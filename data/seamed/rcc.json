@@ -1,67 +1,2071 @@
 {
-  "schema": "osap-seamed-rcc/1",
-  "updated": "2026-10-05",
-  "about": "Maritime rescue coordination leads and national emergency lines, published institutional contacts only. Seeded from the maritime medevac assessment Shane supplied on 2026-10-05 (Philippines to Sri Lanka transit), which reviewed each published page on that date and called none of them. OSAP has not called or re-read these pages itself: every entry is 'published, not tested'. These are coordination leads, not a map of rescue jurisdiction; the responsible RCC coordinates cross-border support. Revalidate before sailing.",
-  "via": "Supplied maritime medevac assessment, 5 October 2026 (contacts reviewed that day, not called)",
-  "centres": [
-    { "id": "ph-pcg-comcen", "cc": "ph", "name": "Philippine Coast Guard Command Center", "kind": "rcc", "lat": 14.5906, "lon": 120.9686,
-      "tel": ["+63 2 8527 3877", "+63 966 217 9610"], "email": ["pcgcomcen@coastguard.gov.ph"],
-      "role": "Departure and Philippine maritime coordination.",
-      "src": "https://www.coastguard.gov.ph/images/2024/ARTA/PCG_CITIZENS_CHARTER_2024.pdf", "srcname": "Philippine Coast Guard Citizen's Charter 2024", "src_date": "2024",
-      "note": "Official 2024 charter; the assessment could not fetch the PDF directly and read it from the search index. Confirm current duty access." },
-    { "id": "sg-mpa-pocc", "cc": "sg", "name": "Singapore MPA Port Operations Control Centre (maritime rescue)", "kind": "rcc", "lat": 1.2655, "lon": 103.8203,
-      "tel": ["+65 6226 5539", "+65 6325 2493"], "email": ["pocc@mpa.gov.sg"], "vhf": "16", "dsc": "70", "mmsi": "005630002",
-      "role": "Published 24-hour emergency contacts. Singapore's search and rescue region extends into the South China Sea.",
-      "src": "https://www.mpa.gov.sg/port-marine-ops/port-safety-security/search-rescue", "srcname": "Maritime and Port Authority of Singapore: Search and Rescue" },
-    { "id": "my-mrcc-putrajaya", "cc": "my", "name": "Malaysia MRCC Putrajaya (MMEA)", "kind": "rcc", "lat": 2.9264, "lon": 101.6964,
-      "tel": ["+60 3 8941 3140", "+60 3 8995 7821", "+60 10 875 1718"],
-      "role": "National maritime rescue coordination. Verify the working duty number.",
-      "src": "https://www.mmea.gov.my/eng/index.php/ms/orang-awam-latest/55-pusat-mrsc-dan-mrcc", "srcname": "Malaysian Maritime Enforcement Agency: MRCC and MRSC directory", "src_date": "2026-02",
-      "note": "Directory versions carry different update dates; these numbers agreed across the versions the assessment read." },
-    { "id": "my-mrsc-langkawi", "cc": "my", "name": "Malaysia MRSC Langkawi (MMEA)", "kind": "rsc", "lat": 6.3242, "lon": 99.8432,
-      "tel": ["+60 4 966 2750", "+60 11 5892 5868"],
-      "role": "Northern Malacca and nearby regional coordination lead; jurisdiction is assigned by the RCC.",
-      "src": "https://www.mmea.gov.my/eng/index.php/ms/orang-awam-latest/55-pusat-mrsc-dan-mrcc", "srcname": "Malaysian Maritime Enforcement Agency: MRCC and MRSC directory", "src_date": "2026-02" },
-    { "id": "my-mrsc-johor", "cc": "my", "name": "Malaysia MRSC Johor Bahru (MMEA)", "kind": "rsc", "lat": 1.4655, "lon": 103.7578,
-      "tel": ["+60 7 221 9231", "+60 13 700 1235"],
-      "role": "Southern regional coordination lead.",
-      "src": "https://www.mmea.gov.my/eng/index.php/ms/orang-awam-latest/55-pusat-mrsc-dan-mrcc", "srcname": "Malaysian Maritime Enforcement Agency: MRCC and MRSC directory", "src_date": "2026-02" },
-    { "id": "my-mmcc-portklang", "cc": "my", "name": "Malaysia Maritime Communication Centre, Port Klang (Marine Department)", "kind": "comms", "lat": 3.0006, "lon": 101.3925,
-      "tel": ["+60 3 3167 0530"], "email": ["mmcc@marine.gov.my"],
-      "role": "Published 24-hour maritime communications and ship-to-shore coordination for injured seafarers.",
-      "src": "https://www.marine.gov.my/en/warga-awam/pelayaran/pusat-komunikasi-maritim-malaysia/", "srcname": "Marine Department Malaysia: Malaysia Maritime Communication Centre" },
-    { "id": "id-basarnas", "cc": "id", "name": "Indonesia BASARNAS (National Search and Rescue Agency)", "kind": "rcc", "lat": -6.1525, "lon": 106.8467,
-      "tel": ["115 (within Indonesia)", "+62 21 6586 7511"],
-      "role": "Emergency reporting. Confirm the regional duty desk and calling access from offshore.",
-      "src": "https://ppid.basarnas.go.id/p/operasi-pencarian-dan-pertolongan", "srcname": "BASARNAS: search and rescue operations" },
-    { "id": "in-mrcc-portblair", "cc": "in", "name": "India MRCC Port Blair (Indian Coast Guard)", "kind": "rcc", "lat": 11.6675, "lon": 92.7346,
-      "tel": ["+91 3192 245530"], "email": ["mrcc-ptb@indiancoastguard.nic.in"],
-      "role": "Andaman and Nicobar rescue coordination lead where the approved route passes near.",
-      "src": "https://indiancoastguard.gov.in/sites/default/files/Crisis.pdf", "srcname": "Indian Coast Guard: crisis contacts" },
-    { "id": "in-mrcc-chennai", "cc": "in", "name": "India MRCC Chennai (Indian Coast Guard)", "kind": "rcc", "lat": 13.0827, "lon": 80.2907,
-      "tel": ["+91 44 2539 5018"], "email": ["mrcc-east@indiancoastguard.nic.in"],
-      "role": "Bay of Bengal regional coordination contact; not proof of aircraft reach to a particular vessel.",
-      "src": "https://indiancoastguard.gov.in/coordinating-agencies", "srcname": "Indian Coast Guard: coordinating agencies" },
-    { "id": "lk-mrcc-colombo", "cc": "lk", "name": "Sri Lanka MRCC Colombo (Sri Lanka Navy)", "kind": "rcc", "lat": 6.9387, "lon": 79.8436,
-      "tel": ["+94 11 244 5368"], "email": ["mrcc-colombo@navy.lk", "mrcccolombo@gmail.com"],
-      "role": "Sri Lanka approaches. Direct contacts as printed in the Navy MRCC bulletin of October 2024.",
-      "src": "https://www.ifccolombo.org/assets/files/report/mrcc/monthly/202410MRCC.pdf", "srcname": "Sri Lanka Navy MRCC monthly bulletin, October 2024", "src_date": "2024-10",
-      "note": "A September 2026 Navy report confirms the centre is active but does not independently confirm this telephone." },
-    { "id": "th-mecc", "cc": "th", "name": "Thai Maritime Enforcement Command Center (Thai-MECC)", "kind": "national", "lat": null, "lon": null,
-      "tel": ["1465 (within Thailand)"],
-      "role": "Maritime emergency reporting. A domestic short code: establish a tested international alternative.",
-      "src": "https://www.thaimecc2.go.th/en/menu-service/flow-chart-of-service-thai-mecc2.html", "srcname": "Thai-MECC Region 2: service flow" },
-    { "id": "th-nac2", "cc": "th", "name": "Royal Thai Navy Second Naval Area Command", "kind": "naval", "lat": 7.2000, "lon": 100.5950,
-      "tel": ["1696 (within Thailand)", "+66 74 325 804"], "vhf": "16",
-      "role": "Lower Gulf of Thailand assistance contacts; the naval notice also publishes VHF 16 (156.800 MHz).",
-      "src": "https://nac2.navy.mi.th/fuvcsnvymrtm", "srcname": "Royal Thai Navy Second Naval Area Command" },
-    { "id": "th-nac3", "cc": "th", "name": "Royal Thai Navy Third Naval Area Command", "kind": "naval", "lat": 8.5650, "lon": 98.2390,
-      "tel": ["+66 76 391 590"],
-      "role": "Andaman command call centre: ask for the maritime rescue desk. Continuous duty answering of this line is not verified.",
-      "src": "https://nac3.navy.mi.th/", "srcname": "Royal Thai Navy Third Naval Area Command" },
-    { "id": "th-niems", "cc": "th", "name": "Thailand emergency medical services (NIEM)", "kind": "national", "lat": null, "lon": null,
-      "tel": ["1669 (within Thailand)"],
-      "role": "Emergency medical activation ashore. This number does not task aircraft offshore.",
-      "src": "https://www.niems.go.th/1/News/Detail/1118?group=2", "srcname": "National Institute for Emergency Medicine" }
-  ]
+ "schema": "osap-seamed-rcc/1",
+ "updated": "2026-10-10",
+ "about": "Maritime rescue coordination leads and national maritime emergency lines: published institutional contacts only. Entries marked via 'pdf' come from the maritime medevac assessment Shane supplied on 2026-10-05, which read each official page that day and called none of them. Entries marked via 'search' (2026-10-10) are official pages found by web search that name the centre; OSAP could read only page titles, so their numbers were not read: open the official page for current contacts. Where a centre name or position comes from general knowledge rather than the page title, the entry's note says so. Nothing here has been called or tested by OSAP. These are coordination leads, not a map of rescue jurisdiction; the responsible RCC coordinates cross-border support. Revalidate before sailing.",
+ "via": "Supplied maritime medevac assessment (5 October 2026) and official pages found by web search (10 October 2026); contacts not called",
+ "centres": [
+  {
+   "id": "ph-pcg-comcen",
+   "cc": "ph",
+   "name": "Philippine Coast Guard Command Center",
+   "kind": "rcc",
+   "lat": 14.5906,
+   "lon": 120.9686,
+   "tel": [
+    "+63 2 8527 3877",
+    "+63 966 217 9610"
+   ],
+   "email": [
+    "pcgcomcen@coastguard.gov.ph"
+   ],
+   "role": "Departure and Philippine maritime coordination.",
+   "src": "https://www.coastguard.gov.ph/images/2024/ARTA/PCG_CITIZENS_CHARTER_2024.pdf",
+   "srcname": "Philippine Coast Guard Citizen's Charter 2024",
+   "src_date": "2024",
+   "note": "Official 2024 charter; the assessment could not fetch the PDF directly and read it from the search index. Confirm current duty access.",
+   "via": "pdf"
+  },
+  {
+   "id": "sg-mpa-pocc",
+   "cc": "sg",
+   "name": "Singapore MPA Port Operations Control Centre (maritime rescue)",
+   "kind": "rcc",
+   "lat": 1.2655,
+   "lon": 103.8203,
+   "tel": [
+    "+65 6226 5539",
+    "+65 6325 2493"
+   ],
+   "email": [
+    "pocc@mpa.gov.sg"
+   ],
+   "vhf": "16",
+   "dsc": "70",
+   "mmsi": "005630002",
+   "role": "Published 24-hour emergency contacts. Singapore's search and rescue region extends into the South China Sea.",
+   "src": "https://www.mpa.gov.sg/port-marine-ops/port-safety-security/search-rescue",
+   "srcname": "Maritime and Port Authority of Singapore: Search and Rescue",
+   "via": "pdf"
+  },
+  {
+   "id": "my-mrcc-putrajaya",
+   "cc": "my",
+   "name": "Malaysia MRCC Putrajaya (MMEA)",
+   "kind": "rcc",
+   "lat": 2.9264,
+   "lon": 101.6964,
+   "tel": [
+    "+60 3 8941 3140",
+    "+60 3 8995 7821",
+    "+60 10 875 1718"
+   ],
+   "role": "National maritime rescue coordination. Verify the working duty number.",
+   "src": "https://www.mmea.gov.my/eng/index.php/ms/orang-awam-latest/55-pusat-mrsc-dan-mrcc",
+   "srcname": "Malaysian Maritime Enforcement Agency: MRCC and MRSC directory",
+   "src_date": "2026-02",
+   "note": "Directory versions carry different update dates; these numbers agreed across the versions the assessment read.",
+   "via": "pdf"
+  },
+  {
+   "id": "my-mrsc-langkawi",
+   "cc": "my",
+   "name": "Malaysia MRSC Langkawi (MMEA)",
+   "kind": "rsc",
+   "lat": 6.3242,
+   "lon": 99.8432,
+   "tel": [
+    "+60 4 966 2750",
+    "+60 11 5892 5868"
+   ],
+   "role": "Northern Malacca and nearby regional coordination lead; jurisdiction is assigned by the RCC.",
+   "src": "https://www.mmea.gov.my/eng/index.php/ms/orang-awam-latest/55-pusat-mrsc-dan-mrcc",
+   "srcname": "Malaysian Maritime Enforcement Agency: MRCC and MRSC directory",
+   "src_date": "2026-02",
+   "via": "pdf"
+  },
+  {
+   "id": "my-mrsc-johor",
+   "cc": "my",
+   "name": "Malaysia MRSC Johor Bahru (MMEA)",
+   "kind": "rsc",
+   "lat": 1.4655,
+   "lon": 103.7578,
+   "tel": [
+    "+60 7 221 9231",
+    "+60 13 700 1235"
+   ],
+   "role": "Southern regional coordination lead.",
+   "src": "https://www.mmea.gov.my/eng/index.php/ms/orang-awam-latest/55-pusat-mrsc-dan-mrcc",
+   "srcname": "Malaysian Maritime Enforcement Agency: MRCC and MRSC directory",
+   "src_date": "2026-02",
+   "via": "pdf"
+  },
+  {
+   "id": "my-mmcc-portklang",
+   "cc": "my",
+   "name": "Malaysia Maritime Communication Centre, Port Klang (Marine Department)",
+   "kind": "comms",
+   "lat": 3.0006,
+   "lon": 101.3925,
+   "tel": [
+    "+60 3 3167 0530"
+   ],
+   "email": [
+    "mmcc@marine.gov.my"
+   ],
+   "role": "Published 24-hour maritime communications and ship-to-shore coordination for injured seafarers.",
+   "src": "https://www.marine.gov.my/en/warga-awam/pelayaran/pusat-komunikasi-maritim-malaysia/",
+   "srcname": "Marine Department Malaysia: Malaysia Maritime Communication Centre",
+   "via": "pdf"
+  },
+  {
+   "id": "id-basarnas",
+   "cc": "id",
+   "name": "Indonesia BASARNAS (National Search and Rescue Agency)",
+   "kind": "rcc",
+   "lat": -6.1525,
+   "lon": 106.8467,
+   "tel": [
+    "115 (within Indonesia)",
+    "+62 21 6586 7511"
+   ],
+   "role": "Emergency reporting. Confirm the regional duty desk and calling access from offshore.",
+   "src": "https://ppid.basarnas.go.id/p/operasi-pencarian-dan-pertolongan",
+   "srcname": "BASARNAS: search and rescue operations",
+   "via": "pdf"
+  },
+  {
+   "id": "in-mrcc-portblair",
+   "cc": "in",
+   "name": "India MRCC Port Blair (Indian Coast Guard)",
+   "kind": "rcc",
+   "lat": 11.6675,
+   "lon": 92.7346,
+   "tel": [
+    "+91 3192 245530"
+   ],
+   "email": [
+    "mrcc-ptb@indiancoastguard.nic.in"
+   ],
+   "role": "Andaman and Nicobar rescue coordination lead where the approved route passes near.",
+   "src": "https://indiancoastguard.gov.in/sites/default/files/Crisis.pdf",
+   "srcname": "Indian Coast Guard: crisis contacts",
+   "via": "pdf"
+  },
+  {
+   "id": "in-mrcc-chennai",
+   "cc": "in",
+   "name": "India MRCC Chennai (Indian Coast Guard)",
+   "kind": "rcc",
+   "lat": 13.0827,
+   "lon": 80.2907,
+   "tel": [
+    "+91 44 2539 5018"
+   ],
+   "email": [
+    "mrcc-east@indiancoastguard.nic.in"
+   ],
+   "role": "Bay of Bengal regional coordination contact; not proof of aircraft reach to a particular vessel.",
+   "src": "https://indiancoastguard.gov.in/coordinating-agencies",
+   "srcname": "Indian Coast Guard: coordinating agencies",
+   "via": "pdf"
+  },
+  {
+   "id": "lk-mrcc-colombo",
+   "cc": "lk",
+   "name": "Sri Lanka MRCC Colombo (Sri Lanka Navy)",
+   "kind": "rcc",
+   "lat": 6.9387,
+   "lon": 79.8436,
+   "tel": [
+    "+94 11 244 5368"
+   ],
+   "email": [
+    "mrcc-colombo@navy.lk",
+    "mrcccolombo@gmail.com"
+   ],
+   "role": "Sri Lanka approaches. Direct contacts as printed in the Navy MRCC bulletin of October 2024.",
+   "src": "https://www.ifccolombo.org/assets/files/report/mrcc/monthly/202410MRCC.pdf",
+   "srcname": "Sri Lanka Navy MRCC monthly bulletin, October 2024",
+   "src_date": "2024-10",
+   "note": "A September 2026 Navy report confirms the centre is active but does not independently confirm this telephone.",
+   "via": "pdf"
+  },
+  {
+   "id": "th-mecc",
+   "cc": "th",
+   "name": "Thai Maritime Enforcement Command Center (Thai-MECC)",
+   "kind": "national",
+   "lat": null,
+   "lon": null,
+   "tel": [
+    "1465 (within Thailand)"
+   ],
+   "role": "Maritime emergency reporting. A domestic short code: establish a tested international alternative.",
+   "src": "https://www.thaimecc2.go.th/en/menu-service/flow-chart-of-service-thai-mecc2.html",
+   "srcname": "Thai-MECC Region 2: service flow",
+   "via": "pdf"
+  },
+  {
+   "id": "th-nac2",
+   "cc": "th",
+   "name": "Royal Thai Navy Second Naval Area Command",
+   "kind": "naval",
+   "lat": 7.2,
+   "lon": 100.595,
+   "tel": [
+    "1696 (within Thailand)",
+    "+66 74 325 804"
+   ],
+   "vhf": "16",
+   "role": "Lower Gulf of Thailand assistance contacts; the naval notice also publishes VHF 16 (156.800 MHz).",
+   "src": "https://nac2.navy.mi.th/fuvcsnvymrtm",
+   "srcname": "Royal Thai Navy Second Naval Area Command",
+   "via": "pdf"
+  },
+  {
+   "id": "th-nac3",
+   "cc": "th",
+   "name": "Royal Thai Navy Third Naval Area Command",
+   "kind": "naval",
+   "lat": 8.565,
+   "lon": 98.239,
+   "tel": [
+    "+66 76 391 590"
+   ],
+   "role": "Andaman command call centre: ask for the maritime rescue desk. Continuous duty answering of this line is not verified.",
+   "src": "https://nac3.navy.mi.th/",
+   "srcname": "Royal Thai Navy Third Naval Area Command",
+   "via": "pdf"
+  },
+  {
+   "id": "th-niems",
+   "cc": "th",
+   "name": "Thailand emergency medical services (NIEM)",
+   "kind": "national",
+   "lat": null,
+   "lon": null,
+   "tel": [
+    "1669 (within Thailand)"
+   ],
+   "role": "Emergency medical activation ashore. This number does not task aircraft offshore.",
+   "src": "https://www.niems.go.th/1/News/Detail/1118?group=2",
+   "srcname": "National Institute for Emergency Medicine",
+   "via": "pdf"
+  },
+  {
+   "id": "za-mrcc-cape-town",
+   "cc": "za",
+   "name": "MRCC Cape Town (SAMSA)",
+   "kind": "rcc",
+   "lat": -33.92,
+   "lon": 18.42,
+   "role": "South Africa's Maritime Rescue Coordination Centre, run by the South African Maritime Safety Authority, coordinating maritime search and rescue in the South African search and rescue region (Atlantic and Indian Ocean).",
+   "src": "https://blog.samsa.org.za/tag/mrcc-cape-town/",
+   "srcname": "SAMSA (The 10th Province blog): Tag: MRCC Cape Town",
+   "note": "No phone number appeared in any official title. The commonly listed +27 21 938 3300 showed up only on a non-official directory (yellowpages.net), so it is left out. Leads for checking: SAMSA Cape Town page https://www.samsa.org.za/Pages/Cape-Town.aspx and IHO SAIHC marine disaster contact list https://iho.int/mtg_docs/rhc/SAIHC/SAIHC_Misc/MarineDisasterContactDetails.pdf. No official title said which countries it covers.",
+   "via": "search"
+  },
+  {
+   "id": "ke-rmrcc-mombasa",
+   "cc": "ke",
+   "name": "Regional Maritime Rescue Coordination Centre (RMRCC) Mombasa",
+   "kind": "rcc",
+   "lat": -4.04,
+   "lon": 39.67,
+   "role": "IMO-sponsored regional MRCC run by the Kenya Maritime Authority, providing 24/7 search and rescue coordination for the western Indian Ocean and Kenyan inland waters.",
+   "src": "https://kma.go.ke/?p=2187",
+   "srcname": "Kenya Maritime Authority: The Regional Maritime Rescue Coordination Centre (RMRCC) – Mombasa",
+   "note": "A second KMA page is titled '24/7 Search and Rescue Indian Ocean and Inland Waters IMO aligned operations' (https://kma.go.ke/search-rescue/). No official title gave its phone number or the list of countries it covers (its sub-centres reportedly include Dar es Salaam, Seychelles and Somalia, but this was not confirmed). Lead: KMA contact page https://kma.go.ke/contact.",
+   "via": "search"
+  },
+  {
+   "id": "ng-nimasa-sar-lagos",
+   "cc": "ng",
+   "name": "NIMASA Search and Rescue Services (Regional MRCC Lagos)",
+   "kind": "rcc",
+   "lat": 6.45,
+   "lon": 3.4,
+   "role": "Nigerian Maritime Administration and Safety Agency search and rescue service; Lagos hosts the IMO-sponsored regional MRCC for part of West and Central Africa.",
+   "src": "https://nimasa.gov.ng/services/maritime-safety-security/search-rescue-rs/",
+   "srcname": "NIMASA: Search Rescue RS",
+   "note": "The page title confirms the SAR service, not the words 'regional MRCC Lagos'. Titles of NIMASA pages show general agency lines +234 0201 630 9590 / 9591 / 9592 and info@nimasa.gov.ng (head office). These are not confirmed as 24/7 MRCC lines, so they are kept out of tel. No official title listed the countries it covers.",
+   "via": "search"
+  },
+  {
+   "id": "re-cross-reunion",
+   "cc": "re",
+   "name": "CROSS La Réunion (CROSS Sud Océan Indien)",
+   "kind": "rcc",
+   "lat": -20.94,
+   "lon": 55.29,
+   "tel": [
+    "196"
+   ],
+   "role": "French regional operational surveillance and rescue centre for La Réunion and the southern Indian Ocean; reached by phone on the short emergency number 196.",
+   "src": "https://www.reunion.gouv.fr/layout/set/print/Actions-de-l-Etat/Mer-littoral-et-securite-maritime/Securite-maritime/Les-secours-en-mer-contacter-le-CROSS-par-telephone-au-196",
+   "srcname": "Les services de l'État à La Réunion: Les secours en mer: contacter le CROSS par téléphone au 196",
+   "note": "196 is a free short code that works only from French networks; there was no international number in any title. Position is approximate (Le Port). Annual reports from the official DM Sud Océan Indien site: https://www.dm.sud-ocean-indien.developpement-durable.gouv.fr/IMG/pdf/rapport_d_activite_cross_soi_2022-min_cle222243.pdf",
+   "via": "search"
+  },
+  {
+   "id": "ca-jrcc-halifax",
+   "cc": "ca",
+   "name": "JRCC Halifax",
+   "kind": "rcc",
+   "lat": 44.65,
+   "lon": -63.57,
+   "role": "Joint (air/maritime) rescue coordination centre run by the RCAF and Canadian Coast Guard for its Canadian search and rescue region.",
+   "src": "https://www.canada.ca/en/air-force/services/search-rescue/joint-rescue-coordination-centre.html",
+   "srcname": "Government of Canada (RCAF): Joint Rescue Coordination Centre",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "ca-jrcc-trenton",
+   "cc": "ca",
+   "name": "JRCC Trenton",
+   "kind": "rcc",
+   "lat": 44.1,
+   "lon": -77.58,
+   "role": "Joint (air/maritime) rescue coordination centre run by the RCAF and Canadian Coast Guard for its Canadian search and rescue region.",
+   "src": "https://www.canada.ca/en/air-force/services/search-rescue/joint-rescue-coordination-centre.html",
+   "srcname": "Government of Canada (RCAF): Joint Rescue Coordination Centre",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "ca-jrcc-victoria",
+   "cc": "ca",
+   "name": "JRCC Victoria",
+   "kind": "rcc",
+   "lat": 48.43,
+   "lon": -123.37,
+   "role": "Joint (air/maritime) rescue coordination centre run by the RCAF and Canadian Coast Guard for its Canadian search and rescue region.",
+   "src": "https://www.canada.ca/en/air-force/services/search-rescue/joint-rescue-coordination-centre.html",
+   "srcname": "Government of Canada (RCAF): Joint Rescue Coordination Centre",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "ca-mrsc-quebec",
+   "cc": "ca",
+   "name": "MRSC Québec",
+   "kind": "rsc",
+   "lat": 46.81,
+   "lon": -71.21,
+   "role": "Canadian Coast Guard maritime rescue sub-centre handling maritime SAR in its sub-region under a JRCC.",
+   "src": "https://www.canada.ca/en/department-national-defence/services/operations/military-operations/types/search-rescue/caf-structure-sar.html",
+   "srcname": "Government of Canada (DND): Canadian Armed Forces structure for search and rescue",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. Sub-centre name not confirmed in a result title; only a non-official directory (sarcontacts.info) title named MRSC Québec.",
+   "via": "search"
+  },
+  {
+   "id": "ca-mrsc-stjohns",
+   "cc": "ca",
+   "name": "MRSC St. John's",
+   "kind": "rsc",
+   "lat": 47.56,
+   "lon": -52.71,
+   "role": "Canadian Coast Guard maritime rescue sub-centre handling maritime SAR in its sub-region under a JRCC.",
+   "src": "https://www.canada.ca/en/department-national-defence/services/operations/military-operations/types/search-rescue/caf-structure-sar.html",
+   "srcname": "Government of Canada (DND): Canadian Armed Forces structure for search and rescue",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. Sub-centre name not confirmed in a result title; only a non-official directory (sarcontacts.info) title named MRSC Québec.",
+   "via": "search"
+  },
+  {
+   "id": "ca-ccg-report",
+   "cc": "ca",
+   "name": "Canadian Coast Guard - Report a search and rescue incident",
+   "kind": "national",
+   "lat": 45.42,
+   "lon": -75.7,
+   "role": "Official national page on how to report a maritime search and rescue incident in Canada.",
+   "src": "https://www.canada.ca/en/canadian-coast-guard/corporate/contact-us/emergency/report-search-rescue-incident.html",
+   "srcname": "Government of Canada (CCG): Report a search and rescue incident",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-boston",
+   "cc": "us",
+   "name": "USCG RCC Boston (Northeast District, formerly D1)",
+   "kind": "rcc",
+   "lat": 42.36,
+   "lon": -71.06,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-norfolk",
+   "cc": "us",
+   "name": "USCG RCC Norfolk (formerly D5)",
+   "kind": "rcc",
+   "lat": 36.85,
+   "lon": -76.29,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-miami",
+   "cc": "us",
+   "name": "USCG RCC Miami (Southeast District, formerly D7)",
+   "kind": "rcc",
+   "lat": 25.77,
+   "lon": -80.19,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-neworleans",
+   "cc": "us",
+   "name": "USCG RCC New Orleans (formerly D8)",
+   "kind": "rcc",
+   "lat": 29.95,
+   "lon": -90.07,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-alameda",
+   "cc": "us",
+   "name": "USCG RCC Alameda (Southwest District, formerly D11)",
+   "kind": "rcc",
+   "lat": 37.77,
+   "lon": -122.24,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-seattle",
+   "cc": "us",
+   "name": "USCG RCC Seattle (formerly D13)",
+   "kind": "rcc",
+   "lat": 47.61,
+   "lon": -122.33,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-juneau",
+   "cc": "us",
+   "name": "USCG RCC Juneau (formerly D17)",
+   "kind": "rcc",
+   "lat": 58.3,
+   "lon": -134.42,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-honolulu",
+   "cc": "us",
+   "name": "USCG JRCC Honolulu (formerly D14)",
+   "kind": "rcc",
+   "lat": 21.31,
+   "lon": -157.86,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "us-rcc-sanjuan",
+   "cc": "us",
+   "name": "USCG RCC San Juan (Sector San Juan)",
+   "kind": "rcc",
+   "lat": 18.47,
+   "lon": -66.11,
+   "role": "US Coast Guard rescue coordination centre for maritime SAR in its district's search and rescue region.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "U.S. Coast Guard Office of Search and Rescue (CG-SAR): RCC Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. USCG districts were renamed (e.g. Northeast/Southeast/Southwest District) per uscg.mil Unit Display titles; RCC-to-city mapping is from prior knowledge, check the RCC Numbers page.",
+   "via": "search"
+  },
+  {
+   "id": "mx-semar-sar",
+   "cc": "mx",
+   "name": "Secretaría de Marina (SEMAR) - Sistema de Búsqueda y Rescate en la Mar",
+   "kind": "naval",
+   "lat": 19.43,
+   "lon": -99.13,
+   "role": "Mexican Navy national maritime search and rescue system (Coast Guard function).",
+   "src": "https://www.gob.mx/semar/unicapam/articulos/sistema-de-busqueda-y-rescate-en-la-mar",
+   "srcname": "Gobierno de México (SEMAR): Sistema de Búsqueda y Rescate en la Mar",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "br-salvamar-brasil",
+   "cc": "br",
+   "name": "Salvamar Brasil (MRCC Brasil)",
+   "kind": "rcc",
+   "lat": -22.9,
+   "lon": -43.17,
+   "role": "Brazilian Navy national maritime SAR coordination centre overseeing the regional Salvamar centres.",
+   "src": "https://www.marinha.mil.br/salvamarbrasil/content/contato-sar",
+   "srcname": "Marinha do Brasil: Salvamar Brasil - Contato SAR",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. Regional structure listed at https://www.marinha.mil.br/salvamarbrasil/content/estrutura-sar",
+   "via": "search"
+  },
+  {
+   "id": "br-salvamar-norte",
+   "cc": "br",
+   "name": "Salvamar Norte",
+   "kind": "rsc",
+   "lat": -1.46,
+   "lon": -48.49,
+   "role": "Regional maritime SAR centre of the Brazilian Navy 4th Naval District.",
+   "src": "https://www.marinha.mil.br/com4dn/salvamar-norte",
+   "srcname": "Marinha do Brasil (4th Naval District): Salvamar Norte",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. City position inferred from naval district HQ.",
+   "via": "search"
+  },
+  {
+   "id": "br-salvamar-leste",
+   "cc": "br",
+   "name": "Salvamar Leste",
+   "kind": "rsc",
+   "lat": -12.97,
+   "lon": -38.51,
+   "role": "Regional maritime SAR centre of the Brazilian Navy 2nd Naval District.",
+   "src": "https://www.marinha.mil.br/com2dn/salvamar-leste",
+   "srcname": "Marinha do Brasil (2nd Naval District): Salvamar Leste",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. City position inferred from naval district HQ.",
+   "via": "search"
+  },
+  {
+   "id": "br-salvamar-sul",
+   "cc": "br",
+   "name": "Salvamar Sul",
+   "kind": "rsc",
+   "lat": -32.04,
+   "lon": -52.1,
+   "role": "Regional maritime SAR centre of the Brazilian Navy 5th Naval District.",
+   "src": "https://www.marinha.mil.br/com5dn/salvamarsul",
+   "srcname": "Marinha do Brasil (5th Naval District): Salvamar Sul",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. City position inferred from naval district HQ.",
+   "via": "search"
+  },
+  {
+   "id": "ar-pna",
+   "cc": "ar",
+   "name": "Prefectura Naval Argentina - Emergencias",
+   "kind": "national",
+   "lat": -34.6,
+   "lon": -58.38,
+   "role": "Argentine Coast Guard (maritime authority) responsible for maritime emergencies and SAR.",
+   "src": "https://www.argentina.gob.ar/prefecturanaval/emergencias",
+   "srcname": "Argentina.gob.ar (Prefectura Naval Argentina): Emergencias y denuncias",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "cl-mrcc",
+   "cc": "cl",
+   "name": "MRCC Chile (DIRECTEMAR)",
+   "kind": "rcc",
+   "lat": -33.05,
+   "lon": -71.62,
+   "tel": [
+    "137"
+   ],
+   "role": "Chilean maritime authority rescue coordination centre; 137 is the national maritime emergency short number.",
+   "src": "https://www.armada.cl/noticias-navales/team-137-de-emergencias-maritimas-entrega-informacion-de-seguridad-a",
+   "srcname": "Armada de Chile: \"Team 137\" de Emergencias Marítimas entrega información de seguridad...",
+   "note": "137 shown in official title (domestic short code, not an international number). MRCC FAQ: https://www.directemar.cl/directemar/preguntas-frecuentes/mrcc/1-existe-algun-numero-unico-para-comunicarse-con-la-autoridad-maritima . Valparaíso position assumed.",
+   "via": "search"
+  },
+  {
+   "id": "uy-prena",
+   "cc": "uy",
+   "name": "Armada Nacional - Prefectura Nacional Naval (PRENA)",
+   "kind": "naval",
+   "lat": -34.91,
+   "lon": -56.19,
+   "role": "Uruguayan Navy coast guard/maritime authority responsible for maritime safety and SAR.",
+   "src": "https://www.armada.mil.uy/index.php/36-institucion/prefectura-nacional-naval",
+   "srcname": "Armada Nacional (Uruguay): PRENA",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. MRCC Montevideo not named in any result title.",
+   "via": "search"
+  },
+  {
+   "id": "pe-comoperguard",
+   "cc": "pe",
+   "name": "DICAPI - Comandancia de Operaciones Guardacostas",
+   "kind": "naval",
+   "lat": -12.05,
+   "lon": -77.15,
+   "role": "Peruvian coast guard operations command under the maritime authority (DICAPI).",
+   "src": "https://www.dicapi.mil.pe/direcciones/comoperguard",
+   "srcname": "DICAPI: Comandancia de Operaciones Guardacostas",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. MRCC Callao not named in result titles.",
+   "via": "search"
+  },
+  {
+   "id": "ec-dirnea",
+   "cc": "ec",
+   "name": "DIRNEA - Comando de Guardacostas Guayaquil",
+   "kind": "naval",
+   "lat": -2.19,
+   "lon": -79.89,
+   "role": "Ecuadorian Navy aquatic-spaces directorate and coast guard command responsible for maritime safety.",
+   "src": "https://www.dirnea.org/en/servicio-maritimo",
+   "srcname": "DIRNEA (Armada del Ecuador): Servicio marítimo",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. MRCC Guayaquil not named in result titles.",
+   "via": "search"
+  },
+  {
+   "id": "co-armada",
+   "cc": "co",
+   "name": "Armada de Colombia - Guardacostas",
+   "kind": "naval",
+   "lat": 10.39,
+   "lon": -75.51,
+   "role": "Colombian Navy coast guard responsible for safeguarding life at sea and maritime SAR.",
+   "src": "https://www.armada.mil.co/es/content/armada-colombia-comprometida-con-salvaguarda-vida-humana-en-mar",
+   "srcname": "Armada de Colombia: comprometida con la salvaguarda de la vida humana en el mar",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. Cartagena position assumed; line 146 not visible.",
+   "via": "search"
+  },
+  {
+   "id": "mq-cross-ag",
+   "cc": "mq",
+   "name": "CROSS Antilles-Guyane (MRCC Fort-de-France)",
+   "kind": "rcc",
+   "lat": 14.6,
+   "lon": -61.07,
+   "tel": [
+    "196"
+   ],
+   "covers": [
+    "mq",
+    "gp",
+    "gf"
+   ],
+   "role": "French regional SAR centre for the Antilles and French Guiana maritime area; 196 is the free sea-rescue number.",
+   "src": "https://www.guadeloupe.developpement-durable.gouv.fr/196-un-numero-gratuit-pour-le-secours-en-mer-a1189.html",
+   "srcname": "DEAL Guadeloupe (gouv.fr): 196 : un numéro gratuit pour le secours en mer !",
+   "note": "196 shown in official title (French domestic short number). Coverage of Antilles and French Guiana per title 'CROSS en mer des Antilles et de la Guyane' (guyane.gouv.fr). Contact page: https://www.dm.martinique.developpement-durable.gouv.fr/pour-joindre-le-cross-antilles-guyane-a519.html",
+   "via": "search"
+  },
+  {
+   "id": "pa-senan",
+   "cc": "pa",
+   "name": "Servicio Nacional Aeronaval (SENAN)",
+   "kind": "naval",
+   "lat": 8.98,
+   "lon": -79.52,
+   "role": "Panamanian air-naval service conducting maritime search and rescue.",
+   "src": "https://www.aeronaval.gob.pa/",
+   "srcname": "SENAN: Servicio Nacional Aeronaval",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "pa-amp",
+   "cc": "pa",
+   "name": "Autoridad Marítima de Panamá - Líneas de Emergencia",
+   "kind": "national",
+   "lat": 8.98,
+   "lon": -79.52,
+   "role": "Panama Maritime Authority page listing maritime emergency lines.",
+   "src": "https://www.amp.gob.pa/lineas-de-emergencia/",
+   "srcname": "AMP: Líneas de Emergencia",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "cr-sng",
+   "cc": "cr",
+   "name": "Servicio Nacional de Guardacostas",
+   "kind": "naval",
+   "lat": 9.93,
+   "lon": -84.08,
+   "role": "Costa Rican national coast guard (Ministry of Public Security), maritime law enforcement and SAR.",
+   "src": "https://www.seguridadpublica.go.cr/contactenos/directorio/guardacostas.aspx",
+   "srcname": "Ministerio de Seguridad Pública: Directorio - Guardacostas",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "jm-jdfcg",
+   "cc": "jm",
+   "name": "Jamaica Defence Force Coast Guard",
+   "kind": "naval",
+   "lat": 17.97,
+   "lon": -76.79,
+   "role": "Jamaican coast guard protecting the maritime space, including SAR.",
+   "src": "https://jis.gov.jm/features/jdf-coast-guard-protecting-the-maritime-space/",
+   "srcname": "Jamaica Information Service: JDF Coast Guard Protecting the Maritime Space",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. No JRCC/MRCC name found in titles.",
+   "via": "search"
+  },
+  {
+   "id": "bs-rbdf",
+   "cc": "bs",
+   "name": "Royal Bahamas Defence Force",
+   "kind": "naval",
+   "lat": 25.05,
+   "lon": -77.35,
+   "role": "Bahamian defence force conducting maritime search and rescue operations.",
+   "src": "https://rbdf.gov.bs/phone-numbers/",
+   "srcname": "Royal Bahamas Defence Force: Phone Numbers",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "do-ard-com",
+   "cc": "do",
+   "name": "Armada de República Dominicana - Centro de Operaciones Marítimas (COM)",
+   "kind": "naval",
+   "lat": 18.47,
+   "lon": -69.89,
+   "role": "Dominican Navy maritime operations centre providing maritime assistance.",
+   "src": "https://armada.mil.do/noticias/armada-de-republica-dominicana-ard-a-traves-de-su-centro-de-operaciones-maritimas-com-brinda-asistencia-maritima/",
+   "srcname": "Armada República Dominicana: ARD, a través de su Centro de Operaciones Marítimas (COM) brinda asistencia marítima",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "bb-bdf",
+   "cc": "bb",
+   "name": "Barbados Defence Force (Barbados Coast Guard)",
+   "kind": "naval",
+   "lat": 13.1,
+   "lon": -59.62,
+   "role": "Barbados Defence Force, whose Coast Guard conducts maritime SAR.",
+   "src": "https://gisbarbados.gov.bb/blog/new-numbers-for-defence-force/",
+   "srcname": "GIS Barbados: New Numbers For Defence Force",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. Article title indicates new BDF numbers; not visible in results.",
+   "via": "search"
+  },
+  {
+   "id": "bz-bcg",
+   "cc": "bz",
+   "name": "Belize Coast Guard",
+   "kind": "naval",
+   "lat": 17.5,
+   "lon": -88.2,
+   "role": "Belize national coast guard service conducting maritime search and rescue.",
+   "src": "https://www.pressoffice.gov.bz/belize-coast-guard-conduct-successful-search-and-rescue/",
+   "srcname": "Government of Belize Press Office: Belize Coast Guard Conduct Successful Search and Rescue",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "gy-marad",
+   "cc": "gy",
+   "name": "Maritime Administration Department (MARAD) - Maritime Safety Division",
+   "kind": "national",
+   "lat": 6.8,
+   "lon": -58.16,
+   "role": "Guyana maritime administration responsible for maritime safety; leads SAR with the Coast Guard.",
+   "src": "https://marad.gov.gy/safety-division",
+   "srcname": "MARAD Guyana: Maritime Safety Division",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. Guyana Defence Force Coast Guard role not confirmed in titles.",
+   "via": "search"
+  },
+  {
+   "id": "sr-mas",
+   "cc": "sr",
+   "name": "Maritieme Autoriteit Suriname (MAS)",
+   "kind": "national",
+   "lat": 5.85,
+   "lon": -55.2,
+   "role": "Suriname maritime authority; contact point for maritime matters.",
+   "src": "https://mas.sr/contact-us/",
+   "srcname": "Maritime Authority Suriname: Contact us",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. MRCC Paramaribo not named in result titles.",
+   "via": "search"
+  },
+  {
+   "id": "hn-fnh",
+   "cc": "hn",
+   "name": "Fuerza Naval de Honduras (FNH)",
+   "kind": "naval",
+   "lat": 14.07,
+   "lon": -87.19,
+   "role": "Honduran Navy conducting maritime rescues; SAR exercised with Dirección General de la Marina Mercante.",
+   "src": "https://sedena.gob.hn/index.php/noticias/rescate-por-la-fuerza-naval-de-honduras",
+   "srcname": "SEDENA Honduras: Rescate por la Fuerza Naval de Honduras",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "sv-sar-plan",
+   "cc": "sv",
+   "name": "El Salvador national aeronautical and maritime SAR coordination (AAC plan)",
+   "kind": "national",
+   "lat": 13.69,
+   "lon": -89.22,
+   "role": "National plan coordinating aeronautical and maritime search and rescue in El Salvador.",
+   "src": "https://www.aac.gob.sv/wp-content/uploads/download-manager-files/Plan-Coord-Nac-Busqueda-y-Salvamento-Aero-y-Marit-2.pdf",
+   "srcname": "Autoridad de Aviación Civil El Salvador: Plan para la coordinación nacional de búsqueda y salvamento aeronáutico y marítimo",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source.",
+   "via": "search"
+  },
+  {
+   "id": "ve-inea",
+   "cc": "ve",
+   "name": "Instituto Nacional de los Espacios Acuáticos (INEA)",
+   "kind": "national",
+   "lat": 10.49,
+   "lon": -66.88,
+   "role": "Venezuelan aquatic-spaces maritime authority (harbour masters, maritime safety).",
+   "src": "https://www.inea.gob.ve/action/acerca",
+   "srcname": "INEA: Acerca del INEA",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. No Venezuelan MRCC named in titles; Armada Guardacostas not confirmed.",
+   "via": "search"
+  },
+  {
+   "id": "gt-marina",
+   "cc": "gt",
+   "name": "Marina de la Defensa Nacional",
+   "kind": "naval",
+   "lat": 14.63,
+   "lon": -90.51,
+   "role": "Guatemalan Navy, responsible for maritime security including rescues at sea.",
+   "src": "https://prensa.gob.gt/comunicado/marina-de-la-defensa-nacional-desarrolla-diferentes-acciones-en-beneficio-de-los",
+   "srcname": "Secretaría de Comunicación Social (prensa.gob.gt): Marina de la Defensa Nacional desarrolla diferentes acciones...",
+   "note": "Search results returned page titles/URLs only (no text snippets); entry is supported by the official page title. Contact numbers not visible in results, so omitted - consult source. Weak: no dedicated SAR centre named.",
+   "via": "search"
+  },
+  {
+   "id": "jp-jcg-118",
+   "cc": "jp",
+   "name": "Japan Coast Guard (maritime emergency number 118)",
+   "kind": "national",
+   "lat": 35.68,
+   "lon": 139.75,
+   "tel": [
+    "118"
+   ],
+   "role": "National maritime emergency number for incidents and accidents at sea in Japanese waters, routed to Japan Coast Guard.",
+   "src": "https://www.kaiho.mlit.go.jp/info/joho/tel118.html",
+   "srcname": "Japan Coast Guard (kaiho.mlit.go.jp): 海の「もしも」は118番",
+   "note": "118 appears in the page title. Contacts for the individual JCG regional RCCs were not found. Search-and-rescue mission page: https://www.kaiho.mlit.go.jp/e/mission/saving_lives.html",
+   "via": "search"
+  },
+  {
+   "id": "kr-kcg",
+   "cc": "kr",
+   "name": "Korea Coast Guard",
+   "kind": "national",
+   "lat": 36.48,
+   "lon": 127.29,
+   "role": "National coast guard responsible for maritime search and rescue in Korean waters.",
+   "src": "https://www.kcg.go.kr/english/si/sub/info.do?page=2870&mi=2870",
+   "srcname": "Korea Coast Guard: English site",
+   "note": "The emergency number (commonly 122) could not be checked from a snippet, so it is left out. HQ shown at Sejong.",
+   "via": "search"
+  },
+  {
+   "id": "cn-cmrcc",
+   "cc": "cn",
+   "name": "China Maritime Search and Rescue Centre (China MRCC)",
+   "kind": "rcc",
+   "lat": 39.9,
+   "lon": 116.4,
+   "role": "National maritime SAR coordination centre under the Ministry of Transport; coordinates provincial maritime search and rescue centres.",
+   "src": "https://zizhan.mot.gov.cn/sj2019/soujiuzx/yewujn_sjzx/201903/t20190314_3175726.html",
+   "srcname": "China Maritime Search and Rescue Centre (MOT): 如何拨打海上遇险报警电话?",
+   "note": "The page explains how to call the maritime distress number; the number itself is not in this title. See the Guangdong entry for 12395.",
+   "via": "search"
+  },
+  {
+   "id": "cn-gd-mrsc",
+   "cc": "cn",
+   "name": "Guangdong Provincial Maritime Search and Rescue Centre",
+   "kind": "rsc",
+   "lat": 23.13,
+   "lon": 113.26,
+   "tel": [
+    "12395"
+   ],
+   "role": "Provincial maritime SAR centre for Guangdong waters, under Guangdong MSA.",
+   "src": "https://www.gd.msa.gov.cn/25a7cf34838c331dfa99113dcf4a60e9/8419a5d8373242afa2cc24c6a366be56.jhtml",
+   "srcname": "Guangdong MSA: 广东省海上搜救中心开展“12395”系列宣传活动",
+   "note": "The page title names 12395 as the maritime distress hotline it promotes. 12395 is the national maritime distress short number in China.",
+   "via": "search"
+  },
+  {
+   "id": "cn-js-mrsc",
+   "cc": "cn",
+   "name": "Jiangsu Provincial Water Search and Rescue Centre",
+   "kind": "rsc",
+   "lat": 32.06,
+   "lon": 118.8,
+   "role": "Provincial water SAR centre for Jiangsu, under Jiangsu MSA.",
+   "src": "https://www.js.msa.gov.cn/module/download/downfile.jsp?classid=0&filename=a929f3acdad14f63b48fcd900bfd5f0a.pdf",
+   "srcname": "Jiangsu MSA: 江苏省水上搜救应急预案",
+   "note": "No contact number visible.",
+   "via": "search"
+  },
+  {
+   "id": "hk-mrcc",
+   "cc": "hk",
+   "name": "Hong Kong Maritime Rescue Co-ordination Centre (MRCC Hong Kong)",
+   "kind": "rcc",
+   "lat": 22.29,
+   "lon": 114.16,
+   "role": "Coordinates maritime search and rescue in the Hong Kong SRR; run by the Marine Department.",
+   "src": "https://www.mardep.gov.hk/en/pub_services/ocean/home.html",
+   "srcname": "Marine Department HKSAR: Search and Rescue",
+   "note": "No number visible. Government directory listing: https://tel.directory.gov.hk/0256000105_ENG.html (Search and Rescue Section).",
+   "via": "search"
+  },
+  {
+   "id": "mo-dsamma",
+   "cc": "mo",
+   "name": "Marine and Water Bureau, Macao (DSAMA): maritime emergency rescue",
+   "kind": "national",
+   "lat": 22.19,
+   "lon": 113.54,
+   "role": "Macao government bureau responsible for maritime emergency rescue in Macao waters.",
+   "src": "https://www.gov.mo/en/services/ps-1823/ps-1823d/",
+   "srcname": "Macao SAR Government portal: Maritime emergency rescue",
+   "note": "No number visible.",
+   "via": "search"
+  },
+  {
+   "id": "tw-cga-118",
+   "cc": "tw",
+   "name": "Coast Guard Administration, Ocean Affairs Council (emergency line 118)",
+   "kind": "national",
+   "lat": 25.0,
+   "lon": 121.54,
+   "tel": [
+    "118"
+   ],
+   "role": "Coast guard emergency report line for maritime incidents and rescue in Taiwan's waters.",
+   "src": "https://www.cga.gov.tw/GipOpen/wSite/ct?xItem=16621&ctNode=8176&mp=9997A",
+   "srcname": "Coast Guard Administration: Fleet Branch, Emergency Report Line 118",
+   "note": "118 appears in the page titles of the CGA Fleet Branch and Northern Branch. Search and rescue page: https://www.cga.gov.tw/GipOpen/wSite/ct?xItem=118627&ctNode=10124&mp=eng",
+   "via": "search"
+  },
+  {
+   "id": "vn-vmrcc",
+   "cc": "vn",
+   "name": "Vietnam Maritime Search and Rescue Coordination Centre (VMRCC)",
+   "kind": "rcc",
+   "lat": 21.03,
+   "lon": 105.85,
+   "role": "National MRCC for Vietnam, under VINAMARINE, with regional MRCCs (e.g. Regional Centre No. IV).",
+   "src": "https://vmrcc.gov.vn/en/contact-us",
+   "srcname": "VMRCC: Contact us",
+   "note": "Contact page found, but no number visible. HQ shown at Hanoi, approximate.",
+   "via": "search"
+  },
+  {
+   "id": "bn-mpabd",
+   "cc": "bn",
+   "name": "Maritime and Port Authority of Brunei Darussalam",
+   "kind": "national",
+   "lat": 5.02,
+   "lon": 115.07,
+   "role": "National maritime authority of Brunei; the MRCC function was not confirmed from search results.",
+   "src": "https://mpabd.gov.bn/",
+   "srcname": "Maritime and Port Authority of Brunei Darussalam: Home",
+   "note": "MRCC role and contacts not confirmed. Shown at Muara.",
+   "via": "search"
+  },
+  {
+   "id": "au-jrcc",
+   "cc": "au",
+   "name": "JRCC Australia (AMSA)",
+   "kind": "rcc",
+   "lat": -35.28,
+   "lon": 149.13,
+   "role": "Coordinates aviation and maritime search and rescue in the Australian SRR; run by AMSA in Canberra.",
+   "src": "https://www.amsa.gov.au/safety-navigation/search-and-rescue/responding-search-and-rescue",
+   "srcname": "AMSA: Responding to search and rescue",
+   "note": "No number visible in the search results. Contact page: https://www.amsa.gov.au/about/contact-us",
+   "via": "search"
+  },
+  {
+   "id": "nz-rccnz",
+   "cc": "nz",
+   "name": "Rescue Coordination Centre New Zealand (RCCNZ)",
+   "kind": "rcc",
+   "lat": -41.21,
+   "lon": 174.91,
+   "role": "Coordinates search and rescue in the New Zealand SRR, which includes a large part of the South-West Pacific; run by Maritime NZ.",
+   "src": "https://www.maritimenz.govt.nz/about-us/what-we-do/safety-and-response/rescue-coordination-centre-rccnz/",
+   "srcname": "Maritime NZ: Rescue Coordination Centre (RCCNZ)",
+   "note": "The page 'Search and rescue in the Pacific' exists (https://maritimenz.govt.nz/readiness-and-response/maritime-incident-readiness-and-response-mirr/rescue-coordination-centre-rccnz/search-and-rescue-in-the-pacific/), but the island states it covers could not be checked, so covers is left out. Shown at Lower Hutt.",
+   "via": "search"
+  },
+  {
+   "id": "fj-msaf",
+   "cc": "fj",
+   "name": "Maritime Safety Authority of Fiji",
+   "kind": "national",
+   "lat": -18.14,
+   "lon": 178.44,
+   "role": "Fiji's national maritime safety authority; the RCC operator was not confirmed.",
+   "src": "https://www.msaf.com.fj/contact-us/",
+   "srcname": "Maritime Safety Authority of Fiji: Contact Us",
+   "note": "The Fiji RCC (reportedly run by the Navy / Maritime Essential Services Centre) was not confirmed. No numbers visible.",
+   "via": "search"
+  },
+  {
+   "id": "sb-sima",
+   "cc": "sb",
+   "name": "Solomon Islands Maritime Authority: Search & Rescue Coordination",
+   "kind": "rcc",
+   "lat": -9.43,
+   "lon": 159.95,
+   "role": "Coordinates maritime search and rescue for Solomon Islands.",
+   "src": "https://www.sima.gov.sb/environmental-protection-marine-pollution/search-rescue-coordination/",
+   "srcname": "SIMA: Search & Rescue Coordination",
+   "note": "No number visible. Police Maritime contact page: https://solomons.gov.sb/ministry-of-police-national-security-and-correctional-services/royal-solomon-islands-police-force/contact-the-police-maritime/",
+   "via": "search"
+  },
+  {
+   "id": "vu-pmw",
+   "cc": "vu",
+   "name": "Vanuatu Police Maritime Wing",
+   "kind": "national",
+   "lat": -17.73,
+   "lon": 168.32,
+   "role": "Police maritime unit of Vanuatu; whether it holds the national maritime SAR role was not confirmed.",
+   "src": "https://police.gov.vu/contact-us/pmw",
+   "srcname": "Vanuatu Police Force: PMW - Maritime Wing",
+   "note": "No RCC and no number confirmed.",
+   "via": "search"
+  },
+  {
+   "id": "nc-coss",
+   "cc": "nc",
+   "name": "COSS Nouvelle-Calédonie (formerly MRCC Nouméa)",
+   "kind": "rcc",
+   "lat": -22.27,
+   "lon": 166.45,
+   "role": "French state centre for maritime surveillance and rescue coordination for New Caledonia waters.",
+   "src": "https://www.nouvelle-caledonie.gouv.fr/Services-de-l-Etat/Espace-maritime-et-aerien/MRCC-Noumea-Maritime-Rescue-Coordination-Centre-Nouvelle-Caledonie",
+   "srcname": "Services de l'État en Nouvelle-Calédonie: Centre Opérationnel de Surveillance et de Sauvetage (COSS Nouvelle-Calédonie)",
+   "src_date": "2023-03",
+   "note": "According to the press file 'Le MRCC devient le COSS, 29 mars 2023', MRCC Nouméa was renamed COSS. No number visible.",
+   "via": "search"
+  },
+  {
+   "id": "pf-jrcc",
+   "cc": "pf",
+   "name": "JRCC Tahiti",
+   "kind": "rcc",
+   "lat": -17.54,
+   "lon": -149.57,
+   "role": "Joint aviation and maritime rescue coordination centre for French Polynesia.",
+   "src": "https://www.polynesie-francaise.gouv.fr/Services-de-l-Etat/Espace-maritime-et-aerien/JRCC-Tahiti",
+   "srcname": "Services de l'État en Polynésie française: JRCC Tahiti",
+   "src_date": "2016",
+   "note": "Set up by the arrêté of 8 August 2016 (Légifrance JORFTEXT000033120883). A service-public annuaire entry exists. No number visible.",
+   "via": "search"
+  },
+  {
+   "id": "us-jrcc-honolulu",
+   "cc": "us",
+   "name": "JRCC Honolulu (USCG Oceania District)",
+   "kind": "rcc",
+   "lat": 21.31,
+   "lon": -157.86,
+   "role": "US Coast Guard joint rescue coordination centre for the central Pacific SRR.",
+   "src": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Response-Policy-CG-5R/Office-of-Incident-Management-Preparedness-CG-5RI/US-Coast-Guard-Office-of-Search-and-Rescue-CG-SAR/RCC-Numbers/",
+   "srcname": "USCG Office of Search and Rescue: RCC Numbers",
+   "note": "The official RCC numbers page was found, but the number is not visible in the results. USCG news releases show it coordinated a search in the Marshall Islands, but covers is left out because no official coverage statement was seen.",
+   "via": "search"
+  },
+  {
+   "id": "gu-sector-guam",
+   "cc": "gu",
+   "name": "US Coast Guard Forces Micronesia / Sector Guam",
+   "kind": "rsc",
+   "lat": 13.44,
+   "lon": 144.66,
+   "role": "USCG sector for Guam and the wider Micronesia area under the Oceania District.",
+   "src": "https://www.pacificarea.uscg.mil/Our-Organization/Oceania-District/Oceania-District-Units/US-Coast-Guard-Forces-Micronesia-Sector-Guam/",
+   "srcname": "USCG Pacific Area: US Coast Guard Forces Micronesia Sector Guam",
+   "note": "USCG news releases mention SAR work with FSM and Palau. No number visible.",
+   "via": "search"
+  },
+  {
+   "id": "gb-jrcc-fareham",
+   "cc": "gb",
+   "name": "HM Coastguard Joint Rescue Coordination Centre (JRCC) Fareham",
+   "kind": "rcc",
+   "lat": 50.85,
+   "lon": -1.18,
+   "role": "National HM Coastguard JRCC coordinating maritime and aeronautical SAR across the UK SRR alongside the regional coastguard operations centres.",
+   "src": "https://www.gov.uk/guidance/hm-coastguard-rescue-coordination-centre-contact-details",
+   "srcname": "GOV.UK: HM Coastguard rescue coordination centre contact details",
+   "note": "The regional MRCC/coastguard operations centres are listed on the same page but were not visible in results, so they are not included as separate entries. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "ie-mrcc-dublin",
+   "cc": "ie",
+   "name": "Irish Coast Guard MRCC Dublin",
+   "kind": "rcc",
+   "lat": 53.35,
+   "lon": -6.26,
+   "role": "Irish Coast Guard national maritime rescue coordination centre for the Irish SRR.",
+   "src": "https://www.gov.ie/en/department-of-transport/organisation-information/irish-coast-guard-contact-information/",
+   "srcname": "gov.ie (Department of Transport): Irish Coast Guard contact information",
+   "note": "The name 'MRCC Dublin' also appears as a page title on nidirect.gov.uk/node/138. MRSC Valentia and MRSC Malin Head were not confirmed in results. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "is-jrcc-reykjavik",
+   "cc": "is",
+   "name": "Icelandic Coast Guard Joint Rescue Coordination Centre (JRCC Iceland)",
+   "kind": "rcc",
+   "lat": 64.15,
+   "lon": -21.94,
+   "role": "Icelandic Coast Guard JRCC coordinating maritime and aeronautical SAR in the Icelandic SRR.",
+   "src": "https://www.lhg.is/en/search-and-rescue/",
+   "srcname": "Icelandic Coast Guard (Landhelgisgæslan): Search and rescue",
+   "note": "Isavia eAIP GEN 3.6 is a secondary official source: https://eaip.isavia.is/A_09-2026_2026_10_01/eAIP/BI-GEN 3.6-en-GB.html Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "no-jrcc-south",
+   "cc": "no",
+   "name": "Joint Rescue Coordination Centre of Southern Norway (JRCC Sola/Stavanger)",
+   "kind": "rcc",
+   "lat": 58.88,
+   "lon": 5.64,
+   "role": "Norwegian JRCC coordinating SAR in southern Norway and adjacent sea areas.",
+   "src": "https://www.hovedredningssentralen.no/english/",
+   "srcname": "Hovedredningssentralen (JRCC Norway): English",
+   "note": "JRCC Northern Norway (Bodø) exists but was not confirmed in a result title; the 2023 SAR Cooperation Plan PDF on hovedredningssentralen.no should list both centres. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "se-jrcc-goteborg",
+   "cc": "se",
+   "name": "JRCC Sweden (Swedish Maritime Administration)",
+   "kind": "rcc",
+   "lat": 57.71,
+   "lon": 11.97,
+   "role": "Swedish JRCC coordinating maritime and aeronautical SAR in the Swedish SRR; also acts as the Maritime Assistance Service (MAS) and TMAS contact.",
+   "src": "https://www.sjofartsverket.se/en/search-and-rescue/contact-channels/contact-channels/",
+   "srcname": "Sjöfartsverket: Contact channels (Search and rescue)",
+   "note": "Gothenburg location is from general knowledge. The Sjöfartsverket Tele Medical Assistance Service page is relevant for medevac. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "fi-mrcc-turku",
+   "cc": "fi",
+   "name": "Finnish Border Guard MRCC Turku",
+   "kind": "rcc",
+   "lat": 60.45,
+   "lon": 22.27,
+   "role": "The Finnish Border Guard leads and coordinates maritime SAR in the Finnish SRR.",
+   "src": "https://stm.fi/en/web/intermin/border-management/maritime-search-and-rescue",
+   "srcname": "Ministry of the Interior Finland: The Border Guard directs maritime search and rescue",
+   "note": "The names 'MRCC Turku' and 'MRSC Helsinki' come from general knowledge; the result title only confirmed that the Border Guard directs maritime SAR. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "dk-jrcc-karup",
+   "cc": "dk",
+   "name": "JRCC Denmark (Danish Defence)",
+   "kind": "rcc",
+   "lat": 56.31,
+   "lon": 9.12,
+   "role": "Danish Defence JRCC coordinating maritime and aeronautical SAR in the Danish SRR; also acts as MAS.",
+   "src": "https://www.forsvaret.dk/globalassets/fko---sovarnet/svk/dokumenter/jrcc/-sar-cooperation-plan-2026-final-.pdf",
+   "srcname": "Forsvaret (Danish Defence): SAR Cooperation Plan 2026 (JRCC)",
+   "src_date": "2026",
+   "note": "Karup location is from general knowledge. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "gl-jrcc-nuuk",
+   "cc": "gl",
+   "name": "Joint Arctic Command JRCC Greenland (Nuuk)",
+   "kind": "rcc",
+   "lat": 64.18,
+   "lon": -51.72,
+   "role": "Joint Arctic Command coordinates maritime and aeronautical SAR in the Greenland SRR.",
+   "src": "https://www.forsvaret.dk/en/organisation/joint-arctic-command/search-and-rescue-greenland/",
+   "srcname": "Forsvaret: Joint Arctic Command, Search and rescue Greenland",
+   "note": "Official SAR Greenland Vol I PDF: https://www.forsvaret.dk/globalassets/fko---varnsfalles/ako/dokumenter/2021/-210727-sar-greenland-vol-i-june-2020-english-version-1.0-.pdf Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "fo-mrcc-torshavn",
+   "cc": "fo",
+   "name": "MRCC Tórshavn (Vørn, Faroese Coast Guard)",
+   "kind": "rcc",
+   "lat": 62.01,
+   "lon": -6.77,
+   "role": "Faroese MRCC run by Vørn, coordinating maritime SAR around the Faroe Islands.",
+   "src": "https://www.vorn.fo/english/about-mrcc/",
+   "srcname": "Vørn: About MRCC",
+   "note": "Faroese SAR book 2024 PDF is on vorn.cdn.fo. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "de-mrcc-bremen",
+   "cc": "de",
+   "name": "MRCC Bremen (Seenotleitung Bremen, DGzRS)",
+   "kind": "rcc",
+   "lat": 53.08,
+   "lon": 8.81,
+   "role": "DGzRS-operated MRCC coordinating maritime SAR in the German North Sea and Baltic SRR.",
+   "src": "https://www.seenotretter.de/aktuelles/neuigkeiten/aufgaben-und-zustaendigkeiten-der-seenotleitung-mrcc-bremen",
+   "srcname": "DGzRS (Die Seenotretter): Aufgaben und Zuständigkeiten der Seenotleitung (MRCC) Bremen",
+   "note": "DGzRS is the statutory SAR service but is a non-governmental society. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "nl-jrcc-denhelder",
+   "cc": "nl",
+   "name": "Netherlands Coastguard Centre / JRCC Den Helder (Kustwachtcentrum)",
+   "kind": "rcc",
+   "lat": 52.96,
+   "lon": 4.76,
+   "role": "Netherlands Coastguard Centre acting as JRCC for maritime and aeronautical SAR in the Netherlands SRR.",
+   "src": "https://kustwacht.nl/kustwachtcentrum/",
+   "srcname": "Kustwacht Nederland: Kustwachtcentrum",
+   "note": "The emergency-number guidance page is https://kustwacht.nl/en/help/ (number not visible in results). Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "be-mrcc-oostende",
+   "cc": "be",
+   "name": "MRCC Oostende (Agentschap MDK)",
+   "kind": "rcc",
+   "lat": 51.23,
+   "lon": 2.92,
+   "role": "Belgian MRCC coordinating maritime SAR in the Belgian SRR of the North Sea.",
+   "src": "https://agentschapmdk.be/en/mrcc",
+   "srcname": "Agentschap Maritieme Dienstverlening en Kust: Emergencies at sea",
+   "note": "Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "fr-cross-grisnez",
+   "cc": "fr",
+   "name": "CROSS Gris-Nez",
+   "kind": "rcc",
+   "lat": 50.87,
+   "lon": 1.58,
+   "role": "French CROSS (MRCC) covering the Dover Strait and eastern Channel.",
+   "src": "https://mer.gouv.fr/surveillance-et-sauvetage-en-mer",
+   "srcname": "Ministère de la Mer: Surveillance et sauvetage en mer",
+   "note": "The centre name is from general knowledge; the result title did not list individual CROSS centres. 2026 60-year CROSS press kit: https://www.ecologie.gouv.fr/sites/default/files/documents/03062026_DP_60_ans_CROSS.pdf Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "fr-cross-jobourg",
+   "cc": "fr",
+   "name": "CROSS Jobourg",
+   "kind": "rcc",
+   "lat": 49.68,
+   "lon": -1.91,
+   "role": "French CROSS (MRCC) covering the central Channel.",
+   "src": "https://mer.gouv.fr/surveillance-et-sauvetage-en-mer",
+   "srcname": "Ministère de la Mer: Surveillance et sauvetage en mer",
+   "note": "The centre name is from general knowledge, not shown in a result title. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "fr-cross-corsen",
+   "cc": "fr",
+   "name": "CROSS Corsen",
+   "kind": "rcc",
+   "lat": 48.41,
+   "lon": -4.79,
+   "role": "French CROSS (MRCC) covering the western Channel and Ushant approaches.",
+   "src": "https://mer.gouv.fr/surveillance-et-sauvetage-en-mer",
+   "srcname": "Ministère de la Mer: Surveillance et sauvetage en mer",
+   "note": "The centre name is from general knowledge, not shown in a result title. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "fr-cross-etel",
+   "cc": "fr",
+   "name": "CROSS Étel",
+   "kind": "rcc",
+   "lat": 47.66,
+   "lon": -3.2,
+   "role": "French CROSS (MRCC) covering the Bay of Biscay Atlantic coast; also French national SAR contact for distress beacons.",
+   "src": "https://mer.gouv.fr/surveillance-et-sauvetage-en-mer",
+   "srcname": "Ministère de la Mer: Surveillance et sauvetage en mer",
+   "note": "The centre name and role are from general knowledge, not shown in a result title. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "es-cncs-madrid",
+   "cc": "es",
+   "name": "Salvamento Marítimo Centro Nacional de Coordinación de Salvamento (Madrid)",
+   "kind": "national",
+   "lat": 40.42,
+   "lon": -3.7,
+   "role": "National coordination centre of SASEMAR overseeing Spain's 20 coordination centres (CCS).",
+   "src": "https://www.salvamentomaritimo.es/conocenos/nuestra-empresa/contacto-ccs-y-bec",
+   "srcname": "Salvamento Marítimo: Contacto CCS y BEC",
+   "note": "Overview page: https://www.salvamentomaritimo.es/conocenos/nuestros-medios/20-centros-de-coordinacion-de-salvamento Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "es-ccs-laspalmas",
+   "cc": "es",
+   "name": "Salvamento Marítimo CCS Las Palmas",
+   "kind": "rcc",
+   "lat": 28.12,
+   "lon": -15.43,
+   "role": "SASEMAR coordination centre for the Canary Islands SRR (eastern islands).",
+   "src": "https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/transportes/Paginas/2020/201120-salvamento.aspx",
+   "srcname": "La Moncloa: Visita el Centro de Coordinación de Salvamento Marítimo en Las Palmas de Gran Canaria",
+   "src_date": "2020-11",
+   "note": "Contacts are on the salvamentomaritimo.es 'Contacto CCS y BEC' page. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "es-ccs-tenerife",
+   "cc": "es",
+   "name": "Salvamento Marítimo CCS Tenerife",
+   "kind": "rcc",
+   "lat": 28.47,
+   "lon": -16.25,
+   "role": "SASEMAR coordination centre for the western Canary Islands.",
+   "src": "https://www.salvamentomaritimo.es/conocenos/nuestra-empresa/contacto-ccs-y-bec",
+   "srcname": "Salvamento Marítimo: Contacto CCS y BEC",
+   "note": "The centre name is from general knowledge; confirm it on the page. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "es-ccs-finisterre",
+   "cc": "es",
+   "name": "Salvamento Marítimo CCS Finisterre",
+   "kind": "rcc",
+   "lat": 42.91,
+   "lon": -9.26,
+   "role": "SASEMAR coordination centre for the Finisterre Atlantic zone (NW Spain, including the traffic separation scheme).",
+   "src": "https://www.salvamentomaritimo.es/conocenos/nuestra-empresa/contacto-ccs-y-bec",
+   "srcname": "Salvamento Marítimo: Contacto CCS y BEC",
+   "note": "The centre name is from general knowledge; confirm it on the page. Other Atlantic CCS centres (Bilbao, Santander, Gijón, Coruña, Vigo, Huelva, Cádiz) were not confirmed. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "pt-mrcc-lisboa",
+   "cc": "pt",
+   "name": "MRCC Lisboa (Portuguese Navy)",
+   "kind": "rcc",
+   "lat": 38.7,
+   "lon": -9.18,
+   "role": "Portuguese Navy MRCC coordinating maritime SAR in the Lisbon SRR (mainland Portugal and Madeira sub-region).",
+   "src": "https://www.marinha.pt/pt/media-center/Noticias/Paginas/Marinha-coordena-o-salvamento-de-252-pessoas-nos-primeiros-meses-do-ano.aspx",
+   "srcname": "Marinha Portuguesa: Marinha coordena o salvamento de 252 pessoas nos primeiros meses do ano",
+   "note": "The centre name is from general knowledge; the result title confirms only that the Navy coordinates rescue. FollowMe@Sea (Navy): https://followmeatsea.marinha.pt/ Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "pl-mrcc-gdynia",
+   "cc": "pl",
+   "name": "MRCC Gdynia (Morska Służba Poszukiwania i Ratownictwa, SAR Polska)",
+   "kind": "rcc",
+   "lat": 54.52,
+   "lon": 18.53,
+   "role": "Polish Maritime SAR Service MRCC coordinating SAR in the Polish Baltic SRR.",
+   "src": "https://sar.gov.pl/uploads/media/default/0001/05/8bb99cb892009c75a4e6d2c3b7345745fdb9318b.pdf",
+   "srcname": "Morska Służba Poszukiwania i Ratownictwa (sar.gov.pl): official document PDF",
+   "note": "The PDF content was not visible; the MRCC Gdynia name and location are from general knowledge. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "lt-mrcc-klaipeda",
+   "cc": "lt",
+   "name": "Lithuanian Navy MRCC Klaipėda",
+   "kind": "naval",
+   "lat": 55.71,
+   "lon": 21.13,
+   "role": "Lithuanian Navy MRCC coordinating maritime SAR in the Lithuanian SRR; it has relayed medical consultations for ships' crew.",
+   "src": "https://kariuomene.lt/en/maritime-rescue-coordination-centre-intermediated-in-rendering-medical-consultations-for-a-ships-crew-member/3096",
+   "srcname": "Lithuanian Armed Forces: Maritime Rescue Coordination Centre intermediated in rendering medical consultations for a ship's crew member",
+   "note": "The Klaipėda location is from general knowledge. EMSA contact page: https://portal.emsa.europa.eu/web/dona/contact-details-lithuania Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "lv-mrcc-riga",
+   "cc": "lv",
+   "name": "MRCC Riga (Latvian Naval Forces)",
+   "kind": "naval",
+   "lat": 57.03,
+   "lon": 24.08,
+   "role": "Latvian MRCC coordinating maritime and aeronautical SAR in its area of responsibility under Cabinet Regulation 299319.",
+   "src": "https://likumi.lv/ta/id/299319",
+   "srcname": "Likumi.lv: Noteikumi par meklēšanu un glābšanu jūrā MRCC atbildības rajonā",
+   "note": "Operated by the Naval Forces Coast Guard Service (from general knowledge). Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "ee-jrcc-tallinn",
+   "cc": "ee",
+   "name": "JRCC Tallinn (Police and Border Guard Board)",
+   "kind": "rcc",
+   "lat": 59.44,
+   "lon": 24.75,
+   "role": "Estonian Police and Border Guard Board JRCC coordinating maritime and aeronautical SAR in the Estonian SRR.",
+   "src": "https://www.politsei.ee/en/instructions/search-and-rescue-operations",
+   "srcname": "Politsei- ja Piirivalveamet: Search and rescue operations",
+   "note": "EANS eAIP GEN 3.6: https://eaip.eans.ee/2026-05-14/html/eAIP/EE-GEN-3.6-en-GB.html Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "ru-mrcc-kaliningrad",
+   "cc": "ru",
+   "name": "MRCC Kaliningrad (МСКЦ Калининград)",
+   "kind": "rcc",
+   "lat": 54.71,
+   "lon": 20.51,
+   "role": "Russian MRCC under the Marine Rescue Service (Rosmorrechflot) for the Baltic (Kaliningrad) area.",
+   "src": "https://morspas.ru/gmskts/morskie-spasatelno-koordinatsionnye-tsentry/mskts-kaliningrad22918432/",
+   "srcname": "Морская спасательная служба (morspas.ru): МСКЦ Калининград",
+   "note": "MRCC St Petersburg (Gulf of Finland) was not checked. Sanctions or communications restrictions may apply. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "ru-mrcc-murmansk",
+   "cc": "ru",
+   "name": "MRCC Murmansk (МСКЦ Мурманск)",
+   "kind": "rcc",
+   "lat": 68.97,
+   "lon": 33.08,
+   "role": "Russian MRCC for the Barents Sea/Arctic western sector.",
+   "src": "https://morspas.ru/gmskts/morskie-spasatelno-koordinatsionnye-tsentry/mskts-murmansk84624458/",
+   "srcname": "Морская спасательная служба (morspas.ru): МСКЦ Мурманск",
+   "note": "Other Arctic MRCC/MRSC centres (Arkhangelsk, Dikson, Tiksi, Pevek) were not checked. Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "ru-mrcc-vladivostok",
+   "cc": "ru",
+   "name": "MRCC Vladivostok (МСКЦ Владивосток)",
+   "kind": "rcc",
+   "lat": 43.12,
+   "lon": 131.89,
+   "role": "Russian MRCC for the Pacific (Sea of Japan) sector.",
+   "src": "https://morspas.ru/gmskts/morskie-spasatelno-koordinatsionnye-tsentry/mskts-vladivostok11082919/",
+   "srcname": "Морская спасательная служба (morspas.ru): МСКЦ Владивосток",
+   "note": "Outside the Europe region; included as requested. The full list is at https://morspas.ru/gmskts/morskie-spasatelno-koordinatsionnye-tsentry/ Search tool returned titles/URLs only (no snippets), so no phone/email/MMSI could be verified from a snippet; open src for contacts.",
+   "via": "search"
+  },
+  {
+   "id": "it-1530",
+   "cc": "it",
+   "name": "Guardia Costiera - 1530 Emergenza in mare",
+   "kind": "national",
+   "lat": 41.9,
+   "lon": 12.5,
+   "tel": [
+    "1530"
+   ],
+   "role": "Free national short number for emergencies at sea, answered by the Italian Coast Guard (Capitanerie di Porto), which runs maritime SAR in the Italian SRR.",
+   "src": "https://www.mit.gov.it/index.php/come-fare-per/sicurezza/sicurezza-mare/1530-emergenza-mare",
+   "srcname": "Ministero delle Infrastrutture e dei Trasporti: 1530 - Emergenza in mare",
+   "note": "The name IMRCC Roma and its direct international line were not visible in an official title. Position is Rome.",
+   "via": "search"
+  },
+  {
+   "id": "hr-195",
+   "cc": "hr",
+   "name": "195 - Sluzba traganja i spasavanja na moru",
+   "kind": "national",
+   "lat": 45.33,
+   "lon": 14.44,
+   "tel": [
+    "195"
+   ],
+   "role": "Croatian national short number for search and rescue at sea, routed to the national MRCC.",
+   "src": "https://www.gov.hr/hr/195-sluzba-traganja-i-spasavanja-na-moru/1188",
+   "srcname": "gov.hr: 195 - Sluzba traganja i spasavanja na moru",
+   "note": "Position is Rijeka, where the MRCC is based. That is general knowledge and is not in the source title.",
+   "via": "search"
+  },
+  {
+   "id": "hr-mrcc",
+   "cc": "hr",
+   "name": "MRCC Croatia (Ministry of the Sea, Transport and Infrastructure)",
+   "kind": "rcc",
+   "lat": 45.33,
+   "lon": 14.44,
+   "role": "Croatia's national maritime rescue coordination centre, covering the Croatian Adriatic SRR. Its call statistics are published by the Ministry.",
+   "src": "https://mmpi.gov.hr/UserDocsImages/dokumenti/PRESS/Priopćenja/Priopcenja_25/MMPI priopcenje_zbog nevremena niz pomorskih nezgoda-MRCC zaprimio 270 poziva 17-6_25.pdf",
+   "srcname": "MMPI (Croatian Ministry of the Sea): press release - MRCC zaprimio 270 poziva",
+   "src_date": "2025-06",
+   "note": "The Rijeka location is not shown in the title, and no direct phone number was visible.",
+   "via": "search"
+  },
+  {
+   "id": "gr-hcg-sar",
+   "cc": "gr",
+   "name": "Hellenic Coast Guard - Maritime Search and Rescue",
+   "kind": "national",
+   "lat": 37.94,
+   "lon": 23.64,
+   "role": "The Hellenic Coast Guard runs maritime SAR in the Greek SRR through its Joint Rescue Coordination Centre.",
+   "src": "https://hcg.gr/en/organization/duties/search-and-rescue",
+   "srcname": "Hellenic Coast Guard: Maritime Search and Rescue",
+   "note": "The name JRCC Piraeus and the 108 short number were not visible in an official title. Position is Piraeus.",
+   "via": "search"
+  },
+  {
+   "id": "cy-jrcc",
+   "cc": "cy",
+   "name": "Joint Rescue Coordination Centre (JRCC) Cyprus",
+   "kind": "rcc",
+   "lat": 34.92,
+   "lon": 33.62,
+   "role": "Cyprus's joint aeronautical and maritime RCC, covering the Nicosia SRR in the eastern Mediterranean.",
+   "src": "https://www.cna.org.cy/en/politics/article/8723615/we-will-continue-to-strengthen-upgraded-jrcc-role-in-the-region-president-says",
+   "srcname": "Cyprus News Agency: We will continue to strengthen upgraded JRCC role in the region, President says",
+   "note": "The source is the state news agency, not the JRCC itself. Position is Larnaca (general knowledge). No contact numbers were visible.",
+   "via": "search"
+  },
+  {
+   "id": "bg-mrcc-varna",
+   "cc": "bg",
+   "name": "Maritime Rescue Coordination Centre Varna",
+   "kind": "rcc",
+   "lat": 43.2,
+   "lon": 27.92,
+   "role": "Coordinates maritime SAR in the Bulgarian Black Sea SRR.",
+   "src": "https://www.mtc.government.bg/en/category/1/maritime-rescue-center-varna-coordinates-rescue-operation-cargo-ship-black-sea",
+   "srcname": "Bulgarian Ministry of Transport and Communications: The Maritime Rescue Center in Varna coordinates a rescue operation on a cargo ship in the Black Sea",
+   "note": "No contact numbers were visible.",
+   "via": "search"
+  },
+  {
+   "id": "ro-anr-sar",
+   "cc": "ro",
+   "name": "Romanian Naval Authority (ANR) - maritime SAR",
+   "kind": "national",
+   "lat": 44.17,
+   "lon": 28.65,
+   "role": "The Romanian Naval Authority coordinates maritime search and rescue in the Romanian Black Sea SRR.",
+   "src": "https://portal.rna.ro/SiteAssets/presa/comunicate/Comunicat%20de%20presa%20curs%20SAR%2026.06.2023.pdf",
+   "srcname": "Autoritatea Navala Romana: Comunicat de presa curs SAR",
+   "src_date": "2023-06",
+   "note": "The name MRCC Constanta and its numbers were not visible. Position is Constanta.",
+   "via": "search"
+  },
+  {
+   "id": "si-ursp",
+   "cc": "si",
+   "name": "Slovenian Maritime Administration (Uprava RS za pomorstvo)",
+   "kind": "national",
+   "lat": 45.55,
+   "lon": 13.73,
+   "role": "Slovenia's maritime administration, responsible for maritime SAR coordination in Slovenian waters.",
+   "src": "https://www.gov.si/assets/organi-v-sestavi/URSP/Dokumenti/Porocila-o-delu/porocilo-o-delu-2025.pdf",
+   "srcname": "gov.si / URSP: Porocilo o delu 2025",
+   "src_date": "2025",
+   "note": "The name MRCC Koper was not visible in the title. EMSA also has a contact page: https://portal.emsa.europa.eu/web/dona/contact-details-slovenia. Position is Koper.",
+   "via": "search"
+  },
+  {
+   "id": "tr-sgk",
+   "cc": "tr",
+   "name": "Turkish Coast Guard Command (Sahil Guvenlik Komutanligi)",
+   "kind": "national",
+   "lat": 39.93,
+   "lon": 32.86,
+   "role": "Turkey's maritime SAR authority, covering the Turkish Black Sea, Marmara, Aegean and Mediterranean SRR.",
+   "src": "https://sg.gov.tr/kurumlar/sg.gov.tr/komutanlik/yayinlar/Sahil-Guvenlik-Komutanligi-2024-Yili-Faaliyetleri-ve-2025-Yili-Hedefleri.pdf",
+   "srcname": "Sahil Guvenlik Komutanligi: 2024 Yili Faaliyetleri ve 2025 Yili Hedefleri",
+   "src_date": "2025",
+   "note": "The 158 short number appeared only in a non-official news title (haberturk), so it is left out. The name MRCC Ankara was not visible. Position is Ankara.",
+   "via": "search"
+  },
+  {
+   "id": "ge-mrs",
+   "cc": "ge",
+   "name": "Maritime Rescue Service of Georgia",
+   "kind": "national",
+   "lat": 41.65,
+   "lon": 41.64,
+   "role": "Georgia's statutory maritime rescue service for the Georgian Black Sea SRR, under the Maritime Transport Agency.",
+   "src": "https://manage.matsne.gov.ge/en/document/view/17296",
+   "srcname": "Legislative Herald of Georgia (matsne.gov.ge): On Maritime Rescue Service",
+   "note": "The MRCC name and contacts were not visible. Position is Batumi (general knowledge).",
+   "via": "search"
+  },
+  {
+   "id": "es-sasemar",
+   "cc": "es",
+   "name": "Salvamento Maritimo (SASEMAR)",
+   "kind": "national",
+   "lat": 40.42,
+   "lon": -3.7,
+   "role": "Spain's maritime safety and rescue agency, running the coastal rescue coordination centres, including the Mediterranean ones.",
+   "src": "https://www.defensordelpueblo.es/noticias/la-defensora-del-pueblo-visita-la-instalaciones-de-salvamento-maritimo-2/",
+   "srcname": "Defensor del Pueblo: La Defensora del Pueblo visita las instalaciones de Salvamento Maritimo",
+   "note": "The Mediterranean centres (Barcelona, Tarragona, Valencia, Castellon, Palma, Cartagena, Almeria, Tarifa) and the 900 202 202 number were not confirmed in any official title. Position is Madrid HQ.",
+   "via": "search"
+  },
+  {
+   "id": "mc-dpma",
+   "cc": "mc",
+   "name": "Monaco Marine and Airport Police Division",
+   "kind": "national",
+   "lat": 43.73,
+   "lon": 7.42,
+   "role": "Monaco police unit that carries out sea rescue in Monegasque waters.",
+   "src": "https://en.gouv.mc/Government-Institutions/The-Government/Ministry-of-Interior/Police-Department/Marine-and-Airport-Police-Division",
+   "srcname": "Gouvernement Princier de Monaco: Marine and Airport Police Division",
+   "note": "Not an RCC. SRR coordination by French CROSS MED is expected but was not confirmed by an official source.",
+   "via": "search"
+  },
+  {
+   "id": "sa-jmrcc-jeddah",
+   "cc": "sa",
+   "name": "Saudi Joint Maritime Rescue Coordination Centre (JMRCC), General Directorate of Border Guard",
+   "kind": "rcc",
+   "lat": 21.49,
+   "lon": 39.19,
+   "role": "Coordinates maritime search and rescue for Saudi Arabia's Red Sea area under the Border Guard.",
+   "src": "https://spa.gov.sa/en/N2021335",
+   "srcname": "Saudi Press Agency: Saudi JMRCC Rescues French Citizen on Sailboat Stuck Near Sudan's Marsa Oseif",
+   "note": "Position assumed Jeddah; Gulf-side (Dammam) sub-centre not confirmed. Border Guard site: https://www.fg.gov.sa/en. No numbers verifiable.",
+   "via": "search"
+  },
+  {
+   "id": "in-mrcc-mumbai",
+   "cc": "in",
+   "name": "Maritime Rescue Coordination Centre Mumbai (Coast Guard Region West)",
+   "kind": "rcc",
+   "lat": 18.93,
+   "lon": 72.83,
+   "role": "Coordinates maritime SAR in the Mumbai search and rescue region of the Arabian Sea.",
+   "src": "https://indiancoastguard.gov.in/west/contact-us-west",
+   "srcname": "Indian Coast Guard: Contact Us (West)",
+   "note": "Contact page title only seen; numbers not visible in results.",
+   "via": "search"
+  },
+  {
+   "id": "in-nmsrca",
+   "cc": "in",
+   "name": "Indian Coast Guard - National Maritime Search and Rescue Coordinating Authority",
+   "kind": "national",
+   "lat": 28.61,
+   "lon": 77.21,
+   "role": "National authority coordinating maritime SAR across India's three SRRs (Mumbai, Chennai, Port Blair).",
+   "src": "https://indiancoastguard.gov.in/national-maritime-search-and-rescue-coordinating-authority",
+   "srcname": "Indian Coast Guard: National Maritime Search And Rescue Coordinating Authority",
+   "note": "Located at Coast Guard HQ New Delhi.",
+   "via": "search"
+  },
+  {
+   "id": "pk-pmsa",
+   "cc": "pk",
+   "name": "Pakistan Maritime Security Agency (PMSA)",
+   "kind": "national",
+   "lat": 24.86,
+   "lon": 67.01,
+   "role": "Conducts maritime search and rescue in Pakistan's maritime zones; the agency hosting MRCC Karachi.",
+   "src": "https://pmsa.gov.pk/operations/search-and-rescue-sar-efforts",
+   "srcname": "PMSA: Operation : Search and Rescue (SAR) Efforts",
+   "note": "Contact page https://pmsa.gov.pk/contactus exists; MRCC Karachi designation not visible in results.",
+   "via": "search"
+  },
+  {
+   "id": "bd-mrcc-navy",
+   "cc": "bd",
+   "name": "Bangladesh Navy Maritime Rescue Coordination Centre",
+   "kind": "rcc",
+   "lat": 22.33,
+   "lon": 91.81,
+   "role": "Coordinates maritime SAR in Bangladesh's search and rescue region of the Bay of Bengal.",
+   "src": "https://navy.mil.bd/Operation/mrcc.html",
+   "srcname": "Bangladesh Navy: MRCC",
+   "note": "Location assumed Chattogram; not confirmed in results.",
+   "via": "search"
+  },
+  {
+   "id": "mm-dma",
+   "cc": "mm",
+   "name": "Department of Marine Administration - National Contact Point",
+   "kind": "national",
+   "lat": 16.78,
+   "lon": 96.16,
+   "role": "Myanmar maritime administration publishing the national maritime contact point.",
+   "src": "https://dma.gov.mm/2017/08/10/national-contact-point/",
+   "srcname": "Department of Marine Administration (Myanmar): National Contact Point",
+   "note": "Page may be a security (ISPS) contact point rather than an MRCC; verify before use.",
+   "via": "search"
+  },
+  {
+   "id": "eg-eams",
+   "cc": "eg",
+   "name": "Egyptian Authority for Maritime Safety (EAMS)",
+   "kind": "national",
+   "lat": 31.2,
+   "lon": 29.92,
+   "role": "Egyptian maritime safety authority responsible for maritime safety including SAR coordination.",
+   "src": "https://eams.gov.eg/About/AboutEnglish",
+   "srcname": "EAMS: Brief of Egyptian Authority for Maritime Safety",
+   "note": "MRCC Cairo/Red Sea details not confirmed; SAR role inferred from search context. Location assumed Alexandria.",
+   "via": "search"
+  },
+  {
+   "id": "bh-msar",
+   "cc": "bh",
+   "name": "Bahrain maritime search and rescue (government portal service)",
+   "kind": "national",
+   "lat": 26.23,
+   "lon": 50.59,
+   "role": "Bahrain government service page for maritime search and rescue.",
+   "src": "https://business.bahrain.bh/wps/portal/en/",
+   "srcname": "Bahrain.bh: Maritime search and rescue",
+   "note": "Responsible agency (Coast Guard) and contact details not visible in results.",
+   "via": "search"
+  },
+  {
+   "id": "jo-rjn-aqaba",
+   "cc": "jo",
+   "name": "Royal Jordanian Navy / Coast Guard, Aqaba",
+   "kind": "naval",
+   "lat": 29.53,
+   "lon": 35.01,
+   "role": "Conducts maritime rescue in the Jordanian waters of the Gulf of Aqaba.",
+   "src": "https://petra.gov.jo/index.php/en/news/royal-jordanian-navy-coast-guard-rescue-tourist-boat-in-aqaba",
+   "srcname": "Petra (Jordan News Agency): Royal Jordanian Navy coast guard rescue tourist boat in Aqaba",
+   "note": "News item, not a contact page; no numbers.",
+   "via": "search"
+  },
+  {
+   "id": "ae-ukmto",
+   "cc": "ae",
+   "name": "UK Maritime Trade Operations (UKMTO), Dubai",
+   "kind": "comms",
+   "lat": 25.2,
+   "lon": 55.27,
+   "role": "Primary point of contact for merchant vessels for security incidents and voluntary reporting in the Indian Ocean, Gulf and Red Sea.",
+   "src": "https://www.ukmto.org/indian-ocean/contacts",
+   "srcname": "UKMTO: Indian Ocean contacts",
+   "note": "Numbers are on the page but not visible in search results. Also https://www.ukmto.org/contact-us. Not a SAR centre.",
+   "via": "search"
+  },
+  {
+   "id": "fr-mscio",
+   "cc": "fr",
+   "name": "EUNAVFOR Maritime Security Centre - Indian Ocean (MSCIO, formerly MSCHOA)",
+   "kind": "comms",
+   "lat": 47.5,
+   "lon": -2.75,
+   "role": "EU naval force maritime security centre for vessel registration and threat information; publishes a Western Indian Ocean maritime emergency contact map.",
+   "src": "https://mscio.eu/documents/235/MSCIO_Western_Indian_Ocean_Maritime_Emergency_Contact_Map_High_Resolution_01_16.pdf",
+   "srcname": "MSCIO: Western Indian Ocean Maritime Emergency Contact Map",
+   "note": "Location/cc uncertain (centre has moved between Northwood UK, Rota Spain and Brest France); lat/lon placeholder for Brest area should be checked. The contact map likely lists MRCC numbers for the whole region but contents were not visible.",
+   "via": "search"
+  }
+ ],
+ "missing": [
+  {
+   "cc": "al",
+   "why": "No official source found."
+  },
+  {
+   "cc": "ao",
+   "why": "Only Angola's SAR regulation (Presidential Decree 89/16, lex.ao) and an ICAO presentation; no centre name or number visible."
+  },
+  {
+   "cc": "az",
+   "why": "No official Azerbaijani maritime RCC source found."
+  },
+  {
+   "cc": "ba",
+   "why": "Only a REMPEC country profile was found, with no RCC details visible: https://www.rempec.org/fr/resources/profil-des-pays/bosnie-herzegovine/country_profile_pdf"
+  },
+  {
+   "cc": "bj",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "cd",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "cg",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "ci",
+   "why": "Only an AIP news item about a renovated maritime radio station and ICAO SAR papers; no MRCC name or number in an official title."
+  },
+  {
+   "cc": "cm",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "cu",
+   "why": "No official source naming a Cuban maritime RCC or number surfaced (only MINFAR/MINREX general pages)."
+  },
+  {
+   "cc": "cv",
+   "why": "Only official bulletin PDFs (boe.incv.cv) with no visible centre name or number."
+  },
+  {
+   "cc": "dj",
+   "why": "Only JICA and Japan Coast Guard pages on Djibouti Coast Guard capacity building; no MRCC name or number."
+  },
+  {
+   "cc": "dz",
+   "why": "No official title named the Algerian MRCC or CNOSS. Only press and FAOLEX legal texts were found. Candidate: https://www.rempec.org/en/knowledge-centre/country-profiles/algeria/country_profile_pdf"
+  },
+  {
+   "cc": "er",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "fm",
+   "why": "No national centre found; USCG Sector Guam works with FSM on SAR, but formal coverage not confirmed."
+  },
+  {
+   "cc": "ga",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "gf",
+   "why": "No separate centre; covered by CROSS Antilles-Guyane per guyane.gouv.fr title."
+  },
+  {
+   "cc": "gh",
+   "why": "Only an IHO national report and ICAO SAR presentations; no MRCC name or number in an official title."
+  },
+  {
+   "cc": "gm",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "gn",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "gq",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "gw",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "ht",
+   "why": "Not searched within budget; no official Haitian maritime SAR source found."
+  },
+  {
+   "cc": "il",
+   "why": "No official Israeli source found. The RCC Haifa reference was on a non-official wiki only."
+  },
+  {
+   "cc": "io",
+   "why": "BIOT/Diego Garcia not searched (budget); no official source."
+  },
+  {
+   "cc": "iq",
+   "why": "Not searched / no source found (budget)."
+  },
+  {
+   "cc": "ir",
+   "why": "MRCC Bandar Abbas referenced only in Persian news and IHO meeting docs; no official PMO contact page seen."
+  },
+  {
+   "cc": "kh",
+   "why": "No official Cambodian MRCC source found; only ICAO aeronautical SAR papers."
+  },
+  {
+   "cc": "ki",
+   "why": "No official national centre found; RCCNZ coverage not confirmed."
+  },
+  {
+   "cc": "km",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "kp",
+   "why": "Skipped: no official source searched or found."
+  },
+  {
+   "cc": "kw",
+   "why": "Only news media (Kuwait Times) on Coast Guard; no official MRCC page."
+  },
+  {
+   "cc": "kz",
+   "why": "Only a caa.gov.kz news item on Caspian SAR exercises was found, with no RCC named."
+  },
+  {
+   "cc": "lb",
+   "why": "No official source found."
+  },
+  {
+   "cc": "lr",
+   "why": "MRCC Monrovia (regional) appeared only on non-official news sites (maritimafrica.com); no Liberia Maritime Authority or IMO title confirmed it."
+  },
+  {
+   "cc": "ly",
+   "why": "Only a REMPEC country profile was found, with no RCC details visible: https://www.rempec.org/en/knowledge-centre/country-profiles/libya/country_profile_pdf"
+  },
+  {
+   "cc": "ma",
+   "why": "Only press coverage of the Rabat MRCC inauguration was found, with no official source."
+  },
+  {
+   "cc": "me",
+   "why": "No official source named MRCC Bar. Only press results and an unlabelled Official Gazette file."
+  },
+  {
+   "cc": "mg",
+   "why": "Only IHO technical visit reports and a news item on a SAR centre being commissioned (non-official); no official title naming the centre or a number."
+  },
+  {
+   "cc": "mh",
+   "why": "No national centre found; JRCC Honolulu coverage seen only in news of a single search."
+  },
+  {
+   "cc": "mr",
+   "why": "Not searched within the budget; no official source found."
+  },
+  {
+   "cc": "mt",
+   "why": "The official pages found (EMSA DONA 'Contact details Malta', afm.gov.mt) did not show the RCC name or numbers in their titles. Candidate: https://portal.emsa.europa.eu/web/dona/contact-details-malta"
+  },
+  {
+   "cc": "mu",
+   "why": "MRCC Mauritius appeared only on sarcontacts.info (non-official). Lead: IHO SAIHC marine disaster contact list PDF."
+  },
+  {
+   "cc": "mv",
+   "why": "MNDF Coast Guard number found only on non-official/foreign-ministry FAQ pages; not cited."
+  },
+  {
+   "cc": "mz",
+   "why": "Only IHO SAIHC national reports; no MRCC name or number in an official title. Lead: IHO SAIHC marine disaster contact list PDF."
+  },
+  {
+   "cc": "na",
+   "why": "Only IHO national reports and ITOPF profile; no official title named an MRCC Walvis Bay or a number."
+  },
+  {
+   "cc": "ni",
+   "why": "No official Nicaraguan maritime SAR centre found (only La Gaceta results)."
+  },
+  {
+   "cc": "nr",
+   "why": "No official national centre found."
+  },
+  {
+   "cc": "om",
+   "why": "Only state newspaper (Oman Observer) mentions of the Maritime Security Centre; no official agency page or numbers found."
+  },
+  {
+   "cc": "pg",
+   "why": "PNG National Maritime Safety Authority has a search and rescue section (http://www.nmsa.gov.pg/search-and-rescue/), but the site is not served over https and the MRCC Port Moresby name and numbers were not visible."
+  },
+  {
+   "cc": "pw",
+   "why": "No national centre found; USCG ties noted, but formal coverage not confirmed."
+  },
+  {
+   "cc": "qa",
+   "why": "No official Qatar maritime SAR centre page found."
+  },
+  {
+   "cc": "sc",
+   "why": "Only news coverage of Seychelles Coast Guard rescues; no official title naming an MRCC/MRSC Seychelles or a number."
+  },
+  {
+   "cc": "sd",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "sl",
+   "why": "Not searched within the budget; the regional link to MRCC Monrovia was not confirmed by an official source."
+  },
+  {
+   "cc": "sn",
+   "why": "Only legal texts and IHO reports came up (faolex, iho.int); no official title named an MRCC Dakar or a number."
+  },
+  {
+   "cc": "so",
+   "why": "Not confirmed by an official source within the budget."
+  },
+  {
+   "cc": "st",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "sy",
+   "why": "Only a REMPEC country profile was found, with no RCC details visible: https://www.rempec.org/en/knowledge-centre/country-profiles/syria/country_profile_pdf"
+  },
+  {
+   "cc": "tg",
+   "why": "Not searched within the budget."
+  },
+  {
+   "cc": "tl",
+   "why": "No official Timor-Leste maritime SAR centre or number found."
+  },
+  {
+   "cc": "tm",
+   "why": "Only Turkmen embassy news on a Caspian SAR cooperation agreement was found, with no RCC named."
+  },
+  {
+   "cc": "tn",
+   "why": "Only a REMPEC country profile was found, with no RCC details visible: https://www.rempec.org/en/knowledge-centre/country-profiles/tunisia/country_profile_pdf"
+  },
+  {
+   "cc": "to",
+   "why": "No official RCC or maritime emergency number found (only corporate plans for HMAF and Tonga Police)."
+  },
+  {
+   "cc": "tt",
+   "why": "No official TTCG MRCC page surfaced; only general gov.tt/MOWT pages."
+  },
+  {
+   "cc": "tv",
+   "why": "No official national centre found; RCCNZ coverage not confirmed."
+  },
+  {
+   "cc": "tz",
+   "why": "MRSC Dar es Salaam appeared only on sarcontacts.info (non-official) and an ICAO presentation. An IMO page 'Commissioning of Maritime Rescue Sub-Centre' exists but its title does not name the place."
+  },
+  {
+   "cc": "ua",
+   "why": "An official kmu.gov.ua page confirms a Black Sea SAR conference in Odesa but does not name MRCC Odesa or its contacts."
+  },
+  {
+   "cc": "ws",
+   "why": "Only a Samoa Police Maritime office opening speech was found; no RCC or number."
+  },
+  {
+   "cc": "ye",
+   "why": "No official Yemeni MRCC source found."
+  }
+ ]
 }

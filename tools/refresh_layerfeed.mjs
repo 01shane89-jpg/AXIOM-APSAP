@@ -63,6 +63,14 @@ for (const [cc, layers] of Object.entries(by)) {
     method: "Headlines from the news pool sorted into layers by their words (tools/view_reports.json); not reviewed", items: out }).replace(/<\//g, "<\\/") + ";\n");
   written.add(cc + ".js");
 }
-// a country with nothing tagged keeps no stale file
+// a country with nothing tagged gets an empty file, not a stale one: the page asks for this file on every open of every country
+// (index.html country-data loader), and a missing one cost a failed request before the page could carry on
+for (const f of fs.existsSync("data/live/news") ? fs.readdirSync("data/live/news") : []) {
+  const cc = f.replace(/\.js$/, "");
+  if (/^[a-z]{2,3}\.js$/.test(f) && !written.has(f)) {
+    fs.writeFileSync(OUT + "/" + f, "window.OSAP_LAYERFEED=" + JSON.stringify({ cc, asof: stamp, days: DAYS, method: "Nothing tagged for this country in the last " + DAYS + " days", items: [] }) + ";\n");
+    written.add(f);
+  }
+}
 for (const f of fs.readdirSync(OUT)) if (/\.js$/.test(f) && !written.has(f)) fs.rmSync(OUT + "/" + f);
 console.log(`layer feed: ${items} reports (${pinned} pinned) for ${written.size} countries from ${rows} tagged headline copies, last ${DAYS} days`);

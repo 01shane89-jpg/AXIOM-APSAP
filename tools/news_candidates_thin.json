@@ -1,0 +1,884 @@
+{
+ "note": "Candidates for the 20 thinnest countries by tools/density_score.mjs (2026-10-10): keyless global feed families (Guardian country pages, allAfrica, Global Voices, MeteoAlarm warnings), extra Bing queries, and national home pages for feed discovery. Checked with CANDIDATES=tools/news_candidates_thin.json node tools/probe_news.mjs (only=probe-news).",
+ "feeds": [
+  {
+   "cc": "ls",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/lesotho/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/san-marino/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sc",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/seychelles/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "ad",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/andorra/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/equatorial-guinea/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/comoros/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "st",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/sao-tome-and-principe/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "st",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/sao-tome/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "li",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/liechtenstein/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/burundi/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "kn",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/st-kitts-and-nevis/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "kn",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/saint-kitts-and-nevis/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "tm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/turkmenistan/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bw",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/botswana/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "eh",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/western-sahara/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cv",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/cape-verde/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "rw",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/rwanda/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/gambia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "mk",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/north-macedonia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "mk",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/macedonia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cz",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/czech-republic/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "fm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/micronesia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/eswatini/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/swaziland/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "ls",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/lesotho/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sc",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/seychelles/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/equatorialguinea/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/comoros/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "st",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/saotomeandprincipe/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/burundi/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bw",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/botswana/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "eh",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/westernsahara/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cv",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/capeverde/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "rw",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/rwanda/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gm",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/gambia/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/swaziland/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "allAfrica (French)",
+   "url": "https://fr.allafrica.com/tools/headlines/rdf/comoros/headlines.rdf",
+   "lang": "fr",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "allAfrica (French)",
+   "url": "https://fr.allafrica.com/tools/headlines/rdf/burundi/headlines.rdf",
+   "lang": "fr",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "allAfrica (French)",
+   "url": "https://fr.allafrica.com/tools/headlines/rdf/equatorialguinea/headlines.rdf",
+   "lang": "fr",
+   "kind": "global"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/lesotho/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/seychelles/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/equatorial-guinea/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/comoros/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/burundi/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bw",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/botswana/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "rw",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/rwanda/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gm",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/gambia/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/swaziland/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "tm",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/central-asia-caucasus/turkmenistan/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "mk",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/eastern-central-europe/macedonia/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cz",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/eastern-central-europe/czech-republic/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/middle-east-north-africa/western-sahara/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cv",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/cape-verde/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cz",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Czech%20Republic%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "fm",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Federated%20States%20of%20Micronesia%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Swaziland%22%20OR%20%22Eswatini%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "sm",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22San%20Marino%22%20Repubblica&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "gq",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Guinea%20Ecuatorial%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "km",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Comores%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "st",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22S%C3%A3o%20Tom%C3%A9%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "tm",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22%D0%A2%D1%83%D1%80%D0%BA%D0%BC%D0%B5%D0%BD%D0%B8%D1%81%D1%82%D0%B0%D0%BD%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "cv",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Cabo%20Verde%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "li",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Liechtenstein%20Regierung&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "ad",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Andorra%20Govern&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "ad",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-andorra",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "cz",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-czechia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "mk",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-republic-of-north-macedonia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "sk",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "at",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-austria",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ch",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-switzerland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "fr",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "it",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-italy",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "nl",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-netherlands",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "be",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-belgium",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "lu",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-luxembourg",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "dk",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-denmark",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ie",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ireland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "pl",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "hu",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-hungary",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "si",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovenia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "hr",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-croatia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ba",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bosnia-herzegovina",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "rs",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-serbia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "me",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-montenegro",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "bg",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bulgaria",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ro",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-romania",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "md",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-moldova",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "gr",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-greece",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "cy",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-cyprus",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "mt",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-malta",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ee",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-estonia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "lv",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-latvia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "lt",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-lithuania",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "is",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ua",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ukraine",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "il",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "gb",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-united-kingdom",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "de",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "es",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "pt",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "no",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "se",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-sweden",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "fi",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland",
+   "lang": "en",
+   "kind": "warning"
+  }
+ ],
+ "discover": [
+  {
+   "cc": "cz",
+   "home": "https://english.radio.cz/"
+  },
+  {
+   "cc": "cz",
+   "home": "https://ct24.ceskatelevize.cz/"
+  },
+  {
+   "cc": "cz",
+   "home": "https://www.expats.cz/"
+  },
+  {
+   "cc": "mk",
+   "home": "https://mia.mk/en"
+  },
+  {
+   "cc": "mk",
+   "home": "https://www.slobodenpecat.mk/"
+  },
+  {
+   "cc": "tm",
+   "home": "https://turkmen.news/"
+  },
+  {
+   "cc": "tm",
+   "home": "https://www.turkmenportal.com/"
+  },
+  {
+   "cc": "li",
+   "home": "https://www.vaterland.li/"
+  },
+  {
+   "cc": "li",
+   "home": "https://www.volksblatt.li/"
+  },
+  {
+   "cc": "sm",
+   "home": "https://www.sanmarinortv.sm/"
+  },
+  {
+   "cc": "sm",
+   "home": "https://www.libertas.sm/"
+  },
+  {
+   "cc": "ad",
+   "home": "https://www.altaveu.com/"
+  },
+  {
+   "cc": "ad",
+   "home": "https://www.diariandorra.ad/"
+  },
+  {
+   "cc": "ad",
+   "home": "https://www.bondia.ad/"
+  },
+  {
+   "cc": "kn",
+   "home": "https://www.thestkittsnevisobserver.com/"
+  },
+  {
+   "cc": "kn",
+   "home": "https://www.winnfm.com/"
+  },
+  {
+   "cc": "fm",
+   "home": "https://www.kpress.info/"
+  },
+  {
+   "cc": "fm",
+   "home": "https://gov.fm/"
+  },
+  {
+   "cc": "sc",
+   "home": "https://www.nation.sc/"
+  },
+  {
+   "cc": "sc",
+   "home": "https://www.seychellesnewsagency.com/"
+  },
+  {
+   "cc": "gq",
+   "home": "https://www.guineaecuatorialpress.com/"
+  },
+  {
+   "cc": "gq",
+   "home": "https://www.ahoraeg.com/"
+  },
+  {
+   "cc": "km",
+   "home": "https://www.alwatwan.net/"
+  },
+  {
+   "cc": "km",
+   "home": "https://lagazettedescomores.com/"
+  },
+  {
+   "cc": "st",
+   "home": "https://www.stp-press.st/"
+  },
+  {
+   "cc": "bi",
+   "home": "https://www.iwacu-burundi.org/"
+  },
+  {
+   "cc": "bi",
+   "home": "https://www.rtnb.bi/"
+  },
+  {
+   "cc": "bw",
+   "home": "https://www.mmegi.bw/"
+  },
+  {
+   "cc": "bw",
+   "home": "https://www.dailynews.gov.bw/"
+  },
+  {
+   "cc": "eh",
+   "home": "https://www.spsrasd.info/"
+  },
+  {
+   "cc": "cv",
+   "home": "https://www.inforpress.cv/"
+  },
+  {
+   "cc": "cv",
+   "home": "https://expressodasilhas.cv/"
+  },
+  {
+   "cc": "rw",
+   "home": "https://www.newtimes.co.rw/"
+  },
+  {
+   "cc": "gm",
+   "home": "https://www.thepoint.gm/"
+  },
+  {
+   "cc": "gm",
+   "home": "https://foroyaa.net/"
+  },
+  {
+   "cc": "ls",
+   "home": "https://www.lestimes.com/"
+  },
+  {
+   "cc": "ls",
+   "home": "https://www.thepost.co.ls/"
+  },
+  {
+   "cc": "sz",
+   "home": "https://new.observer.org.sz/"
+  },
+  {
+   "cc": "sz",
+   "home": "https://eswatininews.co.sz/"
+  }
+ ]
+}
