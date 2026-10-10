@@ -64,6 +64,9 @@ export function csvRows(text) {
   return rows;
 }
 const num = (v) => { if (v == null || v === "") return null; const n = parseFloat(String(v).replace(/[+]/g, "")); return isFinite(n) ? n : null; };
+/* the TAF file marks unknown places as -99.99 / -99.99 and unknown heights as 9999; the station list then fills them in */
+const coord = (v, max) => { const n = num(v); return n == null || Math.abs(n) > max || n === -99.99 ? null : n; };
+const elev = (v) => { const n = num(v); return n == null || n >= 9999 || n < -500 ? null : n; };
 const ms = (v) => { const t = Date.parse(v); return isFinite(t) ? t : null; };
 
 export function parseMetars(text) {
@@ -75,8 +78,8 @@ export function parseMetars(text) {
   const out = [];
   for (const r of rows.slice(h + 1)) {
     if (r.length < H.length - 2 || !r[cId]) continue;
-    const la = num(r[cLa]), lo = num(r[cLo]), t = ms(r[cT]);
-    if (la == null || lo == null || t == null || Math.abs(la) > 90 || Math.abs(lo) > 180) continue;
+    const la = coord(r[cLa], 90), lo = coord(r[cLo], 180), t = ms(r[cT]);
+    if (la == null || lo == null || t == null) continue;
     let cig = null; const layers = [];
     sky.forEach((ci, k) => {
       const cv = (r[ci] || "").trim(), b = num(r[base[k]]);
@@ -96,12 +99,12 @@ export function parseMetars(text) {
 /* TAF XML: only the elements needed, read with patterns (the file is machine-written and flat per <TAF>) */
 export function parseTafs(text) {
   const out = [], tag = (s, n) => { const m = new RegExp("<" + n + ">([\\s\\S]*?)</" + n + ">").exec(s); return m ? m[1].trim() : null; };
-  const unx = (s) => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+  const unx = (s) => s.replace(/^<!\[CDATA\[([\s\S]*)\]\]>$/, "$1").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
   const re = /<TAF>([\s\S]*?)<\/TAF>/g; let m;
   while ((m = re.exec(text))) {
     const s = m[1], id = tag(s, "station_id"), raw = tag(s, "raw_text");
     if (!id || !raw) continue;
-    out.push({ id: id.toUpperCase(), la: num(tag(s, "latitude")), lo: num(tag(s, "longitude")), el: num(tag(s, "elevation_m")),
+    out.push({ id: id.toUpperCase(), la: coord(tag(s, "latitude"), 90), lo: coord(tag(s, "longitude"), 180), el: elev(tag(s, "elevation_m")),
       f: { raw: unx(raw).replace(/\s+/g, " "), it: ms(tag(s, "issue_time")), vf: ms(tag(s, "valid_time_from")), vt: ms(tag(s, "valid_time_to")) } });
   }
   return out;
@@ -113,7 +116,8 @@ export function parseStations(text) {
   for (const s of list) {
     const id = String(s.icaoId || s.station_id || s.id || "").toUpperCase();
     if (!id) continue;
-    out.set(id, { n: String(s.site || s.name || "").trim().slice(0, 80) || null, c: String(s.country || "").trim().slice(0, 2).toUpperCase() || null, la: num(s.lat), lo: num(s.lon), el: num(s.elev) });
+    const n = String(s.site || s.name || "").trim().slice(0, 80);
+    out.set(id, { n: n && n !== "UNK" ? n : null, c: String(s.country || "").trim().slice(0, 2).toUpperCase() || null, la: coord(s.lat, 90), lo: coord(s.lon, 180), el: elev(s.elev) });
   }
   return out;
 }
@@ -125,19 +129,20 @@ export function build(metars, tafs, stations, now) {
   for (const x of metars) {
     if (now - x.m.t > MAX_OBS_H * 36e5 || x.m.t - now > 15 * 6e4) continue;
     const o = by.get(x.id);
-    if (!o || !o.m || o.m.t < x.m.t) by.set(x.id, Object.assign(o || {}, { id: x.id, la: x.la, lo: x.lo, el: x.el, m: x.m }));
+    if (!o || !o.m || o.m.t < x.m.t) by.set(x.id, Object.assign(o || {}, { id: x.id, la: x.la, lo: x.lo, el: elev(x.el), m: x.m }));
   }
   for (const x of tafs) {
     if (x.f.vt != null && x.f.vt < now) continue;
     const o = by.get(x.id) || { id: x.id, la: x.la, lo: x.lo, el: x.el };
     if (!o.f || (o.f.it || 0) < (x.f.it || 0)) o.f = x.f;
-    if (o.la == null) { o.la = x.la; o.lo = x.lo; }
+    if (o.la == null || o.lo == null) { o.la = x.la; o.lo = x.lo; }
+    if (o.el == null) o.el = x.el;
     by.set(x.id, o);
   }
   const cells = {};
   for (const o of by.values()) {
     const s = stations.get(o.id);
-    if (s) { o.n = s.n; o.c = s.c; if (o.la == null) { o.la = s.la; o.lo = s.lo; } if (o.el == null) o.el = s.el; }
+    if (s) { o.n = s.n; o.c = s.c; if (o.la == null || o.lo == null) { o.la = s.la; o.lo = s.lo; } if (o.el == null) o.el = s.el; }
     if (o.la == null || o.lo == null) continue;
     const k = cellKey(o.la, o.lo);
     (cells[k] = cells[k] || []).push({ id: o.id, n: o.n || null, c: o.c || null, la: +o.la.toFixed(4), lo: +o.lo.toFixed(4), el: o.el, m: o.m || null, f: o.f || null });
