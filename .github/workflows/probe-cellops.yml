@@ -1,0 +1,19 @@
+# Test only: probes keyless sources that name the mobile network on cell sites (tools/probe_cellops.mjs). Prints to the log; writes nothing.
+name: Probe cell operators
+on:
+  push:
+    branches: [claude/cell-operator-probe]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund pmtiles@3 @mapbox/vector-tile@1 pbf@3
+      - run: node tools/probe_cellops.mjs
