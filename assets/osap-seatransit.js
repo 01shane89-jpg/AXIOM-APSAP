@@ -265,11 +265,12 @@
       var used = {};
       rows.forEach(function (row) { ["ports", "hosp", "osm", "af"].forEach(function (k) { var x = row[k]; if (!x) return; var id = x.node.id; if (!used[id] || used[id].nm > x.nm) used[id] = { node: x.node, nm: x.nm, at: row.pt.nm }; }); });
       var nodes = Object.keys(used).map(function (k) { return used[k]; }).sort(function (a, b) { return a.at - b.at; });
-      S.res = { at: Date.now(), pts: pts, rows: rows, segs: segs, nodes: nodes, rcc: rcc, rccGap: rccGap, rccDoc: r[5], ccNames: ccNames, osmAt: r[4].at || "", errs: errs.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6),
+      S.res = { at: Date.now(), pts: pts, rows: rows, segs: segs, nodes: nodes, rcc: rcc, rccGap: rccGap, hospAll: hosp, rccDoc: r[5], ccNames: ccNames, osmAt: r[4].at || "", errs: errs.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6),
         counts: { ports: sets.ports.length, hosp: hosp.length, osm: r[4].H.length, af: af.length }, opts: { kn: num("kn"), dep: depMs(), step: num("step"), remH: num("remH"), remP: num("remP"), rwy: num("rwy") } };
       S.busy = false; S.msg = ""; render(); draw(); fit();
       var res = S.res;
       wxLoad(res).then(function (wx) { if (!live() || S.res !== res) return; res.wx = wx; render(); }, function () { if (!live() || S.res !== res) return; res.wx = { at: Date.now(), rows: [], errs: ["forecast not read"] }; render(); });
+      osmSpecLoad(res).then(function (o) { if (!live() || S.res !== res) return; res.osmSpec = o; render(); });
     }).catch(function (e) { if (!live()) return; S.busy = false; S.msg = "The assessment failed: " + (e && e.message || e); render(); });
   }
 
@@ -334,6 +335,78 @@
       }).join("") + "</tbody></table></div>" +
       (wx.errs.length ? '<p class="stbad">' + E(wx.errs.join("; ")) + "</p>" : "") +
       '<p class="obs">Model forecast, not observation: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo.com</a> (CC BY 4.0), read ' + E(dual(wx.at)) + ". Flags are OSAP planning cues, not vessel, aircraft, hoist or boat-transfer limits: those belong to the master, the aircraft operator and the boat crew. Check official forecasts and warnings (GMDSS, NAVTEX, the national weather service) before and during the transit.</p>";
+    return h;
+  }
+  /* ---------- specialist care and rescue aviation near the corridor ---------- */
+  var SPEC = [
+    [["trauma.team", "surg.trauma"], "Trauma surgery or trauma team"], [["surg.neuro"], "Neurosurgery"], [["cc.icu"], "Intensive care"],
+    [["spec.burn"], "Burns care"], [["spec.hyperbaric"], "Hyperbaric oxygen (diving injury, gas embolism)"], [["spec.stroke"], "Stroke care"]];
+  /* closest approach of a point to the sampled corridor, with the NM-from-start where it happens */
+  function closest(res, lat, lon) {
+    var b = { nm: Infinity, at: 0 };
+    res.pts.forEach(function (p) { var d = nm([p.lat, p.lon], [lat, lon]); if (d < b.nm) { b.nm = d; b.at = p.nm; } });
+    return b;
+  }
+  function specRows(res) {
+    return SPEC.map(function (g) {
+      var L = (res.hospAll || []).filter(function (h) { return h.caps.some(function (c) { return g[0].indexOf(c) >= 0; }); })
+        .map(function (h) { var c = closest(res, h.lat, h.lon); return { h: h, nm: c.nm, at: c.at }; })
+        .filter(function (x) { return x.nm <= HOSP_NM; }).sort(function (a, b) { return a.nm - b.nm; }).slice(0, 3);
+      return { label: g[1], list: L };
+    });
+  }
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  function overpass(q, ms) {
+    var body = "data=" + encodeURIComponent(q), errs = [];
+    function go(i) {
+      if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
+      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms);
+      return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac ? ac.signal : undefined })
+        .then(function (r) { clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (j) { if (j && j.remark && /runtime error|timed? ?out|out of memory|too many/i.test(j.remark)) throw new Error("incomplete answer"); return j; })
+        .catch(function (e) { clearTimeout(t); errs.push(OVERPASS[i].split("/")[2] + ": " + (e && e.name === "AbortError" ? "no answer" : e.message)); return go(i + 1); });
+    }
+    return go(0);
+  }
+  var OSM_KM = 300;
+  function osmSpecLoad(res) {
+    var pts = densify(P.wps, 100), ll2 = pts.map(function (p) { return p.lat.toFixed(3) + "," + wrap(p.lon).toFixed(3); }).join(","), A = "(around:" + OSM_KM * 1000 + "," + ll2 + ")";
+    var q = '[out:json][timeout:90];(nwr["healthcare"="hyperbaric_chamber"]' + A + ';nwr["healthcare:speciality"~"hyperbaric"]' + A + ';nwr["healthcare:speciality"~"burn"]' + A + ';nwr["emergency"="air_rescue_service"]' + A + ";);out center tags 400;";
+    return overpass(q, 100000).then(function (j) {
+      var out = { hb: [], burn: [], air: [], at: (j.osm3s && j.osm3s.timestamp_osm_base) || "" }, seen = {};
+      (j.elements || []).forEach(function (e) {
+        var t = e.tags || {}, la = e.lat != null ? e.lat : e.center && e.center.lat, lo = e.lon != null ? e.lon : e.center && e.center.lon;
+        if (la == null || lo == null || seen[e.type + e.id]) return; seen[e.type + e.id] = 1;
+        var sp = String(t["healthcare:speciality"] || ""), c = closest(res, la, lo);
+        var x = { name: clean(t["name:en"] || t.name || t.operator || "", 80), op: clean(t.operator || "", 60), lat: la, lon: lo, nm: c.nm, at: c.at, url: "https://www.openstreetmap.org/" + e.type + "/" + e.id };
+        if (t.emergency === "air_rescue_service") out.air.push(x);
+        else if (t.healthcare === "hyperbaric_chamber" || /hyperbaric/i.test(sp)) out.hb.push(x);
+        else if (/burn/i.test(sp)) out.burn.push(x);
+      });
+      ["hb", "burn", "air"].forEach(function (k) { out[k].sort(function (a, b) { return a.nm - b.nm; }); out[k] = out[k].slice(0, 12); });
+      return out;
+    }, function (e) { return { err: e.message || String(e) }; });
+  }
+  function specHtml(res, print) {
+    var h = "<h3>5a. Specialist care and rescue aviation near the corridor</h3><h4>Sourced hospitals by capability</h4>" +
+      '<div class="stscroll"><table><thead><tr><th>Capability</th><th>Nearest documented (closest approach to corridor)</th></tr></thead><tbody>' +
+      specRows(res).map(function (r) {
+        return "<tr><td><b>" + E(r.label) + "</b></td><td>" + (r.list.length ? r.list.map(function (x) {
+          return E(x.h.name) + ' <span class="obs">' + E(cName(res, x.h.cc)) + " · " + nmT(x.nm) + " at NM " + Math.round(x.at) + "</span> " + link(x.h.url, "source");
+        }).join("<br>") : '<span class="stbad">None documented within ' + HOSP_NM + " NM in OSAP's sourced list</span>") + "</td></tr>";
+      }).join("") + "</tbody></table></div>" +
+      '<p class="obs">Only capabilities a credible source documents for that hospital. A capability listing is not acceptance, a free bed or a surgeon on duty: confirm with the hospital before diverting.</p>';
+    var o = res.osmSpec;
+    h += "<h4>Mapped in OpenStreetMap (reference only)</h4>";
+    if (!o) return h + '<p class="obs">Reading hyperbaric chambers, burns units and air rescue bases near the corridor from OpenStreetMap…</p>';
+    if (o.err) return h + '<p class="stbad">OpenStreetMap could not be read (' + E(clean(o.err, 160)) + "). Ask the RCC and the vessel's medical adviser for the nearest chamber, burns unit and rescue aircraft.</p>";
+    function list(L, none) {
+      return L.length ? "<ul>" + L.map(function (x) { return "<li>" + E(x.name || "No name in OpenStreetMap") + (x.op && x.op !== x.name ? ' <span class="obs">(' + E(x.op) + ")</span>" : "") + ' <span class="obs">' + nmT(x.nm) + " from the corridor at NM " + Math.round(x.at) + "</span> " + link(x.url, "map") + "</li>"; }).join("") + "</ul>" : '<p class="obs">' + none + "</p>";
+    }
+    h += "<p><b>Hyperbaric chambers</b></p>" + list(o.hb, "None mapped within " + OSM_KM + " km.") +
+      "<p><b>Burns units</b></p>" + list(o.burn, "None mapped within " + OSM_KM + " km.") +
+      "<p><b>Air rescue bases</b> (helicopter or air ambulance)</p>" + list(o.air, "None mapped within " + OSM_KM + " km.") +
+      '<p class="obs">Crowd-edited map data, read ' + E(o.at ? o.at.slice(0, 10) : "now") + ": shows where something is mapped, never whether it is staffed, serviceable, able to reach a vessel or willing to accept. A mapped air rescue base is not a tasking: the RCC decides which aircraft can reach the vessel. A chamber's operating hours and dive-medicine cover must be confirmed directly.</p>";
     return h;
   }
   function judgments(res) {
@@ -492,6 +565,7 @@
       '<p class="obs">A fixed-wing air ambulance can move a patient from an accepted airport; it cannot collect a casualty from a ship.</p>' +
       "<details" + (print ? " open" : "") + "><summary>Hospitals OpenStreetMap maps near the corridor (" + by.osmh.length + ", reference only)</summary>" + (by.osmh.length ? '<div class="stscroll"><table>' + th + "<tbody>" + nodeRows(by.osmh, function (n) { return '<span class="obs">' + (n.er ? "emergency=yes in OpenStreetMap" : "no emergency tag") + "</span>"; }) + "</tbody></table></div>" : "") +
       '<p class="obs">Crowd-edited data: shows where a hospital is mapped, never its capability. Not a planned receiving facility until a credible source documents it.</p></details>';
+    h += specHtml(res, print);
     /* rescue coordination */
     var doc = res.rccDoc;
     h += "<h3>6. Rescue coordination leads</h3>" + (res.rcc.length ? '<div class="stscroll"><table><thead><tr><th>Authority</th><th>Telephone and email</th><th>Role and source</th></tr></thead><tbody>' + res.rcc.map(function (c) {
