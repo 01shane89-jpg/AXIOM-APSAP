@@ -1,0 +1,3446 @@
+[
+ {
+  "cc": "cz",
+  "home": "https://english.radio.cz/",
+  "tried": [
+   {
+    "url": "https://english.radio.cz/feed",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/feed/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/rss.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/index.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/feed.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/atom.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/rss/all.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://english.radio.cz/rss/news.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 403,
+  "final": "https://english.radio.cz/",
+  "bytes": 5727,
+  "links": 0,
+  "title": "Just a moment..."
+ },
+ {
+  "cc": "cz",
+  "home": "https://ct24.ceskatelevize.cz/",
+  "tried": [
+   {
+    "url": "https://ct24.ceskatelevize.cz/rss",
+    "status": 200,
+    "n": 30,
+    "last7": 30,
+    "newest": "2026-10-10T10:51",
+    "sample": [
+     "Irsko chce snížit rozpočet EU na 1,62 bilionu eur, dotknout se to má i bezpečnosti",
+     "Neurážejte naše AI, varuje Anthropic uživatele"
+    ]
+   },
+   {
+    "url": "https://www.ceskatelevize.cz/rss/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/rss.xml",
+    "status": 200,
+    "n": 30,
+    "last7": 30,
+    "newest": "2026-10-10T10:51",
+    "sample": [
+     "Irsko chce snížit rozpočet EU na 1,62 bilionu eur, dotknout se to má i bezpečnosti",
+     "Neurážejte naše AI, varuje Anthropic uživatele"
+    ]
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/rss/",
+    "status": 200,
+    "n": 30,
+    "last7": 30,
+    "newest": "2026-10-10T10:51",
+    "sample": [
+     "Irsko chce snížit rozpočet EU na 1,62 bilionu eur, dotknout se to má i bezpečnosti",
+     "Neurážejte naše AI, varuje Anthropic uživatele"
+    ]
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ct24.ceskatelevize.cz/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://ct24.ceskatelevize.cz/",
+  "bytes": 711967,
+  "links": 155,
+  "title": "ČT24 — Nejdůvěryhodnější zpravodajský web v ČR | Česká televize"
+ },
+ {
+  "cc": "cz",
+  "home": "https://www.expats.cz/",
+  "tried": [
+   {
+    "url": "https://www.expats.cz/feed",
+    "status": 200,
+    "n": 25,
+    "last7": 25,
+    "newest": "2026-10-10T10:34",
+    "sample": [
+     "Prague’s glowing Beacon installation gets an extended stay through October",
+     "Czech fuel price caps rise for the weekend as gasoline hits October high"
+    ]
+   },
+   {
+    "url": "https://www.expats.cz/feed/",
+    "status": 200,
+    "n": 25,
+    "last7": 25,
+    "newest": "2026-10-10T10:34",
+    "sample": [
+     "Prague’s glowing Beacon installation gets an extended stay through October",
+     "Czech fuel price caps rise for the weekend as gasoline hits October high"
+    ]
+   },
+   {
+    "url": "https://www.expats.cz/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.expats.cz/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.expats.cz/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.expats.cz/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.expats.cz/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.expats.cz/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.expats.cz/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.expats.cz/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.expats.cz/",
+  "bytes": 100877,
+  "links": 258,
+  "title": "Expats.cz for news, jobs and real estate in Prague and the Czech Republic"
+ },
+ {
+  "cc": "mk",
+  "home": "https://mia.mk/en",
+  "tried": [
+   {
+    "url": "https://mia.mk/feed",
+    "status": 200,
+    "n": 50,
+    "last7": 50,
+    "newest": "2026-10-10T12:04",
+    "sample": [
+     "Бендевска од Делчево: Функциите за ЗНАМ се одговорност, а не привилегија, отчетот го давам",
+     "Трамп бара од Врховниот суд да ја активира неговата тужба против Хилари Клинтон"
+    ]
+   },
+   {
+    "url": "https://mia.mk/feed/",
+    "status": 200,
+    "n": 50,
+    "last7": 50,
+    "newest": "2026-10-10T12:04",
+    "sample": [
+     "Бендевска од Делчево: Функциите за ЗНАМ се одговорност, а не привилегија, отчетот го давам",
+     "Трамп бара од Врховниот суд да ја активира неговата тужба против Хилари Клинтон"
+    ]
+   },
+   {
+    "url": "https://mia.mk/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://mia.mk/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://mia.mk/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://mia.mk/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://mia.mk/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://mia.mk/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://mia.mk/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://mia.mk/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://mia.mk/en",
+  "bytes": 86738,
+  "links": 243,
+  "title": "Mia News and Magazine"
+ },
+ {
+  "cc": "mk",
+  "home": "https://www.slobodenpecat.mk/",
+  "tried": [
+   {
+    "url": "https://www.slobodenpecat.mk/feed",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/feed/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/rss.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/index.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/feed.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/atom.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/rss/all.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.slobodenpecat.mk/rss/news.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 403,
+  "final": "https://www.slobodenpecat.mk/",
+  "bytes": 5624,
+  "links": 0,
+  "title": "Just a moment..."
+ },
+ {
+  "cc": "tm",
+  "home": "https://turkmen.news/",
+  "tried": [
+   {
+    "url": "https://turkmen.news/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 6,
+    "newest": "2026-10-08T14:55",
+    "sample": [
+     "В Москве один гражданин Туркменистана ранил другого из-за любовного треугольника",
+     "Глава здравоохранения Лебапа отказался от массового шантажа врачей, но продолжает увольнят"
+    ]
+   },
+   {
+    "url": "https://turkmen.news/comments/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 0,
+    "newest": null,
+    "sample": [
+     "Комментарий к записи «Каждый день 5-6 человек предлагали мне секс за деньги». Гей из Туркм",
+     "Комментарий к записи Глава здравоохранения Лебапа отказался от массового шантажа врачей, н"
+    ]
+   },
+   {
+    "url": "https://turkmen.news/feed",
+    "status": 200,
+    "n": 10,
+    "last7": 6,
+    "newest": "2026-10-08T14:55",
+    "sample": [
+     "В Москве один гражданин Туркменистана ранил другого из-за любовного треугольника",
+     "Глава здравоохранения Лебапа отказался от массового шантажа врачей, но продолжает увольнят"
+    ]
+   },
+   {
+    "url": "https://turkmen.news/rss",
+    "status": 200,
+    "n": 10,
+    "last7": 6,
+    "newest": "2026-10-08T14:55",
+    "sample": [
+     "В Москве один гражданин Туркменистана ранил другого из-за любовного треугольника",
+     "Глава здравоохранения Лебапа отказался от массового шантажа врачей, но продолжает увольнят"
+    ]
+   },
+   {
+    "url": "https://turkmen.news/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://turkmen.news/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 6,
+    "newest": "2026-10-08T14:55",
+    "sample": [
+     "В Москве один гражданин Туркменистана ранил другого из-за любовного треугольника",
+     "Глава здравоохранения Лебапа отказался от массового шантажа врачей, но продолжает увольнят"
+    ]
+   },
+   {
+    "url": "https://turkmen.news/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://turkmen.news/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://turkmen.news/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://turkmen.news/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://turkmen.news/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://turkmen.news/",
+  "bytes": 507142,
+  "links": 237,
+  "title": "Hoвости | Turkmen.News"
+ },
+ {
+  "cc": "tm",
+  "home": "https://www.turkmenportal.com/",
+  "tried": [
+   {
+    "url": "https://www.turkmenportal.com/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.turkmenportal.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.turkmenportal.com/ru",
+  "bytes": 667670,
+  "links": 171,
+  "title": "Туркменистан, интернет портал о культурной, деловой и развлекательной жизни в Туркменистане"
+ },
+ {
+  "cc": "li",
+  "home": "https://www.vaterland.li/",
+  "tried": [
+   {
+    "url": "https://www.vaterland.li/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.vaterland.li/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.vaterland.li/",
+  "bytes": 192409,
+  "links": 254,
+  "title": "News aus Liechtenstein - Vaterland online"
+ },
+ {
+  "cc": "li",
+  "home": "https://www.volksblatt.li/",
+  "tried": [],
+  "error": "fetch failed"
+ },
+ {
+  "cc": "sm",
+  "home": "https://www.sanmarinortv.sm/",
+  "tried": [
+   {
+    "url": "https://www.sanmarinortv.sm/help/feed-rss",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/rss.xml",
+    "status": 200,
+    "n": 20,
+    "last7": 20,
+    "newest": "2026-10-10T10:57",
+    "sample": [
+     "IA e automazione: San Marino all'UiPath Fusion Milano con due giovani talenti sammarinesi",
+     "Accordo Usa-Russia sul diesel, l'esperto: \"Mossa di Trump per elezioni di midterm, ma il m"
+    ]
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.sanmarinortv.sm/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.sanmarinortv.sm/",
+  "bytes": 324511,
+  "links": 291,
+  "title": "Radio e Televisione della Repubblica di San Marino"
+ },
+ {
+  "cc": "sm",
+  "home": "https://www.libertas.sm/",
+  "tried": [
+   {
+    "url": "https://www.libertas.sm/feed/",
+    "status": 200,
+    "n": 100,
+    "last7": 63,
+    "newest": "2026-10-09T11:53",
+    "sample": [
+     "UIP, eletto Milton Dick: il gruppo sammarinese sostiene il nuovo presidente",
+     "Repubblica Futura riunisce l’assemblea e attacca il governo sui temi caldi"
+    ]
+   },
+   {
+    "url": "https://www.libertas.sm/feed",
+    "status": 200,
+    "n": 100,
+    "last7": 63,
+    "newest": "2026-10-09T11:53",
+    "sample": [
+     "UIP, eletto Milton Dick: il gruppo sammarinese sostiene il nuovo presidente",
+     "Repubblica Futura riunisce l’assemblea e attacca il governo sui temi caldi"
+    ]
+   },
+   {
+    "url": "https://www.libertas.sm/rss",
+    "status": 200,
+    "n": 100,
+    "last7": 63,
+    "newest": "2026-10-09T11:53",
+    "sample": [
+     "UIP, eletto Milton Dick: il gruppo sammarinese sostiene il nuovo presidente",
+     "Repubblica Futura riunisce l’assemblea e attacca il governo sui temi caldi"
+    ]
+   },
+   {
+    "url": "https://www.libertas.sm/rss.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.libertas.sm/rss/",
+    "status": 200,
+    "n": 100,
+    "last7": 63,
+    "newest": "2026-10-09T11:53",
+    "sample": [
+     "UIP, eletto Milton Dick: il gruppo sammarinese sostiene il nuovo presidente",
+     "Repubblica Futura riunisce l’assemblea e attacca il governo sui temi caldi"
+    ]
+   },
+   {
+    "url": "https://www.libertas.sm/index.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.libertas.sm/feed.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.libertas.sm/atom.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.libertas.sm/rss/all.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.libertas.sm/rss/news.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.libertas.sm/",
+  "bytes": 193662,
+  "links": 381,
+  "title": "libertas - Informazione per passione"
+ },
+ {
+  "cc": "ad",
+  "home": "https://www.altaveu.com/",
+  "tried": [
+   {
+    "url": "https://www.altaveu.com/uploads/feeds/feed_altaveu_ca.xml",
+    "status": 200,
+    "n": 15,
+    "last7": 15,
+    "newest": "2026-10-10T12:07",
+    "sample": [
+     "El Castelló posa a prova la reacció de l'Andorra",
+     "\"El miracle que dona vida a la vida\""
+    ]
+   },
+   {
+    "url": "https://www.altaveu.com/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.altaveu.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.altaveu.com/",
+  "bytes": 582749,
+  "links": 371,
+  "title": "altaveu | Diari Digital | Notícies Andorra | Breaking News"
+ },
+ {
+  "cc": "ad",
+  "home": "https://www.diariandorra.ad/",
+  "tried": [
+   {
+    "url": "https://www.diariandorra.ad/rss/home.xml",
+    "status": 200,
+    "n": 84,
+    "last7": 79,
+    "newest": "2026-10-10T11:54",
+    "sample": [
+     "L’empresa d’aviació andorrana impugna l’adjudicació de les línies",
+     "La rifa del Tesla de TheGrefg acaba amb unes pèrdues de 373.150 euros"
+    ]
+   },
+   {
+    "url": "https://www.diariandorra.ad/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.diariandorra.ad/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.diariandorra.ad/",
+  "bytes": 271007,
+  "links": 179,
+  "title": "Diari d'Andorra | Diari digital, notícies d'Andorra, actualitat i última hora"
+ },
+ {
+  "cc": "ad",
+  "home": "https://www.bondia.ad/",
+  "tried": [
+   {
+    "url": "https://www.bondia.ad/rss.xml",
+    "status": 200,
+    "n": 20,
+    "last7": 20,
+    "newest": "2026-10-08T22:00",
+    "sample": [
+     "I ara el repte d'arribar al patiment silenciós",
+     "Les plomes del caos"
+    ]
+   },
+   {
+    "url": "https://www.bondia.ad/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bondia.ad/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.bondia.ad/",
+  "bytes": 194598,
+  "links": 154,
+  "title": "Bondia - Diari digital d'Andorra"
+ },
+ {
+  "cc": "kn",
+  "home": "https://www.thestkittsnevisobserver.com/",
+  "tried": [
+   {
+    "url": "https://www.thestkittsnevisobserver.com/feed/",
+    "status": 200,
+    "n": 26,
+    "last7": 26,
+    "newest": "2026-10-09T22:50",
+    "sample": [
+     "New Zealand: Food and Fibre Exports Hit Record $65.2 Billion",
+     "New Zealand: Additional Domestic Student Places For Veterinary Science At Massey Universit"
+    ]
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/comments/feed/",
+    "status": 200,
+    "n": 3,
+    "last7": 0,
+    "newest": "2024-11-14T00:04",
+    "sample": [
+     "Comment on Nevisian resident can challenge Candy Development by Homepage",
+     "Comment on Giving Back To Carnival Participants Is Key, Says Chairman Of SKNNCC by URL"
+    ]
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/feed",
+    "status": 200,
+    "n": 26,
+    "last7": 26,
+    "newest": "2026-10-09T22:50",
+    "sample": [
+     "New Zealand: Food and Fibre Exports Hit Record $65.2 Billion",
+     "New Zealand: Additional Domestic Student Places For Veterinary Science At Massey Universit"
+    ]
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/rss",
+    "status": 200,
+    "n": 26,
+    "last7": 26,
+    "newest": "2026-10-09T22:50",
+    "sample": [
+     "New Zealand: Food and Fibre Exports Hit Record $65.2 Billion",
+     "New Zealand: Additional Domestic Student Places For Veterinary Science At Massey Universit"
+    ]
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/rss/",
+    "status": 200,
+    "n": 26,
+    "last7": 26,
+    "newest": "2026-10-09T22:50",
+    "sample": [
+     "New Zealand: Food and Fibre Exports Hit Record $65.2 Billion",
+     "New Zealand: Additional Domestic Student Places For Veterinary Science At Massey Universit"
+    ]
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thestkittsnevisobserver.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.thestkittsnevisobserver.com/",
+  "bytes": 275183,
+  "links": 183,
+  "title": "The St Kitts Nevis Observer | For Up To Date News from the Twin Island Islands"
+ },
+ {
+  "cc": "kn",
+  "home": "https://www.winnfm.com/",
+  "tried": [
+   {
+    "url": "https://www.winnmediaskn.com/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T21:50",
+    "sample": [
+     "Health Projects & Strategic Initiatives Director talks true cost of subsidised medication",
+     "Afghanistan’s emerald miners struggle with tools but attract global buyers"
+    ]
+   },
+   {
+    "url": "https://www.winnmediaskn.com/comments/feed/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/home/feed/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/wp-content/plugins/instagram-feed/assets/tokens/sbi-tokens-local.min.css?ver=6.14.0",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/wp-content/plugins/instagram-feed/css/sbi-styles.min.css?ver=6.14.0",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/wp-content/plugins/custom-twitter-feeds/css/ctf-styles.min.css?ver=2.10.0",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/wp-content/plugins/custom-facebook-feed/assets/css/cff-style.min.css?ver=4.14.0",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/wp-content/plugins/custom-facebook-feed/assets/css/font-awesome.min.css?ver=4.7.0",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/feed",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T21:50",
+    "sample": [
+     "Health Projects & Strategic Initiatives Director talks true cost of subsidised medication",
+     "Afghanistan’s emerald miners struggle with tools but attract global buyers"
+    ]
+   },
+   {
+    "url": "https://www.winnmediaskn.com/rss",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T21:50",
+    "sample": [
+     "Health Projects & Strategic Initiatives Director talks true cost of subsidised medication",
+     "Afghanistan’s emerald miners struggle with tools but attract global buyers"
+    ]
+   },
+   {
+    "url": "https://www.winnmediaskn.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T21:50",
+    "sample": [
+     "Health Projects & Strategic Initiatives Director talks true cost of subsidised medication",
+     "Afghanistan’s emerald miners struggle with tools but attract global buyers"
+    ]
+   },
+   {
+    "url": "https://www.winnmediaskn.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.winnmediaskn.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.winnmediaskn.com/",
+  "bytes": 726117,
+  "links": 216,
+  "title": "WINNFM 98.9 | West Indies News Network"
+ },
+ {
+  "cc": "fm",
+  "home": "https://www.kpress.info/",
+  "tried": [],
+  "error": "fetch failed"
+ },
+ {
+  "cc": "fm",
+  "home": "https://gov.fm/",
+  "tried": [
+   {
+    "url": "https://gov.fm/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 4,
+    "newest": "2026-10-05T02:28",
+    "sample": [
+     "President Simina and ADB President Kanda Sign Landmark Agreement to Establish North Pacifi",
+     "President Simina Joins North Pacific Leaders in Restoring Peace Corps Partnership with the"
+    ]
+   },
+   {
+    "url": "https://gov.fm/comments/feed/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://gov.fm/feed",
+    "status": 200,
+    "n": 10,
+    "last7": 4,
+    "newest": "2026-10-05T02:28",
+    "sample": [
+     "President Simina and ADB President Kanda Sign Landmark Agreement to Establish North Pacifi",
+     "President Simina Joins North Pacific Leaders in Restoring Peace Corps Partnership with the"
+    ]
+   },
+   {
+    "url": "https://gov.fm/rss",
+    "status": 200,
+    "n": 10,
+    "last7": 4,
+    "newest": "2026-10-05T02:28",
+    "sample": [
+     "President Simina and ADB President Kanda Sign Landmark Agreement to Establish North Pacifi",
+     "President Simina Joins North Pacific Leaders in Restoring Peace Corps Partnership with the"
+    ]
+   },
+   {
+    "url": "https://gov.fm/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://gov.fm/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 4,
+    "newest": "2026-10-05T02:28",
+    "sample": [
+     "President Simina and ADB President Kanda Sign Landmark Agreement to Establish North Pacifi",
+     "President Simina Joins North Pacific Leaders in Restoring Peace Corps Partnership with the"
+    ]
+   },
+   {
+    "url": "https://gov.fm/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://gov.fm/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://gov.fm/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://gov.fm/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://gov.fm/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://gov.fm/",
+  "bytes": 351386,
+  "links": 114,
+  "title": "FSM Government &#8211; FSM Government"
+ },
+ {
+  "cc": "sc",
+  "home": "https://www.nation.sc/",
+  "tried": [
+   {
+    "url": "https://www.nation.sc/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nation.sc/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.nation.sc/",
+  "bytes": 20616,
+  "links": 78,
+  "title": "Seychelles Nation"
+ },
+ {
+  "cc": "sc",
+  "home": "https://www.seychellesnewsagency.com/",
+  "tried": [
+   {
+    "url": "https://www.seychellesnewsagency.com/feed",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/feed/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/rss.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/index.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/feed.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/atom.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/rss/all.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.seychellesnewsagency.com/rss/news.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 403,
+  "final": "https://www.seychellesnewsagency.com/",
+  "bytes": 5675,
+  "links": 0,
+  "title": "Just a moment..."
+ },
+ {
+  "cc": "gq",
+  "home": "https://www.guineaecuatorialpress.com/",
+  "tried": [
+   {
+    "url": "https://www.guineaecuatorialpress.com/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.guineaecuatorialpress.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.guineaecuatorialpress.com/",
+  "bytes": 161,
+  "links": 0
+ },
+ {
+  "cc": "gq",
+  "home": "https://www.ahoraeg.com/",
+  "tried": [
+   {
+    "url": "https://ahoraeg.com/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-10T08:45",
+    "sample": [
+     "Fiscalía pide diez años de prisión para S. O. O. por presuntamente contagiar del VIH a M. ",
+     "Guinea Ecuatorial registra más nacimientos de madres solteras que de mujeres casadas en el"
+    ]
+   },
+   {
+    "url": "https://ahoraeg.com/comments/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 0,
+    "newest": "2020-07-31T07:25",
+    "sample": [
+     "Comentario en La función más esperada de WhatsApp: usar el mismo número en varios disposit",
+     "Comentario en CNEDOGE renovará los pasaportes de los ecuatoguineanos en el extranjero a tr"
+    ]
+   },
+   {
+    "url": "https://ahoraeg.com/feed",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-10T08:45",
+    "sample": [
+     "Fiscalía pide diez años de prisión para S. O. O. por presuntamente contagiar del VIH a M. ",
+     "Guinea Ecuatorial registra más nacimientos de madres solteras que de mujeres casadas en el"
+    ]
+   },
+   {
+    "url": "https://ahoraeg.com/rss",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-10T08:45",
+    "sample": [
+     "Fiscalía pide diez años de prisión para S. O. O. por presuntamente contagiar del VIH a M. ",
+     "Guinea Ecuatorial registra más nacimientos de madres solteras que de mujeres casadas en el"
+    ]
+   },
+   {
+    "url": "https://ahoraeg.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ahoraeg.com/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-10T08:45",
+    "sample": [
+     "Fiscalía pide diez años de prisión para S. O. O. por presuntamente contagiar del VIH a M. ",
+     "Guinea Ecuatorial registra más nacimientos de madres solteras que de mujeres casadas en el"
+    ]
+   },
+   {
+    "url": "https://ahoraeg.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ahoraeg.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ahoraeg.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ahoraeg.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://ahoraeg.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://ahoraeg.com/",
+  "bytes": 216390,
+  "links": 177,
+  "title": "Noticias de Guinea Ecuatorial, actualidad nacional, África y el mundo"
+ },
+ {
+  "cc": "km",
+  "home": "https://www.alwatwan.net/",
+  "tried": [
+   {
+    "url": "https://www.alwatwan.net/feed",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/feed/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/rss.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/index.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/feed.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/atom.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/rss/all.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.alwatwan.net/rss/news.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 403,
+  "final": "https://www.alwatwan.net/",
+  "bytes": 5620,
+  "links": 0,
+  "title": "Just a moment..."
+ },
+ {
+  "cc": "km",
+  "home": "https://lagazettedescomores.com/",
+  "tried": [
+   {
+    "url": "https://lagazettedescomores.com/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lagazettedescomores.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://lagazettedescomores.com/",
+  "bytes": 51856,
+  "links": 102,
+  "title": "La gazette des Comores"
+ },
+ {
+  "cc": "st",
+  "home": "https://www.stp-press.st/",
+  "tried": [
+   {
+    "url": "https://www.stp-press.st/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 3,
+    "newest": "2026-10-09T10:39",
+    "sample": [
+     "“MLSTP está preparado para apresentar uma solução governativa baseada na estabilidade”- Am",
+     "ADI e MCI-PUN assinam acordo parlamentar para formação do próximo governo"
+    ]
+   },
+   {
+    "url": "https://www.stp-press.st/comments/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 0,
+    "newest": "2019-02-22T08:26",
+    "sample": [
+     "Comentário em Coreia do Norte admite reabilitar palácio dos pioneiros da quinta de Santo A",
+     "Comentário em Governo passa a viajar em classe económica e limita viagens de serviços por "
+    ]
+   },
+   {
+    "url": "https://www.stp-press.st/home/feed/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.stp-press.st/feed",
+    "status": 200,
+    "n": 10,
+    "last7": 3,
+    "newest": "2026-10-09T10:39",
+    "sample": [
+     "“MLSTP está preparado para apresentar uma solução governativa baseada na estabilidade”- Am",
+     "ADI e MCI-PUN assinam acordo parlamentar para formação do próximo governo"
+    ]
+   },
+   {
+    "url": "https://www.stp-press.st/rss",
+    "status": 200,
+    "n": 10,
+    "last7": 3,
+    "newest": "2026-10-09T10:39",
+    "sample": [
+     "“MLSTP está preparado para apresentar uma solução governativa baseada na estabilidade”- Am",
+     "ADI e MCI-PUN assinam acordo parlamentar para formação do próximo governo"
+    ]
+   },
+   {
+    "url": "https://www.stp-press.st/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.stp-press.st/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 3,
+    "newest": "2026-10-09T10:39",
+    "sample": [
+     "“MLSTP está preparado para apresentar uma solução governativa baseada na estabilidade”- Am",
+     "ADI e MCI-PUN assinam acordo parlamentar para formação do próximo governo"
+    ]
+   },
+   {
+    "url": "https://www.stp-press.st/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.stp-press.st/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.stp-press.st/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.stp-press.st/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.stp-press.st/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.stp-press.st/",
+  "bytes": 380262,
+  "links": 471,
+  "title": "Home - STP-PRESS"
+ },
+ {
+  "cc": "bi",
+  "home": "https://www.iwacu-burundi.org/",
+  "tried": [
+   {
+    "url": "https://www.iwacu-burundi.org/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T13:36",
+    "sample": [
+     "Rapprochement entre élus et communautés d’origine : La Commune de Ntahangwa au cœur des éc",
+     "Le mandat du Rapporteur spécial sur les droits de l’homme au Burundi renouvelé"
+    ]
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/comments/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 9,
+    "newest": "2026-10-08T17:30",
+    "sample": [
+     "Commentaires sur Un pavé dans la mare par Vyatsi",
+     "Commentaires sur Burundi/Médias : Nathan Ntahondi remplace Mme Espérance au CNC par Mbariz"
+    ]
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/feed",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T13:36",
+    "sample": [
+     "Rapprochement entre élus et communautés d’origine : La Commune de Ntahangwa au cœur des éc",
+     "Le mandat du Rapporteur spécial sur les droits de l’homme au Burundi renouvelé"
+    ]
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/rss",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T13:36",
+    "sample": [
+     "Rapprochement entre élus et communautés d’origine : La Commune de Ntahangwa au cœur des éc",
+     "Le mandat du Rapporteur spécial sur les droits de l’homme au Burundi renouvelé"
+    ]
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T13:36",
+    "sample": [
+     "Rapprochement entre élus et communautés d’origine : La Commune de Ntahangwa au cœur des éc",
+     "Le mandat du Rapporteur spécial sur les droits de l’homme au Burundi renouvelé"
+    ]
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.iwacu-burundi.org/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.iwacu-burundi.org/",
+  "bytes": 75263,
+  "links": 89,
+  "title": "IWACU &#8211; Les voix du Burundi"
+ },
+ {
+  "cc": "bi",
+  "home": "https://www.rtnb.bi/",
+  "tried": [
+   {
+    "url": "https://www.rtnb.bi/feed",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/feed/",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/rss",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/rss.xml",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/rss/",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/index.xml",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/feed.xml",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/atom.xml",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/rss/all.xml",
+    "status": "fetch failed",
+    "sample": []
+   },
+   {
+    "url": "https://www.rtnb.bi/rss/news.xml",
+    "status": "fetch failed",
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.rtnb.bi/",
+  "bytes": 129322,
+  "links": 121,
+  "title": "RTNB | Radio Télévision Nationale du Burundi"
+ },
+ {
+  "cc": "bw",
+  "home": "https://www.mmegi.bw/",
+  "tried": [
+   {
+    "url": "https://www.mmegi.bw/rss",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/rss/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.mmegi.bw/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.mmegi.bw/",
+  "bytes": 367206,
+  "links": 122,
+  "title": "Mmegi Online :: Home"
+ },
+ {
+  "cc": "bw",
+  "home": "https://www.dailynews.gov.bw/",
+  "tried": [],
+  "error": "fetch failed"
+ },
+ {
+  "cc": "eh",
+  "home": "https://www.spsrasd.info/",
+  "tried": [
+   {
+    "url": "https://www.spsrasd.info/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.spsrasd.info/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.spsrasd.info/ar",
+  "bytes": 220228,
+  "links": 117,
+  "title": "وكالة الأنباء الصحراوية (واص)"
+ },
+ {
+  "cc": "cv",
+  "home": "https://www.inforpress.cv/",
+  "tried": [
+   {
+    "url": "https://www.inforpress.cv/feed",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/feed/",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/rss",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/rss/",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.inforpress.cv/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.inforpress.cv/pt",
+  "bytes": 394370,
+  "links": 106,
+  "title": "Inforpress"
+ },
+ {
+  "cc": "cv",
+  "home": "https://expressodasilhas.cv/",
+  "tried": [
+   {
+    "url": "https://expressodasilhas.cv/rss",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-10T11:33",
+    "sample": [
+     "Governo apresenta segunda-feira relatório final sobre acidente de 05 de Setembro",
+     "Diogo Araújo conquista primeira medalha internacional de Cabo Verde na modalidade"
+    ]
+   },
+   {
+    "url": "https://expressodasilhas.cv/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://expressodasilhas.cv/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://expressodasilhas.cv/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://expressodasilhas.cv/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-10T11:33",
+    "sample": [
+     "Governo apresenta segunda-feira relatório final sobre acidente de 05 de Setembro",
+     "Diogo Araújo conquista primeira medalha internacional de Cabo Verde na modalidade"
+    ]
+   },
+   {
+    "url": "https://expressodasilhas.cv/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://expressodasilhas.cv/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://expressodasilhas.cv/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://expressodasilhas.cv/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://expressodasilhas.cv/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://expressodasilhas.cv/",
+  "bytes": 55674,
+  "links": 114,
+  "title": "Expresso das Ilhas - primeira página"
+ },
+ {
+  "cc": "rw",
+  "home": "https://www.newtimes.co.rw/",
+  "tried": [
+   {
+    "url": "https://www.newtimes.co.rw/feedback-from-readers",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/rss",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/rss/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.newtimes.co.rw/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.newtimes.co.rw/",
+  "bytes": 205944,
+  "links": 104,
+  "title": " The New Times - Home "
+ },
+ {
+  "cc": "gm",
+  "home": "https://www.thepoint.gm/",
+  "tried": [
+   {
+    "url": "https://thepoint.gm/posts/rss/xml",
+    "status": 200,
+    "n": 8,
+    "last7": 8,
+    "newest": "2026-10-09T11:28",
+    "sample": [
+     "Military Tribunal ‘lacks competence’ to try Sanna Manjang, defence challenges court martia",
+     "Gov’t boosts health sector with over $700M worth of medicines"
+    ]
+   },
+   {
+    "url": "https://thepoint.gm/africa/gambia/national-news/us-citizens-invest-28m-in-school-feeding-nutrition-in-gambia",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thepoint.gm/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://thepoint.gm/",
+  "bytes": 171525,
+  "links": 190,
+  "title": "Gambia News - The Point"
+ },
+ {
+  "cc": "gm",
+  "home": "https://foroyaa.net/",
+  "tried": [
+   {
+    "url": "https://foroyaa.net/feed/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T15:40",
+    "sample": [
+     "Three Government Workers Convicted in Cannabis Trafficking Case",
+     "Revising Court Rejects Abdul Karim Drammeh’s Objection to Maimuna Camara’s Voter Registrat"
+    ]
+   },
+   {
+    "url": "https://foroyaa.net/gaf-plans-to-establish-agricultural-battalion-to-cut-rice-imports-and-feed-troops/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/gambias-breastfeeding-gap-working-mothers-caught-between-babies-and-livelihoods/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/feed",
+    "status": "timed out",
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/rss",
+    "status": "timed out",
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/rss/",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T15:40",
+    "sample": [
+     "Three Government Workers Convicted in Cannabis Trafficking Case",
+     "Revising Court Rejects Abdul Karim Drammeh’s Objection to Maimuna Camara’s Voter Registrat"
+    ]
+   },
+   {
+    "url": "https://foroyaa.net/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://foroyaa.net/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://foroyaa.net/",
+  "bytes": 643601,
+  "links": 318,
+  "title": "Foroyaa Newspaper | EDUCATING THE PEOPLE"
+ },
+ {
+  "cc": "ls",
+  "home": "https://www.lestimes.com/",
+  "tried": [
+   {
+    "url": "https://lestimes.com/?feed=rss2",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-09T08:30",
+    "sample": [
+     "Minister Tsheka in police hiring row",
+     "Lipholo faces rearrest"
+    ]
+   },
+   {
+    "url": "https://lestimes.com/?feed=comments-rss2",
+    "status": 200,
+    "n": 10,
+    "last7": 10,
+    "newest": "2026-10-10T11:28",
+    "sample": [
+     "Comment on Sebabatso Initiative promoting youth entrepreneurs by casino en Reconquista",
+     "Comment on Sebabatso Initiative promoting youth entrepreneurs by Casinos EspañOles Juego S"
+    ]
+   },
+   {
+    "url": "https://lestimes.com/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://lestimes.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://lestimes.com/",
+  "bytes": 242218,
+  "links": 366,
+  "title": "Lesotho Times"
+ },
+ {
+  "cc": "ls",
+  "home": "https://www.thepost.co.ls/",
+  "tried": [
+   {
+    "url": "https://www.thepost.co.ls/feed",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/feed/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/rss.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/index.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/feed.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/atom.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/rss/all.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.thepost.co.ls/rss/news.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 403,
+  "final": "https://www.thepost.co.ls/",
+  "bytes": 358,
+  "links": 0,
+  "title": "403 Forbidden"
+ },
+ {
+  "cc": "sz",
+  "home": "https://new.observer.org.sz/",
+  "tried": [],
+  "error": "fetch failed"
+ },
+ {
+  "cc": "sz",
+  "home": "https://eswatininews.co.sz/",
+  "tried": [],
+  "error": "fetch failed"
+ }
+]
