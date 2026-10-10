@@ -138,4 +138,5 @@ jobs:
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
       - run: node tests/report_english_smoke.mjs
+      - run: node tests/social_filter_smoke.mjs
       - run: node tests/speed_budget.mjs

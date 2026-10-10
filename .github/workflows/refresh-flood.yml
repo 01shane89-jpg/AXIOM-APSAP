@@ -168,8 +168,9 @@ jobs:
             echo "Social snapshot is under 40 minutes old; skipping this cycle"; exit 0
           fi
           node tools/refresh_social.mjs
-          # relevance over social, shadow mode only: writes data/live/social-relevance.json, hides nothing
-          node tools/social_relevance.mjs || echo "social relevance report not written"
+          # relevance over social (tools/relevance-social.json "mode": "on"): marks left-out posts in data/live/social.js and the
+          # stored history, which the page shows only on request; writes data/live/social-relevance.json. If it fails, posts show unmarked.
+          node tools/social_relevance.mjs || echo "social relevance not applied"
           # public replies to the Bluesky posts, as aggregates only (no names or reply text): data/live/replies/<cc>.js
           node tools/social_replies.mjs || echo "social replies not written"
         continue-on-error: true

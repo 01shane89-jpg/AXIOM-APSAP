@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { compileRelevance, itemRelevance, kept } from "./topics_lib.mjs";
-import { policyVersion } from "./social_relevance.mjs";
+import { policyVersion, compileSocial, socialRelevance, socialKept } from "./social_relevance.mjs";
 
 export const SAMPLE = "tools/eval/social-relevance-sample.json";
 export const PILOT = ["th", "my"];
@@ -22,6 +22,8 @@ export const LABELS = ["relevant", "not_relevant", "unclear"];
 
 const h = (s) => crypto.createHash("sha256").update(s).digest("hex");
 const verdictOf = (R, i) => { const rel = itemRelevance(R, i); return { rel, verdict: kept(rel) ? "keep" : "hide" }; };
+// the social policy (news policy + tools/relevance-social.json), as used on the page since the filter was switched on
+export const socialVerdict = (R, S) => (i) => { const rel = socialRelevance(R, S, i); return { rel, verdict: socialKept(rel) ? "keep" : "hide" }; };
 
 // Pure: picks the sample. A short group is topped up from the same verdict elsewhere, so the total stays at the target when it can.
 export function pick(R, social, { seed = "1", alloc = ALLOC, skip = [] } = {}) {
@@ -62,13 +64,21 @@ export function wilson(k, n) {
 // Pure: scores a policy against the labelled sample. Each post is re-checked with the CURRENT policy (its stored text), so a policy
 // change is measured on the same posts. "unclear" and unlabelled posts are counted but left out of the rates.
 // Rates are per stratum (verdict now): false_hide = relevant among posts the policy would hide; false_keep = not relevant among kept.
-export function score(R, sample) {
+export function score(R, sample, judge = (i) => verdictOf(R, i)) {
   const cell = () => ({ relevant: 0, not_relevant: 0, unclear: 0, unlabelled: 0 });
   const by = { hide: cell(), keep: cell() };
+  // sampling weights: each post stands for population[group] / (posts sampled from that group), so the whole-snapshot figures
+  // below stay right for any policy (posts are weighted by the stratum they were drawn from, not by today's verdict)
+  const P = sample.population || {}, drawn = {};
+  for (const s of sample.items) drawn[s.group] = (drawn[s.group] || 0) + 1;
+  const W = { tp: 0, fp: 0, fn: 0, tn: 0 };
   for (const s of sample.items) {
     const i = { title: s.title, title_en: s.title_en || s.title, summary: s.summary, summary_en: s.summary_en, mt: s.mt, lang: s.lang };
-    const v = verdictOf(R, i).verdict;
-    by[v][LABELS.includes(s.label) ? s.label : "unlabelled"]++;
+    const v = judge(i).verdict, lab = LABELS.includes(s.label) ? s.label : "unlabelled";
+    by[v][lab]++;
+    const w = P[s.group] && drawn[s.group] ? P[s.group] / drawn[s.group] : 1;
+    if (lab === "relevant") W[v === "keep" ? "tp" : "fn"] += w;
+    else if (lab === "not_relevant") W[v === "keep" ? "fp" : "tn"] += w;
   }
   const rate = (k, n) => ({ k, n, rate: n ? +(k / n).toFixed(3) : null, ci95: wilson(k, n).map((x) => +x.toFixed(3)) });
   const out = {
@@ -78,12 +88,16 @@ export function score(R, sample) {
   };
   // Whole-snapshot estimates, weighting each verdict's rate by how many posts had that verdict when the sample was drawn
   // (only meaningful while the policy is the one the sample was drawn with; a later policy moves posts between verdicts).
-  const P = sample.population || {}, ph = (P.pilot_hide || 0) + (P.other_hide || 0), pk = (P.pilot_keep || 0) + (P.other_keep || 0);
+  const ph = (P.pilot_hide || 0) + (P.other_hide || 0), pk = (P.pilot_keep || 0) + (P.other_keep || 0);
   if (ph + pk && out.false_hide.n && out.false_keep.n) {
     const relHide = ph * out.false_hide.rate, relKeep = pk * (1 - out.false_keep.rate);
     out.estimate = { posts: ph + pk, recall: +(relKeep / (relKeep + relHide)).toFixed(3), precision: +(1 - out.false_keep.rate).toFixed(3),
       note: "recall = share of relevant posts the policy keeps; precision = share of kept posts that are relevant; unclear posts left out" };
   }
+  const all = W.tp + W.fp + W.fn + W.tn;
+  if (all) out.weighted = { accuracy: +((W.tp + W.tn) / all).toFixed(3), recall: +(W.tp / (W.tp + W.fn || 1)).toFixed(3),
+    precision: +(W.tp / (W.tp + W.fp || 1)).toFixed(3), shown_share: +((W.tp + W.fp) / all).toFixed(3),
+    note: "whole-snapshot estimates from sampling weights: accuracy = share of posts (relevant or not) the policy gets right; recall = share of relevant posts shown; precision = share of shown posts that are relevant; unclear posts left out" };
   return out;
 }
 
@@ -105,7 +119,10 @@ if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1])))
     fs.writeFileSync(SAMPLE, JSON.stringify(head, null, 1).replace(/\n\}$/, ",\n \"items\": [\n") + body + "\n ]\n}\n");
     console.log("sample:", items.length, "posts", JSON.stringify(population));
   } else if (cmd === "eval") {
-    const s = JSON.parse(fs.readFileSync(SAMPLE, "utf8")), r = score(R, s);
-    console.log(JSON.stringify({ policy: policyVersion(relText), labelled_by: s.labelled_by, ...r }, null, 1));
+    const file = process.argv[3] || SAMPLE, s = JSON.parse(fs.readFileSync(file, "utf8"));
+    const socText = fs.readFileSync("tools/relevance-social.json", "utf8"), S = compileSocial(JSON.parse(socText));
+    const news = score(R, s), social = score(R, s, socialVerdict(R, S));
+    console.log(JSON.stringify({ sample: file, labelled_by: s.labelled_by, news_policy_only: { policy: policyVersion(relText), ...news },
+      social_policy: { policy: policyVersion(relText) + "+" + policyVersion(socText), ...social } }, null, 1));
   } else { console.error("usage: node tools/relevance_sample.mjs new [seed] | eval"); process.exit(2); }
 }
