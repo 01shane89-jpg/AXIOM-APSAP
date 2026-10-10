@@ -171,6 +171,7 @@
         b("Fly out from here") + " or " + b("Sail from here") + " makes a ground-to-air or ground-to-sea option ending where you tap. Flown and sailed legs are straight lines timed at the speeds you set (helicopter 220 kt, fixed wing 400 kt, vessel 12 kt by default).",
         b("Find bridges and crossings") + " lists what the road legs depend on, in route order, with the detour if a bridge, tunnel or ferry is lost. Each border crossing gets a card: country entered, hours, the U.S. advisory and the nearest other crossing. Nothing is ever shown as open without a source.",
         b("Add a cross-border option") + " routes to the nearest official border crossings.",
+        b("Check along the route") + " groups hazards in the corridor by km and shows phone coverage by stretch, fuel (the longest stretch without it), U.S. posts and hospitals near the line. The card then shows data freshness and how complete OSAP's checks are. Tick the map layers you want; Sustainment and Medical start off.",
         b("Open in Route (checkpoints, print)") + " takes an option to Route to print it. " + b("Where this route can be seen from") + " shows the ground that overlooks it.",
         "Plans are kept on this device, up to 20."]) +
       tip("OSAP never proposes Available: only you do. An embassy is shown as a place to go, not a confirmed evacuation point. Call the post first.") },
