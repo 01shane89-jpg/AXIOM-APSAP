@@ -1,0 +1,19 @@
+{"cc":"vu","at":"2026-10-10T10:39:29Z","base":"2026-10-10T10:37:59Z","m":[
+["n10920927820",-17.74939,168.31408,{"man_made":"communications_tower","tower:type":"communication"}],
+["n12439689406",-13.88149,167.52313,{"man_made":"tower","tower:type":"communication"}],
+["n3340988900",-17.48275,168.48646,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n3398758976",-19.53006,169.26456,{"man_made":"tower","tower:type":"communication"}],
+["n3398824021",-17.64554,168.21794,{"man_made":"tower","tower:type":"communication"}],
+["n3398837263",-17.75726,168.3072,{"man_made":"tower","tower:type":"communication"}],
+["n3398838889",-17.75772,168.30793,{"man_made":"tower","tower:type":"communication"}],
+["n3398901274",-17.64483,168.23241,{"man_made":"tower","tower:type":"communication"}],
+["n3401393139",-17.73565,168.3203,{"man_made":"tower","tower:type":"communication"}],
+["n3415262108",-16.46108,168.22275,{"man_made":"tower","name":"Digicel Tower","tower:type":"communication"}],
+["n3429591444",-15.31788,167.932,{"man_made":"tower","tower:type":"communication"}],
+["n3438065751",-15.52035,167.13975,{"man_made":"communications_tower","tower:type":"communication"}],
+["n4047358684",-15.28135,167.98468,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n9867741636",-17.79885,168.43074,{"communication:microwave":"yes","communication:mobile_phone":"yes","man_made":"tower","name":"TVL Tower","tower:type":"communication"}],
+["n9867753570",-17.05065,168.40176,{"communication:microwave":"yes","communication:mobile_phone":"yes","man_made":"tower","name":"TVL Tower","tower:type":"communication"}],
+["n9867753571",-17.05002,168.40302,{"communication:microwave":"yes","communication:mobile_phone":"yes","man_made":"tower","name":"Digicel Tower","tower:type":"communication"}],
+["n9867753572",-17.04948,168.40242,{"communication:microwave":"yes","communication:radio":"yes","man_made":"tower","name":"OGCIO Tower","tower:type":"communication"}]
+]}
