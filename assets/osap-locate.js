@@ -106,7 +106,9 @@
   function draw(center) {
     if (!map || !here || !W.L) return;
     var ll = [here.lat, here.lon];
-    if (!rend) { map.createPane("mylocpane"); map.getPane("mylocpane").style.zIndex = 645; rend = W.L.svg({ pane: "mylocpane" }); }
+    /* 676: above every drawn overlay (route line 660, route waypoints 662, measure 675) so "you are here" is never hidden under a line;
+       still below hover tooltips (680) and info boxes (700) */
+    if (!rend) { map.createPane("mylocpane"); map.getPane("mylocpane").style.zIndex = 676; rend = W.L.svg({ pane: "mylocpane" }); }
     if (!ring) ring = W.L.circle(ll, { pane: "mylocpane", renderer: rend, radius: here.acc, color: "#1a73e8", weight: 1, opacity: 0.6, fillColor: "#1a73e8", fillOpacity: 0.12, interactive: false }).addTo(map);
     else ring.setLatLng(ll).setRadius(here.acc);
     if (!dot) {

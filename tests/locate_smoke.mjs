@@ -54,6 +54,8 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
   const wx = await p.evaluate(() => document.querySelector(".tdwx .tdplaces button[aria-pressed=true], .tdwx .tdplace")?.textContent);
   await p.click(".tdmap"); await settle(p, 1500);
   ok(await p.evaluate(() => document.querySelector(".leaflet-mylocpane-pane")?.querySelectorAll("path").length >= 2), "map: dot and accuracy circle drawn");
+  const zs = await p.evaluate(() => { const m = window.__asapMap, me = +m.getPane("mylocpane").style.zIndex; if (!m.getPane("routepane")) { m.createPane("routepane"); m.getPane("routepane").style.zIndex = 660; } const over = Object.keys(m._panes).filter(k => k !== "mylocpane" && !/^(tooltip|popup)Pane$/.test(k) && +m.getPane(k).style.zIndex >= me); return [me, over.join(",")]; });
+  ok(zs[0] > 662 && !zs[1], "map: you-are-here dot sits above the route line and every overlay pane (z " + zs[0] + (zs[1] ? ", under " + zs[1] : "") + ")");
   await p.click(".locctl button"); await settle(p, 1500);
   const c = await p.evaluate(() => { const m = window.__asapMap.getCenter(); return [m.lat, m.lng, window.__asapMap.getZoom()]; });
   ok(Math.abs(c[0] + 33.8688) < 0.05 && Math.abs(c[1] - 151.2093) < 0.05, "recenter: map centred on the dot " + c.join(","));
