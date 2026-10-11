@@ -1294,7 +1294,7 @@ function main() {
       wps: S.wps.map(function (w) { return { lat: w.lat, lon: w.lon, name: w.name || "" }; }), mode: S.mode, unit: S.unit, buf: S.buf, name: routeName(),
       haz: S.haz ? S.haz.hits.map(function (h) { return { p: h.p, kind: h.kind, title: h.title, url: h.url, date: h.date, src: h.src, d: h.d, along: h.along }; }) : [],
       elev: S.elev ? S.elev.map(function (e) { return { m: e.m, h: e.h }; }) : null,
-      evac: o ? { dest: { name: o.cand.i.name, lat: o.cand.i.lat, lon: o.cand.i.lon, k: o.cand.k, kind: evKindName(o.cand) }, cps: evCps(r).map(function (c) { return { id: c.id, m: c.m, what: c.what, url: c.url }; }) } : null,
+      evac: o ? { dest: { name: o.cand.i.name, lat: o.cand.i.lat, lon: o.cand.i.lon, k: o.cand.k, kind: evKindName(o.cand) }, cps: evCps(r).map(function (c) { return { id: c.id, m: c.m, what: c.what, url: c.url, p: c.p }; }) } : null,
       map: S.ctx.map, cc: S.ctx.cc, overpass: overpassAny,
       detour: function (lat, lon) {
         if (!r.road || S.mode === "line") return Promise.reject(new Error("only road routes can be re-routed"));
@@ -1336,9 +1336,12 @@ function main() {
     var g = navGesture(), mode = S.mode;
     snap.gesture = g;
     /* leaving the route: a fresh route from where the person is, through the waypoints still ahead, by the same means of travel */
-    snap.reroute = function (from, ahead, hd) {
+    snap.reroute = function (from, ahead, hd, avoid) {
       var w = [{ lat: from[0], lon: from[1] }].concat(ahead.map(function (x) { return { lat: x.lat, lon: x.lon, name: x.name || "" }; }));
       if (mode === "line" || !snap.r.road) return Promise.reject(new Error("straight-line routes are not re-routed"));
+      /* "avoid the road ahead": Valhalla, kept off the given points (a roadblock, a checkpoint, contact) */
+      if (avoid && avoid.length) return valhalla(evCost(mode), w, { alternates: 0, exclude_locations: avoid.slice(0, 50).map(function (p) { return { lat: +p[0], lon: G.wrap(+p[1]) }; }) }, mode === "foot" ? null : hd)
+        .then(function (rs) { var x = rs[0]; return { coords: x.coords, m: x.m, s: x.s, legs: x.legs, steps: x.steps, src: x.src ? x.src.name : "", road: true }; });
       /* moving fast enough to have a direction: start the new route that way (a walker can turn on the spot) */
       return roadRoutes(mode, w, mode === "foot" ? null : hd).then(function (rs) { var x = rs[0]; return { coords: x.coords, m: x.m, s: x.s, legs: x.legs, steps: x.steps, src: x.src ? x.src.name : "", road: true }; });
     };
