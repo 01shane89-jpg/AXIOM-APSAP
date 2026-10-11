@@ -114,6 +114,9 @@ const fixAt = (p, q, o) => { t0 += (o && o.dt) || 2000; return p.evaluate(({ q, 
   ok(/arrive \d{4}Z/.test(ban.eta) && /km/.test(ban.eta), "bottom bar: distance left and arrival in Zulu (" + ban.eta + ")");
   ok(await p.evaluate(() => !document.querySelector("#osnav .nvlanes")), "lanes are not shown while the turn is far off");
   ok(await p.evaluate(() => /\d/.test(document.querySelector("#osnav .nvspd b").textContent)), "speed is shown");
+  await p.waitForTimeout(2300);
+  const hud1 = await p.evaluate(() => document.querySelector("#osnav .nvwhere").textContent);
+  ok(/^Heading north on Phahonyothin Road \(1\)/.test(hud1) && /00\d°/.test(hud1) && /47P/.test(hud1), "heads-up line: heading, road, exact heading and grid (" + hud1 + ")");
   ok(await p.evaluate(() => { const pk = document.querySelector("#osnav .nvpuck"); const mk = pk && pk.closest(".maplibregl-marker"); const cv = document.querySelector("#osnav .maplibregl-canvas-container"); return !!mk && !!cv && (cv.compareDocumentPosition(mk) & Node.DOCUMENT_POSITION_FOLLOWING) > 0; }),
     "the you-are-here arrow is a marker drawn after (above) the map canvas and its route line");
   /* 110 m before the turn: the voice gives the turn ahead; at 55 m: the turn now. The Thai road name is never spoken */
@@ -128,6 +131,9 @@ const fixAt = (p, q, o) => { t0 += (o && o.dt) || 2000; return p.evaluate(({ q, 
   await fixAt(p, [14.02, 100.508], { hdg: 90, spd: 14 });
   s = await st(p);
   ok(s.on && s.next && s.next.k === "arrive", "after the turn the next step is the arrival");
+  await p.waitForTimeout(2300);
+  const hud2 = await p.evaluate(() => document.querySelector("#osnav .nvwhere").textContent);
+  ok(/^Heading east on ถนนทดสอบ \(3\)/.test(hud2), "after the turn the heads-up line changes to the new heading and road (" + hud2 + ")");
   ok(s.hz >= 1 && s.spoken.some((x) => /^Caution\. Road closure reported ahead in /.test(x)), "the road closure OSAP holds near the route is called out ahead (" + s.hz + ")");
   ok(await p.evaluate(() => /Road closure/.test(document.querySelector("#osnav .nvnotes").textContent)), "and shown under the banner");
   if (OUT) await p.screenshot({ path: OUT + "/nav-desktop.png" });
