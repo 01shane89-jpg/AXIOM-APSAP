@@ -11,7 +11,11 @@
    - off the route for a few fixes: a new route from where you are through the waypoints still ahead, by the same means of travel;
    - hazards OSAP already holds near the route (road closures, disaster alerts, quakes, conflict events, storms, reports) called
      out ahead of you;
-   - the screen kept awake while navigating; a simulated drive along the route when there is no GPS, or to rehearse.
+   - the screen kept awake while navigating; a simulated drive along the route when there is no GPS, or to rehearse;
+   - for teams on the ground: a red night mode, one-tap Mark (drops a point on the map with its MGRS grid and time), Avoid
+     the road ahead (a new route kept off the next 2 km, remembered for the rest of the trip), Back to start, control points
+     and border or water crossings of an evacuation route called out, the destination's grid, straight-line bearing and
+     light (sunset, EENT), and the track driven saved as GPX on request.
    Privacy: positions stay in memory on this device; only the waypoints still ahead and the current position go to the
    router when re-routing (as planning already does). Preferences (voice, map, 3D, heading up) are the only thing stored.
    A planning and awareness aid: the road, its signs and the law come first. */
@@ -26,8 +30,8 @@
 
   function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  var P = (function () { var p = lsGet(PK, {}) || {}; return { mute: !!p.mute, style: p.style === "sat" ? "sat" : "streets", dim: p.dim === "2d" ? "2d" : "3d", up: p.up === "north" ? "north" : "head" }; })();
-  function savePrefs() { lsSet(PK, { mute: P.mute, style: P.style, dim: P.dim, up: P.up }); }
+  var P = (function () { var p = lsGet(PK, {}) || {}; return { mute: !!p.mute, style: p.style === "sat" ? "sat" : "streets", dim: p.dim === "2d" ? "2d" : "3d", up: p.up === "north" ? "north" : "head", night: !!p.night }; })();
+  function savePrefs() { lsSet(PK, { mute: P.mute, style: P.style, dim: P.dim, up: P.up, night: P.night }); }
   function E(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function clean(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 80); }
   function now() { return Date.now(); }
@@ -241,6 +245,14 @@
       "#osnav .nvwp{width:24px;height:24px;border-radius:12px;background:#1c7ed6;border:2px solid #fff;color:#fff;font:700 12px/20px system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.5)}#osnav .nvwp.end{background:#c92a2a}" +
       "#osnav .nvattr{position:absolute;left:4px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:2;font-size:9.5px;color:#222;background:rgba(255,255,255,.7);padding:1px 4px;border-radius:3px;max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
       "#osnav .nvattr a{color:inherit}" +
+      /* night: everything in dim red, kind to dark-adapted eyes and less visible from outside the vehicle */
+      "#osnav.night{filter:grayscale(1) sepia(1) saturate(6) hue-rotate(-50deg) brightness(.55) contrast(1.15)}" +
+      "#osnav .nvnote{max-width:calc(100% - 60px)}#osnav .nvnote.ok{background:#0b5d33}" +
+      "#osnav .nvside button.nvmark{background:#e8590c;font-size:12px}" +
+      "#osnav .nvact{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}#osnav .nvact button{flex:1 1 140px;min-height:44px;border:none;border-radius:10px;background:#333b45;color:#fff;font:600 14.5px/1.2 system-ui,sans-serif;padding:8px 10px;cursor:pointer}" +
+      "#osnav .nvact button.warn{background:#a61e1e}#osnav .nvact button:disabled{opacity:.45}" +
+      "#osnav dl.nvfacts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:6px 0 12px;font-size:13.5px}#osnav dl.nvfacts dt{color:#9aa4ae}#osnav dl.nvfacts dd{margin:0;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px}" +
+      "#osnav .nvmk{width:14px;height:14px;background:#e8590c;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5)}" +
       "@media (min-width:760px){#osnav .nvtop{right:auto;width:440px}#osnav .nvsteps{left:auto;width:420px;top:0;border-radius:0}}" +
       "@media (orientation:landscape) and (max-height:500px){#osnav .nvtop{right:auto;width:52%}#osnav .nvban{min-height:0;padding:8px 10px}#osnav .nvico{width:44px;height:44px}#osnav .nvdist{font-size:24px}#osnav .nvroad{font-size:16px}#osnav .nvwhere{display:none}}";
     D.head.appendChild(st);
@@ -263,23 +275,25 @@
     var wps = (snap.wps || []).map(function (w, i) { return { lat: +w.lat, lon: +w.lon, name: clean(w.name, 60), L: "ABCDEFGHIJKLMNOPQRSTUVWXY".charAt(i) }; });
     var ahead = wps.slice(1);
     S = { snap: snap, unit: snap.unit, mode: snap.mode, wps: wps, ahead: ahead, follow: true, prog: { along: 0, i: 0 }, offN: 0, offT: 0, said: {}, spoken: [], hzSaid: {},
-      rr: { busy: false, at: 0, n: 0, err: "" }, fixes: 0, last: null, disp: null, anim: null, hd: 0, arrived: false, gps: "wait", sim: null, raf: 0, lt: 0, cz: null, compass: null };
+      rr: { busy: false, at: 0, n: 0, err: "" }, avoid: [], track: [], marks: [], cpSaid: {}, fixes: 0, last: null, disp: null, anim: null, hd: 0, arrived: false, gps: "wait", sim: null, raf: 0, lt: 0, cz: null, compass: null };
     var last = wps[wps.length - 1];
     S.dest = last ? last.L + (last.name ? " " + last.name : "") : "the destination";
     S.R = model(snap.r, ahead, snap.r.cum, snap.r.t);
+    S.cps0 = (snap.evac && snap.evac.cps || []).filter(function (c) { return c && c.p && c.id !== "SP"; }).map(function (c) { return { id: clean(c.id, 6), what: clean(c.what, 140), p: [+c.p[0], +c.p[1]] }; });
     hzPlace();
     var el = D.createElement("div"); el.id = "osnav"; el.setAttribute("role", "application"); el.setAttribute("aria-label", "Navigation");
     el.innerHTML = '<div class="nvmap"></div>' +
       '<div class="nvtop"><div class="nvban" aria-live="polite"><div class="nvico"></div><div class="nvbt"><b class="nvdist"></b><span class="nvroad"></span><span class="nvwhat"></span></div></div>' +
       '<div class="nvsub"></div><div class="nvnotes"></div></div>' +
-      '<div class="nvside"><button type="button" data-nv="mute"></button><button type="button" data-nv="up"></button><button type="button" data-nv="dim"></button><button type="button" data-nv="style"></button><button type="button" data-nv="over" aria-label="Show the whole route ahead" title="Overview">' + IC.over + "</button></div>" +
+      '<div class="nvside"><button type="button" data-nv="mute"></button><button type="button" data-nv="up"></button><button type="button" data-nv="dim"></button><button type="button" data-nv="style"></button><button type="button" data-nv="night"></button><button type="button" data-nv="over" aria-label="Show the whole route ahead" title="Overview">' + IC.over + "</button>" +
+      '<button type="button" class="nvmark" data-nv="mark" aria-label="Mark this spot: a point on the map with its grid and time" title="Mark this spot">Mark</button></div>' +
       '<button type="button" class="nvrec" data-nv="rec" hidden>Re-centre</button>' +
       '<div class="nvspd" title="Speed from GPS"><b>–</b><span>' + (metric() ? "km/h" : "mph") + "</span></div>" +
       '<div class="nvwhere"><span></span></div><div class="nvattr"></div>' +
       '<div class="nvbar"><button type="button" class="nvend" data-nv="end" aria-label="End navigation" title="End navigation">&#x2715;</button><div class="nveta"><b>–</b><span></span></div>' +
-      '<button type="button" class="nvlist" data-nv="list" aria-label="All turns" title="All turns">' + IC.list + "</button></div>" +
+      '<button type="button" class="nvlist" data-nv="list" aria-label="Turns ahead and actions: avoid the road ahead, back to start, save track" title="Turns and actions">' + IC.list + "</button></div>" +
       '<div class="nvsteps" hidden></div>';
-    D.body.appendChild(el); S.el = el;
+    D.body.appendChild(el); S.el = el; el.classList.toggle("night", P.night);
     D.documentElement.classList.add("nav-on");
     el.addEventListener("click", onClick);
     S.onKey = function (e) { if (e.key === "Escape") { if (!S.el.querySelector(".nvsteps").hidden) toggleList(false); else close(); } };
@@ -349,6 +363,8 @@
     var p = [f.lat, f.lon], prev = S.last, R = S.R;
     if (f.spd == null && prev && f.t > prev.t) { var dt = (f.t - prev.t) / 1000; if (dt > 0.3 && dt < 10) f.spd = hav([prev.lat, prev.lon], p) / dt; }
     S.last = f;
+    /* the track driven, in memory only, for Save track (GPX); a simulated drive is not a track */
+    if (!f.sim && (!S.track.length || hav(S.track[S.track.length - 1], p) > 10)) { S.track.push([+f.lat.toFixed(6), +f.lon.toFixed(6), f.t]); if (S.track.length > 20000) S.track.splice(0, 1); }
     var acc = isFinite(f.acc) ? f.acc : 30, tol = Math.max(30, Math.min(acc, 50) + 20), v = f.spd || 0;
     var pr = null, a0 = S.prog.along;
     if (!S.arrived) {
@@ -377,7 +393,7 @@
     var span = prev ? Math.max(300, Math.min(1500, f.t - prev.t)) : 0;
     S.anim = { from: { p: S.disp.p.slice(), h: S.disp.h, a: S.dispA == null ? S.prog.along : S.dispA }, to: tgt, toA: S.prog.along, t0: performance.now(), dur: span };
     S.hd = h;
-    waypoints(); guide(); hazardsAhead(); hud();
+    waypoints(); guide(); hazardsAhead(); checkpoints(); hud();
     if (S.lf) lfFollow();
   }
   /* waypoints passed: dropped from the list ahead (an intermediate one is announced) */
@@ -393,15 +409,17 @@
       if (S.sim) simStop();
     }
   }
-  function reroute(f) {
-    var snap = S.snap, rr = S.rr;
-    if (!S.R.road || !snap.reroute || rr.busy || now() - rr.at < 10000 || S.arrived) { if (!S.R.road) S.straightOff = true; return; }
+  function reroute(f, o) {
+    var snap = S.snap, rr = S.rr; o = o || {};
+    if (!S.R.road || !snap.reroute) { S.straightOff = true; return; }
+    if (!o.force && (rr.busy || now() - rr.at < 10000 || S.arrived)) return;
     rr.busy = true; rr.at = now(); rr.err = "";
-    speak("Rerouting.", true); hud();
+    speak(o.say || "Rerouting.", true); hud();
     var ahead = S.ahead.slice(), tok = ++rr.n;
-    snap.reroute([f.lat, f.lon], ahead, f.spd > 3 && f.hdg != null ? f.hdg : null).then(function (r) {
+    /* roads the team chose to avoid stay avoided on every later re-route */
+    snap.reroute([f.lat, f.lon], ahead, f.spd > 3 && f.hdg != null ? f.hdg : null, S.avoid.length ? S.avoid : null).then(function (r) {
       if (!S || tok !== S.rr.n) return;
-      S.R = model(r, ahead); S.prog = { along: 0, i: 0 }; S.dispA = null; S.anim = null; S.offN = 0; S.offT = 0; S.said = {}; S.rr.busy = false; S.rr.done = (S.rr.done || 0) + 1;
+      S.R = model(r, ahead); S.prog = { along: 0, i: 0 }; S.dispA = null; S.anim = null; S.arrived = false; S.cpSaid = {}; S.offN = 0; S.offT = 0; S.said = {}; S.rr.busy = false; S.rr.done = (S.rr.done || 0) + 1;
       hzPlace(); routeData(); if (S.last) { var l = S.last; S.last = null; S.fixes--; fix(l); }
     }, function (e) {
       if (!S || tok !== S.rr.n) return;
@@ -443,7 +461,70 @@
       S.hz.push({ id: j, kind: clean(h.kind, 40), title: clean(h.title, 140), src: clean(h.src, 40), date: clean(h.date, 20), along: pr.along, d: pr.d, p: h.p });
     });
     S.hz.sort(function (a, b) { return a.along - b.along; });
+    /* an evacuation route's control points and crossings, placed on this line */
+    S.cps = (S.cps0 || []).map(function (c) { var pr = proj(R, c.p); return pr && pr.d < 500 ? { id: c.id, what: c.what, p: c.p, along: pr.along } : null; }).filter(Boolean)
+      .sort(function (a, b) { return a.along - b.along; });
     if (S.gl && S.glReady) routeData();
+  }
+  function checkpoints() {
+    if (!S.on || !S.cps) return;
+    var a = S.prog.along;
+    S.cpNext = S.cps.filter(function (c) { return c.along > a - 10; })[0] || null;
+    S.cps.forEach(function (c) {
+      var d = c.along - a, nm = /^(CP|RP)/.test(c.id) ? (c.id === "RP" ? "Release point" : "Control point " + c.id) : c.what.split(":")[0];
+      if (d < 1200 && d > 300 && !S.cpSaid[c.id + c.along + "a"]) { S.cpSaid[c.id + c.along + "a"] = 1; speak(nm + " in " + spokenDist(d) + "."); }
+      if (d <= 60 && d > -30 && !S.cpSaid[c.id + c.along + "b"]) { S.cpSaid[c.id + c.along + "b"] = S.cpSaid[c.id + c.along + "a"] = 1; speak("Passing " + nm + "."); }
+    });
+  }
+
+  /* ---------- team actions ---------- */
+  function here() { return S.last ? [S.last.lat, S.last.lon] : null; }
+  function flash(html, cls) { S.flash = { html: html, cls: cls || "ok", until: now() + 6000 }; hud(); setTimeout(function () { if (S) hud(); }, 6100); }
+  function zulu(ms) { var d = new Date(ms); return ("0" + d.getUTCHours()).slice(-2) + ("0" + d.getUTCMinutes()).slice(-2) + "Z"; }
+  /* Mark: a point on the main map (the toolbar's dropped points, kept on this device) with the time in its name */
+  function mark() {
+    var p = here(); if (!p) { flash("No position yet, so nothing to mark.", "warn"); return; }
+    var name = "Mark " + zulu(now()), grid = G && G.mgrs ? G.mgrs(p[0], p[1], 5) : p[0].toFixed(5) + ", " + p[1].toFixed(5), A = W.OSAP_ATAK && W.OSAP_ATAK.pts, saved = false;
+    if (A && A.all && A.save) {
+      var all = A.all(); all.push({ id: "p" + now().toString(36) + Math.random().toString(36).slice(2, 6), cc: S.snap.cc || "", lat: +p[0].toFixed(6), lon: +wrap(p[1]).toFixed(6), n: name, t: now() });
+      saved = A.save(all); if (saved) { try { A.draw(); if (A.paint) A.paint(); } catch (e) {} }
+    }
+    S.marks.push({ p: p, n: name });
+    if (S.gl && W.maplibregl) { var e = D.createElement("div"); e.className = "nvmk"; e.title = name; new W.maplibregl.Marker({ element: e }).setLngLat(ll(p)).addTo(S.gl); }
+    speak("Marked.");
+    flash("<b>" + E(name) + "</b> " + E(grid) + (saved ? " · saved to your map points" : A ? " · could not be saved: storage is full" : ""), saved ? "ok" : "warn");
+  }
+  /* Avoid ahead: a new route kept off the next 2 km of this one (roadblock, checkpoint, contact), remembered for the rest of the trip */
+  function avoidAhead() {
+    if (!S.R.road || !S.snap.reroute) { flash("Straight-line routes cannot be re-routed.", "warn"); return; }
+    var a = S.prog.along, pts = [];
+    for (var m = a + 120; m <= Math.min(S.R.tot - 60, a + 2000); m += 150) pts.push(pointAt(S.R, m).p);
+    if (!pts.length) { flash("Too close to the end of the route to avoid the road ahead.", "warn"); return; }
+    S.avoid = S.avoid.concat(pts.map(function (q) { return [+q[0].toFixed(5), +q[1].toFixed(5)]; })).slice(-50);
+    var p = here() || pointAt(S.R, a).p;
+    toggleList(false);
+    reroute({ lat: p[0], lon: p[1], spd: S.last && S.last.spd, hdg: S.last && S.last.hdg }, { force: true, say: "Finding a way round the road ahead." });
+  }
+  /* Back to start: turn for the first waypoint by the quickest way from here */
+  function backToStart() {
+    var A0 = S.wps[0], p = here() || pointAt(S.R, S.prog.along).p;
+    if (!A0) return;
+    S.ahead = [A0]; S.dest = A0.L + (A0.name ? " " + A0.name : ""); S.arrived = false;
+    toggleList(false);
+    if (!S.R.road || !S.snap.reroute) { S.R = model({ coords: [p, [A0.lat, A0.lon]], s: hav(p, [A0.lat, A0.lon]) / 1.4, steps: [] }, S.ahead); S.prog = { along: 0, i: 0 }; routeData(); hud(); return; }
+    reroute({ lat: p[0], lon: p[1], spd: S.last && S.last.spd, hdg: S.last && S.last.hdg }, { force: true, say: "Routing back to the start." });
+  }
+  /* the track driven as GPX, only when asked; nothing of it is kept after navigation ends */
+  function gpx() {
+    if (S.track.length < 2) { flash("No track yet: it starts with the first GPS fixes.", "warn"); return; }
+    var x = function (t) { return String(t).replace(/[<>&'"]/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c]; }); };
+    var body = '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="AXIOM OSAP" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>' + x("Track " + new Date(S.track[0][2]).toISOString().slice(0, 16) + "Z") + "</name><trkseg>\n" +
+      S.track.map(function (q) { return '<trkpt lat="' + q[0] + '" lon="' + q[1] + '"><time>' + new Date(q[2]).toISOString() + "</time></trkpt>"; }).join("\n") + "\n</trkseg></trk>\n" +
+      S.marks.map(function (m) { return '<wpt lat="' + m.p[0].toFixed(6) + '" lon="' + m.p[1].toFixed(6) + '"><name>' + x(m.n) + "</name></wpt>"; }).join("\n") + "\n</gpx>\n";
+    var a = D.createElement("a"), url = URL.createObjectURL(new Blob([body], { type: "application/gpx+xml" }));
+    a.href = url; a.download = "osap-track-" + new Date().toISOString().slice(0, 16).replace(/[-:]/g, "") + "Z.gpx"; D.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+    S.gpxN = (S.gpxN || 0) + 1;
   }
   function hazardsAhead() {
     if (!S.on) return;
@@ -499,6 +580,9 @@
     else if (!S.fixes) notes.push(["", (S.gps === "slow" ? "Still waiting for a GPS fix. Go outside or near a window. " : "Finding your position… ") + "<button type=\"button\" data-nv=\"sim\">Simulate drive</button>"]);
     else if (S.last && S.last.acc > 100) notes.push(["warn", "Weak GPS (about " + Math.round(S.last.acc) + " m)."]);
     if (S.straightOff && !R.road) notes.push(["", "Straight-line route: follow the bearing; it is not re-routed."]);
+    if (S.flash && now() < S.flash.until) notes.unshift([S.flash.cls, S.flash.html]);
+    if (S.avoid.length && !S.arrived) notes.push(["", "Keeping off " + (S.avoid.length >= 50 ? "the roads you avoided" : "the road you avoided") + "."]);
+    if (S.cpNext && S.cpNext.along - a < 2500) notes.push(["", "<b>" + E(S.cpNext.id) + "</b> " + E(fd(Math.max(0, S.cpNext.along - a))) + " ahead: " + E(S.cpNext.what)]);
     (S.hzNow || []).slice(0, 2).forEach(function (h) {
       notes.push([h.kind === "Report" ? "" : "warn", "<b>" + E(h.kind) + "</b> " + E(fd(Math.max(0, h.along - a))) + " ahead" + (h.title ? ": " + E(h.title) : "") + (h.date ? " <small>(" + E(h.src ? h.src + ", " : "") + E(h.date) + ")</small>" : "")]);
     });
@@ -525,6 +609,8 @@
     var u = el.querySelector('[data-nv="up"]'); u.innerHTML = P.up === "north" ? IC.north : IC.head; u.setAttribute("aria-label", P.up === "north" ? "North up. Turn to the direction of travel" : "Direction of travel up. Turn north up"); u.title = P.up === "north" ? "North up" : "Heading up";
     var d = el.querySelector('[data-nv="dim"]'); d.textContent = P.dim === "3d" ? "3D" : "2D"; d.setAttribute("aria-label", P.dim === "3d" ? "Tilted 3D view. Switch to flat" : "Flat view. Switch to 3D"); d.title = d.getAttribute("aria-label");
     var s = el.querySelector('[data-nv="style"]'); s.textContent = P.style === "sat" ? "Sat" : "Map"; s.setAttribute("aria-label", P.style === "sat" ? "Satellite. Switch to the street map" : "Street map. Switch to satellite"); s.title = s.getAttribute("aria-label");
+    var nt = el.querySelector('[data-nv="night"]'); nt.textContent = "Night"; nt.setAttribute("aria-pressed", String(P.night)); nt.setAttribute("aria-label", P.night ? "Night mode is on (red, dim). Turn it off" : "Night mode: red and dim, for dark-adapted eyes"); nt.title = nt.getAttribute("aria-label");
+    el.classList.toggle("night", P.night);
     if (S.lf) { d.hidden = true; u.hidden = true; s.hidden = true; }
   }
   function onClick(e) {
@@ -538,6 +624,11 @@
     else if (k === "over") overview();
     else if (k === "rec") { S.follow = true; if (S.gl) S.gl.setPadding(pad()); hud(); if (S.lf) lfFollow(); }
     else if (k === "list") toggleList(true);
+    else if (k === "night") { P.night = !P.night; savePrefs(); sideUi(); }
+    else if (k === "mark") mark();
+    else if (k === "avoid") avoidAhead();
+    else if (k === "back") backToStart();
+    else if (k === "gpx") gpx();
     else if (k === "listx") toggleList(false);
     else if (k === "sim") simStart();
     else if (k === "simstop") simStop();
@@ -546,7 +637,21 @@
   function toggleList(on) { var b = S.el.querySelector(".nvsteps"); b.hidden = !on; if (on) listUi(); }
   function listUi() {
     var R = S.R, a = S.prog.along, up = upcoming(), box = S.el.querySelector(".nvsteps");
-    var html = '<h3>Turns ahead <button type="button" data-nv="listx">Close</button></h3>' +
+    var p = here(), dw = S.ahead[S.ahead.length - 1], dp = dw ? [dw.lat, dw.lon] : R.c[R.c.length - 1], mg = function (q) { return G && G.mgrs ? G.mgrs(q[0], q[1], 5) || "" : ""; };
+    var facts = "";
+    if (p) facts += "<dt>You</dt><dd>" + E(mg(p)) + "</dd>";
+    facts += "<dt>" + E(dw ? dw.L : "End") + "</dt><dd>" + E(mg(dp)) + "</dd>";
+    if (p) { var b = brg(p, dp); facts += "<dt>Straight</dt><dd>" + E(fd(hav(p, dp))) + " · " + E(G.fmtBrg(b)) + " T · " + E(G.fmtBrg(b - G.decl(p[0], p[1]))) + " M</dd>"; }
+    if (G && G.sun) { try { var sn = G.sun(now(), dp[0], dp[1]), lt = function (t) { return t == null ? "–" : clock(t); }; facts += "<dt>Light there</dt><dd>sunset " + E(lt(sn.set)) + " · EENT " + E(lt(sn.eent)) + "</dd>"; } catch (e) {} }
+    var road0 = R.road && S.snap.reroute;
+    var html = '<h3>Turns and actions <button type="button" data-nv="listx">Close</button></h3>' +
+      '<div class="nvact"><button type="button" class="warn" data-nv="avoid"' + (road0 ? "" : " disabled") + ' title="A new route that keeps off the next 2 km of this one">Avoid the road ahead</button>' +
+      '<button type="button" data-nv="back">Back to start (' + E(S.wps[0] ? S.wps[0].L : "A") + ")</button>" +
+      '<button type="button" data-nv="gpx"' + (S.track.length > 1 ? "" : " disabled") + ' title="Your track and marks as a GPX file, saved only when you press this">Save track (GPX)</button></div>' +
+      '<dl class="nvfacts">' + facts + "</dl>" +
+      (S.cps && S.cps.length ? "<h3>Control points</h3><ol>" + S.cps.filter(function (c) { return c.along > a - 10; }).map(function (c) {
+        return '<li><span class="i" style="font:700 12px/30px system-ui;text-align:center">' + E(c.id) + "</span><div><b>" + E(c.what) + "</b><small>" + E(mg(c.p)) + "</small></div><em>" + E(fd(c.along - a)) + "</em></li>"; }).join("") + "</ol>" : "") +
+      "<h3>Turns ahead</h3>" +
       (up.length ? "<ol>" + up.map(function (s) {
         var last = s === R.steps[R.steps.length - 1];
         return '<li><span class="i">' + icon(s) + "</span><div><b>" + E(phrase(s, last)) + "</b><small>" + E(s.k === "arrive" ? "" : road(s)) + "</small></div><em>" + E(fd(s.along - a)) + "</em></li>";
@@ -751,7 +856,7 @@
       var n = upcoming()[0];
       return { on: !!S.on, along: Math.round(S.prog.along), tot: Math.round(S.R.tot), next: n ? { k: n.k, mod: n.mod, along: Math.round(n.along), road: road(n), lanes: n.lanes ? n.lanes.length : 0 } : null,
         offN: S.offN, rerouting: S.rr.busy, rerouted: S.rr.done || 0, rrErr: S.rr.err, arrived: S.arrived, ahead: S.ahead.map(function (w) { return w.L; }), spoken: S.spoken.slice(),
-        follow: S.follow, gl: !!S.gl, glReady: !!S.glReady, lf: !!S.lf, sim: !!S.sim, hz: S.hz.length, prefs: { mute: P.mute, style: P.style, dim: P.dim, up: P.up } };
+        follow: S.follow, night: P.night, avoid: S.avoid.length, marks: S.marks.length, track: S.track.length, gpx: S.gpxN || 0, dest: S.dest, cps: (S.cps || []).length, gl: !!S.gl, glReady: !!S.glReady, lf: !!S.lf, sim: !!S.sim, hz: S.hz.length, prefs: { mute: P.mute, style: P.style, dim: P.dim, up: P.up } };
     }
   };
 })();

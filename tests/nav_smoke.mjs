@@ -30,7 +30,20 @@ const LINE = [...Array.from({ length: 21 }, (_, i) => lerp(A, T, i / 20)), ...Ar
 function len(c) { let m = 0; for (let i = 1; i < c.length; i++) { const dy = (c[i][0] - c[i - 1][0]) * 111320, dx = (c[i][1] - c[i - 1][1]) * 111320 * Math.cos(c[i][0] * Math.PI / 180); m += Math.hypot(dx, dy); } return m; }
 const J = (r, body, status) => r.fulfill({ status: status || 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(body) });
 const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
-const calls = { route: 0, reroute: [] };
+const calls = { route: 0, reroute: [], valhalla: [] };
+function enc6(pts) {
+  let out = "", plat = 0, plon = 0;
+  const one = (v) => { v = v < 0 ? ~(v << 1) : v << 1; let s = ""; while (v >= 0x20) { s += String.fromCharCode((0x20 | (v & 0x1f)) + 63); v >>= 5; } return s + String.fromCharCode(v + 63); };
+  for (const [la, lo] of pts) { const a = Math.round(la * 1e6), b = Math.round(lo * 1e6); out += one(a - plat) + one(b - plon); plat = a; plon = b; }
+  return out;
+}
+function valhallaAnswer(q) {
+  calls.valhalla.push(q);
+  const a = [q.locations[0].lat, q.locations[0].lon], b = [q.locations[q.locations.length - 1].lat, q.locations[q.locations.length - 1].lon];
+  const c = Array.from({ length: 11 }, (_, i) => [a[0] + (b[0] - a[0]) * i / 10, a[1] + (b[1] - a[1]) * i / 10 + Math.sin(i / 10 * Math.PI) * 0.01]), m = len(c);
+  return { trip: { summary: { length: m / 1000, time: m / 13.9 }, legs: [{ shape: enc6(c), summary: { length: m / 1000, time: m / 13.9 },
+    maneuvers: [{ type: 1, instruction: "Drive east.", begin_shape_index: 0, length: m / 1000, time: m / 13.9, street_names: ["Bypass Road"] }, { type: 4, instruction: "You have arrived.", begin_shape_index: 10, length: 0, time: 0 }] }] } };
+}
 
 function osrmAnswer(coords) {
   const pts = coords.split(";").map((x) => x.split(",").map(Number)).map((x) => [x[1], x[0]]);
@@ -44,12 +57,12 @@ function osrmAnswer(coords) {
       { distance: 0, duration: 0, name: "", maneuver: { type: "arrive", location: [B[1], B[0]] }, intersections: [{}] }];
     return { code: "Ok", routes: [{ distance: m, duration: s, geometry: { coordinates: LINE.map((p) => [p[1], p[0]]) }, legs: [{ distance: m, duration: s, steps }] }] };
   }
-  /* a re-route: straight from where the person is to B */
+  /* a re-route: straight from where the person is to the last waypoint asked for */
   calls.reroute.push(pts[0]);
-  const c = Array.from({ length: 11 }, (_, i) => lerp(pts[0], B, i / 10)), m = len(c), s = m / 13.9;
+  const end = pts[pts.length - 1], c = Array.from({ length: 11 }, (_, i) => lerp(pts[0], end, i / 10)), m = len(c), s = m / 13.9;
   return { code: "Ok", routes: [{ distance: m, duration: s, geometry: { coordinates: c.map((p) => [p[1], p[0]]) }, legs: [{ distance: m, duration: s, steps: [
     { distance: m, duration: s, name: "Detour Lane", maneuver: { type: "depart", location: [pts[0][1], pts[0][0]], bearing_after: 180 }, intersections: [{}] },
-    { distance: 0, duration: 0, name: "", maneuver: { type: "arrive", location: [B[1], B[0]] }, intersections: [{}] }] }] }] };
+    { distance: 0, duration: 0, name: "", maneuver: { type: "arrive", location: [end[1], end[0]] }, intersections: [{}] }] }] }] };
 }
 
 async function open(phone) {
@@ -59,6 +72,7 @@ async function open(phone) {
     const u = r.request().url();
     const m = /routing\.openstreetmap\.de\/routed-\w+\/route\/v1\/driving\/([^?]+)/.exec(u);
     if (m) { if (/bearings=/.test(u)) calls.lastUrl = u; return J(r, osrmAnswer(decodeURIComponent(m[1]))); }
+    if (/valhalla1\.openstreetmap\.de\/route/.test(u)) return J(r, valhallaAnswer(JSON.parse(new URL(u).searchParams.get("json"))));
     if (/tiles\.openfreemap\.org\/styles\/liberty/.test(u)) return J(r, { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#e8e4dc" } }, { id: "lbl", type: "symbol", layout: { "text-field": ["get", "name"] }, source: "x" }].slice(0, 1) });
     if (/open-meteo\.com\/v1\/elevation/.test(u)) { const n = new URL(u).searchParams.get("latitude").split(",").length; return J(r, { elevation: Array.from({ length: n }, (_, i) => 20 + i) }); }
     if (/\.(jpg|png)|\/tile\//.test(u)) return r.fulfill({ status: 200, contentType: "image/png", headers: { "access-control-allow-origin": "*" }, body: PNG });
@@ -129,10 +143,37 @@ const fixAt = (p, q, o) => { t0 += (o && o.dt) || 2000; return p.evaluate(({ q, 
   s = await st(p);
   ok(s.arrived && s.spoken.some((x) => /^You have arrived/.test(x)), "arriving at B is announced");
   ok(await p.evaluate(() => /Arrived/.test(document.querySelector("#osnav .nvdist").textContent)), "the banner says Arrived");
+  /* team actions: Mark drops a map point with its time; night mode; avoid the road ahead; back to start; track as GPX */
+  await p.click('#osnav [data-nv="mark"]');
+  const pts = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]"));
+  ok(pts.some((x) => /^Mark \d{4}Z$/.test(x.n) && Math.abs(x.lat - B[0]) < 1e-3), "Mark saves a map point named with the Zulu time (" + pts.map((x) => x.n).join(",") + ")");
+  ok(await p.evaluate(() => /Mark \d{4}Z/.test(document.querySelector("#osnav .nvnotes").textContent) && /47P/.test(document.querySelector("#osnav .nvnotes").textContent)), "the mark's MGRS grid is shown");
+  await p.click('#osnav [data-nv="night"]');
+  ok(await p.evaluate(() => document.getElementById("osnav").classList.contains("night") && /grayscale/.test(getComputedStyle(document.getElementById("osnav")).filter)), "Night mode turns the whole screen dim red");
+  await p.click('#osnav [data-nv="list"]');
+  ok(await p.evaluate(() => { const t = document.querySelector("#osnav .nvsteps").textContent; return /Avoid the road ahead/.test(t) && /Back to start/.test(t) && /Save track/.test(t) && /Straight/.test(t) && /EENT/.test(t); }), "the actions panel: avoid, back to start, save track, grids, straight-line bearing and light");
+  const dl = p.waitForEvent("download", { timeout: 5000 }).catch(() => null);
+  await p.click('#osnav [data-nv="gpx"]');
+  const d = await dl;
+  let gx = ""; if (d) { const fp = await d.path(); gx = (await readFile(fp)).toString(); }
+  ok(d && /\.gpx$/.test(d.suggestedFilename()) && /<trkpt lat="14\.0/.test(gx) && /<wpt [^>]*><name>Mark \d{4}Z<\/name>/.test(gx), "Save track gives a GPX of the track and marks (" + (d ? d.suggestedFilename() : "no download") + ")");
+  await p.click('#osnav [data-nv="back"]');
+  await p.waitForFunction(() => window.OSAP_NAV.state().rerouted >= 2, null, { timeout: 10000 }).catch(() => {});
+  s = await st(p);
+  const lastRe = calls.reroute[calls.reroute.length - 1];
+  ok(s.rerouted >= 2 && /^A/.test(s.dest) && s.ahead.join() === "A" && !s.arrived, "Back to start routes to A from here (" + JSON.stringify({ dest: s.dest, rr: s.rerouted }) + ")");
+  await fixAt(p, [14.0205, 100.5295], { hdg: 270, spd: 10 });
+  await p.click('#osnav [data-nv="list"]'); await p.click('#osnav [data-nv="avoid"]');
+  await p.waitForFunction(() => window.OSAP_NAV.state().rerouted >= 3, null, { timeout: 10000 }).catch(() => {});
+  s = await st(p);
+  const vq = calls.valhalla[calls.valhalla.length - 1];
+  ok(vq && vq.exclude_locations && vq.exclude_locations.length >= 5 && s.avoid >= 5 && s.rerouted >= 3, "Avoid the road ahead asks for a route kept off the next stretch (" + (vq ? vq.exclude_locations.length : 0) + " points)");
+  ok(s.spoken.includes("Finding a way round the road ahead.") && await p.evaluate(() => /Keeping off the road you avoided/.test(document.querySelector("#osnav .nvnotes").textContent)), "and says so");
+  await p.click('#osnav [data-nv="night"]');
   /* preferences: the only thing kept, never a coordinate */
   await p.click('#osnav [data-nv="mute"]'); await p.click('#osnav [data-nv="up"]');
   const pref = await p.evaluate(() => localStorage.getItem("osap-nav-prefs"));
-  ok(/"mute":true/.test(pref) && /"up":"north"/.test(pref) && !/\d+\.\d+/.test(pref), "voice and north-up kept as preferences, no coordinates (" + pref + ")");
+  ok(/"mute":true/.test(pref) && /"up":"north"/.test(pref) && /"night":false/.test(pref) && !/\d+\.\d+/.test(pref), "voice and north-up kept as preferences, no coordinates (" + pref + ")");
   ok(await p.evaluate(() => !Object.keys(localStorage).some((k) => /nav/.test(k) && /14\.0|100\.5/.test(localStorage.getItem(k)))), "no position kept in storage");
   await p.click('#osnav [data-nv="end"]');
   ok(await p.evaluate(() => !document.getElementById("osnav") && !document.documentElement.classList.contains("nav-on") && !window.OSAP_NAV.isOpen()), "End closes navigation");
