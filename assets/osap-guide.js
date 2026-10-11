@@ -97,11 +97,12 @@
         b("Travel by") + ": Drive, Truck, Walk, Cycle or Straight line. Straight line asks for a speed: on foot, vehicle off-road, boat, helicopter, aircraft or your own.",
         "Set " + b("Depart (Zulu)") + " and a stop time at each waypoint to get arrival times.",
         "The result gives distance, time, arrival and up to 3 alternatives, then elevation, light, weather along the route, hazards near the route and turn-by-turn directions.",
+        b("Navigate") + " (or " + b("Go") + " on the phone's route bar) starts turn-by-turn navigation: the map follows you, turned to your direction of travel, with the next turn, its distance and lanes, spoken turns, time left and arrival in Zulu and local time. Leave the route and it finds a new one from where you are. Hazards OSAP holds near the route are called out ahead. " + b("Simulate drive") + " rehearses it without GPS.",
         b("Search this route") + " finds reports within 1 to 25 km of the route. " + b("Comms along route") + " checks phone coverage along it.",
         b("Preview route") + " steps through pictures along the route: street pictures where they exist, otherwise satellite, terrain and map. Filter to critical points, hazards, bridges or support.",
         b("▶ Drive the route from here") + " plays the preview like a drive, at 1× to 8× speed.",
         "Save as GPX, KML or GeoJSON, print it, copy a link or name it and press " + b("Save") + ". Routes stay on this device."]) +
-      tip("Route is a planning aid, not navigation. If road routing does not answer, OSAP shows straight lines and says so.") +
+      tip("Route and Navigate are planning and awareness aids: the road, its signs and local law come first. If road routing does not answer, OSAP shows straight lines and says so; navigation then gives the bearing to the next waypoint.") +
       fig("route", "Route") },
 
     { id: "area", t: "Area, NAI and TAI", h:

@@ -118,6 +118,8 @@ jobs:
       - run: node tests/epe_corridor_smoke.mjs
       - run: node tests/route_api_smoke.mjs
       - run: node tests/route_preview_smoke.mjs
+      # Route > Navigate: turn banner, lanes, voice, re-route, arrival, phone Go button (assets/osap-nav.js)
+      - run: node tests/nav_smoke.mjs
       - run: node tests/dc_smoke.mjs
       - run: node tests/infra_smoke.mjs
       - run: node tests/traffic_smoke.mjs

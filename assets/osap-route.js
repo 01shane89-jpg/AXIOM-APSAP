@@ -98,18 +98,27 @@ function main() {
   }
 
   /* ---------- routing ---------- */
-  function osrm(profile, wps) {
+  /* hd: the direction the person is moving (navigation re-routes), so the new route starts the way they are going */
+  function osrm(profile, wps, hd) {
     var c = wps.map(function (w) { return w.lon.toFixed(6) + "," + w.lat.toFixed(6); }).join(";");
-    return getJSON(HOST.osrm.url + "routed-" + profile + "/route/v1/driving/" + c + "?overview=full&geometries=geojson&steps=true&alternatives=" + (wps.length === 2 ? "3" : "false"), 25000)
+    var br = hd != null && isFinite(hd) ? "&bearings=" + Math.round((hd % 360 + 360) % 360) + ",60" + wps.slice(1).map(function () { return ";"; }).join("") : "";
+    return getJSON(HOST.osrm.url + "routed-" + profile + "/route/v1/driving/" + c + "?overview=full&geometries=geojson&steps=true&alternatives=" + (wps.length === 2 && br === "" ? "3" : "false") + br, 25000)
       .then(function (j) {
         if (!j || j.code !== "Ok" || !j.routes || !j.routes.length) throw new Error((j && (j.message || j.code)) || "no route");
         return j.routes.map(function (r) {
           var steps = [];
-          r.legs.forEach(function (lg, li) { (lg.steps || []).forEach(function (s) { steps.push({ text: osrmText(s, li), m: s.distance, s: s.duration, at: [s.maneuver.location[1], s.maneuver.location[0]], leg: li }); }); });
+          r.legs.forEach(function (lg, li) { (lg.steps || []).forEach(function (s) { steps.push(osrmStep(s, li)); }); });
           return { coords: r.geometry.coordinates.map(function (p) { return [p[1], p[0]]; }), m: r.distance, s: r.duration,
             legs: r.legs.map(function (l) { return { m: l.distance, s: l.duration }; }), steps: steps, src: HOST.osrm, road: true };
         });
       });
+  }
+  /* one router step, with what turn-by-turn navigation (assets/osap-nav.js) needs: the turn's kind and side, a roundabout's exit,
+     the road's name and number, and the lanes before the turn where OpenStreetMap maps them */
+  function osrmStep(s, li) {
+    var m = s.maneuver || {}, x = (s.intersections || [])[0], lanes = x && x.lanes && x.lanes.length ? x.lanes.map(function (l) { return { i: (l.indications || []).slice(0, 4), v: !!l.valid }; }) : null;
+    return { text: osrmText(s, li), m: s.distance, s: s.duration, at: [m.location[1], m.location[0]], leg: li,
+      k: m.type || "", mod: m.modifier || "", ex: m.exit || null, nm: clean(s.name, 80), ref: clean(s.ref, 30), lanes: lanes, ba: m.bearing_after };
   }
   function card8(b) { return ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"][Math.round(((b % 360) + 360) % 360 / 45) % 8]; }
   function osrmText(s, li) {
@@ -136,8 +145,14 @@ function main() {
     }
     return out;
   }
-  function valhalla(costing, wps, extra) {
-    var q = { locations: wps.map(function (w, i) { return { lat: w.lat, lon: w.lon, type: i === 0 || i === wps.length - 1 ? "break" : "through" }; }), costing: costing,
+  /* Valhalla's maneuver type numbers as OSRM's kind and side (the navigation screen reads one form) */
+  var VKIND = { 1: ["depart", ""], 2: ["depart", "right"], 3: ["depart", "left"], 4: ["arrive", ""], 5: ["arrive", "right"], 6: ["arrive", "left"], 7: ["new name", "straight"],
+    8: ["continue", "straight"], 9: ["turn", "slight right"], 10: ["turn", "right"], 11: ["turn", "sharp right"], 12: ["turn", "uturn"], 13: ["turn", "uturn"],
+    14: ["turn", "sharp left"], 15: ["turn", "left"], 16: ["turn", "slight left"], 17: ["on ramp", "straight"], 18: ["on ramp", "right"], 19: ["on ramp", "left"],
+    20: ["off ramp", "right"], 21: ["off ramp", "left"], 22: ["fork", "straight"], 23: ["fork", "right"], 24: ["fork", "left"], 25: ["merge", "straight"],
+    26: ["roundabout", ""], 27: ["exit roundabout", ""], 28: ["notification", "straight"], 29: ["notification", "straight"], 37: ["merge", "right"], 38: ["merge", "left"] };
+  function valhalla(costing, wps, extra, hd) {
+    var q = { locations: wps.map(function (w, i) { var l = { lat: w.lat, lon: w.lon, type: i === 0 || i === wps.length - 1 ? "break" : "through" }; if (!i && hd != null && isFinite(hd)) { l.heading = Math.round((hd % 360 + 360) % 360); l.heading_tolerance = 60; } return l; }), costing: costing,
       units: "kilometers", alternates: wps.length === 2 ? 2 : 0, directions_options: { units: "kilometers", language: "en-US" } };
     if (extra) Object.keys(extra).forEach(function (k) { q[k] = extra[k]; });
     return getJSON(HOST.valhalla.url + "route?json=" + encodeURIComponent(JSON.stringify(q)), 25000).then(function (j) {
@@ -147,7 +162,11 @@ function main() {
         var coords = [], steps = [];
         tr.legs.forEach(function (lg, li) {
           var sh = poly6(lg.shape || ""); coords = coords.concat(coords.length ? sh.slice(1) : sh);
-          (lg.maneuvers || []).forEach(function (mv) { var p = sh[mv.begin_shape_index] || sh[0]; steps.push({ text: mv.instruction || "", m: (mv.length || 0) * 1000, s: mv.time || 0, at: p, leg: li }); });
+          (lg.maneuvers || []).forEach(function (mv) {
+            var p = sh[mv.begin_shape_index] || sh[0], kt = VKIND[mv.type] || ["turn", ""];
+            steps.push({ text: mv.instruction || "", m: (mv.length || 0) * 1000, s: mv.time || 0, at: p, leg: li, k: kt[0], mod: kt[1], ex: mv.roundabout_exit_count || null,
+              nm: clean((mv.street_names || [])[0], 80), ref: "", lanes: null, say: clean(mv.verbal_pre_transition_instruction, 200) });
+          });
         });
         return { coords: coords, m: tr.summary.length * 1000, s: tr.summary.time, legs: tr.legs.map(function (l) { return { m: l.summary.length * 1000, s: l.summary.time }; }),
           steps: steps, src: HOST.valhalla, road: true };
@@ -163,12 +182,12 @@ function main() {
     }
     return { coords: coords, m: m, s: m / (kmh / 3.6), legs: legs, steps: [], src: null, road: false, kmh: kmh };
   }
-  function roadRoutes(mode, wps) {
+  function roadRoutes(mode, wps, hd) {
     var o = { car: ["car", "auto"], truck: [null, "truck"], foot: ["foot", "pedestrian"], bike: ["bike", "bicycle"] }[mode];
-    var first = o[0] ? osrm(o[0], wps) : valhalla(o[1], wps);
+    var first = o[0] ? osrm(o[0], wps, hd) : valhalla(o[1], wps, null, hd);
     return first.catch(function (e1) {
       if (!o[0]) throw e1;
-      return valhalla(o[1], wps).then(function (r) { r.forEach(function (x) { x.note = "OSRM did not answer (" + e1.message + "); routed by Valhalla."; }); return r; },
+      return valhalla(o[1], wps, null, hd).then(function (r) { r.forEach(function (x) { x.note = "OSRM did not answer (" + e1.message + "); routed by Valhalla."; }); return r; },
         function (e2) { throw new Error("OSRM: " + e1.message + "; Valhalla: " + e2.message); });
     });
   }
@@ -364,6 +383,7 @@ function main() {
     else if (k === "search") search();
     else if (k === "evac") evPlan();
     else if (k === "preview") preview(b);
+    else if (k === "nav") navigate(b);
     else if (k === "comms") { /* Comms planning > Coverage checks phone and data coverage segment by segment along this route */
       W.OSAP_COMMSPLAN_WANT = "route";
       if (W.OSAP_COMMSPLAN && D.documentElement.getAttribute("data-view") === "comms") { W.OSAP_COMMSPLAN_WANT = null; W.OSAP_COMMSPLAN.routeCorridor(); }
@@ -459,11 +479,22 @@ function main() {
     if (!timeOnly || !S.elev) elevation(); else profUi();
     weather(); hazards();
   }
+  /* on a phone the folded sheet's bar carries a Go button, so navigation starts with the map in full view (Google and Apple put Start there too) */
+  function goBtn(on) {
+    var h = el("rail-handle"), b = el("rt-hgo");
+    if (!on || !h) { if (b) b.remove(); return; }
+    if (b) return;
+    b = D.createElement("button"); b.type = "button"; b.id = "rt-hgo"; b.textContent = "Go"; b.title = "Start turn-by-turn navigation along this route";
+    ["pointerdown", "touchstart", "mousedown"].forEach(function (t) { b.addEventListener(t, function (e) { e.stopPropagation(); }); });
+    b.addEventListener("click", function (e) { e.stopPropagation(); if (isRoute()) navigate(b); });
+    h.insertBefore(b, h.querySelector(".chev"));
+  }
   function sumUi() {
     var box = el("rt-sum"), alt = el("rt-alt"), lg = el("rt-legs"); if (!box) return;
     /* on a phone the folded bottom sheet shows this one line, so the route can be read with the map in full view */
     var res = el("rt-res");
     function note(t) { if (res) res.setAttribute("data-sheet-note", t); }
+    goBtn(!S.busy && S.routes.length > 0);
     if (S.busy) { note("Planning the route…"); box.innerHTML = '<p class="obs">Planning the route…</p>'; alt.innerHTML = lg.innerHTML = ""; return; }
     if (!S.routes.length) { note(S.wps.length ? "Tap the map to add the next waypoint" : "Tap the map to add waypoints"); box.innerHTML = S.wps.length ? '<p class="obs">Add one more waypoint to plan a route.</p>' : ""; alt.innerHTML = lg.innerHTML = ""; return; }
     var r = prep(S.routes[S.sel]), dep = departMs(), arr = dep + r.total * 1000;
@@ -472,7 +503,7 @@ function main() {
       '<div class="rtkpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.total)) + "</b><span>time" + (S.stopMin && S.wps.length > 2 ? " with stops" : "") + "</span></div>" +
       "<div><b>" + E(zOnly(arr)) + "</b><span>arrive</span></div></div>" +
       '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : r.xc ? "Cross-country estimate at off-path walking pace (about 3 km/h on the flat), slowed by slope and seasonal water, with no time for water crossings; averages " + r.kmh + " km/h without rests." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>" +
-      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button><button type="button" data-rt="preview" title="Step through the route with street-level pictures where they exist, satellite, terrain or map where not">Preview route</button><button type="button" data-rt="comms" title="Phone and data coverage segment by segment along this route, in Comms planning">Comms along route</button></div>';
+      '<div class="rtbtns"><button type="button" data-rt="nav" class="rtgo rtnavgo" title="Turn-by-turn navigation along this route from where you are: follows you, speaks the turns and re-routes if you leave the route">Navigate</button><button type="button" data-rt="search" class="rtgo">Search this route</button><button type="button" data-rt="preview" title="Step through the route with street-level pictures where they exist, satellite, terrain or map where not">Preview route</button><button type="button" data-rt="comms" title="Phone and data coverage segment by segment along this route, in Comms planning">Comms along route</button></div>';
     alt.innerHTML = S.routes.length > 1 ? '<div class="rtalts">' + S.routes.map(function (x, i) {
       return '<button type="button" data-alt="' + i + '" aria-pressed="' + (i === S.sel) + '"><b>' + E(x.label || (i ? "Alternative " + i : "Fastest")) + "</b> " + E(dist(x.m)) + " · " + E(dur(x.s)) + "</button>";
     }).join("") + "</div>" : "";
@@ -1280,6 +1311,43 @@ function main() {
       .then(function () { if (b) b.disabled = false; });
   }
 
+  /* ---------- navigate: turn-by-turn along the planned route (assets/osap-nav.js, loaded the first time) ---------- */
+  var nvWait = null;
+  function nvLoad() {
+    if (W.OSAP_NAV) return Promise.resolve(W.OSAP_NAV);
+    if (nvWait) return nvWait;
+    nvWait = new Promise(function (res, rej) {
+      var sc = document.createElement("script"); sc.src = "assets/osap-nav.js";
+      sc.onload = function () { if (W.OSAP_NAV) res(W.OSAP_NAV); else { nvWait = null; rej(new Error("navigation did not start")); } };
+      sc.onerror = function () { nvWait = null; sc.remove(); rej(new Error("navigation could not load. Check the connection")); };
+      document.head.appendChild(sc);
+    });
+    return nvWait;
+  }
+  /* the phone only lets a page speak, or read the compass, from inside a tap: both are asked for here, before anything loads */
+  function navGesture() {
+    var g = {};
+    try { if (W.speechSynthesis && W.SpeechSynthesisUtterance) { var u = new SpeechSynthesisUtterance(" "); u.volume = 0; W.speechSynthesis.speak(u); g.speech = true; } } catch (e) {}
+    try { var DOE = W.DeviceOrientationEvent; if (DOE && typeof DOE.requestPermission === "function") g.compass = DOE.requestPermission().catch(function () { return "denied"; }); } catch (e) {}
+    return g;
+  }
+  function navigate(b) {
+    var snap = pvSnap(); if (!snap) { msg("Plan a route first, then navigate it."); return; }
+    var g = navGesture(), mode = S.mode;
+    snap.gesture = g;
+    /* leaving the route: a fresh route from where the person is, through the waypoints still ahead, by the same means of travel */
+    snap.reroute = function (from, ahead, hd) {
+      var w = [{ lat: from[0], lon: from[1] }].concat(ahead.map(function (x) { return { lat: x.lat, lon: x.lon, name: x.name || "" }; }));
+      if (mode === "line" || !snap.r.road) return Promise.reject(new Error("straight-line routes are not re-routed"));
+      /* moving fast enough to have a direction: start the new route that way (a walker can turn on the spot) */
+      return roadRoutes(mode, w, mode === "foot" ? null : hd).then(function (rs) { var x = rs[0]; return { coords: x.coords, m: x.m, s: x.s, legs: x.legs, steps: x.steps, src: x.src ? x.src.name : "", road: true }; });
+    };
+    snap.src = (S.routes[S.sel].src || {}).name || "";
+    if (b) b.disabled = true;
+    nvLoad().then(function (N) { N.open(snap); }, function (e) { msg("Navigation: " + e.message + "."); })
+      .then(function () { if (b) b.disabled = false; });
+  }
+
   /* ---------- search this route: one brief of everything along it ---------- */
   /* the corridor test: nearest point of the route to (lat, lon) when it lies within buf metres, else null */
   function corridor(r, bufM) {
@@ -1666,6 +1734,8 @@ function main() {
     ".rtv{background:none;border:0}.rtv span{display:block;width:22px;height:22px;border-radius:50%;background:#1c7ed6;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.45);color:#fff;font:700 11.5px/22px system-ui,sans-serif;text-align:center;cursor:grab}" +
     ".rtv.s span{background:#2b8a3e}.rtv.e span{background:#c92a2a}" +
     ".rtpb{display:flex;gap:4px;margin-top:6px}.rtpb button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:#c92a2a;border-radius:4px;padding:4px 10px;min-height:32px;cursor:pointer}" +
+    "#rt-hgo{display:none}html.phone[data-view=route] #rt-hgo{display:block;flex:none;margin-left:8px;min-width:64px;height:40px;border-radius:20px;border:none;background:#1a73e8;color:#fff;font-weight:700;font-size:16px;letter-spacing:.02em;box-shadow:0 1px 4px rgba(0,0,0,.35)}" +
+    ".rtbtns button.rtnavgo{background:#1a73e8;border-color:#1a73e8;color:#fff}" +
     ".rtbtns button.rtgo,.rtrow button.rtgo{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}ul.rtgl{list-style:none;margin:6px 0;padding:0}" +
     "ul.rtgl li{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:6px;align-items:start;padding:5px 0;border-top:1px solid var(--line-soft,var(--line));font-size:12.5px;line-height:1.35}" +
     "ul.rtgl li>b{font-size:11.5px;color:var(--muted);font-weight:600}ul.rtgl li button{font:inherit;font-size:11.5px;border:1px solid var(--line);background:none;color:var(--accent);border-radius:3px;padding:1px 6px;cursor:pointer}" +
@@ -1696,7 +1766,7 @@ function main() {
   W.OSAP_ROUTETAB = { show: show, seed: function (pts) { if (S.ctx) { S.wps = cleanWps(pts.map(function (p) { return { lat: p[0], lon: p[1] }; })); changed(); fit(); } },
     route: function () { var r = S.routes[S.sel]; return r ? { coords: r.coords.slice(), xc: !!r.xc, road: !!r.road, water: (r.water || []).slice(), m: r.m, s: r.s } : null; },
     state: function () { return { token: S.token, wps: S.wps.slice(), mode: S.mode, routes: S.routes.length, sel: S.sel, err: S.err, busy: S.busy, haz: S.haz && S.haz.hits.length, elev: !!S.elev, wx: !!S.wx }; },
-    hosts: HOST, preview: function () { preview(null); },
+    hosts: HOST, preview: function () { preview(null); }, navigate: function () { navigate(null); },
     /* the evacuation engine for the evacuation planner (assets/osap-epe.js): evRun(to, start, o) -> { opts, nCand, notes };
        evShow(plan in the kept shape) opens one line here with its checkpoints */
     evRun: evRun, evShow: function (k) { if (S.ctx) evShow(k); }, evKinds: EV_KINDS, evR: EV_R,
