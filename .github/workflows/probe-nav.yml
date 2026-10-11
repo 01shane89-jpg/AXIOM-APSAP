@@ -1,0 +1,14 @@
+# Test only (branch claude/nav-probe): turn, lane and speed-limit data from the keyless routers. Prints to the log.
+name: Probe nav data
+on:
+  push:
+    branches: [claude/nav-probe]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_nav.sh 2>&1 | tee probe.txt; python3 -c "import sys;t=open('probe.txt').read();[print('::notice::'+t[i:i+3900].replace('%','%25').replace('\n','%0A')) for i in range(0,min(len(t),39000),3900)]"
