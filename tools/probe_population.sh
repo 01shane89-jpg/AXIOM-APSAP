@@ -14,37 +14,41 @@ try:
 except Exception as e: print('not image', open('/tmp/b','rb').read(300))
 PY
 }
-echo "##### GIBS 3857 capabilities"
-curl -sS -m 60 "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml" -o /tmp/g.xml; ls -la /tmp/g.xml
+echo "##### GIBS GPW tiles (z/y/x over Bangkok, Java, Europe)"
+for L in GPW_Population_Density_2020; do
+  for d in default 2020-01-01; do
+    for t in "5/14/25" "7/57/99" "7/66/104" "4/5/8"; do
+      hit "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/$L/default/$d/GoogleMapsCompatible_Level7/$t.png"; px
+    done
+  done
+done
+echo "##### GIBS GPW colormap legend"
+curl -sS -m 30 "https://gibs.earthdata.nasa.gov/colormaps/v1.3/GPW_Population_Density_2020.xml" -o /tmp/c.xml
+python3 - <<'PY'
+import re
+x=open('/tmp/c.xml').read()
+for m in re.finditer(r'<ColorMapEntry rgb="([^"]*)"[^>]*value="([^"]*)"',x): print(m.group(1), m.group(2))
+for m in re.finditer(r'<LegendEntry[^>]*>',x): print(m.group(0))
+PY
+grep -A12 "GPW_Population_Density_2020</ows:Identifier>" /tmp/g.xml 2>/dev/null | head -5
+curl -sS -m 60 "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml" -o /tmp/g.xml
 python3 - <<'PY'
 import re
 x=open('/tmp/g.xml',encoding='utf-8',errors='ignore').read()
-for m in re.finditer(r'<Layer>(.*?)</Layer>', x, re.S):
-    b=m.group(1); i=re.search(r'<ows:Identifier>([^<]*)',b).group(1)
-    if re.search(r'pop|gpw|settle|urban|ghs', i, re.I):
-        tms=re.findall(r'<TileMatrixSet>([^<]*)',b); fmt=re.findall(r'<Format>([^<]*)',b); dims=re.findall(r'<Value>([^<]*)',b)[:6]
-        meta=re.findall(r'xlink:href="([^"]*)"',b)[:4]
-        print(i, tms, fmt, dims, meta)
+i=x.find('GPW_Population_Density_2020</ows:Identifier>'); s=x.rfind('<Layer>',0,i); e=x.find('</Layer>',i); print(x[s:e][:3000])
 PY
-for L in GPW_Population_Density_2020 GPW_Population_Density_2015 GPW_Population_Density_2000; do
-  for t in "3/6/3" "5/26/14" "7/108/57"; do
-    hit "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/$L/default/default/GoogleMapsCompatible_Level7/$t.png"; px
-  done
+echo "##### GHSL POP WMS (jeodpp)"
+G="https://jeodpp.jrc.ec.europa.eu/jeodpp/services/ows/wms/landcover/ghsl"
+curl -sS -m 60 "$G?service=WMS&request=GetCapabilities" -o /tmp/gh.xml
+python3 - <<'PY'
+import re
+x=open('/tmp/gh.xml',encoding='utf-8',errors='ignore').read()
+print(re.findall(r'<CRS>[^<]*</CRS>|<SRS>[^<]*</SRS>',x)[:12])
+for n in ['POP.GHS_POP_E2015_GLOBE_R2019A_54009_250_V1_0','LC.GHS_SMOD_POP2015_GLOBE_R2019A_54009_1K_V1_0']:
+    i=x.find('<Name>'+n); s=x.rfind('<Layer',0,i); e=x.find('</Layer>',i); print(x[s:e][:2500])
+PY
+for B in "11163000,1447000,11241000,1525000" "10018754,0,12523442,2504688"; do
+  hit "$G?service=WMS&request=GetMap&version=1.3.0&layers=POP.GHS_POP_E2015_GLOBE_R2019A_54009_250_V1_0&styles=&crs=EPSG:3857&bbox=$B&width=256&height=256&format=image/png&transparent=true"; px
 done
-for c in GPW_Population_Density GPW_Population_Density_2020; do hit "https://gibs.earthdata.nasa.gov/colormaps/v1.3/$c.xml"; head -c 4000 /tmp/b; echo; done
-hit "https://gibs.earthdata.nasa.gov/legends/GPW_Population_Density_H.svg"; head -c 600 /tmp/b; echo
-echo "##### SEDAC"
-hit "https://sedac.ciesin.columbia.edu/geoserver/wms?service=WMS&request=GetCapabilities&version=1.3.0"; grep -o "<Name>[^<]*pop[^<]*</Name>" /tmp/b | head -20
-echo "##### WorldPop"
-hit "https://ogc.worldpop.org/geoserver/ows?service=WMS&request=GetCapabilities"; grep -o "<Name>[^<]*</Name>" /tmp/b | head -40
-hit "https://ogc.worldpop.org/geoserver/wms?service=WMS&request=GetCapabilities"; grep -o "<Name>[^<]*</Name>" /tmp/b | head -40
-echo "##### GHSL / JRC"
-hit "https://ghsl.jrc.ec.europa.eu/ghsl_wms.php?service=WMS&request=GetCapabilities"; head -c 800 /tmp/b; echo
-hit "https://jeodpp.jrc.ec.europa.eu/jeodpp/services/ows/wms/landcover/ghsl?service=WMS&request=GetCapabilities"; grep -o "<Name>[^<]*</Name>" /tmp/b | head -40
-hit "https://jeodpp.jrc.ec.europa.eu/jeodpp/services/ows/wms/ghsl?service=WMS&request=GetCapabilities"; grep -o "<Name>[^<]*</Name>" /tmp/b | head -40
-echo "##### Esri living atlas"
-hit "https://landscape6.arcgis.com/arcgis/rest/services/World_Population_Density_Estimate_2016/ImageServer?f=json"; head -c 600 /tmp/b; echo
-hit "https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/World_Population_Density_Estimate_2016/MapServer?f=json"; head -c 600 /tmp/b; echo
-echo "##### Kontur"
-hit "https://disaster.ninja/active/api/tiles/bivariate/v1/3/6/3.mvt"; head -c 200 /tmp/b | xxd | head -3
-hit "https://apps.kontur.io/active/api/tiles/bivariate/v1/3/6/3.mvt"; head -c 200 /tmp/b | xxd | head -3
+hit "$G?service=WMS&request=GetLegendGraphic&version=1.3.0&format=image/png&layer=POP.GHS_POP_E2015_GLOBE_R2019A_54009_250_V1_0"; px
+exit 0
