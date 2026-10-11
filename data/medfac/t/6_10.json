@@ -19,5 +19,6 @@
 ["w556877215",6.2228,10.30596,"cm",{"name":"St. Martin de Porres Catholic Mission Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w557011332",6.74996,11.83056,"cm",{"name":"Baptist Hospital Banyo","amenity":"hospital","healthcare":"hospital","website":"https://www.cbchealthservices.org/html/banyo.html"}],
 ["w557816045",6.16411,10.29068,"cm",{"name":"Mbingo Baptist Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"dentistry;eyes;surgery;physiatry","website":"https://www.cbchealthservices.org/html/mbing.html"}],
+["w872346494",6.71561,11.24829,"ng",{"amenity":"hospital","healthcare":"hospital"}],
 ["w936369093",6.03466,10.12134,"cm",{"aeroway":"helipad","surface":"asphalt"}],
 ["w936369094",6.03434,10.12111,"cm",{"aeroway":"helipad","surface":"asphalt"}]]
