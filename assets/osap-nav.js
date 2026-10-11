@@ -230,7 +230,7 @@
       "#osnav .nvspd{position:absolute;left:calc(10px + env(safe-area-inset-left));bottom:calc(96px + env(safe-area-inset-bottom));z-index:3;width:64px;height:64px;border-radius:32px;background:#fff;color:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.45)}" +
       "#osnav .nvspd b{font:700 24px/1 system-ui,sans-serif}#osnav .nvspd span{font-size:11px;color:#444}" +
       "#osnav .nvwhere{position:absolute;left:84px;right:84px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:3;display:flex;justify-content:center;pointer-events:none}" +
-      "#osnav .nvwhere span{display:flex;flex-direction:column;align-items:center;background:rgba(29,35,43,.92);border-radius:14px;padding:5px 12px;font-size:13.5px;max-width:100%;box-shadow:0 2px 6px rgba(0,0,0,.35)}" +
+      "#osnav .nvwhere span{display:flex;flex-direction:column;align-items:center;background:rgba(29,35,43,.94);border-radius:14px;padding:6px 14px;font-size:16px;max-width:100%;box-shadow:0 2px 6px rgba(0,0,0,.35)}" +
       "#osnav .nvwhere span>*{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#osnav .nvwhere small{font:12px 'IBM Plex Mono',ui-monospace,monospace;opacity:.85}" +
       "#osnav .nvbar{position:absolute;left:0;right:0;bottom:0;z-index:4;background:#1d232b;border-top:1px solid #333b45;display:flex;align-items:center;gap:10px;padding:10px calc(12px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left))}" +
       "#osnav .nvbar .nvend{background:#c92a2a;font-size:22px}#osnav .nvbar .nvlist{background:#333b45}" +
@@ -594,14 +594,63 @@
     el.querySelector(".nveta span").textContent = S.arrived ? clock(S.arrT || now()) : fd(dl) + " · arrive " + clock(now() + left * 1000);
     var v = S.last && S.last.spd, sp = el.querySelector(".nvspd b");
     sp.textContent = v == null || !S.fixes ? "–" : String(Math.round(v * (metric() ? 3.6 : 2.23694)));
-    /* the road you are on, and the MGRS grid where you are */
-    var cur = null; for (var i = 0; i < R.steps.length; i++) { if (R.steps[i].along <= a + 3) cur = R.steps[i]; else break; }
-    var here = S.last ? [S.last.lat, S.last.lon] : null, grid = here && G && G.mgrs ? G.mgrs(here[0], here[1], 4) : "";
-    var wsp = el.querySelector(".nvwhere span"), wtxt = (S.on && cur && road(cur) ? "<b>" + E(road(cur)) + "</b>" : "") + (grid ? '<small title="MGRS grid where you are">' + E(grid) + "</small>" : "");
-    if (wsp.innerHTML !== wtxt) wsp.innerHTML = wtxt;
-    wsp.style.display = wtxt ? "" : "none";
+    whereUi();
     el.querySelector(".nvrec").hidden = S.follow;
     if (!el.querySelector(".nvsteps").hidden) listUi();
+  }
+  /* the heads-up line: "Heading north on Sukhumvit Road (3)", with the exact heading and the MGRS grid under it.
+     Redrawn four times a second from the smoothed arrow, so it changes the moment a turn is made. The road is the map's
+     English name for the road under you where the Streets map has it, else the router's name as signed, else none. */
+  var CARD = ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"];
+  function whereUi() {
+    if (!S || !S.el) return;
+    var wsp = S.el.querySelector(".nvwhere span"); if (!wsp) return;
+    var pos = S.disp ? S.disp.p : S.last ? [S.last.lat, S.last.lon] : null, html = "";
+    if (pos && S.fixes) {
+      var h = S.disp ? S.disp.h : S.hd, v = S.last && S.last.spd || 0, moving = v > 0.8 || S.sim;
+      var rd = roadHere(pos, h), dir = CARD[Math.round(((h % 360) + 360) % 360 / 45) % 8];
+      var grid = G && G.mgrs ? G.mgrs(pos[0], pos[1], 4) : "";
+      html = "<b>" + (moving ? "Heading " + dir : "Stopped, facing " + dir) + (rd ? " on " + E(rd) : "") + "</b>" +
+        '<small title="Heading (true) and the MGRS grid where you are">' + ("00" + Math.round(((h % 360) + 360) % 360) % 360).slice(-3) + "°" + (grid ? " · " + E(grid) : "") + "</small>";
+    }
+    if (wsp.innerHTML !== html) wsp.innerHTML = html;
+    wsp.style.display = html ? "" : "none";
+  }
+  function roadHere(pos, h) {
+    var t = performance.now();
+    if (S.rdC && t - S.rdC.t < 900 && hav(S.rdC.p, pos) < 15) return S.rdC.name;
+    var name = mapRoad(pos, h);
+    if (!name && S.on) { var R = S.R, a = S.prog.along, cur = null; for (var i = 0; i < R.steps.length; i++) { if (R.steps[i].along <= a + 3) cur = R.steps[i]; else break; } name = cur ? road(cur) : ""; }
+    S.rdC = { t: t, p: pos.slice(), name: name };
+    return name;
+  }
+  /* the nearest named road on the Streets map within 25 m, running the way you are going (either direction along it) */
+  function mapRoad(pos, h) {
+    if (!S.gl || !S.glReady || P.style !== "streets") return "";
+    var src = S.vsrc;
+    if (src === undefined) { src = null; try { var ss = S.gl.getStyle().sources; for (var k in ss) if (ss[k].type === "vector") { src = k; break; } } catch (e) {} S.vsrc = src; }
+    if (!src) return "";
+    var fs; try { fs = S.gl.querySourceFeatures(src, { sourceLayer: "transportation_name" }); } catch (e) { return ""; }
+    var cl = Math.cos(pos[0] * D2R), k = 111320, best = null;
+    for (var i = 0; i < fs.length && i < 4000; i++) {
+      var f = fs[i], pr = f.properties || {}, nm = pr["name:en"] || pr.name_en || pr["name:latin"] || pr.name || "";
+      if (!nm) continue;
+      var g = f.geometry, lines = g.type === "LineString" ? [g.coordinates] : g.type === "MultiLineString" ? g.coordinates : [];
+      for (var j = 0; j < lines.length; j++) {
+        var L = lines[j];
+        for (var q = 0; q < L.length - 1; q++) {
+          var ax = wrap(L[q][0] - pos[1]) * cl * k, ay = (L[q][1] - pos[0]) * k, bx = wrap(L[q + 1][0] - pos[1]) * cl * k, by = (L[q + 1][1] - pos[0]) * k;
+          if ((ax > 60 && bx > 60) || (ax < -60 && bx < -60) || (ay > 60 && by > 60) || (ay < -60 && by < -60)) continue;
+          var dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy, fr = L2 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / L2)) : 0;
+          var x = ax + fr * dx, y = ay + fr * dy, d = Math.sqrt(x * x + y * y);
+          if (d > 25 || (best && d >= best.d)) continue;
+          var sb = (Math.atan2(dx, dy) * R2D + 360) % 360, diff = Math.abs(sdiff(sb, h)); if (diff > 90) diff = 180 - diff;
+          if (diff > 35) continue;
+          best = { d: d, nm: nm, ref: pr.ref || "" };
+        }
+      }
+    }
+    return best ? clean(best.nm + (best.ref && String(best.nm).indexOf(best.ref) < 0 ? " (" + best.ref + ")" : ""), 90) : "";
   }
   function sideUi() {
     var el = S.el;
@@ -804,6 +853,7 @@
       /* the travelled line ends under the arrow, not ahead of it */
       S.dispA = A.toA < A.from.a ? A.toA : A.from.a + (A.toA - A.from.a) * f;
     }
+    if (S.disp && t - (S.whT || 0) > 250) { S.whT = t; whereUi(); }
     if (!S.gl || !S.glReady || !S.disp) return;
     if (S.puck) { S.puck.setLngLat(ll(S.disp.p)); S.puck.setRotation(S.disp.h); S.puck.getElement().classList.toggle("stale", !!(S.last && now() - S.last.t > 15000 && !S.sim)); }
     if (S.follow) {
