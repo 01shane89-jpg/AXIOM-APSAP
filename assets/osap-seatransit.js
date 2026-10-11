@@ -109,7 +109,53 @@
     }
     return out;
   }
-  var core = { nm: nm, gcAt: gcAt, dest: dest, ring: ring, densify: densify, line: line, nearest: nearest, assess: assess, segments: segments, R_NM: R_NM, DEF: DEF };
+  /* hourly forecast series: times ["2026-10-10T12:00", ...] in UTC, vals numbers or null.
+     at(t): the value in the hour holding t, or null outside the series; worst(t0, hours): the largest value from t0 for that many hours */
+  function hourIdx(times, t) {
+    if (!times || !times.length) return -1;
+    var t0 = Date.parse(times[0] + "Z"), i = Math.floor((t - t0) / 3600000);
+    return i >= 0 && i < times.length ? i : -1;
+  }
+  function wxAt(times, vals, t) { var i = hourIdx(times, t); return i < 0 || !vals || vals[i] == null ? null : vals[i]; }
+  function wxWorst(times, vals, t0, hours) {
+    if (!times || !times.length || !vals) return null;
+    var i0 = hourIdx(times, t0), m = null, mi = -1;
+    if (i0 < 0) { if (t0 < Date.parse(times[0] + "Z")) i0 = 0; else return null; }
+    for (var i = i0; i < Math.min(times.length, i0 + hours); i++) if (vals[i] != null && (m === null || vals[i] > m)) { m = vals[i]; mi = i; }
+    return m === null ? null : { v: m, t: Date.parse(times[mi] + "Z") };
+  }
+  /* OSAP planning flags, never vessel, aircraft or hoist limits */
+  function wxFlags(w) {
+    var f = [];
+    if (w.hs != null && w.hs >= 4) f.push("very rough sea (4 m or more): boat transfer and hoist work likely limited");
+    else if (w.hs != null && w.hs >= 2.5) f.push("rough sea (2.5 m or more): small-boat transfer and deck work hard");
+    if (w.gust != null && w.gust >= 34) f.push("gale-force gusts (34 kn or more)");
+    if (w.vis != null && w.vis < 1000) f.push("poor visibility (under 1 km)");
+    return f;
+  }
+  function brg(a, b) {
+    var p1 = a[0] * RAD, p2 = b[0] * RAD, dl = wrap(b[1] - a[1]) * RAD;
+    return Math.atan2(Math.sin(dl) * Math.cos(p2), Math.cos(p1) * Math.sin(p2) - Math.sin(p1) * Math.cos(p2) * Math.cos(dl)) / RAD;
+  }
+  /* a logged position against the corridor: the nearest leg, NM along the corridor from the start, NM off it
+     (cross-track, + right of the leg's direction, - left), and NM still to go */
+  function track(wps, p) {
+    var best = null, cum = 0, tot = 0, i;
+    for (i = 0; i + 1 < wps.length; i++) tot += nm([wps[i].lat, wps[i].lon], [wps[i + 1].lat, wps[i + 1].lon]);
+    for (i = 0; i + 1 < wps.length; i++) {
+      var A = [wps[i].lat, wps[i].lon], B = [wps[i + 1].lat, wps[i + 1].lon], L = nm(A, B), d13 = nm(A, p) / R_NM;
+      var xt = Math.asin(Math.max(-1, Math.min(1, Math.sin(d13) * Math.sin((brg(A, p) - brg(A, B)) * RAD))));
+      var at = Math.acos(Math.max(-1, Math.min(1, Math.cos(d13) / Math.cos(xt)))) * R_NM;
+      if (Math.cos((brg(A, p) - brg(A, B)) * RAD) < 0) at = -at;
+      var off, along;
+      if (at < 0) { along = 0; off = nm(A, p); } else if (at > L) { along = L; off = nm(B, p); } else { along = at; off = Math.abs(xt * R_NM); }
+      if (!best || off < best.off) best = { leg: i, along: cum + along, off: off, xtd: xt * R_NM, total: tot };
+      cum += L;
+    }
+    if (best) best.togo = Math.max(0, best.total - best.along);
+    return best;
+  }
+  var core = { nm: nm, gcAt: gcAt, dest: dest, ring: ring, densify: densify, line: line, nearest: nearest, assess: assess, segments: segments, wxAt: wxAt, wxWorst: wxWorst, wxFlags: wxFlags, brg: brg, track: track, R_NM: R_NM, DEF: DEF };
   if (!D) { W.OSAP_SEATRANSIT = { core: core }; return; }
 
   /* ---------- helpers ---------- */
@@ -144,7 +190,7 @@
     { n: "Manila Bay", lat: 14.50, lon: 120.75 }, { n: "South China Sea", lat: 6.50, lon: 111.00 }, { n: "Singapore approaches", lat: 1.15, lon: 104.45 },
     { n: "Southern Malacca", lat: 2.30, lon: 101.90 }, { n: "Northern Malacca", lat: 5.50, lon: 98.00 }, { n: "Western strait exit", lat: 6.20, lon: 95.50 },
     { n: "Open ocean reference", lat: 5.80, lon: 90.00 }, { n: "Sri Lanka south approach", lat: 5.70, lon: 84.00 }, { n: "Colombo", lat: 6.95, lon: 79.80 }];
-  function blank() { return { wps: [], kn: DEF.kn, dep: "", step: DEF.step, remH: DEF.remH, remP: DEF.remP, f: {}, rings: [] }; }
+  function blank() { return { wps: [], kn: DEF.kn, dep: "", step: DEF.step, remH: DEF.remH, remP: DEF.remP, f: {}, rings: [], log: [], st: [], cas: {} }; }
   var P = (function () { var p = lsGet(KEY, null); return p && Array.isArray(p.wps) ? Object.assign(blank(), p) : blank(); })();
   function save() { lsSet(KEY, P); }
   function num(k) { var v = +P[k]; return isFinite(v) && v > 0 && v < 100000 ? v : DEF[k]; }
@@ -241,13 +287,150 @@
       var used = {};
       rows.forEach(function (row) { ["ports", "hosp", "osm", "af"].forEach(function (k) { var x = row[k]; if (!x) return; var id = x.node.id; if (!used[id] || used[id].nm > x.nm) used[id] = { node: x.node, nm: x.nm, at: row.pt.nm }; }); });
       var nodes = Object.keys(used).map(function (k) { return used[k]; }).sort(function (a, b) { return a.at - b.at; });
-      S.res = { at: Date.now(), pts: pts, rows: rows, segs: segs, nodes: nodes, rcc: rcc, rccGap: rccGap, rccDoc: r[5], ccNames: ccNames, osmAt: r[4].at || "", errs: errs.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6),
+      S.res = { at: Date.now(), pts: pts, rows: rows, segs: segs, nodes: nodes, rcc: rcc, rccGap: rccGap, hospAll: hosp, rccDoc: r[5], ccNames: ccNames, osmAt: r[4].at || "", errs: errs.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6),
         counts: { ports: sets.ports.length, hosp: hosp.length, osm: r[4].H.length, af: af.length }, opts: { kn: num("kn"), dep: depMs(), step: num("step"), remH: num("remH"), remP: num("remP"), rwy: num("rwy") } };
       S.busy = false; S.msg = ""; render(); draw(); fit();
+      var res = S.res;
+      wxLoad(res).then(function (wx) { if (!live() || S.res !== res) return; res.wx = wx; render(); }, function () { if (!live() || S.res !== res) return; res.wx = { at: Date.now(), rows: [], errs: ["forecast not read"] }; render(); });
+      osmSpecLoad(res).then(function (o) { if (!live() || S.res !== res) return; res.osmSpec = o; render(); });
     }).catch(function (e) { if (!live()) return; S.busy = false; S.msg = "The assessment failed: " + (e && e.message || e); render(); });
   }
 
   /* ---------- key judgments: facts read from the result, never a claim of coverage ---------- */
+  /* ---------- marine weather along the corridor (Open-Meteo marine and forecast, keyless) ---------- */
+  var OM = "https://api.open-meteo.com/v1/forecast", OMM = "https://marine-api.open-meteo.com/v1/marine", WX_H = 72;
+  function wxPoints(res) {
+    var out = [];
+    res.segs.forEach(function (sg, i) {
+      if (!i) out.push({ seg: i, lab: "WP1 " + (sg.from.n || ""), lat: sg.from.lat, lon: sg.from.lon, nm: sg.nm0 });
+      var m = gcAt([sg.from.lat, sg.from.lon], [sg.to.lat, sg.to.lon], 0.5);
+      out.push({ seg: i, lab: "Mid WP" + (i + 1) + "–WP" + (i + 2), lat: m[0], lon: m[1], nm: sg.nm0 + sg.nm / 2 });
+      out.push({ seg: i, lab: "WP" + (i + 2) + " " + (sg.to.n || ""), lat: sg.to.lat, lon: sg.to.lon, nm: sg.nm0 + sg.nm });
+    });
+    return out.slice(0, 41);
+  }
+  function wxList(j, n) { return Array.isArray(j) ? j : n === 1 && j && j.hourly ? [j] : []; }
+  function wxLoad(res) {
+    var pts = wxPoints(res), q = "?latitude=" + pts.map(function (p) { return p.lat.toFixed(3); }).join(",") + "&longitude=" + pts.map(function (p) { return wrap(p.lon).toFixed(3); }).join(",") + "&timezone=GMT&forecast_days=8";
+    return Promise.all([
+      getJSON(OMM + q + "&hourly=wave_height,swell_wave_height,wave_period", 25000).catch(function (e) { return { err: e.message || String(e) }; }),
+      getJSON(OM + q + "&hourly=wind_speed_10m,wind_gusts_10m,visibility&wind_speed_unit=kn", 25000).catch(function (e) { return { err: e.message || String(e) }; })
+    ]).then(function (r) {
+      var M = wxList(r[0], pts.length), F = wxList(r[1], pts.length), now = Date.now(), errs = [];
+      if (r[0] && r[0].err) errs.push("sea state not read (" + r[0].err + ")");
+      if (r[1] && r[1].err) errs.push("wind not read (" + r[1].err + ")");
+      var rows = pts.map(function (p, i) {
+        var m = M[i] && M[i].hourly, f = F[i] && F[i].hourly, eta = res.opts.dep ? res.opts.dep + p.nm / res.opts.kn * 3600000 : null, w = { p: p };
+        var tm = m && m.time, tf = f && f.time, useEta = eta != null && ((tm && hourIdx(tm, eta) >= 0) || (tf && hourIdx(tf, eta) >= 0));
+        if (useEta) {
+          w.basis = "eta"; w.t = eta;
+          w.hs = m ? wxAt(tm, m.wave_height, eta) : null; w.sw = m ? wxAt(tm, m.swell_wave_height, eta) : null; w.tp = m ? wxAt(tm, m.wave_period, eta) : null;
+          w.wind = f ? wxAt(tf, f.wind_speed_10m, eta) : null; w.gust = f ? wxAt(tf, f.wind_gusts_10m, eta) : null; w.vis = f ? wxAt(tf, f.visibility, eta) : null;
+        } else {
+          w.basis = eta != null ? "outside" : "worst"; w.t = now;
+          function wv(t, v) { var x = t && v ? wxWorst(t, v, now, WX_H) : null; return x ? x.v : null; }
+          w.hs = m ? wv(tm, m.wave_height) : null; w.sw = m ? wv(tm, m.swell_wave_height) : null; w.tp = null;
+          w.wind = f ? wv(tf, f.wind_speed_10m) : null; w.gust = f ? wv(tf, f.wind_gusts_10m) : null;
+          var vv = f && tf ? (function () { var i0 = Math.max(0, hourIdx(tf, now)), mn = null; for (var k = i0; k < Math.min(tf.length, i0 + WX_H); k++) if (f.visibility && f.visibility[k] != null && (mn === null || f.visibility[k] < mn)) mn = f.visibility[k]; return mn; })() : null;
+          w.vis = vv;
+        }
+        w.flags = wxFlags(w);
+        return w;
+      });
+      return { at: now, rows: rows, errs: errs };
+    });
+  }
+  function wxHtml(res, print) {
+    var wx = res.wx;
+    var h = "<h3>3a. Sea state and wind along the corridor</h3>";
+    if (!wx) return h + '<p class="obs">Reading the marine forecast…</p>';
+    if (!wx.rows.some(function (w) { return w.hs != null || w.wind != null; })) return h + '<p class="stbad">The marine forecast could not be read' + (wx.errs.length ? " (" + E(wx.errs.join("; ")) + ")" : "") + ". Get the forecast for each segment from the national meteorological service or GMDSS broadcasts.</p>";
+    var eta = wx.rows.some(function (w) { return w.basis === "eta"; });
+    function v(x, d, u) { return x == null ? "–" : (d ? (+x).toFixed(d) : Math.round(x)) + (u || ""); }
+    h += '<p class="obs">' + (res.opts.dep ? "At each point's ETA where the forecast reaches it; beyond that, the worst of the next " + WX_H + " hours." : "No departure time set: the worst value in the next " + WX_H + " hours at each point. Set a departure time to read the forecast at each ETA.") + "</p>" +
+      '<div class="stscroll"><table><thead><tr><th>Point</th><th>Time used</th><th>Wave height (sig.)</th><th>Swell</th><th>Wind / gusts</th><th>Visibility</th><th>OSAP flags</th></tr></thead><tbody>' +
+      wx.rows.map(function (w) {
+        return "<tr" + (w.flags.length ? ' class="strem"' : "") + "><td><b>" + E(clean(w.p.lab, 50)) + '</b><br><span class="obs">NM ' + Math.round(w.p.nm) + "</span></td>" +
+          "<td>" + (w.basis === "eta" ? "ETA " + E(zulu(w.t)) : w.basis === "outside" ? '<span class="obs">ETA beyond forecast: worst next ' + WX_H + " h</span>" : '<span class="obs">worst next ' + WX_H + " h</span>") + "</td>" +
+          '<td class="n">' + v(w.hs, 1, " m") + (w.tp != null ? '<br><span class="obs">' + v(w.tp, 0, " s") + "</span>" : "") + '</td><td class="n">' + v(w.sw, 1, " m") + '</td><td class="n">' + v(w.wind, 0, " kn") + " / " + v(w.gust, 0, " kn") + '</td><td class="n">' + (w.vis == null ? "–" : w.vis >= 10000 ? "10 km+" : v(w.vis / 1000, 1, " km")) + "</td>" +
+          "<td>" + (w.flags.length ? E(w.flags.join("; ")) : '<span class="obs">none</span>') + "</td></tr>";
+      }).join("") + "</tbody></table></div>" +
+      (wx.errs.length ? '<p class="stbad">' + E(wx.errs.join("; ")) + "</p>" : "") +
+      '<p class="obs">Model forecast, not observation: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo.com</a> (CC BY 4.0), read ' + E(dual(wx.at)) + ". Flags are OSAP planning cues, not vessel, aircraft, hoist or boat-transfer limits: those belong to the master, the aircraft operator and the boat crew. Check official forecasts and warnings (GMDSS, NAVTEX, the national weather service) before and during the transit.</p>";
+    return h;
+  }
+  /* ---------- specialist care and rescue aviation near the corridor ---------- */
+  var SPEC = [
+    [["trauma.team", "surg.trauma"], "Trauma surgery or trauma team"], [["surg.neuro"], "Neurosurgery"], [["cc.icu"], "Intensive care"],
+    [["spec.burn"], "Burns care"], [["spec.hyperbaric"], "Hyperbaric oxygen (diving injury, gas embolism)"], [["spec.stroke"], "Stroke care"]];
+  /* closest approach of a point to the sampled corridor, with the NM-from-start where it happens */
+  function closest(res, lat, lon) {
+    var b = { nm: Infinity, at: 0 };
+    res.pts.forEach(function (p) { var d = nm([p.lat, p.lon], [lat, lon]); if (d < b.nm) { b.nm = d; b.at = p.nm; } });
+    return b;
+  }
+  function specRows(res) {
+    return SPEC.map(function (g) {
+      var L = (res.hospAll || []).filter(function (h) { return h.caps.some(function (c) { return g[0].indexOf(c) >= 0; }); })
+        .map(function (h) { var c = closest(res, h.lat, h.lon); return { h: h, nm: c.nm, at: c.at }; })
+        .filter(function (x) { return x.nm <= HOSP_NM; }).sort(function (a, b) { return a.nm - b.nm; }).slice(0, 3);
+      return { label: g[1], list: L };
+    });
+  }
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  function overpass(q, ms) {
+    var body = "data=" + encodeURIComponent(q), errs = [];
+    function go(i) {
+      if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
+      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms);
+      return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac ? ac.signal : undefined })
+        .then(function (r) { clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (j) { if (j && j.remark && /runtime error|timed? ?out|out of memory|too many/i.test(j.remark)) throw new Error("incomplete answer"); return j; })
+        .catch(function (e) { clearTimeout(t); errs.push(OVERPASS[i].split("/")[2] + ": " + (e && e.name === "AbortError" ? "no answer" : e.message)); return go(i + 1); });
+    }
+    return go(0);
+  }
+  var OSM_KM = 300;
+  function osmSpecLoad(res) {
+    var pts = densify(P.wps, 100), ll2 = pts.map(function (p) { return p.lat.toFixed(3) + "," + wrap(p.lon).toFixed(3); }).join(","), A = "(around:" + OSM_KM * 1000 + "," + ll2 + ")";
+    var q = '[out:json][timeout:90];(nwr["healthcare"="hyperbaric_chamber"]' + A + ';nwr["healthcare:speciality"~"hyperbaric"]' + A + ';nwr["healthcare:speciality"~"burn"]' + A + ';nwr["emergency"="air_rescue_service"]' + A + ";);out center tags 400;";
+    return overpass(q, 100000).then(function (j) {
+      var out = { hb: [], burn: [], air: [], at: (j.osm3s && j.osm3s.timestamp_osm_base) || "" }, seen = {};
+      (j.elements || []).forEach(function (e) {
+        var t = e.tags || {}, la = e.lat != null ? e.lat : e.center && e.center.lat, lo = e.lon != null ? e.lon : e.center && e.center.lon;
+        if (la == null || lo == null || seen[e.type + e.id]) return; seen[e.type + e.id] = 1;
+        var sp = String(t["healthcare:speciality"] || ""), c = closest(res, la, lo);
+        var x = { name: clean(t["name:en"] || t.name || t.operator || "", 80), op: clean(t.operator || "", 60), lat: la, lon: lo, nm: c.nm, at: c.at, url: "https://www.openstreetmap.org/" + e.type + "/" + e.id };
+        if (t.emergency === "air_rescue_service") out.air.push(x);
+        else if (t.healthcare === "hyperbaric_chamber" || /hyperbaric/i.test(sp)) out.hb.push(x);
+        else if (/burn/i.test(sp)) out.burn.push(x);
+      });
+      ["hb", "burn", "air"].forEach(function (k) { out[k].sort(function (a, b) { return a.nm - b.nm; }); out[k] = out[k].slice(0, 12); });
+      return out;
+    }, function (e) { return { err: e.message || String(e) }; });
+  }
+  function specHtml(res, print) {
+    var h = "<h3>5a. Specialist care and rescue aviation near the corridor</h3><h4>Sourced hospitals by capability</h4>" +
+      '<div class="stscroll"><table><thead><tr><th>Capability</th><th>Nearest documented (closest approach to corridor)</th></tr></thead><tbody>' +
+      specRows(res).map(function (r) {
+        return "<tr><td><b>" + E(r.label) + "</b></td><td>" + (r.list.length ? r.list.map(function (x) {
+          return E(x.h.name) + ' <span class="obs">' + E(cName(res, x.h.cc)) + " · " + nmT(x.nm) + " at NM " + Math.round(x.at) + "</span> " + link(x.h.url, "source");
+        }).join("<br>") : '<span class="stbad">None documented within ' + HOSP_NM + " NM in OSAP's sourced list</span>") + "</td></tr>";
+      }).join("") + "</tbody></table></div>" +
+      '<p class="obs">Only capabilities a credible source documents for that hospital. A capability listing is not acceptance, a free bed or a surgeon on duty: confirm with the hospital before diverting.</p>';
+    var o = res.osmSpec;
+    h += "<h4>Mapped in OpenStreetMap (reference only)</h4>";
+    if (!o) return h + '<p class="obs">Reading hyperbaric chambers, burns units and air rescue bases near the corridor from OpenStreetMap…</p>';
+    if (o.err) return h + '<p class="stbad">OpenStreetMap could not be read (' + E(clean(o.err, 160)) + "). Ask the RCC and the vessel's medical adviser for the nearest chamber, burns unit and rescue aircraft.</p>";
+    function list(L, none) {
+      return L.length ? "<ul>" + L.map(function (x) { return "<li>" + E(x.name || "No name in OpenStreetMap") + (x.op && x.op !== x.name ? ' <span class="obs">(' + E(x.op) + ")</span>" : "") + ' <span class="obs">' + nmT(x.nm) + " from the corridor at NM " + Math.round(x.at) + "</span> " + link(x.url, "map") + "</li>"; }).join("") + "</ul>" : '<p class="obs">' + none + "</p>";
+    }
+    h += "<p><b>Hyperbaric chambers</b></p>" + list(o.hb, "None mapped within " + OSM_KM + " km.") +
+      "<p><b>Burns units</b></p>" + list(o.burn, "None mapped within " + OSM_KM + " km.") +
+      "<p><b>Air rescue bases</b> (helicopter or air ambulance)</p>" + list(o.air, "None mapped within " + OSM_KM + " km.") +
+      '<p class="obs">Crowd-edited map data, read ' + E(o.at ? o.at.slice(0, 10) : "now") + ": shows where something is mapped, never whether it is staffed, serviceable, able to reach a vessel or willing to accept. A mapped air rescue base is not a tasking: the RCC decides which aircraft can reach the vessel. A chamber's operating hours and dive-medicine cover must be confirmed directly.</p>";
+    return h;
+  }
   function judgments(res) {
     var segs = res.segs, rows = res.rows, tot = segs.reduce(function (a, s) { return a + s.nm; }, 0), J = [];
     J.push("The corridor is " + nmT(tot) + " in " + segs.length + " segment" + (segs.length > 1 ? "s" : "") + ", about " + hrs(tot / res.opts.kn) + " at " + res.opts.kn + " kn" + (res.opts.dep ? ", departing " + zulu(res.opts.dep) + ", arriving about " + zulu(res.opts.dep + tot / res.opts.kn * 3600000) : "") + ".");
@@ -287,7 +470,8 @@
       "#seatr .stgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 12px}#seatr .stgrid label{display:flex;flex-direction:column;gap:2px;font-size:12px}#seatr .stgrid label.wide{grid-column:1/-1}" +
       "#seatr .stjud li{margin:3px 0}#seatr code{font-size:11.5px}" +
       ".stmk{background:#0b4f8a;color:#fff;border:2px solid #fff;border-radius:3px;font:700 10px/14px system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.5);white-space:nowrap}" +
-      ".stmk.wp{background:#111}.stmk.hosp{background:#D7141A}.stmk.af{background:#1d5fa8}.stmk.osmh{background:#8a8f96}" +
+      "#seatr #st-castext{width:100%;box-sizing:border-box;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;margin-top:6px}#seatr .stnow{margin:6px 0}" +
+      ".stmk.now{background:#0a7d32}.stmk.wp{background:#111}.stmk.hosp{background:#D7141A}.stmk.af{background:#1d5fa8}.stmk.osmh{background:#8a8f96}" +
       "html.seatr-picking .leaflet-container{cursor:crosshair}" +
       ".stdoc h2{font-size:17px}.stdoc h3{font-size:13px;margin:12px 0 4px;break-after:avoid}.stdoc table{border-collapse:collapse;width:100%;font-size:10.5px}.stdoc th,.stdoc td{border-bottom:1px solid #ccd;padding:2px 4px;text-align:left;vertical-align:top}" +
       ".stdoc td.n{text-align:right;white-space:nowrap}.stdoc tr{break-inside:avoid}.stdoc .obs{color:#56626f}.stdoc svg{width:100%;height:auto;border:1px solid #ccd;background:#dfe9f3}.stdoc figure{margin:6px 0;break-inside:avoid}" +
@@ -302,7 +486,7 @@
       D.body.appendChild(el);
       el.addEventListener("click", onClick); el.addEventListener("change", onChange);
       el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.picking) { pickEnd(); render(); } else close(); } });
-      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "st-add") addTyped(); });
+      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "st-add") addTyped(); else if (e.target.id === "st-log") logTyped(); });
       if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
     }
     return el;
@@ -345,7 +529,7 @@
       '<p class="obs">The line between waypoints is a great-circle planning corridor, not a navigation route, traffic scheme or charted passage. If the departure port or the passage changes (Sunda or Lombok instead of Malacca, for example), work it out again: do not reuse an assessment for another route.</p>' +
       '<div class="stbtns">' + (S.busy ? '<button type="button" data-st="stop">Stop</button>' : '<button type="button" class="stgo" data-st="run"' + (P.wps.length >= 2 ? "" : " disabled") + ">" + (res ? "Work out again" : "Work out the assessment") + "</button>") + "</div>" +
       '<p id="st-msg" class="obs" role="status">' + E(S.msg) + "</p>";
-    el.innerHTML = '<div class="stbox">' + head + route + (res ? resultHtml(res, false) : "") + fieldsHtml() +
+    el.innerHTML = '<div class="stbox">' + head + route + (res ? resultHtml(res, false) : "") + fieldsHtml() + transitHtml() +
       '<p class="obs">Kept on this device only. Automatic draft by fixed rules from open data: not AI and not analyst-approved. Final approval belongs to the vessel operator, the master, the medical authority and the participating providers.</p></div>';
   }
   function cName(res, c) { return (res.ccNames && res.ccNames[c]) || (W.OSAP_COUNTRIES || []).filter(function (x) { return x.id === c; }).map(function (x) { return x.name; })[0] || String(c).toUpperCase(); }
@@ -370,6 +554,7 @@
           "<td>" + (s.leads.length ? E(s.leads.map(function (c) { return cName(res, c); }).join(", ")) : '<span class="obs">none within ' + NEAR_CC_NM + " NM</span>") + "</td>" +
           '<td class="n">' + nmT(s.worstHosp) + " / " + nmT(s.worstPort) + "</td><td>" + segConcept(s) + "</td></tr>";
       }).join("") + "</tbody></table></div>";
+    h += wxHtml(res, print);
     var R = print ? res.rows.filter(function (r, i) { return r.pt.wp >= 0 || r.remote || i % Math.max(1, Math.round(100 / res.opts.step)) === 0; }) : res.rows;
     h += "<h3>4. Distance table</h3><p class=\"obs\">Great-circle distances (spherical haversine, Earth radius 3,440.065 NM) from points along the corridor every " + res.opts.step + " NM" + (print ? " (waypoints, remote points and every ~100 NM shown)" : "") + ". Spatial separation only: they exclude the aircraft's real base, air routing, refuelling, reserves, retrieval, ground transfer and treatment delay. Do not divide an advertised maximum range by two and call the result rescue coverage.</p>" +
       '<div class="stscroll"><table><thead><tr><th>Point</th><th>NM from start' + (res.opts.dep ? " / ETA" : "") + '</th><th>Nearest coast</th><th>Port</th><th>Sourced hospital</th><th>Hospital (OSM, reference)</th><th>Airport ≥ ' + res.opts.rwy + " m runway</th></tr></thead><tbody>" +
@@ -403,6 +588,7 @@
       '<p class="obs">A fixed-wing air ambulance can move a patient from an accepted airport; it cannot collect a casualty from a ship.</p>' +
       "<details" + (print ? " open" : "") + "><summary>Hospitals OpenStreetMap maps near the corridor (" + by.osmh.length + ", reference only)</summary>" + (by.osmh.length ? '<div class="stscroll"><table>' + th + "<tbody>" + nodeRows(by.osmh, function (n) { return '<span class="obs">' + (n.er ? "emergency=yes in OpenStreetMap" : "no emergency tag") + "</span>"; }) + "</tbody></table></div>" : "") +
       '<p class="obs">Crowd-edited data: shows where a hospital is mapped, never its capability. Not a planned receiving facility until a credible source documents it.</p></details>';
+    h += specHtml(res, print);
     /* rescue coordination */
     var doc = res.rccDoc;
     h += "<h3>6. Rescue coordination leads</h3>" + (res.rcc.length ? '<div class="stscroll"><table><thead><tr><th>Authority</th><th>Telephone and email</th><th>Role and source</th></tr></thead><tbody>' + res.rcc.map(function (c) {
@@ -478,6 +664,69 @@
       FIELDS.map(function (x) { var long = x[0] === "decision" || x[0] === "stop" || x[0] === "route"; return '<label class="' + (long ? "wide" : "") + '">' + E(x[1]) + (long ? '<textarea data-st-f="' + x[0] + '" maxlength="600" rows="2">' + E(f[x[0]] || "") + "</textarea>" : '<input data-st-f="' + x[0] + '" maxlength="200" value="' + E(f[x[0]] || "") + '">') + "</label>"; }).join("") + "</div>";
   }
 
+  /* ---------- in transit: plan status, position log, casualty request message ---------- */
+  var STATUS = [["draft", "Draft"], ["reviewed", "Reviewed by the master"], ["approved", "Approved by the medical authority"], ["active", "Active: in transit"], ["closed", "Closed"]];
+  function stNow() { var L = P.st || []; return L.length ? L[L.length - 1] : { s: "draft", t: null }; }
+  function stName(k) { return (STATUS.filter(function (x) { return x[0] === k; })[0] || STATUS[0])[1]; }
+  function lastFix() { var L = P.log || []; return L.length ? L[L.length - 1] : null; }
+  /* nearest support point of each kind to a position, from the last assessment */
+  function nearNow(p) {
+    var res = S.res, out = {}; if (!res) return out;
+    res.nodes.forEach(function (x) { var k = x.node.kind, d = nm(p, [x.node.lat, x.node.lon]); if (!out[k] || d < out[k].nm) out[k] = { node: x.node, nm: d }; });
+    return out;
+  }
+  function wxNear(p) {
+    var wx = S.res && S.res.wx, b = null; if (!wx) return null;
+    wx.rows.forEach(function (w) { var d = nm(p, [w.p.lat, w.p.lon]); if ((w.hs != null || w.wind != null) && (!b || d < b.d)) b = { w: w, d: d }; });
+    return b && b.d <= 150 ? b.w : null;
+  }
+  var CAS = [["n", "Number of casualties"], ["who", "Age and sex (no names)"], ["what", "What happened (onset or mechanism) and when"], ["avpu", "Consciousness (AVPU) and trend"],
+    ["vitals", "Pulse, breathing, blood pressure, SpO2, temperature, with times"], ["tx", "Treatment given; oxygen or ventilation needs"], ["cap", "Medical capability on board"],
+    ["deck", "Deck or hoist arrangements; stretcher"], ["cs", "Course and speed now"], ["haz", "Hazards (fuel, cargo, weather, security)"], ["div", "Intended diversion or rendezvous"],
+    ["comms", "Primary and alternate communications (satphone, VHF, email)"], ["ask", "What is requested (telemedical advice, evacuation, diversion support)"]];
+  function casText() {
+    var c = P.cas || {}, f = lastFix(), now = Date.now(), v = clean((P.f || {}).vessel, 120), lines = [];
+    lines.push("MEDICAL ASSISTANCE REQUEST" + (c.urg ? " (" + c.urg.toUpperCase() + ")" : ""));
+    lines.push("Time: " + new Date(now).toISOString().slice(0, 16).replace("T", " ") + "Z");
+    lines.push("Vessel: " + (v || "[vessel name, call sign, flag, IMO, MMSI]"));
+    if (f) {
+      var tr = track(P.wps, [f.lat, f.lon]);
+      lines.push("Position: " + ll(f.lat, f.lon) + " (MGRS " + grid(f.lat, f.lon) + ") at " + new Date(f.t).toISOString().slice(11, 16) + "Z");
+      if (tr) lines.push("Planned route: " + Math.round(tr.along) + " NM along, " + Math.round(tr.togo) + " NM to go, " + tr.off.toFixed(1) + " NM off the planned corridor");
+    } else lines.push("Position: [latitude, longitude, time]");
+    CAS.forEach(function (x) { lines.push(x[1] + ": " + (clean(c[x[0]], 400) || "[ ]")); });
+    var w = f && wxNear([f.lat, f.lon]);
+    if (w) lines.push("Forecast sea and wind near the position (model, Open-Meteo): waves " + (w.hs == null ? "?" : w.hs.toFixed(1) + " m") + ", wind " + (w.wind == null ? "?" : Math.round(w.wind) + " kn") + (w.gust != null ? " gusting " + Math.round(w.gust) + " kn" : ""));
+    return lines.join("\n");
+  }
+  function transitHtml() {
+    if (P.wps.length < 2) return "";
+    var cur = stNow(), f = lastFix(), c = P.cas || {};
+    var h = '<h3>14. In transit</h3><div class="strow"><label>Plan status<select data-st-status="1">' + STATUS.map(function (x) { return '<option value="' + x[0] + '"' + (cur.s === x[0] ? " selected" : "") + ">" + E(x[1]) + "</option>"; }).join("") + "</select></label>" +
+      '<span class="obs">' + (cur.t ? "Since " + E(dual(cur.t)) : "Not yet reviewed") + ". Recorded on this device by whoever sets it; it does not approve anything on its own.</span></div>";
+    if ((P.st || []).length > 1) h += '<p class="obs">History: ' + E(P.st.map(function (x) { return stName(x.s) + " " + zulu(x.t); }).join(" · ")) + "</p>";
+    h += "<h4>Position log</h4>" +
+      '<form id="st-log" class="stbtns" autocomplete="off"><input id="st-lgrid" maxlength="60" placeholder="Position: lat, lon or MGRS" aria-label="Logged position"><input id="st-lnote" maxlength="80" placeholder="Note (optional)" aria-label="Log note"><button type="submit">Log position</button>' +
+      '<button type="button" data-st="here">Use my location</button></form>';
+    if (f) {
+      var tr = track(P.wps, [f.lat, f.lon]), nn = nearNow([f.lat, f.lon]);
+      h += '<p class="stnow"><b>Last position ' + E(zulu(f.t)) + ":</b> " + E(ll(f.lat, f.lon)) + (tr ? " · " + nmT(tr.along) + " along, " + nmT(tr.togo) + " to go, on WP" + (tr.leg + 1) + "–WP" + (tr.leg + 2) + " · " + (tr.off < 0.05 ? "on the corridor" : tr.off.toFixed(1) + " NM " + (tr.xtd >= 0 ? "right" : "left") + " of it") : "") + "</p>" +
+        (tr && tr.off > 25 ? '<p class="stbad">More than 25 NM off the planned corridor: the assessment\'s distances and leads may not fit this position. Work it out again on the route actually sailed.</p>' : "") +
+        (S.res ? "<p>Nearest now: " + [["port", "port"], ["hosp", "sourced hospital"], ["af", "airport"]].map(function (k) { var x = nn[k[0]]; return x ? k[1] + " <b>" + E(x.node.name) + "</b> " + nmT(x.nm) : ""; }).filter(Boolean).join(" · ") + ' <span class="obs">(from the last assessment)</span></p>' : '<p class="obs">Work out the assessment to see the nearest support points to each logged position.</p>');
+      h += '<div class="stscroll"><table><thead><tr><th>Time</th><th>Position</th><th>Along / to go</th><th>Off corridor</th><th>Note</th><th class="noprint"></th></tr></thead><tbody>' +
+        P.log.map(function (x, i) { return { x: x, i: i }; }).reverse().slice(0, 30).map(function (o) {
+          var x = o.x, t2 = track(P.wps, [x.lat, x.lon]);
+          return "<tr><td>" + E(zulu(x.t)) + "</td><td><code>" + E(ll(x.lat, x.lon)) + '</code></td><td class="n">' + (t2 ? Math.round(t2.along) + " / " + Math.round(t2.togo) + " NM" : "–") + '</td><td class="n">' + (t2 ? t2.off.toFixed(1) + " NM" : "–") + "</td><td>" + E(x.note || "") + '</td><td class="noprint"><button type="button" data-st-ldel="' + o.i + '" aria-label="Remove log entry">Remove</button></td></tr>';
+        }).join("") + "</tbody></table></div>";
+    } else h += '<p class="obs">No positions logged yet. Log a position (or use this device\'s location, which you allow each time) to see progress along the corridor.</p>';
+    h += "<h4>Casualty: medical assistance request</h4>" +
+      '<p class="obs noprint">Fill in what you know; the message below builds itself with the vessel name (worksheet), the last logged position and the forecast. It stays on this device until you copy or print it: send it to the RCC or telemedical service through your own communications. Do not enter the casualty\'s name.</p>' +
+      '<div class="stgrid"><label>Urgency<select data-st-cas="urg">' + [["", "Choose"], ["distress", "Distress: life-threatening"], ["urgency", "Urgency: serious, not immediately life-threatening"], ["advice", "Advice only"]].map(function (x) { return '<option value="' + x[0] + '"' + ((c.urg || "") === x[0] ? " selected" : "") + ">" + x[1] + "</option>"; }).join("") + "</select></label>" +
+      CAS.map(function (x) { return "<label>" + E(x[1]) + '<input data-st-cas="' + x[0] + '" maxlength="400" value="' + E(c[x[0]] || "") + '"></label>'; }).join("") + "</div>" +
+      '<textarea id="st-castext" readonly rows="14" aria-label="Medical assistance request message">' + E(casText()) + "</textarea>" +
+      '<div class="stbtns noprint"><button type="button" data-st="cascopy">Copy message</button><button type="button" data-st="casclear">Clear casualty details</button><span id="st-casmsg" class="obs" role="status"></span></div>';
+    return h;
+  }
   /* ---------- the map ---------- */
   function mk(p, t, cls, tip) {
     var w = Math.max(22, t.length * 7 + 8);
@@ -503,6 +752,9 @@
       [100, 200].forEach(function (d) { L.polyline(ring([n.node.lat, n.node.lon], d), { color: "#6a3d9a", weight: 1.5, dashArray: "6 6", interactive: false }).addTo(layer); });
     });
     P.wps.forEach(function (w, i) { mk([w.lat, w.lon], "WP" + (i + 1), "wp", (w.n || "Waypoint " + (i + 1)) + " · " + ll(w.lat, w.lon)).addTo(layer); });
+    var lg = P.log || [];
+    if (lg.length > 1) L.polyline(lg.map(function (x) { return [x.lat, x.lon]; }), { color: "#0a7d32", weight: 2, interactive: false }).addTo(layer);
+    if (lg.length) { var f = lg[lg.length - 1]; mk([f.lat, f.lon], "NOW", "now", "Last logged position " + zulu(f.t) + " · " + ll(f.lat, f.lon)).addTo(layer); }
   }
   function fit() {
     var map = W.__asapMap; if (!map || !L || !P.wps.length) return;
@@ -541,6 +793,7 @@
     el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="std-print">Print or save PDF</button> <button type="button" class="refresh" id="std-close">Back</button> <span class="obs">Every page as it prints. Choose "Save as PDF" in the print dialog to keep a copy.</span></div>' +
       '<article class="bpage stdoc"><header><h2>Sea transit medical support assessment</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<p class="obs">' + E(P.wps[0].n || "Start") + " to " + E(P.wps[P.wps.length - 1].n || "End") + " · worked out " + E(dual(res.at)) + "</p></header>" +
+      "<p><b>Plan status:</b> " + E(stName(stNow().s)) + (stNow().t ? " since " + E(zulu(stNow().t)) : "") + (lastFix() ? " · last logged position " + E(ll(lastFix().lat, lastFix().lon)) + " at " + E(zulu(lastFix().t)) : "") + "</p>" +
       (f.decision ? "<p><b>Decision:</b> " + E(f.decision) + "</p>" : '<p class="obs"><b>Decision:</b> to be entered by the planner (worksheet).</p>') +
       '<p class="obs"><b>Authority and scope.</b> A planning assessment, not a directive or an approved flight or medical order. Final approval belongs to the vessel operator, the master, the medical authority and the participating providers. No agency endorsement, aircraft reservation or hospital acceptance is implied.</p>' +
       '<figure>' + svgMap(res) + '<figcaption class="obs">The dashed line is a conceptual medical planning corridor (great circle between the waypoints), not a navigation route, traffic separation scheme or charted passage. Red dots: remote points. Squares: support points (red hospital, dark blue port, blue airport). Purple dashed rings, where shown, are 100 and 200 NM geodesic distances from a support point: not helicopter operating envelopes, rescue guarantees or SAR boundaries. Land: Natural Earth (public domain), generalised.</figcaption></figure>' +
@@ -573,11 +826,19 @@
     P.wps.push({ n: clean(n && n.value, 40) || "WP" + (P.wps.length + 1), lat: +p[0].toFixed(5), lon: +wrap(p[1]).toFixed(5) }); dirty(); render(); draw(); fit();
     var g3 = D.getElementById("st-grid"); if (g3) g3.focus();
   }
+  function addFix(lat, lon, note) {
+    P.log = (P.log || []).concat([{ t: Date.now(), lat: +lat.toFixed(5), lon: +wrap(lon).toFixed(5), note: clean(note, 80) }]).slice(-200); save(); render(); draw();
+  }
+  function logTyped() {
+    var g = D.getElementById("st-lgrid"), n = D.getElementById("st-lnote"), p = parseGrid(g && g.value);
+    if (!p) { S.msg = "Not a grid. Type lat, lon (6.95, 79.80) or MGRS."; render(); var g2 = D.getElementById("st-lgrid"); if (g2) g2.focus(); return; }
+    addFix(p[0], p[1], n && n.value); var g3 = D.getElementById("st-lgrid"); if (g3) g3.focus();
+  }
   /* any change to the corridor or the limits makes the last result stale */
   function dirty() { save(); if (S.res) { S.res = null; S.msg = "The corridor changed: work the assessment out again."; } S.tok++; S.busy = false; }
   function onClick(e) {
     if (e.target.id === "seatr") { close(); return; }
-    var b = e.target.closest && e.target.closest("[data-st],[data-st-del],[data-st-up],[data-st-ring],[data-st-go]"); if (!b) return;
+    var b = e.target.closest && e.target.closest("[data-st],[data-st-del],[data-st-up],[data-st-ring],[data-st-go],[data-st-ldel]"); if (!b) return;
     var k = b.getAttribute("data-st");
     if (k === "close") close();
     else if (k === "pick") { if (S.picking) { pickEnd(); render(); } else pickStart(); }
@@ -587,6 +848,13 @@
     else if (k === "run") { pickEnd(); run(); }
     else if (k === "stop") { S.tok++; S.busy = false; S.msg = "Stopped."; render(); }
     else if (k === "print") printView();
+    else if (k === "here") {
+      if (!navigator.geolocation) { S.msg = "This device gives no location."; render(); return; }
+      navigator.geolocation.getCurrentPosition(function (g) { addFix(g.coords.latitude, g.coords.longitude, "device location ±" + Math.round(g.coords.accuracy) + " m"); }, function (er) { var m = D.getElementById("st-casmsg"); S.msg = "Location not available (" + (er && er.message || "refused") + ")."; render(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 });
+    }
+    else if (k === "cascopy") { var tx = casText(), cm = D.getElementById("st-casmsg"); (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(tx) : Promise.reject()).then(function () { if (cm) cm.textContent = "Copied."; }, function () { var ta = D.getElementById("st-castext"); if (ta) { ta.focus(); ta.select(); } if (cm) cm.textContent = "Select the text and copy it."; }); }
+    else if (k === "casclear") { P.cas = {}; save(); render(); }
+    else if (b.hasAttribute("data-st-ldel")) { P.log.splice(+b.getAttribute("data-st-ldel"), 1); save(); render(); draw(); }
     else if (b.hasAttribute("data-st-del")) { P.wps.splice(+b.getAttribute("data-st-del"), 1); dirty(); render(); draw(); }
     else if (b.hasAttribute("data-st-up")) { var i = +b.getAttribute("data-st-up"); if (i > 0) { var t = P.wps[i - 1]; P.wps[i - 1] = P.wps[i]; P.wps[i] = t; dirty(); render(); draw(); } }
     else if (b.hasAttribute("data-st-ring")) { var id = b.getAttribute("data-st-ring"), j = P.rings.indexOf(id); if (j >= 0) P.rings.splice(j, 1); else P.rings.push(id); P.rings = P.rings.slice(-6); save(); render(); draw(); var nb = D.querySelector('#seatr [data-st-ring="' + (W.CSS && CSS.escape ? CSS.escape(id) : id) + '"]'); if (nb) nb.focus(); }
@@ -598,6 +866,8 @@
     if (t.hasAttribute("data-st-num")) { var k = t.getAttribute("data-st-num"); P[k] = +t.value > 0 ? +t.value : DEF[k]; dirty(); render(); draw(); var a = D.querySelector('#seatr [data-st-num="' + k + '"]'); if (a) a.focus(); return; }
     if (t.hasAttribute("data-st-dep")) { P.dep = String(t.value || "").slice(0, 16); dirty(); render(); var d = D.querySelector("#seatr [data-st-dep]"); if (d) d.focus(); return; }
     if (t.hasAttribute("data-st-f")) { P.f = P.f || {}; P.f[t.getAttribute("data-st-f")] = String(t.value || "").slice(0, 600); save(); }
+    if (t.hasAttribute("data-st-status")) { P.st = (P.st || []).concat([{ s: t.value, t: Date.now() }]).slice(-50); save(); render(); var ss = D.querySelector("#seatr [data-st-status]"); if (ss) ss.focus(); return; }
+    if (t.hasAttribute("data-st-cas")) { P.cas = P.cas || {}; P.cas[t.getAttribute("data-st-cas")] = String(t.value || "").slice(0, 400); save(); var ct = D.getElementById("st-castext"); if (ct) ct.value = casText(); return; }
   }
 
   W.OSAP_SEATRANSIT = { open: open, close: close, state: function () { return { plan: JSON.parse(JSON.stringify(P)), busy: S.busy, res: S.res }; }, run: run, printView: printView, core: core };
