@@ -320,7 +320,6 @@
     {"id": "kampucheathmey", "outlet": "Kampuchea Thmey", "url": "https://kampucheathmey.com/feed/", "lang": "km"},
     {"id": "dap-news", "outlet": "DAP News", "url": "https://www.dap-news.com/feed/", "lang": "km"},
     {"id": "rfa-khmer", "outlet": "RFA Khmer", "url": "https://www.rfa.org/arc/outboundfeeds/khmer/rss/", "lang": "km"},
-    {"id": "tna-mcot", "outlet": "Thai News Agency (MCOT)", "url": "https://tna.mcot.net/feed", "lang": "th"},
     {"id": "bkp-recent", "outlet": "Bangkok Post (most recent)", "url": "https://www.bangkokpost.com/rss/data/most-recent.xml", "lang": "en"},
     {"id": "odc-announcements", "outlet": "Open Development Cambodia: announcements", "url": "https://opendevelopmentcambodia.net/announcements/feed/", "lang": "en"}
    ],
@@ -350,7 +349,6 @@
     {"q": "Banteay Meanchey Thai soldiers", "lang": "en"},
     {"q": "site:khmertimeskh.com Thai border", "lang": "en"},
     {"q": "site:mfa.go.th Cambodia border", "lang": "en", "side": "th"},
-    {"q": "site:mfaic.gov.kh Thailand", "lang": "en", "side": "kh"},
     {"q": "ชายแดนไทย-กัมพูชา", "lang": "th", "sort": "date"},
     {"q": "กัมพูชา ยิง", "lang": "th", "sort": "date"},
     {"q": "กองทัพภาคที่ 2 กัมพูชา", "lang": "th", "side": "th"},

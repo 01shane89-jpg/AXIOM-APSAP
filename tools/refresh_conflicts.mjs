@@ -407,7 +407,7 @@ for (const c of LIST) {
       todo.forEach((i, n) => { if (tr[n].en) { i.title_en = tr[n].en.slice(0, 300); i.mt = tr[n].tool; } if (tr[todo.length + n].en) i.summary_en = tr[todo.length + n].en.slice(0, 400); });
     }
   }
-  for (const i of items) for (const k of ["title", "summary", "title_en", "summary_en", "outlet"]) if (i[k]) i[k] = unent(i[k]);
+  for (const i of items) for (const k of ["title", "summary", "title_en", "summary_en", "outlet"]) if (i[k]) i[k] = unent(i[k]).replace(/\uFFFD/g, "");   // a search engine cuts long Khmer titles mid-character
   for (const i of items) {
     const en = /^en\b/i.test(i.lang || "") ? i.title : i.title_en || "";
     i.kind = classify(en || i.title);
