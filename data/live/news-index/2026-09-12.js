@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-12"]=[["mn","2026-09-12T21:44","Mongolia Turns to Untapped Resources for Its Next Phase of Economic Growth","","Devdiscourse (via Bing News search)","https://www.devdiscourse.com/article/education/3975821-mongolia-turns-to-untapped-resources-for-its-next-phase-of-economic-growth","","s","",""]];
