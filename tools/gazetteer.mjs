@@ -106,6 +106,8 @@ export const DATELINE = [
   /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-)/gu,
   // "MANILA, Philippines-The ...": no space either side of the dash, only after a "PLACE, Country" dateline
   /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30},[^\n\u2013\u2014-]{1,30}-(?=\p{Lu})/gu,
+  // "ILOCOS SUR-The ...": an all-capitals place with no space either side of the dash, before a capitalised word
+  /(^|\n)[ \t]*\p{Lu}[\p{Lu} .']{3,30}-(?=\p{Lu}[\p{Ll}\s])/gu,
 ];
 export function stripDatelines(text) {
   let t = String(text || "");
