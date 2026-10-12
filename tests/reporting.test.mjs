@@ -1,7 +1,8 @@
 // Unit test for the Deep South and conflict reporting guards (no network): old stories re-dated by a search, and translations
 // that lose a Deep South place name. Usage: node tests/reporting.test.mjs
 import assert from "node:assert/strict";
-import { staleSearchResult, statedDates, linkDate } from "../tools/conflict_lib.mjs";
+import { staleSearchResult, statedDates, linkDate, isSecurity, termRe } from "../tools/conflict_lib.mjs";
+import fs from "node:fs";
 import { placeSubst, placeMismatch } from "../tools/deepsouth_lib.mjs";
 
 // a July 2025 photo caption under a result dated September 2026 (the Daily Star F-16 story)
@@ -37,4 +38,16 @@ assert.equal(placeMismatch("อส.ทพ. ถูกยิงดับกลา�
 assert.equal(placeMismatch("อส.ทพ. ถูกยิงดับกลางหน้าที่ ที่ระแงะ นราธิวาส", "Ranger shot dead on duty in Rangae, Narathiwat"), false);
 assert.equal(placeMismatch("ระเบิดที่เมืองปัตตานี", "Bomb in Pattani town"), false);
 assert.equal(placeMismatch("ไม่มีชื่อสถานที่", "No place named"), false);
+// Khmer border reports count as security reports; a meeting notice does not
+assert.equal(isSecurity("ទាហានថៃបាញ់កាំភ្លើងធំចូលភូមិ"), true);
+assert.equal(isSecurity("ពលរដ្ឋរងរបួសដោយសារគ្រាប់មីន"), true);
+assert.equal(isSecurity("កិច្ចប្រជុំគណៈកម្មការ JBC"), false);
+// Thai–Cambodian tab: Khmer and Thai wording reaches the tab's terms and strong terms
+{
+  const tk = JSON.parse(fs.readFileSync("tools/conflicts.json", "utf8")).conflicts.find((c) => c.id === "thailand-cambodia");
+  assert.equal(termRe(tk.terms).test("ទាហានថៃ"), true);
+  assert.equal(termRe(tk.strong).test("ស្ថានភាពព្រំដែនកម្ពុជា-ថៃ"), true);
+  assert.equal(termRe(tk.strong).test("กองทัพภาคที่ 2 แถลง"), true);
+  assert.ok(tk.searches.some((x) => x.lang === "km") && tk.searches.some((x) => x.sort === "date"));
+}
 console.log("reporting.test.mjs: all passed");
