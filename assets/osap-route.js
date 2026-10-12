@@ -272,7 +272,7 @@ function main() {
       '<option value="seaports">Seaport</option><option value="crossings">Border crossing</option></select></label>' +
       '<label id="rt-evfootl"' + (S.mode === "foot" ? "" : " hidden") + '>Walking <select id="rt-evfoot"><option value="both"' + (S.evFoot === "both" ? " selected" : "") + '>Compare paths and cross-country</option>' +
       '<option value="xc"' + (S.evFoot === "xc" ? " selected" : "") + '>Cross-country, over open ground</option><option value="paths"' + (S.evFoot === "paths" ? " selected" : "") + ">On roads and paths only</option></select></label>" +
-      '<label>Incidents from the last <select id="rt-evdays"><option>7</option><option selected>30</option><option>90</option></select> days</label></div>' +
+      '<label>Incidents from the last <select id="rt-evdays"><option>7</option><option>14</option><option selected>30</option><option>90</option></select> days</label></div>' +
       '<div class="rtbtns"><button type="button" data-rt="evac" class="rtgo">Plan evacuation route</button></div></details><div id="rt-evres"></div><div id="rt-evsaved"></div></div>' +
       '<div class="sec rtsec"><h2>Travel by</h2><div class="rtseg" role="group" aria-label="Travel by" id="rt-modes"></div><div id="rt-speed"></div></div>' +
       '<div class="sec rtsec"><h2>Waypoints</h2>' +

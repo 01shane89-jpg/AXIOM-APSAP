@@ -133,7 +133,7 @@
   /* ---------- the reporting period and drawn area, read the same way the page does (its own settings on this device) ---------- */
   function periodRange() {
     var P = lsGet("asap-period") || { p: "all" }, today = Math.floor(Date.now() / 864e5), since = Date.now() - 864e5;
-    if (!/^(24h|7|30|90|all|custom)$/.test(P.p)) P = { p: "all" };
+    if (!/^(24h|7|14|30|90|all|custom)$/.test(P.p)) P = { p: "all" };
     var PR = P.p === "all" ? { from: "", to: "" } : P.p === "custom" ? { from: P.from || "", to: P.to || "" }
       : P.p === "24h" ? { from: new Date(since).toISOString().slice(0, 10), to: "", since: since }
       : { from: new Date((today - (+P.p) + 1) * 864e5).toISOString().slice(0, 10), to: "" };
