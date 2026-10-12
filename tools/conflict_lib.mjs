@@ -32,7 +32,9 @@ const SECURITY = new RegExp([
   // Arabic, Persian, Hebrew
   "(?:غارة|غارات|قصف|هجوم|هجمات|استهداف|اشتباك\\w*|معارك|انفجار|مسيرة|مسيّرة|صاروخ|صواريخ|قتلى|قتيل|شهيد|شهداء|جرحى|مقتل|استشهاد|اجتياح|توغل|وقف إطلاق النار|حمله|موشک|پهپاد|کشته|زخمی|תקיפה|טיל|רקטות|כטב\"ם|נהרג|פצוע|הרוג)",
   // Thai, Burmese, Hindi, Urdu
-  "(?:ระเบิด|ยิง|ปะทะ|โจมตี|เสียชีวิต|บาดเจ็บ|โดรน|တိုက်ပွဲ|ဗုံး|လေကြောင်းတိုက်ခိုက်|ဒရုန်း|သေဆုံး|ဒဏ်ရာ|हमला|मुठभेड़|आतंकी|शहीद|फायरिंग|حملہ|دھماکہ|شہید|ہلاک|جھڑپ)"
+  "(?:ระเบิด|ยิง|ปะทะ|โจมตี|เสียชีวิต|บาดเจ็บ|โดรน|တိုက်ပွဲ|ဗုံး|လေကြောင်းတိုက်ခိုက်|ဒရုန်း|သေဆုံး|ဒဏ်ရာ|हमला|मुठभेड़|आतंकी|शहीद|फायरिंग|حملہ|دھماکہ|شہید|ہلاک|جھڑپ)",
+  // Khmer (Thai–Cambodian border feeds): clash, shooting, attack, explosion, landmine, artillery, bomb, drone, fighter jet, killed, wounded, ceasefire, invasion
+  "(?:ប៉ះទង្គិច|បាញ់|វាយប្រហារ|ផ្ទុះ|គ្រាប់មីន|កាំភ្លើងធំ|គ្រាប់បែក|ដ្រូន|យន្តហោះចម្បាំង|ស្លាប់|របួស|បទឈប់បាញ់|ឈប់បាញ់|ឈ្លានពាន)"
 ].join("|"), "iu");
 const SPORT = /\b(?:football|soccer|league|FC|goals?|match(?:es)?|tournament|striker|futsal|cricket|Olympic\w*|world cup|championship|volleyball|basketball|tennis|coach)\b|ฟุตบอล|ยิงประตู|ليگ|الدوري/i;
 export const isSecurity = (text) => SECURITY.test(text) && !SPORT.test(text);

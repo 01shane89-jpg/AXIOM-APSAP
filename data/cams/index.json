@@ -1,5 +1,5 @@
 {
- "built": "2026-10-05T11:58Z",
+ "built": "2026-10-12T12:33Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -18,7 +18,7 @@
     1.44702,
     103.82389
    ],
-   "checked": "2026-10-05T11:48Z"
+   "checked": "2026-10-12T12:23Z"
   },
   {
    "id": "hk-td",
@@ -36,7 +36,7 @@
     22.54589,
     114.26637
    ],
-   "checked": "2026-10-05T11:48Z"
+   "checked": "2026-10-12T12:23Z"
   },
   {
    "id": "nz-nzta",
@@ -47,14 +47,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://www.nzta.govt.nz/traffic-and-travel-information/infoconnect-section-page/",
    "every": 2,
-   "n": 248,
+   "n": 251,
    "box": [
     -45.89658,
     168.66154,
     -36.38935,
     176.87727
    ],
-   "checked": "2026-10-05T11:48Z"
+   "checked": "2026-10-12T12:23Z"
   },
   {
    "id": "gb-tfl",
@@ -65,14 +65,14 @@
    "licence": "Powered by TfL Open Data (Open Government Licence)",
    "page": "https://tfl.gov.uk/info-for/open-data-users/",
    "every": 5,
-   "n": 799,
+   "n": 804,
    "box": [
     51.3169,
     -0.49324,
     51.6799,
     0.23161
    ],
-   "checked": "2026-10-05T11:48Z"
+   "checked": "2026-10-12T12:23Z"
   },
   {
    "id": "fi-digitraffic",
@@ -83,14 +83,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://www.digitraffic.fi/en/road-traffic/",
    "every": 10,
-   "n": 808,
+   "n": 812,
    "box": [
     59.85645,
     19.61872,
     70.08851,
     31.27705
    ],
-   "checked": "2026-10-05T11:48Z"
+   "checked": "2026-10-12T12:23Z"
   },
   {
    "id": "ca-drivebc",
@@ -108,7 +108,7 @@
     59.99805,
     -114.71282
    ],
-   "checked": "2026-10-05T11:48Z"
+   "checked": "2026-10-12T12:23Z"
   },
   {
    "id": "au-nsw",
@@ -119,14 +119,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://opendata.transport.nsw.gov.au/dataset/live-traffic-cameras",
    "every": 1,
-   "n": 241,
+   "n": 250,
    "box": [
     -36.41048,
     144.74397,
-    -28.22595,
+    0,
     153.55694
    ],
-   "checked": "2026-10-05T11:48Z"
+   "checked": "2026-10-12T12:23Z"
   },
   {
    "id": "ca-on",
@@ -144,7 +144,7 @@
     51.48012,
     -74.38254
    ],
-   "checked": "2026-10-05T11:52Z"
+   "checked": "2026-10-12T12:26Z"
   },
   {
    "id": "ca-nb",
@@ -162,7 +162,7 @@
     47.95752,
     -63.93869
    ],
-   "checked": "2026-10-05T11:52Z"
+   "checked": "2026-10-12T12:26Z"
   },
   {
    "id": "ca-ns",
@@ -180,7 +180,7 @@
     46.8772,
     -60.2754
    ],
-   "checked": "2026-10-05T11:52Z"
+   "checked": "2026-10-12T12:26Z"
   },
   {
    "id": "ca-nl",
@@ -198,7 +198,7 @@
     53.56083,
     -52.87225
    ],
-   "checked": "2026-10-05T11:52Z"
+   "checked": "2026-10-12T12:26Z"
   },
   {
    "id": "ca-ab",
@@ -209,14 +209,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511.alberta.ca/cctv",
    "every": 2,
-   "n": 340,
+   "n": 337,
    "box": [
     49.077,
     -119.999,
     59.868,
     -110.021
    ],
-   "checked": "2026-10-05T11:52Z"
+   "checked": "2026-10-12T12:27Z"
   },
   {
    "id": "ca-mb",
@@ -234,7 +234,7 @@
     54.66911,
     -95.15482
    ],
-   "checked": "2026-10-05T11:52Z"
+   "checked": "2026-10-12T12:27Z"
   },
   {
    "id": "ca-pe",
@@ -252,7 +252,7 @@
     46.81474,
     -62.61556
    ],
-   "checked": "2026-10-05T11:53Z"
+   "checked": "2026-10-12T12:27Z"
   },
   {
    "id": "ca-yt",
@@ -263,14 +263,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511yukon.ca/cctv",
    "every": 2,
-   "n": 15,
+   "n": 14,
    "box": [
-    59.58996,
+    59.7592,
     -140.9756,
     66.44319,
     -128.26911
    ],
-   "checked": "2026-10-05T11:53Z"
+   "checked": "2026-10-12T12:27Z"
   },
   {
    "id": "th-dwr",
@@ -283,14 +283,14 @@
    "every": 15,
    "kind": "dwr",
    "type": "river",
-   "n": 123,
+   "n": 118,
    "box": [
     6.22808,
-    98.36329,
+    98.39166,
     20.44465,
     105.4932
    ],
-   "checked": "2026-10-05T11:54Z"
+   "checked": "2026-10-12T12:28Z"
   },
   {
    "id": "th-itic",
@@ -302,14 +302,14 @@
    "page": "https://www.iticfoundation.org/",
    "every": 0,
    "kind": "hls",
-   "n": 56,
+   "n": 55,
    "box": [
     13.66608,
     100.52785,
-    16.47545,
-    102.83252
+    16.47656,
+    102.83274
    ],
-   "checked": "2026-10-05T11:54Z"
+   "checked": "2026-10-12T12:28Z"
   },
   {
    "id": "au-qld",
@@ -346,7 +346,7 @@
     66.32717,
     -13.85469
    ],
-   "checked": "2026-10-05T11:54Z"
+   "checked": "2026-10-12T12:28Z"
   },
   {
    "id": "lt-eismoinfo",
@@ -357,14 +357,14 @@
    "licence": "Lithuanian Road Administration open data",
    "page": "https://eismoinfo.lt/",
    "every": 5,
-   "n": 310,
+   "n": 306,
    "box": [
     54.03408,
     20.97875,
     56.37486,
     26.53135
    ],
-   "checked": "2026-10-05T11:54Z"
+   "checked": "2026-10-12T12:28Z"
   },
   {
    "id": "es-dgt",
@@ -375,14 +375,14 @@
    "licence": "DGT National Access Point open data (credit the DGT)",
    "page": "https://infocar.dgt.es/etraffic/",
    "every": 5,
-   "n": 1955,
+   "n": 1959,
    "box": [
     35.87692,
     -8.99783,
     43.5638,
     3.21198
    ],
-   "checked": "2026-10-05T11:54Z"
+   "checked": "2026-10-12T12:28Z"
   },
   {
    "id": "nz-geonet",
@@ -401,7 +401,7 @@
     -29.26733,
     177.69217
    ],
-   "checked": "2026-10-05T11:54Z"
+   "checked": "2026-10-12T12:28Z"
   },
   {
    "id": "jp-jma-volcano",
@@ -421,7 +421,7 @@
     43.662,
     144.465
    ],
-   "checked": "2026-10-05T11:54Z"
+   "checked": "2026-10-12T12:28Z"
   },
   {
    "id": "jp-mlit-river",
@@ -433,14 +433,14 @@
    "page": "https://www.river.go.jp/",
    "every": 10,
    "type": "river",
-   "n": 11717,
+   "n": 11719,
    "box": [
     31.30879,
     128.83459,
     45.40325,
     145.18755
    ],
-   "checked": "2026-10-05T11:58Z"
+   "checked": "2026-10-12T12:33Z"
   },
   {
    "id": "th-egat",
@@ -459,7 +459,7 @@
     17.76507,
     105.43222
    ],
-   "checked": "2026-10-05T11:58Z"
+   "checked": "2026-10-12T12:33Z"
   }
  ]
 }

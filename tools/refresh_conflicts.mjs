@@ -133,8 +133,12 @@ for (const c of LIST) {
   }
   // a Telegram channel (type "telegram", channel name only) is read through its public web preview
   const srcs = [...(c.feeds || []).map((f) => f.type === "telegram" ? { ...f, id: f.id || "tg-" + f.channel, outlet: f.outlet || "@" + f.channel, url: "https://t.me/s/" + f.channel, search: false, tg: f.channel } : { ...f, search: false }),
+    // a search with "sort": "date" asks for the newest results first (Bing ranks by relevance otherwise and returns only ~12,
+    // so fresh incidents can be crowded out by older, bigger stories); "side" and "state" pass through as on feeds
     ...(c.searches || []).map((s, k) => ({ id: "bing-" + (s.lang || "en") + "-" + k, outlet: "Bing News search", lang: s.lang || "en", q: s.q, search: true, nc: true,
-      url: "https://www.bing.com/news/search?q=" + encodeURIComponent(s.q) + "&format=rss" + (s.lang && s.lang !== "en" ? "&setlang=" + s.lang : "") }))];
+      ...(s.side ? { side: s.side } : {}), ...(s.state ? { state: true } : {}),
+      url: "https://www.bing.com/news/search?q=" + encodeURIComponent(s.q) + "&format=rss" + (s.lang && s.lang !== "en" ? "&setlang=" + s.lang : "") +
+        (s.sort === "date" ? "&qft=sortbydate%3d%221%22" : "") }))];
   for (const f of srcs) {
     try {
       const raw = await feedItems(f.url, f.search, f.tg), kept = [];
@@ -403,7 +407,7 @@ for (const c of LIST) {
       todo.forEach((i, n) => { if (tr[n].en) { i.title_en = tr[n].en.slice(0, 300); i.mt = tr[n].tool; } if (tr[todo.length + n].en) i.summary_en = tr[todo.length + n].en.slice(0, 400); });
     }
   }
-  for (const i of items) for (const k of ["title", "summary", "title_en", "summary_en", "outlet"]) if (i[k]) i[k] = unent(i[k]);
+  for (const i of items) for (const k of ["title", "summary", "title_en", "summary_en", "outlet"]) if (i[k]) i[k] = unent(i[k]).replace(/\uFFFD/g, "");   // a search engine cuts long Khmer titles mid-character
   for (const i of items) {
     const en = /^en\b/i.test(i.lang || "") ? i.title : i.title_en || "";
     i.kind = classify(en || i.title);
