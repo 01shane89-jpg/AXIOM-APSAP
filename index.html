@@ -5407,7 +5407,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     new RegExp("(^|\\n)[ \\t]*[^\\n()]{0,60}?\\((?:" + AGENCY + ")\\)\\s*(?:--|[-\u2013\u2014:])", "gu"),
     /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-)/gu,
     /* "MANILA, Philippines-The ...": no space either side of the dash, only after a "PLACE, Country" dateline */
-    /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30},[^\n\u2013\u2014-]{1,30}-(?=\p{Lu})/gu];
+    /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30},[^\n\u2013\u2014-]{1,30}-(?=\p{Lu})/gu,
+    /* "ILOCOS SUR-A 56-year-old ...", "PAMPANGA-Isang ...": a provincial dateline in capitals, the dash straight before the first word */
+    /(^|\n)[ \t]*\p{Lu}{3,}(?: \p{Lu}{2,}){0,3}-(?=\p{Lu}\p{Ll}|\p{Lu} )/gu];
   function stripDatelines(text) {
     var t = String(text || "");
     DATELINE.forEach(function (re) { t = t.replace(re, function (m, lead) { lead = typeof lead === "string" ? lead : ""; return lead + new Array(m.length - lead.length + 1).join(" "); }); });
