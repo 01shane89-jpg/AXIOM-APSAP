@@ -6552,6 +6552,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
     if (v === current) return;
+    /* Route is a map tool, not a data set: opening it, or going back from it, keeps the map where the analyst left it
+       (the planner fits to a route only once one is planned or asked for) */
+    var keep = !fromLoad && (v === "route" || current === "route");
     current = v;
     var l = LBY[v];
     document.documentElement.setAttribute("data-view", v);
@@ -6575,13 +6578,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (l.sof) {
       if (dsShown(v)) sofLayer.addTo(map);
       showSof(v); map.invalidateSize();
-      map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
+      if (!keep) map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
     }
     else if (l.curated) {
       if (dsShown(v)) curLayer.addTo(map);
       showCurated(v);
       map.invalidateSize();
-      map.fitBounds(TH && TD[v].bounds && !(ADDED && ADDED.length) ? TD[v].bounds : cBounds(), { padding: [10, 10], animate: false });
+      if (!keep) map.fitBounds(TH && TD[v].bounds && !(ADDED && ADDED.length) ? TD[v].bounds : cBounds(), { padding: [10, 10], animate: false });
     }
     else if (v === "flood" && TH) { if (dsShown(v)) window.FW.show(); }
     else if (v === "border" && TH) { if (dsShown(v)) window.TBW.show(); else window.TBW.fit(); }
@@ -6590,7 +6593,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       else if (v === "alerts") { if (dsShown(v)) alertLayer.addTo(map); renderAlerts(); }
       else fillStub(l);
       map.invalidateSize();
-      map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
+      if (!keep) map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
     }
     dsSync();
     try { localStorage.setItem("tw-view", v); } catch (e) {}
