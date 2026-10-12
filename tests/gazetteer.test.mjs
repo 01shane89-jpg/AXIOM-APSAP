@@ -57,6 +57,8 @@ const cases = [
   ["Free rides amid strike \n SEOUL, Korea -The ministry deployed buses", "kr", null],   // "-The": no space after the dash                                 // not all capitals: a headline, not a dateline
   ["Coast guard patrols \n MANILA, Philippines-The Department of Foreign Affairs rejected the claim", "ph", null],   // no space either side of the dash
   ["Heavy rain floods roads in Seoul", "kr", "Seoul"],
+  ["Farmers receive diesel subsidy \n ILOCOS SUR-The City Government helped rice farmers", "ph", null],   // all-capitals place, no space either side of the dash
+  ["Motorcyclist dies in crash \n ILOCOS SUR-A 56-year-old rider crashed on the national highway", "ph", null],
 ];
 let bad = 0;
 for (const [t, cc, want] of cases) {
