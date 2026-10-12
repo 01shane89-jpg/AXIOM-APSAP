@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { loadGazetteer, placeIn } from "../tools/gazetteer.mjs";
+import { loadGazetteer, placeIn, stripDatelines } from "../tools/gazetteer.mjs";
 
 // geonameid name ascii alt lat lon class code(7) cc(8) cc2 admin1(10) a2 a3 a4 pop(14) ...
 const row = (name, lat, lon, code, cc, a1, pop) => [0, name, name, "", lat, lon, "P", code, cc, "", a1, "", "", "", pop, "", "", "", ""].join("\t");
@@ -57,8 +57,6 @@ const cases = [
   ["Free rides amid strike \n SEOUL, Korea -The ministry deployed buses", "kr", null],   // "-The": no space after the dash                                 // not all capitals: a headline, not a dateline
   ["Coast guard patrols \n MANILA, Philippines-The Department of Foreign Affairs rejected the claim", "ph", null],   // no space either side of the dash
   ["Heavy rain floods roads in Seoul", "kr", "Seoul"],
-  ["Farmers receive diesel subsidy \n ILOCOS SUR-The City Government helped rice farmers", "ph", null],   // all-capitals place, no space either side of the dash
-  ["Motorcyclist dies in crash \n ILOCOS SUR-A 56-year-old rider crashed on the national highway", "ph", null],
 ];
 let bad = 0;
 for (const [t, cc, want] of cases) {
@@ -69,4 +67,10 @@ for (const [t, cc, want] of cases) {
 // a state's centre is found by its admin-1 code even where a city holds the state's name
 const hi = gz.us.regs.get("US.HI"); if (!hi || hi.kind !== "region") bad++;
 console.log(hi && hi.kind === "region" ? "ok  " : "FAIL", "state centre by code US.HI ->", hi ? hi.name : null);
+// provincial datelines in capitals with the dash straight before the first word are blanked; a hyphenated headline word is not
+for (const [t, gone, kept] of [["ILOCOS SUR-A 56-year-old wife died", "ILOCOS", "wife"], ["PAMPANGA-Isang lalaki ang nasawi", "PAMPANGA", "Isang"],
+  ["US-China talks resume", null, "US-China"], ["COVID-19 cases rise in Cebu", null, "COVID-19"]]) {
+  const out = stripDatelines(t), ok = (!gone || !out.includes(gone)) && out.includes(kept); if (!ok) bad++;
+  console.log(ok ? "ok  " : "FAIL", "dateline", JSON.stringify(t), "->", JSON.stringify(out.trim()));
+}
 process.exit(bad ? 1 : 0);
