@@ -1,0 +1,11 @@
+[["n1042058522",27.64583,47.99306,"sa",{"name":"Al Wariah SE Highway Strip","aeroway":"aerodrome"}],
+["n348263148",27.95234,46.74009,"sa",{"aeroway":"aerodrome"}],
+["n7343448513",26.51702,47.33322,"sa",{"name":"مركز صحي","amenity":"clinic","healthcare":"clinic"}],
+["n7343502722",26.3675,47.2392,"sa",{"name":"مركز صحي شوية","amenity":"clinic"}],
+["n7343510426",26.3685,47.2372,"sa",{"name":"مركز إسعاف","emergency":"ambulance_station"}],
+["n7405503367",27.54541,47.28258,"sa",{"name":"مركز صحي الشيط","amenity":"clinic"}],
+["w1541083903",27.01077,47.41896,"sa",{"aeroway":"aerodrome"}],
+["w315588555",26.59048,47.03975,"sa",{"aeroway":"aerodrome","military":"airfield"}],
+["w597070217",27.46564,47.94437,"sa",{"aeroway":"aerodrome"}],
+["w957466370",27.01933,47.06829,"sa",{"name":"مستشفى الرفيعة العام","amenity":"hospital","healthcare":"hospital"}],
+["w957466371",27.56125,47.70916,"sa",{"name":"مستشفى قرية العليا العام","amenity":"hospital","healthcare":"hospital"}]]

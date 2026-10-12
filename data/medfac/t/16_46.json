@@ -1,0 +1,8 @@
+[["n1014372092",17.46954,47.11564,"sa",{"name":"شررة","name:en":"Sharurah Domestic Airport","aeroway":"aerodrome","icao":"OESH","iata":"SHW","aerodrome:type":"military/public","wikidata":"Q2876026"}],
+["n7542306074",16.96441,47.01851,"sa",{"name":"مركز إسعاف الوديعة","emergency":"ambulance_station"}],
+["r13740136",17.46657,47.12149,"sa",{"name":"مطار شرورة المحلي","name:en":"Sharurah Domestic Airport","operator":"General Authority Of Civil Aviation","operator:type":"government","aeroway":"aerodrome","icao":"OESH","iata":"SHW","wikidata":"Q2876026"}],
+["w1101850382",17.2058,47.10103,"sa",{"aeroway":"helipad"}],
+["w1177916829",17.53303,47.05409,"sa",{"aeroway":"helipad"}],
+["w1211263019",17.49453,47.0953,"sa",{"name":"مركز الهلال الأحمر","emergency":"ambulance_station","operator":"Minstry Of Healthy","addr:city":"شرورة"}],
+["w963933022",17.47895,47.103,"sa",{"name":"المستشفى العسكري","amenity":"hospital","healthcare":"hospital"}],
+["w963933023",17.48528,47.10184,"sa",{"name":"مستشفى شرورة العام","amenity":"hospital","healthcare":"hospital"}]]
