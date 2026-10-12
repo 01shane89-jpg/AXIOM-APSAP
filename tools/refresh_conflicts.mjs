@@ -133,8 +133,12 @@ for (const c of LIST) {
   }
   // a Telegram channel (type "telegram", channel name only) is read through its public web preview
   const srcs = [...(c.feeds || []).map((f) => f.type === "telegram" ? { ...f, id: f.id || "tg-" + f.channel, outlet: f.outlet || "@" + f.channel, url: "https://t.me/s/" + f.channel, search: false, tg: f.channel } : { ...f, search: false }),
+    // a search with "sort": "date" asks for the newest results first (Bing ranks by relevance otherwise and returns only ~12,
+    // so fresh incidents can be crowded out by older, bigger stories); "side" and "state" pass through as on feeds
     ...(c.searches || []).map((s, k) => ({ id: "bing-" + (s.lang || "en") + "-" + k, outlet: "Bing News search", lang: s.lang || "en", q: s.q, search: true, nc: true,
-      url: "https://www.bing.com/news/search?q=" + encodeURIComponent(s.q) + "&format=rss" + (s.lang && s.lang !== "en" ? "&setlang=" + s.lang : "") }))];
+      ...(s.side ? { side: s.side } : {}), ...(s.state ? { state: true } : {}),
+      url: "https://www.bing.com/news/search?q=" + encodeURIComponent(s.q) + "&format=rss" + (s.lang && s.lang !== "en" ? "&setlang=" + s.lang : "") +
+        (s.sort === "date" ? "&qft=sortbydate%3d%221%22" : "") }))];
   for (const f of srcs) {
     try {
       const raw = await feedItems(f.url, f.search, f.tg), kept = [];
