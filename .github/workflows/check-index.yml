@@ -112,6 +112,7 @@ jobs:
       - run: node tests/evac_smoke.mjs
       - run: node tests/evacroute_smoke.mjs
       - run: node tests/route_wpdel_smoke.mjs
+      - run: node tests/route_keepview_smoke.mjs
       - run: node tests/evac_lz_airfield_smoke.mjs
       - run: node tests/evac_foot_xc_smoke.mjs
       - run: node tests/epe_smoke.mjs
