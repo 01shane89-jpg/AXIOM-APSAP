@@ -1,0 +1,8 @@
+[["n2721108200",22.66481,40.31579,"sa",{"amenity":"hospital"}],
+["n4547232194",22.85784,40.5742,"sa",{"name:en":"Al Amal polyclinic Rabigh (183 patient )","amenity":"hospital"}],
+["n7533557967",23.502,40.8829,"sa",{"name":"مستشفى المهد العام","amenity":"hospital"}],
+["n7855983883",22.43071,41.74648,"sa",{"name":"مستشفى الموية العام","amenity":"hospital","addr:street":"طريق الملك عبدالعزيز","opening_hours":"Mo-Th, Su 08:00-15:00"}],
+["n7856427061",22.43378,41.7608,"sa",{"name":"مركز الهلال الأحمر بالموية","emergency":"ambulance_station"}],
+["n7862863691",22.92291,41.6411,"sa",{"name":"مركز صحي البادرية","amenity":"clinic"}],
+["w1237626130",23.48944,40.85357,"sa",{"aeroway":"helipad"}],
+["w1545871026",22.62403,41.35503,"sa",{"name":"مستشفى أم الدوم العام","amenity":"hospital","emergency":"yes","beds":"50","operator":"وزارة الصحة","addr:city":"الطائف"}]]
