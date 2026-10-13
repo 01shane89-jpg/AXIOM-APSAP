@@ -1,0 +1,10 @@
+[["n3635353407",51.57905,93.55729,"ru",{"amenity":"clinic"}],
+["w1034692069",50.7441,92.10267,"ru",{"aeroway":"helipad"}],
+["w1034692886",50.79461,92.74783,"ru",{"aeroway":"helipad"}],
+["w1068184392",51.53965,92.90152,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w1079950533",50.81357,92.68295,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w1104142736",51.52025,92.33437,"ru",{"name":"Чаа-Хольская Центральная кожуунная больница","amenity":"hospital","healthcare":"hospital"}],
+["w1387189259",50.72928,92.08633,"ru",{"name":"Овюрская центральная клиническая больница","amenity":"hospital","healthcare":"hospital"}],
+["w333208823",51.13096,93.71551,"ru",{"name":"Чеди-Хольская Центральная Кожуунная больница","amenity":"hospital"}],
+["w579146304",50.66899,93.77005,"ru",{"aeroway":"helipad"}],
+["w920547573",51.53905,92.90077,"ru",{"emergency":"ambulance_station"}]]

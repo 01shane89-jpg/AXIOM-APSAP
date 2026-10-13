@@ -95,6 +95,7 @@
 ["w292075627",54.24185,28.5046,"by",{"name":"Паліклініка №1","name:en":"Polyclinic №1","amenity":"clinic","addr:housenumber":"23","addr:street":"вуліца 3-га Інтэрнацыяналу"}],
 ["w301252502",55.02054,28.88256,"by",{"name":"Каменская сельская медыцынская амбулаторыя","amenity":"clinic","addr:housenumber":"2","addr:street":"Кветкавая вуліца"}],
 ["w30273010",54.96627,29.83463,"by",{"name":"Дом кругласутачнага знаходжання","amenity":"hospital"}],
+["w318823870",55.84681,29.46924,"ru",{"aeroway":"helipad"}],
 ["w322552309",54.5182,28.95816,"by",{"name":"Халопеніцкая гарпасялковая бальніца","amenity":"hospital"}],
 ["w334184022",55.47523,28.85018,"by",{"name":"Полацкая гарадская бальніца №1","name:en":"City hospital №1 of Polotsk","amenity":"hospital","healthcare":"hospital","operator":"ГУЗ \"Полоцкая центральная городская больница\"","contact:phone":"+375 (214) 49-31-60;+375 (214) 49-38-00","contact:website":"https://polmed.by/ru/podrazdeleniya/gorodskaya-bolnitsa-1"}],
 ["w337258600",54.85471,29.16113,"by",{"name":"Чашніцкая раённая бальніца","amenity":"hospital","contact:phone":"+375(2133) 4-12-34"}],

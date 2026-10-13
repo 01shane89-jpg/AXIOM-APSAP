@@ -2,4 +2,6 @@
 ["n5232955243",53.62928,72.34117,"kz",{"name":"Уалихановская центральная районная больница","amenity":"hospital"}],
 ["n5761148308",52.16048,72.73994,"kz",{"name":"Облыстық мәжбүрлеп емдеу наркологиялық ауруханасы","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"psychiatry","emergency":"no"}],
 ["r7580072",52.16035,72.73965,"kz",{"name":"Облыстық мәжбүрлеп емдеу наркологиялық ауруханасы;Сілеті дәрігерлік амбулаториясы","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"no"}],
+["w1041194020",53.76373,73.88169,"ru",{"aeroway":"helipad"}],
+["w322699903",53.77523,73.88202,"ru",{"name":"Русско-","amenity":"hospital","phone":"+7 3815 62 14 55","website":"http://russko-polyanskaya-crb.ru/","opening_hours":"24/7"}],
 ["w762648888",52.05972,72.01199,"kz",{"amenity":"hospital","healthcare":"hospital","phone":"+7 71638 3 42 17"}]]

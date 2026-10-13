@@ -1,3 +1,12 @@
 [["n1042034392",6.98444,46.4214,"et",{"name":"Geladi Airport","aeroway":"aerodrome","iata":"GLC"}],
 ["n10690260005",7.7613,46.53132,"et",{"name:en":"Markan Health Center, Bokh woreda","amenity":"clinic"}],
-["w1155150302",6.30446,46.2222,"et",{"name":"Old Abudwaq Runway","aeroway":"aerodrome"}]]
+["n12724277991",7.13313,47.52553,"so",{"name":"Heemo Airport","aeroway":"aerodrome"}],
+["n8178752253",6.133,46.6249,"so",{"name":"Adado General Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w1155150302",6.30446,46.2222,"et",{"name":"Old Abudwaq Runway","aeroway":"aerodrome"}],
+["w1297148362",6.95454,47.01677,"so",{"name":"Galdogob International Airport","aeroway":"aerodrome"}],
+["w1374263236",6.69173,47.40322,"so",{"name":"Oshaco International Airport","aeroway":"aerodrome"}],
+["w1507465937",6.02945,46.02073,"so",{"aeroway":"aerodrome"}],
+["w276883215",7.02262,47.02247,"so",{"name":"Galdogob general hospital","amenity":"hospital","healthcare":"hospital"}],
+["w277338627",6.18064,46.19412,"so",{"name":"Abudwak Airport","aeroway":"aerodrome","surface":"paved","aerodrome:type":"international"}],
+["w588704240",6.09698,46.63759,"so",{"name":"Adado Airport","aeroway":"aerodrome","icao":"HCAD","iata":"AAD","wikidata":"Q25037309"}],
+["w673886674",6.78118,47.45547,"so",{"name":"Abdullahi Yusef International Airport مطار عبد الله يوسف","name:en":"Abdullahi Yusuf International Airport","aeroway":"aerodrome","icao":"HCMR","iata":"GLK","wikidata":"Q2011096"}]]

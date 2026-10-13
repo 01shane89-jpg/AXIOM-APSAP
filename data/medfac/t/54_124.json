@@ -1,0 +1,10 @@
+[["n1336756098",55.15712,124.72727,"ru",{"name":"терапия","amenity":"hospital","emergency":"yes"}],
+["n1336756174",55.15816,124.7291,"ru",{"name":"хирургия","amenity":"hospital","emergency":"yes"}],
+["w1070629085",55.10275,124.97136,"ru",{"aeroway":"helipad"}],
+["w1070633231",55.1614,124.99445,"ru",{"aeroway":"helipad"}],
+["w112452081",55.15713,124.7274,"ru",{"name":"Больница терапия","amenity":"hospital","addr:housenumber":"74","addr:street":"улица 2-я Пятилетка"}],
+["w118916211",55.15825,124.72911,"ru",{"name":"Хирургическое отделение","amenity":"hospital","operator":"ЦРБ","addr:housenumber":"1","addr:street":"Зелёная улица"}],
+["w125265501",54.22108,124.42825,"ru",{"name":"Соловьевская участковая больница","amenity":"hospital","healthcare":"hospital","addr:housenumber":"10","addr:street":"Школьная улица"}],
+["w1428261070",55.29316,125.09197,"ru",{"aeroway":"helipad"}],
+["w227233233",55.15763,124.7512,"ru",{"name":"РЖД-Медицина","amenity":"hospital","healthcare":"hospital"}],
+["w75207996",55.28457,124.77692,"ru",{"name":"Аэропорт Тында","name:en":"Tynda Airport","aeroway":"aerodrome","icao":"UHBW","iata":"TYD","wikidata":"Q658000"}]]

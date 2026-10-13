@@ -1,0 +1,12 @@
+[["n1592204362",59.43399,62.36888,"ru",{"aeroway":"helipad"}],
+["n7394152179",58.47059,62.60141,"ru",{"name":"ФАП","amenity":"hospital","healthcare":"hospital","addr:housenumber":"7","addr:street":"улица Строителей","addr:city":"Санкино"}],
+["w1095727937",59.90744,63.80981,"ru",{"aeroway":"helipad"}],
+["w1095727945",59.99336,63.88496,"ru",{"aeroway":"helipad","surface":"asphalt"}],
+["w1311505268",59.98589,63.95849,"ru",{"aeroway":"helipad"}],
+["w145917238",59.43395,62.3727,"ru",{"name":"Аэропорт Гари","aeroway":"aerodrome"}],
+["w164963463",59.73033,62.94684,"ru",{"name":"Аэродром Пуксинка","aeroway":"aerodrome"}],
+["w276924056",59.44221,62.34552,"ru",{"name":"МУ Гаринская ЦРБ","amenity":"hospital"}],
+["w277936155",59.48764,63.73416,"ru",{"aeroway":"helipad"}],
+["w367641658",58.04928,63.69778,"ru",{"name":"Туринская центральная районная больница","amenity":"hospital"}],
+["w790389720",59.32858,63.42108,"ru",{"name":"Аэропорт Лапоткова","name:en":"Lapotkova Airport","aeroway":"aerodrome","icao":"ZA6Y"}],
+["w790399483",58.04035,63.6739,"ru",{"name":"Аэродром Туринск","name:en":"Turinsk Airport","aeroway":"aerodrome","icao":"USST"}]]

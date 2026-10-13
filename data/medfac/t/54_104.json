@@ -1,0 +1,6 @@
+[["n5494830432",55.00705,105.08809,"ru",{"amenity":"clinic","healthcare":"clinic"}],
+["w105427882",54.81038,105.15301,"ru",{"name":"ОГБУЗ Жигаловская районная больница","amenity":"hospital","emergency":"yes","website":"http://crbjigalovo.ru/","addr:housenumber":"18","addr:street":"улица Левина"}],
+["w1230825620",54.797,105.13568,"ru",{"name":"Жигалово","aeroway":"helipad"}],
+["w465960722",54.79697,105.13506,"ru",{"aeroway":"helipad"}],
+["w75208148",54.79787,105.21378,"ru",{"name":"Аэропорт Жигалово","operator":"Киренское авиапредприятие","aeroway":"aerodrome","icao":"UIIV"}],
+["w87324475",54.81127,105.15156,"ru",{"name":"Поликлинника","amenity":"clinic","healthcare":"clinic","addr:housenumber":"13","addr:street":"Советская улица","addr:postcode":"666402"}]]

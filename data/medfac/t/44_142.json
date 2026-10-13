@@ -26,5 +26,7 @@
 ["w895682554",44.36143,143.34745,"jp",{"name":"Monbetsu Regional Hospital Helipad","aeroway":"helipad"}],
 ["w902046346",44.38457,142.44259,"jp",{"name":"名寄駐屯地滑走路","name:en":"Camp Nayoro Runway","aeroway":"aerodrome"}],
 ["w902046347",44.38406,142.44142,"jp",{"aeroway":"helipad"}],
+["w909314358",45.89786,142.08264,"ru",{"name":"Мыс Крильон","operator":"ФСБ","aeroway":"helipad","surface":"concrete:plates"}],
+["w909314359",45.92574,142.06969,"ru",{"name":"Карналит","operator":"Министерство Обороны РФ","aeroway":"helipad"}],
 ["w966050546",44.72978,142.25405,"jp",{"aeroway":"helipad"}],
 ["w971035821",44.06245,143.52409,"jp",{"name":"遠軽厚生病院","name:en":"Engaru Kosei Hospital","amenity":"hospital","healthcare":"hospital","operator":"JA北海道厚生連","phone":"+81 158 42 4101","website":"https://www.dou-kouseiren.com/byouin/engaru/","addr:housenumber":"5","addr:city":"遠軽町","addr:province":"北海道","addr:postcode":"099-0404"}]]

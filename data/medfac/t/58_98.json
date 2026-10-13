@@ -1,0 +1,12 @@
+[["n12578672030",58.61144,99.17509,"ru",{"name":"Старый стационар","amenity":"hospital","healthcare":"hospital"}],
+["w1239974475",58.48126,99.10288,"ru",{"aeroway":"helipad"}],
+["w136527321",58.61026,99.17368,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w136527323",58.61081,99.17443,"ru",{"name":"Кежемская РБ","amenity":"hospital","healthcare":"hospital","addr:housenumber":"7","addr:street":"улица Колесниченко"}],
+["w136527768",58.60197,99.18714,"ru",{"name":"Кежемская РБ","amenity":"hospital","healthcare":"hospital","addr:housenumber":"26","addr:street":"Гидростроителей","addr:city":"Кодинск"}],
+["w136527851",58.60509,99.18958,"ru",{"name":"Детская поликлиника","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2А","addr:street":"улица Колесниченко"}],
+["w524330678",58.68223,99.15427,"ru",{"aeroway":"helipad"}],
+["w524330679",58.68165,99.15435,"ru",{"aeroway":"helipad"}],
+["w524330680",58.68108,99.1544,"ru",{"aeroway":"helipad"}],
+["w694725719",58.60931,99.17516,"ru",{"name":"Кежемская ЦРБ","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"15","addr:street":"улица Колесниченко","addr:city":"Кодинск"}],
+["w694737129",58.61022,99.17367,"ru",{"amenity":"mortuary","healthcare":"hospital"}],
+["w75208195",58.4806,99.0947,"ru",{"name":"Аэропорт Кодинск","name:en":"Kodinsk Airport","aeroway":"aerodrome","icao":"UNKI","wikidata":"Q16664420"}]]

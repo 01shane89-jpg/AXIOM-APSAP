@@ -1,0 +1,13 @@
+[["w1246370861",70.03801,68.26769,"ru",{"aeroway":"helipad","surface":"concrete"}],
+["w1315489335",70.36266,68.45307,"ru",{"name":"Больничный комплекс","amenity":"hospital","healthcare":"hospital","operator":"Ямальское газопромысловое управление","operator:type":"private"}],
+["w159491047",70.36399,68.43183,"ru",{"name":"Вертолётная площадка","operator":"ООО Авиапредприятие «Газпром авиа»","aeroway":"helipad","surface":"concrete:plates"}],
+["w159491050",70.31513,68.33358,"ru",{"name":"Аэропорт Бованенково","name:en":"Bovanenkovo airport","operator":"ООО Авиапредприятие «Газпром авиа»","aeroway":"aerodrome","icao":"USDB","iata":"BVJ","aerodrome:type":"public","wikidata":"Q21636179"}],
+["w617122380",70.36244,68.45289,"ru",{"name":"Пoликлиника","amenity":"clinic","healthcare":"clinic"}],
+["w694666677",70.24505,68.16086,"ru",{"aeroway":"helipad","surface":"concrete:plates"}],
+["w694666691",70.42239,68.21436,"ru",{"aeroway":"helipad","surface":"concrete:plates"}],
+["w694666695",70.39118,68.35063,"ru",{"aeroway":"helipad","surface":"concrete:plates"}],
+["w694666705",70.39047,68.41382,"ru",{"aeroway":"helipad","surface":"concrete:plates"}],
+["w722337942",70.27385,68.14791,"ru",{"aeroway":"helipad","surface":"concrete:plates"}],
+["w722337945",70.24021,68.12759,"ru",{"aeroway":"helipad","surface":"concrete:plates"}],
+["w722337995",70.36275,68.45334,"ru",{"name":"Стационар","amenity":"hospital","healthcare":"hospital"}],
+["w854023443",70.32136,68.32583,"ru",{"aeroway":"helipad"}]]

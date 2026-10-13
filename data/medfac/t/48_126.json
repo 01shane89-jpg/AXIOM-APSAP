@@ -2,6 +2,8 @@
 ["n11350504959",49.42431,127.3327,"cn",{"name":"孙吴县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1033859989",48.62805,126.61436,"cn",{"name":"五大连池沾河直升机场","aeroway":"heliport"}],
 ["w1033911549",48.65384,126.71417,"cn",{"name":"五大连池龙镇通用机场","name:en":"Wudalianchi Longzhen General Airport","aeroway":"aerodrome"}],
+["w1034288541",49.88572,127.54583,"ru",{"aeroway":"helipad"}],
+["w1034288975",49.99183,127.50869,"ru",{"aeroway":"helipad"}],
 ["w1093772800",48.73084,127.37551,"cn",{"name":"五大连池幸福机场","name:en":"Wudalianchi Xingfu Airport","aeroway":"aerodrome"}],
 ["w1115663636",48.6521,126.15311,"cn",{"name":"五大连池风景区直升机场","aeroway":"heliport"}],
 ["w1396775350",48.83567,126.88781,"cn",{"name":"五大连池襄河机场","operator":"黑龙江省襄河农场","operator:type":"public","aeroway":"aerodrome"}],

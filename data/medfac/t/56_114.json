@@ -1,0 +1,13 @@
+[["n13248940433",56.36602,114.83679,"ru",{"name":"РЖД-Медицина","amenity":"clinic","healthcare":"clinic","phone":"+7 30132 4 23 31","website":"https://taksimo.rzd-medicine.ru/","addr:housenumber":"12","addr:street":"Советская улица","opening_hours":"Mo-Fr 08:00-20:00; Sa 09:00-15:00"}],
+["n2594246320",57.8498,114.21242,"ru",{"name":"СЭС","amenity":"hospital","addr:housenumber":"105","addr:street":"улица Стояновича","addr:city":"Бодайбо"}],
+["n2594246342",57.84784,114.20718,"ru",{"name":"Поликлиника","amenity":"hospital","addr:housenumber":"4","addr:street":"улица Розы Люксембург","addr:city":"Бодайбо"}],
+["w1123130361",56.3667,114.83692,"ru",{"amenity":"hospital"}],
+["w251369679",57.84746,114.20584,"ru",{"amenity":"hospital","addr:city":"Бодайбо"}],
+["w251369680",57.84804,114.20531,"ru",{"amenity":"hospital","addr:city":"Бодайбо"}],
+["w251369681",57.84791,114.20417,"ru",{"amenity":"hospital","addr:city":"Бодайбо"}],
+["w251369683",57.84731,114.20474,"ru",{"amenity":"hospital","addr:city":"Бодайбо"}],
+["w251369684",57.84767,114.20506,"ru",{"name":"Бодайбинская районная больница","amenity":"hospital","addr:city":"Бодайбо"}],
+["w393484085",57.81752,114.00509,"ru",{"amenity":"hospital"}],
+["w436249919",57.84781,114.20715,"ru",{"name":"Поликлиника","amenity":"hospital"}],
+["w611807361",56.36134,114.92987,"ru",{"name":"Аэропорт Таксимо","aeroway":"aerodrome","icao":"UIKG"}],
+["w75207986",57.86553,114.24033,"ru",{"name":"Аэропорт Бодайбо","name:en":"Bodaybo Airport","operator":"ЗАО «Ленсиб»","addr:housenumber":"5","addr:street":"Первомайская улица","addr:city":"Бодайбо","aeroway":"aerodrome","icao":"UIKB","iata":"ODO"}]]

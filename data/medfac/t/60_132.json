@@ -1,0 +1,10 @@
+[["n11284622564",61.99476,132.44896,"ru",{"name":"Отделение скорой медицинской помощи","emergency":"ambulance_station"}],
+["w1272030865",61.65851,132.07949,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w1313017040",61.67334,132.07322,"ru",{"aeroway":"helipad"}],
+["w173229195",61.84141,132.12219,"ru",{"healthcare":"hospital"}],
+["w215000848",60.90091,132.00061,"ru",{"name":"Районная больница","amenity":"hospital","addr:housenumber":"2","addr:street":"Партизанская улица","addr:city":"Амга"}],
+["w275960233",61.99066,132.44289,"ru",{"name":"Терапия","amenity":"hospital","addr:housenumber":"1","addr:street":"улица Карла Маркса","addr:city":"Чурапча"}],
+["w275960894",61.99468,132.44873,"ru",{"name":"Центральная районная больница","amenity":"hospital","healthcare":"hospital","addr:housenumber":"18","addr:street":"Октябрьская улица","addr:city":"Чурапча"}],
+["w367550467",61.99809,132.45025,"ru",{"name":"Детская Консультация","amenity":"hospital","operator":"Чурапчинская ЦРБ"}],
+["w375547078",60.90462,132.04094,"ru",{"aeroway":"aerodrome"}],
+["w431084281",61.21509,132.69014,"ru",{"amenity":"hospital"}]]

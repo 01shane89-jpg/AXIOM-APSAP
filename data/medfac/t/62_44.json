@@ -1,0 +1,5 @@
+[["w103877575",62.23975,45.01971,"ru",{"name":"Аэропорт Верхняя Тойма","name:en":"Verkhnyaya Toyma Airport","aeroway":"aerodrome"}],
+["w1496858957",62.24007,45.0138,"ru",{"aeroway":"helipad"}],
+["w208264711",62.33755,44.20335,"ru",{"name":"Афанасьевская больница","amenity":"hospital","addr:housenumber":"90"}],
+["w272057242",62.15709,45.12647,"ru",{"amenity":"hospital","healthcare":"hospital","operator":"ЦРБ филиал Двинской","addr:housenumber":"3А","addr:street":"Заречная улица","addr:city":"Двинской"}],
+["w291864918",62.23523,44.98961,"ru",{"name":"Верхнетоемская ЦРБ","amenity":"hospital"}]]

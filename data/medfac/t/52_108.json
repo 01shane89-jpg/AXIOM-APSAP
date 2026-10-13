@@ -1,0 +1,12 @@
+[["n11552039465",52.949,108.21627,"ru",{"emergency":"ambulance_station"}],
+["n11574743969",53.62353,109.62149,"ru",{"name":"Баргузинский противотуберкулезный диспансер имени Г.Д. Дугаровой","amenity":"clinic","healthcare":"clinic"}],
+["n1249592680",52.16046,109.76362,"ru",{"name":"Хоринская районная поликлиника","amenity":"hospital","emergency":"no"}],
+["n935630095",53.58516,109.70621,"ru",{"name":"Аэропорт Баргузин","aeroway":"aerodrome"}],
+["w100615139",53.40849,109.02449,"ru",{"emergency":"ambulance_station"}],
+["w1529156411",53.62434,109.62085,"ru",{"name":"Баргузинский противотуберкулезный диспансер имени Г.Д. Дугаровой","amenity":"hospital","healthcare":"hospital"}],
+["w258699425",52.98801,108.29899,"ru",{"name":"Лечебный центр","amenity":"hospital","emergency":"no"}],
+["w361355641",53.47914,109.29707,"ru",{"name":"Фельдшерский пункт","amenity":"clinic","healthcare":"clinic"}],
+["w505332849",53.61998,109.63433,"ru",{"name":"ГБУЗ Баргузинская ЦРБ","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+7 30131 43163","website":"http://bcrb03.ru/"}],
+["w517471567",52.94964,108.21552,"ru",{"name":"Амбулатория","amenity":"clinic","healthcare":"clinic","addr:housenumber":"2","addr:street":"Набережная улица"}],
+["w533595836",52.1543,109.74466,"ru",{"name":"ГБУЗ Хоринская ЦРБ","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"1","addr:street":"улица Больничный Городок"}],
+["w997679761",53.40684,109.037,"ru",{"amenity":"clinic"}]]

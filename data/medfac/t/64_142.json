@@ -1,0 +1,6 @@
+[["n14121594719",64.56132,143.25427,"ru",{"aeroway":"helipad"}],
+["w1111943606",64.56815,143.23583,"ru",{"name":"Оймяконская ЦРБ","amenity":"hospital","healthcare":"hospital"}],
+["w172094973",64.56799,143.23526,"ru",{"name":"Поликлиника","amenity":"clinic","healthcare":"clinic","addr:housenumber":"8","addr:street":"улица Ленина"}],
+["w172096984",64.56765,143.23597,"ru",{"name":"Усть-Нерская база СМП","emergency":"ambulance_station"}],
+["w676509209",65.37123,143.16772,"ru",{"name":"Аэродром Чумпу-Кытыл (Тюбелях)","name:en":"Chumpu-Kytyl Airport","aeroway":"aerodrome","icao":"UEAT"}],
+["w75208201",64.54995,143.11033,"ru",{"name":"Аэропорт Усть-Нера","name:en":"Ust-Nera Airport","aeroway":"aerodrome","icao":"UEMT","iata":"USR","aerodrome:type":"public","wikidata":"Q16897534"}]]

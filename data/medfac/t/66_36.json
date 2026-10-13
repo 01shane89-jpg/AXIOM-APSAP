@@ -1,0 +1,9 @@
+[["n1042057625",66.11395,37.73487,"ru",{"name":"Чаваньга","name:en":"Chavan'ga","aeroway":"aerodrome","wikidata":"Q99753065"}],
+["n14157742794",66.94167,36.06689,"ru",{"name":"Большая Варзуга","aeroway":"helipad","icao":"HE0W","surface":"unpaved"}],
+["n14157755815",66.5009,36.40933,"ru",{"name":"Пундостров","aeroway":"helipad","icao":"HD90"}],
+["n1659663769",67.34862,37.05581,"ru",{"name":"Больница","amenity":"hospital","addr:housenumber":"5","addr:street":"Набережная улица"}],
+["w146927379",67.34786,37.07674,"ru",{"name":"Краснощелье","name:en":"Krasnoshchelye Airstrip","aeroway":"aerodrome","icao":"ULMX"}],
+["w1552903159",67.34802,37.08316,"ru",{"name":"Краснощелье","aeroway":"helipad"}],
+["w1553044280",67.3508,37.07267,"ru",{"aeroway":"helipad","surface":"paved"}],
+["w1556590778",66.11273,37.75784,"ru",{"name":"Чаваньга","aeroway":"helipad","icao":"ULMQ","surface":"paved"}],
+["w821629284",66.40572,36.62967,"ru",{"name":"Собачий","operator":"СПК РК \"Всходы Коммунизма\"","aeroway":"helipad","icao":"HJE3","surface":"paved"}]]

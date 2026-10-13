@@ -1,0 +1,12 @@
+[["n1705460768",51.34027,139.24491,"ru",{"name":"Участковая больница","amenity":"hospital"}],
+["n2405693810",50.34158,138.47855,"ru",{"amenity":"hospital","contact:phone":"+7 4217 567316;+7 4217 567303","contact:website":"http://www.uktur-muz.raion-kms.ru/"}],
+["n2979060491",51.57165,139.85034,"ru",{"amenity":"hospital"}],
+["n3086800829",50.31388,138.09186,"ru",{"name":"Фельдшерско-акушерский пункт","amenity":"hospital"}],
+["n3159079113",50.18847,138.59574,"ru",{"name":"Фельдшерский пункт","amenity":"hospital"}],
+["n5261381350",51.06362,138.43006,"ru",{"name":"Участковая больница Ягодненского СП","amenity":"hospital","healthcare":"hospital"}],
+["w1484418855",51.33351,139.24005,"ru",{"name":"Циммермановка","operator":"ООО Дальнереченск Авиа","aeroway":"helipad","surface":"concrete:plates"}],
+["w1484418856",51.33363,139.23943,"ru",{"name":"Циммермановка","operator":"ООО Дальнереченск Авиа","aeroway":"helipad","surface":"concrete:plates"}],
+["w201395322",50.09426,139.12998,"ru",{"name":"Больница","amenity":"hospital","addr:housenumber":"25","addr:street":"Хабаровская улица","addr:city":"Высокогорный","addr:postcode":"682855"}],
+["w234850536",51.34028,139.24493,"ru",{"name":"Участковая больница","amenity":"hospital","healthcare":"hospital","addr:housenumber":"35Б","addr:street":"Железнодорожная улица"}],
+["w421603891",51.49131,139.73012,"ru",{"operator":"Газпром","aeroway":"helipad"}],
+["w421603892",51.47716,139.73408,"ru",{"operator":"Газпром","aeroway":"helipad"}]]

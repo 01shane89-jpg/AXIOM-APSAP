@@ -1,0 +1,8 @@
+[["n4811979646",65.15379,32.16566,"ru",{"name":"ФАП п. Кепа","amenity":"clinic","phone":"+7 81454 53121","addr:housenumber":"31","addr:street":"улица Мира"}],
+["n8727615519",64.16623,33.15844,"ru",{"name":"ФАП","amenity":"clinic","healthcare":"clinic"}],
+["w208957460",65.89491,33.73072,"ru",{"name":"Амбарнская амбулатория","amenity":"clinic","operator":"ГБУЗ РК Лоухская ЦРБ","phone":"+7 81439 51450","addr:housenumber":"36","addr:street":"Советская улица","addr:city":"Амбарный"}],
+["w483327901",65.0408,33.6713,"ru",{"name":"Фап","amenity":"clinic","addr:housenumber":"9А","addr:street":"Кольцевая улица"}],
+["w487537890",64.25577,32.03099,"ru",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"21Б","addr:street":"улица 50 лет ВЛКСМ","addr:city":"Ледмозеро","addr:postcode":"186970"}],
+["w487537894",64.25658,32.03231,"ru",{"amenity":"clinic","healthcare":"clinic"}],
+["w488026274",64.60778,32.23427,"ru",{"amenity":"hospital"}],
+["w488909161",64.77334,32.22317,"ru",{"name":"ФАП п.Новое- Юшкозеро","amenity":"clinic","phone":"+7 81454 54610","addr:housenumber":"8","addr:street":"Лесная улица"}]]

@@ -1,0 +1,11 @@
+[["n5274931620",55.35581,109.18792,"ru",{"amenity":"clinic","healthcare":"clinic","phone":"+7 30130 43222"}],
+["w243309156",55.63329,109.32301,"ru",{"name":"Железнодорожная больница","amenity":"hospital"}],
+["w243309157",55.63258,109.32268,"ru",{"name":"Неврология","amenity":"hospital"}],
+["w243309158",55.63224,109.32354,"ru",{"name":"Станция скорой помощи","amenity":"hospital"}],
+["w244513601",55.63218,109.33986,"ru",{"name":"ЖД Поликлиника","name:en":"Polyclinic","amenity":"clinic","addr:housenumber":"21А","addr:street":"проспект 60 лет СССР","addr:city":"Северобайкальск","addr:postcode":"671700"}],
+["w246297136",55.63321,109.32175,"ru",{"amenity":"hospital"}],
+["w246297138",55.63343,109.32224,"ru",{"amenity":"hospital"}],
+["w246297139",55.63263,109.32364,"ru",{"amenity":"hospital"}],
+["w377945837",55.63212,109.34039,"ru",{"name":"Профилакторий","amenity":"clinic","addr:housenumber":"12А","addr:street":"проспект 60 лет СССР","addr:city":"Северобайкальск","addr:postcode":"671700"}],
+["w545809807",55.78044,109.56599,"ru",{"name":"ГБУЗ \"Нижнеангарская ЦРБ\"","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+7 30130 47421","website":"https://nacrb.ru/"}],
+["w75208041",55.80153,109.59456,"ru",{"name":"Аэропорт Нижнеангарск","operator":"Buryat Airlines","aeroway":"aerodrome","icao":"UIUN","wikidata":"Q4318722"}]]

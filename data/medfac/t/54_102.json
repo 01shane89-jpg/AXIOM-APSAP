@@ -1,0 +1,10 @@
+[["n5021576521",54.10956,102.16088,"ru",{"name":"Детская поликлиника","amenity":"clinic"}],
+["n9447062946",54.11241,102.16345,"ru",{"name":"Юнилаб","amenity":"clinic","healthcare":"clinic","contact:phone":"+7 395 5370040;+7 423 2242124;+7 800 5555569","contact:website":"http://unilab.su/","opening_hours":"Mo-Fr 08:00-19:00;Sa 08:00-17:00;Su 09:00-12:00"}],
+["n9457094317",55.87328,102.09374,"ru",{"name":"Озернинская участковая","name:en":"Озернинская участковая больница","amenity":"hospital"}],
+["r14556696",54.10003,102.1699,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w447534178",54.10281,102.17849,"ru",{"aeroway":"helipad"}],
+["w447729225",54.01646,103.05891,"ru",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"2","addr:street":"Ангарская улица"}],
+["w447729228",54.01687,103.05849,"ru",{"name":"ОГБУЗ \"Балаганская ЦРБ\"","amenity":"hospital","website":"https://balcb.ru/"}],
+["w537768531",54.03248,103.61191,"ru",{"name":"Участковая больница","amenity":"clinic","healthcare":"clinic","addr:housenumber":"1","addr:street":"улица Макаренко"}],
+["w572787087",54.17184,103.02305,"ru",{"name":"ОГБУЗ Усть-Удинская ЦРБ","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+7 395 4531532","website":"https://www.crbust-uda.ru","contact:website":"https://crbust-uda.gosuslugi.ru/"}],
+["w602747439",54.1038,102.18071,"ru",{"name":"Саянская городская больница","amenity":"hospital","healthcare":"hospital"}]]

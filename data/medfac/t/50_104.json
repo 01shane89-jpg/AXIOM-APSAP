@@ -1,0 +1,12 @@
+[["n13042769548",51.86609,104.86758,"ru",{"name":"Врачебная амбулатория","amenity":"clinic","healthcare":"clinic","opening_hours":"Mo-Fr 07:30-19:00; Sa-Su off"}],
+["n2906663195",51.8413,104.88239,"ru",{"name":"Участковая больница","amenity":"hospital"}],
+["w1038672520",50.46263,105.09326,"ru",{"aeroway":"helipad"}],
+["w1038888859",50.48762,104.4848,"ru",{"aeroway":"helipad"}],
+["w254041090",51.89543,104.81623,"ru",{"aeroway":"helipad"}],
+["w254041091",51.89498,104.81686,"ru",{"aeroway":"helipad"}],
+["w473612906",51.5428,104.05925,"ru",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"14А","addr:street":"Привокзальная улица"}],
+["w502428883",51.71639,105.86716,"ru",{"amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w502448228",51.71587,105.88764,"ru",{"name":"Бабушкинский психоневрологический интернат","amenity":"hospital","healthcare":"hospital","addr:street":"улица 3-го Интернационала"}],
+["w503093148",51.46515,104.64293,"ru",{"name":"Выдринская участковая больница","amenity":"hospital","healthcare":"hospital"}],
+["w503260114",51.51214,104.12188,"ru",{"name":"Байкальская городская больница","amenity":"hospital","healthcare":"hospital"}],
+["w504419057",50.60908,105.3094,"ru",{"name":"Петропавловская ЦРБ","amenity":"hospital","emergency":"yes","operator":"ГБУЗ «Петропавловская ЦРБ\"","contact:phone":"+7 30134 41331"}]]
