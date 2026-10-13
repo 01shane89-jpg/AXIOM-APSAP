@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-13"]=[["oki","2026-09-13T22:01","Okinawa governor-elect Koja wins record 400,000-plus votes","","The Mainichi (via Bing News search)","https://mainichi.jp/english/articles/20260914/p2g/00m/0na/040000c","","sn","elections",""]];
