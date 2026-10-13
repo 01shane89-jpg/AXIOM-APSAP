@@ -1,0 +1,12 @@
+[["n11909654936",60.15221,59.96099,"ru",{"name":"Олмед","amenity":"clinic","contact:phone":"+7 343 9540199","contact:website":"https://sevural.mcolmed.ru","opening_hours":"Mo-Fr 08:00-20:00; Sa-Su 08:00-17:00"}],
+["n12609707502",60.14718,59.82481,"ru",{"amenity":"clinic","opening_hours":"Mo-Fr 08:00-15:00"}],
+["n4064561448",60.15519,59.94941,"ru",{"name":"Мед. центр","amenity":"hospital","addr:housenumber":"8","addr:street":"улица Мира","addr:city":"Североуральск"}],
+["n4079478221",60.15032,59.95183,"ru",{"name":"Скорая помощь","emergency":"ambulance_station"}],
+["n6738667824",60.40435,59.89991,"ru",{"name":"Медпункт","amenity":"clinic"}],
+["n6992525434",61.40549,59.18438,"ru",{"name":"Вертолетная площадка","operator":"Вишерский заповедник","aeroway":"helipad"}],
+["w273406472",60.14566,59.94735,"ru",{"name":"Женская консультация","amenity":"clinic","addr:housenumber":"26","addr:street":"улица Маяковского","addr:city":"Североуральск"}],
+["w273443154",60.14813,59.95066,"ru",{"name":"Североуральская центральная городская больница","amenity":"hospital","addr:housenumber":"33","addr:street":"улица Ленина","addr:city":"Североуральск","addr:postcode":"624470"}],
+["w281458610",60.14767,59.95429,"ru",{"name":"Детская поликлиника № 1","amenity":"clinic","operator":"Североуральская центральная городская больница","addr:housenumber":"22","addr:street":"улица Чайковского","addr:city":"Североуральск","addr:postcode":"624470"}],
+["w291709666",60.23879,59.9804,"ru",{"name":"Поликлиника","amenity":"clinic","phone":"+7 34380 44466","addr:housenumber":"13","addr:street":"улица Зои Космодемьянской","addr:city":"Калья","addr:postcode":"624474","opening_hours":"8:00-17:00"}],
+["w747293717",61.21588,59.14226,"ru",{"name":"Вертолетная площадка","operator":"Вишерский заповедник","aeroway":"helipad","surface":"ground"}],
+["w747298705",61.40549,59.18436,"ru",{"name":"Вертолетная площадка","operator":"Вишерский заповедник","aeroway":"helipad","surface":"ground"}]]

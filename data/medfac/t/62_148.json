@@ -1,0 +1,11 @@
+[["n2227143136",62.52189,149.62566,"ru",{"name":"Районная поликлиника","amenity":"hospital","healthcare":"hospital"}],
+["n4499658989",62.52853,149.63387,"ru",{"name":"Наркологическое отделение","amenity":"hospital","healthcare":"hospital","addr:housenumber":"65к4","addr:street":"Улица Ленина","addr:subdistrict":"Ягоднинский район"}],
+["n4518847989",62.52883,149.63373,"ru",{"name":"Родильное отделение","amenity":"hospital","healthcare":"hospital","addr:housenumber":"65к2","addr:street":"Улица Ленина","addr:subdistrict":"Ягоднинский район"}],
+["n5515160921",62.77799,148.14336,"ru",{"amenity":"clinic","phone":"+74134521506"}],
+["n5632678430",62.52685,149.6301,"ru",{"name":"детская консультация","amenity":"hospital","healthcare":"hospital"}],
+["n5632707525",62.52479,149.63059,"ru",{"name":"Вход для людей с ограниченными возможностями (пандус для колясок)","amenity":"hospital","healthcare":"hospital","phone":"84134322218","opening_hours":"Mo-Su 10:00-21:00"}],
+["w171170234",62.54467,149.52579,"ru",{"name":"Аэропорт Ягодное","aeroway":"aerodrome","icao":"UHGE","aerodrome:type":"regional"}],
+["w587498616",62.76519,148.14755,"ru",{"name":"Сусуман","name:en":"Susuman","aeroway":"aerodrome","icao":"UHMH","aerodrome:type":"regional","wikidata":"Q7649758"}],
+["w711680662",62.76567,148.14558,"ru",{"aeroway":"helipad"}],
+["w922296344",62.51966,149.60825,"ru",{"aeroway":"helipad"}],
+["w969947957",62.77074,148.12903,"ru",{"name":"Сусуманская ЦРБ","amenity":"hospital","healthcare":"hospital"}]]

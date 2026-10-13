@@ -1,0 +1,10 @@
+[["n11284622265",61.98082,131.91795,"ru",{"name":"Мугудайская участковая больница","amenity":"hospital","healthcare":"hospital"}],
+["w208150049",61.7376,130.26754,"ru",{"amenity":"hospital","addr:housenumber":"25А","addr:street":"Советская улица"}],
+["w208790192",61.73646,130.26805,"ru",{"amenity":"hospital"}],
+["w208790194",61.73675,130.26667,"ru",{"amenity":"hospital"}],
+["w208926013",61.73657,130.26725,"ru",{"amenity":"hospital"}],
+["w208926014",61.73772,130.26601,"ru",{"amenity":"hospital","emergency":"yes"}],
+["w208942792",61.73543,130.26855,"ru",{"amenity":"hospital","addr:housenumber":"2А","addr:street":"Советская улица"}],
+["w210336585",61.73728,130.26549,"ru",{"amenity":"hospital"}],
+["w303166219",61.73892,130.28047,"ru",{"name":"Детская поликлиника","amenity":"clinic","healthcare":"clinic","addr:housenumber":"19/2","addr:street":"Майинская улица"}],
+["w304161824",61.73651,130.26769,"ru",{"name":"Мегино-Кангаласская центральная районная больница","amenity":"hospital"}]]

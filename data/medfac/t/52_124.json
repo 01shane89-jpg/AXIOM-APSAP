@@ -1,4 +1,16 @@
 [["n10296542529",52.33167,124.69946,"cn",{"name":"塔河中医医院","amenity":"hospital","healthcare":"hospital"}],
+["n1894434417",53.45586,125.78779,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w1034685618",52.78225,125.9814,"ru",{"aeroway":"helipad"}],
+["w1034686710",53.13517,125.47429,"ru",{"aeroway":"helipad"}],
+["w1034686920",53.3978,124.07479,"ru",{"aeroway":"helipad"}],
 ["w1126004452",52.33809,124.71015,"cn",{"name":"塔河县人民医院","amenity":"hospital","healthcare":"hospital"}],
+["w1236955839",53.94746,124.24799,"ru",{"aeroway":"helipad"}],
 ["w1254160684",52.71111,124.13678,"cn",{"aeroway":"helipad"}],
-["w399081220",52.22458,124.71941,"cn",{"name":"大兴安岭塔尔根机场","aeroway":"aerodrome"}]]
+["w1316419258",53.41481,125.80211,"ru",{"aeroway":"helipad"}],
+["w1316626106",53.73888,124.81002,"ru",{"aeroway":"helipad"}],
+["w179102144",53.44315,125.82015,"ru",{"name":"ЦРБ","amenity":"hospital","addr:housenumber":"17","addr:street":"Лесная улица"}],
+["w179224817",53.45419,125.80137,"ru",{"name":"Станция скорой помощи","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"17А","addr:street":"улица Дзержинского"}],
+["w399081220",52.22458,124.71941,"cn",{"name":"大兴安岭塔尔根机场","aeroway":"aerodrome"}],
+["w520361655",53.3639,124.3275,"ru",{"aeroway":"helipad"}],
+["w520779703",53.68296,124.81756,"ru",{"name":"Талданская участковая больница","amenity":"hospital"}],
+["w75208076",53.47575,125.79961,"ru",{"name":"Аэропорт Магдагачи","name:en":"Magdagachi Airport","operator":"Russian Army","aeroway":"aerodrome","icao":"UHBI","iata":"GDG","aerodrome:type":"military","wikidata":"Q8215404"}]]

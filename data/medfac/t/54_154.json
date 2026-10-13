@@ -1,0 +1,11 @@
+[["n1042046682",55.59561,155.61916,"ru",{"name":"Аэропорт Ича","name:en":"UHQI Icha","aeroway":"aerodrome","icao":"UHQI"}],
+["n6043258486",54.29642,155.94793,"ru",{"name":"Администрация","amenity":"hospital"}],
+["n6043258487",54.29632,155.9475,"ru",{"name":"Поликлиника","amenity":"hospital","addr:street":"улица Родыгина","addr:postcode":"684200"}],
+["n6043258785",54.29663,155.94757,"ru",{"name":"Регистратура","amenity":"hospital"}],
+["n6043258786",54.29638,155.94749,"ru",{"name":"Пункт скорой помощи","amenity":"hospital","addr:street":"улица Родыгина","opening_hours":"24/7"}],
+["n956517318",54.30556,155.96552,"ru",{"name":"Аэропорт Соболево","name:en":"Sobolevo Airport","aeroway":"aerodrome","icao":"UHPS","wikidata":"Q62188397"}],
+["w171779387",54.24946,155.81556,"ru",{"aeroway":"helipad"}],
+["w391523596",54.75365,155.7806,"ru",{"aeroway":"helipad"}],
+["w391523597",54.75362,155.77938,"ru",{"aeroway":"helipad"}],
+["w807919510",54.68951,155.8542,"ru",{"aeroway":"helipad"}],
+["w807919513",54.70336,155.83885,"ru",{"aeroway":"helipad"}]]

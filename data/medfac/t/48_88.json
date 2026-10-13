@@ -1,4 +1,5 @@
 [["n11822790979",48.96679,89.97255,"mn",{"amenity":"hospital","healthcare":"hospital"}],
+["n13848837003",49.94857,88.62997,"ru",{"name":"Аэропорт Кош-Агач","name:en":"Kosh-Agach Airport","aeroway":"aerodrome"}],
 ["n3732540781",48.96575,89.97576,"mn",{"name":"City Hospital","amenity":"hospital"}],
 ["n3891359654",48.30562,89.51351,"mn",{"amenity":"hospital"}],
 ["n4488395133",48.96657,89.97192,"mn",{"name":"эруул мэндийн газар","name:en":"health deartment","amenity":"hospital"}],
@@ -6,5 +7,12 @@
 ["n5151718221",48.96718,89.97244,"mn",{"name":"Амаржих газар","name:en":"Maternity","amenity":"hospital"}],
 ["n5157514321",48.96476,89.96136,"mn",{"name":"Жан Шарапат Эмнэлэг","amenity":"clinic"}],
 ["n5500220625",48.97253,89.94994,"mn",{"name":"Фатиха эмнэлэг","name:en":"Fatiha hospital","amenity":"hospital"}],
+["w1105145073",49.9147,89.53982,"ru",{"aeroway":"helipad","surface":"compacted"}],
+["w1111996244",49.7336,88.6662,"ru",{"aeroway":"helipad"}],
 ["w252607884",48.08481,88.93303,"cn",{"aeroway":"helipad"}],
-["w536365953",48.99414,89.92223,"mn",{"name":"Ölgii Airport","aeroway":"aerodrome","icao":"ZMUL","iata":"ULG"}]]
+["w482200400",49.7766,88.46292,"ru",{"aeroway":"helipad"}],
+["w505644582",49.71957,89.19063,"ru",{"name":"Противочумный эпидотряд","amenity":"hospital","operator":"ФКУЗ \"Алтайская противочумная станция\" Роспотребнадзора","phone":"8-388-22-6-42-39","website":"https://rospotrebnadzor.ru/"}],
+["w536365953",48.99414,89.92223,"mn",{"name":"Ölgii Airport","aeroway":"aerodrome","icao":"ZMUL","iata":"ULG"}],
+["w610740366",49.77607,88.47045,"ru",{"aeroway":"helipad","surface":"concrete"}],
+["w610740372",49.72029,89.17932,"ru",{"aeroway":"helipad","surface":"concrete"}],
+["w75208045",49.94616,88.62911,"ru",{"name":"Аэропорт Кош-Агач","name:en":"Kosh-Agach Airport","aeroway":"aerodrome","icao":"UNBA","wikidata":"Q5659149"}]]

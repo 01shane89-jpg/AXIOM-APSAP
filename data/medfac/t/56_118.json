@@ -1,0 +1,5 @@
+[["n5092715572",56.91278,119.95814,"ru",{"name":"Амбулатория","amenity":"clinic"}],
+["n5272067951",56.79882,118.27713,"ru",{"name":"ЖД поликлиника","amenity":"hospital","healthcare":"hospital","contact:phone":"8 (30261) 7-51-39","addr:housenumber":"6","addr:street":"улица Молдованова"}],
+["r17577405",56.79853,118.27524,"ru",{"name":"НУЗ Узловая поликлиника","amenity":"hospital","healthcare":"hospital","phone":"+7 30261 23413","addr:housenumber":"7","addr:street":"улица Молдованова"}],
+["r2961557",56.91442,118.26996,"ru",{"name":"Аэропорт Чара","name:en":"Chara Airport","aeroway":"aerodrome","icao":"UIAR","aerodrome:type":"public","wikidata":"Q2159407"}],
+["w382631196",56.90458,118.26212,"ru",{"name":"Каларская центральная районная больница","official_name":"Государственное учреждение здравоохранения «Каларская центральная районная больница»","amenity":"hospital","emergency":"yes","contact:phone":"+7 30261 22589","website":"http://www.kalarskaya-crb.ru/","addr:housenumber":"16","addr:street":"Советская улица"}]]

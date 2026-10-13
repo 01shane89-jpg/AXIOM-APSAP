@@ -1,0 +1,7 @@
+[["n1446173309",55.90885,97.99455,"ru",{"name":"Тайшет (не эксплуатируется)","aeroway":"aerodrome","icao":"UINE"}],
+["n3891823254",54.20432,96.96234,"ru",{"aeroway":"helipad"}],
+["n3891823893",54.20372,96.96098,"ru",{"name":"Аэропорт Верхняя Гутара","aeroway":"aerodrome"}],
+["n5301974729",55.96256,97.8444,"ru",{"name":"ОГБУЗ \"Бирюсинская городская больница\"","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w1165910461",55.9092,97.99455,"ru",{"aeroway":"aerodrome"}],
+["w454659698",55.93316,97.98616,"ru",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"39","addr:street":"Советская улица","addr:city":"Тайшет"}],
+["w536696476",55.93239,97.98657,"ru",{"name":"Тайшетская ЦРБ","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+7 39563 24267","website":"https://taishetrb.ru/"}]]

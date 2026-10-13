@@ -2,6 +2,7 @@
 ["n10595627675",53.18215,63.66069,"kz",{"name":"Врачебная амбулатория","amenity":"clinic","healthcare":"clinic"}],
 ["n10851313717",52.96734,63.11385,"kz",{"name":"Рудненская городская детская поликлиника","amenity":"clinic","healthcare":"clinic"}],
 ["n11942238445",52.96923,63.11337,"kz",{"name":"Инфекционная","amenity":"hospital","healthcare":"hospital"}],
+["n13070221203",53.03156,62.00849,"ru",{"name":"ФАП","amenity":"hospital"}],
 ["n13154745917",53.20307,63.62585,"kz",{"name":"Поликлиника №6","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"ТОВАРИЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ПОЛИКЛИНИКА №6 ГОРОДА КОСТАНАЙ\"","operator:type":"government","addr:housenumber":"111","addr:street":"Абай даңғылы","addr:city":"Қостанай","addr:postcode":"110000"}],
 ["n14038832441",53.22192,63.56224,"kz",{"amenity":"hospital","healthcare":"hospital"}],
 ["n1794777564",53.20149,63.71387,"kz",{"name":"Центральная районная больница","amenity":"clinic","healthcare":"clinic"}],
