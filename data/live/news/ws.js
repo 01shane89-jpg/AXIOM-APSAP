@@ -1,0 +1,1 @@
+window.ASAP_NEWS={"asof":"2026-10-13 18:46Z","sources":[{"cc":"ws","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Samoa%22&format=rss","ok":true,"n":5,"old":3}],"coverage":{"countries":198,"with":197,"none":["nr"]},"items":{"ws":[]}};
