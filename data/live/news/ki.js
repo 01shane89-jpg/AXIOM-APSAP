@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-10-13 04:11Z","sources":[{"cc":"ki","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Kiribati%22&format=rss","ok":true,"n":2,"old":7}],"coverage":{"countries":198,"with":197,"none":["tz"]},"items":{"ki":[]}};
+window.ASAP_NEWS={"asof":"2026-10-13 04:24Z","sources":[{"cc":"ki","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Kiribati%22&format=rss","ok":true,"n":2,"old":7}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"ki":[]}};
