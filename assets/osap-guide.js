@@ -32,7 +32,7 @@
         "A red or orange dot beside a country means high or raised recent activity. It is an automatic count from worldwide feeds, not a threat rating.",
         "To see two countries on one map, pick " + b("+ Add a country to this map…") + " at the end of the list."]) +
       "<h3>Set the period</h3>" +
-      ul(["The period decides which reports you see: " + b("24 h") + ", " + b("7 d") + ", " + b("30 d") + ", " + b("90 d") + ", " + b("All") + " or " + b("Custom") + ".",
+      ul(["The period decides which reports you see: " + b("24 h") + ", " + b("7 d") + ", " + b("14 d") + ", " + b("30 d") + ", " + b("90 d") + ", " + b("All") + " or " + b("Custom") + ".",
         "On a phone it is the small chip beside the gear. It always names the period in force.",
         "When reports are hidden by the period, the list says how many and offers " + b("Show all") + "."]) +
       "<h3>Today</h3>" +
