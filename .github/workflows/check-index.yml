@@ -39,6 +39,7 @@ jobs:
       - run: node tests/milsites.test.mjs
       - run: node tests/deepsouth_border.test.mjs
       - run: node tests/entities.test.mjs
+      - run: node tests/deepsouth_peace.test.mjs
       - run: node tests/conflict_figures.test.mjs
       - run: node tests/social_relevance.test.mjs
       - run: node tests/relevance_sample.test.mjs
@@ -83,6 +84,7 @@ jobs:
       - run: node tests/milsym_smoke.mjs
       - run: node tests/milsites_smoke.mjs
       - run: node tests/deepsouth_border_smoke.mjs
+      - run: node tests/dspat_smoke.mjs
       - run: node tests/ds_review_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/sides_smoke.mjs
