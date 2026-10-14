@@ -258,6 +258,11 @@ for (const [src, url] of LIST) {
         const txt = body.replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").slice(0, 60000);
         fs.mkdirSync("probe-out/pages", { recursive: true });
         fs.writeFileSync("probe-out/pages/" + src.slice(5).replace(/[^A-Za-z0-9]+/g, "-") + ".txt", url + "\n\n" + txt);
+        // the passage that names the most Deep South districts, printed so it can be read from the run log
+        const NAMES = /ปัตตานี|ยะลา|นราธิวาส|สงขลา|โคกโพธิ์|หนองจิก|ปะนาเระ|มายอ|ทุ่งยางแดง|สายบุรี|ไม้แก่น|ยะหริ่ง|ยะรัง|กะพ้อ|แม่ลาน|เบตง|บันนังสตา|ธารโต|ยะหา|รามัน|กาบัง|กรงปินัง|ตากใบ|บาเจาะ|ยี่งอ|ระแงะ|รือเสาะ|ศรีสาคร|แว้ง|สุคิริน|สุไหงโก-ลก|สุไหงปาดี|จะแนะ|เจาะไอร้อง|จะนะ|เทพา|นาทวี|สะบ้าย้อย|Pattani|Yala|Narathiwat|Songkhla|Betong|Bannang Sata|Than To|Yaha|Raman|Kabang|Krong Pinang|Tak Bai|Bacho|Yi-?ngo|Ra-?ngae|Rueso|Si Sakhon|Waeng|Sukhirin|Kolok|Padi|Chanae|Cho-?airong|Chana|Thepha|Na Thawi|Saba Yoi|Khok Pho|Nong Chik|Panare|Mayo|Thung Yang Daeng|Sai Buri|Mai Kaen|Yaring|Yarang|Kapho|Mae Lan/g;
+        let best = [0, 0];
+        for (let k = 0; k < txt.length; k += 200) { const n = (txt.slice(k, k + 1800).match(NAMES) || []).length; if (n > best[0]) best = [n, k]; }
+        console.log("PAGETEXT " + src + " (" + best[0] + " names): " + txt.slice(best[1], best[1] + 1800));
       }
     }
   } catch (e) { r0.error = e.name === "AbortError" ? "timed out" : (e.cause && e.cause.code) || e.message; }

@@ -14,6 +14,27 @@ const REGION = /\b(?:deep south|southern border provinces|restive south|southern
 const SONGKHLA = /\b(?:Songkhla|Hat Yai)\b|สงขลา|หาดใหญ่/i;
 const SECURITY = /\b(?:bomb\w*|blast|explo\w+|IED|gunm[ae]n|shot|shoot\w*|gunfire|killed|kill\w*|dead|murder\w*|attack\w*|ambush\w*|arson|torch\w*|set (?:on )?fire|burn\w*|insurgen\w*|militant\w*|separatist\w*|rebel\w*|raid\w*|arrest\w*|clash\w*|firefight|siege|surround\w*|ranger\w*|paramilitary|defen[cs]e volunteer\w*|checkpoint|peace (?:talk|dialogue|process)\w*|martial law|emergency decree|security forces?|ISOC|curfew|violen\w*|unrest|hostage|grenade|landmine|mortar)\b|ระเบิด|ยิง|คนร้าย|ลอบ|วางเพลิง|เผา|ปะทะ|ปิดล้อม|ตรวจค้น|ทหารพราน|อส\.|ชรบ\.|ผู้ก่อความไม่สงบ|ก่อเหตุ|ความไม่สงบ|พูดคุยสันติสุข|สันติสุข|เสียชีวิต|บาดเจ็บ|จับกุม|หมายจับ|กฎอัยการศึก|พ\.ร\.ก\.ฉุกเฉิน|ป่วนใต้|ไฟใต้|\b(?:letupan|bom|serangan|tembak\w*|pengganas|militan)\b/i;
 
+// The Malaysian side of the border (2026-10-14, Thai southern border build): Malaysian border towns, the crossings and the Kolok
+// river. A report naming one of them counts for the Deep South when it is about the border (smuggling, illegal crossings, jetties,
+// arrests, weapons, drugs) or about security; it is placed at that town, marked as the Malaysian side, and never given a Thai district.
+const MY_PLACES = [
+  ["Rantau Panjang", "Kelantan", 6.02, 101.98, ["Rantau Panjang"]],
+  ["Pengkalan Kubor", "Kelantan", 6.23, 102.09, ["Pengkalan Kubor"]],
+  ["Bukit Bunga", "Kelantan", 5.88, 101.85, ["Bukit Bunga"]],
+  ["Sungai Golok (Kolok river)", "Kelantan", 6.0, 101.98, ["Sungai Golok", "Sg Golok", "Golok river", "Kolok river"]],
+  ["Pasir Mas", "Kelantan", 6.05, 102.14, ["Pasir Mas"]],
+  ["Tumpat", "Kelantan", 6.2, 102.17, ["Tumpat"]],
+  ["Jeli", "Kelantan", 5.7, 101.84, ["Jeli"]],
+  ["Pengkalan Hulu", "Perak", 5.7, 101.0, ["Pengkalan Hulu", "Pengkalan Ulu"]],
+  ["Bukit Kayu Hitam", "Kedah", 6.5, 100.42, ["Bukit Kayu Hitam"]],
+  ["Durian Burung", "Kedah", 6.44, 100.76, ["Durian Burung"]],
+  ["Padang Besar", "Perlis", 6.66, 100.32, ["Padang Besar"]],
+  ["Wang Kelian", "Perlis", 6.69, 100.19, ["Wang Kelian"]],
+].map(([name, state, lat, lon, en]) => ({ id: "MY-" + name.toLowerCase().replace(/[^a-z]+/g, "-").replace(/-+$/, ""), name, state, lat, lon, en: wordRe(en) }));
+const BORDERW = /\b(?:smuggl\w*|contraband|border|illegal (?:jett(?:y|ies)|crossings?|immigrants?|routes?)|jett(?:y|ies)|seiz\w*|weapons?|firearms?|guns?|drugs?|syabu|ganja|trafficking|seludup\w*|penyeludup\w*|sempadan|jeti haram|PATI|rampas\w*|dadah|senjata|tangkap\w*|ditahan|AKPS|GOF|Pasukan Gerakan Am)\b/i;
+export function myPlace(text) { for (const m of MY_PLACES) if (m.en.test(text)) return m; return null; }
+export function myBorder(text) { return !!myPlace(text) && BORDERW.test(text); }
+
 // Football and other sport ("shot", "ยิง" = to score) are not security news
 const SPORT = /\b(?:football|soccer|league|FC|goal\w*|match|tournament|striker|futsal)\b|ฟุตบอล|ไทยลีก|ลีก|ยิงประตู|บุกชนะ|บุกแพ้|เสมอ|ทดเจ็บ|นักเตะ|ฟุตซอล/i;
 // Kind from headline words, most specific first. Only a sorting aid: the page labels it as machine-sorted.
@@ -55,6 +76,7 @@ export const INJURED = new RegExp(NUMS + BETWEEN + "\\s+(?:injured|wounded|hurt)
 export function place(texts) {
   for (const t of texts) { if (!t) continue; for (const d of DIST) if (d.en.test(t) || d.th.test(t)) return { n: d.name + " district, " + d.prov, la: d.lat, lo: d.lon, p: "approx", prov: d.prov, id: d.id }; }
   for (const t of texts) { if (!t) continue; for (const p of PROVS) if (p.en.test(t) || p.th.test(t)) return { n: p.name + " province", la: p.lat, lo: p.lon, p: "province", prov: p.name, id: p.id }; }
+  for (const t of texts) { if (!t) continue; const m = myPlace(t); if (m) return { n: m.name + " (" + m.state + ", Malaysia)", la: m.lat, lo: m.lon, p: "approx", prov: m.state + " (Malaysia)", id: m.id, side: "my" }; }
   return null;
 }
 // Every gazetteer place named in the texts, with the words that named it (the evidence for a location claim).
@@ -80,7 +102,9 @@ export function mentions(texts) {
   return out;
 }
 export function relevant(f, text) {
-  if (!SECURITY.test(text) || SPORT.test(text)) return false;
+  if (SPORT.test(text)) return false;
+  if (myBorder(text)) return true;
+  if (!SECURITY.test(text)) return false;
   if (f.all) return true;
   if (DIST.some((d) => d.en.test(text) || d.th.test(text)) || PROVS.some((p) => p.en.test(text) || p.th.test(text))) return true;
   return REGION.test(text) || false;
