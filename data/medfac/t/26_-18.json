@@ -1,0 +1,7 @@
+[["w1224463207",27.8068,-17.88443,"es",{"aeroway":"helipad"}],
+["w1224463208",27.80647,-17.88472,"es",{"aeroway":"helipad"}],
+["w132610881",27.81433,-17.91561,"es",{"name":"Hospital Insular Nuestra Señora de los Reyes","amenity":"hospital","emergency":"yes","phone":"+34 922 55 35 00","addr:housenumber":"1","addr:street":"Calle Los Barriales","addr:city":"Valverde","addr:postcode":"38900","wikidata":"Q87762436"}],
+["w132610882",27.81481,-17.91578,"es",{"aeroway":"helipad"}],
+["w134933527",27.81463,-17.91129,"es",{"aeroway":"helipad"}],
+["w135177520",27.70771,-17.98372,"es",{"aeroway":"helipad"}],
+["w52323651",27.81445,-17.88725,"es",{"name":"Aeropuerto de El Hierro","name:en":"El Hierro Airport","operator":"AENA","website":"https://www.aena.es/es/el-hierro.html","aeroway":"aerodrome","icao":"GCHI","iata":"VDE","aerodrome:type":"public","wikidata":"Q1431249"}]]
