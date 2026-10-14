@@ -30,7 +30,7 @@
   /* ---------- the app's reporting period (same rule as the page: stored under "asap-period") ---------- */
   function appPeriod() {
     var P = { p: "all" };
-    try { var v = JSON.parse(localStorage.getItem("asap-period")); if (v && /^(24h|7|30|90|all|custom)$/.test(v.p)) P = v; } catch (e) {}
+    try { var v = JSON.parse(localStorage.getItem("asap-period")); if (v && /^(24h|7|14|30|90|all|custom)$/.test(v.p)) P = v; } catch (e) {}
     var today = Math.floor(Date.now() / 864e5);
     if (P.p === "all") return { from: "", to: "", label: "All dates" };
     if (P.p === "custom") return { from: P.from || "", to: P.to || "", label: "" };

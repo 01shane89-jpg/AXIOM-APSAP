@@ -37,6 +37,7 @@ jobs:
       - run: node tests/view_reports.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
+      - run: node tests/deepsouth_border.test.mjs
       - run: node tests/entities.test.mjs
       - run: node tests/conflict_figures.test.mjs
       - run: node tests/social_relevance.test.mjs
@@ -81,6 +82,7 @@ jobs:
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
       - run: node tests/milsites_smoke.mjs
+      - run: node tests/deepsouth_border_smoke.mjs
       - run: node tests/ds_review_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/sides_smoke.mjs
@@ -98,6 +100,7 @@ jobs:
       - run: node tests/ai_smoke.mjs
       - run: node tests/timeline_scope_smoke.mjs
       - run: node tests/period_smoke.mjs
+      - run: node tests/period14_smoke.mjs
       - run: node tests/search_smoke.mjs
       - run: node tests/news_speed_smoke.mjs
       - run: node tests/grid_smoke.mjs
