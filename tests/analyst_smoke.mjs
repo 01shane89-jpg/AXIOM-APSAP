@@ -104,6 +104,7 @@ await p.waitForTimeout(600);
 const bd = await p.evaluate(() => { const B = window.OSAP_ANALYST._bed(); return { rows: B.rows.map((r) => r.d + ":" + r.n), warn: /not a finding/.test(document.querySelector("#anws .anwarn").textContent), ter: B.rows.some((r) => r.ter.length) }; });
 ok(JSON.stringify(bd.rows) === JSON.stringify(["TH-9606:2", "TH-9503:1"]), "Bed-down counts search and find reports by district, not the drug seizure (" + bd.rows + ")");
 ok(bd.warn, "Bed-down says it is an indicator, not a finding");
+ok(bd.ter, "Bed-down lists the terrain and flashpoints inside a district");
 await p.evaluate(() => { const c = document.getElementById("an-bedmap"); c.checked = true; c.dispatchEvent(new Event("change", { bubbles: true })); });
 await p.waitForTimeout(400);
 const drawn = await p.evaluate(() => Object.values(window.__asapMap._layers).filter((l) => l.options && l.options.pane === "anpane" && l._latlngs).length);

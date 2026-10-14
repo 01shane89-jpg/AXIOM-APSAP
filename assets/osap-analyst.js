@@ -71,6 +71,8 @@
     if (W.OSAP_DS_ENT) return Promise.resolve();
     return script(ENT_SRC).then(function () { S.entsErr = ""; }, function () { S.entsErr = "The entity list could not load. Check the connection."; });
   }
+  /* Thailand's terrain and flashpoints (the same per-country file Map overlays loads), for the Bed-down tab's context column */
+  function needTerrain() { return W.OSAP_TERRAIN && W.OSAP_TERRAIN.th ? Promise.resolve() : script("data/terrain/th.js").catch(function () {}); }
   function needAreas() {
     if (S.areas) return Promise.resolve(S.areas);
     return fetch(AREAS_SRC).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
@@ -156,7 +158,7 @@
     if (W.OSAP_TODAY && W.OSAP_TODAY.isOpen && W.OSAP_TODAY.isOpen()) W.OSAP_TODAY.hide();
     el.hidden = false; render();
     if (W.OSAP_SPLIT) W.OSAP_SPLIT.apply();
-    Promise.all([needEnts(), needAreas()]).then(function () { if (!el.hidden) render(); });
+    Promise.all([needEnts(), needAreas(), needTerrain()]).then(function () { if (!el.hidden) render(); });
     paintBtn();
   }
   function close() { if (S.el) S.el.hidden = true; if (S.layer && W.__asapMap) { W.__asapMap.removeLayer(S.layer); S.layer = null; } if (W.OSAP_SPLIT) W.OSAP_SPLIT.apply(); paintBtn(); }
