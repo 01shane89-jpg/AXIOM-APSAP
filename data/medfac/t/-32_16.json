@@ -1,0 +1,6 @@
+[["n1042101246",-30.19076,17.28321,"za",{"name":"Koingnaas Airport","aeroway":"aerodrome","iata":"KIG","aerodrome:type":"airfield","wikidata":"Q31934021"}],
+["n11403080369",-30.33491,17.28973,"za",{"name":"Hondeklip Bay Airstrip","aeroway":"aerodrome"}],
+["n2316652192",-31.3565,17.92139,"za",{"name":"Voelklip Airfield (CLOSED)","aeroway":"aerodrome"}],
+["w1051332896",-30.31932,17.27801,"za",{"name":"Hondeklipbaai Kliniek - Medical Clinic","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;maternity;chronic","emergency":"yes","operator":"Namaqua Department of Health","contact:phone":"+27 27 692 3081","addr:street":"Sunnyside Street","addr:city":"Hondeklip Bay","addr:postcode":"8222"}],
+["w112854575",-30.56989,17.99178,"za",{"name":"Joe Slovo Community Health Centre","amenity":"hospital","healthcare":"hospital","addr:street":"Main Road","addr:city":"Garies","addr:postcode":"8220","wikidata":"Q58022107"}],
+["w764638600",-30.56615,17.98854,"za",{"name":"Garies Clinic","amenity":"clinic","healthcare":"clinic","operator":"Northern Cape Department of Health","addr:housenumber":"4","addr:street":"Namaqua Street","addr:city":"Garies","addr:postcode":"8220","wikidata":"Q58020970"}]]

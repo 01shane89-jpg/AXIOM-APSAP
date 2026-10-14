@@ -1,0 +1,11 @@
+[["n1042019636",-8.87289,161.01127,"sb",{"name":"Atoifi","aeroway":"aerodrome","icao":"AGAT","iata":"ATD","wikidata":"Q7901377"}],
+["w1010072541",-8.3498,160.62884,"sb",{"name":"Malu'u Health Centre","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"no","operator":"Solomon Islands Government Ministry of Health & Medical Services","addr:city":"Malu'u Station","addr:postcode":"677"}],
+["w1059376658",-8.70253,160.68151,"sb",{"name":"Auki Gwaunaru'u","aeroway":"aerodrome","icao":"AGGA","iata":"AKS","wikidata":"Q2902032"}],
+["w1324286579",-9.22134,160.96542,"sb",{"name":"Hauhui Clinic-Permanent","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;maternity","addr:city":"Auki"}],
+["w1334995529",-9.8607,161.97991,"sb",{"name":"Ulawa","aeroway":"aerodrome","icao":"AGAR","iata":"RNA","wikidata":"Q3434537"}],
+["w205518933",-9.19114,160.94914,"sb",{"name":"Afutara","aeroway":"aerodrome","icao":"AGAF","iata":"AFT","wikidata":"Q3502455"}],
+["w205621666",-9.42917,160.05118,"sb",{"name":"Honiara International Airport","name:en":"Honiara International Airport","aeroway":"aerodrome","icao":"AGGH","iata":"HIR","wikidata":"Q859876"}],
+["w205667274",-9.86154,160.82574,"sb",{"name":"Marau Airport","aeroway":"aerodrome","icao":"AGGU","iata":"RUS","wikidata":"Q1030716"}],
+["w705014877",-9.28799,161.24503,"sb",{"name":"Masupa clinic","amenity":"clinic","healthcare":"clinic"}],
+["w742089666",-9.41831,160.05165,"sb",{"aeroway":"helipad"}],
+["w835456535",-9.64133,161.42528,"sb",{"name":"Parasi Airport","aeroway":"aerodrome","icao":"AGGP","iata":"PRS","wikidata":"Q12270098"}]]

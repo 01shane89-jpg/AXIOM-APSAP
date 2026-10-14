@@ -1,4 +1,11 @@
-[["n11397940890",-24.06804,23.29673,"bw",{"name":"Motokwe Airstrip","aeroway":"aerodrome"}],
+[["n1042035959",-25.8459,23.53683,"za",{"name":"Pomfret Airport","aeroway":"aerodrome","icao":"FAQF","wikidata":"Q12694470"}],
+["n11397940890",-24.06804,23.29673,"bw",{"name":"Motokwe Airstrip","aeroway":"aerodrome"}],
 ["n11398065636",-24.51203,23.92007,"bw",{"name":"Sekuma Airstrip","aeroway":"aerodrome"}],
+["n11405371891",-25.46523,23.69747,"za",{"name":"Kirstonia Airstrip (CLOSED)","aeroway":"aerodrome"}],
+["n1735282250",-25.8755,23.96234,"za",{"name":"Tosca Airstrip","aeroway":"aerodrome"}],
+["n2387566494",-25.60851,22.85639,"za",{"name":"Watersend Airstrip","aeroway":"aerodrome"}],
 ["w1228812779",-25.29003,23.47174,"bw",{"name":"Riverside North Airstrip","aeroway":"aerodrome"}],
+["w1229893793",-25.47404,23.74749,"za",{"name":"Dorchester Farm Airstrip","aeroway":"aerodrome"}],
+["w1229895735",-25.71914,23.78965,"za",{"name":"Sandhurst Airstrip","aeroway":"aerodrome","icao":"FASA"}],
+["w1283452096",-25.98575,23.51798,"za",{"amenity":"clinic"}],
 ["w334100494",-25.26967,23.27652,"bw",{"name":"Werda Clinic","amenity":"clinic","healthcare":"clinic"}]]
