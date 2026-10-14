@@ -78,7 +78,9 @@ async function open(phone) {
     if (/\.(jpg|png)|\/tile\//.test(u)) return r.fulfill({ status: 200, contentType: "image/png", headers: { "access-control-allow-origin": "*" }, body: PNG });
     r.abort();
   });
-  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.removeItem("osap-route-cur"); localStorage.removeItem("osap-nav-prefs"); } catch (e) {} });
+  /* top page only: the app's watch scan loads a hidden same-origin copy of the page (index.html?watchscan=1) on a timer, and running
+     this there too wiped the nav prefs mid-test (intermittent null on the preferences check) */
+  await ctx.addInitScript(() => { if (window.top !== window) return; try { localStorage.setItem("osap-home", "map"); localStorage.removeItem("osap-route-cur"); localStorage.removeItem("osap-nav-prefs"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + "#th", { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.OSAP_ROUTE_SEED, null, { timeout: 60000 }); await p.waitForTimeout(2500);
@@ -178,6 +180,8 @@ const fixAt = (p, q, o) => { t0 += (o && o.dt) || 2000; return p.evaluate(({ q, 
   await p.click('#osnav [data-nv="night"]');
   /* preferences: the only thing kept, never a coordinate */
   await p.click('#osnav [data-nv="mute"]'); await p.click('#osnav [data-nv="up"]');
+  /* a same-origin frame opening (as the watch scan does) must not touch them */
+  await p.evaluate(() => new Promise((res) => { const f = document.createElement("iframe"); f.style.display = "none"; f.onload = () => { f.remove(); res(); }; f.src = "sw.js"; document.body.appendChild(f); setTimeout(res, 5000); }));
   const pref = await p.evaluate(() => localStorage.getItem("osap-nav-prefs"));
   ok(/"mute":true/.test(pref) && /"up":"north"/.test(pref) && /"night":false/.test(pref) && !/\d+\.\d+/.test(pref), "voice and north-up kept as preferences, no coordinates (" + pref + ")");
   ok(await p.evaluate(() => !Object.keys(localStorage).some((k) => /nav/.test(k) && /14\.0|100\.5/.test(localStorage.getItem(k)))), "no position kept in storage");
