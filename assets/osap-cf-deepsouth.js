@@ -95,7 +95,7 @@
     var f = dsb(), h = "<h3>Deep South border map</h3>";
     if (st.line && f) h += '<div class="lg"><span class="sw" style="background:transparent;border-top:3px dashed #212121;height:0;margin-top:7px"></span><div>Thailand–Malaysia border (approximate)</div></div>' +
       '<div class="lg"><span class="sw dsb-sq dsb-road"></span><div>Official crossing (road, rail, ferry, boat)</div></div>';
-    if (st.law && f && (f.measures || []).length) ["decree", "isa", "martial", "unknown"].forEach(function (k) { h += '<div class="lg"><span class="sw" style="background:' + LAWC[k] + ';opacity:.6"></span><div>' + esc(LAWN[k]) + "</div></div>"; });
+    if (st.law && f && (f.measures || []).length) ["decree", "isa", "martial", "unknown"].filter(function (k) { return k === "unknown" || f.measures.some(function (x) { return x.law === k; }); }).forEach(function (k) { h += '<div class="lg"><span class="sw" style="background:' + LAWC[k] + ';opacity:.6"></span><div>' + esc(LAWN[k]) + "</div></div>"; });
     else if (st.dist) h += '<div class="lg"><span class="sw" style="background:linear-gradient(90deg,rgba(183,28,28,.12),rgba(183,28,28,.62))"></span><div>Attack reports per district this period (most: ' + num(max) + ")</div></div>";
     h += '<div class="lg"><div><span class="d">Reports, not incidents: several outlets often report one attack. Government statements on special laws are claims.</span></div></div>';
     W.OSAP_LEGEND.set("cf-ds", h, rail());
@@ -130,7 +130,7 @@
     var h = '<h4>Deep South border map</h4>' +
       '<label style="display:block"><input type="checkbox" data-cfds="line"' + (st.line ? " checked" : "") + "> <b>Malaysia border and crossings</b></label>" +
       '<label style="display:block"><input type="checkbox" data-cfds="dist"' + (st.dist ? " checked" : "") + "> <b>Districts</b> <span class=\"cfm\" style=\"display:inline\">(shaded by attack reports this period)</span></label>" +
-      '<label style="display:block"><input type="checkbox" data-cfds="law"' + (st.law ? " checked" : "") + (law ? "" : " disabled") + "> <b>Special security laws</b> <span class=\"cfm\" style=\"display:inline\">" + (law ? "(Emergency Decree, Security Act, martial law)" : "(not loaded yet)") + "</span></label>";
+      '<label style="display:block"><input type="checkbox" data-cfds="law"' + (st.law ? " checked" : "") + (law ? "" : " disabled") + "> <b>Special security laws</b> <span class=\"cfm\" style=\"display:inline\">" + (law ? "(Emergency Decree, Internal Security Act)" : "(not loaded yet)") + "</span></label>";
     if (err) h += '<div class="cfm cfbad">' + esc(err) + "</div>";
     if (areas) {
       var top = areas.map(function (a) { return [a, c[a.id] || 0]; }).filter(function (x) { return x[1]; }).sort(function (a, b) { return b[1] - a[1]; });
