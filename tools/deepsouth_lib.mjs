@@ -117,7 +117,7 @@ export function relevant(f, text) {
 const TIER_DOMAINS = [
   ["official", /(^|\.)(southpeace|isoc|police9|p9\.police|royalthaipolice|prd|sbpac|narathiwat|pattani|yala|songkhla|railway)\.(go|co|or)\.th$|(^|\.)rta\.mi\.th$|(^|\.)(rmp|kln)\.gov\.my$/],
   ["independent", /(^|\.)(isranews\.org|thaipbs\.or\.th|thaipbsworld\.com|nationthailand\.com|bangkokpost\.com|khaosodenglish\.com|khaosod\.co\.th|thaiexaminer\.com|prachatai(english)?\.com|matichon\.co\.th|thairath\.co\.th|dailynews\.co\.th|mgronline\.com|thethaiger\.com|thainewsroom\.com|deepsouthwatch\.org)$/],
-  ["international", /(^|\.)(reuters\.com|apnews\.com|bernama\.com|aljazeera\.com|thestar\.com\.my|malaymail\.com|nst\.com\.my|freemalaysiatoday\.com|scmp\.com|bbc\.(com|co\.uk)|afp\.com|france24\.com|channelnewsasia\.com|straitstimes\.com)$/],
+  ["international", /(^|\.)(reuters\.com|apnews\.com|bernama\.com|aljazeera\.com|thestar\.com\.my|malaymail\.com|nst\.com\.my|freemalaysiatoday\.com|thesun\.my|bharian\.com\.my|hmetro\.com\.my|sinarharian\.com\.my|utusan\.com\.my|kosmo\.com\.my|scmp\.com|bbc\.(com|co\.uk)|afp\.com|france24\.com|channelnewsasia\.com|straitstimes\.com)$/],
 ];
 export function tierOf(i) {
   if (i.ftier) return i.ftier;
