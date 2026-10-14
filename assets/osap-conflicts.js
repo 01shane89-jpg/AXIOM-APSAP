@@ -76,7 +76,7 @@
 
   /* ---------- state ---------- */
   var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { kind: "", cc: "", q: "", days: 30, from: "", to: "", win: null, att: false, show: { front: true, ucdp: true, rep: true, prev: false } };
-  /* ---------- period: follows the page header (24 h, 7/30/90 days, all, custom); the tab's own list can narrow it ---------- */
+  /* ---------- period: follows the page header (24 h, 7/14/30/90 days, all, custom); the tab's own list can narrow it ---------- */
   var ALL = 36500;
   function headerPeriod() {
     var p = null; try { p = JSON.parse(localStorage.getItem("asap-period")); } catch (e) {}
@@ -538,7 +538,7 @@
       '<div class="fp" title="SHA-256 fingerprint: ' + esc(e.fp || "") + '">SHA-256 ' + esc((e.fp || "").slice(0, 16)) + "…</div>";
   }
   function periodSel() {
-    var opts = (F.win ? [[-1, F.win.label]] : F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]);
+    var opts = (F.win ? [[-1, F.win.label]] : F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [14, "14 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]);
     return '<select data-cff="days" aria-label="Period">' + opts.map(function (p) {
       return '<option value="' + p[0] + '"' + ((F.win ? p[0] === -1 : F.days === p[0]) ? " selected" : "") + ">" + esc(p[1]) + "</option>"; }).join("") + "</select>";
   }
