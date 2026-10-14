@@ -1,0 +1,10 @@
+[["n12002649703",-34.03259,24.22007,"za",{"name":"Regyne Protea Farm Airport","aeroway":"aerodrome"}],
+["n2387566366",-34.00102,25.35182,"za",{"name":"Seaview Airport","aeroway":"aerodrome","icao":"FAEW","aerodrome:type":"airfield"}],
+["n597287247",-34.18729,24.83276,"za",{"name":"St. Francis Airfield","aeroway":"aerodrome","icao":"FACF"}],
+["n597287248",-34.10151,24.88395,"za",{"name":"Paradise Beach Airfield","aeroway":"aerodrome","icao":"FAPX"}],
+["n6064986318",-34.04999,24.92318,"za",{"name":"King's PC Clinic","amenity":"clinic","addr:street":"Da Gama Road"}],
+["w1031620769",-34.03522,24.7757,"za",{"name":"KwaNomzamo Clinic","amenity":"clinic","healthcare":"clinic","addr:street":"Ketse Street","addr:city":"Humansdorp"}],
+["w1295245090",-34.06371,24.19978,"za",{"name":"Oubosstrand Heliport","aeroway":"helipad","surface":"asphalt"}],
+["w176766564",-34.03102,24.78067,"za",{"name":"Life Isivivana Private Hospital Helipad","aeroway":"helipad","surface":"asphalt"}],
+["w228182390",-34.03074,24.78183,"za",{"name":"Life Isivivana Private Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;maternity;ophthalmology;pathology;radiology","emergency":"yes","beds":"33","operator":"Life Health Care","operator:type":"private","phone":"+27 42 200 4250","addr:street":"Du Plessis Street","addr:city":"Humansdorp"}],
+["w228182391",-34.0224,24.7583,"za",{"name":"P.Z. Meyer Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"anti-retroviral_treatment_services_(arvs);medical_services;occupational_services;out_patients_department;pharmacy;post_trauma_counselling_services","emergency":"yes","beds":"57","operator":"Eastern Cape Health Department","operator:type":"government","phone":"+27 42 291 2072","addr:street":"Kraanvoël Street","addr:city":"Humansdorp","addr:postcode":"6300"}]]
