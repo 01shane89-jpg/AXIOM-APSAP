@@ -1,0 +1,387 @@
+{
+ "schema": "osap-entities/1",
+ "asof": "2026-10-14",
+ "area": "Thailand Deep South",
+ "note": "Reference list of organisations, units and agencies named in Deep South reporting, for the analyst workspace's entity database and link analysis. Organisations only: no private individuals. Each role line is a draft (AI-generated, not analyst-approved); being listed is not a finding about what a group did. Mentions in reports are found by matching the aliases in the report text: a machine match, not a claim.",
+ "entities": [
+  {
+   "id": "ent:ds:brn",
+   "type": "entity",
+   "entity_type": "organisation",
+   "group": "Armed groups named in reporting",
+   "name": "Barisan Revolusi Nasional (BRN)",
+   "aliases": [
+    "BRN",
+    "BRN-C",
+    "Barisan Revolusi Nasional",
+    "บีอาร์เอ็น",
+    "ขบวนการบีอาร์เอ็น"
+   ],
+   "role": "Main Patani separatist movement; Thai officials attribute most attacks to it, and it is the party to the Malaysia-facilitated peace dialogue.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Barisan_Revolusi_Nasional",
+   "srcname": "Wikipedia",
+   "fp": "4980a4b7b09263f6f1983dd4388b4415c54f08f02c49f8772add1cfb346721d6"
+  },
+  {
+   "id": "ent:ds:rkk",
+   "type": "entity",
+   "entity_type": "organisation",
+   "group": "Armed groups named in reporting",
+   "name": "Runda Kumpulan Kecil (RKK)",
+   "aliases": [
+    "RKK",
+    "Runda Kumpulan Kecil",
+    "อาร์เคเค"
+   ],
+   "role": "Name Thai security agencies use for the small armed cells they say carry out attacks; how far they are under BRN command is disputed.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/South_Thailand_insurgency",
+   "srcname": "Wikipedia",
+   "fp": "58fb836ee3779b73a7ac79632688bf54fd954039b19faac1f3f49db39720eec3"
+  },
+  {
+   "id": "ent:ds:pulo",
+   "type": "entity",
+   "entity_type": "organisation",
+   "group": "Armed groups named in reporting",
+   "name": "Patani United Liberation Organisation (PULO)",
+   "aliases": [
+    "PULO",
+    "Patani United Liberation Organisation",
+    "พูโล"
+   ],
+   "role": "Older separatist organisation, now split into factions; occasionally claims statements but is rarely named in current attacks.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Patani_United_Liberation_Organisation",
+   "srcname": "Wikipedia",
+   "fp": "da21cfc769fa46452fa9a37697c6abcc6d756628e05a91182bd6af24c6c80234"
+  },
+  {
+   "id": "ent:ds:gmip",
+   "type": "entity",
+   "entity_type": "organisation",
+   "group": "Armed groups named in reporting",
+   "name": "Gerakan Mujahidin Islam Patani (GMIP)",
+   "aliases": [
+    "GMIP",
+    "Gerakan Mujahidin Islam Patani",
+    "จีเอ็มไอพี"
+   ],
+   "role": "Armed group formed in the 1990s; named occasionally in Thai security statements.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Gerakan_Mujahidin_Islam_Pattani",
+   "srcname": "Wikipedia",
+   "fp": "5dd13f492f79bb59803859958eee22eeee9408ff28607bba91d508bfc15e9c80"
+  },
+  {
+   "id": "ent:ds:mara-patani",
+   "type": "entity",
+   "entity_type": "organisation",
+   "group": "Armed groups named in reporting",
+   "name": "MARA Patani",
+   "aliases": [
+    "MARA Patani",
+    "มาราปาตานี"
+   ],
+   "role": "Umbrella of several Patani groups that took part in talks with Thailand from 2015 without the BRN leadership.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/South_Thailand_insurgency",
+   "srcname": "Wikipedia",
+   "fp": "2c2a44d79307e45354ae72e9b9fdfabf3c82bf44bb831e261366e93953d54c63"
+  },
+  {
+   "id": "ent:ds:isoc4",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "ISOC Region 4 Forward Command",
+   "aliases": [
+    "ISOC Region 4",
+    "ISOC-4",
+    "กอ.รมน.ภาค 4",
+    "กอ.รมน.ภาค 4 สน.",
+    "Internal Security Operations Command Region 4"
+   ],
+   "role": "Thai command that runs security operations in the Deep South and issues most official incident statements.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Internal_Security_Operations_Command",
+   "srcname": "Wikipedia",
+   "fp": "9f0645970a67f403b19a11fb714dc165a682eede351b54fc96ec224f2bdf6340"
+  },
+  {
+   "id": "ent:ds:army4",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "Fourth Army Area",
+   "aliases": [
+    "Fourth Army Area",
+    "4th Army Area",
+    "Fourth Army",
+    "แม่ทัพภาคที่ 4",
+    "กองทัพภาคที่ 4"
+   ],
+   "role": "Thai army region covering the south; its commander also heads ISOC Region 4.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Royal_Thai_Army",
+   "srcname": "Wikipedia",
+   "fp": "e0a70475f1698c53185f23aa9bcf6edd314cb2915f8ca0895cf8377bc16f0921"
+  },
+  {
+   "id": "ent:ds:sbpac",
+   "type": "entity",
+   "entity_type": "agency",
+   "group": "Thai security forces and agencies",
+   "name": "Southern Border Provinces Administrative Centre (SBPAC)",
+   "aliases": [
+    "SBPAC",
+    "ศอ.บต.",
+    "Southern Border Provinces Administrative Centre"
+   ],
+   "role": "Civilian agency for development, justice and compensation in the southern border provinces.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Southern_Border_Provinces_Administrative_Centre",
+   "srcname": "Wikipedia",
+   "fp": "ead24ab69a00451c94fc29c362220d907f45b777df70af26f1230ae2343f9805"
+  },
+  {
+   "id": "ent:ds:rangers",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "Thahan Phran (paramilitary rangers)",
+   "aliases": [
+    "Thahan Phran",
+    "ranger",
+    "rangers",
+    "ทหารพราน",
+    "ร้อย ทพ."
+   ],
+   "role": "Army paramilitary ranger regiments that man bases and patrols across the Deep South; frequent targets of ambushes and roadside bombs.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Thahan_Phran",
+   "srcname": "Wikipedia",
+   "fp": "57de01e97756c22ec21af28ee46e959742cbe7faa3a6157255c5727c6873cddd"
+  },
+  {
+   "id": "ent:ds:or-sor",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "Volunteer Defence Corps (Or Sor)",
+   "aliases": [
+    "Or Sor",
+    "Volunteer Defence Corps",
+    "defence volunteer",
+    "defense volunteer",
+    "อส.",
+    "อาสารักษาดินแดน"
+   ],
+   "role": "Interior Ministry volunteers who guard district offices, schools and officials; often attacked.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Volunteer_Defence_Corps_(Thailand)",
+   "srcname": "Wikipedia",
+   "fp": "22c5a43de199fb443892b19a426a920da69b2fc3edcef0c69976604d54601765"
+  },
+  {
+   "id": "ent:ds:chor-ror-bor",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "Village defence volunteers (Chor Ror Bor)",
+   "aliases": [
+    "Chor Ror Bor",
+    "village defence volunteer",
+    "village defense volunteer",
+    "ชรบ."
+   ],
+   "role": "Armed village volunteers who guard their own villages.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/South_Thailand_insurgency",
+   "srcname": "Wikipedia",
+   "fp": "46167077ef2bfc993fd979eafd8871a8632d36496071b32f4365d2516c663285"
+  },
+  {
+   "id": "ent:ds:bpp",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "Border Patrol Police",
+   "aliases": [
+    "Border Patrol Police",
+    "BPP",
+    "ตชด.",
+    "ตำรวจตระเวนชายแดน"
+   ],
+   "role": "Police paramilitary force that patrols the border and joins cordon-and-search operations.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Border_Patrol_Police",
+   "srcname": "Wikipedia",
+   "fp": "fd5a6711e6de82bf5b90bab122d3c8c67097d7a4845bc585549d6db675cd92cd"
+  },
+  {
+   "id": "ent:ds:police9",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "Royal Thai Police Region 9 / Southern Border Provinces Police Operation Centre",
+   "aliases": [
+    "Police Region 9",
+    "Region 9 police",
+    "ศชต.",
+    "ตำรวจภูธรภาค 9",
+    "Southern Border Provinces Police Operation Centre"
+   ],
+   "role": "Police command for the southern border provinces; makes most arrests and announces warrants.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Royal_Thai_Police",
+   "srcname": "Wikipedia",
+   "fp": "cdb79a0e066326fef2d63f27032091d8d03394cf910aad08d0a2d7c96fa136f9"
+  },
+  {
+   "id": "ent:ds:marines-nara",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Thai security forces and agencies",
+   "name": "Royal Thai Marine Corps (Narathiwat task force)",
+   "aliases": [
+    "marines",
+    "Marine Corps",
+    "นาวิกโยธิน",
+    "ฉก.นย."
+   ],
+   "role": "Navy marines responsible for parts of Narathiwat, including the coast and the Malaysian border.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Royal_Thai_Marine_Corps",
+   "srcname": "Wikipedia",
+   "fp": "4b1fc3861718052d315ab049e6fb6b129ea9a5cc81b99e16feea0b0022104eea"
+  },
+  {
+   "id": "ent:ds:thai-panel",
+   "type": "entity",
+   "entity_type": "agency",
+   "group": "Peace process",
+   "name": "Thai peace dialogue panel",
+   "aliases": [
+    "peace dialogue panel",
+    "Thai peace panel",
+    "คณะพูดคุยเพื่อสันติสุข",
+    "คณะพูดคุยสันติสุข"
+   ],
+   "role": "Thai government delegation to the peace dialogue with BRN.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/South_Thailand_insurgency",
+   "srcname": "Wikipedia",
+   "fp": "87084df765a8b6074562e004cea81d6dde9dfe45cb4f8a78db53ff2d2f7022eb"
+  },
+  {
+   "id": "ent:ds:my-facilitator",
+   "type": "entity",
+   "entity_type": "agency",
+   "group": "Peace process",
+   "name": "Malaysian peace facilitator",
+   "aliases": [
+    "Malaysian facilitator",
+    "peace facilitator",
+    "fasilitator",
+    "ผู้อำนวยความสะดวก"
+   ],
+   "role": "Malaysia hosts and facilitates the Thailand–BRN peace dialogue.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/South_Thailand_insurgency",
+   "srcname": "Wikipedia",
+   "fp": "b9b81879bb20c460e2a4e8895785d2da780f2f5da525ce318a772cb42cdc79d9"
+  },
+  {
+   "id": "ent:ds:akps",
+   "type": "entity",
+   "entity_type": "agency",
+   "group": "Malaysian border agencies",
+   "name": "Malaysian Border Control and Protection Agency (AKPS)",
+   "aliases": [
+    "AKPS",
+    "Agensi Kawalan dan Perlindungan Sempadan",
+    "Border Control and Protection Agency"
+   ],
+   "role": "Malaysian agency set up in 2024 to run border entry points and patrols, including on the Thai border.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://www.bing.com/news/search?q=AKPS+Agensi+Kawalan+dan+Perlindungan+Sempadan",
+   "srcname": "Bing News search",
+   "fp": "30a8479ce8597e9292c130cc2a40da8efdae2b75de8ee2dac54d6db9abfa0e99"
+  },
+  {
+   "id": "ent:ds:gof",
+   "type": "entity",
+   "entity_type": "unit",
+   "group": "Malaysian border agencies",
+   "name": "General Operations Force (PGA)",
+   "aliases": [
+    "General Operations Force",
+    "GOF",
+    "Pasukan Gerakan Am",
+    "PGA"
+   ],
+   "role": "Royal Malaysia Police paramilitary force that guards the Malaysian side of the border.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/General_Operations_Force",
+   "srcname": "Wikipedia",
+   "fp": "541c0d73920a9c020df856fb9d8136825e8f3518a2bd2c4a517cc2c54a110373"
+  },
+  {
+   "id": "ent:ds:my-customs",
+   "type": "entity",
+   "entity_type": "agency",
+   "group": "Malaysian border agencies",
+   "name": "Royal Malaysian Customs",
+   "aliases": [
+    "Royal Malaysian Customs",
+    "Kastam",
+    "JKDM",
+    "Malaysian Customs"
+   ],
+   "role": "Malaysian customs; reports smuggling seizures at the crossings and along the Golok river.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/Royal_Malaysian_Customs_Department",
+   "srcname": "Wikipedia",
+   "fp": "a5817f89a4c1937de09d3facff3496abc23b7e6a6003637dda5cf6d7d2bb0fdf"
+  },
+  {
+   "id": "ent:ds:dsw",
+   "type": "entity",
+   "entity_type": "organisation",
+   "group": "Monitors and researchers",
+   "name": "Deep South Watch",
+   "aliases": [
+    "Deep South Watch",
+    "DSW",
+    "ศูนย์เฝ้าระวังสถานการณ์ภาคใต้"
+   ],
+   "role": "Independent monitor that keeps the longest-running database of Deep South incidents and casualties.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://en.wikipedia.org/wiki/South_Thailand_insurgency",
+   "srcname": "Wikipedia",
+   "fp": "8ead5cfdcb2b9f44550c0bc6fbab0ba6745bca2f9eda876912cf24f8fdb19244"
+  }
+ ]
+}
