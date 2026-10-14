@@ -180,7 +180,62 @@ const RECENT = [
   ["R Thai PBS south page", "https://www.thaipbs.or.th/news/categories/south"],
   ["R Isranews south page", "https://www.isranews.org/article/south-news.html"],
 ];
-const LIST = process.env.PROBE_SET === "coverage" ? COV : C.concat(RECENT);
+// PROBE_SET=border (2026-10-14, Thai southern border build): Malaysian outlets and searches for the Malaysian side of the border, and
+// article pages on the emergency decree / security-act districts (PAGE entries: the page's text is saved to probe-out/pages/ for reading).
+const BORDER = [
+  ["MY Bernama EN", "https://www.bernama.com/en/rssfeed.php"],
+  ["MY Bernama BM", "https://www.bernama.com/bm/rssfeed.php"],
+  ["MY Bernama crime", "https://www.bernama.com/en/rss/crime_courts.xml"],
+  ["MY NST nation", "https://www.nst.com.my/news/nation/feed"],
+  ["MY NST feed", "https://www.nst.com.my/feed"],
+  ["MY The Sun", "https://thesun.my/rss/malaysia-news"],
+  ["MY The Sun all", "https://thesun.my/rss"],
+  ["MY Malay Mail", "https://www.malaymail.com/feed/rss/malaysia"],
+  ["MY FMT nation", "https://www.freemalaysiatoday.com/category/nation/feed/"],
+  ["MY FMT BM", "https://www.freemalaysiatoday.com/category/bahasa/feed/"],
+  ["MY Berita Harian", "https://www.bharian.com.my/feed"],
+  ["MY Harian Metro", "https://www.hmetro.com.my/feed"],
+  ["MY Sinar Harian", "https://www.sinarharian.com.my/rssFeed/211"],
+  ["MY Utusan", "https://www.utusan.com.my/feed/"],
+  ["MY Kosmo", "https://www.kosmo.com.my/feed/"],
+  ["MY The Star nation", "https://www.thestar.com.my/rss/News/Nation"],
+  ["MY Kelantan PDRM page", "https://www.rmp.gov.my/"],
+  ["MY search: Kelantan border smuggling", "https://www.bing.com/news/search?q=Kelantan%20border%20smuggling&format=rss"],
+  ["MY search: Rantau Panjang", "https://www.bing.com/news/search?q=Rantau%20Panjang&format=rss"],
+  ["MY search: Bukit Kayu Hitam", "https://www.bing.com/news/search?q=Bukit%20Kayu%20Hitam&format=rss"],
+  ["MY search: Pengkalan Hulu", "https://www.bing.com/news/search?q=Pengkalan%20Hulu&format=rss"],
+  ["MY search: Padang Besar", "https://www.bing.com/news/search?q=Padang%20Besar&format=rss"],
+  ["MY search: Sungai Golok", "https://www.bing.com/news/search?q=Sungai%20Golok&format=rss"],
+  ["MY search: Pengkalan Kubor", "https://www.bing.com/news/search?q=Pengkalan%20Kubor&format=rss"],
+  ["MY search: Wang Kelian", "https://www.bing.com/news/search?q=Wang%20Kelian&format=rss"],
+  ["MY search: AKPS sempadan Thailand", "https://www.bing.com/news/search?q=AKPS%20sempadan%20Thailand&format=rss"],
+  ["MY search: GOF sempadan Kelantan", "https://www.bing.com/news/search?q=GOF%20sempadan%20Kelantan&format=rss"],
+  ["MY search: seludup sempadan Kelantan", "https://www.bing.com/news/search?q=seludup%20sempadan%20Kelantan&format=rss"],
+  ["MY search: penyeludupan Bukit Kayu Hitam", "https://www.bing.com/news/search?q=penyeludupan%20Bukit%20Kayu%20Hitam&format=rss"],
+  ["MY search: Rantau Panjang tangkap", "https://www.bing.com/news/search?q=Rantau%20Panjang%20tangkap&format=rss"],
+  ["MY search: site:bernama.com southern Thailand peace", "https://www.bing.com/news/search?q=site%3Abernama.com%20southern%20Thailand%20peace&format=rss"],
+  ["MY search: Malaysia facilitator Thailand peace BRN", "https://www.bing.com/news/search?q=Malaysia%20facilitator%20Thailand%20peace%20BRN&format=rss"],
+  ["MY search: BRN dialog damai", "https://www.bing.com/news/search?q=BRN%20dialog%20damai&format=rss"],
+  ["MY search: Pattani peace talks Malaysia", "https://www.bing.com/news/search?q=Pattani%20peace%20talks%20Malaysia&format=rss"],
+  ["MY search: PATI sempadan Thailand Kelantan", "https://www.bing.com/news/search?q=PATI%20sempadan%20Thailand%20Kelantan&format=rss"],
+  ["MY search: jeti haram Sungai Golok", "https://www.bing.com/news/search?q=jeti%20haram%20Sungai%20Golok&format=rss"],
+  ["MY search: dadah sempadan Thailand Kedah", "https://www.bing.com/news/search?q=dadah%20sempadan%20Thailand%20Kedah&format=rss"],
+  ["PAGE decree Isranews list", "https://www.isranews.org/article/south-news/south-slide/125392-somsakemergencydecree.html"],
+  ["PAGE ISA 19 districts InfoQuest", "https://www.infoquest.co.th/2026/656433"],
+  ["PAGE ISA 19 districts southpeace", "https://www.southpeace.go.th/?p=185602"],
+  ["PAGE ISA 19 districts Thansettakij", "https://www.thansettakij.com/politics/670219"],
+  ["PAGE ISA 19 districts thestandard", "https://thestandard.co/cabinet-extends-southern-border-security-zone/"],
+  ["PAGE decree Jan70 InfoQuest", "https://www.infoquest.co.th/2026/659898"],
+  ["PAGE decree Jan70 ThaiPBS", "https://www.thaipbs.or.th/news/content/559232"],
+  ["PAGE decree 86 thansettakij", "https://www.thansettakij.com/politics/670803"],
+  ["PAGE decree Panare Raman", "https://nbt2hd.prd.go.th/th/content/category/detail/id/2153/iid/250981"],
+  ["PAGE decree Kolok Isranews", "https://www.isranews.org/article/south-news/south-slide/146422-sungaikolok.html"],
+  ["PAGE decree PRD lifted", "https://thailand.prd.go.th/en/content/category/detail/id/50/iid/250819"],
+  ["PAGE decree Thai PBS World", "https://www.thaipbsworld.com/south-watch/559243"],
+  ["PAGE ISA mgr", "https://mgronline.com/politics/detail/9690000095081"],
+  ["PAGE ISA matichon", "https://www.matichon.co.th/politics/news_5911255"],
+];
+const LIST = process.env.PROBE_SET === "coverage" ? COV : process.env.PROBE_SET === "border" ? BORDER : C.concat(RECENT);
 const out = [];
 for (const [src, url] of LIST) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000), r0 = { src, url };
@@ -198,6 +253,12 @@ for (const [src, url] of LIST) {
       const title = (body.match(/<title[^>]*>([^<]*)/i) || [])[1] || "";
       const links = [...body.matchAll(/<a\b[^>]*>([^<]{15,200})<\/a>/g)].map((m) => m[1].trim()).filter((x) => relevant({}, x));
       Object.assign(r0, { title: title.trim().slice(0, 80), ds_links: links.length, sample: links.slice(0, 3).map((x) => x.slice(0, 100)) });
+      if (/^PAGE /.test(src)) {
+        // the article's text only (scripts, styles and tags removed), capped, for reading by hand
+        const txt = body.replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").slice(0, 60000);
+        fs.mkdirSync("probe-out/pages", { recursive: true });
+        fs.writeFileSync("probe-out/pages/" + src.slice(5).replace(/[^A-Za-z0-9]+/g, "-") + ".txt", url + "\n\n" + txt);
+      }
     }
   } catch (e) { r0.error = e.name === "AbortError" ? "timed out" : (e.cause && e.cause.code) || e.message; }
   clearTimeout(t);
