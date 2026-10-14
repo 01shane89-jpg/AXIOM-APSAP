@@ -1155,7 +1155,7 @@
       '<form id="epe-find" class="epefind" autocomplete="off"><input type="search" id="epe-q" maxlength="120" placeholder="Grid (MGRS, lat/lon) or a place: hotel, base, town" aria-label="Origin: a grid or a place"><button type="submit">Find</button></form>' +
       foundHtml() +
       '<div class="eperow"><label>Travel by <select data-ep-mode>' + MODES.map(function (m) { return '<option value="' + m[0] + '"' + (S.mode === m[0] ? " selected" : "") + ">" + m[1] + "</option>"; }).join("") + "</select></label>" +
-      '<label>Incidents from the last <select data-ep-days>' + [7, 30, 90].map(function (d) { return "<option" + (S.days === d ? " selected" : "") + ">" + d + "</option>"; }).join("") + "</select> days</label></div>" +
+      '<label>Incidents from the last <select data-ep-days>' + [7, 14, 30, 90].map(function (d) { return "<option" + (S.days === d ? " selected" : "") + ">" + d + "</option>"; }).join("") + "</select> days</label></div>" +
       '<div class="epebtns">' + (S.busy ? '<button type="button" data-ep="stop">Stop</button>' : '<button type="button" class="epego" data-ep="plan"' + (o ? "" : " disabled") + ">" + (p ? "Work out again" : "Work out the options") + "</button>") + "</div>" +
       '<p id="epe-msg" class="obs" role="status">' + E(S.msg) + "</p></section>";
     el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) : "") + keptHtml() + pkgsHtml() +
