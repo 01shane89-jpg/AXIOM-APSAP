@@ -235,7 +235,33 @@ const BORDER = [
   ["PAGE ISA mgr", "https://mgronline.com/politics/detail/9690000095081"],
   ["PAGE ISA matichon", "https://www.matichon.co.th/politics/news_5911255"],
 ];
-const LIST = process.env.PROBE_SET === "coverage" ? COV : process.env.PROBE_SET === "border" ? BORDER : C.concat(RECENT);
+// PROBE_SET=peace (2026-10-14, Deep South peace talks tracker): news searches listing every dated item, and article pages on the
+// 2026 rounds of the BRN dialogue, whose passages about the talks are printed for reading from the run log.
+const PEACE = [
+  ["S bing BRN peace dialogue", "https://www.bing.com/news/search?q=BRN%20peace%20dialogue%20Thailand&format=rss"],
+  ["S bing BRN peace talks Malaysia", "https://www.bing.com/news/search?q=BRN%20peace%20talks%20Malaysia&format=rss"],
+  ["S bing southern Thailand peace talks", "https://www.bing.com/news/search?q=southern%20Thailand%20peace%20talks&format=rss"],
+  ["S bing Thanut peace dialogue", "https://www.bing.com/news/search?q=Thanut%20Suvarnananda&format=rss"],
+  ["S bing TH peace dialogue", "https://www.bing.com/news/search?q=%E0%B8%9E%E0%B8%B9%E0%B8%94%E0%B8%84%E0%B8%B8%E0%B8%A2%E0%B8%AA%E0%B8%B1%E0%B8%99%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B8%B8%E0%B8%82&format=rss"],
+  ["S bing BRN dialog damai", "https://www.bing.com/news/search?q=BRN%20dialog%20damai&format=rss"],
+  ["PAGE peace NST BRN process key", "https://www.nst.com.my/amp/news/regional/2026/07/1480966/brn-says-peace-process-remains-key-resolving-southern-thailand"],
+  ["PAGE peace Bernama resume", "https://bernama.com/en/news.php?id=2490942"],
+  ["PAGE peace BP govt slams BRN", "https://www.bangkokpost.com/thailand/general/3281415/govt-slams-brn-remarks-amid-talks-in-malaysia"],
+  ["PAGE peace BP new look", "https://www.bangkokpost.com/thailand/general/3279895/new-look-for-peace-talks-in-south"],
+  ["PAGE peace Mizzima surge", "https://eng.mizzima.com/2026/07/06/36001"],
+  ["PAGE peace Crisis Group b172", "https://www.crisisgroup.org/brf/asia-pacific/thailand/b172-sustaining-momentum-southern-thailands-peace-dialogue"],
+  ["PAGE peace TPBSW endorse plan", "https://www.thaipbsworld.com/world/thai-delegation-brn-agree-to-endorse-peace-plan-soon"],
+  ["PAGE peace BP local hands", "https://www.bangkokpost.com/opinion/opinion/3283819/south-peace-talks-must-stay-in-local-hands"],
+  ["PAGE peace Indoneo August", "https://www.indoneo.com/power/thailand-southern-attacks-august-2026-peace-talks/"],
+  ["PAGE peace Star Thanut", "https://www.thestar.com.my/news/nation/2026/07/14/malaysia-to-cooperate-closely-with-new-thai-peace-dialogue-chief-thanut-suvarnananda"],
+  ["PAGE peace BP new negotiator", "https://www.bangkokpost.com/thailand/general/3268324/new-southern-peace-negotiator-promises-to-be-openminded"],
+  ["PAGE peace NST welcomes", "https://www.nst.com.my/news/nation/2026/07/1488393/malaysia-welcomes-new-thai-peace-negotiator-vows-support-southern"],
+  ["PAGE peace ThaiPBS 508440", "https://www.thaipbs.or.th/news/content/508440"],
+  ["PAGE peace Thairath 2761197", "https://www.thairath.co.th/news/local/south/2761197"],
+  ["PAGE peace Naewna 966664", "https://www.naewna.com/politic/966664"],
+  ["PAGE peace Amarin 553264", "https://www.amarintv.com/news/politic/553264"],
+];
+const LIST = process.env.PROBE_SET === "coverage" ? COV : process.env.PROBE_SET === "border" ? BORDER : process.env.PROBE_SET === "peace" ? PEACE : C.concat(RECENT);
 const out = [];
 for (const [src, url] of LIST) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000), r0 = { src, url };
@@ -246,6 +272,7 @@ for (const [src, url] of LIST) {
     const items = parseFeed(body);
     if (items.length) {
       const ds = items.filter((i) => /^TK/.test(src) ? /Cambodia|Thai|กัมพูชา|ชายแดน|កម្ពុជា|ថៃ/i.test(i.title + " " + i.summary) : relevant({}, i.title + " " + i.summary));
+      if (process.env.PROBE_SET === "peace") items.forEach((i) => console.log("ITEM " + src + " | " + i.date + " | " + String(i.title).slice(0, 200) + " | " + String(i.summary || "").replace(/\s+/g, " ").slice(0, 300) + " | " + i.link));
       Object.assign(r0, { d7: items.filter((i) => Date.now() - new Date(i.date) < 7 * 864e5).length, items: items.length, newest: items.map((i) => { const d = new Date(i.date); return isNaN(d) ? "" : d.toISOString().slice(0, 16); }).sort().pop(), ds: ds.length, sample: (ds.length ? ds : items).slice(0, 3).map((i) => i.title.slice(0, 100)) });
     } else if (/json/.test(r0.type)) {
       try { const j = JSON.parse(body); if (Array.isArray(j)) Object.assign(r0, { items: j.length, newest: (j[0] || {}).date || "", sample: j.slice(0, 3).map((x) => ((x.title || {}).rendered || "").slice(0, 100)) }); } catch (e) {}
@@ -260,9 +287,18 @@ for (const [src, url] of LIST) {
         fs.writeFileSync("probe-out/pages/" + src.slice(5).replace(/[^A-Za-z0-9]+/g, "-") + ".txt", url + "\n\n" + txt);
         // the passage that names the most Deep South districts, printed so it can be read from the run log
         const NAMES = /ปัตตานี|ยะลา|นราธิวาส|สงขลา|โคกโพธิ์|หนองจิก|ปะนาเระ|มายอ|ทุ่งยางแดง|สายบุรี|ไม้แก่น|ยะหริ่ง|ยะรัง|กะพ้อ|แม่ลาน|เบตง|บันนังสตา|ธารโต|ยะหา|รามัน|กาบัง|กรงปินัง|ตากใบ|บาเจาะ|ยี่งอ|ระแงะ|รือเสาะ|ศรีสาคร|แว้ง|สุคิริน|สุไหงโก-ลก|สุไหงปาดี|จะแนะ|เจาะไอร้อง|จะนะ|เทพา|นาทวี|สะบ้าย้อย|Pattani|Yala|Narathiwat|Songkhla|Betong|Bannang Sata|Than To|Yaha|Raman|Kabang|Krong Pinang|Tak Bai|Bacho|Yi-?ngo|Ra-?ngae|Rueso|Si Sakhon|Waeng|Sukhirin|Kolok|Padi|Chanae|Cho-?airong|Chana|Thepha|Na Thawi|Saba Yoi|Khok Pho|Nong Chik|Panare|Mayo|Thung Yang Daeng|Sai Buri|Mai Kaen|Yaring|Yarang|Kapho|Mae Lan/g;
-        let best = [0, 0];
-        for (let k = 0; k < txt.length; k += 200) { const n = (txt.slice(k, k + 1800).match(NAMES) || []).length; if (n > best[0]) best = [n, k]; }
-        console.log("PAGETEXT " + src + " (" + best[0] + " names): " + txt.slice(best[1], best[1] + 1800));
+        if (/^PAGE peace /.test(src)) {
+          // peace pages: the two passages with the most talk words, each printed
+          const W = /BRN|peace|dialogue|talks|negotiat|facilitat|round|ceasefire|พูดคุย|บีอาร์เอ็น|สันติ|เจรจา|damai|rundingan/gi, wins = [];
+          for (let k = 0; k < txt.length; k += 300) wins.push([(txt.slice(k, k + 2400).match(W) || []).length, k]);
+          wins.sort((a, b) => b[0] - a[0]);
+          const pick = [wins[0], wins.find((w) => wins[0] && Math.abs(w[1] - wins[0][1]) >= 2400)].filter(Boolean);
+          pick.forEach((w) => console.log("PAGETEXT " + src + " (" + w[0] + " words): " + txt.slice(w[1], w[1] + 2400)));
+        } else {
+          let best = [0, 0];
+          for (let k = 0; k < txt.length; k += 200) { const n = (txt.slice(k, k + 1800).match(NAMES) || []).length; if (n > best[0]) best = [n, k]; }
+          console.log("PAGETEXT " + src + " (" + best[0] + " names): " + txt.slice(best[1], best[1] + 1800));
+        }
       }
     }
   } catch (e) { r0.error = e.name === "AbortError" ? "timed out" : (e.cause && e.cause.code) || e.message; }
