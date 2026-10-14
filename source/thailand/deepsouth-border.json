@@ -3,7 +3,11 @@
  "asof": "2026-10-14",
  "note": "Hand-kept inputs for the Deep South border map (tools/build_deepsouth_border.mjs). Crossings: official checkpoints on the Thailand–Malaysia border, positions approximate. Special-law areas: which districts the Thai government says are under each special security law; government statements are claims, shown with their sources.",
  "districts_note": "District outlines: data/places/deepsouth-areas.json (geoBoundaries THA ADM2, CC BY 3.0 IGO).",
- "measure_levels": {},
+ "measure_levels": {
+  "decree": "Emergency Decree on Public Administration in Emergency Situations (2005): the strongest of the three; detention without charge for a limited time and immunity for officials.",
+  "isa": "Internal Security Act (2008), section 15: ISOC leads security; used where the Thai government says things have improved, in place of the decree.",
+  "martial": "Martial Law Act (1914): not shown, because no current source confirming its districts was found."
+ },
  "crossings": [
   {
    "id": "cx:th-my:wang-prachan",
@@ -159,5 +163,93 @@
    "srcname": "Wikipedia"
   }
  ],
- "measures": []
+ "measures": [
+  {
+   "id": "law:th:deepsouth:decree",
+   "name": "Emergency Decree (serious emergency), 86th extension",
+   "law": "decree",
+   "districts": [
+    "TH-9401",
+    "TH-9402",
+    "TH-9403",
+    "TH-9407",
+    "TH-9410",
+    "TH-9501",
+    "TH-9503",
+    "TH-9504",
+    "TH-9601",
+    "TH-9602",
+    "TH-9603",
+    "TH-9605",
+    "TH-9606",
+    "TH-9607",
+    "TH-9610",
+    "TH-9611",
+    "TH-9612",
+    "TH-9613"
+   ],
+   "until": "2027-01-19",
+   "extended": "2026-10-06",
+   "from": "2026-10-20",
+   "note": "Cabinet extended it for 3 months, 20 Oct 2026 to 19 Jan 2027: all of Narathiwat except Yi-ngo, Waeng and Sukhirin; Pattani except Yaring, Panare, Mayo, Mai Kaen, Thung Yang Daeng, Kapho and Mae Lan; Yala except Betong, Yaha, Raman, Kabang and Krong Pinang. Su-ngai Kolok has been back under the decree since 20 Apr 2026. Government statement, a claim.",
+   "evidence": [
+    {
+     "src": "https://www.thansettakij.com/politics/670803",
+     "srcname": "Thansettakij (6 Oct 2026)"
+    },
+    {
+     "src": "https://www.infoquest.co.th/2026/659898",
+     "srcname": "InfoQuest (6 Oct 2026)"
+    },
+    {
+     "src": "https://www.isranews.org/article/south-news/south-slide/146422-sungaikolok.html",
+     "srcname": "Isra News (Su-ngai Kolok)"
+    }
+   ]
+  },
+  {
+   "id": "law:th:deepsouth:isa",
+   "name": "Internal Security Act area, section 15",
+   "law": "isa",
+   "districts": [
+    "TH-9604",
+    "TH-9608",
+    "TH-9609",
+    "TH-9409",
+    "TH-9404",
+    "TH-9405",
+    "TH-9408",
+    "TH-9406",
+    "TH-9411",
+    "TH-9412",
+    "TH-9502",
+    "TH-9505",
+    "TH-9506",
+    "TH-9507",
+    "TH-9508",
+    "TH-9004",
+    "TH-9003",
+    "TH-9005",
+    "TH-9006"
+   ],
+   "until": "2027-09-30",
+   "extended": "2026-09-29",
+   "from": "2026-10-01",
+   "note": "Cabinet extended it for 1 year, 1 Oct 2026 to 30 Sep 2027 (22nd extension): Narathiwat 3 districts, Pattani 7, Yala 5 and Songkhla 4 (Na Thawi, Chana, Thepha, Saba Yoi). Su-ngai Kolok was taken out on 11 Apr 2026, leaving 19. Government statement, a claim.",
+   "evidence": [
+    {
+     "src": "https://www.infoquest.co.th/2026/656433",
+     "srcname": "InfoQuest (29 Sep 2026)"
+    },
+    {
+     "src": "https://www.thansettakij.com/politics/670219",
+     "srcname": "Thansettakij (29 Sep 2026)"
+    },
+    {
+     "src": "https://thestandard.co/cabinet-extends-southern-border-security-zone/",
+     "srcname": "The Standard (29 Sep 2026)"
+    }
+   ]
+  }
+ ]
 }
