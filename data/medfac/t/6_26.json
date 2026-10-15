@@ -1,1 +1,8 @@
-[["n1825937554",6.28333,26.46667,"cf",{"name":"Wilsary","aeroway":"aerodrome"}]]
+[["n10040593370",7.72361,27.978,"ss",{"aeroway":"helipad"}],
+["n1825937148",7.95538,27.51303,"ss",{"name":"Bararud","aeroway":"aerodrome"}],
+["n1825937189",7.70967,26.19017,"ss",{"name":"Deim Zubeir","aeroway":"aerodrome"}],
+["n1825937554",6.28333,26.46667,"cf",{"name":"Wilsary","aeroway":"aerodrome"}],
+["w1020045656",7.57342,27.88981,"ss",{"name":"Baggari Primary Health Care Unit","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"Bagari"}],
+["w1477029935",7.71412,26.19605,"ss",{"name":"Deim Zubeir Primary Health Care Centre","amenity":"hospital","healthcare":"hospital"}],
+["w217947353",7.72504,27.97418,"ss",{"name":"مطار واو","name:en":"Wau Airport","addr:street":"Airport Road","addr:city":"Wau","aeroway":"aerodrome","icao":"HJWW","iata":"WUU","aerodrome:type":"public","wikidata":"Q1031812"}],
+["w418731625",7.69967,27.99562,"ss",{"name":"Comboni Hospital","amenity":"hospital"}]]

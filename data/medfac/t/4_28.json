@@ -1,2 +1,8 @@
-[["w1011056514",4.34795,29.44262,"cd",{"aeroway":"aerodrome"}],
-["w1411239904",4.07273,29.57384,"cd",{"name":"Bagunda Airport","aeroway":"aerodrome"}]]
+[["w1010249838",4.902,29.4428,"ss",{"name":"Maridi Airport","addr:street":"Airport Road","addr:city":"Maridi","aeroway":"aerodrome","icao":"HSMD"}],
+["w1011056514",4.34795,29.44262,"cd",{"aeroway":"aerodrome"}],
+["w1411239904",4.07273,29.57384,"cd",{"name":"Bagunda Airport","aeroway":"aerodrome"}],
+["w385266904",4.56726,28.42386,"ss",{"name":"Yambio Airport","addr:street":"Maridi-Yambio Highway","addr:city":"Yambio","aeroway":"aerodrome","icao":"HSYA"}],
+["w615481621",4.56665,28.40852,"ss",{"name":"Yambio General Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"State Avenue","addr:city":"Yambio"}],
+["w925731425",4.56494,28.42107,"ss",{"aeroway":"aerodrome"}],
+["w970992222",4.91639,29.46396,"ss",{"name":"Maridi General Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Maridi-Yambio Highway","addr:city":"Maridi"}],
+["w978473719",4.64238,28.24831,"ss",{"name":"Nzara General Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"Basukangbi Road","addr:city":"Nzara"}]]
