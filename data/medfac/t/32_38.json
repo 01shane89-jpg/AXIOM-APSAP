@@ -18,6 +18,8 @@
 ["w422220116",33.06906,39.5911,"iq",{"name":"قاعدة شمال شرق اج٣ الجوية","name:en":"H3 Northwest AB","aeroway":"aerodrome","military":"airfield"}],
 ["w742052085",32.92807,39.74911,"iq",{"name":"قاعدة اج 3 الجوية","name:en":"H3 Airbase","aeroway":"aerodrome","military":"airfield"}],
 ["w761988220",33.67625,39.95273,"iq",{"aeroway":"helipad"}],
+["w862965603",33.5074,38.61469,"sy",{"aeroway":"helipad"}],
+["w862965604",33.507,38.61436,"sy",{"aeroway":"helipad"}],
 ["w965574687",33.31417,38.69967,"jo",{"aeroway":"helipad"}],
 ["w965574688",33.31383,38.69966,"jo",{"aeroway":"helipad"}],
 ["w965574689",33.31348,38.69964,"jo",{"aeroway":"helipad"}],
