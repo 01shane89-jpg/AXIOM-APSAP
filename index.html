@@ -1127,6 +1127,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
 
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
+<script src="assets/osap-boolq.js"></script>
 <script>/* NATO-style symbol icon; null if assets/osap-symbols.js failed to load, so callers keep their old pin */
 function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon(k, o) : null; }</script>
 <script src="data/thailand/power.js"></script>
@@ -7525,9 +7526,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* watch words: any one of them, matched at the start of a word in the report's title, text, original-language text or place */
   function wKwList(s) { return String(s || "").split(/[,;\n]+/).map(function (x) { return x.trim().replace(/\s+/g, " ").slice(0, 60); }).filter(Boolean).slice(0, 20); }
   var wKwRe = {};
+  /* a watch with a Boolean string (w.q, assets/osap-boolq.js) is matched by it; w.kw then only lists its words for display */
+  function wQ(w) { return w && w.q && window.OSAP_BOOLQ ? window.OSAP_BOOLQ.compile(w.q) : null; }
+  function wKwTxt(r) { return r.__kwt || (r.__kwt = [r.title, r.detail, r.orig, r.place, r.prov, r.cat].join(" \n ")); }
+  function wWordsHit(w, r) { var c = wQ(w); return c ? c.test(wKwTxt(r)) : wKwHit(w.kw, r); }
+  function wWordsWhich(w, r) { var c = wQ(w); return c ? c.which(wKwTxt(r)) : wKwWhich(w.kw, r); }
+  function wWordsText(w) { return w.q ? w.q : w.kw && w.kw.length ? w.kw.join(", ") : ""; }
   function wKwHit(kw, r) { return !kw || !kw.length || !!wKwWhich(kw, r); }
   function wKwWhich(kw, r) {
-    var txt = r.__kwt || (r.__kwt = [r.title, r.detail, r.orig, r.place, r.prov, r.cat].join(" \n "));
+    var txt = wKwTxt(r);
     return (kw || []).filter(function (k) {
       var re = wKwRe[k];
       if (!re) { try { re = new RegExp("(^|[^\\p{L}\\p{N}])" + k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "iu"); } catch (e) { re = { test: function (t) { return t.toLowerCase().indexOf(k.toLowerCase()) >= 0; } }; } wKwRe[k] = re; }
@@ -7538,7 +7545,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (w.layers && w.layers.length && w.layers.indexOf(r.layer) < 0) return false;
     if ((r.sev || 1) < (w.minSev || 1)) return false;
     if (w.area) { if (!hasLL(r) || !inPoly(r.lat, r.lon, w.area)) return false; }
-    if (!wKwHit(w.kw, r)) return false;
+    if (!wWordsHit(w, r)) return false;
     if (w.conf === "ied" && !wIedOk(r)) return false;
     var t = evMs(r).ms;
     return isFinite(t) && Date.now() - t <= W_RECENT_DAYS * 864e5 && t <= Date.now() + 36e5;
@@ -7549,7 +7556,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     R.forEach(function (r) {
       if (!wMatch(w, r)) return;
       var k = rk(r), v = EV_ON ? evOfRec(r) : null;
-      out.push({ k: k, gk: v ? v.id : k, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wKwWhich(w.kw, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
+      out.push({ k: k, gk: v ? v.id : k, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wWordsWhich(w, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
         src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", grp: v ? v.m.length : 0, place: r.place || "" });
     });
     return out;
@@ -7664,14 +7671,26 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         '<label><input type="radio" name="w-area" value="country"' + (AREA ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
         '<fieldset><legend>Categories</legend><label><input type="checkbox" id="w-anycat" checked> Any category</label><div class="wcats">' + cats.map(function (l) {
           return '<label><input type="checkbox" name="w-cat" value="' + esc(l.id) + '"> ' + esc(l.name) + "</label>"; }).join("") + "</div></fieldset>" +
-        '<label>Words <span class="obs">(optional; any one of them, separated by commas)</span> <input type="text" id="w-kw" class="mini" maxlength="400" placeholder="e.g. ferry, landslide, Hat Yai"></label>' +
+        '<fieldset class="wwords"><legend>Words <span class="obs">(optional)</span></legend>' +
+          (window.OSAP_BOOLQ ? '<div class="wqrow"><select id="w-qp" class="mini" aria-label="Quick search"><option value="">Quick search\u2026</option>' +
+            window.OSAP_BOOLQ.presets.map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.name) + "</option>"; }).join("") + "</select>" +
+            '<input type="text" id="w-qd" class="mini" maxlength="300" placeholder="Or describe it: attacks on police near the border, not training" aria-label="Describe what to watch for">' +
+            '<button type="button" class="refresh" data-w-qdraft>Draft Boolean</button></div>' : "") +
+          '<textarea id="w-kw" class="mini" rows="3" maxlength="600" aria-label="Words" aria-describedby="w-qmsg" placeholder="ferry, landslide, Hat Yai   or   (bomb OR blast) AND police NOT training"></textarea>' +
+          '<div id="w-qmsg" class="wqmsg obs" aria-live="polite"></div>' +
+          '<details class="wqhelp"><summary>How words and Boolean searches work</summary><ul>' +
+            "<li>A plain list with commas finds reports with any one of the words.</li>" +
+            "<li><b>AND</b>, <b>OR</b>, <b>NOT</b> in capitals combine words. Words side by side mean AND; a comma means OR; a leading minus means NOT.</li>" +
+            '<li>"Quote marks" keep a phrase together. Brackets group: (bomb OR blast) AND police.</li>' +
+            "<li>Each word matches the start of a word in the title, text, original-language text or place, so bomb also finds bombing.</li>" +
+            "<li>Draft Boolean builds a search from your description with OSAP's word rules, not an AI model. Check it before saving.</li></ul></details></fieldset>" +
         '<label>Severity <select id="w-sev" class="mini"><option value="1">Any severity</option><option value="2">Medium or high</option><option value="3">High only</option></select></label>' +
         '<p class="obs">Counts reports dated in the last ' + W_RECENT_DAYS + " days. What is already there when you save is noted, not announced; only later arrivals are hits.</p>" +
         '<button type="submit" class="refresh primary">Save watch</button></form>' +
       "<h3>Your watches</h3>" + (WATCHES.length ? '<div class="wlist">' + WATCHES.map(function (w) {
         var cn = (CBY[w.cc] || {}).name || w.cc, nNew = hitsLoad().filter(function (h) { return h.w === w.id && !h.read; }).length;
         return '<div class="wrow"><div><b>' + esc(w.name) + "</b>" + (w.on === false ? ' <span class="chip">paused</span>' : "") + (nNew ? ' <span class="abadge new">' + nNew + " new</span>" : "") +
-          '<div class="obs">' + esc(cn + " · " + (w.aoi ? w.aoi.label : w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev) + (w.kw && w.kw.length ? " · words: " + w.kw.join(", ") : "") + (w.conf === "ied" ? " · confirmed IED reports only" : "")) +
+          '<div class="obs">' + esc(cn + " · " + (w.aoi ? w.aoi.label : w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev) + (wWordsText(w) ? " · words: " + wWordsText(w) : "") + (w.conf === "ied" ? " · confirmed IED reports only" : "")) +
           "<br>" + (w.checked ? "Last checked " + esc(window.OSAP_TIME.dualT(w.checked, { date: true })) : "Not checked yet") + "</div></div>" +
           '<div class="wbtns">' + (w.area ? '<button type="button" class="refresh" data-w-show="' + esc(w.id) + '">Show</button>' : "") +
           '<button type="button" class="refresh" data-w-pause="' + esc(w.id) + '">' + (w.on === false ? "Resume" : "Pause") + "</button>" +
@@ -7694,14 +7713,59 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-area"]'), function (r) { r.addEventListener("change", function () {
       if (wNameTyped || !r.checked) return;
       wName.value = r.hasAttribute("data-w-aname") ? C.name + " " + r.getAttribute("data-w-aname") : r.value === "drawn" ? C.name + " drawn area" : C.name; }); });
+    /* Words: a plain comma list stays the old any-of list (w.kw); Boolean syntax is kept as w.q with its words in w.kw for display */
+    var wKwEl = wEl.querySelector("#w-kw"), wQmsg = wEl.querySelector("#w-qmsg"), wDrafted = "", wQt = 0;
+    function wWordsOf() {
+      var v = wKwEl.value.trim(), B = window.OSAP_BOOLQ;
+      if (!v) return { kw: [] };
+      if (!B || !B.isBool(v)) return { kw: wKwList(v) };
+      var c = B.compile(v);
+      return c.ok ? { kw: c.terms.slice(0, 20), q: c.q } : { err: c.err };
+    }
+    function wFormWatch(words) {
+      var a = wEl.querySelector('[name="w-area"]:checked'), ao = a && a.value.indexOf("aoi:") === 0 && window.OSAP_AOI ? window.OSAP_AOI.get(a.value.slice(4)) : null;
+      return { area: ao ? ao.pts : a && a.value === "drawn" && AREA ? AREA : null, layers: any.checked ? [] : Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; }),
+        kw: words.kw || [], q: words.q || null, minSev: +wEl.querySelector("#w-sev").value || 1, conf: null };
+    }
+    /* as the words change: say how they are read, and how many recent reports on this map the watch would match now */
+    function wQcheck() {
+      var v = wKwEl.value.trim(), words = wWordsOf();
+      if (!v) { wQmsg.innerHTML = ""; return; }
+      if (words.err) { wQmsg.innerHTML = '<span class="wqerr">Check the search: ' + esc(words.err) + ".</span>"; return; }
+      var n = 0; try { n = wMatches(wFormWatch(words)).length; } catch (e) {}
+      wQmsg.innerHTML = (wDrafted && v === wDrafted ? '<span class="chip wqauto" title="Drafted by OSAP\u2019s word rules from your description, not by an AI model and not reviewed by an analyst. Check and edit it before saving.">Auto-drafted</span> ' : "") +
+        esc(words.q ? "Boolean search." : "Any one of these words.") + " Matches " + n + " report" + (n === 1 ? "" : "s") + " on this map from the last " + W_RECENT_DAYS + " days.";
+    }
+    function wQsoon() { clearTimeout(wQt); wQt = setTimeout(wQcheck, 250); }
+    wKwEl.addEventListener("input", wQsoon);
+    wEl.querySelector("#wform").addEventListener("change", function (e) { if (e.target && e.target.id !== "w-qp") wQsoon(); });
+    var wQp = wEl.querySelector("#w-qp");
+    if (wQp) wQp.addEventListener("change", function () {
+      var p = window.OSAP_BOOLQ.presets.filter(function (x) { return x.id === wQp.value; })[0]; if (!p) return;
+      wKwEl.value = p.q; wDrafted = "";
+      if (!wNameTyped) wName.value = (C.name + " " + p.name).slice(0, 60);
+      wQcheck();
+    });
+    var wQd = wEl.querySelector("#w-qd");
+    if (wQd) wQd.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); wEl.querySelector("[data-w-qdraft]").click(); } });
+    wEl.querySelector("#wform").addEventListener("click", function (e) {
+      if (!e.target.closest || !e.target.closest("[data-w-qdraft]")) return;
+      var d = window.OSAP_BOOLQ.draft(wQd.value);
+      if (d.err) { wQmsg.innerHTML = '<span class="wqerr">' + esc(d.err) + "</span>"; return; }
+      wKwEl.value = wDrafted = d.q; if (wQp) wQp.value = "";
+      if (!wNameTyped && wQd.value.trim()) wName.value = (C.name + " " + wQd.value.trim()).slice(0, 60);
+      wQcheck();
+    });
     wEl.querySelector("#wform").addEventListener("submit", function (ev) {
       ev.preventDefault();
+      var words = wWordsOf();
+      if (words.err) { wQcheck(); wKwEl.focus(); return; }
       var a = wEl.querySelector('[name="w-area"]:checked'), cats2 = Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; });
       /* a saved area: the watch keeps its own copy of the shape, so editing or deleting the area later leaves the watch as it was */
       var ao = a && a.value.indexOf("aoi:") === 0 && window.OSAP_AOI ? window.OSAP_AOI.get(a.value.slice(4)) : null;
       var w = { id: "w" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name: (wName.value || C.name).trim().slice(0, 60), cc: CC,
         area: ao ? ao.pts.slice() : a && a.value === "drawn" && AREA ? AREA.slice() : null, aoi: ao ? { id: ao.id, type: ao.type, label: window.OSAP_AOI.label(ao) } : undefined,
-        layers: any.checked ? [] : cats2, kw: wKwList(wEl.querySelector("#w-kw").value), minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
+        layers: any.checked ? [] : cats2, kw: words.kw, q: words.q || undefined, minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
       wLoad(); WATCHES.push(w);
       ADDED.forEach(function (cc) { var w2 = {}; Object.keys(w).forEach(function (k) { w2[k] = w[k]; }); w2.id = w.id + "-" + cc; w2.cc = cc; w2.name = (w.name.indexOf(C.name) === 0 ? cName(cc) + w.name.slice(C.name.length) : w.name + " (" + cName(cc) + ")").slice(0, 60); w2.layers = w.layers.slice(); w2.kw = w.kw.slice(); WATCHES.push(w2); });
       wSave(); wRun(); wBadge(); wOpen(); wSchedule(true);
@@ -7814,7 +7878,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.addEventListener("storage", function (e) { if (e.key === WH_KEY || e.key === W_KEY) wBadge(); });
   /* the push check (tools/push_watches.mjs) opens this page headless and asks it which reports a watch matches, so pushes and the
      in-app Watch follow the same rules; assets/osap-push.js adds Push to phone to the Watch dialog */
-  window.OSAP_WATCH = { country: CC, matches: function (w) { return wMatches({ area: w.area || null, layers: w.layers || [], kw: w.kw || [], minSev: w.minSev || 1, conf: w.conf || null }); }, words: wKwList,
+  window.OSAP_WATCH = { country: CC, matches: function (w) { return wMatches({ area: w.area || null, layers: w.layers || [], kw: w.kw || [], q: w.q || null, minSev: w.minSev || 1, conf: w.conf || null }); }, words: wKwList,
     open: function () { wOpen(); }, list: function () { return wLoad(); }, countryName: cName };
   if (document.readyState === "complete") setTimeout(wStart, 1500); else window.addEventListener("load", function () { setTimeout(wStart, 1500); });
   (function () {
@@ -7832,7 +7896,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ".wnotif{padding:8px 10px;border:1px solid var(--line);border-radius:6px;margin:8px 0}.wlimits summary{cursor:pointer;font-weight:600}" +
       ".wform{display:flex;flex-direction:column;gap:8px}.wform fieldset{border:1px solid var(--line);border-radius:6px;padding:6px 10px;display:flex;flex-direction:column;gap:4px}" +
       ".wform legend{font-weight:600;font-size:12px}.wcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px 10px}.wform label{display:flex;gap:6px;align-items:center}" +
-      ".wform button[type=submit]{align-self:flex-start}.wpreset{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.wrow{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line-soft)}" +
+      ".wform button[type=submit]{align-self:flex-start}.wform .wwords{gap:6px}.wform .wwords legend .obs{font-weight:400}.wqrow{display:flex;flex-wrap:wrap;gap:6px}.wqrow select{flex:0 1 200px;min-width:0}.wqrow input{flex:1 1 220px;min-width:0}" +
+      ".wform textarea{width:100%;box-sizing:border-box;font:inherit;resize:vertical;min-height:44px}.wqmsg:empty{display:none}.wqerr{color:var(--hot,#c62828)}.chip.wqauto{text-transform:none;letter-spacing:0;font-size:10.5px}.wqhelp summary{cursor:pointer;color:var(--muted)}.wqhelp ul{font-size:12px}" +
+      ".wpreset{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.wrow{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line-soft)}" +
       ".wbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.whits{display:flex;flex-direction:column}.tlrow.new .tln{font-weight:600}" +
       ".wctl button .abadge{margin-left:4px}#wtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:99999;max-width:min(560px,calc(100vw - 32px));" +
       "background:var(--surface);color:var(--ink);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:13px;line-height:1.4}" +
