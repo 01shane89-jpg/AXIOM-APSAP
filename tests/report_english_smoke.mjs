@@ -1,8 +1,8 @@
 // Headless check that a report card shows English only (index.html enParts). On Thailand, every news, social and warning record's
 // headline and summary are English: words still in another script never show as the card's text, a headline with no English
-// becomes a plain line naming the language and source, and the original stays under "<language> original". The Thai PBS post
-// of 2026-10-06 (Mae Hong Son flash floods, Thai description shown as the card body) opens with no Thai in its headline or body,
-// and its Verified line calls it the account's own post, not an official statement. The page throws nothing. External hosts
+// becomes a plain line naming the language and source, and the original stays under "<language> original". A Thai PBS post
+// that keeps Thai text as its original opens with no Thai in its headline or body, and its Verified line calls it the
+// account's own post, not an official statement. The page throws nothing. External hosts
 // are blocked. Run from the repo root: node tests/report_english_smoke.mjs   (needs playwright and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -26,14 +26,15 @@ await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
 const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message));
 await p.goto(base + "#timeline", { waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.TSAP && window.TSAP.country === "th" && window.TSAP.records.some((r) => r.social) && window.TSAP.records.some((r) => r.news) &&
-  window.ASAP_HIST && window.ASAP_HIST.th && window.TSAP.records.some((r) => /0268MJk9bJs/.test(r.url || "")), null, { timeout: 90000 });
+  window.ASAP_HIST && window.ASAP_HIST.th, null, { timeout: 90000 });
 const res = await p.evaluate(() => {
   const NL = /(?=\p{L})\P{Script=Latin}/gu, L = /\p{L}/gu;
   const foreign = (s) => { s = String(s || ""); const o = (s.match(NL) || []).length, a = (s.match(L) || []).length; return a > 0 && o * 2 >= a; };
   const R = window.TSAP.records.filter((r) => r.news || r.social || r.warn);
   const bad = R.filter((r) => foreign(r.title) || foreign(r.detail)).map((r) => r.title.slice(0, 80) + " / " + String(r.detail).slice(0, 60));
   const untr = R.filter((r) => r.untr);
-  const tpbs = R.find((r) => /0268MJk9bJs/.test(r.url || ""));
+  /* any Thai PBS post that keeps Thai text as its original: a fixed post ages out of live and history within days */
+  const tpbs = R.find((r) => r.social && r.src && r.src.id === "social--thaipbs" && r.orig && /\p{Script=Thai}/u.test(JSON.stringify(r.orig)));
   let card = null;
   if (tpbs) {
     window.TSAP.select(tpbs.id, true, "tl-pkg");
@@ -48,12 +49,10 @@ const res = await p.evaluate(() => {
 ok(res.n > 100, `Thailand has news, social and warning records (${res.n})`);
 ok(res.bad.length === 0, "no record shows a headline or summary in another script" + (res.bad.length ? ": " + res.bad.slice(0, 5).join(" || ") : ""));
 ok(res.untrSample.every((u) => /not translated yet/.test(u.t) && !/^(Foreign-language|en) /.test(u.t) && u.o), `untranslated records name the language and keep the original (${res.untr})` + JSON.stringify(res.untrSample));
-ok(!!res.card, "the Thai PBS Mae Hong Son post is on the map");
+ok(!!res.card, "a Thai PBS post with Thai original text is on the map");
 if (res.card) {
   ok(res.foreignCard[0] === false && res.foreignCard[1] === 0, "its card has no Thai in the headline or body: " + res.card.h + " | " + res.card.d);
-  /* the post ages from the live list into history, which keeps its Thai title but not its description, so the check reads
-     the place name both carry (Mae Hong Son) rather than a word only the description had */
-  ok(/Thai original/.test(res.card.orig) && /แม่ฮ่องสอน/.test(res.card.origText), "the Thai text is kept under Thai original: " + res.card.origText.slice(0, 120));
+  ok(/Thai original/.test(res.card.orig) && /\p{Script=Thai}/u.test(res.card.origText), "the Thai text is kept under Thai original: " + res.card.origText.slice(0, 120));
   ok(/account's own post/.test(res.card.ver) && !/official statement/.test(res.card.ver), "Verified calls it the account's own post: " + res.card.ver);
 }
 ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
