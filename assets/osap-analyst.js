@@ -32,7 +32,7 @@
   var TABS = [["ents", "Entities"], ["links", "Links"], ["struct", "Structure"], ["time", "Timeline"], ["saved", "Saved"], ["bed", "Bed-down"]];
   var PERIODS = [[30, "30 days"], [90, "90 days"], [365, "1 year"], [0, "All kept"]];
   var TYPES = ["organisation", "armed group", "unit", "agency", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
-  var RELS = ["member of", "commands", "support node for", "supplies", "funds", "beds down at", "uses route", "operates in", "attributed to", "targeted", "occurred in", "responded to", "works with", "opposes", "talks with", "other"];
+  var RELS = ["member of", "commands", "support node for", "supplies", "funds", "beds down at", "uses route", "operates in", "attributed to", "targeted", "occurred in", "responded to", "arrested or detained by", "linked by evidence to", "captured", "possibly linked to", "works with", "opposes", "talks with", "other"];
   /* how sure the analyst is of a link they record; drawn the link-analysis way: solid, long dashes, short dashes */
   var CONFS = [["suspected", "Suspected"], ["probable", "Probable"], ["confirmed", "Confirmed"]];
   function dashOf(c) { return c === "suspected" ? "4 4" : c === "probable" ? "10 5" : ""; }
@@ -64,7 +64,7 @@
   /* ---------- state ---------- */
   var UI = lsGet(K_UI, {}); if (typeof UI !== "object" || !UI) UI = {};
   var S = { tab: TABS.some(function (t) { return t[0] === UI.tab; }) ? UI.tab : "ents", days: [30, 90, 365, 0].indexOf(UI.days) >= 0 ? UI.days : 90,
-    sel: null, q: "", tf: "", ownOnly: null, bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "" };
+    sel: null, q: "", tf: "", ownOnly: null, lay: "net", bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "" };
   function saveUi() { lsSet(K_UI, { tab: S.tab, days: S.days }); }
   function ownEnts() { var v = lsGet(K_ENT, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-ent/1", items: [], notes: {} }; if (!v.notes || typeof v.notes !== "object") v.notes = {}; return v; }
   function ownLinks() { var v = lsGet(K_LINK, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-links/1", items: [] }; return v; }
@@ -139,7 +139,7 @@
       "#anws td.n{text-align:right;white-space:nowrap}#anws .ancard{border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:6px 9px;margin:6px 0}" +
       "#anws .ancard.sel{border-color:var(--accent,#1c5d99);box-shadow:0 0 0 1px var(--accent,#1c5d99)}#anws .anal{font-size:11.5px;color:var(--muted,#56626f)}" +
       "#anws details{margin:6px 0}#anws summary{cursor:pointer;font-weight:600}#anws .angraph{width:100%;height:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px;background:var(--surface2,#f5f7f9)}" +
-      "#anws .angraph text{font-size:13px;fill:var(--ink,#1d2329);pointer-events:none;paint-order:stroke;stroke:var(--surface2,#f5f7f9);stroke-width:3px;stroke-linejoin:round}#anws .angraph text.anbx{font-size:12px;font-weight:600;stroke:none;fill:#1d2329}#anws .angraph text.ancnt{font-size:10px;font-weight:700;fill:#fff;stroke:none}#anws .angraph text.anrel{font-size:11.5px;fill:#2b8a3e;font-weight:600}#anws .angraph g[data-an-node]{cursor:pointer}#anws .answ{display:inline-block;width:26px;height:14px;border:1.6px solid;border-radius:3px;background:#fff;flex:none}#anws .anln{display:inline-block;width:26px;height:0;flex:none}#anws .anscroll{overflow-x:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px}#anws .anscroll .angraph{border:0;width:100%;max-width:none;height:auto}#anws .angraph text.anlane{font-size:12px;font-weight:700;fill:var(--muted,#56626f);stroke:none;text-transform:uppercase;letter-spacing:.04em}#anws .angraph circle,#anws .angraph rect{cursor:pointer}#anws .ankey{display:flex;flex-wrap:wrap;gap:0 14px;margin:4px 0 8px}#anws .ankey .lgh{flex-basis:100%}#anws .ankey .lg{display:flex;align-items:center;gap:6px;font-size:11.5px}#anws .ankey .msyfr{flex-basis:100%}" +
+      "#anws .angraph text{font-size:13px;fill:var(--ink,#1d2329);pointer-events:none;paint-order:stroke;stroke:var(--surface2,#f5f7f9);stroke-width:3px;stroke-linejoin:round}#anws .angraph text.anbx{font-size:12px;font-weight:600;stroke:none;fill:#1d2329}#anws .angraph text.ancnt{font-size:10px;font-weight:700;fill:#fff;stroke:none}#anws .angraph text.anrel{font-size:11.5px;fill:#2b8a3e;font-weight:600}#anws .angraph text.annr{fill:#343a40;font-weight:500;font-style:italic}#anws .angraph text.annl{font-size:12.5px;font-weight:700}#anws .angraph g[data-an-node]{cursor:pointer}#anws .answ{display:inline-block;width:26px;height:14px;border:1.6px solid;border-radius:3px;background:#fff;flex:none}#anws .anln{display:inline-block;width:26px;height:0;flex:none}#anws .anscroll{overflow-x:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px}#anws .anscroll .angraph{border:0;width:100%;max-width:none;height:auto}#anws .angraph text.anlane{font-size:12px;font-weight:700;fill:var(--muted,#56626f);stroke:none;text-transform:uppercase;letter-spacing:.04em}#anws .angraph circle,#anws .angraph rect{cursor:pointer}#anws .ankey{display:flex;flex-wrap:wrap;gap:0 14px;margin:4px 0 8px}#anws .ankey .lgh{flex-basis:100%}#anws .ankey .lg{display:flex;align-items:center;gap:6px;font-size:11.5px}#anws .ankey .msyfr{flex-basis:100%}" +
       "#anws .anday{font-weight:700;margin:10px 0 2px}#anws .anit{margin:3px 0 3px 8px;padding-left:8px;border-left:3px solid var(--line,#d5dbe1)}#anws .anit.mine{border-left-color:#2b8a3e}" +
       "#anws .anbar{display:inline-block;height:8px;background:#e67700;border-radius:2px;vertical-align:middle;margin-right:4px}#anws .anwarn{background:rgba(230,119,0,.1);border-left:3px solid #e67700;padding:6px 10px;margin:6px 0}" +
       "#anws .atk-pph{display:flex;flex-wrap:wrap;gap:4px}#anws .atk-pph img{width:84px;height:84px;object-fit:cover;border-radius:4px}#anws .atk-pph button{padding:0;border:none;min-height:0}" +
@@ -223,7 +223,7 @@
     "ent:ds:thai-panel": "la_gov", "ent:ds:my-facilitator": "la_gov", "ent:ds:akps": "la_border", "ent:ds:gof": "la_police", "ent:ds:my-customs": "la_customs", "ent:ds:dsw": "la_org" };
   var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place",
     "incident: bombing or IED": "la_bomb", "incident: shooting or armed attack": "la_shoot", "incident: seizure, arrest or raid": "la_seize" };
-  function symOf(e) { if (e && (e.type === "route" || e.type === "vehicle")) return ""; var k = e && (SYM_ID[e.id] || SYM_TYPE[e.type] || "la_group"); return W.OSAP_SYM && W.OSAP_SYM.d[k] ? k : ""; }
+  function symOf(e) { if (e && (e.type === "route" || e.type === "vehicle" || e.type === "other")) return ""; var k = e && (SYM_ID[e.id] || SYM_TYPE[e.type] || "la_group"); return W.OSAP_SYM && W.OSAP_SYM.d[k] ? k : ""; }
   function graph(X) {
     var nodes = {}, edges = {};
     function node(id, label, kind, w) { if (!nodes[id]) nodes[id] = { id: id, label: label, kind: kind, w: 0 }; nodes[id].w += w || 0; return nodes[id]; }
@@ -254,16 +254,62 @@
     return { N: N, E: E, nodes: nodes };
   }
   /* a small force layout, started from a circle so the same data always draws the same picture */
-  function layout(N, E, w, h) {
+  /* the network chart tries several starting orders (a fixed list, so the same data always draws the same picture) and keeps
+     the drawing with the fewest crossing lines */
+  function crossings(N, E) {
+    var at = {}, c = 0; N.forEach(function (n) { at[n.id] = n; });
+    var L = E.map(function (e) { return [at[e.a], at[e.b]]; }).filter(function (l) { return l[0] && l[1]; });
+    function ccw(a, b, p) { return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x); }
+    for (var i = 0; i < L.length; i++) for (var j = i + 1; j < L.length; j++) {
+      var a = L[i], b = L[j]; if (a[0] === b[0] || a[0] === b[1] || a[1] === b[0] || a[1] === b[1]) continue;
+      if (ccw(a[0], a[1], b[0]) * ccw(a[0], a[1], b[1]) < 0 && ccw(b[0], b[1], a[0]) * ccw(b[0], b[1], a[1]) < 0) c++;
+    }
+    return c;
+  }
+  /* stress layout: each pair of entities is drawn about as far apart as the number of links between them (so a cell sits next
+     to its group, an incident next to whoever it is attributed to), from several starting points; the drawing with the fewest
+     crossing lines is kept. Seeded, so the same links always draw the same picture. */
+  function netLayout(N, E, w, h) {
+    var n = N.length, idx = {}, adj = N.map(function () { return []; }), D = [], seed = 7, best = null, L = 1;
+    N.forEach(function (v, i) { idx[v.id] = i; });
+    E.forEach(function (e) { var a = idx[e.a], b = idx[e.b]; if (a == null || b == null) return; adj[a].push(b); adj[b].push(a); });
+    for (var i = 0; i < n; i++) { var d = N.map(function () { return -1; }), q = [i]; d[i] = 0;
+      while (q.length) { var c = q.shift(); adj[c].forEach(function (o) { if (d[o] < 0) { d[o] = d[c] + 1; q.push(o); } }); }
+      D.push(d); }
+    var dmax = 1; D.forEach(function (r) { r.forEach(function (v) { if (v > dmax) dmax = v; }); });
+    D = D.map(function (r) { return r.map(function (v) { return v < 0 ? dmax + 1 : v; }); });
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    for (var t = 0; t < 16; t++) {
+      var X = N.map(function () { return [rnd() * 10, rnd() * 10]; });
+      for (var it = 0; it < 260; it++) for (var a = 0; a < n; a++) {
+        var sx = 0, sy = 0, sw = 0;
+        for (var b = 0; b < n; b++) { if (a === b) continue; var dij = D[a][b], wij = 1 / (dij * dij), dx = X[a][0] - X[b][0], dy = X[a][1] - X[b][1], dd = Math.sqrt(dx * dx + dy * dy) || 1e-3;
+          sx += wij * (X[b][0] + L * dij * dx / dd); sy += wij * (X[b][1] + L * dij * dy / dd); sw += wij; }
+        X[a] = [sx / sw, sy / sw];
+      }
+      /* fit the frame, then push labels apart */
+      var x0 = Math.min.apply(null, X.map(function (p) { return p[0]; })), x1 = Math.max.apply(null, X.map(function (p) { return p[0]; })),
+        y0 = Math.min.apply(null, X.map(function (p) { return p[1]; })), y1 = Math.max.apply(null, X.map(function (p) { return p[1]; }));
+      if (x1 - x0 < y1 - y0) { X = X.map(function (p) { return [p[1], p[0]]; }); var s0 = x0; x0 = y0; y0 = s0; s0 = x1; x1 = y1; y1 = s0; }
+      N.forEach(function (v, k) { v.x = 100 + (x1 > x0 ? (X[k][0] - x0) / (x1 - x0) : 0.5) * (w - 200); v.y = 40 + (y1 > y0 ? (X[k][1] - y0) / (y1 - y0) : 0.5) * (h - 120); });
+      unclash(N, w, h);
+      var sc = crossings(N, E);
+      if (!best || sc < best.sc) best = { sc: sc, pos: N.map(function (v) { return [v.x, v.y]; }) };
+    }
+    N.forEach(function (v, k) { v.x = best.pos[k][0]; v.y = best.pos[k][1]; });
+    var at = {}; N.forEach(function (v) { at[v.id] = v; }); return at;
+  }
+  function layout(N, E, w, h, len, rep, hub) {
+    len = len || 110; rep = rep || 5200;
     var at = {}; N.forEach(function (n, i) { var a = 2 * Math.PI * i / Math.max(1, N.length); n.x = w / 2 + Math.cos(a) * w * 0.36; n.y = h / 2 + Math.sin(a) * h * 0.36; at[n.id] = n; });
     for (var it = 0; it < 220; it++) {
       var t = 1 - it / 220;
       N.forEach(function (a) { a.fx = 0; a.fy = 0; });
       for (var i = 0; i < N.length; i++) for (var j = i + 1; j < N.length; j++) {
-        var a = N[i], b = N[j], dx = a.x - b.x, dy = a.y - b.y, d2 = Math.max(dx * dx + dy * dy, 25), f = 5200 / d2;
+        var a = N[i], b = N[j], dx = a.x - b.x, dy = a.y - b.y, d2 = Math.max(dx * dx + dy * dy, 25), f = rep / d2;
         a.fx += dx * f / Math.sqrt(d2); a.fy += dy * f / Math.sqrt(d2); b.fx -= dx * f / Math.sqrt(d2); b.fy -= dy * f / Math.sqrt(d2);
       }
-      E.forEach(function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return; var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1, f = (d - 110) * 0.02; a.fx += dx / d * f * d * 0.05; a.fy += dy / d * f * d * 0.05; b.fx -= dx / d * f * d * 0.05; b.fy -= dy / d * f * d * 0.05; });
+      E.forEach(function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return; var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1, f = (d - len) * 0.02; a.fx += dx / d * f * d * 0.05; a.fy += dy / d * f * d * 0.05; b.fx -= dx / d * f * d * 0.05; b.fy -= dy / d * f * d * 0.05; });
       N.forEach(function (a) { a.fx += (w / 2 - a.x) * 0.01; a.fy += (h / 2 - a.y) * 0.01; a.x = Math.max(40, Math.min(w - 40, a.x + Math.max(-12, Math.min(12, a.fx)) * t)); a.y = Math.max(20, Math.min(h - 20, a.y + Math.max(-12, Math.min(12, a.fy)) * t)); });
     }
     /* then stretch the drawing to fill the frame, so a small network is not a knot in the middle */
@@ -282,6 +328,7 @@
   function boxOf(n) {
     if (n.kind === "dist") return { w: 16, h: 24, lab: true };
     if (n.person) return { w: 30, h: 30, lab: true };
+    if (S.netMode) return { w: 176, h: 96 };
     return S.colMode ? { w: 240, h: 44 } : { w: 212, h: 40 };
   }
   /* push overlapping boxes apart after the force layout, so names never sit on each other */
@@ -298,6 +345,10 @@
       N.forEach(function (n) { var B = boxOf(n); n.x = Math.max(B.w / 2 + 50, Math.min(w - B.w / 2 - 50, n.x)); n.y = Math.max(B.h / 2 + 8, Math.min(h - B.h / 2 - 20, n.y)); });
       if (!moved) break;
     }
+  }
+  function wrap3(t, max) {
+    var a = wrap2(t, max); if (a.length < 2 || String(t).length <= a[0].length + 1 + max) return a;
+    var rest = String(t).slice(a[0].length).trim(), b = wrap2(rest, max); return [a[0]].concat(b);
   }
   function wrap2(t, max) {
     t = String(t || ""); if (t.length <= max) return [t];
@@ -338,9 +389,17 @@
     return { at: at, hh: hh, X0: X0, role: roleOf };
   }
   function tabLinks(X) {
-    var G = graph(X), w = 1000, hh = G.N.length > 12 ? 700 : 520, cols = ownOnly() ? columns(G, w) : null, at;
-    S.colMode = !!cols;
-    if (cols) { at = cols.at; hh = cols.hh; w = 1060; } else { at = layout(G.N, G.E, w, hh); unclash(G.N, w, hh); }
+    var G = graph(X), w = 1000, hh = G.N.length > 12 ? 700 : 520, own1 = ownOnly(), cols = own1 && S.lay === "cols" ? columns(G, w) : null, at;
+    S.colMode = !!cols; S.netMode = own1 && !cols;
+    /* the analyst's own links draw as a network chart by default, the usual link-analysis picture: each entity an icon with
+       its name under it, plain lines between them with what the link is, hubs pulled to the middle by their links */
+    if (cols) { at = cols.at; hh = cols.hh; w = 1060; }
+    else if (S.netMode) { w = 1300; hh = Math.max(520, Math.min(780, 200 + G.N.length * 22)); at = netLayout(G.N, G.E, w, hh); }
+    else { at = layout(G.N, G.E, w, hh); unclash(G.N, w, hh); }
+    var OWN_C = S.netMode ? "#5f6b77" : "#2b8a3e";
+    /* what is already drawn on the network chart: each entity's icon and name; edge labels are added as they are placed */
+    var netBusy = S.netMode ? G.N.map(function (n) { var nl = Math.min(3, Math.ceil(String(n.label || "").length / 22)); return [n.x - 78, n.y - 22, 156, 44 + nl * 14]; }) : [],
+      netHit = function (x, y, w2, h2) { return netBusy.some(function (r) { return x < r[0] + r[2] && x + w2 > r[0] && y < r[1] + r[3] && y + h2 > r[1]; }); };
     /* in columns, a line leaves a box from its side; where every line between two columns says the same thing, it is said
        once at the top of the gap instead of on each line */
     var side = function (n, other) { if (!cols || n.kind === "dist") return n.x; var half = boxOf(n).w / 2; return other.x > n.x + 1 ? n.x + half : other.x < n.x - 1 ? n.x - half : n.x; },
@@ -348,7 +407,8 @@
     if (cols) { var cnt = {}; G.E.forEach(function (e) { if (e.kind !== "own") return; var g = gapOf(e), c = cnt[g] || (cnt[g] = { n: 0 }); c.n++; c[e.rel] = (c[e.rel] || 0) + 1; });
       Object.keys(cnt).forEach(function (g) { Object.keys(cnt[g]).forEach(function (r) { if (r !== "n" && cnt[g][r] >= 0.6 * cnt[g].n && cnt[g].n > 2) gapRel[g] = r; }); }); }
     var h = '<p class="anal">Link chart. Boxes: organisations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
-    if (ownLinks().items.length) h += '<label class="anrow"><input type="checkbox" id="an-ownonly"' + (ownOnly() ? " checked" : "") + "> Your links only (leave out the machine co-mentions)</label>";
+    if (ownLinks().items.length) h += '<label class="anrow"><input type="checkbox" id="an-ownonly"' + (ownOnly() ? " checked" : "") + "> Your links only (leave out the machine co-mentions)</label>" +
+      (ownOnly() ? '<label class="anrow">Layout <select id="an-lay"><option value="net"' + (S.lay !== "cols" ? " selected" : "") + '>Network</option><option value="cols"' + (S.lay === "cols" ? " selected" : "") + ">Columns (who / what happened / where)</option></select></label>" : "");
     if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + linkForm(X);
     h += '<svg class="angraph" viewBox="0 0 ' + w + " " + hh + '" role="img" aria-label="Link chart">' +
       (cols ? ROLE_COLS.map(function (c) { return '<text class="anlane" x="' + cols.X0[c[0]] + '" y="22" text-anchor="middle">' + esc(c[1]) + "</text>"; }).join("") +
@@ -358,10 +418,17 @@
         var same = cols && Math.abs(a.x - b.x) < 1, bend = a.x < w / 2 ? -1 : 1, hw = cols ? boxOf(a).w / 2 : 106, cx = a.x + bend * (hw + 22 + Math.min(40, Math.abs(a.y - b.y) * 0.08)),
           geo = same ? 'path d="M' + (a.x + bend * hw).toFixed(1) + " " + a.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + ((a.y + b.y) / 2).toFixed(1) + " " + (b.x + bend * hw).toFixed(1) + " " + b.y.toFixed(1) + '" fill="none"' :
           'line x1="' + side(a, b).toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + side(b, a).toFixed(1) + '" y2="' + b.y.toFixed(1) + '"';
-        var ln = '<' + geo + ' stroke="' + (own ? "#2b8a3e" : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? 2.5 : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? (dashOf(e.conf) ? ' stroke-dasharray="' + dashOf(e.conf) + '"' : "") : ' stroke-dasharray="6 5"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></" + geo.split(" ")[0] + ">";
+        var ln = '<' + geo + ' stroke="' + (own ? OWN_C : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? (S.netMode ? 1.8 : 2.5) : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? (dashOf(e.conf) ? ' stroke-dasharray="' + dashOf(e.conf) + '"' : "") : ' stroke-dasharray="6 5"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></" + geo.split(" ")[0] + ">";
         /* a recorded link carries its label at the middle, as on a link chart */
         if (own && e.rel && !(cols && !same && gapRel[gapOf(e)] === e.rel)) { var mx = same ? cx + bend * 4 : (side(a, b) + side(b, a)) / 2, my = (a.y + b.y) / 2 - 4;
-          ln += '<text class="anrel" x="' + mx.toFixed(1) + '" y="' + my.toFixed(1) + '" text-anchor="' + (same ? (bend < 0 ? "end" : "start") : "middle") + '">' + esc(e.rel) + "</text>"; }
+          /* on the network chart, slide the label along its line to the first spot clear of every name and earlier label */
+          if (S.netMode) { var lw = e.rel.length * 6.4 + 6, tries = [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74];
+            var ll = Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)) || 1, px = -(b.y - a.y) / ll, py = (b.x - a.x) / ll, found = false;
+            /* along the line first, then just beside it */
+            [0, 16, -16, 30, -30].some(function (off) { return tries.some(function (tt) { var tx2 = a.x + (b.x - a.x) * tt + px * off, ty2 = a.y + (b.y - a.y) * tt - 4 + py * off;
+              if (netHit(tx2 - lw / 2, ty2 - 11, lw, 14)) return false; mx = tx2; my = ty2; found = true; return true; }); });
+            netBusy.push([mx - lw / 2, my - 11, lw, 14]); }
+          ln += '<text class="anrel' + (S.netMode ? " annr" : "") + '" x="' + mx.toFixed(1) + '" y="' + my.toFixed(1) + '" text-anchor="' + (same ? (bend < 0 ? "end" : "start") : "middle") + '">' + esc(e.rel) + "</text>"; }
         return ln; }).join("") +
       G.N.map(function (n) { var on = S.sel === n.id, x = n.x, y = n.y, B = boxOf(n), d = n.sym && W.OSAP_SYM && W.OSAP_SYM.d[n.sym], out = "", lab = String(n.label || "");
         var tip = "<title>" + esc(lab + (d ? " \u00b7 " + W.OSAP_SYM.m[n.sym][0] : "") + " \u00b7 named in " + n.w + " report" + (n.w === 1 ? "" : "s")) + "</title>";
@@ -370,6 +437,14 @@
           else out = '<rect x="' + (x - 8) + '" y="' + (y - 8) + '" width="16" height="16" fill="#8d6e63">' + tip + "</rect>";
           if (on) out = '<circle cx="' + x.toFixed(1) + '" cy="' + (y - 10).toFixed(1) + '" r="17" fill="none" stroke="#e67700" stroke-width="3"/>' + out;
           return '<g data-an-node="' + esc(n.id) + '">' + out + '<text x="' + x.toFixed(1) + '" y="' + (y + 15).toFixed(1) + '" text-anchor="middle">' + esc(lab) + "</text></g>";
+        }
+        if (S.netMode) {
+          var nc = GROUP_C[n.group] || "#495057", nl = wrap3(lab, 22), IH = 36;
+          out = '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (d ? 22 : 11) + '" fill="' + (d ? "transparent" : nc) + '" stroke="' + (on ? "#e67700" : d ? "none" : "#fff") + '" stroke-width="' + (on ? 3 : 2) + '">' + tip + "</circle>";
+          if (d) { var s3 = IH / Math.max(d[1], d[2]), w3 = d[1] * s3, h3 = d[2] * s3; out += d[0].replace("<svg ", '<svg x="' + (x - w3 / 2).toFixed(1) + '" y="' + (y - h3 / 2).toFixed(1) + '" width="' + w3.toFixed(1) + '" height="' + h3.toFixed(1) + '" pointer-events="none" ');
+            if (on) out += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="25" fill="none" stroke="#e67700" stroke-width="3" pointer-events="none"/>'; }
+          out += nl.map(function (l, k) { return '<text class="annl" x="' + x.toFixed(1) + '" y="' + (y + (d ? 32 : 24) + k * 14).toFixed(1) + '" text-anchor="middle">' + esc(l) + "</text>"; }).join("");
+          return '<g data-an-node="' + esc(n.id) + '">' + out + "</g>";
         }
         if (n.person) {
           return '<g data-an-node="' + esc(n.id) + '"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#fff" stroke="' + (on ? "#e67700" : "#343a40") + '" stroke-width="' + (on ? 3 : 2) + '">' + tip + "</circle>" +
@@ -387,8 +462,8 @@
     /* the key: the symbols and box colours in this chart, in plain words */
     var ks = G.N.map(function (n) { return n.sym; }).filter(function (k, i, a) { return k && a.indexOf(k) === i; }),
       gs = G.N.map(function (n) { return n.kind === "ent" && !n.person ? n.group : ""; }).filter(function (g, i, a) { return g && a.indexOf(g) === i; });
-    h += '<div class="ankey">' + (gs.length ? '<div class="lgh">Box edge: list group (not a judgement)</div>' + gs.map(function (g) { return '<div class="lg"><span class="answ" style="border-color:' + (GROUP_C[g] || "#495057") + ";box-shadow:inset 4px 0 0 " + (GROUP_C[g] || "#495057") + '"></span><div>' + esc(g) + "</div></div>"; }).join("") : "") +
-      '<div class="lgh">Lines</div><div class="lg"><span class="anln" style="border-top:2.5px dashed #8a96a3"></span><div>Named in the same report (unconfirmed)</div></div><div class="lg"><span class="anln" style="border-top:2.5px solid #2b8a3e"></span><div>Your link, confirmed</div></div><div class="lg"><span class="anln" style="border-top:2.5px dashed #2b8a3e"></span><div>Your link, probable or suspected</div></div>' +
+    h += '<div class="ankey">' + (gs.length && !S.netMode ? '<div class="lgh">Box edge: list group (not a judgement)</div>' + gs.map(function (g) { return '<div class="lg"><span class="answ" style="border-color:' + (GROUP_C[g] || "#495057") + ";box-shadow:inset 4px 0 0 " + (GROUP_C[g] || "#495057") + '"></span><div>' + esc(g) + "</div></div>"; }).join("") : "") +
+      '<div class="lgh">Lines</div><div class="lg"><span class="anln" style="border-top:2.5px dashed #8a96a3"></span><div>Named in the same report (unconfirmed)</div></div><div class="lg"><span class="anln" style="border-top:2.5px solid ' + OWN_C + '"></span><div>Your link, confirmed</div></div><div class="lg"><span class="anln" style="border-top:2.5px dashed ' + OWN_C + '"></span><div>Your link, probable or suspected</div></div>' +
       (ks.length && W.OSAP_SYM && W.OSAP_SYM.legend ? W.OSAP_SYM.legend(ks) + '<p class="msyfr">NATO-style symbols (APP-6 / MIL-STD-2525D). <b>Yellow, four-lobed frame</b>: armed or security body, side not marked. <b>Purple</b>: civilian body (government, monitor). The symbol shows what kind of body it is, not what it did.</p>' : "") + "</div>";
     if (S.sel && G.nodes[S.sel]) {
       var mine = G.E.filter(function (e) { return e.a === S.sel || e.b === S.sel; }).sort(function (a, b) { return (b.kind === "own") - (a.kind === "own") || b.n - a.n; });
@@ -653,6 +728,7 @@
     else if (t.id === "an-tf") { S.tf = t.value; render(); }
     else if (t.id === "an-root") { S.root = t.value; render(); }
     else if (t.id === "an-ownonly") { S.ownOnly = t.checked; render(); }
+    else if (t.id === "an-lay") { S.lay = t.value; render(); }
     else if (t.id === "an-bedmap") { S.bedMap = t.checked; drawBed(); }
   }
   function onSubmit(e) {
