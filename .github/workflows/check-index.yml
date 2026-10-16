@@ -87,6 +87,7 @@ jobs:
       - run: node tests/dspat_smoke.mjs
       - run: node tests/ds_review_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
+      - run: node tests/cf_history_range_smoke.mjs
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/flood_overlay_smoke.mjs
