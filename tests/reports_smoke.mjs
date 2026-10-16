@@ -75,7 +75,7 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   await pick(p, "brief"); ok(await briefOpen(p), "Country brief opens"); await closeBrief(p);
   m = await menu(p); await pick(p, "report"); ok(await briefOpen(p, "#report"), "Country report opens"); await closeBrief(p);
   m = await menu(p);
-  if (!item(m, "Timeline report").off) { await pick(p, "timeline"); await p.waitForTimeout(1500); ok(await briefOpen(p, ".tlr"), "Timeline report opens"); await closeBrief(p); }
+  if (!item(m, "Timeline report").off) { await pick(p, "timeline"); await p.waitForSelector("#brief .tlr", { timeout: 15000 }).catch(() => {}); ok(await briefOpen(p, ".tlr"), "Timeline report opens"); await closeBrief(p); }
   else ok(false, "Timeline report ready on Thailand (" + item(m, "Timeline report").hint + ")");
   m = await menu(p); await pick(p, "wxbrief"); m = await menu(p); await pick(p, "wxreport"); m = await menu(p); await pick(p, "wxchart");
   ok(await p.evaluate(() => window.__calls.wxbrief === 1 && window.__calls.wxreport === 1 && window.__calls.wxchart === 1), "weather brief, 5-day chart and detailed report open through the weather tool");
