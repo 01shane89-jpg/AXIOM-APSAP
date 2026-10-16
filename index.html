@@ -45,6 +45,8 @@
   timer = setTimeout(done, 15000);
 })();
 </script>
+<!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
+<script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-lock.js"></script>
 <script src="assets/osap-start.js"></script>
 <script>
@@ -8824,6 +8826,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-lidar.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
+<!-- sync my devices: saved data kept the same on your own devices through encrypted public relays, no account -->
+<script src="assets/osap-sync.js"></script>
 <!-- the user guide: Settings (the gear) > User guide, offline and printable -->
 <script src="assets/osap-guide.js"></script>
 <script src="assets/osap-i18n.js"></script>

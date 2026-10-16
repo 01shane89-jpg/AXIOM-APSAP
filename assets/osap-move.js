@@ -23,7 +23,7 @@
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var MAGIC = "OSAPMOVE", VER = 1, ITER = 600000, MIN_PASS = 8, MAX_FILE = 500 * 1048576, MAX_PHOTOS = 5000, MSG = "osap-move-msg";
   var PICK = /^(osap|asap|tsap|tfw|tw|tbw)[-.]/;
-  var SKIP = ["osap-offline", "osap-offline-prev", "osap-loc", "osap-loc-go", "osap-boot", "osap-boot-t", "osap-tile-fail", "osap-ws-msg", "osap-ws-go", "osap-rt-link", "osap-ai", MSG];
+  var SKIP = ["osap-offline", "osap-offline-prev", "osap-loc", "osap-loc-go", "osap-boot", "osap-boot-t", "osap-tile-fail", "osap-ws-msg", "osap-ws-go", "osap-rt-link", "osap-ai", "osap-sync", "osap-sync-pending", MSG];
   var SKIP_PRE = /^(asap-xrecs-|osap-today-wx-)/;
   var te = new TextEncoder(), td = new TextDecoder();
 
