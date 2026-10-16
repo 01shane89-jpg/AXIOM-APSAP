@@ -5,11 +5,12 @@
 // an edit on B reaches A; a new workspace on A appears on B with its points; nothing readable reaches the relay; a feature
 // saving its old copy before the reload does not lose the other device's items; the panel fits a phone.
 // Run from the repo root: node tests/sync_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
+// LIVE=1 uses the real public relays instead of the stand-in (needs internet; checks on the relay's copy are skipped).
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
-const OUT = process.env.OUT || "";
+const OUT = process.env.OUT || "", LIVE = !!process.env.LIVE;
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
 const server = createServer(async (req, res) => {
@@ -47,13 +48,14 @@ function relayFor(ctx) {
 async function ready(p) { await p.waitForFunction(() => window.OSAP_SYNC && window.OSAP_WS && window.__asapMap, null, { timeout: 30000 }); await p.waitForTimeout(400); }
 async function device(seed, vp) {
   const ctx = await browser.newContext({ viewport: vp || { width: 1200, height: 800 } });
-  await relayFor(ctx);
+  if (!LIVE) await relayFor(ctx);
   const p = await ctx.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));
   await p.addInitScript((S) => {
-    window.OSAP_SYNC_RELAYS = ["wss://relay.test/"];
+    if (!S.__live) window.OSAP_SYNC_RELAYS = ["wss://relay.test/"];
+    delete S.__live;
     if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); localStorage.setItem("osap-home", "map"); sessionStorage.setItem("osap-today", "0"); for (const k in S) localStorage.setItem(k, S[k]); }
     sessionStorage.setItem("osap-sync-auto", String(Date.now()));   // no automatic reload in the test: it reloads itself when it wants to look
-  }, seed);
+  }, { ...seed, __live: LIVE });
   await p.goto(base + "#th/map"); await ready(p);
   return { ctx, p, errs };
 }
@@ -86,10 +88,12 @@ if (OUT) await A.p.screenshot({ path: OUT + "/sync-code.png" });
 await A.p.click("[data-sy-go]");
 await A.p.waitForFunction(() => OSAP_SYNC.status().last.ok, null, { timeout: 30000 });
 ok(/Sync is on/.test(await A.p.textContent("#syncdlg")), "panel says sync is on");
-ok(store.size >= 2, "A posted its buckets and its device name", store.size);
-const all = JSON.stringify([...store.values()]);
-ok(!/Alpha CP|PC point|Hidden US|101\.25/.test(all), "nothing saved is readable on the relay");
-ok([...store.values()].every((e) => e.kind === 30078 && /^[0-9a-f]{128}$/.test(e.sig)), "events are signed kind 30078");
+if (!LIVE) {
+  ok(store.size >= 2, "A posted its buckets and its device name", store.size);
+  const all = JSON.stringify([...store.values()]);
+  ok(!/Alpha CP|PC point|Hidden US|101\.25/.test(all), "nothing saved is readable on the relay");
+  ok([...store.values()].every((e) => e.kind === 30078 && /^[0-9a-f]{128}$/.test(e.sig)), "events are signed kind 30078");
+} else ok(true, "live relays answered", await A.p.evaluate(() => OSAP_SYNC.status().last));
 
 /* ---------- device B joins ---------- */
 const B = await device(SEED_B);
@@ -145,7 +149,7 @@ ok(JSON.stringify(bws) === JSON.stringify(["North OP"]), "A's new workspace and 
 /* ---------- turning off keeps the data ---------- */
 await B.p.evaluate(() => OSAP_SYNC.off());
 ok(await B.p.evaluate(() => !localStorage.getItem("osap-sync") && JSON.parse(localStorage.getItem("osap-atak-pts")).length === 3), "turning sync off forgets the code and keeps what is saved");
-ok(!JSON.stringify([...store.values()]).includes(shown.replace(/-/g, "")), "the code itself never reaches the relay");
+if (!LIVE) ok(!JSON.stringify([...store.values()]).includes(shown.replace(/-/g, "")), "the code itself never reaches the relay");
 ok(A.errs.length === 0 && B.errs.length === 0, "no page errors", A.errs.concat(B.errs));
 
 /* ---------- phone ---------- */
