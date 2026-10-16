@@ -149,8 +149,23 @@
     var el = D.getElementById("medplan"); if (!el) return;
     var on = dockOn(); el.classList.toggle("dock", on); el.setAttribute("aria-modal", on ? "false" : "true");
     var b = el.querySelector('[data-mp="dock"]'); if (b) b.outerHTML = dockBtn();
+    sheetSync(el);
     if (SP() && SP().top) SP().top();
     if (W.__asapMap && W.__asapMap.invalidateSize) W.__asapMap.invalidateSize();
+  }
+  /* the docked plan is a sheet (W.OSAP_SPLIT.sheet): it opens folded to its handle bar so the whole map shows, with the plan
+     status on the bar; Half and Full (or a drag on a phone) pull the plan up */
+  var SLV = { VALID: "ok", WARNING: "warning", BLOCKING: "blocking" };
+  function sheetSync(el) {
+    if (!SP() || !SP().sheet || !el) return;
+    SP().sheet(el, { stop: "min", close: '[data-mp="close"]', docked: function () { return el.classList.contains("dock"); },
+      title: function () { return "Medical plan" + (ST && ST.name ? " " + ST.name : ""); },
+      status: function () {
+        var v = ST && ST.plan && ST.plan.validation_status;
+        if (!v) return { text: ST ? "Building the plan…" : "" };
+        var n = ST.plan.pending && ST.plan.pending.length;
+        return { text: v.label + (n ? " · still reading " + n : ""), level: SLV[v.status] || "" };
+      } });
   }
   /* centre a point in the part of the map the side panel leaves clear */
   function mapFocus(lat, lon) {
@@ -1152,7 +1167,9 @@
       ST = { P: P, c: c, o: poi || c, from: poi ? "poi" : "c", reach: reach, at: Date.now(), cc: cc(), name: name };
     }
     render(); el.hidden = false; dockApply();
-    var h = el.querySelector("h2"); if (h) { h.tabIndex = -1; h.focus(); }
+    /* folded to its bar: the focus goes to the bar, else to the plan's title */
+    var fb = el.classList.contains("osheet-on") && el.getAttribute("data-osheet") === "min" && el.querySelector(".osheet-h .osh-t");
+    var h = fb || el.querySelector("h2"); if (h) { if (!fb) h.tabIndex = -1; h.focus(); }
     build();
   }
   function close() {
@@ -2810,7 +2827,7 @@
   }
   function valRender() {
     var el = D.getElementById("mp-val"), s = ST; if (!el || !s) return;
-    s.plan = planNow(s); el.innerHTML = valHtml(s.plan); picRender(); conopRender();
+    s.plan = planNow(s); el.innerHTML = valHtml(s.plan); picRender(); conopRender(); sheetSync(D.getElementById("medplan"));
     /* an open print view waiting on data rebuilds itself once the data is in */
     if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(s.printMode); }
   }

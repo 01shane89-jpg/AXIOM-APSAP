@@ -150,6 +150,7 @@
       fig("medplan", "The medical plan for the map centre") +
       ul(["Tap " + b("Med plan") + ". It plans for the drawn area, or the map centre when nothing is drawn. Or long-press, " + b("Plans") + ", " + b("Med plan from here") + ".",
         "Set the point of injury: type a grid and press " + b("Set") + ", or press " + b("Pick on map") + ".",
+        "The plan opens folded to a bar showing its status, so the whole map stays in view. Press " + b("Half") + " or " + b("Full") + " on the bar to pull it up, and " + b("Map") + " to fold it again. On a phone you can also drag the bar. Watch, NAI/TAI, Terrain and the evacuation plan have the same bar.",
         "The plan lists receiving hospitals, most capable first, with drive times against the golden hour, routes, emergency contacts, landing sites, ways out of the country, health threats, weather and ground.",
         "The table of Primary, Secondary and Tertiary hospitals covers major trauma, severe head injury, major burn and complex limb trauma. It says when to bypass a hospital and go straight to the next.",
         "Only capabilities from a credible source count: an official register or your own check. OpenStreetMap and Wikipedia are shown but never qualify.",
