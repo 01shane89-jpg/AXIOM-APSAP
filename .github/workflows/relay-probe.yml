@@ -1,4 +1,4 @@
-# Probe only (branch claude/device-sync-probe, never merged): which public relays take OSAP sync events
+# Probe only (branch claude/device-sync-probe, never merged): Sync my devices end to end over the real public relays
 name: Relay probe
 on:
   push:
@@ -8,10 +8,12 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
-      - run: node tools/probe/relay_probe.mjs
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: LIVE=1 node tests/sync_smoke.mjs
