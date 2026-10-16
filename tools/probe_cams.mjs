@@ -378,6 +378,59 @@ async function round13() {
   console.log("   page text " + t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 1200));
   console.log("   terms " + ((t.match(/[^.]{0,200}(uvjeti|copyright|©|zabranjeno|prenošenje)[^.]{0,200}/i) || [""])[0]));
 }
+/* ---------- round DS: Thailand's Deep South (Pattani, Yala, Narathiwat, Songkhla) and the Malaysian side (Kelantan, Kedah, Perlis) ---------- */
+const inDS = (la, lo) => la > 5.4 && la < 7.9 && lo > 99.8 && lo < 102.6;
+async function roundDS() {
+  console.log("\n##### DS1. Longdo camera feed (all organisations), Deep South");
+  const lg = await get("https://camera.longdo.com/feed/?command=json", 60000); line("Longdo", lg);
+  try {
+    const j = JSON.parse(lg.b); const orgs = {};
+    j.forEach((c) => { orgs[c.organization] = (orgs[c.organization] || 0) + 1; });
+    console.log("   " + j.length + " cams; keys " + Object.keys(j[0]).join(",") + "; orgs " + JSON.stringify(orgs));
+    const ds = j.filter((c) => inDS(+c.latitude, +c.longitude));
+    console.log("   in Deep South box: " + ds.length);
+    ds.slice(0, 80).forEach((c) => console.log("   " + JSON.stringify(c).slice(0, 600)));
+    for (const c of ds.slice(0, 6)) { if (c.imgurl) await img(c.imgurl); if (c.hls_url) { const r = await get(c.hls_url, 20000); line("  hls " + c.hls_url, r); } }
+  } catch (e) { console.log("   parse " + e); }
+  console.log("\n##### DS2. ThaiWater (HII) camera list, every agency, Deep South");
+  const tw = await get("https://api-v3.thaiwater.net/api/v1/thaiwater30/analyst/cctv", 60000); line("ThaiWater", tw);
+  try {
+    const a = JSON.parse(tw.b).data || []; const by = {};
+    a.forEach((c) => { const k = (c.agency_name && (c.agency_name.en || c.agency_name.th)) || c.agency_id || "?"; const h = (String(c.cctv_url || "").match(/^(\w+:\/\/[^/]+)/) || [])[1]; const kk = k + " | " + c.media_type + " | " + h; by[kk] = (by[kk] || 0) + 1; });
+    console.log("   " + a.length + " cams; keys " + Object.keys(a[0] || {}).join(","));
+    Object.entries(by).sort((x, y) => y[1] - x[1]).forEach(([k, n]) => console.log("   " + n + "  " + k));
+    const ds = a.filter((c) => inDS(+c.lat, +c.long)); console.log("   in Deep South box: " + ds.length);
+    ds.forEach((c) => console.log("   " + JSON.stringify(c).slice(0, 500)));
+    for (const c of ds.slice(0, 10)) if (c.cctv_url) { const r = await get(c.cctv_url, 20000); line("  " + c.media_type + " " + c.cctv_url, r); }
+  } catch (e) { console.log("   parse " + e); }
+  console.log("\n##### DS3. DWR telemetry cameras incl. offline, Deep South provinces");
+  const post = (u, b) => fetch(u, { method: "POST", headers: { "Content-Type": "application/json", "User-Agent": UA, Origin: O }, body: JSON.stringify(b), signal: AbortSignal.timeout(40000) }).then((r) => r.json()).catch((e) => ({ err: String(e) }));
+  let all = [];
+  for (let page = 1; page < 10; page++) { const j = await post("https://telemetry.dwr.go.th/api/public/reportCctv/listPaginate", { paginate: { page, pageSize: 200, orders: [] }, search: {} }); const r = (j.value || {}).results || []; all = all.concat(r); if (r.length < 200) break; }
+  console.log("   total " + all.length + "; online " + all.filter((r) => (r.entity || {}).cctvOnline !== false).length);
+  all.filter((r) => /Pattani|Yala|Narathiwat|Songkhla|Satun/i.test(r.provinceNameEn || "")).forEach((r) => console.log("   " + r.provinceNameEn + " " + (r.entity || {}).stationCode + " online=" + (r.entity || {}).cctvOnline + " " + (r.entity || {}).stnNameEn));
+  console.log("\n##### DS4. Agency camera pages in a browser: camera data each page asks for");
+  const { chromium } = await import("playwright"); const br = await chromium.launch();
+  const sites = [["ThaiWater cctv", "https://www.thaiwater.net/water/cctv"], ["Longdo traffic cams", "https://traffic.longdo.com/camera"], ["DOH highwaytraffic", "https://www.highwaytraffic.go.th/"],
+    ["DOH cctv", "https://cctv.doh.go.th/"], ["Hat Yai city", "https://www.hatyaicity.go.th/"], ["Hat Yai climate", "https://www.hatyaicityclimate.org/"], ["Yala city", "https://www.yalacity.go.th/"],
+    ["Songkhla RID", "https://ridceo.rid.go.th/songkhla/"], ["RID region 17 (Narathiwat)", "https://ridceo.rid.go.th/narathiwat/"], ["RID tele", "https://tele-songkhla.rid.go.th/"], ["TMD radar Songkhla", "https://weather.tmd.go.th/skm.php"],
+    ["MY JPS infobanjir cctv", "https://publicinfobanjir.water.gov.my/cctv/"], ["MY JPS infobanjir", "https://publicinfobanjir.water.gov.my/"], ["MY eBanjir Kelantan", "https://ebanjir.kelantan.gov.my/"], ["MY JPS Kelantan", "https://jps.kelantan.gov.my/"],
+    ["MY LLM traffic", "https://www.llm.gov.my/awam/trafik"], ["MY PLUS", "https://www.plus.com.my/traffic-cam"], ["MY JKR Kelantan", "https://jkr.kelantan.gov.my/"], ["MY KPKT cctv", "https://www.malaysiacctv.com/"]];
+  for (const [k, u] of sites) {
+    const ctx = await br.newContext({ userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36" }); const pg = await ctx.newPage(); const seen = [];
+    pg.on("response", async (r) => { const ct = r.headers()["content-type"] || "", url = r.url();
+      if (/json|xml|geo|javascript/.test(ct) && /cam|cctv|webcam|video|stream|kamera/i.test(url)) { let n = 0; try { n = (await r.body()).length; } catch {} seen.push(r.status() + " " + ct.split(";")[0] + " " + n + "B " + url.slice(0, 220)); }
+      else if (/json/.test(ct)) { let t = ""; try { t = (await r.body()).toString("utf8"); } catch {} if (/cctv|camera|m3u8|\.jpg/i.test(t)) seen.push(r.status() + " json-with-cams " + t.length + "B " + url.slice(0, 220) + " :: " + t.slice(0, 300).replace(/\s+/g, " ")); }
+      else if (/image\/jpe?g|mpegurl/.test(ct) && /cam|cctv|snap|live|stream/i.test(url) && seen.filter((x) => / image\/| mpegurl/.test(x)).length < 4) seen.push(r.status() + " " + ct + " " + url.slice(0, 220)); });
+    try { await pg.goto(u, { waitUntil: "networkidle", timeout: 45000 }); } catch (e) { seen.push("goto " + e.message.slice(0, 80)); }
+    await pg.waitForTimeout(4000);
+    const links = await pg.evaluate(() => [...new Set([...document.querySelectorAll("a[href],iframe[src]")].map((a) => a.href || a.src).filter((h) => /cctv|camera|kamera|live/i.test(h)))].slice(0, 15)).catch(() => []);
+    console.log(k + " " + u + " title=" + (await pg.title().catch(() => "")).slice(0, 60) + "\n   " + (seen.slice(0, 16).join("\n   ") || "(no camera data seen)") + (links.length ? "\n   links: " + links.join(" | ") : ""));
+    await ctx.close();
+  }
+  await br.close();
+}
+if (only === "rds") await roundDS();
 if (only === "r13") await round13();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
