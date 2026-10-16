@@ -16,7 +16,8 @@ import os from "os";
 import { execFileSync } from "child_process";
 import { pathToFileURL } from "url";
 import { vehicles } from "./gtfsrt.mjs";
-import { kindOf, UA, HEADERS, licenceOf } from "./transit_lib.mjs";
+import { kindOf, HEADERS, licenceOf } from "./transit_lib.mjs";
+import { ccsAt } from "./geo_cc.mjs";
 
 const OUT = process.argv[2] || "transit-meta";
 const CATALOG = "https://files.mobilitydatabase.org/feeds_v2.csv";
@@ -89,7 +90,7 @@ async function main() {
       const fresh = list.filter((v) => (v.ts || ts || 0) > now - FRESH);
       if (!fresh.length) throw new Error(list.length ? list.length + " vehicles, none recent" : "no vehicles");
       const routed = fresh.filter((v) => v.route).length;
-      kept.push({ row: r, n: fresh.length, routed });
+      kept.push({ row: r, n: fresh.length, routed, pts: fresh.map((v) => v.lat.toFixed(3) + "," + v.lon.toFixed(3)) });
       why = "ok " + fresh.length;
     } catch (e) { why = String(e && e.message || e).slice(0, 80); }
     const k = why.startsWith("ok") ? "ok" : why.replace(/\d+/g, "N");
@@ -97,12 +98,23 @@ async function main() {
     console.log((r["location.country_code"] || "--").padEnd(3), r.id.padEnd(10), why, "·", u.slice(0, 100));
   });
   console.log("results", JSON.stringify(tally));
+  // the catalog lists some fleets twice (an agency feed and a regional or versioned copy): keep the bigger one when most of a
+  // feed's vehicles sit where another kept feed's vehicles are
+  kept.sort((a, b) => b.n - a.n);
+  const taken = [];
+  for (const k of kept) {
+    const own = new Set(k.pts), dup = taken.find((t) => { let n = 0; for (const p of own) if (t.set.has(p)) n++; return n >= 0.6 * own.size; });
+    if (dup) { k.dupOf = dup.k.row.id; console.log("duplicate", k.row.id, "of", dup.k.row.id, k.row["urls.direct_download"].slice(0, 90)); continue; }
+    taken.push({ k, set: own });
+    // country from where the vehicles are (the catalog's country is sometimes missing or wrong)
+    const lat = k.pts.map((p) => +p.split(",")[0]).sort((a, b) => a - b), lon = k.pts.map((p) => +p.split(",")[1]).sort((a, b) => a - b), mid = lat.length >> 1;
+    k.cc = ((ccsAt(lat[mid], lon[mid], 0)[0] || "") + "").toUpperCase() || (k.row["location.country_code"] || "").toUpperCase();
+  }
   const feeds = [];
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "gtfs-"));
-  kept.sort((a, b) => a.row.id.localeCompare(b.row.id, "en", { numeric: true }));
-  await pool(kept, 4, async ({ row: r, n, routed }) => {
+  await pool(kept.filter((k) => !k.dupOf), 4, async ({ row: r, n, routed, cc }) => {
     const id = r.id.replace(/[^A-Za-z0-9_-]/g, "");
-    const f = { id, name: (r.provider || r.name || id).slice(0, 120), feed: (r.name || "").slice(0, 80), cc: (r["location.country_code"] || "").toUpperCase().slice(0, 2),
+    const f = { id, name: (r.provider || r.name || id).slice(0, 120), feed: (r.name || "").slice(0, 80), cc: (cc || "").slice(0, 2),
       place: [r["location.municipality"], r["location.subdivision_name"]].filter(Boolean).join(", ").slice(0, 80),
       url: r["urls.direct_download"], licence: licenceOf(r["urls.license"]), licence_url: /^https:\/\//.test(r["urls.license"] || "") ? r["urls.license"] : "",
       catalog: "https://mobilitydatabase.org/feeds/gtfs_rt/" + encodeURIComponent(r.id), n, routes: 0, kinds: {} };
@@ -132,7 +144,7 @@ async function main() {
   feeds.sort((a, b) => a.cc.localeCompare(b.cc) || a.id.localeCompare(b.id, "en", { numeric: true }));
   const total = feeds.reduce((s, f) => s + f.n, 0);
   fs.writeFileSync(path.join(OUT, "feeds.json"), JSON.stringify({ schema: "osap-transit-feeds/1", built: new Date().toISOString(),
-    catalog: CATALOG, tried: cand.length, feeds }, null, 1));
+    catalog: CATALOG, tried: cand.length, duplicates: kept.filter((k) => k.dupOf).map((k) => [k.row.id, k.dupOf]), feeds }, null, 1));
   console.log("kept", feeds.length, "feeds,", total, "vehicles at probe time,", new Set(feeds.map((f) => f.cc)).size, "countries");
   if (!feeds.length) process.exit(1);
 }
