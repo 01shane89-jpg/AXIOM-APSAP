@@ -1,0 +1,9 @@
+[["n1042044065",18.75434,36.98584,"sd",{"name":"مطار كارثاغو","name:en":"Carthago Airport","aeroway":"aerodrome","icao":"HSCG","wikidata":"Q1961925"}],
+["n1042044149",19.5765,37.2159,"sd",{"name":"قاعدة بورتسودان‎ الجوية","name:en":"Port Sudan Air Base","aeroway":"aerodrome"}],
+["n3364254260",19.60905,37.21745,"sd",{"name":"مستشفى الشرطة","name:en":"Shorta Hodpital","amenity":"hospital"}],
+["n6009200586",19.61951,37.22541,"sd",{"name":"مستشفي مذر كير","name:en":"Mother care Hospital","amenity":"hospital"}],
+["n6009206186",19.61981,37.21601,"sd",{"name":"مستشفى بورتسودان الرئيسي","name:en":"Portsudan Main Hospital","amenity":"hospital"}],
+["w126080262",19.62281,37.21642,"sd",{"name":"مستشفى دقنة","name:en":"Degna Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"بورتسودان"}],
+["w126083117",19.5759,37.2145,"sd",{"name":"مطار بورتسودان الإقليمي","name:en":"Port Sudan Regional Airport","aeroway":"aerodrome","icao":"HSSP","military":"airfield"}],
+["w600427480",19.43452,37.23508,"sd",{"name":"مطار بورتسودان الدولي","name:en":"Port Sudan International Airport","addr:city":"بورتسودان","aeroway":"aerodrome","icao":"HSPN","iata":"PZU","aerodrome:type":"international","wikidata":"Q1431022"}],
+["w786511332",19.63622,37.22135,"sd",{"name":"مستشفى المواني","name:en":"Muwani Hospital","amenity":"hospital","healthcare":"hospital"}]]

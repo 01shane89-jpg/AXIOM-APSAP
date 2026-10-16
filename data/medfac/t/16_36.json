@@ -1,3 +1,6 @@
 [["n8234452526",16.28406,37.36118,"er",{"name":"Kerkebet Airfield","aeroway":"aerodrome","icao":"HHKT"}],
 ["w1100696714",16.50503,37.96427,"er",{"aeroway":"helipad"}],
+["w787050555",16.14042,36.20231,"sd",{"name":"umalgura HC","name:en":"umalgura HC","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"clinic;general","operator":"ministry of health"}],
+["w787051022",16.18352,36.1018,"sd",{"name":"hedalia IDP HC","name:en":"hedalia IDP HC","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;clinic"}],
+["w787051855",16.043,36.12671,"sd",{"name":"talatashara issa eljag HC","name:en":"talatashara issa eljag HC","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"community","operator":"ministry of health of sudan"}],
 ["w918833903",16.27911,37.36236,"er",{"aeroway":"aerodrome","icao":"HHKT"}]]

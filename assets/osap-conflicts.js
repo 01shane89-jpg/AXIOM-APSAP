@@ -834,7 +834,10 @@
   // panels (OSAP_CF_PANELS) filter their own lists with inPeriod, so every list in a conflict tab follows the chosen period
   // layers(id): this country's layer tabs the conflict has taken over (their records are the page's own, so the Master timeline and
   // the Timeline report can cover just this conflict); name(id): its short name
+  // items(data), grouped(items), family(item), kindName(kind): the tab's own record list, incident grouping and kind families, for
+  // additions that count incidents the way the tab does (assets/osap-cf-dspat.js)
   W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin,
+    items: allItems, grouped: grouped, family: family, kindName: kindName,
     layers: function (id) { var m = absorbed(); return Object.keys(m).filter(function (l) { return m[l] === id; }); },
     name: function (id) { var c = byId(id); return c ? c.short || c.name : ""; } };
 })();

@@ -29,6 +29,7 @@
 <script src="assets/osap-cf-history.js"></script>
 <script src="assets/osap-cf-sites.js"></script>
 <script src="assets/osap-cf-deepsouth.js"></script>
+<script src="assets/osap-cf-dspat.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
 <script src="assets/osap-areareport.js"></script>

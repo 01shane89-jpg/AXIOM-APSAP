@@ -1,0 +1,9 @@
+[["n1042044117",16.70998,33.44735,"sd",{"name":"مطار شندي","name:en":"Shendi Airport","addr:city":"شندي","aeroway":"aerodrome","icao":"HSND","wikidata":"Q7494220"}],
+["n12000223735",17.70261,33.97721,"sd",{"name":"مستشفى عطبرة التعليمي","amenity":"hospital"}],
+["n12000256452",17.7016,33.97711,"sd",{"name":"مستشفى عطبرة التعليمي","name:en":"Atbara Teaching Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n12000277891",17.70072,33.97592,"sd",{"name":"مستشفى عطبرة التشخيصي","name:en":"Atbara Diagnostic Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w1056494230",16.12732,32.75011,"sd",{"aeroway":"helipad"}],
+["w1365749325",16.70996,33.44558,"sd",{"aeroway":"helipad"}],
+["w1433710669",16.40661,32.78428,"sd",{"name":"Hajar al-Asal Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w786479235",17.68128,33.97654,"sd",{"name":"مستشفى الشرطة عطبرة","name:en":"Police Hospital Atbara","amenity":"hospital","healthcare":"hospital"}],
+["w902036589",16.61393,32.82358,"sd",{"aeroway":"helipad"}]]
