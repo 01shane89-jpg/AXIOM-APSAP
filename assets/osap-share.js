@@ -212,6 +212,16 @@
     ctx.fillStyle = fg; ctx.fillText(text, x + 11, y + 21);
     return x + w + 10;
   }
+  /* a north arrow (the pictures are north-up Web Mercator), top right of a map: "N" over a half-filled arrowhead on a white disc */
+  function northArrow(ctx, cx, top, sz) {
+    var u = sz / 30;
+    ctx.save(); ctx.fillStyle = "rgba(255,255,255,.9)"; ctx.beginPath(); ctx.arc(cx, top + 16 * u, 19 * u, 0, 7); ctx.fill();
+    ctx.fillStyle = "#141b23"; ctx.strokeStyle = "#141b23"; ctx.lineWidth = 1.6 * u; ctx.lineJoin = "round";
+    ctx.font = "700 " + Math.round(10 * u) + "px system-ui,-apple-system,Segoe UI,sans-serif"; ctx.textAlign = "center"; ctx.fillText("N", cx, top + 9 * u);
+    ctx.beginPath(); ctx.moveTo(cx, top + 11 * u); ctx.lineTo(cx + 6 * u, top + 30 * u); ctx.lineTo(cx, top + 25 * u); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx, top + 11 * u); ctx.lineTo(cx - 6 * u, top + 30 * u); ctx.lineTo(cx, top + 25 * u); ctx.closePath(); ctx.stroke();
+    ctx.restore();
+  }
   function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
 
   function drawPicture(pic) {
@@ -242,6 +252,7 @@
           ctx.fillStyle = "#141b23"; ctx.fillText(lab, lx, my + 8);
         }
       }
+      northArrow(ctx, W - 42, 22, 44);
       /* text band */
       ctx.fillStyle = "rgba(20,27,35,.92)"; ctx.fillRect(0, H - BAND, W, BAND);
       ctx.fillStyle = "#fff"; ctx.font = "700 34px system-ui,-apple-system,Segoe UI,sans-serif";
@@ -410,6 +421,7 @@
         ctx.font = "700 22px " + SANS; ctx.lineJoin = "round";
         ctx.lineWidth = 5; ctx.strokeStyle = "rgba(255,255,255,.95)"; ctx.strokeText(lab, lx, my + 8); ctx.fillStyle = "#141b23"; ctx.fillText(lab, lx, my + 8);
       }
+      northArrow(ctx, w - 36, 14, 38);
       /* scale bar */
       var mpp = 156543.03 * Math.cos(main.lat * Math.PI / 180) / Math.pow(2, z), want = 160 * mpp, nice = [1, 2, 5], d = 1;
       for (var e = 1; e < 8; e++) for (var i = 0; i < 3; i++) { var v = nice[i] * Math.pow(10, e); if (v <= want) d = v; }

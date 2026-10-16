@@ -9,7 +9,10 @@
      the period name each one. A mention is a machine match of a name in the report text, not a claim about what anyone did.
    - Links: a network drawn from co-mentions (two entities, or an entity and a district, named in the same report) and from the
      analyst's own links. Co-mention lines are dashed and say so: being named together is not a relationship. Solid lines are
-     the analyst's own judgements, kept apart from the machine ones.
+     the analyst's own judgements, kept apart from the machine ones, each with the analyst's confidence (confirmed solid, probable
+     long dashes, suspected short dashes). Organisations and units are labelled boxes with their NATO APP-6 symbol.
+   - Structure: a network hierarchy chart from the analyst's own links only: the chain of command from a chosen top entity,
+     then lanes for support nodes, finance, supply chain, bed-down sites, routes and areas of operation.
    - Timeline: the reports that name an entity or a district, newest first, with the analyst's saved reports and points, in
      Zulu and local (Thailand, UTC+7) time.
    - Saved: My work's saved reports (assets/osap-work.js), the dropped points (saved locations, "osap-atak-pts") and their photos
@@ -26,10 +29,13 @@
   var K_ENT = "osap-an-ent", K_LINK = "osap-an-links", K_UI = "osap-an-ui";
   var ENT_SRC = "data/thailand/deepsouth-entities.js", AREAS_SRC = "data/places/deepsouth-areas.json";
   var LOCAL_H = 7, LOCAL_N = "Thailand";
-  var TABS = [["ents", "Entities"], ["links", "Links"], ["time", "Timeline"], ["saved", "Saved"], ["bed", "Bed-down"]];
+  var TABS = [["ents", "Entities"], ["links", "Links"], ["struct", "Structure"], ["time", "Timeline"], ["saved", "Saved"], ["bed", "Bed-down"]];
   var PERIODS = [[30, "30 days"], [90, "90 days"], [365, "1 year"], [0, "All kept"]];
-  var TYPES = ["organisation", "armed group", "unit", "agency", "person (sanctioned or charged only)", "place", "vehicle", "other"];
-  var RELS = ["member of", "commands", "works with", "supplies", "operates in", "opposes", "talks with", "other"];
+  var TYPES = ["organisation", "armed group", "unit", "police or security force", "agency", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
+  var RELS = ["member of", "commands", "support node for", "supplies", "funds", "beds down at", "uses route", "operates in", "attributed to", "targeted", "occurred in", "responded to", "arrested or detained by", "linked by evidence to", "captured", "possibly linked to", "works with", "opposes", "talks with", "other"];
+  /* how sure the analyst is of a link they record; drawn the link-analysis way: solid, long dashes, short dashes */
+  var CONFS = [["suspected", "Suspected"], ["probable", "Probable"], ["confirmed", "Confirmed"]];
+  function dashOf(c) { return c === "suspected" ? "4 4" : c === "probable" ? "10 5" : ""; }
   /* bed-down indicator: the words of a search, a cordon or a find; drug seizures are left out (they are not about where cells stay) */
   var FIND = /\b(raid(?:ed|s)? (?:on )?(?:a |the )?(?:house|home|hideout|hut|camp|safe ?house|weapons? store)|security forces raid(?:ed)?|cordon(?:ed)?|hide-?outs?|safe ?houses?|hiding (?:place|spot)s?|(?:insurgent|militant|training|jungle|hidden) camps?|caches?|bomb[- ]making|weapons? (?:store|depot|found|seized)|seiz(?:e|ed|ing) (?:weapons?|guns?|rifles?|bombs?|explosives?|ammunition)|found (?:weapons?|guns?|rifles?|bombs?|explosives?|ammunition)|search(?:ed)? (?:a |the )?(?:house|houses|village|hut|woodshed|plantation|forest|mountain)|surround(?:ed)? (?:a |the )?(?:house|hut|village))\b|ปิดล้อม|ตรวจค้น|ที่หลบซ่อน|แหล่งกบดาน|กบดาน|คลังอาวุธ|แหล่งประกอบระเบิด|ตรวจยึดอาวุธ|พบอาวุธ/i;
   var NOTFIND = /\b(ice|crystal meth|methamphetamine|ya ?ba|kratom|drugs?|narcotics?|heroin|smuggl\w* (?:fuel|cigarettes|rice))\b|ยาบ้า|ยาไอซ์|ไอซ์|กระท่อม|ยาเสพติด|training|exercise|ฝึก/i;
@@ -58,9 +64,12 @@
   /* ---------- state ---------- */
   var UI = lsGet(K_UI, {}); if (typeof UI !== "object" || !UI) UI = {};
   var S = { tab: TABS.some(function (t) { return t[0] === UI.tab; }) ? UI.tab : "ents", days: [30, 90, 365, 0].indexOf(UI.days) >= 0 ? UI.days : 90,
-    sel: null, q: "", tf: "", bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "" };
+    sel: null, q: "", tf: "", ownOnly: null, lay: "net", bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "" };
   function saveUi() { lsSet(K_UI, { tab: S.tab, days: S.days }); }
-  function ownEnts() { var v = lsGet(K_ENT, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-ent/1", items: [], notes: {} }; if (!v.notes || typeof v.notes !== "object") v.notes = {}; return v; }
+  function ownEnts() { var v = lsGet(K_ENT, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-ent/1", items: [], notes: {} }; if (!v.notes || typeof v.notes !== "object") v.notes = {}; if (!v.sides || typeof v.sides !== "object") v.sides = {}; return v; }
+  /* the analyst's own designation of an entity (friend, hostile...), drawn as the APP-6 frame on the link chart. OSAP never sets one. */
+  var SIDES = [["", "Not marked (unknown frame)"], ["f", "Friend (blue)"], ["a", "Assumed friend (blue)"], ["n", "Neutral (green)"], ["s", "Suspect (red)"], ["h", "Hostile (red)"]];
+  function sideOf(id) { var v = ownEnts().sides[id]; return /^[fanhs]$/.test(v || "") ? v : ""; }
   function ownLinks() { var v = lsGet(K_LINK, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-links/1", items: [] }; return v; }
 
   /* ---------- data ---------- */
@@ -133,7 +142,7 @@
       "#anws td.n{text-align:right;white-space:nowrap}#anws .ancard{border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:6px 9px;margin:6px 0}" +
       "#anws .ancard.sel{border-color:var(--accent,#1c5d99);box-shadow:0 0 0 1px var(--accent,#1c5d99)}#anws .anal{font-size:11.5px;color:var(--muted,#56626f)}" +
       "#anws details{margin:6px 0}#anws summary{cursor:pointer;font-weight:600}#anws .angraph{width:100%;height:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px;background:var(--surface2,#f5f7f9)}" +
-      "#anws .angraph text{font-size:10.5px;fill:var(--ink,#1d2329);pointer-events:none}#anws .angraph circle,#anws .angraph rect{cursor:pointer}" +
+      "#anws .angraph text{font-size:13px;fill:var(--ink,#1d2329);pointer-events:none;paint-order:stroke;stroke:var(--surface2,#f5f7f9);stroke-width:3px;stroke-linejoin:round}#anws .angraph text.anbx{font-size:12px;font-weight:600;stroke:none;fill:#1d2329}#anws .angraph text.ancnt{font-size:10px;font-weight:700;fill:#fff;stroke:none}#anws .angraph text.anrel{font-size:11.5px;fill:#2b8a3e;font-weight:600}#anws .angraph text.annr{fill:#343a40;font-weight:500;font-style:italic}#anws .angraph text.annl{font-size:12.5px;font-weight:700}#anws .angraph g[data-an-node]{cursor:pointer}#anws .answ{display:inline-block;width:26px;height:14px;border:1.6px solid;border-radius:3px;background:#fff;flex:none}#anws .anln{display:inline-block;width:26px;height:0;flex:none}#anws .anscroll{overflow-x:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px}#anws .anscroll .angraph{border:0;width:100%;max-width:none;height:auto}#anws .angraph text.anlane{font-size:12px;font-weight:700;fill:var(--muted,#56626f);stroke:none;text-transform:uppercase;letter-spacing:.04em}#anws .angraph circle,#anws .angraph rect{cursor:pointer}#anws .ankey{display:flex;flex-wrap:wrap;gap:0 14px;margin:4px 0 8px}#anws .ankey .lgh{flex-basis:100%}#anws .ankey .lg{display:flex;align-items:center;gap:6px;font-size:11.5px}#anws .ankey .msyfr{flex-basis:100%}" +
       "#anws .anday{font-weight:700;margin:10px 0 2px}#anws .anit{margin:3px 0 3px 8px;padding-left:8px;border-left:3px solid var(--line,#d5dbe1)}#anws .anit.mine{border-left-color:#2b8a3e}" +
       "#anws .anbar{display:inline-block;height:8px;background:#e67700;border-radius:2px;vertical-align:middle;margin-right:4px}#anws .anwarn{background:rgba(230,119,0,.1);border-left:3px solid #e67700;padding:6px 10px;margin:6px 0}" +
       "#anws .atk-pph{display:flex;flex-wrap:wrap;gap:4px}#anws .atk-pph img{width:84px;height:84px;object-fit:cover;border-radius:4px}#anws .atk-pph button{padding:0;border:none;min-height:0}" +
@@ -173,7 +182,7 @@
       ((W.ASAP_DS || {}).asof ? ", read " + esc(W.ASAP_DS.asof) : "") + ". Your entities, links and notes stay in this browser.</p>" +
       '<div class="antabs" role="tablist">' + TABS.map(function (t) { return '<button type="button" role="tab" data-an-tab="' + t[0] + '" aria-pressed="' + (S.tab === t[0]) + '">' + t[1] + "</button>"; }).join("") + "</div>";
     if (S.entsErr) h += '<p class="anwarn">' + esc(S.entsErr) + "</p>";
-    h += S.tab === "links" ? tabLinks(X) : S.tab === "time" ? tabTime(X) : S.tab === "saved" ? tabSaved() : S.tab === "bed" ? tabBed() : tabEnts(X);
+    h += S.tab === "links" ? tabLinks(X) : S.tab === "struct" ? tabStruct(X) : S.tab === "time" ? tabTime(X) : S.tab === "saved" ? tabSaved() : S.tab === "bed" ? tabBed() : tabEnts(X);
     el.innerHTML = h + "</div>";
     if (S.tab === "saved") fillPhotos();
     drawBed();
@@ -197,6 +206,8 @@
           (note ? '<div><b>Your note:</b> ' + esc(note) + "</div>" : "") +
           '<div class="anrow"><button type="button" data-an-go="time" data-an-e="' + esc(e.id) + '">Timeline</button><button type="button" data-an-go="links" data-an-e="' + esc(e.id) + '">Links</button>' +
           '<button type="button" data-an-note="' + esc(e.id) + '">' + (note ? "Edit note" : "Add note") + "</button>" +
+          '<label title="Your designation, drawn as the symbol frame on the link chart. Your judgement, this browser only.">Side <select data-an-side="' + esc(e.id) + '">' +
+          SIDES.map(function (o) { return '<option value="' + o[0] + '"' + (sideOf(e.id) === o[0] ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select></label>" +
           (e.own ? '<button type="button" data-an-del="' + esc(e.id) + '">Delete</button>' : "") + "</div></div>";
       }).join("");
     });
@@ -209,13 +220,24 @@
   }
 
   /* ---------- Links ---------- */
+  /* link chart symbols: NATO APP-6 / MIL-STD-2525D land units and civilian organisations from assets/osap-symbols.js (keys la_*).
+     Armed and security bodies use the unknown frame, civilian bodies the neutral frame: OSAP never marks a side. */
+  var SYM_ID = { "ent:ds:brn": "la_armed", "ent:ds:rkk": "la_armed", "ent:ds:pulo": "la_armed", "ent:ds:gmip": "la_armed", "ent:ds:mara-patani": "la_group",
+    "ent:ds:isoc4": "la_c2", "ent:ds:army4": "la_c2", "ent:ds:sbpac": "la_gov", "ent:ds:rangers": "la_armed", "ent:ds:or-sor": "la_security",
+    "ent:ds:chor-ror-bor": "la_security", "ent:ds:bpp": "la_border", "ent:ds:police9": "la_police", "ent:ds:marines-nara": "la_amphib",
+    "ent:ds:thai-panel": "la_gov", "ent:ds:my-facilitator": "la_gov", "ent:ds:akps": "la_border", "ent:ds:gof": "la_police", "ent:ds:my-customs": "la_customs", "ent:ds:dsw": "la_org" };
+  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", "police or security force": "la_police", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place",
+    "incident: bombing or IED": "la_bomb", "incident: shooting or armed attack": "la_shoot", "incident: seizure, arrest or raid": "la_seize" };
+  function symOf(e) { if (e && (e.type === "route" || e.type === "vehicle" || e.type === "other")) return ""; var k = e && (SYM_ID[e.id] || SYM_TYPE[e.type] || "la_group"), sd = e && sideOf(e.id);
+    if (sd && W.OSAP_SYM && W.OSAP_SYM.d[k + "_" + sd]) return k + "_" + sd; return W.OSAP_SYM && W.OSAP_SYM.d[k] ? k : ""; }
   function graph(X) {
     var nodes = {}, edges = {};
     function node(id, label, kind, w) { if (!nodes[id]) nodes[id] = { id: id, label: label, kind: kind, w: 0 }; nodes[id].w += w || 0; return nodes[id]; }
     function edge(a, b, kind) { if (a === b) return; var k = a < b ? a + "|" + b : b + "|" + a, e = edges[k] || (edges[k] = { a: a < b ? a : b, b: a < b ? b : a, n: 0, kind: kind, rep: [] }); return e; }
-    var name = {}; X.E.forEach(function (e) { name[e.id] = e.name; });
+    var name = {}, sym = {}, kind = {}; X.E.forEach(function (e) { name[e.id] = e.name; sym[e.id] = symOf(e); kind[e.id] = [e.group, e.type]; });
+    var mineOnly = ownOnly();
     X.rows.forEach(function (r) {
-      if (!r.ents.length) return;
+      if (mineOnly || !r.ents.length) return;
       r.ents.forEach(function (id) { node(id, name[id], "ent", 1); });
       for (var i = 0; i < r.ents.length; i++) for (var j = i + 1; j < r.ents.length; j++) { var e = edge(r.ents[i], r.ents[j], "co"); e.n++; e.rep.push(r.i); }
       if (r.d) r.ents.forEach(function (id) { node("d:" + r.d, distName(r.d), "dist", 1); var e = edge(id, "d:" + r.d, "co"); e.n++; e.rep.push(r.i); });
@@ -223,7 +245,7 @@
     ownLinks().items.forEach(function (l) {
       if (!l.a || !l.b) return;
       [l.a, l.b].forEach(function (id) { if (/^d:/.test(id)) node(id, distName(id.slice(2)), "dist", 0); else node(id, name[id] || id, "ent", 0); });
-      var k = "own:" + l.id; edges[k] = { a: l.a, b: l.b, kind: "own", rel: l.rel, note: l.note, id: l.id, n: 0 };
+      var k = "own:" + l.id; edges[k] = { a: l.a, b: l.b, kind: "own", rel: l.rel, conf: l.conf, note: l.note, id: l.id, n: 0 };
     });
     /* keep it readable: the 14 most-named entities, the 10 districts most tied to them, the selection and everything the analyst linked */
     var N = Object.keys(nodes).map(function (k) { return nodes[k]; }), keep = {};
@@ -234,19 +256,66 @@
     if (S.sel && nodes[S.sel]) { keep[S.sel] = 1; E.forEach(function (e) { if (e.a === S.sel || e.b === S.sel) keep[e.a] = keep[e.b] = 1; }); }
     N = N.filter(function (n) { return keep[n.id]; });
     E = E.filter(function (e) { return keep[e.a] && keep[e.b]; });
+    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.type = kind[n.id][1] || ""; n.person = /^person/.test(n.type); } });
     return { N: N, E: E, nodes: nodes };
   }
   /* a small force layout, started from a circle so the same data always draws the same picture */
-  function layout(N, E, w, h) {
+  /* the network chart tries several starting orders (a fixed list, so the same data always draws the same picture) and keeps
+     the drawing with the fewest crossing lines */
+  function crossings(N, E) {
+    var at = {}, c = 0; N.forEach(function (n) { at[n.id] = n; });
+    var L = E.map(function (e) { return [at[e.a], at[e.b]]; }).filter(function (l) { return l[0] && l[1]; });
+    function ccw(a, b, p) { return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x); }
+    for (var i = 0; i < L.length; i++) for (var j = i + 1; j < L.length; j++) {
+      var a = L[i], b = L[j]; if (a[0] === b[0] || a[0] === b[1] || a[1] === b[0] || a[1] === b[1]) continue;
+      if (ccw(a[0], a[1], b[0]) * ccw(a[0], a[1], b[1]) < 0 && ccw(b[0], b[1], a[0]) * ccw(b[0], b[1], a[1]) < 0) c++;
+    }
+    return c;
+  }
+  /* stress layout: each pair of entities is drawn about as far apart as the number of links between them (so a cell sits next
+     to its group, an incident next to whoever it is attributed to), from several starting points; the drawing with the fewest
+     crossing lines is kept. Seeded, so the same links always draw the same picture. */
+  function netLayout(N, E, w, h) {
+    var n = N.length, idx = {}, adj = N.map(function () { return []; }), D = [], seed = 7, best = null, L = 1;
+    N.forEach(function (v, i) { idx[v.id] = i; });
+    E.forEach(function (e) { var a = idx[e.a], b = idx[e.b]; if (a == null || b == null) return; adj[a].push(b); adj[b].push(a); });
+    for (var i = 0; i < n; i++) { var d = N.map(function () { return -1; }), q = [i]; d[i] = 0;
+      while (q.length) { var c = q.shift(); adj[c].forEach(function (o) { if (d[o] < 0) { d[o] = d[c] + 1; q.push(o); } }); }
+      D.push(d); }
+    var dmax = 1; D.forEach(function (r) { r.forEach(function (v) { if (v > dmax) dmax = v; }); });
+    D = D.map(function (r) { return r.map(function (v) { return v < 0 ? dmax + 1 : v; }); });
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    for (var t = 0; t < 16; t++) {
+      var X = N.map(function () { return [rnd() * 10, rnd() * 10]; });
+      for (var it = 0; it < 260; it++) for (var a = 0; a < n; a++) {
+        var sx = 0, sy = 0, sw = 0;
+        for (var b = 0; b < n; b++) { if (a === b) continue; var dij = D[a][b], wij = 1 / (dij * dij), dx = X[a][0] - X[b][0], dy = X[a][1] - X[b][1], dd = Math.sqrt(dx * dx + dy * dy) || 1e-3;
+          sx += wij * (X[b][0] + L * dij * dx / dd); sy += wij * (X[b][1] + L * dij * dy / dd); sw += wij; }
+        X[a] = [sx / sw, sy / sw];
+      }
+      /* fit the frame, then push labels apart */
+      var x0 = Math.min.apply(null, X.map(function (p) { return p[0]; })), x1 = Math.max.apply(null, X.map(function (p) { return p[0]; })),
+        y0 = Math.min.apply(null, X.map(function (p) { return p[1]; })), y1 = Math.max.apply(null, X.map(function (p) { return p[1]; }));
+      if (x1 - x0 < y1 - y0) { X = X.map(function (p) { return [p[1], p[0]]; }); var s0 = x0; x0 = y0; y0 = s0; s0 = x1; x1 = y1; y1 = s0; }
+      N.forEach(function (v, k) { v.x = 100 + (x1 > x0 ? (X[k][0] - x0) / (x1 - x0) : 0.5) * (w - 200); v.y = 40 + (y1 > y0 ? (X[k][1] - y0) / (y1 - y0) : 0.5) * (h - 120); });
+      unclash(N, w, h);
+      var sc = crossings(N, E);
+      if (!best || sc < best.sc) best = { sc: sc, pos: N.map(function (v) { return [v.x, v.y]; }) };
+    }
+    N.forEach(function (v, k) { v.x = best.pos[k][0]; v.y = best.pos[k][1]; });
+    var at = {}; N.forEach(function (v) { at[v.id] = v; }); return at;
+  }
+  function layout(N, E, w, h, len, rep, hub) {
+    len = len || 110; rep = rep || 5200;
     var at = {}; N.forEach(function (n, i) { var a = 2 * Math.PI * i / Math.max(1, N.length); n.x = w / 2 + Math.cos(a) * w * 0.36; n.y = h / 2 + Math.sin(a) * h * 0.36; at[n.id] = n; });
     for (var it = 0; it < 220; it++) {
       var t = 1 - it / 220;
       N.forEach(function (a) { a.fx = 0; a.fy = 0; });
       for (var i = 0; i < N.length; i++) for (var j = i + 1; j < N.length; j++) {
-        var a = N[i], b = N[j], dx = a.x - b.x, dy = a.y - b.y, d2 = Math.max(dx * dx + dy * dy, 25), f = 5200 / d2;
+        var a = N[i], b = N[j], dx = a.x - b.x, dy = a.y - b.y, d2 = Math.max(dx * dx + dy * dy, 25), f = rep / d2;
         a.fx += dx * f / Math.sqrt(d2); a.fy += dy * f / Math.sqrt(d2); b.fx -= dx * f / Math.sqrt(d2); b.fy -= dy * f / Math.sqrt(d2);
       }
-      E.forEach(function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return; var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1, f = (d - 110) * 0.02; a.fx += dx / d * f * d * 0.05; a.fy += dy / d * f * d * 0.05; b.fx -= dx / d * f * d * 0.05; b.fy -= dy / d * f * d * 0.05; });
+      E.forEach(function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return; var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1, f = (d - len) * 0.02; a.fx += dx / d * f * d * 0.05; a.fy += dy / d * f * d * 0.05; b.fx -= dx / d * f * d * 0.05; b.fy -= dy / d * f * d * 0.05; });
       N.forEach(function (a) { a.fx += (w / 2 - a.x) * 0.01; a.fy += (h / 2 - a.y) * 0.01; a.x = Math.max(40, Math.min(w - 40, a.x + Math.max(-12, Math.min(12, a.fx)) * t)); a.y = Math.max(20, Math.min(h - 20, a.y + Math.max(-12, Math.min(12, a.fy)) * t)); });
     }
     /* then stretch the drawing to fill the frame, so a small network is not a knot in the middle */
@@ -257,17 +326,152 @@
     }
     return at;
   }
+  /* the chart follows the usual link-analysis conventions: organisations and units are labelled boxes (with their NATO APP-6
+     symbol), people are circles, places are point-of-interest markers; a dashed line is an unconfirmed association (here: named
+     in the same report), a solid line one the analyst recorded. The box's edge colour is the list group, not a judgement. */
+  var GROUP_C = { "Armed groups named in reporting": "#6a3d9a", "Thai security forces and agencies": "#1c5d99", "Peace process": "#2b8a3e",
+    "Malaysian border agencies": "#c56a00", "Monitors and researchers": "#5f6b77", "Your entities": "#343a40" };
+  function boxOf(n) {
+    if (n.kind === "dist") return { w: 16, h: 24, lab: true };
+    if (n.person) return { w: 30, h: 30, lab: true };
+    if (S.netMode) return { w: 176, h: 96 };
+    return S.colMode ? { w: 240, h: 44 } : { w: 212, h: 40 };
+  }
+  /* push overlapping boxes apart after the force layout, so names never sit on each other */
+  function unclash(N, w, h) {
+    for (var it = 0; it < 80; it++) {
+      var moved = false;
+      for (var i = 0; i < N.length; i++) for (var j = i + 1; j < N.length; j++) {
+        var a = N[i], b = N[j], A = boxOf(a), B = boxOf(b), aw = A.w + (A.lab ? 90 : 0), bw = B.w + (B.lab ? 90 : 0), ah = A.h + (A.lab ? 16 : 0), bh = B.h + (B.lab ? 16 : 0);
+        var ox = (aw + bw) / 2 + 10 - Math.abs(a.x - b.x), oy = (ah + bh) / 2 + 10 - Math.abs(a.y - b.y);
+        if (ox <= 0 || oy <= 0) continue;
+        moved = true;
+        if (ox / aw < oy / ah) { var sx = (a.x < b.x ? -1 : 1) * ox / 2; a.x += sx; b.x -= sx; } else { var sy = (a.y < b.y ? -1 : 1) * oy / 2; a.y += sy; b.y -= sy; }
+      }
+      N.forEach(function (n) { var B = boxOf(n); n.x = Math.max(B.w / 2 + 50, Math.min(w - B.w / 2 - 50, n.x)); n.y = Math.max(B.h / 2 + 8, Math.min(h - B.h / 2 - 20, n.y)); });
+      if (!moved) break;
+    }
+  }
+  function wrap3(t, max) {
+    var a = wrap2(t, max); if (a.length < 2 || String(t).length <= a[0].length + 1 + max) return a;
+    var rest = String(t).slice(a[0].length).trim(), b = wrap2(rest, max); return [a[0]].concat(b);
+  }
+  function wrap2(t, max) {
+    t = String(t || ""); if (t.length <= max) return [t];
+    var cut = t.lastIndexOf(" ", max); if (cut < max * 0.5) cut = max;
+    var a = t.slice(0, cut).trim(), b = t.slice(cut).trim(); if (b.length > max) b = b.slice(0, max - 1).trim() + "\u2026";
+    return [a, b];
+  }
+  /* the analyst's own link chart by default once they have links; co-mentions can be laid over it */
+  function ownOnly() { return S.ownOnly == null ? ownLinks().items.length > 0 : S.ownOnly; }
+  /* with only the analyst's own links, a link chart reads best in columns, as analysts draw them by hand: who (actors) on the
+     left, what happened (incidents, by date) in the middle, where (districts, routes, sites) on the right. Rows are ordered so
+     that lines cross as little as possible. */
+  var ROLE_COLS = [["act", "Actors"], ["inc", "Incidents (by date)"], ["plc", "Places and routes"]];
+  function roleOf(n) {
+    if (n.kind === "dist" || /^(route|site|place|district)/.test(n.type || "")) return "plc";
+    if (/^incident/.test(n.type || "")) return "inc";
+    return "act";
+  }
+  function columns(G, w) {
+    var at = {}, col = { act: [], inc: [], plc: [] }, RH = 62;
+    G.N.forEach(function (n) { at[n.id] = n; col[roleOf(n)].push(n); });
+    if (!col.inc.length) return null;
+    var dt = function (n) { var m = /\b(\d{1,2})(?:[\u2013-]\d{1,2})? (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/.exec(n.label || ""); return m ? ("JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(m[2]) / 3) * 40 + +m[1] : 999; };
+    col.inc.sort(function (a, b) { return dt(a) - dt(b) || String(a.label).localeCompare(b.label); });
+    col.inc.forEach(function (n, i) { n.y = i; });
+    var bary = function (n) { var ys = G.E.filter(function (e) { return e.a === n.id || e.b === n.id; }).map(function (e) { var o = at[e.a === n.id ? e.b : e.a]; return o && roleOf(o) === "inc" ? o.y : null; }).filter(function (y) { return y != null; });
+      return ys.length ? ys.reduce(function (a, b) { return a + b; }, 0) / ys.length : 1e3; };
+    var by = {}; col.act.concat(col.plc).forEach(function (n) { by[n.id] = bary(n); });
+    /* a node with no incident of its own sits next to what it is linked to (a peace panel beside the group it talks with) */
+    for (var pass = 0; pass < 3; pass++) col.act.concat(col.plc).forEach(function (n) { if (by[n.id] < 1e3 && pass === 0) return;
+      var ys = G.E.filter(function (e) { return e.a === n.id || e.b === n.id; }).map(function (e) { return by[e.a === n.id ? e.b : e.a]; }).filter(function (y) { return y != null && y < 1e3; });
+      if (ys.length) by[n.id] = ys.reduce(function (a, b) { return a + b; }, 0) / ys.length + 0.01; });
+    col.act.sort(function (a, b) { return by[a.id] - by[b.id] || String(a.label).localeCompare(b.label); });
+    col.plc.sort(function (a, b) { return by[a.id] - by[b.id]; });
+    var rows = Math.max(col.act.length, col.inc.length, col.plc.length), hh = 60 + rows * RH, X0 = { act: 250, inc: 590, plc: 940 };
+    ["act", "inc", "plc"].forEach(function (k) { var L = col[k], gap = (rows * RH) / Math.max(1, L.length);
+      L.forEach(function (n, i) { n.x = X0[k]; n.y = 60 + gap * (i + 0.5); }); });
+    return { at: at, hh: hh, X0: X0, role: roleOf };
+  }
   function tabLinks(X) {
-    var G = graph(X), w = 640, hh = G.N.length > 12 ? 440 : 340, at = layout(G.N, G.E, w, hh);
-    var h = '<p class="anal">Dashed grey: named in the same report (the number on hover), which is not a relationship. Solid green: your own links. Blue circles are entities, brown squares districts. Tap one to see its connections.</p>';
+    var G = graph(X), w = 1000, hh = G.N.length > 12 ? 700 : 520, own1 = ownOnly(), cols = own1 && S.lay === "cols" ? columns(G, w) : null, at;
+    S.colMode = !!cols; S.netMode = own1 && !cols;
+    /* the analyst's own links draw as a network chart by default, the usual link-analysis picture: each entity an icon with
+       its name under it, plain lines between them with what the link is, hubs pulled to the middle by their links */
+    if (cols) { at = cols.at; hh = cols.hh; w = 1060; }
+    else if (S.netMode) { w = 1300; hh = Math.max(520, Math.min(780, 200 + G.N.length * 22)); at = netLayout(G.N, G.E, w, hh); }
+    else { at = layout(G.N, G.E, w, hh); unclash(G.N, w, hh); }
+    var OWN_C = S.netMode ? "#5f6b77" : "#2b8a3e";
+    /* what is already drawn on the network chart: each entity's icon and name; edge labels are added as they are placed */
+    var netBusy = S.netMode ? G.N.map(function (n) { var nl = Math.min(3, Math.ceil(String(n.label || "").length / 22)); return [n.x - 78, n.y - 22, 156, 44 + nl * 14]; }) : [],
+      netHit = function (x, y, w2, h2) { return netBusy.some(function (r) { return x < r[0] + r[2] && x + w2 > r[0] && y < r[1] + r[3] && y + h2 > r[1]; }); };
+    /* in columns, a line leaves a box from its side; where every line between two columns says the same thing, it is said
+       once at the top of the gap instead of on each line */
+    var side = function (n, other) { if (!cols || n.kind === "dist") return n.x; var half = boxOf(n).w / 2; return other.x > n.x + 1 ? n.x + half : other.x < n.x - 1 ? n.x - half : n.x; },
+      gapOf = function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return ""; var r = [cols.role(a), cols.role(b)].sort().join("-"); return r; }, gapRel = {};
+    if (cols) { var cnt = {}; G.E.forEach(function (e) { if (e.kind !== "own") return; var g = gapOf(e), c = cnt[g] || (cnt[g] = { n: 0 }); c.n++; c[e.rel] = (c[e.rel] || 0) + 1; });
+      Object.keys(cnt).forEach(function (g) { Object.keys(cnt[g]).forEach(function (r) { if (r !== "n" && cnt[g][r] >= 0.6 * cnt[g].n && cnt[g].n > 2) gapRel[g] = r; }); }); }
+    var h = '<p class="anal">Link chart. Boxes: organisations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
+    if (ownLinks().items.length) h += '<label class="anrow"><input type="checkbox" id="an-ownonly"' + (ownOnly() ? " checked" : "") + "> Your links only (leave out the machine co-mentions)</label>" +
+      (ownOnly() ? '<label class="anrow">Layout <select id="an-lay"><option value="net"' + (S.lay !== "cols" ? " selected" : "") + '>Network</option><option value="cols"' + (S.lay === "cols" ? " selected" : "") + ">Columns (who / what happened / where)</option></select></label>" : "");
     if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + linkForm(X);
     h += '<svg class="angraph" viewBox="0 0 ' + w + " " + hh + '" role="img" aria-label="Link chart">' +
+      (cols ? ROLE_COLS.map(function (c) { return '<text class="anlane" x="' + cols.X0[c[0]] + '" y="22" text-anchor="middle">' + esc(c[1]) + "</text>"; }).join("") +
+        [["act-inc", (cols.X0.act + cols.X0.inc) / 2], ["inc-plc", (cols.X0.inc + cols.X0.plc) / 2]].map(function (g) { return gapRel[g[0]] ? '<text class="anrel" x="' + g[1] + '" y="44" text-anchor="middle">' + esc(gapRel[g[0]]) + " (unless marked)</text>" : ""; }).join("") : "") +
       G.E.map(function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return ""; var own = e.kind === "own", on = S.sel && (e.a === S.sel || e.b === S.sel);
-        return '<line x1="' + a.x.toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + b.x.toFixed(1) + '" y2="' + b.y.toFixed(1) + '" stroke="' + (own ? "#2b8a3e" : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? 2.5 : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? "" : ' stroke-dasharray="5 4"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></line>"; }).join("") +
-      G.N.map(function (n) { var r = Math.min(18, 6 + Math.sqrt(n.w) * 2), on = S.sel === n.id, x = n.x.toFixed(1), y = n.y.toFixed(1);
-        return '<g data-an-node="' + esc(n.id) + '">' + (n.kind === "dist" ? '<rect x="' + (n.x - r * 0.8).toFixed(1) + '" y="' + (n.y - r * 0.8).toFixed(1) + '" width="' + (r * 1.6).toFixed(1) + '" height="' + (r * 1.6).toFixed(1) + '" fill="#8d6e63"' : '<circle cx="' + x + '" cy="' + y + '" r="' + r.toFixed(1) + '" fill="#1c5d99"') +
-          ' stroke="' + (on ? "#e67700" : "#fff") + '" stroke-width="' + (on ? 3 : 1.5) + '"><title>' + esc(n.label) + "</title></" + (n.kind === "dist" ? "rect" : "circle") + ">" +
-          '<text x="' + x + '" y="' + (n.y + r + 11).toFixed(1) + '" text-anchor="middle">' + esc(String(n.label).length > 26 ? String(n.label).slice(0, 25) + "\u2026" : n.label) + "</text></g>"; }).join("") + "</svg>";
+        /* two nodes in one column are joined by an arc out to the side, so the line does not run through the boxes between them */
+        var same = cols && Math.abs(a.x - b.x) < 1, bend = a.x < w / 2 ? -1 : 1, hw = cols ? boxOf(a).w / 2 : 106, cx = a.x + bend * (hw + 22 + Math.min(40, Math.abs(a.y - b.y) * 0.08)),
+          geo = same ? 'path d="M' + (a.x + bend * hw).toFixed(1) + " " + a.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + ((a.y + b.y) / 2).toFixed(1) + " " + (b.x + bend * hw).toFixed(1) + " " + b.y.toFixed(1) + '" fill="none"' :
+          'line x1="' + side(a, b).toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + side(b, a).toFixed(1) + '" y2="' + b.y.toFixed(1) + '"';
+        var ln = '<' + geo + ' stroke="' + (own ? OWN_C : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? (S.netMode ? 1.8 : 2.5) : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? (dashOf(e.conf) ? ' stroke-dasharray="' + dashOf(e.conf) + '"' : "") : ' stroke-dasharray="6 5"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></" + geo.split(" ")[0] + ">";
+        /* a recorded link carries its label at the middle, as on a link chart */
+        if (own && e.rel && !(cols && !same && gapRel[gapOf(e)] === e.rel)) { var mx = same ? cx + bend * 4 : (side(a, b) + side(b, a)) / 2, my = (a.y + b.y) / 2 - 4;
+          /* on the network chart, slide the label along its line to the first spot clear of every name and earlier label */
+          if (S.netMode) { var lw = e.rel.length * 6.4 + 6, tries = [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74];
+            var ll = Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)) || 1, px = -(b.y - a.y) / ll, py = (b.x - a.x) / ll, found = false;
+            /* along the line first, then just beside it */
+            [0, 16, -16, 30, -30].some(function (off) { return tries.some(function (tt) { var tx2 = a.x + (b.x - a.x) * tt + px * off, ty2 = a.y + (b.y - a.y) * tt - 4 + py * off;
+              if (netHit(tx2 - lw / 2, ty2 - 11, lw, 14)) return false; mx = tx2; my = ty2; found = true; return true; }); });
+            netBusy.push([mx - lw / 2, my - 11, lw, 14]); }
+          ln += '<text class="anrel' + (S.netMode ? " annr" : "") + '" x="' + mx.toFixed(1) + '" y="' + my.toFixed(1) + '" text-anchor="' + (same ? (bend < 0 ? "end" : "start") : "middle") + '">' + esc(e.rel) + "</text>"; }
+        return ln; }).join("") +
+      G.N.map(function (n) { var on = S.sel === n.id, x = n.x, y = n.y, B = boxOf(n), d = n.sym && W.OSAP_SYM && W.OSAP_SYM.d[n.sym], out = "", lab = String(n.label || "");
+        var tip = "<title>" + esc(lab + (d ? " \u00b7 " + W.OSAP_SYM.m[n.sym][0] : "") + " \u00b7 named in " + n.w + " report" + (n.w === 1 ? "" : "s")) + "</title>";
+        if (n.kind === "dist") {
+          if (d) { var sc = 26 / Math.max(d[1], d[2]); out = '<rect x="' + (x - 10).toFixed(1) + '" y="' + (y - 24).toFixed(1) + '" width="20" height="26" fill="transparent">' + tip + "</rect>" + d[0].replace("<svg ", '<svg x="' + (x - d[3] * sc).toFixed(1) + '" y="' + (y - d[4] * sc).toFixed(1) + '" width="' + (d[1] * sc).toFixed(1) + '" height="' + (d[2] * sc).toFixed(1) + '" pointer-events="none" '); }
+          else out = '<rect x="' + (x - 8) + '" y="' + (y - 8) + '" width="16" height="16" fill="#8d6e63">' + tip + "</rect>";
+          if (on) out = '<circle cx="' + x.toFixed(1) + '" cy="' + (y - 10).toFixed(1) + '" r="17" fill="none" stroke="#e67700" stroke-width="3"/>' + out;
+          return '<g data-an-node="' + esc(n.id) + '">' + out + '<text x="' + x.toFixed(1) + '" y="' + (y + 15).toFixed(1) + '" text-anchor="middle">' + esc(lab) + "</text></g>";
+        }
+        if (S.netMode) {
+          var nc = GROUP_C[n.group] || "#495057", nl = wrap3(lab, 22), IH = 36;
+          out = '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (d ? 22 : 11) + '" fill="' + (d ? "transparent" : nc) + '" stroke="' + (on ? "#e67700" : d ? "none" : "#fff") + '" stroke-width="' + (on ? 3 : 2) + '">' + tip + "</circle>";
+          if (d) { var s3 = IH / Math.max(d[1], d[2]), w3 = d[1] * s3, h3 = d[2] * s3; out += d[0].replace("<svg ", '<svg x="' + (x - w3 / 2).toFixed(1) + '" y="' + (y - h3 / 2).toFixed(1) + '" width="' + w3.toFixed(1) + '" height="' + h3.toFixed(1) + '" pointer-events="none" ');
+            if (on) out += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="25" fill="none" stroke="#e67700" stroke-width="3" pointer-events="none"/>'; }
+          out += nl.map(function (l, k) { return '<text class="annl" x="' + x.toFixed(1) + '" y="' + (y + (d ? 32 : 24) + k * 14).toFixed(1) + '" text-anchor="middle">' + esc(l) + "</text>"; }).join("");
+          return '<g data-an-node="' + esc(n.id) + '">' + out + "</g>";
+        }
+        if (n.person) {
+          return '<g data-an-node="' + esc(n.id) + '"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#fff" stroke="' + (on ? "#e67700" : "#343a40") + '" stroke-width="' + (on ? 3 : 2) + '">' + tip + "</circle>" +
+            '<text x="' + x.toFixed(1) + '" y="' + (y + 29).toFixed(1) + '" text-anchor="middle">' + esc(lab.length > 30 ? lab.slice(0, 29) + "\u2026" : lab) + "</text></g>";
+        }
+        var col = GROUP_C[n.group] || "#495057", bx = x - B.w / 2, by = y - B.h / 2, lines = wrap2(lab, S.colMode ? 29 : 23), tx = bx + (d ? 40 : 8);
+        out = '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + B.w + '" height="' + B.h + '" rx="3" fill="#fff" stroke="' + (on ? "#e67700" : col) + '" stroke-width="' + (on ? 3 : 1.6) + '">' + tip + "</rect>" +
+          '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="5" height="' + B.h + '" fill="' + col + '" pointer-events="none"/>';
+        if (d) { var s2 = 26 / Math.max(d[1], d[2]), sw = d[1] * s2, sh = d[2] * s2; out += d[0].replace("<svg ", '<svg x="' + (bx + 8 + (28 - sw) / 2).toFixed(1) + '" y="' + (y - sh / 2).toFixed(1) + '" width="' + sw.toFixed(1) + '" height="' + sh.toFixed(1) + '" pointer-events="none" '); }
+        out += lines.map(function (l, k) { return '<text class="anbx" x="' + tx.toFixed(1) + '" y="' + (y + (lines.length === 1 ? 4 : k ? 12 : -2)).toFixed(1) + '">' + esc(l) + "</text>"; }).join("");
+        /* how many reports name it, as a tab on the box's top edge */
+        var cnt = String(n.w), cw = 8 + cnt.length * 6.5;
+        if (n.w) out += '<rect x="' + (bx + B.w - cw - 4).toFixed(1) + '" y="' + (by - 8).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="14" rx="7" fill="' + col + '" pointer-events="none"/><text class="ancnt" x="' + (bx + B.w - 4 - cw / 2).toFixed(1) + '" y="' + (by + 2.5).toFixed(1) + '" text-anchor="middle">' + cnt + "</text>";
+        return '<g data-an-node="' + esc(n.id) + '">' + out + "</g>"; }).join("") + "</svg>";
+    /* the key: the symbols and box colours in this chart, in plain words */
+    var ks = G.N.map(function (n) { return n.sym; }).filter(function (k, i, a) { return k && a.indexOf(k) === i; }),
+      gs = G.N.map(function (n) { return n.kind === "ent" && !n.person ? n.group : ""; }).filter(function (g, i, a) { return g && a.indexOf(g) === i; });
+    h += '<div class="ankey">' + (gs.length && !S.netMode ? '<div class="lgh">Box edge: list group (not a judgement)</div>' + gs.map(function (g) { return '<div class="lg"><span class="answ" style="border-color:' + (GROUP_C[g] || "#495057") + ";box-shadow:inset 4px 0 0 " + (GROUP_C[g] || "#495057") + '"></span><div>' + esc(g) + "</div></div>"; }).join("") : "") +
+      '<div class="lgh">Lines</div><div class="lg"><span class="anln" style="border-top:2.5px dashed #8a96a3"></span><div>Named in the same report (unconfirmed)</div></div><div class="lg"><span class="anln" style="border-top:2.5px solid ' + OWN_C + '"></span><div>Your link, confirmed</div></div><div class="lg"><span class="anln" style="border-top:2.5px dashed ' + OWN_C + '"></span><div>Your link, probable or suspected</div></div>' +
+      (ks.length && W.OSAP_SYM && W.OSAP_SYM.legend ? W.OSAP_SYM.legend(ks) + '<p class="msyfr">NATO-style symbols (APP-6 / MIL-STD-2525D). <b>Yellow, four-lobed frame</b>: armed or security body, side not marked. <b>Purple</b>: civilian body (government, monitor). The symbol shows what kind of body it is, not what it did.' +
+        (ks.some(function (k) { return /_[fanhs]$/.test(k); }) ? ' <b>Red diamond</b>: marked hostile or suspect by you. <b>Blue rectangle</b>: marked friend by you. <b>Green square</b>: marked neutral by you. These are your designations (Entities tab, Side), not OSAP\'s.' : "") + "</p>" : "") + "</div>";
     if (S.sel && G.nodes[S.sel]) {
       var mine = G.E.filter(function (e) { return e.a === S.sel || e.b === S.sel; }).sort(function (a, b) { return (b.kind === "own") - (a.kind === "own") || b.n - a.n; });
       h += "<h3>" + esc(G.nodes[S.sel].label) + "</h3><table><tr><th>Connected to</th><th>How</th><th></th></tr>" + mine.map(function (e) {
@@ -283,13 +487,114 @@
       (S.areas || []).map(function (a) { return '<option value="d:' + esc(a.id) + '">District: ' + esc(a.name) + "</option>"; }).join("");
     return '<details><summary>Add your own link</summary><form id="an-addlink" class="anrow"><label>From <select name="a">' + opts + "</select></label>" +
       '<label>Relationship <select name="rel">' + RELS.map(function (r) { return "<option>" + esc(r) + "</option>"; }).join("") + "</select></label>" +
-      '<label>To <select name="b">' + opts + '</select></label><label>Why (your basis) <input name="note" maxlength="600"></label><button type="submit" class="go">Add link</button></form>' +
-      '<p class="anal">Your link is your judgement, shown solid and kept apart from the machine co-mentions. In this browser only.</p></details>';
+      '<label>To <select name="b">' + opts + '</select></label><label>Confidence <select name="conf">' + CONFS.map(function (c) { return '<option value="' + c[0] + '">' + c[1] + "</option>"; }).join("") + '</select></label><label>Why (your basis) <input name="note" maxlength="600"></label><button type="submit" class="go">Add link</button></form>' +
+      '<p class="anal">Your link is your judgement, shown in green and kept apart from the machine co-mentions: solid when confirmed, long dashes when probable, short dashes when suspected. The Structure tab arranges these links as a network chart. In this browser only.</p></details>';
   }
   function repLine(i) {
     var u = safeUrl(i.link);
     return '<div class="anit"><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(titleOf(i)) + '</a> <span class="anal">' + esc(i.outlet || "") + " \u00b7 " + esc(String(i.date || "").replace("T", " ")) +
       (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (i.mt ? " \u00b7 machine-translated" : "") + "</span></div>";
+  }
+
+  /* ---------- Structure ----------
+     A network chart of the analyst's own links only (no machine co-mentions, nothing drawn by AI): the chosen top entity, its
+     chain of command ("commands", "member of") as tiers, then lanes for support nodes, finance, supply chain, bed-down
+     sites, routes, areas of operation and other associates, each joined by the link that put it there. It is the analyst's
+     judgement and says so; nothing here changes the reference entity list. */
+  var LANES = [["sup", "Support nodes", ["support node for"]], ["fin", "Finance", ["funds"]], ["log", "Supply chain", ["supplies"]],
+    ["bed", "Bed-down sites", ["beds down at"]], ["rte", "Routes", ["uses route"]], ["aoo", "Areas of operation", ["operates in"]], ["oth", "Other associates", []]];
+  function laneOf(rel) { for (var i = 0; i < LANES.length; i++) if (LANES[i][2].indexOf(rel) >= 0) return LANES[i][0]; return "oth"; }
+  function tabStruct(X) {
+    var L = ownLinks().items.filter(function (l) { return l.a && l.b; }), name = {}, sym = {}, grp = {};
+    X.E.forEach(function (e) { name[e.id] = e.name; sym[e.id] = symOf(e); grp[e.id] = e.group; });
+    function nm(id) { return /^d:/.test(id) ? "District: " + distName(id.slice(2)) : name[id] || id; }
+    var cnt = {}; L.forEach(function (l) { cnt[l.a] = (cnt[l.a] || 0) + 1; cnt[l.b] = (cnt[l.b] || 0) + 1; });
+    var roots = Object.keys(cnt).filter(function (id) { return !/^d:/.test(id); }).sort(function (a, b) { return cnt[b] - cnt[a]; });
+    var h = '<p class="anal">Network structure from <b>your own links only</b>: a chain of command from the top entity, then support nodes, finance, supply chain, bed-down sites, routes and areas of operation. It is your judgement, not a finding; machine co-mentions are not used. Add links in the Links tab (relationships such as member of, commands, support node for, supplies, funds, beds down at, uses route).</p>';
+    if (!roots.length) return h + '<p class="obs">No links of your own yet. Record links in the Links tab (with a confidence and your basis) and the structure appears here.</p>' + linkForm(X);
+    var root = roots.indexOf(S.root) >= 0 ? S.root : roots.indexOf("ent:ds:brn") >= 0 ? "ent:ds:brn" : roots[0];
+    h += '<div class="anrow"><label>Top of the chart <select id="an-root">' + roots.map(function (id) { return '<option value="' + esc(id) + '"' + (id === root ? " selected" : "") + ">" + esc(nm(id)) + " (" + cnt[id] + ")</option>"; }).join("") + "</select></label></div>";
+    /* command tiers: "A commands B" puts B under A; "A member of B" puts A under B */
+    var tier = {}, lane = {}, via = {}, q = [root], seen = {}; tier[root] = 0; seen[root] = 1;
+    while (q.length) {
+      var c = q.shift();
+      L.forEach(function (l) {
+        var ch = l.rel === "commands" && l.a === c ? l.b : l.rel === "member of" && l.b === c ? l.a : null;
+        if (ch && !seen[ch] && tier[c] < 5) { seen[ch] = 1; tier[ch] = tier[c] + 1; via[ch] = l; q.push(ch); }
+      });
+    }
+    /* everything else linked to a node of the command chain goes in the lane its link names (two steps out at most) */
+    var inChart = Object.keys(tier), front = inChart.slice();
+    for (var step = 0; step < 2; step++) {
+      var next = [];
+      L.forEach(function (l) {
+        [[l.a, l.b], [l.b, l.a]].forEach(function (p) {
+          if (!seen[p[0]] || seen[p[1]] || front.indexOf(p[0]) < 0) return;
+          seen[p[1]] = 1; lane[p[1]] = laneOf(l.rel); via[p[1]] = l; next.push(p[1]);
+        });
+      });
+      front = next;
+    }
+    var nodes = Object.keys(seen).slice(0, 80);
+    /* top: the chain of command as tiers, each child under its parent; below: one column per lane in use, joined like an
+       organisation chart (a bus under the command tiers, a rail down the left of each column, a stub into each box) */
+    var BW = 196, BH = 40, GAP = 22, LBL = 110, RH = 86, IH = 54, maxT = 0, at = {}, rows = [];
+    Object.keys(tier).forEach(function (id) { if (nodes.indexOf(id) >= 0) maxT = Math.max(maxT, tier[id]); });
+    for (var t = 0; t <= maxT; t++) rows.push(nodes.filter(function (id) { return tier[id] === t; }));
+    var cols = LANES.map(function (ln) { return { id: ln[0], lab: ln[1], ids: nodes.filter(function (id) { return lane[id] === ln[0]; }) }; }).filter(function (c) { return c.ids.length; });
+    var CW = BW + 46, maxRow = Math.max.apply(null, rows.map(function (r) { return r.length; })),
+      w = Math.max(900, LBL + 20 + maxRow * (BW + GAP), LBL + 20 + cols.length * CW),
+      bandY = 20 + rows.length * RH + 34, maxItems = Math.max.apply(null, [0].concat(cols.map(function (c) { return c.ids.length; }))),
+      hh = (cols.length ? bandY + 26 + maxItems * IH + 10 : rows.length * RH + 20);
+    function parentOf(id) { var l = via[id]; return l ? (l.a === id ? l.b : l.a) : null; }
+    rows.forEach(function (r, ri) {
+      r.sort(function (a, b) { var pa = at[parentOf(a)], pb = at[parentOf(b)]; return (pa ? pa.x : 0) - (pb ? pb.x : 0); });
+      var span = r.length * (BW + GAP) - GAP, x0 = LBL + 20 + Math.max(0, (w - LBL - 20 - span) / 2);
+      r.forEach(function (id, k) { at[id] = { x: x0 + k * (BW + GAP) + BW / 2, y: 20 + ri * RH + BH / 2 }; });
+    });
+    var cx0 = LBL + 20 + Math.max(0, (w - LBL - 20 - cols.length * CW) / 2);
+    cols.forEach(function (c, ci) {
+      c.x = cx0 + ci * CW; c.rail = c.x + 14;
+      c.ids.sort(function (a, b) { var pa = at[parentOf(a)], pb = at[parentOf(b)]; return (pa ? pa.x : 0) - (pb ? pb.x : 0); });
+      c.ids.forEach(function (id, k) { at[id] = { x: c.x + 30 + BW / 2, y: bandY + 26 + k * IH + BH / 2, col: c }; });
+    });
+    var svg = '<svg class="angraph anstruct" viewBox="0 0 ' + w + " " + hh + '" style="min-width:' + Math.round(w * 0.6) + 'px" role="img" aria-label="Network structure chart">';
+    rows.forEach(function (r, ri) {
+      var y = 10 + ri * RH;
+      svg += '<rect x="0" y="' + y + '" width="' + w + '" height="' + (RH - 8) + '" fill="' + (ri % 2 ? "rgba(0,0,0,.025)" : "rgba(0,0,0,.05)") + '"/>' +
+        '<text class="anlane" x="10" y="' + (y + RH / 2 - 2) + '">' + (ri ? "Tier " + ri : "Command") + "</text>";
+    });
+    cols.forEach(function (c) { svg += '<text class="anlane" x="' + (c.x + 22) + '" y="' + (bandY + 12) + '">' + esc(c.lab) + "</text>"; });
+    function dash(l) { return dashOf(l.conf) ? ' stroke-dasharray="' + dashOf(l.conf) + '"' : ""; }
+    function tipOf(l) { return "<title>" + esc(nm(l.a) + " — " + l.rel + " — " + nm(l.b) + " (" + (l.conf || "not stated") + (l.note ? "; " + l.note : "") + ")") + "</title>"; }
+    L.forEach(function (l) {
+      var a = at[l.a], b = at[l.b]; if (!a || !b) return;
+      var d, lab = "";
+      if (a.col || b.col) {
+        if (a.col && b.col) { var top = a.y <= b.y ? a : b, bot = a.y <= b.y ? b : a; d = "M" + (top.x - BW / 2) + " " + top.y + " H" + (top.col.rail + 6) + " V" + bot.y + " H" + (bot.x - BW / 2); }
+        else { var p = a.col ? b : a, q = a.col ? a : b; d = "M" + p.x + " " + (p.y + BH / 2) + " V" + (bandY - 6) + " H" + q.col.rail + " V" + q.y + " H" + (q.x - BW / 2); }
+      } else if (Math.abs(a.y - b.y) < 1) { d = "M" + (Math.min(a.x, b.x) + BW / 2) + " " + a.y + " H" + (Math.max(a.x, b.x) - BW / 2); lab = '<text class="anrel" x="' + ((a.x + b.x) / 2) + '" y="' + (a.y - 6) + '" text-anchor="middle">' + esc(l.rel) + "</text>"; }
+      else {
+        var tp = a.y <= b.y ? a : b, bt = a.y <= b.y ? b : a, ym = tp.y + BH / 2 + (RH - BH) / 2;
+        d = "M" + tp.x + " " + (tp.y + BH / 2) + " V" + ym + " H" + bt.x + " V" + (bt.y - BH / 2);
+        lab = '<text class="anrel" x="' + (bt.x + 6) + '" y="' + (bt.y - BH / 2 - 5) + '">' + esc(l.rel) + "</text>";
+      }
+      svg += '<path d="' + d + '" fill="none" stroke="#2b8a3e" stroke-width="2"' + dash(l) + ">" + tipOf(l) + "</path>" + lab;
+    });
+    nodes.forEach(function (id) {
+      var p = at[id]; if (!p) return;
+      var dist = /^d:/.test(id), k = dist ? "la_place" : sym[id], d = k && W.OSAP_SYM && W.OSAP_SYM.d[k], col = GROUP_C[grp[id]] || "#495057", bx = p.x - BW / 2, by = p.y - BH / 2, lines = wrap2(nm(id), 22);
+      var g = '<rect x="' + bx + '" y="' + by + '" width="' + BW + '" height="' + BH + '" rx="3" fill="#fff" stroke="' + (id === root ? "#e67700" : col) + '" stroke-width="' + (id === root ? 2.5 : 1.6) + '"><title>' + esc(nm(id)) + "</title></rect>" +
+        '<rect x="' + bx + '" y="' + by + '" width="5" height="' + BH + '" fill="' + col + '"/>';
+      if (d) { var sc = 26 / Math.max(d[1], d[2]); g += d[0].replace("<svg ", '<svg x="' + (bx + 8 + (28 - d[1] * sc) / 2).toFixed(1) + '" y="' + (p.y - d[2] * sc / 2).toFixed(1) + '" width="' + (d[1] * sc).toFixed(1) + '" height="' + (d[2] * sc).toFixed(1) + '" pointer-events="none" '); }
+      g += lines.map(function (t, j) { return '<text class="anbx" x="' + (bx + (d ? 40 : 10)) + '" y="' + (p.y + (lines.length === 1 ? 4 : j ? 12 : -2)) + '">' + esc(t) + "</text>"; }).join("");
+      svg += '<g data-an-node="' + esc(id) + '">' + g + "</g>";
+    });
+    svg += "</svg>";
+    h += '<div class="anscroll">' + svg + "</div>" +
+      '<div class="ankey"><div class="lgh">Your links</div><div class="lg"><span class="anln" style="border-top:2.5px solid #2b8a3e"></span><div>Confirmed</div></div><div class="lg"><span class="anln" style="border-top:2.5px dashed #2b8a3e"></span><div>Probable (long dashes) or suspected (short dashes)</div></div><div class="lg"><span class="answ" style="border-color:#e67700"></span><div>Top of the chart</div></div></div>' +
+      '<p class="anal">' + nodes.length + " items, " + L.filter(function (l) { return at[l.a] && at[l.b]; }).length + " of your links. Items more than two links from the chain of command are left out.</p>";
+    return h + linkForm(X);
   }
 
   /* ---------- Timeline ---------- */
@@ -428,6 +733,10 @@
     var t = e.target;
     if (t.id === "an-days") { S.days = +t.value; saveUi(); render(); }
     else if (t.id === "an-tf") { S.tf = t.value; render(); }
+    else if (t.hasAttribute && t.hasAttribute("data-an-side")) { var OS = ownEnts(), sid = t.getAttribute("data-an-side"); if (/^[fanhs]$/.test(t.value)) OS.sides[sid] = t.value; else delete OS.sides[sid]; lsSet(K_ENT, OS); render(); }
+    else if (t.id === "an-root") { S.root = t.value; render(); }
+    else if (t.id === "an-ownonly") { S.ownOnly = t.checked; render(); }
+    else if (t.id === "an-lay") { S.lay = t.value; render(); }
     else if (t.id === "an-bedmap") { S.bedMap = t.checked; drawBed(); }
   }
   function onSubmit(e) {
@@ -442,7 +751,7 @@
     } else if (f.id === "an-addlink") {
       var a = f.a.value, b = f.b.value; if (!a || !b || a === b) { toast("Pick two different items."); return; }
       var L = ownLinks(); if (L.items.length >= 2000) { toast("2,000 links is the limit in this browser."); return; }
-      L.items.push({ id: rid("lnk:"), a: a, b: b, rel: RELS.indexOf(f.rel.value) >= 0 ? f.rel.value : "other", note: clean(f.note.value, 600), created: now });
+      L.items.push({ id: rid("lnk:"), a: a, b: b, rel: RELS.indexOf(f.rel.value) >= 0 ? f.rel.value : "other", conf: CONFS.some(function (c) { return c[0] === (f.conf && f.conf.value); }) ? f.conf.value : "suspected", note: clean(f.note.value, 600), created: now });
       if (lsSet(K_LINK, L)) toast("Link added (your judgement, this browser only)."); S.sel = a; render();
     }
   }
