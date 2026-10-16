@@ -247,6 +247,7 @@
     box.innerHTML = '<div class="pkghead"><h2>' + esc(spec ? spec.title || "Summary" : "Area summary") + '</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
       '<div class="asum">' +
       '<p class="obs">' + (spec ? esc(spec.sub || "") : "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km²") + " · " + esc(g.period) + " · written " + esc(T().dualT(LAST.at)) + "</p>" +
+      (!spec && window.OSAP_AREAREPORT ? '<p><button type="button" class="refresh" data-as-report="1" title="Printable report on this area with an overview map and a map per section">Full report with maps</button></p>' : "") +
       (g.items.length ? "" : spec ? '<p class="obs">' + esc(spec.empty || "Nothing to summarise on this tab for " + g.period + ". Widen the period in the page header.") + "</p>" : '<p class="obs">Nothing with a map location lies inside the drawn area for ' + esc(g.period) + ". Widen the period or draw a larger area.</p>") +
       (g.items.length ? '<div class="ashead"><h4>Summary</h4><span class="aitag" tabindex="0" title="Written by fixed rules from the numbered items below: counts, the largest groups and the newest titles. Not AI and not analyst-approved.">Automatic</span></div>' +
         au.paras.map(function (p) { return '<p class="asp">' + citeHtml(p) + "</p>"; }).join("") : "") +
@@ -268,6 +269,7 @@
     if (b) { A().select(b.getAttribute("data-as-rec"), undefined, e.currentTarget.id); return; }
     var r = e.target.closest && e.target.closest("[data-asref]");
     if (r) { e.preventDefault(); var li = e.currentTarget.querySelector("#asref-" + r.getAttribute("data-asref")); if (li) { li.scrollIntoView({ behavior: "smooth", block: "center" }); li.classList.add("hl"); setTimeout(function () { li.classList.remove("hl"); }, 1600); } return; }
+    if (e.target.closest && e.target.closest("[data-as-report]")) { window.OSAP_AREAREPORT.open(); return; }
     var go = e.target.closest && e.target.closest("[data-as-ai]");
     if (go) { runAi(e.currentTarget, go); return; }
     if (e.target.closest && e.target.closest("[data-as-aiset]") && window.OSAP_AI) window.OSAP_AI.open();
@@ -307,5 +309,6 @@
       el.innerHTML = '<p class="obs">The on-device AI could not write a summary (' + esc(clip(err && err.message || err, 120)) + "). The summary above stands.</p>";
     });
   }
-  window.OSAP_AREASUM = { open: open, _ground: ground, _automatic: automatic, _gather: gather };
+  /* _ai: the same writers for the printable Area report (assets/osap-areareport.js) */
+  window.OSAP_AREASUM = { open: open, _ground: ground, _automatic: automatic, _gather: gather, _ai: { pick: aiPick, write: aiWrite, ground: ground } };
 })();
