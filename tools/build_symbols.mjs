@@ -95,7 +95,24 @@ const DEFS = {
   i_hydro:    [N, "20", "1205010800", "Hydroelectric power plant", "Infrastructure"],
   i_gas:      [N, "20", "1205010900", "Gas power plant", "Infrastructure"],
   i_oil:      [N, "20", "1205011000", "Oil power plant", "Infrastructure"],
-  i_nuclear:  [N, "20", "1205010305", "Nuclear power plant (atomic energy reactor)", "Infrastructure"]
+  i_nuclear:  [N, "20", "1205010305", "Nuclear power plant (atomic energy reactor)", "Infrastructure"],
+  // link analysis (assets/osap-analyst.js): organisations and units drawn as 2525D land units or land civilian
+  // organisations. Armed and security bodies take the unknown frame like every other actor; civilian bodies the neutral frame.
+  la_armed:   [U, "10", "121100", "Armed group or armed unit (infantry)", "Link analysis"],
+  la_amphib:  [U, "10", "121101", "Marine or amphibious unit", "Link analysis"],
+  la_c2:      [U, "10", "110000", "Command or headquarters (command and control)", "Link analysis"],
+  la_security:[U, "10", "141700", "Security or defence volunteer force", "Link analysis"],
+  la_police:  [U, "10", "200700", "Police", "Link analysis"],
+  la_border:  [U, "10", "200200", "Border patrol or border agency", "Link analysis"],
+  la_customs: [U, "10", "200300", "Customs service", "Link analysis"],
+  la_group:   [U, "11", "110400", "Organisation or group, role not settled", "Link analysis"],
+  la_person:  [U, "11", "110300", "Individual (sanctioned or charged only)", "Link analysis"],
+  la_gov:     [N, "11", "110200", "Government body or civilian agency", "Link analysis"],
+  la_org:     [N, "11", "110400", "Civilian organisation (monitor, researcher)", "Link analysis"],
+  la_bomb:    [U, "40", "110606", "Incident: bombing or IED", "Link analysis"],
+  la_shoot:   [U, "40", "110400", "Incident: shooting or armed attack", "Link analysis"],
+  la_seize:   [U, "40", "131500", "Incident: seizure, arrest or raid (law enforcement operation)", "Link analysis"],
+  la_place:   [U, "25", "131300", "District named in the same reports (point of interest)", "Link analysis", { monoColor: "#6d4c41" }]
 };
 
 // the user-chosen sides (assets/osap-sides.js): side letter -> [2525D identity, plain words]. Unknown is the base symbol.
@@ -103,6 +120,12 @@ const SIDES = { f: ["3", "friend"], a: ["2", "assumed friend"], n: ["4", "neutra
 for (const k of ["ms_air", "ms_naval", "ms_depot", "milbase"]) {
   const d = DEFS[k];
   for (const [c, v] of Object.entries(SIDES)) DEFS[k + "_" + c] = [v[0], d[1], d[2], d[3] + ", in a country you marked " + v[1], "Military sites (your country sides)"];
+}
+// the analyst's own designation on the link chart (assets/osap-analyst.js, owner-only): an entity the analyst marked takes
+// that frame, e.g. red diamond for a body they marked hostile, blue rectangle for friend. Never set by OSAP.
+for (const k of Object.keys(DEFS).filter((k) => /^la_/.test(k) && k !== "la_place")) {
+  const d = DEFS[k];
+  for (const [c, v] of Object.entries(SIDES)) DEFS[k + "_" + c] = [v[0], d[1], d[2], d[3] + ", marked " + v[1] + " by you", "Link analysis (your designation)"];
 }
 
 const out = {}, meta = {};

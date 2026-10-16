@@ -83,11 +83,25 @@ await p.evaluate(() => document.querySelector('#anws [data-an-tab="links"]').cli
 await p.waitForTimeout(300);
 const g1 = await p.evaluate(() => ({ dashed: document.querySelectorAll("#anws .angraph line[stroke-dasharray]").length, nodes: document.querySelectorAll("#anws .angraph [data-an-node]").length, dist: document.querySelectorAll("#anws .angraph rect").length }));
 ok(g1.dashed >= 2 && g1.nodes >= 3 && g1.dist >= 1, "Links draws entities, districts and dashed co-mention lines (" + JSON.stringify(g1) + ")");
-await p.evaluate(() => { const f = document.getElementById("an-addlink"); f.a.value = "ent:ds:brn"; f.b.value = "ent:ds:pulo"; f.rel.value = "opposes"; f.note.value = "test basis"; f.requestSubmit(); });
+await p.evaluate(() => { const f = document.getElementById("an-addlink"); f.a.value = "ent:ds:brn"; f.b.value = "ent:ds:pulo"; f.rel.value = "opposes"; f.conf.value = "confirmed"; f.note.value = "test basis"; f.requestSubmit(); });
 await p.waitForTimeout(300);
 const g2 = await p.evaluate(() => ({ solid: [...document.querySelectorAll("#anws .angraph line")].filter((l) => !l.hasAttribute("stroke-dasharray")).length, table: document.querySelector("#anws table") ? document.querySelector("#anws table").textContent : "" }));
 if (OUT) await p.screenshot({ path: OUT + "/analyst-links.png" });
 ok(g2.solid === 1 && /Your link: opposes/.test(g2.table), "an own link draws solid and is listed as the analyst's link");
+// structure: a chain of command and lanes, built from the analyst's own links only
+for (const [a, b, rel, conf] of [["ent:ds:brn", "ent:ds:rkk", "commands", "probable"], ["ent:ds:gmip", "ent:ds:rkk", "funds", "suspected"]]) {
+  await p.evaluate(([a, b, rel, conf]) => { const f = document.getElementById("an-addlink"); f.a.value = a; f.b.value = b; f.rel.value = rel; f.conf.value = conf; f.note.value = "test"; f.requestSubmit(); }, [a, b, rel, conf]);
+  await p.waitForTimeout(200);
+}
+const lk = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-an-links")).items.map((l) => l.rel + ":" + l.conf));
+ok(JSON.stringify(lk) === JSON.stringify(["opposes:confirmed", "commands:probable", "funds:suspected"]), "own links keep the analyst's confidence (" + lk + ")");
+await p.evaluate(() => document.querySelector('#anws [data-an-tab="struct"]').click());
+await p.waitForTimeout(300);
+const st = await p.evaluate(() => { const v = document.querySelector("#anws .anstruct"), t = v ? v.textContent : "";
+  return { root: document.getElementById("an-root") && document.getElementById("an-root").value, cmd: /Command/.test(t) && /Tier 1/.test(t), fin: /Finance/.test(t), boxes: v ? v.querySelectorAll("[data-an-node]").length : 0,
+    probable: v ? v.querySelectorAll('path[stroke-dasharray="10 5"]').length : 0, suspected: v ? v.querySelectorAll('path[stroke-dasharray="4 4"]').length : 0, mine: /your own links only/.test(document.querySelector("#anws").textContent) }; });
+ok(st.root === "ent:ds:brn" && st.cmd && st.fin && st.boxes === 4 && st.probable === 1 && st.suspected === 1 && st.mine, "Structure draws BRN's chain of command and a finance lane from own links, dashed by confidence (" + JSON.stringify(st) + ")");
+if (OUT) await p.screenshot({ path: OUT + "/analyst-structure.png" });
 // timeline
 await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').click());
 await p.waitForTimeout(300);
