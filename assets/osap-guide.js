@@ -120,7 +120,7 @@
         "Give it a name, a note and an icon (military symbol, shape or pin). Edits save as you type.",
         b("Take photo") + " or " + b("Add from library") + " adds pictures. Each original is kept unchanged with its SHA-256 fingerprint, on this device only.",
         "Tap a point on the map for " + b("Measure from") + ", " + b("Route from") + ", " + b("Medical plan here") + ", " + b("Copy") + " and " + b("Remove") + "."]) +
-      tip("Points and photos are never uploaded. Clearing this site's data in the browser removes them, so use Move to another device to keep a copy.") },
+      tip("Points and photos stay on this device unless you turn on Sync my devices, which sends points (not photos) locked with your sync code. Clearing this site's data in the browser removes them, so use Move to another device to keep a copy.") },
 
     { id: "watch", t: "Watches and alerts", h:
       fig("watch", "Watch an area") +
@@ -234,6 +234,13 @@
         "On the new device: " + b("Open backup") + ", type the passphrase, then " + b("Replace and reload") + ". This replaces what the new device had; " + b("Put back what was here before") + " undoes it.",
         "If the passphrase is lost the file cannot be opened. Four or more random words make a strong one.",
         "Offline map downloads, Use my location and On-device AI settings stay behind."]) +
+      "<h3>Sync my devices</h3>" +
+      ul(["Keeps your saved points, areas, routes, shapes, watches, plans and workspaces the same on your phone and computer. No account.",
+        "On the first device press " + b("Start on this device") + ", note the sync code and press " + b("Turn on sync on this device") + ".",
+        "On the other device press " + b("I have a code") + " and type it. What each device has is joined; nothing is replaced.",
+        "Each item is merged on its own and the newest change wins. Deleted items stay deleted. Changes from the other device show when OSAP opens, or press " + b("Show them") + ".",
+        "Photos, settings, offline maps and the hidden areas stay on each device. Keep the code private: anyone with it can read your synced data.",
+        "Data is locked on your device before it is passed through free public relays, which cannot read it. Keep a backup with Move to another device too."]) +
       "<h3>On-device AI</h3>" +
       ul(["AI summaries (area, route and tab summaries) run on your device, never on a server.",
         "OSAP uses the browser's own model if it has one, or your own AI server on your network, or OSAP's own small model.",

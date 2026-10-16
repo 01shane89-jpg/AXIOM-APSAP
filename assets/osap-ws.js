@@ -603,7 +603,7 @@
     if (g && g.cc === cc()) setTimeout(function () { apply(g.t); }, 1200);
   }
   if (W.__asapMap) later(); else W.addEventListener("load", later);
-  W.OSAP_WS = { open: open, close: close, active: active, list: function () { return reg().list.slice(); }, items: liveItems, switchTo: switchTo, create: newWs, remove: dropWs,
+  W.OSAP_WS = { open: open, close: close, active: active, scoped: scoped, list: function () { return reg().list.slice(); }, items: liveItems, switchTo: switchTo, create: newWs, remove: dropWs,
     importText: function (text, name) { return importKml(text, name || "file.kml"); }, importFile: importFile, kml: function () { return toKml(active().name, features(raw, liveAreas(raw, liveKeys()))); },
     zip: zip, unzip: unzip, exportZip: exportZip, parseKml: parseKml, draw: drawShapes };
 })();
