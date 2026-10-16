@@ -1,0 +1,9 @@
+[["n1589747185",57.70575,71.15947,"ru",{"name":"Аэропорт Усть-Ишим","name:en":"Ust'-Ishim airport","aeroway":"aerodrome","icao":"UNOI"}],
+["n1589781307",57.69018,71.16813,"ru",{"name":"ЦРБ","amenity":"hospital"}],
+["w1049847265",56.25483,70.58392,"ru",{"aeroway":"helipad"}],
+["w287277805",56.82475,70.59977,"ru",{"name":"Областная больница №4 (филиал с.Викулово)","amenity":"hospital","healthcare":"hospital","addr:housenumber":"120","addr:street":"улица Карла Маркса","addr:city":"Викулово"}],
+["w294665712",56.28462,70.45203,"ru",{"name":"Абатская областная больница № 5","amenity":"hospital","healthcare":"hospital","addr:housenumber":"54","addr:street":"улица Ленина","addr:city":"Абатское"}],
+["w664613140",56.11886,70.28506,"ru",{"name":"ФАП Банниково","amenity":"hospital","addr:housenumber":"5","addr:street":"Центральная улица"}],
+["w682869792",56.81518,70.94656,"ru",{"name":"4","amenity":"hospital","healthcare":"hospital","addr:housenumber":"4","addr:street":"улица 8 Марта","addr:city":"Коточиги"}],
+["w749973116",57.0692,70.68645,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w965877602",56.21388,70.13837,"ru",{"amenity":"hospital","healthcare":"hospital"}]]

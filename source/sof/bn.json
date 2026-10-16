@@ -30,13 +30,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Brunei.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "OpenStreetMap way/525256685",
-   "fp": "80e1e239861cd5b4d216f0fd9a2f96e16a433ef2a852236d06b2bfac983e8e27",
+   "fp": "3fc12fe3dfff41ae36a748ea8eec2d2c7eef87fe48ba92a504efbec8e1200321",
    "web": "https://bn.usembassy.gov/",
    "phone": "673-238-7400",
    "phone_after_hours": "238 7400",
    "phone_src": "https://bn.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -229,8 +229,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2888615443",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "34b0617d1bf7424640204be421d24fff143927c3ab0b9d20f3242a4cb10e380e"
+   "asof": "2026-10-09",
+   "fp": "54ac376ff062d3733a4772529f3aa91e9828082e86e2a0cb7849cab797bd55e3"
   },
   {
    "id": "sof:bn:xing:node-2888652424",
@@ -246,8 +246,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2888652424",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "3b73dc0a50525c5563b5d683b020be2e26c986da2614f299bf5ec30d32b4a1a3"
+   "asof": "2026-10-09",
+   "fp": "fe3873ac217d3a3a639416e6cb9aad3d68b52d634f011b0301a56060cf21df5c"
   },
   {
    "id": "sof:bn:xing:node-3800269327",
@@ -268,13 +268,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3800269327",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "560a628a1ea8d98cf581683d6b097436cacd79d44621937ffb7b7061e6871647"
+   "asof": "2026-10-09",
+   "fp": "284b1634d78fd7c87aa16437d0ac3e9e696b24b3cf14fc2710c66fc35c74873c"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

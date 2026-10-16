@@ -8,7 +8,25 @@
   var W = window, D = document, H = W.OSAP_HOSP;
   if (!H) return;
 
-  function sofOf(c) { return (W.ASAP_SOF || {})[c] || null; }
+  /* a file keeps text shared by many records once (tools/build_jp_ccc.py): "hosp_defaults" holds the fields a group of
+     records shares (a record names its group in "g" and keeps what it sets itself), "cap_refs" the quoted texts a capability
+     points at by "ref". Both are filled into the records in place, once, so every reader sees whole records. */
+  function expand(d) {
+    if (!d || d._x) return d;
+    var R = d.cap_refs || {}, G = d.hosp_defaults || {};
+    (d.hospitals || []).forEach(function (h) {
+      var g = h.g && G[h.g];
+      if (g) Object.keys(g).forEach(function (k) { if (h[k] === undefined) h[k] = g[k]; });
+      ["caps", "caps_std"].forEach(function (f) {
+        var c = h[f], o = {}; if (!c) return;
+        Object.keys(c).forEach(function (k) { var x = c[k]; o[k] = x && x.ref && R[x.ref] ? Object.assign({}, R[x.ref], x) : x; });
+        h[f] = o;
+      });
+    });
+    d._x = 1;
+    return d;
+  }
+  function sofOf(c) { return expand((W.ASAP_SOF || {})[c] || null); }
   function load(c) {
     if (sofOf(c)) return Promise.resolve(sofOf(c));
     var F = W.OSAP_COUNTRY_FILES; if (F && F.sof && F.sof.indexOf(c) < 0) return Promise.resolve(null);
@@ -63,5 +81,5 @@
   }
 
   H.register({ id: "sof", tier: 1, countries: null, label: "OSAP researched referral hospitals", discoverFacilities: discoverFacilities,
-    load: load, toFacility: toFacility, typeOf: typeOf });
+    load: load, toFacility: toFacility, typeOf: typeOf, expand: expand });
 })();

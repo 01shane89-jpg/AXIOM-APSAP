@@ -11,6 +11,7 @@
 import crypto from "node:crypto";
 import { fold, relevance } from "./topics_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
+import { mtSuspect } from "./mt_guard.mjs";
 
 export const SCHEMA = "osap-daily/1";
 export const MAX_EVENTS = 6, MAX_REFS = 30;
@@ -135,8 +136,15 @@ export function buildRules(inp, R) {
   if (win > 24) out.gaps.push("Fewer than 3 reports in the last 24 hours, so the window was widened to 72 hours.");
   return out;
 }
+// A headline whose machine translation the model invented (tools/mt_guard.mjs: "The 1980s were a time of great success for the
+// band." for a Thai flood story) is used in its original words: the invented line would pass the analyst filter, and identical
+// inventions for different stories would be grouped as one story carried by several outlets.
+export function trustMt(i, now) {
+  if (!/m/.test(i.flags || "") || !i.orig || !mtSuspect(i.orig, i.title, now)) return i;
+  return { ...i, title: i.orig, orig: "", flags: String(i.flags).replace(/m/g, ""), mt_rejected: true };
+}
 function pick(items, from, to, R, cc) {
-  return (items || []).filter((i) => i.url && /^https?:\/\//.test(i.url) && i.title && i.date >= from && i.date <= to && !softSection(i.url))
+  return (items || []).map((i) => trustMt(i)).filter((i) => i.url && /^https?:\/\//.test(i.url) && i.title && i.date >= from && i.date <= to && !softSection(i.url))
     .map((i) => ({ ...i, _s: score(R, i, cc) })).filter((i) => i._s > -3);
 }
 

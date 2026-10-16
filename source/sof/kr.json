@@ -30,13 +30,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/SouthKorea.html",
    "srcname": "travel.state.gov South Korea country information",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Seoul",
-   "fp": "f7becda89889301271ed83f01982436ef29131b68a512fbeab054de77e4c3b1d",
+   "fp": "91d3a7281bbac294707d3870c72a6d16a6fa4c8e8efec70e160e0e06a18b98a0",
    "web": "https://kr.usembassy.gov/",
    "phone": "+82-2-397-4114",
    "phone_after_hours": "(02)-397-4114",
    "phone_src": "https://kr.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   },
   {
    "id": "sof:kr:post:u-s-consulate-busan",
@@ -51,12 +51,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/SouthKorea.html",
    "srcname": "travel.state.gov South Korea country information",
    "coord_basis": "OpenStreetMap node/6620305911",
-   "fp": "4bc0235042afce052038b9dfb660e0b5bfb534168e6ade1fe47561d20be46e66",
+   "fp": "a67e70607d90a399ba35ed1711f4cd9b6956e7261186979a05e26055c2205815",
    "web": "https://kr.usembassy.gov/busan/",
    "phone_after_hours": "(02) 397-4114",
    "phone_src": "https://kr.usembassy.gov/busan/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -656,8 +656,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/10272475183",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "9bd95599a0dc0b157d314940efba5635775c0e1a5749edf64015c432482c6e03"
+   "asof": "2026-10-09",
+   "fp": "a641226abf18bb3f6dda6a8c4fbdc1f1a27a1d6ea83d5f91a3b0945340e5b8b6"
   },
   {
    "id": "sof:kr:xing:node-10272773829",
@@ -676,8 +676,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/10272773829",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "5746284d34bcc3a77f78b84da105492184d706bfa4406e8fa270f47502fff33b"
+   "asof": "2026-10-09",
+   "fp": "148c62470f4053b49cd9a7371896613b63036716d8fb193b4ecdb7d35f217427"
   },
   {
    "id": "sof:kr:xing:node-6438562659",
@@ -693,8 +693,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6438562659",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "a35eb0a2ca0f9e11dca53f385bc4b850c96b45186135b5781fa34f7634e6ce6f"
+   "asof": "2026-10-09",
+   "fp": "7fab387dc11ad9398df313c2f2078e676366a9f4a988e3619f98babf4d77b2dd"
   },
   {
    "id": "sof:kr:xing:way-1123255204",
@@ -710,8 +710,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1123255204",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7bdc9322af002fbfcee6aebd3c93dd18ad575edade2b1f2b30a1e44678b1cc17"
+   "asof": "2026-10-09",
+   "fp": "9d82871ac69e5295611c29ea6c9b21a39b361227124c6e294118de7f3fb02817"
   },
   {
    "id": "sof:kr:xing:way-1123296204",
@@ -727,8 +727,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1123296204",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "340073959e9a73d5edede7716a6ed8f5b79f1a73ddbcab37d58b6247627872d4"
+   "asof": "2026-10-09",
+   "fp": "7634c54fe375307d87962d1ae33592a953f2cbf6f0ac6d61b4b3ead20547d358"
   },
   {
    "id": "sof:kr:xing:way-245072804",
@@ -744,8 +744,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/245072804",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "4e5c5bbbc871cc01245c2f7d9d978027b70942043d885cd7b9c142623ced8002"
+   "asof": "2026-10-09",
+   "fp": "419afef9d34b486de13317e9502d9e00bebe572c7b91f48c65ac27ba939efe03"
   },
   {
    "id": "sof:kr:xing:way-92854802",
@@ -761,13 +761,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/92854802",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7631c0bb1bc0800d140051c8ef5aca5a338a0ef095fc536706d8eb0059ab74c8"
+   "asof": "2026-10-09",
+   "fp": "0ae8f546fedac5dd00028551ee092382189af93e07ea459587e4beb2687012ba"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

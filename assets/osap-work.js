@@ -25,7 +25,7 @@
   function nowTxt() { return T().dualT(Date.now(), { date: true }); }
   /* record times shown the page's way: Zulu and local, 24-hour; a date alone stays a date */
   function tsTxt(ts) { var t = T(); return t.asofT ? t.asofT(String(ts || "")) : String(ts || "").replace("T", " "); }
-  function claimStatus(r) { var s = STATE[r.type]; return s ? s[0] + " (" + s[1] + ")" : String(r.type || "Not stated"); }
+  function claimStatus(r) { var s = STATE[r.type]; return s ? s[0] + " (" + (r.social ? "the account's own post, not confirmed" : r.news && r.type === "claim" ? "state media report, not confirmed" : s[1]) + ")" : String(r.type || "Not stated"); }
 
   /* a stable key per item across page loads (record ids are renumbered on every load). Feed items keep their link;
      curated records use link, title and date together. Two FNV-1a passes give 16 hex characters. */
@@ -133,7 +133,7 @@
   /* ---------- the reporting period and drawn area, read the same way the page does (its own settings on this device) ---------- */
   function periodRange() {
     var P = lsGet("asap-period") || { p: "all" }, today = Math.floor(Date.now() / 864e5), since = Date.now() - 864e5;
-    if (!/^(24h|7|30|90|all|custom)$/.test(P.p)) P = { p: "all" };
+    if (!/^(24h|7|14|30|90|all|custom)$/.test(P.p)) P = { p: "all" };
     var PR = P.p === "all" ? { from: "", to: "" } : P.p === "custom" ? { from: P.from || "", to: P.to || "" }
       : P.p === "24h" ? { from: new Date(since).toISOString().slice(0, 10), to: "", since: since }
       : { from: new Date((today - (+P.p) + 1) * 864e5).toISOString().slice(0, 10), to: "" };

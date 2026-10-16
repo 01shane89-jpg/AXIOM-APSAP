@@ -1,2 +1,14 @@
-[["n678327621",68.35959,23.42584,"fi",{"name":"Enontekiön lentoasema","name:en":"Enontekiö Airport","operator":"Enontekiön Lentoasema Oy","website":"https://www.enf.fi/","aeroway":"aerodrome","icao":"EFET","iata":"ENF","aerodrome:type":"public","wikidata":"Q662933"}],
-["w320785228",68.384,23.63824,"fi",{"name":"Hetan terveysasema","amenity":"clinic","healthcare":"clinic","addr:housenumber":"4","addr:street":"Kuntokatu","addr:postcode":"99400"}]]
+[["n1042033547",69.0402,23.03518,"no",{"name":"Guovdageainnu girdišillju","name:en":"Kautokeino Air Base","aeroway":"aerodrome","icao":"ENKA","aerodrome:type":"private","wikidata":"Q4846383"}],
+["n6276309665",69.93754,22.04836,"no",{"emergency":"ambulance_station"}],
+["n6761544914",69.32973,23.96986,"no",{"name":"Gárggoluoppal","aeroway":"aerodrome"}],
+["n6761599682",69.42019,23.62895,"no",{"name":"Máze","aeroway":"aerodrome"}],
+["n678327621",68.35959,23.42584,"fi",{"name":"Enontekiön lentoasema","name:en":"Enontekiö Airport","operator":"Enontekiön Lentoasema Oy","website":"https://www.enf.fi/","aeroway":"aerodrome","icao":"EFET","iata":"ENF","aerodrome:type":"public","wikidata":"Q662933"}],
+["r11058191",69.96884,23.27611,"no",{"name":"Finnmarkssykehuset, Klinikk Alta","amenity":"hospital","healthcare":"hospital"}],
+["w110726687",69.93848,22.04141,"no",{"name":"Burfjord helikoperlandingsplass","aeroway":"helipad"}],
+["w1257828514",69.977,23.3562,"no",{"aeroway":"helipad"}],
+["w1257828515",69.97714,23.35552,"no",{"aeroway":"helipad"}],
+["w320785228",68.384,23.63824,"fi",{"name":"Hetan terveysasema","amenity":"clinic","healthcare":"clinic","addr:housenumber":"4","addr:street":"Kuntokatu","addr:postcode":"99400"}],
+["w380305482",69.97727,23.36583,"no",{"name":"Alta lufthavn","name:en":"Alta Airport","operator":"Avinor","website":"https://avinor.no/en/airport/alta-airport/","aeroway":"aerodrome","icao":"ENAT","iata":"ALF","aerodrome:type":"public","wikidata":"Q1430778"}],
+["w667173550",69.01022,23.02755,"no",{"aeroway":"helipad"}],
+["w730289636",69.44219,23.66599,"no",{"aeroway":"helipad","surface":"grass"}],
+["w793790365",69.96837,23.27663,"no",{"name":"Alta helsesenter","name:en":"Alta Health Centre","amenity":"hospital","healthcare":"hospital","operator":"Finnmarkssykehuset","phone":"+47 78 48 39 00","website":"https://finnmarkssykehuset.no/steder/alta-helsesenter","opening_hours":"Mo-Fr 08:00-15:30"}]]

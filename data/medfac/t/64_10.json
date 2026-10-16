@@ -1,0 +1,7 @@
+[["n4007437080",64.46998,11.50415,"no",{"name":"Namsos helikopterplass, Sykehuset Namsos","aeroway":"helipad","icao":"ENNH"}],
+["w206589025",65.67295,11.96281,"no",{"aeroway":"helipad"}],
+["w307766786",64.03263,11.48117,"no",{"name":"Egge Helsetun","amenity":"clinic"}],
+["w382927707",64.83701,11.14316,"no",{"name":"Rørvik lufthavn","name:en":"Rørvik Airport","operator":"Avinor","website":"https://avinor.no/en/airport/rorvik-airport/","aeroway":"aerodrome","icao":"ENRM","iata":"RVK","aerodrome:type":"international","wikidata":"Q2673189"}],
+["w383027767",64.47219,11.57686,"no",{"name":"Namsos lufthavn","name:en":"Namsos Airport, Høknesøra","operator":"Avinor","website":"https://avinor.no/en/airport/namsos-airport/","aeroway":"aerodrome","icao":"ENNM","iata":"OSY","aerodrome:type":"civil","wikidata":"Q3499438"}],
+["w397973286",64.47062,11.50488,"no",{"name":"Sykehuset Namsos","amenity":"hospital","emergency":"yes","wikidata":"Q6962088"}],
+["w756206033",64.01246,11.4804,"no",{"name":"Steinkjer helikopterplass, Norsileiret","aeroway":"helipad"}]]

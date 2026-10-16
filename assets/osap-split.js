@@ -81,6 +81,7 @@
     ".osplit:not([hidden])>*{pointer-events:auto;box-sizing:border-box;height:100%;max-height:none!important;width:100%!important;max-width:none!important;margin:0!important;overflow:auto;border-radius:0!important;box-shadow:-4px 0 18px rgba(0,0,0,.3)!important}" +
     ".osplit .chead{top:0}" +
     "html.osplit-cover #atk-tools{right:calc(8px + var(--osplit-r,0px))!important}html.osplit-cover #atk-om{right:var(--osplit-r,0px)!important}html.osplit-cover #srch{right:calc(66px + var(--osplit-r,0px))!important}" +
+    "html.osplit-lcover #map .leaflet-top.leaflet-left{left:var(--osplit-l,0px)}" +
     "@media (max-width:700px){.osplit:not([hidden]){top:auto!important;left:0!important;width:auto!important;height:auto!important;max-height:50svh!important}" +
     ".osplit:not([hidden])>*{height:auto;max-height:50svh!important;box-shadow:0 -4px 18px rgba(0,0,0,.3)!important;border-top:3px solid var(--line,#d5dbe1)!important}}";
   D.head.appendChild(css);
@@ -89,12 +90,16 @@
   function top() {
     var m = W.__asapMap, root = D.documentElement, mr = m && m.getContainer().getBoundingClientRect(), t = mr && !phone() ? Math.max(0, Math.round(mr.top)) : 0;
     root.style.setProperty("--osplit-top", t + "px");
-    var cov = 0;
+    var cov = 0, lcov = 0;
     if (mr && !phone()) Array.prototype.forEach.call(D.querySelectorAll(".osplit:not([hidden]), #medplan.dock:not([hidden])"), function (w) {
-      var r = (w.firstElementChild || w).getBoundingClientRect(); if (!r.width || r.left >= mr.right) return;
+      var r = (w.firstElementChild || w).getBoundingClientRect(); if (!r.width || r.left >= mr.right || r.right <= mr.left) return;
+      /* moved by the user (assets/osap-panels.js): a floating window moves nothing; one docked on the left moves the zoom buttons */
+      if (W.OSAP_PANELS && W.OSAP_PANELS.mode("win") === "float") return;
+      if (r.left + r.width / 2 < mr.left + mr.width / 2) { lcov = Math.max(lcov, Math.round(Math.min(r.right, mr.right) - mr.left)); return; }
       cov = Math.max(cov, Math.round(mr.right - Math.max(r.left, mr.left)));
     });
     root.style.setProperty("--osplit-r", cov + "px"); root.classList.toggle("osplit-cover", cov > 0);
+    root.style.setProperty("--osplit-l", lcov + "px"); root.classList.toggle("osplit-lcover", lcov > 0);
   }
   W.addEventListener("resize", function () { top(); LIST.forEach(decorate); });
   setTimeout(top, 0); W.addEventListener("load", top);

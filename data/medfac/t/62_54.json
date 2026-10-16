@@ -1,0 +1,9 @@
+[["n2130359753",62.90537,54.98222,"ru",{"aeroway":"helipad"}],
+["n6203353007",63.63834,54.85102,"ru",{"name":"Детская поликлиника","amenity":"clinic"}],
+["w1248808287",63.86228,54.20712,"ru",{"aeroway":"helipad"}],
+["w203369140",62.88973,54.96905,"ru",{"name":"Поликлиника","amenity":"clinic","addr:housenumber":"4А с1","addr:street":"Больничная улица","addr:city":"Войвож"}],
+["w241698059",62.88936,54.97058,"ru",{"name":"Больница-2","amenity":"hospital"}],
+["w328305810",62.19729,54.18338,"ru",{"amenity":"hospital","emergency":"yes","addr:housenumber":"46","addr:street":"улица А.В.Уляшева","addr:city":"Помоздино","addr:postcode":"168090"}],
+["w365519385",62.09163,54.35927,"ru",{"name":"ФАП","amenity":"clinic","addr:housenumber":"13","addr:street":"Центральная улица","addr:city":"Ярашъю","addr:postcode":"168096"}],
+["w88658465",63.63967,54.85349,"ru",{"name":"Поликлиника","amenity":"hospital","addr:housenumber":"7","addr:street":"Транспортная улица","addr:city":"Нижний Одес"}],
+["w88658472",63.63992,54.8422,"ru",{"amenity":"hospital","addr:housenumber":"3","addr:street":"Северная улица"}]]

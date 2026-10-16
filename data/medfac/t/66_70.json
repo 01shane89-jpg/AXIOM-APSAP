@@ -1,0 +1,10 @@
+[["w569102584",66.74551,70.10306,"ru",{"aeroway":"helipad"}],
+["w631100061",66.86009,70.83942,"ru",{"name":"Роддом","amenity":"hospital","healthcare":"birthing_centre","addr:housenumber":"21А","addr:street":"улица Худи Сэроко","addr:city":"Яр-Сале","addr:postcode":"629700"}],
+["w631100064",66.85966,70.83997,"ru",{"healthcare":"hospital","addr:housenumber":"21","addr:street":"улица Худи Сэроко","addr:city":"Яр-Сале","addr:postcode":"629700"}],
+["w631103519",66.86564,70.85712,"ru",{"aeroway":"helipad"}],
+["w631103521",66.87359,70.829,"ru",{"aeroway":"helipad"}],
+["w929220128",66.32234,70.38858,"ru",{"aeroway":"helipad"}],
+["w930742343",66.85917,70.84021,"ru",{"name":"Стационар","amenity":"hospital","addr:housenumber":"19","addr:street":"улица Худи Сэроко","addr:city":"Яр-Сале","addr:postcode":"629700"}],
+["w930746689",66.85931,70.84047,"ru",{"name":"Яр-Салинская центральная районная больница","official_name":"Государственное бюджетное учреждение здравоохранения Ямало-Ненецкого автономного округа \"Яр-Салинская центральная районная больница\"","amenity":"hospital","healthcare":"hospital","website":"http://crb.yar-sale.ru/bolnitsa"}],
+["w930752702",66.8677,70.83151,"ru",{"name":"Туберкулёзное отделение","amenity":"hospital","healthcare":"hospital"}],
+["w948248771",66.90007,71.25887,"ru",{"aeroway":"helipad"}]]

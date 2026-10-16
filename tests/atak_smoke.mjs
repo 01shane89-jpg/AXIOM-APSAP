@@ -64,7 +64,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // long-press radial menu
   await longPress(p);
   ok(await shown(p, "#atk-ring"), "phone: long-press opens the radial menu");
-  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 9, "phone: radial has 8 actions (Med plan and Find LZ included) and close");
+  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 10, "phone: radial has 9 actions (Plans, Find LZ and Terrain included) and close");
   if (OUT) await p.screenshot({ path: OUT + "/phone-radial.png" });
   await ringBtn(p, "pin");
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").length === 1 && document.querySelectorAll(".leaflet-atakpane-pane .atk-pt").length === 1), "phone: Drop point draws P1 and keeps it");
@@ -144,8 +144,10 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   /* Med plan in the ring plans from that point, with no drawn area */
   await p.evaluate(() => { window.__mp = null; window.OSAP_MEDPLAN.open = (o) => { window.__mp = o; }; });
   await p.mouse.click(box[0] - 100, box[1], { button: "right" }); await p.waitForTimeout(200);
-  await ringBtn(p, "medplan"); await p.waitForTimeout(100);
-  ok(await p.evaluate(() => !!(window.__mp && Array.isArray(window.__mp.at) && isFinite(window.__mp.at[0]) && Math.abs(window.__mp.at[1]) <= 180)), "desktop: Med plan in the radial menu opens the medical plan at that point");
+  await ringBtn(p, "plans"); await p.waitForTimeout(150);
+  ok(await shown(p, "#atk-pop") && /Med plan from here/.test(await p.textContent("#atk-pop")) && /Evacuate from here/.test(await p.textContent("#atk-pop")), "desktop: Plans in the radial menu lists Med plan and Evacuate from here");
+  await p.click('#atk-pop [data-pk="medplan"]'); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => !!(window.__mp && Array.isArray(window.__mp.at) && isFinite(window.__mp.at[0]) && Math.abs(window.__mp.at[1]) <= 180)), "desktop: Med plan from here opens the medical plan at that point");
   await p.click('#atk-tools [data-atk="area"]');
   ok(await shown(p, "#atk-pop") && /Lasso/.test(await p.textContent("#atk-pop")), "desktop: Area opens Lasso / Polygon");
   await p.click('#atk-pop [data-pk="poly"]'); await p.waitForTimeout(150);

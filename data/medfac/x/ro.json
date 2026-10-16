@@ -1,0 +1,13 @@
+[["n11488861119",44.42455,24.37661,"ro",{"name":"Centrul de Transfuzie Sanguină Slatina","healthcare":"blood_donation"}],
+["n12348266424",47.16323,27.56645,"ro",{"name":"Atelier Armata Salvării","healthcare":"blood_donation"}],
+["n13149483547",45.10786,24.36405,"ro",{"name":"Centrul De Transfuzie Sangvină Vâlcea","healthcare":"blood_donation","phone":"+40 350 420 504; +40 350 420 505","addr:housenumber":"138","addr:street":"Calea lui Traian","opening_hours":"Mo-Fr 07:30-12:00; Sa-Su off"}],
+["n13269390561",44.43398,26.09661,"ro",{"name":"Punct de recoltare Regina Maria Eforie","healthcare":"blood_donation"}],
+["n2211719791",47.16977,27.58272,"ro",{"name":"Centrul Regional de Transfuzii Sanguine","healthcare":"blood_donation"}],
+["n3661261125",44.46505,26.15267,"ro",{"name":"Centrul de Donare Sânge Fundeni","healthcare":"blood_donation","opening_hours":"Mo-Su 08:00-11:00"}],
+["n4449969995",46.92639,26.37381,"ro",{"name":"Centru de Transfuzie si Donare","healthcare":"blood_donation","addr:housenumber":"5","addr:street":"Bulevardul Traian","addr:city":"Piatra-Neamț"}],
+["w109556399",45.73717,21.23997,"ro",{"name":"Centrul de Transfuzie Sanguină","healthcare":"blood_donation","website":"https://www.ctstimisoara.ro/","addr:housenumber":"1","addr:street":"Strada Martir Marius Ciopec","addr:city":"Timișoara","addr:postcode":"300737"}],
+["w1184236232",46.35391,25.80944,"ro",{"name":"Hargita Megyei Vérközpont","name:en":"Hargita County Blood Center","healthcare":"blood_donation","addr:housenumber":"1","addr:street":"Aleea Avântului","addr:city":"Miercurea Ciuc","addr:postcode":"530181"}],
+["w276472316",46.77588,23.59793,"ro",{"name":"Centru de transfuzie sanguină","healthcare":"blood_donation","addr:housenumber":"11","addr:street":"Strada Paris","addr:city":"Cluj-Napoca","addr:postcode":"400161"}],
+["w312720097",47.7419,26.66146,"ro",{"name":"Centrul de Transfuzie Sanguină","healthcare":"blood_donation","addr:housenumber":"91","addr:street":"Strada Arhimandrit Marchian","addr:city":"Botoșani"}],
+["w331455729",46.9264,26.37378,"ro",{"healthcare":"blood_donation"}],
+["w644897002",47.78332,22.86059,"ro",{"name":"Centrul De Transfuzie Sanguină Satu Mare","healthcare":"blood_donation","operator":"Ministerul Sănătății"}]]

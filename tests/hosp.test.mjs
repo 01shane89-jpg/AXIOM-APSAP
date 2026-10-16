@@ -96,7 +96,36 @@ ok(L2[0].capabilities["ed.24_7"].status === "contradicted" && L2[0].conflicts.so
 ok(fs.capabilities["ed.24_7"].status === "reported", "merging never changes the records it came from");
 
 // ---------- hospital websites ----------
-const { build, PERSON } = await import("../tools/build_hospital_web.mjs");
+const { build, PERSON, strictOk, update } = await import("../tools/build_hospital_web.mjs");
+/* Shane 2026-10-04 ("this is not accurate"): the quote must show the service itself; these are real quotes from the 2026-10-04 read */
+ok(!strictOk("ed.basic", "\u0e15\u0e31\u0e49\u0e07\u0e2d\u0e22\u0e39\u0e48\u0e14\u0e49\u0e32\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e2d\u0e32\u0e04\u0e32\u0e23\u0e01\u0e34\u0e15\u0e15\u0e34\u0e27\u0e31\u0e12\u0e19\u0e32 (\u0e2d\u0e38\u0e1a\u0e31\u0e15\u0e34\u0e40\u0e2b\u0e15\u0e38\u0e41\u0e25\u0e30\u0e09\u0e38\u0e01\u0e40\u0e09\u0e34\u0e19) \u0e28\u0e39\u0e19\u0e22\u0e4c\u0e01\u0e32\u0e23\u0e41\u0e1e\u0e17\u0e22\u0e4c") &&
+  strictOk("ed.basic", "\u0e2b\u0e49\u0e2d\u0e07\u0e09\u0e38\u0e01\u0e40\u0e09\u0e34\u0e19\u0e40\u0e1b\u0e34\u0e14\u0e15\u0e25\u0e2d\u0e14 24 \u0e0a\u0e31\u0e48\u0e27\u0e42\u0e21\u0e07") && strictOk("ed.basic", "Emergency Department, Floor 1"),
+  "strict check: a building named after the emergency department is not one; an emergency room open 24 hours is");
+ok(!strictOk("dx.xray", "\u0e17\u0e35\u0e21\u0e23\u0e31\u0e07\u0e2a\u0e35\u0e27\u0e34\u0e19\u0e34\u0e08\u0e09\u0e31\u0e22\u0e41\u0e25\u0e30\u0e23\u0e31\u0e07\u0e2a\u0e35\u0e23\u0e48\u0e27\u0e21\u0e23\u0e31\u0e01\u0e29\u0e32") && !strictOk("dx.xray", "a full panoramic X-ray machine that provides our dentist with a clear view") &&
+  !strictOk("dx.xray", "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e40\u0e2d\u0e01\u0e0b\u0e40\u0e23\u0e22\u0e4c\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c 3 \u0e21\u0e34\u0e15\u0e34") &&
+  strictOk("dx.xray", "chest X-ray, 3D mammogram") && strictOk("dx.xray", "\u0e28\u0e39\u0e19\u0e22\u0e4c\u0e2a\u0e48\u0e07\u0e40\u0e2a\u0e23\u0e34\u0e21\u0e2a\u0e38\u0e02\u0e20\u0e32\u0e1e \u0e23\u0e31\u0e07\u0e2a\u0e35\u0e27\u0e34\u0e19\u0e34\u0e08\u0e09\u0e31\u0e22"),
+  "strict check: a radiology team, a dental X-ray and a CT are not X-ray; a chest X-ray and a radiology service are");
+ok(!strictOk("trauma.team", "\u0e28\u0e39\u0e19\u0e22\u0e4c\u0e2d\u0e38\u0e1a\u0e31\u0e15\u0e34\u0e40\u0e2b\u0e15\u0e38\u0e41\u0e25\u0e30\u0e09\u0e38\u0e01\u0e40\u0e09\u0e34\u0e19 24 \u0e0a\u0e21.") && strictOk("trauma.team", "Trauma Center Level 1"),
+  "strict check: an accident and emergency centre is not a trauma team; a trauma centre is");
+ok(!strictOk("cc.icu", "Neonatal Intensive Care Unit (NICU) and Pediatric Intensive Care Unit (PICU)") && strictOk("cc.icu", "Intensive Care Unit (ICU) Our Intensive Care Unit is ready") &&
+  !strictOk("dx.ultrasound", "Ultrasound Guided Cadaveric Training & certification Board Certifications") && !strictOk("dx.ct", "X-RAY / CT-Scan Lorem Ipsum is simply dummy text"),
+  "strict check: a neonatal or paediatric ICU alone, a doctor's training and a template page do not document a service");
+{
+  const doc = { schema: "osap-hospital-web/1", facilities: [{ key: "x:th:t", name: "T", lat: 14, lon: 100, caps: {
+    "ed.basic": [{ url: "https://t.example/", excerpt: "\u0e2d\u0e32\u0e04\u0e32\u0e23\u0e01\u0e34\u0e15\u0e15\u0e34 (\u0e2d\u0e38\u0e1a\u0e31\u0e15\u0e34\u0e40\u0e2b\u0e15\u0e38\u0e41\u0e25\u0e30\u0e09\u0e38\u0e01\u0e40\u0e09\u0e34\u0e19)", sha256: "1".repeat(64) }],
+    "cc.icu": [{ url: "https://t.example/icu", excerpt: "\u0e2b\u0e2d\u0e1c\u0e39\u0e49\u0e1b\u0e48\u0e27\u0e22\u0e2b\u0e19\u0e31\u0e01", sha256: "2".repeat(64) }],
+    "dx.ct": [{ url: "https://t.example/ct", excerpt: "CT scan 24 hours", sha256: "3".repeat(64) }] } },
+    { key: "x:th:empty", name: "E", lat: 1, lon: 1, caps: { "dx.xray": [{ url: "https://e.example/", excerpt: "\u0e17\u0e35\u0e21\u0e23\u0e31\u0e07\u0e2a\u0e35\u0e27\u0e34\u0e19\u0e34\u0e08\u0e09\u0e31\u0e22", sha256: "4".repeat(64) }] } }] };
+  const asked = [];
+  const U = await update(doc, async (items) => { asked.push(...items); return items.map((it) => /\u0e2b\u0e19\u0e31\u0e01/.test(it.text) ? { en: "Intensive care ward", tool: "TestMT" } : { en: null, tool: null }); });
+  const f = U.doc.facilities;
+  ok(f.length === 1 && !f[0].caps["ed.basic"] && U.dropped === 2, "update: quotes that fail the stricter check are dropped, then capabilities and hospitals left with none");
+  ok(asked.length === 1 && asked[0].lang === "th" && f[0].caps["cc.icu"][0].excerpt_en === "Intensive care ward" && f[0].caps["cc.icu"][0].mt === "TestMT" &&
+    f[0].caps["cc.icu"][0].excerpt === "\u0e2b\u0e2d\u0e1c\u0e39\u0e49\u0e1b\u0e48\u0e27\u0e22\u0e2b\u0e19\u0e31\u0e01" && f[0].caps["cc.icu"][0].sha256 === "2".repeat(64) && !f[0].caps["dx.ct"][0].excerpt_en,
+    "update: only Thai quotes are translated; the English is stored beside the original with the tool named, and the fingerprint is unchanged");
+  const U2 = await update(U.doc, async () => { throw new Error("should not be asked"); }).catch((e) => ({ err: e.message }));
+  ok(U2.translated === 0 && U2.untranslated === 0, "update: a quote already translated is not sent again");
+}
 ok(["Asst. Prof. Somchai Jaidee, Emergency", "Prof. Nattachai Srisawat, M.D.", "Dr Somchai", "\u0e19\u0e1e.\u0e2a\u0e21\u0e0a\u0e32\u0e22", "\u0e23\u0e28.\u0e1e\u0e0d.\u0e1b\u0e23\u0e30\u0e19\u0e2d\u0e21", "\u0e1e.\u0e17. \u0e0a\u0e19\u0e30"].every((t) => PERSON.test(t)) &&
   !["CT scanner open 24 hours", "\u0e2b\u0e49\u0e2d\u0e07\u0e09\u0e38\u0e01\u0e40\u0e09\u0e34\u0e19 24 \u0e0a\u0e31\u0e48\u0e27\u0e42\u0e21\u0e07", "\u0e23\u0e1e\u0e28.\u0e02\u0e2d\u0e19\u0e41\u0e01\u0e48\u0e19", "\u0e42\u0e23\u0e07\u0e1e\u0e22\u0e32\u0e1a\u0e32\u0e25\u0e19\u0e32\u0e07\u0e23\u0e2d\u0e07"].some((t) => PERSON.test(t)),
   "website quotes naming a person (a title before a name, English or Thai) are recognised; service text and hospital names are not");
@@ -149,23 +178,28 @@ ok(ob && !ob.ok && /registry offline/.test(ob.err) && of && of.ok && of.n === 1 
     ["13", BKK, "โรงพยาบาลธนบุรี 2", "Thonburi 2 Hospital", "11640", "เอกชน", "รพ.เอกชน", "", "100", "", "", "", ""],
     ["13", BKK, "โรงพยาบาลเอ", "Same Hospital", "20001", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
     ["13", BKK, "โรงพยาบาลบี", "Same Hospital", "20002", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
-    ["13", BKK, "โรงพยาบาลไม่มีที่", "Nowhere Hospital", "20003", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""]]);
+    ["13", BKK, "โรงพยาบาลไม่มีที่", "Nowhere Hospital", "20003", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
+    ["13", BKK, "โรงพยาบาลกลางเมือง", "Klang Mueang Hospital", "20004", "สังกัดสำนักงานปลัดกระทรวงสาธารณสุข", "รพ.ทั่วไป", "", "300", "", "", "", ""]]);
   W("ha-accreditation.csv", [["h"], ["13", BKK, "โรงพยาบาลศิริราช", "13814", "", "", "ขั้นก้าวหน้า", "2024-09-26", "2028-09-25", ""]]);
   W("ha-pdsc.csv", [["h"], [BKK, "โรงพยาบาลธนบุรี", "โรคหลอดเลือดสมอง (Stroke)", "PDSC", "2025-01-01", "2028-01-01", ""], [BKK, "โรงพยาบาลไม่มีในรายชื่อ", "โรคหลอดเลือดสมอง", "PDSC", "2025-01-01", "2028-01-01", ""]]);
   W("ha-2p-safety.csv", [["h"], ["13814", "", "", "", "", "", "", "รพศ.(A) มีการเรียน-สอนครบทุกสาขา"]]);
   W("ha-hnc.csv", [["h"]]);
-  W("odm-health-facilities-th.csv", [["ID", "Ministry", "Department", "Agency", "Address", "Lat", "Long"], ["1", "", "", "x รพ.สต.ใกล้", "แขวงศิริราช เขตบางกอกน้อย จ.กรุงเทพมหานคร 10700", "13.7590", "100.4860"]]);
+  W("odm-health-facilities-th.csv", [["ID", "Ministry", "Department", "Agency", "Address", "Lat", "Long"], ["1", "", "", "x รพ.สต.ใกล้", "แขวงศิริราช เขตบางกอกน้อย จ.กรุงเทพมหานคร 10700", "13.7590", "100.4860"],
+    ["2", "", "", "โรงพยาบาลกลางเมือง จังหวัดกรุงเทพมหานคร", "แขวงบางรัก เขตบางรัก จ.กรุงเทพมหานคร 10500", "13.7300", "100.5200"],
+    ["3", "", "", "โรงพยาบาลธนบุรี จังหวัดกรุงเทพมหานคร", "แขวงบางรัก เขตบางรัก จ.กรุงเทพมหานคร 10500", "13.8500", "100.5800"]]);
   const osm = [R.osmEntry("r1", 13.7578, 100.4854, { name: "โรงพยาบาลศิริราช", "name:en": "Siriraj Hospital" }),
     R.osmEntry("n2", 13.7600, 100.4800, { name: "โรงพยาบาลธนบุรี", "addr:province": BKK }),
     R.osmEntry("n3", 13.7000, 100.5000, { name: "Same Hospital", "addr:province": BKK })];
   const { doc } = await R.build(dir, { osm });
   const by = Object.fromEntries(doc.hospitals.map((h) => [h.hcode, h]));
-  ok(doc.schema === "osap-th-registry/1" && doc.hospitals.length === 6 && doc.hospitals.every((h) => /^[0-9a-f]{64}$/.test(h.sha256)), "registry: one record per H code, each fingerprinted");
+  ok(doc.schema === "osap-th-registry/1" && doc.hospitals.length === 7 && doc.hospitals.every((h) => /^[0-9a-f]{64}$/.test(h.sha256)), "registry: one record per H code, each fingerprinted");
   ok(by["13814"].osm === "r1" && /nearest MOPH-listed facility/.test(by["13814"].coord_basis), "registry: a long official name is placed on its OpenStreetMap entry by its first part, province taken from the nearest MOPH facility");
   ok(by["13814"].level === "A" && /teaching in all specialties/.test(by["13814"].level_en) && by["13814"].ha.accredited && by["13814"].beds_open === 2136 && by["13814"].name_en === "Siriraj Hospital", "registry: MOPH level, HA accreditation and beds are read; English names are title-cased");
   ok(by["11645"].osm === "n2" && by["11640"].osm === "" && by["11640"].lat === null, "registry: a numbered branch is never placed on the main hospital's entry");
   ok(by["20001"].lat === null && by["20002"].lat === null && /claimed by more than one/.test(by["20001"].coord_note || ""), "registry: one OpenStreetMap entry claimed equally by two records goes to neither");
   ok(by["20003"].lat === null && /not placed/.test(by["20003"].coord_basis), "registry: a hospital with no match is kept, without a location");
+  ok(by["20004"].lat === 13.73 && by["20004"].osm === "" && /MOPH location/.test(by["20004"].coord_basis) && doc.stats.placed_moph === 1, "registry: a hospital OpenStreetMap lacks is placed on its MOPH location, whose name carries the province after it");
+  ok(by["11645"].osm === "n2" && /km apart; OpenStreetMap used/.test(by["11645"].coord_note || "") && doc.stats.coord_conflict === 1, "registry: when the MOPH location is more than 5 km from the named OpenStreetMap entry, the entry is kept and the gap noted");
   ok(by["11645"].programs.length === 1 && by["11645"].programs[0].caps.join() === "spec.stroke" && doc.stats.programmes_unmatched === 1, "registry: a certificate joins the one hospital of that name and province; others are counted as unmatched");
   ok(R.key("คณะแพทยศาสตร์โรงพยาบาลรามาธิบดี") === "รามาธิบดี" && R.ekey("Bangkok 8 Hospital") === "bangkok8" && R.ekey("Bangkok Hospital") === "bangkok", "registry: name keys drop generic words, never digits");
   fs.rmSync(dir, { recursive: true, force: true });

@@ -1,0 +1,6 @@
+[["n11093295609",61.81487,92.63863,"ru",{"aeroway":"helipad","icao":"UNJB"}],
+["w140965051",60.37412,93.02601,"ru",{"amenity":"hospital"}],
+["w1489168416",60.14975,92.41877,"ru",{"aeroway":"helipad"}],
+["w168234120",60.37646,93.02995,"ru",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"2","addr:street":"Советская улица"}],
+["w168234648",60.3743,93.02559,"ru",{"name":"ЦРБ Северо-Енисейского района","amenity":"hospital","phone":"+7 39160 21486","addr:housenumber":"2","addr:street":"Советская улица"}],
+["w352814663",60.37332,93.01185,"ru",{"name":"Аэропорт Северо-Енисейск","name:en":"Severo-Eniseysk Airport","aeroway":"aerodrome","icao":"UNIS","aerodrome:type":"public","wikidata":"Q7457983"}]]

@@ -40,14 +40,23 @@
   function loadIndex() {
     if (S.ix || S.ixBusy) return Promise.resolve(S.ix);
     S.ixBusy = true;
-    return getJson("data/cams/index.json" + bust()).then(function (j) { S.ixBusy = false; S.ix = j; S.ixErr = ""; paintSec(); return j; })
+    return getJson("data/cams/index.json" + bust()).then(withHidden).then(function (j) { S.ixBusy = false; S.ix = j; S.ixErr = ""; paintSec(); return j; })
       .catch(function () { S.ixBusy = false; S.ixErr = "The camera list could not be read just now."; paintSec(); return null; });
+  }
+  /* a hidden country's agencies are listed in their own sealed data/cams/<cc>-index.json (tools/seal_hidden.mjs), read only while
+     this device is unlocked; a list that cannot be read (still sealed) adds nothing */
+  function withHidden(j) {
+    var L = W.OSAP_LOCK; if (!j || !L || !L.isOpen()) return j;
+    return Promise.all(L.list().map(function (cc) { return getJson("data/cams/" + cc + "-index.json" + bust()).catch(function () { return null; }); })).then(function (xs) {
+      xs.forEach(function (x) { if (x && x.sources) j.sources = (j.sources || []).concat(x.sources); });
+      return j;
+    });
   }
   function src(id) { return ((S.ix || {}).sources || []).filter(function (s) { return s.id === id; })[0]; }
   function hits(b) {
     return ((S.ix || {}).sources || []).filter(function (s) {
       /* a kind of camera this copy of the page does not know how to fetch (a newer list read by an older page) is left out */
-      var x = s.box; return x && !OFF[typeOf(s)] && (!s.kind || KINDS[s.kind]) && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
+      var x = s.box; return x && !(W.OSAP_LOCK && W.OSAP_LOCK.hidden(s.cc)) && !OFF[typeOf(s)] && (!s.kind || KINDS[s.kind]) && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
     });
   }
   function loadList(id) {

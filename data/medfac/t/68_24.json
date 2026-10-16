@@ -1,2 +1,11 @@
 [["n1042032518",68.15026,25.82962,"fi",{"name":"Pokan lentokenttä","name:en":"Pokka Airfield","aeroway":"aerodrome","icao":"EFPA","wikidata":"Q11888541"}],
-["n4268829318",69.40585,25.83749,"fi",{"name":"Tereveyskeskus","amenity":"clinic","addr:city":"Karigasniemi","addr:postcode":"99950"}]]
+["n11046134582",69.34898,24.01949,"no",{"name":"Vuottašjávri sjøflyplass","operator":"Mosquito Air Taxi","website":"https://www.mosquitoairtaxi.com/","aeroway":"aerodrome","aerodrome:type":"seaplane"}],
+["n2352922033",69.47193,25.52136,"no",{"name":"Spesialistlegesenteret i Karasjok","amenity":"clinic","healthcare":"clinic"}],
+["n4268829318",69.40585,25.83749,"fi",{"name":"Tereveyskeskus","amenity":"clinic","addr:city":"Karigasniemi","addr:postcode":"99950"}],
+["n6761587093",69.64518,24.31826,"no",{"name":"Iešjávri","aeroway":"aerodrome"}],
+["n6761613797",69.52731,24.95613,"no",{"name":"Ravnastua","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["n6761613798",69.52902,24.39215,"no",{"name":"Nedre Mollisjok","aeroway":"aerodrome"}],
+["n6761617391",69.45733,25.46085,"no",{"name":"Maggi beach","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w318628153",69.4717,25.5218,"no",{"name":"Karasjok helsesenter","amenity":"doctors","healthcare":"clinic","healthcare:speciality":"general"}],
+["w338765693",69.48732,25.50237,"no",{"aeroway":"helipad"}],
+["w720489081",69.95882,24.96381,"no",{"name":"Gairasmoen","aeroway":"aerodrome","aerodrome:type":"airfield"}]]

@@ -1,0 +1,7 @@
+[["n1042081051",-3.49264,-74.7725,"pe",{"name":"Intuto Airport","aeroway":"aerodrome"}],
+["n10674407243",-3.80672,-75.05639,"pe",{"aeroway":"helipad"}],
+["n10674407244",-3.80698,-75.05598,"pe",{"aeroway":"helipad"}],
+["n10674407245",-3.8065,-75.05597,"pe",{"aeroway":"helipad"}],
+["n7083033818",-3.80638,-75.061,"pe",{"amenity":"clinic","operator":"Gobierno Regional","phone":"+51 65 251756","addr:full":"Caserio Villa Trompetero"}],
+["w1091730765",-3.80542,-75.04001,"pe",{"name":"Trompeteros Airport","aeroway":"aerodrome","icao":"SPDR","iata":"TDP","aerodrome:type":"regional","wikidata":"Q12695365"}],
+["w1091730777",-3.80752,-75.06346,"pe",{"name":"Centro de Salud Trompeteros","amenity":"clinic","healthcare":"clinic"}]]

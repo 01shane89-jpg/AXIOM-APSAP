@@ -1,0 +1,9 @@
+{"cc":"pw","at":"2026-10-07T11:06:47Z","base":"2026-10-07T11:05:06Z","m":[
+["n10976909616",3.01185,131.12709,{"man_made":"tower","tower:type":"communication"}],
+["n2853458336",7.04198,134.25746,{"man_made":"tower","tower:construction":"lattice_steel","tower:type":"communication"}],
+["n4856405788",8.08261,134.71731,{"man_made":"tower","tower:type":"communication"}],
+["n7826079553",7.45751,134.4777,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
+["n7826079554",7.45775,134.47792,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
+["n7826079555",7.45824,134.47787,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
+["n7826079556",7.4583,134.47813,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}]
+]}

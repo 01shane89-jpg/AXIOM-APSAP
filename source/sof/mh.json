@@ -30,13 +30,13 @@
    "src": "https://mh.usembassy.gov/health-alert-u-s-embassy-majuro-marshall-islands-august-27-2026/",
    "srcname": "U.S. Embassy Majuro",
    "coord_basis": "OpenStreetMap way/315534022",
-   "fp": "5b6d3b06b6d8891df825515a875e16942425405dd38c0ea71d6e162bbcf8c178",
+   "fp": "ffdf33a3f1ed1df45ce5ed7696f7eccfcf7ff45e63d3275186df2106973bbfb6",
    "web": "https://mh.usembassy.gov",
    "phone": "+692-247-4011",
    "phone_after_hours": "+692-247-4011",
    "phone_src": "https://mh.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -359,5 +359,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

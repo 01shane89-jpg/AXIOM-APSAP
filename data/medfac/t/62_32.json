@@ -1,0 +1,13 @@
+[["n2396028519",62.71497,32.75269,"ru",{"name":"Поликлиника","amenity":"clinic","phone":"+7 81457 34360","addr:street":"Комсомольская улица"}],
+["n4561908881",63.96289,32.01273,"ru",{"name":"Клиника им. Ерина","amenity":"clinic"}],
+["n4561908882",63.96347,32.0018,"ru",{"name":"Муезерская ЦРБ","amenity":"hospital","addr:housenumber":"2","addr:street":"улица Строителей"}],
+["n4830325904",62.20073,32.61222,"ru",{"name":"ФАП","amenity":"clinic","addr:housenumber":"4","addr:street":"Комсомольская улица"}],
+["n4872145880",62.47619,33.67845,"ru",{"name":"Амбулатория","amenity":"clinic","phone":"+7 81451 31378"}],
+["n7344543018",63.72318,33.9926,"ru",{"name":"ФАП","amenity":"clinic","healthcare":"clinic","addr:housenumber":"8","addr:street":"Центральная улица","addr:city":"Волдозеро","addr:postcode":"186420"}],
+["n8739952330",63.99135,33.57218,"ru",{"name":"ФАП","amenity":"clinic","healthcare":"clinic"}],
+["w1210828480",62.08446,32.38736,"ru",{"aeroway":"helipad"}],
+["w487669394",63.96292,32.01284,"ru",{"amenity":"clinic"}],
+["w490377208",63.55712,32.0382,"ru",{"amenity":"clinic","addr:housenumber":"4","addr:street":"Советская улица"}],
+["w491112024",62.71539,32.75378,"ru",{"amenity":"hospital"}],
+["w491633219",62.07935,32.35751,"ru",{"name":"Детская поликлиника","amenity":"clinic","addr:housenumber":"3","addr:street":"улица Шельшакова"}],
+["w491635778",62.07583,32.35584,"ru",{"amenity":"hospital"}]]

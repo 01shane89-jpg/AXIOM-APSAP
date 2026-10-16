@@ -229,6 +229,8 @@
   function rasters() {
     var out = [];
     map.eachLayer(function (l) {
+      /* the English Streets map is drawn by its own engine on the 2D map; 3D draws the same OpenStreetMap map from its plain tiles */
+      if (l.rasterTwin && map.hasLayer(l)) { var t = l.rasterTwin(); if (t) out.push({ urls: [t.url], z: 0, op: 1, min: 0, max: t.max, tms: false, attr: t.attr, base: true }); return; }
       if (!(l instanceof L.TileLayer) || !map.hasLayer(l)) return;
       /* the Elevation and LiDAR shading is multiplied into the 2D base map; 3D has no multiply, so it shades from the elevation instead */
       if (/(^| )osap-hs( |$)/.test(l.options.className || "")) return;

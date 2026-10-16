@@ -1,7 +1,8 @@
 // Headless check of the power grid section (assets/osap-power.js): its switches sit in Map overlays (Infrastructure); lines, substations
 // and plants load from OpenStreetMap (Overpass, answered here by a fixture) only when switched on and zoomed in, 200 kV and up at
-// region zoom and everything close in, coloured by voltage with a map legend; a busy server is reported, not hidden; the WRI plants
-// already in a country's reference data show at any zoom; outage headlines come from the news pool; classic layout on a phone.
+// region zoom and everything close in, coloured by voltage with a map legend; a busy server is reported, not hidden; the plants switch
+// hands over to the stored all-fuel plants (assets/osap-infra.js, fixture here) with the fuel filter under it and never asks Overpass;
+// outage headlines come from the news pool; classic layout on a phone.
 // Run from the repo root: node tests/power_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -23,7 +24,8 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const settle = (p, ms = 3500) => p.waitForTimeout(ms);
 const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s); return !!e && !e.hidden && getComputedStyle(e).display !== "none" && e.getClientRects().length > 0; }, s);
 
-// a small grid near Bangkok: one 500 kV, one 230 kV and one 115 kV line, a cable, two substations and two plants
+// a small grid near Bangkok: one 500 kV, one 230 kV and one 115 kV line, a cable, two substations and two plants (Overpass
+// plants are no longer drawn by this module)
 const FIX = { elements: [
   { type: "way", id: 1, tags: { power: "line", voltage: "500000;230000", name: "Test 500" }, geometry: [{ lat: 13.70, lon: 100.40 }, { lat: 13.80, lon: 100.60 }] },
   { type: "way", id: 2, tags: { power: "line", voltage: "230000" }, geometry: [{ lat: 13.72, lon: 100.45 }, { lat: 13.78, lon: 100.55 }] },
@@ -46,6 +48,11 @@ async function open(opts, hash = "", overpass = "ok") {
     return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FIX) });
   });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*overpass)/, (r) => r.abort());
+  /* the stored plants for Thailand: a big coal plant and a small solar farm */
+  await ctx.route(/\/data\/infra\/index\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ v: 1, at: "2026-10-04T00:00Z", sources: {}, countries: { th: { plant: 2 } } }) }));
+  await ctx.route(/\/data\/infra\/th\/plant\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ v: 1, cc: "th", layer: "plant", lines: [], items: [
+    { k: "plant", t: "coal", id: "wri:T1", nm: "Big plant", la: 13.71, lo: 100.49, s: "wri", u: "https://datasets.wri.org/", x: { fuel: "Coal", mw: 1200 }, fp: "ab".repeat(32) },
+    { k: "plant", t: "solar", id: "osm:w8", nm: "Solar farm", la: 13.77, lo: 100.51, s: "osm", u: "https://www.openstreetmap.org/way/8", x: { mw: 2 }, fp: "cd".repeat(32) }] }) }));
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + hash, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_POWER, null, { timeout: 60000 }); await settle(p);
@@ -54,7 +61,8 @@ async function open(opts, hash = "", overpass = "ok") {
 }
 const grid = (p) => p.evaluate(() => {
   const pp = document.querySelector(".leaflet-pwrpt-pane"), st = window.OSAP_POWER.state();
-  return { st, paths: st.drawn.lines, subs: pp ? pp.querySelectorAll(".pwr-sub").length : 0, plants: st.drawn.points + st.drawn.wri - (pp ? pp.querySelectorAll(".pwr-sub").length : 0),
+  const inf = window.OSAP_INFRA ? window.OSAP_INFRA.state() : { shown: {} };
+  return { st, paths: st.drawn.lines, subs: pp ? pp.querySelectorAll(".pwr-sub").length : 0, plants: inf.shown.plant || 0, osmPlants: st.drawn.points - (pp ? pp.querySelectorAll(".pwr-sub").length : 0),
     legend: /Power grid · voltage/.test(document.body.innerHTML) };
 });
 const om = async (p, want) => {
@@ -96,11 +104,19 @@ const om = async (p, want) => {
   ok(g.legend, "desktop: voltage legend on the map");
   await p.check('#pwr-sec input[data-pwr="subs"]'); await p.check('#pwr-sec input[data-pwr="plants"]'); await p.waitForTimeout(1800);
   g = await grid(p);
-  ok(g.subs === 2 && g.plants === 1, "desktop: region zoom shows substations and only the 100 MW+ plant (" + g.subs + " subs, " + g.plants + " plants)");
+  ok(g.subs === 2 && g.plants === 2 && g.osmPlants === 0, "desktop: substations from Overpass, plants from the stored all-fuel list, none from Overpass (" + g.subs + " subs, " + g.plants + " plants, " + g.osmPlants + " live)");
+  ok(await p.evaluate(() => !document.querySelector('#inf-sec input[data-inf="plant"]') || document.querySelector('#inf-sec input[data-inf="plant"]').closest(".mlrow").hidden), "desktop: one Power plants switch only (the power grid's)");
+  const chips = await p.evaluate(() => Array.from(document.querySelectorAll('#pwr-sec [data-inffuel] button[data-fuel]')).map((b) => b.textContent));
+  ok(chips.length === 2 && /Coal 1/.test(chips[0]) && /Solar 1/.test(chips[1]), "desktop: fuel filter under the plants switch, with counts: " + chips.join(" | "));
+  await p.click('#pwr-sec [data-inffuel] button[data-fuel="coal"]'); await p.waitForTimeout(400);
+  g = await grid(p);
+  ok(g.plants === 1, "desktop: coal filtered out leaves the solar farm (" + g.plants + ")");
+  await p.click('#pwr-sec [data-inffuel] button[data-fuel="*"]'); await p.waitForTimeout(400);
+  g = await grid(p);
+  ok(g.plants === 2, "desktop: Show all brings it back (" + g.plants + ")");
   await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 12, { animate: false }));
   await p.waitForFunction(() => / on screen\.$/.test(window.OSAP_POWER.state().msg), null, { timeout: 15000 }).catch(() => {});
   g = await grid(p);
-  ok(g.plants === 2, "desktop: close in, every plant (" + g.plants + ") " + g.st.msg + " z" + await p.evaluate(() => window.__asapMap.getZoom()));
   ok(/on screen/.test(g.st.msg), "desktop: count note: " + g.st.msg);
   await om(p, false);
   { const r = await p.evaluate(() => { const b = document.querySelector(".leaflet-pwrpt-pane .pwr-sub").getBoundingClientRect(); return [b.x + b.width / 2, b.y + b.height / 2]; }); await p.mouse.click(r[0], r[1]); }
@@ -123,6 +139,8 @@ const om = async (p, want) => {
   ok(queries.length === 2, "queries: one per view (" + queries.length + ")");
   ok(/voltage/.test(queries[0] || "") && !/substation/.test(queries[0] || ""), "queries: region zoom asks only for 200 kV+ lines");
   ok(/way\["power"="line"\];/.test(queries[1] || ""), "queries: close in asks for every line");
+  await p.evaluate(() => window.OSAP_POWER.set("plants", true)); await p.waitForTimeout(800);
+  ok(queries.every((q) => !/plant/.test(q)), "queries: Overpass is never asked for plants");
   await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 9, { animate: false }); }); await p.waitForTimeout(1500);
   ok(queries.length === 2, "queries: a view seen before is drawn from memory, not asked again");
   ok(errors.length === 0, "queries: no page errors " + errors.join(" | "));
@@ -173,14 +191,14 @@ const om = async (p, want) => {
   ok(errors.length === 0, "low zoom: no page errors " + errors.join(" | "));
   await ctx.close();
 }
-// ---------- WRI plants from the country's reference data, at any zoom ----------
+// ---------- big plants show zoomed out ----------
 {
-  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, "#ng/timeline");
-  const n = await p.evaluate(() => (((window.ASAP_SOF || {}).ng || {}).power || []).filter((i) => i.lat != null).length);
-  await p.evaluate(() => { window.__asapMap.setZoom(5, { animate: false }); window.OSAP_POWER.set("plants", true); }); await p.waitForTimeout(800);
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 5, { animate: false }); window.OSAP_POWER.set("plants", true); }); await p.waitForTimeout(1500);
   const g = await grid(p);
-  ok(n > 0 && g.plants === n, "Nigeria: the " + n + " WRI plants show zoomed out (" + g.plants + " drawn)");
-  ok(errors.length === 0, "Nigeria: no page errors " + errors.join(" | "));
+  ok(g.plants >= 1, "zoomed out: the stored plants show (" + g.plants + " drawn)");
+  ok(/Big plant|Power plants: 2/.test(await p.evaluate(() => window.OSAP_INFRA.state().plantMsg)), "zoomed out: plant count note: " + await p.evaluate(() => window.OSAP_INFRA.state().plantMsg));
+  ok(errors.length === 0, "zoomed out: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- phone, classic controls ----------

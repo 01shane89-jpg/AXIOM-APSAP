@@ -30,13 +30,13 @@
    "src": "https://pw.usembassy.gov/medical-assistance/",
    "srcname": "U.S. Embassy Koror",
    "coord_basis": "OpenStreetMap node/6139820921",
-   "fp": "b3c2b9533507ba591a4ff8dec7bd57e3e643699a705311d25a5e7299b4116066",
+   "fp": "d8120269a7ece298f4e57f863b9e37354d887cb042a321d2f06c4d4d623920d1",
    "web": "https://pw.usembassy.gov",
    "phone": "(680) 587-2920",
    "phone_after_hours": "680-750-8821 775",
    "phone_src": "https://pw.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -157,5 +157,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

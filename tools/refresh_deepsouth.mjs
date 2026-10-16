@@ -8,6 +8,8 @@
 // both are marked as machine-sorted. Items are unverified reports, never evidence. Items are kept for three years (merged by link).
 // Writes data/live/deepsouth.js. PROBE=1 writes probe-out/deepsouth.json instead (per-feed result and sample headlines), never data/.
 import fs from "node:fs";
+import path from "node:path";
+import os from "node:os";
 import { translateAll, saveCache, decodeEntities, forget } from "./translate.mjs";
 import { parseFeed } from "./feedparse.mjs";
 
@@ -28,6 +30,10 @@ async function get(url, accept) {
 
 import { classify, figure, place, relevant, markAlerts, KILLED, INJURED, placeSubst, placeMismatch } from "./deepsouth_lib.mjs";
 import { staleSearchResult } from "./conflict_lib.mjs";
+import { readIndex, plan as capturePlan, write as captureWrite, toCapture, toTranslation } from "./capture_lib.mjs";
+import { plan as claimPlan, RULES as CLAIM_RULES } from "./claim_lib.mjs";
+import { build as buildIncidents } from "./incident_lib.mjs";
+import { plan as decisionPlan, TITLE as DECISION_TITLE } from "./decision_lib.mjs";
 
 // Kept from refresh_news.mjs: a search engine's result list is read only where its robots.txt allows the path for every agent.
 const robotsCache = {};
@@ -261,6 +267,60 @@ for (const i of items) {
 markAlerts(items, (i) => [i.title, i.title_en, i.summary, i.summary_en].filter(Boolean).join(" "));
 const ok = status.some((s) => s.ok && s.id !== "ucdp") || ucdpStatus.ok;
 if (!ok) { console.error("every Deep South source failed; old file left untouched"); process.exit(1); }
+// Capture records (tools/capture_lib.mjs): every item read this run that the layer keeps is written once to data/captures/deepsouth,
+// append-only, with the source's own time, OSAP's first sighting and this run's time kept apart. A failure here is logged and
+// never stops the layer file below.
+try {
+  const EV_DIR = "data/captures/deepsouth", EV_RETAIN_DAYS = 365;
+  const registered = new Set(JSON.parse(fs.readFileSync("tools/sources/deepsouth.json", "utf8")).sources.map((s) => s.source_id));
+  const ctx = { collected: stamp.replace(" ", "T").replace(/Z$/, ""), retainDays: EV_RETAIN_DAYS,
+    sourceOf: (i) => (registered.has(i.feed) ? i.feed : "unregistered:" + (i.feed || "unknown")) };
+  const seenNow = new Set(fresh.map((i) => i.link));
+  const { records, index } = capturePlan(items.filter((i) => seenNow.has(i.link)), readIndex(EV_DIR), ctx);
+  const r = captureWrite(EV_DIR, records, index, ctx);
+  const late = records.filter((x) => x.time_check).length;
+  console.log(`Deep South captures: ${records.filter((x) => x.type === "capture").length} capture and ${records.filter((x) => x.type === "translation").length} translation records written` +
+    (late ? `, ${late} with a source time after this run` : "") + (r.dropped ? `, ${r.dropped} day files past retention removed` : ""));
+  // Claim records (tools/claim_lib.mjs): each statement a captured report makes (event kind, places, casualty figures), tied to its
+  // words, unassessed. Written once per capture revision; a translation that arrives later adds the claims only it supports.
+  try {
+    const CL_DIR = "data/claims/deepsouth";
+    const caps = items.filter((i) => seenNow.has(i.link) && /^https?:\/\//.test(i.link || "")).map((i) => {
+      const cap = toCapture(i, ctx); cap.rev = (index[cap.capture_id] || {}).rev || 1;
+      return { cap, tr: toTranslation(cap, i) };
+    });
+    const cl = claimPlan(caps, readIndex(CL_DIR), ctx.collected);
+    captureWrite(CL_DIR, cl.records, cl.index, ctx);
+    const by = {}; for (const c of cl.records) by[c.predicate] = (by[c.predicate] || 0) + 1;
+    console.log(`Deep South claims: ${cl.records.length} written ${JSON.stringify(by)} (rules ${CLAIM_RULES})`);
+  } catch (e) { console.error("Deep South claims not written:", e.message); }
+  // Analyst decisions (tools/decision_lib.mjs): the repository owner's decision issues, opened from the app's review panel, are read
+  // with the job's own token, checked against the stores and recorded once each in data/decisions/deepsouth (never pruned). What to
+  // tell each issue goes to a file outside the repo for tools/decisions_close.mjs, which answers and closes them after the commit.
+  const DEC_DIR = "data/decisions/deepsouth";
+  try {
+    const token = process.env.GITHUB_TOKEN, repo = process.env.GITHUB_REPOSITORY, owner = process.env.GITHUB_REPOSITORY_OWNER;
+    if (token && repo && owner) {
+      const url = "https://api.github.com/repos/" + repo + "/issues?state=open&creator=" + encodeURIComponent(owner) + "&per_page=100&sort=created&direction=asc";
+      const res = await fetch(url, { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-refresh" }, signal: AbortSignal.timeout(20000) });
+      if (!res.ok) throw new Error("issues HTTP " + res.status);
+      const issues = (await res.json()).filter((i) => String(i.title || "").startsWith(DECISION_TITLE));
+      const known = { captures: new Set(Object.keys(readIndex(EV_DIR))), claims: new Set(Object.keys(readIndex("data/claims/deepsouth"))) };
+      const d = decisionPlan(issues, owner, known, readIndex(DEC_DIR), ctx.collected);
+      captureWrite(DEC_DIR, d.records, d.index, { collected: ctx.collected });
+      fs.writeFileSync(path.join(process.env.RUNNER_TEMP || os.tmpdir(), "osap-decision-replies.json"), JSON.stringify(d.replies));
+      console.log(`Deep South analyst decisions: ${issues.length} decision issues open, ${d.records.length} recorded, ${d.replies.filter((r) => !r.recorded).length} refused`);
+    } else console.log("Deep South analyst decisions: no token, not read (a local run)");
+  } catch (e) { console.error("Deep South analyst decisions not read:", e.message); }
+  // Incident candidates (tools/incident_lib.mjs): which reports may describe the same event, rebuilt from the stores each run, with
+  // the analyst's recorded decisions applied on top. A projection (data/live/ds-incidents.json): it can be deleted and rebuilt.
+  try {
+    const inc = buildIncidents(EV_DIR, "data/claims/deepsouth", JSON.parse(fs.readFileSync("tools/places/deepsouth.json", "utf8")).places, stamp, DEC_DIR);
+    fs.mkdirSync("data/live", { recursive: true });
+    fs.writeFileSync("data/live/ds-incidents.json", JSON.stringify(inc));
+    console.log("Deep South incident candidates:", JSON.stringify(inc.totals));
+  } catch (e) { console.error("Deep South incident candidates not written:", e.message); }
+} catch (e) { console.error("Deep South captures not written:", e.message); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.ASAP_DS=" + JSON.stringify({ asof: stamp, keep_days: KEEP_DAYS, sources: status, items,
   ucdp: [...ucdp.values()].filter((e) => e.date >= cutoff.slice(0, 10)).sort((a, b) => (a.date < b.date ? 1 : -1)), ucdp_files: [...ucdpFiles] }).replace(/<\//g, "<\\/") + ";\n");

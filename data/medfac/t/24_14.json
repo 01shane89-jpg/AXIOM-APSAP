@@ -1,0 +1,12 @@
+[["n7362771285",25.92092,14.45105,"ly",{"name":"مركز لكل داء دواء التخصصي","name:en":"Health Special Center","amenity":"hospital","addr:street":"الزيتون-الجبار-معفن-بندليف"}],
+["n7884160885",25.92735,14.43318,"ly",{"name":"جمعية الهلال الاحمر -تراغن","name:en":"Libyan Red Crescent Society","amenity":"clinic"}],
+["w1227440065",24.82925,14.49829,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w1418637760",25.923,14.27388,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w1418637780",25.87595,14.1507,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w1418637795",25.92561,14.04765,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w328636129",24.92175,14.57944,"ly",{"name":"مستوصف قصر مسعود","name:en":"Dispensary of Ksar Messaoud","amenity":"clinic","healthcare":"clinic","addr:city":"قصر مسعود"}],
+["w328636130",24.8853,14.5266,"ly",{"name":"مستشفي القطرون","name:en":"Qatrun Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"القطرون"}],
+["w516863246",24.17719,14.54148,"ly",{"name":"مطار الويغ العسكري","name:en":"Al Wigh Airport","operator":"Military","aeroway":"aerodrome","icao":"HL57","wikidata":"Q287365"}],
+["w792058164",25.93383,14.42863,"ly",{"name":"مستشفي تراغن","name:en":"TRAGIN Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","addr:city":"تراغن"}],
+["w836079796",25.83844,15.00725,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w836083385",24.33006,14.26676,"ly",{"name":"مستشفي تجرهي","name:en":"Tjarhi Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator:type":"public"}]]

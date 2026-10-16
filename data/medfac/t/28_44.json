@@ -1,0 +1,10 @@
+[["n1705031064",28.41795,45.97734,"sa",{"name":"مستشفى نور خان","name:en":"Noor Moh'd khan's general hospital (1,682 patient )","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["n3709907173",28.36186,45.99439,"sa",{"name":"التأهيل الشامل","amenity":"hospital","healthcare":"hospital"}],
+["n4363484091",28.31111,45.95341,"sa",{"name":"مستشفى حفر الباطن المركزي","name:en":"Hafr Al Batin Central Hospital","amenity":"hospital","healthcare":"hospital","phone":"065270001","addr:street":"طريق الملك عبدالعزيز","opening_hours":"24/7"}],
+["n4398308091",28.39372,45.94056,"sa",{"name":"مستوصف السليمانيه","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"وزارة الصحة","operator:type":"government","addr:housenumber":"123","addr:street":"ابن حزم"}],
+["n4586142389",28.43131,45.98232,"sa",{"name":"مستشفى المعالي","name:en":"Al Maali Hospital","amenity":"hospital","healthcare":"hospital","phone":"0137200025","website":"https://www.almaali.sa/","addr:street":"حسان بن ثابت","addr:postcode":"39921","opening_hours":"24/7"}],
+["n5456442721",28.42195,45.92622,"sa",{"amenity":"hospital","healthcare":"hospital"}],
+["n6394954485",28.42724,45.82828,"sa",{"name":"الصحه السابع","name:en":"alsaba","amenity":"clinic","healthcare":"clinic"}],
+["w158268795",28.4141,45.97664,"sa",{"name":"مستشفى الملك خالد","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"وزارة الصحة","operator:type":"government"}],
+["w597093555",28.31099,45.95368,"sa",{"name":"مستشفى حفرالباطن المركزي","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w597093606",28.36154,45.99459,"sa",{"amenity":"hospital","healthcare":"hospital"}]]

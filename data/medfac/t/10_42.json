@@ -20,6 +20,8 @@
 ["w1239089805",11.54555,43.16513,"dj",{"aeroway":"helipad"}],
 ["w1239090015",11.55481,43.15667,"dj",{"aeroway":"helipad"}],
 ["w1239090154",11.13124,42.88272,"dj",{"aeroway":"helipad","surface":"ground"}],
+["w1376499330",11.35368,43.47721,"so",{"name":"Zeila Hospital  مستشفى زيلع","name:en":"Zeila Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"زيلع"}],
+["w1376502290",10.68275,43.94102,"so",{"name":"Lughaya Regional Hospital مستشفى لغهايا المديري","name:en":"Lughaya Regional Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"لغهايا"}],
 ["w228050145",11.60894,43.15396,"dj",{"name":"Hôpital Général Peltier مستشفى بلتيير العام","name:en":"Peltier General Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"surgery;neurology;orthopaedics","addr:city":"جيبوتي"}],
 ["w250227855",11.0032,42.1027,"dj",{"aeroway":"helipad"}],
 ["w250249212",11.10233,42.36651,"dj",{"aeroway":"helipad","surface":"asphalt"}],

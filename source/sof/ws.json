@@ -30,12 +30,12 @@
    "src": "https://ws.usembassy.gov/services/",
    "srcname": "U.S. Embassy in Samoa",
    "coord_basis": "Apia centre estimate; verify",
-   "fp": "55fd65cbb569d1adf7caf5004e7d217e3c85c927e5d191a53413e44372f0525a",
+   "fp": "dced4cac4eb283b71a2fa72697697c0732b4342417ec5e0817528f0efa4ac77d",
    "phone": "+685 21436",
    "phone_after_hours": "(685) 21631",
    "phone_src": "https://ws.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -183,13 +183,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1456108623",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "925da3603e3357259ff9f8f331fbda042b8ed6f88af5401bf3523889c84e2a56"
+   "asof": "2026-10-09",
+   "fp": "2d2cda8f70efb1c87d5501b33f093a2cafcbc6b96e9520e292beaf2990460427"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

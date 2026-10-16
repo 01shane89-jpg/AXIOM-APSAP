@@ -1,0 +1,10 @@
+[["n2256314390",60.72066,114.91586,"ru",{"name":"Мео-клиник","amenity":"clinic","healthcare":"clinic"}],
+["w1022773076",60.71952,114.81687,"ru",{"aeroway":"helipad"}],
+["w1022776165",60.72089,114.81945,"ru",{"aeroway":"helipad"}],
+["w1160654554",60.85166,114.70086,"ru",{"name":"ФАП Чамча","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2","addr:street":"Лесная улица","addr:city":"Чамча"}],
+["w159657686",60.72319,114.91544,"ru",{"name":"Районная поликлиника","amenity":"hospital","healthcare":"hospital","addr:housenumber":"40","addr:street":"Первомайская улица","addr:city":"Ленск","addr:postcode":"678144"}],
+["w206502860",60.72075,114.81601,"ru",{"name":"Аэропорт \"Ленск\"","name:en":"Lensk Airport","aeroway":"aerodrome","icao":"UERL","iata":"ULK"}],
+["w492043375",60.74694,114.90214,"ru",{"name":"ILS Lenszk","aeroway":"helipad"}],
+["w520430971",60.71996,114.91847,"ru",{"name":"Клиника матери и ребенка","amenity":"clinic","healthcare":"clinic","addr:housenumber":"3/1","addr:street":"улица Орджоникидзе","addr:city":"Ленск","addr:postcode":"678144"}],
+["w638192038",61.05507,114.38032,"ru",{"aeroway":"helipad"}],
+["w894756740",60.72826,114.90691,"ru",{"amenity":"hospital","healthcare":"hospital"}]]

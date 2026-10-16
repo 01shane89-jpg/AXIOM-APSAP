@@ -1,0 +1,13 @@
+[["n1042037169",-23.733,44.389,"mg",{"name":"Betioky Airport","aeroway":"aerodrome","icao":"FMSV","iata":"BKU","wikidata":"Q63849940"}],
+["n1042037171",-22.29888,44.53289,"mg",{"name":"Ankazoabo Airport","aeroway":"aerodrome","iata":"WAK","wikidata":"Q2875756"}],
+["n11980742970",-23.43706,44.50572,"mg",{"amenity":"hospital"}],
+["n12969116097",-22.55914,45.41423,"mg",{"name":"Hôpital manarapenitra","amenity":"hospital"}],
+["n14118721601",-22.92784,44.89218,"mg",{"name":"Hôpital Analalava","amenity":"hospital","phone":"+261333321940","website":"http://mail.Google.com","addr:street":"N7","addr:postcode":"620","opening_hours":"24/7"}],
+["n2446929718",-22.86131,45.80342,"mg",{"aeroway":"aerodrome"}],
+["n4634921471",-22.64159,45.32581,"mg",{"name":"Isalo Relais de la Reine","aeroway":"aerodrome","iata":"RLR"}],
+["n9371701805",-22.70187,45.21199,"mg",{"name":"Clinique Mikajy Ny Aina","amenity":"clinic"}],
+["n9396851017",-22.69499,45.22389,"mg",{"name":"Sri Lanka - Mada - Hospital Ilakaka","amenity":"hospital"}],
+["w1539984497",-23.71637,44.38247,"mg",{"name":"CHRD Betioky","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w1541002526",-23.49935,44.50373,"mg",{"name":"CHRD II Bezaha","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w190602038",-23.42357,45.0393,"mg",{"aeroway":"aerodrome"}],
+["w802126998",-22.55795,45.41311,"mg",{"name":"Centre Hospitalier de Référence de District Ranohira","amenity":"hospital","healthcare":"hospital"}]]

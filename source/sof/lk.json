@@ -38,12 +38,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/SriLanka.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "estimated from published address",
-   "fp": "fde3a2b66148113f2f038b86d993a3c5ec55d3a3cf45cfc53d2ef98c94b0bfca",
+   "fp": "60ae8428ecf6bfd3090308d371780814e1eb6d5cfa540242c36a14f48ef089a8",
    "phone": "+94 (11) 202-8500",
    "phone_after_hours": "011-202-8500",
    "phone_src": "https://lk.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -419,8 +419,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5722655131",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "87c09cc120e89dae3d345c694cdd3a4666996dcc8e4c26bb5b11d8ca781d8ec8"
+   "asof": "2026-10-09",
+   "fp": "e8efb1f6f1e21badbec78adf2658f13e778018000367e152414de8a63b664a99"
   },
   {
    "id": "sof:lk:xing:node-5722655151",
@@ -436,13 +436,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5722655151",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "377c74f15cf4fc92774b56abeacb8729c2d24298e7d77f03d692fd2b8f9f2780"
+   "asof": "2026-10-09",
+   "fp": "5773b0a60ffa58c91486c1707ca0de7b527defc383270b78bbe8738d18fb77db"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

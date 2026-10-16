@@ -41,10 +41,10 @@
     "html[data-cf] #atk-tools [data-atk=layout]{display:none!important}html[data-cf] .shell.rv-list #map{position:relative!important;left:auto!important;width:100%!important}" +
       "html[data-cf] .shell.rv-list #map .leaflet-control-container{display:block}html[data-cf] .shell.rv-list #map .areactl{display:flex}",
     // every other map pane is hidden, except the overlays a person switches on in the Layers menu (terrain, possible flashpoints,
-    // flood maps, road closures, weather, ground mobility, live aircraft) and the area drawn with Draw area: those draw only when switched on, and each data set
+    // flood maps, road closures, weather, ground mobility, live aircraft), the area drawn with Draw area and what Terrain analysis draws (viewshed, line of sight, slope): those draw only when switched on, and each data set
     // change switches the overlays off again
-    "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-sidespane-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-cfrep-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
-      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-lzpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane):not(.leaflet-pwrpane-pane):not(.leaflet-pwrpt-pane):not(.leaflet-comcov-pane):not(.leaflet-comchk-pane):not(.leaflet-bdrpane-pane):not(.leaflet-dcpt-pane):not(.leaflet-evpane-pane){visibility:hidden}",
+    "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-sidespane-pane):not(.leaflet-poppane-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-cfrep-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
+      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-lzpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane):not(.leaflet-pwrpane-pane):not(.leaflet-pwrpt-pane):not(.leaflet-comcov-pane):not(.leaflet-comchk-pane):not(.leaflet-bdrpane-pane):not(.leaflet-dcpt-pane):not(.leaflet-infpt-pane):not(.leaflet-infln-pane):not(.leaflet-evpane-pane):not(.leaflet-vspane-pane):not(.leaflet-vslines-pane){visibility:hidden}",
     "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}html.cfprinting #cf-print h2{font-size:12.5pt;margin:12px 0 4px}html.cfprinting #cf-print .cfpcols{display:flex;gap:24px;align-items:flex-start}html.cfprinting #cf-print .cfpt{border-collapse:collapse;font-size:9.5pt}html.cfprinting #cf-print .cfpt th,html.cfprinting #cf-print .cfpt td{border-bottom:1px solid #ccc;padding:2px 8px 2px 0;text-align:left}}",
     "#cf-rail[hidden]{display:none}#cf-rail .sec{padding:12px 14px;border-bottom:1px solid var(--line-soft)}#cf-rail h2{font-size:15px;margin:0 0 4px}#cf-rail h3{font-size:12.5px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}",
     "#cf-rail .cfsub{font-size:12px;color:var(--muted);margin:0 0 6px}#cf-rail .cfpart{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 0}#cf-rail .cfpart span{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:0 7px;background:var(--surface2)}",
@@ -76,7 +76,7 @@
 
   /* ---------- state ---------- */
   var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { kind: "", cc: "", q: "", days: 30, from: "", to: "", win: null, att: false, show: { front: true, ucdp: true, rep: true, prev: false } };
-  /* ---------- period: follows the page header (24 h, 7/30/90 days, all, custom); the tab's own list can narrow it ---------- */
+  /* ---------- period: follows the page header (24 h, 7/14/30/90 days, all, custom); the tab's own list can narrow it ---------- */
   var ALL = 36500;
   function headerPeriod() {
     var p = null; try { p = JSON.parse(localStorage.getItem("asap-period")); } catch (e) {}
@@ -538,7 +538,7 @@
       '<div class="fp" title="SHA-256 fingerprint: ' + esc(e.fp || "") + '">SHA-256 ' + esc((e.fp || "").slice(0, 16)) + "…</div>";
   }
   function periodSel() {
-    var opts = (F.win ? [[-1, F.win.label]] : F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]);
+    var opts = (F.win ? [[-1, F.win.label]] : F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [14, "14 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]);
     return '<select data-cff="days" aria-label="Period">' + opts.map(function (p) {
       return '<option value="' + p[0] + '"' + ((F.win ? p[0] === -1 : F.days === p[0]) ? " selected" : "") + ">" + esc(p[1]) + "</option>"; }).join("") + "</select>";
   }
@@ -834,7 +834,10 @@
   // panels (OSAP_CF_PANELS) filter their own lists with inPeriod, so every list in a conflict tab follows the chosen period
   // layers(id): this country's layer tabs the conflict has taken over (their records are the page's own, so the Master timeline and
   // the Timeline report can cover just this conflict); name(id): its short name
+  // items(data), grouped(items), family(item), kindName(kind): the tab's own record list, incident grouping and kind families, for
+  // additions that count incidents the way the tab does (assets/osap-cf-dspat.js)
   W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin,
+    items: allItems, grouped: grouped, family: family, kindName: kindName,
     layers: function (id) { var m = absorbed(); return Object.keys(m).filter(function (l) { return m[l] === id; }); },
     name: function (id) { var c = byId(id); return c ? c.short || c.name : ""; } };
 })();

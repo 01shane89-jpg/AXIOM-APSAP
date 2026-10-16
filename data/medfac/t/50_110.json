@@ -1,0 +1,8 @@
+[["n6399534100",51.34377,110.53199,"ru",{"aeroway":"helipad"}],
+["n6854832737",51.34489,110.53383,"ru",{"aeroway":"aerodrome"}],
+["w218432717",50.98842,111.54734,"ru",{"amenity":"clinic","healthcare":"clinic","addr:street":"Партизанская улица"}],
+["w273899932",51.36799,110.46709,"ru",{"amenity":"clinic","healthcare":"clinic"}],
+["w273900178",51.36626,110.46369,"ru",{"name":"НУЗ Узловая поликлиника","amenity":"clinic","healthcare":"clinic"}],
+["w534621501",51.74732,110.16604,"ru",{"name":"ФАП","amenity":"clinic","healthcare":"clinic","addr:housenumber":"4А","addr:street":"Больничная улица"}],
+["w535265625",51.97907,110.73567,"ru",{"name":"Амбулатория","amenity":"clinic","healthcare":"clinic","addr:housenumber":"66","addr:street":"улица Мангатай"}],
+["w682318755",51.36897,110.46754,"ru",{"name":"ГУЗ «Хилокская ЦРБ»","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+7 3022 217253","website":"https://crbhilok.ru/"}]]

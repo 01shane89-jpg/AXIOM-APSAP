@@ -6,6 +6,7 @@
 
 # script tags
 <script src="assets/osap-start.js"></script>
+<script src="assets/osap-lock.js"></script>
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-boolq.js"></script>
@@ -19,6 +20,7 @@
 <script src="assets/osap-share.js"></script>
 <script src="assets/osap-push.js"></script>
 <script src="assets/osap-health.js"></script>
+<script src="assets/osap-ds-review.js"></script>
 <script src="assets/osap-heat.js"></script>
 <script src="assets/osap-sides.js"></script>
 <script src="assets/osap-conflicts.js"></script>
@@ -27,12 +29,17 @@
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-cf-history.js"></script>
 <script src="assets/osap-cf-sites.js"></script>
+<script src="assets/osap-cf-deepsouth.js"></script>
+<script src="assets/osap-cf-dspat.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
+# on-device AI for the AI summaries: your AI server or OSAP's own model (assets/osap-ai.js; Settings > On-device AI)
+<script src="assets/osap-ai.js"></script>
 <script src="assets/osap-aoi.js"></script>
 <script src="assets/osap-mobility.js"></script>
 <script src="assets/osap-viewrep.js"></script>
 <script src="assets/osap-et.js"></script>
+<script src="assets/osap-socialstats.js"></script>
 <script src="assets/osap-geo.js"></script>
 <script src="assets/osap-measure.js"></script>
 <script src="assets/osap-tools.js"></script>
@@ -63,6 +70,7 @@ window.TSAP.areaApi
 
 # tidy screen: one view chooser (Overlays), one country picker, Reports/Settings menus (claude/ui-cleanup)
 <script src="assets/osap-tidy.js"></script>
+<script src="assets/osap-panels.js"></script>
 setSheet: function (s)
 refresh: function () { dsUi(); }
 
@@ -81,6 +89,7 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+<script src="assets/osap-analyst.js"></script>
 
 # timeline covers the open topic (Deep South / All Thailand) and the event report (claude/timeline-topic-scope)
 <div class="tlscope" id="tl-scope"
@@ -91,6 +100,8 @@ data-ev-tlr="1"
 
 # Comms tab: masts, radio and TV towers, phone coverage check (claude/comms-tab)
   function showComms() {
+# Comms planning: six tabs, PACE, power, link (claude/comms-planning)
+        ["assets/comms/radio-lib.js", "assets/osap-comms.js", "assets/osap-commsplan.js"].forEach(function (src) {
 # power grid section: plants, transmission lines, substations, outage reporting (claude/power-grid)
 <script src="assets/osap-power.js"></script>
 <script src="assets/osap-surveil.js"></script>
@@ -104,6 +115,11 @@ data-ev-tlr="1"
 <script src="assets/hospital-sources/web-provider.js"></script>
 <script src="assets/hospital-sources/osm-provider.js"></script>
 <script src="assets/hospital-sources/countries/th-provider.js"></script>
+<script src="assets/osap-facility-intel.js"></script>
+<script src="assets/osap-medplan-decide.js"></script>
+<script src="assets/osap-medplan-air.js"></script>
+<script src="assets/osap-sea.js"></script>
+<script src="assets/osap-seatransit.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
@@ -114,12 +130,29 @@ data-ev-tlr="1"
 # Country boundaries overlay in Map overlays (claude/country-borders)
 <script src="assets/osap-borders.js"></script>
 :not([data-bd])
+# Population density overlay in Map overlays (claude/population-density)
+<script src="assets/osap-pop.js"></script>
+:not([data-pop])
 # data centres, AI and all, in Map overlays > Infrastructure (claude/ai-datacenters)
 <script>window.OSAP_LATER("assets/osap-dc.js");</script>
+<script>window.OSAP_LATER("assets/osap-infra.js");</script>
 
 # offline maps and data: Offline map base map and the saving panel (claude/offline-mode)
 <script src="assets/osap-offline.js"></script>
 
 # move saved data to another device: encrypted backup file, no account (claude/move-device)
 <script src="assets/osap-move.js"></script>
+
+# the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
+<script src="assets/osap-guide.js"></script>
+<script src="assets/osap-i18n.js"></script>
 offline: { name: "Offline map"
+
+# terrain analysis: viewshed and line of sight (claude/terrain-viewshed)
+<script src="assets/osap-terrain.js"></script>
+data-terrain-open
+id="ml-viewsheds"
+
+# the map pans round the globe without end; drawings follow onto the world copy in view (claude/map-wrap-globe)
+/* ---------- the map wraps round the globe ----------
+L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {

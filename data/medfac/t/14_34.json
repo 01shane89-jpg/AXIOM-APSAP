@@ -1,0 +1,10 @@
+[["n11297513169",14.14053,34.33333,"sd",{"name":"MTI Clinic","amenity":"clinic"}],
+["n12615509902",14.04192,35.39152,"sd",{"name":"مركز روان كير","amenity":"clinic","opening_hours":"24/7"}],
+["n4586094205",14.28592,35.79008,"sd",{"name":"Airport","aeroway":"aerodrome"}],
+["w1065897381",15.35585,35.7305,"sd",{"name":"مطار حلفا الجديدة","name:en":"New Halfa Airport","aeroway":"aerodrome","icao":"HSNW","iata":"NHF","wikidata":"Q7008011"}],
+["w1066028112",14.92514,35.87702,"sd",{"name":"مطار خشم القربة","name:en":"Khashm El Girba Airport","aeroway":"aerodrome","icao":"HSKG","iata":"GBU","wikidata":"Q6400843"}],
+["w1323648096",14.03913,35.38797,"sd",{"name":"مستشفى القضارف التعليمى للعيون","name:en":"Gedaref Eye Teaching Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w1323648100",14.04236,35.39329,"sd",{"name":"2 مركز شاكرين","amenity":"clinic","healthcare":"clinic"}],
+["w748983525",14.05684,35.47744,"sd",{"name":"مركز صحي الشميلياب","name:en":"Health care Center","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"الصندوق القومي للتامين الصحي","operator:type":"public"}],
+["w786555236",14.03996,35.38735,"sd",{"name":"مستشفى القضارف التعليمي","name:en":"Gadarif Educational Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"شارع المستشفي"}],
+["w786582586",14.05738,35.36998,"sd",{"name":"مستشفى التاهيل","name:en":"Rehabilitation Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"مدخل المدينة"}]]

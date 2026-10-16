@@ -1,53 +1,39 @@
 // Deep South matching helpers for tools/refresh_deepsouth.mjs (no network): place names, relevance, kind and casualty figures.
-// District centres (approximate, placed by hand from the district seats; precision "approx"). Thai names match Thai text.
-const D = [
-  ["Pattani", "Mueang Pattani", 6.868, 101.250, ["Mueang Pattani", "Pattani town", "Pattani city"], ["เมืองปัตตานี"]],
-  ["Pattani", "Khok Pho", 6.717, 101.083, ["Khok Pho"], ["โคกโพธิ์"]],
-  ["Pattani", "Nong Chik", 6.843, 101.177, ["Nong Chik"], ["หนองจิก"]],
-  ["Pattani", "Panare", 6.861, 101.490, ["Panare"], ["ปะนาเระ"]],
-  ["Pattani", "Mayo", 6.722, 101.420, ["Mayo"], ["มายอ"]],
-  ["Pattani", "Thung Yang Daeng", 6.664, 101.451, ["Thung Yang Daeng"], ["ทุ่งยางแดง"]],
-  ["Pattani", "Sai Buri", 6.701, 101.617, ["Sai Buri", "Saiburi"], ["สายบุรี"]],
-  ["Pattani", "Mai Kaen", 6.627, 101.672, ["Mai Kaen"], ["ไม้แก่น"]],
-  ["Pattani", "Yaring", 6.866, 101.368, ["Yaring"], ["ยะหริ่ง"]],
-  ["Pattani", "Yarang", 6.752, 101.300, ["Yarang"], ["ยะรัง"]],
-  ["Pattani", "Kapho", 6.610, 101.553, ["Kapho"], ["กะพ้อ"]],
-  ["Pattani", "Mae Lan", 6.657, 101.240, ["Mae Lan"], ["แม่ลาน"]],
-  ["Yala", "Mueang Yala", 6.540, 101.281, ["Mueang Yala", "Yala town", "Yala city"], ["เมืองยะลา"]],
-  ["Yala", "Betong", 5.773, 101.072, ["Betong"], ["เบตง"]],
-  ["Yala", "Bannang Sata", 6.263, 101.253, ["Bannang Sata", "Bannang Sta"], ["บันนังสตา"]],
-  ["Yala", "Than To", 6.143, 101.226, ["Than To"], ["ธารโต"]],
-  ["Yala", "Yaha", 6.489, 101.134, ["Yaha"], ["ยะหา"]],
-  ["Yala", "Raman", 6.478, 101.430, ["Raman"], ["รามัน"]],
-  ["Yala", "Kabang", 6.402, 101.031, ["Kabang"], ["กาบัง"]],
-  ["Yala", "Krong Pinang", 6.430, 101.280, ["Krong Pinang"], ["กรงปินัง"]],
-  ["Narathiwat", "Mueang Narathiwat", 6.426, 101.823, ["Mueang Narathiwat", "Narathiwat town", "Narathiwat city"], ["เมืองนราธิวาส"]],
-  ["Narathiwat", "Tak Bai", 6.259, 102.053, ["Tak Bai"], ["ตากใบ"]],
-  ["Narathiwat", "Bacho", 6.522, 101.657, ["Bacho", "Ba Cho"], ["บาเจาะ"]],
-  ["Narathiwat", "Yi-ngo", 6.391, 101.700, ["Yi-ngo", "Yingo", "Yi Ngo"], ["ยี่งอ"]],
-  ["Narathiwat", "Ra-ngae", 6.297, 101.727, ["Ra-ngae", "Rangae", "Ra Ngae", "Tanyong Mas", "Tanyongmas"], ["ระแงะ", "ตันหยงมัส"]],
-  ["Narathiwat", "Rueso", 6.392, 101.522, ["Rueso", "Rue So"], ["รือเสาะ"]],
-  ["Narathiwat", "Si Sakhon", 6.230, 101.500, ["Si Sakhon"], ["ศรีสาคร"]],
-  ["Narathiwat", "Waeng", 5.940, 101.840, ["Waeng"], ["แว้ง"]],
-  ["Narathiwat", "Sukhirin", 5.903, 101.717, ["Sukhirin"], ["สุคิริน"]],
-  ["Narathiwat", "Su-ngai Kolok", 6.030, 101.970, ["Su-ngai Kolok", "Sungai Kolok", "Sungai Golok", "Su-ngai Ko-lok", "Sungai Kolok"], ["สุไหงโก-ลก", "สุไหงโกลก"]],
-  ["Narathiwat", "Su-ngai Padi", 6.100, 101.870, ["Su-ngai Padi", "Sungai Padi"], ["สุไหงปาดี"]],
-  ["Narathiwat", "Chanae", 6.070, 101.660, ["Chanae"], ["จะแนะ"]],
-  ["Narathiwat", "Cho-airong", 6.240, 101.860, ["Cho-airong", "Cho Airong", "Choairong"], ["เจาะไอร้อง"]],
-  ["Songkhla", "Chana", 6.910, 100.740, ["Chana district"], ["อำเภอจะนะ", "อ.จะนะ"]],
-  ["Songkhla", "Thepha", 6.830, 100.970, ["Thepha"], ["เทพา"]],
-  ["Songkhla", "Na Thawi", 6.730, 100.690, ["Na Thawi"], ["นาทวี"]],
-  ["Songkhla", "Saba Yoi", 6.620, 100.930, ["Saba Yoi"], ["สะบ้าย้อย"]],
-];
-const PROV = { Pattani: [6.87, 101.25, ["Pattani"], ["ปัตตานี"]], Yala: [6.54, 101.28, ["Yala"], ["ยะลา"]], Narathiwat: [6.43, 101.82, ["Narathiwat"], ["นราธิวาส"]] };
+// Places come from tools/places/deepsouth.json (ids, Thai and English names, approximate district-seat centres). Thai names match Thai text.
+import fs from "fs";
+export const GAZ = JSON.parse(fs.readFileSync(new URL("./places/deepsouth.json", import.meta.url), "utf8"));
+const GPROV = Object.fromEntries(GAZ.places.filter((p) => p.level === "province").map((p) => [p.id, p]));
+const D = GAZ.places.filter((p) => p.level === "district").map((p) => [GPROV[p.parent].name, p.name, p.centre[0], p.centre[1], p.names.en, p.names.th, p.id]);
+const PROV = Object.fromEntries(GAZ.places.filter((p) => p.level === "province" && p.match !== false).map((p) => [p.name, [p.centre[0], p.centre[1], p.names.en, p.names.th, p.id]]));
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const wordRe = (names) => new RegExp("\\b(?:" + names.map(esc).join("|") + ")\\b", "i");
-const DIST = D.map(([prov, name, lat, lon, en, th]) => ({ prov, name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
-const PROVS = Object.entries(PROV).map(([name, [lat, lon, en, th]]) => ({ name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
+const DIST = D.map(([prov, name, lat, lon, en, th, id]) => ({ id, prov, name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
+const PROVS = Object.entries(PROV).map(([name, [lat, lon, en, th, id]]) => ({ id, name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
 const REGION = /\b(?:deep south|southern border provinces|restive south|southern insurgen\w*|BRN|Barisan Revolusi Nasional|Patani)\b|\bselatan Thailand\b|ชายแดนภาคใต้|ชายแดนใต้|จังหวัดชายแดนใต้|สามจังหวัดภาคใต้|บีอาร์เอ็น|ปาตานี|ศอ\.บต\.|กอ\.รมน\.ภาค 4|กอ\.รมน\. ภาค 4/i;
 // Hat Yai and Songkhla alone are outside the conflict area unless the text is about the insurgency
 const SONGKHLA = /\b(?:Songkhla|Hat Yai)\b|สงขลา|หาดใหญ่/i;
 const SECURITY = /\b(?:bomb\w*|blast|explo\w+|IED|gunm[ae]n|shot|shoot\w*|gunfire|killed|kill\w*|dead|murder\w*|attack\w*|ambush\w*|arson|torch\w*|set (?:on )?fire|burn\w*|insurgen\w*|militant\w*|separatist\w*|rebel\w*|raid\w*|arrest\w*|clash\w*|firefight|siege|surround\w*|ranger\w*|paramilitary|defen[cs]e volunteer\w*|checkpoint|peace (?:talk|dialogue|process)\w*|martial law|emergency decree|security forces?|ISOC|curfew|violen\w*|unrest|hostage|grenade|landmine|mortar)\b|ระเบิด|ยิง|คนร้าย|ลอบ|วางเพลิง|เผา|ปะทะ|ปิดล้อม|ตรวจค้น|ทหารพราน|อส\.|ชรบ\.|ผู้ก่อความไม่สงบ|ก่อเหตุ|ความไม่สงบ|พูดคุยสันติสุข|สันติสุข|เสียชีวิต|บาดเจ็บ|จับกุม|หมายจับ|กฎอัยการศึก|พ\.ร\.ก\.ฉุกเฉิน|ป่วนใต้|ไฟใต้|\b(?:letupan|bom|serangan|tembak\w*|pengganas|militan)\b/i;
+
+// The Malaysian side of the border (2026-10-14, Thai southern border build): Malaysian border towns, the crossings and the Kolok
+// river. A report naming one of them counts for the Deep South when it is about the border (smuggling, illegal crossings, jetties,
+// arrests, weapons, drugs) or about security; it is placed at that town, marked as the Malaysian side, and never given a Thai district.
+const MY_PLACES = [
+  ["Rantau Panjang", "Kelantan", 6.02, 101.98, ["Rantau Panjang"]],
+  ["Pengkalan Kubor", "Kelantan", 6.23, 102.09, ["Pengkalan Kubor"]],
+  ["Bukit Bunga", "Kelantan", 5.88, 101.85, ["Bukit Bunga"]],
+  ["Sungai Golok (Kolok river)", "Kelantan", 6.0, 101.98, ["Sungai Golok", "Sg Golok", "Golok river", "Kolok river"]],
+  ["Pasir Mas", "Kelantan", 6.05, 102.14, ["Pasir Mas"]],
+  ["Tumpat", "Kelantan", 6.2, 102.17, ["Tumpat"]],
+  ["Jeli", "Kelantan", 5.7, 101.84, ["Jeli"]],
+  ["Pengkalan Hulu", "Perak", 5.7, 101.0, ["Pengkalan Hulu", "Pengkalan Ulu"]],
+  ["Bukit Kayu Hitam", "Kedah", 6.5, 100.42, ["Bukit Kayu Hitam"]],
+  ["Durian Burung", "Kedah", 6.44, 100.76, ["Durian Burung"]],
+  ["Padang Besar", "Perlis", 6.66, 100.32, ["Padang Besar"]],
+  ["Wang Kelian", "Perlis", 6.69, 100.19, ["Wang Kelian"]],
+].map(([name, state, lat, lon, en]) => ({ id: "MY-" + name.toLowerCase().replace(/[^a-z]+/g, "-").replace(/-+$/, ""), name, state, lat, lon, en: wordRe(en) }));
+const BORDERW = /\b(?:smuggl\w*|contraband|border|illegal (?:jett(?:y|ies)|crossings?|immigrants?|routes?)|jett(?:y|ies)|seiz\w*|weapons?|firearms?|guns?|drugs?|syabu|ganja|trafficking|seludup\w*|penyeludup\w*|sempadan|jeti haram|PATI|rampas\w*|dadah|senjata|tangkap\w*|ditahan|AKPS|GOF|Pasukan Gerakan Am)\b/i;
+export function myPlace(text) { for (const m of MY_PLACES) if (m.en.test(text)) return m; return null; }
+export function myBorder(text) { return !!myPlace(text) && BORDERW.test(text); }
 
 // Football and other sport ("shot", "ยิง" = to score) are not security news
 const SPORT = /\b(?:football|soccer|league|FC|goal\w*|match|tournament|striker|futsal)\b|ฟุตบอล|ไทยลีก|ลีก|ยิงประตู|บุกชนะ|บุกแพ้|เสมอ|ทดเจ็บ|นักเตะ|ฟุตซอล/i;
@@ -65,23 +51,60 @@ const KINDS = [
   ["statistics", /\b(?:statistic\w*|incidents? (?:this|last) (?:year|month)|since 2004|year-to-date|\d[\d,]* incidents)\b|สถิติ/i],
 ];
 export function classify(text) { for (const [k, re] of KINDS) if (re.test(text)) return k; return "other"; }
+// the kind and the words that decided it (for claim evidence); null when nothing matched
+export function kindWords(text) { for (const [k, re] of KINDS) { const m = String(text || "").match(re); if (m) return { kind: k, words: m[0].trim() }; } return null; }
 const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12 };
 // Casualty figures only when the headline states them plainly (under 100, so a long-run toll is never read as one incident's)
 export function figure(text, re) {
   const m = text.match(re); if (!m) return null;
+  if (/\b(?:no|not)\s*$/i.test(text.slice(0, m.index))) return null;
   const n = NUM[m[1].toLowerCase()] || +m[1];
   return Number.isInteger(n) && n > 0 && n < 100 ? n : null;
 }
-export const KILLED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+\w+){0,3}?\s+(?:killed|dead|die[ds]?|slain)\b/i;
-export const INJURED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+\w+){0,3}?\s+(?:injured|wounded|hurt)\b/i;
+// the same figure with the words that state it
+export function figureWords(text, re) {
+  const n = figure(String(text || ""), re); return n == null ? null : { n, words: String(text).match(re)[0] };
+}
+// The number must belong to the casualty word: the words between may not be another number, another casualty word, "and"
+// ("two men shot and killed a policeman" is one death, "two killed and 16 wounded" is 16 wounded) or a count of something else
+// ("15 shots killed"). A number after "no" is a denial ("no one was injured or killed"): figure() drops it.
+const BETWEEN = "(?:\\s+(?!(?:\\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|killed|dead|died|dies|slain|injured|wounded|hurt|and|or|shots|rounds|bullets|times|incidents|riots|attacks|years?|days?|hours?)\\b)\\w+){0,3}?";
+const NUMS = "\\b(\\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\b";
+export const KILLED = new RegExp(NUMS + BETWEEN + "\\s+(?:killed|dead|die[ds]?|slain)\\b", "i");
+export const INJURED = new RegExp(NUMS + BETWEEN + "\\s+(?:injured|wounded|hurt)\\b", "i");
 
 export function place(texts) {
-  for (const t of texts) { if (!t) continue; for (const d of DIST) if (d.en.test(t) || d.th.test(t)) return { n: d.name + " district, " + d.prov, la: d.lat, lo: d.lon, p: "approx", prov: d.prov }; }
-  for (const t of texts) { if (!t) continue; for (const p of PROVS) if (p.en.test(t) || p.th.test(t)) return { n: p.name + " province", la: p.lat, lo: p.lon, p: "province", prov: p.name }; }
+  for (const t of texts) { if (!t) continue; for (const d of DIST) if (d.en.test(t) || d.th.test(t)) return { n: d.name + " district, " + d.prov, la: d.lat, lo: d.lon, p: "approx", prov: d.prov, id: d.id }; }
+  for (const t of texts) { if (!t) continue; for (const p of PROVS) if (p.en.test(t) || p.th.test(t)) return { n: p.name + " province", la: p.lat, lo: p.lon, p: "province", prov: p.name, id: p.id }; }
+  for (const t of texts) { if (!t) continue; const m = myPlace(t); if (m) return { n: m.name + " (" + m.state + ", Malaysia)", la: m.lat, lo: m.lon, p: "approx", prov: m.state + " (Malaysia)", id: m.id, side: "my" }; }
   return null;
 }
+// Every gazetteer place named in the texts, with the words that named it (the evidence for a location claim).
+// texts: [{ field, text }]. A district found means its province is not listed again from the same words.
+// level is the most precise place the words support ("district" or "province"); the centre is never an exact location.
+const AMBIG = Object.fromEntries(GAZ.places.filter((p) => p.ambiguity).map((p) => [p.id, p.ambiguity]));
+export function mentions(texts) {
+  const out = [], seen = new Set();
+  for (const { field, text } of texts) {
+    if (!text) continue;
+    for (const d of DIST) for (const [lang, re] of [["th", d.th], ["en", d.en]]) {
+      const m = String(text).match(re); if (!m || seen.has(d.id + field)) continue;
+      seen.add(d.id + field);
+      out.push({ id: d.id, level: "district", name: d.name, prov: d.prov, field, words: m[0], lang, ...(AMBIG[d.id] ? { ambiguity: AMBIG[d.id] } : {}) });
+    }
+    const provs = new Set(out.filter((o) => o.field === field).map((o) => o.prov));
+    for (const p of PROVS) for (const [lang, re] of [["th", p.th], ["en", p.en]]) {
+      const m = String(text).match(re); if (!m || provs.has(p.name) || seen.has(p.id + field)) continue;
+      seen.add(p.id + field);
+      out.push({ id: p.id, level: "province", name: p.name, prov: p.name, field, words: m[0], lang });
+    }
+  }
+  return out;
+}
 export function relevant(f, text) {
-  if (!SECURITY.test(text) || SPORT.test(text)) return false;
+  if (SPORT.test(text)) return false;
+  if (myBorder(text)) return true;
+  if (!SECURITY.test(text)) return false;
   if (f.all) return true;
   if (DIST.some((d) => d.en.test(text) || d.th.test(text)) || PROVS.some((p) => p.en.test(text) || p.th.test(text))) return true;
   return REGION.test(text) || false;
@@ -94,7 +117,7 @@ export function relevant(f, text) {
 const TIER_DOMAINS = [
   ["official", /(^|\.)(southpeace|isoc|police9|p9\.police|royalthaipolice|prd|sbpac|narathiwat|pattani|yala|songkhla|railway)\.(go|co|or)\.th$|(^|\.)rta\.mi\.th$|(^|\.)(rmp|kln)\.gov\.my$/],
   ["independent", /(^|\.)(isranews\.org|thaipbs\.or\.th|thaipbsworld\.com|nationthailand\.com|bangkokpost\.com|khaosodenglish\.com|khaosod\.co\.th|thaiexaminer\.com|prachatai(english)?\.com|matichon\.co\.th|thairath\.co\.th|dailynews\.co\.th|mgronline\.com|thethaiger\.com|thainewsroom\.com|deepsouthwatch\.org)$/],
-  ["international", /(^|\.)(reuters\.com|apnews\.com|bernama\.com|aljazeera\.com|thestar\.com\.my|malaymail\.com|nst\.com\.my|freemalaysiatoday\.com|scmp\.com|bbc\.(com|co\.uk)|afp\.com|france24\.com|channelnewsasia\.com|straitstimes\.com)$/],
+  ["international", /(^|\.)(reuters\.com|apnews\.com|bernama\.com|aljazeera\.com|thestar\.com\.my|malaymail\.com|nst\.com\.my|freemalaysiatoday\.com|thesun\.my|bharian\.com\.my|hmetro\.com\.my|sinarharian\.com\.my|utusan\.com\.my|kosmo\.com\.my|scmp\.com|bbc\.(com|co\.uk)|afp\.com|france24\.com|channelnewsasia\.com|straitstimes\.com)$/],
 ];
 export function tierOf(i) {
   if (i.ftier) return i.ftier;

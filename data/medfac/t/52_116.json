@@ -1,0 +1,10 @@
+[["n1042058469",52.3333,116.833,"ru",{"name":"Аэродром \"Укурей\"","name:en":"Ukurey Air Base","aeroway":"aerodrome","military":"airfield","wikidata":"Q7878336"}],
+["n2364214408",52.24368,117.69495,"ru",{"amenity":"hospital"}],
+["n6502741094",53.06655,117.50576,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w259931917",52.51749,117.01318,"ru",{"name":"Поликлиника","amenity":"clinic","phone":"+7 30265 21330","website":"http://chern-crb.oms09.ru/","addr:housenumber":"21","addr:street":"Советская улица"}],
+["w259931941",52.51821,117.01015,"ru",{"name":"Поликлиника","amenity":"clinic","addr:housenumber":"30","addr:street":"улица Калинина"}],
+["w358826193",52.11743,116.10019,"ru",{"name":"Амбулатория","amenity":"clinic"}],
+["w516865099",52.51765,117.00956,"ru",{"name":"ГУЗ «Чернышевская ЦРБ»","amenity":"hospital","emergency":"yes","phone":"+7 830265 22088","website":"http://chern-crb.oms09.ru/","addr:housenumber":"32","addr:street":"улица Калинина"}],
+["w638976226",52.24155,117.70209,"ru",{"name":"Сретенская районная больница №1","amenity":"hospital","healthcare":"hospital","phone":"+7 30246 31193"}],
+["w638976233",52.20392,117.54909,"ru",{"name":"ГУЗ «Сретенская ЦРБ»","amenity":"hospital","healthcare":"hospital"}],
+["w639060964",52.21488,117.52982,"ru",{"aeroway":"helipad"}]]

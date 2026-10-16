@@ -1,0 +1,11 @@
+[["n1982603420",70.19895,28.17423,"no",{"name":"Tana Helsesenter","amenity":"hospital","emergency":"yes"}],
+["n1982616418",70.19917,28.17718,"no",{"emergency":"ambulance_station"}],
+["n2917300900",70.26321,28.15425,"no",{"name":"Masjok","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1231771843",70.08645,29.66585,"no",{"aeroway":"helipad"}],
+["w1539105389",70.1774,28.61273,"no",{"aeroway":"helipad","surface":"asphalt"}],
+["w382908068",70.87147,29.03043,"no",{"name":"Berlevåg lufthavn","name:en":"Berlevåg Airport","operator":"Avinor","website":"https://avinor.no/en/airport/berlevag-airport/","aeroway":"aerodrome","icao":"ENBV","iata":"BVG","aerodrome:type":"international","wikidata":"Q619876"}],
+["w411359425",70.06489,29.84677,"no",{"name":"Vadsø lufthavn","name:en":"Vadsø Airport","operator":"Avinor","website":"https://avinor.no/en/airport/vadso-airport/","aeroway":"aerodrome","icao":"ENVD","iata":"VDS","aerodrome:type":"international","wikidata":"Q182789"}],
+["w584817089",70.59974,29.69156,"no",{"name":"Båtsfjord lufthavn","name:en":"Båtsfjord Airport","operator":"Avinor","website":"https://avinor.no/en/airport/batsfjord-airport/","aeroway":"aerodrome","icao":"ENBS","iata":"BJF","aerodrome:type":"international","wikidata":"Q2265643"}],
+["w674795366",70.87491,28.91956,"no",{"aeroway":"helipad"}],
+["w731752764",70.20097,28.192,"no",{"name":"Tana Bru Heliport","name:en":"Tana Bru","aeroway":"heliport"}],
+["w731752766",70.20095,28.19201,"no",{"aeroway":"helipad"}]]

@@ -1,0 +1,11 @@
+[["n1042037124",-17.85006,44.92111,"mg",{"name":"Morafenobe Airport","aeroway":"aerodrome","iata":"TVA"}],
+["n1042037152",-16.74528,44.48039,"mg",{"name":"Besalampy Airport","aeroway":"aerodrome","icao":"FMNQ","iata":"BPY"}],
+["n1964119338",-17.69595,45.08699,"mg",{"name":"Bemolanga","aeroway":"aerodrome"}],
+["n663455768",-16.10229,45.32587,"mg",{"name":"Hôpital de Soalala","amenity":"hospital","healthcare":"hospital"}],
+["n663455961",-16.10138,45.35817,"mg",{"name":"Soalala","aeroway":"aerodrome","icao":"FMNO","iata":"DWB","wikidata":"Q7549760"}],
+["n666449709",-16.42322,45.37356,"mg",{"name":"Kapiloza","aeroway":"aerodrome"}],
+["n7051628854",-16.12679,45.0162,"mg",{"aeroway":"aerodrome"}],
+["w1176849264",-17.81451,44.92334,"mg",{"name":"Centre Hospitalier de Référence de District de Morafenobe","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w1448179415",-16.74413,44.48366,"mg",{"name":"Besalampy Airport","aeroway":"aerodrome","icao":"FMNQ","iata":"BPY","wikidata":"Q4896170"}],
+["w290863928",-16.59486,44.4537,"mg",{"aeroway":"aerodrome"}],
+["w595555421",-16.00855,45.87129,"mg",{"name":"Service de Santé de District Mitsinjo","amenity":"hospital","healthcare":"hospital"}]]

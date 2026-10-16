@@ -625,6 +625,212 @@
    "lang": "th",
    "tier": "independent",
    "all": true
+  },
+  {
+   "id": "my-nst",
+   "outlet": "New Straits Times",
+   "url": "https://www.nst.com.my/feed",
+   "lang": "en",
+   "tier": "international"
+  },
+  {
+   "id": "my-thesun",
+   "outlet": "The Sun (Malaysia)",
+   "url": "https://thesun.my/rss",
+   "lang": "en",
+   "tier": "international"
+  },
+  {
+   "id": "my-malaymail",
+   "outlet": "Malay Mail",
+   "url": "https://www.malaymail.com/feed/rss/malaysia",
+   "lang": "en",
+   "tier": "international"
+  },
+  {
+   "id": "my-fmt",
+   "outlet": "Free Malaysia Today",
+   "url": "https://www.freemalaysiatoday.com/category/nation/feed/",
+   "lang": "en",
+   "tier": "international"
+  },
+  {
+   "id": "my-fmt-bm",
+   "outlet": "Free Malaysia Today (Berita)",
+   "url": "https://www.freemalaysiatoday.com/category/bahasa/feed/",
+   "lang": "ms",
+   "tier": "international"
+  },
+  {
+   "id": "my-bharian",
+   "outlet": "Berita Harian",
+   "url": "https://www.bharian.com.my/feed",
+   "lang": "ms",
+   "tier": "international"
+  },
+  {
+   "id": "my-hmetro",
+   "outlet": "Harian Metro",
+   "url": "https://www.hmetro.com.my/feed",
+   "lang": "ms",
+   "tier": "international"
+  },
+  {
+   "id": "my-sinar",
+   "outlet": "Sinar Harian",
+   "url": "https://www.sinarharian.com.my/rssFeed/211",
+   "lang": "ms",
+   "tier": "international"
+  },
+  {
+   "id": "my-utusan",
+   "outlet": "Utusan Malaysia",
+   "url": "https://www.utusan.com.my/feed/",
+   "lang": "ms",
+   "tier": "international"
+  },
+  {
+   "id": "my-kosmo",
+   "outlet": "Kosmo",
+   "url": "https://www.kosmo.com.my/feed/",
+   "lang": "ms",
+   "tier": "international"
+  },
+  {
+   "id": "bing-my-rantau-panjang",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Rantau%20Panjang&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-sungai-golok",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Sungai%20Golok&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-pengkalan-hulu",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Pengkalan%20Hulu&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-bukit-kayu-hitam",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Bukit%20Kayu%20Hitam&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-pengkalan-kubor",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Pengkalan%20Kubor&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-padang-besar",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Padang%20Besar&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-wang-kelian",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Wang%20Kelian&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-penyeludupan-bukit-kayu-hitam",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=penyeludupan%20Bukit%20Kayu%20Hitam&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-rantau-panjang-tangkap",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Rantau%20Panjang%20tangkap&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-seludup-sempadan-kelantan",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=seludup%20sempadan%20Kelantan&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-pati-sempadan-thailand-kelantan",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=PATI%20sempadan%20Thailand%20Kelantan&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-jeti-haram-sungai-golok",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=jeti%20haram%20Sungai%20Golok&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-kelantan-border-smuggling",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Kelantan%20border%20smuggling&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-site-bernama-com-southern-thailand-peace",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Abernama.com%20southern%20Thailand%20peace&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-malaysia-facilitator-thailand-peace-brn",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Malaysia%20facilitator%20Thailand%20peace%20BRN&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-pattani-peace-talks-malaysia",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Pattani%20peace%20talks%20Malaysia&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-my-brn-dialog-damai",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=BRN%20dialog%20damai&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
   }
  ]
 }

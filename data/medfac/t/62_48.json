@@ -1,0 +1,12 @@
+[["n3155317473",62.16652,49.0873,"ru",{"name":"Лечебный корпус","amenity":"hospital","healthcare":"hospital"}],
+["n3155317475",62.1664,49.08648,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["n6616727881",62.02608,49.32521,"ru",{"name":"Амбулатория","amenity":"clinic"}],
+["w1251139277",62.17196,49.74236,"ru",{"aeroway":"helipad"}],
+["w1251139303",62.01319,49.40331,"ru",{"aeroway":"helipad"}],
+["w159528976",63.42563,48.70127,"ru",{"name":"Центральная районная больница","amenity":"hospital"}],
+["w159707619",63.45656,48.89983,"ru",{"name":"амбулатория","amenity":"hospital","addr:housenumber":"140","addr:street":"Центральная улица"}],
+["w411131590",62.22912,49.998,"ru",{"amenity":"hospital"}],
+["w48202445",63.47377,48.84115,"ru",{"name":"Аэропорт Кослан","aeroway":"aerodrome"}],
+["w539158985",63.76776,48.63406,"ru",{"name":"ФАП","amenity":"clinic","addr:housenumber":"113","addr:street":"Центральная улица","addr:city":"Чернутьево"}],
+["w904093065",62.07468,48.63942,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w921601498",62.23145,48.9264,"ru",{"amenity":"clinic","healthcare":"clinic"}]]

@@ -1,4 +1,5 @@
-[["n11383174345",-18.36227,23.53349,"bw",{"name":"Kwando-Lebala Airstrip","aeroway":"aerodrome","icao":"FBKW"}],
+[["n1042039125",-18.11605,23.38896,"na",{"name":"Lianshulu Lodge Airstrip","aeroway":"aerodrome","icao":"FYLS","iata":"LHU","wikidata":"Q20451038"}],
+["n11383174345",-18.36227,23.53349,"bw",{"name":"Kwando-Lebala Airstrip","aeroway":"aerodrome","icao":"FBKW"}],
 ["n11383190534",-18.44243,23.68801,"bw",{"name":"Kings Pool Airstrip","aeroway":"aerodrome","icao":"FBKP"}],
 ["n11384944099",-18.5676,23.50998,"bw",{"name":"Selinda Old Airport","aeroway":"aerodrome"}],
 ["n11384944105",-18.57894,23.48324,"bw",{"name":"Selinda Airport","aeroway":"aerodrome","icao":"FBSL"}],
@@ -35,7 +36,9 @@
 ["n8498138009",-18.90259,22.5944,"bw",{"name":"Kadizora Airstrip","aeroway":"aerodrome"}],
 ["n8679071117",-19.98683,23.42461,"bw",{"name":"Doctors Inn","amenity":"hospital","healthcare":"hospital","addr:street":"Pulane Rd","wikidata":"Q131822296"}],
 ["n9250969618",-19.96734,23.44915,"bw",{"name":"Maun Private Hospital","amenity":"hospital","healthcare":"hospital","wikidata":"Q131822303"}],
+["w1047591902",-18.24957,23.65338,"na",{"name":"Sangwali Health Centre","amenity":"clinic","healthcare":"clinic"}],
 ["w1182630417",-19.31426,22.95011,"bw",{"name":"Piajio Airstrip","aeroway":"aerodrome","icao":"FBPJ"}],
+["w1210504736",-18.03024,22.18958,"na",{"name":"Omega Airport","aeroway":"aerodrome","icao":"FYOE","iata":"OMG","wikidata":"Q11824649"}],
 ["w1218537860",-19.16754,22.04939,"bw",{"aeroway":"helipad"}],
 ["w1227728796",-18.96099,22.3722,"bw",{"name":"Guma Lagoon Camp Helipad","aeroway":"helipad","surface":"concrete"}],
 ["w1227730781",-18.9547,22.81417,"bw",{"name":"Vumbura Airport","aeroway":"aerodrome","icao":"FBVM"}],
@@ -76,4 +79,5 @@
 ["w694585131",-18.53404,23.65915,"bw",{"name":"Chobe Airstrip","aeroway":"aerodrome","icao":"FBCH"}],
 ["w714381106",-19.14936,23.78754,"bw",{"name":"Khwai River Airport","aeroway":"aerodrome","icao":"FBKR","iata":"KHW","wikidata":"Q1657019"}],
 ["w729743054",-19.19731,23.43551,"bw",{"name":"Xakanaka Airstrip","aeroway":"aerodrome"}],
-["w729744225",-19.2154,23.43586,"bw",{"name":"Xakanaxa Airstrip","operator":"Botswana Department of Wildlife and National Parks","aeroway":"aerodrome"}]]
+["w729744225",-19.2154,23.43586,"bw",{"name":"Xakanaxa Airstrip","operator":"Botswana Department of Wildlife and National Parks","aeroway":"aerodrome"}],
+["w945124023",-18.20604,23.8761,"na",{"name":"Batubaja Clinic","amenity":"clinic","healthcare":"clinic"}]]

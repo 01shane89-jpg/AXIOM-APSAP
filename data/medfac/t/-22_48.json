@@ -1,0 +1,10 @@
+[["n11109446806",-21.21354,48.35512,"mg",{"amenity":"hospital"}],
+["n11903157769",-20.31884,48.516,"mg",{"amenity":"hospital"}],
+["w1182218155",-21.23135,48.30085,"mg",{"name":"Hôpital Sainte Anne","amenity":"hospital","healthcare":"hospital","operator":"EKAR","operator:type":"religious"}],
+["w1186897880",-20.04945,48.13323,"mg",{"name":"Centre Hospitalier de District Niveau II Marolambo","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w1561019591",-20.64874,48.51371,"mg",{"name":"Aérodrome de Nosy Varika","aeroway":"aerodrome"}],
+["w193120267",-21.20183,48.35823,"mg",{"name":"Aéroport de Mananjary","aeroway":"aerodrome","icao":"FMSM","iata":"MNJ","wikidata":"Q6746910"}],
+["w299168040",-21.21355,48.3551,"mg",{"name":"Centre Hospitalier de Référence de District Mananjary","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w609285443",-21.22632,48.33916,"mg",{"name":"Dispensaire ECAR","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Communauté des soeurs Saint Paul de Chartres","operator:type":"religious","addr:city":"Mananjary","addr:postcode":"317"}],
+["w818134711",-20.58849,48.53497,"mg",{"name":"Centre Hospitalier de Référence de District Nosy Varika","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w818642922",-21.74267,48.04417,"mg",{"name":"Fondation Médicale Ampasimanjeva","amenity":"hospital","healthcare":"hospital","operator":"Fondation Akbaraly","operator:type":"private"}]]

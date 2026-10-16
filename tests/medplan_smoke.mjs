@@ -23,6 +23,8 @@ await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
+const TILES = { mode: "", osm: 0, esri: 0, now: 0, max: 0 };
+const PNG1 = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
 /* a small made-up neighbourhood round 13.75 N, 100.50 E */
@@ -83,6 +85,13 @@ function osrmRoute(url) {
   return { code: "Ok", routes: [{ duration: d, distance: d * 10, geometry: { type: "LineString", coordinates: [pts[0], [(pts[0][0] + pts[1][0]) / 2, pts[0][1]], pts[1]] },
     legs: [{ steps: [{ name: "Rama IV Road", distance: 5000 }, { name: "", distance: 50 }, { name: "Sukhumvit Road", ref: "3", distance: 2500 }, { name: "Soi 1", distance: 300 }] }] }] };
 }
+function osrmAlts(url) {
+  const pts = new URL(url).pathname.split("/").pop().split(";").map((x) => x.split(",").map(Number)), d = secsTo(pts[1][0], pts[1][1]);
+  const step = (n, at) => ({ name: n, distance: 5000, duration: 300, maneuver: { type: "depart", location: at, bearing_after: 90 } });
+  const line = (k) => [pts[0], [(pts[0][0] + pts[1][0]) / 2, pts[0][1] + k], pts[1]];
+  return { code: "Ok", routes: [0, 0.2].map((k, i) => ({ duration: d * (1 + i * 0.3), distance: d * 10 * (1 + i * 0.4), geometry: { type: "LineString", coordinates: line(k) },
+    legs: [{ distance: d * 10, duration: d, steps: [step(i ? "Bypass Road" : "Rama IV Road", pts[0])] }] })) };
+}
 function iso(url) {
   const j = JSON.parse(new URL(url).searchParams.get("json")), c = j.locations[0], ring = (d) => [[c.lon - d, c.lat - d], [c.lon + d, c.lat - d], [c.lon + d, c.lat + d], [c.lon - d, c.lat + d], [c.lon - d, c.lat - d]];
   return { type: "FeatureCollection", features: j.contours.map((x) => ({ type: "Feature", properties: { contour: x.time }, geometry: { type: "Polygon", coordinates: [ring(x.time / 300)] } })) };
@@ -140,12 +149,24 @@ async function open(opts, o) {
       calls.overpass++; return overpassFails ? r.fulfill({ status: 504, body: "" }) : J(r, OSM);
     }
     if (/\/table\/v1\//.test(u)) { calls.osrm++; return o.osrmFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrm(u)); }
+    /* the Route tab's alternates (phase 3 P/A/C): two lines, the second slower round a bend */
+    if (/\/route\/v1\/.*alternatives=3/.test(u)) { calls.alt = (calls.alt || 0) + 1; return o.altFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrmAlts(u)); }
     if (/\/route\/v1\//.test(u)) { calls.route++; return o.osrmFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrmRoute(u)); }
     if (/valhalla.*sources_to_targets/.test(u)) { calls.vhm++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhMatrix(u)); }
+    if (/valhalla.*\/route\?/.test(u) && /exclude_locations/.test(decodeURIComponent(u))) { calls.vhx = (calls.vhx || 0) + 1; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhRoute(u)); }
     if (/valhalla.*\/route\?/.test(u)) { calls.vhr++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhRoute(u)); }
     if (/valhalla/.test(u)) { calls.iso++; return J(r, iso(u)); }
     if (/query\.wikidata\.org/.test(u) && /wikibase%3Aaround|wikibase:around/.test(u)) { calls.wdh = (calls.wdh || 0) + 1; return o.wdFails ? r.fulfill({ status: 504, body: "" }) : J(r, WDH); }
     if (/query\.wikidata\.org/.test(u)) { calls.wd++; return J(r, WD); }
+    /* print map tiles (off unless a check sets TILES): "half" fails OpenStreetMap's odd columns, the Esri street map stands in */
+    if (TILES.mode && /tile\.openstreetmap\.org\/|World_Street_Map/.test(u)) {
+      const osm = /openstreetmap/.test(u), x = osm ? +u.split("/").slice(-2)[0] : 0;
+      if (osm) { TILES.osm++; TILES.now++; TILES.max = Math.max(TILES.max, TILES.now); } else TILES.esri++;
+      return new Promise((res) => setTimeout(res, osm ? 150 : 0)).then(() => {
+        if (osm) TILES.now--;
+        return osm && TILES.mode === "half" && x % 2 ? r.fulfill({ status: 503, body: "" }) : r.fulfill({ status: 200, contentType: "image/png", headers: { "access-control-allow-origin": "*" }, body: PNG1 });
+      });
+    }
     if (/api\.open-meteo\.com\/v1\/forecast/.test(u)) { if (/hourly=visibility,wind_gusts_10m,cloud_cover_low/.test(u)) calls.meteo++; return J(r, meteo()); }
     return r.abort();
   });
@@ -208,6 +229,10 @@ async function openPlan(p) {
   await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (!m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
   ok(await p.evaluate(() => document.querySelector('#atk-tools [data-atk="medplan"]').getAttribute("aria-pressed") === "false"), "desktop: closing the plan releases the Med plan button");
   ok(!/Medical plan/.test(await areaMenu(p)), "desktop: still not in the Area menu once an area is drawn");
+  /* phase 4: only a confirmed aircraft competes with the road. These checks confirm one at Test Air Rescue with the same legs
+     the potential estimate counts (no call, approval or handoff time), so the air times below are the same either way. */
+  await p.evaluate((A) => { const n = Date.now === window.__realNow ? Date.now() : window.__realNow(), a = window.OSAP_MEDAIR.makeAsset(Object.assign({}, A, { last_confirmed: new Date(n - 3600000).toISOString() }), new Date(n).toISOString());
+    localStorage.setItem("osap-medair-th", JSON.stringify([a])); }, { provider: "Test Air Rescue", base_name: "Test Air Rescue", base_lat: 13.9, base_lon: 100.6, status: "CONFIRMED", valid_h: 48, call_min: 0, approval_min: 0, handoff_min: 0, ground_min: 10, launch_min: 15, cruise_kn: 120, night_capable: "yes", day_capable: "yes" });
   await openPlan(p);
   ok(await p.evaluate(() => !!window.OSAP_MEDPLAN && !document.getElementById("medplan").hidden), "desktop: the Med plan button opens the plan for the drawn area");
   ok(/Centred on the centre of the area/.test(await p.textContent("#medplan")), "desktop: with no point of injury set, the plan is centred on the area's centre");
@@ -248,14 +273,15 @@ async function openPlan(p) {
   const rt = await p.textContent("#mp-rt");
   ok(/Primary: H3 Far North Hospital/.test(rt) && /Secondary: H2 Sourced Trauma Centre/.test(rt) && /Tertiary: H1 Trauma Test Hospital/.test(rt), "desktop: routes to the Primary, Secondary and Tertiary hospitals");
   const pst = await p.textContent("#mp-pst");
-  ok(/Primary\s*H3 Far North Hospital/.test(pst) && /Secondary\s*H2 Sourced Trauma Centre/.test(pst) && /Tertiary\s*H1 Trauma Test Hospital/.test(pst), "desktop: Primary, Secondary and Tertiary named at the top of the plan");
+  ok(/Primarymajor trauma · \d+ min by (road|air)( · bypassed)?H3 Far North Hospital/.test(pst) && /Secondary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H2 Sourced Trauma Centre/.test(pst) && /Tertiary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H1 Trauma Test Hospital/.test(pst), "desktop: Primary, Secondary and Tertiary named at the top of the plan, each with a small role label");
+  ok(await p.evaluate(() => !document.querySelector("#mp-pst table.mppst th") && [...document.querySelectorAll("#mp-pst table.mppst .mprole")].every((x) => x.getBoundingClientRect().height < 24)), "pick cards: the role is a small label, not a red block (Shane 2026-10-04)");
   ok(/Primary for major trauma: Trauma Level IV \(official designation, reported\), \d+ min from injury by (road|air) \(inside golden hour\); documented: official trauma designation/.test(pst) && /Tertiary for major trauma: Trauma Level I \(/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
   const roles = await p.evaluate(() => [...document.querySelectorAll("#mp-pst table.mproles tbody tr")].map((r) => [...r.children].map((c) => c.textContent)));
   ok(roles.length === 4 && /^Major trauma/.test(roles[0][0]) && /Far North Hospital/.test(roles[0][1]) && /Sourced Trauma Centre/.test(roles[0][2]) && /Trauma Test Hospital/.test(roles[0][3])
     && /Severe head injury/.test(roles[1][0]) && /Distant Burn Centre/.test(roles[1][3]) && /Wider search: nothing within \d+ km has this documented/.test(roles[1][3]) && /Distant Burn Centre/.test(roles[2][3])
-    && /Complex limb/.test(roles[3][0]) && /Gap/.test(roles[3][3]) && /No hospital within \d+ km, nor any of the 1 documented hospitals farther out \(up to 1500 km\), has documented orthopaedic/i.test(roles[3][3])
-    && /Nearest with part documented: H\d+ Distant Burn Centre, [\d.]+ km \(plastic surgery and ICU documented; orthopaedic surgery and vascular surgery not\)/i.test(roles[3][3]),
-    "desktop: a role table per casualty type; with nothing near documented, the wider search finds the nearest documented hospital; a type no documented hospital covers is a gap that says so " + JSON.stringify(roles).slice(0, 400));
+    && /Complex limb/.test(roles[3][0]) && /No hospital within \d+ km, nor any of the 1 documented hospitals farther out \(up to 1500 km\), has documented orthopaedic/i.test(roles[3][3])
+    && /Gap/.test(roles[3][3]) && /Reference only, not eligible: nearest with part documented, H\d+ Distant Burn Centre, [\d.]+ km \(plastic surgery and ICU documented; orthopaedic surgery and vascular surgery not\)/i.test(roles[3][3]),
+    "desktop: a role table per casualty type; with nothing near documented, the wider search finds the nearest documented hospital; a type no documented hospital covers is a gap that says so " + JSON.stringify(roles[3]));
   ok(await p.evaluate(() => { const r = [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => /Distant Burn Centre/.test(x.textContent)); return !!r && /Beyond the \d+ km search: added as a hospital with documented capability/.test(r.textContent); }),
     "desktop: the hospital found by the wider search is listed and marked");
   ok(await p.evaluate(() => { const f = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.major_burn" && x.role === "tertiary")[0]; return f.state === "filled" && f.choice.met.join() === "spec.burn,cc.icu,surg.plastic"; }),
@@ -264,15 +290,38 @@ async function openPlan(p) {
      Primary and Secondary are both bypassed and kept as stabilisation options */
   const bt = await p.evaluate(() => { const R = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.major_trauma"), g = (k) => R.filter((x) => x.role === k)[0];
     return { p: [g("primary").stop, g("primary").stabilisation_option, (g("secondary").bypassed[0] || {}).reason, !!(g("secondary").bypassed[0] || {}).via_time], s: g("secondary").stop, t: [g("tertiary").stop, g("tertiary").via && g("tertiary").via.from] }; });
-  ok(JSON.stringify(bt) === JSON.stringify({ p: [false, true, "direct_route_faster_to_required_care", true], s: false, t: [true, "secondary"] }) && /POI → Tertiary/.test(roles[0][0]) && /Bypass: go direct to Secondary/.test(roles[0][1]) && /Stabilisation option/.test(roles[0][1]) && /Bypass: go direct to Tertiary/.test(roles[0][2]),
+  ok(JSON.stringify(bt) === JSON.stringify({ p: [false, true, "direct_inside_golden_hour", true], s: false, t: [true, "secondary"] }) && /POI → Tertiary/.test(roles[0][0]) && /Bypass: go direct to Secondary/.test(roles[0][1]) && /Stabilisation option/.test(roles[0][1]) && /Bypass: go direct to Tertiary/.test(roles[0][2]),
     "desktop: bypass by time to required care: direct to Tertiary by air inside the golden hour, Primary and Secondary kept as stabilisation options " + JSON.stringify(bt) + " " + roles[0].join(" | ").slice(0, 300));
   await p.fill('#mp-pst [data-mpf="dwell"]', "0"); await p.waitForTimeout(1100);
-  ok(/Time at a stop \(0 min\)|\(0 min\) plus transfer/.test(await p.textContent("#mp-pst")), "desktop: the time at a stop can be set, and the comparison uses it");
+  ok(/its time there \(0 min\), transfer activation/.test(await p.textContent("#mp-pst")), "desktop: the time at a stop can be set, and the comparison uses it");
+  await p.fill('#mp-pst [data-mpf="handoff"]', "2"); await p.waitForTimeout(1100);
+  ok(/plus handoff \(2 min\)/.test(await p.textContent("#mp-pst")) && /Time to required care direct: to Trauma Test Hospital \d+ min \+ handoff 2 min = \d+ min; required care not confirmed available now\./.test(await p.textContent("#mp-pst")), "phase 2: handoff can be set, and the Tertiary shows its time to required care part by part, not confirmed now");
   await p.fill('#mp-pst [data-mpf="dwell"]', "30"); await p.waitForTimeout(1100);
   ok(!/Trauma Test Hospital/.test(roles[1][1] + roles[2][1] + roles[3][1]) && /Head trauma \(neurosurgery\):.*for information; the planned destination is the Severe head injury row/.test(await p.textContent("#mp-pst")), "desktop: OpenStreetMap-only neurosurgery never makes a severe head injury pick (shown for information only)");
   ok(/Phone: \+66 2 777 1000 \(Wikidata Q900001/.test(pst) && /Listed: /.test(pst) && await p.evaluate(() => document.querySelectorAll("#mp-pst [data-mp-assess]").length === 3 && document.querySelectorAll("#mp-pst [data-mp-go]").length === 3), "desktop: each pick shows its contacts, what is listed, and its own Assessment and Map buttons");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-pst [data-mp-assess]")].every((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && r.right <= innerWidth; })), "desktop: the picks' Assessment buttons are on screen");
+  // the role cards follow the theme: readable text on the card in light, grey and dark
+  const contrast = await p.evaluate(() => {
+    const lum = (c) => { const m = c.match(/[\d.]+/g).map(Number).slice(0, 3).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]; };
+    const out = {}, prev = document.documentElement.getAttribute("data-map");
+    for (const t of ["light", "grey", "dark"]) {
+      if (t === "light") document.documentElement.removeAttribute("data-map"); else document.documentElement.setAttribute("data-map", t);
+      const td = document.querySelector("#mp-pst table.mppst td"), b = td.querySelector("b") || td;
+      const a = lum(getComputedStyle(td).backgroundColor), c = lum(getComputedStyle(b).color);
+      out[t] = Math.round((Math.max(a, c) + 0.05) / (Math.min(a, c) + 0.05) * 10) / 10;
+    }
+    if (prev) document.documentElement.setAttribute("data-map", prev); else document.documentElement.removeAttribute("data-map");
+    return out;
+  });
+  ok(contrast.light >= 4.5 && contrast.grey >= 4.5 && contrast.dark >= 4.5, "role cards: the hospital name is readable on the card in light, grey and dark " + JSON.stringify(contrast));
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
+  /* Shane 2026-10-04: the legend follows the plan, alternates are marked, and a stabilization stop is named when nothing near is in the golden hour */
+  const lgd = await p.evaluate(() => { const l = document.querySelector('[data-lg="medplan"]'); return { t: l ? l.textContent : "", shown: !!l && !l.hidden, alt: document.querySelectorAll(".mpicon.alt").length }; });
+  ok(lgd.shown && /Point of injury|Plan centre/.test(lgd.t) && /PRI\s*Primary MTF/.test(lgd.t) && /SEC\s*Secondary MTF/.test(lgd.t) && /TER\s*Tertiary MTF/.test(lgd.t) && !/PRI SEC/.test(lgd.t) && /Route to Primary/.test(lgd.t) && (!lgd.alt || /Alternate MTF/.test(lgd.t)) && !/Other hospital/.test(lgd.t), "legend: the map legend explains the medical plan's own marks and lines " + JSON.stringify(lgd));
+  const stb = await p.evaluate(() => { const r = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.complex_limb" && x.role === "stabilization")[0]; return r ? [r.state, !!r.choice, r.ref && r.ref.f.name] : null; });
+  ok(JSON.stringify(stb) === JSON.stringify(["gap", false, "Far North Hospital"]) && /^Complex limb traumaNo planned destination/.test(roles[3][0]) && /No documented stabilization stop\. No planned destination, and no hospital inside the golden hour has an emergency department documented by a credible source\. Nearest, for reference only and not eligible: Far North Hospital, 20 min by road\./.test(roles[3][0]),
+    "stabilization: an emergency department OpenStreetMap lists is never a stabilization stop; the plan says none is documented and names the nearest for reference only " + JSON.stringify(stb) + " " + roles[3][0]);
+  ok(await p.evaluate(() => /Alternate MTFs, major trauma \(documented by a credible source\): ALT PRI/.test(document.querySelector("#mp-pst .mpalts").textContent) && [...document.querySelectorAll(".mpicon.alt")].every((m) => /^ALT (PRI|SEC|TER)$/.test(m.textContent))), "alternates: only documented alternates, listed per role and marked ALT on the map");
   ok(/Main roads: Rama IV Road \(5\.0 km\) → 3 Sukhumvit Road \(2\.5 km\)/.test(rt), "desktop: each route lists its main roads");
   const ghs = await p.textContent("#mp-gh");
   ok(/60 minutes from injury/.test(ghs) && /10 minutes to treat and load/.test(ghs) && /green 30 minutes/.test(ghs) && /light blue ring/.test(ghs), "desktop: golden-hour section states its thresholds, the road reach and the air rings");
@@ -294,6 +343,32 @@ async function openPlan(p) {
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
   ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  /* phase 3: primary, alternate and contingency lines per hospital from the Route tab's API, with hazards along each */
+  await p.waitForFunction(() => document.querySelectorAll("#mp-rt table.mppac").length >= 1 && !/Looking for alternate/.test(document.getElementById("mp-rt").textContent), null, { timeout: 30000 }).catch(() => {});
+  const pac = await p.evaluate(() => ({ t: document.getElementById("mp-rt").textContent, n: document.querySelectorAll("#mp-rt table.mppac").length,
+    rows: [...document.querySelectorAll("#mp-rt table.mppac")].map((t) => [...t.querySelectorAll("tbody th")].map((x) => x.textContent).join()),
+    val: document.getElementById("mp-val").textContent, src: document.getElementById("mp-src").textContent, blue: (() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polyline && !(l instanceof L.Polygon) && l.options.color === "#1d5fa8" && l.options.dashArray) n++; }); return n; })() }));
+  ok(pac.n === 3 && pac.rows.every((r) => r === "P primary,A alternate") && /\(\+\d+ min\)/.test(pac.t) && /an order \(fastest first\), not a judgement/.test(pac.t) && /not a clearance/.test(pac.t), "phase 3: each routed hospital gets P and A lines with how much longer A is " + JSON.stringify(pac.rows));
+  ok(calls.alt === 3 && pac.blue >= 3, "phase 3: one Route-tab request per hospital, alternates drawn in blue " + JSON.stringify({ alt: calls.alt, blue: pac.blue }));
+  ok(/Alternate ground route: A \+\d+ min on the primary/.test(pac.val) && /no contingency line/.test(pac.val) && /Hazards along the primary route/.test(pac.val), "phase 3: validation names the alternate and checks hazards on the primary");
+  ok(/Alternate routes and hazards along them/.test(pac.src) && /3 of 3 hospitals routed/.test(pac.src), "phase 3: the sources list the Route tab's lines and what was read");
+  /* phase 5: the operational picture: the forecast at the pickup against review rules, heavy rain, air state and data age */
+  const pic = await p.evaluate(() => ({ t: document.getElementById("mp-pic").textContent, flags: [...document.querySelectorAll("#mp-pic ul.mppic li b")].map((b) => b.textContent),
+    ages: [...document.querySelectorAll("#mp-pic table.mpage tbody tr")].map((r) => r.textContent), val: document.getElementById("mp-val").textContent,
+    order: [...document.querySelectorAll("#medplan h3")].map((h) => h.textContent).filter((t) => /^(Operational picture|Plan status)$/.test(t)).join("|") }));
+  ok(pic.flags.includes("POINT OF INJURY (NO HLZ GRID) VISIBILITY FORECAST 0.8 KM, GUSTS 35 KN / AIR EVACUATION REVIEW REQUIRED") && pic.flags.includes("HEAVY RAIN FORECAST 25 MM 2026-10-01 / ROADS AND LANDING ZONES MAY FLOOD") &&
+    !pic.flags.some((f) => /AIR MEDEVAC|CONFIRMED AIRCRAFT/.test(f)) && /Forecast at the pickup: POINT OF INJURY/.test(pic.val) && pic.order === "Operational picture|Plan status",
+    "phase 5: the picture flags the forecast at the pickup and heavy rain (the confirmed aircraft clears the air flag), above the plan status " + JSON.stringify(pic.flags));
+  ok(pic.ages.some((r) => /^Hospital dataset/.test(r) && /live read from OpenStreetMap/.test(r)) && pic.ages.some((r) => /^Weather forecast.*live.*Open-Meteo/.test(r)) && pic.ages.some((r) => /^Facility verification.*none.*no planner's check/.test(r)) &&
+    /Data age: .*Facility verification not available/.test(pic.val) && /not when this device fetched it/.test(pic.t), "phase 5: each dataset with its own date and whether it is live or a saved copy " + JSON.stringify(pic.ages));
+  /* phase 6: page 1, the medical CONOP, with casualty buttons that switch the pathway it shows */
+  const cn = await p.evaluate(() => ({ t: document.getElementById("mp-conop").textContent, first: document.querySelector("#medplan .mpbox > #mp-conop") !== null && [...document.querySelectorAll("#medplan h3")][0].textContent }));
+  ok(/^Medical plan: /i.test(cn.t) && /Status(GREEN|AMBER|RED)/.test(cn.t) && /Ground evac(AVAILABLE|NOT ROUTED)/.test(cn.t) && /Air MEDEVACCONFIRMED/.test(cn.t) && /Definitive care: Major trauma/.test(cn.t) && /Primary routeAVAILABLE/.test(cn.t) && /Critical gaps/.test(cn.t) && /Receiving hospital acceptance/.test(cn.t),
+    "phase 6: the CONOP shows status, ground, air, definitive care, routes and critical gaps " + JSON.stringify(cn.t.slice(0, 400)));
+  await p.click('#mp-conop [data-mp-cat="cat.severe_tbi"]');
+  const cn2 = await p.evaluate(() => ({ t: document.getElementById("mp-conop").textContent, on: document.querySelector('#mp-conop [aria-pressed="true"]').textContent, kept: localStorage.getItem("osap-medcat") }));
+  ok(/Definitive care: Severe head injury/.test(cn2.t) && cn2.on === "Head injury" && cn2.kept === '"cat.severe_tbi"', "phase 6: Head injury switches the CONOP to that pathway and is kept on this device " + JSON.stringify(cn2.t.slice(0, 300)));
+  await p.click('#mp-conop [data-mp-cat="cat.major_trauma"]');
   /* head trauma (Shane): where neurosurgery is, sourced, else the likely place labelled as an estimate */
   const hd = await p.evaluate(() => (document.querySelector("#mp-pst .mpneuro") || {}).textContent || "");
   ok(/^Head trauma \(neurosurgery\):/.test(hd) && /H\d+ Trauma Test Hospital, \d+ min from injury by (air|road)/.test(hd) && /neurosurgery stated by OpenStreetMap healthcare:speciality/.test(hd) && !/Not known/.test(hd), "head trauma: the nearest hospital that states neurosurgery is named with its time and source: " + hd.slice(0, 220));
@@ -306,7 +381,8 @@ async function openPlan(p) {
   ok(/Test Hyperbaric Centre/.test(dc.f) && /healthcare:speciality=hyperbaric_medicine/.test(dc.f) && /\+66 38 000 911/.test(dc.f) && /km/.test(dc.f) && /fly as low as safely possible/.test(dc.f) && dc.mk.includes("D1"), "chamber: the nearest decompression chamber is listed with its source, contacts, distance, a D mark and the low-altitude note " + JSON.stringify(dc).slice(0, 240));
   /* air times count the aircraft's flight from its base to the POI (Shane) */
   await p.waitForFunction(() => /Aircraft base: Test Air Rescue/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
-  const airMin = () => p.evaluate(() => { const m = /(\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent) || /(\d+) h (\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent); return m ? +m[1] : null; });
+  /* the base chosen here moves the potential estimate (planning only); the confirmed aircraft's own base is unchanged */
+  const airMin = () => p.evaluate(() => { const m = /(\d+) min to fly to it/.exec(document.getElementById("mp-gh").textContent); return m ? +m[1] : /set to start at the point of injury/.test(document.getElementById("mp-gh").textContent) ? 0 : null; });
   const ab = await p.evaluate(() => ({ gh: document.getElementById("mp-gh").textContent, mev: document.getElementById("mp-mev").textContent, fac: document.getElementById("mp-fac").textContent }));
   const withBase = await airMin();
   ok(/Aircraft base: Test Air Rescue, [\d.]+ km from the POI, \d+ min to fly to it \(nearest air rescue base in OpenStreetMap\)/.test(ab.gh) && /Aircraft base used for every air time: Test Air Rescue/.test(ab.mev) && /from the call, with the aircraft's flight in/.test(ab.fac), "air times: the aircraft's base is named and its flight to the POI is counted " + ab.gh.slice(ab.gh.indexOf("Aircraft base"), ab.gh.indexOf("Aircraft base") + 120));
@@ -321,30 +397,31 @@ async function openPlan(p) {
   const offId = await p.evaluate(() => { const r = [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => /Sourced Trauma Centre/.test(x.textContent)); return r && r.querySelector("[data-mp-off]").getAttribute("data-mp-off"); });
   const mk0 = await p.evaluate(() => document.querySelectorAll(".mpicon").length);
   await p.click(`#mp-fac [data-mp-off="${offId}"]`);
-  await p.waitForFunction(() => /Secondary\s*H\d+ Trauma Test Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  await p.waitForFunction(() => /Secondary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H\d+ Trauma Test Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   const offd = await p.evaluate((id) => ({ pst: document.getElementById("mp-pst").textContent, row: [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => x.querySelector(`[data-mp-off="${id}"]`)).className,
     mk: document.querySelectorAll(".mpicon").length, saved: localStorage.getItem("osap-medplan-off-th"), note: /1 hospital is turned off/.test(document.getElementById("mp-fac").textContent) }), offId);
-  ok(!/Sourced Trauma Centre/.test(offd.pst) && /Secondary\s*H\d+ Trauma Test Hospital/.test(offd.pst) && offd.row === "mpoff" && offd.note && offd.mk === mk0 - 1 && JSON.parse(offd.saved || "[]").includes(offId), "desktop: unticking a hospital drops it from the picks (the next one is picked), greys its row and is kept on the device " + JSON.stringify(offd).slice(0, 220));
+  ok(!/Sourced Trauma Centre/.test(offd.pst) && /Secondary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H\d+ Trauma Test Hospital/.test(offd.pst) && offd.row === "mpoff" && offd.note && offd.mk === mk0 - 1 && JSON.parse(offd.saved || "[]").includes(offId), "desktop: unticking a hospital drops it from the picks (the next one is picked), greys its row and is kept on the device " + JSON.stringify(Object.assign({}, offd, { mk0, pst: offd.pst.slice(0, 900) })));
   await p.click('#medplan [data-mp="allon"]');
-  await p.waitForFunction(() => /Primary\s*H3 Far North Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
-  ok(/Primary\s*H3 Far North Hospital/.test(await p.textContent("#mp-pst")) && !(await p.$("#mp-fac tr.mpoff")), "desktop: Turn all back on restores the picks");
-  await p.click('#mp-pst [data-mp-offbtn]');
-  await p.waitForFunction(() => !/Primary\s*H\d+ Far North/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
-  ok(/Primary\s*H\d+ Sourced Trauma Centre/.test(await p.textContent("#mp-pst")) && !!(await p.$("#mp-fac tr.mpoff")), "desktop: Turn off on a pick drops it and picks the next");
+  await p.waitForFunction(() => /Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok(/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(await p.textContent("#mp-pst")) && !(await p.$("#mp-fac tr.mpoff")), "desktop: Turn all back on restores the picks");
+  await p.click('#mp-pst tr:not([data-mp-role=Stabilization]) [data-mp-offbtn]');
+  await p.waitForFunction(() => !/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H\d+ Far North/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok(/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H\d+ Sourced Trauma Centre/.test(await p.textContent("#mp-pst")) && !!(await p.$("#mp-fac tr.mpoff")), "desktop: Turn off on a pick drops it and picks the next " + (await p.textContent("#mp-pst")).slice(0, 600));
   /* Shane 2026-10-02: with every documented hospital off, nothing is picked, and an undocumented hospital is never put in */
   /* the third off makes the wider search's hospital (documented 24-hour emergency, CT and ICU, beyond the radius) the Primary */
-  for (let i = 0; i < 2; i++) { await p.click('#mp-pst [data-mp-offbtn]'); await p.waitForTimeout(400); }
-  await p.waitForFunction(() => /Primary\s*H\d+ Distant Burn Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
-  ok(/Primary\s*H\d+ Distant Burn Centre/.test(await p.textContent("#mp-pst")) && /found by the wider search \(nothing nearer has it documented\)/.test(await p.textContent("#mp-pst")), "desktop: with every documented hospital near turned off, the nearest documented one farther out is the Primary, and says why");
-  await p.click('#mp-pst [data-mp-offbtn]'); await p.waitForTimeout(400);
+  for (let i = 0; i < 2; i++) { await p.click('#mp-pst tr:not([data-mp-role=Stabilization]) [data-mp-offbtn]'); await p.waitForTimeout(400); }
+  await p.waitForFunction(() => /Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H\d+ Distant Burn Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok(/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H\d+ Distant Burn Centre/.test(await p.textContent("#mp-pst")) && /found by the wider search \(nothing nearer has it documented\)/.test(await p.textContent("#mp-pst")), "desktop: with every documented hospital near turned off, the nearest documented one farther out is the Primary, and says why");
+  await p.click('#mp-pst tr:not([data-mp-role=Stabilization]) [data-mp-offbtn]'); await p.waitForTimeout(400);
   await p.waitForFunction(() => /No Primary, Secondary or Tertiary/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   const none = await p.textContent("#mp-pst .mpwarn");
   ok(/No Primary, Secondary or Tertiary for major trauma: no hospital within \d+ km, nor OSAP's documented hospitals farther out \(up to 1500 km\), has the needed capabilities documented by a credible source \(or the ones that do are turned off\)/.test(none) && /reference only and are not eligible/.test(none) && !/Near Hospital/.test(none)
-    && (await p.evaluate(() => window.OSAP_MEDPLAN._picks().length)) === 0, "desktop: with no documented hospital, the plan says so plainly and picks none, never an undocumented one: " + none.slice(0, 160));
+    && (await p.evaluate(() => window.OSAP_MEDPLAN._picks().filter((x) => x.role !== "Stabilization").length)) === 0, "desktop: with no documented hospital, the plan says so plainly and picks none, never an undocumented one: " + none.slice(0, 160));
   await p.click('#medplan [data-mp="allon"]');
-  await p.waitForFunction(() => /Primary\s*H3 Far North Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  await p.waitForFunction(() => /Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   ok(/no stored copy|not read: HTTP 404/.test(await p.textContent("#mp-src")), "desktop: with no stored copy, the plan says so and asks OpenStreetMap live");
-  ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 16), "desktop: numbered marks on the map (centre, 5 hospitals incl. the wider search, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base, 2 blood services, 1 chamber)");
+  const mks = await p.evaluate(() => [...document.querySelectorAll(".mpicon")].map((m) => m.textContent));
+  ok(mks.length === 15 && !mks.some((t) => /^H\d/.test(t)) && ["PRI", "SEC", "TER"].every((t) => mks.includes(t)), "desktop: numbered marks on the map (centre, only the plan's hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base, 2 blood services, 1 chamber) " + mks.join(","));
   const lines = () => p.evaluate(() => { let r = 0, g = 0, a = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polygon) { if (/#1e7a3a|#c77700/.test(l.options.color)) g++; } else if (l instanceof L.Polyline && /#D7141A|#222|#6a3d9a/.test(l.options.color)) r++; else if (l instanceof L.Circle && /#6fa8dc|#1d5fa8/.test(l.options.color)) a++; }); return { r, g, a }; });
   const ln = await lines();
   ok(ln.r === 3 && ln.g === 2 && ln.a === 2, "desktop: three routes, two road-reach outlines and two air rings drawn on the map " + JSON.stringify(ln));
@@ -407,6 +484,9 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="dock"]'); await p.click('#mp-oc [data-mp="strat"]'); await p.waitForTimeout(400);
   ok(await p.evaluate(() => window.__asapMap.getZoom() <= 4 && !document.getElementById("medplan").hidden), "out of country: Show on the map zooms out to the whole chain, beside the side panel");
   await p.click('#medplan [data-mp="dock"]');
+  await p.click('#medplan [data-mp="dock"]'); await p.click('#mp-gh [data-mp="airfit"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => { const m = window.__asapMap, rings = []; m.eachLayer((l) => { if (l.getRadius && l.options && l.options.fill === false) rings.push(l); }); const b = m.getBounds(); return rings.length >= 1 && rings.every((r) => b.contains(r.getBounds().pad(-0.01))) && !document.getElementById("medplan").hidden; }), "air map: Show the air rings on the map fits the whole of both rings, beside the side panel");
+  await p.click('#medplan [data-mp="dock"]');
   await p.fill('#mp-oc [data-mpf="sjkn"]', "300");
   await p.waitForFunction(() => /at 300 kn with 2 h/.test(document.getElementById("mp-oc").textContent), null, { timeout: 5000 }).catch(() => {});
   ok(/at 300 kn with 2 h/.test(await p.textContent("#mp-oc")), "out of country: a new strategic cruise speed recomputes the chains");
@@ -432,8 +512,46 @@ async function openPlan(p) {
   const hlz = await p.inputValue("#mpf-hlz1");
   ok(/^\d{2}[A-Z] [A-Z]{2} \d{4} \d{4}/.test(hlz), "desktop: Use as HLZ fills the HLZ with the grid: " + hlz);
   await p.fill("#mpf-unit", "Test element"); await p.fill("#mpf-ccp1", "13.7400, 100.4900"); await p.fill("#mpf-medevac1", "Test Air Rescue, +66 2 555 0100"); await p.waitForTimeout(900);
-  const kept = await p.evaluate(() => { const k = Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0]; return k && JSON.parse(localStorage.getItem(k)); });
+  const kept = await p.evaluate(() => window.OSAP_MEDPLAN._fields());
   ok(kept && kept.unit === "Test element" && kept.hlz1 === hlz && kept.oc === 1, "desktop: fields kept on this device");
+  await p.waitForFunction(() => /PRIMARY HLZ|Forecast at the pickup: No review rule met at the primary HLZ/.test(document.getElementById("mp-pic").textContent + document.getElementById("mp-val").textContent), null, { timeout: 10000 }).catch(() => {});
+  const hpic = await p.evaluate(() => ({ t: document.getElementById("mp-pic").textContent, v: document.getElementById("mp-val").textContent }));
+  ok(/PRIMARY HLZ VISIBILITY FORECAST 0\.8 KM, GUSTS 35 KN \/ AIR EVACUATION REVIEW REQUIRED/.test(hpic.t) && !/NO HLZ GRID/.test(hpic.t) && calls.meteo >= 1, "phase 5: with an HLZ grid the forecast flag is for the primary HLZ (meteo calls " + calls.meteo + ")");
+
+  /* phase 3: the CCP and HLZ with grids are map objects; the validation says so */
+  const sites = await p.evaluate(() => ({ mk: [...document.querySelectorAll(".mpicon.cp")].map((m) => m.textContent).sort().join(), val: document.getElementById("mp-val").textContent }));
+  ok(sites.mk === "CCP,HLZ" && /Casualty collection point \(CCP\): 13\.7400, 100\.4900/.test(sites.val) && /Ambulance exchange point \(AXP\): Not set/.test(sites.val), "phase 3: CCP and HLZ drawn on the map from their grids, AXP checked " + JSON.stringify(sites.mk));
+  await p.selectOption('#mp-sites [data-mp-sst="ccp1"]', "unusable"); await p.fill('#mp-sites [data-mpf="ccp1_note"]', "bridge out"); await p.waitForTimeout(900);
+  const st = await p.evaluate(() => ({ t: document.getElementById("mp-sites").textContent, rows: document.querySelectorAll("#mp-sites tbody tr").length, val: document.getElementById("mp-val").textContent,
+    kept: window.OSAP_MEDPLAN._fields() }));
+  ok(st.rows === 2 && /km [NESW]{1,2} of/.test(st.t) && st.kept.ccp1_st === "unusable" && st.kept.ccp1_note === "bridge out" && /checked not usable .*bridge out/.test(st.val), "phase 3: each point's status, capacity and notes are kept and the validation reads them " + JSON.stringify(st.val.slice(st.val.indexOf("Casualty collection"), st.val.indexOf("Casualty collection") + 120)));
+  const seeded = await p.evaluate(() => { const o = window.OSAP_ROUTE_SEED; let got = null; window.OSAP_ROUTE_SEED = (pts) => { got = pts; }; document.querySelector('#mp-sites [data-mp-siteroute="hlz1"]').click(); window.OSAP_ROUTE_SEED = o; return got; });
+  ok(seeded && seeded.length === 2 && Math.abs(seeded[1][0] - 13.74) > 0, "phase 3: Route to it hands the plan centre and the point to the Route tab " + JSON.stringify(seeded));
+  /* Shane 2026-10-06 (a Sukhothai receiving facility blocked a plan near Lop Buri): section 9's places belong to the place a
+     plan was made for, never to the whole country */
+  const pk0 = await p.evaluate(() => ({ c: JSON.parse(localStorage.getItem("osap-medplan-th") || "{}"), s: JSON.parse(localStorage.getItem("osap-medplan-sites-th") || "[]"), m: window.__asapMap.getCenter() }));
+  ok(!("hlz1" in pk0.c) && !("ccp1" in pk0.c) && pk0.c.unit === "Test element" && pk0.s.length === 1 && pk0.s[0].v.hlz1 === hlz && pk0.s[0].v.ccp1_note === "bridge out",
+    "section 9: the HLZ, CCP and their checks are kept with this plan's place, the unit with the country " + JSON.stringify({ c: Object.keys(pk0.c), s: pk0.s.length }));
+  await p.evaluate(() => window.OSAP_MEDPLAN.open({ at: [14.80592, 100.70098] }));
+  await p.waitForFunction(() => document.getElementById("mpf-hlz1") && /14\.80592/.test(document.getElementById("medplan").textContent), null, { timeout: 10000 });
+  const farP = await p.evaluate(() => ({ h: document.getElementById("mpf-hlz1").value, c: document.getElementById("mpf-ccp1").value, u: document.getElementById("mpf-unit").value, mk: document.querySelectorAll(".mpicon.cp").length, f: window.OSAP_MEDPLAN._fields() }));
+  ok(farP.h === "" && farP.c === "" && farP.u === "Test element" && farP.mk === 0 && !farP.f.ccp1_st && !farP.f.hlz1, "section 9: a plan opened more than 25 km away starts without the other place's HLZ and CCP and keeps the unit " + JSON.stringify({ h: farP.h, c: farP.c, u: farP.u, mk: farP.mk }));
+  await p.fill("#mpf-recv1", "Lop Buri Test Hospital"); await p.waitForTimeout(900);
+  await p.evaluate((m) => window.__asapMap.setView([m.lat, m.lng], window.__asapMap.getZoom(), { animate: false }), pk0.m);
+  await p.evaluate(() => window.OSAP_MEDPLAN.close()); await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
+  const back = await p.evaluate(() => ({ h: document.getElementById("mpf-hlz1").value, r: document.getElementById("mpf-recv1").value, s: JSON.parse(localStorage.getItem("osap-medplan-sites-th") || "[]").length }));
+  ok(back.h === hlz && back.r === "" && back.s === 2, "section 9: back at the first place its HLZ returns, and the other place's receiving facility does not follow " + JSON.stringify(back));
+  /* a receiving facility saved per country before this change is offered once, never used silently */
+  await p.evaluate(() => { const k = "osap-medplan-th", v = JSON.parse(localStorage.getItem(k) || "{}"); v.recv1 = "Srisangworn Sukhothai Hospital (47Q NU 9210 9816)"; localStorage.setItem(k, JSON.stringify(v)); });
+  await p.evaluate(() => window.OSAP_MEDPLAN.close()); await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites") && window.OSAP_MEDPLAN_MODEL && /AMBER|GREEN|RED/.test((document.querySelector("#mp-val .mpvs") || {}).textContent || ""), null, { timeout: 20000 });
+  const leg = await p.evaluate(() => ({ n: (document.getElementById("mp-legacy") || {}).textContent || "", r: document.getElementById("mpf-recv1").value, v: document.getElementById("mp-val").textContent }));
+  ok(/Saved from an earlier plan, not used here/.test(leg.n) && /Srisangworn Sukhothai/.test(leg.n) && leg.r === "" && !/Srisangworn/.test(leg.v), "section 9: an old country-wide receiving facility is shown to use or discard, not used: " + leg.n.slice(0, 120));
+  await p.click('#medplan [data-mp="legacydrop"]');
+  await p.waitForFunction(() => document.getElementById("mp-sites") && !document.getElementById("mp-legacy"), null, { timeout: 10000 }).catch(() => {});
+  ok(await p.evaluate(() => !document.getElementById("mp-legacy") && !("recv1" in JSON.parse(localStorage.getItem("osap-medplan-th") || "{}"))), "section 9: Discard removes it for good");
+  await p.evaluate(() => window.OSAP_MEDPLAN.close()); await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
+  /* section 4 is drawn once the hospital lookup returns; wait for it rather than read an empty box */
+  await p.waitForFunction(() => /Emergency medevac provider and phone: Test Air Rescue/.test((document.getElementById("mp-mev") || {}).textContent || ""), null, { timeout: 20000 }).catch(() => {});
   ok(/Emergency medevac provider and phone: Test Air Rescue/.test(await p.textContent("#mp-mev")), "desktop: the medevac provider typed in prints in the medevac section");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
@@ -463,11 +581,47 @@ async function openPlan(p) {
   await p.waitForFunction(() => /^data:image\/png/.test((document.querySelector("#brief .mpscmap img") || {}).src || ""), null, { timeout: 20000 });
   ok(/East: JPN → HAW → USA/.test(await p.textContent("#brief .mpscmap figcaption")), "print view: the strategic chains have their own world map in section 6");
   if (OUT) await (await p.$("#brief .mpscmap")).screenshot({ path: OUT + "/chain-map.png" });
+  /* the air evacuation map (Shane 2026-10-08): rings that would zoom the plan map out get their own map with the golden hour */
+  {
+    const am = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"), a = d.querySelector(".mpairmap img"); return { air: !!a, cap: document.getElementById("mpd-cap").textContent, key: d.querySelector("figure .mpkeyd").textContent, inGh: !!(a && a.closest(".mpairmap")) }; });
+    if (am.air) {
+      await p.waitForFunction(() => /^data:image\/png/.test((document.querySelector("#brief .mpairmap img") || {}).src || ""), null, { timeout: 20000 });
+      const ac = await p.evaluate(() => ({ cap: document.querySelector("#brief .mpairmap figcaption").textContent, key: document.querySelector("#brief .mpairmap .mpkeyd").textContent, w: document.querySelector("#brief .mpairmap img").naturalWidth }));
+      ok(ac.w >= 1000 && /Helicopter at \d+ kn/.test(ac.cap) && /Light blue/.test(ac.key) && /air evacuation map/.test(am.cap) && !/Air reach/.test(am.key), "air map: the rings are on their own map and the plan map keeps its ground zoom: " + ac.cap.slice(0, 90));
+      if (OUT) await (await p.$("#brief .mpairmap")).screenshot({ path: OUT + "/air-map.png" });
+    } else ok(/Air reach/.test(am.key) && !/air evacuation map/.test(am.cap), "air map: the rings fit the plan map at its ground zoom, so there is one map");
+  }
+  const split = await p.evaluate(() => !!document.querySelector("#brief .mpairmap img"));
   ok(["Primary, Secondary", "1. Golden hour", "2. Receiving", "3. Routes", "4. Emergency", "5. Evacuation landing", "6. Evacuate out", "7. Health", "8. Evacuation weather", "9. Unit", "10. Sources"].every((x) => pv.h3.some((h) => h.indexOf(x) === 0)), "print view: every section is there: " + pv.h3.join(" | "));
   ok(pv.btn === 0 && /Test element/.test(pv.t) && /Primary/.test(pv.t), "print view: fields print as their values, no buttons or inputs");
   ok(!/Looking up|Reading…|Still reading/.test(pv.t) && /Plan status/.test(pv.t), "print view: the plan status prints and no lookup is left in progress");
   const pa3 = await p.evaluate(() => [...document.querySelectorAll("#brief .mpdoc .mpaprint")].map((x) => ({ h: x.querySelector("h3").textContent, ct: /Contacts and cover/.test(x.textContent), cap: /Capability and services/.test(x.textContent), ids: x.querySelectorAll("[id]").length, brk: getComputedStyle(x).breakBefore })));
   ok(pa3.length === 3 && /^Hospital assessment, Primary: H3 Far North Hospital/.test(pa3[0].h) && /Secondary/.test(pa3[1].h) && /Tertiary/.test(pa3[2].h) && pa3.every((x) => x.ct && x.cap && !x.ids && x.brk === "page"), "print view: the full assessment of Primary, Secondary and Tertiary prints, each from a new page " + JSON.stringify(pa3.map((x) => x.h)));
+  /* phase 6: the Medical CONOP prints apart from the intelligence annex: the operational sections only, no hospital assessments */
+  ok(/^Medical intelligence annex, /.test(await p.textContent("#brief .mpdoc h2")), "print view: the full print is the medical intelligence annex");
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
+  const pc = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), a: d.querySelectorAll(".mpaprint").length, src: !!d.querySelector("#brief .mpdoc .mpfp"), srcList: /OpenStreetMap as of|Open-Meteo/.test((d.querySelector(".mpfp") || { parentElement: { textContent: "" } }).parentElement.textContent) }; });
+  ok(/^Medical CONOP, /.test(pc.h2) && /^Medical plan: /i.test(pc.h3[0]) && ["Operational picture", "Plan status", "Primary, Secondary", "1. Golden hour", "3. Routes", "4. Emergency", "6. Evacuate out", "9. Unit"].every((x) => pc.h3.some((h) => h.indexOf(x) === 0)) &&
+    !pc.h3.some((h) => /^(2\. Receiving|5\. Evacuation landing|7\. Health|8\. Evacuation weather)/.test(h)) && pc.a === 0 && pc.src && !pc.srcList, "phase 6: Print CONOP is the operational plan only, with the fingerprint and without the annex material " + JSON.stringify(pc.h3));
+  ok(split === await p.evaluate(() => !!document.querySelector("#brief .mpairmap img")), "air map: the CONOP carries the same air evacuation map as the annex");
+  ok(/basemap could not be loaded/.test(await p.textContent("#mpd-cap")), "print map: with no tile host reachable the caption says the basemap could not be loaded");
+  /* Shane 2026-10-09: most OpenStreetMap tiles of the CONOP map never came back on his iPhone. Six at a time; a failed tile is asked for again, then taken from Esri's street map */
+  Object.assign(TILES, { mode: "half", osm: 0, esri: 0, now: 0, max: 0 });
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || "") && !/Drawing the map/.test(document.getElementById("mpd-cap").textContent), null, { timeout: 60000 });
+  const tc = await p.textContent("#mpd-cap");
+  ok(TILES.osm > 0 && TILES.max <= 6 && TILES.esri > 0 && /Some squares are from Esri's street map/.test(tc) && !/could not be loaded/.test(tc), "print map: tiles load six at a time and a tile OpenStreetMap fails comes from Esri's street map, said in the caption " + JSON.stringify(TILES) + " " + tc.slice(0, 120));
+  /* let the annex maps of the last view finish before counting again */
+  for (let n = -1; n !== TILES.osm + TILES.esri; ) { n = TILES.osm + TILES.esri; await p.waitForTimeout(1500); }
+  Object.assign(TILES, { mode: "osm", osm: 0, esri: 0 });
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || "") && !/Drawing the map/.test(document.getElementById("mpd-cap").textContent), null, { timeout: 60000 });
+  const tc2 = await p.textContent("#mpd-cap");
+  ok(TILES.esri === 0 && !/Esri|could not be loaded/.test(tc2), "print map: with OpenStreetMap answering, every tile is its own and the caption says nothing about the basemap " + JSON.stringify(TILES) + " " + tc2.slice(0, 120));
+  TILES.mode = "";
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="print"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
   ok(prn, "print view: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });
@@ -485,12 +639,12 @@ async function openPlan(p) {
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
   const as = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); const row = (k) => { const th = [...d.querySelectorAll("table.mpas th")].find((x) => x.textContent === k); return th ? th.nextElementSibling.textContent : null; };
     return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), ed: row("Emergency department"), beds: row("Beds"), icu: row("Intensive care (ICU)"), surg: row("Surgery"), or: row("Operating rooms"), s24: row("24-hour surgeon"), oh: row("Opening hours"),
-      blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air"), rt: row("Route"), cap: row("Official trauma designation"), cls: row("Observed class"), flag: [...d.querySelectorAll("table.mpas")].map((t) => [...t.querySelectorAll("tr")].find((r) => r.querySelector("th").textContent === "Emergency department" && /REPORTED/.test(r.textContent))).filter(Boolean).map((r) => r.querySelector("td").textContent)[0] || "", unk: row("Unknown"),
-      ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: d.querySelectorAll("button,input,select").length, w: document.getElementById("mpa-map").naturalWidth }; });
+      blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air (potential)"), rt: row("Route"), cap: row("Official trauma designation"), cls: row("Observed class"), flag: [...d.querySelectorAll("table.mpas")].map((t) => [...t.querySelectorAll("tr")].find((r) => r.querySelector("th").textContent === "Emergency department" && /REPORTED/.test(r.textContent))).filter(Boolean).map((r) => r.querySelector("td").textContent)[0] || "", unk: row("Unknown"),
+      ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: [...d.querySelectorAll("button,input,select")].filter((x) => !x.closest(".noprint")).length, w: document.getElementById("mpa-map").naturalWidth }; });
   ok(/Hospital assessment: Far North Hospital/.test(as.h2) && ["Location", "From the point of injury", "Capability and services", "Landing", "Contacts and cover"].every((h) => as.h3.includes(h)), "assessment: opens for the hospital with every section " + as.h3.join(" | "));
   ok(as.w >= 900, "assessment: has its own map " + as.w);
   ok(/^Yes/.test(as.ed) && /^300/.test(as.beds) && /Trauma Level IV \(official designation, reported\)/.test(as.cap) && /not yet verified with the designating authority/.test(as.cap), "assessment: emergency department, beds and the official designation as reported, with its source");
-  ok(as.h3.includes("Capability flags") && /^Observed T5/.test(as.cls) && /REPORTED, confidence LOW · OpenStreetMap emergency=yes/.test(as.flag) && /UNKNOWN No source states: 24\/7 emergency department, Trauma team/.test(as.unk), "assessment: capability flags with status, confidence and source; unknown listed as unknown: " + [as.cls, as.flag, as.unk.slice(0, 80)].join(" | "));
+  ok(as.h3.includes("Capability flags") && /^Observed T5/.test(as.cls) && /^V4 Community source REPORTED, confidence LOW · available now: UNKNOWN \(no planner's check\) · OpenStreetMap emergency=yes/.test(as.flag) && /^U Unknown No source states: 24\/7 emergency department, Trauma team/.test(as.unk), "assessment: capability flags with status, confidence and source; unknown listed as unknown: " + [as.cls, as.flag, as.unk.slice(0, 80)].join(" | "));
   ok(/^Not known/.test(as.icu) && /^Not known/.test(as.surg) && /^Not known/.test(as.blood) && /^Not known/.test(as.ct), "assessment: every gap says Not known (surgery, ICU, blood bank, CT/MRI)");
   ok(/^Not known/.test(as.or) && /^Not known/.test(as.s24) && /ask the hospital/.test(as.s24) && /^Not known/.test(as.oh), "assessment: operating rooms, 24-hour surgeon and opening hours rows, Not known where nothing is published");
   ok(/47P [A-Z]{2} \d{4} \d{4}/.test(as.mgrs) && /min/.test(as.road) && /golden hour/i.test(as.road) && /kn/.test(as.air), "assessment: MGRS, road and air times from the point of injury against the golden hour");
@@ -499,6 +653,28 @@ async function openPlan(p) {
   ok(/TRICARE status not known/.test(as.tc) && !/accept/i.test(as.tc.replace(/acceptance/g, "")) && as.tclinks >= 2, "assessment: TRICARE status not known, never assumed, with where to confirm: " + as.tc);
   ok(/Pacific Area regional call centre: \+65-6339-2676/.test(as.tc), "assessment: TRICARE line gives the Pacific call centre to confirm with");
   ok(as.btn === 0, "assessment: no buttons inside the printed pages");
+  // Phase 1: a planner's check, graded V1, with an expiring "available now"; it outranks the designation for the pick
+  const chk = async (cap, ex, now, extra) => p.evaluate(([cap, ex, now, extra]) => {
+    const f = document.querySelector("#brief form[data-mp-chk]"); f.elements.cap.value = cap; f.elements.exists.value = ex; f.elements.now.value = now; f.elements.method.value = "phone";
+    f.elements.role.value = (extra && extra.role) || "ED charge nurse"; f.elements.note.value = (extra && extra.note) || ""; f.elements.h.value = (extra && extra.h) || "24";
+    f.querySelector("button[type=submit]").click();
+    return { msg: (document.querySelector("#brief .mpchkmsg") || {}).textContent || "", flags: document.getElementById("mpa-caps").textContent, log: document.getElementById("mpa-chk").textContent, logHtml: document.getElementById("mpa-chk").innerHTML };
+  }, [cap, ex, now, extra]);
+  ok(await p.evaluate(() => /No planner has checked this hospital/.test(document.getElementById("mpa-chk").textContent) && document.querySelector("#brief form[data-mp-chk]").classList.contains("noprint")), "checks: none yet, and the form does not print");
+  let ck = await chk("dx.ct", "yes", "available", { note: "<b>CT up</b>" });
+  ok(/^Recorded CT,/.test(ck.msg) && /CTV1 Human verified VERIFIED, confidence HIGH · available now: AVAILABLE \(checked .* by phone call, ED charge nurse; expires/.test(ck.flags) && /Planner's check \(phone call\)/.test(ck.flags), "checks: a phone check makes CT V1 human verified and available now, with its expiry: " + ck.flags.slice(ck.flags.indexOf("CTV1"), ck.flags.indexOf("CTV1") + 160));
+  ok(/<b>CT up<\/b>/.test(ck.log) && /&lt;b&gt;CT up&lt;\/b&gt;/.test(ck.logHtml), "checks: a typed note is shown as text, never as markup");
+  ck = await chk("dx.ct", "no", "available");
+  ok(/^Not recorded: check cannot be available now when the hospital does not have it/.test(ck.msg), "DENY checks: available now but does not have it is refused");
+  ok(/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(await p.textContent("#mp-pst")), "checks: Far North is Primary before any check of its emergency department");
+  ck = await chk("ed.basic", "yes", "unavailable", { note: "ED closed for flooding" });
+  const pst2 = await p.textContent("#mp-pst");
+  ok(/available now: UNAVAILABLE/.test(ck.flags) && !/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(pst2), "checks: emergency department not available now takes Far North off Primary, even with its designation: " + pst2.slice(0, 120));
+  ck = await chk("ed.basic", "unknown", "unknown");
+  ok(/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(await p.textContent("#mp-pst")) && /replaced by a newer check/.test(ck.log) && /ED closed for flooding/.test(ck.log), "checks: \"not said\" for both undoes it; the older check stays listed as replaced");
+  const stored = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-medcheck-th") || "[]"));
+  ok(stored.length === 3 && stored.every((c) => c.by === "planner on this device" && c.expires_at && c.at) && stored[2].supersedes === stored[1].id, "checks: kept on this device as an append-only log, each naming the check it replaced");
+  ok(/Capabilities confirmed available now/.test(await p.textContent("#mp-val")), "checks: the plan status says whether the definitive facility's critical capabilities are confirmed available now");
   const aprn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpa-print").click(); setTimeout(() => res(false), 5000); }));
   ok(aprn, "assessment: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });
@@ -515,9 +691,26 @@ async function openPlan(p) {
   ok(calls.route > r0 && /Main roads/.test(await p.textContent("#brief")), "assessment: a hospital that is not a pick gets its road route asked when opened");
   ok(/Test wiki/.test(await p.textContent("#brief")), "assessment: a sourced hospital names its source");
   await p.click("#mpa-close");
+  /* phase 4: the aircraft for this plan. The confirmed one competes; a planned one is listed but never chosen; removing the
+     confirmed one leaves the picks on road times, and the provider item says why */
+  const ac0 = await p.evaluate(() => ({ t: document.getElementById("mp-mev").textContent, pst: document.getElementById("mp-pst").textContent, val: document.getElementById("mp-val").textContent }));
+  ok(/Aircraft for this plan/.test(ac0.t) && /Test Air Rescue.*Confirmed/.test(ac0.t) && /call 0 min \+ mission approval 0 min \+ launch 15 min \+ fly Test Air Rescue to the (primary HLZ|point of injury) \d+ min/.test(ac0.t) && /by air/.test(ac0.pst) && /Air MEDEVAC provider: Test Air Rescue confirmed until/.test(ac0.val),
+    "phase 4: the confirmed aircraft is listed with its mission leg by leg, competes, and clears the provider item " + JSON.stringify([ac0.t.slice(ac0.t.indexOf("Aircraft for this plan"), ac0.t.indexOf("Aircraft for this plan") + 500), /by air/.test(ac0.pst), ac0.val.slice(ac0.val.indexOf("Air MEDEVAC"), ac0.val.indexOf("Air MEDEVAC") + 120)]));
+  await p.click("#mp-mev .mpaform summary");
+  await p.fill('#mp-mev [data-mpa="provider"]', "Planned Heli"); await p.fill('#mp-mev [data-mpa="base_grid"]', "13.75, 100.50"); await p.fill('#mp-mev [data-mpa="cruise_kn"]', "300");
+  await p.click('#mp-mev [data-mpa-add]'); await p.waitForTimeout(400);
+  const delId = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-medair-th")).filter((a) => a.provider === "Test Air Rescue")[0].id);
+  await p.click(`#mp-mev [data-mpa-del="${delId}"]`); await p.waitForTimeout(400);
+  const ac1 = await p.evaluate(() => ({ t: document.getElementById("mp-mev").textContent, pst: document.getElementById("mp-pst").textContent, val: document.getElementById("mp-val").textContent, n: JSON.parse(localStorage.getItem("osap-medair-th")).length }));
+  ok(ac1.n === 1 && /Planned Heli.*Planned, not confirmed/.test(ac1.t) && !/by air/.test(ac1.pst) && /Planned Heli \(entered, not confirmed\)\. Air does not compete with the road/.test(ac1.val) && /air times shown are potential/.test(await p.textContent("#mp-gh")),
+    "phase 4: a planned aircraft, even a fast one, is never chosen: with no confirmed aircraft the picks use road times and the provider item says why");
+  await p.click('#mp-mev [data-mpa-conf]'); await p.waitForTimeout(400);
+  ok(/Planned Heli.*Confirmed/.test(await p.textContent("#mp-mev")) && /Air MEDEVAC provider: Planned Heli confirmed but stopped by its limits now: night capability not known/.test(await p.textContent("#mp-val")) && /Stopped by its limits: night capability not known/.test(await p.textContent("#mp-mev")),
+    "phase 4: Confirmed now confirms it; at night with night capability not recorded it still does not compete, and says so " + JSON.stringify([(await p.textContent("#mp-val")).match(/Air MEDEVAC provider[^!✓]*/), (await p.textContent("#mp-mev")).match(/Planned Heli.{0,300}/)]));
   if (OUT) await p.screenshot({ path: OUT + "/desk-plan.png" });
   await p.click('#medplan [data-mp="close"]');
   ok(await p.evaluate(() => document.getElementById("medplan").hidden && !document.querySelector(".mpicon")) && JSON.stringify(await lines()) === '{"r":0,"g":0,"a":0}', "desktop: Close hides the plan and takes the marks, routes, outlines and rings off the map");
+  ok(await p.evaluate(() => !document.querySelector('[data-lg="medplan"]')), "legend: closing the plan takes its legend away");
   ok(!errors.length, "desktop: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -653,6 +846,23 @@ async function openPlan(p) {
   ok(pr.ho === "visible" && pr.bo === "visible" && pr.bh > 4 * pr.vh && pr.h > 4 * pr.vh && pr.last, "phone print: html and body run the full length of the plan, so every page prints " + JSON.stringify(pr));
   await p.emulateMedia({ media: "screen" });
   if (OUT) await p.screenshot({ path: OUT + "/phone-print-view.png", fullPage: true });
+  /* Shane 2026-10-10: on his iPhone the CONOP's data-age table ran off the left of the screen and its From column wrapped a few
+     letters a line. Every print-view table stacks as labelled cards on a phone: nothing past the screen edge, no squeezed cells */
+  for (const mode of ["print", "printc"]) {
+    await p.click("#mpd-close"); await p.click('#medplan [data-mp="' + mode + '"]');
+    await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
+    await p.waitForTimeout(300);
+    const st = await p.evaluate(() => {
+      const vw = innerWidth, d = document.querySelector("#brief .mpdoc"), T = [...d.querySelectorAll("table")];
+      const out = [...d.querySelectorAll("table, td, th, td *")].filter((e) => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > vw + 1); }).map((e) => e.tagName + ":" + e.textContent.slice(0, 30));
+      const cells = [...d.querySelectorAll("td")].filter((c) => c.offsetParent && c.textContent.trim().length > 12);
+      const narrow = cells.filter((c) => (c.querySelector(".mpcv") || c).getBoundingClientRect().width < 120).map((c) => c.textContent.slice(0, 30));
+      const age = d.querySelector("table.mpage"), td = age && age.querySelector("td[data-l=From]");
+      return { n: T.length, flat: T.filter((t) => getComputedStyle(t.querySelector("thead") || t).display !== "none" && t.tHead).length, out: out.slice(0, 5), nOut: out.length, narrow: narrow.slice(0, 5), nNarrow: narrow.length,
+        age: !!age, from: td ? getComputedStyle(td, "::before").content : "", top: getComputedStyle(document.getElementById("brief")).paddingTop };
+    });
+    ok(st.n > 3 && st.flat === 0 && st.nOut === 0 && st.nNarrow === 0 && st.age && /From/.test(st.from), "phone " + mode + ": every table stacks as labelled cards, nothing off the screen and no squeezed column " + JSON.stringify(st));
+  }
   await p.click("#mpd-close");
   await p.evaluate(() => document.querySelector('#mp-fac [data-mp-assess]').click());
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
@@ -668,7 +878,8 @@ const WEB = { schema: "osap-hospital-web/1", cc: "th", read_at: "2026-10-03T07:4
   { key: "osm:w2", osm: "w2", sof: "", name: "Near Hospital", lat: 13.76, lon: 100.51, website: "https://near.example.org/",
     caps: { "dx.ct": [{ url: "https://near.example.org/ct", title: "CT", excerpt: "CT scanner open 24 hours", observed: "2026-10-03", sha256: "a".repeat(64) }] } },
   { key: "osm:n99", osm: "n99", sof: "", name: "Website Only Hospital", lat: 13.73, lon: 100.52, website: "https://wo.example.org/",
-    caps: { "ed.24_7": [{ url: "https://wo.example.org/er", title: "ER", excerpt: "Emergency room open 24 hours <b>x</b>", observed: "2026-10-03", sha256: "b".repeat(64) }] } }] };
+    caps: { "ed.24_7": [{ url: "https://wo.example.org/er", title: "ER", excerpt: "Emergency room open 24 hours <b>x</b>", observed: "2026-10-03", sha256: "b".repeat(64) }],
+      "cc.icu": [{ url: "https://wo.example.org/icu", title: "ICU", excerpt: "\u0e2b\u0e2d\u0e1c\u0e39\u0e49\u0e1b\u0e48\u0e27\u0e22\u0e2b\u0e19\u0e31\u0e01 12 \u0e40\u0e15\u0e35\u0e22\u0e07", excerpt_en: "Intensive care ward, 12 beds", mt: "MADLAD-400 (Google open model, run in the refresh job)", observed: "2026-10-03", sha256: "9".repeat(64) }] } }] };
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { medfac: MF_ALL, web: WEB });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
@@ -684,6 +895,9 @@ const WEB = { schema: "osap-hospital-web/1", cc: "th", read_at: "2026-10-03T07:4
   await p.click('#mp-fac tr:has-text("Website Only Hospital") [data-mp-assess]');
   await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 20000 });
   ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>x<\/b>/.test(document.getElementById("brief").textContent)), "websites: quoted page text is shown as text, never as markup");
+  /* Shane 2026-10-04 "Machine translation is failing": a Thai quote reads in English, says it is machine translated and by what, and keeps the original */
+  const bt = await p.textContent("#brief");
+  ok(/\u201cIntensive care ward, 12 beds\u201d \(machine translated, MADLAD-400 \(Google open model, run in the refresh job\); original: \u201c\u0e2b\u0e2d\u0e1c\u0e39\u0e49\u0e1b\u0e48\u0e27\u0e22\u0e2b\u0e19\u0e31\u0e01 12 \u0e40\u0e15\u0e35\u0e22\u0e07\u201d\)/.test(bt), "websites: a Thai quote shows its English machine translation, the tool and the original " + (bt.match(/Intensive care ward[^\u00b7]{0,200}/) || [""])[0]);
   await p.click("#mpa-close");
   ok(!errors.length, "websites: no page errors " + errors.join(" | "));
   await ctx.close();
@@ -710,24 +924,58 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   { hcode: "99002", name_th: "x", name_en: "Sourced Trauma Centre", province: "Testburi", type_th: "x", type_en: "General hospital", kind: "hospital", beds_open: 120, level: "S", level_en: "S (standard: provincial)",
     ha: null, programs: [{ kind: "network", name_th: "er-th", name_en: "Emergency care system", stage: "HNC", from: "2025-01-01", to: "2029-01-01", caps: ["ed.basic"], src: "hnc" }],
     lat: 13.8002, lon: 100.5601, osm: "", coord_basis: "MOPH location", retrieved: "2026-10-03", sha256: "d".repeat(64) },
+  { hcode: "99004", name_th: "z", name_en: "Moph Only Hospital", province: "Testburi", type_en: "General hospital", kind: "hospital", beds_open: 200, level: "M1", programs: [],
+    lat: 13.765, lon: 100.515, osm: "", coord_basis: "MOPH location (CITIZENinfo 2020) for the same name in the same province", retrieved: "2026-10-03", sha256: "f".repeat(64) },
   { hcode: "99003", name_th: "y", name_en: "Unplaced Hospital", province: "Testburi", kind: "hospital", programs: [], lat: null, lon: null, osm: "", coord_basis: "not placed", retrieved: "2026-10-03", sha256: "e".repeat(64) }] };
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { medfac: MF_ALL, gov: GOVDOC });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
   await openPlan(p);
   const src = await p.textContent("#mp-src");
-  ok(/Official hospital records \(HA Thailand open data\)/.test(src) && /built 2026-10-03, 3 hospitals, 2 placed on the map; 2 in this plan/.test(src), "official records: the sources list names the registry, its date, the placed count and how many plan hospitals it covers " + src.slice(0, 300));
+  ok(/Official hospital records \(HA Thailand open data\)/.test(src) && /built 2026-10-03, 4 hospitals, 3 placed on the map; 3 in this plan/.test(src), "official records: the sources list names the registry, its date, the placed count and how many plan hospitals it covers " + src.slice(0, 300));
+  /* Shane 2026-10-08 (fix 2): an official hospital OpenStreetMap lacks joins the plan at its MOPH location, and says so */
+  const fac0 = await p.textContent("#mp-fac");
+  ok(/Moph Only Hospital/.test(fac0) && /Official record, not in OpenStreetMap; location: MOPH location \(CITIZENinfo 2020\)/.test(fac0) && (fac0.match(/Sourced Trauma Centre/g) || []).length >= 1 && !/Unplaced Hospital/.test(fac0),
+    "official records: a hospital placed only by its MOPH location is in the plan, labelled with where its location comes from; an unplaced one is not");
   await p.click('#mp-fac tr:has-text("Near Hospital") [data-mp-assess]');
   await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 20000 });
   const b = await p.textContent("#brief"), h = await p.innerHTML("#brief");
   ok(/Official record/.test(b) && /99001/.test(b) && /Regional hospital/.test(b) && /A \(advanced: regional referral\)/.test(b) && /450 open, 500 registered/.test(b) && /Advanced HA accreditation \(x\), 2025-01-01 to 2028-12-31/.test(b), "official records: the assessment shows the H code, type, MOPH level, beds and HA accreditation");
   ok(/Stroke care/.test(b) && /Hip fracture surgery in older people[^<]*2021-01-01 to 2024-01-01 expired/.test(b), "official records: certified programmes are listed and a past end date reads expired");
-  ok(/<th scope="row">Stroke<\/th><td><b>VERIFIED<\/b>, confidence HIGH/.test(h) && /HA Thailand open data: certifications test/.test(b) && /cccccccccccc/.test(b), "official records: a current certificate makes its capability VERIFIED at HIGH confidence, with the source and SHA-256");
-  ok(/<th scope="row">Orthopaedic surgery<\/th><td><b>REPORTED<\/b>, confidence LOW[^<]*<a[^>]*>[^<]*<\/a> <code>[^<]*expired/.test(h), "official records: an expired certificate leaves its capability REPORTED at LOW confidence, marked expired");
+  ok(/<th scope="row">Stroke<\/th><td><span class="mpgrade mpg-v2"[^>]*>V2 Official source<\/span> <b>VERIFIED<\/b>, confidence HIGH/.test(h) && /HA Thailand open data: certifications test/.test(b) && /cccccccccccc/.test(b), "official records: a current certificate makes its capability VERIFIED at HIGH confidence, with the source and SHA-256");
+  ok(/<th scope="row">Orthopaedic surgery<\/th><td><span class="mpgrade mpg-v2"[^>]*>V2 Official source<\/span> <b>REPORTED<\/b>, confidence LOW · available now: <b>UNKNOWN<\/b> \(no planner's check\) · <a[^>]*>[^<]*<\/a> <code>[^<]*expired/.test(h), "official records: an expired certificate leaves its capability REPORTED at LOW confidence, marked expired");
   ok(!/<th scope="row">Cardiac catheterisation<\/th><td><b>(VERIFIED|NOT_AVAILABLE)/.test(h), "official records: no certificate is never read as no capability");
+  /* Shane 2026-10-04: official status counts, as INFERRED and named, for what the status stands for */
+  const rowOf = (n) => (h.match(new RegExp('<th scope="row">' + n + '</th>[\\s\\S]*?</tr>')) || [""])[0];
+  ok(/INFERRED/.test(rowOf("CT")) && /inferred from the official record: MOPH service level A \(regional referral\), H code 99001/.test(rowOf("CT")) && /INFERRED/.test(rowOf("Emergency operating room")) && !/INFERRED/.test(rowOf("Stroke")) && !/INFERRED/.test(rowOf("Neurosurgery")),
+    "official status: a level A hospital's Secondary capabilities are INFERRED from the official record and say so; a certificate stays VERIFIED and nothing else is added " + JSON.stringify(["CT", "Emergency operating room", "Stroke", "Neurosurgery"].map((n) => rowOf(n).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 110))));
+  ok(await p.evaluate(() => { const f = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.major_trauma" && x.role === "secondary")[0]; return !!f.choice; }), "official status: with the official record, a Secondary is found");
   ok(/450 open \(official record, H code 99001\)/.test(b) && /teaching or referral hospital: MOPH service level A/.test(b), "official records: beds open and the MOPH level A referral status come from the official record");
   ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>y<\/b>/.test(document.getElementById("brief").textContent)), "official records: registry text is shown as text, never as markup");
   await p.click("#mpa-close");
+  /* Shane 2026-10-06 (King Narai, level S, credited with an emergency department only): what the MOPH says each service level
+     has is INFERRED, named and linked; Shane 2026-10-08 ("an unverified T5 is not good"): the Service Plan rooms per level add
+     X-ray, blood bank, CT and burn unit from level S, so a level S hospital reads T3; neurosurgery stays unknown */
+  ok(/MOPH Service Plan hospital levels/.test(src) && /MOPH health KPI 046\.2/.test(src) && /hospital level criteria \(ICU, OR from level M2 up\)/.test(src) && /MOPH Service Plan 2555 rooms and beds per hospital level/.test(src), "MOPH levels: the four government sources are in the sources list");
+  await p.click('#mp-fac tr:has-text("Sourced Trauma Centre") [data-mp-assess]');
+  await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || "") && /Sourced Trauma Centre/.test(document.getElementById("brief").textContent), null, { timeout: 20000 });
+  const hS = await p.innerHTML("#brief"), rowS = (n) => (hS.match(new RegExp('<th scope="row">' + n + '</th>[\\s\\S]*?</tr>')) || [""])[0];
+  ok(/INFERRED/.test(rowS("General surgeon")) && /MOPH service level S, H code 99002; level S: specialists in every major and secondary branch/.test(rowS("General surgeon")) && /INFERRED/.test(rowS("Orthopaedic surgery")) && /INFERRED/.test(rowS("Anaesthesia")) &&
+    /INFERRED/.test(rowS("Emergency operating room")) && /operating room within 60 minutes/.test(rowS("Emergency operating room")) && /INFERRED/.test(rowS("ICU")) && /ICU and operating theatre are level criteria from M2 up/.test(rowS("ICU")) &&
+    /INFERRED/.test(rowS("Blood bank")) && /Service Plan rooms for level S \(general hospital, 300-500 beds\)/.test(rowS("Blood bank")) && /INFERRED/.test(rowS("CT")) && /1 CT room/.test(rowS("CT")) &&
+    /INFERRED/.test(rowS("X-ray")) && /INFERRED/.test(rowS("Burn care")) && !/INFERRED/.test(rowS("Neurosurgery")) && !/INFERRED/.test(rowS("Mechanical ventilation")),
+    "MOPH levels: a level S hospital gets surgery, orthopaedics, anaesthesia, emergency theatre, ICU, X-ray, blood bank, CT and burn unit as INFERRED with the reason; neurosurgery and ventilation stay unknown " + JSON.stringify(["General surgeon", "Emergency operating room", "ICU", "Blood bank", "CT"].map((n) => rowS(n).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 150))));
+  ok(/Observed T3 selective definitive trauma \(inferred\)/.test(hS), "MOPH levels: with the Service Plan rooms, a level S hospital reads as observed T3, not T5");
+  await p.click("#mpa-close");
+  /* Shane 2026-10-06 ("We NEED to know about air medevac"): the documented service, how to request it and its source */
+  await p.waitForFunction(() => /Thai Sky Doctor/.test((document.getElementById("mp-mev") || {}).textContent || "") && /Thai Sky Doctor/.test((document.getElementById("mp-conop") || {}).textContent || ""), null, { timeout: 20000 }).catch(() => {});
+  const airT = await p.evaluate(() => ({ mev: document.getElementById("mp-mev").textContent, tel: !!document.querySelector('#mp-mev a[href="tel:1669"]'), href: !!document.querySelector('#mp-mev a[href="https://thailand.go.th/issue-focus-detail/001_07_002-2"]'),
+    conop: document.getElementById("mp-conop").textContent, src: document.getElementById("mp-src").textContent }));
+  ok(/Air medevac service documented for this country/.test(airT.mev) && /Thai Sky Doctor \(National Institute for Emergency Medicine, NIEM\)/.test(airT.mev) && airT.tel && airT.href && /can be made using the 1669 system/.test(airT.mev),
+    "air: section 4 names Thai Sky Doctor, a tap-to-call 1669, the government source and its words");
+  ok(/NOT CONFIRMED/.test(airT.conop) && /Request: Thai Sky Doctor .*call 1669 \(documented service, not confirmed for this mission\)/.test(airT.conop) && /Air MEDEVAC provider not confirmed: request Thai Sky Doctor/.test(airT.conop),
+    "air: the CONOP card says who to request and that it is not confirmed " + airT.conop.slice(airT.conop.indexOf("AIR"), airT.conop.indexOf("AIR") + 200));
+  ok(/THAILAND\.GO\.TH \(Royal Thai Government\): Thai Sky Doctor/.test(airT.src), "air: the source is in the sources list with its record fingerprint");
   ok(!errors.length, "official records: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -771,6 +1019,7 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   p.on("pageerror", (e) => console.log("helper page error: " + e.message));
   await p.addScriptTag({ url: base + "assets/osap-geo.js" });
   for (const f of ["base-provider", "resolver", "sof-provider", "web-provider", "osm-provider", "countries/th-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
+  for (const f of ["osap-facility-intel", "osap-medplan-decide", "osap-medplan-air", "osap-medplan-model"]) await p.addScriptTag({ url: base + "assets/" + f + ".js" });
   await p.addScriptTag({ url: base + "assets/osap-medplan.js" });
   const r = await p.evaluate(() => { const M = window.OSAP_MEDPLAN; return {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),

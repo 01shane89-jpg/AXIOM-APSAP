@@ -1,0 +1,23 @@
+# Test only: checks the flood tile hosts and the colours in their tiles (tools/probe_flood.sh), then opens OSAP headless over central
+# Thailand with the real flood layers on (tests/flood_overlay_smoke.mjs, LIVE=1). Prints to the log; writes nothing to the repo.
+name: Probe flood tiles
+on:
+  push:
+    branches: [claude/flood-overlay-fix]
+    paths: [tools/probe_flood.sh, tests/flood_overlay_smoke.mjs, index.html, assets/osap-weather.js, .github/workflows/probe-flood.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_flood.sh
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: LIVE=1 node tests/flood_overlay_smoke.mjs

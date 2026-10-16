@@ -1,0 +1,13 @@
+[["n4269850493",29.62947,43.52361,"sa",{"name":"مجمع الشفاء الطبي","amenity":"hospital"}],
+["n7350014021",29.6207,43.52,"sa",{"name":"مركز إسعاف رفحاء","emergency":"ambulance_station"}],
+["n7350036570",29.6376,43.5153,"sa",{"name":"مستشفى رفحاء المركزي","amenity":"hospital"}],
+["n7351094052",28.257,42.9382,"sa",{"name":"مركز إسعاف","emergency":"ambulance_station"}],
+["r11881620",29.62549,43.49003,"sa",{"name":"رفحاء","name:en":"Rafha Domestic Airport","aeroway":"aerodrome","icao":"OERF","iata":"RAH","wikidata":"Q2743307"}],
+["w1235795408",29.82822,43.85278,"sa",{"aeroway":"helipad"}],
+["w1241010746",29.68352,43.41912,"sa",{"aeroway":"helipad"}],
+["w1241010747",29.68414,43.41813,"sa",{"aeroway":"helipad"}],
+["w479727229",29.75748,43.67572,"sa",{"aeroway":"helipad"}],
+["w908997753",29.62586,43.48468,"sa",{"aeroway":"helipad"}],
+["w908997754",29.6256,43.48456,"sa",{"aeroway":"helipad"}],
+["w908997755",29.62565,43.48534,"sa",{"aeroway":"helipad"}],
+["w908997756",29.62539,43.48523,"sa",{"aeroway":"helipad"}]]

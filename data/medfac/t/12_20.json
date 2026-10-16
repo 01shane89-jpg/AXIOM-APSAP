@@ -14,6 +14,7 @@
 ["n7745655643",12.73349,20.50022,"td",{"name":"Aéroport d'Am Dam مطار أم دام","addr:city":"أم دام","aeroway":"aerodrome","wikidata":"Q4738919"}],
 ["n7750429652",13.57276,21.85215,"td",{"name":"Aéroport de Farchana مطار فرشانة","addr:city":"فرشانة","aeroway":"aerodrome"}],
 ["n8134155382",13.8299,20.82311,"td",{"name":"Dispensaire d'Abéché","amenity":"hospital","healthcare":"hospital"}],
+["w1192464057",13.06587,21.98638,"sd",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1194691078",12.47448,21.58031,"td",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1194705133",12.51083,21.41123,"td",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1194760264",12.21055,21.45841,"td",{"name":"Goz-Beida Airport مطار قوز بيدا","name:en":"Goz Beïda Airport","aeroway":"aerodrome","icao":"FTTG","wikidata":"Q3913491"}],

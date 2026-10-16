@@ -180,7 +180,88 @@ const RECENT = [
   ["R Thai PBS south page", "https://www.thaipbs.or.th/news/categories/south"],
   ["R Isranews south page", "https://www.isranews.org/article/south-news.html"],
 ];
-const LIST = process.env.PROBE_SET === "coverage" ? COV : C.concat(RECENT);
+// PROBE_SET=border (2026-10-14, Thai southern border build): Malaysian outlets and searches for the Malaysian side of the border, and
+// article pages on the emergency decree / security-act districts (PAGE entries: the page's text is saved to probe-out/pages/ for reading).
+const BORDER = [
+  ["MY Bernama EN", "https://www.bernama.com/en/rssfeed.php"],
+  ["MY Bernama BM", "https://www.bernama.com/bm/rssfeed.php"],
+  ["MY Bernama crime", "https://www.bernama.com/en/rss/crime_courts.xml"],
+  ["MY NST nation", "https://www.nst.com.my/news/nation/feed"],
+  ["MY NST feed", "https://www.nst.com.my/feed"],
+  ["MY The Sun", "https://thesun.my/rss/malaysia-news"],
+  ["MY The Sun all", "https://thesun.my/rss"],
+  ["MY Malay Mail", "https://www.malaymail.com/feed/rss/malaysia"],
+  ["MY FMT nation", "https://www.freemalaysiatoday.com/category/nation/feed/"],
+  ["MY FMT BM", "https://www.freemalaysiatoday.com/category/bahasa/feed/"],
+  ["MY Berita Harian", "https://www.bharian.com.my/feed"],
+  ["MY Harian Metro", "https://www.hmetro.com.my/feed"],
+  ["MY Sinar Harian", "https://www.sinarharian.com.my/rssFeed/211"],
+  ["MY Utusan", "https://www.utusan.com.my/feed/"],
+  ["MY Kosmo", "https://www.kosmo.com.my/feed/"],
+  ["MY The Star nation", "https://www.thestar.com.my/rss/News/Nation"],
+  ["MY Kelantan PDRM page", "https://www.rmp.gov.my/"],
+  ["MY search: Kelantan border smuggling", "https://www.bing.com/news/search?q=Kelantan%20border%20smuggling&format=rss"],
+  ["MY search: Rantau Panjang", "https://www.bing.com/news/search?q=Rantau%20Panjang&format=rss"],
+  ["MY search: Bukit Kayu Hitam", "https://www.bing.com/news/search?q=Bukit%20Kayu%20Hitam&format=rss"],
+  ["MY search: Pengkalan Hulu", "https://www.bing.com/news/search?q=Pengkalan%20Hulu&format=rss"],
+  ["MY search: Padang Besar", "https://www.bing.com/news/search?q=Padang%20Besar&format=rss"],
+  ["MY search: Sungai Golok", "https://www.bing.com/news/search?q=Sungai%20Golok&format=rss"],
+  ["MY search: Pengkalan Kubor", "https://www.bing.com/news/search?q=Pengkalan%20Kubor&format=rss"],
+  ["MY search: Wang Kelian", "https://www.bing.com/news/search?q=Wang%20Kelian&format=rss"],
+  ["MY search: AKPS sempadan Thailand", "https://www.bing.com/news/search?q=AKPS%20sempadan%20Thailand&format=rss"],
+  ["MY search: GOF sempadan Kelantan", "https://www.bing.com/news/search?q=GOF%20sempadan%20Kelantan&format=rss"],
+  ["MY search: seludup sempadan Kelantan", "https://www.bing.com/news/search?q=seludup%20sempadan%20Kelantan&format=rss"],
+  ["MY search: penyeludupan Bukit Kayu Hitam", "https://www.bing.com/news/search?q=penyeludupan%20Bukit%20Kayu%20Hitam&format=rss"],
+  ["MY search: Rantau Panjang tangkap", "https://www.bing.com/news/search?q=Rantau%20Panjang%20tangkap&format=rss"],
+  ["MY search: site:bernama.com southern Thailand peace", "https://www.bing.com/news/search?q=site%3Abernama.com%20southern%20Thailand%20peace&format=rss"],
+  ["MY search: Malaysia facilitator Thailand peace BRN", "https://www.bing.com/news/search?q=Malaysia%20facilitator%20Thailand%20peace%20BRN&format=rss"],
+  ["MY search: BRN dialog damai", "https://www.bing.com/news/search?q=BRN%20dialog%20damai&format=rss"],
+  ["MY search: Pattani peace talks Malaysia", "https://www.bing.com/news/search?q=Pattani%20peace%20talks%20Malaysia&format=rss"],
+  ["MY search: PATI sempadan Thailand Kelantan", "https://www.bing.com/news/search?q=PATI%20sempadan%20Thailand%20Kelantan&format=rss"],
+  ["MY search: jeti haram Sungai Golok", "https://www.bing.com/news/search?q=jeti%20haram%20Sungai%20Golok&format=rss"],
+  ["MY search: dadah sempadan Thailand Kedah", "https://www.bing.com/news/search?q=dadah%20sempadan%20Thailand%20Kedah&format=rss"],
+  ["PAGE decree Isranews list", "https://www.isranews.org/article/south-news/south-slide/125392-somsakemergencydecree.html"],
+  ["PAGE ISA 19 districts InfoQuest", "https://www.infoquest.co.th/2026/656433"],
+  ["PAGE ISA 19 districts southpeace", "https://www.southpeace.go.th/?p=185602"],
+  ["PAGE ISA 19 districts Thansettakij", "https://www.thansettakij.com/politics/670219"],
+  ["PAGE ISA 19 districts thestandard", "https://thestandard.co/cabinet-extends-southern-border-security-zone/"],
+  ["PAGE decree Jan70 InfoQuest", "https://www.infoquest.co.th/2026/659898"],
+  ["PAGE decree Jan70 ThaiPBS", "https://www.thaipbs.or.th/news/content/559232"],
+  ["PAGE decree 86 thansettakij", "https://www.thansettakij.com/politics/670803"],
+  ["PAGE decree Panare Raman", "https://nbt2hd.prd.go.th/th/content/category/detail/id/2153/iid/250981"],
+  ["PAGE decree Kolok Isranews", "https://www.isranews.org/article/south-news/south-slide/146422-sungaikolok.html"],
+  ["PAGE decree PRD lifted", "https://thailand.prd.go.th/en/content/category/detail/id/50/iid/250819"],
+  ["PAGE decree Thai PBS World", "https://www.thaipbsworld.com/south-watch/559243"],
+  ["PAGE ISA mgr", "https://mgronline.com/politics/detail/9690000095081"],
+  ["PAGE ISA matichon", "https://www.matichon.co.th/politics/news_5911255"],
+];
+// PROBE_SET=peace (2026-10-14, Deep South peace talks tracker): news searches listing every dated item, and article pages on the
+// 2026 rounds of the BRN dialogue, whose passages about the talks are printed for reading from the run log.
+const PEACE = [
+  ["S bing BRN peace dialogue", "https://www.bing.com/news/search?q=BRN%20peace%20dialogue%20Thailand&format=rss"],
+  ["S bing BRN peace talks Malaysia", "https://www.bing.com/news/search?q=BRN%20peace%20talks%20Malaysia&format=rss"],
+  ["S bing southern Thailand peace talks", "https://www.bing.com/news/search?q=southern%20Thailand%20peace%20talks&format=rss"],
+  ["S bing Thanut peace dialogue", "https://www.bing.com/news/search?q=Thanut%20Suvarnananda&format=rss"],
+  ["S bing TH peace dialogue", "https://www.bing.com/news/search?q=%E0%B8%9E%E0%B8%B9%E0%B8%94%E0%B8%84%E0%B8%B8%E0%B8%A2%E0%B8%AA%E0%B8%B1%E0%B8%99%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B8%B8%E0%B8%82&format=rss"],
+  ["S bing BRN dialog damai", "https://www.bing.com/news/search?q=BRN%20dialog%20damai&format=rss"],
+  ["PAGE peace NST BRN process key", "https://www.nst.com.my/amp/news/regional/2026/07/1480966/brn-says-peace-process-remains-key-resolving-southern-thailand"],
+  ["PAGE peace Bernama resume", "https://bernama.com/en/news.php?id=2490942"],
+  ["PAGE peace BP govt slams BRN", "https://www.bangkokpost.com/thailand/general/3281415/govt-slams-brn-remarks-amid-talks-in-malaysia"],
+  ["PAGE peace BP new look", "https://www.bangkokpost.com/thailand/general/3279895/new-look-for-peace-talks-in-south"],
+  ["PAGE peace Mizzima surge", "https://eng.mizzima.com/2026/07/06/36001"],
+  ["PAGE peace Crisis Group b172", "https://www.crisisgroup.org/brf/asia-pacific/thailand/b172-sustaining-momentum-southern-thailands-peace-dialogue"],
+  ["PAGE peace TPBSW endorse plan", "https://www.thaipbsworld.com/world/thai-delegation-brn-agree-to-endorse-peace-plan-soon"],
+  ["PAGE peace BP local hands", "https://www.bangkokpost.com/opinion/opinion/3283819/south-peace-talks-must-stay-in-local-hands"],
+  ["PAGE peace Indoneo August", "https://www.indoneo.com/power/thailand-southern-attacks-august-2026-peace-talks/"],
+  ["PAGE peace Star Thanut", "https://www.thestar.com.my/news/nation/2026/07/14/malaysia-to-cooperate-closely-with-new-thai-peace-dialogue-chief-thanut-suvarnananda"],
+  ["PAGE peace BP new negotiator", "https://www.bangkokpost.com/thailand/general/3268324/new-southern-peace-negotiator-promises-to-be-openminded"],
+  ["PAGE peace NST welcomes", "https://www.nst.com.my/news/nation/2026/07/1488393/malaysia-welcomes-new-thai-peace-negotiator-vows-support-southern"],
+  ["PAGE peace ThaiPBS 508440", "https://www.thaipbs.or.th/news/content/508440"],
+  ["PAGE peace Thairath 2761197", "https://www.thairath.co.th/news/local/south/2761197"],
+  ["PAGE peace Naewna 966664", "https://www.naewna.com/politic/966664"],
+  ["PAGE peace Amarin 553264", "https://www.amarintv.com/news/politic/553264"],
+];
+const LIST = process.env.PROBE_SET === "coverage" ? COV : process.env.PROBE_SET === "border" ? BORDER : process.env.PROBE_SET === "peace" ? PEACE : C.concat(RECENT);
 const out = [];
 for (const [src, url] of LIST) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000), r0 = { src, url };
@@ -191,6 +272,7 @@ for (const [src, url] of LIST) {
     const items = parseFeed(body);
     if (items.length) {
       const ds = items.filter((i) => /^TK/.test(src) ? /Cambodia|Thai|กัมพูชา|ชายแดน|កម្ពុជា|ថៃ/i.test(i.title + " " + i.summary) : relevant({}, i.title + " " + i.summary));
+      if (process.env.PROBE_SET === "peace") items.forEach((i) => console.log("ITEM " + src + " | " + i.date + " | " + String(i.title).slice(0, 200) + " | " + String(i.summary || "").replace(/\s+/g, " ").slice(0, 300) + " | " + i.link));
       Object.assign(r0, { d7: items.filter((i) => Date.now() - new Date(i.date) < 7 * 864e5).length, items: items.length, newest: items.map((i) => { const d = new Date(i.date); return isNaN(d) ? "" : d.toISOString().slice(0, 16); }).sort().pop(), ds: ds.length, sample: (ds.length ? ds : items).slice(0, 3).map((i) => i.title.slice(0, 100)) });
     } else if (/json/.test(r0.type)) {
       try { const j = JSON.parse(body); if (Array.isArray(j)) Object.assign(r0, { items: j.length, newest: (j[0] || {}).date || "", sample: j.slice(0, 3).map((x) => ((x.title || {}).rendered || "").slice(0, 100)) }); } catch (e) {}
@@ -198,6 +280,26 @@ for (const [src, url] of LIST) {
       const title = (body.match(/<title[^>]*>([^<]*)/i) || [])[1] || "";
       const links = [...body.matchAll(/<a\b[^>]*>([^<]{15,200})<\/a>/g)].map((m) => m[1].trim()).filter((x) => relevant({}, x));
       Object.assign(r0, { title: title.trim().slice(0, 80), ds_links: links.length, sample: links.slice(0, 3).map((x) => x.slice(0, 100)) });
+      if (/^PAGE /.test(src)) {
+        // the article's text only (scripts, styles and tags removed), capped, for reading by hand
+        const txt = body.replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").slice(0, 60000);
+        fs.mkdirSync("probe-out/pages", { recursive: true });
+        fs.writeFileSync("probe-out/pages/" + src.slice(5).replace(/[^A-Za-z0-9]+/g, "-") + ".txt", url + "\n\n" + txt);
+        // the passage that names the most Deep South districts, printed so it can be read from the run log
+        const NAMES = /ปัตตานี|ยะลา|นราธิวาส|สงขลา|โคกโพธิ์|หนองจิก|ปะนาเระ|มายอ|ทุ่งยางแดง|สายบุรี|ไม้แก่น|ยะหริ่ง|ยะรัง|กะพ้อ|แม่ลาน|เบตง|บันนังสตา|ธารโต|ยะหา|รามัน|กาบัง|กรงปินัง|ตากใบ|บาเจาะ|ยี่งอ|ระแงะ|รือเสาะ|ศรีสาคร|แว้ง|สุคิริน|สุไหงโก-ลก|สุไหงปาดี|จะแนะ|เจาะไอร้อง|จะนะ|เทพา|นาทวี|สะบ้าย้อย|Pattani|Yala|Narathiwat|Songkhla|Betong|Bannang Sata|Than To|Yaha|Raman|Kabang|Krong Pinang|Tak Bai|Bacho|Yi-?ngo|Ra-?ngae|Rueso|Si Sakhon|Waeng|Sukhirin|Kolok|Padi|Chanae|Cho-?airong|Chana|Thepha|Na Thawi|Saba Yoi|Khok Pho|Nong Chik|Panare|Mayo|Thung Yang Daeng|Sai Buri|Mai Kaen|Yaring|Yarang|Kapho|Mae Lan/g;
+        if (/^PAGE peace /.test(src)) {
+          // peace pages: the two passages with the most talk words, each printed
+          const W = /BRN|peace|dialogue|talks|negotiat|facilitat|round|ceasefire|พูดคุย|บีอาร์เอ็น|สันติ|เจรจา|damai|rundingan/gi, wins = [];
+          for (let k = 0; k < txt.length; k += 300) wins.push([(txt.slice(k, k + 2400).match(W) || []).length, k]);
+          wins.sort((a, b) => b[0] - a[0]);
+          const pick = [wins[0], wins.find((w) => wins[0] && Math.abs(w[1] - wins[0][1]) >= 2400)].filter(Boolean);
+          pick.forEach((w) => console.log("PAGETEXT " + src + " (" + w[0] + " words): " + txt.slice(w[1], w[1] + 2400)));
+        } else {
+          let best = [0, 0];
+          for (let k = 0; k < txt.length; k += 200) { const n = (txt.slice(k, k + 1800).match(NAMES) || []).length; if (n > best[0]) best = [n, k]; }
+          console.log("PAGETEXT " + src + " (" + best[0] + " names): " + txt.slice(best[1], best[1] + 1800));
+        }
+      }
     }
   } catch (e) { r0.error = e.name === "AbortError" ? "timed out" : (e.cause && e.cause.code) || e.message; }
   clearTimeout(t);

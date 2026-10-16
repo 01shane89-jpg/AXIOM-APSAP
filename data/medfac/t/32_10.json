@@ -1,0 +1,13 @@
+[["n5651076330",32.01174,11.34754,"ly",{"amenity":"clinic"}],
+["n7959924385",32.01092,11.35223,"ly",{"name":"عيادة الوفاق","name:en":"Al Wifaq Clinic","amenity":"clinic"}],
+["w102221928",32.48213,11.89332,"ly",{"name":"قاعدة الوطية الجوية عقبة بن نافع","name:en":"Uqba Bin Nafeh Air Force Base","operator":"Government of National Unity","aeroway":"aerodrome","icao":"HL77","military":"airfield","wikidata":"Q12694250"}],
+["w1083511425",32.00803,11.46861,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w1335205590",32.96942,11.84269,"ly",{"name":"مستشفى الاوتاد القروي قسم النساء و الولادة والاطفال","amenity":"hospital","healthcare":"hospital"}],
+["w637506760",32.88908,11.98482,"ly",{"name":"مستشفي رقدالين","name:en":"Riqdalin Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w789945801",32.01721,11.95496,"ly",{"name":"مستشفى شكشوك","name:en":"Shakshuk Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w790361510",32.00481,10.83786,"ly",{"name":"مستوصف الغزايا","name:en":"Al Ghazzaya Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w790361720",32.01266,11.34693,"ly",{"name":"مستشفى تيجي","name:en":"Teji Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"العزيزية-نالوت","addr:city":"تيجي"}],
+["w792056889",32.06303,11.54346,"ly",{"name":"مستوصف بدر","name:en":"BADR Clinic","amenity":"hospital","healthcare":"hospital","addr:street":"بدر"}],
+["w832943186",32.82856,11.63288,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w853330031",32.01741,11.35931,"ly",{"name":"العيادات الخارجية","name:en":"Outpatient clinics","amenity":"hospital","healthcare":"hospital"}],
+["w948855513",32.85255,11.98086,"ly",{"name":"مستشفي السبخة القروي","name:en":"Al Sabkha Village Hospital","amenity":"hospital","healthcare":"hospital"}]]

@@ -1,0 +1,10 @@
+[["n1042057420",55.93659,158.71132,"ru",{"name":"Витязь Аэро","aeroway":"aerodrome"}],
+["w100697382",54.69807,158.62496,"ru",{"name":"Поликлиника","amenity":"hospital","healthcare":"hospital"}],
+["w100697627",54.68903,158.60869,"ru",{"name":"Инфекция","amenity":"hospital","healthcare":"hospital"}],
+["w100697750",54.68936,158.60773,"ru",{"name":"Стационар","amenity":"hospital","healthcare":"hospital"}],
+["w115670131",54.69235,158.61205,"ru",{"name":"Детская поликлиника","amenity":"clinic","healthcare":"clinic"}],
+["w1226249629",54.11072,159.97729,"ru",{"aeroway":"helipad"}],
+["w1470000159",55.93836,158.71075,"ru",{"name":"Аэродром Эссо","name:en":"Esso Airport","aeroway":"heliport"}],
+["w192004343",55.92928,158.69819,"ru",{"amenity":"hospital","healthcare":"hospital","healthcare:speciality":"Бальница"}],
+["w210901589",54.68253,158.56514,"ru",{"aeroway":"helipad"}],
+["w587541977",54.68151,158.54992,"ru",{"name":"Аэропорт Мильково","name:en":"Milkovo Airport","aeroway":"aerodrome","icao":"UHPM","aerodrome:type":"public","wikidata":"Q6858124"}]]

@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "e976bcc8460e";
+const VERSION = "a795648b9193";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -417,18 +417,27 @@ const PRECACHE = [
 "assets/osap-cf-thailand.js",
 "assets/osap-cf-history.js",
 "assets/osap-cf-sites.js",
+"assets/osap-cf-deepsouth.js",
+"assets/osap-cf-dspat.js",
+"data/thailand/deepsouth-corridors.js",
+"data/thailand/deepsouth-peace.js",
 "assets/osap-evsum.js",
 "assets/osap-share.js",
 "assets/osap-push.js",
 "assets/osap-boolq.js",
 "assets/osap-health.js",
+"assets/osap-ds-review.js",
+"assets/osap-lock.js",
 "assets/osap-start.js",
 "assets/osap-symbols.js",
 "assets/osap-tlreport.js",
+"assets/osap-ai.js",
+"assets/osap-ai-worker.js",
 "assets/osap-areasum.js",
 "assets/osap-aoi.js",
 "assets/osap-viewrep.js",
 "assets/osap-et.js",
+"assets/osap-socialstats.js",
 "assets/osap-geo.js",
 "assets/osap-measure.js",
 "assets/osap-tools.js",
@@ -437,6 +446,8 @@ const PRECACHE = [
 "assets/osap-points.js",
 "assets/osap-3d.js",
 "assets/osap-ws.js",
+"assets/osap-analyst.js",
+"data/thailand/deepsouth-entities.js",
 "assets/osap-milsym.js",
 "assets/osap-milsym-cat.js",
 "assets/osap-maploading.js",
@@ -445,10 +456,15 @@ const PRECACHE = [
 "assets/osap-surveil.js",
 "assets/osap-cams.js",
 "assets/osap-borders.js",
+"assets/osap-pop.js",
+"assets/osap-lidar.js",
 "assets/osap-evac.js",
 "assets/osap-dc.js",
+"assets/osap-infra.js",
 "assets/osap-route.js",
+"assets/comms/radio-lib.js",
 "assets/osap-comms.js",
+"assets/osap-commsplan.js",
 "assets/osap-search.js",
 "assets/hospital-sources/base-provider.js",
 "assets/hospital-sources/resolver.js",
@@ -456,15 +472,58 @@ const PRECACHE = [
 "assets/hospital-sources/web-provider.js",
 "assets/hospital-sources/osm-provider.js",
 "assets/hospital-sources/countries/th-provider.js",
+"assets/osap-facility-intel.js",
+"assets/osap-medplan-decide.js",
+"assets/osap-medplan-air.js",
+"assets/osap-sea.js",
+"assets/osap-seatransit.js",
 "assets/osap-medplan-model.js",
 "assets/osap-medplan.js",
 "assets/osap-lz.js",
+"assets/osap-terrain.js",
+"assets/terrain/terrain-provider.js",
+"assets/terrain/providers/remote-dem.js",
+"assets/terrain/providers/packaged-dem.js",
+"assets/terrain/viewshed-engine.js",
+"assets/terrain/viewshed-worker.js",
 "assets/osap-xc.js",
+"assets/osap-epe.js",
 "assets/osap-preview.js",
+"assets/osap-nav.js",
 "assets/osap-split.js",
 "assets/osap-reports.js",
 "assets/osap-offline.js",
 "assets/osap-move.js",
+"assets/osap-guide.js",
+"assets/osap-i18n.js",
+"assets/i18n/th.js",
+"assets/i18n/vi.js",
+"assets/i18n/fil.js",
+"assets/i18n/id.js",
+"assets/i18n/ms.js",
+"assets/i18n/zh.js",
+"assets/i18n/ja.js",
+"assets/i18n/ko.js",
+"assets/guide/today.jpg",
+"assets/guide/map.jpg",
+"assets/guide/datasets.jpg",
+"assets/guide/weather.jpg",
+"assets/guide/overlays.jpg",
+"assets/guide/grid.jpg",
+"assets/guide/ring.jpg",
+"assets/guide/measure.jpg",
+"assets/guide/route.jpg",
+"assets/guide/area.jpg",
+"assets/guide/point.jpg",
+"assets/guide/watch.jpg",
+"assets/guide/mywork.jpg",
+"assets/guide/medplan.jpg",
+"assets/guide/evac.jpg",
+"assets/guide/lz.jpg",
+"assets/guide/terrain.jpg",
+"assets/guide/comms.jpg",
+"assets/guide/reports.jpg",
+"assets/guide/settings.jpg",
 "assets/osap-illum.js",
 "assets/osap-locate.js",
 "assets/osap-drones.js",
@@ -483,7 +542,10 @@ const PRECACHE = [
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
-const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /ais\.openwaters\.io/,
+const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw\.githubusercontent\.com\/mlc-ai\//,  // OSAP's AI model (assets/osap-ai.js): WebLLM keeps its own copy
+  // Mapterhorn's coverage file (assets/osap-lidar.js) is read in byte ranges, which the Cache API cannot keep
+  /download\.mapterhorn\.com\//,
+  /thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-avwx\//, /ais\.openwaters\.io/,
   // traffic camera stills (assets/osap-cams.js): always the agency's newest image, never a saved copy
   /api\.data\.gov\.sg\/v1\/transport/, /images\.data\.gov\.sg\//, /tdcctv\.data\.one\.gov\.hk/, /trafficnz\.info\/camera/, /jamcams\.tfl\.gov\.uk/,
   /weathercam\.digitraffic\.fi/, /drivebc\.ca\/images\//, /webcams\.transport\.nsw\.gov\.au/, /cwwp2\.dot\.ca\.gov\/data\/d\d+\/cctv\/image/, /webcams\.nyctmc\.org\/api\/cameras\/[^/]+\/image/,
@@ -497,13 +559,65 @@ const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.ear
   /cctv\d*\.dot\.wi\.gov\//, /itsstreaming[\w-]*\.dotd\.la\.gov\//i, /\.its\.nv\.gov(:\d+)?\//, /publicstreamer\d*\.cotrip\.org(:\d+)?\//, /video\d*\.iowadot\.gov(:\d+)?\//,
   /skysfs\d*\.trafficwise\.org\//, /wzmedia\.dot\.ca\.gov(:\d+)?\//, /video\.deldot\.gov(:\d+)?\//, /strmr\d*\.sha\.maryland\.gov\//];
 // Saved after install rather than during it (see the top of this file).
-const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
+const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
 const DATA = "asap-data";
 const home = (u) => new URL(u, self.registration.scope).href;
 const isData = (u) => /\/data\//.test(new URL(u, self.registration.scope).pathname);
 const store = (u) => (isData(u) ? DATA : SHELL);
 const save = (req, res) => caches.open(store(typeof req === "string" ? req : req.url)).then((c) => c.put(req, res)).catch(() => {});
+// Hidden areas (assets/osap-lock.js, tools/seal_hidden.mjs): these files are sealed in the repository and on the site, readable only
+// with an owner device's private key. While that device is unlocked the page keeps the key in IndexedDB ("osap-lock", as a
+// CryptoKey that cannot be exported) with its end time, and this worker opens the sealed files on their way to the page. The
+// caches only ever hold the sealed copies; the opened copy is marked (X-OSAP-Unsealed) so the page does not save it either.
+// Locked, or with no key, the sealed text is passed on as it is: one JavaScript comment, so a script runs nothing.
+// SEALED must equal "sealed" in tools/hidden-areas.json (tests/seal.test.mjs).
+const SEALED = ["^data/layers/us/", "^data/infra/us/", "^data/(sof|brief|history)/us\\.js$", "^data/dc/us\\.json$", "^data/live/[a-z]+/us\\.js$",
+  "^data/live/news/us-states/", "^data/cams/us-[a-z0-9-]+\\.json$", "^source/(sof|countries)/us\\.json$"].map((r) => new RegExp(r));
+const SEAL_PREFIX = "/*osap-sealed:v1 ";
+function sealedPath(u) {
+  const p = new URL(u).pathname, s = new URL(self.registration.scope).pathname;
+  return p.startsWith(s) && SEALED.some((r) => r.test(p.slice(s.length)));
+}
+const unb64u = (t) => Uint8Array.from(atob(String(t).replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+function lockKey() {
+  return new Promise((done) => {
+    try {
+      const o = indexedDB.open("osap-lock", 1);
+      o.onupgradeneeded = () => o.result.createObjectStore("k");
+      o.onerror = () => done(null);
+      o.onsuccess = () => {
+        const db = o.result;
+        try {
+          const g = db.transaction("k").objectStore("k").get("open");
+          g.onsuccess = () => { const r = g.result; db.close(); done(r && r.until > Date.now() && r.key && r.f ? r : null); };
+          g.onerror = () => { db.close(); done(null); };
+        } catch (e) { db.close(); done(null); }
+      };
+    } catch (e) { done(null); }
+  });
+}
+async function unseal(res) {
+  if (!res || !res.ok) return res;
+  try {
+    const text = await res.clone().text();
+    if (!text.startsWith(SEAL_PREFIX)) return res;
+    const k = await lockKey();
+    if (!k) return res;
+    const env = JSON.parse(text.slice(SEAL_PREFIX.length).replace(/\*\/\s*$/, "")), r = (env.r || []).find((x) => x.f === k.f);
+    if (!r) return res;
+    const S = crypto.subtle, e = unb64u(r.e);
+    const eph = await S.importKey("spki", e, { name: "ECDH", namedCurve: "P-256" }, false, []);
+    const hk = await S.importKey("raw", await S.deriveBits({ name: "ECDH", public: eph }, k.key, 256), "HKDF", false, ["deriveKey"]);
+    const kek = await S.deriveKey({ name: "HKDF", hash: "SHA-256", salt: e, info: new TextEncoder().encode("osap-seal v1") }, hk, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const ck = await S.importKey("raw", await S.decrypt({ name: "AES-GCM", iv: unb64u(r.iv) }, kek, unb64u(r.w)), "AES-GCM", false, ["decrypt"]);
+    const z = await S.decrypt({ name: "AES-GCM", iv: unb64u(env.iv) }, ck, unb64u(env.c));
+    const body = await new Response(new Blob([z]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+    const h = new Headers(res.headers); h.delete("content-length"); h.delete("content-encoding"); h.set("X-OSAP-Unsealed", "1");
+    return new Response(body, { status: 200, statusText: "OK", headers: h });
+  } catch (err) { return res; }
+}
+const opened = (req) => (r) => (r && sealedPath(req.url) ? unseal(r) : r);
 
 self.addEventListener("install", (e) => {
   // cache: "reload" skips the browser's HTTP cache (GitHub Pages lets it keep files for 10 minutes),
@@ -555,7 +669,7 @@ self.addEventListener("fetch", (e) => {
       e.respondWith(fetch(req.url, { cache: "no-store", credentials: "same-origin" }).then((res) => {
         if (res.ok) e.waitUntil(save(url.origin + url.pathname, res.clone()));
         return res;
-      }).catch(() => caches.match(req, { ignoreSearch: true })));
+      }).catch(() => caches.match(req, { ignoreSearch: true })).then(opened(req)));
       return;
     }
     // "no-cache" asks the server every time (a cheap check when nothing changed), so a new deploy shows on the next load.
@@ -576,7 +690,7 @@ self.addEventListener("fetch", (e) => {
     // the network copy keeps downloading and is saved for the next open (or Refresh now, above).
     const wait = /\/data\//.test(url.pathname) ? DATA_WAIT : PAGE_WAIT;
     e.respondWith(Promise.race([net.catch(() => null), new Promise((r) => setTimeout(() => r(null), wait))])
-      .then((res) => res || caches.match(req, { ignoreSearch: true }).then((r) => r || net)).catch(fallback));
+      .then((res) => res || caches.match(req, { ignoreSearch: true }).then((r) => r || net)).catch(fallback).then(opened(req)));
     return;
   }
   if (url.origin === location.origin) {

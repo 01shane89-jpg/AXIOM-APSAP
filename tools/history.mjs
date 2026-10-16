@@ -4,6 +4,7 @@
 // The page loads only the open area's file. Writes nothing when run outside the repository root.
 import fs from "node:fs";
 import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
+import { dropSuspectMt } from "./mt_guard.mjs";
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
 // geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
@@ -12,12 +13,30 @@ const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "geo
 // Page script text that an outlet put inside an item body ("if (!window._raw... addEventListener(...") is not a summary;
 // it is removed from new and already-kept items alike, so older copies are cleaned on the next refresh.
 const CODE = /\bwindow\.\w+|addEventListener\s*\(|document\.getElementById|function\s*\(\s*\w*\s*\)\s*\{/;
-const unCode = (i) => { for (const k of ["summary", "summary_en"]) if (i[k] && CODE.test(i[k])) delete i[k]; return i; };
+// A machine translation the model invented (tools/mt_guard.mjs) is removed from new and kept items alike; the original stays.
+const unCode = (i) => { for (const k of ["summary", "summary_en"]) if (i[k] && CODE.test(i[k])) delete i[k]; dropSuspectMt(i); return i; };
 function read(cc) {
   try {
     const t = fs.readFileSync(`${DIR}/${cc}.js`, "utf8");
     return JSON.parse(t.slice(t.indexOf("=", t.indexOf("]")) + 1).trim().replace(/;$/, ""));
   } catch (e) { return {}; }
+}
+// The English already stored for each kept item, as [{ text, lang, en, tool }] for tools/translate.mjs seed(): a refresh
+// reuses these instead of asking the model again, so an item does not fall back to its original language when the
+// translation cache has dropped it. ccs: the areas to read (default every stored area).
+export function storedTranslations(kind, ccs) {
+  const out = [];
+  let list = ccs;
+  if (!list) { try { list = fs.readdirSync(DIR).filter((f) => /^[a-z]{2,3}\.js$/.test(f)).map((f) => f.slice(0, -3)); } catch (e) { list = []; } }
+  for (const cc of list) {
+    if (!/^[a-z]{2,3}$/.test(cc)) continue;
+    for (const i of read(cc)[kind] || []) {
+      if (!i || !i.mt || i.mt === "untranslated" || /^en\b/i.test(i.lang || "")) continue;
+      if (i.title && i.title_en) out.push({ text: i.title, lang: i.lang || "", en: i.title_en, tool: i.mt });
+      if (i.summary && i.summary_en) out.push({ text: i.summary, lang: i.lang || "", en: i.summary_en, tool: i.mt });
+    }
+  }
+  return out;
 }
 // caps: an optional { cc: n } of larger news caps for the focus countries (tools/news_feeds.json "focus")
 export async function updateHistory(kind, items, stamp, caps) {
@@ -35,6 +54,13 @@ export async function updateHistory(kind, items, stamp, caps) {
       if (!i || !i.link || !/^https?:\/\//.test(i.link)) continue;
       if (!byLink.has(i.link)) added++;
       const o = {}; for (const k of KEEP) if (i[k] != null && i[k] !== "") o[k] = i[k];
+      // a run that could not translate the item this time keeps the English an earlier run stored for the same words
+      const prev = byLink.get(i.link);
+      if (prev && prev.mt && prev.mt !== "untranslated") {
+        let kept = false;
+        for (const [t, e] of [["title", "title_en"], ["summary", "summary_en"]]) if (!o[e] && o[t] && prev[e] && prev[t] === o[t]) { o[e] = prev[e]; kept = true; }
+        if (kept && (!o.mt || o.mt === "untranslated")) o.mt = prev.mt;
+      }
       unCode(o);
       o.first_seen = (byLink.get(i.link) || {}).first_seen || stamp;
       byLink.set(i.link, o);
