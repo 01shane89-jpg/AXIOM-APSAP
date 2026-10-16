@@ -24,7 +24,9 @@
      private half of one of these can unlock; another owner device (a PC with Windows Hello) is added by its own setup code. */
   var OWNER = [
     /* Shane's iPhone, 2026-10-05 */
-    "osap-pub:v1:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4szScDUlf52qw3rj8u8INzz6Atximq6IwbWPX3vogQtQpdoaj57inC2XVtzVhLyCm9vCEtyaj-tMLIPWfsPPgg"
+    "osap-pub:v1:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4szScDUlf52qw3rj8u8INzz6Atximq6IwbWPX3vogQtQpdoaj57inC2XVtzVhLyCm9vCEtyaj-tMLIPWfsPPgg",
+    /* Shane's PC (Windows Hello), 2026-10-16 */
+    "osap-pub:v1:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVCMyWOUnrA4V3Xlu6L8DgxlHcU_9b5lSuKdmznadau_X8DJ1ISW7ItCiReF0BAJj8lum913HOoE9jfoPn2yheQ"
   ];
   var K_DEV = "osap-lock-dev", K_OPEN = "osap-lock-open", STAY = 12;
   var PRF_SALT_TEXT = "AXIOM OSAP hidden areas v1";
