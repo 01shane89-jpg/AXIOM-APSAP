@@ -453,6 +453,18 @@ async function openPlan(p) {
     return { dock: el.classList.contains("dock"), left: Math.round(r.left), w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")), btn: el.querySelector('[data-mp="dock"]').textContent, modal: el.getAttribute("aria-modal"), kept: localStorage.getItem("osap.split") };
   });
   ok(dk.dock && dk.left > dk.vw / 2 - 2 && dk.map && dk.btn === "Full window" && dk.modal === "false" && dk.kept === "1", "desktop: Side panel moves the plan right and leaves the map usable " + JSON.stringify(dk));
+  /* the side panel is a sheet: Map folds it to its bar at the top with the plan status, so the whole map shows; Half and Full pull it back */
+  await p.click('#medplan .osheet-h [data-osheet-go="min"]'); await p.waitForTimeout(250);
+  const fold = await p.evaluate(() => {
+    const el = document.getElementById("medplan"), h = el.querySelector(".osheet-h"), r = h.getBoundingClientRect(), bx = el.querySelector(".mpbox"), mr = window.__asapMap.getContainer().getBoundingClientRect(), hit = document.elementFromPoint(Math.round(mr.right - 30), Math.round(mr.top + mr.height * 0.7));
+    return { stop: el.getAttribute("data-osheet"), hTop: Math.round(r.top), hH: Math.round(r.height), left: Math.round(r.left), vw: innerWidth, box: getComputedStyle(bx).display, map: !!(hit && hit.closest(".leaflet-container")), t: h.textContent, pad: window.OSAP_SPLIT.clear().br[0] };
+  });
+  ok(fold.stop === "min" && fold.box === "none" && fold.hH < 80 && fold.left > fold.vw / 2 - 2 && fold.map && fold.pad === 0 && /Medical plan/.test(fold.t) && /(GREEN|AMBER|RED)|Building/.test(fold.t), "desktop: Map folds the side panel to its bar with the plan status, the map under it usable " + JSON.stringify(fold));
+  await p.click('#medplan .osheet-h [data-osheet-go="half"]'); await p.waitForTimeout(250);
+  const half = await p.evaluate(() => { const r = document.querySelector("#medplan").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return { h: Math.round(r.height), mh: Math.round(innerHeight - m.top), box: getComputedStyle(document.querySelector("#medplan .mpbox")).display }; });
+  ok(half.box !== "none" && Math.abs(half.h - half.mh / 2) < 30, "desktop: Half shows the plan over the top half " + JSON.stringify(half));
+  await p.click('#medplan .osheet-h [data-osheet-go="full"]'); await p.waitForTimeout(250);
+  ok(await p.evaluate(() => { const r = document.querySelector("#medplan .mpbox").getBoundingClientRect(); return r.bottom >= innerHeight - 2 && r.left > innerWidth / 2 - 2; }), "desktop: Full shows the whole side panel again");
   await p.click('#mp-fac tr:has-text("Far North Hospital") [data-mp-go]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => !document.getElementById("medplan").hidden && !!document.querySelector(".mpicon")), "desktop: Map on a hospital keeps the side panel open with the plan on the map");
   await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
@@ -752,6 +764,28 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
   const hs = await p.evaluate(() => { const r = document.querySelector("#medplan .mpbox").getBoundingClientRect(), hit = document.elementFromPoint(20, 120); return { top: Math.round(r.top), vh: innerHeight, w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")) }; });
   ok(hs.top > hs.vh * 0.4 && hs.w <= hs.vw && hs.map, "phone: Half screen puts the plan in the lower half with the map usable above " + JSON.stringify(hs));
+  /* Shane 2026-10-10: the plan opens folded to a bar at the bottom so the whole map shows; Half or Full (or a drag) pulls it up */
+  await p.click('#medplan [data-mp="close"]'); await p.evaluate(() => window.OSAP_MEDPLAN.open()); await p.waitForTimeout(400);
+  const sh = () => p.evaluate(() => { const el = document.getElementById("medplan"), r = el.getBoundingClientRect(), h = el.querySelector(".osheet-h"), hr = h.getBoundingClientRect(), hit = document.elementFromPoint(Math.round(innerWidth / 2), Math.round(innerHeight * 0.75));
+    return { stop: el.getAttribute("data-osheet"), top: Math.round(r.top), bottom: Math.round(r.bottom), hTop: Math.round(hr.top), hH: Math.round(hr.height), vh: innerHeight, map: !!(hit && hit.closest(".leaflet-container")), t: h.textContent, box: getComputedStyle(el.querySelector(".mpbox")).display, sw: el.scrollWidth, vw: innerWidth }; });
+  const s0 = await sh();
+  ok(s0.stop === "min" && s0.box === "none" && s0.bottom >= s0.vh - 1 && s0.vh - s0.top < 110 && s0.map && /Medical plan/.test(s0.t) && s0.sw <= s0.vw + 1, "phone: the plan opens folded to a bar at the bottom with its status; the map fills the screen " + JSON.stringify(s0));
+  if (OUT) await p.screenshot({ path: OUT + "/phone-sheet-map.png" });
+  await p.tap('#medplan .osheet-h [data-osheet-go="half"]'); await p.waitForTimeout(300);
+  const s1 = await sh();
+  ok(s1.stop === "half" && Math.abs(s1.top - s1.vh / 2) < 10 && s1.box !== "none", "phone: Half pulls the plan up over half the screen " + JSON.stringify(s1));
+  if (OUT) await p.screenshot({ path: OUT + "/phone-sheet-half.png" });
+  await p.tap('#medplan .osheet-h [data-osheet-go="full"]'); await p.waitForTimeout(300);
+  const s2 = await sh();
+  ok(s2.stop === "full" && s2.top <= 1 && s2.bottom >= s2.vh - 1, "phone: Full shows the plan over the whole screen " + JSON.stringify(s2));
+  if (OUT) await p.screenshot({ path: OUT + "/phone-sheet-full.png" });
+  await p.tap('#medplan .osheet-h [data-osheet-go="min"]'); await p.waitForTimeout(300);
+  ok((await sh()).stop === "min", "phone: Map folds it back to the bar");
+  /* a drag up on the bar pulls the plan up to the nearest stop */
+  const hb = await p.evaluate(() => { const r = document.querySelector("#medplan .osheet-h .osh-t").getBoundingClientRect(); return { x: r.left + 20, y: r.top + r.height / 2 }; });
+  await p.mouse.move(hb.x, hb.y); await p.mouse.down(); await p.mouse.move(hb.x, hb.y - 150, { steps: 6 }); await p.mouse.move(hb.x, 420, { steps: 6 }); await p.mouse.up(); await p.waitForTimeout(350);
+  const s3 = await sh();
+  ok(s3.stop === "half", "phone: dragging the bar up settles on Half " + JSON.stringify(s3));
   await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(150);
   ok(!errors.length, "phone: no page errors " + errors.join(" | "));
   await ctx.close();
