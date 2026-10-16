@@ -373,6 +373,9 @@ html.phone .lgctl{max-width:calc(100vw - 80px)}html.phone .lgctl .lgbody{max-hei
 .lg .d{color:var(--muted);font-size:11px;display:block;line-height:1.35}
 /* NATO-style (APP-6) map symbols from assets/osap-symbols.js */
 .msb{position:absolute}.msb>svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 1px rgba(0,0,0,.6)) drop-shadow(0 1px 2px rgba(0,0,0,.35))}.msym.old .msb{opacity:.8}
+.msym-tag{background:none!important;border:0!important;padding:0!important;box-shadow:none!important;width:0!important;height:0!important;overflow:visible!important;color:#111!important}
+.msym-tag .msb>img{display:block;width:100%;height:100%;filter:drop-shadow(0 0 1px rgba(0,0,0,.6)) drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.msym-l{position:absolute;transform:translateY(-50%);font:700 11px/1.3 sans-serif;background:#fff;color:#111;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.45);white-space:nowrap;pointer-events:none}
 .msym-t{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-2px);font:700 11.5px/1.25 sans-serif;background:#fff;color:#3a2a1a;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px #6d4c2f;white-space:nowrap;pointer-events:none}
 .msw{display:inline-flex;width:30px;justify-content:center;flex:none}.msw svg{width:26px;height:auto;max-height:30px;display:block}
 .lgh{font-weight:600;font-size:11px;margin:6px 0 1px;color:var(--muted)}.msyfr{font-size:10.5px;line-height:1.35;margin:6px 0 2px;color:var(--muted)}
@@ -857,12 +860,12 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
 
     <div class="sec maplg">
       <h2>Legend</h2>
-      <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Gauge above its bank<span class="d">Circle grows with the depth over the bank</span></div></div>
-      <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Within 1 m of the bank</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Rain station, 24 h total<span class="d">Circle grows from 60 mm up</span></div></div>
-      <div class="lg"><span class="sw" style="background:var(--power);border-radius:3px"></span><div>Power asset in the flood footprint<span class="d">Substation, plant or generator</span></div></div>
+      <div class="lg msyml"><span class="msw" data-sym="g_sensor" data-badge="--over"><span class="sw round" style="background:var(--over)"></span></span><div>Gauge above its bank<span class="d">NATO sensor symbol; the dot is the level</span></div></div>
+      <div class="lg msyml"><span class="msw" data-sym="g_sensor" data-badge="--near"><span class="sw round" style="background:var(--near)"></span></span><div>Within 1 m of the bank</div></div>
+      <div class="lg msyml"><span class="msw" data-sym="a_hydromet" data-badge="--rain"><span class="sw round" style="background:var(--rain)"></span></span><div>Rain station, 24 h total<span class="d">NATO weather-event symbol; grows from 60 mm up</span></div></div>
+      <div class="lg msyml"><span class="msw" data-sym="i_power"><span class="sw" style="background:var(--power);border-radius:3px"></span></span><div>Power asset in the flood footprint<span class="d">Substation, plant or generator</span></div></div>
       <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital in the flood footprint</div></div>
-      <div class="lg"><span class="sw" style="background:var(--util);border-radius:3px"></span><div>Water works in the flood footprint</div></div>
+      <div class="lg msyml"><span class="msw" data-sym="i_watert"><span class="sw" style="background:var(--util);border-radius:3px"></span></span><div>Water works in the flood footprint</div></div>
       <div class="lg"><span class="sw" style="background:var(--over);opacity:.45"></span><div>Subdistrict by an overflowing gauge</div></div>
       <div class="lg"><span class="sw" style="background:var(--sat-water);opacity:.45"></span><div>Subdistrict with satellite-seen water</div></div>
       <div class="lg" style="margin-top:8px"><span class="sw" style="background:#FA1E24"></span><div>Flood (MODIS)<span class="d">Water where the sensor does not normally see any</span></div></div>
@@ -1087,11 +1090,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     </div>
     <div class="sec maplg">
       <h2>On the map</h2>
-      <div class="lg" data-tll="border" hidden><span class="sw round" style="background:var(--over)"></span><div>Border record</div></div>
-      <div class="lg" data-tll="flood" hidden><span class="sw round" style="background:var(--rain)"></span><div>Flood record</div></div>
-      <div class="lg"><span class="sw round" style="background:transparent;border:2px solid var(--muted)"></span><div>Observation<span class="d">Hollow ring: an instrument reading</span></div></div>
-      <div class="lg"><span class="sw round" style="background:var(--muted);border:1px dashed var(--ink)"></span><div>Claim<span class="d">Dashed edge: an official statement</span></div></div>
-      <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Event<span class="d">Solid: a sourced report of something that happened. Larger means more severe.</span></div></div>
+      <div class="lg"><div>Each report is drawn as its NATO map symbol (APP-6 / MIL-STD-2525D activity; yellow four-lobed frame: a report, not verified). The symbols on the map are listed below.<span class="d">Dashed ring: an official statement (claim). Larger means more severe.</span></div></div>
     </div>
     <div class="sec">
       <h2>Source registry</h2>
@@ -1149,7 +1148,23 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-boolq.js"></script>
 <script>/* NATO-style symbol icon; null if assets/osap-symbols.js failed to load, so callers keep their old pin */
-function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon(k, o) : null; }</script>
+function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon(k, o) : null; }
+/* NATO-style symbol as the default for every map object (Shane 2026-10-14): a report, hazard or site drawn as its 2525D symbol on
+   the shared canvas. key is a symbol key, or null to work it out from the words in txt (OSAP_SYM.classify); st is the old dot's
+   style, kept for fading, selection rings and as the fallback when assets/osap-symbols.js failed to load. */
+function osapMark(ll, key, st, txt) {
+  var S = window.OSAP_SYM; st = st || {};
+  if (!S || !S.mark) return L.circleMarker(ll, st);
+  var k = key && S.d[key] ? key : S.classify(txt || "");
+  return S.mark(ll, k, L.extend({}, st, { scale: st.scale || Math.max(0.5, Math.min(1.1, 0.3 + (st.radius || 6) * 0.06)) }));
+}
+/* fixed legend rows name their symbol with data-sym; the swatch is drawn from the same symbol file */
+/* static legend rows: <span class="msw" data-sym="key" data-badge="--token or #hex"> becomes that NATO symbol, with its colour dot */
+if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[data-sym]"), function (el) {
+  var k = el.getAttribute("data-sym"), b = el.getAttribute("data-badge"); if (!OSAP_SYM.d[k]) return;
+  if (b && b.charAt(0) === "-") b = getComputedStyle(document.documentElement).getPropertyValue(b).trim();
+  if (b) el.outerHTML = OSAP_SYM.sw(k, b); else el.innerHTML = OSAP_SYM.svg(k);
+});</script>
 <script src="data/thailand/power.js"></script>
 <script src="data/thailand/flood-live-snapshot.js"></script>
 <script src="data/thailand/flood-exposure.js"></script>
@@ -1644,7 +1659,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       var k = ROADK[i.kind] || ROADK.incident; n++;
       /* agencies that publish local clock time without an offset are shown in that local time, labelled */
       var tm = function (t) { return roadEsc(t.replace("T", " ")) + (i.tz ? " " + roadEsc(i.tz) : "Z"); };
-      L.circleMarker([i.lat, i.lon], { pane: "roadpane", radius: i.kind === "closure" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: k[1], fillOpacity: 0.95 })
+      osapMark([i.lat, i.lon], "a_vehicle", { pane: "roadpane", radius: i.kind === "closure" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: k[1], fillOpacity: 0.95, badge: k[1] })
         .bindPopup('<div class="pop"><div class="tier">' + roadEsc(k[0]) + " · agency notice</div><h3>" + roadEsc(i.title) + "</h3>" +
           (i.detail ? "<p>" + roadEsc(i.detail) + "</p>" : "") + '<p class="obs">' + [i.start ? "From " + tm(i.start) : "", i.end ? "until " + tm(i.end) : (i.until ? roadEsc(i.until.toLowerCase()) : ""),
           i.updated ? "updated " + tm(i.updated) : ""].filter(Boolean).join(", ") + (i.lang ? " · in " + ({ fr: "French", fi: "Finnish" }[i.lang] || i.lang) + ", as published" : "") + '</p><p class="obs">Source: ' +
@@ -1654,7 +1669,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     ((window.TSAP && window.TSAP.records) || []).forEach(function (r) {
       if (r.lat == null || !isFinite(r.lat) || !ROAD_RE.test((r.title || "") + " " + (r.detail || ""))) return;
       rep++;
-      L.circleMarker([r.lat, r.lon], { pane: "roadpane", radius: 7, color: "#c62828", weight: 2, dashArray: "3 3", fillColor: "#c62828", fillOpacity: 0.15 })
+      osapMark([r.lat, r.lon], "a_vehicle", { pane: "roadpane", radius: 7, color: "#c62828", weight: 2, dashArray: "3 3", fillColor: "#c62828", fillOpacity: 0.15, badge: "#c62828" })
         .bindPopup('<div class="pop"><div class="tier">Reported road disruption · unverified</div><h3>' + roadEsc(r.title) + '</h3><p class="obs">From ' +
           roadEsc(r.src && r.src.name) + (r.place ? ", placed at " + roadEsc(r.place) + " (approximate)" : "") + '. <a href="#" data-openrec="' + roadEsc(r.id) + '">Report</a></p></div>', { maxWidth: 320 })
         .addTo(roadLayer);
@@ -2062,10 +2077,10 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       var m = o.g === "care"
         ? L.marker([o.lat, o.lon], { pane: "infrapane", keyboard: false, title: o.n,
             icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7], html: OSAP_REDCROSS(14) }) })
-        : L.circleMarker([o.lat, o.lon], {
+        : osapMark([o.lat, o.lon], o.g === "power" ? "i_power" : o.g === "water" ? "i_watert" : null, {
             pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
             color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
-          });
+          }, o.n);
       m.bindPopup('<div class="pop"><h3>' + esc(o.n) + "</h3>" +
         '<div class="tier" style="color:' + col + '">' + esc(o.k) + "</div>" +
         '<div class="why">Inside <b>' + esc(o.t) + "</b>, " + esc(o.a) + ", " + esc(o.p) +
@@ -2108,9 +2123,10 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     LIVE.stations.forEach(function (s) {
       if (!all && s.lv < 4) return;
       var st = gaugeStyle(s);
-      gaugeLayer.addLayer(L.circleMarker([s.lat, s.lon], {
+      /* NATO (2525D) sensor symbol; the level colour is the dot, low levels drawn smaller and fainter */
+      gaugeLayer.addLayer(osapMark([s.lat, s.lon], "g_sensor", {
         radius: st.r, color: tok("--surface"), weight: s.lv === 5 ? 1.4 : 0.8,
-        fillColor: st.c, fillOpacity: st.o
+        fillColor: st.c, fillOpacity: st.o, badge: st.c, scale: s.lv >= 4 ? 0.7 : 0.5, opacity: Math.max(0.55, st.o)
       }).bindPopup(gaugePopup(s)));
     });
   }
@@ -2120,9 +2136,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       var rad = 2.5 + Math.min(10, (r.mm - 60) / 18);
       /* hollow rings: 500-odd rain stations overlap heavily and filled discs
          merge into one blob that hides the gauges underneath */
-      rainLayer.addLayer(L.circleMarker([r.lat, r.lon], {
+      rainLayer.addLayer(osapMark([r.lat, r.lon], "a_hydromet", {
         pane: "rainpane", radius: rad, color: tok("--rain"), weight: 1,
-        opacity: 0.5, fillColor: tok("--rain"), fillOpacity: 0.06
+        opacity: 0.75, fillColor: tok("--rain"), fillOpacity: 0.06, badge: tok("--rain"), scale: Math.min(0.9, 0.45 + (r.mm - 60) / 400)
       }).bindPopup('<div class="pop"><h3>' + r.mm.toFixed(1) + " mm in 24 h</h3>" +
         '<div class="tier" style="color:' + tok("--rain") + '">' + esc(r.a) + (r.p ? ", " + esc(r.p) : "") + "</div>" +
         '<div class="why">' + esc(r.n || "Rain gauge") + "</div><dl>" +
@@ -3664,6 +3680,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function stateSub(r) { var st = STATE[r.type] || ["", ""]; return r.social ? "the account's own post, not confirmed" : r.news && r.type === "claim" ? "state media report, not confirmed" : st[1]; }
   function chip(cls, text) { return '<span class="chip ' + esc(cls) + '">' + esc(text) + "</span>"; }
 
+  /* the words a record's NATO symbol is chosen from: its category, kind and title; when they say nothing, its data set's name */
+  function recWords(r) {
+    var t = [r.cat, r.kind, r.title].filter(Boolean).join(" ");
+    return window.OSAP_SYM && OSAP_SYM.classify && OSAP_SYM.classify(t) === "a_incident" ? t + " " + ((LBY[r.layer] || {}).name || r.layer || "") : t;
+  }
   function markerStyle(r) {
     if (r.xcc) { var xc = xaCol(r.xcc); return { radius: 3.5 + (r.sev || 1) * 1.6, color: xc, weight: 2.4, fillColor: xc, fillOpacity: 0.3 }; }
     var c = tok(LCOL[r.layer] || "--muted");
@@ -3708,7 +3729,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           var fade = Math.max(0.3, 1 - age(r) / (PB.win || (dMax - dMin + 1)));
           st0.fillOpacity *= fade; st0.opacity = Math.max(0.35, fade);
         }
-        var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, st0));
+        var m = osapMark([r.lat, r.lon], null, L.extend({ pane: "tlpane", lgk: "rec:" + (r.type === "claim" || r.type === "observation" ? r.type : "event") }, st0), recWords(r));
         m.bindTooltip((r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.title), { direction: "top" });
         m.on("click", function () { select(r.id, false); });
         if (mapped(r)) tlLayer.addLayer(m); markers[r.id] = m;
@@ -4236,13 +4257,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var list = document.getElementById("al-list");
     list.textContent = "";
     alertLayer.clearLayers();
-    if (window.OSAP_LEGEND) OSAP_LEGEND.set("alerts", '<div class="lg"><span class="sw round" style="background:var(--over);opacity:.6;border:2.5px solid var(--over)"></span><div>High-severity alert<span class="d">A rule you set was met by this record</span></div></div>' +
+    if (window.OSAP_LEGEND) OSAP_LEGEND.set("alerts", '<div class="lg"><span class="sw round" style="background:var(--over);opacity:.6;border:2.5px solid var(--over)"></span><div>High-severity alert<span class="d">A rule you set was met by this record. Shown as the record&#39;s NATO symbol with a dot in this colour</span></div></div>' +
       '<div class="lg"><span class="sw round" style="background:var(--near);opacity:.6;border:2.5px solid var(--near)"></span><div>Other alert</div></div>', document.getElementById("rail-alerts"));
     ALERTS.forEach(function (a, i) {
       var r = a.rec;
       if (r.lat != null && isFinite(r.lat) && isFinite(r.lon)) {
-        var m = L.circleMarker([r.lat, r.lon], { pane: "tlpane", radius: 5 + a.sev * 2,
-          color: tok(a.sev === 3 ? "--over" : "--near"), weight: 2.5, fillColor: tok(a.sev === 3 ? "--over" : "--near"), fillOpacity: 0.35 });
+        var m = osapMark([r.lat, r.lon], null, { pane: "tlpane", radius: 5 + a.sev * 2, badge: tok(a.sev === 3 ? "--over" : "--near"),
+          color: tok(a.sev === 3 ? "--over" : "--near"), weight: 2.5, fillColor: tok(a.sev === 3 ? "--over" : "--near"), fillOpacity: 0.35 }, recWords(r));
         m.bindTooltip(esc(a.rule.name + ": " + r.title), { direction: "top" });
         m.on("click", function () { openRec(r.id); });
         alertLayer.addLayer(m);
@@ -4402,16 +4423,24 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     /* the map key for this layer sits on the map (the checkboxes in the panel stay as filters) */
     var atc = {}, onMap = {}; (D.assets || []).forEach(function (x) { if (x.lat != null) atc[x.asset_type || "asset"] = 1; });
     vis.forEach(function (r) { if (r.lat != null && isFinite(r.lat)) onMap[r.kind] = 1; });
+    /* each kind's NATO symbol, from the kind's own words (the report's title only when the kind says nothing) */
+    var KS = {}, curSym = function (r) { var S = window.OSAP_SYM, kl = [kindOf(r).label, r.kind].join(" ");
+      if (!S || !S.classify) return null; var k = S.classify(kl); return k === "a_incident" ? S.classify(kl, r.title) : k; };
+    vis.forEach(function (r) { if (onMap[r.kind] && !KS[r.kind]) KS[r.kind] = curSym(r); });
     if (window.OSAP_LEGEND) OSAP_LEGEND.set("cur", Object.keys(D.kinds).filter(function (k) { return onMap[k]; }).map(function (k) {
-        return '<div class="lg"><span class="sw round" style="background:var(' + D.kinds[k].color + ')"></span><div>' + esc(D.kinds[k].label) + "</div></div>"; }).join("") +
-      (Object.keys(onMap).length ? '<div class="lg"><div><span class="d">Larger dot: more severe, or more people killed</span></div></div>' : "") +
+        return KS[k] && window.OSAP_SYM ? '<div class="lg msyml">' + OSAP_SYM.sw(KS[k]) + "<div>" + esc(D.kinds[k].label) + "</div></div>"
+          : '<div class="lg"><span class="sw round" style="background:var(' + D.kinds[k].color + ')"></span><div>' + esc(D.kinds[k].label) + "</div></div>"; }).join("") +
+      (Object.keys(onMap).length ? '<div class="lg"><div><span class="d">' + (window.OSAP_SYM ? "NATO map symbols (APP-6 / 2525D). Larger: more severe, or more people killed" : "Larger dot: more severe, or more people killed") + "</span></div></div>" : "") +
       (D.assets && !curOff[lid + ":__assets"] ? Object.keys(atc).map(function (t) {
         return '<div class="lg"><span class="sw round" style="background:transparent;border:2.5px solid ' + tok((D.assetTypes || {})[t] || "--muted") + '"></span><div>' + esc(t) + '<span class="d">Key asset, a reference point, not an event</span></div></div>'; }).join("") : ""), railC);
     var AM = [];
     (D.assets || []).forEach(function (a, i) {
       if (curOff[lid + ":__assets"] || a.lat == null || !isFinite(a.lat) || !isFinite(a.lon)) return;
       var col = tok((D.assetTypes || {})[a.asset_type] || "--muted");
-      var am = L.circleMarker([a.lat, a.lon], { pane: "tlpane", radius: 7, color: col, weight: 2.5, fillColor: col, fillOpacity: 0.12 });
+      var ask = window.OSAP_SYM && OSAP_SYM.siteOf && OSAP_SYM.siteOf(a.asset_type, a.title), hosp = /hospital|clinic|medical/i.test((a.asset_type || "") + " " + a.title);
+      var am = hosp ? L.marker([a.lat, a.lon], { pane: "tlpane", keyboard: false, icon: L.divIcon({ className: "", iconSize: [16, 16], iconAnchor: [8, 8], html: OSAP_REDCROSS(16) }) })
+        : ask ? osapMark([a.lat, a.lon], ask, { pane: "tlpane", radius: 7, color: col, weight: 2.5, fillColor: col, fillOpacity: 0.12, badge: col })
+        : osapMark([a.lat, a.lon], "g_poi", { pane: "tlpane", radius: 7, color: col, weight: 2.5, fillColor: col, fillOpacity: 0.12, badge: col });
       am.bindTooltip(esc(a.title + " \u00b7 " + (a.asset_type || "asset")), { direction: "top" });
       am.bindPopup('<b>' + esc(a.title) + '</b><br>' + esc([a.asset_type, a.place, a.prov].filter(Boolean).join(" \u00b7 ")) +
         (a.agency ? "<br>Operator: " + esc(a.agency) : "") + "<br>" + esc(PREC[a.prec] || a.prec || "") +
@@ -4426,7 +4455,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (ab) ab.addEventListener("change", function () { curOff[lid + ":__assets"] = !ab.checked; showCurated(lid); });
     vis.forEach(function (r) {
       if (r.lat != null && isFinite(r.lat) && isFinite(r.lon)) {
-        var mk2 = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, cStyle(r)));
+        var mk2 = osapMark([r.lat, r.lon], curSym(r), L.extend({ pane: "tlpane" }, cStyle(r)));
         mk2.bindTooltip(esc(r.title), { direction: "top" });
         mk2.on("click", function () { select(r.id, false, "cl-pkg"); });
         curLayer.addLayer(mk2); CM[r.id] = mk2;
@@ -4576,7 +4605,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     all.forEach(function (x) {
       if (x.lat == null || x.lon == null) return;
       var st = exStatus(x), col = tok(st === "completed" ? "--muted" : (x.us_participation ? "--accent" : "--near"));
-      var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: 8, color: col, weight: 2, fillColor: col, fillOpacity: st === "completed" ? 0.15 : 0.45, lgk: "ex:" + (st === "completed" ? "done" : x.us_participation ? "us" : "other") });
+      var m = osapMark([x.lat, x.lon], "a_operation", { pane: "tlpane", radius: 8, badge: col, opacity: st === "completed" ? 0.6 : 1, color: col, weight: 2, fillColor: col, fillOpacity: st === "completed" ? 0.15 : 0.45, lgk: "ex:" + (st === "completed" ? "done" : x.us_participation ? "us" : "other") });
       m.bindPopup(exPop(x), { maxWidth: 340 }); sofLayer.addLayer(m); sofM[x.id] = m;
     });
     function row(x) {
@@ -5116,7 +5145,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (e.track || []).forEach(function (line) { if (line.length > 1) sofLayer.addLayer(L.polyline(line, { pane: "tlpane", color: c, weight: 2, opacity: 0.8, dashArray: "4 3" })
         .bindPopup('<div class="pop"><div class="tier">Track · GDACS ' + esc(e.alert || "") + " alert</div><h3>" + esc(e.name || e.desc || "") + '</h3><p class="obs">Path of this event as GDACS reported it' + (gdWhen(e) ? ", " + esc(gdWhen(e)) : "") +
           '.</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 })); });
-      var m = L.circleMarker([e.lat, e.lon], { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: c, fillOpacity: 0.8, lgk: "gd:" + (col[e.alert] ? e.alert : "Other") });
+      var m = osapMark([e.lat, e.lon], { TC: "a_hydromet", FL: "a_flood", DR: "a_drought", EQ: "a_quake", VO: "a_volcano", WF: "a_wildfire", TS: "a_tsunami" }[e.type] || null,
+        { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: c, fillOpacity: 0.8, badge: c, lgk: "gd:" + (col[e.alert] ? e.alert : "Other") }, (GD_TYPE[e.type] || [e.type])[0]);
       m.bindPopup('<div class="pop"><div class="tier">' + esc((GD_TYPE[e.type] || [e.type])[0]) + " · GDACS " + esc(e.alert || "") + " alert</div><h3>" + esc(e.name || e.desc || "") + "</h3>" +
         '<p class="obs">' + esc([e.severity, gdWhen(e)].filter(Boolean).join(" · ")) + '</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["gd:" + i] = m;
@@ -5227,7 +5257,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         if (p.past && p.past.length > 1) {
           stormLayer.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2, opacity: 0.8 }).bindPopup(part("Track so far, as the agency reported it."), { maxWidth: 320 }));
           p.past.forEach(function (x) {
-            var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: 3, color: col, weight: 1, fillColor: col, fillOpacity: 0.8 });
+            var m = osapMark([x.lat, x.lon], "a_hydromet", { pane: "tlpane", radius: 3, color: col, weight: 1, fillColor: col, fillOpacity: 0.8, badge: col, scale: 0.4, opacity: 0.7 });
             m.bindPopup('<div class="pop"><div class="tier">Past position · ' + esc(p.agencyName) + "</div><h3>" + esc(st.name + " " + stZ(x.t)) + '</h3><p class="obs">' + esc([x.cat, stWind(x)].filter(Boolean).join(" · ")) + "</p></div>");
             stormLayer.addLayer(m);
           });
@@ -5245,7 +5275,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         if (track.length > 1) stormLayer.addLayer(L.polyline(track.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2.5, opacity: 0.9, dashArray: "6 5" })
           .bindPopup(part("Forecast track to " + esc(stZ(track[track.length - 1].t)) + "."), { maxWidth: 320 }));
         track.forEach(function (x, i) {
-          var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: i ? 5 : 10, color: "#fff", weight: i ? 1 : 2, fillColor: col, fillOpacity: i ? 0.9 : 1, lgk: "st:" + (STC[p.agency] ? p.agency : "other") });
+          var sto = { pane: "tlpane", radius: i ? 5 : 10, color: "#fff", weight: i ? 1 : 2, fillColor: col, fillOpacity: i ? 0.9 : 1, lgk: "st:" + (STC[p.agency] ? p.agency : "other") };
+          /* the storm now is its NATO symbol (agency colour as the dot); forecast positions stay small track dots */
+          var m = i ? L.circleMarker([x.lat, x.lon], sto) : osapMark([x.lat, x.lon], "a_hydromet", L.extend(sto, { badge: col }));
           m.bindPopup('<div class="pop"><div class="tier">' + (i ? "Forecast, +" + x.h + " h" : "Current position") + " · " + esc(p.agencyName) + "</div><h3>" +
             esc((x.cat ? x.cat + " " : "") + st.name + " · " + stZ(x.t)) + '</h3><p class="obs">' + esc([stWind(x), x.pressure ? x.pressure + " hPa" : "", x.course ? "moving " + stDir(x.course) : "",
               x.r_km ? "70% circle " + x.r_km + " km" : ""].filter(Boolean).join(" · ")) + "<br>" + esc(x.lat + ", " + x.lon) + (window.MGRS_OF ? " · MGRS " + esc(MGRS_OF(x.lat, x.lon, 3)) : "") +
@@ -5642,7 +5674,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     sofLayer.clearLayers(); sofM = {};
     recs.forEach(function (r) {
       if (r.lat == null) return;
-      var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane", lgk: "rec:" + (r.type === "claim" || r.type === "observation" ? r.type : "event") }, markerStyle(r)));
+      var m = osapMark([r.lat, r.lon], null, L.extend({ pane: "tlpane", lgk: "rec:" + (r.type === "claim" || r.type === "observation" ? r.type : "event") }, markerStyle(r)), recWords(r));
       m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
         (r.prec === "province" ? " by name, at the rough centre of that region." : " by name, approximately.") + ' <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM[r.id] = m;
@@ -5732,7 +5764,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var T = window.ASAP_TSU, list = T ? (T.items || []).filter(function (t) { return hasCC(t) && inPeriodDate(t.date); }) : [];
     list.forEach(function (t, i) {
       if (t.lat == null) return;
-      var m = L.circleMarker([t.lat, t.lon], { pane: "tlpane", radius: 10, color: "#0d47a1", weight: 2, fillColor: "#42a5f5", fillOpacity: 0.5, lgk: "tsu" });
+      var m = osapMark([t.lat, t.lon], "a_tsunami", { pane: "tlpane", radius: 10, color: "#0d47a1", weight: 2, fillColor: "#42a5f5", fillOpacity: 0.5, lgk: "tsu" });
       m.bindPopup('<div class="pop"><div class="tier">Tsunami bulletin · ' + esc(t.center) + " · " + esc(window.OSAP_TIME.asofT(t.date)) + "</div><h3>" + esc(t.title) + '</h3><p class="obs">' + esc(t.summary) +
         '</p><p class="obs"><a href="' + esc(t.link || "https://www.tsunami.gov/") + '" target="_blank" rel="noopener">Bulletin</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["tsu:" + i] = m;
@@ -5746,7 +5778,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var V = window.ASAP_VOLC, list = V ? (V.items || []).filter(hasCC) : [];
     list.forEach(function (v, i) {
       if (v.lat == null) return;
-      var m = L.marker([v.lat, v.lon], { pane: "tlpane", lgk: "volc", icon: L.divIcon({ className: "", html: '<div style="font-size:18px;line-height:18px">▲</div>', iconSize: [18, 18], iconAnchor: [9, 12] }) });
+      var m = window.OSAP_SYM && OSAP_SYM.mark ? osapMark([v.lat, v.lon], "a_volcthreat", { pane: "tlpane", radius: 9, lgk: "volc" })
+        : L.marker([v.lat, v.lon], { pane: "tlpane", lgk: "volc", icon: L.divIcon({ className: "", html: '<div style="font-size:18px;line-height:18px">▲</div>', iconSize: [18, 18], iconAnchor: [9, 12] }) });
       m.bindPopup('<div class="pop"><div class="tier">Volcano · GVP weekly report · ' + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + "</p><p>" + esc(v.summary.slice(0, 500)) +
         '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">Weekly report</a></p></div>', { maxWidth: 340 });
       sofLayer.addLayer(m); sofM["vo:" + i] = m;
@@ -5926,7 +5959,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var N = window.ASAP_NQ, list = N ? (N.items || []).filter(function (q) { return hasCC(q) && inPeriodDate(q.time); }).sort(function (a, b) { return a.time < b.time ? 1 : -1; }) : [];
     if (!N) return "";
     list.forEach(function (q, i) {
-      var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3), color: "#5d4037", weight: 1.5, fillColor: "#8d6e63", fillOpacity: 0.35, dashArray: "2 2", lgk: "eqo" });
+      var m = osapMark([q.lat, q.lon], "a_quake", { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3), color: "#5d4037", weight: 1.5, fillColor: "#8d6e63", fillOpacity: 0.35, lgk: "eqo" });
       m.bindPopup('<div class="pop"><div class="tier">Earthquake · ' + esc(q.agency) + " · " + esc(window.OSAP_TIME.asofT(q.time)) + "</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + '</h3><p class="obs">' +
         esc([q.depth != null ? "depth " + Math.round(q.depth) + " km" : "", q.intensity ? "max intensity " + q.intensity : "", q.note].filter(Boolean).join(" · ")) +
         '</p><p class="obs"><a href="' + esc(q.link) + '" target="_blank" rel="noopener">' + esc(q.agency) + "</a></p></div>", { maxWidth: 320 });
@@ -5946,7 +5979,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (e.track) sofLayer.addLayer(L.polyline(e.track, { pane: "tlpane", color: "#00838f", weight: 2, opacity: 0.8 })
         .bindPopup('<div class="pop"><div class="tier">Track · ' + esc(e.cat) + " · NASA EONET</div><h3>" + esc(e.title) + '</h3><p class="obs">Positions NASA EONET logged for this event, latest ' + esc(window.OSAP_TIME.asofT(e.last.date)) +
           '.</p><p class="obs"><a href="' + esc(e.link) + '" target="_blank" rel="noopener">Source</a></p></div>', { maxWidth: 320 }));
-      var m = L.circleMarker([e.last.lat, e.last.lon], { pane: "tlpane", radius: 8, color: "#004d40", weight: 1.5, fillColor: "#26a69a", fillOpacity: 0.7, lgk: "eonet" });
+      var m = osapMark([e.last.lat, e.last.lon], null, { pane: "tlpane", radius: 8, color: "#004d40", weight: 1.5, fillColor: "#26a69a", fillOpacity: 0.7, lgk: "eonet" }, e.cat + " " + e.title);
       m.bindPopup('<div class="pop"><div class="tier">' + esc(e.cat) + " · NASA EONET · " + esc(window.OSAP_TIME.asofT(e.last.date)) + "</div><h3>" + esc(e.title) + '</h3><p class="obs">' + esc([e.last.mag, "source " + e.srcs].filter(Boolean).join(" · ")) +
         '</p><p class="obs"><a href="' + esc(e.link) + '" target="_blank" rel="noopener">Source</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["eo:" + i] = m;
@@ -5980,7 +6013,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     list.forEach(function (w, i) {
       if (!w.pos.length) return;
       var c = col[w.kind] || "#1565c0";
-      var shape = w.pos.length >= 3 ? L.polygon(w.pos, { pane: "tlpane", color: c, weight: 1.5, fillOpacity: 0.15, lgk: "nw:" + (col[w.kind] ? w.kind : "navigation") }) : L.circleMarker(w.pos[0], { pane: "tlpane", radius: 7, color: c, weight: 2, fillOpacity: 0.3, lgk: "nw:" + (col[w.kind] ? w.kind : "navigation") });
+      var shape = w.pos.length >= 3 ? L.polygon(w.pos, { pane: "tlpane", color: c, weight: 1.5, fillOpacity: 0.15, lgk: "nw:" + (col[w.kind] ? w.kind : "navigation") }) : osapMark(w.pos[0], { "missile or rocket": "a_rocket", "military exercise": "a_operation" }[w.kind] || "a_marine", { pane: "tlpane", radius: 7, color: c, weight: 2, fillOpacity: 0.3, badge: c, lgk: "nw:" + (col[w.kind] ? w.kind : "navigation") });
       shape.bindPopup('<div class="pop"><div class="tier">Navigational warning · ' + esc(w.id) + " · " + esc(w.kind) + "</div><p>" + esc(w.text) + '</p><p class="obs">Issued ' + esc(w.issued) + (w.authority ? " by " + esc(w.authority) : "") + "</p></div>", { maxWidth: 360 });
       sofLayer.addLayer(shape); sofM["nw:" + i] = shape;
     });
@@ -6009,7 +6042,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<p class="note" style="margin-top:6px">Automated detection from routing, active probing and traffic telescopes. A drop can be a power cut, a cable fault or a shutdown; IODA does not say which. <a href="https://ioda.inetintel.cc.gatech.edu/country/' + esc((CC === "oki" ? "JP" : CC.toUpperCase())) + '" target="_blank" rel="noopener">IODA dashboard</a>.</p></div>';
     var M = window.ASAP_MAR, asam = M ? (M.asam || []).filter(function (a) { return hasCC(a) && inPeriodDate(a.date); }) : [];
     asam.forEach(function (a, i) {
-      var m = L.circleMarker([a.lat, a.lon], { pane: "tlpane", radius: 7, color: "#222", weight: 1, fillColor: "#6a1b9a", fillOpacity: 0.85, lgk: "asam" });
+      var m = osapMark([a.lat, a.lon], "a_robbery", { pane: "tlpane", radius: 7, color: "#222", weight: 1, fillColor: "#6a1b9a", fillOpacity: 0.85, lgk: "asam" });
       m.bindPopup('<div class="pop"><div class="tier">Maritime incident · NGA ASAM ' + esc(a.ref) + " · " + esc(a.date) + "</div><h3>" + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + "</h3><p>" + esc(a.text) +
         '</p><p class="obs">MGRS ' + esc(window.MGRS_OF(a.lat, a.lon, 2)) + " (approximate)</p></div>", { maxWidth: 340 });
       sofLayer.addLayer(m); sofM["as:" + i] = m;
@@ -6052,7 +6085,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var qs = (HZ.q || []).filter(function (q) { return inArea(q.lat, q.lon) && inPeriodDate(new Date(q.time).toISOString()); }).sort(function (a, b) { return b.time - a.time; });
     qs.forEach(function (q) {
       var r = R.filter(function (x) { return x.quake && x.url === q.url; })[0];
-      var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3.2), color: tok("--over"), weight: 1.5, fillColor: tok("--over"), fillOpacity: 0.25, lgk: "eq" });
+      var m = osapMark([q.lat, q.lon], "a_quake", { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3.2), color: tok("--over"), weight: 1.5, fillColor: tok("--over"), fillOpacity: 0.25, lgk: "eq" });
       m.bindPopup('<div class="pop"><div class="tier">Earthquake · USGS · ' + esc(window.OSAP_TIME.dualT(new Date(q.time).getTime(), { date: true })) + "</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + "</h3>" +
         '<p class="obs">Depth ' + (q.depth != null ? Math.round(q.depth) + " km" : "not given") + " · " + esc(q.lat.toFixed(3) + ", " + q.lon.toFixed(3)) + " · MGRS " + esc(window.MGRS_OF(q.lat, q.lon, 3)) + "</p>" +
         '<p class="obs"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS event page</a>' + (r ? ' · <a href="#" data-openrec="' + esc(r.id) + '">Report</a>' : "") + "</p></div>", { maxWidth: 320 });
@@ -6061,7 +6094,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     (HZ.aq || []).forEach(function (p, i) {
       if (p.us_aqi == null) return;
       var band = aqiBand(p.us_aqi);
-      var m = L.circleMarker([p.lat, p.lon], { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: band[2], fillOpacity: 0.85, lgk: "aq:" + band[1] });
+      var m = osapMark([p.lat, p.lon], "g_sensor", { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: band[2], fillOpacity: 0.85, lgk: "aq:" + band[1], badge: band[2], scale: 0.75 });
       m.bindPopup('<div class="pop"><div class="tier">Air quality · model estimate</div><h3>' + esc(p.name) + ": US AQI " + Math.round(p.us_aqi) + "</h3><p class=\"obs\">" + esc(band[1]) +
         (p.pm2_5 != null ? " · PM2.5 " + p.pm2_5.toFixed(0) + " µg/m³" : "") + (p.pm10 != null ? " · PM10 " + p.pm10.toFixed(0) + " µg/m³" : "") + "</p></div>");
       sofLayer.addLayer(m); sofM["aq:" + i] = m;
@@ -6192,7 +6225,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (XOFF[f.cat]) return;
       ((byCat[f.cat] = byCat[f.cat] || {})[i.f] = byCat[f.cat][i.f] || []).push([i, n]);
       if (i.la != null) {
-        var m = L.circleMarker([i.la, i.lo], { pane: "tlpane", radius: i.s >= 3 ? 7 : i.s === 2 ? 5 : 4, color: "#111", weight: 0.6, fillColor: XCOL[f.cat] || "#888", fillOpacity: 0.8, lgk: "x:" + (XCOL[f.cat] ? f.cat : "Other") });
+        var m = osapMark([i.la, i.lo], null, { pane: "tlpane", badge: XCOL[f.cat] || "#888", radius: i.s >= 3 ? 7 : i.s === 2 ? 5 : 4, color: "#111", weight: 0.6, fillColor: XCOL[f.cat] || "#888", fillOpacity: 0.8, lgk: "x:" + (XCOL[f.cat] ? f.cat : "Other") }, i.t + " " + (i.x || "") + " " + f.name);
         m.bindPopup(xPop(i, f), { maxWidth: 340 }); sofLayer.addLayer(m); sofM["x:" + n] = m;
       }
     });
@@ -7360,11 +7393,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (a === "nw") return ["Navigational warning: " + b, "Area or point from NGA"];
       if (a === "aq") return ["Air quality: " + b, "US AQI, a model estimate"];
       if (a === "ex") return [{ us: "Exercise with US forces", other: "Military exercise", done: "Completed exercise" }[b] || b, b === "done" ? "" : "Announced, scheduled or under way"];
+      if (a === "rec" && o.sym && window.OSAP_SYM && OSAP_SYM.m[o.sym]) return [OSAP_SYM.m[o.sym][0], { event: "Report; larger means more severe", claim: "Official statement (claim), dashed ring", observation: "Instrument reading" }[b] || ""];
       if (a === "rec") return [{ event: "Report", claim: "Official statement (claim)", observation: "Instrument reading" }[b] || b, b === "event" ? "Larger means more severe" : ""];
       return [b, ""];
     }
     function lgSwatch(l) {
       var o = l.options;
+      if (o.sym && window.OSAP_SYM && OSAP_SYM.d[o.sym]) return OSAP_SYM.sw(o.sym, o.badge);
       if (o.icon) return '<span class="sw" style="border:0;background:none;text-align:center;line-height:15px">\u25B2</span>';
       var op = o.fillOpacity == null ? 0.2 : o.fillOpacity, fc = o.fillColor || o.color;
       return '<span class="sw' + (l.getLatLngs ? "" : " round") + '" style="background:' + fc + ";opacity:1;box-shadow:inset 0 0 0 20px rgba(255,255,255," + (1 - Math.max(0.15, op)).toFixed(2) + ");border:" +
@@ -7374,12 +7409,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       autoT = 0;
       var got = {}, order = [];
       map.eachLayer(function (l) {
-        var o = l.options; if (!o || !o.lgk || got[o.lgk]) return;
+        /* one row per key, and per NATO symbol within it (reports of different kinds each show their own symbol) */
+        var o = l.options, g = o && o.lgk && o.lgk + (o.sym ? "|" + o.sym : ""); if (!g || got[g]) return;
         var pn = map.getPane(o.pane || "overlayPane"); if (pn && getComputedStyle(pn).visibility === "hidden") return;
-        got[o.lgk] = l; order.push(o.lgk);
+        got[g] = l; order.push(g);
       });
       var sig = order.join(","); if (sig === autoSig) return; autoSig = sig;
-      OSAP_LEGEND.set("auto", order.map(function (k) { var t = lgLabel(k, got[k].options);
+      OSAP_LEGEND.set("auto", order.map(function (k) { var t = lgLabel(k.split("|")[0], got[k].options);
         return '<div class="lg">' + lgSwatch(got[k]) + "<div>" + esc(t[0]) + (t[1] ? '<span class="d">' + esc(t[1]) + "</span>" : "") + "</div></div>"; }).join(""));
     }
     mo2 = new MutationObserver(function () { if (!autoT) autoT = setTimeout(autoUpdate, 300); });
@@ -7713,7 +7749,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* one pin per event on the Timeline map; each member's id points at it, so selecting a report rings the event pin */
   function evPin(v) {
     if (!v.loc) return null;
-    var m = L.circleMarker([v.loc.lat, v.loc.lon], L.extend({ pane: "tlpane" }, evStyle(v)));
+    var m = osapMark([v.loc.lat, v.loc.lon], null, L.extend({ pane: "tlpane" }, evStyle(v)), v.m.map(function (x) { return recWords(x); }).join(" "));
     m.__evStyle = evStyle(v);
     m.bindTooltip(esc((v.xcc.length ? "Cross-border " + [CC].concat(v.xcc).map(flagOf).join(" ") + " · " : "") + v.m.length + " reports, grouped automatically: " + v.head.title), { direction: "top" });
     m.on("click", function () { evOpen(v, "tl-pkg"); });
@@ -8294,7 +8330,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     xaLayer.clearLayers(); XAM = {};
     list.forEach(function (r) {
       if (!hasLL(r)) return;
-      var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane", lgk: "xa:" + r.xcc, lgl: cName(r.xcc) + ", added to this map" }, markerStyle(r)));
+      var m = osapMark([r.lat, r.lon], null, L.extend({ pane: "tlpane", lgk: "xa:" + r.xcc, lgl: cName(r.xcc) + ", added to this map", badge: xaCol(r.xcc) }, markerStyle(r)), recWords(r));
       m.bindTooltip(flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " + esc(r.title), { direction: "top" });
       m.on("click", function () { select(r.id, false); });
       xaLayer.addLayer(m); XAM[r.id] = m;

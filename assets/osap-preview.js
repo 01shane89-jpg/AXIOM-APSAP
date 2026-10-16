@@ -771,7 +771,10 @@
     }
     if (S.show.feat) S.feats.forEach(function (f) {
       var c = CAT[f.kind]; if (!c) return;
-      L.circleMarker([f.lat, f.lon], { pane: "rtpvpane", radius: 5, weight: 1.5, color: "#fff", fillOpacity: 0.95, fillColor: { bridge: "#5f3dc4", hazard: "#e67700", support: "#2b8a3e", air: "#0b7285", int: "#495057" }[c.g] || "#495057" })
+      var fc = { bridge: "#5f3dc4", hazard: "#e67700", support: "#2b8a3e", air: "#0b7285", int: "#495057" }[c.g] || "#495057", SM = W.OSAP_SYM;
+      // NATO (2525D) symbol for the feature (installation, hazard event or point of interest), its group colour as the dot
+      (SM && SM.mark ? SM.mark([f.lat, f.lon], c.g === "hazard" ? SM.classify(c.n, f.name) : SM.siteOf(c.n, f.name) || (c.g === "support" ? "g_supply" : c.g === "air" ? "i_air" : "g_poi"), { pane: "rtpvpane", badge: fc, scale: 0.55, fillColor: fc })
+        : L.circleMarker([f.lat, f.lon], { pane: "rtpvpane", radius: 5, weight: 1.5, color: "#fff", fillOpacity: 0.95, fillColor: fc }))
         .bindTooltip(E(c.n + (f.name ? ": " + f.name : "") + (f.off > 150 ? " (" + dist(f.off) + " off the route)" : "")), { direction: "top" }).addTo(S.featL);
     });
     drawPts();
@@ -787,7 +790,8 @@
     if (S.show.pts) S.pts.forEach(function (p) {
       if (p.i === S.cur) return;
       var col = p.state !== "done" ? "#adb5bd" : p.street ? (p.age.k === "stale" ? "#e67700" : "#2b8a3e") : "#c92a2a";
-      L.circleMarker([p.lat, p.lon], { pane: "rtpvtop", radius: p.crit ? 6 : 4, weight: p.crit ? 2 : 1, color: p.crit ? "#212529" : "#fff", fillColor: col, fillOpacity: 0.95 })
+      (W.OSAP_SYM && W.OSAP_SYM.mark ? W.OSAP_SYM.mark([p.lat, p.lon], p.crit ? "g_check" : "g_waypoint", { pane: "rtpvtop", badge: col, scale: p.crit ? 0.55 : 0.4, fillColor: col })
+        : L.circleMarker([p.lat, p.lon], { pane: "rtpvtop", radius: p.crit ? 6 : 4, weight: p.crit ? 2 : 1, color: p.crit ? "#212529" : "#fff", fillColor: col, fillOpacity: 0.95 }))
         .bindTooltip(E((p.m / 1000).toFixed(1) + " km · " + p.label), { direction: "top" }).on("click", function (e) { if (e.originalEvent) L.DomEvent.stop(e.originalEvent); go(p.i); }).addTo(S.ptL);
     });
     if (S.drv && S.drv.on) { S.drv.mk = null; drvMarker(); return; }

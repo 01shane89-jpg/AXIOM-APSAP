@@ -220,7 +220,8 @@
 
   /* ---------- map layer ---------- */
   var map = null, layer = null, drawn = {};
-  function icon(s) { return L.divIcon({ className: "cam-ic", iconSize: [20, 20], iconAnchor: [10, 10], html: '<span style="background:' + TYPES[typeOf(s)].c + '">' + CAM + "</span>" }); }
+  // NATO (2525D) sensor symbol, the camera type's colour as the dot; the camera glyph where the symbols did not load
+  function icon(s) { if (W.OSAP_SYM && W.OSAP_SYM.icon) return W.OSAP_SYM.icon("g_sensor", { cls: "cam-ic cam-sym", badge: TYPES[typeOf(s)].c, scale: 0.75 }); return L.divIcon({ className: "cam-ic", iconSize: [20, 20], iconAnchor: [10, 10], html: '<span style="background:' + TYPES[typeOf(s)].c + '">' + CAM + "</span>" }); }
   function tipHtml(s, c) {
     if (s.kind === "hls") return '<div class="cam-tipbox"><b>' + esc(c[3]) + '</b><span class="cam-no">Live video: click the camera to play it.</span><i>' + esc(s.agency) + "</i></div>";
     return '<div class="cam-tipbox"><b>' + esc(c[3]) + '</b><div data-camimg><span class="cam-no">Loading the image…</span></div><i>' + esc(s.agency) + "</i></div>";
@@ -371,7 +372,7 @@
     if (!W.OSAP_LEGEND) return;
     var on = {}; Object.keys(drawn).forEach(function (k) { on[typeOf(src(k.split("|")[0]))] = 1; });
     W.OSAP_LEGEND.set("cam", S.on ? Object.keys(TYPES).filter(function (k) { return on[k]; }).map(function (k) {
-      return '<div class="lg"><span class="cam-ic" style="position:static;display:inline-block;width:20px;height:20px"><span style="background:' + TYPES[k].c + '">' + CAM + "</span></span><div>" + TYPES[k].t + " (published by its agency): hover or tap for the latest image" + (k === "road" ? " or live video" : "") + "</div></div>";
+      return '<div class="lg">' + (W.OSAP_SYM ? W.OSAP_SYM.sw("g_sensor", TYPES[k].c) : '<span class="cam-ic" style="position:static;display:inline-block;width:20px;height:20px"><span style="background:' + TYPES[k].c + '">' + CAM + "</span></span>") + "<div>" + TYPES[k].t + " (published by its agency): hover or tap for the latest image" + (k === "road" ? " or live video" : "") + "</div></div>";
     }).join("") : "");
   }
   function set(on) {

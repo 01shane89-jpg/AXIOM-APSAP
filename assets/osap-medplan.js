@@ -2587,12 +2587,39 @@
     if (it.some(function (x) { return x[0] === "ring"; })) o.push(["dl", "#1d5fa8", "", "Air reach: light blue " + (GOLDEN_MIN - 10) + " min, blue " + GOLDEN_MIN + " min", ""]);
     return o;
   }
+  function mpSw(t) {
+    var S = W.OSAP_SYM, k = { POI: "g_poi", S: "g_start", E: "g_amb", PORT: "i_port", "L A M P": "i_air", B: "g_supply", "CCP AXP HLZ": "g_ccp" }[t];
+    if (!S || !S.uri) return "";
+    return k ? '<img alt="" src="' + S.uri(k) + '" style="width:22px;height:18px;object-fit:contain;flex:none;margin-right:3px">'
+      : W.OSAP_REDCROSS ? '<span style="flex:none;margin-right:3px;display:inline-block;width:16px;height:16px">' + W.OSAP_REDCROSS(16) + "</span>" : "";
+  }
   function legendHtml() {
     return "<h3>Medical plan</h3>" + legendItems().map(function (x) {
       var sw = x[0] === "ln" || x[0] === "dl" ? '<span class="sw" style="height:0;border:0;border-top:3px ' + (x[0] === "dl" ? "dashed" : "solid") + " " + x[1] + ';margin-top:9px"></span>'
-        : '<span class="mprole" style="background:' + x[1] + (x[0] === "mka" ? ";border:1px dashed #fff" : "") + ';flex:none">' + esc(x[2]) + "</span>";
+        : mpSw(x[2]) + '<span class="mprole" style="background:' + x[1] + (x[0] === "mka" ? ";border:1px dashed #fff" : "") + ';flex:none">' + esc(x[2]) + "</span>";
       return '<div class="lg">' + sw + "<div>" + esc(x[3]) + (x[4] ? '<span class="d">' + esc(x[4]) + "</span>" : "") + "</div></div>";
     }).join("");
+  }
+  /* each plan mark as its NATO (2525D) symbol with its label: hospitals, clinics and chambers keep the red cross; landing zones,
+     unit points, ports and airfields their control-measure or installation symbol; the role colour is the dot */
+  var MPCOL = { "": "#D7141A", e: "#b35c00", pt: "#0b4f8a", air: "#1d5fa8", o: "#111", bl: "#a4005b", dc: "#00727a", pk: "#8b0010", stb: "#b34700", alt: "#8a4b00", cp: "#1e7a3a", sw: "#7a1fa2", se: "#0b6e4f" };
+  function mpKey(t, c) {
+    t = String(t || "");
+    if (c === "air") return /^L/.test(t) ? "g_medevac" : /^M/.test(t) ? "i_heli" : "i_air";
+    if (c === "cp") return /^AXP/.test(t) ? "g_axp" : /^HLZ/.test(t) ? "g_medevac" : "g_ccp";
+    if (c === "pt") return "i_port";
+    if (c === "o") return /^POI/.test(t) ? "g_poi" : "g_start";
+    if (c === "e") return "g_amb";
+    if (c === "bl") return "g_supply";
+    if (c === "sw" || c === "se") return "g_waypoint";
+    return "RC";
+  }
+  function mpIcon(t, c, w) {
+    var S = W.OSAP_SYM, k = mpKey(t, c);
+    if (S && S.tag && k !== "RC") return S.tag(k, t, { cls: "mpicon " + c, badge: MPCOL[c], scale: 0.7 });
+    if (S && S.tag && W.OSAP_REDCROSS) return L.divIcon({ className: "mpicon " + c + " msym msym-tag", iconSize: [0, 0], iconAnchor: [0, 0],
+      html: '<span style="position:absolute;left:-9px;top:-9px;width:18px;height:18px;display:block">' + W.OSAP_REDCROSS(18) + '</span><b class="msym-l" style="left:11px;top:0' + (c && MPCOL[c] && c !== "" ? ";box-shadow:0 0 0 2px " + MPCOL[c] : "") + '">' + esc(t) + "</b>" });
+    return L.divIcon({ className: "mpicon " + c, html: t, iconSize: [w, 20], iconAnchor: [w / 2, 10] });
   }
   function mapShow() {
     var map = W.__asapMap; if (!map || !W.L || !ST) return;
@@ -2603,7 +2630,7 @@
       if (it[0] === "iso") L.polygon(it[1], { color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }).addTo(layer);
       else if (it[0] === "ring") L.circle(it[1], { radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }).addTo(layer);
       else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2])).addTo(layer);
-      else L.marker(it[1], { icon: L.divIcon({ className: "mpicon " + it[3], html: it[2], iconSize: [it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26, 20], iconAnchor: [(it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26) / 2, 10] }), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
+      else L.marker(it[1], { icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
     });
     layer.addTo(map);
   }

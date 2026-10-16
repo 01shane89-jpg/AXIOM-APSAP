@@ -344,6 +344,14 @@
   }
   var SAVE_FAIL = "Point not saved: this browser's storage for OSAP is full. Delete some saved items or workspaces, then try again.";
   function ptsHere() { var c = cc(); return ptsAll().filter(function (p) { return p.cc === c; }); }
+  /* a point with no chosen icon: the NATO (2525D) point-of-interest symbol; the teal diamond if the symbols did not load */
+  function defIcon(p) {
+    var lab = "<span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", d = W.OSAP_SYM && W.OSAP_SYM.d && W.OSAP_SYM.d.g_poi;
+    if (!d) return L.divIcon({ className: "atk-pt", html: "<i></i>" + lab, iconSize: [18, 18], iconAnchor: [9, 9] });
+    var sc = 0.75, w = Math.round(d[1] * sc), h = Math.round(d[2] * sc);
+    return L.divIcon({ className: "atk-pt", html: '<i class="atk-def" style="width:' + w + "px;height:" + h + 'px">' + d[0] + "</i>" + lab.replace("<span>", '<span style="left:' + (w + 2) + "px;top:" + Math.max(0, Math.round(h / 2 - 8)) + 'px">'),
+      iconSize: [w, h], iconAnchor: [Math.round(d[3] * sc), Math.round(d[4] * sc)] });
+  }
   function ptDraw() {
     ptLayer.clearLayers();
     ptsHere().forEach(function (p) {
@@ -351,7 +359,7 @@
       var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,
         icon: sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] })
-          : L.divIcon({ className: "atk-pt", html: "<i></i><span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) });
+          : defIcon(p) });
       m.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "atk-ptpop";
         var PX = W.OSAP_POINTS;
@@ -656,6 +664,7 @@
     "@keyframes atkpop{from{opacity:0;scale:.4}to{opacity:1;scale:1}}@media (prefers-reduced-motion:reduce){#atk-ring [data-rk]{animation:none}}" +
     /* dropped points */
     ".atk-pt{background:none;border:0}.atk-pt i{position:absolute;left:3px;top:3px;width:12px;height:12px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5);box-sizing:border-box}" +
+    ".atk-pt i.atk-def{left:0;top:0;background:none;border:0;transform:none;box-shadow:none}.atk-pt i.atk-def svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 1px rgba(0,0,0,.6))}" +
     ".atk-pt span{position:absolute;left:19px;top:1px;padding:0 4px;border-radius:3px;background:rgba(20,24,28,.85);color:#fff;font:700 10.5px/15px 'IBM Plex Mono',monospace;white-space:nowrap}" +
     ".atk-ptpop .atk-note{white-space:pre-wrap;word-break:break-word;margin:4px 0}" +
     ".atk-ptpop code{display:block;font:12px/1.4 'IBM Plex Mono',monospace;margin:3px 0 0}.atk-ptpop .obs{color:var(--muted);font-size:11.5px}.atk-ptpop p{margin:6px 0}" +

@@ -18,6 +18,10 @@
   var SIDE = { us: { name: "US, Israel and partners", col: "#2F6FB5" }, ir: { name: "Iran and aligned groups", col: "#B3261E" }, neutral: { name: "Neutral, other or not stated", col: "#6B7785" } };
   var AREA_COL = { exclusion: "#B3261E", blockade: "#2F6FB5", threat: "#C2792B", "strike-zone": "#8A1C7C" };
   var AREA_LBL = { exclusion: "Announced exclusion zone", blockade: "Blockade", threat: "Shipping threat area", "strike-zone": "Reported strike zone" };
+  /* NATO map symbols (assets/osap-symbols.js) for the kinds of place, when that file loaded */
+  function sym() { return !!(W.OSAP_SYM && W.OSAP_SYM.mark && W.OSAP_SYM.classify); }
+  var SYMK = { base: "milbase", "naval-base": "ms_naval", airbase: "ms_air", nuclear: "ms_nuclear", oil: "i_pol", port: "seaport", chokepoint: "keyterrain",
+    island: "keyterrain", city: "g_poi", facility: "milbase" };
   var KIND_LBL = { base: "Base", "naval-base": "Naval base", airbase: "Air base", nuclear: "Nuclear site", oil: "Oil and gas", port: "Port", chokepoint: "Chokepoint",
     island: "Island", city: "City", facility: "Military facility" };
   /* earlier reports use their own kind words; shown under the shared tab's names */
@@ -165,8 +169,9 @@
       var BUILD = {
         places: function () {
           return L.layerGroup(X.places.map(function (p) {
-            var c = (SIDE[p.side] || SIDE.neutral).col;
-            return L.circleMarker([p.lat, p.lon], { pane: "cfpane", radius: 6, color: "#fff", weight: 1.5, fillColor: c, fillOpacity: 0.95 })
+            var c = (SIDE[p.side] || SIDE.neutral).col, po = { pane: "cfpane", radius: 6, color: "#fff", weight: 1.5, fillColor: c, fillOpacity: 0.95 };
+            /* NATO symbol of the kind of site (unknown frame: the source's report); the side the source gives is the dot */
+            return (sym() ? W.OSAP_SYM.mark([p.lat, p.lon], SYMK[p.kind] || "milbase", L.extend(po, { badge: c, scale: 0.75 })) : L.circleMarker([p.lat, p.lon], po))
               .bindPopup("<b>" + esc(p.name) + "</b><br><small>" + esc(KIND_LBL[p.kind] || p.kind) + " · " + esc((SIDE[p.side] || SIDE.neutral).name) + "</small><br>" + esc(p.why) +
                 ' <span class="aitag" title="' + esc(p.why_status) + '">AI generated</span><br><small>' + link(p.src, p.srcname) + " · position approximate" + fpShort(p.fp) + "</small>", { maxWidth: 320 });
           }));
@@ -177,7 +182,7 @@
             var pos = w.pos || []; if (!pos.length) return;
             if (!pos.some(function (p) { return p[0] > 10 && p[0] < 32 && p[1] > 32 && p[1] < 66; })) return;
             var txt = "<b>" + esc(w.id) + "</b> · issued " + esc(w.issued) + "<br><small>" + esc(String(w.text || "").slice(0, 400)) + "</small><br><small>" + link(W.ASAP_NAVW.src, "NGA navigational warnings") + "</small>";
-            var m = (pos.length > 2 ? L.polygon(pos, { pane: "cfarea", color: "#1D5A86", weight: 1, fillOpacity: 0.08 }) : L.circleMarker(pos[0], { pane: "cfpane", radius: 5, color: "#1D5A86" })).bindPopup(txt, { maxWidth: 320 }).addTo(g);
+            var m = (pos.length > 2 ? L.polygon(pos, { pane: "cfarea", color: "#1D5A86", weight: 1, fillOpacity: 0.08 }) : sym() ? W.OSAP_SYM.mark(pos[0], "a_marine", { pane: "cfpane", scale: 0.65 }) : L.circleMarker(pos[0], { pane: "cfpane", radius: 5, color: "#1D5A86" })).bindPopup(txt, { maxWidth: 320 }).addTo(g);
             // the warning file carries no fingerprint: one is made here from the warning as NGA published it (number, time, text)
             sha(w.id + "\n" + w.issued + "\n" + (w.text || "")).then(function (h) { m.setPopupContent(txt + "<br><small>" + fpShort(h) + "</small>"); }, function () {});
           });
@@ -185,7 +190,8 @@
         },
         hist: function () {
           return L.layerGroup(recs.filter(function (r) { return !r.live && inP(r.t) && isFinite(r.lat) && isFinite(r.lon); }).map(function (r) {
-            return L.circleMarker([r.lat, r.lon], { pane: "cfpane", radius: 5, color: "#fff", weight: 1, fillColor: (SIDE[r.side] || SIDE.neutral).col, fillOpacity: 0.8 })
+            var ho = { pane: "cfpane", radius: 5, color: "#fff", weight: 1, fillColor: (SIDE[r.side] || SIDE.neutral).col, fillOpacity: 0.8 };
+            return (sym() ? W.OSAP_SYM.mark([r.lat, r.lon], W.OSAP_SYM.classify(r.title), L.extend(ho, { badge: ho.fillColor, scale: 0.6 })) : L.circleMarker([r.lat, r.lon], ho))
               .bindPopup("<small>" + day(r.t) + " · " + esc(r.place) + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ") · reported, not verified" + fpShort(r.fp) + "</small>", { maxWidth: 320 });
           }));
         }
@@ -201,7 +207,8 @@
         var on = function (k) { return layers[k] && map.hasLayer(layers[k]); }, h = "";
         function row(col, txt, ring) { return '<div class="lg"><span class="sw round" style="background:' + (ring ? "transparent;border:2px solid " + col : col) + '"></span><div>' + esc(txt) + "</div></div>"; }
         if (on("places") || on("hist")) h += "<h3>" + (on("places") ? "Bases, facilities" + (on("hist") ? " and earlier reports" : "") : "Earlier reports") + ", by side</h3>" +
-          row(SIDE.us.col, SIDE.us.name) + row(SIDE.ir.col, SIDE.ir.name) + row(SIDE.neutral.col, SIDE.neutral.name);
+          row(SIDE.us.col, SIDE.us.name) + row(SIDE.ir.col, SIDE.ir.name) + row(SIDE.neutral.col, SIDE.neutral.name) +
+          (sym() ? '<div class="lg"><div><span class="d">NATO map symbols show the kind of site or event; the dot on each is the side the source gives.</span></div></div>' : "");
         if (on("navw")) h += "<h3>Navigational warnings</h3>" + '<div class="lg"><span class="sw" style="background:rgba(29,90,134,.12);border:1px solid #1D5A86"></span><div>Warning area (NGA)</div></div>';
         W.OSAP_LEGEND.set("cf-iran", h, box);
       }

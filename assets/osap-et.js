@@ -29,9 +29,11 @@
   }
   function inCountry(x) { return (x.cc || []).indexOf(S.ctx.cc) >= 0 || (S.ctx.cc === "oki" && (x.cc || []).indexOf("jp") >= 0 && x.geo && x.geo.lat < 28); }
   function marker(key, lat, lon, kind, pop) {
-    var c = COL[kind], m = L.circleMarker([lat, lon], { pane: "tlpane", radius: kind === "case" ? 8 : 7, color: kind === "case" ? "#222" : "#fff", weight: kind === "case" ? 1 : 2,
+    var c = COL[kind], mo = { pane: "tlpane", radius: kind === "case" ? 8 : 7, color: kind === "case" ? "#222" : "#fff", weight: kind === "case" ? 1 : 2,
       fillColor: c, fillOpacity: kind === "case" ? 0.55 : 0.9, lgk: "et:" + kind,
-      lgl: { news: "UFO/UAP report in the news (placed by a named place)", official: "Official release", "case": "Notable past case (approximate place)" }[kind] });
+      lgl: { news: "UFO/UAP report in the news (placed by a named place)", official: "Official release", "case": "Notable past case (approximate place)" }[kind] };
+    // NATO (2525D) suspicious-activity symbol, the kind's colour as the dot; a past case's place is approximate (dashed ring)
+    var m = window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark([lat, lon], "a_suspicious", L.extend(mo, { sym: "a_suspicious", badge: c, scale: 0.7, weight: 0, dashArray: kind === "case" ? "3 3" : null, opacity: kind === "case" ? 0.8 : 1 })) : L.circleMarker([lat, lon], mo);
     m.bindPopup(pop, { maxWidth: 330 });
     S.ctx.layer.addLayer(m); S.ctx.put("et:" + key, m);
     return m;

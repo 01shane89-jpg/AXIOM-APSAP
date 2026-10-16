@@ -124,11 +124,11 @@
   /* ---------- movement restrictions from OpenStreetMap ---------- */
   var rxLayer = null, rxT = 0, rxKey = "", rxCache = {}, rxBusy = null, rxMsg = "";
   var RX = {
-    border: { lgl: "Border post or crossing", col: "#6a1b9a" },
-    mil: { lgl: "Military area: entry may be prohibited", col: "#b71c1c" },
-    prot: { lgl: "Protected area: vehicle access may be limited", col: "#2e7d32" },
-    ford: { lgl: "Ford", col: "#0277bd" },
-    limit: { lgl: "Weight or height limit (bridge or road)", col: "#e65100" }
+    border: { lgl: "Border post or crossing", col: "#6a1b9a", sym: "crossing" },
+    mil: { lgl: "Military area: entry may be prohibited", col: "#b71c1c", sym: "milbase" },
+    prot: { lgl: "Protected area: vehicle access may be limited", col: "#2e7d32", sym: "g_poi" },
+    ford: { lgl: "Ford", col: "#0277bd", sym: "keyterrain" },
+    limit: { lgl: "Weight or height limit (bridge or road)", col: "#e65100", sym: "i_bridge" }
   };
   function rxKind(t) {
     if (t.barrier === "border_control") return "border";
@@ -153,7 +153,9 @@
       var t = e.tags || {}, k = rxKind(t); if (!k) return;
       var o = RX[k], p = null;
       if (e.type === "node" && e.lat != null) {
-        p = L.circleMarker([e.lat, e.lon], { pane: "mobrx", radius: k === "border" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: o.col, fillOpacity: 0.95, lgk: "mob:" + k, lgl: o.lgl });
+        var po = { pane: "mobrx", radius: k === "border" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: o.col, fillOpacity: 0.95, lgk: "mob:" + k, lgl: o.lgl };
+        // NATO (2525D) symbol for the point, its colour kept as the dot
+        p = window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark([e.lat, e.lon], o.sym, L.extend(po, { sym: o.sym, badge: o.col, scale: k === "border" ? 0.8 : 0.65 })) : L.circleMarker([e.lat, e.lon], po);
       } else if (e.geometry && e.geometry.length > 1) {
         var pts = e.geometry.filter(function (g) { return g && g.lat != null; }).map(function (g) { return [g.lat, g.lon]; });
         if (pts.length < 2) return;

@@ -43,7 +43,7 @@ for (const vp of [{ width: 1400, height: 900, tag: "desktop" }, { width: 390, he
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
   const view = () => p.evaluate(() => { const m = window.FW.map, c = m.getCenter(); return { lat: c.lat, lng: c.lng, z: m.getZoom(), v: document.documentElement.getAttribute("data-view") }; });
   const same = (a, b) => a.z === b.z && Math.abs(a.lat - b.lat) < 1e-3 && Math.abs(a.lng - b.lng) < 1e-3;
-  const goHere = async () => { await p.evaluate(([h, z]) => window.FW.map.setView(h, z, { animate: false }), [HERE, Z]); await p.waitForTimeout(300); return view(); };
+  const goHere = async () => { await p.evaluate(([h, z]) => { window.FW.map.setView(h, z, { animate: false }); }, [HERE, Z]); /* braces: never hand the whole map object back to the test */ await p.waitForTimeout(300); return view(); };
   const pressRoute = async () => { await p.evaluate(() => document.querySelector('[data-atk="route"]').click()); await p.waitForTimeout(1500); };
 
   /* 1. opening Route from the toolbar keeps the view */

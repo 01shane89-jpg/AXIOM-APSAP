@@ -348,7 +348,8 @@
     var col = { low: "#e67700", moderate: "#d9480f", severe: "#c92a2a" };
     L.slice(0, 200).forEach(function (r) {
       if (!isFinite(r.lat) || !isFinite(r.lon)) return;
-      W.L.circleMarker([r.lat, r.lon], { radius: 7, color: "#fff", weight: 1.5, fillColor: col[r.sev] || "#c92a2a", fillOpacity: 0.9 })
+      // NATO (2525D) communications checkpoint, the severity colour as the dot
+      (W.OSAP_SYM && W.OSAP_SYM.mark ? W.OSAP_SYM.mark([r.lat, r.lon], "g_comcheck", { badge: col[r.sev] || "#c92a2a", scale: 0.6, fillColor: col[r.sev] || "#c92a2a" }) : W.L.circleMarker([r.lat, r.lon], { radius: 7, color: "#fff", weight: 1.5, fillColor: col[r.sev] || "#c92a2a", fillOpacity: 0.9 }))
         .bindPopup("<b>Interference (operator report)</b><br>" + E(zT(r.t)) + " · " + E((R().BANDS.filter(function (x) { return x.id === r.band; })[0] || { label: "Other band" }).label) + (r.note ? "<br>" + E(r.note) : "")).addTo(intfLayer);
     });
     S.ctx.layer.addLayer(intfLayer);
@@ -525,9 +526,9 @@
     if (P.a && P.b) W.L.polyline([P.a, P.b], { renderer: svg, color: col, weight: 4, opacity: 0.9, dashArray: x && x.verdict === "blocked" ? "8 6" : null, interactive: false }).addTo(tlLayer);
     [["A", P.a], ["B", P.b]].forEach(function (q) {
       if (!q[1]) return;
-      W.L.marker(q[1], { keyboard: false, interactive: false, icon: W.L.divIcon({ className: "cptlm", html: "<span>" + q[0] + "</span>", iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(tlLayer);
+      W.L.marker(q[1], { keyboard: false, interactive: false, icon: W.OSAP_SYM && W.OSAP_SYM.tag ? W.OSAP_SYM.tag("g_comcheck", q[0], { cls: "cptlm", scale: 0.65 }) : W.L.divIcon({ className: "cptlm", html: "<span>" + q[0] + "</span>", iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(tlLayer);
     });
-    if (x && x.worst && x.worst.lat != null) W.L.circleMarker([x.worst.lat, x.worst.lon], { renderer: svg, radius: 6, color: "#fff", weight: 2, fillColor: col, fillOpacity: 1, interactive: false }).addTo(tlLayer);
+    if (x && x.worst && x.worst.lat != null) (W.OSAP_SYM && W.OSAP_SYM.mark ? W.OSAP_SYM.mark([x.worst.lat, x.worst.lon], "keyterrain", { badge: col, scale: 0.55, interactive: false }) : W.L.circleMarker([x.worst.lat, x.worst.lon], { renderer: svg, radius: 6, color: "#fff", weight: 2, fillColor: col, fillOpacity: 1, interactive: false })).addTo(tlLayer);
     S.ctx.layer.addLayer(tlLayer);
   }
   function tlAct(b) {
@@ -666,7 +667,7 @@
     rcLayerOff(); if (!S.ctx || S.tab !== "link" || !W.L || !RC.at) return;
     rcLayer = W.L.layerGroup(); rcRend = W.L.canvas({ pane: "comchk" });
     W.L.marker(RC.at, { pane: "comchk", keyboard: false, interactive: false, title: "Transmitter",
-      icon: W.L.divIcon({ className: "cptlm", html: '<span style="background:#5f3dc4">Tx</span>', iconSize: [26, 26], iconAnchor: [13, 13] }) }).addTo(rcLayer);
+      icon: W.OSAP_SYM && W.OSAP_SYM.tag ? W.OSAP_SYM.tag("i_tower", "Tx", { cls: "cptlm", badge: "#5f3dc4", scale: 0.65 }) : W.L.divIcon({ className: "cptlm", html: '<span style="background:#5f3dc4">Tx</span>', iconSize: [26, 26], iconAnchor: [13, 13] }) }).addTo(rcLayer);
     S.ctx.layer.addLayer(rcLayer);
     RC.rays.forEach(function (_, k) { rcDrawRay(k); });
   }

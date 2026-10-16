@@ -80,7 +80,8 @@
     if (st.line && f) {
       g.push(L.polyline(f.border.line.map(function (p) { return [p[1], p[0]]; }), { pane: "dsbpane", color: "#212121", weight: 3, opacity: 0.85, dashArray: "8 5", interactive: false }));
       f.crossings.forEach(function (x, ix) {
-        var ic = L.divIcon({ className: "dsb-cx", html: '<span class="dsb-sq dsb-' + esc(x.kind) + '"></span><span class="dsb-lb">' + esc(x.name.split(" (")[0]) + "</span>", iconSize: [14, 14], iconAnchor: [7, 7] });
+        // NATO (2525D) border-crossing (checkpoint) symbol; ferries and boat crossings their installation symbol; the name shows when zoomed in
+        var ic = window.OSAP_SYM && window.OSAP_SYM.tag ? window.OSAP_SYM.tag({ ferry: "i_ferry", sea: "i_port" }[x.kind] || "crossing", x.name.split(" (")[0], { cls: "dsb-cx", scale: 0.6 }) : L.divIcon({ className: "dsb-cx", html: '<span class="dsb-sq dsb-' + esc(x.kind) + '"></span><span class="dsb-lb">' + esc(x.name.split(" (")[0]) + "</span>", iconSize: [14, 14], iconAnchor: [7, 7] });
         var mk = L.marker([x.lat, x.lon], { pane: "cfpane", icon: ic, keyboard: false, zIndexOffset: 300 });
         mk.bindTooltip(esc(x.name) + " · " + esc(KIND[x.kind] || "Crossing"), { direction: "top" });
         mk.bindPopup(cxPop(x), { maxWidth: 340 });
@@ -94,7 +95,7 @@
     if (!W.OSAP_LEGEND) return;
     var f = dsb(), h = "<h3>Deep South border map</h3>";
     if (st.line && f) h += '<div class="lg"><span class="sw" style="background:transparent;border-top:3px dashed #212121;height:0;margin-top:7px"></span><div>Thailand–Malaysia border (approximate)</div></div>' +
-      '<div class="lg"><span class="sw dsb-sq dsb-road"></span><div>Official crossing (road, rail, ferry, boat)</div></div>';
+      '<div class="lg">' + (window.OSAP_SYM ? window.OSAP_SYM.sw("crossing") : '<span class="sw dsb-sq dsb-road"></span>') + "<div>Official crossing (road, rail, ferry, boat)</div></div>";
     if (st.law && f && (f.measures || []).length) ["decree", "isa", "martial", "unknown"].filter(function (k) { return k === "unknown" || f.measures.some(function (x) { return x.law === k; }); }).forEach(function (k) { h += '<div class="lg"><span class="sw" style="background:' + LAWC[k] + ';opacity:.6"></span><div>' + esc(LAWN[k]) + "</div></div>"; });
     else if (st.dist) h += '<div class="lg"><span class="sw" style="background:linear-gradient(90deg,rgba(183,28,28,.12),rgba(183,28,28,.62))"></span><div>Attack reports per district this period (most: ' + num(max) + ")</div></div>";
     h += '<div class="lg"><div><span class="d">Reports, not incidents: several outlets often report one attack. Government statements on special laws are claims.</span></div></div>';
@@ -186,7 +187,7 @@
     ".dsb-cx{display:flex!important;align-items:center;gap:4px;white-space:nowrap;pointer-events:auto}.dsb-sq{display:inline-block;width:12px;height:12px;border:2px solid #fff;box-shadow:0 0 0 1px #212121;background:#1565c0;flex:none}" +
     ".dsb-road_rail{background:#4527a0}.dsb-ferry,.dsb-sea{background:#00838f;border-radius:50%}" +
     ".dsb-lb{font:600 11px/1 system-ui,sans-serif;color:#111;text-shadow:0 0 3px #fff,0 0 3px #fff;display:none}" +
-    "#map.dsb-z .dsb-lb{display:inline}";
+    "#map.dsb-z .dsb-lb{display:inline}.dsb-cx .msym-l{display:none}#map.dsb-z .dsb-cx .msym-l{display:block}";
   D.head.appendChild(css);
   // crossing names only when zoomed in enough to read them
   function zcls() { var m = W.__asapMap; if (m) D.getElementById("map").classList.toggle("dsb-z", m.getZoom() >= 9); }

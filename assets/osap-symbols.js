@@ -12,6 +12,27 @@ window.OSAP_SYM = { d: {"clash":["<svg xmlns=\"http://www.w3.org/2000/svg\" vers
     return L.divIcon({ className: "msym msk-" + k + (o.cls ? " " + o.cls : ""), iconSize: [0, 0], iconAnchor: [0, 0],
       html: '<div class="msb" style="width:' + px(d[1]) + ";height:" + px(d[2]) + ";left:" + px(-d[3]) + ";top:" + px(-d[4]) + '">' + d[0] + lab + badge(o.badge) + "</div>" });
   };
+  /* a labelled symbol for plan and tool points (route checkpoints, plan stops): S.tag(key, text, {cls, badge, scale}). The symbol is an
+     image, so the marker's text is only its label (code and tests read it); cls keeps the module's own class for its clicks and checks. */
+  var URI = {};
+  S.uri = uri;
+  function uri(k) { return URI[k] || (URI[k] = "data:image/svg+xml;charset=utf-8," + encodeURIComponent((S.d[k] || S.d.pr_site)[0])); }
+  S.tag = function (k, text, opts) {
+    var o = opts || {}, sc = o.scale || 1, d = (S.d[k] || S.d.pr_site).map(function (v, j) { return j ? v * sc : v; }), t = text == null ? "" : String(text);
+    return L.divIcon({ className: (o.cls ? o.cls + " " : "") + "msym msym-tag msk-" + k, iconSize: [0, 0], iconAnchor: [0, 0],
+      html: '<div class="msb" style="width:' + px(d[1]) + ";height:" + px(d[2]) + ";left:" + px(-d[3]) + ";top:" + px(-d[4]) + '"><img alt="" src="' + uri(k) + '">' + badge(o.badge) + "</div>" +
+        (t ? '<b class="msym-l" style="left:' + px(d[1] - d[3] + 2) + ";top:" + px(d[2] / 2 - d[4]) + '">' + t.replace(/[<>&"]/g, "") + "</b>" : "") });
+  };
+  /* a labelled facility from its words: hospitals, clinics and medical posts keep the red cross (window.OSAP_REDCROSS),
+     anything else its installation symbol, or opts.def (a point of interest when none is given) */
+  S.ptag = function (words, text, opts) {
+    var o = opts || {}, w = [].concat(words).filter(Boolean).join(" "), t = text == null ? "" : String(text);
+    if (/hospital|clinic|medical|mtf|first.aid/i.test(w) && window.OSAP_REDCROSS)
+      return L.divIcon({ className: (o.cls ? o.cls + " " : "") + "msym msym-tag", iconSize: [0, 0], iconAnchor: [0, 0],
+        html: '<span style="position:absolute;left:-8px;top:-8px;width:16px;height:16px;display:block">' + window.OSAP_REDCROSS(16) + "</span>" +
+          (t ? '<b class="msym-l" style="left:10px;top:0">' + t.replace(/[<>&"]/g, "") + "</b>" : "") });
+    return S.tag(S.siteOf(w) || o.def || "g_poi", t, o);
+  };
   /* opts.badge: a small colour dot at the symbol's lower right (a power plant's fuel, a substation's voltage), in the map legend too */
   function badge(c) {
     return c && /^#[0-9a-f]{3,8}$/i.test(c) ? '<i style="position:absolute;right:-3px;bottom:-3px;width:' + px(9) + ";height:" + px(9) + ";border-radius:50%;background:" + c + ';border:1.5px solid #fff;box-shadow:0 0 1px #000"></i>' : "";
@@ -40,13 +61,75 @@ window.OSAP_SYM = { d: {"clash":["<svg xmlns=\"http://www.w3.org/2000/svg\" vers
       var R = this._renderer; if (!R._drawing || this._empty()) return;
       var o = this.options, k = S.d[o.sym] ? o.sym : "pr_site", d = S.d[k], im = img(k), sc = this._sc(), p = this._point, c = R._ctx;
       if (!im.ok) { (WAIT[k] = WAIT[k] || []).push(this); return; }
+      /* opts.opacity fades it (time playback, outside a drawn area = 0); a stroke of weight 3 or more is the selection ring;
+         opts.dashArray (a claim, not confirmed) adds a thin dashed ring */
+      var a = o.opacity == null ? 1 : o.opacity; if (a <= 0) return;
+      c.save(); c.globalAlpha = a;
       c.drawImage(im, p.x - d[3] * sc, p.y - d[4] * sc, d[1] * sc, d[2] * sc);
-      if (!o.badge) return;
-      var r = Math.max(3, 4.5 * sc), x = p.x + (d[1] - d[3]) * sc - r * 0.5, y = p.y + (d[2] - d[4]) * sc - r * 0.5;
-      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = o.badge; c.fill(); c.lineWidth = 1.5; c.strokeStyle = "#fff"; c.stroke();
+      var rr = this._radius + 2;
+      if ((o.weight || 0) >= 3 || o.dashArray) {
+        c.beginPath(); c.arc(p.x, p.y, rr, 0, Math.PI * 2);
+        c.setLineDash((o.weight || 0) >= 3 ? [] : [3, 3]); c.lineWidth = (o.weight || 0) >= 3 ? o.weight : 1.3;
+        c.strokeStyle = (o.weight || 0) >= 3 ? o.color || "#111" : "#333"; c.stroke(); c.setLineDash([]);
+      }
+      if (o.badge) {
+        var r = Math.max(3, 4.5 * sc), x = p.x + (d[1] - d[3]) * sc - r * 0.5, y = p.y + (d[2] - d[4]) * sc - r * 0.5;
+        c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = o.badge; c.fill(); c.lineWidth = 1.5; c.strokeStyle = "#fff"; c.stroke();
+      }
+      c.restore();
     }
   });
-  S.mark = function (ll, k, o) { return new Mark(ll, L.extend({ sym: k, stroke: false, fill: true }, o || {})); };
+  /* the canvas for a pane, made once: a symbol needs a canvas renderer, whatever the map's default */
+  var CANV = {};
+  function canv(p) { p = p || "overlayPane"; return CANV[p] || (CANV[p] = L.canvas({ pane: p, padding: 0.3 })); }
+  S.mark = function (ll, k, o) {
+    o = L.extend({ sym: k, stroke: false, fill: true, weight: 0 }, o || {});
+    if (!o.renderer || !o.renderer._ctx && !(o.renderer instanceof L.Canvas)) o.renderer = canv(o.pane);
+    return new Mark(ll, o);
+  };
+  /* a record's symbol from its words (kind, category, title): the most specific 2525D activity that fits, else "incident" */
+  var RX = [
+    [/tsunami/i, "a_tsunami"], [/aftershock|earthquake|quake|tremor|seismic/i, "a_quake"], [/volcan|eruption|lava|ash ?fall/i, "a_volcano"],
+    [/landslide|mudslide|rockfall|sinkhole/i, "a_landslide"], [/avalanche/i, "a_avalanche"], [/flood|inundat|river level|water level|dam burst|flash flood/i, "a_flood"],
+    [/drought|water shortage/i, "a_drought"], [/typhoon|cyclone|hurricane|tropical (storm|depression)|storm|monsoon|heavy rain|rainfall|thunder|tornado|heatwave|heat wave|weather/i, "a_hydromet"],
+    [/bird flu|avian/i, "a_bird"], [/outbreak|epidemic|pandemic|cholera|dengue|mpox|measles|ebola|marburg|anthrax|disease|virus|infect|malaria/i, "a_microbe"],
+    [/locust|insect/i, "a_infest"], [/radioactiv|radiation|nuclear (leak|accident)/i, "a_radio"], [/unexploded|\buxo\b|ordnance found/i, "a_uxo"],
+    [/air quality|\bpm ?2\.?5|\bhaze|smog|toxic gas|gas leak/i, "a_toxic"], [/chemical|spill|hazardous material|hazmat/i, "a_hazmat"],
+    [/hot ?spot|firms|thermal anomal/i, "a_hotspot"], [/wildfire|bushfire|forest fire|grass fire/i, "a_wildfire"],
+    [/suicide (bomb|attack)/i, "a_suicide"], [/\bied\b|improvised explosive|roadside bomb|car bomb|vbied/i, "a_ied"], [/bomb threat|hoax/i, "a_bombthreat"],
+    [/grenade/i, "a_grenade"], [/landmine|\bmine (blast|explosion)|stepped on a mine/i, "a_mine"], [/mortar|shell(ing|ed)|artillery/i, "a_mortar"],
+    [/rocket|missile/i, "a_rocket"], [/bomb|bombing/i, "a_bomb"], [/air ?strikes?|drone strikes?|missile strikes?|strikes? (on|against|hit)|explosion|blast|explod/i, "a_explosion"],
+    [/sniper|sniping/i, "a_sniping"], [/shoot|shot|gunfire|gunmen|gunman|armed clash|clash|firefight|ambush|attack|insurgen|militant/i, "a_shooting"],
+    [/murder|killed|killing|homicide|beheaded|massacre|dead body|body found/i, "a_killing"], [/arson|set (on )?fire|torched/i, "a_arson"],
+    [/\bfires?\b|blaze|\bburn/i, "a_fire"], [/riot|looting|\bmobs?\b/i, "a_riot"], [/protest|demonstrat|rally|rallies|strike action|general strike|labou?r strike|walkout|sit-in/i, "a_demo"],
+    [/unrest|curfew|coup|martial law|tear gas|civil disturbance/i, "a_disturb"], [/election|ballot|polling|referendum|vote/i, "a_election"],
+    [/sabotage/i, "a_sabotage"], [/spy|espionage/i, "a_spy"], [/\braids?\b|\braided\b/i, "a_raid"], [/arrest|detain|apprehend|custody|captured/i, "a_arrest"],
+    [/traffick/i, "a_traffick"], [/drug|narcotic|\bmeth\b|heroin|cocaine|ya ba|kratom/i, "a_drug"], [/smuggl|contraband|illegal (fishing|logging|mining)/i, "a_smuggling"],
+    [/pirac|pirate|robbery|robbed|armed robber/i, "a_robbery"], [/theft|stolen|burglar/i, "a_theft"], [/kidnap|abduct|hostage|extort|scam|fraud|crime|criminal|\bgangs?\b/i, "a_crime"],
+    [/suspicious|sighting|drone (seen|sighted)/i, "a_suspicious"], [/plane|aircraft|airliner|helicopter|air crash|aviation/i, "a_air"],
+    [/ship|vessel|boat|ferry|maritime|navigation warning|navarea|coast guard|fishing|\bseas?\b/i, "a_marine"], [/train|railway|rail /i, "a_rail"],
+    [/road|traffic|crash|collision|accident|\bbus(es)?\b|truck|vehicle|highway|motorway|closure|closed/i, "a_vehicle"],
+    [/evacuat/i, "a_evac"], [/shelter|relief|aid distribution|displaced|refugee/i, "a_shelter"], [/rescue|emergency/i, "a_emerg"],
+    [/exercise|drill|deploy|troops|military|navy|army|patrol/i, "a_operation"], [/police|law enforcement|crackdown/i, "a_lawenf"],
+    [/meeting|talks|summit|visit|diplomat|agreement|ceasefire/i, "a_meeting"]];
+  /* a facility's symbol from its words (asset type, name): the 2525D installation that fits, else null (callers keep their own) */
+  var SX = [[/airport|airfield|air ?base|airstrip/i, "i_air"], [/heli(port|pad)/i, "i_heli"], [/ferry/i, "i_ferry"], [/sea ?port|harbou?r|\bport\b|naval base|jetty|pier/i, "i_port"],
+    [/\bdams?\b|reservoir|weir/i, "i_dam"], [/rail|station/i, "i_rail"], [/bridge/i, "i_bridge"], [/tunnel/i, "i_tunnel"], [/desal/i, "i_water"],
+    [/sewage|wastewater/i, "i_sewage"], [/water/i, "i_watert"], [/data ?cent/i, "i_data"], [/exchange|telephone/i, "i_phone"], [/mast|tower|antenna/i, "i_tower"],
+    [/telecom|cable|internet|radio|broadcast/i, "i_telecom"], [/refiner/i, "i_petrol"], [/\blng\b|gas terminal|gas plant/i, "i_natgas"], [/fuel|oil|petrol|depot|pipeline/i, "i_pol"],
+    [/nuclear/i, "i_nuclear"], [/coal/i, "i_coal"], [/hydro/i, "i_hydro"], [/substation|grid|transmission/i, "i_power"], [/power|plant|generat|solar|wind/i, "i_gen"],
+    [/prison|jail|detention/i, "i_prison"], [/border|checkpoint|customs/i, "i_customs"], [/police/i, "i_police"], [/fire station/i, "i_fire"],
+    [/parliament|ministry|government|palace|court|city hall|provincial hall/i, "i_gov"], [/school|university|college/i, "school"], [/military|army|camp|barracks/i, "milbase"]];
+  S.siteOf = function () {
+    var t = Array.prototype.slice.call(arguments).filter(Boolean).join(" ");
+    for (var i = 0; i < SX.length; i++) if (SX[i][0].test(t)) return SX[i][1];
+    return null;
+  };
+  S.classify = function () {
+    var t = Array.prototype.slice.call(arguments).filter(Boolean).join(" ");
+    for (var i = 0; i < RX.length; i++) if (RX[i][0].test(t)) return RX[i][1];
+    return "a_incident";
+  };
   S.svg = function (k) { return (S.d[k] || S.d.pr_site)[0]; };
   /* legend rows for the given keys, in plain words, grouped; the frame key comes first */
   S.legend = function (keys) {
