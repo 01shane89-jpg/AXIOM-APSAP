@@ -126,6 +126,8 @@
     if (W.OSAP_OFFLINE) h += '<button type="button" role="menuitem" data-tp="@off">Offline maps and data</button>';
     /* carrying saved data to another device in a passphrase-locked file, no account (assets/osap-move.js) */
     if (W.OSAP_MOVE) h += '<button type="button" role="menuitem" data-tp="@move">Move to another device</button>';
+    /* keeping saved data the same on the analyst's own devices, encrypted, no account (assets/osap-sync.js) */
+    if (W.OSAP_SYNC) h += '<button type="button" role="menuitem" data-tp="@sync">Sync my devices</button>';
     /* the AI model the AI summaries use where the browser has none of its own (assets/osap-ai.js) */
     if (W.OSAP_AI) h += '<button type="button" role="menuitem" data-tp="@ai">On-device AI</button>';
     /* the user guide, offline and printable (assets/osap-guide.js) */
@@ -187,6 +189,7 @@
     if (sel.indexOf("@rep:") === 0) { if (W.OSAP_REPORTS) W.OSAP_REPORTS.run(sel.slice(5)); }
     else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
+    else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }

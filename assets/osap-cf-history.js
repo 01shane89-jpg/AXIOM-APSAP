@@ -6,7 +6,8 @@
    plus the provisional candidate events after it. Nothing is loaded until the layer is switched on; then the year files shown
    load one by one and the map fills in as each arrives.
    Zoomed out, a heat map (assets/osap-heat.js) drawn from each event's own position, never snapped to a grid; zoomed in (or
-   with "Heat map when zoomed out" off in Layers), one pin per event. Deaths are UCDP's reported
+   with "Heat map when zoomed out" off in Layers), one pin per event. Any span of dates can be shown: all years, the past 12
+   months, the page's reporting period, whole years on the sliders, or any From and To date. Deaths are UCDP's reported
    estimates (low, best, high), not counts. Each event's SHA-256 fingerprint is computed from its UCDP record when opened.
    Hooks into assets/osap-conflicts.js through window.OSAP_CF_HOOKS (render, clear). */
 (function () {
@@ -23,8 +24,22 @@
   var TYPEN = { 1: "State-based fighting", 2: "Fighting between armed groups", 3: "Violence against civilians" };
   var TYPES = { 1: "A government is one of the sides (battles, clashes, air and artillery strikes)", 2: "Armed groups fighting each other, no government involved", 3: "An armed group or a government deliberately killing civilians" };
   var on = false; try { on = localStorage.getItem("osap-cf-hist") === "1"; } catch (e) {}
-  // S: the open conflict's history; sel: the years (or the past 12 months) and types shown
-  var S = null, id = null, lyr = null, rend = null, map = null, bound = false, sel = { from: 0, to: 0, last12: false, t: { 1: true, 2: true, 3: true } }, pending = {};
+  // sel: the dates shown (a and b, YYYY-MM-DD, both inside), how they were picked (m: all, 12, period, custom) and the types shown
+  var S = null, id = null, lyr = null, rend = null, map = null, bound = false, sel = { a: "", b: "", m: "all", t: { 1: true, 2: true, 3: true } }, pending = {};
+  var DAY = 864e5;
+  function iso(ms) { return new Date(ms).toISOString().slice(0, 10); }
+  function today() { return iso(Date.now()); }
+  function y0() { return +sel.a.slice(0, 4); }
+  function y1() { return +sel.b.slice(0, 4); }
+  /* whole calendar years: the per-year totals answer it exactly with no year file loaded */
+  function wholeYears() { var x = idx(); return (sel.a.slice(5) === "01-01" || x && sel.a === String(x.start).slice(0, 10)) && (sel.b.slice(5) === "12-31" || sel.b === today() && y1() === new Date().getUTCFullYear()); }
+  /* the page's reporting period (the header's 24 h, 7 to 90 days or custom dates), as a span of dates; null when it is "all" */
+  function headerSpan() {
+    var p = null; try { p = JSON.parse(localStorage.getItem("asap-period")); } catch (e) {}
+    if (!p || !p.p || p.p === "all") return null;
+    if (p.p === "custom") return p.from || p.to ? { a: p.from || "1989-01-01", b: p.to || today() } : null;
+    var n = p.p === "24h" ? 1 : +p.p; return n > 0 ? { a: iso(Date.now() - (n - 1) * DAY), b: today() } : null;
+  }
   function ctab() { return W.OSAP_CONFLICT_TABS; }
   function rail() { return D.getElementById("cf-rail"); }
 
@@ -37,14 +52,13 @@
   // the chunks that hold the years shown; resolves once all are loaded
   function need() {
     var x = idx(); if (!x) return [];
-    var y0 = sel.last12 ? new Date(Date.now() - 365 * 864e5).getUTCFullYear() : sel.from, y1 = sel.last12 ? 9999 : sel.to;
-    return x.chunks.filter(function (c) { return +c.to >= y0 && +c.from <= y1; });
+    var a = y0(), b = y1();
+    return x.chunks.filter(function (c) { return +c.to >= a && +c.from <= b; });
   }
   function chunk(c) { return (W.OSAP_CF_HIST || {})[c.f.replace(/\.js$/, "")]; }
   function inSel(date, type) {
     if (!sel.t[type]) return false;
-    if (sel.last12) return date >= new Date(Date.now() - 365 * 864e5).toISOString().slice(0, 10);
-    var y = +date.slice(0, 4); return y >= sel.from && y <= sel.to;
+    var d = String(date).slice(0, 10); return d >= sel.a && d <= sel.b;
   }
   // events of the loaded chunks that fit the selection: [row, chunk]
   function events() {
@@ -57,13 +71,16 @@
   /* ---------- totals for the selection (from the per-year figures, so they need no chunk) ---------- */
   function totals() {
     var x = idx(), n = 0, b = 0, bt = { 1: 0, 2: 0, 3: 0 }, nt = { 1: 0, 2: 0, 3: 0 };
-    if (sel.last12 && loaded()) { events().forEach(function (e) { n++; b += e[0][6]; nt[e[0][5]]++; bt[e[0][5]] += e[0][6]; }); return { n: n, b: b, nt: nt, bt: bt, exact: true }; }
+    /* any other span is counted from its events, once their year files are in */
+    if (!wholeYears()) {
+      if (!loaded()) return { n: null, b: null, nt: { 1: null, 2: null, 3: null }, bt: bt, exact: false };
+      events().forEach(function (e) { n++; b += e[0][6]; nt[e[0][5]]++; bt[e[0][5]] += e[0][6]; }); return { n: n, b: b, nt: nt, bt: bt, exact: true };
+    }
     Object.keys(x.years).forEach(function (y) {
-      if (!sel.last12 && (+y < sel.from || +y > sel.to)) return;
-      if (sel.last12 && +y < new Date(Date.now() - 365 * 864e5).getUTCFullYear()) return;
+      if (+y < y0() || +y > y1()) return;
       var Y = x.years[y]; [1, 2, 3].forEach(function (t) { if (!sel.t[t]) return; n += Y[1 + t]; b += Y[4 + t]; nt[t] += Y[1 + t]; bt[t] += Y[4 + t]; });
     });
-    return { n: n, b: b, nt: nt, bt: bt, exact: !sel.last12 };
+    return { n: n, b: b, nt: nt, bt: bt, exact: true };
   }
 
   /* ---------- map ---------- */
@@ -77,7 +94,7 @@
   // the heat map follows the map by itself, so it is redrawn here only when the view switches between heat and pins
   var drawn = null, hl = null, redrawT = null;
   function heatOn() { return !!(W.OSAP_HEAT && W.OSAP_HEAT.on()); }
-  function mode(z) { return z >= PINZ || !heatOn() || (sel.last12 && loaded() && events().length <= MAXPINS) ? "pins" : "heat"; }
+  function mode(z) { return z >= PINZ || !heatOn() || (sel.m !== "all" && loaded() && events().length <= MAXPINS) ? "pins" : "heat"; }
   function moved() {
     if (!drawn || (!lyr && !hl)) return true;
     var m = mode(map.getZoom());
@@ -128,8 +145,11 @@
     legend(m);
     var nb = D.getElementById("cfh-note"); if (nb) nb.textContent = note || (m === "pins" ? "" : "Zoomed out: a heat map of where each event happened. Tap a hot area or zoom in to see each event.");
   }
-  function period() { return sel.last12 ? "the past 12 months" : sel.from === sel.to ? String(sel.from) : sel.from + " to " + sel.to; }
-  function sym() { return !!(W.OSAP_SYM && W.OSAP_SYM.mark); }
+  function period() {
+    if (sel.m === "12") return "the past 12 months";
+    if (wholeYears()) return y0() === y1() ? String(y0()) : y0() + " to " + y1();
+    return sel.a === sel.b ? day(sel.a) : day(sel.a) + " to " + day(sel.b);
+  }
   function legend(m) {
     if (!W.OSAP_LEGEND) return;
     var h = "<h3>History of violence (UCDP), " + esc(period()) + "</h3>";
@@ -166,9 +186,9 @@
   function chart() {
     var x = idx(), yr = yearsRange(), n = yr[1] - yr[0] + 1, vals = [], max = 1;
     for (var y = yr[0]; y <= yr[1]; y++) { var Y = x.years[y] || [0, 0, 0, 0, 0, 0, 0, 0], v = [1, 2, 3].reduce(function (s, t) { return s + (sel.t[t] ? Y[4 + t] : 0); }, 0); vals.push(v); if (v > max) max = v; }
-    var bw = 100 / n, cut = new Date(Date.now() - 365 * 864e5).getUTCFullYear();
+    var bw = 100 / n;
     return '<div class="cfchart" role="img" aria-label="Deaths per year, UCDP best estimates"><svg viewBox="0 0 100 50" preserveAspectRatio="none">' + vals.map(function (v, k) {
-      var y = yr[0] + k, h = Math.round(v / max * 44), inside = sel.last12 ? y >= cut : y >= sel.from && y <= sel.to;
+      var y = yr[0] + k, h = Math.round(v / max * 44), inside = y >= y0() && y <= y1();
       return '<rect x="' + (k * bw + 0.1).toFixed(2) + '" y="' + (46 - h) + '" width="' + Math.max(bw - 0.2, 0.2).toFixed(2) + '" height="' + Math.max(h, v ? 1 : 0) + '" style="fill:' + (inside ? "#9E3118" : "#bbb") + '"><title>' + y + ": about " + num(v) + " deaths (UCDP best estimates)</title></rect>";
     }).join("") + '</svg><div class="cfnote" style="display:flex;justify-content:space-between;margin:0"><span>' + yr[0] + "</span><span>deaths a year, max " + num(max) + "</span><span>" + yr[1] + "</span></div></div>";
   }
@@ -179,13 +199,17 @@
     if (on && !x) h += '<div class="cfm">' + (err ? esc(err) : "Loading the history…") + "</div>";
     if (on && x) {
       var yr = yearsRange(), t = totals(), pre = +String(x.since || "").slice(0, 4) < 1989;
+      var hs = headerSpan(), dmin = String(x.start).slice(0, 10), dmax = today();
       h += '<div class="cfhbox"><div class="cfctl" style="align-items:center">' +
-        '<button type="button" data-cfhp="all"' + (!sel.last12 && sel.from === yr[0] && sel.to === yr[1] ? ' class="on"' : "") + ">All years</button>" +
-        '<button type="button" data-cfhp="12"' + (sel.last12 ? ' class="on"' : "") + ">Past 12 months</button></div>" +
-        '<div class="cfhr"><label>From <b>' + (sel.last12 ? "—" : sel.from) + '</b><input type="range" data-cfhy="from" min="' + yr[0] + '" max="' + yr[1] + '" step="1" value="' + (sel.last12 ? yr[0] : sel.from) + '" aria-label="From year"></label>' +
-        '<label>To <b>' + (sel.last12 ? "—" : sel.to) + '</b><input type="range" data-cfhy="to" min="' + yr[0] + '" max="' + yr[1] + '" step="1" value="' + (sel.last12 ? yr[1] : sel.to) + '" aria-label="To year"></label></div>' +
-        '<div class="cfctl">' + [1, 2, 3].map(function (k) { return '<label title="' + esc(TYPES[k]) + '"><input type="checkbox" data-cfht="' + k + '"' + (sel.t[k] ? " checked" : "") + '><span class="lg" style="background:' + TYPEC[k] + '"></span>' + esc(TYPEN[k]) + " (" + num(t.nt[k]) + ")</label>"; }).join("") + "</div>" +
-        '<div class="cfk"><div><b>' + num(t.n) + "</b><span>events, " + esc(period()) + '</span></div><div><b>' + num(t.b) + "</b><span>deaths, UCDP best estimates added up</span></div></div>" +
+        '<button type="button" data-cfhp="all"' + (sel.m === "all" ? ' class="on"' : "") + ">All years</button>" +
+        '<button type="button" data-cfhp="12"' + (sel.m === "12" ? ' class="on"' : "") + ">Past 12 months</button>" +
+        (hs ? '<button type="button" data-cfhp="period"' + (sel.m === "period" ? ' class="on"' : "") + ' title="The reporting period set at the top of the page">Reporting period</button>' : "") + "</div>" +
+        '<div class="cfhr"><label>From year <b>' + y0() + '</b><input type="range" data-cfhy="from" min="' + yr[0] + '" max="' + yr[1] + '" step="1" value="' + Math.max(yr[0], y0()) + '" aria-label="From year"></label>' +
+        '<label>To year <b>' + y1() + '</b><input type="range" data-cfhy="to" min="' + yr[0] + '" max="' + yr[1] + '" step="1" value="' + Math.min(yr[1], y1()) + '" aria-label="To year"></label></div>' +
+        '<div class="cfhr"><label>From date <input type="date" data-cfhd="a" min="' + dmin + '" max="' + dmax + '" value="' + esc(sel.a) + '"></label>' +
+        '<label>To date <input type="date" data-cfhd="b" min="' + dmin + '" max="' + dmax + '" value="' + esc(sel.b) + '"></label></div>' +
+        '<div class="cfctl">' + [1, 2, 3].map(function (k) { return '<label title="' + esc(TYPES[k]) + '"><input type="checkbox" data-cfht="' + k + '"' + (sel.t[k] ? " checked" : "") + '><span class="lg" style="background:' + TYPEC[k] + '"></span>' + esc(TYPEN[k]) + " (" + (t.nt[k] == null ? "…" : num(t.nt[k])) + ")</label>"; }).join("") + "</div>" +
+        '<div class="cfk"><div><b>' + (t.n == null ? "…" : num(t.n)) + "</b><span>events, " + esc(period()) + '</span></div><div><b>' + (t.b == null ? "…" : num(t.b)) + "</b><span>deaths, UCDP best estimates added up</span></div></div>" +
         chart() +
         '<div class="cfm" id="cfh-note"></div>' +
         (err ? '<div class="cfbad">' + esc(err) + "</div>" : "") +
@@ -196,14 +220,27 @@
     }
     box.innerHTML = h;
   }
-  function selectAll() { var yr = yearsRange(); sel.from = yr[0]; sel.to = yr[1]; sel.last12 = false; }
+  function selectAll() { var x = idx(); sel.a = String(x.start).slice(0, 10); sel.b = today(); sel.m = "all"; }
+  function select(m) {
+    if (m === "all") return selectAll();
+    if (m === "12") { sel.a = iso(Date.now() - 365 * DAY); sel.b = today(); sel.m = "12"; return; }
+    if (m === "period") { var hs = headerSpan(); if (!hs) return selectAll(); sel.a = hs.a; sel.b = hs.b; sel.m = "period"; }
+  }
+  /* any span of dates, from a date field or another part of OSAP (a brief for a chosen period) */
+  function setSpan(a, b, moved) {
+    var x = idx(), lo = x ? String(x.start).slice(0, 10) : "1989-01-01", hi = today();
+    a = /^\d{4}-\d\d-\d\d$/.test(a || "") ? a : lo; b = /^\d{4}-\d\d-\d\d$/.test(b || "") ? b : hi;
+    /* a From date after the To date moves the To date with it (and the other way round) */
+    if (a > b) { if (moved === "a") b = a; else if (moved === "b") a = b; else { var t = a; a = b; b = t; } }
+    sel.a = a < lo ? lo : a; sel.b = b > hi ? hi : b; sel.m = "custom";
+  }
   function open(cid) {
-    if (id !== cid) { clear(); id = cid; sel.from = 0; bad = {}; drawn = null; }
+    if (id !== cid) { clear(); id = cid; sel.a = ""; bad = {}; drawn = null; }
     if (!on) { panel(); return; }
     panel();
     loadIdx(cid).then(function () {
       if (id !== cid) return;
-      if (!sel.from) selectAll();
+      if (!sel.a) selectAll();
       panel(); draw();
     }, function () { if (id === cid) panel("The history for this conflict is not built yet. It is written by the weekly refresh."); });
   }
@@ -217,23 +254,37 @@
   // the year sliders: the label follows as you drag; the map redraws when you let go
   D.addEventListener("input", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cfh") || !t.hasAttribute("data-cfhy")) return;
-    var k = t.getAttribute("data-cfhy"), v = +t.value; sel.last12 = false;
-    if (k === "from") { sel.from = v; if (sel.to < v) sel.to = v; } else { sel.to = v; if (sel.from > v) sel.from = v; }
+    var k = t.getAttribute("data-cfhy"), v = +t.value, a = y0(), b = y1();
+    if (k === "from") { a = v; if (b < v) b = v; } else { b = v; if (a > v) a = v; }
+    setSpan(a + "-01-01", b + "-12-31");
     var lb = t.parentNode.querySelector("b"); if (lb) lb.textContent = v;
   });
-  D.addEventListener("change", function (e) { var t = e.target; if (t.closest && t.closest("#cfh") && t.hasAttribute("data-cfhy")) { panel(); draw(); } });
+  D.addEventListener("change", function (e) {
+    var t = e.target; if (!t.closest || !t.closest("#cfh")) return;
+    if (t.hasAttribute("data-cfhy")) { panel(); draw(); return; }
+    if (t.hasAttribute("data-cfhd") && t.value) { if (t.getAttribute("data-cfhd") === "a") setSpan(t.value, sel.b, "a"); else setSpan(sel.a, t.value, "b"); panel(); draw(); }
+  });
   D.addEventListener("click", function (e) {
     var t = e.target; if (!t.closest) return;
-    var p = t.closest("[data-cfhp]"); if (p && p.closest("#cfh")) { if (p.getAttribute("data-cfhp") === "all") selectAll(); else sel.last12 = true; panel(); draw(); return; }
+    var p = t.closest("[data-cfhp]"); if (p && p.closest("#cfh")) { select(p.getAttribute("data-cfhp")); panel(); draw(); return; }
     var z = t.closest("[data-cfhz]"); if (z && map) { e.preventDefault(); var ll = z.getAttribute("data-cfhz").split(","); map.closePopup(); map.setView([+ll[0], +ll[1]], PINZ); }
   });
 
   if (W.OSAP_HEAT) W.OSAP_HEAT.onChange(function () { if (on && id && idx()) draw(); });
+  /* for other parts of OSAP: show the history for a span of dates on the open conflict tab (switches the layer on) */
+  W.OSAP_CF_HISTORY = {
+    span: function () { return { from: sel.a, to: sel.b, mode: sel.m, label: sel.a ? period() : "" }; },
+    show: function (a, b) {
+      on = true; try { localStorage.setItem("osap-cf-hist", "1"); } catch (x) {}
+      if (!id) return Promise.resolve(false);
+      return loadIdx(id).then(function () { setSpan(a, b); panel(); draw(); return true; });
+    }
+  };
 
   /* ---------- hooks from the conflict tabs ---------- */
   var css = D.createElement("style");
   css.textContent = "#cfh{margin-top:8px;padding-top:8px;border-top:1px solid var(--line,#ddd)}#cfh .cfhbox{margin-top:6px}#cfh button.on{font-weight:700;outline:2px solid currentColor}" +
-    "#cfh .cfhr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}#cfh .cfhr label{display:flex;flex-direction:column;font-size:12px}#cfh .cfhr input{width:100%}" +
+    "#cfh .cfhr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}#cfh .cfhr label{display:flex;flex-direction:column;font-size:12px}#cfh .cfhr input{width:100%;box-sizing:border-box}" +
     "#cfh .lg{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 2px;vertical-align:-1px}";
   D.head.appendChild(css);
   (W.OSAP_CF_HOOKS = W.OSAP_CF_HOOKS || []).push({

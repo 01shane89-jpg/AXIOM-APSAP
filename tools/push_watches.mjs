@@ -76,7 +76,7 @@ async function scan() {
         for (const w of byCc[cc]) {
           out[w.id] = await p.evaluate((w) => {
             return window.OSAP_WATCH.matches(w);
-          }, { area: w.area, layers: w.layers, kw: w.kw, minSev: w.minSev });
+          }, { area: w.area, layers: w.layers, kw: w.kw, q: w.q, minSev: w.minSev, conf: w.conf });
         }
       } catch (e) { failed.push(cc + ": " + String(e.message || e).split("\n")[0]); }
       finally { await p.close(); }

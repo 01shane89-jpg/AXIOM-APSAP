@@ -96,85 +96,23 @@ const DEFS = {
   i_gas:      [N, "20", "1205010900", "Gas power plant", "Infrastructure"],
   i_oil:      [N, "20", "1205011000", "Oil power plant", "Infrastructure"],
   i_nuclear:  [N, "20", "1205010305", "Nuclear power plant (atomic energy reactor)", "Infrastructure"],
-  i_tower:    [N, "20", "121203", "Telecommunications tower (mast)", "Infrastructure"],
-  // reports and events (records, hazards, conflict events): 2525D activities, unknown frame (a source's report, not a judgement)
-  a_incident: [U, "40", "110000", "Incident (report)", "Reports and events"],
-  a_crime:    [U, "40", "110100", "Crime", "Reports and events"],
-  a_arrest:   [U, "40", "110101", "Arrest", "Reports and events"],
-  a_arson:    [U, "40", "110102", "Arson", "Reports and events"],
-  a_killing:  [U, "40", "110108", "Killing", "Reports and events"],
-  a_riot:     [U, "40", "110110", "Riot", "Reports and events"],
-  a_robbery:  [U, "40", "110116", "Robbery or piracy", "Reports and events"],
-  a_theft:    [U, "40", "110117", "Theft", "Reports and events"],
-  a_smuggling: [U, "40", "110119", "Smuggling", "Reports and events"],
-  a_drug:     [U, "40", "110105", "Drug-related crime", "Reports and events"],
-  a_traffick: [U, "40", "110501", "Trafficking", "Reports and events"],
-  a_sabotage: [U, "40", "110122", "Sabotage", "Reports and events"],
-  a_suspicious: [U, "40", "110123", "Suspicious activity", "Reports and events"],
-  a_bomb:     [U, "40", "110200", "Bombing", "Reports and events"],
-  a_bombthreat: [U, "40", "110201", "Bomb threat", "Reports and events"],
-  a_ied:      [U, "40", "110301", "IED explosion", "Reports and events"],
-  a_suicide:  [U, "40", "110304", "Suicide bombing", "Reports and events"],
-  a_shooting: [U, "40", "110400", "Shooting or armed clash", "Reports and events"],
-  a_sniping:  [U, "40", "110401", "Sniping", "Reports and events"],
-  a_explosion: [U, "40", "110600", "Explosion or strike", "Reports and events"],
-  a_grenade:  [U, "40", "110601", "Grenade attack", "Reports and events"],
-  a_mine:     [U, "40", "110603", "Mine explosion", "Reports and events"],
-  a_mortar:   [U, "40", "110604", "Mortar or shelling", "Reports and events"],
-  a_rocket:   [U, "40", "110605", "Rocket or missile", "Reports and events"],
-  a_disturb:  [U, "40", "120000", "Civil disturbance or unrest", "Reports and events"],
-  a_demo:     [U, "40", "120100", "Protest or demonstration", "Reports and events"],
-  a_patrol:   [U, "40", "130100", "Patrol", "Reports and events"],
-  a_spy:      [U, "40", "130600", "Espionage", "Reports and events"],
-  a_meeting:  [U, "40", "131000", "Meeting or talks", "Reports and events"],
-  a_election: [U, "40", "131001", "Election", "Reports and events"],
-  a_raid:     [U, "40", "131100", "Raid", "Reports and events"],
-  a_emerg:    [U, "40", "131200", "Emergency operation", "Reports and events"],
-  a_evac:     [U, "40", "131201", "Evacuation", "Reports and events"],
-  a_shelter:  [U, "40", "131206", "Shelter or relief", "Reports and events"],
-  a_lawenf:   [U, "40", "131500", "Law enforcement operation", "Reports and events"],
-  a_operation: [U, "40", "130000", "Military operation or exercise", "Reports and events"],
-  a_fire:     [U, "40", "140000", "Fire", "Reports and events"],
-  a_wildfire: [U, "40", "140800", "Wildfire", "Reports and events"],
-  a_hotspot:  [U, "40", "140300", "Fire hotspot (satellite)", "Reports and events"],
-  a_hazmat:   [U, "40", "150100", "Hazardous materials", "Reports and events"],
-  a_radio:    [U, "40", "150111", "Radioactive material", "Reports and events"],
-  a_uxo:      [U, "40", "150115", "Unexploded ordnance", "Reports and events"],
-  a_toxic:    [U, "40", "150113", "Toxic gas or air quality", "Reports and events"],
-  a_air:      [U, "40", "160100", "Air incident", "Reports and events"],
-  a_marine:   [U, "40", "160200", "Maritime incident or warning", "Reports and events"],
-  a_rail:     [U, "40", "160300", "Rail incident", "Reports and events"],
-  a_vehicle:  [U, "40", "160400", "Road incident", "Reports and events"],
-  a_geo:      [U, "40", "170100", "Geological event", "Reports and events"],
-  a_quake:    [U, "40", "170103", "Earthquake", "Reports and events"],
-  a_landslide: [U, "40", "170104", "Landslide", "Reports and events"],
-  a_avalanche: [U, "40", "170102", "Avalanche", "Reports and events"],
-  a_volcano:  [U, "40", "170106", "Volcanic eruption", "Reports and events"],
-  a_volcthreat: [U, "40", "170107", "Volcano (threat)", "Reports and events"],
-  a_hydromet: [U, "40", "170200", "Storm or severe weather", "Reports and events"],
-  a_drought:  [U, "40", "170201", "Drought", "Reports and events"],
-  a_flood:    [U, "40", "170202", "Flood", "Reports and events"],
-  a_tsunami:  [U, "40", "170203", "Tsunami", "Reports and events"],
-  a_infest:   [U, "40", "170300", "Infestation", "Reports and events"],
-  a_bird:     [U, "40", "170301", "Bird flu", "Reports and events"],
-  a_microbe:  [U, "40", "170303", "Disease outbreak", "Reports and events"],
-  // sensors (traffic and other cameras): 2525D sensor outpost, a map graphic with no frame
-  g_sensor:   [U, "25", "160204", "Camera or sensor", "Map graphics"],
-  g_poi:      [U, "25", "131300", "Point of interest (town or place)", "Map graphics"],
-  ms_nuclear: [U, "20", "111500", "Nuclear site", "Military sites"],
-  // planning and tool points (routes, evacuation and medical plans, line of sight, coverage checks): 2525D control measures
-  g_start:    [U, "25", "131600", "Start point (plan or route origin)", "Map graphics"],
-  g_waypoint: [U, "25", "131800", "Waypoint", "Map graphics"],
-  g_release:  [U, "25", "131500", "Release point (route end)", "Map graphics"],
-  g_check:    [U, "25", "130300", "Checkpoint", "Map graphics"],
-  g_op:       [U, "25", "160100", "Observation post (line-of-sight observer)", "Map graphics"],
-  g_medevac:  [U, "25", "321100", "MEDEVAC pick-up point (landing zone)", "Map graphics"],
-  g_ccp:      [U, "25", "320500", "Casualty collection point", "Map graphics"],
-  g_amb:      [U, "25", "320100", "Ambulance point (station)", "Map graphics"],
-  g_axp:      [U, "25", "320101", "Ambulance exchange point", "Map graphics"],
-  g_fuel:     [U, "25", "321703", "Fuel point (class III supply)", "Map graphics"],
-  g_supply:   [U, "25", "321700", "Supply point", "Map graphics"],
-  g_comcheck: [U, "25", "180200", "Communications checkpoint", "Map graphics"]
+  // link analysis (assets/osap-analyst.js): organisations and units drawn as 2525D land units or land civilian
+  // organisations. Armed and security bodies take the unknown frame like every other actor; civilian bodies the neutral frame.
+  la_armed:   [U, "10", "121100", "Armed group or armed unit (infantry)", "Link analysis"],
+  la_amphib:  [U, "10", "121101", "Marine or amphibious unit", "Link analysis"],
+  la_c2:      [U, "10", "110000", "Command or headquarters (command and control)", "Link analysis"],
+  la_security:[U, "10", "141700", "Security or defence volunteer force", "Link analysis"],
+  la_police:  [U, "10", "200700", "Police", "Link analysis"],
+  la_border:  [U, "10", "200200", "Border patrol or border agency", "Link analysis"],
+  la_customs: [U, "10", "200300", "Customs service", "Link analysis"],
+  la_group:   [U, "11", "110400", "Organisation or group, role not settled", "Link analysis"],
+  la_person:  [U, "11", "110300", "Individual (sanctioned or charged only)", "Link analysis"],
+  la_gov:     [N, "11", "110200", "Government body or civilian agency", "Link analysis"],
+  la_org:     [N, "11", "110400", "Civilian organisation (monitor, researcher)", "Link analysis"],
+  la_bomb:    [U, "40", "110606", "Incident: bombing or IED", "Link analysis"],
+  la_shoot:   [U, "40", "110400", "Incident: shooting or armed attack", "Link analysis"],
+  la_seize:   [U, "40", "131500", "Incident: seizure, arrest or raid (law enforcement operation)", "Link analysis"],
+  la_place:   [U, "25", "131300", "District named in the same reports (point of interest)", "Link analysis", { monoColor: "#6d4c41" }]
 };
 
 // the user-chosen sides (assets/osap-sides.js): side letter -> [2525D identity, plain words]. Unknown is the base symbol.
@@ -182,6 +120,12 @@ const SIDES = { f: ["3", "friend"], a: ["2", "assumed friend"], n: ["4", "neutra
 for (const k of ["ms_air", "ms_naval", "ms_depot", "milbase"]) {
   const d = DEFS[k];
   for (const [c, v] of Object.entries(SIDES)) DEFS[k + "_" + c] = [v[0], d[1], d[2], d[3] + ", in a country you marked " + v[1], "Military sites (your country sides)"];
+}
+// the analyst's own designation on the link chart (assets/osap-analyst.js, owner-only): an entity the analyst marked takes
+// that frame, e.g. red diamond for a body they marked hostile, blue rectangle for friend. Never set by OSAP.
+for (const k of Object.keys(DEFS).filter((k) => /^la_/.test(k) && k !== "la_place")) {
+  const d = DEFS[k];
+  for (const [c, v] of Object.entries(SIDES)) DEFS[k + "_" + c] = [v[0], d[1], d[2], d[3] + ", marked " + v[1] + " by you", "Link analysis (your designation)"];
 }
 
 const out = {}, meta = {};

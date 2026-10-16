@@ -120,7 +120,7 @@
         "Give it a name, a note and an icon (military symbol, shape or pin). Edits save as you type.",
         b("Take photo") + " or " + b("Add from library") + " adds pictures. Each original is kept unchanged with its SHA-256 fingerprint, on this device only.",
         "Tap a point on the map for " + b("Measure from") + ", " + b("Route from") + ", " + b("Medical plan here") + ", " + b("Copy") + " and " + b("Remove") + "."]) +
-      tip("Points and photos are never uploaded. Clearing this site's data in the browser removes them, so use Move to another device to keep a copy.") },
+      tip("Points and photos stay on this device unless you turn on Sync my devices, which sends points (not photos) locked with your sync code. Clearing this site's data in the browser removes them, so use Move to another device to keep a copy.") },
 
     { id: "watch", t: "Watches and alerts", h:
       fig("watch", "Watch an area") +
@@ -150,6 +150,7 @@
       fig("medplan", "The medical plan for the map centre") +
       ul(["Tap " + b("Med plan") + ". It plans for the drawn area, or the map centre when nothing is drawn. Or long-press, " + b("Plans") + ", " + b("Med plan from here") + ".",
         "Set the point of injury: type a grid and press " + b("Set") + ", or press " + b("Pick on map") + ".",
+        "The plan opens folded to a bar showing its status, so the whole map stays in view. Press " + b("Half") + " or " + b("Full") + " on the bar to pull it up, and " + b("Map") + " to fold it again. On a phone you can also drag the bar. Watch, NAI/TAI, Terrain and the evacuation plan have the same bar.",
         "The plan lists receiving hospitals, most capable first, with drive times against the golden hour, routes, emergency contacts, landing sites, ways out of the country, health threats, weather and ground.",
         "The table of Primary, Secondary and Tertiary hospitals covers major trauma, severe head injury, major burn and complex limb trauma. It says when to bypass a hospital and go straight to the next.",
         "Only capabilities from a credible source count: an official register or your own check. OpenStreetMap and Wikipedia are shown but never qualify.",
@@ -234,6 +235,13 @@
         "On the new device: " + b("Open backup") + ", type the passphrase, then " + b("Replace and reload") + ". This replaces what the new device had; " + b("Put back what was here before") + " undoes it.",
         "If the passphrase is lost the file cannot be opened. Four or more random words make a strong one.",
         "Offline map downloads, Use my location and On-device AI settings stay behind."]) +
+      "<h3>Sync my devices</h3>" +
+      ul(["Keeps your saved points, areas, routes, shapes, watches, plans and workspaces the same on your phone and computer. No account.",
+        "On the first device press " + b("Start on this device") + ", note the sync code and press " + b("Turn on sync on this device") + ".",
+        "On the other device press " + b("I have a code") + " and type it. What each device has is joined; nothing is replaced.",
+        "Each item is merged on its own and the newest change wins. Deleted items stay deleted. Changes from the other device show when OSAP opens, or press " + b("Show them") + ".",
+        "Photos, settings, offline maps and the hidden areas stay on each device. Keep the code private: anyone with it can read your synced data.",
+        "Data is locked on your device before it is passed through free public relays, which cannot read it. Keep a backup with Move to another device too."]) +
       "<h3>On-device AI</h3>" +
       ul(["AI summaries (area, route and tab summaries) run on your device, never on a server.",
         "OSAP uses the browser's own model if it has one, or your own AI server on your network, or OSAP's own small model.",
