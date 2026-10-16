@@ -109,6 +109,9 @@ const DEFS = {
   la_person:  [U, "11", "110300", "Individual (sanctioned or charged only)", "Link analysis"],
   la_gov:     [N, "11", "110200", "Government body or civilian agency", "Link analysis"],
   la_org:     [N, "11", "110400", "Civilian organisation (monitor, researcher)", "Link analysis"],
+  la_bomb:    [U, "40", "110606", "Incident: bombing or IED", "Link analysis"],
+  la_shoot:   [U, "40", "110400", "Incident: shooting or armed attack", "Link analysis"],
+  la_seize:   [U, "40", "131500", "Incident: seizure, arrest or raid (law enforcement operation)", "Link analysis"],
   la_place:   [U, "25", "131300", "District named in the same reports (point of interest)", "Link analysis", { monoColor: "#6d4c41" }]
 };
 

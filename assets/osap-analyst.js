@@ -31,8 +31,8 @@
   var LOCAL_H = 7, LOCAL_N = "Thailand";
   var TABS = [["ents", "Entities"], ["links", "Links"], ["struct", "Structure"], ["time", "Timeline"], ["saved", "Saved"], ["bed", "Bed-down"]];
   var PERIODS = [[30, "30 days"], [90, "90 days"], [365, "1 year"], [0, "All kept"]];
-  var TYPES = ["organisation", "armed group", "unit", "agency", "person (sanctioned or charged only)", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
-  var RELS = ["member of", "commands", "support node for", "supplies", "funds", "beds down at", "uses route", "operates in", "works with", "opposes", "talks with", "other"];
+  var TYPES = ["organisation", "armed group", "unit", "agency", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
+  var RELS = ["member of", "commands", "support node for", "supplies", "funds", "beds down at", "uses route", "operates in", "attributed to", "targeted", "occurred in", "responded to", "works with", "opposes", "talks with", "other"];
   /* how sure the analyst is of a link they record; drawn the link-analysis way: solid, long dashes, short dashes */
   var CONFS = [["suspected", "Suspected"], ["probable", "Probable"], ["confirmed", "Confirmed"]];
   function dashOf(c) { return c === "suspected" ? "4 4" : c === "probable" ? "10 5" : ""; }
@@ -64,7 +64,7 @@
   /* ---------- state ---------- */
   var UI = lsGet(K_UI, {}); if (typeof UI !== "object" || !UI) UI = {};
   var S = { tab: TABS.some(function (t) { return t[0] === UI.tab; }) ? UI.tab : "ents", days: [30, 90, 365, 0].indexOf(UI.days) >= 0 ? UI.days : 90,
-    sel: null, q: "", tf: "", bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "" };
+    sel: null, q: "", tf: "", ownOnly: null, bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "" };
   function saveUi() { lsSet(K_UI, { tab: S.tab, days: S.days }); }
   function ownEnts() { var v = lsGet(K_ENT, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-ent/1", items: [], notes: {} }; if (!v.notes || typeof v.notes !== "object") v.notes = {}; return v; }
   function ownLinks() { var v = lsGet(K_LINK, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-links/1", items: [] }; return v; }
@@ -221,15 +221,17 @@
     "ent:ds:isoc4": "la_c2", "ent:ds:army4": "la_c2", "ent:ds:sbpac": "la_gov", "ent:ds:rangers": "la_armed", "ent:ds:or-sor": "la_security",
     "ent:ds:chor-ror-bor": "la_security", "ent:ds:bpp": "la_border", "ent:ds:police9": "la_police", "ent:ds:marines-nara": "la_amphib",
     "ent:ds:thai-panel": "la_gov", "ent:ds:my-facilitator": "la_gov", "ent:ds:akps": "la_border", "ent:ds:gof": "la_police", "ent:ds:my-customs": "la_customs", "ent:ds:dsw": "la_org" };
-  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place" };
+  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place",
+    "incident: bombing or IED": "la_bomb", "incident: shooting or armed attack": "la_shoot", "incident: seizure, arrest or raid": "la_seize" };
   function symOf(e) { if (e && (e.type === "route" || e.type === "vehicle")) return ""; var k = e && (SYM_ID[e.id] || SYM_TYPE[e.type] || "la_group"); return W.OSAP_SYM && W.OSAP_SYM.d[k] ? k : ""; }
   function graph(X) {
     var nodes = {}, edges = {};
     function node(id, label, kind, w) { if (!nodes[id]) nodes[id] = { id: id, label: label, kind: kind, w: 0 }; nodes[id].w += w || 0; return nodes[id]; }
     function edge(a, b, kind) { if (a === b) return; var k = a < b ? a + "|" + b : b + "|" + a, e = edges[k] || (edges[k] = { a: a < b ? a : b, b: a < b ? b : a, n: 0, kind: kind, rep: [] }); return e; }
     var name = {}, sym = {}, kind = {}; X.E.forEach(function (e) { name[e.id] = e.name; sym[e.id] = symOf(e); kind[e.id] = [e.group, e.type]; });
+    var mineOnly = ownOnly();
     X.rows.forEach(function (r) {
-      if (!r.ents.length) return;
+      if (mineOnly || !r.ents.length) return;
       r.ents.forEach(function (id) { node(id, name[id], "ent", 1); });
       for (var i = 0; i < r.ents.length; i++) for (var j = i + 1; j < r.ents.length; j++) { var e = edge(r.ents[i], r.ents[j], "co"); e.n++; e.rep.push(r.i); }
       if (r.d) r.ents.forEach(function (id) { node("d:" + r.d, distName(r.d), "dist", 1); var e = edge(id, "d:" + r.d, "co"); e.n++; e.rep.push(r.i); });
@@ -248,7 +250,7 @@
     if (S.sel && nodes[S.sel]) { keep[S.sel] = 1; E.forEach(function (e) { if (e.a === S.sel || e.b === S.sel) keep[e.a] = keep[e.b] = 1; }); }
     N = N.filter(function (n) { return keep[n.id]; });
     E = E.filter(function (e) { return keep[e.a] && keep[e.b]; });
-    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.person = /^person/.test(kind[n.id][1] || ""); } });
+    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.type = kind[n.id][1] || ""; n.person = /^person/.test(n.type); } });
     return { N: N, E: E, nodes: nodes };
   }
   /* a small force layout, started from a circle so the same data always draws the same picture */
@@ -280,7 +282,7 @@
   function boxOf(n) {
     if (n.kind === "dist") return { w: 16, h: 24, lab: true };
     if (n.person) return { w: 30, h: 30, lab: true };
-    return { w: 212, h: 40 };
+    return S.colMode ? { w: 240, h: 44 } : { w: 212, h: 40 };
   }
   /* push overlapping boxes apart after the force layout, so names never sit on each other */
   function unclash(N, w, h) {
@@ -303,16 +305,63 @@
     var a = t.slice(0, cut).trim(), b = t.slice(cut).trim(); if (b.length > max) b = b.slice(0, max - 1).trim() + "\u2026";
     return [a, b];
   }
+  /* the analyst's own link chart by default once they have links; co-mentions can be laid over it */
+  function ownOnly() { return S.ownOnly == null ? ownLinks().items.length > 0 : S.ownOnly; }
+  /* with only the analyst's own links, a link chart reads best in columns, as analysts draw them by hand: who (actors) on the
+     left, what happened (incidents, by date) in the middle, where (districts, routes, sites) on the right. Rows are ordered so
+     that lines cross as little as possible. */
+  var ROLE_COLS = [["act", "Actors"], ["inc", "Incidents (by date)"], ["plc", "Places and routes"]];
+  function roleOf(n) {
+    if (n.kind === "dist" || /^(route|site|place|district)/.test(n.type || "")) return "plc";
+    if (/^incident/.test(n.type || "")) return "inc";
+    return "act";
+  }
+  function columns(G, w) {
+    var at = {}, col = { act: [], inc: [], plc: [] }, RH = 62;
+    G.N.forEach(function (n) { at[n.id] = n; col[roleOf(n)].push(n); });
+    if (!col.inc.length) return null;
+    var dt = function (n) { var m = /\b(\d{1,2})(?:[\u2013-]\d{1,2})? (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/.exec(n.label || ""); return m ? ("JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(m[2]) / 3) * 40 + +m[1] : 999; };
+    col.inc.sort(function (a, b) { return dt(a) - dt(b) || String(a.label).localeCompare(b.label); });
+    col.inc.forEach(function (n, i) { n.y = i; });
+    var bary = function (n) { var ys = G.E.filter(function (e) { return e.a === n.id || e.b === n.id; }).map(function (e) { var o = at[e.a === n.id ? e.b : e.a]; return o && roleOf(o) === "inc" ? o.y : null; }).filter(function (y) { return y != null; });
+      return ys.length ? ys.reduce(function (a, b) { return a + b; }, 0) / ys.length : 1e3; };
+    var by = {}; col.act.concat(col.plc).forEach(function (n) { by[n.id] = bary(n); });
+    /* a node with no incident of its own sits next to what it is linked to (a peace panel beside the group it talks with) */
+    for (var pass = 0; pass < 3; pass++) col.act.concat(col.plc).forEach(function (n) { if (by[n.id] < 1e3 && pass === 0) return;
+      var ys = G.E.filter(function (e) { return e.a === n.id || e.b === n.id; }).map(function (e) { return by[e.a === n.id ? e.b : e.a]; }).filter(function (y) { return y != null && y < 1e3; });
+      if (ys.length) by[n.id] = ys.reduce(function (a, b) { return a + b; }, 0) / ys.length + 0.01; });
+    col.act.sort(function (a, b) { return by[a.id] - by[b.id] || String(a.label).localeCompare(b.label); });
+    col.plc.sort(function (a, b) { return by[a.id] - by[b.id]; });
+    var rows = Math.max(col.act.length, col.inc.length, col.plc.length), hh = 60 + rows * RH, X0 = { act: 250, inc: 590, plc: 940 };
+    ["act", "inc", "plc"].forEach(function (k) { var L = col[k], gap = (rows * RH) / Math.max(1, L.length);
+      L.forEach(function (n, i) { n.x = X0[k]; n.y = 60 + gap * (i + 0.5); }); });
+    return { at: at, hh: hh, X0: X0, role: roleOf };
+  }
   function tabLinks(X) {
-    var G = graph(X), w = 1000, hh = G.N.length > 12 ? 700 : 520, at = layout(G.N, G.E, w, hh);
-    unclash(G.N, w, hh);
+    var G = graph(X), w = 1000, hh = G.N.length > 12 ? 700 : 520, cols = ownOnly() ? columns(G, w) : null, at;
+    S.colMode = !!cols;
+    if (cols) { at = cols.at; hh = cols.hh; w = 1060; } else { at = layout(G.N, G.E, w, hh); unclash(G.N, w, hh); }
+    /* in columns, a line leaves a box from its side; where every line between two columns says the same thing, it is said
+       once at the top of the gap instead of on each line */
+    var side = function (n, other) { if (!cols || n.kind === "dist") return n.x; var half = boxOf(n).w / 2; return other.x > n.x + 1 ? n.x + half : other.x < n.x - 1 ? n.x - half : n.x; },
+      gapOf = function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return ""; var r = [cols.role(a), cols.role(b)].sort().join("-"); return r; }, gapRel = {};
+    if (cols) { var cnt = {}; G.E.forEach(function (e) { if (e.kind !== "own") return; var g = gapOf(e), c = cnt[g] || (cnt[g] = { n: 0 }); c.n++; c[e.rel] = (c[e.rel] || 0) + 1; });
+      Object.keys(cnt).forEach(function (g) { Object.keys(cnt[g]).forEach(function (r) { if (r !== "n" && cnt[g][r] >= 0.6 * cnt[g].n && cnt[g].n > 2) gapRel[g] = r; }); }); }
     var h = '<p class="anal">Link chart. Boxes: organisations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
+    if (ownLinks().items.length) h += '<label class="anrow"><input type="checkbox" id="an-ownonly"' + (ownOnly() ? " checked" : "") + "> Your links only (leave out the machine co-mentions)</label>";
     if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + linkForm(X);
     h += '<svg class="angraph" viewBox="0 0 ' + w + " " + hh + '" role="img" aria-label="Link chart">' +
+      (cols ? ROLE_COLS.map(function (c) { return '<text class="anlane" x="' + cols.X0[c[0]] + '" y="22" text-anchor="middle">' + esc(c[1]) + "</text>"; }).join("") +
+        [["act-inc", (cols.X0.act + cols.X0.inc) / 2], ["inc-plc", (cols.X0.inc + cols.X0.plc) / 2]].map(function (g) { return gapRel[g[0]] ? '<text class="anrel" x="' + g[1] + '" y="44" text-anchor="middle">' + esc(gapRel[g[0]]) + " (unless marked)</text>" : ""; }).join("") : "") +
       G.E.map(function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return ""; var own = e.kind === "own", on = S.sel && (e.a === S.sel || e.b === S.sel);
-        var ln = '<line x1="' + a.x.toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + b.x.toFixed(1) + '" y2="' + b.y.toFixed(1) + '" stroke="' + (own ? "#2b8a3e" : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? 2.5 : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? (dashOf(e.conf) ? ' stroke-dasharray="' + dashOf(e.conf) + '"' : "") : ' stroke-dasharray="6 5"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></line>";
+        /* two nodes in one column are joined by an arc out to the side, so the line does not run through the boxes between them */
+        var same = cols && Math.abs(a.x - b.x) < 1, bend = a.x < w / 2 ? -1 : 1, hw = cols ? boxOf(a).w / 2 : 106, cx = a.x + bend * (hw + 22 + Math.min(40, Math.abs(a.y - b.y) * 0.08)),
+          geo = same ? 'path d="M' + (a.x + bend * hw).toFixed(1) + " " + a.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + ((a.y + b.y) / 2).toFixed(1) + " " + (b.x + bend * hw).toFixed(1) + " " + b.y.toFixed(1) + '" fill="none"' :
+          'line x1="' + side(a, b).toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + side(b, a).toFixed(1) + '" y2="' + b.y.toFixed(1) + '"';
+        var ln = '<' + geo + ' stroke="' + (own ? "#2b8a3e" : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? 2.5 : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? (dashOf(e.conf) ? ' stroke-dasharray="' + dashOf(e.conf) + '"' : "") : ' stroke-dasharray="6 5"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></" + geo.split(" ")[0] + ">";
         /* a recorded link carries its label at the middle, as on a link chart */
-        if (own && e.rel) ln += '<text class="anrel" x="' + ((a.x + b.x) / 2).toFixed(1) + '" y="' + ((a.y + b.y) / 2 - 4).toFixed(1) + '" text-anchor="middle">' + esc(e.rel) + "</text>";
+        if (own && e.rel && !(cols && !same && gapRel[gapOf(e)] === e.rel)) { var mx = same ? cx + bend * 4 : (side(a, b) + side(b, a)) / 2, my = (a.y + b.y) / 2 - 4;
+          ln += '<text class="anrel" x="' + mx.toFixed(1) + '" y="' + my.toFixed(1) + '" text-anchor="' + (same ? (bend < 0 ? "end" : "start") : "middle") + '">' + esc(e.rel) + "</text>"; }
         return ln; }).join("") +
       G.N.map(function (n) { var on = S.sel === n.id, x = n.x, y = n.y, B = boxOf(n), d = n.sym && W.OSAP_SYM && W.OSAP_SYM.d[n.sym], out = "", lab = String(n.label || "");
         var tip = "<title>" + esc(lab + (d ? " \u00b7 " + W.OSAP_SYM.m[n.sym][0] : "") + " \u00b7 named in " + n.w + " report" + (n.w === 1 ? "" : "s")) + "</title>";
@@ -326,14 +375,14 @@
           return '<g data-an-node="' + esc(n.id) + '"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#fff" stroke="' + (on ? "#e67700" : "#343a40") + '" stroke-width="' + (on ? 3 : 2) + '">' + tip + "</circle>" +
             '<text x="' + x.toFixed(1) + '" y="' + (y + 29).toFixed(1) + '" text-anchor="middle">' + esc(lab.length > 30 ? lab.slice(0, 29) + "\u2026" : lab) + "</text></g>";
         }
-        var col = GROUP_C[n.group] || "#495057", bx = x - B.w / 2, by = y - B.h / 2, lines = wrap2(lab, 23), tx = bx + (d ? 40 : 8);
+        var col = GROUP_C[n.group] || "#495057", bx = x - B.w / 2, by = y - B.h / 2, lines = wrap2(lab, S.colMode ? 29 : 23), tx = bx + (d ? 40 : 8);
         out = '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + B.w + '" height="' + B.h + '" rx="3" fill="#fff" stroke="' + (on ? "#e67700" : col) + '" stroke-width="' + (on ? 3 : 1.6) + '">' + tip + "</rect>" +
           '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="5" height="' + B.h + '" fill="' + col + '" pointer-events="none"/>';
         if (d) { var s2 = 26 / Math.max(d[1], d[2]), sw = d[1] * s2, sh = d[2] * s2; out += d[0].replace("<svg ", '<svg x="' + (bx + 8 + (28 - sw) / 2).toFixed(1) + '" y="' + (y - sh / 2).toFixed(1) + '" width="' + sw.toFixed(1) + '" height="' + sh.toFixed(1) + '" pointer-events="none" '); }
         out += lines.map(function (l, k) { return '<text class="anbx" x="' + tx.toFixed(1) + '" y="' + (y + (lines.length === 1 ? 4 : k ? 12 : -2)).toFixed(1) + '">' + esc(l) + "</text>"; }).join("");
         /* how many reports name it, as a tab on the box's top edge */
         var cnt = String(n.w), cw = 8 + cnt.length * 6.5;
-        out += '<rect x="' + (bx + B.w - cw - 4).toFixed(1) + '" y="' + (by - 8).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="14" rx="7" fill="' + col + '" pointer-events="none"/><text class="ancnt" x="' + (bx + B.w - 4 - cw / 2).toFixed(1) + '" y="' + (by + 2.5).toFixed(1) + '" text-anchor="middle">' + cnt + "</text>";
+        if (n.w) out += '<rect x="' + (bx + B.w - cw - 4).toFixed(1) + '" y="' + (by - 8).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="14" rx="7" fill="' + col + '" pointer-events="none"/><text class="ancnt" x="' + (bx + B.w - 4 - cw / 2).toFixed(1) + '" y="' + (by + 2.5).toFixed(1) + '" text-anchor="middle">' + cnt + "</text>";
         return '<g data-an-node="' + esc(n.id) + '">' + out + "</g>"; }).join("") + "</svg>";
     /* the key: the symbols and box colours in this chart, in plain words */
     var ks = G.N.map(function (n) { return n.sym; }).filter(function (k, i, a) { return k && a.indexOf(k) === i; }),
@@ -603,6 +652,7 @@
     if (t.id === "an-days") { S.days = +t.value; saveUi(); render(); }
     else if (t.id === "an-tf") { S.tf = t.value; render(); }
     else if (t.id === "an-root") { S.root = t.value; render(); }
+    else if (t.id === "an-ownonly") { S.ownOnly = t.checked; render(); }
     else if (t.id === "an-bedmap") { S.bedMap = t.checked; drawBed(); }
   }
   function onSubmit(e) {
