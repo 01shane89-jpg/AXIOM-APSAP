@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-16"]=[["mn","2026-09-16T23:46","Eight forest and field fires were reported this week.","Энэ долоо хоногт нийт найман удаагийн ой, хээрийн гал түймэр бүртгэгджээ","ikon (via Bing News search)","https://ikon.mn/n/3qdy","","sm","mn-hazards","safety"]];
