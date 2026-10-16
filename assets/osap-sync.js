@@ -292,9 +292,11 @@
     var D = W.document;
     if (/[?&]watchscan=1(&|$)/.test(W.location.search)) return;
     var CFG = "osap-sync", PEND = "osap-sync-pending", AUTO = "osap-sync-auto", MSG = "osap-sync-msg";
-    var RELAYS = ["wss://nos.lol", "wss://relay.damus.io", "wss://relay.primal.net", "wss://nostr.mom"];
+    /* relays that took, kept, replaced and gave back these events from a new key (probe from GitHub Actions 2026-10-16);
+       relay.damus.io took them but did not answer reads, offchain.pub and bitcoiner.social refuse new keys, nostr.land is paid */
+    var RELAYS = ["wss://relay.primal.net", "wss://nos.lol", "wss://relay.snort.social", "wss://nostr-pub.wellorder.net", "wss://nostr.oxtr.dev"];
     if (W.OSAP_SYNC_RELAYS && W.OSAP_SYNC_RELAYS.length) RELAYS = W.OSAP_SYNC_RELAYS.slice(0, 6);
-    var MAX_EVENT = 200000, WAIT = 7000;
+    var MAX_EVENT = 120000, WAIT = 7000;   /* the smallest relays take messages up to 131,072 bytes */
 
     function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
     function raw(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
