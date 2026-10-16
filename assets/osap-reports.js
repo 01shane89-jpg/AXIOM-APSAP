@@ -55,6 +55,8 @@
 
     ["areasum", "Drawn area", "Area summary", "Everything inside the drawn area, summarised with sources",
       function () { return (areaOn() && !!q('[data-area="sum"]')) || "Draw an area first"; }, function () { press('[data-area="sum"]'); }, drawArea],
+    ["areastudy", "Drawn area", "Area study", "Printable study of the drawn area: terrain, weather and climate, population, infrastructure, security, medical and contacts",
+      function () { return (!!W.OSAP_AREASTUDY && areaOn()) || "Draw an area first"; }, function () { W.OSAP_AREASTUDY.open(); }, drawArea],
     /* no drawn area needed: the plan opens on the drawn area when there is one, else on the map centre (Pick on map moves it) */
     ["medplan", "Point on the map", "Medical plan", "Draft MEDEVAC plan from a point of injury: hospitals by capability, routes, contacts, golden hour, evacuation",
       function () { return !!W.OSAP_MEDPLAN || "Not available"; }, function () { W.OSAP_MEDPLAN.open(areaOn() ? undefined : { centre: true }); }],

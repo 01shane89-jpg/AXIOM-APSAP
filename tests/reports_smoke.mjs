@@ -2,7 +2,7 @@
 // Checks: the menu lists every report OSAP makes, in groups; ready ones open the same thing their own button does (Country
 // brief, Country report, Timeline report, Daily summary in Today, the weather brief and detailed report, Situation report);
 // reports that need something first are greyed with what to do (the Medical plan needs nothing: it opens on the map centre),
-// Area summary becomes ready once an area is drawn and then opens; on a conflict tab (Deep South) the report list print and the tab summary are ready; an open
+// Area summary and Area study become ready once an area is drawn and then opens; on a conflict tab (Deep South) the report list print and the tab summary are ready; an open
 // event offers its event report and the share PDF; the menu fits the screen on a phone; and the page throws nothing.
 // External hosts are blocked; the weather and medical plan calls are counted, not fetched.
 // Run from the repo root: node tests/reports_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -23,7 +23,7 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-const IDS = ["brief", "report", "daily", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "medplan", "seatransit", "route", "routesearch", "sitrep"];
+const IDS = ["brief", "report", "daily", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "areastudy", "medplan", "seatransit", "route", "routesearch", "sitrep"];
 
 async function open(hash, opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
@@ -36,9 +36,10 @@ async function open(hash, opts) {
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(300);
   /* count the weather and medical plan calls instead of fetching forecasts and OpenStreetMap */
   await p.evaluate(() => {
-    window.__calls = { wxbrief: 0, wxreport: 0, wxchart: 0, med: 0 };
+    window.__calls = { wxbrief: 0, wxreport: 0, wxchart: 0, med: 0, study: 0 };
     if (window.OSAP_WX) { window.OSAP_WX.brief = () => window.__calls.wxbrief++; window.OSAP_WX.report = () => window.__calls.wxreport++; window.OSAP_WX.chart = () => window.__calls.wxchart++; }
     if (window.OSAP_MEDPLAN) window.OSAP_MEDPLAN.open = () => window.__calls.med++;
+    if (window.OSAP_AREASTUDY) window.OSAP_AREASTUDY.open = () => window.__calls.study++;
   });
   return { ctx, p, errors };
 }
@@ -67,6 +68,7 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   ok(["Country", "On screen now", "Drawn area", "Route", "My work"].every((g) => m.groups.includes(g)), "grouped: " + m.groups.join(" / "));
   ok(m.fits, "the menu fits the screen");
   ok(item(m, "Area summary").off && /Draw an area/.test(item(m, "Area summary").hint), "Area summary greyed: " + item(m, "Area summary").hint);
+  ok(item(m, "Area study").off, "Area study greyed until an area is drawn");
   ok(item(m, "Event report").off && /event/.test(item(m, "Event report").hint), "Event report greyed: " + item(m, "Event report").hint);
   ok(item(m, "Route plan (print)").off, "Route plan greyed: " + item(m, "Route plan (print)").hint);
   ok(item(m, "Report list (print)").off, "conflict report list greyed off a conflict tab");
@@ -99,6 +101,9 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   ok(await p.evaluate(() => { const b = document.getElementById("rv-pkg"); return b && !b.hidden && /Area summary/.test(b.textContent); }), "Area summary opens");
   m = await menu(p); await pick(p, "medplan");
   ok(await p.evaluate(() => window.__calls.med === 1), "Medical plan opens");
+  ok(!item(m, "Area study").off, "Area study ready once an area is drawn");
+  m = await menu(p); await pick(p, "areastudy");
+  ok(await p.evaluate(() => window.__calls.study === 1), "Area study opens");
 
   // an open event offers its event report and the share PDF
   await p.evaluate(() => window.TSAP.areaApi.setArea(null)); await p.waitForTimeout(800);

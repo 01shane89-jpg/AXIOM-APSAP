@@ -143,6 +143,7 @@ jobs:
       - run: node tests/terrain_smoke.mjs
       - run: node tests/lidar_smoke.mjs
       - run: node tests/selected_contrast_smoke.mjs
+      - run: node tests/areastudy_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/panels_smoke.mjs

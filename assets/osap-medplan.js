@@ -2667,8 +2667,10 @@
     }
     return { z: z, a: a, b: b };
   }
+  /* focus (optional): { items, pts, minZ, noScale }; other printed reports (the Area study, assets/osap-areastudy.js) pass
+     o, the centre, too, and may draw ["poly", ring, colour] outlines */
   function mapImage(Wd, Ht, focus) {
-    var s = ST, items = focus ? focus.items : mapItems(), pts = focus ? focus.pts.slice() : groundPts(s);
+    var s = focus && focus.o ? { o: focus.o } : ST, items = focus ? focus.items : mapItems(), pts = focus ? focus.pts.slice() : groundPts(s);
     if (pts.length < 2) pts.push([s.o[0] + 0.05, s.o[1] + 0.05], [s.o[0] - 0.05, s.o[1] - 0.05]);
     var fz = fitZoom(pts, Wd, Ht, focus && focus.minZ), z = fz.z, a = fz.a, b = fz.b;
     var c0 = [(a[0] + b[0]) / 2 - Wd / 2, (a[1] + b[1]) / 2 - Ht / 2], K = 2;
@@ -2683,7 +2685,8 @@
       var mpp = 156543.03392 * Math.cos(s.o[0] * Math.PI / 180) / Math.pow(2, z);
       items.forEach(function (it) {
         g.setLineDash([]); g.globalAlpha = 1;
-        if (it[0] === "iso") { g.beginPath(); it[1].forEach(function (p, i) { var q = xy(p); if (i) g.lineTo(q[0], q[1]); else g.moveTo(q[0], q[1]); }); g.closePath(); g.strokeStyle = it[2]; g.lineWidth = 2.5; g.setLineDash([6, 4]); g.stroke(); }
+        if (it[0] === "poly") { g.beginPath(); it[1].forEach(function (p, i) { var q = xy(p); if (i) g.lineTo(q[0], q[1]); else g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = it[2]; g.globalAlpha = 0.08; g.fill(); g.globalAlpha = 1; g.strokeStyle = "#fff"; g.lineWidth = 5; g.stroke(); g.strokeStyle = it[2]; g.lineWidth = 2.5; g.stroke(); }
+        else if (it[0] === "iso") { g.beginPath(); it[1].forEach(function (p, i) { var q = xy(p); if (i) g.lineTo(q[0], q[1]); else g.moveTo(q[0], q[1]); }); g.closePath(); g.strokeStyle = it[2]; g.lineWidth = 2.5; g.setLineDash([6, 4]); g.stroke(); }
         else if (it[0] === "ring") { var q = xy(it[1]); g.beginPath(); g.arc(q[0], q[1], it[2] / mpp, 0, 2 * Math.PI); g.strokeStyle = it[3]; g.lineWidth = 2.5; if (it[4] < GOLDEN_MIN) g.setLineDash([4, 6]); g.stroke(); }
         else if (it[0] === "line") { g.beginPath(); it[1].forEach(function (p, i) { var q = xy(p); if (i) g.lineTo(q[0], q[1]); else g.moveTo(q[0], q[1]); }); g.strokeStyle = it[2].color; g.lineWidth = it[2].weight + 0.5; g.globalAlpha = 0.9; if (it[2].dashArray) g.setLineDash(it[2].dashArray.split(" ").map(Number)); g.stroke(); }
       });
@@ -3300,6 +3303,9 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView,
+    /* shared with the Area study (assets/osap-areastudy.js), which looks things up and prints the same way */
+    lib: { getJSON: getJSON, overpass: overpass, hav: hav, km: km, grid: grid, centre: centre, areaKm2: areaKm2, dual: dual, sha: sha, link: link,
+      facName: facName, stored: storedFac, osmUrl: osmUrl, ems: ems, isosHtml: isosHtml, stateEmerg: STATE_EMERG, mapImage: mapImage }, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();

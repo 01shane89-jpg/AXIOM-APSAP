@@ -121,6 +121,8 @@ data-ev-tlr="1"
 <script src="assets/osap-seatransit.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
+# area study for the drawn area, in the Area menu and Reports (claude/area-study)
+<script src="assets/osap-areastudy.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-illum.js"></script>
