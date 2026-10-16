@@ -55,7 +55,7 @@
     var a = w.area;
     if (a && a.length > MAX_PTS) { var step = a.length / MAX_PTS, o = []; for (var i = 0; i < MAX_PTS; i++) o.push(a[Math.floor(i * step)]); a = o; }
     return { v: 1, id: w.id, name: w.name, cc: w.cc, area: a ? a.map(function (p) { return [Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]; }) : null,
-      layers: w.layers || [], kw: w.kw || [], minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic() };
+      layers: w.layers || [], kw: w.kw || [], q: w.q || undefined, minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic() };
   }
   function issueUrl(title, body) { return REPO + "/issues/new?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body); }
   function addUrl(w) {
@@ -73,7 +73,7 @@
     var w = byId(id), el = dlg(); if (!w || !el) return;
     var st = status(w), t = topic(), where = (w.aoi && w.aoi.label ? w.aoi.label + " in " : w.area ? "a drawn area in " : "all of ") + cName(w.cc);
     var what = [where, w.layers && w.layers.length ? w.layers.join(", ") : "any category", ["", "any severity", "medium or high", "high only"][w.minSev || 1]]
-      .concat(w.kw && w.kw.length ? ["words: " + w.kw.join(", ")] : []).join(" · ");
+      .concat(w.q ? ["words: " + w.q] : w.kw && w.kw.length ? ["words: " + w.kw.join(", ")] : []).join(" · ");
     el.innerHTML = '<div class="cbox pushbox" data-id="' + esc(id) + '"><div class="chead"><button type="button" class="refresh" data-push-back>Back</button><h2 id="watch-h">Push to phone</h2>' +
       '<button type="button" class="x" aria-label="Close" data-push-close>&times;</button></div>' +
       "<p><b>" + esc(w.name) + '</b><br><span class="obs">' + esc(what) + "</span></p>" +

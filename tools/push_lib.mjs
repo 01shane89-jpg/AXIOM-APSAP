@@ -3,6 +3,9 @@
 // A push watch is the same watch the app keeps in the browser (area, categories, severity, words) plus the ntfy channel ("topic")
 // the phone subscribes to. The list is data/push/watches.json in this public repository, so nothing secret may go in it.
 import fs from "node:fs";
+import { createRequire } from "node:module";
+// the app's own Boolean parser (assets/osap-boolq.js), so a push watch is read exactly as the page reads it
+const BOOLQ = createRequire(import.meta.url)("../assets/osap-boolq.js");
 
 export const FILE = "data/push/watches.json";
 export const MAX_WATCHES = 25, MAX_AREA_POINTS = 150, MAX_WORDS = 20, MAX_LAYERS = 30;
@@ -43,7 +46,13 @@ export function validate(w) {
   }
   const layers = Array.isArray(w.layers) ? w.layers.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,30}$/.test(x)).slice(0, MAX_LAYERS) : [];
   const kw = Array.isArray(w.kw) ? [...new Set(w.kw.map((x) => cleanText(x, 60)).filter(Boolean))].slice(0, MAX_WORDS) : [];
+  let q;
+  if (w.q != null && w.q !== "") {
+    const c = BOOLQ.compile(cleanText(w.q, BOOLQ.MAX_LEN + 1));
+    if (!c.ok) return { error: "the Boolean words do not read: " + c.err };
+    q = c.q;
+  }
   const minSev = [1, 2, 3].includes(+w.minSev) ? +w.minSev : 1;
   const conf = w.conf === "ied" ? "ied" : undefined;   // Deep South IED watch: only reports confirmed by an official source or corroborated
-  return { watch: { id, name, cc: w.cc, area, layers, kw, minSev, ...(conf ? { conf } : {}), topic } };
+  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic } };
 }
