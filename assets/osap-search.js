@@ -144,7 +144,7 @@
     else map.flyTo(ll, Math.max(map.getZoom(), r.z || 14), { duration: 0.8 });
     hereR = r;
     here = L.marker(ll, { pane: "srchpane", keyboard: false, title: r.name,
-      icon: L.divIcon({ className: "srch-pin", html: '<svg viewBox="0 0 24 32" width="26" height="34" aria-hidden="true"><path d="M12 31S2 18.6 2 11a10 10 0 0 1 20 0c0 7.6-10 20-10 20z" fill="#e8590c" stroke="#fff" stroke-width="2"/><circle cx="12" cy="11" r="3.6" fill="#fff"/></svg>', iconSize: [26, 34], iconAnchor: [13, 33], popupAnchor: [0, -30] }) });
+      icon: W.OSAP_SYM && W.OSAP_SYM.icon ? W.OSAP_SYM.icon("g_poi", { cls: "srch-pin", badge: "#e8590c" }) : L.divIcon({ className: "srch-pin", html: '<svg viewBox="0 0 24 32" width="26" height="34" aria-hidden="true"><path d="M12 31S2 18.6 2 11a10 10 0 0 1 20 0c0 7.6-10 20-10 20z" fill="#e8590c" stroke="#fff" stroke-width="2"/><circle cx="12" cy="11" r="3.6" fill="#fff"/></svg>', iconSize: [26, 34], iconAnchor: [13, 33], popupAnchor: [0, -30] }) });
     here.bindPopup(function () {
       var d = D.createElement("div"); d.className = "srch-pop"; d.setAttribute("data-keep-pop", "");
       d.innerHTML = "<b>" + esc(r.name) + "</b>" + (r.sub && !r.grid ? '<p class="obs">' + esc(r.sub) + "</p>" : "") + "<code>" + esc(grid(r.lat, r.lon)) + "</code>" +

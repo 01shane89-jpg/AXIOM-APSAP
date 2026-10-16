@@ -71,6 +71,8 @@
   var SERIOUS = { conflict: 1, violent: 1, closure: 1, disaster: 1 };
   var NODE_T = [["assembly", "Assembly area"], ["pickup", "Pickup point"], ["transfer", "Transfer point"], ["vehchange", "Vehicle change point"],
     ["airdep", "Air departure point"], ["seadep", "Sea departure point"], ["border", "Border crossing"], ["haven", "Safe haven"]];
+  /* plan points are drawn as NATO (2525D) symbols when assets/osap-symbols.js loaded; the old dots otherwise */
+  function SY() { return !!(W.OSAP_SYM && W.OSAP_SYM.tag && W.OSAP_SYM.mark); }
   var NODE_N = {}; NODE_T.forEach(function (t) { NODE_N[t[0]] = t[1]; });
   var MAX_NODES = 8, MAX_ALL = 8;
   /* how a leg is travelled: the plan's ground mode, or a straight line at a set speed */
@@ -1469,7 +1471,7 @@
       if (ao) {
         L.polyline(ao.route.coords, { color: "#fff", weight: 11, opacity: 0.9, interactive: false }).addTo(layer);
         L.polyline(ao.route.coords, { color: COL[ao.role || ""], weight: 7, opacity: 1, interactive: false }).addTo(layer);
-        chainKm(ao).forEach(function (n, i) { L.circleMarker([n.lat, n.lon], { radius: 7, color: "#fff", weight: 2, fillColor: i <= S.active.passed ? "#868e96" : "#212529", fillOpacity: 1 }).bindTooltip(E(n.name + " (km " + n.km + ")")).addTo(layer); });
+        chainKm(ao).forEach(function (n, i) { (SY() ? W.OSAP_SYM.mark([n.lat, n.lon], "g_waypoint", { scale: 0.6, opacity: i <= S.active.passed ? 0.45 : 1 }) : L.circleMarker([n.lat, n.lon], { radius: 7, color: "#fff", weight: 2, fillColor: i <= S.active.passed ? "#868e96" : "#212529", fillOpacity: 1 })).bindTooltip(E(n.name + " (km " + n.km + ")")).addTo(layer); });
         if (S.active.pos) L.circleMarker(S.active.pos, { radius: 9, color: "#fff", weight: 3, fillColor: "#1c7ed6", fillOpacity: 1 }).bindTooltip("You (My location)").addTo(layer);
       }
       S.dr = { active: layer.getLayers().length };
@@ -1481,7 +1483,7 @@
       L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6", className: (x.legs || []).some(function (l) { return flies(l.mode); }) ? "epefly" : "" })
         .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); })
         .bindTooltip(E((x.role ? x.role + " · " : "") + x.dest.i.name + " · " + dist(x.route.m) + " · " + dur(x.route.s)), { sticky: true }).addTo(layer);
-      L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
+      L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(E(x.dest.i.name + " (" + (x.dest.i.kind || x.kindName) + ")")).on("click", function () { S.sel = x.id; render(); draw(); }).addTo(layer);
       if (!sel) return;
       /* the corridor: a band its width each side of the line (a line this many pixels wide at this zoom), and the node circles */
@@ -1491,13 +1493,14 @@
       circles(x).forEach(function (cc0) { L.circle([cc0.lat, cc0.lon], { radius: cc0.km * 1000, color: c, weight: 1.5, opacity: 0.6, fillOpacity: 0.08, interactive: false, className: "epecirc" }).addTo(layer); });
       ((x.air && lay("air") && x.air.list) || []).forEach(function (a) {
         var k = CLS.indexOf(a.cls), col = ["#1864ab", "#1864ab", "#5f3dc4", "#e67700", "#2b8a3e", "#0b7285", "#0b7285"][k] || "#495057";
-        L.circleMarker([a.lat, a.lon], { radius: a.cls === "User-verified LZ" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: col, fillOpacity: 0.95, className: "epeairmk" })
+        (SY() ? W.OSAP_SYM.mark([a.lat, a.lon], ["i_air", "i_heli", "i_air", "g_medevac", "g_medevac", "i_port", "i_ferry"][k] || "i_air", { badge: col, scale: a.cls === "User-verified LZ" ? 0.7 : 0.55, className: "epeairmk" })
+          : L.circleMarker([a.lat, a.lon], { radius: a.cls === "User-verified LZ" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: col, fillOpacity: 0.95, className: "epeairmk" }))
           .bindTooltip(E(a.name + " (" + a.cls + ", km " + a.km + ")")).addTo(layer);
       });
       ((x.deps && x.deps.list) || []).forEach(function (d) {
         if (d.kind === "border" ? !lay("borders") : !lay("deps")) return;
         var col = d.status && d.status.st === "Closure reported" ? "#c92a2a" : d.detour && d.detour.none ? "#e8590c" : "#343a40";
-        L.marker([d.lat, d.lon], { keyboard: false, icon: L.divIcon({ className: "epedepmk", html: '<span style="background:' + col + '">' + ({ bridge: "B", tunnel: "T", ferry: "F", rail: "R", junction: "J", border: "X" }[d.kind] || "?") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) })
+        L.marker([d.lat, d.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.tag({ bridge: "i_bridge", tunnel: "i_tunnel", ferry: "i_ferry", rail: "i_rail", junction: "g_check", border: "crossing" }[d.kind] || "g_poi", "", { cls: "epedepmk", badge: col, scale: 0.6 }) : L.divIcon({ className: "epedepmk", html: '<span style="background:' + col + '">' + ({ bridge: "B", tunnel: "T", ferry: "F", rail: "R", junction: "J", border: "X" }[d.kind] || "?") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) })
           .bindTooltip(E(DEP_K[d.kind] + (d.name && d.name !== DEP_K[d.kind] ? ": " + d.name : "") + ", km " + d.km)).addTo(layer);
         if (S.showDet === d.id && d.detour && d.detour.coords) L.polyline(d.detour.coords, { color: "#7048e8", weight: 4, opacity: 0.9, dashArray: "6 5", interactive: false }).addTo(layer);
       });
@@ -1506,10 +1509,10 @@
       if (al) {
         var n0 = layer.getLayers().length;
         if (lay("comms") && al.comms) al.comms.segs.forEach(function (sg) { L.polyline(sg.coords, { color: COMMS_C[sg.status] || COMMS_C.unknown, weight: 4, opacity: 0.95, offset: 0, interactive: true, dashArray: sg.status === "unknown" ? "3 5" : null }).bindTooltip(E("Phone coverage km " + sg.km_from + "–" + sg.km_to + ": " + sg.status)).addTo(layer); });
-        if (lay("haz") && al.haz) al.haz.ranges.forEach(function (r) { r.items.forEach(function (h) { if (h.p) L.circleMarker(h.p, { radius: 5, color: "#fff", weight: 1.5, fillColor: "#c92a2a", fillOpacity: 0.9 }).bindTooltip(E(h.kind + ": " + h.text)).addTo(layer); }); });
-        if (lay("sus") && al.sus) al.sus.fuel.forEach(function (f) { L.circleMarker([f.lat, f.lon], { radius: 4, color: "#fff", weight: 1, fillColor: "#5c940d", fillOpacity: 0.95 }).bindTooltip(E(f.name + " (fuel, km " + f.km + ")")).addTo(layer); });
-        if (lay("us") && al.us) al.us.list.forEach(function (u) { L.circleMarker([u.lat, u.lon], { radius: 6, color: "#fff", weight: 2, fillColor: "#1c3d7a", fillOpacity: 1 }).bindTooltip(E(u.name + " (not verified as an evacuation destination)")).addTo(layer); });
-        if (lay("med") && al.med) al.med.list.forEach(function (m) { L.circleMarker([m.lat, m.lon], { radius: 5, color: "#fff", weight: 1.5, fillColor: "#d6336c", fillOpacity: 1 }).bindTooltip(E(m.name + " (hospital, capability " + (m.ed ? "ED tagged, unverified" : "unknown") + ")")).addTo(layer); });
+        if (lay("haz") && al.haz) al.haz.ranges.forEach(function (r) { r.items.forEach(function (h) { if (h.p) (SY() ? W.OSAP_SYM.mark(h.p, W.OSAP_SYM.classify(h.kind, h.text), { badge: "#c92a2a", scale: 0.55 }) : L.circleMarker(h.p, { radius: 5, color: "#fff", weight: 1.5, fillColor: "#c92a2a", fillOpacity: 0.9 })).bindTooltip(E(h.kind + ": " + h.text)).addTo(layer); }); });
+        if (lay("sus") && al.sus) al.sus.fuel.forEach(function (f) { (SY() ? W.OSAP_SYM.mark([f.lat, f.lon], "g_fuel", { scale: 0.45 }) : L.circleMarker([f.lat, f.lon], { radius: 4, color: "#fff", weight: 1, fillColor: "#5c940d", fillOpacity: 0.95 })).bindTooltip(E(f.name + " (fuel, km " + f.km + ")")).addTo(layer); });
+        if (lay("us") && al.us) al.us.list.forEach(function (u) { (SY() ? W.OSAP_SYM.mark([u.lat, u.lon], "govt", { scale: 0.6 }) : L.circleMarker([u.lat, u.lon], { radius: 6, color: "#fff", weight: 2, fillColor: "#1c3d7a", fillOpacity: 1 })).bindTooltip(E(u.name + " (not verified as an evacuation destination)")).addTo(layer); });
+        if (lay("med") && al.med) al.med.list.forEach(function (m) { (SY() && W.OSAP_REDCROSS ? L.marker([m.lat, m.lon], { keyboard: false, icon: W.OSAP_SYM.ptag("hospital", "") }) : L.circleMarker([m.lat, m.lon], { radius: 5, color: "#fff", weight: 1.5, fillColor: "#d6336c", fillOpacity: 1 })).bindTooltip(E(m.name + " (hospital, capability " + (m.ed ? "ED tagged, unverified" : "unknown") + ")")).addTo(layer); });
         if (S.dr) S.dr.along = layer.getLayers().length - n0;
       }
       /* the selected option: failed lines struck out, leg numbers, the analyst's nodes */
@@ -1521,11 +1524,12 @@
         }
       });
       (x.nodes || []).forEach(function (n, i) {
-        L.marker([n.lat, n.lon], { keyboard: false, icon: L.divIcon({ className: "epend", html: "<span>" + E(NODE_N[n.type] ? NODE_N[n.type].charAt(0) : "N") + (i + 1) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
+        var nt = (NODE_N[n.type] ? NODE_N[n.type].charAt(0) : "N") + (i + 1);
+        L.marker([n.lat, n.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.tag({ airdep: "i_air", seadep: "i_port", border: "crossing", haven: "g_poi" }[n.type] || "g_waypoint", nt, { cls: "epend", scale: 0.6 }) : L.divIcon({ className: "epend", html: "<span>" + E(nt) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
           .bindTooltip(E(n.name + " (" + (NODE_N[n.type] || n.type) + ", placed by you)")).addTo(layer);
       });
     });
-    if (o) L.circleMarker([o.lat, o.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#212529", fillOpacity: 1 }).bindTooltip(E("Origin: " + (o.label || grid(o.lat, o.lon)))).addTo(layer);
+    if (o) (SY() ? L.marker([o.lat, o.lon], { keyboard: false, icon: W.OSAP_SYM.tag("g_start", "", { scale: 0.75 }) }) : L.circleMarker([o.lat, o.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#212529", fillOpacity: 1 })).bindTooltip(E("Origin: " + (o.label || grid(o.lat, o.lon)))).addTo(layer);
   }
   function fitPlan() {
     var map = W.__asapMap; if (!map || !L) return;

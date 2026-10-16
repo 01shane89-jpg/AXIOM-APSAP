@@ -11,6 +11,8 @@
   "use strict";
   var ID = "russia-ukraine", ST = { alerts: true, heat: false }, layers = null;
   try { var sv = JSON.parse(localStorage.getItem("osap-cf-ua") || "{}"); if (sv.alerts != null) ST.alerts = !!sv.alerts; if (sv.heat != null) ST.heat = !!sv.heat; } catch (e) {}
+  function sym() { return !!(window.OSAP_SYM && window.OSAP_SYM.mark && window.OSAP_SYM.sw); }
+  function SW(k, badge, fb) { return sym() ? window.OSAP_SYM.sw(k, badge) : fb; }
   function E(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function U(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function A(u, t) { var x = U(u); return x ? '<a href="' + E(x) + '" target="_blank" rel="noopener noreferrer">' + E(t) + "</a>" : E(t); }
@@ -47,7 +49,9 @@
     if (X && X.alerts && ST.alerts) X.alerts.regions.forEach(function (r) {
       if (!r.on || r.la == null) return;
       var al = X.alerts, what = E(r.en + ": air-raid alert" + (r.standing ? " (standing since " + r.since.slice(0, 10) + ")" : r.since ? " since " + ago(r.since) + " ago" : " (start time not given by the source)"));
-      L.circleMarker([r.la, r.lo], { pane: pane, radius: r.standing ? 7 : 11, color: r.standing ? "#8a8a8a" : "#c62828", weight: 2, fillColor: r.standing ? "#8a8a8a" : "#c62828", fillOpacity: r.standing ? 0.15 : 0.35 })
+      var ao = { pane: pane, radius: r.standing ? 7 : 11, color: r.standing ? "#8a8a8a" : "#c62828", weight: 2, fillColor: r.standing ? "#8a8a8a" : "#c62828", fillOpacity: r.standing ? 0.15 : 0.35 };
+      // NATO (2525D) emergency-incident symbol, red dot = alert now, grey and faded = standing alert
+      (sym() ? window.OSAP_SYM.mark([r.la, r.lo], "a_emerg", { pane: pane, scale: r.standing ? 0.6 : 0.8, badge: ao.color, opacity: r.standing ? 0.6 : 1 }) : L.circleMarker([r.la, r.lo], ao))
         .bindTooltip(what, { direction: "top" })
         .bindPopup("<b>" + what + "</b><br><small>" + E(al.claim) + "<br>" + A(al.home, al.source) + (al.read ? ", read " + T(al.read) : "") + FP(al.sha256, "this alert reading") + "</small>", { maxWidth: 320 })
         .addTo(layers.alerts);
@@ -55,7 +59,8 @@
     if (X && X.heat && ST.heat) X.heat.points.forEach(function (p) {
       var he = X.heat, what = E("Heat detection " + p[3] + " (" + p[4] + ", " + (p[5] === "D" ? "day" : "night") + " pass), " + p[2] + " MW" + (p[7] ? ", in occupied area" : p[6] === "ru" ? ", in Russia" : "") + ". Cause unknown."),
         body = "<b>" + what + "</b><br><small>" + E(he.claim) + "<br>" + A(he.home, he.source) + (he.read ? ", read " + T(he.read) : "") + "</small>";
-      var m = L.circleMarker([p[0], p[1]], { pane: pane, radius: Math.min(7, 2 + Math.sqrt(p[2]) / 2), color: "#e65100", weight: 1, fillColor: "#ff9800", fillOpacity: 0.6 })
+      var ho = { pane: pane, radius: Math.min(7, 2 + Math.sqrt(p[2]) / 2), color: "#e65100", weight: 1, fillColor: "#ff9800", fillOpacity: 0.6 };
+      var m = (sym() ? window.OSAP_SYM.mark([p[0], p[1]], "a_hotspot", { pane: pane, scale: Math.min(0.75, 0.45 + Math.sqrt(p[2]) / 30) }) : L.circleMarker([p[0], p[1]], ho))
         .bindTooltip(what, { direction: "top" }).bindPopup(body, { maxWidth: 320 })
         .addTo(layers.heat);
       // the detection file carries no per-point fingerprint: one is made from the detection as read (position, power, time, satellite, pass)
@@ -65,9 +70,9 @@
     if (ST.heat) layers.heat.addTo(map); else map.removeLayer(layers.heat);
     // their key goes in the map's legend with the tab's own
     if (window.OSAP_LEGEND) window.OSAP_LEGEND.set("cf-ua", (ST.alerts && X && X.alerts ? "<h3>Air-raid alerts</h3>" +
-        '<div class="lg"><span class="sw round" style="background:rgba(198,40,40,.35);border:2px solid #c62828"></span><div>Region under alert now<span class="d">A declared threat, not a strike</span></div></div>' +
-        '<div class="lg"><span class="sw round" style="background:rgba(138,138,138,.15);border:2px solid #8a8a8a"></span><div>Standing alert<span class="d">Unchanged for over 30 days</span></div></div>' : "") +
-      (ST.heat && X && X.heat ? "<h3>Satellite heat</h3>" + '<div class="lg"><span class="sw round" style="background:rgba(255,152,0,.6);border:1px solid #e65100"></span><div>Heat detection, past 24 hours<span class="d">Cause unknown; larger means hotter</span></div></div>' : ""),
+        '<div class="lg">' + SW("a_emerg", "#c62828", '<span class="sw round" style="background:rgba(198,40,40,.35);border:2px solid #c62828"></span>') + '<div>Region under alert now<span class="d">A declared threat, not a strike</span></div></div>' +
+        '<div class="lg">' + SW("a_emerg", "#8a8a8a", '<span class="sw round" style="background:rgba(138,138,138,.15);border:2px solid #8a8a8a"></span>') + '<div>Standing alert<span class="d">Unchanged for over 30 days</span></div></div>' : "") +
+      (ST.heat && X && X.heat ? "<h3>Satellite heat</h3>" + '<div class="lg">' + SW("a_hotspot", "", '<span class="sw round" style="background:rgba(255,152,0,.6);border:1px solid #e65100"></span>') + '<div>Heat detection, past 24 hours<span class="d">Cause unknown; larger means hotter (NATO hot-spot symbol)</span></div></div>' : ""),
       document.getElementById("cf-rail"));
   }
 

@@ -163,7 +163,7 @@
     if (!nearL) return;
     nearL.clearLayers();
     if (!S.from) return;
-    L.circleMarker(S.from, { pane: "evpane", radius: 7, color: "#fff", weight: 2, fillColor: "#d6336c", fillOpacity: 1 }).bindTooltip("From here").addTo(nearL);
+    (W.OSAP_SYM && W.OSAP_SYM.tag ? L.marker(S.from, { pane: "evpane", keyboard: false, icon: W.OSAP_SYM.tag("g_start", "", { scale: 0.75 }) }) : L.circleMarker(S.from, { pane: "evpane", radius: 7, color: "#fff", weight: 2, fillColor: "#d6336c", fillOpacity: 1 })).bindTooltip("From here").addTo(nearL);
     if (!S.near) return;
     KINDS.forEach(function (K) {
       var r = S.near[K.k] && S.near[K.k][0]; if (!r) return;

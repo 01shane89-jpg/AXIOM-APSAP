@@ -573,7 +573,7 @@
     var o = r.o;
     if (r.poly) L.polygon(r.poly, { pane: "lzpane", renderer: rend, color: "#0b7285", weight: 2, dashArray: "6 5", fill: false, interactive: false }).addTo(layer);
     else L.circle(o, { pane: "lzpane", renderer: rend, radius: r.radius, color: "#0b7285", weight: 2, dashArray: "6 5", fill: false, interactive: false }).addTo(layer);
-    L.circleMarker(o, { pane: "lzpane", renderer: rend, radius: 4, color: "#fff", weight: 2, fillColor: "#0b7285", fillOpacity: 1, interactive: false }).addTo(layer);
+    (window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark(o, "g_poi", { pane: "lzpane", scale: 0.55, interactive: false }) : L.circleMarker(o, { pane: "lzpane", renderer: rend, radius: 4, color: "#fff", weight: 2, fillColor: "#0b7285", fillOpacity: 1, interactive: false })).addTo(layer);
     r.cands.forEach(function (k) {
       var col = k.caution ? "#e65100" : "#2e7d32";
       var c = L.circle([k.lat, k.lon], { pane: "lzpane", renderer: rend, radius: r.size / 2, color: col, weight: 2.5, fillColor: col, fillOpacity: 0.3, lgk: "lz", lgl: "Candidate LZ" })
@@ -586,7 +586,7 @@
       c.addTo(layer); k._m = c;
     });
     r.pads.forEach(function (p) {
-      L.marker([p.lat, p.lon], { pane: "lzpane", icon: L.divIcon({ className: "", html: '<span class="lzpad">' + (p.kind === "aerodrome" ? "A" : "H") + "</span>", iconSize: [20, 20], iconAnchor: [10, 10] }), title: p.name || p.kind })
+      L.marker([p.lat, p.lon], { pane: "lzpane", icon: window.OSAP_SYM && window.OSAP_SYM.icon ? window.OSAP_SYM.icon(p.kind === "aerodrome" ? "i_air" : "i_heli", { cls: "lzpadsym", scale: 0.7 }) : L.divIcon({ className: "", html: '<span class="lzpad">' + (p.kind === "aerodrome" ? "A" : "H") + "</span>", iconSize: [20, 20], iconAnchor: [10, 10] }), title: p.name || p.kind })
         .bindPopup('<div class="pop"><div class="tier">' + esc(p.kind === "aerodrome" ? "Airfield" : "Helipad") + " · OpenStreetMap</div>" + (p.name ? "<p>" + esc(p.name) + "</p>" : "") +
           '<p class="obs"><b>Grid:</b> ' + esc(grid(p.lat, p.lon)) + '</p><p class="obs">Mapped, not verified: status, size and access unknown. <a href="' + esc(p.osm) + '" target="_blank" rel="noopener">OpenStreetMap</a></p></div>', { maxWidth: 300 }).addTo(layer);
     });

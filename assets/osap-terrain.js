@@ -269,7 +269,7 @@
   function drawObserver() {
     if (!ST.obs) { if (obsMark) { lay.removeLayer(obsMark); obsMark = null; } if (ring) { lay.removeLayer(ring); ring = null; } return; }
     var ll = [ST.obs[0], ST.obs[1]];
-    if (!obsMark) { obsMark = L.circleMarker(ll, { pane: "vslines", radius: 7, color: "#fff", weight: 2.5, fillColor: "#0b7285", fillOpacity: 1, interactive: false }).bindTooltip(S.mode === "slope" ? "Centre" : "Observer", { permanent: false, direction: "top" }); lay.addLayer(obsMark); }
+    if (!obsMark) { obsMark = (window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark(ll, S.mode === "slope" ? "g_poi" : "g_op", { pane: "vslines", scale: 0.75, interactive: false }) : L.circleMarker(ll, { pane: "vslines", radius: 7, color: "#fff", weight: 2.5, fillColor: "#0b7285", fillOpacity: 1, interactive: false })).bindTooltip(S.mode === "slope" ? "Centre" : "Observer", { permanent: false, direction: "top" }); lay.addLayer(obsMark); }
     obsMark.setLatLng(ll);
     if (!ring) { ring = L.circle(ll, { pane: "vslines", radius: S.km * 1000, fill: false, color: "#37474f", weight: 1.2, dashArray: "2 6", interactive: false }); lay.addLayer(ring); }
     ring.setLatLng(ll).setRadius(S.km * 1000);
@@ -909,7 +909,7 @@
       corLay.addLayer(io);
     });
     corLay.addLayer(L.polyline(c.route, { pane: "vslines", color: "#e65100", weight: 3, opacity: 0.9, interactive: false }));
-    c.stations.forEach(function (q) { corLay.addLayer(L.circleMarker([q.lat, q.lon], { pane: "vslines", radius: 3, color: "#fff", weight: 1, fillColor: q.visible_pct == null ? "#616161" : "#e65100", fillOpacity: 1, interactive: false })); });
+    c.stations.forEach(function (q) { var qc = q.visible_pct == null ? "#616161" : "#e65100"; corLay.addLayer(window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark([q.lat, q.lon], "g_op", { pane: "vslines", badge: qc, scale: 0.4, interactive: false }) : L.circleMarker([q.lat, q.lon], { pane: "vslines", radius: 3, color: "#fff", weight: 1, fillColor: qc, fillOpacity: 1, interactive: false })); });
   }
   /* other modules: open the panel on a route and show where it can be seen from */
   function routeExposure(pts, o) {
@@ -970,7 +970,7 @@
       var t = x.blockD / x.dist, bp = [x.from[0] + (x.to[0] - x.from[0]) * t, x.from[1] + (x.to[1] - x.from[1]) * t];
       /* a sampled line knows where each sample is */
       var hit = x.samples.filter(function (q) { return q.lat != null && q.d >= x.blockD; })[0]; if (hit) bp = [hit.lat, hit.lon];
-      losLay.addLayer(L.circleMarker(bp, { pane: "vslines", radius: 5, color: "#fff", weight: 2, fillColor: "#c62828", fillOpacity: 1, interactive: false }).bindTooltip("Blocking terrain " + km(x.blockD) + " from " + x.fA, { direction: "top" }));
+      losLay.addLayer((window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark(bp, "keyterrain", { pane: "vslines", badge: "#c62828", scale: 0.6, interactive: false }) : L.circleMarker(bp, { pane: "vslines", radius: 5, color: "#fff", weight: 2, fillColor: "#c62828", fillOpacity: 1, interactive: false })).bindTooltip("Blocking terrain " + km(x.blockD) + " from " + x.fA, { direction: "top" }));
     }
     if (popup) {
       var pad = split() && W.OSAP_SPLIT ? W.OSAP_SPLIT.clear() : { tl: [0, 0], br: [0, 0] };
@@ -1145,7 +1145,7 @@
       (v.visible || []).forEach(function (q) { savedLay.addLayer(L.polygon([q.o].concat(q.h || []), { pane: "vspane", stroke: true, color: "#1b5e20", weight: 1, opacity: 0.7, fillColor: "#43a047", fillOpacity: 0.28, interactive: false })); });
       if (v.horizon && v.horizon.length > 2) savedLay.addLayer(L.polyline(v.horizon.concat([v.horizon[0]]), { pane: "vslines", color: "#ffd600", weight: 1.6, dashArray: "4 4", opacity: 0.9, interactive: false }));
       savedLay.addLayer(L.marker([v.observer.lat, v.observer.lon], { pane: "vslines", interactive: false, keyboard: false, icon: L.divIcon({ className: "vsname", html: "<span>" + esc(v.name) + "</span>", iconSize: null, iconAnchor: [0, 0] }) }));
-      savedLay.addLayer(L.circleMarker([v.observer.lat, v.observer.lon], { pane: "vslines", radius: 5, color: "#fff", weight: 2, fillColor: "#1b5e20", fillOpacity: 1, interactive: false }));
+      savedLay.addLayer(window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark([v.observer.lat, v.observer.lon], "g_op", { pane: "vslines", badge: "#1b5e20", scale: 0.6, interactive: false }) : L.circleMarker([v.observer.lat, v.observer.lon], { pane: "vslines", radius: 5, color: "#fff", weight: 2, fillColor: "#1b5e20", fillOpacity: 1, interactive: false }));
     });
   }
   function vsSet(id, fn) { var a = vsAll(); a.forEach(function (v) { if (v.id === id) fn(v); }); vsPut(a); }

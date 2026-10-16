@@ -53,6 +53,7 @@ country-data:start
 window.OSAP_ROUTE_SEED
 window.OSAP_LATER
 function osapSym(
+function osapMark(
 window.OSAP_REDCROSS
 function extrasOff(
 function recMsK(
