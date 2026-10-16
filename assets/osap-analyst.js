@@ -133,7 +133,7 @@
       "#anws td.n{text-align:right;white-space:nowrap}#anws .ancard{border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:6px 9px;margin:6px 0}" +
       "#anws .ancard.sel{border-color:var(--accent,#1c5d99);box-shadow:0 0 0 1px var(--accent,#1c5d99)}#anws .anal{font-size:11.5px;color:var(--muted,#56626f)}" +
       "#anws details{margin:6px 0}#anws summary{cursor:pointer;font-weight:600}#anws .angraph{width:100%;height:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px;background:var(--surface2,#f5f7f9)}" +
-      "#anws .angraph text{font-size:10.5px;fill:var(--ink,#1d2329);pointer-events:none}#anws .angraph circle,#anws .angraph rect{cursor:pointer}" +
+      "#anws .angraph text{font-size:13px;fill:var(--ink,#1d2329);pointer-events:none;paint-order:stroke;stroke:var(--surface2,#f5f7f9);stroke-width:3px;stroke-linejoin:round}#anws .angraph text.anbx{font-size:12px;font-weight:600;stroke:none;fill:#1d2329}#anws .angraph text.ancnt{font-size:10px;font-weight:700;fill:#fff;stroke:none}#anws .angraph text.anrel{font-size:11.5px;fill:#2b8a3e;font-weight:600}#anws .angraph g[data-an-node]{cursor:pointer}#anws .answ{display:inline-block;width:26px;height:14px;border:1.6px solid;border-radius:3px;background:#fff;flex:none}#anws .anln{display:inline-block;width:26px;height:0;flex:none}#anws .angraph circle,#anws .angraph rect{cursor:pointer}#anws .ankey{display:flex;flex-wrap:wrap;gap:0 14px;margin:4px 0 8px}#anws .ankey .lgh{flex-basis:100%}#anws .ankey .lg{display:flex;align-items:center;gap:6px;font-size:11.5px}#anws .ankey .msyfr{flex-basis:100%}" +
       "#anws .anday{font-weight:700;margin:10px 0 2px}#anws .anit{margin:3px 0 3px 8px;padding-left:8px;border-left:3px solid var(--line,#d5dbe1)}#anws .anit.mine{border-left-color:#2b8a3e}" +
       "#anws .anbar{display:inline-block;height:8px;background:#e67700;border-radius:2px;vertical-align:middle;margin-right:4px}#anws .anwarn{background:rgba(230,119,0,.1);border-left:3px solid #e67700;padding:6px 10px;margin:6px 0}" +
       "#anws .atk-pph{display:flex;flex-wrap:wrap;gap:4px}#anws .atk-pph img{width:84px;height:84px;object-fit:cover;border-radius:4px}#anws .atk-pph button{padding:0;border:none;min-height:0}" +
@@ -209,11 +209,19 @@
   }
 
   /* ---------- Links ---------- */
+  /* link chart symbols: NATO APP-6 / MIL-STD-2525D land units and civilian organisations from assets/osap-symbols.js (keys la_*).
+     Armed and security bodies use the unknown frame, civilian bodies the neutral frame: OSAP never marks a side. */
+  var SYM_ID = { "ent:ds:brn": "la_armed", "ent:ds:rkk": "la_armed", "ent:ds:pulo": "la_armed", "ent:ds:gmip": "la_armed", "ent:ds:mara-patani": "la_group",
+    "ent:ds:isoc4": "la_c2", "ent:ds:army4": "la_c2", "ent:ds:sbpac": "la_gov", "ent:ds:rangers": "la_armed", "ent:ds:or-sor": "la_security",
+    "ent:ds:chor-ror-bor": "la_security", "ent:ds:bpp": "la_border", "ent:ds:police9": "la_police", "ent:ds:marines-nara": "la_amphib",
+    "ent:ds:thai-panel": "la_gov", "ent:ds:my-facilitator": "la_gov", "ent:ds:akps": "la_border", "ent:ds:gof": "la_police", "ent:ds:my-customs": "la_customs", "ent:ds:dsw": "la_org" };
+  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person" };
+  function symOf(e) { var k = e && (SYM_ID[e.id] || SYM_TYPE[e.type] || "la_group"); return W.OSAP_SYM && W.OSAP_SYM.d[k] ? k : ""; }
   function graph(X) {
     var nodes = {}, edges = {};
     function node(id, label, kind, w) { if (!nodes[id]) nodes[id] = { id: id, label: label, kind: kind, w: 0 }; nodes[id].w += w || 0; return nodes[id]; }
     function edge(a, b, kind) { if (a === b) return; var k = a < b ? a + "|" + b : b + "|" + a, e = edges[k] || (edges[k] = { a: a < b ? a : b, b: a < b ? b : a, n: 0, kind: kind, rep: [] }); return e; }
-    var name = {}; X.E.forEach(function (e) { name[e.id] = e.name; });
+    var name = {}, sym = {}, kind = {}; X.E.forEach(function (e) { name[e.id] = e.name; sym[e.id] = symOf(e); kind[e.id] = [e.group, e.type]; });
     X.rows.forEach(function (r) {
       if (!r.ents.length) return;
       r.ents.forEach(function (id) { node(id, name[id], "ent", 1); });
@@ -234,6 +242,7 @@
     if (S.sel && nodes[S.sel]) { keep[S.sel] = 1; E.forEach(function (e) { if (e.a === S.sel || e.b === S.sel) keep[e.a] = keep[e.b] = 1; }); }
     N = N.filter(function (n) { return keep[n.id]; });
     E = E.filter(function (e) { return keep[e.a] && keep[e.b]; });
+    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.person = /^person/.test(kind[n.id][1] || ""); } });
     return { N: N, E: E, nodes: nodes };
   }
   /* a small force layout, started from a circle so the same data always draws the same picture */
@@ -257,17 +266,75 @@
     }
     return at;
   }
+  /* the chart follows the usual link-analysis conventions: organisations and units are labelled boxes (with their NATO APP-6
+     symbol), people are circles, places are point-of-interest markers; a dashed line is an unconfirmed association (here: named
+     in the same report), a solid line one the analyst recorded. The box's edge colour is the list group, not a judgement. */
+  var GROUP_C = { "Armed groups named in reporting": "#6a3d9a", "Thai security forces and agencies": "#1c5d99", "Peace process": "#2b8a3e",
+    "Malaysian border agencies": "#c56a00", "Monitors and researchers": "#5f6b77", "Your entities": "#343a40" };
+  function boxOf(n) {
+    if (n.kind === "dist") return { w: 16, h: 24, lab: true };
+    if (n.person) return { w: 30, h: 30, lab: true };
+    return { w: 212, h: 40 };
+  }
+  /* push overlapping boxes apart after the force layout, so names never sit on each other */
+  function unclash(N, w, h) {
+    for (var it = 0; it < 80; it++) {
+      var moved = false;
+      for (var i = 0; i < N.length; i++) for (var j = i + 1; j < N.length; j++) {
+        var a = N[i], b = N[j], A = boxOf(a), B = boxOf(b), aw = A.w + (A.lab ? 90 : 0), bw = B.w + (B.lab ? 90 : 0), ah = A.h + (A.lab ? 16 : 0), bh = B.h + (B.lab ? 16 : 0);
+        var ox = (aw + bw) / 2 + 10 - Math.abs(a.x - b.x), oy = (ah + bh) / 2 + 10 - Math.abs(a.y - b.y);
+        if (ox <= 0 || oy <= 0) continue;
+        moved = true;
+        if (ox / aw < oy / ah) { var sx = (a.x < b.x ? -1 : 1) * ox / 2; a.x += sx; b.x -= sx; } else { var sy = (a.y < b.y ? -1 : 1) * oy / 2; a.y += sy; b.y -= sy; }
+      }
+      N.forEach(function (n) { var B = boxOf(n); n.x = Math.max(B.w / 2 + 50, Math.min(w - B.w / 2 - 50, n.x)); n.y = Math.max(B.h / 2 + 8, Math.min(h - B.h / 2 - 20, n.y)); });
+      if (!moved) break;
+    }
+  }
+  function wrap2(t, max) {
+    t = String(t || ""); if (t.length <= max) return [t];
+    var cut = t.lastIndexOf(" ", max); if (cut < max * 0.5) cut = max;
+    var a = t.slice(0, cut).trim(), b = t.slice(cut).trim(); if (b.length > max) b = b.slice(0, max - 1).trim() + "\u2026";
+    return [a, b];
+  }
   function tabLinks(X) {
-    var G = graph(X), w = 640, hh = G.N.length > 12 ? 440 : 340, at = layout(G.N, G.E, w, hh);
-    var h = '<p class="anal">Dashed grey: named in the same report (the number on hover), which is not a relationship. Solid green: your own links. Blue circles are entities, brown squares districts. Tap one to see its connections.</p>';
+    var G = graph(X), w = 1000, hh = G.N.length > 12 ? 700 : 520, at = layout(G.N, G.E, w, hh);
+    unclash(G.N, w, hh);
+    var h = '<p class="anal">Link chart. Boxes: organisations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
     if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + linkForm(X);
     h += '<svg class="angraph" viewBox="0 0 ' + w + " " + hh + '" role="img" aria-label="Link chart">' +
       G.E.map(function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return ""; var own = e.kind === "own", on = S.sel && (e.a === S.sel || e.b === S.sel);
-        return '<line x1="' + a.x.toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + b.x.toFixed(1) + '" y2="' + b.y.toFixed(1) + '" stroke="' + (own ? "#2b8a3e" : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? 2.5 : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? "" : ' stroke-dasharray="5 4"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></line>"; }).join("") +
-      G.N.map(function (n) { var r = Math.min(18, 6 + Math.sqrt(n.w) * 2), on = S.sel === n.id, x = n.x.toFixed(1), y = n.y.toFixed(1);
-        return '<g data-an-node="' + esc(n.id) + '">' + (n.kind === "dist" ? '<rect x="' + (n.x - r * 0.8).toFixed(1) + '" y="' + (n.y - r * 0.8).toFixed(1) + '" width="' + (r * 1.6).toFixed(1) + '" height="' + (r * 1.6).toFixed(1) + '" fill="#8d6e63"' : '<circle cx="' + x + '" cy="' + y + '" r="' + r.toFixed(1) + '" fill="#1c5d99"') +
-          ' stroke="' + (on ? "#e67700" : "#fff") + '" stroke-width="' + (on ? 3 : 1.5) + '"><title>' + esc(n.label) + "</title></" + (n.kind === "dist" ? "rect" : "circle") + ">" +
-          '<text x="' + x + '" y="' + (n.y + r + 11).toFixed(1) + '" text-anchor="middle">' + esc(String(n.label).length > 26 ? String(n.label).slice(0, 25) + "\u2026" : n.label) + "</text></g>"; }).join("") + "</svg>";
+        var ln = '<line x1="' + a.x.toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + b.x.toFixed(1) + '" y2="' + b.y.toFixed(1) + '" stroke="' + (own ? "#2b8a3e" : on ? "#1c5d99" : "#8a96a3") + '" stroke-width="' + (own ? 2.5 : Math.min(6, 0.8 + Math.log(1 + e.n) * 1.2)).toFixed(1) + '"' + (own ? "" : ' stroke-dasharray="6 5"') + ' opacity="' + (S.sel && !on ? 0.25 : 0.85) + '"><title>' + esc(own ? (G.nodes[e.a] || {}).label + " \u2014 " + e.rel + " \u2014 " + (G.nodes[e.b] || {}).label + " (your link)" : (G.nodes[e.a] || {}).label + " and " + (G.nodes[e.b] || {}).label + ": named together in " + e.n + " report" + (e.n === 1 ? "" : "s")) + "</title></line>";
+        /* a recorded link carries its label at the middle, as on a link chart */
+        if (own && e.rel) ln += '<text class="anrel" x="' + ((a.x + b.x) / 2).toFixed(1) + '" y="' + ((a.y + b.y) / 2 - 4).toFixed(1) + '" text-anchor="middle">' + esc(e.rel) + "</text>";
+        return ln; }).join("") +
+      G.N.map(function (n) { var on = S.sel === n.id, x = n.x, y = n.y, B = boxOf(n), d = n.sym && W.OSAP_SYM && W.OSAP_SYM.d[n.sym], out = "", lab = String(n.label || "");
+        var tip = "<title>" + esc(lab + (d ? " \u00b7 " + W.OSAP_SYM.m[n.sym][0] : "") + " \u00b7 named in " + n.w + " report" + (n.w === 1 ? "" : "s")) + "</title>";
+        if (n.kind === "dist") {
+          if (d) { var sc = 26 / Math.max(d[1], d[2]); out = '<rect x="' + (x - 10).toFixed(1) + '" y="' + (y - 24).toFixed(1) + '" width="20" height="26" fill="transparent">' + tip + "</rect>" + d[0].replace("<svg ", '<svg x="' + (x - d[3] * sc).toFixed(1) + '" y="' + (y - d[4] * sc).toFixed(1) + '" width="' + (d[1] * sc).toFixed(1) + '" height="' + (d[2] * sc).toFixed(1) + '" pointer-events="none" '); }
+          else out = '<rect x="' + (x - 8) + '" y="' + (y - 8) + '" width="16" height="16" fill="#8d6e63">' + tip + "</rect>";
+          if (on) out = '<circle cx="' + x.toFixed(1) + '" cy="' + (y - 10).toFixed(1) + '" r="17" fill="none" stroke="#e67700" stroke-width="3"/>' + out;
+          return '<g data-an-node="' + esc(n.id) + '">' + out + '<text x="' + x.toFixed(1) + '" y="' + (y + 15).toFixed(1) + '" text-anchor="middle">' + esc(lab) + "</text></g>";
+        }
+        if (n.person) {
+          return '<g data-an-node="' + esc(n.id) + '"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#fff" stroke="' + (on ? "#e67700" : "#343a40") + '" stroke-width="' + (on ? 3 : 2) + '">' + tip + "</circle>" +
+            '<text x="' + x.toFixed(1) + '" y="' + (y + 29).toFixed(1) + '" text-anchor="middle">' + esc(lab.length > 30 ? lab.slice(0, 29) + "\u2026" : lab) + "</text></g>";
+        }
+        var col = GROUP_C[n.group] || "#495057", bx = x - B.w / 2, by = y - B.h / 2, lines = wrap2(lab, 23), tx = bx + (d ? 40 : 8);
+        out = '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + B.w + '" height="' + B.h + '" rx="3" fill="#fff" stroke="' + (on ? "#e67700" : col) + '" stroke-width="' + (on ? 3 : 1.6) + '">' + tip + "</rect>" +
+          '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="5" height="' + B.h + '" fill="' + col + '" pointer-events="none"/>';
+        if (d) { var s2 = 26 / Math.max(d[1], d[2]), sw = d[1] * s2, sh = d[2] * s2; out += d[0].replace("<svg ", '<svg x="' + (bx + 8 + (28 - sw) / 2).toFixed(1) + '" y="' + (y - sh / 2).toFixed(1) + '" width="' + sw.toFixed(1) + '" height="' + sh.toFixed(1) + '" pointer-events="none" '); }
+        out += lines.map(function (l, k) { return '<text class="anbx" x="' + tx.toFixed(1) + '" y="' + (y + (lines.length === 1 ? 4 : k ? 12 : -2)).toFixed(1) + '">' + esc(l) + "</text>"; }).join("");
+        /* how many reports name it, as a tab on the box's top edge */
+        var cnt = String(n.w), cw = 8 + cnt.length * 6.5;
+        out += '<rect x="' + (bx + B.w - cw - 4).toFixed(1) + '" y="' + (by - 8).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="14" rx="7" fill="' + col + '" pointer-events="none"/><text class="ancnt" x="' + (bx + B.w - 4 - cw / 2).toFixed(1) + '" y="' + (by + 2.5).toFixed(1) + '" text-anchor="middle">' + cnt + "</text>";
+        return '<g data-an-node="' + esc(n.id) + '">' + out + "</g>"; }).join("") + "</svg>";
+    /* the key: the symbols and box colours in this chart, in plain words */
+    var ks = G.N.map(function (n) { return n.sym; }).filter(function (k, i, a) { return k && a.indexOf(k) === i; }),
+      gs = G.N.map(function (n) { return n.kind === "ent" && !n.person ? n.group : ""; }).filter(function (g, i, a) { return g && a.indexOf(g) === i; });
+    h += '<div class="ankey">' + (gs.length ? '<div class="lgh">Box edge: list group (not a judgement)</div>' + gs.map(function (g) { return '<div class="lg"><span class="answ" style="border-color:' + (GROUP_C[g] || "#495057") + ";box-shadow:inset 4px 0 0 " + (GROUP_C[g] || "#495057") + '"></span><div>' + esc(g) + "</div></div>"; }).join("") : "") +
+      '<div class="lgh">Lines</div><div class="lg"><span class="anln" style="border-top:2.5px dashed #8a96a3"></span><div>Named in the same report (unconfirmed)</div></div><div class="lg"><span class="anln" style="border-top:2.5px solid #2b8a3e"></span><div>Your recorded link</div></div>' +
+      (ks.length && W.OSAP_SYM && W.OSAP_SYM.legend ? W.OSAP_SYM.legend(ks) + '<p class="msyfr">NATO-style symbols (APP-6 / MIL-STD-2525D). <b>Yellow, four-lobed frame</b>: armed or security body, side not marked. <b>Purple</b>: civilian body (government, monitor). The symbol shows what kind of body it is, not what it did.</p>' : "") + "</div>";
     if (S.sel && G.nodes[S.sel]) {
       var mine = G.E.filter(function (e) { return e.a === S.sel || e.b === S.sel; }).sort(function (a, b) { return (b.kind === "own") - (a.kind === "own") || b.n - a.n; });
       h += "<h3>" + esc(G.nodes[S.sel].label) + "</h3><table><tr><th>Connected to</th><th>How</th><th></th></tr>" + mine.map(function (e) {
