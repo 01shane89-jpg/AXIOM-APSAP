@@ -11,7 +11,7 @@ const at = Math.floor(Date.now() / 1000);
 for (const url of RELAYS) {
   const row = { url, info: await info(url) };
   for (const kb of [20, 100]) {
-    const d = await C.dtag(K, "probe/" + kb), content = await C.seal(K, d, { type: "bucket", v: 1, u: { pad: Array.from(crypto.getRandomValues(new Uint8Array(kb * 700))).join("") } });
+    const d = await C.dtag(K, "probe/" + kb), content = await C.seal(K, d, { type: "bucket", v: 1, u: { pad: Array.from({ length: kb * 20 }, () => Buffer.from(crypto.getRandomValues(new Uint8Array(48))).toString("base64")).join("") } });
     const ev = await C.event(K, d, content, at);
     row["pub" + kb] = { bytes: content.length, ...(await pub(url, ev)) };
   }
