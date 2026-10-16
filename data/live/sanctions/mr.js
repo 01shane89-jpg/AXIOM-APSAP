@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"mr","asof":"2026-10-16 01:48Z","items":[]};
+window.ASAP_SANC_CC={"cc":"mr","asof":"2026-10-16 02:03Z","items":[{"id":"6903","n":"AL-WALID, Mahfouz Ould","t":"person","p":"SDGT","ccs":["mr"]},{"id":"21187","n":"MOHAMEDOU, Saleck Ould Cheikh","t":"person","p":"SDGT","ccs":["mr"]}]};
