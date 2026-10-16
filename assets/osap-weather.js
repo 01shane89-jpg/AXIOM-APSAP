@@ -1603,10 +1603,10 @@
     { k: "fhist", name: "Flood history", grp: "Flooding", mirror: "hist", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water).", lic: "EC JRC / Google, CC BY 4.0",
       legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,rgba(149,109,235,.2),rgba(115,80,235,.6),rgba(80,50,235,.75))"></span><span class="wxrl"><span>rarely wet</span><span>often wet</span></span>'; } },
     { k: "tc", name: "Tropical cyclones", grp: "Storms", note: "Tracks and forecast cones: JMA and JTWC (from the app's 15-minute snapshot), NOAA NHC, CPHC and JTWC (nowCOAST), and GDACS storm alerts worldwide.", op: 0.85,
-      lic: "JMA, JTWC, NOAA nowCOAST (public domain), GDACS", legend: function () { return cats([["#c62828", "track, forecast dashed"], ["rgba(198,40,40,.25)", "cone or wind area"]]); },
+      lic: "JMA, JTWC, NOAA nowCOAST (public domain), GDACS", legend: function () { return (W.OSAP_SYM ? W.OSAP_SYM.sw("a_hydromet", "#c62828") + " storm now (NATO weather-event symbol; dot = agency colour) " : "") + cats([["#c62828", "track, forecast dashed"], ["rgba(198,40,40,.25)", "cone or wind area"]]); },
       make: function (op) { return stormLayer(op); } },
     { k: "warn", name: "Weather warnings", grp: "Warnings", note: "Mapped warnings and alerts: GDACS (worldwide), Pacific Disaster Center hazards for the open country, and U.S. National Weather Service warning areas. Warnings without a map position are listed in the Weather view.", op: 0.8,
-      lic: "GDACS; PDC DisasterAWARE; NOAA NWS (public domain)", legend: function () { return cats([["#c62828", "red or warning"], ["#ef6c00", "orange or watch"], ["#2e7d32", "green or advisory"]]); },
+      lic: "GDACS; PDC DisasterAWARE; NOAA NWS (public domain)", legend: function () { return (W.OSAP_SYM ? "NATO event symbols (flood, storm, quake, fire…); the dot is the level: " : "") + cats([["#c62828", "red or warning"], ["#ef6c00", "orange or watch"], ["#2e7d32", "green or advisory"]]); },
       make: function (op) { return warnLayer(op); } }
   ];
   var LBYK = {}; LAY.forEach(function (l) { LBYK[l.k] = l; });
@@ -1716,7 +1716,7 @@
         (p.fc || []).forEach(function (x) { if (x.r_km) g.addLayer(L.circle([x.lat, x.lon], { pane: "wxvec", radius: x.r_km * 1000, color: c, weight: 1, dashArray: "3 3", fillColor: c, fillOpacity: 0.06 * op, opacity: op })
           .bindPopup(part("Forecast position" + (x.t ? " for " + esc(String(x.t).replace("T", " ")) : "") + ", within about " + Math.round(x.r_km) + " km (the agency's uncertainty circle)"))); });
         if (tr.length > 1) g.addLayer(L.polyline(tr.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2.5, dashArray: "6 5", opacity: op }).bindPopup(part("Forecast track")));
-        g.addLayer(L.circleMarker([p.now.lat, p.now.lon], { pane: "wxvec", radius: 9, color: "#fff", weight: 2, fillColor: c, fillOpacity: 1 })
+        g.addLayer(wxMark([p.now.lat, p.now.lon], "a_hydromet", c, 0.9, { pane: "wxvec", radius: 9, color: "#fff", weight: 2, fillColor: c, fillOpacity: 1 })
           .bindPopup(part(esc([p.now.wind_kt != null ? p.now.wind_kt + " kt" : "", p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + p.now.course : ""].filter(Boolean).join(" · "))))
           .bindTooltip(esc(st.name), { permanent: true, direction: "right", offset: [10, 0], className: "stlbl" }));
       });
@@ -1724,10 +1724,16 @@
     ((W.ASAP_GDACS || {}).events || []).forEach(function (e) {
       if (e.type !== "TC" || e.current === false || e.lat == null) return;
       var c = { Red: "#c62828", Orange: "#ef6c00", Green: "#2e7d32" }[e.alert] || "#555";
-      g.addLayer(L.circleMarker([e.lat, e.lon], { pane: "wxvec", radius: 7, color: "#fff", weight: 1.5, fillColor: c, fillOpacity: 0.95 })
+      g.addLayer(wxMark([e.lat, e.lon], "a_hydromet", c, 0.75, { pane: "wxvec", radius: 7, color: "#fff", weight: 1.5, fillColor: c, fillOpacity: 0.95 })
         .bindPopup('<div class="pop"><div class="tier">GDACS ' + esc(e.alert || "") + ' alert</div><h3>' + esc(e.name) + '</h3><p class="obs">' + esc(e.severity || "") + ' · <a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>'));
     });
     return g;
+  }
+  /* storms and warnings are drawn with NATO (2525D) event symbols, the agency's or alert level's colour as the dot */
+  var GTYPE = { TC: "a_hydromet", FL: "a_flood", DR: "a_drought", EQ: "a_quake", VO: "a_volcano", WF: "a_wildfire", TS: "a_tsunami" };
+  function wxMark(ll, k, col, sc, st, op) {
+    var S = W.OSAP_SYM; if (!S || !S.mark) return L.circleMarker(ll, st);
+    return S.mark(ll, S.d[k] ? k : "a_incident", { pane: st.pane, badge: col, scale: sc, opacity: op == null ? 1 : Math.max(0.35, op) });
   }
   /* warnings: GDACS alerts, PDC hazards for the open country, U.S. NWS warning areas */
   var NWS = { at: 0, g: null };
@@ -1735,7 +1741,7 @@
     var g = L.layerGroup(), C = { Red: "#c62828", Orange: "#ef6c00", Green: "#2e7d32" };
     ((W.ASAP_GDACS || {}).events || []).forEach(function (e) {
       if (e.current === false || e.lat == null || e.type === "EQ") return;
-      g.addLayer(L.circleMarker([e.lat, e.lon], { pane: "wxvec", radius: 7, color: "#fff", weight: 1.5, fillColor: C[e.alert] || "#555", fillOpacity: op })
+      g.addLayer(wxMark([e.lat, e.lon], GTYPE[e.type] || "a_incident", C[e.alert] || "#555", 0.75, { pane: "wxvec", radius: 7, color: "#fff", weight: 1.5, fillColor: C[e.alert] || "#555", fillOpacity: op }, op)
         .bindPopup('<div class="pop"><div class="tier">GDACS ' + esc(e.alert || "") + " alert · " + esc(e.type) + "</div><h3>" + esc(e.name) + '</h3><p class="obs">' + esc([e.from ? "from " + e.from.slice(0, 10) : "", e.to ? "to " + e.to.slice(0, 10) : ""].join(" ")) +
           ' · <a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a>. A disaster-alert model score, not an official warning.</p></div>'));
     });
@@ -1745,7 +1751,7 @@
       ((X && X.items) || []).forEach(function (i) {
         if (i.f !== "pdc" || i.la == null) return;
         var lvl = /WARNING/.test(i.t) ? "#c62828" : /WATCH/.test(i.t) ? "#ef6c00" : "#2e7d32";
-        g.addLayer(L.circleMarker([i.la, i.lo], { pane: "wxvec", radius: 6, color: "#fff", weight: 1.5, fillColor: lvl, fillOpacity: op })
+        g.addLayer(wxMark([i.la, i.lo], W.OSAP_SYM && W.OSAP_SYM.classify ? W.OSAP_SYM.classify(i.k || "", i.t || "") : "a_incident", lvl, 0.7, { pane: "wxvec", radius: 6, color: "#fff", weight: 1.5, fillColor: lvl, fillOpacity: op }, op)
           .bindPopup('<div class="pop"><div class="tier">Pacific Disaster Center · ' + esc(i.k || "") + "</div><h3>" + esc(i.t) + '</h3><p class="obs">' + esc(i.d ? i.d.replace("T", " ") + ", as published" : "") +
             ' · <a href="' + esc(i.u) + '" target="_blank" rel="noopener">DisasterAWARE</a></p></div>'));
       });

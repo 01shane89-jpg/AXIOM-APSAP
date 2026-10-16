@@ -109,8 +109,11 @@
       if (ev.length > MAXPINS) { ev.sort(function (a, c) { return c[0][6] - a[0][6]; }); note = (note ? note + " " : "") + "Showing the " + num(MAXPINS) + " deadliest of " + num(ev.length) + " events here; zoom in for the rest."; ev = ev.slice(0, MAXPINS); }
       ev.forEach(function (e) {
         var r = e[0];
-        g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: "cfpane", radius: Math.min(3 + Math.sqrt(r[6]) * 1.1, 13), color: "#222", weight: r[15] ? 1.2 : 0.8, dashArray: r[15] ? "2 2" : null,
-          fillColor: TYPEC[r[5]] || TYPEC[1], fillOpacity: 0.72 }).bindPopup(function () { return pop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { fp(r, e[1]); }, 0); }));
+        var ho = { renderer: rend, pane: "cfpane", radius: Math.min(3 + Math.sqrt(r[6]) * 1.1, 13), color: "#222", weight: r[15] ? 1.2 : 0.8, dashArray: r[15] ? "2 2" : null,
+          fillColor: TYPEC[r[5]] || TYPEC[1], fillOpacity: 0.72 };
+        /* NATO symbol (2525D): fighting = armed clash, violence against civilians = killing; the type colour is the dot */
+        g.push((sym() ? W.OSAP_SYM.mark([r[3], r[4]], r[5] === 3 ? "a_killing" : "a_shooting", L.extend(ho, { badge: ho.fillColor, scale: Math.min(1, 0.45 + Math.sqrt(r[6] || 0) * 0.04) }))
+          : L.circleMarker([r[3], r[4]], ho)).bindPopup(function () { return pop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { fp(r, e[1]); }, 0); }));
       });
       lyr = L.layerGroup(g).addTo(map);
     } else {
@@ -126,11 +129,12 @@
     var nb = D.getElementById("cfh-note"); if (nb) nb.textContent = note || (m === "pins" ? "" : "Zoomed out: a heat map of where each event happened. Tap a hot area or zoom in to see each event.");
   }
   function period() { return sel.last12 ? "the past 12 months" : sel.from === sel.to ? String(sel.from) : sel.from + " to " + sel.to; }
+  function sym() { return !!(W.OSAP_SYM && W.OSAP_SYM.mark); }
   function legend(m) {
     if (!W.OSAP_LEGEND) return;
     var h = "<h3>History of violence (UCDP), " + esc(period()) + "</h3>";
-    if (m === "pins") h += [1, 2, 3].filter(function (t) { return sel.t[t]; }).map(function (t) { return '<div class="lg"><span class="sw round" style="background:' + TYPEC[t] + '"></span><div>' + esc(TYPEN[t]) + "</div></div>"; }).join("") +
-      '<div class="lg"><div><span class="d">Larger pin: more deaths (UCDP best estimate). Dashed ring: provisional event, not yet in a yearly release.</span></div></div>';
+    if (m === "pins") h += [1, 2, 3].filter(function (t) { return sel.t[t]; }).map(function (t) { return (sym() ? '<div class="lg msyml">' + W.OSAP_SYM.sw(t === 3 ? "a_killing" : "a_shooting", TYPEC[t]) : '<div class="lg"><span class="sw round" style="background:' + TYPEC[t] + '"></span>') + "<div>" + esc(TYPEN[t]) + "</div></div>"; }).join("") +
+      '<div class="lg"><div><span class="d">' + (sym() ? "NATO map symbols, the dot in the event type's colour. " : "") + 'Larger pin: more deaths (UCDP best estimate). Dashed ring: provisional event, not yet in a yearly release.</span></div></div>';
     else h = W.OSAP_HEAT.legend("History of violence (UCDP), " + esc(period()), "Heat map of " + num(drawn.n) + " events, each where UCDP placed it; deadlier events weigh more." +
       (drawn.left ? " " + num(drawn.left) + " events UCDP placed only to a province or wider are left out here; zoom in to see them." : "") + " Zoom in or tap a hot area for each event.");
     W.OSAP_LEGEND.set("cf-hist", h, rail());

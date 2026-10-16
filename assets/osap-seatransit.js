@@ -729,7 +729,9 @@
   }
   /* ---------- the map ---------- */
   function mk(p, t, cls, tip) {
-    var w = Math.max(22, t.length * 7 + 8);
+    var w = Math.max(22, t.length * 7 + 8), SM = W.OSAP_SYM;
+    /* NATO (2525D) symbols with their label: hospitals keep the red cross; the vessel's own last position keeps its plain marker */
+    if (SM && SM.tag && cls !== "now") return L.marker(p, { icon: cls === "hosp" || cls === "osmh" ? SM.ptag("hospital", cls === "osmh" ? "" : t, { cls: "stmk " + cls }) : SM.tag({ port: "i_port", af: "i_air", wp: "g_waypoint" }[cls] || "g_poi", t, { cls: "stmk " + cls, scale: 0.65 }), keyboard: false }).bindTooltip(E(tip));
     return L.marker(p, { icon: L.divIcon({ className: "stmk " + cls, html: E(t), iconSize: [w, 18], iconAnchor: [w / 2, 9] }), keyboard: false }).bindTooltip(E(tip));
   }
   function draw() {
@@ -743,7 +745,7 @@
       res.rows.forEach(function (r, i) { if (r.remote) run.push([r.pt.lat, r.pt.lon]); if ((!r.remote || i === res.rows.length - 1) && run.length) { if (run.length > 1) L.polyline(run, { color: "#c0392b", weight: 6, opacity: .55, interactive: false }).addTo(layer); else L.circleMarker(run[0], { radius: 6, color: "#c0392b", fillOpacity: .5 }).addTo(layer); run = []; } });
       res.nodes.forEach(function (x) {
         var n = x.node, t = { hosp: "H", port: "PT", af: "A", osmh: "h" }[n.kind] || "?";
-        if (n.kind === "osmh") L.circleMarker([n.lat, n.lon], { radius: 3, color: "#8a8f96", weight: 1, fillOpacity: .7 }).bindTooltip(E(n.name + " (OpenStreetMap, reference only)")).addTo(layer);
+        if (n.kind === "osmh") (W.OSAP_SYM && W.OSAP_SYM.ptag ? mk([n.lat, n.lon], "", "osmh", "") : L.circleMarker([n.lat, n.lon], { radius: 3, color: "#8a8f96", weight: 1, fillOpacity: .7 })).bindTooltip(E(n.name + " (OpenStreetMap, reference only)")).addTo(layer);
         else mk([n.lat, n.lon], t, n.kind, n.name + " · " + nmT(x.nm) + " from the corridor").addTo(layer);
       });
     }

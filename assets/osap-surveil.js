@@ -69,6 +69,12 @@
   function icon(kind, dir) {
     var col = TYPES[kind].col;
     var cone = dir == null ? "" : '<path d="' + sector(18, 18, 16, dir - 27, dir + 27) + '" fill="' + col + '" fill-opacity="0.3" stroke="' + col + '" stroke-opacity="0.6" stroke-width="0.6"/>';
+    // NATO (2525D) sensor symbol over the cone, the camera type's colour as the dot
+    if (W.OSAP_SYM && W.OSAP_SYM.icon) {
+      var ic = W.OSAP_SYM.icon("g_sensor", { cls: "sv-ic", badge: col, scale: 0.6 });
+      if (cone) ic.options.html = '<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true" style="position:absolute;left:-18px;top:-18px;pointer-events:none">' + cone + "</svg>" + ic.options.html;
+      return ic;
+    }
     return L.divIcon({ className: "sv-ic", iconSize: [36, 36], iconAnchor: [18, 18],
       html: '<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">' + cone + '<circle cx="18" cy="18" r="5.5" fill="' + col + '" stroke="#fff" stroke-width="1.6"/></svg>' });
   }
@@ -180,7 +186,7 @@
     if (!W.OSAP_LEGEND) return;
     if (!S.on) { W.OSAP_LEGEND.set("sv", ""); return; }
     W.OSAP_LEGEND.set("sv", '<div class="lgh" style="font-weight:600;margin-bottom:2px">Surveillance cameras</div>' +
-      Object.keys(TYPES).map(function (k) { return '<div class="lg"><span class="sw" style="background:' + TYPES[k].col + ';width:12px;height:12px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.4)"></span><div>' + TYPES[k].name + "</div></div>"; }).join("") +
+      Object.keys(TYPES).map(function (k) { return '<div class="lg">' + (W.OSAP_SYM ? W.OSAP_SYM.sw("g_sensor", TYPES[k].col) : '<span class="sw" style="background:' + TYPES[k].col + ';width:12px;height:12px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.4)"></span>') + '<div>' + TYPES[k].name + "</div></div>"; }).join("") +
       '<div class="lg"><div><span class="d">A cone shows the direction a camera faces, where OpenStreetMap records it. &copy; OpenStreetMap (ODbL).</span></div></div>');
   }
   function set(on) {

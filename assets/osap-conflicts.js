@@ -379,7 +379,9 @@
       } else if (f.current.kind === "places") {
         lyr.places = L.layerGroup(f.current.places.map(function (p) {
           var con = /^contested/.test(p.ctl);
-          return L.circleMarker([p.la, p.lo], { pane: "cfpane", radius: con ? 5 : 4, color: con ? "#000" : "#fff", weight: con ? 1.5 : 1, fillColor: ctlColour(p.ctl), fillOpacity: 0.95 })
+          var po = { pane: "cfpane", radius: con ? 5 : 4, color: con ? "#000" : "#fff", weight: con ? 1.5 : 1, fillColor: ctlColour(p.ctl), fillOpacity: 0.95 };
+          // NATO (2525D) point-of-interest symbol, the holder's colour as the dot; contested places get a dashed ring
+          return (sym() ? W.OSAP_SYM.mark([p.la, p.lo], "g_poi", { pane: "cfpane", badge: po.fillColor, scale: 0.5, dashArray: con ? "3 3" : null, color: "#000" }) : L.circleMarker([p.la, p.lo], po))
             .bindTooltip(esc(pname(p)) + (p.t && p.t !== "town" ? " (" + esc(TNAME[p.t] || p.t) + ")" : "") + " · " + esc(legendName(f, p.ctl)) + " · reported, not verified")
             .bindPopup("<b>" + esc(pname(p)) + "</b>" + '<div class="cfm">' + esc(TNAME[p.t] || p.t || "place") + "</div><div>" + esc(legendName(f, p.ctl)) + ", as the source shows it.</div>" +
               frontSrc(f), { maxWidth: 320 });
@@ -399,7 +401,10 @@
       } else {
         ucdpHeat.cnt = uev.length;
         lyr.ucdp = L.layerGroup(uev.map(function (e) {
-          return L.circleMarker([e.lat, e.lon], { pane: "cfpane", radius: Math.min(3 + Math.sqrt(e.best || 0) * 1.4, 16), color: "#fff", weight: 1, fillColor: TYPEC[e.type] || "#9E3118", fillOpacity: 0.75 })
+          var uo = { pane: "cfpane", radius: Math.min(3 + Math.sqrt(e.best || 0) * 1.4, 16), color: "#fff", weight: 1, fillColor: TYPEC[e.type] || "#9E3118", fillOpacity: 0.75 };
+          /* NATO symbol (2525D): fighting = armed clash, violence against civilians = killing; the UCDP type colour is the dot */
+          return (sym() ? W.OSAP_SYM.mark([e.lat, e.lon], e.type === 3 ? "a_killing" : "a_shooting", L.extend(uo, { badge: uo.fillColor, scale: Math.min(1.1, 0.5 + Math.sqrt(e.best || 0) * 0.05) }))
+            : L.circleMarker([e.lat, e.lon], uo))
             .bindPopup(ucdpHtml(e), { maxWidth: 320 });
         })).addTo(map);
       }
@@ -411,12 +416,20 @@
      to them, or list them when they share a spot), so a zoomed-out map shows a few clear badges, not a pile of circles.
      Grouping is by screen distance at the current zoom only; each report keeps its own position. */
   var REPGAP = 26;
+  /* NATO map symbols (assets/osap-symbols.js) when that file loaded */
+  function sym() { return !!(W.OSAP_SYM && W.OSAP_SYM.mark && W.OSAP_SYM.classify); }
+  var repSyms = {};
+  function repSym(i) { var k = W.OSAP_SYM.classify(kindName(i.kind)); return k === "a_incident" ? W.OSAP_SYM.classify(kindName(i.kind), i.title_en || i.title) : k; }
   function repDot(g) {
     var i = g.lead, rough = i.geo.p === "province";   // placed only to a province or region: a hollow ring at its centre, so it does not read as the exact spot
-    return W.L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: g.all.length > 1 ? 6.5 : 5, color: rough ? "#1D5A86" : "#fff", weight: rough ? 2 : 1.5, dashArray: rough ? "3 2" : null, fillColor: "#1D5A86", fillOpacity: rough ? 0.15 : 0.9 }).bindPopup(repHtml(i, true) + alsoHtml(g), { maxWidth: 340 });
+    var ro = { pane: "cfpane", radius: g.all.length > 1 ? 6.5 : 5, color: rough ? "#1D5A86" : "#fff", weight: rough ? 2 : 1.5, dashArray: rough ? "3 2" : null, fillColor: "#1D5A86", fillOpacity: rough ? 0.15 : 0.9 };
+    var sk = sym() ? repSym(i) : null; if (sk) repSyms[sk] = 1;
+    /* the symbol of what the report is about; placed only to a province: a dashed ring round it */
+    return (sk ? W.OSAP_SYM.mark([i.geo.la, i.geo.lo], sk, L.extend(ro, { scale: g.all.length > 1 ? 0.75 : 0.65, opacity: rough ? 0.75 : 1 })) : W.L.circleMarker([i.geo.la, i.geo.lo], ro)).bindPopup(repHtml(i, true) + alsoHtml(g), { maxWidth: 340 });
   }
   function drawRep() {
     if (lyr.rep) map.removeLayer(lyr.rep);
+    repSyms = {};
     var L = W.L, z = map.getZoom(), gs = grouped(filtered()).filter(function (g) { return g.lead.geo && g.lead.geo.la != null; }), bins = [];
     gs.forEach(function (g) {
       var pt = map.project([g.lead.geo.la, g.lead.geo.lo], z), b = null;
@@ -466,13 +479,17 @@
       } else if (cu.kind === "places") {
         var cnt = {}; (cu.places || []).forEach(function (p) { cnt[p.ctl] = (cnt[p.ctl] || 0) + 1; });
         h.push("<h3>Towns, by who holds them (as the source shows)</h3>" + Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).map(function (k) {
-          return row(ctlColour(k), legendName(f, k) + " (" + num(cnt[k]) + ")", "", /^contested/.test(k)); }).join(""));
+          return sym() ? '<div class="lg">' + W.OSAP_SYM.sw("g_poi", ctlColour(k)) + "<div>" + esc(legendName(f, k) + " (" + num(cnt[k]) + ")") + (/^contested/.test(k) ? '<span class="d">Dashed ring: contested</span>' : "") + "</div></div>"
+            : row(ctlColour(k), legendName(f, k) + " (" + num(cnt[k]) + ")", "", /^contested/.test(k)); }).join(""));
       }
     }
     if (ucdpHeat.on) h.push(W.OSAP_HEAT.legend("UCDP events", "Heat map of " + num(ucdpHeat.n) + " events, each where UCDP placed it; deadlier events weigh more." +
       (ucdpHeat.left ? " " + num(ucdpHeat.left) + " placed only to a province or wider are left out here." : "") + " Zoom in or tap a hot area for each event."));
-    else if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate)</span></div></div>');
-    if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the centre of the province it names", true) +
+    else if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return sym() ? '<div class="lg msyml">' + W.OSAP_SYM.sw(t === 3 ? "a_killing" : "a_shooting", TYPEC[t]) + "<div>" + esc(TYPEN[t]) + "</div></div>" : row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">' + (sym() ? "NATO map symbols, the dot in the event type's colour. Larger: more deaths (UCDP best estimate)" : "Larger dot: more deaths (UCDP best estimate)") + "</span></div></div>");
+    var rk = sym() ? Object.keys(repSyms) : [];
+    if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + (rk.length ? rk.map(function (k) { return '<div class="lg msyml">' + W.OSAP_SYM.sw(k) + "<div>" + esc(W.OSAP_SYM.m[k][0]) + "</div></div>"; }).join("") +
+        '<div class="lg"><div><span class="d">News reports as NATO map symbols, placed at the place they name; unverified. Dashed ring: placed only to a province.</span></div></div>'
+      : row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the centre of the province it names", true)) +
       '<div class="lg"><span class="sw round cfrepn" style="position:static;display:inline-flex;width:18px;height:18px"><span style="font-size:10px">3</span></span><div>Reports close together<span class="d">Tap to zoom in or list them</span></div></div>');
     W.OSAP_LEGEND.set("cf", h.join(""), rail());
   }

@@ -551,7 +551,9 @@ function main() {
     S.marks.clearLayers();
     S.wps.forEach(function (w, i) {
       var m = L.marker([w.lat, w.lon], { pane: "routewppane", draggable: true, keyboard: true, title: wpName(i) + ": drag to move",
-        icon: L.divIcon({ className: "rtv" + (i === 0 ? " s" : i === S.wps.length - 1 ? " e" : ""), html: "<span>" + LET.charAt(i) + "</span>", iconSize: [26, 26], iconAnchor: [13, 13] }) });
+        // NATO (2525D) start point, waypoint and release point, each with its letter
+        icon: W.OSAP_SYM && W.OSAP_SYM.tag ? W.OSAP_SYM.tag(i === 0 ? "g_start" : i === S.wps.length - 1 ? "g_release" : "g_waypoint", LET.charAt(i), { cls: "rtv" + (i === 0 ? " s" : i === S.wps.length - 1 ? " e" : ""), scale: 0.8 })
+          : L.divIcon({ className: "rtv" + (i === 0 ? " s" : i === S.wps.length - 1 ? " e" : ""), html: "<span>" + LET.charAt(i) + "</span>", iconSize: [26, 26], iconAnchor: [13, 13] }) });
       var pop = D.createElement("div"); pop.setAttribute("data-keep-pop", "1");
       pop.innerHTML = "<h3>" + E(wpName(i)) + "</h3><p><code>" + E(G.mgrs(w.lat, w.lon) || "") + "</code><br>" + E(G.fmtLL(w.lat, w.lon)) + "</p><p class=\"obs\">Waypoint you placed; drag to move it.</p>" +
         '<div class="rtpb"><button type="button" data-wpdel="' + i + '" aria-label="Delete waypoint ' + LET.charAt(i) + '">Delete waypoint</button></div>';
@@ -723,7 +725,8 @@ function main() {
     S.haz = { hits: hits, areas: areas };
     S.hz.clearLayers();
     hits.slice(0, 200).forEach(function (h) {
-      var m = L.circleMarker(h.p, { pane: "routepane", renderer: S.svg, radius: 6, color: "#fff", weight: 1.5, fillColor: "#c92a2a", fillOpacity: 0.9 });
+      var m = W.OSAP_SYM && W.OSAP_SYM.mark ? W.OSAP_SYM.mark(h.p, W.OSAP_SYM.classify(h.kind, h.title), { pane: "routepane", badge: "#c92a2a", scale: 0.6, fillColor: "#c92a2a" })
+        : L.circleMarker(h.p, { pane: "routepane", renderer: S.svg, radius: 6, color: "#fff", weight: 1.5, fillColor: "#c92a2a", fillOpacity: 0.9 });
       m.bindPopup('<div data-keep-pop="1"><h3>' + E(h.kind) + "</h3><p>" + E(h.title) + '</p><p class="obs">' + E(dist(h.d)) + " from the route, " + E(dist(h.along)) + " along" + (h.date ? " · " + E(h.date) : "") + (h.src ? " · " + E(h.src) : "") + "</p>" +
         (h.url ? '<p><a href="' + E(h.url) + '" target="_blank" rel="noopener">Source</a></p>' : "") + "</div>");
       m.addTo(S.hz);
@@ -1196,7 +1199,7 @@ function main() {
     S.cpl.clearLayers();
     (cps || []).forEach(function (x) {
       if (x.flag) return;
-      L.marker(x.p, { pane: "routewppane", keyboard: false, interactive: true, icon: L.divIcon({ className: "rtcp", html: "<span>" + E(x.id) + "</span>", iconSize: [34, 18], iconAnchor: [17, 9] }) })
+      L.marker(x.p, { pane: "routewppane", keyboard: false, interactive: true, icon: W.OSAP_SYM && W.OSAP_SYM.tag ? W.OSAP_SYM.tag("g_check", x.id, { cls: "rtcp", scale: 0.6 }) : L.divIcon({ className: "rtcp", html: "<span>" + E(x.id) + "</span>", iconSize: [34, 18], iconAnchor: [17, 9] }) })
         .bindPopup('<div data-keep-pop="1"><h3>' + E(x.id) + "</h3><p>" + E(x.what) + "</p><p><code>" + E(G.mgrs(x.p[0], x.p[1], 5) || "") + "</code></p><p class=\"obs\">" + E(dist(x.m)) + " from the start · " + E(zOnly(departMs() + x.t * 1000)) + "</p></div>")
         .addTo(S.cpl);
     });
@@ -1518,7 +1521,8 @@ function main() {
     S.rxl.clearLayers();
     q.rx.slice(0, 300).forEach(function (x) {
       if (!isFinite(x.lat) || !isFinite(x.lon)) return;
-      L.circleMarker([x.lat, x.lon], { pane: "routepane", renderer: S.svg, radius: x.area ? 5 : 6, color: "#fff", weight: 1.5, fillColor: x.col, fillOpacity: 0.9 })
+      (W.OSAP_SYM && W.OSAP_SYM.mark ? W.OSAP_SYM.mark([x.lat, x.lon], W.OSAP_SYM.siteOf(x.lbl, x.name) || (/milit/i.test(x.lbl) ? "milbase" : /border/i.test(x.lbl) ? "crossing" : "g_poi"), { pane: "routepane", badge: x.col, scale: 0.6, fillColor: x.col })
+        : L.circleMarker([x.lat, x.lon], { pane: "routepane", renderer: S.svg, radius: x.area ? 5 : 6, color: "#fff", weight: 1.5, fillColor: x.col, fillOpacity: 0.9 }))
         .bindPopup('<div data-keep-pop="1"><h3>' + E(x.lbl) + "</h3>" + (x.name ? "<p>" + E(x.name) + "</p>" : "") + (x.detail ? '<p class="obs">' + E(x.detail) + "</p>" : "") +
           '<p class="obs">' + (x.inside ? "The route runs inside this area. " : "") + "Mapped in OpenStreetMap; community-mapped, may be incomplete or out of date.</p>" +
           '<p><a href="' + E(x.url) + '" target="_blank" rel="noopener">OpenStreetMap</a></p></div>').addTo(S.rxl);

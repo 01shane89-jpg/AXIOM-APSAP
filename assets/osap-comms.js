@@ -816,6 +816,11 @@ function main() {
       });
     }
   });
+  /* the checked place: the NATO (2525D) communications checkpoint, its answer's colour as the dot; the phone glyph without the symbols */
+  function comIcon(lv, wait) {
+    if (W.OSAP_SYM && W.OSAP_SYM.icon) return W.OSAP_SYM.icon("g_comcheck", { cls: "comv" + (wait ? " comv-wait" : ""), badge: LV[lv].c, scale: 0.8 });
+    return L.divIcon({ className: "comv" + (wait ? " comv-wait" : ""), html: '<span style="background:' + LV[lv].c + '">' + PHONE + "</span>", iconSize: [28, 28], iconAnchor: [14, 14] });
+  }
   function drawMasts() {
     if (!S.ctx) return;
     if (!canv) canv = L.canvas({ padding: 0.3 });
@@ -830,7 +835,9 @@ function main() {
     Object.keys(S.masts).forEach(function (id) {
       var m = S.masts[id]; if (!S.on[m.kind] || !provOn(m) || !b.contains([m.lat, m.lon])) return;
       if (keep && keep.options.mid === id) { n++; shown.push(m); return; }
-      var mk = new MastMark([m.lat, m.lon], { renderer: canv, mid: id, kind: m.kind, radius: (m.kind === "bcast" ? 5.5 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 });
+      var mo = { renderer: canv, mid: id, kind: m.kind, radius: (m.kind === "bcast" ? 5.5 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 };
+      // NATO (2525D) telecommunications-tower symbol, the network's (or kind's) colour as the dot
+      var mk = W.OSAP_SYM && W.OSAP_SYM.mark ? W.OSAP_SYM.mark([m.lat, m.lon], "i_tower", L.extend(mo, { badge: mo.fillColor, scale: Math.min(0.85, 0.3 + rad * 0.3) })) : new MastMark([m.lat, m.lon], mo);
       mk.bindPopup(function () { if (m.kind !== "bcast") setTimeout(function () { fillNear(m); }, 0); return mastPopup(m); });
       mk.addTo(mastLayer); n++; shown.push(m);
     });
@@ -862,7 +869,7 @@ function main() {
     if (!r) return;
     if (r.busy && r.lat != null) {
       L.marker([r.lat, r.lon], { pane: "comchk", keyboard: false, title: "Checking this place",
-        icon: L.divIcon({ className: "comv comv-wait", html: '<span style="background:' + LV[0].c + '">' + PHONE + "</span>", iconSize: [28, 28], iconAnchor: [14, 14] }) }).addTo(chkLayer);
+        icon: comIcon(0, true) }).addTo(chkLayer);
       return;
     }
     if (!r.rows && !r.line) return;
@@ -887,7 +894,7 @@ function main() {
       hit.addTo(chkLayer);
     });
     var pin = L.marker([r.lat, r.lon], { pane: "comchk", keyboard: true, title: LV[r.v.level].t + (r.partial ? " (still checking)" : ""),
-      icon: L.divIcon({ className: "comv" + (r.partial ? " comv-wait" : ""), html: '<span style="background:' + LV[r.v.level].c + '">' + PHONE + "</span>", iconSize: [28, 28], iconAnchor: [14, 14] }) });
+      icon: comIcon(r.v.level, r.partial) });
     pin.addTo(chkLayer);
     if (S.ctx.put) S.ctx.put("com:check", pin);
   }
@@ -902,7 +909,7 @@ function main() {
   function legend() {
     var Lg = W.OSAP_LEGEND; if (!Lg || !S.ctx) return;
     var h = "<h3>Comms</h3>";
-    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + "</div>"; });
+    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div>' + (W.OSAP_SYM ? W.OSAP_SYM.sw("i_tower", KINDS[k].col) : '<span class="comsw" style="background:' + KINDS[k].col + '"></span>') + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + "</div>"; });
     if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast; each test cell is about 2.4 km, blended for display</small></div>";
     if (S.on.pcov) h += '<div class="comkey">Coverage by network, where phones picked up its cells (OpenCelliD): ' + Object.keys(S.pcol).filter(function (k) { return !S.off[k]; }).slice(0, 8).map(function (k) { return '<span class="comsq" style="background:' + S.pcol[k] + '" title="' + E(provName(k)) + '"></span>'; }).join("") + " <small>each network in its own colour</small></div>";
     if (S.result) h += '<div class="comkey">' + [3, 2, 1].map(function (l) { return '<span class="comsw" style="background:' + LV[l].c + '"></span>' + E(LV[l].t); }).join("<br>") + "</div>";
@@ -1203,7 +1210,7 @@ function main() {
     ".comln{display:inline-block;width:22px;height:0;border-top:3px solid #2f9e44;margin-right:6px;vertical-align:middle}.comln-x{border-top:3px dashed #e03131}" +
     ".comv-h{border-left:5px solid;padding:6px 10px;margin:6px 0;background:var(--card,rgba(0,0,0,.03));border-radius:4px}.comv-h b{font-size:16px}.comv-h span{font-size:12px}" +
     ".comlist,.comgaps{margin:4px 0 8px;padding-left:18px}.comlist li,.comgaps li{margin:2px 0}.comlist{list-style:none;padding-left:0}" +
-    ".comv-wait span{animation:comwait 1.1s ease-in-out infinite}@keyframes comwait{50%{opacity:.45}}.comwait{font-weight:600}@media (prefers-reduced-motion:reduce){.comv-wait span{animation:none}}" +
+    ".comv-wait span,.comv-wait .msb{animation:comwait 1.1s ease-in-out infinite}@keyframes comwait{50%{opacity:.45}}.comwait{font-weight:600}@media (prefers-reduced-motion:reduce){.comv-wait span{animation:none}}" +
     ".comv{background:none;border:0}.comv span{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}.comv svg{display:block}" +
     ".comkey{margin-top:4px}.rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}" +
     ".combtns button{min-height:32px}@media (pointer:coarse){.comsec input,.comsec select{font-size:16px!important}.combtns button,[data-comact]{min-height:40px}}" +
