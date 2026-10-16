@@ -7233,7 +7233,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<button type="button" data-area="circle">Circle</button><button type="button" data-area="rect">Square</button>' +
       (AREA ? '<button type="button" data-area="edit">Edit shape</button><button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
     else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>" +
-      (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarise area</button>' : "");
+      (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarise area</button>' +
+      (window.OSAP_AREAREPORT ? '<button type="button" data-area="report" title="Printable report on the drawn area with an overview map and a map per section">Area report</button>' : "") : "");
     areaEl.innerHTML = h;
   }
   areaEl.addEventListener("click", function (e) {
@@ -7251,6 +7252,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     else if (k === "finish") { drawEnd(false); return; }
     else if (k === "cancel") { drawEnd(true); return; }
     else if (k === "sum") { areaSum(); return; }
+    else if (k === "report") { if (window.OSAP_AREAREPORT) window.OSAP_AREAREPORT.open(); return; }
     areaUi();
   });
   areaEl.addEventListener("input", function (e) {
@@ -8774,6 +8776,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-ai.js"></script>
 <script src="assets/osap-areasum.js"></script>
+<script src="assets/osap-areareport.js"></script>
 <script src="assets/osap-aoi.js"></script>
 <script src="assets/osap-mobility.js"></script>
 <script src="assets/osap-viewrep.js"></script>

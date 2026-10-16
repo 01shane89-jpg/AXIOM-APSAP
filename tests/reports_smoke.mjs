@@ -23,7 +23,7 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-const IDS = ["brief", "report", "daily", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "medplan", "seatransit", "route", "routesearch", "sitrep"];
+const IDS = ["brief", "report", "daily", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "areareport", "medplan", "seatransit", "route", "routesearch", "sitrep"];
 
 async function open(hash, opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
@@ -97,6 +97,10 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   ok(!item(m, "Area summary").off && !item(m, "Medical plan").off, "Area summary and Medical plan ready once an area is drawn");
   await pick(p, "areasum"); await p.waitForTimeout(800);
   ok(await p.evaluate(() => { const b = document.getElementById("rv-pkg"); return b && !b.hidden && /Area summary/.test(b.textContent); }), "Area summary opens");
+  m = await menu(p); ok(!item(m, "Area report with maps").off, "Area report ready once an area is drawn");
+  await pick(p, "areareport"); await p.waitForTimeout(800);
+  ok(await p.evaluate(() => { const b = document.getElementById("brief"); return b && !b.hidden && !!b.querySelector(".arp .arpmap"); }), "Area report opens with its maps");
+  await p.evaluate(() => window.OSAP_AREAREPORT.close());
   m = await menu(p); await pick(p, "medplan");
   ok(await p.evaluate(() => window.__calls.med === 1), "Medical plan opens");
 
