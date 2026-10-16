@@ -59,7 +59,8 @@ ok(await p.evaluate(() => { const w = window.OSAP_SEATRANSIT.state().plan.wps; r
 await p.click('#seatr [data-st-del="9"]');
 ok(await p.evaluate(() => window.OSAP_SEATRANSIT.state().plan.wps.length === 9), "Remove takes it out again");
 // departure time
-await p.fill("#seatr [data-st-dep]", "2026-10-06T00:00"); await p.dispatchEvent("#seatr [data-st-dep]", "change");
+// today at 00:00, so the departure always falls inside the stubbed forecast window (a fixed date went stale)
+await p.fill("#seatr [data-st-dep]", new Date().toISOString().slice(0, 10) + "T00:00"); await p.dispatchEvent("#seatr [data-st-dep]", "change");
 await p.click('#seatr [data-st="run"]');
 await p.waitForFunction(() => { const s = window.OSAP_SEATRANSIT.state(); return !s.busy && (s.res || /failed/.test(document.getElementById("st-msg").textContent)); }, null, { timeout: 90000 });
 const r = await p.evaluate(() => {
