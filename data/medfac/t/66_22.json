@@ -1,4 +1,10 @@
-[["n4145184245",67.32714,23.76492,"fi",{"name":"Terveyskeskus","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
+[["n12216391541",66.33839,22.84668,"se",{"name":"Överkalix vårdcentral","amenity":"hospital","healthcare":"hospital"}],
+["n1369476684",66.33008,22.84009,"se",{"aeroway":"helipad"}],
+["n13751150366",66.38904,23.6525,"se",{"name":"Övertorneå hälsocentral","amenity":"clinic","healthcare":"clinic","website":"https://www.norrbotten.se/sv/vard-och-halsa/vara-vardenheter/halsocentraler/overtornea-halsocentral/"}],
+["n4145184245",67.32714,23.76492,"fi",{"name":"Terveyskeskus","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["r17040093",67.60403,23.97139,"fi",{"name":"Aavahelukan lentokenttä","name:en":"Aavahelukka Airfield","website":"https://lentopaikat.fi/aavahelukka-efaa/","aeroway":"aerodrome","icao":"EFAA","aerodrome:type":"public","wikidata":"Q4352578"}],
+["w1299319067",67.22358,23.34368,"se",{"name":"Hälsocentral","amenity":"clinic","healthcare":"clinic"}],
+["w303970657",67.24409,23.07724,"se",{"name":"Pajala flygplats","operator":"Pajala Municipality","operator:type":"council","phone":"+46 978 129 60","addr:housenumber":"11","addr:street":"Mommankangas","addr:city":"PAJALA","addr:postcode":"984 91","aeroway":"aerodrome","icao":"ESUP","iata":"PJA","aerodrome:type":"public","wikidata":"Q1432282"}],
 ["w405746227",66.31965,23.67582,"fi",{"name":"Ylitornion terveyskeskus","amenity":"hospital","healthcare":"hospital","website":"https://www.ylitornio.fi/palvelut/perusturvatoimi/terveyskeskus.html","addr:street":"Rajantie","addr:city":"Ylitornio","addr:postcode":"95600"}],
-["w421653826",67.96266,23.68308,"fi",{"name":"Muonion terveyskeskus","amenity":"hospital","healthcare":"hospital","operator":"Muonion-Enontekiön terveydenhuollon kuntayhtymä","phone":"+358 16 534111","website":"https://www.muonio.fi/fi/hallinto/terveyskeskus.html","addr:housenumber":"2","addr:street":"Ilttitie","addr:city":"Muonio","addr:postcode":"99301"}]]
+["w421653826",67.96266,23.68308,"fi",{"name":"Muonion terveyskeskus","amenity":"hospital","healthcare":"hospital","operator":"Muonion-Enontekiön terveydenhuollon kuntayhtymä","phone":"+358 16 534111","website":"https://www.muonio.fi/fi/hallinto/terveyskeskus.html","addr:housenumber":"2","addr:street":"Ilttitie","addr:city":"Muonio","addr:postcode":"99301"}],
+["w506444999",66.52966,22.35769,"se",{"name":"Överkalix flygfält","aeroway":"aerodrome","icao":"ESNE"}]]
