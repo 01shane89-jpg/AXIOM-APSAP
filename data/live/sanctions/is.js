@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"is","asof":"2026-10-17 17:53Z","items":[{"id":"49260","n":"NORDIC RESISTANCE MOVEMENT","t":"entity","p":"SDGT","ccs":["se","no","dk","fi","is"]}]};
+window.ASAP_SANC_CC={"cc":"is","asof":"2026-10-17 18:08Z","items":[{"id":"49260","n":"NORDIC RESISTANCE MOVEMENT","t":"entity","p":"SDGT","ccs":["se","no","dk","fi","is"]}]};
