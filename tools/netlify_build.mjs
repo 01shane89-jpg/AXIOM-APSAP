@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = process.cwd(), OUT = path.join(ROOT, "_site");
-const KEEP = ["index.html", "reset.html", "sw.js", "manifest.webmanifest", "assets", "LICENSE", "NOTICE.md"];
+const KEEP = ["index.html", "reset.html", "sw.js", "manifest.webmanifest", "assets", "LICENSE", "NOTICE.md", "terms.html", "privacy.html", "refunds.html"];
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT);
 let n = 0;

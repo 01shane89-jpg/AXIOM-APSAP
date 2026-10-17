@@ -99,6 +99,7 @@ let freeErrors = [];
   await p.evaluate(() => document.querySelector('#atk-tools [data-atk="overlays"]').click()); await p.waitForTimeout(400);
   const dlg = await p.evaluate(() => { const d = document.getElementById("tierdlg"); return d && !d.hidden ? d.textContent : ""; });
   ok(/Plan and sign-in/.test(dlg) && /needs the Mid plan/.test(dlg), "a locked tool opens Plan and sign-in: " + dlg.slice(0, 90));
+  ok((await p.evaluate(() => Array.prototype.map.call(document.querySelectorAll("#tierdlg .trlegal a"), (a) => a.getAttribute("href")).join())) === "terms.html,privacy.html,refunds.html", "the plan sheet links the terms, privacy and refund pages");
   const om = await p.evaluate(() => { const o = document.getElementById("atk-om"); return !!(o && !o.hidden && o.offsetParent); });
   ok(!om, "the locked Overlays panel did not open");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-plans.png" : "/dev/null" }).catch(() => {});

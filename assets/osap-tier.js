@@ -172,6 +172,7 @@
         : '<button type="button" class="refresh" data-tr="signin">Sign in</button><button type="button" data-tr="signup">Create an account</button>') + "</div>";
       if (CFG.signedIn && me !== "free") h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
     }
+    h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
     BOX.innerHTML = h + "</div>";
     var f = BOX.querySelector("input"); if (f && UI.mode !== "plans") f.focus();
   }
@@ -258,7 +259,7 @@
       "#tierdlg .trplan.cur{border-color:#1c7ed6}#tierdlg .trplan h3{margin:0;font-size:15px}#tierdlg .trplan h3 i{font-size:11px;font-weight:400;color:var(--muted)}" +
       "#tierdlg .trplan p{margin:0;flex:1}#tierdlg .trplan button{min-height:40px}" +
       "#tierdlg form{display:flex;flex-direction:column;gap:8px;margin-top:8px}#tierdlg label{display:flex;flex-direction:column;gap:3px;font-weight:600}" +
-      "#tierdlg input{font:inherit;padding:8px;min-height:40px;box-sizing:border-box}";
+      "#tierdlg input{font:inherit;padding:8px;min-height:40px;box-sizing:border-box}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
     D.head.appendChild(s);
   }
 
