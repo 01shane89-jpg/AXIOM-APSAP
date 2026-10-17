@@ -68,13 +68,9 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
   const p2 = await ctx.newPage(); let loads = 0; p2.on("load", () => loads++);
   await p2.goto(base); await settle(p2);
   ok(await cc(p2) === "au" && loads === 1, "fresh open: starts in Australia with no extra reload (" + loads + " loads)");
-  // 4. crossed into Texas: the United States is a hidden area (assets/osap-lock.js), so a locked app never moves there
+  // 4. crossed into Texas: a fresh open moves to us?st=TX (the United States is a normal country, no unlock needed)
   await ctx.setGeolocation({ latitude: 30.2672, longitude: -97.7431 }); await p2.evaluate(() => window.OSAP_LOC && 0);
-  const p3l = await ctx.newPage(); await p3l.goto(base); await settle(p3l, 6000);
-  ok(await cc(p3l) !== "us" && !/st=|#us/.test(p3l.url()), "locked: Texas does not open the United States: " + p3l.url());
-  await p3l.close();
-  // ... and once unlocked, a fresh open moves to us?st=TX
-  const p3 = await ctx.newPage(); await p3.addInitScript({ content: UNLOCK }); await p3.goto(base);
+  const p3 = await ctx.newPage(); await p3.goto(base);
   await p3.waitForFunction(() => window.TSAP && window.TSAP.country === "us", null, { timeout: 25000 }).catch(() => {});
   await settle(p3);
   ok(await cc(p3) === "us" && /st=TX/.test(p3.url()), "moved to Texas on fresh open: " + p3.url());

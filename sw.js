@@ -574,9 +574,8 @@ const save = (req, res) => caches.open(store(typeof req === "string" ? req : req
 // CryptoKey that cannot be exported) with its end time, and this worker opens the sealed files on their way to the page. The
 // caches only ever hold the sealed copies; the opened copy is marked (X-OSAP-Unsealed) so the page does not save it either.
 // Locked, or with no key, the sealed text is passed on as it is: one JavaScript comment, so a script runs nothing.
-// SEALED must equal "sealed" in tools/hidden-areas.json (tests/seal.test.mjs).
-const SEALED = ["^data/layers/us/", "^data/infra/us/", "^data/(sof|brief|history)/us\\.js$", "^data/dc/us\\.json$", "^data/live/[a-z]+/us\\.js$",
-  "^data/live/news/us-states/", "^data/cams/us-[a-z0-9-]+\\.json$", "^source/(sof|countries)/us\\.json$"].map((r) => new RegExp(r));
+// SEALED must equal "sealed" in tools/hidden-areas.json (tests/seal.test.mjs); empty while no area is hidden.
+const SEALED = [].map((r) => new RegExp(r));
 const SEAL_PREFIX = "/*osap-sealed:v1 ";
 function sealedPath(u) {
   const p = new URL(u).pathname, s = new URL(self.registration.scope).pathname;
