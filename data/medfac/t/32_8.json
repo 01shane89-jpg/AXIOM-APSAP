@@ -1,0 +1,12 @@
+[["n12011939926",33.66788,9.01164,"tn",{"name":"Hôpital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"community"}],
+["n4524682901",33.47511,9.0219,"tn",{"name":"المستشفى المحلي لدوز","amenity":"hospital","phone":"+216 75 470 012","addr:street":"Route kebili C206"}],
+["n4735167914",33.70522,8.97176,"tn",{"name":"Polyclinique Nefzaoua","amenity":"clinic","phone":"+216 75 491 415","addr:street":"Avenue de la Victoire"}],
+["n9944920276",33.36136,8.66369,"tn",{"name":"Hopital El Fouar","amenity":"hospital","healthcare":"hospital"}],
+["w1465831764",33.07106,8.96252,"tn",{"aeroway":"helipad"}],
+["w178377873",33.97805,9.97285,"tn",{"name":"المستشفى المحلي بوذرف","amenity":"hospital","healthcare":"hospital","phone":"+216 75 365 388"}],
+["w207342076",33.91645,8.1292,"tn",{"name":"المستشفى الجهوي بتوزر","amenity":"hospital","healthcare":"hospital","phone":"+216 76 453 400","addr:city":"Tozeur","addr:postcode":"2200"}],
+["w246289920",33.4754,9.02175,"tn",{"name":"المستشفى المحلي بدوز","amenity":"hospital","emergency":"yes","phone":"+216 75 470 323;+216 75 470 012","addr:street":"Route kebili C206"}],
+["w246427793",33.7185,8.97327,"tn",{"name":"المستشفى الجهوي بقبلي","amenity":"hospital","phone":"+216 75 490 210","addr:street":"Route de Gabes","addr:postcode":"4200"}],
+["w783566412",33.99007,8.20372,"tn",{"name":"المستشفى الجهوي بدقاش","amenity":"hospital","healthcare":"yes"}],
+["w789974876",33.78182,8.8357,"tn",{"amenity":"hospital","healthcare":"hospital","addr:city":"سوق الأحد"}],
+["w79642875",33.93758,8.09813,"tn",{"name":"مطار توزر نفطة","name:en":"Tozeur Nefta Airport","operator":"ديوان الطيران المدني والمطارات","aeroway":"aerodrome","icao":"DTTZ","iata":"TOE","aerodrome:type":"international","wikidata":"Q656500"}]]

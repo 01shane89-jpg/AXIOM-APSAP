@@ -1,0 +1,9 @@
+[["n1042034332",57.85,19.03833,"se",{"name":"Bunge flygfält","aeroway":"aerodrome","icao":"ESVB"}],
+["n51398507",57.67256,18.34671,"se",{"name":"F18G","aeroway":"aerodrome","military":"airfield"}],
+["r1722775",57.64874,18.3006,"se",{"name":"Visby Lasarett","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+46 498 269000","website":"https://www.gotland.se/visbylasarett","addr:housenumber":"5","addr:street":"S:t Göransgatan","addr:city":"Visby","addr:postcode":"621 84","wikidata":"Q10716057","opening_hours":"24/7"}],
+["w1247255772",57.64838,18.34507,"se",{"aeroway":"helipad"}],
+["w204059615",57.64993,18.3009,"se",{"name":"Visby Lasarett","aeroway":"helipad"}],
+["w204060138",57.64879,18.30031,"se",{"name":"Visby Lasarett","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+46 498 269000","website":"https://www.gotland.se/visbylasarett","addr:housenumber":"5","addr:street":"S:t Göransgatan","addr:city":"Visby","addr:postcode":"621 84","opening_hours":"24/7"}],
+["w463605852",57.66516,18.34479,"se",{"name":"Visby flygplats","name:en":"Visby Airport","operator":"Swedavia","aeroway":"aerodrome","icao":"ESSV","iata":"VBY","wikidata":"Q1433208"}],
+["w463610668",57.66832,18.34586,"se",{"aeroway":"helipad"}],
+["w494899597",57.91498,19.1278,"se",{"aeroway":"helipad"}]]

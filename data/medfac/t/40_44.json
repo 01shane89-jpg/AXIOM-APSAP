@@ -656,6 +656,7 @@
 ["w208561328",40.32166,44.48942,"am",{"name":"Նաիրի բժշկական կենտրոն","name:en":"Nairi Medical Center","amenity":"hospital","addr:housenumber":"196","addr:street":"Չարենցի փողոց","addr:city":"Եղվարդ"}],
 ["w208624869",40.28224,44.64333,"am",{"name":"Abovyan Maternity Hospital","amenity":"hospital","phone":"+374 222 3 73 62"}],
 ["w208830572",40.30488,44.36747,"am",{"amenity":"hospital","healthcare":"hospital"}],
+["w217776194",40.04219,44.29268,"tr",{"aeroway":"helipad"}],
 ["w218006463",40.14685,44.46131,"am",{"name":"Policlinic N9","amenity":"hospital","healthcare":"hospital","addr:housenumber":"28","addr:street":"Արտաշիսյան փողոց 3-րդ նրբանցք","addr:city":"Երևան","addr:postcode":"0086"}],
 ["w218132222",40.20431,44.5314,"am",{"name":"\"NorMed\"","amenity":"hospital","healthcare":"hospital","addr:housenumber":"12/8","addr:street":"Հրաչյա Ներսիսյան փողոց","addr:city":"Երևան","addr:postcode":"0014"}],
 ["w219905752",40.15501,44.50131,"am",{"name":"«18 Պոլիկլինիկա»","name:en":"Polyclinic No 18","amenity":"clinic","healthcare":"clinic","addr:housenumber":"43","addr:street":"Արշակունյաց պողոտա","addr:city":"Երևան"}],

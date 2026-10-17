@@ -1,0 +1,5 @@
+[["n12518967901",42.12734,59.66105,"tm",{"name":"Boldumsaz Hastahanasy","name:en":"Boldumsaz Hospital","amenity":"hospital"}],
+["w482605376",42.07761,59.94352,"tm",{"name":"Gubadag Hassahanasy","name:en":"Gubadag Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"M Garlyyew köçesi","addr:city":"Gubadag"}],
+["w593138185",42.32704,59.16978,"tm",{"name":"Köneurgenç Merkez Hassahana","name:en":"Koneurgench Central Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"G Atabaýew köçesi","addr:city":"Koneurgench"}],
+["w674027315",42.37828,58.80619,"tm",{"name":"Inçekeseller Bölümi","name:en":"Tuberculosis Ward","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"tuberculosis","addr:street":"Aşgabat köçesi"}],
+["w682764064",42.32717,59.16031,"tm",{"amenity":"hospital","healthcare":"hospital","addr:street":"G. Atabaýew köçesi","addr:city":"Köneürgenç"}]]
