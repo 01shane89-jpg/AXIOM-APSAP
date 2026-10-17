@@ -429,6 +429,7 @@ const PRECACHE = [
 "assets/osap-ds-review.js",
 "assets/osap-sync-boot.js",
 "assets/osap-lock.js",
+"assets/osap-tier.js",
 "assets/osap-start.js",
 "assets/osap-symbols.js",
 "assets/osap-tlreport.js",
@@ -666,6 +667,8 @@ self.addEventListener("fetch", (e) => {
   // its tiles that way and saves them itself, so they are not also copied into the capped tile cache.
   if (url.origin !== location.origin && req.cache === "no-store") return;
   if (NEVER.some((r) => r.test(url.href))) return;
+  // the paywall's sign-in and plan (Netlify site only, assets/osap-tier.js): always the network, never saved
+  if (url.origin === location.origin && /^\/(api|\.netlify)\//.test(url.pathname)) return;
   if (url.origin === location.origin && FRESH.some((r) => r.test(url.pathname))) {
     if (/\/data\//.test(url.pathname) && url.searchParams.has("fresh")) {
       // Refresh now: wait for the network copy however long it takes, and save it as the copy for the plain address
