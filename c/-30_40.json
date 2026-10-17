@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-10-17T23:05:05.748Z","cell":"-30_40","st":[{"id":"FMSD","n":"Tôlanaro Arpt","c":"MG","la":-25.038,"lo":46.956,"el":7,"m":{"raw":"METAR FMSD 172200Z 08021G31KT 9999 FEW017 22/18 Q1017","t":1792274400000,"cat":"VFR","wd":80,"ws":21,"wg":31,"vis":6,"visp":true,"cig":null,"sky":"FEW017","tc":22,"dc":18,"alt":30.03,"wx":null},"f":null}]}
