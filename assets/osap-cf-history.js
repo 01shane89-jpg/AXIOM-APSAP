@@ -150,6 +150,7 @@
     if (wholeYears()) return y0() === y1() ? String(y0()) : y0() + " to " + y1();
     return sel.a === sel.b ? day(sel.a) : day(sel.a) + " to " + day(sel.b);
   }
+  function sym() { return !!(W.OSAP_SYM && W.OSAP_SYM.mark); }
   function legend(m) {
     if (!W.OSAP_LEGEND) return;
     var h = "<h3>History of violence (UCDP), " + esc(period()) + "</h3>";
