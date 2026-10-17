@@ -4,7 +4,7 @@
 // what it refuses is checked without a Netlify account. Keys and the webhook secret are made here for the test.
 import http from "node:http";
 import fs from "node:fs";
-import { tierOfPath, tierOfRoles, allows, TOOLS } from "../tools/tiers.mjs";
+import { tierOfPath, tierOfRoles, allows, TOOLS, SETS, SETS_DEFAULT, PRICES } from "../tools/tiers.mjs";
 import { seal, b64u } from "../tools/seal_lib.mjs";
 import { loadTierKey, openForTier } from "../tools/tier_open.mjs";
 import { verifySignature, planFromEvent, applyPlan } from "../tools/paddle.mjs";
@@ -28,6 +28,8 @@ ok(tierOfPath("data/live/daily/th.js") === "full", "AI daily briefs need Full");
 ok(tierOfPath("assets/osap-news.js") === null, "app files are not data");
 ok(tierOfRoles(["mid"]) === "mid" && tierOfRoles(["mid", "full"]) === "full" && tierOfRoles([]) === "free" && tierOfRoles(undefined) === "free", "roles map to the highest plan");
 ok(allows("full", "mid") && allows("mid", "free") && !allows("free", "mid") && !allows("mid", "full"), "plans rank free < mid < full");
+ok(SETS.flood === "free" && SETS.news === "free" && !SETS.border && SETS_DEFAULT === "mid", "data sets: News, Alerts, Flood and Hazards free, the rest Mid");
+ok(/9/.test(PRICES.mid) && /29/.test(PRICES.full), "the plans sheet shows the proposed prices");
 ok(TOOLS.overlays === "mid" && TOOLS.mine === "full" && !TOOLS.today && !TOOLS.weather, "toolbar: Today and Weather free, Overlays Mid, My work Full");
 
 /* ---------- sealed for the server's tier key, opened only with it ---------- */

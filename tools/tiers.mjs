@@ -5,6 +5,8 @@
 // Order matters: the first rule that matches a path wins. A data path no rule names needs DATA_DEFAULT.
 export const TIERS = ["free", "mid", "full"];
 export const NAMES = { free: "Free", mid: "Mid", full: "Full" };
+// Shown on the plans sheet. Proposed 2026-10-17; the charge itself is whatever the Paddle price says, so change both together.
+export const PRICES = { free: "US$0, no account needed", mid: "US$9 a month or US$90 a year", full: "US$29 a month or US$290 a year" };
 export const DATA_DEFAULT = "mid";
 
 // Data and source files, by path from the site root.
@@ -30,7 +32,7 @@ export const TOOLS = {
   mine: "full",
 };
 // Data sets (the ids in Data sets). A data set not listed needs SETS_DEFAULT.
-export const SETS = { news: "free", alerts: "free", hazards: "free", weather: "free", timeline: "free" };
+export const SETS = { news: "free", alerts: "free", flood: "free", hazards: "free", weather: "free", timeline: "free" };
 export const SETS_DEFAULT = "mid";
 
 export const rank = (t) => Math.max(0, TIERS.indexOf(t));
@@ -49,5 +51,5 @@ export function tierOfRoles(roles) {
 }
 /** What the page needs to draw its locks (no secrets). */
 export function rulesForPage() {
-  return { tiers: TIERS, names: NAMES, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT };
+  return { tiers: TIERS, names: NAMES, prices: PRICES, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT };
 }

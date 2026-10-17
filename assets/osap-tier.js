@@ -141,9 +141,9 @@
 
   /* ---------- Settings > Plan and sign-in ---------- */
   var WHAT = {
-    free: "The map and country picker, weather and warnings, earthquakes and storms, and headline news with links.",
-    mid: "Everything in Free, plus every data set and map overlay, Route, Area, Med plan, Evac, Comms, Point, Watch and 3D.",
-    full: "Everything in Mid, plus My work, the AI summaries and daily briefs, claims, captures and the analyst reference data.",
+    free: "The map for every country, search, weather, warnings, floods, earthquakes and storms, and headline news with source links.",
+    mid: "Everything in Free, plus every reporting data set (conflict, border, insurgency, crime, health, infrastructure, transport, social media), every map overlay, history, and Route, Area, Point, Watch, 3D, Med plan, Evac and Comms planning.",
+    full: "Everything in Mid, plus My work, AI area summaries and reports, daily and event summaries, claims and captures, and the SOF reference data.",
   };
   function render() {
     if (!BOX || BOX.hidden) return;
@@ -165,7 +165,7 @@
         : '<p class="obs">You are using the Free plan. Sign in to use a plan you have paid for.</p>';
       h += '<div class="trplans">' + TIERS.map(function (t) {
         var cur = t === me, up = rank(t) > rank(me);
-        return '<div class="trplan' + (cur ? " cur" : "") + '"><h3>' + esc(name(t)) + (cur ? " <i>your plan</i>" : "") + "</h3><p>" + esc(WHAT[t]) + "</p>" +
+        return '<div class="trplan' + (cur ? " cur" : "") + '"><h3>' + esc(name(t)) + (cur ? " <i>your plan</i>" : "") + "</h3>" + (CFG.rules.prices && CFG.rules.prices[t] ? '<p class="trprice">' + esc(CFG.rules.prices[t]) + "</p>" : "") + "<p>" + esc(WHAT[t]) + "</p>" +
           (up ? '<button type="button" class="refresh" data-tr-buy="' + t + '"' + dis + ">Choose " + esc(name(t)) + "</button>" : "") + "</div>";
       }).join("") + "</div>";
       h += '<div class="trbtns">' + (CFG.signedIn ? '<button type="button" data-tr="signout"' + dis + ">Sign out</button>"
@@ -257,7 +257,7 @@
       "#tierdlg .trplans{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:10px 0}" +
       "#tierdlg .trplan{border:1px solid var(--line,rgba(127,127,127,.35));border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}" +
       "#tierdlg .trplan.cur{border-color:#1c7ed6}#tierdlg .trplan h3{margin:0;font-size:15px}#tierdlg .trplan h3 i{font-size:11px;font-weight:400;color:var(--muted)}" +
-      "#tierdlg .trplan p{margin:0;flex:1}#tierdlg .trplan button{min-height:40px}" +
+      "#tierdlg .trplan p{margin:0;flex:1}#tierdlg .trplan p.trprice{flex:0;font-weight:700}#tierdlg .trplan button{min-height:40px}" +
       "#tierdlg form{display:flex;flex-direction:column;gap:8px;margin-top:8px}#tierdlg label{display:flex;flex-direction:column;gap:3px;font-weight:600}" +
       "#tierdlg input{font:inherit;padding:8px;min-height:40px;box-sizing:border-box}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
     D.head.appendChild(s);
