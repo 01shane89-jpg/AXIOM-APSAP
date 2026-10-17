@@ -18,9 +18,12 @@ const A = await pair(), C = await pair();
 const PLAIN = 'window.SEAL_TEST={"area":"hidden","n":42};\n';
 const SEALED = await seal(PLAIN, [A.pub], "data/live/sealtest/us.js");
 const lockSrc = (await readFile(join(root, "assets/osap-lock.js"), "utf8")).replace(/var OWNER = \[[\s\S]*?\];/, "var OWNER = [" + JSON.stringify("osap-pub:v1:" + A.pub) + "];");
+// the test file's path is sealed here even when no area is hidden in the real sw.js
+const swSrc = (await readFile(join(root, "sw.js"), "utf8")).replace(/const SEALED = \[[\s\S]*?\]\.map/, 'const SEALED = ["^data/live/sealtest/us\\\\.js$"].map');
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
   if (path === "data/live/sealtest/us.js") { res.writeHead(200, { "Content-Type": "text/javascript" }); res.end(SEALED); return; }
+  if (path === "sw.js") { res.writeHead(200, { "Content-Type": "text/javascript" }); res.end(swSrc); return; }
   if (path === "assets/osap-lock.js") { res.writeHead(200, { "Content-Type": "text/javascript" }); res.end(lockSrc); return; }
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }

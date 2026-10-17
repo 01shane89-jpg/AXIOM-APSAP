@@ -17,6 +17,8 @@ const keyPair = async () => {
 };
 const A = await keyPair(), B = await keyPair(), C = await keyPair();
 const dec = (u8) => new TextDecoder().decode(u8);
+const TEST_SEALED = ["^data/layers/us/", "^data/infra/us/", "^data/(sof|brief|history)/us\\.js$", "^data/dc/us\\.json$", "^data/live/[a-z]+/us\\.js$",
+  "^data/live/news/us-states/", "^data/cams/us-[a-z0-9-]+\\.json$", "^source/(sof|countries)/us\\.json$"];
 
 // 1. round trip, for every owner and nobody else
 {
@@ -53,8 +55,8 @@ const dec = (u8) => new TextDecoder().decode(u8);
   const w = (rel, t) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), t); };
   fs.mkdirSync(path.join(dir, "tools"));
   for (const f of ["seal_lib.mjs", "seal_hidden.mjs"]) fs.copyFileSync(path.join(ROOT, "tools", f), path.join(dir, "tools", f));
-  const cfg = JSON.parse(fs.readFileSync("tools/hidden-areas.json", "utf8"));
-  w("tools/hidden-areas.json", JSON.stringify({ ...cfg, owners: ["osap-pub:v1:" + A.pub] }));
+  // a fixed test setup with the US hidden (the real one may hide nothing), so the sealing itself stays tested
+  w("tools/hidden-areas.json", JSON.stringify({ hidden: ["us"], owners: ["osap-pub:v1:" + A.pub], sealed: TEST_SEALED }));
   const brief = 'window.ASAP_BRIEF=window.ASAP_BRIEF||{};window.ASAP_BRIEF.us={"t":"test brief"};\n';
   w("data/brief/us.js", brief);
   w("data/brief/th.js", 'window.ASAP_BRIEF.th={"t":"stays plain"};\n');
