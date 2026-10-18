@@ -5,8 +5,10 @@
   publish = "_site"
   functions = "netlify/functions"
   edge_functions = "netlify/edge-functions"
-  # a data refresh (most commits) needs no new deploy: the data comes from GitHub Pages
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)data' ':(exclude)source'"
+  # a data refresh (most commits) needs no new deploy: the data comes from GitHub Pages. Skipped (exit 0) only when there
+  # is an earlier build to compare with and nothing but data changed since; the first build, and a deploy started by hand
+  # for the same commit, always run.
+  ignore = '''[ -n "$CACHED_COMMIT_REF" ] && [ "$CACHED_COMMIT_REF" != "$COMMIT_REF" ] && git diff --quiet "$CACHED_COMMIT_REF" "$COMMIT_REF" -- . ':(exclude)data' ':(exclude)source''''
 
 # Free data, after the gate let it through: straight from GitHub Pages
 [[redirects]]
