@@ -21,6 +21,7 @@ const users = {
 const PASSWORDS = { "mid@test": "tok-mid", "full@test": "tok-full", "free@test": "tok-free" };
 const PW = { "mid@test": "password1", "full@test": "password1", "free@test": "password1" }; // each account's password
 const recovered = [], signups = [];
+const ALIAS = {}; let mint = 0; // a renewed token is a new string for the same account, as Identity's are
 const meta = {}; // app_metadata as the admin API holds it, by user id
 for (const t in users) meta[users[t].id] = { roles: users[t].roles };
 const asAdmin = (who) => ({ id: who.id, email: who.email, created_at: "2026-10-01T00:00:00Z", confirmed_at: "2026-10-01T00:05:00Z", last_sign_in_at: "2026-10-18T00:00:00Z", app_metadata: meta[who.id] });
@@ -43,7 +44,7 @@ const server = createServer(async (req, res) => {
   if (p.startsWith(".netlify/identity/")) {
     const what = p.slice(".netlify/identity/".length);
     if (what === "user") {
-      const t = (req.headers.authorization || "").replace(/^Bearer /, ""), who = users[t];
+      const t = (req.headers.authorization || "").replace(/^Bearer /, ""), who = users[t] || users[ALIAS[t]];
       if (!who) { res.writeHead(401); res.end("{}"); return; }
       if (req.method === "PUT") { const b = JSON.parse(await R.text()); if (b.password) PW[who.email] = b.password; }
       res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify(asAdmin(who))); return;
@@ -71,7 +72,9 @@ const server = createServer(async (req, res) => {
     }
     if (what === "token") {
       const f = new URLSearchParams(await R.text()), pw = f.get("grant_type") === "password";
-      const t = pw ? (PW[f.get("username")] === f.get("password") ? PASSWORDS[f.get("username")] : null) : (users[f.get("refresh_token")] ? f.get("refresh_token") : null);
+      const rt = f.get("refresh_token"), base = users[rt] ? rt : ALIAS[rt];
+      let t = pw ? (PW[f.get("username")] === f.get("password") ? PASSWORDS[f.get("username")] : null) : (base ? base : null);
+      if (!pw && t) { t = base + "~" + ++mint; ALIAS[t] = base; }
       if (!t) { res.writeHead(400, { "content-type": "application/json" }); res.end(JSON.stringify({ error: "invalid_grant", error_description: pw ? "No user found with that email, or password invalid." : "Invalid Refresh Token" })); return; }
       res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ access_token: t, refresh_token: t, expires_in: 3600 })); return;
     }
@@ -79,6 +82,7 @@ const server = createServer(async (req, res) => {
   }
   if (p === "api/osap-account") return send(res, await ACCOUNT(R));
   if (p === "api/osap-users") return send(res, await USERS(R));
+  if (p === "api/osap-codes") return send(res, await CODES(R));
   if (/^(data|source)\//.test(p)) {
     const r = await GATE(R);
     if (r) return send(res, r);
@@ -94,6 +98,8 @@ globalThis.netlifyIdentityContext = { url: base + ".netlify/identity", token: "o
 const GATE = (await import("../netlify/edge-functions/osap-data.js")).default;
 const ACCOUNT = (await import("../netlify/functions/osap-account.mjs")).default;
 const USERS = (await import("../netlify/functions/osap-users.mjs")).default;
+const codesFn = await import("../netlify/functions/osap-codes.mjs"), CODES = codesFn.default;
+const codeStore = (await import("./codes_store.mjs")).memoryStore(); codesFn.useStore(() => codeStore);
 
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
@@ -337,6 +343,39 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok((await get(p, "data/live/ucdp.js")) === 200 && (await get(p, "data/claims/th.json")) !== 402 && (await get(p, "data/live/evsum.js")) === 200, "OSAP_OWNERS owner: Mid and Full data open at the gate");
   ok(errors.length === 0, "OSAP_OWNERS owner: no page errors " + errors.join(" | "));
   await ctx.close();
+}
+// 12. beta tester codes: the owner makes one in Users; a Free account uses it and has Full; turned off, it is Free again
+{
+  const { ctx, p, errors } = await open("tok-boss");
+  p.on("dialog", (d) => d.accept());
+  await p.evaluate(() => window.OSAP_TIER.users()); await p.waitForTimeout(1200);
+  await p.fill('#tierdlg input[name="note"]', "Tester A"); await p.click('#tierdlg form[data-tr-form="mkcode"] button[type="submit"]'); await p.waitForTimeout(800);
+  const code = await p.evaluate(() => { const c = document.querySelector("#tierdlg .trnewcode code"); return c && c.textContent; });
+  ok(/^OSAP-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code || "") && /Tester A/.test(await p.evaluate(() => document.getElementById("tierdlg").textContent)), "owner: makes a code, shown once, listed with its note: " + code);
+  const t = await open("tok-free");
+  await t.p.evaluate(() => window.OSAP_TIER.open()); await t.p.waitForTimeout(300);
+  await t.p.fill('#tierdlg input[name="code"]', "osap-aaaa-bbbb-cccc"); await t.p.click('#tierdlg form[data-tr-form="code"] button[type="submit"]'); await t.p.waitForTimeout(600);
+  ok(/not valid/.test(await msg(t.p)), "a made-up code is refused: " + (await msg(t.p)));
+  await t.p.fill('#tierdlg input[name="code"]', code.toLowerCase());
+  await Promise.all([t.p.waitForEvent("load", { timeout: 15000 }).catch(() => null), t.p.click('#tierdlg form[data-tr-form="code"] button[type="submit"]')]);
+  await t.p.waitForTimeout(6000);
+  const s = await state(t.p);
+  ok(s.tier === "full" && !s.locked.length && (await get(t.p, "data/live/evsum.js")) === 200, "beta tester: Full after the code " + JSON.stringify(s));
+  await t.p.evaluate(() => window.OSAP_TIER.open()); await t.p.waitForTimeout(300);
+  ok(/beta tester code/.test((await wall(t.p)).text) && !(await t.p.$('#tierdlg input[name="code"]')), "beta tester: the plan says beta tester code, and no code box");
+  const t2 = await open("tok-mid");
+  await t2.p.evaluate(() => window.OSAP_TIER.open()); await t2.p.waitForTimeout(300);
+  await t2.p.fill('#tierdlg input[name="code"]', code); await t2.p.click('#tierdlg form[data-tr-form="code"] button[type="submit"]'); await t2.p.waitForTimeout(800);
+  ok(/not valid/.test(await msg(t2.p)), "the same code a second time: refused");
+  await t2.ctx.close();
+  await p.click('#tierdlg [data-tr="users"]'); await p.waitForTimeout(1500);
+  ok(/free@test/.test(await p.evaluate(() => document.getElementById("tierdlg").textContent)), "owner: the list shows who used the code");
+  await p.click("#tierdlg [data-tr-off]"); await p.waitForTimeout(1000);
+  const tierNow = await t.p.evaluate(() => fetch("api/osap-account", { headers: { authorization: "Bearer tok-free" } }).then((r) => r.json()).then((j) => j.tier));
+  ok(tierNow === "free" && /off/.test(await p.evaluate(() => document.getElementById("tierdlg").textContent)), "owner turns the code off: the tester is back on Free (" + tierNow + ")");
+  ok((await t.p.evaluate(() => fetch("api/osap-codes", { headers: { authorization: "Bearer tok-free" } }).then((r) => r.status))) === 403, "only the owner can list codes");
+  ok(errors.length === 0 && t.errors.length === 0, "beta codes: no page errors " + errors.concat(t.errors).join(" | "));
+  await t.ctx.close(); await ctx.close();
 }
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");

@@ -1,6 +1,8 @@
 // Who is the owner (Shane 2026-10-18: "As the owner I want to see who is using the app"): an Identity account holding the
 // "owner" role (set in Netlify > Identity > the user > Roles), or whose confirmed email is listed in the Netlify environment
 // variable OSAP_OWNERS (comma-separated). Only the owner can list accounts (netlify/functions/osap-users.mjs).
+import { betaActive } from "./codes.mjs";
+
 export function isOwner(u, ownersCsv) {
   if (!u) return false;
   const roles = [].concat((u.app_metadata || u.appMetadata || {}).roles || []);
@@ -14,6 +16,7 @@ export function planOf(u, ownersCsv, tierOfRoles) {
   if (!u) return "free";
   if (isOwner(u, ownersCsv)) return "full";
   const m = u.app_metadata || u.appMetadata || {};
+  if (betaActive(m)) return "full"; // a beta tester code (tools/codes.mjs)
   return tierOfRoles(m.roles);
 }
 /** The row the owner sees for one account: no password, no tokens, nothing but email, times and plan. */
