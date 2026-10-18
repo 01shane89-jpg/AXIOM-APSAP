@@ -214,7 +214,8 @@
         '<div class="trbtns"><button type="submit" class="refresh primary"' + dis + ">Save password</button>" +
         (UI.recover ? "" : '<button type="button" class="refresh" data-tr="plans">Back</button>') + "</div></form>";
     } else {
-      h += CFG.signedIn ? '<p>Signed in as <b>' + esc(CFG.email || "") + "</b>. Your plan: <b>" + esc(name(me)) + "</b>.</p>"
+      h += CFG.signedIn ? '<p>Signed in as <b>' + esc(CFG.email || "") + "</b>. Your plan: <b>" + esc(name(me)) + "</b>" +
+          (CFG.owner ? " (owner)" : CFG.beta ? " (beta tester code" + (CFG.beta.until ? ", until " + esc(String(CFG.beta.until).slice(0, 10)) : "") + ")" : "") + ".</p>"
         : '<p class="obs">You are using the Free plan. Sign in to use a plan you have paid for.</p>';
       var trial = CFG.rules.trialDays || 0;
       h += '<div class="trplans">' + TIERS.map(function (t) {
@@ -226,7 +227,10 @@
       h += '<div class="trbtns">' + (CFG.signedIn ? '<button type="button" class="refresh" data-tr="newpw"' + dis + ">Change password</button>" +
           '<button type="button" class="refresh" data-tr="signout"' + dis + ">Sign out</button>"
         : '<button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="signup">Create an account</button>') + "</div>";
-      if (CFG.signedIn && me !== "free") h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
+      if (CFG.signedIn && me !== "free" && !CFG.owner && !CFG.beta) h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
+      /* a beta tester code from the owner (tools/codes.mjs) */
+      if (CFG.signedIn && me !== "full") h += '<form data-tr-form="code" class="trcode"><label>Beta tester code<input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OSAP-XXXX-XXXX-XXXX" required></label>' +
+        '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">Use code</button></div></form>";
     }
     h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
     BOX.className = wall ? "trwall" : "";
@@ -245,7 +249,34 @@
         return "<tr><td>" + esc(r.email) + (r.owner ? " <i>owner</i>" : "") + "</td><td>" + esc(name(r.tier)) + "</td><td>" + fmt(r.lastSeen) + "</td><td>" + fmt(r.lastSignIn) +
           "</td><td>" + fmt(r.joined) + "</td><td>" + (r.confirmed ? "yes" : "no") + "</td></tr>";
       }).join("") + "</tbody></table></div>" +
-      '<div class="trbtns"><button type="button" class="refresh" data-tr="users">Refresh</button></div>';
+      '<div class="trbtns"><button type="button" class="refresh" data-tr="users">Refresh</button></div>' + codesHtml();
+  }
+  /* beta tester codes: made here, shown once, each works for one account; turning one off takes Full away again */
+  function codesHtml() {
+    var c = UI.codes, h = "<h3>Beta tester codes</h3><p>A code gives one account Full, until the end date you pick (or until you turn it off). The person signs in, then types the code in Settings &gt; Plan and sign-in.</p>" +
+      '<form data-tr-form="mkcode"><label>Who it is for (only you see this)<input name="note" maxlength="80" autocomplete="off"></label>' +
+      '<label>Ends (leave empty for no end)<input type="date" name="until"></label><div class="trbtns"><button type="submit" class="refresh primary"' + (UI.busy ? " disabled" : "") + ">Make a code</button></div></form>";
+    if (UI.newCode) h += '<div class="trnewcode"><p>New code, shown only now. Copy it and send it to your tester:</p><p><code>' + esc(UI.newCode) + '</code> <button type="button" class="refresh" data-tr="copy">Copy</button></p></div>';
+    if (!c) return h + '<p class="obs">Loading the codes…</p>';
+    if (!c.codes.length) return h + '<p class="obs">No codes yet.</p>';
+    return h + '<div class="trusers"><table><thead><tr><th>For</th><th>Code ends in</th><th>Made</th><th>Ends</th><th>Used by</th><th>State</th><th></th></tr></thead><tbody>' +
+      c.codes.map(function (r) {
+        return "<tr><td>" + esc(r.note || "") + "</td><td>…" + esc(r.last4) + "</td><td>" + fmt(r.made) + "</td><td>" + (r.until ? esc(String(r.until).slice(0, 10)) : "no end") + "</td><td>" + esc(r.usedBy || "") +
+          "</td><td>" + esc(r.state) + "</td><td>" + (r.state === "off" ? "" : '<button type="button" class="refresh" data-tr-off="' + esc(r.id) + '">Turn off</button>') + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+  function codesApi(body) {
+    return session().then(function (a) {
+      if (!a) throw new Error("Sign in again first.");
+      return fetch("api/osap-codes", body ? { method: "POST", headers: { authorization: "Bearer " + a.access_token, "content-type": "application/json" }, body: JSON.stringify(body), cache: "no-store" }
+        : { headers: { authorization: "Bearer " + a.access_token }, cache: "no-store" });
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || "The codes service did not answer (" + r.status + ")."); return j; });
+    });
+  }
+  function loadCodes() {
+    UI.codes = null; render();
+    codesApi().then(function (j) { UI.codes = j; render(); }, function (err) { UI.codes = { codes: [] }; say(String(err && err.message || err)); });
   }
   function loadUsers() {
     UI.users = null; render();
@@ -256,7 +287,7 @@
       if (r.status === 403) throw new Error("Only the owner's account can see the list of accounts.");
       if (!r.ok) throw new Error("The list did not load (" + r.status + ").");
       return r.json();
-    }).then(function (j) { UI.users = j; render(); }, function (err) { UI.users = { count: 0, users: [] }; say(String(err && err.message || err)); });
+    }).then(function (j) { UI.users = j; render(); loadCodes(); }, function (err) { UI.users = { count: 0, users: [] }; say(String(err && err.message || err)); });
   }
   function say(t) { UI.msg = t; render(); }
   function open(mode, msg) {
@@ -297,6 +328,20 @@
     e.preventDefault();
     var f = e.target, k = f.getAttribute("data-tr-form"), em = f.email ? f.email.value.trim() : "", pw = f.password ? f.password.value : "";
     if (em) UI.email = em;
+    if (k === "code") {
+      UI.busy = true; say("Checking the code…");
+      /* a new token after the code, so the gate (which keeps a token's plan for a minute) sees Full on the reload */
+      codesApi({ use: f.code.value }).then(function () {
+        var a = lGet(K_AUTH);
+        return (a && a.refresh_token ? tokenGrant({ grant_type: "refresh_token", refresh_token: a.refresh_token }).catch(function () {}) : null);
+      }).then(function () { say("Code accepted: Full is on. Reloading…"); setTimeout(function () { location.reload(); }, 800); }).catch(fail);
+      return;
+    }
+    if (k === "mkcode") {
+      UI.busy = true; UI.newCode = null; say("Making a code…");
+      codesApi({ make: { note: f.note.value, until: f.until.value } }).then(function (j) { UI.busy = false; UI.newCode = j.code; UI.msg = ""; loadCodes(); }).catch(fail);
+      return;
+    }
     UI.busy = true; say(k === "signup" ? "Creating your account…" : k === "newpw" ? "Saving your password…" : "Signing in…");
     if (k === "signin") tokenGrant({ grant_type: "password", username: em, password: pw }).then(function () { return signedIn("Signed in."); }).catch(fail);
     else if (k === "signup") jsonPost("/signup", { email: em, password: pw }).then(function (u) {
@@ -325,14 +370,25 @@
   function onClick(e) {
     var t = e.target;
     if (t === BOX || (t.closest && t.closest(".x"))) { close(); return; }
-    var b = t.closest && t.closest("[data-tr],[data-tr-buy]"); if (!b || UI.busy) return;
+    var b = t.closest && t.closest("[data-tr],[data-tr-buy],[data-tr-off]"); if (!b || UI.busy) return;
+    if (b.hasAttribute("data-tr-off")) {
+      if (!W.confirm("Turn this code off? If someone used it, their account goes back to its own plan.")) return;
+      UI.busy = true; say("Turning the code off…");
+      codesApi({ off: b.getAttribute("data-tr-off") }).then(function () { UI.busy = false; UI.msg = "Code turned off."; loadCodes(); }).catch(fail);
+      return;
+    }
     if (b.hasAttribute("data-tr-buy")) { buy(b.getAttribute("data-tr-buy")); return; }
     var k = b.getAttribute("data-tr");
     if (k === "signin" || k === "signup" || k === "plans" || k === "newpw") {
       var typed = BOX.querySelector('input[name="email"]'); if (typed && typed.value) UI.email = typed.value.trim();
       UI.mode = k; say(""); return;
     }
-    if (k === "users") { UI.msg = ""; loadUsers(); return; }
+    if (k === "users") { UI.msg = ""; UI.newCode = null; loadUsers(); return; }
+    if (k === "copy") {
+      var done = function () { say("Code copied."); };
+      try { navigator.clipboard.writeText(UI.newCode).then(done, function () { say("Copy did not work: select the code and copy it."); }); } catch (e2) { say("Copy did not work: select the code and copy it."); }
+      return;
+    }
     if (k === "forgot") {
       var em = (BOX.querySelector('input[name="email"]') || {}).value;
       if (!em || !/\S@\S/.test(em)) { say("Type your email first, then choose Forgot password."); return; }
@@ -388,7 +444,9 @@
       "#tierdlg .trbtns button.refresh,#tierdlg .trplan button.refresh{font-size:14px;padding:8px 14px;min-height:44px;border-radius:6px}" +
       "#tierdlg.trwall{background:var(--bg,#0b1220)}#tierdlg .trusers{overflow:auto;max-height:60vh}#tierdlg .cbox:has(.trusers){max-width:900px}" +
       "#tierdlg table{border-collapse:collapse;width:100%;font-size:12px}#tierdlg th,#tierdlg td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line,rgba(127,127,127,.35));white-space:nowrap}" +
-      "#tierdlg td i{font-size:11px;color:var(--muted)}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
+      "#tierdlg td i{font-size:11px;color:var(--muted)}#tierdlg h3{margin:16px 0 4px;font-size:15px}#tierdlg td .refresh{min-height:32px;font-size:12px}" +
+      "#tierdlg .trnewcode{border:1px solid #1c7ed6;border-radius:6px;padding:4px 10px;margin:8px 0}#tierdlg .trnewcode code{font-size:16px;font-weight:700;user-select:all}" +
+      "#tierdlg form.trcode{margin-top:12px}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
     D.head.appendChild(s);
   }
 

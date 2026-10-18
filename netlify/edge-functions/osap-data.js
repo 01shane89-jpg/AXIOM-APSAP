@@ -6,6 +6,7 @@
 // Anyone else gets 402 with a body that runs nothing when loaded as a script.
 import { tierOfPath, tierOfRoles, allows } from "../../tools/tiers.mjs";
 import { loadTierKey, openForTier } from "../../tools/tier_open.mjs";
+import { planOf } from "../../tools/owner.mjs";
 
 const ORIGIN = (Netlify.env.get("OSAP_DATA_ORIGIN") || "https://01shane89-jpg.github.io/AXIOM-APSAP").replace(/\/+$/, "");
 let keyP = null;
@@ -20,7 +21,7 @@ async function tierOf(req) {
   if (hit && hit.until > Date.now()) return hit.v;
   const r = await fetch(new URL("/.netlify/identity/user", req.url), { headers: { authorization: "Bearer " + decodeURIComponent(m[1]) } }).catch(() => null);
   const u = r && r.ok ? await r.json().catch(() => null) : null;
-  const v = { tier: u ? tierOfRoles(u.app_metadata && u.app_metadata.roles) : "free", signedIn: !!u };
+  const v = { tier: planOf(u, Netlify.env.get("OSAP_OWNERS"), tierOfRoles), signedIn: !!u };
   if (seen.size > 500) seen.clear();
   seen.set(m[1], { until: Date.now() + 60000, v });
   return v;

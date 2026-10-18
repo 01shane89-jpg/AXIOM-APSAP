@@ -16,10 +16,12 @@ const uid = (n) => "00000000-0000-4000-8000-00000000000" + n;
 const users = {
   "tok-free": { id: uid(1), email: "free@test", roles: [] }, "tok-mid": { id: uid(2), email: "mid@test", roles: ["mid"] },
   "tok-full": { id: uid(3), email: "full@test", roles: ["full"] }, "tok-owner": { id: uid(4), email: "owner@test", roles: ["owner"] },
+  "tok-boss": { id: uid(5), email: "boss@test", roles: [] }, // the owner named in OSAP_OWNERS, with no role (as Shane's account is)
 };
 const PASSWORDS = { "mid@test": "tok-mid", "full@test": "tok-full", "free@test": "tok-free" };
 const PW = { "mid@test": "password1", "full@test": "password1", "free@test": "password1" }; // each account's password
 const recovered = [], signups = [];
+const ALIAS = {}; let mint = 0; // a renewed token is a new string for the same account, as Identity's are
 const meta = {}; // app_metadata as the admin API holds it, by user id
 for (const t in users) meta[users[t].id] = { roles: users[t].roles };
 const asAdmin = (who) => ({ id: who.id, email: who.email, created_at: "2026-10-01T00:00:00Z", confirmed_at: "2026-10-01T00:05:00Z", last_sign_in_at: "2026-10-18T00:00:00Z", app_metadata: meta[who.id] });
@@ -42,7 +44,7 @@ const server = createServer(async (req, res) => {
   if (p.startsWith(".netlify/identity/")) {
     const what = p.slice(".netlify/identity/".length);
     if (what === "user") {
-      const t = (req.headers.authorization || "").replace(/^Bearer /, ""), who = users[t];
+      const t = (req.headers.authorization || "").replace(/^Bearer /, ""), who = users[t] || users[ALIAS[t]];
       if (!who) { res.writeHead(401); res.end("{}"); return; }
       if (req.method === "PUT") { const b = JSON.parse(await R.text()); if (b.password) PW[who.email] = b.password; }
       res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify(asAdmin(who))); return;
@@ -70,7 +72,9 @@ const server = createServer(async (req, res) => {
     }
     if (what === "token") {
       const f = new URLSearchParams(await R.text()), pw = f.get("grant_type") === "password";
-      const t = pw ? (PW[f.get("username")] === f.get("password") ? PASSWORDS[f.get("username")] : null) : (users[f.get("refresh_token")] ? f.get("refresh_token") : null);
+      const rt = f.get("refresh_token"), base = users[rt] ? rt : ALIAS[rt];
+      let t = pw ? (PW[f.get("username")] === f.get("password") ? PASSWORDS[f.get("username")] : null) : (base ? base : null);
+      if (!pw && t) { t = base + "~" + ++mint; ALIAS[t] = base; }
       if (!t) { res.writeHead(400, { "content-type": "application/json" }); res.end(JSON.stringify({ error: "invalid_grant", error_description: pw ? "No user found with that email, or password invalid." : "Invalid Refresh Token" })); return; }
       res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ access_token: t, refresh_token: t, expires_in: 3600 })); return;
     }
@@ -78,6 +82,7 @@ const server = createServer(async (req, res) => {
   }
   if (p === "api/osap-account") return send(res, await ACCOUNT(R));
   if (p === "api/osap-users") return send(res, await USERS(R));
+  if (p === "api/osap-codes") return send(res, await CODES(R));
   if (/^(data|source)\//.test(p)) {
     const r = await GATE(R);
     if (r) return send(res, r);
@@ -87,12 +92,14 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 base = `http://127.0.0.1:${server.address().port}/`;
-const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP" };
+const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP", OSAP_OWNERS: "boss@test" };
 globalThis.Netlify = { env: { get: (k) => env[k] } };
 globalThis.netlifyIdentityContext = { url: base + ".netlify/identity", token: "op-token" };
 const GATE = (await import("../netlify/edge-functions/osap-data.js")).default;
 const ACCOUNT = (await import("../netlify/functions/osap-account.mjs")).default;
 const USERS = (await import("../netlify/functions/osap-users.mjs")).default;
+const codesFn = await import("../netlify/functions/osap-codes.mjs"), CODES = codesFn.default;
+const codeStore = (await import("./codes_store.mjs")).memoryStore(); codesFn.useStore(() => codeStore);
 
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
@@ -208,7 +215,7 @@ gate = true;
   ok(item, "owner: Settings has Users");
   await p.evaluate(() => document.querySelector('[data-tp="@users"]').click()); await p.waitForTimeout(800);
   const u = await p.evaluate(() => { const d = document.getElementById("tierdlg"); return d && !d.hidden ? { h: d.querySelector("h2").textContent, rows: d.querySelectorAll("tbody tr").length, text: d.textContent } : null; });
-  ok(u && u.h === "Users" && u.rows === 4 && /4 accounts/.test(u.text) && /mid@test/.test(u.text) && /owner@test owner/.test(u.text), "owner: Users lists every account " + JSON.stringify(u && { h: u.h, rows: u.rows }));
+  ok(u && u.h === "Users" && u.rows === 5 && /5 accounts/.test(u.text) && /boss@test owner/.test(u.text) && /mid@test/.test(u.text) && /owner@test owner/.test(u.text), "owner: Users lists every account " + JSON.stringify(u && { h: u.h, rows: u.rows }));
   ok(u && !/0000-4000/.test(u.text) && !/tok-/.test(u.text), "owner: the list shows no ids or tokens");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-users.png" : "/dev/null" }).catch(() => {});
   ok(errors.length === 0, "owner: no page errors " + errors.join(" | "));
@@ -327,6 +334,48 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok(/new address/.test(await msg(p)) && /Add to Home Screen/.test(await msg(p)), "moved from GitHub Pages: says to add the home-screen icon again: " + (await msg(p)).slice(0, 60));
   ok(!/from=pages/.test(await p.evaluate(() => location.href)), "moved from GitHub Pages: the marker is taken off the address");
   await ctx.close();
+}
+// 11. the owner named only in OSAP_OWNERS (no role): Full everywhere, in the page and at the gate
+{
+  const { ctx, p, errors } = await open("tok-boss");
+  const s = await state(p);
+  ok(s.tier === "full" && !s.locked.length && (await p.evaluate(() => window.OSAP_TIER.owner())), "OSAP_OWNERS owner: Full plan, nothing locked " + JSON.stringify(s));
+  ok((await get(p, "data/live/ucdp.js")) === 200 && (await get(p, "data/claims/th.json")) !== 402 && (await get(p, "data/live/evsum.js")) === 200, "OSAP_OWNERS owner: Mid and Full data open at the gate");
+  ok(errors.length === 0, "OSAP_OWNERS owner: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// 12. beta tester codes: the owner makes one in Users; a Free account uses it and has Full; turned off, it is Free again
+{
+  const { ctx, p, errors } = await open("tok-boss");
+  p.on("dialog", (d) => d.accept());
+  await p.evaluate(() => window.OSAP_TIER.users()); await p.waitForTimeout(1200);
+  await p.fill('#tierdlg input[name="note"]', "Tester A"); await p.click('#tierdlg form[data-tr-form="mkcode"] button[type="submit"]'); await p.waitForTimeout(800);
+  const code = await p.evaluate(() => { const c = document.querySelector("#tierdlg .trnewcode code"); return c && c.textContent; });
+  ok(/^OSAP-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code || "") && /Tester A/.test(await p.evaluate(() => document.getElementById("tierdlg").textContent)), "owner: makes a code, shown once, listed with its note: " + code);
+  const t = await open("tok-free");
+  await t.p.evaluate(() => window.OSAP_TIER.open()); await t.p.waitForTimeout(300);
+  await t.p.fill('#tierdlg input[name="code"]', "osap-aaaa-bbbb-cccc"); await t.p.click('#tierdlg form[data-tr-form="code"] button[type="submit"]'); await t.p.waitForTimeout(600);
+  ok(/not valid/.test(await msg(t.p)), "a made-up code is refused: " + (await msg(t.p)));
+  await t.p.fill('#tierdlg input[name="code"]', code.toLowerCase());
+  await Promise.all([t.p.waitForEvent("load", { timeout: 15000 }).catch(() => null), t.p.click('#tierdlg form[data-tr-form="code"] button[type="submit"]')]);
+  await t.p.waitForTimeout(6000);
+  const s = await state(t.p);
+  ok(s.tier === "full" && !s.locked.length && (await get(t.p, "data/live/evsum.js")) === 200, "beta tester: Full after the code " + JSON.stringify(s));
+  await t.p.evaluate(() => window.OSAP_TIER.open()); await t.p.waitForTimeout(300);
+  ok(/beta tester code/.test((await wall(t.p)).text) && !(await t.p.$('#tierdlg input[name="code"]')), "beta tester: the plan says beta tester code, and no code box");
+  const t2 = await open("tok-mid");
+  await t2.p.evaluate(() => window.OSAP_TIER.open()); await t2.p.waitForTimeout(300);
+  await t2.p.fill('#tierdlg input[name="code"]', code); await t2.p.click('#tierdlg form[data-tr-form="code"] button[type="submit"]'); await t2.p.waitForTimeout(800);
+  ok(/not valid/.test(await msg(t2.p)), "the same code a second time: refused");
+  await t2.ctx.close();
+  await p.click('#tierdlg [data-tr="users"]'); await p.waitForTimeout(1500);
+  ok(/free@test/.test(await p.evaluate(() => document.getElementById("tierdlg").textContent)), "owner: the list shows who used the code");
+  await p.click("#tierdlg [data-tr-off]"); await p.waitForTimeout(1000);
+  const tierNow = await t.p.evaluate(() => fetch("api/osap-account", { headers: { authorization: "Bearer tok-free" } }).then((r) => r.json()).then((j) => j.tier));
+  ok(tierNow === "free" && /off/.test(await p.evaluate(() => document.getElementById("tierdlg").textContent)), "owner turns the code off: the tester is back on Free (" + tierNow + ")");
+  ok((await t.p.evaluate(() => fetch("api/osap-codes", { headers: { authorization: "Bearer tok-free" } }).then((r) => r.status))) === 403, "only the owner can list codes");
+  ok(errors.length === 0 && t.errors.length === 0, "beta codes: no page errors " + errors.concat(t.errors).join(" | "));
+  await t.ctx.close(); await ctx.close();
 }
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");

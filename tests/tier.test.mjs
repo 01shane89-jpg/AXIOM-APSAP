@@ -8,7 +8,7 @@ import { tierOfPath, tierOfRoles, allows, TOOLS, SETS, SETS_DEFAULT, PRICES } fr
 import { seal, b64u } from "../tools/seal_lib.mjs";
 import { loadTierKey, openForTier } from "../tools/tier_open.mjs";
 import { verifySignature, planFromEvent, applyPlan } from "../tools/paddle.mjs";
-import { isOwner, userRow } from "../tools/owner.mjs";
+import { isOwner, userRow, planOf } from "../tools/owner.mjs";
 
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
@@ -129,6 +129,9 @@ ok(isOwner({ email: "a@x", app_metadata: { roles: ["owner"] } }, ""), "the owner
 ok(isOwner({ email: "Shane@X", confirmed_at: "2026-10-18T00:00:00Z", app_metadata: {} }, "x@y, shane@x"), "a confirmed email in OSAP_OWNERS is the owner");
 ok(!isOwner({ email: "shane@x", app_metadata: {} }, "shane@x"), "an unconfirmed email in OSAP_OWNERS is not (anyone can sign up with any email)");
 ok(!isOwner({ email: "b@x", confirmed_at: "x", app_metadata: { roles: ["full"] } }, "shane@x") && !isOwner(null, "shane@x"), "everyone else is not the owner");
+ok(planOf({ email: "Shane@X", confirmed_at: "2026-10-18T00:00:00Z", app_metadata: { roles: [] } }, "shane@x", tierOfRoles) === "full", "the owner set by OSAP_OWNERS has Full, with no paid role");
+ok(planOf({ email: "a@x", app_metadata: { roles: ["owner"] } }, "", tierOfRoles) === "full" && planOf({ email: "b@x", confirmed_at: "x", app_metadata: { roles: ["mid"] } }, "shane@x", tierOfRoles) === "mid" && planOf(null, "shane@x", tierOfRoles) === "free", "everyone else has what their roles give");
+ok(userRow({ email: "shane@x", confirmedAt: "x", appMetadata: { roles: [] } }, tierOfRoles, "shane@x").tier === "full" && userRow({ email: "shane@x", confirmedAt: "x", appMetadata: { roles: [] } }, tierOfRoles, "shane@x").owner, "the Users list shows the OSAP_OWNERS owner as owner on Full");
 const row = userRow({ id: "u1", email: "b@x", createdAt: "2026-10-01T00:00:00Z", confirmedAt: "2026-10-01T00:05:00Z", lastSignInAt: "2026-10-18T01:00:00Z",
   appMetadata: { roles: ["mid"], osap_seen: "2026-10-18T02:00:00Z", osap_plan: { sub: "sub_1" } }, userMetadata: { full_name: "B" } }, tierOfRoles);
 ok(JSON.stringify(Object.keys(row).sort()) === '["confirmed","email","joined","lastSeen","lastSignIn","owner","tier"]' && row.tier === "mid" && row.lastSeen === "2026-10-18T02:00:00Z",
@@ -138,6 +141,36 @@ const askList = (tok) => list(new Request(BASE + "/api/osap-users", { headers: t
 ok((await askList()).status === 401 && (await askList("forged")).status === 401, "Users list: signed out or a forged token gets 401");
 ok((await askList("tok-full")).status === 403 && (await askList("tok-mid")).status === 403, "Users list: any account but the owner's gets 403, Full included");
 srv.close();
+
+/* ---------- beta tester codes (tools/codes.mjs) ---------- */
+{
+  const C = await import("../tools/codes.mjs"), { memoryStore } = await import("./codes_store.mjs");
+  const st = memoryStore(), now = Date.parse("2026-10-18T12:00:00Z");
+  const { code, rec } = await C.makeCode(st, { note: "Tester A", until: "2026-12-31" }, now);
+  ok(/^OSAP-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/.test(code), "a code looks like OSAP-XXXX-XXXX-XXXX, without 0, O, 1 or I: " + code);
+  ok(!JSON.stringify([...st.m]).includes(code.slice(5)) && !JSON.stringify([...st.m]).includes(C.normalise(code)), "the store holds only the code's hash, never the code");
+  ok(rec.until === "2026-12-31T23:59:59.000Z" && rec.last4 === code.slice(-4), "the end date is the end of that day, Zulu");
+  const used = await C.redeemCode(st, code.toLowerCase().replace(/-/g, " "), { id: "u1", email: "a@x" }, now);
+  ok(used.usedBy.uid === "u1", "a code works typed in lower case with spaces");
+  let again = null; try { await C.redeemCode(st, code, { id: "u2", email: "b@x" }, now); } catch (e) { again = e.message; }
+  let fake = null; try { await C.redeemCode(st, "OSAP-AAAA-BBBB-CCCC", { id: "u2" }, now); } catch (e) { fake = e.message; }
+  ok(again && again === fake, "a used code and a made-up code get the same answer: " + again);
+  const two = await C.makeCode(st, { note: "race" }, now);
+  const race = await Promise.allSettled([C.redeemCode(st, two.code, { id: "u3" }, now), C.redeemCode(st, two.code, { id: "u4" }, now)]);
+  ok(race.filter((r) => r.status === "fulfilled").length === 1, "two people using the same code at once: only one gets it");
+  const late = await C.makeCode(st, { until: "2026-10-20" }, now);
+  let ended = null; try { await C.redeemCode(st, late.code, { id: "u5" }, Date.parse("2026-10-21T00:00:00Z")); } catch (e) { ended = e.message; }
+  ok(ended === again, "a code past its end date does not work");
+  const off = await C.makeCode(st, {}, now); await C.revokeCode(st, off.rec.id);
+  let offd = null; try { await C.redeemCode(st, off.code, { id: "u6" }, now); } catch (e) { offd = e.message; }
+  ok(offd === again, "a code turned off does not work");
+  let past = null; try { C.endOf("2026-10-01", now); } catch (e) { past = e.message; }
+  ok(past && C.endOf("", now) === null, "an end date in the past is refused; empty means no end");
+  ok(C.betaActive({ osap_beta: { id: "x", until: "2026-12-31T23:59:59Z" } }, now) && !C.betaActive({ osap_beta: { id: "x", until: "2026-10-01T00:00:00Z" } }, now) && !C.betaActive({ osap_beta: null }, now), "a beta grant is on until its end date");
+  ok(planOf({ email: "t@x", app_metadata: { roles: [], osap_beta: { id: "x", until: null } } }, "", tierOfRoles) === "full", "a beta tester has Full");
+  const rows = (await C.listCodes(st)).map((r) => C.codeRow(r, now));
+  ok(rows.length === 4 && rows.every((r) => !("code" in r) && r.last4.length === 4) && rows.some((r) => r.state === "off") && rows.some((r) => r.usedBy === "a@x"), "the owner's list: note, last four, state, who used it; never the code");
+}
 
 /* ---------- the page wiring ---------- */
 const html = fs.readFileSync("index.html", "utf8"), sw = fs.readFileSync("sw.js", "utf8");
