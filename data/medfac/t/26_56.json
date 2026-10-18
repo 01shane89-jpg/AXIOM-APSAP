@@ -113,6 +113,7 @@
 ["w1556715046",27.19468,56.29756,"ir",{"name":"اوراژانش","amenity":"hospital","healthcare":"hospital"}],
 ["w198532430",26.36951,56.3636,"om",{"aeroway":"helipad"}],
 ["w207202547",27.15058,56.21588,"ir",{"aeroway":"helipad"}],
+["w211353366",26.04962,56.08665,"ae",{"aeroway":"helipad"}],
 ["w243361207",26.34228,56.4189,"om",{"name":"مركز كمزار الصحي","name:en":"Kumzar Health Center","amenity":"clinic","healthcare":"clinic"}],
 ["w252576786",27.09017,56.44817,"ir",{"name":"بیمارستان و درمانگاه","amenity":"hospital","healthcare":"hospital"}],
 ["w265232342",27.21012,56.33409,"ir",{"name":"بیمارستان خلیج فارس","name:en":"Persian Gulf Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+98 76 3367 0282","website":"https://nobatdarman.tamin.ir/","addr:street":"بلوار پردیس","addr:city":"بندرعباس","opening_hours":"24/7"}],
