@@ -193,7 +193,8 @@
     var dis = UI.busy ? " disabled" : "", me = tier();
     var wall = isWall(), stay = wall || UI.recover;
     var title = UI.mode === "newpw" ? (UI.recover ? "Choose a new password" : "Change password") : wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : "Plan and sign-in";
-    var h = '<div class="cbox"><div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
+    /* the sign-in screen is the first thing people see: the logo and name above the form, as on the loading screen */
+    var h = '<div class="cbox">' + (wall ? '<div class="trbrand"><img src="assets/logo.png" alt=""><span>AXIOM OSAP</span></div>' : "") + '<div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
       '<p class="trmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
     if (wall && UI.mode === "signin") h += '<p>OSAP needs an account, on the Free plan too. Sign in, or create a free account with your email.</p>';
     if (UI.mode === "users") {
@@ -440,7 +441,15 @@
       /* 16px: iPhone zooms the page into any smaller box it focuses */
       "#tierdlg input{font:inherit;font-size:16px;padding:8px;min-height:44px;box-sizing:border-box;width:100%}" +
       "#tierdlg .trbtns button.refresh,#tierdlg .trplan button.refresh{font-size:14px;padding:8px 14px;min-height:44px;border-radius:6px}" +
-      "#tierdlg.trwall{background:var(--bg,#0b1220)}#tierdlg .trusers{overflow:auto;max-height:60vh}#tierdlg .cbox:has(.trusers){max-width:900px}" +
+      /* the sign-in screen: the theme's own page colour, the form in the middle of the screen */
+      "#tierdlg[hidden]{display:none}#tierdlg.trwall{background:var(--paper,#f4f6f8);display:flex;padding:16px max(16px,env(safe-area-inset-right)) 16px max(16px,env(safe-area-inset-left))}" +
+      "#tierdlg.trwall .cbox{margin:auto;width:100%;max-width:420px;box-shadow:0 2px 12px rgba(0,0,0,.12);border:1px solid var(--line,rgba(127,127,127,.35))}" +
+      "#tierdlg .trbrand{display:flex;flex-direction:column;align-items:center;gap:6px;margin:4px 0 12px;font-weight:700;letter-spacing:.08em;font-size:14px}" +
+      "#tierdlg .trbrand img{width:72px;height:72px;border-radius:50%}" +
+      "#tierdlg.trwall .trbtns button.primary[type=submit]{flex:1 1 100%}" +
+      /* daily summaries are on Full: on a plan without them the Today page leaves out the box rather than saying none was built */
+      "html[data-osap-tier=free] .tddaily,html[data-osap-tier=mid] .tddaily{display:none!important}" +
+      "#tierdlg .trusers{overflow:auto;max-height:60vh}#tierdlg .cbox:has(.trusers){max-width:900px}" +
       "#tierdlg table{border-collapse:collapse;width:100%;font-size:12px}#tierdlg th,#tierdlg td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line,rgba(127,127,127,.35));white-space:nowrap}" +
       "#tierdlg td i{font-size:11px;color:var(--muted)}#tierdlg h3{margin:16px 0 4px;font-size:15px}#tierdlg td .refresh{min-height:32px;font-size:12px}" +
       "#tierdlg .trnewcode{border:1px solid #1c7ed6;border-radius:6px;padding:4px 10px;margin:8px 0}#tierdlg .trnewcode code{font-size:16px;font-weight:700;user-select:all}" +
