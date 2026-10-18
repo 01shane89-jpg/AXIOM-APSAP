@@ -144,6 +144,10 @@ const html = fs.readFileSync("index.html", "utf8"), sw = fs.readFileSync("sw.js"
 ok(html.includes('<script src="assets/osap-tier.js"></script>'), "index.html loads assets/osap-tier.js");
 ok(sw.includes('"assets/osap-tier.js"'), "sw.js keeps assets/osap-tier.js for offline use");
 ok(/\(api\|\\\.netlify\)/.test(sw), "sw.js never caches the sign-in and plan answers");
+const tierJs = fs.readFileSync("assets/osap-tier.js", "utf8");
+ok(tierJs.includes('var MOVE_TO = "https://axiom-osap.netlify.app/";') && html.includes('location.replace("https://axiom-osap.netlify.app/"+location.search+location.hash)'),
+  "the GitHub Pages copy sends people to the Netlify site to sign in (index.html and osap-tier.js)");
+ok(html.includes("if(/\\.github\\.io$/.test(location.hostname))"), "only the github.io address is moved, never the Netlify site itself");
 
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);
