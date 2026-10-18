@@ -51,6 +51,12 @@ const server = createServer(async (req, res) => {
       if (req.method === "PUT") { const b = JSON.parse(await R.text()); if (b.app_metadata) meta[id] = b.app_metadata; }
       res.end(JSON.stringify(asAdmin(who))); return;
     }
+    // the link in the confirmation email: a one-time token that signs the new account in
+    if (what === "verify") {
+      const b = JSON.parse(await R.text());
+      if (b.token !== "conf-free" || b.type !== "signup") { res.writeHead(422, { "content-type": "application/json" }); res.end(JSON.stringify({ msg: "Invalid token" })); return; }
+      res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ access_token: "tok-free", refresh_token: "tok-free", expires_in: 3600 })); return;
+    }
     if (what === "token") {
       const f = new URLSearchParams(await R.text()), t = f.get("grant_type") === "password" ? PASSWORDS[f.get("username")] : f.get("refresh_token");
       if (!t) { res.writeHead(400, { "content-type": "application/json" }); res.end(JSON.stringify({ error_description: "Invalid email or password" })); return; }
@@ -138,6 +144,18 @@ gate = true;
   await p.click("#tierdlg .x");
   ok(!(await wall(p)), "Plan and sign-in closes");
   ok(errors.length === 0, "Mid: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// 2b. the confirmation email's link signs the new account in, though the page's own scripts rewrite the address at start
+{
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  const p = await ctx.newPage(), errors = [];
+  p.on("pageerror", (e) => errors.push(String(e.message)));
+  await p.goto(base + "#confirmation_token=conf-free"); await p.waitForTimeout(9000);
+  const s = await state(p);
+  ok(!(await wall(p)) && s.tier === "free" && (await get(p, "data/live/news.js")) === 200, "confirmation link: signed in, no sign-in screen, data loads " + JSON.stringify(s));
+  ok(!/confirmation_token/.test(await p.evaluate(() => location.href)), "confirmation link: the token is taken out of the address");
   await ctx.close();
 }
 // 3. a Free account
