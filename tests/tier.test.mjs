@@ -8,6 +8,7 @@ import { tierOfPath, tierOfRoles, allows, TOOLS, SETS, SETS_DEFAULT, PRICES } fr
 import { seal, b64u } from "../tools/seal_lib.mjs";
 import { loadTierKey, openForTier } from "../tools/tier_open.mjs";
 import { verifySignature, planFromEvent, applyPlan } from "../tools/paddle.mjs";
+import { isOwner, userRow } from "../tools/owner.mjs";
 
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
@@ -26,6 +27,7 @@ ok(tierOfPath("data/claims/th.json") === "full", "claims need Full");
 ok(tierOfPath("data/live/evsum.js") === "full", "AI event summaries need Full");
 ok(tierOfPath("data/live/daily/th.js") === "full", "AI daily briefs need Full");
 ok(tierOfPath("assets/osap-news.js") === null, "app files are not data");
+ok(tierOfRoles(["owner"]) === "full", "the owner's account has everything");
 ok(tierOfRoles(["mid"]) === "mid" && tierOfRoles(["mid", "full"]) === "full" && tierOfRoles([]) === "free" && tierOfRoles(undefined) === "free", "roles map to the highest plan");
 ok(allows("full", "mid") && allows("mid", "free") && !allows("free", "mid") && !allows("mid", "full"), "plans rank free < mid < full");
 ok(SETS.flood === "free" && SETS.news === "free" && !SETS.border && SETS_DEFAULT === "mid", "data sets: News, Alerts, Flood and Hazards free, the rest Mid");
@@ -99,14 +101,16 @@ const env = { OSAP_DATA_ORIGIN: BASE + "/AXIOM-APSAP", OSAP_TIER_KEY: PRIV, OSAP
 globalThis.Netlify = { env: { get: (k) => env[k] } };
 const gate = (await import("../netlify/edge-functions/osap-data.js")).default;
 const ask = (p, tok) => gate(new Request(BASE + p, { headers: tok ? { cookie: "a=b; nf_jwt=" + tok } : {} }));
-ok((await ask("/data/live/news.js")) === undefined, "free data goes on to the plain proxy, signed in or not");
-let r = await ask("/data/infra/th/power.js");
-ok(r.status === 402 && r.headers.get("x-osap-tier-needed") === "mid", "signed out: Mid data is refused with 402");
+let r = await ask("/data/live/news.js");
+ok(r && r.status === 401, "signed out: even free data is refused with 401 (an account is needed)");
 ok(/^\/\* osap-locked/.test(await r.text()), "the refusal runs nothing when loaded as a script");
+ok((await ask("/data/live/news.js", "tok-free")) === undefined, "signed in on Free: free data goes on to the plain proxy");
+r = await ask("/data/infra/th/power.js");
+ok(r.status === 401, "signed out: Mid data is refused with 401");
 r = await ask("/data/infra/th/power.js", "tok-free");
 ok(r.status === 402, "Free plan: Mid data is refused");
 r = await ask("/data/infra/th/power.js", "forged.jwt.token");
-ok(r.status === 402, "a token Identity does not accept is treated as signed out");
+ok(r.status === 401, "a token Identity does not accept is treated as signed out");
 r = await ask("/data/infra/th/power.js", "tok-mid");
 ok(r.status === 200 && (await r.text()) === "window.POWER=1;", "Mid plan: Mid data arrives, opened from its sealed copy");
 r = await ask("/data/claims/th.json", "tok-mid");
@@ -119,6 +123,20 @@ r = await ask("/data/infra/th/missing.js", "tok-mid");
 ok(r.status === 404, "a missing file is a 404, not an error page");
 r = await ask("/data/..%2findex.html", "tok-full");
 ok(r && r.status === 400, "a path that climbs out of data/ is refused");
+
+/* ---------- the owner's Users list ---------- */
+ok(isOwner({ email: "a@x", app_metadata: { roles: ["owner"] } }, ""), "the owner role makes an account the owner");
+ok(isOwner({ email: "Shane@X", confirmed_at: "2026-10-18T00:00:00Z", app_metadata: {} }, "x@y, shane@x"), "a confirmed email in OSAP_OWNERS is the owner");
+ok(!isOwner({ email: "shane@x", app_metadata: {} }, "shane@x"), "an unconfirmed email in OSAP_OWNERS is not (anyone can sign up with any email)");
+ok(!isOwner({ email: "b@x", confirmed_at: "x", app_metadata: { roles: ["full"] } }, "shane@x") && !isOwner(null, "shane@x"), "everyone else is not the owner");
+const row = userRow({ id: "u1", email: "b@x", createdAt: "2026-10-01T00:00:00Z", confirmedAt: "2026-10-01T00:05:00Z", lastSignInAt: "2026-10-18T01:00:00Z",
+  appMetadata: { roles: ["mid"], osap_seen: "2026-10-18T02:00:00Z", osap_plan: { sub: "sub_1" } }, userMetadata: { full_name: "B" } }, tierOfRoles);
+ok(JSON.stringify(Object.keys(row).sort()) === '["confirmed","email","joined","lastSeen","lastSignIn","owner","tier"]' && row.tier === "mid" && row.lastSeen === "2026-10-18T02:00:00Z",
+  "a Users row holds only email, times, plan and the owner mark (no ids, names or payment details)");
+const list = (await import("../netlify/functions/osap-users.mjs")).default;
+const askList = (tok) => list(new Request(BASE + "/api/osap-users", { headers: tok ? { authorization: "Bearer " + tok } : {} }));
+ok((await askList()).status === 401 && (await askList("forged")).status === 401, "Users list: signed out or a forged token gets 401");
+ok((await askList("tok-full")).status === 403 && (await askList("tok-mid")).status === 403, "Users list: any account but the owner's gets 403, Full included");
 srv.close();
 
 /* ---------- the page wiring ---------- */

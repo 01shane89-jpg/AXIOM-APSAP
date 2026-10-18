@@ -22,6 +22,7 @@ jobs:
       - run: node tools/seal_hidden.mjs --check --skip-live
       - run: node tests/seal.test.mjs
       # the paywall (tools/tiers.mjs, netlify/): what each plan opens, the edge gate, Paddle webhooks
+      - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
@@ -80,6 +81,7 @@ jobs:
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
       - run: node tests/lock_smoke.mjs
+      - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier_smoke.mjs
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs

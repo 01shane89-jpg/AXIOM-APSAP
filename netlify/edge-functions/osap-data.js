@@ -1,4 +1,5 @@
 // The paywall's gate (tools/tiers.mjs): every data and source file the site asks for passes here.
+// Every file needs a signed-in account (Shane 2026-10-18: a login is required to use the app); signed out gets 401.
 // A free file goes on to the plain proxy in netlify.toml (GitHub Pages holds the data, refreshed by the Actions jobs every few
 // minutes, so a data refresh never needs a Netlify deploy). A Mid or Full file is fetched here only for a signed-in user
 // whose Identity roles allow it (the Paddle webhook sets them), and opened when it is sealed for the server's tier key.
@@ -30,8 +31,15 @@ export default async (req) => {
   const url = new URL(req.url), rel = decodeURIComponent(url.pathname).replace(/^\/+/, "");
   if (rel.split("/").includes("..")) return new Response("bad path", { status: 400 });
   const need = tierOfPath(rel);
-  if (!need || need === "free") return; // the proxy in netlify.toml
+  if (!need) return;
   const who = await tierOf(req);
+  if (!who.signedIn) {
+    return new Response("/* osap-locked: sign in to use OSAP */\n", {
+      status: 401,
+      headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", "x-osap-tier-needed": need },
+    });
+  }
+  if (need === "free") return; // the proxy in netlify.toml
   if (!allows(who.tier, need)) {
     return new Response("/* osap-locked: this needs the " + need + " plan */\n", {
       status: 402,

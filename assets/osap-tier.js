@@ -4,18 +4,29 @@
    include, and Settings > Plan and sign-in. On GitHub Pages (or offline) that address does not answer and this file adds nothing.
    The locks here are only signs: the edge gate (netlify/edge-functions/osap-data.js) is what refuses the data.
    Sign-in is Netlify Identity (email and password, its own confirmation and reset emails). Its token is kept in this
-   device's storage and in the nf_jwt cookie the gate reads. Payment is Paddle's checkout; card details never reach OSAP. */
+   device's storage and in the nf_jwt cookie the gate reads. Payment is Paddle's checkout; card details never reach OSAP.
+   Every plan needs an account (Shane 2026-10-18: "Create a login/user account requirement"): signed out, the Netlify site
+   shows a sign-in screen that cannot be closed, and the gate refuses every data file. The owner's account also gets
+   Settings > Users, the list of accounts with when each last used OSAP (netlify/functions/osap-users.mjs). */
 (function () {
   "use strict";
   var W = window, D = document;
   var ID = "/.netlify/identity", K_AUTH = "osap-auth", K_RELOAD = "osap-tier-reload";
   var CFG = null, BOX = null, UI = { msg: "", busy: false, mode: "plans" };
   var TIERS = ["free", "mid", "full"];
+  /* The GitHub Pages copy has no gate, so it moves people to the Netlify site, where they must sign in. Empty until that site is
+     live with Identity on (setting it before then would send everyone to a site that does not open). */
+  var MOVE_TO = "";
+  if (MOVE_TO && /\.github\.io$/.test(location.hostname)) { location.replace(MOVE_TO + location.search + location.hash); return; }
   /* empty stand-ins for the paid files the page loads with plain script tags at start (index.html), so that on a plan without
      them the page opens with those parts empty instead of stopping. The real file, when the plan has it, replaces them. */
   if (!W.BORDER) W.BORDER = { border: [], bands: { "20": [], "50": [] }, tambons: [], assets: [] };
   if (!W.CONFLICT) W.CONFLICT = { events: [], crossings: [], sites: [], casualties: [] };
   if (!W.POWER) W.POWER = [];
+  /* signed out, even the free files are refused: the default view's flood map stays empty behind the sign-in screen */
+  if (!W.EXPOSURE) W.EXPOSURE = { features: [], totals: { gauge: { n: 0, house: 0, pop: 0 }, sat: { n: 0, house: 0, pop: 0 }, all: { n: 0, house: 0, pop: 0 } } };
+  if (!W.LIVE) W.LIVE = { stations: [], over: [], rain: [], warnings: [], exposure: { byStation: {}, totals: { places: 0, care: 0, school: 0, util: 0 }, points: [] }, prov: {} };
+  if (!W.PROVINCES) W.PROVINCES = { type: "FeatureCollection", features: [] };
   var rank = function (t) { return Math.max(0, TIERS.indexOf(t)); };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function lGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
@@ -148,15 +159,19 @@
   function render() {
     if (!BOX || BOX.hidden) return;
     var dis = UI.busy ? " disabled" : "", me = tier();
-    var h = '<div class="cbox"><div class="chead"><h2 id="tr-h">Plan and sign-in</h2><button type="button" class="x" aria-label="Close">&times;</button></div>' +
+    var wall = isWall(), title = wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : "Plan and sign-in";
+    var h = '<div class="cbox"><div class="chead"><h2 id="tr-h">' + title + "</h2>" + (wall ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
       '<p class="trmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
-    if (UI.mode === "signin" || UI.mode === "signup") {
+    if (wall && UI.mode === "signin") h += '<p>OSAP needs an account, on the Free plan too. Sign in, or create a free account with your email.</p>';
+    if (UI.mode === "users") {
+      h += usersHtml();
+    } else if (UI.mode === "signin" || UI.mode === "signup") {
       var up = UI.mode === "signup";
       h += '<form data-tr-form="' + UI.mode + '"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
         '<label>Password<input type="password" name="password" minlength="8" autocomplete="' + (up ? "new-password" : "current-password") + '" required></label>' +
         '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">" + (up ? "Create account" : "Sign in") + "</button>" +
         '<button type="button" data-tr="' + (up ? "signin" : "signup") + '">' + (up ? "I have an account" : "Create an account") + "</button>" +
-        (up ? "" : '<button type="button" data-tr="forgot">Forgot password</button>') + '<button type="button" data-tr="plans">Back</button></div></form>';
+        (up ? "" : '<button type="button" data-tr="forgot">Forgot password</button>') + (wall ? "" : '<button type="button" data-tr="plans">Back</button>') + "</div></form>";
     } else if (UI.mode === "newpw") {
       h += '<form data-tr-form="newpw"><label>New password<input type="password" name="password" minlength="8" autocomplete="new-password" required></label>' +
         '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">Save password</button></div></form>";
@@ -173,8 +188,34 @@
       if (CFG.signedIn && me !== "free") h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
     }
     h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
+    BOX.className = wall ? "trwall" : "";
     BOX.innerHTML = h + "</div>";
     var f = BOX.querySelector("input"); if (f && UI.mode !== "plans") f.focus();
+  }
+  /* the sign-in screen: the gate is on and nobody is signed in, so nothing on the page can load */
+  function isWall() { return !!CFG && !CFG.signedIn; }
+  function fmt(t) { return t ? esc(String(t).replace("T", " ").replace(/:\d\d(\.\d+)?Z$/, "Z")) : "never"; }
+  function usersHtml() {
+    var u = UI.users;
+    if (!u) return '<p class="obs">Loading the list of accounts…</p>';
+    return "<p>" + u.count + (u.count === 1 ? " account" : " accounts") + ", most recently active first. Times are Zulu. Last used is updated at most once an hour.</p>" +
+      '<div class="trusers"><table><thead><tr><th>Email</th><th>Plan</th><th>Last used</th><th>Last sign-in</th><th>Joined</th><th>Confirmed</th></tr></thead><tbody>' +
+      u.users.map(function (r) {
+        return "<tr><td>" + esc(r.email) + (r.owner ? " <i>owner</i>" : "") + "</td><td>" + esc(name(r.tier)) + "</td><td>" + fmt(r.lastSeen) + "</td><td>" + fmt(r.lastSignIn) +
+          "</td><td>" + fmt(r.joined) + "</td><td>" + (r.confirmed ? "yes" : "no") + "</td></tr>";
+      }).join("") + "</tbody></table></div>" +
+      '<div class="trbtns"><button type="button" data-tr="users">Refresh</button></div>';
+  }
+  function loadUsers() {
+    UI.users = null; render();
+    session().then(function (a) {
+      if (!a) throw new Error("Sign in again to see the list.");
+      return fetch("api/osap-users", { headers: { authorization: "Bearer " + a.access_token }, cache: "no-store" });
+    }).then(function (r) {
+      if (r.status === 403) throw new Error("Only the owner's account can see the list of accounts.");
+      if (!r.ok) throw new Error("The list did not load (" + r.status + ").");
+      return r.json();
+    }).then(function (j) { UI.users = j; render(); }, function (err) { UI.users = { count: 0, users: [] }; say(String(err && err.message || err)); });
   }
   function say(t) { UI.msg = t; render(); }
   function open(mode, msg) {
@@ -183,14 +224,20 @@
       BOX = D.createElement("div"); BOX.id = "tierdlg"; BOX.hidden = true; BOX.setAttribute("role", "dialog"); BOX.setAttribute("aria-modal", "true"); BOX.setAttribute("aria-labelledby", "tr-h");
       BOX.addEventListener("click", onClick); BOX.addEventListener("submit", onSubmit); D.body.appendChild(BOX);
     }
-    UI.mode = mode || "plans"; UI.msg = msg || ""; BOX.hidden = false; render();
+    UI.mode = mode || "plans"; UI.msg = msg || "";
+    if (isWall() && UI.mode !== "signup" && UI.mode !== "newpw") UI.mode = "signin";
+    BOX.hidden = false; render();
+    if (UI.mode === "users") loadUsers();
   }
-  function close() { if (BOX) { BOX.hidden = true; BOX.innerHTML = ""; } }
+  function close() { if (BOX && !isWall()) { BOX.hidden = true; BOX.innerHTML = ""; } }
   function refreshPlan() {
     return session().then(account).then(function (j) { CFG = j; draw(); return j; });
   }
   function signedIn(msg) {
+    var was = isWall();
     return refreshPlan().then(function () {
+      /* coming from the sign-in screen nothing has loaded yet: start again signed in */
+      if (was && CFG.signedIn) { UI.busy = true; say(msg + " Opening OSAP…"); setTimeout(function () { location.reload(); }, 600); return; }
       var t = UI.after; UI.after = null; UI.mode = "plans"; UI.busy = false;
       if (t && rank(t) > rank(tier())) { say(msg); buy(t); return; }
       /* a plan already paid for: reload so the page loads that plan's data */
@@ -205,7 +252,7 @@
     UI.busy = true; say(k === "signup" ? "Creating your account…" : "Signing in…");
     if (k === "signin") tokenGrant({ grant_type: "password", username: em, password: pw }).then(function () { return signedIn("Signed in."); }).catch(fail);
     else if (k === "signup") jsonPost("/signup", { email: em, password: pw }).then(function (u) {
-      UI.busy = false; UI.mode = "plans";
+      UI.busy = false; UI.mode = isWall() ? "signin" : "plans";
       if (u && u.access_token) { keep(u); return signedIn("Account made."); }
       say("Account made. Open the confirmation email we sent to " + em + ", then sign in here.");
     }).catch(fail);
@@ -219,6 +266,7 @@
     if (b.hasAttribute("data-tr-buy")) { buy(b.getAttribute("data-tr-buy")); return; }
     var k = b.getAttribute("data-tr");
     if (k === "signin" || k === "signup" || k === "plans") { UI.mode = k; say(""); return; }
+    if (k === "users") { UI.msg = ""; loadUsers(); return; }
     if (k === "forgot") {
       var em = (BOX.querySelector('input[name="email"]') || {}).value;
       if (!em) { say("Type your email first."); return; }
@@ -238,6 +286,7 @@
     history.replaceState(null, "", location.pathname + location.search);
     return jsonPost("/verify", { token: decodeURIComponent(m[2]), type: m[1] === "confirmation" ? "signup" : "recovery" }).then(function (t) {
       keep(t);
+      if (m[1] === "confirmation" && isWall()) { location.reload(); return true; }
       return refreshPlan().then(function () { if (m[1] === "recovery") open("newpw", "Choose a new password."); else open("plans", "Email confirmed. You are signed in."); return true; });
     }, function (err) { return refreshPlan().then(function () { open("plans", "That link did not work: " + (err && err.message)); return true; }); });
   }
@@ -259,7 +308,10 @@
       "#tierdlg .trplan.cur{border-color:#1c7ed6}#tierdlg .trplan h3{margin:0;font-size:15px}#tierdlg .trplan h3 i{font-size:11px;font-weight:400;color:var(--muted)}" +
       "#tierdlg .trplan p{margin:0;flex:1}#tierdlg .trplan p.trprice{flex:0;font-weight:700}#tierdlg .trplan button{min-height:40px}" +
       "#tierdlg form{display:flex;flex-direction:column;gap:8px;margin-top:8px}#tierdlg label{display:flex;flex-direction:column;gap:3px;font-weight:600}" +
-      "#tierdlg input{font:inherit;padding:8px;min-height:40px;box-sizing:border-box}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
+      "#tierdlg input{font:inherit;padding:8px;min-height:40px;box-sizing:border-box}" +
+      "#tierdlg.trwall{background:var(--bg,#0b1220)}#tierdlg .trusers{overflow:auto;max-height:60vh}#tierdlg .cbox:has(.trusers){max-width:900px}" +
+      "#tierdlg table{border-collapse:collapse;width:100%;font-size:12px}#tierdlg th,#tierdlg td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line,rgba(127,127,127,.35));white-space:nowrap}" +
+      "#tierdlg td i{font-size:11px;color:var(--muted)}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
     D.head.appendChild(s);
   }
 
@@ -270,7 +322,7 @@
       D.addEventListener("change", function (e) { var r = e.target.closest && e.target.closest(".dsrow[data-tier-need]"); if (r && e.target.type === "checkbox") e.target.checked = false; }, true);
       new MutationObserver(drawSoon).observe(D.body, { childList: true, subtree: true });
       setInterval(function () { session(); }, 20 * 60000);
-      fromEmail();
+      fromEmail().then(function (done) { if (!done && isWall()) open("signin"); });
       /* a token that had run out was renewed after the page had asked for its data: load once more with the new one */
       try {
         if (tier() !== "free" && sessionStorage.getItem(K_RELOAD) !== "1" && W.performance && performance.getEntriesByType &&
@@ -284,7 +336,9 @@
   W.OSAP_TIER = {
     on: function () { return !!CFG; },
     tier: tier,
+    owner: function () { return !!(CFG && CFG.owner); },
     open: function () { open("plans"); },
+    users: function () { if (CFG && CFG.owner) open("users"); },
     allows: function (need) { return !locked(need); },
   };
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", start); else start();

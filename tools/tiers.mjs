@@ -6,7 +6,7 @@
 export const TIERS = ["free", "mid", "full"];
 export const NAMES = { free: "Free", mid: "Mid", full: "Full" };
 // Shown on the plans sheet. Proposed 2026-10-17; the charge itself is whatever the Paddle price says, so change both together.
-export const PRICES = { free: "US$0, no account needed", mid: "US$9 a month or US$90 a year", full: "US$29 a month or US$290 a year" };
+export const PRICES = { free: "US$0, free account", mid: "US$9 a month or US$90 a year", full: "US$29 a month or US$290 a year" };
 export const DATA_DEFAULT = "mid";
 
 // Data and source files, by path from the site root.
@@ -44,10 +44,11 @@ export function tierOfPath(p) {
   for (const [re, t] of DATA) if (re.test(rel)) return t;
   return DATA_DEFAULT;
 }
-/** A signed-in user's tier from their Identity roles (set by the Paddle webhook): the highest tier role they hold. */
+/** A signed-in user's tier from their Identity roles (set by the Paddle webhook): the highest tier role they hold.
+ *  The owner role (tools/owner.mjs) has everything. */
 export function tierOfRoles(roles) {
   const rs = new Set([].concat(roles || []));
-  return rs.has("full") ? "full" : rs.has("mid") ? "mid" : "free";
+  return rs.has("full") || rs.has("owner") ? "full" : rs.has("mid") ? "mid" : "free";
 }
 /** What the page needs to draw its locks (no secrets). */
 export function rulesForPage() {

@@ -136,6 +136,8 @@
     if (W.OSAP_LOCK) h += '<button type="button" role="menuitem" data-tp="@lock">Hidden areas</button>';
     /* the paywall's plans and sign-in, only on the Netlify site (assets/osap-tier.js) */
     if (W.OSAP_TIER && W.OSAP_TIER.on()) h += '<button type="button" role="menuitem" data-tp="@plan">Plan and sign-in</button>';
+    /* the accounts that use OSAP, for the owner's account only (assets/osap-tier.js) */
+    if (W.OSAP_TIER && W.OSAP_TIER.owner && W.OSAP_TIER.owner()) h += '<button type="button" role="menuitem" data-tp="@users">Users</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
@@ -196,6 +198,7 @@
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
     else if (sel === "@plan") { if (W.OSAP_TIER) W.OSAP_TIER.open(); }
+    else if (sel === "@users") { if (W.OSAP_TIER && W.OSAP_TIER.users) W.OSAP_TIER.users(); }
     else press(sel);
   });
   pop.addEventListener("change", function (e) {
