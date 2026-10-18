@@ -11,13 +11,18 @@
 (function () {
   "use strict";
   var W = window, D = document;
-  var ID = "/.netlify/identity", K_AUTH = "osap-auth", K_RELOAD = "osap-tier-reload";
-  var CFG = null, BOX = null, UI = { msg: "", busy: false, mode: "plans" };
+  var ID = "/.netlify/identity", K_AUTH = "osap-auth", K_RELOAD = "osap-tier-reload", K_NEWPW = "osap-newpw";
+  var CFG = null, BOX = null, UI = { msg: "", busy: false, mode: "plans", recover: false };
+  var STARTED_OUT = false; /* the page opened signed out, so nothing loaded: a sign-in from here reloads */
   var TIERS = ["free", "mid", "full"];
   /* The GitHub Pages copy has no gate, so it moves people to the Netlify site, where they must sign in (also at the top of
      index.html; this one catches a page an old service worker still serves). Empty turns the move off. */
   var MOVE_TO = "https://axiom-osap.netlify.app/";
-  if (MOVE_TO && /\.github\.io$/.test(location.hostname)) { location.replace(MOVE_TO + location.search + location.hash); return; }
+  if (MOVE_TO && /\.github\.io$/.test(location.hostname)) { location.replace(MOVE_TO + (location.search ? location.search + "&" : "?") + "from=pages" + location.hash); return; }
+  /* ?from=pages: moved here from the old address, often by a home-screen icon made there, which iPhone opens in a browser
+     view with its own storage. Taken off the address now; the sign-in screen says to add OSAP to the home screen again. */
+  var MOVED = /[?&]from=pages(&|$)/.test(location.search);
+  if (MOVED) try { var q0 = new URLSearchParams(location.search); q0.delete("from"); history.replaceState(null, "", location.pathname + (String(q0) ? "?" + q0 : "") + location.hash); } catch (e) { /* keep the address */ }
   /* the token in a link from Identity's emails (#confirmation_token=… or #recovery_token=…), taken now, before the page's own
      scripts rewrite the address to the view they open (osap-start.js, the tab router), which would lose it */
   var EMAIL_LINK = /(?:^|[#&])(confirmation|recovery)_token=([^&]+)/.exec(location.hash || "");
@@ -31,10 +36,13 @@
   if (!W.EXPOSURE) W.EXPOSURE = { features: [], totals: { gauge: { n: 0, house: 0, pop: 0 }, sat: { n: 0, house: 0, pop: 0 }, all: { n: 0, house: 0, pop: 0 } } };
   if (!W.LIVE) W.LIVE = { stations: [], over: [], rain: [], warnings: [], exposure: { byStation: {}, totals: { places: 0, care: 0, school: 0, util: 0 }, points: [] }, prov: {} };
   if (!W.PROVINCES) W.PROVINCES = { type: "FeatureCollection", features: [] };
+  var MOVED_MSG = "OSAP has a new address: axiom-osap.netlify.app. If you opened OSAP from a home-screen icon, remove that icon and add OSAP again from this page (Share, then Add to Home Screen), so it opens here and keeps you signed in.";
   var rank = function (t) { return Math.max(0, TIERS.indexOf(t)); };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function lGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
   function lSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode: signed out */ } }
+  function sGet(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function sSet(k, v) { try { if (v == null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { /* not kept */ } }
 
   /* ---------- Netlify Identity (its REST API, the one @netlify/identity uses) ---------- */
   function cookie(tok, secs) {
@@ -48,13 +56,23 @@
     return a;
   }
   function forget() { lSet(K_AUTH, null); cookie(null); }
+  /* Identity's own wording, put plainly; the error keeps the HTTP status (0: not reached) */
+  function plain(j, st) {
+    var m = String(j.error_description || j.msg || j.error || "");
+    if (st === 429) return "Too many tries. Wait a few minutes, then try again.";
+    if (/not confirmed/i.test(m)) return "Confirm your email first: open the link in the email we sent you, then sign in.";
+    if (/already (been )?registered|already exists/i.test(m)) return "That email already has an account. Sign in, or use Forgot password to set a new password.";
+    if (/no user found|password invalid|invalid (login|credentials)/i.test(m)) return "That email and password do not match. Check them, or use Forgot password to set a new password.";
+    if (/password/i.test(m) && /short|least|length/i.test(m)) return "Use a password of at least 8 characters.";
+    return m || ("Sign-in service error " + st);
+  }
   function idFetch(path, opt) {
     return fetch(ID + path, opt).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
-        if (!r.ok) throw new Error(j.error_description || j.msg || j.error || ("Sign-in service error " + r.status));
+        if (!r.ok) { var e = new Error(plain(j, r.status)); e.status = r.status; throw e; }
         return j;
       });
-    });
+    }, function () { var e = new Error("Could not reach the sign-in service. Check your connection, then try again."); e.status = 0; throw e; });
   }
   function form(o) { return Object.keys(o).map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(o[k]); }).join("&"); }
   function tokenGrant(o) { return idFetch("/token", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: form(o) }).then(keep); }
@@ -62,13 +80,23 @@
     var h = { "content-type": "application/json" }; if (tok) h.authorization = "Bearer " + tok;
     return idFetch(path, { method: path === "/user" ? "PUT" : "POST", headers: h, body: JSON.stringify(o) });
   }
-  /* a token with less than five minutes left is renewed first */
+  /* a token with less than five minutes left is renewed first. A refresh token works once, so one renewal runs at a time,
+     and when it fails another tab may already have renewed it. Only Identity refusing it signs out: offline, or a server
+     error, keeps the account for the next try. */
+  var renewing = null;
   function session() {
     var a = lGet(K_AUTH);
     if (!a) return Promise.resolve(null);
     if (a.until - Date.now() > 300000) { cookie(a.access_token, (a.until - Date.now()) / 1000); return Promise.resolve(a); }
     if (!a.refresh_token) { forget(); return Promise.resolve(null); }
-    return tokenGrant({ grant_type: "refresh_token", refresh_token: a.refresh_token }).catch(function () { forget(); return null; });
+    if (renewing) return renewing;
+    renewing = tokenGrant({ grant_type: "refresh_token", refresh_token: a.refresh_token }).catch(function (err) {
+      var b = lGet(K_AUTH);
+      if (b && b.refresh_token !== a.refresh_token && b.until - Date.now() > 60000) { cookie(b.access_token, (b.until - Date.now()) / 1000); return b; }
+      if (err && (err.status === 400 || err.status === 401)) { forget(); return null; }
+      return a.until > Date.now() ? a : null;
+    }).then(function (r) { renewing = null; return r; });
+    return renewing;
   }
 
   /* ---------- the plan ---------- */
@@ -163,38 +191,45 @@
   function render() {
     if (!BOX || BOX.hidden) return;
     var dis = UI.busy ? " disabled" : "", me = tier();
-    var wall = isWall(), title = wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : "Plan and sign-in";
-    var h = '<div class="cbox"><div class="chead"><h2 id="tr-h">' + title + "</h2>" + (wall ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
+    var wall = isWall(), stay = wall || UI.recover;
+    var title = UI.mode === "newpw" ? (UI.recover ? "Choose a new password" : "Change password") : wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : "Plan and sign-in";
+    var h = '<div class="cbox"><div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
       '<p class="trmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
     if (wall && UI.mode === "signin") h += '<p>OSAP needs an account, on the Free plan too. Sign in, or create a free account with your email.</p>';
     if (UI.mode === "users") {
       h += usersHtml();
     } else if (UI.mode === "signin" || UI.mode === "signup") {
       var up = UI.mode === "signup";
-      h += '<form data-tr-form="' + UI.mode + '"><label>Email<input type="email" name="email" autocomplete="email" required></label>' +
-        '<label>Password<input type="password" name="password" minlength="8" autocomplete="' + (up ? "new-password" : "current-password") + '" required></label>' +
-        '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">" + (up ? "Create account" : "Sign in") + "</button>" +
-        '<button type="button" data-tr="' + (up ? "signin" : "signup") + '">' + (up ? "I have an account" : "Create an account") + "</button>" +
-        (up ? "" : '<button type="button" data-tr="forgot">Forgot password</button>') + (wall ? "" : '<button type="button" data-tr="plans">Back</button>') + "</div></form>";
+      h += '<form data-tr-form="' + UI.mode + '"><label>Email<input type="email" name="email" autocomplete="username" autocapitalize="none" spellcheck="false" required value="' + esc(UI.email || "") + '"></label>' +
+        '<label>Password' + (up ? " (at least 8 characters)" : "") + '<input type="password" name="password" minlength="8" autocomplete="' + (up ? "new-password" : "current-password") + '" required></label>' +
+        '<div class="trbtns"><button type="submit" class="refresh primary"' + dis + ">" + (up ? "Create account" : "Sign in") + "</button>" +
+        '<button type="button" class="refresh" data-tr="' + (up ? "signin" : "signup") + '"' + dis + ">" + (up ? "I have an account" : "Create an account") + "</button>" +
+        (up ? "" : '<button type="button" class="refresh" data-tr="forgot"' + dis + ">Forgot password</button>") + (wall ? "" : '<button type="button" class="refresh" data-tr="plans">Back</button>') + "</div></form>";
     } else if (UI.mode === "newpw") {
-      h += '<form data-tr-form="newpw"><label>New password<input type="password" name="password" minlength="8" autocomplete="new-password" required></label>' +
-        '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">Save password</button></div></form>";
+      /* the hidden email lets a password manager save the new password under the right account */
+      h += '<form data-tr-form="newpw"><input type="email" name="username" autocomplete="username" value="' + esc(CFG.email || "") + '" hidden readonly>' +
+        (UI.recover ? "<p>Signed in as <b>" + esc(CFG.email || "") + "</b> from the reset link. Choose the password you will sign in with from now on.</p>"
+          : '<label>Current password<input type="password" name="current" autocomplete="current-password" required></label>') +
+        '<label>New password (at least 8 characters)<input type="password" name="password" minlength="8" autocomplete="new-password" required></label>' +
+        '<div class="trbtns"><button type="submit" class="refresh primary"' + dis + ">Save password</button>" +
+        (UI.recover ? "" : '<button type="button" class="refresh" data-tr="plans">Back</button>') + "</div></form>";
     } else {
       h += CFG.signedIn ? '<p>Signed in as <b>' + esc(CFG.email || "") + "</b>. Your plan: <b>" + esc(name(me)) + "</b>.</p>"
         : '<p class="obs">You are using the Free plan. Sign in to use a plan you have paid for.</p>';
       h += '<div class="trplans">' + TIERS.map(function (t) {
         var cur = t === me, up = rank(t) > rank(me);
         return '<div class="trplan' + (cur ? " cur" : "") + '"><h3>' + esc(name(t)) + (cur ? " <i>your plan</i>" : "") + "</h3>" + (CFG.rules.prices && CFG.rules.prices[t] ? '<p class="trprice">' + esc(CFG.rules.prices[t]) + "</p>" : "") + "<p>" + esc(WHAT[t]) + "</p>" +
-          (up ? '<button type="button" class="refresh" data-tr-buy="' + t + '"' + dis + ">Choose " + esc(name(t)) + "</button>" : "") + "</div>";
+          (up ? '<button type="button" class="refresh primary" data-tr-buy="' + t + '"' + dis + ">Choose " + esc(name(t)) + "</button>" : "") + "</div>";
       }).join("") + "</div>";
-      h += '<div class="trbtns">' + (CFG.signedIn ? '<button type="button" data-tr="signout"' + dis + ">Sign out</button>"
-        : '<button type="button" class="refresh" data-tr="signin">Sign in</button><button type="button" data-tr="signup">Create an account</button>') + "</div>";
+      h += '<div class="trbtns">' + (CFG.signedIn ? '<button type="button" class="refresh" data-tr="newpw"' + dis + ">Change password</button>" +
+          '<button type="button" class="refresh" data-tr="signout"' + dis + ">Sign out</button>"
+        : '<button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="signup">Create an account</button>') + "</div>";
       if (CFG.signedIn && me !== "free") h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
     }
     h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
     BOX.className = wall ? "trwall" : "";
     BOX.innerHTML = h + "</div>";
-    var f = BOX.querySelector("input"); if (f && UI.mode !== "plans") f.focus();
+    var f = BOX.querySelector("input:not([hidden])"); if (f && UI.mode !== "plans") { if (f.value && UI.mode !== "newpw") f = BOX.querySelector('input[type="password"]') || f; f.focus(); }
   }
   /* the sign-in screen: the gate is on and nobody is signed in, so nothing on the page can load */
   function isWall() { return !!CFG && !CFG.signedIn; }
@@ -208,7 +243,7 @@
         return "<tr><td>" + esc(r.email) + (r.owner ? " <i>owner</i>" : "") + "</td><td>" + esc(name(r.tier)) + "</td><td>" + fmt(r.lastSeen) + "</td><td>" + fmt(r.lastSignIn) +
           "</td><td>" + fmt(r.joined) + "</td><td>" + (r.confirmed ? "yes" : "no") + "</td></tr>";
       }).join("") + "</tbody></table></div>" +
-      '<div class="trbtns"><button type="button" data-tr="users">Refresh</button></div>';
+      '<div class="trbtns"><button type="button" class="refresh" data-tr="users">Refresh</button></div>';
   }
   function loadUsers() {
     UI.users = null; render();
@@ -229,16 +264,17 @@
       BOX.addEventListener("click", onClick); BOX.addEventListener("submit", onSubmit); D.body.appendChild(BOX);
     }
     UI.mode = mode || "plans"; UI.msg = msg || "";
-    if (isWall() && UI.mode !== "signup" && UI.mode !== "newpw") UI.mode = "signin";
+    if (UI.recover) UI.mode = "newpw";
+    else if (isWall() && UI.mode !== "signup") UI.mode = "signin";
     BOX.hidden = false; render();
     if (UI.mode === "users") loadUsers();
   }
-  function close() { if (BOX && !isWall()) { BOX.hidden = true; BOX.innerHTML = ""; } }
+  function close() { if (BOX && !isWall() && !UI.recover) { BOX.hidden = true; BOX.innerHTML = ""; } }
   function refreshPlan() {
     return session().then(account).then(function (j) { CFG = j; draw(); return j; });
   }
   function signedIn(msg) {
-    var was = isWall();
+    var was = isWall() || STARTED_OUT;
     return refreshPlan().then(function () {
       /* coming from the sign-in screen nothing has loaded yet: start again signed in */
       if (was && CFG.signedIn) { UI.busy = true; say(msg + " Opening OSAP…"); setTimeout(function () { location.reload(); }, 600); return; }
@@ -250,18 +286,39 @@
     });
   }
   function fail(err) { UI.busy = false; say(String(err && err.message || err)); }
+  /* the reset link's sign-in has run out before a new password was saved: back to the sign-in screen for a new link */
+  function lapsed() {
+    UI.recover = false; UI.busy = false; sSet(K_NEWPW, null); forget();
+    return refreshPlan().catch(function () {}).then(function () { open("signin", "That reset link has run out. Type your email, then choose Forgot password for a new one."); });
+  }
   function onSubmit(e) {
     e.preventDefault();
     var f = e.target, k = f.getAttribute("data-tr-form"), em = f.email ? f.email.value.trim() : "", pw = f.password ? f.password.value : "";
-    UI.busy = true; say(k === "signup" ? "Creating your account…" : "Signing in…");
+    if (em) UI.email = em;
+    UI.busy = true; say(k === "signup" ? "Creating your account…" : k === "newpw" ? "Saving your password…" : "Signing in…");
     if (k === "signin") tokenGrant({ grant_type: "password", username: em, password: pw }).then(function () { return signedIn("Signed in."); }).catch(fail);
     else if (k === "signup") jsonPost("/signup", { email: em, password: pw }).then(function (u) {
       UI.busy = false; UI.mode = isWall() ? "signin" : "plans";
       if (u && u.access_token) { keep(u); return signedIn("Account made."); }
       say("Account made. Open the confirmation email we sent to " + em + ", then sign in here.");
     }).catch(fail);
-    else if (k === "newpw") session().then(function (a) { if (!a) throw new Error("The reset link has run out. Ask for a new one."); return jsonPost("/user", { password: pw }, a.access_token); })
-      .then(function () { return signedIn("Password saved."); }).catch(fail);
+    else if (k === "newpw") {
+      /* changing it (not from a reset link) asks for the current one first, so an unlocked device cannot be taken over */
+      var check = f.current ? tokenGrant({ grant_type: "password", username: CFG.email || "", password: f.current.value }).catch(function (err) {
+        if (err && (err.status === 400 || err.status === 401)) throw new Error("Your current password is not right. If you have forgotten it, sign out and use Forgot password.");
+        throw err;
+      }) : session();
+      check.then(function (a) {
+        if (!a) return lapsed().then(function () { return false; });
+        return jsonPost("/user", { password: pw }, a.access_token).then(function () { return true; });
+      }).then(function (ok) {
+        if (!ok) return;
+        var rec = UI.recover; UI.recover = false; sSet(K_NEWPW, null);
+        if (rec) return signedIn("Password saved. Use it to sign in from now on.");
+        /* a change while signed in: the page already has this plan's data */
+        UI.busy = false; UI.mode = "plans"; say("Password changed. Use the new one to sign in from now on.");
+      }).catch(fail);
+    }
   }
   function onClick(e) {
     var t = e.target;
@@ -269,16 +326,22 @@
     var b = t.closest && t.closest("[data-tr],[data-tr-buy]"); if (!b || UI.busy) return;
     if (b.hasAttribute("data-tr-buy")) { buy(b.getAttribute("data-tr-buy")); return; }
     var k = b.getAttribute("data-tr");
-    if (k === "signin" || k === "signup" || k === "plans") { UI.mode = k; say(""); return; }
+    if (k === "signin" || k === "signup" || k === "plans" || k === "newpw") {
+      var typed = BOX.querySelector('input[name="email"]'); if (typed && typed.value) UI.email = typed.value.trim();
+      UI.mode = k; say(""); return;
+    }
     if (k === "users") { UI.msg = ""; loadUsers(); return; }
     if (k === "forgot") {
       var em = (BOX.querySelector('input[name="email"]') || {}).value;
-      if (!em) { say("Type your email first."); return; }
-      jsonPost("/recover", { email: em.trim() }).then(function () { say("If that email has an account, a reset link is on its way."); }, fail);
+      if (!em || !/\S@\S/.test(em)) { say("Type your email first, then choose Forgot password."); return; }
+      UI.email = em.trim(); UI.busy = true; say("Sending a reset link…");
+      /* the same answer whether or not the email has an account, so the screen does not tell who uses OSAP */
+      var sent = function () { UI.busy = false; say("If " + UI.email + " has an account, a reset link is on its way. Open it on this device; it signs you in and asks for a new password."); };
+      jsonPost("/recover", { email: UI.email }).then(sent, function (err) { if (err && (err.status === 404 || err.status === 422)) sent(); else fail(err); });
       return;
     }
     if (k === "signout") {
-      var a = lGet(K_AUTH); forget();
+      var a = lGet(K_AUTH); forget(); sSet(K_NEWPW, null); UI.recover = false; UI.busy = true;
       if (a) fetch(ID + "/logout", { method: "POST", headers: { authorization: "Bearer " + a.access_token } }).catch(function () {});
       say("Signed out. Reloading…"); setTimeout(function () { location.reload(); }, 600);
     }
@@ -287,11 +350,18 @@
   function fromEmail() {
     var m = EMAIL_LINK; EMAIL_LINK = null;
     if (!m) return Promise.resolve(false);
-    return jsonPost("/verify", { token: decodeURIComponent(m[2]), type: m[1] === "confirmation" ? "signup" : "recovery" }).then(function (t) {
-      keep(t);
-      if (m[1] === "confirmation" && isWall()) { location.reload(); return true; }
-      return refreshPlan().then(function () { if (m[1] === "recovery") open("newpw", "Choose a new password."); else open("plans", "Email confirmed. You are signed in."); return true; });
-    }, function (err) { return refreshPlan().then(function () { open("plans", "That link did not work: " + (err && err.message)); return true; }); });
+    var rec = m[1] === "recovery";
+    return jsonPost("/verify", { token: decodeURIComponent(m[2]), type: rec ? "recovery" : "signup" }).then(function (t) {
+      if (!keep(t)) throw new Error("no token");
+      if (!rec && isWall()) { location.reload(); return true; }
+      /* a reset link signs in for one purpose: the new password. Kept for this tab, so a reload asks again. */
+      if (rec) { UI.recover = true; sSet(K_NEWPW, "1"); }
+      return refreshPlan().catch(function () {}).then(function () { if (rec) open("newpw"); else open("plans", "Email confirmed. You are signed in."); return true; });
+    }, function (err) {
+      var why = err && err.status === 0 ? err.message : rec ? "That reset link has expired or was already used. Type your email, then choose Forgot password for a new one."
+        : "That confirmation link has expired or was already used. If you confirmed already, sign in.";
+      return refreshPlan().catch(function () {}).then(function () { open("plans", why); return true; });
+    });
   }
 
   function css() {
@@ -311,7 +381,9 @@
       "#tierdlg .trplan.cur{border-color:#1c7ed6}#tierdlg .trplan h3{margin:0;font-size:15px}#tierdlg .trplan h3 i{font-size:11px;font-weight:400;color:var(--muted)}" +
       "#tierdlg .trplan p{margin:0;flex:1}#tierdlg .trplan p.trprice{flex:0;font-weight:700}#tierdlg .trplan button{min-height:40px}" +
       "#tierdlg form{display:flex;flex-direction:column;gap:8px;margin-top:8px}#tierdlg label{display:flex;flex-direction:column;gap:3px;font-weight:600}" +
-      "#tierdlg input{font:inherit;padding:8px;min-height:40px;box-sizing:border-box}" +
+      /* 16px: iPhone zooms the page into any smaller box it focuses */
+      "#tierdlg input{font:inherit;font-size:16px;padding:8px;min-height:44px;box-sizing:border-box;width:100%}" +
+      "#tierdlg .trbtns button.refresh,#tierdlg .trplan button.refresh{font-size:14px;padding:8px 14px;min-height:44px;border-radius:6px}" +
       "#tierdlg.trwall{background:var(--bg,#0b1220)}#tierdlg .trusers{overflow:auto;max-height:60vh}#tierdlg .cbox:has(.trusers){max-width:900px}" +
       "#tierdlg table{border-collapse:collapse;width:100%;font-size:12px}#tierdlg th,#tierdlg td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line,rgba(127,127,127,.35));white-space:nowrap}" +
       "#tierdlg td i{font-size:11px;color:var(--muted)}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
@@ -320,12 +392,20 @@
 
   function start() {
     refreshPlan().then(function () {
+      STARTED_OUT = !CFG.signedIn;
       css(); draw();
       D.addEventListener("click", guard, true);
       D.addEventListener("change", function (e) { var r = e.target.closest && e.target.closest(".dsrow[data-tier-need]"); if (r && e.target.type === "checkbox") e.target.checked = false; }, true);
       new MutationObserver(drawSoon).observe(D.body, { childList: true, subtree: true });
       setInterval(function () { session(); }, 20 * 60000);
-      fromEmail().then(function (done) { if (!done && isWall()) open("signin"); });
+      fromEmail().then(function (done) {
+        if (done) return;
+        /* a reset link opened in this tab, and the page reloaded before the new password was saved */
+        if (sGet(K_NEWPW) && CFG.signedIn) { UI.recover = true; open("newpw"); return; }
+        sSet(K_NEWPW, null);
+        if (isWall()) open("signin", MOVED ? MOVED_MSG : "");
+        else if (MOVED) open("plans", MOVED_MSG);
+      });
       /* a token that had run out was renewed after the page had asked for its data: load once more with the new one */
       try {
         if (tier() !== "free" && sessionStorage.getItem(K_RELOAD) !== "1" && W.performance && performance.getEntriesByType &&
