@@ -14,9 +14,9 @@
   var ID = "/.netlify/identity", K_AUTH = "osap-auth", K_RELOAD = "osap-tier-reload";
   var CFG = null, BOX = null, UI = { msg: "", busy: false, mode: "plans" };
   var TIERS = ["free", "mid", "full"];
-  /* The GitHub Pages copy has no gate, so it moves people to the Netlify site, where they must sign in. Empty until that site is
-     live with Identity on (setting it before then would send everyone to a site that does not open). */
-  var MOVE_TO = "";
+  /* The GitHub Pages copy has no gate, so it moves people to the Netlify site, where they must sign in (also at the top of
+     index.html; this one catches a page an old service worker still serves). Empty turns the move off. */
+  var MOVE_TO = "https://axiom-osap.netlify.app/";
   if (MOVE_TO && /\.github\.io$/.test(location.hostname)) { location.replace(MOVE_TO + location.search + location.hash); return; }
   /* the token in a link from Identity's emails (#confirmation_token=… or #recovery_token=…), taken now, before the page's own
      scripts rewrite the address to the view they open (osap-start.js, the tab router), which would lose it */
