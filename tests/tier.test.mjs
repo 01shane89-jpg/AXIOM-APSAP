@@ -31,7 +31,7 @@ ok(tierOfRoles(["owner"]) === "full", "the owner's account has everything");
 ok(tierOfRoles(["mid"]) === "mid" && tierOfRoles(["mid", "full"]) === "full" && tierOfRoles([]) === "free" && tierOfRoles(undefined) === "free", "roles map to the highest plan");
 ok(allows("full", "mid") && allows("mid", "free") && !allows("free", "mid") && !allows("mid", "full"), "plans rank free < mid < full");
 ok(SETS.flood === "free" && SETS.news === "free" && !SETS.border && SETS_DEFAULT === "mid", "data sets: News, Alerts, Flood and Hazards free, the rest Mid");
-ok(/9/.test(PRICES.mid) && /29/.test(PRICES.full), "the plans sheet shows the proposed prices");
+ok(/US\$50 a year/.test(PRICES.mid) && /US\$100 a year/.test(PRICES.full), "the plans sheet shows Full at US$100 a year and Mid at US$50");
 ok(TOOLS.overlays === "mid" && TOOLS.mine === "full" && !TOOLS.today && !TOOLS.weather, "toolbar: Today and Weather free, Overlays Mid, My work Full");
 
 /* ---------- sealed for the server's tier key, opened only with it ---------- */

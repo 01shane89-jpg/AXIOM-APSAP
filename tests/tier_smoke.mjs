@@ -180,7 +180,7 @@ gate = true;
   ok((await get(p, "data/live/news.js")) === 200 && (await get(p, "data/live/ucdp.js")) === 402, "Free: news 200, conflict events 402");
   await p.evaluate(() => document.querySelector('#atk-tools [data-atk="overlays"]').click()); await p.waitForTimeout(400);
   const dlg = await wall(p);
-  ok(dlg && /needs the Mid plan/.test(dlg.text) && /US\$9/.test(dlg.text), "Free: a locked tool opens the plans with prices");
+  ok(dlg && /needs the Mid plan/.test(dlg.text) && /US\$50 a year/.test(dlg.text) && /14 days free/.test(dlg.text), "Free: a locked tool opens the plans with prices and the free trial");
   const om = await p.evaluate(() => { const o = document.getElementById("atk-om"); return !!(o && !o.hidden && o.offsetParent); });
   ok(!om, "the locked Overlays panel did not open");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-plans.png" : "/dev/null" }).catch(() => {});
