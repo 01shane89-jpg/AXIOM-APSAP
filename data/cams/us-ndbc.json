@@ -1,5 +1,4 @@
-{"id":"us-ndbc","cams":[["41002",31.743,-74.955,"SOUTH HATTERAS - 225 NM South of Cape Hatteras","https://www.ndbc.noaa.gov/buoycam.php?station=41002",null,"America/New_York"],
-["41004",32.502,-79.099,"EDISTO - 41 NM Southeast of Charleston, SC","https://www.ndbc.noaa.gov/buoycam.php?station=41004",null,"America/New_York"],
+{"id":"us-ndbc","cams":[["41004",32.502,-79.099,"EDISTO - 41 NM Southeast of Charleston, SC","https://www.ndbc.noaa.gov/buoycam.php?station=41004",null,"America/New_York"],
 ["41009",28.508,-80.185,"CANAVERAL 20 NM East of Cape Canaveral, FL","https://www.ndbc.noaa.gov/buoycam.php?station=41009",null,"America/New_York"],
 ["41010",28.86,-78.478,"CANAVERAL EAST - 120NM East of Cape Canaveral","https://www.ndbc.noaa.gov/buoycam.php?station=41010",null,"America/New_York"],
 ["41025",35.026,-75.38,"Diamond Shoals, NC","https://www.ndbc.noaa.gov/buoycam.php?station=41025",null,"America/New_York"],
