@@ -18,6 +18,10 @@
      live with Identity on (setting it before then would send everyone to a site that does not open). */
   var MOVE_TO = "";
   if (MOVE_TO && /\.github\.io$/.test(location.hostname)) { location.replace(MOVE_TO + location.search + location.hash); return; }
+  /* the token in a link from Identity's emails (#confirmation_token=… or #recovery_token=…), taken now, before the page's own
+     scripts rewrite the address to the view they open (osap-start.js, the tab router), which would lose it */
+  var EMAIL_LINK = /(?:^|[#&])(confirmation|recovery)_token=([^&]+)/.exec(location.hash || "");
+  if (EMAIL_LINK) try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* keep the address */ }
   /* empty stand-ins for the paid files the page loads with plain script tags at start (index.html), so that on a plan without
      them the page opens with those parts empty instead of stopping. The real file, when the plan has it, replaces them. */
   if (!W.BORDER) W.BORDER = { border: [], bands: { "20": [], "50": [] }, tambons: [], assets: [] };
@@ -281,9 +285,8 @@
   }
   /* links in Identity's emails come back with a token in the address: confirm the account, or set a new password */
   function fromEmail() {
-    var m = /(?:^|[#&])(confirmation|recovery)_token=([^&]+)/.exec(location.hash || "");
+    var m = EMAIL_LINK; EMAIL_LINK = null;
     if (!m) return Promise.resolve(false);
-    history.replaceState(null, "", location.pathname + location.search);
     return jsonPost("/verify", { token: decodeURIComponent(m[2]), type: m[1] === "confirmation" ? "signup" : "recovery" }).then(function (t) {
       keep(t);
       if (m[1] === "confirmation" && isWall()) { location.reload(); return true; }
