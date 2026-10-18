@@ -26,6 +26,8 @@ const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
   if (/^data\/cams\//.test(path)) reads.push(path);
   if (FIX[path]) { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(FIX[path])); return; }
+  // no area is hidden in the real app now (the US is a normal country); the test hides the US so the hidden-area machinery stays checked
+  if (path === "assets/osap-lock.js") { res.writeHead(200, { "Content-Type": "text/javascript" }); res.end((await readFile(join(root, path), "utf8")).replace("var HIDDEN = [];", 'var HIDDEN = ["us"];')); return; }
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
 }).listen(0, "127.0.0.1");
