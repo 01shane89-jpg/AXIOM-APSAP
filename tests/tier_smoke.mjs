@@ -2,6 +2,8 @@
 // (GitHub Pages) is unchanged; signed out it shows a sign-in screen that cannot be closed and every data file is refused;
 // signing in there with a Mid plan reloads with Mid tools and data but not Full; a Free account has locks on Mid and Full
 // tools, and a locked tool opens Plan and sign-in; a Full plan opens everything; only the owner's account has Settings > Users.
+// Then each sign-in step: wrong password, used email, new account, Forgot password, the reset link (signed out, reloaded,
+// expired), Change password, sign out, renewing with no connection or a refused token, and the move from GitHub Pages.
 // The real edge gate, account and users functions run here; Netlify Identity (and its admin API) is a stand-in.
 // Run from the repo root: node tests/tier_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
@@ -15,7 +17,9 @@ const users = {
   "tok-free": { id: uid(1), email: "free@test", roles: [] }, "tok-mid": { id: uid(2), email: "mid@test", roles: ["mid"] },
   "tok-full": { id: uid(3), email: "full@test", roles: ["full"] }, "tok-owner": { id: uid(4), email: "owner@test", roles: ["owner"] },
 };
-const PASSWORDS = { "mid@test": "tok-mid", "full@test": "tok-full" };
+const PASSWORDS = { "mid@test": "tok-mid", "full@test": "tok-full", "free@test": "tok-free" };
+const PW = { "mid@test": "password1", "full@test": "password1", "free@test": "password1" }; // each account's password
+const recovered = [], signups = [];
 const meta = {}; // app_metadata as the admin API holds it, by user id
 for (const t in users) meta[users[t].id] = { roles: users[t].roles };
 const asAdmin = (who) => ({ id: who.id, email: who.email, created_at: "2026-10-01T00:00:00Z", confirmed_at: "2026-10-01T00:05:00Z", last_sign_in_at: "2026-10-18T00:00:00Z", app_metadata: meta[who.id] });
@@ -40,6 +44,7 @@ const server = createServer(async (req, res) => {
     if (what === "user") {
       const t = (req.headers.authorization || "").replace(/^Bearer /, ""), who = users[t];
       if (!who) { res.writeHead(401); res.end("{}"); return; }
+      if (req.method === "PUT") { const b = JSON.parse(await R.text()); if (b.password) PW[who.email] = b.password; }
       res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify(asAdmin(who))); return;
     }
     // the admin API the functions use (the operator token is Netlify's own, never the page's)
@@ -51,15 +56,22 @@ const server = createServer(async (req, res) => {
       if (req.method === "PUT") { const b = JSON.parse(await R.text()); if (b.app_metadata) meta[id] = b.app_metadata; }
       res.end(JSON.stringify(asAdmin(who))); return;
     }
-    // the link in the confirmation email: a one-time token that signs the new account in
+    // the link in the confirmation or reset email: a one-time token that signs the account in
     if (what === "verify") {
       const b = JSON.parse(await R.text());
-      if (b.token !== "conf-free" || b.type !== "signup") { res.writeHead(422, { "content-type": "application/json" }); res.end(JSON.stringify({ msg: "Invalid token" })); return; }
+      if (!((b.token === "conf-free" && b.type === "signup") || (b.token === "rec-free" && b.type === "recovery"))) { res.writeHead(422, { "content-type": "application/json" }); res.end(JSON.stringify({ msg: "Invalid token" })); return; }
       res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ access_token: "tok-free", refresh_token: "tok-free", expires_in: 3600 })); return;
     }
+    if (what === "recover") { recovered.push(JSON.parse(await R.text()).email); res.writeHead(200, { "content-type": "application/json" }); res.end("{}"); return; }
+    if (what === "signup") {
+      const b = JSON.parse(await R.text()); signups.push(b.email);
+      if (PW[b.email]) { res.writeHead(400, { "content-type": "application/json" }); res.end(JSON.stringify({ code: 400, msg: "A user with this email address has already been registered" })); return; }
+      res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ id: uid(9), email: b.email })); return;
+    }
     if (what === "token") {
-      const f = new URLSearchParams(await R.text()), t = f.get("grant_type") === "password" ? PASSWORDS[f.get("username")] : f.get("refresh_token");
-      if (!t) { res.writeHead(400, { "content-type": "application/json" }); res.end(JSON.stringify({ error_description: "Invalid email or password" })); return; }
+      const f = new URLSearchParams(await R.text()), pw = f.get("grant_type") === "password";
+      const t = pw ? (PW[f.get("username")] === f.get("password") ? PASSWORDS[f.get("username")] : null) : (users[f.get("refresh_token")] ? f.get("refresh_token") : null);
+      if (!t) { res.writeHead(400, { "content-type": "application/json" }); res.end(JSON.stringify({ error: "invalid_grant", error_description: pw ? "No user found with that email, or password invalid." : "Invalid Refresh Token" })); return; }
       res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ access_token: t, refresh_token: t, expires_in: 3600 })); return;
     }
     res.writeHead(404); res.end("{}"); return;
@@ -85,15 +97,15 @@ const USERS = (await import("../netlify/functions/osap-users.mjs")).default;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-async function open(token) {
+async function open(token, path = "", until = 3600e3, rt) {
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   const refused = [], errors = [];
-  if (token) await ctx.addInitScript({ content: "try{localStorage.setItem('osap-auth',JSON.stringify({access_token:'" + token + "',refresh_token:'" + token + "',until:Date.now()+3600e3}));document.cookie='nf_jwt=" + token + "; path=/'}catch(e){}" });
+  if (token) await ctx.addInitScript({ content: "if(!sessionStorage.getItem('t-seeded'))try{sessionStorage.setItem('t-seeded','1');localStorage.setItem('osap-auth',JSON.stringify({access_token:'" + token + "',refresh_token:'" + (rt || token) + "',until:Date.now()+" + until + "}));document.cookie='nf_jwt=" + token + "; path=/'}catch(e){}" });
   const p = await ctx.newPage();
   p.on("pageerror", (e) => errors.push(String(e.stack || e.message).split("\n").slice(0, 2).join(" ")));
   p.on("response", (r) => { if (r.status() === 402 || r.status() === 401) refused.push(r.status() + " " + r.url().slice(base.length)); });
-  await p.goto(base); await p.waitForTimeout(6000);
+  await p.goto(base + path); await p.waitForTimeout(6000);
   return { ctx, p, refused, errors };
 }
 const state = (p) => p.evaluate(() => ({
@@ -200,6 +212,120 @@ gate = true;
   ok(u && !/0000-4000/.test(u.text) && !/tok-/.test(u.text), "owner: the list shows no ids or tokens");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-users.png" : "/dev/null" }).catch(() => {});
   ok(errors.length === 0, "owner: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+const msg = (p) => p.evaluate(() => { const m = document.querySelector("#tierdlg .trmsg"); return m && !m.hidden ? m.textContent : ""; });
+const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
+// 6. the sign-in screen's own messages: a wrong password, an email that already has an account, a new account, Forgot password
+{
+  const { ctx, p, errors } = await open();
+  await p.fill('#tierdlg input[name="email"]', "mid@test"); await p.fill('#tierdlg input[name="password"]', "wrongpass");
+  await p.click('#tierdlg button[type="submit"]'); await p.waitForTimeout(600);
+  ok(/do not match/.test(await msg(p)) && /Forgot password/.test(await msg(p)) && !!(await wall(p)), "wrong password: a plain message, still on the sign-in screen: " + (await msg(p)));
+  ok((await p.inputValue('#tierdlg input[name="email"]')) === "mid@test", "wrong password: the email stays typed");
+  const fs = await p.evaluate(() => getComputedStyle(document.querySelector('#tierdlg input[name="email"]')).fontSize);
+  ok(fs === "16px", "the boxes are 16px, so iPhone does not zoom in on them: " + fs);
+  ok((await p.getAttribute('#tierdlg input[name="email"]', "autocomplete")) === "username", "the email box is the password manager's username");
+  ok(await p.evaluate(() => /primary/.test(document.querySelector('#tierdlg button[type="submit"]').className)), "Sign in is the main button");
+  await p.click('#tierdlg [data-tr="forgot"]'); await p.waitForTimeout(600);
+  ok(recovered.includes("mid@test") && /reset link is on its way/.test(await msg(p)), "Forgot password sends the reset email: " + (await msg(p)));
+  await p.click('#tierdlg [data-tr="signup"]');
+  ok((await p.inputValue('#tierdlg input[name="email"]')) === "mid@test", "Create an account keeps the typed email");
+  await p.fill('#tierdlg input[name="password"]', "password9"); await p.click('#tierdlg button[type="submit"]'); await p.waitForTimeout(600);
+  ok(/already has an account/.test(await msg(p)), "sign-up with a used email: says to sign in instead: " + (await msg(p)));
+  await p.fill('#tierdlg input[name="email"]', "new@test"); await p.fill('#tierdlg input[name="password"]', "password9");
+  await p.click('#tierdlg button[type="submit"]'); await p.waitForTimeout(600);
+  ok(signups.includes("new@test") && /confirmation email/.test(await msg(p)) && !!(await wall(p)), "new account: asks to open the confirmation email: " + (await msg(p)));
+  ok(errors.length === 0, "sign-in screen messages: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// 7. the reset email's link, opened signed out: it asks for a new password and cannot be skipped; a reload asks again;
+//    once saved the page starts again signed in, and the new password signs in
+{
+  const { ctx, p, errors } = await open(null, "#recovery_token=rec-free");
+  let w = await wall(p);
+  ok(w && /Choose a new password/.test(w.text) && /free@test/.test(w.text) && !w.x && !(await p.$('#tierdlg input[name="current"]')), "reset link: asks for a new password, no close button, no current password " + JSON.stringify(w && w.text.slice(0, 90)));
+  ok(!/recovery_token/.test(await p.evaluate(() => location.href)), "reset link: the token is taken out of the address");
+  await p.mouse.click(5, 5); await p.keyboard.press("Escape"); await p.waitForTimeout(300);
+  ok(/Choose a new password/.test((await wall(p) || {}).text || ""), "reset link: clicking outside or Escape does not skip it");
+  await p.reload(); await p.waitForTimeout(6000);
+  ok(/Choose a new password/.test((await wall(p) || {}).text || ""), "reset link: a reload before saving asks again");
+  await p.fill('#tierdlg input[name="password"]', "newpass123");
+  await Promise.all([p.waitForEvent("load", { timeout: 15000 }).catch(() => null), p.click('#tierdlg button[type="submit"]')]);
+  await p.waitForTimeout(6000);
+  ok(PW["free@test"] === "newpass123", "reset link: the new password is saved");
+  // this tab was reloaded while signed in from the link, so the data is already there: no second start, just the message
+  w = await wall(p);
+  ok(w && w.x && /Password saved/.test(w.text) && (await state(p)).tier === "free" && (await get(p, "data/live/news.js")) === 200, "reset link: saved, signed in, the data loads " + JSON.stringify(w && w.text.slice(0, 80)));
+  await p.click("#tierdlg .x");
+  await p.reload(); await p.waitForTimeout(6000);
+  ok(!(await wall(p)), "reset link: done; the next open does not ask again");
+  ok(errors.length === 0, "reset link: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// 7a. the same, saved without a reload in between: the page opened signed out, so it starts again signed in
+{
+  PW["free@test"] = "password1";
+  const { ctx, p, errors } = await open(null, "#recovery_token=rec-free");
+  await p.fill('#tierdlg input[name="password"]', "newpass789");
+  await Promise.all([p.waitForEvent("load", { timeout: 15000 }).catch(() => null), p.click('#tierdlg button[type="submit"]')]);
+  await p.waitForTimeout(6000);
+  ok(PW["free@test"] === "newpass789" && !(await wall(p)) && (await state(p)).tier === "free" && (await get(p, "data/live/news.js")) === 200, "reset link from signed out: the page starts again signed in and the data loads");
+  ok(errors.length === 0, "reset link from signed out: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// 7b. a used or expired reset link says so, on the sign-in screen
+{
+  const { ctx, p } = await open(null, "#recovery_token=old-one");
+  const w = await wall(p);
+  ok(w && /Sign in to OSAP/.test(w.text) && /expired or was already used/.test(await msg(p)), "old reset link: the sign-in screen says to ask for a new one: " + (await msg(p)));
+  await ctx.close();
+}
+// 8. signed in: Change password asks for the current one, and keeps the page as it is
+{
+  const { ctx, p, errors } = await open("tok-mid");
+  await p.evaluate(() => window.OSAP_TIER.open()); await p.waitForTimeout(300);
+  await p.click('#tierdlg [data-tr="newpw"]');
+  let w = await wall(p);
+  ok(w && /Change password/.test(w.text) && w.x && !!(await p.$('#tierdlg input[name="current"]')), "Change password: asks for the current and new password, and can be closed");
+  await p.fill('#tierdlg input[name="current"]', "nope1234"); await p.fill('#tierdlg input[name="password"]', "midpass456");
+  await p.click('#tierdlg button[type="submit"]'); await p.waitForTimeout(600);
+  ok(/current password is not right/.test(await msg(p)) && PW["mid@test"] === "password1" && !!(await auth(p)), "Change password: a wrong current password changes nothing and stays signed in: " + (await msg(p)));
+  let loads = 0; p.on("load", () => loads++);
+  await p.fill('#tierdlg input[name="current"]', "password1"); await p.fill('#tierdlg input[name="password"]', "midpass456");
+  await p.click('#tierdlg button[type="submit"]'); await p.waitForTimeout(1500);
+  ok(PW["mid@test"] === "midpass456" && /Password changed/.test(await msg(p)) && loads === 0, "Change password: saved, without reloading the page: " + (await msg(p)));
+  // sign out: back to the sign-in screen, nothing kept on the device
+  await Promise.all([p.waitForEvent("load", { timeout: 15000 }).catch(() => null), p.click('#tierdlg [data-tr="signout"]')]);
+  await p.waitForTimeout(6000);
+  ok(/Sign in to OSAP/.test((await wall(p) || {}).text || "") && !(await auth(p)) && !(await p.evaluate(() => /nf_jwt=/.test(document.cookie))), "sign out: the sign-in screen, and no token left on the device");
+  await p.fill('#tierdlg input[name="email"]', "mid@test"); await p.fill('#tierdlg input[name="password"]', "midpass456");
+  await Promise.all([p.waitForEvent("load", { timeout: 15000 }).catch(() => null), p.click('#tierdlg button[type="submit"]')]);
+  await p.waitForTimeout(6000);
+  ok(!(await wall(p)) && (await state(p)).tier === "mid", "the changed password signs in");
+  ok(errors.length === 0, "Change password and sign out: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// 9. renewing the sign-in: no connection keeps the account; a refused renewal signs out
+{
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.route(/\/\.netlify\/identity\/token$/, (r) => r.abort());
+  await ctx.addInitScript({ content: "if(!sessionStorage.getItem('t-seeded')){sessionStorage.setItem('t-seeded','1');localStorage.setItem('osap-auth',JSON.stringify({access_token:'tok-full',refresh_token:'tok-full',until:Date.now()+120e3}));document.cookie='nf_jwt=tok-full; path=/'}" });
+  const p = await ctx.newPage(); await p.goto(base); await p.waitForTimeout(6000);
+  ok(!(await wall(p)) && (await state(p)).tier === "full" && !!(await auth(p)), "renewal with no connection: still signed in, token kept");
+  await ctx.close();
+}
+{
+  const { ctx, p } = await open("tok-gone", "", 60e3);
+  ok(/Sign in to OSAP/.test((await wall(p) || {}).text || "") && !(await auth(p)), "a renewal Identity refuses: signed out, to the sign-in screen");
+  await ctx.close();
+}
+// 10. moved from the old address: the sign-in screen says to add OSAP to the home screen again, and the marker goes
+{
+  const { ctx, p } = await open(null, "?from=pages");
+  ok(/new address/.test(await msg(p)) && /Add to Home Screen/.test(await msg(p)), "moved from GitHub Pages: says to add the home-screen icon again: " + (await msg(p)).slice(0, 60));
+  ok(!/from=pages/.test(await p.evaluate(() => location.href)), "moved from GitHub Pages: the marker is taken off the address");
   await ctx.close();
 }
 await browser.close(); server.close();
