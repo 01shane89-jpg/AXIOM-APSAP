@@ -1,1 +1,1 @@
-window.OSAP_LAYERFEED={"cc":"mh","asof":"2026-10-17 09:25Z","days":30,"method":"Headlines from the news pool sorted into layers by their words (tools/view_reports.json); not reviewed","items":[{"l":"insurgency","d":"2026-09-17T13:32","t":"Remembering the terrorist attacks","s":"Marshall Islands Journal","u":"https://marshallislandsjournal.com/remembering-the-terrorist-attacks/","g":["Majuro",7.09,171.38,"approx"]}]};
+window.OSAP_LAYERFEED={"cc":"mh","asof":"2026-10-18 00:41Z","days":30,"method":"Nothing tagged for this country in the last 30 days","items":[]};
