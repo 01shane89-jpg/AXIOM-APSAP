@@ -1,21 +1,21 @@
 {
  "v": 1,
- "at": "2026-10-13T11:45Z",
+ "at": "2026-10-18T01:13Z",
  "sources": {
   "oa": {
    "name": "OurAirports",
    "lic": "Public domain",
    "link": "https://ourairports.com/data/",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
-   "n": 72131
+   "at": "2026-10-18T01:13Z",
+   "n": 72149
   },
   "wpi": {
    "name": "NGA World Port Index (Pub. 150)",
    "lic": "Public domain (U.S. Government)",
    "link": "https://msi.nga.mil/Publications/WPI",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
+   "at": "2026-10-18T01:13Z",
    "n": 2858
   },
   "locode": {
@@ -23,20 +23,20 @@
    "lic": "Free reuse (UNECE)",
    "link": "https://unece.org/trade/uncefact/unlocode",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
-   "n": 11611
+   "at": "2026-10-18T01:13Z",
+   "n": 11669
   },
   "osm": {
    "name": "OpenStreetMap",
    "lic": "ODbL",
    "link": "https://www.openstreetmap.org/copyright",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
-   "n": 1134627,
+   "at": "2026-10-18T01:13Z",
+   "n": 1138684,
    "cover": {
     "tiles": 498,
     "of": 504,
-    "fresh": 222
+    "fresh": 215
    }
   },
   "wd": {
@@ -44,7 +44,7 @@
    "lic": "CC0",
    "link": "https://www.wikidata.org/wiki/Q12323",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
+   "at": "2026-10-18T01:13Z",
    "n": 74607
   },
   "wri": {
@@ -52,7 +52,7 @@
    "lic": "CC BY 4.0",
    "link": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
+   "at": "2026-10-18T01:13Z",
    "n": 34928
   },
   "wdp": {
@@ -60,16 +60,16 @@
    "lic": "CC0",
    "link": "https://www.wikidata.org/wiki/Q159719",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
-   "n": 23647
+   "at": "2026-10-18T01:13Z",
+   "n": 23658
   },
   "wdf": {
    "name": "Wikidata (refineries and terminals)",
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
-   "n": 512
+   "at": "2026-10-18T01:13Z",
+   "n": 513
   },
   "wdr": {
    "name": "Wikidata (railway stations)",
@@ -78,8 +78,8 @@
    "ok": false,
    "at": "2026-10-05T01:05Z",
    "n": 85230,
-   "err": "Expected property name or '}' in JSON at position 2325805",
-   "tried": "2026-10-13T11:45Z"
+   "err": "Unexpected token 'S', ...\"      \"a2\"SPARQL-QUE\"... is not valid JSON",
+   "tried": "2026-10-18T01:13Z"
   },
   "wdb": {
    "name": "Wikidata (bridges and tunnels)",
@@ -88,23 +88,23 @@
    "ok": false,
    "at": "2026-10-06T11:15Z",
    "n": 39350,
-   "err": "Expected ',' or '}' after property value in JSON at position 13094396",
-   "tried": "2026-10-13T11:45Z"
+   "err": "Bad control character in string literal in JSON at position 12676805",
+   "tried": "2026-10-18T01:13Z"
   },
   "wdw": {
    "name": "Wikidata (water and sewage works)",
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
-   "n": 274
+   "at": "2026-10-18T01:13Z",
+   "n": 276
   },
   "wdt": {
    "name": "Wikidata (telephone exchanges)",
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
+   "at": "2026-10-18T01:13Z",
    "n": 58
   },
   "wdg": {
@@ -112,8 +112,8 @@
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
-   "n": 10872
+   "at": "2026-10-18T01:13Z",
+   "n": 10874
   },
   "tg": {
    "name": "TeleGeography Submarine Cable Map",
@@ -121,7 +121,7 @@
    "nc": true,
    "link": "https://www.submarinecablemap.com/",
    "ok": true,
-   "at": "2026-10-13T11:45Z",
+   "at": "2026-10-18T01:13Z",
    "n": 3286
   }
  },
@@ -136,7 +136,7 @@
   },
   "ae": {
    "af": 304,
-   "port": 75,
+   "port": 82,
    "dam": 78,
    "lp": 9,
    "plant": 76,
@@ -178,7 +178,7 @@
   },
   "al": {
    "af": 14,
-   "port": 7,
+   "port": 29,
    "dam": 8,
    "lp": 2,
    "plant": 15,
@@ -223,8 +223,8 @@
    "cable": 5
   },
   "ar": {
-   "af": 1053,
-   "port": 156,
+   "af": 1052,
+   "port": 141,
    "dam": 160,
    "lp": 3,
    "plant": 431,
@@ -244,12 +244,12 @@
    "af": 190,
    "port": 106,
    "dam": 90,
-   "plant": 314,
+   "plant": 315,
    "fuel": 7,
    "stn": 1405,
    "br": 1651,
    "tn": 754,
-   "wat": 199,
+   "wat": 200,
    "tx": 18,
    "gov": 59,
    "emg": 4654,
@@ -257,26 +257,26 @@
    "rail": 261
   },
   "au": {
-   "af": 3257,
-   "port": 658,
+   "af": 3259,
+   "port": 664,
    "dam": 298,
    "lp": 28,
-   "plant": 990,
-   "fuel": 126,
+   "plant": 991,
+   "fuel": 127,
    "stn": 2114,
    "br": 2374,
    "tn": 377,
-   "wat": 1425,
+   "wat": 1426,
    "tx": 618,
    "gov": 244,
-   "emg": 5898,
+   "emg": 5910,
    "rail": 729,
    "pipe": 160,
    "cable": 35
   },
   "az": {
    "af": 44,
-   "port": 12,
+   "port": 13,
    "dam": 14,
    "lp": 1,
    "plant": 24,
@@ -294,7 +294,7 @@
   },
   "ba": {
    "af": 26,
-   "port": 10,
+   "port": 17,
    "dam": 30,
    "plant": 27,
    "stn": 129,
@@ -329,7 +329,7 @@
    "dam": 23,
    "lp": 2,
    "plant": 156,
-   "fuel": 6,
+   "fuel": 12,
    "stn": 564,
    "br": 573,
    "tn": 3,
@@ -381,7 +381,7 @@
    "br": 329,
    "tn": 130,
    "wat": 115,
-   "gov": 41,
+   "gov": 71,
    "emg": 390,
    "rail": 41,
    "pipe": 62,
@@ -429,7 +429,7 @@
   },
   "bn": {
    "af": 17,
-   "port": 8,
+   "port": 6,
    "lp": 3,
    "plant": 10,
    "fuel": 1,
@@ -442,7 +442,7 @@
   },
   "bo": {
    "af": 248,
-   "port": 38,
+   "port": 37,
    "dam": 608,
    "plant": 74,
    "stn": 60,
@@ -456,11 +456,11 @@
    "rail": 55
   },
   "br": {
-   "af": 8073,
-   "port": 900,
-   "dam": 1129,
+   "af": 8082,
+   "port": 898,
+   "dam": 1130,
    "lp": 75,
-   "plant": 3132,
+   "plant": 3133,
    "fuel": 27,
    "stn": 994,
    "br": 3273,
@@ -475,7 +475,7 @@
   },
   "bs": {
    "af": 70,
-   "port": 49,
+   "port": 52,
    "lp": 21,
    "plant": 11,
    "br": 7,
@@ -522,7 +522,7 @@
   },
   "bz": {
    "af": 46,
-   "port": 3,
+   "port": 30,
    "dam": 3,
    "lp": 3,
    "plant": 8,
@@ -533,17 +533,17 @@
    "cable": 1
   },
   "ca": {
-   "af": 2613,
-   "port": 766,
+   "af": 2603,
+   "port": 776,
    "dam": 1306,
    "lp": 158,
-   "plant": 1467,
-   "fuel": 39,
+   "plant": 1471,
+   "fuel": 23,
    "stn": 874,
    "br": 4337,
    "tn": 196,
    "wat": 197,
-   "tx": 201,
+   "tx": 198,
    "gov": 986,
    "emg": 5107,
    "rail": 755,
@@ -552,7 +552,7 @@
   },
   "cd": {
    "af": 429,
-   "port": 32,
+   "port": 31,
    "dam": 19,
    "lp": 5,
    "plant": 98,
@@ -581,7 +581,7 @@
   },
   "cg": {
    "af": 63,
-   "port": 14,
+   "port": 13,
    "dam": 5,
    "lp": 1,
    "plant": 15,
@@ -613,7 +613,7 @@
   },
   "ci": {
    "af": 35,
-   "port": 46,
+   "port": 45,
    "dam": 15,
    "lp": 1,
    "plant": 26,
@@ -648,7 +648,7 @@
   },
   "cm": {
    "af": 55,
-   "port": 10,
+   "port": 9,
    "dam": 34,
    "lp": 3,
    "plant": 36,
@@ -665,11 +665,11 @@
   },
   "cn": {
    "af": 1097,
-   "port": 1855,
-   "dam": 1001,
+   "port": 1885,
+   "dam": 1002,
    "lp": 27,
-   "plant": 7252,
-   "fuel": 87,
+   "plant": 7370,
+   "fuel": 88,
    "stn": 10851,
    "br": 138661,
    "tn": 38456,
@@ -677,13 +677,13 @@
    "tx": 2,
    "gov": 1566,
    "emg": 6611,
-   "pipe": 237,
+   "pipe": 240,
    "rail": 2522,
    "cable": 22
   },
   "co": {
    "af": 1174,
-   "port": 22,
+   "port": 23,
    "dam": 53,
    "lp": 10,
    "plant": 201,
@@ -717,10 +717,10 @@
   },
   "cu": {
    "af": 134,
-   "port": 26,
+   "port": 50,
    "dam": 17,
    "lp": 4,
-   "plant": 209,
+   "plant": 240,
    "stn": 280,
    "br": 121,
    "tn": 7,
@@ -778,19 +778,19 @@
   },
   "de": {
    "af": 1333,
-   "port": 654,
+   "port": 655,
    "dam": 212,
    "lp": 9,
-   "plant": 1745,
+   "plant": 1746,
    "fuel": 34,
    "stn": 6828,
    "br": 7878,
    "tn": 1566,
    "wat": 216,
    "tx": 252,
-   "gov": 193,
+   "gov": 194,
    "emg": 30773,
-   "pipe": 1735,
+   "pipe": 1738,
    "rail": 1431,
    "cable": 10
   },
@@ -836,7 +836,7 @@
   },
   "do": {
    "af": 44,
-   "port": 21,
+   "port": 22,
    "dam": 18,
    "lp": 5,
    "plant": 64,
@@ -852,7 +852,7 @@
   },
   "dz": {
    "af": 138,
-   "port": 29,
+   "port": 41,
    "dam": 29,
    "lp": 5,
    "plant": 106,
@@ -870,7 +870,7 @@
   },
   "ec": {
    "af": 357,
-   "port": 99,
+   "port": 102,
    "dam": 35,
    "lp": 4,
    "plant": 123,
@@ -903,7 +903,7 @@
   },
   "eg": {
    "af": 150,
-   "port": 78,
+   "port": 77,
    "dam": 4,
    "lp": 9,
    "plant": 93,
@@ -926,7 +926,7 @@
    "emg": 3
   },
   "er": {
-   "af": 29,
+   "af": 30,
    "port": 3,
    "dam": 3,
    "plant": 2,
@@ -939,10 +939,10 @@
   },
   "es": {
    "af": 564,
-   "port": 454,
+   "port": 486,
    "dam": 565,
    "lp": 48,
-   "plant": 1427,
+   "plant": 1808,
    "fuel": 18,
    "stn": 2313,
    "br": 6234,
@@ -952,7 +952,7 @@
    "gov": 195,
    "emg": 4619,
    "rail": 726,
-   "pipe": 940,
+   "pipe": 941,
    "cable": 37
   },
   "et": {
@@ -1013,17 +1013,17 @@
    "cable": 4
   },
   "fr": {
-   "af": 1703,
-   "port": 963,
+   "af": 1704,
+   "port": 961,
    "dam": 507,
    "lp": 29,
-   "plant": 2581,
+   "plant": 2582,
    "fuel": 20,
    "stn": 4133,
    "br": 4637,
    "tn": 1577,
    "wat": 1110,
-   "tx": 2187,
+   "tx": 2185,
    "gov": 102,
    "emg": 10812,
    "pipe": 2604,
@@ -1048,9 +1048,9 @@
    "cable": 5
   },
   "gb": {
-   "af": 1253,
-   "port": 1465,
-   "dam": 184,
+   "af": 1258,
+   "port": 1466,
+   "dam": 186,
    "lp": 125,
    "plant": 3688,
    "fuel": 31,
@@ -1058,7 +1058,7 @@
    "br": 13562,
    "tn": 1057,
    "wat": 2334,
-   "tx": 61,
+   "tx": 63,
    "gov": 288,
    "emg": 4183,
    "pipe": 1153,
@@ -1150,16 +1150,16 @@
   },
   "gr": {
    "af": 153,
-   "port": 321,
+   "port": 543,
    "dam": 67,
    "lp": 35,
    "plant": 101,
-   "fuel": 5,
+   "fuel": 3,
    "stn": 295,
    "br": 726,
    "tn": 277,
    "wat": 99,
-   "gov": 52,
+   "gov": 64,
    "emg": 625,
    "rail": 56,
    "pipe": 45,
@@ -1167,7 +1167,7 @@
   },
   "gt": {
    "af": 104,
-   "port": 32,
+   "port": 34,
    "dam": 15,
    "lp": 2,
    "plant": 105,
@@ -1205,7 +1205,7 @@
   },
   "hn": {
    "af": 147,
-   "port": 6,
+   "port": 7,
    "dam": 8,
    "lp": 3,
    "plant": 57,
@@ -1218,7 +1218,7 @@
   },
   "hr": {
    "af": 66,
-   "port": 160,
+   "port": 230,
    "dam": 65,
    "lp": 2,
    "plant": 51,
@@ -1236,7 +1236,7 @@
   },
   "ht": {
    "af": 19,
-   "port": 6,
+   "port": 13,
    "dam": 1,
    "lp": 2,
    "plant": 6,
@@ -1250,9 +1250,9 @@
   },
   "hu": {
    "af": 136,
-   "port": 50,
+   "port": 51,
    "dam": 45,
-   "plant": 40,
+   "plant": 41,
    "stn": 802,
    "br": 300,
    "tn": 48,
@@ -1265,10 +1265,10 @@
   },
   "id": {
    "af": 860,
-   "port": 670,
+   "port": 920,
    "dam": 307,
    "lp": 146,
-   "plant": 673,
+   "plant": 675,
    "fuel": 14,
    "stn": 932,
    "br": 1776,
@@ -1283,7 +1283,7 @@
   },
   "ie": {
    "af": 123,
-   "port": 122,
+   "port": 121,
    "dam": 8,
    "lp": 14,
    "plant": 179,
@@ -1292,7 +1292,7 @@
    "br": 1649,
    "tn": 19,
    "wat": 557,
-   "tx": 2,
+   "tx": 3,
    "gov": 34,
    "emg": 684,
    "pipe": 133,
@@ -1301,7 +1301,7 @@
   },
   "il": {
    "af": 65,
-   "port": 19,
+   "port": 20,
    "dam": 12,
    "lp": 8,
    "plant": 107,
@@ -1316,12 +1316,12 @@
    "cable": 7
   },
   "in": {
-   "af": 715,
+   "af": 716,
    "port": 642,
-   "dam": 726,
+   "dam": 728,
    "lp": 26,
-   "plant": 2414,
-   "fuel": 36,
+   "plant": 2428,
+   "fuel": 88,
    "stn": 10808,
    "br": 12995,
    "tn": 818,
@@ -1335,10 +1335,10 @@
   },
   "iq": {
    "af": 108,
-   "port": 26,
+   "port": 25,
    "dam": 91,
    "lp": 1,
-   "plant": 52,
+   "plant": 51,
    "fuel": 4,
    "stn": 92,
    "br": 598,
@@ -1354,7 +1354,7 @@
   "ir": {
    "af": 397,
    "port": 58,
-   "dam": 209,
+   "dam": 211,
    "lp": 7,
    "plant": 227,
    "fuel": 14,
@@ -1385,11 +1385,11 @@
   },
   "it": {
    "af": 1065,
-   "port": 281,
-   "dam": 331,
+   "port": 359,
+   "dam": 332,
    "lp": 54,
    "plant": 527,
-   "fuel": 8,
+   "fuel": 7,
    "stn": 3362,
    "br": 8361,
    "tn": 4102,
@@ -1403,7 +1403,7 @@
   },
   "jm": {
    "af": 23,
-   "port": 6,
+   "port": 8,
    "dam": 4,
    "lp": 9,
    "plant": 19,
@@ -1435,11 +1435,11 @@
   },
   "jp": {
    "af": 3359,
-   "port": 797,
-   "dam": 2108,
+   "port": 800,
+   "dam": 2109,
    "lp": 68,
-   "plant": 716,
-   "fuel": 103,
+   "plant": 743,
+   "fuel": 104,
    "stn": 8527,
    "br": 26812,
    "tn": 9931,
@@ -1473,7 +1473,6 @@
    "port": 1,
    "dam": 16,
    "plant": 54,
-   "fuel": 6,
    "stn": 30,
    "br": 25,
    "tn": 9,
@@ -1485,7 +1484,7 @@
   },
   "kh": {
    "af": 20,
-   "port": 41,
+   "port": 34,
    "dam": 13,
    "lp": 1,
    "plant": 50,
@@ -1532,7 +1531,7 @@
   "kp": {
    "af": 99,
    "port": 22,
-   "dam": 47,
+   "dam": 48,
    "plant": 70,
    "fuel": 3,
    "stn": 846,
@@ -1547,7 +1546,7 @@
    "port": 359,
    "dam": 84,
    "lp": 10,
-   "plant": 209,
+   "plant": 448,
    "fuel": 13,
    "stn": 1137,
    "br": 8792,
@@ -1581,7 +1580,7 @@
    "dam": 33,
    "lp": 1,
    "plant": 229,
-   "fuel": 11,
+   "fuel": 10,
    "stn": 901,
    "br": 333,
    "tn": 8,
@@ -1735,11 +1734,11 @@
   },
   "ly": {
    "af": 91,
-   "port": 18,
+   "port": 19,
    "dam": 9,
    "lp": 14,
    "plant": 28,
-   "fuel": 6,
+   "fuel": 5,
    "stn": 5,
    "br": 68,
    "tn": 2,
@@ -1794,14 +1793,14 @@
   },
   "me": {
    "af": 7,
-   "port": 10,
+   "port": 18,
    "dam": 2,
    "plant": 6,
    "stn": 27,
    "br": 67,
    "tn": 150,
    "wat": 3,
-   "gov": 39,
+   "gov": 40,
    "emg": 56,
    "rail": 125
   },
@@ -1839,7 +1838,7 @@
    "br": 104,
    "tn": 34,
    "wat": 2,
-   "gov": 29,
+   "gov": 43,
    "emg": 99,
    "pipe": 3,
    "rail": 9
@@ -1860,7 +1859,7 @@
   },
   "mm": {
    "af": 89,
-   "port": 149,
+   "port": 148,
    "dam": 111,
    "lp": 2,
    "plant": 106,
@@ -1905,7 +1904,7 @@
   },
   "mt": {
    "af": 4,
-   "port": 12,
+   "port": 27,
    "lp": 7,
    "plant": 4,
    "fuel": 1,
@@ -1918,7 +1917,7 @@
   },
   "mu": {
    "af": 8,
-   "port": 8,
+   "port": 7,
    "dam": 4,
    "lp": 4,
    "plant": 31,
@@ -1955,7 +1954,7 @@
   },
   "mx": {
    "af": 2111,
-   "port": 150,
+   "port": 167,
    "dam": 147,
    "lp": 14,
    "plant": 464,
@@ -1973,10 +1972,10 @@
   },
   "my": {
    "af": 127,
-   "port": 279,
-   "dam": 59,
+   "port": 254,
+   "dam": 60,
    "lp": 21,
-   "plant": 171,
+   "plant": 173,
    "fuel": 9,
    "stn": 337,
    "br": 1403,
@@ -2035,7 +2034,7 @@
    "pipe": 2
   },
   "ng": {
-   "af": 89,
+   "af": 91,
    "port": 178,
    "dam": 27,
    "lp": 2,
@@ -2052,7 +2051,7 @@
    "cable": 8
   },
   "ni": {
-   "af": 55,
+   "af": 54,
    "port": 8,
    "dam": 34,
    "lp": 2,
@@ -2066,7 +2065,7 @@
   },
   "nl": {
    "af": 237,
-   "port": 359,
+   "port": 363,
    "dam": 6,
    "lp": 8,
    "plant": 211,
@@ -2103,6 +2102,7 @@
    "port": 1,
    "dam": 26,
    "plant": 117,
+   "fuel": 4,
    "stn": 13,
    "br": 143,
    "tn": 4,
@@ -2126,7 +2126,7 @@
    "port": 149,
    "dam": 41,
    "lp": 19,
-   "plant": 181,
+   "plant": 182,
    "fuel": 19,
    "stn": 462,
    "br": 2070,
@@ -2151,7 +2151,7 @@
    "gov": 18,
    "emg": 2,
    "rail": 1,
-   "cable": 17
+   "cable": 18
   },
   "om": {
    "af": 71,
@@ -2189,7 +2189,7 @@
   },
   "pe": {
    "af": 207,
-   "port": 70,
+   "port": 73,
    "dam": 48,
    "lp": 3,
    "plant": 207,
@@ -2207,7 +2207,7 @@
   },
   "pg": {
    "af": 664,
-   "port": 54,
+   "port": 58,
    "dam": 2,
    "lp": 15,
    "plant": 42,
@@ -2222,10 +2222,10 @@
   },
   "ph": {
    "af": 687,
-   "port": 199,
+   "port": 186,
    "dam": 175,
    "lp": 71,
-   "plant": 287,
+   "plant": 288,
    "fuel": 2,
    "stn": 163,
    "br": 6635,
@@ -2243,7 +2243,7 @@
    "dam": 68,
    "lp": 1,
    "plant": 437,
-   "fuel": 7,
+   "fuel": 38,
    "stn": 950,
    "br": 1065,
    "tn": 67,
@@ -2287,7 +2287,7 @@
   },
   "pt": {
    "af": 202,
-   "port": 227,
+   "port": 228,
    "dam": 300,
    "lp": 19,
    "plant": 673,
@@ -2312,7 +2312,7 @@
    "cable": 2
   },
   "py": {
-   "af": 162,
+   "af": 164,
    "port": 31,
    "dam": 8,
    "plant": 8,
@@ -2339,7 +2339,7 @@
    "cable": 7
   },
   "ro": {
-   "af": 185,
+   "af": 186,
    "port": 48,
    "dam": 107,
    "lp": 1,
@@ -2358,24 +2358,24 @@
   },
   "rs": {
    "af": 59,
-   "port": 16,
+   "port": 17,
    "dam": 22,
    "plant": 26,
    "stn": 345,
    "br": 384,
    "tn": 271,
    "wat": 12,
-   "gov": 54,
+   "gov": 67,
    "emg": 374,
    "rail": 187,
    "pipe": 18
   },
   "ru": {
-   "af": 2318,
-   "port": 1145,
-   "dam": 171,
+   "af": 2317,
+   "port": 1150,
+   "dam": 172,
    "lp": 30,
-   "plant": 2207,
+   "plant": 1731,
    "fuel": 308,
    "stn": 8021,
    "br": 4945,
@@ -2390,7 +2390,7 @@
   },
   "rw": {
    "af": 9,
-   "port": 4,
+   "port": 5,
    "plant": 41,
    "br": 7,
    "wat": 2,
@@ -2399,10 +2399,10 @@
   },
   "sa": {
    "af": 216,
-   "port": 34,
+   "port": 33,
    "dam": 372,
    "lp": 6,
-   "plant": 194,
+   "plant": 193,
    "fuel": 1,
    "stn": 56,
    "br": 1171,
@@ -2410,7 +2410,7 @@
    "wat": 11,
    "gov": 162,
    "emg": 313,
-   "pipe": 311,
+   "pipe": 339,
    "rail": 31,
    "cable": 25
   },
@@ -2440,7 +2440,7 @@
    "dam": 7,
    "lp": 1,
    "plant": 98,
-   "fuel": 1,
+   "fuel": 4,
    "stn": 90,
    "br": 63,
    "tn": 2,
@@ -2470,7 +2470,7 @@
   },
   "sg": {
    "af": 11,
-   "port": 31,
+   "port": 30,
    "dam": 11,
    "lp": 8,
    "plant": 33,
@@ -2502,7 +2502,7 @@
   },
   "sk": {
    "af": 120,
-   "port": 23,
+   "port": 22,
    "dam": 27,
    "plant": 38,
    "stn": 699,
@@ -2577,8 +2577,9 @@
   },
   "ss": {
    "af": 222,
-   "port": 1,
+   "port": 2,
    "plant": 11,
+   "fuel": 13,
    "stn": 2,
    "br": 11,
    "tn": 1,
@@ -2665,7 +2666,7 @@
   },
   "th": {
    "af": 131,
-   "port": 442,
+   "port": 433,
    "dam": 112,
    "lp": 7,
    "plant": 313,
@@ -2696,7 +2697,7 @@
   },
   "tl": {
    "af": 13,
-   "port": 1,
+   "port": 5,
    "dam": 1,
    "lp": 1,
    "plant": 3,
@@ -2712,7 +2713,7 @@
    "port": 13,
    "dam": 1,
    "plant": 22,
-   "fuel": 28,
+   "fuel": 27,
    "stn": 177,
    "br": 82,
    "tn": 3,
@@ -2724,11 +2725,11 @@
   },
   "tn": {
    "af": 30,
-   "port": 25,
+   "port": 38,
    "dam": 22,
    "lp": 2,
    "plant": 30,
-   "fuel": 7,
+   "fuel": 1,
    "stn": 226,
    "br": 134,
    "tn": 12,
@@ -2753,7 +2754,7 @@
   },
   "tr": {
    "af": 404,
-   "port": 137,
+   "port": 172,
    "dam": 756,
    "lp": 7,
    "plant": 406,
@@ -2794,8 +2795,8 @@
    "cable": 1
   },
   "tw": {
-   "af": 122,
-   "port": 23,
+   "af": 120,
+   "port": 25,
    "dam": 30,
    "lp": 18,
    "plant": 214,
@@ -2829,10 +2830,10 @@
   },
   "ua": {
    "af": 585,
-   "port": 123,
+   "port": 121,
    "dam": 73,
    "lp": 1,
-   "plant": 510,
+   "plant": 509,
    "fuel": 1,
    "stn": 2152,
    "br": 758,
@@ -2851,7 +2852,7 @@
    "dam": 8,
    "lp": 2,
    "plant": 86,
-   "fuel": 5,
+   "fuel": 4,
    "stn": 22,
    "br": 22,
    "tn": 1,
@@ -2863,20 +2864,20 @@
    "cable": 2
   },
   "us": {
-   "af": 26661,
-   "port": 2839,
-   "dam": 40181,
+   "af": 27010,
+   "port": 3034,
+   "dam": 40156,
    "lp": 168,
-   "plant": 13437,
-   "fuel": 1155,
+   "plant": 13655,
+   "fuel": 948,
    "stn": 2008,
    "br": 25917,
    "tn": 1294,
    "wat": 3646,
-   "tx": 359,
-   "gov": 4521,
-   "emg": 49830,
-   "pipe": 17782,
+   "tx": 346,
+   "gov": 4520,
+   "emg": 49831,
+   "pipe": 17783,
    "rail": 3983,
    "cable": 120
   },
@@ -2901,8 +2902,8 @@
    "af": 97,
    "port": 10,
    "dam": 18,
-   "plant": 161,
-   "fuel": 31,
+   "plant": 162,
+   "fuel": 32,
    "stn": 313,
    "br": 223,
    "tn": 19,
@@ -2942,8 +2943,8 @@
    "cable": 6
   },
   "vn": {
-   "af": 80,
-   "port": 482,
+   "af": 79,
+   "port": 451,
    "dam": 223,
    "lp": 3,
    "plant": 616,
@@ -2990,7 +2991,7 @@
    "br": 49,
    "tn": 18,
    "wat": 1,
-   "gov": 26,
+   "gov": 31,
    "emg": 121,
    "rail": 13
   },
@@ -3012,11 +3013,11 @@
    "cable": 5
   },
   "za": {
-   "af": 1136,
-   "port": 45,
+   "af": 1137,
+   "port": 46,
    "dam": 276,
    "lp": 8,
-   "plant": 510,
+   "plant": 511,
    "fuel": 73,
    "stn": 1243,
    "br": 589,
