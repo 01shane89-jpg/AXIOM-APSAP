@@ -14,7 +14,7 @@ export default async (req) => {
   const rows = [];
   for (let page = 1; page <= 50; page++) {
     const batch = await admin.listUsers({ page, perPage: 100 });
-    rows.push(...batch.map((u) => userRow(u, tierOfRoles)));
+    rows.push(...batch.map((u) => userRow(u, tierOfRoles, Netlify.env.get("OSAP_OWNERS"))));
     if (batch.length < 100) break;
   }
   rows.sort((a, b) => String(b.lastSeen || b.lastSignIn || "").localeCompare(String(a.lastSeen || a.lastSignIn || "")));

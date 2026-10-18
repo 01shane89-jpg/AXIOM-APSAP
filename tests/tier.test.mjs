@@ -8,7 +8,7 @@ import { tierOfPath, tierOfRoles, allows, TOOLS, SETS, SETS_DEFAULT, PRICES } fr
 import { seal, b64u } from "../tools/seal_lib.mjs";
 import { loadTierKey, openForTier } from "../tools/tier_open.mjs";
 import { verifySignature, planFromEvent, applyPlan } from "../tools/paddle.mjs";
-import { isOwner, userRow } from "../tools/owner.mjs";
+import { isOwner, userRow, planOf } from "../tools/owner.mjs";
 
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
@@ -129,6 +129,9 @@ ok(isOwner({ email: "a@x", app_metadata: { roles: ["owner"] } }, ""), "the owner
 ok(isOwner({ email: "Shane@X", confirmed_at: "2026-10-18T00:00:00Z", app_metadata: {} }, "x@y, shane@x"), "a confirmed email in OSAP_OWNERS is the owner");
 ok(!isOwner({ email: "shane@x", app_metadata: {} }, "shane@x"), "an unconfirmed email in OSAP_OWNERS is not (anyone can sign up with any email)");
 ok(!isOwner({ email: "b@x", confirmed_at: "x", app_metadata: { roles: ["full"] } }, "shane@x") && !isOwner(null, "shane@x"), "everyone else is not the owner");
+ok(planOf({ email: "Shane@X", confirmed_at: "2026-10-18T00:00:00Z", app_metadata: { roles: [] } }, "shane@x", tierOfRoles) === "full", "the owner set by OSAP_OWNERS has Full, with no paid role");
+ok(planOf({ email: "a@x", app_metadata: { roles: ["owner"] } }, "", tierOfRoles) === "full" && planOf({ email: "b@x", confirmed_at: "x", app_metadata: { roles: ["mid"] } }, "shane@x", tierOfRoles) === "mid" && planOf(null, "shane@x", tierOfRoles) === "free", "everyone else has what their roles give");
+ok(userRow({ email: "shane@x", confirmedAt: "x", appMetadata: { roles: [] } }, tierOfRoles, "shane@x").tier === "full" && userRow({ email: "shane@x", confirmedAt: "x", appMetadata: { roles: [] } }, tierOfRoles, "shane@x").owner, "the Users list shows the OSAP_OWNERS owner as owner on Full");
 const row = userRow({ id: "u1", email: "b@x", createdAt: "2026-10-01T00:00:00Z", confirmedAt: "2026-10-01T00:05:00Z", lastSignInAt: "2026-10-18T01:00:00Z",
   appMetadata: { roles: ["mid"], osap_seen: "2026-10-18T02:00:00Z", osap_plan: { sub: "sub_1" } }, userMetadata: { full_name: "B" } }, tierOfRoles);
 ok(JSON.stringify(Object.keys(row).sort()) === '["confirmed","email","joined","lastSeen","lastSignIn","owner","tier"]' && row.tier === "mid" && row.lastSeen === "2026-10-18T02:00:00Z",
