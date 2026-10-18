@@ -3,13 +3,21 @@
 // variable OSAP_OWNERS (comma-separated). Only the owner can list accounts (netlify/functions/osap-users.mjs).
 export function isOwner(u, ownersCsv) {
   if (!u) return false;
-  const roles = [].concat((u.app_metadata && u.app_metadata.roles) || []);
+  const roles = [].concat((u.app_metadata || u.appMetadata || {}).roles || []);
   if (roles.includes("owner")) return true;
   const list = String(ownersCsv || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-  return !!(u.email && u.confirmed_at && list.includes(String(u.email).toLowerCase()));
+  return !!(u.email && (u.confirmed_at || u.confirmedAt) && list.includes(String(u.email).toLowerCase()));
+}
+/** The plan an account has: the owner always has everything (Shane 2026-10-18: "I want my account 01shane89@gmail.com to be
+    unlocked fully"), whether the owner is set by role or by OSAP_OWNERS; everyone else has what their roles give. */
+export function planOf(u, ownersCsv, tierOfRoles) {
+  if (!u) return "free";
+  if (isOwner(u, ownersCsv)) return "full";
+  const m = u.app_metadata || u.appMetadata || {};
+  return tierOfRoles(m.roles);
 }
 /** The row the owner sees for one account: no password, no tokens, nothing but email, times and plan. */
-export function userRow(u, tierOfRoles) {
+export function userRow(u, tierOfRoles, ownersCsv) {
   const m = u.appMetadata || u.app_metadata || {};
   return {
     email: u.email || "",
@@ -17,7 +25,7 @@ export function userRow(u, tierOfRoles) {
     confirmed: !!(u.confirmedAt || u.confirmed_at),
     lastSignIn: u.lastSignInAt || u.last_sign_in_at || null,
     lastSeen: m.osap_seen || null,
-    tier: tierOfRoles(m.roles),
-    owner: [].concat(m.roles || []).includes("owner"),
+    tier: planOf(u, ownersCsv, tierOfRoles),
+    owner: isOwner(u, ownersCsv),
   };
 }

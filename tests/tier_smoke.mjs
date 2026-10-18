@@ -16,6 +16,7 @@ const uid = (n) => "00000000-0000-4000-8000-00000000000" + n;
 const users = {
   "tok-free": { id: uid(1), email: "free@test", roles: [] }, "tok-mid": { id: uid(2), email: "mid@test", roles: ["mid"] },
   "tok-full": { id: uid(3), email: "full@test", roles: ["full"] }, "tok-owner": { id: uid(4), email: "owner@test", roles: ["owner"] },
+  "tok-boss": { id: uid(5), email: "boss@test", roles: [] }, // the owner named in OSAP_OWNERS, with no role (as Shane's account is)
 };
 const PASSWORDS = { "mid@test": "tok-mid", "full@test": "tok-full", "free@test": "tok-free" };
 const PW = { "mid@test": "password1", "full@test": "password1", "free@test": "password1" }; // each account's password
@@ -87,7 +88,7 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 base = `http://127.0.0.1:${server.address().port}/`;
-const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP" };
+const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP", OSAP_OWNERS: "boss@test" };
 globalThis.Netlify = { env: { get: (k) => env[k] } };
 globalThis.netlifyIdentityContext = { url: base + ".netlify/identity", token: "op-token" };
 const GATE = (await import("../netlify/edge-functions/osap-data.js")).default;
@@ -208,7 +209,7 @@ gate = true;
   ok(item, "owner: Settings has Users");
   await p.evaluate(() => document.querySelector('[data-tp="@users"]').click()); await p.waitForTimeout(800);
   const u = await p.evaluate(() => { const d = document.getElementById("tierdlg"); return d && !d.hidden ? { h: d.querySelector("h2").textContent, rows: d.querySelectorAll("tbody tr").length, text: d.textContent } : null; });
-  ok(u && u.h === "Users" && u.rows === 4 && /4 accounts/.test(u.text) && /mid@test/.test(u.text) && /owner@test owner/.test(u.text), "owner: Users lists every account " + JSON.stringify(u && { h: u.h, rows: u.rows }));
+  ok(u && u.h === "Users" && u.rows === 5 && /5 accounts/.test(u.text) && /boss@test owner/.test(u.text) && /mid@test/.test(u.text) && /owner@test owner/.test(u.text), "owner: Users lists every account " + JSON.stringify(u && { h: u.h, rows: u.rows }));
   ok(u && !/0000-4000/.test(u.text) && !/tok-/.test(u.text), "owner: the list shows no ids or tokens");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-users.png" : "/dev/null" }).catch(() => {});
   ok(errors.length === 0, "owner: no page errors " + errors.join(" | "));
@@ -326,6 +327,15 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   const { ctx, p } = await open(null, "?from=pages");
   ok(/new address/.test(await msg(p)) && /Add to Home Screen/.test(await msg(p)), "moved from GitHub Pages: says to add the home-screen icon again: " + (await msg(p)).slice(0, 60));
   ok(!/from=pages/.test(await p.evaluate(() => location.href)), "moved from GitHub Pages: the marker is taken off the address");
+  await ctx.close();
+}
+// 11. the owner named only in OSAP_OWNERS (no role): Full everywhere, in the page and at the gate
+{
+  const { ctx, p, errors } = await open("tok-boss");
+  const s = await state(p);
+  ok(s.tier === "full" && !s.locked.length && (await p.evaluate(() => window.OSAP_TIER.owner())), "OSAP_OWNERS owner: Full plan, nothing locked " + JSON.stringify(s));
+  ok((await get(p, "data/live/ucdp.js")) === 200 && (await get(p, "data/claims/th.json")) !== 402 && (await get(p, "data/live/evsum.js")) === 200, "OSAP_OWNERS owner: Mid and Full data open at the gate");
+  ok(errors.length === 0, "OSAP_OWNERS owner: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 await browser.close(); server.close();
