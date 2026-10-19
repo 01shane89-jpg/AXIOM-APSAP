@@ -4931,7 +4931,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       "</article>";
   }
   function openBrief(ev, toReport) {
-    briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()); briefEl.hidden = false; document.documentElement.classList.add("briefing");
+    /* the key dates (assets/osap-keydates.js) print after the country report on their own pages */
+    var kd = window.OSAP_KEYDATES ? window.OSAP_KEYDATES.briefHtml(CC) : "";
+    briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()) + kd; briefEl.hidden = false; document.documentElement.classList.add("briefing");
+    if (kd) window.OSAP_KEYDATES.fillBrief();
+    /* economic stress signals (assets/osap-econ.js) add their own page after the one-page brief once their file has loaded */
+    if (window.OSAP_ECON) window.OSAP_ECON.intoBrief(briefEl, CC, C.name);
     document.getElementById("brief-close").addEventListener("click", closeBrief);
     document.getElementById("brief-print").addEventListener("click", function () { try { window.print(); } catch (e) {} });
     if (toReport) { var r = document.getElementById("report"); if (r) r.scrollIntoView(); } else briefEl.scrollTop = 0;
@@ -6341,7 +6346,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      whenever the data set changes, and on start. The base map choice stays. */
   /* elevation shading (data-hs, data-lidar) and country borders (data-bd) belong with the base map, so they stay on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-satg]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -6522,7 +6527,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* Map overlays in a fixed, sensible order whatever order the modules add their sections in (Shane 2026-10-01: organised so
      it is intuitive): infrastructure first (communications, power: Shane could not find them lower down), then terrain, roads and movement, aircraft, then your own marking (country sides,
      boundaries), then display options. Sections not named here stay where their module put them. */
-  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/],
+  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#ml-sat"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/], ["#ml-warn", /^Airspace and sea warnings/],
     [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/]];
   function mlArrange() {
     var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
@@ -8858,10 +8863,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
 
 
+<!-- source grading (Admiralty / NATO A-F, 1-6) for My work; before osap-work.js, which reads it on load (assets/osap-grade.js) -->
+<script src="assets/osap-grade.js"></script>
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-locate.js"></script>
+<script src="assets/osap-keydates.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
@@ -8893,6 +8901,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-tools.js"></script>
 <script src="assets/osap-drones.js"></script>
 <script src="assets/osap-traffic.js"></script>
+<!-- Airspace and sea warnings drawn as shapes (Map overlays): NGA navigational warnings, FAA TFRs, EASA conflict zone bulletins -->
+<script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-split.js"></script>
 <!-- side panels you can resize, dock left or right, or float (computer only; the edge grip of each panel) -->
 <script src="assets/osap-panels.js"></script>
@@ -8929,12 +8939,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-borders.js"></script>
 <script src="assets/osap-pop.js"></script>
+<!-- Satellite before/after (Area menu and Map overlays > Satellite imagery): Sentinel-2 passes and NASA daily true colour -->
+<script src="assets/osap-sat.js"></script>
 <!-- LiDAR hillshade and LiDAR coverage (Map overlays > Elevation and terrain analysis), LiDAR heights for Terrain analysis -->
 <script src="assets/osap-lidar.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <!-- sync my devices: saved data kept the same on your own devices through encrypted public relays, no account -->
 <script src="assets/osap-sync.js"></script>
+<!-- GPS interference map from aircraft accuracy reports (Map overlays > Live aircraft; tools/gnss.mjs) -->
+<script src="assets/osap-gnss.js"></script>
+<!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
+<script src="assets/osap-econ.js"></script>
+<!-- photo and video check: metadata, sun and shadow, reverse image search links, video frames, all on the device (My work, a point's popup) -->
+<script src="assets/osap-photocheck.js"></script>
 <!-- the user guide: Settings (the gear) > User guide, offline and printable -->
 <script src="assets/osap-guide.js"></script>
 <script src="assets/osap-i18n.js"></script>

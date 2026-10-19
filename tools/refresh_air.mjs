@@ -17,8 +17,12 @@
 // Each aircraft keeps the source and time of its own position, so the map shows exactly how old every one is.
 // What this is: positions aircraft broadcast (ADS-B / MLAT), as reported, a few minutes old on the map. Not every aircraft:
 // many military and state aircraft fly with ADS-B off, and areas without volunteer receivers show nothing.
+// GPS interference: every adsb.fi / adsb.lol record also goes, before it is trimmed, to tools/gnss.mjs, which keeps per-cell
+// hourly counts of aircraft reporting good and poor navigation accuracy (gnss-state.json, carried like the cells) and, when
+// an hour completes, writes the 24-hour and daily maps to $GNSS_DIR (the workflow commits data/live/gnss on main).
 import fs from "fs";
 import path from "path";
+import * as gnss from "./gnss.mjs";
 
 const OUT = process.argv[2] || "air-out";
 const PREV = process.argv[3] || OUT;
@@ -100,6 +104,8 @@ async function main() {
   // latitude (the northern mid-latitudes carry most traffic)
   const prior = (i) => (last[i] == null ? 1 - Math.abs(C[i][0] - 35) / 200 : last[i] + 1);
   todo.sort((a, b) => prior(b) - prior(a));
+  const GS = gnss.readState(path.join(PREV, "gnss-state.json")), gClosed = gnss.roll(GS, Date.now());
+  let gN = 0;
   const circ = last.slice(), seen = new Map(), stat = ALL.map((s) => ({ src: s.name, asked: 0, ok: 0, busy: 0, failed: 0, err: "" }));
   const asked = [];
   function put(x) {
@@ -131,6 +137,7 @@ async function main() {
           if (!a.hex || String(a.hex).startsWith("~") || typeof a.lat !== "number" || typeof a.lon !== "number") continue;
           if ((a.seen_pos ?? a.seen ?? 0) > MAX_AGE) continue;
           n++; put(row(a, si, r.now));
+          if (gnss.add(GS, a)) gN++;
         }
         circ[i] = n;
       }
@@ -194,6 +201,13 @@ async function main() {
   };
   if (!stat.some((s) => s.ok)) { console.error("every source failed", JSON.stringify(stat)); process.exit(2); }
   fs.writeFileSync(path.join(OUT, "index.json"), JSON.stringify(index));
+  // GPS interference: GNSS_FLUSH=1 (test runs) closes the hour now so a single sweep writes the files
+  if (process.env.GNSS_FLUSH === "1") gClosed.push(...gnss.roll(GS, Date.now() + gnss.HOUR));
+  fs.writeFileSync(path.join(OUT, "gnss-state.json"), JSON.stringify(GS));
+  const gWrote = process.env.GNSS_DIR ? gnss.writeOut(process.env.GNSS_DIR, GS, gClosed, Date.now()) : [];
+  const gCur = Object.values(GS.cur ? GS.cur.c : {}).reduce((t, c) => t + Object.keys(c).length, 0);
+  console.log("GPS interference: " + gN + " reports counted, " + gCur + " aircraft-cells this hour, " + GS.hours.length + " hours kept" +
+    (gWrote.length ? ", wrote " + gWrote.join(" ") : ""));
   console.log(built.slice(11, 16) + "Z sweep " + sweep + ": " + total + " aircraft (" + carried + " carried on) in " + Object.keys(counts).length + " cells, median age " +
     index.age_p50_s + " s, " + index.took_s + " s, " + index.asked + "/" + C.length + " circles asked" + (unasked ? ", " + unasked + " left for lack of time" : "") + " | " +
     stat.map((s) => s.src + " ok " + s.ok + (s.busy ? " busy " + s.busy : "") + (s.failed ? " failed " + s.failed + " (" + s.err + ")" : "")).join("; "));

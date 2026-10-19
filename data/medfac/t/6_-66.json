@@ -1,0 +1,13 @@
+[["n1042084754",7.73902,-64.71901,"ve",{"name":"Aeropuerto de Mapire","name:en":"Mapire Airport","aeroway":"aerodrome"}],
+["n13669118619",6.35849,-64.56366,"ve",{"aeroway":"helipad"}],
+["n4189896889",7.44202,-64.79575,"ve",{"name":"Ambulatorio","amenity":"hospital","addr:street":"Carretera: Caicara del Orinoco - Ciudad Bolívar"}],
+["n5628989801",7.99496,-65.13435,"ve",{"name":"Pista","name:en":"Runway","aeroway":"aerodrome"}],
+["n5628989860",7.93108,-65.18126,"ve",{"name":"Veladero Pista","name:en":"Veladero Runway","aeroway":"aerodrome"}],
+["n5653589908",7.89118,-65.87857,"ve",{"name":"Pista","name:en":"Runway","aeroway":"aerodrome"}],
+["w1447799409",7.76221,-64.36422,"ve",{"name":"Helipuerto de la S/E Malena","name:en":"S/E Malena HLS","operator":"EDELCA","aeroway":"helipad","surface":"asphalt","wikidata":"Q136718560"}],
+["w1491376122",6.44803,-65.83029,"ve",{"name":"Pista de El Diamante","name:en":"El Diamante Airstrip","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1491497211",6.32584,-65.37572,"ve",{"name":"Pista de Kayamá","name:en":"Kayama Airstrip","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1491506716",6.36455,-64.59452,"ve",{"name":"Pista de Salto Pará","name:en":"Salto Pará Airstrip","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1491563924",7.76696,-64.35972,"ve",{"name":"Pista de Malena","name:en":"Malena Airstrip","operator":"EDELCA","aeroway":"aerodrome","aerodrome:type":"private"}],
+["w1491564853",7.86239,-64.36469,"ve",{"name":"Pista del Hato San Roque","name:en":"Hato San Roque Airstrip","aeroway":"aerodrome","aerodrome:type":"private"}],
+["w1491567284",7.45466,-65.17611,"ve",{"name":"Pista del Hato La Mascota","name:en":"Hato La Mascota Airstrip","aeroway":"aerodrome","aerodrome:type":"private"}]]
