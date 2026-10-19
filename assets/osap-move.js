@@ -151,7 +151,7 @@
     var c = { points: arrLen(keys["osap-atak-pts"]), areas: 0, aoi: arrLen(keys["osap-aoi"]), routes: arrLen(keys["osap-routes"]), shapes: arrLen(keys["osap-shapes"]), watches: arrLen(keys["asap-watches"]), plans: 0, workspaces: 1, work: 0 };
     Object.keys(keys).forEach(function (k) { if (/^asap-area-[a-z]{2,3}(-st)?$/.test(k) && arrLen(keys[k]) > 2) c.areas++; if (/^osap-medplan-/.test(k)) c.plans++; });
     try { c.workspaces = Math.max(1, JSON.parse(keys["osap-ws"]).list.length); } catch (e) {}
-    try { var it = JSON.parse(keys["osap-work"]).items; c.work = Object.keys(it).filter(function (k) { var x = it[k]; return x && (x.saved || x.note || x.reviewed); }).length; } catch (e) {}
+    try { var it = JSON.parse(keys["osap-work"]).items; c.work = Object.keys(it).filter(function (k) { var x = it[k]; return x && (x.saved || x.note || x.reviewed || x.grade); }).length; } catch (e) {}
     return c;
   }
   function describe(c, photos) {

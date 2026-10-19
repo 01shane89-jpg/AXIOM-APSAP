@@ -1,1 +1,7 @@
-[["w772071488",40.44607,62.17025,"tm",{"name":"Saglyk Merkezi","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general"}]]
+[["n11951686443",40.7197,62.4847,"uz",{"emergency":"ambulance_station"}],
+["n7139599728",40.13225,63.45653,"uz",{"name":"Poliklinika","amenity":"doctors","healthcare":"hospital"}],
+["w1094754819",40.85274,63.33416,"uz",{"amenity":"clinic","healthcare":"clinic"}],
+["w1164198895",40.24695,63.38566,"uz",{"aeroway":"helipad"}],
+["w764328604",40.13111,63.4575,"uz",{"amenity":"hospital","healthcare":"hospital","addr:housenumber":"1","addr:street":"Amir Temur ko'chasi"}],
+["w772071488",40.44607,62.17025,"tm",{"name":"Saglyk Merkezi","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general"}],
+["w792989759",40.81574,62.02468,"uz",{"aeroway":"aerodrome"}]]
