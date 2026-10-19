@@ -13,6 +13,7 @@ import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
+import { stripOutletText } from "./outlet_text.mjs";
 import { dedupeStories } from "./news_dedupe.mjs";
 import { US_STATES, stateQuery } from "./us_states.mjs";
 
@@ -203,21 +204,19 @@ async function ogImage(url) {
 }
 const all = [...new Set(Object.values(items).flat())];
 // The model translates about 400 texts a run and the cache holds 6,000, so with every country's outlets the order matters:
-// headlines of the original 28 areas first, then every other headline (newest first), then only the original areas' summaries.
-// Other countries' summaries stay in the original language.
+// headlines of the original 28 areas first, then every other headline (newest first). Summaries are not translated: outlet text
+// is never stored (tools/outlet_text.mjs), and an English summary is still read below for relevance and places.
 const FIRST = new Set([...Object.keys(FIPS), "oki"]), areaOf = new Map();
 for (const [cc, list] of Object.entries(items)) for (const i of list) if (!areaOf.has(i) || FIRST.has(cc)) areaOf.set(i, cc);
 const ord = [...all].sort((a, b) => (FIRST.has(areaOf.get(b)) - FIRST.has(areaOf.get(a))) || (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
-const sums = ord.filter((i) => FIRST.has(areaOf.get(i)));
 // English already stored with the history is reused (tools/history.mjs), so a story keeps its translation after the cache drops it
 console.log("translations reused from the history:", seed(storedTranslations("news", Object.keys(items).filter((k) => !k.includes(":")))));
-const tr = await translateAll([...ord.map((i) => ({ text: i.title, lang: i.lang })), ...sums.map((i) => ({ text: i.summary, lang: i.lang }))]);
+const tr = await translateAll(ord.map((i) => ({ text: i.title, lang: i.lang })));
 ord.forEach((i, n) => { i.title_en = tr[n].en; i._t = tr[n].tool; });
-sums.forEach((i, n) => { const b = tr[ord.length + n]; i.summary_en = b.en; i._s = b.tool; });
 all.forEach((i) => {
-  i.mt = /^en\b/i.test(i.lang || "") ? null : (i._t || i._s || "untranslated");
-  if (i.summary_en === undefined) i.summary_en = /^en\b/i.test(i.lang || "") ? i.summary : null;
-  delete i._t; delete i._s;
+  i.mt = /^en\b/i.test(i.lang || "") ? null : (i._t || "untranslated");
+  i.summary_en = /^en\b/i.test(i.lang || "") ? i.summary : null;
+  delete i._t;
 });
 saveCache();
 // Only news that matters to an analyst or a special operations team in the country is kept (tools/relevance.json, checked on
@@ -253,6 +252,8 @@ try {
   }
 } catch (e) { console.error("gazetteer unavailable, items left unplaced:", e.message); }
 if (!status.some((s) => s.ok)) { console.error("every news source failed"); process.exit(1); }
+// headline, link and what OSAP derived only: the outlet's summary is dropped before anything is written (tools/outlet_text.mjs)
+{ const R = await loadRelevance(); for (const i of all) stripOutletText(i, R); }
 fs.mkdirSync("data/live", { recursive: true });
 // US state news: one file per state (the page loads only the open state's), taken out of the national snapshot
 {

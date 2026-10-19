@@ -1,7 +1,7 @@
 // Data-set searches (run by .github/workflows/refresh-flood.yml after the news step, or by hand with Node 18+).
 // Each data set in tools/topics.json may list news searches; this runs them (Bing News RSS, read only where robots.txt
 // allows, one a second) and keeps the results for 30 days in data/live/topics.js, filed under every country a headline names.
-// Results are search hits: a headline, a short summary, the outlet, a date and a link, marked nc (aggregator terms).
+// Results are search hits: a headline, the outlet, a date and a link, marked nc (aggregator terms).
 // A failed search keeps its earlier results. Exit code 0 unless tools/topics.json is unreadable.
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
@@ -39,7 +39,8 @@ for (const t of topics || []) {
         if (!topicsOf(own, text, countriesNamed(COUNTRIES, text)).length && !(t.countries || []).length) { off++; continue; }
         if ((t.countries || []).length && !topicsOf(own, text, t.countries).length) { off++; continue; }
         if (!["strong", "keep"].includes(relevance(REL, text))) { off++; continue; }   // sport, celebrity, lifestyle (tools/relevance.json)
-        const o = { title: i.title, summary: String(i.summary || "").slice(0, 280), date: iso(i.date), link, outlet, via: "search", nc: true,
+        // headline and link only: the search result's summary is read above but never stored (tools/outlet_text.mjs)
+        const o = { title: i.title, date: iso(i.date), link, outlet, via: "search", nc: true,
           // a non-Latin headline from an English query is left without a language rather than mislabelled
           lang: /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : "en",
           cc: countriesNamed(COUNTRIES, text).slice(0, 3), topics: [...new Set([...((old && old.topics) || []), t.id])], first_seen: (old && old.first_seen) || stamp };
@@ -54,6 +55,7 @@ const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 1
 // an old story the search listed with a fresh date (its link or its own text dates it earlier) is left out
 const items = [...byLink.values()].filter((i) => (i.date || i.first_seen) >= cutoff && !staleSearchResult([i.title, i.summary].join(" "), i.date, 60, { link: i.link })).sort((a, b) => (b.date > a.date ? 1 : -1))
   .filter((i) => i.topics.some((id) => (count[id] = (count[id] || 0) + 1) <= PER_TOPIC));
+for (const i of items) delete i.summary;   // copies kept from before 2026-10-17
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.OSAP_TOPICS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.topic, JSON.stringify(s.q), s.ok ? s.n + " items" + (s.off ? ", " + s.off + " off-topic or not relevant left out" : "") : s.error));

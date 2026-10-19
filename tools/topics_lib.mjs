@@ -61,13 +61,15 @@ export function relevance(R, text) {
   return "none";
 }
 // One news item checked the way every news surface uses it (news pool and search, Local news, Top stories, history):
-// its English headline, original headline and summary. A headline the translation step left in its own script cannot be
+// its English headline, original headline and summary (or, once the summary is dropped, what it matched: sum_rel). A headline the translation step left in its own script cannot be
 // checked against English words, so it is kept ("unchecked") unless a drop word matched.
 export function itemRelevance(R, i) {
   if (i.exempt) return "strong";   // an outlet marked relevance "exempt" in tools/news_feeds.json
   const en = String(i.title_en || i.title || ""), orig = i.title && i.title !== en ? i.title : "";
   const rel = relevance(R, en + " \n " + orig + " \n " + String(i.summary_en || i.summary || "").slice(0, 400));
   if (rel !== "none") return rel;
+  // the outlet's summary is read by the job but not stored (tools/outlet_text.mjs): what its words matched then still counts
+  if (i.sum_rel === "strong" || i.sum_rel === "keep") return i.sum_rel;
   // a language with its own word lists was already checked in its own words: nothing matched, so it is left out
   if (R.native && R.native.has(baseLang(i.lang))) return "none";
   const latin = (en.match(/[A-Za-z]/g) || []).length, other = (en.match(/\p{L}/gu) || []).length - latin;

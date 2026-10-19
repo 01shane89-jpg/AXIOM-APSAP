@@ -5,10 +5,12 @@
 import fs from "node:fs";
 import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
 import { dropSuspectMt } from "./mt_guard.mjs";
+import { stripOutletText } from "./outlet_text.mjs";
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
 // geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
-const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region", "detail", "exempt"];
+// no summary: outlet text is never stored (tools/outlet_text.mjs); sum_rel is what the summary's words matched
+const KEEP = ["title", "title_en", "sum_rel", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region", "detail", "exempt"];
 
 // Page script text that an outlet put inside an item body ("if (!window._raw... addEventListener(...") is not a summary;
 // it is removed from new and already-kept items alike, so older copies are cleaned on the next refresh.
@@ -33,7 +35,6 @@ export function storedTranslations(kind, ccs) {
     for (const i of read(cc)[kind] || []) {
       if (!i || !i.mt || i.mt === "untranslated" || /^en\b/i.test(i.lang || "")) continue;
       if (i.title && i.title_en) out.push({ text: i.title, lang: i.lang || "", en: i.title_en, tool: i.mt });
-      if (i.summary && i.summary_en) out.push({ text: i.summary, lang: i.lang || "", en: i.summary_en, tool: i.mt });
     }
   }
   return out;
@@ -49,7 +50,8 @@ export async function updateHistory(kind, items, stamp, caps) {
   for (const cc of Object.keys(items)) {
     if (!/^[a-z]{2,3}$/.test(cc)) continue;
     const h = read(cc), byLink = new Map();
-    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, unCode(i));
+    // items kept before 2026-10-17 still carry the outlet's summary: it is dropped here (its relevance verdict kept)
+    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, stripOutletText(unCode(i), R));
     for (const i of items[cc] || []) {
       if (!i || !i.link || !/^https?:\/\//.test(i.link)) continue;
       if (!byLink.has(i.link)) added++;
@@ -58,9 +60,10 @@ export async function updateHistory(kind, items, stamp, caps) {
       const prev = byLink.get(i.link);
       if (prev && prev.mt && prev.mt !== "untranslated") {
         let kept = false;
-        for (const [t, e] of [["title", "title_en"], ["summary", "summary_en"]]) if (!o[e] && o[t] && prev[e] && prev[t] === o[t]) { o[e] = prev[e]; kept = true; }
+        if (!o.title_en && o.title && prev.title_en && prev.title === o.title) { o.title_en = prev.title_en; kept = true; }
         if (kept && (!o.mt || o.mt === "untranslated")) o.mt = prev.mt;
       }
+      if (!o.sum_rel) { const r = stripOutletText({ summary: i.summary, summary_en: i.summary_en }, R).sum_rel; if (r) o.sum_rel = r; }
       unCode(o);
       o.first_seen = (byLink.get(i.link) || {}).first_seen || stamp;
       byLink.set(i.link, o);

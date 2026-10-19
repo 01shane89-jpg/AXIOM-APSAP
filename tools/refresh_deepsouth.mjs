@@ -30,6 +30,7 @@ async function get(url, accept) {
 
 import { classify, figure, place, relevant, markAlerts, KILLED, INJURED, placeSubst, placeMismatch } from "./deepsouth_lib.mjs";
 import { staleSearchResult } from "./conflict_lib.mjs";
+import { stripOutletText } from "./outlet_text.mjs";
 import { readIndex, plan as capturePlan, write as captureWrite, toCapture, toTranslation } from "./capture_lib.mjs";
 import { plan as claimPlan, RULES as CLAIM_RULES } from "./claim_lib.mjs";
 import { build as buildIncidents } from "./incident_lib.mjs";
@@ -241,9 +242,8 @@ if (todo.length) {
   const bad = tr.map((r, k) => (r.en && r.tool && !sane(origOf(k), r.en) ? k : -1)).filter((k) => k >= 0);
   if (bad.length) {
     bad.forEach((k) => forget(texts[k].text, texts[k].lang));
-    const again = await translateAll(bad.map((k) => texts[k]), { model: false });
-    bad.forEach((k, j) => { tr[k] = again[j].en ? again[j] : { en: null, tool: tr[k].tool }; });
-    console.log("Deep South: " + bad.length + " model translations failed the check; " + again.filter((r) => r.en).length + " redone by the fallback service");
+    bad.forEach((k) => { tr[k] = { en: null, tool: tr[k].tool }; });   // no fallback service since 2026-10-17 (tools/translate.mjs); retried next run
+    console.log("Deep South: " + bad.length + " model translations failed the check and were dropped");
   }
   todo.forEach((i, n) => {
     const t = tr[n].en, sm = tr[todo.length + n].en;
@@ -257,6 +257,8 @@ if (todo.length) {
   saveCache();
 }
 for (const i of items) {
+  // a kept item no longer holds its summary (tools/outlet_text.mjs): its kind and place stay as the summary set them
+  if (i.summary == null && i.kind) continue;
   const en = [i.title_en || (/^en\b/i.test(i.lang || "") ? i.title : ""), i.summary_en || (/^en\b/i.test(i.lang || "") ? i.summary : "")].join(" ");
   const all = en + " " + i.title + " " + (i.summary || "");
   { const th = !/^en\b/i.test(i.lang || ""), h = classify(th ? i.title : i.title_en || i.title); i.kind = h !== "other" ? h : classify(th ? i.title + " " + (i.summary || "") : all); }
@@ -321,6 +323,9 @@ try {
     console.log("Deep South incident candidates:", JSON.stringify(inc.totals));
   } catch (e) { console.error("Deep South incident candidates not written:", e.message); }
 } catch (e) { console.error("Deep South captures not written:", e.message); }
+// headline, link and what OSAP derived only: the outlet's summary is dropped before the layer file is written (tools/outlet_text.mjs).
+// The capture and claim stores above still keep it (follow-up: the evidence stores, 2026-10-17).
+for (const i of items) stripOutletText(i);
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.ASAP_DS=" + JSON.stringify({ asof: stamp, keep_days: KEEP_DAYS, sources: status, items,
   ucdp: [...ucdp.values()].filter((e) => e.date >= cutoff.slice(0, 10)).sort((a, b) => (a.date < b.date ? 1 : -1)), ucdp_files: [...ucdpFiles] }).replace(/<\//g, "<\\/") + ";\n");
