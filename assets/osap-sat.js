@@ -4,7 +4,7 @@
      "Satellite imagery" (opens the same window for the drawn area or, with none, the map view; and the NASA daily switch).
      The window is a split-view window (W.OSAP_SPLIT) so the map stays usable beside it. No toolbar button.
    - Passes: Element 84 Earth Search STAC (https://earth-search.aws.element84.com/v1, collection sentinel-2-l2a, keyless, CORS "*";
-     checked from a GitHub runner on 2026-10-19 with tools/probe_sat.sh). Items over the area are grouped into passes (one
+     checked from a GitHub runner on 2026-10-19; the app read real COGs there for Kyiv, Bangkok, Sydney, Reykjavik and a UTM zone edge). Items over the area are grouped into passes (one
      satellite, one UTC day); when a tile was processed twice the newer processing is kept. Cloud % is the item's eo:cloud_cover,
      which is for the whole 110 km tile, not the drawn area: a "clear" pass can still be cloudy over the area, and the reverse.
    - Pictures: each item's "visual" asset, the true-colour (TCI) Cloud Optimised GeoTIFF in the sentinel-cogs bucket on AWS Open

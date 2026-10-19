@@ -5,7 +5,7 @@
 // scene to its STAC item and credits Copernicus; picking another pass redraws; the swipe mode lays both on the map with a handle
 // that moves the cut; NASA GIBS daily true colour asks for the chosen day and sensor; an area too large is refused; external
 // text is escaped; closing clears the map. Earth Search, the COG bucket and GIBS are answered here by made-up data (small
-// GeoTIFFs written with the vendored geotiff.js, no network); the real hosts were checked by tools/probe_sat.sh.
+// GeoTIFFs written with the vendored geotiff.js, no network); the real hosts were checked from a GitHub runner on 2026-10-19.
 // Run from the repo root: node tests/sat_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
