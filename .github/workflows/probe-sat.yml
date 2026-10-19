@@ -1,0 +1,16 @@
+# Test only (removed before merge): checks the Satellite before/after sources from a runner. Prints to the log.
+name: Probe satellite before/after
+on:
+  push:
+    branches: [claude/sat-before-after]
+    paths: [tools/probe_sat.sh, tools/sat_probe.mjs, assets/osap-sat.js, .github/workflows/probe-sat.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_sat.sh
