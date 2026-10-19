@@ -13,6 +13,7 @@
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs";
+import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones } from "./warngeo_lib.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -414,7 +415,7 @@ await job("cdc", "cdc.js", "ASAP_CDC", async () => {
   return { src: "https://wwwnc.cdc.gov/travel/notices", items, note: items.length + " notices" };
 });
 
-// 13. NGA broadcast navigational warnings (HYDROPAC, NAVAREA IV, NAVAREA XII). Positions parsed from the text.
+// 13. NGA broadcast navigational warnings in force (Daily Memoranda of all five NGA areas). Positions parsed from the text.
 function navPos(text) {
   const out = [];
   for (const m of String(text).matchAll(/(\d{1,2})-(\d{2}(?:\.\d+)?)\s*([NS])\s+(\d{1,3})-(\d{2}(?:\.\d+)?)\s*([EW])/g)) {
@@ -424,22 +425,28 @@ function navPos(text) {
   return out;
 }
 await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
-  // HYDROPAC (western Pacific and Indian Ocean), NAVAREA IV (western Atlantic, Caribbean) and NAVAREA XII (eastern Pacific)
-  const AREAS_NAV = [["P", "HYDROPAC"], ["4", "NAVAREA IV"], ["12", "NAVAREA XII"]], items = [], status = [];
-  for (const [area, label] of AREAS_NAV) {
+  // The old query API (api/publications/broadcast-warn?navArea=..&status=A) stopped at 10 May 2024 (its own /latest-warning
+  // says so); the warnings in force now are in each area's Daily Memorandum (tools/warngeo_lib.mjs, MEM_FILES / parseDailyMem).
+  // All five NGA areas: HYDROLANT, HYDROPAC, HYDROARC, NAVAREA IV and NAVAREA XII.
+  let media = null;
+  try { media = await get("https://msi.nga.mil/api/media?type=Nav%20Warnings"); } catch (e) {}
+  const items = [], status = [];
+  for (const mf of memFiles(media)) {
     try {
-      const j = await get("https://msi.nga.mil/api/publications/broadcast-warn?navArea=" + area + "&status=A&output=json");
+      const mem = parseDailyMem(await get(MEM_BASE + mf.key, "text"), mf.code);
+      if (!mem.warnings.length) throw new Error("no warnings in the memorandum (layout changed?)");
       let n = 0;
-      for (const w of j["broadcast-warn"] || j.broadcastWarn || j.data || []) {
+      for (const w of mem.warnings) {
+        if (skipNga(w.text)) continue;
         const text = String(w.text || "").replace(/\s+/g, " ").trim(), pos = navPos(text);
         let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
         if (!ccs.length) continue;
-        items.push({ id: label + " " + (w.msgNumber || "") + "/" + String(w.msgYear || "").slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
-          text: text.slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
+        items.push({ id: (w.area || mf.area) + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
+          text: redactPhones(text).slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
         n++;
       }
-      status.push({ area: label, ok: true, n });
-    } catch (e) { status.push({ area: label, ok: false, error: err(e) }); }
+      status.push({ area: mf.area, ok: true, n, file: mf.modified || null });
+    } catch (e) { status.push({ area: mf.area, ok: false, error: err(e) }); }
   }
   if (!status.some((x) => x.ok)) throw new Error(status.map((x) => x.area + ": " + x.error).join("; "));
   return { src: "https://msi.nga.mil/NavWarnings", status, items, note: items.length + " warnings (" + status.map((x) => x.area + (x.ok ? " " + x.n : " failed")).join(", ") + ")" };

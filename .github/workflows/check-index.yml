@@ -68,6 +68,7 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
+      - run: node tests/warngeo.test.mjs
       # source grading in My work: the Admiralty / NATO scale, cleaning grades and per-source defaults, escaped picker
       - run: node tests/grade.test.mjs
       # photo and video check: NOAA sun position, shadow times, metadata reader (JPEG, PNG, HEIC, MP4, MOV)
@@ -109,6 +110,7 @@ jobs:
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/flood_overlay_smoke.mjs
       - run: node tests/pop_smoke.mjs
+      - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs
       - run: node tests/keydates_smoke.mjs
       - run: node tests/maploading_smoke.mjs
