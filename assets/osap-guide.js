@@ -113,7 +113,16 @@
         b("Edit shape") + " lets you drag corners, turn and move it, and change its colours.",
         b("Summarise area") + " writes a summary of the reports inside, with numbered sources. It can also write an AI summary on this device.",
         b("Landing zones") + " searches inside the area (see LZ finder).",
+        b("Satellite before/after") + " shows two Sentinel-2 pictures of the area (see Satellite before/after).",
         b("Save (NAI/TAI)") + " keeps the area with a type, a name and notes. Saved areas appear under Overlays, where you can use one as the map filter, watch it, zoom to it, edit or delete it."]) },
+
+    { id: "satba", t: "Satellite before/after", h:
+      ul(["Draw an area, then " + b("Area") + ", " + b("Satellite before/after") + ". Or open Overlays, " + b("Satellite imagery") + ", " + b("Open Satellite before/after") + " (the drawn area, or the map view when none is drawn).",
+        "OSAP lists the Sentinel-2 passes over the area for the last 90 days with the time in Zulu and local time and the cloud %. It picks the newest clear pass as " + b("After") + " and one about 30 days earlier as " + b("Before") + ". Press " + b("Before") + " or " + b("After") + " on any pass to change them, filter by cloud, or " + b("Look 90 days further back") + ".",
+        b("Side by side") + " shows the two pictures in the window. " + b("Swipe on map") + " lays them on the map: drag the round handle, before on the left, after on the right.",
+        "Each picture shows its scene id with a link to its catalogue entry, the time and the cloud %. Pictures are about 10 m, true colour, read straight from the open Copernicus archive on this device.",
+        b("NASA daily true colour") + " (here or in Overlays, Satellite imagery) lays one day's whole-world VIIRS or MODIS picture, about 250 m, on the map. " + b("Day of the after pass") + " sets its day to the after picture's."]) +
+      tip("The cloud % is for the whole 110 km tile, so a pass can still be cloudy over a small area, or clear over it. Areas up to about 250 km across. Contains modified Copernicus Sentinel data.") },
 
     { id: "point", t: "Points and photos", h:
       fig("point", "A new point") +

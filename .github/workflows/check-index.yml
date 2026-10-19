@@ -38,6 +38,7 @@ jobs:
       - run: node tests/places_deepsouth.test.mjs
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
+      - run: node tests/sat.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/deepsouth_border.test.mjs
@@ -106,6 +107,7 @@ jobs:
       - run: node tests/flood_overlay_smoke.mjs
       - run: node tests/pop_smoke.mjs
       - run: node tests/warngeo_smoke.mjs
+      - run: node tests/sat_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs
