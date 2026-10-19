@@ -52,6 +52,7 @@ jobs:
       - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
+      - run: node tests/keydates.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/social_view.test.mjs
       - run: node tests/jp_ccc.test.mjs
@@ -113,6 +114,7 @@ jobs:
       - run: node tests/pop_smoke.mjs
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs
+      - run: node tests/keydates_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs

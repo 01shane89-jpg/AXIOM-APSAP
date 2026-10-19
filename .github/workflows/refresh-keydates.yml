@@ -1,0 +1,61 @@
+# Key dates for every country (tools/refresh_keydates.mjs -> data/live/keydates/<cc>.json), shown on Today and in the country
+# brief by assets/osap-keydates.js: public holidays (Nager.Date, MIT), scheduled national elections and referendums (Wikipedia's
+# national electoral calendar, CC BY-SA 4.0) and anniversaries of each country's deadliest days of violence (UCDP GED, CC BY 4.0).
+# Daily; commits on the branch it runs on (main on schedule). A source that fails keeps its last good copy.
+# The UCDP release zip comes from the Actions cache the conflict history job fills (refresh-conflicts.yml, key ucdp-ged-<release>).
+name: Refresh key dates
+
+on:
+  # a push of the builder on a key dates branch builds there, so the cards can be previewed and tested with real data
+  push:
+    branches: ["claude/key-dates*"]
+    paths: ["tools/refresh_keydates.mjs", "tools/keydates_lib.mjs", ".github/workflows/refresh-keydates.yml"]
+  schedule:
+    - cron: "23 2 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "1 rebuilds the anniversaries even when the UCDP release has not changed"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-keydates-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Restore the UCDP release
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .cache/ucdp
+          key: ucdp-ged-none
+          restore-keys: ucdp-ged-
+      - name: Build
+        env:
+          FORCE: ${{ inputs.force }}
+        run: node tools/refresh_keydates.mjs
+        timeout-minutes: 20
+      - name: Commit
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -A data/live/keydates
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Refresh key dates $(date -u +'%Y-%m-%d %H:%MZ')"
+          # Drop other changed files so the rebase can run; other jobs commit to main too, so rebase onto it and retry.
+          git checkout -- .
+          b="${GITHUB_REF#refs/heads/}"
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs origin "$b" && git push -q origin "HEAD:$b" && exit 0; sleep 7; done
+          exit 1
