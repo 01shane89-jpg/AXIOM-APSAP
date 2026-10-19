@@ -83,14 +83,20 @@ try {
   log("WFP datasets on HDX:", pkgs.length);
   await pool(pkgs, 4, async (p) => {
     const g = (p.groups || []).map((x) => String(x.name || "").toUpperCase()).filter((x) => byA3[x]);
-    const res = (p.resources || []).filter((r) => /\.csv$/i.test(r.url || "") && !/qc|quality/i.test(r.name || "") && /wfp_food_prices_/i.test(r.url || ""));
-    const a3 = g[0] || ((res[0] && (res[0].url.match(/wfp_food_prices_([a-z]{3})\.csv/i) || [])[1]) || "").toUpperCase();
+    // the main file is wfp_food_prices_<iso3>.csv; HDX may also split recent years into wfp_food_prices_<iso3>_<year>.csv.
+    // QuickCharts copies (qc_...) are left out. Files for years before last year are not needed (13 months are shown).
+    const res = (p.resources || []).filter((r) => {
+      const u = String(r.url || ""), m = u.match(/(?:^|\/)wfp_food_prices_([a-z]{3})(?:_(\d{4}))?\.csv$/i);
+      return m && !/quickchart/i.test(r.name || "") && (!m[2] || +m[2] >= new Date(NOW).getUTCFullYear() - 1);
+    });
+    const a3 = g[0] || ((res[0] && (res[0].url.match(/wfp_food_prices_([a-z]{3})/i) || [])[1]) || "").toUpperCase();
     const cc = byA3[a3]; if (!cc || !res.length) return;
     try {
-      const text = await get(res[0].url, { type: "text", timeout: 120000 });
-      const items = wfpItems(csvObjects(text), NOW);
+      let objs = [];
+      for (const r of res) objs = objs.concat(csvObjects(await get(r.url, { type: "text", timeout: 120000 })));
+      const items = wfpItems(objs, NOW);
       wfp[cc] = { page: HDX + "/dataset/" + p.name, csv: res[0].url, title: p.title, licence: p.license_title || "CC BY-IGO 3.0",
-        updated: (res[0].last_modified || p.metadata_modified || "").slice(0, 10), items: pickItems(items) };
+        updated: res.map((r) => r.last_modified || "").concat(p.metadata_modified || "").sort().pop().slice(0, 10), items: pickItems(items) };
     } catch (e) { log("WFP", cc, e.message); }
   });
   ok.wfp = Object.keys(wfp).length > 0;
