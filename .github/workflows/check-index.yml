@@ -58,6 +58,7 @@ jobs:
       - run: node tests/boolq.test.mjs
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
+      - run: node tests/econ.test.mjs
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
       - run: node tests/seatransit.test.mjs
@@ -86,6 +87,7 @@ jobs:
       - run: node tests/tier_smoke.mjs
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs
+      - run: node tests/econ_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/area_report_smoke.mjs

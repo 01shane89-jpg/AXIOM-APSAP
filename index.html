@@ -4932,6 +4932,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function openBrief(ev, toReport) {
     briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()); briefEl.hidden = false; document.documentElement.classList.add("briefing");
+    /* economic stress signals (assets/osap-econ.js) add their own page after the one-page brief once their file has loaded */
+    if (window.OSAP_ECON) window.OSAP_ECON.intoBrief(briefEl, CC, C.name);
     document.getElementById("brief-close").addEventListener("click", closeBrief);
     document.getElementById("brief-print").addEventListener("click", function () { try { window.print(); } catch (e) {} });
     if (toReport) { var r = document.getElementById("report"); if (r) r.scrollIntoView(); } else briefEl.scrollTop = 0;
@@ -8934,6 +8936,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-move.js"></script>
 <!-- sync my devices: saved data kept the same on your own devices through encrypted public relays, no account -->
 <script src="assets/osap-sync.js"></script>
+<!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
+<script src="assets/osap-econ.js"></script>
 <!-- the user guide: Settings (the gear) > User guide, offline and printable -->
 <script src="assets/osap-guide.js"></script>
 <script src="assets/osap-i18n.js"></script>
