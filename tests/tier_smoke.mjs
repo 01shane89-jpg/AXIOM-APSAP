@@ -381,9 +381,9 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok(errors.length === 0 && t.errors.length === 0, "beta codes: no page errors " + errors.concat(t.errors).join(" | "));
   await t.ctx.close(); await ctx.close();
 }
-// 13. a phone (iPhone Safari with its bars): Settings stays on the screen and scrolls down to Plan and sign-in and Users
+// 13. a short phone screen (iPhone Safari with its bars, 390x600): Settings stays on the screen and scrolls down to Plan and sign-in and Users
 {
-  const { ctx, p, errors } = await open("tok-boss", "", 3600e3, undefined, { width: 390, height: 664 });
+  const { ctx, p, errors } = await open("tok-boss", "", 3600e3, undefined, { width: 390, height: 600 });
   await p.getByRole("button", { name: "Open map" }).first().click(); await p.waitForTimeout(1500);
   await p.evaluate(() => document.querySelector('[data-tidy="set"]').click()); await p.waitForTimeout(500);
   const m = await p.evaluate(() => { const d = document.getElementById("tidy-pop"), r = d.getBoundingClientRect(); d.scrollTop = 1e5; const u = d.querySelector('[data-tp="@users"]').getBoundingClientRect(); return { l: r.left, r: r.right, b: r.bottom, h: innerHeight, w: innerWidth, uTop: u.top, uBot: u.bottom, top: r.top }; });
