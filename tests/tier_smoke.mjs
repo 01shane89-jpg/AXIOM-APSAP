@@ -377,6 +377,23 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok(errors.length === 0 && t.errors.length === 0, "beta codes: no page errors " + errors.concat(t.errors).join(" | "));
   await t.ctx.close(); await ctx.close();
 }
+// 13. on a phone-sized screen, Settings scrolls, so Plan and sign-in and Users (at the end of the list) can be reached
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 600 }, serviceWorkers: "block", isMobile: true, hasTouch: true });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.addInitScript({ content: "localStorage.setItem('osap-auth',JSON.stringify({access_token:'tok-boss',refresh_token:'tok-boss',until:Date.now()+3600e3}));document.cookie='nf_jwt=tok-boss; path=/'" });
+  const p = await ctx.newPage(); await p.goto(base); await p.waitForTimeout(6000);
+  const r = await p.evaluate(() => {
+    const b = document.querySelector('[data-tidy="set"]'); if (b) b.click();
+    const pop = document.getElementById("tidy-pop"), u = document.querySelector('[data-tp="@users"]');
+    if (!pop || !u) return { found: !!u };
+    u.scrollIntoView({ block: "nearest" });
+    const pr = pop.getBoundingClientRect(), ur = u.getBoundingClientRect();
+    return { found: true, pb: pr.bottom, ih: innerHeight, mh: pop.style.maxHeight, fits: pr.bottom <= innerHeight + 1, reach: ur.bottom <= pr.bottom + 1 && ur.top >= pr.top - 1, plan: !!document.querySelector('[data-tp="@plan"]') };
+  });
+  ok(r.found && r.plan && r.fits && r.reach, "phone screen: Settings stays on screen and scrolls to Plan and sign-in and Users " + JSON.stringify(r));
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);
