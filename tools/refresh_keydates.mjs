@@ -184,7 +184,9 @@ for (const c of LIST) {
   if (p.schema && strip(p) === strip(o)) continue;
   fs.writeFileSync(f, JSON.stringify(o) + "\n"); changed++;
 }
-fs.writeFileSync(STATE_F, JSON.stringify({ schema: "osap-keydates-state/1", checked: stamp, years: YEARS, status, ucdp: ucdpInfo }, null, 1) + "\n");
+// the state file changes only with the data or the source status, so a run that finds nothing new commits nothing
+const newState = { schema: "osap-keydates-state/1", checked: stamp, years: YEARS, status, ucdp: ucdpInfo };
+if (changed || strip(Object.assign({}, state, { checked: "" })) !== strip(Object.assign({}, newState, { checked: "" }))) fs.writeFileSync(STATE_F, JSON.stringify(newState, null, 1) + "\n");
 console.log("keydates:", LIST.length, "countries,", changed, "files changed");
 out("changed", String(changed));
 if (!Object.values(status).some((s) => s.ok)) process.exit(1);
