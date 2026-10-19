@@ -4,7 +4,10 @@ name: Refresh live air traffic
 # whole-world snapshot every 15 minutes), about every five minutes while a run lasts, and writes one file per 10° map cell to the live-air branch (one commit, replaced each time, so
 # the branch never grows). The page reads the cells on screen from raw.githubusercontent.com, which lets any site read them
 # (the aggregators do not). raw.githubusercontent.com serves each file for up to five minutes, so positions are typically
-# five to fifteen minutes old on the map; each pop-up shows its age. Nothing is committed to main, so this does not rebuild Pages.
+# five to fifteen minutes old on the map; each pop-up shows its age. The aircraft are never committed to main.
+# GPS interference (tools/gnss.mjs): the same sweeps keep hourly per-cell counts of aircraft reporting good and poor GPS accuracy
+# (gnss-state.json on the live-air branch); when an hour completes, main gets data/live/gnss/latest.json (rolling 24 h) and
+# the UTC day's file, so this job commits to main at most about once an hour.
 on:
   schedule:
     # each run sweeps for about 14 minutes; GitHub starts scheduled runs late when busy, so gaps of a few minutes are normal
@@ -15,6 +18,10 @@ on:
         description: "Sweeps in this run (about five minutes each)"
         required: false
         default: "3"
+      gnss_flush:
+        description: "Test only: close the GPS-interference hour after each sweep so its files are written at once"
+        required: false
+        default: "0"
 
 permissions:
   contents: write
@@ -37,6 +44,8 @@ jobs:
           SWEEPS: ${{ inputs.sweeps || '3' }}
           # main publishes to live-air, the page's source; a test run on any other branch publishes to live-air-test
           TARGET: ${{ github.ref == 'refs/heads/main' && 'live-air' || 'live-air-test' }}
+          GNSS_DIR: data/live/gnss
+          GNSS_FLUSH: ${{ inputs.gnss_flush || '0' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -52,3 +61,23 @@ jobs:
                 git commit -qm "Live air traffic $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET" ) || echo "publish failed"
             fi
           done
+          ls -l /tmp/la/prev/gnss-state.json data/live/gnss 2>/dev/null || true
+          if [ -f data/live/gnss/latest.json ]; then
+            node -e 'const j=require("./data/live/gnss/latest.json");console.log("GPS interference", j.from, "to", j.to, j.hours + " h", JSON.stringify(j.counts), j.cells.length + " cells");const t=j.cells.filter(c=>c[3]/c[2]>0.25).sort((a,b)=>b[3]/b[2]-a[3]/a[2]).slice(0,25);console.log(JSON.stringify(t))'
+          fi
+      # Only main commits, and only data/live/gnss (written when an hour completed). Other refresh jobs commit to main too,
+      # so rebase onto it and retry.
+      - name: Commit GPS interference map
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          [ -d data/live/gnss ] || exit 0
+          git add -N data/live/gnss
+          if git diff --quiet -- data/live/gnss; then echo "no change"; exit 0; fi
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/live/gnss
+          git commit -qm "Refresh GPS interference map $(date -u +'%Y-%m-%d %H:%MZ')"
+          git checkout -- . 2>/dev/null || true
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs origin main && git push -q && exit 0; sleep 7; done
+          exit 1
