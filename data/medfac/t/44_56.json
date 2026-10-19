@@ -1,1 +1,6 @@
-[["w1118646146",45.44768,56.1047,"kz",{"name":"Акимат","amenity":"hospital","addr:housenumber":"130а","addr:street":"1-я зона","addr:city":"Турыш"}]]
+[["n6064352756",44.76743,56.19764,"uz",{"name":"\"Qaraqalpaqstan\" awil medecina punkti","amenity":"doctors","healthcare":"hospital"}],
+["w1118646146",45.44768,56.1047,"kz",{"name":"Акимат","amenity":"hospital","addr:housenumber":"130а","addr:street":"1-я зона","addr:city":"Турыш"}],
+["w1165084989",44.89117,56.00458,"uz",{"aeroway":"helipad"}],
+["w1165085562",44.77813,56.19266,"uz",{"aeroway":"helipad"}],
+["w1165085563",44.7778,56.19349,"uz",{"aeroway":"helipad"}],
+["w197886292",44.05207,57.54768,"uz",{"name":"Jaslıq","name:en":"Beleuli North (Zhaslyk)","aeroway":"aerodrome","aerodrome:type":"military","military":"airfeld"}]]

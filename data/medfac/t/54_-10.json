@@ -46,6 +46,7 @@
 ["w382754983",54.04712,-8.03594,"ie",{"name":"Drumshanbo Primary Care","amenity":"clinic","healthcare":"clinic"}],
 ["w435672545",55.13765,-8.10069,"ie",{"name":"Falcarragh Medical Centre","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["w473024122",54.11457,-9.16533,"ie",{"name":"Ballina District Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w546945430",54.48032,-8.08886,"gb",{"name":"Rathmore Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:housenumber":"79","addr:street":"Main Street","addr:city":"Belleek","addr:postcode":"BT93 3FY"}],
 ["w598516067",55.26523,-8.23406,"ie",{"name":"Tory Island Helistrip","aeroway":"heliport","surface":"grass"}],
 ["w598519344",55.26502,-8.23432,"ie",{"aeroway":"helipad"}],
 ["w670690777",54.57159,-8.21166,"ie",{"aeroway":"helipad"}],

@@ -1,4 +1,6 @@
 [["n1014372092",17.46954,47.11564,"sa",{"name":"شررة","name:en":"Sharurah Domestic Airport","aeroway":"aerodrome","icao":"OESH","iata":"SHW","aerodrome:type":"military/public","wikidata":"Q2876026"}],
+["n1222136861",16.13869,47.83522,"ye",{"name":"الوحدة الصحية حجر الصيعر","name:en":"Al Wahdah as Sihhiyah Hajar as Say`ar","amenity":"clinic","healthcare":"clinic"}],
+["n1222542432",16.13514,47.23138,"ye",{"name":"الوحدة الصحية العبر","name:en":"Al Wahdah as Sihhiyah al `Abr","amenity":"clinic","healthcare":"clinic"}],
 ["n7542306074",16.96441,47.01851,"sa",{"name":"مركز إسعاف الوديعة","emergency":"ambulance_station"}],
 ["r13740136",17.46657,47.12149,"sa",{"name":"مطار شرورة المحلي","name:en":"Sharurah Domestic Airport","operator":"General Authority Of Civil Aviation","operator:type":"government","aeroway":"aerodrome","icao":"OESH","iata":"SHW","wikidata":"Q2876026"}],
 ["w1101850382",17.2058,47.10103,"sa",{"aeroway":"helipad"}],

@@ -112,7 +112,16 @@
         b("Edit shape") + " lets you drag corners, turn and move it, and change its colours.",
         b("Summarise area") + " writes a summary of the reports inside, with numbered sources. It can also write an AI summary on this device.",
         b("Landing zones") + " searches inside the area (see LZ finder).",
+        b("Satellite before/after") + " shows two Sentinel-2 pictures of the area (see Satellite before/after).",
         b("Save (NAI/TAI)") + " keeps the area with a type, a name and notes. Saved areas appear under Overlays, where you can use one as the map filter, watch it, zoom to it, edit or delete it."]) },
+
+    { id: "satba", t: "Satellite before/after", h:
+      ul(["Draw an area, then " + b("Area") + ", " + b("Satellite before/after") + ". Or open Overlays, " + b("Satellite imagery") + ", " + b("Open Satellite before/after") + " (the drawn area, or the map view when none is drawn).",
+        "OSAP lists the Sentinel-2 passes over the area for the last 90 days with the time in Zulu and local time and the cloud %. It picks the newest clear pass as " + b("After") + " and one about 30 days earlier as " + b("Before") + ". Press " + b("Before") + " or " + b("After") + " on any pass to change them, filter by cloud, or " + b("Look 90 days further back") + ".",
+        b("Side by side") + " shows the two pictures in the window. " + b("Swipe on map") + " lays them on the map: drag the round handle, before on the left, after on the right.",
+        "Each picture shows its scene id with a link to its catalogue entry, the time and the cloud %. Pictures are about 10 m, true colour, read straight from the open Copernicus archive on this device.",
+        b("NASA daily true colour") + " (here or in Overlays, Satellite imagery) lays one day's whole-world VIIRS or MODIS picture, about 250 m, on the map. " + b("Day of the after pass") + " sets its day to the after picture's."]) +
+      tip("The cloud % is for the whole 110 km tile, so a pass can still be cloudy over a small area, or clear over it. Areas up to about 250 km across. Contains modified Copernicus Sentinel data.") },
 
     { id: "point", t: "Points and photos", h:
       fig("point", "A new point") +
@@ -138,6 +147,8 @@
       fig("mywork", "My work") +
       ul([b("My work") + " has " + b("What's new") + " (reports added since your last visit) and " + b("Saved work") + ".",
         "On any report use " + b("☆ Save") + ", " + b("Mark reviewed") + " and " + b("✎ Add note") + ". Reviewed means you looked at it; it does not verify the report.",
+        b("Grade") + " a report the Admiralty / NATO way: source reliability A (completely reliable) to E (unreliable), F cannot be judged, and information credibility 1 (confirmed by other sources) to 5 (improbable), 6 cannot be judged, for example B2. Press " + b("?") + " beside it for what each one means. The grade shows as a badge wherever My work lists the report and goes into every export.",
+        "A grade is always your own choice; OSAP never sets one. " + b("Default … for …") + " remembers a reliability for that source (its web domain), which pre-fills ungraded reports from it until you press " + b("Confirm") + " or set the credibility. Change or remove defaults under " + b("Grading and source defaults") + " in My work.",
         b("Trends") + " counts reports by day or week. It shows how much was reported, not how much happened.",
         b("Export") + " makes a situation report to print, or a KML, GeoJSON or CSV file. Every item keeps its source link and fingerprint, and your notes go in separate columns."]) +
       "<h3>Workspaces</h3>" +
