@@ -139,6 +139,8 @@
       fig("mywork", "My work") +
       ul([b("My work") + " has " + b("What's new") + " (reports added since your last visit) and " + b("Saved work") + ".",
         "On any report use " + b("☆ Save") + ", " + b("Mark reviewed") + " and " + b("✎ Add note") + ". Reviewed means you looked at it; it does not verify the report.",
+        b("Grade") + " a report the Admiralty / NATO way: source reliability A (completely reliable) to E (unreliable), F cannot be judged, and information credibility 1 (confirmed by other sources) to 5 (improbable), 6 cannot be judged, for example B2. Press " + b("?") + " beside it for what each one means. The grade shows as a badge wherever My work lists the report and goes into every export.",
+        "A grade is always your own choice; OSAP never sets one. " + b("Default … for …") + " remembers a reliability for that source (its web domain), which pre-fills ungraded reports from it until you press " + b("Confirm") + " or set the credibility. Change or remove defaults under " + b("Grading and source defaults") + " in My work.",
         b("Trends") + " counts reports by day or week. It shows how much was reported, not how much happened.",
         b("Export") + " makes a situation report to print, or a KML, GeoJSON or CSV file. Every item keeps its source link and fingerprint, and your notes go in separate columns."]) +
       "<h3>Workspaces</h3>" +

@@ -381,15 +381,16 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok(errors.length === 0 && t.errors.length === 0, "beta codes: no page errors " + errors.concat(t.errors).join(" | "));
   await t.ctx.close(); await ctx.close();
 }
-// 13. a short phone screen (iPhone Safari with its bars, 390x600): Settings stays on the screen and scrolls down to Plan and sign-in and Users
-{
-  const { ctx, p, errors } = await open("tok-boss", "", 3600e3, undefined, { width: 390, height: 600 });
+// 13. Settings stays on the screen and scrolls down to Plan and sign-in and Users: a short phone screen (iPhone Safari with its
+// bars, 390x600) and a short desktop window (an installed app on a laptop, 1500x760)
+for (const [label, viewport] of [["phone", { width: 390, height: 600 }], ["desktop", { width: 1500, height: 760 }]]) {
+  const { ctx, p, errors } = await open("tok-boss", "", 3600e3, undefined, viewport);
   await p.getByRole("button", { name: "Open map" }).first().click(); await p.waitForTimeout(1500);
   await p.evaluate(() => document.querySelector('[data-tidy="set"]').click()); await p.waitForTimeout(500);
   const m = await p.evaluate(() => { const d = document.getElementById("tidy-pop"), r = d.getBoundingClientRect(); d.scrollTop = 1e5; const u = d.querySelector('[data-tp="@users"]').getBoundingClientRect(); return { l: r.left, r: r.right, b: r.bottom, h: innerHeight, w: innerWidth, uTop: u.top, uBot: u.bottom, top: r.top }; });
-  ok(m.l >= 0 && m.r <= m.w && m.b <= m.h, "phone: Settings fits the screen " + JSON.stringify(m));
-  ok(m.uTop >= m.top && m.uBot <= m.b, "phone: Settings scrolls down to Users " + JSON.stringify(m));
-  ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
+  ok(m.l >= 0 && m.r <= m.w && m.b <= m.h, label + ": Settings fits the screen " + JSON.stringify(m));
+  ok(m.uTop >= m.top && m.uBot <= m.b, label + ": Settings scrolls down to Users " + JSON.stringify(m));
+  ok(errors.length === 0, label + ": no page errors " + errors.join(" | "));
   await ctx.close();
 }
 await browser.close(); server.close();

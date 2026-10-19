@@ -120,7 +120,7 @@
     vsOf(get).forEach(function (v) { I.vs.push({ id: v.id, name: v.name || "Viewshed", cc: v.cc, sub: (v.mode === "reverse" ? "reverse viewshed, " : "viewshed, ") + Math.round(v.radius_m / 1000) + " km", go: { vs: v.id, c: [v.observer.lat, v.observer.lon], z: 12 } }); });
     arr(json(get("asap-watches") || "[]", [])).forEach(function (w) { if (w) I.watches.push({ id: w.id, name: w.name || (Array.isArray(w.kw) ? w.kw.join(", ") : "") || "Watch", cc: w.cc, go: { watch: 1 } }); });
     var wk = json(get("osap-work") || "null", null), it = wk && wk.items && typeof wk.items === "object" ? wk.items : {};
-    Object.keys(it).forEach(function (k) { var x = it[k]; if (x && (x.saved || x.note || x.reviewed)) I.work.push({ id: k, name: (x.snap && x.snap.title) || "Saved report", cc: x.cc, sub: [x.saved ? "saved" : "", x.note ? "note" : "", x.reviewed ? "reviewed" : ""].filter(String).join(", "), go: { work: 1 } }); });
+    Object.keys(it).forEach(function (k) { var x = it[k], g = x && x.grade && W.OSAP_GRADE ? W.OSAP_GRADE.code(x.grade) : ""; if (x && (x.saved || x.note || x.reviewed || g)) I.work.push({ id: k, name: (x.snap && x.snap.title) || "Saved report", cc: x.cc, sub: [x.saved ? "saved" : "", x.note ? "note" : "", x.reviewed ? "reviewed" : "", g ? "graded " + g : ""].filter(String).join(", "), go: { work: 1 } }); });
     return I;
   }
   function liveItems() { var I = itemsOf(raw), keys = liveKeys(); keys.forEach(function (k) { var m = AREA_RE.exec(k), P = m && arr(json(raw(k), [])); if (P && P.length > 2) I.areas.push({ id: m[1], name: "Drawn area", cc: m[1], go: { b: bounds(P) } }); }); return I; }

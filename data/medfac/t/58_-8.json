@@ -1,0 +1,8 @@
+[["n7599809356",58.21951,-6.32733,"gb",{"name":"Helicopter Search & Rescue Unit","aeroway":"helipad","surface":"concrete"}],
+["w108799656",58.21286,-6.37344,"gb",{"name":"Ionad Slàinte Steòrnabhaigh","name:en":"Stornoway Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Bòrd Slàinte nan Eilean Siar","addr:street":"Rathad nam Buailtean"}],
+["w386571435",58.22107,-6.38355,"gb",{"name":"Ospadal nan Eilean","name:en":"Western Isles Hospital","amenity":"hospital","healthcare":"hospital","operator":"Bòrd SSN nan Eilean Siar","phone":"+44 1851 704704","website":"https://www.wihb.scot.nhs.uk/about-us/our-hospitals-and-healthcare-premises/hospitals/","addr:street":"Macaulay Road","addr:city":"Stornoway","addr:postcode":"HS1 2AF","wikidata":"Q7987984"}],
+["w566444548",58.21441,-6.32912,"gb",{"name":"Port Adhair Steòrnabhaigh","name:en":"Stornoway Airport","operator":"Highlands and Islands Airports Limited","operator:type":"private","website":"https://www.hial.co.uk/stornoway-airport.html","aeroway":"aerodrome","icao":"EGPO","iata":"SYY","wikidata":"Q2667407"}],
+["w622683712",58.21257,-6.36205,"gb",{"emergency":"ambulance_station"}],
+["w854321113",58.2876,-7.58833,"gb",{"website":"https://www.geograph.org.uk/photo/3206202","aeroway":"helipad","surface":"asphalt"}],
+["w923130060",58.22177,-6.38156,"gb",{"name":"Western Isles Hospital Helipad","aeroway":"helipad","surface":"concrete"}],
+["w923969804",58.21122,-6.4097,"gb",{"aeroway":"helipad"}]]

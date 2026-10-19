@@ -164,3 +164,4 @@ id="ml-viewsheds"
 /* ---------- the map wraps round the globe ----------
 L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-warngeo.js"></script>
+<script src="assets/osap-grade.js"></script>
