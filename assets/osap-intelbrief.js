@@ -112,10 +112,11 @@
       '<div class="ibw"><div class="ibp" role="group" aria-label="Dates">' + PRESETS.map(function (p) { return '<button type="button" data-ibp="' + p[0] + '"' + (pr === p[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + ">" + p[1] + "</button>"; }).join("") + "</div></div>" +
       '<label>From<input type="date" id="ib-from" value="' + esc(S.from) + '"></label><label>To<input type="date" id="ib-to" value="' + esc(S.to) + '"></label></div>' +
       '<div class="ibn' + (bad ? " bad" : "") + '" id="ib-note" aria-live="polite">' + note + "</div>" +
-      '<div class="ibb"><button type="button" class="refresh primary" id="ib-go"' + (locked() || !d || !d.recs.length || S.busy ? " disabled" : "") + ">" + (S.busy ? "Making the deck…" : "Make PowerPoint") + "</button>" +
+      '<div class="ibb"><button type="button" class="refresh primary" id="ib-go"' + (locked() || !d || !d.recs.length || S.busy ? " disabled" : "") + ">" + (S.busy === "pptx" ? "Making the deck…" : "Make PowerPoint") + "</button>" +
+      '<button type="button" class="refresh primary" id="ib-pdf"' + (locked() || !d || !d.recs.length || S.busy ? " disabled" : "") + ">" + (S.busy === "pdf" ? "Making the PDF…" : "Make PDF") + "</button>" +
       (locked() && W.OSAP_TIER.open ? '<button type="button" class="refresh" id="ib-plans">See plans</button>' : "") +
       '<button type="button" class="refresh" id="ib-close">Close</button></div>' +
-      '<ul class="ibs"><li>Built on this device and downloaded as a .pptx file; nothing is sent anywhere.</li><li>Counts and key events are picked by fixed rules, not by AI. Slides that need your judgment carry a red NEEDS ANALYST REVIEW box to delete once reviewed.</li>' +
+      '<ul class="ibs"><li>Built on this device; nothing is sent anywhere. PowerPoint downloads a .pptx file. PDF shows the same slides and opens the print window: choose Save as PDF.</li><li>Counts and key events are picked by fixed rules, not by AI. Slides that need your judgment carry a red NEEDS ANALYST REVIEW box to delete once reviewed.</li>' +
       "<li>News and social feeds keep about 30 days; older dates draw on the curated layers and history.</li></ul></div>";
     BOX.querySelector("#ib-x").onclick = close; BOX.querySelector("#ib-close").onclick = close;
     var pl0 = BOX.querySelector("#ib-plans"); if (pl0) pl0.onclick = function () { close(); W.OSAP_TIER.open(); };
@@ -127,7 +128,8 @@
     Array.prototype.forEach.call(BOX.querySelectorAll("[data-ibp]"), function (b) {
       b.onclick = function () { var v = b.getAttribute("data-ibp"); if (v === "all") { S.from = ""; S.to = ""; } else { S.from = iso(Date.now() - (+v - 1) * 864e5); S.to = today(); } refresh(); };
     });
-    BOX.querySelector("#ib-go").onclick = make;
+    BOX.querySelector("#ib-go").onclick = function () { make("pptx"); };
+    BOX.querySelector("#ib-pdf").onclick = function () { make("pdf"); };
   }
   function slideCount(d) { return 6 + Math.ceil(d.keyEv.length / 5) + Math.ceil(d.recs.length / 12) + Math.ceil(srcList(d.recs).length / 16); }
   /* read the records for the current choice; a newer choice replaces an older one still being read */
@@ -241,29 +243,194 @@
   function fileName(d) {
     var a = d.recs[0].__tlw.day, b = d.recs[d.recs.length - 1].__tlw.day;
     var parts = ["OSAP", d.country, S.region === "@area" ? "Area" : S.region, topicLabel(d), "Intel_Brief", (S.from || a) + "_to_" + (S.to || b)].filter(Boolean);
-    return parts.join("_").replace(/[^A-Za-z0-9_.-]+/g, "_").replace(/_+/g, "_").slice(0, 150) + ".pptx";
+    return parts.join("_").replace(/[^A-Za-z0-9_.-]+/g, "_").replace(/_+/g, "_").slice(0, 150);
   }
 
-  function make() {
+  /* kind "pptx": the PowerPoint file; kind "pdf": the same slides drawn as pages (HtmlPres below) and printed, so the
+     browser's Save as PDF keeps the text sharp and the links live */
+  function make(kind) {
     var d = S.data; if (!d || !d.recs.length || S.busy || locked()) return;
-    S.busy = true; draw();
+    S.busy = kind; draw();
     var note = function (t, bad) { var n = BOX.querySelector("#ib-note"); if (n) { n.textContent = t; n.className = "ibn" + (bad ? " bad" : ""); } };
-    note("Making the deck: loading the PowerPoint maker…");
-    var logo = (D.querySelector(".brand .logo") || {}).src || "assets/logo.png";
-    Promise.all([loadLib(), fingerprints(d.recs), d.map ? svgPng(d.map.svg, 1800) : Promise.resolve(null), filePng(logo)]).then(function (got) {
-      note("Making the deck: writing " + slideCount(d) + " slides…");
-      var pres = deck(d, { fp: got[1], map: got[2], logo: got[3] });
-      return pres.writeFile({ fileName: fileName(d), compression: true });
-    }).then(function (name) {
-      S.busy = false; draw(); note("Downloaded " + name + ". Open it in PowerPoint, Keynote or Google Slides; delete each red NEEDS ANALYST REVIEW box once you have reviewed that slide.");
+    note(kind === "pdf" ? "Making the PDF…" : "Making the deck: loading the PowerPoint maker…");
+    var logo = (D.querySelector(".brand .logo") || {}).src || "assets/logo.png", name = fileName(d);
+    Promise.all([kind === "pdf" ? null : loadLib(), fingerprints(d.recs), d.map ? svgPng(d.map.svg, 1800) : Promise.resolve(null), filePng(logo)]).then(function (got) {
+      note("Making the " + (kind === "pdf" ? "PDF" : "deck") + ": writing " + slideCount(d) + " slides…");
+      var pres = deck(d, { fp: got[1], map: got[2], logo: got[3], Pres: kind === "pdf" ? HtmlPres : null });
+      if (kind === "pdf") { pages(pres, name); return name + ".pdf"; }
+      return pres.writeFile({ fileName: name + ".pptx", compression: true });
+    }).then(function (file) {
+      S.busy = false; draw();
+      note(kind === "pdf" ? "The slides are open as pages. Choose Print / Save as PDF and pick Save as PDF; the file name is " + file + ". The red NEEDS ANALYST REVIEW boxes stay in a PDF, so review the judgments first or use the PowerPoint to edit them." :
+        "Downloaded " + file + ". Open it in PowerPoint, Keynote or Google Slides; delete each red NEEDS ANALYST REVIEW box once you have reviewed that slide.");
     }).catch(function (e) {
-      S.busy = false; draw(); note("The deck could not be made: " + (e && e.message ? e.message : "unknown error") + ".", true);
+      S.busy = false; draw(); note("The " + (kind === "pdf" ? "PDF" : "deck") + " could not be made: " + (e && e.message ? e.message : "unknown error") + ".", true);
     });
+  }
+
+  /* ---------- the PDF: the deck drawn as HTML pages ----------
+     HtmlPres takes the same calls as PptxGenJS (slide masters, text runs, shapes, pictures, tables, bar charts, notes), places
+     everything in inches on 13.333 × 7.5 in pages, and pages() shows them and prints one slide per sheet. One deck function
+     serves both formats, so the PDF and the PowerPoint say the same thing. Speaker notes become a last section of pages. */
+  function col(c) { return "#" + String(c || "000000").replace(/^#/, ""); }
+  function rgba(c, tr) { c = String(c || "000000").replace(/^#/, ""); var n = parseInt(c, 16); return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + (1 - (tr || 0) / 100) + ")"; }
+  function inch(v) { return (+v || 0).toFixed(3) + "in"; }
+  function boxCss(o) { return "left:" + inch(o.x) + ";top:" + inch(o.y) + ";width:" + inch(o.w) + ";height:" + inch(o.h); }
+  function fillCss(f) { return !f || f.type === "none" ? "" : "background:" + (f.transparency ? rgba(f.color, f.transparency) : col(f.color)) + ";"; }
+  function lineCss(l, side) { return l && l.color && l.type !== "none" ? (side || "border") + ":" + Math.max(0.5, l.width || l.pt || 1) + "pt " + (l.dashType && l.dashType !== "solid" ? "dashed" : "solid") + " " + col(l.color) + ";" : ""; }
+  function runCss(o) {
+    return (o.bold ? "font-weight:700;" : "") + (o.italic ? "font-style:italic;" : "") + (o.color ? "color:" + col(o.color) + ";" : "") +
+      (o.fontSize ? "font-size:" + o.fontSize + "pt;" : "") + (o.charSpacing ? "letter-spacing:" + o.charSpacing + "pt;" : "") + (o.fontFace ? "font-family:" + o.fontFace + ",monospace;" : "");
+  }
+  /* text or runs -> paragraphs of spans (a run with breakLine ends its paragraph; a bullet run makes a bulleted paragraph) */
+  function runsHtml(text, base) {
+    var runs = typeof text === "string" || typeof text === "number" ? String(text).split("\n").map(function (t, i, a) { return { text: t, options: { breakLine: i < a.length - 1 } }; }) : text || [];
+    var paras = [[]];
+    runs.forEach(function (r) { paras[paras.length - 1].push(r); if (r.options && r.options.breakLine) paras.push([]); });
+    if (!paras[paras.length - 1].length && paras.length > 1) paras.pop();
+    return paras.map(function (p) {
+      var bul = p.some(function (r) { return (r.options || {}).bullet || (base || {}).bullet; });
+      var inner = p.map(function (r) {
+        var o = r.options || {}, t = esc(r.text), u = o.hyperlink && safeUrl(o.hyperlink.url);
+        var sp = '<span style="' + runCss(o) + '">' + t + "</span>";
+        return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" style="color:inherit">' + sp + "</a>" : sp;
+      }).join("");
+      return '<p style="margin:0 0 ' + ((base && base.paraSpaceAfter) || 0) + "pt" + (bul ? ";padding-left:1.1em;text-indent:-.8em" : "") + '">' + (bul ? "•&nbsp; " : "") + (inner || "&nbsp;") + "</p>";
+    }).join("");
+  }
+  function textEl(text, o) {
+    var m = o.margin == null ? 3.6 : Array.isArray(o.margin) ? null : o.margin;
+    var pad = m == null ? o.margin.map(function (v) { return inch(v); }).join(" ") : m + "pt";
+    var jc = o.valign === "middle" ? "center" : o.valign === "bottom" ? "flex-end" : "flex-start";
+    return '<div class="ibt" style="' + boxCss(o) + ";padding:" + pad + ";justify-content:" + jc + ";text-align:" + (o.align || "left") + ";" +
+      runCss({ fontSize: o.fontSize || 18, color: o.color || INK, bold: o.bold, italic: o.italic, charSpacing: o.charSpacing, fontFace: o.fontFace }) + fillCss(o.fill) + lineCss(o.line) + '">' + runsHtml(text, o) + "</div>";
+  }
+  function shapeEl(type, o) {
+    if (type === "line") return '<div class="ibs" style="left:' + inch(o.x) + ";top:" + inch(o.y) + ";width:" + inch(o.w) + ";height:0;" + lineCss(o.line, "border-top") + '"></div>';
+    var r = type === "oval" ? "50%" : type === "rrect" ? inch(Math.min(o.w, o.h) * (o.rectRadius != null ? Math.min(0.5, o.rectRadius / Math.min(o.w, o.h)) : 0.1)) : "0";
+    return '<div class="ibs" style="' + boxCss(o) + ";border-radius:" + r + ";" + fillCss(o.fill) + lineCss(o.line) + '"></div>';
+  }
+  function tableEl(rows, o) {
+    var mg = Array.isArray(o.margin) ? o.margin.map(function (v) { return inch(v); }).join(" ") : "0.04in 0.08in", bd = o.border ? lineCss({ color: o.border.color, width: o.border.pt }) : "";
+    var cols = (o.colW || []).map(function (w) { return '<col style="width:' + inch(w) + '">'; }).join("");
+    return '<table class="ibtb" style="left:' + inch(o.x) + ";top:" + inch(o.y) + ";width:" + inch(o.w) + '"><colgroup>' + cols + "</colgroup>" + rows.map(function (r, i) {
+      var h = o.rowH && o.rowH[i] ? "height:" + inch(o.rowH[i]) + ";" : "";
+      return "<tr>" + r.map(function (c) {
+        var co = c.options || {};
+        return '<td style="' + h + bd + "padding:" + mg + ";vertical-align:" + (co.valign === "middle" ? "middle" : co.valign || "top") + ";text-align:" + (co.align || "left") + ";" +
+          runCss({ fontSize: co.fontSize || 10, color: co.color || INK, bold: co.bold, fontFace: co.fontFace }) + (co.fill ? fillCss(co.fill) : fillCss(o.fill)) + '">' + runsHtml(c.text, {}) + "</td>";
+      }).join("") + "</tr>";
+    }).join("") + "</table>";
+  }
+  /* a bar chart as SVG: columns (barDir "col") or horizontal bars ("bar"), with its title and value labels */
+  function chartEl(data, o) {
+    var W0 = o.w * 96, H0 = o.h * 96, ser = data[0] || { labels: [], values: [] }, L = ser.labels, V = ser.values, n = V.length, mx = Math.max.apply(null, V.concat([1]));
+    var c = col((o.chartColors || [NAVY])[0]), tH = o.showTitle ? (o.titleFontSize || 12) * 1.9 : 4, out = "", fs = (o.catAxisLabelFontSize || 9) * 1.333;
+    if (o.showTitle) out += '<text x="' + W0 / 2 + '" y="' + (tH * 0.65) + '" text-anchor="middle" font-size="' + (o.titleFontSize || 12) * 1.333 + '" font-weight="700" fill="' + col(o.titleColor || NAVY) + '">' + esc(o.title) + "</text>";
+    if (o.barDir === "bar") {
+      var lw = Math.min(W0 * 0.4, Math.max.apply(null, L.map(function (l) { return String(l).length; }).concat([4])) * fs * 0.55 + 8), bh = (H0 - tH - 6) / Math.max(1, n);
+      V.forEach(function (v, i) {
+        var y = tH + i * bh, w = (W0 - lw - 40) * v / mx;
+        out += '<text x="' + (lw - 6) + '" y="' + (y + bh / 2 + fs * 0.35) + '" text-anchor="end" font-size="' + fs + '" fill="' + col(MUTED) + '">' + esc(L[i]) + "</text>" +
+          '<rect x="' + lw + '" y="' + (y + bh * 0.18) + '" width="' + Math.max(1, w) + '" height="' + bh * 0.64 + '" fill="' + c + '"/>' +
+          (o.showValue ? '<text x="' + (lw + w + 4) + '" y="' + (y + bh / 2 + fs * 0.35) + '" font-size="' + fs + '" fill="' + col(INK) + '">' + v + "</text>" : "");
+      });
+    } else {
+      var bot = fs * 2.6, left = fs * 2.4, ch = H0 - tH - bot, cw = (W0 - left - 4) / Math.max(1, n), step = Math.max(1, Math.ceil(n / Math.max(1, Math.floor((W0 - left) / (fs * 3.2)))));
+      [0, 0.5, 1].forEach(function (g) { var y = tH + ch - ch * g; out += '<line x1="' + left + '" x2="' + W0 + '" y1="' + y + '" y2="' + y + '" stroke="#E3E8ED"/><text x="' + (left - 4) + '" y="' + (y + fs * 0.35) + '" text-anchor="end" font-size="' + fs + '" fill="' + col(MUTED) + '">' + Math.round(mx * g) + "</text>"; });
+      V.forEach(function (v, i) {
+        var h = ch * v / mx, x = left + i * cw;
+        out += '<rect x="' + (x + cw * 0.15) + '" y="' + (tH + ch - h) + '" width="' + Math.max(1, cw * 0.7) + '" height="' + h + '" fill="' + c + '"/>' +
+          (o.showValue && v ? '<text x="' + (x + cw / 2) + '" y="' + (tH + ch - h - 3) + '" text-anchor="middle" font-size="' + fs * 0.9 + '" fill="' + col(INK) + '">' + v + "</text>" : "") +
+          (i % step === 0 ? '<text x="' + (x + cw / 2) + '" y="' + (tH + ch + fs * 1.3) + '" text-anchor="middle" font-size="' + fs + '" fill="' + col(MUTED) + '">' + esc(L[i]) + "</text>" : "");
+      });
+    }
+    return '<svg class="ibs" style="' + boxCss(o) + '" viewBox="0 0 ' + W0 + " " + H0 + '" font-family="Arial,Helvetica,sans-serif">' + out + "</svg>";
+  }
+  function HtmlPres() {
+    this.slides = []; this.masters = {}; this.shapes = { RECTANGLE: "rect", OVAL: "oval", ROUNDED_RECTANGLE: "rrect", LINE: "line" }; this.charts = { BAR: "bar" };
+  }
+  HtmlPres.prototype.defineSlideMaster = function (m) { this.masters[m.title] = m; };
+  HtmlPres.prototype.addSection = function () {};
+  HtmlPres.prototype.addSlide = function (o) {
+    var m = this.masters[o.masterName] || {}, s = { els: [], notes: "", ph: {}, master: m, bg: col((m.background || {}).color || "FFFFFF") };
+    (m.objects || []).forEach(function (x) {
+      if (x.rect) s.els.push(shapeEl("rect", x.rect));
+      else if (x.text) s.els.push(textEl(x.text.text, x.text.options));
+      else if (x.image) s.els.push('<img class="ibs" alt="" style="' + boxCss(x.image) + '" src="' + esc(x.image.data) + '">');
+      else if (x.line) s.els.push(shapeEl("line", x.line));
+      else if (x.placeholder) s.ph[x.placeholder.options.name] = x.placeholder.options;
+    });
+    this.slides.push(s);
+    var api = {
+      addText: function (t, op) { s.els.push(textEl(t, op.placeholder ? Object.assign({}, s.ph[op.placeholder] || {}, op) : op)); },
+      addShape: function (type, op) { s.els.push(shapeEl(type, op)); },
+      addImage: function (op) { s.els.push('<img class="ibs" alt="' + esc(op.altText || "") + '" style="' + boxCss(op) + '" src="' + esc(op.data) + '">'); },
+      addTable: function (rows, op) { s.els.push(tableEl(rows, op)); },
+      addChart: function (type, data, op) { s.els.push(chartEl(data, op)); },
+      addNotes: function (t) { s.notes = t; }
+    };
+    return api;
+  };
+  HtmlPres.prototype.html = function () {
+    var sl = this.slides.map(function (s, i) {
+      var sn = s.master.slideNumber;
+      return '<section class="ibsl" style="background:' + s.bg + '">' + s.els.join("") + (sn ? textEl(String(i + 1), Object.assign({ margin: 0, valign: "middle" }, sn)) : "") + "</section>";
+    }).join("");
+    var notes = this.slides.map(function (s, i) { return s.notes ? "<li><b>Slide " + (i + 1) + ".</b> " + esc(s.notes) + "</li>" : ""; }).join("");
+    return sl + (notes ? '<section class="ibnotes"><h2>Speaker notes and provenance</h2><ol>' + notes + "</ol></section>" : "");
+  };
+  var PV = null, unprint = function () {};
+  function pages(pres, name) {
+    if (!D.getElementById("ib-pv-css")) {
+      var st = D.createElement("style"); st.id = "ib-pv-css";
+      st.textContent =
+        "#ibpv{position:fixed;inset:0;z-index:100003;overflow:auto;background:#5b6672;padding:0 0 24px}#ibpv[hidden]{display:none}" +
+        "#ibpv .ibpvb{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;background:var(--surface);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.25)}" +
+        "#ibpv .ibpvb button{min-height:40px}#ibpv .ibpvb span{flex:1;min-width:180px;font-size:12px;color:var(--muted)}" +
+        "#ibpv .ibpvp{display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:14px}" +
+        "#ibpv .ibsl,#ibpv .ibnotes{position:relative;width:13.333in;height:7.5in;overflow:hidden;flex:none;box-shadow:0 2px 10px rgba(0,0,0,.35);font-family:Arial,Helvetica,sans-serif;color:#13202E;-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+        "#ibpv .ibnotes{height:auto;min-height:7.5in;background:#fff;padding:.5in .6in;box-sizing:border-box;font-size:10pt;line-height:1.4}#ibpv .ibnotes h2{font-size:16pt;color:#0B2340;margin:0 0 .15in}#ibpv .ibnotes li{margin:0 0 6pt}" +
+        "#ibpv .ibt,#ibpv .ibs,#ibpv .ibtb{position:absolute;box-sizing:border-box}#ibpv .ibt{display:flex;flex-direction:column;overflow:hidden;line-height:1.2}#ibpv .ibt p{overflow-wrap:anywhere}" +
+        "#ibpv .ibtb{border-collapse:collapse;table-layout:fixed;line-height:1.2}#ibpv .ibtb td{overflow:hidden;overflow-wrap:anywhere}#ibpv a{text-decoration:underline}" +
+        "@media print{html.ibprint body>*:not(#ibpv){display:none!important}html.ibprint,html.ibprint body{background:#fff!important;overflow:visible!important;height:auto!important}" +
+        "html.ibprint #ibpv{position:static;overflow:visible;background:none;padding:0}html.ibprint #ibpv .ibpvb{display:none}html.ibprint #ibpv .ibpvp{display:block;padding:0}" +
+        "html.ibprint #ibpv .ibsl,html.ibprint #ibpv .ibnotes{zoom:1!important;box-shadow:none;margin:0}" +
+        /* one slide a page: the app's own print margin is cancelled and each slide is a hair under a page high, then breaks */
+        "html.ibprint body{margin:0!important;padding:0!important}html.ibprint #ibpv .ibsl{display:block;height:7.49in;break-after:page;page-break-after:always;break-inside:avoid}" +
+        "html.ibprint #ibpv .ibnotes{min-height:0}}";
+      D.head.appendChild(st);
+    }
+    if (!PV) {
+      PV = D.createElement("div"); PV.id = "ibpv"; PV.setAttribute("role", "dialog"); PV.setAttribute("aria-label", "Intelligence brief pages");
+      D.body.appendChild(PV);
+    }
+    PV.innerHTML = '<div class="ibpvb"><button type="button" class="refresh primary" id="ibpv-print">Print / Save as PDF</button><button type="button" class="refresh" id="ibpv-close">Close</button>' +
+      "<span>In the print window choose Save as PDF (on a phone: Print, then Share or Save to Files). One slide per page, landscape.</span></div>" +
+      '<div class="ibpvp">' + pres.html() + "</div>";
+    PV.hidden = false; PV.scrollTop = 0;
+    if (BOX) BOX.hidden = true;
+    /* fit the pages to the screen; the print copy is full size */
+    var fit = function () { var z = Math.min(1, (PV.clientWidth - 24) / (13.333 * 96)); Array.prototype.forEach.call(PV.querySelectorAll(".ibsl,.ibnotes"), function (e) { e.style.zoom = z; }); };
+    fit(); W.addEventListener("resize", fit);
+    PV.querySelector("#ibpv-close").onclick = function () { unprint(); PV.hidden = true; PV.innerHTML = ""; W.removeEventListener("resize", fit); };
+    PV.querySelector("#ibpv-print").onclick = function () { printPages(name); };
+  }
+  function printPages(name) {
+    var pg = D.createElement("style"); pg.id = "ib-page"; pg.textContent = "@page{size:13.333in 7.5in;margin:0!important}@media print{@page{size:13.333in 7.5in;margin:0!important}}";
+    D.head.appendChild(pg); D.documentElement.classList.add("ibprint");
+    var t0 = D.title; D.title = name;
+    var done = function () { if (!pg.parentNode) return; D.documentElement.classList.remove("ibprint"); if (pg.parentNode) pg.parentNode.removeChild(pg); D.title = t0; W.removeEventListener("afterprint", done); };
+    W.addEventListener("afterprint", done);
+    /* print() blocks on a desktop; a phone opens its print sheet later and may never send afterprint: the page title comes back
+       after a pause, and the print-only styles (which change nothing on screen) go when the pages are closed */
+    setTimeout(function () { try { W.print(); } catch (e) {} setTimeout(function () { D.title = t0; }, 3000); }, 60);
+    unprint = done;
   }
 
   /* ---------- the deck ---------- */
   function deck(d, a) {
-    var pres = new W.PptxGenJS(), now = Date.now(), T = d.recs, K = d.keyEv, srcs = srcList(T), sno = {};
+    var pres = new (a.Pres || W.PptxGenJS)(), now = Date.now(), T = d.recs, K = d.keyEv, srcs = srcList(T), sno = {};
     srcs.forEach(function (x) { sno[x.s.id || x.s.name] = x.no; });
     var fpOf = {}; T.forEach(function (r, i) { fpOf[r.id] = a.fp.recs[i]; r.__ref = "S-" + ("00" + (i + 1)).slice(-Math.max(3, String(T.length).length)); });
     var country = d.country, topic = topicLabel(d), region = regionLabel(d), first = T[0].__tlw, last = T[T.length - 1].__tlw;
@@ -583,5 +750,5 @@
     if (p && p.cc === W.TSAP.country && Date.now() - p.t < 120000) setTimeout(function () { open({ from: p.from, to: p.to, scope: "", region: "" }); }, 2500);
   }
   (function wait(i) { if (W.TSAP && W.OSAP_TLREPORT && W.OSAP_TIME) resume(); else if (i < 240) setTimeout(function () { wait(i + 1); }, 250); })(0);
-  W.OSAP_INTELBRIEF = { open: open, close: close, _state: function () { return S; }, _deck: function (d, a) { return deck(d, a); } };
+  W.OSAP_INTELBRIEF = { open: open, close: close, _print: printPages, _state: function () { return S; }, _deck: function (d, a) { return deck(d, a); } };
 })();

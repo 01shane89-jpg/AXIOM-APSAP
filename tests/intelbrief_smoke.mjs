@@ -2,7 +2,8 @@
 // region, topic and date choices; the record count follows each choice; "Make PowerPoint" downloads a .pptx whose slides are
 // checked inside the file: UNCLASSIFIED // OPEN SOURCE banners, BOTTOM LINE bars, NEEDS ANALYST REVIEW boxes on the judgment
 // slides, native charts, the map picture, key events, and Annex A listing every record with its link and its SHA-256 fingerprint
-// (the same as the page's own). Negative checks: no records means no deck; a plan without Full shows the lock and makes nothing;
+// (the same as the page's own). "Make PDF" shows the same slides as pages and prints them one per landscape sheet; the printed
+// PDF is made here too and its pages counted. Negative checks: no records means no deck; a plan without Full shows the lock and makes nothing;
 // making a deck changes no record. Switching country reloads OSAP on that country and opens the window again.
 // Run from the repo root: node tests/intelbrief_smoke.mjs   (needs the playwright package, Chromium and python3; OUT=dir keeps the deck)
 import { createServer } from "node:http";
@@ -68,7 +69,7 @@ ok(nProv > 0 && nProv < nAll && provOk, "region " + prov + ": " + nProv + " of "
 /* dates with no records: no deck */
 await p.evaluate(() => { const f = document.getElementById("ib-from"), t = document.getElementById("ib-to"); f.value = "1990-01-01"; f.dispatchEvent(new Event("change")); t.value = "1990-01-31"; t.dispatchEvent(new Event("change")); });
 await p.waitForFunction(() => window.OSAP_INTELBRIEF._state().data, null, { timeout: 20000 });
-ok(await p.evaluate(() => document.getElementById("ib-go").disabled && /No dated records/.test(document.getElementById("ib-note").textContent)), "no records in the dates: Make PowerPoint is off and says why");
+ok(await p.evaluate(() => document.getElementById("ib-go").disabled && document.getElementById("ib-pdf").disabled && /No dated records/.test(document.getElementById("ib-note").textContent)), "no records in the dates: Make PowerPoint is off and says why");
 
 /* back to the province, all dates; make the deck */
 await p.evaluate(() => document.querySelector('[data-ibp="all"]').click());
@@ -105,11 +106,41 @@ ok(/fixed rules \(no AI\)/.test(notes) && /Report fingerprint/.test(notes), "spe
 ok(!/AI-generated draft summary/.test(all.join(" ")), "AI event summaries stay out of the slides (notes only)");
 ok(await p.evaluate((r0) => JSON.stringify(window.TSAP.records.map((r) => [r.id, r.title, r.lat, r.lon, r.ts])) === r0, rec0), "making the deck changed no record");
 
+/* the same brief as PDF: the slides drawn as pages, printed one per sheet */
+await p.evaluate(() => { window.__printed = 0; window.print = () => { window.__printed++; }; document.getElementById("ibdlg").hidden = false; });
+await p.click("#ib-pdf");
+await p.waitForSelector("#ibpv .ibsl", { timeout: 60000 });
+const pv = await p.evaluate(() => {
+  const v = document.getElementById("ibpv"), sl = [...v.querySelectorAll(".ibsl")], t = (e) => e.textContent;
+  return { n: sl.length, first: t(sl[0]), rev: sl.filter((e) => /NEEDS ANALYST REVIEW/.test(t(e))).length, bl: sl.filter((e) => /BOTTOM LINE/.test(t(e))).length,
+    banners: sl.every((e) => /UNCLASSIFIED \/\/ OPEN SOURCE/.test(t(e))), fps: (sl.map((e) => e.innerText).join(" ").match(/\b[0-9a-f]{64}\b/g) || []).length,
+    links: v.querySelectorAll(".ibsl a[href^='http']").length, charts: v.querySelectorAll(".ibsl svg rect").length, map: v.querySelectorAll(".ibsl img[src^='data:image/png']").length,
+    notes: !!v.querySelector(".ibnotes") && /Report fingerprint/.test(t(v.querySelector(".ibnotes"))) };
+});
+ok(pv.n === slides.length, "PDF: the same " + slides.length + " slides as the PowerPoint (" + pv.n + ")");
+ok(pv.banners && pv.bl >= 3 && pv.rev === rev.length, "PDF: banners on every page, bottom lines, review boxes as in the deck");
+ok(pv.fps === want.n + 1 && pv.links >= Math.min(want.n, 5), "PDF: Annex A fingerprints (" + pv.fps + ") and live links (" + pv.links + ")");
+ok(pv.charts > 0 && pv.map >= 2 && pv.notes, "PDF: charts, map, and speaker notes with the provenance at the end");
+const over = await p.evaluate(() => [...document.querySelectorAll("#ibpv .ibsl")].slice(0, 12).filter((sl) => { const b = sl.getBoundingClientRect(); return [...sl.querySelectorAll(".ibtb")].some((t) => t.getBoundingClientRect().bottom > b.bottom + 1); }).length);
+ok(over === 0, "PDF: no table runs off its page");
+if (OUT) { await p.evaluate(() => { document.getElementById("ibpv").scrollTop = 0; }); await p.screenshot({ path: OUT + "/intelbrief-pdf-pages.png" }); }
+await p.click("#ibpv-print");
+await p.waitForFunction(() => window.__printed === 1, null, { timeout: 5000 });
+ok(await p.evaluate(() => document.documentElement.classList.contains("ibprint") && /13\.333in 7\.5in/.test((document.getElementById("ib-page") || {}).textContent || "") && /Intel_Brief/.test(document.title)), "Print: one 13.333 × 7.5 in landscape page per slide, file named after the brief");
+await p.emulateMedia({ media: "print" });
+const pdf = await p.pdf({ preferCSSPageSize: true, printBackground: true });
+await p.emulateMedia({ media: "screen" });
+const nPages = (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
+ok(nPages >= pv.n && nPages <= pv.n + 6, "printed PDF has " + nPages + " pages for " + pv.n + " slides plus the notes");
+if (OUT) { const { writeFile } = await import("node:fs/promises"); await writeFile(join(OUT, "intelbrief-print.pdf"), pdf); }
+await p.evaluate(() => document.getElementById("ibpv-close").click());
+ok(await p.evaluate(() => document.getElementById("ibpv").hidden && !document.documentElement.classList.contains("ibprint") && !document.getElementById("ib-page")), "closing the pages removes the print styles");
+
 /* a plan without Full: the window shows the lock and makes nothing */
 await p.evaluate(() => { window.__tier = window.OSAP_TIER; window.OSAP_TIER = { on: () => true, allows: (t) => t !== "full", open: () => { window.__plans = 1; } }; window.OSAP_INTELBRIEF.close(); window.OSAP_INTELBRIEF.open(); });
 await p.waitForFunction(() => window.OSAP_INTELBRIEF._state().data, null, { timeout: 20000 });
-const lk = await p.evaluate(() => ({ off: document.getElementById("ib-go").disabled, msg: document.getElementById("ib-note").textContent, plans: !!document.getElementById("ib-plans") }));
-ok(lk.off && /Full plan/.test(lk.msg) && lk.plans, "without the Full plan: locked, with See plans");
+const lk = await p.evaluate(() => ({ off: document.getElementById("ib-go").disabled, pdfOff: document.getElementById("ib-pdf").disabled, msg: document.getElementById("ib-note").textContent, plans: !!document.getElementById("ib-plans") }));
+ok(lk.off && lk.pdfOff && /Full plan/.test(lk.msg) && lk.plans, "without the Full plan: locked, with See plans");
 await p.evaluate(() => document.getElementById("ib-plans").click());
 ok(await p.evaluate(() => window.__plans === 1 && document.getElementById("ibdlg").hidden), "See plans opens the plans sheet");
 await p.evaluate(() => { window.OSAP_TIER = window.__tier; });
