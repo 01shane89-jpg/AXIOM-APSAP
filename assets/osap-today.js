@@ -7,6 +7,8 @@
      grouped by kind so a flood of gauge readings reads as one line.
    - Top stories: grouped events (more than one outlet) first, then the latest headlines, each with its outlet, time and status.
    - New since your last visit: the same count as "What's new" (assets/osap-work.js), with the newest few.
+   - Key dates: the next three holidays, elections, religious dates and anniversaries (assets/osap-keydates.js), "Show all"
+     opens the full list in the country brief.
    - Shortcuts into the full map tabs. Everything here is a summary: every line opens the full report or its source.
    Status words follow the page: an event is a report that is not verified, a claim is an official statement, an observation
    is an instrument reading. Nothing here is an assessment.
@@ -380,6 +382,13 @@
     return h;
   }
 
+  /* ---------- key dates: holidays, elections, religious dates and anniversaries (assets/osap-keydates.js) ---------- */
+  function keyDatesHtml() {
+    var K = window.OSAP_KEYDATES;
+    if (!K || !K.cardHtml) return "";
+    try { return K.cardHtml(CC, function () { if (open) renderSoon(); }); } catch (e) { return ""; }
+  }
+
   /* ---------- the screen ---------- */
   var box = null, open = false, tick = 0;
   var wxAsked = {}; /* one weather read per place each time Today opens */
@@ -403,7 +412,7 @@
         (window.OSAP_LOC.on() ? "Using your location. Your position stays on this device." : "Start on your own country and see where you are on the map. Your position stays on this device.") + '">' +
         (window.OSAP_LOC.on() ? "My location" : "Use my location") + "</button>" : "") +
       '<button type="button" class="tdmap" data-go="map">Open map</button></div>';
-    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div></div>" +
+    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + keyDatesHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div></div>" +
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
@@ -495,6 +504,7 @@
       var t = e.target.closest ? e.target : null; if (!t) return;
       var b = t.closest("[data-rec]");
       if (b) { var id = b.getAttribute("data-rec"); hide(); if (window.TSAP) { window.TSAP.setView("timeline"); window.TSAP.select(id, true); } return; }
+      b = t.closest("[data-kdall]"); if (b) { if (window.OSAP_KEYDATES) window.OSAP_KEYDATES.openAll(); return; }
       b = t.closest("[data-loc]"); if (b) { if (window.OSAP_LOC) window.OSAP_LOC.use(); return; }
       b = t.closest("[data-go]"); if (b) { go(b.getAttribute("data-go")); return; }
       b = t.closest("[data-wx]"); if (b) { wxSel = +b.getAttribute("data-wx") || 0; render(); return; }

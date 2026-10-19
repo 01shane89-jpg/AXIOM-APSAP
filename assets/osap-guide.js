@@ -39,6 +39,7 @@
       ul(["Today opens each time you start the app. It shows the weather, warnings and alerts, top stories, a daily summary and what is new since your last visit.",
         "Search the news from the box at the top. Use quotes to keep a phrase together and a minus sign to leave a word out.",
         "Tap " + b("Open map") + " to go to the map. To start on the map every time, pick " + b("Map") + " at the foot of Today.",
+        b("Key dates") + " lists the next three dates that matter in the country: public holidays, elections and referendums, religious periods (Ramadan, Eid, Christmas, Easter, Diwali, Lunar New Year, Songkran and others) and anniversaries of its deadliest days of violence in UCDP's record. Each says why it matters, links its source and is marked " + b("Official") + " (a government holiday list), " + b("Claimed") + " (a reported election schedule) or " + b("Computed") + " (worked out from a calendar or a record). Dates are the local day, with the time that day starts in Zulu. " + b("Show all") + " opens the full list for the past 7 and next 60 days in the country brief.",
         "The OSAP logo at the top left brings you back to Today."]) +
       "<h3>Install it like an app</h3>" +
       ul(["iPhone or iPad: in Safari tap Share, then " + b("Add to Home Screen") + ".",
@@ -216,7 +217,8 @@
       fig("reports", "The Reports menu") +
       ul(["Tap " + b("Reports") + " for every report OSAP makes: country brief, country report, daily summary, weather brief, 5-day weather chart and detailed weather, night illumination, timeline report, area summary, medical plan, route plan and situation report.",
         "A greyed entry says what to do first, for example " + b("Draw an area first") + " or " + b("Plan a route first") + ".",
-        "Each report opens as a page you can print or save as PDF."]) },
+        "Each report opens as a page you can print or save as PDF.",
+        "The country brief ends with the country's " + b("Key dates") + ": every holiday, election, religious date and anniversary of the past 7 and next 60 days, with its source."]) },
 
     { id: "settings", t: "Settings", h:
       fig("settings", "Settings, under the gear") +

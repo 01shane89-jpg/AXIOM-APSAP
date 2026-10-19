@@ -4931,7 +4931,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       "</article>";
   }
   function openBrief(ev, toReport) {
-    briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()); briefEl.hidden = false; document.documentElement.classList.add("briefing");
+    /* the key dates (assets/osap-keydates.js) print after the country report on their own pages */
+    var kd = window.OSAP_KEYDATES ? window.OSAP_KEYDATES.briefHtml(CC) : "";
+    briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()) + kd; briefEl.hidden = false; document.documentElement.classList.add("briefing");
+    if (kd) window.OSAP_KEYDATES.fillBrief();
     document.getElementById("brief-close").addEventListener("click", closeBrief);
     document.getElementById("brief-print").addEventListener("click", function () { try { window.print(); } catch (e) {} });
     if (toReport) { var r = document.getElementById("report"); if (r) r.scrollIntoView(); } else briefEl.scrollTop = 0;
@@ -8862,6 +8865,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-locate.js"></script>
+<script src="assets/osap-keydates.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
