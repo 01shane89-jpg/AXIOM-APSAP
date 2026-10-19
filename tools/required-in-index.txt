@@ -163,3 +163,4 @@ id="ml-viewsheds"
 # the map pans round the globe without end; drawings follow onto the world copy in view (claude/map-wrap-globe)
 /* ---------- the map wraps round the globe ----------
 L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
+<script src="assets/osap-grade.js"></script>
