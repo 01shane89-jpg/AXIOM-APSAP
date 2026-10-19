@@ -159,6 +159,7 @@ jobs:
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
+      - run: node tests/intelbrief_smoke.mjs
       - run: node tests/wxchart_smoke.mjs
       - run: node tests/avwx_smoke.mjs
       - run: node tests/illum_smoke.mjs
