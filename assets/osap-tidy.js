@@ -130,6 +130,8 @@
     if (W.OSAP_SYNC) h += '<button type="button" role="menuitem" data-tp="@sync">Sync my devices</button>';
     /* the AI model the AI summaries use where the browser has none of its own (assets/osap-ai.js) */
     if (W.OSAP_AI) h += '<button type="button" role="menuitem" data-tp="@ai">On-device AI</button>';
+    /* pinned countries, role and the first-run setup again (assets/osap-mycountries.js) */
+    if (W.OSAP_MYCC) h += '<button type="button" role="menuitem" data-tp="@mycc">My countries and setup</button>';
     /* the user guide, offline and printable (assets/osap-guide.js) */
     if (W.OSAP_GUIDE) h += '<button type="button" role="menuitem" data-tp="@guide">User guide</button>';
     /* areas hidden from everyone but the owner, unlocked with Face ID (assets/osap-lock.js) */
@@ -205,6 +207,7 @@
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
+    else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
     else if (sel === "@plan") { if (W.OSAP_TIER) W.OSAP_TIER.open(); }

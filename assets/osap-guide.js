@@ -42,6 +42,12 @@
         "Tap " + b("Open map") + " to go to the map. To start on the map every time, pick " + b("Map") + " at the foot of Today.",
         b("Key dates") + " lists the next three dates that matter in the country: public holidays, elections and referendums, religious periods (Ramadan, Eid, Christmas, Easter, Diwali, Lunar New Year, Songkran and others) and anniversaries of its deadliest days of violence in UCDP's record. Each says why it matters, links its source and is marked " + b("Official") + " (a government holiday list), " + b("Claimed") + " (a reported election schedule) or " + b("Computed") + " (worked out from a calendar or a record). Dates are the local day, with the time that day starts in Zulu. " + b("Show all") + " opens the full list for the past 7 and next 60 days in the country brief.",
         "The OSAP logo at the top left brings you back to Today."]) +
+      "<h3>My countries</h3>" +
+      ul(["The first time you open OSAP on a device it asks for up to 5 countries and how you use it: " + b("Analyst") + ", " + b("Team in country") + " (also offers " + b("Use my location") + ") or " + b("Traveller") + " (Today shows the U.S. travel advisory at the top). " + b("Skip") + " if you would rather not; it is not asked again.",
+        "Today then opens on your first country. Your countries show as chips on Today and beside the country picker on the map: one tap switches.",
+        "Tap " + b("☆ Pin") + " beside the country picker to add the open country (up to 5), " + b("★ Pinned") + " to take it off. The " + b("My countries") + " card on Today shows the newest headline in each and how many are new.",
+        "Today says how many headlines and warnings are new since you last looked at that country, and marks them " + b("New") + ". The count starts again once you have looked.",
+        "Change your countries or role any time: Settings, " + b("My countries and setup") + ". All of this stays on this device."]) +
       "<h3>Install it like an app</h3>" +
       ul(["iPhone or iPad: in Safari tap Share, then " + b("Add to Home Screen") + ".",
         "Android or a computer: use the browser's Install or Add to Home screen option.",
@@ -249,6 +255,7 @@
       ul(["The gear holds settings for this device: " + b("Map colours") + " (Light, Grey, Dark), " + b("Grid format") + " (MGRS, Lat/long, DMS) and " + b("Distance units") + " (km, miles, nautical mi).",
         b("Use my location") + ": off until you turn it on. OSAP then starts on your country and shows where you are. Only the country is stored, never your position.",
         b("Language") + ": English, Thai, Vietnamese, Filipino, Indonesian, Malay, Chinese, Japanese or Korean for the app's menus and buttons. Reports stay in their original language. The translations are AI drafts, marked AI generated.",
+        b("My countries and setup") + ": your pinned countries and how you use OSAP, the questions asked the first time.",
         b("User guide") + ": this guide."]) +
       "<h3>Offline maps and data</h3>" +
       ul(["Save a country so OSAP opens and works with no signal: the Offline map, the country's layers, brief, news, history and the medical plan's hospitals.",
