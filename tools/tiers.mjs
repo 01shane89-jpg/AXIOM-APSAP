@@ -6,7 +6,10 @@
 export const TIERS = ["free", "mid", "full"];
 export const NAMES = { free: "Free", mid: "Mid", full: "Full" };
 // Shown on the plans sheet. Proposed 2026-10-17; the charge itself is whatever the Paddle price says, so change both together.
-export const PRICES = { free: "US$0, free account", mid: "US$9 a month or US$90 a year", full: "US$29 a month or US$290 a year" };
+// Shane 2026-10-18: "start at 100$/year for full access and tier the rest off that with a 14 day free trial". The prices
+// charged are set in Paddle, which also lowers them by the buyer's billing country; these are the US-dollar prices shown.
+export const PRICES = { free: "US$0, free account", mid: "US$50 a year or US$5 a month", full: "US$100 a year or US$10 a month" };
+export const TRIAL_DAYS = 14;
 export const DATA_DEFAULT = "mid";
 
 // Data and source files, by path from the site root.
@@ -52,5 +55,5 @@ export function tierOfRoles(roles) {
 }
 /** What the page needs to draw its locks (no secrets). */
 export function rulesForPage() {
-  return { tiers: TIERS, names: NAMES, prices: PRICES, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT };
+  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT };
 }

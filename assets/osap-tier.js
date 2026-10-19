@@ -218,11 +218,13 @@
       h += CFG.signedIn ? '<p>Signed in as <b>' + esc(CFG.email || "") + "</b>. Your plan: <b>" + esc(name(me)) + "</b>" +
           (CFG.owner ? " (owner)" : CFG.beta ? " (beta tester code" + (CFG.beta.until ? ", until " + esc(String(CFG.beta.until).slice(0, 10)) : "") + ")" : "") + ".</p>"
         : '<p class="obs">You are using the Free plan. Sign in to use a plan you have paid for.</p>';
+      var trial = CFG.rules.trialDays || 0;
       h += '<div class="trplans">' + TIERS.map(function (t) {
         var cur = t === me, up = rank(t) > rank(me);
         return '<div class="trplan' + (cur ? " cur" : "") + '"><h3>' + esc(name(t)) + (cur ? " <i>your plan</i>" : "") + "</h3>" + (CFG.rules.prices && CFG.rules.prices[t] ? '<p class="trprice">' + esc(CFG.rules.prices[t]) + "</p>" : "") + "<p>" + esc(WHAT[t]) + "</p>" +
-          (up ? '<button type="button" class="refresh primary" data-tr-buy="' + t + '"' + dis + ">Choose " + esc(name(t)) + "</button>" : "") + "</div>";
+          (up ? '<button type="button" class="refresh primary" data-tr-buy="' + t + '"' + dis + ">" + (trial ? "Try " + esc(name(t)) + " " + trial + " days free" : "Choose " + esc(name(t))) + "</button>" : "") + "</div>";
       }).join("") + "</div>";
+      if (trial && me === "free") h += '<p class="obs">Paid plans start with ' + trial + " days free. Cancel before then and you pay nothing. The price at checkout is set for the country of your billing address.</p>";
       h += '<div class="trbtns">' + (CFG.signedIn ? '<button type="button" class="refresh" data-tr="newpw"' + dis + ">Change password</button>" +
           '<button type="button" class="refresh" data-tr="signout"' + dis + ">Sign out</button>"
         : '<button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="signup">Create an account</button>') + "</div>";
