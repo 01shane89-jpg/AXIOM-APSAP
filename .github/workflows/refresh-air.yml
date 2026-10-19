@@ -71,9 +71,9 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           [ -d data/live/gnss ] || exit 0
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -N data/live/gnss
           if git diff --quiet -- data/live/gnss; then echo "no change"; exit 0; fi
-          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A data/live/gnss
