@@ -22,10 +22,17 @@
      the security forces searched is not proof of where insurgents stay; the tab says so and never calls a district a bed-down.
    The analyst's entities and links are kept in this browser only (localStorage "osap-an-ent", "osap-an-links", both carried by
    workspaces in assets/osap-ws.js). Nothing is sent anywhere. */
-(function () {
+/* Who gets it: a device unlocked with the owner's Face ID, or, on the Netlify site, the owner's signed-in account (Shane
+   2026-10-18: Face ID passkeys belong to the old github.io address, so they cannot unlock on the new one). The account is
+   checked by the server (api/osap-account, assets/osap-tier.js), which answers after the page has started. */
+(function (main) {
+  "use strict";
+  var W = window;
+  if (W.OSAP_LOCK && W.OSAP_LOCK.isOpen()) main();
+  else if (W.OSAP_TIER && W.OSAP_TIER.ready) W.OSAP_TIER.ready.then(function () { if (W.OSAP_TIER.owner()) main(); });
+})(function () {
   "use strict";
   var W = window, D = document;
-  if (!W.OSAP_LOCK || !W.OSAP_LOCK.isOpen()) return;
   var K_ENT = "osap-an-ent", K_LINK = "osap-an-links", K_UI = "osap-an-ui";
   var ENT_SRC = "data/thailand/deepsouth-entities.js", AREAS_SRC = "data/places/deepsouth-areas.json";
   var LOCAL_H = 7, LOCAL_N = "Thailand";
@@ -764,7 +771,7 @@
     if (!list) { if (n < 100) setTimeout(function () { addBtn(n + 1); }, 150); return; }
     if (list.querySelector("[data-an-btn]")) return;
     style();
-    var b = D.createElement("button"); b.type = "button"; b.setAttribute("data-an-btn", ""); b.title = "Analyst workspace (only on this unlocked device): entities, links, timeline, saved items, bed-down indicator";
+    var b = D.createElement("button"); b.type = "button"; b.setAttribute("data-an-btn", ""); b.title = "Analyst workspace (owner only): entities, links, timeline, saved items, bed-down indicator";
     b.setAttribute("aria-label", "Analyst"); b.innerHTML = ICON + '<span class="atk-l">Analyst</span>';
     b.addEventListener("click", function (e) { e.stopPropagation(); if (isOpen()) close(); else open(); });
     var mine = list.querySelector('[data-atk="mine"]');
@@ -772,4 +779,4 @@
   })(0);
 
   W.OSAP_ANALYST = { open: open, close: close, isOpen: isOpen, render: render, _bed: function () { return bed(); }, _index: function () { return index(); } };
-})();
+});

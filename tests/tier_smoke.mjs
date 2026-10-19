@@ -104,8 +104,8 @@ const codeStore = (await import("./codes_store.mjs")).memoryStore(); codesFn.use
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-async function open(token, path = "", until = 3600e3, rt) {
-  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
+async function open(token, path = "", until = 3600e3, rt, viewport = { width: 1400, height: 900 }) {
+  const ctx = await browser.newContext({ viewport, serviceWorkers: "block" });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   const refused = [], errors = [];
   if (token) await ctx.addInitScript({ content: "if(!sessionStorage.getItem('t-seeded'))try{sessionStorage.setItem('t-seeded','1');localStorage.setItem('osap-auth',JSON.stringify({access_token:'" + token + "',refresh_token:'" + (rt || token) + "',until:Date.now()+" + until + "}));document.cookie='nf_jwt=" + token + "; path=/'}catch(e){}" });
@@ -139,6 +139,7 @@ gate = true;
   ok(w && /trwall/.test(w.cls) && /Sign in to OSAP/.test(w.text) && /needs an account/.test(w.text) && !w.x, "signed out: the sign-in screen shows, with no close button " + JSON.stringify(w && { cls: w.cls, x: w.x, text: w.text.slice(0, 80) }));
   await p.mouse.click(5, 5); await p.keyboard.press("Escape"); await p.waitForTimeout(300);
   ok(!!(await wall(p)), "signed out: clicking outside or Escape does not close it");
+  ok(await p.evaluate(() => { const d = document.getElementById("tierdlg"), b = d.querySelector(".cbox").getBoundingClientRect(); return !!d.querySelector(".trbrand img") && b.top > 16 && getComputedStyle(d).backgroundColor !== "rgb(11, 18, 32)"; }), "the sign-in screen shows the logo, in the middle, on the theme's page colour");
   ok(refused.some((u) => /^401 data\//.test(u)) && (await get(p, "data/live/news.js")) === 401 && (await get(p, "data/basemap/world-countries.js")) === 401, "signed out: free data (news, base map) refused with 401");
   ok((await p.evaluate(() => Array.prototype.map.call(document.querySelectorAll("#tierdlg .trlegal a"), (a) => a.getAttribute("href")).join())) === "terms.html,privacy.html,refunds.html", "the sign-in screen links the terms, privacy and refund pages");
   ok(errors.length === 0, "signed out: no page errors " + errors.join(" | "));
@@ -202,6 +203,7 @@ gate = true;
   ok((await get(p, "data/live/evsum.js")) === 200, "Full: AI summaries 200");
   ok((await p.evaluate(() => fetch("api/osap-users", { headers: { authorization: "Bearer tok-full" } }).then((r) => r.status))) === 403, "Full: the Users list is refused (403)");
   ok(!(await p.evaluate(() => window.OSAP_TIER.owner())), "Full: not the owner");
+  ok(!(await p.evaluate(() => !!document.querySelector("#atk-tools [data-an-btn]"))), "Full: no Analyst workspace (owner only)");
   ok(!(await p.evaluate(() => { const b = document.querySelector('[data-tidy="set"]'); if (b) b.click(); return !!document.querySelector('[data-tp="@users"]') || !document.querySelector('[data-tp="@plan"]'); })), "Full: Settings has Plan and sign-in but no Users");
   ok(errors.length === 0, "Full: no page errors " + errors.join(" | "));
   await ctx.close();
@@ -341,6 +343,8 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   const s = await state(p);
   ok(s.tier === "full" && !s.locked.length && (await p.evaluate(() => window.OSAP_TIER.owner())), "OSAP_OWNERS owner: Full plan, nothing locked " + JSON.stringify(s));
   ok((await get(p, "data/live/ucdp.js")) === 200 && (await get(p, "data/claims/th.json")) !== 402 && (await get(p, "data/live/evsum.js")) === 200, "OSAP_OWNERS owner: Mid and Full data open at the gate");
+  // Face ID passkeys belong to the old github.io address, so on the Netlify site the owner's account opens the workspace
+  ok(await p.evaluate(() => !!document.querySelector("#atk-tools [data-an-btn]")), "OSAP_OWNERS owner: the Analyst workspace button is on the toolbar");
   ok(errors.length === 0, "OSAP_OWNERS owner: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -376,6 +380,17 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok((await t.p.evaluate(() => fetch("api/osap-codes", { headers: { authorization: "Bearer tok-free" } }).then((r) => r.status))) === 403, "only the owner can list codes");
   ok(errors.length === 0 && t.errors.length === 0, "beta codes: no page errors " + errors.concat(t.errors).join(" | "));
   await t.ctx.close(); await ctx.close();
+}
+// 13. a short phone screen (iPhone Safari with its bars, 390x600): Settings stays on the screen and scrolls down to Plan and sign-in and Users
+{
+  const { ctx, p, errors } = await open("tok-boss", "", 3600e3, undefined, { width: 390, height: 600 });
+  await p.getByRole("button", { name: "Open map" }).first().click(); await p.waitForTimeout(1500);
+  await p.evaluate(() => document.querySelector('[data-tidy="set"]').click()); await p.waitForTimeout(500);
+  const m = await p.evaluate(() => { const d = document.getElementById("tidy-pop"), r = d.getBoundingClientRect(); d.scrollTop = 1e5; const u = d.querySelector('[data-tp="@users"]').getBoundingClientRect(); return { l: r.left, r: r.right, b: r.bottom, h: innerHeight, w: innerWidth, uTop: u.top, uBot: u.bottom, top: r.top }; });
+  ok(m.l >= 0 && m.r <= m.w && m.b <= m.h, "phone: Settings fits the screen " + JSON.stringify(m));
+  ok(m.uTop >= m.top && m.uBot <= m.b, "phone: Settings scrolls down to Users " + JSON.stringify(m));
+  ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
+  await ctx.close();
 }
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");
