@@ -10,7 +10,10 @@
      "Reviewed" means the analyst looked at it; it is not verification and does not change the item's claim status.
    - Exports: situation report (print or save as PDF), KML, GeoJSON and CSV of the open tab or the whole country,
      filtered by the period and the drawn area; each item keeps its source link, SHA-256 record fingerprint and
-     claim status. Notes export and import as a JSON file (schema osap-work/1) so they survive a phone change. */
+     claim status. Notes export and import as a JSON file (schema osap-work/1) so they survive a phone change.
+   - Source grading (assets/osap-grade.js): the analyst's Admiralty / NATO grade (reliability A-F, credibility 1-6) on an item,
+     kept as item.grade, and a default reliability per source in WORK.srcRel that only pre-fills the picker. Never automatic.
+     The grade goes into every export as optional analyst_grade fields; osap-work/1 files without it still import. */
 (function () {
   "use strict";
   var WORK_KEY = "osap-work", SEEN_PREFIX = "osap-seen-", VISIT_GAP = 30 * 60e3, SEEN_CAP = 8000, IMPORT_MAX = 5e6;
@@ -62,8 +65,14 @@
   /* ---------- my work store ---------- */
   var WORK = lsGet(WORK_KEY);
   if (!WORK || typeof WORK !== "object" || !WORK.items || typeof WORK.items !== "object") WORK = { schema: "osap-work/1", items: {} };
+  function G() { return window.OSAP_GRADE; }
+  /* default reliability per source; a plain map of objects so Sync merges it source by source */
+  WORK.srcRel = G() ? G().normDefaults(WORK.srcRel) : (WORK.srcRel && typeof WORK.srcRel === "object" ? WORK.srcRel : {});
   /* item keys are record fingerprints (16 hex); anything else (a hand-made or tampered workspace file) is dropped */
-  Object.keys(WORK.items).forEach(function (k) { if (!/^[0-9a-f]{16}$/.test(k)) delete WORK.items[k]; });
+  Object.keys(WORK.items).forEach(function (k) {
+    if (!/^[0-9a-f]{16}$/.test(k)) { delete WORK.items[k]; return; }
+    var it = WORK.items[k]; if (it && it.grade && G()) { var g = G().norm(it.grade); if (g) it.grade = g; else delete it.grade; }
+  });
   function saveWork() { if (!lsSet(WORK_KEY, WORK)) toast("This browser would not store your work (storage full or blocked)."); }
   function snap(r) {
     return { title: String(r.title || ""), layer: r.layer || "", type: r.type || "", status: claimStatus(r), source: r.src ? r.src.name : "",
@@ -78,7 +87,39 @@
     return it || null;
   }
   function touch(it) { it.at = new Date().toISOString(); }
-  function prune(k) { var it = WORK.items[k]; if (it && !it.saved && !it.reviewed && !it.note) delete WORK.items[k]; }
+  function prune(k) { var it = WORK.items[k]; if (it && !it.saved && !it.reviewed && !it.note && !it.grade) delete WORK.items[k]; }
+  /* ---------- source grading: only ever set here, from the analyst's own choice in the picker ---------- */
+  function gradeOf(it) { return it && it.grade && G() ? G().norm(it.grade) : null; }
+  function gradeCode(it) { var g = gradeOf(it); return g ? G().code(g) : ""; }
+  function srcKeyOf(it) { var s = (it && it.snap) || {}; return G() ? G().sourceKey(s.url, s.source) : ""; }
+  function setGrade(k, r, c) {
+    var rec = recByKey(k), it = rec ? itemFor(rec, true) : WORK.items[k]; if (!it || !G()) return;
+    var g = G().norm({ r: r || "", c: c || "" });
+    if (g) { g.at = new Date().toISOString(); it.grade = g; } else delete it.grade;
+    touch(it); prune(k); saveWork(); decorate();
+  }
+  function setSrcDefault(k) {
+    var it = WORK.items[k], g = gradeOf(it), sk = srcKeyOf(it); if (!g || !g.r || !sk) return;
+    WORK.srcRel[sk] = { r: g.r, label: G().sourceLabel(sk), at: new Date().toISOString() };
+    saveWork(); toast("Default " + g.r + " for " + G().sourceLabel(sk) + ". It pre-fills ungraded items from this source; you confirm each one.");
+  }
+  function pickerFor(k, it) {
+    if (!G()) return "";
+    var rec = !(it && it.snap) ? recByKey(k) : null, sn = (it && it.snap) || (rec ? snap(rec) : {}), sk = G().sourceKey(sn.url, sn.source);
+    return G().picker(k, it && it.grade, sk && WORK.srcRel[sk] ? WORK.srcRel[sk] : null, sk ? G().sourceLabel(sk) : "");
+  }
+  /* one handler for the picker wherever it is shown; returns true when it acted */
+  function gradeEvent(e, after) {
+    var t = e.target, w = t.closest && t.closest("[data-wkg]"); if (!w) return false;
+    var k = w.getAttribute("data-wkg"), rs = w.querySelector("[data-wkg-r]"), cs = w.querySelector("[data-wkg-c]");
+    if (e.type === "change" && (t === rs || t === cs)) { setGrade(k, rs.value, cs.value); after(); return true; }
+    if (e.type === "click") {
+      var b = t.closest("button"); if (!b) return false;
+      if (b.hasAttribute("data-wkg-ok")) { setGrade(k, rs.value, cs.value); after(); return true; }
+      if (b.hasAttribute("data-wkg-def")) { setSrcDefault(k); after(); return true; }
+    }
+    return false;
+  }
   function setFlag(r, flag, on) {
     var it = itemFor(r, true), k = keyOf(r);
     it[flag] = on; it[flag + "At"] = on ? new Date().toISOString() : ""; touch(it);
@@ -188,7 +229,8 @@
       date: String(r.ts || ""), published: String(r.issued || ""), place: [r.place, r.prov].filter(Boolean).join(", "), precision: r.prec || "",
       lat: located(r) ? +(+r.lat).toFixed(5) : null, lon: located(r) ? +(+r.lon).toFixed(5) : null,
       source: r.src ? r.src.name : "", source_kind: r.src ? r.src.kind : "", source_link: safeUrl(r.url), fingerprint_sha256: fp || "",
-      analyst_saved: !!(it && it.saved), analyst_reviewed: !!(it && it.reviewed), analyst_note: it ? it.note || "" : "" };
+      analyst_saved: !!(it && it.saved), analyst_reviewed: !!(it && it.reviewed), analyst_note: it ? it.note || "" : "",
+      analyst_grade: gradeCode(it), analyst_grade_meaning: gradeOf(it) ? G().meaning(gradeOf(it)) : "" };
   }
   function stamp() { return new Date().toISOString().slice(0, 16).replace(/[-:]/g, "").replace("T", "-") + "Z"; }
   function download(name, type, text) {
@@ -197,7 +239,7 @@
     document.body.appendChild(a); a.click();
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
   }
-  var HEADER = "Compiled by AXIOM OSAP from public sources. Every item is the named source's report or claim, not confirmed. analyst_* fields are the user's own marks and notes, kept apart from source content. \"Reviewed\" means looked at, not verified.";
+  var HEADER = "Compiled by AXIOM OSAP from public sources. Every item is the named source's report or claim, not confirmed. analyst_* fields are the user's own marks and notes, kept apart from source content. \"Reviewed\" means looked at, not verified. analyst_grade is the user's own Admiralty / NATO grade (source reliability A-F, information credibility 1-6), never set automatically.";
   function exportAs(fmt, scope, useArea) {
     var S = exportSet(scope, useArea);
     if (!S.list.length) { toast("Nothing to export with these settings."); return; }
@@ -205,6 +247,7 @@
     withFingerprints(S.list).then(function (fps) {
       var rows = S.list.map(function (r, i) { return rowOf(r, fps[i]); }), base = "osap-" + CC + "-" + stamp();
       var meta = { generated_utc: new Date().toISOString(), country: countryName(), country_id: CC, scope: S.tab, period: S.period, drawn_area: S.area, note: HEADER };
+      if (G()) meta.grading = { system: "Admiralty / NATO (STANAG 2511)", source_reliability: G().REL.map(function (x) { return x[0] + ": " + x[1]; }), information_credibility: G().CRED.map(function (x) { return x[0] + ": " + x[1]; }) };
       if (fmt === "csv") {
         var cols = Object.keys(rows[0]);
         var csvCell = function (v) { v = v == null ? "" : String(v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
@@ -225,6 +268,7 @@
           "<description>" + x(HEADER + " Scope: " + S.tab + ", " + S.period + (S.area ? ", inside the drawn area" : "") + ". " + (rows.length - pts.length) + " items without a map location are left out; use CSV or GeoJSON for them.") + "</description>" +
           pts.map(function (o) {
             return "<Placemark><name>" + x(o.title.slice(0, 120)) + "</name><description>" + x([o.detail, "Status: " + o.claim_status, "Source: " + o.source, o.source_link, "SHA-256: " + o.fingerprint_sha256,
+              o.analyst_grade ? "Analyst grade (user's own judgement): " + o.analyst_grade + " (" + o.analyst_grade_meaning + ")" : "",
               o.analyst_note ? "Analyst note (user's own, not source content): " + o.analyst_note : ""].filter(Boolean).join("\n")) + "</description>" +
               (o.date ? "<TimeStamp><when>" + x(o.date.slice(0, 10)) + "</when></TimeStamp>" : "") +
               "<ExtendedData>" + Object.keys(o).filter(function (k) { return k !== "lat" && k !== "lon"; }).map(function (k) { return '<Data name="' + k + '"><value>' + x(o[k]) + "</value></Data>"; }).join("") + "</ExtendedData>" +
@@ -238,7 +282,7 @@
 
   /* ---------- situation report (print, or save as PDF from the print dialog) ---------- */
   function sitrep(scope, useArea) {
-    var S = exportSet(scope, useArea), mine = myItems().filter(function (it) { return it.saved || it.note || it.reviewed; }), cap = 300;
+    var S = exportSet(scope, useArea), mine = myItems().filter(function (it) { return it.saved || it.note || it.reviewed || it.grade; }), cap = 300;
     withFingerprints(S.list.slice(0, cap)).then(function (fps) {
       var byL = {}; S.list.forEach(function (r) { byL[r.layer] = (byL[r.layer] || 0) + 1; });
       var nNew = newRecords().length;
@@ -255,13 +299,13 @@
         (mine.length ? '<table class="wkpn"><tr><th>Item (source content)</th><th>Analyst marks and note (user\'s own)</th></tr>' + mine.map(function (it) {
           var s = it.snap || {};
           return "<tr><td>" + esc(s.title) + '<div class="wkps">' + esc(s.source) + (s.ts ? " · " + esc(tsTxt(s.ts)) : "") + " · " + esc(s.status) + (s.url ? "<br>" + esc(s.url) : "") + (s.fp ? "<br>SHA-256 " + esc(s.fp) : "") + "</div></td>" +
-            "<td>" + [it.saved ? "Saved" : "", it.reviewed ? "Reviewed (not verified)" : ""].filter(Boolean).join(", ") + (it.note ? '<div class="wkpnote">' + esc(it.note) + "</div>" : "") + "</td></tr>";
-        }).join("") + "</table>" : '<p class="wkpm">No saved items or notes for this country on this device.</p>') +
+            "<td>" + [gradeCode(it) ? "<b>Grade " + esc(gradeCode(it)) + "</b> (" + esc(G().meaning(gradeOf(it))) + ")" : "", it.saved ? "Saved" : "", it.reviewed ? "Reviewed (not verified)" : ""].filter(Boolean).join(", ") + (it.note ? '<div class="wkpnote">' + esc(it.note) + "</div>" : "") + "</td></tr>";
+        }).join("") + "</table>" + (mine.some(function (it) { return gradeCode(it); }) ? '<p class="wkpm">Grades: ' + esc(G().NOTE) + "</p>" : "") : '<p class="wkpm">No saved items or notes for this country on this device.</p>') +
         "<h2>3. Reports</h2>" + (S.list.length > cap ? '<p class="wkpm">The newest ' + cap + " of " + S.list.length + ". Use CSV or GeoJSON for the full set.</p>" : "") +
         '<table class="wkpr"><colgroup><col style="width:15%"><col style="width:43%"><col style="width:15%"><col style="width:27%"></colgroup><tr><th>Date</th><th>Report</th><th>Status</th><th>Source and fingerprint</th></tr>' + S.list.slice(0, cap).map(function (r, i) {
           var u = safeUrl(r.url);
           return "<tr><td>" + esc(tsTxt(r.ts)) + "</td><td><b>" + esc(r.title) + '</b><div class="wkps">' + esc(layerName(r.layer)) + ([r.place, r.prov].filter(Boolean).length ? " · " + esc([r.place, r.prov].filter(Boolean).join(", ")) : "") + "</div></td>" +
-            "<td>" + esc(claimStatus(r)) + "</td><td>" + esc(r.src ? r.src.name : "") + (u ? '<div class="wkps">' + esc(u) + "</div>" : "") + '<div class="wkps wkfp">' + esc(fps[i] || "") + "</div></td></tr>";
+            "<td>" + esc(claimStatus(r)) + (gradeCode(WORK.items[keyOf(r)]) ? '<div class="wkps">Analyst grade ' + esc(gradeCode(WORK.items[keyOf(r)])) + "</div>" : "") + "</td><td>" + esc(r.src ? r.src.name : "") + (u ? '<div class="wkps">' + esc(u) + "</div>" : "") + '<div class="wkps wkfp">' + esc(fps[i] || "") + "</div></td></tr>";
         }).join("") + "</table></div>";
       document.documentElement.classList.add("wk-printing");
       var done = function () { document.documentElement.classList.remove("wk-printing"); window.removeEventListener("afterprint", done); };
@@ -275,7 +319,8 @@
     var all = Object.keys(WORK.items).map(function (k) { var it = Object.assign({}, WORK.items[k]); it.key = k; delete it.k; return it; });
     if (!all.length) { toast("No saved items or notes yet."); return; }
     download("osap-my-work-" + stamp() + ".json", "application/json", JSON.stringify({ schema: "osap-work/1", exported_utc: new Date().toISOString(),
-      note: "Analyst's own saved items, notes and review marks from AXIOM OSAP. Not source content.", items: all }, null, 1));
+      note: "Analyst's own saved items, notes, review marks and grades from AXIOM OSAP. Not source content. grade is the analyst's Admiralty / NATO grade {r: source reliability A-F, c: information credibility 1-6}; source_defaults are the analyst's default reliability per source.",
+      items: all, source_defaults: WORK.srcRel }, null, 1));
   }
   function clean(s, n) { return typeof s === "string" ? s.slice(0, n) : ""; }
   function importNotes(file) {
@@ -286,6 +331,7 @@
       var j; try { j = JSON.parse(fr.result); } catch (e) { toast("That file is not an OSAP notes file (not JSON)."); return; }
       if (!j || j.schema !== "osap-work/1" || !Array.isArray(j.items)) { toast("That file is not an OSAP notes file (schema osap-work/1)."); return; }
       var added = 0, updated = 0;
+      if (G()) { var D = G().normDefaults(j.source_defaults); Object.keys(D).forEach(function (sk) { var cur = WORK.srcRel[sk]; if (!cur || (D[sk].at || "") > (cur.at || "")) WORK.srcRel[sk] = D[sk]; }); }
       j.items.forEach(function (x) {
         if (!x || !/^[0-9a-f]{16}$/.test(x.key) || !/^[a-z]{2,3}$/.test(x.cc)) return;
         var s = x.snap || {}, it = { cc: x.cc, saved: x.saved === true, reviewed: x.reviewed === true, note: clean(x.note, 4000), at: clean(x.at, 40),
@@ -293,6 +339,7 @@
           snap: { title: clean(s.title, 500), layer: clean(s.layer, 40), type: clean(s.type, 40), status: clean(s.status, 120), source: clean(s.source, 200),
             url: safeUrl(clean(s.url, 2000)), ts: clean(s.ts, 40), place: clean(s.place, 200), lat: isFinite(s.lat) && s.lat !== null ? +s.lat : null,
             lon: isFinite(s.lon) && s.lon !== null ? +s.lon : null, fp: /^[0-9a-f]{64}$/.test(s.fp || "") ? s.fp : "" } };
+        var g = G() && x.grade ? G().norm(x.grade) : null; if (g) it.grade = g;
         var cur = WORK.items[x.key];
         if (!cur) { WORK.items[x.key] = it; added++; } else if ((it.at || "") > (cur.at || "")) { WORK.items[x.key] = it; updated++; }
       });
@@ -361,7 +408,7 @@
     return '<div class="wkrow"><button type="button" class="wkopen" data-wk-open="' + k + '"><span class="wkt">' + esc(tsTxt(r.ts)) + "</span>" +
       '<span class="wkh">' + esc(r.title) + "</span>" +
       '<span class="wks">' + esc(layerName(r.news ? "news" : r.social ? "social" : r.layer)) + " · " + esc(r.src ? r.src.name : "") + " · " + esc(STATE[r.type] ? STATE[r.type][0] : r.type) +
-      (it && it.saved ? " · ★ saved" : "") + (it && it.reviewed ? " · ✓ reviewed" : "") + (it && it.note ? " · ✎ note" : "") + "</span></button>" + (extra || "") + "</div>";
+      (it && it.saved ? " · ★ saved" : "") + (it && it.reviewed ? " · ✓ reviewed" : "") + (it && it.note ? " · ✎ note" : "") + (gradeOf(it) ? " · " + G().badge(gradeOf(it)) : "") + "</span></button>" + (extra || "") + "</div>";
   }
   function tabNew() {
     if (!baseSet) return '<p class="obs">This is your first visit to ' + esc(countryName()) + " on this device, so there is nothing to compare with yet. Come back later and the reports that arrived in between show here, with a count on the map button.</p>";
@@ -396,28 +443,42 @@
   }
   function tabMine() {
     var all = myItems(), f = WK.savedF;
-    var L = all.filter(function (it) { return f === "all" ? true : f === "saved" ? it.saved : f === "notes" ? !!it.note : it.reviewed; })
+    var L = all.filter(function (it) { return f === "all" ? true : f === "saved" ? it.saved : f === "notes" ? !!it.note : f === "graded" ? !!gradeOf(it) : it.reviewed; })
       .sort(function (a, b) { return (b.at || "") < (a.at || "") ? -1 : 1; });
     var cnt = function (p) { return all.filter(p).length; };
-    return '<p class="obs">Your saved items, notes and review marks for ' + esc(countryName()) + '. They stay in this browser only and are never sent anywhere. Notes are your words, kept apart from the source. "Reviewed" means you looked at it; it does not verify the report.</p>' +
-      '<div class="wkctl"><span class="seg" role="group" aria-label="Show">' + [["all", "All", all.length], ["saved", "Saved", cnt(function (i) { return i.saved; })], ["notes", "With notes", cnt(function (i) { return !!i.note; })], ["reviewed", "Reviewed", cnt(function (i) { return i.reviewed; })]].map(function (b) {
+    return '<p class="obs">Your saved items, notes, review marks and grades for ' + esc(countryName()) + '. They stay in this browser only and are never sent anywhere. Notes are your words, kept apart from the source. "Reviewed" means you looked at it; it does not verify the report.</p>' +
+      '<div class="wkctl"><span class="seg" role="group" aria-label="Show">' + [["all", "All", all.length], ["saved", "Saved", cnt(function (i) { return i.saved; })], ["notes", "With notes", cnt(function (i) { return !!i.note; })], ["reviewed", "Reviewed", cnt(function (i) { return i.reviewed; })], ["graded", "Graded", cnt(function (i) { return !!gradeOf(i); })]].map(function (b) {
         return '<button type="button" data-wk-f="' + b[0] + '" aria-pressed="' + (f === b[0]) + '">' + b[1] + " " + b[2] + "</button>"; }).join("") + "</span></div>" +
       (L.length ? '<div class="wklist">' + L.map(function (it) {
         var s = it.snap || {}, live = recByKey(it.k), u = safeUrl(s.url);
-        return '<div class="wkrow wkmine"><div class="wkh">' + esc(s.title || "(untitled)") + "</div>" +
+        return '<div class="wkrow wkmine"><div class="wkh">' + (gradeOf(it) ? G().badge(gradeOf(it)) + " " : "") + esc(s.title || "(untitled)") + "</div>" +
           '<div class="wks">' + esc(layerName(s.layer)) + " · " + esc(s.source) + (s.ts ? " · " + esc(tsTxt(s.ts)) : "") + " · " + esc(s.status) + "</div>" +
           (u ? '<div class="wks"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(u.replace(/^https?:\/\/(www\.)?/, "").slice(0, 70)) + "</a></div>" : "") +
           (s.fp ? '<div class="wks wkfp">SHA-256 ' + esc(s.fp) + "</div>" : "") +
+          pickerFor(it.k, it) +
           '<div class="wkanl"><span class="wktag">Your note</span>' +
           '<textarea data-wk-note="' + esc(it.k) + '" rows="2" maxlength="4000" placeholder="Your own note (not part of the source)">' + esc(it.note || "") + "</textarea></div>" +
           '<div class="wkbtns">' + (live ? '<button type="button" class="refresh" data-wk-open="' + esc(it.k) + '">Open</button>' : '<span class="obs">Not in the current data; kept from when you saved it.</span>') +
           '<button type="button" class="refresh" data-wk-tog="saved" data-k="' + esc(it.k) + '" aria-pressed="' + !!it.saved + '">' + (it.saved ? "★ Saved" : "☆ Save") + "</button>" +
           '<button type="button" class="refresh" data-wk-tog="reviewed" data-k="' + esc(it.k) + '" aria-pressed="' + !!it.reviewed + '">' + (it.reviewed ? "✓ Reviewed" : "Mark reviewed") + "</button>" +
           '<button type="button" class="refresh" data-wk-del="' + esc(it.k) + '">Remove</button></div></div>';
-      }).join("") + "</div>" : '<p class="obs">Nothing here yet. Open any report and use ☆ Save, Mark reviewed or Add note.</p>') +
+      }).join("") + "</div>" : '<p class="obs">Nothing here yet. Open any report and use ☆ Save, Mark reviewed, Add note or Grade.</p>') +
+      srcDefaultsHtml() +
       '<h3>Keep your work when you change phone</h3><p class="obs">Export writes every country\'s saved items and notes to a file. Import merges a file back in; the newer copy of each item wins.</p>' +
       '<p class="wkbtns"><button type="button" class="refresh" data-wk-act="notes-out">Export my notes (.json)</button>' +
       '<label class="refresh wkfile">Import notes file<input type="file" accept="application/json,.json" data-wk-import hidden></label></p>';
+  }
+  function srcDefaultsHtml() {
+    if (!G()) return "";
+    var K = Object.keys(WORK.srcRel).sort();
+    return '<details class="wksrc"' + (WK.srcOpen ? " open" : "") + '><summary>Grading and source defaults (' + K.length + ")</summary>" +
+      '<p class="obs">Grades are your own Admiralty / NATO judgement: source reliability A to F and information credibility 1 to 6, for example B2. OSAP never sets them. A default reliability for a source only pre-fills the picker on items you have not graded; nothing is stored until you confirm it. Set a default from a graded item with its "Default … for …" button.</p>' +
+      (K.length ? '<div class="wklist">' + K.map(function (sk) {
+        var d = WORK.srcRel[sk], lb = d.label || G().sourceLabel(sk);
+        return '<div class="wkrow wkmine wksrcrow"><span class="wkh">' + esc(lb) + '</span><select data-wk-srcset="' + esc(sk) + '" aria-label="' + esc("Default reliability for " + lb) + '">' +
+          G().REL.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === d.r ? " selected" : "") + ">" + x[0] + " · " + esc(x[1]) + "</option>"; }).join("") + "</select>" +
+          '<button type="button" class="refresh" data-wk-srcdel="' + esc(sk) + '">Remove</button></div>';
+      }).join("") + "</div>" : '<p class="obs">No source defaults yet.</p>') + G().legendHtml() + "</details>";
   }
   function tabExport() {
     var A = area(), PR = periodRange(), v = currentView();
@@ -429,7 +490,7 @@
       '<p class="obs"><b>' + S.list.length + "</b> items · period: " + esc(PR.label) + (ua ? " · inside the drawn area" : A ? "" : " · no drawn area") + (S.note ? "<br>" + esc(S.note) : "") + "</p>" +
       '<p class="wkbtns"><button type="button" class="refresh primary" data-wk-exp="sitrep">Situation report (print or PDF)</button>' +
       '<button type="button" class="refresh" data-wk-exp="kml">KML</button><button type="button" class="refresh" data-wk-exp="geojson">GeoJSON</button><button type="button" class="refresh" data-wk-exp="csv">CSV</button></p>' +
-      '<p class="obs">KML holds only items with a map location. The situation report lists the newest 300; CSV and GeoJSON hold every item. To save a PDF, choose "Save as PDF" in the print dialog.</p>';
+      '<p class="obs">KML holds only items with a map location. The situation report lists the newest 300; CSV and GeoJSON hold every item. To save a PDF, choose "Save as PDF" in the print dialog. Your grades go in the analyst_grade columns.</p>';
   }
   function openRecordKey(k) {
     var r = recByKey(k); if (!r || !window.TSAP) return;
@@ -441,6 +502,10 @@
   box.addEventListener("click", function (e) {
     var t = e.target;
     if (t === box) { closeWk(); return; }
+    if (gradeEvent(e, renderTab)) return;
+    if (t.closest && t.closest(".wksrc>summary")) { WK.srcOpen = !t.closest(".wksrc").open; return; }
+    var sd = t.closest && t.closest("[data-wk-srcdel]");
+    if (sd) { delete WORK.srcRel[sd.getAttribute("data-wk-srcdel")]; saveWork(); WK.srcOpen = true; renderTab(); return; }
     var b = t.closest && t.closest("button,[data-wk-open]");
     if (!b) return;
     if (b.classList.contains("x")) { closeWk(); return; }
@@ -461,6 +526,8 @@
   });
   box.addEventListener("change", function (e) {
     var t = e.target;
+    if (gradeEvent(e, renderTab)) return;
+    if (t.hasAttribute("data-wk-srcset")) { var sk = t.getAttribute("data-wk-srcset"); if (WORK.srcRel[sk] && /^[A-F]$/.test(t.value)) { WORK.srcRel[sk].r = t.value; WORK.srcRel[sk].at = new Date().toISOString(); saveWork(); } return; }
     if (t.hasAttribute("data-wk-tarea")) { WK.trendArea = t.checked; renderTab(); }
     else if (t.hasAttribute("data-wk-uarea")) { WK.useArea = t.checked; renderTab(); }
     else if (t.hasAttribute("data-wk-import")) { importNotes(t.files && t.files[0]); t.value = ""; }
@@ -477,17 +544,21 @@
     var fpEl = pkg.querySelector("code[data-fp]"); if (!fpEl) return;
     var r = recById(fpEl.getAttribute("data-fp")); if (!r) return;
     var k = keyOf(r), old = pkg.querySelector(".wkpkg");
-    if (old && old.getAttribute("data-k") === k) return;
+    if (old && old.getAttribute("data-k") === k && (old.getAttribute("data-g") === gradeCode(WORK.items[k]) || old.contains(document.activeElement))) return;
     if (old) old.remove();
     var it = WORK.items[k] || {}, d = document.createElement("div");
-    d.className = "wkpkg"; d.setAttribute("data-k", k);
+    d.className = "wkpkg"; d.setAttribute("data-k", k); d.setAttribute("data-g", gradeCode(it));
     d.innerHTML = '<div class="wkbtns"><button type="button" class="refresh" data-p="saved" aria-pressed="' + !!it.saved + '">' + (it.saved ? "★ Saved" : "☆ Save") + "</button>" +
       '<button type="button" class="refresh" data-p="reviewed" aria-pressed="' + !!it.reviewed + '" title="You looked at it. This does not verify the report.">' + (it.reviewed ? "✓ Reviewed" : "Mark reviewed") + "</button>" +
       '<button type="button" class="refresh" data-p="note">' + (it.note ? "✎ Edit note" : "✎ Add note") + "</button>" + (isNew(k) ? '<span class="wknew">New since last visit</span>' : "") + "</div>" +
+      pickerFor(k, WORK.items[k] || null) +
       '<div class="wkanl"' + (it.note ? "" : " hidden") + '><span class="wktag">Your note · this device only · not part of the source</span><textarea rows="3" maxlength="4000" placeholder="Your own note">' + esc(it.note || "") + "</textarea></div>";
     var chips = pkg.querySelector(".pkgchips");
     if (chips && chips.parentNode === pkg) chips.insertAdjacentElement("afterend", d); else pkg.appendChild(d);
+    var again = function () { d.remove(); pkgBar(pkg); };
+    d.addEventListener("change", function (e) { gradeEvent(e, again); });
     d.addEventListener("click", function (e) {
+      if (gradeEvent(e, again)) return;
       var b = e.target.closest && e.target.closest("button[data-p]"); if (!b) return;
       var rr = recByKey(k); if (!rr) return;
       var p = b.getAttribute("data-p"), cur = WORK.items[k] || {};
@@ -502,14 +573,15 @@
     var list = document.getElementById("rv-list"); if (!list) return;
     Array.prototype.forEach.call(list.querySelectorAll(".rvcard[data-rv]"), function (c) {
       var r = recById(c.getAttribute("data-rv")), mark = "";
-      if (r) { var k = keyOf(r), it = WORK.items[k]; mark = (isNew(k) ? "new " : "") + (it && it.saved ? "saved " : "") + (it && it.reviewed ? "rev " : "") + (it && it.note ? "note" : ""); }
+      if (r) { var k = keyOf(r), it = WORK.items[k]; mark = (isNew(k) ? "new " : "") + (it && it.saved ? "saved " : "") + (it && it.reviewed ? "rev " : "") + (it && it.note ? "note " : "") + (gradeCode(it) ? "g:" + gradeCode(it) : ""); mark = mark.trim(); }
       if (c.getAttribute("data-wk") === mark) return;
       c.setAttribute("data-wk", mark);
       var m = c.querySelector(".wkmark"); if (m) m.remove();
       if (!mark) return;
       m = document.createElement("span"); m.className = "wkmark";
-      m.textContent = [/new/.test(mark) ? "NEW" : "", /saved/.test(mark) ? "★" : "", /rev/.test(mark) ? "✓" : "", /note/.test(mark) ? "✎" : ""].filter(Boolean).join(" ");
-      m.title = [/new/.test(mark) ? "New since your last visit" : "", /saved/.test(mark) ? "Saved" : "", /rev/.test(mark) ? "You marked it reviewed" : "", /note/.test(mark) ? "You wrote a note" : ""].filter(Boolean).join(", ");
+      var gm = /g:(\S+)/.exec(mark);
+      m.textContent = [/new/.test(mark) ? "NEW" : "", /saved/.test(mark) ? "★" : "", /rev/.test(mark) ? "✓" : "", /note/.test(mark) ? "✎" : "", gm ? gm[1] : ""].filter(Boolean).join(" ");
+      m.title = [/new/.test(mark) ? "New since your last visit" : "", /saved/.test(mark) ? "Saved" : "", /rev/.test(mark) ? "You marked it reviewed" : "", /note/.test(mark) ? "You wrote a note" : "", gm ? "Your grade " + gm[1] + " (" + G().meaning(gm[1]) + ")" : ""].filter(Boolean).join(", ");
       c.insertBefore(m, c.firstChild);
     });
   }
@@ -547,6 +619,7 @@
     ".wkchips{display:flex;flex-wrap:wrap;gap:4px}.wkchip{border:1px solid var(--line);border-radius:10px;padding:1px 8px;font-size:11px}" +
     ".wkanl{border-left:3px dashed var(--accent);padding:4px 0 4px 8px;margin:6px 0}.wkanl textarea{width:100%;box-sizing:border-box;font:inherit;font-size:13px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:6px}" +
     ".wktag{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:2px}" +
+    ".wksrc{margin:12px 0 4px}.wksrc>summary{cursor:pointer;font-weight:600;min-height:32px;line-height:32px}.wksrcrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.wksrcrow .wkh{flex:1}.wksrcrow select{min-height:36px;font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:3px}" +
     ".wkpkg{margin:8px 0 4px}.wknew{font-size:11px;font-weight:600;color:var(--accent)}" +
     ".wktr{width:100%;border-collapse:collapse}.wktr th{text-align:left;font-weight:600;padding:4px 8px 4px 0;width:34%;vertical-align:middle}.wktr td{padding:3px 0}.wktr tr+tr{border-top:1px solid var(--line)}.wktot th{font-weight:700}" +
     ".wkspark{display:block;width:100%;height:34px}.wkspark .wkbar{fill:var(--accent)}.wktot .wkspark .wkbar{fill:var(--ink)}.wkspark .wkhit{fill:transparent}.wkspark g:hover .wkbar{opacity:.7}.wkspark .wkbase{stroke:var(--line);stroke-width:1}" +
@@ -583,7 +656,7 @@
     new MutationObserver(function () { if (pend) return; pend = true; setTimeout(function () { pend = false; decorate(); }, 50); })
       .observe(document.body, { childList: true, subtree: true });
     decorate();
-    window.OSAP_WORK = { open: openWk, keyOf: keyOf, items: function () { return WORK.items; } };
+    window.OSAP_WORK = { open: openWk, keyOf: keyOf, items: function () { return WORK.items; }, sourceDefaults: function () { return WORK.srcRel; } };
   }
   (function wait(n) { if (window.TSAP && window.TSAP.records) start(); else if (n < 200) setTimeout(function () { wait(n + 1); }, 100); })(0);
 })();
