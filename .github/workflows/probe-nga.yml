@@ -1,0 +1,16 @@
+# Test only (temporary): which NGA MSI request returns the warnings in force now (tools/probe_nga.sh). Writes nothing.
+name: Probe NGA warnings
+on:
+  push:
+    branches: [claude/airspace-sea-warnings]
+    paths: [tools/probe_nga.sh, .github/workflows/probe-nga.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_nga.sh
