@@ -38,6 +38,7 @@ jobs:
       - run: node tests/places_deepsouth.test.mjs
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
+      - run: node tests/sat.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/deepsouth_border.test.mjs
@@ -67,6 +68,8 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
+      # source grading in My work: the Admiralty / NATO scale, cleaning grades and per-source defaults, escaped picker
+      - run: node tests/grade.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
@@ -104,6 +107,7 @@ jobs:
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/flood_overlay_smoke.mjs
       - run: node tests/pop_smoke.mjs
+      - run: node tests/sat_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs
@@ -170,3 +174,5 @@ jobs:
       - run: node tests/social_filter_smoke.mjs
       - run: node tests/speed_budget.mjs
       - run: node tests/boolq_smoke.mjs
+      # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
+      - run: node tests/grade_smoke.mjs

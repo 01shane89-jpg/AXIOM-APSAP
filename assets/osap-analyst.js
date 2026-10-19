@@ -647,7 +647,7 @@
     var h = "<h3>Saved reports (" + R.length + ")</h3>" + (R.length ? "<table><tr><th>Report</th><th>Source</th><th>Your note</th><th></th></tr>" + R.map(function (it) {
       var s = it.snap || {}, has = s.lat != null && s.lon != null;
       return "<tr><td>" + (safeUrl(s.url) ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + "</a>" : esc(s.title)) + '<div class="anal">' + esc([s.place, s.ts, (it.cc || "").toUpperCase()].filter(Boolean).join(" \u00b7 ")) +
-        (s.fp ? " \u00b7 SHA-256 " + esc(String(s.fp).slice(0, 12)) + "\u2026" : "") + "</div></td><td>" + esc(s.source || "") + (s.status ? '<div class="anal">' + esc(s.status) + "</div>" : "") + "</td><td>" + esc(it.note || "") + "</td><td>" +
+        (s.fp ? " \u00b7 SHA-256 " + esc(String(s.fp).slice(0, 12)) + "\u2026" : "") + "</div></td><td>" + esc(s.source || "") + (it.grade && W.OSAP_GRADE ? " " + W.OSAP_GRADE.badge(it.grade) : "") + (s.status ? '<div class="anal">' + esc(s.status) + "</div>" : "") + "</td><td>" + esc(it.note || "") + "</td><td>" +
         (has ? '<button type="button" data-an-fly="' + (+s.lat) + "," + (+s.lon) + '">Map</button>' : "") + "</td></tr>";
     }).join("") + "</table>" : '<p class="obs">None yet. Save a report from its card (My work).</p>');
     h += "<h3>Saved locations (" + P.length + ")</h3>" + (P.length ? "<table><tr><th>Point</th><th>Where</th><th>Photos</th><th></th></tr>" + P.map(function (p) {
