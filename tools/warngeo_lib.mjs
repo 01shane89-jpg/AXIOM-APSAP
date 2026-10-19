@@ -164,7 +164,15 @@ export function timesOf(text, issuedIso) {
   }
   const cancel = new RegExp("CANCEL THIS (?:MSG|MESSAGE)\\s+" + G).exec(t);
   if (cancel) r.to = grp(cancel, 1, issuedIso, null);
-  if (!r.windows.length) {
+  // "0500Z TO 0845Z DAILY 21 OCT THRU 03 NOV" (also "1030Z TO 1230Z DAILY 20 THRU 22 OCT"): the first and last day, and the daily hours
+  const daily = /(\d{2})(\d{2})Z\s+TO\s+(\d{2})(\d{2})Z\s+DAILY\s+(\d{1,2})(?:\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?\s+(?:THRU|THROUGH|TO)\s+(\d{1,2})\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)/.exec(t);
+  if (daily && !r.windows.length) {
+    r.from = nearYear(issuedIso, MON[daily[6] || daily[8]], +daily[5], +daily[1], +daily[2]);
+    const to = nearYear(issuedIso, MON[daily[8]], +daily[7], +daily[3], +daily[4]);
+    if (!r.to) r.to = to;
+    r.daily = daily[1] + daily[2] + "Z to " + daily[3] + daily[4] + "Z";
+  }
+  if (!r.windows.length && !r.from) {
     const start = new RegExp(G + "\\s+UNTIL\\s+FURTHER\\s+NOTICE").exec(t);
     if (start) r.from = grp(start, 1, issuedIso, null);
   }
@@ -210,9 +218,50 @@ export function skipNga(text) {
 }
 export const NAV_AREAS = { A: "HYDROLANT", P: "HYDROPAC", C: "HYDROARC", 4: "NAVAREA IV", 12: "NAVAREA XII" };
 
+// ---------- NGA Daily Memoranda ----------
+// NGA's broadcast-warn API (msi.nga.mil/api/publications/broadcast-warn) stopped at 2024-05-10: its own
+// /broadcast-warn/latest-warning answers {"date":"2024-05-10T15:42:00Z"} and msgYear=2025 or 2026 returns nothing (checked
+// from GitHub Actions on 2026-10-19). The warnings in force now are in the Daily Memorandum text files, one per area, listed
+// by /api/media?type=Nav Warnings and fetched through /api/publications/download?key=<s3Key>&type=view.
+export const MEM_BASE = "https://msi.nga.mil/api/publications/download?type=view&key=";
+export const MEM_FILES = [
+  { code: "4", area: "NAVAREA IV", key: "16694640/SFH00000/DailyMemIV.txt" }, { code: "12", area: "NAVAREA XII", key: "16694640/SFH00000/DailyMemXII.txt" },
+  { code: "A", area: "HYDROLANT", key: "16694640/SFH00000/DailyMemLAN.txt" }, { code: "P", area: "HYDROPAC", key: "16694640/SFH00000/DailyMemPAC.txt" },
+  { code: "C", area: "HYDROARC", key: "16694640/SFH00000/DailyMemARC.txt" }];
+// the media list (api/media?type=Nav Warnings) to the memorandum files, by area name; the fixed list when it names none
+export function memFiles(media) {
+  const by = Object.fromEntries(MEM_FILES.map((m) => [m.area, m]));
+  const got = (Array.isArray(media) ? media : []).filter((m) => m && by[m.displayName] && /\.txt$/i.test(m.s3Key || ""))
+    .map((m) => ({ ...by[m.displayName], key: m.s3Key, modified: m.lastModified || null }));
+  return got.length ? got : MEM_FILES;
+}
+// one Daily Memorandum into warnings shaped like the old API's records: { navArea, msgNumber, msgYear, subregion, issueDate, text }.
+// Each warning is a date-time group line ("161621Z OCT 26"), an id line ("HYDROPAC 3013/26." or "HYDROARC 178/25(15)."), then
+// its text; older ones carried over are headed "MSGID/GENADMIN/…//" and "RMKS/" with no date-time group.
+const MEM_ID = /^(HYDROPAC|HYDROLANT|HYDROARC|NAVAREA IV|NAVAREA XII|SPECIAL WARNING)\s+(\d+)\/(\d{2,4})(?:\(([^)]*)\))?\.?\s*$/;
+const MEM_DTG = /^(\d{6}Z\s+[A-Z]{3}\s+\d{2,4})\.?\s*$/;
+export function parseDailyMem(text, code) {
+  const L = String(text || "").replace(/\r/g, "").split("\n");
+  const out = [], asof = (/IN FORCE AS OF\s+(\d+Z\s+[A-Z]{3})/.exec(L.slice(0, 3).join(" ")) || [])[1] || "";
+  const ids = [];
+  L.forEach((l, i) => { const m = MEM_ID.exec(l.trim()); if (m) ids.push({ i, m }); });
+  ids.forEach((x, k) => {
+    // the header lines just above an id line (date-time group, MSGID, RMKS) belong to that warning, not to the one before
+    const isHead = (s) => MEM_DTG.test(s) || /^MSGID\/|^RMKS\/?$/.test(s);
+    let dt = "", end = k + 1 < ids.length ? ids[k + 1].i : L.length;
+    for (let j = x.i - 1; j >= Math.max(0, x.i - 3); j--) { const s = L[j].trim(); if (!isHead(s)) break; if (MEM_DTG.test(s)) dt = MEM_DTG.exec(s)[1]; }
+    while (end - 1 > x.i && isHead(L[end - 1].trim())) end--;
+    const body = L.slice(x.i + 1, end).join("\n").trim();
+    const yy = x.m[3].length === 2 ? 2000 + +x.m[3] : +x.m[3];
+    out.push({ navArea: code, area: x.m[1], msgNumber: +x.m[2], msgYear: yy, subregion: x.m[4] || "",
+      issueDate: dt.replace(/\s+/g, " "), authority: "", text: body });
+  });
+  return { asof, warnings: out };
+}
+
 // one NGA broadcast warning (as the MSI API sends it) into GeoJSON features, one per shape; none when it gives no position
 export function ngaFeatures(w, code) {
-  const area = NAV_AREAS[code] || NAV_AREAS[w.navArea] || String(w.navArea || code || "");
+  const area = (w.area && String(w.area).length > 2 ? w.area : "") || NAV_AREAS[code] || NAV_AREAS[w.navArea] || String(w.navArea || code || "");
   const raw = String(w.text || "").replace(/\r/g, "").trim();
   const id = area + " " + (w.msgNumber || w.number || "") + "/" + String(w.msgYear || w.year || "").slice(-2);
   const issued = dtg(w.issueDate);
@@ -222,10 +271,10 @@ export function ngaFeatures(w, code) {
   const shapes = shapesOf(raw);
   const props = {
     cat: "sea", src: "nga", id, area, subregion: w.subregion || "", authority: String(w.authority || "").trim(), issued, issued_raw: w.issueDate || "",
-    from: times.from, to: times.to, ufn: times.ufn, windows: times.windows.slice(0, 6), kind: kindOf(flat), where: head.join(" · "),
+    from: times.from, to: times.to, ufn: times.ufn, windows: times.windows.slice(0, 6), daily: times.daily || "", kind: kindOf(flat), where: head.join(" · "),
     text: redactPhones(raw).slice(0, 4000),
     link: "https://msi.nga.mil/NavWarnings",
-    api: "https://msi.nga.mil/api/publications/broadcast-warn?navArea=" + encodeURIComponent(code || w.navArea || "") + "&msgYear=" + (w.msgYear || "") + "&msgNumber=" + (w.msgNumber || "") + "&output=json",
+    api: w.source || "https://msi.nga.mil/api/publications/broadcast-warn?navArea=" + encodeURIComponent(code || w.navArea || "") + "&msgYear=" + (w.msgYear || "") + "&msgNumber=" + (w.msgNumber || "") + "&output=json",
   };
   return shapes.map((s, i) => ({ type: "Feature", geometry: s.geometry,
     properties: { ...props, shape: s.shape, part: s.part || "", radius_m: s.radius_m || null, n: shapes.length, k: i } }));

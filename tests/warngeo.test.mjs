@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import vm from "node:vm";
 import { coordsIn, unwrap, shapesOf, timesOf, dtg, notamWindow, redactPhones, kindOf, ngaFeatures, tfrDetail, tfrFeature, czibRows, czibPartial,
-  czibCountries, pack, unpack, skipNga } from "../tools/warngeo_lib.mjs";
+  czibCountries, pack, unpack, skipNga, parseDailyMem, memFiles, MEM_BASE } from "../tools/warngeo_lib.mjs";
 import { ccFromName, ccsInText } from "../tools/geo_cc.mjs";
 
 let fails = 0;
@@ -64,6 +64,28 @@ ok(f[0].properties.shape === "area" && lons.every((x) => x < -174 && x > -176), 
 f = feats("P", 1549);
 ok(f.length === 2 && f.every((x) => x.properties.shape === "point") && f[0].properties.kind === "sar", "a missing vessel's two positions are points, search and rescue");
 ok(feats("A", 945).length === 0 && skipNga(nga("A", 945).text) && skipNga(nga("12", 249).text) && !skipNga(nga("A", 789).text), "the 'warnings in force' list and cancel-only messages are skipped; 'mines adrift' with no position is kept");
+
+/* ---------- NGA Daily Memoranda (the warnings in force now; the old query API stops at May 2024) ---------- */
+const pac = parseDailyMem(S.memPac, "P");
+ok(pac.asof === "1161855Z OCT" && pac.warnings.map((w) => w.msgNumber).join() === "3014,3013,3012,3010,3009,3008,3007,3006" && pac.warnings.every((w) => w.msgYear === 2026),
+  "HYDROPAC memorandum: the in-force list then seven warnings, all of 2026, in order (" + pac.warnings.length + ")");
+ok(skipNga(pac.warnings[0].text) && !skipNga(pac.warnings[1].text), "the memorandum's own in-force list is skipped, the warnings are not");
+const w3013 = pac.warnings.find((w) => w.msgNumber === 3013);
+ok(w3013 && w3013.issueDate === "161621Z OCT 26" && /^GULF OF OMAN\.\nOMAN\.\n1\. M\/V CAPE DAO SANK/.test(w3013.text) && !/HYDROPAC 3012/.test(w3013.text) && !/161329Z/.test(w3013.text),
+  "each warning gets its own date-time group and text, and stops before the next one's header");
+let mf = ngaFeatures(pac.warnings.find((w) => w.msgNumber === 3007), "P");
+ok(mf.length === 1 && mf[0].properties.id === "HYDROPAC 3007/26" && mf[0].properties.shape === "area" && mf[0].properties.issued === "2026-10-16T09:39Z" &&
+  mf[0].properties.from === "2026-10-18T23:00Z" && mf[0].properties.to === "2026-10-30T08:00Z" && mf[0].properties.kind === "hazard", "HYDROPAC 3007/26 gunnery area off Russia: polygon, issue time, window 182300Z to 300700Z, end at CANCEL THIS MSG");
+mf = ngaFeatures(pac.warnings.find((w) => w.msgNumber === 3006), "P");
+ok(mf.length === 2 && mf.every((x) => x.properties.shape === "area") && mf[0].properties.kind === "launch" && mf[0].properties.from === "2026-10-21T05:00Z" &&
+  mf[0].properties.to === "2026-11-03T09:45Z" && mf[0].properties.daily === "0500Z to 0845Z", "HYDROPAC 3006/26 rocket launch and space debris areas, daily 0500Z to 0845Z from 21 Oct, ending 030945Z NOV");
+const lan = parseDailyMem(S.memLan, "A");
+const l838 = lan.warnings.find((w) => w.msgNumber === 838);
+ok(lan.warnings.length === 3 && lan.warnings[0].msgNumber === 2017 && lan.warnings[0].subregion === "55" && l838 && l838.msgYear === 2022 && l838.issueDate === "" &&
+  !/MSGID|RMKS/.test(lan.warnings[0].text + l838.text), "carried-over warnings headed MSGID/GENADMIN and RMKS: read, with no date-time group, headers not in the text");
+ok(memFiles(S.media).length === 5 && memFiles(S.media).every((m) => /DailyMem\w+\.txt$/.test(m.key) && m.modified) && memFiles(null).length === 5, "media list to the five memorandum files (the Google Earth file left out); fixed list when the list fails");
+mf = ngaFeatures({ ...pac.warnings[1], source: MEM_BASE + "16694640/SFH00000/DailyMemPAC.txt" }, "P");
+ok(mf.every((x) => /DailyMemPAC\.txt$/.test(x.properties.api)), "a memorandum warning links its memorandum file");
 
 /* ---------- times ---------- */
 ok(dtg("101515Z MAY 2024") === "2024-05-10T15:15Z" && dtg("280342Z APR 23") === "2023-04-28T03:42Z" && dtg("nonsense") === null, "date-time groups to UTC");

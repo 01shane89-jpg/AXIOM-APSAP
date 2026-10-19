@@ -88,6 +88,7 @@
       (isFinite(iss) ? "Issued " + esc(zt(iss)) + "<br>" : w.issued_raw ? "Issued " + esc(w.issued_raw) + "<br>" : "") +
       (isFinite(from) ? "From " + esc(zt(from)) + "<br>" : "") +
       (isFinite(to) ? (to < Date.now() ? '<b style="color:#c62828">Ended</b> ' : "Until ") + esc(zt(to)) + "<br>" : w.ufn ? "Until further notice<br>" : "") +
+      (w.daily ? "Daily " + esc(w.daily) + " between those days<br>" : "") +
       (w.windows && w.windows.length > 1 ? "Times: " + w.windows.map(function (x) { return esc(zt(ms(x.from))) + " to " + esc(zt(ms(x.to))); }).join("; ") + "<br>" : "") +
       "</p>";
     if (w.src === "easa") h += '<p class="obs" style="margin:4px 0">' + (w.partial ? "The bulletin covers <b>part</b> of this airspace (" + esc(w.where) + "); the outline is the whole country, so read the bulletin for the exact area." :

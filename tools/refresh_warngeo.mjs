@@ -2,8 +2,8 @@
 // Run hourly by .github/workflows/refresh-flood.yml (fast lane), or by hand with Node 18+ from the repo root.
 // Writes data/live/warnings-geo.json: one GeoJSON-style feature per shape, with the warning's id, issuing authority, times
 // (UTC; the page adds local time), the original text (telephone numbers removed) and a link to the source.
-//   Sea:  NGA Maritime Safety Information broadcast warnings, all five areas NGA issues (HYDROLANT, HYDROPAC, HYDROARC,
-//         NAVAREA IV, NAVAREA XII), which between them repeat the other coordinators' NAVAREA warnings worldwide.
+//   Sea:  NGA Maritime Safety Information broadcast warnings in force, from the Daily Memoranda of all five areas NGA issues
+//         (HYDROLANT, HYDROPAC, HYDROARC, NAVAREA IV, NAVAREA XII), which repeat the other coordinators' warnings worldwide.
 //         U.S. Government work, public domain. Positions read from the text by tools/warngeo_lib.mjs.
 //   Air:  FAA temporary flight restrictions (tfr.faa.gov, United States only; public domain), with their published polygons.
 //         EASA Conflict Zone Information Bulletins (easa.europa.eu; reuse with acknowledgement): the airspace each one names,
@@ -11,7 +11,7 @@
 // Keyless sources only (the FAA NOTAM API needs a key, so it is not used). Each source is independent: one failing keeps its
 // features from the previous file, and the failure is reported in "sources".
 import fs from "node:fs";
-import { ngaFeatures, NAV_AREAS, redactPhones, dtg, kindOf, tfrDetail, tfrFeature, czibRows, czibPartial, czibCountries, pack, unpack, skipNga } from "./warngeo_lib.mjs";
+import { ngaFeatures, memFiles, parseDailyMem, MEM_BASE, redactPhones, dtg, kindOf, tfrDetail, tfrFeature, czibRows, czibPartial, czibCountries, pack, unpack, skipNga } from "./warngeo_lib.mjs";
 import { ccsAt, ccsInText, ccFromName, outlineOf } from "./geo_cc.mjs";
 
 const OUT = process.env.OUT || "data/live/warnings-geo.json";
@@ -34,38 +34,44 @@ const r3 = (g) => JSON.parse(JSON.stringify(g, (k, v) => (typeof v === "number" 
 const features = [], unplaced = [], sources = [];
 let czib = [];
 
-// ---------- NGA broadcast warnings ----------
+// ---------- NGA broadcast warnings (Daily Memoranda) ----------
+// The old query API (api/publications/broadcast-warn?status=A) stopped at 10 May 2024; the warnings in force now are in the
+// Daily Memorandum of each area (see MEM_FILES in tools/warngeo_lib.mjs).
 {
-  const st = { id: "nga", name: "NGA Maritime Safety Information, broadcast navigational warnings", licence: "U.S. Government work, public domain",
+  const st = { id: "nga", name: "NGA Maritime Safety Information, broadcast navigational warnings (Daily Memoranda)", licence: "U.S. Government work, public domain",
     url: "https://msi.nga.mil/NavWarnings", areas: [] };
   let anyOk = false;
   const got = [];
-  for (const code of Object.keys(NAV_AREAS)) {
+  let media = null;
+  try { media = await get("https://msi.nga.mil/api/media?type=Nav%20Warnings"); } catch (e) {}
+  for (const mf of memFiles(media)) {
+    const src = MEM_BASE + mf.key;
     try {
-      const j = await get("https://msi.nga.mil/api/publications/broadcast-warn?navArea=" + code + "&status=A&output=json");
-      const list = j["broadcast-warn"] || [];
+      const mem = parseDailyMem(await get(src, "text"), mf.code);
+      if (!mem.warnings.length) throw new Error("no warnings in the memorandum (layout changed?)");
       let nf = 0, nw = 0;
-      for (const w of list) {
+      for (const w of mem.warnings) {
         const text = String(w.text || "");
         if (skipNga(text)) continue;
         nw++;
-        const fs_ = ngaFeatures(w, code);
+        w.source = src;
+        const fs_ = ngaFeatures(w, mf.code);
         if (fs_.length) { fs_.forEach((f) => { const p = firstPt(f.geometry); f.properties.ccs = ccsAt(p[1], p[0], 1.5); got.push(f); }); nf += fs_.length; }
         else {
-          const id = NAV_AREAS[code] + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2);
-          unplaced.push({ src: "nga", id, area: NAV_AREAS[code], authority: String(w.authority || "").trim(), issued: dtg(w.issueDate), kind: kindOf(text.replace(/\s+/g, " ")),
+          const id = (w.area || mf.area) + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2);
+          unplaced.push({ src: "nga", id, area: w.area || mf.area, authority: "", issued: dtg(w.issueDate), kind: kindOf(text.replace(/\s+/g, " ")),
             text: redactPhones(text.trim()).slice(0, 2000), link: st.url, ccs: ccsInText(text) });
         }
       }
-      st.areas.push({ area: NAV_AREAS[code], ok: true, warnings: nw, shapes: nf });
+      st.areas.push({ area: mf.area, ok: true, warnings: nw, shapes: nf, inforce_asof: mem.asof, modified: mf.modified || null });
       anyOk = true;
-    } catch (e) { st.areas.push({ area: NAV_AREAS[code], ok: false, error: err(e) }); }
+    } catch (e) { st.areas.push({ area: mf.area, ok: false, error: err(e) }); }
   }
   // an area that failed keeps its shapes from the last good run
   for (const a of st.areas) if (!a.ok) got.push(...keepOld("nga").filter((f) => f.properties.area === a.area));
   features.push(...got);
   st.ok = anyOk; st.n = got.length;
-  st.note = st.areas.map((a) => a.area + (a.ok ? " " + a.warnings + " warnings" : " failed (" + a.error + ")")).join(", ");
+  st.note = st.areas.map((a) => a.area + (a.ok ? " " + a.warnings + " warnings" + (a.modified ? " (file of " + a.modified.slice(0, 16) + "Z)" : "") : " failed (" + a.error + ")")).join(", ");
   sources.push(st);
 }
 
