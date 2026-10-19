@@ -28,6 +28,8 @@
       function () { return !!q("#brief-btn") || "Not available for this view"; }, function () { press("#brief-btn"); }],
     ["report", "Country", "Country report", "PMESII summary and threat assessment (AI draft)",
       function () { return !!q("#report-btn") || "Not available for this view"; }, function () { press("#report-btn"); }],
+    ["intelbrief", "Country", "Intelligence brief (PowerPoint)", "Briefing deck to download: choose the dates, topic and region; bottom line, trend, map, key events, slides for your judgments, every source with its SHA-256",
+      function () { return !!(W.OSAP_INTELBRIEF && W.OSAP_TLREPORT && W.OSAP_TLREPORT.data) || "Still loading"; }, function () { W.OSAP_INTELBRIEF.open(); }],
     ["daily", "Country", "Daily summary", "Key events of the last 24 hours with every source, in Today",
       function () { return !!(W.OSAP_TODAY && W.OSAP_DAILYQ) || "Not available for this view"; },
       function () { W.OSAP_TODAY.show(); setTimeout(function () { var d = D.getElementById("td-daily"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "start" }); }, 120); }],
