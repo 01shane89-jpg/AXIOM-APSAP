@@ -457,8 +457,11 @@
     D.head.appendChild(s);
   }
 
+  /* settled once the plan is known, or once it is clear this is not the Netlify site (OSAP_TIER.ready) */
+  var readyDone, READY = new Promise(function (r) { readyDone = r; });
   function start() {
     refreshPlan().then(function () {
+      readyDone();
       STARTED_OUT = !CFG.signedIn;
       css(); draw();
       D.addEventListener("click", guard, true);
@@ -480,13 +483,14 @@
           sessionStorage.setItem(K_RELOAD, "1"); location.reload();
         } else sessionStorage.removeItem(K_RELOAD);
       } catch (e) { /* no reload */ }
-    }, function () { /* not the Netlify site: no paywall here */ });
+    }, function () { readyDone(); /* not the Netlify site: no paywall here */ });
   }
 
   W.OSAP_TIER = {
     on: function () { return !!CFG; },
     tier: tier,
     owner: function () { return !!(CFG && CFG.owner); },
+    ready: READY,
     open: function () { open("plans"); },
     users: function () { if (CFG && CFG.owner) open("users"); },
     allows: function (need) { return !locked(need); },
