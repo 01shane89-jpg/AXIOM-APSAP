@@ -125,7 +125,8 @@ await p.setViewportSize({ width: 1400, height: 900 });
 /* switching country reloads OSAP there and opens the window again */
 await p.evaluate(() => { const s = document.getElementById("ib-cc"); s.value = "vn"; s.dispatchEvent(new Event("change")); });
 await p.waitForFunction(() => window.TSAP && window.TSAP.country === "vn" && window.OSAP_INTELBRIEF && !document.getElementById("ibdlg")?.hidden && document.getElementById("ib-cc")?.value === "vn", null, { timeout: 60000 });
-ok(true, "country switch: OSAP reloads on Vietnam and the window opens again");
+await p.waitForFunction(() => window.OSAP_INTELBRIEF._state().data, null, { timeout: 30000 });
+ok(await p.evaluate(() => /\d+ records? match/.test(document.getElementById("ib-note").textContent)), "country switch: OSAP reloads on Vietnam and the window opens again with its records");
 if (OUT) await p.screenshot({ path: OUT + "/intelbrief.png" });
 
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 3).join(" | ") : ""));
