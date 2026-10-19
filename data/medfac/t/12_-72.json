@@ -22,6 +22,7 @@
 ["n703382734",12.30585,-71.24683,"co",{"name":"Arkuhmo","aeroway":"aerodrome"}],
 ["n7846313984",12.49975,-70.01493,"nl",{"aeroway":"helipad"}],
 ["w1063074020",12.2217,-71.98372,"co",{"name":"Aeropuerto de Puerto Bolívar","operator":"Colombia","aeroway":"aerodrome","icao":"SKPB","aerodrome:type":"private","wikidata":"Q7258548"}],
+["w259923393",12.35983,-70.90212,"ve",{"aeroway":"helipad"}],
 ["w335599580",12.54036,-70.05893,"nl",{"name":"Physical Therapy","amenity":"clinic","addr:housenumber":"3","addr:street":"Caya Punta Brabo"}],
 ["w335599612",12.54017,-70.05927,"nl",{"name":"Heart Clinic Aruba","amenity":"clinic","addr:housenumber":"5","addr:street":"Caya Punta Brabo"}],
 ["w370096797",12.56714,-70.03219,"nl",{"name":"Noord Medical Center","amenity":"clinic","addr:housenumber":"63","addr:street":"Noord","addr:city":"Noord"}],
