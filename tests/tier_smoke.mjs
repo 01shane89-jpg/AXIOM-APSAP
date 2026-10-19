@@ -104,8 +104,8 @@ const codeStore = (await import("./codes_store.mjs")).memoryStore(); codesFn.use
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-async function open(token, path = "", until = 3600e3, rt) {
-  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
+async function open(token, path = "", until = 3600e3, rt, viewport = { width: 1400, height: 900 }) {
+  const ctx = await browser.newContext({ viewport, serviceWorkers: "block" });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   const refused = [], errors = [];
   if (token) await ctx.addInitScript({ content: "if(!sessionStorage.getItem('t-seeded'))try{sessionStorage.setItem('t-seeded','1');localStorage.setItem('osap-auth',JSON.stringify({access_token:'" + token + "',refresh_token:'" + (rt || token) + "',until:Date.now()+" + until + "}));document.cookie='nf_jwt=" + token + "; path=/'}catch(e){}" });
@@ -380,6 +380,17 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok((await t.p.evaluate(() => fetch("api/osap-codes", { headers: { authorization: "Bearer tok-free" } }).then((r) => r.status))) === 403, "only the owner can list codes");
   ok(errors.length === 0 && t.errors.length === 0, "beta codes: no page errors " + errors.concat(t.errors).join(" | "));
   await t.ctx.close(); await ctx.close();
+}
+// 13. a phone (iPhone Safari with its bars): Settings stays on the screen and scrolls down to Plan and sign-in and Users
+{
+  const { ctx, p, errors } = await open("tok-boss", "", 3600e3, undefined, { width: 390, height: 664 });
+  await p.getByRole("button", { name: "Open map" }).first().click(); await p.waitForTimeout(1500);
+  await p.evaluate(() => document.querySelector('[data-tidy="set"]').click()); await p.waitForTimeout(500);
+  const m = await p.evaluate(() => { const d = document.getElementById("tidy-pop"), r = d.getBoundingClientRect(); d.scrollTop = 1e5; const u = d.querySelector('[data-tp="@users"]').getBoundingClientRect(); return { l: r.left, r: r.right, b: r.bottom, h: innerHeight, w: innerWidth, uTop: u.top, uBot: u.bottom, top: r.top }; });
+  ok(m.l >= 0 && m.r <= m.w && m.b <= m.h, "phone: Settings fits the screen " + JSON.stringify(m));
+  ok(m.uTop >= m.top && m.uBot <= m.b, "phone: Settings scrolls down to Users " + JSON.stringify(m));
+  ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
+  await ctx.close();
 }
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");
