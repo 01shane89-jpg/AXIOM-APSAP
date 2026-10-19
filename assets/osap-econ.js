@@ -144,7 +144,8 @@
         '<span class="bm"> · ' + esc(fx.date) + "</span></td><td>" + esc(pct(fx.ch30)) + (fx.from30 ? '<span class="bm"> since ' + esc(fx.from30) + "</span>" : "") + "</td><td>" + esc(pct(fx.ch365)) +
         (fx.from365 ? '<span class="bm"> since ' + esc(fx.from365) + "</span>" : "") + "</td><td>" + spark(fxValues(fx), 160, 34, "Currency value in U.S. dollars, past year") + "</td></tr></table>" +
         '<p class="bm">The change is the currency\'s value in dollars: negative means it buys fewer dollars. A reference rate from fawazahmed0 currency-api (CC0); where a parallel (street) market exists the rate people pay can differ widely.' +
-        (fx.shared ? " The currency is " + esc(fx.shared) + ", shared with other countries, so the move is not this country's alone." : "") + (fx.stale ? " The latest rate is more than ten days old." : "") + "</p>";
+        (fx.shared ? " The currency is " + esc(fx.shared) + ", shared with other countries, so the move is not this country's alone." : "") + (fx.stale ? " The latest rate is more than ten days old." : "") +
+        (fx.basis ? " " + esc(fx.basis.left) + " older rate" + (fx.basis.left === 1 ? " was" : "s were") + " on a different basis (a new currency unit, a switch between the official and market rate, or a bad reading; the last on " + esc(fx.basis.last) + ") and " + (fx.basis.left === 1 ? "is" : "are") + " left out of the changes and the chart." : "") + "</p>";
     } else h += '<p class="bm">' + esc(fxLine(fx) || "No exchange rate held.") + "</p>";
     h += "<h3>" + link(E.prices && E.prices.page, "Staple food and fuel prices (WFP market monitoring)") + "</h3>";
     if (P.length) {
