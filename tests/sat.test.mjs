@@ -43,6 +43,9 @@ ok(d.before && d.before.date === "2026-09-18", "before = clear pass nearest 30 d
 const d2 = T.pickDefault(P.filter((p) => p.cloud > 50), 20, 30);
 ok(d2.after && d2.after.date === "2026-10-18" && d2.before && d2.before.date === "2026-09-13", "no clear pass: newest, and the nearest older one");
 ok(T.pickDefault([], 20, 30).after === null, "no passes: nothing picked");
+const real = T.groupPasses([feat("S2A_36UUA_20261005_1_L2A", "2026-10-05T09:06:00Z", 2.2), feat("S2B_36UUA_20260908_0_L2A", "2026-09-08T09:06:00Z", 35.9), feat("S2C_36UUA_20260906_0_L2A", "2026-09-06T09:16:00Z", 73.8)]);
+const d3 = T.pickDefault(real, 20, 30);
+ok(d3.before && d3.before.date === "2026-09-08", "no clear before: the least cloudy within 12 days of the target, not the nearest (" + (d3.before && d3.before.date) + ")");
 
 // UTM against PROJ
 const REF = [[51.5074, -0.1278, 30, false, 699316.234, 5710163.758], [50.45, 30.52, 36, false, 323940.495, 5591604.544], [-33.87, 151.21, 56, true, 334435.706, 6250816.398],

@@ -65,7 +65,7 @@
     }).sort(function (a, b) { return b.t - a.t; });
   }
   /* default pair: "after" = the newest pass at or under maxCloud (else the newest), "before" = the pass at or under maxCloud
-     nearest to gapDays before it (else the nearest older pass) */
+     nearest to gapDays before it (else the least cloudy within 12 days of that, else the nearest older pass) */
   function pickDefault(passes, maxCloud, gapDays) {
     if (!passes || !passes.length) return { after: null, before: null };
     var mc = maxCloud == null ? 20 : maxCloud, gap = (gapDays == null ? 30 : gapDays) * DAY;
@@ -73,7 +73,9 @@
     var after = passes.filter(clear)[0] || passes[0];
     var older = passes.filter(function (p) { return p.t < after.t - 0.5 * DAY; });
     var near = function (L) { return L.slice().sort(function (a, b) { return Math.abs(a.t - (after.t - gap)) - Math.abs(b.t - (after.t - gap)); })[0] || null; };
-    return { after: after, before: near(older.filter(clear)) || near(older) };
+    /* none clear: the least cloudy within 12 days of the target, else the nearest */
+    var win = older.filter(function (p) { return Math.abs(p.t - (after.t - gap)) <= 12 * DAY; }).sort(function (a, b) { return (a.cloud == null ? 101 : a.cloud) - (b.cloud == null ? 101 : b.cloud); })[0];
+    return { after: after, before: near(older.filter(clear)) || win || near(older) };
   }
   /* WGS84 -> UTM (Krüger series, error well under a metre inside a zone and a few metres at its edge) */
   function utm(lat, lon, zone, south) {
@@ -163,6 +165,8 @@
     return items.reduce(function (chain, it) {
       return chain.then(function () {
         if (signal && signal.aborted) throw new Error("aborted");
+        /* every pixel already drawn from a clearer tile of the pass: the rest are not fetched */
+        if (filled >= Wd * Ht) return;
         return tif(it.href).then(function (o) {
           /* the tile's grid at each node, and the part of the tile the canvas covers */
           var E = new Float64Array(grid.ll.length), N = new Float64Array(grid.ll.length), ub = [Infinity, Infinity, -Infinity, -Infinity];
