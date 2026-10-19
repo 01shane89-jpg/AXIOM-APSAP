@@ -62,6 +62,8 @@ export function fxDates(nowMs) {
   for (let d = 0; d <= 364; d += 7) out.add(ymd(nowMs - d * 864e5));
   return [...out].sort();
 }
+// a step between snapshots bigger than this factor is a change of basis (see fxBlock)
+export const BASIS = 2.5;
 // one country's currency block from {date: {cur: rate}} snapshots
 export function fxBlock(cur, snaps, nowMs) {
   if (!cur || cur === "usd") return { cur: "usd", usd: true };
@@ -69,9 +71,17 @@ export function fxBlock(cur, snaps, nowMs) {
   for (const d of dates) { const v = snaps[d] && snaps[d][cur]; if (v > 0) series.push([d, v]); }
   if (!series.length) return { cur, none: true };
   const last = series[series.length - 1];
-  const near = (target) => { // the snapshot nearest the target date, within 5 days
+  // a jump of more than BASIS times from one weekly snapshot to the next is a change of basis (a redenomination, a switch
+  // between the official and the market rate, or a bad snapshot), not a market move. Walking back from today, a rate that
+  // jumps that far from the next kept one is left out of the changes and the chart, and noted; a steady slide is kept.
+  const kept = [last], cut = [];
+  for (let i = series.length - 2; i >= 0; i--) {
+    const v = series[i][1], ref = kept[0][1];
+    if (v / ref < BASIS && ref / v < BASIS) kept.unshift(series[i]); else cut.unshift(series[i]);
+  }
+  const near = (target) => { // the comparable snapshot nearest the target date, within 5 days
     let best = null, bd = Infinity;
-    for (const s of series) { const dd = Math.abs(Date.parse(s[0]) - Date.parse(target)); if (dd < bd) { bd = dd; best = s; } }
+    for (const s of kept) { const dd = Math.abs(Date.parse(s[0]) - Date.parse(target)); if (dd < bd) { bd = dd; best = s; } }
     return bd <= 5 * 864e5 ? best : null;
   };
   const m1 = near(ymd(Date.parse(last[0]) - 30 * 864e5)), y1 = near(ymd(Date.parse(last[0]) - 365 * 864e5));
@@ -79,8 +89,9 @@ export function fxBlock(cur, snaps, nowMs) {
     cur, rate: last[1], date: last[0],
     ch30: m1 ? fxChange(m1[1], last[1]) : null, from30: m1 ? m1[0] : null,
     ch365: y1 ? fxChange(y1[1], last[1]) : null, from365: y1 ? y1[0] : null,
-    series: series.map((s) => [s[0], +s[1].toPrecision(6)]),
-    stale: nowMs - Date.parse(last[0]) > 10 * 864e5
+    series: kept.map((s) => [s[0], +s[1].toPrecision(6)]),
+    stale: nowMs - Date.parse(last[0]) > 10 * 864e5,
+    ...(cut.length ? { basis: { left: cut.length, last: cut[cut.length - 1][0] } } : {})
   };
 }
 

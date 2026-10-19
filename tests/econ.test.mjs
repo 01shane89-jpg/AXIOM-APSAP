@@ -36,6 +36,26 @@ ok(fx.rate === 100 && fx.date === "2026-10-19", "fxBlock: latest rate and date")
 ok(fx.ch30 === -15, "fxBlock: 30-day change " + fx.ch30);
 ok(fx.ch365 === -40, "fxBlock: 1-year change " + fx.ch365);
 ok(fx.series.length === dates.length, "fxBlock: one point per snapshot");
+ok(!fx.basis, "fxBlock: a real 40% fall is not treated as a change of basis");
+
+// a switch from the official rate (42,000) to the market rate (about 1,000,000) in January, as the source did for the Iranian rial
+const snapsIr = {};
+for (const d of dates) snapsIr[d] = { irr: d < "2026-01-12" ? 42000 : d >= "2026-10-01" ? 1300000 : 1000000 };
+const ir = L.fxBlock("irr", snapsIr, NOW);
+ok(ir.ch365 === null && ir.from365 === null, "fxBlock: no 1-year change across a change of basis (" + ir.ch365 + ")");
+ok(ir.ch30 === -23.1, "fxBlock: the 30-day market move still counts (" + ir.ch30 + ")");
+ok(ir.basis && ir.basis.last === "2026-01-05" && ir.series.every((s) => s[1] >= 1e6), "fxBlock: the old-basis rates are noted and left out of the chart");
+ok(!L.flagsOf(ir, []).some((f) => f.kind === "fx365"), "flagsOf: no 1-year crash flag from a change of basis");
+// a steady slide that adds up to far more than BASIS over the year (Venezuela, 203 to 879 bolívares) is a real fall
+const snapsVe = {};
+for (const d of dates) snapsVe[d] = { ves: 200 * Math.pow(4.4, 1 - (NOW - Date.parse(d)) / 864e5 / 365) };
+const ve = L.fxBlock("ves", snapsVe, NOW);
+ok(!ve.basis && ve.ch365 === -77.3, "fxBlock: a steady slide is a real fall, not a change of basis (" + ve.ch365 + ")");
+// a few bad snapshots in the middle (Mongolia's tögrög read as 0.56 for three weeks) do not break the 1-year change
+const snapsMn = {};
+for (const d of dates) snapsMn[d] = { mnt: d >= "2025-10-27" && d <= "2025-11-10" ? 0.56 : 3500 };
+const mn = L.fxBlock("mnt", snapsMn, NOW);
+ok(mn.ch365 === 0 && mn.basis.left === 3, "fxBlock: bad snapshots are left out, the 1-year change stands (" + mn.ch365 + ")");
 ok(L.fxBlock("usd", snaps, NOW).usd === true, "fxBlock: a dollar country has no rate");
 ok(L.fxBlock("zzz", snaps, NOW).none === true, "fxBlock: an unpublished currency is marked none");
 
