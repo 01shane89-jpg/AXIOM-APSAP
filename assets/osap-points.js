@@ -206,7 +206,7 @@
 
   /* ---------- the photo viewer: the original, full size, with its fingerprint and times ---------- */
   var vw = D.createElement("div"); vw.id = "pt-view"; vw.hidden = true; vw.setAttribute("role", "dialog"); vw.setAttribute("aria-label", "Photo");
-  vw.innerHTML = '<div class="pt-vimg"></div><div class="pt-vmeta"></div><div class="pt-vbar"><a class="pt-btn" data-pv="save" download>Save original</a><button type="button" class="pt-btn dng" data-pv="del">Delete</button><button type="button" class="pt-btn pri" data-pv="x">Close</button></div>';
+  vw.innerHTML = '<div class="pt-vimg"></div><div class="pt-vmeta"></div><div class="pt-vbar"><a class="pt-btn" data-pv="save" download>Save original</a><button type="button" class="pt-btn" data-pv="check">Check this photo</button><button type="button" class="pt-btn dng" data-pv="del">Delete</button><button type="button" class="pt-btn pri" data-pv="x">Close</button></div>';
   var vwCur = null;
   function view(id) {
     photo(id).then(function (r) {
@@ -230,6 +230,7 @@
     if (!b) { if (e.target === vw) viewClose(); return; }
     var k = b.getAttribute("data-pv");
     if (k === "x") viewClose();
+    else if (k === "check" && vwCur && W.OSAP_PHOTOCHECK) { var c = vwCur, cp = find(c.pid) || {}; viewClose(); edClose(); W.OSAP_PHOTOCHECK.open({ blob: blobOf(c), name: c.name, lat: cp.lat, lon: cp.lon, place: cp.n }); }
     else if (k === "del" && vwCur && W.confirm("Delete this photo from this device?")) {
       var r = vwCur; viewClose(); dropPhoto(r.pid, r.id).then(function () { if (cur === r.pid) edPaint(); });
     }

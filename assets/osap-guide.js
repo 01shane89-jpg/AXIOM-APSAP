@@ -119,7 +119,7 @@
       ul(["Tap " + b("Point") + " and choose " + b("At the map centre") + ", " + b("Tap the map to place it") + " or " + b("At my position") + ".",
         "Give it a name, a note and an icon (military symbol, shape or pin). Edits save as you type.",
         b("Take photo") + " or " + b("Add from library") + " adds pictures. Each original is kept unchanged with its SHA-256 fingerprint, on this device only.",
-        "Tap a point on the map for " + b("Measure from") + ", " + b("Route from") + ", " + b("Medical plan here") + ", " + b("Copy") + " and " + b("Remove") + "."]) +
+        "Tap a point on the map for " + b("Measure from") + ", " + b("Route from") + ", " + b("Medical plan here") + ", " + b("Check a photo here") + ", " + b("Copy") + " and " + b("Remove") + "."]) +
       tip("Points and photos stay on this device unless you turn on Sync my devices, which sends points (not photos) locked with your sync code. Clearing this site's data in the browser removes them, so use Move to another device to keep a copy.") },
 
     { id: "watch", t: "Watches and alerts", h:
@@ -145,6 +145,17 @@
         "Open " + b("Workspaces") + " at the top of My work to rename, switch, delete or make a " + b("New workspace") + ". Switching reloads the page.",
         b("Import KML, KMZ or workspace") + " brings shapes into the active workspace: placemarks become points, lines and polygons become shapes. A workspace .zip comes in as a new workspace.",
         b("Export workspace (.zip)") + " and " + b("Export KML") + " take it out."]) },
+    { id: "photocheck", t: "Photo and video check", h:
+      "<p>Checks where and when a picture or video was taken. Everything runs on your device: nothing is uploaded.</p>" +
+      ul(["Open it from " + b("My work") + " > " + b("Check a photo") + ", from a point on the map with " + b("Check a photo here") + ", or from a point's photo with " + b("Check this photo") + ". It sits beside the map.",
+        b("Pick a photo or video") + ". The metadata shows the camera time (with its UTC offset when the file has one), the GPS position (a red pin on the map), the camera, the software that saved it and the size. JPEG, PNG, WebP, HEIC, MP4 and MOV are read.",
+        "No metadata is normal: social media, chat apps and screenshots strip it. Any field can be faked, and camera clocks are often wrong, so treat it as a lead.",
+        "<b>Sun and shadow</b>: set the place (" + b("Map centre") + ", " + b("Tap the map") + " or " + b("Photo GPS") + ") and the date, time and UTC offset. You get the sun's direction and height, and the map shows the expected shadow (black) and the way to the sun (orange, dashed).",
+        "Type a shadow bearing you measured, or " + b("Draw the shadow on the map") + " (tap the foot of an object, then the tip of its shadow). The times that day when shadows point that way are listed; " + b("Use this time") + " puts one in the time box.",
+        "<b>Video</b>: step with " + b("◀ Frame") + " and " + b("Frame ▶") + ", then " + b("Take this frame as a picture") + " to use it in the other checks.",
+        "<b>Reverse image search</b>: " + b("Save the picture") + ", then open Google Lens, Bing Visual Search, Yandex Images or TinEye and upload it there yourself. Lens is best for places and landmarks, Yandex often for faces and Eastern Europe, TinEye for the oldest copy.",
+        b("Save to My work") + " keeps the results and your note as a My work note for this country."]) +
+      tip("The sun position uses the NOAA solar equations (about 0.01°). A shadow in a photo is foreshortened by the camera angle, so take its bearing from features you can place on the map.") },
 
     { id: "medplan", t: "Medical plan", h:
       fig("medplan", "The medical plan for the map centre") +

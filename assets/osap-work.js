@@ -56,7 +56,7 @@
     Array.prototype.forEach.call(document.querySelectorAll("#view-seg button[data-view]"), function (b) { o[b.getAttribute("data-view")] = b.textContent.replace(/\s*\d+$/, "").trim(); });
     return o;
   }
-  function layerName(id) { var n = layerNames()[id]; return n || String(id || "").replace(/^./, function (c) { return c.toUpperCase(); }); }
+  function layerName(id) { if (id === "photocheck") return "Photo check"; var n = layerNames()[id]; return n || String(id || "").replace(/^./, function (c) { return c.toUpperCase(); }); }
   function currentView() { var b = document.querySelector('#view-seg button[aria-selected="true"]'); return b ? b.getAttribute("data-view") : ""; }
 
   /* ---------- my work store ---------- */
@@ -89,6 +89,22 @@
     var it = itemFor(r, true), k = keyOf(r);
     it.note = String(text || "").slice(0, 4000); it.noteAt = it.note ? new Date().toISOString() : ""; touch(it);
     prune(k); saveWork(); decorate();
+  }
+  /* a note of the analyst's own that is not about a report (the photo check, assets/osap-photocheck.js): a saved item with a
+     random key, so it shows, exports and imports like any other */
+  function addNote(o) {
+    o = o || {};
+    var k = "", a = new Uint8Array(8);
+    try { window.crypto.getRandomValues(a); } catch (e) { for (var i = 0; i < 8; i++) a[i] = Math.floor(Math.random() * 256); }
+    for (var j = 0; j < 8; j++) k += (a[j] < 16 ? "0" : "") + a[j].toString(16);
+    var now = new Date().toISOString();
+    WORK.items[k] = { cc: CC, saved: true, reviewed: false, note: String(o.note || "").slice(0, 4000), at: now, savedAt: now, noteAt: now,
+      snap: { title: String(o.title || "Note").slice(0, 500), layer: String(o.layer || "note").slice(0, 40), type: "note", status: String(o.status || "Analyst's own note").slice(0, 120),
+        source: String(o.source || "").slice(0, 200), url: "", ts: now, place: "", lat: o.lat != null && isFinite(o.lat) ? +o.lat : null, lon: o.lon != null && isFinite(o.lon) ? +o.lon : null, fp: "" } };
+    var ok = lsSet(WORK_KEY, WORK);
+    if (!ok) delete WORK.items[k];
+    badge(); renderTab();
+    return ok;
   }
   function myItems() { return Object.keys(WORK.items).map(function (k) { var it = WORK.items[k]; it.k = k; return it; }).filter(function (it) { return it.cc === CC; }); }
 
@@ -410,11 +426,12 @@
           (s.fp ? '<div class="wks wkfp">SHA-256 ' + esc(s.fp) + "</div>" : "") +
           '<div class="wkanl"><span class="wktag">Your note</span>' +
           '<textarea data-wk-note="' + esc(it.k) + '" rows="2" maxlength="4000" placeholder="Your own note (not part of the source)">' + esc(it.note || "") + "</textarea></div>" +
-          '<div class="wkbtns">' + (live ? '<button type="button" class="refresh" data-wk-open="' + esc(it.k) + '">Open</button>' : '<span class="obs">Not in the current data; kept from when you saved it.</span>') +
+          '<div class="wkbtns">' + (live ? '<button type="button" class="refresh" data-wk-open="' + esc(it.k) + '">Open</button>' : s.layer === "photocheck" ? '<span class="obs">Your own photo check, kept on this device.</span>' : '<span class="obs">Not in the current data; kept from when you saved it.</span>') +
           '<button type="button" class="refresh" data-wk-tog="saved" data-k="' + esc(it.k) + '" aria-pressed="' + !!it.saved + '">' + (it.saved ? "★ Saved" : "☆ Save") + "</button>" +
           '<button type="button" class="refresh" data-wk-tog="reviewed" data-k="' + esc(it.k) + '" aria-pressed="' + !!it.reviewed + '">' + (it.reviewed ? "✓ Reviewed" : "Mark reviewed") + "</button>" +
           '<button type="button" class="refresh" data-wk-del="' + esc(it.k) + '">Remove</button></div></div>';
       }).join("") + "</div>" : '<p class="obs">Nothing here yet. Open any report and use ☆ Save, Mark reviewed or Add note.</p>') +
+      (window.OSAP_PHOTOCHECK && window.OSAP_PHOTOCHECK.open ? '<h3>Check a photo or video</h3><p class="obs">Read its metadata, check the sun and shadows, step through video frames and search for copies, all on this device.</p><p class="wkbtns"><button type="button" class="refresh" data-wk-act="photo">Check a photo</button></p>' : "") +
       '<h3>Keep your work when you change phone</h3><p class="obs">Export writes every country\'s saved items and notes to a file. Import merges a file back in; the newer copy of each item wins.</p>' +
       '<p class="wkbtns"><button type="button" class="refresh" data-wk-act="notes-out">Export my notes (.json)</button>' +
       '<label class="refresh wkfile">Import notes file<input type="file" accept="application/json,.json" data-wk-import hidden></label></p>';
@@ -451,7 +468,7 @@
     else if ((a = b.getAttribute("data-wk-f"))) { WK.savedF = a; renderTab(); }
     else if ((a = b.getAttribute("data-wk-scope"))) { WK.scope = a; renderTab(); }
     else if ((a = b.getAttribute("data-wk-exp"))) { if (a === "sitrep") { var sc = WK.scope || "tab", ua = WK.useArea !== false && !!area(); closeWk(); sitrep(sc, ua); } else exportAs(a, WK.scope || "tab", WK.useArea !== false && !!area()); }
-    else if ((a = b.getAttribute("data-wk-act"))) { if (a === "seen") markAllSeen(); else if (a === "notes-out") exportNotes(); }
+    else if ((a = b.getAttribute("data-wk-act"))) { if (a === "seen") markAllSeen(); else if (a === "notes-out") exportNotes(); else if (a === "photo" && window.OSAP_PHOTOCHECK) { closeWk(); window.OSAP_PHOTOCHECK.open(); } }
     else if ((a = b.getAttribute("data-wk-tog"))) {
       var k = b.getAttribute("data-k"), it = WORK.items[k]; if (!it) return;
       var r = recByKey(k);
@@ -583,7 +600,7 @@
     new MutationObserver(function () { if (pend) return; pend = true; setTimeout(function () { pend = false; decorate(); }, 50); })
       .observe(document.body, { childList: true, subtree: true });
     decorate();
-    window.OSAP_WORK = { open: openWk, keyOf: keyOf, items: function () { return WORK.items; } };
+    window.OSAP_WORK = { open: openWk, keyOf: keyOf, items: function () { return WORK.items; }, addNote: addNote };
   }
   (function wait(n) { if (window.TSAP && window.TSAP.records) start(); else if (n < 200) setTimeout(function () { wait(n + 1); }, 100); })(0);
 })();
