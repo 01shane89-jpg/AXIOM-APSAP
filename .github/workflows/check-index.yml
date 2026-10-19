@@ -69,6 +69,8 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
+      # GPS interference map: which aircraft reports count, hourly windows, grading, day files (tools/gnss.mjs)
+      - run: node tests/gnss.test.mjs
       - run: node tests/warngeo.test.mjs
       # source grading in My work: the Admiralty / NATO scale, cleaning grades and per-source defaults, escaped picker
       - run: node tests/grade.test.mjs
@@ -122,6 +124,7 @@ jobs:
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
       - run: node tests/sync_smoke.mjs
+      - run: node tests/gnss_smoke.mjs
       - run: node tests/guide_smoke.mjs
       - run: node tests/lang_smoke.mjs
       - run: node tests/ai_smoke.mjs
