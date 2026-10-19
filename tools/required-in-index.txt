@@ -168,3 +168,4 @@ id="ml-viewsheds"
 L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
+<script src="assets/osap-econ.js"></script>

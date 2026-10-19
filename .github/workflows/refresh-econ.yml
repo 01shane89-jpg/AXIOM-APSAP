@@ -1,0 +1,57 @@
+name: Refresh economic stress signals
+
+# Once a day (tools/refresh_econ.mjs): currency against the U.S. dollar (fawazahmed0 currency-api, CC0), WFP staple food and fuel
+# market prices (HDX, CC BY-IGO) and consumer price inflation (World Bank CC BY 4.0; IMF DataMapper) for every country, into
+# data/live/econ/<cc>.json and data/live/econ/index.json (the countries with a watch flag). The app's Today screen and country
+# brief read them (assets/osap-econ.js). Keyless, no account. A run on any branch other than main parks its output on
+# claude/econ-preview-data instead of committing.
+on:
+  schedule:
+    # after currency-api's daily snapshot (published around 0000Z) and off the hour
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-econ-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  econ:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Read currencies, market prices and inflation
+        timeout-minutes: 20
+        run: node tools/refresh_econ.mjs
+      - name: Park test output on a preview-data branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan econ-preview-data
+          git rm -rqf --cached .
+          git add -f data/live/econ
+          git commit -qm "Test output (econ) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/econ-preview-data
+      - name: Commit if anything changed
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/live/econ 2>/dev/null || true
+          if git diff --quiet -- data/live/econ; then echo "no change"; exit 0; fi
+          git config user.name "asap-econ-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live/econ
+          git commit -m "Refresh economic stress signals $(date -u +'%Y-%m-%d %H:%MZ')"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          exit 1
