@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-18"]=[["kp","2026-09-18T23:49","Kim Jong Un inspects weapons factories, calls for AI and automation upgrades","","NK News","https://www.nknews.org/2026/09/kim-jong-un-inspects-weapons-factories-calls-for-ai-and-automation-upgrades/","","","","border"]];
