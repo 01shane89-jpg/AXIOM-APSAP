@@ -151,6 +151,7 @@ data-ev-tlr="1"
 # sync my devices: encrypted relay sync of saved data, no account (claude/device-sync)
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-sync.js"></script>
+<script src="assets/osap-photocheck.js"></script>
 
 # the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
 <script src="assets/osap-guide.js"></script>

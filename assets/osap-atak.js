@@ -365,12 +365,13 @@
         var PX = W.OSAP_POINTS;
         d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
-          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
+          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? '<button type="button" data-pp="photo">Check a photo here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-pp]"); if (!b) return; var k = b.getAttribute("data-pp");
           map.closePopup();
           if (k === "del") ptDel(p.id);
           else if (k === "edit") PX.edit(p.id);
+          else if (k === "photo") W.OSAP_PHOTOCHECK.open({ lat: p.lat, lon: p.lon, place: p.n });
           else act(k, L.latLng(p.lat, p.lon));
         });
         if (PX && p.ph) PX.thumbs(d.querySelector(".atk-pph"), p.id);
