@@ -1,1 +1,12 @@
-[["w1034179628",43.61382,61.9216,"kz",{"aeroway":"helipad"}]]
+[["n6968210578",42.0867,60.28426,"uz",{"name":"\"Qarataw\" Nókis shańaraq poliklinikası","name:en":"Nukus family polyclinic \"Karatau\"","amenity":"clinic","healthcare":"clinic"}],
+["n7169883129",42.22053,60.10128,"uz",{"amenity":"clinic","healthcare":"clinic"}],
+["n7189336708",43.0727,60.4671,"uz",{"name":"Awil medecina punkti","name:en":"Rural medical center","amenity":"hospital","healthcare":"hospital"}],
+["r6554228",43.02741,60.28177,"uz",{"name":"Тахтакупырская центральная районная больница","amenity":"hospital","phone":"+99 (861) 435-20-45","addr:housenumber":"10","addr:street":"Doslik guzari"}],
+["w1034179628",43.61382,61.9216,"kz",{"aeroway":"helipad"}],
+["w1165086416",43.03861,60.25948,"uz",{"aeroway":"helipad"}],
+["w1165086417",43.03814,60.26021,"uz",{"aeroway":"helipad"}],
+["w452280730",43.02831,60.00679,"uz",{"name":"Караузякская центральная районная больница им. Чаржау Абдирова","amenity":"hospital","addr:housenumber":"2","addr:street":"G'aresizlik ko'shesi"}],
+["w525921873",42.11693,60.05235,"uz",{"name":"Amudarya rayoni orayliq emlewxanasi","name:en":"Amudarya Central District Hospital","amenity":"hospital","emergency":"yes","phone":"+998615151357","addr:housenumber":"21","addr:street":"Shifokorlar ko'shesi"}],
+["w633170174",43.0613,60.22022,"uz",{"name":"Сельский врачебный пункт","amenity":"hospital","healthcare":"hospital"}],
+["w633185738",43.02131,60.06526,"uz",{"name":"Сельский врачебный пункт","amenity":"hospital","healthcare":"hospital"}],
+["w699583814",42.11635,60.05437,"uz",{"name":"Amudarya rayoni poliklinikasi","amenity":"hospital","healthcare":"hospital"}]]

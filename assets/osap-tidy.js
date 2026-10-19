@@ -177,11 +177,13 @@
       var vh = Math.min(W.innerHeight, (W.visualViewport && W.visualViewport.height) || W.innerHeight);
       if (r.bottom + 4 + ph > vh - 8) pop.style.maxHeight = Math.max(160, Math.round(vh - r.bottom - 12)) + "px";
     }
-    /* parts of the panel (the theme buttons, Plan and sign-in) can widen it after it was placed: keep it on the screen */
+    /* parts of the panel (the theme buttons, Plan and sign-in) can grow it after it was placed: keep it on the screen,
+       scrolling inside when it is taller than the space below the button */
     (W.requestAnimationFrame || setTimeout)(function () {
       if (pop.hidden) return;
-      var pr = pop.getBoundingClientRect();
+      var pr = pop.getBoundingClientRect(), vh2 = Math.min(W.innerHeight, (W.visualViewport && W.visualViewport.height) || W.innerHeight);
       if (pr.right > W.innerWidth - 8) pop.style.left = Math.round(Math.max(8, W.innerWidth - pr.width - 8)) + "px";
+      if (pr.bottom > vh2 - 8) pop.style.maxHeight = Math.max(160, Math.round(vh2 - pr.top - 8)) + "px";
     });
   }
   [rep, set, perChip, repTool].forEach(function (b) { b.addEventListener("click", function (e) { e.stopPropagation(); if (popFor === b) popClose(); else popOpen(b); }); });
