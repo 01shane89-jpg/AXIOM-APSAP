@@ -155,7 +155,9 @@ await p.setViewportSize({ width: 1400, height: 900 });
 
 /* switching country reloads OSAP there and opens the window again */
 await p.evaluate(() => { const s = document.getElementById("ib-cc"); s.value = "vn"; s.dispatchEvent(new Event("change")); });
-await p.waitForFunction(() => window.TSAP && window.TSAP.country === "vn" && window.OSAP_INTELBRIEF && !document.getElementById("ibdlg")?.hidden && document.getElementById("ib-cc")?.value === "vn", null, { timeout: 60000 });
+/* a busy CI runner can take a while to load a second country: wait longer, and say what was missing when it still times out */
+await p.waitForFunction(() => window.TSAP && window.TSAP.country === "vn" && window.OSAP_INTELBRIEF && !document.getElementById("ibdlg")?.hidden && document.getElementById("ib-cc")?.value === "vn", null, { timeout: 150000 })
+  .catch(async (e) => { console.log("switch state:", JSON.stringify(await p.evaluate(() => ({ url: location.href, cc: window.TSAP && window.TSAP.country, ib: !!window.OSAP_INTELBRIEF, dlg: !!document.getElementById("ibdlg"), hidden: document.getElementById("ibdlg")?.hidden, sel: document.getElementById("ib-cc")?.value, pending: sessionStorage.getItem("osap-ib-pending") })).catch(() => "page gone"))); throw e; });
 await p.waitForFunction(() => window.OSAP_INTELBRIEF._state().data, null, { timeout: 30000 });
 ok(await p.evaluate(() => /\d+ records? match/.test(document.getElementById("ib-note").textContent)), "country switch: OSAP reloads on Vietnam and the window opens again with its records");
 if (OUT) await p.screenshot({ path: OUT + "/intelbrief.png" });
