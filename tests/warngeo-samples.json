@@ -1,0 +1,302 @@
+{
+ "note": "Real samples for tests/warngeo.test.mjs, fetched 2026-10-19 from msi.nga.mil (broadcast-warn API), tfr.faa.gov (WFS and detail XML) and easa.europa.eu (CZIB list). Telephone numbers replaced by zeros.",
+ "nga": [
+  {
+   "code": "4",
+   "msgYear": 2024,
+   "msgNumber": 517,
+   "navArea": "4",
+   "subregion": "GEN",
+   "issueDate": "081653Z MAY 2024",
+   "authority": "SFH 0/24 081641Z MAY 24.",
+   "text": "1. NAVAREA IV MOBILE OFFSHORE DRILLING UNITS\n   POSITIONS AT 081630Z MAY:\n   A. AGOSTO 12 19-23.0N 092-03.1W.\n   B. ARGOS 27-10.4N 090-22.1W.\n   C. ATLANTIS 19-26.5N 092-01.9W.\n   D. BLAKE 1007 27-22.0N 094-28.1W.\n   E. BORR HILD 19-02.6N 092-26.6W.\n   F. BORR RAN 19-00.2N 091-58.4W.\n   G. CAMPECHE 18-39.8N 092-51.3W.\n   H. CHIHUAHUA 19-30.1N 091-59.3W.\n   I. CME I 18-22.5N 093-49.0W.\n   J. CME II 18-39.4N 093-20.2W.\n   K. COATZACOALCOS 19-30.4N 092-00.0W.\n   L. DEEPWATER ASGARD 28-15.0N 088-52.4W.\n   M. DEEPWATER ATLAS 26-54.2N 091-35.6W.\n   N. DEEPWATER CONQUEROR 27-09.7N 091-14.9W.\n   O. DEEPWATER INVICTUS 28-44.2N 088-20.3W.\n   P. DEEPWATER PONTUS 28-01.7N 089-09.7W.\n   Q. DEEPWATER POSEIDON 28-36.5N 088-02.4W.\n   R. DEEPWATER PROTEUS 28-09.6N 089-07.0W.\n   S. DEEPWATER THALASSA 26-12.2N 094-44.6W.\n   T. DEEPWATER TITAN 27-09.7N 091-12.0W.\n   U. DEVELOPMENT DRILLER III 12-26.5N 070-06.5W.\n   V. ENTERPRISE 351 28-15.3N 091-26.0W.\n   W. FRIDA I 19-36.1N 092-31.6W.\n   X. GALAR 18-30.5N 093-26.5W.\n   Y. GERSEMI 18-29.1N 093-21.6W.\n   Z. GRID 18-44.8N 093-07.4W.\n   AA. H&P RIG 201 28-09.4N 089-13.0W.\n   AB. H&P RIG 205 26-06.6N 094-53.1W.\n   AC. (NEW POSITION) HELIX Q4000\n       27-27.1N 090-16.1W.\n   AD. HELIX Q5000 26-06.9N 094-53.2W.\n   AE. HOLSTEIN SPAR 27-19.6N 090-31.0W.\n   AF. INDEPENDENCIA 2 12-28.2N 070-07.2W.\n   AG. IOLAIR 19-35.8N 092-13.4W.\n   AH. JINDAL PIONEER 18-20.2N 093-52.3W.\n   AI. JOE DOUGLAS 09-59.7N 060-18.4W.\n   AJ. LA COVADONGA 18-30.3N 093-15.7W.\n   AK. LA SANTA MARIA 19-30.5N 092-04.3W.\n   AL. LIZA DESTINY 08-00.6N 056-59.5W.\n   AM. LIZA UNITY 08-00.5N 056-54.8W.\n   AN. MAD DOG 27-11.6N 090-16.5W.\n   AO. (NEW POSITION) MAERSK DISCOVERER\n       12-03.3N 068-56.8W.\n   AP. NABORS MODS 140 28-12.4N 088-46.4W.\n   AQ. NABORS MODS 200 28-06.2N 090-12.1W.\n   AR. NABORS MODS 400 26-55.7N 090-31.4W.\n   AS. NEPTUNO 19-34.0N 092-14.0W.\n   AT. NFE PIONEER III 22-39.2N 097-40.8W.\n   AU. NOBLE BOB DOUGLAS 07-55.0N 056-43.0W.\n   AV. (NEW RIG) NOBLE DEVELOPER\n       10-21.4N 061-38.6W.\n   AW. NOBLE DON TAYLOR 07-57.0N 056-41.0W.\n   AX. NOBLE GLOBETROTTER I 27-52.0N 092-01.3W.\n   AY. NOBLE GLOBETROTTER II 28-09.6N 089-07.1W.\n   AZ. NOBLE SAM CROFT 08-02.0N 056-50.0W.\n   AAA. NOBLE STANLEY LAFOSSE 27-33.7N 090-06.3W.\n   AAB. NOBLE TOM MADDEN 08-09.7N 056-58.2W.\n   AAC. NOBLE VALIANT 28-28.2N 088-43.7W.\n   AAD. NOBLE VOYAGER 07-22.5N 055-32.9W.\n   AAE. OCEAN BLACKHAWK 28-57.4N 087-59.6W.\n   AAF. OCEAN BLACKHORNET 28-02.0N 088-22.0W.\n   AAG. OCEAN BLACKLION 27-08.9N 090-19.4W.\n   AAH. ODIN 18-18.3N 094-05.3W.\n   AAI. OLYMPUS N88 28-09.6N 089-12.8W.\n   AAJ. PAPALOAPAN 19-29.0N 092-01.6W.\n   AAK. PROSPERITY 08-11.7N 057-00.1W.\n   AAL. RALPH COFFMAN 18-20.4N 093-53.6W.\n   AAM. SANDUNGA 19-30.9N 091-58.9W.\n   AAN. SEVAN LOUISIANA 27-58.3N 090-09.4W.\n   AAO. (NEW POSITION) STENA CARRON\n        07-58.0N 056-51.0W.\n   AAP. STENA DRILLMAX 07-57.8N 056-50.8W.\n   AAQ. STENA EVOLUTION 28-20.7N 087-56.5W.\n   AAR. STENA ICEMAX 28-11.8N 088-36.4W.\n   AAS. THUNDERHORSE PDQ 28-12.7N 088-28.7W.\n   AAT. TUXPAN 18-45.8N 091-45.7W.\n   AAU. UXPANAPA 18-51.4N 092-28.1W.\n   AAV. VALARIS 249 10-05.3N 060-35.4W.\n   AAW. VALARIS DPS-5 29-17.4N 088-00.3W.\n   AAX. VALARIS DS-16 28-54.6N 088-05.7W.\n   AAY. VALARIS DS-18 28-23.2N 088-14.1W.\n   AAZ. VALARIS EXL II 27-51.1N 096-45.5W.\n   AAAA. WELL SERVICES RIG 50 10-40.6N 061-38.7W.\n   AAAB. WEST COURAGEOUS 19-35.1N 092-13.7W.\n   AAAC. WEST DEFENDER 18-40.4N 092-52.4W.\n   AAAD. WEST INTREPID 19-36.5N 092-15.5W.\n   AAAE. WEST NEPTUNE 26-12.8N 092-08.1W.\n   AAAF. (NEW POSITION) WEST VELA\n         27-01.7N 091-00.5W.\n   AAAG. WFD 250 28-31.2N 091-31.6W.\n   AAAH. WFD 400 28-17.0N 091-40.4W.\n   AAAI. (NEW RIG) YUNUEN 19-35.3N 092-12.1W.\n2. TO REPORT A MOBILE OFFSHORE DRILLING UNIT AS\n   PER IMO RESOLUTION A.1023(26), PARAGRAPH 11.5.1,\n   CONTACT NAVSAFETY@NGA.MIL SUBJ: MODU REPORT.\n3. CANCEL NAVAREA IV 489/24.\n"
+  },
+  {
+   "code": "4",
+   "msgYear": 2024,
+   "msgNumber": 127,
+   "navArea": "4",
+   "subregion": "24,25",
+   "issueDate": "051805Z FEB 2024",
+   "authority": "MERTECH MARINE 0/24 051601Z FEB 24.",
+   "text": "CARIBBEAN SEA.\nARUBA.\nCABLE OPERATIONS IN PROGRESS UNTIL FURTHER NOTICE\nBY CABLESHIP PANAM ALONG TRACKLINES JOINING:\nA. 13-10.34N 069-51.47W, 12-55.78N 069-48.86W,\n   12-43.47N 069-46.66W, 12-39.79N 069-46.00W.\nB. 13-47.75N 069-55.00W, 13-30.00N 069-55.00W,\n   13-22.30N 069-53.62W.\nWIDE BERTH REQUESTED.\n"
+  },
+  {
+   "code": "4",
+   "msgYear": 2024,
+   "msgNumber": 12,
+   "navArea": "4",
+   "subregion": "24",
+   "issueDate": "031917Z JAN 2024",
+   "authority": "OFFSHORE GUYANA 22/24 031800Z JAN 24.",
+   "text": "WESTERN NORTH ATLANTIC.\nUNDERWATER OPERATIONS IN PROGRESS UNTIL\nFURTHER NOTICE BY M/V BOURBON CALM\nAND M/V BOURBON SAPPHIRE\nIN AREAS BOUND BY\nA. 08-00.66N 056-44.58W, 08-00.66N 056-40.12W,\n   07-54.87N 056-40.12W, 07-54.87N 056-44.58W.\nB. 08-15.96N 057-02.23W, 08-15.96N 056-54.25W,\n   07-58.60N 056-54.25W, 07-58.60N 057-02.23W.\nC. 08-06.94N 056-49.93W, 08-06.94N 056-46.61W,\n   07-58.94N 056-46.61W, 07-58.94N 056-49.93W.\nWIDE BERTH REQUESTED.\n"
+  },
+  {
+   "code": "12",
+   "msgYear": 2023,
+   "msgNumber": 249,
+   "navArea": "12",
+   "subregion": "83",
+   "issueDate": "280353Z APR 2023",
+   "authority": "JRCC HONOLULU 0/23 280342Z APR 23.",
+   "text": "EASTERN NORTH PACIFIC.\nCANCEL NAVAREA XII 243/23 AND THIS MSG,\nSEARCH SUSPENDED.\n"
+  },
+  {
+   "code": "12",
+   "msgYear": 2023,
+   "msgNumber": 93,
+   "navArea": "12",
+   "subregion": "19",
+   "issueDate": "282251Z FEB 2023",
+   "authority": "PACMISRANFAC 0/23 282245Z FEB 23.",
+   "text": "NORTH PACIFIC.\nHAWAII.\n1. INTERMITTENT MISSILE FIRING OPERATIONS CONDUCTED\n   BY THE PACIFIC MISSILE RANGE FACILITY (PMRF),\n   BARKING SANDS, KAUAI, HAWAII, IN WHISKEY\n   188 (W-188) OPERATING AREA. OPERATIONS ARE\n   CONDUCTED PERIODICALLY THROUGHOUT EACH WEEK\n   IN AREA BOUND BY\n   22-00.0N 159-51.0W, 22-00.0N 160-00.0W,\n   22-04.0N 160-06.0W, 21-59.5N 160-21.0W,\n   22-05.0N 161-35.0W, 22-45.0N 161-25.0W,\n   22-56.0N 161-49.0W, 23-34.0N 161-18.6W,\n   23-57.0N 160-41.0W, 25-41.0N 161-36.0W,\n   26-00.0N 159-58.0W, 25-47.0N 158-15.0W,\n   23-54.0N 158-15.0W, 22-20.0N 159-09.0W,\n   22-21.0N 159-30.0W, 22-13.0N 159-42.0W,\n   22-00.0N 159-51.0W.\n2. VESSELS MAY BE REQUESTED TO ALTER COURSE DUE TO\n   FIRING OPERATIONS AND ARE REQUESTED TO CONTACT\n   \"PACIFIC MISSILE RANGE BARKING SANDS\" ON VHF\n   MARINE BAND CHANNEL 16 PRIOR\n   TO ENTERING THE ABOVE BOUNDARIES. IF UNABLE\n   TO CONTACT PMRF PRIOR TO ENTERING OR WHILE IN\n   THE WARNING AREA, RELAY MESSAGES THROUGH\n   U.S. COAST GUARD HONOLULU.\n3. VESSELS INBOUND AND OUTBOUND FOR HAWAIIAN PORTS\n   WILL CREATE THE LEAST INTERFERENCE TO FIRING\n   OPERATIONS AS WELL AS ENHANCE VESSEL SAFETY\n   BY PASSING SOUTH OF THE ISLANDS OF KAUAI\n   AND NIIHAU DURING SPECIFIED TIMES.\n4. CANCEL NAVAREA XII 269/21.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2024,
+   "msgNumber": 979,
+   "navArea": "A",
+   "subregion": "11",
+   "issueDate": "092138Z MAY 2024",
+   "authority": "COMCOGARD SECTOR MOBILE 0/24 092100Z MAY 24.",
+   "text": "GULF OF MEXICO.\nFLORIDA.\nDNC 15.\n48 FOOT VESSEL, THREE PERSONS ON BOARD, DISABLED\nIN 28-32.90N 084-36.97W AT 091650Z MAY. VESSELS IN\nVICINITY REQUESTED TO KEEP A SHARP LOOKOUT, ASSIST\nIF POSSIBLE. REPORTS TO USCG SECTOR MOBILE,\nPHONE: 000 000 0000,\nEMAIL: D8COMMANDCENTER@USCG.MIL.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2024,
+   "msgNumber": 945,
+   "navArea": "A",
+   "subregion": "GEN",
+   "issueDate": "031613Z MAY 2024",
+   "authority": "NGA NAVSAFETY 0/24 031553Z MAY 24.",
+   "text": "1. HYDROLANT WARNINGS IN FORCE AS OF 031554Z MAY.\n   ALL THE INFORCE WARNINGS ARE LISTED HERE.\n   944/2024, 943/2024, 942/2024, 936/2024, 935/2024,\n   934/2024, 933/2024, 932/2024, 931/2024, 928/2024,\n   926/2024, 925/2024, 924/2024, 919/2024, 913/2024,\n   910/2024, 904/2024, 903/2024, 901/2024, 899/2024,\n   892/2024, 884/2024, 883/2024, 881/2024, 877/2024,\n   876/2024, 872/2024, 871/2024, 870/2024, 869/2024,\n   867/2024, 866/2024, 862/2024, 861/2024, 860/2024,\n   858/2024, 855/2024, 853/2024, 852/2024, 851/2024,\n   848/2024, 846/2024, 845/2024, 842/2024, 836/2024,\n   834/2024, 833/2024, 827/2024, 817/2024, 815/2024,\n   812/2024, 807/2024, 802/2024, 758/2024, 749/2024,\n   743/2024, 723/2024, 703/2024, 701/2024, 699/2024,\n   698/2024, 697/2024, 696/2024, 695/2024, 689/2024,\n   682/2024, 680/2024, 679/2024, 673/2024, 616/2024,\n   586/2024, 569/2024, 537/2024, 522/2024, 512/2024,\n   444/2024, 403/2024, 362/2024, 360/2024, 331/2024,\n   321/2024, 256/2024, 239/2024, 209/2024, 192/2024,\n   150/2024, 139/2024, 123/2024, 122/2024, 121/2024,\n   26/2024.\n   2974/2023, 2973/2023, 2972/2023, 2939/2023,\n   2930/2023, 2906/2023, 2905/2023, 2872/2023,\n   2853/2023, 2845/2023, 2835/2023, 2826/2023,\n   2814/2023, 2750/2023, 2739/2023, 2686/2023,\n   2635/2023, 2596/2023, 2566/2023, 2542/2023,\n   2507/2023, 2490/2023, 2453/2023, 2452/2023,\n   2443/2023, 2379/2023, 2378/2023, 2362/2023,\n   2324/2023, 2291/2023, 2041/2023, 2017/2023,\n   1902/2023, 1645/2023, 1632/2023, 1435/2023,\n   1361/2023, 757/2023, 142/2023.\n   3226/2022, 2247/2022, 1892/2022, 1828/2022,\n   1293/2022, 838/2022, 789/2022, 729/2022, 564/2022.\n   2647/2021, 1484/2021.\n2. THE COMPLETE TEXT OF ALL IN-FORCE HYDROLANT\n   BROADCAST WARNINGS ARE AVAILABLE ON THE NGA\n   MARITIME SAFETY INFORMATION WEBSITE AT:\n   MSI.NGA.MIL/NAVWARNINGS.\n   ALTERNATIVELY, THESE MAY BE REQUESTED BY E-MAIL\n   FROM NGA AT NAVSAFETY@NGA.MIL.\n3. CANCEL HYDROLANT 739/24, 740/24, 742/24, 750/24,\n   768/24, 776/24, 786/24, 789/24, 795/24, 796/24,\n   801/24, 811/24, 888/24.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2024,
+   "msgNumber": 682,
+   "navArea": "A",
+   "subregion": "55",
+   "issueDate": "021535Z APR 2024",
+   "authority": "NAVAREA III 34/24 021247Z APR 24.",
+   "text": "BLACK SEA.\nUKRAINE.\nDNC 10.\n1. UKRAINIAN COASTAL WARNING COORDINATOR HAS\n   DECLARED THE FOLLOWING COASTAL APROACH\n   INSTRUCTIONS FOR ENTRY OR DEPARTURE IN UKRAINIAN\n   PORTS 0200Z TO 1700Z DAILY UNTIL FUTHER NOTICE.\n2. ROUTES TO THE PORTS OF UKRAINE:\n   A. ROUTE FOR VESSELS WITH A DRAFT OF UP TO\n      EIGHT METERS WITHIN THREE MILES OF\n      TRACKLINE JOINING\n      45-05.00N 030-03.00E, 45-14.00N 030-01.00E,\n      45-39.00N 030-05.70E, 45-47.80N 030-22.70E.\n   B. ROUTE FOR VESSELS WITH A DRAFT OF\n      UP TO EIGHT METERS WITHIN ONE MILE OF\n      TRACKLINE JOINING\n      45-47.80N 030-22.70E, 45-58.86N 030-30.79E,\n      46-03.40N 030-32.60E, 46-10.81N 030-40.84E,\n      46-19.84N 030-48.00E, 46-25.38N 030-53.23E.\n   C. TWO-WAY ROUTE FOR VESSELS WITH DRAFT UP TO 12\n      METERS WITHIN THREE MILES OF TRACKLINE JOINING\n      45-05.00N 030-03.00E, 45-14.00N 030-01.00E,\n      45-39.00N 030-05.70E, 46-00.00N 030-57.80E,\n      46-02.80N 031-04.40E, 46-19.30N 031-04.40E,\n      46-26.30N 030-53.90E.\n   D. TWO-WAY ROUTE FOR VESSELS OVER 12 METERS\n      DRAFT WITHIN THREE MILES OF TRACKLINE JOINING\n      45-03.90N 030-18.50E, 45-33.80N 030-36.90E,\n      46-00.00N 030-57.80E, 46-02.80N 031-04.40E,\n      46-19.30N 031-04.40E, 46-26.30N 030-53.90E.\n   E. SOUTHERN TEMPORARY WAITING AREA FOR VESSELS\n      GOING TO THE PORTS OF CHORNOMORSK, ODESA,\n      OR PIVDENNYI MAY BE USED TO WAIT FOR\n      TRANSITING THE ROUTES DURING ALLOWED TIMES\n      IN AREA BOUND BY\n      45-00.00N 030-10.00E, 44-55.00N 030-25.00E,\n      44-50.00N 030-25.00E, 44-50.00N 030-10.00E.\n   F. NORTHERN HOLDING AREA AR 354 USED FOR SHORT\n      STAYING VESSELS IN EMERGENCY CASES\n      IN AREA BOUND BY\n      46-29.98N 030-50.37E, 46-30.48N 030-53.90E,\n      46-25.38N 030-53.90E, 46-25.38N 030-52.60E.\n   G. CHORNOMORSK TO NORTHERN HOLDING AREA CHANNEL\n      WITHIN 200 METERS OF TRACKLINE JOINING\n      46-25.38N 030-52.60E, 46-22.00N 030-47.70E,\n      46-21.55N 030-46.29E, 46-20.00N 030-42.70E,\n      46-18.84N 030-41.81E, 46-19.12N 030-40.60E.\n   H. ODESA TO NORTHERN HOLDING AREA CHANNEL\n      WITHIN 200 METERS OF TRACKLINE JOINING\n      46-30.00N 030-50.51E, 46-30.00N 030-46.40E,\n      46-29.90N 030-46.04E, 46-29.99N 030-44.54E.\n   I. PIVDENNYI TO NORTHERN HOLDING AREA CHANNEL\n      WITHIN 200 METERS OF TRACKLINE JOINING\n      46-30.48N 030-53.90E, 46-31.84N 030-53.90E,\n      46-33.36N 031-00.06E, 46-36.19N 031-01.00E.\n3. CANCEL HYDROLANT 603/23.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2023,
+   "msgNumber": 2801,
+   "navArea": "A",
+   "subregion": "53",
+   "issueDate": "041558Z DEC 2023",
+   "authority": "MRCC ROME 0/23 041529Z DEC 23.",
+   "text": "IONIAN SEA.\nSICILY.\nDNC 09.\nMAN OVERBOARD FROM FERRY VESSEL IN VICINITY OF\nTRACKLINE JOINING 37-32.09N 015-07.46E AT\n031158Z DEC AND 38-07.84N 015-38.84E. VESSELS\nIN VICINITY REQUESTED TO KEEP A SHARP\nLOOKOUT, ASSIST IF POSSIBLE.\nREPORTS TO MRCC ROME,\nPHONE: 000 0000 0000, 0000 0000 0000,\nEMAIL: ITMRCC@MIT.GOV.IT.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2023,
+   "msgNumber": 2452,
+   "navArea": "A",
+   "subregion": "55",
+   "issueDate": "270038Z OCT 2023",
+   "authority": "UKRAINE 8/22 262001Z OCT 23.",
+   "text": "BLACK SEA.\nUKRAINE.\nDNC 10.\nMINING OPERATIONS IN PROGRESS UNTIL FURTHER NOTICE\nIN AREAS BOUND BY:\nA. 46-22.50N 030-45.10E, 46-20.20N 030-53.10E,\n   46-11.90N 030-47.10E, 46-14.10N 030-40.00E,\n   46-04.70N 030-31.30E, 46-04.60N 030-28.40E.\nB. 46-04.40N 030-28.40E, 46-04.50N 030-31.10E,\n   45-58.00N 030-28.00E, 45-48.10N 030-18.30E,\n   45-38.40N 029-59.90E, 45-31.30N 029-46.80E,\n   45-29.50N 029-44.80E, 45-28.60N 029-36.50E.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2023,
+   "msgNumber": 2017,
+   "navArea": "A",
+   "subregion": "55",
+   "issueDate": "071541Z SEP 2023",
+   "authority": "ROMANIA 111/23 071433Z SEP 23.",
+   "text": "BLACK SEA.\nROMANIA.\nDNC 10.\nMINES REPORTED IN AREA WITHIN FIVE MILES\nOF 45-07.10N 030-09.70E.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2023,
+   "msgNumber": 1757,
+   "navArea": "A",
+   "subregion": "24",
+   "issueDate": "082323Z AUG 2023",
+   "authority": "NAVAREA V 284/23 082112Z AUG 23.",
+   "text": "WESTERN SOUTH ATLANTIC.\nBRAZIL.\nDNC 01.\n1. SURVEY OPERATIONS IN PROGRESS UNTIL 20 AUG BY\n   M/V RAMFORM TETHYS TOWING 12 8000 METER LONG\n   CABLES IN AREA BOUND BY\n   26-45.04S 044-58.45W, 26-44.55S 046-40.34W,\n   26-49.19S 046-41.07W, 27-14.59S 047-06.48W,\n   27-28.07S 047-16.30W, 28-14.34S 047-16.30W,\n   28-14.39S 044-58.26W.\n2. CANCEL HYDROLANT 1704/23.\n3. CANCEL THIS MSG 210001Z AUG 23.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2022,
+   "msgNumber": 789,
+   "navArea": "A",
+   "subregion": "55",
+   "issueDate": "181218Z MAR 2022",
+   "authority": "NAVAREA III 118/22 181124Z MAR 22.",
+   "text": "BLACK SEA.\nDNC 10.\nMINES ADRIFT REPORTED IN NORTHWESTERN, WESTERN\nAND SOUTHWESTERN BLACK SEA. VESSELS IN VICINITY\nARE ADVISED TO EXERCISE EXTREME CAUTION.\n"
+  },
+  {
+   "code": "A",
+   "msgYear": 2022,
+   "msgNumber": 564,
+   "navArea": "A",
+   "subregion": "55",
+   "issueDate": "251438Z FEB 2022",
+   "authority": "NAVAREA III 92/22 251205Z FEB 22.",
+   "text": "BLACK SEA.\nUKRAINE.\nDNC 10.\nMINING OPERATIONS IN PROGRESS UNTIL FURTHER NOTICE\nIN AREAS BOUND BY:\nA. 46-04.0N 033-12.8E, 46-03.1N 033-13.9E,\n   45-55.6N 033-08.1E, 45-57.3N 032-54.5E,\n   46-00.9N 033-06.8E.\nB. 46-06.4N 032-05.4E, 45-57.4N 032-53.3E,\n   45-49.2N 032-47.0E, 45-59.7N 032-02.4E.\nC. 46-09.4N 032-06.6E, 46-07.0N 032-05.5E,\n   45-58.2N 032-54.2E, 45-59.5N 033-05.5E,\n   46-00.9N 033-05.5E, 46-00.9N 033-04.8E.\nD. 46-32.4N 031-01.2E, 46-32.6N 031-26.3E,\n   46-28.0N 031-27.9E, 46-27.9N 031-00.8E.\nE. 46-22.2N 031-31.9E, 46-36.6N 031-31.6E,\n   46-36.0N 031-00.1E, 46-31.5N 030-44.4E.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2024,
+   "msgNumber": 1571,
+   "navArea": "P",
+   "subregion": "75",
+   "issueDate": "101515Z MAY 2024",
+   "authority": "AUSCOAST 154/24 101452Z MAY 24.",
+   "text": "BASS STRAIT.\nAUSTRALIA.\nDNC 05.\n1. UNDERWATER OPERATIONS IN PROGRESS\n   UNTIL FURTHER NOTICE BY M/V INVESTIGATOR\n   IN AREA BOUND BY\n   37-57.00S 148-13.00E, 38-54.00S 148-13.00E,\n   38-54.00S 149-03.00E, 37-57.00S 149-03.00E.\n   ONE MILE BERTH REQUESTED.\n2. CANCEL HYDROLANT 1564/24.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2024,
+   "msgNumber": 1561,
+   "navArea": "P",
+   "subregion": "94",
+   "issueDate": "100559Z MAY 2024",
+   "authority": "NAVAREA XI 223/24 100544Z MAY 24.",
+   "text": "PHILIPPINE SEA.\nTAIWAN.\nDNC 23.\nCABLE OPERATIONS 100900Z MAY UNTIL FURTHER NOTICE\nBY CABLESHIP PETER FABER IN AREA BOUND BY\n24-51.27N 122-05.38E, 24-50.57N 122-03.14E,\n24-48.00N 122-03.97E, 24-48.13N 122-06.33E,\n24-48.52N 122-06.30E.\nWIDE BERTH REQUESTED.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2024,
+   "msgNumber": 1549,
+   "navArea": "P",
+   "subregion": "71,72",
+   "issueDate": "091746Z MAY 2024",
+   "authority": "RCC BASARNAS 0/24 091553Z MAY 24.",
+   "text": "BALI SEA.\nJAVA SEA.\nSTRAIT OF MALACCA.\nINDONESIA TO MALAYSIA.\nDNC 03, DNC 04.\nVESSEL, FOUR PERSONS ON BOARD, UNREPORTED BALI\n(08-24.54S 115-11.33E) TO MALAYSIA. LAST KNOWN\nPOSITION IN VICINITY 03-47.40S 102-15.60E AT\n271102Z APR. VESSELS IN VICINITY REQUESTED TO KEEP A\nSHARP LOOKOUT, ASSIST IF POSSIBLE.\nREPORTS TO RCC BASARNAS, PHONE: 0000 0000 0000,\nEMAIL: RCC.INDONESIA@BASARNAS.GO.ID.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2024,
+   "msgNumber": 1519,
+   "navArea": "P",
+   "subregion": "81",
+   "issueDate": "070316Z MAY 2024",
+   "authority": "ILE DE BREHAT 0/24 070301Z MAY 24.",
+   "text": "PHILIPPINE SEA.\nWESTERN NORTH PACIFIC.\nGUAM.\nDNC 12.\nCABLE OPERATIONS IN PROGRESS UNTIL FURTHER\nNOTICE BY CABLESHIP ILE DE BREHAT\nALONG TRACKLINE JOINING\n13-47.5N 143.46.0E, 13-34.2N 144-27.3E,\n13-29.9N 144-45.5E.\nWIDE BERTH REQUESTED.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2024,
+   "msgNumber": 1344,
+   "navArea": "P",
+   "subregion": "93",
+   "issueDate": "240543Z APR 2024",
+   "authority": "MRCC VIETNAM 0/24 240424Z APR 24.",
+   "text": "SOUTH CHINA SEA.\nVIETNAM.\nDNC 23.\nBARGE LA 06695 AND BARGE LA 06883, FIVE PERSONS\nON BOARD EACH, SANK WITHIN THREE MILES OF LY SON\n(15-22.85N 109-07.05E). TWO PERSONS RECOVERED,\nEIGHT PERSONS REMAIN MISSING. VESSELS IN VICINITY\nREQUESTED  TO KEEP A SHARP LOOKOUT,\nASSIST IF POSSIBLE. REPORTS TO MRCC VIETNAM,\nEMAIL: HPLES-GMDSS@HPLES.COM.VN.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2024,
+   "msgNumber": 894,
+   "navArea": "P",
+   "subregion": "91,92",
+   "issueDate": "180010Z MAR 2024",
+   "authority": "NAVAREA XI 136/24 180000Z MAR 24.",
+   "text": "SIBUYAN SEA.\nSOUTH CHINA SEA.\nSULU SEA.\nPHILIPPINES.\nDNC 11.\n1. PIPELINE OPERATIONS IN PROGRESS UNTIL FURTHER\n   NOTICE IN VICINITY OF TRACKLINE JOINING\n   11-38.57N 118-54.38E 11-37.75N 118-58.07E\n   11-36.13N 119-00.28E 11-29.25N 119-09.63E\n   11-40.18N 119-42.99E 11-37.71N 119-56.63E\n   11-33.24N 120-06.25E 11-43.41N 120-26.00E\n   11-47.18N 120-37.34E 12-08.67N 121-16.78E\n   12-19.00N 121-32.46E 12-43.92N 121-42.06E\n   13-00.61N 121-37.75E 13-08.31N 121-36.77E\n   13-22.16N 121-20.65E 13-27.89N 121-13.39E\n   13-26.91N 121-07.06E 13-34.51N 121-00.11E\n   13-37.51N 121-00.48E 13-42.67N 121-03.05E.\n   WIDE BERTH REQUESTED.\n2. CANCEL HYDROPAC 425/24.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2023,
+   "msgNumber": 3542,
+   "navArea": "P",
+   "subregion": "97",
+   "issueDate": "101003Z NOV 2023",
+   "authority": "NAVAREA XI 387/23 100901Z NOV 23.",
+   "text": "PHILIPPINE SEA.\nJAPAN.\nDNC 12.\nVOLCANIC ACTIVITY REPORTED IN AREA WITHIN\n400 METERS OF 24-45.44N 141-19.60E AT 100428Z NOV.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2023,
+   "msgNumber": 2153,
+   "navArea": "P",
+   "subregion": "83",
+   "issueDate": "011639Z JUL 2023",
+   "authority": "NAVAREA XIV 111/23 011545Z JUL 23.",
+   "text": "SOUTH PACIFIC.\nTONGA.\nDNC 06.\nCABLE OPERATIONS 041700Z JUL UNTIL FURTHER NOTICE BY\nCABLESHIP LODBROG IN AREA BOUND BY\n19-59.20S 174-59.20W, 20-00.20S 174-56.50W,\n20-21.50S 175-05.30W, 20-38.30S 175-13.40W,\n20-49.10S 175-16.10W, 20-55.10S 175-13.70W,\n20-56.50S 175-16.40W, 20-49.50S 175-19.60W,\n20-40.70S 175-17.80W, 20-05.20S 175-03.50W.\nONE MILE BERTH REQUESTED.\n"
+  },
+  {
+   "code": "P",
+   "msgYear": 2023,
+   "msgNumber": 630,
+   "navArea": "P",
+   "subregion": "61",
+   "issueDate": "241202Z FEB 2023",
+   "authority": "NAVAREA VIII 178/23 241013Z FEB 23.",
+   "text": "WESTERN INDIAN OCEAN.\nMAURITIUS.\nDNC 02.\n1. UNDERWATER OPERATIONS IN PROGRESS UNTIL\n   FURTHER NOTICE:\n   A. IN AREA BOUND BY\n      20-26.10S 057-43.1E0, 20-25.10S 057-44.00E,\n      20-24.00S 057-45.50E.\n   B. IN VICINITY 20-26.60S 057-44.60E.\n   TWO MILE BERTH REQUESTED.\n2. CANCEL HYDROPAC 536/23.\n"
+  },
+  {
+   "code": "C",
+   "msgYear": 2023,
+   "msgNumber": 254,
+   "navArea": "C",
+   "subregion": "41",
+   "issueDate": "130722Z OCT 2023",
+   "authority": "NAVAREA XXI 56/23 130705Z OCT 23.",
+   "text": "EAST SIBERIAN SEA.\nDNC 27.\n1. AUTONOMOUS BUOY STATIONS ESTABLISHED IN:\n   A. 74-53.21N 175-33.07E.\n   B. 74-35.06N 173-31.44E.\n   C. 73-16.56N 173-52.60E.\n   ONE MILE BERTH REQUESTED.\n2. CANCEL HYDROARC 283/22.\n"
+  }
+ ],
+ "tfr": {
+  "features": [
+   {
+    "type": "Feature",
+    "id": "V_TFR_LOC.6/0198",
+    "geometry": {
+     "type": "Polygon",
+     "coordinates": [
+      [
+       [
+        -118.9875,
+        36.7375
+       ],
+       [
+        -118.94166667,
+        36.7375
+       ],
+       [
+        -118.94166667,
+        36.76666667
+       ],
+       [
+        -118.9875,
+        36.76666667
+       ],
+       [
+        -118.9875,
+        36.7375
+       ]
+      ]
+     ]
+    },
+    "geometry_name": "SHAPE",
+    "properties": {
+     "GID": 235053,
+     "CNS_LOCATION_ID": "ZOA",
+     "NOTAM_KEY": "6/0198-1-FDC-F",
+     "TITLE": "38NM E FRESNO, CA, Monday, October 19, 2026 through Tuesday, October 20, 2026 UTC",
+     "LAST_MODIFICATION_DATETIME": "202610190310",
+     "STATE": "CA",
+     "LEGAL": "HAZARDS"
+    }
+   }
+  ],
+  "list": [
+   {
+    "notam_id": "6/0198",
+    "type": "HAZARDS",
+    "facility": "ZOA",
+    "state": "CA",
+    "description": "38NM E FRESNO, CA, Monday, October 19, 2026 through Tuesday, October 20, 2026 UTC",
+    "creation_date": "10/19/2026"
+   }
+  ],
+  "xml": "<XNOTAM-Update><dateIssued>2026-10-19T03:10:15</dateIssued>\n<txtLocalName>6/0198</txtLocalName>\n<dateEffective>2026-10-19T14:00:00</dateEffective>\n<dateExpire>2026-10-20T02:00:00</dateExpire>\n<codeTimeZone>UTC</codeTimeZone>\n<codeFacility>ZOA</codeFacility>\n<codeType>91.137(a)(1)</codeType>\n<codeType>RAS</codeType>\n<valDistVerUpper>8000</valDistVerUpper>\n<uomDistVerUpper>FT</uomDistVerUpper>\n<valDistVerLower>0</valDistVerLower>\n<dateEffective>2026-10-19T14:00:00</dateEffective>\n<dateExpire>2026-10-20T02:00:00</dateExpire>\n<codeType>RAS</codeType>\n<codeType>PART</codeType>\n<codeType>BOM</codeType>\n<codeType>RAS</codeType>\n<codeType>GRC</codeType>\n<codeType>GRC</codeType>\n<codeType>GRC</codeType>\n<codeType>GRC</codeType>\n<codeType>GRC</codeType>\n<codeType>PART</codeType>\n<codeType>PART</codeType>\n<codeType>GRC</codeType>\n<codeType>GRC</codeType>\n<codeType>GRC</codeType>\n<codeType>GRC</codeType>\n<txtDescrUSNS>!FDC 6/0198 ZOA CA..AIRSPACE 38NM E FRESNO, CA..TEMPORARY FLIGHT RESTRICTIONS. PURSUANT TO 14 CFR SECTION 91.137(A)(1) TO PROTECT PERSONS AND PROPERTY ON THE SFC OR IN THE AIR FM A HAZARD ASSOCIATED WITH AN INCIDENT ON THE SFC. WI AN AREA DEFINED AS 364600N1185915W (FRA108035.5) TO 364600N1185630W (FRA106037.4) TO 364415N1185630W (FRA108038.3) TO 364415N1185915W (FRA110036.6) TO POINT OF ORIGIN SFC-8000FT ONLY RELIEF ACFT OPS UNDER DIRECTION OF ASH MOUNTAIN DISPATCH ARE AUTH IN THE AIRSPACE. ASH MOUNTAIN DISPATCH TEL 000-000-0000 OR FREQ 120.975 IS IN CHARGE OF ON SCENE EMERG RESPONSE ACTIVITY. OAKLAND/ZOA/ARTCC TEL 000-000-0000 IS THE FAA CDN FAC. DLY 1400-0200 2610191400-2610200200</txtDescrUSNS></XNOTAM-Update>"
+ },
+ "czibHtml": "<table><tr>\n                                                  <th id=\"view-field-easa-conflict-zone-up-date-table-column\" class=\"views-field views-field-field-easa-conflict-zone-up-date\" scope=\"col\">Issue date</th>\n                                                  <th id=\"view-field-easa-conflict-zone-revdate-table-column\" class=\"views-field views-field-field-easa-conflict-zone-revdate\" scope=\"col\">Revision date</th>\n                                                  <th id=\"view-field-easa-conflict-zone-until-table-column\" class=\"views-field views-field-field-easa-conflict-zone-until\" scope=\"col\">Valid until</th>\n                                                  <th id=\"view-title-table-column\" class=\"views-field views-field-title\" scope=\"col\">Subject/CZIB number</th>\n                                                  <th class=\"views-field views-field-rh-redirect\" scope=\"col\"></th>\n                                                  <th id=\"view-view-node-table-column\" class=\"views-field views-field-view-node\" scope=\"col\">More info</th>\n                                                  <th class=\"views-field views-field-node-personalisation-item-settings\" scope=\"col\"></th>\n              </tr>\n<tr>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-up-date-table-column\" class=\"views-field views-field-field-easa-conflict-zone-up-date\">30/09/2026          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-revdate-table-column\" class=\"views-field views-field-field-easa-conflict-zone-revdate\">09/10/2026          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-until-table-column\" class=\"views-field views-field-field-easa-conflict-zone-until\">16/11/2026          </td>\n                                                                                                                                            <td headers=\"view-title-table-column\" class=\"views-field views-field-title views-field-field-easa-czib-number views-field-field-easa-cz-status\"><div class=\"cz-title\">Airspace of Saudi Arabia</div><div class=\"czib_number\">CZIB-2026-09-R1</div><div class=\"easa-status-field status-active\">\n  <div class=\"easa-status-field status-active field-item\"><div class=\"cz-status cz-status-Active\">Active</div></div>\n</div>\n          </td>\n                                                                                        <td class=\"views-field views-field-rh-redirect\">          </td>\n                                                                                        <td class=\"single-icon views-field views-field-view-node\" headers=\"view-view-node-table-column\"><a href=\"/en/domains/air-operations/czibs/czib-2026-09-r1\" hreflang=\"en\"><span class=\"easa-view-node\" title=\"Click here for more info\">view</span></a>          </td>\n                                                                                        <td class=\"views-field views-field-node-personalisation-item-settings\"><div class=\"personalisation-async-placeholder personalisation-item-wrapper--teaser\" data-personalisation-nid=\"144230\" data-personalisation-bundle=\"easa_conflict_zone\"></div>          </td>\n              </tr>\n<tr>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-up-date-table-column\" class=\"views-field views-field-field-easa-conflict-zone-up-date\">14/07/2026          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-revdate-table-column\" class=\"views-field views-field-field-easa-conflict-zone-revdate\">30/09/2026          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-until-table-column\" class=\"views-field views-field-field-easa-conflict-zone-until\">16/11/2026          </td>\n                                                                                                                                            <td headers=\"view-title-table-column\" class=\"views-field views-field-title views-field-field-easa-czib-number views-field-field-easa-cz-status\"><div class=\"cz-title\">Airspace of the Persian Gulf and Gulf of Oman</div><div class=\"czib_number\">CZIB-2026-07R3</div><div class=\"easa-status-field status-active\">\n  <div class=\"easa-status-field status-active field-item\"><div class=\"cz-status cz-status-Active\">Active</div></div>\n</div>\n          </td>\n                                                                                        <td class=\"views-field views-field-rh-redirect\">          </td>\n                                                                                        <td class=\"single-icon views-field views-field-view-node\" headers=\"view-view-node-table-column\"><a href=\"/en/domains/air-operations/czibs/czib-2026-07r3\" hreflang=\"en\"><span class=\"easa-view-node\" title=\"Click here for more info\">view</span></a>          </td>\n                                                                                        <td class=\"views-field views-field-node-personalisation-item-settings\"><div class=\"personalisation-async-placeholder personalisation-item-wrapper--teaser\" data-personalisation-nid=\"143899\" data-personalisation-bundle=\"easa_conflict_zone\"></div>          </td>\n              </tr>\n<tr>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-up-date-table-column\" class=\"views-field views-field-field-easa-conflict-zone-up-date\">09/01/2025          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-revdate-table-column\" class=\"views-field views-field-field-easa-conflict-zone-revdate\">24/07/2026          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-until-table-column\" class=\"views-field views-field-field-easa-conflict-zone-until\">31/01/2027          </td>\n                                                                                                                                            <td headers=\"view-title-table-column\" class=\"views-field views-field-title views-field-field-easa-czib-number views-field-field-easa-cz-status\"><div class=\"cz-title\">Airspace of the Russian Federation</div><div class=\"czib_number\">2025-01 R3</div><div class=\"easa-status-field status-active\">\n  <div class=\"easa-status-field status-active field-item\"><div class=\"cz-status cz-status-Active\">Active</div></div>\n</div>\n          </td>\n                                                                                        <td class=\"views-field views-field-rh-redirect\">          </td>\n                                                                                        <td class=\"single-icon views-field views-field-view-node\" headers=\"view-view-node-table-column\"><a href=\"/en/domains/air-operations/czibs/2025-01-r3\" hreflang=\"en\"><span class=\"easa-view-node\" title=\"Click here for more info\">view</span></a>          </td>\n                                                                                        <td class=\"views-field views-field-node-personalisation-item-settings\"><div class=\"personalisation-async-placeholder personalisation-item-wrapper--teaser\" data-personalisation-nid=\"141480\" data-personalisation-bundle=\"easa_conflict_zone\"></div>          </td>\n              </tr>\n<tr>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-up-date-table-column\" class=\"views-field views-field-field-easa-conflict-zone-up-date\">10/01/2018          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-revdate-table-column\" class=\"views-field views-field-field-easa-conflict-zone-revdate\">24/07/2026          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-until-table-column\" class=\"views-field views-field-field-easa-conflict-zone-until\">31/01/2027          </td>\n                                                                                                                                            <td headers=\"view-title-table-column\" class=\"views-field views-field-title views-field-field-easa-czib-number views-field-field-easa-cz-status\"><div class=\"cz-title\">Airspace of Pakistan – Baluchistan and Khyber Pakhtunkhwa provinces</div><div class=\"czib_number\">CZIB-2018-02R21</div><div class=\"easa-status-field status-active\">\n  <div class=\"easa-status-field status-active field-item\"><div class=\"cz-status cz-status-Active\">Active</div></div>\n</div>\n          </td>\n                                                                                        <td class=\"views-field views-field-rh-redirect\">          </td>\n                                                                                        <td class=\"single-icon views-field views-field-view-node\" headers=\"view-view-node-table-column\"><a href=\"/en/domains/air-operations/czibs/czib-2018-02r21\" hreflang=\"en\"><span class=\"easa-view-node\" title=\"Click here for more info\">view</span></a>          </td>\n                                                                                        <td class=\"views-field views-field-node-personalisation-item-settings\"><div class=\"personalisation-async-placeholder personalisation-item-wrapper--teaser\" data-personalisation-nid=\"20587\" data-personalisation-bundle=\"easa_conflict_zone\"></div>          </td>\n              </tr>\n<tr>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-up-date-table-column\" class=\"views-field views-field-field-easa-conflict-zone-up-date\">31/08/2017          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-revdate-table-column\" class=\"views-field views-field-field-easa-conflict-zone-revdate\">30/09/2026          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-until-table-column\" class=\"views-field views-field-field-easa-conflict-zone-until\">30/04/2027          </td>\n                                                                                                                                            <td headers=\"view-title-table-column\" class=\"views-field views-field-title views-field-field-easa-czib-number views-field-field-easa-cz-status\"><div class=\"cz-title\">Airspace of Yemen – Sana’a Flight Information Region</div><div class=\"czib_number\">CZIB-2017-07R20</div><div class=\"easa-status-field status-active\">\n  <div class=\"easa-status-field status-active field-item\"><div class=\"cz-status cz-status-Active\">Active</div></div>\n</div>\n          </td>\n                                                                                        <td class=\"views-field views-field-rh-redirect\">          </td>\n                                                                                        <td class=\"single-icon views-field views-field-view-node\" headers=\"view-view-node-table-column\"><a href=\"/en/domains/air-operations/czibs/czib-2017-07r20\" hreflang=\"en\"><span class=\"easa-view-node\" title=\"Click here for more info\">view</span></a>          </td>\n                                                                                        <td class=\"views-field views-field-node-personalisation-item-settings\"><div class=\"personalisation-async-placeholder personalisation-item-wrapper--teaser\" data-personalisation-nid=\"20602\" data-personalisation-bundle=\"easa_conflict_zone\"></div>          </td>\n              </tr>\n<tr>\n                                                  <th id=\"view-field-easa-conflict-zone-up-date-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-up-date\" scope=\"col\">Issue date</th>\n                                                  <th id=\"view-field-easa-conflict-zone-revdate-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-revdate\" scope=\"col\">Revision date</th>\n                                                  <th id=\"view-field-easa-conflict-zone-until-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-until\" scope=\"col\">Valid until</th>\n                                                  <th id=\"view-title-table-column--2\" class=\"views-field views-field-title\" scope=\"col\">Subject/CZIB number</th>\n                                                  <th class=\"views-field views-field-rh-redirect\" scope=\"col\"></th>\n                                                  <th id=\"view-view-node-table-column--2\" class=\"views-field views-field-view-node\" scope=\"col\">More info</th>\n                                                  <th class=\"views-field views-field-node-personalisation-item-settings\" scope=\"col\"></th>\n              </tr>\n<tr>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-up-date-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-up-date\">30/09/2022          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-revdate-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-revdate\">N/A          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-until-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-until\">30/04/2023          </td>\n                                                                                                                                            <td headers=\"view-title-table-column--2\" class=\"views-field views-field-title views-field-field-easa-czib-number views-field-field-easa-cz-status\"><div class=\"cz-title\">Airspace of Ethiopia – Tigray Region</div><div class=\"czib_number\">2022-02R2</div><div class=\"easa-status-field status-withdrawn\">\n  <div class=\"easa-status-field status-withdrawn field-item\"><div class=\"cz-status cz-status-Withdrawn\">Withdrawn</div></div>\n</div>\n          </td>\n                                                                                        <td class=\"views-field views-field-rh-redirect\">          </td>\n                                                                                        <td class=\"single-icon views-field views-field-view-node\" headers=\"view-view-node-table-column--2\"><a href=\"/en/domains/air-operations/czibs/2022-02r2\" hreflang=\"en\"><span class=\"easa-view-node\" title=\"Click here for more info\">view</span></a>          </td>\n                                                                                        <td class=\"views-field views-field-node-personalisation-item-settings\"><div class=\"personalisation-async-placeholder personalisation-item-wrapper--teaser\" data-personalisation-nid=\"137114\" data-personalisation-bundle=\"easa_conflict_zone\"></div>          </td>\n              </tr>\n<tr>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-up-date-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-up-date\">29/04/2022          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-revdate-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-revdate\">N/A          </td>\n                                                                                        <td headers=\"view-field-easa-conflict-zone-until-table-column--2\" class=\"views-field views-field-field-easa-conflict-zone-until\">31/10/2022          </td>\n                                                                                                                                            <td headers=\"view-title-table-column--2\" class=\"views-field views-field-title views-field-field-easa-czib-number views-field-field-easa-cz-status\"><div class=\"cz-title\">Airspace of Saudi Arabia – Jeddah Flight Information Region</div><div class=\"czib_number\">CZIB-2018-01R9</div><div class=\"easa-status-field status-withdrawn\">\n  <div class=\"easa-status-field status-withdrawn field-item\"><div class=\"cz-status cz-status-Withdrawn\">Withdrawn</div></div>\n</div>\n          </td>\n                                                                                        <td class=\"views-field views-field-rh-redirect\">          </td>\n                                                                                        <td class=\"single-icon views-field views-field-view-node\" headers=\"view-view-node-table-column--2\"><a href=\"/en/domains/air-operations/czibs/czib-2018-01r9\" hreflang=\"en\"><span class=\"easa-view-node\" title=\"Click here for more info\">view</span></a>          </td>\n                                                                                        <td class=\"views-field views-field-node-personalisation-item-settings\"><div class=\"personalisation-async-placeholder personalisation-item-wrapper--teaser\" data-personalisation-nid=\"44846\" data-personalisation-bundle=\"easa_conflict_zone\"></div>          </td>\n              </tr></table>"
+}
