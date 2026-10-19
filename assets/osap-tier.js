@@ -496,6 +496,8 @@
     open: function () { open("plans"); },
     users: function () { if (CFG && CFG.owner) open("users"); },
     allows: function (need) { return !locked(need); },
+    /* the plan a toolbar tool ("tool", its data-atk) or a data set ("set", its id) needs when this plan lacks it, else "" (osap-findall.js) */
+    needs: function (kind, id) { var n = kind === "set" ? needSet(id) : needTool(id); return locked(n) ? n : ""; },
   };
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", start); else start();
 })();
