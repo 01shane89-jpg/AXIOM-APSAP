@@ -37,6 +37,7 @@
         "When reports are hidden by the period, the list says how many and offers " + b("Show all") + "."]) +
       "<h3>Today</h3>" +
       ul(["Today opens each time you start the app. It shows the weather, warnings and alerts, top stories, a daily summary and what is new since your last visit.",
+        b("Economy") + " shows the currency against the U.S. dollar (30 days and a year), staple food and fuel prices where WFP reports markets, and inflation, each with a small trend line and a link to its source. Inflation is the government's own figure, marked " + b("Official claim") + ". A " + b("Watch") + " flag means a figure moved fast (currency down more than 10% in 30 days or 30% in a year, a staple food or fuel price up more than 20% in a month); such moves often come before unrest, but a flag is a computed signal, not an assessment. " + b("Full detail in the country brief") + " opens the brief with a page of all the figures.",
         "Search the news from the box at the top. Use quotes to keep a phrase together and a minus sign to leave a word out.",
         "Tap " + b("Open map") + " to go to the map. To start on the map every time, pick " + b("Map") + " at the foot of Today.",
         "The OSAP logo at the top left brings you back to Today."]) +
