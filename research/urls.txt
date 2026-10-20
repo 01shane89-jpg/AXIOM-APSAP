@@ -401,3 +401,5 @@ kr_desig_a1 https://www.mohw.go.kr/boardDownload.es?bid=0027&list_no=1490087&seq
 kr_byl72 https://www.law.go.kr/LSW/lsBylInfoPLinkR.do?lsNm=%EC%9D%91%EA%B8%89%EC%9D%98%EB%A3%8C%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99&bylNo=0007&bylBrNo=02&bylCls=BE&bylEfYdYn=Y
 kr_byl7 https://www.law.go.kr/LSW/lsBylInfoPLinkR.do?lsNm=%EC%9D%91%EA%B8%89%EC%9D%98%EB%A3%8C%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99&bylNo=0007&bylBrNo=00&bylCls=BE&bylEfYdYn=Y
 kr_byl_list https://www.law.go.kr/LSW/lsBylInfoR.do?lsiSeq=270485
+kr_byl72_raw https://www.law.go.kr/LSW/lsBylInfoPLinkR.do?lsNm=%EC%9D%91%EA%B8%89%EC%9D%98%EB%A3%8C%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99&bylNo=0007&bylBrNo=02&bylCls=BE&bylEfYdYn=Y
+kr_rule_raw https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=270485
