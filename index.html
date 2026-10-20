@@ -5843,10 +5843,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var m = window.OSAP_SYM && OSAP_SYM.mark ? osapMark([v.lat, v.lon], "a_volcthreat", { pane: "tlpane", radius: 9, lgk: "volc" })
         : L.marker([v.lat, v.lon], { pane: "tlpane", lgk: "volc", icon: L.divIcon({ className: "", html: '<div style="font-size:18px;line-height:18px">▲</div>', iconSize: [18, 18], iconAnchor: [9, 12] }) });
       m.bindPopup('<div class="pop"><div class="tier">Volcano · ' + esc(v.via || "GVP weekly report") + " · " + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + "</p><p>" + esc(v.summary.slice(0, 500)) +
-        '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">' + (v.via === "NASA EONET" ? "Source" : "Weekly report") + "</a></p></div>", { maxWidth: 340 });
+        '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">' + (v.via && v.via !== "GVP weekly report" ? "Source" : "Weekly report") + "</a></p></div>", { maxWidth: 340 });
       sofLayer.addLayer(m); sofM["vo:" + i] = m;
     });
-    return '<div class="sec"><h2>Volcanic activity (' + (V && V.fallback ? "NASA EONET; Smithsonian report unavailable" : "Smithsonian weekly report") + ')</h2><p class="obs">' + snapBadge(V) + "</p>" + (V ? (list.length ? '<div class="tllist">' + list.map(function (v, i) {
+    return '<div class="sec"><h2>Volcanic activity (' + (V && V.fallback ? "NASA EONET and ash SIGMETs; Smithsonian report unavailable" : "Smithsonian weekly report") + ')</h2><p class="obs">' + snapBadge(V) + "</p>" + (V ? (list.length ? '<div class="tllist">' + list.map(function (v, i) {
       return '<button type="button" class="tlrow" data-sof="vo:' + i + '"><span class="tln">▲ ' + esc(v.volcano) + '</span><span class="tlm"><span class="tls">' + esc(v.report) + "</span></span></button>";
     }).join("") + "</div>" : '<p class="obs">No volcano in ' + esc(C.name) + " is in this week's report.</p>") : "") +
       '<p class="note">A weekly digest of observatories\' reports, not real time. Always shown, whatever the period.</p></div>';

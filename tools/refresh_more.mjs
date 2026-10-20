@@ -200,21 +200,45 @@ await job("volc", "volcano.js", "ASAP_VOLC", async () => {
     if (items.length) return { src: url, items, note: items.length + " volcanoes in covered areas" + (fails.length ? " (after " + fails.join("; ") + ")" : "") };
     fails.push(url.split("/").pop() + ": no items");
   }
-  // EONET: volcanoes with open events in the last 60 days, newest position first
-  const j = await get("https://eonet.gsfc.nasa.gov/api/v3/events?category=volcanoes&status=open&days=60"), items = [];
-  for (const e of j.events || []) {
-    const pts = (e.geometry || []).filter((g) => g.type === "Point" && Array.isArray(g.coordinates));
-    const g = pts[pts.length - 1]; if (!g) continue;
-    const lat = g.coordinates[1], lon = g.coordinates[0], ccs = ccsAt(lat, lon, 0.5);
-    if (!ccs.length) continue;
-    const m = String(e.title || "").match(/^(.*?)(?:\s+Volcano)?\s*,\s*(.+)$/) || [];
-    const src = (e.sources || []).find((s) => s.id === "SIVolcano") || (e.sources || [])[0] || {};
-    items.push({ volcano: m[1] || e.title, country: m[2] || "", report: "Open volcanic event since " + isoDay((pts[0] || g).date), title: e.title, date: isoDay(g.date),
-      summary: "NASA EONET lists this volcano as active (sources: " + (e.sources || []).map((s) => s.id).join(", ") + "). The Smithsonian weekly report could not be read this run.",
-      link: src.url || e.link || "https://eonet.gsfc.nasa.gov/", lat, lon, ccs, via: "NASA EONET" });
-  }
-  if (!items.length) throw new Error(fails.join("; ") + "; EONET: no open volcano events");
-  return { src: "https://eonet.gsfc.nasa.gov/", fallback: fails.join("; ").slice(0, 300), items, note: items.length + " volcanoes from EONET (GVP refused: " + fails[0] + ")" };
+  // Stand-ins, merged: NASA EONET's open volcano events, and volcanic-ash SIGMETs in force worldwide (NOAA Aviation Weather Center's
+  // international SIGMET list, no key), which name the volcano and give its position. Neither is the weekly report; both say so.
+  const items = [], seen = new Set();
+  try {
+    const j = await get("https://eonet.gsfc.nasa.gov/api/v3/events?category=volcanoes&status=open&days=60");
+    for (const e of j.events || []) {
+      const pts = (e.geometry || []).filter((g) => g.type === "Point" && Array.isArray(g.coordinates));
+      const g = pts[pts.length - 1]; if (!g) continue;
+      const lat = g.coordinates[1], lon = g.coordinates[0], ccs = ccsAt(lat, lon, 0.5);
+      if (!ccs.length) continue;
+      const m = String(e.title || "").match(/^(.*?)(?:\s+Volcano)?\s*,\s*(.+)$/) || [];
+      const src = (e.sources || []).find((s) => s.id === "SIVolcano") || (e.sources || [])[0] || {};
+      seen.add(String(m[1] || e.title).toLowerCase());
+      items.push({ volcano: m[1] || e.title, country: m[2] || "", report: "Open volcanic event since " + isoDay((pts[0] || g).date), title: e.title, date: isoDay(g.date),
+        summary: "NASA EONET lists this volcano as active (sources: " + (e.sources || []).map((s) => s.id).join(", ") + ").",
+        link: src.url || e.link || "https://eonet.gsfc.nasa.gov/", lat, lon, ccs, via: "NASA EONET" });
+    }
+    fails.push("EONET: " + items.length + " open volcano events");
+  } catch (e) { fails.push("EONET: " + err(e)); }
+  try {
+    const j = await get("https://aviationweather.gov/api/data/isigmet?hazard=va&format=json");
+    for (const x of Array.isArray(j) ? j : j.features || []) {
+      const p = x.properties || x, raw = String(p.rawSigmet || p.rawAirSigmet || "");
+      const name = (raw.match(/\bVA ERUPTION\s+(?:MT\s+)?([A-Z][A-Z' -]+?)\s+(?:PSN|LOC)\b/) || raw.match(/\bMT\s+([A-Z][A-Z' -]+?)\s+(?:PSN|LOC)\b/) || [])[1];
+      const pm = raw.match(/\bPSN\s+([NS])(\d{2})(\d{2})\s+([EW])(\d{3})(\d{2})/);
+      const lat = pm ? (pm[1] === "S" ? -1 : 1) * (+pm[2] + pm[3] / 60) : null, lon = pm ? (pm[4] === "W" ? -1 : 1) * (+pm[5] + pm[6] / 60) : null;
+      if (!name || lat == null) continue;
+      const key = name.trim().toLowerCase(); if (seen.has(key)) continue; seen.add(key);
+      const ccs = ccsAt(lat, lon, 0.5); if (!ccs.length) continue;
+      const vol = key.replace(/\b\w/g, (c) => c.toUpperCase());
+      items.push({ volcano: vol, country: "", report: "Volcanic ash SIGMET in force (" + (p.firName || p.firId || "aviation") + ")", title: vol + " - volcanic ash SIGMET",
+        date: isoDay(p.validTimeFrom ? (typeof p.validTimeFrom === "number" ? p.validTimeFrom * 1000 : p.validTimeFrom) : Date.now()),
+        summary: raw.replace(/\s+/g, " ").slice(0, 600), link: "https://aviationweather.gov/gfa/#sigmet", lat: +lat.toFixed(3), lon: +lon.toFixed(3), ccs, via: "Volcanic ash SIGMET (NOAA AWC)" });
+    }
+    fails.push("SIGMET: " + items.filter((i) => i.via !== "NASA EONET").length + " volcanoes");
+  } catch (e) { fails.push("SIGMET: " + err(e)); }
+  // both stand-ins failing keeps the old snapshot; both answering with nothing is a real "no activity found"
+  if (!items.length && fails.filter((f) => /^(EONET|SIGMET): \d/.test(f)).length < 2) throw new Error(fails.join("; "));
+  return { src: "https://eonet.gsfc.nasa.gov/ and https://aviationweather.gov/", fallback: fails.join("; ").slice(0, 400), items, note: items.length + " volcanoes from stand-ins (" + fails.join("; ") + ")" };
 });
 
 // 4. IODA internet outage signals (Georgia Tech). Country summaries for the last 7 days, then events for countries with any.
