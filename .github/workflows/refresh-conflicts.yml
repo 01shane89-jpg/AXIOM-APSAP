@@ -72,7 +72,8 @@ jobs:
         run: PROBE=1 node tools/refresh_mil_sites.mjs
         timeout-minutes: 12
         continue-on-error: true
-      # History of violence (tools/refresh_conflict_history.mjs): every UCDP event of each conflict since its start, from the UCDP
+      # History of violence (tools/refresh_conflict_history.mjs): every UCDP event of each conflict since its start, and of every
+      # country since 1989 (data/live/conflicts/history/cc/), from the UCDP
       # GED yearly release plus the candidate events written above. Weekly: runs when the last build is 6 days old, or with only=history.
       # The release zip (tens of MB, changes once a year) is kept in the Actions cache under its release name.
       - name: Is the violence history due
