@@ -207,7 +207,7 @@
         (rain || hot || wind ? '<p class="tdwxnote">' + [rain ? rain + " wet day" + (rain > 1 ? "s" : "") + " ahead" : "", hot ? hot + " very hot day" + (hot > 1 ? "s" : "") : "", wind ? "strong gusts on " + wind + " day" + (wind > 1 ? "s" : "") : ""].filter(Boolean).join(" · ") + "</p>" : "");
     }
     h += '<p class="tdsrc">Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> (national weather models blended, CC BY 4.0). ' +
-      "Model output, not an official forecast: check official warnings below." + (L && L.days && L.days.length ? " Forecast read " + esc(when(L.at)) + "." : p.snap ? " Forecast snapshot " + esc(when(p.snap)) + "." : "") + "</p>" +
+      "Model output, not an official forecast: check official warnings below." + (L && L.days && L.days.length ? " Forecast read " + esc(when(L.at)) + "." : p.snap ? " Forecast snapshot " + esc(when(p.snap)) + (window.OSAP_EMPTY ? window.OSAP_EMPTY.ageNote(p.snap, 720) : "") + "." : "") + "</p>" +
       '<div class="tdlinks"><button type="button" class="tdlink" data-go="weather">Weather tab and warnings</button></div></section>';
     return h;
   }
@@ -252,6 +252,10 @@
     }
     if (!G.length) h += '<p class="tdobs">' + (a ? "No other" : "No") + " official warning or live hazard has been reported for this area in the last 3 days" +
       (window.OSAP_XF || recs().length ? "." : " (the feeds have not loaded yet).") + " Check the national weather agency's own site as well.</p>";
+    /* a warning feed whose snapshot is old is named with its age, so "nothing reported" is not read as current */
+    var EM = window.OSAP_EMPTY, late = EM ? [["ASAP_WARN", "Official warnings"], ["ASAP_GDACS", "Disaster alerts"], ["ASAP_ADV", "Travel advisories"]].filter(function (x) {
+      return window[x[0]] && EM.ageNote(window[x[0]].asof, 180); }) : [];
+    if (late.length) h += '<p class="tdobs">' + late.map(function (x) { return esc(x[1]) + " last read " + esc(when(window[x[0]].asof)) + EM.ageNote(window[x[0]].asof, 180); }).join("; ") + ".</p>";
     G.slice(0, 6).forEach(function (g) {
       var st = STATUS[g.status] || ["Source report", "claim"], top = g.items.slice(0, 2);
       h += '<div class="tdal tds' + g.sev + '"><div class="tdalh"><b>' + esc(g.kind) + "</b>" + (g.n > 1 ? ' <span class="tdn">' + g.n + "</span>" : "") +
@@ -352,11 +356,23 @@
     return out;
   }
   function storiesHtml() {
-    var S = stories(), w = window.ASAP_NEWS;
-    var h = '<section class="tdcard tdnews"><div class="tdh"><h2>Top stories</h2><span class="tdcount">' + (w && w.asof && S.some(function (x) { return x.rec && x.rec.news; }) ? "news read " + esc(when(w.asof)) : "") + "</span></div>";
-    if (!S.length) h += '<p class="tdobs">No headlines are held for this area yet. Per-country news is being added area by area; the Open data tab has the global feeds.</p>';
-    S.forEach(function (s) {
-      var pic = s.rec && (s.rec.img || s.rec.thumb), st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
+    var S = stories(), w = window.ASAP_NEWS, E = window.OSAP_EMPTY, now = Date.now();
+    var h = '<section class="tdcard tdnews"><div class="tdh"><h2>Top stories</h2><span class="tdcount">' + (w && w.asof && S.some(function (x) { return x.rec && x.rec.news; }) ? "news read " + esc(when(w.asof)) + (E ? E.ageNote(w.asof, 120) : "") : "") + "</span></div>";
+    /* no headline for this country in the last 24 hours: say so, and offer its older items and nearby countries' news
+       (assets/osap-empty.js) instead of a blank card or an old list presented as today's */
+    var newest = -Infinity;
+    recs().forEach(function (r) { if (r.news && !r.xcc) { var ms = recMs(r); if (isFinite(ms) && ms > newest) newest = ms; } });
+    if (E && (w || newest > 0) && !(now - newest <= E.DAY)) {
+      var inDay = function (s) { return isFinite(s.ms) && now - s.ms <= E.DAY; }, older = S.filter(function (s) { return !inDay(s); });
+      h += E.newsHtml({ cc: CC, name: countryName(), newest: newest > 0 ? newest : NaN, olderHtml: older.map(storyHtml).join(""), olderN: older.length });
+      S = S.filter(inDay);
+    } else if (!S.length) h += '<p class="tdobs">No headlines are held for this area yet. Per-country news is being added area by area; the Open data tab has the global feeds.</p>';
+    h += S.map(storyHtml).join("");
+    h += '<div class="tdlinks"><button type="button" class="tdlink" data-go="news">All local news</button><button type="button" class="tdlink" data-go="timeline">Timeline</button></div></section>';
+    return h;
+  }
+  function storyHtml(s) {
+      var h = "", pic = s.rec && (s.rec.img || s.rec.thumb), st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
       h += '<article class="tdst' + (pic ? " haspic" : "") + '">' +
         (pic ? '<img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") +
         '<div class="tdstb">' + (s.rec ? '<button type="button" class="tdsth" data-rec="' + esc(s.rec.id) + '">' + esc(s.title) + "</button>"
@@ -365,9 +381,7 @@
         '<span class="tdtags">' + (MY() ? MY().newTag(CC, s.ms) : "") + '<span class="tdtag ' + st[1] + '">' + st[0] + "</span>" + (s.state ? '<span class="tdtag claim">State media</span>' : "") +
         (s.mt ? '<span class="tdtag mt">Machine translated</span>' : "") + (s.xb ? '<span class="tdtag xb">Across the border</span>' : "") +
         (url && s.rec ? '<a class="tdsrcl" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Source ↗</a>' : "") + "</span></div></article>";
-    });
-    h += '<div class="tdlinks"><button type="button" class="tdlink" data-go="news">All local news</button><button type="button" class="tdlink" data-go="timeline">Timeline</button></div></section>';
-    return h;
+      return h;
   }
 
   /* ---------- new since the last visit (the same baseline as "What's new") ---------- */

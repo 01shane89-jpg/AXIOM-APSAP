@@ -5677,6 +5677,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }).join("") + "</div>" : '<p class="obs">No headline reaches 5 points in this period.</p>') +
       '<p><button type="button" class="refresh" id="news-all">' + (newsAll ? "Hide the full list" : "Show all " + recs.length + " headlines") + "</button></p></div>";
   }
+  /* nothing filed for this country in the last 24 hours: say so and offer nearby countries' news (assets/osap-empty.js) */
+  function newsGap(list) {
+    var nw = -Infinity; list.forEach(function (r) { var t = window.OSAP_TIME.parseT(r.tsLabel || ""); if (isFinite(t) && t > nw) nw = t; });
+    return Date.now() - nw <= 864e5 ? "" : window.OSAP_EMPTY.newsHtml({ cc: CC, name: C.name, newest: nw > 0 ? nw : NaN, olderN: 0 });
+  }
   function feedList(key, layer, flag, title, empty, note) {
     var w = window[key], recsAll = R.filter(function (r) { return r[flag]; }), recs = recsAll.filter(inPeriod);
     sofLayer.clearLayers(); sofM = {};
@@ -5698,6 +5703,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (layer === "social" && leftN ? '<p class="obs">' + (socialAll ? "Showing every post, including " : "") + leftN + " post" + (leftN === 1 ? "" : "s") +
         (socialAll ? " the relevance rules leave out (marked “left out”)." : " left out as sport, entertainment, lifestyle or off-topic (no security, politics, crime, disaster or economy word).") +
         ' <button type="button" class="refresh" id="social-all">' + (socialAll ? "Hide left-out posts" : "Show left-out posts") + "</button></p>" : "") +
+      (layer === "news" && window.OSAP_EMPTY ? newsGap(recsAll) : "") +
       (layer === "news" && recs.length ? topHtml(recs) + '<div id="news-full"' + (newsAll ? "" : " hidden") + '><h2 style="margin-top:10px">All headlines</h2>' : "<div>") +
       (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
         var pic = r.thumb || r.img;
@@ -5728,7 +5734,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
   /* ---------- further free sources (15-minute snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
      internet outages, maritime security, sanctions. Every item is its publisher's statement or an automated signal. ---------- */
-  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
+  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + (window.OSAP_EMPTY ? window.OSAP_EMPTY.ageNote(g.asof, 360) : "") + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
   function hasCC(x) { return (x.ccs || []).indexOf(CC) >= 0; }
   function fmtN(v) { return v == null ? "–" : Math.round(v).toLocaleString("en-GB"); }
   function advNow() {
@@ -8872,6 +8878,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-locate.js"></script>
 <script src="assets/osap-keydates.js"></script>
+<script src="assets/osap-empty.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
@@ -8937,6 +8944,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 <script src="assets/osap-seatransit.js"></script>
+<script src="assets/osap-intelbrief.js"></script>
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-borders.js"></script>
 <script src="assets/osap-pop.js"></script>

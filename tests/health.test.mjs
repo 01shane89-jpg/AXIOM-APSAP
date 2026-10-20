@@ -65,6 +65,76 @@ assert.equal(ev.fp, "stall");
 // no health file at all
 ev = evaluate(null, cfg, NOW);
 assert.equal(ev.state, "down");
+assert.equal(ev.ui.state, "down");
+
+// what app readers see (ev.ui): milder than the alert state
+const minor = (id, minAgo, extra = {}) => feed(id, minAgo, { key: false, ...extra });
+const fresh = [feed("quakes", 5), feed("news", 10), feed("warnings", 8), feed("storms", 3)];
+// everything fresh: green, plain line
+ev = evaluate({ asof: iso(10), feeds: fresh }, cfg, NOW);
+assert.equal(ev.ui.state, "ok");
+assert.equal(ev.ui.line, "All 4 feeds are fresh.");
+assert.equal(ev.ui.short, "");
+// one key feed 6 h late (the conflict tabs case): the keeper is alerted, the reader sees amber naming it
+ev = evaluate({ asof: iso(10), feeds: fresh.concat(feed("conflicts", 360, { name: "Conflict tabs" })) }, cfg, NOW);
+assert.equal(ev.state, "down");                       // alert rule unchanged
+assert.equal(ev.ui.state, "amber");
+assert.equal(ev.ui.line, "Conflict tabs last updated 6 h ago; everything else is fresh.");
+assert.equal(ev.ui.short, "Conflict tabs late");
+// one key feed late plus minor ones: the key feed is named, the minor ones counted
+ev = evaluate({ asof: iso(10), feeds: fresh.concat(feed("conflicts", 360, { name: "Conflict tabs" }), minor("volcano", 17 * 1440, { name: "Volcanoes" }), minor("rw", null)) }, cfg, NOW);
+assert.equal(ev.ui.state, "amber");
+assert.equal(ev.ui.line, "Conflict tabs last updated 6 h ago; 2 minor feeds are also late; everything else is fresh.");
+// only a minor feed with no data: amber, named
+ev = evaluate({ asof: iso(10), feeds: fresh.concat(minor("rw", null, { name: "ReliefWeb reports" })) }, cfg, NOW);
+assert.equal(ev.ui.state, "amber");
+assert.equal(ev.ui.line, "ReliefWeb reports has no data; everything else is fresh.");
+// two of five key feeds late: still amber, both named
+ev = evaluate({ asof: iso(10), feeds: [feed("quakes", 5), feed("news", 200), feed("warnings", 8), feed("storms", 3), feed("gdacs", 300)] }, cfg, NOW);
+assert.equal(ev.ui.state, "amber");
+assert.equal(ev.ui.short, "2 key feeds late");
+assert.match(ev.ui.line, /^NEWS last updated 3 h 20 min ago, GDACS last updated 5 h ago; everything else is fresh\.$/);
+// most key feeds down: red
+ev = evaluate({ asof: iso(10), feeds: [feed("quakes", 500), feed("news", 200), feed("warnings", 8), feed("storms", null)] }, cfg, NOW);
+assert.equal(ev.ui.state, "down");
+assert.match(ev.ui.line, /^Most key feeds are down: QUAKES, NEWS and STORMS\.$/);
+// a key feed whose sources mostly fail: amber for readers, worded plainly
+ev = evaluate({ asof: iso(10), feeds: fresh.concat(feed("dense", 10, { name: "Open-data feeds", src: { ok: 3, fail: 7, failing: [] } })) }, cfg, NOW);
+assert.equal(ev.ui.state, "amber");
+assert.equal(ev.ui.line, "Open-data feeds has 7 of 10 sources failing; everything else is fresh.");
+// all stalled: red, says nothing has refreshed
+ev = evaluate({ asof: iso(500), feeds: [feed("quakes", 510), feed("news", 505)] }, cfg, NOW);
+assert.equal(ev.ui.state, "down");
+assert.equal(ev.ui.line, "No new data for 8 h 20 min. Everything shown is at least that old.");
+// refresh late but under the down limit, feeds fine: amber, says when it last ran
+ev = evaluate({ asof: iso(45), feeds: [feed("quakes", 50)] }, cfg, NOW);
+assert.equal(ev.ui.state, "amber");
+assert.match(ev.ui.line, /^The last refresh was 45 min ago/);
+// late refresh and a late feed: the tail says the refresh is late rather than "everything else is fresh"
+ev = evaluate({ asof: iso(45), feeds: [feed("quakes", 50), feed("news", 50), minor("rw", null)] }, cfg, NOW);
+assert.equal(ev.ui.line, "RW has no data; the last refresh was 45 min ago.");
+// the app's copy of the rule (assets/osap-health.js) gives the same answers
+{
+  const src = fs.readFileSync(new URL("../assets/osap-health.js", import.meta.url), "utf8");
+  const m = /\/\* same rules as tools\/health_lib\.mjs[\s\S]*?\n  (function evaluate[\s\S]*?\n  \})\n/.exec(src);
+  assert.ok(m, "evaluate() copy found in assets/osap-health.js");
+  const helpers = /(function parseStamp[\s\S]*?)\n  function when/.exec(src)[1];
+  const appEval = new Function(helpers + "\n" + m[1] + "\nreturn evaluate;")();
+  const cases = [
+    { asof: iso(10), feeds: fresh },
+    { asof: iso(10), feeds: fresh.concat(feed("conflicts", 360, { name: "Conflict tabs" })) },
+    { asof: iso(10), feeds: fresh.concat(feed("conflicts", 360, { name: "Conflict tabs" }), minor("volcano", 17 * 1440), minor("rw", null)) },
+    { asof: iso(10), feeds: [feed("quakes", 500), feed("news", 200), feed("warnings", 8), feed("storms", null)] },
+    { asof: iso(500), feeds: [feed("quakes", 510), feed("news", 505)] },
+    { asof: iso(45), feeds: [feed("quakes", 50), feed("news", 50), minor("rw", null)] },
+  ];
+  for (const h of cases) {
+    const a = appEval(Object.assign({ amberMin: 40, downMin: 60 }, h), NOW), b = evaluate(h, cfg, NOW).ui;
+    assert.equal(a.state, b.state, "app state for " + JSON.stringify(h.feeds.map((f) => f.id)));
+    assert.equal(a.line, b.line);
+    assert.equal(a.short, b.short);
+  }
+}
 
 // what to send, given the last health message in the channel
 const down = { state: "down", fp: "news" }, ok = { state: "ok", fp: "" };
