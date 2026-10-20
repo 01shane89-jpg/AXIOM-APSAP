@@ -643,7 +643,7 @@
 
     W.OSAP_TEAM = { open: openP, close: closeP, create: create, join: join, syncNow: syncTeam, syncAll: syncAll, rekey: rekey, leave: leave, list: function () { return cfg().teams.map(function (t) { return { id: t.id, name: t.name, role: t.role, owner: !!t.owner, ws: t.ws, call: t.call, closed: !!t.closed }; }); },
       status: function (id) { return { busy: !!busy[id], last: LAST[id] || null }; }, teamOf: function (ws) { var t = teamOfWs(ws); return t ? { id: t.id, name: t.name, role: t.role } : null; },
-      link: function (id, kind) { var t = team(id); return t ? linkFor(base(), kind === "e" ? (t.role === "e" ? t.code : "") : viewerCode(t.code)) : ""; },
+      link: function (id, kind) { var t = team(id), c = !t ? "" : kind === "e" ? (t.role === "e" ? t.code : "") : viewerCode(t.code); return c ? linkFor(base(), c) : ""; },
       wsHtml: wsHtml, tag: tag, syncHtml: function () { return syncHtml(false); }, allowed: allowed, core: core };
     start();
     /* a team link opened in this tab (kept by assets/osap-sync-boot.js): offer to join once the plan is known */
