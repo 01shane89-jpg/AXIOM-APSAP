@@ -403,3 +403,4 @@ kr_byl7 200 text/html 5808
 kr_byl_list 200 text/html 5268
 kr_byl72_raw 200 text/html 5816
 kr_rule_raw 200 text/html 145658
+kr_byl72c_raw 200 text/html 13383
