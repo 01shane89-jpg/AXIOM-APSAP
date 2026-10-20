@@ -501,6 +501,8 @@
     open: function () { open("plans"); },
     users: function () { if (CFG && CFG.owner) open("users"); },
     allows: function (need) { return !locked(need); },
+    /* the plan a feature inside a tool needs (tools/tiers.mjs FEATURES), or null when the rules do not name it */
+    need: function (f) { return (CFG && CFG.rules && CFG.rules.features && CFG.rules.features[f]) || null; },
     name: function (t) { return CFG ? name(t) : ""; },
     /* the plan a toolbar tool ("tool", its data-atk) or a data set ("set", its id) needs when this plan lacks it, else "" (osap-findall.js) */
     needs: function (kind, id) { var n = kind === "set" ? needSet(id) : needTool(id); return locked(n) ? n : ""; },
