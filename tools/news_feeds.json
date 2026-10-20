@@ -1026,7 +1026,6 @@
     {"cc":"lt","outlet":"LRT (Bing search)","url":"https://www.bing.com/news/search?q=site%3Alrt.lt&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"ge","outlet":"Interpressnews (Bing search)","url":"https://www.bing.com/news/search?q=site%3Ainterpressnews.ge&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"do","outlet":"Listín Diario (Bing search)","url":"https://www.bing.com/news/search?q=site%3Alistindiario.com&format=rss","lang":"es","search":true,"nc":true},
-    {"cc":"al","outlet":"Top Channel (Bing search)","url":"https://www.bing.com/news/search?q=site%3Atop-channel.tv&format=rss","lang":"sq","search":true,"nc":true},
     {"cc":"ao","outlet":"Angop (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aangop.ao&format=rss","lang":"pt","search":true,"nc":true},
     {"cc":"bo","outlet":"Erbol (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aerbol.com.bo&format=rss","lang":"es","search":true,"nc":true},
     {"cc":"bt","outlet":"Kuensel (Bing search)","url":"https://www.bing.com/news/search?q=site%3Akuenselonline.com&format=rss","lang":"en","search":true,"nc":true},
