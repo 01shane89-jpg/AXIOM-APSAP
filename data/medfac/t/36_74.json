@@ -45,4 +45,4 @@
 ["w794830017",37.12297,75.02061,"cn",{"aeroway":"helipad"}],
 ["w814587893",37.7241,75.25337,"cn",{"aeroway":"helipad"}],
 ["w977112673",37.77667,75.21732,"cn",{"name":"塔什库尔干塔吉克自治县人民医院","name:en":"People's Hospital of Tajik Autonomous County","amenity":"hospital"}],
-["w977746844",37.66132,75.28883,"cn",{"name":"塔什库尔干红其拉甫机场 تاشقۇرغان ئايرودرومى","name:en":"Taxkorgan Airport","operator":"新疆机场集团有限责任公司","addr:street":"塔什库尔干乡","addr:district":"塔什库尔干塔吉克自治县","addr:city":"喀什地区","addr:province":"新疆维吾尔自治区","addr:postcode":"845250","aeroway":"aerodrome","icao":"ZWTK","iata":"HQL"}]]
+["w977746844",37.66132,75.28883,"cn",{"name":"塔什库尔干红其拉甫机场 تاشقۇرغان ئايرودرومى","name:en":"Taxkorgan Airport","operator":"新疆机场集团有限责任公司","addr:street":"塔什库尔干乡","addr:district":"塔什库尔干塔吉克自治县","addr:city":"喀什地区","addr:province":"新疆维吾尔自治区","addr:postcode":"845250","aeroway":"aerodrome","icao":"ZWTK","iata":"HQL","wikidata":"Q107621242"}]]

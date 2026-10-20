@@ -11,4 +11,4 @@
 ["w1528155115",39.77243,98.29601,"cn",{"name":"嘉峪关市妇幼保健院","amenity":"hospital","healthcare":"hospital"}],
 ["w860235250",39.88926,98.70622,"cn",{"name":"Airport (construction)","aeroway":"aerodrome"}],
 ["w860274042",39.5566,98.88665,"cn",{"name":"清水空军基地","name:en":"Qingshui Air Base","aeroway":"aerodrome","military":"airfield"}],
-["w98959316",39.85862,98.33967,"cn",{"name":"嘉峪关酒泉机场","name:en":"Jiayuguan Jiuquan Airport","operator":"甘肃省民航机场集团有限公司嘉峪关机场公司","operator:type":"government","addr:postcode":"735100","aeroway":"aerodrome","icao":"ZLJQ","iata":"JGN","aerodrome:type":"military/public"}]]
+["w98959316",39.85862,98.33967,"cn",{"name":"嘉峪关酒泉机场","name:en":"Jiayuguan Jiuquan Airport","operator":"甘肃省民航机场集团有限公司嘉峪关机场公司","operator:type":"government","addr:postcode":"735100","aeroway":"aerodrome","icao":"ZLJQ","iata":"JGN","aerodrome:type":"military/public","wikidata":"Q1937403"}]]

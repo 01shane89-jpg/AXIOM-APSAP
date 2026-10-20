@@ -13,7 +13,7 @@
 ["w1018898113",41.49948,86.71507,"cn",{"aeroway":"helipad"}],
 ["w1248914482",41.65528,86.34867,"cn",{"aeroway":"helipad"}],
 ["w1304083346",41.73937,86.13933,"cn",{"name":"库尔勒市第一人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w186823511",41.61498,86.14082,"cn",{"name":"库尔勒梨城机场 كورلا ئايرودرومى","name:en":"Korla Airport","aeroway":"aerodrome","icao":"ZWKL","iata":"KRL","aerodrome:type":"military/public"}],
+["w186823511",41.61498,86.14082,"cn",{"name":"库尔勒梨城机场 كورلا ئايرودرومى","name:en":"Korla Airport","aeroway":"aerodrome","icao":"ZWKL","iata":"KRL","aerodrome:type":"military/public","wikidata":"Q5259967"}],
 ["w263229417",41.76335,87.42347,"cn",{"aeroway":"helipad"}],
 ["w750950673",41.6463,86.33052,"cn",{"aeroway":"helipad"}],
 ["w965920381",41.69736,86.27126,"cn",{"aeroway":"helipad"}],

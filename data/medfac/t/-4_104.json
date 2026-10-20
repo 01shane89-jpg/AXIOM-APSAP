@@ -56,7 +56,7 @@
 ["w1446751345",-2.90216,104.70142,"id",{"aeroway":"helipad"}],
 ["w1446751346",-2.90221,104.70054,"id",{"aeroway":"helipad"}],
 ["w1482285848",-2.97787,104.74248,"id",{"amenity":"hospital"}],
-["w169004547",-2.89724,104.69781,"id",{"name":"Bandar Udara Internasional Sultan Mahmud Badaruddin II","name:en":"Sultan Mahmud Badaruddin II International Airport","operator":"PT. Angkasa Pura II","phone":"+62 711 385001","aeroway":"aerodrome","icao":"WIPP","iata":"PLM","aerodrome:type":"international"}],
+["w169004547",-2.89724,104.69781,"id",{"name":"Bandar Udara Internasional Sultan Mahmud Badaruddin II","name:en":"Sultan Mahmud Badaruddin II International Airport","operator":"PT. Angkasa Pura II","phone":"+62 711 385001","aeroway":"aerodrome","icao":"WIPP","iata":"PLM","aerodrome:type":"international","wikidata":"Q1432286"}],
 ["w239179150",-2.97593,104.75288,"id",{"name":"RS RK. Charitas","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Jalan Jendral Sudirman","addr:city":"Palembang"}],
 ["w310459341",-2.94218,104.78471,"id",{"name":"Rumah Sakit Bersalin Aszahra","amenity":"hospital","healthcare":"hospital","addr:street":"Jalan Brigjen Hasan Kasim","addr:city":"Palembang","addr:postcode":"30114"}],
 ["w311082294",-2.93718,104.79515,"id",{"name":"RS Charitas Kenten","amenity":"hospital","healthcare":"hospital"}],

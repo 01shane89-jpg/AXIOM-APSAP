@@ -14,7 +14,7 @@
 ["w261334502",3.85876,114.59198,"my",{"name":"Klinik Kesihatan Long Bemang","amenity":"clinic","healthcare":"clinic"}],
 ["w407606392",2.34316,114.81011,"my",{"aeroway":"helipad"}],
 ["w676891731",3.61198,115.69903,"id",{"name":"Bandar Udara Long Layu","name:en":"Long Layu Airport","operator":"UPT Daerah / Pemda","operator:type":"public","aeroway":"aerodrome","aerodrome:type":"regional"}],
-["w676923642",3.89961,115.68916,"id",{"name":"Bandar Udara Yuvai Semaring","name:en":"Yuvai Semaring Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 551 30244","aeroway":"aerodrome","icao":"WAQJ","iata":"LBW","aerodrome:type":"regional"}],
+["w676923642",3.89961,115.68916,"id",{"name":"Bandar Udara Yuvai Semaring","name:en":"Yuvai Semaring Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 551 30244","aeroway":"aerodrome","icao":"WAQJ","iata":"LBW","aerodrome:type":"regional","wikidata":"Q4272460"}],
 ["w726087387",2.91176,115.84703,"id",{"name":"Puskesmas Long Alango","amenity":"hospital","healthcare":"hospital"}],
 ["w726088927",2.93073,115.85124,"id",{"name":"Lapangan Perintis Long Alango","aeroway":"aerodrome"}],
 ["w727206605",2.5907,115.79866,"id",{"name":"Lapangan Terbang Long Pujungan","name:en":"Long Pujungan Airstrip","aeroway":"aerodrome"}],

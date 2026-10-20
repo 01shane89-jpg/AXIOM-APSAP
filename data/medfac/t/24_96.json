@@ -115,9 +115,9 @@
 ["w46725656",25.38378,97.35331,"mm",{"name":"မြစ်ကြီးနားလေဆိပ်","name:en":"Myitkyina Airport","aeroway":"aerodrome","icao":"VYMK","iata":"MYT","wikidata":"Q1528948"}],
 ["w489554451",24.27104,97.24725,"mm",{"name":"ဗန်းမော် လေဆိပ်","name:en":"Bhamo Airport","aeroway":"aerodrome","icao":"VYBM","iata":"BMO","wikidata":"Q619664"}],
 ["w489554452",25.35402,97.29597,"mm",{"name":"Nampong Air Base","name:en":"Nampong Air Base","aeroway":"aerodrome","icao":"VYNP","military":"airfield","wikidata":"Q3565474"}],
-["w556441894",24.0673,97.81608,"cn",{"name":"瑞丽景成直升机场","name:en":"Ruili Jingcheng Heliport","operator":"云南景成集团有限公司","addr:street":"南京里刀坝","addr:district":"瑞丽市","addr:city":"德宏傣族景颇族自治州","addr:province":"云南省","addr:postcode":"678600","aeroway":"aerodrome"}],
+["w556441894",24.0673,97.81608,"cn",{"name":"瑞丽景成直升机场","name:en":"Ruili Jingcheng Heliport","operator":"云南景成集团有限公司","addr:street":"南京里刀坝","addr:district":"瑞丽市","addr:city":"德宏傣族景颇族自治州","addr:province":"云南省","addr:postcode":"678600","aeroway":"aerodrome","wikidata":"Q48897804"}],
 ["w687909743",24.01547,97.86193,"cn",{"name":"瑞丽市中医傣医医院","amenity":"hospital","healthcare":"hospital"}],
 ["w700499831",25.22503,96.7866,"mm",{"name":"ဆားမှော် တိုက်နယ်ဆေးရုံ","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"ကျန်းမာရေးဝန်းကြီးဌာန","addr:city":"ဆားမှော်","addr:postcode":"၁၁၀၂"}],
 ["w709349981",25.3953,97.39473,"mm",{"name":"Myitkyina General Hosipital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;surgery;dentistry;emergency","emergency":"yes","addr:city":"မြစ်ကြီးနား"}],
 ["w822001337",24.18663,97.80006,"cn",{"name":"陇川县第一人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w838363850",24.26674,97.90497,"cn",{"name":"陇川广宋通用机场","name:en":"Longchuan Guangsong General Airport","addr:district":"陇川县景罕镇广宋村","addr:city":"德宏傣族景颇族自治州","addr:province":"云南省","addr:postcode":"678700","aeroway":"aerodrome","iata":"LCS"}]]
+["w838363850",24.26674,97.90497,"cn",{"name":"陇川广宋通用机场","name:en":"Longchuan Guangsong General Airport","addr:district":"陇川县景罕镇广宋村","addr:city":"德宏傣族景颇族自治州","addr:province":"云南省","addr:postcode":"678700","aeroway":"aerodrome","iata":"LCS","wikidata":"Q131364075"}]]
