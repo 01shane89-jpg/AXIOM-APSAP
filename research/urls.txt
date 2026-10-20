@@ -393,3 +393,11 @@ tw_std6252 https://mohw.gov.tw/dl-6252-984d6d3d-d5bb-4a84-87cb-01ebdc34cf95.html
 tw_23603 https://mohw.gov.tw/cp-16-23603-1.html
 tw_27452 https://mohw.gov.tw/cp-16-27452-1.html
 tw_taipei2012 https://www.laws.taipei.gov.tw/lawatt/Law/A040170040006600-20121030-2000-001.pdf
+kr_rec53 https://www.mohw.go.kr/board.es?act=view&bid=0027&list_no=1491285&mid=a10503010100
+kr_rec53_a1 https://www.mohw.go.kr/boardDownload.es?bid=0027&list_no=1491285&seq=2
+kr_rec53_a2 https://www.mohw.go.kr/boardDownload.es?bid=0027&list_no=1491285&seq=4
+kr_desig https://www.mohw.go.kr/board.es?act=view&bid=0027&list_no=1490087&mid=a10503010100
+kr_desig_a1 https://www.mohw.go.kr/boardDownload.es?bid=0027&list_no=1490087&seq=2
+kr_byl72 https://www.law.go.kr/LSW/lsBylInfoPLinkR.do?lsNm=%EC%9D%91%EA%B8%89%EC%9D%98%EB%A3%8C%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99&bylNo=0007&bylBrNo=02&bylCls=BE&bylEfYdYn=Y
+kr_byl7 https://www.law.go.kr/LSW/lsBylInfoPLinkR.do?lsNm=%EC%9D%91%EA%B8%89%EC%9D%98%EB%A3%8C%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99&bylNo=0007&bylBrNo=00&bylCls=BE&bylEfYdYn=Y
+kr_byl_list https://www.law.go.kr/LSW/lsBylInfoR.do?lsiSeq=270485
