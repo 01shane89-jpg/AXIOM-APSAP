@@ -20,8 +20,6 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
-const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 async function open(opts, ui) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [];
@@ -213,7 +211,7 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
   const cdp = await ctx.newCDPSession(p);
   await p.evaluate(() => window.TSAP.areaApi.setArea(null));
-  await tool(p, '[data-atk="area"]');
+  await p.click('#atk-tools [data-atk="area"]');
   ok(/Circle/.test(await p.textContent("#atk-pop")) && /Square/.test(await p.textContent("#atk-pop")), "phone: toolbar Area menu offers Circle and Square");
   if (OUT) await p.screenshot({ path: OUT + "/phone-menu.png" });
   await p.click('#atk-pop [data-pk="circle"]'); await p.waitForTimeout(200);
@@ -224,11 +222,11 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   ok((await area(p) || []).length === 64, "phone: finger drag draws the circle");
   ok(await p.evaluate(() => { const b = document.querySelector('#area-ctl [data-area="save"]'); if (!b) return false; const r = b.getBoundingClientRect(), t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return b.contains(t); }), "phone: Save is on screen right after drawing");
   await p.click('#area-ctl [data-area="done"]');
-  await tool(p, '[data-atk="area"]'); await p.click('#atk-pop [data-pk="rect"]'); await p.waitForTimeout(200);
+  await p.click('#atk-tools [data-atk="area"]'); await p.click('#atk-pop [data-pk="rect"]'); await p.waitForTimeout(200);
   await touchDrag(p, cdp, cx - 80, cy - 60, cx + 70, cy + 90);
   ok((await area(p) || []).length === 4, "phone: finger drag draws the square");
   // Summarise area straight after drawing, while the shape is still in Edit shape (Shane 2026-10-01: it did nothing)
-  await tool(p, '[data-atk="area"]'); await p.click('#atk-pop [data-pk="sum"]'); await p.waitForTimeout(600);
+  await p.click('#atk-tools [data-atk="area"]'); await p.click('#atk-pop [data-pk="sum"]'); await p.waitForTimeout(600);
   ok(await p.evaluate(() => { const b = document.getElementById("rv-pkg"), r = b.getBoundingClientRect(); return !b.hidden && !!b.querySelector(".asum") && r.height > 100 && r.top < innerHeight; }), "phone: Summarise area right after drawing opens the summary");
   ok((await area(p) || []).length === 4 && !(await p.$('#area-ctl [data-area="done"]')), "phone: the square is kept and editing has ended");
   await p.evaluate(() => { const x = document.querySelector("#rv-pkg .pkghead .x"); if (x) x.click(); });
@@ -236,13 +234,11 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   if (OUT) await p.screenshot({ path: OUT + "/phone-square.png" });
   ok(await p.evaluate(() => !document.getElementById("map").classList.contains("area-drawing")), "phone: map panning is back after drawing");
   // edit with a finger: the toolbar's Edit shape, then drag a corner
-  await tool(p, '[data-atk="area"]'); await p.click('#atk-pop [data-pk="edit"]'); await p.waitForTimeout(300);
+  await p.click('#atk-tools [data-atk="area"]'); await p.click('#atk-pop [data-pk="edit"]'); await p.waitForTimeout(300);
   await p.click('#area-ctl [data-area="look"]');
   ok(await p.evaluate(() => document.querySelectorAll(".areah").length) === 6, "phone: Edit shape shows the handles");
   ok(await p.evaluate(() => { const e = document.getElementById("area-ctl"), r = e.getBoundingClientRect(); const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return r.width > 100 && r.left >= 0 && r.right <= innerWidth && !!e.querySelector('[data-ast="op"]') && e.contains(t); }), "phone: colour controls fit the screen and nothing covers them");
   if (OUT) await p.screenshot({ path: OUT + "/phone-edit.png" });
-  /* the map is shorter above the phone's bottom toolbar: bring the corner down, clear of the editing panel */
-  await p.evaluate(() => window.__asapMap.panBy([0, -120], { animate: false })); await p.waitForTimeout(300);
   const pb0 = await pxBox(p), pc = await hpos(p, "c2");
   await touchDrag(p, cdp, pc[0], pc[1], pc[0] + 30, pc[1] + 30);
   const pb1 = await pxBox(p);

@@ -6404,7 +6404,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      whenever the data set changes, and on start. The base map choice stays. */
   /* elevation shading (data-hs, data-lidar) and country borders (data-bd) belong with the base map, so they stay on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-satg]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-dsx]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-satg]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -6529,8 +6529,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
     infraUi();
-    var DX = window.OSAP_DISASTERX, dx = DX ? DX.list() : [];
-    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length + dx.filter(function (x) { return x.on; }).length;
+    var DX = window.OSAP_DISASTERX, dx = DX ? DX.list() : [], xs = dsExtra();
+    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length + dx.filter(function (x) { return x.on; }).length + xs.filter(function (x) { return x.on(); }).length;
     /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
        which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
     var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
@@ -6556,7 +6556,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         '<button type="button" class="dsclear" data-dsall="0"' + (n ? "" : " disabled") + ' title="Take every data set off the map">Clear map</button>' +
         '<button type="button" class="dsshowall" data-dsall="1" title="Put every data set on the map">Show all</button></div>' +
       (tl ? '<button type="button" class="dsname dsall-rep" data-dsopen="timeline" aria-pressed="' + (openId === "timeline") + '"><span>All reports</span><i>Timeline</i></button>' : "") +
-      grp.filter(function (g) { return g[1].length || (g[0] === DS_NAT && dxRows); }).map(function (g) {
+      grp.filter(function (g) { return g[1].length || (g[0] === DS_NAT && dxRows) || xs.some(function (x) { return x.group === g[0]; }); }).map(function (g) {
         /* Natural disasters: the flood reports, then the satellite pictures (flooding now, flood history, fires now), then the rest */
         var nat = g[0] === DS_NAT, fi = nat ? g[1].map(function (x) { return x.id; }).indexOf("flood") + 1 : 0;
         return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x, i) {
@@ -6564,7 +6564,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
             '<label class="dstick" title="Show ' + esc(x.name) + ' on the map"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map"></label>';
           return (nat && i === fi ? dxRows : "") + '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
             "<span>" + esc(x.name) + "</span></button></div>";
-        }).join("") + (nat && fi >= g[1].length ? dxRows : "");
+        }).join("") + (nat && fi >= g[1].length ? dxRows : "") + xs.filter(function (x) { return x.group === g[0]; }).map(function (x) {
+          /* a view other modules add to a group (History of violence): its map tick and its name, which opens its window */
+          return '<div class="dsrow"><label class="dstick" title="Show ' + esc(x.name) + ' on the map"><input type="checkbox" data-dsx="' + esc(x.id) + '"' + (x.on() ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map"></label>' +
+            '<button type="button" class="dsname dsxname" data-dsxopen="' + esc(x.id) + '" title="' + esc(x.note || "") + '"><span>' + esc(x.name) + (x.short ? "<i>" + esc(x.short) + "</i>" : "") + "</span></button></div>";
+        }).join("");
       }).join("") +
       /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
       (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
@@ -6616,6 +6620,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!r || !document.documentElement.getAttribute("data-cf")) return [];
     return Array.prototype.filter.call(r.querySelectorAll(DS_CFSEL), function (i) { return i.type === "checkbox" && i.checked; });
   }
+  /* rows other modules add to the Data sets list: window.OSAP_DS_EXTRA = [{ id, group, name, note, on(), set(on), open() }] */
+  function dsExtra() { return (window.OSAP_DS_EXTRA || []).filter(function (x) { return x && x.id && typeof x.on === "function" && typeof x.set === "function"; }); }
   function dsCfClear() {
     /* one at a time: a panel may redraw itself after a switch, which replaces the boxes still to do */
     for (var k = 0, i; k < 20 && (i = dsCfOn()[0]); k++) { i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); }
@@ -6626,8 +6632,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked);
     /* a satellite layer: the Layers panel's own change listener switches it; redraw the list for the count and the opacity slider */
     else if (t.getAttribute("data-fx")) setTimeout(dsUi, 0);
+    else if (t.getAttribute("data-dsx")) { var x = dsExtra().filter(function (y) { return y.id === t.getAttribute("data-dsx"); })[0]; if (x) x.set(t.checked); setTimeout(dsUi, 0); }
   });
   dsBox.addEventListener("click", function (e) {
+    var xo = e.target.closest && e.target.closest("[data-dsxopen]");
+    if (xo) { var xx = dsExtra().filter(function (y) { return y.id === xo.getAttribute("data-dsxopen"); })[0]; if (xx && xx.open) xx.open(); setTimeout(dsUi, 0); return; }
     var o = e.target.closest && e.target.closest("[data-dsopen]");
     if (o) {
       var ov = o.getAttribute("data-dsopen"), ob = seg.querySelector('[data-view="' + ov + '"]');
@@ -6637,7 +6646,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
-    if (!on) { dsCfClear(); var DX = window.OSAP_DISASTERX; if (DX) DX.list().forEach(function (x) { if (x.on) DX.set(x.id, false); }); }
+    if (!on) { dsCfClear(); var DX = window.OSAP_DISASTERX; if (DX) DX.list().forEach(function (x) { if (x.on) DX.set(x.id, false); }); dsExtra().forEach(function (x) { if (x.on()) x.set(false); }); }
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
     dsSet(current, !!DS[current]);
   });
@@ -8974,10 +8983,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
 <!-- the analyst workspace: only on a device unlocked with the owner's Face ID (assets/osap-lock.js); adds nothing elsewhere -->
+<script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
 <script src="assets/osap-grid.js"></script>
-<!-- the phone's bottom toolbar (4 most-used tools and More) and one entry for tools a plan does not include -->
-<script src="assets/osap-toolbar.js"></script>
 <script src="assets/osap-power.js"></script>
 <script src="assets/osap-surveil.js"></script>
 <script src="assets/osap-cams.js"></script>
@@ -9009,6 +9017,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-move.js"></script>
 <!-- sync my devices: saved data kept the same on your own devices through encrypted public relays, no account -->
 <script src="assets/osap-sync.js"></script>
+<!-- team workspace: share a workspace with a team by an editor or viewer link, built on sync my devices (My work > Workspaces) -->
+<script src="assets/osap-team.js"></script>
 <!-- GPS interference map from aircraft accuracy reports (Map overlays > Live aircraft; tools/gnss.mjs) -->
 <script src="assets/osap-gnss.js"></script>
 <!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
