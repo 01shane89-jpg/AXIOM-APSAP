@@ -401,3 +401,5 @@ kr_desig_a1 000 cannot open `/tmp/kr_desig_a1.bin' (No such file or directory)
 kr_byl72 200 text/html 5816
 kr_byl7 200 text/html 5808
 kr_byl_list 200 text/html 5268
+kr_byl72_raw 200 text/html 5816
+kr_rule_raw 200 text/html 145658

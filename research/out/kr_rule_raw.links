@@ -1,0 +1,103 @@
+href="/LSW/images/ico_favorites.ico" />
+href="/LSW/css/lsw/common.css?Time=1792499379" />
+href="/LSW/js/jquery/jquery.loadmask.css?Time=1792499379" />
+href="/LSW/js/jquery/layout-default-latest.css?Time=1792499379" />
+href="/LSW/css/lsw/layout.css?Time=1792499379" />
+href="/LSW/css/lsw/board.css?Time=1792499379" />
+href="/LSW/css/ui_2017.css?Time=1792499379" />
+href="/LSW/css/fonts.css?Time=1792499379" />
+href="https://www.law.go.kr/법령/주택공급에관한규칙" />
+href="/LSW/css/lsw/commonForLs.css" />
+href="/LSW/css/lsw/xtheme-ls.css" />
+href="/LSW/css/lsw/xtheme-lsHst.css" />
+href="/LSW/css/lsw/xtheme-layer.css" />
+href="/LSW/css/lsw/xtheme-lsOutput.css" />
+href="/LSW/css/lsw/common-ex.css" />
+href="/LSW/css/lsw/oldandnew.css" />
+href="/LSW/css/lsw/thdcmp.css" />
+href="/LSW/css/lsw/thdcmpNew.css" />
+href="/LSW/js/jquery/jquery.fancybox-2.1.5.css" />
+href="javascript:;" name="liBgcolor" style="background: transparent;"> 
+href="javascript:;" onclick="javascript:fSelectJoListAncInfoPTree('liBgcolorSpanJo','999','1','270485','20250331','','');return false;"> 
+href="javascript:;" onclick="javascript:fSelectJoListAncInfoPTree('liBgcolorSpanAr','2','1','270485','20250331','','');return false;"> 
+href="javascript:;" onclick="javascript:fSelectJoListAncInfoPTree('liBgcolorSpanBy','3','1','270485','20250331','','');return false;"> 
+href="javascript:;" onclick="javascript:fSelectJoListAncInfoPTree('liBgcolorSpanByJi','7','1','270485','20250331','','');return false;"> 
+href="javascript:;" onclick="lsContentsView(true, true);return false;" title="본문 새 창 열림" target="_blank">본문
+href="javascript:;" title="제정개정이유 새 창 열림" target="_blank" onclick="sideInfo('lsRvsDocInfoR');return false;">제정·개정이유
+href="javascript:;" style="display: none;" title="별표서식">별표·서식
+href="javascript:;" title="연혁">연혁
+href="javascript:;" title="3단비교 새 창 열림" target="_blank" onclick="thdLsNewView();return false;">3단비교
+href="javascript:;" title="신구법비교 새 창 열림" target="_blank" onclick="sideInfo('lsOldAndNew');return false;">신구법비교
+href="javascript:;" title="법령체계도 새 창 열림" target="_blank" onclick="lsStmdPop(lsVO.lsValue.lsiSeq, lsVO.lsValue.ancYnChk);return false;">법령체계도
+href="javascript:;" title="법령비교 새 창 열림" target="_blank" onclick="lawComparePop();return false;">법령비교
+href="javascript:;" style="display: none;" title="생활법령정보">생활법령정보
+href="javascript:;" style="display: none;" title="조례위임조문" onclick="unOrdinView(this); return false;" onmouseover="lsScInfo(this,1);" onmouseout="lsScClose();">조례위임조문
+href="javascript:;" style="display: none;" title="위임조례" onclick="joDelegateLsPop(lsVO.lsValue.lsiSeq, el('lsId').value); return false;" onmouseover="lsScInfo(this,2);" onmouseout="lsScClose();">위임조례
+href="javascript:void(0);" style="display: none;" title="한눈보기" onmouseover="lsInfo(this);" onmouseout="lsInfoClose();" onclick="javascript:showOneView(this); return false;">한눈보기
+href="javascript:;" style="display: none;" title="원문다운로드">원문다운로드
+href="javascript:;" style="display: none;" title="음성지원 레이어" onclick="bdyTtsLayer(0, this);return false;">음성지원
+href="javascript:;" title="점자뷰어" target="_blank" onclick="openBrlViewer('법령');return false;">점자뷰어
+href="javascript:;" id="skipNavi" onclick="javascript:skipNavi(); return false;" title="본문바로가기" style="padding-right: 4px;"> 
+href="javascript:;" id="innerSearch" class="btn type4" onclick="lsBodySearch(this);return false;">화면내검색
+href="javascript:;" class="btn_c type" id="share" onclick="javascript:snsShareLayer(1); return false;" title="공유하기"> 
+href="javascript:shareOnKakao();">
+href="javascript:shareOnFacebook();">
+href="javascript:shareOnTwitter();">
+href="javascript:shareOnLine();">
+href="javascript: shareUrl();">
+href="javascript:;" class="btn_c type2" id="interestLaw" onclick="interestLaw();" title="관심법령추가"> 
+href="javascript:;" class="btn_c type3 typeA" id="langType" title="한자" onclick="chrChange(this);return false;"> 
+href="javascript:;" class="btn_c type3 typeB" id="bdySaveBtn" onclick="bdySavePrint(0, this ,0, '');return false;" title="저장"> 
+href="javascript:;" class="btn_c type3 typeC" id="bdyPrintBtn" onclick="bdySavePrint(1, this ,20, '');return false;" title="인쇄(새창팝업)"> 
+href="javascript:;" onclick="javascript:myLawJo();" id="myLawJo" style="display: none;">
+href="javascript:;" id="btnLawSave" onclick="javascript:bdyCheckOutPut('0');">
+href="javascript:;" id="btnLawPri" onclick="javascript:bdyCheckOutPut('1');">
+href="javascript:;" id="shareJo" onclick="javascript:snsShareLayerCheck(); return false;" title="공유하기"> 
+href="javascript:shareOnKakao();">
+href="javascript:shareOnFacebook();">
+href="javascript:shareOnTwitter();">
+href="javascript:shareOnLine();">
+href="javascript: shareUrl();">
+href="javascript:;" id="btnCopyJo">복사
+href="#AJAX" id="btnEnlargeJo">돋보기
+href="javascript:;" id="csmLnkDpId">생활법령정보
+href="javascript:;" id="closeJoLayer">
+href="javascript:;" onclick="window.bdySearch(document.getElementsByName('srcBtn'));return false;">
+href="javascript:;" class="btn type" onclick="submitListSave();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideListSave();">닫기
+href="javascript:;" class="btn type" onclick="javascript:submitJoListSave();">저장
+href="javascript:;" class="btn type" onclick="javascript:SaveWindow.hideJoListSave();">닫기
+href="javascript:;" class="btn type" onclick="joBeforeSavePrint(); return false;">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideJoInfoSave();">닫기
+href="javascript:;" onkeypress="" onclick="javascript:SaveWindow.hideHtmlSave();">
+href="javascript:;" class="btn type" onclick="submitNewContent();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideNewSave();">닫기
+href="javascript:;" class="btn type" onclick="submitBulkSave();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideBulkSave();">닫기
+href="javascript:;" class="btn type" onclick="submitLawCompareContent();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideLawCompareSave();">닫기
+href="javascript:;" class="btn type" onclick="submitContent();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideInfoSave();">닫기
+href="javascript:;" class="btn type" onclick="javascript:submitRvsRsnContent();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideLsRvsRsnSave();">닫기
+href="javascript:;" class="btn type" onclick="submitSchlPubRulContent();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideSchlPubRulRvsRsnSave();">닫기
+href="javascript:;" class="btn type" onclick="engLsBeforeSavePrint();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideEngInfoSave();">닫기
+href="javascript:;" class="btn type" onclick="multiLingualActSavePrint();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideMultiLingualActInfoSave();">닫기
+href="javascript:;" onkeypress="" onclick="javascript:SaveWindow.hideInfoSaveNew();">
+href="javascript:;" onkeypress="" onclick="javascript:SaveWindow.hideThdCmpSave();">
+href="javascript:;" class="btn type" onclick="javascript:submitListSaveLumThdCmpPrc();return false;">저장
+href="javascript:;" class="btn type" onclick="javascript:SaveWindow.hideThdCmpNewSave();">닫기
+href="javascript:;" onkeypress="" onclick="javascript:SaveWindow.hideThdCmpTmpSave();">
+href="javascript:;" class="btn type" onclick="submitAdmRulOAN();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideAdmRulOANSave();">닫기
+href="javascript:;" class="btn type" onclick="submitSchlPubRulOAN();">저장
+href="javascript:;" class="btn type" onclick="SaveWindow.hideSchlPubRulOANSave();">닫기
+href="#AJAX" class="on">범위설정
+href="#AJAX" class="on" id="lsPtnOutBdy">법령본문
+href="#AJAX" onclick="javascript:lsThdCmpSavePrint('0'); return false;">
+href="#AJAX" onclick="javascript:lsThdCmpSavePrint('1');return false;">
+href="#AJAX" onclick="SaveWindow.hideLsPtnThdCmpSave();">
+href="#AJAX" onclick="openScrollPop('noticeInfoP.do?searchKeyword=&amp;pageIndex=3&amp;brdSeq=1935033',590,510); return false;"> 
