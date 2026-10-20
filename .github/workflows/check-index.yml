@@ -169,6 +169,7 @@ jobs:
       - run: node tests/medplan_smoke.mjs
       - run: node tests/medplan_sea_smoke.mjs
       - run: node tests/medplan_hang_smoke.mjs
+      - run: node tests/medplan_equiv.test.mjs
       - run: node tests/seatransit_smoke.mjs
       - run: node tests/lz_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
