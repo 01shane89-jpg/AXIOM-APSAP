@@ -10,6 +10,7 @@ import os from "node:os";
 import path from "node:path";
 import { rssItems, feed, run, ageDays } from "./dense_lib.mjs";
 import { ccsInText, ccFromA2, withOki } from "./geo_cc.mjs";
+import { robotsAllow, unwrap } from "./news_fetch.mjs";
 
 const TT = [
   // id, institute, home page, candidate feed addresses
@@ -152,6 +153,26 @@ async function fromSitemap(g, home) {
   throw new Error("no recent pages in sitemap");
 }
 
+// Institutes whose feeds refuse GitHub's runners (403) or were switched off are still indexed by news search. A Bing News search
+// limited to the institute's own site gives its real headlines, dates and links; only results on that site are kept. Searches go
+// one at a time, a little over a second apart, and only while Bing's robots.txt allows the path.
+const SEARCH_GAP = 1200;
+let searchChain = Promise.resolve();
+function fromSearch(g, home) {
+  const host = new URL(home).hostname.replace(/^www\./, "");
+  const url = "https://www.bing.com/news/search?q=" + encodeURIComponent("site:" + host) + "&format=rss";
+  const job = searchChain.then(async () => {
+    if (!(await robotsAllow(url))) throw new Error("robots.txt does not allow the search");
+    const t = await g(url, "text", { timeout: 20e3 });
+    const es = rssItems(t).map((x) => ({ ...x, link: unwrap(x.link), date: fixDate(x.date) }))
+      .filter((x) => { try { return x.title && (new URL(x.link).hostname.replace(/^www\./, "") === host || new URL(x.link).hostname.endsWith("." + host)) && (!x.date || ageDays(x.date) <= 60); } catch (e) { return false; } });
+    if (!es.length) throw new Error("no recent results on " + host);
+    return es;
+  });
+  searchChain = job.catch(() => {}).then(() => new Promise((r) => setTimeout(r, SEARCH_GAP)));
+  return job;
+}
+
 // Some feeds write European zone names ("22 Sep 2026 10:00:00 CEST") that Date.parse does not read.
 function fixDate(d) {
   if (!d) return "";
@@ -192,6 +213,7 @@ for (const [id, org, home, urls] of TT) {
         } catch (e) { why.push(pg + ": " + e.message); }
       }
     }
+    if (!entries) { try { entries = await fromSearch(g, home); used = "Bing News search of the institute's site"; } catch (e) { why.push("search: " + e.message); } }
     if (!entries) { try { entries = await fromSitemap(g, home); used = "sitemap (headline from page address)"; } catch (e) { why.push("sitemap: " + e.message); } }
     if (!entries || !entries.length) throw new Error("no feed: " + why.join("; ").slice(0, 300));
     let gz = null; try { gz = await gazetteer(g); } catch (e) {}
