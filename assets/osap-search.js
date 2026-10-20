@@ -5,7 +5,9 @@
    - an MGRS, UTM or latitude/longitude typed in the box is read on this device (window.OSAP_GEO) and goes straight there;
    - picking a result flies the map there and drops a temporary marker that offers Save as point (a point in the active
      workspace, the same as the toolbar's Point tool), Route to here, and Copy the grid;
-   - the last few places picked are kept in this browser only (localStorage "osap-search-recent").
+   - the last few places picked are kept in this browser only (localStorage "osap-search-recent");
+   - countries, tools, data sets and settings that match are listed above the places, and the last row searches the news
+     (assets/osap-findall.js, window.OSAP_FINDALL); those need no network.
    What is typed goes to the search host and nowhere else. A search result is a place name, never a report or a record. */
 (function () {
   "use strict";
@@ -30,19 +32,30 @@
   var box = D.createElement("div");
   box.id = "srch"; box.className = "leaflet-control"; box.hidden = true; box.setAttribute("role", "search");
   box.innerHTML = '<div class="srch-in"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>' +
-    '<input type="search" id="srch-q" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" placeholder="Search places, MGRS or lat, long" aria-label="Search places" aria-controls="srch-list" aria-autocomplete="list">' +
+    '<input type="search" id="srch-q" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" placeholder="Search places, tools, settings, MGRS…" aria-label="Search places, countries, tools, data sets and settings" aria-controls="srch-list" aria-autocomplete="list">' +
     '<button type="button" class="srch-x" data-sx aria-label="Close search" title="Close">×</button></div>' +
-    '<ul id="srch-list" role="listbox" aria-label="Places"></ul><p class="srch-st" aria-live="polite"></p>';
+    '<ul id="srch-list" role="listbox" aria-label="Results"></ul><p class="srch-st" aria-live="polite"></p>';
   L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
   mapEl.appendChild(box);
   var inp = box.querySelector("#srch-q"), list = box.querySelector("#srch-list"), st = box.querySelector(".srch-st");
-  var items = [], sel = -1, timer = 0, seq = 0, ac = null, cache = {}, itemsFor = "";  /* itemsFor: the query the list answers ("" = recent) */
+  var items = [], sel = -1, timer = 0, seq = 0, ac = null, cache = {}, itemsFor = "";  /* itemsFor: the query the place results answer ("" = recent) */
+  /* countries, tools, data sets and settings matching the query (osap-findall.js), shown above the places; a news row after them */
+  var quick = [];
+  function FA() { return W.OSAP_FINDALL; }
+  function withQuick(places, q) {
+    var n = FA() && FA().newsItem && q ? FA().newsItem(q) : null;
+    return quick.concat(places || [], n ? [n] : []);
+  }
 
   function status(t) { st.textContent = t || ""; st.hidden = !t; }
-  function paint(head) {
-    sel = items.length ? 0 : -1;
+  function paint(head, keep) {
+    var k = keep && keep.indexOf ? items.indexOf(keep) : -1;
+    sel = k >= 0 ? k : items.length ? 0 : -1;
+    /* a heading over each kind (Countries, Tools, ... Places, News) once anything other than places is listed */
+    var grouped = items.some(function (r) { return r.fa; }), last = null;
     list.innerHTML = (head ? '<li class="srch-h" role="presentation">' + esc(head) + "</li>" : "") + items.map(function (r, i) {
-      return '<li role="option" id="srch-o' + i + '" data-i="' + i + '"' + (i === sel ? ' aria-selected="true"' : "") + "><b>" + esc(r.name) + "</b>" + (r.sub ? "<span>" + esc(r.sub) + "</span>" : "") + "</li>";
+      var g = r.grp || "Places", h = grouped && g !== last ? '<li class="srch-h" role="presentation">' + esc(g) + "</li>" : ""; last = g;
+      return h + '<li role="option" id="srch-o' + i + '" data-i="' + i + '"' + (r.fa ? ' data-g="' + esc(r.k) + '"' : "") + (i === sel ? ' aria-selected="true"' : "") + "><b>" + esc(r.name) + "</b>" + (r.sub ? "<span>" + esc(r.sub) + "</span>" : "") + "</li>";
     }).join("");
     inp.setAttribute("aria-activedescendant", sel >= 0 ? "srch-o" + sel : "");
   }
@@ -54,8 +67,8 @@
     var li = list.querySelector('[data-i="' + sel + '"]'); if (li && li.scrollIntoView) li.scrollIntoView({ block: "nearest" });
   }
   function showRecent() {
-    items = recAll(); itemsFor = ""; paint(items.length ? "Recent" : "");
-    status(items.length ? "" : "Type a place, or a grid such as 47P PS 12345 67890 or 13.75, 100.5.");
+    quick = []; items = recAll(); itemsFor = ""; paint(items.length ? "Recent" : "");
+    status(items.length ? "" : "Type a place, a country, a tool or a setting, or a grid such as 47P PS 12345 67890 or 13.75, 100.5.");
   }
 
   /* a typed MGRS, UTM or latitude/longitude is read here, with no network at all */
@@ -98,24 +111,27 @@
     if (ac) try { ac.abort(); } catch (e) {}
     ac = W.AbortController ? new AbortController() : null;
     var sig = ac ? ac.signal : undefined, key = q.toLowerCase() + "@" + map.getCenter().lat.toFixed(0) + "," + map.getCenter().lng.toFixed(0);
-    if (cache[key]) { items = cache[key]; itemsFor = q; paint(); status(items.length ? "" : 'No places found for "' + q + '".'); if (goFirst && items.length) go(items[0]); return; }
+    var keep = items[sel];
+    if (cache[key]) { items = withQuick(cache[key], q); itemsFor = q; paint("", keep); status(cache[key].length ? "" : 'No places found for "' + q + '".'); if (goFirst && cache[key].length) go(cache[key][0]); return; }
     status("Searching…");
     var t = setTimeout(function () { if (ac) try { ac.abort(); } catch (e) {} }, 10000);
     photon(q, sig).catch(function (e) { if (n !== seq) throw e; return openMeteo(q, W.AbortController ? new AbortController().signal : undefined).then(function (r) { r.fallback = true; return r; }); })
       .then(function (r) {
         clearTimeout(t); if (n !== seq) return;
-        items = r.filter(function (x) { return x.name && isFinite(x.lat) && isFinite(x.lon); }).slice(0, 8);
-        if (!r.fallback) cache[key] = items;
-        itemsFor = q; paint(); status(items.length ? (r.fallback ? "OpenStreetMap search did not answer; towns from GeoNames." : "") : 'No places found for "' + q + '".');
-        if (goFirst && items.length) go(items[0]);
-      }, function () { clearTimeout(t); if (n !== seq) return; items = []; itemsFor = q; paint(); status("Place search did not answer. Check the connection and try again; grids still work offline."); });
+        var pl = r.filter(function (x) { return x.name && isFinite(x.lat) && isFinite(x.lon); }).slice(0, 8);
+        if (!r.fallback) cache[key] = pl;
+        items = withQuick(pl, q); itemsFor = q; paint("", keep); status(pl.length ? (r.fallback ? "OpenStreetMap search did not answer; towns from GeoNames." : "") : 'No places found for "' + q + '".');
+        if (goFirst && pl.length) go(pl[0]);
+      }, function () { clearTimeout(t); if (n !== seq) return; items = withQuick([], q); itemsFor = q; paint("", keep); status("Place search did not answer. Check the connection and try again; grids still work offline."); });
   }
   inp.addEventListener("input", function () {
     clearTimeout(timer);
     var q = inp.value.trim().slice(0, 120);
     if (q.length < 2) { seq++; showRecent(); return; }
     var g = fromGrid(q);
-    if (g) { seq++; items = [g]; itemsFor = q; paint(); status("Press Enter or tap it to go there."); return; }
+    if (g) { seq++; quick = []; items = [g]; itemsFor = q; paint(); status("Press Enter or tap it to go there."); return; }
+    /* countries, tools, data sets and settings show at once, with no network; the places follow */
+    seq++; quick = FA() ? FA().match(q) : []; items = withQuick([], q); paint(); status(quick.length ? "Searching places…" : "");
     timer = setTimeout(function () { run(q); }, 300);
   });
   inp.addEventListener("keydown", function (e) {
@@ -124,8 +140,13 @@
     else if (e.key === "Enter") {
       e.preventDefault(); clearTimeout(timer);
       var q = inp.value.trim().slice(0, 120), g = q && fromGrid(q);
-      /* only a list that answers what is typed now: the Recent list or an older query's results would send the map to the wrong place */
-      if (g) go(g); else if (sel >= 0 && items[sel] && itemsFor === q) go(items[sel]); else if (q.length >= 2) run(q, true);
+      /* only a list that answers what is typed now: the Recent list or an older query's results would send the map to the wrong place.
+         A close match for a country, tool or setting goes at once; a loose one, or the news row, waits for the places */
+      var r = sel >= 0 ? items[sel] : null;
+      if (g) go(g);
+      else if (r && r.fa && r.q === q && (r.strong || itemsFor === q)) go(r);
+      else if (r && !r.fa && itemsFor === q) go(r);
+      else if (q.length >= 2) run(q, true);
     }
     else if (e.key === "Escape") { e.stopPropagation(); close(); }
   });
@@ -137,6 +158,7 @@
   var here = null, hereR = null;
   function clearMark() { if (here) { map.removeLayer(here); here = null; hereR = null; } }
   function go(r) {
+    if (r.fa) { inp.value = ""; close(); if (FA()) FA().pick(r); return; }
     if (!r.grid) recAdd(r);
     inp.value = ""; close(); clearMark();
     var ll = L.latLng(r.lat, r.lon);
@@ -184,10 +206,10 @@
     "#srch input{flex:1;min-width:0;height:44px;border:0;outline:0;background:none;color:inherit;font:inherit;font-size:16px;-webkit-appearance:none;appearance:none}#srch input::-webkit-search-cancel-button{display:none}" +
     "#srch .srch-x{flex:none;width:38px;height:38px;border:0;border-radius:6px;background:none;color:var(--muted,#666);font-size:22px;line-height:1;cursor:pointer}#srch .srch-x:hover{background:var(--surface2,#eee)}" +
     "#srch ul{list-style:none;margin:0;padding:0;max-height:min(360px,55vh);overflow-y:auto}#srch ul:empty{display:none}" +
-    "#srch li[data-i]{padding:9px 12px;cursor:pointer;border-top:1px solid var(--line-soft,var(--line,#eee))}#srch li[data-i]:first-child,#srch .srch-h+li{border-top:0}" +
+    "#srch li[data-i]{display:flex;flex-direction:column;justify-content:center;min-height:44px;box-sizing:border-box;padding:7px 12px;cursor:pointer;border-top:1px solid var(--line-soft,var(--line,#eee))}#srch li[data-i]:first-child,#srch .srch-h+li{border-top:0}" +
     "#srch li[aria-selected=true]{background:rgba(11,114,133,.12)}#srch li[data-i]:hover{background:rgba(11,114,133,.18)}" +
     "#srch li b{display:block;font-weight:600}#srch li span{display:block;font-size:12.5px;color:var(--muted,#666);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
-    "#srch .srch-h{padding:7px 12px 3px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#666)}" +
+    "#srch .srch-h:first-child{border-top:0}#srch .srch-h{padding:7px 12px 3px;border-top:1px solid var(--line-soft,var(--line,#eee));font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#666)}" +
     "#srch .srch-st{margin:0;padding:8px 12px;font-size:12.5px;color:var(--muted,#666)}#srch .srch-st[hidden]{display:none}" +
     ".srch-pin{background:none;border:0}.srch-pop code{display:block;font:12px/1.4 'IBM Plex Mono',monospace;margin:4px 0}.srch-pop .obs{color:var(--muted);font-size:11.5px;margin:3px 0}" +
     "@media (max-width:700px){#srch{top:6px;left:6px;right:64px;width:auto}}";
