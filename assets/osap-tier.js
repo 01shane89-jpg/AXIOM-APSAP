@@ -496,6 +496,8 @@
     open: function () { open("plans"); },
     users: function () { if (CFG && CFG.owner) open("users"); },
     allows: function (need) { return !locked(need); },
+    /* the plan a feature inside a tool needs (tools/tiers.mjs FEATURES), or null when the rules do not name it */
+    need: function (f) { return (CFG && CFG.rules && CFG.rules.features && CFG.rules.features[f]) || null; },
   };
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", start); else start();
 })();

@@ -37,6 +37,9 @@ export const TOOLS = {
 // Data sets (the ids in Data sets). A data set not listed needs SETS_DEFAULT.
 export const SETS = { news: "free", alerts: "free", flood: "free", hazards: "free", weather: "free", timeline: "free" };
 export const SETS_DEFAULT = "mid";
+// Features inside a tool. team: Team workspace (assets/osap-team.js), creating or joining a team; the owner always has Full.
+// Like every lock on the page it is a sign only: a team's data never passes through OSAP's server.
+export const FEATURES = { team: "full" };
 
 export const rank = (t) => Math.max(0, TIERS.indexOf(t));
 export const allows = (have, need) => rank(have) >= rank(need);
@@ -55,5 +58,5 @@ export function tierOfRoles(roles) {
 }
 /** What the page needs to draw its locks (no secrets). */
 export function rulesForPage() {
-  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT };
+  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT, features: FEATURES };
 }
