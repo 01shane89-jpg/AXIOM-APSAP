@@ -1084,6 +1084,13 @@
     {"cc":"al","outlet":"Euronews Albania (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aeuronews.al&format=rss","lang":"sq","search":true,"nc":true},
     {"cc":"bj","outlet":"La Nouvelle Tribune (Bing search)","url":"https://www.bing.com/news/search?q=site%3Alanouvelletribune.info&format=rss","lang":"fr","search":true,"nc":true},
     {"cc":"bo","outlet":"El Deber (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aeldeber.com.bo&format=rss","lang":"es","search":true,"nc":true},
-    {"cc":"gt","outlet":"Prensa Libre (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aprensalibre.com&format=rss","lang":"es","search":true,"nc":true}
+    {"cc":"gt","outlet":"Prensa Libre (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aprensalibre.com&format=rss","lang":"es","search":true,"nc":true},
+    {"cc":"sb","outlet":"Island Sun","url":"https://www.theislandsun.com.sb/feed/","lang":"en"},
+    {"cc":"vc","outlet":"St Vincent Times","url":"https://www.stvincenttimes.com/feed/","lang":"en"},
+    {"cc":"bs","outlet":"Tribune 242","url":"https://www.tribune242.com/rss/headlines/","lang":"en"},
+    {"cc":"tv","outlet":"Tuvalu (Bing search)","url":"https://www.bing.com/news/search?q=Tuvalu%20Funafuti&format=rss","lang":"en","search":true,"nc":true},
+    {"cc":"ki","outlet":"Kiribati (Bing search)","url":"https://www.bing.com/news/search?q=Kiribati%20Tarawa&format=rss","lang":"en","search":true,"nc":true},
+    {"cc":"pw","outlet":"Palau (Bing search)","url":"https://www.bing.com/news/search?q=Palau%20Koror&format=rss","lang":"en","search":true,"nc":true},
+    {"cc":"fm","outlet":"Micronesia (Bing search)","url":"https://www.bing.com/news/search?q=%22Federated%20States%20of%20Micronesia%22&format=rss","lang":"en","search":true,"nc":true}
   ]
 }
