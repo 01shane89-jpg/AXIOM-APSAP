@@ -393,3 +393,11 @@ tw_std6252 200 application/pdf 680432
 tw_23603 200 text/html 29793
 tw_27452 200 text/html 29376
 tw_taipei2012 404 text/html 1161
+kr_rec53 200 application/javascript 122766
+kr_rec53_a1 200 application/pdf 329744
+kr_rec53_a2 200 text/html 92
+kr_desig 000 cannot open `/tmp/kr_desig.bin' (No such file or directory) 
+kr_desig_a1 000 cannot open `/tmp/kr_desig_a1.bin' (No such file or directory) 
+kr_byl72 200 text/html 5816
+kr_byl7 200 text/html 5808
+kr_byl_list 200 text/html 5268

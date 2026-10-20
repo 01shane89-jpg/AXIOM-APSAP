@@ -1,0 +1,6 @@
+href="/LSW/js/jquery/jquery.fancybox-2.1.5.css" />
+href="javascript:;" title="관심법령" onclick="javascrpt:interestLaw();return false;">
+href="javascript:;" title="한글문서저장" onclick="javascrpt:setDownBtn('1');return false;">
+href="javascript:;" title="PDF문서저장" onclick="javascrpt:setDownBtn('3');return false;">
+href="javascript:;" style="margin-left: 5px;" onclick="javascrpt:printlsByl();return false;" title="인쇄(팝업으로 이동)">
+href="javascript:;" class="btn type" onclick="javascript:fHstLsBylList();return false;">선택
