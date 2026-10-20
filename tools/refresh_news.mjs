@@ -103,6 +103,7 @@ async function readFeed(f) {
       if (f.relevance === "exempt") o.exempt = true;   // every item kept by the relevance check
       if (f.tier) o.tier = f.tier;          // official, national, regional, local-language or specialist (tools/news_feeds.json)
       if (f.region) o.region = f.region;    // the province or island group a regional outlet covers
+      if (f.local) o._local = true;         // a station group feed that mixes in network stories: kept only when it names the state or a place in it
       return o;
     });
     // a US state's own outlets are kept apart ("us:TX") and written to data/live/news/us-states/<st>.js for the state view
@@ -241,11 +242,17 @@ try {
     // a US state's own outlet: only a place inside that state, else the state's rough centre
     const st = cc.startsWith("us:") ? cc.slice(3) : "", ok = (r) => r && (!st || r.a1 === "US." + st);
     for (const t of texts) { const r = placeIn(gz, t, [st ? "us" : cc]); if (ok(r) && (!g || (r.prec === "approx" && g.prec !== "approx"))) g = r; if (g && g.prec === "approx") break; }
+    // a local-TV feed's network-wide stories (the same health or weather piece on every station) name no place in the state:
+    // left out of the state view rather than pinned to the state's centre
+    if (!g && st && i._local && !new RegExp("\\b" + (US_STATES.find((s) => s[0] === st) || [, "-"])[1] + "\\b", "i").test(texts.join(" "))) { i._drop = true; continue; }
     if (!g && st) g = stateCentre(gz, st);
     i.geo = g ? { n: g.name, la: g.lat, lo: g.lon, p: g.prec } : null;
     if (g) placed++;
   }
-  console.log("placed", placed, "of", all.length, "items by name");
+  let dropped = 0;
+  for (const k of Object.keys(items)) { const n = items[k].length; items[k] = items[k].filter((i) => !i._drop); dropped += n - items[k].length; }
+  for (const l of Object.values(items)) for (const i of l) delete i._local;
+  console.log("placed", placed, "of", all.length, "items by name;", dropped, "local-TV network stories naming no place in their state left out");
   function stateCentre(gz, st) {
     // by admin-1 code, not name: a city can hold the name (Washington, D.C.; Georgia, the country)
     const p = gz.us && gz.us.regs.get("US." + st);
