@@ -24,6 +24,8 @@ jobs:
       # the paywall (tools/tiers.mjs, netlify/): what each plan opens, the edge gate, Paddle webhooks
       - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier.test.mjs
+      # reviews (tools/reviews.mjs, netlify/functions/osap-reviews.mjs) and when the app asks for one (assets/osap-reviews.js)
+      - run: node tests/reviews.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -53,6 +55,7 @@ jobs:
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
       - run: node tests/keydates.test.mjs
+      - run: node tests/an_auto.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/social_view.test.mjs
       - run: node tests/jp_ccc.test.mjs
@@ -176,6 +179,7 @@ jobs:
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
       - run: node tests/medplan_sea_smoke.mjs
+      - run: node tests/medplan_hang_smoke.mjs
       - run: node tests/seatransit_smoke.mjs
       - run: node tests/lz_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
@@ -196,7 +200,6 @@ jobs:
       - run: node tests/empty_states_smoke.mjs
       - run: node tests/report_english_smoke.mjs
       - run: node tests/social_filter_smoke.mjs
-      - run: node tests/phone_toolbar_smoke.mjs
       - run: node tests/speed_budget.mjs
       - run: node tests/boolq_smoke.mjs
       # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade

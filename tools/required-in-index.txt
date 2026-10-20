@@ -78,6 +78,7 @@ window.TSAP.areaApi
 # tidy screen: one view chooser (Overlays), one country picker, Reports/Settings menus (claude/ui-cleanup)
 <script src="assets/osap-tidy.js"></script>
 <script src="assets/osap-findall.js"></script>
+<script src="assets/osap-reviews.js"></script>
 <script src="assets/osap-panels.js"></script>
 setSheet: function (s)
 refresh: function () { dsUi(); }
@@ -97,6 +98,7 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+<script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
 
 # timeline covers the open topic (Deep South / All Thailand) and the event report (claude/timeline-topic-scope)
@@ -176,6 +178,3 @@ L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
-
-# one-handed phone toolbar and grouped locked tools (claude/ux-phone-toolbar)
-<script src="assets/osap-toolbar.js"></script>
