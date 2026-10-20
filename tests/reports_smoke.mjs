@@ -42,9 +42,7 @@ async function open(hash, opts) {
   });
   return { ctx, p, errors };
 }
-const menuBtn = (p) => p.evaluate(() => { const t = document.getElementById("tidy-reptool"), h = document.getElementById("tidy-rep"); const vis = (b) => b && b.getBoundingClientRect().width > 0; if (vis(h)) return "#tidy-rep"; if (vis(t)) return "#tidy-reptool";
-  /* a phone's bottom bar (assets/osap-toolbar.js) keeps Reports in its More sheet */
-  if (t && window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone()) { window.OSAP_TOOLBAR.open(); return "#tidy-reptool"; } return ""; });
+const menuBtn = (p) => p.evaluate(() => { const t = document.getElementById("tidy-reptool"), h = document.getElementById("tidy-rep"); const vis = (b) => b && b.getBoundingClientRect().width > 0; return vis(h) ? "#tidy-rep" : vis(t) ? "#tidy-reptool" : ""; });
 async function menu(p) {
   await p.evaluate(() => { const pop = document.getElementById("tidy-pop"); if (pop && !pop.hidden) document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })); });
   const sel = await menuBtn(p); await p.click(sel); await p.waitForTimeout(250);
