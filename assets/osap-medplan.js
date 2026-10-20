@@ -131,8 +131,16 @@
   function T() { return W.OSAP_TIME || { dualT: function (ms) { return new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; } }; }
   function dual(ms, date) { return T().dualT(ms, { date: !!date }); }
   function cc() { var a = A(); return (a && a.cc) || (W.TSAP && W.TSAP.country) || ""; }
-  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
-  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  /* one drawing of the plan asks for the same saved settings once per hospital, so a value read is kept until the current task
+     ends (another tab's change only arrives in a later task) and any save here drops them all */
+  var LSC = null;
+  function lsGet(k) {
+    if (LSC && Object.prototype.hasOwnProperty.call(LSC, k)) return LSC[k];
+    var v; try { v = JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { v = null; }
+    if (!LSC) { LSC = {}; setTimeout(function () { LSC = null; }, 0); }
+    return (LSC[k] = v);
+  }
+  function lsSet(k, v) { LSC = null; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   /* side panel: the plan docked to the right (bottom half on a phone) so the map stays usable. The choice is the one split view
      setting on this device (W.OSAP_SPLIT, assets/osap-split.js) that Find LZ, Watch and NAI/TAI share; this key is only the fallback. */
   var DOCK_KEY = "osap.medplan.dock";
