@@ -2,6 +2,7 @@
 ["n12739120795",27.06042,98.36006,"mm",{"name":"ခေါင်လန်ဖူးမြို့နယ်ဆေးရုံ","name:en":"Khaunglanhpu Township Hospital","amenity":"hospital","beds":"25"}],
 ["n12739120798",26.15121,98.26949,"mm",{"name":"ဆော့လော်မြို့နယ်ဆေးရုံ","name:en":"Tsawlaw Township Hospital","amenity":"hospital","beds":"25"}],
 ["n13366696332",26.26505,99.70003,"cn",{"name":"卫生室","amenity":"clinic","healthcare":"clinic"}],
+["n14279691474",27.82257,99.70435,"cn",{"aeroway":"helipad"}],
 ["n3718263268",27.76881,99.42674,"cn",{"name":"拖顶乡中心卫生院","amenity":"hospital","healthcare":"hospital"}],
 ["n9230403742",26.46017,99.42128,"cn",{"name":"兰坪县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["r13777426",27.82221,99.70405,"cn",{"name":"迪庆香格里拉人民医院","amenity":"hospital","healthcare":"hospital"}],
@@ -17,6 +18,6 @@
 ["w1467535924",27.17419,99.30027,"cn",{"name":"维西县人民医院","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}],
 ["w1467535927",27.1658,99.30356,"cn",{"name":"维西县中藏医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1528768366",27.84697,99.73691,"cn",{"name":"香格里拉市人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w163714636",27.79201,99.67822,"cn",{"name":"迪庆香格里拉机场","name:en":"Diqing Shangri-La Airport","aeroway":"aerodrome","icao":"ZPDQ","iata":"DIG"}],
-["w688436826",26.64505,99.54401,"cn",{"name":"兰坪机场","name:en":"Lanping Airport","aeroway":"aerodrome"}],
+["w163714636",27.79201,99.67822,"cn",{"name":"迪庆香格里拉机场","name:en":"Diqing Shangri-La Airport","aeroway":"aerodrome","icao":"ZPDQ","iata":"DIG","wikidata":"Q1579838"}],
+["w688436826",26.64505,99.54401,"cn",{"name":"兰坪机场","name:en":"Lanping Airport","aeroway":"aerodrome","wikidata":"Q131364085"}],
 ["w871612871",26.52996,99.91261,"cn",{"name":"剑川县人民医院","amenity":"hospital","healthcare":"hospital"}]]

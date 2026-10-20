@@ -6,8 +6,10 @@
 
 # script tags
 <script src="assets/osap-start.js"></script>
+<script src="assets/osap-mycountries.js"></script>
 <script src="assets/osap-lock.js"></script>
 <script src="assets/osap-tier.js"></script>
+<script src="assets/osap-datagate.js"></script>
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-boolq.js"></script>
@@ -75,6 +77,7 @@ window.TSAP.areaApi
 
 # tidy screen: one view chooser (Overlays), one country picker, Reports/Settings menus (claude/ui-cleanup)
 <script src="assets/osap-tidy.js"></script>
+<script src="assets/osap-findall.js"></script>
 <script src="assets/osap-panels.js"></script>
 setSheet: function (s)
 refresh: function () { dsUi(); }

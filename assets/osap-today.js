@@ -11,6 +11,8 @@
    - New since your last visit: the same count as "What's new" (assets/osap-work.js), with the newest few.
    - Key dates: the next three holidays, elections, religious dates and anniversaries (assets/osap-keydates.js), "Show all"
      opens the full list in the country brief.
+   - My countries: pinned-country chips, a Pin button, "N new since" with New tags, and a My countries card
+     (assets/osap-mycountries.js).
    - Shortcuts into the full map tabs. Everything here is a summary: every line opens the full report or its source.
    Status words follow the page: an event is a report that is not verified, a claim is an official statement, an observation
    is an instrument reading. Nothing here is an assessment.
@@ -111,6 +113,8 @@
     return m < 2 ? "just now" : m < 60 ? m + " min ago" : m < 48 * 60 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago";
   }
 
+  /* My countries and "new since you last looked" (assets/osap-mycountries.js) */
+  function MY() { return window.OSAP_MYCC || null; }
   var CC = "", recs = function () { return (window.TSAP && window.TSAP.records) || []; };
   function countries() {
     var out = [];
@@ -257,7 +261,7 @@
       h += '<div class="tdal tds' + g.sev + '"><div class="tdalh"><b>' + esc(g.kind) + "</b>" + (g.n > 1 ? ' <span class="tdn">' + g.n + "</span>" : "") +
         '<span class="tdtag ' + st[1] + '">' + st[0] + "</span></div>" +
         top.map(function (i) {
-          var t = esc(i.title) + (isFinite(i.ms) ? ' <span class="tdt">' + esc(when(i.ms)) + "</span>" : "");
+          var t = esc(i.title) + (isFinite(i.ms) ? ' <span class="tdt">' + esc(when(i.ms)) + "</span>" : "") + (MY() ? MY().newTag(CC, i.ms) : "");
           return i.id ? '<button type="button" class="tdrow" data-rec="' + esc(i.id) + '">' + t + "</button>"
             : i.url ? '<a class="tdrow" href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + t + " ↗</a>" : '<span class="tdrow">' + t + "</span>";
         }).join("") + (g.n > 2 ? '<span class="tdmore">and ' + (g.n - 2) + " more</span>" : "") + '<span class="tdsub">' + esc(g.src) + "</span></div>";
@@ -374,7 +378,7 @@
         '<div class="tdstb">' + (s.rec ? '<button type="button" class="tdsth" data-rec="' + esc(s.rec.id) + '">' + esc(s.title) + "</button>"
           : url ? '<a class="tdsth" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : '<span class="tdsth">' + esc(s.title) + "</span>") +
         '<span class="tdsub">' + (s.ev ? "<b>" + s.n + " sources</b>: " : "") + esc(s.src) + (isFinite(s.ms) ? " · " + esc(ago(s.ms) || when(s.ms)) : "") + "</span>" +
-        '<span class="tdtags"><span class="tdtag ' + st[1] + '">' + st[0] + "</span>" + (s.state ? '<span class="tdtag claim">State media</span>' : "") +
+        '<span class="tdtags">' + (MY() ? MY().newTag(CC, s.ms) : "") + '<span class="tdtag ' + st[1] + '">' + st[0] + "</span>" + (s.state ? '<span class="tdtag claim">State media</span>' : "") +
         (s.mt ? '<span class="tdtag mt">Machine translated</span>' : "") + (s.xb ? '<span class="tdtag xb">Across the border</span>' : "") +
         (url && s.rec ? '<a class="tdsrcl" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Source ↗</a>' : "") + "</span></div></article>";
       return h;
@@ -421,14 +425,14 @@
       /* the daily summary (assets/osap-daily.js) keeps its own box too, so a picked day survives the redraws */
       if (window.OSAP_DAILYQ) window.OSAP_DAILYQ.mount(box.querySelector("#td-daily"), CC, countryName());
     }
-    box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
+    box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo-cover.webp" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
-        return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
+        return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" + (MY() ? MY().pinHtml(CC) : "") : "") +
       (window.OSAP_LOC ? '<button type="button" class="tdloc" data-loc aria-pressed="' + window.OSAP_LOC.on() + '" title="' +
         (window.OSAP_LOC.on() ? "Using your location. Your position stays on this device." : "Start on your own country and see where you are on the map. Your position stays on this device.") + '">' +
         (window.OSAP_LOC.on() ? "My location" : "Use my location") + "</button>" : "") +
-      '<button type="button" class="tdmap" data-go="map">Open map</button></div>';
-    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + keyDatesHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + (window.OSAP_ECON ? window.OSAP_ECON.cardHtml(CC) : "") + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div></div>" +
+      '<button type="button" class="tdmap" data-go="map">Open map</button></div>' + (MY() ? MY().headHtml(CC) : "");
+    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + keyDatesHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + (window.OSAP_ECON ? window.OSAP_ECON.cardHtml(CC) : "") + "</div><div class=\"tdcol tdc3\">" + (MY() ? MY().cardHtml(CC) : "") + storiesHtml() + newHtml() + "</div></div>" +
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
@@ -467,7 +471,7 @@
 
   var CSS = "#today{position:fixed;inset:0;z-index:5000;overflow:auto;background:var(--bg,var(--surface));color:var(--ink);-webkit-overflow-scrolling:touch;outline:none}" +
     "html.td-on body{overflow:hidden}" +
-    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
+    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo-cover.webp) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
     ".tdwrap{position:relative;z-index:1}.tdmark{width:44px;height:44px;border-radius:50%;flex:none}" +
     ".tdwrap{max-width:2200px;margin:0 auto;padding:max(8px,env(safe-area-inset-top)) clamp(10px,1.6vw,24px) calc(20px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
     ".tdtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:2;background:var(--bg,var(--surface));padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px}" +
@@ -552,7 +556,7 @@
       brand.addEventListener("click", show);
       brand.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(); } });
     }
-    window.OSAP_TODAY = { show: show, hide: hide, isOpen: function () { return open; }, refresh: renderSoon };
+    window.OSAP_TODAY = { show: show, hide: hide, isOpen: function () { return open; }, refresh: renderSoon, recMs: recMs };
     /* a new position redraws only when it changes the weather place or the location button */
     var locSig = "";
     if (window.OSAP_LOC) window.OSAP_LOC.onChange(function () {

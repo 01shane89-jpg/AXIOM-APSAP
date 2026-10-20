@@ -32,7 +32,7 @@
 ["n8549507794",34.51951,107.40075,"cn",{"name":"凤翔瑞格眼科医院","amenity":"hospital","healthcare":"hospital"}],
 ["n8549507982",34.52104,107.40336,"cn",{"amenity":"hospital","healthcare":"hospital"}],
 ["n9187377790",35.72696,107.63815,"cn",{"name":"庆阳市市医院","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
-["r13052400",35.80191,107.60005,"cn",{"name":"庆阳机场","name:en":"Qingyang Airport","aeroway":"aerodrome","icao":"ZLQY","iata":"IQN"}],
+["r13052400",35.80191,107.60005,"cn",{"name":"庆阳机场","name:en":"Qingyang Airport","aeroway":"aerodrome","icao":"ZLQY","iata":"IQN","wikidata":"Q1930812"}],
 ["w1024296834",35.32114,107.33843,"cn",{"name":"泾川县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1044344528",35.54683,106.68067,"cn",{"name":"平凉市妇幼保健院","amenity":"hospital","healthcare":"hospital"}],
 ["w1044446458",35.53346,106.69355,"cn",{"name":"过店街社区卫生服务中心","amenity":"hospital","healthcare":"hospital"}],

@@ -12,7 +12,7 @@
 ["w1316309480",44.58367,129.66623,"cn",{"name":"牡丹江市南山精神病医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1316512114",44.53918,129.60824,"cn",{"name":"牡丹江市中医医院江南院区","amenity":"hospital","healthcare":"hospital"}],
 ["w1323798065",44.60167,129.64591,"cn",{"name":"机车医院","amenity":"hospital","healthcare":"hospital"}],
-["w147187455",44.52565,129.5692,"cn",{"name":"牡丹江海浪机场","name:en":"Mudanjiang Hailang International Airport","addr:city":"牡丹江市","addr:province":"黑龙江省","addr:postcode":"157021","aeroway":"aerodrome","icao":"ZYMD","iata":"MDG","aerodrome:type":"international"}],
+["w147187455",44.52565,129.5692,"cn",{"name":"牡丹江海浪机场","name:en":"Mudanjiang Hailang International Airport","addr:city":"牡丹江市","addr:province":"黑龙江省","addr:postcode":"157021","aeroway":"aerodrome","icao":"ZYMD","iata":"MDG","aerodrome:type":"international","wikidata":"Q1209229"}],
 ["w549834024",44.60247,129.57006,"cn",{"name":"红旗医院","amenity":"hospital","healthcare":"hospital"}],
 ["w550008271",44.59916,129.64052,"cn",{"name":"第二人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w581910414",44.5752,129.56681,"cn",{"name":"牡丹江心血管病医院","amenity":"hospital","healthcare":"hospital"}],

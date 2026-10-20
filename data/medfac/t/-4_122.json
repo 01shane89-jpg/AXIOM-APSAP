@@ -1,5 +1,6 @@
 [["n12761656877",-3.95756,122.50497,"id",{"name":"Rumah Sakit Jiwa Prov. Sultra","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;psychiatry;dentist;dental_oral_maxillo_facial_surgery","addr:street":"Jalan Doktor Sutomo","addr:city":"Kendari","addr:province":"Sulawesi Tenggara","addr:postcode":"93115"}],
 ["n14199073571",-3.9776,122.59443,"id",{"aeroway":"helipad"}],
+["n14257354601",-3.96241,122.52437,"id",{"name":"Rumah Sakit Jantung Dan Pembuluh Darah Oputa Yi Koo","amenity":"hospital","website":"http://rsjpdo.sultraprov.go.id","addr:street":"Jalan Doktor Sam Ratulangi","addr:postcode":"93111","opening_hours":"24/7"}],
 ["n2879718359",-3.99889,122.52042,"id",{"amenity":"hospital","healthcare":"hospital"}],
 ["n7495009759",-3.96967,122.57466,"id",{"name":"RUMAH SAKIT SANTA ANNA","amenity":"hospital","healthcare":"hospital"}],
 ["n8978552273",-3.9703,122.5847,"id",{"name":"Puskesmas Kandai","amenity":"hospital","healthcare":"hospital"}],

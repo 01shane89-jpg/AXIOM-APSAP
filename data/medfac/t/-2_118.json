@@ -12,7 +12,7 @@
 ["w190555838",-0.88964,119.86768,"id",{"name":"Rumah Sakit Bhayangkara","amenity":"hospital","healthcare":"hospital","addr:street":"Jalan Suharso Lorong Polda"}],
 ["w190681267",-0.876,119.87356,"id",{"name":"Puskesmas Talise","amenity":"clinic","addr:street":"Jalan Yos Sudarso"}],
 ["w190874337",-0.88987,119.86769,"id",{"name":"Rumah Sakit Bhayangkara","amenity":"hospital","addr:street":"Jalan Suharso Lorong Polda"}],
-["w317408406",-0.91719,119.90885,"id",{"name":"Bandar Udara Mutiara SIS Al-Jufrie","name:en":"Mutiara Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 451 481702","aeroway":"aerodrome","icao":"WAFF","iata":"PLW","aerodrome:type":"regional"}],
+["w317408406",-0.91719,119.90885,"id",{"name":"Bandar Udara Mutiara SIS Al-Jufrie","name:en":"Mutiara Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 451 481702","aeroway":"aerodrome","icao":"WAFF","iata":"PLW","aerodrome:type":"regional","wikidata":"Q1432303"}],
 ["w475089322",-0.84496,119.81898,"id",{"name":"Klinik Varsya","amenity":"clinic","addr:city":"Palu"}],
 ["w475089336",-0.84525,119.81807,"id",{"name":"Poskesdes","amenity":"clinic","addr:city":"Palu"}],
 ["w477415597",-0.73232,119.86191,"id",{"name":"Klinik Tawaeli Medika","amenity":"clinic","addr:city":"Palu"}],

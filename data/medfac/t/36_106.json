@@ -12,7 +12,7 @@
 ["w1473996036",36.02137,107.86562,"cn",{"name":"庆城县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1474020709",36.01815,107.88301,"cn",{"name":"庆城县岐伯中医医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1535143062",37.60154,107.59589,"cn",{"name":"定边县精神病院","amenity":"hospital"}],
-["w440284672",36.07916,106.22043,"cn",{"name":"固原六盘山机场","name:en":"Guyuan Liupanshan Airport","addr:city":"固原市","aeroway":"aerodrome","icao":"ZLGY","iata":"GYU"}],
+["w440284672",36.07916,106.22043,"cn",{"name":"固原六盘山机场","name:en":"Guyuan Liupanshan Airport","addr:city":"固原市","aeroway":"aerodrome","icao":"ZLGY","iata":"GYU","wikidata":"Q1082907"}],
 ["w473989781",37.7709,107.39455,"cn",{"name":"盐池县人民医院","amenity":"hospital"}],
 ["w474610536",37.57935,107.57828,"cn",{"name":"定边县中医医院","amenity":"hospital","healthcare":"hospital"}],
 ["w513250087",37.59647,107.59492,"cn",{"name":"定边县医院","amenity":"hospital","healthcare":"hospital"}],

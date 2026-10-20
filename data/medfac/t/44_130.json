@@ -79,7 +79,7 @@
 ["w598472978",45.34779,130.84608,"cn",{"name":"滴道区医院","amenity":"hospital","healthcare":"hospital"}],
 ["w603737257",45.75326,130.58882,"cn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w627101836",45.22641,130.97388,"cn",{"name":"二道河子社区卫生服务中心","amenity":"hospital","healthcare":"hospital"}],
-["w631423435",45.29509,131.19085,"cn",{"name":"鸡西兴凯湖机场","name:en":"Jixi Xingkaihu Airport","addr:street":"程家村","addr:district":"鸡东县","addr:city":"鸡西市","addr:province":"黑龙江省","addr:postcode":"158200","aeroway":"aerodrome","icao":"ZYJX","iata":"JXA"}],
+["w631423435",45.29509,131.19085,"cn",{"name":"鸡西兴凯湖机场","name:en":"Jixi Xingkaihu Airport","addr:street":"程家村","addr:district":"鸡东县","addr:city":"鸡西市","addr:province":"黑龙江省","addr:postcode":"158200","aeroway":"aerodrome","icao":"ZYJX","iata":"JXA","wikidata":"Q2901204"}],
 ["w662772659",45.30341,130.94957,"cn",{"amenity":"clinic","healthcare":"clinic"}],
 ["w680460588",45.78088,131.05167,"cn",{"name":"妇幼保健院","amenity":"hospital","healthcare":"hospital"}],
 ["w682585421",45.76874,131.01671,"cn",{"name":"警官医院","amenity":"hospital","healthcare":"hospital"}],
@@ -102,4 +102,4 @@
 ["w936552476",45.20557,130.47664,"cn",{"name":"麻山区医院","amenity":"hospital","healthcare":"hospital"}],
 ["w942408480",45.76759,131.01832,"cn",{"name":"市总院","amenity":"hospital","healthcare":"hospital"}],
 ["w944540666",45.76756,131.01147,"cn",{"name":"妇产医院","amenity":"hospital","healthcare":"hospital"}],
-["w984792748",44.45363,130.84523,"cn",{"name":"绥芬河东宁机场","name:en":"Suifenhe Dongning Airport","operator":"绥芬河东宁机场管理有限公司","operator:type":"government","addr:street":"绥阳镇","addr:district":"东宁市","addr:city":"牡丹江市","addr:province":"黑龙江省","aeroway":"aerodrome","icao":"ZYSD","iata":"HSF"}]]
+["w984792748",44.45363,130.84523,"cn",{"name":"绥芬河东宁机场","name:en":"Suifenhe Dongning Airport","operator":"绥芬河东宁机场管理有限公司","operator:type":"government","addr:street":"绥阳镇","addr:district":"东宁市","addr:city":"牡丹江市","addr:province":"黑龙江省","aeroway":"aerodrome","icao":"ZYSD","iata":"HSF","wikidata":"Q109256966"}]]

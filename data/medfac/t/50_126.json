@@ -106,7 +106,7 @@
 ["w200148951",50.37946,127.54855,"ru",{"aeroway":"helipad"}],
 ["w201410670",50.255,127.57285,"ru",{"name":"Больница Водников","amenity":"hospital","addr:housenumber":"25","addr:street":"Первомайская улица"}],
 ["w201512953",50.2692,127.5088,"ru",{"name":"Кожно-венерологический диспансер","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"gynaecology;urology","addr:housenumber":"41","addr:street":"Новая улица","wikidata":"Q129233609"}],
-["w225605836",50.17206,127.30921,"cn",{"name":"黑河瑷珲机场","name:en":"Heihe Aihui Airport","aeroway":"aerodrome","icao":"ZYHE","iata":"HEK"}],
+["w225605836",50.17206,127.30921,"cn",{"name":"黑河瑷珲机场","name:en":"Heihe Aihui Airport","aeroway":"aerodrome","icao":"ZYHE","iata":"HEK","wikidata":"Q3504538"}],
 ["w550749357",50.25582,127.55673,"ru",{"name":"Поликлиника водников","amenity":"clinic","healthcare":"clinic","addr:housenumber":"61","addr:street":"улица Ленина","opening_hours":"Mo-Sa 08:00-18:00"}],
 ["w690882036",50.11444,127.56634,"ru",{"aeroway":"helipad"}],
 ["w75208211",50.42365,127.41326,"ru",{"name":"Международный аэропорт Благовещенск (Игнатьево) им. Н. Н. Муравьёва-АмурскогоИгнатьево","name:en":"Ignatyevo Airport","official_name":"Международный аэропорт Благовещенск (Игнатьево) имени Н.Н.Муравьёва-Амурского","operator":"ГУП Амурской области «Аэропорт Благовещенск»","aeroway":"aerodrome","icao":"UHBB","iata":"BQS","aerodrome:type":"international","wikidata":"Q267645"}],
