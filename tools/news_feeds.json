@@ -690,7 +690,6 @@
     {"cc":"us","st":"AK","outlet":"Anchorage Daily News","url":"https://www.adn.com/arc/outboundfeeds/rss/?outputType=xml","lang":"en"},
     {"cc":"us","st":"AZ","outlet":"AZ Family","url":"https://www.azfamily.com/arc/outboundfeeds/rss/?outputType=xml","lang":"en"},
     {"cc":"us","st":"IL","outlet":"Chicago Sun-Times","url":"https://chicago.suntimes.com/rss/index.xml","lang":"en"},
-    {"cc":"us","st":"KS","outlet":"KCUR","url":"https://www.kcur.org/news.rss","lang":"en"},
     {"cc":"us","st":"MO","outlet":"KCUR (Kansas City)","url":"https://www.kcur.org/news.rss","lang":"en"},
     {"cc":"us","st":"MO","outlet":"St. Louis Public Radio","url":"https://www.stlpr.org/news.rss","lang":"en"},
     {"cc":"us","st":"KY","outlet":"Louisville Public Media","url":"https://www.lpm.org/news.rss","lang":"en"},
