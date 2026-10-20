@@ -2,7 +2,8 @@
 // device unlocked by the owner gets the button after My work, and the workspace's tabs work on fixture Deep South reports:
 // Entities counts mentions (exact-case short names, Thai names) and adds the analyst's own entity; Links draws co-mentions as
 // dashed lines and the analyst's own link as a solid one; Timeline lists reports and the analyst's saved point; Saved shows the
-// saved report and the point; Bed-down counts search and find reports per district (not drug seizures) and draws them on the map.
+// saved report and the point; Links fills itself with auto-proposed incidents and links (violet dots, "Auto"), which the analyst
+// accepts into their own links or rejects, without touching the links they already have; Bed-down counts search and find reports per district (not drug seizures) and draws them on the map.
 // Run from the repo root: node tests/analyst_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves a screenshot)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -31,15 +32,22 @@ const FIX = { asof: "2026-10-14 04:00Z", keep_days: 1095, sources: [], items: [
   R(5, { title: "ทหารพรานปิดล้อมตรวจค้นบ้าน พบอาวุธ บีอาร์เอ็น", lang: "th", kind: "raid_or_arrest", geo: { n: "Rueso district, Narathiwat", la: 6.39, lo: 101.53, p: "approx", id: "TH-9606" } }),
   R(6, { title: "brn lowercase inside abrnx should not count", kind: "other", geo: { n: "Pattani", la: 6.8, lo: 101.2, p: "approx", id: "TH-94" } }),
   R(7, { title: "Old BRN story", date: d(400), first_seen: z(400), kind: "other", geo: { n: "Rueso district, Narathiwat", la: 6.39, lo: 101.53, p: "approx", id: "TH-9606" } })] };
+// the machine's incident candidates (data/live/ds-incidents.json), pointing at the fixture reports above
+const INC = { schema: "osap-incident-candidates/1", asof: "2026-10-14 04:00Z", candidates: [
+  { candidate_id: "cand-s1", kind: "clash", place_id: "TH-9606", place_name: "Rueso", location_level: "district", first: d(2), figures: { killed: [], injured: [] },
+    reports: [{ url: "https://example.org/1", title: "Rangers clash with BRN cell in Rueso", title_en: "Rangers clash with BRN cell in Rueso" }] },
+  { candidate_id: "cand-s2", kind: "shooting", place_id: "TH-9503", place_name: "Bannang Sata", location_level: "district", first: d(3), figures: { killed: [], injured: [{ n: 2 }] },
+    reports: [{ url: "https://example.org/8", title: "Two rangers were wounded in a shooting in Bannang Sata", title_en: "Two rangers were wounded in a shooting in Bannang Sata" }] }] };
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 
 async function page(unlocked) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1500, height: 950 } });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.route(/data\/live\/ds-incidents\.json$/, (r) => r.fulfill({ contentType: "application/json", body: JSON.stringify(INC) }));
   await ctx.route(/data\/live\/deepsouth\.js$/, (r) => r.fulfill({ contentType: "text/javascript", body: "window.ASAP_DS=" + JSON.stringify(FIX) + ";" }));
   await ctx.addInitScript(() => { try { if (window.top === window && !sessionStorage.getItem("seeded")) {
     sessionStorage.setItem("seeded", "1"); localStorage.setItem("osap-home", "map");
-    ["osap-an-ent", "osap-an-links", "osap-an-ui"].forEach((k) => localStorage.removeItem(k));
+    ["osap-an-ent", "osap-an-links", "osap-an-ui", "osap-an-auto-rej"].forEach((k) => localStorage.removeItem(k));
     localStorage.setItem("osap-atak-pts", JSON.stringify([{ id: "ptest1", cc: "th", lat: 6.39, lon: 101.53, n: "Test OP Rueso", t: Date.now() - 3600e3 }]));
   } } catch (e) {} });
   if (unlocked) await ctx.addInitScript(UNLOCK);
@@ -81,6 +89,9 @@ ok(own.n === 1 && own.hits === 1 && own.shown, "an own entity is stored in this 
 // links
 await p.evaluate(() => document.querySelector('#anws [data-an-tab="links"]').click());
 await p.waitForTimeout(300);
+ok(await p.evaluate(() => document.getElementById("an-ownonly").checked && document.querySelectorAll("#anws .angraph [data-an-auto]").length >= 4), "with auto-proposals to draw, Links opens on them and leaves out the co-mentions");
+await p.evaluate(() => { const c = document.getElementById("an-ownonly"); c.checked = false; c.dispatchEvent(new Event("change", { bubbles: true })); });
+await p.waitForTimeout(300);
 const g1 = await p.evaluate(() => ({ dashed: document.querySelectorAll("#anws .angraph line[stroke-dasharray]").length, nodes: document.querySelectorAll("#anws .angraph [data-an-node]").length, dist: document.querySelectorAll("#anws .angraph rect").length }));
 ok(g1.dashed >= 2 && g1.nodes >= 3 && g1.dist >= 1, "Links draws entities, districts and dashed co-mention lines (" + JSON.stringify(g1) + ")");
 await p.evaluate(() => { const f = document.getElementById("an-addlink"); f.a.value = "ent:ds:brn"; f.b.value = "ent:ds:pulo"; f.rel.value = "opposes"; f.conf.value = "confirmed"; f.note.value = "test basis"; f.requestSubmit(); });
@@ -102,6 +113,33 @@ const st = await p.evaluate(() => { const v = document.querySelector("#anws .ans
     probable: v ? v.querySelectorAll('path[stroke-dasharray="10 5"]').length : 0, suspected: v ? v.querySelectorAll('path[stroke-dasharray="4 4"]').length : 0, mine: /your own links only/.test(document.querySelector("#anws").textContent) }; });
 ok(st.root === "ent:ds:brn" && st.cmd && st.fin && st.boxes === 4 && st.probable === 1 && st.suspected === 1 && st.mine, "Structure draws BRN's chain of command and a finance lane from own links, dashed by confidence (" + JSON.stringify(st) + ")");
 if (OUT) await p.screenshot({ path: OUT + "/analyst-structure.png" });
+// auto-proposed links: drawn on the chart, listed with their sources, accepted or rejected by the analyst
+await p.evaluate(() => document.querySelector('#anws [data-an-tab="links"]').click());
+await p.waitForTimeout(400);
+const au = await p.evaluate(() => { const A = window.OSAP_ANALYST._auto(), list = document.querySelector("#anws details.anauto");
+  return { lines: document.querySelectorAll("#anws .angraph [data-an-auto]").length, nodes: document.querySelectorAll("#anws .angraph [data-an-autonode]").length,
+    rels: A.links.map((l) => l.rel).sort().join(","), tag: !!(list && list.querySelector(".aitag")), rows: list ? list.querySelectorAll("[data-an-accept]").length : 0, src: list ? list.querySelectorAll('a[href^="https://example.org/"]').length : 0 }; });
+ok(au.lines >= 4 && au.nodes === 2, "Links draws the auto-proposed incidents and links on the chart (" + JSON.stringify(au) + ")");
+ok(au.rels === "attributed to,occurred in,occurred in,targeted", "the proposals are typed from the report text: occurred in, attributed to, targeted (" + au.rels + ")");
+ok(au.tag && au.rows === 4 && au.src >= 4, "the review list carries the Auto tag, a source link and Accept / Reject on each proposal");
+const before = await p.evaluate(() => localStorage.getItem("osap-an-links"));
+await p.evaluate(() => { const pid = window.OSAP_ANALYST._auto().links.find((l) => l.rel === "attributed to").pid, row = document.querySelector('#anws details.anauto [data-an-prow="' + pid + '"]');
+  row.querySelector("[data-an-pconf]").value = "probable"; row.querySelector("[data-an-accept]").click(); });
+await p.waitForTimeout(300);
+const acc = await p.evaluate((before) => { const L = JSON.parse(localStorage.getItem("osap-an-links")).items, O = JSON.parse(localStorage.getItem("osap-an-ent")).items, n = L[L.length - 1], old = JSON.parse(before).items;
+  return { kept: JSON.stringify(L.slice(0, old.length)) === JSON.stringify(old), n: { a: n.a, b: n.b, rel: n.rel, conf: n.conf, auto: /^auto:/.test(n.auto), src: n.src && n.src[0] }, inc: O.some((e) => e.id === "ent:me:inc:cand-s1" && /^incident/.test(e.type)),
+    left: window.OSAP_ANALYST._auto().links.some((l) => l.rel === "attributed to"), own: [...document.querySelectorAll("#anws .angraph line")].some((l) => !l.hasAttribute("data-an-auto") && l.getAttribute("stroke-dasharray") === "10 5") }; }, before);
+ok(acc.kept, "accepting leaves the analyst's existing links exactly as they were");
+ok(acc.n.a === "ent:me:inc:cand-s1" && acc.n.b === "ent:ds:brn" && acc.n.rel === "attributed to" && acc.n.conf === "probable" && acc.n.auto && acc.n.src === "https://example.org/1", "Accept copies the proposal into the analyst's links with the chosen confidence and its source (" + JSON.stringify(acc.n) + ")");
+ok(acc.inc && !acc.left && acc.own, "the incident becomes the analyst's own entity, the proposal leaves the list and the link draws as theirs");
+await p.evaluate(() => { const pid = window.OSAP_ANALYST._auto().links.find((l) => l.rel === "targeted").pid; document.querySelector('#anws details.anauto [data-an-reject="' + pid + '"]').click(); });
+await p.waitForTimeout(300);
+const rj = await p.evaluate(() => ({ rej: JSON.parse(localStorage.getItem("osap-an-auto-rej") || "[]").length, left: window.OSAP_ANALYST._auto().links.some((l) => l.rel === "targeted"), back: !!document.querySelector("#anws [data-an-unreject]") }));
+ok(rj.rej === 1 && !rj.left && rj.back, "Reject hides the proposal on this device and offers to bring it back (" + JSON.stringify(rj) + ")");
+await p.evaluate(() => { const c = document.getElementById("an-showauto"); c.checked = false; c.dispatchEvent(new Event("change", { bubbles: true })); });
+await p.waitForTimeout(200);
+ok(await p.evaluate(() => document.querySelectorAll("#anws .angraph [data-an-auto]").length === 0), "the chart can be shown without the auto-proposed links");
+if (OUT) await p.screenshot({ path: OUT + "/analyst-auto.png" });
 // timeline
 await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').click());
 await p.waitForTimeout(300);

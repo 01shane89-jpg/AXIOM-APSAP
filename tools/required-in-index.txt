@@ -97,6 +97,7 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+<script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
 
 # timeline covers the open topic (Deep South / All Thailand) and the event report (claude/timeline-topic-scope)
@@ -176,6 +177,3 @@ L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
-
-# one-handed phone toolbar and grouped locked tools (claude/ux-phone-toolbar)
-<script src="assets/osap-toolbar.js"></script>
