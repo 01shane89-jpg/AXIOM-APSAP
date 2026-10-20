@@ -261,7 +261,7 @@
       h += '<div class="tdal tds' + g.sev + '"><div class="tdalh"><b>' + esc(g.kind) + "</b>" + (g.n > 1 ? ' <span class="tdn">' + g.n + "</span>" : "") +
         '<span class="tdtag ' + st[1] + '">' + st[0] + "</span></div>" +
         top.map(function (i) {
-          var t = esc(i.title) + (isFinite(i.ms) ? ' <span class="tdt">' + esc(when(i.ms)) + "</span>" : "") + (MY() ? MY().newTag(CC, i.ms) : "");
+          var t = esc(i.title) + (isFinite(i.ms) ? ' <span class="tdt">' + esc(when(i.ms)) + "</span>" : "") + (MY() ? MY().newTag(CC, i.ms, 0) : "");
           return i.id ? '<button type="button" class="tdrow" data-rec="' + esc(i.id) + '">' + t + "</button>"
             : i.url ? '<a class="tdrow" href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + t + " ↗</a>" : '<span class="tdrow">' + t + "</span>";
         }).join("") + (g.n > 2 ? '<span class="tdmore">and ' + (g.n - 2) + " more</span>" : "") + '<span class="tdsub">' + esc(g.src) + "</span></div>";
