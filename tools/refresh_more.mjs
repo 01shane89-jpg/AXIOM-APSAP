@@ -176,20 +176,45 @@ await job("tsu", "tsunami.js", "ASAP_TSU", async () => {
 });
 
 // 3. Smithsonian GVP weekly volcanic activity report (RSS with georss points).
+// From 2026-10-02 volcano.si.edu answers GitHub's runners with HTTP 403. The report is tried again with a browser user agent and
+// through its CAP twin; when all of them are refused, NASA EONET's open volcano events (which cite the GVP and the observatories)
+// stand in, so the list stays current. Each item says which one it came from (via).
+const BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-OSAP hourly refresh)";
 await job("volc", "volcano.js", "ASAP_VOLC", async () => {
-  const url = "https://volcano.si.edu/news/WeeklyVolcanoRSS.xml", xml = await get(url, "text"), items = [];
-  for (const it of xml.split(/<item[\s>]/).slice(1)) {
-    const tag = (t) => { const m = it.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">")); return m ? unhtml(m[1].replace(/<!\[CDATA\[|\]\]>/g, "")) : ""; };
-    const pt = tag("georss:point").split(/\s+/).map(parseFloat), title = tag("title");
-    const m = title.match(/^(.*?)\s*\(([^)]+)\)\s*[-–]\s*(.*)$/) || [];
-    const lat = pt[0], lon = pt[1];
-    if ((lat == null || isNaN(lat)) && !m[2]) continue;
-    const ccs = [...new Set([...(isNaN(lat) ? [] : ccsAt(lat, lon, 0.5)), ...ccsInText(m[2] || "")])];
-    if (!ccs.length) continue;
-    items.push({ volcano: m[1] || title, country: m[2] || "", report: m[3] || "", title, date: isoDay(tag("pubDate")), summary: tag("description").slice(0, 900),
-      link: tag("link"), lat: isNaN(lat) ? null : lat, lon: isNaN(lon) ? null : lon, ccs });
+  const urls = ["https://volcano.si.edu/news/WeeklyVolcanoRSS.xml", "https://volcano.si.edu/news/WeeklyVolcanoCAP.xml"], fails = [];
+  for (const url of urls) for (const ua of [UA, BROWSER_UA]) {
+    let xml; try { xml = await get(url, "text", { headers: { "user-agent": ua } }); } catch (e) { fails.push(url.split("/").pop() + ": " + err(e)); continue; }
+    const items = [];
+    for (const it of xml.split(/<item[\s>]|<cap:info[\s>]|<info[\s>]/).slice(1)) {
+      const tag = (t) => { const m = it.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">")); return m ? unhtml(m[1].replace(/<!\[CDATA\[|\]\]>/g, "")) : ""; };
+      const pt = (tag("georss:point") || tag("cap:circle") || tag("circle")).split(/[\s,]+/).map(parseFloat), title = tag("title") || tag("cap:headline") || tag("headline");
+      const m = title.match(/^(.*?)\s*\(([^)]+)\)\s*[-–]\s*(.*)$/) || [];
+      const lat = pt[0], lon = pt[1];
+      if ((lat == null || isNaN(lat)) && !m[2]) continue;
+      const ccs = [...new Set([...(isNaN(lat) ? [] : ccsAt(lat, lon, 0.5)), ...ccsInText(m[2] || "")])];
+      if (!ccs.length) continue;
+      items.push({ volcano: m[1] || title, country: m[2] || "", report: m[3] || "", title, date: isoDay(tag("pubDate") || tag("cap:sent") || tag("sent")),
+        summary: (tag("description") || tag("cap:description")).slice(0, 900), link: tag("link") || "https://volcano.si.edu/reports_weekly.cfm",
+        lat: isNaN(lat) ? null : lat, lon: isNaN(lon) ? null : lon, ccs, via: "GVP weekly report" });
+    }
+    if (items.length) return { src: url, items, note: items.length + " volcanoes in covered areas" + (fails.length ? " (after " + fails.join("; ") + ")" : "") };
+    fails.push(url.split("/").pop() + ": no items");
   }
-  return { src: url, items, note: items.length + " volcanoes in covered areas" };
+  // EONET: volcanoes with open events in the last 60 days, newest position first
+  const j = await get("https://eonet.gsfc.nasa.gov/api/v3/events?category=volcanoes&status=open&days=60"), items = [];
+  for (const e of j.events || []) {
+    const pts = (e.geometry || []).filter((g) => g.type === "Point" && Array.isArray(g.coordinates));
+    const g = pts[pts.length - 1]; if (!g) continue;
+    const lat = g.coordinates[1], lon = g.coordinates[0], ccs = ccsAt(lat, lon, 0.5);
+    if (!ccs.length) continue;
+    const m = String(e.title || "").match(/^(.*?)(?:\s+Volcano)?\s*,\s*(.+)$/) || [];
+    const src = (e.sources || []).find((s) => s.id === "SIVolcano") || (e.sources || [])[0] || {};
+    items.push({ volcano: m[1] || e.title, country: m[2] || "", report: "Open volcanic event since " + isoDay((pts[0] || g).date), title: e.title, date: isoDay(g.date),
+      summary: "NASA EONET lists this volcano as active (sources: " + (e.sources || []).map((s) => s.id).join(", ") + "). The Smithsonian weekly report could not be read this run.",
+      link: src.url || e.link || "https://eonet.gsfc.nasa.gov/", lat, lon, ccs, via: "NASA EONET" });
+  }
+  if (!items.length) throw new Error(fails.join("; ") + "; EONET: no open volcano events");
+  return { src: "https://eonet.gsfc.nasa.gov/", fallback: fails.join("; ").slice(0, 300), items, note: items.length + " volcanoes from EONET (GVP refused: " + fails[0] + ")" };
 });
 
 // 4. IODA internet outage signals (Georgia Tech). Country summaries for the last 7 days, then events for countries with any.

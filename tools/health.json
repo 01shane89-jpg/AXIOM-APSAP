@@ -26,7 +26,7 @@
     { "id": "maritime", "file": "data/live/maritime.js", "name": "Maritime security", "maxMin": 90 },
     { "id": "navwarnings", "file": "data/live/navwarnings.js", "name": "Navigation warnings", "maxMin": 90 },
     { "id": "sanctions", "file": "data/live/sanctions.js", "name": "Sanctions", "maxMin": 90 },
-    { "id": "displacement", "file": "data/live/displacement.js", "name": "Displacement", "maxMin": 90 },
+    { "id": "displacement", "file": "data/live/displacement.js", "name": "Displacement", "maxMin": 1560 },
     { "id": "national-quakes", "file": "data/live/national-quakes.js", "name": "National earthquake agencies", "maxMin": 90 },
     { "id": "eonet", "file": "data/live/eonet.js", "name": "NASA natural events", "maxMin": 90 },
     { "id": "ifrc", "file": "data/live/ifrc.js", "name": "Red Cross appeals", "maxMin": 90 },
