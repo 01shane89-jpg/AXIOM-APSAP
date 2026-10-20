@@ -27,6 +27,7 @@ ok(tierOfPath("data/something-new/x.js") === "mid", "a data path no rule names n
 ok(tierOfPath("data/claims/th.json") === "full", "claims need Full");
 ok(tierOfPath("data/live/evsum.js") === "full", "AI event summaries need Full");
 ok(tierOfPath("data/live/daily/th.js") === "full", "AI daily briefs need Full");
+ok(tierOfPath("data/axiom/osap-bundle.ndjson") === "full", "the AXIOM bundle needs Full");
 ok(tierOfPath("assets/osap-news.js") === null, "app files are not data");
 ok(tierOfRoles(["owner"]) === "full", "the owner's account has everything");
 ok(tierOfRoles(["mid"]) === "mid" && tierOfRoles(["mid", "full"]) === "full" && tierOfRoles([]) === "free" && tierOfRoles(undefined) === "free", "roles map to the highest plan");
