@@ -375,3 +375,21 @@ kr_eval2024 200 application/javascript 110559
 kr_ptdr 200 application/javascript 117191
 kr_hub 200 application/javascript 115818
 kr_ptdr_news 200 text/html 171871
+kr_eval2024_a1 200 application/pdf 553164
+kr_ptdr_a1 200 application/pdf 367418
+kr_hub_a2 200 application/pdf 344545
+kr_hub_a4 000 cannot open `/tmp/kr_hub_a4.bin' (No such file or directory) 
+kr_rule 200 text/html 145658
+kr_rule2 200 text/html 1297
+kr_ywmc_eq 200 text/html 49533
+tw_std6282 200 application/msword 102400
+tw_std45129 200 application/pdf 396352
+tw_std6232 200 application/pdf 405030
+tw_std83191 200 application/pdf 972597
+tw_std55071 200 application/pdf 978999
+tw_std88320 200 application/pdf 796948
+tw_std6255 200 application/vnd.openxmlformats-officedocument.wordprocessingml.document 57445
+tw_std6252 200 application/pdf 680432
+tw_23603 200 text/html 29793
+tw_27452 200 text/html 29376
+tw_taipei2012 404 text/html 1161
