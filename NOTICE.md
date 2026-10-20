@@ -18,6 +18,7 @@ Some feeds are only free for non-commercial use. They are marked `"nc": true` in
 - **Leaflet 1.9.4** (`assets/vendor/leaflet-1.9.4.js`): Copyright (c) 2010-2023 Volodymyr Agafonkin, (c) 2010-2011 CloudMade. BSD 2-Clause licence, reproduced below.
 - **MapLibre GL JS 5.24.0** (`assets/vendor/maplibre-gl-5.24.0.js` and `.css`, loaded only when the 3D view is opened): Copyright (c) 2023 MapLibre contributors, (c) 2020 Mapbox (mapbox-gl-js v1.13 and earlier). BSD 3-Clause licence, full text in `assets/vendor/maplibre-gl-LICENSE.txt`.
 - **milsymbol 3.0.4** (`assets/vendor/milsymbol-3.0.4.js`, draws military symbols for map points): Copyright (c) 2017 Måns Beckman, spatialillusions.com. MIT licence, kept in the file header.
+- **PptxGenJS 4.0.1** (`assets/vendor/pptxgenjs-4.0.1.bundle.js`, loaded only when an intelligence brief is made as PowerPoint): Copyright (c) 2015-2022 Brent Ely. MIT licence. The bundle includes JSZip (Stuart Knightley and contributors), dual-licensed MIT or GPLv3 and used here under MIT. Full text in `assets/vendor/pptxgenjs-LICENSE.txt`.
 - **mil-std-2525 0.2.8** tables (symbol function names in `assets/osap-milsym-cat.js`): Copyright (c) Måns Beckman, spatialillusions.com. MIT licence.
 
 ## Services and data

@@ -111,7 +111,7 @@
     if (!c || c.state !== 2) return h + '</div><p class="tdobs">Loading…</p></section>';
     var E = c.data;
     if (!E) return h + '</div><p class="tdobs">No economic figures are held for this country yet (the daily refresh writes them).</p></section>';
-    h += '<span class="tdcount">read ' + esc(T().asofT(E.asof)) + "</span></div>";
+    h += '<span class="tdcount">read ' + esc(T().asofT(E.asof)) + (W.OSAP_EMPTY ? W.OSAP_EMPTY.ageNote(E.asof, 3 * 1440) : "") + "</span></div>";
     h += flagsHtml(E, "ecflags");
     var fx = E.fx;
     if (fx) h += '<div class="ecrow"><div class="ecl">' + (fx.src ? link(fx.src, esc(fxLine(fx))) : esc(fxLine(fx))) +
