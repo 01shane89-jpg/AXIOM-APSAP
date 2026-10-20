@@ -109,7 +109,8 @@
     var now = Date.now() + 36e5;
     return ((W.TSAP && W.TSAP.records) || []).filter(function (r) { if (!counted(r)) return false; var ms = recMs(r); return ms > base && ms <= now; }).length;
   }
-  function isNew(id, ms) { return view.cc === id && view.base != null && isFinite(ms) && ms > view.base; }
+  /* items timed ahead (a warning's valid-from time) are not "new" until then, the same window newCount uses */
+  function isNew(id, ms) { return view.cc === id && view.base != null && isFinite(ms) && ms > view.base && ms <= Date.now() + 36e5; }
 
   /* ---------- headlines for the My countries card ---------- */
   var news = {}, newsBusy = {};
