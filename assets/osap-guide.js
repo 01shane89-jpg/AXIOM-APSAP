@@ -170,6 +170,25 @@
         "Open " + b("Workspaces") + " at the top of My work to rename, switch, delete or make a " + b("New workspace") + ". Switching reloads the page.",
         b("Import KML, KMZ or workspace") + " brings shapes into the active workspace: placemarks become points, lines and polygons become shapes. A workspace .zip comes in as a new workspace.",
         b("Export workspace (.zip)") + " and " + b("Export KML") + " take it out."]) },
+    { id: "team", t: "Team workspace", h:
+      "<p>Share a workspace with your team, so everyone sees the same points, areas, NAI/TAI, routes, shapes, viewsheds, watches, saved reports and notes, plans and analyst entities. It needs the Full plan.</p>" +
+      "<h3>Start a team</h3>" +
+      ul(["Open " + b("My work") + ", then " + b("Workspaces") + ". Under the active workspace press " + b("Share with a team") + ".",
+        "Give the team a name and your call sign (up to 24 characters, never an email address), then press " + b("Create team") + ".",
+        "Copy the " + b("Copy editor link") + " for members who add and change items, or the " + b("Copy viewer link") + " for members who only look. Send each one in a private message: anyone with a link is in the team."]) +
+      "<h3>Join a team</h3>" +
+      ul(["Open the link you were sent. OSAP asks first: type your call sign and press " + b("Join team") + ", or " + b("Not now") + ". Nothing joins until you press it.",
+        "Or open Settings, " + b("Sync my devices") + ", and press " + b("Join a team with a link or code") + " to paste it.",
+        "The team's items go into a new workspace named after the team. Press " + b("Open the team workspace") + " to switch to it."]) +
+      "<h3>Working in a team</h3>" +
+      ul(["Each item shows the call sign of the member who added it and when, in Zulu and local time.",
+        "Each item is merged on its own and the newest change wins. Changes from the team show when OSAP opens, or press " + b("Show them") + ".",
+        "With a viewer link you can see the team's items but cannot change them; that is enforced by the team's keys, not only by the buttons. Your own changes stay on your device.",
+        "Photos and the hidden areas are never shared. A team holds about 2 MB; when it is full OSAP says so, and new changes wait until you delete items the team no longer needs."]) +
+      "<h3>Remove someone</h3>" +
+      ul(["A link cannot be taken back. The owner (who made the team) presses " + b("Make new team links") + ": OSAP makes a new team key, copies the team's items to it and closes the old key with a note that the team has moved.",
+        "Send the new links to the members who stay. Whoever does not get one keeps what they had, but sees nothing new and cannot add to the team.",
+        "The team key stays on members' devices. The team's data passes through free public relays locked with it; OSAP's server never holds the key."]) },
     { id: "photocheck", t: "Photo and video check", h:
       "<p>Checks where and when a picture or video was taken. Everything runs on your device: nothing is uploaded.</p>" +
       ul(["Open it from " + b("My work") + " > " + b("Check a photo") + ", from a point on the map with " + b("Check a photo here") + ", or from a point's photo with " + b("Check this photo") + ". It sits beside the map.",
