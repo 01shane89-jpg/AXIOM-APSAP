@@ -530,15 +530,19 @@
   /* the official designation only as a source states it (status REPORTED: OSAP's sources are not the designating authority) */
   function tierLabel(f) {
     if (f.trauma) return f.lvl ? "Trauma Level " + ROMAN[f.lvl] + " (official designation, reported)" : f.trauma.official ? clip(f.trauma.text, 90) + " (official designation)" : "Trauma centre, level not stated (reported)";
-    return NK_LVL;
+    return eqText(f) || NK_LVL;
   }
+  /* the small tag on an equivalent level: an assessment by OSAP's rule, its basis in the tooltip */
+  function eqTag(f) { return !f.trauma && eqText(f) ? ' <span class="aitag" tabindex="0" title="' + esc(EQ_RULE) + '">Assessed</span>' : ""; }
   function desigNote(f) {
+    if (!f.trauma && eqText(f)) return "No official trauma designation found in OSAP's sources. " + EQ_RULE;
     if (f.trauma && f.trauma.official) return "Published by the designating authority" + (f.trauma.authority ? " (" + f.trauma.authority + ")" : "") + " in " + f.trauma.srcname + ": \"" + f.trauma.text + "\".";
     return f.trauma ? "Reported by " + f.trauma.srcname + ": \"" + f.trauma.text + "\". Not yet verified with the designating authority." : "No official trauma designation found in OSAP's sources.";
   }
   /* rank: a sourced level above every hospital without one (Level 1 highest; a trauma centre with no stated level after
      Level 5); without one, the order of what is listed */
-  function rankOf(f) { return f.trauma ? 10 - (f.lvl || 5.5) : tcRank(f) / 10 + f.tier / 100; }
+  /* an equivalent level ranks below every official one and above hospitals with none */
+  function rankOf(f) { return f.trauma ? 10 - (f.lvl || 5.5) : (f.eq && f.eq.level ? 1 + (5 - f.eq.level) / 10 : 0) + tcRank(f) / 10 + f.tier / 100; }
   function capability(f, sofList) {
     var why = [], sc = 0, tr = null, m = f.sofRec || (f.noSof ? null : sofMatch(f, sofList)), er24 = false, ref = "";
     if (m) {
@@ -571,7 +575,7 @@
     f.score = sc; f.why = why; f.trauma = tr; f.role = role;
     f.low = !tr && !ref && !surg && role > 0;
     f.tier = tr ? 4 : role; f.lvl = lvlOf(tr);
-    f.caps = capFlags(f, m); f.tc = tClass(f.caps);
+    f.caps = capFlags(f, m); f.tc = tClass(f.caps); f.eq = equivLevel(f.caps);
     /* schema field official_trauma_designation: only as a source states it; VERIFIED only from the designating authority */
     f.official_trauma_designation = tr ? { level: f.lvl ? ROMAN[f.lvl] : "UNSPECIFIED", designation_name: tr.text, authority: tr.authority || "", jurisdiction: tr.jurisdiction || "",
       status: tr.official ? "VERIFIED" : "REPORTED", source_refs: [tr.src], source: { kind: tr.official ? "register" : "sof", url: tr.src, name: tr.srcname } } : { level: "NONE_IDENTIFIED", status: "UNKNOWN", source_refs: [] };
@@ -740,6 +744,41 @@
       missing: next ? next.missing : [], unknown: next ? next.unknown : [], next: next ? next.cls : null };
     out.wording = cls ? TC_WORD[cls] : out["class"] === "NONE" ? "No emergency department (source-stated)." : "Not enough is listed to say.";
     return out;
+  }
+  /* Shane 2026-10-20: where no authority grades a hospital, an "equivalent" trauma level from its capabilities. Rule
+     osap.equiv/0.1 compares capabilities a credible source documents (stated by the hospital or a government, or required
+     by an official designation's standard) with what the American College of Surgeons' trauma levels need: IV a 24-hour
+     emergency department with blood and X-ray or ultrasound to stabilise and transfer; III adds CT, ICU and emergency
+     surgery (general, orthopaedic, anaesthesia, an emergency theatre); II adds neurosurgery and a trauma surgeon or team;
+     I adds vascular, thoracic and plastic surgery. OpenStreetMap and Wikipedia never count, a planner's check does. It is
+     an assessment, never an official designation, and an official one always comes first. */
+  var EQ_RULE_ID = "osap.equiv/0.1";
+  var EQ_NEED = [
+    [4, [["ed.24_7"], ["blood.bank"], ["dx.xray", "dx.ultrasound"]]],
+    [3, [["dx.ct"], ["cc.icu"], ["surg.general"], ["surg.or_emergency"], ["surg.anaesthesia"], ["surg.ortho"]]],
+    [2, [["surg.neuro"], ["surg.trauma", "trauma.team"]]],
+    [1, [["surg.vascular"], ["surg.thoracic"], ["surg.plastic"]]]];
+  var EQ_RULE = "Equivalent level (rule " + EQ_RULE_ID + "): OSAP compares the capabilities a credible source documents with what the American College of Surgeons' trauma levels need. " +
+    "Level IV: 24-hour emergency department, blood bank, X-ray or ultrasound. Level III adds CT, ICU, general and orthopaedic surgery, anaesthesia and an emergency operating theatre. " +
+    "Level II adds neurosurgery and a trauma surgeon or team. Level I adds vascular, thoracic and plastic surgery. OpenStreetMap and Wikipedia never count. " +
+    "An assessment by OSAP's rule, not an official designation; draft, not analyst-approved.";
+  function equivLevel(C) {
+    function ok(k) { var c = C[k]; return has(C, k) && c.source && !crowd(c.source); }
+    var lvl = null, next = null;
+    for (var i = 0; i < EQ_NEED.length; i++) {
+      var miss = EQ_NEED[i][1].filter(function (a) { return !a.some(ok); });
+      if (miss.length) { next = { level: EQ_NEED[i][0], missing: miss.map(function (a) { return capNames(a).join(" or "); }) }; break; }
+      lvl = EQ_NEED[i][0];
+    }
+    return { level: lvl, status: "INFERRED", rule: EQ_RULE_ID, next: next };
+  }
+  function eqText(f) {
+    var e = f.eq; if (!e) return "";
+    return e.level ? "Trauma Level " + ROMAN[e.level] + " equivalent (assessed from documented capabilities)" : "";
+  }
+  function eqNext(f) {
+    var e = f.eq; if (!e || !e.next) return "";
+    return (e.level ? "Level " + ROMAN[e.next.level] + " equivalent" : "An equivalent level") + " would need " + andList(e.next.missing) + " documented";
   }
   /* "T5 basic emergency facility (inferred, could be T4 if 24/7 emergency department, blood bank and X-ray or ultrasound are confirmed)" */
   function tcText(f) {
@@ -1854,7 +1893,7 @@
     var mk = (pre || (f.kind === "hospital" ? "H" : "C")) + (i + 1), rw = num("rwkn");
     var cap = [f.er === "yes" ? "Emergency dept (OSM)" : f.er === "no" ? "No emergency dept (OSM)" : "", f.pad ? "Helipad on site" : "", f.beds ? f.beds + " beds" : "",
       f.op ? f.op.replace(/_/g, " ") : "", f.spec].filter(Boolean).join(" · ");
-    var tier = f.kind === "hospital" ? '<span class="mptier t' + (f.trauma ? 4 : 0) + '" tabindex="0" title="' + esc(desigNote(f) + " " + ROLE_RULE) + '">' + esc(tierLabel(f)) + "</span>" + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" : "";
+    var tier = f.kind === "hospital" ? '<span class="mptier t' + (f.trauma ? 4 : eqText(f) ? 2 : 0) + '" tabindex="0" title="' + esc(desigNote(f) + " " + ROLE_RULE) + '">' + esc(tierLabel(f)) + "</span>" + eqTag(f) + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" : "";
     var tr = f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " " + (link(f.trauma.src, "(" + f.trauma.srcname + ")") || "") + "</span>" : f.kind === "hospital" && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + "</span>" : "";
     var tot = groundTotal(f);
     var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
@@ -2838,7 +2877,7 @@
   var KEY_CAPS = ["blood.bank", "surg.or_emergency", "ed.24_7", "dx.ct", "cc.icu", "cc.ventilator", "surg.neuro"];
   function planFac(f) {
     var c = {}, n = {}; KEY_CAPS.forEach(function (k) { c[k] = capOk(f, k); n[k] = f.caps && f.caps[k] && f.caps[k].now ? f.caps[k].now.state : "UNKNOWN"; });
-    var r = { id: f.id, name: f.name, name_local: f.alias && f.alias !== f.name ? f.alias : "", aliases: [], lat: f.lat, lon: f.lon, mgrs: grid(f.lat, f.lon), caps: c, caps_now: n, designation: tierLabel(f), source: f.osm || f.src || "" };
+    var r = { id: f.id, name: f.name, name_local: f.alias && f.alias !== f.name ? f.alias : "", aliases: [], lat: f.lat, lon: f.lon, mgrs: grid(f.lat, f.lon), caps: c, caps_now: n, designation: f.trauma ? tierLabel(f) : NK_LVL, equivalent: f.eq && f.eq.level ? { level: ROMAN[f.eq.level], status: "INFERRED", rule: EQ_RULE_ID, basis: "documented capabilities" } : null, source: f.osm || f.src || "" };
     /* Build Plan v2's Facility object: every capability with who says it exists (V1 to U) and whether it can be used now */
     if (FI()) r.intel = FI().record({ id: f.id, name: f.name, aliases: r.name_local ? [r.name_local] : [], cc: ST ? ST.cc : "", lat: f.lat, lon: f.lon, mgrs: r.mgrs, caps: f.caps, designation: f.official_trauma_designation || null,
       contacts: { phone: f.phone || "", emergency_phone: f.ephone || "", hotline: f.hot || "", web: f.web || "", address: f.addr || "" }, sources: [f.osm, f.sofRec && f.sofRec.src, f.gov && "MOPH " + f.gov.hcode].filter(Boolean) }, checks(), new Date().toISOString());
@@ -3055,7 +3094,9 @@
       }
       return "";
     }
-    row("Official trauma designation", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" + (f.trauma.official ? ". Status VERIFIED: published by the designating authority" + (f.trauma.authority ? " (" + esc(f.trauma.authority) + ")" : "") + "." : ". Status REPORTED: not yet verified with the designating authority.") + "</span>" : '<span class="sub">None identified in OSAP\'s sources. This does not mean the hospital cannot treat injured patients; see the observed class and capability flags.</span>'));
+    row("Official trauma designation", '<b>' + esc(f.trauma ? tierLabel(f) : NK_LVL) + "</b>" + lowTag(f) + (f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" + (f.trauma.official ? ". Status VERIFIED: published by the designating authority" + (f.trauma.authority ? " (" + esc(f.trauma.authority) + ")" : "") + "." : ". Status REPORTED: not yet verified with the designating authority.") + "</span>" : '<span class="sub">None identified in OSAP\'s sources. This does not mean the hospital cannot treat injured patients; see the observed class and capability flags.</span>'));
+    row("Equivalent level", (eqText(f) ? "<b>" + esc(eqText(f)) + "</b>" + eqTag(f) : "None: " + esc(f.eq && f.eq.next ? "Level IV equivalent would need " + andList(f.eq.next.missing) + " documented" : "not enough is documented")) +
+      (f.eq && f.eq.level && f.eq.next ? '<span class="sub">' + esc(eqNext(f)) + ".</span>" : "") + '<span class="sub">' + esc(EQ_RULE) + (f.trauma ? " The official designation above comes first." : "") + "</span>");
     row("Observed class", esc(tcText(f)) + '<span class="sub">' + esc(f.tc ? f.tc.wording : "") + " Inferred by rule " + TC_RULE_ID + "; not an official level and not used to pick.</span>" + (f.why && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + "</span>" : ""));
     row("Emergency department", f.er === "yes" ? "Yes" + (osm ? " (" + osm + " emergency=yes)" : "") : f.er === "no" ? "No" + (osm ? " (" + osm + " emergency=no)" : "") :
       sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : flag("ed.24_7", "ed.basic") || nk("No emergency department listed."));
@@ -3242,7 +3283,7 @@
     if (c.errors) { if (msg) msg.textContent = "Not recorded: check " + c.errors.join(", ") + "."; return; }
     var L = I.addCheck(checks(), c); lsSet(chkKey(), L);
     if (checks().length !== L.length) { if (msg) msg.textContent = "Not recorded: this device's storage is full."; return; }
-    f.caps = capFlags(f, f.sofRec); f.tc = tClass(f.caps);
+    f.caps = capFlags(f, f.sofRec); f.tc = tClass(f.caps); f.eq = equivLevel(f.caps);
     var cp = D.getElementById("mpa-caps"), ck = D.getElementById("mpa-chk");
     if (cp) cp.innerHTML = capTable(f, ST);
     if (ck) { ck.innerHTML = chkHtml(f); var m2 = ck.querySelector(".mpchkmsg"); if (m2) m2.textContent = "Recorded " + (CAP_NAME[c.cap] || c.cap) + ", " + dual(Date.parse(c.at), true) + "."; var b = ck.querySelector("button[type=submit]"); if (b) b.focus(); }
@@ -3395,6 +3436,6 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();
