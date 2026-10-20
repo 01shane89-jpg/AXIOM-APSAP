@@ -869,7 +869,6 @@
     {"cc":"ae","outlet":"WAM (Bing search)","url":"https://www.bing.com/news/search?q=site%3Awam.ae&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"ae","outlet":"Gulf News (Bing search)","url":"https://www.bing.com/news/search?q=site%3Agulfnews.com%20UAE&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"qa","outlet":"The Peninsula (Bing search)","url":"https://www.bing.com/news/search?q=site%3Athepeninsulaqatar.com&format=rss","lang":"en","search":true,"nc":true},
-    {"cc":"kw","outlet":"Arab Times (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aarabtimesonline.com&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"kw","outlet":"Kuwait Times (Bing search)","url":"https://www.bing.com/news/search?q=site%3Akuwaittimes.com&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"bh","outlet":"Bahrain News Agency (Bing search)","url":"https://www.bing.com/news/search?q=site%3Abna.bh&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"iq","outlet":"Rudaw (Bing search)","url":"https://www.bing.com/news/search?q=site%3Arudaw.net%20Iraq&format=rss","lang":"en","search":true,"nc":true},
