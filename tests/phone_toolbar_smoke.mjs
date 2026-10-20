@@ -280,6 +280,14 @@ gate = true;
   ok(errors.length === 0, "Full (desktop): no page errors " + errors.join(" | "));
   await ctx.close();
 }
+{
+  const { ctx, p, errors } = await open(PHONE, "tok-full");
+  await more(p); await p.waitForTimeout(200);
+  const v = await visible(p);
+  ok(!v.some((b) => b.lock) && !(await shown(p, "#atk-tools .atk-tblocks")) && ["overlays", "route", "area", "mine"].every((k) => v.some((b) => b.k === k)), "Full (phone): no plan rows in More, every tool listed: " + v.map((b) => b.k).join());
+  ok(errors.length === 0, "Full (phone): no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);

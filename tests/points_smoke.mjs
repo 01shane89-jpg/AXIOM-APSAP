@@ -53,7 +53,9 @@ async function open(opts, ctxIn) {
 // ---------- phone ----------
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
-  ok(await p.evaluate(() => !!document.querySelector('#atk-tools [data-atk="point"]')), "phone: Point button on the map toolbar (in More)");
+  if (await p.evaluate(() => !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone())) await p.click('#atk-tools [data-tb="more"]');
+  ok(await shown(p, '#atk-tools [data-atk="point"]'), "phone: Point button on the map toolbar (in More)");
+  await p.evaluate(() => window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.close());
   await tool(p, '[data-atk="point"]');
   ok(/At the map centre/.test(await p.textContent("#atk-pop")) && /Tap the map/.test(await p.textContent("#atk-pop")), "phone: Point offers map centre and tap to place");
   await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);

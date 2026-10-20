@@ -118,7 +118,9 @@ async function run3d(name, p, errors, libs, openSel, early) {
   // clear of the grid strip
   const clear = await p.evaluate(() => { const s = document.querySelector(".leaflet-bottom .o3s").getBoundingClientRect(), b = document.getElementById("atk-bar"); if (!b) return true; const r = b.getBoundingClientRect(); return s.bottom <= r.top + 0.5; });
   ok(clear, "phone: scale bar sits above the grid strip");
-  ok(await p.evaluate(() => !!document.querySelector("#atk-tools [data-o3d]")), "phone: 3D button in the map toolbar (in More)");
+  if (await p.evaluate(() => !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone())) await p.click('#atk-tools [data-tb="more"]');
+  ok(await shown(p, "#atk-tools [data-o3d]"), "phone: 3D button in the map toolbar (in More)");
+  await p.evaluate(() => window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.close());
   ok(!(await shown(p, ".o3dctl")), "phone: classic 3D button hidden in toolbar mode");
   if (OUT) await p.screenshot({ path: OUT + "/phone-2d.png" });
   await run3d("phone", p, errors, libs, "#atk-tools [data-o3d]", early);
