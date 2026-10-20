@@ -1,5 +1,6 @@
 // Headless check of the History of violence layer's date span (assets/osap-cf-history.js) on the Thailand Deep South tab:
-// all years, whole years from the sliders, any From and To date (counted from the events), the page's reporting period,
+// opening on the page's reporting period and following it (24 h = the past 24 hours), all years, whole years from the sliders,
+// any From and To date (counted from the events), the page's reporting period,
 // and window.OSAP_CF_HISTORY.show(from, to) for other parts of OSAP. Every count is checked against the UCDP year files.
 // Run from the repo root: node tests/cf_history_range_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
@@ -43,8 +44,27 @@ const shown = () => p.evaluate(() => ({ n: document.querySelector("#cfh .cfk b")
 const settle = async () => { await p.waitForFunction(() => !/…/.test(document.querySelector("#cfh .cfk b").textContent), null, { timeout: 60000 }); return shown(); };
 
 let s = await settle();
+// it opens on the page's reporting period (16 Apr to 16 Oct 2026 here), not on every year
+ok(s.on === "period" && s.a === "2026-04-16" && s.b === "2026-10-16" && +s.n === count("2026-04-16", "2026-10-16"), `Opens on the reporting period: ${s.n} events (expected ${count("2026-04-16", "2026-10-16")})`);
+// and follows it: the header set to 24 h shows the past 24 hours only
+const setPeriod = (v) => p.evaluate((v) => { localStorage.setItem("asap-period", JSON.stringify(v)); document.dispatchEvent(new Event("osap:period")); }, v);
+await setPeriod({ p: "24h" });
+s = await settle();
+const today = new Date().toISOString().slice(0, 10);
+ok(s.on === "period" && s.a === today && s.b === today && +s.n === count(today, today), `Header 24 h: the history shows ${s.a} to ${s.b}, ${s.n} events`);
+const dots = await p.evaluate(() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.CircleMarker && l.options.pane === "cfpane" && l.options.fillColor === "#D32F2F") n++; }); return n; });
+ok(dots === count(today, today), "Only the past 24 hours' events are on the map: " + dots + " red dots");
+await setPeriod({ p: "custom", from: "2026-04-16", to: "2026-10-16" });
+await p.click('#cfh [data-cfhp="all"]');
+s = await settle();
 ok(s.on === "all" && +s.n === yearN(1989, 2100), `All years: ${s.n} events (year totals ${yearN(1989, 2100)})`);
 ok(s.a === IDX.start.slice(0, 10), "From date field starts at the conflict's start: " + s.a);
+await setPeriod({ p: "7" });
+s = await settle();
+ok(s.on === "all", "A span picked in the panel stays when the header period changes");
+const dots2 = await p.evaluate(() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.CircleMarker && l.options.pane === "cfpane" && l.options.fillColor === "#D32F2F") n++; }); return n; });
+ok(dots2 > 0, "All years: red dots drawn (" + dots2 + ")");
+await setPeriod({ p: "custom", from: "2026-04-16", to: "2026-10-16" });
 
 // whole years from the sliders
 const slide = (k, v) => p.evaluate(([k, v]) => { const i = document.querySelector('#cfh [data-cfhy="' + k + '"]');
