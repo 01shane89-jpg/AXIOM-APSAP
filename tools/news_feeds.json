@@ -1015,6 +1015,19 @@
     {"cc":"ag","outlet":"Antigua Observer (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aantiguaobserver.com&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"sa","outlet":"Arab News (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aarabnews.com&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"qa","outlet":"Gulf Times (Bing search)","url":"https://www.bing.com/news/search?q=site%3Agulf-times.com&format=rss","lang":"en","search":true,"nc":true},
-    {"cc":"bh","outlet":"Gulf Daily News (Bing search)","url":"https://www.bing.com/news/search?q=site%3Agdnonline.com&format=rss","lang":"en","search":true,"nc":true}
+    {"cc":"bh","outlet":"Gulf Daily News (Bing search)","url":"https://www.bing.com/news/search?q=site%3Agdnonline.com&format=rss","lang":"en","search":true,"nc":true},
+    {"cc":"lb","outlet":"LBCI","url":"https://www.lbcgroup.tv/Rss/News/en","lang":"en"},
+    {"cc":"lb","outlet":"Annahar","url":"https://www.annahar.com/rss","lang":"ar"},
+    {"cc":"lb","outlet":"Al Modon","url":"https://www.almodon.com/rss","lang":"ar"},
+    {"cc":"jo","outlet":"7iber","url":"https://www.7iber.com/feed/","lang":"ar"},
+    {"cc":"ps","outlet":"Quds News Network","url":"https://qudsn.co/feed","lang":"ar"},
+    {"cc":"ps","outlet":"PNN","url":"https://english.pnn.ps/feed","lang":"en"},
+    {"cc":"ps","outlet":"Arab48","url":"https://www.arab48.com/rss","lang":"ar"},
+    {"cc":"ee","outlet":"Postimees","url":"https://www.postimees.ee/rss","lang":"et"},
+    {"cc":"ee","outlet":"Õhtuleht","url":"https://www.ohtuleht.ee/rss","lang":"et"},
+    {"cc":"ag","outlet":"ABS TV Antigua","url":"https://abstvradio.com/feed/","lang":"en"},
+    {"cc":"gd","outlet":"Grenada Broadcast Network","url":"https://www.gbn.gd/feed/","lang":"en"},
+    {"cc":"pg","outlet":"Post-Courier","url":"https://www.postcourier.com.pg/rss","lang":"en"},
+    {"cc":"to","outlet":"Kaniva Tonga","url":"https://www.kanivatonga.co.nz/feed/","lang":"en"}
   ]
 }
