@@ -1006,6 +1006,23 @@
     {"cc":"ag","outlet":"ABS TV Antigua","url":"https://abstvradio.com/feed/","lang":"en"},
     {"cc":"gd","outlet":"Grenada Broadcast Network","url":"https://www.gbn.gd/feed/","lang":"en"},
     {"cc":"pg","outlet":"Post-Courier","url":"https://www.postcourier.com.pg/rss","lang":"en"},
-    {"cc":"to","outlet":"Kaniva Tonga","url":"https://www.kanivatonga.co.nz/feed/","lang":"en"}
+    {"cc":"to","outlet":"Kaniva Tonga","url":"https://www.kanivatonga.co.nz/feed/","lang":"en"},
+    {"cc":"de","outlet":"Deutschlandfunk","url":"https://www.deutschlandfunk.de/nachrichten-100.rss","lang":"de"},
+    {"cc":"de","outlet":"ZDF heute","url":"https://www.zdf.de/rss/zdf/nachrichten","lang":"de"},
+    {"cc":"de","outlet":"FAZ Politik","url":"https://www.faz.net/rss/aktuell/politik/","lang":"de"},
+    {"cc":"fr","outlet":"France Info","url":"https://www.francetvinfo.fr/titres.rss","lang":"fr"},
+    {"cc":"fr","outlet":"Le Figaro","url":"https://www.lefigaro.fr/rss/figaro_actualites.xml","lang":"fr"},
+    {"cc":"fr","outlet":"Libération","url":"https://www.liberation.fr/arc/outboundfeeds/rss-all/?outputType=xml","lang":"fr"},
+    {"cc":"fr","outlet":"Ouest-France","url":"https://www.ouest-france.fr/rss/une","lang":"fr"},
+    {"cc":"gb","outlet":"The Independent UK","url":"https://www.independent.co.uk/news/uk/rss","lang":"en"},
+    {"cc":"gb","outlet":"UK Defence Journal","url":"https://ukdefencejournal.org.uk/feed/","lang":"en"},
+    {"cc":"ke","outlet":"Kenyans.co.ke","url":"https://www.kenyans.co.ke/feeds/news","lang":"en"},
+    {"cc":"ke","outlet":"KBC","url":"https://www.kbc.co.ke/feed/","lang":"en"},
+    {"cc":"lt","outlet":"Delfi Lithuania","url":"https://www.delfi.lt/rss/feeds/daily.xml","lang":"lt"},
+    {"cc":"kz","outlet":"Tengrinews","url":"https://tengrinews.kz/news.rss","lang":"ru"},
+    {"cc":"do","outlet":"El Nuevo Diario DO","url":"https://elnuevodiario.com.do/feed/","lang":"es"},
+    {"cc":"lu","outlet":"RTL.lu","url":"https://www.rtl.lu/rss/headlines","lang":"lb"},
+    {"cc":"ne","outlet":"Aïr Info","url":"https://www.airinfoagadez.com/feed/","lang":"fr"},
+    {"cc":"tj","outlet":"Avesta","url":"http://avesta.tj/feed/","lang":"ru"}
   ]
 }
