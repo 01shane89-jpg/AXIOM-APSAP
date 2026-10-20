@@ -5,7 +5,7 @@
 ["r7696167",-10.2264,120.55425,"id",{"name":"Puskesmas Baing","amenity":"clinic","healthcare":"hospital"}],
 ["r7706292",-10.22802,120.61174,"id",{"name":"Puskesmas Pembantu Wulla","amenity":"clinic"}],
 ["w1026625098",-10.00908,120.29551,"id",{"name":"Puskesmas Tanarara","amenity":"hospital","healthcare":"hospital"}],
-["w161306693",-10.49265,121.84821,"id",{"name":"Bandar Udara Tardamu","name:en":"Tardamu Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 380 861322","aeroway":"aerodrome","icao":"WATS","iata":"SAU","aerodrome:type":"regional"}],
+["w161306693",-10.49265,121.84821,"id",{"name":"Bandar Udara Tardamu","name:en":"Tardamu Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 380 861322","aeroway":"aerodrome","icao":"WATS","iata":"SAU","aerodrome:type":"regional","wikidata":"Q1971597"}],
 ["w176781625",-10.01263,120.04502,"id",{"name":"Pustu Pr.Kareha","amenity":"clinic"}],
 ["w180081500",-10.21986,120.56034,"id",{"name":"Polindes","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],
 ["w189638694",-10.2103,120.53364,"id",{"name":"Polindes Laipandak","amenity":"hospital"}],

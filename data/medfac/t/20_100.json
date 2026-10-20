@@ -154,7 +154,7 @@
 ["n9202564150",20.28016,100.41373,"la",{"name":"ໂຮງໝໍແຂວງ ບໍ່ແກ້ວ","name:en":"Bokeo Provincial Hospital","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health","operator:type":"government"}],
 ["w1010348419",20.27596,100.08775,"th",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1010727241",21.45669,101.56441,"cn",{"name":"勐腊城南医院","name:en":"Mengla Chengnan Hospital","amenity":"hospital","healthcare":"hospital"}],
-["w102685357",21.97467,100.76255,"cn",{"name":"西双版纳嘎洒机场","name:en":"Xishuangbanna Gasa Airport","aeroway":"aerodrome","icao":"ZPJH","iata":"JHG"}],
+["w102685357",21.97467,100.76255,"cn",{"name":"西双版纳嘎洒机场","name:en":"Xishuangbanna Gasa Airport","aeroway":"aerodrome","icao":"ZPJH","iata":"JHG","wikidata":"Q3234757"}],
 ["w1027716047",20.32425,100.16428,"la",{"name":"ສະໜາມບິນສາກົນບໍ່ແກ້ວ 博胶国际机场","name:en":"Bokeo International Airport","aeroway":"aerodrome","icao":"VLBK","iata":"BOR","wikidata":"Q125120548"}],
 ["w1033387176",20.01119,100.05862,"th",{"name:en":"Wiang Ciang Rung Hospital","amenity":"hospital"}],
 ["w1124024973",20.00982,101.12766,"la",{"name:en":"Singxay Healthcare","amenity":"hospital","addr:street":"2248"}],

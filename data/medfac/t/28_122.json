@@ -15,6 +15,7 @@
 ["w1492425262",28.85821,122.23124,"cn",{"aeroway":"helipad"}],
 ["w1492425263",28.85822,122.23105,"cn",{"aeroway":"helipad"}],
 ["w1492425264",28.85824,122.23085,"cn",{"aeroway":"helipad"}],
-["w167421680",29.93482,122.36088,"cn",{"name":"舟山普陀山国际机场","name:en":"Zhoushan Putuoshan International Airport","operator":"舟山市民用航空管理局","aeroway":"aerodrome","icao":"ZSZS","iata":"HSN"}],
+["w1566652225",29.99509,122.12403,"cn",{"aeroway":"helipad"}],
+["w167421680",29.93482,122.36088,"cn",{"name":"舟山普陀山国际机场","name:en":"Zhoushan Putuoshan International Airport","operator":"舟山市民用航空管理局","aeroway":"aerodrome","icao":"ZSZS","iata":"HSN","wikidata":"Q498954"}],
 ["w477443494",29.98406,122.32049,"cn",{"name":"浙江普陀医院","amenity":"hospital"}],
 ["w891276811",29.98508,122.32191,"cn",{"name":"普陀区公共卫生服务中心","amenity":"hospital","healthcare":"hospital"}]]

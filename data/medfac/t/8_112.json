@@ -3,7 +3,7 @@
 ["w1057966313",8.9591,113.65341,"vn",{"name":"Sân đỗ trực thăng đảo Phan Vinh B","aeroway":"helipad"}],
 ["w1060346992",8.86463,112.83121,"cn",{"aeroway":"helipad"}],
 ["w1396126469",8.17698,113.32747,"vn",{"aeroway":"helipad"}],
-["w425005575",9.55126,112.88771,"cn",{"name":"永暑礁机场","name:en":"Sansha Yongshu Airport","aeroway":"aerodrome","military":"airfield"}],
+["w425005575",9.55126,112.88771,"cn",{"name":"永暑礁机场","name:en":"Sansha Yongshu Airport","aeroway":"aerodrome","military":"airfield","wikidata":"Q55715983"}],
 ["w537693554",9.5392,112.88013,"cn",{"aeroway":"helipad"}],
 ["w537699746",8.8643,112.83192,"cn",{"aeroway":"helipad"}],
 ["w713958431",9.54414,112.88816,"cn",{"name":"永暑礁医院","name:en":"Hospital of Yongshu Reef","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],

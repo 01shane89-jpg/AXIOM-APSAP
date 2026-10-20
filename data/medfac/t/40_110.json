@@ -38,7 +38,7 @@
 ["w1493550330",41.68449,110.46441,"cn",{"name":"蒙医医院康复医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1522334303",41.08623,111.44463,"cn",{"name":"武川县医院","amenity":"hospital","healthcare":"hospital"}],
 ["w157199087",40.7396,111.22837,"cn",{"name":"毕克齐机场","aeroway":"aerodrome","military":"airfield"}],
-["w157544077",40.85034,111.82234,"cn",{"name":"呼和浩特白塔国际机场","name:en":"Hohhot Baita International Airport","aeroway":"aerodrome","icao":"ZBHH","iata":"HET","aerodrome:type":"international"}],
+["w157544077",40.85034,111.82234,"cn",{"name":"呼和浩特白塔国际机场","name:en":"Hohhot Baita International Airport","aeroway":"aerodrome","icao":"ZBHH","iata":"HET","aerodrome:type":"international","wikidata":"Q3238282"}],
 ["w500514710",40.74551,111.22883,"cn",{"aeroway":"aerodrome"}],
 ["w541991806",40.55429,110.51508,"cn",{"name":"土右旗医院","name:en":"Tumed Right Banner Hospital","amenity":"hospital"}],
 ["w545139532",40.39708,111.8291,"cn",{"name":"和林格尔县人民医院","name:en":"Horinger People's Hospital","amenity":"hospital"}],

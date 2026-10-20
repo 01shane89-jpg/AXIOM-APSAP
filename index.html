@@ -4,7 +4,9 @@
 <style>
 /* loading screen: covers the page until the open country's map and lists are built, so no other country's map shows first.
    The official logo (unaltered, only animated) spins as a 3D coin: the logo on both faces, thin darker copies between them
-   as the coin's edge, and a shadow that narrows as it turns edge-on. Behind it, a faint world map drawn from the app's own
+   as the coin's edge, and a shadow that narrows as it turns edge-on. The picture is assets/logo-cover.webp: the same artwork
+   as assets/logo.png at 512 px (34 KB instead of 314 KB), enough for the 170 px coin on a 3x screen; one file for every copy,
+   also used by the sign-in screen and Today, so a phone's start downloads the logo once. Behind it, a faint world map drawn from the app's own
    country outlines (assets/world-watermark.svg). */
 #osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;
   background:#DEE3E9;color:#56626F;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.04em;transition:opacity .25s}
@@ -25,7 +27,7 @@
 @media (orientation:portrait){#osap-boot::before{background-position:78% 50%}}
 @media (prefers-reduced-motion:reduce){.ob-coin,.ob-shadow,#osap-boot::before{animation:none}}
 </style>
-<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
+<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo-cover.webp" alt=""><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo-cover.webp" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
 <script>
 (function () {
   var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
@@ -48,8 +50,34 @@
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-lock.js"></script>
+<script src="assets/osap-datagate.js"></script>
+<script>
+/* Data files the page writes in further down instead of plain tags: Thailand's own files only when Thailand opens (no country
+   in the address, or #th/…; another country never builds the flood and border views, and switching country reloads the page),
+   and the feeds a plan may not include, which assets/osap-datagate.js leaves out when the signed-in plan cannot open them.
+   Asked for here, so they download while the page's own scripts are read, as plain tags would. */
+(function () {
+  var h = (location.hash || "").replace("#", "").split("/"), th = !(h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) && h[0] !== "th");
+  var L = {
+    th: th ? ["data/thailand/power.js", "data/thailand/flood-live-snapshot.js", "data/thailand/flood-exposure.js", "data/thailand/province-alerts.js"] : [],
+    /* the border record: Thailand's timeline lists its incidents (the border line and bands load with the border view) */
+    border: th ? ["data/thailand/border-conflict.js"] : [],
+    feeds: ["data/sof/exercises-outside.js", "data/live/air-quality.js", "data/live/reliefweb.js", "data/live/outages.js", "data/live/outbreaks.js",
+      "data/live/maritime.js", "data/live/sanctions.js", "data/live/displacement.js", "data/live/ifrc.js", "data/live/cdc.js", "data/live/navwarnings.js",
+      "data/live/ucdp.js", "data/live/deepsouth.js"]
+  };
+  window.OSAP_TH = th;
+  [].concat(L.th, L.border, L.feeds).forEach(function (s) {
+    if (window.OSAP_DATA && !window.OSAP_DATA.ok(s)) return;
+    var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = s; document.head.appendChild(l);
+  });
+  window.OSAP_WRITE = function (k) { document.write(L[k].map(function (s) { return '<script src="' + s + '"><\/script>'; }).join("")); };
+})();
+</script>
 <script src="assets/osap-tier.js"></script>
 <script src="assets/osap-start.js"></script>
+<!-- first-run setup and My countries: runs before any other script saves a setting, to tell a new device from an existing user -->
+<script src="assets/osap-mycountries.js"></script>
 <script>
 /* Times: every time on the page is shown in Zulu (UTC) and in local time, 24-hour, for example "27 Sept 2026 0340Z / 10:40 ICT".
    Local means the open country's main time zone (tzAt picks the right one inside Indonesia, Australia and Mongolia). */
@@ -1166,17 +1194,17 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   if (b && b.charAt(0) === "-") b = getComputedStyle(document.documentElement).getPropertyValue(b).trim();
   if (b) el.outerHTML = OSAP_SYM.sw(k, b); else el.innerHTML = OSAP_SYM.svg(k);
 });</script>
-<script src="data/thailand/power.js"></script>
-<script src="data/thailand/flood-live-snapshot.js"></script>
-<script src="data/thailand/flood-exposure.js"></script>
-<script src="data/thailand/province-alerts.js"></script>
+<script>/* Thailand's flood files, only when Thailand opens (OSAP_WRITE, near the top) */ window.OSAP_WRITE("th");</script>
 <script>
 (function () {
   "use strict";
   var BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
   var TW = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/";
 
-  function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || "#888"; }
+  /* the root's computed style is a live object: read once, it always gives the current theme's values (one lookup per marker
+     instead of a new style object per marker) */
+  var rootCS = null;
+  function tok(n){ return (rootCS || (rootCS = getComputedStyle(document.documentElement))).getPropertyValue(n).trim() || "#888"; }
   function num(v){ return (v == null) ? "\u2014" : Math.round(v).toLocaleString(); }
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
@@ -1922,6 +1950,12 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     if (ST.ter || ST.fp || ST.pr) { set("ter", ST.ter); set("fp", ST.fp); set("pr", ST.pr); }
   })();
 
+  /* ---------- Thailand's flood view: built when Thailand opens (or the flood view is first shown), never for another country,
+     where it cost about a second on a phone's start for layers nobody sees. Not indented, to keep the history readable. ---------- */
+  var floodBuilt = false, floodRestyle = null, FLOOD_LAYERS = [];
+  function buildFlood() {
+  if (floodBuilt) return;
+  floodBuilt = true;
   /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
   var floodStore = function () { return window.TILES_FLOOD; };
   var Packed = L.TileLayer.extend({
@@ -2447,17 +2481,29 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     floodLayer.setOpacity(this.value / 100);
   });
 
-  /* ---------- theme and basemap brightness ----------
-     The page follows the viewer's theme by default; these let you override it,
-     because an inverted light-grey basemap can read very dark on some screens. */
-  function restyle() {
-    syncBasemap();
+  floodRestyle = function () {
     provLayer.setStyle(provStyle);
     expoLayer.eachLayer(function (poly) {
       var k = KIND[poly._kind] || KIND.sat;
       poly.setStyle({ color: tok(k.c), fillColor: tok(k.c) });
     });
     drawGauges(); drawRain(); drawInfra();
+  };
+  FLOOD_LAYERS = [["lyr-flood", floodLayer], ["lyr-expo", expoLayer], ["lyr-gauge", gaugeLayer],
+                  ["lyr-infra", infraLayer], ["lyr-rain", rainLayer], ["lyr-prov", provLayer]];
+  drawGauges(); drawRain(); fillRail();
+  msg.textContent = "Snapshot built " + (LIVE.built || "") + " \u2014 checking for a live feed\u2026";
+  refresh(true);          /* one probe on load: goes live, or says it cannot */
+  schedule();
+  }
+  if (window.OSAP_TH !== false) buildFlood();
+
+  /* ---------- theme and basemap brightness ----------
+     The page follows the viewer's theme by default; these let you override it,
+     because an inverted light-grey basemap can read very dark on some screens. */
+  function restyle() {
+    syncBasemap();
+    if (floodRestyle) floodRestyle();
     if (window.TBW) window.TBW.restyle();
   }
   var themeSeg = document.getElementById("theme-seg");
@@ -2497,11 +2543,6 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
   if (mqDark.addEventListener) mqDark.addEventListener("change", restyle);
 
-  drawGauges(); drawRain(); fillRail();
-  msg.textContent = "Snapshot built " + (LIVE.built || "") + " \u2014 checking for a live feed\u2026";
-  refresh(true);          /* one probe on load: goes live, or says it cannot */
-  schedule();
-
   var THAILAND = L.latLngBounds([5.5, 97.2], [20.6, 105.8]);
   function frame() {
     map.invalidateSize();
@@ -2514,29 +2555,49 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   window.addEventListener("resize", function () { map.invalidateSize(); });
 
   /* hooks for the border view, which shares this map */
-  var FLOOD_LAYERS = [["lyr-flood", floodLayer], ["lyr-expo", expoLayer], ["lyr-gauge", gaugeLayer],
-                      ["lyr-infra", infraLayer], ["lyr-rain", rainLayer], ["lyr-prov", provLayer]];
   window.FW = {
     map: map, tok: tok, esc: esc, num: num,
     hide: function () { FLOOD_LAYERS.forEach(function (p) { map.removeLayer(p[1]); }); },
     show: function () {
+      buildFlood();
       FLOOD_LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked) p[1].addTo(map); });
-      if (map.hasLayer(provLayer)) provLayer.bringToBack();
+      var prov = FLOOD_LAYERS[5][1];
+      if (map.hasLayer(prov)) prov.bringToBack();
       frame();
     }
   };
 })();
 </script>
 
-<script src="data/thailand/border-geometry.js"></script>
-<script src="data/thailand/border-conflict.js"></script>
+<script>/* the border record, only when Thailand opens (OSAP_WRITE, near the top) */ window.OSAP_WRITE("border");</script>
 <script>
 /* ================= Border conflict view =================
    Shares the map, basemap and theme with the flood view. Everything it draws
-   lives in its own panes and layer groups so switching views is a clean swap. */
+   lives in its own panes and layer groups so switching views is a clean swap.
+   Built the first time it is shown (the Border view, or the Thai-Cambodian conflict tab), after its geometry file
+   (data/thailand/border-geometry.js, about 0.4 MB) has loaded: a start that never shows it skips both. */
 (function () {
   "use strict";
   var FW = window.FW, map = FW.map, tok = FW.tok, esc = FW.esc, num = FW.num;
+  var BORDER_VIEW = L.latLngBounds([11.4, 102.0], [14.8, 105.6]), real = null, want = null, asked = false;
+  function fit() { map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false }); }
+  window.TBW = {
+    show: function (noFit, opt) {
+      if (real) return real.show(noFit, opt);
+      want = { opt: opt };
+      if (!noFit) fit();
+      if (asked) return;
+      asked = true;
+      var s = document.createElement("script"); s.src = "data/thailand/border-geometry.js";
+      /* a file that did not load (offline with no saved copy, or not in the plan) leaves the stand-in from assets/osap-tier.js */
+      s.onload = s.onerror = function () { real = build(); if (want) real.show(true, want.opt); };
+      document.body.appendChild(s);
+    },
+    hide: function () { want = null; if (real) real.hide(); },
+    restyle: function () { if (real) real.restyle(); },
+    fit: fit
+  };
+  function build() {
   var BD = window.BORDER, CF = window.CONFLICT;
   var TODAY = new Date();
 
@@ -2966,23 +3027,22 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function restyle() { drawBorder(); drawBands(); styleTambons(); drawAssets(); drawSites(); drawEvents(); }
   restyle(); setPhase(phase);
 
-  var BORDER_VIEW = L.latLngBounds([11.4, 102.0], [14.8, 105.6]);
-  window.TBW = {
+  return {
     /* opt.noEvents: the Thai-Cambodian conflict tab maps these incidents itself (its own list, filtered by period), so the
        border view's incident pins stay off there */
     show: function (noFit, opt) {
       active = true; noEv = !!(opt && opt.noEvents);
       drawEvents(); fillRail();
       LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked && !(noEv && p[1] === evLayer)) p[1].addTo(map); });
-      if (!noFit) map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false });
+      if (!noFit) fit();
     },
     hide: function () {
       active = false;
       LAYERS.forEach(function (p) { map.removeLayer(p[1]); });
     },
-    restyle: function () { restyle(); fillRail(); },
-    fit: function () { map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false }); }
+    restyle: function () { restyle(); fillRail(); }
   };
+  }
 })();
 </script>
 <!-- country-data:start -->
@@ -3032,27 +3092,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
 })();
 </script>
-<script src="data/sof/exercises-outside.js"></script>
+<script>/* the feeds a plan may not include (Mid and Full in tools/tiers.mjs; OSAP_WRITE, near the top); the Free feeds stay plain tags below */ window.OSAP_WRITE("feeds");</script>
 <script src="data/live/quakes.js"></script>
-<script src="data/live/air-quality.js"></script>
 <script src="data/live/gdacs.js"></script>
-<script src="data/live/reliefweb.js"></script>
 <script src="data/live/warnings.js"></script>
 <script src="data/live/advisories.js"></script>
 <script src="data/live/tsunami.js"></script>
 <script src="data/live/volcano.js"></script>
-<script src="data/live/outages.js"></script>
-<script src="data/live/outbreaks.js"></script>
-<script src="data/live/maritime.js"></script>
-<script src="data/live/sanctions.js"></script>
-<script src="data/live/displacement.js"></script>
 <script src="data/live/national-quakes.js"></script>
 <script src="data/live/eonet.js"></script>
-<script src="data/live/ifrc.js"></script>
-<script src="data/live/cdc.js"></script>
-<script src="data/live/navwarnings.js"></script>
-<script src="data/live/ucdp.js"></script>
-<script src="data/live/deepsouth.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
@@ -3116,6 +3164,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.OSAP_COUNTRIES = COUNTRIES;
   var HASH = (location.hash || "").replace("#", "").split("/");
   var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
+  /* a country code the list does not know opens Thailand: start again as Thailand, so its flood files load (OSAP_TH, near the top) */
+  if (TH && window.OSAP_TH === false) { location.replace("#" + HASH.slice(1).join("/")); location.reload(); }
   /* an open US state (see SUB-AREAS above): the same country, shown under the state's name and box */
   var SUB = window.OSAP_SUB && window.OSAP_SUBAREA && window.OSAP_SUB.cc === CC && window.OSAP_SUBAREA.code === window.OSAP_SUB.code ? window.OSAP_SUBAREA : null;
   if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
@@ -8915,6 +8965,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-panels.js"></script>
 <script src="assets/osap-atak.js"></script>
 <script src="assets/osap-tidy.js"></script>
+<script src="assets/osap-findall.js"></script>
 <script src="assets/osap-milsym.js"></script>
 <script src="assets/osap-points.js"></script>
 <script src="assets/osap-3d.js"></script>
@@ -8969,5 +9020,5 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <!-- terrain analysis: viewshed and line of sight (Map overlays > Elevation and terrain analysis, long-press > Terrain) -->
 <script src="assets/osap-terrain.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
-<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage("warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage(window.OSAP_DATA && OSAP_DATA.plan() ? { warm: OSAP_DATA.plan() } : "warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

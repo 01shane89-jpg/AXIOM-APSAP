@@ -68,7 +68,7 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
   await type(p, "Bangkok");
   ok(hits.photon.length === 1, "phone: typing sends one debounced search, not one per letter (" + hits.photon.length + ")");
   ok(/[?&]lat=-?\d/.test(hits.photon[0] || "") && /[?&]lon=-?\d/.test(hits.photon[0] || ""), "phone: the search is biased to the map view");
-  ok(await p.evaluate(() => document.querySelectorAll("#srch-list [data-i]").length) === 2 && /Bangkok/.test(await p.textContent("#srch-list")), "phone: results appear as you type");
+  ok(await p.evaluate(() => document.querySelectorAll("#srch-list [data-i]:not([data-g])").length) === 2 && /Bangkok/.test(await p.textContent("#srch-list")), "phone: place results appear as you type");
   if (OUT) await p.screenshot({ path: OUT + "/phone-search.png" });
   await p.click('#srch-list [data-i="0"]'); await p.waitForTimeout(1500);
   ok(!(await shown(p, "#srch")), "phone: picking a result closes the box");

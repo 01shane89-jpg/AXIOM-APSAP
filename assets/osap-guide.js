@@ -43,10 +43,17 @@
         b("Key dates") + " lists the next three dates that matter in the country: public holidays, elections and referendums, religious periods (Ramadan, Eid, Christmas, Easter, Diwali, Lunar New Year, Songkran and others) and anniversaries of its deadliest days of violence in UCDP's record. Each says why it matters, links its source and is marked " + b("Official") + " (a government holiday list), " + b("Claimed") + " (a reported election schedule) or " + b("Computed") + " (worked out from a calendar or a record). Dates are the local day, with the time that day starts in Zulu. " + b("Show all") + " opens the full list for the past 7 and next 60 days in the country brief.",
         "When a country has no news in the last 24 hours, " + b("Top stories") + " says so and gives the time of the newest item. Tap " + b("Newest older items") + " to see them, or " + b("News from nearby countries") + " for the latest from its neighbours and the same region. A card showing old data gives its age in grey, for example (17 days old).",
         "The OSAP logo at the top left brings you back to Today."]) +
+      "<h3>My countries</h3>" +
+      ul(["The first time you open OSAP on a device it asks for up to 5 countries and how you use it: " + b("Analyst") + ", " + b("Team in country") + " (also offers " + b("Use my location") + ") or " + b("Traveller") + " (Today shows the U.S. travel advisory at the top). " + b("Skip") + " if you would rather not; it is not asked again.",
+        "Today then opens on your first country. Your countries show as chips on Today and beside the country picker on the map: one tap switches.",
+        "Tap " + b("☆ Pin") + " beside the country picker to add the open country (up to 5), " + b("★ Pinned") + " to take it off. The " + b("My countries") + " card on Today shows the newest headline in each and how many are new.",
+        "Today says how many headlines and warnings are new since you last looked at that country, and marks them " + b("New") + ". The count starts again once you have looked.",
+        "Change your countries or role any time: Settings, " + b("My countries and setup") + ". All of this stays on this device."]) +
       "<h3>Install it like an app</h3>" +
       ul(["iPhone or iPad: in Safari tap Share, then " + b("Add to Home Screen") + ".",
         "Android or a computer: use the browser's Install or Add to Home screen option.",
-        "Installed, OSAP opens full screen, can send watch alerts, and the browser is less likely to clear your saved maps."]) },
+        "Installed, OSAP opens full screen, can send watch alerts, and the browser is less likely to clear your saved maps.",
+        "To open quickly on a phone, OSAP downloads only what your plan includes and what the open country needs: Thailand's flood and border maps load only for Thailand, and the border map only when you open it."]) },
 
     { id: "map", t: "The map screen", h:
       fig("map", "The map with the toolbar down the right") +
@@ -63,6 +70,7 @@
       "<p>Top to bottom, the toolbar holds:</p>" +
       ul([b("Today") + ": back to the start screen.",
         b("Search") + ": find a place, or type an MGRS, UTM or lat/long grid. Grids work with no signal. Tap a result for " + b("Save as point") + ", " + b("Route to here") + " or " + b("Copy grid") + ".",
+        b("Search") + " finds more than places: a country by name or code (" + b("Estonia") + " or " + b("ee") + " opens it), a tool (" + b("Med plan") + ", " + b("Evac") + ", " + b("LZ finder") + "), a data set (it goes on the map) or a setting (" + b("Dark map") + ", " + b("miles") + ", " + b("Offline maps") + "). Everyday words work too: " + b("hospital") + " finds Med plan, " + b("night") + " finds Dark map. The last row searches the news. On a computer press " + b("/") + " or " + b("Ctrl+K") + " (" + b("Cmd+K") + " on a Mac) to start typing, the arrow keys and Enter to pick, Esc to close.",
         b("Data sets") + ": the reporting topics, such as conflict, crime, natural disasters, public safety and news. Tick a set to show it on the map; tap its name to open its list. " + b("Clear map") + " takes everything off.",
         b("Weather") + ": radar, satellite rain, cloud, wind, temperature, air quality, cyclones and warnings. " + b("Model time") + " looks ahead up to 72 hours. " + b("Open forecasts and warnings") + " opens the full weather view, with the one-page brief, the detailed report and the " + b("5-day chart") + " (a military-style chart: night and day halves, winds, crosswind on a runway you pick, density and pressure altitude, sun, moon, illumination and mission impacts hour by hour).",
         b("Overlays") + ": map layers that are not reports: infrastructure (communications, power plants of every fuel, the grid, data centres, airfields, ports, dams, submarine cables, railways, bridges and tunnels, water and sewage works, telephone exchanges, government sites, prisons, border crossings, police and fire stations, refineries and pipelines, roads), embassies and evacuation points, elevation and terrain analysis, key terrain, aircraft and ships, borders, and your own marks. Under " + b("Live aircraft") + ", " + b("GPS interference (last 24 h)") + " shades 1° cells where many aircraft reported poor GPS accuracy (yellow low, orange medium, red high; faint green normal); tap a cell for its counts and period. It is inferred from aircraft reports: an empty cell means too few aircraft to judge, not no jamming, and it does not detect spoofing.",
@@ -252,6 +260,7 @@
       ul(["The gear holds settings for this device: " + b("Map colours") + " (Light, Grey, Dark), " + b("Grid format") + " (MGRS, Lat/long, DMS) and " + b("Distance units") + " (km, miles, nautical mi).",
         b("Use my location") + ": off until you turn it on. OSAP then starts on your country and shows where you are. Only the country is stored, never your position.",
         b("Language") + ": English, Thai, Vietnamese, Filipino, Indonesian, Malay, Chinese, Japanese or Korean for the app's menus and buttons. Reports stay in their original language. The translations are AI drafts, marked AI generated.",
+        b("My countries and setup") + ": your pinned countries and how you use OSAP, the questions asked the first time.",
         b("User guide") + ": this guide."]) +
       "<h3>Offline maps and data</h3>" +
       ul(["Save a country so OSAP opens and works with no signal: the Offline map, the country's layers, brief, news, history and the medical plan's hospitals.",

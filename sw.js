@@ -409,6 +409,7 @@ const PRECACHE = [
 "assets/icons/maskable-512.png",
 "assets/logo-mark.png",
 "assets/logo.png",
+"assets/logo-cover.webp",
 "assets/osap-cf-iran.js",
 "assets/osap-heat.js",
 "assets/osap-sides.js",
@@ -430,6 +431,7 @@ const PRECACHE = [
 "assets/osap-sync-boot.js",
 "assets/osap-lock.js",
 "assets/osap-tier.js",
+"assets/osap-datagate.js",
 "assets/osap-start.js",
 "assets/osap-symbols.js",
 "assets/osap-tlreport.js",
@@ -471,6 +473,7 @@ const PRECACHE = [
 "assets/osap-comms.js",
 "assets/osap-commsplan.js",
 "assets/osap-search.js",
+"assets/osap-findall.js",
 "assets/hospital-sources/base-provider.js",
 "assets/hospital-sources/resolver.js",
 "assets/hospital-sources/sof-provider.js",
@@ -542,6 +545,7 @@ const PRECACHE = [
 "assets/osap-keydates.js",
 "assets/osap-warngeo.js",
 "assets/osap-today.js",
+"assets/osap-mycountries.js",
 "assets/osap-empty.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
@@ -642,11 +646,20 @@ self.addEventListener("install", (e) => {
 });
 // Old version caches are dropped once this version has warmed; until then they are used only when offline.
 let warming = null;
-function warm() {
+// plan: the signed-in plan's data rules, sent by the page on the Netlify site (assets/osap-datagate.js, tools/tiers.mjs). A file
+// the plan cannot open is left out rather than asked for (and refused) on every warm-up.
+const TIERS = ["free", "mid", "full"];
+function locked(u, plan) {
+  if (!plan || !plan.data || !/^(data|source)\//.test(u)) return false;
+  let need = plan.dataDefault || "mid";
+  for (const [re, t] of plan.data) { try { if (new RegExp(re).test(u)) { need = t; break; } } catch (e) { /* skip that rule */ } }
+  return TIERS.indexOf(plan.tier) < TIERS.indexOf(need);
+}
+function warm(plan) {
   if (warming) return warming;
   warming = (async () => {
     const todo = [];
-    for (const u of PRECACHE) if (u !== "./" && !(await caches.open(store(u)).then((c) => c.match(home(u), { ignoreSearch: true })))) todo.push(u);
+    for (const u of PRECACHE) if (u !== "./" && !locked(u, plan) && !(await caches.open(store(u)).then((c) => c.match(home(u), { ignoreSearch: true })))) todo.push(u);
     for (let i = 0; i < todo.length; i += 4) {
       await Promise.all(todo.slice(i, i + 4).map((u) => fetch(home(u), { cache: "no-cache", credentials: "same-origin" })
         .then((res) => { if (!res.ok) throw 0; return save(home(u), res); }).catch(() => {})));
@@ -662,7 +675,7 @@ self.addEventListener("activate", (e) => {
     caches.open(DATA).then((c) => c.keys().then((ks) => Promise.all(ks.filter((k) => new URL(k.url).search).map((k) => c.delete(k))))).catch(() => {})]));
 });
 // The page asks for the warm-up once it has loaded, so it never competes with the first paint.
-self.addEventListener("message", (e) => { if (e.data === "warm") e.waitUntil(warm()); });
+self.addEventListener("message", (e) => { if (e.data === "warm" || (e.data && e.data.warm)) e.waitUntil(warm(e.data.warm || null)); });
 async function trim(name, max) {
   const c = await caches.open(name), ks = await c.keys();
   for (let i = 0; i < ks.length - max; i++) await c.delete(ks[i]);

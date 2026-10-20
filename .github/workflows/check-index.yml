@@ -94,6 +94,8 @@ jobs:
       - run: node tests/lock_smoke.mjs
       - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier_smoke.mjs
+      # the plan's locked data files are not asked for (Free and Mid get no 402); Thailand's files load only for Thailand
+      - run: node tests/locked_requests_smoke.mjs
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs
       - run: node tests/econ_smoke.mjs
@@ -132,6 +134,7 @@ jobs:
       - run: node tests/period_smoke.mjs
       - run: node tests/period14_smoke.mjs
       - run: node tests/search_smoke.mjs
+      - run: node tests/search_all_smoke.mjs
       - run: node tests/news_speed_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
@@ -181,6 +184,7 @@ jobs:
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
+      - run: node tests/mycountries_smoke.mjs
       - run: node tests/empty_states_smoke.mjs
       - run: node tests/report_english_smoke.mjs
       - run: node tests/social_filter_smoke.mjs
