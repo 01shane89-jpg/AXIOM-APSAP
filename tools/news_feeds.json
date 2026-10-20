@@ -1090,6 +1090,6 @@
     {"cc":"bs","outlet":"Tribune 242","url":"https://www.tribune242.com/rss/headlines/","lang":"en"},
     {"cc":"tv","outlet":"Tuvalu (Bing search)","url":"https://www.bing.com/news/search?q=Tuvalu%20Funafuti&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"ki","outlet":"Kiribati (Bing search)","url":"https://www.bing.com/news/search?q=Kiribati%20Tarawa&format=rss","lang":"en","search":true,"nc":true},
-    {"cc":"pw","outlet":"Palau (Bing search)","url":"https://www.bing.com/news/search?q=Palau%20Koror&format=rss","lang":"en","search":true,"nc":true},
+    {"cc":"pw","outlet":"Palau (Bing search)","url":"https://www.bing.com/news/search?q=Palau%20Koror&format=rss","lang":"en","search":true,"nc":true}
   ]
 }
