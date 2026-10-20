@@ -70,6 +70,8 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
+      # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
+      - run: node tests/team.test.mjs
       # GPS interference map: which aircraft reports count, hourly windows, grading, day files (tools/gnss.mjs)
       - run: node tests/gnss.test.mjs
       - run: node tests/warngeo.test.mjs
@@ -128,6 +130,8 @@ jobs:
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
       - run: node tests/sync_smoke.mjs
+      # team workspace: share from Workspaces, join by viewer and editor links, viewer read-only, forged events refused, new team links
+      - run: node tests/team_smoke.mjs
       - run: node tests/gnss_smoke.mjs
       - run: node tests/guide_smoke.mjs
       - run: node tests/lang_smoke.mjs
@@ -170,6 +174,7 @@ jobs:
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
       - run: node tests/medplan_sea_smoke.mjs
+      - run: node tests/medplan_hang_smoke.mjs
       - run: node tests/medplan_conflict_map_smoke.mjs
       - run: node tests/seatransit_smoke.mjs
       - run: node tests/lz_smoke.mjs
