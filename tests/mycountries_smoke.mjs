@@ -6,6 +6,7 @@
 // - An existing user (a saved OSAP setting) is not shown the sheet, and an automated browser without the test flag is not either.
 // - New since: with a stored last look, Today says "N new since" and marks lines New; leaving Today and coming back resets it.
 // - Pin from Today puts the chip in the map header; Settings lists "My countries and setup" and opens the sheet.
+// - With the empty-news message (assets/osap-empty.js) on Today: the card, chips and new-since line show beside it, no sideways scroll.
 // - On the gated (Netlify) site, signed out: the sheet waits behind the sign-in screen and shows once signed in.
 // External hosts are blocked. Run from the repo root: node tests/mycountries_smoke.mjs   (needs playwright and Chromium)
 import { createServer } from "node:http";
@@ -207,6 +208,37 @@ let pick = null;
   ok((await p.textContent("#mcs-h")).trim() === "My countries and setup" && (await p.textContent('#mycc-setup [data-mcs="skip"]')).trim() === "Cancel", "reopened as My countries and setup, with Cancel");
   await p.click('#mycc-setup [data-mcs="skip"]');
   ok(!(await sheetOpen(p)) && await ls(p, "osap-setup") === null, "Cancel closes it and changes nothing");
+  ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+  await ctx.close();
+}
+
+/* ---------- 6. with the empty-news message (assets/osap-empty.js): both show on Today, on a phone ---------- */
+{
+  const stamp = (minAgo) => new Date(Date.now() - minAgo * 60000).toISOString().slice(0, 16);
+  const { ctx, p, errors } = await ctxOf(PHONE, (t) => {
+    if (sessionStorage.getItem("seeded")) return; sessionStorage.setItem("seeded", "1");
+    localStorage.setItem("osap-home", '"today"');
+    localStorage.setItem("osap-mycc", JSON.stringify({ pins: ["ee", "th"], role: "analyst" }));
+    localStorage.setItem("osap-mycc-seen", JSON.stringify({ ee: t }));
+  }, Date.now() - 2 * 864e5);
+  /* Estonia's newest headline is 4 days old; no history file, so Today has no fresh reporting for it */
+  await ctx.route(/\/data\/live\/news\/ee\.js(\?|$)/, (r) => r.fulfill({ contentType: "text/javascript", body: "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp(10).replace("T", " ") + "Z", sources: [],
+    items: { ee: [{ title: "Estonia police report border incident near Narva", date: stamp(4 * 1440), outlet: "ERR News", link: "https://news.err.ee/1" }] } }) + ";" }));
+  await ctx.route(/\/data\/history\/ee\.js(\?|$)/, (r) => r.fulfill({ contentType: "text/javascript", body: 'window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST["ee"]={"news":[],"social":[]};' }));
+  await p.goto(base + "#ee/timeline", { waitUntil: "domcontentloaded" });
+  await ready(p);
+  await p.waitForFunction(() => window.OSAP_TODAY.isOpen() && document.querySelector("#today .oe-empty") && document.querySelector("#today .mccard"), null, { timeout: 30000 }).catch(() => {});
+  await p.waitForTimeout(2500);
+  const e = await p.evaluate(() => ({ cc: window.TSAP.country, empty: !!document.querySelector("#today .oe-empty"), card: document.querySelectorAll("#today .mccard .mcrow").length,
+    ee: ((document.querySelector('#today .mccard [data-mycc="ee"]') || {}).parentNode || {}).textContent || "",
+    nw: ((document.querySelector("#today .mcnew") || {}).textContent) || "", chips: document.querySelectorAll("#today .mchead .mcchip").length,
+    dx: document.documentElement.scrollWidth - document.documentElement.clientWidth, tw: (document.getElementById("today") || document.body).scrollWidth - (document.getElementById("today") || document.body).clientWidth }));
+  ok(e.cc === "ee" && e.empty, "a country with no fresh news shows the empty-news message", e.cc);
+  ok(e.card === 2 && /Narva/.test(e.ee), "the My countries card shows beside it, with the country's newest (old) headline", e.ee);
+  ok(/^Nothing new since/.test(e.nw), "and Today says nothing is new since the last look", e.nw);
+  ok(e.chips === 2, "the chips show above it", e.chips);
+  ok(e.dx <= 1 && e.tw <= 1, "nothing scrolls sideways at 390 px", e);
+  if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + "/mycc-empty-phone.png", fullPage: true });
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
