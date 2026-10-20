@@ -55,7 +55,7 @@
     lSet(K_AUTH, a); cookie(a.access_token, (a.until - Date.now()) / 1000);
     return a;
   }
-  function forget() { lSet(K_AUTH, null); cookie(null); }
+  function forget() { lSet(K_AUTH, null); cookie(null); if (W.OSAP_DATA) W.OSAP_DATA.save(null); }
   /* Identity's own wording, put plainly; the error keeps the HTTP status (0: not reached) */
   function plain(j, st) {
     var m = String(j.error_description || j.msg || j.error || "");
@@ -166,7 +166,7 @@
     var n = 0;
     (function poll() {
       session().then(account).then(function (j) {
-        if (rank(j.tier) > rank(tier())) { CFG = j; say("Your " + name(j.tier) + " plan is on. Reloading…"); setTimeout(function () { location.reload(); }, 800); }
+        if (rank(j.tier) > rank(tier())) { CFG = j; if (W.OSAP_DATA) W.OSAP_DATA.save(j); say("Your " + name(j.tier) + " plan is on. Reloading…"); setTimeout(function () { location.reload(); }, 800); }
         else if (++n < 20) setTimeout(poll, 3000);
         else say("Payment done, but the plan has not switched on yet. Reload in a minute; if it still has not, reply to your Paddle receipt.");
       }, function () { if (++n < 20) setTimeout(poll, 3000); });
@@ -194,7 +194,7 @@
     var wall = isWall(), stay = wall || UI.recover;
     var title = UI.mode === "newpw" ? (UI.recover ? "Choose a new password" : "Change password") : wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : "Plan and sign-in";
     /* the sign-in screen is the first thing people see: the logo and name above the form, as on the loading screen */
-    var h = '<div class="cbox">' + (wall ? '<div class="trbrand"><img src="assets/logo.png" alt=""><span>AXIOM OSAP</span></div>' : "") + '<div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
+    var h = '<div class="cbox">' + (wall ? '<div class="trbrand"><img src="assets/logo-cover.webp" alt=""><span>AXIOM OSAP</span></div>' : "") + '<div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
       '<p class="trmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
     if (wall && UI.mode === "signin") h += '<p>OSAP needs an account, on the Free plan too. Sign in, or create a free account with your email.</p>';
     if (UI.mode === "users") {
@@ -305,7 +305,8 @@
   }
   function close() { if (BOX && !isWall() && !UI.recover) { BOX.hidden = true; BOX.innerHTML = ""; } }
   function refreshPlan() {
-    return session().then(account).then(function (j) { CFG = j; draw(); return j; });
+    /* the plan's data rules are kept for the next start (assets/osap-datagate.js), which then skips what the plan cannot open */
+    return session().then(account).then(function (j) { CFG = j; if (W.OSAP_DATA) W.OSAP_DATA.save(j); draw(); return j; });
   }
   function signedIn(msg) {
     var was = isWall() || STARTED_OUT;
@@ -335,7 +336,8 @@
       codesApi({ use: f.code.value }).then(function () {
         var a = lGet(K_AUTH);
         return (a && a.refresh_token ? tokenGrant({ grant_type: "refresh_token", refresh_token: a.refresh_token }).catch(function () {}) : null);
-      }).then(function () { say("Code accepted: Full is on. Reloading…"); setTimeout(function () { location.reload(); }, 800); }).catch(fail);
+      }).then(function () { return refreshPlan().catch(function () {}); /* Full's data rules kept for the reload */ })
+        .then(function () { say("Code accepted: Full is on. Reloading…"); setTimeout(function () { location.reload(); }, 800); }).catch(fail);
       return;
     }
     if (k === "mkcode") {
@@ -478,10 +480,12 @@
         if (isWall()) open("signin", MOVED ? MOVED_MSG : "");
         else if (MOVED) open("plans", MOVED_MSG);
       });
-      /* a token that had run out was renewed after the page had asked for its data: load once more with the new one */
+      /* a token that had run out was renewed after the page had asked for its data, or the plan kept on this device was lower
+         than the one read now (so files it includes were skipped): load once more. Files this plan cannot open do not count. */
       try {
-        if (tier() !== "free" && sessionStorage.getItem(K_RELOAD) !== "1" && W.performance && performance.getEntriesByType &&
-          performance.getEntriesByType("resource").some(function (r) { return /\/data\//.test(r.name) && r.responseStatus === 402; })) {
+        var gate = W.OSAP_DATA, opens = function (u) { return !gate || gate.ok(u); };
+        if (sessionStorage.getItem(K_RELOAD) !== "1" && ((gate && gate.skipped().some(opens)) || (tier() !== "free" && W.performance && performance.getEntriesByType &&
+          performance.getEntriesByType("resource").some(function (r) { return /\/data\//.test(r.name) && r.responseStatus === 402 && opens(r.name); })))) {
           sessionStorage.setItem(K_RELOAD, "1"); location.reload();
         } else sessionStorage.removeItem(K_RELOAD);
       } catch (e) { /* no reload */ }

@@ -52,7 +52,8 @@
       "<h3>Install it like an app</h3>" +
       ul(["iPhone or iPad: in Safari tap Share, then " + b("Add to Home Screen") + ".",
         "Android or a computer: use the browser's Install or Add to Home screen option.",
-        "Installed, OSAP opens full screen, can send watch alerts, and the browser is less likely to clear your saved maps."]) },
+        "Installed, OSAP opens full screen, can send watch alerts, and the browser is less likely to clear your saved maps.",
+        "To open quickly on a phone, OSAP downloads only what your plan includes and what the open country needs: Thailand's flood and border maps load only for Thailand, and the border map only when you open it."]) },
 
     { id: "map", t: "The map screen", h:
       fig("map", "The map with the toolbar down the right") +
