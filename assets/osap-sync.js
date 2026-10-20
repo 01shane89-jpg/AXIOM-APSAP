@@ -337,7 +337,7 @@
 
     /* ---------- the workspaces on this device ---------- */
     var WSKEYS = ["osap-atak-pts", "osap-aoi", "osap-routes", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-pkgs", "asap-watches", "osap-work", "osap-shapes", "osap-viewsheds",
-      "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links"];
+      "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej"];
     var AREA = /^asap-area-[a-z]{2,3}(-st)?$/;
     function synced(k) { return (W.OSAP_WS && W.OSAP_WS.scoped ? W.OSAP_WS.scoped(k) : WSKEYS.indexOf(k) >= 0 || AREA.test(k)) && NOSYNC.indexOf(k) < 0; }
     function reg() { var r = json(raw("osap-ws"), null); return r && Array.isArray(r.list) && r.list.length ? r : null; }
