@@ -1057,7 +1057,6 @@
     {"cc":"ml","outlet":"Maliweb (Bing search)","url":"https://www.bing.com/news/search?q=site%3Amaliweb.net&format=rss","lang":"fr","search":true,"nc":true},
     {"cc":"mr","outlet":"Cridem (Bing search)","url":"https://www.bing.com/news/search?q=site%3Acridem.org&format=rss","lang":"fr","search":true,"nc":true},
     {"cc":"mr","outlet":"Sahara Medias (Bing search)","url":"https://www.bing.com/news/search?q=site%3Afr.saharamedias.net&format=rss","lang":"fr","search":true,"nc":true},
-    {"cc":"mw","outlet":"Nyasa Times (Bing search)","url":"https://www.bing.com/news/search?q=site%3Anyasatimes.com&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"ni","outlet":"Confidencial (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aconfidencial.digital&format=rss","lang":"es","search":true,"nc":true},
     {"cc":"pt","outlet":"Público (Bing search)","url":"https://www.bing.com/news/search?q=site%3Apublico.pt&format=rss","lang":"pt","search":true,"nc":true},
     {"cc":"ro","outlet":"Digi24 (Bing search)","url":"https://www.bing.com/news/search?q=site%3Adigi24.ro&format=rss","lang":"ro","search":true,"nc":true},
