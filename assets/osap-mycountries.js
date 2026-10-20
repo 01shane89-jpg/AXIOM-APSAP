@@ -109,8 +109,9 @@
     var now = Date.now() + 36e5;
     return ((W.TSAP && W.TSAP.records) || []).filter(function (r) { if (!counted(r)) return false; var ms = recMs(r); return ms > base && ms <= now; }).length;
   }
-  /* items timed ahead (a warning's valid-from time) are not "new" until then, the same window newCount uses */
-  function isNew(id, ms) { return view.cc === id && view.base != null && isFinite(ms) && ms > view.base && ms <= Date.now() + 36e5; }
+  /* items timed ahead are not "new" until then: stories get the same 1-hour clock allowance newCount uses, a warning's
+     valid-from time (ahead = 0) none, so a WATCH valid from later today is not tagged New right after looking */
+  function isNew(id, ms, ahead) { return view.cc === id && view.base != null && isFinite(ms) && ms > view.base && ms <= Date.now() + (ahead == null ? 36e5 : ahead); }
 
   /* ---------- headlines for the My countries card ---------- */
   var news = {}, newsBusy = {};
@@ -179,7 +180,7 @@
     });
     return h + '<p class="tdsrc">Pin or unpin with the star beside the country picker. Up to 5.</p></section>';
   }
-  function newTag(id, ms) { return isNew(id, ms) ? '<span class="tdtag mcnewtag">New</span>' : ""; }
+  function newTag(id, ms, ahead) { return isNew(id, ms, ahead) ? '<span class="tdtag mcnewtag">New</span>' : ""; }
 
   /* ---------- the map header: Pin and the chips, beside the country picker ---------- */
   var bar = null;
