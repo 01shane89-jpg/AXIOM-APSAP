@@ -3106,8 +3106,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (!hit) return;
   window.OSAP_SUB = { cc: "us", code: hit[0], name: hit[1], tz: hit[2] };
   window.OSAP_ZONE = hit[2];
-  /* the state's outline, and its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) */
-  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
+  /* the state's outline, its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) and their earlier
+     items (data/history/us-states/<code>.js, tools/history.mjs; a missing file only means no history yet) */
+  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>' +
+    '<script src="data/history/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
 })();
 </script>
 <script>/* the feeds a plan may not include (Mid and Full in tools/tiers.mjs; OSAP_WRITE, near the top); the Free feeds stay plain tags below */ window.OSAP_WRITE("feeds");</script>
@@ -3189,10 +3191,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
   /* a state's own outlets join the national news for this view, marked with the state */
   (function () {
-    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS;
-    if (!SUB || !S || S.st !== SUB.code || !(S.items || []).length) return;
+    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS, H = window.ASAP_HIST_ST;
+    if (!SUB || !S || S.st !== SUB.code) return;
+    /* the state outlets' earlier items, one copy per link, after the latest ones */
+    var seen = {}, cur = (S.items || []).filter(function (i) { return i && i.link && !seen[i.link] && (seen[i.link] = 1); });
+    var old = H && H.st === SUB.code ? (H.news || []).filter(function (i) { return i && i.link && !seen[i.link] && (seen[i.link] = 1); }) : [];
+    if (!cur.length && !old.length) return;
     if (!N || !N.items) N = window.ASAP_NEWS = { asof: S.asof, sources: [], items: {} };
-    N.items[CC] = S.items.map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
+    N.items[CC] = cur.concat(old).map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
     N.sources = (N.sources || []).concat(S.sources || []);
   })();
   function subRing(ring, x, y) {
