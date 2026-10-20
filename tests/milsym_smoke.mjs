@@ -23,8 +23,6 @@ const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s);
 const pts = (p) => p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]"));
 const photos = (p, pid) => p.evaluate((pid) => window.OSAP_POINTS.photos(pid).then((a) => a.map((r) => ({ id: r.id, size: r.size, type: r.type, sha256: r.sha256, camera: r.camera, name: r.name }))), pid);
 
-/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
-const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 async function open(opts, ctxIn) {
   const ctx = ctxIn || await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [];
@@ -44,7 +42,7 @@ const sym = (p) => p.evaluate(() => (JSON.parse(localStorage.getItem("osap-atak-
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   ok(await p.evaluate(() => !window.ms && !window.OSAP_MSCAT), "phone: the symbol library is not loaded until it is needed");
-  await tool(p, '[data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
+  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
   ok(await shown(p, "#pt-ed .pt-icb") && /Default marker/.test(await p.textContent("#pt-ed .pt-icl")), "phone: the point sheet has an Icon row showing the default marker");
   await p.click('#pt-ed [data-pe="icon"]');
   ok(await shown(p, "#ms-pick"), "phone: Change opens the icon picker");
@@ -109,7 +107,7 @@ const sym = (p) => p.evaluate(() => (JSON.parse(localStorage.getItem("osap-atak-
 // ---------- desktop ----------
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } });
-  await tool(p, '[data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
+  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
   await p.click('#pt-ed [data-pe="icon"]');
   await p.waitForFunction(() => document.querySelectorAll("#ms-pick .ms-fn").length > 0, null, { timeout: 20000 });
   const pk = await p.evaluate(() => { const r = document.getElementById("ms-pick").getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect(); return { right: m.right - r.right, w: r.width }; });

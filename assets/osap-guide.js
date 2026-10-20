@@ -57,8 +57,7 @@
 
     { id: "map", t: "The map screen", h:
       fig("map", "The map with the toolbar down the right") +
-      ul(["On a computer the " + b("toolbar") + " runs down the right of the map. The arrow at its top folds it away; click again to bring it back.",
-        "On a phone the toolbar is a bar along the bottom, in reach of your thumb: four tools and " + b("More") + ". More opens every other tool, and " + b("Settings") + ". The bar starts with Today, Search, Data sets and Weather and learns from what you use on this phone: a tool you use clearly more often takes the place of the least-used one, and the other three stay where they are.",
+      ul(["The " + b("toolbar") + " runs down the right of the map. The arrow at its top folds it away; tap again to bring it back. On a phone, scroll the toolbar when a down arrow shows more tools below.",
         "The strip along the bottom shows the grid of the map centre. Tap the grid to switch between MGRS, decimal degrees and DMS, or tap the copy icon to copy it.",
         "When " + b("Use my location") + " is on, the strip also shows your own position. The target button locks the map on you until you move the map.",
         "The reports list sits under the map on a phone. Tap or drag it up to read it. On a computer, " + b("Layout") + " chooses Map only, Map and list, or List.",
@@ -81,8 +80,7 @@
         b("Measure") + ", " + b("Route") + ", " + b("Area") + ", " + b("Med plan") + ", " + b("Evac") + ", " + b("Comms") + ", " + b("Point") + " and " + b("Watch") + ": each has its own section below.",
         b("My work") + ": what is new since your last visit, and your saved work.",
         b("Reports") + " (phone) or the " + b("Reports") + " button in the header: every printable report OSAP makes.",
-        b("Full") + ": full-screen map. Press Esc on a keyboard to leave.",
-        "Tools your plan does not include are kept together: " + b("More with Mid") + " at the end of the toolbar on a computer, or a " + b("Mid tools") + " (and " + b("Full tools") + ") row in More on a phone. Tap it to see what each plan adds."]) +
+        b("Full") + ": full-screen map. Press Esc on a keyboard to leave."]) +
       fig("datasets", "Data sets: tick to show on the map") +
       fig("weather", "Weather layers") +
       fig("overlays", "Map overlays") +

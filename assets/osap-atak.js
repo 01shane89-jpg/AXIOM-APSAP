@@ -152,8 +152,6 @@
     var r = btn.getBoundingClientRect(), mr = mapEl.getBoundingClientRect();
     pop.style.top = Math.max(4, Math.min(r.top - mr.top, mr.height - pop.offsetHeight - 34)) + "px";
     pop.style.right = (mr.right - r.left + 6) + "px";
-    /* the phone's bottom bar (assets/osap-toolbar.js): at the foot of the map, lined up with the button, kept on the screen */
-    if (bar.classList.contains("atk-bb")) pop.style.right = Math.max(6, Math.min(mr.right - r.right, mr.width - pop.offsetWidth - 6)) + "px";
   }
   function popClose() { pop.hidden = true; pop._for = null; }
   function paintTools() {
