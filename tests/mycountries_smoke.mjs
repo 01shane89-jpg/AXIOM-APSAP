@@ -226,6 +226,8 @@ let pick = null;
   await ctx.route(/\/data\/live\/news\/ee\.js(\?|$)/, (r) => r.fulfill({ contentType: "text/javascript", body: "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp(10).replace("T", " ") + "Z", sources: [],
     items: { ee: [{ title: "Estonia police report border incident near Narva", date: stamp(4 * 1440), outlet: "ERR News", link: "https://news.err.ee/1" }] } }) + ";" }));
   await ctx.route(/\/data\/history\/ee\.js(\?|$)/, (r) => r.fulfill({ contentType: "text/javascript", body: 'window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST["ee"]={"news":[],"social":[]};' }));
+  /* and no official warnings for it: the real MeteoAlarm feed often has a fresh Estonian wind warning */
+  await ctx.route(/\/data\/live\/warnings\.js(\?|$)/, (r) => r.fulfill({ contentType: "text/javascript", body: "window.ASAP_WARN=" + JSON.stringify({ asof: stamp(10).replace("T", " ") + "Z", feeds: [], items: {} }) + ";" }));
   await p.goto(base + "#ee/timeline", { waitUntil: "domcontentloaded" });
   await ready(p);
   await p.waitForFunction(() => window.OSAP_TODAY.isOpen() && document.querySelector("#today .oe-empty") && document.querySelector("#today .mccard"), null, { timeout: 30000 }).catch(() => {});
