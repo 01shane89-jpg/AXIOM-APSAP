@@ -1,6 +1,6 @@
 // The bundle AXIOM Analyst Work Station imports (tools/axiom_bundle_lib.mjs): framing, digest, licence filter, hidden areas, and
 // that curated records pass through byte for byte. Run: node tests/axiom_bundle.test.mjs
-import { buildBundle, verifyBundle, parseLive, curatedFiles, FORMAT, sha256 } from "../tools/axiom_bundle_lib.mjs";
+import { buildBundle, verifyBundle, parseLive, curatedFiles, arrayElements, FORMAT, sha256 } from "../tools/axiom_bundle_lib.mjs";
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
@@ -44,6 +44,12 @@ ok(curatedFiles(io().list).map((f) => f.path).join(",") === "source/countries/af
 const th = recs.find((r) => r.origin === "source/thailand/insurgency.json");
 ok(th && th.area === "th" && th.layer_from_file === "insurgency" && JSON.stringify(th.record) === JSON.stringify(curatedTh[0]), "a curated Thailand record passes through unchanged, with its layer from the file name");
 ok(!recs.some((r) => r.area === "hidd"), "hidden areas are left out, curated and live");
+// number literals survive: AXIOM fingerprints the record as Python reads it, where 47.0 and 47 differ
+const pretty = '[\n  {"layer": "flood", "lat": 47.0, "lon": 1e2, "title": "a , b ] { \\" }"},\n  {"x": [1, 2]}\n]';
+const els = arrayElements(pretty);
+ok(els.length === 2 && els[0] === '{"layer":"flood","lat":47.0,"lon":1e2,"title":"a , b ] { \\" }"}' && els[1] === '{"x":[1,2]}', "arrayElements keeps each record's original text (47.0 stays 47.0, strings untouched)");
+const floatBundle = buildBundle({ ...io(), read: (p) => (p === "source/countries/af.json" ? '[{"layer":"safety","date":"2026-01-01","lat": 47.0}]' : null) }).text;
+ok(floatBundle.includes('"record":{"layer":"safety","date":"2026-01-01","lat":47.0}'), "a curated record's 47.0 reaches the bundle as 47.0");
 
 const ds = recs.filter((r) => r.origin === "live:deepsouth");
 ok(ds.length === 1 && ds[0].licence === "pending", "Deep South: the non-commercial item and the item without a link are left out");

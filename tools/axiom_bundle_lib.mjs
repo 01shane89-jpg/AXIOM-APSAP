@@ -180,6 +180,32 @@ export function curatedFiles(list) {
   return out;
 }
 
+/**
+ * The elements of a JSON array as their original text, with only the whitespace between tokens taken out. A curated record has
+ * to reach AXIOM exactly as OSAP stored it: JSON.parse then JSON.stringify would write 47.0 as 47, and AXIOM's fingerprint, made
+ * from the stored text as Python reads it, would then differ from a checkout import. Call only on text JSON.parse accepted.
+ */
+export function arrayElements(text) {
+  const s = String(text), out = [];
+  let i = s.indexOf("[") + 1, depth = 0, cur = "", inStr = false;
+  for (; i < s.length; i++) {
+    const ch = s[i];
+    if (inStr) {
+      cur += ch;
+      if (ch === "\\") { cur += s[++i]; continue; }
+      if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') { inStr = true; cur += ch; continue; }
+    if (ch === " " || ch === "\n" || ch === "\r" || ch === "\t") continue;
+    if (depth === 0 && (ch === "," || ch === "]")) { if (cur) out.push(cur); cur = ""; if (ch === "]") break; continue; }
+    if (ch === "{" || ch === "[") depth++;
+    else if (ch === "}" || ch === "]") depth--;
+    cur += ch;
+  }
+  return out;
+}
+
 /** Parse a data/live "window.X = {...};" file without running it. */
 export function parseLive(text) {
   const t = String(text);
@@ -200,7 +226,9 @@ export function buildBundle(io) {
   const add = (area, origin, layerFromFile, licence, record) => {
     if (!AREA.test(area)) return "unusable";
     if (hidden.has(area)) return "hidden";
-    const line = JSON.stringify({ t: "record", area, origin, layer_from_file: layerFromFile, licence, record });
+    // a curated record arrives as its original JSON text (see arrayElements), so it is spliced in rather than re-serialised
+    const head = JSON.stringify({ t: "record", area, origin, layer_from_file: layerFromFile, licence });
+    const line = head.slice(0, -1) + ',"record":' + (typeof record === "string" ? record : JSON.stringify(record)) + "}";
     if (seen.has(line)) return "duplicate";
     seen.add(line); lines.push(line); return "kept";
   };
@@ -212,9 +240,8 @@ export function buildBundle(io) {
     const text = io.read(f.path);
     if (text == null) continue;
     let list;
-    try { list = JSON.parse(text); } catch (e) { continue; }
-    if (!Array.isArray(list)) continue;
-    for (const r of list) { curated.read++; tally(curated, r && typeof r === "object" ? add(f.area, f.path, f.layer, "osap-curated", r) : "unusable"); }
+    try { if (!Array.isArray(JSON.parse(text))) continue; list = arrayElements(text); } catch (e) { continue; }
+    for (const r of list) { curated.read++; tally(curated, r[0] === "{" ? add(f.area, f.path, f.layer, "osap-curated", r) : "unusable"); }
   }
 
   for (const feed of FEEDS) {
