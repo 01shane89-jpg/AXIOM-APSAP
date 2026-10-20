@@ -151,7 +151,7 @@
     var rows = Object.keys(LBL).filter(function (k) { return x[k] != null && x[k] !== ""; }).map(function (k) { return "<dt>" + LBL[k] + "</dt><dd>" + esc(val(k, x[k])) + "</dd>"; }).join("");
     return '<div class="pop"><div class="tier" style="color:' + ty[1] + '">' + esc(ty[0]) + " · " + esc(SRC[i.s] || i.s) + "</div>" +
       "<h3>" + esc(i.nm || ty[0] + " (no name mapped)") + "</h3>" + (rows ? "<dl>" + rows + "</dl>" : "") + also(i) +
-      '<p class="obs">' + (safeUrl(i.u) ? '<a href="' + esc(i.u) + '" target="_blank" rel="noopener">Source record</a> · ' : "") + LIC[i.s] +
+      '<p class="obs">' + (safeUrl(i.u) ? '<a href="' + esc(i.u) + '" target="_blank" rel="noopener noreferrer">Source record</a> · ' : "") + LIC[i.s] +
       "<br>" + esc(i.la.toFixed(4) + ", " + i.lo.toFixed(4)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(i.la, i.lo)) : "") +
       (i.fp ? '<br>Fingerprint <code class="fp">' + esc(i.fp.slice(0, 16)) + "…</code>" : "") +
       (x.approx ? "<br>Placed to the nearest arc-minute by the source (about 2 km)." : "") +
@@ -163,7 +163,7 @@
     if (!a.length) return "";
     return '<p class="obs inf-also"><b>Also listed by</b> ' + a.map(function (o) {
       var t = esc(SRC[o.s] || o.s) + (o.nm ? " as \u201c" + esc(o.nm) + "\u201d" : "");
-      return safeUrl(o.u) ? '<a href="' + esc(o.u) + '" target="_blank" rel="noopener">' + t + "</a>" : t;
+      return safeUrl(o.u) ? '<a href="' + esc(o.u) + '" target="_blank" rel="noopener noreferrer">' + t + "</a>" : t;
     }).join("; ") + ". " + a.map(function (o) { return LIC[o.s] || ""; }).filter(function (v, j, r) { return v && r.indexOf(v) === j; }).join(" · ") + "</p>";
   }
   function lpop(l) {
@@ -171,7 +171,7 @@
     var rows = pipe ? Object.keys(LBL).filter(function (k) { return x[k] != null && x[k] !== ""; }).map(function (k) { return "<dt>" + LBL[k] + "</dt><dd>" + esc(val(k, x[k])) + "</dd>"; }).join("") : "";
     return '<div class="pop"><div class="tier" style="color:' + esc(ty[1]) + '">' + esc(ty[0]) + " · " + esc(SRC[l.s] || l.s) + "</div><h3>" + esc(l.nm || ty[0] + (pipe ? " (no name mapped)" : "")) + "</h3>" +
       (rows ? "<dl>" + rows + "</dl>" : "") +
-      '<p class="obs">' + (safeUrl(l.u) ? '<a href="' + esc(l.u) + '" target="_blank" rel="noopener">Source record</a> · ' : "") + LIC[l.s] +
+      '<p class="obs">' + (safeUrl(l.u) ? '<a href="' + esc(l.u) + '" target="_blank" rel="noopener noreferrer">Source record</a> · ' : "") + LIC[l.s] +
       (l.k === "rail" ? "<br>Community-mapped; track is joined per line and simplified to about 500 m, sidings and yards left out." :
         pipe ? "<br>Community-mapped and simplified to about 500 m; many pipelines are buried and unmapped." : "<br>Route as drawn by the source; the real cable path at sea is approximate.") +
       (l.fp ? '<br>Fingerprint <code class="fp">' + esc(l.fp.slice(0, 16)) + "…</code>" : "") + "</p></div>";

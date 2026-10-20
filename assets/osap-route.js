@@ -728,13 +728,13 @@ function main() {
       var m = W.OSAP_SYM && W.OSAP_SYM.mark ? W.OSAP_SYM.mark(h.p, W.OSAP_SYM.classify(h.kind, h.title), { pane: "routepane", badge: "#c92a2a", scale: 0.6, fillColor: "#c92a2a" })
         : L.circleMarker(h.p, { pane: "routepane", renderer: S.svg, radius: 6, color: "#fff", weight: 1.5, fillColor: "#c92a2a", fillOpacity: 0.9 });
       m.bindPopup('<div data-keep-pop="1"><h3>' + E(h.kind) + "</h3><p>" + E(h.title) + '</p><p class="obs">' + E(dist(h.d)) + " from the route, " + E(dist(h.along)) + " along" + (h.date ? " · " + E(h.date) : "") + (h.src ? " · " + E(h.src) : "") + "</p>" +
-        (h.url ? '<p><a href="' + E(h.url) + '" target="_blank" rel="noopener">Source</a></p>' : "") + "</div>");
+        (h.url ? '<p><a href="' + E(h.url) + '" target="_blank" rel="noopener noreferrer">Source</a></p>' : "") + "</div>");
       m.addTo(S.hz);
     });
     var dep = departMs();
     box.innerHTML = (areas.length ? '<p class="rtbad"><b>Crosses ' + areas.map(function (x) { return E(x.a.type + " " + x.a.name); }).join(", ") + "</b> (your saved areas).</p>" : "") +
       (hits.length ? '<p class="obs">' + hits.length + " within " + S.buf + " km, in order along the route" + (hits.length > 60 ? "; the first 60 are listed" : "") + ".</p><ol class=\"rthaz\">" + hits.slice(0, 60).map(function (h) {
-        return '<li><button type="button" data-zoom="' + h.p[0].toFixed(5) + "," + h.p[1].toFixed(5) + '" title="Show on the map">' + E(dist(h.along)) + "</button><div><b>" + E(h.kind) + "</b> " + (h.url ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener">' + E(h.title) + "</a>" : E(h.title)) +
+        return '<li><button type="button" data-zoom="' + h.p[0].toFixed(5) + "," + h.p[1].toFixed(5) + '" title="Show on the map">' + E(dist(h.along)) + "</button><div><b>" + E(h.kind) + "</b> " + (h.url ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener noreferrer">' + E(h.title) + "</a>" : E(h.title)) +
           '<span class="obs"> · ' + E(dist(h.d)) + " off · pass " + E(zOnly(dep + h.t * 1000)) + (h.date ? " · " + E(h.date) : "") + (h.src ? " · " + E(h.src) : "") + "</span></div></li>";
       }).join("") + "</ol>" : '<p class="obs">Nothing the app holds lies within ' + S.buf + " km of this route.</p>") +
       '<p class="obs">Checked: this country\'s reports in the chosen period, road closures (where agencies publish them), GDACS alerts, USGS and national earthquakes M4+, UCDP conflict events, storms and your saved NAI/TAI areas. An empty list is not a clearance.</p>';
@@ -1224,7 +1224,7 @@ function main() {
       (i.address ? E(i.address) + "<br>" : "") +
       (i.phone ? "Phone " + phone(i.phone) : "") + (i.phone_after_hours ? (i.phone ? " · " : "") + "After hours " + phone(i.phone_after_hours) : "") + (i.phone || i.phone_after_hours ? "<br>" : "") +
       (i.hours ? "Open " + E(i.hours) + "<br>" : "") + (i.longest_runway && i.longest_runway.length_m ? (i.longest_runway.mapped ? "Longest mapped runway about " : "Longest runway ") + E(i.longest_runway.length_m) + " m" + (i.longest_runway.surface ? " (" + E(i.longest_runway.surface) + ")" : "") + "<br>" : i.surface ? "Surface " + E(i.surface) + "<br>" : "") +
-      '<code>' + E(G.mgrs(i.lat, i.lon, 5) || "") + "</code>" + (safeUrl(i.src) ? ' · <a href="' + E(i.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</div>" +
+      '<code>' + E(G.mgrs(i.lat, i.lon, 5) || "") + "</code>" + (safeUrl(i.src) ? ' · <a href="' + E(i.src) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") + "</div>" +
       ((ev.notes || []).length ? '<p class="obs">' + ev.notes.map(E).join(" ") + "</p>" : "") +
       (o.cand.k === "lz" || o.cand.k === "airfields" ? '<p class="obs">' + (o.cand.k === "lz" ? "Landing zones are worked out from open elevation, OpenStreetMap obstacles and 10 m satellite land cover (Find LZ): a candidate, not a surveyed LZ. Check it on imagery and on the ground before use." :
         "Airfields come from OpenStreetMap (any size, including airstrips, heliports and military fields) and the OurAirports reference list. Mapped is not open: confirm status, access and runway condition.") + "</p>" : "") +
@@ -1232,7 +1232,7 @@ function main() {
         "About " + E(r.climb || 0) + " m of climb in all. It does not see forest, crops, swamp, walls, fences, private or military land, mines or small streams. Check it on imagery and the Ground mobility overlay.</p>" : "") +
       "<h3>Checkpoints</h3>" + (cps.length ? '<table class="rttab rtcps"><thead><tr><th></th><th>Grid</th><th>Along</th><th>Pass</th><th>What</th></tr></thead><tbody>' + cps.map(function (x) {
         return "<tr" + (x.flag ? ' class="rtflag"' : "") + "><td><b>" + E(x.id) + '</b></td><td><button type="button" class="linkish" data-zoom="' + x.p[0].toFixed(5) + "," + x.p[1].toFixed(5) + '">' + E(G.mgrs(x.p[0], x.p[1], 4) || G.fmtLL(x.p[0], x.p[1], 3)) + "</button></td><td>" + E(dist(x.m)) + "</td><td>" + E(zOnly(dep + x.t * 1000)) + "</td><td>" +
-          (x.url && safeUrl(x.url) ? '<a href="' + E(x.url) + '" target="_blank" rel="noopener">' + E(x.what) + "</a>" : E(x.what)) + "</td></tr>";
+          (x.url && safeUrl(x.url) ? '<a href="' + E(x.url) + '" target="_blank" rel="noopener noreferrer">' + E(x.what) + "</a>" : E(x.what)) + "</td></tr>";
       }).join("") + "</tbody></table>" : '<p class="obs">No route.</p>') +
       '<p class="obs">SP, CP and RP are control points spaced evenly along the line for reporting progress. BX is a border crossing mapped in OpenStreetMap, WX a water crossing on a cross-country line, CHK a checkpoint and INC an incident reported within 1 km of the line.</p>' +
       '<p class="obs"><b>Safety weighting is an estimate from open reporting.</b> It counts what OSAP holds within ' + EV_R / 1000 + " km of each line from the last " + ev.days + " days (this country's reports, UCDP conflict events, road closures, disaster alerts and storms), weighted by kind (conflict events and violent reports 3, closures and disasters 2, other reports 1) and fading with age. " +
@@ -1525,13 +1525,13 @@ function main() {
         : L.circleMarker([x.lat, x.lon], { pane: "routepane", renderer: S.svg, radius: x.area ? 5 : 6, color: "#fff", weight: 1.5, fillColor: x.col, fillOpacity: 0.9 }))
         .bindPopup('<div data-keep-pop="1"><h3>' + E(x.lbl) + "</h3>" + (x.name ? "<p>" + E(x.name) + "</p>" : "") + (x.detail ? '<p class="obs">' + E(x.detail) + "</p>" : "") +
           '<p class="obs">' + (x.inside ? "The route runs inside this area. " : "") + "Mapped in OpenStreetMap; community-mapped, may be incomplete or out of date.</p>" +
-          '<p><a href="' + E(x.url) + '" target="_blank" rel="noopener">OpenStreetMap</a></p></div>').addTo(S.rxl);
+          '<p><a href="' + E(x.url) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></p></div>').addTo(S.rxl);
     });
     var by = {}; q.rx.forEach(function (x) { by[x.lbl] = (by[x.lbl] || 0) + 1; });
     box.innerHTML = '<h3>Movement restrictions</h3>' + (q.rx.length ? '<p class="obs">' + Object.keys(by).map(function (k) { return E(k) + " " + by[k]; }).join(" · ") + ". In order along the route" + (q.rx.length > 80 ? "; the first 80 are listed" : "") + '.</p><ol class="rthaz">' +
       q.rx.slice(0, 80).map(function (x) {
         return '<li><button type="button" data-zoom="' + x.lat.toFixed(5) + "," + x.lon.toFixed(5) + '" title="Show on the map">' + E(dist(x.along)) + '</button><div><span class="rtrxk" style="background:' + x.col + '"></span><b>' + E(x.lbl) + "</b> " +
-          '<a href="' + E(x.url) + '" target="_blank" rel="noopener">' + E(x.name || "unnamed") + "</a>" + (x.detail ? " · " + E(x.detail) : "") +
+          '<a href="' + E(x.url) + '" target="_blank" rel="noopener noreferrer">' + E(x.name || "unnamed") + "</a>" + (x.detail ? " · " + E(x.detail) : "") +
           '<span class="obs"> · ' + (x.inside ? "route runs inside" : x.area ? "near the route" : x.d < 50 ? "on the route" : E(dist(x.d)) + " off") + "</span></div></li>";
       }).join("") + "</ol>" : '<p class="obs">None mapped in OpenStreetMap along this route.</p>') +
       '<p class="obs">Checked in OpenStreetMap: border posts and military checkpoints within 1 km, military and protected areas within ' + Math.min(q.buf, 2) + " km or containing the route, fords and weight or height limits on the route itself. " +
