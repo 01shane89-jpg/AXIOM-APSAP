@@ -56,6 +56,7 @@ jobs:
       - run: node tests/hosp.test.mjs
       - run: node tests/social_view.test.mjs
       - run: node tests/jp_ccc.test.mjs
+      - run: node tests/tw_kr_designations.test.mjs
       - run: node tests/medplan_model.test.mjs
       - run: node tests/boolq.test.mjs
       - run: node tests/terrain.test.mjs
