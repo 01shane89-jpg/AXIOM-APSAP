@@ -2625,12 +2625,16 @@
     var map = W.__asapMap; if (!map || !W.L || !ST) return;
     var el0 = D.getElementById("medplan"); if (W.OSAP_LEGEND && el0 && !el0.hidden) W.OSAP_LEGEND.set("medplan", legendHtml(), el0);
     if (layer) layer.remove();
+    /* the plan draws in its own panes, so a view that hides the page's other layers (a conflict tab such as Deep South,
+       assets/osap-conflicts.js) still shows it (Shane 2026-10-20: a plan from the Deep South tab drew nothing) */
+    if (!map.getPane("mppane")) { map.createPane("mppane").style.zIndex = 450; map.createPane("mpmkpane").style.zIndex = 640; }
+    var vp = { pane: "mppane" };
     layer = L.layerGroup();
     mapItems().forEach(function (it) {
-      if (it[0] === "iso") L.polygon(it[1], { color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }).addTo(layer);
-      else if (it[0] === "ring") L.circle(it[1], { radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }).addTo(layer);
-      else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2])).addTo(layer);
-      else L.marker(it[1], { icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
+      if (it[0] === "iso") L.polygon(it[1], Object.assign({ color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }, vp)).addTo(layer);
+      else if (it[0] === "ring") L.circle(it[1], Object.assign({ radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }, vp)).addTo(layer);
+      else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2], vp)).addTo(layer);
+      else L.marker(it[1], { pane: "mpmkpane", icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
     });
     layer.addTo(map);
   }
