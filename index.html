@@ -55,9 +55,7 @@
 /* Data files the page writes in further down instead of plain tags: Thailand's own files only when Thailand opens (no country
    in the address, or #th/…; another country never builds the flood and border views, and switching country reloads the page),
    and the feeds a plan may not include, which assets/osap-datagate.js leaves out when the signed-in plan cannot open them.
-   Only Thailand's flood files are asked for here, as they are read before the map is made. The border record and the feeds
-   (about 2.5 MB, read after the map is made) are not: asked for this early they came in before the map's first pictures,
-   and reading them kept the phone too busy to draw those pictures (about a second slower; tests/speed_budget.mjs). */
+   Asked for here, so they download while the page's own scripts are read, as plain tags would. */
 (function () {
   var h = (location.hash || "").replace("#", "").split("/"), th = !(h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) && h[0] !== "th");
   var L = {
@@ -69,7 +67,7 @@
       "data/live/ucdp.js", "data/live/deepsouth.js"]
   };
   window.OSAP_TH = th;
-  L.th.forEach(function (s) {
+  [].concat(L.th, L.border, L.feeds).forEach(function (s) {
     if (window.OSAP_DATA && !window.OSAP_DATA.ok(s)) return;
     var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = s; document.head.appendChild(l);
   });
