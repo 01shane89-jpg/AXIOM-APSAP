@@ -41,6 +41,7 @@
         "Search the news from the box at the top. Use quotes to keep a phrase together and a minus sign to leave a word out.",
         "Tap " + b("Open map") + " to go to the map. To start on the map every time, pick " + b("Map") + " at the foot of Today.",
         b("Key dates") + " lists the next three dates that matter in the country: public holidays, elections and referendums, religious periods (Ramadan, Eid, Christmas, Easter, Diwali, Lunar New Year, Songkran and others) and anniversaries of its deadliest days of violence in UCDP's record. Each says why it matters, links its source and is marked " + b("Official") + " (a government holiday list), " + b("Claimed") + " (a reported election schedule) or " + b("Computed") + " (worked out from a calendar or a record). Dates are the local day, with the time that day starts in Zulu. " + b("Show all") + " opens the full list for the past 7 and next 60 days in the country brief.",
+        "When a country has no news in the last 24 hours, " + b("Top stories") + " says so and gives the time of the newest item. Tap " + b("Newest older items") + " to see them, or " + b("News from nearby countries") + " for the latest from its neighbours and the same region. A card showing old data gives its age in grey, for example (17 days old).",
         "The OSAP logo at the top left brings you back to Today."]) +
       "<h3>Install it like an app</h3>" +
       ul(["iPhone or iPad: in Safari tap Share, then " + b("Add to Home Screen") + ".",
@@ -56,7 +57,7 @@
         "The reports list sits under the map on a phone. Tap or drag it up to read it. On a computer, " + b("Layout") + " chooses Map only, Map and list, or List.",
         "On a computer you can size and move the side panels (Details, Reports and windows such as the medical plan). Drag the small grip on a panel's edge to make it wider or narrower; double-click it for the normal width. Click the grip to " + b("Dock on the left") + ", " + b("Dock on the right") + ", " + b("Float over the map") + " or " + b("Reset size and place") + ". A floating panel moves by the bar on its top and gets taller or shorter by its bottom edge. Your choice is kept on this device.",
         "The title at the top names what you are looking at. Tap it to open " + b("Data sets") + " and change it.",
-        "The " + b("Data") + " badge says how fresh the data is: green is fresh, amber means a feed is late, red means data has stopped. Tap it for details and " + b("Refresh now") + "."]) },
+        "The " + b("Data") + " badge says how fresh the data is: green is fresh, amber means one or a few feeds are late (it names them, for example “Conflict tabs late”; everything else is fresh), red means data has stopped or most key feeds are down. Tap it for details and " + b("Refresh now") + "."]) },
 
     { id: "toolbar", t: "The toolbar", h:
       "<p>Top to bottom, the toolbar holds:</p>" +

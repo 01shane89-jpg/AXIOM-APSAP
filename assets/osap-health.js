@@ -1,8 +1,10 @@
 /* Data health badge (next to the OSAP name in the header, and under the date on the Today screen). Reads data/live/health.json, which every refresh writes
-   (tools/health.mjs build), and shows how old the newest data is: green when fresh, amber when late or a minor feed is
-   down, red when a key feed has died or nothing has refreshed for an hour. Tapping it lists what is wrong and offers the
-   outage alert channel (ntfy, no account). Re-read every 5 minutes while the page is open, so a stall shows without a reload.
-   The same rules as the keeper's phone alerts: the page keeps a copy of tools/health_lib.mjs evaluate() below. */
+   (tools/health.mjs build), and shows how old the newest data is: green when fresh, amber when the refresh is late or one or
+   a few feeds are late (named in plain words: "Conflict tabs last updated 6 h ago; everything else is fresh"), red only when
+   nothing has refreshed for an hour or most key feeds are down. Tapping it lists what is wrong and offers the outage alert
+   channel (ntfy, no account). Re-read every 5 minutes while the page is open, so a stall shows without a reload.
+   The page keeps a copy of tools/health_lib.mjs evaluate() and userView() below (tests/health.test.mjs checks they agree).
+   The keeper's phone alerts are stricter: any key feed that dies is announced. */
 (function () {
   if (window.OSAP_HEALTH_UI || /[?&]watchscan=1/.test(location.search)) return;
   var css = document.createElement("style");
@@ -15,7 +17,9 @@
     ".ohp{position:absolute;z-index:1200;top:calc(100% + 6px);left:0;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);" +
     "border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px 12px;font:400 12.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal}" +
     ".ohp strong{font:inherit;font-weight:600;color:inherit}.ohp ul{margin:6px 0;padding-left:18px}.ohp li{margin:2px 0}" +
-    ".ohp .hk{color:var(--bad,#C0392B)}.ohp p{margin:6px 0}.ohp a{color:inherit}.ohp .obs{color:var(--muted);font-size:11.5px}";
+    ".ohp .hk,.ohp .ohl.down{color:var(--bad,#C0392B)}.ohp .ha,.ohp .ohl.amber{color:var(--warn,#B7800F)}" +
+    ".ohb .ohx{text-transform:none;letter-spacing:0;font-weight:500;max-width:46vw;overflow:hidden;text-overflow:ellipsis}" +
+    "@media (max-width:700px){#osap-health .ohx{display:none}}.ohp p{margin:6px 0}.ohp a{color:inherit}.ohp .obs{color:var(--muted);font-size:11.5px}";
   document.head.appendChild(css);
 
   /* one badge in the map header (after the OSAP name) and one on the Today screen (after its date line); Today is drawn by
@@ -58,8 +62,27 @@
       else if (f.src && f.src.ok + f.src.fail >= 4 && f.src.fail > f.src.ok) why = f.src.fail + " of " + (f.src.ok + f.src.fail) + " sources failing";
       if (why) probs.push({ name: f.name || f.id, why: why, key: !!f.key });
     });
-    var keyBad = probs.some(function (p) { return p.key; });
-    return { age: age, at: at, stall: stall, probs: probs, state: stall || keyBad ? "down" : probs.length || age > amberMin ? "amber" : "ok" };
+    /* what the reader sees (tools/health_lib.mjs userView): red only when nothing has refreshed for downMin or most key feeds
+       are down; one or a few late feeds are amber and named. The keeper's phone alerts still fire for any key feed. */
+    var feeds = h.feeds || [], keyN = feeds.filter(function (f) { return f.key; }).length, keyBad = probs.filter(function (p) { return p.key; });
+    var ageS = ago(now - at), v;
+    function phrase(w) { return /^last updated /.test(w) ? (/ago$/.test(w) ? w : w + " ago") : "has " + w; }
+    if (stall) v = { state: "down", line: "No new data for " + ageS + ". Everything shown is at least that old.", short: "stopped" };
+    else if (keyN && keyBad.length * 2 > keyN) {
+      var nm = keyBad.map(function (p) { return p.name; }), s4 = nm.slice(0, 4);
+      v = { state: "down", line: "Most key feeds are down: " + (nm.length > 4 ? s4.join(", ") + " and " + (nm.length - 4) + " more" : s4.length > 1 ? s4.slice(0, -1).join(", ") + " and " + s4[s4.length - 1] : s4.join("")) + ".",
+        short: keyBad.length + " key feeds down" };
+    } else if (!probs.length) {
+      v = age > amberMin ? { state: "amber", line: "The last refresh was " + ageS + " ago; refreshes usually run every 15 to 25 minutes.", short: "late" }
+        : { state: "ok", line: "All " + feeds.length + " feeds are fresh.", short: "" };
+    } else {
+      var lead = keyBad.length ? keyBad : probs, named = lead.slice(0, 2), rest = probs.length - named.length;
+      var line = named.map(function (p) { return p.name + " " + phrase(p.why); }).join(", ");
+      if (rest > 0) line += "; " + rest + (keyBad.length && rest === probs.length - keyBad.length ? " minor" : " more") + " feed" + (rest === 1 ? " is" : "s are") + " also late";
+      line += "; " + (age > amberMin ? "the last refresh was " + ageS + " ago" : "everything else is fresh") + ".";
+      v = { state: "amber", line: line.charAt(0).toUpperCase() + line.slice(1), short: lead.length === 1 ? lead[0].name + " late" : lead.length + (keyBad.length ? " key" : "") + " feeds late" };
+    }
+    return { age: age, at: at, stall: stall, probs: probs, state: v.state, line: v.line, short: v.short };
   }
 
   function draw() {
@@ -69,11 +92,17 @@
     if (!EV) { lab = "Data ?"; title = "Data health not available offline"; }
     else {
       lab = EV.stall ? "Data " + ago(now - EV.at) + " old" : "Data " + ago(now - EV.at);
-      title = EV.state === "ok" ? "All feeds fresh. Tap for details." : EV.state === "amber" ? "Some data is late or a feed is down. Tap for details." : "Data has stopped or a key feed has died. Tap for details.";
+      title = EV.line + " Tap for details.";
     }
+    /* the late feed is named on the badge itself (the header copy drops it on a narrow screen; the Today copy keeps it) */
+    var extra = EV && EV.state === "amber" && EV.short && EV.short !== "late" ? EV.short : "";
     badges().forEach(function (b) {
-      b.className = "ohb" + (EV ? " " + EV.state : ""); b.title = title; b.lastChild.textContent = lab;
-      b.setAttribute("aria-label", "Data health: " + (EV ? { ok: "fresh", amber: "some feeds late", down: "problem" }[EV.state] + ", last refresh " + ago(now - EV.at) + " ago" : "unknown"));
+      b.className = "ohb" + (EV ? " " + EV.state : ""); b.title = title;
+      b.querySelector("span").textContent = lab;
+      var x = b.querySelector(".ohx");
+      if (extra) { if (!x) { x = document.createElement("span"); x.className = "ohx"; b.appendChild(x); } x.textContent = "· " + extra; }
+      else if (x) x.remove();
+      b.setAttribute("aria-label", "Data health: " + (EV ? EV.line + " Last refresh " + ago(now - EV.at) + " ago." : "unknown"));
     });
     if (panel) fillPanel();
   }
@@ -84,9 +113,11 @@
     else {
       h += "<p>Last refresh " + esc(when(EV.at)) + " (" + ago(now - EV.at) + " ago). Refreshes run about every 15 to 25 minutes.</p>";
       if (EV.stall) h += '<p class="hk"><strong>No new data for ' + ago(now - EV.at) + ".</strong> Everything below is at least that old.</p>";
+      else h += '<p class="ohl ' + EV.state + '"><strong>' + esc(EV.line) + "</strong></p>";
       if (EV.probs.length) {
-        h += "<ul>" + EV.probs.map(function (p) { return "<li" + (p.key ? ' class="hk"' : "") + "><strong>" + esc(p.name) + "</strong>: " + esc(p.why) + "</li>"; }).join("") + "</ul>";
-      } else if (!EV.stall) h += "<p>All " + (H.feeds || []).length + " feeds are fresh.</p>";
+        /* key feeds stay marked in red only when the data really is down; a single late key feed is listed in amber */
+        h += "<ul>" + EV.probs.map(function (p) { return "<li" + (p.key ? ' class="' + (EV.state === "down" ? "hk" : "ha") + '"' : "") + "><strong>" + esc(p.name) + "</strong>: " + esc(p.why) + (p.key ? " (key feed)" : "") + "</li>"; }).join("") + "</ul>";
+      }
       if (H.run) h += '<p class="obs"><a href="' + esc(H.run) + '" target="_blank" rel="noopener">The refresh run that wrote this</a></p>';
     }
     var topic = H && H.topic;
