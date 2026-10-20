@@ -27,7 +27,8 @@
 
   var css = D.createElement("style"); css.id = "osap-panels-css";
   css.textContent =
-    "html.pnl .shell{grid-template-columns:var(--pn-cols)!important}" +
+    /* the conflict tabs pin their own two columns (html[data-cf]:not(.phone) .shell): this must outrank that too */
+    "html.pnl .shell,html.pnl[data-cf]:not(.phone) .shell{grid-template-columns:var(--pn-cols)!important}" +
     "html.pnl.pn-rail-left .rail{order:-2;border-left:none;border-right:1px solid var(--line)}html.pnl.pn-rv-left #rv{order:-1;border-right:1px solid var(--line)}" +
     "html.pnl.pn-rail-right .rail{order:2}html.pnl.pn-rv-right #rv{order:1}" +
     /* floating Details or Reports: over the map, out of the columns */
@@ -277,7 +278,7 @@
 
   /* ---------- keep up with the page ---------- */
   new MutationObserver(later).observe(shell, { attributes: true, attributeFilter: ["class"] });
-  new MutationObserver(later).observe(root, { attributes: true, attributeFilter: ["class"] });
+  new MutationObserver(later).observe(root, { attributes: true, attributeFilter: ["class", "data-cf"] });   /* data-cf: a conflict tab opens or closes */
   /* map windows open and close (hidden, the dock class): they are children of <body> */
   var att = new MutationObserver(later);
   function watch() {

@@ -130,7 +130,16 @@
     }).join("") + "</div>";
   L.DomEvent.disableClickPropagation(bar); L.DomEvent.disableScrollPropagation(bar);
   /* when the tools run past the bottom of the map (phones), a fade and a down arrow say there are more below */
-  function moreCue() { var l = bar.querySelector(".atk-list"); if (l) bar.classList.toggle("more", !bar.classList.contains("folded") && l.scrollTop + l.clientHeight < l.scrollHeight - 4); }
+  /* measured once per frame however many changes ask for it: each measure is a full page layout, and a redraw can change the
+     toolbar many times over */
+  var cueQ = 0;
+  function moreCue() {
+    if (cueQ) return;
+    cueQ = (W.requestAnimationFrame || setTimeout)(function () {
+      cueQ = 0;
+      var l = bar.querySelector(".atk-list"); if (l) bar.classList.toggle("more", !bar.classList.contains("folded") && l.scrollTop + l.clientHeight < l.scrollHeight - 4);
+    });
+  }
   bar.querySelector(".atk-list").addEventListener("scroll", moreCue, { passive: true });
   W.addEventListener("resize", moreCue);
   if (W.ResizeObserver) new ResizeObserver(moreCue).observe(bar.querySelector(".atk-list"));
