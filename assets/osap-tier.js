@@ -233,9 +233,12 @@
       if (CFG.signedIn && me !== "full") h += '<form data-tr-form="code" class="trcode"><label>Beta tester code<input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OSAP-XXXX-XXXX-XXXX" required></label>' +
         '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">Use code</button></div></form>";
     }
+    /* shown reviews under the sign-in form (assets/osap-reviews.js) */
+    if (wall) h += '<div id="tr-reviews"></div>';
     h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
     BOX.className = wall ? "trwall" : "";
     BOX.innerHTML = h + "</div>";
+    if (wall && W.OSAP_REVIEWS) W.OSAP_REVIEWS.wall(BOX.querySelector("#tr-reviews"));
     var f = BOX.querySelector("input:not([hidden])"); if (f && UI.mode !== "plans") { if (f.value && UI.mode !== "newpw") f = BOX.querySelector('input[type="password"]') || f; f.focus(); }
   }
   /* the sign-in screen: the gate is on and nobody is signed in, so nothing on the page can load */
@@ -496,6 +499,9 @@
     on: function () { return !!CFG; },
     tier: tier,
     owner: function () { return !!(CFG && CFG.owner); },
+    signedIn: function () { return !!(CFG && CFG.signedIn); },
+    /* the account's access token, renewed when near its end, or null signed out (assets/osap-reviews.js) */
+    token: function () { return session().then(function (a) { return a ? a.access_token : null; }); },
     ready: READY,
     open: function () { open("plans"); },
     users: function () { if (CFG && CFG.owner) open("users"); },
