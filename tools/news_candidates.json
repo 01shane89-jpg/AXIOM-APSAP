@@ -1,866 +1,284 @@
 {
-"note": "PROBE BRANCH ONLY: round 12 Bing site searches for thin countries",
+"note": "PROBE BRANCH ONLY: round 13 small Pacific/Caribbean states, Liechtenstein, Brunei",
 "feeds": [
 {
-"cc": "am",
-"outlet": "Armenpress (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aarmenpress.am&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "am",
-"outlet": "Azatutyun (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aazatutyun.am&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ba",
-"outlet": "Oslobođenje (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aoslobodjenje.ba&format=rss",
-"lang": "bs",
-"search": true,
-"nc": true
-},
-{
-"cc": "ba",
-"outlet": "BHRT (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Abhrt.ba&format=rss",
-"lang": "bs",
-"search": true,
-"nc": true
-},
-{
-"cc": "by",
-"outlet": "Belta (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Abelta.by&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "by",
-"outlet": "Nasha Niva (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anashaniva.com&format=rss",
-"lang": "be",
-"search": true,
-"nc": true
-},
-{
-"cc": "cf",
-"outlet": "Corbeau News (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Acorbeaunews-centrafrique.org&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "cf",
-"outlet": "Radio Ndeke Luka (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aradiondekeluka.org&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "cl",
-"outlet": "La Tercera (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alatercera.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "cl",
-"outlet": "Emol (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aemol.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "cl",
-"outlet": "BioBioChile (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Abiobiochile.cl&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "co",
-"outlet": "El Tiempo (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aeltiempo.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "co",
-"outlet": "Semana (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Asemana.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "co",
-"outlet": "El Espectador (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aelespectador.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "ec",
-"outlet": "El Universo (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aeluniverso.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "gr",
-"outlet": "Kathimerini (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aekathimerini.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "gr",
-"outlet": "Keep Talking Greece (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Akeeptalkinggreece.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "gw",
-"outlet": "O Democrata (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aodemocratagb.com&format=rss",
-"lang": "pt",
-"search": true,
-"nc": true
-},
-{
-"cc": "hr",
-"outlet": "Index.hr (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aindex.hr&format=rss",
-"lang": "hr",
-"search": true,
-"nc": true
-},
-{
-"cc": "hr",
-"outlet": "Jutarnji (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ajutarnji.hr&format=rss",
-"lang": "hr",
-"search": true,
-"nc": true
-},
-{
-"cc": "hu",
-"outlet": "Telex (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Atelex.hu&format=rss",
-"lang": "hu",
-"search": true,
-"nc": true
-},
-{
-"cc": "hu",
-"outlet": "Hungary Today (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ahungarytoday.hu&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "hu",
-"outlet": "Index.hu (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aindex.hu&format=rss",
-"lang": "hu",
-"search": true,
-"nc": true
-},
-{
-"cc": "ie",
-"outlet": "RTÉ News (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Arte.ie&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ie",
-"outlet": "Irish Times (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Airishtimes.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ie",
-"outlet": "Irish Independent (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aindependent.ie&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "is",
-"outlet": "Vísir (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Avisir.is&format=rss",
-"lang": "is",
-"search": true,
-"nc": true
-},
-{
-"cc": "la",
-"outlet": "Laotian Times (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alaotiantimes.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "la",
-"outlet": "Vientiane Times (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Avientianetimes.org.la&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "lk",
-"outlet": "Daily Mirror LK (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Adailymirror.lk&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "lk",
-"outlet": "Ada Derana (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aadaderana.lk&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "lr",
-"outlet": "FrontPage Africa (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Afrontpageafricaonline.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "lr",
-"outlet": "Liberian Observer (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aliberianobserver.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "lv",
-"outlet": "LSM (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alsm.lv&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "lv",
-"outlet": "Delfi Latvia (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Adelfi.lv&format=rss",
-"lang": "lv",
-"search": true,
-"nc": true
-},
-{
-"cc": "ly",
-"outlet": "Libya Observer (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alibyaobserver.ly&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ly",
-"outlet": "Libya Herald (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alibyaherald.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ma",
-"outlet": "Hespress (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ahespress.com&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "ma",
-"outlet": "Morocco World News (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Amoroccoworldnews.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "md",
-"outlet": "Moldpres (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Amoldpres.md&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "md",
-"outlet": "Ziarul de Gardă (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Azdg.md&format=rss",
-"lang": "ro",
-"search": true,
-"nc": true
-},
-{
-"cc": "mg",
-"outlet": "L'Express de Madagascar (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alexpress.mg&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "mg",
-"outlet": "Midi Madagasikara (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Amidi-madagasikara.mg&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "ml",
-"outlet": "Maliweb (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Amaliweb.net&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "ml",
-"outlet": "Studio Tamani (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Astudiotamani.org&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "mr",
-"outlet": "Cridem (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Acridem.org&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "mr",
-"outlet": "Sahara Medias (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Afr.saharamedias.net&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "mv",
-"outlet": "Edition.mv (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aedition.mv&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "mw",
-"outlet": "Nyasa Times (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anyasatimes.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "mw",
-"outlet": "Malawi24 (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Amalawi24.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ni",
-"outlet": "La Prensa NI (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alaprensani.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "ni",
-"outlet": "Confidencial (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aconfidencial.digital&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "pt",
-"outlet": "Público (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Apublico.pt&format=rss",
-"lang": "pt",
-"search": true,
-"nc": true
-},
-{
-"cc": "pt",
-"outlet": "RTP Notícias (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Artp.pt&format=rss",
-"lang": "pt",
-"search": true,
-"nc": true
-},
-{
-"cc": "pt",
-"outlet": "Observador (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aobservador.pt&format=rss",
-"lang": "pt",
-"search": true,
-"nc": true
-},
-{
-"cc": "ro",
-"outlet": "Digi24 (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Adigi24.ro&format=rss",
-"lang": "ro",
-"search": true,
-"nc": true
-},
-{
-"cc": "ro",
-"outlet": "HotNews (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ahotnews.ro&format=rss",
-"lang": "ro",
-"search": true,
-"nc": true
-},
-{
-"cc": "ro",
-"outlet": "Romania Insider (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aromania-insider.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "si",
-"outlet": "RTV Slovenija (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Artvslo.si&format=rss",
-"lang": "sl",
-"search": true,
-"nc": true
-},
-{
-"cc": "si",
-"outlet": "24ur (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3A24ur.com&format=rss",
-"lang": "sl",
-"search": true,
-"nc": true
-},
-{
-"cc": "sy",
-"outlet": "Enab Baladi (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aenabbaladi.net&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "sy",
-"outlet": "SANA (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Asana.sy&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "sz",
-"outlet": "Times of Eswatini (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Atimes.co.sz&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Observer (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anew.observer.org.sz&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "tm",
-"outlet": "Turkmenportal (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aturkmenportal.com&format=rss",
-"lang": "ru",
-"search": true,
-"nc": true
-},
-{
-"cc": "to",
-"outlet": "Tonga Broadcasting (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Atbc.to&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "tt",
-"outlet": "Trinidad Guardian (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aguardian.co.tt&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "tt",
-"outlet": "Newsday TT (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anewsday.co.tt&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "tt",
-"outlet": "Trinidad Express (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Atrinidadexpress.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "tz",
-"outlet": "The Citizen TZ (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Athecitizen.co.tz&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "tz",
-"outlet": "Daily News TZ (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Adailynews.co.tz&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ug",
-"outlet": "New Vision (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anewvision.co.ug&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ug",
-"outlet": "Nile Post (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anilepost.co.ug&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "uz",
-"outlet": "Kun.uz (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Akun.uz&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "uz",
-"outlet": "Gazeta.uz (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Agazeta.uz&format=rss",
-"lang": "ru",
-"search": true,
-"nc": true
+"cc": "ws",
+"outlet": "Talamua Online",
+"url": "https://www.talamua.com/feed/",
+"lang": "en"
 },
 {
 "cc": "ws",
-"outlet": "Samoa News (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Asamoanews.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"outlet": "Samoa Observer",
+"url": "https://www.samoaobserver.ws/rss",
+"lang": "en"
 },
 {
-"cc": "ye",
-"outlet": "Yemen Monitor (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ayemenmonitor.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "to",
+"outlet": "Tonga News",
+"url": "https://www.tonganews.to/feed/",
+"lang": "en"
 },
 {
-"cc": "ye",
-"outlet": "Saba (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Asaba.ye&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "fj",
+"outlet": "Fiji Village",
+"url": "https://www.fijivillage.com/feed",
+"lang": "en"
 },
 {
-"cc": "zm",
-"outlet": "Lusaka Times (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alusakatimes.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "fj",
+"outlet": "Fiji Times",
+"url": "https://www.fijitimes.com.fj/feed/",
+"lang": "en"
 },
 {
-"cc": "zm",
-"outlet": "Zambia Daily Mail (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Adaily-mail.co.zm&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "sb",
+"outlet": "Island Sun",
+"url": "https://www.theislandsun.com.sb/feed/",
+"lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Tribune 242 (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Atribune242.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "sb",
+"outlet": "Solomon Star",
+"url": "https://solomonstarnews.com/feed/",
+"lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Nassau Guardian (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Athenassauguardian.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "pg",
+"outlet": "The National PNG",
+"url": "https://www.thenational.com.pg/feed/",
+"lang": "en"
+},
+{
+"cc": "pg",
+"outlet": "EMTV",
+"url": "https://www.emtv.com.pg/feed/",
+"lang": "en"
+},
+{
+"cc": "pg",
+"outlet": "PNG Haus Bung",
+"url": "https://pnghausbung.com/feed/",
+"lang": "en"
+},
+{
+"cc": "fm",
+"outlet": "Kaselehlie Press",
+"url": "https://www.kpress.info/index.php?format=feed&type=rss",
+"lang": "en"
+},
+{
+"cc": "fj",
+"outlet": "PINA",
+"url": "https://www.pina.com.fj/feed/",
+"lang": "en"
 },
 {
 "cc": "gd",
-"outlet": "NOW Grenada (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anowgrenada.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"outlet": "Grenada Informer",
+"url": "https://www.thegrenadainformer.com/feed",
+"lang": "en"
 },
 {
 "cc": "lc",
-"outlet": "St Lucia Times (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Astluciatimes.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"outlet": "HTS St Lucia",
+"url": "https://www.htsstlucia.org/feed/",
+"lang": "en"
+},
+{
+"cc": "lc",
+"outlet": "St Lucia News Online",
+"url": "https://www.stlucianewsonline.com/feed/",
+"lang": "en"
 },
 {
 "cc": "vc",
-"outlet": "iWitness News (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aiwnsvg.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"outlet": "St Vincent Times",
+"url": "https://www.stvincenttimes.com/feed/",
+"lang": "en"
 },
 {
 "cc": "kn",
-"outlet": "SKN Pulse (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Asknpulse.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"outlet": "St Kitts Nevis Observer",
+"url": "https://www.thestkittsnevisobserver.com/feed/",
+"lang": "en"
+},
+{
+"cc": "kn",
+"outlet": "SKN Vibes",
+"url": "https://www.sknvibes.com/rss",
+"lang": "en"
+},
+{
+"cc": "bs",
+"outlet": "Nassau Guardian",
+"url": "https://thenassauguardian.com/feed/",
+"lang": "en"
+},
+{
+"cc": "bs",
+"outlet": "Tribune 242",
+"url": "https://www.tribune242.com/rss/headlines/",
+"lang": "en"
+},
+{
+"cc": "dm",
+"outlet": "Emo News",
+"url": "https://emonewsdm.com/feed/",
+"lang": "en"
+},
+{
+"cc": "ag",
+"outlet": "Antigua Newsroom",
+"url": "https://antiguanewsroom.com/feed/",
+"lang": "en"
 },
 {
 "cc": "bz",
-"outlet": "Channel 5 Belize (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aedition.channel5belize.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"outlet": "Love FM",
+"url": "https://www.lovefm.com/feed/",
+"lang": "en"
 },
 {
-"cc": "sr",
-"outlet": "De Ware Tijd (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Adwtonline.com&format=rss",
-"lang": "nl",
-"search": true,
-"nc": true
+"cc": "bz",
+"outlet": "The Reporter BZ",
+"url": "https://www.reporter.bz/feed/",
+"lang": "en"
 },
 {
 "cc": "gy",
-"outlet": "Kaieteur News (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Akaieteurnewsonline.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"outlet": "News Room Guyana",
+"url": "https://newsroom.gy/feed/",
+"lang": "en"
 },
 {
-"cc": "ht",
-"outlet": "Haiti Libre (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ahaitilibre.com&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
+"cc": "gy",
+"outlet": "News Source Guyana",
+"url": "https://newsourcegy.com/feed/",
+"lang": "en"
 },
 {
-"cc": "jm",
-"outlet": "Jamaica Observer (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ajamaicaobserver.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "li",
+"outlet": "Vaterland",
+"url": "https://www.vaterland.li/rss",
+"lang": "de"
 },
 {
-"cc": "cg",
-"outlet": "Les Dépêches de Brazzaville (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aadiac-congo.com&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
+"cc": "li",
+"outlet": "Liechtensteiner Volksblatt",
+"url": "https://www.volksblatt.li/rss",
+"lang": "de"
 },
 {
-"cc": "dj",
-"outlet": "La Nation (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alanation.dj&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
+"cc": "bn",
+"outlet": "Borneo Bulletin",
+"url": "https://borneobulletin.com.bn/feed/",
+"lang": "en"
 },
 {
-"cc": "er",
-"outlet": "Shabait (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Ashabait.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "ss",
-"outlet": "Sudans Post (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Asudanspost.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "na",
-"outlet": "Namibian Sun (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Anamibiansun.com&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "mz",
-"outlet": "O País (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aopais.co.mz&format=rss",
-"lang": "pt",
-"search": true,
-"nc": true
-},
-{
-"cc": "me",
-"outlet": "Vijesti (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Avijesti.me&format=rss",
-"lang": "sr",
-"search": true,
-"nc": true
-},
-{
-"cc": "xk",
-"outlet": "Koha (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Akoha.net&format=rss",
-"lang": "sq",
-"search": true,
-"nc": true
-},
-{
-"cc": "al",
-"outlet": "Euronews Albania (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aeuronews.al&format=rss",
-"lang": "sq",
-"search": true,
-"nc": true
-},
-{
-"cc": "bj",
-"outlet": "La Nouvelle Tribune (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Alanouvelletribune.info&format=rss",
-"lang": "fr",
-"search": true,
-"nc": true
-},
-{
-"cc": "bo",
-"outlet": "El Deber (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aeldeber.com.bo&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "gt",
-"outlet": "Prensa Libre (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aprensalibre.com&format=rss",
-"lang": "es",
-"search": true,
-"nc": true
-},
-{
-"cc": "tj",
-"outlet": "Asia-Plus (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aasiaplustj.info&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
+"cc": "bn",
+"outlet": "Biz Brunei",
+"url": "https://www.bizbrunei.com/feed/",
+"lang": "en"
 },
 {
 "cc": "pw",
-"outlet": "Island Times (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Aislandtimes.org&format=rss",
+"outlet": "Pacific Note",
+"url": "https://pacificnote.com/feed/",
+"lang": "en"
+},
+{
+"cc": "tv",
+"outlet": "Tuvalu (Bing search)",
+"url": "https://www.bing.com/news/search?q=Tuvalu%20Funafuti&format=rss",
 "lang": "en",
 "search": true,
 "nc": true
 },
 {
 "cc": "ki",
-"outlet": "Kiribati Updates (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Akiribatiupdates.com.ki&format=rss",
+"outlet": "Kiribati (Bing search)",
+"url": "https://www.bing.com/news/search?q=Kiribati%20Tarawa&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "pw",
+"outlet": "Palau (Bing search)",
+"url": "https://www.bing.com/news/search?q=Palau%20Koror&format=rss",
 "lang": "en",
 "search": true,
 "nc": true
 },
 {
 "cc": "fm",
-"outlet": "Kaselehlie Press (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Akpress.info&format=rss",
+"outlet": "Micronesia (Bing search)",
+"url": "https://www.bing.com/news/search?q=%22Federated%20States%20of%20Micronesia%22&format=rss",
 "lang": "en",
 "search": true,
 "nc": true
 },
 {
 "cc": "mh",
-"outlet": "Marshall Islands Journal (Bing search)",
-"url": "https://www.bing.com/news/search?q=site%3Amarshallislandsjournal.com&format=rss",
+"outlet": "Marshall Islands (Bing search)",
+"url": "https://www.bing.com/news/search?q=Majuro&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "gd",
+"outlet": "Grenada (Bing search)",
+"url": "https://www.bing.com/news/search?q=Grenada%20St.%20George%27s&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "lc",
+"outlet": "Saint Lucia (Bing search)",
+"url": "https://www.bing.com/news/search?q=%22Saint%20Lucia%22&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "vc",
+"outlet": "St Vincent (Bing search)",
+"url": "https://www.bing.com/news/search?q=%22St%20Vincent%20and%20the%20Grenadines%22&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "kn",
+"outlet": "St Kitts (Bing search)",
+"url": "https://www.bing.com/news/search?q=%22St%20Kitts%22&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "to",
+"outlet": "Tonga (Bing search)",
+"url": "https://www.bing.com/news/search?q=Tonga%20Nuku%27alofa&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ws",
+"outlet": "Samoa (Bing search)",
+"url": "https://www.bing.com/news/search?q=Samoa%20Apia&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "bn",
+"outlet": "Brunei (Bing search)",
+"url": "https://www.bing.com/news/search?q=Brunei%20Bandar%20Seri%20Begawan&format=rss",
 "lang": "en",
 "search": true,
 "nc": true
