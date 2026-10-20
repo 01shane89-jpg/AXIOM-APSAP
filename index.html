@@ -3162,6 +3162,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.OSAP_COUNTRIES = COUNTRIES;
   var HASH = (location.hash || "").replace("#", "").split("/");
   var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
+  /* a country code the list does not know opens Thailand: start again as Thailand, so its flood files load (OSAP_TH, near the top) */
+  if (TH && window.OSAP_TH === false) { location.replace("#" + HASH.slice(1).join("/")); location.reload(); }
   /* an open US state (see SUB-AREAS above): the same country, shown under the state's name and box */
   var SUB = window.OSAP_SUB && window.OSAP_SUBAREA && window.OSAP_SUB.cc === CC && window.OSAP_SUBAREA.code === window.OSAP_SUB.code ? window.OSAP_SUBAREA : null;
   if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
