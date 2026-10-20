@@ -35,6 +35,8 @@ function withExif(jpeg) {
   const seg = Buffer.alloc(4); seg.writeUInt16BE(0xFFE1, 0); seg.writeUInt16BE(body.length + 2, 2);
   return Buffer.concat([jpeg.subarray(0, 2), seg, body, jpeg.subarray(2)]);
 }
+/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
+const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 async function open(opts, ctxIn) {
   const ctx = ctxIn || await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [];
@@ -51,8 +53,8 @@ async function open(opts, ctxIn) {
 // ---------- phone ----------
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
-  ok(await shown(p, '#atk-tools [data-atk="point"]'), "phone: Point button on the map toolbar");
-  await p.click('#atk-tools [data-atk="point"]');
+  ok(await p.evaluate(() => !!document.querySelector('#atk-tools [data-atk="point"]')), "phone: Point button on the map toolbar (in More)");
+  await tool(p, '[data-atk="point"]');
   ok(/At the map centre/.test(await p.textContent("#atk-pop")) && /Tap the map/.test(await p.textContent("#atk-pop")), "phone: Point offers map centre and tap to place");
   await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
   let P = await pts(p);
@@ -111,7 +113,7 @@ async function open(opts, ctxIn) {
   const r2 = await open(null, ctx);
   ok((await pts(r2.p)).length === 1 && (await photos(r2.p, pid)).length === 1, "phone: point and photo are still there after a reload");
   // Overlay Manager: pencil opens the sheet
-  await r2.p.click('#atk-tools [data-atk="overlays"]'); await r2.p.waitForTimeout(200);
+  await tool(r2.p, '[data-atk="overlays"]'); await r2.p.waitForTimeout(200);
   await r2.p.click(`#atk-marks [data-mk-ed="${pid}"]`); await r2.p.waitForTimeout(300);
   ok(await shown(r2.p, "#pt-ed"), "phone: the pencil in Overlays opens the point sheet");
   // deleting the point removes its photos
@@ -120,7 +122,7 @@ async function open(opts, ctxIn) {
   ok(!(await shown(r2.p, "#pt-ed")), "phone: the sheet closes after deleting");
 
   // tap the map to place
-  await r2.p.click('#atk-tools [data-atk="point"]'); await r2.p.click('#atk-pop [data-pk="tap"]');
+  await tool(r2.p, '[data-atk="point"]'); await r2.p.click('#atk-pop [data-pk="tap"]');
   const box = await r2.p.evaluate(() => { const r = document.getElementById("map").getBoundingClientRect(); return [r.left + r.width / 2 - 40, r.top + r.height / 3]; });
   await r2.p.mouse.click(box[0], box[1]); await r2.p.waitForTimeout(300);
   ok((await pts(r2.p)).length === 1 && await shown(r2.p, "#pt-ed"), "phone: Tap the map places a point where tapped");
@@ -130,7 +132,7 @@ async function open(opts, ctxIn) {
 // ---------- desktop ----------
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } });
-  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
+  await tool(p, '[data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
   const ed = await p.evaluate(() => { const r = document.getElementById("pt-ed").getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect(); return { right: m.right - r.right, w: r.width }; });
   ok(ed.right <= 1 && ed.w <= 362, "desktop: the point sheet is a side sheet " + JSON.stringify(ed));
   await p.keyboard.press("Escape");
@@ -149,13 +151,13 @@ async function open(opts, ctxIn) {
     try { localStorage.setItem("probe", "x".repeat(200)); localStorage.removeItem("probe"); return false; } catch (e) { return true; }
   }, xrecs);
   ok(await fill(true), "full store: this browser's store is full");
-  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(300);
+  await tool(p, '[data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(300);
   let P = await pts(p);
   ok(P.length === 1 && await shown(p, "#pt-ed"), "full store: a new point is still saved (neighbour-report caches let go)");
   ok(await p.evaluate(() => Object.keys(localStorage).every((k) => k.indexOf("asap-xrecs-") !== 0)), "full store: the caches went, the filler stayed");
   await p.keyboard.press("Escape");
   ok(await fill(false), "full store: full again with no caches to let go");
-  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(300);
+  await tool(p, '[data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(300);
   P = await pts(p);
   ok(P.length === 1 && !(await shown(p, "#pt-ed")), "full store: a point that cannot be stored is not shown as dropped");
   ok(/storage for OSAP is full/.test(await p.evaluate(() => document.body.innerText)), "full store: the user is told the point was not saved");

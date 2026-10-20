@@ -139,7 +139,8 @@
     var t = e.target, el = t.closest && t.closest("[data-tier-need]");
     if (!el) return;
     e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-    open("plans", "That needs the " + name(el.getAttribute("data-tier-need")) + " plan.");
+    /* data-tier-msg: the grouped entry for locked tools (assets/osap-toolbar.js) says what each plan adds */
+    open("plans", el.getAttribute("data-tier-msg") || "That needs the " + name(el.getAttribute("data-tier-need")) + " plan.");
   }
 
   /* ---------- Paddle checkout ---------- */
@@ -496,6 +497,7 @@
     open: function () { open("plans"); },
     users: function () { if (CFG && CFG.owner) open("users"); },
     allows: function (need) { return !locked(need); },
+    name: function (t) { return CFG ? name(t) : ""; },
   };
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", start); else start();
 })();

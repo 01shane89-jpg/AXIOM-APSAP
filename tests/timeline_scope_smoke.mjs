@@ -21,6 +21,8 @@ const browser = await chromium.launch(process.env.CHROME ? { executablePath: pro
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
+/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
+const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 async function open(opts, hash) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
@@ -114,7 +116,7 @@ const listed = (p) => p.evaluate(() => {
   const ds = await listed(p);
   ok(ds.layers.every((l) => l === "insurgency"), "phone: only Deep South records listed");
   // the same through the Overlays views (the phone's view chooser)
-  const chip = async (v) => { await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(400); await p.click('#ml-ds [data-dsopen="' + v + '"]'); await p.waitForTimeout(1800); };
+  const chip = async (v) => { await tool(p, '[data-atk="datasets"]'); await p.waitForTimeout(400); await p.click('#ml-ds [data-dsopen="' + v + '"]'); await p.waitForTimeout(1800); };
   await chip("cf-thailand-deep-south");
   ok(await p.evaluate(() => document.documentElement.getAttribute("data-cf") === "thailand-deep-south"), "phone: Deep South open from Overlays");
   ok(await p.evaluate(() => { const t = document.querySelector('#ml-ds [data-dsopen="timeline"]'); return !t || t.getAttribute("aria-pressed") === "false"; }), "phone: Overlays shows Deep South, not Timeline, as chosen");
