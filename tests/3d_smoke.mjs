@@ -20,8 +20,6 @@ const browser = await chromium.launch({ args: ["--enable-unsafe-swiftshader", "-
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s); return !!e && !e.hidden && getComputedStyle(e).display !== "none" && e.getClientRects().length > 0; }, s);
-/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
-const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 async function open(opts, classic) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [], libs = [];
@@ -44,7 +42,7 @@ async function run3d(name, p, errors, libs, openSel, early) {
   ok(early === 0, name + ": 3D engine not downloaded while the app starts (it is fetched later, when idle)");
   const before = await p.evaluate(() => { const m = window.__asapMap; m.setView([18.79, 98.98], 10, { animate: false }); return { c: m.getCenter(), z: m.getZoom() }; });
   await p.waitForTimeout(300);
-  if (/^#atk-tools /.test(openSel)) await tool(p, openSel.slice(11)); else await p.click(openSel);
+  await p.click(openSel);
   const flat0 = await p.waitForFunction(() => window.OSAP_3D.gl && { p: window.OSAP_3D.gl.getPitch() }, null, { timeout: 30000, polling: "raf" }).then((h) => h.jsonValue()).then((v) => v.p).catch(() => 99);
   await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.loaded && window.OSAP_3D.gl.isStyleLoaded(), null, { timeout: 30000 }).catch(() => {});
   ok(await shown(p, "#o3d .o3-map canvas"), name + ": 3D view opened with a WebGL canvas");
@@ -118,9 +116,7 @@ async function run3d(name, p, errors, libs, openSel, early) {
   // clear of the grid strip
   const clear = await p.evaluate(() => { const s = document.querySelector(".leaflet-bottom .o3s").getBoundingClientRect(), b = document.getElementById("atk-bar"); if (!b) return true; const r = b.getBoundingClientRect(); return s.bottom <= r.top + 0.5; });
   ok(clear, "phone: scale bar sits above the grid strip");
-  if (await p.evaluate(() => !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone())) await p.click('#atk-tools [data-tb="more"]');
-  ok(await shown(p, "#atk-tools [data-o3d]"), "phone: 3D button in the map toolbar (in More)");
-  await p.evaluate(() => window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.close());
+  ok(await shown(p, "#atk-tools [data-o3d]"), "phone: 3D button in the map toolbar");
   ok(!(await shown(p, ".o3dctl")), "phone: classic 3D button hidden in toolbar mode");
   if (OUT) await p.screenshot({ path: OUT + "/phone-2d.png" });
   await run3d("phone", p, errors, libs, "#atk-tools [data-o3d]", early);
@@ -138,14 +134,14 @@ async function run3d(name, p, errors, libs, openSel, early) {
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await p.evaluate(() => { window.__asapMap.setView([18.79, 98.98], 10, { animate: false }); });
-  await tool(p, "[data-o3d]");
+  await p.click("#atk-tools [data-o3d]");
   await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.isStyleLoaded(), null, { timeout: 30000 }).catch(() => {});
   await p.waitForTimeout(1500);
   const top = await p.evaluate(() => {
     const at = (s) => { const r = document.querySelector(s).getBoundingClientRect(); const e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!e && !!e.closest(s); };
     const a = document.querySelector("#o3d .o3-side").getBoundingClientRect(), b = document.querySelector("#atk-tools").getBoundingClientRect();
     const t = document.querySelector("#o3d .o3-tilt").getBoundingClientRect(), s = document.querySelector("#atk-bar").getBoundingClientRect();
-    return { tools: at('#atk-tools [data-atk="datasets"]'), bar: at("#atk-bar .atk-pos"), apart: a.right <= b.left || a.left >= b.right || a.bottom <= b.top + 0.5 || a.top >= b.bottom - 0.5, tilt: t.bottom <= s.top + 0.5 };
+    return { tools: at('#atk-tools [data-atk="datasets"]'), bar: at("#atk-bar .atk-pos"), apart: a.right <= b.left || a.left >= b.right, tilt: t.bottom <= s.top + 0.5 };
   });
   if (OUT) await p.screenshot({ path: OUT + "/phone-3d-bar.png" });
   ok(top.tools && top.bar, "3D tools: the map toolbar and the grid strip stay on top of the 3D view " + JSON.stringify(top));
@@ -166,13 +162,13 @@ async function run3d(name, p, errors, libs, openSel, early) {
   const fl = await p.evaluate(() => { const m = window.__asapMap, c = m.getCenter(); return { lat: c.lat, lng: c.lng, z: m.getZoom(), want: Math.min(14, m.getMaxZoom()), grid: document.querySelector("#atk-bar .atk-v").textContent, still: window.OSAP_3D.gl.getCenter().lng }; });
   ok(Math.abs(fl.lat - 13.81) < 0.001 && Math.abs(fl.lng - 100.62) < 0.001 && fl.z === fl.want && Math.abs(fl.still - 100.62) < 1e-6, "3D tools: the flat map follows the 3D view, so Centre, Search and Med plan use it " + JSON.stringify(fl));
   // a panel from the toolbar opens over 3D
-  await tool(p, '[data-atk="datasets"]'); await p.waitForTimeout(400);
+  await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(400);
   if (OUT) await p.screenshot({ path: OUT + "/phone-3d-panel.png" });
   const om = await p.evaluate(() => { const o = document.getElementById("atk-om"); if (!o || o.hidden) return false; const r = o.getBoundingClientRect(), e = document.elementFromPoint(r.left + r.width / 2, r.top + 60); return !!e && !!e.closest("#atk-om") && !!document.getElementById("o3d"); });
   ok(om, "3D tools: Data sets opens over the 3D view, which stays open");
-  await tool(p, '[data-atk="datasets"]'); await p.waitForTimeout(200);
+  await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(200);
   // Measure needs taps on the map: back to 2D at the same place, and it says why
-  await tool(p, '[data-atk="measure"]'); await p.waitForTimeout(400);
+  await p.click('#atk-tools [data-atk="measure"]'); await p.waitForTimeout(400);
   const ms = await p.evaluate(() => ({ open: !!document.getElementById("o3d"), toast: (document.getElementById("atk-toast") || {}).textContent || "", c: window.__asapMap.getCenter() }));
   ok(!ms.open && /flat map/.test(ms.toast) && Math.abs(ms.c.lng - 100.62) < 0.01, "3D tools: Measure goes back to 2D at the same place and says why " + JSON.stringify(ms));
   ok(await p.evaluate(() => !document.documentElement.classList.contains("o3d-on") && getComputedStyle(document.querySelector("#map .leaflet-control-container")).display !== "none"), "3D tools: the flat map's own controls are back in 2D");
