@@ -196,7 +196,7 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   ok(await p.evaluate(() => { const b = document.querySelector("#lz-card [data-osplit]"); return !!b && b.textContent === "Full window"; }), "phone: the card has a Full window switch");
   await p.click("#lz-card [data-osplit]"); await p.waitForTimeout(200);
   ok(await p.evaluate(() => { const c = document.getElementById("lz-card"); return c.classList.contains("lzdock") && c.closest(".leaflet-bottom.leaflet-left") !== null && document.getElementById("lz-dock").hidden && localStorage.getItem("osap.split") === "0"; }), "phone: Full window puts the card back on the map and is remembered");
-  ok(await p.evaluate(() => { const c = document.getElementById("lz-card").getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect(); return c.left >= 0 && (c.right <= t.left || c.bottom <= t.top + 0.5); }), "phone: the card fits clear of the toolbar");
+  ok(await p.evaluate(() => { const c = document.getElementById("lz-card").getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect(); return c.left >= 0 && c.right <= t.left; }), "phone: the card fits beside the toolbar");
   ok(await p.evaluate(() => document.querySelector("#lz-card [data-osplit]").textContent === "Half screen"), "phone: the switch then offers Half screen");
   await p.click("#lz-card [data-osplit]"); await p.waitForTimeout(200);
   ok(await p.evaluate(() => !document.getElementById("lz-dock").hidden && !!document.querySelector("#lz-dock #lz-card")), "phone: Half screen docks it again");
