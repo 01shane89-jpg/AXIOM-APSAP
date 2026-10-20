@@ -97,6 +97,7 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+<script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
 
 # timeline covers the open topic (Deep South / All Thailand) and the event report (claude/timeline-topic-scope)
@@ -156,6 +157,7 @@ data-ev-tlr="1"
 # sync my devices: encrypted relay sync of saved data, no account (claude/device-sync)
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-sync.js"></script>
+<script src="assets/osap-team.js"></script>
 <script src="assets/osap-photocheck.js"></script>
 
 # the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
@@ -175,6 +177,3 @@ L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
-
-# one-handed phone toolbar and grouped locked tools (claude/ux-phone-toolbar)
-<script src="assets/osap-toolbar.js"></script>

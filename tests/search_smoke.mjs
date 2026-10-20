@@ -30,8 +30,6 @@ const PHOTON = { type: "FeatureCollection", features: [
 ] };
 const METEO = { results: [{ name: "Chiang Mai", latitude: 18.7883, longitude: 98.9853, admin1: "Chiang Mai", country: "Thailand" }] };
 
-/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
-const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 async function open(opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [], hits = { photon: [], meteo: 0, search: 0 }, mode = { photon: "ok" };
@@ -58,12 +56,12 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
   ok(await shown(p, '#atk-tools [data-atk="search"]'), "phone: magnifying glass on the map toolbar");
   ok(await p.evaluate(() => [...document.querySelectorAll('#atk-tools .atk-list [data-atk]')].slice(0, 2).map(b => b.getAttribute("data-atk")).join() === "today,search"), "phone: Search is the first tool after Today");
   ok(hits.search === 0 && !(await p.evaluate(() => !!window.OSAP_SEARCH)), "phone: nothing for search is loaded before the button is pressed");
-  await tool(p, '[data-atk="search"]'); await p.waitForFunction(() => window.OSAP_SEARCH && window.OSAP_SEARCH.isOpen(), null, { timeout: 10000 });
+  await p.click('#atk-tools [data-atk="search"]'); await p.waitForFunction(() => window.OSAP_SEARCH && window.OSAP_SEARCH.isOpen(), null, { timeout: 10000 });
   ok(hits.search === 1 && await shown(p, "#srch"), "phone: pressing it loads search once and opens the box");
   ok(await p.evaluate(() => document.activeElement && document.activeElement.id === "srch-q"), "phone: the box has the cursor");
   ok(await p.evaluate(() => getComputedStyle(document.getElementById("srch-q")).fontSize === "16px"), "phone: 16px input (no iPhone focus zoom)");
   const lay = await p.evaluate(() => { const s = document.getElementById("srch").getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect(); return { l: s.left - m.left, r: s.right, tl: t.left, w: s.width }; });
-  ok(lay.l >= 0 && lay.r <= 390 && lay.w > 360, "phone: the box fills the width (the toolbar is a bar along the bottom) " + JSON.stringify(lay));
+  ok(lay.l >= 0 && lay.r <= lay.tl && lay.w > 250, "phone: the box fills the width beside the toolbar " + JSON.stringify(lay));
   ok(/Type a place/.test(await p.textContent("#srch")), "phone: an empty box explains what can be typed");
   await type(p, "Bangkok");
   ok(hits.photon.length === 1, "phone: typing sends one debounced search, not one per letter (" + hits.photon.length + ")");
@@ -82,7 +80,7 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-srchpane-pane .srch-pin").length === 0), "phone: the temporary marker goes once saved");
   if (await shown(p, "#pt-ed")) await p.click('#pt-ed .pt-foot [data-pe="x"]');
   // recent
-  await tool(p, '[data-atk="search"]'); await p.waitForTimeout(150);
+  await p.click('#atk-tools [data-atk="search"]'); await p.waitForTimeout(150);
   ok(hits.search === 1, "phone: the second press does not load search again");
   ok(/Recent/.test(await p.textContent("#srch")) && /Bangkok/.test(await p.textContent("#srch-list")), "phone: recent searches show in an empty box");
   // MGRS straight there, no network
@@ -92,20 +90,20 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
   ok(hits.photon.length === n0, "phone: an MGRS is read on the device, no search sent");
   ok(near(await centre(p), [15.87, 100.99], 0.01), "phone: an MGRS goes straight there (" + mg + ")");
   // lat/long and UTM
-  await tool(p, '[data-atk="search"]'); await type(p, "13.75, 100.5"); await p.keyboard.press("Enter"); await p.waitForTimeout(1500);
+  await p.click('#atk-tools [data-atk="search"]'); await type(p, "13.75, 100.5"); await p.keyboard.press("Enter"); await p.waitForTimeout(1500);
   ok(near(await centre(p), [13.75, 100.5], 0.01), "phone: a lat/long goes straight there");
   const u = await p.evaluate(() => { const u = window.OSAP_GEO.toUtm(14.2, 101.3); return u.zone + u.band + " " + Math.round(u.e) + " " + Math.round(u.n); });
-  await tool(p, '[data-atk="search"]'); await type(p, u); await p.keyboard.press("Enter"); await p.waitForTimeout(1500);
+  await p.click('#atk-tools [data-atk="search"]'); await type(p, u); await p.keyboard.press("Enter"); await p.waitForTimeout(1500);
   ok(near(await centre(p), [14.2, 101.3], 0.01), "phone: a UTM goes straight there (" + u + ")");
   ok(hits.photon.length === n0, "phone: no search sent for grids");
   // Photon down: Open-Meteo answers
   mode.photon = "down";
-  await tool(p, '[data-atk="search"]'); await type(p, "Chiang Mai");
+  await p.click('#atk-tools [data-atk="search"]'); await type(p, "Chiang Mai");
   await p.waitForFunction(() => /Chiang Mai/.test((document.getElementById("srch-list") || {}).textContent || "") && /GeoNames/.test((document.getElementById("srch") || {}).textContent || ""), null, { timeout: 8000 }).catch(() => {});
   ok(hits.meteo >= 1 && /Chiang Mai/.test(await p.textContent("#srch-list")) && /GeoNames/.test(await p.textContent("#srch")), "phone: when Photon fails, Open-Meteo answers and says so");
   // Escape / X closes; route to here
   await p.click("#srch [data-sx]"); ok(!(await shown(p, "#srch")), "phone: the X closes the box");
-  await tool(p, '[data-atk="search"]'); await type(p, "Chiang Mai"); await p.waitForTimeout(400); await p.keyboard.press("Enter"); await p.waitForTimeout(1500);
+  await p.click('#atk-tools [data-atk="search"]'); await type(p, "Chiang Mai"); await p.waitForTimeout(400); await p.keyboard.press("Enter"); await p.waitForTimeout(1500);
   await p.click('.srch-pop [data-sp="route"]'); await p.waitForTimeout(1500);
   ok(await p.evaluate(() => !!document.getElementById("rt-q")), "phone: Route to here opens the Route tab");
   ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
@@ -114,7 +112,7 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
 // ---------- desktop ----------
 {
   const { ctx, p, errors, hits } = await open({ viewport: { width: 1400, height: 900 } });
-  await tool(p, '[data-atk="search"]'); await p.waitForFunction(() => window.OSAP_SEARCH && window.OSAP_SEARCH.isOpen(), null, { timeout: 10000 });
+  await p.click('#atk-tools [data-atk="search"]'); await p.waitForFunction(() => window.OSAP_SEARCH && window.OSAP_SEARCH.isOpen(), null, { timeout: 10000 });
   const lay = await p.evaluate(() => { const s = document.getElementById("srch").getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect(); return { r: s.right, tl: t.left, w: s.width }; });
   ok(lay.r <= lay.tl && lay.w <= 362, "desktop: the box sits beside the toolbar " + JSON.stringify(lay));
   await type(p, "Bangkok");
@@ -124,9 +122,9 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
   ok(near(await centre(p), [13.75, 100.493], 0.01), "desktop: Enter goes to the chosen result (Grand Palace)");
   // Enter straight after typing, before the results are in: the Recent list (Grand Palace now first) must not answer it
   await p.evaluate(() => window.__asapMap.setView([-30, 20], 5));
-  await tool(p, '[data-atk="search"]'); await p.waitForTimeout(150); await p.type("#srch-q", "Bangkok", { delay: 15 }); await p.keyboard.press("Enter"); await p.waitForTimeout(2000);
+  await p.click('#atk-tools [data-atk="search"]'); await p.waitForTimeout(150); await p.type("#srch-q", "Bangkok", { delay: 15 }); await p.keyboard.press("Enter"); await p.waitForTimeout(2000);
   ok(near(await centre(p), [13.72, 100.63], 0.4) && !near(await centre(p), [13.75, 100.493], 0.05), "desktop: Enter before the results arrive goes to the typed place, not a recent one " + JSON.stringify(await centre(p)));
-  await tool(p, '[data-atk="search"]'); await p.keyboard.press("Escape");
+  await p.click('#atk-tools [data-atk="search"]'); await p.keyboard.press("Escape");
   ok(!(await shown(p, "#srch")), "desktop: Escape closes the box");
   ok(hits.search === 1, "desktop: search loaded once");
   if (OUT) await p.screenshot({ path: OUT + "/desktop-search.png" });

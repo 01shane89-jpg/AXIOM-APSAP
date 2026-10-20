@@ -152,8 +152,6 @@
     var r = btn.getBoundingClientRect(), mr = mapEl.getBoundingClientRect();
     pop.style.top = Math.max(4, Math.min(r.top - mr.top, mr.height - pop.offsetHeight - 34)) + "px";
     pop.style.right = (mr.right - r.left + 6) + "px";
-    /* the phone's bottom bar (assets/osap-toolbar.js): at the foot of the map, lined up with the button, kept on the screen */
-    if (bar.classList.contains("atk-bb")) pop.style.right = Math.max(6, Math.min(mr.right - r.right, mr.width - pop.offsetWidth - 6)) + "px";
   }
   function popClose() { pop.hidden = true; pop._for = null; }
   function paintTools() {
@@ -365,7 +363,7 @@
       m.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "atk-ptpop";
         var PX = W.OSAP_POINTS;
-        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
+        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">" + (typeof p.addedBy === "string" && p.addedBy ? "added by " + esc(p.addedBy.slice(0, 24)) + (+p.addedAt > 0 && W.OSAP_TIME ? ", " + esc(W.OSAP_TIME.dualT(+p.addedAt, { date: true })) : "") : "your own mark") + "</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
           '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? '<button type="button" data-pp="photo">Check a photo here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
