@@ -407,7 +407,7 @@
       /* the daily summary (assets/osap-daily.js) keeps its own box too, so a picked day survives the redraws */
       if (window.OSAP_DAILYQ) window.OSAP_DAILYQ.mount(box.querySelector("#td-daily"), CC, countryName());
     }
-    box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
+    box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo-cover.webp" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
         return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
       (window.OSAP_LOC ? '<button type="button" class="tdloc" data-loc aria-pressed="' + window.OSAP_LOC.on() + '" title="' +
@@ -453,7 +453,7 @@
 
   var CSS = "#today{position:fixed;inset:0;z-index:5000;overflow:auto;background:var(--bg,var(--surface));color:var(--ink);-webkit-overflow-scrolling:touch;outline:none}" +
     "html.td-on body{overflow:hidden}" +
-    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
+    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo-cover.webp) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
     ".tdwrap{position:relative;z-index:1}.tdmark{width:44px;height:44px;border-radius:50%;flex:none}" +
     ".tdwrap{max-width:2200px;margin:0 auto;padding:max(8px,env(safe-area-inset-top)) clamp(10px,1.6vw,24px) calc(20px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
     ".tdtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:2;background:var(--bg,var(--surface));padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px}" +

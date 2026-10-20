@@ -4,7 +4,8 @@
 // what it refuses is checked without a Netlify account. Keys and the webhook secret are made here for the test.
 import http from "node:http";
 import fs from "node:fs";
-import { tierOfPath, tierOfRoles, allows, TOOLS, SETS, SETS_DEFAULT, PRICES } from "../tools/tiers.mjs";
+import vm from "node:vm";
+import { tierOfPath, tierOfRoles, allows, TOOLS, SETS, SETS_DEFAULT, PRICES, TIERS, rulesForPage } from "../tools/tiers.mjs";
 import { seal, b64u } from "../tools/seal_lib.mjs";
 import { loadTierKey, openForTier } from "../tools/tier_open.mjs";
 import { verifySignature, planFromEvent, applyPlan } from "../tools/paddle.mjs";
@@ -33,6 +34,31 @@ ok(allows("full", "mid") && allows("mid", "free") && !allows("free", "mid") && !
 ok(SETS.flood === "free" && SETS.news === "free" && !SETS.border && SETS_DEFAULT === "mid", "data sets: News, Alerts, Flood and Hazards free, the rest Mid");
 ok(/US\$50 a year/.test(PRICES.mid) && /US\$100 a year/.test(PRICES.full), "the plans sheet shows Full at US$100 a year and Mid at US$50");
 ok(TOOLS.overlays === "mid" && TOOLS.mine === "full" && !TOOLS.today && !TOOLS.weather, "toolbar: Today and Weather free, Overlays Mid, My work Full");
+
+/* ---------- the page's copy of the data rules (rulesForPage().data, read by assets/osap-datagate.js) ---------- */
+{
+  const R = rulesForPage();
+  ok(JSON.parse(JSON.stringify(R)).data.every((r) => typeof r[0] === "string" && TIERS.includes(r[1])) && R.dataDefault === "mid", "the page gets the data rules as plain strings");
+  // the page's own code, run here with a signed-in Free plan kept on the device (a site served from /AXIOM-APSAP/, as Pages does)
+  const store = { "osap-auth": "{}", "osap-tier-plan": JSON.stringify({ tier: "free", data: R.data, dataDefault: R.dataDefault }) };
+  const ctx = { URL, location: { origin: "https://x.test", pathname: "/AXIOM-APSAP/" }, localStorage: { getItem: (k) => store[k] ?? null, setItem: () => {}, removeItem: () => {} } };
+  ctx.window = ctx; ctx.document = { baseURI: "https://x.test/AXIOM-APSAP/", write() {} };
+  vm.runInNewContext(fs.readFileSync("assets/osap-datagate.js", "utf8"), ctx);
+  const G = ctx.OSAP_DATA, sw = JSON.parse(fs.readFileSync("sw.js", "utf8").match(/const PRECACHE = (\[[\s\S]*?\]);/)[1]);
+  const paths = sw.filter((u) => /^(data|source)\//.test(u)).concat(["data/live/news/th.js?t=1", "source/sof/x.json", "data/live/daily/th.js", "assets/osap-news.js"]);
+  const bad = paths.filter((u) => G.need(u) !== tierOfPath(u.split("?")[0]));
+  ok(paths.length > 100 && !bad.length, "the page reads each of " + paths.length + " data paths as tierOfPath does " + bad.slice(0, 5).join(", "));
+  ok(G.plan().tier === "free" && !G.ok("data/live/ucdp.js") && G.ok("data/live/news.js") && G.ok("/AXIOM-APSAP/data/basemap/x.js") && !G.ok("https://x.test/AXIOM-APSAP/data/sof/th.js") && G.ok("https://other.test/data/sof/th.js") && G.ok("assets/logo.png"),
+    "Free kept: Mid and Full files are left out, Free files, other sites and app files are not");
+  store["osap-auth"] = undefined; const ctx2 = { ...ctx }; ctx2.window = ctx2;
+  vm.runInNewContext(fs.readFileSync("assets/osap-datagate.js", "utf8"), ctx2);
+  ok(!ctx2.OSAP_DATA.plan() && ctx2.OSAP_DATA.ok("data/sof/th.js"), "signed out (or GitHub Pages, where no plan is kept): nothing is left out");
+  // the service worker's warm-up leaves out the same files, given the plan the page sends it
+  const locked = new Function("TIERS", fs.readFileSync("sw.js", "utf8").match(/function locked\(u, plan\) \{[\s\S]*?\n\}/)[0] + "; return locked;")(TIERS);
+  const plan = (tier) => ({ tier, data: R.data, dataDefault: R.dataDefault });
+  const wrong = ["free", "mid", "full"].flatMap((t) => paths.filter((u) => locked(u.split("?")[0], plan(t)) !== (tierOfPath(u.split("?")[0]) !== null && !allows(t, tierOfPath(u.split("?")[0])))).map((u) => t + ":" + u));
+  ok(!wrong.length && !locked("data/sof/th.js", null), "the service worker's warm-up skips exactly what each plan cannot open, and nothing without a plan " + wrong.slice(0, 5).join(", "));
+}
 
 /* ---------- sealed for the server's tier key, opened only with it ---------- */
 const kp = await subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);

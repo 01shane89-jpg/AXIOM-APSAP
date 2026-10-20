@@ -53,7 +53,9 @@ export function tierOfRoles(roles) {
   const rs = new Set([].concat(roles || []));
   return rs.has("full") || rs.has("owner") ? "full" : rs.has("mid") ? "mid" : "free";
 }
-/** What the page needs to draw its locks (no secrets). */
+/** What the page needs to draw its locks (no secrets). data is DATA as [pattern, tier] strings, so the page can leave out the
+ *  files the plan cannot open instead of asking for each and being refused (assets/osap-datagate.js applies them like tierOfPath). */
 export function rulesForPage() {
-  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT };
+  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT,
+    data: DATA.map(([re, t]) => [re.source, t]), dataDefault: DATA_DEFAULT };
 }
