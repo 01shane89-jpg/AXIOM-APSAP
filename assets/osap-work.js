@@ -471,6 +471,8 @@
           '<div class="wks">' + esc(layerName(s.layer)) + " · " + esc(s.source) + (s.ts ? " · " + esc(tsTxt(s.ts)) : "") + " · " + esc(s.status) + "</div>" +
           (u ? '<div class="wks"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(u.replace(/^https?:\/\/(www\.)?/, "").slice(0, 70)) + "</a></div>" : "") +
           (s.fp ? '<div class="wks wkfp">SHA-256 ' + esc(s.fp) + "</div>" : "") +
+          /* shared with a team (assets/osap-team.js): the member's call sign and when they added it */
+          (typeof it.addedBy === "string" && it.addedBy ? '<div class="wks">Added by ' + esc(it.addedBy.slice(0, 24)) + (+it.addedAt > 0 ? ", " + esc(T().dualT(+it.addedAt, { date: true })) : "") + "</div>" : "") +
           pickerFor(it.k, it) +
           '<div class="wkanl"><span class="wktag">Your note</span>' +
           '<textarea data-wk-note="' + esc(it.k) + '" rows="2" maxlength="4000" placeholder="Your own note (not part of the source)">' + esc(it.note || "") + "</textarea></div>" +
