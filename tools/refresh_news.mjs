@@ -140,11 +140,11 @@ for (const c of COUNTRIES) {
     if (working().has(c.id)) break;
   }
 }
-// Every US state gets news too: a state whose outlets all failed this run gets a Bing News search for its name.
+// Every US state also gets a Bing News search for its name on every run, beside its own outlets: one or two outlets a state
+// left the state view with a few dozen headlines (Missouri, 2026-10-20). Marked as a search (nc) like the others.
 const stOk = () => new Set(status.filter((s) => s.ok && s.n > 0 && s.st).map((s) => s.st));
 for (const [code, name] of US_STATES) {
-  if (stOk().has(code)) continue;
-  await readFeed({ cc: "us", st: code, outlet: "Bing News search (fallback)", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(stateQuery(code, name)) + "&format=rss",
+  await readFeed({ cc: "us", st: code, outlet: "Bing News search", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(stateQuery(code, name)) + "&format=rss",
     lang: "en", search: true, nc: true });
   await sleep(1000);
 }
@@ -257,6 +257,9 @@ fs.mkdirSync("data/live", { recursive: true });
 // US state news: one file per state (the page loads only the open state's), taken out of the national snapshot
 {
   fs.mkdirSync("data/live/news/us-states", { recursive: true });
+  // each state's items also go to its own history (tools/history.mjs), so "All" in the state view shows more than this run
+  const stItems = Object.fromEntries(US_STATES.map(([code]) => ["us:" + code, items["us:" + code] || []]));
+  try { await updateHistory("news", stItems, stamp); } catch (e) { console.error("state history not updated:", e.message); }
   for (const [code] of US_STATES) {
     const k = "us:" + code, part = { asof: stamp, st: code, sources: status.filter((s) => s.st === code), items: items[k] || [] };
     fs.writeFileSync("data/live/news/us-states/" + code.toLowerCase() + ".js", "window.ASAP_NEWS_ST=" + JSON.stringify(part).replace(/<\//g, "<\\/") + ";\n");
