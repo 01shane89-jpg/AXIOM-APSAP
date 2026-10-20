@@ -140,6 +140,8 @@
     if (W.OSAP_TIER && W.OSAP_TIER.on()) h += '<button type="button" role="menuitem" data-tp="@plan">Plan and sign-in</button>';
     /* the accounts that use OSAP, for the owner's account only (assets/osap-tier.js) */
     if (W.OSAP_TIER && W.OSAP_TIER.owner && W.OSAP_TIER.owner()) h += '<button type="button" role="menuitem" data-tp="@users">Users</button>';
+    /* reviews of OSAP: read them, leave one (assets/osap-reviews.js, Netlify site only) */
+    if (W.OSAP_REVIEWS && W.OSAP_REVIEWS.on()) h += '<button type="button" role="menuitem" data-tp="@reviews">Reviews</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
@@ -211,6 +213,7 @@
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
     else if (sel === "@plan") { if (W.OSAP_TIER) W.OSAP_TIER.open(); }
+    else if (sel === "@reviews") { if (W.OSAP_REVIEWS) W.OSAP_REVIEWS.open(); }
     else if (sel === "@users") { if (W.OSAP_TIER && W.OSAP_TIER.users) W.OSAP_TIER.users(); }
     else press(sel);
   });

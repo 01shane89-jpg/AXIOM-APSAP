@@ -125,10 +125,16 @@ window.OSAP_SYM = { d: {"clash":["<svg xmlns=\"http://www.w3.org/2000/svg\" vers
     for (var i = 0; i < SX.length; i++) if (SX[i][0].test(t)) return SX[i][1];
     return null;
   };
+  /* the same words always give the same symbol, and every redraw (a period change, a data set ticked) asks again for each
+     record, so each text is classified once per page */
+  var CLS = new Map();
   S.classify = function () {
-    var t = Array.prototype.slice.call(arguments).filter(Boolean).join(" ");
-    for (var i = 0; i < RX.length; i++) if (RX[i][0].test(t)) return RX[i][1];
-    return "a_incident";
+    var t = Array.prototype.slice.call(arguments).filter(Boolean).join(" "), k = CLS.get(t);
+    if (k) return k;
+    k = "a_incident";
+    for (var i = 0; i < RX.length; i++) if (RX[i][0].test(t)) { k = RX[i][1]; break; }
+    if (CLS.size > 20000) CLS.clear();
+    CLS.set(t, k); return k;
   };
   S.svg = function (k) { return (S.d[k] || S.d.pr_site)[0]; };
   /* legend rows for the given keys, in plain words, grouped; the frame key comes first */
