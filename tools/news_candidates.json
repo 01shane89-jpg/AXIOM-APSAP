@@ -1,677 +1,541 @@
 {
-"note": "PROBE BRANCH ONLY: round 7 (countries on <=2 outlets)",
+"note": "PROBE BRANCH ONLY: round 7b (Bing site: searches for outlets that refuse runners)",
 "feeds": [
 {
-"cc": "ca",
-"outlet": "CTV News",
-"url": "https://www.ctvnews.ca/rss/ctvnews-ca-canada-public-rss-1.822284",
-"lang": "en"
-},
-{
-"cc": "ca",
-"outlet": "National Post",
-"url": "https://nationalpost.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ca",
-"outlet": "Toronto Star",
-"url": "https://www.thestar.com/search/?f=rss&t=article&c=news/canada*&l=50&s=start_time&sd=desc",
-"lang": "en"
-},
-{
-"cc": "ca",
-"outlet": "Radio-Canada",
-"url": "https://ici.radio-canada.ca/rss/4159",
-"lang": "fr",
-"state": true
-},
-{
-"cc": "ca",
-"outlet": "The Canadian Press",
-"url": "https://www.cp24.com/rss/cp24-news-rss-1.1323736",
-"lang": "en"
-},
-{
-"cc": "mx",
-"outlet": "El Universal",
-"url": "https://www.eluniversal.com.mx/rss.xml",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "Proceso",
-"url": "https://www.proceso.com.mx/rss/",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "Animal Político",
-"url": "https://animalpolitico.com/feed",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "El Financiero",
-"url": "https://www.elfinanciero.com.mx/arc/outboundfeeds/rss/?outputType=xml",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "Milenio",
-"url": "https://www.milenio.com/rss",
-"lang": "es"
-},
-{
-"cc": "it",
-"outlet": "Il Post",
-"url": "https://www.ilpost.it/feed/",
-"lang": "it"
-},
-{
-"cc": "it",
-"outlet": "Rai News",
-"url": "https://www.rainews.it/rss/ultimora",
-"lang": "it",
-"state": true
-},
-{
-"cc": "it",
-"outlet": "Corriere della Sera",
-"url": "https://xml2.corriereobjects.it/rss/homepage.xml",
-"lang": "it"
-},
-{
-"cc": "it",
-"outlet": "Decode39",
-"url": "https://decode39.com/feed/",
-"lang": "en"
-},
-{
-"cc": "es",
-"outlet": "elDiario.es",
-"url": "https://www.eldiario.es/rss/",
-"lang": "es"
-},
-{
-"cc": "es",
-"outlet": "RTVE",
-"url": "https://api2.rtve.es/rss/temas_noticias.xml",
-"lang": "es",
-"state": true
-},
-{
-"cc": "es",
-"outlet": "El Mundo",
-"url": "https://e00-elmundo.uecdn.es/elmundo/rss/portada.xml",
-"lang": "es"
-},
-{
-"cc": "es",
-"outlet": "Europa Press",
-"url": "https://www.europapress.es/rss/rss.aspx",
-"lang": "es"
-},
-{
-"cc": "nl",
-"outlet": "NL Times",
-"url": "https://nltimes.nl/rssfeed2",
-"lang": "en"
-},
-{
-"cc": "nl",
-"outlet": "RTL Nieuws",
-"url": "https://www.rtlnieuws.nl/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "nl",
-"outlet": "De Volkskrant",
-"url": "https://www.volkskrant.nl/voorpagina/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "se",
-"outlet": "SVT Nyheter",
-"url": "https://www.svt.se/nyheter/rss.xml",
-"lang": "sv",
-"state": true
-},
-{
-"cc": "se",
-"outlet": "Aftonbladet",
-"url": "https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/",
-"lang": "sv"
-},
-{
-"cc": "se",
-"outlet": "Dagens Nyheter",
-"url": "https://www.dn.se/rss/",
-"lang": "sv"
-},
-{
-"cc": "no",
-"outlet": "VG",
-"url": "https://www.vg.no/rss/feed/",
-"lang": "no"
-},
-{
-"cc": "no",
-"outlet": "Aftenposten",
-"url": "https://www.aftenposten.no/rss",
-"lang": "no"
-},
-{
-"cc": "no",
-"outlet": "The Barents Observer",
-"url": "https://www.thebarentsobserver.com/rss",
-"lang": "en"
-},
-{
-"cc": "no",
-"outlet": "High North News",
-"url": "https://www.highnorthnews.com/en/rss.xml",
-"lang": "en"
-},
-{
-"cc": "dk",
-"outlet": "The Copenhagen Post",
-"url": "https://cphpost.dk/feed/",
-"lang": "en"
-},
-{
-"cc": "dk",
-"outlet": "Politiken",
-"url": "https://politiken.dk/rss/senestenyt.rss",
-"lang": "da"
-},
-{
-"cc": "dk",
-"outlet": "Berlingske",
-"url": "https://www.berlingske.dk/content/rss",
-"lang": "da"
-},
-{
-"cc": "fi",
-"outlet": "Helsingin Sanomat",
-"url": "https://www.hs.fi/rss/tuoreimmat.xml",
-"lang": "fi"
-},
-{
-"cc": "fi",
-"outlet": "Yle News (English)",
-"url": "https://yle.fi/rss/t/18-34837/en",
+"cc": "sa",
+"outlet": "Arab News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aarabnews.com%20Saudi&format=rss",
 "lang": "en",
-"state": true
-},
-{
-"cc": "fi",
-"outlet": "Ilta-Sanomat",
-"url": "https://www.is.fi/rss/tuoreimmat.xml",
-"lang": "fi"
-},
-{
-"cc": "be",
-"outlet": "The Brussels Times",
-"url": "https://www.brusselstimes.com/feed",
-"lang": "en"
-},
-{
-"cc": "be",
-"outlet": "Le Soir",
-"url": "https://www.lesoir.be/rss/31867/cible_principale",
-"lang": "fr"
-},
-{
-"cc": "be",
-"outlet": "De Standaard",
-"url": "https://www.standaard.be/rss/section/1f2838d4-99ea-49f0-9102-138784c7ea7c",
-"lang": "nl"
-},
-{
-"cc": "at",
-"outlet": "Der Standard",
-"url": "https://www.derstandard.at/rss",
-"lang": "de"
-},
-{
-"cc": "at",
-"outlet": "Die Presse",
-"url": "https://www.diepresse.com/rss/home",
-"lang": "de"
-},
-{
-"cc": "at",
-"outlet": "Kurier",
-"url": "https://kurier.at/xml/rssd",
-"lang": "de"
-},
-{
-"cc": "iq",
-"outlet": "Rudaw",
-"url": "https://www.rudaw.net/rss/english",
-"lang": "en"
-},
-{
-"cc": "iq",
-"outlet": "Kurdistan24",
-"url": "https://www.kurdistan24.net/en/rss.xml",
-"lang": "en"
-},
-{
-"cc": "iq",
-"outlet": "Shafaq News",
-"url": "https://shafaq.com/en/rss",
-"lang": "en"
-},
-{
-"cc": "jo",
-"outlet": "Petra",
-"url": "https://petra.gov.jo/Include/RSS.jsp?lang=en",
-"lang": "en",
-"state": true
-},
-{
-"cc": "jo",
-"outlet": "Ammon News",
-"url": "https://en.ammonnews.net/rss.php",
-"lang": "en"
-},
-{
-"cc": "ae",
-"outlet": "Khaleej Times",
-"url": "https://www.khaleejtimes.com/rss",
-"lang": "en"
-},
-{
-"cc": "ae",
-"outlet": "WAM",
-"url": "https://www.wam.ae/en/rss",
-"lang": "en",
-"state": true
-},
-{
-"cc": "ae",
-"outlet": "Gulf Today",
-"url": "https://www.gulftoday.ae/rss",
-"lang": "en"
-},
-{
-"cc": "gr",
-"outlet": "Kathimerini (English)",
-"url": "https://www.ekathimerini.com/rss",
-"lang": "en"
-},
-{
-"cc": "gr",
-"outlet": "Greek Reporter",
-"url": "https://greekreporter.com/feed/",
-"lang": "en"
-},
-{
-"cc": "gr",
-"outlet": "ERT News",
-"url": "https://www.ertnews.gr/feed/",
-"lang": "el",
-"state": true
-},
-{
-"cc": "cl",
-"outlet": "BioBioChile",
-"url": "https://www.biobiochile.cl/static/rss/nacional.xml",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "El Mostrador",
-"url": "https://www.elmostrador.cl/feed/",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "CIPER",
-"url": "https://www.ciperchile.cl/feed/",
-"lang": "es"
-},
-{
-"cc": "pe",
-"outlet": "La República",
-"url": "https://larepublica.pe/rss/",
-"lang": "es"
-},
-{
-"cc": "pe",
-"outlet": "Infobae Perú",
-"url": "https://www.infobae.com/arc/outboundfeeds/rss/category/peru/",
-"lang": "es"
-},
-{
-"cc": "pe",
-"outlet": "Andina",
-"url": "https://andina.pe/agencia/rss.aspx",
-"lang": "es",
-"state": true
-},
-{
-"cc": "ec",
-"outlet": "Primicias",
-"url": "https://www.primicias.ec/feed/",
-"lang": "es"
-},
-{
-"cc": "ec",
-"outlet": "Expreso",
-"url": "https://www.expreso.ec/rss/",
-"lang": "es"
+"search": true,
+"nc": true
 },
 {
 "cc": "sa",
-"outlet": "Arab News",
-"url": "https://www.arabnews.com/cat/1/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sa",
-"outlet": "Saudi Press Agency",
-"url": "https://www.spa.gov.sa/en/rss",
+"outlet": "Saudi Press Agency (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aspa.gov.sa&format=rss",
 "lang": "en",
-"state": true
+"search": true,
+"nc": true
 },
 {
 "cc": "sa",
-"outlet": "Al Arabiya (English)",
-"url": "https://english.alarabiya.net/feed/rss2/en.xml",
-"lang": "en"
+"outlet": "Al Arabiya (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aenglish.alarabiya.net%20Saudi&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "sa",
+"outlet": "Okaz (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aokaz.com.sa&format=rss",
+"lang": "ar",
+"search": true,
+"nc": true
+},
+{
+"cc": "ae",
+"outlet": "Khaleej Times (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Akhaleejtimes.com%20UAE&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ae",
+"outlet": "WAM (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Awam.ae&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ae",
+"outlet": "Gulf News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Agulfnews.com%20UAE&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "qa",
-"outlet": "The Peninsula",
-"url": "https://thepeninsulaqatar.com/rss",
-"lang": "en"
+"outlet": "The Peninsula (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Athepeninsulaqatar.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "qa",
-"outlet": "Gulf Times",
-"url": "https://www.gulf-times.com/rss",
-"lang": "en"
+"outlet": "Gulf Times (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Agulf-times.com%20Qatar&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "qa",
+"outlet": "Al Jazeera (Qatar) (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aaljazeera.com%20Qatar&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "kw",
-"outlet": "Arab Times",
-"url": "https://www.arabtimesonline.com/rss",
-"lang": "en"
+"outlet": "KUNA (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Akuna.net.kw&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "kw",
-"outlet": "KUNA",
-"url": "https://www.kuna.net.kw/rss.aspx?language=en",
+"outlet": "Arab Times (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aarabtimesonline.com&format=rss",
 "lang": "en",
-"state": true
+"search": true,
+"nc": true
+},
+{
+"cc": "kw",
+"outlet": "Kuwait Times (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Akuwaittimes.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "om",
-"outlet": "Times of Oman",
-"url": "https://timesofoman.com/rss",
-"lang": "en"
+"outlet": "Times of Oman (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Atimesofoman.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "om",
-"outlet": "Muscat Daily",
-"url": "https://www.muscatdaily.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ye",
-"outlet": "South24",
-"url": "https://south24.net/news/rss.php",
-"lang": "en"
-},
-{
-"cc": "ye",
-"outlet": "Yemen Monitor",
-"url": "https://www.yemenmonitor.com/en/rss",
-"lang": "en"
-},
-{
-"cc": "ye",
-"outlet": "Al-Masdar Online",
-"url": "https://al-masdaronline.net/feed",
-"lang": "en"
-},
-{
-"cc": "lb",
-"outlet": "L'Orient Today",
-"url": "https://today.lorientlejour.com/rss",
-"lang": "en"
-},
-{
-"cc": "lb",
-"outlet": "Naharnet",
-"url": "https://www.naharnet.com/stories/en/rss",
-"lang": "en"
-},
-{
-"cc": "lb",
-"outlet": "NNA Lebanon",
-"url": "https://www.nna-leb.gov.lb/en/rss",
+"outlet": "Muscat Daily (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Amuscatdaily.com&format=rss",
 "lang": "en",
-"state": true
+"search": true,
+"nc": true
+},
+{
+"cc": "bh",
+"outlet": "Gulf Daily News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Agdnonline.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "bh",
+"outlet": "Bahrain News Agency (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Abna.bh&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ye",
+"outlet": "South24 (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Asouth24.net&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ye",
+"outlet": "Al-Masdar Online (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aal-masdaronline.net&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ye",
+"outlet": "Yemen (Houthi, Red Sea) (Bing search)",
+"url": "https://www.bing.com/news/search?q=Yemen%20Houthi&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "lb",
-"outlet": "The961",
-"url": "https://www.the961.com/feed/",
-"lang": "en"
+"outlet": "L'Orient Today (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Atoday.lorientlejour.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "lb",
+"outlet": "Naharnet (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Anaharnet.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "lb",
+"outlet": "NNA Lebanon (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Anna-leb.gov.lb&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "lb",
+"outlet": "Lebanon (Hezbollah, south) (Bing search)",
+"url": "https://www.bing.com/news/search?q=Lebanon%20Hezbollah&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "jo",
+"outlet": "Jordan Times (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Ajordantimes.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "jo",
+"outlet": "Petra (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Apetra.gov.jo&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "jo",
+"outlet": "Roya News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aen.royanews.tv&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "iq",
+"outlet": "Rudaw (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Arudaw.net%20Iraq&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "iq",
+"outlet": "Shafaq News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Ashafaq.com%20Iraq&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ps",
+"outlet": "WAFA (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aenglish.wafa.ps&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ps",
+"outlet": "Gaza and West Bank (Bing search)",
+"url": "https://www.bing.com/news/search?q=Gaza%20OR%20%22West%20Bank%22&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "ao",
-"outlet": "Novo Jornal",
-"url": "https://novojornal.co.ao/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Angop",
-"url": "https://www.angop.ao/feed/",
+"outlet": "Angop (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aangop.ao&format=rss",
 "lang": "pt",
-"state": true
+"search": true,
+"nc": true
 },
 {
 "cc": "ao",
-"outlet": "Jornal de Angola",
-"url": "https://www.jornaldeangola.ao/rss",
+"outlet": "Novo Jornal (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Anovojornal.co.ao&format=rss",
 "lang": "pt",
-"state": true
+"search": true,
+"nc": true
 },
 {
 "cc": "ao",
-"outlet": "Club-K",
-"url": "https://www.club-k.net/index.php?format=feed&type=rss",
-"lang": "pt"
+"outlet": "Angola (Portuguese) (Bing search)",
+"url": "https://www.bing.com/news/search?q=Angola%20Luanda&format=rss",
+"lang": "pt",
+"search": true,
+"nc": true
 },
 {
 "cc": "ee",
-"outlet": "ERR News",
-"url": "https://news.err.ee/rss",
-"lang": "en"
+"outlet": "ERR News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Anews.err.ee&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "ee",
-"outlet": "Postimees (English)",
-"url": "https://news.postimees.ee/rss",
-"lang": "en"
-},
-{
-"cc": "ee",
-"outlet": "Delfi Estonia",
-"url": "https://www.delfi.ee/rss",
-"lang": "et"
+"outlet": "Postimees (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Anews.postimees.ee&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "ci",
-"outlet": "Abidjan.net",
-"url": "https://news.abidjan.net/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Fratmat",
-"url": "https://www.fratmat.info/feed",
+"outlet": "Abidjan.net (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aabidjan.net&format=rss",
 "lang": "fr",
-"state": true
+"search": true,
+"nc": true
 },
 {
 "cc": "ci",
-"outlet": "Koaci",
-"url": "https://www.koaci.com/rss",
-"lang": "fr"
+"outlet": "Côte d'Ivoire (French) (Bing search)",
+"url": "https://www.bing.com/news/search?q=%22C%C3%B4te%20d%27Ivoire%22%20Abidjan&format=rss",
+"lang": "fr",
+"search": true,
+"nc": true
 },
 {
 "cc": "tg",
-"outlet": "Republicoftogo",
-"url": "https://www.republicoftogo.com/rss",
+"outlet": "Republicoftogo (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Arepublicoftogo.com&format=rss",
 "lang": "fr",
-"state": true
+"search": true,
+"nc": true
 },
 {
 "cc": "tg",
-"outlet": "Togo Breaking News",
-"url": "https://togobreakingnews.info/feed/",
-"lang": "fr"
+"outlet": "Togo (French) (Bing search)",
+"url": "https://www.bing.com/news/search?q=Togo%20Lom%C3%A9&format=rss",
+"lang": "fr",
+"search": true,
+"nc": true
 },
 {
 "cc": "td",
-"outlet": "Alwihda Info",
-"url": "https://www.alwihdainfo.com/xml/syndication.rss",
-"lang": "fr"
+"outlet": "Alwihda Info (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aalwihdainfo.com&format=rss",
+"lang": "fr",
+"search": true,
+"nc": true
 },
 {
 "cc": "td",
-"outlet": "Journal du Tchad",
-"url": "https://www.journaldutchad.com/feed/",
-"lang": "fr"
+"outlet": "Tchad (French) (Bing search)",
+"url": "https://www.bing.com/news/search?q=Tchad%20N%27Djamena&format=rss",
+"lang": "fr",
+"search": true,
+"nc": true
 },
 {
 "cc": "pg",
-"outlet": "The National (PNG)",
-"url": "https://www.thenational.com.pg/feed/",
-"lang": "en"
-},
-{
-"cc": "pg",
-"outlet": "EMTV",
-"url": "https://emtv.com.pg/feed/",
+"outlet": "The National (PNG) (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Athenational.com.pg&format=rss",
 "lang": "en",
-"state": true
+"search": true,
+"nc": true
 },
 {
 "cc": "pg",
-"outlet": "PNG Haus Bung",
-"url": "https://pnghausbung.com/feed/",
-"lang": "en"
+"outlet": "EMTV (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aemtv.com.pg&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://www.samoaobserver.ws/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Talamua",
-"url": "https://talamua.com/feed/",
-"lang": "en"
+"outlet": "Samoa Observer (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Asamoaobserver.ws&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "bn",
-"outlet": "Borneo Bulletin",
-"url": "https://borneobulletin.com.bn/feed/",
-"lang": "en"
-},
-{
-"cc": "bn",
-"outlet": "BruDirect",
-"url": "https://www.brudirect.com/feed",
-"lang": "en"
+"outlet": "Borneo Bulletin (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aborneobulletin.com.bn&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "ki",
-"outlet": "Kiribati Independent",
-"url": "https://kiribatiindependent.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ps",
-"outlet": "WAFA (English)",
-"url": "https://english.wafa.ps/rss",
+"outlet": "Kiribati (Bing search)",
+"url": "https://www.bing.com/news/search?q=Kiribati%20Tarawa&format=rss",
 "lang": "en",
-"state": true
+"search": true,
+"nc": true
 },
 {
-"cc": "ps",
-"outlet": "Palestine Chronicle",
-"url": "https://www.palestinechronicle.com/feed/",
-"lang": "en"
+"cc": "mh",
+"outlet": "Marshall Islands (Bing search)",
+"url": "https://www.bing.com/news/search?q=%22Marshall%20Islands%22%20Majuro&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "nr",
+"outlet": "Nauru (Bing search)",
+"url": "https://www.bing.com/news/search?q=Nauru%20government&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "tv",
+"outlet": "Tuvalu (Bing search)",
+"url": "https://www.bing.com/news/search?q=Tuvalu%20Funafuti&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "sv",
-"outlet": "El Faro",
-"url": "https://elfaro.net/es/rss",
-"lang": "es"
+"outlet": "El Faro (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aelfaro.net&format=rss",
+"lang": "es",
+"search": true,
+"nc": true
 },
 {
 "cc": "sv",
-"outlet": "La Prensa Gráfica",
-"url": "https://www.laprensagrafica.com/rss/",
-"lang": "es"
-},
-{
-"cc": "sv",
-"outlet": "Diario El Mundo",
-"url": "https://diario.elmundo.sv/feed",
-"lang": "es"
+"outlet": "La Prensa Gráfica (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Alaprensagrafica.com&format=rss",
+"lang": "es",
+"search": true,
+"nc": true
 },
 {
 "cc": "gw",
-"outlet": "O Democrata",
-"url": "https://www.odemocratagb.com/feed/",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "e-Global",
-"url": "https://e-global.pt/feed/",
-"lang": "pt"
+"outlet": "Guiné-Bissau (Portuguese) (Bing search)",
+"url": "https://www.bing.com/news/search?q=Guin%C3%A9-Bissau&format=rss",
+"lang": "pt",
+"search": true,
+"nc": true
 },
 {
 "cc": "li",
-"outlet": "Liechtensteiner Vaterland",
-"url": "https://www.vaterland.li/rss",
-"lang": "de"
+"outlet": "Liechtenstein (Bing search)",
+"url": "https://www.bing.com/news/search?q=Liechtenstein%20Vaduz&format=rss",
+"lang": "de",
+"search": true,
+"nc": true
 },
 {
 "cc": "ag",
-"outlet": "Antigua News Room",
-"url": "https://antiguanewsroom.com/feed/",
-"lang": "en"
-},
-{
-"cc": "bb",
-"outlet": "Nation News",
-"url": "https://www.nationnews.com/feed/",
-"lang": "en"
+"outlet": "Antigua and Barbuda (Bing search)",
+"url": "https://www.bing.com/news/search?q=%22Antigua%20and%20Barbuda%22&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "dm",
-"outlet": "Emo News",
-"url": "https://emonewsdm.com/feed/",
-"lang": "en"
+"outlet": "Dominica (Bing search)",
+"url": "https://www.bing.com/news/search?q=Dominica%20Roseau&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
 },
 {
 "cc": "gd",
-"outlet": "Grenada Broadcast",
-"url": "https://www.grenadabroadcast.com/feed",
-"lang": "en"
+"outlet": "Grenada (Bing search)",
+"url": "https://www.bing.com/news/search?q=Grenada%20St.%20George%27s&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "gr",
+"outlet": "Kathimerini (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aekathimerini.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "be",
+"outlet": "Brussels Times (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Abrusselstimes.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "ca",
+"outlet": "CTV News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Actvnews.ca&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "mx",
+"outlet": "El Universal (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aeluniversal.com.mx&format=rss",
+"lang": "es",
+"search": true,
+"nc": true
+},
+{
+"cc": "mx",
+"outlet": "Proceso (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aproceso.com.mx&format=rss",
+"lang": "es",
+"search": true,
+"nc": true
+},
+{
+"cc": "cl",
+"outlet": "BioBioChile (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Abiobiochile.cl&format=rss",
+"lang": "es",
+"search": true,
+"nc": true
+},
+{
+"cc": "ec",
+"outlet": "Primicias (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Aprimicias.ec&format=rss",
+"lang": "es",
+"search": true,
+"nc": true
+},
+{
+"cc": "no",
+"outlet": "High North News (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Ahighnorthnews.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "no",
+"outlet": "The Barents Observer (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Athebarentsobserver.com&format=rss",
+"lang": "en",
+"search": true,
+"nc": true
+},
+{
+"cc": "it",
+"outlet": "Il Post (Bing search)",
+"url": "https://www.bing.com/news/search?q=site%3Ailpost.it&format=rss",
+"lang": "it",
+"search": true,
+"nc": true
 }
 ]
 }
