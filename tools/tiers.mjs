@@ -17,6 +17,8 @@ export const DATA = [
   // Full: the analyst's material and the AI-written summaries
   [/^data\/(claims|captures|decisions|sof)\//, "full"],
   [/^data\/live\/(evsum|aiwatch)\.js$/, "full"],
+  // the bundle AXIOM Analyst Work Station imports (tools/axiom_bundle.mjs)
+  [/^data\/axiom\//, "full"],
   [/^data\/live\/daily(\/|\.js$)/, "full"],
   [/^source\/sof\//, "full"],
   // Free: the map itself, the country picker, weather, warnings and headline news

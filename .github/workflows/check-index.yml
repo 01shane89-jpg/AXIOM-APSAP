@@ -82,6 +82,8 @@ jobs:
       - run: node tests/grade.test.mjs
       # photo and video check: NOAA sun position, shadow times, metadata reader (JPEG, PNG, HEIC, MP4, MOV)
       - run: node tests/photocheck.test.mjs
+      # the bundle AXIOM imports: framing and digest, non-commercial sources left out, curated records unchanged (tools/axiom_bundle_lib.mjs)
+      - run: node tests/axiom_bundle.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
