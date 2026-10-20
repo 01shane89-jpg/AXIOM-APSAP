@@ -16,7 +16,7 @@ import { splitByCountry } from "./split_country.mjs";
 import { dedupeStories } from "./news_dedupe.mjs";
 import { US_STATES, stateQuery } from "./us_states.mjs";
 
-const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 25, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
+const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 60, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 // GDELT uses FIPS country codes for the outlet's country
 const FIPS = { th: "TH", vn: "VM", kh: "CB", la: "LA", mm: "BM", ph: "RP", my: "MY", sg: "SN", id: "ID", bn: "BX", tl: "TT",
