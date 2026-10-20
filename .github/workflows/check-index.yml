@@ -196,7 +196,6 @@ jobs:
       - run: node tests/empty_states_smoke.mjs
       - run: node tests/report_english_smoke.mjs
       - run: node tests/social_filter_smoke.mjs
-      - run: node tests/phone_toolbar_smoke.mjs
       - run: node tests/speed_budget.mjs
       - run: node tests/boolq_smoke.mjs
       # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
