@@ -175,3 +175,6 @@ L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
+
+# one-handed phone toolbar and grouped locked tools (claude/ux-phone-toolbar)
+<script src="assets/osap-toolbar.js"></script>
