@@ -132,9 +132,11 @@
     }
     var b = map.getBounds().pad(0.2), all = ev.length; ev = ev.filter(function (e) { return b.contains([e[0][3], e[0][4]]); });
     if (ev.length > MAXPINS) { ev.sort(function (a, c) { return c[0][6] - a[0][6]; }); note = (note ? note + " " : "") + "Dots: the " + num(MAXPINS) + " deadliest of " + num(ev.length) + " events in view; zoom in for the rest."; ev = ev.slice(0, MAXPINS); }
+    /* zoomed out the dots stay small, so the heat map's clusters show round them */
+    var small = map.getZoom() < 7;
     ev.forEach(function (e) {
       var r = e[0];
-      g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: "cfpane", radius: Math.min(2.5 + Math.sqrt(r[6] || 0) * 0.7, 9), color: r[15] ? "#fff" : "#5a0d0d", weight: r[15] ? 1.2 : 0.6,
+      g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: "cfpane", radius: small ? Math.min(1.6 + Math.sqrt(r[6] || 0) * 0.25, 4) : Math.min(2 + Math.sqrt(r[6] || 0) * 0.45, 7), color: r[15] ? "#fff" : "#5a0d0d", weight: r[15] ? 1.2 : 0.6,
         dashArray: r[15] ? "2 2" : null, fillColor: "#D32F2F", fillOpacity: 0.8 })
         .bindPopup(function () { return pop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { fp(r, e[1]); }, 0); }));
     });
