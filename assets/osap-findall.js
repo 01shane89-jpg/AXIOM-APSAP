@@ -53,7 +53,7 @@
     loc: "gps,my location,position,where am i", off: "offline,download,no signal,save maps,cache", move: "transfer,export,import,another device,new phone",
     sync: "sync,devices,backup", ai: "ai model,on device ai", guide: "help,manual,how to,instructions,guide,docs",
     lock: "hidden areas,face id", plan: "plan,sign in,sign out,login,log in,log out,account,subscription,upgrade,pay,billing,password",
-    users: "users,accounts", credits: "credits,sources,attribution", lang: "language,translate,translation"
+    users: "users,accounts", reviews: "reviews,review,rate,rating,feedback,stars", credits: "credits,sources,attribution", lang: "language,translate,translation"
   };
   function syn(id) { return SYN[id] ? SYN[id].split(",") : []; }
 
@@ -124,6 +124,7 @@
     if (W.OSAP_GUIDE) add("guide", "User guide", "How to use OSAP, offline and printable", function () { W.OSAP_GUIDE.open(); });
     if (W.OSAP_LOCK) add("lock", "Hidden areas", "Settings", function () { W.OSAP_LOCK.open(); });
     if (T && T.on && T.on()) add("plan", "Plan and sign-in", "Your plan, sign in or out", function () { T.open(); });
+    if (W.OSAP_REVIEWS && W.OSAP_REVIEWS.on()) add("reviews", "Reviews", "Read reviews of OSAP, or leave one", function () { W.OSAP_REVIEWS.open(); });
     if (T && T.owner && T.owner()) add("users", "Users", "Accounts that use OSAP", function () { T.users(); });
     if (W.OSAP_I18N) {
       add("lang", "Language", "Menus and buttons", function () {

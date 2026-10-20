@@ -139,8 +139,7 @@
     var t = e.target, el = t.closest && t.closest("[data-tier-need]");
     if (!el) return;
     e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-    /* data-tier-msg: the grouped entry for locked tools (assets/osap-toolbar.js) says what each plan adds */
-    open("plans", el.getAttribute("data-tier-msg") || "That needs the " + name(el.getAttribute("data-tier-need")) + " plan.");
+    open("plans", "That needs the " + name(el.getAttribute("data-tier-need")) + " plan.");
   }
 
   /* ---------- Paddle checkout ---------- */
@@ -234,9 +233,12 @@
       if (CFG.signedIn && me !== "full") h += '<form data-tr-form="code" class="trcode"><label>Beta tester code<input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OSAP-XXXX-XXXX-XXXX" required></label>' +
         '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">Use code</button></div></form>";
     }
+    /* shown reviews under the sign-in form (assets/osap-reviews.js) */
+    if (wall) h += '<div id="tr-reviews"></div>';
     h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
     BOX.className = wall ? "trwall" : "";
     BOX.innerHTML = h + "</div>";
+    if (wall && W.OSAP_REVIEWS) W.OSAP_REVIEWS.wall(BOX.querySelector("#tr-reviews"));
     var f = BOX.querySelector("input:not([hidden])"); if (f && UI.mode !== "plans") { if (f.value && UI.mode !== "newpw") f = BOX.querySelector('input[type="password"]') || f; f.focus(); }
   }
   /* the sign-in screen: the gate is on and nobody is signed in, so nothing on the page can load */
@@ -497,13 +499,15 @@
     on: function () { return !!CFG; },
     tier: tier,
     owner: function () { return !!(CFG && CFG.owner); },
+    signedIn: function () { return !!(CFG && CFG.signedIn); },
+    /* the account's access token, renewed when near its end, or null signed out (assets/osap-reviews.js) */
+    token: function () { return session().then(function (a) { return a ? a.access_token : null; }); },
     ready: READY,
     open: function () { open("plans"); },
     users: function () { if (CFG && CFG.owner) open("users"); },
     allows: function (need) { return !locked(need); },
     /* the plan a feature inside a tool needs (tools/tiers.mjs FEATURES), or null when the rules do not name it */
     need: function (f) { return (CFG && CFG.rules && CFG.rules.features && CFG.rules.features[f]) || null; },
-    name: function (t) { return CFG ? name(t) : ""; },
     /* the plan a toolbar tool ("tool", its data-atk) or a data set ("set", its id) needs when this plan lacks it, else "" (osap-findall.js) */
     needs: function (kind, id) { var n = kind === "set" ? needSet(id) : needTool(id); return locked(n) ? n : ""; },
   };
