@@ -39,12 +39,13 @@ export function sourcesOf(obj) {
 const mins = (ms) => Math.round(ms / 60000);
 
 // -> { state: "ok" | "amber" | "down", ageMin, problems: [{ id, name, why, key }], alerts: [lines], fp }
-// A key feed that is stale, empty or mostly failing, or no refresh at all for downMin, makes it "down" (and alerts).
-// Anything else wrong is "amber" and only shows in the app.
+// A key feed that is stale, empty or mostly failing, or no refresh at all for downMin, makes it "down" (and alerts the keeper).
+// Anything else wrong is "amber". What app readers see is ev.ui (userView below), which is milder.
 export function evaluate(health, cfg, now = Date.now()) {
   const amberMin = cfg.amberMin || 40, downMin = cfg.downMin || 60;
   const at = health && parseStamp(health.asof);
-  if (!at) return { state: "down", ageMin: null, problems: [{ id: "health", name: "Data health file", why: "missing or unreadable", key: true }], alerts: ["The data health file is missing or unreadable."], fp: "nohealth" };
+  if (!at) return { state: "down", ageMin: null, problems: [{ id: "health", name: "Data health file", why: "missing or unreadable", key: true }], alerts: ["The data health file is missing or unreadable."], fp: "nohealth",
+    ui: { state: "down", line: "The data health file is missing or unreadable.", short: "" } };
   const ageMin = mins(now - at);
   const problems = [];
   // when nothing is refreshing, feeds are judged as of the last refresh (what was already wrong then), not all listed as stale
@@ -68,7 +69,45 @@ export function evaluate(health, cfg, now = Date.now()) {
   const state = alerts.length ? "down" : problems.length || ageMin > amberMin ? "amber" : "ok";
   // what the alert is about, so the same problem is not sent twice: stalled, or which key feeds are wrong
   const fp = ageMin > downMin ? "stall" : problems.filter((p) => p.key).map((p) => p.id).sort().join(",");
-  return { state, ageMin, problems, alerts, fp };
+  return { state, ageMin, problems, alerts, fp, ui: userView(health, problems, ageMin, now - at, amberMin, downMin) };
+}
+
+// What a reader of the app sees (the header DATA badge; assets/osap-health.js keeps a copy). Milder than the alert state above:
+// red only when data has stopped overall (no refresh for downMin) or most key feeds are down. One or a few late feeds are amber
+// and named in plain words, so one slow feed does not read as an outage while everything else is minutes old.
+// -> { state: "ok" | "amber" | "down", line: one sentence, short: a few words for the badge ("" when there is nothing to add) }
+export function userView(health, problems, ageMin, ageMs, amberMin, downMin) {
+  const feeds = (health && health.feeds) || [];
+  const real = problems.filter((p) => p.id !== "refresh");
+  const keyN = feeds.filter((f) => f.key).length, keyBad = real.filter((p) => p.key);
+  if (ageMin > downMin) return { state: "down", line: "No new data for " + ago(ageMs) + ". Everything shown is at least that old.", short: "stopped" };
+  if (keyN && keyBad.length * 2 > keyN) {
+    return { state: "down", line: "Most key feeds are down: " + listNames(keyBad.map((p) => p.name), 4) + ".", short: keyBad.length + " key feeds down" };
+  }
+  const tail = ageMin > amberMin ? "the last refresh was " + ago(ageMs) + " ago" : "everything else is fresh";
+  if (!real.length) {
+    if (ageMin > amberMin) return { state: "amber", line: "The last refresh was " + ago(ageMs) + " ago; refreshes usually run every 15 to 25 minutes.", short: "late" };
+    return { state: "ok", line: "All " + feeds.length + " feeds are fresh.", short: "" };
+  }
+  // key feeds are named first; minor ones are counted when a key feed is already named
+  const lead = keyBad.length ? keyBad : real, named = lead.slice(0, 2), rest = real.length - named.length;
+  let line = named.map((p) => p.name + " " + phrase(p.why)).join(", ");
+  if (rest > 0) line += "; " + rest + (keyBad.length && rest === real.length - keyBad.length ? " minor" : " more") + " feed" + (rest === 1 ? " is" : "s are") + " also late";
+  line = line + "; " + tail + ".";
+  const short = lead.length === 1 ? lead[0].name + " late" : lead.length + (keyBad.length ? " key" : "") + " feeds late";
+  return { state: "amber", line: line.charAt(0).toUpperCase() + line.slice(1), short };
+}
+
+// a problem in plain words after the feed's name: "last updated 6 h ago", "has no data", "has 7 of 10 sources failing"
+export function phrase(why) {
+  why = String(why || "");
+  if (/^last updated /.test(why)) return /ago$/.test(why) ? why : why + " ago";
+  return "has " + why;
+}
+function listNames(a, max) {
+  const s = a.slice(0, max);
+  if (a.length > max) return s.join(", ") + " and " + (a.length - max) + " more";
+  return s.length > 1 ? s.slice(0, -1).join(", ") + " and " + s[s.length - 1] : s.join("");
 }
 
 export function ago(ms) {
