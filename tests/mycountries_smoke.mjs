@@ -149,11 +149,11 @@ let pick = null;
   ok(typeof seen1.th === "number", "the look is remembered for Thailand");
   /* a last look before the newest few headlines and warnings */
   pick = await p.evaluate(() => {
-    const f = window.OSAP_TODAY.recMs, now = Date.now() + 36e5;
-    const ms = window.TSAP.records.filter((r) => r.news || (r.live && !r.social && (r.sev || 0) >= 2)).map(f).filter((m) => isFinite(m) && m <= now).sort((a, b) => b - a);
-    /* the newest time older than the newest item, so at least one item is strictly newer (many share a minute) */
-    const older = ms.filter((m) => m < ms[0]);
-    return older.length ? older[Math.min(older.length - 1, 2)] : null;
+    /* just before the newest story Today shows, so at least that line is strictly newer (the newest record overall may not be shown) */
+    const R = {}; window.TSAP.records.forEach((r) => { R[r.id] = r; });
+    const ms = [...document.querySelectorAll("#today .tdst [data-rec]")].map((b) => R[b.getAttribute("data-rec")]).filter(Boolean)
+      .map(window.OSAP_TODAY.recMs).filter((m) => isFinite(m) && m <= Date.now() + 36e5).sort((a, b) => b - a);
+    return ms.length ? ms[0] - 60000 : null;
   });
   ok(pick != null, "the page holds timed headlines to count");
   await ctx.close();
@@ -172,7 +172,8 @@ let pick = null;
     tags: document.querySelectorAll("#today .tdtags .mcnewtag, #today .tdal .mcnewtag").length }));
   ok(s.since === pick, "the count starts from the stored last look");
   ok(s.n > 0 && new RegExp("^" + s.n + " new since \\d{4}Z").test(s.txt), "Today says \"N new since HHMMZ\"", s.txt);
-  ok(s.tags > 0, "new lines carry a New tag", s.tags);
+  /* new lines on the summary carry a New tag; when none of them made the summary the note points to the full lists instead */
+  ok(s.tags > 0 ? /marked New below/.test(s.txt) : /All local news and All alerts/.test(s.txt), "new lines carry a New tag, or the note names the full lists", s.tags + " " + s.txt);
   const wrong = await p.evaluate((t) => {
     const R = {}; window.TSAP.records.forEach((r) => { R[r.id] = r; });
     return [...document.querySelectorAll("#today .tdst")].filter((a) => {
