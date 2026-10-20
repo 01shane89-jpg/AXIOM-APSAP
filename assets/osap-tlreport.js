@@ -78,10 +78,10 @@
       .filter(function (p) { return p && p.length < 30; });
   }
   /* the records a report covers: this country's own dated records in the scope and range, oldest first */
-  function pick(opt) {
+  function pick(opt, enough) {
     var R = (window.TSAP && window.TSAP.records) || [], sc = opt.scope != null ? scopeOf(opt.scope) : { layers: opt.layer ? [opt.layer] : null };
     var ids = sc.ids ? sc.ids.reduce(function (o, id) { o[id] = 1; return o; }, {}) : null;
-    return R.filter(function (r) {
+    function keep(r) {
       if (r.xcc || !r.src || (sc.layers && sc.layers.indexOf(r.layer) < 0) || (ids && !ids[r.id])) return false;
       var w = when(r); if (!w) return false;
       if (opt.since) { if (w.timed ? w.ms < opt.since : w.day < new Date(opt.since).toISOString().slice(0, 10)) return false; }
@@ -91,7 +91,10 @@
       if (opt.prov && provsOf(r).map(function (p) { return p.toLowerCase(); }).indexOf(String(opt.prov).toLowerCase()) < 0) return false;
       if (opt.area && !(r.lat != null && r.lon != null && isFinite(r.lat) && isFinite(r.lon) && window.TSAP.areaApi && window.TSAP.areaApi.inPoly(+r.lat, +r.lon, opt.area))) return false;
       r.__tlw = w; return true;
-    }).sort(function (a, b) { return a.__tlw.ms - b.__tlw.ms || String(a.title).localeCompare(String(b.title)); });
+    }
+    /* only asking whether there are enough (the buttons below): stop counting there, unsorted */
+    if (enough) { for (var i = 0, n = 0; i < R.length; i++) if (keep(R[i]) && ++n >= enough) return true; return false; }
+    return R.filter(keep).sort(function (a, b) { return a.__tlw.ms - b.__tlw.ms || String(a.title).localeCompare(String(b.title)); });
   }
 
   /* ---------- styles: own class prefix. Set like a short research paper: serif headings, numbered sections, a captioned
@@ -805,7 +808,7 @@
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && el && !el.hidden && el.querySelector(".tlr")) close(); });
 
   /* ---------- buttons: in the header beside Country report, and in the Master timeline; shown only when there is a timeline ---------- */
-  function eligible() { var p = appPeriod(); return pick({ from: p.from, to: p.to, since: p.since }).length >= MIN_RECS; }
+  function eligible() { var p = appPeriod(); return pick({ from: p.from, to: p.to, since: p.since }, MIN_RECS); }
   function mk(id, text) {
     var b = document.createElement("button"); b.type = "button"; b.className = "refresh"; b.id = id; b.textContent = text;
     b.title = "Printable report of the dated records for this area and period: day-by-day chronology, key events, map and sources";

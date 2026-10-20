@@ -55,7 +55,9 @@
 /* Data files the page writes in further down instead of plain tags: Thailand's own files only when Thailand opens (no country
    in the address, or #th/…; another country never builds the flood and border views, and switching country reloads the page),
    and the feeds a plan may not include, which assets/osap-datagate.js leaves out when the signed-in plan cannot open them.
-   Asked for here, so they download while the page's own scripts are read, as plain tags would. */
+   Only Thailand's flood files are asked for here, as they are read before the map is made. The border record and the feeds
+   (about 2.5 MB, read after the map is made) are not: asked for this early they came in before the map's first pictures,
+   and reading them kept the phone too busy to draw those pictures (about a second slower; tests/speed_budget.mjs). */
 (function () {
   var h = (location.hash || "").replace("#", "").split("/"), th = !(h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) && h[0] !== "th");
   var L = {
@@ -67,7 +69,7 @@
       "data/live/ucdp.js", "data/live/deepsouth.js"]
   };
   window.OSAP_TH = th;
-  [].concat(L.th, L.border, L.feeds).forEach(function (s) {
+  L.th.forEach(function (s) {
     if (window.OSAP_DATA && !window.OSAP_DATA.ok(s)) return;
     var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = s; document.head.appendChild(l);
   });
@@ -1203,8 +1205,18 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
 
   /* the root's computed style is a live object: read once, it always gives the current theme's values (one lookup per marker
      instead of a new style object per marker) */
-  var rootCS = null;
-  function tok(n){ return (rootCS || (rootCS = getComputedStyle(document.documentElement))).getPropertyValue(n).trim() || "#888"; }
+  var rootCS = null, TOKC = {}, TOKS = "";
+  /* the colours are set per theme in the page's style sheets, so each value is kept until the theme can have changed: the root's
+     class or data-map, or a style sheet added or edited. Reading a custom property makes the browser restyle the page first
+     when anything changed since, which a redraw always has, so asking once per value saves a full restyle per redraw. */
+  if (window.MutationObserver) new MutationObserver(function () { TOKC = {}; }).observe(document.head, { childList: true, subtree: true, characterData: true });
+  function tok(n){
+    var R0 = document.documentElement, sg = R0.className + "|" + R0.getAttribute("data-map");
+    if (sg !== TOKS) { TOKC = {}; TOKS = sg; }
+    var v = TOKC[n];
+    if (v === undefined) v = TOKC[n] = (rootCS || (rootCS = getComputedStyle(R0))).getPropertyValue(n).trim() || "#888";
+    return v;
+  }
   function num(v){ return (v == null) ? "\u2014" : Math.round(v).toLocaleString(); }
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
@@ -1380,6 +1392,12 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   })();
   /* the hidden watch-check copies of this page (?watchscan=1) never show their map, so they download no map tiles */
   if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
+  /* nor do they project or draw their outlines and markers, or measure the map: they only report their records back */
+  if (/[?&]watchscan=1(&|$)/.test(location.search)) {
+    [L.Path, L.Polyline, L.CircleMarker, L.Circle].forEach(function (C) { C.prototype._project = C.prototype._update = function () {}; });
+    L.Canvas.prototype._redraw = L.Canvas.prototype._updatePaths = function () {};
+    L.Map.prototype.invalidateSize = function () { return this; };
+  }
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
   /* symbols grow as you zoom in: --msk scales every NATO-style symbol (about 37 px at 1) from roughly 24 px zoomed out to 48 px zoomed in */
   function symZoom() {
@@ -3088,8 +3106,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (!hit) return;
   window.OSAP_SUB = { cc: "us", code: hit[0], name: hit[1], tz: hit[2] };
   window.OSAP_ZONE = hit[2];
-  /* the state's outline, and its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) */
-  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
+  /* the state's outline, its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) and their earlier
+     items (data/history/us-states/<code>.js, tools/history.mjs; a missing file only means no history yet) */
+  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>' +
+    '<script src="data/history/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
 })();
 </script>
 <script>/* the feeds a plan may not include (Mid and Full in tools/tiers.mjs; OSAP_WRITE, near the top); the Free feeds stay plain tags below */ window.OSAP_WRITE("feeds");</script>
@@ -3171,10 +3191,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
   /* a state's own outlets join the national news for this view, marked with the state */
   (function () {
-    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS;
-    if (!SUB || !S || S.st !== SUB.code || !(S.items || []).length) return;
+    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS, H = window.ASAP_HIST_ST;
+    if (!SUB || !S || S.st !== SUB.code) return;
+    /* the state outlets' earlier items, one copy per link, after the latest ones */
+    var seen = {}, cur = (S.items || []).filter(function (i) { return i && i.link && !seen[i.link] && (seen[i.link] = 1); });
+    var old = H && H.st === SUB.code ? (H.news || []).filter(function (i) { return i && i.link && !seen[i.link] && (seen[i.link] = 1); }) : [];
+    if (!cur.length && !old.length) return;
     if (!N || !N.items) N = window.ASAP_NEWS = { asof: S.asof, sources: [], items: {} };
-    N.items[CC] = S.items.map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
+    N.items[CC] = cur.concat(old).map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
     N.sources = (N.sources || []).concat(S.sources || []);
   })();
   function subRing(ring, x, y) {
@@ -3745,7 +3769,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return { radius: rad, color: tok("--surface"), weight: 1.4, fillColor: c, fillOpacity: 0.95 };
   }
   var shown = [];
+  /* a hidden scan copy (?watchscan=1) only reports its records back; it never shows the list or the map, so it draws neither */
+  var SCAN_COPY = /[?&]watchscan=1(&|$)/.test(location.search);
   function render() {
+    if (SCAN_COPY) return;
     var dsRecOn = Object.keys(DS).some(function (k) { return LBY[k] && !LBY[k].sof && k !== "alerts"; });
     /* a topic scope shows the topic's records on the map and in the list whatever the data set ticks */
     var sc = scoped(), mapped = function (r) { return DS[r.layer] || (sc && sc.layers.indexOf(r.layer) >= 0); };
@@ -7618,7 +7645,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* nSame() for two grouped records, by counting shared word numbers: the record being placed (a) has its words marked in
      EVW_MARK, so each comparison is a short array walk instead of two object scans (same rule, same answer) */
   var EVW_ID = Object.create(null), EVW_N = 0, EVW_MARK = [], EVW_STAMP = 0, EVW_CUR = null;
-  function evWords(r) { var ids = []; for (var k in nWords(r.title)) ids.push(EVW_ID[k] || (EVW_ID[k] = ++EVW_N)); return ids; }
+  /* a title's word numbers never change (EVW_ID only grows), so each title is split once per page, not on every rebuild: the
+     neighbours' reports come back as fresh copies each time a hidden scan returns, and their titles repeat */
+  var EVW_T = new Map();
+  function evWords(r) {
+    var t = String(r.title || ""), ids = EVW_T.get(t); if (ids) return ids;
+    ids = []; for (var k in nWords(t)) ids.push(EVW_ID[k] || (EVW_ID[k] = ++EVW_N));
+    EVW_T.set(t, ids); return ids;
+  }
   function evMark(r) { EVW_STAMP++; EVW_CUR = r; for (var i = 0; i < r.__wi.length; i++) EVW_MARK[r.__wi[i]] = EVW_STAMP; }
   function evSame(a, b) {
     if (a !== EVW_CUR) evMark(a);
@@ -7708,6 +7742,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   xbLoad();
   var EVC = { sig: "", byRec: {}, list: [] };
+  /* sport, entertainment and programme headlines, decided once per title */
+  var EVR_T = new Map();
+  function evRoutine(t) { var v = EVR_T.get(t); if (v === undefined) { v = NROUTINE.test(t) || EV_SHOW.test(t); EVR_T.set(t, v); } return v; }
   function evSig() { return R.length + ":" + (R[0] ? R[0].id : "") + ":" + (R.length ? R[R.length - 1].id : "") + ":" + Object.keys(EV_SPLIT).length + ":" + XBV; }
   /* clusters: records in time order, each joins the open event it matches best (an event stays open for 48 h after its first
      report and holds at most 40 reports), or starts its own */
@@ -7718,7 +7755,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (EV_SPLIT[rk(r)] || r.ongoing) return false;
       if (r.type === "observation" && r.magnitude == null) return false;
       /* sport, entertainment and advertising headlines are not incidents */
-      if ((r.news || r.social) && (NROUTINE.test(r.title) || EV_SHOW.test(r.title))) return false;
+      if ((r.news || r.social) && evRoutine(r.title)) return false;
       r.__t = evMs(r); r.__wi = evWords(r);
       return isFinite(r.__t.ms);
     }).sort(function (a, b) { return a.__t.ms - b.__t.ms; });
@@ -8843,8 +8880,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   h.innerHTML = '<button type="button" class="grab"><i></i><b></b><small></small></button><span class="chev" aria-hidden="true">&#9650;</span>';
   rail.insertBefore(h, rail.firstChild);
   var STATES = ["bar", "half", "full"];
+  /* whether a panel holds any text: stops at the first word, where reading textContent copied out the whole list each time */
+  function hasText(el) {
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+    while ((n = w.nextNode())) if (/\S/.test(n.data)) return true;
+    return false;
+  }
   function panel() {
-    for (var i = 0; i < rail.children.length; i++) { var c = rail.children[i]; if (c !== h && c.id !== "rv" && !c.hidden && c.offsetParent !== null && c.textContent.trim()) return c; }
+    for (var i = 0; i < rail.children.length; i++) { var c = rail.children[i]; if (c !== h && c.id !== "rv" && !c.hidden && c.offsetParent !== null && hasText(c)) return c; }
     return null;
   }
   function label() {

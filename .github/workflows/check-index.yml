@@ -97,6 +97,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
+      # a US state view shows its outlets' earlier items (data/history/us-states, tools/history.mjs)
+      - run: node tests/state_history_smoke.mjs
       - run: node tests/lock_smoke.mjs
       - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier_smoke.mjs
@@ -178,6 +180,7 @@ jobs:
       - run: node tests/medplan_smoke.mjs
       - run: node tests/medplan_sea_smoke.mjs
       - run: node tests/medplan_hang_smoke.mjs
+      - run: node tests/medplan_equiv.test.mjs
       - run: node tests/medplan_conflict_map_smoke.mjs
       - run: node tests/seatransit_smoke.mjs
       - run: node tests/lz_smoke.mjs
