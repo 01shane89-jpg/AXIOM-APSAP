@@ -83,6 +83,7 @@ const server = createServer(async (req, res) => {
   if (p === "api/osap-account") return send(res, await ACCOUNT(R));
   if (p === "api/osap-users") return send(res, await USERS(R));
   if (p === "api/osap-codes") return send(res, await CODES(R));
+  if (p === "api/osap-reviews") return send(res, await REVIEWS(R));
   if (/^(data|source)\//.test(p)) {
     const r = await GATE(R);
     if (r) return send(res, r);
@@ -100,6 +101,8 @@ const ACCOUNT = (await import("../netlify/functions/osap-account.mjs")).default;
 const USERS = (await import("../netlify/functions/osap-users.mjs")).default;
 const codesFn = await import("../netlify/functions/osap-codes.mjs"), CODES = codesFn.default;
 const codeStore = (await import("./codes_store.mjs")).memoryStore(); codesFn.useStore(() => codeStore);
+const reviewsFn = await import("../netlify/functions/osap-reviews.mjs"), REVIEWS = reviewsFn.default;
+const reviewStore = (await import("./codes_store.mjs")).memoryStore(); reviewsFn.useStore(() => reviewStore);
 
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
@@ -391,6 +394,79 @@ for (const [label, viewport] of [["phone", { width: 390, height: 600 }], ["deskt
   ok(m.l >= 0 && m.r <= m.w && m.b <= m.h, label + ": Settings fits the screen " + JSON.stringify(m));
   ok(m.uTop >= m.top && m.uBot <= m.b, label + ": Settings scrolls down to Users " + JSON.stringify(m));
   ok(errors.length === 0, label + ": no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// 14. Reviews (assets/osap-reviews.js): Settings > Reviews, the owner shows a review, the sign-in screen shows it, and the ask
+{
+  const { ctx, p, errors } = await open("tok-mid");
+  const rv = () => p.evaluate(() => { const d = document.getElementById("revdlg"); return d && !d.hidden ? d.textContent : ""; });
+  await p.getByRole("button", { name: "Open map" }).first().click(); await p.waitForTimeout(1200);
+  await p.evaluate(() => document.querySelector('[data-tidy="set"]').click()); await p.waitForTimeout(400);
+  ok(!!(await p.$('#tidy-pop [data-tp="@reviews"]')), "Settings lists Reviews");
+  await p.click('#tidy-pop [data-tp="@reviews"]'); await p.waitForTimeout(1200);
+  ok(/No reviews shown yet/.test(await rv()) && /Rate OSAP/.test(await rv()), "Reviews: none shown yet, a signed-in account can rate");
+  await p.click('#revdlg button[type="submit"]'); await p.waitForTimeout(300);
+  ok(/Pick 1 to 5 stars/.test(await rv()), "Reviews: sending with no stars asks for stars");
+  await p.click('#revdlg [data-rv-star="4"]'); await p.fill("#revdlg textarea", "Call me on 0812 345 678");
+  await p.click('#revdlg button[type="submit"]'); await p.waitForTimeout(800);
+  ok(/phone numbers/.test(await rv()), "Reviews: a phone number is refused");
+  await p.fill("#revdlg textarea", "Fast <b>maps</b>, clear news."); await p.click('#revdlg button[type="submit"]'); await p.waitForTimeout(1200);
+  ok(/waiting for the owner/.test(await rv()) && (await p.$$eval('#revdlg [data-rv-star][aria-checked="true"]', (b) => b.map((x) => x.getAttribute("data-rv-star")).join())) === "4", "Reviews: sent, waiting for the owner, 4 stars kept");
+  ok(!(await p.$("#revdlg [data-rv-to]")), "Reviews: an account that is not the owner has no Show or Hide");
+  await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/reviews-mine.png" : "/dev/null" }).catch(() => {});
+  await p.keyboard.press("Escape"); await p.waitForTimeout(200);
+  ok(!(await rv()), "Reviews closes with Escape");
+  // the ask: this device has used OSAP on 6 days, the first 30 days ago
+  await p.evaluate(() => { const d = (n) => { const t = new Date(Date.now() - n * 864e5); return t.getFullYear() + "-" + ("0" + (t.getMonth() + 1)).slice(-2) + "-" + ("0" + t.getDate()).slice(-2); };
+    localStorage.setItem("osap-review-ask", JSON.stringify({ days: [30, 20, 10, 5, 2, 0].map(d), first: d(30), n: 6, laterN: 0 })); });
+  await p.evaluate(() => window.OSAP_REVIEWS.check()); await p.waitForTimeout(800);
+  ok(!(await p.$("#rvask")), "the ask: an account that has reviewed is not asked " + (await p.evaluate(() => localStorage.getItem("osap-review-ask"))));
+  errors.length || ok(true, "Reviews: no page errors");
+  if (errors.length) ok(false, "Reviews: page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  const { ctx, p, errors } = await open("tok-boss");
+  await p.evaluate(() => window.OSAP_REVIEWS.open()); await p.waitForTimeout(1200);
+  const t = await p.evaluate(() => document.getElementById("revdlg").textContent);
+  ok(/All reviews \(owner\).*1 waiting/.test(t) && /mid@test/.test(t), "owner: sees the waiting review with its email");
+  await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/reviews-owner.png" : "/dev/null" }).catch(() => {});
+  await p.click('#revdlg [data-rv-to="shown"]'); await p.waitForTimeout(1200);
+  const t2 = await p.evaluate(() => document.getElementById("revdlg").textContent);
+  ok(/4\.0/.test(t2) && /1 review/.test(t2) && /What people say/.test(t2) && (await p.$eval("#revdlg .rvlist:not(.rvown) p", (e) => e.innerHTML)) === "Fast &lt;b&gt;maps&lt;/b&gt;, clear news.", "owner shows it: the average and the words appear, as text not markup");
+  await p.keyboard.press("Escape");
+  // the ask for an account with no review, after weeks of use: shown, but never over an open window
+  await p.evaluate(() => { const d = (n) => { const t = new Date(Date.now() - n * 864e5); return t.getFullYear() + "-" + ("0" + (t.getMonth() + 1)).slice(-2) + "-" + ("0" + t.getDate()).slice(-2); };
+    localStorage.setItem("osap-review-ask", JSON.stringify({ days: [30, 20, 10, 5, 2, 0].map(d), first: d(30), n: 6, laterN: 0 })); });
+  await p.evaluate(() => window.OSAP_TIER.open()); await p.waitForTimeout(300);
+  await p.evaluate(() => window.OSAP_REVIEWS.check()); await p.waitForTimeout(800);
+  ok(!(await p.$("#rvask")), "the ask: not shown while a window is open");
+  await p.click("#tierdlg .x"); await p.waitForTimeout(200);
+  await p.evaluate(() => window.OSAP_REVIEWS.check()); await p.waitForTimeout(800);
+  ok(!!(await p.$("#rvask")) && /Rate OSAP/.test(await p.$eval("#rvask", (e) => e.textContent)), "the ask: shown once nothing is open");
+  await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/reviews-ask.png" : "/dev/null" }).catch(() => {});
+  await p.click('#rvask [data-ask="later"]'); await p.waitForTimeout(200);
+  const st = JSON.parse(await p.evaluate(() => localStorage.getItem("osap-review-ask")));
+  ok(!(await p.$("#rvask")) && st.laterN === 1 && st.later, "the ask: Later hides it and asks again later " + JSON.stringify(st));
+  ok(errors.length === 0, "owner reviews: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  // signed out: the sign-in screen shows the shown review under the form
+  const { ctx, p, errors } = await open();
+  const w = await p.evaluate(() => { const d = document.querySelector("#tierdlg #tr-reviews"); return d ? d.textContent : null; });
+  ok(w && /4\.0/.test(w) && /Fast <b>maps<\/b>/.test(w), "the sign-in screen shows shown reviews: " + w);
+  ok(!/mid@test/.test(await p.evaluate(() => document.body.textContent)), "the sign-in screen never shows a reviewer's email");
+  await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/reviews-wall.png" : "/dev/null" }).catch(() => {});
+  ok(errors.length === 0, "sign-in screen reviews: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+for (const [label, viewport] of [["phone", { width: 390, height: 700 }]]) {
+  const { ctx, p } = await open("tok-boss", "", 3600e3, undefined, viewport);
+  await p.evaluate(() => window.OSAP_REVIEWS.open()); await p.waitForTimeout(1200);
+  const m = await p.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: innerWidth, box: document.querySelector("#revdlg .cbox").getBoundingClientRect().right }));
+  ok(m.sw <= m.w && m.box <= m.w, label + ": Reviews fits the width " + JSON.stringify(m));
+  await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/reviews-phone.png" : "/dev/null" }).catch(() => {});
   await ctx.close();
 }
 await browser.close(); server.close();
