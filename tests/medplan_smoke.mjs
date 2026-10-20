@@ -134,6 +134,8 @@ const MF_ALL = ["th", "kh", "la", "mm", "vn", "my"];
 const mfIndex = (ccs, xs) => ({ v: 1, tile: 2, countries: Object.fromEntries(ccs.map((c) => [c, Object.assign({ at: "2026-09-30T02:00:00Z", n: {}, tiles: ["12_100"] }, (xs || []).includes(c) ? { x: { b: 2, d: 1, r: 1 } } : {})])), tiles: { "12_100": MF_ROWS.length } });
 /* the stored blood services, chamber and air rescue base (data/medfac/x/th.json): the live extras answer without the embassy */
 const MFX_TH = OSMX.elements.filter((e) => !e.tags.country).map((e) => [e.type.charAt(0) + e.id, e.lat, e.lon, "th", e.tags]);
+/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
+const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 async function open(opts, o) {
   o = typeof o === "object" ? o : { overpassFails: !!o };
   const overpassFails = o.overpassFails;
@@ -198,7 +200,7 @@ async function open(opts, o) {
 const square = (c, d) => [[c[0] - d, c[1] - d], [c[0] - d, c[1] + d], [c[0] + d, c[1] + d], [c[0] + d, c[1] - d]];
 async function areaMenu(p) {
   for (let i = 0; i < 2; i++) {
-    await p.click('#atk-tools [data-atk="area"]'); await p.waitForTimeout(150);
+    await tool(p, '[data-atk="area"]'); await p.waitForTimeout(150);
     if (await p.evaluate(() => !document.getElementById("atk-pop").hidden)) break;
   }
   return p.textContent("#atk-pop");
@@ -206,7 +208,7 @@ async function areaMenu(p) {
 /* the toolbar's Med plan button (it closes an open plan, so it is only pressed when the plan is shut) */
 async function medBtn(p) {
   await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (m && !m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
-  if (await p.evaluate(() => { const m = document.getElementById("medplan"); return !m || m.hidden; })) await p.click('#atk-tools [data-atk="medplan"]');
+  if (await p.evaluate(() => { const m = document.getElementById("medplan"); return !m || m.hidden; })) await tool(p, '[data-atk="medplan"]');
 }
 async function openPlan(p) {
   await medBtn(p);
