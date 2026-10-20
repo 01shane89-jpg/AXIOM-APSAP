@@ -275,7 +275,13 @@
   function events() {
     try { return window.OSAP_EVENTS && window.OSAP_EVENTS.list ? window.OSAP_EVENTS.list() : []; } catch (e) { return []; }
   }
-  function recByUrl(u) { if (!u) return null; var R = recs(); for (var i = 0; i < R.length; i++) if (R[i].url === u) return R[i]; return null; }
+  /* the first record with each link, indexed once for the record list as it stands (it only grows or is replaced) */
+  var BYU = { R: null, n: -1, m: null };
+  function recByUrl(u) {
+    if (!u) return null; var R = recs();
+    if (BYU.R !== R || BYU.n !== R.length) { var m = new Map(); for (var i = 0; i < R.length; i++) if (R[i].url && !m.has(R[i].url)) m.set(R[i].url, R[i]); BYU = { R: R, n: R.length, m: m }; }
+    var r = BYU.m.get(u); return r && r.url === u ? r : null;
+  }
   /* Top stories keep to the selected country. National outlets also carry world news (Bangkok Post's /world/ section, for
      example), so a headline is left out when it comes from a world section or names another country, unless the headline or
      its summary also names this country, its capital or its people. */
@@ -315,7 +321,14 @@
     placeCc = CC; return placeRe;
   }
   var WORLD_PATH = /\/(world|world-?news|international|global|foreign|abroad|overseas)(\/|$)/i;
+  /* the answer for a record is kept while its words and link stay the same (the country never changes on a page) */
+  var HERE = new WeakMap();
   function aboutHere(r) {
+    var sig = (r.title || "") + "\u0001" + (r.detail || "") + "\u0001" + (r.place || "") + "\u0001" + (r.url || ""), c = HERE.get(r);
+    if (c && c.s === sig) return c.v;
+    var v = aboutHere0(r); HERE.set(r, { s: sig, v: v }); return v;
+  }
+  function aboutHere0(r) {
     var P = placeFilters(), t = r.title || "", all = t + " " + (r.detail || "") + " " + (r.place || "");
     if (P.here.test(t)) return true;
     if (P.here.test(all)) return true;

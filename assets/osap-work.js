@@ -47,7 +47,22 @@
   var CC = "", map = null;
   function recs() { return (window.TSAP && window.TSAP.records) || []; }
   function recByKey(k) { var R = recs(); for (var i = 0; i < R.length; i++) if (keyOf(R[i]) === k) return R[i]; return null; }
-  function recById(id) { var R = recs(); for (var i = 0; i < R.length; i++) if (R[i].id === id) return R[i]; return null; }
+  /* every card and package on screen asks for its record by id, so the ids are indexed once for the record list as it stands */
+  /* every card and package on screen asks for its record by id, so the ids are indexed for the record list as it stands; a miss
+     re-indexes at most once per task, in case a record was swapped in place */
+  var BYID = { R: null, n: -1, m: null, fresh: false };
+  function idIndex(R) {
+    var m = new Map(); for (var i = 0; i < R.length; i++) if (!m.has(R[i].id)) m.set(R[i].id, R[i]);
+    BYID = { R: R, n: R.length, m: m, fresh: true }; setTimeout(function () { BYID.fresh = false; }, 0);
+  }
+  function recById(id) {
+    var R = recs();
+    if (BYID.R !== R || BYID.n !== R.length) idIndex(R);
+    var r = BYID.m.get(id);
+    if (r && r.id === id) return r;
+    if (BYID.fresh) return null;
+    idIndex(R); r = BYID.m.get(id); return r || null;
+  }
   function countryName() {
     var b = document.querySelector('#country-seg button[aria-current="true"]');
     if (!b) return CC.toUpperCase();
