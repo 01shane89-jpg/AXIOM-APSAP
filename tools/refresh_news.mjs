@@ -103,7 +103,7 @@ async function readFeed(f) {
       if (f.relevance === "exempt") o.exempt = true;   // every item kept by the relevance check
       if (f.tier) o.tier = f.tier;          // official, national, regional, local-language or specialist (tools/news_feeds.json)
       if (f.region) o.region = f.region;    // the province or island group a regional outlet covers
-      if (f.local) o._local = true;         // a station group feed that mixes in network stories: kept only when it names the state or a place in it
+      if (f.local) o._local = true;         // a feed that mixes in other places' stories (station group, world service): kept only when it names its state or country, or a place in it
       return o;
     });
     // a US state's own outlets are kept apart ("us:TX") and written to data/live/news/us-states/<st>.js for the state view
@@ -229,6 +229,9 @@ saveCache();
   for (const cc of Object.keys(items)) { const n = items[cc].length; items[cc] = items[cc].filter((i) => kept(itemRelevance(R, i))); out += n - items[cc].length; }
   console.log("relevance: left out", out, "headlines (sport, celebrity, lifestyle or no relevant word)");
 }
+const NAME_ALIAS = { th: ["Thai"], af: ["Afghan"], so: ["Somali"], kg: ["Kyrgyz"], uz: ["Uzbek"], tr: ["Turk", "Türkiye"], mm: ["Myanmar", "Burm"],
+  kr: ["Korea", "Seoul"], kp: ["Korea", "Pyongyang"], cn: ["China", "Chinese", "Beijing"], ru: ["Russia", "Kremlin", "Moscow"], ua: ["Ukrain", "Kyiv"],
+  ir: ["Iran", "Tehran"], vn: ["Vietnam", "Viet Nam", "Hanoi"], la: ["Lao"], ng: ["Nigeria"], et: ["Ethiopia"], er: ["Eritrea"], rs: ["Serb"], br: ["Brazil", "Brasil"] };
 // Pin each item to the first town or region its headline or summary names inside its own country (GeoNames, tools/gazetteer.mjs).
 // geo.p is the honest precision: "approx" = a town or city centre, "province" = the rough centre of a named region.
 // Items that name no place carry no geo and are not pinned.
@@ -245,6 +248,8 @@ try {
     // a local-TV feed's network-wide stories (the same health or weather piece on every station) name no place in the state:
     // left out of the state view rather than pinned to the state's centre
     if (!g && st && i._local && !new RegExp("\\b" + (US_STATES.find((s) => s[0] === st) || [, "-"])[1] + "\\b", "i").test(texts.join(" "))) { i._drop = true; continue; }
+    // a world-service feed in one language (BBC, RFA) also carries other countries' news: kept under its country only when it names it
+    if (!g && !st && i._local && !namesCountry(cc, texts.join(" "))) { i._drop = true; continue; }
     if (!g && st) g = stateCentre(gz, st);
     i.geo = g ? { n: g.name, la: g.lat, lo: g.lon, p: g.prec } : null;
     if (g) placed++;
@@ -252,7 +257,13 @@ try {
   let dropped = 0;
   for (const k of Object.keys(items)) { const n = items[k].length; items[k] = items[k].filter((i) => !i._drop); dropped += n - items[k].length; }
   for (const l of Object.values(items)) for (const i of l) delete i._local;
-  console.log("placed", placed, "of", all.length, "items by name;", dropped, "local-TV network stories naming no place in their state left out");
+  console.log("placed", placed, "of", all.length, "items by name;", dropped, "items from mixed feeds (local TV, world services) naming no place in their state or country left out");
+  function namesCountry(cc, text) {
+    // the page's name, and the demonyms and short forms a name does not start (Thai, Afghan, Korea, Burma)
+    const c = COUNTRIES.find((x) => x.id === cc), extra = NAME_ALIAS[cc] || [];
+    const names = [c && c.name.replace(/\s*\(.*\)$/, ""), ...extra].filter(Boolean).map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    return names.length > 0 && new RegExp("\\b(" + names.join("|") + ")", "i").test(text);
+  }
   function stateCentre(gz, st) {
     // by admin-1 code, not name: a city can hold the name (Washington, D.C.; Georgia, the country)
     const p = gz.us && gz.us.regs.get("US." + st);
