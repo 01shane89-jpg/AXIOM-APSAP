@@ -1,0 +1,1853 @@
+{
+ "schema": "osap-cf-history-state/1",
+ "release": "ged261-csv.zip",
+ "version": "26.1",
+ "zip_sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667",
+ "ged_last": "2025-12-31",
+ "built": "2026-10-20 13:41Z",
+ "conflicts": {
+  "russia-ukraine": {
+   "key": "9ce04ba12add",
+   "n": 40293,
+   "best": 431815,
+   "chunks": 5,
+   "first": "2022-02-24",
+   "last": "2026-08-31"
+  },
+  "iran-war": {
+   "key": "fb69864ec4d7",
+   "n": 117,
+   "best": 3686,
+   "chunks": 1,
+   "first": "2026-02-28",
+   "last": "2026-08-30"
+  },
+  "sudan": {
+   "key": "9e0d3cfd000f",
+   "n": 2237,
+   "best": 102110,
+   "chunks": 1,
+   "first": "2023-04-15",
+   "last": "2026-08-31"
+  },
+  "israel-gaza": {
+   "key": "6f9db2479b7b",
+   "n": 8212,
+   "best": 64513,
+   "chunks": 2,
+   "first": "2023-10-07",
+   "last": "2026-08-31"
+  },
+  "israel-lebanon": {
+   "key": "072c0b0fa99c",
+   "n": 1901,
+   "best": 9202,
+   "chunks": 1,
+   "first": "2023-10-09",
+   "last": "2026-08-27"
+  },
+  "yemen-red-sea": {
+   "key": "f84dbce4e130",
+   "n": 5378,
+   "best": 64231,
+   "chunks": 2,
+   "first": "2014-09-25",
+   "last": "2026-08-31"
+  },
+  "myanmar": {
+   "key": "bbe0aabac9fd",
+   "n": 6659,
+   "best": 14024,
+   "chunks": 2,
+   "first": "2021-02-09",
+   "last": "2026-08-30"
+  },
+  "afghanistan-pakistan": {
+   "key": "5ddcd99bafaf",
+   "n": 168,
+   "best": 728,
+   "chunks": 1,
+   "first": "2025-10-11",
+   "last": "2026-08-31"
+  },
+  "pakistan-insurgency": {
+   "key": "a4242d132674",
+   "n": 8213,
+   "best": 44205,
+   "chunks": 2,
+   "first": "2007-12-15",
+   "last": "2026-08-31"
+  },
+  "drc-east": {
+   "key": "3044412cc293",
+   "n": 4395,
+   "best": 27693,
+   "chunks": 1,
+   "first": "2021-11-07",
+   "last": "2026-08-31"
+  },
+  "sahel": {
+   "key": "3a16c7d093d1",
+   "n": 17178,
+   "best": 120482,
+   "chunks": 4,
+   "first": "2012-01-16",
+   "last": "2026-08-31"
+  },
+  "somalia": {
+   "key": "054539e10159",
+   "n": 7075,
+   "best": 47041,
+   "chunks": 2,
+   "first": "2006-12-20",
+   "last": "2026-08-31"
+  },
+  "lake-chad-nigeria": {
+   "key": "3a669c550fc0",
+   "n": 8716,
+   "best": 68511,
+   "chunks": 2,
+   "first": "2009-07-26",
+   "last": "2026-08-31"
+  },
+  "ethiopia": {
+   "key": "3f77cf490d81",
+   "n": 3049,
+   "best": 13888,
+   "chunks": 1,
+   "first": "2023-08-04",
+   "last": "2026-08-29"
+  },
+  "syria": {
+   "key": "69db2f1d2400",
+   "n": 88681,
+   "best": 417434,
+   "chunks": 10,
+   "first": "2011-03-18",
+   "last": "2026-08-30"
+  },
+  "haiti": {
+   "key": "c47dab7ee500",
+   "n": 493,
+   "best": 4927,
+   "chunks": 1,
+   "first": "2021-09-09",
+   "last": "2026-08-23"
+  },
+  "south-sudan": {
+   "key": "1fca76c0993a",
+   "n": 969,
+   "best": 14110,
+   "chunks": 1,
+   "first": "2013-12-15",
+   "last": "2026-08-27"
+  },
+  "colombia": {
+   "key": "626e1f4f161f",
+   "n": 17681,
+   "best": 50630,
+   "chunks": 5,
+   "first": "1989-01-01",
+   "last": "2026-08-31"
+  },
+  "mozambique": {
+   "key": "b806f435775b",
+   "n": 1413,
+   "best": 6667,
+   "chunks": 1,
+   "first": "2017-11-27",
+   "last": "2026-08-11"
+  },
+  "cameroon-anglophone": {
+   "key": "983ea2f8af1e",
+   "n": 1568,
+   "best": 4666,
+   "chunks": 1,
+   "first": "2017-09-15",
+   "last": "2026-08-29"
+  },
+  "car": {
+   "key": "545728d91151",
+   "n": 1863,
+   "best": 14997,
+   "chunks": 1,
+   "first": "2012-12-10",
+   "last": "2026-08-20"
+  },
+  "mexico-cartels": {
+   "key": "73994f97c62a",
+   "n": 27056,
+   "best": 149430,
+   "chunks": 8,
+   "first": "2007-01-01",
+   "last": "2026-08-31"
+  },
+  "india-pakistan": {
+   "key": "092bdcf0d301",
+   "n": 10239,
+   "best": 27271,
+   "chunks": 3,
+   "first": "1989-01-01",
+   "last": "2026-08-08"
+  },
+  "india-internal": {
+   "key": "138ebd076240",
+   "n": 510,
+   "best": 1280,
+   "chunks": 1,
+   "first": "2023-05-03",
+   "last": "2026-08-31"
+  },
+  "thailand-cambodia": {
+   "key": "5d423c17b885",
+   "n": 55,
+   "best": 252,
+   "chunks": 1,
+   "first": "2025-05-28",
+   "last": "2025-12-23"
+  },
+  "philippines": {
+   "key": "6ab08c41d8d4",
+   "n": 4478,
+   "best": 21826,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-29"
+  },
+  "papua": {
+   "key": "37a910eb4754",
+   "n": 332,
+   "best": 636,
+   "chunks": 1,
+   "first": "1989-07-26",
+   "last": "2026-08-17"
+  },
+  "thailand-deep-south": {
+   "key": "2604e9fde1b8",
+   "n": 2835,
+   "best": 4014,
+   "chunks": 1,
+   "first": "2004-01-04",
+   "last": "2026-08-05"
+  },
+  "libya": {
+   "key": "11d21b06db88",
+   "n": 994,
+   "best": 9654,
+   "chunks": 1,
+   "first": "2014-05-16",
+   "last": "2026-08-10"
+  },
+  "iraq-is": {
+   "key": "ab0d8a32c82a",
+   "n": 2273,
+   "best": 6810,
+   "chunks": 1,
+   "first": "2017-12-09",
+   "last": "2026-08-27"
+  }
+ },
+ "countries": {
+  "th": {
+   "key": "cc-v1",
+   "n": 3086,
+   "best": 7129,
+   "chunks": 1,
+   "first": "1989-02-06",
+   "last": "2026-08-05"
+  },
+  "vn": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "kh": {
+   "key": "cc-v1",
+   "n": 553,
+   "best": 4947,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2025-12-23"
+  },
+  "la": {
+   "key": "cc-v1",
+   "n": 25,
+   "best": 385,
+   "chunks": 1,
+   "first": "1989-08-25",
+   "last": "2025-07-24"
+  },
+  "mm": {
+   "key": "cc-v1",
+   "n": 9410,
+   "best": 32619,
+   "chunks": 3,
+   "first": "1989-01-01",
+   "last": "2026-08-30"
+  },
+  "ph": {
+   "key": "cc-v1",
+   "n": 4477,
+   "best": 21825,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-29"
+  },
+  "my": {
+   "key": "cc-v1",
+   "n": 20,
+   "best": 76,
+   "chunks": 1,
+   "first": "2013-03-01",
+   "last": "2021-08-03"
+  },
+  "sg": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "id": {
+   "key": "cc-v1",
+   "n": 1804,
+   "best": 8146,
+   "chunks": 1,
+   "first": "1989-04-20",
+   "last": "2026-08-27"
+  },
+  "bn": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "tl": {
+   "key": "cc-v1",
+   "n": 295,
+   "best": 1352,
+   "chunks": 1,
+   "first": "1990-01-16",
+   "last": "1999-10-25"
+  },
+  "cn": {
+   "key": "cc-v1",
+   "n": 43,
+   "best": 3008,
+   "chunks": 1,
+   "first": "1989-03-05",
+   "last": "2017-02-14"
+  },
+  "tw": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "kp": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "kr": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "jp": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "oki": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "mn": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "au": {
+   "key": "cc-v1",
+   "n": 2,
+   "best": 2,
+   "chunks": 1,
+   "first": "2018-11-09",
+   "last": "2018-11-09"
+  },
+  "nz": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "pg": {
+   "key": "cc-v1",
+   "n": 171,
+   "best": 1086,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-01"
+  },
+  "in": {
+   "key": "cc-v1",
+   "n": 18247,
+   "best": 61640,
+   "chunks": 5,
+   "first": "1989-01-01",
+   "last": "2026-08-31"
+  },
+  "pk": {
+   "key": "cc-v1",
+   "n": 10132,
+   "best": 54472,
+   "chunks": 3,
+   "first": "1989-01-25",
+   "last": "2026-08-31"
+  },
+  "np": {
+   "key": "cc-v1",
+   "n": 5656,
+   "best": 12360,
+   "chunks": 2,
+   "first": "1990-02-20",
+   "last": "2026-07-26"
+  },
+  "bt": {
+   "key": "cc-v1",
+   "n": 3,
+   "best": 5,
+   "chunks": 1,
+   "first": "1997-09-27",
+   "last": "2016-05-11"
+  },
+  "bd": {
+   "key": "cc-v1",
+   "n": 788,
+   "best": 1921,
+   "chunks": 1,
+   "first": "1989-05-20",
+   "last": "2026-08-27"
+  },
+  "lk": {
+   "key": "cc-v1",
+   "n": 4584,
+   "best": 65760,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-06"
+  },
+  "mv": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "af": {
+   "key": "cc-v1",
+   "n": 42565,
+   "best": 318502,
+   "chunks": 12,
+   "first": "1989-01-01",
+   "last": "2026-08-31"
+  },
+  "al": {
+   "key": "cc-v1",
+   "n": 9,
+   "best": 22,
+   "chunks": 1,
+   "first": "1999-04-11",
+   "last": "1999-06-04"
+  },
+  "dz": {
+   "key": "cc-v1",
+   "n": 4179,
+   "best": 21283,
+   "chunks": 1,
+   "first": "1990-12-20",
+   "last": "2026-07-29"
+  },
+  "ad": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ao": {
+   "key": "cc-v1",
+   "n": 2078,
+   "best": 33296,
+   "chunks": 1,
+   "first": "1989-01-02",
+   "last": "2026-02-15"
+  },
+  "ag": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ar": {
+   "key": "cc-v1",
+   "n": 207,
+   "best": 304,
+   "chunks": 1,
+   "first": "1992-03-17",
+   "last": "2026-01-18"
+  },
+  "am": {
+   "key": "cc-v1",
+   "n": 87,
+   "best": 479,
+   "chunks": 1,
+   "first": "1990-01-15",
+   "last": "2023-12-04"
+  },
+  "at": {
+   "key": "cc-v1",
+   "n": 1,
+   "best": 4,
+   "chunks": 1,
+   "first": "2020-11-02",
+   "last": "2020-11-02"
+  },
+  "az": {
+   "key": "cc-v1",
+   "n": 847,
+   "best": 14753,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2023-09-30"
+  },
+  "bs": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "bh": {
+   "key": "cc-v1",
+   "n": 47,
+   "best": 40,
+   "chunks": 1,
+   "first": "1995-01-12",
+   "last": "2026-03-24"
+  },
+  "bb": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "by": {
+   "key": "cc-v1",
+   "n": 2,
+   "best": 7,
+   "chunks": 1,
+   "first": "2023-08-28",
+   "last": "2025-10-31"
+  },
+  "be": {
+   "key": "cc-v1",
+   "n": 6,
+   "best": 40,
+   "chunks": 1,
+   "first": "2016-03-15",
+   "last": "2023-10-16"
+  },
+  "bz": {
+   "key": "cc-v1",
+   "n": 9,
+   "best": 13,
+   "chunks": 1,
+   "first": "2026-02-06",
+   "last": "2026-04-21"
+  },
+  "bj": {
+   "key": "cc-v1",
+   "n": 98,
+   "best": 372,
+   "chunks": 1,
+   "first": "2019-05-03",
+   "last": "2026-07-10"
+  },
+  "bo": {
+   "key": "cc-v1",
+   "n": 14,
+   "best": 56,
+   "chunks": 1,
+   "first": "1998-01-26",
+   "last": "2022-11-20"
+  },
+  "ba": {
+   "key": "cc-v1",
+   "n": 9674,
+   "best": 65284,
+   "chunks": 3,
+   "first": "1991-07-20",
+   "last": "1995-12-14"
+  },
+  "bw": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "br": {
+   "key": "cc-v1",
+   "n": 9114,
+   "best": 20888,
+   "chunks": 2,
+   "first": "1993-01-01",
+   "last": "2026-08-31"
+  },
+  "bg": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "bf": {
+   "key": "cc-v1",
+   "n": 2927,
+   "best": 23815,
+   "chunks": 1,
+   "first": "2014-10-30",
+   "last": "2026-08-31"
+  },
+  "bi": {
+   "key": "cc-v1",
+   "n": 3219,
+   "best": 53442,
+   "chunks": 1,
+   "first": "1990-08-13",
+   "last": "2026-08-25"
+  },
+  "cv": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "cm": {
+   "key": "cc-v1",
+   "n": 2321,
+   "best": 9052,
+   "chunks": 1,
+   "first": "1990-05-26",
+   "last": "2026-08-29"
+  },
+  "ca": {
+   "key": "cc-v1",
+   "n": 36,
+   "best": 94,
+   "chunks": 1,
+   "first": "1994-10-20",
+   "last": "2026-03-03"
+  },
+  "cf": {
+   "key": "cc-v1",
+   "n": 2128,
+   "best": 16280,
+   "chunks": 1,
+   "first": "1991-08-08",
+   "last": "2026-08-20"
+  },
+  "td": {
+   "key": "cc-v1",
+   "n": 504,
+   "best": 11026,
+   "chunks": 1,
+   "first": "1989-02-28",
+   "last": "2026-08-21"
+  },
+  "cl": {
+   "key": "cc-v1",
+   "n": 2,
+   "best": 2,
+   "chunks": 1,
+   "first": "2026-08-02",
+   "last": "2026-08-15"
+  },
+  "co": {
+   "key": "cc-v1",
+   "n": 17578,
+   "best": 50267,
+   "chunks": 5,
+   "first": "1989-01-01",
+   "last": "2026-08-31"
+  },
+  "km": {
+   "key": "cc-v1",
+   "n": 7,
+   "best": 125,
+   "chunks": 1,
+   "first": "1989-11-26",
+   "last": "1998-12-07"
+  },
+  "cr": {
+   "key": "cc-v1",
+   "n": 198,
+   "best": 212,
+   "chunks": 1,
+   "first": "2023-02-01",
+   "last": "2025-12-31"
+  },
+  "hr": {
+   "key": "cc-v1",
+   "n": 432,
+   "best": 4682,
+   "chunks": 1,
+   "first": "1991-01-01",
+   "last": "1995-09-21"
+  },
+  "cu": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "cy": {
+   "key": "cc-v1",
+   "n": 1,
+   "best": 1,
+   "chunks": 1,
+   "first": "1996-07-07",
+   "last": "1996-07-07"
+  },
+  "cz": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ci": {
+   "key": "cc-v1",
+   "n": 370,
+   "best": 3716,
+   "chunks": 1,
+   "first": "1989-12-26",
+   "last": "2026-08-04"
+  },
+  "cd": {
+   "key": "cc-v1",
+   "n": 10262,
+   "best": 146818,
+   "chunks": 3,
+   "first": "1989-02-01",
+   "last": "2026-08-31"
+  },
+  "dk": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "dj": {
+   "key": "cc-v1",
+   "n": 65,
+   "best": 536,
+   "chunks": 1,
+   "first": "1989-05-29",
+   "last": "2026-03-02"
+  },
+  "dm": {
+   "key": "cc-v1",
+   "n": 2,
+   "best": 2,
+   "chunks": 1,
+   "first": "2026-01-09",
+   "last": "2026-02-15"
+  },
+  "do": {
+   "key": "cc-v1",
+   "n": 6,
+   "best": 5,
+   "chunks": 1,
+   "first": "2026-03-11",
+   "last": "2026-07-17"
+  },
+  "ec": {
+   "key": "cc-v1",
+   "n": 1048,
+   "best": 1999,
+   "chunks": 1,
+   "first": "1995-01-29",
+   "last": "2026-07-24"
+  },
+  "eg": {
+   "key": "cc-v1",
+   "n": 1085,
+   "best": 5770,
+   "chunks": 1,
+   "first": "1990-01-22",
+   "last": "2025-07-20"
+  },
+  "sv": {
+   "key": "cc-v1",
+   "n": 213,
+   "best": 6073,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2022-03-27"
+  },
+  "gq": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "er": {
+   "key": "cc-v1",
+   "n": 145,
+   "best": 139699,
+   "chunks": 1,
+   "first": "1989-01-03",
+   "last": "2022-11-08"
+  },
+  "ee": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "sz": {
+   "key": "cc-v1",
+   "n": 24,
+   "best": 60,
+   "chunks": 1,
+   "first": "1989-02-12",
+   "last": "2025-01-11"
+  },
+  "et": {
+   "key": "cc-v1",
+   "n": 7283,
+   "best": 393916,
+   "chunks": 2,
+   "first": "1989-01-01",
+   "last": "2026-08-29"
+  },
+  "fj": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "fi": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "fr": {
+   "key": "cc-v1",
+   "n": 64,
+   "best": 301,
+   "chunks": 1,
+   "first": "1992-06-08",
+   "last": "2026-08-30"
+  },
+  "ga": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "gm": {
+   "key": "cc-v1",
+   "n": 7,
+   "best": 16,
+   "chunks": 1,
+   "first": "1990-09-21",
+   "last": "2024-01-08"
+  },
+  "ge": {
+   "key": "cc-v1",
+   "n": 278,
+   "best": 3539,
+   "chunks": 1,
+   "first": "1989-04-09",
+   "last": "2023-11-06"
+  },
+  "de": {
+   "key": "cc-v1",
+   "n": 8,
+   "best": 25,
+   "chunks": 1,
+   "first": "1989-07-02",
+   "last": "2026-07-26"
+  },
+  "gh": {
+   "key": "cc-v1",
+   "n": 96,
+   "best": 2634,
+   "chunks": 1,
+   "first": "1991-04-07",
+   "last": "2026-08-14"
+  },
+  "gr": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "gd": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "gt": {
+   "key": "cc-v1",
+   "n": 571,
+   "best": 3003,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-17"
+  },
+  "gn": {
+   "key": "cc-v1",
+   "n": 82,
+   "best": 1256,
+   "chunks": 1,
+   "first": "1993-01-01",
+   "last": "2021-04-24"
+  },
+  "gw": {
+   "key": "cc-v1",
+   "n": 24,
+   "best": 754,
+   "chunks": 1,
+   "first": "1992-12-12",
+   "last": "2026-03-31"
+  },
+  "gy": {
+   "key": "cc-v1",
+   "n": 3,
+   "best": 29,
+   "chunks": 1,
+   "first": "2008-01-25",
+   "last": "2008-06-15"
+  },
+  "ht": {
+   "key": "cc-v1",
+   "n": 622,
+   "best": 6008,
+   "chunks": 1,
+   "first": "1989-04-03",
+   "last": "2026-08-23"
+  },
+  "hn": {
+   "key": "cc-v1",
+   "n": 141,
+   "best": 526,
+   "chunks": 1,
+   "first": "1999-11-12",
+   "last": "2026-05-20"
+  },
+  "hu": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "is": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ir": {
+   "key": "cc-v1",
+   "n": 960,
+   "best": 27853,
+   "chunks": 1,
+   "first": "1990-04-17",
+   "last": "2026-08-31"
+  },
+  "iq": {
+   "key": "cc-v1",
+   "n": 9914,
+   "best": 128559,
+   "chunks": 3,
+   "first": "1989-01-01",
+   "last": "2026-08-27"
+  },
+  "ie": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "il": {
+   "key": "cc-v1",
+   "n": 1201,
+   "best": 4636,
+   "chunks": 1,
+   "first": "1989-07-06",
+   "last": "2026-07-02"
+  },
+  "it": {
+   "key": "cc-v1",
+   "n": 1,
+   "best": 0,
+   "chunks": 1,
+   "first": "1993-03-16",
+   "last": "1993-03-16"
+  },
+  "jm": {
+   "key": "cc-v1",
+   "n": 37,
+   "best": 203,
+   "chunks": 1,
+   "first": "1989-01-17",
+   "last": "2026-06-10"
+  },
+  "jo": {
+   "key": "cc-v1",
+   "n": 12,
+   "best": 115,
+   "chunks": 1,
+   "first": "1989-09-02",
+   "last": "2026-07-17"
+  },
+  "kz": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ke": {
+   "key": "cc-v1",
+   "n": 1208,
+   "best": 6431,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-25"
+  },
+  "ki": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "xk": {
+   "key": "cc-v1",
+   "n": 502,
+   "best": 2741,
+   "chunks": 1,
+   "first": "1995-02-15",
+   "last": "2001-08-11"
+  },
+  "kw": {
+   "key": "cc-v1",
+   "n": 48,
+   "best": 1831,
+   "chunks": 1,
+   "first": "1990-08-01",
+   "last": "2026-07-30"
+  },
+  "kg": {
+   "key": "cc-v1",
+   "n": 76,
+   "best": 505,
+   "chunks": 1,
+   "first": "1990-06-04",
+   "last": "2022-09-17"
+  },
+  "lv": {
+   "key": "cc-v1",
+   "n": 3,
+   "best": 3,
+   "chunks": 1,
+   "first": "1991-01-16",
+   "last": "1991-08-20"
+  },
+  "lb": {
+   "key": "cc-v1",
+   "n": 3082,
+   "best": 15573,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-27"
+  },
+  "ls": {
+   "key": "cc-v1",
+   "n": 5,
+   "best": 78,
+   "chunks": 1,
+   "first": "1998-09-03",
+   "last": "1998-09-22"
+  },
+  "lr": {
+   "key": "cc-v1",
+   "n": 553,
+   "best": 23141,
+   "chunks": 1,
+   "first": "1989-12-01",
+   "last": "2024-07-01"
+  },
+  "ly": {
+   "key": "cc-v1",
+   "n": 1281,
+   "best": 14284,
+   "chunks": 1,
+   "first": "1995-03-31",
+   "last": "2026-08-10"
+  },
+  "li": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "lt": {
+   "key": "cc-v1",
+   "n": 3,
+   "best": 15,
+   "chunks": 1,
+   "first": "1991-01-13",
+   "last": "1991-01-28"
+  },
+  "lu": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "mg": {
+   "key": "cc-v1",
+   "n": 47,
+   "best": 234,
+   "chunks": 1,
+   "first": "2002-02-26",
+   "last": "2020-08-23"
+  },
+  "mw": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ml": {
+   "key": "cc-v1",
+   "n": 3608,
+   "best": 21027,
+   "chunks": 1,
+   "first": "1990-06-28",
+   "last": "2026-08-31"
+  },
+  "mt": {
+   "key": "cc-v1",
+   "n": 2,
+   "best": 0,
+   "chunks": 1,
+   "first": "1995-10-26",
+   "last": "2025-10-12"
+  },
+  "mh": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "mr": {
+   "key": "cc-v1",
+   "n": 37,
+   "best": 197,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2025-07-01"
+  },
+  "mu": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "mx": {
+   "key": "cc-v1",
+   "n": 27195,
+   "best": 150887,
+   "chunks": 8,
+   "first": "1989-01-22",
+   "last": "2026-08-31"
+  },
+  "fm": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "md": {
+   "key": "cc-v1",
+   "n": 78,
+   "best": 586,
+   "chunks": 1,
+   "first": "1992-03-01",
+   "last": "2026-05-10"
+  },
+  "mc": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "me": {
+   "key": "cc-v1",
+   "n": 6,
+   "best": 11,
+   "chunks": 1,
+   "first": "1998-05-07",
+   "last": "1999-04-30"
+  },
+  "ma": {
+   "key": "cc-v1",
+   "n": 21,
+   "best": 148,
+   "chunks": 1,
+   "first": "1989-09-24",
+   "last": "2026-06-07"
+  },
+  "mz": {
+   "key": "cc-v1",
+   "n": 1787,
+   "best": 13222,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-11"
+  },
+  "na": {
+   "key": "cc-v1",
+   "n": 77,
+   "best": 394,
+   "chunks": 1,
+   "first": "1989-02-10",
+   "last": "2021-05-22"
+  },
+  "nr": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "nl": {
+   "key": "cc-v1",
+   "n": 2,
+   "best": 2,
+   "chunks": 1,
+   "first": "1990-05-28",
+   "last": "2015-12-15"
+  },
+  "ni": {
+   "key": "cc-v1",
+   "n": 27,
+   "best": 565,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "1990-04-14"
+  },
+  "ne": {
+   "key": "cc-v1",
+   "n": 1007,
+   "best": 10171,
+   "chunks": 1,
+   "first": "1989-09-19",
+   "last": "2026-08-29"
+  },
+  "ng": {
+   "key": "cc-v1",
+   "n": 9600,
+   "best": 84538,
+   "chunks": 3,
+   "first": "1990-09-25",
+   "last": "2026-08-31"
+  },
+  "mk": {
+   "key": "cc-v1",
+   "n": 48,
+   "best": 75,
+   "chunks": 1,
+   "first": "1999-04-14",
+   "last": "2001-08-16"
+  },
+  "no": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "om": {
+   "key": "cc-v1",
+   "n": 3,
+   "best": 7,
+   "chunks": 1,
+   "first": "2026-03-13",
+   "last": "2026-07-24"
+  },
+  "pw": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ps": {
+   "key": "cc-v1",
+   "n": 11439,
+   "best": 71138,
+   "chunks": 3,
+   "first": "1989-01-16",
+   "last": "2026-08-31"
+  },
+  "pa": {
+   "key": "cc-v1",
+   "n": 4,
+   "best": 921,
+   "chunks": 1,
+   "first": "1989-10-03",
+   "last": "2009-02-18"
+  },
+  "py": {
+   "key": "cc-v1",
+   "n": 5,
+   "best": 157,
+   "chunks": 1,
+   "first": "1989-02-03",
+   "last": "2021-10-10"
+  },
+  "pe": {
+   "key": "cc-v1",
+   "n": 892,
+   "best": 7828,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-07-24"
+  },
+  "pl": {
+   "key": "cc-v1",
+   "n": 1,
+   "best": 2,
+   "chunks": 1,
+   "first": "2022-11-15",
+   "last": "2022-11-15"
+  },
+  "pt": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "qa": {
+   "key": "cc-v1",
+   "n": 2,
+   "best": 6,
+   "chunks": 1,
+   "first": "2004-02-12",
+   "last": "2025-09-09"
+  },
+  "cg": {
+   "key": "cc-v1",
+   "n": 247,
+   "best": 15723,
+   "chunks": 1,
+   "first": "1992-11-30",
+   "last": "2022-11-08"
+  },
+  "ro": {
+   "key": "cc-v1",
+   "n": 16,
+   "best": 448,
+   "chunks": 1,
+   "first": "1989-12-16",
+   "last": "1989-12-29"
+  },
+  "ru": {
+   "key": "cc-v1",
+   "n": 5162,
+   "best": 40365,
+   "chunks": 2,
+   "first": "1992-08-11",
+   "last": "2026-08-31"
+  },
+  "rw": {
+   "key": "cc-v1",
+   "n": 2735,
+   "best": 795967,
+   "chunks": 1,
+   "first": "1990-10-01",
+   "last": "2026-08-01"
+  },
+  "kn": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "lc": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "vc": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ws": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "sm": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "sa": {
+   "key": "cc-v1",
+   "n": 323,
+   "best": 1073,
+   "chunks": 1,
+   "first": "1991-01-25",
+   "last": "2026-07-19"
+  },
+  "sn": {
+   "key": "cc-v1",
+   "n": 296,
+   "best": 2115,
+   "chunks": 1,
+   "first": "1989-04-09",
+   "last": "2021-10-23"
+  },
+  "rs": {
+   "key": "cc-v1",
+   "n": 80,
+   "best": 1014,
+   "chunks": 1,
+   "first": "1991-07-10",
+   "last": "1999-11-21"
+  },
+  "sc": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "sl": {
+   "key": "cc-v1",
+   "n": 1491,
+   "best": 20386,
+   "chunks": 1,
+   "first": "1991-03-01",
+   "last": "2021-04-16"
+  },
+  "sk": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "si": {
+   "key": "cc-v1",
+   "n": 15,
+   "best": 64,
+   "chunks": 1,
+   "first": "1991-06-27",
+   "last": "1991-07-02"
+  },
+  "sb": {
+   "key": "cc-v1",
+   "n": 1,
+   "best": 2,
+   "chunks": 1,
+   "first": "1992-09-12",
+   "last": "1992-09-12"
+  },
+  "so": {
+   "key": "cc-v1",
+   "n": 7527,
+   "best": 71050,
+   "chunks": 2,
+   "first": "1989-01-01",
+   "last": "2026-08-31"
+  },
+  "za": {
+   "key": "cc-v1",
+   "n": 2917,
+   "best": 5395,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-25"
+  },
+  "ss": {
+   "key": "cc-v1",
+   "n": 1965,
+   "best": 64112,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-27"
+  },
+  "es": {
+   "key": "cc-v1",
+   "n": 149,
+   "best": 421,
+   "chunks": 1,
+   "first": "1989-04-12",
+   "last": "2026-08-16"
+  },
+  "sd": {
+   "key": "cc-v1",
+   "n": 4752,
+   "best": 151752,
+   "chunks": 2,
+   "first": "1989-01-01",
+   "last": "2026-08-31"
+  },
+  "sr": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "se": {
+   "key": "cc-v1",
+   "n": 4,
+   "best": 8,
+   "chunks": 1,
+   "first": "2017-04-07",
+   "last": "2026-07-01"
+  },
+  "ch": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "sy": {
+   "key": "cc-v1",
+   "n": 87757,
+   "best": 411915,
+   "chunks": 10,
+   "first": "1989-04-03",
+   "last": "2026-08-30"
+  },
+  "st": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "tj": {
+   "key": "cc-v1",
+   "n": 340,
+   "best": 9554,
+   "chunks": 1,
+   "first": "1992-05-05",
+   "last": "2026-08-13"
+  },
+  "tz": {
+   "key": "cc-v1",
+   "n": 129,
+   "best": 1388,
+   "chunks": 1,
+   "first": "1992-01-10",
+   "last": "2026-02-12"
+  },
+  "tg": {
+   "key": "cc-v1",
+   "n": 146,
+   "best": 762,
+   "chunks": 1,
+   "first": "1991-04-05",
+   "last": "2026-01-31"
+  },
+  "to": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "tt": {
+   "key": "cc-v1",
+   "n": 3,
+   "best": 39,
+   "chunks": 1,
+   "first": "1990-07-27",
+   "last": "1990-07-29"
+  },
+  "tn": {
+   "key": "cc-v1",
+   "n": 127,
+   "best": 439,
+   "chunks": 1,
+   "first": "2000-09-12",
+   "last": "2026-01-22"
+  },
+  "tm": {
+   "key": "cc-v1",
+   "n": 8,
+   "best": 19,
+   "chunks": 1,
+   "first": "2009-11-29",
+   "last": "2021-04-11"
+  },
+  "tv": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "tr": {
+   "key": "cc-v1",
+   "n": 7796,
+   "best": 36573,
+   "chunks": 2,
+   "first": "1989-01-17",
+   "last": "2026-07-25"
+  },
+  "ug": {
+   "key": "cc-v1",
+   "n": 1788,
+   "best": 17698,
+   "chunks": 1,
+   "first": "1989-04-03",
+   "last": "2026-08-30"
+  },
+  "ua": {
+   "key": "cc-v1",
+   "n": 42437,
+   "best": 425339,
+   "chunks": 6,
+   "first": "2014-01-22",
+   "last": "2026-08-31"
+  },
+  "ae": {
+   "key": "cc-v1",
+   "n": 12,
+   "best": 16,
+   "chunks": 1,
+   "first": "2010-01-20",
+   "last": "2026-04-03"
+  },
+  "gb": {
+   "key": "cc-v1",
+   "n": 198,
+   "best": 333,
+   "chunks": 1,
+   "first": "1989-01-25",
+   "last": "2019-11-29"
+  },
+  "us": {
+   "key": "cc-v1",
+   "n": 43,
+   "best": 3063,
+   "chunks": 1,
+   "first": "2001-09-11",
+   "last": "2026-08-23"
+  },
+  "uy": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "uz": {
+   "key": "cc-v1",
+   "n": 37,
+   "best": 520,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2009-05-26"
+  },
+  "vu": {
+   "key": "cc-v1",
+   "n": 0,
+   "best": 0,
+   "chunks": 0,
+   "first": "",
+   "last": ""
+  },
+  "ve": {
+   "key": "cc-v1",
+   "n": 1616,
+   "best": 2023,
+   "chunks": 1,
+   "first": "1989-02-06",
+   "last": "2026-08-31"
+  },
+  "eh": {
+   "key": "cc-v1",
+   "n": 8,
+   "best": 154,
+   "chunks": 1,
+   "first": "1989-06-21",
+   "last": "2025-01-11"
+  },
+  "ye": {
+   "key": "cc-v1",
+   "n": 6484,
+   "best": 75521,
+   "chunks": 2,
+   "first": "1994-02-21",
+   "last": "2026-08-31"
+  },
+  "zm": {
+   "key": "cc-v1",
+   "n": 37,
+   "best": 161,
+   "chunks": 1,
+   "first": "1989-02-13",
+   "last": "2026-08-14"
+  },
+  "zw": {
+   "key": "cc-v1",
+   "n": 72,
+   "best": 332,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2020-09-30"
+  }
+ },
+ "candidate_files": {
+  "read": [
+   "GEDEvent_v26_0_1.csv",
+   "GEDEvent_v26_0_2.csv",
+   "GEDEvent_v26_0_3.csv",
+   "GEDEvent_v26_0_4.csv",
+   "GEDEvent_v26_0_5.csv",
+   "GEDEvent_v26_0_6.csv",
+   "GEDEvent_v26_0_7.csv",
+   "GEDEvent_v26_0_8.csv"
+  ],
+  "missing": [
+   "GEDEvent_v26_0_9.csv (HTTP 404)",
+   "GEDEvent_v26_0_10.csv (HTTP 404)"
+  ]
+ },
+ "unmatched_names": {}
+}
