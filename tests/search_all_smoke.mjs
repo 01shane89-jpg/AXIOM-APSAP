@@ -160,11 +160,11 @@ async function type(p, text) { await openBox(p); await p.fill("#srch-q", ""); aw
   const lay = await p.evaluate(() => {
     const s = document.getElementById("srch"), r = s.getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect();
     const lis = [...document.querySelectorAll("#srch-list [data-i]")];
-    return { n: lis.length, minH: Math.min(...lis.map((li) => li.getBoundingClientRect().height)), over: s.scrollWidth - s.clientWidth, page: document.documentElement.scrollWidth, left: r.left, right: r.right, tl: t.left,
+    return { n: lis.length, minH: Math.min(...lis.map((li) => li.getBoundingClientRect().height)), over: s.scrollWidth - s.clientWidth, page: document.documentElement.scrollWidth, left: r.left, right: r.right, tl: t.left, bottom: r.bottom, tt: t.top, below: t.top >= innerHeight / 2,
       cut: lis.some((li) => li.querySelector("b").scrollWidth > li.querySelector("b").clientWidth + 1) };
   });
   ok(lay.n >= 2 && lay.minH >= 44, "phone: results are tap-sized (" + lay.n + " rows, smallest " + lay.minH + " px)");
-  ok(lay.over <= 0 && lay.page <= 390 && lay.left >= 0 && lay.right <= lay.tl, "phone: the list fits the screen beside the toolbar " + JSON.stringify(lay));
+  ok(lay.over <= 0 && lay.page <= 390 && lay.left >= 0 && (lay.below ? lay.bottom <= lay.tt + 1 : lay.right <= lay.tl), "phone: the list fits the screen beside (or above) the toolbar " + JSON.stringify(lay));
   ok(!lay.cut, "phone: result names are not cut off");
   if (OUT) await p.screenshot({ path: OUT + "/phone-findall.png" });
   await p.tap('#srch-list [data-i="0"]'); await p.waitForTimeout(1500);
