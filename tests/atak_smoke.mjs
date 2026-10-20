@@ -40,6 +40,8 @@ async function longPress(p, dx = 0, dy = 0) {
   await p.waitForTimeout(750);
   await p.evaluate(() => { const m = document.getElementById("map"); m.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, pointerType: "touch", isPrimary: true, pointerId: 7 })); });
 }
+/* a map tool: on a phone (assets/osap-toolbar.js) the tools not on the bottom bar are in its More sheet */
+const tool = async (p, s) => { if (await p.evaluate((s) => { const b = document.querySelector("#atk-tools " + s); return !!b && !b.getClientRects().length && !!window.OSAP_TOOLBAR && window.OSAP_TOOLBAR.phone(); }, s)) await p.click('#atk-tools [data-tb="more"]'); await p.click("#atk-tools " + s); };
 const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
 
 // ---------- phone ----------
@@ -49,18 +51,14 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await shown(p, "#atk-tools") && await shown(p, "#atk-bar"), "phone: side toolbar and grid readout shown");
   ok(!(await shown(p, "#watch-btn")) && !(await shown(p, ".tdctl")) && !(await shown(p, ".mlctl")) && !(await shown(p, "#meas-btn")), "phone: old map buttons out of sight");
   const tb = await p.evaluate(() => { const r = document.getElementById("atk-tools").getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect(); return { w: r.width, right: m.right - r.right, top: r.top - m.top, h: r.height, mh: m.height }; });
-  ok(tb.w <= 56 && tb.right < 12, "phone: toolbar is slim and on the right edge " + JSON.stringify(tb));
-  ok(tb.h <= tb.mh - 30, "phone: toolbar fits inside the map above the readout");
+  ok(tb.w >= 380 && tb.top >= tb.mh - 1 && tb.h >= 44, "phone: toolbar is a bar along the bottom, under the map " + JSON.stringify(tb));
+  ok(await p.evaluate(() => { const r = document.getElementById("atk-bar").getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect(); return r.bottom <= t.top + 0.5; }), "phone: the readout sits above the toolbar");
   const rd = await p.textContent("#atk-bar .atk-v");
   ok(/^\d{1,2}[C-X] [A-Z]{2} \d{5} \d{5}$/.test(rd), "phone: readout shows an MGRS grid: " + rd);
   await p.click('#atk-bar [data-sb="fmt"]'); ok(/°[NS] /.test(await p.textContent("#atk-bar .atk-v")), "phone: tap readout switches to degrees");
   await p.click('#atk-bar [data-sb="fmt"]'); await p.click('#atk-bar [data-sb="fmt"]');
   if (OUT) await p.screenshot({ path: OUT + "/phone-toolbar.png" });
-  // fold and unfold, remembered
-  await p.click("#atk-tools .atk-fold");
-  ok(await p.evaluate(() => document.getElementById("atk-tools").classList.contains("folded") && localStorage.getItem("osap-atak-fold") === "1"), "phone: toolbar folds away and remembers");
-  if (OUT) await p.screenshot({ path: OUT + "/phone-folded.png" });
-  await p.click("#atk-tools .atk-fold");
+  ok(!(await shown(p, "#atk-tools .atk-fold")), "phone: the bottom bar has no fold button (the computer's rail keeps it)");
   // long-press radial menu
   await longPress(p);
   ok(await shown(p, "#atk-ring"), "phone: long-press opens the radial menu");
@@ -92,7 +90,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await p.evaluate(() => { const l = document.querySelector('#atk-tools [data-atk="area"] .atk-l'); return !!l && getComputedStyle(l).display !== "none" && l.textContent === "Area"; }), "phone: toolbar buttons show their names");
   ok(await p.evaluate(() => { const l = document.querySelector("#atk-tools .atk-list"); return (l.scrollHeight > l.clientHeight + 4) === document.getElementById("atk-tools").classList.contains("more"); }), "phone: the more-below arrow matches whether the tools overflow");
   // right side toolbar opens the Overlay Manager with the Layers panel inside
-  await p.click('#atk-tools [data-atk="overlays"]'); await p.waitForTimeout(200);
+  await tool(p, '[data-atk="overlays"]'); await p.waitForTimeout(200);
   ok(await shown(p, "#atk-om") && await p.evaluate(() => !!document.querySelector("#atk-om #ml-panel")), "phone: Overlay Manager opens holding the map layers");
   ok(await p.evaluate(() => { const d = document.querySelector("#atk-om #ml-ds"); return !d || d.offsetParent === null; }), "phone: Map overlays does not repeat the data sets");
   // Data sets is its own button: the list alone, no map layers or marks
@@ -107,7 +105,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await p.evaluate(() => !document.querySelector('#ml-ds [data-fx="now"]').checked && !JSON.parse(localStorage.getItem("asap-map-layers") || "{}").now), "phone: Clear map takes Flooding now off");
   // each button opens its own panel: no tabs leading to the other two, and the title says which one is open
   ok(await p.evaluate(() => !document.querySelector("#atk-om [data-omm], #atk-om [role=tab]") && document.querySelector("#atk-om h2").textContent === "Data sets" && document.querySelector("#atk-om h2").offsetParent !== null), "phone: Data sets panel has its own title and no tabs to the others");
-  const via = async (k) => { await p.click('#atk-om [data-om="x"]'); await p.waitForTimeout(150); await p.click('#atk-tools [data-atk="' + k + '"]'); await p.waitForTimeout(200); };
+  const via = async (k) => { await p.click('#atk-om [data-om="x"]'); await p.waitForTimeout(150); await tool(p, '[data-atk="' + k + '"]'); await p.waitForTimeout(200); };
   await via("overlays");
   ok(await p.evaluate(() => document.getElementById("atk-om").getAttribute("data-mode") === "overlays" && document.querySelector("#atk-om h2").textContent === "Map overlays"), "phone: the Overlays button opens Map overlays");
   ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !w || w.offsetParent === null; }), "phone: Map overlays does not hold the weather layers");
@@ -134,6 +132,11 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } });
   ok(await shown(p, "#atk-tools") && await shown(p, ".leaflet-control-zoom"), "desktop: toolbar shown, zoom buttons kept for a mouse");
+  // fold and unfold, remembered (the rail's fold; a phone's bottom bar has none)
+  await p.click("#atk-tools .atk-fold");
+  ok(await p.evaluate(() => document.getElementById("atk-tools").classList.contains("folded") && localStorage.getItem("osap-atak-fold") === "1"), "desktop: toolbar folds away and remembers");
+  await p.click("#atk-tools .atk-fold");
+  ok(await p.evaluate(() => !document.getElementById("atk-tools").classList.contains("folded") && !localStorage.getItem("osap-atak-fold")), "desktop: and unfolds");
   const box = await p.evaluate(() => { const r = document.getElementById("map").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
   await p.mouse.move(box[0] - 100, box[1]); await p.waitForTimeout(100);
   ok(/Cursor/i.test(await p.textContent("#atk-bar .atk-k")), "desktop: readout follows the mouse");

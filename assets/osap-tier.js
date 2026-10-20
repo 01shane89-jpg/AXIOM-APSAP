@@ -139,7 +139,8 @@
     var t = e.target, el = t.closest && t.closest("[data-tier-need]");
     if (!el) return;
     e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-    open("plans", "That needs the " + name(el.getAttribute("data-tier-need")) + " plan.");
+    /* data-tier-msg: the grouped entry for locked tools (assets/osap-toolbar.js) says what each plan adds */
+    open("plans", el.getAttribute("data-tier-msg") || "That needs the " + name(el.getAttribute("data-tier-need")) + " plan.");
   }
 
   /* ---------- Paddle checkout ---------- */
@@ -502,6 +503,7 @@
     allows: function (need) { return !locked(need); },
     /* the plan a feature inside a tool needs (tools/tiers.mjs FEATURES), or null when the rules do not name it */
     need: function (f) { return (CFG && CFG.rules && CFG.rules.features && CFG.rules.features[f]) || null; },
+    name: function (t) { return CFG ? name(t) : ""; },
     /* the plan a toolbar tool ("tool", its data-atk) or a data set ("set", its id) needs when this plan lacks it, else "" (osap-findall.js) */
     needs: function (kind, id) { var n = kind === "set" ? needSet(id) : needTool(id); return locked(n) ? n : ""; },
   };
