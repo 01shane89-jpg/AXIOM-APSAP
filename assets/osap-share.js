@@ -10,13 +10,15 @@
      Signal take a PDF as an attachment and a phone opens it with every link tappable, so no account, key or server is involved.
    Send as: Full report (default), Map picture or Message only; the message text always rides along with its own live links.
    Buttons: Share (the device's share menu, Web Share API), Copy message, Copy link, Save report (PDF), Save picture. Nothing leaves the device unless the user picks a share target; OSAP stores nothing about it.
-   It never changes a record, an event, a claim status or a summary. The map picture uses the Esri light canvas tiles when the
+   It never changes a record, an event, a claim status or a summary. The map picture uses OpenStreetMap tiles, greyed, when the
    browser may draw them into a picture, otherwise the packaged Natural Earth outlines (data/basemap/world-outlines.js).
    Opening a shared link whose story has since dropped out of the feed shows a short note instead of the watch-alert message. */
 (function () {
   "use strict";
   var LIVE = "https://01shane89-jpg.github.io/AXIOM-APSAP/";
-  var ESRI = "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+  /* OpenStreetMap's own tiles (CORS allowed; one picture asks for a handful, within its tile policy), drawn greyed. Was the Esri
+     canvas until 2026-10-17: Esri's terms need a paid plan for a product that is sold */
+  var TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png", CREDIT = "Map: \u00a9 OpenStreetMap contributors, Natural Earth";
   var PRANK = { exact: 3, approx: 2, province: 1 };
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -279,14 +281,14 @@
       if (ty < 0 || ty >= n) continue;
       (function (tx, ty) {
         var wx = ((tx % n) + n) % n;
-        jobs.push(loadImg(ESRI.replace("{z}", z).replace("{y}", ty).replace("{x}", wx), true, 4500).then(function (im) { return { im: im, x: tx * 256 - ox, y: ty * 256 - oy }; }));
+        jobs.push(loadImg(TILES.replace("{z}", z).replace("{y}", ty).replace("{x}", wx), true, 4500).then(function (im) { return { im: im, x: tx * 256 - ox, y: ty * 256 - oy }; }));
       })(tx, ty);
     }
     return Promise.all(jobs).then(function (ts) {
       var got = ts.filter(function (t) { return t.im; });
       if (got.length >= ts.length * 0.6) {
-        got.forEach(function (t) { ctx.drawImage(t.im, t.x, t.y, 256, 256); });
-        try { ctx.getImageData(0, 0, 1, 1); outlines(ctx, z, ox, oy, false); return finish("Map: Esri, Natural Earth"); }
+        ctx.filter = "grayscale(1)"; got.forEach(function (t) { ctx.drawImage(t.im, t.x, t.y, 256, 256); }); ctx.filter = "none";
+        try { ctx.getImageData(0, 0, 1, 1); outlines(ctx, z, ox, oy, false); return finish(CREDIT); }
         catch (e) {}
       }
       cv = document.createElement("canvas"); cv.width = W; cv.height = H; ctx = cv.getContext("2d"); base0();
@@ -439,14 +441,14 @@
       if (ty < 0 || ty >= n) continue;
       (function (tx, ty) {
         var wx = ((tx % n) + n) % n;
-        jobs.push(loadImg(ESRI.replace("{z}", z).replace("{y}", ty).replace("{x}", wx), true, 4500).then(function (im) { return { im: im, x: tx * 256 - ox, y: ty * 256 - oy }; }));
+        jobs.push(loadImg(TILES.replace("{z}", z).replace("{y}", ty).replace("{x}", wx), true, 4500).then(function (im) { return { im: im, x: tx * 256 - ox, y: ty * 256 - oy }; }));
       })(tx, ty);
     }
     return Promise.all(jobs).then(function (ts) {
       var got = ts.filter(function (t) { return t.im; });
       if (got.length >= ts.length * 0.6) {
-        got.forEach(function (t) { ctx.drawImage(t.im, t.x, t.y, 256, 256); });
-        try { ctx.getImageData(0, 0, 1, 1); outlines(ctx, z, ox, oy, false, w, h); return marks("Map: Esri, Natural Earth"); } catch (e) {}
+        ctx.filter = "grayscale(1)"; got.forEach(function (t) { ctx.drawImage(t.im, t.x, t.y, 256, 256); }); ctx.filter = "none";
+        try { ctx.getImageData(0, 0, 1, 1); outlines(ctx, z, ox, oy, false, w, h); return marks(CREDIT); } catch (e) {}
       }
       cv = document.createElement("canvas"); cv.width = w; cv.height = h; ctx = cv.getContext("2d");
       frame(7); bg(); outlines(ctx, z, ox, oy, true, w, h);

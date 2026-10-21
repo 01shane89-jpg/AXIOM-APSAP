@@ -535,8 +535,6 @@ const PRECACHE = [
 "assets/osap-weather.js",
 "assets/osap-work.js",
 "assets/world-watermark.svg",
-"assets/tiles-base-dark.js",
-"assets/tiles-base.js",
 "assets/tiles-flood.js",
 "assets/tiles-flood25.js",
 "assets/vendor/leaflet-1.9.4.js",

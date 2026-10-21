@@ -464,6 +464,9 @@ select.mini{
 
 .leaflet-container{background:var(--surface2);font-family:inherit}
 .basefilter{filter:var(--base-filter) brightness(var(--base-bright,1))}
+/* the Grey map's stand-in (plain OpenStreetMap tiles when the vector engine cannot start), greyed to match the theme */
+.osap-greyfb{filter:grayscale(1) brightness(var(--base-bright,1))}
+:root[data-map="grey"] .osap-greyfb,:root[data-map="dark"] .osap-greyfb{filter:grayscale(1) invert(1) brightness(.6) contrast(1.1) brightness(var(--base-bright,1))}
 .leaflet-control-zoom a{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important}
 .leaflet-control-attribution{background:color-mix(in srgb,var(--surface) 88%,transparent)!important;color:var(--muted)!important;font-size:10px!important}
 .leaflet-control-attribution a{color:var(--muted)!important}
@@ -1180,59 +1183,6 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
 
-  /* ---------- packaged basemap, loaded only if the live service is blocked ----------
-     One bundle per theme. Serving the LIGHT tiles under the dark theme is why
-     Dark looked broken in sandboxed viewers, so the fallback now matches. */
-  var BUNDLES = {
-    light: { src: "assets/tiles-base.js", global: "TILES_BASE", state: 0, waiting: [] },
-    dark:  { src: "assets/tiles-base-dark.js", global: "TILES_BASE_DARK", state: 0, waiting: [] }
-  };
-  function noteOffline() {
-    var b = document.getElementById("offline-note");
-    if (!b.hidden) return;
-    b.textContent = "This viewer blocks outside requests, so the basemap is using the Esri "
-      + "canvas tiles packaged with the page (zoom 6-9 over Thailand). The same block stops "
-      + "the live data refresh.";
-    b.hidden = false;
-  }
-  function loadBase(which, cb) {
-    var b = BUNDLES[which] || BUNDLES.light;
-    noteOffline();
-    if (window[b.global]) { b.state = 2; cb(window[b.global]); return; }
-    if (b.state === 2) { cb(window[b.global]); return; }
-    b.waiting.push(cb);
-    if (b.state === 1) return;
-    b.state = 1;
-    var s = document.createElement("script");
-    s.src = b.src;
-    s.onload = s.onerror = function () {
-      b.state = 2;
-      var q = b.waiting; b.waiting = [];
-      q.forEach(function (f) { f(window[b.global]); });
-    };
-    document.body.appendChild(s);
-  }
-  var Hybrid = L.TileLayer.extend({
-    createTile: function (coords, done) {
-      var tile = document.createElement("img");
-      L.DomEvent.on(tile, "load", L.Util.bind(this._tileOnLoad, this, done, tile));
-      tile.onerror = function () {
-        if (tile._fellBack) { done(null, tile); return; }
-        tile._fellBack = true;
-        loadBase(isDark() ? "dark" : "light", function (store) {
-          var k = coords.z + "/" + coords.x + "/" + coords.y;
-          /* no packaged picture here (it covers Thailand only): report the failure, so the map's loading bar says the
-             map service is not answering and offers Try again, instead of a silently blank grey map */
-          if (store && store[k]) tile.src = store[k];
-          else { tile.classList.add("osap-tile-fail"); done(new Error("base map not answering"), tile); }
-        });
-      };
-      tile.alt = ""; tile.setAttribute("role", "presentation"); tile.fetchPriority = "high";   /* the base map before the data downloads */
-      tile.src = this.getTileUrl(coords);
-      return tile;
-    }
-  });
-
   /* Imagery tiles that go closer than the source has pictures for. The host is asked with blankTile=false, so a missing
      close-up comes back as 404 instead of a grey "Map data not yet available" square; the tile then shows the nearest
      wider tile that does exist (up to 3 levels up), enlarged and cropped to fit. Zooming in past the sharpest picture
@@ -1375,26 +1325,23 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   map.createPane("lblpane"); map.getPane("lblpane").style.zIndex = 670; map.getPane("lblpane").style.pointerEvents = "none";
   map.getPane("tooltipPane").style.zIndex = 680;
 
-  /* Esri ships a purpose-built canvas for each theme. Inverting the light one
-     produced a near-black map, so each theme gets its own tiles instead. */
-  var ESRI = "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_{v}_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+  /* The default Grey map: OpenFreeMap's OpenStreetMap vector tiles in a plain light or dark style (Positron / Dark), drawn on the
+     device by VectorBase below with every label left off, so OSAP's own names and markers read cleanly on it. Free, no key,
+     commercial use allowed with credit; it replaced the Esri canvas (whose terms need a paid plan to sell, and forbid packaging
+     its tiles) on 2026-10-17. If the drawing engine cannot start, the plain OpenStreetMap tiles stand in, greyed to match. */
+  var GREY = { light: "https://tiles.openfreemap.org/styles/positron", dark: "https://tiles.openfreemap.org/styles/dark" };
+  var OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  var OFM_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>';
   function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
-  function isDark() { return theme() !== "light"; } /* Grey and Dark both use the dark canvas; Grey lifts it to slate with --base-filter */
-  /* Esri serves every zoom; only the packaged offline copy starts at zoom 6. Forcing zoom-6 tiles on a zoomed-out
-     world view asked for thousands of tiles at once and froze the page (Russia, Canada) */
-  var baseLayer = new Hybrid(ESRI.replace("{v}", isDark() ? "Dark" : "Light"),
-    { maxNativeZoom: 9, maxZoom: 13, className: "basefilter",
-      attribution: "Powered by Esri · Esri, HERE, Garmin, FAO, NOAA, USGS" }).addTo(map);
-  function syncBasemap() {
-    var want = ESRI.replace("{v}", isDark() ? "Dark" : "Light");
-    if (baseLayer._url !== want) { baseLayer.setUrl(want); baseLayer.redraw(); }
-  }
+  function isDark() { return theme() !== "light"; } /* Grey and Dark both use the dark style; Grey lifts it to slate with --base-filter */
+  var baseLayer = null;   /* made once VectorBase is defined (below) */
+  function syncBasemap() { if (baseLayer) baseLayer.setStyle(GREY[isDark() ? "dark" : "light"]); }
 
   /* ---------- map layers: base map choice, flood overlays with one opacity slider, road closures ----------
      Every choice here is a display layer only (tiles drawn by their publishers); nothing is added to the record list.
      The choice is remembered on this device. */
   var BASES = {
-    grey: { name: "Grey", note: "Esri canvas, follows the light or dark theme" },
+    grey: { name: "Grey", note: "Plain OpenStreetMap map with no labels, follows the light or dark theme" },
     /* drawn on the device from OpenFreeMap's OpenStreetMap vector tiles so every name can be shown in English (see VectorBase);
        if the drawing engine cannot start, the plain OpenStreetMap tiles (names in local script) stand in */
     streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names, labelled in English",
@@ -1455,28 +1402,45 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     });
     return st;
   }
+  /* plain: drop every label (symbol) layer, for the Grey map */
+  function plainStyle(st) { st.layers = (st.layers || []).filter(function (l) { return l.type !== "symbol"; }); return st; }
+  function styleFor(o, st) { return o.plain ? plainStyle(st) : englishStyle(st); }
+  function getStyle(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error("style " + r.status); return r.json(); }); }
   var VectorBase = L.Layer.extend({
     PAD: 0.15,
     initialize: function (styleUrl, o) { this._styleUrl = styleUrl; L.setOptions(this, o); },
+    /* the theme changed: the other style of the same map */
+    setStyle: function (u) {
+      if (u === this._styleUrl) return;
+      var self = this, map = this._map; this._styleUrl = u;
+      if (!map || !this._gl) return;
+      getStyle(u).then(function (st) { if (self._map === map && self._gl && self._styleUrl === u) self._gl.setStyle(styleFor(self.options, st)); }).catch(function () {});
+    },
     onAdd: function (map) {
       var self = this;
-      this._box = L.DomUtil.create("div", "leaflet-layer leaflet-zoom-animated osap-vbase");
+      if (/[?&]watchscan=1(&|$)/.test(location.search)) return;   /* hidden watch-check copies never show their map (see above) */
+      this._box = L.DomUtil.create("div", "leaflet-layer leaflet-zoom-animated osap-vbase" + (this.options.className ? " " + this.options.className : ""));
       this._box.style.position = "absolute"; this._box.style.zIndex = 0; this._box.style.pointerEvents = "none";
       var tp = map.getPane("tilePane"); tp.insertBefore(this._box, tp.firstChild);
       map.on("move zoom resize viewreset", this._update, this);
       map.on("zoomanim", this._anim, this);
       this._update();
-      Promise.all([loadMapLibre(), fetch(this._styleUrl).then(function (r) { if (!r.ok) throw new Error("style " + r.status); return r.json(); })])
+      Promise.all([loadMapLibre(), getStyle(this._styleUrl)])
         .then(function (a) {
           if (self._map !== map) return;
-          self._gl = new a[0].Map({ container: self._box, style: englishStyle(a[1]), interactive: false, attributionControl: false,
+          self._gl = new a[0].Map({ container: self._box, style: styleFor(self.options, a[1]), interactive: false, attributionControl: false,
             center: [0, 0], zoom: 0, fadeDuration: 0, maxZoom: 22 });
-          self._gl.on("error", function () {});   /* a missing tile is not fatal; the engine keeps drawing the rest */
+          /* a missing tile is not fatal; the engine keeps drawing the rest. But when the tile host answers nothing at all
+             (blocked, down), the plain tiles stand in so the map is never left blank and the loading bar can name the service */
+          var errs = 0;
+          self._gl.on("data", function (e) { if (e.tile) self._tilesOk = true; });
+          self._gl.on("error", function () { if (++errs >= 8 && !self._tilesOk && self._map === map) self._fail(); });
           self._update();
         })
         .catch(function () { if (self._map === map) self._fail(); });
     },
     onRemove: function (map) {
+      if (!this._box) return;
       map.off("move zoom resize viewreset", this._update, this);
       map.off("zoomanim", this._anim, this);
       if (this._gl) { try { this._gl.remove(); } catch (e) {} this._gl = null; }
@@ -1488,7 +1452,11 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     /* no engine (old phone, no WebGL, offline before the style was saved): the plain OpenStreetMap tiles instead */
     _fail: function () {
       if (this._fb || !this.options.fallback) return;
-      this._fb = L.tileLayer(this.options.fallback, { maxNativeZoom: this.options.max, maxZoom: this._map.getMaxZoom(), attribution: "" }).addTo(this._map);
+      if (this._box) this._box.style.visibility = "hidden";
+      this._fb = L.tileLayer(this.options.fallback, { maxNativeZoom: this.options.max, maxZoom: this._map.getMaxZoom(), attribution: "",
+        className: this.options.fbClass || "" });
+      /* marked, so the map's loading bar (assets/osap-maploading.js) still counts a picture that failed before it started watching */
+      this._fb.on("tileerror", function (e) { if (e.tile) e.tile.classList.add("osap-tile-fail"); }).addTo(this._map);
       this._fb.bringToBack();
     },
     _update: function () {
@@ -1512,6 +1480,8 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     }
   });
   window.OSAP_ENGLISH_STYLE = englishStyle;
+  baseLayer = new VectorBase(GREY[isDark() ? "dark" : "light"], { plain: true, className: "basefilter", fallback: OSM_TILES, max: 19, fbClass: "osap-greyfb",
+    attribution: OFM_ATTR });   /* added by setBase below only when Grey is the chosen map, so another choice never loads the engine */
 
   function mlGet() { try { return JSON.parse(localStorage.getItem("asap-map-layers")) || {}; } catch (e) { return {}; } }
   function mlSet() { try { localStorage.setItem("asap-map-layers", JSON.stringify(ML)); } catch (e) {} }
@@ -1756,7 +1726,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       var r = document.querySelector('input[name="ml-base"][value="' + k + '"]'); if (r) r.checked = true;
     }
   };
-  if (ML.base !== "grey") setBase(ML.base);
+  setBase(ML.base);
   Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
   Object.keys(HSX).forEach(function (k) { if (ML["hs_" + k]) setShade(k, true); });
   /* records exist only once the page has built them (window.TSAP); draw saved road markers after that */
@@ -4943,7 +4913,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var CREDITS = [
     ["Map", [
       ['Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, available under the Open Database License (ODbL).'],
-      ['Background map: Powered by <a href="https://www.esri.com/">Esri</a>. Sources: Esri, HERE, Garmin, FAO, NOAA, USGS.'],
+      ['Grey background map: vector tiles and Positron / Dark styles by <a href="https://openfreemap.org/">OpenFreeMap</a> (free, no key, commercial use allowed) &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data from OpenStreetMap.'],
       ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
       ['Streets base map: vector tiles and style by <a href="https://openfreemap.org/">OpenFreeMap</a> (free, no key) &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data from OpenStreetMap; labels shown in English where OpenStreetMap records an English or Latin-letter name. Drawn with <a href="https://maplibre.org/">MapLibre GL JS</a> (BSD-3-Clause). If it cannot be drawn, tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation stand in, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],

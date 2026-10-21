@@ -618,12 +618,12 @@ async function openPlan(p) {
     !pc.h3.some((h) => /^(2\. Receiving|5\. Evacuation landing|7\. Health|8\. Evacuation weather)/.test(h)) && pc.a === 0 && pc.src && !pc.srcList, "phase 6: Print CONOP is the operational plan only, with the fingerprint and without the annex material " + JSON.stringify(pc.h3));
   ok(split === await p.evaluate(() => !!document.querySelector("#brief .mpairmap img")), "air map: the CONOP carries the same air evacuation map as the annex");
   ok(/basemap could not be loaded/.test(await p.textContent("#mpd-cap")), "print map: with no tile host reachable the caption says the basemap could not be loaded");
-  /* Shane 2026-10-09: most OpenStreetMap tiles of the CONOP map never came back on his iPhone. Six at a time; a failed tile is asked for again, then taken from Esri's street map */
+  /* Shane 2026-10-09: most OpenStreetMap tiles of the CONOP map never came back on his iPhone. Six at a time; a failed tile is asked for again, then left grey (Esri's street map stood in until 2026-10-17; its terms need a paid plan for a sold product) */
   Object.assign(TILES, { mode: "half", osm: 0, esri: 0, now: 0, max: 0 });
   await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || "") && !/Drawing the map/.test(document.getElementById("mpd-cap").textContent), null, { timeout: 60000 });
   const tc = await p.textContent("#mpd-cap");
-  ok(TILES.osm > 0 && TILES.max <= 6 && TILES.esri > 0 && /Some squares are from Esri's street map/.test(tc) && !/could not be loaded/.test(tc), "print map: tiles load six at a time and a tile OpenStreetMap fails comes from Esri's street map, said in the caption " + JSON.stringify(TILES) + " " + tc.slice(0, 120));
+  ok(TILES.osm > 0 && TILES.max <= 6 && TILES.esri === 0 && /could not be loaded and are left grey/.test(tc), "print map: tiles load six at a time; a tile OpenStreetMap fails is left grey and the caption says so (no Esri stand-in since 2026-10-17) " + JSON.stringify(TILES) + " " + tc.slice(0, 120));
   /* let the annex maps of the last view finish before counting again */
   for (let n = -1; n !== TILES.osm + TILES.esri; ) { n = TILES.osm + TILES.esri; await p.waitForTimeout(1500); }
   Object.assign(TILES, { mode: "osm", osm: 0, esri: 0 });
