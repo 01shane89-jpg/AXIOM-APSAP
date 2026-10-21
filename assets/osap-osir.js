@@ -49,7 +49,7 @@
   }
 
   /* ---------- the window: what the report covers ---------- */
-  var BOX = null, S = { cc: "", region: "", scope: "", from: "", to: "", subject: "", subjectSet: false, by: "", summary: "", data: null, seq: 0 };
+  var BOX = null, S = { cc: "", region: "", scope: "", kw: "", kwName: "", from: "", to: "", subject: "", subjectSet: false, by: "", summary: "", data: null, seq: 0 };
   /* analyst sections: free text the preparer types, plus graded claims and outside sources; in memory only */
   var REL = ["A", "B", "C", "D", "E", "F"], CRED = ["1", "2", "3", "4", "5", "6"], CONF = ["HIGH", "MODERATE", "LOW"], MAXROWS = 30;
   var RELN = { A: "Completely reliable", B: "Usually reliable", C: "Fairly reliable", D: "Not usually reliable", E: "Unreliable", F: "Reliability cannot be judged" };
@@ -81,7 +81,9 @@
 "#osirdlg details.osx{grid-column:1/-1;border:1px solid var(--line);border-radius:6px;padding:6px 10px}#osirdlg details.osx>summary{cursor:pointer;font-weight:600;min-height:32px;line-height:32px}" +
       "#osirdlg .osx .osg{margin:6px 0}#osirdlg .osrow{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) 70px 70px 44px;gap:6px;align-items:end;border-top:1px dashed var(--line);padding-top:6px}" +
       "#osirdlg .osrow .osw2{grid-column:1/-1}#osirdlg .osrow button{min-height:38px;min-width:44px}#osirdlg .osadd{justify-self:start}" +
-      "@media (max-width:520px){#osirdlg{padding:8px}#osirdlg .osg{grid-template-columns:minmax(0,1fr)}#osirdlg .osrow{grid-template-columns:minmax(0,1fr) 64px 64px 44px}}" +
+      "#osirdlg .oskw{display:flex;flex-direction:column;gap:6px}#osirdlg .oskwr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}" +
+      "#osirdlg .oskw small{font-size:12px;line-height:1.4}#osirdlg .oskwe{color:var(--bad);font-weight:600}" +
+      "@media (max-width:520px){#osirdlg{padding:8px}#osirdlg .osg,#osirdlg .oskwr{grid-template-columns:minmax(0,1fr)}#osirdlg .osrow{grid-template-columns:minmax(0,1fr) 64px 64px 44px}}" +
       /* the report: the Timeline report's styles (.tlr) plus the OSIR's own banner, field table and closing line */
       ".tlr.osir .osban{background:#007a33;color:#fff;text-align:center;font:700 10.5px/1.9 system-ui,sans-serif;letter-spacing:.16em;margin:0 0 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
       ".tlr.osir .osban.end{margin:16px 0 0}.tlr.osir table.osf{width:100%;border-collapse:collapse;margin:0 0 6px}" +
@@ -102,7 +104,7 @@
     var o = { scope: S.scope, from: S.from, to: S.to };
     if (S.region === "@area") { var A = W.TSAP.areaApi, P = A && A.area && A.area(); if (P && P.length >= 3) o.area = P; }
     else if (S.region) o.prov = S.region;
-    return o;
+    return CT().opts(S, o);
   }
   function regionText(d) { return S.region === "@area" ? "the drawn area in " + d.country : S.region ? S.region + ", " + d.country : d.country; }
   function autoSubject(d) { return d.scope && d.scope.label && S.scope ? d.scope.label + ", " + regionText(d) : "Open source reporting on " + regionText(d); }
@@ -112,7 +114,9 @@
     for (var i = 0; i < PRESETS.length - 1; i++) if (S.from === iso(Date.now() - (+PRESETS[i][0] - 1) * 864e5)) return PRESETS[i][0];
     return "";
   }
-  function draw() {
+  function CT() { return W.OSAP_TLREPORT.custom; }
+  function draw() { CT().keepFocus(BOX, draw0); }
+  function draw0() {
     var d = S.data, cs = (W.OSAP_COUNTRIES || []).slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
     var sel = function (v, cur) { return v === cur ? " selected" : ""; };
     if (d && !S.subjectSet) S.subject = autoSubject(d);
@@ -120,13 +124,16 @@
       (d ? d.provinces.map(function (p) { return '<option value="' + esc(p[0]) + '"' + sel(p[0], S.region) + ">" + esc(p[0]) + " (" + p[1] + ")</option>"; }).join("") : "");
     var note, bad = false, pr = presetOf();
     if (!d) note = "Reading the records…";
-    else if (!d.recs.length) { note = "No dated records match. Widen the dates, or pick another topic or region."; bad = true; }
+    else if (d.scope.kwEmpty) { note = "Type the words for your topic; the count updates as you type."; bad = true; }
+    else if (d.scope.kw && !d.scope.kwOk) { note = "The words cannot be read, so nothing matches yet."; bad = true; }
+    else if (!d.recs.length) { note = "No dated records match. Widen the dates, or pick another topic or region" + (d.scope.kw ? ", or change the words" : "") + "."; bad = true; }
     else note = "<b>" + pl(d.total, "record") + "</b> match" + (d.total === 1 ? "es" : "") + (d.total > d.recs.length ? "; the report covers the latest " + d.recs.length + ", dated " : ", dated ") + esc(d.period) + "; " + pl(d.keyEv.length, "key event") + ".";
     BOX.innerHTML = '<div class="cbox"><div class="chead"><h2 id="os-h">OSIR (Open Source Intelligence Report)</h2><button type="button" class="x" id="os-x" aria-label="Close">×</button></div>' +
       '<p class="obs" style="margin:2px 0 0">Subject, date generated, countries, OSINT disclaimer, summary, main content, end of report, attachments, contributors and sources, from what OSAP holds. Choose what it covers.</p>' +
       '<div class="osg"><label>Country<select id="os-cc">' + cs.map(function (c) { return '<option value="' + esc(c.id) + '"' + sel(c.id, S.cc) + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" +
       '<label>Region<select id="os-reg">' + regs + "</select></label>" +
-      '<label class="osw">Topic<select id="os-top">' + (d ? d.scopes.map(function (x) { return '<option value="' + esc(x.v) + '"' + sel(x.v, S.scope) + ">" + esc(x.label) + "</option>"; }).join("") : "") + "</select></label>" +
+      '<label class="osw">Topic<select id="os-top">' + (d ? d.scopes.map(function (x) { return '<option value="' + esc(x.v) + '"' + sel(x.v, S.scope) + ">" + esc(x.label) + "</option>"; }).join("") : "") +
+        '<option value="' + CT().opt + '"' + sel(CT().opt, S.scope) + ">" + esc(CT().label) + "</option></select></label>" + CT().html("os", S, d) +
       '<div class="osw"><div class="osp" role="group" aria-label="Dates">' + PRESETS.map(function (p) { return '<button type="button" data-osp="' + p[0] + '"' + (pr === p[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + ">" + p[1] + "</button>"; }).join("") + "</div></div>" +
       '<label>From<input type="date" id="os-from" value="' + esc(S.from) + '"></label><label>To<input type="date" id="os-to" value="' + esc(S.to) + '"></label>' +
       '<label class="osw">Subject<input type="text" id="os-subj" maxlength="200" value="' + esc(S.subject) + '"></label>' +
@@ -139,6 +146,7 @@
     BOX.querySelector("#os-cc").onchange = function () { switchCountry(this.value); };
     BOX.querySelector("#os-reg").onchange = function () { S.region = this.value; refresh(); };
     BOX.querySelector("#os-top").onchange = function () { S.scope = this.value; refresh(); };
+    CT().bind(BOX, "os", S, refresh);
     BOX.querySelector("#os-from").onchange = function () { S.from = this.value; refresh(); };
     BOX.querySelector("#os-to").onchange = function () { S.to = this.value; refresh(); };
     BOX.querySelector("#os-subj").oninput = function () { S.subject = this.value; S.subjectSet = !!this.value.trim(); };
@@ -200,7 +208,7 @@
     var n = ++S.seq; S.data = null; draw();
     W.OSAP_TLREPORT.data(opts(), function (d) {
       if (n !== S.seq || !BOX || BOX.hidden) return;
-      if (S.scope && !d.scopes.some(function (x) { return x.v === S.scope; })) d.scopes.push({ v: S.scope, label: d.scope.label || S.scope });
+      if (S.scope && S.scope !== CT().opt && !d.scopes.some(function (x) { return x.v === S.scope; })) d.scopes.push({ v: S.scope, label: d.scope.label || S.scope });
       if (S.region && S.region !== "@area" && !d.provinces.some(function (p) { return p[0] === S.region; })) d.provinces.push([S.region, 0]);
       S.data = d; draw();
     });
@@ -220,7 +228,7 @@
       D.body.appendChild(BOX);
     }
     var p = appPeriod(), tl = W.TSAP.timeline ? W.TSAP.timeline() : null, v = (location.hash || "").replace("#", "").split("/").pop();
-    S.cc = W.TSAP.country; S.region = areaOn() ? "@area" : ""; S.from = p.from; S.to = p.to; S.subject = ""; S.subjectSet = false; S.summary = ""; S.by = getLS(WHO); anReset();
+    S.cc = W.TSAP.country; S.region = areaOn() ? "@area" : ""; S.from = p.from; S.to = p.to; S.subject = ""; S.subjectSet = false; S.summary = ""; S.by = getLS(WHO); anReset(); CT().load(S);
     /* the topic on screen: an open conflict tab, else the open data set, else everything */
     S.scope = tl && tl.cf ? "cf-" + tl.cf : v && v !== "timeline" && v !== "alerts" ? v : "";
     if (pre) { ["from", "to", "scope", "region"].forEach(function (k) { if (pre[k] != null) S[k] = pre[k]; }); }
@@ -299,7 +307,7 @@
       '<header class="tlrh"><img src="' + esc((D.querySelector(".brand .logo") || {}).src || "assets/logo.png") + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Open Source Intelligence Report</div><h2>OSIR</h2>' +
       '<div class="tlrsubt">' + esc(no) + "</div></div></header><div class=\"tlrrule\"></div>" +
       /* 1-3: Subject, Date generated, Country/s */
-      '<table class="osf"><tbody><tr><th scope="row">Subject</th><td><b data-osf="subject">' + esc(o.subject) + '</b><br><small>Covers ' + esc(d.scope && d.scope.label && S.scope ? d.scope.label : "all reporting") + ", " + esc(period) + "</small></td></tr>" +
+      '<table class="osf"><tbody><tr><th scope="row">Subject</th><td><b data-osf="subject">' + esc(o.subject) + '</b><br><small>Covers ' + esc(d.scope && d.scope.label && S.scope ? d.scope.label : "all reporting") + ", " + esc(period) + (d.scope && d.scope.kw ? '; custom topic: records whose text matches <span data-osf="words">' + esc(d.scope.kw) + "</span>" : "") + "</small></td></tr>" +
       '<tr><th scope="row">Date generated</th><td data-osf="generated">' + esc(dtg(now)) + " · " + esc(gen) + "</td></tr>" +
       '<tr><th scope="row">Country/s</th><td data-osf="countries">' + esc(d.country) + (S.region ? " (" + esc(S.region === "@area" ? "drawn area" : S.region) + ")" : "") + "</td></tr></tbody></table>" +
       /* 4: OSINT disclaimer */

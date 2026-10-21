@@ -42,7 +42,8 @@
   function recWhen(r) { var w = r.__tlw; return w.timed ? dtg(w.ms) : fmtShort(w.day) + " (date only)"; }
 
   /* ---------- the window ---------- */
-  var BOX = null, S = { cc: "", region: "", scope: "", from: "", to: "", busy: false, data: null, seq: 0 };
+  var BOX = null, S = { cc: "", region: "", scope: "", kw: "", kwName: "", from: "", to: "", busy: false, data: null, seq: 0 };
+  function CT() { return W.OSAP_TLREPORT.custom; }
   function css() {
     if (D.getElementById("ib-css")) return;
     var st = D.createElement("style"); st.id = "ib-css";
@@ -58,8 +59,10 @@
       "#ibdlg .ibp button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}" +
       "#ibdlg .ibn{background:var(--surface2);border-left:3px solid var(--accent);padding:7px 10px;margin:8px 0;min-height:20px}" +
       "#ibdlg .ibn.bad{border-left-color:var(--bad)}#ibdlg .ibb{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}#ibdlg .ibb button{min-height:42px}" +
+      "#ibdlg .ibkw{display:flex;flex-direction:column;gap:6px}#ibdlg .ibkwr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}" +
+      "#ibdlg .ibkw small{font-size:12px;line-height:1.4}#ibdlg .ibkwe{color:var(--bad);font-weight:600}" +
       "#ibdlg ul.ibs{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:12px}" +
-      "@media (max-width:520px){#ibdlg{padding:8px}#ibdlg .ibg{grid-template-columns:minmax(0,1fr)}}";
+      "@media (max-width:520px){#ibdlg{padding:8px}#ibdlg .ibg,#ibdlg .ibkwr{grid-template-columns:minmax(0,1fr)}}";
     D.head.appendChild(st);
   }
   function locked() { var T = W.OSAP_TIER; return !!(T && T.on && T.on() && T.allows && !T.allows("full")); }
@@ -82,7 +85,7 @@
     var o = { scope: S.scope, from: S.from, to: S.to };
     if (S.region === "@area") { var A = W.TSAP.areaApi, P = A && A.area && A.area(); if (P && P.length >= 3) o.area = P; }
     else if (S.region) o.prov = S.region;
-    return o;
+    return CT().opts(S, o);
   }
   function regionLabel(d) {
     if (S.region === "@area") return "Drawn area in " + d.country;
@@ -91,24 +94,29 @@
   function topicLabel(d) { return d.scope && d.scope.label ? d.scope.label : "All reporting"; }
   function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area() && A.area().length >= 3); }
 
-  function draw() {
+  function draw() { CT().keepFocus(BOX, draw0); }
+  function draw0() {
     var d = S.data, cs = (W.OSAP_COUNTRIES || []).slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
     var sel = function (v, cur) { return v === cur ? " selected" : ""; };
     var ctry = '<select id="ib-cc">' + cs.map(function (c) { return '<option value="' + esc(c.id) + '"' + sel(c.id, S.cc) + ">" + esc(c.name) + "</option>"; }).join("") + "</select>";
     var regs = '<option value="">All of ' + esc(d ? d.country : "the country") + "</option>" + (areaOn() ? '<option value="@area"' + sel("@area", S.region) + ">Drawn area on the map</option>" : "") +
       (d ? d.provinces.map(function (p) { return '<option value="' + esc(p[0]) + '"' + sel(p[0], S.region) + ">" + esc(p[0]) + " (" + p[1] + ")</option>"; }).join("") : "");
     var tops = d ? d.scopes.map(function (x) { return '<option value="' + esc(x.v) + '"' + sel(x.v, S.scope) + ">" + esc(x.label) + "</option>"; }).join("") : "";
+    tops += '<option value="' + CT().opt + '"' + sel(CT().opt, S.scope) + ">" + esc(CT().label) + "</option>";
     var pr = presetOf();
     var note, bad = false;
     if (locked()) { note = "The PowerPoint brief is part of the Full plan."; bad = true; }
     else if (!d) note = "Reading the records…";
-    else if (!d.recs.length) { note = "No dated records match. Widen the dates, or pick another topic or region."; bad = true; }
+    else if (d.scope.kwEmpty) { note = "Type the words for your topic; the count updates as you type."; bad = true; }
+    else if (d.scope.kw && !d.scope.kwOk) { note = "The words cannot be read, so nothing matches yet."; bad = true; }
+    else if (!d.recs.length) { note = "No dated records match. Widen the dates, or pick another topic or region" + (d.scope.kw ? ", or change the words" : "") + "."; bad = true; }
     else note = "<b>" + pl(d.total, "record") + "</b> match" + (d.total === 1 ? "es" : "") + (d.total > d.recs.length ? "; the deck covers the latest " + d.recs.length + ", dated " : ", dated ") + esc(d.period) + "; " + pl(d.keyEv.length, "key event") + ". " +
       "The deck will have about " + slideCount(d) + " slides.";
     BOX.innerHTML = '<div class="cbox"><div class="chead"><h2 id="ib-h">Intelligence brief (PowerPoint)</h2><button type="button" class="x" id="ib-x" aria-label="Close">×</button></div>' +
       '<p class="obs" style="margin:2px 0 0">A briefing deck from what OSAP holds: bottom line, trend, map, key events, slides for your judgments, and every source with its link and SHA-256. Choose what it covers.</p>' +
       '<div class="ibg"><label>Country' + ctry + '</label><label>Region<select id="ib-reg">' + regs + "</select></label>" +
       '<label class="ibw">Topic<select id="ib-top">' + tops + "</select></label>" +
+      CT().html("ib", S, d) +
       '<div class="ibw"><div class="ibp" role="group" aria-label="Dates">' + PRESETS.map(function (p) { return '<button type="button" data-ibp="' + p[0] + '"' + (pr === p[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + ">" + p[1] + "</button>"; }).join("") + "</div></div>" +
       '<label>From<input type="date" id="ib-from" value="' + esc(S.from) + '"></label><label>To<input type="date" id="ib-to" value="' + esc(S.to) + '"></label></div>' +
       '<div class="ibn' + (bad ? " bad" : "") + '" id="ib-note" aria-live="polite">' + note + "</div>" +
@@ -123,6 +131,7 @@
     BOX.querySelector("#ib-cc").onchange = function () { switchCountry(this.value); };
     BOX.querySelector("#ib-reg").onchange = function () { S.region = this.value; refresh(); };
     BOX.querySelector("#ib-top").onchange = function () { S.scope = this.value; refresh(); };
+    CT().bind(BOX, "ib", S, refresh);
     BOX.querySelector("#ib-from").onchange = function () { S.from = this.value; refresh(); };
     BOX.querySelector("#ib-to").onchange = function () { S.to = this.value; refresh(); };
     Array.prototype.forEach.call(BOX.querySelectorAll("[data-ibp]"), function (b) {
@@ -138,7 +147,7 @@
     W.OSAP_TLREPORT.data(opts(), function (d) {
       if (n !== S.seq || !BOX || BOX.hidden) return;
       /* a choice with no records in these dates stays chosen (the count says 0) rather than jumping to another */
-      if (S.scope && !d.scopes.some(function (x) { return x.v === S.scope; })) d.scopes.push({ v: S.scope, label: d.scope.label || S.scope });
+      if (S.scope && S.scope !== CT().opt && !d.scopes.some(function (x) { return x.v === S.scope; })) d.scopes.push({ v: S.scope, label: d.scope.label || S.scope });
       if (S.region && S.region !== "@area" && !d.provinces.some(function (p) { return p[0] === S.region; })) d.provinces.push([S.region, 0]);
       S.data = d; draw();
     });
@@ -158,7 +167,7 @@
       D.body.appendChild(BOX);
     }
     var p = appPeriod(), tl = W.TSAP.timeline ? W.TSAP.timeline() : null;
-    S.cc = W.TSAP.country; S.region = areaOn() ? "@area" : ""; S.from = p.from; S.to = p.to; S.busy = false;
+    S.cc = W.TSAP.country; S.region = areaOn() ? "@area" : ""; S.from = p.from; S.to = p.to; S.busy = false; CT().load(S);
     /* the topic on screen: an open conflict tab, else the open data set, else everything */
     var v = (location.hash || "").replace("#", "").split("/").pop();
     S.scope = tl && tl.cf ? "cf-" + tl.cf : v && v !== "timeline" && v !== "alerts" ? v : "";
@@ -504,7 +513,7 @@
     var bl = pl(T.length, "report") + " on " + (topic === "All reporting" ? "all topics" : topic) + " in " + region + ", " + periodTxt + ", from " + pl(srcs.length, "source") + "." +
       (ser && ser.peakN > 1 ? " Busiest " + (ser.weekly ? "week: " : "month: ") + ser.peak + " (" + ser.peakN + ")." : "") +
       (K.length ? " " + pl(K.length, "key event") + (multi ? ", " + multi + " reported by two or more sources." : ".") : "");
-    var prov = "Built by AXIOM OSAP in the browser at " + DTG + " from the records OSAP held for " + country + " (topic: " + topic + "; region: " + region + "; dates " + periodTxt + "). " +
+    var prov = "Built by AXIOM OSAP in the browser at " + DTG + " from the records OSAP held for " + country + " (topic: " + topic + (d.scope && d.scope.kw ? ", a custom topic: records whose text matches " + d.scope.kw : "") + "; region: " + region + "; dates " + periodTxt + "). " +
       "Counts and key events are picked by fixed rules (no AI). Report fingerprint (SHA-256 over the " + T.length + " record fingerprints in Annex A, in order): " + (a.fp.all || "not computed") + ".";
 
     /* 1. title */

@@ -122,6 +122,9 @@
     if (A && A.posFmt) h += seg("fmt", "Grid format", [["mgrs", "MGRS"], ["dd", "Lat/long"], ["dms", "DMS"]], A.posFmt());
     if (M && M.prefs) h += seg("unit", "Distance units", [["km", "km"], ["mi", "miles"], ["nm", "nautical mi"]], M.prefs().unit);
     if (LOC) h += '<label class="tpchk"><input type="checkbox" data-tset="loc"' + (LOC.on() ? " checked" : "") + '> Use my location<span>Kept on this device only</span></label>';
+    /* protected mode: the page contacts no outside service itself; maps, weather and search go through OSAP (assets/osap-protect.js) */
+    if (W.OSAP_PROTECT) h += '<label class="tpchk"><input type="checkbox" data-tset="protect"' + (W.OSAP_PROTECT.on() ? " checked" : "") + '> Protected mode<span>' +
+      "Outside services never see this device: maps, weather and search go through OSAP. Cameras, sync, push and AI download stay off. Reloads OSAP</span></label>";
     /* saving maps and data on this device for use with no signal (assets/osap-offline.js) */
     if (W.OSAP_OFFLINE) h += '<button type="button" role="menuitem" data-tp="@off">Offline maps and data</button>';
     /* carrying saved data to another device in a passphrase-locked file, no account (assets/osap-move.js) */
@@ -224,7 +227,9 @@
     else press(sel);
   });
   pop.addEventListener("change", function (e) {
-    var c = e.target; if (c.getAttribute("data-tset") !== "loc" || !W.OSAP_LOC) return;
+    var c = e.target;
+    if (c.getAttribute("data-tset") === "protect" && W.OSAP_PROTECT) { W.OSAP_PROTECT.set(c.checked); return; }
+    if (c.getAttribute("data-tset") !== "loc" || !W.OSAP_LOC) return;
     if (c.checked) { popClose(); W.OSAP_LOC.use(); } else W.OSAP_LOC.off();
   });
   /* picking a period closes its menu so the map shows the new set of points (Custom stays open for its dates) */
