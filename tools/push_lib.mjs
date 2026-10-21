@@ -10,6 +10,23 @@ const BOOLQ = createRequire(import.meta.url)("../assets/osap-boolq.js");
 export const FILE = "data/push/watches.json";
 export const MAX_WATCHES = 25, MAX_AREA_POINTS = 150, MAX_WORDS = 20, MAX_LAYERS = 30;
 
+// The push watches now live on OSAP's server (netlify/functions/osap-push.mjs), not in this public repository. In the refresh
+// job (with "permissions: id-token: write") the list is fetched with a GitHub Actions OIDC token for audience "osap-push",
+// which the server checks came from this repository's main branch: no shared secret. Each watch is checked with validate()
+// before use. Outside Actions (tests, a run by hand) the local file FILE is read, if there is one.
+export const PUSH_API = process.env.PUSH_API || "https://axiom-osap.netlify.app/api/osap-push";
+export async function fetchList() {
+  const url = process.env.ACTIONS_ID_TOKEN_REQUEST_URL, rt = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+  if (!url || !rt) return readList();
+  const t = await fetch(url + (url.includes("?") ? "&" : "?") + "audience=osap-push", { headers: { authorization: "Bearer " + rt } }).then((r) => r.json());
+  if (!t || !t.value) throw new Error("no Actions token");
+  const r = await fetch(PUSH_API, { headers: { authorization: "Bearer " + t.value, "x-osap-caller": "actions" }, signal: AbortSignal.timeout(20000) });
+  if (!r.ok) throw new Error("push list " + r.status);
+  const o = await r.json();
+  const watches = [];
+  for (const w of (o && Array.isArray(o.watches) ? o.watches : [])) { const v = validate(w); if (v.watch) watches.push(v.watch); else console.log("push: skipped a watch that does not check:", v.error); }
+  return { v: 1, watches };
+}
 export function readList() {
   try { const o = JSON.parse(fs.readFileSync(FILE, "utf8")); if (o && Array.isArray(o.watches)) return o; } catch (e) {}
   return { v: 1, watches: [] };

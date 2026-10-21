@@ -430,8 +430,8 @@ jobs:
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
           exit 1
 
-  # Push watches (tools/push_watches.mjs): after each refresh, every watch in data/push/watches.json (added from the app's Push to
-  # phone button) is checked by opening its country's page headless on the new data, and new matching reports are sent to the
+  # Push watches (tools/push_watches.mjs): after each refresh, every watch kept on OSAP's server (added from the app's Push to
+  # phone button; read with this job's GitHub OIDC token, so no secret, see tools/push_lib.mjs) is checked by opening its country's page headless on the new data, and new matching reports are sent to the
   # watch's ntfy.sh channel. No key or account: ntfy.sh takes anonymous posts. What was already seen is kept in the Actions cache,
   # not in the repo. "push-test" (any branch) sends the newest match of each watch once, marked [test], and keeps nothing.
   push:
@@ -441,13 +441,14 @@ jobs:
     timeout-minutes: 12
     permissions:
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
       - name: Any push watches?
         id: any
-        run: echo "n=$(node -e 'try{console.log(JSON.parse(require("fs").readFileSync("data/push/watches.json","utf8")).watches.length)}catch(e){console.log(0)}')" >> "$GITHUB_OUTPUT"
+        run: echo "n=$(node tools/push_count.mjs)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         if: ${{ steps.any.outputs.n != '0' }}
         with:

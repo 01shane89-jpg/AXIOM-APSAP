@@ -68,7 +68,7 @@ nav{font-size:14px;color:var(--mut)}nav a{margin-right:12px}
 <h2>5. Optional features that send data elsewhere</h2>
 <ul>
 <li><strong>Sync my devices.</strong> If you pair devices, your saved work is encrypted on your device with a key made from your sync code and posted to public Nostr relays (<span class="ph">[CURRENT RELAY LIST, e.g. nos.lol, relay.primal.net]</span>). The relays and we cannot read it. They see an anonymous key, the encrypted data's size and timing, and your IP address. Photos are not synced.</li>
-<li><strong>Push to phone.</strong> Alerts go through ntfy.sh to a random channel name made on your device. Anyone who knows that name can read the alerts. <span class="ph">[REWRITE: today a push watch's name, area and keywords are stored in the public GitHub repository; the paywall build should move them off the public repo before launch]</span></li>
+<li><strong>Push to phone.</strong> Alerts go through ntfy.sh to a random channel name made on your device. Anyone who knows that name can read the alerts, and ntfy.sh sees them. The watch itself (its name, area, words and channel) is kept on our server, readable only by the owner's account and OSAP's own refresh job; it is not published.</li>
 <li><strong>On-device AI model.</strong> If you tap Download, the model files are fetched once from Hugging Face, which sees your IP address.</li>
 <li><strong>Export and share.</strong> Files and links you export or share go wherever you send them.</li>
 </ul>
