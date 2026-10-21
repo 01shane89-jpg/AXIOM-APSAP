@@ -367,9 +367,9 @@
             (p.description ? "<div>" + esc(p.description) + "</div>" : "") +
             '<div class="cfm">' + (p.from || p.to ? esc(p.from || "?") + " to " + esc(p.to || "now") + "<br>" : "") +
             (p.claimed_by ? "Claimed by " + esc(p.claimed_by) + "<br>" : "") + (p.basis ? esc(p.basis) + "<br>" : "") +
-            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</div>" +
+            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") + "</div>" +
             (rs.length ? '<div class="cfm">Reports behind it:' + rs.map(function (r) {
-              return '<br><a href="' + url(r.link) + '" target="_blank" rel="noopener">' + esc(r.t) + "</a> (" + esc(r.outlet || "") + (r.date ? ", " + day(r.date) : "") + ")"; }).join("") +
+              return '<br><a href="' + url(r.link) + '" target="_blank" rel="noopener noreferrer">' + esc(r.t) + "</a> (" + esc(r.outlet || "") + (r.date ? ", " + day(r.date) : "") + ")"; }).join("") +
               ((p.reports || []).length > rs.length ? "<br>and " + ((p.reports || []).length - rs.length) + " more" : "") + "</div>" : "") +
             fpDiv(p.fp, "this area") + (p.fp ? "" : fpDiv(f.current.sha256, "the map version it comes from")), { maxWidth: 340 });
         } : null });
@@ -458,7 +458,7 @@
   // where a front-line or control marker comes from: the named source, when it was taken, and that version's fingerprint
   function frontSrc(f, v) {
     var c = v || f.current || {}, s = (f.sources || []).filter(function (x) { return x.id === c.source; })[0] || {};
-    return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
+    return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener noreferrer">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
       (c.taken ? ", read " + when(c.taken) : "") + "</div>" + fpDiv(c.sha256, "the map version this comes from");
   }
   // the key to what drawMap put on the map; shown in the map's own legend while this tab's panel is open
@@ -522,7 +522,7 @@
   function kindName(k) { var n = (cur.data && cur.data.kind_names) || (IDX && IDX.kind_names) || {}; return n[k] || k; }
   function repHtml(i, pop) {
     var t = i.title_en || i.title, orig = i.title_en && i.title_en !== i.title ? i.title : "";
-    return (pop ? "" : "") + '<a class="cft" href="' + url(i.link) + '" target="_blank" rel="noopener">' + esc(t) + "</a>" +
+    return (pop ? "" : "") + '<a class="cft" href="' + url(i.link) + '" target="_blank" rel="noopener noreferrer">' + esc(t) + "</a>" +
       (orig ? '<div class="cfm" lang="' + esc(i.lang || "") + '">' + esc(orig) + "</div>" : "") +
       '<div class="cfm">' + (i.tab ? '<span class="tag" title="A record of the country’s own ' + esc(i.tab) + ' layer, merged into this tab">' + esc(i.tab) + "</span>" +
         (i.ongoing ? '<span class="tag" title="A status that still holds; the date is when it began">Ongoing</span>' : "") : "") +
@@ -545,13 +545,13 @@
     o = o.filter(function (x) { var n = oname(x); if (seen[n]) return false; seen[n] = 1; return true; });
     return '<div class="cfm cfalso"><span class="tag claim" title="Reports grouped by machine as one incident: same kind, same place, within 36 hours, or near-identical headlines">' +
       (g.outlets.length > 1 ? "Reported by " + g.outlets.length + " outlets" : g.all.length + " reports") + "</span>" + (o.length ? "Also: " + o.map(function (x) {
-        return '<a href="' + url(x.link) + '" target="_blank" rel="noopener" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(oname(x) || "report") + "</a>"; }).join(" · ") : "") + "</div>";
+        return '<a href="' + url(x.link) + '" target="_blank" rel="noopener noreferrer" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(oname(x) || "report") + "</a>"; }).join(" · ") : "") + "</div>";
   }
   function ucdpHtml(e) {
     return "<b>" + esc(actors(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict)) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
       (e.end && e.end !== e.date ? " to " + day(e.end) : "") + "</div><div>" + esc(TYPEN[e.type] || "") + ". Deaths, UCDP best estimate: <b>" + num(e.best) + "</b> (range " + num(e.low) + " to " + num(e.high) + ")" +
       (e.civ ? ", of which civilians " + num(e.civ) : "") + ".</div>" + (e.headline ? '<div class="cfm">Source headline: ' + esc(e.headline) + "</div>" : "") +
-      '<div class="cfm">UCDP candidate event ' + esc(e.id) + ", provisional (revised by UCDP later). <a href=\"https://ucdp.uu.se/downloads/\" target=\"_blank\" rel=\"noopener\">UCDP</a>, CC BY 4.0</div>" +
+      '<div class="cfm">UCDP candidate event ' + esc(e.id) + ", provisional (revised by UCDP later). <a href=\"https://ucdp.uu.se/downloads/\" target=\"_blank\" rel=\"noopener noreferrer\">UCDP</a>, CC BY 4.0</div>" +
       '<div class="fp" title="SHA-256 fingerprint: ' + esc(e.fp || "") + '">SHA-256 ' + esc((e.fp || "").slice(0, 16)) + "…</div>";
   }
   function periodSel() {
@@ -681,7 +681,7 @@
         : "No machine-readable front-line or control source is known for this conflict, so no line is drawn. AXIOM OSAP does not draw lines itself.") + "</p>");
     } else {
       var cu = f.current, s = (f.sources || []).filter(function (x) { return x.id === cu.source; })[0] || {}, v = (f.versions || [])[0];
-      h.push('<p class="cfm"><b>Reported, not verified.</b> Source: <a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || cu.source) + "</a>" + (s.licence ? " (" + esc(s.licence) + ")" : "") +
+      h.push('<p class="cfm"><b>Reported, not verified.</b> Source: <a href="' + url(s.home) + '" target="_blank" rel="noopener noreferrer">' + esc(s.name || cu.source) + "</a>" + (s.licence ? " (" + esc(s.licence) + ")" : "") +
         (s.nc ? ' <span class="tag">nc</span>' : "") + ". Last changed " + when(v ? v.taken : cu.taken) + "; checked " + when(f.asof) + ".</p>");
       if (cu.kind === "areas" && cu.no_front) {
         // zones are not territory held, so their areas are not added up
@@ -703,17 +703,17 @@
       }).join("") + "</tbody></table></details>");
     }
     if (f && f.maps && f.maps.length) h.push("<h3>Control maps published in the feeds</h3><ol class=\"cfl\">" + f.maps.map(function (m) {
-      return '<li><a class="cft" href="' + url(m.link) + '" target="_blank" rel="noopener">' + esc(m.title) + '</a><div class="cfm">' + esc(m.outlet) + " · " + when(m.date) + "</div></li>"; }).join("") + "</ol>");
+      return '<li><a class="cft" href="' + url(m.link) + '" target="_blank" rel="noopener noreferrer">' + esc(m.title) + '</a><div class="cfm">' + esc(m.outlet) + " · " + when(m.date) + "</div></li>"; }).join("") + "</ol>");
     h.push("</div>");
     return h.join("");
   }
   function sourcesHtml(d, f) {
     var s = (d.sources || []).map(function (x) {
-      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + "</td><td>" + (x.url ? '<a href="' + url(x.url) + '" target="_blank" rel="noopener">' + esc(x.source) + "</a>" : esc(x.source || x.id)) +
+      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + "</td><td>" + (x.url ? '<a href="' + url(x.url) + '" target="_blank" rel="noopener noreferrer">' + esc(x.source) + "</a>" : esc(x.source || x.id)) +
         (x.nc ? ' <span class="tag">nc</span>' : "") + "</td><td>" + (x.ok ? (x.kept != null ? esc(x.kept) + " kept of " + esc(x.n) : esc(x.n) + " events") : esc(x.error || "")) + "</td></tr>";
     }).join("");
     var fs = f ? (f.sources || []).map(function (x) {
-      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + '</td><td><a href="' + url(x.home) + '" target="_blank" rel="noopener">' + esc(x.name) + "</a>" + (x.nc ? ' <span class="tag">nc</span>' : "") +
+      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + '</td><td><a href="' + url(x.home) + '" target="_blank" rel="noopener noreferrer">' + esc(x.name) + "</a>" + (x.nc ? ' <span class="tag">nc</span>' : "") +
         "</td><td>" + (x.ok ? esc(x.n) + (x.type === "wikimap" ? " town markers" : " areas") : esc(x.error || "")) + "</td></tr>";
     }).join("") : "";
     return '<div class="sec"><details><summary>Sources and how this tab is made</summary><p class="cfnote">Reports come from the national outlets the Local news tab reads, the conflict’s own outlets and Bing News searches, kept when they name this conflict and report violence or its direct effects. ' +

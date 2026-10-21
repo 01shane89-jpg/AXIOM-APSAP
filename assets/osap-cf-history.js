@@ -172,7 +172,7 @@
         "<div>" + esc(TYPEN[r[5]] || "") + ". Deaths, UCDP best estimate: <b>" + num(r[6]) + "</b> (range " + num(r[7]) + " to " + num(r[8]) + ")" + (r[9] ? ", of which civilians " + num(r[9]) : "") + ". These are reported estimates, not counts.</div>" +
         (r[14] > 2 ? '<div class="cfm">Placed only roughly by UCDP (' + (r[14] >= 4 ? "province or wider" : "district") + " level), not at an exact spot.</div>" : "") +
         '<div class="cfm">' + (r[15] ? "UCDP candidate event " + esc(r[0]) + ", provisional (UCDP revises these in its next yearly release)." : "UCDP GED " + esc(k.release || rel.version) + ", event " + esc(r[0]) + ".") +
-        ' <a href="https://ucdp.uu.se/downloads/" target="_blank" rel="noopener">UCDP</a>, CC BY 4.0. UCDP codes events from media and NGO reports.</div>' +
+        ' <a href="https://ucdp.uu.se/downloads/" target="_blank" rel="noopener noreferrer">UCDP</a>, CC BY 4.0. UCDP codes events from media and NGO reports.</div>' +
         '<div class="fp" data-cfhfp="' + esc(r[0]) + '">SHA-256 …</div>' + (map && map.getZoom() < PINZ ? '<div class="cfm"><a href="#" data-cfhz="' + r[3] + "," + r[4] + '">Zoom to this event</a></div>' : "");
     }
     // the event's fingerprint, from its UCDP record (ucdp|release|id|date|lat|lon|type|best|low|high)

@@ -559,6 +559,7 @@ const PRECACHE = [
 "assets/tiles-base.js",
 "assets/tiles-flood.js",
 "assets/tiles-flood25.js",
+"assets/fonts/plex.css",
 "assets/vendor/leaflet-1.9.4.js",
 "assets/vendor/milsymbol-3.0.4.js"
 ];
