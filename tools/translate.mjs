@@ -1,13 +1,12 @@
 // Machine translation to English for the refresh jobs (warnings, news and social posts).
-// Providers are tried in order and each only sees what the one before left untranslated:
-//   1. MADLAD-400 (Google's open 3B translation model, Apache-2.0, commercial use allowed) run on the job's own CPU by
-//      tools/mt/madlad.py. No account, key or quota, and no text leaves the job. Any other model can replace it behind
-//      the same interface (tools/mt/madlad.py's JSON stdin/stdout contract).
-//   2. MyMemory's free anonymous service: a fallback for when the model is not installed (a local run).
-// Texts neither could translate stay untranslated and are marked so; they are retried on later runs.
+// One provider: MADLAD-400 (Google's open 3B translation model, Apache-2.0, commercial use allowed) run on the job's own CPU by
+// tools/mt/madlad.py. No account, key or quota, and no text leaves the job. Any other model can replace it behind the same
+// interface (tools/mt/madlad.py's JSON stdin/stdout contract). MyMemory's free service was a fallback until 2026-10-17; its terms
+// bar resale without Translated's consent, so it was removed for the paid product (translations it already made are kept).
+// Texts the model could not translate stay untranslated and are marked so; they are retried on later runs.
 // Every translation, new or cached, passes tools/mt_guard.mjs: a line the model invented ("The 1980s were a time of great
 // success for the band." for a Thai flood story) is never used. The model is not asked again for that text (the cache keeps
-// the rejection); the fallback service may still translate it.
+// the rejection).
 // Results are cached in data/live/translation-cache.json so the same text is never translated twice.
 import fs from "node:fs";
 import crypto from "node:crypto";
@@ -17,11 +16,10 @@ import path from "node:path";
 import { mtSuspect } from "./mt_guard.mjs";
 
 const CACHE_FILE = "data/live/translation-cache.json";
-const MAX_CACHE = 6000, TIMEOUT = 30000, MYMEMORY_LIMIT = Number(process.env.MYMEMORY_LIMIT || 60);
+const MAX_CACHE = 6000;
 let cache = {};
 try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8")); } catch (e) {}
 const key = (s, lang) => crypto.createHash("sha1").update((lang || "") + "|" + s).digest("hex").slice(0, 20);
-let myMemoryUsed = 0;
 // Feeds often carry HTML character codes ("&#8216;", "&amp;"). The model reads them as text and invents around them, so they are
 // turned back into the characters they stand for before anything is translated or cached.
 // "<" and ">" stay encoded, so decoding can never turn feed text into markup.
@@ -51,14 +49,8 @@ export function seed(pairs) {
 // Drop a cached translation that a caller found to be wrong, so it is not served again.
 export function forget(text, lang) { delete cache[key(decodeEntities(text), lang)]; }
 
-async function get(url) {
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
-  try { const r = await fetch(url, { signal: ctl.signal }); if (!r.ok) throw new Error("HTTP " + r.status); return await r.json(); }
-  finally { clearTimeout(t); }
-}
-
 // items: [{ text, lang }] -> [{ en, tool }] (en null when not translated). English and empty texts pass through.
-// opts.model === false skips the local model and asks only the fallback service (used to retry a rejected model translation).
+// opts.model === false skips the local model (there is no other service since 2026-10-17, so nothing is translated).
 export async function translateAll(items, opts = {}) {
   const orig = items;   // English passes through exactly as given
   items = items.map((it) => ({ ...it, text: it.text ? decodeEntities(it.text) : it.text }));
@@ -79,19 +71,6 @@ export async function translateAll(items, opts = {}) {
     const bad = fresh.length ? localModel(items, fresh, out) : [];
     const retry = [...again, ...bad].slice(0, MT_BEAM_LIMIT);
     if (retry.length) localModel(items, retry, out, { MT_BEAM: "4" });
-  }
-  for (const k of todo) {
-    if (out[k] || myMemoryUsed >= MYMEMORY_LIMIT) continue;
-    const it = items[k], src = (it.lang || "").split("-")[0] || "autodetect";
-    try {
-      myMemoryUsed++;
-      const j = await get("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(it.text.slice(0, 480)) + "&langpair=" + encodeURIComponent(src + "|en"));
-      const en = j && j.responseStatus == 200 && j.responseData && j.responseData.translatedText;
-      if (en && !/MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(en) && !mtSuspect(it.text, en)) {
-        out[k] = { en, tool: "MyMemory" };
-        cache[key(it.text, it.lang)] = { en, tool: "MyMemory", at: Date.now() };
-      }
-    } catch (e) { console.error("MyMemory failed:", e.message); if (/429/.test(e.message)) myMemoryUsed = MYMEMORY_LIMIT; break; }
   }
   return out.map((o) => o || { en: null, tool: null });
 }

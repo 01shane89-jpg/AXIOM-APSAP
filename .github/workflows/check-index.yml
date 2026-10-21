@@ -71,6 +71,8 @@ jobs:
       # machine translation: invented lines rejected, and a translation stays with its item
       - run: node tests/mt_guard.test.mjs
       - run: node tests/translate_keep.test.mjs
+      # licence: outlet summaries are read by the jobs but never stored
+      - run: node tests/outlet_text.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
       # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
