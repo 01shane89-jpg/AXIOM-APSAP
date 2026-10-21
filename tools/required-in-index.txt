@@ -6,7 +6,10 @@
 
 # script tags
 <script src="assets/osap-start.js"></script>
+<script src="assets/osap-mycountries.js"></script>
 <script src="assets/osap-lock.js"></script>
+<script src="assets/osap-tier.js"></script>
+<script src="assets/osap-datagate.js"></script>
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-boolq.js"></script>
@@ -14,6 +17,8 @@
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-locate.js"></script>
+<script src="assets/osap-keydates.js"></script>
+<script src="assets/osap-empty.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
@@ -72,6 +77,8 @@ window.TSAP.areaApi
 
 # tidy screen: one view chooser (Overlays), one country picker, Reports/Settings menus (claude/ui-cleanup)
 <script src="assets/osap-tidy.js"></script>
+<script src="assets/osap-findall.js"></script>
+<script src="assets/osap-reviews.js"></script>
 <script src="assets/osap-panels.js"></script>
 setSheet: function (s)
 refresh: function () { dsUi(); }
@@ -91,6 +98,7 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+<script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
 
 # timeline covers the open topic (Deep South / All Thailand) and the event report (claude/timeline-topic-scope)
@@ -125,6 +133,9 @@ data-ev-tlr="1"
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
+<script src="assets/osap-intelbrief.js"></script>
+# OSIR report format (claude/osir-report)
+<script src="assets/osap-osir.js"></script>
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-illum.js"></script>
 # News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)
@@ -134,6 +145,7 @@ data-ev-tlr="1"
 :not([data-bd])
 # Population density overlay in Map overlays (claude/population-density)
 <script src="assets/osap-pop.js"></script>
+<script src="assets/osap-sat.js"></script>
 :not([data-pop])
 # data centres, AI and all, in Map overlays > Infrastructure (claude/ai-datacenters)
 <script>window.OSAP_LATER("assets/osap-dc.js");</script>
@@ -148,6 +160,8 @@ data-ev-tlr="1"
 # sync my devices: encrypted relay sync of saved data, no account (claude/device-sync)
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-sync.js"></script>
+<script src="assets/osap-team.js"></script>
+<script src="assets/osap-photocheck.js"></script>
 
 # the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
 <script src="assets/osap-guide.js"></script>
@@ -162,3 +176,7 @@ id="ml-viewsheds"
 # the map pans round the globe without end; drawings follow onto the world copy in view (claude/map-wrap-globe)
 /* ---------- the map wraps round the globe ----------
 L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
+<script src="assets/osap-gnss.js"></script>
+<script src="assets/osap-warngeo.js"></script>
+<script src="assets/osap-grade.js"></script>
+<script src="assets/osap-econ.js"></script>

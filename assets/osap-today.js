@@ -6,7 +6,13 @@
    - Warnings and alerts: the U.S. State Department level, official warnings and live hazards from the last 3 days,
      grouped by kind so a flood of gauge readings reads as one line.
    - Top stories: grouped events (more than one outlet) first, then the latest headlines, each with its outlet, time and status.
+   - Economy: the currency against the U.S. dollar, staple food and fuel prices, inflation and any watch flags
+     (assets/osap-econ.js, data/live/econ/<cc>.json, read once per page load), with the full detail in the Country brief.
    - New since your last visit: the same count as "What's new" (assets/osap-work.js), with the newest few.
+   - Key dates: the next three holidays, elections, religious dates and anniversaries (assets/osap-keydates.js), "Show all"
+     opens the full list in the country brief.
+   - My countries: pinned-country chips, a Pin button, "N new since" with New tags, and a My countries card
+     (assets/osap-mycountries.js).
    - Shortcuts into the full map tabs. Everything here is a summary: every line opens the full report or its source.
    Status words follow the page: an event is a report that is not verified, a claim is an official statement, an observation
    is an instrument reading. Nothing here is an assessment.
@@ -107,6 +113,8 @@
     return m < 2 ? "just now" : m < 60 ? m + " min ago" : m < 48 * 60 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago";
   }
 
+  /* My countries and "new since you last looked" (assets/osap-mycountries.js) */
+  function MY() { return window.OSAP_MYCC || null; }
   var CC = "", recs = function () { return (window.TSAP && window.TSAP.records) || []; };
   function countries() {
     var out = [];
@@ -199,7 +207,7 @@
         (rain || hot || wind ? '<p class="tdwxnote">' + [rain ? rain + " wet day" + (rain > 1 ? "s" : "") + " ahead" : "", hot ? hot + " very hot day" + (hot > 1 ? "s" : "") : "", wind ? "strong gusts on " + wind + " day" + (wind > 1 ? "s" : "") : ""].filter(Boolean).join(" · ") + "</p>" : "");
     }
     h += '<p class="tdsrc">Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> (national weather models blended, CC BY 4.0). ' +
-      "Model output, not an official forecast: check official warnings below." + (L && L.days && L.days.length ? " Forecast read " + esc(when(L.at)) + "." : p.snap ? " Forecast snapshot " + esc(when(p.snap)) + "." : "") + "</p>" +
+      "Model output, not an official forecast: check official warnings below." + (L && L.days && L.days.length ? " Forecast read " + esc(when(L.at)) + "." : p.snap ? " Forecast snapshot " + esc(when(p.snap)) + (window.OSAP_EMPTY ? window.OSAP_EMPTY.ageNote(p.snap, 720) : "") + "." : "") + "</p>" +
       '<div class="tdlinks"><button type="button" class="tdlink" data-go="weather">Weather tab and warnings</button></div></section>';
     return h;
   }
@@ -244,12 +252,16 @@
     }
     if (!G.length) h += '<p class="tdobs">' + (a ? "No other" : "No") + " official warning or live hazard has been reported for this area in the last 3 days" +
       (window.OSAP_XF || recs().length ? "." : " (the feeds have not loaded yet).") + " Check the national weather agency's own site as well.</p>";
+    /* a warning feed whose snapshot is old is named with its age, so "nothing reported" is not read as current */
+    var EM = window.OSAP_EMPTY, late = EM ? [["ASAP_WARN", "Official warnings"], ["ASAP_GDACS", "Disaster alerts"], ["ASAP_ADV", "Travel advisories"]].filter(function (x) {
+      return window[x[0]] && EM.ageNote(window[x[0]].asof, 180); }) : [];
+    if (late.length) h += '<p class="tdobs">' + late.map(function (x) { return esc(x[1]) + " last read " + esc(when(window[x[0]].asof)) + EM.ageNote(window[x[0]].asof, 180); }).join("; ") + ".</p>";
     G.slice(0, 6).forEach(function (g) {
       var st = STATUS[g.status] || ["Source report", "claim"], top = g.items.slice(0, 2);
       h += '<div class="tdal tds' + g.sev + '"><div class="tdalh"><b>' + esc(g.kind) + "</b>" + (g.n > 1 ? ' <span class="tdn">' + g.n + "</span>" : "") +
         '<span class="tdtag ' + st[1] + '">' + st[0] + "</span></div>" +
         top.map(function (i) {
-          var t = esc(i.title) + (isFinite(i.ms) ? ' <span class="tdt">' + esc(when(i.ms)) + "</span>" : "");
+          var t = esc(i.title) + (isFinite(i.ms) ? ' <span class="tdt">' + esc(when(i.ms)) + "</span>" : "") + (MY() ? MY().newTag(CC, i.ms, 0) : "");
           return i.id ? '<button type="button" class="tdrow" data-rec="' + esc(i.id) + '">' + t + "</button>"
             : i.url ? '<a class="tdrow" href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + t + " ↗</a>" : '<span class="tdrow">' + t + "</span>";
         }).join("") + (g.n > 2 ? '<span class="tdmore">and ' + (g.n - 2) + " more</span>" : "") + '<span class="tdsub">' + esc(g.src) + "</span></div>";
@@ -263,7 +275,13 @@
   function events() {
     try { return window.OSAP_EVENTS && window.OSAP_EVENTS.list ? window.OSAP_EVENTS.list() : []; } catch (e) { return []; }
   }
-  function recByUrl(u) { if (!u) return null; var R = recs(); for (var i = 0; i < R.length; i++) if (R[i].url === u) return R[i]; return null; }
+  /* the first record with each link, indexed once for the record list as it stands (it only grows or is replaced) */
+  var BYU = { R: null, n: -1, m: null };
+  function recByUrl(u) {
+    if (!u) return null; var R = recs();
+    if (BYU.R !== R || BYU.n !== R.length) { var m = new Map(); for (var i = 0; i < R.length; i++) if (R[i].url && !m.has(R[i].url)) m.set(R[i].url, R[i]); BYU = { R: R, n: R.length, m: m }; }
+    var r = BYU.m.get(u); return r && r.url === u ? r : null;
+  }
   /* Top stories keep to the selected country. National outlets also carry world news (Bangkok Post's /world/ section, for
      example), so a headline is left out when it comes from a world section or names another country, unless the headline or
      its summary also names this country, its capital or its people. */
@@ -303,7 +321,14 @@
     placeCc = CC; return placeRe;
   }
   var WORLD_PATH = /\/(world|world-?news|international|global|foreign|abroad|overseas)(\/|$)/i;
+  /* the answer for a record is kept while its words and link stay the same (the country never changes on a page) */
+  var HERE = new WeakMap();
   function aboutHere(r) {
+    var sig = (r.title || "") + "\u0001" + (r.detail || "") + "\u0001" + (r.place || "") + "\u0001" + (r.url || ""), c = HERE.get(r);
+    if (c && c.s === sig) return c.v;
+    var v = aboutHere0(r); HERE.set(r, { s: sig, v: v }); return v;
+  }
+  function aboutHere0(r) {
     var P = placeFilters(), t = r.title || "", all = t + " " + (r.detail || "") + " " + (r.place || "");
     if (P.here.test(t)) return true;
     if (P.here.test(all)) return true;
@@ -344,22 +369,32 @@
     return out;
   }
   function storiesHtml() {
-    var S = stories(), w = window.ASAP_NEWS;
-    var h = '<section class="tdcard tdnews"><div class="tdh"><h2>Top stories</h2><span class="tdcount">' + (w && w.asof && S.some(function (x) { return x.rec && x.rec.news; }) ? "news read " + esc(when(w.asof)) : "") + "</span></div>";
-    if (!S.length) h += '<p class="tdobs">No headlines are held for this area yet. Per-country news is being added area by area; the Open data tab has the global feeds.</p>';
-    S.forEach(function (s) {
-      var pic = s.rec && (s.rec.img || s.rec.thumb), st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
+    var S = stories(), w = window.ASAP_NEWS, E = window.OSAP_EMPTY, now = Date.now();
+    var h = '<section class="tdcard tdnews"><div class="tdh"><h2>Top stories</h2><span class="tdcount">' + (w && w.asof && S.some(function (x) { return x.rec && x.rec.news; }) ? "news read " + esc(when(w.asof)) + (E ? E.ageNote(w.asof, 120) : "") : "") + "</span></div>";
+    /* no headline for this country in the last 24 hours: say so, and offer its older items and nearby countries' news
+       (assets/osap-empty.js) instead of a blank card or an old list presented as today's */
+    var newest = -Infinity;
+    recs().forEach(function (r) { if (r.news && !r.xcc) { var ms = recMs(r); if (isFinite(ms) && ms > newest) newest = ms; } });
+    if (E && (w || newest > 0) && !(now - newest <= E.DAY)) {
+      var inDay = function (s) { return isFinite(s.ms) && now - s.ms <= E.DAY; }, older = S.filter(function (s) { return !inDay(s); });
+      h += E.newsHtml({ cc: CC, name: countryName(), newest: newest > 0 ? newest : NaN, olderHtml: older.map(storyHtml).join(""), olderN: older.length });
+      S = S.filter(inDay);
+    } else if (!S.length) h += '<p class="tdobs">No headlines are held for this area yet. Per-country news is being added area by area; the Open data tab has the global feeds.</p>';
+    h += S.map(storyHtml).join("");
+    h += '<div class="tdlinks"><button type="button" class="tdlink" data-go="news">All local news</button><button type="button" class="tdlink" data-go="timeline">Timeline</button></div></section>';
+    return h;
+  }
+  function storyHtml(s) {
+      var h = "", pic = s.rec && (s.rec.img || s.rec.thumb), st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
       h += '<article class="tdst' + (pic ? " haspic" : "") + '">' +
         (pic ? '<img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") +
         '<div class="tdstb">' + (s.rec ? '<button type="button" class="tdsth" data-rec="' + esc(s.rec.id) + '">' + esc(s.title) + "</button>"
           : url ? '<a class="tdsth" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : '<span class="tdsth">' + esc(s.title) + "</span>") +
         '<span class="tdsub">' + (s.ev ? "<b>" + s.n + " sources</b>: " : "") + esc(s.src) + (isFinite(s.ms) ? " · " + esc(ago(s.ms) || when(s.ms)) : "") + "</span>" +
-        '<span class="tdtags"><span class="tdtag ' + st[1] + '">' + st[0] + "</span>" + (s.state ? '<span class="tdtag claim">State media</span>' : "") +
+        '<span class="tdtags">' + (MY() ? MY().newTag(CC, s.ms) : "") + '<span class="tdtag ' + st[1] + '">' + st[0] + "</span>" + (s.state ? '<span class="tdtag claim">State media</span>' : "") +
         (s.mt ? '<span class="tdtag mt">Machine translated</span>' : "") + (s.xb ? '<span class="tdtag xb">Across the border</span>' : "") +
         (url && s.rec ? '<a class="tdsrcl" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Source ↗</a>' : "") + "</span></div></article>";
-    });
-    h += '<div class="tdlinks"><button type="button" class="tdlink" data-go="news">All local news</button><button type="button" class="tdlink" data-go="timeline">Timeline</button></div></section>';
-    return h;
+      return h;
   }
 
   /* ---------- new since the last visit (the same baseline as "What's new") ---------- */
@@ -380,6 +415,13 @@
     return h;
   }
 
+  /* ---------- key dates: holidays, elections, religious dates and anniversaries (assets/osap-keydates.js) ---------- */
+  function keyDatesHtml() {
+    var K = window.OSAP_KEYDATES;
+    if (!K || !K.cardHtml) return "";
+    try { return K.cardHtml(CC, function () { if (open) renderSoon(); }); } catch (e) { return ""; }
+  }
+
   /* ---------- the screen ---------- */
   var box = null, open = false, tick = 0;
   var wxAsked = {}; /* one weather read per place each time Today opens */
@@ -396,14 +438,14 @@
       /* the daily summary (assets/osap-daily.js) keeps its own box too, so a picked day survives the redraws */
       if (window.OSAP_DAILYQ) window.OSAP_DAILYQ.mount(box.querySelector("#td-daily"), CC, countryName());
     }
-    box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
+    box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo-cover.webp" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
-        return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
+        return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" + (MY() ? MY().pinHtml(CC) : "") : "") +
       (window.OSAP_LOC ? '<button type="button" class="tdloc" data-loc aria-pressed="' + window.OSAP_LOC.on() + '" title="' +
         (window.OSAP_LOC.on() ? "Using your location. Your position stays on this device." : "Start on your own country and see where you are on the map. Your position stays on this device.") + '">' +
         (window.OSAP_LOC.on() ? "My location" : "Use my location") + "</button>" : "") +
-      '<button type="button" class="tdmap" data-go="map">Open map</button></div>';
-    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div></div>" +
+      '<button type="button" class="tdmap" data-go="map">Open map</button></div>' + (MY() ? MY().headHtml(CC) : "");
+    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + keyDatesHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + (window.OSAP_ECON ? window.OSAP_ECON.cardHtml(CC) : "") + "</div><div class=\"tdcol tdc3\">" + (MY() ? MY().cardHtml(CC) : "") + storiesHtml() + newHtml() + "</div></div>" +
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
@@ -442,7 +484,7 @@
 
   var CSS = "#today{position:fixed;inset:0;z-index:5000;overflow:auto;background:var(--bg,var(--surface));color:var(--ink);-webkit-overflow-scrolling:touch;outline:none}" +
     "html.td-on body{overflow:hidden}" +
-    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
+    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo-cover.webp) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
     ".tdwrap{position:relative;z-index:1}.tdmark{width:44px;height:44px;border-radius:50%;flex:none}" +
     ".tdwrap{max-width:2200px;margin:0 auto;padding:max(8px,env(safe-area-inset-top)) clamp(10px,1.6vw,24px) calc(20px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
     ".tdtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:2;background:var(--bg,var(--surface));padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px}" +
@@ -495,6 +537,7 @@
       var t = e.target.closest ? e.target : null; if (!t) return;
       var b = t.closest("[data-rec]");
       if (b) { var id = b.getAttribute("data-rec"); hide(); if (window.TSAP) { window.TSAP.setView("timeline"); window.TSAP.select(id, true); } return; }
+      b = t.closest("[data-kdall]"); if (b) { if (window.OSAP_KEYDATES) window.OSAP_KEYDATES.openAll(); return; }
       b = t.closest("[data-loc]"); if (b) { if (window.OSAP_LOC) window.OSAP_LOC.use(); return; }
       b = t.closest("[data-go]"); if (b) { go(b.getAttribute("data-go")); return; }
       b = t.closest("[data-wx]"); if (b) { wxSel = +b.getAttribute("data-wx") || 0; render(); return; }
@@ -526,7 +569,7 @@
       brand.addEventListener("click", show);
       brand.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(); } });
     }
-    window.OSAP_TODAY = { show: show, hide: hide, isOpen: function () { return open; } };
+    window.OSAP_TODAY = { show: show, hide: hide, isOpen: function () { return open; }, refresh: renderSoon, recMs: recMs };
     /* a new position redraws only when it changes the weather place or the location button */
     var locSig = "";
     if (window.OSAP_LOC) window.OSAP_LOC.onChange(function () {

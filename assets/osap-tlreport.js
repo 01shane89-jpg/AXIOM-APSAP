@@ -72,18 +72,29 @@
     if (cf) return { layers: cf.layers, label: cf.label };
     return v ? { layers: [v], label: LN[v] || layerNames()[v] || v } : { label: "" };
   }
+  /* the provinces a record names ("Pattani province, Yala and Narathiwat" -> Pattani, Yala, Narathiwat) */
+  function provsOf(r) {
+    return String(r.prov || "").split(/,|\band\b/).map(function (p) { return p.replace(/\(.*$/, "").replace(/\s+(province|state|region|division)$/i, "").trim(); })
+      .filter(function (p) { return p && p.length < 30; });
+  }
   /* the records a report covers: this country's own dated records in the scope and range, oldest first */
-  function pick(opt) {
+  function pick(opt, enough) {
     var R = (window.TSAP && window.TSAP.records) || [], sc = opt.scope != null ? scopeOf(opt.scope) : { layers: opt.layer ? [opt.layer] : null };
     var ids = sc.ids ? sc.ids.reduce(function (o, id) { o[id] = 1; return o; }, {}) : null;
-    return R.filter(function (r) {
+    function keep(r) {
       if (r.xcc || !r.src || (sc.layers && sc.layers.indexOf(r.layer) < 0) || (ids && !ids[r.id])) return false;
       var w = when(r); if (!w) return false;
       if (opt.since) { if (w.timed ? w.ms < opt.since : w.day < new Date(opt.since).toISOString().slice(0, 10)) return false; }
       if (opt.from && w.day < opt.from) return false;
       if (opt.to && w.day > opt.to) return false;
+      /* a region inside the country: one province named in the record, or the drawn area (records with a map position only) */
+      if (opt.prov && provsOf(r).map(function (p) { return p.toLowerCase(); }).indexOf(String(opt.prov).toLowerCase()) < 0) return false;
+      if (opt.area && !(r.lat != null && r.lon != null && isFinite(r.lat) && isFinite(r.lon) && window.TSAP.areaApi && window.TSAP.areaApi.inPoly(+r.lat, +r.lon, opt.area))) return false;
       r.__tlw = w; return true;
-    }).sort(function (a, b) { return a.__tlw.ms - b.__tlw.ms || String(a.title).localeCompare(String(b.title)); });
+    }
+    /* only asking whether there are enough (the buttons below): stop counting there, unsorted */
+    if (enough) { for (var i = 0, n = 0; i < R.length; i++) if (keep(R[i]) && ++n >= enough) return true; return false; }
+    return R.filter(keep).sort(function (a, b) { return a.__tlw.ms - b.__tlw.ms || String(a.title).localeCompare(String(b.title)); });
   }
 
   /* ---------- styles: own class prefix. Set like a short research paper: serif headings, numbered sections, a captioned
@@ -657,6 +668,19 @@
   function list3(t) { return t.map(function (x, i) { return (i && i === t.length - 1 ? "and " : "") + x[0] + " (" + x[1] + ")"; }).join(t.length > 2 ? ", " : " "); }
   var LN = {};
   function stamp(w) { return w.timed ? T().dualT(w.ms, { date: true }) : fmtShort(w.day) + " (date only)"; }
+  /* what a report can cover (the Covers list): this event and the filtered timeline when they are open (withCtx), each
+     topic (conflict tab), the whole country, then each layer a topic has not taken over that has records in the dates */
+  function scopes(o, withCtx) {
+    var cfs = cfTabs(), taken = {}, out = [];
+    cfs.forEach(function (x) { x.layers.forEach(function (l) { taken[l] = 1; }); });
+    if (withCtx && CTX.ev) out.push({ v: "ev", label: "This event" });
+    if (withCtx && CTX.tl) out.push({ v: "tl", label: "The timeline as filtered: " + CTX.tl.label });
+    cfs.forEach(function (x) { out.push({ v: x.v, label: x.label }); });
+    out.push({ v: "", label: "All " + cname() });
+    Object.keys(LN).filter(function (k) { return k !== "timeline" && k !== "alerts" && !taken[k] && !/^cf-/.test(k) && pick({ layer: k, from: o.from, to: o.to, since: o.since, prov: o.prov, area: o.area }).length; })
+      .forEach(function (k) { out.push({ v: k, label: LN[k] }); });
+    return out;
+  }
   function build() {
     LN = layerNames();
     var o = OPT, all = pick(o), recs = all.length > MAX_ROWS ? all.slice(all.length - MAX_ROWS) : all;
@@ -669,13 +693,9 @@
     recs.forEach(function (r) { var d = r.__tlw.day; if (!days[d]) { days[d] = []; order.push(d); } days[d].push(r); });
     var kinds = { observation: 0, claim: 0, event: 0 }; recs.forEach(function (r) { kinds[r.type] = (kinds[r.type] || 0) + 1; });
     /* the scope list: this event, the timeline as filtered, each topic, the whole country, then each layer a topic has not taken over */
-    var cfs = cfTabs(), taken = {}, sc = scopeOf(o.scope);
-    cfs.forEach(function (x) { x.layers.forEach(function (l) { taken[l] = 1; }); });
-    function opt(v, label) { return '<option value="' + esc(v) + '"' + (v === o.scope ? " selected" : "") + ">" + esc(label) + "</option>"; }
-    var layerOpts = (CTX.ev ? opt("ev", "This event") : "") + (CTX.tl ? opt("tl", "The timeline as filtered: " + CTX.tl.label) : "") +
-      cfs.map(function (x) { return opt(x.v, x.label); }).join("") + opt("", "All " + cname()) +
-      Object.keys(LN).filter(function (k) { return k !== "timeline" && k !== "alerts" && !taken[k] && !/^cf-/.test(k) && pick({ layer: k, from: o.from, to: o.to, since: o.since }).length; })
-        .map(function (k) { return opt(k, LN[k]); }).join("");
+    var sc = scopeOf(o.scope);
+    function opt(x) { return '<option value="' + esc(x.v) + '"' + (x.v === o.scope ? " selected" : "") + ">" + esc(x.label) + "</option>"; }
+    var layerOpts = scopes(o, true).map(opt).join("");
     var bar = '<div class="bbar noprint tlrbar"><button type="button" class="refresh primary" id="tlr-print">Print</button> <button type="button" class="refresh" id="tlr-close">Close</button> ' +
       '<label for="tlr-layer">Covers</label> <select id="tlr-layer" class="mini">' + layerOpts + "</select> " +
       '<label for="tlr-from">From</label> <input id="tlr-from" class="mini" type="date" value="' + esc(o.from || "") + '"> <label for="tlr-to">To</label> <input id="tlr-to" class="mini" type="date" value="' + esc(o.to || "") + '">' +
@@ -690,7 +710,7 @@
     /* summary points: counts by fixed rules, no AI */
     var perProv = {}, perCat = {};
     recs.forEach(function (r) {
-      String(r.prov || "").split(/,|\band\b/).forEach(function (p) { p = p.replace(/\(.*$/, "").replace(/\s+(province|state|region|division)$/i, "").trim(); if (p && p.length < 30) perProv[p] = (perProv[p] || 0) + 1; });
+      provsOf(r).forEach(function (p) { perProv[p] = (perProv[p] || 0) + 1; });
       if (r.cat) perCat[r.cat] = (perCat[r.cat] || 0) + 1;
     });
     var nArea = keyEv.filter(function (e) { return e.how === "area"; }).length, nNone = keyEv.filter(function (e) { return e.how === "none"; }).length;
@@ -788,7 +808,7 @@
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && el && !el.hidden && el.querySelector(".tlr")) close(); });
 
   /* ---------- buttons: in the header beside Country report, and in the Master timeline; shown only when there is a timeline ---------- */
-  function eligible() { var p = appPeriod(); return pick({ from: p.from, to: p.to, since: p.since }).length >= MIN_RECS; }
+  function eligible() { var p = appPeriod(); return pick({ from: p.from, to: p.to, since: p.since }, MIN_RECS); }
   function mk(id, text) {
     var b = document.createElement("button"); b.type = "button"; b.className = "refresh"; b.id = id; b.textContent = text;
     b.title = "Printable report of the dated records for this area and period: day-by-day chronology, key events, map and sources";
@@ -807,5 +827,25 @@
     setTimeout(sync, 1000); setTimeout(sync, 2200); setInterval(sync, 4000);
   }
   (function wait(n) { if (window.TSAP && window.OSAP_TIME) init(); else if (n < 240) setTimeout(function () { wait(n + 1); }, 250); })(0);
-  window.OSAP_TLREPORT = { open: open, eligible: eligible };
+  /* the same content as data, for other report formats (the PowerPoint intelligence brief, assets/osap-intelbrief.js):
+     o = { scope, from, to, prov, area }; cb gets the records (oldest first, each with __tlw), the key events (numbered as on
+     the map, each with how/where and, for one reported by two or more sources, its event summary), the map and chart SVGs,
+     the Covers list and the provinces the country's records name, and this report's own HTML for a key-event row (rowHtml) and a
+     chronology entry (entryHtml, with its source number) so the OSIR (assets/osap-osir.js) shows them the same way. Nothing is changed. */
+  function data(o, cb) {
+    loadSummaries(function () { loadRegions(function () {
+      LN = layerNames();
+      var all = pick(o), recs = all.length > MAX_ROWS ? all.slice(all.length - MAX_ROWS) : all;
+      var evs = recs.length ? eventsFor(recs) : [], nts = recs.length ? notable(recs, evs, KEY_EVENTS - evs.length) : [];
+      var keyEv = recs.length ? keyEvents(recs, evs, nts) : [];
+      keyEv.forEach(function (e) { e.sum = e.g ? summaryFor(e.g) : null; });
+      var provs = {};
+      pick({ scope: o.scope, from: o.from, to: o.to }).forEach(function (r) { provsOf(r).forEach(function (p) { provs[p] = (provs[p] || 0) + 1; }); });
+      cb({ cc: cc(), country: cname(), scope: scopeOf(o.scope), scopes: scopes(o), recs: recs, total: all.length, max: MAX_ROWS, keyEv: keyEv, grouped: evs.length,
+        map: recs.length ? mapSvg(recs, keyEv) : null, legend: recs.length ? legendHtml : null, bars: barsSvg(recs), period: periodText(recs, o),
+        provinces: topN(provs, 200), provsOf: provsOf, layerName: function (l) { return LN[l] || l || ""; }, status: STATUS, appPeriod: appPeriod(),
+        rowHtml: rowHtml, entryHtml: entry });
+    }); });
+  }
+  window.OSAP_TLREPORT = { open: open, eligible: eligible, data: data };
 })();

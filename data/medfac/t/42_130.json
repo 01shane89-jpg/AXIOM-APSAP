@@ -224,7 +224,7 @@
 ["w79723841",43.15305,131.91621,"ru",{"name":"Родильный Дом №1","amenity":"hospital","addr:housenumber":"8","addr:street":"улица Завойко","addr:city":"Владивосток"}],
 ["w81968396",43.13115,131.92717,"ru",{"name":"Краевая детская психиатрическая больница","amenity":"hospital","addr:housenumber":"50А","addr:street":"улица Жигура","addr:city":"Владивосток","addr:postcode":"690088"}],
 ["w842315491",42.86919,130.34539,"cn",{"name":"珲春市中医医院","amenity":"hospital","healthcare":"hospital"}],
-["w843218980",42.86821,130.36981,"cn",{"name":"珲春市人民医院","amenity":"hospital","healthcare":"hospital"}],
+["w843218980",42.86814,130.36997,"cn",{"name":"珲春市人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w86387613",43.11042,131.93019,"ru",{"name":"Военно-морской клинический госпиталь флота","name:en":"Sea Military Hospital","amenity":"hospital"}],
 ["w898070943",43.02249,131.89321,"ru",{"aeroway":"helipad"}],
 ["w898071597",42.65691,130.78529,"ru",{"aeroway":"helipad"}]]

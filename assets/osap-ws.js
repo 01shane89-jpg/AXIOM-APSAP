@@ -21,7 +21,7 @@
   var W = window, D = document;
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var REG = "osap-ws", DATA = "osap-ws-data-", GO = "osap-ws-go", MSG = "osap-ws-msg", SHAPES = "osap-shapes", PTS = "osap-atak-pts";
-  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "osap-epe-pkgs", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds", "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links"];
+  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "osap-epe-pkgs", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds", "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej"];
   var AREA_RE = /^asap-area-([a-z]{2,3})$/, AREA_ANY = /^asap-area-[a-z]{2,3}(-st)?$/;
   var MAX_FILE = 25 * 1048576, MAX_UNZIP = 60 * 1048576, MAX_PTS = 500, MAX_SHAPES = 300, MAX_VERT = 2000, MAX_WS = 30, SHOW = 40;
 
@@ -111,16 +111,18 @@
     P.forEach(function (p) { if (p[0] < s) s = p[0]; if (p[0] > n) n = p[0]; if (p[1] < w) w = p[1]; if (p[1] > e) e = p[1]; });
     return [[s, w], [n, e]];
   }
+  /* who added a shared item and when (Team workspace, assets/osap-team.js stamps addedBy and addedAt) */
+  function by(x) { return x && typeof x.addedBy === "string" && x.addedBy ? "added by " + clip(x.addedBy, 24) + (isFinite(x.addedAt) && +x.addedAt > 0 ? ", " + when(+x.addedAt) : "") : ""; }
   function itemsOf(get) {
     var I = { pts: [], areas: [], aoi: [], routes: [], shapes: [], vs: [], watches: [], work: [] };
-    arr(json(get(PTS) || "[]", [])).forEach(function (p) { if (p && isFinite(p.lat) && isFinite(p.lon)) I.pts.push({ id: p.id, name: p.n || "Point", cc: p.cc, ph: +p.ph || 0, sym: p.sym, go: { c: [+p.lat, +p.lon], z: 14 } }); });
-    arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) I.aoi.push({ id: a.id, name: a.type + " " + a.name, cc: a.cc, go: { b: bounds(a.pts) } }); });
-    arr(json(get("osap-routes") || "[]", [])).forEach(function (x) { var w = arr(x && x.wps).filter(function (p) { return p && isFinite(p.lat) && isFinite(p.lon); }); if (w.length > 1) I.routes.push({ id: x.id, name: x.name || "Route", cc: x.cc, sub: w.length + " waypoints", go: { route: w.map(function (p) { return [+p.lat, +p.lon]; }) } }); });
-    arr(json(get(SHAPES) || "[]", [])).forEach(function (s) { if (okShape(s)) I.shapes.push({ id: s.id, name: s.name || (s.kind === "line" ? "Line" : "Area"), cc: s.cc, sub: (s.kind === "line" ? "line" : "area") + (s.file ? " from " + s.file : ""), go: { b: bounds(s.pts) } }); });
-    vsOf(get).forEach(function (v) { I.vs.push({ id: v.id, name: v.name || "Viewshed", cc: v.cc, sub: (v.mode === "reverse" ? "reverse viewshed, " : "viewshed, ") + Math.round(v.radius_m / 1000) + " km", go: { vs: v.id, c: [v.observer.lat, v.observer.lon], z: 12 } }); });
-    arr(json(get("asap-watches") || "[]", [])).forEach(function (w) { if (w) I.watches.push({ id: w.id, name: w.name || (Array.isArray(w.kw) ? w.kw.join(", ") : "") || "Watch", cc: w.cc, go: { watch: 1 } }); });
+    arr(json(get(PTS) || "[]", [])).forEach(function (p) { if (p && isFinite(p.lat) && isFinite(p.lon)) I.pts.push({ id: p.id, name: p.n || "Point", cc: p.cc, ph: +p.ph || 0, sym: p.sym, by: by(p), go: { c: [+p.lat, +p.lon], z: 14 } }); });
+    arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) I.aoi.push({ id: a.id, name: a.type + " " + a.name, cc: a.cc, by: by(a), go: { b: bounds(a.pts) } }); });
+    arr(json(get("osap-routes") || "[]", [])).forEach(function (x) { var w = arr(x && x.wps).filter(function (p) { return p && isFinite(p.lat) && isFinite(p.lon); }); if (w.length > 1) I.routes.push({ id: x.id, name: x.name || "Route", cc: x.cc, sub: w.length + " waypoints", by: by(x), go: { route: w.map(function (p) { return [+p.lat, +p.lon]; }) } }); });
+    arr(json(get(SHAPES) || "[]", [])).forEach(function (s) { if (okShape(s)) I.shapes.push({ id: s.id, name: s.name || (s.kind === "line" ? "Line" : "Area"), cc: s.cc, sub: (s.kind === "line" ? "line" : "area") + (s.file ? " from " + s.file : ""), by: by(s), go: { b: bounds(s.pts) } }); });
+    vsOf(get).forEach(function (v) { I.vs.push({ id: v.id, name: v.name || "Viewshed", cc: v.cc, sub: (v.mode === "reverse" ? "reverse viewshed, " : "viewshed, ") + Math.round(v.radius_m / 1000) + " km", by: by(v), go: { vs: v.id, c: [v.observer.lat, v.observer.lon], z: 12 } }); });
+    arr(json(get("asap-watches") || "[]", [])).forEach(function (w) { if (w) I.watches.push({ id: w.id, name: w.name || (Array.isArray(w.kw) ? w.kw.join(", ") : "") || "Watch", cc: w.cc, by: by(w), go: { watch: 1 } }); });
     var wk = json(get("osap-work") || "null", null), it = wk && wk.items && typeof wk.items === "object" ? wk.items : {};
-    Object.keys(it).forEach(function (k) { var x = it[k]; if (x && (x.saved || x.note || x.reviewed)) I.work.push({ id: k, name: (x.snap && x.snap.title) || "Saved report", cc: x.cc, sub: [x.saved ? "saved" : "", x.note ? "note" : "", x.reviewed ? "reviewed" : ""].filter(String).join(", "), go: { work: 1 } }); });
+    Object.keys(it).forEach(function (k) { var x = it[k], g = x && x.grade && W.OSAP_GRADE ? W.OSAP_GRADE.code(x.grade) : ""; if (x && (x.saved || x.note || x.reviewed || g)) I.work.push({ id: k, name: (x.snap && x.snap.title) || "Saved report", cc: x.cc, sub: [x.saved ? "saved" : "", x.note ? "note" : "", x.reviewed ? "reviewed" : "", g ? "graded " + g : ""].filter(String).join(", "), by: by(x), go: { work: 1 } }); });
     return I;
   }
   function liveItems() { var I = itemsOf(raw), keys = liveKeys(); keys.forEach(function (k) { var m = AREA_RE.exec(k), P = m && arr(json(raw(k), [])); if (P && P.length > 2) I.areas.push({ id: m[1], name: "Drawn area", cc: m[1], go: { b: bounds(P) } }); }); return I; }
@@ -515,7 +517,7 @@
       var L = I[g[0]]; if (!L.length) return "";
       var all = UI.more[g[0]], show = all ? L : L.slice(0, SHOW);
       return '<details class="wsg"' + (L.length <= 12 ? " open" : "") + "><summary>" + esc(g[1]) + ' <span class="wsn">' + L.length + "</span></summary><ul>" + show.map(function (it, i) {
-        return "<li><span><b>" + esc(it.name) + '</b> <i class="obs">' + esc([it.cc ? cName(it.cc) : "", it.sub || "", it.ph ? it.ph + " photo" + (it.ph > 1 ? "s" : "") : ""].filter(String).join(" · ")) + "</i></span>" +
+        return "<li><span><b>" + esc(it.name) + '</b> <i class="obs">' + esc([it.cc ? cName(it.cc) : "", it.sub || "", it.ph ? it.ph + " photo" + (it.ph > 1 ? "s" : "") : "", it.by || ""].filter(String).join(" · ")) + "</i></span>" +
           '<button type="button" data-ws-open="' + g[0] + ":" + i + '">' + (g[0] === "routes" ? "Open route" : g[0] === "watches" ? "Watches" : g[0] === "work" ? "My work" : "Open on map") + "</button></li>";
       }).join("") + "</ul>" + (L.length > show.length ? '<button type="button" class="wslink" data-ws-more="' + g[0] + '">Show all ' + L.length + "</button>" : "") + "</details>";
     }).join("");
@@ -524,12 +526,14 @@
       '<p class="wsmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>" +
       '<section class="wsact"><div class="wshd"><h3>' + esc(w.name) + '</h3><span class="wstag">Active</span><button type="button" data-ws-ren="' + w.id + '">Rename</button></div>' +
       '<p class="obs">Created ' + esc(when(w.created)) + " · last change " + esc(when(w.updated)) + "</p>" +
+      /* Team workspace (assets/osap-team.js): share this workspace, or the team it is shared with */
+      (W.OSAP_TEAM && W.OSAP_TEAM.wsHtml ? W.OSAP_TEAM.wsHtml(w.id) : "") +
       (groups || '<p class="obs">Nothing saved in this workspace yet. Drop a point, draw an area, save a route or import a KML file.</p>') +
       '<div class="wsbtns"><button type="button" class="refresh" data-ws-act="zip">Export workspace (.zip)</button><button type="button" class="refresh" data-ws-act="kml">Export KML</button>' +
       '<label class="refresh wsfile">Import KML, KMZ or workspace<input type="file" accept=".kml,.kmz,.zip,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/zip" data-ws-file hidden></label></div>' +
       '<p class="obs">KML and KMZ files are added to this workspace: placemarks become map points, lines and polygons become imported shapes. Descriptions are kept as plain text; nothing in a file is run or fetched.</p></section>' +
       "<h3>Other workspaces</h3>" + (others.length ? '<ul class="wslist">' + others.map(function (x) {
-        return "<li><span><b>" + esc(x.name) + '</b> <i class="obs">' + esc(summary(storedItems(x.id))) + " · last change " + esc(when(x.updated)) + "</i></span>" +
+        return "<li><span><b>" + esc(x.name) + '</b> <i class="obs">' + esc(summary(storedItems(x.id))) + " · last change " + esc(when(x.updated)) + (W.OSAP_TEAM && W.OSAP_TEAM.tag && W.OSAP_TEAM.tag(x.id) ? " · " + esc(W.OSAP_TEAM.tag(x.id)) : "") + "</i></span>" +
           '<button type="button" data-ws-sw="' + x.id + '">Switch to</button><button type="button" data-ws-ren="' + x.id + '">Rename</button><button type="button" data-ws-del="' + x.id + '" aria-label="Delete ' + esc(x.name) + '">Delete</button></li>';
       }).join("") + "</ul>" : '<p class="obs">None yet.</p>') +
       '<form class="wsnew" data-ws-new><label>New workspace <input name="n" maxlength="60" placeholder="e.g. Deep South, Op name" autocomplete="off"></label><button type="submit" class="refresh">Create and switch</button></form></div>';

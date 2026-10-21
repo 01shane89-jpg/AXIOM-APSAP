@@ -1,0 +1,8 @@
+[["n1042050140",-13.666,167.71201,"vu",{"name":"Mota Lava","aeroway":"aerodrome","icao":"NVSA","iata":"MTV","wikidata":"Q3886807"}],
+["n1042050141",-13.85285,167.53733,"vu",{"name":"Sola","operator":"Air Vanuatu","aeroway":"aerodrome","icao":"NVSC","iata":"SLH","wikidata":"Q7915229"}],
+["r4733237",-13.84688,167.70908,"vu",{"aeroway":"aerodrome"}],
+["w206247967",-13.32781,166.63831,"vu",{"name":"Torres Airstrip","aeroway":"aerodrome","icao":"NVSD","iata":"TOH","aerodrome:type":"public","wikidata":"Q6588598"}],
+["w336528025",-13.90701,167.45118,"vu",{"amenity":"clinic","healthcare":"clinic"}],
+["w336528113",-13.90669,167.45131,"vu",{"amenity":"clinic","healthcare":"clinic"}],
+["w336528130",-13.90694,167.45129,"vu",{"amenity":"clinic","healthcare":"clinic"}],
+["w823424100",-13.86724,167.54098,"vu",{"name":"Sola Hospital","amenity":"hospital","healthcare":"hospital"}]]

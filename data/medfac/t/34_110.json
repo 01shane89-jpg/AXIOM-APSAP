@@ -23,7 +23,7 @@
 ["w1528835807",35.60295,111.01298,"cn",{"name":"稷山县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1528835809",35.6036,111.01717,"cn",{"name":"稷山县精神病医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1532901166",34.37158,111.6731,"cn",{"name":"洛宁县中医院","amenity":"hospital","healthcare":"hospital"}],
-["w222283805",35.11776,111.03355,"cn",{"name":"运城盐湖国际机场","name:en":"Yuncheng Yanhu International Airport Airport","aeroway":"aerodrome","icao":"ZBYC","iata":"YCU"}],
+["w222283805",35.11776,111.03355,"cn",{"name":"运城盐湖国际机场","name:en":"Yuncheng Yanhu International Airport Airport","aeroway":"aerodrome","icao":"ZBYC","iata":"YCU","wikidata":"Q1017617"}],
 ["w255746878",35.13769,111.2136,"cn",{"name":"夏县人民医院","name:en":"People's hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w449385729",35.02097,110.98699,"cn",{"name":"运城市盐湖区人民医院","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"凤凰北路"}],
 ["w514264538",35.03516,111.02984,"cn",{"name":"运城市中心医院","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"政府","addr:postcode":"044000"}],

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy · AXIOM OSAP</title>
+<style>
+:root{--bg:#0f1419;--fg:#e6e9ed;--mut:#9aa4af;--acc:#5aa9ff;--line:#2a323c;--note:#2b2410;--notefg:#f3d27a}
+@media (prefers-color-scheme:light){:root{--bg:#fff;--fg:#1b232b;--mut:#5b6672;--acc:#0b63c4;--line:#dde3ea;--note:#fff6dc;--notefg:#6b4e00}}
+html{background:var(--bg)}body{margin:0 auto;max-width:760px;padding:24px 16px 64px;font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;color:var(--fg);background:var(--bg)}
+h1{font-size:28px;margin:8px 0 4px}h2{font-size:19px;margin:32px 0 8px;border-top:1px solid var(--line);padding-top:20px}
+p,li{margin:6px 0}a{color:var(--acc)}.meta{color:var(--mut);font-size:14px}
+.draft{background:var(--note);color:var(--notefg);border-radius:6px;padding:10px 14px;font-size:14px;margin:16px 0}
+.ph{background:var(--note);color:var(--notefg);padding:0 4px;border-radius:3px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+nav{font-size:14px;color:var(--mut)}nav a{margin-right:12px}
+</style>
+</head>
+<body>
+<nav><a href="./">Back to OSAP</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a></nav>
+<h1>Privacy Policy</h1>
+<p class="meta">AXIOM OSAP · Effective <span class="ph">[EFFECTIVE DATE]</span></p>
+<div class="draft">DRAFT, not legal advice. Highlighted items are placeholders or depend on how the paywall is finally built. Check each one before publishing.</div>
+
+<h2>The short version</h2>
+<ul>
+<li>We collect only your email address and your subscription status, and only if you buy a paid plan.</li>
+<li>What you save in OSAP (points, areas, routes, photos, notes, plans) stays on your device. We never see it.</li>
+<li>We use no advertising, no analytics and no tracking cookies, and we do not sell your data.</li>
+<li>Some map, weather, routing and search features send the place you are looking at to the service that answers it. They are listed below.</li>
+</ul>
+
+<h2>1. Who is responsible</h2>
+<p><span class="ph">[SELLER NAME]</span>, <span class="ph">[SELLER ADDRESS]</span>, is the controller of the personal data described here. Contact: <span class="ph">[CONTACT EMAIL]</span>.</p>
+
+<h2>2. What we collect, and why</h2>
+<table>
+<tr><th>Data</th><th>When</th><th>Why, and legal basis</th><th>Kept for</th></tr>
+<tr><td>Email address</td><td>You create an account or buy a paid plan</td><td>To sign you in, send the account confirmation and password reset emails, and service emails about your subscription (performing our contract with you)</td><td>While you subscribe, then <span class="ph">[e.g. 12 months]</span>, then deleted</td></tr>
+<tr><td>Subscription record: tier, status, renewal date, Paddle customer and subscription IDs</td><td>Paddle tells us after each payment, renewal or cancellation</td><td>To decide which tier you can use (contract)</td><td>As above; tax and payment records are kept by Paddle as the law requires</td></tr>
+<tr><td>Account record: email, a hash of your password, sign-up, last sign-in and last-seen times (the last-seen time is updated at most once an hour), plan. The site owner can see this list.</td><td>You create an account</td><td>To sign you in and decide which tier you can use (contract)</td><td>While you have an account</td></tr>
+<tr><td>Review: your stars and words, your account's email and when you wrote it. Only the stars, words and date are ever shown to others, and only after the owner approves the review. Whether this device has been asked for a review, and on which days it was used, stays on your device.</td><td>You leave a review in Settings &gt; Reviews</td><td>To show reviews of OSAP and let the owner check them first (legitimate interest)</td><td>Until you or the owner delete it</td></tr>
+<tr><td>Beta tester code: if you use one, the code record notes your account's email and when you used it (the code itself is kept only as a hash)</td><td>You type a beta tester code</td><td>To give you the tester plan and let the owner turn it off (contract)</td><td>Until the owner deletes the code</td></tr>
+<tr><td>Sign-in token, kept in your browser's storage and in a cookie (nf_jwt)</td><td>You sign in</td><td>Keeps you signed in. It is strictly necessary, so no cookie banner is needed for it</td><td>The cookie lasts one hour and is renewed while you use OSAP; it is removed when you sign out</td></tr>
+<tr><td>Server request logs: IP address, time, page or file requested, browser type</td><td>Every visit, kept by our host</td><td>Security, abuse prevention and keeping the site running (legitimate interests)</td><td>As set by our host, <span class="ph">[CHECK NETLIFY LOG RETENTION]</span></td></tr>
+<tr><td>Emails you send us</td><td>You contact us</td><td>To answer you (legitimate interests)</td><td>As long as needed to resolve your request</td></tr>
+</table>
+<p>We do not receive your card or bank details. Paddle collects those when you pay.</p>
+
+<h2>3. What stays on your device</h2>
+<p>OSAP keeps your work in your browser's own storage (local storage and IndexedDB): map points and photos, drawn areas, routes, imported shapes, keyword watches, workspaces, medical, evacuation and comms plans, analyst notes, and settings. None of this is sent to us. It leaves your device only if you export it, share a link, or turn on one of the optional features in section 5. Clearing your browser data deletes it.</p>
+<p>"Use my location" asks your browser for your position, uses it on your device to centre the map or pick your country, and does not send it to us. On-device AI summaries run in your browser, or on an AI server on your own network if you set one up, and the reports never leave your device.</p>
+
+<h2>4. Services OSAP contacts while you use it</h2>
+<p>To draw the map and answer some tools, your browser connects directly to these services. Each sees your IP address and what is requested, and handles it under its own privacy policy. We send them no name, email, notes or photos.</p>
+<table>
+<tr><th>Service</th><th>What it receives</th></tr>
+<tr><td>Map tile and imagery servers (OpenFreeMap, OpenStreetMap, OpenTopoMap, NASA GIBS, EOX and others in the layer list) <span class="ph">[UPDATE AFTER BASEMAP SWAP]</span></td><td>The map area on screen</td></tr>
+<tr><td>Open-Meteo</td><td>Rounded coordinates for weather, marine and air quality forecasts</td></tr>
+<tr><td>Photon (Komoot), Open-Meteo geocoding</td><td>Text you type into place search and the map centre</td></tr>
+<tr><td>OSM routing servers (FOSSGIS, OSRM, Valhalla) and Overpass</td><td>Start, end and way points of a route, evacuation or medical plan, or an area being searched</td></tr>
+<tr><td>Wikidata</td><td>Searches for nearby facilities in a medical plan</td></tr>
+<tr><td>Google Fonts</td><td>Your IP address when fonts load <span class="ph">[OR SELF-HOST FONTS AND DELETE THIS ROW]</span></td></tr>
+<tr><td>News, video and source sites</td><td>Only when you open a source link, which takes you to that site</td></tr>
+</table>
+
+<h2>5. Optional features that send data elsewhere</h2>
+<ul>
+<li><strong>Sync my devices.</strong> If you pair devices, your saved work is encrypted on your device with a key made from your sync code and posted to public Nostr relays (<span class="ph">[CURRENT RELAY LIST, e.g. nos.lol, relay.primal.net]</span>). The relays and we cannot read it. They see an anonymous key, the encrypted data's size and timing, and your IP address. Photos are not synced.</li>
+<li><strong>Push to phone.</strong> Alerts go through ntfy.sh to a random channel name made on your device. Anyone who knows that name can read the alerts. <span class="ph">[REWRITE: today a push watch's name, area and keywords are stored in the public GitHub repository; the paywall build should move them off the public repo before launch]</span></li>
+<li><strong>On-device AI model.</strong> If you tap Download, the model files are fetched once from Hugging Face, which sees your IP address.</li>
+<li><strong>Export and share.</strong> Files and links you export or share go wherever you send them.</li>
+</ul>
+
+<h2>6. Who we share personal data with</h2>
+<ul>
+<li><strong>Paddle</strong> (Paddle.com Market Ltd and its affiliates), our Merchant of Record, which takes payment, handles tax, invoices and refunds, and sends us your email and subscription status. See <a href="https://www.paddle.com/legal/privacy">Paddle's privacy notice</a>.</li>
+<li><strong>Netlify, Inc.</strong>, which hosts OSAP, stores your account record (Netlify Identity) and runs the tier check.</li>
+<li>Authorities, where the law requires it, or to protect people from harm or OSAP from abuse.</li>
+</ul>
+<p>We do not sell or rent personal data, or share it for advertising.</p>
+
+<h2>7. International transfers</h2>
+<p>Our providers may process data in the United States and other countries. Where the law requires it, they rely on safeguards such as the EU Standard Contractual Clauses or the EU-US Data Privacy Framework.</p>
+
+<h2>8. Your rights</h2>
+<p>Depending on where you live (for example under the GDPR, UK GDPR or California law), you can ask to see, correct, delete or export your personal data, object to or restrict its use, and complain to your data protection authority. Email <span class="ph">[CONTACT EMAIL]</span> and we will answer within 30 days. Deleting your account cancels your subscription. We never sell or share personal data for cross-context advertising.</p>
+
+<h2>9. Security</h2>
+<p>Connections use HTTPS. Passwords are stored only as a hash by Netlify Identity. Confirmation and password reset links are single-use and expire <span class="ph">[CHECK NETLIFY IDENTITY LINK EXPIRY]</span>. Access to account records is limited to what the tier check needs. No system is perfectly secure; if a breach affects your data we will tell you as the law requires.</p>
+
+<h2>10. Children</h2>
+<p>OSAP is not meant for children under 16 and we do not knowingly collect their data. Paid plans are for adults.</p>
+
+<h2>11. Changes</h2>
+<p>We will post changes here with a new effective date, and email paying subscribers about material ones.</p>
+</body>
+</html>

@@ -8,7 +8,7 @@
 ["w1396793929",52.93946,122.76546,"cn",{"name":"大兴安岭图强直升机场","aeroway":"heliport"}],
 ["w1396793930",52.93947,122.76556,"cn",{"aeroway":"helipad"}],
 ["w148848394",53.99829,123.96895,"ru",{"aeroway":"helipad"}],
-["w209316707",52.91325,122.42936,"cn",{"name":"漠河古莲机场","name:en":"Mohe Gulian Airport","operator":"黑龙江省机场管理集团有限公司","addr:postcode":"165300","aeroway":"aerodrome","icao":"ZYMH","iata":"OHE"}],
+["w209316707",52.91325,122.42936,"cn",{"name":"漠河古莲机场","name:en":"Mohe Gulian Airport","operator":"黑龙江省机场管理集团有限公司","addr:postcode":"165300","aeroway":"aerodrome","icao":"ZYMH","iata":"OHE","wikidata":"Q1006900"}],
 ["w318746063",53.97393,123.92949,"ru",{"name":"Поликлиника","amenity":"clinic","phone":"+7 41654 22696","website":"https://skovzdrav.ru/","addr:housenumber":"6","addr:street":"улица Сурнина","opening_hours":"Mo-Fr 08:00-18:00"}],
 ["w318746072",53.97495,123.92709,"ru",{"name":"ГБУЗ АО \"Сковородинская ЦРБ\"","amenity":"hospital","emergency":"yes","phone":"+7 924 1480303","website":"https://skovzdrav.ru/","addr:housenumber":"10","addr:street":"улица Победы"}],
 ["w520339420",53.45682,123.98836,"ru",{"aeroway":"helipad"}],

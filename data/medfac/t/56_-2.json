@@ -1,0 +1,6 @@
+[["n10673574341",57.51508,-1.79473,"gb",{"name":"Peterhead Vaccination Centre","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"vaccination","operator":"Grampian HSCP","operator:type":"public"}],
+["n2165689419",57.40675,-1.91157,"gb",{"name":"Hatton","aeroway":"aerodrome"}],
+["n4194683810",57.51688,-1.86446,"gb",{"name":"Longside Airfield","website":"https://www.buchanaeroclub.co.uk/","aeroway":"aerodrome","icao":"EGPS"}],
+["w116586373",57.51502,-1.79435,"gb",{"name":"Ugie Hospital","amenity":"hospital","healthcare":"hospital","emergency":"no","addr:street":"Ugie Road","addr:city":"Peterhead","addr:postcode":"AB42 1LZ","wikidata":"Q7877761"}],
+["w1240220327",57.51812,-1.86193,"gb",{"name":"Peterhead Heliport","aeroway":"helipad"}],
+["w1348845437",57.50252,-1.79383,"gb",{"name":"Peterhead Community Hospital","amenity":"hospital","healthcare":"hospital","wikidata":"Q14956755"}]]

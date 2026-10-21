@@ -7,14 +7,14 @@
 ["n3006385509",0.35714,108.96114,"id",{"name":"Rumah Sakit Khusus1","amenity":"hospital"}],
 ["n3085549462",0.38326,109.95947,"id",{"name":"Bidan Nurhassanah","amenity":"clinic","healthcare":"clinic"}],
 ["n3085549463",0.38106,109.95367,"id",{"name":"Bidan Rita","amenity":"clinic","healthcare":"clinic"}],
-["n5854378275",1.17358,108.97882,"id",{"name":"Regional General Hospital","name:en":"Regional General Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","phone":"+62 562 241203","addr:housenumber":"20","addr:street":"Jalan Ahmad Kadir Kasim","addr:city":"Pemangkat","addr:postcode":"79154"}],
+["n5854378275",1.17358,108.97882,"id",{"name":"Regional General Hospital","name:en":"Regional General Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","phone":"+62 562 241203","addr:housenumber":"20","addr:street":"Jalan Ahmad Kadir Kasim","addr:city":"Pemangkat","addr:postcode":"79154","opening_hours":"24/7"}],
 ["n5854378276",1.17356,108.97796,"id",{"name":"Amkur Maternity Hospital","name:en":"Amkur Maternity Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"maternity"}],
 ["n9020158413",1.53047,109.80567,"my",{"aeroway":"helipad"}],
 ["w1016534636",1.8133,109.76441,"my",{"name":"Sematan Airport","name:en":"Sematan Airport","operator":"Malaysia Airports","aeroway":"aerodrome","icao":"WBGN","iata":"BSE","wikidata":"Q7449138"}],
 ["w1160196660",0.33664,108.96263,"id",{"name":"Rumah Sakit Umum Daerah dr. Rubini Mempawah","name:en":"Regional General Hospital Dr. Rubini Mempawah","amenity":"hospital"}],
 ["w1193723566",0.90556,108.98635,"id",{"name":"Rumah Sakit Santo Vincentius","official_name":"Rumah Sakit Umum Santo Vincentius","amenity":"hospital","healthcare":"hospital","operator":"Yayasan Karya Kesehatan Santo Vincentius","operator:type":"private","addr:street":"Jalan Pangeran Diponegoro","addr:district":"Singkawang Barat","addr:city":"Singkawang","addr:province":"Kalimantan Barat","addr:postcode":"79111"}],
-["w1194210476",0.91277,108.99421,"id",{"name":"klinik dan Apotik Insan Citra Madanj","amenity":"clinic","healthcare":"clinic","addr:street":"Jalan Jenderal Sudirman","addr:city":"Singkawang"}],
-["w1197155006",0.90141,108.98681,"id",{"name":"Elshetic Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1194210476",0.91277,108.99421,"id",{"name":"klinik dan Apotik Insan Citra Madanj","amenity":"clinic","healthcare":"clinic","addr:street":"Jalan Jenderal Sudirman","addr:city":"Singkawang","opening_hours":"24/7"}],
+["w1197155006",0.90141,108.98681,"id",{"name":"Elshetic Clinic","amenity":"clinic","healthcare":"clinic","opening_hours":"Mo-Su 08:00-20:00"}],
 ["w1202300646",0.9118,108.98606,"id",{"amenity":"clinic","healthcare":"clinic"}],
 ["w1202361886",0.93445,108.98158,"id",{"amenity":"clinic","healthcare":"clinic"}],
 ["w1272375135",0.99863,109.0511,"id",{"name":"Bandar Udara Smart Semelagi","name:en":"Smart Semelagi Special Airport","operator":"Smart Cakrawala Aviation","aeroway":"aerodrome","icao":"WISA"}],
@@ -34,4 +34,4 @@
 ["w581528140",0.79455,109.54447,"id",{"name":"Poskesdes Malo Jelayan","amenity":"clinic"}],
 ["w674056551",1.08331,109.69358,"id",{"name":"Pangkalan Udara Harry Hadisoemantri","aeroway":"aerodrome","military":"airfield"}],
 ["w820166531",0.78095,109.57939,"id",{"name":"Poskesdes Sengkaruh","amenity":"clinic"}],
-["w916882005",0.79065,108.96025,"id",{"name":"Bandar Udara Singkawang","name:en":"Singkawang Airport","operator":"Direktorat Jenderal Perhubungan Udara","aeroway":"aerodrome","icao":"WIOD","iata":"SKJ"}]]
+["w916882005",0.79065,108.96025,"id",{"name":"Bandar Udara Singkawang","name:en":"Singkawang Airport","operator":"Direktorat Jenderal Perhubungan Udara","aeroway":"aerodrome","icao":"WIOD","iata":"SKJ","wikidata":"Q62023680"}]]

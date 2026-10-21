@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"><script>/* AXIOM OSAP: an account is needed to use OSAP (Shane 2026-10-18), and only the Netlify site can check it: the GitHub Pages copy sends people there at once. assets/osap-tier.js does the same for a page served from an old cache. */if(/\.github\.io$/.test(location.hostname))location.replace("https://axiom-osap.netlify.app/"+(location.search?location.search+"&":"?")+"from=pages"+location.hash);</script></head><body>
 <title>AXIOM OSAP</title>
 <style>
 /* loading screen: covers the page until the open country's map and lists are built, so no other country's map shows first.
    The official logo (unaltered, only animated) spins as a 3D coin: the logo on both faces, thin darker copies between them
-   as the coin's edge, and a shadow that narrows as it turns edge-on. Behind it, a faint world map drawn from the app's own
+   as the coin's edge, and a shadow that narrows as it turns edge-on. The picture is assets/logo-cover.webp: the same artwork
+   as assets/logo.png at 512 px (34 KB instead of 314 KB), enough for the 170 px coin on a 3x screen; one file for every copy,
+   also used by the sign-in screen and Today, so a phone's start downloads the logo once. Behind it, a faint world map drawn from the app's own
    country outlines (assets/world-watermark.svg). */
 #osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;
   background:#DEE3E9;color:#56626F;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.04em;transition:opacity .25s}
@@ -25,7 +27,7 @@
 @media (orientation:portrait){#osap-boot::before{background-position:78% 50%}}
 @media (prefers-reduced-motion:reduce){.ob-coin,.ob-shadow,#osap-boot::before{animation:none}}
 </style>
-<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
+<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo-cover.webp" alt=""><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo-cover.webp" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
 <script>
 (function () {
   var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
@@ -48,7 +50,36 @@
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-lock.js"></script>
+<script src="assets/osap-datagate.js"></script>
+<script>
+/* Data files the page writes in further down instead of plain tags: Thailand's own files only when Thailand opens (no country
+   in the address, or #th/…; another country never builds the flood and border views, and switching country reloads the page),
+   and the feeds a plan may not include, which assets/osap-datagate.js leaves out when the signed-in plan cannot open them.
+   Only Thailand's flood files are asked for here, as they are read before the map is made. The border record and the feeds
+   (about 2.5 MB, read after the map is made) are not: asked for this early they came in before the map's first pictures,
+   and reading them kept the phone too busy to draw those pictures (about a second slower; tests/speed_budget.mjs). */
+(function () {
+  var h = (location.hash || "").replace("#", "").split("/"), th = !(h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) && h[0] !== "th");
+  var L = {
+    th: th ? ["data/thailand/power.js", "data/thailand/flood-live-snapshot.js", "data/thailand/flood-exposure.js", "data/thailand/province-alerts.js"] : [],
+    /* the border record: Thailand's timeline lists its incidents (the border line and bands load with the border view) */
+    border: th ? ["data/thailand/border-conflict.js"] : [],
+    feeds: ["data/sof/exercises-outside.js", "data/live/air-quality.js", "data/live/reliefweb.js", "data/live/outages.js", "data/live/outbreaks.js",
+      "data/live/maritime.js", "data/live/sanctions.js", "data/live/displacement.js", "data/live/ifrc.js", "data/live/cdc.js", "data/live/navwarnings.js",
+      "data/live/ucdp.js", "data/live/deepsouth.js"]
+  };
+  window.OSAP_TH = th;
+  L.th.forEach(function (s) {
+    if (window.OSAP_DATA && !window.OSAP_DATA.ok(s)) return;
+    var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = s; document.head.appendChild(l);
+  });
+  window.OSAP_WRITE = function (k) { document.write(L[k].map(function (s) { return '<script src="' + s + '"><\/script>'; }).join("")); };
+})();
+</script>
+<script src="assets/osap-tier.js"></script>
 <script src="assets/osap-start.js"></script>
+<!-- first-run setup and My countries: runs before any other script saves a setting, to tell a new device from an existing user -->
+<script src="assets/osap-mycountries.js"></script>
 <script>
 /* Times: every time on the page is shown in Zulu (UTC) and in local time, 24-hour, for example "27 Sept 2026 0340Z / 10:40 ICT".
    Local means the open country's main time zone (tzAt picks the right one inside Indonesia, Australia and Mongolia). */
@@ -1165,17 +1196,27 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   if (b && b.charAt(0) === "-") b = getComputedStyle(document.documentElement).getPropertyValue(b).trim();
   if (b) el.outerHTML = OSAP_SYM.sw(k, b); else el.innerHTML = OSAP_SYM.svg(k);
 });</script>
-<script src="data/thailand/power.js"></script>
-<script src="data/thailand/flood-live-snapshot.js"></script>
-<script src="data/thailand/flood-exposure.js"></script>
-<script src="data/thailand/province-alerts.js"></script>
+<script>/* Thailand's flood files, only when Thailand opens (OSAP_WRITE, near the top) */ window.OSAP_WRITE("th");</script>
 <script>
 (function () {
   "use strict";
   var BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
   var TW = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/";
 
-  function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || "#888"; }
+  /* the root's computed style is a live object: read once, it always gives the current theme's values (one lookup per marker
+     instead of a new style object per marker) */
+  var rootCS = null, TOKC = {}, TOKS = "";
+  /* the colours are set per theme in the page's style sheets, so each value is kept until the theme can have changed: the root's
+     class or data-map, or a style sheet added or edited. Reading a custom property makes the browser restyle the page first
+     when anything changed since, which a redraw always has, so asking once per value saves a full restyle per redraw. */
+  if (window.MutationObserver) new MutationObserver(function () { TOKC = {}; }).observe(document.head, { childList: true, subtree: true, characterData: true });
+  function tok(n){
+    var R0 = document.documentElement, sg = R0.className + "|" + R0.getAttribute("data-map");
+    if (sg !== TOKS) { TOKC = {}; TOKS = sg; }
+    var v = TOKC[n];
+    if (v === undefined) v = TOKC[n] = (rootCS || (rootCS = getComputedStyle(R0))).getPropertyValue(n).trim() || "#888";
+    return v;
+  }
   function num(v){ return (v == null) ? "\u2014" : Math.round(v).toLocaleString(); }
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
@@ -1351,6 +1392,12 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   })();
   /* the hidden watch-check copies of this page (?watchscan=1) never show their map, so they download no map tiles */
   if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
+  /* nor do they project or draw their outlines and markers, or measure the map: they only report their records back */
+  if (/[?&]watchscan=1(&|$)/.test(location.search)) {
+    [L.Path, L.Polyline, L.CircleMarker, L.Circle].forEach(function (C) { C.prototype._project = C.prototype._update = function () {}; });
+    L.Canvas.prototype._redraw = L.Canvas.prototype._updatePaths = function () {};
+    L.Map.prototype.invalidateSize = function () { return this; };
+  }
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
   /* symbols grow as you zoom in: --msk scales every NATO-style symbol (about 37 px at 1) from roughly 24 px zoomed out to 48 px zoomed in */
   function symZoom() {
@@ -1921,6 +1968,12 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     if (ST.ter || ST.fp || ST.pr) { set("ter", ST.ter); set("fp", ST.fp); set("pr", ST.pr); }
   })();
 
+  /* ---------- Thailand's flood view: built when Thailand opens (or the flood view is first shown), never for another country,
+     where it cost about a second on a phone's start for layers nobody sees. Not indented, to keep the history readable. ---------- */
+  var floodBuilt = false, floodRestyle = null, FLOOD_LAYERS = [];
+  function buildFlood() {
+  if (floodBuilt) return;
+  floodBuilt = true;
   /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
   var floodStore = function () { return window.TILES_FLOOD; };
   var Packed = L.TileLayer.extend({
@@ -2446,17 +2499,29 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     floodLayer.setOpacity(this.value / 100);
   });
 
-  /* ---------- theme and basemap brightness ----------
-     The page follows the viewer's theme by default; these let you override it,
-     because an inverted light-grey basemap can read very dark on some screens. */
-  function restyle() {
-    syncBasemap();
+  floodRestyle = function () {
     provLayer.setStyle(provStyle);
     expoLayer.eachLayer(function (poly) {
       var k = KIND[poly._kind] || KIND.sat;
       poly.setStyle({ color: tok(k.c), fillColor: tok(k.c) });
     });
     drawGauges(); drawRain(); drawInfra();
+  };
+  FLOOD_LAYERS = [["lyr-flood", floodLayer], ["lyr-expo", expoLayer], ["lyr-gauge", gaugeLayer],
+                  ["lyr-infra", infraLayer], ["lyr-rain", rainLayer], ["lyr-prov", provLayer]];
+  drawGauges(); drawRain(); fillRail();
+  msg.textContent = "Snapshot built " + (LIVE.built || "") + " \u2014 checking for a live feed\u2026";
+  refresh(true);          /* one probe on load: goes live, or says it cannot */
+  schedule();
+  }
+  if (window.OSAP_TH !== false) buildFlood();
+
+  /* ---------- theme and basemap brightness ----------
+     The page follows the viewer's theme by default; these let you override it,
+     because an inverted light-grey basemap can read very dark on some screens. */
+  function restyle() {
+    syncBasemap();
+    if (floodRestyle) floodRestyle();
     if (window.TBW) window.TBW.restyle();
   }
   var themeSeg = document.getElementById("theme-seg");
@@ -2496,11 +2561,6 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
   if (mqDark.addEventListener) mqDark.addEventListener("change", restyle);
 
-  drawGauges(); drawRain(); fillRail();
-  msg.textContent = "Snapshot built " + (LIVE.built || "") + " \u2014 checking for a live feed\u2026";
-  refresh(true);          /* one probe on load: goes live, or says it cannot */
-  schedule();
-
   var THAILAND = L.latLngBounds([5.5, 97.2], [20.6, 105.8]);
   function frame() {
     map.invalidateSize();
@@ -2513,29 +2573,49 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   window.addEventListener("resize", function () { map.invalidateSize(); });
 
   /* hooks for the border view, which shares this map */
-  var FLOOD_LAYERS = [["lyr-flood", floodLayer], ["lyr-expo", expoLayer], ["lyr-gauge", gaugeLayer],
-                      ["lyr-infra", infraLayer], ["lyr-rain", rainLayer], ["lyr-prov", provLayer]];
   window.FW = {
     map: map, tok: tok, esc: esc, num: num,
     hide: function () { FLOOD_LAYERS.forEach(function (p) { map.removeLayer(p[1]); }); },
     show: function () {
+      buildFlood();
       FLOOD_LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked) p[1].addTo(map); });
-      if (map.hasLayer(provLayer)) provLayer.bringToBack();
+      var prov = FLOOD_LAYERS[5][1];
+      if (map.hasLayer(prov)) prov.bringToBack();
       frame();
     }
   };
 })();
 </script>
 
-<script src="data/thailand/border-geometry.js"></script>
-<script src="data/thailand/border-conflict.js"></script>
+<script>/* the border record, only when Thailand opens (OSAP_WRITE, near the top) */ window.OSAP_WRITE("border");</script>
 <script>
 /* ================= Border conflict view =================
    Shares the map, basemap and theme with the flood view. Everything it draws
-   lives in its own panes and layer groups so switching views is a clean swap. */
+   lives in its own panes and layer groups so switching views is a clean swap.
+   Built the first time it is shown (the Border view, or the Thai-Cambodian conflict tab), after its geometry file
+   (data/thailand/border-geometry.js, about 0.4 MB) has loaded: a start that never shows it skips both. */
 (function () {
   "use strict";
   var FW = window.FW, map = FW.map, tok = FW.tok, esc = FW.esc, num = FW.num;
+  var BORDER_VIEW = L.latLngBounds([11.4, 102.0], [14.8, 105.6]), real = null, want = null, asked = false;
+  function fit() { map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false }); }
+  window.TBW = {
+    show: function (noFit, opt) {
+      if (real) return real.show(noFit, opt);
+      want = { opt: opt };
+      if (!noFit) fit();
+      if (asked) return;
+      asked = true;
+      var s = document.createElement("script"); s.src = "data/thailand/border-geometry.js";
+      /* a file that did not load (offline with no saved copy, or not in the plan) leaves the stand-in from assets/osap-tier.js */
+      s.onload = s.onerror = function () { real = build(); if (want) real.show(true, want.opt); };
+      document.body.appendChild(s);
+    },
+    hide: function () { want = null; if (real) real.hide(); },
+    restyle: function () { if (real) real.restyle(); },
+    fit: fit
+  };
+  function build() {
   var BD = window.BORDER, CF = window.CONFLICT;
   var TODAY = new Date();
 
@@ -2965,23 +3045,22 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function restyle() { drawBorder(); drawBands(); styleTambons(); drawAssets(); drawSites(); drawEvents(); }
   restyle(); setPhase(phase);
 
-  var BORDER_VIEW = L.latLngBounds([11.4, 102.0], [14.8, 105.6]);
-  window.TBW = {
+  return {
     /* opt.noEvents: the Thai-Cambodian conflict tab maps these incidents itself (its own list, filtered by period), so the
        border view's incident pins stay off there */
     show: function (noFit, opt) {
       active = true; noEv = !!(opt && opt.noEvents);
       drawEvents(); fillRail();
       LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked && !(noEv && p[1] === evLayer)) p[1].addTo(map); });
-      if (!noFit) map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false });
+      if (!noFit) fit();
     },
     hide: function () {
       active = false;
       LAYERS.forEach(function (p) { map.removeLayer(p[1]); });
     },
-    restyle: function () { restyle(); fillRail(); },
-    fit: function () { map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false }); }
+    restyle: function () { restyle(); fillRail(); }
   };
+  }
 })();
 </script>
 <!-- country-data:start -->
@@ -3027,31 +3106,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (!hit) return;
   window.OSAP_SUB = { cc: "us", code: hit[0], name: hit[1], tz: hit[2] };
   window.OSAP_ZONE = hit[2];
-  /* the state's outline, and its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) */
-  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
+  /* the state's outline, its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) and their earlier
+     items (data/history/us-states/<code>.js, tools/history.mjs; a missing file only means no history yet) */
+  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>' +
+    '<script src="data/history/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
 })();
 </script>
-<script src="data/sof/exercises-outside.js"></script>
+<script>/* the feeds a plan may not include (Mid and Full in tools/tiers.mjs; OSAP_WRITE, near the top); the Free feeds stay plain tags below */ window.OSAP_WRITE("feeds");</script>
 <script src="data/live/quakes.js"></script>
-<script src="data/live/air-quality.js"></script>
 <script src="data/live/gdacs.js"></script>
-<script src="data/live/reliefweb.js"></script>
 <script src="data/live/warnings.js"></script>
 <script src="data/live/advisories.js"></script>
 <script src="data/live/tsunami.js"></script>
 <script src="data/live/volcano.js"></script>
-<script src="data/live/outages.js"></script>
-<script src="data/live/outbreaks.js"></script>
-<script src="data/live/maritime.js"></script>
-<script src="data/live/sanctions.js"></script>
-<script src="data/live/displacement.js"></script>
 <script src="data/live/national-quakes.js"></script>
 <script src="data/live/eonet.js"></script>
-<script src="data/live/ifrc.js"></script>
-<script src="data/live/cdc.js"></script>
-<script src="data/live/navwarnings.js"></script>
-<script src="data/live/ucdp.js"></script>
-<script src="data/live/deepsouth.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
@@ -3115,15 +3184,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.OSAP_COUNTRIES = COUNTRIES;
   var HASH = (location.hash || "").replace("#", "").split("/");
   var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
+  /* a country code the list does not know opens Thailand: start again as Thailand, so its flood files load (OSAP_TH, near the top) */
+  if (TH && window.OSAP_TH === false) { location.replace("#" + HASH.slice(1).join("/")); location.reload(); }
   /* an open US state (see SUB-AREAS above): the same country, shown under the state's name and box */
   var SUB = window.OSAP_SUB && window.OSAP_SUBAREA && window.OSAP_SUB.cc === CC && window.OSAP_SUBAREA.code === window.OSAP_SUB.code ? window.OSAP_SUBAREA : null;
   if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
   /* a state's own outlets join the national news for this view, marked with the state */
   (function () {
-    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS;
-    if (!SUB || !S || S.st !== SUB.code || !(S.items || []).length) return;
+    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS, H = window.ASAP_HIST_ST;
+    if (!SUB || !S || S.st !== SUB.code) return;
+    /* the state outlets' earlier items, one copy per link, after the latest ones */
+    var seen = {}, cur = (S.items || []).filter(function (i) { return i && i.link && !seen[i.link] && (seen[i.link] = 1); });
+    var old = H && H.st === SUB.code ? (H.news || []).filter(function (i) { return i && i.link && !seen[i.link] && (seen[i.link] = 1); }) : [];
+    if (!cur.length && !old.length) return;
     if (!N || !N.items) N = window.ASAP_NEWS = { asof: S.asof, sources: [], items: {} };
-    N.items[CC] = S.items.map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
+    N.items[CC] = cur.concat(old).map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
     N.sources = (N.sources || []).concat(S.sources || []);
   })();
   function subRing(ring, x, y) {
@@ -3694,7 +3769,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return { radius: rad, color: tok("--surface"), weight: 1.4, fillColor: c, fillOpacity: 0.95 };
   }
   var shown = [];
+  /* a hidden scan copy (?watchscan=1) only reports its records back; it never shows the list or the map, so it draws neither */
+  var SCAN_COPY = /[?&]watchscan=1(&|$)/.test(location.search);
   function render() {
+    if (SCAN_COPY) return;
     var dsRecOn = Object.keys(DS).some(function (k) { return LBY[k] && !LBY[k].sof && k !== "alerts"; });
     /* a topic scope shows the topic's records on the map and in the list whatever the data set ticks */
     var sc = scoped(), mapped = function (r) { return DS[r.layer] || (sc && sc.layers.indexOf(r.layer) >= 0); };
@@ -4930,7 +5008,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       "</article>";
   }
   function openBrief(ev, toReport) {
-    briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()); briefEl.hidden = false; document.documentElement.classList.add("briefing");
+    /* the key dates (assets/osap-keydates.js) print after the country report on their own pages */
+    var kd = window.OSAP_KEYDATES ? window.OSAP_KEYDATES.briefHtml(CC) : "";
+    briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()) + kd; briefEl.hidden = false; document.documentElement.classList.add("briefing");
+    if (kd) window.OSAP_KEYDATES.fillBrief();
+    /* economic stress signals (assets/osap-econ.js) add their own page after the one-page brief once their file has loaded */
+    if (window.OSAP_ECON) window.OSAP_ECON.intoBrief(briefEl, CC, C.name);
     document.getElementById("brief-close").addEventListener("click", closeBrief);
     document.getElementById("brief-print").addEventListener("click", function () { try { window.print(); } catch (e) {} });
     if (toReport) { var r = document.getElementById("report"); if (r) r.scrollIntoView(); } else briefEl.scrollTop = 0;
@@ -5675,6 +5758,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }).join("") + "</div>" : '<p class="obs">No headline reaches 5 points in this period.</p>') +
       '<p><button type="button" class="refresh" id="news-all">' + (newsAll ? "Hide the full list" : "Show all " + recs.length + " headlines") + "</button></p></div>";
   }
+  /* nothing filed for this country in the last 24 hours: say so and offer nearby countries' news (assets/osap-empty.js) */
+  function newsGap(list) {
+    var nw = -Infinity; list.forEach(function (r) { var t = window.OSAP_TIME.parseT(r.tsLabel || ""); if (isFinite(t) && t > nw) nw = t; });
+    return Date.now() - nw <= 864e5 ? "" : window.OSAP_EMPTY.newsHtml({ cc: CC, name: C.name, newest: nw > 0 ? nw : NaN, olderN: 0 });
+  }
   function feedList(key, layer, flag, title, empty, note) {
     var w = window[key], recsAll = R.filter(function (r) { return r[flag]; }), recs = recsAll.filter(inPeriod);
     sofLayer.clearLayers(); sofM = {};
@@ -5696,6 +5784,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (layer === "social" && leftN ? '<p class="obs">' + (socialAll ? "Showing every post, including " : "") + leftN + " post" + (leftN === 1 ? "" : "s") +
         (socialAll ? " the relevance rules leave out (marked “left out”)." : " left out as sport, entertainment, lifestyle or off-topic (no security, politics, crime, disaster or economy word).") +
         ' <button type="button" class="refresh" id="social-all">' + (socialAll ? "Hide left-out posts" : "Show left-out posts") + "</button></p>" : "") +
+      (layer === "news" && window.OSAP_EMPTY ? newsGap(recsAll) : "") +
       (layer === "news" && recs.length ? topHtml(recs) + '<div id="news-full"' + (newsAll ? "" : " hidden") + '><h2 style="margin-top:10px">All headlines</h2>' : "<div>") +
       (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
         var pic = r.thumb || r.img;
@@ -5726,7 +5815,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
   /* ---------- further free sources (15-minute snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
      internet outages, maritime security, sanctions. Every item is its publisher's statement or an automated signal. ---------- */
-  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
+  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + (window.OSAP_EMPTY ? window.OSAP_EMPTY.ageNote(g.asof, 360) : "") + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
   function hasCC(x) { return (x.ccs || []).indexOf(CC) >= 0; }
   function fmtN(v) { return v == null ? "–" : Math.round(v).toLocaleString("en-GB"); }
   function advNow() {
@@ -5749,7 +5838,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     if (LBY.safety && V) (V.items || []).filter(hasCC).forEach(function (v) {
       add({ layer: "safety", type: "report", cat: "Volcanic activity (GVP weekly)", kind: "other", more: true, live: true, title: v.volcano + ": " + v.report,
-        detail: "", ts: v.date, place: v.volcano, prov: "", lat: v.lat, lon: v.lon, prec: v.lat != null ? "exact" : "none",
+        detail: v.summary || "", ts: v.date, place: v.volcano,   /* GVP items carry no text (licence); stand-ins carry OSAP's own line */ prov: "", lat: v.lat, lon: v.lon, prec: v.lat != null ? "exact" : "none",
         sev: /new activity|unrest/i.test(v.report) ? 2 : 1, src: SOURCES.gvp, url: v.link || V.src, issued: v.date, recorded: V.asof });
     });
     if (LBY.health && W) (W.items || []).filter(hasCC).forEach(function (w) {
@@ -5786,11 +5875,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (v.lat == null) return;
       var m = window.OSAP_SYM && OSAP_SYM.mark ? osapMark([v.lat, v.lon], "a_volcthreat", { pane: "tlpane", radius: 9, lgk: "volc" })
         : L.marker([v.lat, v.lon], { pane: "tlpane", lgk: "volc", icon: L.divIcon({ className: "", html: '<div style="font-size:18px;line-height:18px">▲</div>', iconSize: [18, 18], iconAnchor: [9, 12] }) });
-      m.bindPopup('<div class="pop"><div class="tier">Volcano · GVP weekly report · ' + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) +
+<<<<<<< HEAD
+      m.bindPopup('<div class="pop"><div class="tier">Volcano · GVP weekly report · ' + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + (v.summary ? "</p><p>" + esc(v.summary.slice(0, 500)) : "") +
         '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">Read the weekly report at the Smithsonian</a></p></div>', { maxWidth: 340 });
+=======
+      m.bindPopup('<div class="pop"><div class="tier">Volcano · ' + esc(v.via || "GVP weekly report") + " · " + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + "</p><p>" + esc(v.summary.slice(0, 500)) +
+        '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">' + (v.via && v.via !== "GVP weekly report" ? "Source" : "Weekly report") + "</a></p></div>", { maxWidth: 340 });
+>>>>>>> origin/main
       sofLayer.addLayer(m); sofM["vo:" + i] = m;
     });
-    return '<div class="sec"><h2>Volcanic activity (Smithsonian weekly report)</h2><p class="obs">' + snapBadge(V) + "</p>" + (V ? (list.length ? '<div class="tllist">' + list.map(function (v, i) {
+    return '<div class="sec"><h2>Volcanic activity (' + (V && V.fallback ? "NASA EONET and ash SIGMETs; Smithsonian report unavailable" : "Smithsonian weekly report") + ')</h2><p class="obs">' + snapBadge(V) + "</p>" + (V ? (list.length ? '<div class="tllist">' + list.map(function (v, i) {
       return '<button type="button" class="tlrow" data-sof="vo:' + i + '"><span class="tln">▲ ' + esc(v.volcano) + '</span><span class="tlm"><span class="tls">' + esc(v.report) + "</span></span></button>";
     }).join("") + "</div>" : '<p class="obs">No volcano in ' + esc(C.name) + " is in this week's report.</p>") : "") +
       '<p class="note">A weekly digest of observatories\' reports, not real time. Always shown, whatever the period.</p></div>';
@@ -6346,7 +6440,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      whenever the data set changes, and on start. The base map choice stays. */
   /* elevation shading (data-hs, data-lidar) and country borders (data-bd) belong with the base map, so they stay on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-dsx]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-satg]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -6471,8 +6565,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
     infraUi();
-    var DX = window.OSAP_DISASTERX, dx = DX ? DX.list() : [];
-    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length + dx.filter(function (x) { return x.on; }).length;
+    var DX = window.OSAP_DISASTERX, dx = DX ? DX.list() : [], xs = dsExtra();
+    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length + dx.filter(function (x) { return x.on; }).length + xs.filter(function (x) { return x.on(); }).length;
     /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
        which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
     var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
@@ -6498,7 +6592,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         '<button type="button" class="dsclear" data-dsall="0"' + (n ? "" : " disabled") + ' title="Take every data set off the map">Clear map</button>' +
         '<button type="button" class="dsshowall" data-dsall="1" title="Put every data set on the map">Show all</button></div>' +
       (tl ? '<button type="button" class="dsname dsall-rep" data-dsopen="timeline" aria-pressed="' + (openId === "timeline") + '"><span>All reports</span><i>Timeline</i></button>' : "") +
-      grp.filter(function (g) { return g[1].length || (g[0] === DS_NAT && dxRows); }).map(function (g) {
+      grp.filter(function (g) { return g[1].length || (g[0] === DS_NAT && dxRows) || xs.some(function (x) { return x.group === g[0]; }); }).map(function (g) {
         /* Natural disasters: the flood reports, then the satellite pictures (flooding now, flood history, fires now), then the rest */
         var nat = g[0] === DS_NAT, fi = nat ? g[1].map(function (x) { return x.id; }).indexOf("flood") + 1 : 0;
         return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x, i) {
@@ -6506,7 +6600,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
             '<label class="dstick" title="Show ' + esc(x.name) + ' on the map"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map"></label>';
           return (nat && i === fi ? dxRows : "") + '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
             "<span>" + esc(x.name) + "</span></button></div>";
-        }).join("") + (nat && fi >= g[1].length ? dxRows : "");
+        }).join("") + (nat && fi >= g[1].length ? dxRows : "") + xs.filter(function (x) { return x.group === g[0]; }).map(function (x) {
+          /* a view other modules add to a group (History of violence): its map tick and its name, which opens its window */
+          return '<div class="dsrow"><label class="dstick" title="Show ' + esc(x.name) + ' on the map"><input type="checkbox" data-dsx="' + esc(x.id) + '"' + (x.on() ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map"></label>' +
+            '<button type="button" class="dsname dsxname" data-dsxopen="' + esc(x.id) + '" title="' + esc(x.note || "") + '"><span>' + esc(x.name) + (x.short ? "<i>" + esc(x.short) + "</i>" : "") + "</span></button></div>";
+        }).join("");
       }).join("") +
       /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
       (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
@@ -6527,7 +6625,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* Map overlays in a fixed, sensible order whatever order the modules add their sections in (Shane 2026-10-01: organised so
      it is intuitive): infrastructure first (communications, power: Shane could not find them lower down), then terrain, roads and movement, aircraft, then your own marking (country sides,
      boundaries), then display options. Sections not named here stay where their module put them. */
-  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/],
+  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#ml-sat"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/], ["#ml-warn", /^Airspace and sea warnings/],
     [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/]];
   function mlArrange() {
     var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
@@ -6558,6 +6656,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!r || !document.documentElement.getAttribute("data-cf")) return [];
     return Array.prototype.filter.call(r.querySelectorAll(DS_CFSEL), function (i) { return i.type === "checkbox" && i.checked; });
   }
+  /* rows other modules add to the Data sets list: window.OSAP_DS_EXTRA = [{ id, group, name, note, on(), set(on), open() }] */
+  function dsExtra() { return (window.OSAP_DS_EXTRA || []).filter(function (x) { return x && x.id && typeof x.on === "function" && typeof x.set === "function"; }); }
   function dsCfClear() {
     /* one at a time: a panel may redraw itself after a switch, which replaces the boxes still to do */
     for (var k = 0, i; k < 20 && (i = dsCfOn()[0]); k++) { i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); }
@@ -6568,8 +6668,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked);
     /* a satellite layer: the Layers panel's own change listener switches it; redraw the list for the count and the opacity slider */
     else if (t.getAttribute("data-fx")) setTimeout(dsUi, 0);
+    else if (t.getAttribute("data-dsx")) { var x = dsExtra().filter(function (y) { return y.id === t.getAttribute("data-dsx"); })[0]; if (x) x.set(t.checked); setTimeout(dsUi, 0); }
   });
   dsBox.addEventListener("click", function (e) {
+    var xo = e.target.closest && e.target.closest("[data-dsxopen]");
+    if (xo) { var xx = dsExtra().filter(function (y) { return y.id === xo.getAttribute("data-dsxopen"); })[0]; if (xx && xx.open) xx.open(); setTimeout(dsUi, 0); return; }
     var o = e.target.closest && e.target.closest("[data-dsopen]");
     if (o) {
       var ov = o.getAttribute("data-dsopen"), ob = seg.querySelector('[data-view="' + ov + '"]');
@@ -6579,7 +6682,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
-    if (!on) { dsCfClear(); var DX = window.OSAP_DISASTERX; if (DX) DX.list().forEach(function (x) { if (x.on) DX.set(x.id, false); }); }
+    if (!on) { dsCfClear(); var DX = window.OSAP_DISASTERX; if (DX) DX.list().forEach(function (x) { if (x.on) DX.set(x.id, false); }); dsExtra().forEach(function (x) { if (x.on()) x.set(false); }); }
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
     dsSet(current, !!DS[current]);
   });
@@ -7553,7 +7656,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* nSame() for two grouped records, by counting shared word numbers: the record being placed (a) has its words marked in
      EVW_MARK, so each comparison is a short array walk instead of two object scans (same rule, same answer) */
   var EVW_ID = Object.create(null), EVW_N = 0, EVW_MARK = [], EVW_STAMP = 0, EVW_CUR = null;
-  function evWords(r) { var ids = []; for (var k in nWords(r.title)) ids.push(EVW_ID[k] || (EVW_ID[k] = ++EVW_N)); return ids; }
+  /* a title's word numbers never change (EVW_ID only grows), so each title is split once per page, not on every rebuild: the
+     neighbours' reports come back as fresh copies each time a hidden scan returns, and their titles repeat */
+  var EVW_T = new Map();
+  function evWords(r) {
+    var t = String(r.title || ""), ids = EVW_T.get(t); if (ids) return ids;
+    ids = []; for (var k in nWords(t)) ids.push(EVW_ID[k] || (EVW_ID[k] = ++EVW_N));
+    EVW_T.set(t, ids); return ids;
+  }
   function evMark(r) { EVW_STAMP++; EVW_CUR = r; for (var i = 0; i < r.__wi.length; i++) EVW_MARK[r.__wi[i]] = EVW_STAMP; }
   function evSame(a, b) {
     if (a !== EVW_CUR) evMark(a);
@@ -7643,6 +7753,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   xbLoad();
   var EVC = { sig: "", byRec: {}, list: [] };
+  /* sport, entertainment and programme headlines, decided once per title */
+  var EVR_T = new Map();
+  function evRoutine(t) { var v = EVR_T.get(t); if (v === undefined) { v = NROUTINE.test(t) || EV_SHOW.test(t); EVR_T.set(t, v); } return v; }
   function evSig() { return R.length + ":" + (R[0] ? R[0].id : "") + ":" + (R.length ? R[R.length - 1].id : "") + ":" + Object.keys(EV_SPLIT).length + ":" + XBV; }
   /* clusters: records in time order, each joins the open event it matches best (an event stays open for 48 h after its first
      report and holds at most 40 reports), or starts its own */
@@ -7653,7 +7766,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (EV_SPLIT[rk(r)] || r.ongoing) return false;
       if (r.type === "observation" && r.magnitude == null) return false;
       /* sport, entertainment and advertising headlines are not incidents */
-      if ((r.news || r.social) && (NROUTINE.test(r.title) || EV_SHOW.test(r.title))) return false;
+      if ((r.news || r.social) && evRoutine(r.title)) return false;
       r.__t = evMs(r); r.__wi = evWords(r);
       return isFinite(r.__t.ms);
     }).sort(function (a, b) { return a.__t.ms - b.__t.ms; });
@@ -8778,8 +8891,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   h.innerHTML = '<button type="button" class="grab"><i></i><b></b><small></small></button><span class="chev" aria-hidden="true">&#9650;</span>';
   rail.insertBefore(h, rail.firstChild);
   var STATES = ["bar", "half", "full"];
+  /* whether a panel holds any text: stops at the first word, where reading textContent copied out the whole list each time */
+  function hasText(el) {
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+    while ((n = w.nextNode())) if (/\S/.test(n.data)) return true;
+    return false;
+  }
   function panel() {
-    for (var i = 0; i < rail.children.length; i++) { var c = rail.children[i]; if (c !== h && c.id !== "rv" && !c.hidden && c.offsetParent !== null && c.textContent.trim()) return c; }
+    for (var i = 0; i < rail.children.length; i++) { var c = rail.children[i]; if (c !== h && c.id !== "rv" && !c.hidden && c.offsetParent !== null && hasText(c)) return c; }
     return null;
   }
   function label() {
@@ -8863,10 +8982,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
 
 
+<!-- source grading (Admiralty / NATO A-F, 1-6) for My work; before osap-work.js, which reads it on load (assets/osap-grade.js) -->
+<script src="assets/osap-grade.js"></script>
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-locate.js"></script>
+<script src="assets/osap-keydates.js"></script>
+<script src="assets/osap-empty.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
@@ -8898,17 +9021,22 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-tools.js"></script>
 <script src="assets/osap-drones.js"></script>
 <script src="assets/osap-traffic.js"></script>
+<!-- Airspace and sea warnings drawn as shapes (Map overlays): NGA navigational warnings, FAA TFRs, EASA conflict zone bulletins -->
+<script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-split.js"></script>
 <!-- side panels you can resize, dock left or right, or float (computer only; the edge grip of each panel) -->
 <script src="assets/osap-panels.js"></script>
 <script src="assets/osap-atak.js"></script>
 <script src="assets/osap-tidy.js"></script>
+<script src="assets/osap-findall.js"></script>
+<script src="assets/osap-reviews.js"></script>
 <script src="assets/osap-milsym.js"></script>
 <script src="assets/osap-points.js"></script>
 <script src="assets/osap-3d.js"></script>
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
 <!-- the analyst workspace: only on a device unlocked with the owner's Face ID (assets/osap-lock.js); adds nothing elsewhere -->
+<script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
 <script src="assets/osap-grid.js"></script>
 <script src="assets/osap-power.js"></script>
@@ -8930,15 +9058,27 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 <script src="assets/osap-seatransit.js"></script>
+<script src="assets/osap-intelbrief.js"></script>
+<script src="assets/osap-osir.js"></script>
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-borders.js"></script>
 <script src="assets/osap-pop.js"></script>
+<!-- Satellite before/after (Area menu and Map overlays > Satellite imagery): Sentinel-2 passes and NASA daily true colour -->
+<script src="assets/osap-sat.js"></script>
 <!-- LiDAR hillshade and LiDAR coverage (Map overlays > Elevation and terrain analysis), LiDAR heights for Terrain analysis -->
 <script src="assets/osap-lidar.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <!-- sync my devices: saved data kept the same on your own devices through encrypted public relays, no account -->
 <script src="assets/osap-sync.js"></script>
+<!-- team workspace: share a workspace with a team by an editor or viewer link, built on sync my devices (My work > Workspaces) -->
+<script src="assets/osap-team.js"></script>
+<!-- GPS interference map from aircraft accuracy reports (Map overlays > Live aircraft; tools/gnss.mjs) -->
+<script src="assets/osap-gnss.js"></script>
+<!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
+<script src="assets/osap-econ.js"></script>
+<!-- photo and video check: metadata, sun and shadow, reverse image search links, video frames, all on the device (My work, a point's popup) -->
+<script src="assets/osap-photocheck.js"></script>
 <!-- the user guide: Settings (the gear) > User guide, offline and printable -->
 <script src="assets/osap-guide.js"></script>
 <script src="assets/osap-i18n.js"></script>
@@ -8946,5 +9086,5 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <!-- terrain analysis: viewshed and line of sight (Map overlays > Elevation and terrain analysis, long-press > Terrain) -->
 <script src="assets/osap-terrain.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
-<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage("warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage(window.OSAP_DATA && OSAP_DATA.plan() ? { warm: OSAP_DATA.plan() } : "warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

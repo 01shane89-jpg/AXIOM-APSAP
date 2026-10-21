@@ -121,6 +121,46 @@ async function openEvac(p) {
   await ctx.close();
 }
 
+// ---------- a conflict tab (Thailand-Cambodia): its own two-column rule used to win, so the grip seemed to do nothing ----------
+{
+  const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1366, height: 768 } });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-rv-mode", "split"); } catch (e) {} });
+  const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message));
+  await p.goto(base + "#timeline", { waitUntil: "domcontentloaded" });
+  await ready(p);
+  await p.waitForFunction(() => document.querySelector('#view-seg [data-view="cf-thailand-cambodia"]'), null, { timeout: 60000 });
+  await p.evaluate(() => document.querySelector('#view-seg [data-view="cf-thailand-cambodia"]').click());
+  await p.waitForFunction(() => document.documentElement.getAttribute("data-cf") && document.querySelector('.pngrip.e.on[data-pn="rail"]'), null, { timeout: 30000 }); await p.waitForTimeout(800);
+  const c0 = await R(p, ".rail"), cm0 = await R(p, "#map");
+  ok(c0.w === 372 && c0.x + c0.w === 1366 && cm0.x === 0 && cm0.w === 994, `conflict tab: Details on the right at its normal width (${c0.x}+${c0.w}, map ${cm0.w})`);
+  // a real mouse click at the centre of the ⋮ tab
+  const [tx, ty] = await mid(p, '.pngrip.e.on[data-pn="rail"] .pntab');
+  ok(await p.evaluate(([x, y]) => !!document.elementFromPoint(x, y).closest('.pngrip[data-pn="rail"]'), [tx, ty]), "conflict tab: nothing covers the grip's tab");
+  await p.mouse.click(tx, ty); await p.waitForTimeout(250);
+  ok(await p.evaluate(() => document.querySelectorAll(".pnmenu [data-pnset]").length === 4), "conflict tab: a mouse click on the tab opens the position menu");
+  await p.keyboard.press("Escape"); await p.waitForTimeout(150);
+  await dragBy(p, '.pngrip.e.on[data-pn="rail"] .pntab', -120, 0);
+  const c1 = await R(p, ".rail"), cm1 = await R(p, "#map");
+  ok(c1.w === 492 && cm1.w === 874 && !(await p.evaluate(() => document.querySelector(".pnmenu"))), `conflict tab: dragging the tab makes Details wider (${c1.w}) and the map narrower (${cm1.w}), no menu`);
+  await p.mouse.click(...(await mid(p, '.pngrip.e.on[data-pn="rail"] .pntab'))); await p.waitForTimeout(250);
+  await p.click('.pnmenu [data-pnset="left"]'); await p.waitForTimeout(400);
+  const c2 = await R(p, ".rail"), cm2 = await R(p, "#map");
+  ok(c2.x === 0 && c2.w === 492 && cm2.x === 492 && cm2.w === 874, `conflict tab: Dock on the left puts Details on the left (${c2.x}+${c2.w}, map ${cm2.x}+${cm2.w})`);
+  await p.evaluate(() => window.OSAP_PANELS.set("rail", "float")); await p.waitForTimeout(400);
+  ok((await R(p, "#map")).w === 1366, "conflict tab: floating Details gives the whole width to the map");
+  await p.evaluate(() => window.OSAP_PANELS.reset("rail")); await p.waitForTimeout(400);
+  const c3 = await R(p, ".rail"); ok(c3.w === 372 && c3.x === 994, "conflict tab: Reset puts Details back on the right");
+  // leaving the tab: the Reports column comes back as before
+  await p.evaluate(() => document.querySelector('#view-seg [data-view="timeline"]').click());
+  await p.waitForFunction(() => !document.documentElement.getAttribute("data-cf"), null, { timeout: 10000 }); await p.waitForTimeout(600);
+  const rvb = await R(p, "#rv"), rlb = await R(p, ".rail");
+  ok(rvb && rvb.w === 380 && rlb.w === 372 && rlb.x + rlb.w === 1366, `after the tab closes Reports and Details are back (${rvb && rvb.w}, ${rlb.w})`);
+  ok(errors.length === 0, "conflict tab: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+  await shot(p, "panels-conflict");
+  await ctx.close();
+}
+
 // ---------- a phone and a narrow window: untouched, even with choices stored ----------
 for (const [w, h, name] of [[390, 844, "phone"], [860, 900, "narrow window"]]) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: w, height: h }, isMobile: w < 700, hasTouch: w < 700 });

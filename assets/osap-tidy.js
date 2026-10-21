@@ -130,10 +130,18 @@
     if (W.OSAP_SYNC) h += '<button type="button" role="menuitem" data-tp="@sync">Sync my devices</button>';
     /* the AI model the AI summaries use where the browser has none of its own (assets/osap-ai.js) */
     if (W.OSAP_AI) h += '<button type="button" role="menuitem" data-tp="@ai">On-device AI</button>';
+    /* pinned countries, role and the first-run setup again (assets/osap-mycountries.js) */
+    if (W.OSAP_MYCC) h += '<button type="button" role="menuitem" data-tp="@mycc">My countries and setup</button>';
     /* the user guide, offline and printable (assets/osap-guide.js) */
     if (W.OSAP_GUIDE) h += '<button type="button" role="menuitem" data-tp="@guide">User guide</button>';
     /* areas hidden from everyone but the owner, unlocked with Face ID (assets/osap-lock.js) */
     if (W.OSAP_LOCK) h += '<button type="button" role="menuitem" data-tp="@lock">Hidden areas</button>';
+    /* the paywall's plans and sign-in, only on the Netlify site (assets/osap-tier.js) */
+    if (W.OSAP_TIER && W.OSAP_TIER.on()) h += '<button type="button" role="menuitem" data-tp="@plan">Plan and sign-in</button>';
+    /* the accounts that use OSAP, for the owner's account only (assets/osap-tier.js) */
+    if (W.OSAP_TIER && W.OSAP_TIER.owner && W.OSAP_TIER.owner()) h += '<button type="button" role="menuitem" data-tp="@users">Users</button>';
+    /* reviews of OSAP: read them, leave one (assets/osap-reviews.js, Netlify site only) */
+    if (W.OSAP_REVIEWS && W.OSAP_REVIEWS.on()) h += '<button type="button" role="menuitem" data-tp="@reviews">Reviews</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
@@ -169,8 +177,18 @@
       pop.style.top = Math.round(r.bottom + 4) + "px";
       pop.style.left = Math.round(Math.max(8, Math.min(r.left, W.innerWidth - w - 8))) + "px";
       /* a long menu (Reports) scrolls inside the space below the button */
-      if (r.bottom + 4 + ph > W.innerHeight - 8) pop.style.maxHeight = Math.max(160, Math.round(W.innerHeight - r.bottom - 12)) + "px";
+      /* iPhone Safari: innerHeight runs under the bottom bar, the visual viewport does not */
+      var vh = Math.min(W.innerHeight, (W.visualViewport && W.visualViewport.height) || W.innerHeight);
+      if (r.bottom + 4 + ph > vh - 8) pop.style.maxHeight = Math.max(160, Math.round(vh - r.bottom - 12)) + "px";
     }
+    /* parts of the panel (the theme buttons, Plan and sign-in) can grow it after it was placed: keep it on the screen,
+       scrolling inside when it is taller than the space below the button */
+    (W.requestAnimationFrame || setTimeout)(function () {
+      if (pop.hidden) return;
+      var pr = pop.getBoundingClientRect(), vh2 = Math.min(W.innerHeight, (W.visualViewport && W.visualViewport.height) || W.innerHeight);
+      if (pr.right > W.innerWidth - 8) pop.style.left = Math.round(Math.max(8, W.innerWidth - pr.width - 8)) + "px";
+      if (pr.bottom > vh2 - 8) pop.style.maxHeight = Math.max(160, Math.round(vh2 - pr.top - 8)) + "px";
+    });
   }
   [rep, set, perChip, repTool].forEach(function (b) { b.addEventListener("click", function (e) { e.stopPropagation(); if (popFor === b) popClose(); else popOpen(b); }); });
   pop.addEventListener("click", function (e) {
@@ -191,8 +209,12 @@
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
+    else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
+    else if (sel === "@plan") { if (W.OSAP_TIER) W.OSAP_TIER.open(); }
+    else if (sel === "@reviews") { if (W.OSAP_REVIEWS) W.OSAP_REVIEWS.open(); }
+    else if (sel === "@users") { if (W.OSAP_TIER && W.OSAP_TIER.users) W.OSAP_TIER.users(); }
     else press(sel);
   });
   pop.addEventListener("change", function (e) {
@@ -277,7 +299,8 @@
     "html.phone.tidy #phone-nav .tidygear{flex:0 0 auto;min-width:44px;min-height:40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}" +
     "html.phone.tidy #phone-nav .tidygear[aria-expanded=true]{background:var(--ink);color:var(--surface)}" +
     "#tidy-pop #period-seg{display:flex!important;flex-wrap:wrap;gap:4px;margin:0 10px 6px}#tidy-pop #period-seg .plbl{display:none}" +
-    "#tidy-pop{position:fixed;z-index:4000;min-width:220px;max-width:calc(100vw - 16px);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.28);padding:6px;display:flex;flex-direction:column;gap:2px}#tidy-pop[hidden]{display:none}" +
+    /* border-box, so the panel is never wider than the screen; it scrolls inside its max-height (Settings on a phone is taller than the space below the button) */
+    "#tidy-pop{position:fixed;z-index:4000;min-width:220px;max-width:calc(100vw - 16px);box-sizing:border-box;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.28);padding:6px;display:flex;flex-direction:column;gap:2px}#tidy-pop>*{flex-shrink:0}#tidy-pop[hidden]{display:none}" +
     "#tidy-pop [data-tp]{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;font:inherit;font-size:14px;background:none;border:0;border-radius:6px;padding:8px 10px;color:var(--ink);cursor:pointer;min-height:40px}" +
     "#tidy-pop [data-tp]:hover,#tidy-pop [data-tp]:focus-visible{background:var(--accent-soft,rgba(0,0,0,.06))}#tidy-pop [data-tp] span{font-size:12px;color:var(--muted)}" +
     "#tidy-pop .tplbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:4px 10px 4px}#tidy-pop .tpset{display:flex;flex-direction:column;gap:6px}#tidy-pop #theme-seg{display:flex!important;margin:0 10px 4px}#tidy-pop{min-width:250px}" +

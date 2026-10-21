@@ -1,0 +1,13 @@
+[["n13432424701",37.58956,62.01672,"tm",{"name":"Мед. пункт","amenity":"hospital","opening_hours":"Mo-Sa 09:00-18:00"}],
+["n5654299903",37.29711,62.34073,"tm",{"name":"Saglyk Öýi","amenity":"clinic","healthcare":"clinic","addr:city":"Ýolöten"}],
+["n7103685285",36.59419,62.50773,"tm",{"name":"Saglyk Öýi","amenity":"clinic","healthcare":"clinic","addr:city":"Üzümçilik geňeşligi"}],
+["w1543081549",37.11973,62.35338,"tm",{"aeroway":"helipad"}],
+["w1543081550",37.11984,62.35237,"tm",{"aeroway":"helipad"}],
+["w1543081551",37.11929,62.35183,"tm",{"aeroway":"helipad"}],
+["w1543081552",37.11912,62.35284,"tm",{"aeroway":"helipad"}],
+["w1543081553",37.11855,62.35228,"tm",{"aeroway":"helipad"}],
+["w1543081554",37.11798,62.35175,"tm",{"aeroway":"helipad"}],
+["w294260537",37.61948,62.16893,"tm",{"name":"Saglyk öýi","amenity":"clinic","addr:street":"Soltan Sanjar köçesi","addr:city":"Bayram Aly"}],
+["w294262138",37.61698,62.16658,"tm",{"name":"Baýramaly Hassahanasy","amenity":"hospital","healthcare":"hospital","addr:street":"Azady köçesi","addr:city":"Baýramaly"}],
+["w294265100",37.61498,62.15523,"tm",{"name":"Saglyk Öýi","amenity":"clinic","addr:street":"Altyn Asyr köçesi","addr:city":"Bayramaly"}],
+["w566235142",37.29716,62.36137,"tm",{"name":"Ýolöten Etrap Hassahanasy","name:en":"Yoloten District Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"Atçapar köçesi","addr:city":"Ýolöten"}]]

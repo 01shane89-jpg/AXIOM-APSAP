@@ -1,0 +1,9 @@
+[["n1815564867",64.48205,14.1045,"se",{"name":"Frostlanda flygfält","aeroway":"aerodrome"}],
+["n1903048721",64.49093,14.14944,"se",{"amenity":"clinic"}],
+["n1932869892",65.06122,14.80798,"se",{"name":"Norrhelikopter","website":"http://norrhelikopter.se/","aeroway":"helipad"}],
+["n7133793887",65.71403,15.21656,"se",{"aeroway":"helipad"}],
+["n8357835144",64.7039,15.53575,"se",{"name":"Distriktssköterska","amenity":"clinic","healthcare":"clinic"}],
+["r16627766",65.80578,15.08302,"se",{"name":"Hemavan Tärnaby Airport","aeroway":"aerodrome","icao":"ESUT","iata":"HMV","wikidata":"Q1933061"}],
+["w1235541128",65.71579,15.31181,"se",{"aeroway":"helipad","surface":"asphalt"}],
+["w1235541131",65.71586,15.31339,"se",{"name":"Tärnaby sjukstuga","amenity":"clinic","addr:housenumber":"9","addr:street":"Granvägen"}],
+["w1246887391",65.71402,15.21674,"se",{"name":"Tärnaby Heliport","operator":"Arctic Air","website":"https://arcticairhemavantarnaby.se/","aeroway":"heliport"}]]

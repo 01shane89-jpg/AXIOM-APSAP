@@ -1,2 +1,5 @@
-[["n538249913",-21.48206,168.03638,"fr",{"name":"Aéroport de La Roche Maré","aeroway":"aerodrome","icao":"NWWR","iata":"MEE","wikidata":"Q6781896"}],
+[["n3408785161",-20.1399,169.78329,"vu",{"name":"Aid Post","amenity":"clinic"}],
+["n3408785162",-20.24638,169.85144,"vu",{"name":"Aid Post","amenity":"clinic","healthcare":"clinic"}],
+["n538249913",-21.48206,168.03638,"fr",{"name":"Aéroport de La Roche Maré","aeroway":"aerodrome","icao":"NWWR","iata":"MEE","wikidata":"Q6781896"}],
+["w303205198",-20.24911,169.77084,"vu",{"name":"Aneityum Airport","aeroway":"aerodrome","icao":"NVVA","iata":"AUY","wikidata":"Q4752245"}],
 ["w678814219",-21.4734,168.03596,"fr",{"name":"Dispensaire de La Roche","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes"}]]

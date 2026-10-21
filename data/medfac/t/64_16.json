@@ -1,0 +1,13 @@
+[["n1042034208",65.30528,17.97556,"se",{"name":"Gargnäs Airfield","aeroway":"aerodrome","icao":"ESUG","wikidata":"Q12692798"}],
+["n1042034303",64.15792,17.27557,"se",{"name":"Åsele flygfält","name:en":"Åsele Airfield","aeroway":"aerodrome","icao":"ESUS","wikidata":"Q12691720"}],
+["n2403659358",64.16087,17.3599,"se",{"name":"Åsele sjukstuga","amenity":"clinic","healthcare":"clinic","operator":"Region Västerbotten","operator:type":"public","addr:housenumber":"11A","addr:street":"Bryggaregatan","addr:city":"Åsele","addr:postcode":"91932","opening_hours":"Mo-Fr 08:00-12:00, 13:00-17:00"}],
+["n312024605",65.09688,17.1216,"se",{"name":"Storumans sjukstuga","amenity":"clinic","healthcare":"clinic"}],
+["n312709005",64.96086,17.69654,"se",{"name":"Storuman/Gunnarns flygplats","name:en":"Storuman Airport","operator":"Storuman Municipality","aeroway":"aerodrome","icao":"ESUD","iata":"SQO","wikidata":"Q581004"}],
+["n4831131994",64.26457,16.48994,"se",{"name":"Dorotea flygfält","aeroway":"aerodrome"}],
+["n6477443478",65.53717,17.54123,"se",{"name":"Sorsele sjukstuga hälsocentral","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Region Västerbotten","phone":"+46907859171","addr:housenumber":"13","addr:street":"Burevägen","addr:city":"Sorsele","addr:postcode":"92431"}],
+["w1079617441",65.09635,17.12055,"se",{"aeroway":"helipad"}],
+["w267311611",64.62517,16.66261,"se",{"name":"Vilhelmina vårdcentral","amenity":"clinic","healthcare":"clinic"}],
+["w292121954",64.25924,16.41771,"se",{"amenity":"hospital"}],
+["w491623829",64.57914,16.83318,"se",{"name":"Vilhelmina Airport","name:en":"Vilhelmina Airport","operator":"Vilhelmina Municipality","aeroway":"aerodrome","icao":"ESNV","iata":"VHM","wikidata":"Q1933049"}],
+["w555667320",64.11358,16.20977,"se",{"aeroway":"helipad"}],
+["w759827005",65.09712,17.10692,"se",{"aeroway":"helipad"}]]

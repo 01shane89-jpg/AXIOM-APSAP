@@ -3,7 +3,7 @@
 ["n12250835024",28.48736,92.28437,"cn",{"name":"曲古塘村卫生室","amenity":"hospital"}],
 ["n4071205415",29.06959,92.19612,"cn",{"name":"曲松县人民医院","name:en":"Qusong Xian Renmin Yiyuan","amenity":"hospital"}],
 ["w1013149910",28.10836,93.30299,"in",{"name":"Huri Helipad","name:en":"Huri Helipad","aeroway":"helipad"}],
-["w1033468090",28.4233,92.34793,"cn",{"name":"山南隆子机场","name:en":"Shannan Lhuntse","operator":"民航西藏自治区机场集团有限公司山南隆子机场分公司","addr:housenumber":"855600","aeroway":"aerodrome","icao":"ZUSH","iata":"LGZ"}],
+["w1033468090",28.4233,92.34793,"cn",{"name":"山南隆子机场","name:en":"Shannan Lhuntse","operator":"民航西藏自治区机场集团有限公司山南隆子机场分公司","addr:housenumber":"855600","aeroway":"aerodrome","icao":"ZUSH","iata":"LGZ","wikidata":"Q113212298"}],
 ["w1055102821",28.36792,93.02129,"cn",{"aeroway":"helipad"}],
 ["w1055102822",28.36864,93.02051,"cn",{"aeroway":"helipad"}],
 ["w1073270968",28.63215,93.07329,"cn",{"name":"玉麦乡卫生院","name:en":"Yume Health Center","amenity":"hospital","healthcare":"hospital"}],

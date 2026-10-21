@@ -105,7 +105,7 @@
 ["w673890636",-5.55642,141.03284,"pg",{"name":"Ok Ao Airport","name:en":"Okao Airport","official_name":"Ok Ao Airstrip","aeroway":"aerodrome","icao":"AYOF","iata":"OKV"}],
 ["w674038277",-5.67076,141.02972,"pg",{"name":"Kungim Airport","aeroway":"aerodrome","icao":"AYIM","iata":"KGM"}],
 ["w683251186",-5.87896,140.71001,"id",{"name":"Bandar Udara Mindiptana","name:en":"Mindiptana Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAKD","iata":"MDP","aerodrome:type":"regional"}],
-["w684053991",-4.90686,140.62728,"id",{"name":"Bandar Udara Oksibil","name:en":"Oksibil Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAJO","iata":"OKL","aerodrome:type":"regional"}],
+["w684053991",-4.90686,140.62728,"id",{"name":"Bandar Udara Oksibil","name:en":"Oksibil Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAJO","iata":"OKL","aerodrome:type":"regional","wikidata":"Q12474098"}],
 ["w687290352",-4.07724,140.66152,"id",{"name":"Dulis","aeroway":"aerodrome"}],
 ["w707313784",-4.97309,141.90904,"pg",{"name":"Duranmin Airstrip","aeroway":"aerodrome","icao":"AYDM","aerodrome:type":"airfield"}],
 ["w707938736",-4.14791,140.19522,"id",{"name":"Sekame","aeroway":"aerodrome"}],

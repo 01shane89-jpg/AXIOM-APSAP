@@ -14,7 +14,7 @@
 ["w1423596839",34.58738,103.49381,"cn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1488469326",35.41296,103.34101,"cn",{"name":"和政县中医医院","amenity":"hospital"}],
 ["w1524882487",35.69732,103.66055,"cn",{"name":"东乡县中西医结合医院","amenity":"hospital"}],
-["w238867672",34.81895,102.6217,"cn",{"name":"甘南夏河机场 ཀན་ལྷོ་བསང་ཆུ་ནམ་གྲུ་ཐང་།","name:en":"Gannan Xiahe Airport","aeroway":"aerodrome","icao":"ZLXH","iata":"GXH"}],
+["w238867672",34.81895,102.6217,"cn",{"name":"甘南夏河机场 ཀན་ལྷོ་བསང་ཆུ་ནམ་གྲུ་ཐང་།","name:en":"Gannan Xiahe Airport","aeroway":"aerodrome","icao":"ZLXH","iata":"GXH","wikidata":"Q3274816"}],
 ["w318713929",35.30628,103.83633,"cn",{"name":"临洮機場","name:en":"Lintao Air Base","aeroway":"aerodrome","military":"airfield"}],
 ["w457668074",35.95358,103.27851,"cn",{"name":"永靖县医院","amenity":"hospital","healthcare":"hospital"}],
 ["w462849079",34.98666,102.91595,"cn",{"name":"甘南州人民医院","amenity":"hospital","healthcare":"hospital"}],

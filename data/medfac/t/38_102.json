@@ -7,7 +7,7 @@
 ["w1455953513",38.15459,102.59207,"cn",{"name":"双城镇卫生院","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}],
 ["w1457046154",38.04575,102.50681,"cn",{"name":"五和镇卫生院","amenity":"hospital","healthcare":"hospital"}],
 ["w1465797999",38.10631,102.59462,"cn",{"name":"南安村卫生室","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:district":"凉州区双城镇南安村","addr:city":"武威市","addr:province":"甘肃省","addr:postcode":"733018"}],
-["w221348246",38.54104,102.35063,"cn",{"name":"金昌金川机场","name:en":"Jinchang Jinchuan Airport","operator":"HNA Airport Group","aeroway":"aerodrome","icao":"ZLJC","iata":"JIC"}],
+["w221348246",38.54104,102.35063,"cn",{"name":"金昌金川机场","name:en":"Jinchang Jinchuan Airport","operator":"HNA Airport Group","aeroway":"aerodrome","icao":"ZLJC","iata":"JIC","wikidata":"Q81319"}],
 ["w652540982",38.96185,103.5996,"cn",{"name":"中兴卫生院","amenity":"clinic","healthcare":"clinic"}],
 ["w652540984",38.96146,103.60188,"cn",{"name":"中兴医院","amenity":"hospital","healthcare":"hospital"}],
 ["w803559496",38.63375,103.09674,"cn",{"name":"民勤县中医院","amenity":"hospital","healthcare":"hospital"}],

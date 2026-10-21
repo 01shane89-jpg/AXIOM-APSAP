@@ -69,7 +69,7 @@
 ["w1396728089",22.65727,106.26515,"vn",{"name":"Bệnh viện đa khoa tỉnh Cao Bằng - Khoa nội tiết","amenity":"hospital","healthcare":"hospital"}],
 ["w1396728098",22.65752,106.26547,"vn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1408539488",22.42203,107.35616,"cn",{"name":"江州区人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w143366050",23.71991,106.96047,"cn",{"name":"百色巴马机场","name:en":"Baise Bama Airport","aeroway":"aerodrome","icao":"ZGBS","iata":"AEB","military":"airfield"}],
+["w143366050",23.71991,106.96047,"cn",{"name":"百色巴马机场","name:en":"Baise Bama Airport","aeroway":"aerodrome","icao":"ZGBS","iata":"AEB","military":"airfield","wikidata":"Q2901224"}],
 ["w1472885756",23.34061,107.52601,"cn",{"name":"广西平果广旅医院","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w1472949294",23.31829,107.58389,"cn",{"name":"平果市人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1486736324",22.82169,106.82151,"cn",{"name":"硕龙镇卫生院","name:en":"Shuolong Town Health Center","amenity":"hospital","healthcare":"hospital"}],

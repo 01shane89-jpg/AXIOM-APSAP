@@ -155,6 +155,7 @@
 ["w306341135",34.21264,35.86105,"lb",{"name":"Tannourine Governmental Hospital","name:en":"Tannourine Governmental Hospital","amenity":"hospital","healthcare":"hospital","contact:phone":"+9616520555"}],
 ["w306361230",34.16018,35.78282,"lb",{"aeroway":"helipad"}],
 ["w312248985",35.14579,35.94978,"sy",{"aeroway":"helipad"}],
+["w316524409",35.93023,35.95756,"tr",{"name":"Denizgören Hudut Karakolu Helipad","aeroway":"helipad","surface":"concrete"}],
 ["w327364735",34.4159,35.84315,"lb",{"name":"مستشفى الشفاء","name:en":"Shifaa' Hospital","amenity":"hospital"}],
 ["w341326547",35.70988,35.81984,"sy",{"aeroway":"helipad"}],
 ["w620301308",35.52566,34.1812,"cy",{"name":"Yeni Erenköy Sağlık Merkezi","amenity":"hospital","healthcare":"hospital"}],
@@ -172,4 +173,5 @@
 ["w838327593",34.43737,35.86007,"lb",{"name":"Tripoli Governmental Hospital","name:en":"Tripoli Governmental Hospital","amenity":"hospital","healthcare":"hospital","operator:type":"public","contact:phone":"+9616385300"}],
 ["w842717025",34.41523,35.84006,"lb",{"name":"Dar Al Zahraa Hospital","name:en":"Dar Al Zahraa Hospital","amenity":"hospital","emergency":"yes","contact:phone":"+9616444529"}],
 ["w843483047",34.34915,35.83781,"lb",{"name":"Al Koura Hospital","name:en":"Al Koura Hospital","amenity":"hospital","healthcare":"hospital","contact:phone":"+9616930981","contact:website":"http://www.hopital-alkoura.com.lb"}],
+["w910482619",35.95006,35.96913,"tr",{"name":"Kel Dağı Helipad","aeroway":"helipad","surface":"concrete"}],
 ["w995463969",34.41259,35.8324,"lb",{"name":"Hospital Haykel","name:en":"Hospital Haykel","amenity":"hospital","healthcare":"hospital","emergency":"yes","contact:phone":"+961 6 411 111","contact:website":"http://www.hopitalhaykel.com"}]]

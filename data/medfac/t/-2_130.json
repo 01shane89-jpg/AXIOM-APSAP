@@ -10,8 +10,8 @@
 ["r7628757",-0.90281,131.32168,"id",{"name":"Rumah Sakit Sele Be Solu","amenity":"hospital","addr:full":"Jl Sele Be Solu RT 01/RW 001"}],
 ["w1547863701",-1.11221,131.22992,"id",{"aeroway":"helipad"}],
 ["w501078888",-0.05028,131.00113,"id",{"name":"Bandar Udara Kabare","name:en":"Kabare Airport","operator":"UPT Daerah / Pemda","aeroway":"aerodrome","aerodrome:type":"regional"}],
-["w501135021",-0.4242,130.77417,"id",{"name":"Bandar Udara Marinda","name:en":"Marinda Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WASN","iata":"RJM","aerodrome:type":"regional"}],
-["w501324231",-0.89313,131.28848,"id",{"name":"Bandar Udara Domine Eduard Osok","name:en":"Domine Eduard Osok Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WASS","iata":"SOQ","aerodrome:type":"regional"}],
+["w501135021",-0.4242,130.77417,"id",{"name":"Bandar Udara Marinda","name:en":"Marinda Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WASN","iata":"RJM","aerodrome:type":"regional","wikidata":"Q25470161"}],
+["w501324231",-0.89313,131.28848,"id",{"name":"Bandar Udara Domine Eduard Osok","name:en":"Domine Eduard Osok Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WASS","iata":"SOQ","aerodrome:type":"regional","wikidata":"Q3499628"}],
 ["w506018994",-0.88678,131.287,"id",{"name":"Puskesmas Remu","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government","addr:full":"Jl. Selat Sairere"}],
 ["w506230169",-0.94442,131.33339,"id",{"name":"Puskesmas Pembantu Klabim","amenity":"clinic","addr:full":"Jl Kelapa 1 RT 2/RW 1"}],
 ["w506245023",-0.82116,131.22748,"id",{"name":"Pustu Kelurahan Tanjung Kasuari","amenity":"clinic","addr:full":"Jl. Yohanes Fakdawer"}],
@@ -54,5 +54,5 @@
 ["w530178672",-0.83963,131.21686,"id",{"name":"Polindes","amenity":"clinic","addr:full":"Jalan F. Tehupeiouri RT/RW 01/03"}],
 ["w787327381",-0.86973,131.24691,"id",{"name":"RUMAH SAKIT KABUPATEN SORONG","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"pemerintah Kota sorong","operator:type":"government","addr:housenumber":"780000","addr:street":"Jl. Kesehatan","addr:city":"Kota Sorong","addr:postcode":"98411"}],
 ["w879867351",-0.86414,131.2475,"id",{"name":"Klinik Talita Kumi","amenity":"clinic","healthcare":"clinic","addr:full":"Jalan Yos Sudarso"}],
-["w884219261",-0.89017,131.32329,"id",{"name":"Kantor SAR Kota Sorong","name:en":"Search an Rescue Sorong","emergency":"ambulance_station","emergency:phone":"115","addr:full":"Jl. Sungai Maruni"}],
-["w940417568",-0.75961,131.78057,"id",{"name":"Puskesman Selemkai","amenity":"clinic","healthcare":"clinic","addr:street":"Klabili, Selemkai","addr:city":"Tambrauw"}]]
+["w884219261",-0.89017,131.32329,"id",{"name":"Kantor SAR Kota Sorong","name:en":"Search an Rescue Sorong","emergency":"ambulance_station","emergency:phone":"115","addr:full":"Jl. Sungai Maruni","opening_hours":"24/7"}],
+["w940417568",-0.75961,131.78057,"id",{"name":"Puskesman Selemkai","amenity":"clinic","healthcare":"clinic","addr:street":"Klabili, Selemkai","addr:city":"Tambrauw","opening_hours":"24/7"}]]
