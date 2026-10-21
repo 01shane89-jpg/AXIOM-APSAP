@@ -4,7 +4,7 @@
 ["n5139838333",31.1455,97.17922,"cn",{"name":"仁和诊所","amenity":"clinic"}],
 ["n5139862868",31.14525,97.17917,"cn",{"name":"西藏昌都贡培藏药诊所","amenity":"clinic"}],
 ["n5139889472",31.14045,97.18185,"cn",{"name":"民安医院","amenity":"hospital"}],
-["w101968188",30.55237,97.1096,"cn",{"name":"昌都邦达机场","name:en":"Bangda Airport","aeroway":"aerodrome","icao":"ZUBD","iata":"BPX"}],
+["w101968188",30.55237,97.1096,"cn",{"name":"昌都邦达机场","name:en":"Bangda Airport","aeroway":"aerodrome","icao":"ZUBD","iata":"BPX","wikidata":"Q531800"}],
 ["w1348151450",31.11071,97.20551,"cn",{"name":"卡若区人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w430008886",31.13697,97.17813,"cn",{"name":"昌都华协医院","amenity":"hospital"}],
 ["w449021673",31.12874,97.18164,"cn",{"name":"昌都市人民医院","amenity":"hospital","healthcare":"hospital"}],

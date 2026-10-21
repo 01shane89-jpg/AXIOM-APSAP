@@ -17,10 +17,14 @@ const KEEP = ["title", "title_en", "sum_rel", "date", "link", "geo", "outlet", "
 const CODE = /\bwindow\.\w+|addEventListener\s*\(|document\.getElementById|function\s*\(\s*\w*\s*\)\s*\{/;
 // A machine translation the model invented (tools/mt_guard.mjs) is removed from new and kept items alike; the original stays.
 const unCode = (i) => { for (const k of ["summary", "summary_en"]) if (i[k] && CODE.test(i[k])) delete i[k]; dropSuspectMt(i); return i; };
+// A US state's own outlets ("us:MO") are kept apart in data/history/us-states/<st>.js (window.ASAP_HIST_ST), loaded only by
+// that state's view, so the state keeps its past reporting as countries do.
+const isState = (cc) => /^us:[A-Z]{2}$/.test(cc);
+const file = (cc) => isState(cc) ? `${DIR}/us-states/${cc.slice(3).toLowerCase()}.js` : `${DIR}/${cc}.js`;
 function read(cc) {
   try {
-    const t = fs.readFileSync(`${DIR}/${cc}.js`, "utf8");
-    return JSON.parse(t.slice(t.indexOf("=", t.indexOf("]")) + 1).trim().replace(/;$/, ""));
+    const t = fs.readFileSync(file(cc), "utf8");
+    return JSON.parse(t.slice(isState(cc) ? t.indexOf("=") + 1 : t.indexOf("=", t.indexOf("]")) + 1).trim().replace(/;$/, ""));
   } catch (e) { return {}; }
 }
 // The English already stored for each kept item, as [{ text, lang, en, tool }] for tools/translate.mjs seed(): a refresh
@@ -48,7 +52,7 @@ export async function updateHistory(kind, items, stamp, caps) {
   // news keeps only what tools/relevance.json keeps, old items included, so the history follows the word lists when they change
   const R = kind === "news" ? await loadRelevance() : null;
   for (const cc of Object.keys(items)) {
-    if (!/^[a-z]{2,3}$/.test(cc)) continue;
+    if (!/^[a-z]{2,3}$/.test(cc) && !isState(cc)) continue;
     const h = read(cc), byLink = new Map();
     // items kept before 2026-10-17 still carry the outlet's summary: it is dropped here (its relevance verdict kept)
     for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, stripOutletText(unCode(i), R));
@@ -70,6 +74,7 @@ export async function updateHistory(kind, items, stamp, caps) {
     }
     h[kind] = [...byLink.values()].filter((i) => (!i.date || i.date >= cutoff) && (!R || kept(itemRelevance(R, i)))).sort((a, b) => (b.date || "") > (a.date || "") ? 1 : -1).slice(0, Math.max(CAP[kind], (kind === "news" && caps && caps[cc]) || 0));
     h.updated = stamp;
+    if (isState(cc)) { fs.mkdirSync(`${DIR}/us-states`, { recursive: true }); fs.writeFileSync(file(cc), "window.ASAP_HIST_ST=" + JSON.stringify({ st: cc.slice(3), ...h }).replace(/<\//g, "<\\/") + ";\n"); continue; }
     fs.writeFileSync(`${DIR}/${cc}.js`, `window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST[${JSON.stringify(cc)}]=` + JSON.stringify(h).replace(/<\//g, "<\\/") + ";\n");
   }
   console.log(`history (${kind}): ${added} new item${added === 1 ? "" : "s"} across ${Object.keys(items).length} areas`);

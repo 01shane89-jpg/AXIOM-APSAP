@@ -38,7 +38,7 @@
 ["w1530851394",29.66216,94.36105,"cn",{"name":"林芝市人民医院","amenity":"hospital"}],
 ["w1530852471",29.65536,94.36421,"cn",{"name":"林芝市藏医院","amenity":"hospital"}],
 ["w157708626",28.06549,95.33651,"in",{"name":"Pasighat Airport","name:en":"Pasighat Airport","aeroway":"aerodrome","icao":"VEPG","iata":"IXT"}],
-["w174965488",29.30353,94.33564,"cn",{"name":"林芝米林机场","name:en":"Nyingchi Mainling Airport","addr:district":"米林镇","addr:city":"林芝市","addr:province":"西藏藏族自治区","addr:postcode":"860501","aeroway":"aerodrome","icao":"ZUNZ","iata":"LZY"}],
+["w174965488",29.30353,94.33564,"cn",{"name":"林芝米林机场","name:en":"Nyingchi Mainling Airport","addr:district":"米林镇","addr:city":"林芝市","addr:province":"西藏藏族自治区","addr:postcode":"860501","aeroway":"aerodrome","icao":"ZUNZ","iata":"LZY","wikidata":"Q615458"}],
 ["w401019023",28.96531,95.80901,"in",{"aeroway":"helipad"}],
 ["w401019024",28.93076,95.9739,"in",{"aeroway":"helipad"}],
 ["w450541089",28.26823,95.62448,"in",{"aeroway":"helipad"}],

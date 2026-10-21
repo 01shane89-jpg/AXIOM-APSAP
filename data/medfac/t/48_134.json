@@ -133,7 +133,7 @@
 ["w180348535",48.4918,135.05657,"ru",{"name":"Больница № 12","amenity":"hospital"}],
 ["w180348546",48.49068,135.06138,"ru",{"name":"Краевая психиатрическая больница","amenity":"hospital","addr:housenumber":"33","addr:street":"улица Серышева"}],
 ["w193817582",48.60114,135.59045,"ru",{"name":"Военный госпиталь","amenity":"hospital","emergency":"yes"}],
-["w225696033",48.19868,134.36598,"cn",{"name":"抚远东极机场","name:en":"Fuyuan Dongji Airport","operator":"抚远东极机场管理有限责任公司","addr:district":"抚远市","addr:city":"佳木斯市","addr:province":"黑龙江省","addr:postcode":"156500","aeroway":"aerodrome","icao":"ZYFY","iata":"FYJ"}],
+["w225696033",48.19868,134.36598,"cn",{"name":"抚远东极机场","name:en":"Fuyuan Dongji Airport","operator":"抚远东极机场管理有限责任公司","addr:district":"抚远市","addr:city":"佳木斯市","addr:province":"黑龙江省","addr:postcode":"156500","aeroway":"aerodrome","icao":"ZYFY","iata":"FYJ","wikidata":"Q4073698"}],
 ["w243508666",48.51623,135.04581,"ru",{"name":"Детская городская больница №2","amenity":"hospital"}],
 ["w243509583",48.51626,135.04664,"ru",{"name":"Станция скорой помощи","amenity":"doctors","emergency":"ambulance_station"}],
 ["w252084060",48.4128,135.41777,"ru",{"name":"Аэродром Калинка","name:en":"Blagodatnoye Air Base","aeroway":"aerodrome","icao":"UHHS","military":"airfield","wikidata":"Q21634724"}],

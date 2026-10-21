@@ -5,7 +5,7 @@
 ["w1208478404",29.996,100.27009,"cn",{"name":"理塘县人民医院","amenity":"hospital","healthcare":"hospital","addr:housenumber":"99","addr:street":"格聂东路"}],
 ["w1264537223",28.55855,100.3396,"cn",{"name":"稻城县中藏医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1416023718",29.99761,101.95664,"cn",{"name":"康定市人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w292580461",29.31682,100.06102,"cn",{"name":"稻城亚丁机场","name:en":"Daocheng Yading Airport","aeroway":"aerodrome","icao":"ZUDC","iata":"DCY"}],
+["w292580461",29.31682,100.06102,"cn",{"name":"稻城亚丁机场","name:en":"Daocheng Yading Airport","aeroway":"aerodrome","icao":"ZUDC","iata":"DCY","wikidata":"Q1708704"}],
 ["w923817716",29.98867,100.21392,"cn",{"aeroway":"helipad"}],
 ["w923817717",29.98869,100.2147,"cn",{"aeroway":"helipad"}],
 ["w923817718",29.98811,100.21469,"cn",{"aeroway":"helipad"}],

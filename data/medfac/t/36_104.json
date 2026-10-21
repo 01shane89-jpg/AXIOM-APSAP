@@ -41,7 +41,7 @@
 ["w1507827638",37.51582,105.17389,"cn",{"name":"中卫人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1507827640",37.5201,105.18264,"cn",{"name":"中卫第二人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w166880781",36.62836,105.00364,"cn",{"name":"空军靖远场站","aeroway":"aerodrome","military":"airfield"}],
-["w359372444",37.57103,105.15454,"cn",{"name":"中卫沙坡头机场","name:en":"Zhongwei Shapotou Airport","aeroway":"aerodrome","icao":"ZLZW","iata":"ZHY"}],
+["w359372444",37.57103,105.15454,"cn",{"name":"中卫沙坡头机场","name:en":"Zhongwei Shapotou Airport","aeroway":"aerodrome","icao":"ZLZW","iata":"ZHY","wikidata":"Q1019317"}],
 ["w427601172",36.72449,104.81158,"cn",{"name":"平川区人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w484469850",37.19117,104.06723,"cn",{"name":"景泰县人民医院","name:en":"Yingtai County People's Hospital","amenity":"hospital"}],
 ["w494166790",36.72251,104.84075,"cn",{"name":"靖煤集团总医院","amenity":"hospital"}],

@@ -1,5 +1,5 @@
 [["n3406722223",42.84323,93.52417,"cn",{"name":"益民诊所","amenity":"hospital","healthcare":"hospital"}],
-["w104242666",42.84072,93.66793,"cn",{"name":"哈密伊州机场 قۇمۇل ئايروپورتى","name:en":"Hami Airport","addr:housenumber":"3575km","addr:street":"312国道","addr:city":"哈密市","addr:province":"新疆维吾尔自治区","addr:postcode":"839000","aeroway":"aerodrome","icao":"ZWHM","iata":"HMI","aerodrome:type":"military/public"}],
+["w104242666",42.84072,93.66793,"cn",{"name":"哈密伊州机场 قۇمۇل ئايروپورتى","name:en":"Hami Airport","addr:housenumber":"3575km","addr:street":"312国道","addr:city":"哈密市","addr:province":"新疆维吾尔自治区","addr:postcode":"839000","aeroway":"aerodrome","icao":"ZWHM","iata":"HMI","aerodrome:type":"military/public","wikidata":"Q3886447"}],
 ["w1237365515",42.45139,92.32715,"cn",{"aeroway":"helipad"}],
 ["w1237365517",42.45783,92.32863,"cn",{"aeroway":"helipad"}],
 ["w1256813688",43.15836,92.67336,"cn",{"name":"三道岭人民医院","amenity":"hospital","healthcare":"hospital"}],

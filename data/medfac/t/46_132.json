@@ -28,7 +28,7 @@
 ["w481238607",47.93871,132.62026,"ru",{"name":"Ленинская центральная районная больница","amenity":"hospital","healthcare":"hospital","contact:phone":"8-(42663)-21-3-23","website":"http://leninskcrb.ru/","addr:housenumber":"2Б","addr:street":"улица Кагыкина","addr:city":"село Ленинское","addr:postcode":"679370"}],
 ["w520744816",47.5503,133.10857,"cn",{"name":"前进医院","name:en":"Qianjin Hospital","amenity":"hospital"}],
 ["w521039339",47.26737,132.62321,"cn",{"name":"建三江人民医院","name:en":"Jiansanjiang People's Hospital","amenity":"hospital"}],
-["w521115630",47.10662,132.66015,"cn",{"name":"建三江湿地机场","name:en":"Jiansanjiang Shidi Airport","addr:street":"七星农场七十七队","addr:city":"建三江市","addr:province":"黑龙江省","addr:postcode":"156300","aeroway":"aerodrome","icao":"ZYJS","iata":"JSJ"}],
+["w521115630",47.10662,132.66015,"cn",{"name":"建三江湿地机场","name:en":"Jiansanjiang Shidi Airport","addr:street":"七星农场七十七队","addr:city":"建三江市","addr:province":"黑龙江省","addr:postcode":"156300","aeroway":"aerodrome","icao":"ZYJS","iata":"JSJ","wikidata":"Q14943727"}],
 ["w553687244",46.33117,132.20605,"cn",{"name":"中医院","amenity":"hospital","healthcare":"hospital"}],
 ["w881969271",47.92517,132.61892,"ru",{"aeroway":"helipad"}],
 ["w938690889",47.64783,132.51185,"cn",{"name":"同江市人民医院","amenity":"hospital","healthcare":"hospital"}],

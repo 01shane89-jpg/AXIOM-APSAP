@@ -1,0 +1,42 @@
+{
+ "schema": "osap-keydates-state/1",
+ "checked": "2026-10-20 07:46Z",
+ "years": [
+  2026,
+  2027
+ ],
+ "status": {
+  "nager": {
+   "ok": true,
+   "countries": 164,
+   "failed": 0
+  },
+  "wikipedia": {
+   "ok": true,
+   "pages": 2,
+   "unmatched": [
+    "Tokelau",
+    "Faroe Islands",
+    "Niue",
+    "Jersey",
+    "New Caledonia",
+    "Cook Islands",
+    "South Ossetia",
+    "Isle of Man",
+    "Transnistria"
+   ]
+  },
+  "ucdp": {
+   "ok": true,
+   "release": "ged261-csv.zip"
+  }
+ },
+ "ucdp": {
+  "release": "ged261-csv.zip",
+  "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667",
+  "v": 2,
+  "last": "2025-12-31",
+  "from": "2016-01-01",
+  "url": "https://ucdp.uu.se/downloads/"
+ }
+}

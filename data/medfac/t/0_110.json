@@ -78,7 +78,7 @@
 ["n4180503525",1.74771,111.3405,"my",{"name":"Hospital Saratok","amenity":"hospital"}],
 ["n4201565400",1.53868,110.36165,"my",{"name":"Lim Medical Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n4479008840",0.02231,110.88951,"id",{"name":"Anugerah","amenity":"clinic","healthcare":"clinic"}],
-["n4519827891",0.7564,110.58517,"id",{"name":"Puskesmas Noyan","amenity":"hospital","website":"http://puskesmasnoyan.blogspot.co.id","addr:street":"Jalan Bonuo Mawa No. 2, Kec. Noyan","addr:postcode":"78554"}],
+["n4519827891",0.7564,110.58517,"id",{"name":"Puskesmas Noyan","amenity":"hospital","website":"http://puskesmasnoyan.blogspot.co.id","addr:street":"Jalan Bonuo Mawa No. 2, Kec. Noyan","addr:postcode":"78554","opening_hours":"Mo-Fr 07:30-01:00"}],
 ["n5163053421",1.55576,110.35612,"my",{"name":"Lee Physician & Drugstore","amenity":"clinic","healthcare":"clinic"}],
 ["n5755335021",1.5319,110.33719,"my",{"name":"Gribbles Pathology","amenity":"clinic","healthcare":"clinic"}],
 ["n7217877185",1.55335,110.35267,"my",{"name":"Wong Yieng Beauty Professional Centre","amenity":"clinic","healthcare":"clinic"}],

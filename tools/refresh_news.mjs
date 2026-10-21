@@ -17,7 +17,7 @@ import { stripOutletText } from "./outlet_text.mjs";
 import { dedupeStories } from "./news_dedupe.mjs";
 import { US_STATES, stateQuery } from "./us_states.mjs";
 
-const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 25, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
+const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 60, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 // GDELT uses FIPS country codes for the outlet's country
 const FIPS = { th: "TH", vn: "VM", kh: "CB", la: "LA", mm: "BM", ph: "RP", my: "MY", sg: "SN", id: "ID", bn: "BX", tl: "TT",
@@ -104,6 +104,7 @@ async function readFeed(f) {
       if (f.relevance === "exempt") o.exempt = true;   // every item kept by the relevance check
       if (f.tier) o.tier = f.tier;          // official, national, regional, local-language or specialist (tools/news_feeds.json)
       if (f.region) o.region = f.region;    // the province or island group a regional outlet covers
+      if (f.local) o._local = true;         // a feed that mixes in other places' stories (station group, world service): kept only when it names its state or country, or a place in it
       return o;
     });
     // a US state's own outlets are kept apart ("us:TX") and written to data/live/news/us-states/<st>.js for the state view
@@ -141,11 +142,11 @@ for (const c of COUNTRIES) {
     if (working().has(c.id)) break;
   }
 }
-// Every US state gets news too: a state whose outlets all failed this run gets a Bing News search for its name.
+// Every US state also gets a Bing News search for its name on every run, beside its own outlets: one or two outlets a state
+// left the state view with a few dozen headlines (Missouri, 2026-10-20). Marked as a search (nc) like the others.
 const stOk = () => new Set(status.filter((s) => s.ok && s.n > 0 && s.st).map((s) => s.st));
 for (const [code, name] of US_STATES) {
-  if (stOk().has(code)) continue;
-  await readFeed({ cc: "us", st: code, outlet: "Bing News search (fallback)", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(stateQuery(code, name)) + "&format=rss",
+  await readFeed({ cc: "us", st: code, outlet: "Bing News search", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(stateQuery(code, name)) + "&format=rss",
     lang: "en", search: true, nc: true });
   await sleep(1000);
 }
@@ -227,6 +228,9 @@ saveCache();
   for (const cc of Object.keys(items)) { const n = items[cc].length; items[cc] = items[cc].filter((i) => kept(itemRelevance(R, i))); out += n - items[cc].length; }
   console.log("relevance: left out", out, "headlines (sport, celebrity, lifestyle or no relevant word)");
 }
+const NAME_ALIAS = { th: ["Thai"], af: ["Afghan"], so: ["Somali"], kg: ["Kyrgyz"], uz: ["Uzbek"], tr: ["Turk", "Türkiye"], mm: ["Myanmar", "Burm"],
+  kr: ["Korea", "Seoul"], kp: ["Korea", "Pyongyang"], cn: ["China", "Chinese", "Beijing"], ru: ["Russia", "Kremlin", "Moscow"], ua: ["Ukrain", "Kyiv"],
+  ir: ["Iran", "Tehran"], vn: ["Vietnam", "Viet Nam", "Hanoi"], la: ["Lao"], ng: ["Nigeria"], et: ["Ethiopia"], er: ["Eritrea"], rs: ["Serb"], br: ["Brazil", "Brasil"] };
 // Pin each item to the first town or region its headline or summary names inside its own country (GeoNames, tools/gazetteer.mjs).
 // geo.p is the honest precision: "approx" = a town or city centre, "province" = the rough centre of a named region.
 // Items that name no place carry no geo and are not pinned.
@@ -240,11 +244,25 @@ try {
     // a US state's own outlet: only a place inside that state, else the state's rough centre
     const st = cc.startsWith("us:") ? cc.slice(3) : "", ok = (r) => r && (!st || r.a1 === "US." + st);
     for (const t of texts) { const r = placeIn(gz, t, [st ? "us" : cc]); if (ok(r) && (!g || (r.prec === "approx" && g.prec !== "approx"))) g = r; if (g && g.prec === "approx") break; }
+    // a local-TV feed's network-wide stories (the same health or weather piece on every station) name no place in the state:
+    // left out of the state view rather than pinned to the state's centre
+    if (!g && st && i._local && !new RegExp("\\b" + (US_STATES.find((s) => s[0] === st) || [, "-"])[1] + "\\b", "i").test(texts.join(" "))) { i._drop = true; continue; }
+    // a world-service feed in one language (BBC, RFA) also carries other countries' news: kept under its country only when it names it
+    if (!g && !st && i._local && !namesCountry(cc, texts.join(" "))) { i._drop = true; continue; }
     if (!g && st) g = stateCentre(gz, st);
     i.geo = g ? { n: g.name, la: g.lat, lo: g.lon, p: g.prec } : null;
     if (g) placed++;
   }
-  console.log("placed", placed, "of", all.length, "items by name");
+  let dropped = 0;
+  for (const k of Object.keys(items)) { const n = items[k].length; items[k] = items[k].filter((i) => !i._drop); dropped += n - items[k].length; }
+  for (const l of Object.values(items)) for (const i of l) delete i._local;
+  console.log("placed", placed, "of", all.length, "items by name;", dropped, "items from mixed feeds (local TV, world services) naming no place in their state or country left out");
+  function namesCountry(cc, text) {
+    // the page's name, and the demonyms and short forms a name does not start (Thai, Afghan, Korea, Burma)
+    const c = COUNTRIES.find((x) => x.id === cc), extra = NAME_ALIAS[cc] || [];
+    const names = [c && c.name.replace(/\s*\(.*\)$/, ""), ...extra].filter(Boolean).map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    return names.length > 0 && new RegExp("\\b(" + names.join("|") + ")", "i").test(text);
+  }
   function stateCentre(gz, st) {
     // by admin-1 code, not name: a city can hold the name (Washington, D.C.; Georgia, the country)
     const p = gz.us && gz.us.regs.get("US." + st);
@@ -258,6 +276,9 @@ fs.mkdirSync("data/live", { recursive: true });
 // US state news: one file per state (the page loads only the open state's), taken out of the national snapshot
 {
   fs.mkdirSync("data/live/news/us-states", { recursive: true });
+  // each state's items also go to its own history (tools/history.mjs), so "All" in the state view shows more than this run
+  const stItems = Object.fromEntries(US_STATES.map(([code]) => ["us:" + code, items["us:" + code] || []]));
+  try { await updateHistory("news", stItems, stamp); } catch (e) { console.error("state history not updated:", e.message); }
   for (const [code] of US_STATES) {
     const k = "us:" + code, part = { asof: stamp, st: code, sources: status.filter((s) => s.st === code), items: items[k] || [] };
     fs.writeFileSync("data/live/news/us-states/" + code.toLowerCase() + ".js", "window.ASAP_NEWS_ST=" + JSON.stringify(part).replace(/<\//g, "<\\/") + ";\n");

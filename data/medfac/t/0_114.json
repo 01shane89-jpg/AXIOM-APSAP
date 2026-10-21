@@ -10,8 +10,8 @@
 ["w315870069",1.79518,114.90077,"id",{"name":"Puskesmas Kayan Hulu","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
 ["w607260970",0.3623,115.39721,"id",{"name":"Puskesmas Laham","amenity":"clinic"}],
 ["w674056549",1.79922,114.90428,"id",{"name":"Long Nawang Airstrip","aeroway":"aerodrome","icao":"WALN"}],
-["w676881028",0.80673,114.5291,"id",{"name":"Bandar Udara Datah Dawai","name:en":"Datah Dawai Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WALJ","iata":"DTD","aerodrome:type":"regional"}],
-["w676915821",1.7066,114.97081,"id",{"name":"Bandar Udara Long Apung","name:en":"Long Apung Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAQL","iata":"LPU","aerodrome:type":"regional"}],
+["w676881028",0.80673,114.5291,"id",{"name":"Bandar Udara Datah Dawai","name:en":"Datah Dawai Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WALJ","iata":"DTD","aerodrome:type":"regional","wikidata":"Q1709017"}],
+["w676915821",1.7066,114.97081,"id",{"name":"Bandar Udara Long Apung","name:en":"Long Apung Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAQL","iata":"LPU","aerodrome:type":"regional","wikidata":"Q130863"}],
 ["w726020779",1.7231,114.96114,"id",{"name":"PKM KAYAN SELATAN","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],
 ["w729834542",1.99614,115.13788,"id",{"name":"Helipad Data Dian","aeroway":"helipad"}],
 ["w729837388",1.93616,115.07105,"id",{"name":"Lapangan Perintis Long Metut","aeroway":"aerodrome"}]]

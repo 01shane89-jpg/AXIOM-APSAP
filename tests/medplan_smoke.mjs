@@ -1049,7 +1049,9 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
 // ---------- rule helpers ----------
 {
   const ctx = await browser.newContext({ serviceWorkers: "block" }), p = await ctx.newPage();
-  await p.goto(base + "tests/", { waitUntil: "domcontentloaded" }).catch(() => {});
+  /* a plain empty page on the test server's origin (the server may answer "tests/" with the app, which then reloads itself) */
+  await p.route(base + "tests/", (r) => r.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><head></head><body></body></html>" }));
+  await p.goto(base + "tests/", { waitUntil: "load" });
   p.on("pageerror", (e) => console.log("helper page error: " + e.message));
   await p.addScriptTag({ url: base + "assets/osap-geo.js" });
   for (const f of ["base-provider", "resolver", "sof-provider", "web-provider", "osm-provider", "countries/th-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });

@@ -15,5 +15,5 @@
 ["w1347964339",46.81064,82.01711,"kz",{"aeroway":"aerodrome"}],
 ["w250581601",46.68217,82.80332,"cn",{"aeroway":"helipad"}],
 ["w293322726",47.76746,82.80152,"kz",{"name":"Аурухана","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
-["w528929311",46.67145,83.34439,"cn",{"name":"塔城千泉机场 شاۋەشەك اۋەجايى","name:en":"Tacheng Airport","addr:city":"塔城市","addr:province":"新疆维吾尔自治区","addr:postcode":"834700","aeroway":"aerodrome","icao":"ZWTC","iata":"TCG"}],
+["w528929311",46.67145,83.34439,"cn",{"name":"塔城千泉机场 شاۋەشەك اۋەجايى","name:en":"Tacheng Airport","addr:city":"塔城市","addr:province":"新疆维吾尔自治区","addr:postcode":"834700","aeroway":"aerodrome","icao":"ZWTC","iata":"TCG","wikidata":"Q2983621"}],
 ["w626088829",46.20562,82.98884,"cn",{"name":"裕民县人民医院","amenity":"hospital","healthcare":"hospital"}]]

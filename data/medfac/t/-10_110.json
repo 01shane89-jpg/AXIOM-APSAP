@@ -11,7 +11,7 @@
 ["n9751912848",-8.05211,110.81025,"id",{"name":"Puskesmas Pracimantoro 1","amenity":"clinic"}],
 ["w1058627655",-8.21333,111.47453,"id",{"name":"Rumah Dinas Bidan Desa Sawahan","amenity":"hospital","healthcare":"hospital"}],
 ["w1058635401",-8.21698,111.45701,"id",{"name":"Puskesmas Bodag","amenity":"hospital","healthcare":"hospital"}],
-["w1063433158",-8.14614,111.97258,"id",{"name":"Puskesmas Desa Domasan","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
+["w1063433158",-8.14614,111.97258,"id",{"name":"Puskesmas Desa Domasan","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government","opening_hours":"Mo-Fr 09.00-14.00"}],
 ["w1230006719",-8.06734,111.90772,"id",{"name":"RS. Bhayangkara","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w1339514642",-8.05604,111.14121,"id",{"aeroway":"helipad"}],
 ["w1339514643",-8.05629,111.14081,"id",{"aeroway":"helipad"}],

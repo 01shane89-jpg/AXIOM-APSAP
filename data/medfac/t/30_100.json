@@ -8,7 +8,7 @@
 ["w1239091161",30.95628,101.16649,"cn",{"aeroway":"helipad"}],
 ["w1415847347",30.05748,101.96372,"cn",{"name":"甘孜藏族自治州人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1441907898",30.02231,101.95961,"cn",{"name":"甘孜州人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w955167288",30.14303,101.73873,"cn",{"name":"甘孜康定机场","name:en":"Kangding Airport","aeroway":"aerodrome","icao":"ZUKD","iata":"KGT"}],
+["w955167288",30.14303,101.73873,"cn",{"name":"甘孜康定机场","name:en":"Kangding Airport","aeroway":"aerodrome","icao":"ZUKD","iata":"KGT","wikidata":"Q1431641"}],
 ["w988249780",30.03333,101.51972,"cn",{"aeroway":"helipad","surface":"concrete"}],
 ["w988249781",30.0318,101.51939,"cn",{"aeroway":"helipad","surface":"concrete"}],
 ["w988249782",30.03201,101.51824,"cn",{"aeroway":"helipad","surface":"concrete"}],

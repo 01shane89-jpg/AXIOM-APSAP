@@ -7,7 +7,7 @@
 ["n12139641799",-3.68038,127.08725,"id",{"name":"Pustu Simi","amenity":"clinic"}],
 ["n12141761792",-3.77801,126.52094,"id",{"name":"Puskesmas leksula","amenity":"clinic"}],
 ["n12146145809",-3.68038,127.08725,"id",{"name":"Pustu Simi","amenity":"clinic"}],
-["w235083435",-3.23827,127.10071,"id",{"name":"Bandar Udara Namlea","name:en":"Namlea Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAPR","iata":"NAM","aerodrome:type":"regional"}],
-["w317845664",-3.85502,126.70087,"id",{"name":"Bandar Udara Namrole","name:en":"Namrole Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAPG","iata":"NRE","aerodrome:type":"regional"}],
+["w235083435",-3.23827,127.10071,"id",{"name":"Bandar Udara Namlea","name:en":"Namlea Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAPR","iata":"NAM","aerodrome:type":"regional","wikidata":"Q3565368"}],
+["w317845664",-3.85502,126.70087,"id",{"name":"Bandar Udara Namrole","name:en":"Namrole Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAPG","iata":"NRE","aerodrome:type":"regional","wikidata":"Q3565500"}],
 ["w593184192",-3.1433,126.97708,"id",{"name":"Bandar Udara Namniwel","name:en":"Namniwel Airport","aeroway":"aerodrome","icao":"WAPN"}],
 ["w595909343",-3.37951,126.98213,"id",{"aeroway":"helipad"}]]

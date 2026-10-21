@@ -33,5 +33,5 @@
 ["w617125473",3.41383,125.58278,"id",{"name":"Puskesmas Pembantu Kampung Lapepahe","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government","addr:full":"Lindongan I Kapitalaung Lapepahe"}],
 ["w617289060",3.72603,125.49499,"id",{"name":"PUSKESMAS PEMBANTU BAHU","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
 ["w617307537",3.70289,125.52415,"id",{"name":"Puskesmas Kalekube","amenity":"clinic","operator:type":"government","addr:full":"Lindongan 1 Kalekube"}],
-["w668714473",2.64854,125.42304,"id",{"name":"Bandar Udara Taman Bung Karno","aeroway":"aerodrome","icao":"WAMO","iata":"BRG"}],
-["w678062427",3.68655,125.52662,"id",{"name":"Bandar Udara Naha","name:en":"Naha Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAMH","iata":"NAH","aerodrome:type":"regional"}]]
+["w668714473",2.64854,125.42304,"id",{"name":"Bandar Udara Taman Bung Karno","aeroway":"aerodrome","icao":"WAMO","iata":"BRG","wikidata":"Q97372841"}],
+["w678062427",3.68655,125.52662,"id",{"name":"Bandar Udara Naha","name:en":"Naha Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAMH","iata":"NAH","aerodrome:type":"regional","wikidata":"Q1529235"}]]

@@ -28,6 +28,8 @@
 ["n5328181085",-31.4028,-58.0189,"ar",{"name":"Instituto de Pediatría","amenity":"clinic","healthcare":"centre","healthcare:speciality":"gynaecology;paediatrics","contact:phone":"+54 345 421-7788","addr:housenumber":"323","addr:street":"General Justo José de Urquiza","addr:city":"Concordia","addr:postcode":"3200"}],
 ["n5678460051",-31.34219,-59.44787,"ar",{"name":"Clínica del Sol","amenity":"clinic","healthcare":"clinic","phone":"+54 3438 421070; +54 3438 421615","addr:housenumber":"169","addr:street":"Hipólito Yrigoyen","addr:city":"Bovril","addr:postcode":"3142"}],
 ["n5678460059",-31.34538,-59.44532,"ar",{"name":"Hospital San Miguel","amenity":"hospital","healthcare":"hospital","phone":"+54 3438 421171","addr:street":"Avenida General San Martín","addr:city":"Bovril","addr:postcode":"3142"}],
+["n6175532829",-31.96436,-58.13412,"uy",{"name":"Estancia \"La Florita\"","operator:type":"private","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["n6175538924",-31.74403,-58.02874,"uy",{"name":"Estancia \"Los Olivos de Guaviyú\"","operator:type":"private","aeroway":"aerodrome","aerodrome:type":"airfield"}],
 ["n6312026676",-30.0137,-59.52476,"ar",{"amenity":"clinic","healthcare":"clinic","operator:type":"private","addr:city":"Esquina","addr:postcode":"3196","osap:withheld":"1"}],
 ["n6426871685",-31.34302,-59.44379,"ar",{"name":"Clínica Bovril","amenity":"clinic","healthcare":"clinic","addr:housenumber":"168","addr:street":"Juan XXIII","addr:city":"Bovril","addr:postcode":"3142"}],
 ["n7296853985",-30.95474,-58.74542,"ar",{"name":"Hospital Colonia Dr. Raul Caminos","amenity":"hospital","healthcare":"hospital","phone":"+54 3454 427009","addr:full":"Gral Donovan S/Nº o Ruta Provincial Nº 5","addr:street":"Ruta Provincial 5","addr:city":"Federal"}],

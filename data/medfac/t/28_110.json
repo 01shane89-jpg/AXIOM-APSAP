@@ -9,7 +9,7 @@
 ["w1265446279",29.01486,111.66565,"cn",{"name":"红云街道社区卫生计生服务中心","amenity":"hospital","healthcare":"hospital"}],
 ["w1284973775",28.00728,110.18879,"cn",{"name":"辰溪县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1349948907",29.58914,111.39588,"cn",{"name":"石门血防医院","amenity":"hospital","healthcare":"hospital"}],
-["w1373019019",29.96698,110.21567,"cn",{"name":"燕子镇卫生院-预防接种门诊","name:en":"Yanzi Town Vaccination Clini","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"vaccination","phone":"(0718)5381117"}],
+["w1373019019",29.96698,110.21567,"cn",{"name":"燕子镇卫生院-预防接种门诊","name:en":"Yanzi Town Vaccination Clini","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"vaccination","phone":"(0718)5381117","opening_hours":"Mo-Fr 08:30-17:00"}],
 ["w1459447661",29.01347,111.68121,"cn",{"name":"鼎城区妇幼保健院","amenity":"hospital","healthcare":"hospital"}],
 ["w1459465277",28.97148,111.68479,"cn",{"name":"常德力正骨康医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1459582179",28.93087,111.69946,"cn",{"name":"湖南省妇幼保健院常德妇产医院","amenity":"hospital","healthcare":"hospital"}],
@@ -26,6 +26,6 @@
 ["w551667581",28.47251,111.76408,"cn",{"name":"桃江县第三人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w570576872",29.13164,110.47869,"cn",{"name":"张家界市人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w570637380",29.12225,110.54145,"cn",{"name":"张家界市人民医院东区","amenity":"hospital","healthcare":"hospital"}],
-["w787987141",29.10311,110.4435,"cn",{"name":"张家界荷花国际机场","name:en":"Zhangjiajie Hehua International Airport","aeroway":"aerodrome","icao":"ZGDY","iata":"DYG","aerodrome:type":"international"}],
-["w88313850",28.91879,111.63861,"cn",{"name":"常德桃花源机场","name:en":"Changde Taohuayuan Airport","aeroway":"aerodrome","icao":"ZGCD","iata":"CGD"}],
+["w787987141",29.10311,110.4435,"cn",{"name":"张家界荷花国际机场","name:en":"Zhangjiajie Hehua International Airport","aeroway":"aerodrome","icao":"ZGDY","iata":"DYG","aerodrome:type":"international","wikidata":"Q1134280"}],
+["w88313850",28.91879,111.63861,"cn",{"name":"常德桃花源机场","name:en":"Changde Taohuayuan Airport","aeroway":"aerodrome","icao":"ZGCD","iata":"CGD","wikidata":"Q1000025"}],
 ["w968495363",28.13862,111.65962,"cn",{"name":"安化县梅城卫生院","amenity":"hospital","healthcare":"hospital"}]]
