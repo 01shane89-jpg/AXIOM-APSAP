@@ -77,12 +77,23 @@
     return String(r.prov || "").split(/,|\band\b/).map(function (p) { return p.replace(/\(.*$/, "").replace(/\s+(province|state|region|division)$/i, "").trim(); })
       .filter(function (p) { return p && p.length < 30; });
   }
-  /* the records a report covers: this country's own dated records in the scope and range, oldest first */
+  /* a custom topic: the user's own words, in the watch-word syntax (assets/osap-boolq.js: words side by side all appear; OR,
+     NOT, "exact phrase", brackets). Matched against what the record says (kind, headline, summary, original-language text,
+     place), not OSAP's own notes about it. An unreadable string matches nothing and says why (kwOf(s).err). */
+  function kwOf(s, on) {
+    s = String(s || "").trim();
+    if (!s) return on ? { ok: false, empty: true, err: "", q: "", terms: [], test: function () { return false; } } : null;
+    var B = window.OSAP_BOOLQ;
+    return B ? B.compile(s) : { ok: false, err: "the word search did not load", q: s, terms: [], test: function () { return false; } };
+  }
+  function kwText(r) { return [r.cat, r.title, r.detail, r.orig, r.place, r.prov].filter(Boolean).join(" \n "); }
+  /* the records a report covers: this country's own dated records in the scope and range (and custom topic words), oldest first */
   function pick(opt, enough) {
     var R = (window.TSAP && window.TSAP.records) || [], sc = opt.scope != null ? scopeOf(opt.scope) : { layers: opt.layer ? [opt.layer] : null };
-    var ids = sc.ids ? sc.ids.reduce(function (o, id) { o[id] = 1; return o; }, {}) : null;
+    var ids = sc.ids ? sc.ids.reduce(function (o, id) { o[id] = 1; return o; }, {}) : null, kq = kwOf(opt.kw, opt.kwOn);
     function keep(r) {
       if (r.xcc || !r.src || (sc.layers && sc.layers.indexOf(r.layer) < 0) || (ids && !ids[r.id])) return false;
+      if (kq && !kq.test(kwText(r))) return false;
       var w = when(r); if (!w) return false;
       if (opt.since) { if (w.timed ? w.ms < opt.since : w.day < new Date(opt.since).toISOString().slice(0, 10)) return false; }
       if (opt.from && w.day < opt.from) return false;
@@ -828,7 +839,7 @@
   }
   (function wait(n) { if (window.TSAP && window.OSAP_TIME) init(); else if (n < 240) setTimeout(function () { wait(n + 1); }, 250); })(0);
   /* the same content as data, for other report formats (the PowerPoint intelligence brief, assets/osap-intelbrief.js):
-     o = { scope, from, to, prov, area }; cb gets the records (oldest first, each with __tlw), the key events (numbered as on
+     o = { scope, from, to, prov, area, kw (custom topic words), kwName, kwOn (custom topic chosen, so no words match nothing) }; cb gets the records (oldest first, each with __tlw), the key events (numbered as on
      the map, each with how/where and, for one reported by two or more sources, its event summary), the map and chart SVGs,
      the Covers list and the provinces the country's records name, and this report's own HTML for a key-event row (rowHtml) and a
      chronology entry (entryHtml, with its source number) so the OSIR (assets/osap-osir.js) shows them the same way. Nothing is changed. */
@@ -840,12 +851,55 @@
       var keyEv = recs.length ? keyEvents(recs, evs, nts) : [];
       keyEv.forEach(function (e) { e.sum = e.g ? summaryFor(e.g) : null; });
       var provs = {};
-      pick({ scope: o.scope, from: o.from, to: o.to }).forEach(function (r) { provsOf(r).forEach(function (p) { provs[p] = (provs[p] || 0) + 1; }); });
-      cb({ cc: cc(), country: cname(), scope: scopeOf(o.scope), scopes: scopes(o), recs: recs, total: all.length, max: MAX_ROWS, keyEv: keyEv, grouped: evs.length,
+      pick({ scope: o.scope, from: o.from, to: o.to, kw: o.kw, kwOn: o.kwOn }).forEach(function (r) { provsOf(r).forEach(function (p) { provs[p] = (provs[p] || 0) + 1; }); });
+      /* a custom topic is named by the user (kwName) or by its words; scope.kw keeps the words for the report's provenance */
+      var sc = scopeOf(o.scope), kq = kwOf(o.kw, o.kwOn);
+      if (kq) sc = { layers: sc.layers, ids: sc.ids, label: String(o.kwName || "").trim().slice(0, 80) || kq.q || "Custom topic", kw: kq.q, kwOk: kq.ok, kwErr: kq.err || "", kwEmpty: !!kq.empty };
+      cb({ cc: cc(), country: cname(), scope: sc, scopes: scopes(o), recs: recs, total: all.length, max: MAX_ROWS, keyEv: keyEv, grouped: evs.length,
         map: recs.length ? mapSvg(recs, keyEv) : null, legend: recs.length ? legendHtml : null, bars: barsSvg(recs), period: periodText(recs, o),
         provinces: topN(provs, 200), provsOf: provsOf, layerName: function (l) { return LN[l] || l || ""; }, status: STATUS, appPeriod: appPeriod(),
         rowHtml: rowHtml, entryHtml: entry });
     }); });
   }
-  window.OSAP_TLREPORT = { open: open, eligible: eligible, data: data };
+  /* the custom topic box the PowerPoint brief and the OSIR windows share (p = their id prefix, st = their state, which keeps
+     scope "@kw", kw and kwName): the Topic list's last choice, the user's words with ready-made searches to start from, and
+     an optional name for the title. The count redraws as the words are typed; the last words are kept on this device. */
+  var KW_OPT = "@kw", KW_LS = "osap-custom-topic";
+  function kwLoad(st) { try { var v = JSON.parse(localStorage.getItem(KW_LS)); if (v && typeof v.kw === "string") { st.kw = v.kw.slice(0, 600); st.kwName = String(v.name || "").slice(0, 80); } } catch (e) {} }
+  function kwSave(st) { try { localStorage.setItem(KW_LS, JSON.stringify({ kw: st.kw || "", name: st.kwName || "" })); } catch (e) {} }
+  function kwHtml(p, st, d) {
+    if (st.scope !== KW_OPT) return "";
+    var B = window.OSAP_BOOLQ, pre = (B && B.presets) || [], err = d && d.scope && d.scope.kw && !d.scope.kwOk ? d.scope.kwErr : "";
+    return '<div class="' + p + 'w ' + p + 'kw">' +
+      '<label>Your words<input type="text" id="' + p + '-kw" maxlength="600" autocomplete="off" spellcheck="false" value="' + esc(st.kw || "") + '" placeholder="e.g. ferry OR boat AND (sank OR capsized)" aria-describedby="' + p + '-kwh"></label>' +
+      '<div class="' + p + 'kwr"><label>Start from<select id="' + p + '-kwp"><option value="">A ready-made search…</option>' +
+      pre.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name) + "</option>"; }).join("") + "</select></label>" +
+      '<label>Name for the title (optional)<input type="text" id="' + p + '-kwn" maxlength="80" autocomplete="off" value="' + esc(st.kwName || "") + '" placeholder="e.g. Ferry accidents"></label></div>' +
+      '<small id="' + p + '-kwh" class="obs">Words side by side must all appear; a comma or OR means any of them; NOT or a leading - leaves out; "quotes" for a phrase; ( ) to group. ' +
+      "Each word also finds longer forms (bomb finds bombing). Searched: headline, summary, original-language text and place, across all of " + esc(d ? d.country : "the country") + ".</small>" +
+      (err ? '<small class="' + p + 'kwe" role="alert">Cannot read these words: ' + esc(err) + ".</small>" : "") + "</div>";
+  }
+  function kwBind(box, p, st, refresh) {
+    var t = null, kw = box.querySelector("#" + p + "-kw"), kn = box.querySelector("#" + p + "-kwn"), kp = box.querySelector("#" + p + "-kwp");
+    if (!kw) return;
+    var later = function () { clearTimeout(t); t = setTimeout(function () { kwSave(st); refresh(); }, 350); };
+    kw.oninput = function () { st.kw = this.value; later(); };
+    kn.oninput = function () { st.kwName = this.value; later(); };
+    kp.onchange = function () {
+      var x = ((window.OSAP_BOOLQ || {}).presets || []).filter(function (y) { return y.id === kp.value; })[0]; if (!x) return;
+      st.kw = x.q; st.kwName = x.name; kwSave(st); refresh();
+    };
+  }
+  /* draw() rebuilds a window's HTML; keep the caret where it was in the box being typed in */
+  function keepFocus(box, redraw) {
+    var a = document.activeElement, id = a && box.contains(a) && a.id, s0 = null, s1 = null;
+    try { s0 = a.selectionStart; s1 = a.selectionEnd; } catch (e) {}
+    redraw();
+    var b = id && box.querySelector("#" + id); if (!b) return;
+    b.focus(); try { if (s0 != null) b.setSelectionRange(s0, s1); } catch (e) {}
+  }
+  /* what a window passes to data() for the chosen topic: the custom topic covers everything, narrowed by the words */
+  function kwOpts(st, o) { if (st.scope === KW_OPT) { o.scope = ""; o.kw = st.kw || ""; o.kwName = st.kwName || ""; o.kwOn = true; } return o; }
+  window.OSAP_TLREPORT = { open: open, eligible: eligible, data: data,
+    custom: { opt: KW_OPT, label: "Custom topic (your own words)…", load: kwLoad, html: kwHtml, bind: kwBind, opts: kwOpts, keepFocus: keepFocus } };
 })();
