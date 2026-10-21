@@ -7,8 +7,8 @@
      line), then interval points between them, closer together where the route is slow (towns) and further apart on fast road.
    - Imagery, provider by provider behind one interface (find, metadata, cache policy, attribution): street level from KartaView
      and Panoramax (keyless, CORS open, checked from GitHub Actions by tools/probe_preview.sh); Google Street View only as a keyless
-     link that leaves OSAP, offered where no open picture exists (OSAP never depends on it and does not claim coverage); then the fallbacks: Esri World Imagery satellite with
-     its capture date, a modelled terrain profile ahead (Copernicus 90 m DEM, labelled simulated) with the 3D view along the route,
+     link that leaves OSAP, offered where no open picture exists (OSAP never depends on it and does not claim coverage); then the fallbacks: Sentinel-2 cloudless 2016 satellite
+     (10 m, its mosaic year shown), a modelled terrain profile ahead (Copernicus 90 m DEM, labelled simulated) with the 3D view along the route,
      and an analytical map card (road, surface, lanes, bridge ahead, fuel and hospital distances). It never stops at "no imagery".
    - Pictures show how a place looked when they were taken. What OSAP currently reports there (its feeds, as the Route tab lists
      them) is shown apart, with its own source and date, and the two are never merged into one statement.
@@ -147,28 +147,22 @@
       attribution: function () { return "Google"; }
     },
     satellite: {
-      id: "satellite", name: "Esri World Imagery", tier: 3, kind: "aerial", cachePolicy: "TEMPORARY", licence: "Esri terms of use (shown as the map's own satellite layer)", home: "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9",
-      api: "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/",
+      id: "satellite", name: "Sentinel-2 cloudless 2016 (EOX)", tier: 3, kind: "aerial", cachePolicy: "TEMPORARY", licence: "CC BY 4.0 (the map's own Satellite layer)", home: "https://s2maps.eu",
+      tiles: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", z: 14,
       isAvailable: online,
-      /* the capture date of the satellite picture at this point (World Imagery's own citation layer) */
-      find: function (lat, lon) {
-        var lo = G.wrap(lon), e = [lo - 0.004, lat - 0.004, lo + 0.004, lat + 0.004].map(function (v) { return v.toFixed(5); }).join(",");
-        return getJSON(this.api + "identify?geometry=" + lo.toFixed(6) + "," + lat.toFixed(6) + "&geometryType=esriGeometryPoint&sr=4326&layers=all&tolerance=1&mapExtent=" + e + "&imageDisplay=600,600,96&returnGeometry=false&f=json", 12000).then(function (j) {
-          var best = null;
-          ((j && j.results) || []).forEach(function (x) {
-            var a = x.attributes || {}, ds = String(a["DATE (YYYYMMDD)"] || a.SRC_DATE || ""), m = ds.match(/^(\d{4})(\d\d)(\d\d)$/), res = parseFloat(a["RESOLUTION (M)"] || a.SRC_RES);
-            var d = m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null;
-            if (!best || (d && !best.date) || (isFinite(res) && res < best.res)) best = { prov: "satellite", date: d, res: isFinite(res) ? res : null, src: clean([a.SOURCE, a.DESCRIPTION || a.SOURCE_INFO].filter(function (v) { return v && v !== "Null"; }).join(" "), 60) };
-          });
-          return best ? [best] : [];
-        });
-      },
-      /* a picture about 600 m across centred on the point, in Web Mercator so the route can be drawn on top */
+      /* one cloud-free mosaic of 2016 images for the whole world, so the date is the same everywhere and needs no lookup */
+      find: function () { return Promise.resolve([{ prov: "satellite", date: Date.UTC(2016, 6, 1), approx: "2016 (one-year mosaic)", res: 10, src: "Cloud-free mosaic of 2016 Sentinel-2 images" }]); },
+      /* the picture about 600 m across centred on the point, in Web Mercator so the route can be drawn on top: the few
+         zoom-14 tiles that cover it, each placed as a share of the frame */
       image: function (lat, lon, w, h, halfM) {
         var x = G.wrap(lon) * 20037508.34 / 180, y = Math.log(Math.tan((90 + lat) * RAD / 2)) * 6378137, s = 1 / Math.cos(lat * RAD), hx = halfM * s, hy = halfM * s * h / w;
-        return { url: this.api + "export?bbox=" + [x - hx, y - hy, x + hx, y + hy].map(function (v) { return v.toFixed(1); }).join(",") + "&bboxSR=3857&imageSR=3857&size=" + w + "," + h + "&format=jpg&f=image", x0: x - hx, y1: y + hy, sx: w / (2 * hx), sy: h / (2 * hy) };
+        var O = 20037508.34, T = 2 * O / Math.pow(2, this.z), x0 = x - hx, y1 = y + hy, sx = w / (2 * hx), sy = h / (2 * hy), tiles = [];
+        for (var tx = Math.floor((x0 + O) / T); tx <= Math.floor((x + hx + O) / T); tx++)
+          for (var ty = Math.floor((O - y1) / T); ty <= Math.floor((O - (y - hy)) / T); ty++)
+            tiles.push({ url: this.tiles.replace("{z}", this.z).replace("{y}", ty).replace("{x}", tx), l: ((tx * T - O) - x0) * sx / w * 100, t: (y1 - (O - ty * T)) * sy / h * 100, w: T * sx / w * 100, h: T * sy / h * 100 });
+        return { tiles: tiles, x0: x0, y1: y1, sx: sx, sy: sy };
       },
-      attribution: function () { return "Esri, Vantor (Maxar), Earthstar Geographics and the GIS user community"; }
+      attribution: function () { return "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0"; }
     },
     terrain: { id: "terrain", name: "Modelled terrain (Copernicus GLO-90 DEM, Open-Meteo)", tier: 4, kind: "terrain", cachePolicy: "TEMPORARY", simulated: true, licence: "Copernicus DEM, open", home: "https://open-meteo.com/en/docs/elevation-api", isAvailable: online },
     map: { id: "map", name: "Analytical map (OpenStreetMap)", tier: 5, kind: "map", cachePolicy: "LOCAL", licence: "ODbL", home: "https://www.openstreetmap.org/copyright", isAvailable: function () { return true; } }
@@ -183,6 +177,7 @@
     return d < 365 ? { k: "recent", t: "Under 1 year old", cls: "ok", d: d } : d <= 3 * 365 ? { k: "aging", t: "Aging, 1 to 3 years old", cls: "mid", d: d } : { k: "stale", t: "Stale, over 3 years old", cls: "bad", d: d };
   }
   function ageTxt(ms) { var d = (Date.now() - ms) / DAY; return d < 60 ? Math.round(d) + " days" : d < 730 ? Math.round(d / 30.4) + " months" : (d / 365.25).toFixed(1) + " years"; }
+  function sdstr(c) { return c.approx || dstr(c.date); }
   function dstr(ms) { if (!ms) return "date unknown"; var d = new Date(ms); return ("0" + d.getUTCDate()).slice(-2) + " " + "JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC".split(" ")[d.getUTCMonth()] + " " + d.getUTCFullYear(); }
 
   /* score street candidates for a point: distance, age, heading along the route, provider; the best one wins */
@@ -605,7 +600,7 @@
     var half = 320, s = p.sat || {}, a2 = s.date ? ageOf(s.date) : null;
     box.innerHTML = satFig(p, 480, 360, half) +
       (a2 ? '<div class="rtpv-age ' + a2.cls + '"><b>VISUAL REFERENCE · SATELLITE · ' + E(a2.t.toUpperCase()) + "</b> · Route conditions may have changed since.</div>" : '<div class="rtpv-age unk"><b>VISUAL REFERENCE · SATELLITE · ' + (p.state === "done" ? "DATE UNKNOWN" : "CHECKING DATE…") + "</b></div>") +
-      '<dl class="rtpv-dl"><div><dt>Provider</dt><dd>' + E(PROVIDERS.satellite.name) + "</dd></div><div><dt>Captured</dt><dd>" + E(s.date ? dstr(s.date) : s.err ? "date lookup failed (" + s.err + ")" : p.state === "done" ? "not published here" : "…") + "</dd></div>" +
+      '<dl class="rtpv-dl"><div><dt>Provider</dt><dd>' + E(PROVIDERS.satellite.name) + "</dd></div><div><dt>Captured</dt><dd>" + E(s.date ? sdstr(s) : s.err ? "date lookup failed (" + s.err + ")" : p.state === "done" ? "not published here" : "…") + "</dd></div>" +
       (s.date ? "<div><dt>Image age</dt><dd>" + E(ageTxt(s.date)) + "</dd></div>" : "") + (s.res ? "<div><dt>Resolution</dt><dd>" + E(s.res) + " m</dd></div>" : "") + (s.src ? "<div><dt>Source</dt><dd>" + E(s.src) + "</dd></div>" : "") + "</dl>" +
       '<p class="obs">About ' + E(dist(half * 2)) + " across, turned so the route runs up the picture. Blue line: the route; red: hazards OSAP holds; other dots: mapped bridges, crossings and support. " + E(PROVIDERS.satellite.attribution()) + ".</p>";
   }
@@ -620,7 +615,7 @@
     var feats = S.feats.filter(function (f) { return Math.abs(f.m - p.m) < 1500 && f.off < 600; }).map(function (f) { var x = MERC(f.lat, f.lon); return '<circle cx="' + ((x[0] - im.x0) * im.sx).toFixed(1) + '" cy="' + ((im.y1 - x[1]) * im.sy).toFixed(1) + '" r="6" class="f ' + E(CAT[f.kind] ? CAT[f.kind].g : "") + '"><title>' + E(CAT[f.kind] ? CAT[f.kind].n : f.kind) + (f.name ? ": " + E(f.name) : "") + "</title></circle>"; }).join("");
     var hz = (S.snap.haz || []).filter(function (h) { return Math.abs(h.along - p.m) < 1500 && h.d < 800; }).map(function (h) { var x = MERC(h.p[0], h.p[1]); return '<circle cx="' + ((x[0] - im.x0) * im.sx).toFixed(1) + '" cy="' + ((im.y1 - x[1]) * im.sy).toFixed(1) + '" r="6" class="hz"><title>' + E(h.kind + ": " + h.title) + "</title></circle>"; }).join("");
     return '<div class="rtpv-satw"><div class="rtpv-satr" style="transform:rotate(' + (-p.hd) + 'deg) scale(1.25)">' +
-      '<img src="' + E(im.url) + '" width="' + W0 + '" height="' + H0 + '" alt="Satellite picture round this point" referrerpolicy="no-referrer">' +
+      '<div class="rtpv-sati" role="img" aria-label="Satellite picture round this point">' + im.tiles.map(function (t) { return '<img src="' + E(t.url) + '" alt="" referrerpolicy="no-referrer" style="left:' + t.l.toFixed(2) + "%;top:" + t.t.toFixed(2) + "%;width:" + t.w.toFixed(2) + "%;height:" + t.h.toFixed(2) + '%">'; }).join("") + "</div>" +
       '<svg viewBox="0 0 ' + W0 + " " + H0 + '" aria-hidden="true"><polyline points="' + path + '" class="rl"/>' + feats + hz + '<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="7" class="me"/></svg></div>' +
       '<span class="rtpv-n" style="transform:rotate(' + (-p.hd) + 'deg)" title="North">N</span><span class="rtpv-up">Direction of travel ▲</span></div>';
   }
@@ -1006,7 +1001,7 @@
       '<span class="rtdv-note">' + (a.k === "stale" ? "STALE, over 3 years old. " : "") + "Visual reference: how this looked then, not now</span>";
     else { var s = f.sat || {}, a2 = s.date ? ageOf(s.date) : null, gp = drvGap(f.m);
       var gl = gp.end != null ? (gp.last ? "No street pictures from here to the end (" + dist(gp.end - f.m) + ")." : "No street pictures for the next " + dist(gp.end - f.m) + ".") : "No street pictures for at least " + dist(Math.max(0, gp.known - f.m)) + ".";
-      top.innerHTML = '<span class="rtdv-badge ' + (a2 ? a2.cls : "unk") + '">Satellite · ' + E(s.date ? "captured " + dstr(s.date) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : f.sat ? "date not published" : "checking date…") + "</span>" +
+      top.innerHTML = '<span class="rtdv-badge ' + (a2 ? a2.cls : "unk") + '">Satellite · ' + E(s.date ? "captured " + sdstr(s) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : f.sat ? "date not published" : "checking date…") + "</span>" +
         '<span class="rtdv-note">' + E(chunkAt(f.m).st === "err" ? "Street picture services did not answer here (" + (chunkAt(f.m).note || "error") + ")." : gl) + " Direction of travel is up." +
         (!gp.last && (gp.end == null || gp.end - f.m > 500) ? ' <button type="button" data-dv="skip">Skip ahead ▶▶</button>' : "") + "</span>"; }
     var ah = drvAhead(d.m);
@@ -1144,10 +1139,10 @@
      The camera follows the line at road level, tilted towards the horizon, at a steady speed; its heading is eased round bends
      so it never jumps. Street photos (the same KartaView and Panoramax pictures, chosen the same way) appear in a corner
      whenever the car passes one, with their date and age; between them the 3D satellite view carries on, so the drive never
-     stops for a gap. Uses the 3D map's engine (MapLibre GL, assets/vendor) and its keyless sources: Esri World Imagery with
-     the World Transportation and Boundaries and Places labels (the 2D Hybrid map), and the AWS terrarium elevation tiles.
+     stops for a gap. Uses the 3D map's engine (MapLibre GL, assets/vendor) and its keyless sources: Sentinel-2 cloudless 2016
+     by EOX (the 2D Satellite map, CC BY 4.0), and the AWS terrarium elevation tiles.
      Without WebGL, or by choice, the photo-by-photo drive above is used instead. */
-  var GLLIB = "assets/vendor/maplibre-gl-5.24.0", ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/", DEM3 = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+  var GLLIB = "assets/vendor/maplibre-gl-5.24.0", DEM3 = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
   /* speed in 3D: 1× is 60 km/h, real driving; 5× gets through a 20 km route in four minutes */
   var V3 = [[1, "1× (60 km/h)", 16.7], [2, "2×", 33.3], [5, "5×", 83.3], [10, "10×", 166.7], [20, "20×", 333.3]], V30 = 5;
   var glP = null;
@@ -1173,12 +1168,10 @@
       if (S.drv !== d || !d.on || d.mode !== "3d") return;
       var p = at(S.R, d.m).p, line = { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: S.R.coords.map(function (c) { return [G.wrap(c[1]), c[0]]; }) } };
       var hz = { type: "FeatureCollection", features: (S.snap.haz || []).filter(function (h) { return h.p; }).map(function (h) { return { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [G.wrap(h.p[1]), h.p[0]] } }; }) };
-      var t = function (n) { return { type: "raster", tiles: [ESRI + n + "/MapServer/tile/{z}/{y}/{x}"], tileSize: 256, maxzoom: 19 }; };
-      var style = { version: 8, sources: { sat: t("World_Imagery"), rd: t("Reference/World_Transportation"), pl: t("Reference/World_Boundaries_and_Places"),
+      var style = { version: 8, sources: { sat: { type: "raster", tiles: [PROVIDERS.satellite.tiles], tileSize: 256, maxzoom: PROVIDERS.satellite.z },
           dem: { type: "raster-dem", tiles: [DEM3], tileSize: 256, maxzoom: 14, encoding: "terrarium" }, rt: { type: "geojson", data: line }, hz: { type: "geojson", data: hz } },
         layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } },
-          { id: "sat", type: "raster", source: "sat", paint: { "raster-fade-duration": 0 } }, { id: "rd", type: "raster", source: "rd", paint: { "raster-opacity": 0.75, "raster-fade-duration": 0 } },
-          { id: "pl", type: "raster", source: "pl", paint: { "raster-fade-duration": 0 } },
+          { id: "sat", type: "raster", source: "sat", paint: { "raster-fade-duration": 0 } },
           { id: "rtc", type: "line", source: "rt", layout: { "line-join": "round", "line-cap": "round" }, paint: { "line-color": "#0b3d6b", "line-width": 9, "line-opacity": 0.55 } },
           { id: "rtl", type: "line", source: "rt", layout: { "line-join": "round", "line-cap": "round" }, paint: { "line-color": "#4dabf7", "line-width": 5, "line-opacity": 0.9 } },
           { id: "hz", type: "circle", source: "hz", paint: { "circle-color": "#e03131", "circle-radius": 7, "circle-stroke-color": "#fff", "circle-stroke-width": 2, "circle-pitch-alignment": "map" } }],
@@ -1252,7 +1245,7 @@
   }
   function d3Tag() {
     var d = S.drv, s = d.sat || {}, a = s.date ? ageOf(s.date) : null;
-    return '<span class="rtdv-badge ' + (a ? a.cls : "unk") + '">3D satellite view · ' + E(s.date ? "captured " + dstr(s.date) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : d.sat ? "date not published" : "checking date…") + "</span>" +
+    return '<span class="rtdv-badge ' + (a ? a.cls : "unk") + '">3D satellite view · ' + E(s.date ? "captured " + sdstr(s) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : d.sat ? "date not published" : "checking date…") + "</span>" +
       '<span class="rtdv-note">Satellite pictures over a terrain model: how it looked then, not now.' + (d.demErr > 3 ? " Elevation is not loading, so the ground may look flat." : "") + "</span>";
   }
   function drvMode(m) {
@@ -1355,7 +1348,7 @@
     "#rtpv .rtpv-tabs{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:8px 0 4px;border-top:1px solid var(--line,#dee2e6);padding-top:8px}#rtpv .rtpv-tabs button[aria-selected=true]{background:var(--accent,#1c7ed6);color:var(--on-accent,#fff);border-color:var(--accent,#1c7ed6)}" +
     "#rtpv .rtpv-chain{flex-basis:100%;font-size:11px}#rtpv .rtpv-fig{margin:4px 0}#rtpv .rtpv-fig img{display:block;width:100%;max-height:300px;object-fit:cover;border-radius:4px;background:#000}" +
     "#rtpv .rtpv-age{margin:6px 0;padding:5px 8px;border-radius:4px;font-size:12px;border-left:4px solid #868e96;background:var(--surface2,#f1f3f5)}#rtpv .rtpv-age.ok{border-color:#2b8a3e}#rtpv .rtpv-age.mid{border-color:#e67700}#rtpv .rtpv-age.bad{border-color:#c92a2a}#rtpv .rtpv-age.sim{border-color:#7048e8}#rtpv .rtpv-age.map{border-color:#1c7ed6}" +
-    ".rtpv-satw{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#222}.rtpv-satr{position:absolute;inset:0;transform-origin:50% 50%}.rtpv-satr img,.rtpv-satr svg{position:absolute;inset:0;width:100%;height:100%}" +
+    ".rtpv-satw{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#222}.rtpv-satr{position:absolute;inset:0;transform-origin:50% 50%}.rtpv-satr svg,.rtpv-sati{position:absolute;inset:0;width:100%;height:100%}.rtpv-sati{overflow:hidden}.rtpv-sati img{position:absolute;max-width:none;image-rendering:auto}" +
     ".rtpv-satr .rl{fill:none;stroke:#4dabf7;stroke-width:4;stroke-linejoin:round;stroke-linecap:round;opacity:.9}.rtpv-satr .me{fill:#fff;stroke:#1c7ed6;stroke-width:3}.rtpv-satr .hz{fill:#c92a2a;stroke:#fff;stroke-width:1.5}.rtpv-satr .f{fill:#9775fa;stroke:#fff;stroke-width:1.5}.rtpv-satr .f.support{fill:#40c057}.rtpv-satr .f.air{fill:#15aabf}" +
     ".rtpv-n{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font:700 11px/22px system-ui,sans-serif;text-align:center}.rtpv-up{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:1px 6px;border-radius:3px}" +
     "#rtpv .rtpv-prof{display:block;width:100%;height:auto}#rtpv .rtpv-prof .fill{fill:var(--accent-soft,#d0bfff)}#rtpv .rtpv-prof .ln{fill:none;stroke:#7048e8;stroke-width:1.8}#rtpv .rtpv-prof .ax{font:9px 'IBM Plex Mono',monospace;fill:var(--muted,#6c757d)}" +

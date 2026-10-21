@@ -165,7 +165,7 @@
   var rafX = 0; map.on("move zoomend", function () { if (st.cross && !rafX) rafX = requestAnimationFrame(function () { rafX = 0; paintCross(); }); });
 
   /* ---------- switches ---------- */
-  function imagery() { try { var b = (JSON.parse(localStorage.getItem("asap-map-layers")) || {}).base; return /^(sat|hybrid|s2|daily)$/.test(b || ""); } catch (e) { return false; } }
+  function imagery() { try { var b = (JSON.parse(localStorage.getItem("asap-map-layers")) || {}).base; return /^(sat|offline|daily)$/.test(b || ""); } catch (e) { return false; } }
   function paintBase() { root.classList.toggle("osap-gimg", imagery()); }
   function setGrid(v) {
     st.grid = !!v; lsSet(K_GRID, st.grid);
