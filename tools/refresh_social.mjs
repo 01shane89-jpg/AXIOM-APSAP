@@ -9,6 +9,7 @@
 import fs from "node:fs";
 import { translateAll, saveCache, seed } from "./translate.mjs";
 import { updateHistory, storedTranslations } from "./history.mjs";
+import { stripOutletText, postOnly } from "./outlet_text.mjs";
 import { splitByCountry, newsCodes } from "./split_country.mjs";
 import { splitView } from "./social_lib.mjs";
 
@@ -259,19 +260,26 @@ const tTr = Date.now();
 // Headlines first, then the video descriptions (YouTube's summary); a description the model has no time for this run stays
 // untranslated and the page shows only the English headline, with the original under "<language> original".
 console.log("translations reused from the history:", seed(storedTranslations("social", Object.keys(items))));
-const sums = all.filter((i) => i.summary && !/^en\b/i.test(i.lang || ""));
-const tr = await translateAll([...all.map((i) => ({ text: i.title, lang: i.lang || "" })), ...sums.map((i) => ({ text: i.summary, lang: i.lang || "" })),
-  ...extra.map((i) => ({ text: i.title, lang: i.lang || "" }))]);
+// Bluesky and Telegram posts are not translated: their words are read below for relevance and then dropped (tools/outlet_text.mjs).
+// YouTube descriptions are not translated either, as they are not stored.
+const WORDS_ONLY = (i) => i.platform === "Bluesky" || i.platform === "Telegram";
+const tAll = all.filter((i) => !WORDS_ONLY(i)), tExtra = extra.filter((i) => !WORDS_ONLY(i));
+const tr = await translateAll([...tAll, ...tExtra].map((i) => ({ text: i.title, lang: i.lang || "" })));
 const setTitle = (i, t) => { i.title_en = t.en; i.mt = /^en\b/i.test(i.lang || "") ? null : (t.tool || "untranslated"); if (i.mt && t.en === i.title) i.mt = null; };
-all.forEach((i, n) => setTitle(i, tr[n]));
-extra.forEach((i, n) => setTitle(i, tr[all.length + sums.length + n]));
-sums.forEach((i, n) => {
-  const b = tr[all.length + n]; if (!b.en || b.en === i.summary) return;
-  i.summary_en = b.en.slice(0, 400);
-  if (!i.mt || i.mt === "untranslated") i.mt = b.tool;
-});
+[...tAll, ...tExtra].forEach((i, n) => setTitle(i, tr[n]));
 saveCache();
 lap("Translation", tTr);
+// What is stored: the video's title, link and thumbnail (YouTube); for Bluesky and Telegram only who posted, when and the link,
+// with the relevance verdict their words gave (rel_v, used by tools/social_relevance.mjs). Licence check 2026-09-26, fixed 2026-10-17.
+{
+  const { compileRelevance } = await import("./topics_lib.mjs"), { compileSocial, socialRelevance } = await import("./social_relevance.mjs");
+  const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), JSON.parse(fs.readFileSync("tools/topics.json", "utf8")).topics);
+  const S = compileSocial(JSON.parse(fs.readFileSync("tools/relevance-social.json", "utf8")));
+  for (const i of new Set(Object.values(kept).flat().concat(Object.values(items).flat()))) {
+    if (WORDS_ONLY(i)) { if (!i.notext) i.rel_v = socialRelevance(R, S, i); postOnly(i, i.platform, i.account); }
+    else stripOutletText(i);
+  }
+}
 if (!status.some((s) => s.ok)) { console.error("no social source worked"); status.forEach((s) => console.error(" ", s.platform, s.source, s.error)); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/social.js", "window.ASAP_SOCIAL=" + JSON.stringify({ asof: stamp, sources: status.map((s) => ({ ...s, source: s.platform + " " + s.source, cc: s.cc || "*" })), items: view }).replace(/<\//g, "<\\/") + ";\n");
