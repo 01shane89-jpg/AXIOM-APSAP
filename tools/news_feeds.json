@@ -1212,7 +1212,6 @@
     {"cc":"bb","outlet":"Barbados Today (Bing search)","url":"https://www.bing.com/news/search?q=site%3Abarbadostoday.bb&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"bb","outlet":"Nation News (Bing search)","url":"https://www.bing.com/news/search?q=site%3Anationnews.com&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"bz","outlet":"Amandala (Bing search)","url":"https://www.bing.com/news/search?q=site%3Aamandala.com.bz&format=rss","lang":"en","search":true,"nc":true},
-    {"cc":"gy","outlet":"Demerara Waves (Bing search)","url":"https://www.bing.com/news/search?q=site%3Ademerarawaves.com&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"sr","outlet":"Starnieuws (Bing search)","url":"https://www.bing.com/news/search?q=site%3Astarnieuws.com&format=rss","lang":"nl","search":true,"nc":true},
     {"cc":"to","outlet":"Matangi Tonga (Bing search)","url":"https://www.bing.com/news/search?q=site%3Amatangitonga.to&format=rss","lang":"en","search":true,"nc":true}
   ]
