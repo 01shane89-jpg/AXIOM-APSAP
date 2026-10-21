@@ -143,6 +143,8 @@
     /* reviews of OSAP: read them, leave one (assets/osap-reviews.js, Netlify site only) */
     if (W.OSAP_REVIEWS && W.OSAP_REVIEWS.on()) h += '<button type="button" role="menuitem" data-tp="@reviews">Reviews</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
+    /* panic wipe: erases everything OSAP keeps on this device, after one confirm (assets/osap-wipe.js) */
+    if (W.OSAP_WIPE) h += '<button type="button" role="menuitem" data-tp="@wipe" class="tpwipe">Erase this device</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
     return box;
@@ -207,6 +209,7 @@
     if (sel.indexOf("@rep:") === 0) { if (W.OSAP_REPORTS) W.OSAP_REPORTS.run(sel.slice(5)); }
     else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
+    else if (sel === "@wipe") { if (W.OSAP_WIPE) W.OSAP_WIPE.open(); }
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }
