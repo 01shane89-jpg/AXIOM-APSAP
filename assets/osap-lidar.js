@@ -23,7 +23,7 @@
   var W = window, D = document;
   var MT = "https://tiles.mapterhorn.com/{z}/{x}/{y}.webp", COV = "https://download.mapterhorn.com/coverage.pmtiles",
     ATT = "https://download.mapterhorn.com/attribution.json", PMLIB = "assets/vendor/pmtiles-4.5.0.js", KEY = "osap-lidar";
-  var ATTR = 'Elevation: <a href="https://mapterhorn.com/attribution/" target="_blank" rel="noopener">Mapterhorn</a> (national LiDAR and elevation models, each under its producer\'s licence; Copernicus GLO-30 &copy; DLR e.V., Airbus, ESA)';
+  var ATTR = 'Elevation: <a href="https://mapterhorn.com/attribution/" target="_blank" rel="noopener noreferrer">Mapterhorn</a> (national LiDAR and elevation models, each under its producer\'s licence; Copernicus GLO-30 &copy; DLR e.V., Airbus, ESA)';
   /* resolution classes, finest first; "max" is the coarsest resolution (m) in the class */
   var CLASSES = [
     { id: "l1", max: 1, name: "LiDAR 1 m or finer", col: "#1b5e20" },
@@ -298,7 +298,7 @@
       if (!on && L_HS) { map.removeLayer(L_HS); L_HS = null; }
     } else {
       if (on && !L_COV) {
-        L_COV = new COVL({ zIndex: 7, opacity: 0.85, maxZoom: 20, maxNativeZoom: 16, attribution: 'LiDAR coverage: <a href="https://mapterhorn.com/coverage/" target="_blank" rel="noopener">Mapterhorn</a>' }).addTo(map);
+        L_COV = new COVL({ zIndex: 7, opacity: 0.85, maxZoom: 20, maxNativeZoom: 16, attribution: 'LiDAR coverage: <a href="https://mapterhorn.com/coverage/" target="_blank" rel="noopener noreferrer">Mapterhorn</a>' }).addTo(map);
         L_COV.on("tileerror", note);
       }
       if (!on && L_COV) { map.removeLayer(L_COV); L_COV = null; }
@@ -338,7 +338,7 @@
       if (t !== cTok) return;
       var s = r.best, cl = s && classOf(s.res);
       n.innerHTML = "<b>At the map centre:</b> " + (s ? esc(cl ? cl.name : "Elevation model") + ". " + esc(s.name) + ", " + esc(fmtRes(s.res)) + (s.producer ? ", " + esc(s.producer) : "") +
-        (s.licence ? ". Licence: " + esc(s.licence) : "") + (/^https?:\/\//.test(s.website) ? '. <a href="' + esc(s.website) + '" target="_blank" rel="noopener">Source</a>' : "") +
+        (s.licence ? ". Licence: " + esc(s.licence) : "") + (/^https?:\/\//.test(s.website) ? '. <a href="' + esc(s.website) + '" target="_blank" rel="noopener noreferrer">Source</a>' : "") +
         (r.sources.length > 1 ? " (" + (r.sources.length - 1) + " more model" + (r.sources.length > 2 ? "s" : "") + " here)" : "") : "no LiDAR. " + esc(SAT)) + ".";
     }, function () { if (t === cTok) note(); });
   }

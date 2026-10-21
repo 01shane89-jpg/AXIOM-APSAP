@@ -120,13 +120,13 @@
   /* ---------- pop-ups ---------- */
   function srcLinks(s) {
     var a = [];
-    if (s.wd) a.push('<a href="https://www.wikidata.org/wiki/' + esc(s.wd) + '" target="_blank" rel="noopener">Wikidata</a>');
-    if (s.w) a.push('<a href="' + url(s.w) + '" target="_blank" rel="noopener">Wikipedia</a>');
-    if (s.osm) a.push('<a href="https://www.openstreetmap.org/' + esc(s.osm) + '" target="_blank" rel="noopener">OpenStreetMap</a>');
+    if (s.wd) a.push('<a href="https://www.wikidata.org/wiki/' + esc(s.wd) + '" target="_blank" rel="noopener noreferrer">Wikidata</a>');
+    if (s.w) a.push('<a href="' + url(s.w) + '" target="_blank" rel="noopener noreferrer">Wikipedia</a>');
+    if (s.osm) a.push('<a href="https://www.openstreetmap.org/' + esc(s.osm) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>');
     return a.join(" · ");
   }
   function repLine(m) {
-    return '<li><a class="cft" href="' + url(m.u) + '" target="_blank" rel="noopener">' + esc(m.t) + "</a>" +
+    return '<li><a class="cft" href="' + url(m.u) + '" target="_blank" rel="noopener noreferrer">' + esc(m.t) + "</a>" +
       '<div class="cfm">' + esc(m.o) + " · " + day(m.d) + (m.st ? ' <span class="tag claim" title="A party to the conflict said this">Claim</span>' : "") + "</div>" +
       (m.fp ? '<div class="fp" title="SHA-256 fingerprint of this report: ' + esc(m.fp) + '">SHA-256 ' + esc(m.fp.slice(0, 16)) + "…</div>" : "") + "</li>";
   }
@@ -160,7 +160,7 @@
   }
   function strikePop(i) {
     return "<b>Reported strike on a military target</b>" +
-      '<div><a class="cft" href="' + url(i.link) + '" target="_blank" rel="noopener">' + esc(i.title_en || i.title) + "</a></div>" +
+      '<div><a class="cft" href="' + url(i.link) + '" target="_blank" rel="noopener noreferrer">' + esc(i.title_en || i.title) + "</a></div>" +
       '<div class="cfm">' + esc(String(i.outlet || "").replace(/\s*\(via [^)]*\)$/, "")) + " · " + day(i.date) + (i.state ? ' <span class="tag claim" title="A party to the conflict said this">Claim</span>' : "") + "</div>" +
       '<div class="cfm">Placed at ' + esc((i.geo && i.geo.n) || "the place the report names") + ", which may be the nearest town rather than the target. Reported, not verified.</div>" +
       (i.fp ? '<div class="fp" title="SHA-256 fingerprint of this report: ' + esc(i.fp) + '">SHA-256 ' + esc(i.fp.slice(0, 16)) + "…</div>" : "");
@@ -184,7 +184,7 @@
       if (hits.length) h += "<details" + (hits.length <= 6 ? " open" : "") + '><summary>Sites named in reports (' + hits.length + ")</summary><table>" + hits.slice(0, 40).map(function (x) {
         return '<tr><td><a href="#" data-cfsz="' + x[1] + '">' + esc(x[0].n) + '</a><div class="cfm">' + esc(KN[x[0].k] || "") + "</div></td><td>" + x[2] + " report" + (x[2] > 1 ? "s" : "") + "</td></tr>"; }).join("") + "</table></details>";
       var bad = (f.sources || []).filter(function (s) { return s.ok === false; });
-      h += '<p class="cfnote">Sites: <a href="https://www.wikidata.org/" target="_blank" rel="noopener">Wikidata</a> (CC0) and <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL, © OpenStreetMap contributors), as recorded there; not every site is mapped and some listed sites may be closed or moved. ' +
+      h += '<p class="cfnote">Sites: <a href="https://www.wikidata.org/" target="_blank" rel="noopener noreferrer">Wikidata</a> (CC0) and <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> (ODbL, © OpenStreetMap contributors), as recorded there; not every site is mapped and some listed sites may be closed or moved. ' +
         "A red ring means a report in this period names the site next to a word such as base or airfield: a machine match, not a finding that it was struck. " +
         "Strike markers are this tab’s own reports whose headline names a military target, placed where the report says, often the town. Reported, not verified; statements by a party are claims. " +
         "Site lists re-read " + day(f.built) + "; reports matched " + esc(f.asof) + "." + (bad.length ? ' <span class="cfbad">Not reached last time: ' + bad.map(function (s) { return esc(s.id); }).join(", ") + " (the earlier list is kept).</span>" : "") +

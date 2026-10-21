@@ -588,7 +588,7 @@
     r.pads.forEach(function (p) {
       L.marker([p.lat, p.lon], { pane: "lzpane", icon: window.OSAP_SYM && window.OSAP_SYM.icon ? window.OSAP_SYM.icon(p.kind === "aerodrome" ? "i_air" : "i_heli", { cls: "lzpadsym", scale: 0.7 }) : L.divIcon({ className: "", html: '<span class="lzpad">' + (p.kind === "aerodrome" ? "A" : "H") + "</span>", iconSize: [20, 20], iconAnchor: [10, 10] }), title: p.name || p.kind })
         .bindPopup('<div class="pop"><div class="tier">' + esc(p.kind === "aerodrome" ? "Airfield" : "Helipad") + " · OpenStreetMap</div>" + (p.name ? "<p>" + esc(p.name) + "</p>" : "") +
-          '<p class="obs"><b>Grid:</b> ' + esc(grid(p.lat, p.lon)) + '</p><p class="obs">Mapped, not verified: status, size and access unknown. <a href="' + esc(p.osm) + '" target="_blank" rel="noopener">OpenStreetMap</a></p></div>', { maxWidth: 300 }).addTo(layer);
+          '<p class="obs"><b>Grid:</b> ' + esc(grid(p.lat, p.lon)) + '</p><p class="obs">Mapped, not verified: status, size and access unknown. <a href="' + esc(p.osm) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></p></div>', { maxWidth: 300 }).addTo(layer);
     });
     layer.addTo(map);
     if (S.mask && r.maskUrl) mask = L.imageOverlay(r.maskUrl, r.bounds, { pane: "lzpane", opacity: 0.55, interactive: false, className: "lzmask" }).addTo(map);

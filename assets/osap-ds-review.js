@@ -38,7 +38,7 @@
       "Only issues opened by the app's owner count; anyone else's are ignored.\n\n" +
       "What this decides: " + what + "\n\n```json\n" + JSON.stringify(block, null, 1) + "\n```\n";
     var url = REPO + "/issues/new?title=" + encodeURIComponent(("OSAP decision: " + summary).slice(0, 120)) + "&body=" + encodeURIComponent(body);
-    window.open(url, "_blank", "noopener");
+    window.open(url, "_blank", "noopener,noreferrer");
   }
   function repLine(r) {
     var t = r.title_en || r.title || "", u = link(r.url);

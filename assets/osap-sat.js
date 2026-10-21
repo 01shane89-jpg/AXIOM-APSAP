@@ -290,8 +290,8 @@
     var k = Object.keys(y); return k.length ? k.join(", ") : String(new Date().getUTCFullYear());
   }
   function attrHtml() {
-    return "Contains modified Copernicus Sentinel data " + esc(years()) + '. Passes from <a href="https://earth-search.aws.element84.com/v1" target="_blank" rel="noopener">Element 84 Earth Search</a> (STAC), pictures from the Sentinel-2 L2A true-colour COGs on <a href="https://registry.opendata.aws/sentinel-2-l2a-cogs/" target="_blank" rel="noopener">AWS Open Data</a>, read in this browser.' +
-      (P.gon ? ' Daily picture: NASA <a href="https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api" target="_blank" rel="noopener">GIBS</a> / LANCE, public domain.' : "");
+    return "Contains modified Copernicus Sentinel data " + esc(years()) + '. Passes from <a href="https://earth-search.aws.element84.com/v1" target="_blank" rel="noopener noreferrer">Element 84 Earth Search</a> (STAC), pictures from the Sentinel-2 L2A true-colour COGs on <a href="https://registry.opendata.aws/sentinel-2-l2a-cogs/" target="_blank" rel="noopener noreferrer">AWS Open Data</a>, read in this browser.' +
+      (P.gon ? ' Daily picture: NASA <a href="https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api" target="_blank" rel="noopener noreferrer">GIBS</a> / LANCE, public domain.' : "");
   }
   function draw() {
     if (!el || el.hidden) return;
@@ -446,7 +446,7 @@
   function gibsDraw() {
     if (gl) { map.removeLayer(gl); gl = null; }
     if (P.gon) gl = Lf.tileLayer(gibsUrl(), { pane: "gibspane", maxNativeZoom: 9, maxZoom: 20, className: "osap-gibs", crossOrigin: "anonymous",
-      attribution: 'Daily true colour ' + esc(gDate()) + ': NASA <a href="https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api" target="_blank" rel="noopener">GIBS</a> (' + esc((GLAYERS.filter(function (g) { return g[0] === P.gl; })[0] || [, ""])[1]) + ")" }).addTo(map);
+      attribution: 'Daily true colour ' + esc(gDate()) + ': NASA <a href="https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api" target="_blank" rel="noopener noreferrer">GIBS</a> (' + esc((GLAYERS.filter(function (g) { return g[0] === P.gl; })[0] || [, ""])[1]) + ")" }).addTo(map);
     gsync(); if (isOpen()) { var a = el.querySelector(".attr"); if (a) a.innerHTML = attrHtml(); }
   }
   function gibs(on) { P.gon = !!on; save(); gibsDraw(); }
