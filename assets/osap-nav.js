@@ -760,9 +760,9 @@
         { id: "rd", type: "raster", source: "rd", paint: { "raster-opacity": 0.8, "raster-fade-duration": 0 } }, { id: "pl", type: "raster", source: "pl", paint: { "raster-fade-duration": 0 } }] };
   }
   var ATTR = {
-    streets: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+    streets: '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
     sat: "Esri, Maxar, Earthstar Geographics · © OpenStreetMap",
-    osm: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+    osm: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
   };
   /* the route, travelled part and hazards drawn on top of whichever base map */
   function addRouteLayers(st) {

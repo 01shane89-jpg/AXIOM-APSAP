@@ -75,7 +75,7 @@
     if (k === "posts") {
       return row("Type", esc((i.kind || "").replace(/_/g, " "))) + row("City", esc(i.city)) + row("Address", esc(i.address)) +
         row("Phone", phoneHtml(i.phone)) + row("After hours", phoneHtml(i.phone_after_hours)) +
-        row("Website", safeUrl(i.web) ? '<a href="' + esc(i.web) + '" target="_blank" rel="noopener">' + esc(i.web.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")) + "</a>" : "") +
+        row("Website", safeUrl(i.web) ? '<a href="' + esc(i.web) + '" target="_blank" rel="noopener noreferrer">' + esc(i.web.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")) + "</a>" : "") +
         row("Services", esc(i.services_note)) +
         (i.phone || i.phone_after_hours ? "" : row("Phone", '<span class="obs">Not published in the sources read; see the website</span>'));
     }
@@ -90,9 +90,9 @@
   }
   function pop(x) {
     var i = x.i, K = KINDS.filter(function (y) { return y.k === x.k; })[0], g = G();
-    var phoneNote = x.k === "posts" && i.phone_src ? '<br>Phone: <a href="' + esc(safeUrl(i.phone_src)) + '" target="_blank" rel="noopener">' + esc(i.phone_srcname || "source") + "</a>" + (i.phone_asof ? " (read " + esc(i.phone_asof) + ")" : "") : "";
+    var phoneNote = x.k === "posts" && i.phone_src ? '<br>Phone: <a href="' + esc(safeUrl(i.phone_src)) + '" target="_blank" rel="noopener noreferrer">' + esc(i.phone_srcname || "source") + "</a>" + (i.phone_asof ? " (read " + esc(i.phone_asof) + ")" : "") : "";
     return '<div class="pop evpop"><div class="tier">' + esc(K.one) + " · " + esc(cname(x.cc)) + " · reference</div><h3>" + esc(i.name) + "</h3><dl>" + facts(x) + "</dl>" +
-      '<p class="obs" style="margin-top:6px">Source: ' + (safeUrl(i.src) ? '<a href="' + esc(i.src) + '" target="_blank" rel="noopener">' + esc(i.srcname || i.src) + "</a>" : esc(i.srcname || "")) + phoneNote +
+      '<p class="obs" style="margin-top:6px">Source: ' + (safeUrl(i.src) ? '<a href="' + esc(i.src) + '" target="_blank" rel="noopener noreferrer">' + esc(i.srcname || i.src) + "</a>" : esc(i.srcname || "")) + phoneNote +
       "<br>" + esc(i.lat.toFixed(5) + ", " + i.lon.toFixed(5)) + (g ? " · MGRS " + esc(g.mgrs(i.lat, i.lon, 5)) : "") + (i.prec === "approx" ? " (approximate)" : "") +
       (i.fp ? '<br>Fingerprint <code class="fp">' + esc(i.fp.slice(0, 16)) + "…</code>" : "") + "</p>" +
       '<p class="evbtns"><button type="button" class="refresh" data-ev-from="' + esc(i.lat + "," + i.lon) + '">Nearest from here</button></p></div>';

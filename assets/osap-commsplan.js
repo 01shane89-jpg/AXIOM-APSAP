@@ -1383,7 +1383,7 @@
         '<table class="rttab"><thead><tr><th>Started (UTC)</th><th>Lasted</th><th>Seen by</th><th>Area</th></tr></thead><tbody>' +
         (o.list || []).slice(-12).reverse().map(function (x) { var m = num(x.minutes, 0); return "<tr><td>" + E(String(x.start || "").replace("T", " ")) + "Z</td><td>" + (m >= 120 ? f(m / 60, 1) + " h" : f(m, 0) + " min") + "</td><td>" + E(SRC[x.source] || x.source) + "</td><td>" + E(x.region) + "</td></tr>"; }).join("") + "</tbody></table>";
     }
-    h += '<p class="obs">IODA (Georgia Tech) detects drops automatically from routing, active probing and traffic data. A drop can be a power cut, a cable fault or a shutdown; IODA does not say which. <a href="https://ioda.inetintel.cc.gatech.edu/country/' + E((cc === "oki" ? "JP" : String(cc).toUpperCase())) + '" target="_blank" rel="noopener">IODA dashboard</a></p></div>' +
+    h += '<p class="obs">IODA (Georgia Tech) detects drops automatically from routing, active probing and traffic data. A drop can be a power cut, a cable fault or a shutdown; IODA does not say which. <a href="https://ioda.inetintel.cc.gatech.edu/country/' + E((cc === "oki" ? "JP" : String(cc).toUpperCase())) + '" target="_blank" rel="noopener noreferrer">IODA dashboard</a></p></div>' +
       '<div class="sec cpsec"><h3>Masts, towers and providers <span class="cptag">MAPPED</span> <span class="cptag">OBSERVED</span></h3><p class="obs">Masts come from OpenStreetMap and are incomplete in many places: no mapped mast does not mean no mast. Phone coverage shading is measured speed tests.</p></div>';
     el.innerHTML = h;
   }

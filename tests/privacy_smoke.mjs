@@ -5,12 +5,14 @@
 //    takes them when opened, and no request (OSAP's own site included) carries them. Copy link makes that kind of link.
 // 3. Route links made before the change ("?rt=") still open.
 // 4. Nothing from outside can run script in the page (and so read saved data): a tampered My work entry, a javascript: link.
+// 5. Opening the app asks no font service (the fonts come from OSAP itself), and links that open another site tell it nothing
+//    about OSAP (no Referer: rel="noreferrer").
 // Run from the repo root: node tests/privacy_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
-const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
+const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".css": "text/css", ".woff2": "font/woff2" };
 const root = process.cwd();
 const seen = []; /* every request OSAP's own (local) site received, with its full address */
 const server = createServer(async (req, res) => {
@@ -64,6 +66,11 @@ const errorsOf = (p) => { const e = []; p.on("pageerror", (x) => e.push(x.messag
     ok(all.indexOf(s) < 0, "no request carries " + s);
   const wx = out.filter((u) => /open-meteo/.test(u) && /latitude=/.test(u));
   ok(wx.every((u) => !/latitude=[^&]*\.\d{4}/.test(u) && !/longitude=[^&]*\.\d{4}/.test(u)), "weather requests carry at most 3 decimals (" + wx.length + " seen)");
+  ok(!out.some((u) => /fonts\.(googleapis|gstatic)\.com/.test(u)), "no request to Google Fonts");
+  ok(await p.evaluate(() => document.fonts.load('600 14px "IBM Plex Sans"').then(() => document.fonts.check('600 14px "IBM Plex Sans"'))), "IBM Plex Sans loads from OSAP's own copy");
+  ok(seen.some((u) => /^\/assets\/fonts\/[^/]+\.woff2$/.test(u)), "a font file was fetched from assets/fonts");
+  const leaky = await p.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].filter((a) => /^https?:/.test(a.getAttribute("href") || "") && !/\bnoreferrer\b/.test(a.rel)).map((a) => a.href).slice(0, 5));
+  ok(!leaky.length, "every link to another site has rel=noreferrer" + (leaky.length ? ": " + leaky.join(" ") : ""));
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }

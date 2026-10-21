@@ -40,7 +40,7 @@
     var s = (j && j.sources) || [{ name: "adsb.fi", site: "https://adsb.fi/", licence: "adsb.fi open data terms (non-commercial)", nc: true }, { name: "adsb.lol", site: "https://adsb.lol/", licence: "ODbL 1.0", nc: false }];
     return "Source: aircraft reports via " + s.map(function (x) {
       var u = safeUrl(x.site);
-      return (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(x.name) + "</a>" : esc(x.name)) + " (" + esc(x.licence) + (x.nc ? ", NC" : "") + ")";
+      return (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.name) + "</a>" : esc(x.name)) + " (" + esc(x.licence) + (x.nc ? ", NC" : "") + ")";
     }).join(" and ") + ". Method after gpsjam.org.";
   }
   var CAVEAT = "Inferred from what aircraft report about their own GPS accuracy, not measured on the ground. Few aircraft means no data, not no jamming. Does not tell jamming from spoofing.";

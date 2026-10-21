@@ -97,7 +97,7 @@
         return t;
       }
     }))({ pane: "mobpane", minZoom: MINZ, maxNativeZoom: 13, maxZoom: 19, opacity: 1, tileSize: 256, updateWhenIdle: true, keepBuffer: 1,
-      attribution: 'Ground mobility: rule-based, from <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Terrain Tiles</a> and &copy; EC JRC / Google Global Surface Water (CC BY 4.0)' });
+      attribution: 'Ground mobility: rule-based, from <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">AWS Terrain Tiles</a> and &copy; EC JRC / Google Global Surface Water (CC BY 4.0)' });
   }
 
   /* ---------- wet ground from the Open-Meteo model at the map centre ---------- */

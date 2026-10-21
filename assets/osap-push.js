@@ -65,7 +65,7 @@
   }
   function stopUrl(w) { return issueUrl("OSAP push watch: stop " + w.id, "Made by Push to phone in OSAP. Submit this issue to stop push alerts for \"" + w.name + "\"."); }
   function subLinks(t) {
-    return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener">Open ' + esc(t) + " in ntfy</a>";
+    return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener noreferrer">Open ' + esc(t) + " in ntfy</a>";
   }
 
   /* the Push to phone panel, drawn inside the Watch dialog */
@@ -84,8 +84,8 @@
         off: "Off. This watch only checks while OSAP is open." }[st]) + (LIST_ERR ? ' <span class="obs">(could not read the push list just now)</span>' : "") + "</div>" +
       (note ? '<p class="note">' + esc(note) + "</p>" : "") +
       "<h3>1. Get the free ntfy app</h3>" +
-      '<p>No account and no key. <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener">Android</a> · ' +
-      '<a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener">iPhone and iPad</a> · <a href="' + NTFY + '/app" target="_blank" rel="noopener">Web app</a> ' +
+      '<p>No account and no key. <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer">Android</a> · ' +
+      '<a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener noreferrer">iPhone and iPad</a> · <a href="' + NTFY + '/app" target="_blank" rel="noopener noreferrer">Web app</a> ' +
       '<span class="obs">(the web app alerts while its tab is open)</span></p>' +
       "<h3>2. Subscribe to this device's OSAP channel</h3>" +
       '<p>In ntfy tap <b>+</b> and enter <code class="pushtopic">' + esc(t) + '</code> <button type="button" class="refresh" data-push-copy>Copy</button><br>' + subLinks(t) +
@@ -93,8 +93,8 @@
       "<h3>3. Send this watch to OSAP</h3>" +
       "<p>Opens a filled-in issue on OSAP's GitHub page. Tap <b>Submit</b> there. OSAP's refresh job then checks this watch after every refresh, " +
       "about every 15 minutes, and sends new matching reports from the last 48 hours: one alert per event, up to 3 per check, then a count.</p>" +
-      '<p><a class="refresh primary" data-push-send href="' + esc(addUrl(w)) + '" target="_blank" rel="noopener">' + (st === "on" || st === "other" ? "Send the watch again" : "Send to OSAP") + "</a>" +
-      (st === "on" || st === "other" || st === "asked" ? ' <a class="refresh" data-push-stop href="' + esc(stopUrl(w)) + '" target="_blank" rel="noopener">Stop push alerts</a>' : "") + "</p>" +
+      '<p><a class="refresh primary" data-push-send href="' + esc(addUrl(w)) + '" target="_blank" rel="noopener noreferrer">' + (st === "on" || st === "other" ? "Send the watch again" : "Send to OSAP") + "</a>" +
+      (st === "on" || st === "other" || st === "asked" ? ' <a class="refresh" data-push-stop href="' + esc(stopUrl(w)) + '" target="_blank" rel="noopener noreferrer">Stop push alerts</a>' : "") + "</p>" +
       '<details class="wlimits"><summary>What is public, and the limits</summary><ul>' +
         "<li>OSAP's project files are public. The watch's name, area, categories, words and the channel name are saved there, so anyone who looks can read them, and could subscribe to the same channel. Keep private details out of a watch.</li>" +
         "<li>Only issues opened by OSAP's owner are accepted. Anyone else's are ignored.</li>" +

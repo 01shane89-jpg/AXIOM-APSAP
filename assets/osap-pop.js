@@ -82,7 +82,7 @@
   function draw() {
     if (lyr) { map.removeLayer(lyr); lyr = null; }
     if (st.on) lyr = new Tiles(url(st.y), { pane: "poppane", maxNativeZoom: 7, maxZoom: 20, opacity: st.op, className: "osap-pop",
-      attribution: 'Population: <a href="https://doi.org/10.7927/H49C6VHW" target="_blank" rel="noopener">CIESIN GPW v4</a> (CC BY 4.0) via NASA GIBS' }).addTo(map);
+      attribution: 'Population: <a href="https://doi.org/10.7927/H49C6VHW" target="_blank" rel="noopener noreferrer">CIESIN GPW v4</a> (CC BY 4.0) via NASA GIBS' }).addTo(map);
     legend();
   }
   function legend() {
