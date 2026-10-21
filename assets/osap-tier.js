@@ -235,7 +235,7 @@
     }
     /* shown reviews under the sign-in form (assets/osap-reviews.js) */
     if (wall) h += '<div id="tr-reviews"></div>';
-    h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
+    h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener noreferrer">Refunds</a></p>';
     BOX.className = wall ? "trwall" : "";
     BOX.innerHTML = h + "</div>";
     if (wall && W.OSAP_REVIEWS) W.OSAP_REVIEWS.wall(BOX.querySelector("#tr-reviews"));

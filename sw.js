@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "1cef0f7a839c";
+const VERSION = "289be802f308";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -506,6 +506,7 @@ const PRECACHE = [
 "assets/vendor/pptxgenjs-4.0.1.bundle.js",
 "assets/osap-offline.js",
 "assets/osap-move.js",
+"assets/osap-wipe.js",
 "assets/osap-sync.js",
 "assets/osap-team.js",
 "assets/osap-gnss.js",
@@ -558,6 +559,7 @@ const PRECACHE = [
 "assets/tiles-base.js",
 "assets/tiles-flood.js",
 "assets/tiles-flood25.js",
+"assets/fonts/plex.css",
 "assets/vendor/leaflet-1.9.4.js",
 "assets/vendor/milsymbol-3.0.4.js"
 ];

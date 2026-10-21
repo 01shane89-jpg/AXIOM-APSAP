@@ -1196,9 +1196,9 @@
         (d.address ? E(d.address) + ". " : "") + phone + (d.hours ? " · open " + E(d.hours) : "") +
         (d.longest_runway && d.longest_runway.length_m ? " · " + (d.longest_runway.mapped ? "longest mapped runway about " : "longest runway ") + E(d.longest_runway.length_m) + " m" : "") + "</p>" +
         (o.kind === "posts" ? '<p class="obs">An embassy or consulate is shown as a place to go, not verified as an evacuation destination. Call the post first.</p>' : "") +
-        '<p><code>' + E(grid(d.lat, d.lon)) + "</code>" + (safeUrl(d.src) ? ' · <a href="' + E(d.src) + '" target="_blank" rel="noopener">source</a>' : "") + " · " + E(r.src || "router") + "</p>" +
+        '<p><code>' + E(grid(d.lat, d.lon)) + "</code>" + (safeUrl(d.src) ? ' · <a href="' + E(d.src) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") + " · " + E(r.src || "router") + "</p>" +
         (o.exp.hits.length ? '<ol class="epehits">' + o.exp.hits.slice(0, 8).map(function (h) {
-          return "<li>" + E(dist(h.along)) + " along, " + E(dist(h.d)) + " off: " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener">' + E(h.title || h.kind) + "</a>" : E(h.title || h.kind)) + ' <span class="obs">' + E(h.kind) + (h.date ? ", " + E(String(h.date).slice(0, 10)) : "") + (h.src ? ", " + E(h.src) : "") + "</span></li>";
+          return "<li>" + E(dist(h.along)) + " along, " + E(dist(h.d)) + " off: " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener noreferrer">' + E(h.title || h.kind) + "</a>" : E(h.title || h.kind)) + ' <span class="obs">' + E(h.kind) + (h.date ? ", " + E(String(h.date).slice(0, 10)) : "") + (h.src ? ", " + E(h.src) : "") + "</span></li>";
         }).join("") + "</ol>" : "") +
         legsHtml(o) + corrHtml(o) + depsHtml(o) + alongHtml(o) +
         '<div class="epebtns"><button type="button" data-ep="route">Open in Route (checkpoints, print)</button>' + toolsHtml(o) + "</div>" + toolNote(o) + "</div>" : "") +
@@ -1250,7 +1250,7 @@
       (hz.ranges.length ? '<ol class="epehz">' + hz.ranges.map(function (r) {
         return "<li><b>km " + E(r.from) + (r.to > r.from ? "–" + E(r.to) : "") + "</b> " + E(Object.keys(r.kinds).map(function (k) { return r.kinds[k] + " " + k.toLowerCase(); }).join(", ")) +
           (r.newest != null ? ' <span class="obs">newest ' + (r.newest < 48 ? E(r.newest) + " h" : E(Math.round(r.newest / 24)) + " days") + " old</span>" : "") +
-          '<ul>' + r.items.map(function (x) { return "<li>" + (x.url ? '<a href="' + E(x.url) + '" target="_blank" rel="noopener">' + E(x.text || x.kind) + "</a>" : E(x.text || x.kind)) + ' <span class="obs">' + E(x.kind) + (x.src ? ", " + E(x.src) : "") + ", " + E(x.off) + " km off · reported</span></li>"; }).join("") + "</ul></li>";
+          '<ul>' + r.items.map(function (x) { return "<li>" + (x.url ? '<a href="' + E(x.url) + '" target="_blank" rel="noopener noreferrer">' + E(x.text || x.kind) + "</a>" : E(x.text || x.kind)) + ' <span class="obs">' + E(x.kind) + (x.src ? ", " + E(x.src) : "") + ", " + E(x.off) + " km off · reported</span></li>"; }).join("") + "</ul></li>";
       }).join("") + "</ol>" : '<p class="obs">No report OSAP holds inside the corridor. No report is not a clearance: unknown.</p>');
     var cm = a.comms || { segs: [] };
     h += "<h5>Phone coverage</h5>" + (cm.segs.length ? '<ol class="epecm">' + cm.segs.map(function (x) {
@@ -1262,10 +1262,10 @@
       (su.gap ? "<b>Longest stretch without fuel: " + E(su.gap.len) + " km</b>, km " + E(su.gap.from) + " to " + E(su.gap.to) + (su.gap.last ? "; last fuel before it: " + E(su.gap.last.name) + " at km " + E(su.gap.last.km) : su.gap.from === 0 ? ", from the start" : "") + ". " : "") +
       E(su.water) + " drinking water points, " + E(su.shop) + " shops, " + E(su.lodging) + " places to stay.</p>" + (su.notes.length ? '<p class="obs">' + E(su.notes.join(" ")) + "</p>" : "") + '<p class="obs">Mapped in OpenStreetMap (proximity): open hours, stock and fuel type are not known.</p>' : "");
     var us = a.us || { list: [] };
-    h += "<h5>U.S. support</h5>" + (us.list.length ? '<ul class="epeus">' + us.list.map(function (x) { return "<li><b>" + E(x.name) + '</b> <span class="obs">' + E(x.kind) + " · km " + E(x.km) + ", " + E(dist(x.off)) + " off the line</span>" + (x.phone ? ' · <a href="tel:' + E(x.phone.replace(/[^0-9+]/g, "")) + '">' + E(x.phone) + "</a>" : "") + (x.src ? ' · <a href="' + E(x.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</li>"; }).join("") + "</ul>" : '<p class="obs">No U.S. embassy or consulate within 50 km of the line.</p>') +
+    h += "<h5>U.S. support</h5>" + (us.list.length ? '<ul class="epeus">' + us.list.map(function (x) { return "<li><b>" + E(x.name) + '</b> <span class="obs">' + E(x.kind) + " · km " + E(x.km) + ", " + E(dist(x.off)) + " off the line</span>" + (x.phone ? ' · <a href="tel:' + E(x.phone.replace(/[^0-9+]/g, "")) + '">' + E(x.phone) + "</a>" : "") + (x.src ? ' · <a href="' + E(x.src) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") + "</li>"; }).join("") + "</ul>" : '<p class="obs">No U.S. embassy or consulate within 50 km of the line.</p>') +
       '<p class="obs">Not verified as an evacuation destination. Call the post first.</p>';
     var md = a.med;
-    h += '<details class="epemed"><summary>Medical support near the line' + (md ? " (" + E(md.n) + ")" : "") + "</summary>" + (md && md.list.length ? '<ul class="epeus">' + md.list.map(function (x) { return "<li><b>" + E(x.name) + '</b> <span class="obs">km ' + E(x.km) + ", " + E(dist(x.off)) + " off · " + (x.ed ? "emergency department tagged in OpenStreetMap (unverified)" : "capability unknown") + '</span> · <a href="' + E(x.src) + '" target="_blank" rel="noopener">source</a></li>'; }).join("") + "</ul>" : '<p class="obs">No hospital mapped within ' + E(md ? dist(md.w) : "5 km") + " of the line.</p>") +
+    h += '<details class="epemed"><summary>Medical support near the line' + (md ? " (" + E(md.n) + ")" : "") + "</summary>" + (md && md.list.length ? '<ul class="epeus">' + md.list.map(function (x) { return "<li><b>" + E(x.name) + '</b> <span class="obs">km ' + E(x.km) + ", " + E(dist(x.off)) + " off · " + (x.ed ? "emergency department tagged in OpenStreetMap (unverified)" : "capability unknown") + '</span> · <a href="' + E(x.src) + '" target="_blank" rel="noopener noreferrer">source</a></li>'; }).join("") + "</ul>" : '<p class="obs">No hospital mapped within ' + E(md ? dist(md.w) : "5 km") + " of the line.</p>") +
       (md && md.note ? '<p class="obs">' + E(md.note) + "</p>" : "") + '<p class="obs">For levels of care, trauma capability and medevac use Med plan; this list is proximity only.</p></details>';
     return h + "</div>";
   }
@@ -1278,13 +1278,13 @@
     if (!dp) return h + "</div>";
     (dp.borders || []).forEach(function (b) {
       h += '<div class="epeborder" data-ep-border="' + E(b.id) + '"><b>Border crossing: ' + E(b.name) + '</b> <span class="obs">km ' + E(b.km) + "</span>" +
-        "<dl><dt>Status</dt><dd>" + (b.closures.length ? '<span class="st-blocked">Closure reported</span>: ' + E(b.closures[0].title) + (b.closures[0].url ? ' <a href="' + E(b.closures[0].url) + '" target="_blank" rel="noopener">source</a>' : "") : "No source says it is open or closed: unknown. Check with the border agency and the post.") + "</dd>" +
+        "<dl><dt>Status</dt><dd>" + (b.closures.length ? '<span class="st-blocked">Closure reported</span>: ' + E(b.closures[0].title) + (b.closures[0].url ? ' <a href="' + E(b.closures[0].url) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") : "No source says it is open or closed: unknown. Check with the border agency and the post.") + "</dd>" +
         "<dt>Country entered</dt><dd>" + (b.entered ? E(b.enteredName) + ' <span class="obs">(a crossing record on that side within 3 km)</span>' : '<span class="obs">Not identified from the data OSAP holds</span>') + "</dd>" +
         "<dt>Hours</dt><dd>" + (b.hours ? E(b.hours) + ' <span class="obs">(as mapped)</span>' : '<span class="obs">Not published in the data OSAP holds</span>') + "</dd>" +
         "<dt>U.S. advisory</dt><dd>" + (b.adv ? "Level " + E(b.adv.level) + " " + E(b.adv.text) + (b.adv.date ? ' <span class="obs">(' + E(b.adv.date) + ", travel.state.gov, a government statement)</span>" : "") +
           (b.adv.areas.length ? "<ul>" + b.adv.areas.map(function (a) { return "<li>" + E(a.area) + ": level " + E(a.level) + (a.reason ? ", " + E(a.reason) : "") + "</li>"; }).join("") + "</ul>" : "") : '<span class="obs">' + (b.entered ? "None held for that country" : "Unknown until the country entered is known") + "</span>") + "</dd>" +
-        "<dt>Other crossing</dt><dd>" + (b.alt ? E(b.alt.name) + " · " + E(dist(b.alt.m)) + " away in a straight line" + (b.alt.src ? ' · <a href="' + E(b.alt.src) + '" target="_blank" rel="noopener">source</a>' : "") : '<span class="obs">None in the data OSAP holds</span>') + "</dd>" +
-        '<dt>Source</dt><dd><a href="' + E(b.src) + '" target="_blank" rel="noopener">OpenStreetMap</a></dd></dl></div>';
+        "<dt>Other crossing</dt><dd>" + (b.alt ? E(b.alt.name) + " · " + E(dist(b.alt.m)) + " away in a straight line" + (b.alt.src ? ' · <a href="' + E(b.alt.src) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") : '<span class="obs">None in the data OSAP holds</span>') + "</dd>" +
+        '<dt>Source</dt><dd><a href="' + E(b.src) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></dd></dl></div>';
     });
     var rows = dp.list.filter(function (d) { return d.kind !== "border"; });
     if (rows.length) {
@@ -1293,7 +1293,7 @@
         '<ol class="epedep">' + rows.map(function (d) {
           var dt = d.detour, open = S.showDet === d.id;
           return '<li data-ep-dep="' + E(d.id) + '"><span><b>km ' + E(d.km) + "</b> " + E(DEP_K[d.kind]) + (d.name && d.name !== DEP_K[d.kind] ? ": " + E(d.name) : "") + (d.len ? " · " + E(dist(d.len)) + " long" : "") +
-            (d.maxweight ? " · max weight " + E(d.maxweight) : "") + (d.maxheight ? " · max height " + E(d.maxheight) : "") + ' · <a href="' + E(d.src) + '" target="_blank" rel="noopener">source</a></span>' +
+            (d.maxweight ? " · max weight " + E(d.maxweight) : "") + (d.maxheight ? " · max height " + E(d.maxheight) : "") + ' · <a href="' + E(d.src) + '" target="_blank" rel="noopener noreferrer">source</a></span>' +
             '<span class="obs">' + (d.status.st === "Closure reported" ? '<span class="st-blocked">Closure reported</span>: ' + E(d.status.why) : "Status: no source") +
             (dt ? dt.none ? ' · <span class="epebad">' + E(dt.why) + "</span>" : dt.err ? " · Detour: " + E(dt.err) : " · If lost: detour +" + E(dist(Math.max(0, dt.dm))) + ", +" + E(dur(Math.max(0, dt.ds))) + ' <button type="button" class="linkish" data-ep-showdet="' + E(d.id) + '">' + (open ? "Hide" : "Show") + "</button>" :
               DEP_DETOUR[d.kind] ? ' · <button type="button" class="linkish" data-ep-det="' + E(d.id) + '"' + (busy ? " disabled" : "") + ">Detour if lost</button>" : "") + "</span></li>";
@@ -1323,7 +1323,7 @@
         h += '<h4 class="epecls">' + E(cls) + ' <span class="obs">' + xs.length + "</span></h4><ul class=\"epeair\">" + xs.slice(0, 25).map(function (x) {
           var lz = cls === "Candidate LZ" || cls === "User-verified LZ", sea = cls === "Seaport" || cls === "Ferry terminal";
           return '<li data-ep-air="' + E(x.id) + '"><span><b>' + E(x.name) + '</b> <i class="obs">' + E(x.kind) + " · km " + E(x.km) + ", " + E(dist(x.off)) + " off the line" + (x.surface ? " · " + E(x.surface) : "") + (x.access ? " · access " + E(x.access) : "") +
-            (x.ver ? " · verified by you " + E(dual(x.ver)) : "") + " · " + (/^https?:/.test(x.src) ? '<a href="' + E(x.src) + '" target="_blank" rel="noopener">source</a>' : E(x.src)) + "</i>" + (x.note ? '<br><span class="obs">' + E(x.note) + "</span>" : "") + "</span>" +
+            (x.ver ? " · verified by you " + E(dual(x.ver)) : "") + " · " + (/^https?:/.test(x.src) ? '<a href="' + E(x.src) + '" target="_blank" rel="noopener noreferrer">source</a>' : E(x.src)) + "</i>" + (x.note ? '<br><span class="obs">' + E(x.note) + "</span>" : "") + "</span>" +
             '<span class="epeairb">' + (lz ? '<button type="button" data-ep-ver="' + E(x.id) + '"' + (x.ver ? ' aria-pressed="true"' : "") + ">" + (x.ver ? "Verified" : "Verify LZ") + "</button>" : "") +
             '<button type="button" data-ep-use="' + E(x.id) + '">' + (sea ? "Sea departure here" : "Air departure here") + "</button>" +
             '<button type="button" data-ep-fly="' + E(x.id) + '"' + (S.flyPick === x.id ? ' aria-pressed="true"' : "") + ">" + (S.flyPick === x.id ? "Tap where it ends…" : sea ? "Sail from here" : "Fly out from here") + "</button></span></li>";

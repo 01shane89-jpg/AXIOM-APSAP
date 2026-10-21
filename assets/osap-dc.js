@@ -63,7 +63,7 @@
     return '<div class="pop"><div class="tier" style="color:' + (i.ai ? AIC : ALLC) + '">' + (i.ai ? "AI data centre" : "Data centre") + " · " + esc(SRC[i.s] || i.s) + "</div>" +
       "<h3>" + esc(i.nm || "Data centre (no name mapped)") + "</h3>" + ai + cl +
       "<dl>" + rows.filter(function (r) { return r[1] != null && r[1] !== ""; }).map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(String(r[1])) + "</dd>"; }).join("") + "</dl>" +
-      '<p class="obs">' + (safeUrl(i.u) ? '<a href="' + esc(i.u) + '" target="_blank" rel="noopener">Source record</a> · ' : "") + LIC[i.s] +
+      '<p class="obs">' + (safeUrl(i.u) ? '<a href="' + esc(i.u) + '" target="_blank" rel="noopener noreferrer">Source record</a> · ' : "") + LIC[i.s] +
       "<br>" + where + " · " + esc(i.la.toFixed(4) + ", " + i.lo.toFixed(4)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(i.la, i.lo)) : "") +
       (i.fp ? '<br>Fingerprint <code class="fp">' + esc(i.fp.slice(0, 16)) + "…</code>" : "") +
       (i.s === "osm" ? "<br>Community-mapped; may be incomplete or out of date." : "") + "</p></div>";

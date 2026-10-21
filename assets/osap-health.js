@@ -118,14 +118,14 @@
         /* key feeds stay marked in red only when the data really is down; a single late key feed is listed in amber */
         h += "<ul>" + EV.probs.map(function (p) { return "<li" + (p.key ? ' class="' + (EV.state === "down" ? "hk" : "ha") + '"' : "") + "><strong>" + esc(p.name) + "</strong>: " + esc(p.why) + (p.key ? " (key feed)" : "") + "</li>"; }).join("") + "</ul>";
       }
-      if (H.run) h += '<p class="obs"><a href="' + esc(H.run) + '" target="_blank" rel="noopener">The refresh run that wrote this</a></p>';
+      if (H.run) h += '<p class="obs"><a href="' + esc(H.run) + '" target="_blank" rel="noopener noreferrer">The refresh run that wrote this</a></p>';
     }
     var topic = H && H.topic;
     if (topic && /^[\w-]{1,64}$/.test(topic)) {
       h += '<p><strong>Outage alerts on your phone.</strong> Install the free ntfy app, then subscribe to <span class="mono">' + esc(topic) + "</span>. " +
         'Alerts come when data stops for an hour or a key feed dies, and once more when it recovers. No account needed.</p>' +
-        '<p><a href="ntfy://ntfy.sh/' + esc(topic) + '">Open in the ntfy app</a> · <a href="https://ntfy.sh/' + esc(topic) + '" target="_blank" rel="noopener">Open in the browser</a> · ' +
-        '<a href="https://ntfy.sh/docs/subscribe/phone/" target="_blank" rel="noopener">Get ntfy</a></p>' +
+        '<p><a href="ntfy://ntfy.sh/' + esc(topic) + '">Open in the ntfy app</a> · <a href="https://ntfy.sh/' + esc(topic) + '" target="_blank" rel="noopener noreferrer">Open in the browser</a> · ' +
+        '<a href="https://ntfy.sh/docs/subscribe/phone/" target="_blank" rel="noopener noreferrer">Get ntfy</a></p>' +
         '<p class="obs">The channel carries feed names and times only, never report content.</p>';
     }
     panel.innerHTML = h;

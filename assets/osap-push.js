@@ -71,7 +71,7 @@
       layers: w.layers || [], kw: w.kw || [], q: w.q || undefined, minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic() };
   }
   function subLinks(t) {
-    return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener">Open ' + esc(t) + " in ntfy</a>";
+    return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener noreferrer">Open ' + esc(t) + " in ntfy</a>";
   }
 
   /* the Push to phone panel, drawn inside the Watch dialog */
@@ -88,8 +88,8 @@
         off: "Off. This watch only checks while OSAP is open." }[st]) + (LIST_ERR ? ' <span class="obs">(' + esc(LIST_ERR) + ")</span>" : "") + "</div>" +
       (note ? '<p class="note">' + esc(note) + "</p>" : "") +
       "<h3>1. Get the free ntfy app</h3>" +
-      '<p>No account and no key. <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener">Android</a> · ' +
-      '<a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener">iPhone and iPad</a> · <a href="' + NTFY + '/app" target="_blank" rel="noopener">Web app</a> ' +
+      '<p>No account and no key. <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer">Android</a> · ' +
+      '<a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener noreferrer">iPhone and iPad</a> · <a href="' + NTFY + '/app" target="_blank" rel="noopener noreferrer">Web app</a> ' +
       '<span class="obs">(the web app alerts while its tab is open)</span></p>' +
       "<h3>2. Subscribe to this device's OSAP channel</h3>" +
       '<p>In ntfy tap <b>+</b> and enter <code class="pushtopic">' + esc(t) + '</code> <button type="button" class="refresh" data-push-copy>Copy</button><br>' + subLinks(t) +

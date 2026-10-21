@@ -107,7 +107,7 @@
   function cxPop(x) {
     return "<b>" + esc(x.name) + "</b>" + '<div class="cfm">' + esc(KIND[x.kind] || "Crossing") + " · Thai side: " + esc(x.th_side) + " · Malaysian side: " + esc(x.my_side) + "</div>" +
       "<div>" + esc(x.why) + ' <span class="tag" title="' + esc(x.why_status) + '">AI generated</span></div>' +
-      '<div class="cfm">Source: <a href="' + url(x.src) + '" target="_blank" rel="noopener">' + esc(x.srcname) + "</a>. Position approximate: " + esc(x.coord_basis) + ".</div>" +
+      '<div class="cfm">Source: <a href="' + url(x.src) + '" target="_blank" rel="noopener noreferrer">' + esc(x.srcname) + "</a>. Position approximate: " + esc(x.coord_basis) + ".</div>" +
       '<div class="cfm">Reports naming this crossing: search the tab for "' + esc(x.name.split(" ")[0]) + '".</div>' + fpLine(x.fp);
   }
   function distPop(a, n, lv) {
@@ -118,7 +118,7 @@
       m.forEach(function (x) {
         h += '<div class="cfm">' + esc(x.name) + (x.until ? " · in force until " + day(x.until) : "") + (x.extended ? " · last extended " + day(x.extended) : "") +
           ' <span class="tag claim" title="A government statement">Claim</span></div>' +
-          '<div class="cfm">' + (x.evidence || []).map(function (e) { return '<a href="' + url(e.src) + '" target="_blank" rel="noopener">' + esc(e.srcname) + "</a>"; }).join(" · ") + "</div>" + fpLine(x.fp);
+          '<div class="cfm">' + (x.evidence || []).map(function (e) { return '<a href="' + url(e.src) + '" target="_blank" rel="noopener noreferrer">' + esc(e.srcname) + "</a>"; }).join(" · ") + "</div>" + fpLine(x.fp);
       });
     }
     return h + '<div class="cfm">Outline: geoBoundaries (CC BY 3.0 IGO).</div>';
@@ -142,7 +142,7 @@
       return '<tr><td><a href="#" data-cfdsx="' + ix + '">' + esc(x.name) + '</a><div class="cfm">' + esc(KIND[x.kind] || "") + " · " + esc(x.th_province) + " – " + esc(x.my_state) + "</div></td></tr>"; }).join("") + "</table></details>";
     if (f && law) h += "<details><summary>Special security laws</summary>" + f.measures.map(function (x) {
       return '<div style="margin:4px 0"><b>' + esc(x.name) + "</b> · " + num((x.districts || []).length) + " districts" + (x.until ? " · until " + day(x.until) : "") +
-        ' <span class="tag claim" title="A government statement">Claim</span><div class="cfm">' + esc(x.note || "") + " " + (x.evidence || []).map(function (e) { return '<a href="' + url(e.src) + '" target="_blank" rel="noopener">' + esc(e.srcname) + "</a>"; }).join(" · ") + "</div></div>"; }).join("") + "</details>";
+        ' <span class="tag claim" title="A government statement">Claim</span><div class="cfm">' + esc(x.note || "") + " " + (x.evidence || []).map(function (e) { return '<a href="' + url(e.src) + '" target="_blank" rel="noopener noreferrer">' + esc(e.srcname) + "</a>"; }).join(" · ") + "</div></div>"; }).join("") + "</details>";
     h += '<p class="cfnote">Border: Natural Earth 1:10m (public domain), approximate; not for deciding which side a place is on. Crossings placed by hand near the named checkpoints. ' +
       "District outlines: geoBoundaries (CC BY 3.0 IGO). Shading counts this tab's placed reports of attacks in each district, so one attack reported by five outlets counts five times.</p>";
     box.innerHTML = h;

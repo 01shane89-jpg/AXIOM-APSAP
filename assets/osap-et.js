@@ -64,19 +64,19 @@
       marker("n" + i, x.geo.lat, x.geo.lon, "news", '<div class="pop"><div class="tier">UFO/UAP report · ' + E(x.outlet) + " · " + E(when(x.date)) + "</div><h3>" + E(x.title) + "</h3>" +
         (x.orig ? '<p class="obs">Original: ' + E(x.orig) + "</p>" : "") +
         '<p class="obs">A news headline, not a verified sighting. Placed at ' + E(x.geo.name) + (x.geo.prec === "province" ? ", the rough centre of that region" : ", approximately") +
-        ', because the headline names it. <a href="' + E(safeUrl(x.link)) + '" target="_blank" rel="noopener">Article</a></p><p class="obs">Fingerprint ' + E(x.fp || "") + "</p></div>");
+        ', because the headline names it. <a href="' + E(safeUrl(x.link)) + '" target="_blank" rel="noopener noreferrer">Article</a></p><p class="obs">Fingerprint ' + E(x.fp || "") + "</p></div>");
       pts.push([x.geo.lat, x.geo.lon]);
     });
     off.forEach(function (x, i) {
       if (!x.geo) return;
       marker("o" + i, x.geo.lat, x.geo.lon, "official", '<div class="pop"><div class="tier">Official UAP release · ' + E(x.agency) + " · " + E(when(x.date)) + "</div><h3>" + E(x.title) + "</h3>" +
-        (x.summary ? '<p class="note">' + E(x.summary) + "</p>" : "") + '<p class="obs">The releasing office\'s statement. Placed at ' + E(x.geo.name) + " (" + E(x.geo.basis) + '). <a href="' + E(safeUrl(x.link)) + '" target="_blank" rel="noopener">Release</a></p></div>');
+        (x.summary ? '<p class="note">' + E(x.summary) + "</p>" : "") + '<p class="obs">The releasing office\'s statement. Placed at ' + E(x.geo.name) + " (" + E(x.geo.basis) + '). <a href="' + E(safeUrl(x.link)) + '" target="_blank" rel="noopener noreferrer">Release</a></p></div>');
       pts.push([x.geo.lat, x.geo.lon]);
     });
     cases.forEach(function (c) {
       marker("c" + c.id, c.lat, c.lon, "case", '<div class="pop"><div class="tier">Notable past case · ' + E(c.date) + " · " + E(c.kind) + "</div><h3>" + E(c.name) + "</h3>" +
         '<p class="obs">' + E(c.place) + " (approximate). " + (c.official ? "Recorded or investigated by a government, military or aviation authority." : "Civilian reports.") +
-        " A reported claim; the article sets out the explanations offered.</p>" + '<p class="obs"><a href="' + E(safeUrl(c.link)) + '" target="_blank" rel="noopener">Encyclopedia article</a></p></div>');
+        " A reported claim; the article sets out the explanations offered.</p>" + '<p class="obs"><a href="' + E(safeUrl(c.link)) + '" target="_blank" rel="noopener noreferrer">Encyclopedia article</a></p></div>');
       pts.push([c.lat, c.lon]);
     });
     if (S.world && pts.length) { try { ctx.map.fitBounds(L.latLngBounds(pts), { padding: [12, 12], animate: false, maxZoom: 5 }); } catch (e) {} }
@@ -96,7 +96,7 @@
           '<span class="tlm"><span class="tls">' + E(x.agency) + (x.kind === "foia" ? " · reporting on released documents" : " · official statement (claim)") + (x.geo ? " · " + E(x.geo.name) : "") + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">None in this period.</p>') +
       '<ul class="note" style="margin-top:6px">' + (D.links || []).map(function (l) {
-        return '<li><a href="' + E(safeUrl(l.url)) + '" target="_blank" rel="noopener">' + E(l.name) + "</a>: " + E(l.note) + "</li>"; }).join("") + "</ul>" +
+        return '<li><a href="' + E(safeUrl(l.url)) + '" target="_blank" rel="noopener noreferrer">' + E(l.name) + "</a>: " + E(l.note) + "</li>"; }).join("") + "</ul>" +
       '<p class="note">These sites refuse automated reading, so they open in the browser instead.</p></div>';
     var ch = S.cases ? '<div class="sec"><h2>Notable past cases' + (S.world ? "" : " in " + E(ctx.name)) + "</h2>" + (cases.length ? '<div class="tllist">' + cases.map(function (c) {
         return '<button type="button" class="tlrow" data-sof="et:c' + E(c.id) + '"><span class="tlt">' + E(c.date) + '</span><span class="tln">' + E(c.name) + '</span><span class="tlm"><span class="tls">' +
@@ -113,7 +113,7 @@
         var w = e.target.closest && e.target.closest("[data-etw]");
         if (w) { S.world = w.getAttribute("data-etw") === "1"; if (!S.world) { try { S.ctx.map.fitBounds(S.ctx.bounds(), { padding: [8, 8], animate: false }); } catch (x) {} } render(); return; }
         var l = e.target.closest && e.target.closest("[data-etlink]");
-        if (l && l.getAttribute("data-etlink")) window.open(l.getAttribute("data-etlink"), "_blank", "noopener");
+        if (l && l.getAttribute("data-etlink")) window.open(l.getAttribute("data-etlink"), "_blank", "noopener,noreferrer");
       });
       ctx.rail.addEventListener("change", function (e) {
         if (e.target && e.target.hasAttribute && e.target.hasAttribute("data-etc")) { S.cases = e.target.checked; render(); }
