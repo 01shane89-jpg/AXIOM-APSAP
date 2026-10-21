@@ -140,6 +140,7 @@ jobs:
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
+      - run: node tests/protect_smoke.mjs
       - run: node tests/safety_smoke.mjs
       - run: node tests/wipe_smoke.mjs
       - run: node tests/sync_smoke.mjs
@@ -201,6 +202,8 @@ jobs:
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
       - run: node tests/intelbrief_smoke.mjs
+      # custom topic (own words, watch-word syntax) in the PowerPoint brief and OSIR windows
+      - run: node tests/custom_topic_smoke.mjs
       - run: node tests/wxchart_smoke.mjs
       - run: node tests/avwx_smoke.mjs
       - run: node tests/illum_smoke.mjs
