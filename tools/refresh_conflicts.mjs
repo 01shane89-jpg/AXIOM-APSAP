@@ -18,7 +18,7 @@ import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, 
 import { ccsAt } from "./geo_cc.mjs";
 import { zonesFront } from "./front_zones.mjs";
 import { tgItems } from "./tg_preview.mjs";
-import { stripOutletText } from "./outlet_text.mjs";
+import { stripOutletText, postOnly } from "./outlet_text.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
 const TIMEOUT = 25000, KEEP_DAYS = 180, CAP = 900, UCDP_DAYS = 400, OUT = "data/live/conflicts";
@@ -402,7 +402,7 @@ for (const c of LIST) {
   const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date, 60, { link: i.link, old: oldRe }));
   if (stale.length) { const st = new Set(stale); items = items.filter((i) => !st.has(i)); console.log(c.id + ": " + stale.length + " search results dropped as old stories re-dated: " + stale.map((i) => i.link).join(" ")); }
   if (!PROBE && translateAll) {
-    const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected);
+    const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected && i.via !== "Telegram" && !i.notext);
     if (todo.length) {
       // headlines only: summaries are not translated, as outlet text is never stored (tools/outlet_text.mjs)
       const tr = await translateAll(todo.map((i) => ({ text: i.title, lang: i.lang })));
@@ -411,6 +411,7 @@ for (const c of LIST) {
   }
   for (const i of items) for (const k of ["title", "summary", "title_en", "summary_en", "outlet"]) if (i[k]) i[k] = unent(i[k]).replace(/\uFFFD/g, "");   // a search engine cuts long Khmer titles mid-character
   for (const i of items) {
+    if (i.notext && i.fp) continue;   // a kept Telegram post: its kind, figures, place and fingerprint were set from its words (tools/outlet_text.mjs)
     const en = /^en\b/i.test(i.lang || "") ? i.title : i.title_en || "";
     const had = i.kind;
     i.kind = classify(en || i.title);
@@ -483,7 +484,7 @@ for (const c of LIST) {
   st.weeks = W.reverse();
   st.ucdp_latest = ucdp.length ? ucdp[0].date : null;
   // headline, link and what OSAP derived only: the outlet's summary is dropped before anything is written (tools/outlet_text.mjs)
-  for (const i of items) stripOutletText(i);
+  for (const i of items) { stripOutletText(i); if (i.via === "Telegram") postOnly(i, "Telegram", i.outlet || "the channel"); }
   const pub = { id: c.id, name: c.name, short: c.short, countries: c.countries, since: c.since, kind: c.kind, parties: c.parties, bounds: c.bounds, tier: c.tier || 2, ...(c.note_data ? { note_data: c.note_data } : {}), ...(c.merge_tabs ? { merge_tabs: c.merge_tabs } : {}) };
   const data = { ...pub, asof: stamp, keep_days: c.keep_days || KEEP_DAYS, sources: [...status, { ...ucdpStatus, n: ucdp.length }], stats: st, items, ucdp,
     ucdp_key: UF.find((u) => u.id === c.id).key, ucdp_files: [...(ucdpFilesDone[c.id] || [])], kind_names: KIND_NAMES };

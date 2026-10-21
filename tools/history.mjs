@@ -5,12 +5,28 @@
 import fs from "node:fs";
 import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
 import { dropSuspectMt } from "./mt_guard.mjs";
-import { stripOutletText } from "./outlet_text.mjs";
+import { stripOutletText, postOnly } from "./outlet_text.mjs";
+// Bluesky and Telegram posts kept before 2026-10-17 still hold the post's words: judged once on them (the social relevance policy,
+// loaded only when such a post is met) and then reduced to who, when and the link (tools/outlet_text.mjs postOnly)
+let socialJudge = null;
+async function wordsOnly(i) {
+  if (!i || (i.platform !== "Bluesky" && i.platform !== "Telegram")) return i;
+  if (!i.notext) {
+    if (!socialJudge) {
+      const { compileSocial, socialRelevance } = await import("./social_relevance.mjs"), { compileRelevance } = await import("./topics_lib.mjs");
+      const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), JSON.parse(fs.readFileSync("tools/topics.json", "utf8")).topics);
+      const S = compileSocial(JSON.parse(fs.readFileSync("tools/relevance-social.json", "utf8")));
+      socialJudge = (x) => socialRelevance(R, S, x);
+    }
+    i.rel_v = socialJudge(i);
+  }
+  return postOnly(i, i.platform, i.account);
+}
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
 // geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
 // no summary: outlet text is never stored (tools/outlet_text.mjs); sum_rel is what the summary's words matched
-const KEEP = ["title", "title_en", "sum_rel", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region", "detail", "exempt"];
+const KEEP = ["title", "title_en", "sum_rel", "notext", "rel_v", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region", "detail", "exempt"];
 
 // Page script text that an outlet put inside an item body ("if (!window._raw... addEventListener(...") is not a summary;
 // it is removed from new and already-kept items alike, so older copies are cleaned on the next refresh.
@@ -55,7 +71,7 @@ export async function updateHistory(kind, items, stamp, caps) {
     if (!/^[a-z]{2,3}$/.test(cc) && !isState(cc)) continue;
     const h = read(cc), byLink = new Map();
     // items kept before 2026-10-17 still carry the outlet's summary: it is dropped here (its relevance verdict kept)
-    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, stripOutletText(unCode(i), R));
+    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, await wordsOnly(stripOutletText(unCode(i), R)));
     for (const i of items[cc] || []) {
       if (!i || !i.link || !/^https?:\/\//.test(i.link)) continue;
       if (!byLink.has(i.link)) added++;

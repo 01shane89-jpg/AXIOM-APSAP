@@ -110,8 +110,8 @@
         '</table><p class="src">' + E(lo.claimant) + ", day " + E(lo.day) + " (" + E(lo.date) + "), via " + A(lo.home, lo.via) + ". " + E(lo.claim) + " " + A(lo.link, "Original post") + "</p>";
     }
     var mo = X.moc_summary;
-    if (mo) h += '<details><summary><span class="claimt">Claim</span>Russian Ministry of Defence, latest daily summary (' + T(mo.date) + ')</summary><div class="post side-ru">' + E(mo.text) + "</div>" +
-      '<p class="src">' + E(mo.claim) + " " + A(mo.link, "Original post") + "</p></details>";
+    /* link only: the post's words are not copied in (licence, 2026-10-17) */
+    if (mo) h += '<p class="src"><span class="claimt">Claim</span>Russian Ministry of Defence, latest daily summary (' + T(mo.date) + '): ' + A(mo.link, "read the post") + ". " + E(mo.claim) + "</p>";
     // the period chosen in the page header applies here too
     var inP = (window.OSAP_CONFLICT_TABS && window.OSAP_CONFLICT_TABS.inPeriod) || function () { return true; };
     var cl = (X.claims && X.claims.items || []).filter(function (c) { return inP(c.date); });
