@@ -829,6 +829,8 @@
     "html[data-map=dark] .o3n-ctl,html[data-map=grey] .o3n-ctl{background:rgba(20,24,28,.8);color:#e9ecef}" +
     /* desktop toolbar runs down the right edge of the map: the scale bar sits left of it */
     "html.atak:not(.atk-ph) #map .leaflet-bottom.leaflet-right>.o3s{margin-right:70px}" +
+    /* while a shape is edited, a finger on a handle near the scale bar drags the handle, not the bar */
+    "#map.area-editing .o3s{pointer-events:none}" +
     ".o3s:empty{display:none}.o3s:focus-visible{outline:2px solid #4dabf7}" +
     /* the box grows past the bar end by room for half the last number and its unit, so "600 km" stays inside it */
     ".o3s-t{position:relative;height:15px;font:600 11.5px/15px system-ui,-apple-system,sans-serif;margin:0 0 2px 0;padding-right:3.4em}" +
