@@ -204,9 +204,9 @@
       return S;
     }
     /* the bound workspace's shared stores as this device holds them now (writes waiting for the reload count as here) */
-    function storesOf(ws) {
+    function storesOf(ws, stored) {
       var r = reg(), w = wsOf(r, ws); if (!w) return null;
-      var S = w.id === r.active ? overlay(liveStores(), ws) : blob(ws), o = {};
+      var S = w.id === r.active ? (stored ? liveStores() : overlay(liveStores(), ws)) : blob(ws), o = {};
       Object.keys(S).forEach(function (k) { if (synced(k) && typeof S[k] === "string") o[k] = S[k]; });
       return o;
     }
@@ -315,7 +315,11 @@
         var S = C.stamp(L, st.O, st.M, now, st.first && !t.owner), M = C.merge([st.M, S, R], now);
         var ch = writeTeam(t, M);
         st.M = M; st.first = false; st.O = {};
-        Object.keys(S).forEach(function (uk) { if (!S[uk].d) st.O[uk] = { t: S[uk].t, h: S[uk].h }; });
+        /* "held" is what is really stored here, not writes still waiting for the reload: a waiting item the page then
+           saves over (its old copy, without that item) was never here, so it is not counted as deleted here */
+        var Sb = storesOf(t.ws, true) || {}, shb = {}; Object.keys(Sb).forEach(function (k) { shb[k] = shareText(k, Sb[k]); });
+        var Lb = C.unitsOf([{ id: "T", name: t.name, created: 0 }], function () { return shb; }, synced);
+        Object.keys(S).forEach(function (uk) { if (!S[uk].d && uk in Lb) st.O[uk] = { t: S[uk].t, h: C.fp(C.canon(Lb[uk])) }; });
         var B = C.buckets(M, NBT), at = Math.floor(now / 1000);
         return Promise.all(B.map(function (b, i) { return C.seal(K, T.b[i], { type: "bucket", v: 1, u: b }); })).then(function (sealed) {
           var cap = capCheck(sealed.map(function (s) { return s.length; })), out = [], big = 0;

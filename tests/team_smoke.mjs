@@ -172,6 +172,10 @@ await Cd.p.evaluate(() => { const r = JSON.parse(localStorage.getItem("osap-ws")
 await synced(Cd);
 await synced(A);
 ok(await A.p.evaluate(() => { const p = JSON.parse(localStorage.getItem("osap-team-pending")).keys["osap-atak-pts"].v; return JSON.parse(p).some((x) => x.id === "pt-c1" && x.addedBy === "EDIT 2" && x.addedAt > 0); }), "the editor's point reaches the owner with its call sign and time");
+/* a second sync while the point waits, then a feature saves its old copy of the points (same items, written again): the editor's point is not lost */
+await synced(A);
+await A.p.evaluate(() => localStorage.setItem("osap-atak-pts", JSON.stringify(JSON.parse(localStorage.getItem("osap-atak-pts")), null, 1)));
+await synced(A);
 ok(await A.p.isVisible("#teambar"), "the owner is offered the team's changes");
 if (OUT) await A.p.screenshot({ path: OUT + "/team-bar.png" });
 await Promise.all([A.p.waitForNavigation(), A.p.click("#teambar [data-tm-reload]")]); await ready(A.p);
