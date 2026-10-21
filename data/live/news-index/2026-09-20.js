@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-20"]=[["","2026-09-20T23:57","Alien or UFO Sighting? Viral Videos Show Multi-Coloured Object Over Tehran","","LatestLY (via Bing News search)","https://www.latestly.com/world/alien-or-ufo-sighting-viral-videos-show-multi-coloured-object-over-tehran-7613564.html","","sn","uap",""]];
