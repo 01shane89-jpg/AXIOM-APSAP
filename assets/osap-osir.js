@@ -8,6 +8,10 @@
    - OSAP writes no judgments. The automatic summary is counts by fixed rules and says so; the analyst summary is what the person
      typed, marked as theirs. Event summaries written by AI keep their small "AI generated" tag.
    - Every record keeps its source link and SHA-256 fingerprint; the report fingerprint covers all of them in order.
+   - Analyst sections (Shane 2026-10-21, after the Malaysia facilitator product: "yes please do"): optional graded claims
+     (Admiralty source reliability A-F, information credibility 1-6), assessment, alternative explanations, confidence,
+     relevance, indicators to watch, intelligence gaps, and outside sources the analyst cites. Each is what the person typed,
+     tagged Analyst; OSAP adds no judgment and does not check outside sources. Kept in memory only, never stored.
    - Built in the browser; nothing is sent anywhere and no record is changed. */
 (function () {
   "use strict";
@@ -46,6 +50,17 @@
 
   /* ---------- the window: what the report covers ---------- */
   var BOX = null, S = { cc: "", region: "", scope: "", from: "", to: "", subject: "", subjectSet: false, by: "", summary: "", data: null, seq: 0 };
+  /* analyst sections: free text the preparer types, plus graded claims and outside sources; in memory only */
+  var REL = ["A", "B", "C", "D", "E", "F"], CRED = ["1", "2", "3", "4", "5", "6"], CONF = ["HIGH", "MODERATE", "LOW"], MAXROWS = 30;
+  var RELN = { A: "Completely reliable", B: "Usually reliable", C: "Fairly reliable", D: "Not usually reliable", E: "Unreliable", F: "Reliability cannot be judged" };
+  var CREDN = { "1": "Confirmed by other sources", "2": "Probably true", "3": "Possibly true", "4": "Doubtful", "5": "Improbable", "6": "Truth cannot be judged" };
+  var TEXTS = [["assess", "Assessment"], ["alt", "Alternative explanations"], ["rel", ""], ["ind", "Indicators to watch"], ["gaps", "Intelligence gaps"]];
+  function anReset() { S.an = { assess: "", alt: "", conf: "", confNote: "", relLabel: "Relevance", rel: "", ind: "", gaps: "" }; S.claims = []; S.outs = []; S.anOpen = false; }
+  anReset();
+  function anUsed() { var a = S.an; return !!(S.claims.some(claimUsed) || S.outs.some(outUsed) || a.conf || ["assess", "alt", "rel", "ind", "gaps", "confNote"].some(function (k) { return a[k].trim(); })); }
+  function claimUsed(c) { return !!(c.claim.trim() || c.src.trim() || c.note.trim()); }
+  function outUsed(x) { return !!(x.title.trim() || x.url.trim()); }
+  function grade(r, c) { return (r || "") + (c || "") || "—"; }
   function css() {
     if (D.getElementById("osir-css")) return;
     var st = D.createElement("style"); st.id = "osir-css";
@@ -63,7 +78,10 @@
       "#osirdlg .osp button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}" +
       "#osirdlg .osn{background:var(--surface2);border-left:3px solid var(--accent);padding:7px 10px;margin:8px 0;min-height:20px}#osirdlg .osn.bad{border-left-color:var(--bad)}" +
       "#osirdlg .osb{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}#osirdlg .osb button{min-height:42px}" +
-      "@media (max-width:520px){#osirdlg{padding:8px}#osirdlg .osg{grid-template-columns:minmax(0,1fr)}}" +
+"#osirdlg details.osx{grid-column:1/-1;border:1px solid var(--line);border-radius:6px;padding:6px 10px}#osirdlg details.osx>summary{cursor:pointer;font-weight:600;min-height:32px;line-height:32px}" +
+      "#osirdlg .osx .osg{margin:6px 0}#osirdlg .osrow{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) 70px 70px 44px;gap:6px;align-items:end;border-top:1px dashed var(--line);padding-top:6px}" +
+      "#osirdlg .osrow .osw2{grid-column:1/-1}#osirdlg .osrow button{min-height:38px;min-width:44px}#osirdlg .osadd{justify-self:start}" +
+      "@media (max-width:520px){#osirdlg{padding:8px}#osirdlg .osg{grid-template-columns:minmax(0,1fr)}#osirdlg .osrow{grid-template-columns:minmax(0,1fr) 64px 64px 44px}}" +
       /* the report: the Timeline report's styles (.tlr) plus the OSIR's own banner, field table and closing line */
       ".tlr.osir .osban{background:#007a33;color:#fff;text-align:center;font:700 10.5px/1.9 system-ui,sans-serif;letter-spacing:.16em;margin:0 0 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
       ".tlr.osir .osban.end{margin:16px 0 0}.tlr.osir table.osf{width:100%;border-collapse:collapse;margin:0 0 6px}" +
@@ -73,6 +91,9 @@
       ".tlr.osir .osan{white-space:pre-wrap;border-left:3px solid #12324a;padding:3px 0 3px 10px;margin:4px 0 8px}" +
       ".tlr.osir h4.oss{font-family:Georgia,'Times New Roman',serif;color:#12324a;font-size:1.12em;margin:12px 0 4px}" +
       ".tlr.osir .osend{text-align:center;font:700 12px/1.6 Georgia,'Times New Roman',serif;letter-spacing:.2em;color:#12324a;border-top:3px double #12324a;border-bottom:3px double #12324a;margin:18px 0 14px;padding:4px 0}" +
+      ".tlr.osir table.oscl{width:100%;border-collapse:collapse;table-layout:auto;margin:4px 0 8px;font-size:.95em}.tlr.osir table.oscl td{white-space:normal!important;overflow-wrap:anywhere}.tlr.osir table.oscl td:nth-child(2){width:42%}.tlr.osir table.oscl td:nth-child(3){width:22%}.tlr.osir table.oscl th,.tlr.osir table.oscl td{border-bottom:1px solid #d5dde4;padding:3px 6px;text-align:left;vertical-align:top}" +
+      ".tlr.osir table.oscl th{color:#12324a;font-weight:600}.tlr.osir table.oscl td.g{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}.tlr.osir .osanb{white-space:pre-wrap;margin:2px 0 8px}" +
+      ".tlr.osir ul.osli{margin:2px 0 8px;padding-left:18px}.tlr.osir .osconf b{letter-spacing:.06em}" +
       ".tlr.osir ul.oscon{margin:4px 0 0;padding-left:18px}.tlr.osir .mg{font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-all}" +
       "@media print{.tlr.osir h4.oss .aitag::after,.tlr.osir p.bm>.aitag::after{content:none}html.briefing .tlr.osir .osatt{break-before:page;page-break-before:always}html.briefing .tlr.osir table.osf th{width:96px}}";
     D.head.appendChild(st);
@@ -110,7 +131,7 @@
       '<label>From<input type="date" id="os-from" value="' + esc(S.from) + '"></label><label>To<input type="date" id="os-to" value="' + esc(S.to) + '"></label>' +
       '<label class="osw">Subject<input type="text" id="os-subj" maxlength="200" value="' + esc(S.subject) + '"></label>' +
       '<label class="osw">Prepared by <small>(optional: your name, role or team, as it should appear under Contributors)</small><input type="text" id="os-by" maxlength="120" value="' + esc(S.by) + '"></label>' +
-      '<label class="osw">Analyst summary <small>(optional: your own words, shown first and marked as yours; OSAP\'s automatic summary follows)</small><textarea id="os-sum" maxlength="4000">' + esc(S.summary) + "</textarea></label></div>" +
+      '<label class="osw">Analyst summary <small>(optional: your own words, shown first and marked as yours; OSAP\'s automatic summary follows)</small><textarea id="os-sum" maxlength="4000">' + esc(S.summary) + "</textarea></label>" + anHtml() + "</div>" +
       '<div class="osn' + (bad ? " bad" : "") + '" id="os-note" aria-live="polite">' + note + "</div>" +
       '<div class="osb"><button type="button" class="refresh primary" id="os-go"' + (!d || !d.recs.length ? " disabled" : "") + ">Make OSIR</button>" +
       '<button type="button" class="refresh" id="os-close">Close</button></div></div>';
@@ -127,6 +148,52 @@
       b.onclick = function () { var v = b.getAttribute("data-osp"); if (v === "all") { S.from = ""; S.to = ""; } else { S.from = iso(Date.now() - (+v - 1) * 864e5); S.to = today(); } refresh(); };
     });
     BOX.querySelector("#os-go").onclick = make;
+    bindAn();
+  }
+  /* the analyst sections in the window: graded claims, free-text parts, outside sources */
+  function anHtml() {
+    var a = S.an, sel = function (list, cur, blank) { return '<option value="">' + blank + "</option>" + list.map(function (v) { return '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + v + "</option>"; }).join(""); };
+    var ta = function (k, lab, hint) { return '<label class="osw">' + lab + (hint ? " <small>(" + hint + ")</small>" : "") + '<textarea id="os-an-' + k + '" data-an="' + k + '" maxlength="4000">' + esc(a[k]) + "</textarea></label>"; };
+    return '<details class="osx" id="os-anx"' + (S.anOpen || anUsed() ? " open" : "") + '><summary>Analyst sections <small>(optional: graded claims, assessment, confidence, indicators, gaps, outside sources; each is shown as yours)</small></summary><div class="osg">' +
+      '<div class="osw"><b>Graded claims</b> <small>Source reliability A–F, information credibility 1–6 (Admiralty). A credible source can still be wrong.</small></div>' +
+      S.claims.map(function (c, i) {
+        return '<div class="osrow" data-cl="' + i + '"><label class="osw2">Claim ' + (i + 1) + '<textarea id="os-cl-' + i + '-claim" data-clk="claim" maxlength="1000">' + esc(c.claim) + "</textarea></label>" +
+          '<label>Source / originator<input type="text" id="os-cl-' + i + '-src" data-clk="src" maxlength="200" value="' + esc(c.src) + '"></label>' +
+          '<label>Reliability<select id="os-cl-' + i + '-r" data-clk="r" aria-label="Source reliability, claim ' + (i + 1) + '">' + sel(REL, c.r, "—") + "</select></label>" +
+          '<label>Credibility<select id="os-cl-' + i + '-c" data-clk="c" aria-label="Information credibility, claim ' + (i + 1) + '">' + sel(CRED, c.c, "—") + "</select></label>" +
+          '<button type="button" class="refresh" data-cldel="' + i + '" aria-label="Remove claim ' + (i + 1) + '">×</button>' +
+          '<label class="osw2">Corroboration <small>(optional)</small><input type="text" id="os-cl-' + i + '-note" data-clk="note" maxlength="400" value="' + esc(c.note) + '"></label></div>';
+      }).join("") +
+      (S.claims.length < MAXROWS ? '<button type="button" class="refresh osadd" id="os-cl-add">Add claim</button>' : "") +
+      ta("assess", "Assessment") + ta("alt", "Alternative explanations") +
+      '<label>Analytic confidence<select id="os-an-conf">' + sel(CONF, a.conf, "Not stated") + "</select></label>" +
+      '<label>Confidence note <small>(optional)</small><input type="text" id="os-an-confNote" data-an="confNote" maxlength="400" value="' + esc(a.confNote) + '"></label>' +
+      '<label class="osw">Relevance heading <small>(for example "USSOF relevance")</small><input type="text" id="os-an-relLabel" data-an="relLabel" maxlength="60" value="' + esc(a.relLabel) + '"></label>' +
+      ta("rel", "Relevance") + ta("ind", "Indicators to watch", "one per line") + ta("gaps", "Intelligence gaps", "one per line") +
+      '<div class="osw"><b>Outside sources</b> <small>Sources you cite that OSAP does not hold. Listed after OSAP\'s own and marked as yours; OSAP does not check them.</small></div>' +
+      S.outs.map(function (x, i) {
+        return '<div class="osrow" data-out="' + i + '"><label class="osw2">Source ' + (i + 1) + ' title<input type="text" id="os-out-' + i + '-title" data-outk="title" maxlength="300" value="' + esc(x.title) + '"></label>' +
+          '<label>Link <small>(https://…)</small><input type="url" id="os-out-' + i + '-url" data-outk="url" maxlength="600" value="' + esc(x.url) + '"></label>' +
+          '<label>Reliability<select id="os-out-' + i + '-r" data-outk="r" aria-label="Reliability, outside source ' + (i + 1) + '">' + sel(REL, x.r, "—") + "</select></label><span></span>" +
+          '<button type="button" class="refresh" data-outdel="' + i + '" aria-label="Remove outside source ' + (i + 1) + '">×</button>' +
+          '<label class="osw2">Note <small>(optional)</small><input type="text" id="os-out-' + i + '-note" data-outk="note" maxlength="300" value="' + esc(x.note) + '"></label></div>';
+      }).join("") +
+      (S.outs.length < MAXROWS ? '<button type="button" class="refresh osadd" id="os-out-add">Add outside source</button>' : "") +
+      "</div></details>";
+  }
+  function bindAn() {
+    var each = function (s, f) { Array.prototype.forEach.call(BOX.querySelectorAll(s), f); };
+    var det = BOX.querySelector("#os-anx"); if (!det) return;
+    det.ontoggle = function () { S.anOpen = det.open; };
+    each("[data-an]", function (el) { el.oninput = function () { S.an[el.getAttribute("data-an")] = el.value; }; });
+    BOX.querySelector("#os-an-conf").onchange = function () { S.an.conf = this.value; };
+    each("[data-cl]", function (row) { var c = S.claims[+row.getAttribute("data-cl")]; Array.prototype.forEach.call(row.querySelectorAll("[data-clk]"), function (el) { el.oninput = el.onchange = function () { c[el.getAttribute("data-clk")] = el.value; }; }); });
+    each("[data-out]", function (row) { var x = S.outs[+row.getAttribute("data-out")]; Array.prototype.forEach.call(row.querySelectorAll("[data-outk]"), function (el) { el.oninput = el.onchange = function () { x[el.getAttribute("data-outk")] = el.value; }; }); });
+    var again = function (focus) { S.anOpen = true; draw(); var f = focus && BOX.querySelector(focus); if (f) f.focus(); };
+    var ca = BOX.querySelector("#os-cl-add"); if (ca) ca.onclick = function () { S.claims.push({ claim: "", src: "", r: "", c: "", note: "" }); again("#os-cl-" + (S.claims.length - 1) + "-claim"); };
+    var oa = BOX.querySelector("#os-out-add"); if (oa) oa.onclick = function () { S.outs.push({ title: "", url: "", r: "", note: "" }); again("#os-out-" + (S.outs.length - 1) + "-title"); };
+    each("[data-cldel]", function (b) { b.onclick = function () { S.claims.splice(+b.getAttribute("data-cldel"), 1); again("#os-cl-add"); }; });
+    each("[data-outdel]", function (b) { b.onclick = function () { S.outs.splice(+b.getAttribute("data-outdel"), 1); again("#os-out-add"); }; });
   }
   /* read the records for the current choice; a newer choice replaces an older one still being read */
   function refresh() {
@@ -153,7 +220,7 @@
       D.body.appendChild(BOX);
     }
     var p = appPeriod(), tl = W.TSAP.timeline ? W.TSAP.timeline() : null, v = (location.hash || "").replace("#", "").split("/").pop();
-    S.cc = W.TSAP.country; S.region = areaOn() ? "@area" : ""; S.from = p.from; S.to = p.to; S.subject = ""; S.subjectSet = false; S.summary = ""; S.by = getLS(WHO);
+    S.cc = W.TSAP.country; S.region = areaOn() ? "@area" : ""; S.from = p.from; S.to = p.to; S.subject = ""; S.subjectSet = false; S.summary = ""; S.by = getLS(WHO); anReset();
     /* the topic on screen: an open conflict tab, else the open data set, else everything */
     S.scope = tl && tl.cf ? "cf-" + tl.cf : v && v !== "timeline" && v !== "alerts" ? v : "";
     if (pre) { ["from", "to", "scope", "region"].forEach(function (k) { if (pre[k] != null) S[k] = pre[k]; }); }
@@ -168,7 +235,7 @@
   function make() {
     var d = S.data; if (!d || !d.recs.length) return;
     setLS(WHO, S.by.trim());
-    var html = build(d, { subject: S.subject.trim() || autoSubject(d), by: S.by.trim(), summary: S.summary.trim(), region: regionText(d), now: Date.now() });
+    var html = build(d, { subject: S.subject.trim() || autoSubject(d), by: S.by.trim(), summary: S.summary.trim(), region: regionText(d), now: Date.now(), an: anData() });
     close();
     EL = D.getElementById("brief"); if (!EL) return;
     EL.hidden = false; D.documentElement.classList.add("briefing");
@@ -177,6 +244,13 @@
     D.getElementById("osir-back").onclick = function () { closeReport(); BOX.hidden = false; draw(); };
     D.getElementById("osir-print").onclick = printIt;
     fill(d.recs);
+  }
+  /* the analyst sections as the report uses them: trimmed, empty rows left out */
+  function anData() {
+    var a = S.an, t = function (v) { return String(v || "").trim(); };
+    return { assess: t(a.assess), alt: t(a.alt), conf: a.conf, confNote: t(a.confNote), relLabel: t(a.relLabel) || "Relevance", rel: t(a.rel), ind: t(a.ind), gaps: t(a.gaps),
+      claims: S.claims.filter(claimUsed).map(function (c) { return { claim: t(c.claim), src: t(c.src), r: c.r, c: c.c, note: t(c.note) }; }),
+      outs: S.outs.filter(outUsed).map(function (x) { return { title: t(x.title) || t(x.url), url: t(x.url), r: x.r, note: t(x.note) }; }) };
   }
   function build(d, o) {
     var recs = d.recs, keyEv = d.keyEv, m = d.map, bars = d.bars, now = o.now;
@@ -200,6 +274,22 @@
     pts.push(keyEv.length ? pl(keyEv.length, "key event") + " in the main content" + (d.grouped ? ", " + d.grouped + " of them reported by two or more sources" : "") + "." : "No record meets the rules for a key event.");
     var ai = keyEv.filter(function (e) { return e.sum && e.sum.method !== "extract"; }).length, ext = keyEv.filter(function (e) { return e.sum && e.sum.method === "extract"; }).length;
     var tag = function (t, tip) { return ' <span class="aitag" tabindex="0" title="' + esc(tip) + '">' + t + "</span>"; };
+    /* analyst sections: each part only when filled in, numbered ahead of OSAP's own key events and map */
+    var an = o.an || { claims: [], outs: [] }, sub = 0, ANT = tag("Analyst", "Written by the person who made this report, as typed; OSAP adds no judgment.");
+    var h4 = function (t, osf) { sub++; return '<h4 class="oss"' + (osf ? ' data-osf="' + osf + '"' : "") + ">3." + sub + " " + esc(t) + ANT + "</h4>"; };
+    var para = function (t, osf) { return '<div class="osanb" data-osf="' + osf + '">' + esc(t) + "</div>"; };
+    var lines = function (t, osf) { return '<ul class="osli" data-osf="' + osf + '">' + t.split(/\n+/).map(function (x) { return x.replace(/^\s*[-*•]\s*/, "").trim(); }).filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
+    var anMain = (an.claims.length ? h4("Graded claims", "an-claims-h") + '<table class="oscl" data-osf="an-claims"><caption style="text-align:left;caption-side:top"><b>Table A.</b> Claims as graded by the analyst. Source reliability A–F, information credibility 1–6 (key in the attachments). A claim is what a source said, not a confirmed fact.</caption>' +
+        "<thead><tr><th>No.</th><th>Claim</th><th>Source / originator</th><th>Grade</th><th>Corroboration</th></tr></thead><tbody>" +
+        an.claims.map(function (c, i) { return "<tr><td>" + (i + 1) + "</td><td>" + esc(c.claim) + "</td><td>" + esc(c.src) + '</td><td class="g" title="' + esc((c.r ? c.r + " " + RELN[c.r] : "Reliability not stated") + "; " + (c.c ? c.c + " " + CREDN[c.c] : "credibility not stated")) + '">' + esc(grade(c.r, c.c)) + "</td><td>" + esc(c.note) + "</td></tr>"; }).join("") + "</tbody></table>" : "") +
+      (an.assess ? h4("Assessment") + para(an.assess, "an-assess") : "") +
+      (an.alt ? h4("Alternative explanations") + para(an.alt, "an-alt") : "") +
+      (an.conf || an.confNote ? h4("Analytic confidence") + '<p class="osconf" data-osf="an-conf">' + (an.conf ? "<b>" + esc(an.conf) + "</b>" : "Not stated") + (an.confNote ? ". " + esc(an.confNote) : "") + "</p>" : "") +
+      (an.rel ? h4(an.relLabel) + para(an.rel, "an-rel") : "") +
+      (an.ind ? h4("Indicators to watch") + lines(an.ind, "an-ind") : "") +
+      (an.gaps ? h4("Intelligence gaps") + lines(an.gaps, "an-gaps") : "");
+    var anParts = sub, graded = an.claims.some(function (c) { return c.r || c.c; }) || an.outs.some(function (x) { return x.r; });
+    var kNo = "3." + (++sub), wNo = "3." + (++sub);
     var period = d.period + (recs.length < d.total ? " (latest " + recs.length + " of " + d.total + " records)" : "");
     var gen = T().dualT(now, { date: true });
 
@@ -221,11 +311,11 @@
         '<p class="bm" style="margin:0">' + tag("Automatic", "Counts by fixed rules from the records in Attachment 1 (no AI), not analyst-approved.").slice(1) + " Counts by fixed rules from the records in Attachment 1; not a judgment.</p>") +
       '<ul class="tlrpts" data-osf="summary">' + pts.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
       /* 6: Main content: key events, where, trend */
-      '<h3 class="tls"><span class="no">3</span>Main content</h3>' +
-      '<h4 class="oss">3.1 Key events' + tag("Automatic", "Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, closure), casualties, escalation wording and surges in reporting.") + "</h4>" +
+      '<h3 class="tls"><span class="no">3</span>Main content</h3>' + anMain +
+      '<h4 class="oss">' + kNo + ' Key events' + tag("Automatic", "Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, closure), casualties, escalation wording and surges in reporting.") + "</h4>" +
       (keyEv.length ? '<table class="tlrkt" data-osf="keyevents"><caption><b>Table 1.</b> Key events in date order; numbers match Figure 1. Each is what its sources reported, not a confirmed fact.</caption><colgroup><col class="ckn"><col class="ckd"><col></colgroup><thead><tr><th>No.</th><th>Date</th><th>Event</th></tr></thead><tbody>' +
         keyEv.map(d.rowHtml).join("") + "</tbody></table>" : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') +
-      (m ? '<h4 class="oss">3.2 Where</h4><p class="tlrfigc"><b>Figure 1.</b> Records and key events, ' + esc(d.period) + '</p><div class="tlrfig">' + m.svg + '<aside class="tlrside">' + d.legend(m, keyEv) +
+      (m ? '<h4 class="oss">' + wNo + ' Where</h4><p class="tlrfigc"><b>Figure 1.</b> Records and key events, ' + esc(d.period) + '</p><div class="tlrfig">' + m.svg + '<aside class="tlrside">' + d.legend(m, keyEv) +
         (bars ? "<div><h4>Figure 2. Records per month</h4>" + bars.svg + "</div>" : "") + "</aside></div>" +
         '<p class="tlrsrcn">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") +
         ". Positions are as precise as each source allows. Borders and names: Natural Earth (public domain).</p>" : "") +
@@ -233,20 +323,27 @@
       '<div class="osend" data-osf="end">END OF REPORT</div>' +
       /* 8: Attachments */
       '<section class="osatt tlrann"><h3 class="tls"><span class="no">4</span>Attachments</h3><p class="bm">Attachment 1. Chronology: every record, oldest first, ' + esc(period) + '. Each time is in Zulu and local time; each record keeps its source number, link and SHA-256 fingerprint.</p>' +
-      '<div data-osf="attachments">' + recs.map(function (r) { return d.entryHtml(r, sno[r.src.id || r.src.name]); }).join("") + "</div></section>" +
+      '<div data-osf="attachments">' + recs.map(function (r) { return d.entryHtml(r, sno[r.src.id || r.src.name]); }).join("") + "</div>" +
+      (graded ? '<p class="bm" data-osf="gradekey"><b>Attachment 2. Grading key (Admiralty).</b> Source reliability: ' + REL.map(function (k) { return k + " " + RELN[k]; }).join("; ") + ". Information credibility: " + CRED.map(function (k) { return k + " " + CREDN[k]; }).join("; ") + ". Grades are the analyst's own.</p>" : "") +
+      "</section>" +
       /* 9: Contributors */
       '<h3 class="tls"><span class="no">5</span>Contributors</h3><ul class="oscon" data-osf="contributors">' +
       "<li><b>Prepared by:</b> " + (o.by ? esc(o.by) : "not stated") + "</li>" +
       "<li><b>Compiled by:</b> AXIOM OSAP on this device, from " + pl(srcs.length, "open source") + "; counts, groupings and key events by fixed rules (no AI).</li>" +
       (ai ? "<li><b>AI:</b> " + pl(ai, "key-event summary", "key-event summaries") + " drafted by " + esc((W.OSAP_EVSUM && W.OSAP_EVSUM.model) || "an AI model") + ", tagged AI generated; drafts, not analyst-approved.</li>" : "") +
       (ext ? "<li><b>Automatic extracts:</b> " + pl(ext, "key-event summary", "key-event summaries") + " taken from the reports by fixed rules (no AI).</li>" : "") +
-      "<li><b>Analyst review:</b> " + (o.summary ? "the analyst summary is the preparer's own; the rest is not analyst-reviewed." : "none recorded.") + "</li></ul>" +
+      (anParts || an.outs.length ? "<li><b>Analyst sections:</b> " + (anParts ? pl(anParts, "part") + " of the main content" : "") + (anParts && an.outs.length ? " and " : "") + (an.outs.length ? pl(an.outs.length, "outside source") : "") + " written by the preparer, as typed, tagged Analyst; OSAP did not check them.</li>" : "") +
+      "<li><b>Analyst review:</b> " + (o.summary || anParts ? "the analyst summary and analyst sections are the preparer's own; the rest is not analyst-reviewed." : "none recorded.") + "</li></ul>" +
       /* 10: Sources */
       '<h3 class="tls"><span class="no">6</span>Sources</h3><ol class="tlrsrc" data-osf="sources">' + srcs.map(function (x) {
         var u = safeUrl(x.s.url), hs = Object.keys(x.hosts).slice(0, 3);
         return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.s.name) + "</a>" : esc(x.s.name)) +
           (x.s.kind ? ", " + esc(x.s.kind) : "") + " · " + pl(x.n, "record") + (hs.length ? " · " + esc(hs.join(", ")) : "") + (x.s.proposed ? " · reliability " + esc(x.s.proposed) + "?" : "") + "</li>";
       }).join("") + "</ol>" +
+      (an.outs.length ? '<h4 class="oss">Outside sources' + tag("Analyst", "Cited by the person who made this report. OSAP does not hold or check these sources, and they are not in the report fingerprint.") + '</h4><ol class="tlrsrc" start="' + (srcs.length + 1) + '" data-osf="outside">' + an.outs.map(function (x) {
+        var u = safeUrl(x.url);
+        return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title) + "</a>" : esc(x.title) + (x.url ? " (" + esc(x.url) + ")" : "")) + (x.r ? " · reliability " + esc(x.r) + " (analyst)" : "") + (x.note ? " · " + esc(x.note) : "") + "</li>";
+      }).join("") + "</ol>" : "") +
       '<p class="bm">Reliability letters with a question mark are proposed by the build from the kind of source; none has been set by an analyst, and a reliable source can still be wrong. Sources are linked, not stored.</p>' +
       '<footer class="tlrf">Report fingerprint (SHA-256 over the ' + recs.length + ' record fingerprints in Attachment 1, in order): <span class="mg" id="osir-fp">computing…</span></footer>' +
       '<div class="osban end">UNCLASSIFIED // OPEN SOURCE</div></article>';

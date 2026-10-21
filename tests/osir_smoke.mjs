@@ -4,7 +4,8 @@
 // Attachments, Contributors, Sources). Checked: Zulu and local times, the automatic summary tagged as such, the analyst summary
 // marked as the analyst's, key events with links, one SHA-256 per record (the page's own) plus the report fingerprint, every
 // source listed, printing named after the report. Negative checks: no records means no report; making it changes no record;
-// text typed into the window is shown as text, not run as HTML.
+// text typed into the window is shown as text, not run as HTML. Analyst sections: graded claims, assessment, confidence,
+// indicators and outside sources render in order, tagged Analyst, with markup kept as text and only https links linked.
 // Run from the repo root: node tests/osir_smoke.mjs   (needs the playwright package and Chromium; OUT=dir keeps a screenshot and PDF)
 import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
@@ -110,11 +111,65 @@ await p.waitForSelector("#brief .osir", { timeout: 20000 });
 await p.click("#osir-close");
 ok(await p.evaluate(() => document.getElementById("brief").hidden && !document.documentElement.classList.contains("briefing")), "Close removes the report and the print styles");
 
+/* analyst sections: graded claims, assessment, confidence, indicators, outside sources; typed text stays text, bad links are not links */
+await p.evaluate(() => window.OSAP_OSIR.open({ from: "", to: "" }));
+await p.waitForFunction(() => window.OSAP_OSIR._state().data && !document.getElementById("os-go").disabled, null, { timeout: 30000 });
+ok(await p.evaluate(() => { const d = document.getElementById("os-anx"); return !!d && !d.open && !document.getElementById("os-an-assess").value; }), "analyst sections: closed and empty on a fresh window");
+await p.evaluate(() => { document.getElementById("os-anx").open = true; });
+await p.click("#os-cl-add"); await p.click("#os-cl-add");
+await p.fill("#os-cl-0-claim", "Malaysia appointed a new facilitator <script>window.__xss2=1</script>");
+await p.fill("#os-cl-0-src", "National Security Council");
+await p.selectOption("#os-cl-0-r", "A"); await p.selectOption("#os-cl-0-c", "2");
+await p.fill("#os-cl-0-note", "Seven outlets, one originator");
+await p.fill("#os-an-assess", "A leadership change, not an operational one.");
+await p.fill("#os-an-alt", "Administrative transition; or a change of approach.");
+await p.selectOption("#os-an-conf", "MODERATE");
+await p.fill("#os-an-relLabel", "USSOF relevance");
+await p.fill("#os-an-rel", "Bears on Thai-Malaysian security ties.");
+await p.fill("#os-an-ind", "- First meeting with the Thai panel\n\n• A date for the next round");
+await p.click("#os-out-add"); await p.click("#os-out-add");
+await p.fill("#os-out-0-title", "The Star, 17 Oct 2026"); await p.fill("#os-out-0-url", "https://www.thestar.com.my/news/nation/2026/10/17/x"); await p.selectOption("#os-out-0-r", "B");
+await p.fill("#os-out-1-title", "Bad link"); await p.fill("#os-out-1-url", "javascript:window.__xss3=1");
+/* removing the second, empty claim keeps the first one's typing */
+await p.click('[data-cldel="1"]');
+ok(await p.evaluate(() => document.querySelectorAll("#osirdlg [data-cl]").length === 1 && /new facilitator/.test(document.getElementById("os-cl-0-claim").value)), "remove a claim: the others keep what was typed");
+const nsrc = await p.evaluate(() => { const s = {}; window.OSAP_OSIR._state().data.recs.forEach((r) => { s[r.src.id || r.src.name] = 1; }); return Object.keys(s).length; });
+await p.click("#os-go");
+await p.waitForSelector("#brief .osir", { timeout: 20000 });
+await p.waitForFunction(() => /^[0-9a-f]{64}$/.test((document.getElementById("osir-fp") || {}).textContent || ""), null, { timeout: 60000 });
+const an = await p.evaluate(() => {
+  const a = document.querySelector("#brief .osir"), q = (s) => a.querySelector('[data-osf="' + s + '"]'), tx = (s) => (q(s) || {}).textContent || "";
+  const h = [...a.querySelectorAll("h4.oss")].map((e) => e.textContent.replace(/\s*(Analyst|Automatic|AI generated)$/, "").trim());
+  const row = q("an-claims") && q("an-claims").querySelector("tbody tr");
+  return { h, rows: q("an-claims") ? q("an-claims").querySelectorAll("tbody tr").length : 0, cells: row ? [...row.cells].map((c) => c.textContent) : [], claimHtml: row ? row.cells[1].innerHTML : "",
+    assess: tx("an-assess"), alt: tx("an-alt"), conf: tx("an-conf"), rel: tx("an-rel"), ind: q("an-ind") ? [...q("an-ind").querySelectorAll("li")].map((l) => l.textContent) : [], gaps: !!q("an-gaps"),
+    outs: q("outside") ? [...q("outside").querySelectorAll("li")].map((l) => l.textContent) : [], outLinks: q("outside") ? [...q("outside").querySelectorAll("a")].map((x) => x.getAttribute("href")) : [], start: q("outside") ? q("outside").getAttribute("start") : "",
+    osapSrcs: a.querySelectorAll('[data-osf="sources"] li').length, key: tx("gradekey"), con: tx("contributors"), xss: !!(window.__xss2 || window.__xss3),
+    anTags: [...a.querySelectorAll("h4.oss .aitag")].filter((x) => x.textContent === "Analyst").length };
+});
+ok(JSON.stringify(an.h.slice(0, 7)) === JSON.stringify(["3.1 Graded claims", "3.2 Assessment", "3.3 Alternative explanations", "3.4 Analytic confidence", "3.5 USSOF relevance", "3.6 Indicators to watch", "3.7 Key events"]) && an.h.includes("3.8 Where") && !an.gaps,
+  "main content: analyst parts first, numbered, empty parts left out, then key events and map: " + an.h.join(" | "));
+ok(an.anTags === 7, "each analyst part and the outside sources tagged Analyst (" + an.anTags + ")");
+ok(an.rows === 1 && an.cells[3] === "A2" && /National Security Council/.test(an.cells[2]) && /one originator/.test(an.cells[4]), "graded claims table: one claim, grade A2, source and corroboration");
+ok(!/<script/i.test(an.claimHtml) && /&lt;script/.test(an.claimHtml) && !an.xss, "claim text with markup is shown as text, not run");
+ok(/leadership change/.test(an.assess) && /Administrative/.test(an.alt) && /MODERATE/.test(an.conf) && /security ties/.test(an.rel), "assessment, alternatives, confidence and relevance as typed");
+ok(JSON.stringify(an.ind) === JSON.stringify(["First meeting with the Thai panel", "A date for the next round"]), "indicators: one per line, bullets and blank lines dropped");
+ok(an.osapSrcs === nsrc && an.outs.length === 2 && an.start === String(nsrc + 1) && /reliability B \(analyst\)/.test(an.outs[0]), "outside sources listed after OSAP's " + nsrc + ", numbered on, with the analyst's grade");
+ok(an.outLinks.length === 1 && an.outLinks[0].startsWith("https://") && /javascript:/.test(an.outs[1]), "only https links become links; a javascript: link stays plain text");
+ok(/Source reliability: A Completely reliable/.test(an.key) && /6 Truth cannot be judged/.test(an.key), "grading key attached when grades are used");
+ok(/Analyst sections: 6 parts of the main content and 2 outside sources written by the preparer/.test(an.con), "contributors: says what the analyst wrote and that OSAP did not check it");
+ok(await p.evaluate((r0) => JSON.stringify(window.TSAP.records.map((x) => [x.id, x.title, x.lat, x.lon, x.ts])) === r0, rec0), "analyst sections changed no record");
+await p.click("#osir-back");
+ok(await p.evaluate(() => document.getElementById("os-anx").open && document.getElementById("os-an-conf").value === "MODERATE" && document.querySelectorAll("#osirdlg [data-out]").length === 2), "Change choices keeps the analyst sections");
+await p.click("#os-close");
+
 /* phone: the window fits */
 await p.setViewportSize({ width: 390, height: 800 });
 await p.evaluate(() => window.OSAP_OSIR.open());
 await p.waitForFunction(() => window.OSAP_OSIR._state().data, null, { timeout: 20000 });
 ok(await p.evaluate(() => { const c = document.querySelector("#osirdlg .cbox").getBoundingClientRect(); return c.right <= 391 && document.querySelector("#osirdlg").scrollWidth <= 391; }), "phone: the window fits the screen");
+await p.evaluate(() => { document.getElementById("os-anx").open = true; document.getElementById("os-cl-add").click(); document.getElementById("os-out-add").click(); });
+ok(await p.evaluate(() => { const c = document.querySelector("#osirdlg .cbox").getBoundingClientRect(); return c.right <= 391 && document.querySelector("#osirdlg").scrollWidth <= 391; }), "phone: the window fits with analyst rows open");
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");
