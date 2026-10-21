@@ -506,6 +506,7 @@ const PRECACHE = [
 "assets/vendor/pptxgenjs-4.0.1.bundle.js",
 "assets/osap-offline.js",
 "assets/osap-move.js",
+"assets/osap-safety.js",
 "assets/osap-sync.js",
 "assets/osap-team.js",
 "assets/osap-gnss.js",

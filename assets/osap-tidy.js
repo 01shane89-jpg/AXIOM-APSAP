@@ -142,6 +142,8 @@
     if (W.OSAP_TIER && W.OSAP_TIER.owner && W.OSAP_TIER.owner()) h += '<button type="button" role="menuitem" data-tp="@users">Users</button>';
     /* reviews of OSAP: read them, leave one (assets/osap-reviews.js, Netlify site only) */
     if (W.OSAP_REVIEWS && W.OSAP_REVIEWS.on()) h += '<button type="button" role="menuitem" data-tp="@reviews">Reviews</button>';
+    /* how to stay hidden while using OSAP, and where OSAP's server sees this device connecting from (assets/osap-safety.js) */
+    if (W.OSAP_SAFETY) h += '<button type="button" role="menuitem" data-tp="@safe">Staying hidden online</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
@@ -207,6 +209,7 @@
     if (sel.indexOf("@rep:") === 0) { if (W.OSAP_REPORTS) W.OSAP_REPORTS.run(sel.slice(5)); }
     else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
+    else if (sel === "@safe") { if (W.OSAP_SAFETY) W.OSAP_SAFETY.open(); }
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }
