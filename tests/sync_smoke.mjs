@@ -134,6 +134,7 @@ ok(JSON.stringify(await pts(A)) === JSON.stringify(["pt-b1:PC point edited", "pt
 await A.p.evaluate(() => { const L = JSON.parse(localStorage.getItem("osap-atak-pts")); L.push({ id: "pt-a2", n: "New on A" }); localStorage.setItem("osap-atak-pts", JSON.stringify(L)); });
 await synced(A);
 await synced(B);   // B now has pt-a2 waiting for its reload
+await synced(B);   // and a second sync while it waits (the 10 s timer does this) must not count it as held on B
 await B.p.evaluate(() => { const L = JSON.parse(localStorage.getItem("osap-atak-pts")); L.push({ id: "pt-b2", n: "New on B" }); localStorage.setItem("osap-atak-pts", JSON.stringify(L)); });
 await synced(B); await reload(B);
 ok(JSON.stringify(await pts(B)) === JSON.stringify(["pt-a2:New on A", "pt-b1:PC point edited", "pt-b2:New on B"]), "B keeps A's new point and its own after saving over the waiting change", await pts(B));
