@@ -145,6 +145,8 @@
     /* how to stay hidden while using OSAP, and where OSAP's server sees this device connecting from (assets/osap-safety.js) */
     if (W.OSAP_SAFETY) h += '<button type="button" role="menuitem" data-tp="@safe">Staying hidden online</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
+    /* panic wipe: erases everything OSAP keeps on this device, after one confirm (assets/osap-wipe.js) */
+    if (W.OSAP_WIPE) h += '<button type="button" role="menuitem" data-tp="@wipe" class="tpwipe">Erase this device</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
     return box;
@@ -210,6 +212,7 @@
     else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
     else if (sel === "@safe") { if (W.OSAP_SAFETY) W.OSAP_SAFETY.open(); }
+    else if (sel === "@wipe") { if (W.OSAP_WIPE) W.OSAP_WIPE.open(); }
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }

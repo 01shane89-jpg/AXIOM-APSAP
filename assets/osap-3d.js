@@ -31,14 +31,14 @@
      bucket's listing (kept for 3 days) with OVR as the fallback. */
   var OVB = "https://overturemaps-extras-us-west-2.s3.us-west-2.amazonaws.com/", OVR = "2026-09-23.1", K_OVR = "osap-3d-ovr", BLD_Z = 14,
     PMLIB = "assets/vendor/pmtiles-4.5.0.js",
-    BLD_ATTR = 'Buildings: <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noopener">Overture Maps Foundation</a> (&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, Google Open Buildings, Microsoft building footprints)';
-  var DEM_ATTR = 'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles on AWS</a> (Mapzen/Tilezen; SRTM, GMTED, ETOPO1 and others)';
+    BLD_ATTR = 'Buildings: <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noopener noreferrer">Overture Maps Foundation</a> (&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors, Google Open Buildings, Microsoft building footprints)';
+  var DEM_ATTR = 'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">Terrain Tiles on AWS</a> (Mapzen/Tilezen; SRTM, GMTED, ETOPO1 and others)';
   /* Japan: GSI elevation tiles replace the AWS model inside Japan and Okinawa. At the closest zoom GSI's 5 m model from its
      airborne laser survey (LiDAR) is used where it exists, the 10 m national model elsewhere and at the other zooms. They are
      recoded to terrarium in this browser; any pixel GSI has no value for (sea, outside Japan, no survey) comes from the next
      source down, ending with the AWS tile. */
   var GSI5 = "https://cyberjapandata.gsi.go.jp/xyz/dem5a_png/{z}/{x}/{y}.png", GSI10 = "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png";
-  var JP = [20, 122, 46, 154], JP_ATTR = 'Terrain in Japan: <a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">GSI Japan</a> elevation tiles (5 m laser survey, 10 m)';
+  var JP = [20, 122, 46, 154], JP_ATTR = 'Terrain in Japan: <a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer">GSI Japan</a> elevation tiles (5 m laser survey, 10 m)';
   function tileLon(x, z) { return x / Math.pow(2, z) * 360 - 180; }
   function tileLat(y, z) { return Math.atan(Math.sinh(Math.PI * (1 - 2 * y / Math.pow(2, z)))) * 180 / Math.PI; }
   function inJapan(z, x, y) { return z >= 6 && tileLon(x + 1, z) > JP[1] && tileLon(x, z) < JP[3] && tileLat(y, z) > JP[0] && tileLat(y + 1, z) < JP[2]; }
@@ -353,7 +353,7 @@
     var src = (jsonOf(q.sources) || [])[0] || {}, gs = q["@geometry_source"] || src.dataset || "", from = SRC[gs] ? esc(SRC[gs]) : gs ? esc(gs) : "";
     if (src.confidence != null) from += "; the computer was " + esc(Math.round(src.confidence * 100)) + "% sure it is a building";
     var m = /^([nwr])(\d+)/.exec(src.record_id || "");
-    if (gs === "OpenStreetMap" && m) from += ' · <a href="https://www.openstreetmap.org/' + { n: "node", w: "way", r: "relation" }[m[1]] + "/" + m[2] + '" target="_blank" rel="noopener">see it on OpenStreetMap</a>';
+    if (gs === "OpenStreetMap" && m) from += ' · <a href="https://www.openstreetmap.org/' + { n: "node", w: "way", r: "relation" }[m[1]] + "/" + m[2] + '" target="_blank" rel="noopener noreferrer">see it on OpenStreetMap</a>';
     if (from) row("Outline from", from);
     if (src.update_time) row(gs === "OpenStreetMap" ? "Last edited" : "Dated", esc(String(src.update_time).slice(0, 10)));
     var none = !prim && !said;
@@ -395,7 +395,7 @@
   function osmHtml(j, lat, lon) {
     var els = (j && j.elements) || [], bl = [], pl = [];
     els.forEach(function (e) {
-      var t = e.tags || {}, url = "https://www.openstreetmap.org/" + e.type + "/" + e.id, link = ' <a href="' + url + '" target="_blank" rel="noopener">OSM</a>';
+      var t = e.tags || {}, url = "https://www.openstreetmap.org/" + e.type + "/" + e.id, link = ' <a href="' + url + '" target="_blank" rel="noopener noreferrer">OSM</a>';
       if (e.type === "node") {
         var d = Math.round(L.latLng(lat, lon).distanceTo([e.lat, e.lon]));
         pl.push("<li>" + esc(tidy(t["name:en"] || t.name)) + (t["name:en"] && t.name && t.name !== t["name:en"] ? " (" + esc(tidy(t.name)) + ")" : "") +
@@ -673,7 +673,7 @@
       progress(gl, box.querySelector(".o3-load"), function () { return dead; });
       /* credits sit behind an (i) button, so they never cover the scale bar and tilt slider */
       var cr = box.querySelector(".o3-cr"), crb = box.querySelector(".o3-crb");
-      cr.innerHTML = attrs.join(" · ") + " · <a href=\"https://maplibre.org\" target=\"_blank\" rel=\"noopener\">MapLibre</a>";
+      cr.innerHTML = attrs.join(" · ") + " · <a href=\"https://maplibre.org\" target=\"_blank\" rel=\"noopener noreferrer\">MapLibre</a>";
       crb.addEventListener("click", function () { cr.hidden = !cr.hidden; crb.setAttribute("aria-expanded", String(!cr.hidden)); });
       paint(); drawSc();
 
@@ -763,7 +763,7 @@
           var before = r.base ? "hill" : ["bld", "bldp", "vf"].filter(function (x) { return gl.getLayer(x); })[0];
           gl.addLayer({ id: id, type: "raster", source: id, paint: { "raster-opacity": r.op, "raster-fade-duration": 120, "raster-contrast": r.base ? 0.06 : 0, "raster-saturation": r.base ? 0.08 : 0 } }, before);
           rIds.push(id);
-          if (r.attr && attrs.indexOf(r.attr) < 0) { attrs.push(r.attr); cr.innerHTML = attrs.join(" · ") + " · <a href=\"https://maplibre.org\" target=\"_blank\" rel=\"noopener\">MapLibre</a>"; }
+          if (r.attr && attrs.indexOf(r.attr) < 0) { attrs.push(r.attr); cr.innerHTML = attrs.join(" · ") + " · <a href=\"https://maplibre.org\" target=\"_blank\" rel=\"noopener noreferrer\">MapLibre</a>"; }
         });
       }
       function sync() {

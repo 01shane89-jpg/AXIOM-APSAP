@@ -237,7 +237,7 @@
         return '<div class="ancard' + (S.sel === e.id ? " sel" : "") + '"><b>' + esc(e.name) + '</b> <span class="anal">' + esc(e.type || "") + " \u00b7 " + num(n) + " mention" + (n === 1 ? "" : "s") + "</span>" +
           (e.aliases.length > 1 || e.ref ? '<div class="anal">Also: ' + esc(e.aliases.filter(function (a) { return a !== e.name; }).join(", ")) + "</div>" : "") +
           (e.role ? "<div>" + esc(e.role) + " " + AI + "</div>" : "") +
-          (e.ref && safeUrl(e.src) ? '<div class="anal">Source: <a href="' + esc(e.src) + '" target="_blank" rel="noopener">' + esc(e.srcname || "link") + "</a>" + (e.fp ? " \u00b7 SHA-256 " + esc(String(e.fp).slice(0, 12)) + "\u2026" : "") + "</div>" : "") +
+          (e.ref && safeUrl(e.src) ? '<div class="anal">Source: <a href="' + esc(e.src) + '" target="_blank" rel="noopener noreferrer">' + esc(e.srcname || "link") + "</a>" + (e.fp ? " \u00b7 SHA-256 " + esc(String(e.fp).slice(0, 12)) + "\u2026" : "") + "</div>" : "") +
           (note ? '<div><b>Your note:</b> ' + esc(note) + "</div>" : "") +
           '<div class="anrow"><button type="button" data-an-go="time" data-an-e="' + esc(e.id) + '">Timeline</button><button type="button" data-an-go="links" data-an-e="' + esc(e.id) + '">Links</button>' +
           '<button type="button" data-an-note="' + esc(e.id) + '">' + (note ? "Edit note" : "Add note") + "</button>" +
@@ -551,7 +551,7 @@
     var rows = P.links.filter(function (p) { return p.rel !== "occurred in"; }).concat(P.links.filter(function (p) { return p.rel === "occurred in"; }));
     return h + "<table><tr><th>Proposed link</th><th>Why (from the report)</th></tr>" + rows.slice(0, 150).map(function (p) {
       return "<tr><td><b>" + esc(nm(p.a)) + '</b> <span class="anal">' + esc(p.rel) + "</span> <b>" + esc(nm(p.b)) + "</b></td><td>" + esc(p.basis) + (p.mt ? ' <span class="anal">(machine-translated)</span>' : "") +
-        '<div class="anal">' + p.urls.slice(0, 3).map(function (u, i) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener">source ' + (i + 1) + "</a>"; }).join(" \u00b7 ") + "</div>" + propActs(p) + "</td></tr>";
+        '<div class="anal">' + p.urls.slice(0, 3).map(function (u, i) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">source ' + (i + 1) + "</a>"; }).join(" \u00b7 ") + "</div>" + propActs(p) + "</td></tr>";
     }).join("") + "</table></details>";
   }
   function nameOf(id) { var e = entities().filter(function (x) { return x.id === id; })[0]; return e ? e.name : id; }
@@ -581,7 +581,7 @@
   }
   function repLine(i) {
     var u = safeUrl(i.link);
-    return '<div class="anit"><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(titleOf(i)) + '</a> <span class="anal">' + esc(i.outlet || "") + " \u00b7 " + esc(String(i.date || "").replace("T", " ")) +
+    return '<div class="anit"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(titleOf(i)) + '</a> <span class="anal">' + esc(i.outlet || "") + " \u00b7 " + esc(String(i.date || "").replace("T", " ")) +
       (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (i.mt ? " \u00b7 machine-translated" : "") + "</span></div>";
   }
 
@@ -707,12 +707,12 @@
       if (d !== day) { day = d; h += '<div class="anday">' + esc(d) + "</div>"; }
       if (x.r) {
         var i = x.r.i, s = seenMs(i);
-        h += '<div class="anit"><a href="' + esc(safeUrl(i.link)) + '" target="_blank" rel="noopener">' + esc(titleOf(i)) + '</a><div class="anal">' + esc(i.outlet || "") + (i.state ? " (government statement, a claim)" : "") +
+        h += '<div class="anit"><a href="' + esc(safeUrl(i.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(titleOf(i)) + '</a><div class="anal">' + esc(i.outlet || "") + (i.state ? " (government statement, a claim)" : "") +
           " \u00b7 " + esc(i.kind || "") + (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (isFinite(s) ? " \u00b7 seen " + esc(zl(s)) : "") +
           (x.r.ents.length ? " \u00b7 names: " + esc(x.r.ents.map(function (id) { var e = X.E.filter(function (y) { return y.id === id; })[0]; return e ? e.name : id; }).join(", ")) : "") + "</div></div>";
       } else if (x.mine === "report") {
         var sn = x.it.snap || {};
-        h += '<div class="anit mine"><b>You saved:</b> ' + (safeUrl(sn.url) ? '<a href="' + esc(sn.url) + '" target="_blank" rel="noopener">' + esc(sn.title || "report") + "</a>" : esc(sn.title || "report")) +
+        h += '<div class="anit mine"><b>You saved:</b> ' + (safeUrl(sn.url) ? '<a href="' + esc(sn.url) + '" target="_blank" rel="noopener noreferrer">' + esc(sn.title || "report") + "</a>" : esc(sn.title || "report")) +
           '<div class="anal">' + esc(zl(x.t)) + (x.it.note ? " \u00b7 note: " + esc(x.it.note) : "") + "</div></div>";
       } else {
         h += '<div class="anit mine"><b>Your point:</b> ' + esc(x.it.n || "Point") + '<div class="anal">' + esc(zl(x.t)) + " \u00b7 " + (+x.it.lat).toFixed(5) + ", " + (+x.it.lon).toFixed(5) + "</div></div>";
@@ -728,7 +728,7 @@
     var R = savedReports().sort(function (a, b) { return String(b.at || "").localeCompare(String(a.at || "")); }), P = points(), Ph = P.filter(function (p) { return p.ph > 0; });
     var h = "<h3>Saved reports (" + R.length + ")</h3>" + (R.length ? "<table><tr><th>Report</th><th>Source</th><th>Your note</th><th></th></tr>" + R.map(function (it) {
       var s = it.snap || {}, has = s.lat != null && s.lon != null;
-      return "<tr><td>" + (safeUrl(s.url) ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + "</a>" : esc(s.title)) + '<div class="anal">' + esc([s.place, s.ts, (it.cc || "").toUpperCase()].filter(Boolean).join(" \u00b7 ")) +
+      return "<tr><td>" + (safeUrl(s.url) ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : esc(s.title)) + '<div class="anal">' + esc([s.place, s.ts, (it.cc || "").toUpperCase()].filter(Boolean).join(" \u00b7 ")) +
         (s.fp ? " \u00b7 SHA-256 " + esc(String(s.fp).slice(0, 12)) + "\u2026" : "") + "</div></td><td>" + esc(s.source || "") + (it.grade && W.OSAP_GRADE ? " " + W.OSAP_GRADE.badge(it.grade) : "") + (s.status ? '<div class="anal">' + esc(s.status) + "</div>" : "") + "</td><td>" + esc(it.note || "") + "</td><td>" +
         (has ? '<button type="button" data-an-fly="' + (+s.lat) + "," + (+s.lon) + '">Map</button>' : "") + "</td></tr>";
     }).join("") + "</table>" : '<p class="obs">None yet. Save a report from its card (My work).</p>');

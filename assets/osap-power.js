@@ -65,7 +65,7 @@
     return '<div class="pop"><div class="tier" style="color:' + (kind === "line" ? band(kv(t)).col : "var(--power)") + '">' + esc({ line: "Power line", sub: "Substation", plant: "Power plant" }[kind]) + " · OpenStreetMap</div>" +
       (t.name ? "<h3>" + esc(t.name) + "</h3>" : "") +
       "<dl>" + rows.filter(function (r) { return t[r[0]]; }).map(function (r) { return "<dt>" + r[1] + "</dt><dd>" + esc(String(t[r[0]]).slice(0, 120)) + "</dd>"; }).join("") + "</dl>" +
-      '<p class="obs">Community-mapped; may be incomplete or out of date. <a href="https://www.openstreetmap.org/' + esc(id) + '" target="_blank" rel="noopener">OSM ' + esc(id) + "</a> · &copy; OpenStreetMap contributors (ODbL)</p></div>";
+      '<p class="obs">Community-mapped; may be incomplete or out of date. <a href="https://www.openstreetmap.org/' + esc(id) + '" target="_blank" rel="noopener noreferrer">OSM ' + esc(id) + "</a> · &copy; OpenStreetMap contributors (ODbL)</p></div>";
   }
   /* draws one Overpass answer; exported for the tests */
   function draw(els, z) {
@@ -198,7 +198,7 @@
     if (!S.news.length) return '<p class="pwr-m">No outage headlines for this country in the last ' + DAYS + " days.</p>";
     return '<ul class="pwr-news">' + S.news.slice(0, 25).map(function (r) {
       var u = safeUrl(r[5]), when = String(r[1] || "").replace("T", " ").slice(5, 16);
-      return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(r[2] || r[3]) + "</a>" : esc(r[2] || r[3])) +
+      return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(r[2] || r[3]) + "</a>" : esc(r[2] || r[3])) +
         '<span class="pwr-m">' + esc(r[4] || "") + " · " + esc(when) + "Z</span></li>";
     }).join("") + "</ul>" + (S.news.length > 25 ? '<p class="pwr-m">' + (S.news.length - 25) + " more in the news search.</p>" : "") +
       '<p class="pwr-m">Headlines from the news pool, not verified reports.</p>';

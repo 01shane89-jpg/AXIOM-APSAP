@@ -115,6 +115,7 @@ export async function run({ conflict, prev, get, sha256, stamp, tgItems, readJs,
   /* ---- each side's territorial claims and the Russian MoD daily summary ---- */
   const claims = new Map(((prev.claims && prev.claims.items) || []).filter((c) => c.date >= iso(now - 60 * 864e5) && c.v === 2).map((c) => [c.key, c]));
   let summary = prev.moc_summary || null;
+  if (summary) delete summary.text;   // stored before 2026-10-17
   const addClaim = (side, claimant, place, verb, post) => {
     const p = String(place || "").replace(/[\s,.;:]+$/, "").trim(); if (!p || p.length > 60) return;
     const key = side + "|" + p.toLowerCase() + "|" + post.date.slice(0, 10);
@@ -127,7 +128,8 @@ export async function run({ conflict, prev, get, sha256, stamp, tgItems, readJs,
     for (const po of posts) {
       const text = po.title + " " + po.summary;
       if (/progress of (?:the )?special military operation/i.test(text) && (!summary || iso(po.date) > summary.date))
-        summary = { claimant: "Russian Ministry of Defence", date: iso(po.date), link: po.link, text: text.slice(0, 3000), claim: "Russia's claim, as posted. Not verified.", fp: sha256({ link: po.link, text }) };
+        // the link only: the post's words are not stored (Telegram content licence check, 2026-10-17); the places it names become claims below
+        summary = { claimant: "Russian Ministry of Defence", date: iso(po.date), link: po.link, claim: "Russia's claim, as posted. Not verified.", fp: sha256({ link: po.link, text }) };
       // "control has been established over the settlement of Khripuny (Kharkov region)", "liberated the settlements of A and B"
       for (const m of text.matchAll(/(?:control (?:has been|was) established over|liberated) (?:the )?(?:settlements?|villages?|towns?|cit(?:y|ies)) of ([^.;!]+)/gi))
         for (const pl of split(m[1].replace(/\s*\(([^)]*)\)/g, (x, r) => " (" + r + ")"))) addClaim("ru", "Russian Ministry of Defence", pl, "says Russian forces took", po);

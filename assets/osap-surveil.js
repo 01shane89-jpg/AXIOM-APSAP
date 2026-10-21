@@ -93,7 +93,7 @@
       rows.filter(function (r) { return t[r[0]]; }).map(function (r) { return "<dt>" + r[1] + "</dt><dd>" + esc(String(t[r[0]]).slice(0, 120)) + "</dd>"; }).join("") +
       "</dl>" +
       (feed ? '<p class="sv-feed"><a href="' + esc(feed) + '" target="_blank" rel="noopener noreferrer">Open this camera’s feed</a></p>' : "") +
-      '<p class="obs">Community-mapped; the camera may be gone, moved or unmapped. <a href="https://www.openstreetmap.org/' + esc(id) + '" target="_blank" rel="noopener">OSM ' + esc(id) + "</a> · &copy; OpenStreetMap contributors (ODbL)</p></div>";
+      '<p class="obs">Community-mapped; the camera may be gone, moved or unmapped. <a href="https://www.openstreetmap.org/' + esc(id) + '" target="_blank" rel="noopener noreferrer">OSM ' + esc(id) + "</a> · &copy; OpenStreetMap contributors (ODbL)</p></div>";
   }
 
   /* ---------- map layer ---------- */

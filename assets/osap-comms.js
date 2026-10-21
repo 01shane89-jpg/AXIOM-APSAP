@@ -748,7 +748,7 @@ function main() {
   function mastPopup(m) {
     var osm = "https://www.openstreetmap.org/" + m.id.replace(/^(node|way|relation)\//, "$1/");
     return '<div data-keep-pop="1">' + mastInfo(m) +
-      '<p class="obs">OpenStreetMap, community-mapped; may be missing, moved or out of date. <a href="' + E(osm) + '" target="_blank" rel="noopener">Open in OpenStreetMap</a></p>' +
+      '<p class="obs">OpenStreetMap, community-mapped; may be missing, moved or out of date. <a href="' + E(osm) + '" target="_blank" rel="noopener noreferrer">Open in OpenStreetMap</a></p>' +
       (m.kind === "bcast" ? "" : '<div class="comnear" data-comnear="' + E(m.id) + '"><p class="obs">Looking up the networks phones heard round this mast…</p></div>') +
       '<p><button type="button" class="linkish" data-comchk="' + m.lat.toFixed(5) + "," + m.lon.toFixed(5) + '">Check coverage here</button></p></div>';
   }
@@ -1060,10 +1060,10 @@ function main() {
   function paintSources() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-src"); if (!el) return;
     var c = S.cov;
-    el.innerHTML = 'Sources: masts and towers, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL) via Overpass, read live. ' +
-      'Measured coverage, <a href="https://github.com/teamookla/ookla-open-data" target="_blank" rel="noopener">Speedtest by Ookla Global Fixed and Mobile Network Performance Maps</a>' +
+    el.innerHTML = 'Sources: masts and towers, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL) via Overpass, read live. ' +
+      'Measured coverage, <a href="https://github.com/teamookla/ookla-open-data" target="_blank" rel="noopener noreferrer">Speedtest by Ookla Global Fixed and Mobile Network Performance Maps</a>' +
       (c ? ", " + E((c.periods || []).join(" and ")) : "") + " (CC BY-NC-SA 4.0, non-commercial). " +
-      'Coverage by network, <a href="https://opencellid.org" target="_blank" rel="noopener">OpenCelliD</a> (CC BY-SA 4.0), ' + OCID_AT + ' copy published as PMTiles by the UN Smart Maps group on Source Cooperative; network names from the MCC-MNC list (cavoq/mcc-mnc-list, from Wikipedia, CC BY-SA 4.0). ' +
+      'Coverage by network, <a href="https://opencellid.org" target="_blank" rel="noopener noreferrer">OpenCelliD</a> (CC BY-SA 4.0), ' + OCID_AT + ' copy published as PMTiles by the UN Smart Maps group on Source Cooperative; network names from the MCC-MNC list (cavoq/mcc-mnc-list, from Wikipedia, CC BY-SA 4.0). ' +
       "Terrain, AWS Terrain Tiles (SRTM, GMTED and others, about 30 to 90 m). Worked out in this browser; a planning aid, not a record.";
   }
   function paintMode() {

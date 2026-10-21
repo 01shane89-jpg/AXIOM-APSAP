@@ -14,3 +14,13 @@ export function stripOutletText(i, R) {
   for (const k of OUTLET_TEXT) delete i[k];
   return i;
 }
+
+// A social post (Bluesky, Telegram) has no headline of its own: its words are the account's, and they are not stored either. What is
+// stored is who posted, where, when and the link, under a plain stand-in title ("Telegram post by @channel"). notext marks it, so a
+// job does not re-judge a kept post on the stand-in (its kind, figures and place were set while the job held the words).
+export function postOnly(i, platform, account) {
+  if (!i || typeof i !== "object") return i;
+  for (const k of [...OUTLET_TEXT, "title_en", "mt", "mt_rejected"]) delete i[k];
+  i.title = platform + " post by " + account; i.lang = "en"; i.notext = 1;
+  return i;
+}

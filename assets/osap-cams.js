@@ -239,7 +239,7 @@
       (views > 1 ? '<div class="cam-views">' + Array.apply(null, Array(views)).map(function (_, i) { return '<button type="button" data-camview="' + i + '" aria-pressed="' + (i === 0) + '">View ' + (i + 1) + "</button>"; }).join("") + "</div>" : "") +
       (!hls && c[5] ? '<div class="cam-views"><button type="button" data-camlive aria-pressed="false">' + (/\.mp4(\?|$)/.test(c[5]) ? "Play video clip" : "Watch live video") + "</button></div>" : "") +
       '<p class="obs"><span data-camt></span> <button type="button" class="linkish" data-camref>' + (hls ? "Restart" : "Refresh") + "</button><br>" +
-      esc(s.agency) + " · " + esc(s.licence) + (safeUrl(s.page) ? ' · <a href="' + esc(s.page) + '" target="_blank" rel="noopener">source</a>' : "") +
+      esc(s.agency) + " · " + esc(s.licence) + (safeUrl(s.page) ? ' · <a href="' + esc(s.page) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") +
       "<br>" + esc(c[1].toFixed(5) + ", " + c[2].toFixed(5)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(c[1], c[2])) : "") +
       "<br>" + (hls ? "Live video the camera's owner streams publicly, not a record." : "A still image the agency publishes, not a live video or a record.") + "</p></div>";
   }
@@ -348,7 +348,7 @@
     if (S.ixErr) return esc(S.ixErr);
     if (!S.ix) return "Reading the list of agencies…";
     return '<ul class="cam-src">' + S.ix.sources.slice().sort(function (a, b) { return a.country < b.country ? -1 : a.country > b.country ? 1 : 0; }).map(function (s) {
-      return "<li><b>" + esc(s.country) + "</b> " + esc(s.n) + " " + esc(TYPES[typeOf(s)].n.toLowerCase()) + " cameras · " + (safeUrl(s.page) ? '<a href="' + esc(s.page) + '" target="_blank" rel="noopener">' + esc(s.agency) + "</a>" : esc(s.agency)) +
+      return "<li><b>" + esc(s.country) + "</b> " + esc(s.n) + " " + esc(TYPES[typeOf(s)].n.toLowerCase()) + " cameras · " + (safeUrl(s.page) ? '<a href="' + esc(s.page) + '" target="_blank" rel="noopener noreferrer">' + esc(s.agency) + "</a>" : esc(s.agency)) +
         " · " + esc(s.licence) + (s.stale ? " · list not refreshed this week" : "") + "</li>";
     }).join("") + "</ul>" +
       '<p class="pwr-m">Only cameras a government agency or public body publishes itself, openly, with no account or login. Left out on purpose: the FAA\'s aviation weather cameras (shared only under an agreement), and any camera list that needs a key. Other countries have no such feed yet, need a key (South Korea), sit behind a robot check (Philippines, Bangkok), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";

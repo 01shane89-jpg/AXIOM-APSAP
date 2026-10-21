@@ -24,7 +24,7 @@
   function T() { return W.OSAP_CONFLICT_TABS || {}; }
   function inP(t) { var f = T().inPeriod; return f ? f(t) : true; }
   function fpLine(fp) { return fp ? '<div class="fp" title="SHA-256 fingerprint of this record: ' + esc(fp) + '">SHA-256 ' + esc(fp.slice(0, 16)) + "…</div>" : ""; }
-  function srcs(ev) { return (ev || []).map(function (e) { return '<a href="' + url(e.src) + '" target="_blank" rel="noopener">' + esc(e.srcname) + "</a>"; }).join(" · "); }
+  function srcs(ev) { return (ev || []).map(function (e) { return '<a href="' + url(e.src) + '" target="_blank" rel="noopener noreferrer">' + esc(e.srcname) + "</a>"; }).join(" · "); }
 
   var st = { corr: false };
   try { var s0 = JSON.parse(localStorage.getItem("osap-cf-dsp") || "null"); if (s0) st = Object.assign(st, s0); } catch (e) {}
@@ -133,7 +133,7 @@
     else h += '<p class="cfm">Loading the tracker…</p>';
     var live = groups(items().filter(function (i) { return fam(i) === "talks" || i.kind === "peace_talks"; })).slice(0, 6);
     if (live.length) h += "<details><summary>Latest peace-talk reports on this tab (" + live.length + ")</summary><ol class=\"cfl\">" + live.map(function (g) { var i = g.lead;
-      return '<li><a href="' + url(i.link) + '" target="_blank" rel="noopener">' + esc(i.title_en || i.title) + '</a><div class="cfm">' + esc(i.outlet || "") + " · " + day(i.date) + "</div></li>"; }).join("") + "</ol></details>";
+      return '<li><a href="' + url(i.link) + '" target="_blank" rel="noopener noreferrer">' + esc(i.title_en || i.title) + '</a><div class="cfm">' + esc(i.outlet || "") + " · " + day(i.date) + "</div></li>"; }).join("") + "</ol></details>";
     return h;
   }
 
@@ -154,7 +154,7 @@
       '> <b>Show the railway and main roads on the map</b></label>';
     var gs = groups(attacks().filter(function (i) { return inP(i.date); })), rl = [], rd = [];
     gs.forEach(function (g) { var tx = g.all.map(text).join(" "); if (RAIL.test(tx)) rl.push(g); else if (ROAD.test(tx)) rd.push(g); });
-    function li(g) { var i = g.lead; return '<li><a href="' + url(i.link) + '" target="_blank" rel="noopener">' + esc(i.title_en || i.title) + '</a><div class="cfm">' + esc(dname(i)) + " · " + day(i.date) + (g.all.length > 1 ? " · " + g.all.length + " reports" : "") + "</div></li>"; }
+    function li(g) { var i = g.lead; return '<li><a href="' + url(i.link) + '" target="_blank" rel="noopener noreferrer">' + esc(i.title_en || i.title) + '</a><div class="cfm">' + esc(dname(i)) + " · " + day(i.date) + (g.all.length > 1 ? " · " + g.all.length + " reports" : "") + "</div></li>"; }
     h += "<details><summary>Attacks naming the railway or a train, this period (" + rl.length + ")</summary><ol class=\"cfl\">" + rl.slice(0, 20).map(li).join("") + "</ol></details>";
     h += "<details><summary>Attacks naming a highway, bridge or checkpoint, this period (" + rd.length + ")</summary><ol class=\"cfl\">" + rd.slice(0, 20).map(li).join("") + "</ol></details>";
     if (c) {

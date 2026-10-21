@@ -38,6 +38,8 @@ export function postText(R, i) {
 // tools/relevance-social.json describes. R: the compiled news policy; S: compileSocial(). Pure.
 export function socialRelevance(R, S, i) {
   if (i.exempt) return "strong";
+  // a Bluesky or Telegram post whose words are not stored (tools/outlet_text.mjs) keeps the verdict they gave when it was read
+  if (i.notext) return i.rel_v || "unchecked";
   const text = postText(R, i);
   if (text == null) return "unchecked";
   const title = String(i.title_en || i.title || ""), ft = fold(title), f = fold(text);
@@ -59,6 +61,7 @@ export function socialRelevance(R, S, i) {
 export const socialKept = (rel) => kept(rel) || rel === "bulletin";
 // the word that decided a social verdict, for the report and the page's "left out because" line
 export function socialWhy(R, S, i, rel) {
+  if (i.notext) return rel === "none" ? "no listed word in the post" : rel === "drop" ? "left-out word in the post" : rel;
   if (rel === "unchecked") return i.mt === "untranslated" ? "not translated" : "not in English";
   if (rel === "none") return "no listed word";
   if (i.exempt) return "exempt outlet";

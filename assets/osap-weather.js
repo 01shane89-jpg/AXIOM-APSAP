@@ -868,7 +868,7 @@
     var P = PERIODS[ST.per], t0 = rs.length ? rs[0].b.t0 : now, t1 = rs.length ? rs[rs.length - 1].b.t1 : now;
     var SRC = [];
     function src(url) { var n = SRC.indexOf(url); if (n < 0) { SRC.push(url); n = SRC.length - 1; } return '<sup class="po">' + (n + 1) + "</sup>"; }
-    function bl(url, html) { return url ? '<a class="bl" href="' + esc(url) + '" target="_blank" rel="noopener">' + html + "</a>" + src(url) : html; }
+    function bl(url, html) { return url ? '<a class="bl" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + html + "</a>" + src(url) : html; }
     var o = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Print</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
       Object.keys(PERIODS).map(function (k) { return '<button type="button" class="refresh' + (k === ST.per ? " primary" : "") + '" data-wxper="' + k + '">' + PERIODS[k].name + "</button>"; }).join(" ") +
       ' <span class="obs">One page on A4 or Letter. Use the print dialog&rsquo;s &ldquo;Save as PDF&rdquo; to keep a copy.</span></div>';
@@ -1071,7 +1071,7 @@
     var R = D.R, ref = D.pts[0], tz = D.tz, now = Date.now(), H = hazards(R), A72 = analyse(D, "h72"), A7 = analyse(D, "d7");
     var SRC = [];
     function src(url) { var n = SRC.indexOf(url); if (n < 0) { SRC.push(url); n = SRC.length - 1; } return '<sup class="po">' + (n + 1) + "</sup>"; }
-    function bl(url, html) { return url ? '<a class="bl" href="' + esc(url) + '" target="_blank" rel="noopener">' + html + "</a>" + src(url) : html; }
+    function bl(url, html) { return url ? '<a class="bl" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + html + "</a>" + src(url) : html; }
     function page(n, title, body) {
       return '<article class="bpage wxbp wxrp"' + (n === 1 ? ' id="wxr-page"' : "") + "><header><div><b>AXIOM OSAP</b> · Detailed weather report · page " + n + "</div>" +
         (n === 1 ? "<h2>" + esc(R.name) + "</h2><div>Compiled " + esc(zt(now, tz, true)) + ". Reference point " + esc(ref.name) + " " + esc(mgrs(ref.lat, ref.lon) || ll(ref.lat, ref.lon)) +
@@ -1578,7 +1578,7 @@
         var g = L.layerGroup(), me = this;
         rainviewer().then(function (rv) {
           if (!ON.radar) return;
-          g.addLayer(L.tileLayer(rv.host + rv.path + "/256/{z}/{x}/{y}/2/1_1.png", { pane: "wxpane", opacity: op, maxNativeZoom: 7, maxZoom: 13, attribution: '<a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>' }));
+          g.addLayer(L.tileLayer(rv.host + rv.path + "/256/{z}/{x}/{y}/2/1_1.png", { pane: "wxpane", opacity: op, maxNativeZoom: 7, maxZoom: 13, attribution: '<a href="https://www.rainviewer.com/" target="_blank" rel="noopener noreferrer">RainViewer</a>' }));
           me.stamp = "Radar frame " + zt(rv.time, null, true);
           note("radar", me.stamp);
         }, function (e) { note("radar", "Radar did not load (" + e.message + ")."); });
@@ -1675,7 +1675,7 @@
         esc([h.temperature_2m[i] != null ? "Temperature " + degCF(h.temperature_2m[i]) : "",
           h.wind_speed_10m[i] != null ? "wind " + Math.round(h.wind_speed_10m[i]) + " kt from " + Math.round(h.wind_direction_10m[i]) + "°" + (h.wind_gusts_10m[i] != null ? ", gusts " + Math.round(h.wind_gusts_10m[i]) + " kt" : "") : "",
           h.cloud_cover[i] != null ? "cloud " + Math.round(h.cloud_cover[i]) + "%" : "", aqv != null ? "US AQI " + Math.round(aqv) : ""].filter(Boolean).join(" · ")) +
-        "<br>Valid " + esc(ix.t ? zt(ix.t, null, true) : "") + '</p><p class="obs">Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> weather' + (aqv != null ? " and air-quality" : "") +
+        "<br>Valid " + esc(ix.t ? zt(ix.t, null, true) : "") + '</p><p class="obs">Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> weather' + (aqv != null ? " and air-quality" : "") +
         " model, averaged over this cell. A forecast, not a measurement.</p></div>";
       function cell(style) { return L.rectangle(b, L.extend({ pane: "wxpane", stroke: false }, style)).bindPopup(pop, { maxWidth: 300 }); }
       if (ON.cloud && h.cloud_cover[i] != null) LYR.cloud.addLayer(cell({ fillColor: "#5a5a5a", fillOpacity: opOf("cloud", 0.6) * h.cloud_cover[i] / 100 }));
@@ -1708,7 +1708,7 @@
       st.products.forEach(function (p) {
         var c = col[p.agency] || "#c62828";
         // the storm's past track, forecast track and forecast circles open the same pop-up as its position, each saying which part it is
-        var src = '<p class="obs"><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>";
+        var src = '<p class="obs"><a href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>";
         function part(what) { return '<div class="pop"><div class="tier">Tropical cyclone · ' + esc(p.agencyName || p.agency) + "</div><h3>" + esc((p.cat ? p.cat + " " : "") + st.name) + '</h3><p class="obs">' + what + "</p>" + src; }
         if (p.past && p.past.length > 1) g.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2, opacity: op }).bindPopup(part("Track so far, as the agency reported it")));
         if (!p.now) return;
@@ -1725,7 +1725,7 @@
       if (e.type !== "TC" || e.current === false || e.lat == null) return;
       var c = { Red: "#c62828", Orange: "#ef6c00", Green: "#2e7d32" }[e.alert] || "#555";
       g.addLayer(wxMark([e.lat, e.lon], "a_hydromet", c, 0.75, { pane: "wxvec", radius: 7, color: "#fff", weight: 1.5, fillColor: c, fillOpacity: 0.95 })
-        .bindPopup('<div class="pop"><div class="tier">GDACS ' + esc(e.alert || "") + ' alert</div><h3>' + esc(e.name) + '</h3><p class="obs">' + esc(e.severity || "") + ' · <a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>'));
+        .bindPopup('<div class="pop"><div class="tier">GDACS ' + esc(e.alert || "") + ' alert</div><h3>' + esc(e.name) + '</h3><p class="obs">' + esc(e.severity || "") + ' · <a href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer">GDACS report</a></p></div>'));
     });
     return g;
   }
@@ -1743,7 +1743,7 @@
       if (e.current === false || e.lat == null || e.type === "EQ") return;
       g.addLayer(wxMark([e.lat, e.lon], GTYPE[e.type] || "a_incident", C[e.alert] || "#555", 0.75, { pane: "wxvec", radius: 7, color: "#fff", weight: 1.5, fillColor: C[e.alert] || "#555", fillOpacity: op }, op)
         .bindPopup('<div class="pop"><div class="tier">GDACS ' + esc(e.alert || "") + " alert · " + esc(e.type) + "</div><h3>" + esc(e.name) + '</h3><p class="obs">' + esc([e.from ? "from " + e.from.slice(0, 10) : "", e.to ? "to " + e.to.slice(0, 10) : ""].join(" ")) +
-          ' · <a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a>. A disaster-alert model score, not an official warning.</p></div>'));
+          ' · <a href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer">GDACS report</a>. A disaster-alert model score, not an official warning.</p></div>'));
     });
     loadX(cc()).then(function () {
       if (!ON.warn) return;
@@ -1753,7 +1753,7 @@
         var lvl = /WARNING/.test(i.t) ? "#c62828" : /WATCH/.test(i.t) ? "#ef6c00" : "#2e7d32";
         g.addLayer(wxMark([i.la, i.lo], W.OSAP_SYM && W.OSAP_SYM.classify ? W.OSAP_SYM.classify(i.k || "", i.t || "") : "a_incident", lvl, 0.7, { pane: "wxvec", radius: 6, color: "#fff", weight: 1.5, fillColor: lvl, fillOpacity: op }, op)
           .bindPopup('<div class="pop"><div class="tier">Pacific Disaster Center · ' + esc(i.k || "") + "</div><h3>" + esc(i.t) + '</h3><p class="obs">' + esc(i.d ? i.d.replace("T", " ") + ", as published" : "") +
-            ' · <a href="' + esc(i.u) + '" target="_blank" rel="noopener">DisasterAWARE</a></p></div>'));
+            ' · <a href="' + esc(i.u) + '" target="_blank" rel="noopener noreferrer">DisasterAWARE</a></p></div>'));
       });
     });
     /* NWS polygons only when the map shows part of the United States */
@@ -1767,7 +1767,7 @@
         }, filter: function (f) { return !!f.geometry; }, onEachFeature: function (f, l) {
           var p = f.properties;
           l.bindPopup('<div class="pop"><div class="tier">U.S. National Weather Service · ' + esc(p.severity || "") + "</div><h3>" + esc(p.event) + '</h3><p class="obs">' + esc(p.headline || "") +
-            '</p><p class="obs">' + esc(p.areaDesc || "").slice(0, 300) + ' · <a href="' + esc(p["@id"] || "https://alerts.weather.gov/") + '" target="_blank" rel="noopener">NWS alert</a></p></div>', { maxWidth: 320 });
+            '</p><p class="obs">' + esc(p.areaDesc || "").slice(0, 300) + ' · <a href="' + esc(p["@id"] || "https://alerts.weather.gov/") + '" target="_blank" rel="noopener noreferrer">NWS alert</a></p></div>', { maxWidth: 320 });
         } }));
       };
       if (NWS.g && Date.now() - NWS.at < 10 * 60 * 1000) draw(NWS.g);

@@ -692,7 +692,7 @@
     var near = (S.snap.haz || []).filter(function (h) { return Math.abs(h.along - p.m) < 2000; }).slice(0, 6);
     $(".rtpv-live").innerHTML = "<h3>Current status <span class=\"obs\">from OSAP's feeds, not from the picture</span></h3>" +
       (near.length ? '<ul class="rtpv-ll">' + near.map(function (h) {
-        return "<li><b>" + E(h.kind) + "</b> " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener">' + E(h.title) + "</a>" : E(h.title)) + ' <span class="obs">· ' + E(dist(h.d)) + " off the route" + (h.date ? " · " + E(String(h.date).slice(0, 10)) : "") + (h.src ? " · " + E(h.src) : "") + "</span></li>";
+        return "<li><b>" + E(h.kind) + "</b> " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener noreferrer">' + E(h.title) + "</a>" : E(h.title)) + ' <span class="obs">· ' + E(dist(h.d)) + " off the route" + (h.date ? " · " + E(String(h.date).slice(0, 10)) : "") + (h.src ? " · " + E(h.src) : "") + "</span></li>";
       }).join("") + "</ul>" : '<p class="obs">Nothing OSAP holds lies within 2 km of this point along the route (the Route tab\'s hazard list: reports in the chosen period, road closures, disaster alerts, earthquakes, conflict events, storms). No report is not a clearance.</p>');
   }
   /* a detour round a dependency: the router asked to avoid that place (the Route tab's Valhalla call) */
