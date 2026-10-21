@@ -71,6 +71,8 @@ jobs:
       # machine translation: invented lines rejected, and a translation stays with its item
       - run: node tests/mt_guard.test.mjs
       - run: node tests/translate_keep.test.mjs
+      # licence: outlet summaries are read by the jobs but never stored
+      - run: node tests/outlet_text.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
       # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
@@ -112,6 +114,8 @@ jobs:
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/area_report_smoke.mjs
+      # OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
+      - run: node tests/osir_smoke.mjs
       - run: node tests/points_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs

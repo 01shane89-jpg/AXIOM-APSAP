@@ -42,7 +42,6 @@ jobs:
         env:
           MT_LIMIT: "400"
           MT_BUDGET: "600"
-          MYMEMORY_LIMIT: "40"
         run: |
           for f in data/hospitals/*/web.json; do
             for pass in 1 2 3; do node tools/build_hospital_web.mjs --update "$f"; done

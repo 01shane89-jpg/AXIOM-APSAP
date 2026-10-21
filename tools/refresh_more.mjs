@@ -175,7 +175,7 @@ await job("tsu", "tsunami.js", "ASAP_TSU", async () => {
   return { status, items, note: items.length + " bulletins" };
 });
 
-// 3. Smithsonian GVP weekly volcanic activity report (RSS with georss points).
+// 3. Smithsonian GVP weekly volcanic activity report (RSS with georss points). Headline, place and link only.
 // From 2026-10-02 volcano.si.edu answers GitHub's runners with HTTP 403. The report is tried again with a browser user agent and
 // through its CAP twin; when all of them are refused, NASA EONET's open volcano events (which cite the GVP and the observatories)
 // stand in, so the list stays current. Each item says which one it came from (via).
@@ -194,7 +194,8 @@ await job("volc", "volcano.js", "ASAP_VOLC", async () => {
       const ccs = [...new Set([...(isNaN(lat) ? [] : ccsAt(lat, lon, 0.5)), ...ccsInText(m[2] || "")])];
       if (!ccs.length) continue;
       items.push({ volcano: m[1] || title, country: m[2] || "", report: m[3] || "", title, date: isoDay(tag("pubDate") || tag("cap:sent") || tag("sent")),
-        summary: (tag("description") || tag("cap:description")).slice(0, 900), link: tag("link") || "https://volcano.si.edu/reports_weekly.cfm",
+        // title and link only: GVP's terms bar commercial use of its report text, so the description is never stored (2026-10-17)
+        link: tag("link") || "https://volcano.si.edu/reports_weekly.cfm",
         lat: isNaN(lat) ? null : lat, lon: isNaN(lon) ? null : lon, ccs, via: "GVP weekly report" });
     }
     if (items.length) return { src: url, items, note: items.length + " volcanoes in covered areas" + (fails.length ? " (after " + fails.join("; ") + ")" : "") };
@@ -268,7 +269,7 @@ await job("ioda", "outages.js", "ASAP_IODA", async () => {
   return { src: "https://ioda.inetintel.cc.gatech.edu/", from: new Date(from * 1000).toISOString().slice(0, 10), items, note: Object.keys(items).length + " areas" };
 });
 
-// 5. WHO Disease Outbreak News (the WHO site's own JSON). Kept 365 days; assigned by the country named in the title.
+// 5. WHO Disease Outbreak News (the WHO site's own JSON). Kept 365 days; assigned by the country named in the title. Headline and link only.
 await job("who", "outbreaks.js", "ASAP_WHO", async () => {
   const url = "https://www.who.int/api/news/diseaseoutbreaknews?$orderby=PublicationDate%20desc&$top=100";
   const j = await get(url), items = [];
@@ -279,7 +280,7 @@ await job("who", "outbreaks.js", "ASAP_WHO", async () => {
     if (ccs.includes("jp")) ccs.push("oki");
     if (!ccs.length) continue;
     items.push({ title, date, ccs, link: x.UrlName ? "https://www.who.int/emergencies/disease-outbreak-news/item/" + x.UrlName : (x.ItemDefaultUrl ? "https://www.who.int" + x.ItemDefaultUrl : ""),
-      summary: unhtml(x.Summary || x.Overview || "").slice(0, 600) });
+ });   // title and link only: WHO's CC BY-NC-SA licence bars commercial reuse of the notice text (2026-10-17)
   }
   return { src: "https://www.who.int/emergencies/disease-outbreak-news", items, note: items.length + " notices" };
 });

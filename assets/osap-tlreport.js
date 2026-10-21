@@ -830,7 +830,8 @@
   /* the same content as data, for other report formats (the PowerPoint intelligence brief, assets/osap-intelbrief.js):
      o = { scope, from, to, prov, area }; cb gets the records (oldest first, each with __tlw), the key events (numbered as on
      the map, each with how/where and, for one reported by two or more sources, its event summary), the map and chart SVGs,
-     the Covers list and the provinces the country's records name. Nothing is changed. */
+     the Covers list and the provinces the country's records name, and this report's own HTML for a key-event row (rowHtml) and a
+     chronology entry (entryHtml, with its source number) so the OSIR (assets/osap-osir.js) shows them the same way. Nothing is changed. */
   function data(o, cb) {
     loadSummaries(function () { loadRegions(function () {
       LN = layerNames();
@@ -842,7 +843,8 @@
       pick({ scope: o.scope, from: o.from, to: o.to }).forEach(function (r) { provsOf(r).forEach(function (p) { provs[p] = (provs[p] || 0) + 1; }); });
       cb({ cc: cc(), country: cname(), scope: scopeOf(o.scope), scopes: scopes(o), recs: recs, total: all.length, max: MAX_ROWS, keyEv: keyEv, grouped: evs.length,
         map: recs.length ? mapSvg(recs, keyEv) : null, legend: recs.length ? legendHtml : null, bars: barsSvg(recs), period: periodText(recs, o),
-        provinces: topN(provs, 200), provsOf: provsOf, layerName: function (l) { return LN[l] || l || ""; }, status: STATUS, appPeriod: appPeriod() });
+        provinces: topN(provs, 200), provsOf: provsOf, layerName: function (l) { return LN[l] || l || ""; }, status: STATUS, appPeriod: appPeriod(),
+        rowHtml: rowHtml, entryHtml: entry });
     }); });
   }
   window.OSAP_TLREPORT = { open: open, eligible: eligible, data: data };
