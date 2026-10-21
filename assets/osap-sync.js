@@ -512,7 +512,10 @@
         });
         var changes = writeBack(r, M);
         st.M = M; st.first = false; st.O = {};
-        Object.keys(S).forEach(function (uk) { if (!S[uk].d) st.O[uk] = { t: S[uk].t, h: S[uk].h }; });
+        /* "held" is what is really stored here, not writes still waiting for the reload: a waiting item the page then
+           saves over (its old copy, without that item) was never here, so it is not counted as deleted here */
+        var Lb = unitsOf(r.list, function (id) { return id === r.active ? liveStores() : blob(id); }, synced);
+        Object.keys(S).forEach(function (uk) { if (!S[uk].d && uk in Lb) st.O[uk] = { t: S[uk].t, h: fp(canon(Lb[uk])) }; });
         /* publish the buckets the relays do not already hold, and this device's name */
         var B = buckets(M), out = [], at = Math.floor(now / 1000), sizes = 0, big = 0;
         return Promise.all(B.map(function (b, i) {

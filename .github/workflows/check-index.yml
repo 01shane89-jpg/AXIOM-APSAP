@@ -140,6 +140,7 @@ jobs:
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
+      - run: node tests/protect_smoke.mjs
       - run: node tests/wipe_smoke.mjs
       - run: node tests/sync_smoke.mjs
       # team workspace: share from Workspaces, join by viewer and editor links, viewer read-only, forged events refused, new team links

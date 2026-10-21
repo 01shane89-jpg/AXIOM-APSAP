@@ -506,6 +506,7 @@ const PRECACHE = [
 "assets/vendor/pptxgenjs-4.0.1.bundle.js",
 "assets/osap-offline.js",
 "assets/osap-move.js",
+"assets/osap-protect.js",
 "assets/osap-wipe.js",
 "assets/osap-sync.js",
 "assets/osap-team.js",
@@ -699,6 +700,22 @@ self.addEventListener("fetch", (e) => {
   if (NEVER.some((r) => r.test(url.href))) return;
   // the paywall's sign-in and plan (Netlify site only, assets/osap-tier.js): always the network, never saved
   if (url.origin === location.origin && /^\/(api|\.netlify)\//.test(url.pathname)) return;
+  // Protected mode's relay (assets/osap-protect.js): map tiles come as /px?u=<tile address>. Tiles saved by Offline maps and
+  // data are found under their own address, and relayed tiles are kept in TILES like any other; anything else relayed
+  // (weather, search, routes, live feeds) is never saved.
+  if (url.origin === location.origin && url.pathname === "/px" && url.searchParams.get("u")) {
+    const inner = url.searchParams.get("u");
+    let tile = false; try { tile = /\/\d+\/\d+\/\d+(\.\w+)?$/.test(new URL(inner).pathname); } catch (er) { /* not an address */ }
+    if (!tile || NEVER.some((r) => r.test(inner))) return;
+    const ok = (hit) => (hit && !(hit.type === "opaque" && req.mode === "cors") ? hit : null);
+    e.respondWith(caches.open(OFFLINE).then((c) => c.match(inner, { ignoreVary: true })).catch(() => null).then(ok)
+      .then((hit) => hit || caches.open(TILES).then((c) => c.match(req)).then(ok))
+      .then((hit) => hit || fetch(req).then((res) => {
+        if (res.ok) { const copy = res.clone(); e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(trimTilesSoon).catch(() => {})); }
+        return res;
+      })));
+    return;
+  }
   if (url.origin === location.origin && FRESH.some((r) => r.test(url.pathname))) {
     if (/\/data\//.test(url.pathname) && url.searchParams.has("fresh")) {
       // Refresh now: wait for the network copy however long it takes, and save it as the copy for the plain address
