@@ -5055,7 +5055,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     ["News, posts and reference", [
       ['Headlines and posts belong to the outlets and accounts named on each item; OSAP shows the headline, a short extract and a link.'],
       ['Videos: titles, dates and thumbnails come from each YouTube channel&rsquo;s public feed; every video belongs to its channel and plays on YouTube. YouTube is a trademark of Google LLC.'],
-      ['Machine translation: MADLAD-400 (Google, Apache-2.0), run in OSAP&rsquo;s refresh job, and MyMemory. Every translation is marked and keeps the original.'],
+      ['Machine translation: MADLAD-400 (Google, Apache-2.0), run in OSAP&rsquo;s refresh job. Every translation is marked and keeps the original.'],
       ['Airports: <a href="https://ourairports.com/">OurAirports</a> (public domain). Seaports: UN/LOCODE (UNECE). Some facts and coordinates cite Wikipedia (CC BY-SA 4.0).'],
       ['Fonts: IBM Plex (SIL Open Font License).']]]];
   var METSERVICE = 'This information is made freely available by MetService. Despite this, MetService is not associated with, and does not endorse, AXIOM OSAP.';
@@ -5497,11 +5497,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (window.TSAP) window.TSAP.records = R;
   }
   addWarnRecords();
+  /* agencies whose free feeds may not be used in a paid product: a link to their own warnings page instead of the feed.
+     BoM's free warning feeds are "not for commercial use" (removed 2026-10-17; a Registered User Services licence would bring them back) */
+  var WARN_LINKS = { au: { name: "Bureau of Meteorology: current warnings", url: "https://www.bom.gov.au/australia/warnings/",
+    why: "Australia's official warnings are on the Bureau of Meteorology's own site; its terms do not allow OSAP to copy them in." } };
   function warnHtml() {
     var w = window.ASAP_WARN, feeds = w && w.feeds ? w.feeds.filter(function (f) { return f.cc === CC; }) : [];
     var list = warnItems().filter(function (i) { return inPeriodDate(i.date); });
     var head = '<div class="sec"><h2>Official weather warnings</h2>';
     if (!w) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.</p></div>';
+    var wl = WARN_LINKS[CC];
+    if (!feeds.length && wl) return head + '<p class="obs">' + esc(wl.why) + ' <a href="' + esc(wl.url) + '" target="_blank" rel="noopener">' + esc(wl.name) + "</a></p></div>";
     if (!feeds.length) return head + '<p class="obs">No machine-readable warning feed is set up for ' + esc(C.name) + " yet. Check the national weather agency's own site.</p></div>";
     return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(w.asof)) + " · every 15 min · " + feeds.map(function (f) {
         return esc(f.agency) + (f.ok ? " (" + f.n + ")" : ' <span class="badge stale">FEED FAILED</span>'); }).join(", ") + "</p>" +
@@ -5832,11 +5838,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     if (LBY.safety && V) (V.items || []).filter(hasCC).forEach(function (v) {
       add({ layer: "safety", type: "report", cat: "Volcanic activity (GVP weekly)", kind: "other", more: true, live: true, title: v.volcano + ": " + v.report,
-        detail: v.summary || "", ts: v.date, place: v.volcano, prov: "", lat: v.lat, lon: v.lon, prec: v.lat != null ? "exact" : "none",
+        detail: v.summary || "", ts: v.date, place: v.volcano,   /* GVP items carry no text (licence); stand-ins carry OSAP's own line */ prov: "", lat: v.lat, lon: v.lon, prec: v.lat != null ? "exact" : "none",
         sev: /new activity|unrest/i.test(v.report) ? 2 : 1, src: SOURCES.gvp, url: v.link || V.src, issued: v.date, recorded: V.asof });
     });
     if (LBY.health && W) (W.items || []).filter(hasCC).forEach(function (w) {
-      add({ layer: "health", type: "claim", cat: "WHO outbreak notice", kind: "other", more: true, live: true, title: w.title, detail: w.summary || "", ts: w.date, place: "", prov: "",
+      add({ layer: "health", type: "claim", cat: "WHO outbreak notice", kind: "other", more: true, live: true, title: w.title, detail: "", ts: w.date, place: "", prov: "",
         lat: null, lon: null, prec: "none", sev: 2, src: SOURCES["who-don"], url: w.link, issued: w.date, recorded: W.asof });
     });
     if (LBY.safety && M) (M.asam || []).filter(hasCC).forEach(function (a) {
@@ -5869,7 +5875,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (v.lat == null) return;
       var m = window.OSAP_SYM && OSAP_SYM.mark ? osapMark([v.lat, v.lon], "a_volcthreat", { pane: "tlpane", radius: 9, lgk: "volc" })
         : L.marker([v.lat, v.lon], { pane: "tlpane", lgk: "volc", icon: L.divIcon({ className: "", html: '<div style="font-size:18px;line-height:18px">▲</div>', iconSize: [18, 18], iconAnchor: [9, 12] }) });
-      m.bindPopup('<div class="pop"><div class="tier">Volcano · ' + esc(v.via || "GVP weekly report") + " · " + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + "</p><p>" + esc(v.summary.slice(0, 500)) +
+      m.bindPopup('<div class="pop"><div class="tier">Volcano · ' + esc(v.via || "GVP weekly report") + " · " + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + (v.summary ? "</p><p>" + esc(v.summary.slice(0, 500)) : "") +
         '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">' + (v.via && v.via !== "GVP weekly report" ? "Source" : "Weekly report") + "</a></p></div>", { maxWidth: 340 });
       sofLayer.addLayer(m); sofM["vo:" + i] = m;
     });

@@ -137,7 +137,9 @@ const DOMAIN = (link) => { try { return new URL(link).hostname.replace(/^www\./,
 //   no alert              a single unofficial report or a tip-off: listed on the map, never pushed.
 // Attribution (BRN or any group) plays no part in this.
 export function markAlerts(items, textOf) {
-  const cand = items.filter((i) => i.date && !i.seed && EXPLOSIVE.test(textOf(i)) && !/^(legal|peace_talks|statistics)$/.test(i.kind || ""));
+  // exp: the explosive words matched while the job still held the summary (it is not stored: tools/outlet_text.mjs)
+  for (const i of items) if (!i.exp && EXPLOSIVE.test(textOf(i))) i.exp = 1;
+  const cand = items.filter((i) => i.date && !i.seed && i.exp && !/^(legal|peace_talks|statistics)$/.test(i.kind || ""));
   for (const i of items) { delete i.alert; delete i.corrob; i.tier = tierOf(i); }
   for (const i of cand) {
     if (i.tier === "official") { i.alert = "official"; continue; }
