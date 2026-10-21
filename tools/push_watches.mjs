@@ -1,5 +1,5 @@
 // Push watches (run by .github/workflows/refresh-flood.yml, job "push", after each refresh on main; or by hand with Node 18+).
-// For each watch in data/push/watches.json (added from the app's Push to phone button, see tools/push_admin.mjs):
+// For each watch kept on OSAP's server (added from the app's Push to phone button; tools/push_lib.mjs fetchList):
 //   1. The watch's country page is opened headless on the repo's own data (index.html?watchscan=1, network cut off) and
 //      window.OSAP_WATCH.matches(watch) lists the reports it matches: the app's own rules (area, categories, severity, words,
 //      last 7 days, grouped into events), so a push and the in-app Watch never disagree.
@@ -16,7 +16,7 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { readList } from "./push_lib.mjs";
+import { fetchList } from "./push_lib.mjs";
 
 const STATE = process.env.PUSH_STATE || ".push-state/state.json";
 const NTFY = (process.env.PUSH_NTFY || "https://ntfy.sh").replace(/\/$/, "");
@@ -25,7 +25,8 @@ const TEST = !!process.env.PUSH_TEST, DRY = !!process.env.PUSH_DRY;
 const MAX_AGE_H = +(process.env.PUSH_MAX_AGE_H || 48), PER_WATCH = 3, PER_RUN = 40, KEEP_KEYS = 4000;
 const now = Date.now();
 
-const list = readList().watches;
+let list;
+try { list = (await fetchList()).watches; } catch (e) { console.log("push: could not read the push list:", e.message); process.exit(0); }
 if (!list.length) { console.log("push: no push watches"); process.exit(0); }
 
 function loadState() { try { return JSON.parse(fs.readFileSync(STATE, "utf8")); } catch (e) { return { watches: {} }; } }

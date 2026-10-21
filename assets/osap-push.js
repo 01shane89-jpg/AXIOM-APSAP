@@ -5,16 +5,16 @@
    matches are sent through ntfy.sh, a free push service that needs no account or key:
    1. the viewer installs the ntfy app (or opens the ntfy web app) and subscribes to this device's OSAP channel, a random name
       made here and kept in this browser;
-   2. "Send to OSAP" opens a filled-in GitHub issue holding the watch; when the repository owner submits it, the "Push watches"
-      workflow adds it to data/push/watches.json and closes the issue (tools/push_admin.mjs). Only the owner's issues count.
-   The watch list is public, like the rest of the repository, and the dialog says so before anything is sent. A push is a notice
-   about a report, never a finding. "Send a test alert" posts one line to the channel from this browser. */
+   2. "Send to OSAP" keeps the watch on OSAP's server (netlify/functions/osap-push.mjs, owner's account only), where only the
+      owner's signed-in page and the refresh job (signed by GitHub itself) can read it. Until 2026-10-21 the watch went into a
+      public GitHub issue and data/push/watches.json, readable by anyone (Shane 2026-10-20, user protection).
+   A push is a notice about a report, never a finding. "Send a test alert" posts one line to the channel from this browser. */
 (function () {
   "use strict";
-  var REPO = "https://github.com/01shane89-jpg/AXIOM-APSAP";
+  var API = "/api/osap-push";
   var NTFY = "https://ntfy.sh";
-  var T_KEY = "asap-push-topic", Q_KEY = "asap-push-asked", MAX_PTS = 150;
-  var LIST = null, LIST_AT = 0, LIST_ERR = false;
+  var T_KEY = "asap-push-topic", MAX_PTS = 150;
+  var LIST = null, LIST_AT = 0, LIST_ERR = "";
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
@@ -34,21 +34,34 @@
     lsSet(T_KEY, s);
     return s;
   }
-  /* the push list as published (data/push/watches.json on the site), re-read at most once a minute */
+  /* the owner's account token (assets/osap-tier.js), or null */
+  function token() { return window.OSAP_TIER && window.OSAP_TIER.token ? window.OSAP_TIER.token().catch(function () { return null; }) : Promise.resolve(null); }
+  /* one call to OSAP's push list: GET, POST a watch, or DELETE one; answers the list */
+  function call(method, body, id) {
+    return token().then(function (tok) {
+      if (!tok) { var e = new Error("Sign in with OSAP's owner account to use push alerts."); e.code = 401; throw e; }
+      return fetch(API + (id ? "?id=" + encodeURIComponent(id) : ""), { method: method, cache: "no-store", credentials: "same-origin",
+        headers: Object.assign({ authorization: "Bearer " + tok }, body ? { "content-type": "application/json" } : {}), body: body ? JSON.stringify(body) : undefined });
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (o) {
+        if (r.ok) return o;
+        var e = new Error(r.status === 403 ? "Push alerts are kept for OSAP's owner account only." : r.status === 401 ? "Sign in with OSAP's owner account to use push alerts." : (o && o.error) || "OSAP's server answered " + r.status + ".");
+        e.code = r.status; throw e;
+      });
+    });
+  }
+  function took(o) { LIST = (o && o.watches) || []; LIST_AT = Date.now(); LIST_ERR = ""; }
+  /* the push list on OSAP's server, re-read at most once a minute */
   function loadList(cb) {
     if (LIST && Date.now() - LIST_AT < 60000) return cb();
-    fetch("data/push/watches.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : { watches: [] }; })
-      .then(function (o) { LIST = (o && o.watches) || []; LIST_AT = Date.now(); LIST_ERR = false; cb(); })
-      .catch(function () { LIST = LIST || []; LIST_ERR = true; cb(); });
+    call("GET").then(took, function (e) { LIST = LIST || []; LIST_ERR = e.message || "Could not read the push list just now."; }).then(cb);
   }
   function onServer(id) { return (LIST || []).filter(function (w) { return w.id === id; })[0] || null; }
   function status(w) {
-    var s = onServer(w.id), asked = lsGet(Q_KEY, {}) || {};
-    if (s) return s.topic === topic() ? "on" : "other";
-    if (asked[w.id] && Date.now() - asked[w.id].at < 3 * 864e5) return asked[w.id].stop ? "stopping" : "asked";
-    return "off";
+    var s = onServer(w.id);
+    return s ? (s.topic === topic() ? "on" : "other") : "off";
   }
-  var LABEL = { on: "Push: on", other: "Push: on (other device)", asked: "Push: waiting", stopping: "Push: stopping", off: "Push to phone" };
+  var LABEL = { on: "Push: on", other: "Push: on (other device)", off: "Push to phone" };
 
   /* the watch as the push job takes it (tools/push_lib.mjs keeps only these fields) */
   function payload(w) {
@@ -57,13 +70,6 @@
     return { v: 1, id: w.id, name: w.name, cc: w.cc, area: a ? a.map(function (p) { return [Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]; }) : null,
       layers: w.layers || [], kw: w.kw || [], q: w.q || undefined, minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic() };
   }
-  function issueUrl(title, body) { return REPO + "/issues/new?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body); }
-  function addUrl(w) {
-    return issueUrl("OSAP push watch: " + w.name,
-      "Made by Push to phone in OSAP. Submit this issue to send new reports matching this watch to the ntfy channel below. " +
-      "The Push watches workflow adds it and closes this issue. This text is public.\n\n```json\n" + JSON.stringify(payload(w)) + "\n```\n");
-  }
-  function stopUrl(w) { return issueUrl("OSAP push watch: stop " + w.id, "Made by Push to phone in OSAP. Submit this issue to stop push alerts for \"" + w.name + "\"."); }
   function subLinks(t) {
     return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener">Open ' + esc(t) + " in ntfy</a>";
   }
@@ -79,9 +85,7 @@
       "<p><b>" + esc(w.name) + '</b><br><span class="obs">' + esc(what) + "</span></p>" +
       '<div class="wnotif"><b>Status:</b> ' + esc({ on: "On. New matches are sent to this device's channel after every refresh.",
         other: "On, but sending to another device's channel. Send it again from here to move it to this one.",
-        asked: "Sent to OSAP. It switches on once the issue is submitted and the Push watches job has run (usually a minute or two).",
-        stopping: "Stop asked. It switches off once the issue is submitted and the job has run.",
-        off: "Off. This watch only checks while OSAP is open." }[st]) + (LIST_ERR ? ' <span class="obs">(could not read the push list just now)</span>' : "") + "</div>" +
+        off: "Off. This watch only checks while OSAP is open." }[st]) + (LIST_ERR ? ' <span class="obs">(' + esc(LIST_ERR) + ")</span>" : "") + "</div>" +
       (note ? '<p class="note">' + esc(note) + "</p>" : "") +
       "<h3>1. Get the free ntfy app</h3>" +
       '<p>No account and no key. <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener">Android</a> · ' +
@@ -91,13 +95,14 @@
       '<p>In ntfy tap <b>+</b> and enter <code class="pushtopic">' + esc(t) + '</code> <button type="button" class="refresh" data-push-copy>Copy</button><br>' + subLinks(t) +
       ' · <button type="button" class="refresh" data-push-test>Send a test alert</button> <span class="obs" id="push-test-out"></span></p>' +
       "<h3>3. Send this watch to OSAP</h3>" +
-      "<p>Opens a filled-in issue on OSAP's GitHub page. Tap <b>Submit</b> there. OSAP's refresh job then checks this watch after every refresh, " +
+      "<p>Keeps the watch on OSAP's server. OSAP's refresh job then checks it after every refresh, " +
       "about every 15 minutes, and sends new matching reports from the last 48 hours: one alert per event, up to 3 per check, then a count.</p>" +
-      '<p><a class="refresh primary" data-push-send href="' + esc(addUrl(w)) + '" target="_blank" rel="noopener">' + (st === "on" || st === "other" ? "Send the watch again" : "Send to OSAP") + "</a>" +
-      (st === "on" || st === "other" || st === "asked" ? ' <a class="refresh" data-push-stop href="' + esc(stopUrl(w)) + '" target="_blank" rel="noopener">Stop push alerts</a>' : "") + "</p>" +
-      '<details class="wlimits"><summary>What is public, and the limits</summary><ul>' +
-        "<li>OSAP's project files are public. The watch's name, area, categories, words and the channel name are saved there, so anyone who looks can read them, and could subscribe to the same channel. Keep private details out of a watch.</li>" +
-        "<li>Only issues opened by OSAP's owner are accepted. Anyone else's are ignored.</li>" +
+      '<p><button type="button" class="refresh primary" data-push-send>' + (st === "on" || st === "other" ? "Send the watch again" : "Send to OSAP") + "</button>" +
+      (st === "on" || st === "other" ? ' <button type="button" class="refresh" data-push-stop>Stop push alerts</button>' : "") + ' <span class="obs" id="push-send-out" role="status"></span></p>' +
+      '<details class="wlimits"><summary>Who can see it, and the limits</summary><ul>' +
+        "<li>The watch is kept on OSAP's server, readable only by OSAP's owner account and OSAP's own refresh job. It is not in OSAP's public project files.</li>" +
+        "<li>ntfy.sh carries the alerts, so it sees them, and anyone who knows the channel name can read them: keep the name to yourself, and keep private details out of a watch. Protected mode turns push off.</li>" +
+        "<li>Push alerts are for OSAP's owner account.</li>" +
         "<li>The first check only notes what is already there; only later arrivals are sent. Editing the watch here does not change the pushed copy: send it again.</li>" +
         "<li>Alerts are as new as the last refresh plus the sources' own delay. A push is a notice about a report, never a finding: reported, not verified.</li>" +
         "<li>Email or text messages would need an account or a stored address, so they are not offered. ntfy can forward to other apps from your phone.</li></ul></details></div>";
@@ -135,8 +140,13 @@
         return;
       }
       if (t.hasAttribute("data-push-send") || t.hasAttribute("data-push-stop")) {
-        var q = lsGet(Q_KEY, {}) || {}; q[id] = { at: Date.now(), stop: t.hasAttribute("data-push-stop") }; lsSet(Q_KEY, q); LIST_AT = 0;
-        setTimeout(function () { panel(id, t.hasAttribute("data-push-stop") ? "After you submit the issue, push alerts stop within a few minutes." : "After you submit the issue, come back here: the status turns to On within a few minutes."); }, 300);
+        var stop = t.hasAttribute("data-push-stop"), w = byId(id), so = el.querySelector("#push-send-out");
+        if (!w) return;
+        if (so) so.textContent = stop ? "Stopping…" : "Sending…";
+        Array.prototype.forEach.call(el.querySelectorAll("[data-push-send],[data-push-stop]"), function (b) { b.disabled = true; });
+        (stop ? call("DELETE", null, id) : call("POST", payload(w))).then(function (o) {
+          took(o); panel(id, stop ? "Push alerts stopped for this watch." : "Sent. OSAP checks it after the next refresh; the first check only notes what is already there.");
+        }, function (e) { LIST_AT = 0; panel(id, e.message); });
       }
     });
     var st = document.createElement("style");
