@@ -49,6 +49,7 @@ nav{font-size:14px;color:var(--mut)}nav a{margin-right:12px}
 
 <h2>3. What stays on your device</h2>
 <p>OSAP keeps your work in your browser's own storage (local storage and IndexedDB): map points and photos, drawn areas, routes, imported shapes, keyword watches, workspaces, medical, evacuation and comms plans, analyst notes, and settings. None of this is sent to us. It leaves your device only if you export it, share a link, or turn on one of the optional features in section 5. Clearing your browser data deletes it, and so does Settings &gt; Erase this device (or opening OSAP with #panic on the end of the address), which erases it all at once after one confirm.</p>
+<p>"Lock my saved work" (Settings) encrypts this saved work on your device with AES-256 under a key that only your passkey or passphrase can unlock. The passphrase and key are never sent anywhere, and we cannot recover them: if you forget the passphrase, the locked work cannot be read.</p>
 <p>"Use my location" asks your browser for your position, uses it on your device to centre the map or pick your country, and does not send it to us. On-device AI summaries run in your browser, or on an AI server on your own network if you set one up, and the reports never leave your device.</p>
 
 <h2>4. Services OSAP contacts while you use it</h2>

@@ -48,6 +48,8 @@
 })();
 </script>
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
+<!-- lock my saved work: a locked device has no saved work in plain storage before any feature reads it (assets/osap-vault.js) -->
+<script src="assets/osap-vault.js"></script>
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-lock.js"></script>
 <!-- panic wipe: Settings > Erase this device, or #panic on the address (assets/osap-wipe.js) -->
