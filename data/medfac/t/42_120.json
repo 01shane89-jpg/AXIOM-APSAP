@@ -1,6 +1,6 @@
 [["w1007172831",42.91107,120.66776,"cn",{"name":"奈曼旗通用机场","aeroway":"aerodrome"}],
-["w102776088",42.07847,121.66009,"cn",{"aeroway":"aerodrome","military":"airfield"}],
-["w128218576",42.06886,121.72113,"cn",{"name":"阜新空军基地","aeroway":"aerodrome"}],
+["w102776088",42.07847,121.66012,"cn",{"name:en":"Fuxin Air Base","aeroway":"aerodrome","military":"airfield"}],
+["w128218576",42.06886,121.72113,"cn",{"name":"阜新空军基地","name:en":"Fuxin Air Force Base","aeroway":"aerodrome","military":"airfield"}],
 ["w1458432907",43.90551,120.15027,"cn",{"aeroway":"helipad"}],
 ["w1509404486",42.36558,121.61013,"cn",{"name":"旧庙机场","aeroway":"aerodrome"}],
 ["w280440951",42.02259,121.65932,"cn",{"name":"辽宁工程技术大学医院","amenity":"hospital","healthcare":"hospital"}],

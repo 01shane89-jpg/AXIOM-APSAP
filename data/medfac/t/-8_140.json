@@ -8,7 +8,7 @@
 ["w1412683147",-7.3656,140.5941,"id",{"name":"Puskesmas Muting","amenity":"clinic","operator":"Dinas Kesehatan Kabupaten Merauke"}],
 ["w1415137475",-6.65451,140.41792,"id",{"name":"Klinik Asiki","amenity":"hospital","healthcare":"hospital"}],
 ["w222770578",-6.1256,141.28196,"pg",{"name":"Kiunga Airport","aeroway":"aerodrome","icao":"AYKI","iata":"UNG"}],
-["w545945019",-6.09602,140.30481,"id",{"name":"Bandar Udara Tanah Merah","name:en":"Tanah Merah Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAKT","iata":"TMH","aerodrome:type":"regional"}],
+["w545945019",-6.09602,140.30481,"id",{"name":"Bandar Udara Tanah Merah","name:en":"Tanah Merah Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAKT","iata":"TMH","aerodrome:type":"regional","wikidata":"Q12474110"}],
 ["w563103610",-6.10275,141.73911,"pg",{"name":"Gasuke Airport","aeroway":"aerodrome","icao":"AYGS","iata":"GBC"}],
 ["w677073990",-6.30867,141.9055,"pg",{"name":"Debepare Airport","aeroway":"aerodrome","icao":"AYDB","iata":"DBP"}],
 ["w678712440",-7.00992,141.49342,"pg",{"name":"Lake Murray Airport","aeroway":"aerodrome","icao":"AYLM","iata":"LMY"}],

@@ -23,7 +23,7 @@
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var MAGIC = "OSAPMOVE", VER = 1, ITER = 600000, MIN_PASS = 8, MAX_FILE = 500 * 1048576, MAX_PHOTOS = 5000, MSG = "osap-move-msg";
   var PICK = /^(osap|asap|tsap|tfw|tw|tbw)[-.]/;
-  var SKIP = ["osap-offline", "osap-offline-prev", "osap-loc", "osap-loc-go", "osap-boot", "osap-boot-t", "osap-tile-fail", "osap-ws-msg", "osap-ws-go", "osap-rt-link", "osap-ai", "osap-sync", "osap-sync-pending", MSG];
+  var SKIP = ["osap-offline", "osap-offline-prev", "osap-loc", "osap-loc-go", "osap-boot", "osap-boot-t", "osap-tile-fail", "osap-ws-msg", "osap-ws-go", "osap-rt-link", "osap-ai", "osap-sync", "osap-sync-pending", "osap-team", "osap-team-pending", "osap-team-dev", MSG];
   var SKIP_PRE = /^(asap-xrecs-|osap-today-wx-)/;
   var te = new TextEncoder(), td = new TextDecoder();
 
@@ -151,7 +151,7 @@
     var c = { points: arrLen(keys["osap-atak-pts"]), areas: 0, aoi: arrLen(keys["osap-aoi"]), routes: arrLen(keys["osap-routes"]), shapes: arrLen(keys["osap-shapes"]), watches: arrLen(keys["asap-watches"]), plans: 0, workspaces: 1, work: 0 };
     Object.keys(keys).forEach(function (k) { if (/^asap-area-[a-z]{2,3}(-st)?$/.test(k) && arrLen(keys[k]) > 2) c.areas++; if (/^osap-medplan-/.test(k)) c.plans++; });
     try { c.workspaces = Math.max(1, JSON.parse(keys["osap-ws"]).list.length); } catch (e) {}
-    try { var it = JSON.parse(keys["osap-work"]).items; c.work = Object.keys(it).filter(function (k) { var x = it[k]; return x && (x.saved || x.note || x.reviewed); }).length; } catch (e) {}
+    try { var it = JSON.parse(keys["osap-work"]).items; c.work = Object.keys(it).filter(function (k) { var x = it[k]; return x && (x.saved || x.note || x.reviewed || x.grade); }).length; } catch (e) {}
     return c;
   }
   function describe(c, photos) {

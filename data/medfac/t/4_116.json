@@ -87,7 +87,7 @@
 ["w573067106",4.15474,117.26391,"id",{"name":"Puskesmas Pembantu Tabur Lestari","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
 ["w581181857",4.04128,116.98274,"id",{"name":"PUSKESMAS SANUR","amenity":"hospital","healthcare":"hospital"}],
 ["w581181858",4.04184,116.98286,"id",{"name":"UGD SANUR","amenity":"hospital","healthcare":"hospital"}],
-["w676921677",4.13388,117.66985,"id",{"name":"Bandar Udara Nunukan","name:en":"Nunukan Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 556 21710","aeroway":"aerodrome","icao":"WAQA","iata":"NNX","aerodrome:type":"regional"}],
+["w676921677",4.13388,117.66985,"id",{"name":"Bandar Udara Nunukan","name:en":"Nunukan Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 556 21710","aeroway":"aerodrome","icao":"WAQA","iata":"NNX","aerodrome:type":"regional","wikidata":"Q3017031"}],
 ["w679399796",4.08709,117.62442,"id",{"name":"Puskesmas Pembantu Binusan","amenity":"clinic"}],
 ["w692654482",4.26008,117.91541,"my",{"name":"Klinik Kesihatan Tawau","amenity":"clinic","healthcare":"clinic","operator":"Kementerian Kesihatan Malaysia","operator:type":"government"}],
 ["w896444397",5.89881,116.0467,"my",{"name":"Klinik Kesihatan Putatan","amenity":"hospital","healthcare":"hospital"}],

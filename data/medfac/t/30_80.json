@@ -13,5 +13,5 @@
 ["w821540098",30.15215,81.33034,"np",{"aeroway":"helipad"}],
 ["w922325831",30.77334,80.08887,"in",{"aeroway":"helipad"}],
 ["w962405990",30.22822,80.92064,"in",{"aeroway":"helipad"}],
-["w970443901",30.39886,81.13319,"cn",{"name":"阿里普兰机场","name:en":"A'li Pulan Airport","operator":"民航西藏自治区机场集团有限公司阿里普兰机场分公司","addr:district":"普兰县","addr:city":"阿里地区","addr:province":"西藏自治区","addr:postcode":"859599","aeroway":"aerodrome","icao":"ZUPL","iata":"APJ"}],
+["w970443901",30.39886,81.13319,"cn",{"name":"阿里普兰机场","name:en":"A'li Pulan Airport","operator":"民航西藏自治区机场集团有限公司阿里普兰机场分公司","addr:district":"普兰县","addr:city":"阿里地区","addr:province":"西藏自治区","addr:postcode":"859599","aeroway":"aerodrome","icao":"ZUPL","iata":"APJ","wikidata":"Q108364345"}],
 ["w995739385",30.80843,81.37737,"cn",{"aeroway":"helipad"}]]

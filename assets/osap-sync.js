@@ -21,11 +21,13 @@
    - Changes to the open workspace are written at the next page load (assets/osap-sync-boot.js, before any feature reads its
      store), so a feature holding the old list in memory cannot save over them; OSAP reloads by itself right after it opens
      or comes back to the screen, otherwise it offers a Reload button. Changes to other workspaces are written straight away.
+   - The core (keys, sealing, signing and checking events, cutting stores into units, the merge, the relay transport) is shared
+     with Team workspace (assets/osap-team.js), which reads it from window.OSAP_SYNC_CORE.
    window.OSAP_SYNC {open, close, now, status, pair, start, off, core}. */
 (function (G, factory) {
   var api = factory(G);
   if (typeof module === "object" && module.exports) module.exports = api.core;
-  else if (G.document) api.boot();
+  else if (G.document) { G.OSAP_SYNC_CORE = api.core; api.boot(); }
 })(typeof window !== "undefined" ? window : globalThis, function (W) {
   "use strict";
   var te = new TextEncoder(), td = new TextDecoder();
@@ -51,7 +53,8 @@
     return "{" + Object.keys(v).sort().filter(function (k) { return v[k] !== undefined; }).map(function (k) { return JSON.stringify(k) + ":" + canon(v[k]); }).join(",") + "}";
   }
 
-  /* ---------- secp256k1 BIP-340 signing (only signing: what comes back is checked by AES-GCM, not by signature) ---------- */
+  /* ---------- secp256k1 BIP-340 signing, and checking (device sync checks what comes back by AES-GCM alone; Team workspace also
+     checks the signature, because a team viewer holds the AES key but not the signing key) ---------- */
   var P = BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F"), N = BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141");
   var GX = BigInt("0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798"), GY = BigInt("0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8");
   var B0 = BigInt(0), B1 = BigInt(1), B2 = BigInt(2), B3 = BigInt(3), B8 = BigInt(8);
@@ -70,7 +73,8 @@
     var HH = H * H % P, HHH = H * HH % P, V = U1 * HH % P, X = md(R * R - HHH - B2 * V);
     return [X, md(R * (V - X) - S1 * HHH), p[2] * q[2] % P * H % P];
   }
-  function mul(k) { var r = [B0, B1, B0], a = [GX, GY, B1]; while (k > B0) { if (k & B1) r = add(r, a); a = dbl(a); k >>= B1; } return r; }
+  function mulP(k, a) { var r = [B0, B1, B0]; while (k > B0) { if (k & B1) r = add(r, a); a = dbl(a); k >>= B1; } return r; }
+  function mul(k) { return mulP(k, [GX, GY, B1]); }
   function aff(p) { var zi = pw(p[2], P - B2, P), z2 = zi * zi % P; return [p[0] * z2 % P, p[1] * z2 % P * zi % P]; }
   function n2b(n) { var s = n.toString(16); while (s.length < 64) s = "0" + s; return unhex(s); }
   function b2n(u) { return BigInt("0x" + (hex(u) || "0")); }
@@ -86,6 +90,26 @@
       var k0 = md(b2n(r), N); if (k0 === B0) throw new Error("bad nonce");
       var R = aff(mul(k0)), k = R[1] & B1 ? N - k0 : k0, rx = n2b(R[0]);
       return tagged("BIP0340/challenge", cat([rx, px, msg])).then(function (e) { return cat([rx, n2b(md(k + md(b2n(e), N) * d, N))]); });
+    });
+  }
+
+  /* the point with x-coordinate x and an even y (BIP-340 lift_x), or null when there is none */
+  function liftX(x) {
+    if (x <= B0 || x >= P) return null;
+    var c = md(x * x % P * x + BigInt(7)), y = pw(c, (P + B1) / BigInt(4), P);
+    if (y * y % P !== c) return null;
+    return [x, y & B1 ? P - y : y, B1];
+  }
+  function okPub(pk) { return pk instanceof Uint8Array && pk.length === 32 && !!liftX(b2n(pk)); }
+  /* BIP-340 verification: true only for a signature made with the secret key of pk */
+  function verify(msg, pk, sig) {
+    if (!(sig instanceof Uint8Array) || sig.length !== 64 || !(pk instanceof Uint8Array) || pk.length !== 32) return Promise.resolve(false);
+    var Q = liftX(b2n(pk)), r = b2n(sig.subarray(0, 32)), s = b2n(sig.subarray(32));
+    if (!Q || r >= P || s >= N) return Promise.resolve(false);
+    return tagged("BIP0340/challenge", cat([sig.subarray(0, 32), pk, msg])).then(function (e) {
+      var R = add(mul(s), mulP(N - md(b2n(e), N), Q));
+      if (R[2] === B0) return false;
+      var A = aff(R); return !(A[1] & B1) && A[0] === r;
     });
   }
 
@@ -127,24 +151,50 @@
       return SUB.encrypt({ name: "AES-GCM", iv: iv, additionalData: te.encode(d) }, K.aes, cat([new Uint8Array([canZ ? 1 : 0]), z]));
     }).then(function (ct) { return "1:" + b64(cat([iv, new Uint8Array(ct)])); });
   }
-  function open(K, d, s) {
+  /* gunzip with a ceiling, so a small sealed payload cannot unpack into something huge */
+  function unzipCap(u8, cap) {
+    var rd = new Blob([u8]).stream().pipeThrough(new W.DecompressionStream("gzip")).getReader(), parts = [], n = 0;
+    return (function pump() {
+      return rd.read().then(function (x) {
+        if (x.done) return cat(parts);
+        n += x.value.length; if (n > cap) { try { rd.cancel(); } catch (e) {} throw new Error("too large"); }
+        parts.push(x.value); return pump();
+      });
+    })();
+  }
+  /* max: the most the payload may unpack to (Team workspace); device sync leaves it unset */
+  function open(K, d, s, max) {
     if (typeof s !== "string" || s.slice(0, 2) !== "1:" || s.length > 2e6) return Promise.resolve(null);
     var u; try { u = unb64(s.slice(2)); } catch (e) { return Promise.resolve(null); }
     if (u.length < 30) return Promise.resolve(null);
     return SUB.decrypt({ name: "AES-GCM", iv: u.subarray(0, 12), additionalData: te.encode(d) }, K.aes, u.subarray(12)).then(function (pt) {
       pt = new Uint8Array(pt);
       if (pt[0] === 1 && !canZ) return null;
-      return (pt[0] === 1 ? stream(pt.subarray(1), new W.DecompressionStream("gzip")) : Promise.resolve(pt.subarray(1))).then(function (b) { return JSON.parse(td.decode(b)); });
+      if (max && pt.length - 1 > max) return null;
+      return (pt[0] === 1 ? (max ? unzipCap(pt.subarray(1), max) : stream(pt.subarray(1), new W.DecompressionStream("gzip"))) : Promise.resolve(pt.subarray(1))).then(function (b) { return JSON.parse(td.decode(b)); });
     }).then(null, function () { return null; });
   }
 
   /* ---------- a Nostr event ---------- */
+  function evHash(ev) { return sha(te.encode(JSON.stringify([0, ev.pubkey, ev.created_at, ev.kind, ev.tags, ev.content]))); }
   function event(K, d, content, at) {
+    if (!K || !K.sk) return Promise.reject(new Error("no signing key"));
     var ev = { pubkey: K.pk, created_at: at, kind: 30078, tags: [["d", d]], content: content };
-    return sha(te.encode(JSON.stringify([0, ev.pubkey, ev.created_at, ev.kind, ev.tags, ev.content]))).then(function (id) {
+    return evHash(ev).then(function (id) {
       ev.id = hex(id);
       return sign(id, K.sk, rand(32));
     }).then(function (sig) { ev.sig = hex(sig); return ev; });
+  }
+  /* an event from a relay, treated as hostile: the right shape and sizes, from pk, its id the hash of its fields and its
+     signature made with pk's secret key. Resolves true or false, never throws. */
+  function checkEvent(ev, pk, maxContent) {
+    try {
+      if (!plain(ev) || ev.pubkey !== pk || ev.kind !== 30078 || typeof ev.content !== "string" || ev.content.length > (maxContent || 2e5)) return Promise.resolve(false);
+      if (typeof ev.created_at !== "number" || !isFinite(ev.created_at) || ev.created_at < 0 || ev.created_at % 1 || ev.created_at > Date.now() / 1000 + 86400 * 2) return Promise.resolve(false);
+      if (!Array.isArray(ev.tags) || ev.tags.length > 8 || !ev.tags.every(function (t) { return Array.isArray(t) && t.length <= 4 && t.every(function (x) { return typeof x === "string" && x.length <= 200; }); })) return Promise.resolve(false);
+      if (!/^[0-9a-f]{64}$/.test(ev.id || "") || !/^[0-9a-f]{128}$/.test(ev.sig || "") || !/^[0-9a-f]{64}$/.test(pk || "")) return Promise.resolve(false);
+      return evHash(ev).then(function (h) { return hex(h) === ev.id ? verify(h, unhex(pk), unhex(ev.sig)) : false; }).then(null, function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
   }
 
   /* ---------- stores to units ---------- */
@@ -265,10 +315,11 @@
   }
   /* buckets: which event carries a unit */
   var NB = 16;
-  function bucketOf(uk) { return fnv(uk) % NB; }
-  function buckets(M) {
-    var B = []; for (var i = 0; i < NB; i++) B.push({});
-    Object.keys(M).sort().forEach(function (uk) { var x = M[uk]; B[bucketOf(uk)][uk] = x.d ? [x.t, x.h, 0, 1] : [x.t, x.h, x.v]; });
+  function bucketOf(uk, nb) { return fnv(uk) % (nb || NB); }
+  /* nb: how many buckets (device sync 16; Team workspace uses more, for its larger cap) */
+  function buckets(M, nb) {
+    var B = []; for (var i = 0; i < (nb || NB); i++) B.push({});
+    Object.keys(M).sort().forEach(function (uk) { var x = M[uk]; B[bucketOf(uk, nb)][uk] = x.d ? [x.t, x.h, 0, 1] : [x.t, x.h, x.v]; });
     return B;
   }
   function fromBucket(b) {
@@ -283,18 +334,59 @@
   /* a received unit is checked against its fingerprint, so a damaged one is dropped rather than merged */
   function trusted(S) { Object.keys(S).forEach(function (uk) { if (!S[uk].d && fp(canon(S[uk].v)) !== S[uk].h) delete S[uk]; }); return S; }
 
-  var core = { hex: hex, unhex: unhex, sign: sign, pubOf: pubOf, newCode: newCode, cleanCode: cleanCode, showCode: showCode, keys: keys, dtag: dtag, seal: seal, open: open, event: event,
-    split: split, join: join, unitsOf: unitsOf, parseUk: parseUk, stamp: stamp, merge: merge, storesFrom: storesFrom, buckets: buckets, fromBucket: fromBucket, trusted: trusted,
-    canon: canon, fp: fp, NOSYNC: NOSYNC, NB: NB };
+  /* ---------- relays (NIP-01 over a websocket). Everything a relay sends is hostile data: messages over MAX_MSG are dropped
+     unread, at most MAX_EVS events are taken from one relay, and accept() decides which are kept. ---------- */
+  /* relays that took, kept, replaced and gave back these events from a new key (probe from GitHub Actions 2026-10-16);
+     relay.damus.io took them but did not answer reads, offchain.pub and bitcoiner.social refuse new keys, nostr.land is paid */
+  var RELAYS = ["wss://relay.primal.net", "wss://nos.lol", "wss://relay.snort.social", "wss://nostr-pub.wellorder.net", "wss://nostr.oxtr.dev"];
+  var MAX_MSG = 400000, MAX_EVS = 400;
+  function relayReq(url, sub, wait, accept) {
+    return new Promise(function (res) {
+      var got = [], ws, done = false, id = "s" + Math.random().toString(36).slice(2, 10);
+      function end(ok) { if (done) return; done = true; clearTimeout(tm); try { ws.close(); } catch (e) {} res({ url: url, ok: ok, events: got }); }
+      var tm = setTimeout(function () { end(got.length > 0); }, wait);
+      try { ws = new WebSocket(url); } catch (e) { end(false); return; }
+      ws.onopen = function () { ws.send(JSON.stringify(["REQ", id, sub])); };
+      ws.onmessage = function (m) {
+        if (typeof m.data !== "string" || m.data.length > MAX_MSG) return;
+        var a; try { a = JSON.parse(m.data); } catch (e) { return; }
+        if (!Array.isArray(a)) return;
+        if (a[0] === "EVENT" && a[1] === id && plain(a[2]) && accept(a[2])) { if (got.length < MAX_EVS) got.push(a[2]); else end(true); }
+        else if (a[0] === "EOSE" && a[1] === id) end(true);
+        else if (a[0] === "CLOSED" && a[1] === id) end(false);
+      };
+      ws.onerror = function () { end(false); };
+      ws.onclose = function () { end(got.length > 0); };
+    });
+  }
+  function relayPub(url, evs, wait) {
+    return new Promise(function (res) {
+      var ws, ok = 0, left = evs.length, done = false, why = "";
+      function end() { if (done) return; done = true; clearTimeout(tm); try { ws.close(); } catch (e) {} res({ url: url, ok: ok, of: evs.length, why: why }); }
+      var tm = setTimeout(end, wait + 3000);
+      if (!left) { end(); return; }
+      try { ws = new WebSocket(url); } catch (e) { end(); return; }
+      ws.onopen = function () { evs.forEach(function (e) { ws.send(JSON.stringify(["EVENT", e])); }); };
+      ws.onmessage = function (m) {
+        if (typeof m.data !== "string" || m.data.length > MAX_MSG) return;
+        var a; try { a = JSON.parse(m.data); } catch (e) { return; }
+        if (Array.isArray(a) && a[0] === "OK") { if (a[2] === true) ok++; else why = String(a[3] || "").slice(0, 120); if (--left <= 0) end(); }
+      };
+      ws.onerror = ws.onclose = function () { end(); };
+    });
+  }
+  function tagOf(e) { var t = (Array.isArray(e.tags) ? e.tags : []).filter(function (x) { return Array.isArray(x) && x[0] === "d"; })[0]; return t ? String(t[1]) : ""; }
+
+  var core = { hex: hex, unhex: unhex, sign: sign, verify: verify, okPub: okPub, pubOf: pubOf, newCode: newCode, cleanCode: cleanCode, showCode: showCode, keys: keys, dtag: dtag, seal: seal, open: open, event: event, checkEvent: checkEvent,
+    split: split, join: join, unitsOf: unitsOf, parseUk: parseUk, stamp: stamp, merge: merge, newer: newer, storesFrom: storesFrom, buckets: buckets, fromBucket: fromBucket, trusted: trusted,
+    canon: canon, fp: fp, rand: rand, b2n: b2n, N: N, hidden: hidden, plain: plain, NOSYNC: NOSYNC, NB: NB, RELAYS: RELAYS, relayReq: relayReq, relayPub: relayPub, tagOf: tagOf };
 
   /* ================= the page ================= */
   function boot() {
     var D = W.document;
     if (/[?&]watchscan=1(&|$)/.test(W.location.search)) return;
     var CFG = "osap-sync", PEND = "osap-sync-pending", AUTO = "osap-sync-auto", MSG = "osap-sync-msg";
-    /* relays that took, kept, replaced and gave back these events from a new key (probe from GitHub Actions 2026-10-16);
-       relay.damus.io took them but did not answer reads, offchain.pub and bitcoiner.social refuse new keys, nostr.land is paid */
-    var RELAYS = ["wss://relay.primal.net", "wss://nos.lol", "wss://relay.snort.social", "wss://nostr-pub.wellorder.net", "wss://nostr.oxtr.dev"];
+    var RELAYS = core.RELAYS.slice();
     if (W.OSAP_SYNC_RELAYS && W.OSAP_SYNC_RELAYS.length) RELAYS = W.OSAP_SYNC_RELAYS.slice(0, 6);
     var MAX_EVENT = 120000, WAIT = 7000;   /* the smallest relays take messages up to 131,072 bytes */
 
@@ -337,7 +429,7 @@
 
     /* ---------- the workspaces on this device ---------- */
     var WSKEYS = ["osap-atak-pts", "osap-aoi", "osap-routes", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-pkgs", "asap-watches", "osap-work", "osap-shapes", "osap-viewsheds",
-      "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links"];
+      "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej"];
     var AREA = /^asap-area-[a-z]{2,3}(-st)?$/;
     function synced(k) { return (W.OSAP_WS && W.OSAP_WS.scoped ? W.OSAP_WS.scoped(k) : WSKEYS.indexOf(k) >= 0 || AREA.test(k)) && NOSYNC.indexOf(k) < 0; }
     function reg() { var r = json(raw("osap-ws"), null); return r && Array.isArray(r.list) && r.list.length ? r : null; }
@@ -368,41 +460,10 @@
       if (changed) put("osap-ws", JSON.stringify(r));
     }
 
-    /* ---------- relays ---------- */
-    function relayReq(url, K, sub) {
-      return new Promise(function (res) {
-        var got = [], ws, done = false, id = "s" + Math.random().toString(36).slice(2, 10);
-        function end(ok) { if (done) return; done = true; clearTimeout(tm); try { ws.close(); } catch (e) {} res({ url: url, ok: ok, events: got }); }
-        var tm = setTimeout(function () { end(got.length > 0); }, WAIT);
-        try { ws = new WebSocket(url); } catch (e) { end(false); return; }
-        ws.onopen = function () { ws.send(JSON.stringify(["REQ", id, sub])); };
-        ws.onmessage = function (m) {
-          var a; try { a = JSON.parse(m.data); } catch (e) { return; }
-          if (!Array.isArray(a)) return;
-          if (a[0] === "EVENT" && a[1] === id && plain(a[2]) && a[2].pubkey === K.pk && a[2].kind === 30078) got.push(a[2]);
-          else if (a[0] === "EOSE" && a[1] === id) end(true);
-          else if (a[0] === "CLOSED" && a[1] === id) end(false);
-        };
-        ws.onerror = function () { end(false); };
-        ws.onclose = function () { end(got.length > 0); };
-      });
-    }
-    function relayPub(url, evs) {
-      return new Promise(function (res) {
-        var ws, ok = 0, left = evs.length, done = false, why = "";
-        function end() { if (done) return; done = true; clearTimeout(tm); try { ws.close(); } catch (e) {} res({ url: url, ok: ok, of: evs.length, why: why }); }
-        var tm = setTimeout(end, WAIT + 3000);
-        if (!left) { end(); return; }
-        try { ws = new WebSocket(url); } catch (e) { end(); return; }
-        ws.onopen = function () { evs.forEach(function (e) { ws.send(JSON.stringify(["EVENT", e])); }); };
-        ws.onmessage = function (m) {
-          var a; try { a = JSON.parse(m.data); } catch (e) { return; }
-          if (Array.isArray(a) && a[0] === "OK") { if (a[2] === true) ok++; else why = String(a[3] || "").slice(0, 120); if (--left <= 0) end(); }
-        };
-        ws.onerror = ws.onclose = function () { end(); };
-      });
-    }
-    function tagOf(e) { var t = (e.tags || []).filter(function (x) { return Array.isArray(x) && x[0] === "d"; })[0]; return t ? String(t[1]) : ""; }
+    /* ---------- relays (core.relayReq / core.relayPub) ---------- */
+    function relayReq(url, K, sub) { return core.relayReq(url, sub, WAIT, function (e) { return e.pubkey === K.pk && e.kind === 30078; }); }
+    function relayPub(url, evs) { return core.relayPub(url, evs, WAIT); }
+    var tagOf = core.tagOf;
 
     /* ---------- one sync ---------- */
     var busy = null, last = { at: 0, ok: false, msg: "", relays: 0, sent: 0, got: 0, devices: [] }, lastSig = "", sentAt = {}, devAt = 0;
@@ -601,6 +662,8 @@
       }
       box.innerHTML = '<div class="cbox"><div class="chead"><h2 id="sync-h">Sync my devices</h2><button type="button" class="x" aria-label="Close">&times;</button></div>' +
         (UI.msg ? '<p class="mvwarn" role="alert">' + esc(UI.msg) + "</p>" : "") + h +
+        /* Team workspace (assets/osap-team.js) lists this device's teams here */
+        (W.OSAP_TEAM && W.OSAP_TEAM.syncHtml ? W.OSAP_TEAM.syncHtml() : "") +
         '<details class="mvnote"><summary>What syncs, and how it is protected</summary>' +
         "<p>Syncs: every workspace with its map points, drawn areas, NAI/TAI, routes, imported shapes, viewsheds, keyword watches, saved reports and notes, and medical, evacuation and comms plans. Each item is merged on its own, and the newest change wins. Deleted items stay deleted.</p>" +
         "<p>Stays on each device: photos, map and device settings, offline maps, and the hidden areas.</p>" +

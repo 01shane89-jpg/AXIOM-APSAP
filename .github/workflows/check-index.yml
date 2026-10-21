@@ -21,6 +21,11 @@ jobs:
       # hidden areas (tools/hidden-areas.json): their files must be sealed, never plain, in the repository
       - run: node tools/seal_hidden.mjs --check --skip-live
       - run: node tests/seal.test.mjs
+      # the paywall (tools/tiers.mjs, netlify/): what each plan opens, the edge gate, Paddle webhooks
+      - run: npm ci --prefix netlify --no-audit --no-fund
+      - run: node tests/tier.test.mjs
+      # reviews (tools/reviews.mjs, netlify/functions/osap-reviews.mjs) and when the app asks for one (assets/osap-reviews.js)
+      - run: node tests/reviews.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -35,6 +40,7 @@ jobs:
       - run: node tests/places_deepsouth.test.mjs
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
+      - run: node tests/sat.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/deepsouth_border.test.mjs
@@ -48,13 +54,17 @@ jobs:
       - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
+      - run: node tests/keydates.test.mjs
+      - run: node tests/an_auto.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/social_view.test.mjs
       - run: node tests/jp_ccc.test.mjs
+      - run: node tests/tw_kr_designations.test.mjs
       - run: node tests/medplan_model.test.mjs
       - run: node tests/boolq.test.mjs
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
+      - run: node tests/econ.test.mjs
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
       - run: node tests/seatransit.test.mjs
@@ -63,11 +73,23 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
+      # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
+      - run: node tests/team.test.mjs
+      # GPS interference map: which aircraft reports count, hourly windows, grading, day files (tools/gnss.mjs)
+      - run: node tests/gnss.test.mjs
+      - run: node tests/warngeo.test.mjs
+      # source grading in My work: the Admiralty / NATO scale, cleaning grades and per-source defaults, escaped picker
+      - run: node tests/grade.test.mjs
+      # photo and video check: NOAA sun position, shadow times, metadata reader (JPEG, PNG, HEIC, MP4, MOV)
+      - run: node tests/photocheck.test.mjs
+      # the bundle AXIOM imports: framing and digest, non-commercial sources left out, curated records unchanged (tools/axiom_bundle_lib.mjs)
+      - run: node tests/axiom_bundle.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
-    # the whole suite now runs about 29 to 30 minutes, so 30 cancelled green runs (2026-10-04)
-    timeout-minutes: 45
+    # the whole suite now runs about 29 to 30 minutes, so 30 cancelled green runs (2026-10-04); by 2026-10-19 it ran 43 to 45
+    # minutes and 45 cancelled main and two PRs one test from the end
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -77,13 +99,23 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
+      # a US state view shows its outlets' earlier items (data/history/us-states, tools/history.mjs)
+      - run: node tests/state_history_smoke.mjs
       - run: node tests/lock_smoke.mjs
+      - run: npm ci --prefix netlify --no-audit --no-fund
+      - run: node tests/tier_smoke.mjs
+      # the plan's locked data files are not asked for (Free and Mid get no 402); Thailand's files load only for Thailand
+      - run: node tests/locked_requests_smoke.mjs
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs
+      - run: node tests/econ_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/area_report_smoke.mjs
+      # OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
+      - run: node tests/osir_smoke.mjs
       - run: node tests/points_smoke.mjs
+      - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
       - run: node tests/milsites_smoke.mjs
@@ -92,10 +124,14 @@ jobs:
       - run: node tests/ds_review_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/cf_history_range_smoke.mjs
+      - run: node tests/violence_history_smoke.mjs
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/flood_overlay_smoke.mjs
       - run: node tests/pop_smoke.mjs
+      - run: node tests/warngeo_smoke.mjs
+      - run: node tests/sat_smoke.mjs
+      - run: node tests/keydates_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs
@@ -103,6 +139,9 @@ jobs:
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
       - run: node tests/sync_smoke.mjs
+      # team workspace: share from Workspaces, join by viewer and editor links, viewer read-only, forged events refused, new team links
+      - run: node tests/team_smoke.mjs
+      - run: node tests/gnss_smoke.mjs
       - run: node tests/guide_smoke.mjs
       - run: node tests/lang_smoke.mjs
       - run: node tests/ai_smoke.mjs
@@ -110,6 +149,7 @@ jobs:
       - run: node tests/period_smoke.mjs
       - run: node tests/period14_smoke.mjs
       - run: node tests/search_smoke.mjs
+      - run: node tests/search_all_smoke.mjs
       - run: node tests/news_speed_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
@@ -143,6 +183,9 @@ jobs:
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
       - run: node tests/medplan_sea_smoke.mjs
+      - run: node tests/medplan_hang_smoke.mjs
+      - run: node tests/medplan_equiv.test.mjs
+      - run: node tests/medplan_conflict_map_smoke.mjs
       - run: node tests/seatransit_smoke.mjs
       - run: node tests/lz_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
@@ -153,12 +196,17 @@ jobs:
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
+      - run: node tests/intelbrief_smoke.mjs
       - run: node tests/wxchart_smoke.mjs
       - run: node tests/avwx_smoke.mjs
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
+      - run: node tests/mycountries_smoke.mjs
+      - run: node tests/empty_states_smoke.mjs
       - run: node tests/report_english_smoke.mjs
       - run: node tests/social_filter_smoke.mjs
       - run: node tests/speed_budget.mjs
       - run: node tests/boolq_smoke.mjs
+      # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
+      - run: node tests/grade_smoke.mjs

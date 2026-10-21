@@ -11,7 +11,7 @@
 ["w1271514075",0.7548,97.87681,"id",{"name":"Klinik Kasih","amenity":"clinic","operator:type":"private","addr:city":"Nias Selatan"}],
 ["w1513895307",1.41431,97.34543,"id",{"name":"RSUD Tafaeri","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Dinas Kesehatan","operator:type":"government_facility-public"}],
 ["w1532156883",1.38478,97.48044,"id",{"name":"Pustu Mazingo","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
-["w1533402005",1.38753,97.35797,"id",{"name":"Puskesmas Lotu","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
+["w1533402005",1.38753,97.35797,"id",{"name":"Puskesmas Lotu","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government","opening_hours":"Mo-Fr 08:00-17:00"}],
 ["w1534496154",1.22457,97.26664,"id",{"name":"Posyandu Turenamohesa","amenity":"clinic","healthcare":"clinic","operator":"Posyandu","operator:type":"private"}],
 ["w1536076571",1.30226,97.25903,"id",{"name":"Pustu Desa Sisobahili","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
 ["w1536402986",1.39618,97.38357,"id",{"name":"Poskesdes Hiligodu","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
@@ -22,5 +22,5 @@
 ["w293904462",0.75308,97.66519,"id",{"name":"PUSKESMAS Amandraya","amenity":"clinic","operator:type":"government"}],
 ["w293904463",0.75325,97.66505,"id",{"name":"PUSKESMAS Amandraya","amenity":"clinic","operator:type":"government"}],
 ["w293904488",0.75489,97.66914,"id",{"name":"Stela Duce","amenity":"clinic"}],
-["w608363421",1.16607,97.70733,"id",{"name":"Bandar Udara Binaka","name:en":"Binaka Airport","operator":"Kemenhub","phone":"+62 639 8000005","aeroway":"aerodrome","icao":"WIMB","iata":"GNS","aerodrome:type":"public"}],
+["w608363421",1.16607,97.70733,"id",{"name":"Bandar Udara Binaka","name:en":"Binaka Airport","operator":"Kemenhub","phone":"+62 639 8000005","aeroway":"aerodrome","icao":"WIMB","iata":"GNS","aerodrome:type":"public","wikidata":"Q598859"}],
 ["w944310841",0.57134,97.81998,"id",{"name":"Rumah Sakit Stella Maris","amenity":"hospital","healthcare":"hospital","emergency":"yes"}]]

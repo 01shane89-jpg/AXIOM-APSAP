@@ -11,7 +11,7 @@
 ["n11951660342",40.61547,108.98004,"cn",{"aeroway":"helipad"}],
 ["n11951660343",40.61542,108.98082,"cn",{"aeroway":"helipad"}],
 ["r11151089",41.69419,108.37856,"cn",{"name":"乌拉特中旗机场","aeroway":"aerodrome"}],
-["r14511576",40.55985,109.99922,"cn",{"name":"包头东河国际机场","name:en":"Baotou Donghe International Airport","operator":"内蒙古民航机场集团公司","aeroway":"aerodrome","icao":"ZBOW","iata":"BAV"}],
+["r14511576",40.55985,109.99922,"cn",{"name":"包头东河国际机场","name:en":"Baotou Donghe International Airport","operator":"内蒙古民航机场集团公司","aeroway":"aerodrome","icao":"ZBOW","iata":"BAV","wikidata":"Q1930670"}],
 ["w1006110059",40.6065,109.83398,"cn",{"name":"沼潭街道社区卫生中心","amenity":"clinic","healthcare":"clinic"}],
 ["w1021377584",40.7273,108.64869,"cn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1085297980",40.63982,109.8321,"cn",{"name":"包头云龙骨科医院","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"orthopaedics","addr:street":"阿尔丁大街","addr:district":"昆都仑区","addr:city":"包头市","addr:province":"内蒙古自治区"}],
@@ -45,6 +45,6 @@
 ["w1252191470",40.60429,109.83939,"cn",{"name":"包头文治医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1444859514",40.60291,109.82416,"cn",{"name":"普行医院","amenity":"hospital","healthcare":"hospital"}],
 ["w168556498",40.61481,108.99814,"cn",{"name":"公庙子机场","aeroway":"aerodrome","military":"airfield"}],
-["w509212532",41.69419,108.37856,"cn",{"name":"乌拉特中旗机场","name:en":"Urad Middle Banner Airport","operator":"内蒙古机场集团","aeroway":"aerodrome","icao":"ZBUT","iata":"WZQ"}],
+["w509212532",41.69419,108.37856,"cn",{"name":"乌拉特中旗机场","name:en":"Urad Middle Banner Airport","operator":"内蒙古机场集团","aeroway":"aerodrome","icao":"ZBUT","iata":"WZQ","wikidata":"Q35314451"}],
 ["w546689964",41.77332,109.97424,"cn",{"name":"白云矿区蒙医中医医院","amenity":"hospital","healthcare":"hospital"}],
 ["w613969429",40.61984,109.82999,"cn",{"name":"综合门诊部","amenity":"hospital","healthcare":"hospital"}]]

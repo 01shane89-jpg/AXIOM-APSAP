@@ -39,7 +39,7 @@
 ["w1263186107",45.73324,122.6565,"cn",{"aeroway":"helipad"}],
 ["w1473271930",44.17358,123.4499,"cn",{"name":"大兴镇卫生院","amenity":"clinic","healthcare":"clinic","addr:district":"长岭县","addr:city":"松原市","addr:province":"吉林省","addr:postcode":"131513"}],
 ["w1527115135",45.84874,123.22299,"cn",{"name":"镇赉县中医院","amenity":"hospital","healthcare":"hospital"}],
-["w522335996",45.50686,123.02341,"cn",{"name":"白城长安机场","name:en":"Baicheng Chang'an Airport","aeroway":"aerodrome","icao":"ZYBA","iata":"DBC"}],
+["w522335996",45.50686,123.02341,"cn",{"name":"白城长安机场","name:en":"Baicheng Chang'an Airport","aeroway":"aerodrome","icao":"ZYBA","iata":"DBC","wikidata":"Q3565600"}],
 ["w559336518",44.12304,123.3036,"cn",{"name":"科尔沁左翼中旗人民医院","name:en":"Horqin Left MIddle Banner People's Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w559567894",44.01652,122.74733,"cn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w769687676",45.67272,122.846,"cn",{"aeroway":"aerodrome","military":"airfield"}],

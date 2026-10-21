@@ -7,7 +7,7 @@
 ["n4739789261",19.36142,110.09801,"cn",{"name":"屯昌县妇婴医院","amenity":"hospital","healthcare":"hospital"}],
 ["n5842230337",19.13998,110.56345,"cn",{"aeroway":"helipad"}],
 ["n6973239425",19.21413,110.01149,"cn",{"name":"枫木中心卫生院","amenity":"hospital","healthcare":"hospital"}],
-["r10106018",19.94427,110.4625,"cn",{"name":"海口美兰国际机场","name:en":"Haikou Meilan International Airport","aeroway":"aerodrome","icao":"ZJHK","iata":"HAK","aerodrome:type":"international"}],
+["r10106018",19.94427,110.4625,"cn",{"name":"海口美兰国际机场","name:en":"Haikou Meilan International Airport","aeroway":"aerodrome","icao":"ZJHK","iata":"HAK","aerodrome:type":"international","wikidata":"Q1143116"}],
 ["w1105776447",19.2312,110.47072,"cn",{"name":"琼海市中医院（新区）","amenity":"hospital","healthcare":"hospital","addr:street":"跃华路","addr:district":"琼海市","addr:province":"海南省"}],
 ["w1162437371",19.14612,110.49493,"cn",{"name":"博鳌未来医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1162437372",19.14769,110.49424,"cn",{"name":"上海中医药大学博鳌国际医院","amenity":"hospital","healthcare":"hospital"}],
@@ -34,7 +34,7 @@
 ["w1532271667",19.98138,110.29598,"cn",{"name":"海南医科大学第二附属医院主院区","amenity":"hospital","healthcare":"hospital"}],
 ["w1532551289",19.98043,110.41946,"cn",{"name":"海口市妇幼保健院江东院区","amenity":"hospital","healthcare":"hospital"}],
 ["w1533507887",19.76212,110.00597,"cn",{"name":"澄迈县人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w451524438",19.14288,110.4519,"cn",{"name":"琼海博鳌国际机场","name:en":"Qionghai Bo'ao International Airport","aeroway":"aerodrome","icao":"ZJQH","iata":"BAR"}],
+["w451524438",19.14288,110.4519,"cn",{"name":"琼海博鳌国际机场","name:en":"Qionghai Bo'ao International Airport","aeroway":"aerodrome","icao":"ZJQH","iata":"BAR","wikidata":"Q7267894"}],
 ["w832893899",19.69285,110.34164,"cn",{"name":"定安县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w832893900",19.69907,110.32696,"cn",{"name":"定安县中医院","amenity":"hospital","healthcare":"hospital"}],
 ["w896916768",19.9863,110.31538,"cn",{"aeroway":"helipad"}]]

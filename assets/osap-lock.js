@@ -19,7 +19,7 @@
 (function () {
   "use strict";
   var W = window, D = document;
-  var HIDDEN = ["us"];
+  var HIDDEN = [];
   /* the owners' public keys (setup codes, "osap-pub:v1:<base64url SPKI>"), added by hand after setup. Only a device holding the
      private half of one of these can unlock; another owner device (a PC with Windows Hello) is added by its own setup code. */
   var OWNER = [

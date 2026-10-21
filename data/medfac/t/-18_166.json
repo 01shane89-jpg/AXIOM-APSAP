@@ -1,0 +1,11 @@
+[["n1042050144",-16.265,167.924,"vu",{"name":"Craig Cove Airport","aeroway":"aerodrome","icao":"NVSF","iata":"CCV","aerodrome:type":"public","wikidata":"Q1655171"}],
+["n1042050150",-16.45665,167.82879,"vu",{"name":"Lamap Airport","aeroway":"aerodrome","icao":"NVSL","iata":"LPM","wikidata":"Q6743067"}],
+["n1042050163",-16.48345,167.44587,"vu",{"name":"Southwest Bay Airport","aeroway":"aerodrome","icao":"NVSX","iata":"SWJ","wikidata":"Q7568834"}],
+["n11836538203",-16.06434,167.39972,"vu",{"healthcare":"hospital"}],
+["n3414744831",-16.24573,167.95315,"vu",{"name":"Aid Post","amenity":"clinic"}],
+["n3414744832",-16.27059,167.93603,"vu",{"name":"Aid Post","amenity":"clinic"}],
+["n3416130856",-16.30687,167.98388,"vu",{"name":"Aid Post","amenity":"clinic"}],
+["w1412497945",-16.07819,167.39993,"vu",{"name":"Norsup Airport","aeroway":"aerodrome","icao":"NVSP","iata":"NUS","wikidata":"Q7053491"}],
+["w334433631",-16.06437,167.39942,"vu",{"name":"Norsup Hospital","amenity":"hospital"}],
+["w335842472",-16.34769,167.37687,"vu",{"name":"Dixon Reef Aid Post","amenity":"clinic"}],
+["w425014464",-16.48111,167.44551,"vu",{"name":"South West Bay Health Clinic","amenity":"hospital","healthcare":"hospital"}]]

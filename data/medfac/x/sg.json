@@ -1,0 +1,4 @@
+[["n10742863259",1.28048,103.83832,"sg",{"name":"Bloodbank@HSA","healthcare":"blood_donation"}],
+["n11243615161",1.4093,103.90507,"sg",{"name":"Bloodbank@One Punggol","healthcare":"blood_donation","operator":"Health Sciences Authority","phone":"+6563223076","addr:housenumber":"1","addr:street":"Punggol Drive","addr:city":"Singapore","addr:postcode":"828629","opening_hours":"Mo,We-Fr 12:00-20:00; Sa-Su 10:00-17:00; PH,Tu closed"}],
+["n6665216260",1.32478,103.84225,"sg",{"name":"Hyperbaric Medical Services","amenity":"clinic","healthcare":"clinic","operator:type":"private","addr:housenumber":"1","addr:street":"Thomson Road","opening_hours":"Mo-Fr 09:00-18:00; Sa 09:00-13:00; Su,PH off"}],
+["n9890862187",1.29883,103.84578,"sg",{"name":"Bloodbank @ Dhoby Ghaut","healthcare":"blood_donation","opening_hours":"Mo-We,Fr 12:00-20:00; Sa,Su 10:00-17:00; Th,PH closed"}]]

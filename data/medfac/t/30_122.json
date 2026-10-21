@@ -18,6 +18,9 @@
 ["w156015261",30.73954,122.44246,"cn",{"aeroway":"helipad"}],
 ["w1561089521",30.47656,122.28497,"cn",{"aeroway":"helipad"}],
 ["w1561316624",30.45483,122.29343,"cn",{"name":"岱山县第二人民医院","amenity":"hospital","healthcare":"hospital"}],
-["w451705796",30.28744,122.14416,"cn",{"name":"岱山空军基地","name:en":"Daishan Air Base","aeroway":"aerodrome","military":"airfield"}],
+["w1566652176",30.01024,122.08924,"cn",{"aeroway":"helipad"}],
+["w1567122058",30.59429,122.35665,"cn",{"aeroway":"helipad"}],
+["w1567406342",30.4093,122.46948,"cn",{"aeroway":"helipad"}],
+["w451705796",30.28744,122.14416,"cn",{"name":"岱山空军基地","name:en":"Daishan Air Base","aeroway":"aerodrome","military":"airfield","wikidata":"Q11050310"}],
 ["w648345875",30.07165,122.17041,"cn",{"name":"上海瑞金医院舟山分院","amenity":"hospital","healthcare":"hospital"}],
 ["w726837110",30.85272,122.67781,"cn",{"aeroway":"helipad"}]]

@@ -27,8 +27,8 @@
 ["w167824478",37.87357,110.0714,"cn",{"name:en":"Zhenchuan airbase","aeroway":"aerodrome","military":"airfield"}],
 ["w305368798",37.27181,111.78054,"cn",{"name":"汾阳医院","amenity":"hospital","healthcare":"hospital"}],
 ["w305506110",37.27535,111.7768,"cn",{"name":"儿童医院","amenity":"hospital","healthcare":"hospital"}],
-["w454505294",36.13664,111.64095,"cn",{"name":"临汾尧都机场","name:en":"Linfen Yaodu Airport","aeroway":"aerodrome","icao":"ZBLF","iata":"LFQ"}],
+["w454505294",36.13664,111.64095,"cn",{"name":"临汾尧都机场","name:en":"Linfen Yaodu Airport","aeroway":"aerodrome","icao":"ZBLF","iata":"LFQ","wikidata":"Q6553665"}],
 ["w523569027",36.09137,111.47829,"cn",{"name":"临汾市第一医院","amenity":"hospital","healthcare":"hospital"}],
 ["w588449433",36.08392,111.51871,"cn",{"name":"临汾市中心医院","amenity":"hospital","healthcare":"hospital"}],
-["w646168239",37.68398,111.1424,"cn",{"name":"吕梁大武机场","name:en":"Lüliang Airport","aeroway":"aerodrome","icao":"ZBLL","iata":"LLV"}],
+["w646168239",37.68398,111.1424,"cn",{"name":"吕梁大武机场","name:en":"Lüliang Airport","aeroway":"aerodrome","icao":"ZBLL","iata":"LLV","wikidata":"Q6711554"}],
 ["w868657519",37.0236,111.90601,"cn",{"name":"汾西矿业总医院","amenity":"hospital","healthcare":"hospital"}]]

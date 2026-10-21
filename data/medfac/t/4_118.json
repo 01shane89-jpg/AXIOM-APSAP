@@ -32,7 +32,7 @@
 ["w1352840394",4.45715,118.59499,"my",{"aeroway":"helipad"}],
 ["w1509626866",4.74399,118.5143,"my",{"aeroway":"helipad"}],
 ["w287748709",4.84269,119.4609,"ph",{"name":"Sibutu Air Base","operator":"Philippine Air Force","addr:city":"Sibutu","addr:province":"Tawi-Tawi","addr:postcode":"7510","aeroway":"aerodrome","military":"airfield"}],
-["w397038442",5.04947,119.74409,"ph",{"name":"Sanga Sanga Airport","addr:city":"Bongao","addr:postcode":"7500","aeroway":"aerodrome","icao":"RPMN","iata":"TWT"}],
+["w397038442",5.04947,119.74409,"ph",{"name":"Sanga Sanga Airport","addr:city":"Bongao","addr:postcode":"7500","aeroway":"aerodrome","icao":"RPMN","iata":"TWT","wikidata":"Q1321647"}],
 ["w398606745",4.42164,118.5736,"my",{"aeroway":"helipad"}],
 ["w399212749",4.45433,118.59487,"my",{"name":"Lapangan Terbang Semporna","name:en":"Semporna Airport","operator":"Malaysia Airports","aeroway":"aerodrome","icao":"WBKA","iata":"SMM","wikidata":"Q1432815"}],
 ["w497135600",5.0527,119.74394,"ph",{"name":"Sick House","amenity":"clinic","addr:city":"Bongao","addr:province":"Tawi-Tawi","addr:postcode":"7500"}],

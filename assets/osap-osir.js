@@ -1,0 +1,289 @@
+/* AXIOM OSAP: OSIR, Open Source Intelligence Report (Shane 2026-10-21: "New report. OSIR format: Subject, Date generated,
+   Country/s, OSINT disclaimer, Summary, (Main content), End of report, Attachments, Contributors, Sources").
+   Reports > OSIR opens a small window: country, region (the whole country, one province the records name, or the drawn area),
+   topic, dates, the subject line, who prepared it and an optional analyst summary. "Make OSIR" shows the report in the print
+   overlay (#brief, html.briefing, as the Timeline report does); Print or Save as PDF keeps a copy.
+   - The content comes from the Timeline report (window.OSAP_TLREPORT.data): the same records, key events (fixed rules, no AI),
+     map, chart, key-event rows and chronology entries. The sections follow Shane's order exactly.
+   - OSAP writes no judgments. The automatic summary is counts by fixed rules and says so; the analyst summary is what the person
+     typed, marked as theirs. Event summaries written by AI keep their small "AI generated" tag.
+   - Every record keeps its source link and SHA-256 fingerprint; the report fingerprint covers all of them in order.
+   - Built in the browser; nothing is sent anywhere and no record is changed. */
+(function () {
+  "use strict";
+  var W = window, D = document, PEND = "osap-osir-pending", WHO = "osap-osir-by";
+  var MON = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  var PRESETS = [["7", "7 days"], ["14", "14 days"], ["30", "30 days"], ["90", "90 days"], ["182", "6 months"], ["365", "1 year"], ["all", "All dates"]];
+  var DISCLAIMER = "This report was compiled only from publicly available information (open sources). It holds no classified or proprietary material. " +
+    "Statements are what the named sources reported, not confirmed facts: government, police and military statements are reported claims, and a credible source can still be wrong. " +
+    "Groupings, counts and key events are picked by fixed rules; items tagged AI generated or Automatic are drafts, not analyst-approved. " +
+    "The information is as held by OSAP at the time generated. Check the linked sources before acting on it.";
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
+  function host(u) { var m = /^https?:\/\/([^\/?#]+)/i.exec(u || ""); return m ? m[1].replace(/^www\./, "") : ""; }
+  function pl(n, one, many) { return n + " " + (n === 1 ? one : many || one + "s"); }
+  function iso(ms) { return new Date(ms).toISOString().slice(0, 10); }
+  function today() { return iso(Date.now()); }
+  function T() { return W.OSAP_TIME || { dualT: function (ms) { return new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; } }; }
+  function fmtShort(d) { return new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
+  /* date-time group in Zulu: 211043Z OCT 26 */
+  function dtg(ms) { var d = new Date(ms), p = function (x) { return ("0" + x).slice(-2); }; return p(d.getUTCDate()) + p(d.getUTCHours()) + p(d.getUTCMinutes()) + "Z " + MON[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2); }
+  function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
+  function topN(o, n) { return Object.keys(o).sort(function (a, b) { return o[b] - o[a] || a.localeCompare(b); }).slice(0, n).map(function (k) { return [k, o[k]]; }); }
+  function list3(t) { return t.map(function (x, i) { return (i && i === t.length - 1 ? "and " : "") + x[0] + " (" + x[1] + ")"; }).join(t.length > 2 ? ", " : " "); }
+  function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area() && A.area().length >= 3); }
+  function getLS(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }
+  function setLS(k, v) { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} }
+  function appPeriod() {
+    var P = { p: "30" };
+    try { var v = JSON.parse(localStorage.getItem("asap-period")); if (v && v.p) P = v; } catch (e) {}
+    if (P.p === "custom" && (P.from || P.to)) return { from: P.from || "", to: P.to || "" };
+    if (P.p === "all") return { from: "", to: "" };
+    var n = P.p === "24h" ? 1 : +P.p || 30;
+    return { from: iso(Date.now() - (n - 1) * 864e5), to: today() };
+  }
+
+  /* ---------- the window: what the report covers ---------- */
+  var BOX = null, S = { cc: "", region: "", scope: "", from: "", to: "", subject: "", subjectSet: false, by: "", summary: "", data: null, seq: 0 };
+  function css() {
+    if (D.getElementById("osir-css")) return;
+    var st = D.createElement("style"); st.id = "osir-css";
+    st.textContent =
+      "#osirdlg{position:fixed;inset:0;z-index:100001;overflow:auto;background:rgba(0,0,0,.45);padding:16px}#osirdlg[hidden]{display:none}" +
+      "#osirdlg .cbox{max-width:620px;margin:0 auto;background:var(--surface);color:var(--ink);border-radius:8px;padding:14px 18px 18px;font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgba(0,0,0,.3)}" +
+      "#osirdlg .chead{display:flex;align-items:center;gap:8px}#osirdlg .chead h2{margin:0;font-size:18px;flex:1}" +
+      "#osirdlg .chead .x{font-size:26px;min-width:44px;min-height:44px;background:none;border:none;color:var(--ink);cursor:pointer}" +
+      "#osirdlg .obs{color:var(--muted)}#osirdlg .osg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0}" +
+      "#osirdlg label{display:flex;flex-direction:column;gap:3px;font-weight:600;min-width:0}" +
+      "#osirdlg select,#osirdlg input,#osirdlg textarea{min-height:38px;font:inherit;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:4px 8px;min-width:0;max-width:100%}" +
+      "#osirdlg textarea{min-height:64px;resize:vertical;font-weight:400}#osirdlg label small{font-weight:400;color:var(--muted)}" +
+      "#osirdlg .osw{grid-column:1/-1}#osirdlg .osp{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 4px}" +
+      "#osirdlg .osp button{min-height:32px;padding:2px 10px;border-radius:16px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font:inherit;cursor:pointer}" +
+      "#osirdlg .osp button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}" +
+      "#osirdlg .osn{background:var(--surface2);border-left:3px solid var(--accent);padding:7px 10px;margin:8px 0;min-height:20px}#osirdlg .osn.bad{border-left-color:var(--bad)}" +
+      "#osirdlg .osb{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}#osirdlg .osb button{min-height:42px}" +
+      "@media (max-width:520px){#osirdlg{padding:8px}#osirdlg .osg{grid-template-columns:minmax(0,1fr)}}" +
+      /* the report: the Timeline report's styles (.tlr) plus the OSIR's own banner, field table and closing line */
+      ".tlr.osir .osban{background:#007a33;color:#fff;text-align:center;font:700 10.5px/1.9 system-ui,sans-serif;letter-spacing:.16em;margin:0 0 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+      ".tlr.osir .osban.end{margin:16px 0 0}.tlr.osir table.osf{width:100%;border-collapse:collapse;margin:0 0 6px}" +
+      ".tlr.osir table.osf th{width:132px;text-align:left;vertical-align:top;padding:4px 10px 4px 0;color:#12324a;font-family:Georgia,'Times New Roman',serif;font-size:1.05em;border-bottom:1px solid #d5dde4}" +
+      ".tlr.osir table.osf td{padding:4px 0;border-bottom:1px solid #d5dde4}.tlr.osir table.osf td b{font-size:1.08em}" +
+      ".tlr.osir .osdisc{border:1px solid #9fb0bf;background:#f4f7f9;padding:7px 10px;margin:0 0 4px}" +
+      ".tlr.osir .osan{white-space:pre-wrap;border-left:3px solid #12324a;padding:3px 0 3px 10px;margin:4px 0 8px}" +
+      ".tlr.osir h4.oss{font-family:Georgia,'Times New Roman',serif;color:#12324a;font-size:1.12em;margin:12px 0 4px}" +
+      ".tlr.osir .osend{text-align:center;font:700 12px/1.6 Georgia,'Times New Roman',serif;letter-spacing:.2em;color:#12324a;border-top:3px double #12324a;border-bottom:3px double #12324a;margin:18px 0 14px;padding:4px 0}" +
+      ".tlr.osir ul.oscon{margin:4px 0 0;padding-left:18px}.tlr.osir .mg{font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-all}" +
+      "@media print{.tlr.osir h4.oss .aitag::after,.tlr.osir p.bm>.aitag::after{content:none}html.briefing .tlr.osir .osatt{break-before:page;page-break-before:always}html.briefing .tlr.osir table.osf th{width:96px}}";
+    D.head.appendChild(st);
+  }
+  function opts() {
+    var o = { scope: S.scope, from: S.from, to: S.to };
+    if (S.region === "@area") { var A = W.TSAP.areaApi, P = A && A.area && A.area(); if (P && P.length >= 3) o.area = P; }
+    else if (S.region) o.prov = S.region;
+    return o;
+  }
+  function regionText(d) { return S.region === "@area" ? "the drawn area in " + d.country : S.region ? S.region + ", " + d.country : d.country; }
+  function autoSubject(d) { return d.scope && d.scope.label && S.scope ? d.scope.label + ", " + regionText(d) : "Open source reporting on " + regionText(d); }
+  function presetOf() {
+    if (!S.from && !S.to) return "all";
+    if (S.to !== today()) return "";
+    for (var i = 0; i < PRESETS.length - 1; i++) if (S.from === iso(Date.now() - (+PRESETS[i][0] - 1) * 864e5)) return PRESETS[i][0];
+    return "";
+  }
+  function draw() {
+    var d = S.data, cs = (W.OSAP_COUNTRIES || []).slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
+    var sel = function (v, cur) { return v === cur ? " selected" : ""; };
+    if (d && !S.subjectSet) S.subject = autoSubject(d);
+    var regs = '<option value="">All of ' + esc(d ? d.country : "the country") + "</option>" + (areaOn() ? '<option value="@area"' + sel("@area", S.region) + ">Drawn area on the map</option>" : "") +
+      (d ? d.provinces.map(function (p) { return '<option value="' + esc(p[0]) + '"' + sel(p[0], S.region) + ">" + esc(p[0]) + " (" + p[1] + ")</option>"; }).join("") : "");
+    var note, bad = false, pr = presetOf();
+    if (!d) note = "Reading the records…";
+    else if (!d.recs.length) { note = "No dated records match. Widen the dates, or pick another topic or region."; bad = true; }
+    else note = "<b>" + pl(d.total, "record") + "</b> match" + (d.total === 1 ? "es" : "") + (d.total > d.recs.length ? "; the report covers the latest " + d.recs.length + ", dated " : ", dated ") + esc(d.period) + "; " + pl(d.keyEv.length, "key event") + ".";
+    BOX.innerHTML = '<div class="cbox"><div class="chead"><h2 id="os-h">OSIR (Open Source Intelligence Report)</h2><button type="button" class="x" id="os-x" aria-label="Close">×</button></div>' +
+      '<p class="obs" style="margin:2px 0 0">Subject, date generated, countries, OSINT disclaimer, summary, main content, end of report, attachments, contributors and sources, from what OSAP holds. Choose what it covers.</p>' +
+      '<div class="osg"><label>Country<select id="os-cc">' + cs.map(function (c) { return '<option value="' + esc(c.id) + '"' + sel(c.id, S.cc) + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" +
+      '<label>Region<select id="os-reg">' + regs + "</select></label>" +
+      '<label class="osw">Topic<select id="os-top">' + (d ? d.scopes.map(function (x) { return '<option value="' + esc(x.v) + '"' + sel(x.v, S.scope) + ">" + esc(x.label) + "</option>"; }).join("") : "") + "</select></label>" +
+      '<div class="osw"><div class="osp" role="group" aria-label="Dates">' + PRESETS.map(function (p) { return '<button type="button" data-osp="' + p[0] + '"' + (pr === p[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + ">" + p[1] + "</button>"; }).join("") + "</div></div>" +
+      '<label>From<input type="date" id="os-from" value="' + esc(S.from) + '"></label><label>To<input type="date" id="os-to" value="' + esc(S.to) + '"></label>' +
+      '<label class="osw">Subject<input type="text" id="os-subj" maxlength="200" value="' + esc(S.subject) + '"></label>' +
+      '<label class="osw">Prepared by <small>(optional: your name, role or team, as it should appear under Contributors)</small><input type="text" id="os-by" maxlength="120" value="' + esc(S.by) + '"></label>' +
+      '<label class="osw">Analyst summary <small>(optional: your own words, shown first and marked as yours; OSAP\'s automatic summary follows)</small><textarea id="os-sum" maxlength="4000">' + esc(S.summary) + "</textarea></label></div>" +
+      '<div class="osn' + (bad ? " bad" : "") + '" id="os-note" aria-live="polite">' + note + "</div>" +
+      '<div class="osb"><button type="button" class="refresh primary" id="os-go"' + (!d || !d.recs.length ? " disabled" : "") + ">Make OSIR</button>" +
+      '<button type="button" class="refresh" id="os-close">Close</button></div></div>';
+    BOX.querySelector("#os-x").onclick = close; BOX.querySelector("#os-close").onclick = close;
+    BOX.querySelector("#os-cc").onchange = function () { switchCountry(this.value); };
+    BOX.querySelector("#os-reg").onchange = function () { S.region = this.value; refresh(); };
+    BOX.querySelector("#os-top").onchange = function () { S.scope = this.value; refresh(); };
+    BOX.querySelector("#os-from").onchange = function () { S.from = this.value; refresh(); };
+    BOX.querySelector("#os-to").onchange = function () { S.to = this.value; refresh(); };
+    BOX.querySelector("#os-subj").oninput = function () { S.subject = this.value; S.subjectSet = !!this.value.trim(); };
+    BOX.querySelector("#os-by").oninput = function () { S.by = this.value; };
+    BOX.querySelector("#os-sum").oninput = function () { S.summary = this.value; };
+    Array.prototype.forEach.call(BOX.querySelectorAll("[data-osp]"), function (b) {
+      b.onclick = function () { var v = b.getAttribute("data-osp"); if (v === "all") { S.from = ""; S.to = ""; } else { S.from = iso(Date.now() - (+v - 1) * 864e5); S.to = today(); } refresh(); };
+    });
+    BOX.querySelector("#os-go").onclick = make;
+  }
+  /* read the records for the current choice; a newer choice replaces an older one still being read */
+  function refresh() {
+    var n = ++S.seq; S.data = null; draw();
+    W.OSAP_TLREPORT.data(opts(), function (d) {
+      if (n !== S.seq || !BOX || BOX.hidden) return;
+      if (S.scope && !d.scopes.some(function (x) { return x.v === S.scope; })) d.scopes.push({ v: S.scope, label: d.scope.label || S.scope });
+      if (S.region && S.region !== "@area" && !d.provinces.some(function (p) { return p[0] === S.region; })) d.provinces.push([S.region, 0]);
+      S.data = d; draw();
+    });
+  }
+  function switchCountry(cc) {
+    if (!cc || cc === S.cc) return;
+    try { sessionStorage.setItem(PEND, JSON.stringify({ cc: cc, from: S.from, to: S.to, t: Date.now() })); } catch (e) {}
+    BOX.querySelector("#os-note").textContent = "Opening " + ((W.OSAP_COUNTRIES || []).filter(function (c) { return c.id === cc; })[0] || { name: cc }).name + "; this window comes back when it has loaded.";
+    location.hash = "#" + (cc === "th" ? "" : cc + "/") + "timeline";
+  }
+  function open(pre) {
+    if (!W.TSAP || !W.OSAP_TLREPORT || !W.OSAP_TLREPORT.data) return false;
+    css();
+    if (!BOX) {
+      BOX = D.createElement("div"); BOX.id = "osirdlg"; BOX.hidden = true; BOX.setAttribute("role", "dialog"); BOX.setAttribute("aria-modal", "true"); BOX.setAttribute("aria-labelledby", "os-h");
+      BOX.addEventListener("click", function (e) { if (e.target === BOX) close(); });
+      D.body.appendChild(BOX);
+    }
+    var p = appPeriod(), tl = W.TSAP.timeline ? W.TSAP.timeline() : null, v = (location.hash || "").replace("#", "").split("/").pop();
+    S.cc = W.TSAP.country; S.region = areaOn() ? "@area" : ""; S.from = p.from; S.to = p.to; S.subject = ""; S.subjectSet = false; S.summary = ""; S.by = getLS(WHO);
+    /* the topic on screen: an open conflict tab, else the open data set, else everything */
+    S.scope = tl && tl.cf ? "cf-" + tl.cf : v && v !== "timeline" && v !== "alerts" ? v : "";
+    if (pre) { ["from", "to", "scope", "region"].forEach(function (k) { if (pre[k] != null) S[k] = pre[k]; }); }
+    BOX.hidden = false; refresh();
+    var f = BOX.querySelector("#os-top"); if (f) f.focus();
+    return true;
+  }
+  function close() { if (BOX) BOX.hidden = true; S.seq++; }
+
+  /* ---------- the report ---------- */
+  var EL = null, fpJobs = [], title0 = "";
+  function make() {
+    var d = S.data; if (!d || !d.recs.length) return;
+    setLS(WHO, S.by.trim());
+    var html = build(d, { subject: S.subject.trim() || autoSubject(d), by: S.by.trim(), summary: S.summary.trim(), region: regionText(d), now: Date.now() });
+    close();
+    EL = D.getElementById("brief"); if (!EL) return;
+    EL.hidden = false; D.documentElement.classList.add("briefing");
+    EL.innerHTML = html; EL.scrollTop = 0;
+    D.getElementById("osir-close").onclick = closeReport;
+    D.getElementById("osir-back").onclick = function () { closeReport(); BOX.hidden = false; draw(); };
+    D.getElementById("osir-print").onclick = printIt;
+    fill(d.recs);
+  }
+  function build(d, o) {
+    var recs = d.recs, keyEv = d.keyEv, m = d.map, bars = d.bars, now = o.now;
+    var no = "OSIR-" + String(d.cc).toUpperCase() + "-" + dtg(now).replace(/ /g, "");
+    /* sources, numbered in order of first appearance (the same numbers as each chronology entry) */
+    var srcs = [], sno = {};
+    recs.forEach(function (r) { var k = r.src.id || r.src.name; if (!sno[k]) { srcs.push({ s: r.src, n: 0, hosts: {} }); sno[k] = srcs.length; } var x = srcs[sno[k] - 1]; x.n++; var h = host(safeUrl(r.url)); if (h) x.hosts[h] = 1; });
+    var days = {}, kinds = { observation: 0, claim: 0, event: 0 }, perProv = {}, perCat = {};
+    recs.forEach(function (r) {
+      days[r.__tlw.day] = 1; kinds[r.type] = (kinds[r.type] || 0) + 1;
+      d.provsOf(r).forEach(function (p) { perProv[p] = (perProv[p] || 0) + 1; });
+      if (r.cat) perCat[r.cat] = (perCat[r.cat] || 0) + 1;
+    });
+    var first = recs[0].__tlw, last = recs[recs.length - 1].__tlw;
+    /* automatic summary: counts by fixed rules, no AI */
+    var pts = [pl(recs.length, "dated record") + " from " + pl(srcs.length, "source") + ", " + fmtShort(first.day) + " to " + fmtShort(last.day) + ": " +
+      pl(kinds.event || 0, "sourced report") + ", " + pl(kinds.claim || 0, "official statement") + (kinds.observation ? ", " + pl(kinds.observation, "instrument reading") : "") + "."];
+    if (bars && bars.peakN > 1) pts.push("Busiest month: " + new Date(bars.peak + "-01T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) + ", with " + bars.peakN + " records (the monthly average is " + (Math.round(bars.mean * 10) / 10) + ").");
+    var tp = topN(perProv, 3); if (tp.length) pts.push("Most often named province" + (tp.length > 1 ? "s" : "") + ": " + list3(tp) + ".");
+    var tc = topN(perCat, 3); if (tc.length) pts.push("Commonest kind" + (tc.length > 1 ? "s" : "") + " of record: " + list3(tc) + ".");
+    pts.push(keyEv.length ? pl(keyEv.length, "key event") + " in the main content" + (d.grouped ? ", " + d.grouped + " of them reported by two or more sources" : "") + "." : "No record meets the rules for a key event.");
+    var ai = keyEv.filter(function (e) { return e.sum && e.sum.method !== "extract"; }).length, ext = keyEv.filter(function (e) { return e.sum && e.sum.method === "extract"; }).length;
+    var tag = function (t, tip) { return ' <span class="aitag" tabindex="0" title="' + esc(tip) + '">' + t + "</span>"; };
+    var period = d.period + (recs.length < d.total ? " (latest " + recs.length + " of " + d.total + " records)" : "");
+    var gen = T().dualT(now, { date: true });
+
+    var html = '<div class="bbar noprint tlrbar"><button type="button" class="refresh primary" id="osir-print">Print</button> <button type="button" class="refresh" id="osir-back">Change choices</button> ' +
+      '<button type="button" class="refresh" id="osir-close">Close</button> <span class="obs">Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>' +
+      '<article class="bpage tlr osir" data-osir="' + esc(no) + '"><div class="osban">UNCLASSIFIED // OPEN SOURCE</div>' +
+      '<header class="tlrh"><img src="' + esc((D.querySelector(".brand .logo") || {}).src || "assets/logo.png") + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Open Source Intelligence Report</div><h2>OSIR</h2>' +
+      '<div class="tlrsubt">' + esc(no) + "</div></div></header><div class=\"tlrrule\"></div>" +
+      /* 1-3: Subject, Date generated, Country/s */
+      '<table class="osf"><tbody><tr><th scope="row">Subject</th><td><b data-osf="subject">' + esc(o.subject) + '</b><br><small>Covers ' + esc(d.scope && d.scope.label && S.scope ? d.scope.label : "all reporting") + ", " + esc(period) + "</small></td></tr>" +
+      '<tr><th scope="row">Date generated</th><td data-osf="generated">' + esc(dtg(now)) + " · " + esc(gen) + "</td></tr>" +
+      '<tr><th scope="row">Country/s</th><td data-osf="countries">' + esc(d.country) + (S.region ? " (" + esc(S.region === "@area" ? "drawn area" : S.region) + ")" : "") + "</td></tr></tbody></table>" +
+      /* 4: OSINT disclaimer */
+      '<h3 class="tls"><span class="no">1</span>OSINT disclaimer</h3><p class="osdisc" data-osf="disclaimer">' + esc(DISCLAIMER) + "</p>" +
+      /* 5: Summary */
+      '<h3 class="tls"><span class="no">2</span>Summary</h3>' +
+      (o.summary ? '<h4 class="oss">Analyst summary' + tag("Analyst", "Written by the person who made this report, as typed.") + '</h4><div class="osan" data-osf="analyst">' + esc(o.summary) + "</div>" +
+        '<h4 class="oss">Automatic summary' + tag("Automatic", "Counts by fixed rules from the records in Attachment 1 (no AI), not analyst-approved.") + "</h4>" :
+        '<p class="bm" style="margin:0">' + tag("Automatic", "Counts by fixed rules from the records in Attachment 1 (no AI), not analyst-approved.").slice(1) + " Counts by fixed rules from the records in Attachment 1; not a judgment.</p>") +
+      '<ul class="tlrpts" data-osf="summary">' + pts.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
+      /* 6: Main content: key events, where, trend */
+      '<h3 class="tls"><span class="no">3</span>Main content</h3>' +
+      '<h4 class="oss">3.1 Key events' + tag("Automatic", "Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, closure), casualties, escalation wording and surges in reporting.") + "</h4>" +
+      (keyEv.length ? '<table class="tlrkt" data-osf="keyevents"><caption><b>Table 1.</b> Key events in date order; numbers match Figure 1. Each is what its sources reported, not a confirmed fact.</caption><colgroup><col class="ckn"><col class="ckd"><col></colgroup><thead><tr><th>No.</th><th>Date</th><th>Event</th></tr></thead><tbody>' +
+        keyEv.map(d.rowHtml).join("") + "</tbody></table>" : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') +
+      (m ? '<h4 class="oss">3.2 Where</h4><p class="tlrfigc"><b>Figure 1.</b> Records and key events, ' + esc(d.period) + '</p><div class="tlrfig">' + m.svg + '<aside class="tlrside">' + d.legend(m, keyEv) +
+        (bars ? "<div><h4>Figure 2. Records per month</h4>" + bars.svg + "</div>" : "") + "</aside></div>" +
+        '<p class="tlrsrcn">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") +
+        ". Positions are as precise as each source allows. Borders and names: Natural Earth (public domain).</p>" : "") +
+      /* 7: End of report */
+      '<div class="osend" data-osf="end">END OF REPORT</div>' +
+      /* 8: Attachments */
+      '<section class="osatt tlrann"><h3 class="tls"><span class="no">4</span>Attachments</h3><p class="bm">Attachment 1. Chronology: every record, oldest first, ' + esc(period) + '. Each time is in Zulu and local time; each record keeps its source number, link and SHA-256 fingerprint.</p>' +
+      '<div data-osf="attachments">' + recs.map(function (r) { return d.entryHtml(r, sno[r.src.id || r.src.name]); }).join("") + "</div></section>" +
+      /* 9: Contributors */
+      '<h3 class="tls"><span class="no">5</span>Contributors</h3><ul class="oscon" data-osf="contributors">' +
+      "<li><b>Prepared by:</b> " + (o.by ? esc(o.by) : "not stated") + "</li>" +
+      "<li><b>Compiled by:</b> AXIOM OSAP on this device, from " + pl(srcs.length, "open source") + "; counts, groupings and key events by fixed rules (no AI).</li>" +
+      (ai ? "<li><b>AI:</b> " + pl(ai, "key-event summary", "key-event summaries") + " drafted by " + esc((W.OSAP_EVSUM && W.OSAP_EVSUM.model) || "an AI model") + ", tagged AI generated; drafts, not analyst-approved.</li>" : "") +
+      (ext ? "<li><b>Automatic extracts:</b> " + pl(ext, "key-event summary", "key-event summaries") + " taken from the reports by fixed rules (no AI).</li>" : "") +
+      "<li><b>Analyst review:</b> " + (o.summary ? "the analyst summary is the preparer's own; the rest is not analyst-reviewed." : "none recorded.") + "</li></ul>" +
+      /* 10: Sources */
+      '<h3 class="tls"><span class="no">6</span>Sources</h3><ol class="tlrsrc" data-osf="sources">' + srcs.map(function (x) {
+        var u = safeUrl(x.s.url), hs = Object.keys(x.hosts).slice(0, 3);
+        return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.s.name) + "</a>" : esc(x.s.name)) +
+          (x.s.kind ? ", " + esc(x.s.kind) : "") + " · " + pl(x.n, "record") + (hs.length ? " · " + esc(hs.join(", ")) : "") + (x.s.proposed ? " · reliability " + esc(x.s.proposed) + "?" : "") + "</li>";
+      }).join("") + "</ol>" +
+      '<p class="bm">Reliability letters with a question mark are proposed by the build from the kind of source; none has been set by an analyst, and a reliable source can still be wrong. Sources are linked, not stored.</p>' +
+      '<footer class="tlrf">Report fingerprint (SHA-256 over the ' + recs.length + ' record fingerprints in Attachment 1, in order): <span class="mg" id="osir-fp">computing…</span></footer>' +
+      '<div class="osban end">UNCLASSIFIED // OPEN SOURCE</div></article>';
+    return html;
+  }
+  /* record fingerprints: fill in as computed, then the report fingerprint over all of them in order */
+  function fill(recs) {
+    fpJobs = recs.map(function (r) { var h = W.TSAP.fingerprints[r.id]; return h ? Promise.resolve(h) : W.TSAP.fingerprint(r); });
+    return Promise.all(fpJobs).then(function (hs) {
+      if (!EL || EL.hidden || !EL.querySelector(".osir")) return;
+      recs.forEach(function (r, i) { Array.prototype.forEach.call(EL.querySelectorAll('[data-tlfp="' + r.id + '"]'), function (s) { s.textContent = hs[i]; }); });
+      if (!(W.crypto && crypto.subtle)) return;
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(hs.join("\n"))).then(function (b) { var f = D.getElementById("osir-fp"); if (f) f.textContent = hex(b); });
+    });
+  }
+  /* print once every fingerprint is on the page; the document title becomes the file name Save as PDF offers */
+  function printIt() {
+    var a = EL && EL.querySelector(".osir"); if (!a) return;
+    Promise.all(fpJobs).catch(function () {}).then(function () {
+      title0 = D.title; D.title = a.getAttribute("data-osir");
+      var back = function () { D.title = title0; W.removeEventListener("afterprint", back); };
+      W.addEventListener("afterprint", back);
+      setTimeout(function () { try { W.print(); } catch (e) {} setTimeout(back, 3000); }, 60);
+    });
+  }
+  function closeReport() { if (!EL) return; EL.hidden = true; EL.innerHTML = ""; D.documentElement.classList.remove("briefing"); }
+  D.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (BOX && !BOX.hidden) close(); else if (EL && !EL.hidden && EL.querySelector(".osir")) closeReport();
+  });
+
+  /* back after switching country from the window: open it again with the same dates */
+  function resume() {
+    var p = null;
+    try { p = JSON.parse(sessionStorage.getItem(PEND) || "null"); sessionStorage.removeItem(PEND); } catch (e) {}
+    if (p && p.cc === W.TSAP.country && Date.now() - p.t < 120000) setTimeout(function () { open({ from: p.from, to: p.to, scope: "", region: "" }); }, 2500);
+  }
+  (function wait(i) { if (W.TSAP && W.OSAP_TLREPORT && W.OSAP_TIME) resume(); else if (i < 240) setTimeout(function () { wait(i + 1); }, 250); })(0);
+  W.OSAP_OSIR = { open: open, close: close, _state: function () { return S; }, _build: build };
+})();

@@ -57,6 +57,7 @@
 ["w258895992",37.47748,57.31528,"ir",{"name":"مرکز جراحی و درمانگاه تخصصی جواد الائمه سپاه","name:en":"Clinic sepah","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"psychiatry;general","operator":"سپاه","operator:type":"public","addr:street":"بلوار دولت","addr:city":"بجنورد"}],
 ["w258895993",37.47485,57.32286,"ir",{"name":"درمانگاه خاتم الانبیا","amenity":"clinic","healthcare":"clinic","emergency":"yes"}],
 ["w272799774",37.48277,57.32313,"ir",{"name":"بیمارستان ارتش","name:en":"Bimarestan artesh","amenity":"hospital","healthcare":"hospital"}],
+["w274904688",37.88774,57.87306,"tm",{"aeroway":"helipad"}],
 ["w278019603",37.46642,57.34243,"ir",{"name":"هلال احمر","amenity":"clinic","emergency":"no"}],
 ["w350275505",36.22768,57.67487,"ir",{"name":"بیمارستان امداد بهشتی","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"حوادث","addr:street":"رازی","addr:city":"سبزوار"}],
 ["w351844764",36.21221,57.67549,"ir",{"name":"درمانگاه فرهنگیان","amenity":"clinic","healthcare":"clinic","emergency":"no","addr:street":"میدان حکیم سبزواری","addr:city":"سبزوار"}],

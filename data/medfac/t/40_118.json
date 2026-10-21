@@ -52,7 +52,7 @@
 ["w1469762532",40.7758,119.60284,"cn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1478522050",41.40981,119.66168,"cn",{"name":"建平县红十字会医院","amenity":"hospital","healthcare":"hospital"}],
 ["w224821605",40.90051,118.67778,"cn",{"name":"平泉機場","name:en":"Pingquan Air Base","aeroway":"aerodrome"}],
-["w439561388",41.121,118.07629,"cn",{"name":"承德普宁机场","name:en":"Chengde Puning Airport","aeroway":"aerodrome","icao":"ZBCD","iata":"CDE"}],
+["w439561388",41.121,118.07629,"cn",{"name":"承德普宁机场","name:en":"Chengde Puning Airport","aeroway":"aerodrome","icao":"ZBCD","iata":"CDE","wikidata":"Q1708305"}],
 ["w544540357",40.75332,118.15132,"cn",{"name":"河北省承德县医院","name:en":"Chengde County Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w554600639",41.92373,118.69093,"cn",{"name":"喀喇沁旗医院","name:en":"Harqin Banner Hospital","amenity":"hospital"}],
 ["w893278444",41.94292,118.16842,"cn",{"name":"克勒沟镇中心卫生院","name:en":"Kelegou Center Health Station","amenity":"hospital"}],

@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "c79e59a5c6de";
+const VERSION = "9c72e3d638d7";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -409,6 +409,7 @@ const PRECACHE = [
 "assets/icons/maskable-512.png",
 "assets/logo-mark.png",
 "assets/logo.png",
+"assets/logo-cover.webp",
 "assets/osap-cf-iran.js",
 "assets/osap-heat.js",
 "assets/osap-sides.js",
@@ -429,6 +430,8 @@ const PRECACHE = [
 "assets/osap-ds-review.js",
 "assets/osap-sync-boot.js",
 "assets/osap-lock.js",
+"assets/osap-tier.js",
+"assets/osap-datagate.js",
 "assets/osap-start.js",
 "assets/osap-symbols.js",
 "assets/osap-tlreport.js",
@@ -448,6 +451,7 @@ const PRECACHE = [
 "assets/osap-points.js",
 "assets/osap-3d.js",
 "assets/osap-ws.js",
+"assets/osap-an-auto.js",
 "assets/osap-analyst.js",
 "data/thailand/deepsouth-entities.js",
 "assets/osap-milsym.js",
@@ -459,6 +463,7 @@ const PRECACHE = [
 "assets/osap-cams.js",
 "assets/osap-borders.js",
 "assets/osap-pop.js",
+"assets/osap-sat.js",
 "assets/osap-lidar.js",
 "assets/osap-evac.js",
 "assets/osap-dc.js",
@@ -468,6 +473,8 @@ const PRECACHE = [
 "assets/osap-comms.js",
 "assets/osap-commsplan.js",
 "assets/osap-search.js",
+"assets/osap-findall.js",
+"assets/osap-reviews.js",
 "assets/hospital-sources/base-provider.js",
 "assets/hospital-sources/resolver.js",
 "assets/hospital-sources/sof-provider.js",
@@ -494,9 +501,16 @@ const PRECACHE = [
 "assets/osap-nav.js",
 "assets/osap-split.js",
 "assets/osap-reports.js",
+"assets/osap-intelbrief.js",
+"assets/osap-osir.js",
+"assets/vendor/pptxgenjs-4.0.1.bundle.js",
 "assets/osap-offline.js",
 "assets/osap-move.js",
 "assets/osap-sync.js",
+"assets/osap-team.js",
+"assets/osap-gnss.js",
+"assets/osap-econ.js",
+"assets/osap-photocheck.js",
 "assets/osap-guide.js",
 "assets/osap-i18n.js",
 "assets/i18n/th.js",
@@ -531,9 +545,14 @@ const PRECACHE = [
 "assets/osap-locate.js",
 "assets/osap-drones.js",
 "assets/osap-traffic.js",
+"assets/osap-keydates.js",
+"assets/osap-warngeo.js",
 "assets/osap-today.js",
+"assets/osap-mycountries.js",
+"assets/osap-empty.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
+"assets/osap-grade.js",
 "assets/world-watermark.svg",
 "assets/tiles-flood.js",
 "assets/tiles-flood25.js",
@@ -542,7 +561,9 @@ const PRECACHE = [
 ];
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
-const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
+// The sign-in code (assets/osap-tier.js) too: a reset or confirmation link opened right after a deploy must run the new copy,
+// not the one the old version saved.
+const FRESH = [/\/index\.html$/, /\/$/, /\/data\//, /\/assets\/osap-tier\.js$/];
 const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw\.githubusercontent\.com\/mlc-ai\//,  // OSAP's AI model (assets/osap-ai.js): WebLLM keeps its own copy
   // Mapterhorn's coverage file (assets/osap-lidar.js) is read in byte ranges, which the Cache API cannot keep
   /download\.mapterhorn\.com\//,
@@ -560,7 +581,7 @@ const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw
   /cctv\d*\.dot\.wi\.gov\//, /itsstreaming[\w-]*\.dotd\.la\.gov\//i, /\.its\.nv\.gov(:\d+)?\//, /publicstreamer\d*\.cotrip\.org(:\d+)?\//, /video\d*\.iowadot\.gov(:\d+)?\//,
   /skysfs\d*\.trafficwise\.org\//, /wzmedia\.dot\.ca\.gov(:\d+)?\//, /video\.deldot\.gov(:\d+)?\//, /strmr\d*\.sha\.maryland\.gov\//];
 // Saved after install rather than during it (see the top of this file).
-const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
+const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/vendor\/pptxgenjs/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
 const DATA = "asap-data";
 const home = (u) => new URL(u, self.registration.scope).href;
@@ -572,9 +593,8 @@ const save = (req, res) => caches.open(store(typeof req === "string" ? req : req
 // CryptoKey that cannot be exported) with its end time, and this worker opens the sealed files on their way to the page. The
 // caches only ever hold the sealed copies; the opened copy is marked (X-OSAP-Unsealed) so the page does not save it either.
 // Locked, or with no key, the sealed text is passed on as it is: one JavaScript comment, so a script runs nothing.
-// SEALED must equal "sealed" in tools/hidden-areas.json (tests/seal.test.mjs).
-const SEALED = ["^data/layers/us/", "^data/infra/us/", "^data/(sof|brief|history)/us\\.js$", "^data/dc/us\\.json$", "^data/live/[a-z]+/us\\.js$",
-  "^data/live/news/us-states/", "^data/cams/us-[a-z0-9-]+\\.json$", "^source/(sof|countries)/us\\.json$"].map((r) => new RegExp(r));
+// SEALED must equal "sealed" in tools/hidden-areas.json (tests/seal.test.mjs); empty while no area is hidden.
+const SEALED = [].map((r) => new RegExp(r));
 const SEAL_PREFIX = "/*osap-sealed:v1 ";
 function sealedPath(u) {
   const p = new URL(u).pathname, s = new URL(self.registration.scope).pathname;
@@ -627,11 +647,20 @@ self.addEventListener("install", (e) => {
 });
 // Old version caches are dropped once this version has warmed; until then they are used only when offline.
 let warming = null;
-function warm() {
+// plan: the signed-in plan's data rules, sent by the page on the Netlify site (assets/osap-datagate.js, tools/tiers.mjs). A file
+// the plan cannot open is left out rather than asked for (and refused) on every warm-up.
+const TIERS = ["free", "mid", "full"];
+function locked(u, plan) {
+  if (!plan || !plan.data || !/^(data|source)\//.test(u)) return false;
+  let need = plan.dataDefault || "mid";
+  for (const [re, t] of plan.data) { try { if (new RegExp(re).test(u)) { need = t; break; } } catch (e) { /* skip that rule */ } }
+  return TIERS.indexOf(plan.tier) < TIERS.indexOf(need);
+}
+function warm(plan) {
   if (warming) return warming;
   warming = (async () => {
     const todo = [];
-    for (const u of PRECACHE) if (u !== "./" && !(await caches.open(store(u)).then((c) => c.match(home(u), { ignoreSearch: true })))) todo.push(u);
+    for (const u of PRECACHE) if (u !== "./" && !locked(u, plan) && !(await caches.open(store(u)).then((c) => c.match(home(u), { ignoreSearch: true })))) todo.push(u);
     for (let i = 0; i < todo.length; i += 4) {
       await Promise.all(todo.slice(i, i + 4).map((u) => fetch(home(u), { cache: "no-cache", credentials: "same-origin" })
         .then((res) => { if (!res.ok) throw 0; return save(home(u), res); }).catch(() => {})));
@@ -647,7 +676,7 @@ self.addEventListener("activate", (e) => {
     caches.open(DATA).then((c) => c.keys().then((ks) => Promise.all(ks.filter((k) => new URL(k.url).search).map((k) => c.delete(k))))).catch(() => {})]));
 });
 // The page asks for the warm-up once it has loaded, so it never competes with the first paint.
-self.addEventListener("message", (e) => { if (e.data === "warm") e.waitUntil(warm()); });
+self.addEventListener("message", (e) => { if (e.data === "warm" || (e.data && e.data.warm)) e.waitUntil(warm(e.data.warm || null)); });
 async function trim(name, max) {
   const c = await caches.open(name), ks = await c.keys();
   for (let i = 0; i < ks.length - max; i++) await c.delete(ks[i]);
@@ -664,6 +693,8 @@ self.addEventListener("fetch", (e) => {
   // its tiles that way and saves them itself, so they are not also copied into the capped tile cache.
   if (url.origin !== location.origin && req.cache === "no-store") return;
   if (NEVER.some((r) => r.test(url.href))) return;
+  // the paywall's sign-in and plan (Netlify site only, assets/osap-tier.js): always the network, never saved
+  if (url.origin === location.origin && /^\/(api|\.netlify)\//.test(url.pathname)) return;
   if (url.origin === location.origin && FRESH.some((r) => r.test(url.pathname))) {
     if (/\/data\//.test(url.pathname) && url.searchParams.has("fresh")) {
       // Refresh now: wait for the network copy however long it takes, and save it as the copy for the plain address

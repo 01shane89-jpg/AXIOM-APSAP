@@ -85,3 +85,6 @@ export function ccsInText(text) {
   for (const n of NAME_LIST) if (t.includes(" " + n + " ")) { const id = NAME_IDS[n]; if (!out.includes(id)) out.push(id); t = t.split(" " + n + " ").join("  "); }
   return out;
 }
+
+// The outline geometries of one country (the page's own outlines), e.g. to draw an airspace bulletin that names a whole country.
+export function outlineOf(cc) { const p = polys.find((x) => x.c.id === cc); return p ? p.geoms : []; }

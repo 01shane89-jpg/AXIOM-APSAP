@@ -5,3 +5,6 @@ __pycache__/
 probe-out/
 .push-state/
 desktop/dist/
+_site/
+.netlify/
+netlify/node_modules/

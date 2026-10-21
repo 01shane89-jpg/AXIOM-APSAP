@@ -1,0 +1,29 @@
+# OSAP on Netlify, behind the paywall (tools/tiers.mjs). GitHub Pages keeps serving the data the Actions jobs refresh;
+# this site serves the app and passes every data request through the gate (netlify/edge-functions/osap-data.js).
+[build]
+  command = "node tools/netlify_build.mjs && npm ci --prefix netlify --no-audit --no-fund"
+  publish = "_site"
+  functions = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
+  # a data refresh (most commits) needs no new deploy: the data comes from GitHub Pages. Skipped (exit 0) only when there
+  # is an earlier build to compare with and nothing but data changed since; the first build, and a deploy started by hand
+  # for the same commit, always run.
+  ignore = '''[ -n "$CACHED_COMMIT_REF" ] && [ "$CACHED_COMMIT_REF" != "$COMMIT_REF" ] && git diff --quiet "$CACHED_COMMIT_REF" "$COMMIT_REF" -- . ':(exclude)data' ':(exclude)source''''
+
+# Free data, after the gate let it through: straight from GitHub Pages
+[[redirects]]
+  from = "/data/*"
+  to = "https://01shane89-jpg.github.io/AXIOM-APSAP/data/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/source/*"
+  to = "https://01shane89-jpg.github.io/AXIOM-APSAP/source/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"

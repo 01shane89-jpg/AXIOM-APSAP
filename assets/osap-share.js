@@ -15,7 +15,7 @@
    Opening a shared link whose story has since dropped out of the feed shows a short note instead of the watch-alert message. */
 (function () {
   "use strict";
-  var LIVE = "https://01shane89-jpg.github.io/AXIOM-APSAP/";
+  var LIVE = "https://axiom-osap.netlify.app/";
   /* OpenStreetMap's own tiles (CORS allowed; one picture asks for a handful, within its tile policy), drawn greyed. Was the Esri
      canvas until 2026-10-17: Esri's terms need a paid plan for a product that is sold */
   var TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png", CREDIT = "Map: \u00a9 OpenStreetMap contributors, Natural Earth";
@@ -26,8 +26,9 @@
   function clean(s) { return String(s || "").replace(/\s+/g, " ").trim(); }
   function recs() { return (window.TSAP && window.TSAP.records) || []; }
   function pageCC() { return (window.TSAP && window.TSAP.country) || "th"; }
-  /* links point at the live site; a copy opened elsewhere (a preview) still hands out a link that works */
-  function base() { return /\.github\.io$/.test(location.hostname) ? location.origin + location.pathname : LIVE; }
+  /* links point at the live site (the Netlify site since the paywall; the old GitHub Pages address only forwards there);
+     a copy opened elsewhere (a preview) still hands out a link that works */
+  function base() { return /\.netlify\.app$/.test(location.hostname) ? location.origin + location.pathname : LIVE; }
   function deepLink(key, cc) { return base() + "?wopen=" + encodeURIComponent(key) + "&s=1#" + (cc === "th" ? "" : cc + "/") + "timeline"; }
   /* same key the page gives each record (recKey in index.html), so a link keeps working across rebuilds */
   function recKey(r) {

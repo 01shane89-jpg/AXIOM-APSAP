@@ -73,6 +73,8 @@
 ["n8255957410",11.91138,-1.78511,"bf",{"name":"CSPS de Basnéré","amenity":"hospital","operator":"Public"}],
 ["n8277361194",11.99511,-1.81133,"bf",{"name":"CSPS de Goumsin","amenity":"hospital"}],
 ["n8319733447",11.96609,-1.72387,"bf",{"name":"CSPS de Lado","amenity":"hospital","operator":"Public"}],
+["n8809422665",11.11562,-0.07796,"tg",{"name":"USP Boade","amenity":"hospital"}],
+["n9084228735",10.80653,-0.01321,"tg",{"name":"USP Warkanbou","amenity":"hospital"}],
 ["n9360555017",11.16836,-0.86513,"bf",{"name":"CSPS DE AVV4","name:en":"AVV4 CSPS","amenity":"hospital","website":"http://www.ms.gov.bf"}],
 ["n9925587817",10.89415,-1.08859,"gh",{"name":"At Jude Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w1073839065",11.17906,-1.14849,"bf",{"name":"Pô Airport","aeroway":"aerodrome","icao":"DFCP","iata":"PUP","wikidata":"Q7264830"}],

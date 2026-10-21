@@ -5,7 +5,7 @@
 ["w1254314171",8.08279,117.10128,"ph",{"aeroway":"helipad"}],
 ["w1513933385",8.68157,117.6247,"ph",{"name":"Bataraza District Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Provincial Government of Palawan","operator:type":"government"}],
 ["w1536671555",9.02024,117.65161,"ph",{"name":"Dr. Jose Rizal District Hospital","amenity":"hospital"}],
-["w332651973",9.0443,117.63324,"ph",{"name":"Tarumpitao Point Airfield","addr:city":"Rizal","addr:province":"Palawan","addr:postcode":"5304","aeroway":"aerodrome","icao":"RPTL"}],
+["w332651973",9.0443,117.63324,"ph",{"name":"Tarumpitao Point Airfield","addr:city":"Rizal","addr:province":"Palawan","addr:postcode":"5304","aeroway":"aerodrome","icao":"RPTL","wikidata":"Q12695248"}],
 ["w537906720",8.22893,117.32919,"ph",{"name":"Bugsuk Airstrip","addr:postcode":"5307","aeroway":"aerodrome"}],
 ["w606848976",8.53532,117.43644,"ph",{"name":"RTNFI Hospital","amenity":"hospital","healthcare":"hospital","operator":"Rio Tuba Nickel Foundation, Inc.","operator:type":"private","addr:street":"Nickel Avenue"}],
 ["w606848978",8.54891,117.4361,"ph",{"name":"Rio Tuba Airport","aeroway":"aerodrome"}],

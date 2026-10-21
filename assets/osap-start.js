@@ -63,7 +63,7 @@
     document.documentElement.appendChild(st);
     var d = document.createElement("div"), t = null;
     d.id = "osap-boot"; d.setAttribute("role", "status"); d.setAttribute("aria-label", "Loading AXIOM OSAP");
-    d.innerHTML = '<img src="assets/logo.png" alt="AXIOM OSAP"><span>Loading…</span>';
+    d.innerHTML = '<img src="assets/logo-cover.webp" alt="AXIOM OSAP"><span>Loading…</span>';
     function done() {
       clearTimeout(t); d.classList.add("gone");
       setTimeout(function () { if (d.classList.contains("gone") && d.parentNode) d.parentNode.removeChild(d); }, 260);

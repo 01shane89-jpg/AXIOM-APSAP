@@ -131,8 +131,16 @@
   function T() { return W.OSAP_TIME || { dualT: function (ms) { return new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; } }; }
   function dual(ms, date) { return T().dualT(ms, { date: !!date }); }
   function cc() { var a = A(); return (a && a.cc) || (W.TSAP && W.TSAP.country) || ""; }
-  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
-  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  /* one drawing of the plan asks for the same saved settings once per hospital, so a value read is kept until the current task
+     ends (another tab's change only arrives in a later task) and any save here drops them all */
+  var LSC = null;
+  function lsGet(k) {
+    if (LSC && Object.prototype.hasOwnProperty.call(LSC, k)) return LSC[k];
+    var v; try { v = JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { v = null; }
+    if (!LSC) { LSC = {}; setTimeout(function () { LSC = null; }, 0); }
+    return (LSC[k] = v);
+  }
+  function lsSet(k, v) { LSC = null; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   /* side panel: the plan docked to the right (bottom half on a phone) so the map stays usable. The choice is the one split view
      setting on this device (W.OSAP_SPLIT, assets/osap-split.js) that Find LZ, Watch and NAI/TAI share; this key is only the fallback. */
   var DOCK_KEY = "osap.medplan.dock";
@@ -164,7 +172,9 @@
         var v = ST && ST.plan && ST.plan.validation_status;
         if (!v) return { text: ST ? "Building the plan…" : "" };
         var n = ST.plan.pending && ST.plan.pending.length;
-        return { text: v.label + (n ? " · still reading " + n : ""), level: SLV[v.status] || "" };
+        /* while lookups run the bar says so with a spinner, not a red error: the plan is not finished yet */
+        if (n) return { text: "Still reading " + ST.plan.pending.join(", "), level: "busy" };
+        return { text: v.label, level: SLV[v.status] || "" };
       } });
   }
   /* centre a point in the part of the map the side panel leaves clear */
@@ -280,8 +290,9 @@
     return "[out:json][timeout:25];" +
       '(nwr["office"="diplomatic"]["country"="US"](around:1500000,' + la + "," + lo + ');nwr["amenity"="embassy"]["country"="US"](around:1500000,' + la + "," + lo + '););out center tags 40;';
   }
-  function post(url, body, ms) {
-    var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms);
+  function post(url, body, ms, ac) {
+    ac = ac || (W.AbortController ? new AbortController() : null);
+    var t = setTimeout(function () { if (ac) ac.abort(); }, ms);
     /* POST so the service worker never caches it */
     return fetch(url, { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac ? ac.signal : undefined }).then(function (r) {
       clearTimeout(t); if (!r.ok) throw new Error(r.status === 429 ? "busy (429)" : "HTTP " + r.status); return r.json();
@@ -294,21 +305,45 @@
       clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json();
     }, function (e) { clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : "network error"); });
   }
-  function overpass(q, ms) {
-    var body = "data=" + encodeURIComponent(q), errs = [];
-    function go(i) {
-      if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
-      return post(OVERPASS[i], body, ms || 45000).then(function (j) {
-        /* a server that ran out of time or memory answers 200 with a remark and a partial list: that is a failure, not "none" */
-        if (j && j.remark && /runtime error|timed? ?out|out of memory|too many/i.test(j.remark)) throw new Error("incomplete answer (" + String(j.remark).replace(/^runtime error:\s*/i, "").slice(0, 60) + ")");
-        return j;
-      }).catch(function (e) {
-        /* busy or a server error: wait a moment and ask the same server once more before the next one */
-        if (/429|HTTP 5\d\d/.test(e.message) && !go["r" + i]) { go["r" + i] = 1; return new Promise(function (r) { setTimeout(r, 3000); }).then(function () { return go(i); }); }
-        errs.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1);
-      });
-    }
-    return go(0);
+  /* Overpass: the first server, then the next one when it fails or has not answered in HEDGE_MS, the first good answer
+     wins and the others are stopped. The whole lookup ends within budget ms (default ms + 15 s), so a plan never waits on
+     four servers one after another (Shane 2026-10-20: a plan in Louisiana read for five minutes with nothing moving). */
+  var HEDGE_MS = 15000;
+  function overpass(q, ms, budget) {
+    ms = ms || 45000; budget = budget || ms + 15000;
+    var body = "data=" + encodeURIComponent(q), errs = [], done = false, i = 0, live = 0, acs = [], timers = [];
+    return new Promise(function (res, rej) {
+      function end(e, j) {
+        if (done) return; done = true;
+        timers.forEach(clearTimeout); acs.forEach(function (a) { try { a.abort(); } catch (x) {} });
+        if (e) rej(e); else res(j);
+      }
+      timers.push(setTimeout(function () { end(new Error("no OpenStreetMap server answered within " + Math.round(budget / 1000) + " s" + (errs.length ? " (" + errs.join("; ") + ")" : ""))); }, budget));
+      function fail(k, msg) {
+        errs.push(OVERPASS[k].split("/")[2] + ": " + msg); live--;
+        if (i < OVERPASS.length) start(); else if (!live) end(new Error(errs.join("; ")));
+      }
+      function attempt(k, again) {
+        var ac = W.AbortController ? new AbortController() : null; if (ac) acs.push(ac);
+        post(OVERPASS[k], body, ms, ac).then(function (j) {
+          /* a server that ran out of time or memory answers 200 with a remark and a partial list: that is a failure, not "none" */
+          if (j && j.remark && /runtime error|timed? ?out|out of memory|too many/i.test(j.remark)) throw new Error("incomplete answer (" + String(j.remark).replace(/^runtime error:\s*/i, "").slice(0, 60) + ")");
+          end(null, j);
+        }).catch(function (e) {
+          if (done) return;
+          /* busy or a server error: wait a moment and ask the same server once more */
+          if (/429|HTTP 5\d\d/.test(e.message) && !again) { timers.push(setTimeout(function () { if (!done) attempt(k, true); }, 3000)); if (i < OVERPASS.length) start(); return; }
+          fail(k, e.message);
+        });
+      }
+      function start() {
+        if (done || i >= OVERPASS.length) return;
+        var k = i++; live++;
+        timers.push(setTimeout(start, HEDGE_MS));
+        attempt(k, false);
+      }
+      start();
+    });
   }
   function osmUrl(e) { return "https://www.openstreetmap.org/" + ({ n: "node", w: "way", r: "relation" }[e.type.charAt(0)] || "node") + "/" + e.id; }
   function pos(e) { var la = e.lat != null ? e.lat : e.center && e.center.lat, lo = e.lon != null ? e.lon : e.center && e.center.lon; return la == null || lo == null ? null : [la, lo]; }
@@ -435,6 +470,14 @@
     var t = f.tags || {};
     return GOV_P.lookup(GOV.moph, "", W.OSAP_HOSP.facility({ name: f.name || "", name_local: t["name:th"] || "", aliases: [t["name:en"], t.official_name].filter(Boolean), lat: f.lat, lon: f.lon })) || null;
   }
+  /* a plan whose point lies in another country than the one selected (Shane 2026-10-20: a point in Louisiana with Thailand
+     selected got Thailand's 1669 and Sky Doctor) is that country's plan: its hospital list, numbers and air services */
+  function ccAt(s) {
+    try {
+      var near = ccNear(s.o, 0); if (!near.length || near.some(function (x) { return x.id === s.cc; })) return;
+      s.ccSel = s.cc; s.cc = near[0].id; s.name = near[0].name || near[0].id.toUpperCase();
+    } catch (e) {}
+  }
   function tileKeys(o, R) { return hp("osm").tileKeys(o, R); }
   function ccNear(o, R) { return hp("osm").ccNear(o, R); }
   /* OSAP's stored copy of OpenStreetMap health facilities and landing sites (tools/build_medfac.mjs, refreshed every four
@@ -487,15 +530,19 @@
   /* the official designation only as a source states it (status REPORTED: OSAP's sources are not the designating authority) */
   function tierLabel(f) {
     if (f.trauma) return f.lvl ? "Trauma Level " + ROMAN[f.lvl] + " (official designation, reported)" : f.trauma.official ? clip(f.trauma.text, 90) + " (official designation)" : "Trauma centre, level not stated (reported)";
-    return NK_LVL;
+    return eqText(f) || NK_LVL;
   }
+  /* the small tag on an equivalent level: an assessment by OSAP's rule, its basis in the tooltip */
+  function eqTag(f) { return !f.trauma && eqText(f) ? ' <span class="aitag" tabindex="0" title="' + esc(EQ_RULE) + '">Assessed</span>' : ""; }
   function desigNote(f) {
+    if (!f.trauma && eqText(f)) return "No official trauma designation found in OSAP's sources. " + EQ_RULE;
     if (f.trauma && f.trauma.official) return "Published by the designating authority" + (f.trauma.authority ? " (" + f.trauma.authority + ")" : "") + " in " + f.trauma.srcname + ": \"" + f.trauma.text + "\".";
     return f.trauma ? "Reported by " + f.trauma.srcname + ": \"" + f.trauma.text + "\". Not yet verified with the designating authority." : "No official trauma designation found in OSAP's sources.";
   }
   /* rank: a sourced level above every hospital without one (Level 1 highest; a trauma centre with no stated level after
      Level 5); without one, the order of what is listed */
-  function rankOf(f) { return f.trauma ? 10 - (f.lvl || 5.5) : tcRank(f) / 10 + f.tier / 100; }
+  /* an equivalent level ranks below every official one and above hospitals with none */
+  function rankOf(f) { return f.trauma ? 10 - (f.lvl || 5.5) : (f.eq && f.eq.level ? 1 + (5 - f.eq.level) / 10 : 0) + tcRank(f) / 10 + f.tier / 100; }
   function capability(f, sofList) {
     var why = [], sc = 0, tr = null, m = f.sofRec || (f.noSof ? null : sofMatch(f, sofList)), er24 = false, ref = "";
     if (m) {
@@ -528,7 +575,7 @@
     f.score = sc; f.why = why; f.trauma = tr; f.role = role;
     f.low = !tr && !ref && !surg && role > 0;
     f.tier = tr ? 4 : role; f.lvl = lvlOf(tr);
-    f.caps = capFlags(f, m); f.tc = tClass(f.caps);
+    f.caps = capFlags(f, m); f.tc = tClass(f.caps); f.eq = equivLevel(f.caps);
     /* schema field official_trauma_designation: only as a source states it; VERIFIED only from the designating authority */
     f.official_trauma_designation = tr ? { level: f.lvl ? ROMAN[f.lvl] : "UNSPECIFIED", designation_name: tr.text, authority: tr.authority || "", jurisdiction: tr.jurisdiction || "",
       status: tr.official ? "VERIFIED" : "REPORTED", source_refs: [tr.src], source: { kind: tr.official ? "register" : "sof", url: tr.src, name: tr.srcname } } : { level: "NONE_IDENTIFIED", status: "UNKNOWN", source_refs: [] };
@@ -697,6 +744,41 @@
       missing: next ? next.missing : [], unknown: next ? next.unknown : [], next: next ? next.cls : null };
     out.wording = cls ? TC_WORD[cls] : out["class"] === "NONE" ? "No emergency department (source-stated)." : "Not enough is listed to say.";
     return out;
+  }
+  /* Shane 2026-10-20: where no authority grades a hospital, an "equivalent" trauma level from its capabilities. Rule
+     osap.equiv/0.1 compares capabilities a credible source documents (stated by the hospital or a government, or required
+     by an official designation's standard) with what the American College of Surgeons' trauma levels need: IV a 24-hour
+     emergency department with blood and X-ray or ultrasound to stabilise and transfer; III adds CT, ICU and emergency
+     surgery (general, orthopaedic, anaesthesia, an emergency theatre); II adds neurosurgery and a trauma surgeon or team;
+     I adds vascular, thoracic and plastic surgery. OpenStreetMap and Wikipedia never count, a planner's check does. It is
+     an assessment, never an official designation, and an official one always comes first. */
+  var EQ_RULE_ID = "osap.equiv/0.1";
+  var EQ_NEED = [
+    [4, [["ed.24_7"], ["blood.bank"], ["dx.xray", "dx.ultrasound"]]],
+    [3, [["dx.ct"], ["cc.icu"], ["surg.general"], ["surg.or_emergency"], ["surg.anaesthesia"], ["surg.ortho"]]],
+    [2, [["surg.neuro"], ["surg.trauma", "trauma.team"]]],
+    [1, [["surg.vascular"], ["surg.thoracic"], ["surg.plastic"]]]];
+  var EQ_RULE = "Equivalent level (rule " + EQ_RULE_ID + "): OSAP compares the capabilities a credible source documents with what the American College of Surgeons' trauma levels need. " +
+    "Level IV: 24-hour emergency department, blood bank, X-ray or ultrasound. Level III adds CT, ICU, general and orthopaedic surgery, anaesthesia and an emergency operating theatre. " +
+    "Level II adds neurosurgery and a trauma surgeon or team. Level I adds vascular, thoracic and plastic surgery. OpenStreetMap and Wikipedia never count. " +
+    "An assessment by OSAP's rule, not an official designation; draft, not analyst-approved.";
+  function equivLevel(C) {
+    function ok(k) { var c = C[k]; return has(C, k) && c.source && !crowd(c.source); }
+    var lvl = null, next = null;
+    for (var i = 0; i < EQ_NEED.length; i++) {
+      var miss = EQ_NEED[i][1].filter(function (a) { return !a.some(ok); });
+      if (miss.length) { next = { level: EQ_NEED[i][0], missing: miss.map(function (a) { return capNames(a).join(" or "); }) }; break; }
+      lvl = EQ_NEED[i][0];
+    }
+    return { level: lvl, status: "INFERRED", rule: EQ_RULE_ID, next: next };
+  }
+  function eqText(f) {
+    var e = f.eq; if (!e) return "";
+    return e.level ? "Trauma Level " + ROMAN[e.level] + " equivalent (assessed from documented capabilities)" : "";
+  }
+  function eqNext(f) {
+    var e = f.eq; if (!e || !e.next) return "";
+    return (e.level ? "Level " + ROMAN[e.next.level] + " equivalent" : "An equivalent level") + " would need " + andList(e.next.missing) + " documented";
   }
   /* "T5 basic emergency facility (inferred, could be T4 if 24/7 emergency department, blood bank and X-ray or ultrasound are confirmed)" */
   function tcText(f) {
@@ -972,6 +1054,9 @@
     "#medplan ul{margin:4px 0;padding-left:20px}#medplan li{margin:2px 0;line-height:1.4}#medplan .mpfp{overflow-wrap:anywhere}" +
     "#medplan .mpmark{display:inline-block;min-width:18px;text-align:center;font-weight:700;border-radius:3px;background:#D7141A;color:#fff;font-size:11px;padding:0 3px}" +
     "#medplan .mpmark.air{background:#1d5fa8}#medplan .mpmark.o{background:#111}#medplan .mpmark.e{background:#b35c00}" +
+    "@keyframes mpspin{to{transform:rotate(360deg)}}" +
+    "#medplan .mpwait::before,#medplan .osh-busy::before,#medplan .mpbusy::before{content:\"\";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;border-radius:50%;border:2px solid transparent;border-top-color:currentColor;border-right-color:currentColor;animation:mpspin .8s linear infinite}" +
+    "@media (prefers-reduced-motion:reduce){#medplan .mpwait::before,#medplan .osh-busy::before,#medplan .mpbusy::before{animation-duration:2.4s}}" +
     "#medplan .mptier{display:inline-block;font-size:11px;font-weight:600;border-radius:3px;padding:0 5px;margin:1px 4px 1px 0;border:1px solid currentColor}" +
     /* on a phone the role table reads as one card per casualty type, Primary, Secondary and Tertiary stacked and labelled,
        so the long gap explanations wrap across the full width instead of one word per line */
@@ -1160,11 +1245,13 @@
       /* a point of injury typed earlier far from here is not used */
       var useP = poiP && (opts.at || hav(at, poiP) < 50000);
       ST = { P: null, c: at, o: useP ? poiP : at, from: useP ? "poi" : "c", reach: 70000, at: Date.now(), cc: cc(), name: name };
+      ccAt(ST);
     } else {
       var c = centre(P), reach = 0, poi = parseGrid(fieldVals().poi); P.forEach(function (p) { reach = Math.max(reach, hav(c, p)); });
       /* a point of injury typed for another area far away is not used */
       if (poi && hav(c, poi) > Math.max(reach * 3, 50000)) poi = null;
       ST = { P: P, c: c, o: poi || c, from: poi ? "poi" : "c", reach: reach, at: Date.now(), cc: cc(), name: name };
+      ccAt(ST);
     }
     render(); el.hidden = false; dockApply();
     /* folded to its bar: the focus goes to the bar, else to the plan's title */
@@ -1195,13 +1282,13 @@
       '<div id="mp-sea"></div><div id="mp-conop"></div>' +
       '<h3>Operational picture</h3><div id="mp-pic"><p class="obs">Reading the routes, forecast and data dates…</p></div>' +
       '<h3>Plan status</h3><div id="mp-val"></div>' +
-      '<h3>Primary, Secondary and Tertiary hospitals</h3><div id="mp-pst"><p class="obs">Looking up hospitals…</p></div>' +
+      '<h3>Primary, Secondary and Tertiary hospitals</h3><div id="mp-pst"><p class="obs mpwait">Looking up hospitals…</p></div>' +
       '<h3>1. Golden hour</h3><div id="mp-gh"></div>' +
       '<h3>2. Receiving hospitals, most capable first</h3>' +
-      '<div id="mp-fac"><p class="obs">Looking up hospitals and clinics…</p></div>' +
+      '<div id="mp-fac"><p class="obs mpwait">Looking up hospitals and clinics…</p></div>' +
       '<h3>3. Routes to the identified hospitals</h3><div id="mp-rt"><p class="obs">Waiting for the hospital list…</p></div>' +
-      '<h3>4. Emergency contacts: local EMS and medevac</h3><div id="mp-ems"><p class="obs">Looking up emergency numbers…</p></div><div id="mp-mev"></div>' +
-      '<h3>5. Evacuation landing sites</h3><div id="mp-air"><p class="obs">Looking up helipads and airfields…</p></div>' +
+      '<h3>4. Emergency contacts: local EMS and medevac</h3><div id="mp-ems"><p class="obs mpwait">Looking up emergency numbers…</p></div><div id="mp-mev"></div>' +
+      '<h3>5. Evacuation landing sites</h3><div id="mp-air"><p class="obs mpwait">Looking up helipads and airfields…</p></div>' +
       '<h3>6. Evacuate out of country</h3><div id="mp-oc"></div>' +
       '<h3>7. Health threats</h3><div id="mp-thr"></div>' +
       '<h3>8. Evacuation weather and ground</h3><div id="mp-wx"><p class="obs">Reading the forecast…</p></div>' +
@@ -1806,7 +1893,7 @@
     var mk = (pre || (f.kind === "hospital" ? "H" : "C")) + (i + 1), rw = num("rwkn");
     var cap = [f.er === "yes" ? "Emergency dept (OSM)" : f.er === "no" ? "No emergency dept (OSM)" : "", f.pad ? "Helipad on site" : "", f.beds ? f.beds + " beds" : "",
       f.op ? f.op.replace(/_/g, " ") : "", f.spec].filter(Boolean).join(" · ");
-    var tier = f.kind === "hospital" ? '<span class="mptier t' + (f.trauma ? 4 : 0) + '" tabindex="0" title="' + esc(desigNote(f) + " " + ROLE_RULE) + '">' + esc(tierLabel(f)) + "</span>" + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" : "";
+    var tier = f.kind === "hospital" ? '<span class="mptier t' + (f.trauma ? 4 : eqText(f) ? 2 : 0) + '" tabindex="0" title="' + esc(desigNote(f) + " " + ROLE_RULE) + '">' + esc(tierLabel(f)) + "</span>" + eqTag(f) + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" : "";
     var tr = f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " " + (link(f.trauma.src, "(" + f.trauma.srcname + ")") || "") + "</span>" : f.kind === "hospital" && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + "</span>" : "";
     var tot = groundTotal(f);
     var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
@@ -1929,7 +2016,7 @@
     }).join("") + "</tbody></table></div>";
     else if (s.x) h += '<p class="obs">No blood bank or donation centre within 200 km in OpenStreetMap. This does not mean there is none: ask the receiving hospital.</p>';
     else if (s.xErr) h += '<p class="obs mpwarn">Blood banks could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
-    else h += '<p class="obs">Looking up blood banks…</p>';
+    else h += '<p class="obs mpwait">Looking up blood banks…</p>';
     h += xNote(s);
     h += H.length ? '<p class="obs">Hospitals here that list a blood bank or transfusion service (OpenStreetMap healthcare:speciality): ' + H.slice(0, 4).map(function (f) { return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b> (" + esc(km(f.m)) + ")"; }).join(", ") + ".</p>"
       : '<p class="obs">None of the hospitals listed here states a blood bank; most do not publish it. Confirm blood availability with the receiving hospital.</p>';
@@ -1945,7 +2032,7 @@
     }).join("") + "</tbody></table></div>";
     else if (s.x) h += '<p class="obs"><span class="mpnk">Not known</span> No hyperbaric or recompression chamber within 500 km in OpenStreetMap. This does not mean there is none: ask your diving emergency service or the receiving hospital.</p>';
     else if (s.xErr) h += '<p class="obs mpwarn">Chambers could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
-    else h += '<p class="obs">Looking up decompression chambers…</p>';
+    else h += '<p class="obs mpwait">Looking up decompression chambers…</p>';
     return h + xNote(s) + '<p class="obs">Decompression illness: move by ground or fly as low as safely possible (cabin pressure near sea level); confirm the chamber is staffed and the transfer with your diving emergency service before moving.</p>';
   }
   function rtRender() {
@@ -2042,7 +2129,7 @@
     if (s.ems) h += "<ul>" + s.ems.nums.map(function (x) { return '<li><b><a href="tel:' + esc(x.n) + '">' + esc(x.n) + "</a></b>" + (x.uses.length ? ": " + esc(x.uses.join(", ")) : "") + "</li>"; }).join("") + "</ul>" +
       '<p class="obs">From ' + link("https://www.wikidata.org/wiki/" + (s.ems.q || "") + "#P2852", "Wikidata (" + (s.ems.q || "country") + ")") + ", read " + esc(dual(s.ems.at, true)) + ". Confirm the ambulance number locally; some areas use a different one.</p>";
     else if (s.emsErr) h += '<p class="obs mpwarn">The emergency numbers could not be read (' + esc(clip(s.emsErr, 120)) + "). Check the U.S. Embassy country page.</p>";
-    else h += '<p class="obs">Looking up emergency numbers…</p>';
+    else h += '<p class="obs mpwait">Looking up emergency numbers…</p>';
     if (s.fac) {
       h += "<h4>Ambulance stations near the POI</h4>";
       h += s.fac.E.length ? '<div class="mpscroll"><table><thead><tr><th></th><th>Station and contacts</th><th>Straight line</th><th>Grid (MGRS)</th></tr></thead><tbody>' + s.fac.E.map(function (e, i) {
@@ -2091,7 +2178,7 @@
       h += '<p class="obs' + (s.xErr ? " mpwarn" : "") + '">' + (s.xErr ? "Air rescue bases could not be read (" + esc(clip(s.xErr, 120)) + ")." : "No air rescue base within 400 km in OpenStreetMap.") + " Nearest heliports and airfields as possible launch points (no medevac service listed):</p>";
       var LP = s.fac ? s.fac.L.filter(function (l) { return l.kind === "heliport"; }).concat(s.fac.AF).sort(function (a, b) { return a.m - b.m; }).slice(0, 3) : [];
       if (LP.length) h += '<div class="mpscroll"><table>' + head + "<tbody>" + LP.map(function (b, i) { return row(b, i, b.kind === "airfield" ? "A" : "L", "air").replace(/>[AL]\d+</, ">" + (b.kind === "airfield" ? "A" + (s.fac.AF.indexOf(b) + 1) : "L" + (s.fac.L.indexOf(b) + 1)) + "<"); }).join("") + "</tbody></table></div>";
-    } else h += '<p class="obs">Looking up air rescue bases…</p>';
+    } else h += '<p class="obs mpwait">Looking up air rescue bases…</p>';
     if (s.xPart) h += xNote(s);
     h += '<p class="obs">Flight times are straight-line estimates at ' + rw + " kn cruise (a typical medical helicopter) with " + launch + " min to launch; they ignore weather, routing, crew duty and refuelling. Confirm availability, response time and the request procedure with the provider before the mission.</p>";
     el.innerHTML = h + aircraftHtml(s);
@@ -2625,12 +2712,16 @@
     var map = W.__asapMap; if (!map || !W.L || !ST) return;
     var el0 = D.getElementById("medplan"); if (W.OSAP_LEGEND && el0 && !el0.hidden) W.OSAP_LEGEND.set("medplan", legendHtml(), el0);
     if (layer) layer.remove();
+    /* the plan draws in its own panes, so a view that hides the page's other layers (a conflict tab such as Deep South,
+       assets/osap-conflicts.js) still shows it (Shane 2026-10-20: a plan from the Deep South tab drew nothing) */
+    if (!map.getPane("mppane")) { map.createPane("mppane").style.zIndex = 450; map.createPane("mpmkpane").style.zIndex = 640; }
+    var vp = { pane: "mppane" };
     layer = L.layerGroup();
     mapItems().forEach(function (it) {
-      if (it[0] === "iso") L.polygon(it[1], { color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }).addTo(layer);
-      else if (it[0] === "ring") L.circle(it[1], { radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }).addTo(layer);
-      else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2])).addTo(layer);
-      else L.marker(it[1], { icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
+      if (it[0] === "iso") L.polygon(it[1], Object.assign({ color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }, vp)).addTo(layer);
+      else if (it[0] === "ring") L.circle(it[1], Object.assign({ radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }, vp)).addTo(layer);
+      else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2], vp)).addTo(layer);
+      else L.marker(it[1], { pane: "mpmkpane", icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
     });
     layer.addTo(map);
   }
@@ -2789,7 +2880,7 @@
   var KEY_CAPS = ["blood.bank", "surg.or_emergency", "ed.24_7", "dx.ct", "cc.icu", "cc.ventilator", "surg.neuro"];
   function planFac(f) {
     var c = {}, n = {}; KEY_CAPS.forEach(function (k) { c[k] = capOk(f, k); n[k] = f.caps && f.caps[k] && f.caps[k].now ? f.caps[k].now.state : "UNKNOWN"; });
-    var r = { id: f.id, name: f.name, name_local: f.alias && f.alias !== f.name ? f.alias : "", aliases: [], lat: f.lat, lon: f.lon, mgrs: grid(f.lat, f.lon), caps: c, caps_now: n, designation: tierLabel(f), source: f.osm || f.src || "" };
+    var r = { id: f.id, name: f.name, name_local: f.alias && f.alias !== f.name ? f.alias : "", aliases: [], lat: f.lat, lon: f.lon, mgrs: grid(f.lat, f.lon), caps: c, caps_now: n, designation: f.trauma ? tierLabel(f) : NK_LVL, equivalent: f.eq && f.eq.level ? { level: ROMAN[f.eq.level], status: "INFERRED", rule: EQ_RULE_ID, basis: "documented capabilities" } : null, source: f.osm || f.src || "" };
     /* Build Plan v2's Facility object: every capability with who says it exists (V1 to U) and whether it can be used now */
     if (FI()) r.intel = FI().record({ id: f.id, name: f.name, aliases: r.name_local ? [r.name_local] : [], cc: ST ? ST.cc : "", lat: f.lat, lon: f.lon, mgrs: r.mgrs, caps: f.caps, designation: f.official_trauma_designation || null,
       contacts: { phone: f.phone || "", emergency_phone: f.ephone || "", hotline: f.hot || "", web: f.web || "", address: f.addr || "" }, sources: [f.osm, f.sofRec && f.sofRec.src, f.gov && "MOPH " + f.gov.hcode].filter(Boolean) }, checks(), new Date().toISOString());
@@ -2844,7 +2935,10 @@
   function valHtml(p) {
     if (!p) return '<p class="obs mpwarn">The plan record could not be built on this device.</p>';
     var v = p.validation_status;
-    return '<p class="mpvs mpvs-' + v.status.toLowerCase() + '"><b>' + esc(v.label) + "</b></p>" +
+    /* still reading: the plan is not finished, so the badge says that with a spinner instead of a red error */
+    var busy = p.pending && p.pending.length;
+    return (busy ? '<p class="obs mpbusy"><b>Building the plan</b>: still reading ' + esc(andList(p.pending)) + ". Each lookup finishes or fails within about a minute.</p>" :
+      '<p class="mpvs mpvs-' + v.status.toLowerCase() + '"><b>' + esc(v.label) + "</b></p>") +
       '<ul class="mpvl">' + v.items.map(function (x) {
         return '<li class="mpv-' + x.level + '"><span class="mpvm">' + VAL_MARK[x.level] + "</span> <b>" + esc(x.label) + "</b>" + (x.detail ? ": " + esc(x.detail) : "") +
           (x.code === "hospital.sources" ? ' <button type="button" class="refresh noprint" data-mp="retry">Try again</button>' : "") + "</li>";
@@ -3003,7 +3097,9 @@
       }
       return "";
     }
-    row("Official trauma designation", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" + (f.trauma.official ? ". Status VERIFIED: published by the designating authority" + (f.trauma.authority ? " (" + esc(f.trauma.authority) + ")" : "") + "." : ". Status REPORTED: not yet verified with the designating authority.") + "</span>" : '<span class="sub">None identified in OSAP\'s sources. This does not mean the hospital cannot treat injured patients; see the observed class and capability flags.</span>'));
+    row("Official trauma designation", '<b>' + esc(f.trauma ? tierLabel(f) : NK_LVL) + "</b>" + lowTag(f) + (f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" + (f.trauma.official ? ". Status VERIFIED: published by the designating authority" + (f.trauma.authority ? " (" + esc(f.trauma.authority) + ")" : "") + "." : ". Status REPORTED: not yet verified with the designating authority.") + "</span>" : '<span class="sub">None identified in OSAP\'s sources. This does not mean the hospital cannot treat injured patients; see the observed class and capability flags.</span>'));
+    row("Equivalent level", (eqText(f) ? "<b>" + esc(eqText(f)) + "</b>" + eqTag(f) : "None: " + esc(f.eq && f.eq.next ? "Level IV equivalent would need " + andList(f.eq.next.missing) + " documented" : "not enough is documented")) +
+      (f.eq && f.eq.level && f.eq.next ? '<span class="sub">' + esc(eqNext(f)) + ".</span>" : "") + '<span class="sub">' + esc(EQ_RULE) + (f.trauma ? " The official designation above comes first." : "") + "</span>");
     row("Observed class", esc(tcText(f)) + '<span class="sub">' + esc(f.tc ? f.tc.wording : "") + " Inferred by rule " + TC_RULE_ID + "; not an official level and not used to pick.</span>" + (f.why && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + "</span>" : ""));
     row("Emergency department", f.er === "yes" ? "Yes" + (osm ? " (" + osm + " emergency=yes)" : "") : f.er === "no" ? "No" + (osm ? " (" + osm + " emergency=no)" : "") :
       sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : flag("ed.24_7", "ed.basic") || nk("No emergency department listed."));
@@ -3190,7 +3286,7 @@
     if (c.errors) { if (msg) msg.textContent = "Not recorded: check " + c.errors.join(", ") + "."; return; }
     var L = I.addCheck(checks(), c); lsSet(chkKey(), L);
     if (checks().length !== L.length) { if (msg) msg.textContent = "Not recorded: this device's storage is full."; return; }
-    f.caps = capFlags(f, f.sofRec); f.tc = tClass(f.caps);
+    f.caps = capFlags(f, f.sofRec); f.tc = tClass(f.caps); f.eq = equivLevel(f.caps);
     var cp = D.getElementById("mpa-caps"), ck = D.getElementById("mpa-chk");
     if (cp) cp.innerHTML = capTable(f, ST);
     if (ck) { ck.innerHTML = chkHtml(f); var m2 = ck.querySelector(".mpchkmsg"); if (m2) m2.textContent = "Recorded " + (CAP_NAME[c.cap] || c.cap) + ", " + dual(Date.parse(c.at), true) + "."; var b = ck.querySelector("button[type=submit]"); if (b) b.focus(); }
@@ -3343,6 +3439,6 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();

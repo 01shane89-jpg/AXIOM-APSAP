@@ -129,10 +129,11 @@ try {
 } catch (e) { console.error("GDACS failed:", e.message); }
 
 // ReliefWeb: newest humanitarian reports per country (situation reports, flash updates, maps). Documents, not events.
-// Off unless RELIEFWEB_APPNAME is set: from 2026-09 the API answers 403 without an appname approved by ReliefWeb (a
-// registration), and its RSS feed answers GitHub's servers with an empty 202 challenge. Both confirmed on 2026-09-26.
+// From 2026-09 the API answers 403 without an appname approved by ReliefWeb (a registration), so it is used only when
+// RELIEFWEB_APPNAME is set. Otherwise the public RSS is read (no account). On 2026-09-26 the RSS answered GitHub's servers with an
+// empty 202 challenge; an answer that is not a feed counts as a failure, and the RSS is given up after the first few.
 const RW = "https://api.reliefweb.int/v2/reports?appname=" + encodeURIComponent(process.env.RELIEFWEB_APPNAME || "");
-if (process.env.RELIEFWEB_APPNAME) try {
+try {
   const iso = [...new Set(Object.values(ISO3))];
   const body = { limit: 1000, sort: ["date.created:desc"], preset: "latest",
     filter: { operator: "AND", conditions: [{ field: "primary_country.iso3", value: iso.map((i) => i.toLowerCase()), operator: "OR" },
@@ -140,17 +141,19 @@ if (process.env.RELIEFWEB_APPNAME) try {
     fields: { include: ["title", "date.created", "primary_country.iso3", "source.shortname", "source.name", "url_alias", "url", "format.name", "disaster_type.name"] } };
   let j = null, fails = [];
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
-  try {
+  if (process.env.RELIEFWEB_APPNAME) try {
     const r = await fetch(RW, { method: "POST", signal: ctl.signal, headers: { "content-type": "application/json", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-ASAP hourly refresh)" }, body: JSON.stringify(body) });
     if (!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).replace(/\s+/g, " ").slice(0, 200));
     j = await r.json();
   } catch (e) { fails.push("API: " + e.message); } finally { clearTimeout(t); }
+  else clearTimeout(t);
   if (!j) { // ReliefWeb now asks API users to register an appname; its public RSS needs nothing
     const data = [];
     for (const [cc, i3] of Object.entries(ISO3)) {
       if (cc === "oki") continue;
       try {
         const xml = await getText("https://reliefweb.int/updates/rss.xml?search=" + encodeURIComponent("primary_country.iso3:" + i3.toLowerCase()));
+        if (!/<rss[\s>]|<channel[\s>]/.test(xml)) throw new Error("not a feed (" + (xml.length ? xml.length + " bytes" : "empty answer") + ")");
         for (const it of xml.split(/<item[\s>]/).slice(1, 41)) {
           const tg = (x) => { const m = it.match(new RegExp("<" + x + "[^>]*>([\\s\\S]*?)</" + x + ">")); return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : ""; };
           const d = new Date(tg("pubDate")); if (isNaN(d) || Date.now() - d > 90 * 864e5) continue;
@@ -162,7 +165,7 @@ if (process.env.RELIEFWEB_APPNAME) try {
     }
     if (!data.length) throw new Error([fails[0]].concat(fails.slice(1, 3)).join("; "));
     j = { data };
-    console.error("ReliefWeb API failed, used RSS:", fails[0]);
+    if (process.env.RELIEFWEB_APPNAME) console.error("ReliefWeb API failed, used RSS:", fails[0]);
   }
   const reports = {};
   for (const d of j.data || []) {

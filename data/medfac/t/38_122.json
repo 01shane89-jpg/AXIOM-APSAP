@@ -14,7 +14,7 @@
 ["w1359624726",39.45029,122.0221,"cn",{"name":"普兰店机场","aeroway":"aerodrome","military":"airfield"}],
 ["w1548722258",39.87635,123.07454,"cn",{"name":"大营中心卫生院","amenity":"hospital","healthcare":"hospital"}],
 ["w309482170",39.49552,122.97981,"cn",{"aeroway":"helipad"}],
-["w399579004",39.26675,122.66707,"cn",{"name":"长海机场","name:en":"Changhai Airport","addr:district":"长海县","addr:city":"大连市","addr:province":"辽宁省","addr:postcode":"116500","aeroway":"aerodrome","icao":"ZYCH","iata":"CNI"}],
+["w399579004",39.26675,122.66707,"cn",{"name":"长海机场","name:en":"Changhai Airport","addr:district":"长海县","addr:city":"大连市","addr:province":"辽宁省","addr:postcode":"116500","aeroway":"aerodrome","icao":"ZYCH","iata":"CNI","wikidata":"Q1837460"}],
 ["w427804363",39.09079,122.01146,"cn",{"name":"金石滩医院","name:en":"Jinshitan Hospital","amenity":"hospital"}],
 ["w427804365",39.09129,122.01224,"cn",{"name":"金石滩医院","name:en":"Jinshitan Hospital","amenity":"hospital"}],
 ["w880833906",39.66579,122.97147,"cn",{"name":"庄河市中心医院","amenity":"hospital","healthcare":"hospital"}],

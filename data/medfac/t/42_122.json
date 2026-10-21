@@ -4,7 +4,7 @@
 ["n882907959",43.58976,123.57364,"cn",{"name:en":"Datushan Airfield","aeroway":"aerodrome"}],
 ["w1263185829",43.67765,122.37518,"cn",{"aeroway":"helipad"}],
 ["w1463651097",42.07075,123.56139,"cn",{"aeroway":"aerodrome"}],
-["w146745321",43.55298,122.19819,"cn",{"name":"通辽机场","name:en":"Tongliao Airport","operator":"内蒙古民航机场集团有限责任公司","aeroway":"aerodrome","icao":"ZBTL","iata":"TGO"}],
+["w146745321",43.55298,122.19819,"cn",{"name":"通辽机场","name:en":"Tongliao Airport","operator":"内蒙古民航机场集团有限责任公司","aeroway":"aerodrome","icao":"ZBTL","iata":"TGO","wikidata":"Q1018059"}],
 ["w1467934694",43.51795,123.8695,"cn",{"name":"刘家馆子镇卫生院","amenity":"clinic","healthcare":"clinic","addr:district":"梨树县","addr:city":"四平市","addr:province":"吉林省","addr:postcode":"136509"}],
 ["w1504443900",42.03515,122.8521,"cn",{"name":"新民二道机场","aeroway":"aerodrome"}],
 ["w1509382229",42.21719,123.60488,"cn",{"name":"腰堡机场","aeroway":"aerodrome"}],

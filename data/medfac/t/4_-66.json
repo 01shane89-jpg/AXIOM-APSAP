@@ -1,1 +1,10 @@
-[["n1042086162",4.00247,-64.49534,"br",{"name":"Auaris","aeroway":"aerodrome","icao":"SWBV"}]]
+[["n1042086162",4.00247,-64.49534,"br",{"name":"Auaris","aeroway":"aerodrome","icao":"SWBV"}],
+["n1042091954",4.48024,-65.7821,"ve",{"name":"Alto Asisa Pista","name:en":"Alto Asisa Runway","aeroway":"aerodrome"}],
+["n1042092000",5.5894,-65.86179,"ve",{"name":"Hato Yavi Pista","name:en":"Hato Yavi Runway","aeroway":"aerodrome"}],
+["n1042092020",5.4801,-65.91828,"ve",{"name":"Majagua Pista","name:en":"Majagua Runway","aeroway":"aerodrome"}],
+["n1042092091",5.04575,-65.63647,"ve",{"name":"Tenqua Pista","name:en":"Tengua Runway","aeroway":"aerodrome"}],
+["n1042092096",4.33187,-65.24977,"ve",{"name":"Wanana Pista","name:en":"Wanana Runway","aeroway":"aerodrome"}],
+["n6480755203",4.61024,-65.98468,"ve",{"aeroway":"aerodrome"}],
+["w1491499211",5.9268,-64.43151,"ve",{"name":"Pista de Entre Ríos","name:en":"Entre Ríos Airstrip","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1491510510",4.95494,-64.81472,"ve",{"name":"Pista de Dojo","name:en":"Dojo Airstrip","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1491513616",4.43383,-64.12949,"ve",{"name":"Pista de Kanarakuni","name:en":"Kanarakuni Airstrip","aeroway":"aerodrome","aerodrome:type":"airfield"}]]

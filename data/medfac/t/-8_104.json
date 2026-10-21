@@ -1,6 +1,6 @@
 [["n10170416878",-6.37625,105.82812,"id",{"name":"RSUD Banten","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Dinas Kesehatan Banten","operator:type":"government"}],
 ["n6098491598",-6.36941,105.93096,"id",{"amenity":"hospital","healthcare":"hospital"}],
-["n7287354085",-6.38073,105.83531,"id",{"name":"Puskesmas Labuan","amenity":"clinic","healthcare":"clinic;doctor;pharmacy"}],
+["n7287354085",-6.38073,105.83531,"id",{"name":"Puskesmas Labuan","amenity":"clinic","healthcare":"clinic;doctor;pharmacy","opening_hours":"24/7"}],
 ["n7287649385",-6.31979,105.83676,"id",{"name":"Puskesmas Carita","amenity":"clinic","healthcare":"clinic;doctor;pharmacy","addr:full":"Jl. Raya Carita No.KM.8, Banjarmasin, Pandeglang, Kabupaten Pandeglang, Banten 42264"}],
 ["w1119596059",-6.49159,105.66979,"id",{"name":"Bandar Udara Salakanagara","aeroway":"aerodrome","icao":"WIHI"}],
 ["w437215520",-6.19042,105.8414,"id",{"aeroway":"helipad"}],

@@ -13,6 +13,7 @@
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs";
+import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones } from "./warngeo_lib.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -175,20 +176,69 @@ await job("tsu", "tsunami.js", "ASAP_TSU", async () => {
 });
 
 // 3. Smithsonian GVP weekly volcanic activity report (RSS with georss points).
+// From 2026-10-02 volcano.si.edu answers GitHub's runners with HTTP 403. The report is tried again with a browser user agent and
+// through its CAP twin; when all of them are refused, NASA EONET's open volcano events (which cite the GVP and the observatories)
+// stand in, so the list stays current. Each item says which one it came from (via).
+const BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-OSAP hourly refresh)";
 await job("volc", "volcano.js", "ASAP_VOLC", async () => {
-  const url = "https://volcano.si.edu/news/WeeklyVolcanoRSS.xml", xml = await get(url, "text"), items = [];
-  for (const it of xml.split(/<item[\s>]/).slice(1)) {
-    const tag = (t) => { const m = it.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">")); return m ? unhtml(m[1].replace(/<!\[CDATA\[|\]\]>/g, "")) : ""; };
-    const pt = tag("georss:point").split(/\s+/).map(parseFloat), title = tag("title");
-    const m = title.match(/^(.*?)\s*\(([^)]+)\)\s*[-–]\s*(.*)$/) || [];
-    const lat = pt[0], lon = pt[1];
-    if ((lat == null || isNaN(lat)) && !m[2]) continue;
-    const ccs = [...new Set([...(isNaN(lat) ? [] : ccsAt(lat, lon, 0.5)), ...ccsInText(m[2] || "")])];
-    if (!ccs.length) continue;
-    items.push({ volcano: m[1] || title, country: m[2] || "", report: m[3] || "", title, date: isoDay(tag("pubDate")), summary: tag("description").slice(0, 900),
-      link: tag("link"), lat: isNaN(lat) ? null : lat, lon: isNaN(lon) ? null : lon, ccs });
+  const urls = ["https://volcano.si.edu/news/WeeklyVolcanoRSS.xml", "https://volcano.si.edu/news/WeeklyVolcanoCAP.xml"], fails = [];
+  for (const url of urls) for (const ua of [UA, BROWSER_UA]) {
+    let xml; try { xml = await get(url, "text", { headers: { "user-agent": ua } }); } catch (e) { fails.push(url.split("/").pop() + ": " + err(e)); continue; }
+    const items = [];
+    for (const it of xml.split(/<item[\s>]|<cap:info[\s>]|<info[\s>]/).slice(1)) {
+      const tag = (t) => { const m = it.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">")); return m ? unhtml(m[1].replace(/<!\[CDATA\[|\]\]>/g, "")) : ""; };
+      const pt = (tag("georss:point") || tag("cap:circle") || tag("circle")).split(/[\s,]+/).map(parseFloat), title = tag("title") || tag("cap:headline") || tag("headline");
+      const m = title.match(/^(.*?)\s*\(([^)]+)\)\s*[-–]\s*(.*)$/) || [];
+      const lat = pt[0], lon = pt[1];
+      if ((lat == null || isNaN(lat)) && !m[2]) continue;
+      const ccs = [...new Set([...(isNaN(lat) ? [] : ccsAt(lat, lon, 0.5)), ...ccsInText(m[2] || "")])];
+      if (!ccs.length) continue;
+      items.push({ volcano: m[1] || title, country: m[2] || "", report: m[3] || "", title, date: isoDay(tag("pubDate") || tag("cap:sent") || tag("sent")),
+        summary: (tag("description") || tag("cap:description")).slice(0, 900), link: tag("link") || "https://volcano.si.edu/reports_weekly.cfm",
+        lat: isNaN(lat) ? null : lat, lon: isNaN(lon) ? null : lon, ccs, via: "GVP weekly report" });
+    }
+    if (items.length) return { src: url, items, note: items.length + " volcanoes in covered areas" + (fails.length ? " (after " + fails.join("; ") + ")" : "") };
+    fails.push(url.split("/").pop() + ": no items");
   }
-  return { src: url, items, note: items.length + " volcanoes in covered areas" };
+  // Stand-ins, merged: NASA EONET's open volcano events, and volcanic-ash SIGMETs in force worldwide (NOAA Aviation Weather Center's
+  // international SIGMET list, no key), which name the volcano and give its position. Neither is the weekly report; both say so.
+  const items = [], seen = new Set();
+  try {
+    const j = await get("https://eonet.gsfc.nasa.gov/api/v3/events?category=volcanoes&status=open&days=60");
+    for (const e of j.events || []) {
+      const pts = (e.geometry || []).filter((g) => g.type === "Point" && Array.isArray(g.coordinates));
+      const g = pts[pts.length - 1]; if (!g) continue;
+      const lat = g.coordinates[1], lon = g.coordinates[0], ccs = ccsAt(lat, lon, 0.5);
+      if (!ccs.length) continue;
+      const m = String(e.title || "").match(/^(.*?)(?:\s+Volcano)?\s*,\s*(.+)$/) || [];
+      const src = (e.sources || []).find((s) => s.id === "SIVolcano") || (e.sources || [])[0] || {};
+      seen.add(String(m[1] || e.title).toLowerCase());
+      items.push({ volcano: m[1] || e.title, country: m[2] || "", report: "Open volcanic event since " + isoDay((pts[0] || g).date), title: e.title, date: isoDay(g.date),
+        summary: "NASA EONET lists this volcano as active (sources: " + (e.sources || []).map((s) => s.id).join(", ") + ").",
+        link: src.url || e.link || "https://eonet.gsfc.nasa.gov/", lat, lon, ccs, via: "NASA EONET" });
+    }
+    fails.push("EONET: " + items.length + " open volcano events");
+  } catch (e) { fails.push("EONET: " + err(e)); }
+  try {
+    const j = await get("https://aviationweather.gov/api/data/isigmet?hazard=va&format=json");
+    for (const x of Array.isArray(j) ? j : j.features || []) {
+      const p = x.properties || x, raw = String(p.rawSigmet || p.rawAirSigmet || "");
+      const name = (raw.match(/\bVA ERUPTION\s+(?:MT\s+)?([A-Z][A-Z' -]+?)\s+(?:PSN|LOC)\b/) || raw.match(/\bMT\s+([A-Z][A-Z' -]+?)\s+(?:PSN|LOC)\b/) || [])[1];
+      const pm = raw.match(/\bPSN\s+([NS])(\d{2})(\d{2})\s+([EW])(\d{3})(\d{2})/);
+      const lat = pm ? (pm[1] === "S" ? -1 : 1) * (+pm[2] + pm[3] / 60) : null, lon = pm ? (pm[4] === "W" ? -1 : 1) * (+pm[5] + pm[6] / 60) : null;
+      if (!name || lat == null) continue;
+      const key = name.trim().toLowerCase(); if (seen.has(key)) continue; seen.add(key);
+      const ccs = ccsAt(lat, lon, 0.5); if (!ccs.length) continue;
+      const vol = key.replace(/\b\w/g, (c) => c.toUpperCase());
+      items.push({ volcano: vol, country: "", report: "Volcanic ash SIGMET in force (" + (p.firName || p.firId || "aviation") + ")", title: vol + " - volcanic ash SIGMET",
+        date: isoDay(p.validTimeFrom ? (typeof p.validTimeFrom === "number" ? p.validTimeFrom * 1000 : p.validTimeFrom) : Date.now()),
+        summary: raw.replace(/\s+/g, " ").slice(0, 600), link: "https://aviationweather.gov/gfa/#sigmet", lat: +lat.toFixed(3), lon: +lon.toFixed(3), ccs, via: "Volcanic ash SIGMET (NOAA AWC)" });
+    }
+    fails.push("SIGMET: " + items.filter((i) => i.via !== "NASA EONET").length + " volcanoes");
+  } catch (e) { fails.push("SIGMET: " + err(e)); }
+  // both stand-ins failing keeps the old snapshot; both answering with nothing is a real "no activity found"
+  if (!items.length && fails.filter((f) => /^(EONET|SIGMET): \d/.test(f)).length < 2) throw new Error(fails.join("; "));
+  return { src: "https://eonet.gsfc.nasa.gov/ and https://aviationweather.gov/", fallback: fails.join("; ").slice(0, 400), items, note: items.length + " volcanoes from stand-ins (" + fails.join("; ") + ")" };
 });
 
 // 4. IODA internet outage signals (Georgia Tech). Country summaries for the last 7 days, then events for countries with any.
@@ -414,7 +464,7 @@ await job("cdc", "cdc.js", "ASAP_CDC", async () => {
   return { src: "https://wwwnc.cdc.gov/travel/notices", items, note: items.length + " notices" };
 });
 
-// 13. NGA broadcast navigational warnings (HYDROPAC, NAVAREA IV, NAVAREA XII). Positions parsed from the text.
+// 13. NGA broadcast navigational warnings in force (Daily Memoranda of all five NGA areas). Positions parsed from the text.
 function navPos(text) {
   const out = [];
   for (const m of String(text).matchAll(/(\d{1,2})-(\d{2}(?:\.\d+)?)\s*([NS])\s+(\d{1,3})-(\d{2}(?:\.\d+)?)\s*([EW])/g)) {
@@ -424,22 +474,28 @@ function navPos(text) {
   return out;
 }
 await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
-  // HYDROPAC (western Pacific and Indian Ocean), NAVAREA IV (western Atlantic, Caribbean) and NAVAREA XII (eastern Pacific)
-  const AREAS_NAV = [["P", "HYDROPAC"], ["4", "NAVAREA IV"], ["12", "NAVAREA XII"]], items = [], status = [];
-  for (const [area, label] of AREAS_NAV) {
+  // The old query API (api/publications/broadcast-warn?navArea=..&status=A) stopped at 10 May 2024 (its own /latest-warning
+  // says so); the warnings in force now are in each area's Daily Memorandum (tools/warngeo_lib.mjs, MEM_FILES / parseDailyMem).
+  // All five NGA areas: HYDROLANT, HYDROPAC, HYDROARC, NAVAREA IV and NAVAREA XII.
+  let media = null;
+  try { media = await get("https://msi.nga.mil/api/media?type=Nav%20Warnings"); } catch (e) {}
+  const items = [], status = [];
+  for (const mf of memFiles(media)) {
     try {
-      const j = await get("https://msi.nga.mil/api/publications/broadcast-warn?navArea=" + area + "&status=A&output=json");
+      const mem = parseDailyMem(await get(MEM_BASE + mf.key, "text"), mf.code);
+      if (!mem.warnings.length) throw new Error("no warnings in the memorandum (layout changed?)");
       let n = 0;
-      for (const w of j["broadcast-warn"] || j.broadcastWarn || j.data || []) {
+      for (const w of mem.warnings) {
+        if (skipNga(w.text)) continue;
         const text = String(w.text || "").replace(/\s+/g, " ").trim(), pos = navPos(text);
         let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
         if (!ccs.length) continue;
-        items.push({ id: label + " " + (w.msgNumber || "") + "/" + String(w.msgYear || "").slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
-          text: text.slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
+        items.push({ id: (w.area || mf.area) + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
+          text: redactPhones(text).slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
         n++;
       }
-      status.push({ area: label, ok: true, n });
-    } catch (e) { status.push({ area: label, ok: false, error: err(e) }); }
+      status.push({ area: mf.area, ok: true, n, file: mf.modified || null });
+    } catch (e) { status.push({ area: mf.area, ok: false, error: err(e) }); }
   }
   if (!status.some((x) => x.ok)) throw new Error(status.map((x) => x.area + ": " + x.error).join("; "));
   return { src: "https://msi.nga.mil/NavWarnings", status, items, note: items.length + " warnings (" + status.map((x) => x.area + (x.ok ? " " + x.n : " failed")).join(", ") + ")" };

@@ -1,0 +1,10 @@
+{
+  "name": "osap-netlify",
+  "private": true,
+  "type": "module",
+  "description": "Dependencies of the Netlify functions (the paywall). Installed by the build command in netlify.toml.",
+  "dependencies": {
+    "@netlify/blobs": "11.1.3",
+    "@netlify/identity": "2.0.0"
+  }
+}
