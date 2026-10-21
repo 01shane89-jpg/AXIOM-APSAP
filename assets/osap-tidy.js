@@ -147,6 +147,8 @@
     if (W.OSAP_TIER && W.OSAP_TIER.owner && W.OSAP_TIER.owner()) h += '<button type="button" role="menuitem" data-tp="@users">Users</button>';
     /* reviews of OSAP: read them, leave one (assets/osap-reviews.js, Netlify site only) */
     if (W.OSAP_REVIEWS && W.OSAP_REVIEWS.on()) h += '<button type="button" role="menuitem" data-tp="@reviews">Reviews</button>';
+    /* how to stay hidden while using OSAP, and where OSAP's server sees this device connecting from (assets/osap-safety.js) */
+    if (W.OSAP_SAFETY) h += '<button type="button" role="menuitem" data-tp="@safe">Staying hidden online</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     /* panic wipe: erases everything OSAP keeps on this device, after one confirm (assets/osap-wipe.js) */
     if (W.OSAP_WIPE) h += '<button type="button" role="menuitem" data-tp="@wipe" class="tpwipe">Erase this device</button>';
@@ -215,6 +217,7 @@
     else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
     else if (sel === "@vault") { if (W.OSAP_VAULT) W.OSAP_VAULT.open(); }
+    else if (sel === "@safe") { if (W.OSAP_SAFETY) W.OSAP_SAFETY.open(); }
     else if (sel === "@wipe") { if (W.OSAP_WIPE) W.OSAP_WIPE.open(); }
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
