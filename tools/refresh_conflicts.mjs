@@ -18,6 +18,7 @@ import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, 
 import { ccsAt } from "./geo_cc.mjs";
 import { zonesFront } from "./front_zones.mjs";
 import { tgItems } from "./tg_preview.mjs";
+import { stripOutletText } from "./outlet_text.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
 const TIMEOUT = 25000, KEEP_DAYS = 180, CAP = 900, UCDP_DAYS = 400, OUT = "data/live/conflicts";
@@ -403,15 +404,21 @@ for (const c of LIST) {
   if (!PROBE && translateAll) {
     const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected);
     if (todo.length) {
-      const tr = await translateAll([...todo.map((i) => ({ text: i.title, lang: i.lang })), ...todo.map((i) => ({ text: i.summary, lang: i.lang }))]);
-      todo.forEach((i, n) => { if (tr[n].en) { i.title_en = tr[n].en.slice(0, 300); i.mt = tr[n].tool; } if (tr[todo.length + n].en) i.summary_en = tr[todo.length + n].en.slice(0, 400); });
+      // headlines only: summaries are not translated, as outlet text is never stored (tools/outlet_text.mjs)
+      const tr = await translateAll(todo.map((i) => ({ text: i.title, lang: i.lang })));
+      todo.forEach((i, n) => { if (tr[n].en) { i.title_en = tr[n].en.slice(0, 300); i.mt = tr[n].tool; } });
     }
   }
   for (const i of items) for (const k of ["title", "summary", "title_en", "summary_en", "outlet"]) if (i[k]) i[k] = unent(i[k]).replace(/\uFFFD/g, "");   // a search engine cuts long Khmer titles mid-character
   for (const i of items) {
     const en = /^en\b/i.test(i.lang || "") ? i.title : i.title_en || "";
+    const had = i.kind;
     i.kind = classify(en || i.title);
-    if (i.kind === "statement" || i.kind === "other") { const k2 = classify([en || i.title, i.summary_en || i.summary].join(" ")); if (k2 !== "other") i.kind = k2; }
+    // the summary helps only while the job still holds it (a fresh item); a kept item keeps the kind its summary gave it
+    if (i.kind === "statement" || i.kind === "other") {
+      if (i.summary_en || i.summary) { const k2 = classify([en || i.title, i.summary_en || i.summary].join(" ")); if (k2 !== "other") i.kind = k2; }
+      else if (had && had !== "statement" && had !== "other") i.kind = had;
+    }
     i.killed = en ? figure(en, KILLED) : null; i.injured = en ? figure(en, INJURED) : null;
     // placed by the places the text names inside this conflict's countries (the news step placed it within one country only)
     if (gz && placeIn && !i.geo_c) {
@@ -475,6 +482,8 @@ for (const c of LIST) {
   items.forEach((i) => { const k = wk(i.date.slice(0, 10)); if (W[k]) W[k].reports++; });
   st.weeks = W.reverse();
   st.ucdp_latest = ucdp.length ? ucdp[0].date : null;
+  // headline, link and what OSAP derived only: the outlet's summary is dropped before anything is written (tools/outlet_text.mjs)
+  for (const i of items) stripOutletText(i);
   const pub = { id: c.id, name: c.name, short: c.short, countries: c.countries, since: c.since, kind: c.kind, parties: c.parties, bounds: c.bounds, tier: c.tier || 2, ...(c.note_data ? { note_data: c.note_data } : {}), ...(c.merge_tabs ? { merge_tabs: c.merge_tabs } : {}) };
   const data = { ...pub, asof: stamp, keep_days: c.keep_days || KEEP_DAYS, sources: [...status, { ...ucdpStatus, n: ucdp.length }], stats: st, items, ucdp,
     ucdp_key: UF.find((u) => u.id === c.id).key, ucdp_files: [...(ucdpFilesDone[c.id] || [])], kind_names: KIND_NAMES };

@@ -134,6 +134,8 @@ data-ev-tlr="1"
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
 <script src="assets/osap-intelbrief.js"></script>
+# OSIR report format (claude/osir-report)
+<script src="assets/osap-osir.js"></script>
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-illum.js"></script>
 # News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)

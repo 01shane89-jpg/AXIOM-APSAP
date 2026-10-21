@@ -228,6 +228,8 @@ let pick = null;
   /* and no live Estonian warnings (MeteoAlarm posts real ones most days, which would count as new since the last look) */
   await ctx.route(/\/data\/live\/warnings\.js(\?|$)/, async (r) => { const res = await r.fetch(); r.fulfill({ response: res, body: (await res.text()) + "\n;if(window.ASAP_WARN&&window.ASAP_WARN.items)delete window.ASAP_WARN.items.ee;" }); });
   await ctx.route(/\/data\/history\/ee\.js(\?|$)/, (r) => r.fulfill({ contentType: "text/javascript", body: 'window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST["ee"]={"news":[],"social":[]};' }));
+  /* and no official warnings for it: the real MeteoAlarm feed often has a fresh Estonian wind warning */
+  await ctx.route(/\/data\/live\/warnings\.js(\?|$)/, (r) => r.fulfill({ contentType: "text/javascript", body: "window.ASAP_WARN=" + JSON.stringify({ asof: stamp(10).replace("T", " ") + "Z", feeds: [], items: {} }) + ";" }));
   await p.goto(base + "#ee/timeline", { waitUntil: "domcontentloaded" });
   await ready(p);
   await p.waitForFunction(() => window.OSAP_TODAY.isOpen() && document.querySelector("#today .oe-empty") && document.querySelector("#today .mccard"), null, { timeout: 30000 }).catch(() => {});

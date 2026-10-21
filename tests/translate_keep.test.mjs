@@ -9,7 +9,7 @@ import path from "node:path";
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "osap-keep-"));
 const repo = process.cwd();
 process.chdir(dir);
-process.env.MT = "0"; process.env.MYMEMORY_LIMIT = "0";   // no model, no network: only cache and seed can translate
+process.env.MT = "0";   // no model: only cache and seed can translate
 const { updateHistory, storedTranslations } = await import(path.join(repo, "tools/history.mjs"));
 const { translateAll, seed, saveCache } = await import(path.join(repo, "tools/translate.mjs"));
 let ok = 0; const t = async (name, f) => { await f(); ok++; console.log("ok -", name); };
@@ -24,7 +24,7 @@ await t("a refresh that could not translate keeps the English stored earlier", a
   const h = read();
   assert.equal(h.length, 1);
   assert.equal(h[0].title_en, "Flash floods hit many places in Mae Hong Son");
-  assert.equal(h[0].summary_en, "Severe flash floods in Sao Hin, Mae Sariang");
+  assert.ok(!h[0].summary && !h[0].summary_en, "the outlet's description and its translation are never stored (tools/outlet_text.mjs)");
   assert.match(h[0].mt, /MADLAD/);
   assert.equal(h[0].first_seen, "2026-10-06 09:01Z");
 });
@@ -32,16 +32,16 @@ await t("changed words are not given the old English", async () => {
   await updateHistory("social", { th: [{ ...post, title: post.title + " (แก้ไข)", mt: "untranslated" }] }, "2026-10-06 09:31Z");
   const h = read();
   assert.ok(!h[0].title_en, "an edited headline is not shown with the old translation");
-  assert.equal(h[0].summary_en, "Severe flash floods in Sao Hin, Mae Sariang", "the unchanged description keeps its English");
 });
 await t("stored English seeds the translator, and is never written to the cache file", async () => {
+  await updateHistory("social", { th: [{ ...post, title_en: "Flash floods hit many places in Mae Hong Son", mt: "MADLAD-400 (Google open model, run in the refresh job)" }] }, "2026-10-06 09:46Z");
   const pairs = storedTranslations("social", ["th"]);
-  assert.ok(pairs.some((p) => p.en === "Severe flash floods in Sao Hin, Mae Sariang"));
+  assert.ok(pairs.some((p) => p.en === "Flash floods hit many places in Mae Hong Son"));
   assert.ok(seed(pairs) >= 1);
-  const [s] = await translateAll([{ text: post.summary, lang: "th" }]);
-  assert.equal(s.en, "Severe flash floods in Sao Hin, Mae Sariang");
+  const [s] = await translateAll([{ text: post.title, lang: "th" }]);
+  assert.equal(s.en, "Flash floods hit many places in Mae Hong Son");
   saveCache();
-  assert.ok(!fs.readFileSync("data/live/translation-cache.json", "utf8").includes("Sao Hin"));
+  assert.ok(!fs.readFileSync("data/live/translation-cache.json", "utf8").includes("Mae Hong Son"));
 });
 await t("a stored invented line is not reused", async () => {
   seed([{ text: "ฝนตกหนักที่เชียงใหม่", lang: "th", en: "10.35am: Heavy rain in Chiang Mai", tool: "MADLAD-400 (Google open model, run in the refresh job)" }]);

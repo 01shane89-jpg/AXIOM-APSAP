@@ -13,8 +13,9 @@
    - Points, lines and shapes on the 2D map (the ticked data sets, conflict lines, your own dropped marks) are copied into the
      3D view as they are when it opens. Tapping one shows its popup; "Show in 2D" goes back and opens it there. Display only:
      nothing here writes to records, and your marks stay in this browser.
-   - A north arrow sits beside the 2D scale bar (the flat map is always north-up), so a screenshot of the map shows north.
-   - The scale bar (bottom left, 2D and 3D) follows the Measure unit (km, mi or nm, remembered on this device as
+   - A north arrow sits on its own in the top-left corner of the 2D map (the flat map is always north-up), so a screenshot of
+     the map shows north.
+   - The scale bar (2D: bottom right, clear of the Legend; 3D: bottom left) follows the Measure unit (km, mi or nm, remembered on this device as
      "osap-meas-unit"); tap it to change the unit. */
 (function () {
   "use strict";
@@ -166,7 +167,7 @@
   }
   function scaleMax() { return mapEl.clientWidth < 520 ? 130 : 190; }
   var ScaleCtl = L.Control.extend({
-    options: { position: "bottomleft" },
+    options: { position: "bottomright" },
     onAdd: function () {
       var d = L.DomUtil.create("div", "o3s leaflet-control");
       d.setAttribute("role", "button"); d.tabIndex = 0; d.title = "Map scale. Tap to change the unit (km, mi, nm)";
@@ -181,12 +182,16 @@
   var NORTH = '<svg class="o3n" viewBox="0 0 20 30" width="18" height="27" role="img" aria-label="North is up"><title>North</title>' +
     '<text x="10" y="9" text-anchor="middle" font-size="9" font-weight="700" font-family="system-ui,sans-serif" fill="currentColor">N</text>' +
     '<path d="M10 11 L16 28 L10 24 Z" fill="currentColor"/><path d="M10 11 L4 28 L10 24 Z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>';
-  scaleEl.classList.add("o3s-n");
+  /* the flat map is always north-up, so a fixed north arrow sits in the top-left corner and any screenshot of the map carries it */
+  var NorthCtl = L.Control.extend({
+    options: { position: "topleft" },
+    onAdd: function () { var d = L.DomUtil.create("div", "o3n-ctl leaflet-control"); d.innerHTML = NORTH; return d; }
+  });
+  new NorthCtl().addTo(map);
   function drawScale() {
     var s = map.getSize(), y = s.y / 2, a = map.containerPointToLatLng([s.x / 2 - 50, y]), b = map.containerPointToLatLng([s.x / 2 + 50, y]);
     var h = scaleHtml(map.distance(a, b) / 100, scaleMax());
-    /* the flat map is always north-up, so a fixed north arrow sits beside the bar and any screenshot of the map carries it */
-    scaleEl.innerHTML = h ? NORTH + '<div class="o3s-w">' + h + "</div>" : "";
+    scaleEl.innerHTML = h ? '<div class="o3s-w">' + h + "</div>" : "";
   }
   map.on("zoomend moveend resize", drawScale); drawScale();
 
@@ -820,7 +825,13 @@
   var st = D.createElement("style");
   st.textContent =
     ".o3s{background:rgba(255,255,255,.82);border-radius:6px;padding:3px 8px 5px 8px;cursor:pointer;user-select:none;-webkit-user-select:none;color:#212529;box-shadow:0 1px 4px rgba(0,0,0,.25)}" +
-    ".o3s-n{display:flex;align-items:center;gap:8px}.o3s-n .o3n{flex:none;display:block}.o3s:empty{display:none}.o3s:focus-visible{outline:2px solid #4dabf7}" +
+    ".o3n-ctl{background:rgba(255,255,255,.82);border-radius:6px;padding:3px 5px;color:#212529;box-shadow:0 1px 4px rgba(0,0,0,.25);pointer-events:none}.o3n-ctl .o3n{display:block}" +
+    "html[data-map=dark] .o3n-ctl,html[data-map=grey] .o3n-ctl{background:rgba(20,24,28,.8);color:#e9ecef}" +
+    /* desktop toolbar runs down the right edge of the map: the scale bar sits left of it */
+    "html.atak:not(.atk-ph) #map .leaflet-bottom.leaflet-right>.o3s{margin-right:70px}" +
+    /* while a shape is edited, a finger on a handle near the scale bar drags the handle, not the bar */
+    "#map.area-editing .o3s{pointer-events:none}" +
+    ".o3s:empty{display:none}.o3s:focus-visible{outline:2px solid #4dabf7}" +
     /* the box grows past the bar end by room for half the last number and its unit, so "600 km" stays inside it */
     ".o3s-t{position:relative;height:15px;font:600 11.5px/15px system-ui,-apple-system,sans-serif;margin:0 0 2px 0;padding-right:3.4em}" +
     ".o3s-t span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.o3s-t span:first-child{transform:none}.o3s-t span b{position:absolute;left:100%;font-weight:inherit;padding-left:.3em}" +

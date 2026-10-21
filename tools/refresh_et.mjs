@@ -74,17 +74,18 @@ for (const F of FEEDS) {
     const list = parseFeed(await getFeed(F.url));
     let n = 0;
     for (const i of list) {
-      const text = i.title + " " + (i.summary || "");
+      const text = i.title + " " + (i.summary || "");   // the summary is read here but never stored (tools/outlet_text.mjs)
       if (!/^https?:\/\//.test(i.link || "") || !(F.all || isUap(text))) continue;
       const old = offBy.get(i.link), geo = F.id === "dvids-aaro" ? areaOf(i.title, gz, placeIn) : null;
       offBy.set(i.link, { src: F.id, cc: geo ? geo.cc : undefined, geo: geo ? { name: geo.name, lat: geo.lat, lon: geo.lon, prec: geo.prec, basis: geo.basis } : undefined, kind: F.kind, agency: F.agency, date: iso(i.date) || (old && old.date) || stamp.replace(" ", "T").slice(0, 16),
-        title: clip(i.title, 220), summary: clip(i.summary, 300), link: i.link, fp: fp(i.link + "\n" + i.title).slice(0, 16) });
+        title: clip(i.title, 220), link: i.link, fp: fp(i.link + "\n" + i.title).slice(0, 16) });
       n++;
     }
     sources.push({ id: F.id, name: F.name, ok: true, n });
   } catch (e) { sources.push({ id: F.id, name: F.name, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
 const offCut = new Date(Date.now() - OFFICIAL_DAYS * 864e5).toISOString().slice(0, 16);
+for (const i of offBy.values()) delete i.summary;   // copies kept from before 2026-10-17
 const official = [...offBy.values()].filter((i) => i.date >= offCut).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, MAX_OFFICIAL);
 
 // 3. notable cases (hand-researched, no network)
