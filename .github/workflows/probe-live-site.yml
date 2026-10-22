@@ -1,0 +1,28 @@
+# Test only (probe branch, never merged): is the live site serving fresh data? Prints status, headers and asof.
+name: Probe live site freshness
+on:
+  push:
+    branches: [claude/one-source-probe]
+    paths: [.github/workflows/probe-live-site.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: |
+          date -u
+          for u in https://axiom-osap.netlify.app/ \
+                   https://axiom-osap.netlify.app/data/live/health.json \
+                   "https://axiom-osap.netlify.app/data/live/health.json?fresh=1" \
+                   https://axiom-osap.netlify.app/data/live/news.js \
+                   https://axiom-osap.netlify.app/sw.js \
+                   https://01shane89-jpg.github.io/AXIOM-APSAP/data/live/health.json; do
+            echo "=================== $u"
+            curl -sS -m 30 -D - -o body.txt -w 'time=%{time_total}s size=%{size_download}\n' "$u" | grep -iE '^(HTTP|age|cache-control|x-nf|server|date|last-modified|x-osap|time=|content-length|location)' || true
+            head -c 300 body.txt; echo
+            grep -o '"asof":"[^"]*"' body.txt | head -1 || true
+            grep -o 'VERSION *= *"[^"]*"' body.txt | head -1 || true
+          done
