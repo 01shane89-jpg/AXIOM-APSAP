@@ -7,7 +7,7 @@
 ["n4522761890",32.03162,78.05724,"in",{"name":"Primary Health Centre Sagnam","name:en":"Primary Health Centre Sagnam","amenity":"hospital"}],
 ["n5250786293",33.59535,78.65149,"in",{"aeroway":"helipad"}],
 ["n7637784308",32.22913,78.06772,"in",{"name":"Civil Hospital","amenity":"hospital","addr:full":"Kaza Khas","addr:district":"Lahaul and Spiti","addr:postcode":"172114"}],
-["n9360975134",33.83858,78.32419,"in",{"name":"Parma Valley ALG","aeroway":"aerodrome","military":"airfield"}],
+["n9360975134",33.83858,78.32419,"in",{"name":"Parma Valley ALG","aeroway":"aerodrome","military":"airfield","wikidata":"Q110247961"}],
 ["w1090691282",33.76613,78.72069,"in",{"aeroway":"helipad"}],
 ["w1090691283",33.7744,78.7516,"in",{"aeroway":"helipad"}],
 ["w1110130429",32.90725,79.20149,"in",{"aeroway":"helipad"}],

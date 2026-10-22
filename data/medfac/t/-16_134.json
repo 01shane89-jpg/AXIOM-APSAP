@@ -5,7 +5,7 @@
 ["w295004916",-14.7235,134.74798,"au",{"name":"Ngukurr Airport","aeroway":"aerodrome","icao":"YNGU","iata":"RPM"}],
 ["w295004917",-14.73482,134.52546,"au",{"name":"Roper Bar Airport","aeroway":"aerodrome","icao":"YRRB","iata":"RPB"}],
 ["w295004961",-14.70526,134.56202,"au",{"name":"Urapunga Airport","aeroway":"aerodrome"}],
-["w301174035",-14.26967,135.71464,"au",{"name":"Numbulwar Airport","aeroway":"aerodrome","icao":"YNUM","iata":"NUB"}],
+["w301174035",-14.26967,135.71464,"au",{"name":"Numbulwar Airport","aeroway":"aerodrome","icao":"YNUM","iata":"NUB","wikidata":"Q7069621"}],
 ["w448299768",-15.54626,134.0956,"au",{"name":"Hodgson River Airport","aeroway":"aerodrome"}],
 ["w448313361",-15.21955,134.07121,"au",{"name":"Hodgson Downs Airport","aeroway":"aerodrome"}],
 ["w454589391",-14.38557,135.33219,"au",{"name":"Mumpumampu Airport","aeroway":"aerodrome"}],

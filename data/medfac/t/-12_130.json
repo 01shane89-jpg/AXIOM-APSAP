@@ -1,5 +1,5 @@
 [["n1042093575",-11.2983,131.827,"au",{"name":"Cape Don Airport","aeroway":"aerodrome"}],
-["n1042099496",-11.14846,131.98481,"au",{"name":"Vashon Head Airport","operator":"Seven Spirit Bay Wilderness Resort","website":"https://sevenspiritbay.com.au/","aeroway":"aerodrome","icao":"YVSH"}],
+["n1042099496",-11.14846,131.98481,"au",{"name":"Vashon Head Airport","operator":"Seven Spirit Bay Wilderness Resort","website":"https://sevenspiritbay.com.au/","aeroway":"aerodrome","icao":"YVSH","wikidata":"Q97703452"}],
 ["n3202156995",-11.79742,130.02459,"au",{"aeroway":"helipad"}],
 ["n9081489362",-11.75871,130.63916,"au",{"name":"Julanimawu Health Care Centre","amenity":"clinic","healthcare":"clinic","operator":"Top End Health Service","operator:type":"government"}],
 ["n9961208215",-11.75906,130.63861,"au",{"name":"Wurrumiyanga Well Being Centre","amenity":"clinic","healthcare":"clinic","operator":"Top End Health Service","operator:type":"government"}],

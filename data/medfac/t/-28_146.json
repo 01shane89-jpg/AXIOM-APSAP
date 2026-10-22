@@ -1,5 +1,5 @@
 [["n1042093411",-27.25,146.91701,"au",{"name":"Boatman Airport","aeroway":"aerodrome"}],
-["n1042095645",-26.48709,147.94256,"au",{"name":"Mitchell Airport","aeroway":"aerodrome","icao":"YMIT","iata":"MTQ"}],
+["n1042095645",-26.48709,147.94256,"au",{"name":"Mitchell Airport","aeroway":"aerodrome","icao":"YMIT","iata":"MTQ","wikidata":"Q20451210"}],
 ["n1042096373",-26.39577,147.12706,"au",{"name":"Morven Aerodrome","aeroway":"aerodrome"}],
 ["n1430091317",-26.4043,146.23979,"au",{"emergency":"ambulance_station","operator":"Queensland Health","website":"https://www.ambulance.qld.gov.au/"}],
 ["n8562432623",-26.41464,147.10774,"au",{"name":"Morven Community Clinic","amenity":"clinic","healthcare":"clinic","operator":"South West Hospital & Health Service"}],

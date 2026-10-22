@@ -12,5 +12,5 @@
 ["w1025360017",-31.5617,147.20195,"au",{"name":"Nyngan Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"NSW Health","operator:type":"government"}],
 ["w1300407805",-31.69373,147.83606,"au",{"emergency":"ambulance_station"}],
 ["w219318080",-30.45796,147.71085,"au",{"name":"Carinda Airport","aeroway":"aerodrome","icao":"YCRA"}],
-["w475555008",-31.55185,147.20539,"au",{"name":"Nyngan Airport","aeroway":"aerodrome","icao":"YNYN","iata":"NYN"}],
-["w758494328",-31.73848,147.80372,"au",{"name":"Warren Airport","aeroway":"aerodrome","icao":"YWRN"}]]
+["w475555008",-31.55185,147.20539,"au",{"name":"Nyngan Airport","aeroway":"aerodrome","icao":"YNYN","iata":"NYN","wikidata":"Q17571"}],
+["w758494328",-31.73848,147.80372,"au",{"name":"Warren Airport","aeroway":"aerodrome","icao":"YWRN","wikidata":"Q7970017"}]]

@@ -126,7 +126,7 @@
 ["w1309064886",24.22909,71.19692,"in",{"aeroway":"helipad"}],
 ["w1309064887",24.22881,71.19632,"in",{"aeroway":"helipad"}],
 ["w194340724",25.81231,71.48557,"in",{"name":"Uttarlai Airforce Base","aeroway":"aerodrome","icao":"VIUT","military":"airfield"}],
-["w268533287",24.8466,70.09317,"pk",{"name":"Islamkot International Airport","name:en":"Mai Bakhtawar International Airport","operator":"Pakistan Civil Aviation Authority","operator:type":"government","addr:city":"Mithi","aeroway":"aerodrome"}],
+["w268533287",24.8466,70.09317,"pk",{"name":"Islamkot International Airport","name:en":"Mai Bakhtawar International Airport","operator":"Pakistan Civil Aviation Authority","operator:type":"government","addr:city":"Mithi","aeroway":"aerodrome","wikidata":"Q6082890"}],
 ["w270883774",24.87835,70.95075,"pk",{"aeroway":"helipad"}],
 ["w272200606",25.51802,70.6582,"pk",{"aeroway":"helipad"}],
 ["w272206213",25.60601,70.65214,"pk",{"aeroway":"helipad"}],

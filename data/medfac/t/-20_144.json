@@ -22,9 +22,9 @@
 ["n8900289439",-18.14741,144.31693,"au",{"name":"Mount Surprise Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n9911196141",-19.00229,144.98338,"au",{"name":"Greenvale Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service"}],
 ["n9920200664",-19.0023,144.98333,"au",{"name":"RFDS Clinic","healthcare":"clinic"}],
-["w1448362467",-18.19213,144.61422,"au",{"name":"Undara Airport","operator":"Undara Lava Lodge","operator:type":"private","aeroway":"aerodrome","icao":"YUDA","iata":"UDA"}],
-["w1448594684",-18.62017,144.57142,"au",{"name":"Spring Creek Airport","aeroway":"aerodrome","icao":"YSPK","iata":"SCG"}],
-["w375230480",-18.99642,145.01349,"au",{"name":"Greenvale Airstrip","operator":"ChartersTowers Regional Council","aeroway":"aerodrome","icao":"YGNV","iata":"GVP"}],
+["w1448362467",-18.19213,144.61422,"au",{"name":"Undara Airport","operator":"Undara Lava Lodge","operator:type":"private","aeroway":"aerodrome","icao":"YUDA","iata":"UDA","wikidata":"Q21923993"}],
+["w1448594684",-18.62017,144.57142,"au",{"name":"Spring Creek Airport","aeroway":"aerodrome","icao":"YSPK","iata":"SCG","wikidata":"Q21923502"}],
+["w375230480",-18.99642,145.01349,"au",{"name":"Greenvale Airstrip","operator":"ChartersTowers Regional Council","aeroway":"aerodrome","icao":"YGNV","iata":"GVP","wikidata":"Q21924103"}],
 ["w666916119",-18.17831,145.94988,"au",{"name":"Dallachy (Cardwell) Aerodrome","aeroway":"aerodrome","icao":"YCDW"}],
 ["w708802411",-18.50364,144.09392,"au",{"name":"Einasleigh Airport","aeroway":"aerodrome","iata":"EIH"}],
 ["w709189640",-18.13203,144.28766,"au",{"name":"Mount Surprise Airport","aeroway":"aerodrome"}]]

@@ -20,7 +20,7 @@
 ["w245276896",25.35966,60.39178,"ir",{"name":"مرکز بهداشت کنارک","amenity":"clinic"}],
 ["w245741461",25.29933,60.43758,"ir",{"aeroway":"helipad"}],
 ["w408057526",25.08784,61.77077,"pk",{"aeroway":"helipad"}],
-["w408057556",25.06739,61.80506,"pk",{"name":"جیوانی ہوائی اڈا","name:en":"Jiwani Airport","operator":"پاکستان سول ایوی ایشن اتھارٹی","addr:street":"ایئرپورٹ روڈ","addr:city":"جیوانی","aeroway":"aerodrome","icao":"OPJI","iata":"JIW"}],
+["w408057556",25.06739,61.80506,"pk",{"name":"جیوانی ہوائی اڈا","name:en":"Jiwani Airport","operator":"پاکستان سول ایوی ایشن اتھارٹی","addr:street":"ایئرپورٹ روڈ","addr:city":"جیوانی","aeroway":"aerodrome","icao":"OPJI","iata":"JIW","wikidata":"Q2902794"}],
 ["w408063146",25.06787,61.77637,"pk",{"aeroway":"helipad"}],
 ["w457290096",25.33028,60.63453,"ir",{"aeroway":"helipad"}],
 ["w457356789",25.33181,60.35662,"ir",{"aeroway":"aerodrome","aerodrome:type":"airfield"}],

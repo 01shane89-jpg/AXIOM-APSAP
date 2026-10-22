@@ -5,7 +5,7 @@
 ["n1042096409",-22.73916,132.1521,"au",{"name":"Mount Wedge Airport","aeroway":"aerodrome"}],
 ["n1042097006",-23.2333,132.633,"au",{"name":"Narwietooma Airport","aeroway":"aerodrome"}],
 ["n11330386229",-23.76584,133.93605,"au",{"name":"Amoonguna Health Centre","healthcare":"clinic","operator":"CENTRAL AUSTRALIAN ABORIGINAL CONGRESS ABORIGINAL CORPORATION","operator:type":"community","phone":"+61 8 8952 9327","website":"https://www.caac.org.au/clinic/amoonguna-clinic/","addr:housenumber":"60","addr:street":"White Gum Drive","addr:postcode":"0873"}],
-["n2374926179",-23.68425,132.67327,"au",{"aeroway":"helipad"}],
+["n2374926179",-23.68425,132.67327,"au",{"aeroway":"helipad","opening_hours":"Feb-Nov"}],
 ["n2377985488",-23.69703,133.883,"au",{"amenity":"clinic","healthcare":"clinic"}],
 ["n3285056078",-22.52974,132.76271,"au",{"name":"Napperby Aerodrome","aeroway":"aerodrome","icao":"YNPB","iata":"NPP"}],
 ["n3285073018",-22.53296,132.7566,"au",{"name":"Laramba Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Central Australia Health Service","operator:type":"government"}],
@@ -17,8 +17,8 @@
 ["w1313145733",-23.92828,132.80844,"au",{"name":"Hermannsburg Airport","aeroway":"aerodrome"}],
 ["w1327787907",-23.71236,133.87628,"au",{"name":"Gap Road Dialysis Centre","amenity":"clinic","healthcare":"dialysis","healthcare:speciality":"nephrology","operator":"Fresenius","operator:type":"private","website":"https://www.freseniuskidneycare.asia/en-au/center-detail/aus1013","addr:housenumber":"33","addr:street":"Gap Road"}],
 ["w1499823361",-23.98054,133.98941,"au",{"aeroway":"helipad"}],
-["w186248237",-23.80816,133.90364,"au",{"name":"Alice Springs Airport","name:en":"Alice Springs Airport","operator":"Alice Springs Airport Pty Ltd","contact:website":"http://www.alicespringsairport.com.au/","aeroway":"aerodrome","icao":"YBAS","iata":"ASP","aerodrome:type":"public"}],
-["w186250212",-23.70618,133.87826,"au",{"name":"Alice Springs Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Central Australia Health Service","operator:type":"government"}],
+["w186248237",-23.80816,133.90364,"au",{"name":"Alice Springs Airport","name:en":"Alice Springs Airport","operator":"Alice Springs Airport Pty Ltd","contact:website":"http://www.alicespringsairport.com.au/","aeroway":"aerodrome","icao":"YBAS","iata":"ASP","aerodrome:type":"public","wikidata":"Q17606"}],
+["w186250212",-23.70618,133.87826,"au",{"name":"Alice Springs Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Central Australia Health Service","operator:type":"government","wikidata":"Q30254361"}],
 ["w208044418",-23.51733,133.84938,"au",{"name":"Bond Springs Airport","aeroway":"aerodrome"}],
 ["w208044474",-22.12679,133.42227,"au",{"name":"Ti Tree Airport","aeroway":"aerodrome"}],
 ["w225691489",-23.71011,133.86234,"au",{"name":"Alice Springs Community Health","amenity":"clinic"}],
@@ -31,4 +31,4 @@
 ["w630825276",-23.76585,133.93605,"au",{"name":"Amoonguna Health Centre","healthcare":"clinic","operator":"CENTRAL AUSTRALIAN ABORIGINAL CONGRESS ABORIGINAL CORPORATION","operator:type":"community","phone":"+61 8 8952 9327","website":"https://www.caac.org.au/clinic/amoonguna-clinic/","addr:housenumber":"60","addr:street":"White Gum Drive","addr:postcode":"0873"}],
 ["w801439437",-23.94319,132.77459,"au",{"name":"Hermannsburg Health Centre","amenity":"clinic","healthcare":"clinic","operator":"NT Health","operator:type":"government","phone":"+61 8 8951 6040","addr:housenumber":"48","addr:street":"Raberaba Circuit","addr:postcode":"0872"}],
 ["w979947480",-22.25689,132.20779,"au",{"name":"Yuelamu Health Centre","amenity":"clinic","healthcare":"clinic"}],
-["w981902422",-22.53071,132.76306,"au",{"name":"Napperby Aerodrome","aeroway":"aerodrome","icao":"YNPB","iata":"NPP"}]]
+["w981902422",-22.53071,132.76306,"au",{"name":"Napperby Aerodrome","aeroway":"aerodrome","icao":"YNPB","iata":"NPP","wikidata":"Q21957763"}]]

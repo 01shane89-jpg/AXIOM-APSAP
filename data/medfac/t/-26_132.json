@@ -10,9 +10,9 @@
 ["w226848203",-24.44636,133.70578,"au",{"name":"Hugh River Airport","aeroway":"aerodrome"}],
 ["w227651595",-24.64805,132.32484,"au",{"name":"Wallara Ranch Airport","aeroway":"aerodrome"}],
 ["w227775374",-24.09179,132.27148,"au",{"name":"Areyonga Airport","aeroway":"aerodrome"}],
-["w440539500",-25.03241,132.27471,"au",{"name":"Angas Downs","aeroway":"aerodrome","icao":"YADN","iata":"ANZ"}],
+["w440539500",-25.03241,132.27471,"au",{"name":"Angas Downs","aeroway":"aerodrome","icao":"YADN","iata":"ANZ","wikidata":"Q97700136"}],
 ["w448638770",-25.12872,132.56953,"au",{"name":"Imanpa Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Central Australia Health Service","operator:type":"government"}],
 ["w485664060",-25.84269,133.29218,"au",{"name":"Kulgera Airstrip","aeroway":"aerodrome","iata":"KGR"}],
 ["w510761490",-25.74578,133.70021,"au",{"name":"Umbeara Airport","aeroway":"aerodrome"}],
-["w552138339",-25.1545,133.57845,"au",{"name":"Impadna Airport","aeroway":"aerodrome","icao":"YIMP"}],
+["w552138339",-25.1545,133.57845,"au",{"name":"Impadna Airport","aeroway":"aerodrome","icao":"YIMP","wikidata":"Q97701604"}],
 ["w980814857",-24.1247,133.08634,"au",{"name":"Wallace Rockhole Health Centre","amenity":"clinic","healthcare":"clinic","operator":"NT Health","operator:type":"government"}]]

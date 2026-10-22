@@ -1,7 +1,7 @@
 [["w1336023677",51.09353,100.72228,"mn",{"aeroway":"helipad"}],
 ["w293822636",51.67651,100.98997,"ru",{"amenity":"clinic"}],
 ["w346559975",51.66798,100.98296,"ru",{"aeroway":"helipad"}],
-["w395690126",50.44095,100.13387,"mn",{"name":"Хатгал","name:en":"Khatgal Airport","aeroway":"aerodrome","icao":"ZMHG","iata":"HTM"}],
+["w395690126",50.44095,100.13387,"mn",{"name":"Хатгал","name:en":"Khatgal Airport","aeroway":"aerodrome","icao":"ZMHG","iata":"HTM","wikidata":"Q4502623"}],
 ["w425935699",51.96859,101.86797,"ru",{"aeroway":"helipad"}],
 ["w538952645",51.69109,101.67947,"ru",{"name":"Поликлиника Санатория","amenity":"clinic","healthcare":"clinic"}],
 ["w911161460",50.44707,100.16056,"mn",{"amenity":"hospital","healthcare":"hospital"}]]

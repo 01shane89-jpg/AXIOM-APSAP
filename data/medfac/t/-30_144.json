@@ -17,5 +17,5 @@
 ["n9175484804",-28.07143,145.68936,"au",{"name":"Cunnamulla Ambulance","emergency":"ambulance_station","operator":"Queensland Ambulance Service"}],
 ["n9758774523",-29.70492,144.14876,"au",{"name":"Wanaaring Health Clinic","healthcare":"clinic","operator":"Health Western NSW"}],
 ["w194422047",-28.07107,145.68994,"au",{"name":"Cunnamulla Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Queensland Health","operator:type":"government","website":"https://www.health.qld.gov.au/services/southwest/swest_cunna_hosp.asp"}],
-["w194422371",-28.03376,145.62474,"au",{"name":"Cunnamulla Aerodrome","aeroway":"aerodrome","icao":"YCMU","iata":"CMA"}],
+["w194422371",-28.03376,145.62474,"au",{"name":"Cunnamulla Aerodrome","aeroway":"aerodrome","icao":"YCMU","iata":"CMA","wikidata":"Q1655426"}],
 ["w373863849",-29.70407,144.12396,"au",{"name":"Wanaaring Community Health service","healthcare":"clinic","emergency":"yes"}]]

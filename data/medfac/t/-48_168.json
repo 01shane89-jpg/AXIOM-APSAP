@@ -13,12 +13,12 @@
 ["w1515047544",-46.26924,168.38965,"nz",{"name":"Southland Helicopters Limited","operator":"Southland Helicopters Limited","aeroway":"helipad","surface":"concrete"}],
 ["w1524789567",-46.12595,168.01557,"nz",{"name":"HeliOps Southland Helipad","operator":"HeliOps Southland","aeroway":"helipad"}],
 ["w175977594",-46.24475,169.74819,"nz",{"name":"Balclutha Airport","aeroway":"aerodrome","icao":"NZBA"}],
-["w175977597",-46.15738,168.89636,"nz",{"name":"Gore Aerodrome","operator":"Gore District Council","aeroway":"aerodrome","icao":"NZGC"}],
-["w228365521",-46.89874,168.12722,"nz",{"name":"Stewart Island Health Centre","amenity":"clinic","healthcare":"clinic","phone":"+64 3 219 1098","addr:housenumber":"7","addr:street":"Argyle Street"}],
+["w175977597",-46.15738,168.89636,"nz",{"name":"Gore Aerodrome","operator":"Gore District Council","aeroway":"aerodrome","icao":"NZGC","wikidata":"Q5586090"}],
+["w228365521",-46.89874,168.12722,"nz",{"name":"Stewart Island Health Centre","amenity":"clinic","healthcare":"clinic","phone":"+64 3 219 1098","addr:housenumber":"7","addr:street":"Argyle Street","opening_hours":"Mo-Su 10:00-12:30"}],
 ["w237348656",-46.34132,168.02331,"nz",{"amenity":"hospital","healthcare":"hospital","addr:housenumber":"10","addr:street":"Albany Street","addr:city":"Riverton","addr:postcode":"9822"}],
-["w271670631",-46.43851,168.35699,"nz",{"name":"Southland Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w271670631",-46.43851,168.35699,"nz",{"name":"Southland Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","wikidata":"Q30280790"}],
 ["w380938728",-46.42374,168.38397,"nz",{"amenity":"hospital","healthcare":"hospital"}],
 ["w383211485",-46.10296,168.93739,"nz",{"name":"Gore Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w421592932",-46.45139,169.65836,"nz",{"name":"St John Owaka Volunteer Ambulance Station","emergency":"ambulance_station","operator":"St John Ambulance"}],
-["w83642113",-46.89942,168.10251,"nz",{"name":"Ryan's Creek Aerodrome","name:en":"Ryan's Creek Aerodrome","aeroway":"aerodrome","icao":"NZRC","iata":"SZS"}],
-["w83720112",-46.41504,168.31366,"nz",{"name":"Invercargill Airport","name:en":"Invercargill Airport","operator":"Invercargill Airport Limited","aeroway":"aerodrome","icao":"NZNV","iata":"IVC"}]]
+["w83642113",-46.89942,168.10251,"nz",{"name":"Ryan's Creek Aerodrome","name:en":"Ryan's Creek Aerodrome","aeroway":"aerodrome","icao":"NZRC","iata":"SZS","wikidata":"Q7383795"}],
+["w83720112",-46.41504,168.31366,"nz",{"name":"Invercargill Airport","name:en":"Invercargill Airport","operator":"Invercargill Airport Limited","aeroway":"aerodrome","icao":"NZNV","iata":"IVC","wikidata":"Q752694"}]]

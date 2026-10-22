@@ -9,11 +9,11 @@
 ["n1042100424",-22.5167,114.8,"au",{"name":"Yanrey Airport","aeroway":"aerodrome"}],
 ["n1271058201",-22.0411,114.1042,"au",{"aeroway":"helipad"}],
 ["n1271058763",-22.03898,114.10439,"au",{"aeroway":"helipad"}],
-["n302954871",-22.04148,114.1047,"au",{"name":"Exmouth Airport","aeroway":"aerodrome","icao":"YEXM","iata":"EXM"}],
+["n302954871",-22.04148,114.1047,"au",{"name":"Exmouth Airport","aeroway":"aerodrome","icao":"YEXM","iata":"EXM","wikidata":"Q21924113"}],
 ["n4238454910",-23.91952,115.62382,"au",{"name":"Mangaroon","aeroway":"aerodrome"}],
 ["n4238454916",-23.90788,115.61217,"au",{"name":"Mangaroon","aeroway":"aerodrome"}],
 ["n7914242957",-23.15159,114.54879,"au",{"aeroway":"aerodrome","aerodrome:type":"airstrip"}],
 ["w1260634611",-22.24488,114.08569,"au",{"aeroway":"helipad"}],
-["w187114230",-22.23255,114.08305,"au",{"name":"RAAF Base Learmonth","operator":"Royal Australian Air Force","website":"https://www.airforce.gov.au/about-us/bases/wa/learmonth","aeroway":"aerodrome","icao":"YPLM","iata":"LEA","military":"airfield"}],
+["w187114230",-22.23255,114.08305,"au",{"name":"RAAF Base Learmonth","operator":"Royal Australian Air Force","website":"https://www.airforce.gov.au/about-us/bases/wa/learmonth","aeroway":"aerodrome","icao":"YPLM","iata":"LEA","military":"airfield","wikidata":"Q7274976"}],
 ["w693029735",-22.6086,115.43331,"au",{"name":"Yannarie RFDS Emergency Airstrip","aeroway":"aerodrome"}],
-["w847901800",-22.24093,114.09543,"au",{"name":"Learmonth Aerodrome","operator":"Royal Australian Air Force","website":"https://www.airforce.gov.au/about-us/bases/wa/learmonth","aeroway":"aerodrome","icao":"YPLM","iata":"LEA","aerodrome:type":"public"}]]
+["w847901800",-22.24093,114.09543,"au",{"name":"Learmonth Aerodrome","operator":"Royal Australian Air Force","website":"https://www.airforce.gov.au/about-us/bases/wa/learmonth","aeroway":"aerodrome","icao":"YPLM","iata":"LEA","aerodrome:type":"public","wikidata":"Q7274976"}]]

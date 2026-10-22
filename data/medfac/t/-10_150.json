@@ -1,6 +1,6 @@
-[["w1135392576",-8.62854,151.32692,"pg",{"name":"Kitava Airport","aeroway":"aerodrome","iata":"KVE"}],
-["w1137639153",-9.67018,150.79029,"pg",{"name":"Salamo Airport","aeroway":"aerodrome","iata":"SAM"}],
-["w1157157455",-9.30352,150.31908,"pg",{"name":"Vivigani Airfield","aeroway":"aerodrome","iata":"VIV"}],
+[["w1135392576",-8.62854,151.32692,"pg",{"name":"Kitava Airport","aeroway":"aerodrome","iata":"KVE","wikidata":"Q35271143"}],
+["w1137639153",-9.67018,150.79029,"pg",{"name":"Salamo Airport","aeroway":"aerodrome","iata":"SAM","wikidata":"Q7403599"}],
+["w1157157455",-9.30352,150.31908,"pg",{"name":"Vivigani Airfield","aeroway":"aerodrome","iata":"VIV","wikidata":"Q10853601"}],
 ["w1509468446",-8.54381,151.06504,"pg",{"name":"Losuia Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1511037389",-9.22201,150.24013,"pg",{"name":"Watuluma Health Centre","amenity":"hospital","healthcare":"hospital","operator":"Catholic Church","operator:type":"religious"}],
 ["w1513528793",-9.6077,150.43626,"pg",{"name":"Mapamoiwa Health Centre","amenity":"hospital","healthcare":"hospital","operator":"Catholic Church Health Services","operator:type":"religious"}],
@@ -10,7 +10,7 @@
 ["w1522918729",-9.68942,150.84746,"pg",{"name":"Budoya Health Centre","amenity":"hospital","healthcare":"hospital","operator":"Catholic Church Health Services","operator:type":"religious"}],
 ["w1522918730",-9.4151,150.43165,"pg",{"name":"Kalokalo Health Centre","amenity":"hospital","healthcare":"hospital","operator":"United Church Health Services","operator:type":"religious"}],
 ["w1522988172",-9.96106,151.1617,"pg",{"name":"Sehulea Health Centre","amenity":"hospital","healthcare":"hospital"}],
-["w793274055",-9.66972,150.02063,"pg",{"name":"Cape Vogel Airstrip","aeroway":"aerodrome","iata":"CVL"}],
-["w834724847",-9.87412,150.95442,"pg",{"name":"Esa'ala Airport","aeroway":"aerodrome","iata":"ESA"}],
-["w834728668",-8.50648,151.08096,"pg",{"name":"Losuia Airport","operator":"Airlines PNG","aeroway":"aerodrome","icao":"AYKA","iata":"LSA"}],
-["w843171377",-9.9651,151.16208,"pg",{"name":"Sehulea Airport","aeroway":"aerodrome","icao":"AYSL","iata":"SXH"}]]
+["w793274055",-9.66972,150.02063,"pg",{"name":"Cape Vogel Airstrip","aeroway":"aerodrome","iata":"CVL","wikidata":"Q35248649"}],
+["w834724847",-9.87412,150.95442,"pg",{"name":"Esa'ala Airport","aeroway":"aerodrome","iata":"ESA","wikidata":"Q20457076"}],
+["w834728668",-8.50648,151.08096,"pg",{"name":"Losuia Airport","operator":"Airlines PNG","aeroway":"aerodrome","icao":"AYKA","iata":"LSA","wikidata":"Q6684534"}],
+["w843171377",-9.9651,151.16208,"pg",{"name":"Sehulea Airport","aeroway":"aerodrome","icao":"AYSL","iata":"SXH","wikidata":"Q12694936"}]]
