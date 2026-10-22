@@ -19,6 +19,11 @@
   }
   /* only while signed in: the plan is that account's */
   try { if (localStorage.getItem("osap-auth")) use(JSON.parse(localStorage.getItem(K) || "null")); } catch (e) { /* no storage: nothing skipped */ }
+  /* signed in, but the sign-in ran out while OSAP was closed (it lasts an hour): the files this start asks for go out before
+     assets/osap-tier.js can renew it, so the gate refuses them (401) and the page shows the copies saved last time, however
+     old (Shane 2026-10-22: "data 30 h old" while the site was fresh). osap-tier.js loads once more after renewing. */
+  var LATE = false;
+  try { var au = JSON.parse(localStorage.getItem("osap-auth") || "null"); LATE = !!(au && au.access_token && !(au.until - Date.now() > 15000)); } catch (e) { /* no storage: signed out */ }
   var BASE = location.pathname.replace(/[^/]*$/, "");
   /* "data/…" for a file of this site, as tierOfPath reads it; null for anything else */
   function rel(u) {
@@ -68,6 +73,8 @@
     need: need,
     /* the rules in force, for the service worker's warm-up (index.html), or null */
     plan: function () { return PLAN; },
+    /* true when this start's files were asked for with a sign-in that had run out (refused, so old saved copies were shown) */
+    late: function () { return LATE; },
     /* the files left out so far (paths from the site root) */
     skipped: function () { return Object.keys(SKIP); },
     /* from assets/osap-tier.js once the plan is known: keep it for the next start, and use it from now on */
