@@ -46,6 +46,7 @@ jobs:
       - run: node tests/deepsouth_border.test.mjs
       - run: node tests/entities.test.mjs
       - run: node tests/deepsouth_peace.test.mjs
+      - run: node tests/deepsouth_kinds.test.mjs
       - run: node tests/conflict_figures.test.mjs
       - run: node tests/social_relevance.test.mjs
       - run: node tests/relevance_sample.test.mjs
