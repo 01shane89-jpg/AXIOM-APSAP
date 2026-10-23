@@ -13,22 +13,13 @@ jobs:
           set +e
           UA='Mozilla/5.0 (OSAP research probe)'
           curl -sSL -m 30 -A "$UA" -o app.js 'https://www.unroca.org/static/unroca_spa/public/unroca-javascript.min.js?v=2018-12'
-          echo "=== activity values"; grep -oE '.{0,160}(\.open|modalOpen|openModal)[^;]{0,220}' app.js | grep -iE 'export|import' | head -8
-          grep -oE '"(import|imports|export|exports|exp|imp)"' app.js | sort | uniq -c
-          curl -sS -m 30 -A "$UA" -o th.json https://www.unroca.org/api/thailand/
+          for k in '_1"' '"_2' 'own_values' 'reported by' 'Reported by' 'milhold' 'contains_classified' 'tp_slug='; do echo "=== ctx $k"; grep -oE ".{0,250}$k.{0,250}" app.js | head -3; done
+          for t in hw-comptable-template modal-template-for-comptable country-profile; do echo "=== TPL $t"; curl -sS -m 30 -A "$UA" https://www.unroca.org/static/unroca_spa/templates/$t.html | grep -iE 'report|_1|_2|own|other|holding|classified' | sed 's/^ *//' | head -25; done
+          curl -sS -m 30 -A "$UA" -o de.json https://www.unroca.org/api/germany/
           node -e '
-          const d=JSON.parse(require("fs").readFileSync("th.json"));
-          const nn=o=>Object.fromEntries(Object.entries(o).filter(([k,v])=>v!==null&&v!==false));
-          console.log("hw_imp", JSON.stringify(d.hw_imp.map(nn)).slice(0,2500));
-          console.log("hw_exp", JSON.stringify(d.hw_exp.map(nn)));
-          console.log("milhold", JSON.stringify(d.milhold.map(m=>({t:m.tow_acronym,v:m.values.filter(x=>x.has_reported||x.amount!=null)}))).slice(0,1500));
+          const d=JSON.parse(require("fs").readFileSync("de.json"));
+          console.log("milhold", JSON.stringify(d.milhold.map(m=>({t:m.tow_acronym,v:m.values.filter(x=>x.has_reported||x.amount!=null).slice(-3)}))));
           console.log("impdom", JSON.stringify(d.hw_imp_vs_hw_dom));
-          console.log("avail", JSON.stringify(d.availability.map(a=>({t:a.toi,s:a.availability.filter(x=>x.status!="gray").map(x=>x.year+":"+x.status)}))));
-          console.log("reports", JSON.stringify(d.available_reports));
-          console.log("imp_time acv", JSON.stringify(d.hw_imp_time.map(t=>({t:t.tow,own:t.own_values.filter(x=>x.amount).map(x=>x.year+":"+x.amount),oth:t.other_values.filter(x=>x.amount).map(x=>x.year+":"+x.amount)}))));
+          console.log("n imp", d.hw_imp.length, "n exp", d.hw_exp.length, "salw imp", d.salw_imp.length);
+          console.log("keys", Object.keys(d.hw_exp[0]).sort().join(","));
           '
-          for u in imports/lcas/austria exports/acv/bhutan import/lcas/austria exp/acv/bhutan imports/acv/2022 exports/acv/2022 imp/acv/2022; do
-            echo "=== GET /api/thailand/$u/"; curl -sS -m 30 -A "$UA" -o r.txt -w '%{http_code} %{size_download} %{content_type}\n' "https://www.unroca.org/api/thailand/$u/"; head -c 1500 r.txt | grep -v '^\s*$' | head -c 1500; echo
-          done
-          echo "=== countries count"; curl -sS -m 30 -A "$UA" https://www.unroca.org/api/country-list/ | node -e 'let s="";process.stdin.on("data",c=>s+=c).on("end",()=>{const a=JSON.parse(s);console.log(a.length);console.log(a.filter(c=>/united|korea|china|viet|russia|iran|lao|taiwan|palest|kosovo/i.test(c.name_en)).map(c=>c.name_en+"|"+c.countryname_slug+"|"+c.iso_2_acronym).join("\n"))})'
-          echo "=== terms"; curl -sSL -m 30 -A "$UA" https://www.unroca.org/about | grep -oiE '.{0,200}(terms|copyright|licen|reproduc).{0,200}' | head -5
