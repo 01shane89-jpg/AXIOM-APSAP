@@ -5,16 +5,17 @@
    matches are sent through ntfy.sh, a free push service that needs no account or key:
    1. the viewer installs the ntfy app (or opens the ntfy web app) and subscribes to this device's OSAP channel, a random name
       made here and kept in this browser;
-   2. "Send to OSAP" keeps the watch on OSAP's server (netlify/functions/osap-push.mjs, owner's account only), where only the
-      owner's signed-in page and the refresh job (signed by GitHub itself) can read it. Until 2026-10-21 the watch went into a
-      public GitHub issue and data/push/watches.json, readable by anyone (Shane 2026-10-20, user protection).
+   2. "Send to OSAP" keeps the watch on OSAP's server (netlify/functions/osap-push.mjs), in the signed-in account's own list,
+      where only that account and the refresh job (signed by GitHub itself) can read it. Every Mid and Full account has its
+      own push watches, up to its plan's limit (tools/tiers.mjs PUSH; 2026-10-23, personal real-time alerts). Until 2026-10-21
+      the watch went into a public GitHub issue and data/push/watches.json, readable by anyone (Shane 2026-10-20).
    A push is a notice about a report, never a finding. "Send a test alert" posts one line to the channel from this browser. */
 (function () {
   "use strict";
   var API = "/api/osap-push";
   var NTFY = "https://ntfy.sh";
   var T_KEY = "asap-push-topic", MAX_PTS = 150;
-  var LIST = null, LIST_AT = 0, LIST_ERR = "";
+  var LIST = null, LIST_AT = 0, LIST_ERR = "", LIM = null;
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
@@ -34,23 +35,31 @@
     lsSet(T_KEY, s);
     return s;
   }
-  /* the owner's account token (assets/osap-tier.js), or null */
+  /* the signed-in account's token (assets/osap-tier.js), or null */
   function token() { return window.OSAP_TIER && window.OSAP_TIER.token ? window.OSAP_TIER.token().catch(function () { return null; }) : Promise.resolve(null); }
   /* one call to OSAP's push list: GET, POST a watch, or DELETE one; answers the list */
   function call(method, body, id) {
     return token().then(function (tok) {
-      if (!tok) { var e = new Error("Sign in with OSAP's owner account to use push alerts."); e.code = 401; throw e; }
+      if (!tok) { var e = new Error("Sign in to use push alerts."); e.code = 401; throw e; }
       return fetch(API + (id ? "?id=" + encodeURIComponent(id) : ""), { method: method, cache: "no-store", credentials: "same-origin",
         headers: Object.assign({ authorization: "Bearer " + tok }, body ? { "content-type": "application/json" } : {}), body: body ? JSON.stringify(body) : undefined });
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (o) {
         if (r.ok) return o;
-        var e = new Error(r.status === 403 ? "Push alerts are kept for OSAP's owner account only." : r.status === 401 ? "Sign in with OSAP's owner account to use push alerts." : (o && o.error) || "OSAP's server answered " + r.status + ".");
+        if (o && o.max != null) LIM = { plan: o.plan, max: o.max };
+        var e = new Error(r.status === 402 ? "Push alerts come with the Mid and Full plans (Settings > Plan)." : r.status === 401 ? "Sign in to use push alerts." : (o && o.error) || "OSAP's server answered " + r.status + ".");
         e.code = r.status; throw e;
       });
     });
   }
-  function took(o) { LIST = (o && o.watches) || []; LIST_AT = Date.now(); LIST_ERR = ""; }
+  function took(o) { LIST = (o && o.watches) || []; LIST_AT = Date.now(); LIST_ERR = ""; if (o && o.max != null) LIM = { plan: o.plan, max: o.max }; }
+  /* "2 of 5 push watches used on your Mid plan", once the server has said the plan */
+  function used() {
+    if (!LIM) return "";
+    if (!LIM.max) return "Push alerts come with the Mid and Full plans (Settings > Plan).";
+    var n = (LIST || []).length, nm = { mid: "Mid", full: "Full" }[LIM.plan] || LIM.plan;
+    return n + " of " + LIM.max + " push watch" + (LIM.max === 1 ? "" : "es") + " used on your " + nm + " plan.";
+  }
   /* the push list on OSAP's server, re-read at most once a minute */
   function loadList(cb) {
     if (LIST && Date.now() - LIST_AT < 60000) return cb();
@@ -85,7 +94,8 @@
       "<p><b>" + esc(w.name) + '</b><br><span class="obs">' + esc(what) + "</span></p>" +
       '<div class="wnotif"><b>Status:</b> ' + esc({ on: "On. New matches are sent to this device's channel after every refresh.",
         other: "On, but sending to another device's channel. Send it again from here to move it to this one.",
-        off: "Off. This watch only checks while OSAP is open." }[st]) + (LIST_ERR ? ' <span class="obs">(' + esc(LIST_ERR) + ")</span>" : "") + "</div>" +
+        off: "Off. This watch only checks while OSAP is open." }[st]) + (LIST_ERR ? ' <span class="obs">(' + esc(LIST_ERR) + ")</span>" : "") +
+        (used() ? '<br><span class="obs" data-push-used>' + esc(used()) + "</span>" : "") + "</div>" +
       (note ? '<p class="note">' + esc(note) + "</p>" : "") +
       "<h3>1. Get the free ntfy app</h3>" +
       '<p>No account and no key. <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer">Android</a> · ' +
@@ -100,9 +110,9 @@
       '<p><button type="button" class="refresh primary" data-push-send>' + (st === "on" || st === "other" ? "Send the watch again" : "Send to OSAP") + "</button>" +
       (st === "on" || st === "other" ? ' <button type="button" class="refresh" data-push-stop>Stop push alerts</button>' : "") + ' <span class="obs" id="push-send-out" role="status"></span></p>' +
       '<details class="wlimits"><summary>Who can see it, and the limits</summary><ul>' +
-        "<li>The watch is kept on OSAP's server, readable only by OSAP's owner account and OSAP's own refresh job. It is not in OSAP's public project files.</li>" +
+        "<li>The watch is kept on OSAP's server in your account's own list, readable only by your account and OSAP's own refresh job. It is not in OSAP's public project files, and no other account can see it.</li>" +
         "<li>ntfy.sh carries the alerts, so it sees them, and anyone who knows the channel name can read them: keep the name to yourself, and keep private details out of a watch. Protected mode turns push off.</li>" +
-        "<li>Push alerts are for OSAP's owner account.</li>" +
+        "<li>Push watches come with the Mid plan (up to 5) and the Full plan (up to 25). Each is checked with the data your plan opens, so an alert never carries what your plan cannot see in OSAP.</li>" +
         "<li>The first check only notes what is already there; only later arrivals are sent. Editing the watch here does not change the pushed copy: send it again.</li>" +
         "<li>Alerts are as new as the last refresh plus the sources' own delay. A push is a notice about a report, never a finding: reported, not verified.</li>" +
         "<li>Email or text messages would need an account or a stored address, so they are not offered. ntfy can forward to other apps from your phone.</li></ul></details></div>";

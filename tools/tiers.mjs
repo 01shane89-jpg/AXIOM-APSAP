@@ -42,6 +42,12 @@ export const SETS_DEFAULT = "mid";
 // Features inside a tool. team: Team workspace (assets/osap-team.js), creating or joining a team; the owner always has Full.
 // Like every lock on the page it is a sign only: a team's data never passes through OSAP's server.
 export const FEATURES = { team: "full" };
+// Push alerts (netlify/functions/osap-push.mjs, assets/osap-push.js): how many push watches each plan may keep on OSAP's server.
+// Free has none, as the Watch tool itself needs Mid. The refresh job (tools/push_watches.mjs) checks each watch with only the
+// data its plan opens, so a push never carries what the plan cannot see in the app.
+export const PUSH = { free: 0, mid: 5, full: 25 };
+// all accounts' push watches together, the most one refresh job checks (oldest kept first)
+export const PUSH_TOTAL = 3000;
 
 export const rank = (t) => Math.max(0, TIERS.indexOf(t));
 export const allows = (have, need) => rank(have) >= rank(need);
@@ -61,6 +67,6 @@ export function tierOfRoles(roles) {
 /** What the page needs to draw its locks (no secrets). data is DATA as [pattern, tier] strings, so the page can leave out the
  *  files the plan cannot open instead of asking for each and being refused (assets/osap-datagate.js applies them like tierOfPath). */
 export function rulesForPage() {
-  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT, features: FEATURES,
+  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT, features: FEATURES, push: PUSH,
     data: DATA.map(([re, t]) => [re.source, t]), dataDefault: DATA_DEFAULT };
 }
