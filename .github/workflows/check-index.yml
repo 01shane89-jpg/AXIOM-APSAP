@@ -165,6 +165,8 @@ jobs:
       - run: node tests/team_smoke.mjs
       # team shared cases: lead, analyst and viewer accounts, invites, sealed sync, removal and new key, server refusals
       - run: node tests/cases_smoke.mjs
+      # moving a team-link team to a team case: owner only, same workspace, link members told, items keep who added them
+      - run: node tests/cases_move_smoke.mjs
       - run: node tests/gnss_smoke.mjs
       - run: node tests/guide_smoke.mjs
       - run: node tests/lang_smoke.mjs
