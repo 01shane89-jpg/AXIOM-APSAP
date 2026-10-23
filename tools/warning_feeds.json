@@ -92,6 +92,10 @@
     { "cc": "ru",  "agency": "EMERCOM of Russia (MChS) operational information", "url": "https://mchs.gov.ru/deyatelnost/press-centr/operativnaya-informaciya/rss", "lang": "ru", "max_age_days": 7 },
     { "cc": "mm",  "agency": "Department of Meteorology and Hydrology (flood and river warnings)", "url": "https://www.moezala.gov.mm/rss.xml", "lang": "my", "max_age_days": 7 },
     { "cc": "bw",  "agency": "Botswana Meteorological Services (CAP, via the alert hub's public source bucket)", "url": "https://cap-sources.s3.amazonaws.com/bw-met-en/rss.xml", "lang": "en", "max_age_days": 7, "exclude": "\\btest(ing)?\\b" },
-    { "cc": "qa",  "agency": "Qatar Civil Aviation Authority, Meteorology Department (CAP, via the alert hub's public source bucket)", "url": "https://cap-sources.s3.amazonaws.com/qa-caa-en/rss.xml", "lang": "en", "max_age_days": 7, "exclude": "\\btest(ing)?\\b" }
+    { "cc": "qa",  "agency": "Qatar Civil Aviation Authority, Meteorology Department (CAP, via the alert hub's public source bucket)", "url": "https://cap-sources.s3.amazonaws.com/qa-caa-en/rss.xml", "lang": "en", "max_age_days": 7, "exclude": "\\btest(ing)?\\b" },
+    { "cc": "id",  "agency": "BMKG (Indonesian Agency for Meteorology, Climatology and Geophysics) nowcast warnings", "url": "https://www.bmkg.go.id/alerts/nowcast/en/rss.xml", "lang": "en", "max_age_days": 2 },
+    { "cc": "fi",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland", "lang": "en", "nc": true },
+    { "cc": "sg",  "agency": "Meteorological Service Singapore (haze and weather updates)", "url": "https://www.weather.gov.sg/feed/", "lang": "en", "max_age_days": 7 },
+    { "cc": "vc",  "agency": "NEMO St Vincent and the Grenadines (situation reports)", "url": "https://nemo.gov.vc/nemo/index.php?format=feed&type=rss", "lang": "en", "max_age_days": 14 }
   ]
 }
