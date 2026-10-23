@@ -20,9 +20,9 @@ export function unsupportedNames(out, input) {
     const words = part.match(/[\p{L}][\p{L}'’-]*/gu) || [];
     words.slice(1).forEach((w) => {
       if (!/^\p{Lu}/u.test(w) || w.length < 3) return;
-      const k = w.toLowerCase().replace(/['’]s$/, "");
+      const k = w.toLowerCase().replace(/['’]s$/, "").replace(/['’-]+$/, ""), one = k.replace(/(?<=\p{L}{3})s$/u, "");
       // a demonym or plural of a reported name passes (Malaysian for Malaysia): its stem is enough
-      if (!NAMEOK.has(k) && !src.includes(k) && !(k.length >= 7 && src.includes(k.slice(0, k.length - 3)))) bad.add(w);
+      if (!NAMEOK.has(k) && !src.includes(k) && !src.includes(one) && !(k.length >= 7 && src.includes(k.slice(0, k.length - 3)))) bad.add(w);
     });
   }
   return [...bad];
