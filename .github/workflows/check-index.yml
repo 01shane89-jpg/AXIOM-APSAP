@@ -35,6 +35,7 @@ jobs:
       - run: node tests/claims.test.mjs
       - run: node tests/incidents.test.mjs
       - run: node tests/decisions.test.mjs
+      - run: node tests/cf_decisions.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
@@ -75,6 +76,7 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
+      - run: node tests/stories.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
       # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
@@ -127,6 +129,7 @@ jobs:
       - run: node tests/deepsouth_border_smoke.mjs
       - run: node tests/dspat_smoke.mjs
       - run: node tests/ds_review_smoke.mjs
+      - run: node tests/cf_verify_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/cf_history_range_smoke.mjs
       - run: node tests/violence_history_smoke.mjs
@@ -137,6 +140,7 @@ jobs:
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs
       - run: node tests/keydates_smoke.mjs
+      - run: node tests/coverage_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs

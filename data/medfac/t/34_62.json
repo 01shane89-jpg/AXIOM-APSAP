@@ -74,5 +74,5 @@
 ["w1551310557",34.37886,62.14946,"af",{"amenity":"hospital","healthcare":"hospital"}],
 ["w600949221",35.28107,62.34555,"tm",{"name":"Serhetabat Hassahanasy","name:en":"Serhetabat Hospital","healthcare":"hospital","addr:street":"Magtymguly şaýoly","addr:city":"Serhetabat"}],
 ["w713802110",34.35025,62.2024,"af",{"name":"شفاخانه مرکزی هرات","name:en":"Herat Central Hospital","amenity":"hospital","healthcare":"hospital"}],
-["w867663077",34.20542,62.22941,"af",{"name":"فرودگاه بین المللی هرات","name:en":"Herat International Airport","contact:website":"https://www.heratinternational.com/","aeroway":"aerodrome","icao":"OAHR","iata":"HEA"}],
+["w867663077",34.20542,62.22941,"af",{"name":"فرودگاه بین المللی هرات","name:en":"Herat International Airport","contact:website":"https://www.heratinternational.com/","aeroway":"aerodrome","icao":"OAHR","iata":"HEA","wikidata":"Q1431482"}],
 ["w867666612",34.18683,62.23062,"af",{"aeroway":"helipad"}]]

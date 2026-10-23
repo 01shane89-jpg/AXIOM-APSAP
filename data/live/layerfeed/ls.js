@@ -1,1 +1,1 @@
-window.OSAP_LAYERFEED={"cc":"ls","asof":"2026-10-23 06:57Z","days":30,"method":"Nothing tagged for this country in the last 30 days","items":[]};
+window.OSAP_LAYERFEED={"cc":"ls","asof":"2026-10-23 08:33Z","days":30,"method":"Headlines from the news pool sorted into layers by their words (tools/view_reports.json); not reviewed","items":[{"l":"crime","d":"2026-10-23T06:52","t":"M5bn Khubetsoana drug case pushed to November","s":"Lesotho Times","u":"https://lestimes.com/?p=91928"}]};

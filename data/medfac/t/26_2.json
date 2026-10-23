@@ -3,7 +3,7 @@
 ["n4973543022",27.19953,2.47925,"dz",{"amenity":"clinic","healthcare":"clinic","addr:city":"عين صالح"}],
 ["n4973543023",27.20021,2.47994,"dz",{"name":"تعيار الدم","name:en":"analyse","amenity":"clinic"}],
 ["w1059159757",27.39583,3.45035,"dz",{"aeroway":"helipad"}],
-["w357901547",27.25099,2.51118,"dz",{"name":"مطار إن صالح ⴰⴼⴰⴳⵓⵔ ⵏ ⵉⵏ ⵚⴰⵍⴻⵃ","name:en":"In Salah Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","aeroway":"aerodrome","icao":"DAUI","iata":"INZ"}],
+["w357901547",27.25099,2.51118,"dz",{"name":"مطار إن صالح ⴰⴼⴰⴳⵓⵔ ⵏ ⵉⵏ ⵚⴰⵍⴻⵃ","name:en":"In Salah Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","aeroway":"aerodrome","icao":"DAUI","iata":"INZ","wikidata":"Q3018067"}],
 ["w385487096",27.19553,2.48748,"dz",{"amenity":"hospital"}],
 ["w466783497",27.5672,2.54167,"dz",{"aeroway":"aerodrome"}],
 ["w783059461",27.18316,2.49123,"dz",{"name":"المركز الطبي البيداغوجي للأطفال المعاقين ذهنيا","amenity":"hospital","healthcare":"hospital","addr:street":"عين صالح"}],

@@ -3,7 +3,7 @@ export function memoryStore() {
   const m = new Map(); let n = 0;
   return {
     m,
-    async list() { return { blobs: [...m.keys()].map((key) => ({ key })) }; },
+    async list(o = {}) { return { blobs: [...m.keys()].filter((k) => !o.prefix || k.startsWith(o.prefix)).map((key) => ({ key })) }; },
     async get(k) { const v = m.get(k); return v ? JSON.parse(v.body) : null; },
     async getWithMetadata(k) { const v = m.get(k); return v ? { data: JSON.parse(v.body), etag: v.etag, metadata: {} } : null; },
     async delete(k) { m.delete(k); },

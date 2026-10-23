@@ -11,7 +11,7 @@
 ["w1088248224",32.77167,-0.49853,"dz",{"aeroway":"helipad"}],
 ["w1126550352",32.04413,-1.2456,"dz",{"name":"Hôpital Beni Ounif","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"طريق الساورة","addr:city":"beni ounif"}],
 ["w307687123",32.51551,-1.00392,"ma",{"name":"Dispensaire Ich","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
-["w318612626",33.52693,-0.24028,"dz",{"name":"مطار المشرية ⴰⴼⴰⴳⵓⵔ ⵏ ⵎⴻⵛⵔⵉⵢⴰ","name:en":"Mecheria Airport","operator":"مؤسسة تسيير مصالح مطارات وهران","aeroway":"aerodrome","icao":"DAAY","iata":"MZW"}],
+["w318612626",33.52693,-0.24028,"dz",{"name":"مطار المشرية ⴰⴼⴰⴳⵓⵔ ⵏ ⵎⴻⵛⵔⵉⵢⴰ","name:en":"Mecheria Airport","operator":"مؤسسة تسيير مصالح مطارات وهران","aeroway":"aerodrome","icao":"DAAY","iata":"MZW","wikidata":"Q2875858"}],
 ["w377025028",32.77143,-0.49772,"dz",{"aeroway":"helipad"}],
 ["w413602585",32.98056,-1.10556,"dz",{"aeroway":"helipad"}],
 ["w453124655",32.10938,-1.23159,"ma",{"name":"Hôpital de Figuig مستشفى فكيك","amenity":"hospital","healthcare":"hospital","operator":"وزارة الصحة Ministère de Santé","addr:street":"شارع ابن سينا","addr:city":"Figuig ⵉⴼⵉⵢⵢⵉⵢ فگيگ"}],
