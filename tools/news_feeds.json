@@ -1276,6 +1276,15 @@
     {"cc":"xk","outlet":"Gazeta Express","url":"https://gazetaexpress.com/feed/","lang":"sq"},
     {"cc":"xk","outlet":"Indeksonline","url":"https://indeksonline.net/feed/","lang":"sq"},
     {"cc":"xk","outlet":"Kallxo","url":"https://kallxo.com/feed/","lang":"sq"},
-    {"cc":"xk","outlet":"Telegrafi","url":"https://telegrafi.com/feed/","lang":"sq"}
+    {"cc":"xk","outlet":"Telegrafi","url":"https://telegrafi.com/feed/","lang":"sq"},
+    {"cc":"tt","outlet":"TTT (Trinidad and Tobago Television)","url":"https://www.ttt.live/feed/","lang":"en","state":true},
+    {"cc":"lc","outlet":"Government of Saint Lucia (news)","url":"https://www.govt.lc/news/rss","lang":"en","state":true},
+    {"cc":"cg","outlet":"Agence Congolaise d'Information (ACI)","url":"https://aci.cg/feed/","lang":"fr","state":true},
+    {"cc":"cg","outlet":"Gouvernement du Congo","url":"https://www.gouvernement.cg/feed/","lang":"fr","state":true},
+    {"cc":"cg","outlet":"Journal de Brazza","url":"https://www.journaldebrazza.com/feed/","lang":"fr"},
+    {"cc":"cg","outlet":"Congopage","url":"https://www.congopage.com/spip.php?page=backend","lang":"fr"},
+    {"cc":"cg","outlet":"Congo Liberty","url":"https://www.congo-liberty.org/feed/","lang":"fr"},
+    {"cc":"eh","outlet":"Contramutis","url":"https://contramutis.wordpress.com/feed/","lang":"es"},
+    {"cc":"eh","outlet":"Dakhla News","url":"https://www.dakhlanews.com/feed/","lang":"ar"}
   ]
 }
