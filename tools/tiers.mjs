@@ -16,7 +16,7 @@ export const DATA_DEFAULT = "mid";
 export const DATA = [
   // Full: the analyst's material and the AI-written summaries
   [/^data\/(claims|captures|decisions|sof)\//, "full"],
-  [/^data\/live\/(evsum|aiwatch)\.js$/, "full"],
+  [/^data\/live\/(evsum|evsum_ai|aiwatch)\.js$/, "full"],
   // the bundle AXIOM Analyst Work Station imports (tools/axiom_bundle.mjs)
   [/^data\/axiom\//, "full"],
   [/^data\/live\/daily(\/|\.js$)/, "full"],
