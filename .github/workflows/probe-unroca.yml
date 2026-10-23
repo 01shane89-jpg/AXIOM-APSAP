@@ -13,7 +13,15 @@ jobs:
           set +e
           UA='Mozilla/5.0 (OSAP research probe)'
           curl -sSL -m 30 -A "$UA" -o app.js 'https://www.unroca.org/static/unroca_spa/public/unroca-javascript.min.js?v=2018-12'
-          for k in 'countryname_slug' 'exportUrl=' 'importUrl=' 'url="' 'url=' ; do echo "=== ctx $k"; grep -oE ".{0,220}$k.{0,260}" app.js | head -6; done
-          for u in /api/country-list/ /api/participation /api/thailand/ /api/thailand/2022/ /api/thailand/exports-to/ ; do
-            echo "=== GET $u"; curl -sS -m 30 -A "$UA" -H 'Accept-Language: en' -o r.txt -w '%{http_code} %{size_download} %{content_type}\n' "https://www.unroca.org$u"; head -c 1800 r.txt; echo
-          done
+          echo "=== tow_legend"; grep -oE 'tow_legend=\{[^}]{0,1500}\}' app.js | head -2
+          echo "=== activity"; grep -oE '.{0,200}(activity=|"activity")[^;]{0,200}' app.js | head -6
+          curl -sS -m 30 -A "$UA" -o th.json https://www.unroca.org/api/thailand/
+          curl -sS -m 30 -A "$UA" -o us.json https://www.unroca.org/api/united-states-of-america/
+          cat > s.js <<'JS'
+          const d=JSON.parse(require('fs').readFileSync(process.argv[2]));
+          const sh=(v,dep=0)=>{if(Array.isArray(v))return dep>3?'[..]':'['+v.length+' x '+sh(v[0],dep+1)+']';if(v&&typeof v=='object')return dep>3?'{..}':'{'+Object.keys(v).map(k=>k+':'+sh(v[k],dep+1)).join(', ')+'}';return typeof v+(typeof v=='string'?'('+v.slice(0,40)+')':'='+v)};
+          for(const k of Object.keys(d))console.log(k,'=>',sh(d[k]).slice(0,900));
+          JS
+          echo "=== TH shape"; node s.js th.json
+          echo "=== US size"; wc -c us.json; head -c 300 us.json; echo
+          grep -oE 'united-states[^"]*' <(curl -sS -m 30 -A "$UA" https://www.unroca.org/api/country-list/) | head
