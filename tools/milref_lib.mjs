@@ -273,3 +273,72 @@ export function qidByIso(rows) {
   const o = {}; for (const k in best) o[k] = best[k].q;
   return Object.assign(o, QID_FIX);
 }
+
+/* ---------- SIPRI Arms Transfers Database: the trade register (© SIPRI; free for non-commercial use with attribution) ---------- */
+// The register is read from SIPRI's public backend (the one its own site uses), as CSV: a few lines of notes, then the header
+// "Recipient,Supplier,Year of order, ,Number ordered, ,Weapon designation,Weapon description,Deliveries in the Year Range, ,
+// Year(s) of delivery,status,Comments,SIPRI TIV per unit,SIPRI TIV for total order,SIPRI TIV of delivered weapons".
+// The unnamed columns hold "?" when the number or year before them is uncertain.
+export const SIPRI_CAP = 600;
+export const SIPRI_YEARS = 10;
+/* one CSV line or many: fields split on commas, double quotes respected ("" inside quotes is a quote) */
+export function csvRows(text) {
+  const out = []; let row = [], f = "", q = false;
+  const s = String(text || "");
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (q) { if (c === '"') { if (s[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; continue; }
+    if (c === '"') q = true;
+    else if (c === ",") { row.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && s[i + 1] === "\n") i++; row.push(f); out.push(row); row = []; f = ""; }
+    else f += c;
+  }
+  if (f !== "" || row.length) { row.push(f); out.push(row); }
+  return out;
+}
+const num = (v) => { const t = String(v || "").trim(); return /^-?\d+(\.\d+)?$/.test(t) ? +t : null; };
+/* the register's deals as records: r recipient, s supplier, oy order year, no number ordered, d designation, w description,
+   dn number delivered in the years asked, dy delivery years, st status (New, Second hand ...), c comment, tt SIPRI TIV of the
+   whole order and td of what was delivered (millions). u lists the uncertain fields ("oy", "no", "dn") */
+export function sipriFrom(text, cap = SIPRI_CAP) {
+  const rows = csvRows(text), h = rows.findIndex((r) => r[0] === "Recipient" && r[1] === "Supplier");
+  if (h < 0) return null;
+  const out = [];
+  for (const r of rows.slice(h + 1)) {
+    if (r.length < 13 || !clean(r[0]) || !clean(r[6] || r[7])) continue;
+    const u = [];
+    if (/\?/.test(r[3])) u.push("oy"); if (/\?/.test(r[5])) u.push("no"); if (/\?/.test(r[9])) u.push("dn");
+    const rec = { r: clean(r[0], 80), s: clean(r[1], 80), oy: num(r[2]), no: num(r[4]), d: clean(r[6], 80), w: clean(r[7], 80),
+      dn: num(r[8]), dy: clean(r[10], 120), st: clean(r[11], 30), c: clean(r[12], 240), tt: num(r[14]), td: num(r[15]) };
+    if (u.length) rec.u = u;
+    Object.keys(rec).forEach((k) => { if (rec[k] === null || rec[k] === "") delete rec[k]; });
+    out.push(withFp(rec));
+  }
+  // newest orders first, the largest first within a year
+  out.sort((a, b) => (b.oy || 0) - (a.oy || 0) || (b.tt || 0) - (a.tt || 0) || a.d.localeCompare(b.d));
+  return { deals: out.slice(0, cap), total: out.length };
+}
+/* SIPRI's country list (EntityId, Name, CountryCode) -> our two-letter codes: by ISO alpha-3 code first, then by name. SIPRI
+   uses its own codes for some states (Chile, Viet Nam ...) and its own spellings, so names are compared loosely */
+const SIPRI_ALIAS = { "viet nam": "vietnam", "bosnia herzegovina": "bosnia herzegovina", "congo": "congo", "dr congo": "democratic congo", "ivory coast": "cote d ivoire",
+  "north korea": "korea north", "south korea": "korea south", "czechia": "czech", "czech republic": "czech", "turkiye": "turkey", "east timor": "timor leste",
+  "cape verde": "cabo verde", "swaziland": "eswatini", "macedonia": "north macedonia", "burma": "myanmar", "micronesia": "micronesia", "st vincent grenadines": "saint vincent grenadines",
+  "st kitts nevis": "saint kitts nevis", "st lucia": "saint lucia", "uae": "united arab emirates", "brunei": "brunei", "laos": "laos", "russia": "russia", "syria": "syria", "iran": "iran" };
+export function sipriNorm(n) {
+  let t = String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\*+/g, "").replace(/\(.*?\)/g, " ")
+    .replace(/[^a-z]+/g, " ").replace(/\b(the|and|of|republic|islamic|plurinational|bolivarian)\b/g, " ")
+    .replace(/\bsaint\b|\bst\b/g, "saint").replace(/\s+/g, " ").trim();
+  if (/^korea dpr|^dpr korea|korea democratic/.test(t)) t = "korea north";
+  if (/democratic congo|congo kinshasa|^drc$|^dr congo$/.test(t)) t = "democratic congo";
+  return SIPRI_ALIAS[t] || t;
+}
+export function sipriIds(list, iso3, names) {
+  const by3 = {}, byName = {};
+  for (const [cc, a3] of Object.entries(iso3 || {})) if (a3) by3[String(a3).toUpperCase()] = cc;
+  for (const [cc, n] of Object.entries(names || {})) byName[sipriNorm(n)] = cc;
+  const out = {}, ok = (list || []).filter((e) => e && !e.deleted && e.EntityId && !/\*/.test(e.Name || ""));
+  // two passes, so a loose name match never takes a country an exact code match would give another entry
+  for (const e of ok) { const cc = by3[String(e.CountryCode || "").toUpperCase()]; if (cc && !out[cc]) out[cc] = { id: e.EntityId, name: e.Name }; }
+  for (const e of ok) { const cc = byName[sipriNorm(e.Name)]; if (cc && !out[cc]) out[cc] = { id: e.EntityId, name: e.Name }; }
+  return out;
+}

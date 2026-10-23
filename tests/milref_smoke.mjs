@@ -45,6 +45,10 @@ const inst = L.instFrom([b({ s: "Q600", en: "Sattahip Naval Base", cls: "Q14", c
 const fig = {};
 for (const [d, s] of [[L.WB[0], [["2024", 1.1], ["2025", 1.0377]]], [L.WB[1], [["2025", 5983978404.68]]], [L.WB[3], [["2020", 455000]]], [L.WB[5], [["2025", 33000000]]]]) fig[d.k] = L.figureRecord(d, s, "th");
 const NOWS = new Date().toISOString().slice(0, 16) + "Z";
+const SIP = { cc: "th", name: "Thailand", read: NOWS, years: [2016, 2026], kind: "source-claims", imp: { total: 2, deals: [
+  { r: "Thailand", s: "Sweden", oy: 2025, no: 4, d: "Gripen-E", w: "fighter/ground-attack aircraft", st: "New", c: "SEK5.3 b deal; delivery planned by 2030", tt: 126, td: 0, u: ["oy"], fp: "c".repeat(64) },
+  { r: "Thailand", s: "China<img src=x onerror=window.__xss=1>", oy: 2017, no: 7, d: "VT-4 ARV", w: "armoured recovery vehicle", dn: 7, dy: "2017; 2018", st: "New", tt: 12.6, td: 12.6, fp: "d".repeat(64) }] },
+  exp: { total: 1, deals: [{ r: "Bhutan", s: "Thailand", oy: 2021, no: 15, d: "First Win", w: "armoured personnel carrier", dn: 15, dy: "2021", st: "New", tt: 4.5, td: 4.5, fp: "e".repeat(64) }] } };
 const TH = { cc: "th", name: "Thailand", asof: NOWS, kind: "source-claims", fig, wd: { q: "Q869", read: NOWS, units, equip, inst, found: { units: 88, equip: 165 } } };
 
 async function open(cc, opts) {
@@ -52,11 +56,13 @@ async function open(cc, opts) {
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.route(/\/data\/live\/milref\//, (r) => r.fulfill({ status: 404, body: "" }));
   await ctx.route(/\/data\/live\/milref\/th\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(TH) }));
+  await ctx.route(/\/data\/live\/milref\/sipri\/th\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(SIP) }));
   const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + "#" + cc + "/timeline", { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.OSAP_MILREF && window.TSAP && document.getElementById("brief-btn"), null, { timeout: 60000 });
   await p.evaluate(() => document.getElementById("brief-btn").click());
   await p.waitForSelector("#brief #milref", { timeout: 15000 });
+  await p.waitForFunction(() => !/Loading the SIPRI register/.test(document.getElementById("milref").textContent), null, { timeout: 15000 });
   return { p, ctx, errors };
 }
 
@@ -81,6 +87,8 @@ async function open(cc, opts) {
   ok(r.links.filter((u) => /^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(u)).length >= 9 && r.links.some((u) => /data\.worldbank\.org\/indicator\/MS\.MIL/.test(u)), "items link to Wikidata and the World Bank");
   ok(r.fps >= 12 && /^SHA-256 fingerprint of this record: [0-9a-f]{64}$/.test(r.fpTitle), "every item shows its fingerprint (" + r.fps + ")");
   ok(!r.xss && r.imgs === 0, "external text is escaped");
+  ok(/Arms transfers/.test(r.text) && /Non-commercial source/.test(r.text) && /Received by Thailand \(2\)/.test(r.text) && /Supplied by Thailand \(1\)/.test(r.text) && /Gripen-E/.test(r.text) && /First Win/.test(r.text) && /Bhutan/.test(r.text) && /2016 to 2026/.test(r.text), "SIPRI arms transfers: both sides, years, non-commercial tag");
+  ok(r.links.some((u) => /sipri\.org\/databases\/armstransfers/.test(u)) && r.links.some((u) => /sipri\.org\/about\/terms-and-conditions/.test(u)), "SIPRI credited with its terms");
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   if (process.env.SHOTS) { await p.evaluate(() => document.getElementById("milref").scrollIntoView()); await p.screenshot({ path: process.env.SHOTS + "/milref-brief.png" }); }
   await ctx.close();
@@ -99,6 +107,7 @@ async function open(cc, opts) {
 {
   const { p, ctx, errors } = await open("vn", { viewport: { width: 1200, height: 800 } });
   ok(await p.evaluate(() => /No military reference is held for this country yet/.test(document.getElementById("milref").textContent)), "a country with no file says so");
+  ok(await p.evaluate(() => !/Arms transfers/.test(document.getElementById("milref").textContent)), "no file: no SIPRI section either");
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
