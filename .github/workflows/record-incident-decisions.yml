@@ -42,6 +42,7 @@ jobs:
       - name: Commit the decisions
         id: commit
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -N data/decisions/conflicts data/live/conflicts/verified.js 2>/dev/null || true
           if git diff --quiet -- data/decisions/conflicts data/live/conflicts/verified.js; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
