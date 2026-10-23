@@ -71,5 +71,7 @@ export function validate(w) {
   }
   const minSev = [1, 2, 3].includes(+w.minSev) ? +w.minSev : 1;
   const conf = w.conf === "ied" ? "ied" : undefined;   // Deep South IED watch: only reports confirmed by an official source or corroborated
-  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic } };
+  // the plan of the account that keeps the watch (the server says it): the push job checks a Mid watch with Mid's data only
+  const plan = w.plan === "mid" ? "mid" : "full";
+  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic, plan } };
 }

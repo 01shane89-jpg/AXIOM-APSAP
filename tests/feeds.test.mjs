@@ -101,6 +101,26 @@ for (const f of reg.feeds) {
 }
 assert.equal(new Set(reg.feeds.map((f) => f.url)).size, reg.feeds.length, "duplicate feed address");
 for (const [cc, v] of Object.entries(reg.focus || {})) assert.ok(v.per_run > 0 && v.history > 0, "bad focus entry " + cc);
+// covers (a regional outlet read once per country it names): known country ids, each once
+{
+  const { COUNTRIES, ccsInText } = await import("../tools/geo_cc.mjs");
+  const ids = new Set(COUNTRIES.map((c) => c.id));
+  for (const f of reg.feeds.filter((f) => f.covers)) {
+    assert.ok(Array.isArray(f.covers) && f.covers.length, "empty covers " + f.outlet);
+    for (const cc of f.covers) assert.ok(ids.has(cc), `unknown country ${cc} in covers of ${f.outlet}`);
+    assert.equal(new Set(f.covers).size, f.covers.length, "country twice in covers " + f.outlet);
+  }
+  // a regional item counts only for the countries it names: whole names, longest first, French and Spanish names when asked
+  assert.deepEqual(ccsInText("Clashes in South Sudan", true), ["ss"]);
+  assert.deepEqual(ccsInText("Nigeria and Niger reopen the border", true), ["ng", "ne"]);
+  assert.deepEqual(ccsInText("Le Tchad et la RDC signent un accord", true), ["td", "cd"]);
+  assert.deepEqual(ccsInText("Guinée équatoriale : élection", true), ["gq"]);
+  assert.deepEqual(ccsInText("Brasil y República Dominicana firman", true).sort(), ["br", "do"]);
+  assert.deepEqual(ccsInText("Le Tchad et la RDC signent un accord"), []);   // English readers unchanged
+  assert.deepEqual(ccsInText("Maurice Kamto speaks", true), []);              // a person's name is not Mauritius
+  assert.deepEqual(ccsInText("US pushes American Samoa deep sea mining plans", true), []);   // a US territory is not Samoa
+  assert.deepEqual(ccsInText("Samoa and American Samoa sign a fisheries deal", true), ["ws"]);
+}
 console.log("feeds tests passed");
 
 // an outlet marked relevance "exempt" keeps every item, before and after translation, even with no relevant word

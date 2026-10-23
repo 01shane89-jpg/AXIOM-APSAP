@@ -11,7 +11,7 @@ import { ADAPTERS } from "./news_adapters.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
-import { COUNTRIES } from "./geo_cc.mjs";
+import { COUNTRIES, ccsInText } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
 import { stripOutletText } from "./outlet_text.mjs";
 import { dedupeStories } from "./news_dedupe.mjs";
@@ -70,7 +70,13 @@ for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
   }
   for (const [cc] of part) status.push(j ? { cc, source: "GDELT", ok: true, n: n[cc] || 0 } : { cc, source: "GDELT", ok: false, error });
 }
-const { feeds, focus = {} } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
+const { feeds: listed, focus = {} } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
+// covers: a regional outlet (Pacific, Caribbean, Africa, Middle East, Balkans, Latin America) is listed once with every country it
+// reports on, and read as one source per country that keeps only the items naming that country (tools/geo_cc.mjs ccsInText, with
+// French and Spanish names: whole names, longest first, so "South Sudan" is not Sudan and "Guinea-Bissau" is not Guinea).
+// A home country listed as cc but not in covers keeps every item, as before. The feed is fetched once a run and shared.
+const feeds = listed.flatMap((f) => (f.covers ? [...(f.covers.includes(f.cc) ? [] : [{ ...f, covers: undefined }]),
+  ...f.covers.map((cc) => ({ ...f, cc, covers: undefined, names: true }))] : [f]));
 // Dates of the items the last run wrote, by link: an item its outlet publishes without a date (a web-page list, a feed with no
 // dates) keeps the time OSAP first saw it instead of looking new on every run.
 const seenAt = new Map(), seenDetail = new Map();
@@ -85,10 +91,11 @@ const onClock = (d, tz) => { const m = /^([+-])(\d\d):(\d\d)$/.exec(tz || ""); i
 const zoned = (d, tz) => (tz && /^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(d).trim()) ? String(d).trim().replace(" ", "T") + tz : d);
 // About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
 const LANES = 8, MAX_AGE_DAYS = 30;
+const bodies = {}, failed = new Set();   // one fetch per address a run (a regional outlet serves several countries)
 async function readFeed(f) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
-    const body = await getFeed(f.url);
+    const body = await (bodies[f.url] = bodies[f.url] || getFeed(f.url));
     // html: an agency's news list on a web page (links matching f.match), read like a feed
     const list = (f.html ? parseList(body, f.url, f.match) : parseFeed(body)).slice(0, f.max || 25).map((i) => {
       const link = f.search ? unwrap(i.link) : i.link;
@@ -107,6 +114,8 @@ async function readFeed(f) {
       if (f.local) o._local = true;         // a feed that mixes in other places' stories (station group, world service): kept only when it names its state or country, or a place in it
       return o;
     });
+    // a regional outlet counts for a country only on runs where it names it (no empty source line for each of its countries)
+    if (f.names) { for (let k = list.length - 1; k >= 0; k--) if (!ccsInText(list[k].title + " " + list[k].summary, true).includes(f.cc)) list.splice(k, 1); if (!list.length) return; }
     // a US state's own outlets are kept apart ("us:TX") and written to data/live/news/us-states/<st>.js for the state view
     // detail: the list's headline is generic (the same every day); the item's own page gives the facts (tools/news_adapters.mjs).
     // A page read on an earlier run is reused; at most a few new pages a run.
@@ -123,7 +132,10 @@ async function readFeed(f) {
     // not current news: left out of the live list (data/history keeps older items it already had)
     const cut = new Date(Date.now() - MAX_AGE_DAYS * 864e5).toISOString().slice(0, 16), fresh = list.filter((o) => o.date_seen || !(o.date < cut));
     push(f.st ? "us:" + f.st : f.cc, fresh); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: fresh.length, ...(fresh.length < list.length ? { old: list.length - fresh.length } : {}) });
-  } catch (e) { status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
+  } catch (e) {
+    if (f.names && failed.has(f.url)) return;   // a regional outlet that did not answer is listed failed once, not once per country
+    failed.add(f.url); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message });
+  }
 }
 const byHost = {};
 for (const f of feeds) { let h = f.url; try { h = new URL(f.url).hostname; } catch (e) {} (byHost[h] = byHost[h] || []).push(f); }
