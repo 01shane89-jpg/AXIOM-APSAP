@@ -12,11 +12,15 @@
 //    kept in its own files, data/live/milref/sipri/<cc>.json, that can be dropped): the deals of major conventional arms with
 //    the country as recipient and as supplier, with deliveries or still open in the last ten years. Read from the public
 //    backend SIPRI's own site uses.
+//  - UN Register of Conventional Arms (UNROCA, © United Nations; UN terms of use, so marked nc and kept in its own files,
+//    data/live/milref/unroca/<cc>.json): what each government itself reported to the UN since 1992, its military holdings
+//    by year, its imports and exports per partner country and what the partner reported, and its national production.
+//    Read from the public JSON the register's own site uses.
 // No commanders, no people: only forces, equipment types and hulls, and places.
 // Writes data/live/milref/<cc>.json for every country and data/live/milref/index.json (counts per country). A country whose
 // Wikidata queries fail keeps the previous run's lists. Exit code 0 unless nothing at all could be read.
 import fs from "node:fs";
-import { UNIT_ROOTS, INST_ROOTS, CAPS, WB, unitsFrom, equipFrom, instFrom, wbSeriesBy, figureRecord, qidByIso, qid, val, sipriFrom, sipriIds, SIPRI_YEARS } from "./milref_lib.mjs";
+import { UNIT_ROOTS, INST_ROOTS, CAPS, WB, unitsFrom, equipFrom, instFrom, wbSeriesBy, figureRecord, qidByIso, qid, val, sipriFrom, sipriIds, SIPRI_YEARS, unrocaFrom, unrocaIds } from "./milref_lib.mjs";
 import { A3 } from "./econ_lib.mjs";
 
 const OUT = process.env.MILREF_OUT || "data/live/milref";
@@ -122,6 +126,45 @@ if (process.env.MILREF_SIPRI !== "0") {
   log("SIPRI read:", ok, "of", todo.length, "failed:", bad.join(" ") || "none", "minutes:", Math.round((Date.now() - t0) / 60000));
 }
 
+// ---------- 1c. UN Register of Conventional Arms: each country's own reports ----------
+const UNR = "https://www.unroca.org";
+const UNROCA_SRC = { name: "UN Register of Conventional Arms (UNROCA)", url: "https://www.unroca.org/", licence: "© United Nations; reproduced under the UN terms of use (non-commercial, with attribution)",
+  terms: "https://www.un.org/en/about-us/terms-of-use", nc: true, note: "Each number is what the reporting government told the UN: an official claim, not a verified count." };
+const UNROCA_MS = +(process.env.MILREF_UNROCA_MIN || 15) * 60000;
+const unCount = {};
+if (process.env.MILREF_UNROCA !== "0") {
+  const t0 = Date.now(); let ids = {}, ok = 0; const bad = [];
+  try {
+    ids = unrocaIds(await getJson(UNR + "/api/country-list/"), CCS.map((c) => (c === "oki" ? "jp" : c)));
+    log("UNROCA countries matched:", Object.keys(ids).length, "not in the register:", CCS.filter((c) => c !== "oki" && !ids[c]).join(" ") || "none");
+  } catch (e) { log("UNROCA country list:", e.message); }
+  fs.mkdirSync(OUT + "/unroca", { recursive: true });
+  const todo = CCS.filter((c) => c !== "oki" && ids[c]);
+  async function unOne(cc) {
+    let old = null; try { old = JSON.parse(fs.readFileSync(OUT + "/unroca/" + cc + ".json", "utf8")); } catch (e) {}
+    let rec = null;
+    if (Date.now() - t0 < UNROCA_MS) {
+      for (let i = 0; i < 2 && !rec; i++) {
+        try {
+          const r = unrocaFrom(await getJson(UNR + "/api/" + encodeURIComponent(ids[cc].slug) + "/", 60000));
+          if (!r) throw new Error("no country profile in the answer");
+          rec = Object.assign({ cc, name: NAMES[cc], read: STAMP, url: UNR + "/en/" + ids[cc].slug + "/", source: UNROCA_SRC, kind: "source-claims" }, r);
+          ok++;
+        } catch (e) { if (i) { bad.push(cc); log(cc, "UNROCA:", e.message); } else await sleep(3000); }
+      }
+    }
+    if (!rec && old) rec = Object.assign(old, { stale: true });
+    if (rec) { fs.writeFileSync(OUT + "/unroca/" + cc + ".json", JSON.stringify(rec) + "\n"); unCount[cc] = [rec.reports[0] || 0, rec.hold.length]; }
+  }
+  { let i = 0; await Promise.all(Array.from({ length: 3 }, async () => { while (i < todo.length) await unOne(todo[i++]); })); }
+  // the page links each report as <url>report/<year>/ (the register's site has no page per country): say when that stops answering
+  for (const c of todo.slice(0, 1)) {
+    try { const r = JSON.parse(fs.readFileSync(OUT + "/unroca/" + c + ".json", "utf8")), u = r.url + "report/" + r.reports[0] + "/";
+      if (r.reports[0]) { const a = await fetch(u, { headers: { "user-agent": UA } }); log("UNROCA report link", u, "HTTP", a.status); } } catch (e) { log("UNROCA report link:", e.message); }
+  }
+  log("UNROCA read:", ok, "of", todo.length, "failed:", bad.join(" ") || "none", "with holdings:", Object.values(unCount).filter((v) => v[1]).length, "minutes:", Math.round((Date.now() - t0) / 60000));
+}
+
 // ---------- 2. Wikidata: country items and the class lists ----------
 let QIDS = {}, unitCls = [], instCls = [], wdOk = true;
 try {
@@ -204,7 +247,8 @@ const SOURCES = {
   wd: { name: "Wikidata", url: "https://www.wikidata.org/", licence: "CC0 1.0", nc: false },
   wb: { name: "World Bank, World Development Indicators", url: "https://datacatalog.worldbank.org/search/dataset/0037712", licence: "CC BY 4.0", nc: false,
     note: "Military expenditure and arms transfer series come from SIPRI; armed forces personnel from IISS, The Military Balance." },
-  sipri: Object.assign({ file: "sipri/<cc>.json" }, SIPRI_SRC)
+  sipri: Object.assign({ file: "sipri/<cc>.json" }, SIPRI_SRC),
+  unroca: Object.assign({ file: "unroca/<cc>.json" }, UNROCA_SRC)
 };
 const index = { asof: STAMP, caps: CAPS, sources: SOURCES, all: {} };
 let read = 0, failed = [];
@@ -230,6 +274,7 @@ async function one(cc) {
   const w = rec.wd || {};
   index.all[cc] = { n: NAMES[cc], u: (w.units || []).length, e: (w.equip || []).filter((x) => !x.out).length, i: (w.inst || []).length, f: Object.keys(fig).length, st: w.stale ? 1 : 0 };
   const sc = sipriCount[cc === "oki" ? "jp" : cc]; if (sc) { index.all[cc].ti = sc[0]; index.all[cc].te = sc[1]; }
+  const uc = unCount[cc === "oki" ? "jp" : cc]; if (uc) { if (uc[0]) index.all[cc].ur = uc[0]; if (uc[1]) index.all[cc].uh = uc[1]; }
   if (W) log(cc, "units", W.units.length + "/" + W.raw.units, "equipment", W.equip.length + "/" + W.raw.equip, "installations", W.inst.length);
 }
 { let i = 0; await Promise.all(Array.from({ length: PAR }, async () => { while (i < CCS.length) await one(CCS[i++]); })); }

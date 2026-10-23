@@ -156,5 +156,37 @@ ok(/Non-commercial source/.test(SH) && /2016 to 2026/.test(SH) && /Received by T
 ok(/could not be read/.test(C.sipriHtml({ err: true })) && /No SIPRI/.test(C.sipriHtml(null)), "SIPRI section: failed read and no file say so");
 ok(C.sipriFile("oki") === "data/live/milref/sipri/jp.json" && C.sipriFile("../x") === "", "SIPRI file per country");
 
+// ---------- UN Register of Conventional Arms (the shape www.unroca.org/api/<slug>/ answers with) ----------
+const yrs = (o) => Array.from({ length: 34 }, (_, i) => ({ year: 1992 + i, amount: o[1992 + i] == null ? null : o[1992 + i], contains_classified: o.cl === 1992 + i ? true : null, has_reported: o[1992 + i] != null }));
+const UNA = { country_name: "Thailand", country_slug: "thailand", country: { name_en: "Thailand", iso_2_acronym: "TH" },
+  available_reports: [{ year: 2025 }, { year: 2022 }, { year: 1993 }, { year: 2022 }],
+  hw_imp: [
+    { country: "Austria", acro: "AT", countryname_slug: "austria", lcas_1: 54, lcas_2: 18, lcas_1_cc: false, bt_1: null, ca_1: 3 },
+    { country: "United States ", acro: "US", countryname_slug: "united-states", bt_1: 125, bt_2: 125, acv_1: 396, acv_2: 219, mml_gen_1: 166, ws_2: 2 },
+    { country: "Sweden", acro: "SE", mml_gen_1: 65, mml_gen_2: 0, mml_gen_2_cc: true },
+    { country: "Nowhere", acro: "NW", bt_1: null, bt_2: 0 }],
+  hw_exp: [{ country: "Bhutan<b>", acro: "BT", acv_1: 14 }],
+  milhold: [{ tow_acronym: "bt", values: yrs({ 2023: 814, 2024: 790, 2025: 826 }) }, { tow_acronym: "ws", values: yrs({ 2025: 44, cl: 2025 }) }, { tow_acronym: "acv", values: yrs({}) }, { tow_acronym: "mnpd", values: yrs({ 2025: 3 }) }],
+  hw_imp_vs_hw_dom: [{ tow_acronym: "acv", amount_import: 475, amount_domproc: 0 }, { tow_acronym: "lcas", amount_import: 10, amount_domproc: 277, domproc_contains_classified: true }] };
+const UR = L.unrocaFrom(UNA);
+ok(UR && UR.un === "Thailand" && UR.slug === "thailand" && UR.reports.join() === "2025,2022,1993", "UNROCA: name, slug, report years newest first without duplicates");
+ok(UR.imp.length === 3 && UR.imp[0].p === "United States" && UR.imp[0].pcc === "us" && UR.imp[0].o.bt === 125 && UR.imp[0].t.acv === 219 && UR.imp[0].t.ws === 2 && !("ca" in (UR.imp[1].o || {})), "UNROCA imports: largest partner first, own and partner figures apart, sub-categories left out, empty partners dropped");
+ok(UR.imp.find((r) => r.p === "Sweden").tc.join() === "mml_gen" && !("mml_gen" in (UR.imp.find((r) => r.p === "Sweden").t || {})), "UNROCA: a classified partner figure is kept as classified, not as zero");
+ok(UR.exp.length === 1 && UR.exp[0].p === "Bhutan<b>" && UR.exp[0].o.acv === 14, "UNROCA exports read (escaped later, on the page)");
+ok(UR.hold.length === 2 && UR.hold[0].k === "bt" && UR.hold[0].y === 2025 && UR.hold[0].n === 826 && UR.hold[0].s.map((e) => e.join(":")).join() === "2024:790,2023:814" && UR.hold[1].k === "ws" && UR.hold[1].cl === true, "UNROCA holdings: latest filed year, earlier years, classified mark; unreported and unknown categories left out");
+ok(UR.dom.length === 1 && UR.dom[0].k === "lcas" && UR.dom[0].dom === 277 && UR.dom[0].cd === true, "UNROCA national production: only categories with some, classified marked");
+ok([...UR.imp, ...UR.exp, ...UR.hold, ...UR.dom].every((r) => /^[0-9a-f]{64}$/.test(r.fp) && r.fp === L.fp(r)), "UNROCA records carry fingerprints");
+ok(L.unrocaFrom({ detail: "Not found" }) === null && L.unrocaFrom(null) === null, "UNROCA: an answer without a profile is refused, not read as empty");
+const UI = L.unrocaIds([{ name_en: "Thailand", countryname_slug: "thailand", iso_2_acronym: "TH" }, { name_en: "United States ", countryname_slug: "united-states", iso_2_acronym: "US" }, { name_en: "Bad", countryname_slug: "../x", iso_2_acronym: "BX" }, { name_en: "Elsewhere", countryname_slug: "elsewhere", iso_2_acronym: "EL" }], ["th", "us", "bx"]);
+ok(UI.th.slug === "thailand" && UI.us.name === "United States" && !UI.bx && !UI.el, "UNROCA ids: by ISO2, our countries only, unsafe slugs refused");
+const UH = C.unrocaHtml(Object.assign({ name: "Thailand", url: "https://www.unroca.org/en/thailand/" }, UR), "Thailand");
+ok(/Official report \(claim\)/.test(UH) && /Non-commercial source/.test(UH) && /3<\/b> reports filed, the latest for <b>2025/.test(UH) && /href="https:\/\/www\.unroca\.org\/en\/thailand\/report\/2025\/"/.test(UH), "UN Register section: claim and licence tags, reports with links");
+ok(/Battle tanks<\/td>|Battle tanks <code/.test(UH) && /<b>826<\/b>/.test(UH) && /2024: 790/.test(UH) && /<b>44<span title="The report says some items are classified/.test(UH), "UN Register section: holdings with earlier years and the classified +");
+ok(/What Thailand reported/.test(UH) && /What the supplier reported/.test(UH) && /Bhutan&lt;b&gt;/.test(UH) && /Large-calibre artillery: <b>277<span/.test(UH), "UN Register section: both sides per partner, escaped names, national production");
+ok(/not in the UN Register/.test(C.unrocaHtml(null)) && /could not be read/.test(C.unrocaHtml({ err: true })) && /No report filed/.test(C.unrocaHtml({ reports: [], hold: [], dom: [], imp: [], exp: [] }, "X")), "UN Register section: no file, failed read and never-reported say so");
+ok(!/href=/.test(C.unrocaHtml({ url: "javascript:alert(1)", reports: [2020], hold: [], imp: [], exp: [] }, "X")), "UN Register section: report links only to the register's own site");
+ok(/Missiles and launchers <b><span title="The report gives no number: the items are classified">classified/.test(UH), "UN Register section: a classified figure with no number reads classified, not 0");
+ok(C.unrocaFile("oki") === "data/live/milref/unroca/jp.json" && C.unrocaFile("../x") === "", "UN Register file per country");
+
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);
