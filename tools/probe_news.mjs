@@ -77,6 +77,8 @@ console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f
       const alts = [...h.body.matchAll(/<link[^>]+>/gi)].map((m) => m[0]).filter((t) => /application\/(rss|atom)\+xml/i.test(t))
         .map((t) => (t.match(/href=["']([^"']+)/i) || [])[1]).filter(Boolean);
       const anchors = [...h.body.matchAll(/href=["']([^"']*(?:rss|feed)[^"']*)["']/gi)].map((m) => m[1]).slice(0, 12);
+      r.hrefs = [...new Set([...h.body.matchAll(/href=["']([^"'#]{8,200})["']/gi)].map((m) => m[1]))].filter((u) => !/\.(css|js|png|jpe?g|svg|ico|woff2?)(\?|$)/i.test(u)).slice(0, 150);
+      if (d.noFeeds) return r;
       const base = h.final || d.home, urls = new Set();
       for (const u of [...alts, ...anchors, ...COMMON]) { try { urls.add(new URL(u.replace(/&amp;/g, "&"), base).href); } catch (e) {} }
       for (const u of [...urls].slice(0, 16)) {

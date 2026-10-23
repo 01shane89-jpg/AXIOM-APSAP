@@ -1,305 +1,108 @@
 {
  "note": "PROBE BRANCH ONLY: regional outlet candidates",
- "feeds": [
+ "feeds": [],
+ "discover": [
   {
    "cc": "cn",
-   "outlet": "Xinhua",
-   "url": "http://www.xinhuanet.com/english/rss/chinarss.xml",
-   "lang": "en"
+   "outlet": "Xinhua China",
+   "home": "https://english.news.cn/china/index.htm",
+   "noFeeds": true
   },
   {
    "cc": "cn",
-   "outlet": "Xinhua World",
-   "url": "http://www.xinhuanet.com/english/rss/worldrss.xml",
-   "lang": "en"
+   "outlet": "Xinhua home",
+   "home": "https://english.news.cn/",
+   "noFeeds": true
   },
   {
    "cc": "cn",
-   "outlet": "Xinhua news.cn",
-   "url": "https://english.news.cn/rss/chinarss.xml",
-   "lang": "en"
-  },
-  {
-   "cc": "cn",
-   "outlet": "Xinhua news.cn 2",
-   "url": "http://www.news.cn/english/rss/chinarss.xml",
-   "lang": "en"
-  },
-  {
-   "cc": "cn",
-   "outlet": "China Daily",
-   "url": "http://www.chinadaily.com.cn/rss/china_rss.xml",
-   "lang": "en"
-  },
-  {
-   "cc": "cn",
-   "outlet": "Global Times",
-   "url": "https://www.globaltimes.cn/rss/outbrain.xml",
-   "lang": "en"
-  },
-  {
-   "cc": "cn",
-   "outlet": "CGTN",
-   "url": "https://www.cgtn.com/subscribe/rss/section/china.xml",
-   "lang": "en"
+   "outlet": "China Daily China",
+   "home": "https://www.chinadaily.com.cn/china",
+   "noFeeds": true
   },
   {
    "cc": "cn",
    "outlet": "People's Daily",
-   "url": "http://en.people.cn/rss/90882.xml",
-   "lang": "en"
+   "home": "http://en.people.cn/90882/index.html",
+   "noFeeds": true
   },
   {
    "cc": "cn",
-   "outlet": "China.org.cn",
-   "url": "http://www.china.org.cn/rss/1201719.xml",
-   "lang": "en"
-  },
-  {
-   "cc": "kp",
-   "outlet": "KCNA Watch",
-   "url": "https://kcnawatch.org/feed/",
-   "lang": "en"
-  },
-  {
-   "cc": "kp",
-   "outlet": "KCNA Japan mirror",
-   "url": "http://www.kcna.co.jp/index-e.htm",
-   "lang": "en"
+   "outlet": "MFA China press",
+   "home": "https://www.mfa.gov.cn/eng/xw/fyrbt/",
+   "noFeeds": true
   },
   {
    "cc": "kp",
    "outlet": "KCNA",
-   "url": "http://www.kcna.kp/en",
-   "lang": "en"
+   "home": "http://www.kcna.kp/en",
+   "noFeeds": true
   },
   {
    "cc": "kp",
-   "outlet": "KCNA https",
-   "url": "https://kcna.kp/en",
-   "lang": "en"
+   "outlet": "KCNA Watch",
+   "home": "https://kcnawatch.org/",
+   "noFeeds": true
   },
   {
    "cc": "kp",
-   "outlet": "Rodong Sinmun",
-   "url": "http://www.rodong.rep.kp/en/",
-   "lang": "en"
+   "outlet": "Rodong",
+   "home": "http://www.rodong.rep.kp/en/",
+   "noFeeds": true
   },
   {
    "cc": "kp",
    "outlet": "Naenara",
-   "url": "http://www.naenara.com.kp/main/index/en/",
-   "lang": "en"
+   "home": "http://www.naenara.com.kp/main/index/en/",
+   "noFeeds": true
   },
   {
-   "cc": "la",
-   "outlet": "KPL",
-   "url": "https://kpl.gov.la/En/rss.aspx",
-   "lang": "en"
-  },
-  {
-   "cc": "la",
-   "outlet": "Vientiane Times",
-   "url": "https://www.vientianetimes.org.la/feed/",
-   "lang": "en"
-  },
-  {
-   "cc": "kh",
-   "outlet": "AKP",
-   "url": "https://www.akp.gov.kh/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "kh",
-   "outlet": "AKP feed",
-   "url": "https://www.akp.gov.kh/feed",
-   "lang": "en"
-  },
-  {
-   "cc": "mm",
-   "outlet": "Global New Light of Myanmar",
-   "url": "https://www.gnlm.com.mm/feed/",
-   "lang": "en"
-  },
-  {
-   "cc": "by",
-   "outlet": "BelTA",
-   "url": "https://eng.belta.by/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "by",
-   "outlet": "BelTA RU",
-   "url": "https://www.belta.by/rss",
-   "lang": "ru"
-  },
-  {
-   "cc": "az",
-   "outlet": "AZERTAC",
-   "url": "https://azertag.az/en/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "az",
-   "outlet": "Report.az",
-   "url": "https://report.az/en/rss/",
-   "lang": "en"
-  },
-  {
-   "cc": "uz",
-   "outlet": "UzA",
-   "url": "https://uza.uz/en/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "uz",
-   "outlet": "Gazeta.uz",
-   "url": "https://www.gazeta.uz/en/rss/",
-   "lang": "en"
-  },
-  {
-   "cc": "tm",
-   "outlet": "TDH",
-   "url": "https://tdh.gov.tm/en/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "tm",
-   "outlet": "Turkmenportal",
-   "url": "https://turkmenportal.com/en/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "tj",
-   "outlet": "Khovar",
-   "url": "https://khovar.tj/eng/feed/",
-   "lang": "en"
-  },
-  {
-   "cc": "kg",
-   "outlet": "Kabar",
-   "url": "https://en.kabar.kg/rss/",
-   "lang": "en"
-  },
-  {
-   "cc": "sa",
-   "outlet": "SPA",
-   "url": "https://www.spa.gov.sa/en/rss",
-   "lang": "en"
+   "cc": "kp",
+   "outlet": "Voice of Korea",
+   "home": "http://www.vok.rep.kp/index.php/home/main/en",
+   "noFeeds": true
   },
   {
    "cc": "ae",
    "outlet": "WAM",
-   "url": "https://www.wam.ae/en/rss",
-   "lang": "en"
+   "home": "https://www.wam.ae/en",
+   "noFeeds": true
+  },
+  {
+   "cc": "sa",
+   "outlet": "SPA",
+   "home": "https://www.spa.gov.sa/en",
+   "noFeeds": true
   },
   {
    "cc": "qa",
    "outlet": "QNA",
-   "url": "https://www.qna.org.qa/en/rss",
-   "lang": "en"
+   "home": "https://www.qna.org.qa/en",
+   "noFeeds": true
   },
   {
-   "cc": "bh",
-   "outlet": "BNA",
-   "url": "https://www.bna.bh/en/rss",
-   "lang": "en"
+   "cc": "la",
+   "outlet": "KPL",
+   "home": "https://kpl.gov.la/En/",
+   "noFeeds": true
   },
   {
-   "cc": "om",
-   "outlet": "ONA",
-   "url": "https://omannews.gov.om/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "eg",
-   "outlet": "Ahram Online",
-   "url": "https://english.ahram.org.eg/rss/1.aspx",
-   "lang": "en"
-  },
-  {
-   "cc": "sy",
-   "outlet": "SANA",
-   "url": "https://sana.sy/en/?feed=rss2",
-   "lang": "en"
-  },
-  {
-   "cc": "iq",
-   "outlet": "INA",
-   "url": "https://ina.iq/eng/rss.php",
-   "lang": "en"
-  },
-  {
-   "cc": "ye",
-   "outlet": "Saba",
-   "url": "https://www.saba.ye/en/rss.php",
-   "lang": "en"
-  },
-  {
-   "cc": "ve",
-   "outlet": "VTV",
-   "url": "https://www.vtv.gob.ve/feed/",
-   "lang": "es"
-  },
-  {
-   "cc": "ve",
-   "outlet": "teleSUR",
-   "url": "https://www.telesurtv.net/rss/RssPortada.xml",
-   "lang": "es"
-  },
-  {
-   "cc": "ni",
-   "outlet": "El 19 Digital",
-   "url": "https://www.el19digital.com/rss",
-   "lang": "es"
-  },
-  {
-   "cc": "er",
-   "outlet": "Shabait",
-   "url": "https://shabait.com/feed/",
-   "lang": "en"
-  },
-  {
-   "cc": "ug",
-   "outlet": "New Vision",
-   "url": "https://www.newvision.co.ug/rss",
-   "lang": "en"
+   "cc": "tj",
+   "outlet": "Khovar",
+   "home": "https://khovar.tj/eng/",
+   "noFeeds": true
   },
   {
    "cc": "dz",
    "outlet": "APS",
-   "url": "https://www.aps.dz/en/?format=feed&type=rss",
-   "lang": "en"
+   "home": "https://www.aps.dz/en/",
+   "noFeeds": true
   },
   {
-   "cc": "ma",
-   "outlet": "MAP",
-   "url": "https://www.mapnews.ma/en/rss.xml",
-   "lang": "en"
-  },
-  {
-   "cc": "tn",
-   "outlet": "TAP",
-   "url": "https://www.tap.info.tn/en/rss",
-   "lang": "en"
-  },
-  {
-   "cc": "cm",
-   "outlet": "CRTV",
-   "url": "https://www.crtv.cm/feed/",
-   "lang": "fr"
-  },
-  {
-   "cc": "cm",
-   "outlet": "Cameroon Tribune",
-   "url": "https://www.cameroon-tribune.cm/rss",
-   "lang": "fr"
-  },
-  {
-   "cc": "rw",
-   "outlet": "RBA",
-   "url": "https://www.rba.co.rw/rss",
-   "lang": "en"
+   "cc": "vn",
+   "outlet": "VNA",
+   "home": "https://en.vietnamplus.vn/",
+   "noFeeds": true
   }
  ]
 }
