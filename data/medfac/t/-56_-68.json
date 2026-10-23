@@ -11,6 +11,6 @@
 ["w1306376862",-55.9629,-67.22482,"cl",{"name":"Helipuerto Naval Cabo de Hornos","aeroway":"helipad","surface":"wood"}],
 ["w1307277219",-54.93222,-67.63153,"cl",{"aeroway":"helipad"}],
 ["w700007377",-55.29932,-66.83942,"cl",{"aeroway":"helipad"}],
-["w900012885",-54.49914,-67.17246,"ar",{"name":"Aeródromo Lago Fagnano","aeroway":"aerodrome","icao":"SAWL"}],
+["w900012885",-54.49914,-67.17246,"ar",{"name":"Aeródromo Lago Fagnano","aeroway":"aerodrome","icao":"SAWL","wikidata":"Q12693519"}],
 ["w900454334",-54.51071,-67.19497,"ar",{"name":"Centro Asistencial Tolhuin","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministerio de Salud - Gobierno de Tierra del Fuego A. e. I. A. S.","operator:type":"public","addr:housenumber":"243","addr:street":"Avenida de los Shelknam","addr:city":"Tolhuin","addr:postcode":"V9420"}],
 ["w948943889",-54.93131,-67.62649,"cl",{"name":"Aeródromo Guardiamarina Zañartu","name:en":"Guardiamarina Zañartu Airport","addr:street":"Ruta Y-907","addr:city":"Puerto Williams","aeroway":"aerodrome","icao":"SCGZ","iata":"WPU","wikidata":"Q2875729"}]]

@@ -77,12 +77,35 @@ export const ccFromA2 = (a) => (a ? BY_A2[String(a).toUpperCase()] || null : nul
 export const ccFromA3 = (a) => (a ? BY_A3[String(a).toUpperCase()] || null : null);
 export const withOki = (ccs) => (ccs.includes("jp") && !ccs.includes("oki") ? [...ccs, "oki"] : ccs);
 
+// French and Spanish names, read only when a caller asks (regional outlets writing in those languages); kept apart so the
+// English-language readers match exactly as before. Names that are also common words or people's names (Maurice, Granada) are left out.
+const OTHER_LANG = { dz: ["Algérie"], cm: ["Cameroun"], td: ["Tchad"], gn: ["Guinée", "Guinée-Conakry"], gq: ["Guinée équatoriale", "Guinea Ecuatorial"],
+  gw: ["Guinée-Bissau"], mr: ["Mauritanie"], ma: ["Maroc", "Marruecos"], ly: ["Libye"], eg: ["Égypte", "Egipto"], sd: ["Soudan"], ss: ["Soudan du Sud"],
+  et: ["Éthiopie"], so: ["Somalie"], ug: ["Ouganda"], tz: ["Tanzanie"], ke: ["Kenya"], zm: ["Zambie"], na: ["Namibie"], za: ["Afrique du Sud", "Sudáfrica"],
+  cf: ["Centrafrique", "République centrafricaine"], km: ["Comores"], gm: ["Gambie"], cv: ["Cap-Vert"], lb: ["Liban", "Líbano"], sy: ["Syrie", "Siria"],
+  iq: ["Irak"], ye: ["Yémen"], jo: ["Jordanie"], sa: ["Arabie saoudite", "Arabia Saudita"], tn: ["Tunisie", "Túnez"], sn: ["Sénégal"], ne: ["Niger"],
+  bj: ["Bénin"], bf: ["Burkina"], tg: ["Togo"], ga: ["Gabon"], mg: ["Madagascar"], mz: ["Mozambique"], zw: ["Zimbabwe"], rw: ["Rwanda"], bi: ["Burundi"],
+  dj: ["Djibouti"], er: ["Érythrée"], ml: ["Mali"], ci: ["Côte d'Ivoire"], gh: ["Ghana"], ng: ["Nigeria"], ao: ["Angola"], sc: ["Seychelles"],
+  cd: ["RDC", "RD Congo", "République démocratique du Congo", "Congo-Kinshasa", "Kinshasa"], cg: ["Congo-Brazzaville", "Brazzaville"],
+  il: ["Israël"], ps: ["Palestina", "Cisjordanie", "Cisjordania"], ir: ["Irán"], af: ["Afghanistan", "Afganistán"], ru: ["Russie", "Rusia"], ua: ["Ukraine", "Ucrania"],
+  br: ["Brasil", "Brésil"], bz: ["Belice"], do: ["República Dominicana", "République dominicaine"], ht: ["Haïti", "Haití"], mx: ["México", "Mexique"],
+  pe: ["Perú", "Pérou"], co: ["Colombie"], ve: ["Venezuela"], ar: ["Argentine"], cl: ["Chili"], bo: ["Bolivie"], ec: ["Équateur"], uy: ["Uruguay"], py: ["Paraguay"],
+  pa: ["Panamá"], cr: ["Costa Rica"], ni: ["Nicaragua"], hn: ["Honduras"], sv: ["El Salvador"], gt: ["Guatemala"], cu: ["Cuba"], sr: ["Surinam"],
+  tt: ["Trinidad y Tobago"], eh: ["Sahara occidental", "Sáhara Occidental"], us: ["Estados Unidos", "États-Unis"], cn: ["Chine"], fr: ["Francia"], es: ["Espagne", "España"] };
+const OTHER_IDS = { ...NAME_IDS };
+for (const [id, names] of Object.entries(OTHER_LANG)) for (const n of names) OTHER_IDS[norm(n)] = id;
+// places whose names contain a country's name but are not that country: matched first (longer) and counted as none
+for (const n of ["American Samoa", "New Mexico", "Nuevo México", "Nouveau-Mexique", "Georgia, USA"]) OTHER_IDS[norm(n)] = OTHER_IDS[norm(n)] || "";
+
 // Country ids named in free text (whole names only; longest names first so "South Sudan" wins over "Sudan").
-const NAME_LIST = Object.keys(NAME_IDS).filter((n) => n.length > 3 || /^(uk|usa|drc)$/.test(n)).sort((a, b) => b.length - a.length);
-export function ccsInText(text) {
+// otherLangs: also read the French and Spanish names above.
+const byLength = (ids) => Object.keys(ids).filter((n) => n.length > 3 || /^(uk|usa|drc|rdc)$/.test(n)).sort((a, b) => b.length - a.length);
+const NAME_LIST = byLength(NAME_IDS), OTHER_LIST = byLength(OTHER_IDS);
+export function ccsInText(text, otherLangs = false) {
+  const [list, ids] = otherLangs ? [OTHER_LIST, OTHER_IDS] : [NAME_LIST, NAME_IDS];
   let t = " " + norm(text) + " ";
   const out = [];
-  for (const n of NAME_LIST) if (t.includes(" " + n + " ")) { const id = NAME_IDS[n]; if (!out.includes(id)) out.push(id); t = t.split(" " + n + " ").join("  "); }
+  for (const n of list) if (t.includes(" " + n + " ")) { const id = ids[n]; if (id && !out.includes(id)) out.push(id); t = t.split(" " + n + " ").join("  "); }
   return out;
 }
 
