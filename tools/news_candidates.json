@@ -1,761 +1,395 @@
 {
-"note": "PROBE BRANCH ONLY: regional outlet candidates",
-"feeds": [
-{
-"cc": "zz",
-"outlet": "RNZ Pacific",
-"url": "https://www.rnz.co.nz/rss/pacific.xml",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "ABC Pacific",
-"url": "https://www.abc.net.au/pacific/feed/2942460/rss.xml",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Islands Business",
-"url": "https://islandsbusiness.com/feed/",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "PINA",
-"url": "https://pina.com.fj/feed/",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Asia Pacific Report",
-"url": "https://asiapacificreport.nz/feed/",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "The Guardian Pacific",
-"url": "https://www.theguardian.com/world/pacific-islands/rss",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "BenarNews Pacific",
-"url": "https://www.benarnews.org/english/news/pacific/rss.xml",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Pacific Island Times",
-"url": "https://www.pacificislandtimes.com/blog-feed.xml",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Marianas Variety",
-"url": "https://www.mvariety.com/search/?f=rss&t=article&l=50",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Pacnews",
-"url": "https://pacnews.org/feed/",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Pacific Media Network",
-"url": "https://pmn.co.nz/feed/",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Loop Pacific",
-"url": "https://www.looppacific.com/rss.xml",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Kaniva Pacific",
-"url": "https://kanivatonga.co.nz/feed/",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Pacific Islands Report",
-"url": "https://www.pireport.org/rss.xml",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Islands Business news",
-"url": "https://islandsbusiness.com/news-break/feed/",
-"lang": "en",
-"region": "pacific"
-},
-{
-"cc": "zz",
-"outlet": "Caribbean National Weekly",
-"url": "https://www.caribbeannationalweekly.com/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Caribbean News Global",
-"url": "https://caribbeannewsglobal.com/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Caribbean Life",
-"url": "https://www.caribbeanlife.com/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "News Americas Now",
-"url": "https://www.newsamericasnow.com/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Caribbean Journal",
-"url": "https://www.caribjournal.com/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "WIC News",
-"url": "https://wicnews.com/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "CARICOM Today",
-"url": "https://today.caricom.org/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Loop Caribbean",
-"url": "https://caribbean.loopnews.com/rss.xml",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Caribbean Media Corporation",
-"url": "https://www.cmccaribbean.com/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Caribbean Times",
-"url": "https://caribbeantimes.ag/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "St Kitts Nevis Observer regional",
-"url": "https://www.thestkittsnevisobserver.com/category/regional/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Dominica News Online regional",
-"url": "https://dominicanewsonline.com/news/homepage/news/regional/feed/",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "OECS",
-"url": "https://pressroom.oecs.int/rss.xml",
-"lang": "en",
-"region": "caribbean"
-},
-{
-"cc": "zz",
-"outlet": "Africanews",
-"url": "https://www.africanews.com/feed/rss",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "The Africa Report",
-"url": "https://www.theafricareport.com/feed/",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "RFI Afrique",
-"url": "https://www.rfi.fr/fr/afrique/rss",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "France 24 Afrique",
-"url": "https://www.france24.com/fr/afrique/rss",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Jeune Afrique",
-"url": "https://www.jeuneafrique.com/feed/",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Le Monde Afrique",
-"url": "https://www.lemonde.fr/afrique/rss_full.xml",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "APA News",
-"url": "https://apanews.net/feed/",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Sahel Intelligence",
-"url": "https://sahel-intelligence.com/feed",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "CGTN Africa",
-"url": "https://africa.cgtn.com/feed/",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Agence Ecofin",
-"url": "https://www.agenceecofin.com/rss",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "The East African",
-"url": "https://www.theeastafrican.co.ke/rss.xml",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "RFI English Africa",
-"url": "https://www.rfi.fr/en/africa/rss",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "DW Africa",
-"url": "https://rss.dw.com/rdf/rss-en-africa",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Al Jazeera Africa",
-"url": "https://www.aljazeera.com/xml/rss/all.xml",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Africa Confidential",
-"url": "https://www.africa-confidential.com/rss",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "TV5Monde Afrique",
-"url": "https://information.tv5monde.com/afrique/rss.xml",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Le Point Afrique",
-"url": "https://www.lepoint.fr/afrique/rss.xml",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Mondafrique",
-"url": "https://mondafrique.com/feed/",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Africa Intelligence",
-"url": "https://www.africaintelligence.com/rss",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Semafor Africa",
-"url": "https://www.semafor.com/vertical/africa/rss.xml",
-"lang": "en",
-"region": "africa"
-},
-{
-"cc": "zz",
-"outlet": "Al-Monitor",
-"url": "https://www.al-monitor.com/rss",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Middle East Eye",
-"url": "https://www.middleeasteye.net/rss",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "The New Arab",
-"url": "https://www.newarab.com/rss",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Asharq Al-Awsat",
-"url": "https://english.aawsat.com/feed",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Middle East Monitor",
-"url": "https://www.middleeastmonitor.com/feed/",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "The National",
-"url": "https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Gulf Business",
-"url": "https://gulfbusiness.com/feed/",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Arabian Business",
-"url": "https://www.arabianbusiness.com/feed",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Amwaj",
-"url": "https://amwaj.media/rss",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "The Cradle",
-"url": "https://thecradle.co/feed",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Arab Weekly",
-"url": "https://thearabweekly.com/feeds",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Al Arabiya English",
-"url": "https://english.alarabiya.net/feed/rss2/en.xml",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Zawya",
-"url": "https://www.zawya.com/sitemaps/en/rss",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "France 24 Middle East",
-"url": "https://www.france24.com/en/middle-east/rss",
-"lang": "en",
-"region": "mena"
-},
-{
-"cc": "zz",
-"outlet": "Euronews",
-"url": "https://www.euronews.com/rss",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Politico Europe",
-"url": "https://www.politico.eu/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Euractiv",
-"url": "https://www.euractiv.com/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Balkan Insight",
-"url": "https://balkaninsight.com/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "bne IntelliNews",
-"url": "https://www.intellinews.com/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "OC Media",
-"url": "https://oc-media.org/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Eurasianet",
-"url": "https://eurasianet.org/feed",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "RFE/RL",
-"url": "https://www.rferl.org/api/zrqiteuuir",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Times of Central Asia",
-"url": "https://timesca.com/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Emerging Europe",
-"url": "https://emerging-europe.com/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Notes from Poland",
-"url": "https://notesfrompoland.com/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Kafkadesk",
-"url": "https://kafkadesk.org/feed/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "LRT English",
-"url": "https://www.lrt.lt/en/news-in-english?rss",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "The Baltic Times",
-"url": "https://www.baltictimes.com/rss/",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "Brussels Times",
-"url": "https://www.brusselstimes.com/feed",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "SwissInfo",
-"url": "https://www.swissinfo.ch/eng/rss",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "The Local Europe",
-"url": "https://feeds.thelocal.com/rss/es",
-"lang": "en",
-"region": "europe"
-},
-{
-"cc": "zz",
-"outlet": "The Diplomat",
-"url": "https://thediplomat.com/feed/",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "BenarNews",
-"url": "https://www.benarnews.org/english/rss",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "RFA English",
-"url": "https://www.rfa.org/english/rss2.xml",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "Nikkei Asia",
-"url": "https://asia.nikkei.com/rss/feed/nar",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "Asia Times",
-"url": "https://asiatimes.com/feed/",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "SCMP Asia",
-"url": "https://www.scmp.com/rss/3/feed",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "CNA Asia",
-"url": "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6511",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "Eurasia Review",
-"url": "https://www.eurasiareview.com/feed/",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "The Irrawaddy",
-"url": "https://www.irrawaddy.com/feed",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "South Asia Monitor",
-"url": "https://www.southasiamonitor.org/rss.xml",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "Himal Southasian",
-"url": "https://www.himalmag.com/feed/",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "Asia News Network",
-"url": "https://asianews.network/feed/",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "Kyodo Asia",
-"url": "https://english.kyodonews.net/rss/news.xml",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "ThePrint South Asia",
-"url": "https://theprint.in/category/world/feed/",
-"lang": "en",
-"region": "asia"
-},
-{
-"cc": "zz",
-"outlet": "MercoPress",
-"url": "https://en.mercopress.com/rss/",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "Infobae América",
-"url": "https://www.infobae.com/arc/outboundfeeds/rss/?outputType=xml",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "El País América",
-"url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/america/portada",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "DW Español América Latina",
-"url": "https://rss.dw.com/xml/rss-sp-al",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "CNN en Español",
-"url": "https://cnnespanol.cnn.com/feed/",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "Rio Times",
-"url": "https://www.riotimesonline.com/feed/",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "Prensa Latina English",
-"url": "https://www.plenglish.com/feed/",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "teleSUR English",
-"url": "https://www.telesurenglish.net/rss",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "France 24 Español América Latina",
-"url": "https://www.france24.com/es/am%C3%A9rica-latina/rss",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "Latin America Reports",
-"url": "https://latinamericareports.com/feed/",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "BBC Mundo",
-"url": "https://feeds.bbci.co.uk/mundo/rss.xml",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "EFE América",
-"url": "https://efe.com/america/feed/",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "Diálogo Américas",
-"url": "https://dialogo-americas.com/feed/",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "NACLA",
-"url": "https://nacla.org/rss.xml",
-"lang": "en",
-"region": "latam"
-},
-{
-"cc": "zz",
-"outlet": "Latinoamérica21",
-"url": "https://latinoamerica21.com/feed/",
-"lang": "en",
-"region": "latam"
-}
-]
+ "note": "PROBE BRANCH ONLY: regional outlet candidates",
+ "feeds": [
+  {
+   "cc": "li",
+   "outlet": "Liechtensteiner Vaterland",
+   "url": "https://www.vaterland.li/rss",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "outlet": "Liechtensteiner Vaterland feed",
+   "url": "https://www.vaterland.li/feed",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "outlet": "Liechtensteiner Volksblatt",
+   "url": "https://www.volksblatt.li/rss",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "outlet": "Volksblatt feed",
+   "url": "https://www.volksblatt.li/feed",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "outlet": "Radio Liechtenstein",
+   "url": "https://www.radio.li/rss",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "outlet": "Regierung Liechtenstein",
+   "url": "https://www.regierung.li/rss",
+   "lang": "de"
+  },
+  {
+   "cc": "kw",
+   "outlet": "KUNA English",
+   "url": "https://www.kuna.net.kw/RSS/NewsRss.aspx?Language=en",
+   "lang": "en"
+  },
+  {
+   "cc": "kw",
+   "outlet": "KUNA",
+   "url": "https://www.kuna.net.kw/rss.aspx?language=en",
+   "lang": "en"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Arab Times",
+   "url": "https://www.arabtimesonline.com/news/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Arab Times rss",
+   "url": "https://www.arabtimesonline.com/rss",
+   "lang": "en"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Al Rai",
+   "url": "https://www.alraimedia.com/rss",
+   "lang": "ar"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Al Jarida",
+   "url": "https://www.aljarida.com/rss",
+   "lang": "ar"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Al Qabas",
+   "url": "https://www.alqabas.com/rss",
+   "lang": "ar"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Al Anba",
+   "url": "https://www.alanba.com.kw/rss",
+   "lang": "ar"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Kuwait Times feed",
+   "url": "https://kuwaittimes.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Seychelles Nation",
+   "url": "https://www.nation.sc/rss",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Seychelles Nation feed",
+   "url": "https://www.nation.sc/feed",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Seychelles News Agency",
+   "url": "http://www.seychellesnewsagency.com/rss",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "SNA articles rss",
+   "url": "https://www.seychellesnewsagency.com/rss/articles",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "SBC Seychelles",
+   "url": "https://www.sbc.sc/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Today in Seychelles",
+   "url": "https://www.todayinseychelles.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Seychelles Weekly",
+   "url": "https://www.seychellesweekly.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "Awoko",
+   "url": "https://awokonewspaper.sl/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "Sierra Leone Times",
+   "url": "https://sierraleonetimes.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "Politico SL",
+   "url": "https://www.politicosl.com/rss.xml",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "SLBC",
+   "url": "https://slbc.gov.sl/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "Switsalone",
+   "url": "https://www.switsalone.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "Sierra Leone Daily Mail",
+   "url": "https://slenews.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "Global Times SL",
+   "url": "https://globaltimes-sl.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "outlet": "AYV News",
+   "url": "https://ayvnews.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini Observer",
+   "url": "http://new.observer.org.sz/rss.php",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Swaziland News",
+   "url": "https://www.swazilandnews.co.za/feed",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini Government",
+   "url": "https://www.gov.sz/index.php?format=feed&type=rss",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini News",
+   "url": "https://eswatininews.co.sz/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini Daily News",
+   "url": "https://eswatinidailynews.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "st",
+   "outlet": "STP Digital",
+   "url": "https://stpdigital.net/feed/",
+   "lang": "pt"
+  },
+  {
+   "cc": "st",
+   "outlet": "O Parvo",
+   "url": "https://oparvo.st/feed/",
+   "lang": "pt"
+  },
+  {
+   "cc": "st",
+   "outlet": "Jornal Transparência",
+   "url": "https://jornaltransparencia.st/feed/",
+   "lang": "pt"
+  },
+  {
+   "cc": "st",
+   "outlet": "RFI Português São Tomé",
+   "url": "https://www.rfi.fr/pt/s%C3%A3o-tom%C3%A9-e-pr%C3%ADncipe/rss",
+   "lang": "pt"
+  },
+  {
+   "cc": "mc",
+   "outlet": "Monaco Matin",
+   "url": "https://www.monacomatin.mc/rss",
+   "lang": "fr"
+  },
+  {
+   "cc": "mc",
+   "outlet": "Gouvernement Princier",
+   "url": "https://www.gouv.mc/rss",
+   "lang": "fr"
+  },
+  {
+   "cc": "mc",
+   "outlet": "L'Observateur de Monaco",
+   "url": "https://www.lobservateurdemonaco.mc/feed/",
+   "lang": "fr"
+  },
+  {
+   "cc": "mc",
+   "outlet": "Monaco Info",
+   "url": "https://www.monacoinfo.com/feed/",
+   "lang": "fr"
+  },
+  {
+   "cc": "mc",
+   "outlet": "Nice-Matin Monaco",
+   "url": "https://www.nicematin.com/monaco/rss",
+   "lang": "fr"
+  },
+  {
+   "cc": "sm",
+   "outlet": "San Marino Fixing",
+   "url": "https://www.sanmarinofixing.com/feed/",
+   "lang": "it"
+  },
+  {
+   "cc": "sm",
+   "outlet": "Tribuna Politica",
+   "url": "https://www.tribunapoliticaweb.sm/feed/",
+   "lang": "it"
+  },
+  {
+   "cc": "sm",
+   "outlet": "Repubblica SM",
+   "url": "https://www.repubblica.sm/feed/",
+   "lang": "it"
+  },
+  {
+   "cc": "sm",
+   "outlet": "Libertas feed",
+   "url": "https://www.libertas.sm/feed/",
+   "lang": "it"
+  },
+  {
+   "cc": "sm",
+   "outlet": "Segreteria Esteri",
+   "url": "https://www.esteri.sm/feed",
+   "lang": "it"
+  },
+  {
+   "cc": "nr",
+   "outlet": "Nauru Government",
+   "url": "https://www.naurugov.nr/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "nr",
+   "outlet": "Nauru Bulletin",
+   "url": "https://www.naurugov.nr/rss",
+   "lang": "en"
+  },
+  {
+   "cc": "nr",
+   "outlet": "Nauru News",
+   "url": "https://nauru-news.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "tv",
+   "outlet": "Tuvalu Government",
+   "url": "https://www.tuvalu.tv/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "tv",
+   "outlet": "Tuvalu Gov",
+   "url": "https://www.gov.tv/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "mh",
+   "outlet": "RMI Government",
+   "url": "https://rmigovernment.org/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "mh",
+   "outlet": "Kwajalein Hourglass",
+   "url": "https://www.smdc.army.mil/RSS",
+   "lang": "en"
+  },
+  {
+   "cc": "mh",
+   "outlet": "RMI Embassy",
+   "url": "https://www.rmiembassyus.org/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "pw",
+   "outlet": "Palau Government",
+   "url": "https://www.palaugov.pw/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "pw",
+   "outlet": "Palau President",
+   "url": "https://www.palaugov.pw/executive-branch/president/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Sahara Press Service EN",
+   "url": "https://www.spsrasd.info/news/en/rss",
+   "lang": "en"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Sahara Press Service",
+   "url": "https://www.spsrasd.info/rss",
+   "lang": "es"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Le360 Sahara",
+   "url": "https://fr.le360.ma/rss",
+   "lang": "fr"
+  },
+  {
+   "cc": "vc",
+   "outlet": "Government of SVG",
+   "url": "https://www.gov.vc/index.php?format=feed&type=rss",
+   "lang": "en"
+  },
+  {
+   "cc": "vc",
+   "outlet": "NBC SVG",
+   "url": "https://nbcsvg.com/feed/",
+   "lang": "en"
+  },
+  {
+   "cc": "vc",
+   "outlet": "Asberth News Network",
+   "url": "https://asberthnews.com/feed/",
+   "lang": "en"
+  }
+ ]
 }
