@@ -11,9 +11,14 @@ jobs:
     steps:
       - run: |
           set +e
-          curl -sS -m 60 https://armstransfers.sipri.org/build/bundle.js -o f.txt
-          echo "== register builder"; grep -oE '.{2500}x\.secondExport&&e\.push' f.txt | head -1
-          echo "== register defaults"; grep -oE '.{100}secondExport.{0,40}' f.txt | head -5
-          echo "== countries"; curl -sS -m 60 https://atbackend.sipri.org/api/p/countries/getAllCountriesTrimmed -o c.json -w "%{http_code} %{size_download}\n"; head -c 700 c.json; echo
-          curl -sS -m 60 -X POST https://atbackend.sipri.org/api/p/countries/getAllCountriesTrimmed -o c2.json -w "POST %{http_code} %{size_download}\n"; head -c 300 c2.json; echo
-          echo "== maxyear"; curl -sS -m 30 -X POST -H 'Content-Type: application/json' -d '{}' https://atbackend.sipri.org/api/p/trades/getMaxYear; echo
+          curl -sS -m 60 https://atbackend.sipri.org/api/p/countries/getAllCountriesTrimmed -o c.json
+          TH=$(jq -r '.[]|select(.CountryCode=="THA")|.EntityId' c.json); echo "TH=$TH; countries $(jq length c.json)"
+          jq -c '[.[]|select(.CountryCode|test("^[A-Z]{3}$"))|.CountryCode]|length' c.json
+          for role in Recipient Supplier; do
+            body=$(jq -nc --arg r "$role" --argjson id "$TH" '{filters:[{field:$r,oldField:"",condition:"contains",value1:"",value2:"",listData:[$id]},{field:"activePrograms",oldField:"",condition:"contains",value1:2015,value2:2025,listData:[]},{field:"opendeals",oldField:"",condition:"",value1:"",value2:"",listData:[]}],logic:"AND"}')
+            t0=$(date +%s.%N)
+            curl -sS -m 120 -X POST -H 'Content-Type: application/json' -d "$body" 'https://atbackend.sipri.org/api/p/trades/trade-register-csv/?output=csv' -o r.json -w "$role %{http_code} %{size_download}\n"
+            echo "secs $(echo "$(date +%s.%N) - $t0" | bc)"
+            head -c 200 r.json; echo
+            jq -r '.bytes // empty' r.json | base64 -d > r.csv; wc -l r.csv; head -c 2500 r.csv; echo
+          done
