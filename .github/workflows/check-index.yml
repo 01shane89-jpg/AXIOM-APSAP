@@ -127,6 +127,8 @@ jobs:
       - run: node tests/area_report_smoke.mjs
       # OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
       - run: node tests/osir_smoke.mjs
+      # one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
+      - run: node tests/incident_dedup_smoke.mjs
       - run: node tests/points_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs
