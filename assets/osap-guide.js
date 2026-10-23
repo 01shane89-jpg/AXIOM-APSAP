@@ -194,7 +194,8 @@
         b("Analyst") + ": adds and changes items.", b("Viewer") + ": reads the case. Changes a viewer makes stay on their own device."]) +
       "<h3>Start a case</h3>" +
       ul(["Open " + b("My work") + ", then " + b("Workspaces") + ". Under a workspace press " + b("Share as a case") + ", give it a name and your call sign, and press " + b("Create case") + ".",
-        "Invite each member by the email of their OSAP account, with a role. They see the invite when they sign in (the email must be confirmed)."]) +
+        "Invite each member by the email of their OSAP account, with a role. They see the invite when they sign in (the email must be confirmed).",
+        "A team shared by link can move to a case: its owner opens the team and presses " + b("Move to a team case") + ". The case is made from the same workspace, with every item and who added it. Members on the old links keep what they have and are told to ask the owner for an invite."]) +
       "<h3>Join a case</h3>" +
       ul(["Press " + b("Team cases") + " in My work > Workspaces. Open the invite, type your call sign and press " + b("Join case") + ". The case's items go into a new workspace.",
         "The first time, the case waits until a lead's device hands your device the case key; this happens on the lead's next sync."]) +

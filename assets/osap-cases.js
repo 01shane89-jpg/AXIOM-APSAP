@@ -13,7 +13,7 @@
    - Only on the Netlify site, signed in: cases need accounts. Creating a case needs the Full plan; joining needs an invite to the
      account's confirmed email. A workspace is either a team-link workspace or a case, never both.
    - Nothing here approves anything: items are the analysts' own work. Lead approval of analyst work is milestone 3.
-   window.OSAP_CASES {open, list, syncNow, caseOf, wsHtml, tag}. */
+   window.OSAP_CASES {open, create, list, syncNow, caseOf, activeCase, itemState, decide, wsHtml, tag, on}. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -187,9 +187,11 @@
 
   /* ---------- making, joining, leaving ---------- */
   function refreshMine() { return api().then(function (j) { MINE = j; render(); return j; }); }
-  function create(ws, name, call) {
+  /* opts.fromTeam: the team-link owner moving the team here (OSAP_TEAM.toCase), which closes the team link once the case is made */
+  function linked(ws) { var t = W.OSAP_TEAM && W.OSAP_TEAM.teamOf && W.OSAP_TEAM.teamOf(ws); return !!(t && !t.closed); }
+  function create(ws, name, call, opts) {
     if (!allowed()) return Promise.reject(new Error("Team cases need the Full plan."));
-    if (W.OSAP_TEAM && W.OSAP_TEAM.teamOf && W.OSAP_TEAM.teamOf(ws)) return Promise.reject(new Error("This workspace is shared by team link. Use another workspace for a case."));
+    if (!(opts && opts.fromTeam) && linked(ws)) return Promise.reject(new Error("This workspace is shared by team link. Use another workspace for a case."));
     if (caseOf(ws)) return Promise.reject(new Error("This workspace is already a case."));
     return device().then(function () { return cmd("create", { name: name, call: call }); }).then(function (j) {
       bind(j.case.id, ws, { creator: true, name: j.case.name, role: "lead" });
@@ -392,7 +394,7 @@
       var b = bound(id);
       return '<div class="tmws" data-cs-ws><span><b>Case: ' + esc(b.name || "") + '</b> <i class="obs">' + esc(ROLE[b.role] || "") + " · " + esc(stateTxt(id)) + '</i></span><button type="button" class="refresh" data-cs-case="' + esc(id) + '">Case</button></div>';
     }
-    if (W.OSAP_TEAM && W.OSAP_TEAM.teamOf && W.OSAP_TEAM.teamOf(ws)) return "";
+    if (linked(ws)) return "";
     return '<div class="tmws" data-cs-ws><span><b>Team case</b> <i class="obs">Share with named OSAP accounts, each with a role: lead, analyst or viewer.</i></span>' +
       (allowed() ? '<button type="button" class="refresh" data-cs-share="' + esc(ws) + '">Share as a case</button>' : "") + '<button type="button" data-cs-list>Team cases</button></div>';
   }
@@ -450,7 +452,7 @@
     if (!b || !b.role || (LAST[id] && LAST[id].gone)) return null;
     return { id: id, name: b.name || "", role: b.role, roleName: ROLE[b.role] || b.role };
   }
-  W.OSAP_CASES = { open: openP, list: function () { return MINE; }, syncNow: syncCase, caseOf: caseOf, activeCase: activeCase, itemState: itemState, decide: decide, wsHtml: wsHtml, tag: tag, on: on };
+  W.OSAP_CASES = { open: openP, create: create, list: function () { return MINE; }, syncNow: syncCase, caseOf: caseOf, activeCase: activeCase, itemState: itemState, decide: decide, wsHtml: wsHtml, tag: tag, on: on };
   var go = function () { if (on()) start(); };
   if (T() && T().ready && T().ready.then) T().ready.then(go, function () {}); else go();
 })();
