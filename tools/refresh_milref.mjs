@@ -2,8 +2,9 @@
 // Keyless, free sources only; every record keeps its source and a SHA-256 fingerprint, and the app shows each as a source claim:
 //  - Wikidata (CC0 1.0), query.wikidata.org: the country's armed forces, branches and units (order of battle: Q176799 military
 //    unit and Q772547 armed forces with their subclasses, dissolved units left out), the equipment those forces are recorded as
-//    operating (P137 operator, with the P1114 quantity, P580/P582 dates and P730 service retirement where editors gave them),
-//    and military installations (Q18691599 military installation, Q695850 airbase). Wikidata is edited by anyone: coverage
+//    operating (P137 operator, with the P1114 quantity, P580/P582 dates and P730 service retirement where editors gave them;
+//    a type first flown or built before 1960 with no end recorded is listed apart as probably retired),
+//    and military installations (Q18691599 military installation, Q695850 airbase; castles and historic fortresses left out). Wikidata is edited by anyone: coverage
 //    differs widely between countries, quantities are rare and retired types often carry no end date.
 //  - World Bank World Development Indicators (CC BY 4.0): military expenditure (SIPRI Military Expenditure Database), armed
 //    forces personnel (IISS, The Military Balance) and arms imports and exports (SIPRI trend-indicator values).
@@ -106,11 +107,12 @@ async function country(cc) {
   for (const b of uRows) { const q = qid(b, "u"); if (!opName[q] && val(b, "en")) opName[q] = val(b, "en"); }
   let eRows = [];
   for (let i = 0; i < ops.length; i += 2500) {
-    eRows = eRows.concat(await sparql(`SELECT ?eq ?en ?mul ?op ?cls ?qty ?start ?end ?ret ?dis ?coord ?sl WHERE {
+    eRows = eRows.concat(await sparql(`SELECT ?eq ?en ?mul ?op ?cls ?qty ?start ?end ?ret ?dis ?ff ?inc ?coord ?sl WHERE {
   VALUES ?op { ${V(ops.slice(i, i + 2500))} }
   ?eq p:P137 ?st. ?st ps:P137 ?op.
   OPTIONAL { ?st pq:P1114 ?qty } OPTIONAL { ?st pq:P580 ?start } OPTIONAL { ?st pq:P582 ?end }
   OPTIONAL { ?eq wdt:P730 ?ret } OPTIONAL { ?eq wdt:P576 ?dis } OPTIONAL { ?eq wdt:P625 ?coord }
+  OPTIONAL { ?eq wdt:P606 ?ff } OPTIONAL { ?eq wdt:P571 ?inc }
   OPTIONAL { ?eq wdt:P31 ?cls }
   ?eq wikibase:sitelinks ?sl.
   ${LAB("?eq")}
@@ -158,7 +160,7 @@ for (const cc of CCS) {
   if (!W && p.wd) rec.wd.stale = true;
   fs.writeFileSync(OUT + "/" + cc + ".json", JSON.stringify(rec) + "\n");
   const w = rec.wd || {};
-  index.all[cc] = { n: NAMES[cc], u: (w.units || []).length, e: (w.equip || []).filter((x) => !x.out).length, i: (w.inst || []).length, f: Object.keys(fig).length, st: w.stale ? 1 : 0 };
+  index.all[cc] = { n: NAMES[cc], u: (w.units || []).length, e: (w.equip || []).filter((x) => !x.out && !x.old).length, i: (w.inst || []).length, f: Object.keys(fig).length, st: w.stale ? 1 : 0 };
   if (W) log(cc, "units", W.units.length + "/" + W.raw.units, "equipment", W.equip.length + "/" + W.raw.equip, "installations", W.inst.length);
 }
 fs.writeFileSync(OUT + "/index.json", JSON.stringify(index) + "\n");

@@ -59,7 +59,7 @@ const capped = L.unitsFrom(big, cls, 10);
 ok(capped.length === 11 && capped.some((u) => u.q === "Q999"), "cap of 10 keeps the 10 best-known and their parent (" + capped.length + ")");
 
 // ---------- equipment ----------
-const ecls = { Q21: "aircraft family", Q22: "frigate", Q23: "airbase", Q24: "embassy", Q25: "museum ship", Q26: "aircraft", Q27: "ship class" };
+const ecls = { Q21: "aircraft family", Q22: "frigate", Q23: "airbase", Q24: "embassy", Q25: "museum ship", Q26: "aircraft", Q27: "ship class", Q28: "fortress" };
 const opName = { Q100: "Royal Army", Q200: "Royal Navy", Q300: "Royal Air Force" };
 const eRows = [
   b({ eq: "Q500", en: "F-16 Fighting Falcon", op: "Q300", cls: "Q21", qty: "53", start: "1988-01-01T00:00:00Z", sl: 80 }),
@@ -70,7 +70,9 @@ const eRows = [
   b({ eq: "Q505", en: "Balls 8", op: "Q300", cls: "Q26", sl: 1 }),
   b({ eq: "Q506", en: "Old Fighter", op: "Q300", cls: "Q21", end: "1976-01-01T00:00:00Z", sl: 9 }),
   b({ eq: "Q507", en: "Knox-class frigate", op: "Q200", cls: "Q27", ret: "2003-01-01T00:00:00Z", sl: 9 }),
-  b({ eq: "Q508", en: "<img src=x onerror=alert(1)>", op: "Q200", cls: "Q22", sl: 0 })
+  b({ eq: "Q508", en: "<img src=x onerror=alert(1)>", op: "Q200", cls: "Q22", sl: 0 }),
+  b({ eq: "Q509", en: "Nakajima Ki-43", op: "Q300", cls: "Q21", ff: "1939-01-12T00:00:00Z", sl: 20 }),
+  b({ eq: "Q510", en: "Old Fort", op: "Q100", cls: "Q28", sl: 1 })
 ];
 const { equip, inst } = L.equipFrom(eRows, ecls, opName);
 const eq = Object.fromEntries(equip.map((e) => [e.q, e]));
@@ -81,19 +83,24 @@ ok(!eq.Q505, "a single named airframe is left out");
 ok(eq.Q504 && eq.Q504.out === "yes", "a museum ship is shown as retired");
 ok(eq.Q506 && eq.Q506.out === "1976" && eq.Q507 && eq.Q507.out === "2003", "an end-of-service date (qualifier or P730) marks it retired");
 ok(equip.findIndex((e) => e.out) > equip.findIndex((e) => e.q === "Q501"), "in-service items sort before retired ones");
-ok(inst.length === 1 && inst[0].q === "Q502" && inst[0].k === "air" && inst[0].op === "Royal Air Force", "a base the force operates moves to installations");
+ok(eq.Q509 && eq.Q509.old === "1939" && !eq.Q509.out && !eq.Q500.old, "a type first flown before 1960 with no end recorded is kept but marked older");
+ok(equip.findIndex((e) => e.q === "Q509") > equip.findIndex((e) => e.q === "Q501") && equip.findIndex((e) => e.q === "Q509") < equip.findIndex((e) => e.out), "older types sort between current and retired");
+ok(!inst.some((x) => x.q === "Q510") && inst.length === 1 && inst[0].q === "Q502" && inst[0].k === "air" && inst[0].op === "Royal Air Force", "a base the force operates moves to installations");
 ok(equip.every((e) => /^[0-9a-f]{64}$/.test(e.fp)), "every equipment record carries a fingerprint");
 
 // ---------- installations ----------
-const icls = { Q31: "military base", Q32: "naval base" };
+const icls = { Q31: "military base", Q32: "naval base", Q33: "fortress", Q34: "castle" };
 const sRows = [
   b({ s: "Q502", en: "Example Air Force Base", cls: "Q31", sl: 2 }),
   b({ s: "Q600", en: "Sattahip Naval Base", cls: "Q32", coord: "Point(100.9 12.66)", sl: 7 }),
-  b({ s: "Q601", en: "Bad point", cls: "Q31", coord: "Point(300 95)", sl: 0 })
+  b({ s: "Q601", en: "Bad point", cls: "Q31", coord: "Point(300 95)", sl: 0 }),
+  b({ s: "Q602", en: "Khotyn Fortress", cls: "Q33", coord: "Point(26.5 48.5)", sl: 30 }),
+  b({ s: "Q603", en: "Castle Barracks", cls: "Q34", sl: 1 }), b({ s: "Q603", en: "Castle Barracks", cls: "Q31", sl: 1 })
 ];
 const I = L.instFrom(sRows, icls, inst);
 const iq = Object.fromEntries(I.map((s) => [s.q, s]));
-ok(I.length === 3 && iq.Q502.op === "Royal Air Force" && iq.Q502.la === 18.8, "installations merge with the operated bases by QID (point and operator kept)");
+ok(!iq.Q602 && iq.Q603, "a historic fortress is left out; a castle that is also a military base stays");
+ok(I.length === 4 && iq.Q502.op === "Royal Air Force" && iq.Q502.la === 18.8, "installations merge with the operated bases by QID (point and operator kept)");
 ok(iq.Q600.k === "naval" && I[0].q === "Q600", "naval base kind; best-known first");
 ok(iq.Q601.la == null, "an impossible coordinate is dropped, not shown");
 ok(I.every((s) => /^[0-9a-f]{64}$/.test(s.fp) && !("via" in s)), "installation records carry fingerprints");
@@ -120,7 +127,7 @@ const t = C.tree(U);
 ok(t.roots.some((r) => r.q === "Q100") && (t.kids.Q100 || []).length === 1 && C.size("Q100", t.kids) === 2, "order-of-battle tree and the count under a unit");
 ok(C.size("Q105", t.kids) <= 2, "a loop in parent links does not hang the count");
 const g = C.groups(equip);
-ok(g.air.length === 1 && g.sea.length === 2 && g.out.length === 3, "equipment grouped by category, retired apart");
+ok(g.air.length === 1 && g.sea.length === 2 && g.out.length === 3 && g.old.length === 1, "equipment grouped by category, older and retired apart");
 
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);

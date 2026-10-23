@@ -139,6 +139,7 @@ export function unitsFrom(rows, clsName, cap = CAPS.units) {
 }
 
 /* ---------- equipment ---------- */
+export const OLD_BEFORE = 1960;
 // rows: ?eq ?en ?mul ?op ?cls ?qty ?start ?end ?ret ?dis ?sl ; units: the country's unit list (operator names)
 // returns { equip, inst } where inst are bases and airfields the forces are recorded as operating
 export function equipFrom(rows, clsName, opName, cap = CAPS.equip) {
@@ -147,13 +148,15 @@ export function equipFrom(rows, clsName, opName, cap = CAPS.equip) {
     const q = qid(b, "eq"); if (!/^Q\d+$/.test(q)) continue;
     const name = goodName(val(b, "en")) || goodName(val(b, "mul")); if (!name) continue;
     let e = m.get(q);
-    if (!e) m.set(q, (e = { q, n: name, cls: [], ops: [], qty: null, since: "", end: "", ret: "", sl: +val(b, "sl") || 0, at: null }));
+    if (!e) m.set(q, (e = { q, n: name, cls: [], ops: [], qty: null, since: "", end: "", ret: "", y0: "", sl: +val(b, "sl") || 0, at: null }));
     const c = clsName[qid(b, "cls")]; if (c && !e.cls.includes(c)) e.cls.push(c);
     const op = qid(b, "op"); if (op && !e.ops.includes(op)) e.ops.push(op);
     const n = +val(b, "qty"); if (n > 0 && n < 1e6 && (e.qty == null || n > e.qty)) e.qty = Math.round(n);
     if (!e.since) e.since = year(val(b, "start"));
     if (!e.end) e.end = year(val(b, "end"));
     if (!e.ret) e.ret = year(val(b, "ret")) || year(val(b, "dis"));
+    const y0 = year(val(b, "ff")) || year(val(b, "inc"));
+    if (y0 && (!e.y0 || +y0 < +e.y0)) e.y0 = y0;
     if (!e.at) e.at = point(val(b, "coord"));
   }
   const equip = [], inst = [];
@@ -161,6 +164,7 @@ export function equipFrom(rows, clsName, opName, cap = CAPS.equip) {
     const c = catOf(e.cls); if (!c) continue;
     const ops = e.ops.map((o) => opName[o]).filter(Boolean).slice(0, 3);
     if (c === "inst") {
+      if (historicOnly(e.cls)) continue;
       const r = { q: e.q, n: e.n, t: clean(e.cls.slice(0, 2).join(", "), 80), k: instKind(e.cls.join(" ") + " " + e.n), sl: e.sl, via: "op" };
       if (e.at) { r.la = e.at[0]; r.lo = e.at[1]; }
       if (ops.length) r.op = ops.join("; ");
@@ -176,15 +180,27 @@ export function equipFrom(rows, clsName, opName, cap = CAPS.equip) {
     if (e.since) r.since = e.since;
     const gone = e.end || e.ret || (retiredByClass(e.cls) ? "yes" : "");
     if (gone) r.out = gone; // the source records an end of service: shown as retired
+    // a type first flown or built before OLD_BEFORE with no end recorded: kept as the claim it is, but listed apart as probably
+    // retired (Wikidata rarely records when a force stopped using a type)
+    else if (e.y0 && +e.y0 < OLD_BEFORE) r.old = e.y0;
     equip.push(withFp(r));
   }
   const CO = ["air", "sea", "land", "msl", "sens", "arms"];
-  equip.sort((a, b) => (a.out ? 1 : 0) - (b.out ? 1 : 0) || CO.indexOf(a.c) - CO.indexOf(b.c) || b.sl - a.sl || a.n.localeCompare(b.n));
+  const rank = (e) => (e.out ? 2 : e.old ? 1 : 0);
+  equip.sort((a, b) => rank(a) - rank(b) || CO.indexOf(a.c) - CO.indexOf(b.c) || b.sl - a.sl || a.n.localeCompare(b.n));
   // the cap keeps every in-service entry first, then retired ones
   return { equip: equip.slice(0, cap), inst };
 }
 
 /* ---------- installations ---------- */
+// "military installation" on Wikidata also holds castles, ancient fortresses and old batteries: an item whose classes are only
+// such historic works is not a current installation and is left out (one also classed as a base or airfield stays)
+const HISTORIC = /\b(castle|fortress|fortification|fortified|hillfort|ruin|ruins|archaeological|historic|heritage|cave town|city wall|walls|tower|bunker|redoubt|bastion|citadel|kremlin|coastal artillery|battery|blockhouse|earthwork|motte|rampart|stronghold|museum|monument|memorial)\b/;
+const CURRENT = /\b(air ?base|naval base|naval station|military base|airfield|air station|barracks|garrison|range|training area|depot|arsenal|headquarters|airport|aerodrome|camp)\b/;
+export function historicOnly(clsLabels) {
+  const L = (clsLabels || []).map((c) => String(c).toLowerCase());
+  return L.length > 0 && L.some((l) => HISTORIC.test(l)) && !L.some((l) => CURRENT.test(l));
+}
 // rows: ?s ?en ?mul ?cls ?coord ?sl ; extra: bases found through the equipment query (already shaped, merged by QID)
 export function instFrom(rows, clsName, extra = [], cap = CAPS.inst) {
   const m = new Map();
@@ -198,6 +214,7 @@ export function instFrom(rows, clsName, extra = [], cap = CAPS.inst) {
   }
   const out = new Map();
   for (const s of m.values()) {
+    if (historicOnly(s.cls)) continue;
     const r = { q: s.q, n: s.n, t: clean(s.cls.slice(0, 2).join(", "), 80), k: instKind(s.cls.join(" ") + " " + s.n), sl: s.sl };
     if (s.at) { r.la = s.at[0]; r.lo = s.at[1]; }
     out.set(s.q, r);

@@ -47,7 +47,7 @@
   }
   var CATS = [["air", "Aircraft types"], ["sea", "Ships, submarines and classes"], ["land", "Land systems and air defence"], ["msl", "Missiles, rockets and munitions"], ["sens", "Radar, sonar and communications"], ["arms", "Small arms"]];
   function groups(equip) {
-    var g = {}; (equip || []).forEach(function (e) { var k = e.out ? "out" : e.c; (g[k] = g[k] || []).push(e); });
+    var g = {}; (equip || []).forEach(function (e) { var k = e.out ? "out" : e.old ? "old" : e.c; (g[k] = g[k] || []).push(e); });
     return g;
   }
   var KIND = { air: "Air base or airfield", naval: "Naval base", depot: "Depot or arsenal", hq: "Headquarters", barracks: "Barracks or camp", range: "Range or training area", base: "Military base" };
@@ -114,6 +114,9 @@
             "</td><td>" + (e.qty ? "<b>" + esc(e.qty) + "</b> (claim)" : "") + (e.since ? '<span class="bm">' + (e.qty ? ", " : "") + "since " + esc(e.since) + "</span>" : "") + "</td></tr>";
         }).join("") + "</table>" + (L.length > lim ? '<p class="bm">' + (L.length - lim) + " more in this group.</p>" : "");
     });
+    var old = g.old || [];
+    if (old.length) h += '<details class="mrout"><summary>Older types, probably retired (' + old.length + ")</summary><p class=\"bm\">First flown or built before 1960 and listed as operated, with no end of service recorded on Wikidata. " +
+      old.slice(0, 200).map(function (e) { return link(wdUrl(e.q), esc(e.n)) + " (" + esc(e.old) + ")"; }).join(" · ") + "</p></details>";
     var out = g.out || [];
     if (out.length) h += '<details class="mrout"><summary>Recorded as retired or out of service (' + out.length + ")</summary><p class=\"bm\">" +
       out.slice(0, 200).map(function (e) { return link(wdUrl(e.q), esc(e.n)) + (/^\d{4}$/.test(e.out) ? " (" + esc(e.out) + ")" : ""); }).join(" · ") + "</p></details>";
@@ -138,7 +141,7 @@
       '<p class="bwarn">' + CLAIM + " " + esc(NOTE) + "</p>";
     h += "<h3>Key figures</h3>" + figuresHtml(M.fig || {}, M.cc);
     h += "<h3>Forces and units (order of battle) " + '<span class="bm">' + (w.units ? w.units.length : 0) + (w.found && w.found.units > (w.units || []).length ? " of " + w.found.units + " on Wikidata" : "") + "</span></h3>" + unitsHtml(w.units, lim.units);
-    h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out; }).length + " in service, as recorded</span></h3>" + equipHtml(w.equip, lim.equip);
+    h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out && !e.old; }).length + " in service, as recorded</span></h3>" + equipHtml(w.equip, lim.equip);
     h += "<h3>Installations " + '<span class="bm">' + (w.inst || []).length + "</span></h3>" + instHtml(w.inst, lim.inst);
     h += '<footer>Sources: ' + link("https://www.wikidata.org/" + (w.q ? "wiki/" + esc(w.q) : ""), "Wikidata") + " (CC0 1.0), read " + esc(w.read ? T().asofT(w.read) : "never") + "; " +
       link("https://datacatalog.worldbank.org/search/dataset/0037712", "World Bank World Development Indicators") + " (CC BY 4.0), from the SIPRI Military Expenditure and Arms Transfers databases and IISS, The Military Balance. " +
