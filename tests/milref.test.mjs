@@ -71,7 +71,9 @@ const eRows = [
   b({ eq: "Q506", en: "Old Fighter", op: "Q300", cls: "Q21", end: "1976-01-01T00:00:00Z", sl: 9 }),
   b({ eq: "Q507", en: "Knox-class frigate", op: "Q200", cls: "Q27", ret: "2003-01-01T00:00:00Z", sl: 9 }),
   b({ eq: "Q508", en: "<img src=x onerror=alert(1)>", op: "Q200", cls: "Q22", sl: 0 }),
-  b({ eq: "Q509", en: "Nakajima Ki-43", op: "Q300", cls: "Q21", ff: "1939-01-12T00:00:00Z", sl: 20 }),
+  b({ eq: "Q509", ff: "1939-01-12T00:00:00Z" }),            // a date-only row may come before the item's own rows
+  b({ eq: "Q509", en: "Nakajima Ki-43", op: "Q300", cls: "Q21", sl: 20 }),
+  b({ eq: "Q500", ff: "1974-02-02T00:00:00Z" }),
   b({ eq: "Q510", en: "Old Fort", op: "Q100", cls: "Q28", sl: 1 })
 ];
 const { equip, inst } = L.equipFrom(eRows, ecls, opName);

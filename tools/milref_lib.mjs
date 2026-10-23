@@ -140,23 +140,24 @@ export function unitsFrom(rows, clsName, cap = CAPS.units) {
 
 /* ---------- equipment ---------- */
 export const OLD_BEFORE = 1960;
-// rows: ?eq ?en ?mul ?op ?cls ?qty ?start ?end ?ret ?dis ?sl ; units: the country's unit list (operator names)
+// rows: ?eq ?en ?mul ?op ?cls ?qty ?start ?end ?ret ?dis ?sl, plus date-only rows ?eq ?ff (earliest first flight or inception); units: the country's unit list (operator names)
 // returns { equip, inst } where inst are bases and airfields the forces are recorded as operating
 export function equipFrom(rows, clsName, opName, cap = CAPS.equip) {
-  const m = new Map();
+  const m = new Map(), pending = {};
   for (const b of rows) {
     const q = qid(b, "eq"); if (!/^Q\d+$/.test(q)) continue;
+    // a row with only a date (the job's separate first-flight query) updates an item already read
+    const y = year(val(b, "ff")) || year(val(b, "inc"));
+    if (y && !b.op) { const had = m.get(q) || (pending[q] = pending[q] || { y0: "" }); if (!had.y0 || +y < +had.y0) had.y0 = y; continue; }
     const name = goodName(val(b, "en")) || goodName(val(b, "mul")); if (!name) continue;
     let e = m.get(q);
-    if (!e) m.set(q, (e = { q, n: name, cls: [], ops: [], qty: null, since: "", end: "", ret: "", y0: "", sl: +val(b, "sl") || 0, at: null }));
+    if (!e) { m.set(q, (e = { q, n: name, cls: [], ops: [], qty: null, since: "", end: "", ret: "", y0: (pending[q] || {}).y0 || "", sl: +val(b, "sl") || 0, at: null })); delete pending[q]; }
     const c = clsName[qid(b, "cls")]; if (c && !e.cls.includes(c)) e.cls.push(c);
     const op = qid(b, "op"); if (op && !e.ops.includes(op)) e.ops.push(op);
     const n = +val(b, "qty"); if (n > 0 && n < 1e6 && (e.qty == null || n > e.qty)) e.qty = Math.round(n);
     if (!e.since) e.since = year(val(b, "start"));
     if (!e.end) e.end = year(val(b, "end"));
     if (!e.ret) e.ret = year(val(b, "ret")) || year(val(b, "dis"));
-    const y0 = year(val(b, "ff")) || year(val(b, "inc"));
-    if (y0 && (!e.y0 || +y0 < +e.y0)) e.y0 = y0;
     if (!e.at) e.at = point(val(b, "coord"));
   }
   const equip = [], inst = [];

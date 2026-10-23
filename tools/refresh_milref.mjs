@@ -24,6 +24,7 @@ const WDQ = "https://query.wikidata.org/sparql";
 const log = (...a) => console.log(...a);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+let retries = 0;
 async function sparql(q, ms = 150000) {
   let err;
   for (let i = 0; i < 3; i++) {
@@ -34,7 +35,7 @@ async function sparql(q, ms = 150000) {
       if (r.status === 429 || r.status >= 500) throw Object.assign(new Error("HTTP " + r.status), { retry: +(r.headers.get("retry-after") || 0) });
       if (!r.ok) throw new Error("HTTP " + r.status);
       const j = await r.json(); clearTimeout(t); return j.results.bindings;
-    } catch (e) { clearTimeout(t); err = e; await sleep(Math.min(60, e.retry || 5 * (i + 1)) * 1000); }
+    } catch (e) { clearTimeout(t); err = e; retries++; await sleep(Math.min(60, e.retry || 5 * (i + 1)) * 1000); }
   }
   throw err;
 }
@@ -107,18 +108,26 @@ async function country(cc) {
   for (const b of uRows) { const q = qid(b, "u"); if (!opName[q] && val(b, "en")) opName[q] = val(b, "en"); }
   let eRows = [];
   for (let i = 0; i < ops.length; i += 2500) {
-    eRows = eRows.concat(await sparql(`SELECT ?eq ?en ?mul ?op ?cls ?qty ?start ?end ?ret ?dis ?ff ?inc ?coord ?sl WHERE {
+    eRows = eRows.concat(await sparql(`SELECT ?eq ?en ?mul ?op ?cls ?qty ?start ?end ?ret ?dis ?coord ?sl WHERE {
   VALUES ?op { ${V(ops.slice(i, i + 2500))} }
   ?eq p:P137 ?st. ?st ps:P137 ?op.
   OPTIONAL { ?st pq:P1114 ?qty } OPTIONAL { ?st pq:P580 ?start } OPTIONAL { ?st pq:P582 ?end }
   OPTIONAL { ?eq wdt:P730 ?ret } OPTIONAL { ?eq wdt:P576 ?dis } OPTIONAL { ?eq wdt:P625 ?coord }
-  OPTIONAL { ?eq wdt:P606 ?ff } OPTIONAL { ?eq wdt:P571 ?inc }
   OPTIONAL { ?eq wdt:P31 ?cls }
   ?eq wikibase:sitelinks ?sl.
   ${LAB("?eq")}
 }`));
   }
   await names(eRows.map((b) => qid(b, "cls")));
+  // the earliest first-flight (P606) or inception (P571) year of each item, in a query of its own: joined into the query
+  // above, items with several dates multiply its rows and slow every country down
+  const eqs = [...new Set(eRows.map((b) => qid(b, "eq")).filter((x) => /^Q\d+$/.test(x)))];
+  for (let i = 0; i < eqs.length; i += 1500) {
+    try {
+      const yr = await sparql(`SELECT ?eq (MIN(?d) AS ?ff) WHERE { VALUES ?eq { ${V(eqs.slice(i, i + 1500))} } { ?eq wdt:P606 ?d } UNION { ?eq wdt:P571 ?d } } GROUP BY ?eq`);
+      eRows = eRows.concat(yr);
+    } catch (e) { log(cc, "first-flight years:", e.message); }
+  }
   const { equip, inst: viaOp } = equipFrom(eRows, clsName, opName);
   const sRows = await sparql(`SELECT ?s ?en ?mul ?cls ?coord ?sl WHERE {
   hint:Query hint:optimizer "None".
@@ -164,5 +173,5 @@ for (const cc of CCS) {
   if (W) log(cc, "units", W.units.length + "/" + W.raw.units, "equipment", W.equip.length + "/" + W.raw.equip, "installations", W.inst.length);
 }
 fs.writeFileSync(OUT + "/index.json", JSON.stringify(index) + "\n");
-log("countries written:", CCS.length, "Wikidata read:", read, "failed:", failed.join(" ") || "none");
+log("countries written:", CCS.length, "Wikidata read:", read, "failed:", failed.join(" ") || "none", "query retries:", retries, "minutes:", Math.round((Date.now() - NOW) / 60000));
 if (!read && !Object.keys(wb).length) { console.error("no source could be read"); process.exit(1); }
