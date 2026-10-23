@@ -64,6 +64,8 @@ jobs:
       - run: node tests/osirdraft.test.mjs
       # event-summary drafts give only figures their reports give (tools/evsum_lib.mjs)
       - run: node tests/evsum_lib.test.mjs
+      # AI gateway: a slow reply from the runner's model skips one request; two in a row drop it for the run (tools/ai_gateway.mjs)
+      - run: node tests/ai_gateway.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/social_view.test.mjs
       - run: node tests/jp_ccc.test.mjs

@@ -10,6 +10,9 @@
    - Arms transfers: the deals in the SIPRI Arms Transfers Database trade register with the country as recipient and as supplier,
      with deliveries or still open in the last ten years (data/live/milref/sipri/<cc>.json). © SIPRI, free for non-commercial use
      with attribution: marked non-commercial on the page and kept in their own files so they can be dropped.
+   - UN Register of Conventional Arms: what the government itself reported to the UN since 1992 (holdings by year, imports and
+     exports per partner with what the partner reported, national production), data/live/milref/unroca/<cc>.json. Official
+     claims, © United Nations under the UN terms of use: marked non-commercial and kept in their own files too.
    EVERY ITEM IS A SOURCE CLAIM, never a finding: it links to its source and carries the SHA-256 fingerprint the job gave it.
    Wikidata is edited by anyone, so coverage differs widely between countries, quantities are rare and retired types often
    carry no end date; the page says so above the lists. No people are named: no commanders, only forces, equipment and places.
@@ -85,7 +88,49 @@
       "<h4>Received by " + esc(name || S.name) + ' <span class="bm">(' + ((S.imp && S.imp.total) || 0) + ")</span></h4>" + dealsHtml(S.imp, "s", lim) +
       "<h4>Supplied by " + esc(name || S.name) + ' <span class="bm">(' + ((S.exp && S.exp.total) || 0) + ")</span></h4>" + dealsHtml(S.exp, "r", lim);
   }
-  var core = { esc: esc, wdUrl: wdUrl, fileOf: fileOf, sipriFile: sipriFile, sipriHtml: sipriHtml, fig: fig, tree: tree, size: size, groups: groups, CATS: CATS, KIND: KIND };
+
+  /* ---- UN Register of Conventional Arms: what the government itself reported to the UN (data/live/milref/unroca/<cc>.json) ---- */
+  function unrocaFile(cc) { var f = fileOf(cc); return f ? f.replace("/milref/", "/milref/unroca/") : ""; }
+  var UNCAT = { bt: "Battle tanks", acv: "Armoured combat vehicles", lcas: "Large-calibre artillery", ca_gen: "Combat aircraft and UCAV", ah_gen: "Attack helicopters", ws: "Warships", mml_gen: "Missiles and launchers" };
+  var UNORD = ["bt", "acv", "lcas", "ca_gen", "ah_gen", "ws", "mml_gen"];
+  /* a reported number; "+" when the report says part of it is classified, as the register itself shows it */
+  function unN(n, cl) { return (n == null ? "" : Number(n).toLocaleString("en-US")) + (cl ? '<span title="The report says some items are classified, so the real number is higher">+</span>' : (n == null ? "n/a" : "")); }
+  /* one partner's categories as "Battle tanks 125 · Warships 2" */
+  function unCats(v, cl) {
+    v = v || {}; cl = cl || [];
+    var ks = UNORD.filter(function (k) { return v[k] || cl.indexOf(k) >= 0; });
+    return ks.length ? ks.map(function (k) { var c = cl.indexOf(k) >= 0; return esc(UNCAT[k]) + " <b>" + (v[k] || !c ? unN(v[k] || 0, c) : '<span title="The report gives no number: the items are classified">classified</span>') + "</b>"; }).join(" · ") : '<span class="bm">nothing reported</span>';
+  }
+  function unFp(f) { return f ? ' <code class="mrfp" title="SHA-256 fingerprint of this record: ' + esc(f) + '">' + esc(String(f).slice(0, 8)) + "</code>" : ""; }
+  function unSide(L, own, other, lim) {
+    if (!L || !L.length) return '<p class="bm">Nothing reported either way.</p>';
+    return '<table class="btwo mrun"><tr><th style="width:20%">' + esc(other) + '</th><th style="width:40%">What ' + esc(own) + " reported</th><th>What the " + esc(other.toLowerCase()) + " reported</th></tr>" +
+      L.slice(0, lim).map(function (r) { return "<tr><td>" + esc(r.p) + unFp(r.fp) + "</td><td>" + unCats(r.o, r.oc) + "</td><td>" + unCats(r.t, r.tc) + "</td></tr>"; }).join("") + "</table>" +
+      (L.length > lim ? '<p class="bm">' + (L.length - lim) + " more partner countr" + (L.length - lim === 1 ? "y" : "ies") + ".</p>" : "");
+  }
+  function unrocaHtml(U, name, lim) {
+    lim = lim || 60; name = name || (U && U.name) || "";
+    if (!U) return '<p class="bm">This country is not in the UN Register of Conventional Arms, or no record is held yet (the weekly refresh writes it).</p>';
+    if (U.err) return '<p class="bm">The UN Register record could not be read just now. Close and reopen the brief to try again.</p>';
+    var rep = U.reports || [], base = String(U.url || "").replace(/\/?$/, "/");
+    var repLink = function (y) { return /^https:\/\/www\.unroca\.org\//.test(base) ? '<a href="' + esc(base + "report/" + y + "/") + '" target="_blank" rel="noopener noreferrer">' + esc(y) + "</a>" : esc(y); };
+    var h = '<p class="bwarn"><span class="mrtag" title="What the government itself reported to the UN: an official claim, not checked by OSAP">Official report (claim)</span> ' +
+      '<span class="mrtag mrnc" title="© United Nations; UN terms of use allow non-commercial use with attribution">Non-commercial source</span> ' +
+      "What " + esc(name) + "'s government and its trading partners told the UN Register since 1992, as the register publishes it. Each number is a state's own claim. " +
+      "Reporting is voluntary: many states report rarely or never, partners' figures often disagree, and a + marks a number with classified items left out." + (U.stale ? " The last weekly read failed; this is the record from the read before." : "") + "</p>";
+    h += "<p>" + (rep.length ? "<b>" + rep.length + "</b> report" + (rep.length === 1 ? "" : "s") + " filed, the latest for <b>" + esc(rep[0]) + "</b>: " + rep.slice(0, 24).map(repLink).join(" · ") + (rep.length > 24 ? " …" : "")
+      : "<b>No report filed.</b> Only what partner countries reported is shown.") + "</p>";
+    var H = U.hold || [];
+    if (H.length) h += "<h4>Military holdings, as reported</h4>" + '<table class="btwo mrun"><tr><th style="width:34%">Category</th><th style="width:22%">Latest reported</th><th>Earlier reports</th></tr>' +
+      H.map(function (x) { return "<tr><td>" + esc(UNCAT[x.k] || x.k) + unFp(x.fp) + "</td><td><b>" + unN(x.n, x.cl) + '</b><span class="bm"> · ' + esc(x.y) + '</span></td><td class="bm">' + (x.s || []).map(function (e) { return esc(e[0]) + ": " + unN(e[1]); }).join(" · ") + "</td></tr>"; }).join("") + "</table>";
+    else h += '<p class="bm">' + esc(name) + " has not reported its military holdings to the register.</p>";
+    var Dm = U.dom || [];
+    if (Dm.length) h += "<h4>Bought from national production and imported, all reports</h4>" + '<p class="bm">' + Dm.map(function (x) { return esc(UNCAT[x.k] || x.k) + ": <b>" + unN(x.dom, x.cd) + "</b> national, " + unN(x.imp, x.ci) + " imported" + unFp(x.fp); }).join(" · ") + "</p>";
+    h += "<h4>Imports by supplier, all reports " + '<span class="bm">(' + (U.imp || []).length + ")</span></h4>" + unSide(U.imp, name, "Supplier", lim);
+    h += "<h4>Exports by recipient, all reports " + '<span class="bm">(' + (U.exp || []).length + ")</span></h4>" + unSide(U.exp, name, "Recipient", lim);
+    return h;
+  }
+  var core = { esc: esc, unrocaFile: unrocaFile, unrocaHtml: unrocaHtml, wdUrl: wdUrl, fileOf: fileOf, sipriFile: sipriFile, sipriHtml: sipriHtml, fig: fig, tree: tree, size: size, groups: groups, CATS: CATS, KIND: KIND };
   if (!D) return { core: core };
 
   /* ================= browser ================= */
@@ -104,8 +149,8 @@
   }
   /* the SIPRI register: its own file, read when the brief opens; a failed read says so and can be retried by reopening */
   var scache = {};
-  function loadSipri(cc, cb) {
-    var f = sipriFile(cc); if (!f) return cb(null);
+  function loadSipri(cc, cb, fileFn) {
+    var f = (fileFn || sipriFile)(cc); if (!f) return cb(null);
     if (scache[f]) return scache[f].then(cb);
     scache[f] = fetch(f, { cache: "no-cache" }).then(function (r) { if (r.status === 404) return null; if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .catch(function () { delete scache[f]; return { err: true }; });
@@ -184,12 +229,14 @@
       '<p class="bwarn">' + CLAIM + " " + esc(NOTE) + "</p>";
     h += "<h3>Key figures</h3>" + figuresHtml(M.fig || {}, M.cc);
     h += '<h3>Arms transfers <span class="bm">SIPRI trade register</span></h3><div data-mrsipri><p class="bm">Loading the SIPRI register…</p></div>';
+    h += '<h3>UN Register of Conventional Arms <span class="bm">official government reports</span></h3><div data-mrun><p class="bm">Loading the UN Register record…</p></div>';
     h += "<h3>Forces and units (order of battle) " + '<span class="bm">' + (w.units ? w.units.length : 0) + (w.found && w.found.units > (w.units || []).length ? " of " + w.found.units + " on Wikidata" : "") + "</span></h3>" + unitsHtml(w.units, lim.units);
     h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out; }).length + " with no end of service recorded" + ((w.equip || []).length >= 1500 ? " (the 1,500 best-known kept; Wikidata lists more)" : "") + "</span></h3>" + equipHtml(w.equip, lim.equip);
     h += "<h3>Installations " + '<span class="bm">' + (w.inst || []).length + "</span></h3>" + instHtml(w.inst, lim.inst);
     h += '<footer>Sources: ' + link("https://www.wikidata.org/" + (w.q ? "wiki/" + esc(w.q) : ""), "Wikidata") + " (CC0 1.0), read " + esc(w.read ? T().asofT(w.read) : "never") + "; " +
       link("https://datacatalog.worldbank.org/search/dataset/0037712", "World Bank World Development Indicators") + " (CC BY 4.0), from the SIPRI Military Expenditure and Arms Transfers databases and IISS, The Military Balance; " +
-      link("https://www.sipri.org/databases/armstransfers", "SIPRI Arms Transfers Database") + " trade register (" + link("https://www.sipri.org/about/terms-and-conditions", "© SIPRI") + ", non-commercial use). " +
+      link("https://www.sipri.org/databases/armstransfers", "SIPRI Arms Transfers Database") + " trade register (" + link("https://www.sipri.org/about/terms-and-conditions", "© SIPRI") + ", non-commercial use); " +
+      link("https://www.unroca.org/", "UN Register of Conventional Arms") + " (" + link("https://www.un.org/en/about-us/terms-of-use", "© United Nations") + ", non-commercial use). " +
       "Read once a week. A fingerprint is the SHA-256 of the record as the job stored it (sorted keys), so a changed record can be spotted.</footer></article>";
     return h;
   }
@@ -204,11 +251,13 @@
       if (rep) rep.parentNode.insertBefore(art, rep.nextSibling); else el.appendChild(art);
       var box2 = art.querySelector && art.querySelector("[data-mrsipri]");
       if (box2) loadSipri(cc, function (S) { box2.innerHTML = sipriHtml(S, name); });
+      var box3 = art.querySelector && art.querySelector("[data-mrun]");
+      if (box3) loadSipri(cc, function (U) { box3.innerHTML = unrocaHtml(U, name); }, unrocaFile);
     });
   }
 
   var CSS = ".mrtag{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid currentColor;border-radius:9px;padding:0 6px;line-height:16px;color:#12324a}" +
-    ".mrnc{color:#8a4b00}.bmilref .mrsip td div.bm{margin-top:1px}.mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
+    ".mrnc{color:#8a4b00}.bmilref .mrun td{word-break:break-word}.bmilref .mrsip td div.bm{margin-top:1px}.mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
     ".bmilref h4{font-size:11px;margin:6px 0 2px;color:#12324a}.mrtree .mru{border-bottom:1px solid #eee;padding-top:1px;padding-bottom:1px;overflow-wrap:anywhere}" +
     ".bpage.bmilref td{white-space:normal;overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
     /* a phone: each table row becomes one wrapped line (the column headings drop), so nothing squeezes or scrolls sideways */

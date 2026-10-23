@@ -342,3 +342,58 @@ export function sipriIds(list, iso3, names) {
   for (const e of ok) { const cc = byName[sipriNorm(e.Name)]; if (cc && !out[cc]) out[cc] = { id: e.EntityId, name: e.Name }; }
   return out;
 }
+
+/* ---------- UN Register of Conventional Arms (UNROCA): what governments report to the UN ---------- */
+// Read from the public JSON the register's own site uses (www.unroca.org/api/<country slug>/), one answer per country with
+// every report since 1992: hw_imp / hw_exp (per partner country, summed over all years; <cat>_1 = what this country reported,
+// <cat>_2 = what the partner reported, <cat>_N_cc = the number includes items reported as classified), milhold (military
+// holdings by year, has_reported when the state filed them), hw_imp_vs_hw_dom (imports and national production, all years)
+// and available_reports (the years the state filed a report). Every number is the reporting government's own claim.
+export const UNROCA_CATS = [["bt", "Battle tanks"], ["acv", "Armoured combat vehicles"], ["lcas", "Large-calibre artillery"], ["ca_gen", "Combat aircraft and UCAV"],
+  ["ah_gen", "Attack helicopters"], ["ws", "Warships"], ["mml_gen", "Missiles and launchers"]];
+const UN_KEYS = UNROCA_CATS.map((c) => c[0]);
+const cnt = (v) => (typeof v === "number" && isFinite(v) && v >= 0 ? Math.round(v) : null);
+/* one partner row: o what this country reported, t what the partner reported, oc / tc the categories including classified items */
+function unPartner(r) {
+  const rec = { p: clean(r.country, 80), pcc: /^[A-Z]{2}$/.test(String(r.acro || "")) ? String(r.acro).toLowerCase() : "" };
+  for (const [side, n] of [["o", "1"], ["t", "2"]]) {
+    const v = {}, cl = [];
+    for (const k of UN_KEYS) { const x = cnt(r[k + "_" + n]); if (x) v[k] = x; if (r[k + "_" + n + "_cc"] === true) cl.push(k); }
+    if (Object.keys(v).length) rec[side] = v;
+    if (cl.length) rec[side + "c"] = cl;
+  }
+  if (!rec.pcc) delete rec.pcc;
+  return rec.o || rec.t || rec.oc || rec.tc ? withFp(rec) : null;
+}
+const unTotal = (r) => ["o", "t"].reduce((s, k) => s + Object.values(r[k] || {}).reduce((a, b) => a + b, 0), 0);
+export function unrocaFrom(d) {
+  if (!d || typeof d !== "object" || !Array.isArray(d.hw_imp) || !Array.isArray(d.milhold)) return null;
+  const side = (L) => (L || []).map(unPartner).filter(Boolean).sort((a, b) => unTotal(b) - unTotal(a) || a.p.localeCompare(b.p));
+  const reports = [...new Set((d.available_reports || []).map((r) => +r.year).filter((y) => y > 1990 && y < 2100))].sort((a, b) => b - a);
+  // holdings: the latest year the state filed them per category, with up to five earlier filed years
+  const hold = [];
+  for (const m of d.milhold) {
+    const k = String(m.tow_acronym || ""); if (!UN_KEYS.includes(k)) continue;
+    const filed = (m.values || []).filter((v) => v && v.has_reported === true && (cnt(v.amount) != null || v.contains_classified === true)).sort((a, b) => b.year - a.year);
+    if (!filed.length) continue;
+    const rec = { k, y: +filed[0].year, n: cnt(filed[0].amount) };
+    if (filed[0].contains_classified === true) rec.cl = true;
+    const s = filed.slice(1, 6).map((v) => [+v.year, cnt(v.amount)]); if (s.length) rec.s = s;
+    if (rec.n == null) delete rec.n;
+    hold.push(withFp(rec));
+  }
+  hold.sort((a, b) => UN_KEYS.indexOf(a.k) - UN_KEYS.indexOf(b.k));
+  const dom = (d.hw_imp_vs_hw_dom || []).filter((r) => UN_KEYS.includes(r.tow_acronym) && (cnt(r.amount_domproc) || r.domproc_contains_classified === true))
+    .map((r) => { const o = { k: r.tow_acronym, dom: cnt(r.amount_domproc) || 0, imp: cnt(r.amount_import) || 0 }; if (r.domproc_contains_classified === true) o.cd = true; if (r.import_contains_classified === true) o.ci = true; return withFp(o); })
+    .sort((a, b) => UN_KEYS.indexOf(a.k) - UN_KEYS.indexOf(b.k));
+  return { un: clean(d.country_name || (d.country && d.country.name_en), 80), slug: clean(d.country_slug, 80), reports, hold, dom, imp: side(d.hw_imp), exp: side(d.hw_exp) };
+}
+/* the register's country list (name_en, countryname_slug, iso_2_acronym) -> { cc: { slug, name } } for our two-letter codes */
+export function unrocaIds(list, ccs) {
+  const want = new Set(ccs || []), out = {};
+  for (const c of list || []) {
+    const cc = String((c && c.iso_2_acronym) || "").trim().toLowerCase(), slug = String((c && c.countryname_slug) || "").trim();
+    if (/^[a-z]{2}$/.test(cc) && /^[a-z0-9-]+$/.test(slug) && (!ccs || want.has(cc)) && !out[cc]) out[cc] = { slug, name: clean(c.name_en, 80) };
+  }
+  return out;
+}
