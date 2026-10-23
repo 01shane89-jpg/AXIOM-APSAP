@@ -1,1163 +1,455 @@
 {
-"note": "PROBE BRANCH ONLY: round 16 second pass for the 11 weakest countries with no new outlet",
+"note": "PROBE BRANCH ONLY: warning feed candidates (round W1) plus the CAP bucket list",
 "feeds": [
 {
-"cc": "kw",
-"outlet": "Arab Times",
-"url": "https://www.arabtimesonline.com/feed/",
+"cc": "ca",
+"outlet": "NAAD (Canada public alerts)",
+"url": "https://rss.naad-adna.pelmorex.com/",
 "lang": "en"
 },
 {
-"cc": "kw",
-"outlet": "Arab Times",
-"url": "https://arabtimesonline.com/feed/",
+"cc": "ca",
+"outlet": "NAAD (Canada public alerts)",
+"url": "https://rss1.naad-adna.pelmorex.com/",
 "lang": "en"
 },
 {
-"cc": "kw",
-"outlet": "Arab Times",
-"url": "https://www.arabtimesonline.com/rss.xml",
+"cc": "ca",
+"outlet": "Environment Canada warnings",
+"url": "https://weather.gc.ca/rss/battleboard/on1_e.xml",
 "lang": "en"
 },
 {
-"cc": "kw",
-"outlet": "Arab Times",
-"url": "https://www.arabtimesonline.com/news/feed/",
+"cc": "ca",
+"outlet": "Environment Canada warnings",
+"url": "https://weather.gc.ca/rss/warning/on-143_e.xml",
 "lang": "en"
 },
 {
-"cc": "kw",
-"outlet": "Kuwait Times",
-"url": "https://kuwaittimes.com/feed/",
+"cc": "ca",
+"outlet": "Environment Canada warnings",
+"url": "https://dd.weather.gc.ca/alerts/cap/",
 "lang": "en"
 },
 {
-"cc": "kw",
-"outlet": "Kuwait Times",
-"url": "https://www.kuwaittimes.com/feed/",
+"cc": "id",
+"outlet": "BMKG (CAP)",
+"url": "https://signature.bmkg.go.id/alert/public/en/rss.xml",
 "lang": "en"
 },
 {
-"cc": "kw",
-"outlet": "Kuwait Times",
-"url": "https://kuwaittimes.com/rss.xml",
+"cc": "id",
+"outlet": "BMKG (CAP)",
+"url": "https://signature.bmkg.go.id/alert/public/id/rss.xml",
 "lang": "en"
 },
 {
-"cc": "kw",
-"outlet": "Kuwait Times",
-"url": "https://kuwaittimes.com/category/kuwait/feed/",
-"lang": "en"
-},
-{
-"cc": "kw",
-"outlet": "Al Seyassah",
-"url": "https://alseyassah.com/feed/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Seyassah",
-"url": "https://www.alseyassah.com/feed/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Anba",
-"url": "https://www.alanba.com.kw/rss/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Anba",
-"url": "https://www.alanba.com.kw/rss.xml",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Rai",
-"url": "https://www.alraimedia.com/rss/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Rai",
-"url": "https://www.alraimedia.com/feed/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Rai",
-"url": "https://www.alraimedia.com/rss.xml",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Jarida",
-"url": "https://www.aljarida.com/rss.xml",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Jarida",
-"url": "https://www.aljarida.com/feed/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Qabas",
-"url": "https://www.alqabas.com/rss/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Qabas",
-"url": "https://www.alqabas.com/feed/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Qabas",
-"url": "https://alqabas.com/rss.xml",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Annahar Kuwait",
-"url": "https://www.annaharkw.com/rss",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Annahar Kuwait",
-"url": "https://www.annaharkw.com/feed/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "KUNA",
-"url": "https://www.kuna.net.kw/rss.aspx?Language=en",
-"lang": "en"
-},
-{
-"cc": "kw",
-"outlet": "KUNA",
-"url": "https://www.kuna.net.kw/RSS.aspx",
-"lang": "en"
-},
-{
-"cc": "kw",
-"outlet": "KUNA",
-"url": "https://www.kuna.net.kw/rss/RssFeed.aspx?language=en",
-"lang": "en"
-},
-{
-"cc": "kw",
-"outlet": "Al Watan Kuwait",
-"url": "https://alwatan.com.kw/feed/",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Al Watan Kuwait",
-"url": "https://www.alwatan.com.kw/rss",
-"lang": "ar"
-},
-{
-"cc": "kw",
-"outlet": "Kuwait Local",
-"url": "https://kuwaitlocal.com/feed/",
-"lang": "en"
-},
-{
-"cc": "kw",
-"outlet": "Kuwait Local",
-"url": "https://www.kuwaitlocal.com/news/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles News Agency",
-"url": "https://www.seychellesnewsagency.com/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles News Agency",
-"url": "https://www.seychellesnewsagency.com/rss/news",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles News Agency",
-"url": "https://seychellesnewsagency.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Nation",
-"url": "https://www.nation.sc/feed",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Nation",
-"url": "https://www.nation.sc/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Nation",
-"url": "https://nation.sc/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Nation",
-"url": "https://www.nation.sc/articles/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "SBC Seychelles",
-"url": "https://www.sbc.sc/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "SBC Seychelles",
-"url": "https://sbc.sc/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "SBC Seychelles",
-"url": "https://www.sbc.sc/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Today in Seychelles",
-"url": "https://www.todayinseychelles.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Today in Seychelles",
-"url": "https://todayinseychelles.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Weekly",
-"url": "https://www.seychellesweekly.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Weekly",
-"url": "https://seychellesweekly.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "The Seychelles Tribune",
-"url": "https://thetribune.sc/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "The Seychelles Tribune",
-"url": "https://www.thetribune.sc/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "State House Seychelles",
-"url": "https://www.statehouse.gov.sc/feed",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "State House Seychelles",
-"url": "https://www.statehouse.gov.sc/news/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Le Seychellois Hebdo",
-"url": "https://www.leseychelloishebdo.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "tt",
-"outlet": "TV6",
-"url": "https://www.tv6tnt.com/search/?f=rss&t=article&l=50",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TV6",
-"url": "https://www.tv6tnt.com/search/?f=rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TV6",
-"url": "https://www.tv6tnt.com/news/?f=rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Newsday",
-"url": "https://newsday.co.tt/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Newsday",
-"url": "https://www.newsday.co.tt/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Newsday",
-"url": "https://newsday.co.tt/category/news/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Trinidad Guardian",
-"url": "https://www.guardian.co.tt/rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Trinidad Guardian",
-"url": "https://www.guardian.co.tt/news/rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Trinidad Guardian",
-"url": "https://guardian.co.tt/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Loop TT",
-"url": "https://tt.loopnews.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Loop TT",
-"url": "https://tt.loopnews.com/rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Loop TT",
-"url": "https://www.looptt.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TTT News",
-"url": "https://www.ttt.live/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TTT News",
-"url": "https://ttt.live/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Wired868",
-"url": "https://wired868.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Wired868",
-"url": "https://www.wired868.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Government of T&T news",
-"url": "https://www.news.gov.tt/rss.xml",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Government of T&T news",
-"url": "https://www.news.gov.tt/feed",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Government of T&T news",
-"url": "https://www.ttparliament.org/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TT Newsflash",
-"url": "https://ttnewsflash.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Power 102 FM",
-"url": "https://power102fm.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Power 102 FM",
-"url": "https://www.power102fm.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "i95.5 FM",
-"url": "https://i955fm.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "i95.5 FM",
-"url": "https://www.i955fm.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Tobago News",
-"url": "https://www.thetobagonews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Tobago News",
-"url": "https://tobagonews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Saint Lucia News Online",
-"url": "https://www.stlucianewsonline.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Saint Lucia News Online",
-"url": "https://stlucianewsonline.com/category/news/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "St Lucia Star",
-"url": "https://stluciastar.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "St Lucia Star",
-"url": "https://www.stluciastar.com/category/news/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Govt of Saint Lucia",
-"url": "https://www.govt.lc/feed",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Govt of Saint Lucia",
-"url": "https://www.govt.lc/news/rss",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Govt of Saint Lucia",
-"url": "https://www.govt.lc/rss",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Radio Caribbean International",
-"url": "https://rcistlucia.com/feed/",
-"lang": "en"
+"cc": "id",
+"outlet": "BMKG earthquakes",
+"url": "https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.xml",
+"lang": "id"
 },
 {
-"cc": "lc",
-"outlet": "Radio Caribbean International",
-"url": "https://www.rci.fm/feed/",
+"cc": "au",
+"outlet": "NSW Rural Fire Service major incidents",
+"url": "https://www.rfs.nsw.gov.au/feeds/majorIncidents.xml",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "Radio Caribbean International",
-"url": "https://rci.fm/feed/",
+"cc": "au",
+"outlet": "Queensland Fire Department incidents",
+"url": "https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert.xml",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "Choice TV",
-"url": "https://choiceslu.com/feed/",
+"cc": "au",
+"outlet": "Emergency WA",
+"url": "https://www.emergency.wa.gov.au/data/message_DFESCap.xml",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "Choice TV",
-"url": "https://www.choiceslu.com/feed/",
+"cc": "au",
+"outlet": "Emergency WA",
+"url": "https://api.emergency.wa.gov.au/v1/cap",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "DBS Saint Lucia",
-"url": "https://www.dbsstlucia.com/feed/",
+"cc": "au",
+"outlet": "SA Country Fire Service",
+"url": "https://data.eso.sa.gov.au/prod/cfs/criimson/cfs_current_incidents.xml",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "St Lucia Wave",
-"url": "https://www.thewavestlucia.com/feed/",
+"cc": "au",
+"outlet": "Tasmania Fire Service",
+"url": "https://www.fire.tas.gov.au/Show?pageId=colBushfireSummariesRss",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "St Lucia Wave",
-"url": "https://www.wave.lc/feed/",
+"cc": "th",
+"outlet": "Thai Meteorological Department",
+"url": "https://www.tmd.go.th/en/rss/warning",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "HTS",
-"url": "https://htsstlucia.org/feed/",
+"cc": "th",
+"outlet": "Thai Meteorological Department",
+"url": "https://www.tmd.go.th/feeds/warning.xml",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "HTS",
-"url": "https://www.htsstlucia.org/feed/?post_type=post",
+"cc": "th",
+"outlet": "Thai Meteorological Department",
+"url": "https://tmd.go.th/api/xml/WeatherWarningNews",
 "lang": "en"
 },
 {
-"cc": "lc",
-"outlet": "NTN Saint Lucia",
-"url": "https://www.ntn.lc/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "St Lucia News 4 Now",
-"url": "https://stlucianews4now.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://www.samoaobserver.ws/feed",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://www.samoaobserver.ws/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://www.samoaobserver.ws/category/samoa/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://samoaobserver.ws/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Talamua",
-"url": "https://www.talamua.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Talamua",
-"url": "https://talamua.com/feed",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Talamua",
-"url": "https://www.talamua.com/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Savali News",
-"url": "https://www.savalinews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Savali News",
-"url": "https://savalinews.com/?feed=rss2",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Govt of Samoa",
-"url": "https://www.samoagovt.ws/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Govt of Samoa",
-"url": "https://samoagovt.ws/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Govt of Samoa",
-"url": "https://www.mpmc.gov.ws/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Radio Polynesia",
-"url": "https://www.radiopolynesia.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Radio Polynesia",
-"url": "https://radiopolynesia.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Planet",
-"url": "https://samoaplanet.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Planet",
-"url": "https://www.samoaplanet.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "TV3 Samoa",
-"url": "https://tv3samoa.ws/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "TV3 Samoa",
-"url": "https://www.tv3samoa.com/feed/",
-"lang": "en"
-},
-{
-"cc": "cg",
-"outlet": "Congo Liberty",
-"url": "https://www.congo-liberty.org/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Congo Liberty",
-"url": "https://congo-liberty.org/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "La Semaine Africaine",
-"url": "https://lasemaineafricaine.net/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "La Semaine Africaine",
-"url": "https://www.lasemaineafricaine.net/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "La Semaine Africaine",
-"url": "https://lasemaineafricaine.net/index.php?format=feed&type=rss",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Congopage",
-"url": "https://www.congopage.com/spip.php?page=backend",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Congopage",
-"url": "https://congopage.com/spip.php?page=backend",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Journal de Brazza",
-"url": "https://www.journaldebrazza.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Journal de Brazza",
-"url": "https://journaldebrazza.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Brazza News",
-"url": "https://www.brazzanews.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Brazza News",
-"url": "https://brazzanews.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Mwinda Press",
-"url": "https://www.mwinda.org/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Mwinda Press",
-"url": "https://mwinda.org/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Agence d'Information d'Afrique Centrale",
-"url": "https://www.adiac-congo.com/rss/actualites.xml",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Agence d'Information d'Afrique Centrale",
-"url": "https://www.adiac-congo.com/content/rss",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Télé Congo",
-"url": "https://telecongo.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Télé Congo",
-"url": "https://www.telecongo.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Radio Congo",
-"url": "https://radiocongo.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Radio Congo",
-"url": "https://www.radiocongo.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "ACI Congo",
-"url": "https://aci.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "ACI Congo",
-"url": "https://www.aci.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "ACI Congo",
-"url": "https://acicongo.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Info241 Congo",
-"url": "https://www.lepatriote.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Info241 Congo",
-"url": "https://zenga-mambu.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Gouvernement du Congo",
-"url": "https://www.gouvernement.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Gouvernement du Congo",
-"url": "https://gouvernement.cg/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Sacer Infos",
-"url": "https://sacer-infos.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Sacer Infos",
-"url": "https://www.sacer-infos.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Le Patriote Congo",
-"url": "https://www.lepatriote.cg/feed",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Le Patriote Congo",
-"url": "https://lepatriotecongo.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "mh",
-"outlet": "RMI Government",
-"url": "https://rmigovernment.org/feed/",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "RMI Government",
-"url": "https://www.rmigovernment.org/feed/",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "Marshall Islands Journal (news)",
-"url": "https://marshallislandsjournal.com/category/news/feed/",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "RMI Embassy US",
-"url": "https://www.rmiembassyus.org/feed/",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "RMI Embassy US",
-"url": "https://rmiembassyus.org/feed/",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "Kwajalein Hourglass",
-"url": "https://www.smdc.army.mil/RSS/",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "Kwajalein Hourglass",
-"url": "https://home.army.mil/kwajalein/index.php/rss",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Govt of Nauru",
-"url": "https://www.naurugov.nr/feed/",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Govt of Nauru",
-"url": "https://naurugov.nr/feed/",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Govt of Nauru",
-"url": "https://www.naurugov.nr/rss",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Govt of Nauru",
-"url": "https://www.nauru.gov.nr/feed/",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Nauru Bulletin",
-"url": "https://www.naurugov.nr/government-information-office/nauru-bulletin/rss",
-"lang": "en"
+"cc": "vn",
+"outlet": "NCHMF Vietnam",
+"url": "https://nchmf.gov.vn/Kttv/vi-VN/1/canh-bao-thoi-tiet-nguy-hiem-37.rss",
+"lang": "vi"
 },
 {
-"cc": "nr",
-"outlet": "Nauru Media",
-"url": "https://nauru-news.com/feed/",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Nauru Media",
-"url": "https://www.naurunews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Nauru Media",
-"url": "https://naurunews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Office of Te Beretitenti",
-"url": "https://www.president.gov.ki/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Office of Te Beretitenti",
-"url": "https://president.gov.ki/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Office of Te Beretitenti",
-"url": "https://www.president.gov.ki/rss",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Kiribati Independent",
-"url": "https://kiribatiindependent.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Kiribati Independent",
-"url": "https://www.kiribatiindependent.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Kiribati Updates",
-"url": "https://www.kiribatiupdates.com.ki/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Kiribati Updates",
-"url": "https://kiribatiupdates.com.ki/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Ministry of Information Kiribati",
-"url": "https://www.mict.gov.ki/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Ministry of Information Kiribati",
-"url": "https://mict.gov.ki/feed/",
-"lang": "en"
-},
-{
-"cc": "ki",
-"outlet": "Ministry of Information Kiribati",
-"url": "https://www.mfed.gov.ki/feed/",
-"lang": "en"
-},
-{
-"cc": "tv",
-"outlet": "Govt of Tuvalu",
-"url": "https://www.gov.tv/feed/",
-"lang": "en"
-},
-{
-"cc": "tv",
-"outlet": "Govt of Tuvalu",
-"url": "https://gov.tv/feed/",
-"lang": "en"
-},
-{
-"cc": "tv",
-"outlet": "Govt of Tuvalu",
-"url": "https://tuvalu.gov.tv/feed/",
-"lang": "en"
-},
-{
-"cc": "tv",
-"outlet": "Tuvalu Media",
-"url": "https://tuvalumedia.tv/feed/",
-"lang": "en"
-},
-{
-"cc": "tv",
-"outlet": "Tuvalu Media",
-"url": "https://www.tuvalumedia.tv/feed/",
-"lang": "en"
+"cc": "vn",
+"outlet": "NCHMF Vietnam",
+"url": "https://nchmf.gov.vn/kttv/vi-VN/1/rss.html",
+"lang": "vi"
 },
 {
-"cc": "tv",
-"outlet": "Tuvalu Coastal Adaptation",
-"url": "https://tcap.tv/feed/",
+"cc": "kr",
+"outlet": "Korea Meteorological Administration",
+"url": "https://www.weather.go.kr/w/rss/warning.do",
 "lang": "en"
 },
 {
-"cc": "tv",
-"outlet": "Tuvalu Coastal Adaptation",
-"url": "https://www.tcap.tv/feed/",
+"cc": "kr",
+"outlet": "Korea Meteorological Administration",
+"url": "https://www.kma.go.kr/XML/weather/sfc_web_map.xml",
 "lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Por un Sahara Libre",
-"url": "https://porunsaharalibre.org/feed/",
+"cc": "cl",
+"outlet": "SENAPRED (Chile civil protection)",
+"url": "https://senapred.cl/feed/",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "Por un Sahara Libre",
-"url": "https://porunsaharalibre.org/category/noticias/feed/",
+"cc": "cl",
+"outlet": "SENAPRED (Chile civil protection)",
+"url": "https://senapred.cl/alertas/feed/",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Press Service",
-"url": "https://www.spsrasd.info/news/es/rss",
+"cc": "cl",
+"outlet": "SHOA tsunami bulletins",
+"url": "https://www.shoa.cl/php/rss.php",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Press Service",
-"url": "https://www.spsrasd.info/news/en/rss",
+"cc": "mx",
+"outlet": "SMN Mexico (CAP)",
+"url": "https://smn.conagua.gob.mx/tools/PHP/feedsmn/cap.php",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Press Service",
-"url": "https://www.spsrasd.info/rss.xml",
+"cc": "mx",
+"outlet": "SMN Mexico (CAP)",
+"url": "https://smn.conagua.gob.mx/tools/RESOURCES/AvisoCiclones/rss.xml",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Press Service",
-"url": "https://spsrasd.info/news/feed",
+"cc": "mx",
+"outlet": "SASMEX seismic alerts",
+"url": "https://rss.sasmex.net/api/v1/alerts/latest/cap/",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "Saharawi Voice",
-"url": "https://saharawivoice.com/feed/",
+"cc": "mx",
+"outlet": "SASMEX seismic alerts",
+"url": "http://www.sasmex.net/alertas/rss.xml",
+"lang": "es"
+},
+{
+"cc": "ar",
+"outlet": "SMN Argentina alerts",
+"url": "https://ssl.smn.gob.ar/CAP/AR.php",
+"lang": "es"
+},
+{
+"cc": "ar",
+"outlet": "SMN Argentina alerts",
+"url": "https://ssl.smn.gob.ar/feeds/avisocorto_GeoRSS.xml",
+"lang": "es"
+},
+{
+"cc": "tr",
+"outlet": "AFAD (Türkiye disaster authority)",
+"url": "https://deprem.afad.gov.tr/rss",
+"lang": "tr"
+},
+{
+"cc": "tr",
+"outlet": "AFAD (Türkiye disaster authority)",
+"url": "https://www.afad.gov.tr/rss",
+"lang": "tr"
+},
+{
+"cc": "tr",
+"outlet": "MGM Meteouyarı",
+"url": "https://www.mgm.gov.tr/FTPDATA/analiz/sonSOA.xml",
+"lang": "tr"
+},
+{
+"cc": "tr",
+"outlet": "MGM Meteouyarı",
+"url": "https://meteoalarm.mgm.gov.tr/cap/rss.xml",
+"lang": "tr"
+},
+{
+"cc": "ru",
+"outlet": "EMERCOM (MChS) alerts",
+"url": "https://mchs.gov.ru/deyatelnost/press-centr/operativnaya-informaciya/rss",
+"lang": "ru"
+},
+{
+"cc": "ru",
+"outlet": "EMERCOM (MChS) alerts",
+"url": "https://mchs.gov.ru/rss",
+"lang": "ru"
+},
+{
+"cc": "ph",
+"outlet": "PHIVOLCS",
+"url": "https://www.phivolcs.dost.gov.ph/index.php/rss",
 "lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Saharawi Voice",
-"url": "https://www.saharawivoice.com/feed/",
+"cc": "za",
+"outlet": "SA Weather Service warnings",
+"url": "https://www.weathersa.co.za/home/warnings/rss",
 "lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Western Sahara Resource Watch",
-"url": "https://wsrw.org/en/rss",
+"cc": "za",
+"outlet": "SA Weather Service warnings",
+"url": "https://caps.weathersa.co.za/Home/RssFeed",
 "lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Western Sahara Resource Watch",
-"url": "https://wsrw.org/rss.xml",
+"cc": "ke",
+"outlet": "Kenya Meteorological Department",
+"url": "https://meteo.go.ke/feed/",
 "lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Info (MAP)",
-"url": "https://www.mapexpress.ma/feed/",
-"lang": "fr"
+"cc": "ke",
+"outlet": "Kenya Meteorological Department",
+"url": "https://meteo.go.ke/rss.xml",
+"lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Info (MAP)",
-"url": "https://www.mapexpress.ma/ar/feed/",
-"lang": "fr"
+"cc": "bd",
+"outlet": "Bangladesh Meteorological Department",
+"url": "https://live6.bmd.gov.bd/cap/rss.xml",
+"lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Contramutis",
-"url": "https://contramutis.wordpress.com/feed/",
+"cc": "bd",
+"outlet": "Bangladesh Meteorological Department",
+"url": "https://bmd.gov.bd/rss",
+"lang": "en"
+},
+{
+"cc": "lk",
+"outlet": "Disaster Management Centre Sri Lanka",
+"url": "https://www.dmc.gov.lk/index.php?option=com_dmcreports&view=reports&Itemid=273&report_type_id=1&lang=en&format=feed&type=rss",
+"lang": "en"
+},
+{
+"cc": "lk",
+"outlet": "Disaster Management Centre Sri Lanka",
+"url": "https://www.dmc.gov.lk/index.php?format=feed&type=rss",
+"lang": "en"
+},
+{
+"cc": "np",
+"outlet": "Nepal DHM flood alerts",
+"url": "https://www.dhm.gov.np/rss",
+"lang": "en"
+},
+{
+"cc": "np",
+"outlet": "Nepal DHM flood alerts",
+"url": "http://hydrology.gov.np/rss",
+"lang": "en"
+},
+{
+"cc": "sg",
+"outlet": "Singapore NEA",
+"url": "https://www.nea.gov.sg/rss/weather-warnings",
+"lang": "en"
+},
+{
+"cc": "sg",
+"outlet": "Singapore NEA",
+"url": "https://api-open.data.gov.sg/v2/real-time/api/weather?api=twenty-four-hr-forecast",
+"lang": "en"
+},
+{
+"cc": "jm",
+"outlet": "Jamaica Met Service",
+"url": "https://metservice.gov.jm/feed/",
+"lang": "en"
+},
+{
+"cc": "jm",
+"outlet": "Jamaica Met Service",
+"url": "https://www.metservice.gov.jm/rss",
+"lang": "en"
+},
+{
+"cc": "bb",
+"outlet": "Barbados Met Services",
+"url": "https://www.barbadosweather.org/rss/warnings.xml",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "TT Met Service",
+"url": "https://www.metoffice.gov.tt/rss/warnings",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "TT Met Service",
+"url": "https://metoffice.gov.tt/feed/",
+"lang": "en"
+},
+{
+"cc": "cu",
+"outlet": "INSMET Cuba",
+"url": "https://www.insmet.cu/asp/genesis.asp?TB0=RSSFEED",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "No te olvides del Sahara",
-"url": "https://www.noteolvidesdelsahara.org/feed/",
+"cc": "co",
+"outlet": "UNGRD Colombia",
+"url": "https://portal.gestiondelriesgo.gov.co/_layouts/15/listfeed.aspx",
 "lang": "es"
 },
 {
-"cc": "eh",
-"outlet": "Lamalif Sahara",
-"url": "https://le360.ma/rss/sahara",
+"cc": "co",
+"outlet": "UNGRD Colombia",
+"url": "https://www.ideam.gov.co/rss",
+"lang": "es"
+},
+{
+"cc": "pe",
+"outlet": "INDECI Peru",
+"url": "https://www.gob.pe/institucion/indeci/noticias.rss",
+"lang": "es"
+},
+{
+"cc": "pe",
+"outlet": "INDECI Peru",
+"url": "https://www.gob.pe/institucion/senamhi/noticias.rss",
+"lang": "es"
+},
+{
+"cc": "ec",
+"outlet": "IGEPN Ecuador volcano and quake",
+"url": "https://www.igepn.edu.ec/rss",
+"lang": "es"
+},
+{
+"cc": "gr",
+"outlet": "Greek civil protection 112",
+"url": "https://civilprotection.gov.gr/rss.xml",
+"lang": "el"
+},
+{
+"cc": "af",
+"outlet": "Afghanistan ANDMA",
+"url": "https://andma.gov.af/en/rss.xml",
+"lang": "en"
+},
+{
+"cc": "ht",
+"outlet": "Haiti DGPC",
+"url": "https://www.protectioncivile.gouv.ht/feed/",
 "lang": "fr"
 },
 {
-"cc": "eh",
-"outlet": "Lamalif Sahara",
-"url": "https://www.lemag.ma/xml/syndication.rss",
-"lang": "fr"
+"cc": "fj",
+"outlet": "Fiji Met Service",
+"url": "https://www.met.gov.fj/rss.xml",
+"lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Medias (Laayoune)",
-"url": "https://www.sahara24.net/feed/",
-"lang": "ar"
+"cc": "fj",
+"outlet": "Fiji Met Service",
+"url": "https://www.met.gov.fj/index.php?format=feed&type=rss",
+"lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Medias (Laayoune)",
-"url": "https://www.saharanow.ma/feed/",
-"lang": "ar"
+"cc": "to",
+"outlet": "Tonga Met Service",
+"url": "https://met.gov.to/index_files/rss.xml",
+"lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Medias (Laayoune)",
-"url": "https://www.laayoune24.com/feed/",
-"lang": "ar"
+"cc": "to",
+"outlet": "Tonga Met Service",
+"url": "https://met.gov.to/feed/",
+"lang": "en"
 },
 {
-"cc": "eh",
-"outlet": "Sahara Medias (Laayoune)",
-"url": "https://www.dakhlanews.com/feed/",
-"lang": "ar"
+"cc": "ws",
+"outlet": "Samoa Met Service",
+"url": "https://www.samet.gov.ws/feed/",
+"lang": "en"
+},
+{
+"cc": "ws",
+"outlet": "Samoa Met Service",
+"url": "https://samet.gov.ws/feed/",
+"lang": "en"
+},
+{
+"cc": "pw",
+"outlet": "Palau NEMO",
+"url": "https://www.palaugov.pw/feed/",
+"lang": "en"
+},
+{
+"cc": "tl",
+"outlet": "Timor-Leste DNMG",
+"url": "https://www.meteo.tl/feed/",
+"lang": "en"
+},
+{
+"cc": "kh",
+"outlet": "Cambodia NCDM",
+"url": "https://ncdm.gov.kh/feed/",
+"lang": "en"
+},
+{
+"cc": "mm",
+"outlet": "Myanmar DMH",
+"url": "https://www.moezala.gov.mm/rss.xml",
+"lang": "en"
+},
+{
+"cc": "la",
+"outlet": "Laos DMH",
+"url": "https://dmh.gov.la/feed/",
+"lang": "en"
+},
+{
+"cc": "bn",
+"outlet": "Brunei Met Department",
+"url": "https://www.met.gov.bn/rss",
+"lang": "en"
 }
 ]
 }
