@@ -102,7 +102,7 @@ jobs:
           for i in $(seq 1 90); do curl -sf http://127.0.0.1:8080/v1/models >/dev/null && { echo "server up after ${i}x2 s"; exit 0; }; sleep 2; done
           tail -30 llm.log; exit 1
       - name: Redraft the daily summaries' top lines
-        if: ${{ (github.event_name == 'schedule' && github.event.schedule == '23 1 * * *') || (github.event_name != 'schedule' && inputs.task != 'evsum') }}
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule == '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'daily' || inputs.task == 'both' || inputs.task == '')) }}
         timeout-minutes: 90
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -138,6 +138,7 @@ jobs:
           OSAP_LOCAL_LLM: http://127.0.0.1:8080
           OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
           OSIRDRAFT_AI_BUDGET_MIN: "30"
+          OSIRDRAFT_MAX_RECS: "20"
           # the shared cap guards GitHub Models' free daily limit; the runner's own model has none
           OSIRDRAFT_SHARED_CAP: "100000"
           OSIRDRAFT_CC: ${{ inputs.only }}

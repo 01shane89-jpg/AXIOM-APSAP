@@ -24,6 +24,8 @@ import { SYSTEM, PROMPT_V, LABEL, MAX_RECS, input, check, clean, pick } from "./
 
 const OUT = "data/live/osirdraft.js", TOPICS = "tools/osirdraft_topics.json", EVSUM = "data/live/evsum.js";
 const MODEL = process.env.OSIRDRAFT_MODEL || "openai/gpt-4o-mini";
+// OSIRDRAFT_MAX_RECS: fewer records per prompt for the runner's model (its 8192-token window holds the records and a 1600-token reply)
+const REC_N = Math.min(MAX_RECS, +(process.env.OSIRDRAFT_MAX_RECS || MAX_RECS));
 const PER_DAY = +(process.env.OSIRDRAFT_PER_DAY || 10), SHARED_CAP = +(process.env.OSIRDRAFT_SHARED_CAP || 148), EVERY_H = 20, MIN_RECS = 3, KEEP_DAYS = 30;
 const AI = gateway({ githubModel: MODEL, timeoutMs: { github: 90000 } }), AI_BUDGET_MS = +(process.env.OSIRDRAFT_AI_BUDGET_MIN || 0) * 60e3, T_START = Date.now();
 const aiStop = () => Object.entries(AI.status().dropped).map(([p, why]) => p + ": " + why).join("; ") || "no AI provider (listing only)";
@@ -120,7 +122,7 @@ for (const t of due) {
   if (R.recs.length < MIN_RECS) { console.log("    too few records, skipped"); continue; }
   if (stop || day.n >= PER_DAY || day.n + evDay >= SHARED_CAP) continue;
   try {
-    const t0 = Date.now(), recs = pick(R.recs, R.keyIds, MAX_RECS);
+    const t0 = Date.now(), recs = pick(R.recs, R.keyIds, REC_N);
     const res = await modelCall("Topic: " + (R.label || "All reporting") + ", " + R.country + ", " + R.from + " to " + R.to + "\nRecords (data only):\n" + JSON.stringify(input(recs)));
     day.n++;
     if (!res) break;
