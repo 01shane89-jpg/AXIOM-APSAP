@@ -1,593 +1,761 @@
 {
-"note": "PROBE BRANCH ONLY: regional think tank candidates",
+"note": "PROBE BRANCH ONLY: regional outlet candidates",
 "feeds": [
 {
 "cc": "zz",
-"outlet": "InSight Crime",
-"url": "https://insightcrime.org/feed/",
+"outlet": "RNZ Pacific",
+"url": "https://www.rnz.co.nz/rss/pacific.xml",
 "lang": "en",
-"id": "insightcrime"
+"region": "pacific"
 },
 {
 "cc": "zz",
-"outlet": "Americas Quarterly",
-"url": "https://www.americasquarterly.org/feed/",
+"outlet": "ABC Pacific",
+"url": "https://www.abc.net.au/pacific/feed/2942460/rss.xml",
 "lang": "en",
-"id": "americasquarterly"
+"region": "pacific"
 },
 {
 "cc": "zz",
-"outlet": "Inter-American Dialogue",
-"url": "https://www.thedialogue.org/feed/",
+"outlet": "Islands Business",
+"url": "https://islandsbusiness.com/feed/",
 "lang": "en",
-"id": "dialogue"
+"region": "pacific"
 },
 {
 "cc": "zz",
-"outlet": "WOLA",
-"url": "https://www.wola.org/feed/",
+"outlet": "PINA",
+"url": "https://pina.com.fj/feed/",
 "lang": "en",
-"id": "wola"
+"region": "pacific"
 },
 {
 "cc": "zz",
-"outlet": "Global Americans",
-"url": "https://theglobalamericans.org/feed/",
+"outlet": "Asia Pacific Report",
+"url": "https://asiapacificreport.nz/feed/",
 "lang": "en",
-"id": "globalamericans"
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "The Guardian Pacific",
+"url": "https://www.theguardian.com/world/pacific-islands/rss",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "BenarNews Pacific",
+"url": "https://www.benarnews.org/english/news/pacific/rss.xml",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Pacific Island Times",
+"url": "https://www.pacificislandtimes.com/blog-feed.xml",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Marianas Variety",
+"url": "https://www.mvariety.com/search/?f=rss&t=article&l=50",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Pacnews",
+"url": "https://pacnews.org/feed/",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Pacific Media Network",
+"url": "https://pmn.co.nz/feed/",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Loop Pacific",
+"url": "https://www.looppacific.com/rss.xml",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Kaniva Pacific",
+"url": "https://kanivatonga.co.nz/feed/",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Pacific Islands Report",
+"url": "https://www.pireport.org/rss.xml",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Islands Business news",
+"url": "https://islandsbusiness.com/news-break/feed/",
+"lang": "en",
+"region": "pacific"
+},
+{
+"cc": "zz",
+"outlet": "Caribbean National Weekly",
+"url": "https://www.caribbeannationalweekly.com/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Caribbean News Global",
+"url": "https://caribbeannewsglobal.com/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Caribbean Life",
+"url": "https://www.caribbeanlife.com/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "News Americas Now",
+"url": "https://www.newsamericasnow.com/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Caribbean Journal",
+"url": "https://www.caribjournal.com/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "WIC News",
+"url": "https://wicnews.com/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "CARICOM Today",
+"url": "https://today.caricom.org/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Loop Caribbean",
+"url": "https://caribbean.loopnews.com/rss.xml",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Caribbean Media Corporation",
+"url": "https://www.cmccaribbean.com/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Caribbean Times",
+"url": "https://caribbeantimes.ag/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "St Kitts Nevis Observer regional",
+"url": "https://www.thestkittsnevisobserver.com/category/regional/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Dominica News Online regional",
+"url": "https://dominicanewsonline.com/news/homepage/news/regional/feed/",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "OECS",
+"url": "https://pressroom.oecs.int/rss.xml",
+"lang": "en",
+"region": "caribbean"
+},
+{
+"cc": "zz",
+"outlet": "Africanews",
+"url": "https://www.africanews.com/feed/rss",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "The Africa Report",
+"url": "https://www.theafricareport.com/feed/",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "RFI Afrique",
+"url": "https://www.rfi.fr/fr/afrique/rss",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "France 24 Afrique",
+"url": "https://www.france24.com/fr/afrique/rss",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Jeune Afrique",
+"url": "https://www.jeuneafrique.com/feed/",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Le Monde Afrique",
+"url": "https://www.lemonde.fr/afrique/rss_full.xml",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "APA News",
+"url": "https://apanews.net/feed/",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Sahel Intelligence",
+"url": "https://sahel-intelligence.com/feed",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "CGTN Africa",
+"url": "https://africa.cgtn.com/feed/",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Agence Ecofin",
+"url": "https://www.agenceecofin.com/rss",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "The East African",
+"url": "https://www.theeastafrican.co.ke/rss.xml",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "RFI English Africa",
+"url": "https://www.rfi.fr/en/africa/rss",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "DW Africa",
+"url": "https://rss.dw.com/rdf/rss-en-africa",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Al Jazeera Africa",
+"url": "https://www.aljazeera.com/xml/rss/all.xml",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Africa Confidential",
+"url": "https://www.africa-confidential.com/rss",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "TV5Monde Afrique",
+"url": "https://information.tv5monde.com/afrique/rss.xml",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Le Point Afrique",
+"url": "https://www.lepoint.fr/afrique/rss.xml",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Mondafrique",
+"url": "https://mondafrique.com/feed/",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Africa Intelligence",
+"url": "https://www.africaintelligence.com/rss",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Semafor Africa",
+"url": "https://www.semafor.com/vertical/africa/rss.xml",
+"lang": "en",
+"region": "africa"
+},
+{
+"cc": "zz",
+"outlet": "Al-Monitor",
+"url": "https://www.al-monitor.com/rss",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Middle East Eye",
+"url": "https://www.middleeasteye.net/rss",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "The New Arab",
+"url": "https://www.newarab.com/rss",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Asharq Al-Awsat",
+"url": "https://english.aawsat.com/feed",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Middle East Monitor",
+"url": "https://www.middleeastmonitor.com/feed/",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "The National",
+"url": "https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Gulf Business",
+"url": "https://gulfbusiness.com/feed/",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Arabian Business",
+"url": "https://www.arabianbusiness.com/feed",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Amwaj",
+"url": "https://amwaj.media/rss",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "The Cradle",
+"url": "https://thecradle.co/feed",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Arab Weekly",
+"url": "https://thearabweekly.com/feeds",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Al Arabiya English",
+"url": "https://english.alarabiya.net/feed/rss2/en.xml",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Zawya",
+"url": "https://www.zawya.com/sitemaps/en/rss",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "France 24 Middle East",
+"url": "https://www.france24.com/en/middle-east/rss",
+"lang": "en",
+"region": "mena"
+},
+{
+"cc": "zz",
+"outlet": "Euronews",
+"url": "https://www.euronews.com/rss",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Politico Europe",
+"url": "https://www.politico.eu/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Euractiv",
+"url": "https://www.euractiv.com/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Balkan Insight",
+"url": "https://balkaninsight.com/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "bne IntelliNews",
+"url": "https://www.intellinews.com/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "OC Media",
+"url": "https://oc-media.org/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Eurasianet",
+"url": "https://eurasianet.org/feed",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "RFE/RL",
+"url": "https://www.rferl.org/api/zrqiteuuir",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Times of Central Asia",
+"url": "https://timesca.com/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Emerging Europe",
+"url": "https://emerging-europe.com/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Notes from Poland",
+"url": "https://notesfrompoland.com/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Kafkadesk",
+"url": "https://kafkadesk.org/feed/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "LRT English",
+"url": "https://www.lrt.lt/en/news-in-english?rss",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "The Baltic Times",
+"url": "https://www.baltictimes.com/rss/",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "Brussels Times",
+"url": "https://www.brusselstimes.com/feed",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "SwissInfo",
+"url": "https://www.swissinfo.ch/eng/rss",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "The Local Europe",
+"url": "https://feeds.thelocal.com/rss/es",
+"lang": "en",
+"region": "europe"
+},
+{
+"cc": "zz",
+"outlet": "The Diplomat",
+"url": "https://thediplomat.com/feed/",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "BenarNews",
+"url": "https://www.benarnews.org/english/rss",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "RFA English",
+"url": "https://www.rfa.org/english/rss2.xml",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "Nikkei Asia",
+"url": "https://asia.nikkei.com/rss/feed/nar",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "Asia Times",
+"url": "https://asiatimes.com/feed/",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "SCMP Asia",
+"url": "https://www.scmp.com/rss/3/feed",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "CNA Asia",
+"url": "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6511",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "Eurasia Review",
+"url": "https://www.eurasiareview.com/feed/",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "The Irrawaddy",
+"url": "https://www.irrawaddy.com/feed",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "South Asia Monitor",
+"url": "https://www.southasiamonitor.org/rss.xml",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "Himal Southasian",
+"url": "https://www.himalmag.com/feed/",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "Asia News Network",
+"url": "https://asianews.network/feed/",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "Kyodo Asia",
+"url": "https://english.kyodonews.net/rss/news.xml",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "ThePrint South Asia",
+"url": "https://theprint.in/category/world/feed/",
+"lang": "en",
+"region": "asia"
+},
+{
+"cc": "zz",
+"outlet": "MercoPress",
+"url": "https://en.mercopress.com/rss/",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "Infobae América",
+"url": "https://www.infobae.com/arc/outboundfeeds/rss/?outputType=xml",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "El País América",
+"url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/america/portada",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "DW Español América Latina",
+"url": "https://rss.dw.com/xml/rss-sp-al",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "CNN en Español",
+"url": "https://cnnespanol.cnn.com/feed/",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "Rio Times",
+"url": "https://www.riotimesonline.com/feed/",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "Prensa Latina English",
+"url": "https://www.plenglish.com/feed/",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "teleSUR English",
+"url": "https://www.telesurenglish.net/rss",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "France 24 Español América Latina",
+"url": "https://www.france24.com/es/am%C3%A9rica-latina/rss",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "Latin America Reports",
+"url": "https://latinamericareports.com/feed/",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "BBC Mundo",
+"url": "https://feeds.bbci.co.uk/mundo/rss.xml",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "EFE América",
+"url": "https://efe.com/america/feed/",
+"lang": "en",
+"region": "latam"
+},
+{
+"cc": "zz",
+"outlet": "Diálogo Américas",
+"url": "https://dialogo-americas.com/feed/",
+"lang": "en",
+"region": "latam"
 },
 {
 "cc": "zz",
 "outlet": "NACLA",
 "url": "https://nacla.org/rss.xml",
 "lang": "en",
-"id": "nacla"
+"region": "latam"
 },
 {
 "cc": "zz",
-"outlet": "NACLA",
-"url": "https://nacla.org/feed",
+"outlet": "Latinoamérica21",
+"url": "https://latinoamerica21.com/feed/",
 "lang": "en",
-"id": "nacla"
-},
-{
-"cc": "zz",
-"outlet": "CAPRI (Caribbean Policy Research Institute)",
-"url": "https://www.capricaribbean.org/feed",
-"lang": "en",
-"id": "capri"
-},
-{
-"cc": "zz",
-"outlet": "CAPRI (Caribbean Policy Research Institute)",
-"url": "https://capricaribbean.org/rss.xml",
-"lang": "en",
-"id": "capri"
-},
-{
-"cc": "zz",
-"outlet": "SAIIA",
-"url": "https://saiia.org.za/feed/",
-"lang": "en",
-"id": "saiia"
-},
-{
-"cc": "zz",
-"outlet": "Africa Portal",
-"url": "https://africaportal.org/feed/",
-"lang": "en",
-"id": "africaportal"
-},
-{
-"cc": "zz",
-"outlet": "Good Governance Africa",
-"url": "https://gga.org/feed/",
-"lang": "en",
-"id": "gga"
-},
-{
-"cc": "zz",
-"outlet": "CDD West Africa",
-"url": "https://www.cddwestafrica.org/feed/",
-"lang": "en",
-"id": "cddwa"
-},
-{
-"cc": "zz",
-"outlet": "CDD West Africa",
-"url": "https://cddwestafrica.org/feed/",
-"lang": "en",
-"id": "cddwa"
-},
-{
-"cc": "zz",
-"outlet": "Timbuktu Institute",
-"url": "https://timbuktu-institute.org/index.php?format=feed&type=rss",
-"lang": "en",
-"id": "timbuktu"
-},
-{
-"cc": "zz",
-"outlet": "Timbuktu Institute",
-"url": "https://timbuktu-institute.org/feed/",
-"lang": "en",
-"id": "timbuktu"
-},
-{
-"cc": "zz",
-"outlet": "Policy Center for the New South",
-"url": "https://www.policycenter.ma/rss.xml",
-"lang": "en",
-"id": "pcns"
-},
-{
-"cc": "zz",
-"outlet": "Policy Center for the New South",
-"url": "https://www.policycenter.ma/feed",
-"lang": "en",
-"id": "pcns"
-},
-{
-"cc": "zz",
-"outlet": "ECDPM",
-"url": "https://ecdpm.org/feed",
-"lang": "en",
-"id": "ecdpm"
-},
-{
-"cc": "zz",
-"outlet": "ECDPM",
-"url": "https://ecdpm.org/rss.xml",
-"lang": "en",
-"id": "ecdpm"
-},
-{
-"cc": "zz",
-"outlet": "African Arguments",
-"url": "https://africanarguments.org/feed/",
-"lang": "en",
-"id": "africanarguments"
-},
-{
-"cc": "zz",
-"outlet": "Devpolicy Blog (ANU)",
-"url": "https://devpolicy.org/feed/",
-"lang": "en",
-"id": "devpolicy"
-},
-{
-"cc": "zz",
-"outlet": "Pacific Security College",
-"url": "https://pacificsecurity.net/feed/",
-"lang": "en",
-"id": "pacificsecurity"
-},
-{
-"cc": "zz",
-"outlet": "CACI Analyst",
-"url": "https://www.cacianalyst.org/publications/analytical-articles.html?format=feed&type=rss",
-"lang": "en",
-"id": "caci"
-},
-{
-"cc": "zz",
-"outlet": "CACI Analyst",
-"url": "https://www.cacianalyst.org/rss.xml",
-"lang": "en",
-"id": "caci"
-},
-{
-"cc": "zz",
-"outlet": "Caspian Policy Center",
-"url": "https://www.caspianpolicy.org/feed",
-"lang": "en",
-"id": "caspian"
-},
-{
-"cc": "zz",
-"outlet": "Caspian Policy Center",
-"url": "https://www.caspianpolicy.org/rss.xml",
-"lang": "en",
-"id": "caspian"
-},
-{
-"cc": "zz",
-"outlet": "CABAR.asia",
-"url": "https://cabar.asia/en/feed",
-"lang": "en",
-"id": "cabar"
-},
-{
-"cc": "zz",
-"outlet": "CABAR.asia",
-"url": "https://cabar.asia/en/rss",
-"lang": "en",
-"id": "cabar"
-},
-{
-"cc": "zz",
-"outlet": "European Western Balkans",
-"url": "https://europeanwesternbalkans.com/feed/",
-"lang": "en",
-"id": "ewb"
-},
-{
-"cc": "zz",
-"outlet": "BiEPAG",
-"url": "https://biepag.eu/feed/",
-"lang": "en",
-"id": "biepag"
-},
-{
-"cc": "zz",
-"outlet": "CEPA",
-"url": "https://cepa.org/feed/",
-"lang": "en",
-"id": "cepa"
-},
-{
-"cc": "zz",
-"outlet": "ICDS Estonia",
-"url": "https://icds.ee/en/feed/",
-"lang": "en",
-"id": "icds"
-},
-{
-"cc": "zz",
-"outlet": "ICDS Estonia",
-"url": "https://icds.ee/feed/",
-"lang": "en",
-"id": "icds"
-},
-{
-"cc": "zz",
-"outlet": "PISM",
-"url": "https://pism.pl/rss/publications",
-"lang": "en",
-"id": "pism"
-},
-{
-"cc": "zz",
-"outlet": "PISM",
-"url": "https://www.pism.pl/rss",
-"lang": "en",
-"id": "pism"
-},
-{
-"cc": "zz",
-"outlet": "Bruegel",
-"url": "https://www.bruegel.org/rss.xml",
-"lang": "en",
-"id": "bruegel"
-},
-{
-"cc": "zz",
-"outlet": "Bruegel",
-"url": "https://www.bruegel.org/feed",
-"lang": "en",
-"id": "bruegel"
-},
-{
-"cc": "zz",
-"outlet": "Arab Center Washington DC",
-"url": "https://arabcenterdc.org/feed/",
-"lang": "en",
-"id": "arabcenter"
-},
-{
-"cc": "zz",
-"outlet": "Arab Gulf States Institute in Washington",
-"url": "https://agsiw.org/feed/",
-"lang": "en",
-"id": "agsiw"
-},
-{
-"cc": "zz",
-"outlet": "Arab Reform Initiative",
-"url": "https://www.arab-reform.net/feed/",
-"lang": "en",
-"id": "arabreform"
-},
-{
-"cc": "zz",
-"outlet": "Sana'a Center",
-"url": "https://sanaacenter.org/feed",
-"lang": "en",
-"id": "sanaa"
-},
-{
-"cc": "zz",
-"outlet": "Sana'a Center",
-"url": "https://sanaacenter.org/rss.xml",
-"lang": "en",
-"id": "sanaa"
-},
-{
-"cc": "zz",
-"outlet": "TIMEP",
-"url": "https://timep.org/feed/",
-"lang": "en",
-"id": "timep"
-},
-{
-"cc": "zz",
-"outlet": "Gulf International Forum",
-"url": "https://gulfif.org/feed/",
-"lang": "en",
-"id": "gulfif"
-},
-{
-"cc": "zz",
-"outlet": "Al Jazeera Centre for Studies",
-"url": "https://studies.aljazeera.net/en/rss.xml",
-"lang": "en",
-"id": "ajstudies"
-},
-{
-"cc": "zz",
-"outlet": "South Asian Voices (Stimson)",
-"url": "https://southasianvoices.org/feed/",
-"lang": "en",
-"id": "sav"
-},
-{
-"cc": "zz",
-"outlet": "FDD's Long War Journal",
-"url": "https://www.longwarjournal.org/feed",
-"lang": "en",
-"id": "lwj"
-},
-{
-"cc": "zz",
-"outlet": "Small Arms Survey",
-"url": "https://www.smallarmssurvey.org/rss.xml",
-"lang": "en",
-"id": "smallarms"
-},
-{
-"cc": "zz",
-"outlet": "Geopolitical Monitor",
-"url": "https://www.geopoliticalmonitor.com/feed/",
-"lang": "en",
-"id": "geopoliticalmonitor"
-},
-{
-"cc": "zz",
-"outlet": "ISPI",
-"url": "https://www.ispionline.it/en/feed/",
-"lang": "en",
-"id": "ispi"
-},
-{
-"cc": "zz",
-"outlet": "ISPI",
-"url": "https://www.ispionline.it/en/rss",
-"lang": "en",
-"id": "ispi"
-},
-{
-"cc": "zz",
-"outlet": "CIDOB",
-"url": "https://www.cidob.org/en/rss.xml",
-"lang": "en",
-"id": "cidob"
-},
-{
-"cc": "zz",
-"outlet": "CIDOB",
-"url": "https://www.cidob.org/rss",
-"lang": "en",
-"id": "cidob"
-},
-{
-"cc": "zz",
-"outlet": "Real Instituto Elcano",
-"url": "https://www.realinstitutoelcano.org/en/feed/",
-"lang": "en",
-"id": "elcano"
-},
-{
-"cc": "zz",
-"outlet": "Egmont Institute",
-"url": "https://www.egmontinstitute.be/feed/",
-"lang": "en",
-"id": "egmont"
-},
-{
-"cc": "zz",
-"outlet": "FIIA (Finland)",
-"url": "https://www.fiia.fi/en/feed",
-"lang": "en",
-"id": "fiia"
-},
-{
-"cc": "zz",
-"outlet": "FIIA (Finland)",
-"url": "https://www.fiia.fi/en/rss",
-"lang": "en",
-"id": "fiia"
-},
-{
-"cc": "zz",
-"outlet": "NUPI",
-"url": "https://www.nupi.no/en/rss",
-"lang": "en",
-"id": "nupi"
-},
-{
-"cc": "zz",
-"outlet": "NUPI",
-"url": "https://www.nupi.no/en/feed",
-"lang": "en",
-"id": "nupi"
-},
-{
-"cc": "zz",
-"outlet": "DIIS",
-"url": "https://www.diis.dk/en/rss.xml",
-"lang": "en",
-"id": "diis"
-},
-{
-"cc": "zz",
-"outlet": "IAI Italy",
-"url": "https://www.iai.it/en/rss.xml",
-"lang": "en",
-"id": "iai"
-},
-{
-"cc": "zz",
-"outlet": "FRS",
-"url": "https://www.frstrategie.org/en/rss.xml",
-"lang": "en",
-"id": "frstrategie"
-},
-{
-"cc": "zz",
-"outlet": "Asia Society Policy Institute",
-"url": "https://asiasociety.org/policy-institute/rss.xml",
-"lang": "en",
-"id": "asiasociety"
-},
-{
-"cc": "zz",
-"outlet": "Lowy Pacific",
-"url": "https://www.lowyinstitute.org/the-interpreter/rss.xml?region=pacific",
-"lang": "en",
-"id": "lowyinterp"
-},
-{
-"cc": "zz",
-"outlet": "Caribbean Investigative Journalism Network",
-"url": "https://www.cijn.org/feed/",
-"lang": "en",
-"id": "caribbeaninvestigative"
-},
-{
-"cc": "zz",
-"outlet": "Global Organized Crime Index",
-"url": "https://ocindex.net/feed",
-"lang": "en",
-"id": "ocindex"
-},
-{
-"cc": "zz",
-"outlet": "Institute for Security Studies (Africa) ISS Today",
-"url": "https://issafrica.org/iss-today/rss",
-"lang": "en",
-"id": "issas"
-},
-{
-"cc": "zz",
-"outlet": "ACCORD",
-"url": "https://www.accord.org.za/feed/",
-"lang": "en",
-"id": "acss"
-},
-{
-"cc": "zz",
-"outlet": "RSIS Singapore",
-"url": "https://www.rsis.edu.sg/feed/",
-"lang": "en",
-"id": "rsis"
-},
-{
-"cc": "zz",
-"outlet": "ISEAS Perspective",
-"url": "https://www.iseas.edu.sg/feed/",
-"lang": "en",
-"id": "iseas"
-},
-{
-"cc": "zz",
-"outlet": "CSIS Indonesia",
-"url": "https://www.csis.or.id/feed/",
-"lang": "en",
-"id": "csisid"
-},
-{
-"cc": "zz",
-"outlet": "ISIS Malaysia",
-"url": "https://www.isis.org.my/feed/",
-"lang": "en",
-"id": "isis"
-},
-{
-"cc": "zz",
-"outlet": "Stratbase ADRi",
-"url": "https://stratbase.ph/feed/",
-"lang": "en",
-"id": "stratbase"
-},
-{
-"cc": "zz",
-"outlet": "Centre for Policy Research India",
-"url": "https://cprindia.org/feed/",
-"lang": "en",
-"id": "cpri"
-},
-{
-"cc": "zz",
-"outlet": "Pakistan Institute for Peace Studies",
-"url": "https://www.pakpips.com/feed",
-"lang": "en",
-"id": "iiss_sa"
-},
-{
-"cc": "zz",
-"outlet": "ISSI Pakistan",
-"url": "https://issi.org.pk/feed/",
-"lang": "en",
-"id": "issi"
-},
-{
-"cc": "zz",
-"outlet": "Centre for Policy Alternatives Sri Lanka",
-"url": "https://www.cpalanka.org/feed/",
-"lang": "en",
-"id": "cpa"
-},
-{
-"cc": "zz",
-"outlet": "Crisis24 news",
-"url": "https://crisis24.garda.com/feed",
-"lang": "en",
-"id": "mcgill"
-},
-{
-"cc": "zz",
-"outlet": "Global Observatory (IPI)",
-"url": "https://theglobalobservatory.org/feed/",
-"lang": "en",
-"id": "theglobalobs"
-},
-{
-"cc": "zz",
-"outlet": "International Peace Institute",
-"url": "https://www.ipinst.org/feed",
-"lang": "en",
-"id": "ipi"
-},
-{
-"cc": "zz",
-"outlet": "ODI",
-"url": "https://odi.org/en/rss/",
-"lang": "en",
-"id": "odi"
-},
-{
-"cc": "zz",
-"outlet": "GPPi",
-"url": "https://gppi.net/feed",
-"lang": "en",
-"id": "gppi"
-},
-{
-"cc": "zz",
-"outlet": "Wilson Kennan",
-"url": "https://www.wilsoncenter.org/program/kennan-institute/rss.xml",
-"lang": "en",
-"id": "rferlanalysis"
+"region": "latam"
 }
 ]
 }
