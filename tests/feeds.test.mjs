@@ -118,6 +118,8 @@ for (const [cc, v] of Object.entries(reg.focus || {})) assert.ok(v.per_run > 0 &
   assert.deepEqual(ccsInText("Brasil y República Dominicana firman", true).sort(), ["br", "do"]);
   assert.deepEqual(ccsInText("Le Tchad et la RDC signent un accord"), []);   // English readers unchanged
   assert.deepEqual(ccsInText("Maurice Kamto speaks", true), []);              // a person's name is not Mauritius
+  assert.deepEqual(ccsInText("US pushes American Samoa deep sea mining plans", true), []);   // a US territory is not Samoa
+  assert.deepEqual(ccsInText("Samoa and American Samoa sign a fisheries deal", true), ["ws"]);
 }
 console.log("feeds tests passed");
 

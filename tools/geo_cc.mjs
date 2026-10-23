@@ -94,6 +94,8 @@ const OTHER_LANG = { dz: ["Algérie"], cm: ["Cameroun"], td: ["Tchad"], gn: ["Gu
   tt: ["Trinidad y Tobago"], eh: ["Sahara occidental", "Sáhara Occidental"], us: ["Estados Unidos", "États-Unis"], cn: ["Chine"], fr: ["Francia"], es: ["Espagne", "España"] };
 const OTHER_IDS = { ...NAME_IDS };
 for (const [id, names] of Object.entries(OTHER_LANG)) for (const n of names) OTHER_IDS[norm(n)] = id;
+// places whose names contain a country's name but are not that country: matched first (longer) and counted as none
+for (const n of ["American Samoa", "New Mexico", "Nuevo México", "Nouveau-Mexique", "Georgia, USA"]) OTHER_IDS[norm(n)] = OTHER_IDS[norm(n)] || "";
 
 // Country ids named in free text (whole names only; longest names first so "South Sudan" wins over "Sudan").
 // otherLangs: also read the French and Spanish names above.
@@ -103,7 +105,7 @@ export function ccsInText(text, otherLangs = false) {
   const [list, ids] = otherLangs ? [OTHER_LIST, OTHER_IDS] : [NAME_LIST, NAME_IDS];
   let t = " " + norm(text) + " ";
   const out = [];
-  for (const n of list) if (t.includes(" " + n + " ")) { const id = ids[n]; if (!out.includes(id)) out.push(id); t = t.split(" " + n + " ").join("  "); }
+  for (const n of list) if (t.includes(" " + n + " ")) { const id = ids[n]; if (id && !out.includes(id)) out.push(id); t = t.split(" " + n + " ").join("  "); }
   return out;
 }
 
