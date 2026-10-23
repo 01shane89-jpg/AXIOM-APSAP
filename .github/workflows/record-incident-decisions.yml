@@ -1,0 +1,67 @@
+name: Record incident decisions
+
+# The repository owner's confirm or reject decisions on conflict-tab incidents (tools/cf_decision_lib.mjs). The app's review queue
+# opens a prefilled issue titled "OSAP incident decision: ..."; this records it as soon as it is opened, rebuilds
+# data/live/conflicts/verified.js, then answers and closes the issue. Anyone else's issues are ignored (not answered, not closed).
+# The schedule catches any issue a missed run left open. The issue text is never pasted into a shell: tools/cf_decisions.mjs reads
+# it from the API and checks it field by field.
+on:
+  issues:
+    types: [opened]
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: record-incident-decisions
+  cancel-in-progress: false
+
+jobs:
+  record:
+    # an opened issue starts this job only when it is the owner's and carries the decision title
+    if: ${{ github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'OSAP incident decision:')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: main
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      # The job's own token reads the owner's decision issues; it is never logged.
+      - name: Record decisions and rebuild the projection
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node tools/cf_decisions.mjs
+        timeout-minutes: 3
+      - name: Commit the decisions
+        id: commit
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/decisions/conflicts data/live/conflicts/verified.js 2>/dev/null || true
+          if git diff --quiet -- data/decisions/conflicts data/live/conflicts/verified.js; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/decisions/conflicts data/live/conflicts/verified.js
+          git commit -m "Record incident decisions $(date -u +'%Y-%m-%d %H:%MZ')"
+          # the refresh jobs commit to main all the time: rebase onto it and retry. Only this job writes these paths.
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && git push && exit 0
+            git rebase --abort 2>/dev/null || true; sleep $((i * 4))
+          done
+          exit 1
+      # Recorded decisions are answered and closed only once the commit is pushed; refused ones (with the reason) either way.
+      - name: Answer and close the decision issues
+        if: ${{ always() }}
+        timeout-minutes: 3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COMMITTED: ${{ steps.commit.outcome }}
+          REPLIES: osap-cf-decision-replies.json
+        run: node tools/decisions_close.mjs
+        continue-on-error: true

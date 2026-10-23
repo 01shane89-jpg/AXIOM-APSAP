@@ -22,6 +22,6 @@
 ["w207713025",30.14575,9.69039,"ly",{"aeroway":"helipad","surface":"concrete"}],
 ["w207714380",30.14748,9.70232,"ly",{"name":"مطار غدامس المدني","name:en":"Ghadames Civil Airport","operator":"القوات الجوية الليبية","aeroway":"aerodrome","icao":"HLTD","iata":"LTD","wikidata":"Q25741"}],
 ["w317315343",30.23825,9.54713,"dz",{"aeroway":"aerodrome"}],
-["w835131295",31.58003,9.12278,"dz",{"name":"Aérodrome d'El Borma مطار البرمة","name:en":"El Borma Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","aeroway":"aerodrome"}],
+["w835131295",31.58003,9.12278,"dz",{"name":"Aérodrome d'El Borma مطار البرمة","name:en":"El Borma Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","aeroway":"aerodrome","wikidata":"Q11824196"}],
 ["w836204432",31.686,9.20959,"tn",{"aeroway":"helipad"}],
 ["w97252436",31.70391,9.25566,"tn",{"name":"مطار البرمة","name:en":"El Borma Airport","aeroway":"aerodrome","icao":"DTTR","iata":"EBM","wikidata":"Q11824196"}]]

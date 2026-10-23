@@ -84,7 +84,7 @@
 ["n8890725240",-25.53578,-54.55433,"br",{"name":"Premier Home Care","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"paediatrics;gynaecology;consultório;psicologia;nutrição;home_care;internação_domiciliar","emergency":"yes","operator":"Premier Home Care","operator:type":"private","addr:housenumber":"3830","addr:street":"Avenida República Argentina","addr:city":"Foz do Iguaçu","addr:postcode":"85856578"}],
 ["n9456596915",-24.98518,-55.15942,"py",{"name":"Centro Médico Itakyry","amenity":"hospital","healthcare":"hospital","operator":"Municipalidad"}],
 ["r11076255",-25.45561,-54.84272,"py",{"name":"Aeropuerto Internacional Guaraní","name:en":"Guaraní International Airport","aeroway":"aerodrome","icao":"SGES","iata":"AGT","aerodrome:type":"public","wikidata":"Q2673205"}],
-["r6545804",-25.73699,-54.47354,"ar",{"name":"Aeropuerto Internacional Cataratas del Iguazú","official_name":"Aeropuerto de Iguazú \"Mayor D. Carlos Krause\"","operator":"Aeropuertos Argentina 2000","phone":"+54 3757 42 1996","aeroway":"aerodrome","icao":"SARI","iata":"IGR","surface":"asphalt","aerodrome:type":"public"}],
+["r6545804",-25.73699,-54.47354,"ar",{"name":"Aeropuerto Internacional Cataratas del Iguazú","official_name":"Aeropuerto de Iguazú \"Mayor D. Carlos Krause\"","operator":"Aeropuertos Argentina 2000","phone":"+54 3757 42 1996","aeroway":"aerodrome","icao":"SARI","iata":"IGR","surface":"asphalt","aerodrome:type":"public","wikidata":"Q1962002"}],
 ["w1013169351",-25.39132,-54.40966,"br",{"aeroway":"aerodrome","icao":"SNUA"}],
 ["w1025663469",-24.98528,-55.15917,"py",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1025663470",-24.98534,-55.15932,"py",{"amenity":"clinic","healthcare":"clinic"}],

@@ -194,6 +194,22 @@
     scaleEl.innerHTML = h ? '<div class="o3s-w">' + h + "</div>" : "";
   }
   map.on("zoomend moveend resize", drawScale); drawScale();
+  /* the scale bar (bottom right) rises above the Legend (bottom left) when the open Legend is wide enough to reach under it */
+  function clearLegend() {
+    var lg = mapEl.querySelector(".lgctl");
+    scaleEl.style.marginBottom = "";
+    if (!lg || !scaleEl.offsetParent || !lg.offsetParent) return;
+    var s = scaleEl.getBoundingClientRect(), g = lg.getBoundingClientRect();
+    if (s.left < g.right + 6 && s.right > g.left && s.bottom > g.top - 6 && s.top < g.bottom)
+      scaleEl.style.marginBottom = Math.ceil(parseFloat(getComputedStyle(scaleEl).marginBottom) + s.bottom - g.top + 6) + "px";
+  }
+  if (W.ResizeObserver) {
+    var lgRo = new ResizeObserver(clearLegend), lgSeen = null;
+    lgRo.observe(mapEl);
+    var watchLg = function () { var lg = mapEl.querySelector(".lgctl"); if (lg && lg !== lgSeen) { lgSeen = lg; lgRo.observe(lg); } clearLegend(); };
+    watchLg(); map.on("resize", watchLg); setTimeout(watchLg, 1500);
+    mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lgctl")) setTimeout(watchLg, 0); });
+  }
 
   /* ---------- the 3D button ---------- */
   var ICON = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19l6.5-10 4 6 3-4.5L22 19z"/><path d="M8.5 9l1.8 2.7M15.5 10.5l1.4 2.1" opacity=".6"/></svg>';

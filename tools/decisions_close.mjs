@@ -3,11 +3,12 @@
 // failed push leaves the issue open and the next run records it again; a refused issue is answered with the reason and closed either
 // way. The replies file sits outside the repo (RUNNER_TEMP) and holds only issue numbers and the fixed reply text.
 // Usage (in the refresh job): GITHUB_TOKEN=... GITHUB_REPOSITORY=owner/repo COMMITTED=success node tools/decisions_close.mjs
+// REPLIES=<file name> picks another replies file in the same folder (the conflict tabs' incident decisions, tools/cf_decisions.mjs).
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 
-const file = path.join(process.env.RUNNER_TEMP || os.tmpdir(), "osap-decision-replies.json");
+const file = path.join(process.env.RUNNER_TEMP || os.tmpdir(), /^[a-z0-9-]+\.json$/.test(process.env.REPLIES || "") ? process.env.REPLIES : "osap-decision-replies.json");
 const token = process.env.GITHUB_TOKEN, repo = process.env.GITHUB_REPOSITORY, committed = process.env.COMMITTED === "success";
 if (!fs.existsSync(file)) { console.log("no analyst-decision issues read this run"); process.exit(0); }
 if (!token || !repo) { console.log("no token or repository; issues left open"); process.exit(0); }
