@@ -194,21 +194,28 @@
     scaleEl.innerHTML = h ? '<div class="o3s-w">' + h + "</div>" : "";
   }
   map.on("zoomend moveend resize", drawScale); drawScale();
-  /* the scale bar (bottom right) rises above the Legend (bottom left) when the open Legend is wide enough to reach under it */
+  /* the scale bar (bottom right) sits level with the Legend button (bottom left, Shane 2026-10-23), clear of the map credits,
+     and rises above the open Legend when that is wide enough to reach under it */
   function clearLegend() {
-    var lg = mapEl.querySelector(".lgctl");
+    var lg = mapEl.querySelector(".lgctl"), cr = mapEl.querySelector(".leaflet-control-attribution");
     scaleEl.style.marginBottom = "";
     if (!lg || !scaleEl.offsetParent || !lg.offsetParent) return;
-    var s = scaleEl.getBoundingClientRect(), g = lg.getBoundingClientRect();
-    if (s.left < g.right + 6 && s.right > g.left && s.bottom > g.top - 6 && s.top < g.bottom)
-      scaleEl.style.marginBottom = Math.ceil(parseFloat(getComputedStyle(scaleEl).marginBottom) + s.bottom - g.top + 6) + "px";
+    var s = scaleEl.getBoundingClientRect(), g = lg.getBoundingClientRect(), base = parseFloat(getComputedStyle(scaleEl).marginBottom) || 0;
+    var across = function (r) { return s.left < r.right + 6 && s.right > r.left - 6; };
+    var bottom = !lg.classList.contains("shut") && across(g) ? g.top - 6 : g.bottom;
+    if (cr && cr.offsetParent) { var c = cr.getBoundingClientRect(); if (across(c) && bottom > c.top - 4) bottom = Math.min(bottom, c.top - 4); }
+    var mb = Math.round(base + s.bottom - bottom);
+    if (mb !== Math.round(base)) scaleEl.style.marginBottom = mb + "px";
   }
   if (W.ResizeObserver) {
-    var lgRo = new ResizeObserver(clearLegend), lgSeen = null;
+    var lgRo = new ResizeObserver(clearLegend), lgSeen = [];
     lgRo.observe(mapEl);
-    var watchLg = function () { var lg = mapEl.querySelector(".lgctl"); if (lg && lg !== lgSeen) { lgSeen = lg; lgRo.observe(lg); } clearLegend(); };
+    var watchLg = function () {
+      [".lgctl", ".leaflet-control-attribution"].forEach(function (q) { var e = mapEl.querySelector(q); if (e && lgSeen.indexOf(e) < 0) { lgSeen.push(e); lgRo.observe(e); } });
+      clearLegend();
+    };
     watchLg(); map.on("resize", watchLg); setTimeout(watchLg, 1500);
-    mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lgctl")) setTimeout(watchLg, 0); });
+    mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lgctl,.leaflet-control-attribution")) setTimeout(watchLg, 0); });
   }
 
   /* ---------- the 3D button ---------- */
