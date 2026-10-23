@@ -143,6 +143,7 @@
     ".tlr table.tlrkt col.ckn{width:34px}.tlr table.tlrkt col.ckd{width:104px}.tlr table.tlrkt td.kn{padding-left:0}.tlr table.tlrkt td.kd{white-space:normal!important;color:#3d4b57;font-variant-numeric:tabular-nums}.tlr table.tlrkt th:first-child{padding-left:0}" +
     ".tlr table.tlrkt .kt{font-weight:700;color:#1b232b}.tlr table.tlrkt .kt a{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}" +
     ".tlr table.tlrkt .km{color:#55616b;margin-top:1px}.tlr table.tlrkt .ks{margin-top:3px;color:#26323c}.tlr table.tlrkt .kw{margin-top:2px;color:#55616b;font-size:.9em}" +
+    ".tlr table.tlrkt .kp{margin:3px 0 0;padding-left:1.2em;color:#26323c}.tlr table.tlrkt .kp li{margin:1px 0}.tlr table.tlrkt .kc{color:#55616b;font-size:.88em}" +
     ".tlr .kb{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#12324a;color:#fff;font-size:10.5px;font-weight:700;box-sizing:border-box;font-family:system-ui,sans-serif}" +
     ".tlr .kb.ap{box-shadow:0 0 0 1.5px #fff,0 0 0 2.6px #12324a}.tlr .kb.no{background:#fff;color:#12324a;border:1.6px dashed #12324a}" +
     ".tlr .st{display:inline-block;white-space:nowrap;font-size:.82em;font-weight:600;border:1px solid #b9c3cb;border-radius:3px;padding:0 5px;color:#3d4b57;background:#f4f6f8;vertical-align:1px;line-height:1.5}" +
@@ -516,20 +517,30 @@
       .sort(function (a, b) { return a.from - b.from; });
   }
   var sumState = 0, sumWait = [];
+  /* the hourly summaries (evsum.js) and the drafts of the model on the Actions runner (evsum_ai.js), joined by assets/osap-evsum.js */
   function loadSummaries(cb) {
-    if (window.OSAP_EVSUM || sumState === 2) return cb();
+    if ((window.OSAP_EVSUM && window.OSAP_EVSUM_AI) || sumState === 2) { if (window.OSAP_EVSUM_MERGE) window.OSAP_EVSUM_MERGE(); return cb(); }
     sumWait.push(cb); if (sumState === 1) return;
     sumState = 1;
-    var s = document.createElement("script");
-    s.src = "data/live/evsum.js?t=" + Math.floor(Date.now() / 6e5);
-    s.onload = s.onerror = function () { sumState = 2; var w = sumWait; sumWait = []; w.forEach(function (f) { f(); }); };
-    document.body.appendChild(s);
+    var left = 2;
+    ["data/live/evsum.js", "data/live/evsum_ai.js"].forEach(function (f) {
+      var s = document.createElement("script");
+      s.src = f + "?t=" + Math.floor(Date.now() / 6e5);
+      s.onload = s.onerror = function () {
+        if (--left) return;
+        if (window.OSAP_EVSUM_MERGE) window.OSAP_EVSUM_MERGE();
+        sumState = 2; var w = sumWait; sumWait = []; w.forEach(function (f) { f(); });
+      };
+      document.body.appendChild(s);
+    });
   }
   /* one summary per incident: each drafted summary goes to the key event sharing the most reports with it (at least two),
      and each key event shows the summary sharing the most with it, so no summary is shown on two rows (two rows of one split
      incident used to show the same "12 reports from 12 sources" summary) */
   function assignSummaries(keyEv) {
     var d = window.OSAP_EVSUM, items = (d && d.items) || {}, best = {}, mine = [];
+    /* an AI draft (from the model on the Actions runner) before a plain extract, then the most reports shared */
+    var w = function (x) { return x.n + (items[x.id].method !== "extract" ? 1000 : 0); };
     keyEv.forEach(function (e, i) {
       e.sum = null; if (!e.g) return;
       var ks = {}; e.g.reports.forEach(function (p) { ks[p.key] = 1; });
@@ -541,7 +552,7 @@
       });
     });
     mine.filter(function (x) { return best[x.id].i === x.i; })
-      .sort(function (a, b) { return b.n - a.n || String(items[b.id].made).localeCompare(String(items[a.id].made)); })
+      .sort(function (a, b) { return w(b) - w(a) || String(items[b.id].made).localeCompare(String(items[a.id].made)); })
       .forEach(function (x) { if (!keyEv[x.i].sum) keyEv[x.i].sum = items[x.id]; });
   }
   /* the incidents behind the records: the page's groups with two or more reports in them count once each, every other record
@@ -559,9 +570,27 @@
     return "Counting each incident once, these records come to " + inc.n + " separate incidents or items: " + inc.groups + " incident" + (inc.groups === 1 ? "" : "s") +
       " reported " + inc.grouped + " times between them (grouped automatically by time, place and wording) and " + inc.single + " single record" + (inc.single === 1 ? "" : "s") + ".";
   }
+  /* an AI draft in full on a key-event row: the summary, key points, where sources differ and what is not established, each
+     statement followed by the sources it cites (by name, so the printed report keeps them) */
+  function aiSumHtml(s) {
+    var refs = s.refs || [];
+    function cited(t) {
+      var names = [];
+      var txt = String(t || "").replace(/(\s*\[(\d+)\])+/g, function (m) {
+        var ns = (m.match(/\d+/g) || []).map(function (n) { return refs[+n - 1] && refs[+n - 1].source; }).filter(Boolean)
+          .filter(function (x, i, a) { return a.indexOf(x) === i; });
+        return ns.length ? " \u0001" + ns.join("; ") + "\u0002" : "";
+      });
+      return esc(txt).replace(/\u0001([^\u0002]*)\u0002/g, '<span class="kc">($1)</span>');
+    }
+    return '<div class="ks">' + cited(s.summary) + aiTag(s) + "</div>" +
+      (s.points && s.points.length ? '<ul class="kp">' + s.points.map(function (p) { return "<li>" + cited(p.text + " " + (p.refs || []).map(function (n) { return "[" + n + "]"; }).join("")) + "</li>"; }).join("") + "</ul>" : "") +
+      (s.differ && s.differ.length ? '<div class="kw"><b>Where reports differ:</b> ' + s.differ.map(function (p) { return cited(p.text + " " + (p.refs || []).map(function (n) { return "[" + n + "]"; }).join("")); }).join(" ") + "</div>" : "") +
+      (s.unclear ? '<div class="kw"><b>Not established:</b> ' + esc(s.unclear) + "</div>" : "");
+  }
   function aiTag(s) {
     var ai = s.method !== "extract";
-    return ' <span class="aitag" tabindex="0" title="' + (ai ? "Draft, AI-generated from the reports' headlines and summaries, not analyst-approved. Statements are what the sources said, not confirmed facts." :
+    return ' <span class="aitag" tabindex="0" title="' + (ai ? esc("Draft, AI-generated from the reports' headlines and summaries" + (s.model ? " by " + s.model : "") + (s.made ? " at " + s.made : "") + ", not analyst-approved. Statements are what the sources said, not confirmed facts.") :
       "Automatic extract by fixed rules (no AI), not analyst-approved.") + '">' + (ai ? "AI generated" : "Automatic") + "</span>";
   }
   /* ---------- the report ---------- */
@@ -650,7 +679,8 @@
       if (!u && e.g.reports[0]) u = safeUrl(e.g.reports[0].url);
       meta = e.g.reports.length + " reports from " + srcs.length + " source" + (srcs.length === 1 ? "" : "s") + ": " + srcs.slice(0, 4).join(", ") + (srcs.length > 4 ? " and " + (srcs.length - 4) + " more" : "") + (e.g.crossBorder ? "; also reported across the border" : "");
       var s = e.sum;
-      if (s) extra = '<div class="ks">' + esc(String(s.summary || "").replace(/\s*\[\d+\]/g, "")) + aiTag(s) + "</div>" +
+      if (s && s.method !== "extract") extra = aiSumHtml(s);
+      else if (s) extra = '<div class="ks">' + esc(String(s.summary || "").replace(/\s*\[\d+\]/g, "")) + aiTag(s) + "</div>" +
         (s.differ && s.differ.length ? '<div class="kw"><b>Where reports differ:</b> ' + s.differ.map(function (p) { return esc(String(p.text || "").replace(/\s*\[\d+\]/g, "")); }).join(" ") + "</div>" : "");
       why = "reported by " + srcs.length + " sources";
     } else {

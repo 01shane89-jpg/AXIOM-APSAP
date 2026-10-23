@@ -13,26 +13,39 @@
    gives why, what to watch for, and the numbered reports (R) and curated flashpoints (F) it rests on. */
 (function () {
   "use strict";
-  var FILE = "data/live/evsum.js", state = 0, byKey = null, cbs = [];
+  var FILE = "data/live/evsum.js", FILE_AI = "data/live/evsum_ai.js", state = 0, byKey = null, cbs = [];
 
+  /* the runner model's drafts join OSAP_EVSUM.items (ids "ai:…"), once per load of either file */
+  window.OSAP_EVSUM_MERGE = function () {
+    var a = window.OSAP_EVSUM_AI; if (!a || !a.items || a.__merged) return;
+    var d = window.OSAP_EVSUM || (window.OSAP_EVSUM = { items: {} }); d.items = d.items || {};
+    Object.keys(a.items).forEach(function (id) { var x = a.items[id]; if (!x.model) x.model = a.model; d.items["ai:" + id] = x; });
+    a.__merged = true;
+  };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function T() { return window.OSAP_TIME || { asofT: function (s) { return String(s || ""); } }; }
 
-  /* load once; a refresh of the file is picked up on the next page load (the name carries a 10-minute stamp) */
+  /* load once; a refresh of the file is picked up on the next page load (the name carries a 10-minute stamp). The drafts the
+     open-weight model on the Actions runner writes (data/live/evsum_ai.js, tools/refresh_evsum.mjs EVSUM_AI_ONLY) come in a
+     second file and join the same list (window.OSAP_EVSUM_MERGE). */
   function load(cb) {
     if (state === 2) return cb();
     cbs.push(cb); if (state === 1) return;
     state = 1;
-    var s = document.createElement("script");
-    s.src = FILE + "?t=" + Math.floor(Date.now() / 6e5);
-    s.onload = s.onerror = function () {
+    var left = 2;
+    [FILE, FILE_AI].forEach(function (f) {
+      var s = document.createElement("script");
+      s.src = f + "?t=" + Math.floor(Date.now() / 6e5);
+      s.onload = s.onerror = function () { if (--left) return; window.OSAP_EVSUM_MERGE(); done(); };
+      document.head.appendChild(s);
+    });
+    function done() {
       state = 2; byKey = {};
       var d = window.OSAP_EVSUM, items = d && d.items || {};
       Object.keys(items).forEach(function (id) { (items[id].keys || []).forEach(function (k) { (byKey[k] = byKey[k] || []).push(id); }); });
       var q = cbs; cbs = []; q.forEach(function (f) { f(); });
-    };
-    document.head.appendChild(s);
+    }
   }
 
   /* the open event's report keys: its own reports carry page record ids, cross-border ones carry the key in their link */
@@ -47,12 +60,14 @@
     });
     return out;
   }
+  /* the summary sharing the most reports with the open event (two at least); an AI draft before a plain extract */
   function best(keys) {
     var d = window.OSAP_EVSUM, n = {}, top = null, topN = 1;
     if (!d || !byKey) return null;
     keys.forEach(function (k) { (byKey[k] || []).forEach(function (id) { n[id] = (n[id] || 0) + 1; }); });
+    var w = function (id) { return n[id] < 2 ? 0 : n[id] + (d.items[id].method !== "extract" ? 1000 : 0); };
     Object.keys(n).forEach(function (id) {
-      if (n[id] > topN || (n[id] === topN && top && d.items[id].made > d.items[top].made)) { top = id; topN = n[id]; }
+      if (w(id) > (top ? w(top) : 1) || (top && w(id) === w(top) && d.items[id].made > d.items[top].made)) { top = id; topN = n[id]; }
     });
     return top && topN >= 2 ? { s: d.items[top], shared: topN } : null;
   }
