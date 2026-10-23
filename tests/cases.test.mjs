@@ -81,6 +81,20 @@ await refused(run(S, LEAD, { cmd: "rename", op: op(), case: A, name: "Stale", ve
 await run(S, VIEW, { cmd: "call", op: op(), case: A, call: "Watcher" });
 ok((await getCase(S, LEAD, A)).members.find((m) => m.uid === "u-view").call === "Watcher", "any member sets their own call sign");
 
+/* ---------- lead approval of items (milestone 3) ---------- */
+const item = { id: "a".repeat(32), fp: "b".repeat(16) }, sealedWhy = "U2VhbGVkIHJlYXNvbiBieXRlcw==";
+await refused(run(S, ANA, { cmd: "approve", op: op(), case: A, target: item }), 403, "an analyst cannot approve, not even their own work");
+await refused(run(S, VIEW, { cmd: "approve", op: op(), case: A, target: item }), 403, "a viewer cannot approve");
+await refused(run(S, OUT, { cmd: "approve", op: op(), case: A, target: item }), 404, "a stranger cannot approve");
+await refused(run(S, LEAD, { cmd: "approve", op: op(), case: A, target: { id: "x", fp: "y" } }), 400, "a bad item reference is refused");
+await refused(run(S, LEAD, { cmd: "approve", op: op(), case: A, target: item, sreason: "plain words here" }), 400, "a reason that is not sealed is refused");
+const ap = await run(S, LEAD, { cmd: "approve", op: op(), case: A, target: item, sreason: sealedWhy });
+ok(ap.decision.action === "approve" && ap.decision.target.kind === "item" && ap.decision.target.fp === item.fp && ap.decision.detail.sreason === sealedWhy && ap.decision.authority === "lead",
+  "a lead's approval is a decision record: item, fingerprint, sealed reason, authority");
+ok((await getCase(S, VIEW, A)).items[item.id].state === "approved", "every member sees the item as approved");
+const rj = await run(S, LEAD, { cmd: "reject", op: op(), case: A, target: { id: item.id, fp: "c".repeat(16) } });
+ok(rj.decision.prev === ap.decision.version && (await getCase(S, ANA, A)).items[item.id].state === "rejected", "a later decision replaces the earlier one, both kept in the record");
+
 /* ---------- removal takes effect at once ---------- */
 const rm = await run(S, LEAD, { cmd: "remove", op: op(), case: A, member: "u-view", reason: "left the team" });
 ok(rm.decision.action === "remove" && rm.decision.target.id === "u-view" && rm.decision.reason === "left the team", "removal is recorded with its reason");
