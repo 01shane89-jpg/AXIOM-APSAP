@@ -35,6 +35,7 @@ jobs:
       - run: node tests/claims.test.mjs
       - run: node tests/incidents.test.mjs
       - run: node tests/decisions.test.mjs
+      - run: node tests/cf_decisions.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
@@ -127,6 +128,7 @@ jobs:
       - run: node tests/deepsouth_border_smoke.mjs
       - run: node tests/dspat_smoke.mjs
       - run: node tests/ds_review_smoke.mjs
+      - run: node tests/cf_verify_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/cf_history_range_smoke.mjs
       - run: node tests/violence_history_smoke.mjs
