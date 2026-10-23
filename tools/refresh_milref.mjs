@@ -99,6 +99,8 @@ if (process.env.MILREF_SIPRI !== "0") {
     const list = await getJson(SIPRI + "/countries/getAllCountriesTrimmed");
     ids = sipriIds(list, ISO3, NAMES);
     log("SIPRI countries:", list.length, "matched:", Object.keys(ids).length, "not matched:", CCS.filter((c) => !ids[c === "oki" ? "jp" : c]).join(" ") || "none");
+    const used = new Set(Object.values(ids).map((x) => x.id));
+    log("SIPRI entries not used (states only):", list.filter((e) => !e.deleted && !used.has(e.EntityId) && !/\*/.test(e.Name || "")).map((e) => e.Name + " [" + e.CountryCode + "]").slice(0, 80).join("; "));
   } catch (e) { log("SIPRI country list:", e.message); }
   fs.mkdirSync(OUT + "/sipri", { recursive: true });
   const todo = CCS.filter((c) => c !== "oki" && ids[c]);

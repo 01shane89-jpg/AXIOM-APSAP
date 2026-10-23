@@ -318,16 +318,27 @@ export function sipriFrom(text, cap = SIPRI_CAP) {
   out.sort((a, b) => (b.oy || 0) - (a.oy || 0) || (b.tt || 0) - (a.tt || 0) || a.d.localeCompare(b.d));
   return { deals: out.slice(0, cap), total: out.length };
 }
-/* SIPRI's country list (EntityId, Name, CountryCode) -> our two-letter codes: by ISO alpha-3 code first, then by name */
+/* SIPRI's country list (EntityId, Name, CountryCode) -> our two-letter codes: by ISO alpha-3 code first, then by name. SIPRI
+   uses its own codes for some states (Chile, Viet Nam ...) and its own spellings, so names are compared loosely */
+const SIPRI_ALIAS = { "viet nam": "vietnam", "bosnia herzegovina": "bosnia herzegovina", "congo": "congo", "dr congo": "democratic congo", "ivory coast": "cote d ivoire",
+  "north korea": "korea north", "south korea": "korea south", "czechia": "czech", "czech republic": "czech", "turkiye": "turkey", "east timor": "timor leste",
+  "cape verde": "cabo verde", "swaziland": "eswatini", "macedonia": "north macedonia", "burma": "myanmar", "micronesia": "micronesia", "st vincent grenadines": "saint vincent grenadines",
+  "st kitts nevis": "saint kitts nevis", "st lucia": "saint lucia", "uae": "united arab emirates", "brunei": "brunei", "laos": "laos", "russia": "russia", "syria": "syria", "iran": "iran" };
+export function sipriNorm(n) {
+  let t = String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\*+/g, "").replace(/\(.*?\)/g, " ")
+    .replace(/[^a-z]+/g, " ").replace(/\b(the|and|of|republic|islamic|plurinational|bolivarian)\b/g, " ")
+    .replace(/\bsaint\b|\bst\b/g, "saint").replace(/\s+/g, " ").trim();
+  if (/^korea dpr|^dpr korea|korea democratic/.test(t)) t = "korea north";
+  if (/democratic congo|congo kinshasa|^drc$|^dr congo$/.test(t)) t = "democratic congo";
+  return SIPRI_ALIAS[t] || t;
+}
 export function sipriIds(list, iso3, names) {
   const by3 = {}, byName = {};
   for (const [cc, a3] of Object.entries(iso3 || {})) if (a3) by3[String(a3).toUpperCase()] = cc;
-  for (const [cc, n] of Object.entries(names || {})) byName[String(n).toLowerCase()] = cc;
-  const out = {};
-  for (const e of list || []) {
-    if (!e || e.deleted || !e.EntityId) continue;
-    const cc = by3[String(e.CountryCode || "").toUpperCase()] || byName[String(e.Name || "").toLowerCase()];
-    if (cc && !out[cc]) out[cc] = { id: e.EntityId, name: e.Name };
-  }
+  for (const [cc, n] of Object.entries(names || {})) byName[sipriNorm(n)] = cc;
+  const out = {}, ok = (list || []).filter((e) => e && !e.deleted && e.EntityId && !/\*/.test(e.Name || ""));
+  // two passes, so a loose name match never takes a country an exact code match would give another entry
+  for (const e of ok) { const cc = by3[String(e.CountryCode || "").toUpperCase()]; if (cc && !out[cc]) out[cc] = { id: e.EntityId, name: e.Name }; }
+  for (const e of ok) { const cc = byName[sipriNorm(e.Name)]; if (cc && !out[cc]) out[cc] = { id: e.EntityId, name: e.Name }; }
   return out;
 }

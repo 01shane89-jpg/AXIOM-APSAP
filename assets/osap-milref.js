@@ -67,8 +67,8 @@
     return '<table class="btwo mrsip"><tr><th style="width:17%">' + (who === "s" ? "Supplier" : "Recipient") + '</th><th style="width:27%">Weapon</th><th style="width:14%">Ordered</th><th style="width:16%">Delivered</th><th>Status and SIPRI note</th></tr>' +
       L.slice(0, lim).map(function (d) {
         return "<tr><td>" + esc(d[who] || "") + fpt(d.fp) + "</td><td><b>" + esc(d.d || "") + '</b><span class="bm">' + (d.w ? " · " + esc(d.w) : "") + "</span></td><td>" +
-          (d.no != null ? unc(d, "no", d.no) : '<span class="bm">number n/a</span>') + (d.oy ? '<span class="bm"> in ' + unc(d, "oy", d.oy) + "</span>" : "") + "</td><td>" +
-          (d.dn != null ? unc(d, "dn", d.dn) + (d.dy ? '<span class="bm"> (' + esc(d.dy) + ")</span>" : "") : '<span class="bm">none yet</span>') + "</td><td>" +
+          (d.no != null ? unc(d, "no", d.no) + '<span class="bm"> ordered</span>' : '<span class="bm">number ordered n/a</span>') + (d.oy ? '<span class="bm"> in ' + unc(d, "oy", d.oy) + "</span>" : "") + "</td><td>" +
+          (d.dn != null ? unc(d, "dn", d.dn) + '<span class="bm"> delivered' + (d.dy ? " (" + esc(d.dy) + ")" : "") + "</span>" : '<span class="bm">none delivered yet</span>') + "</td><td>" +
           (d.st ? esc(d.st) : "") + (d.tt != null ? '<span class="bm"> · ' + esc(tiv(d.tt)) + "</span>" : "") + (d.c ? '<div class="bm">' + esc(d.c) + "</div>" : "") + "</td></tr>";
       }).join("") + "</table>" +
       (side.total > lim ? '<p class="bm">' + (side.total - lim) + " more deal" + (side.total - lim === 1 ? "" : "s") + " in the register for these years" + (side.total > L.length ? " (the " + L.length + " newest are held)" : "") + ".</p>" : "");
