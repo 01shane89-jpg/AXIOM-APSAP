@@ -3,7 +3,7 @@
 //  - Wikidata (CC0 1.0), query.wikidata.org: the country's armed forces, branches and units (order of battle: Q176799 military
 //    unit and Q772547 armed forces with their subclasses, dissolved units left out), the equipment those forces are recorded as
 //    operating (P137 operator, with the P1114 quantity, P580/P582 dates and P730 service retirement where editors gave them;
-//    a type first flown or built before 1960 with no end recorded is listed apart as probably retired),
+//    a type first flown or built before 1960 with no end recorded is listed apart),
 //    and military installations (Q18691599 military installation, Q695850 airbase; castles and historic fortresses left out). Wikidata is edited by anyone: coverage
 //    differs widely between countries, quantities are rare and retired types often carry no end date.
 //  - World Bank World Development Indicators (CC BY 4.0): military expenditure (SIPRI Military Expenditure Database), armed
@@ -169,7 +169,7 @@ for (const cc of CCS) {
   if (!W && p.wd) rec.wd.stale = true;
   fs.writeFileSync(OUT + "/" + cc + ".json", JSON.stringify(rec) + "\n");
   const w = rec.wd || {};
-  index.all[cc] = { n: NAMES[cc], u: (w.units || []).length, e: (w.equip || []).filter((x) => !x.out && !x.old).length, i: (w.inst || []).length, f: Object.keys(fig).length, st: w.stale ? 1 : 0 };
+  index.all[cc] = { n: NAMES[cc], u: (w.units || []).length, e: (w.equip || []).filter((x) => !x.out).length, i: (w.inst || []).length, f: Object.keys(fig).length, st: w.stale ? 1 : 0 };
   if (W) log(cc, "units", W.units.length + "/" + W.raw.units, "equipment", W.equip.length + "/" + W.raw.equip, "installations", W.inst.length);
 }
 fs.writeFileSync(OUT + "/index.json", JSON.stringify(index) + "\n");

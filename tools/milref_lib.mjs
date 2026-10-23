@@ -181,8 +181,8 @@ export function equipFrom(rows, clsName, opName, cap = CAPS.equip) {
     if (e.since) r.since = e.since;
     const gone = e.end || e.ret || (retiredByClass(e.cls) ? "yes" : "");
     if (gone) r.out = gone; // the source records an end of service: shown as retired
-    // a type first flown or built before OLD_BEFORE with no end recorded: kept as the claim it is, but listed apart as probably
-    // retired (Wikidata rarely records when a force stopped using a type)
+    // a type first flown or built before OLD_BEFORE with no end recorded: kept as the claim it is, but listed apart (Wikidata
+    // rarely records when a force stopped using a type; some old types, such as long-lived bombers, still serve)
     else if (e.y0 && +e.y0 < OLD_BEFORE) r.old = e.y0;
     equip.push(withFp(r));
   }

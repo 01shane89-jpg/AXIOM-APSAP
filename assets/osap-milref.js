@@ -115,7 +115,7 @@
         }).join("") + "</table>" + (L.length > lim ? '<p class="bm">' + (L.length - lim) + " more in this group.</p>" : "");
     });
     var old = g.old || [];
-    if (old.length) h += '<details class="mrout"><summary>Older types, probably retired (' + old.length + ")</summary><p class=\"bm\">First flown or built before 1960 and listed as operated, with no end of service recorded on Wikidata. " +
+    if (old.length) h += '<details class="mrout"><summary>Older types, first flown or built before 1960 (' + old.length + ")</summary><p class=\"bm\">Listed as operated, with no end of service recorded on Wikidata. Some still serve (long-lived bombers, transports, small arms); many have left service. " +
       old.slice(0, 200).map(function (e) { return link(wdUrl(e.q), esc(e.n)) + " (" + esc(e.old) + ")"; }).join(" · ") + "</p></details>";
     var out = g.out || [];
     if (out.length) h += '<details class="mrout"><summary>Recorded as retired or out of service (' + out.length + ")</summary><p class=\"bm\">" +
@@ -141,7 +141,7 @@
       '<p class="bwarn">' + CLAIM + " " + esc(NOTE) + "</p>";
     h += "<h3>Key figures</h3>" + figuresHtml(M.fig || {}, M.cc);
     h += "<h3>Forces and units (order of battle) " + '<span class="bm">' + (w.units ? w.units.length : 0) + (w.found && w.found.units > (w.units || []).length ? " of " + w.found.units + " on Wikidata" : "") + "</span></h3>" + unitsHtml(w.units, lim.units);
-    h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out && !e.old; }).length + " in service, as recorded</span></h3>" + equipHtml(w.equip, lim.equip);
+    h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out; }).length + " with no end of service recorded" + ((w.equip || []).length >= 1500 ? " (the 1,500 best-known kept; Wikidata lists more)" : "") + "</span></h3>" + equipHtml(w.equip, lim.equip);
     h += "<h3>Installations " + '<span class="bm">' + (w.inst || []).length + "</span></h3>" + instHtml(w.inst, lim.inst);
     h += '<footer>Sources: ' + link("https://www.wikidata.org/" + (w.q ? "wiki/" + esc(w.q) : ""), "Wikidata") + " (CC0 1.0), read " + esc(w.read ? T().asofT(w.read) : "never") + "; " +
       link("https://datacatalog.worldbank.org/search/dataset/0037712", "World Bank World Development Indicators") + " (CC BY 4.0), from the SIPRI Military Expenditure and Arms Transfers databases and IISS, The Military Balance. " +
@@ -163,7 +163,7 @@
   var CSS = ".mrtag{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid currentColor;border-radius:9px;padding:0 6px;line-height:16px;color:#12324a}" +
     ".mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
     ".bmilref h4{font-size:11px;margin:6px 0 2px;color:#12324a}.mrtree .mru{border-bottom:1px solid #eee;padding-top:1px;padding-bottom:1px;overflow-wrap:anywhere}" +
-    ".bmilref td{overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
+    ".bpage.bmilref td{white-space:normal;overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
     /* a phone: each table row becomes one wrapped line (the column headings drop), so nothing squeezes or scrolls sideways */
     "@media screen and (max-width:640px){.bmilref table,.bmilref tbody,.bmilref tr,.bmilref td{display:block;width:auto!important}.bmilref tr:first-child{display:none}" +
     ".bmilref tr{border-bottom:1px solid #ddd;padding:3px 0}.bpage.bmilref td{display:inline;border:0;padding:0 6px 0 0}.bpage.bmilref .mg{white-space:normal}.bpage.bmilref,.bpage.bmilref *{overflow-wrap:anywhere;min-width:0}}" +
