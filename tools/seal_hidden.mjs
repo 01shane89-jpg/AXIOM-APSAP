@@ -51,6 +51,7 @@ const STRIP = [
   { file: "data/live/ucdp.js", fix: (v) => (Array.isArray(v.items) ? dropFromList(v.items, itemCodes, setItemCodes) : 0) },
   // event summaries: keyed by id, one country each
   { file: "data/live/evsum.js", fix: (v) => { let n = 0; for (const [k, e] of Object.entries(v.items || {})) if (onlyHidden(ccsOf(e))) { delete v.items[k]; n++; } return n; } },
+  { file: "data/live/evsum_ai.js", fix: (v) => { let n = 0; for (const [k, e] of Object.entries(v.items || {})) if (onlyHidden(ccsOf(e))) { delete v.items[k]; n++; } return n; } },
   // the news search pool, one file a day: each row starts with its country code(s)
   { dir: "data/live/news-index", fix: (v) => (Array.isArray(v) ? dropFromList(v, (r) => (r && r[0] != null ? [].concat(r[0]) : null), (r, keep) => { r[0] = Array.isArray(r[0]) ? keep : keep[0]; }) : 0) },
 ];

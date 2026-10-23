@@ -636,7 +636,7 @@
       '<h3 class="tls"><span class="no">5</span>Contributors</h3><ul class="oscon" data-osf="contributors">' +
       "<li><b>Prepared by:</b> " + (o.by ? esc(o.by) : "not stated") + "</li>" +
       "<li><b>Compiled by:</b> AXIOM OSAP on this device, from " + pl(srcs.length, "open source") + "; counts, groupings and key events by fixed rules (no AI).</li>" +
-      (ai ? "<li><b>AI:</b> " + pl(ai, "key-event summary", "key-event summaries") + " drafted by " + esc((W.OSAP_EVSUM && W.OSAP_EVSUM.model) || "an AI model") + ", tagged AI generated; drafts, not analyst-approved.</li>" : "") +
+      (ai ? "<li><b>AI:</b> " + pl(ai, "key-event summary", "key-event summaries") + " drafted by " + esc(keyEv.filter(function (e) { return e.sum && e.sum.method !== "extract"; }).map(function (e) { return e.sum.model || (W.OSAP_EVSUM && W.OSAP_EVSUM.model); }).filter(function (x, i, a) { return x && a.indexOf(x) === i; }).join(", ") || "an AI model") + ", tagged AI generated; drafts, not analyst-approved.</li>" : "") +
       (ext ? "<li><b>Automatic extracts:</b> " + pl(ext, "key-event summary", "key-event summaries") + " taken from the reports by fixed rules (no AI).</li>" : "") +
       (anParts || an.outs.length ? "<li><b>Analyst sections:</b> " + (anParts ? pl(anParts, "part") + " of the main content" : "") + (anParts && an.outs.length ? " and " : "") + (an.outs.length ? pl(an.outs.length, "outside source") : "") + " written by the preparer, as typed, tagged Analyst; OSAP did not check them.</li>" : "") +
       (aiUsed(an) ? '<li data-osf="ai-draft"><b>AI draft:</b> ' + aiUsed(an) + "</li>" : "") +
