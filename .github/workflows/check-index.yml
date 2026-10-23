@@ -75,6 +75,7 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
+      - run: node tests/stories.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
       # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
@@ -137,6 +138,7 @@ jobs:
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs
       - run: node tests/keydates_smoke.mjs
+      - run: node tests/coverage_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs
