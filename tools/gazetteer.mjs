@@ -128,12 +128,19 @@ export function namesIn(gz, text, ccs) {
       (p.kind === "city" ? towns : regs).push({ ...p, cc, at: m.index });
     }
     // villages and small towns (addSmallPlaces), only where a town or region of the same name does not already match
-    if (g.sre) {
-      g.sre.lastIndex = 0;
-      for (const m of text.matchAll(g.sre)) {
-        if (!/^\p{Lu}/u.test(m[1])) continue;
-        const e = g.sm.get(m[1].toLowerCase()); if (!e) continue;
-        smalls.push({ ...e, cc, at: m.index, end: m.index + m[1].length, ctx: SMALL_CTX_BEFORE.test(text.slice(Math.max(0, m.index - 40), m.index)) || SMALL_CTX_AFTER.test(text.slice(m.index + m[1].length, m.index + m[1].length + 25)) });
+    // (looked up word by word, longest name first: tens of thousands of names in one pattern took seconds per text)
+    if (g.sm) {
+      const words = [...text.matchAll(/[\p{L}\p{N}]+/gu)];
+      for (let a = 0; a < words.length; a++) {
+        const at = words[a].index; if (!/^\p{Lu}/u.test(words[a][0])) continue;
+        for (let k = Math.min(g.smW, words.length - a); k >= 1; k--) {
+          const last = words[a + k - 1], end = last.index + last[0].length, e = g.sm.get(text.slice(at, end).toLowerCase());
+          if (!e) continue;
+          const after = text.slice(end, end + 25);
+          // part of a longer name ("Lanao del Norte", "Agusan del Sur"): not this village
+          if (!SMALL_PART_OF.test(after)) smalls.push({ ...e, cc, at, end, ctx: SMALL_CTX_BEFORE.test(text.slice(Math.max(0, at - 40), at)) || SMALL_CTX_AFTER.test(after) });
+          a += k - 1; break;
+        }
       }
     }
   }
@@ -166,6 +173,12 @@ export function placeIn(gz, text, ccs) {
 const SMALL_URL = "https://download.geonames.org/export/dump/cities1000.zip";
 const SMALL_CTX_BEFORE = /(?:^|[^\p{L}])(?:in|at|near|outside|around|into|towards?|from|of|on|village|town|township|settlement|district|hamlet)\s+(?:the\s+)?(?:(?:village|town|township|settlement|district|hamlet|area)\s+(?:of\s+)?)?$/iu;
 const SMALL_CTX_AFTER = /^\s+(?:village|town|township|settlement|district|hamlet|area)(?![\p{L}])/iu;
+const SMALL_PART_OF = /^[\s-]+(?:del|de|de la|do|da|dos|das|della|di|du|des|el|al|la)\s+\p{Lu}/u;
+// words that make up a name only together with others: a village called "Middle East" or "New Market" is never read on its own
+const SMALL_WORDS = new Set(["middle", "east", "west", "north", "south", "new", "old", "upper", "lower", "central", "great", "little", "big", "small", "the", "and",
+  "of", "camp", "market", "junction", "station", "bridge", "hill", "hills", "valley", "river", "point", "road", "street", "border", "front", "line", "base", "field",
+  "farm", "mill", "mine", "mines", "well", "wells", "spring", "springs", "creek", "lake", "bay", "beach", "island", "port", "town", "city", "village", "center", "centre",
+  "court", "house", "school", "church", "airport", "gate", "park", "garden", "square", "cross", "corner", "end", "side", "view", "green", "red", "white", "black", "blue"]);
 export async function addSmallPlaces(idx, ccs, get = fetchBuf, cacheDir = process.env.GEONAMES_CACHE || "") {
   const want = new Set(ccs), file = cacheDir ? path.join(cacheDir, "cities1000.zip") : "";
   let zip = null;
@@ -187,6 +200,7 @@ export async function addSmallPlaces(idx, ccs, get = fetchBuf, cacheDir = proces
     for (const n of names) {
       const k = n.toLowerCase();
       if (n.length < 5 || STOP.has(k) || COUNTRY_NAMES.has(k) || !/^\p{Lu}/u.test(n) || idx[cc].m.has(k)) continue;
+      if (k.split(/[^\p{L}\p{N}]+/u).every((w) => SMALL_WORDS.has(w) || STOP.has(w))) continue;
       const e = m.get(k) || { cands: [] };
       if (!e.cands.some((x) => x.lat === p.lat && x.lon === p.lon)) e.cands.push(p);
       m.set(k, e);
@@ -198,9 +212,8 @@ export async function addSmallPlaces(idx, ccs, get = fetchBuf, cacheDir = proces
       const big = (WORLD && WORLD.get(k)) || [];
       e.amb = e.cands.length > 1 || (seen.get(k) || new Set()).size > 1 || big.some((o) => o.cc !== cc);
     }
-    const names = [...m.keys()].sort((a, b) => b.length - a.length).map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-    if (!names.length) continue;
-    idx[cc].sm = m; idx[cc].sre = new RegExp("(?<![\\p{L}\\p{N}])(" + names.join("|") + ")(?![\\p{L}\\p{N}])", "giu");
+    if (!m.size) continue;
+    idx[cc].sm = m; idx[cc].smW = Math.max(...[...m.keys()].map((x) => x.split(/[^\p{L}\p{N}]+/u).filter(Boolean).length));
     added += m.size;
   }
   return added;

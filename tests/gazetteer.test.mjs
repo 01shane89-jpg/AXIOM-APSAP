@@ -83,7 +83,8 @@ const small = [
   row("Ivanivka", 49.9, 36.9, "PPL", "UA", "07", 2000), row("Ivanivka", 48.4, 37.9, "PPL", "UA", "14", 1500),
   row("Novoselivka", 48.1, 37.5, "PPL", "UA", "14", 1200), row("Novoselivka", 55.0, 38.0, "PPL", "RU", "47", 1100),
   row("Mambasa", 1.36, 29.05, "PPL", "CD", "12", 9000), row("Bunia", 1.56, 30.25, "PPLA", "CD", "12", 96000),
-  row("Hope", 48.0, 37.0, "PPL", "UA", "14", 1000), row("Kyiv", 50.4, 30.5, "PPL", "BY", "01", 1000),
+  row("Hope", 48.0, 37.0, "PPL", "UA", "14", 1000), row("Middle East", 48.2, 37.1, "PPL", "UA", "14", 1000),
+  row("Lanao", 48.3, 37.2, "PPL", "UA", "14", 1000), row("Ad-Damazin", 48.5, 37.3, "PPL", "UA", "14", 1000), row("Kyiv", 50.4, 30.5, "PPL", "BY", "01", 1000),
 ].join("\n");
 const stxt = path.join(dir, "cities1000.txt"), szip = path.join(dir, "s.zip");
 fs.writeFileSync(stxt, small + "\n"); spawnSync("zip", ["-qj", szip, stxt]);
@@ -101,11 +102,24 @@ for (const [t, cc, want, prec] of [
   ["Shelling in Donetsk Oblast", "ua", "Donetsk Oblast", "province"],
   ["Hope in Donetsk Oblast fades", "ua", "Donetsk Oblast", "province"],             // a stop word is never a village
   ["Floods hit Bangkok", "th", "Bangkok", "approx"],                                // countries not asked for are unchanged
+  ["Oil jumps on Middle East worries", "ua", null],                                 // a name made only of everyday words is never a village
+  ["Wanted man killed in a clash in Lanao del Norte", "ua", null],                  // part of a longer name: not the village
+  ["RSF drone attacks kill civilians in Ad Damazin", "ua", "Ad-Damazin", "approx"],  // hyphen or space, the same village
 ]) {
   const r = placeIn(gz, t, [cc]), got = r ? r.name : null;
   const ok = got === want && (!want || r.prec === prec);
   const latOk = !(want && t.includes("Ivanivka")) || Math.abs(r.lat - 48.4) < 0.01;
   if (!ok || !latOk) bad++;
   console.log(ok && latOk ? "ok  " : "FAIL", "small:", JSON.stringify(t), "->", got, r ? r.prec + " " + r.lat : "");
+}
+// speed: every village of a big country looked up in thousands of texts takes well under a second (one long pattern took seconds)
+{
+  const many = []; for (let n = 0; n < 20000; n++) many.push(row("Zyx" + n.toString(36) + "ville", 48, 37, "PPL", "UA", "14", 1000));
+  const mtxt = path.join(dir, "cities1000.txt"); fs.writeFileSync(mtxt, many.join("\n") + "\n"); const mzip = path.join(dir, "m.zip"); fs.rmSync(mzip, { force: true }); spawnSync("zip", ["-qj", mzip, mtxt]);
+  await addSmallPlaces(gz, ["ua"], async () => fs.readFileSync(mzip));
+  const t0 = Date.now(); let hit = 0;
+  for (let n = 0; n < 3000; n++) if (placeIn(gz, "Russian drone strike on a village near Kramatorsk kills two, officials say in Zyx" + (n % 20000).toString(36) + "ville " + n, ["ua"])) hit++;
+  const ms = Date.now() - t0, ok = ms < 3000 && hit === 3000; if (!ok) bad++;
+  console.log(ok ? "ok  " : "FAIL", "small places: 3000 texts against 20,000 villages in", ms, "ms,", hit, "placed");
 }
 process.exit(bad ? 1 : 0);
