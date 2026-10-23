@@ -8,6 +8,10 @@ name: AI drafts on the runner
 # and watch lines of the priority countries. The model file and the server wheel are kept in the Actions cache.
 # Free while the repository is public (standard GitHub-hosted runners: 4 CPUs, 16 GB).
 on:
+  # TEST ONLY (remove before merge): a push to this branch runs both models on five countries and parks the output
+  push:
+    branches: [claude/local-ai-daily]
+    paths: [tools/ai_gateway.mjs, tools/refresh_daily.mjs, .github/workflows/refresh-ai.yml]
   schedule:
     - cron: "23 1 * * *"
   workflow_dispatch:
@@ -39,8 +43,12 @@ jobs:
     permissions:
       contents: write
       models: read
+    strategy:
+      fail-fast: false
+      matrix:
+        model: ${{ github.event_name == 'push' && fromJSON('["phi-3.5-mini","qwen2.5-1.5b"]') || fromJSON(format('["{0}"]', inputs.model || 'phi-3.5-mini')) }}
     env:
-      MODEL_KEY: ${{ inputs.model || 'phi-3.5-mini' }}
+      MODEL_KEY: ${{ matrix.model }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -92,8 +100,8 @@ jobs:
           OSAP_LOCAL_LLM: http://127.0.0.1:8080
           OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
           DAILY_FORCE: "1"
-          DAILY_ONLY: ${{ inputs.only }}
-          DAILY_AI_PER_RUN: ${{ inputs.per_run || '45' }}
+          DAILY_ONLY: ${{ github.event_name == 'push' && 'th,ph,mm,ua,pk' || inputs.only }}
+          DAILY_AI_PER_RUN: ${{ github.event_name == 'push' && '5' || inputs.per_run || '45' }}
           DAILY_AI_BUDGET_MIN: "80"
         run: node tools/refresh_daily.mjs
       - name: Model server log (tail)
@@ -109,7 +117,7 @@ jobs:
           git rm -rqf --cached .
           for p in data/live/daily.js data/live/daily; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (AI drafts on the runner) $(date -u +'%Y-%m-%d %H:%MZ')"
-          git push -qf origin HEAD:refs/heads/claude/ai-preview-data
+          git push -qf origin HEAD:refs/heads/claude/ai-preview-data-$MODEL_KEY
       - name: Commit the summaries if they changed
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
