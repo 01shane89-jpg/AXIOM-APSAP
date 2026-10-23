@@ -92,8 +92,9 @@ jobs:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
     # the whole suite now runs about 29 to 30 minutes, so 30 cancelled green runs (2026-10-04); by 2026-10-19 it ran 43 to 45
-    # minutes and 45 cancelled main and two PRs one test from the end
-    timeout-minutes: 60
+    # minutes and 45 cancelled main and two PRs one test from the end; on 2026-10-23 it ran past 60 and cancelled PR #498 three
+    # tests from the end (speed_budget at 07:44Z, 60 minutes after the start)
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
