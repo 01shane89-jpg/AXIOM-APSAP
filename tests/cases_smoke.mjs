@@ -128,12 +128,16 @@ const N = await device("tok-ana");
 await N.p.evaluate(() => OSAP_CASES.open("list"));
 await N.p.waitForSelector("#casedlg [data-cs-inv]", { timeout: 15000 });
 ok(/Deep South cell/.test(await msg(N)) && /as Analyst/.test(await msg(N)), "the analyst sees the invite with its role");
+// hold the lead's background sync back for this step, so it cannot hand the key over before the check below
+const hold = (r) => r.abort();
+await L.ctx.route("**/api/osap-cases**", hold);
 await click(N, "#casedlg [data-cs-inv]");
 await N.p.fill("#casedlg [data-cs-call]", "ANA 2");
 await click(N, "#casedlg [data-cs-accept]");
 await N.p.waitForFunction(() => /You are in the case/.test(document.getElementById("casedlg").textContent), null, { timeout: 30000 });
 let s = await N.p.evaluate((id) => OSAP_CASES.syncNow(id), A);
 ok(s && s.ok && s.keyless, "before the lead hands over the key, the analyst waits for it", s);
+await L.ctx.unroute("**/api/osap-cases**", hold);
 await sync(L);
 s = await sync(N);
 ok(s && s.ok && !s.keyless, "after the lead's sync the analyst's device holds the case key", s);
