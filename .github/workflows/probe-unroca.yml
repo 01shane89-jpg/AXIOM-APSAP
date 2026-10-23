@@ -13,8 +13,7 @@ jobs:
           set +e
           UA='Mozilla/5.0 (OSAP research probe)'
           curl -sSL -m 30 -A "$UA" -o app.js 'https://www.unroca.org/static/unroca_spa/public/unroca-javascript.min.js?v=2018-12'
-          wc -c app.js
-          echo "=== url-ish strings"
-          grep -oE '"[^" ]*/[^" ]*"|'"'"'[^'"' "']*/[^'"' "']*'"'" app.js | sort -u | head -150
-          echo "=== http calls"
-          grep -oE '\$http[.a-z]*\([^)]{0,160}' app.js | head -60
+          for k in 'countryname_slug' 'exportUrl=' 'importUrl=' 'url="' 'url=' ; do echo "=== ctx $k"; grep -oE ".{0,220}$k.{0,260}" app.js | head -6; done
+          for u in /api/country-list/ /api/participation /api/thailand/ /api/thailand/2022/ /api/thailand/exports-to/ ; do
+            echo "=== GET $u"; curl -sS -m 30 -A "$UA" -H 'Accept-Language: en' -o r.txt -w '%{http_code} %{size_download} %{content_type}\n' "https://www.unroca.org$u"; head -c 1800 r.txt; echo
+          done
