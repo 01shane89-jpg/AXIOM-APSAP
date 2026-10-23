@@ -1285,6 +1285,11 @@
     {"cc":"cg","outlet":"Congopage","url":"https://www.congopage.com/spip.php?page=backend","lang":"fr"},
     {"cc":"cg","outlet":"Congo Liberty","url":"https://www.congo-liberty.org/feed/","lang":"fr"},
     {"cc":"eh","outlet":"Contramutis","url":"https://contramutis.wordpress.com/feed/","lang":"es"},
-    {"cc":"eh","outlet":"Dakhla News","url":"https://www.dakhlanews.com/feed/","lang":"ar"}
+    {"cc":"eh","outlet":"Dakhla News","url":"https://www.dakhlanews.com/feed/","lang":"ar"},
+    {"cc":"mc","outlet":"Nice-Matin Monaco","url":"https://www.nicematin.com/monaco/rss","lang":"fr"},
+    {"cc":"sc","outlet":"SBC Seychelles","url":"https://www.sbc.sc/feed/","lang":"crs","state":true},
+    {"cc":"sl","outlet":"AYV News","url":"https://ayvnews.com/feed/","lang":"en"},
+    {"cc":"sl","outlet":"Politico SL","url":"https://www.politicosl.com/rss.xml","lang":"en"},
+    {"cc":"vc","outlet":"NBC SVG","url":"https://nbcsvg.com/feed/","lang":"en","state":true}
   ]
 }
