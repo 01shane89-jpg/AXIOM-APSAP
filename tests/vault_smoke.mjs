@@ -106,7 +106,8 @@ const syncPlain = await p.evaluate(async () => new Promise((ok) => { indexedDB.d
   const r = indexedDB.open("osap-sync"); r.onsuccess = () => { const d = r.result; if (!d.objectStoreNames.contains("kv")) return ok(null); const g = d.transaction("kv").objectStore("kv").get("state"); g.onsuccess = () => ok(JSON.stringify(g.result || null)); }; }); }));
 ok(!/ZQX/.test(syncPlain || ""), "the sync copy is not in plain storage");
 const boxText = await p.evaluate(async () => new Promise((ok) => { const r = indexedDB.open("osap-vault"); r.onsuccess = () => { const g = r.result.transaction("box").objectStore("box").get("ls"); g.onsuccess = () => ok(new TextDecoder().decode(g.result.ct)); }; }));
-ok(!/ZQX/.test(boxText), "the encrypted copy does not read as plain text");
+// whole markers only: the ciphertext is random bytes, so a 3-letter "ZQX" turns up in it now and then by chance
+ok(!/ZQX(POINT|NOTE|ROUTE|WATCH|SYNCCODE)/.test(boxText), "the encrypted copy does not read as plain text");
 
 // ---------- 3. unlock ----------
 await p.fill("#vault-pass", "wrong passphrase!!"); await p.evaluate(() => document.querySelector("#vaultscr button").click());
