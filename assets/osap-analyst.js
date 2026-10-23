@@ -44,7 +44,7 @@
   var LOCAL_H = 7, LOCAL_N = "Thailand";
   var TABS = [["ents", "Entities"], ["links", "Links"], ["struct", "Structure"], ["time", "Timeline"], ["saved", "Saved"], ["bed", "Bed-down"]];
   var PERIODS = [[30, "30 days"], [90, "90 days"], [365, "1 year"], [0, "All kept"]];
-  var TYPES = ["organisation", "armed group", "unit", "police or security force", "agency", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
+  var TYPES = ["organisation", "armed group", "unit", "police or security force", "agency", "official (public officeholder)", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
   var RELS = ["member of", "commands", "support node for", "supplies", "funds", "beds down at", "uses route", "operates in", "attributed to", "targeted", "occurred in", "responded to", "arrested or detained by", "linked by evidence to", "captured", "possibly linked to", "works with", "opposes", "talks with", "other"];
   /* how sure the analyst is of a link they record; drawn the link-analysis way: solid, long dashes, short dashes */
   var CONFS = [["suspected", "Suspected"], ["probable", "Probable"], ["confirmed", "Confirmed"]];
@@ -250,7 +250,7 @@
     h += '<details><summary>Add your own entity</summary><form id="an-addent" class="anrow">' +
       '<label>Name <input name="name" required maxlength="120"></label><label>Type <select name="type">' + TYPES.map(function (t) { return "<option>" + esc(t) + "</option>"; }).join("") + "</select></label>" +
       '<label>Other names (comma between) <input name="aliases" maxlength="400"></label><label>Note <input name="note" maxlength="1000"></label><button type="submit" class="go">Add</button></form>' +
-      '<p class="anal">Organisations, units and places. A private person only when sanctioned or charged. Kept in this browser only.</p></details>';
+      '<p class="anal">Organisations, units, places and public officeholders. A private person only when sanctioned or charged. Kept in this browser only.</p></details>';
     return h;
   }
 
@@ -261,7 +261,7 @@
     "ent:ds:isoc4": "la_c2", "ent:ds:army4": "la_c2", "ent:ds:sbpac": "la_gov", "ent:ds:rangers": "la_armed", "ent:ds:or-sor": "la_security",
     "ent:ds:chor-ror-bor": "la_security", "ent:ds:bpp": "la_border", "ent:ds:police9": "la_police", "ent:ds:marines-nara": "la_amphib",
     "ent:ds:thai-panel": "la_gov", "ent:ds:my-facilitator": "la_gov", "ent:ds:akps": "la_border", "ent:ds:gof": "la_police", "ent:ds:my-customs": "la_customs", "ent:ds:dsw": "la_org" };
-  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", "police or security force": "la_police", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place",
+  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", "police or security force": "la_police", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", official: "la_person", "official (public officeholder)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place",
     "incident: bombing or IED": "la_bomb", "incident: shooting or armed attack": "la_shoot", "incident: seizure, arrest or raid": "la_seize" };
   function symOf(e) { if (e && (e.type === "route" || e.type === "vehicle" || e.type === "other")) return ""; var k = e && (SYM_ID[e.id] || SYM_TYPE[e.type] || "la_group"), sd = e && sideOf(e.id);
     if (sd && W.OSAP_SYM && W.OSAP_SYM.d[k + "_" + sd]) return k + "_" + sd; return W.OSAP_SYM && W.OSAP_SYM.d[k] ? k : ""; }
@@ -300,7 +300,7 @@
     if (S.sel && nodes[S.sel]) { keep[S.sel] = 1; E.forEach(function (e) { if (e.a === S.sel || e.b === S.sel) keep[e.a] = keep[e.b] = 1; }); }
     N = N.filter(function (n) { return keep[n.id]; });
     E = E.filter(function (e) { return keep[e.a] && keep[e.b]; });
-    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.type = kind[n.id][1] || ""; n.person = /^person/.test(n.type); } });
+    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.type = kind[n.id][1] || ""; n.person = /^(person|official)/.test(n.type); } });
     return { N: N, E: E, nodes: nodes, P: P };
   }
   /* a small force layout, started from a circle so the same data always draws the same picture */
