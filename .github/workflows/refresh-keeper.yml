@@ -46,11 +46,18 @@ jobs:
                 echo "$(date -u +%H:%MZ) a $lane refresh is still queued; skipping this round"
               fi
             done
-            # the conflict tabs (refresh-conflicts.yml) every fourth round, about once an hour, unless one is still waiting
+            # the conflict tabs (refresh-conflicts.yml) every fourth round, about once an hour, unless one is still waiting.
+            # Only runs from the last 2 hours count: GitHub can leave a ghost run "queued" for good (one from 7 Oct never
+            # started and can't be cancelled), and counting it stopped every hourly start until the feed went stale.
             round=$(( ${round:-0} + 1 ))
             if [ $(( round % 4 )) = 1 ]; then
-              cw=$(( $(gh run list --workflow refresh-conflicts.yml --branch main --status queued --json databaseId --jq length || echo 0) + $(gh run list --workflow refresh-conflicts.yml --branch main --status in_progress --json databaseId --jq length || echo 0) ))
-              if [ "$cw" = "0" ]; then gh workflow run refresh-conflicts.yml --ref main && echo "$(date -u +%H:%MZ) started the conflict refresh" || true; fi
+              since=$(date -u -d '2 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+              cw=$(( $(gh run list --workflow refresh-conflicts.yml --branch main --status queued --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 0) + $(gh run list --workflow refresh-conflicts.yml --branch main --status in_progress --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 0) ))
+              if [ "$cw" = "0" ]; then
+                gh workflow run refresh-conflicts.yml --ref main && echo "$(date -u +%H:%MZ) started the conflict refresh" || echo "$(date -u +%H:%MZ) could not start the conflict refresh"
+              else
+                echo "$(date -u +%H:%MZ) a conflict refresh is still waiting or running; skipping this round"
+              fi
             fi
             # data health: alert on the ntfy health channel when the published data has stopped (never fails the keeper)
             timeout 90 node tools/health.mjs watch || echo "$(date -u +%H:%MZ) health check did not finish"
