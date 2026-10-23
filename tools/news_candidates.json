@@ -1,1282 +1,10 @@
 {
-"note": "PROBE BRANCH ONLY: round 15 national outlets for the 43 countries scoring below 40% on source density",
+"note": "PROBE BRANCH ONLY: round 16 second pass for the 11 weakest countries with no new outlet",
 "feeds": [
 {
-"cc": "eh",
-"outlet": "ECSaharaui",
-"url": "https://ecsaharaui.com/feed/",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "ECSaharaui",
-"url": "https://ecsaharaui.com/rss",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "ECSaharaui",
-"url": "https://ecsaharaui.com/rss.xml",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Futuro Sahara",
-"url": "https://futurosahara.net/feed/",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Futuro Sahara",
-"url": "https://futurosahara.net/rss",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Futuro Sahara",
-"url": "https://futurosahara.net/rss.xml",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Por un Sahara Libre",
-"url": "https://porunsaharalibre.org/feed/",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Por un Sahara Libre",
-"url": "https://porunsaharalibre.org/rss",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Por un Sahara Libre",
-"url": "https://porunsaharalibre.org/rss.xml",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Western Sahara Resource Watch",
-"url": "https://wsrw.org/feed/",
-"lang": "en"
-},
-{
-"cc": "eh",
-"outlet": "Western Sahara Resource Watch",
-"url": "https://wsrw.org/rss",
-"lang": "en"
-},
-{
-"cc": "eh",
-"outlet": "Western Sahara Resource Watch",
-"url": "https://wsrw.org/rss.xml",
-"lang": "en"
-},
-{
-"cc": "eh",
-"outlet": "Sahara Press Service",
-"url": "https://spsrasd.info/feed/",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Sahara Press Service",
-"url": "https://spsrasd.info/rss",
-"lang": "es"
-},
-{
-"cc": "eh",
-"outlet": "Sahara Press Service",
-"url": "https://spsrasd.info/rss.xml",
-"lang": "es"
-},
-{
-"cc": "sm",
-"outlet": "GiornaleSM",
-"url": "https://giornalesm.com/feed/",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "GiornaleSM",
-"url": "https://giornalesm.com/rss",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "GiornaleSM",
-"url": "https://giornalesm.com/rss.xml",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "San Marino Fixing",
-"url": "https://sanmarinofixing.com/feed/",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "San Marino Fixing",
-"url": "https://sanmarinofixing.com/rss",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "San Marino Fixing",
-"url": "https://sanmarinofixing.com/rss.xml",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "L'informazione SM",
-"url": "https://libertas.sm/feed/",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "L'informazione SM",
-"url": "https://libertas.sm/rss",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "L'informazione SM",
-"url": "https://libertas.sm/rss.xml",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "Corriere Romagna San Marino",
-"url": "https://corriereromagna.it/san-marino/feed/",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "Corriere Romagna San Marino",
-"url": "https://corriereromagna.it/san-marino/rss",
-"lang": "it"
-},
-{
-"cc": "sm",
-"outlet": "Corriere Romagna San Marino",
-"url": "https://corriereromagna.it/san-marino/rss.xml",
-"lang": "it"
-},
-{
-"cc": "nr",
-"outlet": "Nauru Government",
-"url": "https://naurugov.nr/feed/",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Nauru Government",
-"url": "https://naurugov.nr/rss",
-"lang": "en"
-},
-{
-"cc": "nr",
-"outlet": "Nauru Government",
-"url": "https://naurugov.nr/rss.xml",
-"lang": "en"
-},
-{
-"cc": "mc",
-"outlet": "Monaco Hebdo",
-"url": "https://monacohebdo.mc/feed/",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Monaco Hebdo",
-"url": "https://monacohebdo.mc/rss",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Monaco Hebdo",
-"url": "https://monacohebdo.mc/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Monaco Matin",
-"url": "https://monacomatin.mc/feed/",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Monaco Matin",
-"url": "https://monacomatin.mc/rss",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Monaco Matin",
-"url": "https://monacomatin.mc/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Gouvernement Princier",
-"url": "https://gouv.mc/feed/",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Gouvernement Princier",
-"url": "https://gouv.mc/rss",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Gouvernement Princier",
-"url": "https://gouv.mc/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Nice-Matin Monaco",
-"url": "https://nicematin.com/monaco/feed/",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Nice-Matin Monaco",
-"url": "https://nicematin.com/monaco/rss",
-"lang": "fr"
-},
-{
-"cc": "mc",
-"outlet": "Nice-Matin Monaco",
-"url": "https://nicematin.com/monaco/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "li",
-"outlet": "Liechtensteiner Vaterland",
-"url": "https://vaterland.li/feed/",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Liechtensteiner Vaterland",
-"url": "https://vaterland.li/rss",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Liechtensteiner Vaterland",
-"url": "https://vaterland.li/rss.xml",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Liechtensteiner Volksblatt",
-"url": "https://volksblatt.li/feed/",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Liechtensteiner Volksblatt",
-"url": "https://volksblatt.li/rss",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Liechtensteiner Volksblatt",
-"url": "https://volksblatt.li/rss.xml",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "lie:zeit",
-"url": "https://lie-zeit.li/feed/",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "lie:zeit",
-"url": "https://lie-zeit.li/rss",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "lie:zeit",
-"url": "https://lie-zeit.li/rss.xml",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Radio Liechtenstein",
-"url": "https://radio.li/feed/",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Radio Liechtenstein",
-"url": "https://radio.li/rss",
-"lang": "de"
-},
-{
-"cc": "li",
-"outlet": "Radio Liechtenstein",
-"url": "https://radio.li/rss.xml",
-"lang": "de"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles News Agency",
-"url": "https://seychellesnewsagency.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles News Agency",
-"url": "https://seychellesnewsagency.com/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles News Agency",
-"url": "https://seychellesnewsagency.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Nation",
-"url": "https://nation.sc/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Nation",
-"url": "https://nation.sc/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Nation",
-"url": "https://nation.sc/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Today in Seychelles",
-"url": "https://todayseychelles.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Today in Seychelles",
-"url": "https://todayseychelles.com/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Today in Seychelles",
-"url": "https://todayseychelles.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Weekly",
-"url": "https://seychellesweekly.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Weekly",
-"url": "https://seychellesweekly.com/rss",
-"lang": "en"
-},
-{
-"cc": "sc",
-"outlet": "Seychelles Weekly",
-"url": "https://seychellesweekly.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Antigua News Room",
-"url": "https://antiguanewsroom.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Antigua News Room",
-"url": "https://antiguanewsroom.com/rss",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Antigua News Room",
-"url": "https://antiguanewsroom.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Antigua.news",
-"url": "https://antigua.news/feed/",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Antigua.news",
-"url": "https://antigua.news/rss",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Antigua.news",
-"url": "https://antigua.news/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Pointe FM",
-"url": "https://pointefm.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Pointe FM",
-"url": "https://pointefm.com/rss",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Pointe FM",
-"url": "https://pointefm.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "268today",
-"url": "https://268today.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "268today",
-"url": "https://268today.com/rss",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "268today",
-"url": "https://268today.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Real News Antigua",
-"url": "https://realnewsantigua.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Real News Antigua",
-"url": "https://realnewsantigua.com/rss",
-"lang": "en"
-},
-{
-"cc": "ag",
-"outlet": "Real News Antigua",
-"url": "https://realnewsantigua.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Observer",
-"url": "https://new.observer.org.sz/feed/",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Observer",
-"url": "https://new.observer.org.sz/rss",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Observer",
-"url": "https://new.observer.org.sz/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Swaziland News",
-"url": "https://swazilandnews.co.za/feed/",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Swaziland News",
-"url": "https://swazilandnews.co.za/rss",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Swaziland News",
-"url": "https://swazilandnews.co.za/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Positive News",
-"url": "https://eswatinipositivenews.online/feed/",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Positive News",
-"url": "https://eswatinipositivenews.online/rss",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Positive News",
-"url": "https://eswatinipositivenews.online/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Daily News",
-"url": "https://eswatinidailynews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Daily News",
-"url": "https://eswatinidailynews.com/rss",
-"lang": "en"
-},
-{
-"cc": "sz",
-"outlet": "Eswatini Daily News",
-"url": "https://eswatinidailynews.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "SKNVibes",
-"url": "https://sknvibes.com/feed/",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "SKNVibes",
-"url": "https://sknvibes.com/rss",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "SKNVibes",
-"url": "https://sknvibes.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "St Kitts Nevis Observer",
-"url": "https://thestkittsnevisobserver.com/feed/",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "St Kitts Nevis Observer",
-"url": "https://thestkittsnevisobserver.com/rss",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "St Kitts Nevis Observer",
-"url": "https://thestkittsnevisobserver.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "ZIZ Online",
-"url": "https://zizonline.com/feed/",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "ZIZ Online",
-"url": "https://zizonline.com/rss",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "ZIZ Online",
-"url": "https://zizonline.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "Times Caribbean",
-"url": "https://timescaribbeanonline.com/feed/",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "Times Caribbean",
-"url": "https://timescaribbeanonline.com/rss",
-"lang": "en"
-},
-{
-"cc": "kn",
-"outlet": "Times Caribbean",
-"url": "https://timescaribbeanonline.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Emo News",
-"url": "https://emonewsdm.com/feed/",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Emo News",
-"url": "https://emonewsdm.com/rss",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Emo News",
-"url": "https://emonewsdm.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Dominica Vibes",
-"url": "https://dominicavibes.dm/feed/",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Dominica Vibes",
-"url": "https://dominicavibes.dm/rss",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Dominica Vibes",
-"url": "https://dominicavibes.dm/rss.xml",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Nature Isle News",
-"url": "https://natureisle.news/feed/",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Nature Isle News",
-"url": "https://natureisle.news/rss",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Nature Isle News",
-"url": "https://natureisle.news/rss.xml",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Q95 Dominica",
-"url": "https://q95da.com/feed/",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Q95 Dominica",
-"url": "https://q95da.com/rss",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Q95 Dominica",
-"url": "https://q95da.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Kairi FM",
-"url": "https://kairifm.com/feed/",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Kairi FM",
-"url": "https://kairifm.com/rss",
-"lang": "en"
-},
-{
-"cc": "dm",
-"outlet": "Kairi FM",
-"url": "https://kairifm.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "pw",
-"outlet": "Oceania TV",
-"url": "https://oceaniatv.net/feed/",
-"lang": "en"
-},
-{
-"cc": "pw",
-"outlet": "Oceania TV",
-"url": "https://oceaniatv.net/rss",
-"lang": "en"
-},
-{
-"cc": "pw",
-"outlet": "Oceania TV",
-"url": "https://oceaniatv.net/rss.xml",
-"lang": "en"
-},
-{
-"cc": "pw",
-"outlet": "Tia Belau",
-"url": "https://tiabelaunews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "pw",
-"outlet": "Tia Belau",
-"url": "https://tiabelaunews.com/rss",
-"lang": "en"
-},
-{
-"cc": "pw",
-"outlet": "Tia Belau",
-"url": "https://tiabelaunews.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "News784",
-"url": "https://news784.com/feed/",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "News784",
-"url": "https://news784.com/rss",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "News784",
-"url": "https://news784.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "Asberth News Network",
-"url": "https://asbertnews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "Asberth News Network",
-"url": "https://asbertnews.com/rss",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "Asberth News Network",
-"url": "https://asbertnews.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "The Vincentian",
-"url": "https://thevincentian.com/feed/",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "The Vincentian",
-"url": "https://thevincentian.com/rss",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "The Vincentian",
-"url": "https://thevincentian.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "One News SVG",
-"url": "https://onenewsstvincent.com/feed/",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "One News SVG",
-"url": "https://onenewsstvincent.com/rss",
-"lang": "en"
-},
-{
-"cc": "vc",
-"outlet": "One News SVG",
-"url": "https://onenewsstvincent.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Mmegi",
-"url": "https://mmegi.bw/feed/",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Mmegi",
-"url": "https://mmegi.bw/rss",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Mmegi",
-"url": "https://mmegi.bw/rss.xml",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "The Voice Botswana",
-"url": "https://thevoicebw.com/feed/",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "The Voice Botswana",
-"url": "https://thevoicebw.com/rss",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "The Voice Botswana",
-"url": "https://thevoicebw.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Weekend Post",
-"url": "https://weekendpost.co.bw/feed/",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Weekend Post",
-"url": "https://weekendpost.co.bw/rss",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Weekend Post",
-"url": "https://weekendpost.co.bw/rss.xml",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Botswana Gazette",
-"url": "https://thegazette.news/feed/",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Botswana Gazette",
-"url": "https://thegazette.news/rss",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Botswana Gazette",
-"url": "https://thegazette.news/rss.xml",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Daily News BW",
-"url": "https://dailynews.gov.bw/feed/",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Daily News BW",
-"url": "https://dailynews.gov.bw/rss",
-"lang": "en"
-},
-{
-"cc": "bw",
-"outlet": "Daily News BW",
-"url": "https://dailynews.gov.bw/rss.xml",
-"lang": "en"
-},
-{
-"cc": "xk",
-"outlet": "Telegrafi",
-"url": "https://telegrafi.com/feed/",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Telegrafi",
-"url": "https://telegrafi.com/rss",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Telegrafi",
-"url": "https://telegrafi.com/rss.xml",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Gazeta Express",
-"url": "https://gazetaexpress.com/feed/",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Gazeta Express",
-"url": "https://gazetaexpress.com/rss",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Gazeta Express",
-"url": "https://gazetaexpress.com/rss.xml",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Kallxo",
-"url": "https://kallxo.com/feed/",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Kallxo",
-"url": "https://kallxo.com/rss",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Kallxo",
-"url": "https://kallxo.com/rss.xml",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Insajderi",
-"url": "https://insajderi.org/feed/",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Insajderi",
-"url": "https://insajderi.org/rss",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Insajderi",
-"url": "https://insajderi.org/rss.xml",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Indeksonline",
-"url": "https://indeksonline.net/feed/",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Indeksonline",
-"url": "https://indeksonline.net/rss",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Indeksonline",
-"url": "https://indeksonline.net/rss.xml",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Kosovapress",
-"url": "https://kosovapress.com/feed/",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Kosovapress",
-"url": "https://kosovapress.com/rss",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Kosovapress",
-"url": "https://kosovapress.com/rss.xml",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "Kosovo Online",
-"url": "https://kosovo-online.com/feed/",
-"lang": "sr"
-},
-{
-"cc": "xk",
-"outlet": "Kosovo Online",
-"url": "https://kosovo-online.com/rss",
-"lang": "sr"
-},
-{
-"cc": "xk",
-"outlet": "Kosovo Online",
-"url": "https://kosovo-online.com/rss.xml",
-"lang": "sr"
-},
-{
-"cc": "xk",
-"outlet": "RTK Live",
-"url": "https://rtklive.com/feed/",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "RTK Live",
-"url": "https://rtklive.com/rss",
-"lang": "sq"
-},
-{
-"cc": "xk",
-"outlet": "RTK Live",
-"url": "https://rtklive.com/rss.xml",
-"lang": "sq"
-},
-{
-"cc": "mv",
-"outlet": "The Edition",
-"url": "https://edition.mv/feed/",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "The Edition",
-"url": "https://edition.mv/rss",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "The Edition",
-"url": "https://edition.mv/rss.xml",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Avas",
-"url": "https://avas.mv/feed/",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Avas",
-"url": "https://avas.mv/rss",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Avas",
-"url": "https://avas.mv/rss.xml",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Corporate Maldives",
-"url": "https://corporatemaldives.com/feed/",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Corporate Maldives",
-"url": "https://corporatemaldives.com/rss",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Corporate Maldives",
-"url": "https://corporatemaldives.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Mihaaru English",
-"url": "https://en.mihaaru.com/feed/",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Mihaaru English",
-"url": "https://en.mihaaru.com/rss",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Mihaaru English",
-"url": "https://en.mihaaru.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "The Press MV",
-"url": "https://thepress.mv/feed/",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "The Press MV",
-"url": "https://thepress.mv/rss",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "The Press MV",
-"url": "https://thepress.mv/rss.xml",
-"lang": "en"
-},
-{
-"cc": "mv",
-"outlet": "Raajje MV",
-"url": "https://raajje.mv/feed/",
-"lang": "dv"
-},
-{
-"cc": "mv",
-"outlet": "Raajje MV",
-"url": "https://raajje.mv/rss",
-"lang": "dv"
-},
-{
-"cc": "mv",
-"outlet": "Raajje MV",
-"url": "https://raajje.mv/rss.xml",
-"lang": "dv"
-},
-{
-"cc": "mh",
-"outlet": "Marshall Islands Gov",
-"url": "https://rmigovernment.org/feed/",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "Marshall Islands Gov",
-"url": "https://rmigovernment.org/rss",
-"lang": "en"
-},
-{
-"cc": "mh",
-"outlet": "Marshall Islands Gov",
-"url": "https://rmigovernment.org/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Talamua",
-"url": "https://talamua.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Talamua",
-"url": "https://talamua.com/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Talamua",
-"url": "https://talamua.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Savali News",
-"url": "https://savalinews.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Savali News",
-"url": "https://savalinews.com/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Savali News",
-"url": "https://savalinews.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Newsline Samoa",
-"url": "https://newslinesamoa.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Newsline Samoa",
-"url": "https://newslinesamoa.com/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Newsline Samoa",
-"url": "https://newslinesamoa.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://samoaobserver.ws/feed/",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://samoaobserver.ws/rss",
-"lang": "en"
-},
-{
-"cc": "ws",
-"outlet": "Samoa Observer",
-"url": "https://samoaobserver.ws/rss.xml",
-"lang": "en"
-},
-{
 "cc": "kw",
-"outlet": "Kuwait Times",
-"url": "https://kuwaittimes.com/feed/",
-"lang": "en"
-},
-{
-"cc": "kw",
-"outlet": "Kuwait Times",
-"url": "https://kuwaittimes.com/rss",
-"lang": "en"
-},
-{
-"cc": "kw",
-"outlet": "Kuwait Times",
-"url": "https://kuwaittimes.com/rss.xml",
+"outlet": "Arab Times",
+"url": "https://www.arabtimesonline.com/feed/",
 "lang": "en"
 },
 {
@@ -1288,43 +16,103 @@
 {
 "cc": "kw",
 "outlet": "Arab Times",
-"url": "https://arabtimesonline.com/rss",
+"url": "https://www.arabtimesonline.com/rss.xml",
 "lang": "en"
 },
 {
 "cc": "kw",
 "outlet": "Arab Times",
-"url": "https://arabtimesonline.com/rss.xml",
+"url": "https://www.arabtimesonline.com/news/feed/",
 "lang": "en"
 },
 {
 "cc": "kw",
-"outlet": "KUNA",
-"url": "https://kuna.net.kw/feed/",
+"outlet": "Kuwait Times",
+"url": "https://kuwaittimes.com/feed/",
 "lang": "en"
 },
 {
 "cc": "kw",
-"outlet": "KUNA",
-"url": "https://kuna.net.kw/rss",
+"outlet": "Kuwait Times",
+"url": "https://www.kuwaittimes.com/feed/",
 "lang": "en"
 },
 {
 "cc": "kw",
-"outlet": "KUNA",
-"url": "https://kuna.net.kw/rss.xml",
+"outlet": "Kuwait Times",
+"url": "https://kuwaittimes.com/rss.xml",
 "lang": "en"
 },
 {
 "cc": "kw",
-"outlet": "Al Qabas",
-"url": "https://alqabas.com/feed/",
+"outlet": "Kuwait Times",
+"url": "https://kuwaittimes.com/category/kuwait/feed/",
+"lang": "en"
+},
+{
+"cc": "kw",
+"outlet": "Al Seyassah",
+"url": "https://alseyassah.com/feed/",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Seyassah",
+"url": "https://www.alseyassah.com/feed/",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Anba",
+"url": "https://www.alanba.com.kw/rss/",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Anba",
+"url": "https://www.alanba.com.kw/rss.xml",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Rai",
+"url": "https://www.alraimedia.com/rss/",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Rai",
+"url": "https://www.alraimedia.com/feed/",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Rai",
+"url": "https://www.alraimedia.com/rss.xml",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Jarida",
+"url": "https://www.aljarida.com/rss.xml",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Jarida",
+"url": "https://www.aljarida.com/feed/",
 "lang": "ar"
 },
 {
 "cc": "kw",
 "outlet": "Al Qabas",
-"url": "https://alqabas.com/rss",
+"url": "https://www.alqabas.com/rss/",
+"lang": "ar"
+},
+{
+"cc": "kw",
+"outlet": "Al Qabas",
+"url": "https://www.alqabas.com/feed/",
 "lang": "ar"
 },
 {
@@ -1335,542 +123,218 @@
 },
 {
 "cc": "kw",
-"outlet": "Al Rai",
-"url": "https://alraimedia.com/feed/",
+"outlet": "Annahar Kuwait",
+"url": "https://www.annaharkw.com/rss",
 "lang": "ar"
 },
 {
 "cc": "kw",
-"outlet": "Al Rai",
-"url": "https://alraimedia.com/rss",
+"outlet": "Annahar Kuwait",
+"url": "https://www.annaharkw.com/feed/",
 "lang": "ar"
 },
 {
 "cc": "kw",
-"outlet": "Al Rai",
-"url": "https://alraimedia.com/rss.xml",
+"outlet": "KUNA",
+"url": "https://www.kuna.net.kw/rss.aspx?Language=en",
+"lang": "en"
+},
+{
+"cc": "kw",
+"outlet": "KUNA",
+"url": "https://www.kuna.net.kw/RSS.aspx",
+"lang": "en"
+},
+{
+"cc": "kw",
+"outlet": "KUNA",
+"url": "https://www.kuna.net.kw/rss/RssFeed.aspx?language=en",
+"lang": "en"
+},
+{
+"cc": "kw",
+"outlet": "Al Watan Kuwait",
+"url": "https://alwatan.com.kw/feed/",
 "lang": "ar"
 },
 {
 "cc": "kw",
-"outlet": "Al Jarida",
-"url": "https://aljarida.com/feed/",
+"outlet": "Al Watan Kuwait",
+"url": "https://www.alwatan.com.kw/rss",
 "lang": "ar"
 },
 {
 "cc": "kw",
-"outlet": "Al Jarida",
-"url": "https://aljarida.com/rss",
-"lang": "ar"
+"outlet": "Kuwait Local",
+"url": "https://kuwaitlocal.com/feed/",
+"lang": "en"
 },
 {
 "cc": "kw",
-"outlet": "Al Jarida",
-"url": "https://aljarida.com/rss.xml",
-"lang": "ar"
-},
-{
-"cc": "om",
-"outlet": "Times of Oman",
-"url": "https://timesofoman.com/feed/",
+"outlet": "Kuwait Local",
+"url": "https://www.kuwaitlocal.com/news/rss",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Times of Oman",
-"url": "https://timesofoman.com/rss",
+"cc": "sc",
+"outlet": "Seychelles News Agency",
+"url": "https://www.seychellesnewsagency.com/rss",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Times of Oman",
-"url": "https://timesofoman.com/rss.xml",
+"cc": "sc",
+"outlet": "Seychelles News Agency",
+"url": "https://www.seychellesnewsagency.com/rss/news",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Muscat Daily",
-"url": "https://muscatdaily.com/feed/",
+"cc": "sc",
+"outlet": "Seychelles News Agency",
+"url": "https://seychellesnewsagency.com/rss.xml",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Muscat Daily",
-"url": "https://muscatdaily.com/rss",
+"cc": "sc",
+"outlet": "Seychelles Nation",
+"url": "https://www.nation.sc/feed",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Muscat Daily",
-"url": "https://muscatdaily.com/rss.xml",
+"cc": "sc",
+"outlet": "Seychelles Nation",
+"url": "https://www.nation.sc/rss",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Oman News Agency",
-"url": "https://omannews.gov.om/feed/",
+"cc": "sc",
+"outlet": "Seychelles Nation",
+"url": "https://nation.sc/feed/",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Oman News Agency",
-"url": "https://omannews.gov.om/rss",
+"cc": "sc",
+"outlet": "Seychelles Nation",
+"url": "https://www.nation.sc/articles/rss",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Oman News Agency",
-"url": "https://omannews.gov.om/rss.xml",
+"cc": "sc",
+"outlet": "SBC Seychelles",
+"url": "https://www.sbc.sc/feed/",
 "lang": "en"
 },
 {
-"cc": "om",
-"outlet": "Atheer",
-"url": "https://atheer.om/feed/",
-"lang": "ar"
-},
-{
-"cc": "om",
-"outlet": "Atheer",
-"url": "https://atheer.om/rss",
-"lang": "ar"
-},
-{
-"cc": "om",
-"outlet": "Atheer",
-"url": "https://atheer.om/rss.xml",
-"lang": "ar"
-},
-{
-"cc": "om",
-"outlet": "Shabiba",
-"url": "https://shabiba.com/feed/",
-"lang": "ar"
-},
-{
-"cc": "om",
-"outlet": "Shabiba",
-"url": "https://shabiba.com/rss",
-"lang": "ar"
-},
-{
-"cc": "om",
-"outlet": "Shabiba",
-"url": "https://shabiba.com/rss.xml",
-"lang": "ar"
-},
-{
-"cc": "sl",
-"outlet": "Awoko",
-"url": "https://awokonewspaper.sl/feed/",
+"cc": "sc",
+"outlet": "SBC Seychelles",
+"url": "https://sbc.sc/feed/",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "Awoko",
-"url": "https://awokonewspaper.sl/rss",
+"cc": "sc",
+"outlet": "SBC Seychelles",
+"url": "https://www.sbc.sc/rss",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "Awoko",
-"url": "https://awokonewspaper.sl/rss.xml",
+"cc": "sc",
+"outlet": "Today in Seychelles",
+"url": "https://www.todayinseychelles.com/feed/",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "Politico SL",
-"url": "https://politicosl.com/feed/",
+"cc": "sc",
+"outlet": "Today in Seychelles",
+"url": "https://todayinseychelles.com/feed/",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "Politico SL",
-"url": "https://politicosl.com/rss",
+"cc": "sc",
+"outlet": "Seychelles Weekly",
+"url": "https://www.seychellesweekly.com/feed/",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "Politico SL",
-"url": "https://politicosl.com/rss.xml",
+"cc": "sc",
+"outlet": "Seychelles Weekly",
+"url": "https://seychellesweekly.com/feed/",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "The Calabash",
-"url": "https://thecalabashnewspaper.com/feed/",
+"cc": "sc",
+"outlet": "The Seychelles Tribune",
+"url": "https://thetribune.sc/feed/",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "The Calabash",
-"url": "https://thecalabashnewspaper.com/rss",
+"cc": "sc",
+"outlet": "The Seychelles Tribune",
+"url": "https://www.thetribune.sc/feed/",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "The Calabash",
-"url": "https://thecalabashnewspaper.com/rss.xml",
+"cc": "sc",
+"outlet": "State House Seychelles",
+"url": "https://www.statehouse.gov.sc/feed",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "Sierra Express Media",
-"url": "https://sierraexpressmedia.com/feed/",
+"cc": "sc",
+"outlet": "State House Seychelles",
+"url": "https://www.statehouse.gov.sc/news/rss",
 "lang": "en"
 },
 {
-"cc": "sl",
-"outlet": "Sierra Express Media",
-"url": "https://sierraexpressmedia.com/rss",
-"lang": "en"
-},
-{
-"cc": "sl",
-"outlet": "Sierra Express Media",
-"url": "https://sierraexpressmedia.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sl",
-"outlet": "SwitSalone",
-"url": "https://switsalone.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sl",
-"outlet": "SwitSalone",
-"url": "https://switsalone.com/rss",
-"lang": "en"
-},
-{
-"cc": "sl",
-"outlet": "SwitSalone",
-"url": "https://switsalone.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "sl",
-"outlet": "Concord Times",
-"url": "https://slconcordtimes.com/feed/",
-"lang": "en"
-},
-{
-"cc": "sl",
-"outlet": "Concord Times",
-"url": "https://slconcordtimes.com/rss",
-"lang": "en"
-},
-{
-"cc": "sl",
-"outlet": "Concord Times",
-"url": "https://slconcordtimes.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ao",
-"outlet": "Novo Jornal",
-"url": "https://novojornal.co.ao/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Novo Jornal",
-"url": "https://novojornal.co.ao/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Novo Jornal",
-"url": "https://novojornal.co.ao/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "ANGOP",
-"url": "https://angop.ao/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "ANGOP",
-"url": "https://angop.ao/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "ANGOP",
-"url": "https://angop.ao/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Jornal de Angola",
-"url": "https://jornaldeangola.ao/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Jornal de Angola",
-"url": "https://jornaldeangola.ao/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Jornal de Angola",
-"url": "https://jornaldeangola.ao/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Club-K",
-"url": "https://club-k.net/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Club-K",
-"url": "https://club-k.net/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Club-K",
-"url": "https://club-k.net/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Ver Angola",
-"url": "https://verangola.net/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Ver Angola",
-"url": "https://verangola.net/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Ver Angola",
-"url": "https://verangola.net/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Maka Angola",
-"url": "https://makaangola.org/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Maka Angola",
-"url": "https://makaangola.org/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Maka Angola",
-"url": "https://makaangola.org/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Expansão",
-"url": "https://expansao.co.ao/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Expansão",
-"url": "https://expansao.co.ao/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Expansão",
-"url": "https://expansao.co.ao/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Platina Line",
-"url": "https://platinaline.com/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Platina Line",
-"url": "https://platinaline.com/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Platina Line",
-"url": "https://platinaline.com/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Correio da Kianda",
-"url": "https://correiokianda.info/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Correio da Kianda",
-"url": "https://correiokianda.info/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Correio da Kianda",
-"url": "https://correiokianda.info/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Nova Gazeta",
-"url": "https://novagazeta.co.ao/feed/",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Nova Gazeta",
-"url": "https://novagazeta.co.ao/rss",
-"lang": "pt"
-},
-{
-"cc": "ao",
-"outlet": "Nova Gazeta",
-"url": "https://novagazeta.co.ao/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "tg",
-"outlet": "Togo First",
-"url": "https://togofirst.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Togo First",
-"url": "https://togofirst.com/rss",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Togo First",
-"url": "https://togofirst.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Republic of Togo",
-"url": "https://republicoftogo.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Republic of Togo",
-"url": "https://republicoftogo.com/rss",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Republic of Togo",
-"url": "https://republicoftogo.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Togo Breaking News",
-"url": "https://togobreakingnews.info/feed/",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Togo Breaking News",
-"url": "https://togobreakingnews.info/rss",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Togo Breaking News",
-"url": "https://togobreakingnews.info/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Lomé Infos",
-"url": "https://lomeinfos.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Lomé Infos",
-"url": "https://lomeinfos.com/rss",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Lomé Infos",
-"url": "https://lomeinfos.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Savoir News",
-"url": "https://savoirnews.net/feed/",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Savoir News",
-"url": "https://savoirnews.net/rss",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "Savoir News",
-"url": "https://savoirnews.net/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "24heureinfo",
-"url": "https://24heureinfo.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "24heureinfo",
-"url": "https://24heureinfo.com/rss",
-"lang": "fr"
-},
-{
-"cc": "tg",
-"outlet": "24heureinfo",
-"url": "https://24heureinfo.com/rss.xml",
+"cc": "sc",
+"outlet": "Le Seychellois Hebdo",
+"url": "https://www.leseychelloishebdo.com/feed/",
 "lang": "fr"
 },
 {
 "cc": "tt",
-"outlet": "Newsday TT",
+"outlet": "TV6",
+"url": "https://www.tv6tnt.com/search/?f=rss&t=article&l=50",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "TV6",
+"url": "https://www.tv6tnt.com/search/?f=rss",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "TV6",
+"url": "https://www.tv6tnt.com/news/?f=rss",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "Newsday",
 "url": "https://newsday.co.tt/feed/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "Newsday TT",
-"url": "https://newsday.co.tt/rss",
+"outlet": "Newsday",
+"url": "https://www.newsday.co.tt/feed/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "Newsday TT",
-"url": "https://newsday.co.tt/rss.xml",
+"outlet": "Newsday",
+"url": "https://newsday.co.tt/category/news/feed/",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "Trinidad Guardian",
+"url": "https://www.guardian.co.tt/rss",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "Trinidad Guardian",
+"url": "https://www.guardian.co.tt/news/rss",
 "lang": "en"
 },
 {
@@ -1881,56 +345,8 @@
 },
 {
 "cc": "tt",
-"outlet": "Trinidad Guardian",
-"url": "https://guardian.co.tt/rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Trinidad Guardian",
-"url": "https://guardian.co.tt/rss.xml",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TV6 TT",
-"url": "https://tv6tnt.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TV6 TT",
-"url": "https://tv6tnt.com/rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "TV6 TT",
-"url": "https://tv6tnt.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Wired868",
-"url": "https://wired868.com/feed/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Wired868",
-"url": "https://wired868.com/rss",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "Wired868",
-"url": "https://wired868.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "tt",
 "outlet": "Loop TT",
-"url": "https://tt.loopnews.com/feed/",
+"url": "https://tt.loopnews.com/rss.xml",
 "lang": "en"
 },
 {
@@ -1942,613 +358,601 @@
 {
 "cc": "tt",
 "outlet": "Loop TT",
-"url": "https://tt.loopnews.com/rss.xml",
+"url": "https://www.looptt.com/rss.xml",
 "lang": "en"
 },
 {
-"cc": "tm",
-"outlet": "Turkmenportal",
-"url": "https://turkmenportal.com/feed/",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Turkmenportal",
-"url": "https://turkmenportal.com/rss",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Turkmenportal",
-"url": "https://turkmenportal.com/rss.xml",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Arzuw News",
-"url": "https://arzuw.news/feed/",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Arzuw News",
-"url": "https://arzuw.news/rss",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Arzuw News",
-"url": "https://arzuw.news/rss.xml",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Business Turkmenistan",
-"url": "https://business.com.tm/feed/",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Business Turkmenistan",
-"url": "https://business.com.tm/rss",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Business Turkmenistan",
-"url": "https://business.com.tm/rss.xml",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Orient TM",
-"url": "https://orient.tm/feed/",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Orient TM",
-"url": "https://orient.tm/rss",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Orient TM",
-"url": "https://orient.tm/rss.xml",
-"lang": "ru"
-},
-{
-"cc": "tm",
-"outlet": "Azatlyk Radiosy",
-"url": "https://azathabar.com/feed/",
-"lang": "tk"
-},
-{
-"cc": "tm",
-"outlet": "Azatlyk Radiosy",
-"url": "https://azathabar.com/rss",
-"lang": "tk"
-},
-{
-"cc": "tm",
-"outlet": "Azatlyk Radiosy",
-"url": "https://azathabar.com/rss.xml",
-"lang": "tk"
-},
-{
-"cc": "gw",
-"outlet": "Conosaba do Porto",
-"url": "https://conosaba.blogspot.com/feeds/posts/default?alt=rss",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "Radio Sol Mansi",
-"url": "https://radiosolmansi.net/feed/",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "Radio Sol Mansi",
-"url": "https://radiosolmansi.net/rss",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "Radio Sol Mansi",
-"url": "https://radiosolmansi.net/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "Ditadura do Consenso",
-"url": "https://ditaduraeconsenso.blogspot.com/feeds/posts/default?alt=rss",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "Bissau Digital",
-"url": "https://bissaudigital.com/feed/",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "Bissau Digital",
-"url": "https://bissaudigital.com/rss",
-"lang": "pt"
-},
-{
-"cc": "gw",
-"outlet": "Bissau Digital",
-"url": "https://bissaudigital.com/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "na",
-"outlet": "Namibian Sun",
-"url": "https://namibiansun.com/feed/",
+"cc": "tt",
+"outlet": "TTT News",
+"url": "https://www.ttt.live/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Namibian Sun",
-"url": "https://namibiansun.com/rss",
+"cc": "tt",
+"outlet": "TTT News",
+"url": "https://ttt.live/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Namibian Sun",
-"url": "https://namibiansun.com/rss.xml",
+"cc": "tt",
+"outlet": "Wired868",
+"url": "https://wired868.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Informanté",
-"url": "https://informante.web.na/feed/",
+"cc": "tt",
+"outlet": "Wired868",
+"url": "https://www.wired868.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Informanté",
-"url": "https://informante.web.na/rss",
+"cc": "tt",
+"outlet": "Government of T&T news",
+"url": "https://www.news.gov.tt/rss.xml",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Informanté",
-"url": "https://informante.web.na/rss.xml",
+"cc": "tt",
+"outlet": "Government of T&T news",
+"url": "https://www.news.gov.tt/feed",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Windhoek Observer",
-"url": "https://observer24.com.na/feed/",
+"cc": "tt",
+"outlet": "Government of T&T news",
+"url": "https://www.ttparliament.org/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Windhoek Observer",
-"url": "https://observer24.com.na/rss",
+"cc": "tt",
+"outlet": "TT Newsflash",
+"url": "https://ttnewsflash.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Windhoek Observer",
-"url": "https://observer24.com.na/rss.xml",
+"cc": "tt",
+"outlet": "Power 102 FM",
+"url": "https://power102fm.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "NBC Namibia",
-"url": "https://nbcnews.na/feed/",
+"cc": "tt",
+"outlet": "Power 102 FM",
+"url": "https://www.power102fm.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "NBC Namibia",
-"url": "https://nbcnews.na/rss",
+"cc": "tt",
+"outlet": "i95.5 FM",
+"url": "https://i955fm.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "NBC Namibia",
-"url": "https://nbcnews.na/rss.xml",
+"cc": "tt",
+"outlet": "i95.5 FM",
+"url": "https://www.i955fm.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "The Brief NA",
-"url": "https://thebrief.com.na/feed/",
+"cc": "tt",
+"outlet": "Tobago News",
+"url": "https://www.thetobagonews.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "The Brief NA",
-"url": "https://thebrief.com.na/rss",
+"cc": "tt",
+"outlet": "Tobago News",
+"url": "https://tobagonews.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "The Brief NA",
-"url": "https://thebrief.com.na/rss.xml",
+"cc": "lc",
+"outlet": "Saint Lucia News Online",
+"url": "https://www.stlucianewsonline.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Eagle FM",
-"url": "https://eaglefm.com.na/feed/",
+"cc": "lc",
+"outlet": "Saint Lucia News Online",
+"url": "https://stlucianewsonline.com/category/news/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Eagle FM",
-"url": "https://eaglefm.com.na/rss",
+"cc": "lc",
+"outlet": "St Lucia Star",
+"url": "https://stluciastar.com/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Eagle FM",
-"url": "https://eaglefm.com.na/rss.xml",
+"cc": "lc",
+"outlet": "St Lucia Star",
+"url": "https://www.stluciastar.com/category/news/feed/",
 "lang": "en"
 },
 {
-"cc": "na",
-"outlet": "Allgemeine Zeitung",
-"url": "https://az.com.na/feed/",
-"lang": "de"
-},
-{
-"cc": "na",
-"outlet": "Allgemeine Zeitung",
-"url": "https://az.com.na/rss",
-"lang": "de"
-},
-{
-"cc": "na",
-"outlet": "Allgemeine Zeitung",
-"url": "https://az.com.na/rss.xml",
-"lang": "de"
-},
-{
-"cc": "ad",
-"outlet": "Altaveu",
-"url": "https://altaveu.com/feed/",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Altaveu",
-"url": "https://altaveu.com/rss",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Altaveu",
-"url": "https://altaveu.com/rss.xml",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Ara Andorra",
-"url": "https://ara.ad/feed/",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Ara Andorra",
-"url": "https://ara.ad/rss",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Ara Andorra",
-"url": "https://ara.ad/rss.xml",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "El Periòdic d'Andorra",
-"url": "https://elperiodic.ad/feed/",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "El Periòdic d'Andorra",
-"url": "https://elperiodic.ad/rss",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "El Periòdic d'Andorra",
-"url": "https://elperiodic.ad/rss.xml",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Andorra Difusió",
-"url": "https://andorradifusio.ad/feed/",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Andorra Difusió",
-"url": "https://andorradifusio.ad/rss",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Andorra Difusió",
-"url": "https://andorradifusio.ad/rss.xml",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Forum.ad",
-"url": "https://forum.ad/feed/",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Forum.ad",
-"url": "https://forum.ad/rss",
-"lang": "ca"
-},
-{
-"cc": "ad",
-"outlet": "Forum.ad",
-"url": "https://forum.ad/rss.xml",
-"lang": "ca"
-},
-{
-"cc": "bs",
-"outlet": "Nassau Guardian",
-"url": "https://thenassauguardian.com/feed/",
+"cc": "lc",
+"outlet": "Govt of Saint Lucia",
+"url": "https://www.govt.lc/feed",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Nassau Guardian",
-"url": "https://thenassauguardian.com/rss",
+"cc": "lc",
+"outlet": "Govt of Saint Lucia",
+"url": "https://www.govt.lc/news/rss",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Nassau Guardian",
-"url": "https://thenassauguardian.com/rss.xml",
+"cc": "lc",
+"outlet": "Govt of Saint Lucia",
+"url": "https://www.govt.lc/rss",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Bahamas Press",
-"url": "https://bahamaspress.com/feed/",
+"cc": "lc",
+"outlet": "Radio Caribbean International",
+"url": "https://rcistlucia.com/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Bahamas Press",
-"url": "https://bahamaspress.com/rss",
+"cc": "lc",
+"outlet": "Radio Caribbean International",
+"url": "https://www.rci.fm/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Bahamas Press",
-"url": "https://bahamaspress.com/rss.xml",
+"cc": "lc",
+"outlet": "Radio Caribbean International",
+"url": "https://rci.fm/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Our News Bahamas",
-"url": "https://ournews.bs/feed/",
+"cc": "lc",
+"outlet": "Choice TV",
+"url": "https://choiceslu.com/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Our News Bahamas",
-"url": "https://ournews.bs/rss",
+"cc": "lc",
+"outlet": "Choice TV",
+"url": "https://www.choiceslu.com/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Our News Bahamas",
-"url": "https://ournews.bs/rss.xml",
+"cc": "lc",
+"outlet": "DBS Saint Lucia",
+"url": "https://www.dbsstlucia.com/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "ZNS Bahamas",
-"url": "https://znsbahamas.com/feed/",
+"cc": "lc",
+"outlet": "St Lucia Wave",
+"url": "https://www.thewavestlucia.com/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "ZNS Bahamas",
-"url": "https://znsbahamas.com/rss",
+"cc": "lc",
+"outlet": "St Lucia Wave",
+"url": "https://www.wave.lc/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "ZNS Bahamas",
-"url": "https://znsbahamas.com/rss.xml",
+"cc": "lc",
+"outlet": "HTS",
+"url": "https://htsstlucia.org/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Bahamas Chronicle",
-"url": "https://bahamaschronicle.com/feed/",
+"cc": "lc",
+"outlet": "HTS",
+"url": "https://www.htsstlucia.org/feed/?post_type=post",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Bahamas Chronicle",
-"url": "https://bahamaschronicle.com/rss",
+"cc": "lc",
+"outlet": "NTN Saint Lucia",
+"url": "https://www.ntn.lc/feed/",
 "lang": "en"
 },
 {
-"cc": "bs",
-"outlet": "Bahamas Chronicle",
-"url": "https://bahamaschronicle.com/rss.xml",
+"cc": "lc",
+"outlet": "St Lucia News 4 Now",
+"url": "https://stlucianews4now.com/feed/",
 "lang": "en"
 },
 {
-"cc": "gq",
-"outlet": "Diario Rombe",
-"url": "https://diariorombe.es/feed/",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Diario Rombe",
-"url": "https://diariorombe.es/rss",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Diario Rombe",
-"url": "https://diariorombe.es/rss.xml",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Asodegue",
-"url": "https://asodegue.org/feed/",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Asodegue",
-"url": "https://asodegue.org/rss",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Asodegue",
-"url": "https://asodegue.org/rss.xml",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Guinea Ecuatorial Press",
-"url": "https://guineaecuatorialpress.com/feed/",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Guinea Ecuatorial Press",
-"url": "https://guineaecuatorialpress.com/rss",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Guinea Ecuatorial Press",
-"url": "https://guineaecuatorialpress.com/rss.xml",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Real Equatorial Guinea",
-"url": "https://realequatorialguinea.com/feed/",
+"cc": "ws",
+"outlet": "Samoa Observer",
+"url": "https://www.samoaobserver.ws/feed",
 "lang": "en"
 },
 {
-"cc": "gq",
-"outlet": "Real Equatorial Guinea",
-"url": "https://realequatorialguinea.com/rss",
+"cc": "ws",
+"outlet": "Samoa Observer",
+"url": "https://www.samoaobserver.ws/rss",
 "lang": "en"
 },
 {
-"cc": "gq",
-"outlet": "Real Equatorial Guinea",
-"url": "https://realequatorialguinea.com/rss.xml",
+"cc": "ws",
+"outlet": "Samoa Observer",
+"url": "https://www.samoaobserver.ws/category/samoa/rss",
 "lang": "en"
 },
 {
-"cc": "gq",
-"outlet": "Radio Macuto",
-"url": "https://radiomacuto.net/feed/",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Radio Macuto",
-"url": "https://radiomacuto.net/rss",
-"lang": "es"
-},
-{
-"cc": "gq",
-"outlet": "Radio Macuto",
-"url": "https://radiomacuto.net/rss.xml",
-"lang": "es"
-},
-{
-"cc": "gd",
-"outlet": "The New Today",
-"url": "https://thenewtodaygrenada.com/feed/",
+"cc": "ws",
+"outlet": "Samoa Observer",
+"url": "https://samoaobserver.ws/rss.xml",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "The New Today",
-"url": "https://thenewtodaygrenada.com/rss",
+"cc": "ws",
+"outlet": "Talamua",
+"url": "https://www.talamua.com/feed/",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "The New Today",
-"url": "https://thenewtodaygrenada.com/rss.xml",
+"cc": "ws",
+"outlet": "Talamua",
+"url": "https://talamua.com/feed",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "Grenada Informer",
-"url": "https://grenadainformer.com/feed/",
+"cc": "ws",
+"outlet": "Talamua",
+"url": "https://www.talamua.com/rss",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "Grenada Informer",
-"url": "https://grenadainformer.com/rss",
+"cc": "ws",
+"outlet": "Savali News",
+"url": "https://www.savalinews.com/feed/",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "Grenada Informer",
-"url": "https://grenadainformer.com/rss.xml",
+"cc": "ws",
+"outlet": "Savali News",
+"url": "https://savalinews.com/?feed=rss2",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "Caribupdate",
-"url": "https://caribupdate.com/feed/",
+"cc": "ws",
+"outlet": "Govt of Samoa",
+"url": "https://www.samoagovt.ws/feed/",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "Caribupdate",
-"url": "https://caribupdate.com/rss",
+"cc": "ws",
+"outlet": "Govt of Samoa",
+"url": "https://samoagovt.ws/feed/",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "Caribupdate",
-"url": "https://caribupdate.com/rss.xml",
+"cc": "ws",
+"outlet": "Govt of Samoa",
+"url": "https://www.mpmc.gov.ws/feed/",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "GIS Grenada",
-"url": "https://gov.gd/feed/",
+"cc": "ws",
+"outlet": "Radio Polynesia",
+"url": "https://www.radiopolynesia.com/feed/",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "GIS Grenada",
-"url": "https://gov.gd/rss",
+"cc": "ws",
+"outlet": "Radio Polynesia",
+"url": "https://radiopolynesia.com/feed/",
 "lang": "en"
 },
 {
-"cc": "gd",
-"outlet": "GIS Grenada",
-"url": "https://gov.gd/rss.xml",
+"cc": "ws",
+"outlet": "Samoa Planet",
+"url": "https://samoaplanet.com/feed/",
+"lang": "en"
+},
+{
+"cc": "ws",
+"outlet": "Samoa Planet",
+"url": "https://www.samoaplanet.com/feed/",
+"lang": "en"
+},
+{
+"cc": "ws",
+"outlet": "TV3 Samoa",
+"url": "https://tv3samoa.ws/feed/",
+"lang": "en"
+},
+{
+"cc": "ws",
+"outlet": "TV3 Samoa",
+"url": "https://www.tv3samoa.com/feed/",
+"lang": "en"
+},
+{
+"cc": "cg",
+"outlet": "Congo Liberty",
+"url": "https://www.congo-liberty.org/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Congo Liberty",
+"url": "https://congo-liberty.org/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "La Semaine Africaine",
+"url": "https://lasemaineafricaine.net/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "La Semaine Africaine",
+"url": "https://www.lasemaineafricaine.net/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "La Semaine Africaine",
+"url": "https://lasemaineafricaine.net/index.php?format=feed&type=rss",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Congopage",
+"url": "https://www.congopage.com/spip.php?page=backend",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Congopage",
+"url": "https://congopage.com/spip.php?page=backend",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Journal de Brazza",
+"url": "https://www.journaldebrazza.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Journal de Brazza",
+"url": "https://journaldebrazza.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Brazza News",
+"url": "https://www.brazzanews.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Brazza News",
+"url": "https://brazzanews.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Mwinda Press",
+"url": "https://www.mwinda.org/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Mwinda Press",
+"url": "https://mwinda.org/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Agence d'Information d'Afrique Centrale",
+"url": "https://www.adiac-congo.com/rss/actualites.xml",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Agence d'Information d'Afrique Centrale",
+"url": "https://www.adiac-congo.com/content/rss",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Télé Congo",
+"url": "https://telecongo.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Télé Congo",
+"url": "https://www.telecongo.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Radio Congo",
+"url": "https://radiocongo.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Radio Congo",
+"url": "https://www.radiocongo.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "ACI Congo",
+"url": "https://aci.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "ACI Congo",
+"url": "https://www.aci.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "ACI Congo",
+"url": "https://acicongo.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Info241 Congo",
+"url": "https://www.lepatriote.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Info241 Congo",
+"url": "https://zenga-mambu.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Gouvernement du Congo",
+"url": "https://www.gouvernement.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Gouvernement du Congo",
+"url": "https://gouvernement.cg/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Sacer Infos",
+"url": "https://sacer-infos.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Sacer Infos",
+"url": "https://www.sacer-infos.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Le Patriote Congo",
+"url": "https://www.lepatriote.cg/feed",
+"lang": "fr"
+},
+{
+"cc": "cg",
+"outlet": "Le Patriote Congo",
+"url": "https://lepatriotecongo.com/feed/",
+"lang": "fr"
+},
+{
+"cc": "mh",
+"outlet": "RMI Government",
+"url": "https://rmigovernment.org/feed/",
+"lang": "en"
+},
+{
+"cc": "mh",
+"outlet": "RMI Government",
+"url": "https://www.rmigovernment.org/feed/",
+"lang": "en"
+},
+{
+"cc": "mh",
+"outlet": "Marshall Islands Journal (news)",
+"url": "https://marshallislandsjournal.com/category/news/feed/",
+"lang": "en"
+},
+{
+"cc": "mh",
+"outlet": "RMI Embassy US",
+"url": "https://www.rmiembassyus.org/feed/",
+"lang": "en"
+},
+{
+"cc": "mh",
+"outlet": "RMI Embassy US",
+"url": "https://rmiembassyus.org/feed/",
+"lang": "en"
+},
+{
+"cc": "mh",
+"outlet": "Kwajalein Hourglass",
+"url": "https://www.smdc.army.mil/RSS/",
+"lang": "en"
+},
+{
+"cc": "mh",
+"outlet": "Kwajalein Hourglass",
+"url": "https://home.army.mil/kwajalein/index.php/rss",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Govt of Nauru",
+"url": "https://www.naurugov.nr/feed/",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Govt of Nauru",
+"url": "https://naurugov.nr/feed/",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Govt of Nauru",
+"url": "https://www.naurugov.nr/rss",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Govt of Nauru",
+"url": "https://www.nauru.gov.nr/feed/",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Nauru Bulletin",
+"url": "https://www.naurugov.nr/government-information-office/nauru-bulletin/rss",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Nauru Media",
+"url": "https://nauru-news.com/feed/",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Nauru Media",
+"url": "https://www.naurunews.com/feed/",
+"lang": "en"
+},
+{
+"cc": "nr",
+"outlet": "Nauru Media",
+"url": "https://naurunews.com/feed/",
+"lang": "en"
+},
+{
+"cc": "ki",
+"outlet": "Office of Te Beretitenti",
+"url": "https://www.president.gov.ki/feed/",
+"lang": "en"
+},
+{
+"cc": "ki",
+"outlet": "Office of Te Beretitenti",
+"url": "https://president.gov.ki/feed/",
+"lang": "en"
+},
+{
+"cc": "ki",
+"outlet": "Office of Te Beretitenti",
+"url": "https://www.president.gov.ki/rss",
 "lang": "en"
 },
 {
@@ -2560,992 +964,200 @@
 {
 "cc": "ki",
 "outlet": "Kiribati Independent",
-"url": "https://kiribatiindependent.com/rss",
+"url": "https://www.kiribatiindependent.com/feed/",
 "lang": "en"
 },
 {
 "cc": "ki",
-"outlet": "Kiribati Independent",
-"url": "https://kiribatiindependent.com/rss.xml",
+"outlet": "Kiribati Updates",
+"url": "https://www.kiribatiupdates.com.ki/feed/",
 "lang": "en"
 },
 {
 "cc": "ki",
-"outlet": "Kiribati Government",
-"url": "https://president.gov.ki/feed/",
+"outlet": "Kiribati Updates",
+"url": "https://kiribatiupdates.com.ki/feed/",
 "lang": "en"
 },
 {
 "cc": "ki",
-"outlet": "Kiribati Government",
-"url": "https://president.gov.ki/rss",
+"outlet": "Ministry of Information Kiribati",
+"url": "https://www.mict.gov.ki/feed/",
 "lang": "en"
 },
 {
 "cc": "ki",
-"outlet": "Kiribati Government",
-"url": "https://president.gov.ki/rss.xml",
+"outlet": "Ministry of Information Kiribati",
+"url": "https://mict.gov.ki/feed/",
 "lang": "en"
 },
 {
-"cc": "sr",
-"outlet": "Suriname Herald",
-"url": "https://srherald.com/feed/",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "Suriname Herald",
-"url": "https://srherald.com/rss",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "Suriname Herald",
-"url": "https://srherald.com/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "Dagblad Suriname",
-"url": "https://dbsuriname.com/feed/",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "Dagblad Suriname",
-"url": "https://dbsuriname.com/rss",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "Dagblad Suriname",
-"url": "https://dbsuriname.com/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "GFC Nieuws",
-"url": "https://gfcnieuws.com/feed/",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "GFC Nieuws",
-"url": "https://gfcnieuws.com/rss",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "GFC Nieuws",
-"url": "https://gfcnieuws.com/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "De West",
-"url": "https://dewestonline.cc/feed/",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "De West",
-"url": "https://dewestonline.cc/rss",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "De West",
-"url": "https://dewestonline.cc/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "ABC Suriname",
-"url": "https://abcsuriname.com/feed/",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "ABC Suriname",
-"url": "https://abcsuriname.com/rss",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "ABC Suriname",
-"url": "https://abcsuriname.com/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "De Ware Tijd",
-"url": "https://dwtonline.com/feed/",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "De Ware Tijd",
-"url": "https://dwtonline.com/rss",
-"lang": "nl"
-},
-{
-"cc": "sr",
-"outlet": "De Ware Tijd",
-"url": "https://dwtonline.com/rss.xml",
-"lang": "nl"
-},
-{
-"cc": "st",
-"outlet": "Jornal Tropical",
-"url": "https://jornaltropical.st/feed/",
-"lang": "pt"
-},
-{
-"cc": "st",
-"outlet": "Jornal Tropical",
-"url": "https://jornaltropical.st/rss",
-"lang": "pt"
-},
-{
-"cc": "st",
-"outlet": "Jornal Tropical",
-"url": "https://jornaltropical.st/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "st",
-"outlet": "STP Digital",
-"url": "https://stpdigital.net/feed/",
-"lang": "pt"
-},
-{
-"cc": "st",
-"outlet": "STP Digital",
-"url": "https://stpdigital.net/rss",
-"lang": "pt"
-},
-{
-"cc": "st",
-"outlet": "STP Digital",
-"url": "https://stpdigital.net/rss.xml",
-"lang": "pt"
-},
-{
-"cc": "dj",
-"outlet": "RTD Djibouti",
-"url": "https://rtd.dj/feed/",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "RTD Djibouti",
-"url": "https://rtd.dj/rss",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "RTD Djibouti",
-"url": "https://rtd.dj/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "ADI Djibouti",
-"url": "https://adi.dj/feed/",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "ADI Djibouti",
-"url": "https://adi.dj/rss",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "ADI Djibouti",
-"url": "https://adi.dj/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "Djibouti24",
-"url": "https://djibouti24.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "Djibouti24",
-"url": "https://djibouti24.com/rss",
-"lang": "fr"
-},
-{
-"cc": "dj",
-"outlet": "Djibouti24",
-"url": "https://djibouti24.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Abidjan.net",
-"url": "https://news.abidjan.net/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Abidjan.net",
-"url": "https://news.abidjan.net/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Abidjan.net",
-"url": "https://news.abidjan.net/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Koaci",
-"url": "https://koaci.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Koaci",
-"url": "https://koaci.com/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Koaci",
-"url": "https://koaci.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Fraternité Matin",
-"url": "https://fratmat.info/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Fraternité Matin",
-"url": "https://fratmat.info/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Fraternité Matin",
-"url": "https://fratmat.info/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Afrik Soir",
-"url": "https://afriksoir.net/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Afrik Soir",
-"url": "https://afriksoir.net/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Afrik Soir",
-"url": "https://afriksoir.net/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "AIP",
-"url": "https://aip.ci/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "AIP",
-"url": "https://aip.ci/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "AIP",
-"url": "https://aip.ci/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Connectionivoirienne",
-"url": "https://connectionivoirienne.net/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Connectionivoirienne",
-"url": "https://connectionivoirienne.net/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Connectionivoirienne",
-"url": "https://connectionivoirienne.net/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Ivoire Matin",
-"url": "https://ivoirematin.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Ivoire Matin",
-"url": "https://ivoirematin.com/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "Ivoire Matin",
-"url": "https://ivoirematin.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "L'Intelligent d'Abidjan",
-"url": "https://lintelligentdabidjan.info/feed/",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "L'Intelligent d'Abidjan",
-"url": "https://lintelligentdabidjan.info/rss",
-"lang": "fr"
-},
-{
-"cc": "ci",
-"outlet": "L'Intelligent d'Abidjan",
-"url": "https://lintelligentdabidjan.info/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "lr",
-"outlet": "Liberian Observer",
-"url": "https://liberianobserver.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberian Observer",
-"url": "https://liberianobserver.com/rss",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberian Observer",
-"url": "https://liberianobserver.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Smart News Liberia",
-"url": "https://smartnewsliberia.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Smart News Liberia",
-"url": "https://smartnewsliberia.com/rss",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Smart News Liberia",
-"url": "https://smartnewsliberia.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberia News Agency",
-"url": "https://lina.gov.lr/feed/",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberia News Agency",
-"url": "https://lina.gov.lr/rss",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberia News Agency",
-"url": "https://lina.gov.lr/rss.xml",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Bush Chicken",
-"url": "https://bushchicken.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Bush Chicken",
-"url": "https://bushchicken.com/rss",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Bush Chicken",
-"url": "https://bushchicken.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberian Investigator",
-"url": "https://liberianinvestigator.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberian Investigator",
-"url": "https://liberianinvestigator.com/rss",
-"lang": "en"
-},
-{
-"cc": "lr",
-"outlet": "Liberian Investigator",
-"url": "https://liberianinvestigator.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "cg",
-"outlet": "Brazzanews",
-"url": "https://brazzanews.fr/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Brazzanews",
-"url": "https://brazzanews.fr/rss",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Brazzanews",
-"url": "https://brazzanews.fr/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Congopage",
-"url": "https://congopage.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Congopage",
-"url": "https://congopage.com/rss",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Congopage",
-"url": "https://congopage.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Les Echos du Congo-Brazzaville",
-"url": "https://lesechos-congobrazza.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Les Echos du Congo-Brazzaville",
-"url": "https://lesechos-congobrazza.com/rss",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Les Echos du Congo-Brazzaville",
-"url": "https://lesechos-congobrazza.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Zenga-Mambu",
-"url": "https://zenga-mambu.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Zenga-Mambu",
-"url": "https://zenga-mambu.com/rss",
-"lang": "fr"
-},
-{
-"cc": "cg",
-"outlet": "Zenga-Mambu",
-"url": "https://zenga-mambu.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "lc",
-"outlet": "St Lucia News Online",
-"url": "https://stlucianewsonline.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "St Lucia News Online",
-"url": "https://stlucianewsonline.com/rss",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "St Lucia News Online",
-"url": "https://stlucianewsonline.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "HTS St Lucia",
-"url": "https://htsstlucia.org/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "HTS St Lucia",
-"url": "https://htsstlucia.org/rss",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "HTS St Lucia",
-"url": "https://htsstlucia.org/rss.xml",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "The Star SLU",
-"url": "https://stluciastar.com/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "The Star SLU",
-"url": "https://stluciastar.com/rss",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "The Star SLU",
-"url": "https://stluciastar.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Government of Saint Lucia",
-"url": "https://govt.lc/feed/",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Government of Saint Lucia",
-"url": "https://govt.lc/rss",
-"lang": "en"
-},
-{
-"cc": "lc",
-"outlet": "Government of Saint Lucia",
-"url": "https://govt.lc/rss.xml",
-"lang": "en"
-},
-{
-"cc": "km",
-"outlet": "Al-Watwan",
-"url": "https://alwatwan.net/feed/",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "Al-Watwan",
-"url": "https://alwatwan.net/rss",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "Al-Watwan",
-"url": "https://alwatwan.net/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "La Gazette des Comores",
-"url": "https://lagazettedescomores.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "La Gazette des Comores",
-"url": "https://lagazettedescomores.com/rss",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "La Gazette des Comores",
-"url": "https://lagazettedescomores.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "Habari za Comores",
-"url": "https://habarizacomores.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "Habari za Comores",
-"url": "https://habarizacomores.com/rss",
-"lang": "fr"
-},
-{
-"cc": "km",
-"outlet": "Habari za Comores",
-"url": "https://habarizacomores.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guinee360",
-"url": "https://guinee360.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guinee360",
-"url": "https://guinee360.com/rss",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guinee360",
-"url": "https://guinee360.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Mosaique Guinée",
-"url": "https://mosaiqueguinee.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Mosaique Guinée",
-"url": "https://mosaiqueguinee.com/rss",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Mosaique Guinée",
-"url": "https://mosaiqueguinee.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guineematin",
-"url": "https://guineematin.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guineematin",
-"url": "https://guineematin.com/rss",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guineematin",
-"url": "https://guineematin.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Vision Guinée",
-"url": "https://visionguinee.info/feed/",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Vision Guinée",
-"url": "https://visionguinee.info/rss",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Vision Guinée",
-"url": "https://visionguinee.info/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Ledjely",
-"url": "https://ledjely.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Ledjely",
-"url": "https://ledjely.com/rss",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Ledjely",
-"url": "https://ledjely.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guinee7",
-"url": "https://guinee7.com/feed/",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guinee7",
-"url": "https://guinee7.com/rss",
-"lang": "fr"
-},
-{
-"cc": "gn",
-"outlet": "Guinee7",
-"url": "https://guinee7.com/rss.xml",
-"lang": "fr"
-},
-{
-"cc": "ss",
-"outlet": "Radio Tamazuj",
-"url": "https://radiotamazuj.org/feed/",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Radio Tamazuj",
-"url": "https://radiotamazuj.org/rss",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Radio Tamazuj",
-"url": "https://radiotamazuj.org/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "The City Review",
-"url": "https://cityreviewss.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "The City Review",
-"url": "https://cityreviewss.com/rss",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "The City Review",
-"url": "https://cityreviewss.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Juba Echo",
-"url": "https://jubaecho.com/feed/",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Juba Echo",
-"url": "https://jubaecho.com/rss",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Juba Echo",
-"url": "https://jubaecho.com/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Radio Miraya",
-"url": "https://radiomiraya.org/feed/",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Radio Miraya",
-"url": "https://radiomiraya.org/rss",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "Radio Miraya",
-"url": "https://radiomiraya.org/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "No. 1 Citizen",
-"url": "https://no1citizen.org/feed/",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "No. 1 Citizen",
-"url": "https://no1citizen.org/rss",
-"lang": "en"
-},
-{
-"cc": "ss",
-"outlet": "No. 1 Citizen",
-"url": "https://no1citizen.org/rss.xml",
-"lang": "en"
-},
-{
-"cc": "uy",
-"outlet": "El Observador",
-"url": "https://elobservador.com.uy/feed/",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "El Observador",
-"url": "https://elobservador.com.uy/rss",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "El Observador",
-"url": "https://elobservador.com.uy/rss.xml",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Subrayado",
-"url": "https://subrayado.com.uy/feed/",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Subrayado",
-"url": "https://subrayado.com.uy/rss",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Subrayado",
-"url": "https://subrayado.com.uy/rss.xml",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Búsqueda",
-"url": "https://busqueda.com.uy/feed/",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Búsqueda",
-"url": "https://busqueda.com.uy/rss",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Búsqueda",
-"url": "https://busqueda.com.uy/rss.xml",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Brecha",
-"url": "https://brecha.com.uy/feed/",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Brecha",
-"url": "https://brecha.com.uy/rss",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Brecha",
-"url": "https://brecha.com.uy/rss.xml",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Caras y Caretas",
-"url": "https://carasycaretas.com.uy/feed/",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Caras y Caretas",
-"url": "https://carasycaretas.com.uy/rss",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Caras y Caretas",
-"url": "https://carasycaretas.com.uy/rss.xml",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Sudestada",
-"url": "https://sudestada.com.uy/feed/",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Sudestada",
-"url": "https://sudestada.com.uy/rss",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "Sudestada",
-"url": "https://sudestada.com.uy/rss.xml",
-"lang": "es"
-},
-{
-"cc": "uy",
-"outlet": "MercoPress Uruguay",
-"url": "https://en.mercopress.com/rss/uruguay",
+"cc": "ki",
+"outlet": "Ministry of Information Kiribati",
+"url": "https://www.mfed.gov.ki/feed/",
 "lang": "en"
 },
 {
 "cc": "tv",
-"outlet": "Tuvalu Government",
-"url": "https://tuvalu.tv/feed/",
+"outlet": "Govt of Tuvalu",
+"url": "https://www.gov.tv/feed/",
 "lang": "en"
 },
 {
 "cc": "tv",
-"outlet": "Tuvalu Government",
-"url": "https://tuvalu.tv/rss",
+"outlet": "Govt of Tuvalu",
+"url": "https://gov.tv/feed/",
 "lang": "en"
 },
 {
 "cc": "tv",
-"outlet": "Tuvalu Government",
-"url": "https://tuvalu.tv/rss.xml",
+"outlet": "Govt of Tuvalu",
+"url": "https://tuvalu.gov.tv/feed/",
 "lang": "en"
+},
+{
+"cc": "tv",
+"outlet": "Tuvalu Media",
+"url": "https://tuvalumedia.tv/feed/",
+"lang": "en"
+},
+{
+"cc": "tv",
+"outlet": "Tuvalu Media",
+"url": "https://www.tuvalumedia.tv/feed/",
+"lang": "en"
+},
+{
+"cc": "tv",
+"outlet": "Tuvalu Coastal Adaptation",
+"url": "https://tcap.tv/feed/",
+"lang": "en"
+},
+{
+"cc": "tv",
+"outlet": "Tuvalu Coastal Adaptation",
+"url": "https://www.tcap.tv/feed/",
+"lang": "en"
+},
+{
+"cc": "eh",
+"outlet": "Por un Sahara Libre",
+"url": "https://porunsaharalibre.org/feed/",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "Por un Sahara Libre",
+"url": "https://porunsaharalibre.org/category/noticias/feed/",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Press Service",
+"url": "https://www.spsrasd.info/news/es/rss",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Press Service",
+"url": "https://www.spsrasd.info/news/en/rss",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Press Service",
+"url": "https://www.spsrasd.info/rss.xml",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Press Service",
+"url": "https://spsrasd.info/news/feed",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "Saharawi Voice",
+"url": "https://saharawivoice.com/feed/",
+"lang": "en"
+},
+{
+"cc": "eh",
+"outlet": "Saharawi Voice",
+"url": "https://www.saharawivoice.com/feed/",
+"lang": "en"
+},
+{
+"cc": "eh",
+"outlet": "Western Sahara Resource Watch",
+"url": "https://wsrw.org/en/rss",
+"lang": "en"
+},
+{
+"cc": "eh",
+"outlet": "Western Sahara Resource Watch",
+"url": "https://wsrw.org/rss.xml",
+"lang": "en"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Info (MAP)",
+"url": "https://www.mapexpress.ma/feed/",
+"lang": "fr"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Info (MAP)",
+"url": "https://www.mapexpress.ma/ar/feed/",
+"lang": "fr"
+},
+{
+"cc": "eh",
+"outlet": "Contramutis",
+"url": "https://contramutis.wordpress.com/feed/",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "No te olvides del Sahara",
+"url": "https://www.noteolvidesdelsahara.org/feed/",
+"lang": "es"
+},
+{
+"cc": "eh",
+"outlet": "Lamalif Sahara",
+"url": "https://le360.ma/rss/sahara",
+"lang": "fr"
+},
+{
+"cc": "eh",
+"outlet": "Lamalif Sahara",
+"url": "https://www.lemag.ma/xml/syndication.rss",
+"lang": "fr"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Medias (Laayoune)",
+"url": "https://www.sahara24.net/feed/",
+"lang": "ar"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Medias (Laayoune)",
+"url": "https://www.saharanow.ma/feed/",
+"lang": "ar"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Medias (Laayoune)",
+"url": "https://www.laayoune24.com/feed/",
+"lang": "ar"
+},
+{
+"cc": "eh",
+"outlet": "Sahara Medias (Laayoune)",
+"url": "https://www.dakhlanews.com/feed/",
+"lang": "ar"
 }
 ]
 }
