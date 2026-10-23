@@ -57,6 +57,7 @@ jobs:
       - run: node tests/illum.test.mjs
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
+      - run: node tests/osirdraft.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/social_view.test.mjs
       - run: node tests/jp_ccc.test.mjs

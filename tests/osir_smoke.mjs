@@ -8,6 +8,8 @@
 // indicators and outside sources render in order, tagged Analyst, with markup kept as text and only https links linked.
 // Refinements (2026-10-22): records per day for short periods, change from the previous period, version and supersedes, page
 // footer, Save draft / Open draft (a hostile draft file is read as data), and the catalogue's proposed letter beside a claim.
+// AI draft: Fill from AI draft fills only empty fields, never the Summary; parts as drafted are tagged AI generated, edited parts
+// "Analyst, edited from AI draft".
 // Run from the repo root: node tests/osir_smoke.mjs   (needs the playwright package and Chromium; OUT=dir keeps a screenshot and PDF)
 import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
@@ -222,6 +224,43 @@ await p.setInputFiles("#os-file", { name: "no.json", mimeType: "application/json
 await p.waitForFunction(() => /Could not open that file/.test(document.getElementById("os-note").textContent), null, { timeout: 10000 });
 ok(true, "a file that is not a draft is refused with a message");
 await p.click("#os-close");
+
+/* AI draft: "Fill from AI draft" fills only empty fields and never the Summary; parts as drafted are tagged AI generated, an
+   edited part "Analyst, edited from AI draft"; citations name the records; a hostile draft's markup stays text */
+await p.evaluate(() => {
+  window.OSAP_OSIRDRAFT = { label: "Draft, AI-generated, not analyst-approved", topics: { "th|cf-thailand-deep-south|30": { cc: "th", scope: "cf-thailand-deep-south", name: "Thailand Deep South",
+    from: "2026-09-24", to: "2026-10-23", records: 597, made: "2026-10-23 05:41Z", model: "openai/gpt-4o-mini",
+    claims: [{ claim: "Malaysia named a new facilitator [1] <img src=x onerror=window.__xss6=1>", source: "Bernama", refs: [1], cred: "2", rel: "B" }],
+    assess: { text: "The records suggest a leadership change [1][2].", refs: [1, 2] }, alt: { text: "An administrative transition [2].", refs: [2] }, conf: "MODERATE", confNote: "Few sources [1].",
+    ind: [{ text: "First meeting with the Thai panel [2]", refs: [2] }], gaps: [{ text: "Who proposed the change", refs: [] }],
+    refs: [{ n: 1, key: "a", source: "Bernama", title: "x", url: "https://www.bernama.com/x", ts: "2026-10-16T09:00" }, { n: 2, key: "b", source: "The Star", title: "y", url: "", ts: "2026-10-17T01:00" }] } } };
+});
+await p.evaluate(() => window.OSAP_OSIR.open({ scope: "cf-thailand-deep-south" }));
+await p.waitForFunction(() => window.OSAP_OSIR._state().data && document.getElementById("os-ai-fill"), null, { timeout: 30000 });
+await p.evaluate(() => { document.getElementById("os-anx").open = true; });
+await p.fill("#os-sum", "My own bottom line");
+await p.fill("#os-an-alt", "My own alternatives");
+await p.click("#os-ai-fill");
+const af = await p.evaluate(() => ({ sum: document.getElementById("os-sum").value, assess: document.getElementById("os-an-assess").value, alt: document.getElementById("os-an-alt").value,
+  conf: document.getElementById("os-an-conf").value, r: document.getElementById("os-cl-0-r").value, c: document.getElementById("os-cl-0-c").value, note: document.getElementById("os-cl-0-note").value,
+  gaps: document.getElementById("os-an-gaps").value }));
+ok(af.sum === "My own bottom line", "the Summary is never filled from the AI draft");
+ok(af.alt === "My own alternatives", "a field the analyst typed in is not overwritten");
+ok(af.assess === "The records suggest a leadership change (Bernama, 16 Oct 2026) (The Star, 17 Oct 2026)." && af.conf === "MODERATE", "drafted text filled with citations naming the records: " + af.assess);
+ok(af.r === "" && af.c === "" && /AI proposes credibility 2/.test(af.note) && /Catalogue proposes reliability B/.test(af.note), "grades left for the analyst; proposals written in the note");
+await p.fill("#os-an-gaps", af.gaps + "\nAnd one of mine");
+await p.click("#os-go");
+await p.waitForSelector("#brief .osir", { timeout: 30000 });
+const ar = await p.evaluate(() => {
+  const a = document.querySelector("#brief .osir"), hs = {}; [...a.querySelectorAll("h4.oss")].forEach((h) => { const t = h.cloneNode(true); const tags = [...t.querySelectorAll(".aitag")].map((x) => x.textContent); t.querySelectorAll(".aitag").forEach((x) => x.remove()); hs[t.textContent.replace(/^3\.\d+ /, "").trim()] = tags; });
+  return { hs, ai: (a.querySelector('[data-osf="ai-draft"]') || {}).textContent || "", row: (a.querySelector('[data-osf="an-claims"] tbody tr') || {}).outerHTML || "", sum: (a.querySelector('[data-osf="analyst"]') || {}).textContent || "", xss: !!window.__xss6 };
+});
+ok(JSON.stringify(ar.hs["Assessment"]) === '["AI generated"]' && JSON.stringify(ar.hs["Analytic confidence"]) === '["AI generated"]', "parts as drafted are tagged AI generated");
+ok(JSON.stringify(ar.hs["Intelligence gaps"]) === '["Analyst, edited from AI draft"]' && JSON.stringify(ar.hs["Alternative explanations"]) === '["Analyst"]', "an edited part says so; the analyst's own part stays Analyst");
+ok(/data-ai="ai"/.test(ar.row) && />AI</.test(ar.row) && /&lt;img/.test(ar.row) && !ar.xss, "a drafted claim row is marked AI; its markup stays text");
+ok(/filled from a draft by openai\/gpt-4o-mini/.test(ar.ai) && /as drafted, tagged AI generated/.test(ar.ai) && /never AI-drafted/.test(ar.ai), "contributors: " + ar.ai.slice(0, 120));
+ok(ar.sum === "My own bottom line", "the report's Summary is the analyst's own");
+await p.click("#osir-close");
 
 /* phone: the window fits */
 await p.setViewportSize({ width: 390, height: 800 });

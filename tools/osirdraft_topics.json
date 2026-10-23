@@ -1,0 +1,9 @@
+{
+  "_about": "Topics tools/refresh_osirdraft.mjs drafts OSIR analyst sections for once a day (.github/workflows/osir-draft.yml). Each: cc (country), scope (a data set or conflict tab id as the OSIR window's Topic list uses it; empty = all reporting), days (the period, ending today), name. Keep the list short: drafts share GitHub Models' free daily limit with the event summaries. Any other topic can be drafted on demand from the workflow's Run button.",
+  "topics": [
+    { "cc": "th", "scope": "cf-thailand-deep-south", "days": 30, "name": "Thailand Deep South" },
+    { "cc": "mm", "scope": "", "days": 30, "name": "Myanmar" },
+    { "cc": "ph", "scope": "", "days": 30, "name": "Philippines" },
+    { "cc": "kh", "scope": "", "days": 30, "name": "Cambodia" }
+  ]
+}
