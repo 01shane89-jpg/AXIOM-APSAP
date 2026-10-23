@@ -165,6 +165,8 @@ data-ev-tlr="1"
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-sync.js"></script>
 <script src="assets/osap-team.js"></script>
+<script src="assets/osap-case-crypto.js"></script>
+<script src="assets/osap-cases.js"></script>
 <script src="assets/osap-photocheck.js"></script>
 
 # the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)

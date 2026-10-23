@@ -527,13 +527,14 @@
       '<section class="wsact"><div class="wshd"><h3>' + esc(w.name) + '</h3><span class="wstag">Active</span><button type="button" data-ws-ren="' + w.id + '">Rename</button></div>' +
       '<p class="obs">Created ' + esc(when(w.created)) + " · last change " + esc(when(w.updated)) + "</p>" +
       /* Team workspace (assets/osap-team.js): share this workspace, or the team it is shared with */
-      (W.OSAP_TEAM && W.OSAP_TEAM.wsHtml ? W.OSAP_TEAM.wsHtml(w.id) : "") +
+      (W.OSAP_TEAM && W.OSAP_TEAM.wsHtml && !(W.OSAP_CASES && W.OSAP_CASES.caseOf(w.id)) ? W.OSAP_TEAM.wsHtml(w.id) : "") +
+      (W.OSAP_CASES && W.OSAP_CASES.wsHtml ? W.OSAP_CASES.wsHtml(w.id) : "") +
       (groups || '<p class="obs">Nothing saved in this workspace yet. Drop a point, draw an area, save a route or import a KML file.</p>') +
       '<div class="wsbtns"><button type="button" class="refresh" data-ws-act="zip">Export workspace (.zip)</button><button type="button" class="refresh" data-ws-act="kml">Export KML</button>' +
       '<label class="refresh wsfile">Import KML, KMZ or workspace<input type="file" accept=".kml,.kmz,.zip,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/zip" data-ws-file hidden></label></div>' +
       '<p class="obs">KML and KMZ files are added to this workspace: placemarks become map points, lines and polygons become imported shapes. Descriptions are kept as plain text; nothing in a file is run or fetched.</p></section>' +
       "<h3>Other workspaces</h3>" + (others.length ? '<ul class="wslist">' + others.map(function (x) {
-        return "<li><span><b>" + esc(x.name) + '</b> <i class="obs">' + esc(summary(storedItems(x.id))) + " · last change " + esc(when(x.updated)) + (W.OSAP_TEAM && W.OSAP_TEAM.tag && W.OSAP_TEAM.tag(x.id) ? " · " + esc(W.OSAP_TEAM.tag(x.id)) : "") + "</i></span>" +
+        return "<li><span><b>" + esc(x.name) + '</b> <i class="obs">' + esc(summary(storedItems(x.id))) + " · last change " + esc(when(x.updated)) + (W.OSAP_TEAM && W.OSAP_TEAM.tag && W.OSAP_TEAM.tag(x.id) ? " · " + esc(W.OSAP_TEAM.tag(x.id)) : "") + (W.OSAP_CASES && W.OSAP_CASES.tag && W.OSAP_CASES.tag(x.id) ? " · " + esc(W.OSAP_CASES.tag(x.id)) : "") + "</i></span>" +
           '<button type="button" data-ws-sw="' + x.id + '">Switch to</button><button type="button" data-ws-ren="' + x.id + '">Rename</button><button type="button" data-ws-del="' + x.id + '" aria-label="Delete ' + esc(x.name) + '">Delete</button></li>';
       }).join("") + "</ul>" : '<p class="obs">None yet.</p>') +
       '<form class="wsnew" data-ws-new><label>New workspace <input name="n" maxlength="60" placeholder="e.g. Deep South, Op name" autocomplete="off"></label><button type="submit" class="refresh">Create and switch</button></form></div>';
