@@ -152,7 +152,10 @@ const SOURCES = {
 };
 const index = { asof: STAMP, caps: CAPS, sources: SOURCES, all: {} };
 let read = 0, failed = [];
-for (const cc of CCS) {
+// a few countries at once: Wikidata's answer times vary several-fold over a day (10 to 40 s a country), and one at a time a
+// slow day ran out of budget a third of the way through. Wikidata allows 5 parallel queries per client; this stays under it.
+const PAR = Math.max(1, Math.min(4, +(process.env.MILREF_PAR || 3)));
+async function one(cc) {
   const p = prev[cc] || {};
   const fig = {};
   for (const d of WB) {
@@ -172,6 +175,8 @@ for (const cc of CCS) {
   index.all[cc] = { n: NAMES[cc], u: (w.units || []).length, e: (w.equip || []).filter((x) => !x.out).length, i: (w.inst || []).length, f: Object.keys(fig).length, st: w.stale ? 1 : 0 };
   if (W) log(cc, "units", W.units.length + "/" + W.raw.units, "equipment", W.equip.length + "/" + W.raw.equip, "installations", W.inst.length);
 }
+{ let i = 0; await Promise.all(Array.from({ length: PAR }, async () => { while (i < CCS.length) await one(CCS[i++]); })); }
+index.all = Object.fromEntries(Object.entries(index.all).sort((a, b) => a[0].localeCompare(b[0]))); // stable order: small diffs
 fs.writeFileSync(OUT + "/index.json", JSON.stringify(index) + "\n");
 log("countries written:", CCS.length, "Wikidata read:", read, "failed:", failed.join(" ") || "none", "query retries:", retries, "minutes:", Math.round((Date.now() - NOW) / 60000));
 if (!read && !Object.keys(wb).length) { console.error("no source could be read"); process.exit(1); }
