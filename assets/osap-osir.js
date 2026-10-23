@@ -14,6 +14,12 @@
      boxes); "Save draft" / "Open draft" (a JSON file on the analyst's own device, nothing stored online); a version number and
      a "supersedes" line when a report is remade for the same country and subject on this device; the catalogue's proposed
      reliability letter shown beside a claim whose source is one of the report's own (a proposal, never set for the analyst).
+   - AI draft (Shane 2026-10-22, "do it"; 2026-10-21 14:24Z: "leave the summary portion for the human to fill out"): when the daily
+     job (tools/refresh_osirdraft.mjs, data/live/osirdraft.js) has drafted this country and topic, "Fill from AI draft" puts its
+     graded claims, assessment, alternatives, confidence, indicators and gaps into the EMPTY analyst fields only (never over
+     what the analyst typed, never the Summary). Grades are left for the analyst; the proposals are written in the claim's note.
+     In the report a part still as drafted is tagged "AI generated" (draft, not analyst-approved, in the tooltip); a part the
+     analyst changed is tagged "Analyst, edited from AI draft". Citations name the OSAP records the draft rests on.
    - Analyst sections (Shane 2026-10-21, after the Malaysia facilitator product: "yes please do"): optional graded claims
      (Admiralty source reliability A-F, information credibility 1-6), assessment, alternative explanations, confidence,
      relevance, indicators to watch, intelligence gaps, and outside sources the analyst cites. Each is what the person typed,
@@ -61,7 +67,7 @@
   var RELN = { A: "Completely reliable", B: "Usually reliable", C: "Fairly reliable", D: "Not usually reliable", E: "Unreliable", F: "Reliability cannot be judged" };
   var CREDN = { "1": "Confirmed by other sources", "2": "Probably true", "3": "Possibly true", "4": "Doubtful", "5": "Improbable", "6": "Truth cannot be judged" };
   var TEXTS = [["assess", "Assessment"], ["alt", "Alternative explanations"], ["rel", ""], ["ind", "Indicators to watch"], ["gaps", "Intelligence gaps"]];
-  function anReset() { S.an = { assess: "", alt: "", conf: "", confNote: "", relLabel: "Relevance", rel: "", ind: "", gaps: "" }; S.claims = []; S.outs = []; S.anOpen = false; }
+  function anReset() { S.an = { assess: "", alt: "", conf: "", confNote: "", relLabel: "Relevance", rel: "", ind: "", gaps: "" }; S.claims = []; S.outs = []; S.anOpen = false; S.aiFill = {}; S.aiFrom = null; S.aiNote = ""; }
   anReset();
   function anUsed() { var a = S.an; return !!(S.claims.some(claimUsed) || S.outs.some(outUsed) || a.conf || ["assess", "alt", "rel", "ind", "gaps", "confNote"].some(function (k) { return a[k].trim(); })); }
   function claimUsed(c) { return !!(c.claim.trim() || c.src.trim() || c.note.trim()); }
@@ -82,7 +88,7 @@
   /* draft file: what the analyst typed in this window, saved to and opened from their own device; nothing is stored online */
   function draftData() {
     return { schema: DRAFT, saved: new Date().toISOString(), cc: S.cc, region: S.region === "@area" ? "" : S.region, scope: S.scope, kw: S.kw || "", kwName: S.kwName || "",
-      from: S.from, to: S.to, subject: S.subjectSet ? S.subject : "", by: S.by, summary: S.summary, an: S.an, claims: S.claims, outs: S.outs };
+      from: S.from, to: S.to, subject: S.subjectSet ? S.subject : "", by: S.by, summary: S.summary, an: S.an, claims: S.claims, outs: S.outs, aiFill: S.aiFill, aiFrom: S.aiFrom };
   }
   function saveDraft() {
     var name = "OSIR-draft-" + String(S.cc || "xx").toUpperCase() + "-" + new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "") + ".json";
@@ -100,7 +106,9 @@
       cc: str(o.cc, 8), region: str(o.region, 120), scope: str(o.scope, 120), kw: str(o.kw, 600), kwName: str(o.kwName, 80), from: day(o.from), to: day(o.to),
       subject: str(o.subject, 200), by: str(o.by, 120), summary: str(o.summary, 4000),
       an: { assess: str(a.assess, 4000), alt: str(a.alt, 4000), conf: pickOf(a.conf, CONF), confNote: str(a.confNote, 400), relLabel: str(a.relLabel, 60) || "Relevance", rel: str(a.rel, 4000), ind: str(a.ind, 4000), gaps: str(a.gaps, 4000) },
-      claims: (Array.isArray(o.claims) ? o.claims : []).slice(0, MAXROWS).map(function (c) { c = c || {}; return { claim: str(c.claim, 1000), src: str(c.src, 200), r: pickOf(c.r, REL), c: pickOf(c.c, CRED), note: str(c.note, 400) }; }),
+      claims: (Array.isArray(o.claims) ? o.claims : []).slice(0, MAXROWS).map(function (c) { c = c || {}; var x = { claim: str(c.claim, 1000), src: str(c.src, 200), r: pickOf(c.r, REL), c: pickOf(c.c, CRED), note: str(c.note, 400) }; if (str(c.ai, 2000)) x.ai = str(c.ai, 2000); return x; }),
+      aiFill: (function (f) { var out = {}; f = f && typeof f === "object" ? f : {}; ["assess", "alt", "confNote", "ind", "gaps"].forEach(function (k) { if (typeof f[k] === "string") out[k] = f[k].slice(0, 4000); }); if (CONF.indexOf(f.conf) >= 0) out.conf = f.conf; return out; })(o.aiFill),
+      aiFrom: o.aiFrom && typeof o.aiFrom === "object" ? { model: str(o.aiFrom.model, 80), made: str(o.aiFrom.made, 40), name: str(o.aiFrom.name, 120), from: str(o.aiFrom.from, 10), to: str(o.aiFrom.to, 10) } : null,
       outs: (Array.isArray(o.outs) ? o.outs : []).slice(0, MAXROWS).map(function (x) { x = x || {}; return { title: str(x.title, 300), url: str(x.url, 600), r: pickOf(x.r, REL), note: str(x.note, 300) }; })
     };
   }
@@ -113,7 +121,7 @@
       var other = g.cc && g.cc !== S.cc;
       ["region", "scope", "kw", "kwName", "from", "to", "by", "summary"].forEach(function (k) { S[k] = g[k]; });
       if (other) S.region = "";
-      S.subject = g.subject; S.subjectSet = !!g.subject.trim(); S.an = g.an; S.claims = g.claims; S.outs = g.outs; S.anOpen = anUsed();
+      S.subject = g.subject; S.subjectSet = !!g.subject.trim(); S.an = g.an; S.claims = g.claims; S.outs = g.outs; S.aiFill = g.aiFill; S.aiFrom = g.aiFrom; S.anOpen = anUsed();
       S.draftNote = "Draft opened (" + pl(g.claims.length, "claim") + ")." + (other ? " It was made for another country (" + g.cc.toUpperCase() + "); its region was left out." : "");
       refresh();
     };
@@ -131,6 +139,63 @@
     var keys = Object.keys(v); if (keys.length > 60) keys.sort(function (a, b) { return (v[a][v[a].length - 1] || {}).t - (v[b][v[b].length - 1] || {}).t; }).slice(0, keys.length - 60).forEach(function (x) { delete v[x]; });
     setLS(VERS, JSON.stringify(v));
   }
+  /* ---------- AI draft (data/live/osirdraft.js) ---------- */
+  var DRAFT_SRC = "data/live/osirdraft.js", draftState = 0;
+  function loadAiDraft(cb) {
+    if (W.OSAP_OSIRDRAFT || draftState === 2) return cb();
+    if (draftState === 1) { setTimeout(function () { loadAiDraft(cb); }, 300); return; }
+    draftState = 1;
+    var sc = D.createElement("script"), done = false, fin = function () { if (!done) { done = true; draftState = 2; cb(); } };
+    sc.src = DRAFT_SRC + "?d=" + new Date().toISOString().slice(0, 13); sc.onload = sc.onerror = fin; D.head.appendChild(sc); setTimeout(fin, 6000);
+  }
+  /* the newest draft for this country and topic, if any */
+  function aiDraftFor() {
+    var T0 = (W.OSAP_OSIRDRAFT || {}).topics || {}, best = null;
+    Object.keys(T0).forEach(function (k) { var t = T0[k]; if (t && t.cc === S.cc && (t.scope || "") === (S.scope || "") && (!best || String(t.made) > String(best.made))) best = t; });
+    return best;
+  }
+  function refName(t, n) {
+    var r = (t.refs || []).filter(function (x) { return x.n === n; })[0]; if (!r) return "";
+    return r.source + (r.ts ? ", " + fmtShort(String(r.ts).slice(0, 10)) : "");
+  }
+  /* [3] in drafted text becomes the record's source and date, so no bare number is left behind */
+  function cited(t, text) { return String(text || "").replace(/\[(\d+)\]/g, function (m, d) { var nm = refName(t, +d); return nm ? " (" + nm + ")" : ""; }).replace(/ {2,}/g, " ").replace(/\s+([.,;])/g, "$1").trim(); }
+  function fillFromAi() {
+    var t = aiDraftFor(); if (!t) return;
+    var a = S.an, f = S.aiFill, filled = 0;
+    var put = function (k, v) { if (v && !String(a[k] || "").trim()) { a[k] = v; f[k] = v; filled++; } };
+    put("assess", t.assess && cited(t, t.assess.text));
+    put("alt", t.alt && cited(t, t.alt.text));
+    if (t.conf && !a.conf) { a.conf = t.conf; f.conf = t.conf; filled++; }
+    put("confNote", t.confNote && cited(t, t.confNote));
+    put("ind", (t.ind || []).map(function (x) { return cited(t, x.text); }).filter(Boolean).join("\n"));
+    put("gaps", (t.gaps || []).map(function (x) { return cited(t, x.text); }).filter(Boolean).join("\n"));
+    var have = {}; S.claims.forEach(function (c) { have[srcKey(c.claim)] = 1; });
+    (t.claims || []).forEach(function (c) {
+      if (S.claims.length >= MAXROWS) return;
+      var claim = cited(t, c.claim); if (!claim || have[srcKey(claim)]) return;
+      var refs = (c.refs || []).map(function (n) { return refName(t, n); }).filter(Boolean);
+      var note = "AI draft cites " + (refs.join("; ") || "no record") + "." + (c.cred ? " AI proposes credibility " + c.cred + "." : "") + (c.rel ? " Catalogue proposes reliability " + c.rel + "." : "");
+      var row = { claim: claim, src: c.source || "", r: "", c: "", note: note.slice(0, 400) };
+      row.ai = JSON.stringify([row.claim, row.src, row.note]); S.claims.push(row); filled++;
+    });
+    S.aiFrom = { model: t.model || "", made: t.made || "", name: t.name || t.label || "", from: t.from, to: t.to };
+    S.anOpen = true; S.aiNote = filled ? "Filled " + pl(filled, "part") + " from the AI draft into empty fields. Each stays tagged AI generated in the report until you edit it; grades are yours to set." : "Nothing filled: the fields the AI draft covers already hold your text.";
+    draw();
+  }
+  /* how a part reached the report: "" typed by the analyst, "ai" as drafted, "edited" drafted then changed */
+  function dispo(k, v) { var f = S.aiFill[k]; return f == null || !String(v || "").trim() ? "" : String(v) === String(f) ? "ai" : "edited"; }
+  function claimDispo(c) { return !c.ai ? "" : c.ai === JSON.stringify([c.claim, c.src, c.note]) ? "ai" : "edited"; }
+  function aiBox() {
+    var t = aiDraftFor(); if (!t) return "";
+    var other = t.from && S.from && (t.from !== S.from || t.to !== S.to);
+    return '<div class="osw osai"><b>AI draft available</b> <span class="aitag" tabindex="0" title="' + esc(LABELAI) + '">AI generated</span><br><small>' +
+      esc((t.name || t.label || "This topic") + ", " + fmtShort(t.from) + " to " + fmtShort(t.to) + "; drafted " + t.made + " by " + (t.model || "an AI model") + " from " + pl(t.records || 0, "record") + " OSAP held. ") +
+      (other ? "<b>Its dates differ from this report's.</b> " : "") +
+      "It fills only empty fields and never the Summary, which is yours. Every filled part stays tagged AI generated until you edit it.</small>" +
+      '<div><button type="button" class="refresh" id="os-ai-fill">Fill from AI draft</button></div>' + (S.aiNote ? '<small role="status">' + esc(S.aiNote) + "</small>" : "") + "</div>";
+  }
+  var LABELAI = "Drafted by AI from the OSAP records it cites: a draft, not analyst-approved.";
   function css() {
     if (D.getElementById("osir-css")) return;
     var st = D.createElement("style"); st.id = "osir-css";
@@ -169,7 +234,7 @@
       ".tlr.osir table.osch{border-collapse:collapse;margin:4px 0 8px;font-size:.95em}.tlr.osir table.osch th,.tlr.osir table.osch td{padding:2px 10px 2px 0;text-align:right;border-bottom:1px solid #d5dde4}" +
       ".tlr.osir table.osch th:first-child,.tlr.osir table.osch td:first-child{text-align:left}.tlr.osir table.osch caption{text-align:left;caption-side:top;padding-bottom:2px}" +
       ".tlr.osir .osdual{display:flex;flex-wrap:wrap;gap:18px}.tlr.osir .osdual>div{flex:1 1 230px;min-width:0}.tlr.osir ul.ospeace{margin:2px 0 8px;padding-left:18px}" +
-      "#osirdlg .osprop{font-weight:400;color:var(--muted);font-size:12px}" +
+      "#osirdlg .osprop{font-weight:400;color:var(--muted);font-size:12px}#osirdlg .osai{border:1px dashed var(--line);border-radius:6px;padding:6px 10px}#osirdlg .osai button{margin-top:6px;min-height:38px}" +
       ".tlr.osir ul.oscon{margin:4px 0 0;padding-left:18px}.tlr.osir .mg{font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-all}" +
       "@media print{.tlr.osir h4.oss .aitag::after,.tlr.osir p.bm>.aitag::after{content:none}html.briefing .tlr.osir .osatt{break-before:page;page-break-before:always}html.briefing .tlr.osir table.osf th{width:96px}}";
     D.head.appendChild(st);
@@ -244,7 +309,7 @@
     var a = S.an, sel = function (list, cur, blank) { return '<option value="">' + blank + "</option>" + list.map(function (v) { return '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + v + "</option>"; }).join(""); };
     var ta = function (k, lab, hint) { return '<label class="osw">' + lab + (hint ? " <small>(" + hint + ")</small>" : "") + '<textarea id="os-an-' + k + '" data-an="' + k + '" maxlength="4000">' + esc(a[k]) + "</textarea></label>"; };
     return '<details class="osx" id="os-anx"' + (S.anOpen || anUsed() ? " open" : "") + '><summary>Analyst sections <small>(optional: graded claims, assessment, confidence, indicators, gaps, outside sources; each is shown as yours)</small></summary><div class="osg">' +
-      '<div class="osw"><b>Graded claims</b> <small>Source reliability A–F, information credibility 1–6 (Admiralty). A credible source can still be wrong. Pick one of the report\'s own sources and the catalogue\'s proposed letter shows in the list (for example "— (proposed B?)"); it is only a proposal until you choose a letter.</small></div>' +
+      aiBox() + '<div class="osw"><b>Graded claims</b> <small>Source reliability A–F, information credibility 1–6 (Admiralty). A credible source can still be wrong. Pick one of the report\'s own sources and the catalogue\'s proposed letter shows in the list (for example "— (proposed B?)"); it is only a proposal until you choose a letter.</small></div>' +
       S.claims.map(function (c, i) {
         return '<div class="osrow" data-cl="' + i + '"><label class="osw2">Claim ' + (i + 1) + '<textarea id="os-cl-' + i + '-claim" data-clk="claim" maxlength="1000">' + esc(c.claim) + "</textarea></label>" +
           '<label>Source / originator<input type="text" id="os-cl-' + i + '-src" data-clk="src" maxlength="200" list="os-srcs" value="' + esc(c.src) + '"></label>' +
@@ -283,6 +348,7 @@
     });
     each("[data-out]", function (row) { var x = S.outs[+row.getAttribute("data-out")]; Array.prototype.forEach.call(row.querySelectorAll("[data-outk]"), function (el) { el.oninput = el.onchange = function () { x[el.getAttribute("data-outk")] = el.value; }; }); });
     var again = function (focus) { S.anOpen = true; draw(); var f = focus && BOX.querySelector(focus); if (f) f.focus(); };
+    var af = BOX.querySelector("#os-ai-fill"); if (af) af.onclick = fillFromAi;
     var ca = BOX.querySelector("#os-cl-add"); if (ca) ca.onclick = function () { S.claims.push({ claim: "", src: "", r: "", c: "", note: "" }); again("#os-cl-" + (S.claims.length - 1) + "-claim"); };
     var oa = BOX.querySelector("#os-out-add"); if (oa) oa.onclick = function () { S.outs.push({ title: "", url: "", r: "", note: "" }); again("#os-out-" + (S.outs.length - 1) + "-title"); };
     each("[data-cldel]", function (b) { b.onclick = function () { S.claims.splice(+b.getAttribute("data-cldel"), 1); again("#os-cl-add"); }; });
@@ -318,6 +384,7 @@
     S.scope = tl && tl.cf ? "cf-" + tl.cf : v && v !== "timeline" && v !== "alerts" ? v : "";
     if (pre) { ["from", "to", "scope", "region"].forEach(function (k) { if (pre[k] != null) S[k] = pre[k]; }); }
     BOX.hidden = false; refresh();
+    loadAiDraft(function () { if (BOX && !BOX.hidden && aiDraftFor() && S.data) draw(); });
     var f = BOX.querySelector("#os-top"); if (f) f.focus();
     return true;
   }
@@ -380,7 +447,9 @@
   function anData() {
     var a = S.an, t = function (v) { return String(v || "").trim(); };
     return { assess: t(a.assess), alt: t(a.alt), conf: a.conf, confNote: t(a.confNote), relLabel: t(a.relLabel) || "Relevance", rel: t(a.rel), ind: t(a.ind), gaps: t(a.gaps),
-      claims: S.claims.filter(claimUsed).map(function (c) { return { claim: t(c.claim), src: t(c.src), r: c.r, c: c.c, note: t(c.note) }; }),
+      dispo: { assess: dispo("assess", a.assess), alt: dispo("alt", a.alt), conf: dispo("conf", a.conf) || dispo("confNote", a.confNote), ind: dispo("ind", a.ind), gaps: dispo("gaps", a.gaps) },
+      aiFrom: S.aiFrom,
+      claims: S.claims.filter(claimUsed).map(function (c) { return { claim: t(c.claim), src: t(c.src), r: c.r, c: c.c, note: t(c.note), ai: claimDispo(c) }; }),
       outs: S.outs.filter(outUsed).map(function (x) { return { title: t(x.title) || t(x.url), url: t(x.url), r: x.r, note: t(x.note) }; }) };
   }
   /* change from the previous period: counts by kind and province side by side, and the peace tracker's lines in this period */
@@ -414,6 +483,16 @@
     }
     return h;
   }
+  /* the contributors line for parts that came from the AI draft: how many as drafted, how many edited */
+  function aiUsed(an) {
+    var D0 = an.dispo || {}, raw = 0, ed = 0;
+    Object.keys(D0).forEach(function (k) { if (D0[k] === "ai") raw++; else if (D0[k] === "edited") ed++; });
+    an.claims.forEach(function (c) { if (c.ai === "ai") raw++; else if (c.ai === "edited") ed++; });
+    if (!raw && !ed) return "";
+    var f = an.aiFrom || {};
+    return pl(raw + ed, "part") + " filled from a draft by " + esc(f.model || "an AI model") + (f.made ? " (" + esc(f.made) + ")" : "") + " from the OSAP records it cites: " +
+      raw + " as drafted, tagged AI generated (a draft, not analyst-approved); " + ed + " edited by the preparer. The Summary is never AI-drafted.";
+  }
   function build(d, o) {
     var recs = d.recs, keyEv = d.keyEv, m = d.map, bars = d.barsDay || d.bars, now = o.now;
     var no = "OSIR-" + String(d.cc).toUpperCase() + "-" + dtg(now).replace(/ /g, "");
@@ -439,18 +518,22 @@
     var tag = function (t, tip) { return ' <span class="aitag" tabindex="0" title="' + esc(tip) + '">' + t + "</span>"; };
     /* analyst sections: each part only when filled in, numbered ahead of OSAP's own key events and map */
     var an = o.an || { claims: [], outs: [] }, sub = 0, ANT = tag("Analyst", "Written by the person who made this report, as typed; OSAP adds no judgment.");
-    var h4 = function (t, osf) { sub++; return '<h4 class="oss"' + (osf ? ' data-osf="' + osf + '"' : "") + ">3." + sub + " " + esc(t) + ANT + "</h4>"; };
+    var DSP = an.dispo || {}, AIM = an.aiFrom && an.aiFrom.model ? " (" + an.aiFrom.model + ", " + an.aiFrom.made + ")" : "";
+    var AIT = tag("AI generated", "Drafted by AI" + AIM + " from the OSAP records it cites, and not changed by the analyst: a draft, not analyst-approved.");
+    var EDT = tag("Analyst, edited from AI draft", "Drafted by AI" + AIM + ", then changed by the person who made this report.");
+    var tagOf = function (k) { return DSP[k] === "ai" ? AIT : DSP[k] === "edited" ? EDT : ANT; };
+    var h4 = function (t, osf, k) { sub++; return '<h4 class="oss"' + (osf ? ' data-osf="' + osf + '"' : "") + ">3." + sub + " " + esc(t) + (k === "claims" ? ANT + (an.claims.some(function (c) { return c.ai; }) ? AIT.replace("and not changed by the analyst", "rows marked AI are as drafted") : "") : tagOf(k)) + "</h4>"; };
     var para = function (t, osf) { return '<div class="osanb" data-osf="' + osf + '">' + esc(t) + "</div>"; };
     var lines = function (t, osf) { return '<ul class="osli" data-osf="' + osf + '">' + t.split(/\n+/).map(function (x) { return x.replace(/^\s*[-*•]\s*/, "").trim(); }).filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
-    var anMain = (an.claims.length ? h4("Graded claims", "an-claims-h") + '<table class="oscl" data-osf="an-claims"><caption style="text-align:left;caption-side:top"><b>Table A.</b> Claims as graded by the analyst. Source reliability A–F, information credibility 1–6 (key in the attachments). A claim is what a source said, not a confirmed fact.</caption>' +
+    var anMain = (an.claims.length ? h4("Graded claims", "an-claims-h", "claims") + '<table class="oscl" data-osf="an-claims"><caption style="text-align:left;caption-side:top"><b>Table A.</b> Claims as graded by the analyst. Source reliability A–F, information credibility 1–6 (key in the attachments). A claim is what a source said, not a confirmed fact.</caption>' +
         "<thead><tr><th>No.</th><th>Claim</th><th>Source / originator</th><th>Grade</th><th>Corroboration</th></tr></thead><tbody>" +
-        an.claims.map(function (c, i) { return "<tr><td>" + (i + 1) + "</td><td>" + esc(c.claim) + "</td><td>" + esc(c.src) + '</td><td class="g" title="' + esc((c.r ? c.r + " " + RELN[c.r] : "Reliability not stated") + "; " + (c.c ? c.c + " " + CREDN[c.c] : "credibility not stated")) + '">' + esc(grade(c.r, c.c)) + "</td><td>" + esc(c.note) + "</td></tr>"; }).join("") + "</tbody></table>" : "") +
-      (an.assess ? h4("Assessment") + para(an.assess, "an-assess") : "") +
-      (an.alt ? h4("Alternative explanations") + para(an.alt, "an-alt") : "") +
-      (an.conf || an.confNote ? h4("Analytic confidence") + '<p class="osconf" data-osf="an-conf">' + (an.conf ? "<b>" + esc(an.conf) + "</b>" : "Not stated") + (an.confNote ? ". " + esc(an.confNote) : "") + "</p>" : "") +
+        an.claims.map(function (c, i) { return "<tr" + (c.ai ? ' data-ai="' + c.ai + '"' : "") + "><td>" + (i + 1) + (c.ai === "ai" ? ' <small title="As drafted by AI; not analyst-approved">AI</small>' : c.ai === "edited" ? ' <small title="Drafted by AI, then changed by the analyst">AI, edited</small>' : "") + "</td><td>" + esc(c.claim) + "</td><td>" + esc(c.src) + '</td><td class="g" title="' + esc((c.r ? c.r + " " + RELN[c.r] : "Reliability not stated") + "; " + (c.c ? c.c + " " + CREDN[c.c] : "credibility not stated")) + '">' + esc(grade(c.r, c.c)) + "</td><td>" + esc(c.note) + "</td></tr>"; }).join("") + "</tbody></table>" : "") +
+      (an.assess ? h4("Assessment", "", "assess") + para(an.assess, "an-assess") : "") +
+      (an.alt ? h4("Alternative explanations", "", "alt") + para(an.alt, "an-alt") : "") +
+      (an.conf || an.confNote ? h4("Analytic confidence", "", "conf") + '<p class="osconf" data-osf="an-conf">' + (an.conf ? "<b>" + esc(an.conf) + "</b>" : "Not stated") + (an.confNote ? ". " + esc(an.confNote) : "") + "</p>" : "") +
       (an.rel ? h4(an.relLabel) + para(an.rel, "an-rel") : "") +
-      (an.ind ? h4("Indicators to watch") + lines(an.ind, "an-ind") : "") +
-      (an.gaps ? h4("Intelligence gaps") + lines(an.gaps, "an-gaps") : "");
+      (an.ind ? h4("Indicators to watch", "", "ind") + lines(an.ind, "an-ind") : "") +
+      (an.gaps ? h4("Intelligence gaps", "", "gaps") + lines(an.gaps, "an-gaps") : "");
     var anParts = sub, graded = an.claims.some(function (c) { return c.r || c.c; }) || an.outs.some(function (x) { return x.r; });
     var kNo = "3." + (++sub), wNo = "3." + (++sub), ch = change(d, o), cNo = ch ? "3." + (++sub) : "";
     var period = d.period + (recs.length < d.total ? " (latest " + recs.length + " of " + d.total + " records)" : "");
@@ -497,6 +580,7 @@
       (ai ? "<li><b>AI:</b> " + pl(ai, "key-event summary", "key-event summaries") + " drafted by " + esc((W.OSAP_EVSUM && W.OSAP_EVSUM.model) || "an AI model") + ", tagged AI generated; drafts, not analyst-approved.</li>" : "") +
       (ext ? "<li><b>Automatic extracts:</b> " + pl(ext, "key-event summary", "key-event summaries") + " taken from the reports by fixed rules (no AI).</li>" : "") +
       (anParts || an.outs.length ? "<li><b>Analyst sections:</b> " + (anParts ? pl(anParts, "part") + " of the main content" : "") + (anParts && an.outs.length ? " and " : "") + (an.outs.length ? pl(an.outs.length, "outside source") : "") + " written by the preparer, as typed, tagged Analyst; OSAP did not check them.</li>" : "") +
+      (aiUsed(an) ? '<li data-osf="ai-draft"><b>AI draft:</b> ' + aiUsed(an) + "</li>" : "") +
       "<li><b>Analyst review:</b> " + (o.summary || anParts ? "the analyst summary and analyst sections are the preparer's own; the rest is not analyst-reviewed." : "none recorded.") + "</li></ul>" +
       /* 10: Sources */
       '<h3 class="tls"><span class="no">6</span>Sources</h3><ol class="tlrsrc" data-osf="sources">' + srcs.map(function (x) {

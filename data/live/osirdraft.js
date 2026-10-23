@@ -1,0 +1,1 @@
+window.OSAP_OSIRDRAFT={"asof":"2026-10-23 00:13Z","prompt":"osirdraft/1","model":"openai/gpt-4o-mini","label":"Draft, AI-generated, not analyst-approved","day":{"date":"2026-10-23","n":0},"drafted":0,"stopped":"","errors":[],"topics":{}};
