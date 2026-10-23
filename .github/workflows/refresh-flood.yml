@@ -121,7 +121,7 @@ jobs:
       - name: Pull data-set searches and build the news search index
         if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics' || inputs.only == 'et' }}
         timeout-minutes: 5
-        run: node tools/refresh_topics.mjs; node tools/news_index.mjs; node tools/refresh_layerfeed.mjs
+        run: node tools/refresh_topics.mjs; node tools/news_index.mjs; node tools/refresh_layerfeed.mjs; node tools/news_stories.mjs
         continue-on-error: true
       # The ET tab (UFO and UAP reports): the news pool's "uap" data set pinned on the map, official releases and the
       # notable cases in tools/et_cases.json, into data/live/et.js (tools/refresh_et.mjs).
@@ -270,7 +270,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true
@@ -430,7 +430,8 @@ jobs:
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
           exit 1
 
-  # Push watches (tools/push_watches.mjs): after each refresh, every watch kept on OSAP's server (added from the app's Push to
+  # Push watches (tools/push_watches.mjs): after each refresh, every account's watches kept on OSAP's server (Mid and Full plans,
+  # each checked with its plan's data; added from the app's Push to
   # phone button; read with this job's GitHub OIDC token, so no secret, see tools/push_lib.mjs) is checked by opening its country's page headless on the new data, and new matching reports are sent to the
   # watch's ntfy.sh channel. No key or account: ntfy.sh takes anonymous posts. What was already seen is kept in the Actions cache,
   # not in the repo. "push-test" (any branch) sends the newest match of each watch once, marked [test], and keeps nothing.
