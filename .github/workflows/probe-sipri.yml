@@ -12,12 +12,7 @@ jobs:
       - run: |
           set +e
           B=https://armstransfers.sipri.org
-          curl -sS -m 60 $B/ -o new.html; echo "== shell"; cat new.html; echo
-          for js in $(grep -oE '(src|href)="[^"]+"' new.html | sed -E 's/^(src|href)="//;s/"$//'); do
-            case "$js" in http*) u=$js;; /*) u=$B$js;; *) u=$B/$js;; esac
-            curl -sS -m 60 "$u" -o f.txt; echo "== $u $(wc -c < f.txt)"
-            grep -oE 'atbackend[^"`]{0,120}|/api/p/[a-zA-Z0-9/_-]{2,80}' f.txt | sort -u | head -60
-            grep -oE '.{300}import-export-csv-str.{600}' f.txt | head -2
-            grep -oE '.{200}getallcountries.{300}' f.txt | head -1
-          done
-          echo "== POST countries"; curl -sS -m 60 -X POST -H 'Content-Type: application/json' -d '{}' https://atbackend.sipri.org/api/p/countries/getallcountries | head -c 800; echo
+          curl -sS -m 60 $B/build/bundle.js -o f.txt; echo "== bundle $(wc -c < f.txt)"
+          grep -oE 'https?://[a-z0-9.-]*sipri[^"`'"'"' ]{0,100}' f.txt | sort -u | head -40
+          grep -oE '"/?api/p/[a-zA-Z0-9/_-]{2,80}"|`/?api/p/[^`]{2,80}`|/api/p/[a-zA-Z0-9/_-]{2,80}' f.txt | sort -u | head -80
+          for k in import-export-csv-str getallcountries trades/; do echo "== ctx $k"; grep -oE ".{400}$k.{700}" f.txt | head -2; done
