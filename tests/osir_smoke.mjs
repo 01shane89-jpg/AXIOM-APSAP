@@ -10,6 +10,7 @@
 // footer, Save draft / Open draft (a hostile draft file is read as data), and the catalogue's proposed letter beside a claim.
 // AI draft: Fill from AI draft fills only empty fields, never the Summary; parts as drafted are tagged AI generated, edited parts
 // "Analyst, edited from AI draft".
+// Multi-country: a report kept as Part 1, the next country added as Part 2, Shane's order kept, joined fingerprint over the parts.
 // Run from the repo root: node tests/osir_smoke.mjs   (needs the playwright package and Chromium; OUT=dir keeps a screenshot and PDF)
 import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
@@ -261,6 +262,41 @@ ok(/data-ai="ai"/.test(ar.row) && />AI</.test(ar.row) && /&lt;img/.test(ar.row) 
 ok(/filled from a draft by openai\/gpt-4o-mini/.test(ar.ai) && /as drafted, tagged AI generated/.test(ar.ai) && /never AI-drafted/.test(ar.ai), "contributors: " + ar.ai.slice(0, 120));
 ok(ar.sum === "My own bottom line", "the report's Summary is the analyst's own");
 await p.click("#osir-close");
+
+/* multi-country: keep Thailand as Part 1, switch to Malaysia, make the joined report */
+await p.evaluate(() => { try { sessionStorage.removeItem("osap-osir-parts"); } catch (e) {} window.OSAP_OSIR.open({ from: "", to: "" }); });
+await p.waitForFunction(() => window.OSAP_OSIR._state().data && !document.getElementById("os-go").disabled, null, { timeout: 30000 });
+await p.fill("#os-subj", "Thai-Malaysian border");
+await p.click("#os-go");
+await p.waitForSelector("#brief .osir", { timeout: 30000 });
+const thFp = await p.evaluate(() => new Promise((res) => { (function w(n) { const t = (document.getElementById("osir-fp") || {}).textContent || ""; if (/^[0-9a-f]{64}$/.test(t) || n > 300) res(t); else setTimeout(() => w(n + 1), 200); })(0); }));
+await p.click("#osir-addc");
+await p.waitForFunction(() => !document.getElementById("osirdlg").hidden && document.getElementById("os-parts"), null, { timeout: 20000 });
+const held = await p.evaluate(() => ({ parts: JSON.parse(sessionStorage.getItem("osap-osir-parts") || "[]").map((x) => [x.cc, x.fp, !!x.main, !!x.att, !!x.src]), go: document.getElementById("os-go").disabled, box: document.getElementById("os-parts").textContent }));
+ok(held.parts.length === 1 && held.parts[0][0] === "th" && held.parts[0][1] === thFp && held.parts[0].slice(2).every(Boolean), "Add another country: Thailand kept as Part 1 with its fingerprint and sections");
+ok(held.go && /already a part/.test(held.box), "the same country cannot be added twice: Make OSIR is off and says why");
+await p.evaluate(() => { const c = document.getElementById("os-cc"); c.value = "my"; c.dispatchEvent(new Event("change")); });
+await p.waitForFunction(() => window.TSAP && window.TSAP.country === "my" && window.OSAP_OSIR && window.OSAP_OSIR._state().data && document.getElementById("osirdlg") && !document.getElementById("osirdlg").hidden && !document.getElementById("os-go").disabled, null, { timeout: 150000 });
+ok(await p.evaluate(() => /Make OSIR adds this country as Part 2/.test((document.getElementById("os-parts") || {}).textContent || "")), "back on Malaysia: the window says it will be Part 2");
+await p.click("#os-go");
+await p.waitForSelector('#brief .osir[data-joined="1"]', { timeout: 30000 });
+await p.waitForFunction(() => /^[0-9a-f]{64}$/.test((document.getElementById("osir-jfp") || {}).textContent || ""), null, { timeout: 90000 });
+const jr = await p.evaluate(() => {
+  const a = document.querySelector("#brief .osir");
+  const order = [...a.querySelectorAll("table.osf th, h3.tls, .osend")].map((e) => e.textContent.replace(/^\d+/, "").replace(/\s*(Automatic|Analyst|AI generated)$/, "").trim());
+  return { order, no: a.getAttribute("data-osir"), ctry: a.querySelector('[data-osf="countries"]').textContent, heads: [...a.querySelectorAll("h4.osparth")].map((h) => h.textContent.split(" (")[0]),
+    fp: document.getElementById("osir-fp").textContent, jfp: document.getElementById("osir-jfp").textContent, foot: a.querySelector("footer.tlrf").textContent, maps: a.querySelectorAll(".tlrfig svg").length,
+    dupIds: (() => { const ids = [...a.querySelectorAll("[id]")].map((e) => e.id); return ids.filter((x, i) => ids.indexOf(x) !== i); })(), addc: document.getElementById("osir-addc").hidden };
+});
+const WANTJ = ["Subject", "Date generated", "Country/s", "OSINT disclaimer", "Summary", "Main content", "END OF REPORT", "Attachments", "Contributors", "Sources"];
+ok(JSON.stringify(jr.order) === JSON.stringify(WANTJ), "joined report keeps Shane's section order");
+ok(/^OSIR-TH-MY-\d{6}Z[A-Z]{3}\d\d$/.test(jr.no) && jr.ctry === "Part 1: Thailand; Part 2: Malaysia", "joined report number " + jr.no + "; countries: " + jr.ctry);
+ok(JSON.stringify(jr.heads) === JSON.stringify(["Part 1: Thailand", "Part 2: Malaysia", "Part 1: Thailand", "Part 2: Malaysia", "Part 1: Thailand", "Part 2: Malaysia", "Part 1: Thailand", "Part 2: Malaysia"]), "each section holds Part 1 then Part 2 (summary, main content, attachments, sources)");
+const jWant = await p.evaluate(async ([a, b]) => { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(a + "\n" + b)); return [...new Uint8Array(h)].map((x) => x.toString(16).padStart(2, "0")).join(""); }, [thFp, jr.fp]);
+ok(jr.jfp === jWant && jr.foot.includes(thFp), "joined fingerprint = SHA-256 over the part fingerprints in order; Part 1's is listed");
+ok(!jr.dupIds.length && jr.addc, "no duplicate ids across parts (" + jr.maps + " maps); a joined report cannot be kept again");
+await p.click("#osir-close");
+await p.evaluate(() => { try { sessionStorage.removeItem("osap-osir-parts"); } catch (e) {} });
 
 /* phone: the window fits */
 await p.setViewportSize({ width: 390, height: 800 });
