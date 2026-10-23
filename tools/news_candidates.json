@@ -1,553 +1,593 @@
 {
-"note": "PROBE BRANCH ONLY: warning feed discovery round W2",
+"note": "PROBE BRANCH ONLY: regional think tank candidates",
 "feeds": [
 {
-"cc": "id",
-"outlet": "BMKG nowcast",
-"url": "https://www.bmkg.go.id/alerts/nowcast/en/rss.xml",
-"lang": "en"
+"cc": "zz",
+"outlet": "InSight Crime",
+"url": "https://insightcrime.org/feed/",
+"lang": "en",
+"id": "insightcrime"
 },
 {
-"cc": "id",
-"outlet": "BMKG nowcast",
-"url": "https://www.bmkg.go.id/alerts/nowcast/id/rss.xml",
-"lang": "id"
+"cc": "zz",
+"outlet": "Americas Quarterly",
+"url": "https://www.americasquarterly.org/feed/",
+"lang": "en",
+"id": "americasquarterly"
 },
 {
-"cc": "id",
-"outlet": "BMKG nowcast",
-"url": "https://bmkg.go.id/alerts/nowcast/en",
-"lang": "en"
+"cc": "zz",
+"outlet": "Inter-American Dialogue",
+"url": "https://www.thedialogue.org/feed/",
+"lang": "en",
+"id": "dialogue"
 },
 {
-"cc": "fi",
-"outlet": "MeteoAlarm Finland",
-"url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland",
-"lang": "en"
+"cc": "zz",
+"outlet": "WOLA",
+"url": "https://www.wola.org/feed/",
+"lang": "en",
+"id": "wola"
 },
 {
-"cc": "fi",
-"outlet": "FMI CAP",
-"url": "https://alerts.fmi.fi/cap/feed/rss_en-GB.rss",
-"lang": "en"
+"cc": "zz",
+"outlet": "Global Americans",
+"url": "https://theglobalamericans.org/feed/",
+"lang": "en",
+"id": "globalamericans"
 },
 {
-"cc": "fi",
-"outlet": "FMI CAP",
-"url": "https://alerts.fmi.fi/cap/feed/atom_en-GB.xml",
-"lang": "en"
+"cc": "zz",
+"outlet": "NACLA",
+"url": "https://nacla.org/rss.xml",
+"lang": "en",
+"id": "nacla"
 },
 {
-"cc": "tr",
-"outlet": "Kandilli quakes",
-"url": "http://www.koeri.boun.edu.tr/scripts/lst0.asp",
-"lang": "tr"
+"cc": "zz",
+"outlet": "NACLA",
+"url": "https://nacla.org/feed",
+"lang": "en",
+"id": "nacla"
 },
 {
-"cc": "kr",
-"outlet": "KMA warnings",
-"url": "https://www.kma.go.kr/weather/warning/rss.jsp",
-"lang": "ko"
+"cc": "zz",
+"outlet": "CAPRI (Caribbean Policy Research Institute)",
+"url": "https://www.capricaribbean.org/feed",
+"lang": "en",
+"id": "capri"
 },
 {
-"cc": "th",
-"outlet": "TMD warning",
-"url": "https://data.tmd.go.th/api/WeatherWarningNews/v1/?uid=api&ukey=api12345",
-"lang": "th"
+"cc": "zz",
+"outlet": "CAPRI (Caribbean Policy Research Institute)",
+"url": "https://capricaribbean.org/rss.xml",
+"lang": "en",
+"id": "capri"
 },
 {
-"cc": "za",
-"outlet": "SAWS CAP",
-"url": "https://caps.weathersa.co.za/Home/RssFeed",
-"lang": "en"
+"cc": "zz",
+"outlet": "SAIIA",
+"url": "https://saiia.org.za/feed/",
+"lang": "en",
+"id": "saiia"
 },
 {
-"cc": "us",
-"outlet": "NWS atom",
-"url": "https://api.weather.gov/alerts/active.atom?severity=Extreme,Severe",
-"lang": "en"
-}
-],
-"discover": [
-{
-"cc": "ae",
-"outlet": "NCM UAE",
-"home": "https://www.ncm.gov.ae/"
-},
-{
-"cc": "ae",
-"outlet": "NCEMA",
-"home": "https://www.ncema.gov.ae/"
-},
-{
-"cc": "af",
-"outlet": "ANDMA",
-"home": "https://andma.gov.af/en"
-},
-{
-"cc": "am",
-"outlet": "MES Armenia",
-"home": "https://www.mes.am/en/"
-},
-{
-"cc": "am",
-"outlet": "Armhydromet",
-"home": "https://www.meteo.am/"
-},
-{
-"cc": "ao",
-"outlet": "INAMET",
-"home": "https://inamet.gov.ao/"
-},
-{
-"cc": "ar",
-"outlet": "SMN Argentina",
-"home": "https://www.smn.gob.ar/"
-},
-{
-"cc": "az",
-"outlet": "Azerbaijan National Hydrometeorology",
-"home": "https://meteo.az/"
-},
-{
-"cc": "bb",
-"outlet": "Barbados Met Services",
-"home": "https://www.barbadosweather.org/"
-},
-{
-"cc": "bb",
-"outlet": "Barbados DEM",
-"home": "https://dem.gov.bb/"
-},
-{
-"cc": "bd",
-"outlet": "Bangladesh Met Department",
-"home": "https://www.bmd.gov.bd/"
-},
-{
-"cc": "bd",
-"outlet": "FFWC Bangladesh",
-"home": "https://www.ffwc.gov.bd/"
-},
-{
-"cc": "bf",
-"outlet": "ANAM Burkina",
-"home": "https://www.meteoburkina.bf/"
-},
-{
-"cc": "bo",
-"outlet": "SENAMHI Bolivia",
-"home": "https://senamhi.gob.bo/"
-},
-{
-"cc": "bs",
-"outlet": "Bahamas Met",
-"home": "https://www.bahamasweather.org.bs/"
-},
-{
-"cc": "bs",
-"outlet": "NEMA Bahamas",
-"home": "https://nema.gov.bs/"
-},
-{
-"cc": "bt",
-"outlet": "NCHM Bhutan",
-"home": "https://www.nchm.gov.bt/"
-},
-{
-"cc": "by",
-"outlet": "Belhydromet",
-"home": "https://belgidromet.by/"
-},
-{
-"cc": "cl",
-"outlet": "DMC Chile",
-"home": "https://www.meteochile.gob.cl/"
-},
-{
-"cc": "cl",
-"outlet": "SENAPRED",
-"home": "https://senapred.cl/"
-},
-{
-"cc": "co",
-"outlet": "IDEAM",
-"home": "https://www.ideam.gov.co/"
-},
-{
-"cc": "co",
-"outlet": "UNGRD",
-"home": "https://portal.gestiondelriesgo.gov.co/"
-},
-{
-"cc": "cu",
-"outlet": "INSMET",
-"home": "https://www.insmet.cu/"
+"cc": "zz",
+"outlet": "Africa Portal",
+"url": "https://africaportal.org/feed/",
+"lang": "en",
+"id": "africaportal"
 },
 {
-"cc": "dm",
-"outlet": "Dominica Met",
-"home": "https://www.weather.gov.dm/"
+"cc": "zz",
+"outlet": "Good Governance Africa",
+"url": "https://gga.org/feed/",
+"lang": "en",
+"id": "gga"
 },
 {
-"cc": "dz",
-"outlet": "ONM Algeria",
-"home": "https://www.meteo.dz/"
+"cc": "zz",
+"outlet": "CDD West Africa",
+"url": "https://www.cddwestafrica.org/feed/",
+"lang": "en",
+"id": "cddwa"
 },
 {
-"cc": "eg",
-"outlet": "EMA Egypt",
-"home": "https://ema.gov.eg/"
+"cc": "zz",
+"outlet": "CDD West Africa",
+"url": "https://cddwestafrica.org/feed/",
+"lang": "en",
+"id": "cddwa"
 },
 {
-"cc": "et",
-"outlet": "EMI Ethiopia",
-"home": "https://www.ethiomet.gov.et/"
+"cc": "zz",
+"outlet": "Timbuktu Institute",
+"url": "https://timbuktu-institute.org/index.php?format=feed&type=rss",
+"lang": "en",
+"id": "timbuktu"
 },
 {
-"cc": "fj",
-"outlet": "Fiji Met",
-"home": "https://www.met.gov.fj/"
+"cc": "zz",
+"outlet": "Timbuktu Institute",
+"url": "https://timbuktu-institute.org/feed/",
+"lang": "en",
+"id": "timbuktu"
 },
 {
-"cc": "fj",
-"outlet": "NDMO Fiji",
-"home": "https://www.ndmo.gov.fj/"
+"cc": "zz",
+"outlet": "Policy Center for the New South",
+"url": "https://www.policycenter.ma/rss.xml",
+"lang": "en",
+"id": "pcns"
 },
 {
-"cc": "ge",
-"outlet": "NEA Georgia",
-"home": "https://meteo.gov.ge/"
+"cc": "zz",
+"outlet": "Policy Center for the New South",
+"url": "https://www.policycenter.ma/feed",
+"lang": "en",
+"id": "pcns"
 },
 {
-"cc": "gh",
-"outlet": "GMet",
-"home": "https://www.meteo.gov.gh/"
+"cc": "zz",
+"outlet": "ECDPM",
+"url": "https://ecdpm.org/feed",
+"lang": "en",
+"id": "ecdpm"
 },
 {
-"cc": "id",
-"outlet": "BMKG",
-"home": "https://www.bmkg.go.id/"
+"cc": "zz",
+"outlet": "ECDPM",
+"url": "https://ecdpm.org/rss.xml",
+"lang": "en",
+"id": "ecdpm"
 },
 {
-"cc": "id",
-"outlet": "BNPB",
-"home": "https://bnpb.go.id/"
+"cc": "zz",
+"outlet": "African Arguments",
+"url": "https://africanarguments.org/feed/",
+"lang": "en",
+"id": "africanarguments"
 },
 {
-"cc": "jm",
-"outlet": "ODPEM",
-"home": "https://www.odpem.org.jm/"
+"cc": "zz",
+"outlet": "Devpolicy Blog (ANU)",
+"url": "https://devpolicy.org/feed/",
+"lang": "en",
+"id": "devpolicy"
 },
 {
-"cc": "jm",
-"outlet": "Jamaica Met",
-"home": "https://metservice.gov.jm/"
+"cc": "zz",
+"outlet": "Pacific Security College",
+"url": "https://pacificsecurity.net/feed/",
+"lang": "en",
+"id": "pacificsecurity"
 },
 {
-"cc": "ke",
-"outlet": "KMD",
-"home": "https://meteo.go.ke/"
+"cc": "zz",
+"outlet": "CACI Analyst",
+"url": "https://www.cacianalyst.org/publications/analytical-articles.html?format=feed&type=rss",
+"lang": "en",
+"id": "caci"
 },
 {
-"cc": "ke",
-"outlet": "NDMA Kenya",
-"home": "https://www.ndma.go.ke/"
+"cc": "zz",
+"outlet": "CACI Analyst",
+"url": "https://www.cacianalyst.org/rss.xml",
+"lang": "en",
+"id": "caci"
 },
 {
-"cc": "kg",
-"outlet": "MChS Kyrgyzstan",
-"home": "https://mchs.gov.kg/"
+"cc": "zz",
+"outlet": "Caspian Policy Center",
+"url": "https://www.caspianpolicy.org/feed",
+"lang": "en",
+"id": "caspian"
 },
 {
-"cc": "kh",
-"outlet": "NCDM Cambodia",
-"home": "https://ncdm.gov.kh/"
+"cc": "zz",
+"outlet": "Caspian Policy Center",
+"url": "https://www.caspianpolicy.org/rss.xml",
+"lang": "en",
+"id": "caspian"
 },
 {
-"cc": "kr",
-"outlet": "KMA",
-"home": "https://www.weather.go.kr/w/index.do"
+"cc": "zz",
+"outlet": "CABAR.asia",
+"url": "https://cabar.asia/en/feed",
+"lang": "en",
+"id": "cabar"
 },
 {
-"cc": "kz",
-"outlet": "Kazhydromet",
-"home": "https://www.kazhydromet.kz/en"
+"cc": "zz",
+"outlet": "CABAR.asia",
+"url": "https://cabar.asia/en/rss",
+"lang": "en",
+"id": "cabar"
 },
 {
-"cc": "lb",
-"outlet": "Lebanon Met",
-"home": "https://www.meteo.gov.lb/"
+"cc": "zz",
+"outlet": "European Western Balkans",
+"url": "https://europeanwesternbalkans.com/feed/",
+"lang": "en",
+"id": "ewb"
 },
 {
-"cc": "lk",
-"outlet": "Sri Lanka Met",
-"home": "https://www.meteo.gov.lk/"
+"cc": "zz",
+"outlet": "BiEPAG",
+"url": "https://biepag.eu/feed/",
+"lang": "en",
+"id": "biepag"
 },
 {
-"cc": "lk",
-"outlet": "DMC Sri Lanka",
-"home": "https://www.dmc.gov.lk/"
+"cc": "zz",
+"outlet": "CEPA",
+"url": "https://cepa.org/feed/",
+"lang": "en",
+"id": "cepa"
 },
 {
-"cc": "ma",
-"outlet": "DGM Morocco",
-"home": "https://www.marocmeteo.ma/"
+"cc": "zz",
+"outlet": "ICDS Estonia",
+"url": "https://icds.ee/en/feed/",
+"lang": "en",
+"id": "icds"
 },
 {
-"cc": "mv",
-"outlet": "Maldives Met",
-"home": "https://www.meteorology.gov.mv/"
+"cc": "zz",
+"outlet": "ICDS Estonia",
+"url": "https://icds.ee/feed/",
+"lang": "en",
+"id": "icds"
 },
 {
-"cc": "mv",
-"outlet": "NDMC Maldives",
-"home": "https://ndmc.gov.mv/"
+"cc": "zz",
+"outlet": "PISM",
+"url": "https://pism.pl/rss/publications",
+"lang": "en",
+"id": "pism"
 },
 {
-"cc": "mw",
-"outlet": "DCCMS Malawi",
-"home": "https://www.metmalawi.gov.mw/"
+"cc": "zz",
+"outlet": "PISM",
+"url": "https://www.pism.pl/rss",
+"lang": "en",
+"id": "pism"
 },
 {
-"cc": "ni",
-"outlet": "INETER",
-"home": "https://www.ineter.gob.ni/"
+"cc": "zz",
+"outlet": "Bruegel",
+"url": "https://www.bruegel.org/rss.xml",
+"lang": "en",
+"id": "bruegel"
 },
 {
-"cc": "np",
-"outlet": "DHM Nepal",
-"home": "https://www.dhm.gov.np/"
+"cc": "zz",
+"outlet": "Bruegel",
+"url": "https://www.bruegel.org/feed",
+"lang": "en",
+"id": "bruegel"
 },
 {
-"cc": "np",
-"outlet": "BIPAD Nepal",
-"home": "https://bipad.gov.np/"
+"cc": "zz",
+"outlet": "Arab Center Washington DC",
+"url": "https://arabcenterdc.org/feed/",
+"lang": "en",
+"id": "arabcenter"
 },
 {
-"cc": "om",
-"outlet": "Oman Met",
-"home": "https://www.met.gov.om/"
+"cc": "zz",
+"outlet": "Arab Gulf States Institute in Washington",
+"url": "https://agsiw.org/feed/",
+"lang": "en",
+"id": "agsiw"
 },
 {
-"cc": "pe",
-"outlet": "SENAMHI Peru",
-"home": "https://www.senamhi.gob.pe/"
+"cc": "zz",
+"outlet": "Arab Reform Initiative",
+"url": "https://www.arab-reform.net/feed/",
+"lang": "en",
+"id": "arabreform"
 },
 {
-"cc": "pe",
-"outlet": "INDECI",
-"home": "https://www.indeci.gob.pe/"
+"cc": "zz",
+"outlet": "Sana'a Center",
+"url": "https://sanaacenter.org/feed",
+"lang": "en",
+"id": "sanaa"
 },
 {
-"cc": "sa",
-"outlet": "NCM Saudi",
-"home": "https://ncm.gov.sa/"
+"cc": "zz",
+"outlet": "Sana'a Center",
+"url": "https://sanaacenter.org/rss.xml",
+"lang": "en",
+"id": "sanaa"
 },
 {
-"cc": "sv",
-"outlet": "MARN El Salvador",
-"home": "https://www.snet.gob.sv/"
+"cc": "zz",
+"outlet": "TIMEP",
+"url": "https://timep.org/feed/",
+"lang": "en",
+"id": "timep"
 },
 {
-"cc": "sv",
-"outlet": "Proteccion Civil SV",
-"home": "https://www.proteccioncivil.gob.sv/"
+"cc": "zz",
+"outlet": "Gulf International Forum",
+"url": "https://gulfif.org/feed/",
+"lang": "en",
+"id": "gulfif"
 },
 {
-"cc": "th",
-"outlet": "TMD Thailand",
-"home": "https://www.tmd.go.th/en/"
+"cc": "zz",
+"outlet": "Al Jazeera Centre for Studies",
+"url": "https://studies.aljazeera.net/en/rss.xml",
+"lang": "en",
+"id": "ajstudies"
 },
 {
-"cc": "th",
-"outlet": "DDPM Thailand",
-"home": "https://www.disaster.go.th/"
+"cc": "zz",
+"outlet": "South Asian Voices (Stimson)",
+"url": "https://southasianvoices.org/feed/",
+"lang": "en",
+"id": "sav"
 },
 {
-"cc": "tn",
-"outlet": "INM Tunisia",
-"home": "https://www.meteo.tn/"
+"cc": "zz",
+"outlet": "FDD's Long War Journal",
+"url": "https://www.longwarjournal.org/feed",
+"lang": "en",
+"id": "lwj"
 },
 {
-"cc": "tr",
-"outlet": "MGM Turkey",
-"home": "https://www.mgm.gov.tr/"
+"cc": "zz",
+"outlet": "Small Arms Survey",
+"url": "https://www.smallarmssurvey.org/rss.xml",
+"lang": "en",
+"id": "smallarms"
 },
 {
-"cc": "tr",
-"outlet": "AFAD",
-"home": "https://www.afad.gov.tr/"
+"cc": "zz",
+"outlet": "Geopolitical Monitor",
+"url": "https://www.geopoliticalmonitor.com/feed/",
+"lang": "en",
+"id": "geopoliticalmonitor"
 },
 {
-"cc": "tt",
-"outlet": "ODPM",
-"home": "https://www.odpm.gov.tt/"
+"cc": "zz",
+"outlet": "ISPI",
+"url": "https://www.ispionline.it/en/feed/",
+"lang": "en",
+"id": "ispi"
 },
 {
-"cc": "tt",
-"outlet": "TT Met",
-"home": "https://www.metoffice.gov.tt/"
+"cc": "zz",
+"outlet": "ISPI",
+"url": "https://www.ispionline.it/en/rss",
+"lang": "en",
+"id": "ispi"
 },
 {
-"cc": "ug",
-"outlet": "UNMA",
-"home": "https://www.unma.go.ug/"
+"cc": "zz",
+"outlet": "CIDOB",
+"url": "https://www.cidob.org/en/rss.xml",
+"lang": "en",
+"id": "cidob"
 },
 {
-"cc": "uy",
-"outlet": "INUMET",
-"home": "https://www.inumet.gub.uy/"
+"cc": "zz",
+"outlet": "CIDOB",
+"url": "https://www.cidob.org/rss",
+"lang": "en",
+"id": "cidob"
 },
 {
-"cc": "uy",
-"outlet": "SINAE",
-"home": "https://www.gub.uy/sistema-nacional-emergencias/"
+"cc": "zz",
+"outlet": "Real Instituto Elcano",
+"url": "https://www.realinstitutoelcano.org/en/feed/",
+"lang": "en",
+"id": "elcano"
 },
 {
-"cc": "uz",
-"outlet": "Uzhydromet",
-"home": "https://meteo.uz/"
+"cc": "zz",
+"outlet": "Egmont Institute",
+"url": "https://www.egmontinstitute.be/feed/",
+"lang": "en",
+"id": "egmont"
 },
 {
-"cc": "vc",
-"outlet": "NEMO SVG",
-"home": "https://nemo.gov.vc/"
+"cc": "zz",
+"outlet": "FIIA (Finland)",
+"url": "https://www.fiia.fi/en/feed",
+"lang": "en",
+"id": "fiia"
 },
 {
-"cc": "ve",
-"outlet": "INAMEH",
-"home": "https://www.inameh.gob.ve/"
+"cc": "zz",
+"outlet": "FIIA (Finland)",
+"url": "https://www.fiia.fi/en/rss",
+"lang": "en",
+"id": "fiia"
 },
 {
-"cc": "vn",
-"outlet": "NCHMF",
-"home": "https://nchmf.gov.vn/"
+"cc": "zz",
+"outlet": "NUPI",
+"url": "https://www.nupi.no/en/rss",
+"lang": "en",
+"id": "nupi"
 },
 {
-"cc": "vn",
-"outlet": "VNDMA",
-"home": "https://phongchongthientai.mard.gov.vn/"
+"cc": "zz",
+"outlet": "NUPI",
+"url": "https://www.nupi.no/en/feed",
+"lang": "en",
+"id": "nupi"
 },
 {
-"cc": "za",
-"outlet": "SAWS",
-"home": "https://www.weathersa.co.za/"
+"cc": "zz",
+"outlet": "DIIS",
+"url": "https://www.diis.dk/en/rss.xml",
+"lang": "en",
+"id": "diis"
 },
 {
-"cc": "zw",
-"outlet": "MSD Zimbabwe",
-"home": "https://www.weatherzw.org.zw/"
+"cc": "zz",
+"outlet": "IAI Italy",
+"url": "https://www.iai.it/en/rss.xml",
+"lang": "en",
+"id": "iai"
 },
 {
-"cc": "ws",
-"outlet": "Samoa Met",
-"home": "https://www.samet.gov.ws/"
+"cc": "zz",
+"outlet": "FRS",
+"url": "https://www.frstrategie.org/en/rss.xml",
+"lang": "en",
+"id": "frstrategie"
 },
 {
-"cc": "to",
-"outlet": "Tonga Met",
-"home": "https://www.met.gov.to/"
+"cc": "zz",
+"outlet": "Asia Society Policy Institute",
+"url": "https://asiasociety.org/policy-institute/rss.xml",
+"lang": "en",
+"id": "asiasociety"
 },
 {
-"cc": "gd",
-"outlet": "NaDMA Grenada",
-"home": "https://www.nadma.gd/"
+"cc": "zz",
+"outlet": "Lowy Pacific",
+"url": "https://www.lowyinstitute.org/the-interpreter/rss.xml?region=pacific",
+"lang": "en",
+"id": "lowyinterp"
 },
 {
-"cc": "lc",
-"outlet": "NEMO Saint Lucia",
-"home": "https://www.nemo.gov.lc/"
+"cc": "zz",
+"outlet": "Caribbean Investigative Journalism Network",
+"url": "https://www.cijn.org/feed/",
+"lang": "en",
+"id": "caribbeaninvestigative"
 },
 {
-"cc": "kn",
-"outlet": "NEMA SKN",
-"home": "https://www.nema.gov.kn/"
+"cc": "zz",
+"outlet": "Global Organized Crime Index",
+"url": "https://ocindex.net/feed",
+"lang": "en",
+"id": "ocindex"
 },
 {
-"cc": "ag",
-"outlet": "Antigua Met",
-"home": "https://www.antiguamet.com/"
+"cc": "zz",
+"outlet": "Institute for Security Studies (Africa) ISS Today",
+"url": "https://issafrica.org/iss-today/rss",
+"lang": "en",
+"id": "issas"
 },
 {
-"cc": "sr",
-"outlet": "Meteo Suriname",
-"home": "https://www.meteosur.sr/"
+"cc": "zz",
+"outlet": "ACCORD",
+"url": "https://www.accord.org.za/feed/",
+"lang": "en",
+"id": "acss"
 },
 {
-"cc": "pw",
-"outlet": "NWS Guam (Palau)",
-"home": "https://www.weather.gov/gum/"
+"cc": "zz",
+"outlet": "RSIS Singapore",
+"url": "https://www.rsis.edu.sg/feed/",
+"lang": "en",
+"id": "rsis"
 },
 {
-"cc": "sg",
-"outlet": "MSS Singapore",
-"home": "https://www.weather.gov.sg/"
+"cc": "zz",
+"outlet": "ISEAS Perspective",
+"url": "https://www.iseas.edu.sg/feed/",
+"lang": "en",
+"id": "iseas"
 },
 {
-"cc": "bn",
-"outlet": "BDMD Brunei",
-"home": "https://www.met.gov.bn/"
+"cc": "zz",
+"outlet": "CSIS Indonesia",
+"url": "https://www.csis.or.id/feed/",
+"lang": "en",
+"id": "csisid"
 },
 {
-"cc": "la",
-"outlet": "DMH Laos",
-"home": "https://dmh.gov.la/"
+"cc": "zz",
+"outlet": "ISIS Malaysia",
+"url": "https://www.isis.org.my/feed/",
+"lang": "en",
+"id": "isis"
 },
 {
-"cc": "tl",
-"outlet": "DNMG Timor-Leste",
-"home": "https://www.meteo.tl/"
+"cc": "zz",
+"outlet": "Stratbase ADRi",
+"url": "https://stratbase.ph/feed/",
+"lang": "en",
+"id": "stratbase"
 },
 {
-"cc": "iq",
-"outlet": "Iraq Met",
-"home": "https://meteoseism.gov.iq/"
+"cc": "zz",
+"outlet": "Centre for Policy Research India",
+"url": "https://cprindia.org/feed/",
+"lang": "en",
+"id": "cpri"
 },
 {
-"cc": "ye",
-"outlet": "Yemen Met",
-"home": "https://www.yms.gov.ye/"
+"cc": "zz",
+"outlet": "Pakistan Institute for Peace Studies",
+"url": "https://www.pakpips.com/feed",
+"lang": "en",
+"id": "iiss_sa"
 },
 {
-"cc": "ps",
-"outlet": "Palestine Met",
-"home": "https://www.pmd.ps/"
+"cc": "zz",
+"outlet": "ISSI Pakistan",
+"url": "https://issi.org.pk/feed/",
+"lang": "en",
+"id": "issi"
 },
 {
-"cc": "xk",
-"outlet": "AMMK Kosovo",
-"home": "https://www.ammk-rks.net/"
+"cc": "zz",
+"outlet": "Centre for Policy Alternatives Sri Lanka",
+"url": "https://www.cpalanka.org/feed/",
+"lang": "en",
+"id": "cpa"
 },
 {
-"cc": "xk",
-"outlet": "Kosovo Emergency",
-"home": "https://ame.rks-gov.net/"
+"cc": "zz",
+"outlet": "Crisis24 news",
+"url": "https://crisis24.garda.com/feed",
+"lang": "en",
+"id": "mcgill"
 },
 {
-"cc": "al",
-"outlet": "IGEWE Albania",
-"home": "https://www.geo.edu.al/"
+"cc": "zz",
+"outlet": "Global Observatory (IPI)",
+"url": "https://theglobalobservatory.org/feed/",
+"lang": "en",
+"id": "theglobalobs"
 },
 {
-"cc": "kw",
-"outlet": "Kuwait Met",
-"home": "https://www.met.gov.kw/"
+"cc": "zz",
+"outlet": "International Peace Institute",
+"url": "https://www.ipinst.org/feed",
+"lang": "en",
+"id": "ipi"
 },
 {
-"cc": "li",
-"outlet": "Liechtenstein govt",
-"home": "https://www.llv.li/"
+"cc": "zz",
+"outlet": "ODI",
+"url": "https://odi.org/en/rss/",
+"lang": "en",
+"id": "odi"
 },
 {
-"cc": "mc",
-"outlet": "Monaco govt",
-"home": "https://www.gouv.mc/"
+"cc": "zz",
+"outlet": "GPPi",
+"url": "https://gppi.net/feed",
+"lang": "en",
+"id": "gppi"
 },
 {
-"cc": "sm",
-"outlet": "San Marino PC",
-"home": "https://www.protezionecivile.sm/"
+"cc": "zz",
+"outlet": "Wilson Kennan",
+"url": "https://www.wilsoncenter.org/program/kennan-institute/rss.xml",
+"lang": "en",
+"id": "rferlanalysis"
 }
 ]
 }
