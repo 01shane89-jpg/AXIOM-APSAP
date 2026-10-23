@@ -12,7 +12,7 @@
 ["n8609471417",34.25911,66.12931,"af",{"name:en":"Sangtakht comperhensive Health Center","amenity":"clinic"}],
 ["w1337690668",34.83466,67.78063,"af",{"name":"Bamyan Hospital","name:en":"Bamyan Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1446964743",34.80598,67.58595,"af",{"name":"Shahidan Clinic Grounds","amenity":"hospital","healthcare":"hospital"}],
-["w553063117",34.80933,67.81834,"af",{"name":"د بامیان هوايي ډګر","name:en":"Bamiyan Airport","aeroway":"aerodrome","icao":"OABN","iata":"BIN"}],
+["w553063117",34.80933,67.81834,"af",{"name":"د بامیان هوايي ډګر","name:en":"Bamiyan Airport","aeroway":"aerodrome","icao":"OABN","iata":"BIN","wikidata":"Q2875811"}],
 ["w669475976",34.82957,67.83469,"af",{"name":"Old Bamyan Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"surgery;general","emergency":"yes","addr:street":"Bayan herat road"}],
 ["w784917719",34.5017,66.28264,"af",{"name":"Lal District Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w827886374",34.82541,67.83832,"af",{"name":"شفاخانه بیست بستر مهدی","name:en":"Mahdi","amenity":"hospital","healthcare":"hospital"}],

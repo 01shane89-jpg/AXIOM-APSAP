@@ -1,0 +1,11 @@
+[["n2560205406",36.81891,5.76747,"dz",{"name":"Association d'aide aux malades et don de sang","amenity":"social_facility","healthcare":"blood_donation"}],
+["n2596196215",36.86315,6.92703,"dz",{"name":"Centre de Transfusion Sanguine","healthcare":"blood_donation","emergency":"no"}],
+["n3274247800",36.47693,2.8096,"dz",{"name":"Centre de Transfusion Sanguine","healthcare":"blood_donation","addr:city":"Blida"}],
+["n3377950167",35.39785,0.14023,"dz",{"name":"Centre de don de sang","healthcare":"blood_donation"}],
+["n4794756722",36.7214,3.0607,"dz",{"name":"Centre de Transfusion sanguine Ain Naadja","healthcare":"blood_donation","opening_hours":"24/7"}],
+["n5582198221",36.75307,5.07757,"dz",{"name":"Centre de transfusion sanguine publique","healthcare":"blood_donation"}],
+["w1093255320",34.91729,-1.30072,"dz",{"name":"Centre de transfusion sanguine","healthcare":"blood_donation"}],
+["w225895065",35.22048,-0.63237,"dz",{"name":"Centre de transfusion sanguine","amenity":"clinic","healthcare":"blood_donation"}],
+["w240578544",36.72399,3.03077,"dz",{"name":"Agence Nationale du Sang (ANS)","healthcare":"blood_bank","phone":"+213 21 402160","website":"http://sante.dz/ans/index.html"}],
+["w427832283",36.76889,2.93699,"dz",{"name":"Centre de sang","healthcare":"blood_donation"}],
+["w461623120",35.69714,-0.58002,"dz",{"name":"Centre de transfusion sanguine","amenity":"clinic","healthcare":"blood_donation","addr:city":"Bir El Djir"}]]

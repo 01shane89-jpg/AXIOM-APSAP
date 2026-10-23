@@ -7,7 +7,7 @@
 ["w1360137595",29.75969,1.62768,"dz",{"aeroway":"aerodrome"}],
 ["w1360137596",29.7591,1.62751,"dz",{"aeroway":"helipad"}],
 ["w1361722542",28.70273,0.34237,"dz",{"amenity":"hospital","healthcare":"hospital"}],
-["w228053573",29.23631,0.27561,"dz",{"name":"مطار تيميمون ⴰⴼⴰⴳⵓⵔ ⵏ ⵜⵉⵎⵉⵎⵓⵏ","name:en":"Timimoun Airport","operator":"مؤسسة تسيير مصالح مطارات وهران","aeroway":"aerodrome","icao":"DAUT","iata":"TMX"}],
+["w228053573",29.23631,0.27561,"dz",{"name":"مطار تيميمون ⴰⴼⴰⴳⵓⵔ ⵏ ⵜⵉⵎⵉⵎⵓⵏ","name:en":"Timimoun Airport","operator":"مؤسسة تسيير مصالح مطارات وهران","aeroway":"aerodrome","icao":"DAUT","iata":"TMX","wikidata":"Q2875952"}],
 ["w320728587",29.25602,0.23405,"dz",{"name":"EPH Timimoun - Hachemi M'hamed;المؤسسة العمومية الاستشفائية تيميمون","name:en":"Timimoun Public Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministère de la Santé","operator:type":"government","contact:phone":"+21349901502","website":"https://www.sante.gov.dz","addr:city":"تيميمون","addr:postcode":"01001"}],
 ["w546631427",29.26161,0.22748,"dz",{"amenity":"hospital","healthcare":"hospital","addr:city":"ﺗﻴﻤﻴﻤﻮن"}],
 ["w782782263",29.70826,0.72085,"dz",{"name":"مصلحة الامومة الريفية","amenity":"hospital","healthcare":"hospital"}]]

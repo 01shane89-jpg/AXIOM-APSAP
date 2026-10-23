@@ -6,7 +6,7 @@
 ["w1071738440",29.98152,9.41764,"dz",{"aeroway":"helipad"}],
 ["w1235828017",28.15665,9.51342,"dz",{"aeroway":"helipad"}],
 ["w1235828018",28.15666,9.51237,"dz",{"aeroway":"helipad"}],
-["w201901566",28.0554,9.645,"dz",{"name":"مطار إن أمناس زرزايتين Aéroport d'In Aménas Zerzaitine","name:en":"In-Amenas Zarzaitine Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","operator:type":"public","aeroway":"aerodrome","icao":"DAUZ","iata":"IAM"}],
+["w201901566",28.0554,9.645,"dz",{"name":"مطار إن أمناس زرزايتين Aéroport d'In Aménas Zerzaitine","name:en":"In-Amenas Zarzaitine Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","operator:type":"public","aeroway":"aerodrome","icao":"DAUZ","iata":"IAM","wikidata":"Q2876003"}],
 ["w301302023",28.62984,9.85094,"dz",{"name":"Aéroport Stah","name:en":"Stah Airport","aeroway":"aerodrome"}],
 ["w782769557",29.96672,9.42447,"dz",{"amenity":"hospital","healthcare":"hospital"}],
 ["w783056585",28.03937,9.57393,"dz",{"name":"C.R.M.T ASL","amenity":"hospital","healthcare":"hospital"}],
