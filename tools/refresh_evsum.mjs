@@ -173,6 +173,8 @@ function refsOk(a, n) { return [...new Set((Array.isArray(a) ? a : []).map(Numbe
 function citeClean(s, n) { return s.replace(/\[(\d+)\]/g, (m, d) => (+d >= 1 && +d <= n ? m : "")); }
 
 let calls = 0, stopModel = "";
+// a draft that fails a check is rejected, not an error: the model works and the next event may pass, so rejections never stop a run
+const rejected = (msg) => Object.assign(new Error(msg), { rejected: true });
 async function draft(e, reps, aig) {
   const input = reps.map((r, i) => ({ n: i + 1, source: r.source + (r.kind ? " (" + r.kind + ")" : ""), time: r.ts, status: r.status, place: r.place || undefined,
     headline: r.title, text: r.detail && r.detail !== r.title ? r.detail.slice(0, DETAIL) : undefined }));
@@ -191,12 +193,12 @@ async function draft(e, reps, aig) {
   const n = reps.length;
   const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: citeClean(clean(p && p.text, 400), n), refs: refsOk(p && p.refs, n) })).filter((p) => p.text && p.refs.length).slice(0, max);
   const out = { summary: citeClean(clean(o.summary, 1400), n), points: list(o.points, 8), differ: list(o.differ, 4), unclear: clean(o.unclear, 300) };
-  if (!out.summary || !/\[\d+\]/.test(out.summary)) throw new Error("summary without citations");
+  if (!out.summary || !/\[\d+\]/.test(out.summary)) throw rejected("summary without citations");
   const bad = unsupportedFigures(out, input);
-  if (bad.length) throw new Error("figures not in the reports: " + bad.slice(0, 5).join(", "));
+  if (bad.length) throw rejected("figures not in the reports: " + bad.slice(0, 5).join(", "));
   const names = unsupportedNames(out, input);
-  if (names.length) throw new Error("names not in the reports: " + names.slice(0, 5).join(", "));
-  if (unsupportedDeaths(out, input)) throw new Error("deaths no report mentions");
+  if (names.length) throw rejected("names not in the reports: " + names.slice(0, 5).join(", "));
+  if (unsupportedDeaths(out, input)) throw rejected("deaths no report mentions");
   out.method = "ai"; out.model = j.model || MODEL; out.provider = j.provider; out.ms = Date.now() - t;
   if (j.usage) out.tokens = { in: j.usage.prompt_tokens, out: j.usage.completion_tokens };
   return out;
@@ -265,7 +267,7 @@ async function runnerDrafts(events, countries, failed) {
   keep.forEach((id) => { items[id] = { ...oldI[id], seen: stamp }; });
   todo.sort((a, b) => b.score - a.score || (b.e.to || 0) - (a.e.to || 0));
   let made = 0, stop = "";
-  const errs = [], byProv = {}, t0 = Date.now();
+  const errs = [], rej = [], byProv = {}, t0 = Date.now();
   for (const t of todo) {
     if (made >= AI_PER_RUN) { stop = "per-run limit"; break; }
     if (Date.now() - t0 > AI_BUDGET_MS) { stop = "time budget used"; break; }
@@ -278,15 +280,19 @@ async function runnerDrafts(events, countries, failed) {
         refs: t.reps.map((r, i) => ({ n: i + 1, source: r.source, title: clean(r.title, 240), url: /^https?:\/\//.test(r.url) ? r.url : "", ts: r.ts, status: r.status })) };
       made++; byProv[d.provider] = (byProv[d.provider] || 0) + 1;
       console.log(`  drafted ${t.e.cc} (${t.srcN} sources, ${Math.round(d.ms / 1000)} s): ${clean(t.e.title, 90)}`);
-    } catch (err) { errs.push(t.e.cc + ": " + String(err.message || err).slice(0, 200)); if (errs.length >= 8) { stop = "too many errors"; break; } }
+    } catch (err) {
+      const m = t.e.cc + ": " + String(err.message || err).slice(0, 200);
+      if (err.rejected) { rej.push(m); continue; }
+      errs.push(m); if (errs.length >= 8) { stop = "too many errors"; break; }
+    }
   }
   if (!stop && !aig.available()) stop = Object.entries(aig.status().dropped).map(([p, why]) => p + ": " + why).join("; ") || "no AI provider";
   const cut = now - KEEP_UNSEEN_DAYS * 864e5;
   Object.entries(oldI).forEach(([id, s]) => { if (!items[id] && !todo.some((t) => t.prior.includes(id) && items[t.id]) && Date.parse(String(s.seen).replace(" ", "T")) >= cut) items[id] = s; });
   const res = { asof: stamp, ran: stamp, prompt: PROMPT_V, model: process.env.OSAP_LOCAL_MODEL || MODEL, label: "Draft, AI-generated, not analyst-approved",
-    scan: { countries, failed, events: events.length, due: todo.length, drafted: made, providers: byProv, stopped: stop, errors: errs.slice(0, 6) }, items };
-  console.log(`evsum (runner model): ${made} drafted of ${todo.length} due, ${Object.keys(items).length} kept` + (stop ? `; stopped: ${stop}` : ""));
-  errs.forEach((e) => console.log("  error: " + e));
+    scan: { countries, failed, events: events.length, due: todo.length, drafted: made, providers: byProv, stopped: stop, errors: errs.slice(0, 6), rejected: rej.length, rejects: rej.slice(0, 6) }, items };
+  console.log(`evsum (runner model): ${made} drafted of ${todo.length} due, ${rej.length} rejected by the checks, ${Object.keys(items).length} kept` + (stop ? `; stopped: ${stop}` : ""));
+  errs.forEach((e) => console.log("  error: " + e)); rej.forEach((e) => console.log("  rejected: " + e));
   fs.writeFileSync(OUT_AI, "window.OSAP_EVSUM_AI=" + JSON.stringify(res) + ";\n");
 }
 
@@ -313,7 +319,7 @@ for (const e of events) {
 }
 // newest first; an event with no draft at all before one that only grew
 todo.sort((a, b) => (a.prior.length ? 1 : 0) - (b.prior.length ? 1 : 0) || b.recent - a.recent || b.srcN - a.srcN);
-let made = 0, errors = [];
+let made = 0, errors = [], hardErrors = 0;
 if (!TOKEN) stopModel = "no GITHUB_TOKEN (listing only)";
 for (const t of todo) {
   if (stopModel || made >= PER_RUN || day.n >= PER_DAY) break;
@@ -325,7 +331,7 @@ for (const t of todo) {
     items[t.id] = { cc: t.e.cc, title: clean(t.e.title, 240), keys: t.keys, made: stamp, seen: stamp, prompt: PROMPT_V, run: process.env.GITHUB_RUN_ID || "",
       ...d, refs: t.reps.map((r, i) => ({ n: i + 1, source: r.source, title: clean(r.title, 240), url: /^https?:\/\//.test(r.url) ? r.url : "", ts: r.ts, status: r.status })) };
     await sleep(4500); // stay under 15 requests a minute
-  } catch (err) { day.n++; errors.push(t.e.cc + ": " + err.message); if (errors.length >= 4) { stopModel = "too many errors"; } }
+  } catch (err) { day.n++; errors.push(t.e.cc + ": " + err.message); if (!err.rejected && ++hardErrors >= 4) { stopModel = "too many errors"; } }
 }
 // every event still without a summary gets a plain extract (no AI): who reported what, the figures each source gave, and where
 // they differ. It is replaced by an AI draft once one can be written.

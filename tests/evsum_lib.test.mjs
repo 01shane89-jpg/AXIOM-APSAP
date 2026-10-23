@@ -17,6 +17,7 @@ ok(!unsupportedFigures(draft("Reported in [1] and [2]."), input).length, "citati
 const names = unsupportedNames(draft("On 16 October police in Si Sakhon said a gang fired on officers [1]. Prime Minister Ismail Sabri Yaakob was briefed, according to Lieutenant General Wang [2]."), input);
 ok(names.includes("Ismail") && names.includes("Wang") && !names.includes("Si") && !names.includes("October") && !names.includes("On"), "names no report gives are caught, sentence starts and months are not: " + names.join(", "));
 ok(!unsupportedNames(draft("Police said a Narathiwati gang fired [2]. Reports said Malaysian police were told [1]."), [{ headline: "Malaysia police told of Narathiwat gang" }]).length, "a demonym of a reported place passes");
+ok(!unsupportedNames(draft("Talks between the two Koreas were raised [1]. Reports quoted Badr' and Badr's aides [1]."), [{ headline: "Korea talks; Badr aides speak" }]).length, "plurals and stray quote marks on a reported name pass");
 ok(!unsupportedNames(draft("Police said a gang in Narathiwat fired 1,200 rounds [2]. Four were killed, police said [2]."), input).length, "names from the reports pass");
 const calm = [{ n: 1, source: "The Star", headline: "Student attacks teacher with axe in Kuching", text: "The teacher was injured." }];
 ok(unsupportedDeaths(draft("A student attacked a teacher in Kuching; at least one person died [1]."), calm), "a death no report mentions is caught");
