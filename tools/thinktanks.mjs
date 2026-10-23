@@ -91,6 +91,23 @@ const TT = [
   ["geopolmonitor", "Geopolitical Monitor", "https://www.geopoliticalmonitor.com/", ["https://www.geopoliticalmonitor.com/feed/"]],
   ["globalobs", "IPI Global Observatory", "https://theglobalobservatory.org/", ["https://theglobalobservatory.org/feed/"]],
   ["ipi", "International Peace Institute", "https://www.ipinst.org/", ["https://www.ipinst.org/feed"]],
+  // national institutes added 2026-10-23; an item naming no country is filed under the home country (HOME_CC)
+  ["oiip", "oiip (Austrian Institute for International Affairs)", "https://www.oiip.ac.at/", ["https://www.oiip.ac.at/feed"]],
+  ["gcsp", "Geneva Centre for Security Policy", "https://www.gcsp.ch/", ["https://www.gcsp.ch/rss.xml"]],
+  ["hcss", "Hague Centre for Strategic Studies", "https://hcss.nl/", ["https://hcss.nl/feed/"]],
+  ["nsc", "New Strategy Center", "https://newstrategycenter.ro/", ["https://newstrategycenter.ro/ro/feed/"]],
+  ["eliamep", "ELIAMEP", "https://www.eliamep.gr/en/", ["https://www.eliamep.gr/feed"]],
+  ["cpd", "Centre for Policy Dialogue", "https://cpd.org.bd/", ["https://cpd.org.bd/feed/"]],
+  ["bipss", "BIPSS", "https://bipss.org.bd/", ["https://bipss.org.bd/feed/"]],
+  ["imani", "IMANI Africa", "https://imaniafrica.org/", ["https://imaniafrica.org/feed/"]],
+  ["bidpa", "BIDPA", "https://bidpa.bw/", ["https://bidpa.bw/feed/"]],
+  ["derasat", "Derasat", "https://www.derasat.org.bh/en/", ["https://www.derasat.org.bh/en/feed/"]],
+  ["cepchile", "Centro de Estudios Públicos", "https://www.cepchile.cl/", ["https://www.cepchile.cl/feed"]],
+  ["milenio", "Fundación Milenio", "https://fundacion-milenio.org/", ["https://fundacion-milenio.org/feed/"]],
+  ["cieps", "CIEPS Panamá", "https://cieps.org.pa/", ["https://cieps.org.pa/feed/"]],
+  ["asies", "ASIES", "https://asies.org.gt/", ["https://asies.org.gt/feed/"]],
+  ["idea", "Fondation IDEA", "https://www.fondation-idea.lu/", ["https://www.fondation-idea.lu/feed/"]],
+  ["cddmoz", "CDD Moçambique", "https://cddmoz.org/", ["https://cddmoz.org/feed/"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
@@ -208,7 +225,7 @@ function fixDate(d) {
 }
 
 // Institutes that cover one country only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
-const HOME_CC = { "38north": ["kp"] };
+const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"] };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
