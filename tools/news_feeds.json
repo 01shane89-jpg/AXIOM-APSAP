@@ -1340,6 +1340,17 @@
     {"cc":"gh","outlet":"3News","url":"https://3news.com/feed/","lang":"en"},
     {"cc":"bj","outlet":"Benin Web TV","url":"https://beninwebtv.com/feed/","lang":"fr"},
     {"cc":"zm","outlet":"Mwebantu","url":"https://www.mwebantu.com/feed/","lang":"en"},
-    {"cc":"sv","outlet":"Gato Encerrado","url":"https://gatoencerrado.news/feed/","lang":"es"}
+    {"cc":"sv","outlet":"Gato Encerrado","url":"https://gatoencerrado.news/feed/","lang":"es"},
+    {"cc":"cn","outlet":"CGTN","url":"https://www.cgtn.com/subscribe/rss/section/china.xml","lang":"en","state":true},
+    {"cc":"by","outlet":"BelTA","url":"https://www.belta.by/rss","lang":"ru","state":true},
+    {"cc":"kg","outlet":"Kabar","url":"https://en.kabar.kg/rss/","lang":"en","state":true},
+    {"cc":"uz","outlet":"UzA","url":"https://uza.uz/en/rss","lang":"en","state":true},
+    {"cc":"cn","outlet":"Xinhua","url":"https://english.news.cn/china/index.htm","lang":"en","state":true,"html":true,"match":"/20\\d{6}/[0-9a-f]{32}/c\\.html$"},
+    {"cc":"cn","outlet":"China Daily","url":"https://www.chinadaily.com.cn/china","lang":"en","state":true,"html":true,"match":"/a/20\\d{4}/\\d\\d/WS[0-9a-f]+\\.html$"},
+    {"cc":"kp","outlet":"KCNA","url":"http://www.kcna.kp/en","lang":"en","state":true,"html":true,"match":"^/en/article/(?:q|detail)/"},
+    {"cc":"kp","outlet":"Voice of Korea","url":"http://www.vok.rep.kp/index.php/home/main/en","lang":"en","state":true,"html":true,"match":"/(?:revo_de/getDetail|detail_com/comde)/ien\\d+/"},
+    {"cc":"qa","outlet":"Qatar News Agency","url":"https://www.qna.org.qa/en","lang":"en","state":true,"html":true,"match":"/en/News-Area/News/20\\d\\d-\\d\\d/\\d\\d/"},
+    {"cc":"la","outlet":"KPL Lao News Agency","url":"https://kpl.gov.la/En/","lang":"en","state":true,"html":true,"match":"detail\\.aspx\\?id=\\d+"},
+    {"cc":"dz","outlet":"APS (Algeria Press Service)","url":"https://www.aps.dz/en","lang":"en","state":true,"html":true,"match":"^/en/(?:presidency-news|algeria/national-news)/[a-z0-9]+-"}
   ]
 }
