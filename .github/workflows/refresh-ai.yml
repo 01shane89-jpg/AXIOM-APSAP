@@ -8,10 +8,8 @@ name: AI drafts on the runner
 # and watch lines of the priority countries. The model file and the server wheel are kept in the Actions cache.
 # Free while the repository is public (standard GitHub-hosted runners: 4 CPUs, 16 GB).
 on:
-  # TEST ONLY (remove before merge): a push to this branch runs both models on five countries and parks the output
-  push:
+  push:  # TEST ONLY, removed in the next commit
     branches: [claude/local-ai-daily]
-    paths: [tools/ai_gateway.mjs, tools/refresh_daily.mjs, .github/workflows/refresh-ai.yml]
   schedule:
     - cron: "23 1 * * *"
   workflow_dispatch:
@@ -43,12 +41,8 @@ jobs:
     permissions:
       contents: write
       models: read
-    strategy:
-      fail-fast: false
-      matrix:
-        model: ${{ github.event_name == 'push' && fromJSON('["phi-3.5-mini","qwen2.5-1.5b"]') || fromJSON(format('["{0}"]', inputs.model || 'phi-3.5-mini')) }}
     env:
-      MODEL_KEY: ${{ matrix.model }}
+      MODEL_KEY: ${{ inputs.model || 'phi-3.5-mini' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -71,16 +65,17 @@ jobs:
       - name: Restore the model and the server
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
-          path: |
-            ~/.cache/osap-llm
-            ~/.cache/pip
-          key: osap-llm-${{ steps.pick.outputs.file }}-llamacpp-0.3.2-v2
-      # Built from source (about 5 minutes; pip keeps the built wheel in the cache). The project's prebuilt CPU wheel index
+          path: ~/.cache/osap-llm
+          key: osap-llm-${{ steps.pick.outputs.file }}-llamacpp-0.3.2-v3
+      # Built from source once (about 5 minutes) and the wheel kept in the cache. The project's prebuilt CPU wheel index
       # served a musl build that can't load on Ubuntu. Native CPU tuning is off so the cached wheel runs on any runner CPU.
       - name: Install the model server
         env:
           CMAKE_ARGS: "-DGGML_NATIVE=OFF -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON"
-        run: python -m pip install --quiet "llama-cpp-python[server]==0.3.2"
+        run: |
+          w=~/.cache/osap-llm/wheels; mkdir -p $w
+          ls $w/llama_cpp_python-0.3.2-*.whl >/dev/null 2>&1 || python -m pip wheel --quiet --no-deps -w $w "llama-cpp-python==0.3.2"
+          python -m pip install --quiet "$(ls $w/llama_cpp_python-0.3.2-*.whl | head -1)[server]"
       - name: Download the model (once; kept in the cache)
         env:
           F: ${{ steps.pick.outputs.file }}
@@ -104,8 +99,8 @@ jobs:
           OSAP_LOCAL_LLM: http://127.0.0.1:8080
           OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
           DAILY_FORCE: "1"
-          DAILY_ONLY: ${{ github.event_name == 'push' && 'th,ph,mm,ua,pk' || inputs.only }}
-          DAILY_AI_PER_RUN: ${{ github.event_name == 'push' && '5' || inputs.per_run || '45' }}
+          DAILY_ONLY: ${{ github.event_name == 'push' && 'th,pk' || inputs.only }}
+          DAILY_AI_PER_RUN: ${{ github.event_name == 'push' && '2' || inputs.per_run || '45' }}
           DAILY_AI_BUDGET_MIN: "80"
         run: node tools/refresh_daily.mjs
       - name: Model server log (tail)
