@@ -16,9 +16,9 @@ export function gateway({ token = process.env.GITHUB_TOKEN || "", githubModel = 
     if (p === "github" && token) providers.push({ id: "github", url: "https://models.github.ai/inference/chat/completions", model: githubModel,
       headers: { authorization: "Bearer " + token }, timeout: timeoutMs.github || 60000 });
     if (p === "local" && localUrl) providers.push({ id: "local", url: localUrl.replace(/\/+$/, "") + "/v1/chat/completions", model: localModel,
-      headers: {}, timeout: timeoutMs.local || 240000 });
+      headers: {}, timeout: timeoutMs.local || 600000, misses: 2 });
   }
-  const dropped = {};
+  const dropped = {}, missed = {};
   async function chat({ messages, max_tokens = 600, temperature = 0.2, json = true }) {
     for (const p of providers) {
       if (dropped[p.id]) continue;
@@ -29,8 +29,15 @@ export function gateway({ token = process.env.GITHUB_TOKEN || "", githubModel = 
       try {
         r = await fetch(p.url, { method: "POST", signal: ctl.signal, headers: { ...p.headers, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body) });
         raw = await r.text();
-      } catch (e) { dropped[p.id] = "no answer (" + (e.name === "AbortError" ? "timed out" : e.message) + ")"; continue; }
+      } catch (e) {
+        // the runner's own model is slow on a long prompt: one miss skips this request, two in a row drop it for the run
+        const why = "no answer (" + (e.name === "AbortError" ? "timed out after " + Math.round(p.timeout / 1000) + " s" : e.message) + ")";
+        missed[p.id] = (missed[p.id] || 0) + 1;
+        if (missed[p.id] >= (p.misses || 1)) { dropped[p.id] = why; continue; }
+        throw new Error(p.id + " " + why);
+      }
       finally { clearTimeout(to); }
+      missed[p.id] = 0;
       if (r.status === 429) { dropped[p.id] = "rate limit (HTTP 429)"; continue; }
       if (!r.ok) { if ([401, 403, 404].includes(r.status) || r.status >= 500) dropped[p.id] = "HTTP " + r.status; throw new Error(p.id + " HTTP " + r.status + ": " + raw.slice(0, 160)); }
       if (!/^\s*\{/.test(raw)) { dropped[p.id] = "answered without a model reply (" + (r.headers.get("content-type") || "no type") + ": " + raw.slice(0, 40).trim() + ")"; continue; }
