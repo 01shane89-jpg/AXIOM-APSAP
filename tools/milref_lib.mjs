@@ -39,10 +39,25 @@ const RETIRED_CLS = /\b(museum ship|preserved|gate guardian|shipwreck|wreck|muse
 // a class label that names a type (many built), not one hull or airframe: "aircraft family", "firearm model", "ship class".
 // A hull whose class is a named class item ("Andres Bonifacio-class frigate") ends in its ship type, so it is not a type.
 const TYPE_CLS = /\b(model|family|series|variant)\b|^[a-z -]*\b(ship|boat|submarine|vessel|warship)s? class$/;
+// The head noun decides first ("guided missile frigate" is a ship, "anti-ship missile" a missile, "aircraft carrier" a ship):
+// the last word of each class label, once generic words such as "family", "model" or "class" are taken off.
+const GENERIC = /(\s+(family|model|class|type|series|variant|version|system|systems))+$/;
+const HEAD_RULES = [
+  ["msl", /^(missiles?|rockets?|torpedo(es)?|bombs?|munitions?|ammunition|mines?|warheads?)$/],
+  ["land", /personnel carrier$/],
+  ["sea", /^(ships?|vessels?|boats?|submarines?|frigates?|corvettes?|destroyers?|carriers?|cruisers?|minesweepers?|minehunters?|tugboats?|tankers?|oilers?|cutters?|hovercraft|icebreakers?|sloops?|tenders?|watercraft|craft)$/],
+  ["arms", /(machine gun|submachine gun|^rifles?|^pistols?|^revolvers?|^carbines?|^shotguns?|^grenades?|^handguns?)$/],
+  ["land", /^(guns?|cannons?|howitzers?|mortars?|tanks?|launchers?)$/]
+];
+const NOT_EQUIP = /^(human|embassy|consulate|consulate general|high commission|diplomatic mission|permanent mission|official residence|residence|aviation accident|accident|disaster|battle|war|military operation|military campaign|siege)$/;
 export function catOf(clsLabels) {
-  const t = (clsLabels || []).join(" | ").toLowerCase();
+  const L = (clsLabels || []).map((c) => String(c).toLowerCase()), t = L.join(" | ");
   if (!t) return "";
-  if (/\b(wikimedia|list article|human|embassy|consulate|high commission|diplomatic|residence|mission|aviation accident|battle|military operation|war\b)/.test(t)) return "";
+  if (/\bwikimedia\b|\blist article\b/.test(t) || L.some((l) => NOT_EQUIP.test(l))) return "";
+  for (const l of L) {
+    const head = l.replace(GENERIC, "").trim(), last = head.split(/\s+/).pop() || "";
+    for (const [c, re] of HEAD_RULES) if (re.test(head) || re.test(last)) return c;
+  }
   for (const [c, re] of CAT_RULES) if (re.test(t)) return c;
   return "";
 }
@@ -51,7 +66,7 @@ export function retiredByClass(clsLabels) { return RETIRED_CLS.test((clsLabels |
 
 /* ---------- unit echelons from class labels, for sorting and the tree ---------- */
 const ECH = [
-  ["force", /\b(armed forces|military|defen[cs]e force|ministry of defen[cs]e)\b/],
+  ["force", /\b(armed forces|military forces|defen[cs]e forces?|ministry of defen[cs]e)\b/],
   ["branch", /\b(army|navy|air force|marine corps|naval infantry|coast guard|space force|gendarmerie|national guard|military branch|service branch)\b/],
   ["command", /\b(command|theatre|theater|military district|military region|fleet|area)\b/],
   ["corps", /\bcorps\b/],
