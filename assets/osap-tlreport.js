@@ -105,7 +105,10 @@
     }
     /* only asking whether there are enough (the buttons below): stop counting there, unsorted */
     if (enough) { for (var i = 0, n = 0; i < R.length; i++) if (keep(R[i]) && ++n >= enough) return true; return false; }
-    return R.filter(keep).sort(function (a, b) { return a.__tlw.ms - b.__tlw.ms || String(a.title).localeCompare(String(b.title)); });
+    /* one story that came in twice (a headline and the layer feed's copy of it) is one record here, as on the Master timeline */
+    var list = R.filter(keep), D = window.TSAP && window.TSAP.storyDedup;
+    if (D) list = D(list, {});
+    return list.sort(function (a, b) { return a.__tlw.ms - b.__tlw.ms || String(a.title).localeCompare(String(b.title)); });
   }
 
   /* ---------- styles: own class prefix. Set like a short research paper: serif headings, numbered sections, a captioned

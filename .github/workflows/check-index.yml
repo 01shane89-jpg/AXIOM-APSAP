@@ -135,6 +135,8 @@ jobs:
       - run: node tests/osir_smoke.mjs
       # one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
       - run: node tests/incident_dedup_smoke.mjs
+      # one story that came in twice (a headline and the layer feed's or a conflict tab's copy of it) is one timeline item and one alert (index.html storyDedup)
+      - run: node tests/story_dedup_smoke.mjs
       # incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
       - run: node tests/evsum_ai_smoke.mjs
       - run: node tests/points_smoke.mjs
