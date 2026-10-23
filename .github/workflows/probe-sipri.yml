@@ -11,8 +11,7 @@ jobs:
     steps:
       - run: |
           set +e
-          B=https://armstransfers.sipri.org
-          curl -sS -m 60 $B/build/bundle.js -o f.txt; echo "== bundle $(wc -c < f.txt)"
-          grep -oE 'https?://[a-z0-9.-]*sipri[^"`'"'"' ]{0,100}' f.txt | sort -u | head -40
-          grep -oE '"/?api/p/[a-zA-Z0-9/_-]{2,80}"|`/?api/p/[^`]{2,80}`|/api/p/[a-zA-Z0-9/_-]{2,80}' f.txt | sort -u | head -80
-          for k in import-export-csv-str getallcountries trades/; do echo "== ctx $k"; grep -oE ".{400}$k.{700}" f.txt | head -2; done
+          curl -sS -m 60 https://armstransfers.sipri.org/build/bundle.js -o f.txt
+          echo "== endpoints"; grep -oE 'Ya\(\)\+"[^"]{2,80}"' f.txt | sort | uniq -c
+          for k in 'checkIP' 'function Ma\(' 'Ma=' 'function Ya\(' 'Ya=' 'trade-register' 'field:"'; do echo "== ctx $k"; grep -oE ".{300}$k.{500}" f.txt | head -3; done
+          echo "== checkIP"; curl -sS -m 60 -i https://atbackend.sipri.org/api/p/login/checkIP/ | head -c 1200; echo
