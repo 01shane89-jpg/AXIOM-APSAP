@@ -5,7 +5,7 @@
    - Case key: 32 random bytes per case epoch.
    - Wrap: a fresh ECDH P-256 key with the member device's public key, HKDF-SHA-256 (salt = the fresh public key, info = the
      context below) to an AES-256-GCM key, which seals the case key. Out: fresh public key | IV | sealed case key, base64url.
-   - Seal: AES-256-GCM with the case key, a random 12-byte IV, and the context as associated data, so a bucket cannot be moved
+   - Seal: the value as JSON, gzipped, then AES-256-GCM with the case key, a random 12-byte IV, and the context as associated data, so a bucket cannot be moved
      to another case, epoch or bucket slot without failing to open. Out: IV | sealed bytes, base64.
    Contexts: "osap-case-wrap/1|<case>|<epoch>|<device>" and "osap-case-bucket/1|<case>|<epoch>|<bucket>".
    window.OSAP_CASE_CRYPTO, or module.exports in node: { newDevice, pubOf, newCaseKey, wrap, unwrap, seal, open }. */
@@ -17,7 +17,7 @@
   "use strict";
   var SUB = CR.subtle, te = new TextEncoder(), td = new TextDecoder("utf-8", { fatal: true });
   var EC = { name: "ECDH", namedCurve: "P-256" };
-  var MAX_OPEN = 2000000;
+  var MAX_OPEN = 8000000, FMT_GZ = 1;
 
   function cat(a) { var n = 0, p = 0, o; a.forEach(function (x) { n += x.length; }); o = new Uint8Array(n); a.forEach(function (x) { o.set(x, p); p += x.length; }); return o; }
   function b64(u) { var s = ""; for (var i = 0; i < u.length; i += 8192) s += String.fromCharCode.apply(null, u.subarray(i, i + 8192)); return btoa(s); }
@@ -64,20 +64,39 @@
       return SUB.decrypt({ name: "AES-GCM", iv: iv, additionalData: info }, k, ct);
     }).then(function (b) { return new Uint8Array(b); });
   }
-  /* one bucket of case content: any JSON value, sealed with the case key */
+  function gzip(u8) { return new Response(new Blob([u8]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
+  /* unzips, stopping past "cap" bytes, so a small sealed bucket cannot unpack into a huge one */
+  function gunzip(u8, cap) {
+    var rd = new Blob([u8]).stream().pipeThrough(new DecompressionStream("gzip")).getReader(), parts = [], n = 0;
+    function step() {
+      return rd.read().then(function (r) {
+        if (r.done) return cat(parts);
+        n += r.value.length; if (n > cap) { rd.cancel(); throw new Error("too large"); }
+        parts.push(r.value); return step();
+      });
+    }
+    return step();
+  }
+  /* one bucket of case content: any JSON value, gzipped and sealed with the case key */
   function seal(caseKey, caseId, epoch, bucket, value) {
-    var iv = rand(12), info = bucketInfo(caseId, epoch, bucket);
+    var iv = rand(12), info = bucketInfo(caseId, epoch, bucket), key;
     return SUB.importKey("raw", caseKey, { name: "AES-GCM" }, false, ["encrypt"]).then(function (k) {
-      return SUB.encrypt({ name: "AES-GCM", iv: iv, additionalData: info }, k, te.encode(JSON.stringify(value)));
+      key = k; return gzip(te.encode(JSON.stringify(value)));
+    }).then(function (gz) {
+      return SUB.encrypt({ name: "AES-GCM", iv: iv, additionalData: info }, key, cat([new Uint8Array([FMT_GZ]), gz]));
     }).then(function (ct) { return b64(cat([iv, new Uint8Array(ct)])); });
   }
   function open(caseKey, caseId, epoch, bucket, data) {
-    if (typeof data !== "string" || data.length > MAX_OPEN * 1.4) return Promise.reject(new Error("too large"));
+    if (typeof data !== "string" || data.length > 300000) return Promise.reject(new Error("too large"));
     var u = unb64(data), info = bucketInfo(caseId, epoch, bucket);
-    if (u.length < 12 + 16) return Promise.reject(new Error("bad bucket"));
+    if (u.length < 12 + 16 + 1) return Promise.reject(new Error("bad bucket"));
     return SUB.importKey("raw", caseKey, { name: "AES-GCM" }, false, ["decrypt"]).then(function (k) {
       return SUB.decrypt({ name: "AES-GCM", iv: u.subarray(0, 12), additionalData: info }, k, u.subarray(12));
-    }).then(function (b) { return JSON.parse(td.decode(new Uint8Array(b))); });
+    }).then(function (b) {
+      b = new Uint8Array(b);
+      if (b[0] !== FMT_GZ) throw new Error("unknown format");
+      return gunzip(b.subarray(1), MAX_OPEN);
+    }).then(function (pt) { return JSON.parse(td.decode(pt)); });
   }
   return { newDevice: newDevice, pubOf: pubOf, newCaseKey: newCaseKey, wrap: wrap, unwrap: unwrap, seal: seal, open: open, b64u: b64u, unb64u: unb64u };
 });

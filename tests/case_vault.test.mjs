@@ -91,6 +91,10 @@ const big = "A".repeat(190000);
 const many = Array.from({ length: 11 }, (_, i) => ({ bucket: i + 1, epoch: 1, rev: 0, data: big }));
 await refused(writeData(S, ANA, A, many), 413, "a case holds about " + MAX_TOTAL / 1e6 + " MB sealed");
 
+const bomb = await CC.seal(key1, A, 1, 5, { x: "0".repeat(9000000) });
+ok(bomb.length < 60000, "content is gzipped before sealing (" + bomb.length + " characters for 9 MB of zeros)");
+await fails_(CC.open(key1, A, 1, 5, bomb), "a bucket that unpacks past 8 MB is refused while unpacking");
+
 /* ---------- removal: shut out at once, new epoch ---------- */
 await run(S, LEAD, { cmd: "remove", op: op(), case: A, member: "u-view", reason: "rotated out" });
 await refused(readData(S, VIEW, A), 404, "a removed member cannot read the sealed buckets");
