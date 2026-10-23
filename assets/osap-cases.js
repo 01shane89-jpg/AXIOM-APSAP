@@ -98,7 +98,8 @@
   function wsExists(ws) { var r = reg(); return !!(r && r.list.some(function (w) { return w.id === ws; })); }
 
   /* ---------- one case's sync ---------- */
-  var LAST = {}, VIEW = {}, busy = {}, sigs = {}, MINE = null;
+  var LAST = {}, VIEW = {}, KEYS = {}, busy = {}, sigs = {}, MINE = null;
+  function changed() { try { W.dispatchEvent(new CustomEvent("osap-cases-change")); } catch (e) {} }
   function syncCase(id) {
     if (busy[id]) return busy[id];
     if (!bound(id) || !on()) return Promise.resolve(null);
@@ -169,6 +170,8 @@
           var total = 0; data.buckets.forEach(function (bk) { total += (bk.data || "").length; });
           LAST[id] = { at: Date.now(), ok: true, role: K.role, epoch: ep, keyless: !key, unread: unread, sent: saved && saved.saved ? saved.saved.length : 0, size: total, changes: ch, msg: "" };
           sigs[id] = E.wsSig(b.ws);
+          KEYS[id] = { epoch: ep, all: keys };
+          changed();
           var c2 = cfg(); if (c2.bind[id]) { c2.bind[id].last = LAST[id].at; c2.bind[id].name = view.name; c2.bind[id].role = K.role; saveCfg(c2); }
           if (ch.live) E.bar(ch.live);
           else if (ch.other) toast("Case " + view.name + ": " + ch.other + " change" + (ch.other > 1 ? "s" : "") + " brought in");
@@ -247,13 +250,14 @@
     if (!L.ok) return L.msg;
     return "Synced " + ago(L.at) + "." + (L.keyless ? " Waiting for a lead to hand this device the case key." : "") + (L.unread ? " " + L.unread + " part" + (L.unread > 1 ? "s" : "") + " sealed under a key this device was never given." : "");
   }
-  var ACT = { create: "made the case", rename: "renamed the case", invite: "invited someone", uninvite: "cancelled an invite", accept: "joined", decline: "declined an invite", call: "set a call sign", role: "changed a role", remove: "removed a member", leave: "left the case" };
+  var ACT = { approve: "approved an item", reject: "rejected an item", create: "made the case", rename: "renamed the case", invite: "invited someone", uninvite: "cancelled an invite", accept: "joined", decline: "declined an invite", call: "set a call sign", role: "changed a role", remove: "removed a member", leave: "left the case" };
   function logLine(d, calls) {
     var who = calls[d.actor] || "a former member", what = ACT[d.action] || d.action, det = d.detail || {};
     if (d.action === "role") what += " (" + (calls[d.target.id] || "someone") + ": " + (ROLE[det.from] || det.from) + " to " + (ROLE[det.to] || det.to) + ")";
     else if (d.action === "invite") what += " as " + (ROLE[det.role] || det.role);
     else if (d.action === "remove") what += " (" + (calls[d.target.id] || "a former member") + ")";
-    return "<li><span><b>" + esc(who) + "</b> " + esc(what) + (d.reason ? ': "' + esc(d.reason) + '"' : "") + '<i class="obs">' + esc(when(d.at)) + " · version " + esc(d.version) + "</i></span></li>";
+    var why = d.reason || d.openReason || "";
+    return "<li><span><b>" + esc(who) + "</b> " + esc(what) + (why ? ': "' + esc(why) + '"' : "") + (det.sreason && !d.openReason ? ' <i class="obs">(reason sealed under a key this device lacks)</i>' : "") + '<i class="obs">' + esc(when(d.at)) + " · version " + esc(d.version) + "</i></span></li>";
   }
   function callInput(v) { return '<label class="mvf">Your call sign<input data-cs-call maxlength="' + CALL_MAX + '" autocomplete="off" spellcheck="false" placeholder="e.g. RAVEN 2" value="' + esc(v || raw("osap-team-call") || "") + '"></label><p class="obs">Shown to the case\'s members and beside the items you add. Not your email.</p>'; }
   function render() {
@@ -351,7 +355,7 @@
     var id = UI.id;
     if (t.closest("[data-cs-now]")) { syncCase(id); return; }
     if (t.closest("[data-cs-sw]")) { var bb = bound(id); if (bb && W.OSAP_WS) W.OSAP_WS.switchTo(bb.ws); return; }
-    if (t.closest("[data-cs-log]")) { api(null, "?case=" + encodeURIComponent(id) + "&log=1&limit=50").then(function (j) { UI.log = j.log; render(); }, fail); return; }
+    if (t.closest("[data-cs-log]")) { api(null, "?case=" + encodeURIComponent(id) + "&log=1&limit=50").then(function (j) { return openReasons(id, j.log); }).then(function (log) { UI.log = log; render(); }, fail); return; }
     if (t.closest("[data-cs-invite]")) {
       var em = val("[data-cs-email]").trim(); if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(em)) { say("Type the email address of their OSAP account."); return; }
       cmd("invite", { case: id, email: em, role: val("[data-cs-irole]"), reason: reason() }).then(function (j) { afterChange(j, "Invited " + em + ". They see it when they sign in to OSAP."); }, fail);
@@ -407,7 +411,46 @@
     "#casedlg ul{list-style:none;margin:4px 0;padding:0}#casedlg li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:5px 0;border-top:1px solid var(--line-soft)}#casedlg li>span{flex:1;min-width:140px;overflow-wrap:anywhere}#casedlg li i{font-style:normal;font-size:12px;display:block}";
   D.head.appendChild(css);
 
-  W.OSAP_CASES = { open: openP, list: function () { return MINE; }, syncNow: syncCase, caseOf: caseOf, wsHtml: wsHtml, tag: tag, on: on };
+  /* ---------- lead approval of items in the open case (milestone 3) ----------
+     An item is named to the server by an opaque reference (a hash of the case, the store and the item's id) and a fingerprint of
+     its content as approved; an edit after that shows as "changed since approval". The reason is sealed with the case key. */
+  function strip(item) { var o = {}; Object.keys(item || {}).forEach(function (k) { if (k !== "addedBy" && k !== "addedAt") o[k] = item[k]; }); return o; }
+  function itemRef(id, store, itemId) { var s = "osap-case-item|" + id + "|" + store + "|" + itemId; return C.fp(s) + C.fp(s + "#2"); }
+  function itemFp(item) { return C.fp(C.canon(strip(item))); }
+  function itemState(store, item) {
+    var c = activeCase(); if (!c || !item || item.id == null) return null;
+    var v = VIEW[c.id], d = v && v.items && v.items[itemRef(c.id, store, String(item.id))];
+    var calls = {}; ((v && v.members) || []).forEach(function (m) { calls[m.uid] = m.call || ""; });
+    if (!d) return { state: "proposal", lead: c.role === "lead" };
+    return { state: d.fp === itemFp(item) ? d.state : "changed", was: d.state, by: calls[d.by] || "a former member", at: d.at, lead: c.role === "lead" };
+  }
+  function decide(store, item, state, reason) {
+    var c = activeCase(); if (!c || c.role !== "lead") return Promise.reject(new Error("Only a lead can approve or reject."));
+    var k = KEYS[c.id], why = String(reason || "").trim().slice(0, 300);
+    var sealed = why && k && k.all[k.epoch] ? CC.seal(k.all[k.epoch], c.id, k.epoch, "reason", why) : Promise.resolve(null);
+    return sealed.then(function (sr) {
+      if (why && !sr) throw new Error("The reason cannot be sealed until this device holds the case key. Sync the case first.");
+      return cmd(state === "approved" ? "approve" : "reject", Object.assign({ case: c.id, target: { id: itemRef(c.id, store, String(item.id)), fp: itemFp(item) } }, sr ? { sreason: sr } : {}));
+    }).then(function (j) { if (j.case) VIEW[c.id] = j.case; changed(); return j; });
+  }
+  /* sealed reasons in the case record, opened with whichever case key fits */
+  function openReasons(id, log) {
+    var k = KEYS[id], keys = k ? Object.keys(k.all) : [];
+    return Promise.all((log || []).map(function (d) {
+      var sr = d.detail && d.detail.sreason; if (!sr || !keys.length) return d;
+      return keys.reduce(function (p, e) { return p.then(function (v) { return v != null ? v : CC.open(k.all[e], id, +e, "reason", sr).then(null, function () { return null; }); }); }, Promise.resolve(null))
+        .then(function (t) { if (typeof t === "string") d.openReason = t.slice(0, 300); return d; });
+    }));
+  }
+
+  /* the case of the open workspace, as this device last synced it (the role is the server's answer at that sync) */
+  function activeCase() {
+    if (!on()) return null;
+    var r = reg(), id = r && caseOf(r.active), b = id && bound(id);
+    if (!b || !b.role || (LAST[id] && LAST[id].gone)) return null;
+    return { id: id, name: b.name || "", role: b.role, roleName: ROLE[b.role] || b.role };
+  }
+  W.OSAP_CASES = { open: openP, list: function () { return MINE; }, syncNow: syncCase, caseOf: caseOf, activeCase: activeCase, itemState: itemState, decide: decide, wsHtml: wsHtml, tag: tag, on: on };
   var go = function () { if (on()) start(); };
   if (T() && T().ready && T().ready.then) T().ready.then(go, function () {}); else go();
 })();
