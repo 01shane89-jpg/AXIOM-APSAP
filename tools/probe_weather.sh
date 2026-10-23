@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# Test only: checks that the free, no-key weather hosts the Weather tab uses answer from a GitHub runner, and whether a
-# browser on the live site may read them (CORS). Prints status, CORS header, size and the first bytes. Writes nothing.
-O="https://01shane89-jpg.github.io"
-probe() {
-  local u="$1"
-  local h
-  h=$(curl -sS -m 30 -L -D - -o /tmp/p.bin -H "Origin: $O" -A "Mozilla/5.0 (OSAP probe)" "$u" 2>&1)
-  echo "=== $u"
-  echo "$h" | grep -iE "^HTTP/|access-control-allow-origin|content-type" | tr -d '\r'
-  echo "bytes: $(wc -c < /tmp/p.bin 2>/dev/null)"
-  head -c ${2:-400} /tmp/p.bin | tr '\n' ' '; echo
-}
-curl -sS -m 60 "https://nowcoast.noaa.gov/geoserver/ows?service=WMS&request=GetCapabilities" -o /tmp/nc.xml
-python3 - <<'PY'
-import re
-x=open('/tmp/nc.xml').read()
-for m in re.finditer(r'<Layer[^>]*>\s*<Name>([^<]+)</Name>\s*<Title>([^<]*)</Title>',x):
-    print(m.group(1),'|',m.group(2))
+# Test only (probe branch): which Open-Meteo models answer for the map grid, CORS, and RainViewer frame list.
+O="https://axiom-osap.netlify.app"
+P="latitude=13.75,18.8,-33.9,51.5,40.7&longitude=100.5,99,151.2,-0.1,-74"
+for m in best_match ecmwf_ifs025 ecmwf_aifs025_single gfs_seamless icon_seamless jma_seamless gem_seamless meteofrance_seamless ukmo_seamless cma_grapes_global bom_access_global kma_seamless; do
+  u="https://api.open-meteo.com/v1/forecast?$P&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,precipitation&models=$m&forecast_days=7&timeformat=unixtime&timezone=GMT&wind_speed_unit=kn"
+  curl -sS -m 40 -D /tmp/h.txt -o /tmp/m.json -H "Origin: $O" "$u"
+  echo "=== $m $(grep -i '^HTTP/' /tmp/h.txt | tr -d '\r') $(grep -i 'access-control-allow-origin' /tmp/h.txt | tr -d '\r')"
+  python3 - <<'PY'
+import json
+j=json.load(open('/tmp/m.json'))
+if isinstance(j,dict) and j.get('error'): print('ERR',j); raise SystemExit
+for p in (j if isinstance(j,list) else [j]):
+    h=p['hourly']; ks=[k for k in h if k!='time']
+    print(' ', p['latitude'],p['longitude'],'hours',len(h['time']),{k:sum(v is not None for v in h[k]) for k in ks})
 PY
-probe "https://nowcoast.noaa.gov/geoserver/satellite/wms?service=WMS&version=1.3.0&request=GetMap&layers=global_longwave_imagery_mosaic&styles=&crs=EPSG:3857&bbox=0,0,5009377,5009377&width=256&height=256&format=image/png&transparent=true" 60
-probe "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/$(date -u +%F)/GoogleMapsCompatible_Level9/3/3/6.jpg" 30
-probe "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/$(date -u -d yesterday +%F)/GoogleMapsCompatible_Level9/3/3/6.jpg" 30
+done
+curl -sS -m 30 -H "Origin: $O" -D - -o /tmp/rv.json https://api.rainviewer.com/public/weather-maps.json | grep -iE "^HTTP|access-control" | tr -d '\r'
+python3 -c "import json;j=json.load(open('/tmp/rv.json'));print({k:len(v) for k,v in j['radar'].items()}, j['radar']['past'][0], j.get('satellite') and {k:len(v) for k,v in j['satellite'].items()})"
+# 120 points in one request (the wind-particle grid size)
+LA=$(python3 -c "print(','.join(str(round(5+i*1.5,2)) for i in range(12) for j in range(10)))"); LO=$(python3 -c "print(','.join(str(round(95+j*1.5,2)) for i in range(12) for j in range(10)))")
+curl -sS -m 60 -o /tmp/g.json -w "grid120 HTTP %{http_code} %{size_download} bytes %{time_total}s\n" "https://api.open-meteo.com/v1/forecast?latitude=$LA&longitude=$LO&hourly=wind_speed_10m,wind_direction_10m,precipitation,cloud_cover,temperature_2m,wind_gusts_10m&models=ecmwf_ifs025&forecast_days=4&timeformat=unixtime&timezone=GMT&wind_speed_unit=kn"
+head -c 300 /tmp/g.json; echo
