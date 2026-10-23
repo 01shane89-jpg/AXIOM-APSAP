@@ -131,5 +131,25 @@ ok(C.size("Q105", t.kids) <= 2, "a loop in parent links does not hang the count"
 const g = C.groups(equip);
 ok(g.air.length === 1 && g.sea.length === 2 && g.out.length === 3 && g.old.length === 1, "equipment grouped by category, older and retired apart");
 
+// ---------- SIPRI trade register ----------
+const HDR = "Recipient,Supplier,Year of order, ,Number ordered, ,Weapon designation,Weapon description,Deliveries in the Year Range, ,Year(s) of delivery,status,Comments,SIPRI TIV per unit,SIPRI TIV for total order,SIPRI TIV of delivered weapons";
+const CSV = "Transfers of major conventional arms from All countries to Thailand.\nA '?' in a column indicates uncertain data.\n\nSource: SIPRI Arms Transfers Database (c) SIPRI.\n" + HDR + "\n" +
+  "Thailand,Sweden,2025,?,8,,Gripen-E,fighter/ground-attack aircraft,,,,New,\"Selected 2025, not yet ordered\",31.5,252,0\r\n" +
+  "Thailand,China,2017,,7,?,VT-4 ARV,armoured recovery vehicle,7,?,2017; 2018,New,\"Says \"\"ARV\"\"\",1.8,12.6,12.6\n" +
+  "Thailand,Spain,2021,?,1,,C-295,transport aircraft,1,,2023,New,,12.5,12.5,12.5\n,,,,,,,,,,,,,,,\n";
+const SR = L.sipriFrom(CSV);
+ok(SR && SR.total === 3 && SR.deals.length === 3, "SIPRI: notes skipped, header found, empty rows dropped");
+ok(SR.deals[0].d === "Gripen-E" && SR.deals[0].oy === 2025 && SR.deals[0].no === 8 && SR.deals[0].u.join() === "oy" && SR.deals[0].c === "Selected 2025, not yet ordered" && SR.deals[0].td === 0 && !("dn" in SR.deals[0]), "SIPRI: fields, uncertain marks, quoted commas, empty numbers dropped");
+ok(SR.deals[2].d === "VT-4 ARV" && SR.deals[2].c === 'Says "ARV"' && SR.deals[2].u.join() === "no,dn" && SR.deals[2].dy === "2017; 2018", "SIPRI: doubled quotes, newest order first");
+ok(SR.deals.every((d) => /^[0-9a-f]{64}$/.test(d.fp) && d.fp === L.fp(d)), "SIPRI deals carry fingerprints");
+ok(L.sipriFrom("<html>error</html>") === null, "SIPRI: an answer without the register is refused, not read as empty");
+ok(L.sipriFrom(CSV, 2).deals.length === 2 && L.sipriFrom(CSV, 2).total === 3, "SIPRI: capped list keeps the total");
+const ids = L.sipriIds([{ EntityId: 1, Name: "Thailand", CountryCode: "THA" }, { EntityId: 2, Name: "Kosovo", CountryCode: "KOS" }, { EntityId: 3, Name: "Old", CountryCode: "OLD", deleted: true }, { EntityId: 4, Name: "African Union**", CountryCode: "AU" }], { th: "THA", xk: "XKX" }, { th: "Thailand", xk: "Kosovo" });
+ok(ids.th.id === 1 && ids.xk.id === 2 && Object.keys(ids).length === 2, "SIPRI ids: by ISO3, else by name; deleted and non-state entries left out");
+const SH = C.sipriHtml({ name: "Thailand", years: [2016, 2026], imp: { deals: SR.deals, total: 3 }, exp: { deals: [{ r: "Bhutan<b>", s: "Thailand", d: "First Win", no: 15, oy: 2021, fp: "f".repeat(64) }], total: 1 } }, "Thailand");
+ok(/Non-commercial source/.test(SH) && /2016 to 2026/.test(SH) && /Received by Thailand/.test(SH) && /Supplied by Thailand/.test(SH) && /Gripen-E/.test(SH) && /Bhutan&lt;b&gt;/.test(SH) && /title="SIPRI marks this uncertain"/.test(SH) && /mrfp/.test(SH), "SIPRI section: licence tag, years, both sides, uncertain marks, escaped, fingerprints");
+ok(/could not be read/.test(C.sipriHtml({ err: true })) && /No SIPRI/.test(C.sipriHtml(null)), "SIPRI section: failed read and no file say so");
+ok(C.sipriFile("oki") === "data/live/milref/sipri/jp.json" && C.sipriFile("../x") === "", "SIPRI file per country");
+
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);

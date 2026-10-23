@@ -7,6 +7,9 @@
    - Equipment: the aircraft types, ships and ship classes, land systems, missiles, sensors and small arms Wikidata records
      those forces as operating, with the quantity and dates where an editor gave them.
    - Installations: bases and airfields on Wikidata, with a grid reference.
+   - Arms transfers: the deals in the SIPRI Arms Transfers Database trade register with the country as recipient and as supplier,
+     with deliveries or still open in the last ten years (data/live/milref/sipri/<cc>.json). © SIPRI, free for non-commercial use
+     with attribution: marked non-commercial on the page and kept in their own files so they can be dropped.
    EVERY ITEM IS A SOURCE CLAIM, never a finding: it links to its source and carries the SHA-256 fingerprint the job gave it.
    Wikidata is edited by anyone, so coverage differs widely between countries, quantities are rare and retired types often
    carry no end date; the page says so above the lists. No people are named: no commanders, only forces, equipment and places.
@@ -51,7 +54,38 @@
     return g;
   }
   var KIND = { air: "Air base or airfield", naval: "Naval base", depot: "Depot or arsenal", hq: "Headquarters", barracks: "Barracks or camp", range: "Range or training area", base: "Military base" };
-  var core = { esc: esc, wdUrl: wdUrl, fileOf: fileOf, fig: fig, tree: tree, size: size, groups: groups, CATS: CATS, KIND: KIND };
+  /* the SIPRI trade register file for an app country id */
+  function sipriFile(cc) { var f = fileOf(cc); return f ? f.replace("/milref/", "/milref/sipri/") : ""; }
+  /* a number SIPRI marks uncertain gets a "?" after it, as in SIPRI's own register */
+  function unc(d, k, v) { return v == null ? "" : esc(v) + (d.u && d.u.indexOf(k) >= 0 ? '<span title="SIPRI marks this uncertain">?</span>' : ""); }
+  function tiv(v) { return v == null ? "" : (v >= 10 ? Math.round(v) : Math.round(v * 10) / 10) + " TIV"; }
+  /* one side of the register (received or supplied) as a table; who: the column naming the other party */
+  function dealsHtml(side, who, lim) {
+    var L = (side && side.deals) || [];
+    if (!L.length) return '<p class="bm">None in the register for these years.</p>';
+    var fpt = function (f) { return f ? ' <code class="mrfp" title="SHA-256 fingerprint of this record: ' + esc(f) + '">' + esc(String(f).slice(0, 8)) + "</code>" : ""; };
+    return '<table class="btwo mrsip"><tr><th style="width:17%">' + (who === "s" ? "Supplier" : "Recipient") + '</th><th style="width:27%">Weapon</th><th style="width:14%">Ordered</th><th style="width:16%">Delivered</th><th>Status and SIPRI note</th></tr>' +
+      L.slice(0, lim).map(function (d) {
+        return "<tr><td>" + esc(d[who] || "") + fpt(d.fp) + "</td><td><b>" + esc(d.d || "") + '</b><span class="bm">' + (d.w ? " · " + esc(d.w) : "") + "</span></td><td>" +
+          (d.no != null ? unc(d, "no", d.no) : '<span class="bm">number n/a</span>') + (d.oy ? '<span class="bm"> in ' + unc(d, "oy", d.oy) + "</span>" : "") + "</td><td>" +
+          (d.dn != null ? unc(d, "dn", d.dn) + (d.dy ? '<span class="bm"> (' + esc(d.dy) + ")</span>" : "") : '<span class="bm">none yet</span>') + "</td><td>" +
+          (d.st ? esc(d.st) : "") + (d.tt != null ? '<span class="bm"> · ' + esc(tiv(d.tt)) + "</span>" : "") + (d.c ? '<div class="bm">' + esc(d.c) + "</div>" : "") + "</td></tr>";
+      }).join("") + "</table>" +
+      (side.total > lim ? '<p class="bm">' + (side.total - lim) + " more deal" + (side.total - lim === 1 ? "" : "s") + " in the register for these years" + (side.total > L.length ? " (the " + L.length + " newest are held)" : "") + ".</p>" : "");
+  }
+  function sipriHtml(S, name, lim) {
+    lim = lim || 80;
+    if (!S) return '<p class="bm">No SIPRI arms transfer record is held for this country yet (the weekly refresh writes it).</p>';
+    if (S.err) return '<p class="bm">The SIPRI list could not be read just now. Close and reopen the brief to try again.</p>';
+    var y = S.years || [];
+    return '<p class="bwarn"><span class="mrtag mrnc" title="SIPRI data is free for non-commercial use with attribution">Non-commercial source</span> ' +
+      "Deals of major conventional arms in the SIPRI Arms Transfers Database, with deliveries or still open from " + esc(y[0]) + " to " + esc(y[1]) +
+      ". SIPRI's research from open sources, not checked by OSAP; small arms and many smaller items are not covered, and recent years fill in as SIPRI updates. " +
+      "TIV is SIPRI's trend-indicator value (millions), a measure of military capability transferred, not a price." + (S.stale ? " The last weekly read failed; this is the list from the read before." : "") + "</p>" +
+      "<h4>Received by " + esc(name || S.name) + ' <span class="bm">(' + ((S.imp && S.imp.total) || 0) + ")</span></h4>" + dealsHtml(S.imp, "s", lim) +
+      "<h4>Supplied by " + esc(name || S.name) + ' <span class="bm">(' + ((S.exp && S.exp.total) || 0) + ")</span></h4>" + dealsHtml(S.exp, "r", lim);
+  }
+  var core = { esc: esc, wdUrl: wdUrl, fileOf: fileOf, sipriFile: sipriFile, sipriHtml: sipriHtml, fig: fig, tree: tree, size: size, groups: groups, CATS: CATS, KIND: KIND };
   if (!D) return { core: core };
 
   /* ================= browser ================= */
@@ -67,6 +101,15 @@
     fetch(f, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (j) { cache[f] = { state: 2, data: j }; }, function (e) { cache[f] = { state: 2, data: null, err: String(e && e.message || e) }; })
       .then(function () { (want[f] || []).splice(0).forEach(function (fn) { try { fn(cache[f].data); } catch (e) {} }); });
+  }
+  /* the SIPRI register: its own file, read when the brief opens; a failed read says so and can be retried by reopening */
+  var scache = {};
+  function loadSipri(cc, cb) {
+    var f = sipriFile(cc); if (!f) return cb(null);
+    if (scache[f]) return scache[f].then(cb);
+    scache[f] = fetch(f, { cache: "no-cache" }).then(function (r) { if (r.status === 404) return null; if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .catch(function () { delete scache[f]; return { err: true }; });
+    scache[f].then(cb);
   }
   function link(url, text) { return url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + text + "</a>" : text; }
   function fpTag(fp) { return fp ? ' <code class="mrfp" title="SHA-256 fingerprint of this record: ' + esc(fp) + '">' + esc(String(fp).slice(0, 8)) + "</code>" : ""; }
@@ -140,11 +183,13 @@
       (w.stale ? ", Wikidata lists from an earlier run" : "") + "</div></header>" +
       '<p class="bwarn">' + CLAIM + " " + esc(NOTE) + "</p>";
     h += "<h3>Key figures</h3>" + figuresHtml(M.fig || {}, M.cc);
+    h += '<h3>Arms transfers <span class="bm">SIPRI trade register</span></h3><div data-mrsipri><p class="bm">Loading the SIPRI register…</p></div>';
     h += "<h3>Forces and units (order of battle) " + '<span class="bm">' + (w.units ? w.units.length : 0) + (w.found && w.found.units > (w.units || []).length ? " of " + w.found.units + " on Wikidata" : "") + "</span></h3>" + unitsHtml(w.units, lim.units);
     h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out; }).length + " with no end of service recorded" + ((w.equip || []).length >= 1500 ? " (the 1,500 best-known kept; Wikidata lists more)" : "") + "</span></h3>" + equipHtml(w.equip, lim.equip);
     h += "<h3>Installations " + '<span class="bm">' + (w.inst || []).length + "</span></h3>" + instHtml(w.inst, lim.inst);
     h += '<footer>Sources: ' + link("https://www.wikidata.org/" + (w.q ? "wiki/" + esc(w.q) : ""), "Wikidata") + " (CC0 1.0), read " + esc(w.read ? T().asofT(w.read) : "never") + "; " +
-      link("https://datacatalog.worldbank.org/search/dataset/0037712", "World Bank World Development Indicators") + " (CC BY 4.0), from the SIPRI Military Expenditure and Arms Transfers databases and IISS, The Military Balance. " +
+      link("https://datacatalog.worldbank.org/search/dataset/0037712", "World Bank World Development Indicators") + " (CC BY 4.0), from the SIPRI Military Expenditure and Arms Transfers databases and IISS, The Military Balance; " +
+      link("https://www.sipri.org/databases/armstransfers", "SIPRI Arms Transfers Database") + " trade register (" + link("https://www.sipri.org/about/terms-and-conditions", "© SIPRI") + ", non-commercial use). " +
       "Read once a week. A fingerprint is the SHA-256 of the record as the job stored it (sorted keys), so a changed record can be spotted.</footer></article>";
     return h;
   }
@@ -157,11 +202,13 @@
       /* after the country report: the brief and the economic page stay first (the key dates follow it on their own pages) */
       var art = box.firstChild, rep = el.querySelector("#report");
       if (rep) rep.parentNode.insertBefore(art, rep.nextSibling); else el.appendChild(art);
+      var box2 = art.querySelector && art.querySelector("[data-mrsipri]");
+      if (box2) loadSipri(cc, function (S) { box2.innerHTML = sipriHtml(S, name); });
     });
   }
 
   var CSS = ".mrtag{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid currentColor;border-radius:9px;padding:0 6px;line-height:16px;color:#12324a}" +
-    ".mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
+    ".mrnc{color:#8a4b00}.bmilref .mrsip td div.bm{margin-top:1px}.mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
     ".bmilref h4{font-size:11px;margin:6px 0 2px;color:#12324a}.mrtree .mru{border-bottom:1px solid #eee;padding-top:1px;padding-bottom:1px;overflow-wrap:anywhere}" +
     ".bpage.bmilref td{white-space:normal;overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
     /* a phone: each table row becomes one wrapped line (the column headings drop), so nothing squeezes or scrolls sideways */
