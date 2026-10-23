@@ -1,111 +1,4587 @@
 [
 {
-"cc": "uy",
-"q": "Telemundo Canal 12 Uruguay"
+"cc": "ad",
+"q": "Andorra news"
 },
 {
-"cc": "uy",
-"q": "Telenoche Canal 4"
+"cc": "ad",
+"q": "Andorra national television"
 },
 {
-"cc": "uy",
-"q": "Subrayado Canal 10"
+"cc": "ad",
+"q": "Andorra government"
 },
 {
-"cc": "uy",
-"q": "TNU Television Nacional Uruguay"
+"cc": "ad",
+"q": "Andorra police"
 },
 {
-"cc": "uy",
-"q": "El Observador Uruguay"
+"cc": "ad",
+"q": "Andorra armed forces"
+},
+{
+"cc": "ad",
+"q": "Andorra president"
+},
+{
+"cc": "ad",
+"q": "Andorra prime minister"
+},
+{
+"cc": "ad",
+"q": "Andorra parliament"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates news"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates national television"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates government"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates police"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates armed forces"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates president"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates prime minister"
+},
+{
+"cc": "ae",
+"q": "United Arab Emirates parliament"
+},
+{
+"cc": "af",
+"q": "Afghanistan news"
+},
+{
+"cc": "af",
+"q": "Afghanistan national television"
+},
+{
+"cc": "af",
+"q": "Afghanistan government"
+},
+{
+"cc": "af",
+"q": "Afghanistan police"
+},
+{
+"cc": "af",
+"q": "Afghanistan armed forces"
+},
+{
+"cc": "af",
+"q": "Afghanistan president"
+},
+{
+"cc": "af",
+"q": "Afghanistan prime minister"
+},
+{
+"cc": "af",
+"q": "Afghanistan parliament"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda news"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda national television"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda government"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda police"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda armed forces"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda president"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda prime minister"
+},
+{
+"cc": "ag",
+"q": "Antigua and Barbuda parliament"
+},
+{
+"cc": "al",
+"q": "Albania news"
+},
+{
+"cc": "al",
+"q": "Albania national television"
+},
+{
+"cc": "al",
+"q": "Albania government"
+},
+{
+"cc": "al",
+"q": "Albania police"
+},
+{
+"cc": "al",
+"q": "Albania armed forces"
+},
+{
+"cc": "al",
+"q": "Albania president"
+},
+{
+"cc": "al",
+"q": "Albania prime minister"
+},
+{
+"cc": "al",
+"q": "Albania parliament"
+},
+{
+"cc": "am",
+"q": "Armenia news"
+},
+{
+"cc": "am",
+"q": "Armenia national television"
+},
+{
+"cc": "am",
+"q": "Armenia government"
+},
+{
+"cc": "am",
+"q": "Armenia police"
+},
+{
+"cc": "am",
+"q": "Armenia armed forces"
+},
+{
+"cc": "am",
+"q": "Armenia president"
+},
+{
+"cc": "am",
+"q": "Armenia prime minister"
+},
+{
+"cc": "am",
+"q": "Armenia parliament"
+},
+{
+"cc": "ao",
+"q": "Angola news"
+},
+{
+"cc": "ao",
+"q": "Angola national television"
+},
+{
+"cc": "ao",
+"q": "Angola government"
+},
+{
+"cc": "ao",
+"q": "Angola police"
+},
+{
+"cc": "ao",
+"q": "Angola armed forces"
+},
+{
+"cc": "ao",
+"q": "Angola president"
+},
+{
+"cc": "ao",
+"q": "Angola prime minister"
+},
+{
+"cc": "ao",
+"q": "Angola parliament"
+},
+{
+"cc": "ar",
+"q": "Argentina news"
+},
+{
+"cc": "ar",
+"q": "Argentina national television"
+},
+{
+"cc": "ar",
+"q": "Argentina government"
+},
+{
+"cc": "ar",
+"q": "Argentina police"
+},
+{
+"cc": "ar",
+"q": "Argentina armed forces"
+},
+{
+"cc": "ar",
+"q": "Argentina president"
+},
+{
+"cc": "ar",
+"q": "Argentina prime minister"
+},
+{
+"cc": "ar",
+"q": "Argentina parliament"
+},
+{
+"cc": "at",
+"q": "Austria news"
+},
+{
+"cc": "at",
+"q": "Austria national television"
+},
+{
+"cc": "at",
+"q": "Austria government"
+},
+{
+"cc": "at",
+"q": "Austria police"
+},
+{
+"cc": "at",
+"q": "Austria armed forces"
+},
+{
+"cc": "at",
+"q": "Austria president"
+},
+{
+"cc": "at",
+"q": "Austria prime minister"
+},
+{
+"cc": "at",
+"q": "Austria parliament"
+},
+{
+"cc": "au",
+"q": "Australia news"
+},
+{
+"cc": "au",
+"q": "Australia national television"
+},
+{
+"cc": "au",
+"q": "Australia government"
+},
+{
+"cc": "au",
+"q": "Australia police"
+},
+{
+"cc": "au",
+"q": "Australia armed forces"
+},
+{
+"cc": "au",
+"q": "Australia president"
+},
+{
+"cc": "au",
+"q": "Australia prime minister"
+},
+{
+"cc": "au",
+"q": "Australia parliament"
+},
+{
+"cc": "az",
+"q": "Azerbaijan news"
+},
+{
+"cc": "az",
+"q": "Azerbaijan national television"
+},
+{
+"cc": "az",
+"q": "Azerbaijan government"
+},
+{
+"cc": "az",
+"q": "Azerbaijan police"
+},
+{
+"cc": "az",
+"q": "Azerbaijan armed forces"
+},
+{
+"cc": "az",
+"q": "Azerbaijan president"
+},
+{
+"cc": "az",
+"q": "Azerbaijan prime minister"
+},
+{
+"cc": "az",
+"q": "Azerbaijan parliament"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina news"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina national television"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina government"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina police"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina armed forces"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina president"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina prime minister"
+},
+{
+"cc": "ba",
+"q": "Bosnia and Herzegovina parliament"
+},
+{
+"cc": "bb",
+"q": "Barbados news"
+},
+{
+"cc": "bb",
+"q": "Barbados national television"
+},
+{
+"cc": "bb",
+"q": "Barbados government"
+},
+{
+"cc": "bb",
+"q": "Barbados police"
+},
+{
+"cc": "bb",
+"q": "Barbados armed forces"
+},
+{
+"cc": "bb",
+"q": "Barbados president"
+},
+{
+"cc": "bb",
+"q": "Barbados prime minister"
+},
+{
+"cc": "bb",
+"q": "Barbados parliament"
+},
+{
+"cc": "bd",
+"q": "Bangladesh news"
+},
+{
+"cc": "bd",
+"q": "Bangladesh national television"
+},
+{
+"cc": "bd",
+"q": "Bangladesh government"
+},
+{
+"cc": "bd",
+"q": "Bangladesh police"
+},
+{
+"cc": "bd",
+"q": "Bangladesh armed forces"
+},
+{
+"cc": "bd",
+"q": "Bangladesh president"
+},
+{
+"cc": "bd",
+"q": "Bangladesh prime minister"
+},
+{
+"cc": "bd",
+"q": "Bangladesh parliament"
+},
+{
+"cc": "be",
+"q": "Belgium news"
+},
+{
+"cc": "be",
+"q": "Belgium national television"
+},
+{
+"cc": "be",
+"q": "Belgium government"
+},
+{
+"cc": "be",
+"q": "Belgium police"
+},
+{
+"cc": "be",
+"q": "Belgium armed forces"
+},
+{
+"cc": "be",
+"q": "Belgium president"
+},
+{
+"cc": "be",
+"q": "Belgium prime minister"
+},
+{
+"cc": "be",
+"q": "Belgium parliament"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso news"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso national television"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso government"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso police"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso armed forces"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso president"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso prime minister"
+},
+{
+"cc": "bf",
+"q": "Burkina Faso parliament"
+},
+{
+"cc": "bg",
+"q": "Bulgaria news"
+},
+{
+"cc": "bg",
+"q": "Bulgaria national television"
+},
+{
+"cc": "bg",
+"q": "Bulgaria government"
+},
+{
+"cc": "bg",
+"q": "Bulgaria police"
+},
+{
+"cc": "bg",
+"q": "Bulgaria armed forces"
+},
+{
+"cc": "bg",
+"q": "Bulgaria president"
+},
+{
+"cc": "bg",
+"q": "Bulgaria prime minister"
+},
+{
+"cc": "bg",
+"q": "Bulgaria parliament"
+},
+{
+"cc": "bh",
+"q": "Bahrain news"
+},
+{
+"cc": "bh",
+"q": "Bahrain national television"
+},
+{
+"cc": "bh",
+"q": "Bahrain government"
+},
+{
+"cc": "bh",
+"q": "Bahrain police"
+},
+{
+"cc": "bh",
+"q": "Bahrain armed forces"
+},
+{
+"cc": "bh",
+"q": "Bahrain president"
+},
+{
+"cc": "bh",
+"q": "Bahrain prime minister"
+},
+{
+"cc": "bh",
+"q": "Bahrain parliament"
+},
+{
+"cc": "bi",
+"q": "Burundi news"
+},
+{
+"cc": "bi",
+"q": "Burundi national television"
+},
+{
+"cc": "bi",
+"q": "Burundi government"
+},
+{
+"cc": "bi",
+"q": "Burundi police"
+},
+{
+"cc": "bi",
+"q": "Burundi armed forces"
+},
+{
+"cc": "bi",
+"q": "Burundi president"
+},
+{
+"cc": "bi",
+"q": "Burundi prime minister"
+},
+{
+"cc": "bi",
+"q": "Burundi parliament"
+},
+{
+"cc": "bj",
+"q": "Benin news"
+},
+{
+"cc": "bj",
+"q": "Benin national television"
+},
+{
+"cc": "bj",
+"q": "Benin government"
+},
+{
+"cc": "bj",
+"q": "Benin police"
+},
+{
+"cc": "bj",
+"q": "Benin armed forces"
+},
+{
+"cc": "bj",
+"q": "Benin president"
+},
+{
+"cc": "bj",
+"q": "Benin prime minister"
+},
+{
+"cc": "bj",
+"q": "Benin parliament"
+},
+{
+"cc": "bn",
+"q": "Brunei news"
+},
+{
+"cc": "bn",
+"q": "Brunei national television"
+},
+{
+"cc": "bn",
+"q": "Brunei government"
+},
+{
+"cc": "bn",
+"q": "Brunei police"
+},
+{
+"cc": "bn",
+"q": "Brunei armed forces"
+},
+{
+"cc": "bn",
+"q": "Brunei president"
+},
+{
+"cc": "bn",
+"q": "Brunei prime minister"
+},
+{
+"cc": "bn",
+"q": "Brunei parliament"
+},
+{
+"cc": "bo",
+"q": "Bolivia news"
+},
+{
+"cc": "bo",
+"q": "Bolivia national television"
+},
+{
+"cc": "bo",
+"q": "Bolivia government"
+},
+{
+"cc": "bo",
+"q": "Bolivia police"
+},
+{
+"cc": "bo",
+"q": "Bolivia armed forces"
+},
+{
+"cc": "bo",
+"q": "Bolivia president"
+},
+{
+"cc": "bo",
+"q": "Bolivia prime minister"
+},
+{
+"cc": "bo",
+"q": "Bolivia parliament"
+},
+{
+"cc": "br",
+"q": "Brazil news"
+},
+{
+"cc": "br",
+"q": "Brazil national television"
+},
+{
+"cc": "br",
+"q": "Brazil government"
+},
+{
+"cc": "br",
+"q": "Brazil police"
+},
+{
+"cc": "br",
+"q": "Brazil armed forces"
+},
+{
+"cc": "br",
+"q": "Brazil president"
+},
+{
+"cc": "br",
+"q": "Brazil prime minister"
+},
+{
+"cc": "br",
+"q": "Brazil parliament"
+},
+{
+"cc": "bs",
+"q": "Bahamas news"
+},
+{
+"cc": "bs",
+"q": "Bahamas national television"
+},
+{
+"cc": "bs",
+"q": "Bahamas government"
+},
+{
+"cc": "bs",
+"q": "Bahamas police"
+},
+{
+"cc": "bs",
+"q": "Bahamas armed forces"
+},
+{
+"cc": "bs",
+"q": "Bahamas president"
+},
+{
+"cc": "bs",
+"q": "Bahamas prime minister"
+},
+{
+"cc": "bs",
+"q": "Bahamas parliament"
+},
+{
+"cc": "bt",
+"q": "Bhutan news"
+},
+{
+"cc": "bt",
+"q": "Bhutan national television"
+},
+{
+"cc": "bt",
+"q": "Bhutan government"
+},
+{
+"cc": "bt",
+"q": "Bhutan police"
+},
+{
+"cc": "bt",
+"q": "Bhutan armed forces"
+},
+{
+"cc": "bt",
+"q": "Bhutan president"
+},
+{
+"cc": "bt",
+"q": "Bhutan prime minister"
+},
+{
+"cc": "bt",
+"q": "Bhutan parliament"
+},
+{
+"cc": "bw",
+"q": "Botswana news"
+},
+{
+"cc": "bw",
+"q": "Botswana national television"
+},
+{
+"cc": "bw",
+"q": "Botswana government"
+},
+{
+"cc": "bw",
+"q": "Botswana police"
+},
+{
+"cc": "bw",
+"q": "Botswana armed forces"
+},
+{
+"cc": "bw",
+"q": "Botswana president"
+},
+{
+"cc": "bw",
+"q": "Botswana prime minister"
+},
+{
+"cc": "bw",
+"q": "Botswana parliament"
+},
+{
+"cc": "by",
+"q": "Belarus news"
+},
+{
+"cc": "by",
+"q": "Belarus national television"
+},
+{
+"cc": "by",
+"q": "Belarus government"
+},
+{
+"cc": "by",
+"q": "Belarus police"
+},
+{
+"cc": "by",
+"q": "Belarus armed forces"
+},
+{
+"cc": "by",
+"q": "Belarus president"
+},
+{
+"cc": "by",
+"q": "Belarus prime minister"
+},
+{
+"cc": "by",
+"q": "Belarus parliament"
+},
+{
+"cc": "bz",
+"q": "Belize news"
+},
+{
+"cc": "bz",
+"q": "Belize national television"
+},
+{
+"cc": "bz",
+"q": "Belize government"
+},
+{
+"cc": "bz",
+"q": "Belize police"
+},
+{
+"cc": "bz",
+"q": "Belize armed forces"
+},
+{
+"cc": "bz",
+"q": "Belize president"
+},
+{
+"cc": "bz",
+"q": "Belize prime minister"
+},
+{
+"cc": "bz",
+"q": "Belize parliament"
+},
+{
+"cc": "ca",
+"q": "Canada news"
+},
+{
+"cc": "ca",
+"q": "Canada national television"
+},
+{
+"cc": "ca",
+"q": "Canada government"
+},
+{
+"cc": "ca",
+"q": "Canada police"
+},
+{
+"cc": "ca",
+"q": "Canada armed forces"
+},
+{
+"cc": "ca",
+"q": "Canada president"
+},
+{
+"cc": "ca",
+"q": "Canada prime minister"
+},
+{
+"cc": "ca",
+"q": "Canada parliament"
+},
+{
+"cc": "cd",
+"q": "DR Congo news"
+},
+{
+"cc": "cd",
+"q": "DR Congo national television"
+},
+{
+"cc": "cd",
+"q": "DR Congo government"
+},
+{
+"cc": "cd",
+"q": "DR Congo police"
+},
+{
+"cc": "cd",
+"q": "DR Congo armed forces"
+},
+{
+"cc": "cd",
+"q": "DR Congo president"
+},
+{
+"cc": "cd",
+"q": "DR Congo prime minister"
+},
+{
+"cc": "cd",
+"q": "DR Congo parliament"
+},
+{
+"cc": "cf",
+"q": "Central African Republic news"
+},
+{
+"cc": "cf",
+"q": "Central African Republic national television"
+},
+{
+"cc": "cf",
+"q": "Central African Republic government"
+},
+{
+"cc": "cf",
+"q": "Central African Republic police"
+},
+{
+"cc": "cf",
+"q": "Central African Republic armed forces"
+},
+{
+"cc": "cf",
+"q": "Central African Republic president"
+},
+{
+"cc": "cf",
+"q": "Central African Republic prime minister"
+},
+{
+"cc": "cf",
+"q": "Central African Republic parliament"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo news"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo national television"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo government"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo police"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo armed forces"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo president"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo prime minister"
+},
+{
+"cc": "cg",
+"q": "Republic of the Congo parliament"
+},
+{
+"cc": "ch",
+"q": "Switzerland news"
+},
+{
+"cc": "ch",
+"q": "Switzerland national television"
+},
+{
+"cc": "ch",
+"q": "Switzerland government"
+},
+{
+"cc": "ch",
+"q": "Switzerland police"
+},
+{
+"cc": "ch",
+"q": "Switzerland armed forces"
+},
+{
+"cc": "ch",
+"q": "Switzerland president"
+},
+{
+"cc": "ch",
+"q": "Switzerland prime minister"
+},
+{
+"cc": "ch",
+"q": "Switzerland parliament"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire news"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire national television"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire government"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire police"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire armed forces"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire president"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire prime minister"
+},
+{
+"cc": "ci",
+"q": "Côte d'Ivoire parliament"
+},
+{
+"cc": "cl",
+"q": "Chile news"
+},
+{
+"cc": "cl",
+"q": "Chile national television"
+},
+{
+"cc": "cl",
+"q": "Chile government"
+},
+{
+"cc": "cl",
+"q": "Chile police"
+},
+{
+"cc": "cl",
+"q": "Chile armed forces"
+},
+{
+"cc": "cl",
+"q": "Chile president"
+},
+{
+"cc": "cl",
+"q": "Chile prime minister"
+},
+{
+"cc": "cl",
+"q": "Chile parliament"
+},
+{
+"cc": "cm",
+"q": "Cameroon news"
+},
+{
+"cc": "cm",
+"q": "Cameroon national television"
+},
+{
+"cc": "cm",
+"q": "Cameroon government"
+},
+{
+"cc": "cm",
+"q": "Cameroon police"
+},
+{
+"cc": "cm",
+"q": "Cameroon armed forces"
+},
+{
+"cc": "cm",
+"q": "Cameroon president"
+},
+{
+"cc": "cm",
+"q": "Cameroon prime minister"
+},
+{
+"cc": "cm",
+"q": "Cameroon parliament"
+},
+{
+"cc": "cn",
+"q": "China news"
+},
+{
+"cc": "cn",
+"q": "China national television"
+},
+{
+"cc": "cn",
+"q": "China government"
+},
+{
+"cc": "cn",
+"q": "China police"
+},
+{
+"cc": "cn",
+"q": "China armed forces"
+},
+{
+"cc": "cn",
+"q": "China president"
+},
+{
+"cc": "cn",
+"q": "China prime minister"
+},
+{
+"cc": "cn",
+"q": "China parliament"
+},
+{
+"cc": "co",
+"q": "Colombia news"
+},
+{
+"cc": "co",
+"q": "Colombia national television"
+},
+{
+"cc": "co",
+"q": "Colombia government"
+},
+{
+"cc": "co",
+"q": "Colombia police"
+},
+{
+"cc": "co",
+"q": "Colombia armed forces"
+},
+{
+"cc": "co",
+"q": "Colombia president"
+},
+{
+"cc": "co",
+"q": "Colombia prime minister"
+},
+{
+"cc": "co",
+"q": "Colombia parliament"
+},
+{
+"cc": "cr",
+"q": "Costa Rica news"
+},
+{
+"cc": "cr",
+"q": "Costa Rica national television"
+},
+{
+"cc": "cr",
+"q": "Costa Rica government"
+},
+{
+"cc": "cr",
+"q": "Costa Rica police"
+},
+{
+"cc": "cr",
+"q": "Costa Rica armed forces"
+},
+{
+"cc": "cr",
+"q": "Costa Rica president"
+},
+{
+"cc": "cr",
+"q": "Costa Rica prime minister"
+},
+{
+"cc": "cr",
+"q": "Costa Rica parliament"
+},
+{
+"cc": "cu",
+"q": "Cuba news"
+},
+{
+"cc": "cu",
+"q": "Cuba national television"
+},
+{
+"cc": "cu",
+"q": "Cuba government"
+},
+{
+"cc": "cu",
+"q": "Cuba police"
+},
+{
+"cc": "cu",
+"q": "Cuba armed forces"
+},
+{
+"cc": "cu",
+"q": "Cuba president"
+},
+{
+"cc": "cu",
+"q": "Cuba prime minister"
+},
+{
+"cc": "cu",
+"q": "Cuba parliament"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde news"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde national television"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde government"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde police"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde armed forces"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde president"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde prime minister"
+},
+{
+"cc": "cv",
+"q": "Cabo Verde parliament"
+},
+{
+"cc": "cy",
+"q": "Cyprus news"
+},
+{
+"cc": "cy",
+"q": "Cyprus national television"
+},
+{
+"cc": "cy",
+"q": "Cyprus government"
+},
+{
+"cc": "cy",
+"q": "Cyprus police"
+},
+{
+"cc": "cy",
+"q": "Cyprus armed forces"
+},
+{
+"cc": "cy",
+"q": "Cyprus president"
+},
+{
+"cc": "cy",
+"q": "Cyprus prime minister"
+},
+{
+"cc": "cy",
+"q": "Cyprus parliament"
+},
+{
+"cc": "cz",
+"q": "Czechia news"
+},
+{
+"cc": "cz",
+"q": "Czechia national television"
+},
+{
+"cc": "cz",
+"q": "Czechia government"
+},
+{
+"cc": "cz",
+"q": "Czechia police"
+},
+{
+"cc": "cz",
+"q": "Czechia armed forces"
+},
+{
+"cc": "cz",
+"q": "Czechia president"
+},
+{
+"cc": "cz",
+"q": "Czechia prime minister"
+},
+{
+"cc": "cz",
+"q": "Czechia parliament"
+},
+{
+"cc": "de",
+"q": "Germany news"
+},
+{
+"cc": "de",
+"q": "Germany national television"
+},
+{
+"cc": "de",
+"q": "Germany government"
+},
+{
+"cc": "de",
+"q": "Germany police"
+},
+{
+"cc": "de",
+"q": "Germany armed forces"
+},
+{
+"cc": "de",
+"q": "Germany president"
+},
+{
+"cc": "de",
+"q": "Germany prime minister"
+},
+{
+"cc": "de",
+"q": "Germany parliament"
+},
+{
+"cc": "dj",
+"q": "Djibouti news"
+},
+{
+"cc": "dj",
+"q": "Djibouti national television"
+},
+{
+"cc": "dj",
+"q": "Djibouti government"
+},
+{
+"cc": "dj",
+"q": "Djibouti police"
+},
+{
+"cc": "dj",
+"q": "Djibouti armed forces"
+},
+{
+"cc": "dj",
+"q": "Djibouti president"
+},
+{
+"cc": "dj",
+"q": "Djibouti prime minister"
+},
+{
+"cc": "dj",
+"q": "Djibouti parliament"
 },
 {
 "cc": "dk",
-"q": "DR Nyheder"
+"q": "Denmark news"
 },
 {
 "cc": "dk",
-"q": "TV 2 Danmark"
+"q": "Denmark national television"
 },
 {
 "cc": "dk",
-"q": "TV2 Nyhederne"
+"q": "Denmark government"
 },
 {
 "cc": "dk",
-"q": "Berlingske"
+"q": "Denmark police"
 },
 {
-"cc": "nl",
-"q": "NOS Nieuws"
+"cc": "dk",
+"q": "Denmark armed forces"
 },
 {
-"cc": "nl",
-"q": "NOS Journaal"
+"cc": "dk",
+"q": "Denmark president"
 },
 {
-"cc": "nl",
-"q": "NU.nl"
+"cc": "dk",
+"q": "Denmark prime minister"
 },
 {
-"cc": "st",
-"q": "TVS Televisao Sao-tomense"
+"cc": "dk",
+"q": "Denmark parliament"
 },
 {
-"cc": "st",
-"q": "STP Press"
+"cc": "dm",
+"q": "Dominica news"
 },
 {
-"cc": "st",
-"q": "Tela Non Sao Tome"
+"cc": "dm",
+"q": "Dominica national television"
 },
 {
-"cc": "ki",
-"q": "Kiribati Broadcasting and Publications Authority"
+"cc": "dm",
+"q": "Dominica government"
 },
 {
-"cc": "ki",
-"q": "Kiribati news"
+"cc": "dm",
+"q": "Dominica police"
 },
 {
-"cc": "mh",
-"q": "Marshall Islands Broadcasting"
+"cc": "dm",
+"q": "Dominica armed forces"
 },
 {
-"cc": "mh",
-"q": "RMI government"
+"cc": "dm",
+"q": "Dominica president"
 },
 {
-"cc": "mh",
-"q": "Marshall Islands news"
+"cc": "dm",
+"q": "Dominica prime minister"
 },
 {
-"cc": "fm",
-"q": "FSM Information Services"
+"cc": "dm",
+"q": "Dominica parliament"
 },
 {
-"cc": "fm",
-"q": "Kaselehlie Press"
+"cc": "do",
+"q": "Dominican Republic news"
+},
+{
+"cc": "do",
+"q": "Dominican Republic national television"
+},
+{
+"cc": "do",
+"q": "Dominican Republic government"
+},
+{
+"cc": "do",
+"q": "Dominican Republic police"
+},
+{
+"cc": "do",
+"q": "Dominican Republic armed forces"
+},
+{
+"cc": "do",
+"q": "Dominican Republic president"
+},
+{
+"cc": "do",
+"q": "Dominican Republic prime minister"
+},
+{
+"cc": "do",
+"q": "Dominican Republic parliament"
+},
+{
+"cc": "dz",
+"q": "Algeria news"
+},
+{
+"cc": "dz",
+"q": "Algeria national television"
+},
+{
+"cc": "dz",
+"q": "Algeria government"
+},
+{
+"cc": "dz",
+"q": "Algeria police"
+},
+{
+"cc": "dz",
+"q": "Algeria armed forces"
+},
+{
+"cc": "dz",
+"q": "Algeria president"
+},
+{
+"cc": "dz",
+"q": "Algeria prime minister"
+},
+{
+"cc": "dz",
+"q": "Algeria parliament"
+},
+{
+"cc": "ec",
+"q": "Ecuador news"
+},
+{
+"cc": "ec",
+"q": "Ecuador national television"
+},
+{
+"cc": "ec",
+"q": "Ecuador government"
+},
+{
+"cc": "ec",
+"q": "Ecuador police"
+},
+{
+"cc": "ec",
+"q": "Ecuador armed forces"
+},
+{
+"cc": "ec",
+"q": "Ecuador president"
+},
+{
+"cc": "ec",
+"q": "Ecuador prime minister"
+},
+{
+"cc": "ec",
+"q": "Ecuador parliament"
+},
+{
+"cc": "ee",
+"q": "Estonia news"
+},
+{
+"cc": "ee",
+"q": "Estonia national television"
+},
+{
+"cc": "ee",
+"q": "Estonia government"
+},
+{
+"cc": "ee",
+"q": "Estonia police"
+},
+{
+"cc": "ee",
+"q": "Estonia armed forces"
+},
+{
+"cc": "ee",
+"q": "Estonia president"
+},
+{
+"cc": "ee",
+"q": "Estonia prime minister"
+},
+{
+"cc": "ee",
+"q": "Estonia parliament"
+},
+{
+"cc": "eg",
+"q": "Egypt news"
+},
+{
+"cc": "eg",
+"q": "Egypt national television"
+},
+{
+"cc": "eg",
+"q": "Egypt government"
+},
+{
+"cc": "eg",
+"q": "Egypt police"
+},
+{
+"cc": "eg",
+"q": "Egypt armed forces"
+},
+{
+"cc": "eg",
+"q": "Egypt president"
+},
+{
+"cc": "eg",
+"q": "Egypt prime minister"
+},
+{
+"cc": "eg",
+"q": "Egypt parliament"
+},
+{
+"cc": "eh",
+"q": "Western Sahara news"
+},
+{
+"cc": "eh",
+"q": "Western Sahara national television"
+},
+{
+"cc": "eh",
+"q": "Western Sahara government"
+},
+{
+"cc": "eh",
+"q": "Western Sahara police"
+},
+{
+"cc": "eh",
+"q": "Western Sahara armed forces"
+},
+{
+"cc": "eh",
+"q": "Western Sahara president"
+},
+{
+"cc": "eh",
+"q": "Western Sahara prime minister"
+},
+{
+"cc": "eh",
+"q": "Western Sahara parliament"
+},
+{
+"cc": "er",
+"q": "Eritrea news"
+},
+{
+"cc": "er",
+"q": "Eritrea national television"
+},
+{
+"cc": "er",
+"q": "Eritrea government"
+},
+{
+"cc": "er",
+"q": "Eritrea police"
+},
+{
+"cc": "er",
+"q": "Eritrea armed forces"
+},
+{
+"cc": "er",
+"q": "Eritrea president"
+},
+{
+"cc": "er",
+"q": "Eritrea prime minister"
+},
+{
+"cc": "er",
+"q": "Eritrea parliament"
+},
+{
+"cc": "es",
+"q": "Spain news"
+},
+{
+"cc": "es",
+"q": "Spain national television"
+},
+{
+"cc": "es",
+"q": "Spain government"
+},
+{
+"cc": "es",
+"q": "Spain police"
+},
+{
+"cc": "es",
+"q": "Spain armed forces"
+},
+{
+"cc": "es",
+"q": "Spain president"
+},
+{
+"cc": "es",
+"q": "Spain prime minister"
+},
+{
+"cc": "es",
+"q": "Spain parliament"
+},
+{
+"cc": "et",
+"q": "Ethiopia news"
+},
+{
+"cc": "et",
+"q": "Ethiopia national television"
+},
+{
+"cc": "et",
+"q": "Ethiopia government"
+},
+{
+"cc": "et",
+"q": "Ethiopia police"
+},
+{
+"cc": "et",
+"q": "Ethiopia armed forces"
+},
+{
+"cc": "et",
+"q": "Ethiopia president"
+},
+{
+"cc": "et",
+"q": "Ethiopia prime minister"
+},
+{
+"cc": "et",
+"q": "Ethiopia parliament"
+},
+{
+"cc": "fi",
+"q": "Finland news"
+},
+{
+"cc": "fi",
+"q": "Finland national television"
+},
+{
+"cc": "fi",
+"q": "Finland government"
+},
+{
+"cc": "fi",
+"q": "Finland police"
+},
+{
+"cc": "fi",
+"q": "Finland armed forces"
+},
+{
+"cc": "fi",
+"q": "Finland president"
+},
+{
+"cc": "fi",
+"q": "Finland prime minister"
+},
+{
+"cc": "fi",
+"q": "Finland parliament"
+},
+{
+"cc": "fj",
+"q": "Fiji news"
+},
+{
+"cc": "fj",
+"q": "Fiji national television"
+},
+{
+"cc": "fj",
+"q": "Fiji government"
+},
+{
+"cc": "fj",
+"q": "Fiji police"
+},
+{
+"cc": "fj",
+"q": "Fiji armed forces"
+},
+{
+"cc": "fj",
+"q": "Fiji president"
+},
+{
+"cc": "fj",
+"q": "Fiji prime minister"
+},
+{
+"cc": "fj",
+"q": "Fiji parliament"
 },
 {
 "cc": "fm",
 "q": "Micronesia news"
 },
 {
-"cc": "nr",
-"q": "Nauru Media"
+"cc": "fm",
+"q": "Micronesia national television"
+},
+{
+"cc": "fm",
+"q": "Micronesia government"
+},
+{
+"cc": "fm",
+"q": "Micronesia police"
+},
+{
+"cc": "fm",
+"q": "Micronesia armed forces"
+},
+{
+"cc": "fm",
+"q": "Micronesia president"
+},
+{
+"cc": "fm",
+"q": "Micronesia prime minister"
+},
+{
+"cc": "fm",
+"q": "Micronesia parliament"
+},
+{
+"cc": "fr",
+"q": "France news"
+},
+{
+"cc": "fr",
+"q": "France national television"
+},
+{
+"cc": "fr",
+"q": "France government"
+},
+{
+"cc": "fr",
+"q": "France police"
+},
+{
+"cc": "fr",
+"q": "France armed forces"
+},
+{
+"cc": "fr",
+"q": "France president"
+},
+{
+"cc": "fr",
+"q": "France prime minister"
+},
+{
+"cc": "fr",
+"q": "France parliament"
+},
+{
+"cc": "ga",
+"q": "Gabon news"
+},
+{
+"cc": "ga",
+"q": "Gabon national television"
+},
+{
+"cc": "ga",
+"q": "Gabon government"
+},
+{
+"cc": "ga",
+"q": "Gabon police"
+},
+{
+"cc": "ga",
+"q": "Gabon armed forces"
+},
+{
+"cc": "ga",
+"q": "Gabon president"
+},
+{
+"cc": "ga",
+"q": "Gabon prime minister"
+},
+{
+"cc": "ga",
+"q": "Gabon parliament"
+},
+{
+"cc": "gb",
+"q": "United Kingdom news"
+},
+{
+"cc": "gb",
+"q": "United Kingdom national television"
+},
+{
+"cc": "gb",
+"q": "United Kingdom government"
+},
+{
+"cc": "gb",
+"q": "United Kingdom police"
+},
+{
+"cc": "gb",
+"q": "United Kingdom armed forces"
+},
+{
+"cc": "gb",
+"q": "United Kingdom president"
+},
+{
+"cc": "gb",
+"q": "United Kingdom prime minister"
+},
+{
+"cc": "gb",
+"q": "United Kingdom parliament"
+},
+{
+"cc": "gd",
+"q": "Grenada news"
+},
+{
+"cc": "gd",
+"q": "Grenada national television"
+},
+{
+"cc": "gd",
+"q": "Grenada government"
+},
+{
+"cc": "gd",
+"q": "Grenada police"
+},
+{
+"cc": "gd",
+"q": "Grenada armed forces"
+},
+{
+"cc": "gd",
+"q": "Grenada president"
+},
+{
+"cc": "gd",
+"q": "Grenada prime minister"
+},
+{
+"cc": "gd",
+"q": "Grenada parliament"
+},
+{
+"cc": "ge",
+"q": "Georgia news"
+},
+{
+"cc": "ge",
+"q": "Georgia national television"
+},
+{
+"cc": "ge",
+"q": "Georgia government"
+},
+{
+"cc": "ge",
+"q": "Georgia police"
+},
+{
+"cc": "ge",
+"q": "Georgia armed forces"
+},
+{
+"cc": "ge",
+"q": "Georgia president"
+},
+{
+"cc": "ge",
+"q": "Georgia prime minister"
+},
+{
+"cc": "ge",
+"q": "Georgia parliament"
+},
+{
+"cc": "gh",
+"q": "Ghana news"
+},
+{
+"cc": "gh",
+"q": "Ghana national television"
+},
+{
+"cc": "gh",
+"q": "Ghana government"
+},
+{
+"cc": "gh",
+"q": "Ghana police"
+},
+{
+"cc": "gh",
+"q": "Ghana armed forces"
+},
+{
+"cc": "gh",
+"q": "Ghana president"
+},
+{
+"cc": "gh",
+"q": "Ghana prime minister"
+},
+{
+"cc": "gh",
+"q": "Ghana parliament"
+},
+{
+"cc": "gm",
+"q": "Gambia news"
+},
+{
+"cc": "gm",
+"q": "Gambia national television"
+},
+{
+"cc": "gm",
+"q": "Gambia government"
+},
+{
+"cc": "gm",
+"q": "Gambia police"
+},
+{
+"cc": "gm",
+"q": "Gambia armed forces"
+},
+{
+"cc": "gm",
+"q": "Gambia president"
+},
+{
+"cc": "gm",
+"q": "Gambia prime minister"
+},
+{
+"cc": "gm",
+"q": "Gambia parliament"
+},
+{
+"cc": "gn",
+"q": "Guinea news"
+},
+{
+"cc": "gn",
+"q": "Guinea national television"
+},
+{
+"cc": "gn",
+"q": "Guinea government"
+},
+{
+"cc": "gn",
+"q": "Guinea police"
+},
+{
+"cc": "gn",
+"q": "Guinea armed forces"
+},
+{
+"cc": "gn",
+"q": "Guinea president"
+},
+{
+"cc": "gn",
+"q": "Guinea prime minister"
+},
+{
+"cc": "gn",
+"q": "Guinea parliament"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea news"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea national television"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea government"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea police"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea armed forces"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea president"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea prime minister"
+},
+{
+"cc": "gq",
+"q": "Equatorial Guinea parliament"
+},
+{
+"cc": "gr",
+"q": "Greece news"
+},
+{
+"cc": "gr",
+"q": "Greece national television"
+},
+{
+"cc": "gr",
+"q": "Greece government"
+},
+{
+"cc": "gr",
+"q": "Greece police"
+},
+{
+"cc": "gr",
+"q": "Greece armed forces"
+},
+{
+"cc": "gr",
+"q": "Greece president"
+},
+{
+"cc": "gr",
+"q": "Greece prime minister"
+},
+{
+"cc": "gr",
+"q": "Greece parliament"
+},
+{
+"cc": "gt",
+"q": "Guatemala news"
+},
+{
+"cc": "gt",
+"q": "Guatemala national television"
+},
+{
+"cc": "gt",
+"q": "Guatemala government"
+},
+{
+"cc": "gt",
+"q": "Guatemala police"
+},
+{
+"cc": "gt",
+"q": "Guatemala armed forces"
+},
+{
+"cc": "gt",
+"q": "Guatemala president"
+},
+{
+"cc": "gt",
+"q": "Guatemala prime minister"
+},
+{
+"cc": "gt",
+"q": "Guatemala parliament"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau news"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau national television"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau government"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau police"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau armed forces"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau president"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau prime minister"
+},
+{
+"cc": "gw",
+"q": "Guinea-Bissau parliament"
+},
+{
+"cc": "gy",
+"q": "Guyana news"
+},
+{
+"cc": "gy",
+"q": "Guyana national television"
+},
+{
+"cc": "gy",
+"q": "Guyana government"
+},
+{
+"cc": "gy",
+"q": "Guyana police"
+},
+{
+"cc": "gy",
+"q": "Guyana armed forces"
+},
+{
+"cc": "gy",
+"q": "Guyana president"
+},
+{
+"cc": "gy",
+"q": "Guyana prime minister"
+},
+{
+"cc": "gy",
+"q": "Guyana parliament"
+},
+{
+"cc": "hn",
+"q": "Honduras news"
+},
+{
+"cc": "hn",
+"q": "Honduras national television"
+},
+{
+"cc": "hn",
+"q": "Honduras government"
+},
+{
+"cc": "hn",
+"q": "Honduras police"
+},
+{
+"cc": "hn",
+"q": "Honduras armed forces"
+},
+{
+"cc": "hn",
+"q": "Honduras president"
+},
+{
+"cc": "hn",
+"q": "Honduras prime minister"
+},
+{
+"cc": "hn",
+"q": "Honduras parliament"
+},
+{
+"cc": "hr",
+"q": "Croatia news"
+},
+{
+"cc": "hr",
+"q": "Croatia national television"
+},
+{
+"cc": "hr",
+"q": "Croatia government"
+},
+{
+"cc": "hr",
+"q": "Croatia police"
+},
+{
+"cc": "hr",
+"q": "Croatia armed forces"
+},
+{
+"cc": "hr",
+"q": "Croatia president"
+},
+{
+"cc": "hr",
+"q": "Croatia prime minister"
+},
+{
+"cc": "hr",
+"q": "Croatia parliament"
+},
+{
+"cc": "ht",
+"q": "Haiti news"
+},
+{
+"cc": "ht",
+"q": "Haiti national television"
+},
+{
+"cc": "ht",
+"q": "Haiti government"
+},
+{
+"cc": "ht",
+"q": "Haiti police"
+},
+{
+"cc": "ht",
+"q": "Haiti armed forces"
+},
+{
+"cc": "ht",
+"q": "Haiti president"
+},
+{
+"cc": "ht",
+"q": "Haiti prime minister"
+},
+{
+"cc": "ht",
+"q": "Haiti parliament"
+},
+{
+"cc": "hu",
+"q": "Hungary news"
+},
+{
+"cc": "hu",
+"q": "Hungary national television"
+},
+{
+"cc": "hu",
+"q": "Hungary government"
+},
+{
+"cc": "hu",
+"q": "Hungary police"
+},
+{
+"cc": "hu",
+"q": "Hungary armed forces"
+},
+{
+"cc": "hu",
+"q": "Hungary president"
+},
+{
+"cc": "hu",
+"q": "Hungary prime minister"
+},
+{
+"cc": "hu",
+"q": "Hungary parliament"
+},
+{
+"cc": "id",
+"q": "Indonesia news"
+},
+{
+"cc": "id",
+"q": "Indonesia national television"
+},
+{
+"cc": "id",
+"q": "Indonesia government"
+},
+{
+"cc": "id",
+"q": "Indonesia police"
+},
+{
+"cc": "id",
+"q": "Indonesia armed forces"
+},
+{
+"cc": "id",
+"q": "Indonesia president"
+},
+{
+"cc": "id",
+"q": "Indonesia prime minister"
+},
+{
+"cc": "id",
+"q": "Indonesia parliament"
+},
+{
+"cc": "ie",
+"q": "Ireland news"
+},
+{
+"cc": "ie",
+"q": "Ireland national television"
+},
+{
+"cc": "ie",
+"q": "Ireland government"
+},
+{
+"cc": "ie",
+"q": "Ireland police"
+},
+{
+"cc": "ie",
+"q": "Ireland armed forces"
+},
+{
+"cc": "ie",
+"q": "Ireland president"
+},
+{
+"cc": "ie",
+"q": "Ireland prime minister"
+},
+{
+"cc": "ie",
+"q": "Ireland parliament"
+},
+{
+"cc": "il",
+"q": "Israel news"
+},
+{
+"cc": "il",
+"q": "Israel national television"
+},
+{
+"cc": "il",
+"q": "Israel government"
+},
+{
+"cc": "il",
+"q": "Israel police"
+},
+{
+"cc": "il",
+"q": "Israel armed forces"
+},
+{
+"cc": "il",
+"q": "Israel president"
+},
+{
+"cc": "il",
+"q": "Israel prime minister"
+},
+{
+"cc": "il",
+"q": "Israel parliament"
+},
+{
+"cc": "in",
+"q": "India news"
+},
+{
+"cc": "in",
+"q": "India national television"
+},
+{
+"cc": "in",
+"q": "India government"
+},
+{
+"cc": "in",
+"q": "India police"
+},
+{
+"cc": "in",
+"q": "India armed forces"
+},
+{
+"cc": "in",
+"q": "India president"
+},
+{
+"cc": "in",
+"q": "India prime minister"
+},
+{
+"cc": "in",
+"q": "India parliament"
+},
+{
+"cc": "iq",
+"q": "Iraq news"
+},
+{
+"cc": "iq",
+"q": "Iraq national television"
+},
+{
+"cc": "iq",
+"q": "Iraq government"
+},
+{
+"cc": "iq",
+"q": "Iraq police"
+},
+{
+"cc": "iq",
+"q": "Iraq armed forces"
+},
+{
+"cc": "iq",
+"q": "Iraq president"
+},
+{
+"cc": "iq",
+"q": "Iraq prime minister"
+},
+{
+"cc": "iq",
+"q": "Iraq parliament"
+},
+{
+"cc": "ir",
+"q": "Iran news"
+},
+{
+"cc": "ir",
+"q": "Iran national television"
+},
+{
+"cc": "ir",
+"q": "Iran government"
+},
+{
+"cc": "ir",
+"q": "Iran police"
+},
+{
+"cc": "ir",
+"q": "Iran armed forces"
+},
+{
+"cc": "ir",
+"q": "Iran president"
+},
+{
+"cc": "ir",
+"q": "Iran prime minister"
+},
+{
+"cc": "ir",
+"q": "Iran parliament"
+},
+{
+"cc": "is",
+"q": "Iceland news"
+},
+{
+"cc": "is",
+"q": "Iceland national television"
+},
+{
+"cc": "is",
+"q": "Iceland government"
+},
+{
+"cc": "is",
+"q": "Iceland police"
+},
+{
+"cc": "is",
+"q": "Iceland armed forces"
+},
+{
+"cc": "is",
+"q": "Iceland president"
+},
+{
+"cc": "is",
+"q": "Iceland prime minister"
+},
+{
+"cc": "is",
+"q": "Iceland parliament"
+},
+{
+"cc": "it",
+"q": "Italy news"
+},
+{
+"cc": "it",
+"q": "Italy national television"
+},
+{
+"cc": "it",
+"q": "Italy government"
+},
+{
+"cc": "it",
+"q": "Italy police"
+},
+{
+"cc": "it",
+"q": "Italy armed forces"
+},
+{
+"cc": "it",
+"q": "Italy president"
+},
+{
+"cc": "it",
+"q": "Italy prime minister"
+},
+{
+"cc": "it",
+"q": "Italy parliament"
+},
+{
+"cc": "jm",
+"q": "Jamaica news"
+},
+{
+"cc": "jm",
+"q": "Jamaica national television"
+},
+{
+"cc": "jm",
+"q": "Jamaica government"
+},
+{
+"cc": "jm",
+"q": "Jamaica police"
+},
+{
+"cc": "jm",
+"q": "Jamaica armed forces"
+},
+{
+"cc": "jm",
+"q": "Jamaica president"
+},
+{
+"cc": "jm",
+"q": "Jamaica prime minister"
+},
+{
+"cc": "jm",
+"q": "Jamaica parliament"
+},
+{
+"cc": "jo",
+"q": "Jordan news"
+},
+{
+"cc": "jo",
+"q": "Jordan national television"
+},
+{
+"cc": "jo",
+"q": "Jordan government"
+},
+{
+"cc": "jo",
+"q": "Jordan police"
+},
+{
+"cc": "jo",
+"q": "Jordan armed forces"
+},
+{
+"cc": "jo",
+"q": "Jordan president"
+},
+{
+"cc": "jo",
+"q": "Jordan prime minister"
+},
+{
+"cc": "jo",
+"q": "Jordan parliament"
+},
+{
+"cc": "jp",
+"q": "Japan news"
+},
+{
+"cc": "jp",
+"q": "Japan national television"
+},
+{
+"cc": "jp",
+"q": "Japan government"
+},
+{
+"cc": "jp",
+"q": "Japan police"
+},
+{
+"cc": "jp",
+"q": "Japan armed forces"
+},
+{
+"cc": "jp",
+"q": "Japan president"
+},
+{
+"cc": "jp",
+"q": "Japan prime minister"
+},
+{
+"cc": "jp",
+"q": "Japan parliament"
+},
+{
+"cc": "ke",
+"q": "Kenya news"
+},
+{
+"cc": "ke",
+"q": "Kenya national television"
+},
+{
+"cc": "ke",
+"q": "Kenya government"
+},
+{
+"cc": "ke",
+"q": "Kenya police"
+},
+{
+"cc": "ke",
+"q": "Kenya armed forces"
+},
+{
+"cc": "ke",
+"q": "Kenya president"
+},
+{
+"cc": "ke",
+"q": "Kenya prime minister"
+},
+{
+"cc": "ke",
+"q": "Kenya parliament"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan news"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan national television"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan government"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan police"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan armed forces"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan president"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan prime minister"
+},
+{
+"cc": "kg",
+"q": "Kyrgyzstan parliament"
+},
+{
+"cc": "kh",
+"q": "Cambodia news"
+},
+{
+"cc": "kh",
+"q": "Cambodia national television"
+},
+{
+"cc": "kh",
+"q": "Cambodia government"
+},
+{
+"cc": "kh",
+"q": "Cambodia police"
+},
+{
+"cc": "kh",
+"q": "Cambodia armed forces"
+},
+{
+"cc": "kh",
+"q": "Cambodia president"
+},
+{
+"cc": "kh",
+"q": "Cambodia prime minister"
+},
+{
+"cc": "kh",
+"q": "Cambodia parliament"
+},
+{
+"cc": "ki",
+"q": "Kiribati news"
+},
+{
+"cc": "ki",
+"q": "Kiribati national television"
+},
+{
+"cc": "ki",
+"q": "Kiribati government"
+},
+{
+"cc": "ki",
+"q": "Kiribati police"
+},
+{
+"cc": "ki",
+"q": "Kiribati armed forces"
+},
+{
+"cc": "ki",
+"q": "Kiribati president"
+},
+{
+"cc": "ki",
+"q": "Kiribati prime minister"
+},
+{
+"cc": "ki",
+"q": "Kiribati parliament"
+},
+{
+"cc": "km",
+"q": "Comoros news"
+},
+{
+"cc": "km",
+"q": "Comoros national television"
+},
+{
+"cc": "km",
+"q": "Comoros government"
+},
+{
+"cc": "km",
+"q": "Comoros police"
+},
+{
+"cc": "km",
+"q": "Comoros armed forces"
+},
+{
+"cc": "km",
+"q": "Comoros president"
+},
+{
+"cc": "km",
+"q": "Comoros prime minister"
+},
+{
+"cc": "km",
+"q": "Comoros parliament"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis news"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis national television"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis government"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis police"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis armed forces"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis president"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis prime minister"
+},
+{
+"cc": "kn",
+"q": "Saint Kitts and Nevis parliament"
+},
+{
+"cc": "kp",
+"q": "North Korea news"
+},
+{
+"cc": "kp",
+"q": "North Korea national television"
+},
+{
+"cc": "kp",
+"q": "North Korea government"
+},
+{
+"cc": "kp",
+"q": "North Korea police"
+},
+{
+"cc": "kp",
+"q": "North Korea armed forces"
+},
+{
+"cc": "kp",
+"q": "North Korea president"
+},
+{
+"cc": "kp",
+"q": "North Korea prime minister"
+},
+{
+"cc": "kp",
+"q": "North Korea parliament"
+},
+{
+"cc": "kr",
+"q": "South Korea news"
+},
+{
+"cc": "kr",
+"q": "South Korea national television"
+},
+{
+"cc": "kr",
+"q": "South Korea government"
+},
+{
+"cc": "kr",
+"q": "South Korea police"
+},
+{
+"cc": "kr",
+"q": "South Korea armed forces"
+},
+{
+"cc": "kr",
+"q": "South Korea president"
+},
+{
+"cc": "kr",
+"q": "South Korea prime minister"
+},
+{
+"cc": "kr",
+"q": "South Korea parliament"
+},
+{
+"cc": "kw",
+"q": "Kuwait news"
+},
+{
+"cc": "kw",
+"q": "Kuwait national television"
+},
+{
+"cc": "kw",
+"q": "Kuwait government"
+},
+{
+"cc": "kw",
+"q": "Kuwait police"
+},
+{
+"cc": "kw",
+"q": "Kuwait armed forces"
+},
+{
+"cc": "kw",
+"q": "Kuwait president"
+},
+{
+"cc": "kw",
+"q": "Kuwait prime minister"
+},
+{
+"cc": "kw",
+"q": "Kuwait parliament"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan news"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan national television"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan government"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan police"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan armed forces"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan president"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan prime minister"
+},
+{
+"cc": "kz",
+"q": "Kazakhstan parliament"
+},
+{
+"cc": "la",
+"q": "Laos news"
+},
+{
+"cc": "la",
+"q": "Laos national television"
+},
+{
+"cc": "la",
+"q": "Laos government"
+},
+{
+"cc": "la",
+"q": "Laos police"
+},
+{
+"cc": "la",
+"q": "Laos armed forces"
+},
+{
+"cc": "la",
+"q": "Laos president"
+},
+{
+"cc": "la",
+"q": "Laos prime minister"
+},
+{
+"cc": "la",
+"q": "Laos parliament"
+},
+{
+"cc": "lb",
+"q": "Lebanon news"
+},
+{
+"cc": "lb",
+"q": "Lebanon national television"
+},
+{
+"cc": "lb",
+"q": "Lebanon government"
+},
+{
+"cc": "lb",
+"q": "Lebanon police"
+},
+{
+"cc": "lb",
+"q": "Lebanon armed forces"
+},
+{
+"cc": "lb",
+"q": "Lebanon president"
+},
+{
+"cc": "lb",
+"q": "Lebanon prime minister"
+},
+{
+"cc": "lb",
+"q": "Lebanon parliament"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia news"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia national television"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia government"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia police"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia armed forces"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia president"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia prime minister"
+},
+{
+"cc": "lc",
+"q": "Saint Lucia parliament"
+},
+{
+"cc": "li",
+"q": "Liechtenstein news"
+},
+{
+"cc": "li",
+"q": "Liechtenstein national television"
+},
+{
+"cc": "li",
+"q": "Liechtenstein government"
+},
+{
+"cc": "li",
+"q": "Liechtenstein police"
+},
+{
+"cc": "li",
+"q": "Liechtenstein armed forces"
+},
+{
+"cc": "li",
+"q": "Liechtenstein president"
+},
+{
+"cc": "li",
+"q": "Liechtenstein prime minister"
+},
+{
+"cc": "li",
+"q": "Liechtenstein parliament"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka news"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka national television"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka government"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka police"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka armed forces"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka president"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka prime minister"
+},
+{
+"cc": "lk",
+"q": "Sri Lanka parliament"
+},
+{
+"cc": "lr",
+"q": "Liberia news"
+},
+{
+"cc": "lr",
+"q": "Liberia national television"
+},
+{
+"cc": "lr",
+"q": "Liberia government"
+},
+{
+"cc": "lr",
+"q": "Liberia police"
+},
+{
+"cc": "lr",
+"q": "Liberia armed forces"
+},
+{
+"cc": "lr",
+"q": "Liberia president"
+},
+{
+"cc": "lr",
+"q": "Liberia prime minister"
+},
+{
+"cc": "lr",
+"q": "Liberia parliament"
+},
+{
+"cc": "ls",
+"q": "Lesotho news"
+},
+{
+"cc": "ls",
+"q": "Lesotho national television"
+},
+{
+"cc": "ls",
+"q": "Lesotho government"
+},
+{
+"cc": "ls",
+"q": "Lesotho police"
+},
+{
+"cc": "ls",
+"q": "Lesotho armed forces"
+},
+{
+"cc": "ls",
+"q": "Lesotho president"
+},
+{
+"cc": "ls",
+"q": "Lesotho prime minister"
+},
+{
+"cc": "ls",
+"q": "Lesotho parliament"
+},
+{
+"cc": "lt",
+"q": "Lithuania news"
+},
+{
+"cc": "lt",
+"q": "Lithuania national television"
+},
+{
+"cc": "lt",
+"q": "Lithuania government"
+},
+{
+"cc": "lt",
+"q": "Lithuania police"
+},
+{
+"cc": "lt",
+"q": "Lithuania armed forces"
+},
+{
+"cc": "lt",
+"q": "Lithuania president"
+},
+{
+"cc": "lt",
+"q": "Lithuania prime minister"
+},
+{
+"cc": "lt",
+"q": "Lithuania parliament"
+},
+{
+"cc": "lu",
+"q": "Luxembourg news"
+},
+{
+"cc": "lu",
+"q": "Luxembourg national television"
+},
+{
+"cc": "lu",
+"q": "Luxembourg government"
+},
+{
+"cc": "lu",
+"q": "Luxembourg police"
+},
+{
+"cc": "lu",
+"q": "Luxembourg armed forces"
+},
+{
+"cc": "lu",
+"q": "Luxembourg president"
+},
+{
+"cc": "lu",
+"q": "Luxembourg prime minister"
+},
+{
+"cc": "lu",
+"q": "Luxembourg parliament"
+},
+{
+"cc": "lv",
+"q": "Latvia news"
+},
+{
+"cc": "lv",
+"q": "Latvia national television"
+},
+{
+"cc": "lv",
+"q": "Latvia government"
+},
+{
+"cc": "lv",
+"q": "Latvia police"
+},
+{
+"cc": "lv",
+"q": "Latvia armed forces"
+},
+{
+"cc": "lv",
+"q": "Latvia president"
+},
+{
+"cc": "lv",
+"q": "Latvia prime minister"
+},
+{
+"cc": "lv",
+"q": "Latvia parliament"
+},
+{
+"cc": "ly",
+"q": "Libya news"
+},
+{
+"cc": "ly",
+"q": "Libya national television"
+},
+{
+"cc": "ly",
+"q": "Libya government"
+},
+{
+"cc": "ly",
+"q": "Libya police"
+},
+{
+"cc": "ly",
+"q": "Libya armed forces"
+},
+{
+"cc": "ly",
+"q": "Libya president"
+},
+{
+"cc": "ly",
+"q": "Libya prime minister"
+},
+{
+"cc": "ly",
+"q": "Libya parliament"
+},
+{
+"cc": "ma",
+"q": "Morocco news"
+},
+{
+"cc": "ma",
+"q": "Morocco national television"
+},
+{
+"cc": "ma",
+"q": "Morocco government"
+},
+{
+"cc": "ma",
+"q": "Morocco police"
+},
+{
+"cc": "ma",
+"q": "Morocco armed forces"
+},
+{
+"cc": "ma",
+"q": "Morocco president"
+},
+{
+"cc": "ma",
+"q": "Morocco prime minister"
+},
+{
+"cc": "ma",
+"q": "Morocco parliament"
+},
+{
+"cc": "mc",
+"q": "Monaco news"
+},
+{
+"cc": "mc",
+"q": "Monaco national television"
+},
+{
+"cc": "mc",
+"q": "Monaco government"
+},
+{
+"cc": "mc",
+"q": "Monaco police"
+},
+{
+"cc": "mc",
+"q": "Monaco armed forces"
+},
+{
+"cc": "mc",
+"q": "Monaco president"
+},
+{
+"cc": "mc",
+"q": "Monaco prime minister"
+},
+{
+"cc": "mc",
+"q": "Monaco parliament"
+},
+{
+"cc": "md",
+"q": "Moldova news"
+},
+{
+"cc": "md",
+"q": "Moldova national television"
+},
+{
+"cc": "md",
+"q": "Moldova government"
+},
+{
+"cc": "md",
+"q": "Moldova police"
+},
+{
+"cc": "md",
+"q": "Moldova armed forces"
+},
+{
+"cc": "md",
+"q": "Moldova president"
+},
+{
+"cc": "md",
+"q": "Moldova prime minister"
+},
+{
+"cc": "md",
+"q": "Moldova parliament"
+},
+{
+"cc": "me",
+"q": "Montenegro news"
+},
+{
+"cc": "me",
+"q": "Montenegro national television"
+},
+{
+"cc": "me",
+"q": "Montenegro government"
+},
+{
+"cc": "me",
+"q": "Montenegro police"
+},
+{
+"cc": "me",
+"q": "Montenegro armed forces"
+},
+{
+"cc": "me",
+"q": "Montenegro president"
+},
+{
+"cc": "me",
+"q": "Montenegro prime minister"
+},
+{
+"cc": "me",
+"q": "Montenegro parliament"
+},
+{
+"cc": "mg",
+"q": "Madagascar news"
+},
+{
+"cc": "mg",
+"q": "Madagascar national television"
+},
+{
+"cc": "mg",
+"q": "Madagascar government"
+},
+{
+"cc": "mg",
+"q": "Madagascar police"
+},
+{
+"cc": "mg",
+"q": "Madagascar armed forces"
+},
+{
+"cc": "mg",
+"q": "Madagascar president"
+},
+{
+"cc": "mg",
+"q": "Madagascar prime minister"
+},
+{
+"cc": "mg",
+"q": "Madagascar parliament"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands news"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands national television"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands government"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands police"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands armed forces"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands president"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands prime minister"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands parliament"
+},
+{
+"cc": "mk",
+"q": "North Macedonia news"
+},
+{
+"cc": "mk",
+"q": "North Macedonia national television"
+},
+{
+"cc": "mk",
+"q": "North Macedonia government"
+},
+{
+"cc": "mk",
+"q": "North Macedonia police"
+},
+{
+"cc": "mk",
+"q": "North Macedonia armed forces"
+},
+{
+"cc": "mk",
+"q": "North Macedonia president"
+},
+{
+"cc": "mk",
+"q": "North Macedonia prime minister"
+},
+{
+"cc": "mk",
+"q": "North Macedonia parliament"
+},
+{
+"cc": "ml",
+"q": "Mali news"
+},
+{
+"cc": "ml",
+"q": "Mali national television"
+},
+{
+"cc": "ml",
+"q": "Mali government"
+},
+{
+"cc": "ml",
+"q": "Mali police"
+},
+{
+"cc": "ml",
+"q": "Mali armed forces"
+},
+{
+"cc": "ml",
+"q": "Mali president"
+},
+{
+"cc": "ml",
+"q": "Mali prime minister"
+},
+{
+"cc": "ml",
+"q": "Mali parliament"
+},
+{
+"cc": "mn",
+"q": "Mongolia news"
+},
+{
+"cc": "mn",
+"q": "Mongolia national television"
+},
+{
+"cc": "mn",
+"q": "Mongolia government"
+},
+{
+"cc": "mn",
+"q": "Mongolia police"
+},
+{
+"cc": "mn",
+"q": "Mongolia armed forces"
+},
+{
+"cc": "mn",
+"q": "Mongolia president"
+},
+{
+"cc": "mn",
+"q": "Mongolia prime minister"
+},
+{
+"cc": "mn",
+"q": "Mongolia parliament"
+},
+{
+"cc": "mr",
+"q": "Mauritania news"
+},
+{
+"cc": "mr",
+"q": "Mauritania national television"
+},
+{
+"cc": "mr",
+"q": "Mauritania government"
+},
+{
+"cc": "mr",
+"q": "Mauritania police"
+},
+{
+"cc": "mr",
+"q": "Mauritania armed forces"
+},
+{
+"cc": "mr",
+"q": "Mauritania president"
+},
+{
+"cc": "mr",
+"q": "Mauritania prime minister"
+},
+{
+"cc": "mr",
+"q": "Mauritania parliament"
+},
+{
+"cc": "mt",
+"q": "Malta news"
+},
+{
+"cc": "mt",
+"q": "Malta national television"
+},
+{
+"cc": "mt",
+"q": "Malta government"
+},
+{
+"cc": "mt",
+"q": "Malta police"
+},
+{
+"cc": "mt",
+"q": "Malta armed forces"
+},
+{
+"cc": "mt",
+"q": "Malta president"
+},
+{
+"cc": "mt",
+"q": "Malta prime minister"
+},
+{
+"cc": "mt",
+"q": "Malta parliament"
+},
+{
+"cc": "mu",
+"q": "Mauritius news"
+},
+{
+"cc": "mu",
+"q": "Mauritius national television"
+},
+{
+"cc": "mu",
+"q": "Mauritius government"
+},
+{
+"cc": "mu",
+"q": "Mauritius police"
+},
+{
+"cc": "mu",
+"q": "Mauritius armed forces"
+},
+{
+"cc": "mu",
+"q": "Mauritius president"
+},
+{
+"cc": "mu",
+"q": "Mauritius prime minister"
+},
+{
+"cc": "mu",
+"q": "Mauritius parliament"
+},
+{
+"cc": "mv",
+"q": "Maldives news"
+},
+{
+"cc": "mv",
+"q": "Maldives national television"
+},
+{
+"cc": "mv",
+"q": "Maldives government"
+},
+{
+"cc": "mv",
+"q": "Maldives police"
+},
+{
+"cc": "mv",
+"q": "Maldives armed forces"
+},
+{
+"cc": "mv",
+"q": "Maldives president"
+},
+{
+"cc": "mv",
+"q": "Maldives prime minister"
+},
+{
+"cc": "mv",
+"q": "Maldives parliament"
+},
+{
+"cc": "mw",
+"q": "Malawi news"
+},
+{
+"cc": "mw",
+"q": "Malawi national television"
+},
+{
+"cc": "mw",
+"q": "Malawi government"
+},
+{
+"cc": "mw",
+"q": "Malawi police"
+},
+{
+"cc": "mw",
+"q": "Malawi armed forces"
+},
+{
+"cc": "mw",
+"q": "Malawi president"
+},
+{
+"cc": "mw",
+"q": "Malawi prime minister"
+},
+{
+"cc": "mw",
+"q": "Malawi parliament"
+},
+{
+"cc": "mx",
+"q": "Mexico news"
+},
+{
+"cc": "mx",
+"q": "Mexico national television"
+},
+{
+"cc": "mx",
+"q": "Mexico government"
+},
+{
+"cc": "mx",
+"q": "Mexico police"
+},
+{
+"cc": "mx",
+"q": "Mexico armed forces"
+},
+{
+"cc": "mx",
+"q": "Mexico president"
+},
+{
+"cc": "mx",
+"q": "Mexico prime minister"
+},
+{
+"cc": "mx",
+"q": "Mexico parliament"
+},
+{
+"cc": "my",
+"q": "Malaysia news"
+},
+{
+"cc": "my",
+"q": "Malaysia national television"
+},
+{
+"cc": "my",
+"q": "Malaysia government"
+},
+{
+"cc": "my",
+"q": "Malaysia police"
+},
+{
+"cc": "my",
+"q": "Malaysia armed forces"
+},
+{
+"cc": "my",
+"q": "Malaysia president"
+},
+{
+"cc": "my",
+"q": "Malaysia prime minister"
+},
+{
+"cc": "my",
+"q": "Malaysia parliament"
+},
+{
+"cc": "mz",
+"q": "Mozambique news"
+},
+{
+"cc": "mz",
+"q": "Mozambique national television"
+},
+{
+"cc": "mz",
+"q": "Mozambique government"
+},
+{
+"cc": "mz",
+"q": "Mozambique police"
+},
+{
+"cc": "mz",
+"q": "Mozambique armed forces"
+},
+{
+"cc": "mz",
+"q": "Mozambique president"
+},
+{
+"cc": "mz",
+"q": "Mozambique prime minister"
+},
+{
+"cc": "mz",
+"q": "Mozambique parliament"
+},
+{
+"cc": "na",
+"q": "Namibia news"
+},
+{
+"cc": "na",
+"q": "Namibia national television"
+},
+{
+"cc": "na",
+"q": "Namibia government"
+},
+{
+"cc": "na",
+"q": "Namibia police"
+},
+{
+"cc": "na",
+"q": "Namibia armed forces"
+},
+{
+"cc": "na",
+"q": "Namibia president"
+},
+{
+"cc": "na",
+"q": "Namibia prime minister"
+},
+{
+"cc": "na",
+"q": "Namibia parliament"
+},
+{
+"cc": "ne",
+"q": "Niger news"
+},
+{
+"cc": "ne",
+"q": "Niger national television"
+},
+{
+"cc": "ne",
+"q": "Niger government"
+},
+{
+"cc": "ne",
+"q": "Niger police"
+},
+{
+"cc": "ne",
+"q": "Niger armed forces"
+},
+{
+"cc": "ne",
+"q": "Niger president"
+},
+{
+"cc": "ne",
+"q": "Niger prime minister"
+},
+{
+"cc": "ne",
+"q": "Niger parliament"
+},
+{
+"cc": "ng",
+"q": "Nigeria news"
+},
+{
+"cc": "ng",
+"q": "Nigeria national television"
+},
+{
+"cc": "ng",
+"q": "Nigeria government"
+},
+{
+"cc": "ng",
+"q": "Nigeria police"
+},
+{
+"cc": "ng",
+"q": "Nigeria armed forces"
+},
+{
+"cc": "ng",
+"q": "Nigeria president"
+},
+{
+"cc": "ng",
+"q": "Nigeria prime minister"
+},
+{
+"cc": "ng",
+"q": "Nigeria parliament"
+},
+{
+"cc": "ni",
+"q": "Nicaragua news"
+},
+{
+"cc": "ni",
+"q": "Nicaragua national television"
+},
+{
+"cc": "ni",
+"q": "Nicaragua government"
+},
+{
+"cc": "ni",
+"q": "Nicaragua police"
+},
+{
+"cc": "ni",
+"q": "Nicaragua armed forces"
+},
+{
+"cc": "ni",
+"q": "Nicaragua president"
+},
+{
+"cc": "ni",
+"q": "Nicaragua prime minister"
+},
+{
+"cc": "ni",
+"q": "Nicaragua parliament"
+},
+{
+"cc": "nl",
+"q": "Netherlands news"
+},
+{
+"cc": "nl",
+"q": "Netherlands national television"
+},
+{
+"cc": "nl",
+"q": "Netherlands government"
+},
+{
+"cc": "nl",
+"q": "Netherlands police"
+},
+{
+"cc": "nl",
+"q": "Netherlands armed forces"
+},
+{
+"cc": "nl",
+"q": "Netherlands president"
+},
+{
+"cc": "nl",
+"q": "Netherlands prime minister"
+},
+{
+"cc": "nl",
+"q": "Netherlands parliament"
+},
+{
+"cc": "no",
+"q": "Norway news"
+},
+{
+"cc": "no",
+"q": "Norway national television"
+},
+{
+"cc": "no",
+"q": "Norway government"
+},
+{
+"cc": "no",
+"q": "Norway police"
+},
+{
+"cc": "no",
+"q": "Norway armed forces"
+},
+{
+"cc": "no",
+"q": "Norway president"
+},
+{
+"cc": "no",
+"q": "Norway prime minister"
+},
+{
+"cc": "no",
+"q": "Norway parliament"
+},
+{
+"cc": "np",
+"q": "Nepal news"
+},
+{
+"cc": "np",
+"q": "Nepal national television"
+},
+{
+"cc": "np",
+"q": "Nepal government"
+},
+{
+"cc": "np",
+"q": "Nepal police"
+},
+{
+"cc": "np",
+"q": "Nepal armed forces"
+},
+{
+"cc": "np",
+"q": "Nepal president"
+},
+{
+"cc": "np",
+"q": "Nepal prime minister"
+},
+{
+"cc": "np",
+"q": "Nepal parliament"
 },
 {
 "cc": "nr",
-"q": "Government of Nauru"
+"q": "Nauru news"
 },
 {
 "cc": "nr",
-"q": "Nauru TV"
+"q": "Nauru national television"
+},
+{
+"cc": "nr",
+"q": "Nauru government"
+},
+{
+"cc": "nr",
+"q": "Nauru police"
+},
+{
+"cc": "nr",
+"q": "Nauru armed forces"
+},
+{
+"cc": "nr",
+"q": "Nauru president"
+},
+{
+"cc": "nr",
+"q": "Nauru prime minister"
+},
+{
+"cc": "nr",
+"q": "Nauru parliament"
+},
+{
+"cc": "nz",
+"q": "New Zealand news"
+},
+{
+"cc": "nz",
+"q": "New Zealand national television"
+},
+{
+"cc": "nz",
+"q": "New Zealand government"
+},
+{
+"cc": "nz",
+"q": "New Zealand police"
+},
+{
+"cc": "nz",
+"q": "New Zealand armed forces"
+},
+{
+"cc": "nz",
+"q": "New Zealand president"
+},
+{
+"cc": "nz",
+"q": "New Zealand prime minister"
+},
+{
+"cc": "nz",
+"q": "New Zealand parliament"
+},
+{
+"cc": "om",
+"q": "Oman news"
+},
+{
+"cc": "om",
+"q": "Oman national television"
+},
+{
+"cc": "om",
+"q": "Oman government"
+},
+{
+"cc": "om",
+"q": "Oman police"
+},
+{
+"cc": "om",
+"q": "Oman armed forces"
+},
+{
+"cc": "om",
+"q": "Oman president"
+},
+{
+"cc": "om",
+"q": "Oman prime minister"
+},
+{
+"cc": "om",
+"q": "Oman parliament"
+},
+{
+"cc": "pa",
+"q": "Panama news"
+},
+{
+"cc": "pa",
+"q": "Panama national television"
+},
+{
+"cc": "pa",
+"q": "Panama government"
+},
+{
+"cc": "pa",
+"q": "Panama police"
+},
+{
+"cc": "pa",
+"q": "Panama armed forces"
+},
+{
+"cc": "pa",
+"q": "Panama president"
+},
+{
+"cc": "pa",
+"q": "Panama prime minister"
+},
+{
+"cc": "pa",
+"q": "Panama parliament"
+},
+{
+"cc": "pe",
+"q": "Peru news"
+},
+{
+"cc": "pe",
+"q": "Peru national television"
+},
+{
+"cc": "pe",
+"q": "Peru government"
+},
+{
+"cc": "pe",
+"q": "Peru police"
+},
+{
+"cc": "pe",
+"q": "Peru armed forces"
+},
+{
+"cc": "pe",
+"q": "Peru president"
+},
+{
+"cc": "pe",
+"q": "Peru prime minister"
+},
+{
+"cc": "pe",
+"q": "Peru parliament"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea news"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea national television"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea government"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea police"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea armed forces"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea president"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea prime minister"
+},
+{
+"cc": "pg",
+"q": "Papua New Guinea parliament"
+},
+{
+"cc": "ph",
+"q": "Philippines news"
+},
+{
+"cc": "ph",
+"q": "Philippines national television"
+},
+{
+"cc": "ph",
+"q": "Philippines government"
+},
+{
+"cc": "ph",
+"q": "Philippines police"
+},
+{
+"cc": "ph",
+"q": "Philippines armed forces"
+},
+{
+"cc": "ph",
+"q": "Philippines president"
+},
+{
+"cc": "ph",
+"q": "Philippines prime minister"
+},
+{
+"cc": "ph",
+"q": "Philippines parliament"
+},
+{
+"cc": "pk",
+"q": "Pakistan news"
+},
+{
+"cc": "pk",
+"q": "Pakistan national television"
+},
+{
+"cc": "pk",
+"q": "Pakistan government"
+},
+{
+"cc": "pk",
+"q": "Pakistan police"
+},
+{
+"cc": "pk",
+"q": "Pakistan armed forces"
+},
+{
+"cc": "pk",
+"q": "Pakistan president"
+},
+{
+"cc": "pk",
+"q": "Pakistan prime minister"
+},
+{
+"cc": "pk",
+"q": "Pakistan parliament"
+},
+{
+"cc": "pl",
+"q": "Poland news"
+},
+{
+"cc": "pl",
+"q": "Poland national television"
+},
+{
+"cc": "pl",
+"q": "Poland government"
+},
+{
+"cc": "pl",
+"q": "Poland police"
+},
+{
+"cc": "pl",
+"q": "Poland armed forces"
+},
+{
+"cc": "pl",
+"q": "Poland president"
+},
+{
+"cc": "pl",
+"q": "Poland prime minister"
+},
+{
+"cc": "pl",
+"q": "Poland parliament"
+},
+{
+"cc": "ps",
+"q": "Palestine news"
+},
+{
+"cc": "ps",
+"q": "Palestine national television"
+},
+{
+"cc": "ps",
+"q": "Palestine government"
+},
+{
+"cc": "ps",
+"q": "Palestine police"
+},
+{
+"cc": "ps",
+"q": "Palestine armed forces"
+},
+{
+"cc": "ps",
+"q": "Palestine president"
+},
+{
+"cc": "ps",
+"q": "Palestine prime minister"
+},
+{
+"cc": "ps",
+"q": "Palestine parliament"
+},
+{
+"cc": "pt",
+"q": "Portugal news"
+},
+{
+"cc": "pt",
+"q": "Portugal national television"
+},
+{
+"cc": "pt",
+"q": "Portugal government"
+},
+{
+"cc": "pt",
+"q": "Portugal police"
+},
+{
+"cc": "pt",
+"q": "Portugal armed forces"
+},
+{
+"cc": "pt",
+"q": "Portugal president"
+},
+{
+"cc": "pt",
+"q": "Portugal prime minister"
+},
+{
+"cc": "pt",
+"q": "Portugal parliament"
 },
 {
 "cc": "pw",
-"q": "Island Times Palau"
+"q": "Palau news"
+},
+{
+"cc": "pw",
+"q": "Palau national television"
 },
 {
 "cc": "pw",
@@ -113,27 +4589,1119 @@
 },
 {
 "cc": "pw",
-"q": "Palau news"
+"q": "Palau police"
+},
+{
+"cc": "pw",
+"q": "Palau armed forces"
+},
+{
+"cc": "pw",
+"q": "Palau president"
+},
+{
+"cc": "pw",
+"q": "Palau prime minister"
+},
+{
+"cc": "pw",
+"q": "Palau parliament"
+},
+{
+"cc": "py",
+"q": "Paraguay news"
+},
+{
+"cc": "py",
+"q": "Paraguay national television"
+},
+{
+"cc": "py",
+"q": "Paraguay government"
+},
+{
+"cc": "py",
+"q": "Paraguay police"
+},
+{
+"cc": "py",
+"q": "Paraguay armed forces"
+},
+{
+"cc": "py",
+"q": "Paraguay president"
+},
+{
+"cc": "py",
+"q": "Paraguay prime minister"
+},
+{
+"cc": "py",
+"q": "Paraguay parliament"
+},
+{
+"cc": "qa",
+"q": "Qatar news"
+},
+{
+"cc": "qa",
+"q": "Qatar national television"
+},
+{
+"cc": "qa",
+"q": "Qatar government"
+},
+{
+"cc": "qa",
+"q": "Qatar police"
+},
+{
+"cc": "qa",
+"q": "Qatar armed forces"
+},
+{
+"cc": "qa",
+"q": "Qatar president"
+},
+{
+"cc": "qa",
+"q": "Qatar prime minister"
+},
+{
+"cc": "qa",
+"q": "Qatar parliament"
+},
+{
+"cc": "ro",
+"q": "Romania news"
+},
+{
+"cc": "ro",
+"q": "Romania national television"
+},
+{
+"cc": "ro",
+"q": "Romania government"
+},
+{
+"cc": "ro",
+"q": "Romania police"
+},
+{
+"cc": "ro",
+"q": "Romania armed forces"
+},
+{
+"cc": "ro",
+"q": "Romania president"
+},
+{
+"cc": "ro",
+"q": "Romania prime minister"
+},
+{
+"cc": "ro",
+"q": "Romania parliament"
+},
+{
+"cc": "rs",
+"q": "Serbia news"
+},
+{
+"cc": "rs",
+"q": "Serbia national television"
+},
+{
+"cc": "rs",
+"q": "Serbia government"
+},
+{
+"cc": "rs",
+"q": "Serbia police"
+},
+{
+"cc": "rs",
+"q": "Serbia armed forces"
+},
+{
+"cc": "rs",
+"q": "Serbia president"
+},
+{
+"cc": "rs",
+"q": "Serbia prime minister"
+},
+{
+"cc": "rs",
+"q": "Serbia parliament"
+},
+{
+"cc": "ru",
+"q": "Russia news"
+},
+{
+"cc": "ru",
+"q": "Russia national television"
+},
+{
+"cc": "ru",
+"q": "Russia government"
+},
+{
+"cc": "ru",
+"q": "Russia police"
+},
+{
+"cc": "ru",
+"q": "Russia armed forces"
+},
+{
+"cc": "ru",
+"q": "Russia president"
+},
+{
+"cc": "ru",
+"q": "Russia prime minister"
+},
+{
+"cc": "ru",
+"q": "Russia parliament"
+},
+{
+"cc": "rw",
+"q": "Rwanda news"
+},
+{
+"cc": "rw",
+"q": "Rwanda national television"
+},
+{
+"cc": "rw",
+"q": "Rwanda government"
+},
+{
+"cc": "rw",
+"q": "Rwanda police"
+},
+{
+"cc": "rw",
+"q": "Rwanda armed forces"
+},
+{
+"cc": "rw",
+"q": "Rwanda president"
+},
+{
+"cc": "rw",
+"q": "Rwanda prime minister"
+},
+{
+"cc": "rw",
+"q": "Rwanda parliament"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia news"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia national television"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia government"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia police"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia armed forces"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia president"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia prime minister"
+},
+{
+"cc": "sa",
+"q": "Saudi Arabia parliament"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands news"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands national television"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands government"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands police"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands armed forces"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands president"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands prime minister"
+},
+{
+"cc": "sb",
+"q": "Solomon Islands parliament"
+},
+{
+"cc": "sc",
+"q": "Seychelles news"
+},
+{
+"cc": "sc",
+"q": "Seychelles national television"
+},
+{
+"cc": "sc",
+"q": "Seychelles government"
+},
+{
+"cc": "sc",
+"q": "Seychelles police"
+},
+{
+"cc": "sc",
+"q": "Seychelles armed forces"
+},
+{
+"cc": "sc",
+"q": "Seychelles president"
+},
+{
+"cc": "sc",
+"q": "Seychelles prime minister"
+},
+{
+"cc": "sc",
+"q": "Seychelles parliament"
+},
+{
+"cc": "sd",
+"q": "Sudan news"
+},
+{
+"cc": "sd",
+"q": "Sudan national television"
+},
+{
+"cc": "sd",
+"q": "Sudan government"
+},
+{
+"cc": "sd",
+"q": "Sudan police"
+},
+{
+"cc": "sd",
+"q": "Sudan armed forces"
+},
+{
+"cc": "sd",
+"q": "Sudan president"
+},
+{
+"cc": "sd",
+"q": "Sudan prime minister"
+},
+{
+"cc": "sd",
+"q": "Sudan parliament"
+},
+{
+"cc": "se",
+"q": "Sweden news"
+},
+{
+"cc": "se",
+"q": "Sweden national television"
+},
+{
+"cc": "se",
+"q": "Sweden government"
+},
+{
+"cc": "se",
+"q": "Sweden police"
+},
+{
+"cc": "se",
+"q": "Sweden armed forces"
+},
+{
+"cc": "se",
+"q": "Sweden president"
+},
+{
+"cc": "se",
+"q": "Sweden prime minister"
+},
+{
+"cc": "se",
+"q": "Sweden parliament"
+},
+{
+"cc": "sg",
+"q": "Singapore news"
+},
+{
+"cc": "sg",
+"q": "Singapore national television"
+},
+{
+"cc": "sg",
+"q": "Singapore government"
+},
+{
+"cc": "sg",
+"q": "Singapore police"
+},
+{
+"cc": "sg",
+"q": "Singapore armed forces"
+},
+{
+"cc": "sg",
+"q": "Singapore president"
+},
+{
+"cc": "sg",
+"q": "Singapore prime minister"
+},
+{
+"cc": "sg",
+"q": "Singapore parliament"
+},
+{
+"cc": "si",
+"q": "Slovenia news"
+},
+{
+"cc": "si",
+"q": "Slovenia national television"
+},
+{
+"cc": "si",
+"q": "Slovenia government"
+},
+{
+"cc": "si",
+"q": "Slovenia police"
+},
+{
+"cc": "si",
+"q": "Slovenia armed forces"
+},
+{
+"cc": "si",
+"q": "Slovenia president"
+},
+{
+"cc": "si",
+"q": "Slovenia prime minister"
+},
+{
+"cc": "si",
+"q": "Slovenia parliament"
+},
+{
+"cc": "sk",
+"q": "Slovakia news"
+},
+{
+"cc": "sk",
+"q": "Slovakia national television"
+},
+{
+"cc": "sk",
+"q": "Slovakia government"
+},
+{
+"cc": "sk",
+"q": "Slovakia police"
+},
+{
+"cc": "sk",
+"q": "Slovakia armed forces"
+},
+{
+"cc": "sk",
+"q": "Slovakia president"
+},
+{
+"cc": "sk",
+"q": "Slovakia prime minister"
+},
+{
+"cc": "sk",
+"q": "Slovakia parliament"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone news"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone national television"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone government"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone police"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone armed forces"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone president"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone prime minister"
+},
+{
+"cc": "sl",
+"q": "Sierra Leone parliament"
+},
+{
+"cc": "sm",
+"q": "San Marino news"
+},
+{
+"cc": "sm",
+"q": "San Marino national television"
+},
+{
+"cc": "sm",
+"q": "San Marino government"
+},
+{
+"cc": "sm",
+"q": "San Marino police"
+},
+{
+"cc": "sm",
+"q": "San Marino armed forces"
+},
+{
+"cc": "sm",
+"q": "San Marino president"
+},
+{
+"cc": "sm",
+"q": "San Marino prime minister"
+},
+{
+"cc": "sm",
+"q": "San Marino parliament"
+},
+{
+"cc": "sn",
+"q": "Senegal news"
+},
+{
+"cc": "sn",
+"q": "Senegal national television"
+},
+{
+"cc": "sn",
+"q": "Senegal government"
+},
+{
+"cc": "sn",
+"q": "Senegal police"
+},
+{
+"cc": "sn",
+"q": "Senegal armed forces"
+},
+{
+"cc": "sn",
+"q": "Senegal president"
+},
+{
+"cc": "sn",
+"q": "Senegal prime minister"
+},
+{
+"cc": "sn",
+"q": "Senegal parliament"
+},
+{
+"cc": "so",
+"q": "Somalia news"
+},
+{
+"cc": "so",
+"q": "Somalia national television"
+},
+{
+"cc": "so",
+"q": "Somalia government"
+},
+{
+"cc": "so",
+"q": "Somalia police"
+},
+{
+"cc": "so",
+"q": "Somalia armed forces"
+},
+{
+"cc": "so",
+"q": "Somalia president"
+},
+{
+"cc": "so",
+"q": "Somalia prime minister"
+},
+{
+"cc": "so",
+"q": "Somalia parliament"
+},
+{
+"cc": "sr",
+"q": "Suriname news"
+},
+{
+"cc": "sr",
+"q": "Suriname national television"
+},
+{
+"cc": "sr",
+"q": "Suriname government"
+},
+{
+"cc": "sr",
+"q": "Suriname police"
+},
+{
+"cc": "sr",
+"q": "Suriname armed forces"
+},
+{
+"cc": "sr",
+"q": "Suriname president"
+},
+{
+"cc": "sr",
+"q": "Suriname prime minister"
+},
+{
+"cc": "sr",
+"q": "Suriname parliament"
+},
+{
+"cc": "ss",
+"q": "South Sudan news"
+},
+{
+"cc": "ss",
+"q": "South Sudan national television"
+},
+{
+"cc": "ss",
+"q": "South Sudan government"
+},
+{
+"cc": "ss",
+"q": "South Sudan police"
+},
+{
+"cc": "ss",
+"q": "South Sudan armed forces"
+},
+{
+"cc": "ss",
+"q": "South Sudan president"
+},
+{
+"cc": "ss",
+"q": "South Sudan prime minister"
+},
+{
+"cc": "ss",
+"q": "South Sudan parliament"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe news"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe national television"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe government"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe police"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe armed forces"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe president"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe prime minister"
+},
+{
+"cc": "st",
+"q": "São Tomé and Príncipe parliament"
+},
+{
+"cc": "sv",
+"q": "El Salvador news"
+},
+{
+"cc": "sv",
+"q": "El Salvador national television"
+},
+{
+"cc": "sv",
+"q": "El Salvador government"
+},
+{
+"cc": "sv",
+"q": "El Salvador police"
+},
+{
+"cc": "sv",
+"q": "El Salvador armed forces"
+},
+{
+"cc": "sv",
+"q": "El Salvador president"
+},
+{
+"cc": "sv",
+"q": "El Salvador prime minister"
+},
+{
+"cc": "sv",
+"q": "El Salvador parliament"
+},
+{
+"cc": "sy",
+"q": "Syria news"
+},
+{
+"cc": "sy",
+"q": "Syria national television"
+},
+{
+"cc": "sy",
+"q": "Syria government"
+},
+{
+"cc": "sy",
+"q": "Syria police"
+},
+{
+"cc": "sy",
+"q": "Syria armed forces"
+},
+{
+"cc": "sy",
+"q": "Syria president"
+},
+{
+"cc": "sy",
+"q": "Syria prime minister"
+},
+{
+"cc": "sy",
+"q": "Syria parliament"
+},
+{
+"cc": "sz",
+"q": "Eswatini news"
+},
+{
+"cc": "sz",
+"q": "Eswatini national television"
+},
+{
+"cc": "sz",
+"q": "Eswatini government"
+},
+{
+"cc": "sz",
+"q": "Eswatini police"
+},
+{
+"cc": "sz",
+"q": "Eswatini armed forces"
+},
+{
+"cc": "sz",
+"q": "Eswatini president"
+},
+{
+"cc": "sz",
+"q": "Eswatini prime minister"
+},
+{
+"cc": "sz",
+"q": "Eswatini parliament"
+},
+{
+"cc": "td",
+"q": "Chad news"
+},
+{
+"cc": "td",
+"q": "Chad national television"
+},
+{
+"cc": "td",
+"q": "Chad government"
+},
+{
+"cc": "td",
+"q": "Chad police"
+},
+{
+"cc": "td",
+"q": "Chad armed forces"
+},
+{
+"cc": "td",
+"q": "Chad president"
+},
+{
+"cc": "td",
+"q": "Chad prime minister"
+},
+{
+"cc": "td",
+"q": "Chad parliament"
+},
+{
+"cc": "tg",
+"q": "Togo news"
+},
+{
+"cc": "tg",
+"q": "Togo national television"
+},
+{
+"cc": "tg",
+"q": "Togo government"
+},
+{
+"cc": "tg",
+"q": "Togo police"
+},
+{
+"cc": "tg",
+"q": "Togo armed forces"
+},
+{
+"cc": "tg",
+"q": "Togo president"
+},
+{
+"cc": "tg",
+"q": "Togo prime minister"
+},
+{
+"cc": "tg",
+"q": "Togo parliament"
+},
+{
+"cc": "th",
+"q": "Thailand news"
+},
+{
+"cc": "th",
+"q": "Thailand national television"
+},
+{
+"cc": "th",
+"q": "Thailand government"
+},
+{
+"cc": "th",
+"q": "Thailand police"
+},
+{
+"cc": "th",
+"q": "Thailand armed forces"
+},
+{
+"cc": "th",
+"q": "Thailand president"
+},
+{
+"cc": "th",
+"q": "Thailand prime minister"
+},
+{
+"cc": "th",
+"q": "Thailand parliament"
+},
+{
+"cc": "tj",
+"q": "Tajikistan news"
+},
+{
+"cc": "tj",
+"q": "Tajikistan national television"
+},
+{
+"cc": "tj",
+"q": "Tajikistan government"
+},
+{
+"cc": "tj",
+"q": "Tajikistan police"
+},
+{
+"cc": "tj",
+"q": "Tajikistan armed forces"
+},
+{
+"cc": "tj",
+"q": "Tajikistan president"
+},
+{
+"cc": "tj",
+"q": "Tajikistan prime minister"
+},
+{
+"cc": "tj",
+"q": "Tajikistan parliament"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste news"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste national television"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste government"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste police"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste armed forces"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste president"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste prime minister"
+},
+{
+"cc": "tl",
+"q": "Timor-Leste parliament"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan news"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan national television"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan government"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan police"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan armed forces"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan president"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan prime minister"
+},
+{
+"cc": "tm",
+"q": "Turkmenistan parliament"
+},
+{
+"cc": "tn",
+"q": "Tunisia news"
+},
+{
+"cc": "tn",
+"q": "Tunisia national television"
+},
+{
+"cc": "tn",
+"q": "Tunisia government"
+},
+{
+"cc": "tn",
+"q": "Tunisia police"
+},
+{
+"cc": "tn",
+"q": "Tunisia armed forces"
+},
+{
+"cc": "tn",
+"q": "Tunisia president"
+},
+{
+"cc": "tn",
+"q": "Tunisia prime minister"
+},
+{
+"cc": "tn",
+"q": "Tunisia parliament"
 },
 {
 "cc": "to",
-"q": "Tonga Broadcasting Commission TBC"
+"q": "Tonga news"
 },
 {
 "cc": "to",
-"q": "Kaniva Tonga"
-},
-{
-"cc": "to",
-"q": "Matangi Tonga"
+"q": "Tonga national television"
 },
 {
 "cc": "to",
 "q": "Tonga government"
 },
 {
+"cc": "to",
+"q": "Tonga police"
+},
+{
+"cc": "to",
+"q": "Tonga armed forces"
+},
+{
+"cc": "to",
+"q": "Tonga president"
+},
+{
+"cc": "to",
+"q": "Tonga prime minister"
+},
+{
+"cc": "to",
+"q": "Tonga parliament"
+},
+{
+"cc": "tr",
+"q": "Türkiye news"
+},
+{
+"cc": "tr",
+"q": "Türkiye national television"
+},
+{
+"cc": "tr",
+"q": "Türkiye government"
+},
+{
+"cc": "tr",
+"q": "Türkiye police"
+},
+{
+"cc": "tr",
+"q": "Türkiye armed forces"
+},
+{
+"cc": "tr",
+"q": "Türkiye president"
+},
+{
+"cc": "tr",
+"q": "Türkiye prime minister"
+},
+{
+"cc": "tr",
+"q": "Türkiye parliament"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago news"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago national television"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago government"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago police"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago armed forces"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago president"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago prime minister"
+},
+{
+"cc": "tt",
+"q": "Trinidad and Tobago parliament"
+},
+{
 "cc": "tv",
-"q": "Tuvalu Broadcasting"
+"q": "Tuvalu news"
+},
+{
+"cc": "tv",
+"q": "Tuvalu national television"
 },
 {
 "cc": "tv",
@@ -141,46 +5709,566 @@
 },
 {
 "cc": "tv",
-"q": "Tuvalu news"
+"q": "Tuvalu police"
 },
 {
-"cc": "sb",
-"q": "SIBC"
+"cc": "tv",
+"q": "Tuvalu armed forces"
 },
 {
-"cc": "sb",
-"q": "Solomon Islands Broadcasting Corporation"
+"cc": "tv",
+"q": "Tuvalu president"
 },
 {
-"cc": "sb",
-"q": "Solomon Star News"
+"cc": "tv",
+"q": "Tuvalu prime minister"
 },
 {
-"cc": "sb",
-"q": "Solomon Islands government"
+"cc": "tv",
+"q": "Tuvalu parliament"
 },
 {
-"cc": "gw",
-"q": "Televisao da Guine-Bissau"
+"cc": "tw",
+"q": "Taiwan news"
 },
 {
-"cc": "gw",
-"q": "Guine-Bissau noticias"
+"cc": "tw",
+"q": "Taiwan national television"
 },
 {
-"cc": "ls",
-"q": "Lesotho Television"
+"cc": "tw",
+"q": "Taiwan government"
 },
 {
-"cc": "ls",
-"q": "Lesotho government"
+"cc": "tw",
+"q": "Taiwan police"
 },
 {
-"cc": "is",
-"q": "RUV frettir"
+"cc": "tw",
+"q": "Taiwan armed forces"
 },
 {
-"cc": "is",
-"q": "Visir"
+"cc": "tw",
+"q": "Taiwan president"
+},
+{
+"cc": "tw",
+"q": "Taiwan prime minister"
+},
+{
+"cc": "tw",
+"q": "Taiwan parliament"
+},
+{
+"cc": "tz",
+"q": "Tanzania news"
+},
+{
+"cc": "tz",
+"q": "Tanzania national television"
+},
+{
+"cc": "tz",
+"q": "Tanzania government"
+},
+{
+"cc": "tz",
+"q": "Tanzania police"
+},
+{
+"cc": "tz",
+"q": "Tanzania armed forces"
+},
+{
+"cc": "tz",
+"q": "Tanzania president"
+},
+{
+"cc": "tz",
+"q": "Tanzania prime minister"
+},
+{
+"cc": "tz",
+"q": "Tanzania parliament"
+},
+{
+"cc": "ua",
+"q": "Ukraine news"
+},
+{
+"cc": "ua",
+"q": "Ukraine national television"
+},
+{
+"cc": "ua",
+"q": "Ukraine government"
+},
+{
+"cc": "ua",
+"q": "Ukraine police"
+},
+{
+"cc": "ua",
+"q": "Ukraine armed forces"
+},
+{
+"cc": "ua",
+"q": "Ukraine president"
+},
+{
+"cc": "ua",
+"q": "Ukraine prime minister"
+},
+{
+"cc": "ua",
+"q": "Ukraine parliament"
+},
+{
+"cc": "ug",
+"q": "Uganda news"
+},
+{
+"cc": "ug",
+"q": "Uganda national television"
+},
+{
+"cc": "ug",
+"q": "Uganda government"
+},
+{
+"cc": "ug",
+"q": "Uganda police"
+},
+{
+"cc": "ug",
+"q": "Uganda armed forces"
+},
+{
+"cc": "ug",
+"q": "Uganda president"
+},
+{
+"cc": "ug",
+"q": "Uganda prime minister"
+},
+{
+"cc": "ug",
+"q": "Uganda parliament"
+},
+{
+"cc": "us",
+"q": "United States news"
+},
+{
+"cc": "us",
+"q": "United States national television"
+},
+{
+"cc": "us",
+"q": "United States government"
+},
+{
+"cc": "us",
+"q": "United States police"
+},
+{
+"cc": "us",
+"q": "United States armed forces"
+},
+{
+"cc": "us",
+"q": "United States president"
+},
+{
+"cc": "us",
+"q": "United States prime minister"
+},
+{
+"cc": "us",
+"q": "United States parliament"
+},
+{
+"cc": "uy",
+"q": "Uruguay news"
+},
+{
+"cc": "uy",
+"q": "Uruguay national television"
+},
+{
+"cc": "uy",
+"q": "Uruguay government"
+},
+{
+"cc": "uy",
+"q": "Uruguay police"
+},
+{
+"cc": "uy",
+"q": "Uruguay armed forces"
+},
+{
+"cc": "uy",
+"q": "Uruguay president"
+},
+{
+"cc": "uy",
+"q": "Uruguay prime minister"
+},
+{
+"cc": "uy",
+"q": "Uruguay parliament"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan news"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan national television"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan government"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan police"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan armed forces"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan president"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan prime minister"
+},
+{
+"cc": "uz",
+"q": "Uzbekistan parliament"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines news"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines national television"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines government"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines police"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines armed forces"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines president"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines prime minister"
+},
+{
+"cc": "vc",
+"q": "Saint Vincent and the Grenadines parliament"
+},
+{
+"cc": "ve",
+"q": "Venezuela news"
+},
+{
+"cc": "ve",
+"q": "Venezuela national television"
+},
+{
+"cc": "ve",
+"q": "Venezuela government"
+},
+{
+"cc": "ve",
+"q": "Venezuela police"
+},
+{
+"cc": "ve",
+"q": "Venezuela armed forces"
+},
+{
+"cc": "ve",
+"q": "Venezuela president"
+},
+{
+"cc": "ve",
+"q": "Venezuela prime minister"
+},
+{
+"cc": "ve",
+"q": "Venezuela parliament"
+},
+{
+"cc": "vn",
+"q": "Vietnam news"
+},
+{
+"cc": "vn",
+"q": "Vietnam national television"
+},
+{
+"cc": "vn",
+"q": "Vietnam government"
+},
+{
+"cc": "vn",
+"q": "Vietnam police"
+},
+{
+"cc": "vn",
+"q": "Vietnam armed forces"
+},
+{
+"cc": "vn",
+"q": "Vietnam president"
+},
+{
+"cc": "vn",
+"q": "Vietnam prime minister"
+},
+{
+"cc": "vn",
+"q": "Vietnam parliament"
+},
+{
+"cc": "vu",
+"q": "Vanuatu news"
+},
+{
+"cc": "vu",
+"q": "Vanuatu national television"
+},
+{
+"cc": "vu",
+"q": "Vanuatu government"
+},
+{
+"cc": "vu",
+"q": "Vanuatu police"
+},
+{
+"cc": "vu",
+"q": "Vanuatu armed forces"
+},
+{
+"cc": "vu",
+"q": "Vanuatu president"
+},
+{
+"cc": "vu",
+"q": "Vanuatu prime minister"
+},
+{
+"cc": "vu",
+"q": "Vanuatu parliament"
+},
+{
+"cc": "ws",
+"q": "Samoa news"
+},
+{
+"cc": "ws",
+"q": "Samoa national television"
+},
+{
+"cc": "ws",
+"q": "Samoa government"
+},
+{
+"cc": "ws",
+"q": "Samoa police"
+},
+{
+"cc": "ws",
+"q": "Samoa armed forces"
+},
+{
+"cc": "ws",
+"q": "Samoa president"
+},
+{
+"cc": "ws",
+"q": "Samoa prime minister"
+},
+{
+"cc": "ws",
+"q": "Samoa parliament"
+},
+{
+"cc": "xk",
+"q": "Kosovo news"
+},
+{
+"cc": "xk",
+"q": "Kosovo national television"
+},
+{
+"cc": "xk",
+"q": "Kosovo government"
+},
+{
+"cc": "xk",
+"q": "Kosovo police"
+},
+{
+"cc": "xk",
+"q": "Kosovo armed forces"
+},
+{
+"cc": "xk",
+"q": "Kosovo president"
+},
+{
+"cc": "xk",
+"q": "Kosovo prime minister"
+},
+{
+"cc": "xk",
+"q": "Kosovo parliament"
+},
+{
+"cc": "ye",
+"q": "Yemen news"
+},
+{
+"cc": "ye",
+"q": "Yemen national television"
+},
+{
+"cc": "ye",
+"q": "Yemen government"
+},
+{
+"cc": "ye",
+"q": "Yemen police"
+},
+{
+"cc": "ye",
+"q": "Yemen armed forces"
+},
+{
+"cc": "ye",
+"q": "Yemen president"
+},
+{
+"cc": "ye",
+"q": "Yemen prime minister"
+},
+{
+"cc": "ye",
+"q": "Yemen parliament"
+},
+{
+"cc": "za",
+"q": "South Africa news"
+},
+{
+"cc": "za",
+"q": "South Africa national television"
+},
+{
+"cc": "za",
+"q": "South Africa government"
+},
+{
+"cc": "za",
+"q": "South Africa police"
+},
+{
+"cc": "za",
+"q": "South Africa armed forces"
+},
+{
+"cc": "za",
+"q": "South Africa president"
+},
+{
+"cc": "za",
+"q": "South Africa prime minister"
+},
+{
+"cc": "za",
+"q": "South Africa parliament"
+},
+{
+"cc": "zm",
+"q": "Zambia news"
+},
+{
+"cc": "zm",
+"q": "Zambia national television"
+},
+{
+"cc": "zm",
+"q": "Zambia government"
+},
+{
+"cc": "zm",
+"q": "Zambia police"
+},
+{
+"cc": "zm",
+"q": "Zambia armed forces"
+},
+{
+"cc": "zm",
+"q": "Zambia president"
+},
+{
+"cc": "zm",
+"q": "Zambia prime minister"
+},
+{
+"cc": "zm",
+"q": "Zambia parliament"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe news"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe national television"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe government"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe police"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe armed forces"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe president"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe prime minister"
+},
+{
+"cc": "zw",
+"q": "Zimbabwe parliament"
 }
 ]
