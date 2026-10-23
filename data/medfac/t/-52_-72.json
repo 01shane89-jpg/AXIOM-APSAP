@@ -1,3 +1,4 @@
 [["n1042143724",-51.6839,-71.9689,"ar",{"name":"Estancia Santa Ana Heliport","aeroway":"helipad"}],
 ["n1653724220",-51.02906,-70.77827,"ar",{"name":"Puesto Sanitario","amenity":"clinic","healthcare":"hospital"}],
-["n3393337235",-51.89274,-70.64477,"ar",{"name":"Aeródromo Bella Vista","aeroway":"aerodrome","aerodrome:type":"airfield"}]]
+["n3393337235",-51.89274,-70.64477,"ar",{"name":"Aeródromo Bella Vista","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1567795758",-51.99958,-71.46913,"ar",{"aeroway":"helipad"}]]

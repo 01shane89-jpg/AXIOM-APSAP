@@ -116,6 +116,16 @@ async function run3d(name, p, errors, libs, openSel, early) {
   // clear of the grid strip
   const clear = await p.evaluate(() => { const s = document.querySelector(".leaflet-bottom .o3s").getBoundingClientRect(), b = document.getElementById("atk-bar"); if (!b) return true; const r = b.getBoundingClientRect(); return s.bottom <= r.top + 0.5; });
   ok(clear, "phone: scale bar sits above the grid strip");
+  // the open Legend (bottom left, nearly full width on a phone) never sits under the scale bar (bottom right); Shane 2026-10-23
+  const lgOv = async () => p.evaluate(() => { const a = document.querySelector(".leaflet-bottom .o3s").getBoundingClientRect(), g = document.querySelector(".lgctl").getBoundingClientRect(); return a.left < g.right && a.right > g.left && a.top < g.bottom && a.bottom > g.top; });
+  if (await p.$(".lgctl .lgbtn")) {
+    const wasShut = await p.evaluate(() => document.querySelector(".lgctl").classList.contains("shut"));
+    if (wasShut) await p.click(".lgctl .lgbtn");
+    await p.waitForTimeout(300);
+    ok(!(await p.evaluate(() => document.querySelector(".lgctl").classList.contains("shut"))) && !(await lgOv()), "phone: the open Legend and the scale bar do not overlap");
+    await p.click(".lgctl .lgbtn"); await p.waitForTimeout(300);
+    ok(!(await lgOv()) && (await p.evaluate(() => document.querySelector(".leaflet-bottom .o3s").style.marginBottom === "")), "phone: Legend shut again, the scale bar back in its corner");
+  }
   ok(await shown(p, "#atk-tools [data-o3d]"), "phone: 3D button in the map toolbar");
   ok(!(await shown(p, ".o3dctl")), "phone: classic 3D button hidden in toolbar mode");
   if (OUT) await p.screenshot({ path: OUT + "/phone-2d.png" });
