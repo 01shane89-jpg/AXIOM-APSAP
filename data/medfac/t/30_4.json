@@ -11,7 +11,7 @@
 ["n4977658124",31.95282,5.32678,"dz",{"name":"الطبيبة مصمودي لطب النساء","amenity":"clinic"}],
 ["n5066987121",31.93029,5.37274,"dz",{"amenity":"clinic"}],
 ["n6242062988",31.94163,5.38948,"dz",{"name":"عيادة متعددة الإختصاصات عين البيضاء","amenity":"clinic","addr:street":"RN 49"}],
-["n6468840892",31.9561,5.27186,"dz",{"name":"Centre d'Urologie Ouargla - مركز جراحة الكلى والمسالك البولية ورقلة","amenity":"clinic","healthcare":"centre","healthcare:speciality":"urology","operator":"الحكيم كبدي أكرم","addr:postcode":"30000"}],
+["n6468840892",31.9561,5.27186,"dz",{"name":"Centre d'Urologie Ouargla - مركز جراحة الكلى والمسالك البولية ورقلة","amenity":"clinic","healthcare":"centre","healthcare:speciality":"urology","operator":"الحكيم كبدي أكرم","addr:postcode":"30000","opening_hours":"08:30-16:30"}],
 ["n7348703434",31.96198,5.3312,"dz",{"name":"Les Urgences (Nouvelles)","healthcare":"hospital","addr:city":"Ouargla","addr:postcode":"30000"}],
 ["n7348703435",31.96284,5.33219,"dz",{"name":"Les Urgences (Ancienne)","healthcare":"hospital","addr:city":"Ouargla","addr:postcode":"30000"}],
 ["n8074033817",31.95694,5.26375,"dz",{"name":"عيادة عادة","name:en":"Aada clenique","amenity":"clinic","healthcare":"clinic","phone":"029609999"}],
@@ -23,7 +23,7 @@
 ["w304632975",31.93571,5.30358,"dz",{"name":"Hôpital ophtalmologique amitié Algérie-Cuba Ouargla","amenity":"hospital"}],
 ["w304798494",31.9591,5.32787,"dz",{"name":"Clinique EDYA","amenity":"clinic"}],
 ["w305431096",31.95252,5.26624,"dz",{"name":"المؤسسة العمومية للصحة الجوارية - العيادة متعددة الخدمات باعزيز عبد الرحمان","amenity":"clinic"}],
-["w358264462",31.91635,5.40479,"dz",{"name":"Aéroport d'Ouargla-Ain El Beida","name:en":"Ain Beida Ouargla Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","aeroway":"aerodrome","icao":"DAUU","iata":"OGX"}],
+["w358264462",31.91635,5.40479,"dz",{"name":"Aéroport d'Ouargla-Ain El Beida","name:en":"Ain Beida Ouargla Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","aeroway":"aerodrome","icao":"DAUU","iata":"OGX","wikidata":"Q4264562"}],
 ["w374299394",31.95784,5.31133,"dz",{"name":"عيادة خمدات","amenity":"hospital","healthcare":"hospital","addr:city":"ورقلة"}],
 ["w377113766",31.95245,5.32327,"dz",{"name":"مستشفي الأم والطفل - حي عبد القادر","amenity":"hospital","healthcare":"hospital","addr:city":"ورقلة","addr:postcode":"30000"}],
 ["w385078367",31.96709,5.32361,"dz",{"name":"مستشفى القصر","amenity":"hospital","healthcare":"hospital","addr:city":"ورقلة"}],
@@ -33,4 +33,4 @@
 ["w389895672",31.92923,5.34233,"dz",{"amenity":"clinic"}],
 ["w439746215",31.97762,5.41931,"dz",{"amenity":"hospital","healthcare":"hospital"}],
 ["w449696429",31.95037,5.39229,"dz",{"amenity":"clinic"}],
-["w576377252",31.95596,5.27187,"dz",{"name":"Centre d'Urologie Ouargla - مركز جراحة الكلى والمسالك البولية ورقلة","amenity":"clinic","healthcare":"centre","healthcare:speciality":"urology","operator":"الحكيم كبدي أكرم","phone":"+213(0)655 500 695/ +213(0)29 60 87 97"}]]
+["w576377252",31.95596,5.27187,"dz",{"name":"Centre d'Urologie Ouargla - مركز جراحة الكلى والمسالك البولية ورقلة","amenity":"clinic","healthcare":"centre","healthcare:speciality":"urology","operator":"الحكيم كبدي أكرم","phone":"+213(0)655 500 695/ +213(0)29 60 87 97","opening_hours":"08:30-16:30"}]]
