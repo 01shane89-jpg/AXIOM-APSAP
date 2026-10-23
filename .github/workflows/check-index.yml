@@ -26,6 +26,8 @@ jobs:
       - run: node tests/tier.test.mjs
       # reviews (tools/reviews.mjs, netlify/functions/osap-reviews.mjs) and when the app asks for one (assets/osap-reviews.js)
       - run: node tests/reviews.test.mjs
+      # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
+      - run: node tests/cases.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -68,6 +70,7 @@ jobs:
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/econ.test.mjs
+      - run: node tests/milref.test.mjs
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
       - run: node tests/seatransit.test.mjs
@@ -94,8 +97,9 @@ jobs:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
     # the whole suite now runs about 29 to 30 minutes, so 30 cancelled green runs (2026-10-04); by 2026-10-19 it ran 43 to 45
-    # minutes and 45 cancelled main and two PRs one test from the end
-    # and on 2026-10-23 a 12-minute browser install pushed a fully green suite past 60 (PR #508), so 90
+    # minutes and 45 cancelled main and two PRs one test from the end; on 2026-10-23 it ran past 60 and cancelled PR #498 three
+    # tests from the end (speed_budget at 07:44Z, 60 minutes after the start)
+    # and a 12-minute browser install pushed a fully green suite past 60 the same day (PR #508)
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -117,6 +121,7 @@ jobs:
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs
       - run: node tests/econ_smoke.mjs
+      - run: node tests/milref_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/area_report_smoke.mjs
@@ -137,6 +142,7 @@ jobs:
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/flood_overlay_smoke.mjs
+      - run: node tests/wxmodels_smoke.mjs
       - run: node tests/pop_smoke.mjs
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs

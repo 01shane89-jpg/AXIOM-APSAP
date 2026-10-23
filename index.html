@@ -5018,6 +5018,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (kd) window.OSAP_KEYDATES.fillBrief();
     /* economic stress signals (assets/osap-econ.js) add their own page after the one-page brief once their file has loaded */
     if (window.OSAP_ECON) window.OSAP_ECON.intoBrief(briefEl, CC, C.name);
+    /* open military reference (assets/osap-milref.js): forces, equipment and installations as source claims, its own page */
+    if (window.OSAP_MILREF) window.OSAP_MILREF.intoBrief(briefEl, CC, C.name);
     document.getElementById("brief-close").addEventListener("click", closeBrief);
     document.getElementById("brief-print").addEventListener("click", function () { try { window.print(); } catch (e) {} });
     if (toReport) { var r = document.getElementById("report"); if (r) r.scrollIntoView(); } else briefEl.scrollTop = 0;
@@ -5055,7 +5057,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ['Conflict events: UCDP Candidate Events Dataset (CC BY 4.0). Hegre, H., Croicu, M., Eck, K. and H&ouml;gbladh, S. (2020) &ldquo;Introducing the UCDP Candidate Events Dataset&rdquo;, <i>Research &amp; Politics</i>. UCDP is part of and funded by DEMSCORE, national research infrastructure grant 2021-00162 from the Swedish Research Council.'],
       ['Refugee and displacement figures: <a href="https://www.unhcr.org/refugee-statistics/">UNHCR Refugee Data Finder</a> (CC BY 4.0).'],
       ['Travel advisories: U.S. Department of State. Sanctions: U.S. Treasury OFAC. Maritime warnings: NGA Maritime Safety Information and U.S. MARAD. Health notices: U.S. CDC (no endorsement implied) and WHO Disease Outbreak News.'],
-      ['Emergencies: IFRC GO. Internet outages: IODA (Georgia Tech). Piracy reports: ReCAAP ISC (titles and links only).']]],
+      ['Emergencies: IFRC GO. Internet outages: IODA (Georgia Tech). Piracy reports: ReCAAP ISC (titles and links only).'],
+      ['Military reference (country brief): forces, units, equipment and installations from <a href="https://www.wikidata.org/">Wikidata</a> (CC0 1.0); military expenditure and arms transfers from the <a href="https://www.sipri.org/databases">SIPRI</a> databases and armed forces personnel from IISS, <i>The Military Balance</i>, as published by the <a href="https://data.worldbank.org/">World Bank</a> (CC BY 4.0). Shown as source claims.']]],
     ["News, posts and reference", [
       ['Headlines and posts belong to the outlets and accounts named on each item; OSAP shows the headline, a short extract and a link.'],
       ['Videos: titles, dates and thumbnails come from each YouTube channel&rsquo;s public feed; every video belongs to its channel and plays on YouTube. YouTube is a trademark of Google LLC.'],
@@ -9078,6 +9081,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-gnss.js"></script>
 <!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
 <script src="assets/osap-econ.js"></script>
+<script src="assets/osap-milref.js"></script>
 <!-- photo and video check: metadata, sun and shadow, reverse image search links, video frames, all on the device (My work, a point's popup) -->
 <script src="assets/osap-photocheck.js"></script>
 <!-- the user guide: Settings (the gear) > User guide, offline and printable -->
