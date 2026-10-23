@@ -45,6 +45,7 @@ await run(S, VIEW, { cmd: "accept", op: op(), case: A });
 
 /* ---------- the lead hands out the case key ---------- */
 let k = await keysFor(S, LEAD, A, dev.lead.id);
+ok(k.keyed === false, "a new case: no device holds its key yet");
 ok(k.epoch === 1 && k.role === "lead" && k.need.length === 3 && !k.need.some((x) => x.uid === "u-out"), "the lead sees the three member devices waiting for the key, not a stranger's");
 const key1 = CC.newCaseKey();
 const wraps = await Promise.all(k.need.map(async (x) => ({ device: x.device, wrap: await CC.wrap(key1, x.pub, A, 1, x.device) })));
@@ -55,7 +56,8 @@ await refused(putWraps(S, LEAD, A, 1, [{ device: dev.out.id, wrap: await CC.wrap
 await refused(putWraps(S, LEAD, A, 2, wraps), 409, "a key for the wrong epoch is refused");
 ok((await putWraps(S, LEAD, A, 1, wraps)).stored === 3, "the lead hands the key to the three member devices");
 ok((await putWraps(S, LEAD, A, 1, wraps)).stored === 0, "a key already handed out is never replaced");
-ok((await keysFor(S, LEAD, A, dev.lead.id)).need.length === 0, "nothing left waiting");
+k = await keysFor(S, LEAD, A, dev.lead.id);
+ok(k.need.length === 0 && k.keyed === true, "nothing left waiting, and the key is out");
 
 /* ---------- each member opens its own copy ---------- */
 async function caseKeyOf(d, epoch) {
@@ -100,7 +102,7 @@ await run(S, LEAD, { cmd: "remove", op: op(), case: A, member: "u-view", reason:
 await refused(readData(S, VIEW, A), 404, "a removed member cannot read the sealed buckets");
 await refused(keysFor(S, VIEW, A, dev.view.id), 404, "a removed member gets no keys");
 k = await keysFor(S, LEAD, A, dev.lead.id);
-ok(k.epoch === 2 && k.need.length === 2 && !k.need.some((x) => x.uid === "u-view"), "removal moves the case to epoch 2; only the two members left wait for the new key");
+ok(k.epoch === 2 && k.keyed === false && k.need.length === 2 && !k.need.some((x) => x.uid === "u-view"), "removal moves the case to epoch 2; only the two members left wait for the new key");
 await refused(writeData(S, ANA, A, [{ bucket: 0, epoch: 1, rev: 1, data: sealed }]), 409, "content sealed under the old key is refused after removal");
 const key2 = CC.newCaseKey();
 await putWraps(S, LEAD, A, 2, await Promise.all(k.need.map(async (x) => ({ device: x.device, wrap: await CC.wrap(key2, x.pub, A, 2, x.device) }))));

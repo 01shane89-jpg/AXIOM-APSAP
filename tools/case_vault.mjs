@@ -77,7 +77,8 @@ export async function dropDevice(store, actor, devId) {
 }
 
 /** What a member's device needs to open a case: the epoch, its own wrapped keys (every epoch it was given), and, for a lead,
-    the member devices that still lack a wrapped key for the current epoch. */
+    the member devices that still lack a wrapped key for the current epoch and whether any device has that key yet ("keyed":
+    false means the epoch is new, so the lead's device makes its key; true means a lead who lacks it waits for another lead). */
 export async function keysFor(store, actor, id, devId) {
   const { c, role } = await member(store, actor, id);
   const epoch = c.epoch || 1;
@@ -90,10 +91,11 @@ export async function keysFor(store, actor, id, devId) {
   }
   const out = { epoch, role, wraps };
   if (can.manage(role)) {
-    out.need = [];
+    out.need = []; out.keyed = false;
     for (const uid of Object.keys(c.members)) {
       for (const d of await devicesOf(store, uid)) {
         if (!(await store.get(wKey(c.id, epoch, d.id), { type: "json" }))) out.need.push({ uid, device: d.id, pub: d.pub });
+        else out.keyed = true;
       }
     }
   }

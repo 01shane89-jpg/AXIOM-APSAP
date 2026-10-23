@@ -187,6 +187,20 @@
       ul(["A link cannot be taken back. The owner (who made the team) presses " + b("Make new team links") + ": OSAP makes a new team key, copies the team's items to it and closes the old key with a note that the team has moved.",
         "Send the new links to the members who stay. Whoever does not get one keeps what they had, but sees nothing new and cannot add to the team.",
         "The team key stays on members' devices. The team's data passes through free public relays locked with it; OSAP's server never holds the key."]) },
+    { id: "cases", t: "Team cases", h:
+      "<p>A team case is a workspace shared with named OSAP accounts, each with a role. OSAP's server checks every request against the case's members and roles, and the case's items stay sealed so only members' devices can read them. Creating a case needs the Full plan and a signed-in account.</p>" +
+      "<h3>Roles</h3>" +
+      ul([b("Lead") + ": invites, removes and changes roles, and adds and changes items. A case always keeps at least one lead.",
+        b("Analyst") + ": adds and changes items.", b("Viewer") + ": reads the case. Changes a viewer makes stay on their own device."]) +
+      "<h3>Start a case</h3>" +
+      ul(["Open " + b("My work") + ", then " + b("Workspaces") + ". Under a workspace press " + b("Share as a case") + ", give it a name and your call sign, and press " + b("Create case") + ".",
+        "Invite each member by the email of their OSAP account, with a role. They see the invite when they sign in (the email must be confirmed)."]) +
+      "<h3>Join a case</h3>" +
+      ul(["Press " + b("Team cases") + " in My work > Workspaces. Open the invite, type your call sign and press " + b("Join case") + ". The case's items go into a new workspace.",
+        "The first time, the case waits until a lead's device hands your device the case key; this happens on the lead's next sync."]) +
+      "<h3>Remove someone</h3>" +
+      ul(["A lead presses " + b("Remove") + " beside the member. The server refuses them at once, and the lead's device makes a new case key for the members left, so new items are sealed under a key the removed person never had. What they already saw stays on their devices.",
+        "Every change to members and roles is kept in the case record, with who made it, the reason given and when: press " + b("Show who did what") + "."]) },
     { id: "photocheck", t: "Photo and video check", h:
       "<p>Checks where and when a picture or video was taken. Everything runs on your device: nothing is uploaded.</p>" +
       ul(["Open it from " + b("My work") + " > " + b("Check a photo") + ", from a point on the map with " + b("Check a photo here") + ", or from a point's photo with " + b("Check this photo") + ". It sits beside the map.",

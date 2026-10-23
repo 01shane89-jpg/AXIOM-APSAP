@@ -152,6 +152,8 @@ jobs:
       - run: node tests/sync_smoke.mjs
       # team workspace: share from Workspaces, join by viewer and editor links, viewer read-only, forged events refused, new team links
       - run: node tests/team_smoke.mjs
+      # team shared cases: lead, analyst and viewer accounts, invites, sealed sync, removal and new key, server refusals
+      - run: node tests/cases_smoke.mjs
       - run: node tests/gnss_smoke.mjs
       - run: node tests/guide_smoke.mjs
       - run: node tests/lang_smoke.mjs
