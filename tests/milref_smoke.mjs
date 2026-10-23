@@ -89,8 +89,9 @@ async function open(cc, opts) {
   const { p, ctx, errors } = await open("th", { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   // measured on this page only: the one-page brief's light table is wider than a phone on its own (not this page's)
   const g = await p.evaluate(() => { const m = document.getElementById("milref"), R = Math.min(m.getBoundingClientRect().right, window.innerWidth); let sx = m.scrollWidth - m.clientWidth;
-    m.querySelectorAll("*").forEach((e) => { const r = e.getBoundingClientRect(); if (r.width) sx = Math.max(sx, Math.round(r.right - R)); }); return { sx }; });
-  ok(g.sx <= 1, `nothing on the page reaches past a phone screen (${g.sx} px)`);
+    let who = "";
+    m.querySelectorAll("*").forEach((e) => { const r = e.getBoundingClientRect(), d = Math.round(r.right - R); if (r.width && d > sx) { sx = d; who = e.tagName.toLowerCase() + "." + e.className + " " + e.textContent.slice(0, 40); } }); return { sx, who }; });
+  ok(g.sx <= 1, `nothing on the page reaches past a phone screen (${g.sx} px${g.who ? ": " + g.who : ""})`);
   if (process.env.SHOTS) { await p.evaluate(() => document.getElementById("milref").scrollIntoView()); await p.screenshot({ path: process.env.SHOTS + "/milref-phone.png" }); }
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();

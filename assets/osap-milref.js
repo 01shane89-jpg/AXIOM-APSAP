@@ -163,7 +163,7 @@
     ".bmilref td{overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
     /* a phone: each table row becomes one wrapped line (the column headings drop), so nothing squeezes or scrolls sideways */
     "@media screen and (max-width:640px){.bmilref table,.bmilref tbody,.bmilref tr,.bmilref td{display:block;width:auto!important}.bmilref tr:first-child{display:none}" +
-    ".bmilref tr{border-bottom:1px solid #ddd;padding:3px 0}.bpage.bmilref td{display:inline;border:0;padding:0 6px 0 0}.bmilref td.mg{white-space:normal}}" +
+    ".bmilref tr{border-bottom:1px solid #ddd;padding:3px 0}.bpage.bmilref td{display:inline;border:0;padding:0 6px 0 0}.bpage.bmilref .mg{white-space:normal}.bpage.bmilref,.bpage.bmilref *{overflow-wrap:anywhere;min-width:0}}" +
     "@media print{.bmilref{break-before:page}.mrout:not([open]) p{display:block}}";
   (function () { var s = D.createElement("style"); s.textContent = CSS; (D.head || D.documentElement).appendChild(s); })();
 
