@@ -8,3 +8,23 @@ export function unsupportedFigures(out, input) {
   const txt = [out.summary, out.unclear, ...out.points.map((p) => p.text), ...out.differ.map((p) => p.text)].join(" ").replace(/\[\d+\]/g, "");
   return (txt.match(/\d+(?:[.,]\d+)*/g) || []).map((x) => x.replace(/,/g, "")).filter((x) => !have.has(x));
 }
+
+// a small model also invents names (a prime minister, a "Lieutenant General Wang") and deaths. Every capitalised word inside a
+// sentence must occur somewhere in the reports or their source names, and a draft may speak of deaths only if a report does.
+const NAMEOK = new Set("january february march april may june july august september october november december monday tuesday wednesday thursday friday saturday sunday ai utc gmt ict myt mst wib wit pht sgt jst kst ist zulu english".split(" "));
+const srcText = (input) => input.map((r) => [r.source, r.headline, r.place, r.text].join(" ")).join(" \n ");
+const draftText = (out) => [out.summary, out.unclear, ...out.points.map((p) => p.text), ...out.differ.map((p) => p.text)].join(" \n ").replace(/\[\d+\]/g, "");
+export function unsupportedNames(out, input) {
+  const src = srcText(input).toLowerCase(), bad = new Set();
+  for (const part of draftText(out).split(/(?<=[.!?:;"'“”(])\s+|\n/)) {
+    const words = part.match(/[\p{L}][\p{L}'’-]*/gu) || [];
+    words.slice(1).forEach((w) => {
+      if (!/^\p{Lu}/u.test(w) || w.length < 3) return;
+      const k = w.toLowerCase().replace(/['’]s$/, "");
+      if (!NAMEOK.has(k) && !src.includes(k)) bad.add(w);
+    });
+  }
+  return [...bad];
+}
+const DEATH = /\b(died|dies|die|dead|deaths?|killed|killing|kills?|fatal\w*|murder\w*|bod(y|ies)|slain|corpses?|lives? lost)\b/i;
+export function unsupportedDeaths(out, input) { return DEATH.test(draftText(out)) && !DEATH.test(srcText(input)); }
