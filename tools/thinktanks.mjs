@@ -108,6 +108,22 @@ const TT = [
   ["asies", "ASIES", "https://asies.org.gt/", ["https://asies.org.gt/feed/"]],
   ["idea", "Fondation IDEA", "https://www.fondation-idea.lu/", ["https://www.fondation-idea.lu/feed/"]],
   ["cddmoz", "CDD Moçambique", "https://cddmoz.org/", ["https://cddmoz.org/feed/"]],
+  ["europeum", "EUROPEUM", "https://www.europeum.org/en/", ["https://www.europeum.org/feed"]],
+  ["cippec", "CIPPEC", "https://www.cippec.org/", ["https://www.cippec.org/feed"]],
+  ["wathi", "WATHI", "https://www.wathi.org/", ["https://www.wathi.org/feed/"]],
+  ["irmo", "IRMO", "https://irmo.hr/en/", ["https://irmo.hr/en/feed/"]],
+  ["nkafu", "Nkafu Policy Institute", "https://nkafu.org/", ["https://nkafu.org/feed/"]],
+  ["lki", "LKI", "https://lki.lk/", ["https://lki.lk/feed/"]],
+  ["verite", "Verité Research", "https://www.veriteresearch.org/", ["https://www.veriteresearch.org/rss.xml"]],
+  ["kisi", "KazISS", "https://kisi.kz/en/", ["https://kisi.kz/feed"]],
+  ["newbelarus", "Center for New Ideas", "https://newideas.center/", ["https://newideas.center/feed/"]],
+  ["ipre", "IPRE", "https://ipre.md/", ["https://ipre.md/feed"]],
+  ["apri", "APRI Armenia", "https://apri.institute/", ["https://apri.institute/feed/"]],
+  ["idscs", "IDSCS", "https://idscs.org.mk/en/", ["https://idscs.org.mk/en/feed/"]],
+  ["bcsp", "Belgrade Centre for Security Policy", "https://bezbednost.org/en/", ["https://bezbednost.org/feed"]],
+  ["bayan", "Al-Bayan Center", "https://www.bayancenter.org/en/", ["https://www.bayancenter.org/en/feed/"]],
+  ["ecss", "ECSS", "https://ecss.com.eg/", ["https://ecss.com.eg/feed/"]],
+  ["hips", "Heritage Institute", "https://heritageinstitute.org/", ["https://heritageinstitute.org/feed/"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
@@ -225,7 +241,7 @@ function fixDate(d) {
 }
 
 // Institutes that cover one country only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
-const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"] };
+const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"] };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
