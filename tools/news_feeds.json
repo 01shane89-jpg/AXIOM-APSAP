@@ -1553,6 +1553,8 @@
     {"cc":"jm","outlet":"JIS","url":"https://jis.gov.jm/feed/","lang":"en","state":true},
     {"cc":"mr","outlet":"AMI","url":"https://www.ami.mr/feed","lang":"fr","state":true},
     {"cc":"mr","outlet":"Alakhbar","url":"https://www.alakhbar.info/latest/rss/","lang":"ar"},
-    {"cc":"gh","outlet":"Pulse Ghana","url":"https://www.pulse.com.gh/rss-articles.xml","lang":"en"}
+    {"cc":"gh","outlet":"Pulse Ghana","url":"https://www.pulse.com.gh/rss-articles.xml","lang":"en"},
+    {"cc":"mc","outlet":"Gouvernement Princier","url":"https://www.gouv.mc/rss/feed/portail-gouv-actualites-fr","lang":"fr","state":true},
+    {"cc":"ls","outlet":"Lesotho Government","url":"https://www.gov.ls/feed/","lang":"en","state":true}
   ]
 }
