@@ -8,8 +8,6 @@ name: AI drafts on the runner
 # and watch lines of the priority countries. The model file and the server wheel are kept in the Actions cache.
 # Free while the repository is public (standard GitHub-hosted runners: 4 CPUs, 16 GB).
 on:
-  push:  # TEST ONLY, removed in the next commit
-    branches: [claude/local-ai-daily]
   schedule:
     - cron: "23 1 * * *"
   workflow_dispatch:
@@ -99,8 +97,8 @@ jobs:
           OSAP_LOCAL_LLM: http://127.0.0.1:8080
           OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
           DAILY_FORCE: "1"
-          DAILY_ONLY: ${{ github.event_name == 'push' && 'th,pk' || inputs.only }}
-          DAILY_AI_PER_RUN: ${{ github.event_name == 'push' && '2' || inputs.per_run || '45' }}
+          DAILY_ONLY: ${{ inputs.only }}
+          DAILY_AI_PER_RUN: ${{ inputs.per_run || '45' }}
           DAILY_AI_BUDGET_MIN: "80"
         run: node tools/refresh_daily.mjs
       - name: Model server log (tail)
