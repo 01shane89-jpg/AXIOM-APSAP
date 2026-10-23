@@ -11,15 +11,13 @@ jobs:
     steps:
       - run: |
           set +e
-          echo "== old export form (TH as buyer, 2015-2025)"
-          curl -sS -m 60 -o old.csv -w "%{http_code} %{content_type} %{size_download}\n" -X POST https://armstrade.sipri.org/armstrade/html/export_trade_register.php \
-            --data "low_year=2015&high_year=2025&seller_country_code=&buyer_country_code=THA&armament_category_id=any&buyers_or_sellers=buyers&filetype=csv&include_open_deals=on&sum_deliveries=off&Submit4=Download"
-          head -c 1500 old.csv; echo
-          echo "== new site"
-          curl -sS -m 60 -o new.html -w "%{http_code} %{content_type} %{size_download}\n" https://armstransfers.sipri.org/
-          grep -oE '(src|href)="[^"]+\.js"' new.html | head; grep -oE 'https?://[a-z0-9.-]*sipri[a-z0-9./-]*' new.html | sort -u | head -20
-          for u in https://atbackend.sipri.org/api/p/countries/getallcountries https://atbackend.sipri.org/api/p/trades/import-export-csv-str; do
-            echo "== $u"; curl -sS -m 60 -o b.out -w "%{http_code} %{content_type} %{size_download}\n" "$u"; head -c 600 b.out; echo; done
-          for js in $(grep -oE 'src="[^"]+\.js"' new.html | sed 's/src="//;s/"$//' | head -5); do
-            case "$js" in http*) u=$js;; /*) u=https://armstransfers.sipri.org$js;; *) u=https://armstransfers.sipri.org/$js;; esac
-            echo "== js $u"; curl -sS -m 60 "$u" | grep -oE '"(/api/[^"]{3,80})"|https?://[a-z0-9.-]+/api[^"]{0,80}' | sort -u | head -40; done
+          B=https://armstransfers.sipri.org
+          curl -sS -m 60 $B/ -o new.html; echo "== shell"; cat new.html; echo
+          for js in $(grep -oE '(src|href)="[^"]+"' new.html | sed -E 's/^(src|href)="//;s/"$//'); do
+            case "$js" in http*) u=$js;; /*) u=$B$js;; *) u=$B/$js;; esac
+            curl -sS -m 60 "$u" -o f.txt; echo "== $u $(wc -c < f.txt)"
+            grep -oE 'atbackend[^"`]{0,120}|/api/p/[a-zA-Z0-9/_-]{2,80}' f.txt | sort -u | head -60
+            grep -oE '.{300}import-export-csv-str.{600}' f.txt | head -2
+            grep -oE '.{200}getallcountries.{300}' f.txt | head -1
+          done
+          echo "== POST countries"; curl -sS -m 60 -X POST -H 'Content-Type: application/json' -d '{}' https://atbackend.sipri.org/api/p/countries/getallcountries | head -c 800; echo
