@@ -1431,7 +1431,6 @@
     {"cc":"ro","outlet":"Mediafax","url":"https://www.mediafax.ro/feed","lang":"ro"},
     {"cc":"ro","outlet":"Romania Insider","url":"https://www.romania-insider.com/feed","lang":"en"},
     {"cc":"ro","outlet":"Adevărul","url":"https://adevarul.ro/rss/index","lang":"ro"},
-    {"cc":"ro","outlet":"Libertatea","url":"https://www.libertatea.ro/feed/","lang":"ro"},
     {"cc":"at","outlet":"Die Presse","url":"https://www.diepresse.com/rss/","lang":"de"},
     {"cc":"at","outlet":"profil","url":"https://www.profil.at/xml/rss","lang":"de"},
     {"cc":"at","outlet":"Salzburg24","url":"https://www.salzburg24.at/rss/news.xml","lang":"de"},
