@@ -1404,7 +1404,6 @@
     {"cc":"ae","outlet":"Emirates 24/7","url":"https://www.emirates247.com/rss/mobile/v2/flash-news.rss","lang":"en","state":true},
     {"cc":"ws","outlet":"Talamua","url":"https://talamua.com/?feed=rss2","lang":"en"},
     {"cc":"bf","outlet":"AIB (Agence d'Information du Burkina)","url":"https://www.aib.media/?feed=rss2","lang":"fr","state":true},
-    {"cc":"td","outlet":"Alwihda Info","url":"https://www.alwihdainfo.com/rss/","lang":"fr"},
-    {"cc":"mw","outlet":"Times Malawi","url":"https://times.mw/feed/","lang":"en"}
+    {"cc":"td","outlet":"Alwihda Info","url":"https://www.alwihdainfo.com/rss/","lang":"fr"}
   ]
 }
