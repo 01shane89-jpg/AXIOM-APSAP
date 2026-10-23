@@ -3781,14 +3781,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      tab's live reports), whose copies are often translated apart: records that only cite one shared page (a gauge list, a data
      file) stay apart. Each tab still lists its own copy. */
   var STORY_ALSO = {};
-  function storyUrl(r) {
-    if (!r.url || typeof r.url !== "string") return "";
-    var u = r.url.trim().replace(/#.*$/, "").replace(/^https?:\/\//i, "").replace(/^(www|m|amp)\./i, "");
-    var q = u.indexOf("?"), path = q < 0 ? u : u.slice(0, q), qs = q < 0 ? "" : u.slice(q + 1);
-    qs = qs.split("&").filter(function (x) { return x && !/^(utm_[a-z]+|fbclid|gclid|ocid|cmpid|rss|ref|amp)(=|$)/i.test(x); }).join("&");
-    path = path.replace(/\/(amp\/?)?$/i, "").replace(/^([^/]+)/, function (h) { return h.toLowerCase(); });
-    return path + (qs ? "?" + qs : "");
-  }
+  function storyUrl(r) { return r.url && typeof r.url === "string" ? storyLinkKey(r.url.trim()) : ""; }
   function storyTitle(r) { return String(r.title || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim(); }
   function storyKey(r) { return r.__sk != null ? r.__sk : (r.__sk = storyUrl(r)); }
   function storyRank(r) { return r.lf ? 1 : r.news ? 2 : r.ds && /^Live report/.test(r.cat || "") ? 3 : 0; }
@@ -5677,20 +5670,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   /* one copy per news story, as tools/news_dedupe.mjs does in the refresh job: the same article under a link that differs only by
      tracking tags, "www." or "/amp", or the same headline (5 words or more) within 3 days. The newer copy is kept. */
+  /* an article's link without what differs between copies of it: tracking tags, "www.", "/amp", http or https */
+  function storyLinkKey(u) {
+    try {
+      var x = new URL(u), q = [];
+      x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
+      return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
+    } catch (e) { return String(u || ""); }
+  }
   function sameStory(list) {
     function title(t) {
       t = String(t || "").toLowerCase().replace(/\s[-–|]\s[^-–|]{2,40}$/, "");
       t = t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
       return t.split(" ").length >= 5 ? t : "";
     }
-    function link(u) {
-      try {
-        var x = new URL(u), q = [];
-        x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
-        return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
-      } catch (e) { return String(u || ""); }
-    }
-    var L = {}, T = {};
+    var link = storyLinkKey, L = {}, T = {};
     return list.slice().sort(function (a, b) { return (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : 0; }).filter(function (i) {
       var l = link(i.link); if (L[l]) return false; L[l] = 1;
       var t = title(i.title), d = Date.parse(i.date) || 0;
