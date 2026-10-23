@@ -187,4 +187,5 @@ L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
 <script src="assets/osap-milref.js"></script>
+<script src="assets/osap-milmap.js"></script>
 <script src="assets/osap-protect.js"></script>
