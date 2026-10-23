@@ -3,760 +3,1443 @@
  "feeds": [],
  "discover": [
   {
-   "cc": "eg",
-   "outlet": "Egyptian Meteorological Authority",
-   "home": "https://nwp.gov.eg/",
-   "lang": "ar"
-  },
-  {
-   "cc": "kr",
-   "outlet": "Korea Meteorological Administration",
-   "home": "https://www.weather.go.kr/w/index.do",
-   "lang": "ko"
-  },
-  {
-   "cc": "kr",
-   "outlet": "KMA English",
-   "home": "https://www.kma.go.kr/neng/index.do",
+   "cc": "ca",
+   "outlet": "CTV News",
+   "home": "https://www.ctvnews.ca/",
    "lang": "en"
   },
   {
-   "cc": "za",
-   "outlet": "South African Weather Service",
-   "home": "https://www.weathersa.co.za/",
+   "cc": "ca",
+   "outlet": "The Globe and Mail",
+   "home": "https://www.theglobeandmail.com/",
    "lang": "en"
   },
   {
-   "cc": "za",
-   "outlet": "NDMC South Africa",
-   "home": "https://www.ndmc.gov.za/",
+   "cc": "ca",
+   "outlet": "Toronto Star",
+   "home": "https://www.thestar.com/",
    "lang": "en"
   },
   {
-   "cc": "th",
-   "outlet": "Thai Meteorological Department",
-   "home": "https://www.tmd.go.th/",
-   "lang": "th"
-  },
-  {
-   "cc": "th",
-   "outlet": "DDPM Thailand",
-   "home": "https://www.disaster.go.th/",
-   "lang": "th"
-  },
-  {
-   "cc": "bd",
-   "outlet": "Bangladesh Meteorological Department",
-   "home": "https://live6.bmd.gov.bd/",
+   "cc": "ca",
+   "outlet": "CityNews",
+   "home": "https://toronto.citynews.ca/",
    "lang": "en"
   },
   {
-   "cc": "bd",
-   "outlet": "FFWC Bangladesh",
-   "home": "https://www.ffwc.gov.bd/",
-   "lang": "en"
-  },
-  {
-   "cc": "vn",
-   "outlet": "NCHMF Vietnam",
-   "home": "https://nchmf.gov.vn/",
-   "lang": "vi"
-  },
-  {
-   "cc": "vn",
-   "outlet": "VDDMA Vietnam",
-   "home": "https://phongchongthientai.mard.gov.vn/",
-   "lang": "vi"
-  },
-  {
-   "cc": "tr",
-   "outlet": "MGM Turkey",
-   "home": "https://www.mgm.gov.tr/",
-   "lang": "tr"
-  },
-  {
-   "cc": "tr",
-   "outlet": "AFAD",
-   "home": "https://www.afad.gov.tr/",
-   "lang": "tr"
-  },
-  {
-   "cc": "ke",
-   "outlet": "Kenya Meteorological Department",
-   "home": "https://meteo.go.ke/",
-   "lang": "en"
-  },
-  {
-   "cc": "et",
-   "outlet": "Ethiopian Meteorology Institute",
-   "home": "https://www.ethiomet.gov.et/",
-   "lang": "en"
-  },
-  {
-   "cc": "co",
-   "outlet": "IDEAM",
-   "home": "https://www.ideam.gov.co/",
-   "lang": "es"
-  },
-  {
-   "cc": "co",
-   "outlet": "UNGRD",
-   "home": "https://portal.gestiondelriesgo.gov.co/",
-   "lang": "es"
-  },
-  {
-   "cc": "ug",
-   "outlet": "Uganda National Meteorological Authority",
-   "home": "https://www.unma.go.ug/",
-   "lang": "en"
-  },
-  {
-   "cc": "ps",
-   "outlet": "Palestine Meteorological Department",
-   "home": "https://www.pmd.ps/",
-   "lang": "ar"
-  },
-  {
-   "cc": "pe",
-   "outlet": "SENAMHI",
-   "home": "https://www.senamhi.gob.pe/",
-   "lang": "es"
-  },
-  {
-   "cc": "pe",
-   "outlet": "INDECI",
-   "home": "https://www.gob.pe/indeci",
-   "lang": "es"
-  },
-  {
-   "cc": "np",
-   "outlet": "DHM Nepal",
-   "home": "https://www.dhm.gov.np/",
-   "lang": "en"
-  },
-  {
-   "cc": "np",
-   "outlet": "NDRRMA Nepal",
-   "home": "https://bipad.gov.np/",
-   "lang": "en"
-  },
-  {
-   "cc": "ye",
-   "outlet": "Yemen Meteorology",
-   "home": "https://www.cama.gov.ye/",
-   "lang": "ar"
-  },
-  {
-   "cc": "so",
-   "outlet": "SWALIM",
-   "home": "https://www.faoswalim.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "kh",
-   "outlet": "MOWRAM Cambodia",
-   "home": "https://www.cambodiameteo.com/",
-   "lang": "km"
-  },
-  {
-   "cc": "ar",
-   "outlet": "SMN Argentina",
-   "home": "https://www.smn.gob.ar/",
-   "lang": "es"
-  },
-  {
-   "cc": "af",
-   "outlet": "ANDMA Afghanistan",
-   "home": "https://andma.gov.af/",
-   "lang": "en"
-  },
-  {
-   "cc": "sa",
-   "outlet": "NCM Saudi Arabia",
-   "home": "https://ncm.gov.sa/",
-   "lang": "ar"
-  },
-  {
-   "cc": "la",
-   "outlet": "DMH Laos",
-   "home": "https://dmhlao.la/",
-   "lang": "lo"
-  },
-  {
-   "cc": "sy",
-   "outlet": "Syria Meteorology",
-   "home": "https://www.syrmet.gov.sy/",
-   "lang": "ar"
-  },
-  {
-   "cc": "iq",
-   "outlet": "Iraq Meteorological Organization",
-   "home": "https://meteoseism.gov.iq/",
-   "lang": "ar"
-  },
-  {
-   "cc": "cl",
-   "outlet": "DMC Chile",
-   "home": "https://www.meteochile.gob.cl/",
-   "lang": "es"
-  },
-  {
-   "cc": "cl",
-   "outlet": "SENAPRED",
-   "home": "https://senapred.cl/",
-   "lang": "es"
-  },
-  {
-   "cc": "sd",
-   "outlet": "Sudan Meteorological Authority",
-   "home": "https://ersad.gov.sd/",
-   "lang": "ar"
-  },
-  {
-   "cc": "ma",
-   "outlet": "DGM Morocco",
-   "home": "https://www.marocmeteo.ma/",
+   "cc": "ca",
+   "outlet": "Le Devoir",
+   "home": "https://www.ledevoir.com/",
    "lang": "fr"
   },
   {
-   "cc": "ve",
-   "outlet": "INAMEH",
-   "home": "https://www.inameh.gob.ve/",
-   "lang": "es"
-  },
-  {
-   "cc": "lb",
-   "outlet": "Lebanon Meteorological Service",
-   "home": "https://www.meteo.gov.lb/",
-   "lang": "ar"
-  },
-  {
-   "cc": "cu",
-   "outlet": "INSMET Cuba",
-   "home": "https://www.insmet.cu/",
-   "lang": "es"
-  },
-  {
-   "cc": "cg",
-   "outlet": "Congo Météo",
-   "home": "https://www.anac-congo.cg/",
+   "cc": "ca",
+   "outlet": "La Presse",
+   "home": "https://www.lapresse.ca/",
    "lang": "fr"
   },
   {
-   "cc": "uz",
-   "outlet": "Uzhydromet",
-   "home": "https://hydromet.uz/",
-   "lang": "ru"
-  },
-  {
-   "cc": "rw",
-   "outlet": "Rwanda Meteorology Agency",
-   "home": "https://www.meteorwanda.gov.rw/",
+   "cc": "ca",
+   "outlet": "Ottawa Citizen",
+   "home": "https://ottawacitizen.com/",
    "lang": "en"
   },
   {
-   "cc": "ne",
-   "outlet": "DMN Niger",
-   "home": "https://www.meteo-niger.org/",
-   "lang": "fr"
-  },
-  {
-   "cc": "ml",
-   "outlet": "Mali-Météo",
-   "home": "https://www.malimeteo.ml/",
-   "lang": "fr"
-  },
-  {
-   "cc": "kg",
-   "outlet": "Kyrgyzhydromet",
-   "home": "https://meteo.kg/",
-   "lang": "ru"
-  },
-  {
-   "cc": "ht",
-   "outlet": "Unité Hydrométéorologique d'Haïti",
-   "home": "https://www.meteo-haiti.gouv.ht/",
-   "lang": "fr"
-  },
-  {
-   "cc": "dz",
-   "outlet": "Météo Algérie",
-   "home": "https://www.meteo.dz/",
-   "lang": "fr"
-  },
-  {
-   "cc": "cd",
-   "outlet": "METTELSAT",
-   "home": "https://www.mettelsat.cd/",
-   "lang": "fr"
-  },
-  {
-   "cc": "bf",
-   "outlet": "ANAM Burkina",
-   "home": "https://www.meteoburkina.bf/",
-   "lang": "fr"
-  },
-  {
-   "cc": "sv",
-   "outlet": "MARN El Salvador",
-   "home": "https://www.snet.gob.sv/",
-   "lang": "es"
-  },
-  {
-   "cc": "sv",
-   "outlet": "Protección Civil El Salvador",
-   "home": "https://www.proteccioncivil.gob.sv/",
-   "lang": "es"
-  },
-  {
-   "cc": "lk",
-   "outlet": "Department of Meteorology Sri Lanka",
-   "home": "https://www.meteo.gov.lk/",
+   "cc": "ca",
+   "outlet": "The Hill Times",
+   "home": "https://www.hilltimes.com/",
    "lang": "en"
   },
   {
-   "cc": "lk",
-   "outlet": "Disaster Management Centre",
-   "home": "https://www.dmc.gov.lk/",
+   "cc": "cr",
+   "outlet": "CRHoy",
+   "home": "https://www.crhoy.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "outlet": "Semanario Universidad",
+   "home": "https://semanariouniversidad.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "outlet": "Teletica",
+   "home": "https://www.teletica.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "outlet": "El Observador CR",
+   "home": "https://observador.cr/",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "outlet": "Delfino",
+   "home": "https://delfino.cr/",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "outlet": "El Mundo CR",
+   "home": "https://www.elmundo.cr/",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "outlet": "AM Prensa",
+   "home": "https://amprensa.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "Listín Diario",
+   "home": "https://listindiario.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "Hoy",
+   "home": "https://hoy.com.do/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "El Día",
+   "home": "https://eldia.com.do/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "Acento",
+   "home": "https://acento.com.do/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "El Caribe",
+   "home": "https://www.elcaribe.com.do/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "CDN",
+   "home": "https://cdn.com.do/",
+   "lang": "es"
+  },
+  {
+   "cc": "me",
+   "outlet": "RTCG",
+   "home": "https://rtcg.me/",
+   "lang": "sr"
+  },
+  {
+   "cc": "me",
+   "outlet": "Pobjeda",
+   "home": "https://www.pobjeda.me/",
+   "lang": "sr"
+  },
+  {
+   "cc": "me",
+   "outlet": "Dan",
+   "home": "https://www.dan.co.me/",
+   "lang": "sr"
+  },
+  {
+   "cc": "me",
+   "outlet": "Portal Analitika",
+   "home": "https://www.portalanalitika.me/",
+   "lang": "sr"
+  },
+  {
+   "cc": "me",
+   "outlet": "Standard",
+   "home": "https://www.standard.co.me/",
+   "lang": "sr"
+  },
+  {
+   "cc": "me",
+   "outlet": "MINA News",
+   "home": "https://mina.news/",
    "lang": "en"
+  },
+  {
+   "cc": "sb",
+   "outlet": "Solomon Star",
+   "home": "https://www.solomonstarnews.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "am",
+   "outlet": "Armenpress",
+   "home": "https://armenpress.am/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "am",
+   "outlet": "Armenian Weekly",
+   "home": "https://armenianweekly.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "am",
+   "outlet": "CivilNet",
+   "home": "https://www.civilnet.am/",
+   "lang": "en"
+  },
+  {
+   "cc": "am",
+   "outlet": "Panorama",
+   "home": "https://www.panorama.am/",
+   "lang": "en"
+  },
+  {
+   "cc": "am",
+   "outlet": "EVN Report",
+   "home": "https://evnreport.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "am",
+   "outlet": "Aravot",
+   "home": "https://www.aravot-en.am/",
+   "lang": "en"
+  },
+  {
+   "cc": "hn",
+   "outlet": "La Prensa Honduras",
+   "home": "https://www.laprensa.hn/",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "outlet": "El Heraldo",
+   "home": "https://www.elheraldo.hn/",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "outlet": "Tiempo",
+   "home": "https://tiempo.hn/",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "outlet": "Radio América",
+   "home": "https://www.radioamericahn.net/",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "outlet": "HCH",
+   "home": "https://hch.tv/",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "outlet": "Contracorriente",
+   "home": "https://contracorriente.red/",
+   "lang": "es"
   },
   {
    "cc": "kz",
-   "outlet": "Kazhydromet",
-   "home": "https://www.kazhydromet.kz/",
+   "outlet": "Kursiv",
+   "home": "https://kursiv.media/",
    "lang": "ru"
   },
   {
-   "cc": "fj",
-   "outlet": "Fiji Meteorological Service",
-   "home": "https://www.met.gov.fj/",
-   "lang": "en"
+   "cc": "kz",
+   "outlet": "Vlast",
+   "home": "https://vlast.kz/",
+   "lang": "ru"
   },
   {
-   "cc": "fj",
-   "outlet": "NDMO Fiji",
-   "home": "https://www.ndmo.gov.fj/",
+   "cc": "kz",
+   "outlet": "Orda",
+   "home": "https://orda.kz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "outlet": "Zakon",
+   "home": "https://www.zakon.kz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "outlet": "KazTAG",
+   "home": "https://kaztag.kz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "outlet": "Azattyq",
+   "home": "https://rus.azattyq.org/",
+   "lang": "ru"
+  },
+  {
+   "cc": "pa",
+   "outlet": "La Estrella de Panamá",
+   "home": "https://www.laestrella.com.pa/",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "outlet": "Panamá América",
+   "home": "https://www.panamaamerica.com.pa/",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "outlet": "Telemetro",
+   "home": "https://www.telemetro.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "outlet": "Metro Libre",
+   "home": "https://www.metrolibre.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "outlet": "Newsroom Panama",
+   "home": "https://www.newsroompanama.com/",
    "lang": "en"
   },
   {
    "cc": "az",
-   "outlet": "National Hydrometeorological Service Azerbaijan",
-   "home": "https://meteo.az/",
+   "outlet": "APA",
+   "home": "https://apa.az/",
+   "lang": "en"
+  },
+  {
+   "cc": "az",
+   "outlet": "Report.az",
+   "home": "https://report.az/",
+   "lang": "en"
+  },
+  {
+   "cc": "az",
+   "outlet": "Turan",
+   "home": "https://www.turan.az/",
+   "lang": "en"
+  },
+  {
+   "cc": "az",
+   "outlet": "Azertac",
+   "home": "https://azertag.az/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "az",
+   "outlet": "Meydan TV",
+   "home": "https://www.meydan.tv/",
    "lang": "az"
   },
   {
    "cc": "by",
-   "outlet": "Belhydromet",
-   "home": "https://www.pogoda.by/",
+   "outlet": "Nasha Niva",
+   "home": "https://nashaniva.com/",
+   "lang": "be"
+  },
+  {
+   "cc": "by",
+   "outlet": "Pozirk",
+   "home": "https://pozirk.online/",
    "lang": "ru"
   },
   {
-   "cc": "gn",
-   "outlet": "Météo Guinée",
-   "home": "https://www.meteo-guinee.gov.gn/",
+   "cc": "by",
+   "outlet": "Euroradio",
+   "home": "https://euroradio.fm/",
+   "lang": "be"
+  },
+  {
+   "cc": "by",
+   "outlet": "SB Belarus Segodnya",
+   "home": "https://www.sb.by/",
+   "lang": "ru",
+   "state": true
+  },
+  {
+   "cc": "cu",
+   "outlet": "Cubadebate",
+   "home": "http://www.cubadebate.cu/",
+   "lang": "es",
+   "state": true
+  },
+  {
+   "cc": "cu",
+   "outlet": "Prensa Latina",
+   "home": "https://www.prensa-latina.cu/",
+   "lang": "es",
+   "state": true
+  },
+  {
+   "cc": "cu",
+   "outlet": "CubaNet",
+   "home": "https://www.cubanet.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "outlet": "El Toque",
+   "home": "https://eltoque.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "outlet": "Juventud Rebelde",
+   "home": "https://www.jrebelde.cu/",
+   "lang": "es",
+   "state": true
+  },
+  {
+   "cc": "cy",
+   "outlet": "Kathimerini Cyprus",
+   "home": "https://www.kathimerini.com.cy/",
+   "lang": "el"
+  },
+  {
+   "cc": "cy",
+   "outlet": "Sigma Live",
+   "home": "https://www.sigmalive.com/",
+   "lang": "el"
+  },
+  {
+   "cc": "cy",
+   "outlet": "Reporter",
+   "home": "https://www.reporter.com.cy/",
+   "lang": "el"
+  },
+  {
+   "cc": "cy",
+   "outlet": "Alphanews",
+   "home": "https://www.alphanews.live/",
+   "lang": "el"
+  },
+  {
+   "cc": "cy",
+   "outlet": "Kıbrıs Postası",
+   "home": "https://www.kibrispostasi.com/",
+   "lang": "tr"
+  },
+  {
+   "cc": "cy",
+   "outlet": "Cyprus News Agency",
+   "home": "https://www.cna.org.cy/",
+   "lang": "el",
+   "state": true
+  },
+  {
+   "cc": "fj",
+   "outlet": "Fiji Times",
+   "home": "https://www.fijitimes.com.fj/",
+   "lang": "en"
+  },
+  {
+   "cc": "fj",
+   "outlet": "Fiji Village",
+   "home": "https://www.fijivillage.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "fj",
+   "outlet": "Fiji Sun",
+   "home": "https://fijisun.com.fj/",
+   "lang": "en"
+  },
+  {
+   "cc": "fj",
+   "outlet": "Fiji Government",
+   "home": "https://www.fiji.gov.fj/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "gt",
+   "outlet": "Soy502",
+   "home": "https://www.soy502.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "gt",
+   "outlet": "Emisoras Unidas",
+   "home": "https://emisorasunidas.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "gt",
+   "outlet": "Prensa Comunitaria",
+   "home": "https://prensacomunitaria.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "gt",
+   "outlet": "No-Ficción",
+   "home": "https://www.no-ficcion.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Daily Mirror",
+   "home": "https://www.dailymirror.lk/",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Daily FT",
+   "home": "https://www.ft.lk/",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Sunday Times",
+   "home": "https://www.sundaytimes.lk/",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Ada Derana",
+   "home": "https://www.adaderana.lk/",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "outlet": "The Island",
+   "home": "https://island.lk/",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Colombo Gazette",
+   "home": "https://colombogazette.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Daily News",
+   "home": "https://www.dailynews.lk/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "lk",
+   "outlet": "Groundviews",
+   "home": "https://groundviews.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "lt",
+   "outlet": "BNS",
+   "home": "https://www.bns.lt/",
+   "lang": "lt"
+  },
+  {
+   "cc": "lt",
+   "outlet": "Kauno diena",
+   "home": "https://kauno.diena.lt/",
+   "lang": "lt"
+  },
+  {
+   "cc": "lt",
+   "outlet": "ELTA",
+   "home": "https://www.elta.lt/",
+   "lang": "lt"
+  },
+  {
+   "cc": "mz",
+   "outlet": "Carta de Moçambique",
+   "home": "https://www.cartamz.com/",
+   "lang": "pt"
+  },
+  {
+   "cc": "mz",
+   "outlet": "AIM",
+   "home": "https://aim.org.mz/",
+   "lang": "pt",
+   "state": true
+  },
+  {
+   "cc": "mz",
+   "outlet": "Evidências",
+   "home": "https://evidencias.co.mz/",
+   "lang": "pt"
+  },
+  {
+   "cc": "qa",
+   "outlet": "The Peninsula",
+   "home": "https://thepeninsulaqatar.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Gulf Times",
+   "home": "https://www.gulf-times.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Qatar Tribune",
+   "home": "https://www.qatar-tribune.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Al Raya",
+   "home": "https://www.raya.com/",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Al Sharq",
+   "home": "https://al-sharq.com/",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Lusail News",
+   "home": "https://lusailnews.net/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "outlet": "SANA",
+   "home": "https://sana.sy/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "sy",
+   "outlet": "Syria TV",
+   "home": "https://www.syria.tv/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "outlet": "Al-Watan Syria",
+   "home": "https://alwatan.sy/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "outlet": "Enab Baladi",
+   "home": "https://www.enabbaladi.net/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "outlet": "Levant24",
+   "home": "https://levant24.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "sy",
+   "outlet": "Syria Direct",
+   "home": "https://syriadirect.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "tz",
+   "outlet": "Mwananchi",
+   "home": "https://www.mwananchi.co.tz/",
+   "lang": "sw"
+  },
+  {
+   "cc": "tz",
+   "outlet": "IPP Media",
+   "home": "https://www.ippmedia.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "tz",
+   "outlet": "Habari Leo",
+   "home": "https://habarileo.co.tz/",
+   "lang": "sw",
+   "state": true
+  },
+  {
+   "cc": "zm",
+   "outlet": "Zambia Daily Mail",
+   "home": "https://www.daily-mail.co.zm/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "zm",
+   "outlet": "ZNBC",
+   "home": "https://www.znbc.co.zm/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "zm",
+   "outlet": "Zambian Observer",
+   "home": "https://zambianobserver.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "gy",
+   "outlet": "Stabroek News",
+   "home": "https://www.stabroeknews.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "gy",
+   "outlet": "Kaieteur News",
+   "home": "https://www.kaieteurnewsonline.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "gy",
+   "outlet": "News Room Guyana",
+   "home": "https://newsroom.gy/",
+   "lang": "en"
+  },
+  {
+   "cc": "gy",
+   "outlet": "iNews Guyana",
+   "home": "https://www.inewsguyana.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "gy",
+   "outlet": "DPI Guyana",
+   "home": "https://dpi.gov.gy/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "ht",
+   "outlet": "AlterPresse",
+   "home": "https://www.alterpresse.org/",
    "lang": "fr"
   },
   {
-   "cc": "am",
-   "outlet": "Armhydromet",
-   "home": "https://www.armstatehydromet.am/",
-   "lang": "hy"
+   "cc": "ht",
+   "outlet": "Ayibopost",
+   "home": "https://ayibopost.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ht",
+   "outlet": "Juno7",
+   "home": "https://www.juno7.ht/",
+   "lang": "fr"
+  },
+  {
+   "cc": "iq",
+   "outlet": "Shafaq News",
+   "home": "https://shafaq.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "iq",
+   "outlet": "INA",
+   "home": "https://www.ina.iq/",
+   "lang": "ar",
+   "state": true
+  },
+  {
+   "cc": "iq",
+   "outlet": "Alsumaria",
+   "home": "https://www.alsumaria.tv/",
+   "lang": "ar"
+  },
+  {
+   "cc": "iq",
+   "outlet": "The New Region",
+   "home": "https://thenewregion.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "kg",
+   "outlet": "Kaktus Media",
+   "home": "https://kaktus.media/",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "outlet": "Azattyk",
+   "home": "https://www.azattyk.org/",
+   "lang": "ky"
+  },
+  {
+   "cc": "kg",
+   "outlet": "Kloop",
+   "home": "https://kloop.kg/",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "outlet": "Economist.kg",
+   "home": "https://economist.kg/",
+   "lang": "ru"
+  },
+  {
+   "cc": "kh",
+   "outlet": "Khmer Times",
+   "home": "https://www.khmertimeskh.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "kh",
+   "outlet": "Phnom Penh Post",
+   "home": "https://www.phnompenhpost.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "kh",
+   "outlet": "VOD",
+   "home": "https://vodenglish.news/",
+   "lang": "en"
+  },
+  {
+   "cc": "lu",
+   "outlet": "L'essentiel",
+   "home": "https://www.lessentiel.lu/",
+   "lang": "fr"
+  },
+  {
+   "cc": "lu",
+   "outlet": "Reporter.lu",
+   "home": "https://www.reporter.lu/",
+   "lang": "en"
+  },
+  {
+   "cc": "lu",
+   "outlet": "Tageblatt",
+   "home": "https://www.tageblatt.lu/",
+   "lang": "de"
+  },
+  {
+   "cc": "lu",
+   "outlet": "Chronicle.lu",
+   "home": "https://chronicle.lu/",
+   "lang": "en"
+  },
+  {
+   "cc": "lv",
+   "outlet": "LETA",
+   "home": "https://www.leta.lv/",
+   "lang": "lv"
+  },
+  {
+   "cc": "lv",
+   "outlet": "Jauns",
+   "home": "https://jauns.lv/",
+   "lang": "lv"
+  },
+  {
+   "cc": "lv",
+   "outlet": "Re:Baltica",
+   "home": "https://en.rebaltica.lv/",
+   "lang": "en"
+  },
+  {
+   "cc": "lv",
+   "outlet": "Neatkarīgā",
+   "home": "https://nra.lv/",
+   "lang": "lv"
+  },
+  {
+   "cc": "pg",
+   "outlet": "The National PNG",
+   "home": "https://www.thenational.com.pg/",
+   "lang": "en"
+  },
+  {
+   "cc": "pg",
+   "outlet": "EMTV",
+   "home": "https://emtv.com.pg/",
+   "lang": "en"
+  },
+  {
+   "cc": "pg",
+   "outlet": "NBC PNG",
+   "home": "https://www.nbc.com.pg/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "pg",
+   "outlet": "PNG Haus Bung",
+   "home": "https://pnghausbung.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "si",
+   "outlet": "STA",
+   "home": "https://www.sta.si/",
+   "lang": "sl",
+   "state": true
+  },
+  {
+   "cc": "si",
+   "outlet": "Necenzurirano",
+   "home": "https://necenzurirano.si/",
+   "lang": "sl"
+  },
+  {
+   "cc": "si",
+   "outlet": "Mladina",
+   "home": "https://www.mladina.si/",
+   "lang": "sl"
+  },
+  {
+   "cc": "si",
+   "outlet": "Dnevnik",
+   "home": "https://www.dnevnik.si/",
+   "lang": "sl"
+  },
+  {
+   "cc": "si",
+   "outlet": "Siol",
+   "home": "https://siol.net/",
+   "lang": "sl"
+  },
+  {
+   "cc": "si",
+   "outlet": "Slovenia Times",
+   "home": "https://sloveniatimes.com/",
+   "lang": "en"
   },
   {
    "cc": "td",
-   "outlet": "ANAM Tchad",
-   "home": "https://www.meteotchad.td/",
+   "outlet": "Journal du Tchad",
+   "home": "https://www.journaldutchad.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "td",
+   "outlet": "ATPE",
+   "home": "https://www.atpe-tchad.info/",
+   "lang": "fr",
+   "state": true
+  },
+  {
+   "cc": "uz",
+   "outlet": "Kun.uz",
+   "home": "https://kun.uz/",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "outlet": "Podrobno",
+   "home": "https://podrobno.uz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "uz",
+   "outlet": "Spot",
+   "home": "https://www.spot.uz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "uz",
+   "outlet": "UzDaily",
+   "home": "https://www.uzdaily.uz/",
+   "lang": "en"
+  },
+  {
+   "cc": "uz",
+   "outlet": "Repost.uz",
+   "home": "https://repost.uz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "vu",
+   "outlet": "Daily Post Vanuatu",
+   "home": "https://www.dailypost.vu/",
+   "lang": "en"
+  },
+  {
+   "cc": "cd",
+   "outlet": "Radio Okapi",
+   "home": "https://www.radiookapi.net/",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "outlet": "7sur7.cd",
+   "home": "https://7sur7.cd/",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "outlet": "Mediacongo",
+   "home": "https://www.mediacongo.net/",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "outlet": "ACP",
+   "home": "https://acp.cd/",
+   "lang": "fr",
+   "state": true
+  },
+  {
+   "cc": "la",
+   "outlet": "Vientiane Times",
+   "home": "https://www.vientianetimes.org.la/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "lb",
+   "outlet": "L'Orient Today",
+   "home": "https://today.lorientlejour.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "lb",
+   "outlet": "NNA",
+   "home": "https://www.nna-leb.gov.lb/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "lb",
+   "outlet": "Naharnet",
+   "home": "https://www.naharnet.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "lb",
+   "outlet": "Al Akhbar",
+   "home": "https://al-akhbar.com/",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "outlet": "MTV Lebanon",
+   "home": "https://www.mtv.com.lb/",
+   "lang": "ar"
+  },
+  {
+   "cc": "ma",
+   "outlet": "Le360",
+   "home": "https://fr.le360.ma/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ma",
+   "outlet": "Morocco World News",
+   "home": "https://www.moroccoworldnews.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "ma",
+   "outlet": "Médias24",
+   "home": "https://medias24.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ma",
+   "outlet": "MAP",
+   "home": "https://www.mapexpress.ma/",
+   "lang": "fr",
+   "state": true
+  },
+  {
+   "cc": "ma",
+   "outlet": "Le Desk",
+   "home": "https://ledesk.ma/",
+   "lang": "fr"
+  },
+  {
+   "cc": "mg",
+   "outlet": "L'Express de Madagascar",
+   "home": "https://lexpress.mg/",
+   "lang": "fr"
+  },
+  {
+   "cc": "mg",
+   "outlet": "Madagascar Tribune",
+   "home": "https://www.madagascar-tribune.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "pe",
+   "outlet": "La República",
+   "home": "https://larepublica.pe/",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "outlet": "RPP",
+   "home": "https://rpp.pe/",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "outlet": "Gestión",
+   "home": "https://gestion.pe/",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "outlet": "Ojo Público",
+   "home": "https://ojo-publico.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "outlet": "Perú21",
+   "home": "https://peru21.pe/",
+   "lang": "es"
+  },
+  {
+   "cc": "sa",
+   "outlet": "SPA",
+   "home": "https://www.spa.gov.sa/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "sa",
+   "outlet": "Arab News",
+   "home": "https://www.arabnews.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Okaz",
+   "home": "https://www.okaz.com.sa/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Al Riyadh",
+   "home": "https://www.alriyadh.com/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Al Arabiya",
+   "home": "https://www.alarabiya.net/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Sabq",
+   "home": "https://sabq.org/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sd",
+   "outlet": "Sudan Tribune",
+   "home": "https://sudantribune.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "sd",
+   "outlet": "Al Taghyeer",
+   "home": "https://www.altaghyeer.info/",
+   "lang": "ar"
+  },
+  {
+   "cc": "sd",
+   "outlet": "Ayin",
+   "home": "https://3ayin.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "sd",
+   "outlet": "SUNA",
+   "home": "https://suna-sd.net/",
+   "lang": "ar",
+   "state": true
+  },
+  {
+   "cc": "sk",
+   "outlet": "Hospodárske noviny",
+   "home": "https://hnonline.sk/",
+   "lang": "sk"
+  },
+  {
+   "cc": "sk",
+   "outlet": "Postoj",
+   "home": "https://www.postoj.sk/",
+   "lang": "sk"
+  },
+  {
+   "cc": "sk",
+   "outlet": "Trend",
+   "home": "https://www.trend.sk/",
+   "lang": "sk"
+  },
+  {
+   "cc": "so",
+   "outlet": "Hiiraan Online",
+   "home": "https://www.hiiraan.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "so",
+   "outlet": "Garowe Online",
+   "home": "https://www.garoweonline.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "so",
+   "outlet": "SONNA",
+   "home": "https://sonna.so/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "so",
+   "outlet": "Radio Dalsan",
+   "home": "https://www.radiodalsan.com/",
+   "lang": "so"
+  },
+  {
+   "cc": "ve",
+   "outlet": "El Nacional",
+   "home": "https://www.elnacional.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "outlet": "Tal Cual",
+   "home": "https://talcualdigital.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "outlet": "VTV",
+   "home": "https://www.vtv.gob.ve/",
+   "lang": "es",
+   "state": true
+  },
+  {
+   "cc": "ve",
+   "outlet": "Últimas Noticias",
+   "home": "https://ultimasnoticias.com.ve/",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "outlet": "Armando.info",
+   "home": "https://armando.info/",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "outlet": "Crónica Uno",
+   "home": "https://cronica.uno/",
+   "lang": "es"
+  },
+  {
+   "cc": "hr",
+   "outlet": "HRT",
+   "home": "https://vijesti.hrt.hr/",
+   "lang": "hr"
+  },
+  {
+   "cc": "hr",
+   "outlet": "Hina",
+   "home": "https://www.hina.hr/",
+   "lang": "hr",
+   "state": true
+  },
+  {
+   "cc": "hr",
+   "outlet": "Nacional",
+   "home": "https://www.nacional.hr/",
+   "lang": "hr"
+  },
+  {
+   "cc": "hr",
+   "outlet": "Telegram.hr",
+   "home": "https://www.telegram.hr/",
+   "lang": "hr"
+  },
+  {
+   "cc": "hr",
+   "outlet": "Slobodna Dalmacija",
+   "home": "https://slobodnadalmacija.hr/",
+   "lang": "hr"
+  },
+  {
+   "cc": "be",
+   "outlet": "Le Soir",
+   "home": "https://www.lesoir.be/",
+   "lang": "fr"
+  },
+  {
+   "cc": "be",
+   "outlet": "Brussels Times",
+   "home": "https://www.brusselstimes.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "be",
+   "outlet": "Belga",
+   "home": "https://www.belganewsagency.eu/",
+   "lang": "en"
+  },
+  {
+   "cc": "be",
+   "outlet": "L'Echo",
+   "home": "https://www.lecho.be/",
+   "lang": "fr"
+  },
+  {
+   "cc": "be",
+   "outlet": "De Tijd",
+   "home": "https://www.tijd.be/",
+   "lang": "nl"
+  },
+  {
+   "cc": "dz",
+   "outlet": "El Watan",
+   "home": "https://elwatan-dz.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "dz",
+   "outlet": "El Khabar",
+   "home": "https://www.elkhabar.com/",
+   "lang": "ar"
+  },
+  {
+   "cc": "dz",
+   "outlet": "Echorouk",
+   "home": "https://www.echoroukonline.com/",
+   "lang": "ar"
+  },
+  {
+   "cc": "ci",
+   "outlet": "Fraternité Matin",
+   "home": "https://www.fratmat.info/",
+   "lang": "fr",
+   "state": true
+  },
+  {
+   "cc": "ci",
+   "outlet": "Abidjan.net",
+   "home": "https://news.abidjan.net/",
    "lang": "fr"
   },
   {
    "cc": "ci",
-   "outlet": "SODEXAM",
-   "home": "https://www.sodexam.com/",
+   "outlet": "Koaci",
+   "home": "https://www.koaci.com/",
    "lang": "fr"
   },
   {
-   "cc": "al",
-   "outlet": "IGEWE Albania",
-   "home": "https://www.geo.edu.al/",
-   "lang": "sq"
-  },
-  {
-   "cc": "bs",
-   "outlet": "Bahamas Department of Meteorology",
-   "home": "https://www.bahamasweather.org.bs/",
-   "lang": "en"
-  },
-  {
-   "cc": "bs",
-   "outlet": "NEMA Bahamas",
-   "home": "https://nema.gov.bs/",
-   "lang": "en"
-  },
-  {
-   "cc": "ni",
-   "outlet": "INETER",
-   "home": "https://www.ineter.gob.ni/",
+   "cc": "cl",
+   "outlet": "El Mostrador",
+   "home": "https://www.elmostrador.cl/",
    "lang": "es"
   },
   {
-   "cc": "ni",
-   "outlet": "SINAPRED",
-   "home": "https://www.sinapred.gob.ni/",
+   "cc": "cl",
+   "outlet": "BioBioChile",
+   "home": "https://www.biobiochile.cl/",
    "lang": "es"
   },
   {
-   "cc": "gh",
-   "outlet": "Ghana Meteorological Agency",
-   "home": "https://www.meteo.gov.gh/",
-   "lang": "en"
-  },
-  {
-   "cc": "gh",
-   "outlet": "NADMO",
-   "home": "https://nadmo.gov.gh/",
-   "lang": "en"
-  },
-  {
-   "cc": "bo",
-   "outlet": "SENAMHI Bolivia",
-   "home": "https://senamhi.gob.bo/",
+   "cc": "cl",
+   "outlet": "Emol",
+   "home": "https://www.emol.com/",
    "lang": "es"
   },
   {
-   "cc": "ae",
-   "outlet": "NCM UAE",
-   "home": "https://www.ncm.gov.ae/",
-   "lang": "en"
-  },
-  {
-   "cc": "tl",
-   "outlet": "Timor-Leste Meteorology",
-   "home": "https://www.dnmg.gov.tl/",
-   "lang": "pt"
-  },
-  {
-   "cc": "mr",
-   "outlet": "ONM Mauritanie",
-   "home": "https://www.onm.mr/",
-   "lang": "fr"
-  },
-  {
-   "cc": "jm",
-   "outlet": "Meteorological Service of Jamaica",
-   "home": "https://metservice.gov.jm/",
-   "lang": "en"
-  },
-  {
-   "cc": "jm",
-   "outlet": "ODPEM",
-   "home": "https://www.odpem.org.jm/",
-   "lang": "en"
-  },
-  {
-   "cc": "ge",
-   "outlet": "National Environmental Agency Georgia",
-   "home": "https://nea.gov.ge/",
-   "lang": "ka"
-  },
-  {
-   "cc": "xk",
-   "outlet": "Kosovo Hydrometeorological Institute",
-   "home": "https://ihmk-rks.net/",
-   "lang": "sq"
-  },
-  {
-   "cc": "sr",
-   "outlet": "Meteorologische Dienst Suriname",
-   "home": "https://www.meteosuriname.com/",
-   "lang": "nl"
-  },
-  {
-   "cc": "ws",
-   "outlet": "Samoa Meteorology",
-   "home": "https://www.samet.gov.ws/",
-   "lang": "en"
-  },
-  {
-   "cc": "to",
-   "outlet": "Tonga Meteorological Service",
-   "home": "https://met.gov.to/",
-   "lang": "en"
-  },
-  {
-   "cc": "tj",
-   "outlet": "Tajik Hydromet",
-   "home": "https://meteo.tj/",
-   "lang": "ru"
-  },
-  {
-   "cc": "zw",
-   "outlet": "Meteorological Services Department Zimbabwe",
-   "home": "https://www.weatherzw.org.zw/",
-   "lang": "en"
-  },
-  {
-   "cc": "uy",
-   "outlet": "INUMET",
-   "home": "https://www.inumet.gub.uy/",
+   "cc": "cl",
+   "outlet": "T13",
+   "home": "https://www.t13.cl/",
    "lang": "es"
   },
   {
-   "cc": "uy",
-   "outlet": "SINAE",
-   "home": "https://www.gub.uy/sistema-nacional-emergencias/",
+   "cc": "cl",
+   "outlet": "24 Horas",
+   "home": "https://www.24horas.cl/",
    "lang": "es"
   },
   {
-   "cc": "tt",
-   "outlet": "Trinidad and Tobago Meteorological Service",
-   "home": "https://www.metoffice.gov.tt/",
-   "lang": "en"
-  },
-  {
-   "cc": "tt",
-   "outlet": "ODPM",
-   "home": "https://www.odpm.gov.tt/",
-   "lang": "en"
-  },
-  {
-   "cc": "ss",
-   "outlet": "South Sudan Meteorological Department",
-   "home": "https://www.ssmd.gov.ss/",
-   "lang": "en"
-  },
-  {
-   "cc": "na",
-   "outlet": "Namibia Meteorological Service",
-   "home": "https://www.meteona.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bj",
-   "outlet": "Météo Bénin",
-   "home": "https://www.meteobenin.bj/",
+   "cc": "ml",
+   "outlet": "Maliweb",
+   "home": "https://www.maliweb.net/",
    "lang": "fr"
   },
   {
-   "cc": "tn",
-   "outlet": "INM Tunisie",
-   "home": "https://www.meteo.tn/",
+   "cc": "ml",
+   "outlet": "Malijet",
+   "home": "https://malijet.com/",
    "lang": "fr"
   },
   {
-   "cc": "tm",
-   "outlet": "Turkmenhydromet",
-   "home": "https://meteo.gov.tm/",
-   "lang": "ru"
-  },
-  {
-   "cc": "tg",
-   "outlet": "Météo Togo",
-   "home": "https://www.anamet-togo.com/",
+   "cc": "ml",
+   "outlet": "Sahelien",
+   "home": "https://sahelien.com/",
    "lang": "fr"
   },
   {
-   "cc": "sl",
-   "outlet": "Sierra Leone Meteorological Agency",
-   "home": "https://slmet.gov.sl/",
+   "cc": "no",
+   "outlet": "Dagens Næringsliv",
+   "home": "https://www.dn.no/",
+   "lang": "no"
+  },
+  {
+   "cc": "no",
+   "outlet": "TV 2",
+   "home": "https://www.tv2.no/",
+   "lang": "no"
+  },
+  {
+   "cc": "no",
+   "outlet": "ABC Nyheter",
+   "home": "https://www.abcnyheter.no/",
+   "lang": "no"
+  },
+  {
+   "cc": "no",
+   "outlet": "Forsvarets Forum",
+   "home": "https://forsvaretsforum.no/",
+   "lang": "no"
+  },
+  {
+   "cc": "rw",
+   "outlet": "The New Times",
+   "home": "https://www.newtimes.co.rw/",
    "lang": "en"
   },
   {
-   "cc": "dj",
-   "outlet": "Météo Djibouti",
-   "home": "https://www.meteodjibouti.dj/",
-   "lang": "fr"
-  },
-  {
-   "cc": "ao",
-   "outlet": "INAMET Angola",
-   "home": "https://www.inamet.gov.ao/",
-   "lang": "pt"
-  },
-  {
-   "cc": "lr",
-   "outlet": "Liberia Meteorological Service",
-   "home": "https://www.lma.gov.lr/",
+   "cc": "rw",
+   "outlet": "IGIHE",
+   "home": "https://en.igihe.com/",
    "lang": "en"
   },
   {
-   "cc": "mw",
-   "outlet": "DCCMS Malawi",
-   "home": "https://www.metmalawi.gov.mw/",
+   "cc": "rw",
+   "outlet": "Taarifa",
+   "home": "https://taarifa.rw/",
    "lang": "en"
   },
   {
-   "cc": "mv",
-   "outlet": "Maldives Meteorological Service",
-   "home": "https://www.meteorology.gov.mv/",
-   "lang": "en"
-  },
-  {
-   "cc": "mv",
-   "outlet": "NDMA Maldives",
-   "home": "https://ndma.gov.mv/",
-   "lang": "en"
-  },
-  {
-   "cc": "lc",
-   "outlet": "St Lucia Meteorological Services",
-   "home": "https://www.stluciamet.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "lc",
-   "outlet": "NEMO St Lucia",
-   "home": "https://www.nemo.gov.lc/",
-   "lang": "en"
-  },
-  {
-   "cc": "bi",
-   "outlet": "IGEBU",
-   "home": "https://www.igebu.bi/",
-   "lang": "fr"
-  },
-  {
-   "cc": "cv",
-   "outlet": "INMG Cabo Verde",
-   "home": "https://www.inmg.gov.cv/",
-   "lang": "pt"
-  },
-  {
-   "cc": "bb",
-   "outlet": "Barbados Meteorological Services",
-   "home": "https://www.barbadosweather.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "bb",
-   "outlet": "Barbados DEM",
-   "home": "https://dem.gov.bb/",
-   "lang": "en"
-  },
-  {
-   "cc": "km",
-   "outlet": "ANACM Comores",
-   "home": "https://www.meteocomores.km/",
-   "lang": "fr"
-  },
-  {
-   "cc": "bn",
-   "outlet": "Brunei Darussalam Meteorological Department",
-   "home": "https://www.met.gov.bn/",
-   "lang": "en"
-  },
-  {
-   "cc": "dm",
-   "outlet": "Dominica Meteorological Service",
-   "home": "https://www.weather.gov.dm/",
-   "lang": "en"
-  },
-  {
-   "cc": "bt",
-   "outlet": "NCHM Bhutan",
-   "home": "https://www.nchm.gov.bt/",
-   "lang": "en"
-  },
-  {
-   "cc": "ag",
-   "outlet": "Antigua and Barbuda Meteorological Services",
-   "home": "https://www.antiguamet.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "ag",
-   "outlet": "NODS Antigua",
-   "home": "https://nods.gov.ag/",
-   "lang": "en"
-  },
-  {
-   "cc": "om",
-   "outlet": "Oman Meteorology",
-   "home": "https://met.gov.om/",
-   "lang": "en"
-  },
-  {
-   "cc": "kw",
-   "outlet": "Kuwait Meteorological Department",
-   "home": "https://www.met.gov.kw/",
+   "cc": "ye",
+   "outlet": "Al-Masdar Online",
+   "home": "https://almasdaronline.com/",
    "lang": "ar"
   },
   {
-   "cc": "kn",
-   "outlet": "NEMA St Kitts and Nevis",
-   "home": "https://www.nema.gov.kn/",
+   "cc": "ye",
+   "outlet": "South24",
+   "home": "https://south24.net/",
    "lang": "en"
   },
   {
-   "cc": "gm",
-   "outlet": "Gambia DWR",
-   "home": "https://www.dwr.gov.gm/",
-   "lang": "en"
-  },
-  {
-   "cc": "gd",
-   "outlet": "NaDMA Grenada",
-   "home": "https://nadma.gov.gd/",
-   "lang": "en"
-  },
-  {
-   "cc": "ls",
-   "outlet": "Lesotho Meteorological Services",
-   "home": "https://www.lesmet.org.ls/",
-   "lang": "en"
-  },
-  {
-   "cc": "sz",
-   "outlet": "Eswatini Meteorological Service",
-   "home": "https://www.swazimet.gov.sz/",
-   "lang": "en"
-  },
-  {
-   "cc": "sz",
-   "outlet": "NDMA Eswatini",
-   "home": "https://ndma.org.sz/",
-   "lang": "en"
-  },
-  {
-   "cc": "st",
-   "outlet": "INM São Tomé",
-   "home": "https://www.inm.st/",
-   "lang": "pt"
-  },
-  {
-   "cc": "mh",
-   "outlet": "NDMO Marshall Islands",
-   "home": "https://rmi-ndmo.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "sc",
-   "outlet": "Seychelles Meteorological Authority",
-   "home": "https://www.meteo.gov.sc/",
-   "lang": "en"
-  },
-  {
-   "cc": "sc",
-   "outlet": "DRDM Seychelles",
-   "home": "https://www.drdm.gov.sc/",
-   "lang": "en"
-  },
-  {
-   "cc": "gq",
-   "outlet": "Meteorología Guinea Ecuatorial",
-   "home": "https://www.meteo-ge.org/",
-   "lang": "es"
-  },
-  {
-   "cc": "gw",
-   "outlet": "INM Guiné-Bissau",
-   "home": "https://www.inm.gw/",
-   "lang": "pt"
-  },
-  {
-   "cc": "pw",
-   "outlet": "Palau Weather Service",
-   "home": "https://www.palauweather.org/",
-   "lang": "en"
+   "cc": "ye",
+   "outlet": "Aden Al-Ghad",
+   "home": "https://adengad.net/",
+   "lang": "ar"
   }
  ]
 }
