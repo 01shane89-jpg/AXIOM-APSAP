@@ -189,6 +189,9 @@ export async function addSmallPlaces(idx, ccs, get = fetchBuf, cacheDir = proces
   const txt = r.stdout && r.stdout.length ? r.stdout.toString("utf8") : "";
   if (!txt) throw new Error("small places unzip failed");
   const byCc = {}, seen = new Map();   // seen: lower name -> countries it is found in (any country)
+  // the first word of a region's name ("Agusan" of Agusan del Sur, "Lanao" of Lanao del Norte) means the region, not a village
+  const regHead = {};
+  for (const cc of want) if (idx[cc]) regHead[cc] = new Set([...idx[cc].regs.values()].flatMap((r) => { const w = String(r.name).toLowerCase().split(/\s+/); return w.length > 1 ? [w[0]] : []; }));
   for (const line of txt.split("\n")) {
     const f = line.split("\t"); if (f.length < 15) continue;
     const cc = ccFromA2(f[8]); if (!cc) continue;
@@ -201,6 +204,7 @@ export async function addSmallPlaces(idx, ccs, get = fetchBuf, cacheDir = proces
       const k = n.toLowerCase();
       if (n.length < 5 || STOP.has(k) || COUNTRY_NAMES.has(k) || !/^\p{Lu}/u.test(n) || idx[cc].m.has(k)) continue;
       if (k.split(/[^\p{L}\p{N}]+/u).every((w) => SMALL_WORDS.has(w) || STOP.has(w))) continue;
+      if (regHead[cc] && regHead[cc].has(k)) continue;
       const e = m.get(k) || { cands: [] };
       if (!e.cands.some((x) => x.lat === p.lat && x.lon === p.lon)) e.cands.push(p);
       m.set(k, e);

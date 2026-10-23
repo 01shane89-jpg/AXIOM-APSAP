@@ -25,10 +25,11 @@ const cities = [
   row("Busan", 35.102, 129.04, "PPLA", "KR", "10", 3400000),
   row("Kramatorsk", 48.72, 37.56, "PPL", "UA", "14", 150000),
   row("Bunia", 1.56, 30.25, "PPLA", "CD", "12", 96000),
+  row("Iligan", 8.23, 124.24, "PPL", "PH", "40", 300000),
 ].join("\n");
 const admin = ["US.UT\tUtah\tUtah\t1", "US.HI\tHawaii\tHawaii\t2", "US.TX\tTexas\tTexas\t3", "US.IL\tIllinois\tIllinois\t4",
   "FR.11\tIle-de-France\tIle-de-France\t5", "TH.40\tBangkok\tBangkok\t6", "KR.11\tSeoul\tSeoul\t7", "KR.10\tBusan\tBusan\t8",
-  "UA.14\tDonetsk Oblast\tDonetsk Oblast\t9", "CD.12\tIturi\tIturi\t10"].join("\n");
+  "UA.14\tDonetsk Oblast\tDonetsk Oblast\t9", "CD.12\tIturi\tIturi\t10", "PH.40\tAgusan del Sur\tAgusan del Sur\t11"].join("\n");
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gz-")), txt = path.join(dir, "cities15000.txt"), zip = path.join(dir, "c.zip");
 fs.writeFileSync(txt, cities + "\n");
 spawnSync("zip", ["-qj", zip, txt]);
@@ -84,11 +85,11 @@ const small = [
   row("Novoselivka", 48.1, 37.5, "PPL", "UA", "14", 1200), row("Novoselivka", 55.0, 38.0, "PPL", "RU", "47", 1100),
   row("Mambasa", 1.36, 29.05, "PPL", "CD", "12", 9000), row("Bunia", 1.56, 30.25, "PPLA", "CD", "12", 96000),
   row("Hope", 48.0, 37.0, "PPL", "UA", "14", 1000), row("Middle East", 48.2, 37.1, "PPL", "UA", "14", 1000),
-  row("Lanao", 48.3, 37.2, "PPL", "UA", "14", 1000), row("Ad-Damazin", 48.5, 37.3, "PPL", "UA", "14", 1000), row("Kyiv", 50.4, 30.5, "PPL", "BY", "01", 1000),
+  row("Lanao", 48.3, 37.2, "PPL", "UA", "14", 1000), row("Agusan", 8.49, 124.74, "PPL", "PH", "40", 2000), row("Ad-Damazin", 48.5, 37.3, "PPL", "UA", "14", 1000), row("Kyiv", 50.4, 30.5, "PPL", "BY", "01", 1000),
 ].join("\n");
 const stxt = path.join(dir, "cities1000.txt"), szip = path.join(dir, "s.zip");
 fs.writeFileSync(stxt, small + "\n"); spawnSync("zip", ["-qj", szip, stxt]);
-const nAdded = await addSmallPlaces(gz, ["ua", "cd"], async () => fs.readFileSync(szip));
+const nAdded = await addSmallPlaces(gz, ["ua", "cd", "ph"], async () => fs.readFileSync(szip));
 console.log(nAdded > 0 ? "ok  " : "FAIL", "small places added:", nAdded); if (!(nAdded > 0)) bad++;
 for (const [t, cc, want, prec] of [
   ["Russian strike on Pokrovske kills two", "ua", "Pokrovske", "approx"],
@@ -105,6 +106,7 @@ for (const [t, cc, want, prec] of [
   ["Oil jumps on Middle East worries", "ua", null],                                 // a name made only of everyday words is never a village
   ["Wanted man killed in a clash in Lanao del Norte", "ua", null],                  // part of a longer name: not the village
   ["RSF drone attacks kill civilians in Ad Damazin", "ua", "Ad-Damazin", "approx"],  // hyphen or space, the same village
+  ["3 NPA members surrender after leader killed in Agusan clash", "ph", null],      // the first word of a region's name: not the village
 ]) {
   const r = placeIn(gz, t, [cc]), got = r ? r.name : null;
   const ok = got === want && (!want || r.prec === prec);
