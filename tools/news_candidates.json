@@ -3,178 +3,760 @@
  "feeds": [],
  "discover": [
   {
-   "cc": "sm",
-   "outlet": "San Marino Fixing",
-   "home": "https://www.sanmarinofixing.com/",
-   "lang": "it"
+   "cc": "eg",
+   "outlet": "Egyptian Meteorological Authority",
+   "home": "https://nwp.gov.eg/",
+   "lang": "ar"
   },
   {
-   "cc": "li",
-   "outlet": "Liechtensteiner Vaterland",
-   "home": "https://www.vaterland.li/",
-   "lang": "de"
+   "cc": "kr",
+   "outlet": "Korea Meteorological Administration",
+   "home": "https://www.weather.go.kr/w/index.do",
+   "lang": "ko"
   },
   {
-   "cc": "li",
-   "outlet": "Liechtensteiner Volksblatt",
-   "home": "https://www.volksblatt.li/",
-   "lang": "de"
-  },
-  {
-   "cc": "li",
-   "outlet": "Regierung Liechtenstein",
-   "home": "https://www.regierung.li/",
-   "lang": "de",
-   "state": true
-  },
-  {
-   "cc": "mc",
-   "outlet": "Monaco-Matin",
-   "home": "https://www.monacomatin.mc/",
-   "lang": "fr"
-  },
-  {
-   "cc": "mc",
-   "outlet": "Gouvernement Princier",
-   "home": "https://www.gouv.mc/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "sc",
-   "outlet": "Seychelles Nation",
-   "home": "https://www.nation.sc/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "sc",
-   "outlet": "Seychelles News Agency",
-   "home": "https://www.seychellesnewsagency.com/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "sc",
-   "outlet": "Today in Seychelles",
-   "home": "https://www.todayinseychelles.com/",
+   "cc": "kr",
+   "outlet": "KMA English",
+   "home": "https://www.kma.go.kr/neng/index.do",
    "lang": "en"
   },
   {
-   "cc": "sz",
-   "outlet": "Swaziland News",
-   "home": "https://www.swazilandnews.co.za/",
+   "cc": "za",
+   "outlet": "South African Weather Service",
+   "home": "https://www.weathersa.co.za/",
    "lang": "en"
   },
   {
-   "cc": "sz",
-   "outlet": "Eswatini Observer",
-   "home": "https://new.observer.org.sz/",
+   "cc": "za",
+   "outlet": "NDMC South Africa",
+   "home": "https://www.ndmc.gov.za/",
    "lang": "en"
   },
   {
-   "cc": "eh",
-   "outlet": "SPS",
-   "home": "https://www.spsrasd.info/",
-   "lang": "en",
-   "state": true
+   "cc": "th",
+   "outlet": "Thai Meteorological Department",
+   "home": "https://www.tmd.go.th/",
+   "lang": "th"
   },
   {
-   "cc": "eh",
-   "outlet": "Por un Sahara Libre",
-   "home": "https://porunsaharalibre.org/",
+   "cc": "th",
+   "outlet": "DDPM Thailand",
+   "home": "https://www.disaster.go.th/",
+   "lang": "th"
+  },
+  {
+   "cc": "bd",
+   "outlet": "Bangladesh Meteorological Department",
+   "home": "https://live6.bmd.gov.bd/",
+   "lang": "en"
+  },
+  {
+   "cc": "bd",
+   "outlet": "FFWC Bangladesh",
+   "home": "https://www.ffwc.gov.bd/",
+   "lang": "en"
+  },
+  {
+   "cc": "vn",
+   "outlet": "NCHMF Vietnam",
+   "home": "https://nchmf.gov.vn/",
+   "lang": "vi"
+  },
+  {
+   "cc": "vn",
+   "outlet": "VDDMA Vietnam",
+   "home": "https://phongchongthientai.mard.gov.vn/",
+   "lang": "vi"
+  },
+  {
+   "cc": "tr",
+   "outlet": "MGM Turkey",
+   "home": "https://www.mgm.gov.tr/",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "outlet": "AFAD",
+   "home": "https://www.afad.gov.tr/",
+   "lang": "tr"
+  },
+  {
+   "cc": "ke",
+   "outlet": "Kenya Meteorological Department",
+   "home": "https://meteo.go.ke/",
+   "lang": "en"
+  },
+  {
+   "cc": "et",
+   "outlet": "Ethiopian Meteorology Institute",
+   "home": "https://www.ethiomet.gov.et/",
+   "lang": "en"
+  },
+  {
+   "cc": "co",
+   "outlet": "IDEAM",
+   "home": "https://www.ideam.gov.co/",
    "lang": "es"
   },
   {
-   "cc": "ls",
-   "outlet": "The Post Lesotho",
-   "home": "https://www.thepost.co.ls/",
+   "cc": "co",
+   "outlet": "UNGRD",
+   "home": "https://portal.gestiondelriesgo.gov.co/",
+   "lang": "es"
+  },
+  {
+   "cc": "ug",
+   "outlet": "Uganda National Meteorological Authority",
+   "home": "https://www.unma.go.ug/",
    "lang": "en"
   },
   {
-   "cc": "ls",
-   "outlet": "Lesotho Government",
-   "home": "https://www.gov.ls/",
-   "lang": "en",
-   "state": true
+   "cc": "ps",
+   "outlet": "Palestine Meteorological Department",
+   "home": "https://www.pmd.ps/",
+   "lang": "ar"
   },
   {
-   "cc": "nr",
-   "outlet": "Nauru Government Information Office",
-   "home": "https://naurunews.nr/",
-   "lang": "en",
-   "state": true
+   "cc": "pe",
+   "outlet": "SENAMHI",
+   "home": "https://www.senamhi.gob.pe/",
+   "lang": "es"
   },
   {
-   "cc": "tv",
-   "outlet": "Tuvalu Government",
-   "home": "https://www.tuvalu.tv/",
-   "lang": "en",
-   "state": true
+   "cc": "pe",
+   "outlet": "INDECI",
+   "home": "https://www.gob.pe/indeci",
+   "lang": "es"
   },
   {
-   "cc": "gd",
-   "outlet": "Grenada Informer",
-   "home": "https://www.grenadainformer.com/",
+   "cc": "np",
+   "outlet": "DHM Nepal",
+   "home": "https://www.dhm.gov.np/",
    "lang": "en"
   },
   {
-   "cc": "gd",
-   "outlet": "GIS Grenada",
-   "home": "https://www.gov.gd/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "ki",
-   "outlet": "Kiribati Government",
-   "home": "https://www.president.gov.ki/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "kn",
-   "outlet": "SKN Times",
-   "home": "https://www.sknvibes.com/",
+   "cc": "np",
+   "outlet": "NDRRMA Nepal",
+   "home": "https://bipad.gov.np/",
    "lang": "en"
   },
   {
-   "cc": "gw",
-   "outlet": "Rádio Sol Mansi",
-   "home": "https://www.radiosolmansi.net/",
+   "cc": "ye",
+   "outlet": "Yemen Meteorology",
+   "home": "https://www.cama.gov.ye/",
+   "lang": "ar"
+  },
+  {
+   "cc": "so",
+   "outlet": "SWALIM",
+   "home": "https://www.faoswalim.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "kh",
+   "outlet": "MOWRAM Cambodia",
+   "home": "https://www.cambodiameteo.com/",
+   "lang": "km"
+  },
+  {
+   "cc": "ar",
+   "outlet": "SMN Argentina",
+   "home": "https://www.smn.gob.ar/",
+   "lang": "es"
+  },
+  {
+   "cc": "af",
+   "outlet": "ANDMA Afghanistan",
+   "home": "https://andma.gov.af/",
+   "lang": "en"
+  },
+  {
+   "cc": "sa",
+   "outlet": "NCM Saudi Arabia",
+   "home": "https://ncm.gov.sa/",
+   "lang": "ar"
+  },
+  {
+   "cc": "la",
+   "outlet": "DMH Laos",
+   "home": "https://dmhlao.la/",
+   "lang": "lo"
+  },
+  {
+   "cc": "sy",
+   "outlet": "Syria Meteorology",
+   "home": "https://www.syrmet.gov.sy/",
+   "lang": "ar"
+  },
+  {
+   "cc": "iq",
+   "outlet": "Iraq Meteorological Organization",
+   "home": "https://meteoseism.gov.iq/",
+   "lang": "ar"
+  },
+  {
+   "cc": "cl",
+   "outlet": "DMC Chile",
+   "home": "https://www.meteochile.gob.cl/",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "outlet": "SENAPRED",
+   "home": "https://senapred.cl/",
+   "lang": "es"
+  },
+  {
+   "cc": "sd",
+   "outlet": "Sudan Meteorological Authority",
+   "home": "https://ersad.gov.sd/",
+   "lang": "ar"
+  },
+  {
+   "cc": "ma",
+   "outlet": "DGM Morocco",
+   "home": "https://www.marocmeteo.ma/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ve",
+   "outlet": "INAMEH",
+   "home": "https://www.inameh.gob.ve/",
+   "lang": "es"
+  },
+  {
+   "cc": "lb",
+   "outlet": "Lebanon Meteorological Service",
+   "home": "https://www.meteo.gov.lb/",
+   "lang": "ar"
+  },
+  {
+   "cc": "cu",
+   "outlet": "INSMET Cuba",
+   "home": "https://www.insmet.cu/",
+   "lang": "es"
+  },
+  {
+   "cc": "cg",
+   "outlet": "Congo Météo",
+   "home": "https://www.anac-congo.cg/",
+   "lang": "fr"
+  },
+  {
+   "cc": "uz",
+   "outlet": "Uzhydromet",
+   "home": "https://hydromet.uz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "rw",
+   "outlet": "Rwanda Meteorology Agency",
+   "home": "https://www.meteorwanda.gov.rw/",
+   "lang": "en"
+  },
+  {
+   "cc": "ne",
+   "outlet": "DMN Niger",
+   "home": "https://www.meteo-niger.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ml",
+   "outlet": "Mali-Météo",
+   "home": "https://www.malimeteo.ml/",
+   "lang": "fr"
+  },
+  {
+   "cc": "kg",
+   "outlet": "Kyrgyzhydromet",
+   "home": "https://meteo.kg/",
+   "lang": "ru"
+  },
+  {
+   "cc": "ht",
+   "outlet": "Unité Hydrométéorologique d'Haïti",
+   "home": "https://www.meteo-haiti.gouv.ht/",
+   "lang": "fr"
+  },
+  {
+   "cc": "dz",
+   "outlet": "Météo Algérie",
+   "home": "https://www.meteo.dz/",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "outlet": "METTELSAT",
+   "home": "https://www.mettelsat.cd/",
+   "lang": "fr"
+  },
+  {
+   "cc": "bf",
+   "outlet": "ANAM Burkina",
+   "home": "https://www.meteoburkina.bf/",
+   "lang": "fr"
+  },
+  {
+   "cc": "sv",
+   "outlet": "MARN El Salvador",
+   "home": "https://www.snet.gob.sv/",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "outlet": "Protección Civil El Salvador",
+   "home": "https://www.proteccioncivil.gob.sv/",
+   "lang": "es"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Department of Meteorology Sri Lanka",
+   "home": "https://www.meteo.gov.lk/",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "outlet": "Disaster Management Centre",
+   "home": "https://www.dmc.gov.lk/",
+   "lang": "en"
+  },
+  {
+   "cc": "kz",
+   "outlet": "Kazhydromet",
+   "home": "https://www.kazhydromet.kz/",
+   "lang": "ru"
+  },
+  {
+   "cc": "fj",
+   "outlet": "Fiji Meteorological Service",
+   "home": "https://www.met.gov.fj/",
+   "lang": "en"
+  },
+  {
+   "cc": "fj",
+   "outlet": "NDMO Fiji",
+   "home": "https://www.ndmo.gov.fj/",
+   "lang": "en"
+  },
+  {
+   "cc": "az",
+   "outlet": "National Hydrometeorological Service Azerbaijan",
+   "home": "https://meteo.az/",
+   "lang": "az"
+  },
+  {
+   "cc": "by",
+   "outlet": "Belhydromet",
+   "home": "https://www.pogoda.by/",
+   "lang": "ru"
+  },
+  {
+   "cc": "gn",
+   "outlet": "Météo Guinée",
+   "home": "https://www.meteo-guinee.gov.gn/",
+   "lang": "fr"
+  },
+  {
+   "cc": "am",
+   "outlet": "Armhydromet",
+   "home": "https://www.armstatehydromet.am/",
+   "lang": "hy"
+  },
+  {
+   "cc": "td",
+   "outlet": "ANAM Tchad",
+   "home": "https://www.meteotchad.td/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ci",
+   "outlet": "SODEXAM",
+   "home": "https://www.sodexam.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "al",
+   "outlet": "IGEWE Albania",
+   "home": "https://www.geo.edu.al/",
+   "lang": "sq"
+  },
+  {
+   "cc": "bs",
+   "outlet": "Bahamas Department of Meteorology",
+   "home": "https://www.bahamasweather.org.bs/",
+   "lang": "en"
+  },
+  {
+   "cc": "bs",
+   "outlet": "NEMA Bahamas",
+   "home": "https://nema.gov.bs/",
+   "lang": "en"
+  },
+  {
+   "cc": "ni",
+   "outlet": "INETER",
+   "home": "https://www.ineter.gob.ni/",
+   "lang": "es"
+  },
+  {
+   "cc": "ni",
+   "outlet": "SINAPRED",
+   "home": "https://www.sinapred.gob.ni/",
+   "lang": "es"
+  },
+  {
+   "cc": "gh",
+   "outlet": "Ghana Meteorological Agency",
+   "home": "https://www.meteo.gov.gh/",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "outlet": "NADMO",
+   "home": "https://nadmo.gov.gh/",
+   "lang": "en"
+  },
+  {
+   "cc": "bo",
+   "outlet": "SENAMHI Bolivia",
+   "home": "https://senamhi.gob.bo/",
+   "lang": "es"
+  },
+  {
+   "cc": "ae",
+   "outlet": "NCM UAE",
+   "home": "https://www.ncm.gov.ae/",
+   "lang": "en"
+  },
+  {
+   "cc": "tl",
+   "outlet": "Timor-Leste Meteorology",
+   "home": "https://www.dnmg.gov.tl/",
    "lang": "pt"
   },
   {
-   "cc": "km",
-   "outlet": "Comores Infos",
-   "home": "https://www.comores-infos.net/",
+   "cc": "mr",
+   "outlet": "ONM Mauritanie",
+   "home": "https://www.onm.mr/",
    "lang": "fr"
   },
   {
-   "cc": "pw",
-   "outlet": "Palau Government",
-   "home": "https://www.palaugov.pw/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "er",
-   "outlet": "Eritrean Press",
-   "home": "https://www.eritreanpress.com/",
+   "cc": "jm",
+   "outlet": "Meteorological Service of Jamaica",
+   "home": "https://metservice.gov.jm/",
    "lang": "en"
   },
   {
-   "cc": "lr",
-   "outlet": "Liberia News Agency",
-   "home": "https://www.liberianewsagency.com/",
-   "lang": "en",
-   "state": true
+   "cc": "jm",
+   "outlet": "ODPEM",
+   "home": "https://www.odpem.org.jm/",
+   "lang": "en"
   },
   {
-   "cc": "ga",
-   "outlet": "Gabon24",
-   "home": "https://www.gabon24.ga/",
+   "cc": "ge",
+   "outlet": "National Environmental Agency Georgia",
+   "home": "https://nea.gov.ge/",
+   "lang": "ka"
+  },
+  {
+   "cc": "xk",
+   "outlet": "Kosovo Hydrometeorological Institute",
+   "home": "https://ihmk-rks.net/",
+   "lang": "sq"
+  },
+  {
+   "cc": "sr",
+   "outlet": "Meteorologische Dienst Suriname",
+   "home": "https://www.meteosuriname.com/",
+   "lang": "nl"
+  },
+  {
+   "cc": "ws",
+   "outlet": "Samoa Meteorology",
+   "home": "https://www.samet.gov.ws/",
+   "lang": "en"
+  },
+  {
+   "cc": "to",
+   "outlet": "Tonga Meteorological Service",
+   "home": "https://met.gov.to/",
+   "lang": "en"
+  },
+  {
+   "cc": "tj",
+   "outlet": "Tajik Hydromet",
+   "home": "https://meteo.tj/",
+   "lang": "ru"
+  },
+  {
+   "cc": "zw",
+   "outlet": "Meteorological Services Department Zimbabwe",
+   "home": "https://www.weatherzw.org.zw/",
+   "lang": "en"
+  },
+  {
+   "cc": "uy",
+   "outlet": "INUMET",
+   "home": "https://www.inumet.gub.uy/",
+   "lang": "es"
+  },
+  {
+   "cc": "uy",
+   "outlet": "SINAE",
+   "home": "https://www.gub.uy/sistema-nacional-emergencias/",
+   "lang": "es"
+  },
+  {
+   "cc": "tt",
+   "outlet": "Trinidad and Tobago Meteorological Service",
+   "home": "https://www.metoffice.gov.tt/",
+   "lang": "en"
+  },
+  {
+   "cc": "tt",
+   "outlet": "ODPM",
+   "home": "https://www.odpm.gov.tt/",
+   "lang": "en"
+  },
+  {
+   "cc": "ss",
+   "outlet": "South Sudan Meteorological Department",
+   "home": "https://www.ssmd.gov.ss/",
+   "lang": "en"
+  },
+  {
+   "cc": "na",
+   "outlet": "Namibia Meteorological Service",
+   "home": "https://www.meteona.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "bj",
+   "outlet": "Météo Bénin",
+   "home": "https://www.meteobenin.bj/",
    "lang": "fr"
+  },
+  {
+   "cc": "tn",
+   "outlet": "INM Tunisie",
+   "home": "https://www.meteo.tn/",
+   "lang": "fr"
+  },
+  {
+   "cc": "tm",
+   "outlet": "Turkmenhydromet",
+   "home": "https://meteo.gov.tm/",
+   "lang": "ru"
+  },
+  {
+   "cc": "tg",
+   "outlet": "Météo Togo",
+   "home": "https://www.anamet-togo.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "sl",
+   "outlet": "Sierra Leone Meteorological Agency",
+   "home": "https://slmet.gov.sl/",
+   "lang": "en"
+  },
+  {
+   "cc": "dj",
+   "outlet": "Météo Djibouti",
+   "home": "https://www.meteodjibouti.dj/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ao",
+   "outlet": "INAMET Angola",
+   "home": "https://www.inamet.gov.ao/",
+   "lang": "pt"
+  },
+  {
+   "cc": "lr",
+   "outlet": "Liberia Meteorological Service",
+   "home": "https://www.lma.gov.lr/",
+   "lang": "en"
+  },
+  {
+   "cc": "mw",
+   "outlet": "DCCMS Malawi",
+   "home": "https://www.metmalawi.gov.mw/",
+   "lang": "en"
+  },
+  {
+   "cc": "mv",
+   "outlet": "Maldives Meteorological Service",
+   "home": "https://www.meteorology.gov.mv/",
+   "lang": "en"
+  },
+  {
+   "cc": "mv",
+   "outlet": "NDMA Maldives",
+   "home": "https://ndma.gov.mv/",
+   "lang": "en"
+  },
+  {
+   "cc": "lc",
+   "outlet": "St Lucia Meteorological Services",
+   "home": "https://www.stluciamet.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "lc",
+   "outlet": "NEMO St Lucia",
+   "home": "https://www.nemo.gov.lc/",
+   "lang": "en"
+  },
+  {
+   "cc": "bi",
+   "outlet": "IGEBU",
+   "home": "https://www.igebu.bi/",
+   "lang": "fr"
+  },
+  {
+   "cc": "cv",
+   "outlet": "INMG Cabo Verde",
+   "home": "https://www.inmg.gov.cv/",
+   "lang": "pt"
+  },
+  {
+   "cc": "bb",
+   "outlet": "Barbados Meteorological Services",
+   "home": "https://www.barbadosweather.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "bb",
+   "outlet": "Barbados DEM",
+   "home": "https://dem.gov.bb/",
+   "lang": "en"
+  },
+  {
+   "cc": "km",
+   "outlet": "ANACM Comores",
+   "home": "https://www.meteocomores.km/",
+   "lang": "fr"
+  },
+  {
+   "cc": "bn",
+   "outlet": "Brunei Darussalam Meteorological Department",
+   "home": "https://www.met.gov.bn/",
+   "lang": "en"
+  },
+  {
+   "cc": "dm",
+   "outlet": "Dominica Meteorological Service",
+   "home": "https://www.weather.gov.dm/",
+   "lang": "en"
+  },
+  {
+   "cc": "bt",
+   "outlet": "NCHM Bhutan",
+   "home": "https://www.nchm.gov.bt/",
+   "lang": "en"
+  },
+  {
+   "cc": "ag",
+   "outlet": "Antigua and Barbuda Meteorological Services",
+   "home": "https://www.antiguamet.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "ag",
+   "outlet": "NODS Antigua",
+   "home": "https://nods.gov.ag/",
+   "lang": "en"
+  },
+  {
+   "cc": "om",
+   "outlet": "Oman Meteorology",
+   "home": "https://met.gov.om/",
+   "lang": "en"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Kuwait Meteorological Department",
+   "home": "https://www.met.gov.kw/",
+   "lang": "ar"
+  },
+  {
+   "cc": "kn",
+   "outlet": "NEMA St Kitts and Nevis",
+   "home": "https://www.nema.gov.kn/",
+   "lang": "en"
+  },
+  {
+   "cc": "gm",
+   "outlet": "Gambia DWR",
+   "home": "https://www.dwr.gov.gm/",
+   "lang": "en"
+  },
+  {
+   "cc": "gd",
+   "outlet": "NaDMA Grenada",
+   "home": "https://nadma.gov.gd/",
+   "lang": "en"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Lesotho Meteorological Services",
+   "home": "https://www.lesmet.org.ls/",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini Meteorological Service",
+   "home": "https://www.swazimet.gov.sz/",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "outlet": "NDMA Eswatini",
+   "home": "https://ndma.org.sz/",
+   "lang": "en"
+  },
+  {
+   "cc": "st",
+   "outlet": "INM São Tomé",
+   "home": "https://www.inm.st/",
+   "lang": "pt"
+  },
+  {
+   "cc": "mh",
+   "outlet": "NDMO Marshall Islands",
+   "home": "https://rmi-ndmo.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Seychelles Meteorological Authority",
+   "home": "https://www.meteo.gov.sc/",
+   "lang": "en"
+  },
+  {
+   "cc": "sc",
+   "outlet": "DRDM Seychelles",
+   "home": "https://www.drdm.gov.sc/",
+   "lang": "en"
+  },
+  {
+   "cc": "gq",
+   "outlet": "Meteorología Guinea Ecuatorial",
+   "home": "https://www.meteo-ge.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "gw",
+   "outlet": "INM Guiné-Bissau",
+   "home": "https://www.inm.gw/",
+   "lang": "pt"
+  },
+  {
+   "cc": "pw",
+   "outlet": "Palau Weather Service",
+   "home": "https://www.palauweather.org/",
+   "lang": "en"
   }
  ]
 }
