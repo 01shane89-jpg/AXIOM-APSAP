@@ -19,7 +19,7 @@
 ["n1226378422",33.99118,71.49179,"pk",{"name":"Kulsoom Maternity Home","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["n1226378424",33.99085,71.49134,"pk",{"name":"Shakat Khanum Clinic","amenity":"hospital","healthcare":"hospital"}],
 ["n1226398110",33.99595,71.48705,"pk",{"name":"Khyber Teaching Hospital - Accident and Emergency","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Pubic","operator:type":"government"}],
-["n13597390826",33.38217,70.0875,"af",{"name":"Hamid Curative Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;paediatrics","operator":"Dr Abdullah Hamid","operator:type":"private","addr:housenumber":"1","addr:street":"Lakan Tang tang madrassa","addr:city":"khost","addr:postcode":"2500"}],
+["n13597390826",33.38217,70.0875,"af",{"name":"Hamid Curative Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;paediatrics","operator":"Dr Abdullah Hamid","operator:type":"private","addr:housenumber":"1","addr:street":"Lakan Tang tang madrassa","addr:city":"khost","addr:postcode":"2500","opening_hours":"24/7"}],
 ["n14257192102",32.78506,71.29577,"pk",{"name":"Al-Rehman Clinic Store, Trag Sharif","amenity":"clinic","phone":"+923006086107","addr:street":"Essa Khel-Mianwali Road","addr:postcode":"42420"}],
 ["n14296465503",32.69066,71.27165,"pk",{"name":"Al-Shifa Hospital","amenity":"hospital","addr:street":"Essa Khel-Mianwali Road","addr:postcode":"42430"}],
 ["n14296476301",32.68991,71.27106,"pk",{"name":"Dr. Humaira Fahad AIM Hospital","amenity":"hospital","addr:street":"Essa Khel-Mianwali Road","addr:postcode":"42430"}],

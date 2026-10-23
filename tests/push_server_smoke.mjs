@@ -2,8 +2,9 @@
 // tools/push_lib.mjs fetchList, assets/osap-push.js).
 // 1. GitHub Actions OIDC tokens: only a correctly signed, unexpired token for audience "osap-push" from this repository's
 //    main branch is accepted.
-// 2. The function: the owner's account lists, adds and stops watches; anyone else, or no sign-in, gets nothing; the refresh
-//    job's GitHub token can only read; bad or oversized watches are refused.
+// 2. The function: every account lists, adds and stops its own watches only, up to its plan's limit (Free none, Mid 5); no
+//    sign-in gets nothing; the refresh job's GitHub token can only read, and reads every account's watches tagged with the
+//    account's plan now, ids made unique, a deleted or downgraded account's left out; bad or oversized watches are refused.
 // 3. fetchList (the refresh job) asks GitHub for its token, reads the list with it, and drops a watch that does not check.
 // 4. The page: Send to OSAP keeps the watch on the server (no GitHub issue), the status turns On, Stop removes it.
 // Run from the repo root: node tests/push_server_smoke.mjs   (needs the playwright package and Chromium for part 4)
@@ -50,7 +51,10 @@ ok(await rejects(verifyActionsToken(b64u(JSON.stringify({ alg: "none", kid: "k1"
 // ---------- 2. the function ----------
 const env = { OSAP_OWNERS: "" };
 globalThis.Netlify = { env: { get: (k) => env[k] } };
-const USERS = { OWNER: { id: "u1", email: "boss@test", app_metadata: { roles: ["owner"] } }, OTHER: { id: "u2", email: "x@test", app_metadata: { roles: [] } } };
+const USERS = { OWNER: { id: "u1-owner-0001", email: "boss@test", app_metadata: { roles: ["owner"] } }, OTHER: { id: "u2-free-00002", email: "x@test", app_metadata: { roles: [] } },
+  MID: { id: "u3-mid-000003", email: "m@test", app_metadata: { roles: ["mid"] } }, MID2: { id: "u4-mid-000004", email: "n@test", app_metadata: { roles: ["mid"] } } };
+let usersDown = false;
+const listUsers = async ({ page }) => { if (usersDown) throw new Error("identity down"); return page === 1 ? Object.values(USERS) : []; };
 const realFetch = globalThis.fetch;
 globalThis.fetch = async (u, o = {}) => {
   if (/\/\.netlify\/identity\/user$/.test(String(u))) {
@@ -60,22 +64,50 @@ globalThis.fetch = async (u, o = {}) => {
   return realFetch(u, o);
 };
 const fn = await import("../netlify/functions/osap-push.mjs"), PUSH = fn.default;
-const store = memoryStore(); fn._test(store, jwks);
+const store = memoryStore(); fn._test(store, jwks, listUsers);
 const req = (method, tok, body, q = "", h = {}) => PUSH(new Request("https://osap.test/api/osap-push" + q, { method, headers: { ...(tok ? { authorization: "Bearer " + tok } : {}), ...h }, body }));
 const W = { v: 1, id: "wtest123", name: "Flood Bangkok", cc: "th", area: null, layers: ["flood"], kw: ["flood"], minSev: 1, topic: "osap-abcdefghijklmnop1234" };
 ok((await req("GET")).status === 401, "no sign-in: refused");
 ok((await req("GET", "NOPE")).status === 401, "a token Identity does not know: refused");
-ok((await req("GET", "OTHER")).status === 403, "an account that is not the owner: refused");
+let r = await req("GET", "OTHER"), j = await r.json();
+ok(r.status === 200 && j.watches.length === 0 && j.max === 0 && j.plan === "free", "a Free account reads its own empty list, limit 0");
 ok((await (await req("GET", "OWNER")).json()).watches.length === 0, "the owner reads an empty list");
-let r = await req("POST", "OWNER", JSON.stringify(W));
+r = await req("POST", "OWNER", JSON.stringify(W));
 ok(r.status === 200 && (await r.json()).watches.length === 1, "the owner adds a watch");
-ok((await req("POST", "OTHER", JSON.stringify({ ...W, id: "wother1" }))).status === 403, "someone else cannot add one");
+ok((await req("POST", "OTHER", JSON.stringify({ ...W, id: "wother1" }))).status === 402, "a Free account cannot add one");
+r = await req("GET", "MID"); j = await r.json();
+ok(r.status === 200 && j.watches.length === 0 && j.max === 5 && j.plan === "mid", "a Mid account does not see the owner's watches; its limit is 5");
+for (let i = 1; i <= 5; i++) await req("POST", "MID", JSON.stringify({ ...W, id: "wmid00" + i, plan: "full" }));
+r = await req("POST", "MID", JSON.stringify({ ...W, id: "wmid006" }));
+ok(r.status === 409, "a Mid account's sixth watch is refused");
+r = await req("POST", "MID", JSON.stringify({ ...W, id: "wmid001", name: "Changed" }));
+ok(r.status === 200 && (await r.json()).watches.length === 5, "a Mid account can still replace one of its five");
+ok(!(await store.get("u/" + USERS.MID.id)).watches.some((w) => "plan" in w), "the page cannot set a watch's plan");
+await req("POST", "MID2", JSON.stringify({ ...W, id: "wmid001" }));
+ok((await (await req("GET", "OWNER")).json()).watches.length === 1, "other accounts' watches stay out of the owner's list");
+r = await req("DELETE", "MID2", undefined, "?id=wmid002");
+ok((await store.get("u/" + USERS.MID.id)).watches.length === 5, "an account cannot stop another account's watch");
 ok((await req("POST", "OWNER", JSON.stringify({ ...W, topic: "not-ours" }))).status === 400, "a watch with a channel the app does not make is refused");
 ok((await req("POST", "OWNER", "not json")).status === 400, "text that is not a watch is refused");
 ok((await req("POST", "OWNER", JSON.stringify({ ...W, name: "x".repeat(30000) }))).status === 413, "an oversized watch is refused");
 const act = await token();
-r = await req("GET", act, undefined, "", { "x-osap-caller": "actions" });
-ok(r.status === 200 && (await r.json()).watches[0].id === "wtest123", "the refresh job's GitHub token reads the list");
+r = await req("GET", act, undefined, "", { "x-osap-caller": "actions" }); j = await r.json();
+ok(r.status === 200 && j.watches.length === 7 && j.watches.some((w) => w.id === "wtest123" && w.plan === "full"), "the refresh job's GitHub token reads every account's watches");
+const midIds = j.watches.filter((w) => w.plan === "mid").map((w) => w.id);
+ok(midIds.length === 6 && new Set(midIds).size === 6 && midIds.every((x) => /^w[0-9a-f]{8}-mid00\d$/.test(x)), "Mid watches are tagged mid, and two accounts' same id stay apart");
+ok(!JSON.stringify(j).includes("@test") && !JSON.stringify(j).includes("u3-mid"), "no email or account id leaves the server");
+USERS.MID.app_metadata.roles = [];
+j = await (await req("GET", act, undefined, "", { "x-osap-caller": "actions" })).json();
+ok(j.watches.length === 2, "an account that drops to Free has its push watches left out");
+USERS.MID.app_metadata.roles = ["mid"];
+delete USERS.MID2;
+j = await (await req("GET", act, undefined, "", { "x-osap-caller": "actions" })).json();
+ok(j.watches.length === 6, "a deleted account's push watches are left out");
+usersDown = true;
+ok((await req("GET", act, undefined, "", { "x-osap-caller": "actions" })).status === 503, "when the accounts cannot be read the job gets 503, not a short list");
+usersDown = false;
+for (let i = 1; i <= 5; i++) await req("DELETE", "MID", undefined, "?id=wmid00" + i);
+ok(!(await store.get("u/" + USERS.MID.id)), "stopping an account's last watch removes its list");
 ok((await req("POST", act, JSON.stringify({ ...W, id: "wjob1" }), "", { "x-osap-caller": "actions" })).status === 405, "the refresh job's token cannot write");
 ok((await req("GET", await token({ repository: "fork/AXIOM-APSAP" }), undefined, "", { "x-osap-caller": "actions" })).status === 403, "a fork's job token is refused");
 ok((await req("GET", act)).status === 401, "a GitHub token without the job header is treated as a sign-in, and refused");
@@ -98,12 +130,12 @@ globalThis.fetch = async (u, o = {}) => {
 const { fetchList } = await import("../tools/push_lib.mjs");
 const got = await fetchList();
 ok(asked.length === 1 && /audience=osap-push/.test(asked[0]), "the job asks GitHub for a token for audience osap-push");
-ok(got.watches.length === 1 && got.watches[0].id === "wtest123", "the job gets the list and drops a watch that does not check");
+ok(got.watches.length === 1 && got.watches[0].id === "wtest123" && got.watches[0].plan === "full", "the job gets the list and drops a watch that does not check");
 globalThis.fetch = realFetch;
 delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL; delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
 
 // ---------- 4. the page ----------
-const pageStore = memoryStore(); fn._test(pageStore, jwks);
+const pageStore = memoryStore(); fn._test(pageStore, jwks, listUsers);
 globalThis.fetch = async (u, o = {}) => /\/\.netlify\/identity\/user$/.test(String(u)) ? Response.json(USERS.OWNER) : realFetch(u, o);
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".css": "text/css", ".woff2": "font/woff2" };
 const root = process.cwd();
@@ -142,6 +174,7 @@ await p.waitForFunction(() => /Status:\s*On\./.test((document.querySelector("#wa
 const kept = await pageStore.get("watches");
 ok(kept && kept.watches.length === 1 && kept.watches[0].id === "wpage123" && /^osap-[a-z0-9]{24}$/.test(kept.watches[0].topic), "Send to OSAP keeps the watch on the server");
 ok(/Status:\s*On\./.test(await p.evaluate(() => document.querySelector("#watchdlg .wnotif").textContent)), "the status turns On at once");
+ok(/1 of 25 push watches used on your Full plan/.test(await p.evaluate(() => document.querySelector("#watchdlg .wnotif").textContent)), "the panel says how many of the plan's push watches are used");
 ok(!outside.some((u) => /github\.com/.test(u)), "nothing went to GitHub");
 await p.evaluate((s) => document.querySelector(s).click(), "#watchdlg [data-push-stop]"); await p.waitForTimeout(800);
 ok((await pageStore.get("watches")).watches.length === 0, "Stop push alerts removes it from the server");

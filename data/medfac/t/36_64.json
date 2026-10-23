@@ -1,6 +1,6 @@
 [["n1042050636",36.94242,65.20621,"af",{"name":"Andkhoi Airport","aeroway":"aerodrome"}],
 ["n1042088812",37.81102,65.96181,"tm",{"name":"Gowurdak aerodromy","name:en":"Gaurdak Airport","aeroway":"aerodrome","wikidata":"Q11824403"}],
-["n312989706",36.75115,65.9098,"af",{"name":"Sheberghan Airfield","name:en":"Sheberghan Airfield","aeroway":"aerodrome","icao":"OASG","aerodrome:type":"public"}],
+["n312989706",36.75115,65.9098,"af",{"name":"Sheberghan Airfield","name:en":"Sheberghan Airfield","aeroway":"aerodrome","icao":"OASG","aerodrome:type":"public","wikidata":"Q2875655"}],
 ["n4417477390",36.66509,65.75759,"af",{"name":"ریاست صحت عامه جوزجان","name:en":"Jawzjan Public Health Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n4647525889",37.83859,65.21182,"tm",{"name":"Göz Hassahanasy","name:en":"Eye Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"ophthalmology","addr:street":"S. Nyýazow köçesi","addr:city":"Kerki","opening_hours":"Mo-Sa 09:00-18:00"}],
 ["n6949062185",37.99628,64.99618,"tm",{"name:en":"Chohpetde","amenity":"clinic","healthcare":"clinic","addr:housenumber":"72","addr:street":"Rahim Taňrygulyýew köçesi","addr:city":"Altyn asyr geňeşligi"}],

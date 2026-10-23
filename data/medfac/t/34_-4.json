@@ -17,7 +17,7 @@
 ["n5262083523",35.30142,-2.97553,"ma",{"name":"Hôpital Mariouari et Idoudouhan ⵙⴻⴱⴼⵉⵟⴰⵔ ⴻⵏ ⵢ'ⴷⵓⴷⵓⵃⴻⵏ مستشفى ماريواري وإدودوحن","amenity":"hospital","healthcare":"hospital"}],
 ["n5490877672",35.28281,-2.94129,"es",{"name":"Centro de Salud Polaviaja Zona Este","amenity":"clinic","healthcare":"clinic","addr:city":"Melilla"}],
 ["n5682327748",35.08187,-2.22799,"ma",{"name":"Mosah Medical","amenity":"clinic","healthcare":"clinic","addr:street":"Boulevard Yousef Ibn Tachfine"}],
-["n6313067686",35.08368,-2.1967,"dz",{"name":"الدكتور هبر محمد","amenity":"clinic","healthcare":"clinic","addr:city":"مرسى بن مهيدي"}],
+["n6313067686",35.08368,-2.1967,"dz",{"amenity":"clinic","healthcare":"clinic","addr:city":"مرسى بن مهيدي","osap:withheld":"1"}],
 ["n8371384004",34.97705,-3.38368,"ma",{"aeroway":"helipad"}],
 ["n8377190516",35.19574,-3.88751,"ma",{"name":"Centre Hospitalier Provincial Mohammed VI","amenity":"hospital","healthcare":"hospital","operator":"Ministère de la Santé","operator:type":"public","addr:street":"La Rocade Méditerranéenne الطريق الساحلية المتوسطية","addr:city":"Al Hoceima"}],
 ["r10652810",35.28015,-2.95645,"es",{"name":"Aeropuerto de Melilla","name:en":"Melilla Airport","operator":"Aena","contact:phone":"+34 913 21 10 00","website":"https://www.aena.es/es/melilla.html","aeroway":"aerodrome","icao":"GEML","iata":"MLN","aerodrome:type":"international","wikidata":"Q651392"}],
@@ -74,5 +74,5 @@
 ["w789174628",34.94233,-2.73556,"ma",{"amenity":"hospital","healthcare":"hospital"}],
 ["w789174876",35.00741,-3.54593,"ma",{"name":"Centre de santé Tafersit","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["w789269042",34.92544,-2.32701,"ma",{"name":"Clinique Moulouya","amenity":"hospital","healthcare":"hospital"}],
-["w87265858",35.08142,-2.20195,"dz",{"name":"مستوصف مرسى بن مهيدي","amenity":"hospital","healthcare":"hospital","addr:city":"مرسى بن مهيدي"}],
+["w87265858",35.08142,-2.20195,"dz",{"name":"Polyclinique Marsa Ben M'hidi;مستوصف مرسى بن مهيدي","amenity":"hospital","healthcare":"hospital","addr:city":"مرسى بن مهيدي","opening_hours":"24/7"}],
 ["w908806511",34.97598,-3.38448,"ma",{"amenity":"hospital","healthcare":"hospital"}]]

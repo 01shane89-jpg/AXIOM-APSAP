@@ -1,5 +1,5 @@
 [["n10189697530",-38.13988,-61.77811,"ar",{"emergency":"ambulance_station"}],
-["n1042020610",-38.4986,-61.8844,"ar",{"name":"Aeródromo Cabildo","aeroway":"aerodrome"}],
+["n1042020610",-38.4986,-61.8844,"ar",{"name":"Aeródromo Cabildo","aeroway":"aerodrome","wikidata":"Q58820384"}],
 ["n1042020974",-38.03045,-60.13449,"ar",{"name":"Aeródromo Adolfo Gonzales Chaves","operator:type":"public","aeroway":"aerodrome"}],
 ["n1042022058",-38.3478,-60.2761,"ar",{"name":"Aeródromo Petrazzini","aeroway":"aerodrome"}],
 ["n10930740333",-38.37844,-60.27982,"ar",{"amenity":"clinic","healthcare":"clinic"}],
@@ -23,7 +23,7 @@
 ["n4126309890",-38.7241,-61.27587,"ar",{"name":"hospital municipal \" Eva Peròn\"","amenity":"hospital","healthcare":"hospital"}],
 ["n5564841240",-38.67898,-61.08823,"ar",{"name":"Unidad Sanitaria Doctor Pedro J. Testani","amenity":"hospital","healthcare":"hospital","addr:street":"Aurelia Diez de Fernández","addr:city":"El Perdido","addr:postcode":"8156"}],
 ["n6408227583",-38.40667,-60.30054,"ar",{"name":"Aeródromo Santagiulian","operator:type":"private","aeroway":"aerodrome"}],
-["r18021041",-38.20505,-61.76109,"ar",{"name":"Aeródromo Saldungaray","phone":"+54 291 491 6085","aeroway":"aerodrome"}],
+["r18021041",-38.20505,-61.76109,"ar",{"name":"Aeródromo Saldungaray","phone":"+54 291 491 6085","aeroway":"aerodrome","wikidata":"Q53887043"}],
 ["w1068341562",-38.13998,-61.79642,"ar",{"name":"Unidad Sanitaria Doctor Emilio Aldaya","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"40","addr:street":"Juan Bautista Alberdi","addr:city":"Sierra de la Ventana","addr:postcode":"8168"}],
 ["w1084920771",-38.38179,-60.27644,"ar",{"name":"Clinica Hispano","amenity":"clinic","healthcare":"clinic"}],
 ["w111876387",-38.03733,-60.1027,"ar",{"name":"Hospital Anita Eliçagaray","healthcare":"hospital"}],
@@ -34,7 +34,7 @@
 ["w1365552415",-38.24206,-61.82589,"ar",{"name":"Saldungaray - Santo Tomás de la Sierra","addr:city":"Saldungaray","aeroway":"aerodrome"}],
 ["w1516377420",-38.74862,-60.6083,"ar",{"amenity":"hospital","healthcare":"hospital"}],
 ["w169015178",-38.00617,-61.33211,"ar",{"name":"Aeroclub Coronel Pringles","aeroway":"aerodrome"}],
-["w188609017",-38.38616,-60.32975,"ar",{"name":"Aeropuerto Tres Arroyos","name:en":"Tres Arroyos Airport","aeroway":"aerodrome","icao":"SAZH","iata":"OYO"}],
+["w188609017",-38.38616,-60.32975,"ar",{"name":"Aeropuerto Tres Arroyos","name:en":"Tres Arroyos Airport","aeroway":"aerodrome","icao":"SAZH","iata":"OYO","wikidata":"Q7838704"}],
 ["w296099024",-38.72414,-61.27585,"ar",{"name":"Hospital Municipal Eva Perón","amenity":"hospital","healthcare":"hospital"}],
 ["w581653886",-38.67915,-61.08823,"ar",{"amenity":"hospital","healthcare":"hospital"}],
-["w961426163",-38.74137,-61.25643,"ar",{"name":"Aeródromo de Coronel Dorrego","addr:housenumber":"Km 593","addr:street":"Ruta Nacional 3","addr:city":"Coronel Dorrego","addr:postcode":"B8150","aeroway":"aerodrome"}]]
+["w961426163",-38.74137,-61.25643,"ar",{"name":"Aeródromo de Coronel Dorrego","addr:housenumber":"Km 593","addr:street":"Ruta Nacional 3","addr:city":"Coronel Dorrego","addr:postcode":"B8150","aeroway":"aerodrome","wikidata":"Q58821868"}]]
