@@ -430,7 +430,8 @@ jobs:
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
           exit 1
 
-  # Push watches (tools/push_watches.mjs): after each refresh, every watch kept on OSAP's server (added from the app's Push to
+  # Push watches (tools/push_watches.mjs): after each refresh, every account's watches kept on OSAP's server (Mid and Full plans,
+  # each checked with its plan's data; added from the app's Push to
   # phone button; read with this job's GitHub OIDC token, so no secret, see tools/push_lib.mjs) is checked by opening its country's page headless on the new data, and new matching reports are sent to the
   # watch's ntfy.sh channel. No key or account: ntfy.sh takes anonymous posts. What was already seen is kept in the Actions cache,
   # not in the repo. "push-test" (any branch) sends the newest match of each watch once, marked [test], and keeps nothing.
