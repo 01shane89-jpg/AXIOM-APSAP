@@ -4,7 +4,7 @@
 // itself. Case content is not kept here (milestone 2 seals it on members' devices); this file holds names, members and roles.
 //
 // Roles belong to a person in one case, not to the account:
-//   lead     read; invite, remove, change roles, rename; (milestone 3: approve the work of analysts)
+//   lead     read; invite, remove, change roles, rename; approve or reject items in the case
 //   analyst  read; add their own work (it stays a proposal until a lead approves it)
 //   viewer   read only
 // Deny by default: anyone not a member of a case gets "No such case." (404), the same answer as for a case that does not exist,
@@ -29,6 +29,8 @@ export const ROLES = ["viewer", "analyst", "lead"];
 export const MAX_MEMBERS = 50; // members and open invites together
 export const MAX_CASES = 50; // cases one account may belong to
 export const NAME_MAX = 60, CALL_MAX = 24, REASON_MAX = 300, LOG_MAX = 200;
+export const MAX_ITEMS = 5000; // item decisions a case keeps in its record
+const ITEM_ID = /^[0-9a-f]{32}$/, ITEM_FP = /^[0-9a-f]{16,64}$/, SEALED = /^[A-Za-z0-9+/]{20,1600}={0,2}$/;
 
 export class CaseError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -113,6 +115,7 @@ export function viewOf(c, actor) {
     id: c.id, name: c.name, created: c.created, version: c.version, epoch: c.epoch || 1, role,
     members: Object.entries(c.members).map(([uid, m]) => ({ uid, role: m.role, call: m.call || "", since: m.since, me: uid === actor.uid, ...(lead ? { email: m.email || "" } : {}) })),
     invites: lead ? Object.values(c.invites || {}).map((v) => ({ email: v.email, role: v.role, at: v.at })) : undefined,
+    items: c.items || {},
   };
 }
 
@@ -239,6 +242,22 @@ export async function run(store, actor, body, opts = {}) {
         }
         step = { action: b.cmd, target: { kind: "member", id: actor.uid }, detail: b.cmd === "accept" ? { role: invited.role } : {},
           after: [async () => dropFrom(store, await iKey(actor.email), c.id), ...(b.cmd === "accept" ? [async () => addTo(store, await uKey(actor.uid), c.id)] : [])] };
+        break;
+      }
+      case "approve":
+      case "reject": {
+        // a lead's judgement on one item of the case (milestone 3). The item itself is sealed; the server sees only an opaque id,
+        // a fingerprint of the item's content as approved (an edit after that shows as changed on members' devices) and,
+        // optionally, the reason sealed with the case key. Analysts, viewers and anything acting for them cannot do this.
+        if (!can.manage(role)) throw no("Only a lead can approve or reject.");
+        const t = b.target || {}, id = String(t.id || ""), fp = String(t.fp || "");
+        if (!ITEM_ID.test(id) || !ITEM_FP.test(fp)) throw bad("That item reference is not valid.");
+        if (b.sreason != null && !SEALED.test(String(b.sreason))) throw bad("The reason must be sealed with the case key.");
+        c.items = c.items || {};
+        if (!c.items[id] && Object.keys(c.items).length >= MAX_ITEMS) throw bad("This case holds " + MAX_ITEMS + " decisions on items already.");
+        const state = b.cmd === "approve" ? "approved" : "rejected";
+        c.items[id] = { state, fp, by: actor.uid, at: new Date(now).toISOString(), version: c.version + 1, ...(b.sreason ? { sreason: String(b.sreason) } : {}) };
+        step = { action: b.cmd, target: { kind: "item", id, fp }, detail: { state, ...(b.sreason ? { sreason: String(b.sreason) } : {}) } };
         break;
       }
       case "call": {

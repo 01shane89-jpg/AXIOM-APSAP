@@ -194,13 +194,18 @@
         b("Analyst") + ": adds and changes items.", b("Viewer") + ": reads the case. Changes a viewer makes stay on their own device."]) +
       "<h3>Start a case</h3>" +
       ul(["Open " + b("My work") + ", then " + b("Workspaces") + ". Under a workspace press " + b("Share as a case") + ", give it a name and your call sign, and press " + b("Create case") + ".",
-        "Invite each member by the email of their OSAP account, with a role. They see the invite when they sign in (the email must be confirmed)."]) +
+        "Invite each member by the email of their OSAP account, with a role. They see the invite when they sign in (the email must be confirmed).",
+        "A team shared by link can move to a case: its owner opens the team and presses " + b("Move to a team case") + ". The case is made from the same workspace, with every item and who added it. Members on the old links keep what they have and are told to ask the owner for an invite."]) +
       "<h3>Join a case</h3>" +
       ul(["Press " + b("Team cases") + " in My work > Workspaces. Open the invite, type your call sign and press " + b("Join case") + ". The case's items go into a new workspace.",
         "The first time, the case waits until a lead's device hands your device the case key; this happens on the lead's next sync."]) +
       "<h3>Remove someone</h3>" +
       ul(["A lead presses " + b("Remove") + " beside the member. The server refuses them at once, and the lead's device makes a new case key for the members left, so new items are sealed under a key the removed person never had. What they already saw stays on their devices.",
-        "Every change to members and roles is kept in the case record, with who made it, the reason given and when: press " + b("Show who did what") + "."]) },
+        "Every change to members and roles is kept in the case record, with who made it, the reason given and when: press " + b("Show who did what") + "."]) +
+      "<h3>Analyst workspace and approval</h3>" +
+      ul(["With a case's workspace open, members get the " + b("Analyst") + " workspace for the case's entities and links.",
+        "An entity or link a member adds is a proposal. A lead presses " + b("Approve") + " or " + b("Reject") + ", with an optional reason that is sealed in the case record. If the item is edited later, it shows as a proposal again.",
+        "Auto-proposed links stay drafts until someone accepts them, and nothing is approved by OSAP or by AI."]) },
     { id: "photocheck", t: "Photo and video check", h:
       "<p>Checks where and when a picture or video was taken. Everything runs on your device: nothing is uploaded.</p>" +
       ul(["Open it from " + b("My work") + " > " + b("Check a photo") + ", from a point on the map with " + b("Check a photo here") + ", or from a point's photo with " + b("Check this photo") + ". It sits beside the map.",

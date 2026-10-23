@@ -26,6 +26,7 @@ ok(tierOfPath("data/live/ucdp.js") === "mid", "conflict events need Mid");
 ok(tierOfPath("data/something-new/x.js") === "mid", "a data path no rule names needs Mid (closed by default)");
 ok(tierOfPath("data/claims/th.json") === "full", "claims need Full");
 ok(tierOfPath("data/live/evsum.js") === "full", "AI event summaries need Full");
+ok(tierOfPath("data/live/evsum_ai.js") === "full", "AI event summaries drafted on the runner need Full");
 ok(tierOfPath("data/live/daily/th.js") === "full", "AI daily briefs need Full");
 ok(tierOfPath("data/axiom/osap-bundle.ndjson") === "full", "the AXIOM bundle needs Full");
 ok(tierOfPath("assets/osap-news.js") === null, "app files are not data");

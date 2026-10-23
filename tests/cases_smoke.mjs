@@ -57,7 +57,7 @@ const casesFn = await import("../netlify/functions/osap-cases.mjs"), CASES = cas
 const store = memoryStore(); casesFn.useStore(() => store);
 
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
-let fails = 0;
+let fails = 0, promptAnswer = "";
 function ok(c, m, x) { console.log((c ? "PASS " : "FAIL ") + m + (x === undefined ? "" : " " + JSON.stringify(x))); if (!c) fails++; }
 
 async function device(token, seed, viewport) {
@@ -73,7 +73,7 @@ async function device(token, seed, viewport) {
   }, { t: token, seed: seed || {} });
   const p = await ctx.newPage(); const errs = [];
   p.on("pageerror", (e) => errs.push(String(e.message).slice(0, 200)));
-  p.on("dialog", (d) => d.accept());
+  p.on("dialog", (d) => d.accept(d.type() === "prompt" ? promptAnswer : undefined));
   await p.goto(base + "#th/map");
   await p.waitForFunction(() => window.OSAP_CASES && window.OSAP_WS && window.OSAP_TIER && window.OSAP_TIER.on() && window.OSAP_CASES.on(), null, { timeout: 40000 });
   await p.waitForTimeout(500);
@@ -211,7 +211,45 @@ const rec = await msg(L);
 ok(/LEAD 6 made the case/.test(rec) && /invited someone as Analyst/.test(rec) && /ANA 2 joined/.test(rec) && /removed a member/.test(rec) && /rotated out/.test(rec) && /Analyst to Viewer/.test(rec), "the case record shows who did what and why", rec.split("Case record")[1]);
 ok(!/view@test.org/.test(rec.split("Case record")[1] || ""), "the record carries no emails");
 
-// 10. on a phone
+// 10. the Analyst workspace opens for members of the open case (none of these accounts is the OSAP owner)
+await L.p.reload(); await L.p.waitForFunction(() => window.OSAP_CASES && window.OSAP_TIER && window.OSAP_TIER.ready, null, { timeout: 40000 });
+await L.p.waitForSelector("[data-an-btn]", { timeout: 20000 });
+await L.p.locator("[data-an-btn]").first().click();
+await L.p.waitForSelector("#anws [data-an-case]", { timeout: 15000 });
+ok(/Team case Deep South cell/.test(await L.p.textContent("#anws [data-an-case]")) && /Lead/.test(await L.p.textContent("#anws [data-an-case]")), "the lead's open case workspace gets the Analyst workspace, labelled with the case and role");
+ok(!/Face ID/.test(await L.p.textContent("#anws")), "it does not claim to be device-only");
+
+// 11. a lead approves an entity in the case; an edit afterwards makes it a proposal again
+await L.p.evaluate(() => { localStorage.setItem("osap-an-ent", JSON.stringify({ schema: "osap-an-ent/1", items: [{ id: "ent-x1", name: "Cell Kilo", type: "armed group", group: "Your entities", note: "" }], notes: {} })); });
+await L.p.evaluate((id) => OSAP_CASES.syncNow(id), A);
+await L.p.locator('#anws [data-an-tab="ents"]').click();
+await L.p.waitForSelector('#anws [data-an-appr="proposal"]', { timeout: 15000 });
+ok(/Proposal, not approved by a lead/.test(await L.p.textContent("#anws [data-an-appr]")), "the lead's own entity starts as a proposal");
+promptAnswer = "two independent sources";
+await L.p.locator("#anws [data-an-approve]").first().click();
+await L.p.waitForSelector('#anws [data-an-appr="approved"]', { timeout: 15000 });
+ok(/Approved by LEAD 6/.test(await L.p.textContent("#anws [data-an-appr]")), "after Approve it shows who approved it");
+const held2 = JSON.stringify([...store.m.values()].map((v) => v.body));
+ok(!/Cell Kilo|two independent sources/.test(held2), "the server holds neither the entity nor the reason in readable form");
+await L.p.evaluate(() => { const v = JSON.parse(localStorage.getItem("osap-an-ent")); v.items[0].note = "edited later"; localStorage.setItem("osap-an-ent", JSON.stringify(v)); });
+await L.p.locator('#anws [data-an-tab="links"]').click(); await L.p.locator('#anws [data-an-tab="ents"]').click();
+await L.p.waitForSelector('#anws [data-an-appr="changed"]', { timeout: 15000 });
+ok(/Changed since a lead's decision/.test(await L.p.textContent("#anws [data-an-appr]")), "an edit after approval shows as a proposal again");
+await L.p.locator("#anws .x").first().click();
+await L.p.evaluate((id) => OSAP_CASES.open("case", id), A);
+await L.p.waitForSelector("#casedlg [data-cs-log]", { timeout: 15000 });
+for (let i = 0; i < 5 && !/approved an item/.test(await msg(L)); i++) {
+  if (await L.p.locator("#casedlg [data-cs-log]").count()) await click(L, "#casedlg [data-cs-log]");
+  await L.p.waitForFunction(() => /approved an item/.test(document.getElementById("casedlg").textContent), null, { timeout: 3000 }).catch(() => {});
+}
+ok(/LEAD 6 approved an item: "two independent sources"/.test(await msg(L)), "the case record shows the approval with its reason, opened on the lead's device");
+await L.p.locator("#casedlg .x").first().click();
+const Q = await device("tok-view");
+await Q.p.waitForTimeout(1500);
+ok(await Q.p.locator("[data-an-btn]").count() === 0, "an account with no open case (the removed viewer on a fresh device) gets no Analyst workspace");
+await Q.ctx.close();
+
+// 12. on a phone
 const P = await device("tok-ana", {}, { width: 390, height: 800 });
 await P.p.evaluate(() => OSAP_CASES.open("list"));
 await P.p.waitForSelector("#casedlg li", { timeout: 15000 });

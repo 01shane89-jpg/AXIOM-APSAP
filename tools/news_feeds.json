@@ -1416,6 +1416,16 @@
     {"cc":"lv","outlet":"LSM","url":"https://www.lsm.lv/rss","lang":"lv"},
     {"cc":"lv","outlet":"Diena","url":"https://diena.lv/rss","lang":"lv"},
     {"cc":"ae","outlet":"Gulf News","url":"https://gulfnews.com/feed","lang":"en"},
-    {"cc":"bt","outlet":"BBS","url":"https://www.bbs.bt/feed/","lang":"en","state":true}
+    {"cc":"bt","outlet":"BBS","url":"https://www.bbs.bt/feed/","lang":"en","state":true},
+    {"cc":"tn","outlet":"La Presse","url":"https://lapresse.tn/feed/","lang":"fr","state":true},
+    {"cc":"gh","outlet":"Ghanaian Times","url":"https://www.ghanaiantimes.com.gh/feed/","lang":"en","state":true},
+    {"cc":"ci","outlet":"AIP (Agence Ivoirienne de Presse)","url":"https://www.aip.ci/feed/","lang":"fr","state":true},
+    {"cc":"ad","outlet":"Altaveu","url":"https://www.altaveu.com/uploads/feeds/feed_altaveu_ca.xml","lang":"ca"},
+    {"cc":"ao","outlet":"O País (Angola)","url":"https://opais.ao/feed/","lang":"pt"},
+    {"cc":"mr","outlet":"Cridem","url":"https://cridem.org/rss/actualites.php","lang":"fr"},
+    {"cc":"ae","outlet":"Emirates 24/7","url":"https://www.emirates247.com/rss/mobile/v2/flash-news.rss","lang":"en","state":true},
+    {"cc":"ws","outlet":"Talamua","url":"https://talamua.com/?feed=rss2","lang":"en"},
+    {"cc":"bf","outlet":"AIB (Agence d'Information du Burkina)","url":"https://www.aib.media/?feed=rss2","lang":"fr","state":true},
+    {"cc":"td","outlet":"Alwihda Info","url":"https://www.alwihdainfo.com/rss/","lang":"fr"}
   ]
 }
