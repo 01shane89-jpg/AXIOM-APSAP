@@ -10,6 +10,10 @@
 ["n12633015843",-33.18064,141.68264,"au",{"aeroway":"aerodrome"}],
 ["n12633015844",-33.25381,141.77779,"au",{"aeroway":"aerodrome"}],
 ["n1324600999",-32.42767,140.00402,"au",{"name":"Manna Hill Aerodrome","aeroway":"aerodrome"}],
+["n14242345365",-33.93249,141.94103,"au",{"aeroway":"aerodrome"}],
+["n14242345368",-33.59236,141.76291,"au",{"aeroway":"aerodrome"}],
+["n14242345370",-33.10971,141.63447,"au",{"aeroway":"aerodrome"}],
+["n14242345371",-33.04604,141.84977,"au",{"aeroway":"aerodrome"}],
 ["n281720200",-33.76271,140.12454,"au",{"aeroway":"helipad"}],
 ["n4761295387",-33.20819,141.169,"au",{"name":"Scotia Sanctuary Airport","aeroway":"aerodrome"}],
-["w177017739",-32.00638,141.47205,"au",{"name":"Broken Hill Airport","aeroway":"aerodrome","icao":"YBHI","iata":"BHQ"}]]
+["w177017739",-32.00638,141.47205,"au",{"name":"Broken Hill Airport","aeroway":"aerodrome","icao":"YBHI","iata":"BHQ","wikidata":"Q17528"}]]

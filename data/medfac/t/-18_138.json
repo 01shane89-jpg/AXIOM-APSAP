@@ -1,8 +1,8 @@
 [["n1042093143",-17.9667,139.767,"au",{"name":"Armraynald Airport","aeroway":"aerodrome"}],
-["n1042093430",-17.0867,139.56578,"au",{"name":"Bentinck Island Airport","aeroway":"aerodrome","icao":"YBTK"}],
+["n1042093430",-17.0867,139.56578,"au",{"name":"Bentinck Island Airport","aeroway":"aerodrome","icao":"YBTK","wikidata":"Q97700337"}],
 ["n1042093783",-17.725,139.41701,"au",{"name":"Escott Airport","aeroway":"aerodrome"}],
 ["n1042093902",-17.45559,138.35267,"au",{"name":"Hells Gate Airport","aeroway":"aerodrome"}],
-["n1042098739",-17.12061,139.60015,"au",{"name":"Sweers Island Airport","aeroway":"aerodrome","icao":"YSWE"}],
+["n1042098739",-17.12061,139.60015,"au",{"name":"Sweers Island Airport","aeroway":"aerodrome","icao":"YSWE","wikidata":"Q97703232"}],
 ["n1042099964",-17.32319,138.23762,"au",{"name":"Westmoreland Airport","aeroway":"aerodrome"}],
 ["n4326858760",-17.74553,139.5387,"au",{"name":"Burketown Aerodrome","operator":"Burketown Shire Council","aeroway":"aerodrome","icao":"YBKT","iata":"BUC"}],
 ["w1156470389",-17.75064,139.53293,"au",{"name":"Burketown Airport","aeroway":"aerodrome","icao":"YBKT","iata":"BUC"}],
@@ -16,4 +16,4 @@
 ["w785299252",-17.93916,138.82803,"au",{"name":"Doomadgee Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service"}],
 ["w785299256",-17.94171,138.82902,"au",{"name":"Doomadgee Community Health Service","amenity":"clinic","healthcare":"clinic"}],
 ["w821288776",-17.74016,139.54823,"au",{"name":"Gidgee Healing - Moungibi Ciinic","healthcare":"clinic"}],
-["w839541468",-16.65935,139.17023,"au",{"name":"Mornington Island Airport","aeroway":"aerodrome","icao":"YMTI","iata":"ONG"}]]
+["w839541468",-16.65935,139.17023,"au",{"name":"Mornington Island Airport","aeroway":"aerodrome","icao":"YMTI","iata":"ONG","wikidata":"Q6913022"}]]

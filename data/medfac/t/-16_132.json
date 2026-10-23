@@ -24,7 +24,7 @@
 ["w453949960",-14.924,133.06185,"au",{"name":"Mataranka Township Airport","aeroway":"aerodrome","icao":"YMAR"}],
 ["w461875985",-14.33614,132.42278,"au",{"name":"Katherine Heliport","aeroway":"aerodrome"}],
 ["w478145482",-14.38613,132.39346,"au",{"name":"Katherine Gorge Airport","aeroway":"aerodrome","icao":"YKHG"}],
-["w953259684",-14.51888,132.37915,"au",{"name":"RAAF Base Tindal","operator":"RAAF / Katherine Town Council","aeroway":"aerodrome","icao":"YPTN","iata":"KTR","military":"airfield"}],
+["w953259684",-14.51888,132.37915,"au",{"name":"RAAF Base Tindal","operator":"RAAF / Katherine Town Council","aeroway":"aerodrome","icao":"YPTN","iata":"KTR","military":"airfield","wikidata":"Q1551495"}],
 ["w953556707",-14.46143,132.26409,"au",{"name":"Katherine Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w953556715",-14.44011,132.2709,"au",{"aeroway":"helipad"}],
 ["w953556716",-14.43943,132.27201,"au",{"name":"Katherine Hospital","amenity":"hospital","healthcare":"hospital","operator":"Top End Health Service","operator:type":"government"}],

@@ -21,7 +21,7 @@
 ["n6212951821",21.91841,90.06267,"bd",{"name":"Community center","amenity":"clinic","addr:district":"Barguna"}],
 ["n6212952221",21.95413,90.07597,"bd",{"name":"Bothipara Community Clinic","amenity":"clinic","addr:district":"Barguna"}],
 ["n7399956225",21.41987,91.98158,"bd",{"aeroway":"helipad"}],
-["w127625837",21.45629,91.96292,"bd",{"name":"কক্সবাজার বিমানবন্দর","name:en":"Cox's Bazar Airport","operator":"বাংলাদেশ বেসামরিক বিমান চলাচল কর্তৃপক্ষ","phone":"+88-0341-64479","website":"http://www.caab.gov.bd","aeroway":"aerodrome","icao":"VGCB","iata":"CXB"}],
+["w127625837",21.45629,91.96292,"bd",{"name":"কক্সবাজার বিমানবন্দর","name:en":"Cox's Bazar Airport","operator":"বাংলাদেশ বেসামরিক বিমান চলাচল কর্তৃপক্ষ","phone":"+88-0341-64479","website":"http://www.caab.gov.bd","aeroway":"aerodrome","icao":"VGCB","iata":"CXB","wikidata":"Q1657851"}],
 ["w1545074703",21.99143,90.27291,"bd",{"aeroway":"helipad"}],
 ["w1545074704",21.99131,90.2735,"bd",{"aeroway":"helipad"}],
 ["w531394127",21.44172,91.97601,"bd",{"name":"Fouad Al-Khateeb Hospital","amenity":"hospital","contact:phone":"+880 1790 342233","contact:website":"https://www.fouadhospitalbd.com/"}],

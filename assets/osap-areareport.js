@@ -59,7 +59,7 @@
   var SKIP = { tlpane: 1, xapane: 1, evlbl: 1, cfrep: 1, areapane: 1, lblpane: 1, measpane: 1, gridpane: 1, srchpane: 1, mylocpane: 1,
     rtpvpane: 1, rtpvtop: 1, wxlbl: 1, wxvec: 1, cbase: 1, stlines: 1, hybpane: 1, satpane: 1, roadpane: 1, tooltipPane: 1, popupPane: 1, rvpane: 1 };
   var PANE = { cfpane: "Conflict tab layers", dsbpane: "Conflict tab layers", terpane: "Terrain, flashpoints and presence", fpzone: "Terrain, flashpoints and presence",
-    infpt: "Infrastructure", pwrpt: "Power", pwrpane: "Power", airpane: "Live aircraft", campt: "Cameras", dcpt: "Data centres", svpt: "Surveillance",
+    infpt: "Infrastructure", milpt: "Military installations", pwrpt: "Power", pwrpane: "Power", airpane: "Live aircraft", campt: "Cameras", dcpt: "Data centres", svpt: "Surveillance",
     mobpane: "Movement and traffic", mobrx: "Movement and traffic", sidespane: "Military sites", lzpane: "Landing zones", evpane: "Incidents",
     wxpane: "Weather stations", atakpane: "My map points", anpane: "Analyst workspace", routewppane: "Route", vspane: "Terrain" };
   function objects(P) {

@@ -206,7 +206,7 @@
 ["w1266754636",25.16667,76.31716,"in",{"aeroway":"helipad"}],
 ["w139084766",24.5853,76.22066,"in",{"name":"Jhalawar Airfield","aeroway":"aerodrome"}],
 ["w1420995839",25.10189,76.49857,"in",{"name":"RADHA KRISHNA MEMORIAL HOSPITAL","amenity":"hospital","healthcare":"hospital"}],
-["w173773996",24.65462,77.34694,"in",{"name":"Guna","aeroway":"aerodrome","iata":"GUX"}],
+["w173773996",24.65462,77.34694,"in",{"name":"Guna","aeroway":"aerodrome","iata":"GUX","wikidata":"Q26794343"}],
 ["w378691238",25.99805,76.36031,"in",{"name":"Ranthambhore Sevika Hospital","amenity":"hospital","addr:full":"Vinayak Nagar,Sawai Madhopur","addr:district":"Sawai Madhopur","addr:postcode":"322001"}],
 ["w780567534",24.83162,77.86173,"in",{"name":"SHRI ANANDPUR DHAM CHARITABLE TRUST HOSPITAL SUKHPUR","amenity":"hospital","healthcare":"hospital","operator":"SHRI ANANDPUR DHAM TRUST"}],
 ["w915154472",24.5771,77.73265,"in",{"name":"District Hospital Ashoknagar","amenity":"hospital","contact:phone":"07543-220422","addr:street":"Isagarh Road, Near Railway Crosing","addr:subdistrict":"Shadhora","addr:district":"Ashoknagar","addr:postcode":"473331"}],

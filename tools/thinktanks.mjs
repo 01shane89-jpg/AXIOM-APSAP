@@ -65,6 +65,65 @@ const TT = [
   ["armscontrol", "Arms Control Association", "https://www.armscontrol.org/", ["https://www.armscontrol.org/rss.xml", "https://www.armscontrol.org/feed"]],
   ["idsa", "MP-IDSA", "https://www.idsa.in/", ["https://www.idsa.in/rss.xml", "https://www.idsa.in/feed"]],
   ["bellingcat", "Bellingcat", "https://www.bellingcat.com/", ["https://www.bellingcat.com/feed/"]],
+  // regional institutes added 2026-10-23 (Latin America, Africa, Pacific, Central Asia, Balkans, Gulf, South Asia, small arms and conflict)
+  ["insightcrime", "InSight Crime", "https://insightcrime.org/", ["https://insightcrime.org/feed/"]],
+  ["dialogue", "Inter-American Dialogue", "https://www.thedialogue.org/", ["https://www.thedialogue.org/feed/"]],
+  ["saiia", "SAIIA", "https://saiia.org.za/", ["https://saiia.org.za/feed/"]],
+  ["gga", "Good Governance Africa", "https://gga.org/", ["https://gga.org/feed/"]],
+  ["pcns", "Policy Center for the New South", "https://www.policycenter.ma/", ["https://www.policycenter.ma/rss.xml"]],
+  ["africanarguments", "African Arguments", "https://africanarguments.org/", ["https://africanarguments.org/feed/"]],
+  ["devpolicy", "Devpolicy Blog (ANU)", "https://devpolicy.org/", ["https://devpolicy.org/feed/"]],
+  ["caci", "CACI Analyst", "https://www.cacianalyst.org/", ["https://www.cacianalyst.org/publications/analytical-articles.html?format=feed&type=rss"]],
+  ["caspian", "Caspian Policy Center", "https://www.caspianpolicy.org/", ["https://www.caspianpolicy.org/rss.xml"]],
+  ["cabar", "CABAR.asia", "https://cabar.asia/en", ["https://cabar.asia/en/feed"]],
+  ["ewb", "European Western Balkans", "https://europeanwesternbalkans.com/", ["https://europeanwesternbalkans.com/feed/"]],
+  ["cepa", "CEPA", "https://cepa.org/", ["https://cepa.org/feed/"]],
+  ["icds", "ICDS Estonia", "https://icds.ee/en/", ["https://icds.ee/en/feed/"]],
+  ["fiia", "Finnish Institute of International Affairs", "https://www.fiia.fi/en", ["https://www.fiia.fi/en/feed"]],
+  ["sanaa", "Sana'a Center for Strategic Studies", "https://sanaacenter.org/", ["https://sanaacenter.org/feed"]],
+  ["timep", "TIMEP", "https://timep.org/", ["https://timep.org/feed/"]],
+  ["gulfif", "Gulf International Forum", "https://gulfif.org/", ["https://gulfif.org/feed/"]],
+  ["ajstudies", "Al Jazeera Centre for Studies", "https://studies.aljazeera.net/en", ["https://studies.aljazeera.net/en/rss.xml"]],
+  ["sav", "South Asian Voices (Stimson)", "https://southasianvoices.org/", ["https://southasianvoices.org/feed/"]],
+  ["issi", "ISSI Pakistan", "https://issi.org.pk/", ["https://issi.org.pk/feed/"]],
+  ["lwj", "FDD's Long War Journal", "https://www.longwarjournal.org/", ["https://www.longwarjournal.org/feed"]],
+  ["smallarms", "Small Arms Survey", "https://www.smallarmssurvey.org/", ["https://www.smallarmssurvey.org/rss.xml"]],
+  ["geopolmonitor", "Geopolitical Monitor", "https://www.geopoliticalmonitor.com/", ["https://www.geopoliticalmonitor.com/feed/"]],
+  ["globalobs", "IPI Global Observatory", "https://theglobalobservatory.org/", ["https://theglobalobservatory.org/feed/"]],
+  ["ipi", "International Peace Institute", "https://www.ipinst.org/", ["https://www.ipinst.org/feed"]],
+  // national institutes added 2026-10-23; an item naming no country is filed under the home country (HOME_CC)
+  ["oiip", "oiip (Austrian Institute for International Affairs)", "https://www.oiip.ac.at/", ["https://www.oiip.ac.at/feed"]],
+  ["gcsp", "Geneva Centre for Security Policy", "https://www.gcsp.ch/", ["https://www.gcsp.ch/rss.xml"]],
+  ["hcss", "Hague Centre for Strategic Studies", "https://hcss.nl/", ["https://hcss.nl/feed/"]],
+  ["nsc", "New Strategy Center", "https://newstrategycenter.ro/", ["https://newstrategycenter.ro/ro/feed/"]],
+  ["eliamep", "ELIAMEP", "https://www.eliamep.gr/en/", ["https://www.eliamep.gr/feed"]],
+  ["cpd", "Centre for Policy Dialogue", "https://cpd.org.bd/", ["https://cpd.org.bd/feed/"]],
+  ["bipss", "BIPSS", "https://bipss.org.bd/", ["https://bipss.org.bd/feed/"]],
+  ["imani", "IMANI Africa", "https://imaniafrica.org/", ["https://imaniafrica.org/feed/"]],
+  ["bidpa", "BIDPA", "https://bidpa.bw/", ["https://bidpa.bw/feed/"]],
+  ["derasat", "Derasat", "https://www.derasat.org.bh/en/", ["https://www.derasat.org.bh/en/feed/"]],
+  ["cepchile", "Centro de Estudios Públicos", "https://www.cepchile.cl/", ["https://www.cepchile.cl/feed"]],
+  ["milenio", "Fundación Milenio", "https://fundacion-milenio.org/", ["https://fundacion-milenio.org/feed/"]],
+  ["cieps", "CIEPS Panamá", "https://cieps.org.pa/", ["https://cieps.org.pa/feed/"]],
+  ["asies", "ASIES", "https://asies.org.gt/", ["https://asies.org.gt/feed/"]],
+  ["idea", "Fondation IDEA", "https://www.fondation-idea.lu/", ["https://www.fondation-idea.lu/feed/"]],
+  ["cddmoz", "CDD Moçambique", "https://cddmoz.org/", ["https://cddmoz.org/feed/"]],
+  ["europeum", "EUROPEUM", "https://www.europeum.org/en/", ["https://www.europeum.org/feed"]],
+  ["cippec", "CIPPEC", "https://www.cippec.org/", ["https://www.cippec.org/feed"]],
+  ["wathi", "WATHI", "https://www.wathi.org/", ["https://www.wathi.org/feed/"]],
+  ["irmo", "IRMO", "https://irmo.hr/en/", ["https://irmo.hr/en/feed/"]],
+  ["nkafu", "Nkafu Policy Institute", "https://nkafu.org/", ["https://nkafu.org/feed/"]],
+  ["lki", "LKI", "https://lki.lk/", ["https://lki.lk/feed/"]],
+  ["verite", "Verité Research", "https://www.veriteresearch.org/", ["https://www.veriteresearch.org/rss.xml"]],
+  ["kisi", "KazISS", "https://kisi.kz/en/", ["https://kisi.kz/feed"]],
+  ["newbelarus", "Center for New Ideas", "https://newideas.center/", ["https://newideas.center/feed/"]],
+  ["ipre", "IPRE", "https://ipre.md/", ["https://ipre.md/feed"]],
+  ["apri", "APRI Armenia", "https://apri.institute/", ["https://apri.institute/feed/"]],
+  ["idscs", "IDSCS", "https://idscs.org.mk/en/", ["https://idscs.org.mk/en/feed/"]],
+  ["bcsp", "Belgrade Centre for Security Policy", "https://bezbednost.org/en/", ["https://bezbednost.org/feed"]],
+  ["bayan", "Al-Bayan Center", "https://www.bayancenter.org/en/", ["https://www.bayancenter.org/en/feed/"]],
+  ["ecss", "ECSS", "https://ecss.com.eg/", ["https://ecss.com.eg/feed/"]],
+  ["hips", "Heritage Institute", "https://heritageinstitute.org/", ["https://heritageinstitute.org/feed/"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
@@ -182,7 +241,7 @@ function fixDate(d) {
 }
 
 // Institutes that cover one country only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
-const HOME_CC = { "38north": ["kp"] };
+const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"] };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;

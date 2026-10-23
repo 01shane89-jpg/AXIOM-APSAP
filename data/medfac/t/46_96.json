@@ -4,7 +4,7 @@
 ["n3900975456",46.373,96.26323,"mn",{"name":"Халдвартын эмнэлэг","amenity":"hospital"}],
 ["n3900975681",46.374,96.26236,"mn",{"name":"Анар дэнт","amenity":"hospital"}],
 ["n3900975687",46.37467,96.26154,"mn",{"name":"Үзлэгийн газар","amenity":"hospital","healthcare":"hospital"}],
-["n4445043789",46.37034,96.25472,"mn",{"name":"Surgical clinic","name:en":"Surgical clinic","amenity":"hospital","phone":"99119887","addr:housenumber":"34 тоот","addr:street":"Жинст баг"}],
+["n4445043789",46.37034,96.25472,"mn",{"name":"Surgical clinic","name:en":"Surgical clinic","amenity":"hospital","phone":"99119887","addr:housenumber":"34 тоот","addr:street":"Жинст баг","opening_hours":"24/7"}],
 ["n8219833972",47.11132,96.67349,"mn",{"name":"Эмнэлэг","amenity":"clinic","healthcare":"clinic"}],
 ["n8222518931",47.74027,96.84347,"mn",{"name":"Төрөх эмнэлэг","amenity":"clinic"}],
 ["n8222518933",47.74228,96.84193,"mn",{"name":"Уламжлалт эмнэлэг","amenity":"clinic","healthcare":"clinic"}],

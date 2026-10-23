@@ -6,4 +6,4 @@
 ["w1560941558",-15.95648,127.04971,"au",{"name":"Ellenbrae Station Airstrip","operator":"Ellenbrae Station","aeroway":"aerodrome"}],
 ["w191167911",-14.28616,126.63374,"au",{"name":"Kalumburu Airfield","aeroway":"aerodrome","icao":"YKAL","iata":"UBU","aerodrome:type":"public"}],
 ["w289757093",-15.16503,127.84051,"au",{"name":"Forest River Mission Airport","name:en":"Forest River Mission Airport","aeroway":"aerodrome","icao":"YFRV","iata":"FVR","aerodrome:type":"public"}],
-["w863692494",-14.08881,126.38046,"au",{"name":"Mungalalu-Truscott Airbase","aeroway":"aerodrome","icao":"YTST","iata":"TTX"}]]
+["w863692494",-14.08881,126.38046,"au",{"name":"Mungalalu-Truscott Airbase","aeroway":"aerodrome","icao":"YTST","iata":"TTX","wikidata":"Q1529336"}]]

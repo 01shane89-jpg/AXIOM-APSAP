@@ -1,6 +1,6 @@
 [["n1042099229",-19.21503,143.66157,"au",{"name":"Talavera Airport","aeroway":"aerodrome"}],
 ["n3782937484",-18.29215,143.54718,"au",{"name":"Georgetown Primary Health Centre","amenity":"clinic","healthcare":"clinic","phone":"+61 7 4062 1266","website":"https://www.health.qld.gov.au/services/cairns-hinterland/cairns_georgetown_hos.asp","addr:street":"High Street","addr:postcode":"4871"}],
-["n423493920",-18.30261,143.53201,"au",{"name":"Georgetown Airport","aeroway":"aerodrome","iata":"GTT"}],
+["n423493920",-18.30261,143.53201,"au",{"name":"Georgetown Airport","aeroway":"aerodrome","iata":"GTT","wikidata":"Q5546971"}],
 ["n6975407932",-19.31144,142.07027,"au",{"name":"Pioneer","aeroway":"aerodrome"}],
 ["n8023691121",-18.79623,143.42485,"au",{"aeroway":"helipad"}],
 ["n8891747540",-18.21126,142.24011,"au",{"name":"Croydon Primary Health Care Centre","amenity":"clinic","healthcare":"clinic","operator":"Queensland Government","operator:type":"public"}],

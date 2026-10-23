@@ -1,5 +1,5 @@
 [["n5246834821",11.83489,93.03017,"in",{"name":"Primary health centre","amenity":"clinic"}],
-["n6893127930",11.64954,92.71731,"in",{"name":"INHS Dhanvantri","amenity":"blood_bank;hospital","healthcare":"hospital","operator:type":"government","contact:phone":"3192248759","addr:full":"Ashvini Nagar, Port Blair, Andaman and Nicobar Islands;Medical Board Office","addr:district":"SOUTH ANDAMAN;South Andaman","addr:city":"Port Blair","addr:postcode":"744103;744101"}],
+["n6893127930",11.64954,92.71731,"in",{"name":"INHS Dhanvantri","amenity":"blood_bank;hospital","healthcare":"hospital","operator:type":"government","contact:phone":"3192248759","addr:full":"Ashvini Nagar, Port Blair, Andaman and Nicobar Islands;Medical Board Office","addr:district":"SOUTH ANDAMAN;South Andaman","addr:city":"Port Blair","addr:postcode":"744103;744101","opening_hours":"24/7"}],
 ["n6908120433",11.65626,92.73209,"in",{"name":"Maricar Hospital","amenity":"hospital","healthcare":"hospital","contact:phone":"3192233434","addr:full":"Near Masjid","addr:district":"South Andaman","addr:postcode":"744103"}],
 ["n6908120435",11.65314,92.73071,"in",{"name":"Pillar Health Centre","amenity":"hospital","healthcare":"hospital","contact:phone":"3192233193","addr:full":"Lamba Line, P.B. No. 526","addr:district":"South Andaman","addr:postcode":"744103"}],
 ["n7631997506",11.58547,92.65451,"in",{"name":"Public Health Centre","amenity":"clinic","addr:full":"Manglutan","addr:postcode":"744103"}],
@@ -18,5 +18,5 @@
 ["w1239920388",11.67723,92.76024,"in",{"aeroway":"helipad"}],
 ["w1239920477",11.84175,93.01834,"in",{"name":"Neil Island Helipad","aeroway":"helipad"}],
 ["w1353084326",11.59535,92.60889,"in",{"aeroway":"helipad"}],
-["w26775725",11.64075,92.72931,"in",{"name":"Veer Savarkar International Airport","name:en":"Veer Savarkar International Airport","operator":"Airport Authority of India","addr:street":"Lambaline","aeroway":"aerodrome","icao":"VOPB","iata":"IXZ"}],
+["w26775725",11.64075,92.72931,"in",{"name":"Veer Savarkar International Airport","name:en":"Veer Savarkar International Airport","operator":"Airport Authority of India","addr:street":"Lambaline","aeroway":"aerodrome","icao":"VOPB","iata":"IXZ","wikidata":"Q937462"}],
 ["w454542247",11.67527,92.74737,"in",{"name":"G B Pant Hospital, Port Blair","amenity":"hospital","healthcare":"hospital","operator:type":"government","website":"http://www.and.nic.in/C_charter/health/dhs/index.html#gph","addr:full":"GB Pant Road, City Centre, Port Blair","addr:district":"South Andaman","addr:postcode":"744103"}]]

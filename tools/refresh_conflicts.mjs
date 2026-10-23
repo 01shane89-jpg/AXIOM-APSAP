@@ -18,7 +18,7 @@ import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, 
 import { ccsAt } from "./geo_cc.mjs";
 import { zonesFront } from "./front_zones.mjs";
 import { tgItems } from "./tg_preview.mjs";
-import { stripOutletText } from "./outlet_text.mjs";
+import { stripOutletText, postOnly } from "./outlet_text.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
 const TIMEOUT = 25000, KEEP_DAYS = 180, CAP = 900, UCDP_DAYS = 400, OUT = "data/live/conflicts";
@@ -383,11 +383,15 @@ async function readFront(c, prev, items) {
 let translateAll = null, saveCache = () => {}, gz = null, placeIn = null;
 if (!PROBE) {
   try { ({ translateAll, saveCache } = await import("./translate.mjs")); } catch (e) { console.error("translation unavailable:", e.message); }
-  try { const g = await import("./gazetteer.mjs"); placeIn = g.placeIn; gz = await g.loadGazetteer(); } catch (e) { console.error("gazetteer unavailable:", errMsg(e)); }
+  try { const g = await import("./gazetteer.mjs"); placeIn = g.placeIn; gz = await g.loadGazetteer();
+    // villages and small towns in the conflicts' countries (fighting is reported by village); without them, towns and regions only
+    try { const n = await g.addSmallPlaces(gz, [...new Set(LIST.flatMap((c) => c.countries))]); console.log("small places added:", n); if (n) Object.defineProperty(gz, "__small", { value: true }); }
+    catch (e) { console.error("small places unavailable:", errMsg(e)); }
+  } catch (e) { console.error("gazetteer unavailable:", errMsg(e)); }
 }
 // a conflict may keep its reports longer than the default (keep_days in tools/conflicts.json); older ones load only on request
 const cutoffOf = (c) => new Date(NOW - (c.keep_days || KEEP_DAYS) * 864e5).toISOString().slice(0, 16);
-const index = [], autoTabs = [];
+const index = [], autoTabs = [], placedMore = {};
 fs.mkdirSync(OUT + "/front", { recursive: true });
 for (const c of LIST) {
   const { fresh, status } = collected[c.id];
@@ -402,7 +406,7 @@ for (const c of LIST) {
   const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date, 60, { link: i.link, old: oldRe }));
   if (stale.length) { const st = new Set(stale); items = items.filter((i) => !st.has(i)); console.log(c.id + ": " + stale.length + " search results dropped as old stories re-dated: " + stale.map((i) => i.link).join(" ")); }
   if (!PROBE && translateAll) {
-    const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected);
+    const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected && i.via !== "Telegram" && !i.notext);
     if (todo.length) {
       // headlines only: summaries are not translated, as outlet text is never stored (tools/outlet_text.mjs)
       const tr = await translateAll(todo.map((i) => ({ text: i.title, lang: i.lang })));
@@ -411,6 +415,7 @@ for (const c of LIST) {
   }
   for (const i of items) for (const k of ["title", "summary", "title_en", "summary_en", "outlet"]) if (i[k]) i[k] = unent(i[k]).replace(/\uFFFD/g, "");   // a search engine cuts long Khmer titles mid-character
   for (const i of items) {
+    if (i.notext && i.fp) continue;   // a kept Telegram post: its kind, figures, place and fingerprint were set from its words (tools/outlet_text.mjs)
     const en = /^en\b/i.test(i.lang || "") ? i.title : i.title_en || "";
     const had = i.kind;
     i.kind = classify(en || i.title);
@@ -420,11 +425,19 @@ for (const c of LIST) {
       else if (had && had !== "statement" && had !== "other") i.kind = had;
     }
     i.killed = en ? figure(en, KILLED) : null; i.injured = en ? figure(en, INJURED) : null;
-    // placed by the places the text names inside this conflict's countries (the news step placed it within one country only)
-    if (gz && placeIn && !i.geo_c) {
-      const p = placeIn(gz, [i.title_en, i.title, i.summary_en, i.summary].filter(Boolean).join(" \u2022 "), c.countries);
-      if (p) i.geo = { n: p.name, la: p.lat, lo: p.lon, p: p.prec, b: "gazetteer" };
-      i.geo_c = 1;
+    // placed by the places the text names inside this conflict's countries (the news step placed it within one country only).
+    // geo_c 2: placed with villages and small towns too; a report placed before them (geo_c 1) with no place or only a region is
+    // looked at once more and takes a village only, never a coarser place
+    if (gz && placeIn) {
+      const small = !!gz.__small, redo = !i.geo_c || (small && i.geo_c < 2 && (!i.geo || i.geo.p === "province"));
+      if (redo) {
+        const p = placeIn(gz, [i.title_en, i.title, i.summary_en, i.summary].filter(Boolean).join(" \u2022 "), c.countries);
+        if (p && (!i.geo_c || p.prec !== "province")) {
+          if (i.geo_c) placedMore[c.id] = (placedMore[c.id] || 0) + 1;
+          i.geo = { n: p.name, la: p.lat, lo: p.lon, p: p.prec, b: p.kind === "small" ? "gazetteer-small" : "gazetteer" };
+        }
+      }
+      i.geo_c = Math.max(i.geo_c || 0, small ? 2 : 1);
     }
     if (i.geo && i.geo.la != null) { const inCc = ccsAt(i.geo.la, i.geo.lo, 0.3); i.cc = i.cc && inCc.includes(i.cc) ? i.cc : inCc.find((x) => c.countries.includes(x)) || i.cc || null; }
     i.fp = sha256({ link: i.link, title: i.title, date: i.date, outlet: i.outlet });
@@ -483,7 +496,7 @@ for (const c of LIST) {
   st.weeks = W.reverse();
   st.ucdp_latest = ucdp.length ? ucdp[0].date : null;
   // headline, link and what OSAP derived only: the outlet's summary is dropped before anything is written (tools/outlet_text.mjs)
-  for (const i of items) stripOutletText(i);
+  for (const i of items) { stripOutletText(i); if (i.via === "Telegram") postOnly(i, "Telegram", i.outlet || "the channel"); }
   const pub = { id: c.id, name: c.name, short: c.short, countries: c.countries, since: c.since, kind: c.kind, parties: c.parties, bounds: c.bounds, tier: c.tier || 2, ...(c.note_data ? { note_data: c.note_data } : {}), ...(c.merge_tabs ? { merge_tabs: c.merge_tabs } : {}) };
   const data = { ...pub, asof: stamp, keep_days: c.keep_days || KEEP_DAYS, sources: [...status, { ...ucdpStatus, n: ucdp.length }], stats: st, items, ucdp,
     ucdp_key: UF.find((u) => u.id === c.id).key, ucdp_files: [...(ucdpFilesDone[c.id] || [])], kind_names: KIND_NAMES };
@@ -535,4 +548,5 @@ writeJs(OUT + "/index.js", "window.OSAP_CONFLICTS", { schema: "osap-conflicts/1"
 // the automatic tabs' UCDP events, loaded only when one of those tabs is opened
 if (!ONLY.length) writeJs(OUT + "/auto.js", "window.OSAP_CF_AUTO", { asof: stamp, events: autoEvents.slice(0, 6000) });
 saveCache();
+if (Object.keys(placedMore).length) console.log("placed with villages and small towns this run (reports that had no place or only a region):", JSON.stringify(placedMore));
 console.log("conflicts:", index.length, "automatic tabs:", autoTabs.length, autoTabs.slice(0, 12).map((a) => a.cc + " " + a.best).join(", "));

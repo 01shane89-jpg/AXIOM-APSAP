@@ -9,8 +9,8 @@
 ["w1119490399",-32.19984,121.76692,"au",{"name":"Norseman Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1143849904",-33.58503,120.04604,"au",{"name":"Ravensthorpe District Health Service","amenity":"hospital","healthcare":"hospital"}],
 ["w140533119",-33.79772,120.20819,"au",{"name":"Ravensthorpe Airport","name:en":"Ravensthorpe Airport","operator":"Shire of Ravensthorpe","aeroway":"aerodrome","icao":"YNRV","iata":"RVT","aerodrome:type":"public"}],
-["w1527735384",-32.2033,121.75819,"au",{"name":"Norseman Airport","aeroway":"aerodrome","icao":"YNSM","iata":"NSM"}],
+["w1527735384",-32.2033,121.75819,"au",{"name":"Norseman Airport","aeroway":"aerodrome","icao":"YNSM","iata":"NSM","wikidata":"Q7053411"}],
 ["w1527745442",-33.58171,120.04112,"au",{"name":"Ravensthorpe Sub Centre","emergency":"ambulance_station","operator":"St John Ambulance WA"}],
-["w265079633",-33.68387,121.81987,"au",{"name":"Esperance Airport","operator":"Esperance Shire Council","aeroway":"aerodrome","icao":"YESP","iata":"EPR","aerodrome:type":"public"}],
+["w265079633",-33.68387,121.81987,"au",{"name":"Esperance Airport","operator":"Esperance Shire Council","aeroway":"aerodrome","icao":"YESP","iata":"EPR","aerodrome:type":"public","wikidata":"Q2339306"}],
 ["w265079635",-33.79166,121.95851,"au",{"name":"Myrup Fly-in Estate Airport","aeroway":"aerodrome","icao":"YMYU","aerodrome:type":"private"}],
 ["w384316966",-33.8561,121.89195,"au",{"name":"Esperance Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","website":"https://www.health.wa.gov.au/services/detail.cfm?Unit_ID=55"}]]

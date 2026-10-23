@@ -9,7 +9,7 @@
 ["n8515870500",-27.15638,149.06376,"au",{"name":"Surat Multipurpose Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","website":"https://www.southwest.health.qld.gov.au/healthcare-facilities/multipurpose-health-services/surat-multipurpose-health-service/"}],
 ["n8515870503",-27.15185,149.06615,"au",{"name":"Surat Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service","addr:housenumber":"48","addr:street":"Burrowes Street","addr:postcode":"4417"}],
 ["w1149097800",-26.26718,149.76981,"au",{"aeroway":"helipad"}],
-["w1156156412",-26.54543,148.77241,"au",{"name":"Roma Airport","aeroway":"aerodrome","icao":"YROM","iata":"RMA"}],
+["w1156156412",-26.54543,148.77241,"au",{"name":"Roma Airport","aeroway":"aerodrome","icao":"YROM","iata":"RMA","wikidata":"Q8215768"}],
 ["w1304953455",-27.15684,149.06354,"au",{"name":"Surat Multipurpose Health Service","amenity":"hospital","healthcare":"hospital","addr:housenumber":"Lot 73","addr:street":"Ivan Street"}],
 ["w1358323959",-26.34867,149.38202,"au",{"aeroway":"helipad"}],
 ["w1358470544",-26.33979,149.3724,"au",{"aeroway":"helipad"}],

@@ -333,6 +333,23 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   ok(/Sign in to OSAP/.test((await wall(p) || {}).text || "") && !(await auth(p)), "a renewal Identity refuses: signed out, to the sign-in screen");
   await ctx.close();
 }
+// 9b. opened after the sign-in ran out (an hour after last use): the first files are refused (401) and the saved copies would
+// show, so once renewed the page loads once more and the data comes through (Shane 2026-10-22: "data 30 h old")
+{
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.addInitScript({ content: "if(!sessionStorage.getItem('t-seeded')){sessionStorage.setItem('t-seeded','1');localStorage.setItem('osap-auth',JSON.stringify({access_token:'tok-full',refresh_token:'tok-full',until:Date.now()-7200e3}))}" });
+  const p = await ctx.newPage(), loads = [], health = [];
+  p.on("load", () => loads.push(Date.now()));
+  p.on("response", (r) => { if (/\/data\/live\/health\.json/.test(r.url())) health.push(r.status()); });
+  await p.goto(base); await p.waitForTimeout(9000);
+  ok(loads.length === 2, "sign-in ran out while closed: the page loads once more after renewing (" + loads.length + " loads)");
+  ok(health.includes(401) && health[health.length - 1] === 200, "sign-in ran out while closed: data refused at first, then served (" + health.join(",") + ")");
+  ok(!(await wall(p)) && (await state(p)).tier === "full", "sign-in ran out while closed: still signed in on Full");
+  await p.reload(); await p.waitForTimeout(6000);
+  ok(loads.length === 3, "a fresh sign-in: no extra load (" + loads.length + " loads)");
+  await ctx.close();
+}
 // 10. moved from the old address: the sign-in screen says to add OSAP to the home screen again, and the marker goes
 {
   const { ctx, p } = await open(null, "?from=pages");

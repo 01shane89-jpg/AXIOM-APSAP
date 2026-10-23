@@ -157,7 +157,7 @@
 ["n7809159328",23.42093,81.35619,"in",{"amenity":"hospital","healthcare":"hospital"}],
 ["r17151255",23.53371,80.80734,"in",{"name":"Umaria Airstrip","aeroway":"aerodrome"}],
 ["r17231117",22.59617,80.37046,"in",{"name":"District Hospital","amenity":"hospital","healthcare":"hospital"}],
-["w121089056",23.18038,80.05677,"in",{"name":"Jabalpur Airport","aeroway":"aerodrome","icao":"VAJB","iata":"JLR"}],
+["w121089056",23.18038,80.05677,"in",{"name":"Jabalpur Airport","aeroway":"aerodrome","icao":"VAJB","iata":"JLR","wikidata":"Q1595048"}],
 ["w1243154724",22.75793,81.92725,"in",{"aeroway":"helipad"}],
 ["w1243154725",22.75847,81.92711,"in",{"aeroway":"helipad"}],
 ["w1243154789",22.77707,81.97044,"in",{"aeroway":"helipad"}],

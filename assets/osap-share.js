@@ -753,7 +753,7 @@
         '<label><input type="radio" name="osh-as" value="txt"> <b>Message only</b></label></fieldset>' +
       '<p class="obs oshrep" role="status" aria-live="polite">Making the full report…</p>' +
       '<label class="oshlbl" for="osh-t">Message</label><textarea id="osh-t" readonly rows="7"></textarea>' +
-      '<p class="oshlink"><span class="obs">Opens on the OSAP map:</span> <a target="_blank" rel="noopener" href="' + esc(d.link) + '">' + esc(d.link.replace(/^https?:\/\//, "")) + "</a></p>" +
+      '<p class="oshlink"><span class="obs">Opens on the OSAP map:</span> <a target="_blank" rel="noopener noreferrer" href="' + esc(d.link) + '">' + esc(d.link.replace(/^https?:\/\//, "")) + "</a></p>" +
       '<div class="oshbtns">' + (canShare ? '<button type="button" class="refresh primary oshgo" data-osh="share">Share…</button>' : "") +
         '<button type="button" class="refresh" data-osh="copy">Copy message</button><button type="button" class="refresh" data-osh="link">Copy link</button>' +
         '<button type="button" class="refresh oshpdf" data-osh="savepdf" hidden>Save report (PDF)</button>' +

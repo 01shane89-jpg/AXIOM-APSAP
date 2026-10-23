@@ -7,9 +7,9 @@
 ["w466224462",30.35896,68.6083,"pk",{"name":"CMH","amenity":"hospital"}],
 ["w651489051",30.35626,68.61091,"pk",{"aeroway":"helipad"}],
 ["w651489052",30.355,68.61096,"pk",{"aeroway":"helipad"}],
-["w651489057",30.35475,68.61173,"pk",{"name":"Loralai Airport","aeroway":"aerodrome","icao":"OPLL","iata":"LRG"}],
+["w651489057",30.35475,68.61173,"pk",{"name":"Loralai Airport","aeroway":"aerodrome","icao":"OPLL","iata":"LRG","wikidata":"Q35275902"}],
 ["w808159723",30.69377,68.34969,"pk",{"name":"Civil Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w967265483",31.96515,69.32277,"pk",{"aeroway":"helipad"}],
 ["w967265951",31.93696,69.33939,"pk",{"aeroway":"helipad"}],
-["w994920834",31.35751,69.46373,"pk",{"name":"ژوب ہوائی اڈا","name:en":"Zhob Airport","operator":"پاکستان سول ایوی ایشن اتھارٹی","operator:type":"public","aeroway":"aerodrome","icao":"OPZB","iata":"PZH"}],
+["w994920834",31.35751,69.46373,"pk",{"name":"ژوب ہوائی اڈا","name:en":"Zhob Airport","operator":"پاکستان سول ایوی ایشن اتھارٹی","operator:type":"public","aeroway":"aerodrome","icao":"OPZB","iata":"PZH","wikidata":"Q3502837"}],
 ["w994921284",31.34403,69.44236,"pk",{"name":"Combined Military Hospital","amenity":"hospital","healthcare":"hospital"}]]

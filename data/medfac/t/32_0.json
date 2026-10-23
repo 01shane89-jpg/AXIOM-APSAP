@@ -10,7 +10,7 @@
 ["w240979000",32.9086,0.54712,"dz",{"amenity":"clinic"}],
 ["w240979013",32.8955,0.54868,"dz",{"amenity":"hospital","healthcare":"hospital","addr:city":"الأبيض سيدي الشيخ"}],
 ["w244191965",33.67213,1.01653,"dz",{"amenity":"hospital","emergency":"yes"}],
-["w357828663",33.72205,1.09263,"dz",{"name":"مطار البيض ⴰⴼⴰⴳⵓⵔ ⵏ ⵍⴱⴻⵢⴻⴹ","name:en":"El Bayadh Airport","operator":"EGSA d'Oran","aeroway":"aerodrome","icao":"DAOY","iata":"EBH"}],
+["w357828663",33.72205,1.09263,"dz",{"name":"مطار البيض ⴰⴼⴰⴳⵓⵔ ⵏ ⵍⴱⴻⵢⴻⴹ","name:en":"El Bayadh Airport","operator":"EGSA d'Oran","aeroway":"aerodrome","icao":"DAOY","iata":"EBH","wikidata":"Q2875767"}],
 ["w388390892",32.86913,0.02666,"dz",{"name":"Salle des soins","amenity":"hospital","healthcare":"hospital"}],
 ["w388549782",32.86448,0.02552,"dz",{"name":"Centre hospitalier","amenity":"clinic","healthcare":"clinic"}],
 ["w402713203",33.63428,1.01154,"dz",{"aeroway":"helipad"}],

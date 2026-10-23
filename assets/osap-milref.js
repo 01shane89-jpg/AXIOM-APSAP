@@ -1,0 +1,270 @@
+/* AXIOM OSAP: open military reference for the open country (Shane 2026-10-23: "make OSAP beat all others"; the reference-depth
+   gap against paid defence references). Reads data/live/milref/<cc>.json, written once a week by tools/refresh_milref.mjs
+   (.github/workflows/refresh-milref.yml):
+   - Key figures: military expenditure (SIPRI), armed forces personnel (IISS, The Military Balance) and arms imports and
+     exports (SIPRI trend-indicator values), all as the World Bank publishes them (CC BY 4.0).
+   - Order of battle: the armed forces, branches and units Wikidata records for the country (CC0), as a tree by parent unit.
+   - Equipment: the aircraft types, ships and ship classes, land systems, missiles, sensors and small arms Wikidata records
+     those forces as operating, with the quantity and dates where an editor gave them.
+   - Installations: bases and airfields on Wikidata, with a grid reference.
+   - Arms transfers: the deals in the SIPRI Arms Transfers Database trade register with the country as recipient and as supplier,
+     with deliveries or still open in the last ten years (data/live/milref/sipri/<cc>.json). © SIPRI, free for non-commercial use
+     with attribution: marked non-commercial on the page and kept in their own files so they can be dropped.
+   - UN Register of Conventional Arms: what the government itself reported to the UN since 1992 (holdings by year, imports and
+     exports per partner with what the partner reported, national production), data/live/milref/unroca/<cc>.json. Official
+     claims, © United Nations under the UN terms of use: marked non-commercial and kept in their own files too.
+   EVERY ITEM IS A SOURCE CLAIM, never a finding: it links to its source and carries the SHA-256 fingerprint the job gave it.
+   Wikidata is edited by anyone, so coverage differs widely between countries, quantities are rare and retired types often
+   carry no end date; the page says so above the lists. No people are named: no commanders, only forces, equipment and places.
+   Where it shows: its own page in the Country brief, right after the country report. No toolbar button, no data set entry.
+   window.OSAP_MILREF {load, intoBrief, briefHtml, core}. */
+(function (G, factory) {
+  var api = factory(G);
+  if (typeof module === "object" && module.exports) module.exports = api.core;
+  else G.OSAP_MILREF = api;
+})(typeof window !== "undefined" ? window : globalThis, function (W) {
+  "use strict";
+  var D = W.document;
+
+  /* ================= core: pure functions, tested in node (tests/milref.test.mjs) ================= */
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function wdUrl(q) { return /^Q\d+$/.test(String(q || "")) ? "https://www.wikidata.org/wiki/" + q : ""; }
+  /* the country file for an app country id (Okinawa reads Japan's) */
+  function fileOf(cc) { cc = String(cc || "").toLowerCase(); if (cc === "oki") cc = "jp"; return /^[a-z]{2}$/.test(cc) ? "data/live/milref/" + cc + ".json" : ""; }
+  /* a figure in words: 5,983,978,405 US$ -> "US$ 5.98 billion"; 455000 people -> "455,000" */
+  function fig(v, unit) {
+    if (v == null || !isFinite(v)) return "n/a";
+    if (unit === "%") return (Math.round(v * 100) / 100) + "%";
+    var a = Math.abs(v), big = a >= 1e9 ? [1e9, " billion"] : a >= 1e6 ? [1e6, " million"] : null;
+    var s = big ? (Math.round(v / big[0] * 100) / 100) + big[1] : Number(v).toLocaleString("en-US");
+    return unit === "US$" ? "US$ " + s : unit === "TIV" ? s + " TIV" : s;
+  }
+  /* the order of battle as a tree: roots are units whose parent is not in the list; children sorted as the job sorted them */
+  function tree(units) {
+    var by = {}, kids = {}, roots = [];
+    (units || []).forEach(function (u) { by[u.q] = u; });
+    (units || []).forEach(function (u) { if (u.p && by[u.p] && u.p !== u.q) (kids[u.p] = kids[u.p] || []).push(u); else roots.push(u); });
+    return { roots: roots, kids: kids };
+  }
+  /* how many units sit under a unit (all levels), guarded against loops in the parent links */
+  function size(q, kids, seen) {
+    seen = seen || {}; if (seen[q]) return 0; seen[q] = 1;
+    return (kids[q] || []).reduce(function (n, k) { return n + 1 + size(k.q, kids, seen); }, 0);
+  }
+  var CATS = [["air", "Aircraft types"], ["sea", "Ships, submarines and classes"], ["land", "Land systems and air defence"], ["msl", "Missiles, rockets and munitions"], ["sens", "Radar, sonar and communications"], ["arms", "Small arms"]];
+  function groups(equip) {
+    var g = {}; (equip || []).forEach(function (e) { var k = e.out ? "out" : e.old ? "old" : e.c; (g[k] = g[k] || []).push(e); });
+    return g;
+  }
+  var KIND = { air: "Air base or airfield", naval: "Naval base", depot: "Depot or arsenal", hq: "Headquarters", barracks: "Barracks or camp", range: "Range or training area", base: "Military base" };
+  /* the SIPRI trade register file for an app country id */
+  function sipriFile(cc) { var f = fileOf(cc); return f ? f.replace("/milref/", "/milref/sipri/") : ""; }
+  /* a number SIPRI marks uncertain gets a "?" after it, as in SIPRI's own register */
+  function unc(d, k, v) { return v == null ? "" : esc(v) + (d.u && d.u.indexOf(k) >= 0 ? '<span title="SIPRI marks this uncertain">?</span>' : ""); }
+  function tiv(v) { return v == null ? "" : (v >= 10 ? Math.round(v) : Math.round(v * 10) / 10) + " TIV"; }
+  /* one side of the register (received or supplied) as a table; who: the column naming the other party */
+  function dealsHtml(side, who, lim) {
+    var L = (side && side.deals) || [];
+    if (!L.length) return '<p class="bm">None in the register for these years.</p>';
+    var fpt = function (f) { return f ? ' <code class="mrfp" title="SHA-256 fingerprint of this record: ' + esc(f) + '">' + esc(String(f).slice(0, 8)) + "</code>" : ""; };
+    return '<table class="btwo mrsip"><tr><th style="width:17%">' + (who === "s" ? "Supplier" : "Recipient") + '</th><th style="width:27%">Weapon</th><th style="width:14%">Ordered</th><th style="width:16%">Delivered</th><th>Status and SIPRI note</th></tr>' +
+      L.slice(0, lim).map(function (d) {
+        return "<tr><td>" + esc(d[who] || "") + fpt(d.fp) + "</td><td><b>" + esc(d.d || "") + '</b><span class="bm">' + (d.w ? " · " + esc(d.w) : "") + "</span></td><td>" +
+          (d.no != null ? unc(d, "no", d.no) + '<span class="bm"> ordered</span>' : '<span class="bm">number ordered n/a</span>') + (d.oy ? '<span class="bm"> in ' + unc(d, "oy", d.oy) + "</span>" : "") + "</td><td>" +
+          (d.dn != null ? unc(d, "dn", d.dn) + '<span class="bm"> delivered' + (d.dy ? " (" + esc(d.dy) + ")" : "") + "</span>" : '<span class="bm">none delivered yet</span>') + "</td><td>" +
+          (d.st ? esc(d.st) : "") + (d.tt != null ? '<span class="bm"> · ' + esc(tiv(d.tt)) + "</span>" : "") + (d.c ? '<div class="bm">' + esc(d.c) + "</div>" : "") + "</td></tr>";
+      }).join("") + "</table>" +
+      (side.total > lim ? '<p class="bm">' + (side.total - lim) + " more deal" + (side.total - lim === 1 ? "" : "s") + " in the register for these years" + (side.total > L.length ? " (the " + L.length + " newest are held)" : "") + ".</p>" : "");
+  }
+  function sipriHtml(S, name, lim) {
+    lim = lim || 80;
+    if (!S) return '<p class="bm">No SIPRI arms transfer record is held for this country yet (the weekly refresh writes it).</p>';
+    if (S.err) return '<p class="bm">The SIPRI list could not be read just now. Close and reopen the brief to try again.</p>';
+    var y = S.years || [];
+    return '<p class="bwarn"><span class="mrtag mrnc" title="SIPRI data is free for non-commercial use with attribution">Non-commercial source</span> ' +
+      "Deals of major conventional arms in the SIPRI Arms Transfers Database, with deliveries or still open from " + esc(y[0]) + " to " + esc(y[1]) +
+      ". SIPRI's research from open sources, not checked by OSAP; small arms and many smaller items are not covered, and recent years fill in as SIPRI updates. " +
+      "TIV is SIPRI's trend-indicator value (millions), a measure of military capability transferred, not a price." + (S.stale ? " The last weekly read failed; this is the list from the read before." : "") + "</p>" +
+      "<h4>Received by " + esc(name || S.name) + ' <span class="bm">(' + ((S.imp && S.imp.total) || 0) + ")</span></h4>" + dealsHtml(S.imp, "s", lim) +
+      "<h4>Supplied by " + esc(name || S.name) + ' <span class="bm">(' + ((S.exp && S.exp.total) || 0) + ")</span></h4>" + dealsHtml(S.exp, "r", lim);
+  }
+
+  /* ---- UN Register of Conventional Arms: what the government itself reported to the UN (data/live/milref/unroca/<cc>.json) ---- */
+  function unrocaFile(cc) { var f = fileOf(cc); return f ? f.replace("/milref/", "/milref/unroca/") : ""; }
+  var UNCAT = { bt: "Battle tanks", acv: "Armoured combat vehicles", lcas: "Large-calibre artillery", ca_gen: "Combat aircraft and UCAV", ah_gen: "Attack helicopters", ws: "Warships", mml_gen: "Missiles and launchers" };
+  var UNORD = ["bt", "acv", "lcas", "ca_gen", "ah_gen", "ws", "mml_gen"];
+  /* a reported number; "+" when the report says part of it is classified, as the register itself shows it */
+  function unN(n, cl) { return (n == null ? "" : Number(n).toLocaleString("en-US")) + (cl ? '<span title="The report says some items are classified, so the real number is higher">+</span>' : (n == null ? "n/a" : "")); }
+  /* one partner's categories as "Battle tanks 125 · Warships 2" */
+  function unCats(v, cl) {
+    v = v || {}; cl = cl || [];
+    var ks = UNORD.filter(function (k) { return v[k] || cl.indexOf(k) >= 0; });
+    return ks.length ? ks.map(function (k) { var c = cl.indexOf(k) >= 0; return esc(UNCAT[k]) + " <b>" + (v[k] || !c ? unN(v[k] || 0, c) : '<span title="The report gives no number: the items are classified">classified</span>') + "</b>"; }).join(" · ") : '<span class="bm">nothing reported</span>';
+  }
+  function unFp(f) { return f ? ' <code class="mrfp" title="SHA-256 fingerprint of this record: ' + esc(f) + '">' + esc(String(f).slice(0, 8)) + "</code>" : ""; }
+  function unSide(L, own, other, lim) {
+    if (!L || !L.length) return '<p class="bm">Nothing reported either way.</p>';
+    return '<table class="btwo mrun"><tr><th style="width:20%">' + esc(other) + '</th><th style="width:40%">What ' + esc(own) + " reported</th><th>What the " + esc(other.toLowerCase()) + " reported</th></tr>" +
+      L.slice(0, lim).map(function (r) { return "<tr><td>" + esc(r.p) + unFp(r.fp) + "</td><td>" + unCats(r.o, r.oc) + "</td><td>" + unCats(r.t, r.tc) + "</td></tr>"; }).join("") + "</table>" +
+      (L.length > lim ? '<p class="bm">' + (L.length - lim) + " more partner countr" + (L.length - lim === 1 ? "y" : "ies") + ".</p>" : "");
+  }
+  function unrocaHtml(U, name, lim) {
+    lim = lim || 60; name = name || (U && U.name) || "";
+    if (!U) return '<p class="bm">This country is not in the UN Register of Conventional Arms, or no record is held yet (the weekly refresh writes it).</p>';
+    if (U.err) return '<p class="bm">The UN Register record could not be read just now. Close and reopen the brief to try again.</p>';
+    var rep = U.reports || [], base = String(U.url || "").replace(/\/?$/, "/");
+    var repLink = function (y) { return /^https:\/\/www\.unroca\.org\//.test(base) ? '<a href="' + esc(base + "report/" + y + "/") + '" target="_blank" rel="noopener noreferrer">' + esc(y) + "</a>" : esc(y); };
+    var h = '<p class="bwarn"><span class="mrtag" title="What the government itself reported to the UN: an official claim, not checked by OSAP">Official report (claim)</span> ' +
+      '<span class="mrtag mrnc" title="© United Nations; UN terms of use allow non-commercial use with attribution">Non-commercial source</span> ' +
+      "What " + esc(name) + "'s government and its trading partners told the UN Register since 1992, as the register publishes it. Each number is a state's own claim. " +
+      "Reporting is voluntary: many states report rarely or never, partners' figures often disagree, and a + marks a number with classified items left out." + (U.stale ? " The last weekly read failed; this is the record from the read before." : "") + "</p>";
+    h += "<p>" + (rep.length ? "<b>" + rep.length + "</b> report" + (rep.length === 1 ? "" : "s") + " filed, the latest for <b>" + esc(rep[0]) + "</b>: " + rep.slice(0, 24).map(repLink).join(" · ") + (rep.length > 24 ? " …" : "")
+      : "<b>No report filed.</b> Only what partner countries reported is shown.") + "</p>";
+    var H = U.hold || [];
+    if (H.length) h += "<h4>Military holdings, as reported</h4>" + '<table class="btwo mrun"><tr><th style="width:34%">Category</th><th style="width:22%">Latest reported</th><th>Earlier reports</th></tr>' +
+      H.map(function (x) { return "<tr><td>" + esc(UNCAT[x.k] || x.k) + unFp(x.fp) + "</td><td><b>" + unN(x.n, x.cl) + '</b><span class="bm"> · ' + esc(x.y) + '</span></td><td class="bm">' + (x.s || []).map(function (e) { return esc(e[0]) + ": " + unN(e[1]); }).join(" · ") + "</td></tr>"; }).join("") + "</table>";
+    else h += '<p class="bm">' + esc(name) + " has not reported its military holdings to the register.</p>";
+    var Dm = U.dom || [];
+    if (Dm.length) h += "<h4>Bought from national production and imported, all reports</h4>" + '<p class="bm">' + Dm.map(function (x) { return esc(UNCAT[x.k] || x.k) + ": <b>" + unN(x.dom, x.cd) + "</b> national, " + unN(x.imp, x.ci) + " imported" + unFp(x.fp); }).join(" · ") + "</p>";
+    h += "<h4>Imports by supplier, all reports " + '<span class="bm">(' + (U.imp || []).length + ")</span></h4>" + unSide(U.imp, name, "Supplier", lim);
+    h += "<h4>Exports by recipient, all reports " + '<span class="bm">(' + (U.exp || []).length + ")</span></h4>" + unSide(U.exp, name, "Recipient", lim);
+    return h;
+  }
+  var core = { esc: esc, unrocaFile: unrocaFile, unrocaHtml: unrocaHtml, wdUrl: wdUrl, fileOf: fileOf, sipriFile: sipriFile, sipriHtml: sipriHtml, fig: fig, tree: tree, size: size, groups: groups, CATS: CATS, KIND: KIND };
+  if (!D) return { core: core };
+
+  /* ================= browser ================= */
+  var cache = {}, want = {};
+  function T() { return W.OSAP_TIME || { asofT: function (s) { return String(s || ""); } }; }
+  function load(cc, cb) {
+    var f = fileOf(cc); if (!f) return cb && cb(null);
+    var c = cache[f];
+    if (c && c.state === 2) return cb && cb(c.data);
+    if (cb) (want[f] = want[f] || []).push(cb);
+    if (c) return;
+    cache[f] = { state: 1 };
+    fetch(f, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) { cache[f] = { state: 2, data: j }; }, function (e) { cache[f] = { state: 2, data: null, err: String(e && e.message || e) }; })
+      .then(function () { (want[f] || []).splice(0).forEach(function (fn) { try { fn(cache[f].data); } catch (e) {} }); });
+  }
+  /* the SIPRI register: its own file, read when the brief opens; a failed read says so and can be retried by reopening */
+  var scache = {};
+  function loadSipri(cc, cb, fileFn) {
+    var f = (fileFn || sipriFile)(cc); if (!f) return cb(null);
+    if (scache[f]) return scache[f].then(cb);
+    scache[f] = fetch(f, { cache: "no-cache" }).then(function (r) { if (r.status === 404) return null; if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .catch(function () { delete scache[f]; return { err: true }; });
+    scache[f].then(cb);
+  }
+  function link(url, text) { return url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + text + "</a>" : text; }
+  function fpTag(fp) { return fp ? ' <code class="mrfp" title="SHA-256 fingerprint of this record: ' + esc(fp) + '">' + esc(String(fp).slice(0, 8)) + "</code>" : ""; }
+  var CLAIM = '<span class="mrtag" title="A source claim: what the source publishes, not checked by OSAP or an analyst">Source claim</span>';
+  var NOTE = "Every item below is a source claim, not a finding: what Wikidata's editors record and what the World Bank publishes from SIPRI and IISS. " +
+    "None has been checked by OSAP or an analyst. Wikidata is edited by anyone, so coverage differs widely between countries, quantities are rare, " +
+    "and equipment that has left service often carries no end date. Each item links to its source and carries a fingerprint.";
+
+  function figuresHtml(F, cc) {
+    var rows = ["spend_gdp", "spend_usd", "spend_gov", "personnel", "personnel_lf", "arms_imp", "arms_exp"].map(function (k) { return F[k]; }).filter(Boolean);
+    if (!rows.length) return '<p class="bm">The World Bank publishes no military expenditure, personnel or arms transfer figure for this country.</p>';
+    return '<table class="btwo mrfig"><tr><th style="width:38%">Figure</th><th style="width:20%">Latest</th><th>Earlier years</th><th style="width:22%">Origin</th></tr>' + rows.map(function (r) {
+      var earlier = (r.s || []).slice(0, -1).slice(-4).map(function (s) { return esc(s[0]) + ": " + esc(fig(s[1], r.unit)); }).join(" · ");
+      return "<tr><td>" + link(r.url, esc(r.n)) + "</td><td><b>" + esc(fig(r.v, r.unit)) + '</b><span class="bm"> · ' + esc(r.year) + "</span></td><td class=\"bm\">" + (earlier || "") + "</td><td>" + esc(r.orig) + fpTag(r.fp) + "</td></tr>";
+    }).join("") + "</table>" +
+      '<p class="bm">Official and research estimates, published by the World Bank (CC BY 4.0) from SIPRI and IISS. TIV is SIPRI\'s trend-indicator value: a measure of the volume of major arms transferred, not their price. Personnel counts include paramilitary forces where IISS judges they can support the regular forces.</p>';
+  }
+
+  function unitsHtml(units, lim) {
+    if (!units || !units.length) return '<p class="bm">Wikidata records no current armed forces or units for this country.</p>';
+    var t = tree(units), shown = 0, seen = {};
+    function row(u, depth) {
+      if (seen[u.q] || shown >= lim) return ""; seen[u.q] = 1; shown++;
+      var n = size(u.q, t.kids), kids = t.kids[u.q] || [];
+      var line = '<div class="mru" style="padding-left:' + (depth * 14) + 'px">' + link(wdUrl(u.q), esc(u.n)) + (u.t ? '<span class="bm"> · ' + esc(u.t) + "</span>" : "") +
+        (u.hq ? '<span class="bm"> · HQ ' + esc(u.hq) + (u.la != null && W.MGRS_OF ? " (" + esc(W.MGRS_OF(u.la, u.lo, 3)) + ")" : "") + "</span>" : "") +
+        (n ? '<span class="bm"> · ' + n + " under it</span>" : "") + fpTag(u.fp) + "</div>";
+      if (!kids.length || depth >= 3) return line;
+      return line + kids.map(function (k) { return row(k, depth + 1); }).join("");
+    }
+    var big = t.roots.slice().sort(function (a, b) { return size(b.q, t.kids) - size(a.q, t.kids); });
+    var h = big.map(function (r) { return row(r, 0); }).join("");
+    var rest = units.length - shown;
+    return '<div class="mrtree">' + h + "</div>" + (rest > 0 ? '<p class="bm">' + rest + " more unit" + (rest === 1 ? "" : "s") + " held for this country are not listed here (deeper levels and smaller units).</p>" : "");
+  }
+
+  function equipHtml(equip, lim) {
+    if (!equip || !equip.length) return '<p class="bm">Wikidata records no equipment operated by this country\'s forces.</p>';
+    var g = groups(equip), h = "";
+    CATS.forEach(function (c) {
+      var L = g[c[0]]; if (!L || !L.length) return;
+      h += "<h4>" + esc(c[1]) + ' <span class="bm">(' + L.length + ")</span></h4>" + '<table class="btwo mreq"><tr><th style="width:36%">Item</th><th style="width:28%">Kind</th><th>Operator</th><th style="width:14%">Recorded</th></tr>' +
+        L.slice(0, lim).map(function (e) {
+          return "<tr><td>" + link(wdUrl(e.q), esc(e.n)) + fpTag(e.fp) + '</td><td class="bm">' + esc(e.t || (e.ty ? "type" : "")) + (e.c === "sea" && !e.ty ? " · one hull" : "") + '</td><td class="bm">' + esc(e.op || "") +
+            "</td><td>" + (e.qty ? "<b>" + esc(e.qty) + "</b> (claim)" : "") + (e.since ? '<span class="bm">' + (e.qty ? ", " : "") + "since " + esc(e.since) + "</span>" : "") + "</td></tr>";
+        }).join("") + "</table>" + (L.length > lim ? '<p class="bm">' + (L.length - lim) + " more in this group.</p>" : "");
+    });
+    var old = g.old || [];
+    if (old.length) h += '<details class="mrout"><summary>Older types, first flown or built before 1960 (' + old.length + ")</summary><p class=\"bm\">Listed as operated, with no end of service recorded on Wikidata. Some still serve (long-lived bombers, transports, small arms); many have left service. " +
+      old.slice(0, 200).map(function (e) { return link(wdUrl(e.q), esc(e.n)) + " (" + esc(e.old) + ")"; }).join(" · ") + "</p></details>";
+    var out = g.out || [];
+    if (out.length) h += '<details class="mrout"><summary>Recorded as retired or out of service (' + out.length + ")</summary><p class=\"bm\">" +
+      out.slice(0, 200).map(function (e) { return link(wdUrl(e.q), esc(e.n)) + (/^\d{4}$/.test(e.out) ? " (" + esc(e.out) + ")" : ""); }).join(" · ") + "</p></details>";
+    return h;
+  }
+
+  function instHtml(inst, lim) {
+    if (!inst || !inst.length) return '<p class="bm">Wikidata records no military installations for this country.</p>';
+    return '<table class="btwo mrinst"><tr><th style="width:36%">Installation</th><th style="width:20%">Kind</th><th style="width:22%">Grid (MGRS)</th><th>Operator</th></tr>' +
+      inst.slice(0, lim).map(function (s) {
+        return "<tr><td>" + link(wdUrl(s.q), esc(s.n)) + fpTag(s.fp) + '</td><td class="bm">' + esc(KIND[s.k] || "Military base") + '</td><td class="mg">' + (s.la != null && W.MGRS_OF ? esc(W.MGRS_OF(s.la, s.lo, 3)) : '<span class="bm">no location</span>') +
+          '</td><td class="bm">' + esc(s.op || "") + "</td></tr>";
+      }).join("") + "</table>" + (inst.length > lim ? '<p class="bm">' + (inst.length - lim) + " more installations held.</p>" : "") +
+      '<p class="bm">Grid references are 100 m (MGRS on WGS84) from the point Wikidata gives; a base\'s point is often its centre or its gate, not its outline.</p>';
+  }
+
+  function briefHtml(M, name, lim) {
+    lim = lim || { units: 160, equip: 60, inst: 120 };
+    var w = M.wd || {}, z = T().asofT(M.asof);
+    var h = '<article class="bpage bmilref" id="milref"><header><div><b>AXIOM OSAP</b> · Military reference (open sources)</div><h2>' + esc(name || M.name) + "</h2><div>Read " + esc(z) +
+      (w.stale ? ", Wikidata lists from an earlier run" : "") + "</div></header>" +
+      '<p class="bwarn">' + CLAIM + " " + esc(NOTE) + "</p>";
+    h += "<h3>Key figures</h3>" + figuresHtml(M.fig || {}, M.cc);
+    h += '<h3>Arms transfers <span class="bm">SIPRI trade register</span></h3><div data-mrsipri><p class="bm">Loading the SIPRI register…</p></div>';
+    h += '<h3>UN Register of Conventional Arms <span class="bm">official government reports</span></h3><div data-mrun><p class="bm">Loading the UN Register record…</p></div>';
+    h += "<h3>Forces and units (order of battle) " + '<span class="bm">' + (w.units ? w.units.length : 0) + (w.found && w.found.units > (w.units || []).length ? " of " + w.found.units + " on Wikidata" : "") + "</span></h3>" + unitsHtml(w.units, lim.units);
+    h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out; }).length + " with no end of service recorded" + ((w.equip || []).length >= 1500 ? " (the 1,500 best-known kept; Wikidata lists more)" : "") + "</span></h3>" + equipHtml(w.equip, lim.equip);
+    h += "<h3>Installations " + '<span class="bm">' + (w.inst || []).length + "</span></h3>" + instHtml(w.inst, lim.inst);
+    h += '<footer>Sources: ' + link("https://www.wikidata.org/" + (w.q ? "wiki/" + esc(w.q) : ""), "Wikidata") + " (CC0 1.0), read " + esc(w.read ? T().asofT(w.read) : "never") + "; " +
+      link("https://datacatalog.worldbank.org/search/dataset/0037712", "World Bank World Development Indicators") + " (CC BY 4.0), from the SIPRI Military Expenditure and Arms Transfers databases and IISS, The Military Balance; " +
+      link("https://www.sipri.org/databases/armstransfers", "SIPRI Arms Transfers Database") + " trade register (" + link("https://www.sipri.org/about/terms-and-conditions", "© SIPRI") + ", non-commercial use); " +
+      link("https://www.unroca.org/", "UN Register of Conventional Arms") + " (" + link("https://www.un.org/en/about-us/terms-of-use", "© United Nations") + ", non-commercial use). " +
+      "Read once a week. A fingerprint is the SHA-256 of the record as the job stored it (sorted keys), so a changed record can be spotted.</footer></article>";
+    return h;
+  }
+  function intoBrief(el, cc, name) {
+    if (!el) return;
+    load(cc, function (M) {
+      if (el.hidden || !el.querySelector(".bpage") || el.querySelector("#milref")) return;
+      var html = M ? briefHtml(M, name) : '<article class="bpage bmilref" id="milref"><header><div><b>AXIOM OSAP</b> · Military reference (open sources)</div></header><p class="bm">No military reference is held for this country yet (the weekly refresh writes it).</p></article>';
+      var box = D.createElement("div"); box.innerHTML = html;
+      /* after the country report: the brief and the economic page stay first (the key dates follow it on their own pages) */
+      var art = box.firstChild, rep = el.querySelector("#report");
+      if (rep) rep.parentNode.insertBefore(art, rep.nextSibling); else el.appendChild(art);
+      var box2 = art.querySelector && art.querySelector("[data-mrsipri]");
+      if (box2) loadSipri(cc, function (S) { box2.innerHTML = sipriHtml(S, name); });
+      var box3 = art.querySelector && art.querySelector("[data-mrun]");
+      if (box3) loadSipri(cc, function (U) { box3.innerHTML = unrocaHtml(U, name); }, unrocaFile);
+    });
+  }
+
+  var CSS = ".mrtag{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid currentColor;border-radius:9px;padding:0 6px;line-height:16px;color:#12324a}" +
+    ".mrnc{color:#8a4b00}.bmilref .mrun td{word-break:break-word}.bmilref .mrsip td div.bm{margin-top:1px}.mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
+    ".bmilref h4{font-size:11px;margin:6px 0 2px;color:#12324a}.mrtree .mru{border-bottom:1px solid #eee;padding-top:1px;padding-bottom:1px;overflow-wrap:anywhere}" +
+    ".bpage.bmilref td{white-space:normal;overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
+    /* a phone: each table row becomes one wrapped line (the column headings drop), so nothing squeezes or scrolls sideways */
+    "@media screen and (max-width:640px){.bmilref table,.bmilref tbody,.bmilref tr,.bmilref td{display:block;width:auto!important}.bmilref tr:first-child{display:none}" +
+    ".bmilref tr{border-bottom:1px solid #ddd;padding:3px 0}.bpage.bmilref td{display:inline;border:0;padding:0 6px 0 0}.bpage.bmilref .mg{white-space:normal}.bpage.bmilref,.bpage.bmilref *{overflow-wrap:anywhere;min-width:0}}" +
+    "@media print{.bmilref{break-before:page}.mrout:not([open]) p{display:block}}";
+  (function () { var s = D.createElement("style"); s.textContent = CSS; (D.head || D.documentElement).appendChild(s); })();
+
+  return { load: load, intoBrief: intoBrief, briefHtml: briefHtml, core: core };
+});

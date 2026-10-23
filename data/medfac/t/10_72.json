@@ -3,7 +3,7 @@
 ["w1236903885",11.6004,72.18541,"in",{"name":"Bitra Heliport","aeroway":"helipad"}],
 ["w1236904033",11.13493,72.73173,"in",{"aeroway":"helipad"}],
 ["w1236904098",11.49606,72.99816,"in",{"aeroway":"helipad"}],
-["w35382008",10.82327,72.17548,"in",{"name":"Agatti Airport","operator":"Airports Authority of India","aeroway":"aerodrome","icao":"VOAT","iata":"AGX","aerodrome:type":"public"}],
+["w35382008",10.82327,72.17548,"in",{"name":"Agatti Airport","operator":"Airports Authority of India","aeroway":"aerodrome","icao":"VOAT","iata":"AGX","aerodrome:type":"public","wikidata":"Q892248"}],
 ["w380572625",11.18231,72.7618,"in",{"aeroway":"helipad"}],
 ["w380779316",10.94585,72.28772,"in",{"aeroway":"helipad"}],
 ["w389443380",10.82858,72.17866,"in",{"aeroway":"helipad"}],

@@ -7,4 +7,4 @@
 ["w499306139",21.92181,120.85183,"tw",{"aeroway":"helipad"}],
 ["w625500215",20.78665,121.84028,"ph",{"name":"Itbayat District Hospital","name:en":"Itbayat District Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"Itbayat"}],
 ["w625643038",20.4504,121.97048,"ph",{"name":"Batanes General Hospital & Medical Center","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","beds":"75","operator":"Department fo Health","operator:type":"government","phone":"+63 917 882 4023","website":"https://batanesgeneralhospital.doh.gov.ph","addr:street":"National Road","addr:city":"Basco","addr:postcode":"3900"}],
-["w668053121",21.99902,120.7451,"tw",{"name":"衛福部恆春旅遊醫院","amenity":"hospital","healthcare":"hospital","emergency":"yes"}]]
+["w668053121",21.99902,120.7451,"tw",{"name":"衛福部恆春旅遊醫院","amenity":"hospital","healthcare":"hospital","emergency":"yes","wikidata":"Q133573966"}]]

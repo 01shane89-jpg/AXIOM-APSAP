@@ -122,10 +122,15 @@
     if (A && A.posFmt) h += seg("fmt", "Grid format", [["mgrs", "MGRS"], ["dd", "Lat/long"], ["dms", "DMS"]], A.posFmt());
     if (M && M.prefs) h += seg("unit", "Distance units", [["km", "km"], ["mi", "miles"], ["nm", "nautical mi"]], M.prefs().unit);
     if (LOC) h += '<label class="tpchk"><input type="checkbox" data-tset="loc"' + (LOC.on() ? " checked" : "") + '> Use my location<span>Kept on this device only</span></label>';
+    /* protected mode: the page contacts no outside service itself; maps, weather and search go through OSAP (assets/osap-protect.js) */
+    if (W.OSAP_PROTECT) h += '<label class="tpchk"><input type="checkbox" data-tset="protect"' + (W.OSAP_PROTECT.on() ? " checked" : "") + '> Protected mode<span>' +
+      "Outside services never see this device: maps, weather and search go through OSAP. Cameras, sync, push and AI download stay off. Reloads OSAP</span></label>";
     /* saving maps and data on this device for use with no signal (assets/osap-offline.js) */
     if (W.OSAP_OFFLINE) h += '<button type="button" role="menuitem" data-tp="@off">Offline maps and data</button>';
     /* carrying saved data to another device in a passphrase-locked file, no account (assets/osap-move.js) */
     if (W.OSAP_MOVE) h += '<button type="button" role="menuitem" data-tp="@move">Move to another device</button>';
+    /* saved work kept encrypted on this device while OSAP is locked (assets/osap-vault.js) */
+    if (W.OSAP_VAULT) h += '<button type="button" role="menuitem" data-tp="@vault">Lock my saved work</button>';
     /* keeping saved data the same on the analyst's own devices, encrypted, no account (assets/osap-sync.js) */
     if (W.OSAP_SYNC) h += '<button type="button" role="menuitem" data-tp="@sync">Sync my devices</button>';
     /* the AI model the AI summaries use where the browser has none of its own (assets/osap-ai.js) */
@@ -142,7 +147,11 @@
     if (W.OSAP_TIER && W.OSAP_TIER.owner && W.OSAP_TIER.owner()) h += '<button type="button" role="menuitem" data-tp="@users">Users</button>';
     /* reviews of OSAP: read them, leave one (assets/osap-reviews.js, Netlify site only) */
     if (W.OSAP_REVIEWS && W.OSAP_REVIEWS.on()) h += '<button type="button" role="menuitem" data-tp="@reviews">Reviews</button>';
+    /* how to stay hidden while using OSAP, and where OSAP's server sees this device connecting from (assets/osap-safety.js) */
+    if (W.OSAP_SAFETY) h += '<button type="button" role="menuitem" data-tp="@safe">Staying hidden online</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
+    /* panic wipe: erases everything OSAP keeps on this device, after one confirm (assets/osap-wipe.js) */
+    if (W.OSAP_WIPE) h += '<button type="button" role="menuitem" data-tp="@wipe" class="tpwipe">Erase this device</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
     return box;
@@ -207,6 +216,9 @@
     if (sel.indexOf("@rep:") === 0) { if (W.OSAP_REPORTS) W.OSAP_REPORTS.run(sel.slice(5)); }
     else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
+    else if (sel === "@vault") { if (W.OSAP_VAULT) W.OSAP_VAULT.open(); }
+    else if (sel === "@safe") { if (W.OSAP_SAFETY) W.OSAP_SAFETY.open(); }
+    else if (sel === "@wipe") { if (W.OSAP_WIPE) W.OSAP_WIPE.open(); }
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }
@@ -218,7 +230,9 @@
     else press(sel);
   });
   pop.addEventListener("change", function (e) {
-    var c = e.target; if (c.getAttribute("data-tset") !== "loc" || !W.OSAP_LOC) return;
+    var c = e.target;
+    if (c.getAttribute("data-tset") === "protect" && W.OSAP_PROTECT) { W.OSAP_PROTECT.set(c.checked); return; }
+    if (c.getAttribute("data-tset") !== "loc" || !W.OSAP_LOC) return;
     if (c.checked) { popClose(); W.OSAP_LOC.use(); } else W.OSAP_LOC.off();
   });
   /* picking a period closes its menu so the map shows the new set of points (Custom stays open for its dates) */

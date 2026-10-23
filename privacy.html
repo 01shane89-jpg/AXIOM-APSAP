@@ -48,7 +48,8 @@ nav{font-size:14px;color:var(--mut)}nav a{margin-right:12px}
 <p>We do not receive your card or bank details. Paddle collects those when you pay.</p>
 
 <h2>3. What stays on your device</h2>
-<p>OSAP keeps your work in your browser's own storage (local storage and IndexedDB): map points and photos, drawn areas, routes, imported shapes, keyword watches, workspaces, medical, evacuation and comms plans, analyst notes, and settings. None of this is sent to us. It leaves your device only if you export it, share a link, or turn on one of the optional features in section 5. Clearing your browser data deletes it.</p>
+<p>OSAP keeps your work in your browser's own storage (local storage and IndexedDB): map points and photos, drawn areas, routes, imported shapes, keyword watches, workspaces, medical, evacuation and comms plans, analyst notes, and settings. None of this is sent to us. It leaves your device only if you export it, share a link, or turn on one of the optional features in section 5. Clearing your browser data deletes it, and so does Settings &gt; Erase this device (or opening OSAP with #panic on the end of the address), which erases it all at once after one confirm.</p>
+<p>"Lock my saved work" (Settings) encrypts this saved work on your device with AES-256 under a key that only your passkey or passphrase can unlock. The passphrase and key are never sent anywhere, and we cannot recover them: if you forget the passphrase, the locked work cannot be read.</p>
 <p>"Use my location" asks your browser for your position, uses it on your device to centre the map or pick your country, and does not send it to us. On-device AI summaries run in your browser, or on an AI server on your own network if you set one up, and the reports never leave your device.</p>
 
 <h2>4. Services OSAP contacts while you use it</h2>
@@ -60,14 +61,15 @@ nav{font-size:14px;color:var(--mut)}nav a{margin-right:12px}
 <tr><td>Photon (Komoot), Open-Meteo geocoding</td><td>Text you type into place search and the map centre</td></tr>
 <tr><td>OSM routing servers (FOSSGIS, OSRM, Valhalla) and Overpass</td><td>Start, end and way points of a route, evacuation or medical plan, or an area being searched</td></tr>
 <tr><td>Wikidata</td><td>Searches for nearby facilities in a medical plan</td></tr>
-<tr><td>Google Fonts</td><td>Your IP address when fonts load <span class="ph">[OR SELF-HOST FONTS AND DELETE THIS ROW]</span></td></tr>
 <tr><td>News, video and source sites</td><td>Only when you open a source link, which takes you to that site</td></tr>
 </table>
+
+<p><strong>Protected mode</strong> (Settings) stops this: with it on, your browser contacts none of these services itself. Map tiles, weather, place search, routing and hazard feeds are fetched for you by OSAP's server, which passes on only what is asked for, never your IP address, cookies or the page you came from. Cameras, device sync, push alerts and the on-device AI download are off while it is on.</p>
 
 <h2>5. Optional features that send data elsewhere</h2>
 <ul>
 <li><strong>Sync my devices.</strong> If you pair devices, your saved work is encrypted on your device with a key made from your sync code and posted to public Nostr relays (<span class="ph">[CURRENT RELAY LIST, e.g. nos.lol, relay.primal.net]</span>). The relays and we cannot read it. They see an anonymous key, the encrypted data's size and timing, and your IP address. Photos are not synced.</li>
-<li><strong>Push to phone.</strong> Alerts go through ntfy.sh to a random channel name made on your device. Anyone who knows that name can read the alerts. <span class="ph">[REWRITE: today a push watch's name, area and keywords are stored in the public GitHub repository; the paywall build should move them off the public repo before launch]</span></li>
+<li><strong>Push to phone.</strong> Alerts go through ntfy.sh to a random channel name made on your device. Anyone who knows that name can read the alerts, and ntfy.sh sees them. The watch itself (its name, area, words and channel) is kept on our server, readable only by the owner's account and OSAP's own refresh job; it is not published.</li>
 <li><strong>On-device AI model.</strong> If you tap Download, the model files are fetched once from Hugging Face, which sees your IP address.</li>
 <li><strong>Export and share.</strong> Files and links you export or share go wherever you send them.</li>
 </ul>

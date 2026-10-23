@@ -73,7 +73,7 @@
    "lang": "id"
   }
  ],
- "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets.",
+ "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets. Channels added on 2026-10-23 (given by channel id) were found the same way (tools/probe_youtube.mjs from GitHub's runners) and kept only when they are the country's own government, parliament, armed forces, police, public or state broadcaster, or an established news outlet, with a video in the last month.",
  "youtube": [
   {
    "cc": "*",
@@ -3918,6 +3918,1840 @@
    "name": "RUV frettir",
    "kind": "public broadcaster",
    "lang": "is"
+  },
+  {
+   "cc": "ae",
+   "channel_id": "UCMebk44F_zVLj-7aD_mSUhQ",
+   "name": "Dubai Police شرطة دبي",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "af",
+   "channel_id": "UCqHNsoD-_xMprzkbTxgrsMw",
+   "name": "RTA Pashto",
+   "kind": "state media",
+   "lang": "ps"
+  },
+  {
+   "cc": "al",
+   "channel_id": "UCXZu85c9j8i_WDtip9hXZTQ",
+   "name": "Vizion Plus TV",
+   "kind": "news desk",
+   "lang": "sq"
+  },
+  {
+   "cc": "al",
+   "channel_id": "UCSd7F2EXAw0_Pgdc1Y1JKIg",
+   "name": "ABC News Albania",
+   "kind": "news desk",
+   "lang": "sq"
+  },
+  {
+   "cc": "am",
+   "channel_id": "UCSnr4wFDHDZZMeeHQvaHpjA",
+   "name": "Armenian Public TV",
+   "kind": "public broadcaster",
+   "lang": "hy"
+  },
+  {
+   "cc": "am",
+   "channel_id": "UCgJCL1nZT3GRM0qX7ve9vVQ",
+   "name": "Government of Armenia",
+   "kind": "government",
+   "lang": "hy"
+  },
+  {
+   "cc": "ar",
+   "channel_id": "UCZ8TQfdJ3Zt7laIrG_nXRGw",
+   "name": "PFAOficial (Policía Federal Argentina)",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "at",
+   "channel_id": "UCmUFDk80y_7Ka1Y2Y-AonXQ",
+   "name": "Österreichs Bundesheer",
+   "kind": "government (military)",
+   "lang": "de"
+  },
+  {
+   "cc": "au",
+   "channel_id": "UC5iLnYoF4Ryb63YdGD9RfWQ",
+   "name": "ABC Australia",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "au",
+   "channel_id": "UCIYLOcEUX6TbBo7HQVF2PKA",
+   "name": "9 News Australia",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "au",
+   "channel_id": "UClmsPZM64f-WDZ_WREdXLfQ",
+   "name": "Defence Australia",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "az",
+   "channel_id": "UC0JypFmHP-9wh5A3JjJLpcA",
+   "name": "BBC News Azərbaycanca",
+   "kind": "public broadcaster (UK)",
+   "lang": "az"
+  },
+  {
+   "cc": "az",
+   "channel_id": "UCrsuO92ygo7bQpgybAvvpbg",
+   "name": "Azerbaijan TV",
+   "kind": "state media",
+   "lang": "az"
+  },
+  {
+   "cc": "bb",
+   "channel_id": "UCfbOuzIck8uZfzFII6bb8Lg",
+   "name": "PMOBarbados",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "bd",
+   "channel_id": "UCpkg5RjtYqjRbxwL9Gf5Tfw",
+   "name": "Bangladesh Army",
+   "kind": "government (military)",
+   "lang": "bn"
+  },
+  {
+   "cc": "be",
+   "channel_id": "UCcsUVq6XMiebmtIiBhdX4Yw",
+   "name": "Belgian Federal Police",
+   "kind": "government",
+   "lang": "nl"
+  },
+  {
+   "cc": "be",
+   "channel_id": "UCy8lCLZWvOWIMkVF0-IX0WA",
+   "name": "Belgian Defence",
+   "kind": "government (military)",
+   "lang": "nl"
+  },
+  {
+   "cc": "bg",
+   "channel_id": "UCtzcS-7JoZd6cvbPY6esNZQ",
+   "name": "Bulgarian News Agency",
+   "kind": "state media",
+   "lang": "bg"
+  },
+  {
+   "cc": "bh",
+   "channel_id": "UCooIZ8y-EHj4YYb-hYdNm-A",
+   "name": "ministry of interior",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "bj",
+   "channel_id": "UCKVBthe9CujL5ZyCK98H2fw",
+   "name": "Présidence Bénin",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "bt",
+   "channel_id": "UCWPola-KayVUJZstymaP4KQ",
+   "name": "BBS PROGRAMME",
+   "kind": "public broadcaster",
+   "lang": "dz"
+  },
+  {
+   "cc": "by",
+   "channel_id": "UCWqeoQKVbAfMjk8-aC713JQ",
+   "name": "Телеканал Беларусь 1",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "bz",
+   "channel_id": "UC823EN3FaKJ4Pk_ZIcp34LA",
+   "name": "Greater Belize Media - GBM Livestream",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ca",
+   "channel_id": "UCKjU3KzdbJE1EFcHVqXC3_g",
+   "name": "CBC News: The National",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "ca",
+   "channel_id": "UCyvEONnqE2Krm9Zi0LVvGmA",
+   "name": "Prime Minister of Canada",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "cf",
+   "channel_id": "UC-uESzikarUBV6wK26yAuFA",
+   "name": "UN Mission in the Central African Republic - MINUSCA",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "ch",
+   "channel_id": "UCQyyY2Izw8hin7c8T5YY4sg",
+   "name": "RTS - Radio Télévision Suisse",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "cl",
+   "channel_id": "UCaVaCaiG6qRzDiJDuEGKOhQ",
+   "name": "TVN",
+   "kind": "public broadcaster",
+   "lang": "es"
+  },
+  {
+   "cc": "cm",
+   "channel_id": "UCs2F-OiqQGEIsrrtx98QbbQ",
+   "name": "STV Cameroon",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cn",
+   "channel_id": "UCpbfXQsYBJTwq5lCkwGIeuQ",
+   "name": "中国新闻社",
+   "kind": "state media",
+   "lang": "zh"
+  },
+  {
+   "cc": "cn",
+   "channel_id": "UC4SUWizzKc1tptprBkWjX2Q",
+   "name": "South China Morning Post",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "co",
+   "channel_id": "UCcpE1fmG2qBZatj28bak2ng",
+   "name": "Caracol Televisión",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "channel_id": "UCLXHie0velori7_dqu8w_bQ",
+   "name": "Presidencia de la República",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "channel_id": "UCILU2ghO8GrOeB-zo93eYdA",
+   "name": "Multimedios Costa Rica",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "channel_id": "UCqS_xL-oefkRoCZJ5LKWPuQ",
+   "name": "NoticiasCubanet Cuba",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cz",
+   "channel_id": "UCi7DbnGg6Ybp6_cFbhvq_aQ",
+   "name": "Česká televize",
+   "kind": "public broadcaster",
+   "lang": "cs"
+  },
+  {
+   "cc": "cz",
+   "channel_id": "UCGMzV8k2T_q9rgyCpTWVexA",
+   "name": "Policie ČR (Policie České republiky)",
+   "kind": "government",
+   "lang": "cs"
+  },
+  {
+   "cc": "de",
+   "channel_id": "UCMIgOXM2JEQ2Pv2d0_PVfcg",
+   "name": "DW Deutsch",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "do",
+   "channel_id": "UC3Q354CYYBqN7_BjlTWsfxw",
+   "name": "Policía Nacional República Dominicana",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "channel_id": "UC8eOJQ4nRPocQm2cZ5yRPjw",
+   "name": "Ejército de República Dominicana",
+   "kind": "government (military)",
+   "lang": "es"
+  },
+  {
+   "cc": "dz",
+   "channel_id": "UCShOIepd16caAKmnqjX_7Cg",
+   "name": "Canal Algérie",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "dz",
+   "channel_id": "UCm4c4Ext9vrIwcEKyzxgyug",
+   "name": "Assemblée Populaire Nationale المجلس الشعبي الوطني",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "ec",
+   "channel_id": "UCV2hmbOyU-XM6aTQvJsKr6A",
+   "name": "Policía Nacional del Ecuador",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "ec",
+   "channel_id": "UCtNaMr4K4bZgpvz2bzcyjjw",
+   "name": "Asamblea Nacional del Ecuador",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "eg",
+   "channel_id": "UCPYussIbK8uihMZcpDIXgwg",
+   "name": "رئاسة جمهورية مصر العربية",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "eg",
+   "channel_id": "UC5AvwPA0ewLnAcNvCF8ZEhg",
+   "name": "وزارة الدفاع المصرية",
+   "kind": "government (military)",
+   "lang": "ar"
+  },
+  {
+   "cc": "es",
+   "channel_id": "UCmUAGTETe2N4ZIaAToIMobw",
+   "name": "Policía Nacional",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "et",
+   "channel_id": "UCSjaw-eGJSkvcXHyTpQyT1Q",
+   "name": "Ethiopian News Agency",
+   "kind": "state media",
+   "lang": "am"
+  },
+  {
+   "cc": "et",
+   "channel_id": "UCrBY82taQkWw11GjsFgeusg",
+   "name": "Office of the Prime Minister - Ethiopia",
+   "kind": "government",
+   "lang": "am"
+  },
+  {
+   "cc": "fi",
+   "channel_id": "UCM8qGnJrcCGQXCZuGenvrOQ",
+   "name": "Puolustusvoimat - Försvarsmakten - The Finnish Defence Forces",
+   "kind": "government (military)",
+   "lang": "fi"
+  },
+  {
+   "cc": "fi",
+   "channel_id": "UCyLhVaou-gZDuKkeXCjqTEA",
+   "name": "SuomenEduskunta",
+   "kind": "government",
+   "lang": "fi"
+  },
+  {
+   "cc": "fj",
+   "channel_id": "UC9Pfc-hXNn3uPINx-U-lcng",
+   "name": "FijiGovernment",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "fr",
+   "channel_id": "UCCCPCZNChQdGa9EkATeye4g",
+   "name": "FRANCE 24",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "gn",
+   "channel_id": "UC0VvoE_Oy21wB-U9N7Q1E5Q",
+   "name": "Présidence de la République de Guinée",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "gr",
+   "channel_id": "UC-rbkri30QnGq9Qh-vKbxWA",
+   "name": "Hellenic Parliament TV",
+   "kind": "government",
+   "lang": "el"
+  },
+  {
+   "cc": "gr",
+   "channel_id": "UC7-Bkk95NxBaHIwv5dupGEg",
+   "name": "Ο Πρωθυπουργός",
+   "kind": "government",
+   "lang": "el"
+  },
+  {
+   "cc": "gt",
+   "channel_id": "UCHsYnV67K3J0yJ4QeciVCww",
+   "name": "PNCdeGuatemala",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "gt",
+   "channel_id": "UC-hSDosSGOQ780sVq2PeGUw",
+   "name": "Noticiero Guatevisión 21 Hrs.",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "gy",
+   "channel_id": "UCGA8-rFam5zwrBs7GZ1tRpw",
+   "name": "Department of Public Information, Guyana",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "hn",
+   "channel_id": "UCe535gAZ3VC477Y7VR4P5PA",
+   "name": "Policía Nacional de Honduras",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "channel_id": "UCOs9gfp9D7KgAi57DTfwaIA",
+   "name": "Channel Armed Forces TV Honduras",
+   "kind": "government (military)",
+   "lang": "es"
+  },
+  {
+   "cc": "hr",
+   "channel_id": "UCweBO4bfRZgu33OMPYlehlg",
+   "name": "Hrvatska radiotelevizija",
+   "kind": "public broadcaster",
+   "lang": "hr"
+  },
+  {
+   "cc": "ht",
+   "channel_id": "UCziJNio0T1VX-BpRj7UHErA",
+   "name": "Police Nationale d'Haïti - PNH",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "hu",
+   "channel_id": "UCUwq-7XDFleqH9y5bvTfmug",
+   "name": "PoliceHungary",
+   "kind": "government",
+   "lang": "hu"
+  },
+  {
+   "cc": "hu",
+   "channel_id": "UCNVkvmkt_D6_XfE2bQOEkpQ",
+   "name": "Hungarian Defence Force",
+   "kind": "government (military)",
+   "lang": "hu"
+  },
+  {
+   "cc": "id",
+   "channel_id": "UC_m_NBgf7ieJBHzb6vvJC5A",
+   "name": "Sekretariat Presiden",
+   "kind": "government",
+   "lang": "id"
+  },
+  {
+   "cc": "id",
+   "channel_id": "UC46q-QSvoJz-1iSxPeuOqWA",
+   "name": "BBC News Indonesia",
+   "kind": "public broadcaster (UK)",
+   "lang": "id"
+  },
+  {
+   "cc": "ie",
+   "channel_id": "UCGnlgHCdAsCNeAdNRTbS4hg",
+   "name": "RTÉ - IRELAND’S NATIONAL PUBLIC SERVICE MEDIA",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "il",
+   "channel_id": "UC4elaDPpw25TipG2U33paLA",
+   "name": "The Knesset",
+   "kind": "government",
+   "lang": "he"
+  },
+  {
+   "cc": "in",
+   "channel_id": "UCISgnSNwqQ2i8lhCun3KtQg",
+   "name": "Sansad TV",
+   "kind": "state media",
+   "lang": "hi"
+  },
+  {
+   "cc": "in",
+   "channel_id": "UCGn6a5SI8SNlj7WylmPD6GQ",
+   "name": "PIB India",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "channel_id": "UCqrJfqXKFIBs4llVPipWppg",
+   "name": "President of India",
+   "kind": "government",
+   "lang": "hi"
+  },
+  {
+   "cc": "iq",
+   "channel_id": "UCm2p8bmPm0QfY3Ozxa_Wo1g",
+   "name": "مجلس النواب العراقي- parliament-iq",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "iq",
+   "channel_id": "UC4NdpAYltpp4mq-e4I9HIHg",
+   "name": "Government of Iraq - الحكومة العراقية",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "is",
+   "channel_id": "UCGgyr3-DI5pr5Cnnv2A8shg",
+   "name": "RÚV",
+   "kind": "public broadcaster",
+   "lang": "is"
+  },
+  {
+   "cc": "jm",
+   "channel_id": "UCT6cAZGuOgJlXrEoPv8jtEw",
+   "name": "Jamaica Information Service",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "jo",
+   "channel_id": "UCCZPsyMDRRCdvQFaE3hW2dA",
+   "name": "Armed ForcesJO",
+   "kind": "government (military)",
+   "lang": "ar"
+  },
+  {
+   "cc": "jo",
+   "channel_id": "UCH3hqWe7xZG_QIBEZeHYhfA",
+   "name": "Prime Ministry of Jordan",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "jp",
+   "channel_id": "UCGCZAYq5Xxojl_tSXcVJhiQ",
+   "name": "ANNnewsCH",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "jp",
+   "channel_id": "UC1URvP081mF60IOOJm81bzg",
+   "name": "JapanGov  - The Government of Japan",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "jp",
+   "channel_id": "UCJD2Br_xC-3vY4nkJ9YPYDA",
+   "name": "Nippon Television News Japan",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ke",
+   "channel_id": "UCJlmIqrgs5r3m81UVzpLqDQ",
+   "name": "Kenya Defence Forces",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "kg",
+   "channel_id": "UC8zGv2QY2-l6dyiyF9H2wzA",
+   "name": "BBC News Кыргыз",
+   "kind": "public broadcaster (UK)",
+   "lang": "ky"
+  },
+  {
+   "cc": "kh",
+   "channel_id": "UC9JOo7brCWvVzrAe9FF4oiw",
+   "name": "National Assembly Of Cambodia",
+   "kind": "government",
+   "lang": "km"
+  },
+  {
+   "cc": "kr",
+   "channel_id": "UCjggo33k7CdCfaOA6RUFS8w",
+   "name": "Republic of Korea Army",
+   "kind": "government (military)",
+   "lang": "ko"
+  },
+  {
+   "cc": "kz",
+   "channel_id": "UCPf1FQVQtODCfw31n51-W9Q",
+   "name": "PrimeMinister_kz",
+   "kind": "government",
+   "lang": "kk"
+  },
+  {
+   "cc": "la",
+   "channel_id": "UCh8r4Noa2sL6QjOiuAOzUvg",
+   "name": "ໂທລະພາບແຫ່ງຊາດລາວ ທຊລ 1",
+   "kind": "state media",
+   "lang": "lo"
+  },
+  {
+   "cc": "lb",
+   "channel_id": "UCm9ayoenlv25GyzgPtGUmNw",
+   "name": "TheLebaneseArmy",
+   "kind": "government (military)",
+   "lang": "ar"
+  },
+  {
+   "cc": "lc",
+   "channel_id": "UC4al3A_gysYEIzAM1L2qZbg",
+   "name": "Saint Lucia Government",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "channel_id": "UC18KIGLmSb0K312PHClqtHw",
+   "name": "SL Army Media",
+   "kind": "government (military)",
+   "lang": "si"
+  },
+  {
+   "cc": "lt",
+   "channel_id": "UCN6ZSYI-7pxml6bE_zrTgow",
+   "name": "Atviras Seimas",
+   "kind": "government",
+   "lang": "lt"
+  },
+  {
+   "cc": "ma",
+   "channel_id": "UCLmLW2hwH-kk9w8QrdX8uAA",
+   "name": "Parlement_ma",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "md",
+   "channel_id": "UCK1s1xxDRmGFno5j2nqqWXQ",
+   "name": "TVR MOLDOVA",
+   "kind": "public broadcaster",
+   "lang": "ro"
+  },
+  {
+   "cc": "me",
+   "channel_id": "UC2V1QkN_HVpR6ZcNjHQ3Ykw",
+   "name": "Skupština Crne Gore",
+   "kind": "government",
+   "lang": "sr"
+  },
+  {
+   "cc": "mk",
+   "channel_id": "UCqyOkS9_lPZHB13yfM8b0Zw",
+   "name": "Канал 5 Телевизија",
+   "kind": "news desk",
+   "lang": "mk"
+  },
+  {
+   "cc": "ml",
+   "channel_id": "UCwOAngbrMhmjFiJXZYh4nTg",
+   "name": "Présidence de la République du Mali",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "mu",
+   "channel_id": "UCygklH4KxJ7SOjSKhhZ76pQ",
+   "name": "TéléPlus",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "mx",
+   "channel_id": "UCoeJxDc717MNVJtUsQW20Qg",
+   "name": "Senado de México.",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "my",
+   "channel_id": "UC2CzLwbhTiI8pTKNVyrOnJQ",
+   "name": "Free Malaysia Today",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ng",
+   "channel_id": "UCaiRlJZKn0bMRNutRWArrrg",
+   "name": "NTA Live",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "nl",
+   "channel_id": "UCGZmCRDBqq73RuAlLWCoMfQ",
+   "name": "Politie",
+   "kind": "government",
+   "lang": "nl"
+  },
+  {
+   "cc": "nl",
+   "channel_id": "UCch2JvY2ZSwcjf5gb93HGQw",
+   "name": "NOS Journaal in Makkelijke Taal",
+   "kind": "public broadcaster",
+   "lang": "nl"
+  },
+  {
+   "cc": "np",
+   "channel_id": "UC6ci3OXsTJ6U93YLkSk3gqg",
+   "name": "Nepali Army",
+   "kind": "government (military)",
+   "lang": "ne"
+  },
+  {
+   "cc": "np",
+   "channel_id": "UCMkrAY5yFo5eQ1SCj9aV28w",
+   "name": "Nepal Police",
+   "kind": "government",
+   "lang": "ne"
+  },
+  {
+   "cc": "nz",
+   "channel_id": "UChHbtuAQL4t-1Z6fEis67OA",
+   "name": "New Zealand Police",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "nz",
+   "channel_id": "UCXo4WugjobSnTIs9WnDE3qA",
+   "name": "NZ Defence Force",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "om",
+   "channel_id": "UC6s4eLQAMHZtf3Or4sKV5Tw",
+   "name": "Oman News Center مركز الأخبار",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "om",
+   "channel_id": "UC9IiuS6cN8E1l2fBkklcJhg",
+   "name": "شرطة عمان السلطانية Royal Oman Police",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "pe",
+   "channel_id": "UC9HLcODpEZuBRLSKXZx5igw",
+   "name": "Congreso de la República del Perú",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "ph",
+   "channel_id": "UCPJWi44tskVVMNyKzYrPoGg",
+   "name": "Senate of the Philippines",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ph",
+   "channel_id": "UCR1TNyQRJPiaSNu9cezMsCQ",
+   "name": "DFA Philippines",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "pk",
+   "channel_id": "UCj-e7yp2_-qE-TPritppZGQ",
+   "name": "Pakistan TV",
+   "kind": "state media",
+   "lang": "ur"
+  },
+  {
+   "cc": "pk",
+   "channel_id": "UC7dleA9qEsOY3SIyPmZhK4g",
+   "name": "National Assembly Of Pakistan",
+   "kind": "government",
+   "lang": "ur"
+  },
+  {
+   "cc": "pl",
+   "channel_id": "UCBjUPsHj7bXt24SUWNoZ0zA",
+   "name": "TVP WORLD",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "pl",
+   "channel_id": "UCS2itf64y7vnkWTJR-lnd0w",
+   "name": "Polska Policja",
+   "kind": "government",
+   "lang": "pl"
+  },
+  {
+   "cc": "pt",
+   "channel_id": "UCWPpeeDOykyH5ducPITCDPw",
+   "name": "RTP",
+   "kind": "public broadcaster",
+   "lang": "pt"
+  },
+  {
+   "cc": "pt",
+   "channel_id": "UCOE-JsBcVf4__OlrsiW59EQ",
+   "name": "Portuguese Republic",
+   "kind": "government",
+   "lang": "pt"
+  },
+  {
+   "cc": "qa",
+   "channel_id": "UC5pUFjdWQI6At8tUAYtQ6Ag",
+   "name": "Government Communications Office",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "ro",
+   "channel_id": "UC9ipWt3PNhs6sZ_niPRoYLw",
+   "name": "HotNews Romania",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "ro",
+   "channel_id": "UC50IpohpwFNmJr6b26XMqew",
+   "name": "Poliția Română",
+   "kind": "government",
+   "lang": "ro"
+  },
+  {
+   "cc": "rs",
+   "channel_id": "UCVgGKbKc_XSjBNXIa_CDr8Q",
+   "name": "Euronews Serbia",
+   "kind": "news desk",
+   "lang": "sr"
+  },
+  {
+   "cc": "rs",
+   "channel_id": "UCghngrfQwzJ4aaPZ-UgNIZQ",
+   "name": "ParlamentSrbija",
+   "kind": "government",
+   "lang": "sr"
+  },
+  {
+   "cc": "ru",
+   "channel_id": "UCrVo0BXjIUlZ-YylYF8oNxg",
+   "name": "Ministry of Foreign Affairs of Russia",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "rw",
+   "channel_id": "UCf1BgxxKW8snd2gvdU6CYtA",
+   "name": "Rwanda Police",
+   "kind": "government",
+   "lang": "rw"
+  },
+  {
+   "cc": "sa",
+   "channel_id": "UC2mWeEHv9IY6i74okFMkGPw",
+   "name": "السعودية",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "channel_id": "UCYZPiAqPEKj8I--lyOOqj9A",
+   "name": "وزارة الداخلية السعودية - Ministry of Interior KSA",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "sd",
+   "channel_id": "UC7b2LAM3NlGdVR504ScOgug",
+   "name": "Sudan News Agency وكالة السودان للأنباء",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "se",
+   "channel_id": "UC9013JWZWntBD6Zy9mVJQpA",
+   "name": "Försvarsmakten",
+   "kind": "government (military)",
+   "lang": "sv"
+  },
+  {
+   "cc": "se",
+   "channel_id": "UCmyMhyy_FHtwui-3dsu-K8g",
+   "name": "Sveriges riksdag",
+   "kind": "government",
+   "lang": "sv"
+  },
+  {
+   "cc": "sg",
+   "channel_id": "UC4p_I9eiRewn2KoU-nawrDg",
+   "name": "The Straits Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sg",
+   "channel_id": "UCgKjHnMbrOK8xLzAwHO0aSg",
+   "name": "govsg",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "sg",
+   "channel_id": "UCCW8a4CgTbBWzid3IJYomFQ",
+   "name": "Prime Minister's Office, Singapore",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "channel_id": "UCGJdFqyPzu98DPdOh2oQh9g",
+   "name": "SN Radio",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "so",
+   "channel_id": "UC_QuRsbRQpaC4iS8WlxW0NA",
+   "name": "BBC News Somali",
+   "kind": "public broadcaster (UK)",
+   "lang": "so"
+  },
+  {
+   "cc": "sr",
+   "channel_id": "UCz-n78QGdFr8JLTZF3dOSvA",
+   "name": "STVS Suriname",
+   "kind": "state media",
+   "lang": "nl"
+  },
+  {
+   "cc": "th",
+   "channel_id": "UCOLG9SK7RJpqWl1ZtNb3dCg",
+   "name": "The Nation Thailand",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "th",
+   "channel_id": "UC6o_cw_H4sItA_pLcw4lxKg",
+   "name": "กองทัพบก Royal Thai Army",
+   "kind": "government (military)",
+   "lang": "th"
+  },
+  {
+   "cc": "tn",
+   "channel_id": "UC91i-9lIqoiWfmov8FwjLqA",
+   "name": "Al Watania News",
+   "kind": "public broadcaster",
+   "lang": "ar"
+  },
+  {
+   "cc": "tt",
+   "channel_id": "UCf58CbplZsDbH9wPMYoOTFw",
+   "name": "TTT Live Online",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "tw",
+   "channel_id": "UC21BtM_TJfRfOyEWKlrBgfQ",
+   "name": "Formosa English News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tw",
+   "channel_id": "UCBBaj1tbLxFhHD0bFAa7WPg",
+   "name": "presidentialoffice",
+   "kind": "government",
+   "lang": "zh"
+  },
+  {
+   "cc": "tw",
+   "channel_id": "UC4yFGrMYnnRusraegYMIauw",
+   "name": "MOFA Taiwan",
+   "kind": "government",
+   "lang": "zh"
+  },
+  {
+   "cc": "tw",
+   "channel_id": "UCXgIO9jJVsX5_2ideiSkfvA",
+   "name": "公視 網路直播頻道",
+   "kind": "public broadcaster",
+   "lang": "zh"
+  },
+  {
+   "cc": "tz",
+   "channel_id": "UC7Ge3n6AbtnOW1nQAUaT7nw",
+   "name": "Bunge TV",
+   "kind": "government",
+   "lang": "sw"
+  },
+  {
+   "cc": "ua",
+   "channel_id": "UCncq73xfx9sVA3Ht2uVRrCw",
+   "name": "Office of the President of Ukraine",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ug",
+   "channel_id": "UCtEIskWCkFh24YhsEvWpM4w",
+   "name": "UPDF",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "channel_id": "UCupvZG-5ko_eiXAupbDfxWw",
+   "name": "CNN",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "uy",
+   "channel_id": "UCdW5hWEhQqexGEApXjBqQrQ",
+   "name": "VTV NOTICIAS",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "uy",
+   "channel_id": "UCeeEsGE06kae6DF-yOGT9Tw",
+   "name": "Ejército del Uruguay",
+   "kind": "government (military)",
+   "lang": "es"
+  },
+  {
+   "cc": "uz",
+   "channel_id": "UCQvZD_M4nzOSyrPx0LfgOmQ",
+   "name": "BBC News Uzbek",
+   "kind": "public broadcaster (UK)",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "channel_id": "UC61Jnumjuz8NXhSuLoZD2xg",
+   "name": "Shavkat Mirziyoyev's Press-service",
+   "kind": "government",
+   "lang": "uz"
+  },
+  {
+   "cc": "ws",
+   "channel_id": "UC9Rf8UTSFEiCdm9aBm4K4rg",
+   "name": "Radio Samoa",
+   "kind": "public broadcaster",
+   "lang": "sm"
+  },
+  {
+   "cc": "xk",
+   "channel_id": "UC99fNIzyZUd5oxlzyrKU3Fg",
+   "name": "KosovaPress",
+   "kind": "news desk",
+   "lang": "sq"
+  },
+  {
+   "cc": "za",
+   "channel_id": "UCaVkkSIuwelBM9inQwm91FA",
+   "name": "The Presidency of the Republic of South Africa",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ae",
+   "channel_id": "UC_5xwyTiWrLUf0cAO_MDmxA",
+   "name": "Emirates News Agency - وكالة أنباء الإمارات",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ao",
+   "channel_id": "UCBJnqOPNlG4CFyCS0n7mezA",
+   "name": "TV PARLAMENTO ANGOLA",
+   "kind": "government",
+   "lang": "pt"
+  },
+  {
+   "cc": "ao",
+   "channel_id": "UCxXu5iIL2m_sqfmA3rH2ORw",
+   "name": "CIPRA | Centro de Imprensa da Presidência...",
+   "kind": "government",
+   "lang": "pt"
+  },
+  {
+   "cc": "ao",
+   "channel_id": "UCmy466a7hmtzLzt4G3yP0fQ",
+   "name": "Polícia Nacional de Angola",
+   "kind": "government",
+   "lang": "pt"
+  },
+  {
+   "cc": "ao",
+   "channel_id": "UCjUQbwdspVBHEqF5lQXR0Ig",
+   "name": "TV8 News Angola",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "at",
+   "channel_id": "UCMS_QUztr_rdo8rn2k64I0Q",
+   "name": "Österreichisches Parlament",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "bb",
+   "channel_id": "UCFM2ZOKVO8a4T3z7ChlrhpA",
+   "name": "Barbados Government Information Service",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "bb",
+   "channel_id": "UCnAo0XVbxFF2UCpkIkAS-6A",
+   "name": "Barbados Parliament Channel",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "be",
+   "channel_id": "UCqWAITdMciryV9TdyjvqEGw",
+   "name": "Belgian Army",
+   "kind": "government (military)",
+   "lang": "nl"
+  },
+  {
+   "cc": "be",
+   "channel_id": "UC7juQCo1UCZLOnagICOx1Rg",
+   "name": "Plenum - Belgian Senate",
+   "kind": "government",
+   "lang": "nl"
+  },
+  {
+   "cc": "bg",
+   "channel_id": "UCU1i6qBMjY9El6q5L2OK8hA",
+   "name": "Euronews Bulgaria",
+   "kind": "news desk",
+   "lang": "bg"
+  },
+  {
+   "cc": "bg",
+   "channel_id": "UCW9EdtT4kCtntp4igyp7o7Q",
+   "name": "Government of Bulgaria",
+   "kind": "government",
+   "lang": "bg"
+  },
+  {
+   "cc": "bh",
+   "channel_id": "UCeTOh30i9_eImrLAT9Jq4sA",
+   "name": "Bahrain International TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "bh",
+   "channel_id": "UCALOr8Es5R2ddCaSOP9hWEQ",
+   "name": "Bahrain PMO",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "bh",
+   "channel_id": "UCfxhU2lYxn1IwNUSSxsyiaQ",
+   "name": "مجلس النواب Council of Representatives",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "bi",
+   "channel_id": "UCJSXWgaKn75Vt5_FKjoHFUg",
+   "name": "BURUNDI TOP Tv",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "bo",
+   "channel_id": "UCwdvHc_u6P8CNoQ2JaVMF6A",
+   "name": "Bolivia TV Oficial",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "bo",
+   "channel_id": "UCaRVKdWqw05XK91i5CGfRfA",
+   "name": "Ministerio de Gobierno - Bolivia",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "bz",
+   "channel_id": "UC2WFLCs_GDHKuN20cV9Cbgg",
+   "name": "Government of Belize Press Office",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "cg",
+   "channel_id": "UCyavCS_0nMefzngu9AN3C8w",
+   "name": "Télé Congo",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "channel_id": "UCZoFAnpnUvQ893azYiU6L_A",
+   "name": "CONGO AVENIR Tv",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cy",
+   "channel_id": "UCOdJPSkQ4EIrR8ml0jpoISQ",
+   "name": "Ant1 Live News - Κύπρος",
+   "kind": "news desk",
+   "lang": "el"
+  },
+  {
+   "cc": "cy",
+   "channel_id": "UCBOKw4sTy2sioroFHbDn-1g",
+   "name": "Κυπριακή Κυβέρνηση / Cyprus Government",
+   "kind": "government",
+   "lang": "el"
+  },
+  {
+   "cc": "cy",
+   "channel_id": "UC2_lzneVJ0RMFkRsTEz4acw",
+   "name": "National Guard Cyprus",
+   "kind": "government (military)",
+   "lang": "el"
+  },
+  {
+   "cc": "cz",
+   "channel_id": "UCuZYRKy64fg_eYYLKCEp5Zw",
+   "name": "CNN Prima NEWS",
+   "kind": "news desk",
+   "lang": "cs"
+  },
+  {
+   "cc": "dj",
+   "channel_id": "UCj8W2DTVMGYihgvrCumbzEw",
+   "name": "Presse Presidentielle de Djibouti",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "dj",
+   "channel_id": "UCI60FWhEi5loZmZ4RtOEAtA",
+   "name": "Gourmad Police Nationale",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "dm",
+   "channel_id": "UCfaJxUEH8Po4dQ7E3nFOsSg",
+   "name": "Dominica News Online",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ee",
+   "channel_id": "UCe-_KzbXm9ONYa_uJxTdPqQ",
+   "name": "TV3 Eesti / TV3 Estonia",
+   "kind": "news desk",
+   "lang": "et"
+  },
+  {
+   "cc": "ee",
+   "channel_id": "UCS1xJUQbauo60LJCEbiiJvg",
+   "name": "Riigikogu",
+   "kind": "government",
+   "lang": "et"
+  },
+  {
+   "cc": "gd",
+   "channel_id": "UC0lyyB7V2k0NqW3ewbRFfGQ",
+   "name": "GIS Grenada",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ge",
+   "channel_id": "UCidFouPFxyvJee3iFrFukTg",
+   "name": "Parliament of Georgia",
+   "kind": "government",
+   "lang": "ka"
+  },
+  {
+   "cc": "gh",
+   "channel_id": "UCy3jXFdDPuYmW2jy1bJAKfA",
+   "name": "GHANA POLICE SERVICE",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "channel_id": "UCXq2W9Zv2IEsYlVfjYR6JZQ",
+   "name": "Official GAF TV",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "channel_id": "UCrMs7nBTw06wKX6nkRBpvYg",
+   "name": "Presidency of the Republic of Ghana",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "gm",
+   "channel_id": "UCPremjRoupBCtHl8XgONZMw",
+   "name": "Askani Gambia (AG Radio)",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gn",
+   "channel_id": "UCuUvGjVoQd1OKpaMW5aULxw",
+   "name": "Ministère de la Défense Nationale Guinée",
+   "kind": "government (military)",
+   "lang": "fr"
+  },
+  {
+   "cc": "gn",
+   "channel_id": "UCg5kaGjGXrbNljkZEQ4mCjw",
+   "name": "Parlement Tv",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "gw",
+   "channel_id": "UC155WPKgPgZOMoqT-YLgF_g",
+   "name": "Forças Armadas da Guiné-Bissau",
+   "kind": "government (military)",
+   "lang": "pt"
+  },
+  {
+   "cc": "gw",
+   "channel_id": "UC4QYtS1Ky-9N3_4Pz_2yi_A",
+   "name": "Olho Reporter Guine-Bissau",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "gy",
+   "channel_id": "UCEQ9d8hoNFdWaOTxVuk8GoA",
+   "name": "NEWS Source Guyana",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "hr",
+   "channel_id": "UCVVdLg-CFTDHr2wngayGskQ",
+   "name": "Vlada Republike Hrvatske",
+   "kind": "government",
+   "lang": "hr"
+  },
+  {
+   "cc": "hr",
+   "channel_id": "UCZPtjvmbCqm2Wbl2FCsXb4Q",
+   "name": "Internet TV Hrvatskoga sabora",
+   "kind": "government",
+   "lang": "hr"
+  },
+  {
+   "cc": "ht",
+   "channel_id": "UC98xnWt1T8nJOaQ8NQAdOjg",
+   "name": "Haitian Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ie",
+   "channel_id": "UC78imML6tEzLoEcadXNu87w",
+   "name": "Virgin Media News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ie",
+   "channel_id": "UCT_RKGsFnti_vktYPk8pgEQ",
+   "name": "Áras an Uachtaráin",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ie",
+   "channel_id": "UC0AGdtfuO-5tKrlw8LxmnEQ",
+   "name": "Government of Ireland",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "kn",
+   "channel_id": "UCOblxaqxpfviaLV1oBEX02g",
+   "name": "SKNISmedia",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "kz",
+   "channel_id": "UCx7OsqlsKQMYG4oyzMGT4sQ",
+   "name": "The Astana Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kz",
+   "channel_id": "UCvozf3nTF7K4_7m2dZpoFjg",
+   "name": "Қазақстан Президентінің Баспасөз қызметі",
+   "kind": "government",
+   "lang": "kk"
+  },
+  {
+   "cc": "lb",
+   "channel_id": "UChGj8o3dIKqGdTz5oeL7cMg",
+   "name": "NBN National Broadcasting Network",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "channel_id": "UC7MeGQZvUxUwFXhitMRNMyQ",
+   "name": "Lebanese Presidency",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "lc",
+   "channel_id": "UCHlO-uPBPiLNnfrj7KNl2rg",
+   "name": "MBC TELEVISION SAINT LUCIA",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lc",
+   "channel_id": "UC_Ga1ESUYTJg98owEQ6GCDA",
+   "name": "Office of the Prime Minister - Saint Lucia",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "li",
+   "channel_id": "UCwVHHUudMdPK8HRzeFKCZKA",
+   "name": "Landespolizei Liechtenstein",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "ls",
+   "channel_id": "UCyA2DXZy4dKCIbK7ULVUV2A",
+   "name": "OfficialLesotho Mounted Police Service",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "lu",
+   "channel_id": "UCefdTpOQwucOfYw-An_kEcQ",
+   "name": "PoliceLux",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "lv",
+   "channel_id": "UCOSAAyJoybqsY5sZ76BaqFA",
+   "name": "LTV Ziņu dienests",
+   "kind": "public broadcaster",
+   "lang": "lv"
+  },
+  {
+   "cc": "lv",
+   "channel_id": "UCzXK03ODst8efI03xnHYkVw",
+   "name": "Valsts policija",
+   "kind": "government",
+   "lang": "lv"
+  },
+  {
+   "cc": "lv",
+   "channel_id": "UChG7C8090M0h6eCU8TM-vGQ",
+   "name": "Valsts prezidents",
+   "kind": "government",
+   "lang": "lv"
+  },
+  {
+   "cc": "mc",
+   "channel_id": "UCrUztlaGkaqr6AeONbmfcCw",
+   "name": "Conseil National TV",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "me",
+   "channel_id": "UCyMI6KapVOvY_Ao4mHbZNBg",
+   "name": "ADRIA TV Montenegro",
+   "kind": "news desk",
+   "lang": "sr"
+  },
+  {
+   "cc": "mt",
+   "channel_id": "UCQqDItOUGaNkjMz7Qx-uiSg",
+   "name": "TVMnews",
+   "kind": "public broadcaster",
+   "lang": "mt"
+  },
+  {
+   "cc": "mt",
+   "channel_id": "UCb_pqqIa6zZigtiCdxEh2AA",
+   "name": "ONE News Malta",
+   "kind": "news desk",
+   "lang": "mt"
+  },
+  {
+   "cc": "mt",
+   "channel_id": "UCYFJ8y8OpRYCAsN4EcXrNEQ",
+   "name": "MaltaGov",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "mv",
+   "channel_id": "UC1yPsBqeOLHSFX-sDvseDXQ",
+   "name": "Presidency Maldives",
+   "kind": "government",
+   "lang": "dv"
+  },
+  {
+   "cc": "mv",
+   "channel_id": "UCCNGwK1wJExFHdRxUzcbZtg",
+   "name": "People's Majlis",
+   "kind": "government",
+   "lang": "dv"
+  },
+  {
+   "cc": "mw",
+   "channel_id": "UCX8cYKiKHRJxX1qDV9N2yTQ",
+   "name": "Parliament of Malawi",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "mw",
+   "channel_id": "UC1F7EY2xQLfJ4h9x8C_N7og",
+   "name": "AM TV MALAWI",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "mz",
+   "channel_id": "UCXBAxqlRPNnqsChZzr1B3Xg",
+   "name": "Ministério da Defesa Nacional - Moçambique",
+   "kind": "government (military)",
+   "lang": "pt"
+  },
+  {
+   "cc": "na",
+   "channel_id": "UCvvbiynzZtXlrXUF8pyQbag",
+   "name": "Government Information Centre [GIC] Namibia",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "pa",
+   "channel_id": "UCBYLzCWg6DLUTOC2v2vrJkw",
+   "name": "Policía Nacional de Panamá",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "pg",
+   "channel_id": "UCuY44m-cD124oITaNkBtsLA",
+   "name": "EMTV Online",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "pg",
+   "channel_id": "UCzvxWocqDnjVpShjQYbRHig",
+   "name": "PM James Marape",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ps",
+   "channel_id": "UCWW2TTMRKB2NMlB_yMkdcLw",
+   "name": "الرئيس محمود عباس",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "py",
+   "channel_id": "UCv3Sy8PzrAlxncQ9BjOYi9A",
+   "name": "Gobierno del Paraguay",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "py",
+   "channel_id": "UCPE4QiiOfRxmk_j1bxxA-yA",
+   "name": "Policía Nacional del Paraguay",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "qa",
+   "channel_id": "UCRfRGnv1mfhLOMP2B4W_s8Q",
+   "name": "Qatar News Agency (QNA)",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "channel_id": "UCqM3dVIzE8lbCU6cfUsbChg",
+   "name": "Hukoomi Qatar",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "rw",
+   "channel_id": "UCweH7GISNi4dkJLXtO1tqDQ",
+   "name": "TV1 Rwanda",
+   "kind": "news desk",
+   "lang": "rw"
+  },
+  {
+   "cc": "rw",
+   "channel_id": "UCr2OimtV-wuMk-3BxdHzrGw",
+   "name": "Rwanda Ministry of Defence",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "rw",
+   "channel_id": "UCMUg1UwfsWe2mF69QhrGzEQ",
+   "name": "Rwanda Parliament - Official",
+   "kind": "government",
+   "lang": "rw"
+  },
+  {
+   "cc": "sb",
+   "channel_id": "UCUIxi8rNAdosGuVUp4ufX7g",
+   "name": "Tavuli News (Solomon Islands)",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sd",
+   "channel_id": "UCFuqvBGpM67TD5FLgXpWE3g",
+   "name": "القوات المسلحة السودانية",
+   "kind": "government (military)",
+   "lang": "ar"
+  },
+  {
+   "cc": "si",
+   "channel_id": "UCwCC6MSkhZJDHSxSB7akskg",
+   "name": "Slovenska vojska",
+   "kind": "government (military)",
+   "lang": "sl"
+  },
+  {
+   "cc": "sk",
+   "channel_id": "UCgA71QWa-XhbOXhdzefNUQg",
+   "name": "Armed Forces of the Slovak Republic",
+   "kind": "government (military)",
+   "lang": "sk"
+  },
+  {
+   "cc": "sn",
+   "channel_id": "UC4Ka-qaee746lv8dM4U9MuQ",
+   "name": "Assemblée nationale du Sénégal",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "sn",
+   "channel_id": "UC5B-oi8wqbGj1AVnOZg_RXg",
+   "name": "Gouvernement du Sénégal",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "sn",
+   "channel_id": "UCeblTAaHHm8vdEtQpenAnIw",
+   "name": "Police Nationale du Sénégal",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "so",
+   "channel_id": "UCBU2HgAcJUzBzD_t33hJuAQ",
+   "name": "Somali News Service",
+   "kind": "news desk",
+   "lang": "so"
+  },
+  {
+   "cc": "sr",
+   "channel_id": "UC0r4lw4rfUS2UoVo57e17Xg",
+   "name": "De Nationale Assemblée",
+   "kind": "government",
+   "lang": "nl"
+  },
+  {
+   "cc": "ss",
+   "channel_id": "UCk3NKLJ0OADjvZ9FY2oIyHg",
+   "name": "SSGTV News: South Sudan Global",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sy",
+   "channel_id": "UCNfTi1pDHHpQzw0Tvy9ogew",
+   "name": "SANA English",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "sz",
+   "channel_id": "UCel7a0bk5oSznuuv0XiTC_Q",
+   "name": "Parliament of the Kingdom of Eswatini",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "tg",
+   "channel_id": "UCNQ7rjeMuH9Dp4HR8QlYwDA",
+   "name": "Présidence du conseil du Togo",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "tg",
+   "channel_id": "UCua74BdBUkZWTb6wCCYz9JQ",
+   "name": "Assemblée Nationale Togolaise",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "tl",
+   "channel_id": "UCTRoILdVhNX-rdVW6ht0cLQ",
+   "name": "RTPN TIMOR-LESTE",
+   "kind": "public broadcaster",
+   "lang": "tet"
+  },
+  {
+   "cc": "tl",
+   "channel_id": "UCCZ6Bnn-dQ60uT8IpqekeaA",
+   "name": "MPCM: PÁGINA DO GOVERNO TIMOR LESTE",
+   "kind": "government",
+   "lang": "tet"
+  },
+  {
+   "cc": "tm",
+   "channel_id": "UC89qzYVCh6y1sUq5_JtcoXA",
+   "name": "Watan Habarlary",
+   "kind": "state media",
+   "lang": "tk"
+  },
+  {
+   "cc": "tn",
+   "channel_id": "UCdvWVsmQBROkgcGzVep73oA",
+   "name": "Watania Replay",
+   "kind": "public broadcaster",
+   "lang": "ar"
+  },
+  {
+   "cc": "tt",
+   "channel_id": "UCw78vOFLUOatclKpu4og57Q",
+   "name": "Parliament of Trinidad and Tobago",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "tt",
+   "channel_id": "UCWiR1VNBi9WDtidSTjEVZYQ",
+   "name": "TTPoliceService",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "tt",
+   "channel_id": "UC4RNWcfDhHBAqDKY0GFA2uQ",
+   "name": "The Office of the President of the Republic of Trinidad and Tobago",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "vc",
+   "channel_id": "UCnSUlj13EVE449biHplmLlw",
+   "name": "APISVG",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ws",
+   "channel_id": "UCRzjl4acwwAZsAu3vNVrJOw",
+   "name": "Government of Samoa",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "xk",
+   "channel_id": "UCqpmNXbs4ZQMt7FBBVmGung",
+   "name": "KosovoPolice",
+   "kind": "government",
+   "lang": "sq"
+  },
+  {
+   "cc": "xk",
+   "channel_id": "UCuVgMC-sGGgp9r3uQtAGD8A",
+   "name": "Kosovo Security Force",
+   "kind": "government (military)",
+   "lang": "sq"
+  },
+  {
+   "cc": "xk",
+   "channel_id": "UCxiKFIYaCELzaYk6JIrZxRw",
+   "name": "President of the Republic of Kosovo",
+   "kind": "government",
+   "lang": "sq"
   }
  ]
 }

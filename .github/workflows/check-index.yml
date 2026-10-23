@@ -26,6 +26,9 @@ jobs:
       - run: node tests/tier.test.mjs
       # reviews (tools/reviews.mjs, netlify/functions/osap-reviews.mjs) and when the app asks for one (assets/osap-reviews.js)
       - run: node tests/reviews.test.mjs
+      # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
+      - run: node tests/cases.test.mjs
+      - run: node tests/case_vault.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -35,6 +38,7 @@ jobs:
       - run: node tests/claims.test.mjs
       - run: node tests/incidents.test.mjs
       - run: node tests/decisions.test.mjs
+      - run: node tests/cf_decisions.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
@@ -46,6 +50,7 @@ jobs:
       - run: node tests/deepsouth_border.test.mjs
       - run: node tests/entities.test.mjs
       - run: node tests/deepsouth_peace.test.mjs
+      - run: node tests/deepsouth_kinds.test.mjs
       - run: node tests/conflict_figures.test.mjs
       - run: node tests/social_relevance.test.mjs
       - run: node tests/relevance_sample.test.mjs
@@ -56,6 +61,11 @@ jobs:
       - run: node tests/illum.test.mjs
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
+      - run: node tests/osirdraft.test.mjs
+      # event-summary drafts give only figures their reports give (tools/evsum_lib.mjs)
+      - run: node tests/evsum_lib.test.mjs
+      # AI gateway: a slow reply from the runner's model skips one request; two in a row drop it for the run (tools/ai_gateway.mjs)
+      - run: node tests/ai_gateway.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/social_view.test.mjs
       - run: node tests/jp_ccc.test.mjs
@@ -65,6 +75,7 @@ jobs:
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/econ.test.mjs
+      - run: node tests/milref.test.mjs
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
       - run: node tests/seatransit.test.mjs
@@ -73,6 +84,7 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
+      - run: node tests/stories.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
       # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
@@ -90,8 +102,10 @@ jobs:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
     # the whole suite now runs about 29 to 30 minutes, so 30 cancelled green runs (2026-10-04); by 2026-10-19 it ran 43 to 45
-    # minutes and 45 cancelled main and two PRs one test from the end
-    timeout-minutes: 60
+    # minutes and 45 cancelled main and two PRs one test from the end; on 2026-10-23 it ran past 60 and cancelled PR #498 three
+    # tests from the end (speed_budget at 07:44Z, 60 minutes after the start)
+    # and a 12-minute browser install pushed a fully green suite past 60 the same day (PR #508)
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -106,16 +120,23 @@ jobs:
       - run: node tests/lock_smoke.mjs
       - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier_smoke.mjs
+      - run: node tests/push_server_smoke.mjs
       # the plan's locked data files are not asked for (Free and Mid get no 402); Thailand's files load only for Thailand
       - run: node tests/locked_requests_smoke.mjs
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs
       - run: node tests/econ_smoke.mjs
+      - run: node tests/milref_smoke.mjs
+      - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/area_report_smoke.mjs
       # OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
       - run: node tests/osir_smoke.mjs
+      # one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
+      - run: node tests/incident_dedup_smoke.mjs
+      # incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
+      - run: node tests/evsum_ai_smoke.mjs
       - run: node tests/points_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs
@@ -124,25 +145,35 @@ jobs:
       - run: node tests/deepsouth_border_smoke.mjs
       - run: node tests/dspat_smoke.mjs
       - run: node tests/ds_review_smoke.mjs
+      - run: node tests/cf_verify_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/cf_history_range_smoke.mjs
       - run: node tests/violence_history_smoke.mjs
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/flood_overlay_smoke.mjs
+      - run: node tests/wxmodels_smoke.mjs
       - run: node tests/pop_smoke.mjs
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs
       - run: node tests/keydates_smoke.mjs
+      - run: node tests/coverage_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
+      - run: node tests/protect_smoke.mjs
+      - run: node tests/safety_smoke.mjs
+      - run: node tests/wipe_smoke.mjs
       - run: node tests/sync_smoke.mjs
       # team workspace: share from Workspaces, join by viewer and editor links, viewer read-only, forged events refused, new team links
       - run: node tests/team_smoke.mjs
+      # team shared cases: lead, analyst and viewer accounts, invites, sealed sync, removal and new key, server refusals
+      - run: node tests/cases_smoke.mjs
+      # moving a team-link team to a team case: owner only, same workspace, link members told, items keep who added them
+      - run: node tests/cases_move_smoke.mjs
       - run: node tests/gnss_smoke.mjs
       - run: node tests/guide_smoke.mjs
       - run: node tests/lang_smoke.mjs
@@ -162,6 +193,7 @@ jobs:
       - run: node tests/surveil_smoke.mjs
       - run: node tests/cams_smoke.mjs
       - run: node tests/privacy_smoke.mjs
+      - run: node tests/vault_smoke.mjs
       - run: node tests/borders_smoke.mjs
       - run: node tests/wrap_smoke.mjs
       - run: node tests/evac_smoke.mjs
@@ -199,6 +231,8 @@ jobs:
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
       - run: node tests/intelbrief_smoke.mjs
+      # custom topic (own words, watch-word syntax) in the PowerPoint brief and OSIR windows
+      - run: node tests/custom_topic_smoke.mjs
       - run: node tests/wxchart_smoke.mjs
       - run: node tests/avwx_smoke.mjs
       - run: node tests/illum_smoke.mjs

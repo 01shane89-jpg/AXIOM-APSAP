@@ -44,7 +44,7 @@
     // flood maps, road closures, weather, ground mobility, live aircraft), the area drawn with Draw area, the medical plan and what Terrain analysis draws (viewshed, line of sight, slope): those draw only when switched on, and each data set
     // change switches the overlays off again
     "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-sidespane-pane):not(.leaflet-poppane-pane):not(.leaflet-gnsspane-pane):not(.leaflet-satpane-pane):not(.leaflet-gibspane-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-cfrep-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
-      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-lzpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane):not(.leaflet-pwrpane-pane):not(.leaflet-pwrpt-pane):not(.leaflet-comcov-pane):not(.leaflet-comchk-pane):not(.leaflet-bdrpane-pane):not(.leaflet-dcpt-pane):not(.leaflet-infpt-pane):not(.leaflet-infln-pane):not(.leaflet-evpane-pane):not(.leaflet-vspane-pane):not(.leaflet-vslines-pane):not(.leaflet-mppane-pane):not(.leaflet-mpmkpane-pane){visibility:hidden}",
+      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-lzpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane):not(.leaflet-pwrpane-pane):not(.leaflet-pwrpt-pane):not(.leaflet-comcov-pane):not(.leaflet-comchk-pane):not(.leaflet-bdrpane-pane):not(.leaflet-dcpt-pane):not(.leaflet-infpt-pane):not(.leaflet-infln-pane):not(.leaflet-milpt-pane):not(.leaflet-evpane-pane):not(.leaflet-vspane-pane):not(.leaflet-vslines-pane):not(.leaflet-mppane-pane):not(.leaflet-mpmkpane-pane){visibility:hidden}",
     "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}html.cfprinting #cf-print h2{font-size:12.5pt;margin:12px 0 4px}html.cfprinting #cf-print .cfpcols{display:flex;gap:24px;align-items:flex-start}html.cfprinting #cf-print .cfpt{border-collapse:collapse;font-size:9.5pt}html.cfprinting #cf-print .cfpt th,html.cfprinting #cf-print .cfpt td{border-bottom:1px solid #ccc;padding:2px 8px 2px 0;text-align:left}}",
     "#cf-rail[hidden]{display:none}#cf-rail .sec{padding:12px 14px;border-bottom:1px solid var(--line-soft)}#cf-rail h2{font-size:15px;margin:0 0 4px}#cf-rail h3{font-size:12.5px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}",
     "#cf-rail .cfsub{font-size:12px;color:var(--muted);margin:0 0 6px}#cf-rail .cfpart{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 0}#cf-rail .cfpart span{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:0 7px;background:var(--surface2)}",
@@ -70,12 +70,16 @@
     "#cf-rail [data-cftile]{cursor:pointer}#cf-rail [data-cftile]:hover,#cf-rail [data-cftile]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}#cf-rail svg[data-cfwk]{cursor:pointer}" +
     "#cf-rail .cfpick{margin:0 0 4px;color:var(--ink)}#cf-rail .cfpick button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}" +
     "#cf-rail #cf-layers-x:empty{display:none}#cf-rail #cf-layers-x{margin:8px 0 4px;padding-top:8px;border-top:1px solid var(--line-soft)}#cf-rail #cf-layers-x h4{font-size:12px;margin:0 0 4px;color:var(--muted)}",
-    "@media (max-width:640px){#cf-rail .cfk{grid-template-columns:repeat(2,minmax(0,1fr))}}"
+    "@media (max-width:640px){#cf-rail .cfk{grid-template-columns:repeat(2,minmax(0,1fr))}}",
+    // analyst review: status tags and the confirm / reject buttons of the review queue
+    ".tag.vok{border-color:#1F8A4C!important;color:#1F8A4C!important;font-weight:600}.tag.vno{border-color:var(--bad,#C0392B)!important;color:var(--bad,#C0392B)!important}.tag.vsent{border-style:dashed!important}" +
+    "#cf-rail .cfrv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:5px 0 0}#cf-rail .cfrv button,#cf-rail .cfrv select{font:inherit;font-size:12px;padding:3px 9px;min-height:28px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}" +
+    "#cf-rail .cfrv button[data-cfv=confirm_incident]{border-color:#1F8A4C;color:#1F8A4C;font-weight:600}#cf-rail .cfrv button[data-cfv=reject_incident]{border-color:var(--bad,#C0392B);color:var(--bad,#C0392B)}"
   ].join("\n");
   D.head.appendChild(css);
 
   /* ---------- state ---------- */
-  var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { kind: "", cc: "", q: "", days: 30, from: "", to: "", win: null, att: false, show: { front: true, ucdp: true, rep: true, prev: false } };
+  var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { vs: "", kind: "", cc: "", q: "", days: 30, from: "", to: "", win: null, att: false, show: { front: true, ucdp: true, rep: true, prev: false } };
   /* ---------- period: follows the page header (24 h, 7/14/30/90 days, all, custom); the tab's own list can narrow it ---------- */
   var ALL = 36500;
   function headerPeriod() {
@@ -186,6 +190,8 @@
       var f = family(i), t = parseT(i.date), sp = spot(i);
       var g = f === "ucdp" ? null : out.filter(function (g) {
         return g.some(function (o) {
+          // reports an analyst decided on: together only when the same decision covers both, whatever the rules say
+          var va = vrec(i), vb = vrec(o); if (va || vb) return !!(va && vb && va.inc === vb.inc);
           var dt = Math.abs(parseT(o.date) - t); if (!(dt <= 72 * 36e5)) return false;
           if (alike(i, o)) return true;
           if (dt > 36 * 36e5 || f !== family(o) || f === "other") return false;
@@ -197,9 +203,79 @@
     });
     return out.map(function (g) {
       var lead = g.slice().sort(function (a, b) { return leadScore(b) - leadScore(a); })[0];
-      return { lead: lead, all: g, date: g[0].date, outlets: uniq(g.map(oname).filter(Boolean)) };
+      return { lead: lead, all: g, date: g[0].date, outlets: uniq(g.map(oname).filter(Boolean)), vs: gstat(g) };
     });
   }
+
+  /* ---------- analyst review: every incident is unverified until an analyst confirms or rejects it ----------
+     The decisions are the repository owner's, recorded by tools/cf_decisions.mjs from a GitHub issue this page fills in (the owner
+     adds a reason and submits it), into data/decisions/conflicts; data/live/conflicts/verified.js is their projection. The page
+     decides nothing: a button only opens the issue. A confirmation says the reports describe a real incident; the figures and
+     statements in them stay as reported. Decisions sent from this device show as "sent" until the projection carries them. */
+  var REPO = "https://github.com/01shane89-jpg/AXIOM-APSAP", VTITLE = "OSAP incident decision:", SENTK = "osap-cf-sent";
+  var VWHY = [["not_incident", "Not a real incident"], ["not_this_conflict", "Not this conflict"], ["wrong_place_or_time", "Wrong place or time"], ["duplicate", "Duplicate of another incident"], ["other", "Other reason"]];
+  var vLoaded = 0;
+  // the projection, read again when a tab opens (a decision recorded meanwhile shows without a reload); a missing file is no decisions
+  function loadVerified() {
+    if (Date.now() - vLoaded < 60000) return Promise.resolve();
+    return load("data/live/conflicts/verified.js?m=" + Math.floor(Date.now() / 60000)).then(function () { vLoaded = Date.now(); }, function () {});
+  }
+  function vrec(i) { var v = W.OSAP_CF_VERIFIED, m = v && v.by && active && v.by[active]; return m && i && i.fp ? m[i.fp] || null : null; }
+  var sentC = null;   // read once, again after each decision sent
+  function sent() { if (sentC) return sentC; try { sentC = JSON.parse(localStorage.getItem(SENTK) || "{}") || {}; } catch (e) { sentC = {}; } return sentC; }
+  function istat(i) { var r = vrec(i); if (r) return r.s; var x = i && i.fp && sent()[active + ":" + i.fp]; return x && Date.now() - x.t < 864e5 ? "sent" : "unverified"; }
+  function gstat(g) {
+    var st = g.map(istat);
+    return st.indexOf("confirmed") >= 0 ? "confirmed" : st.indexOf("rejected") >= 0 ? "rejected" : st.indexOf("sent") >= 0 ? "sent" : "unverified";
+  }
+  // only the job's own reports can be decided on (it checks every fingerprint against its files); a merged layer's records and UCDP
+  // events are not news reports
+  function reviewable(i) { return !!(i && !i.tab && /^[0-9a-f]{64}$/.test(i.fp || "") && family(i) !== "ucdp"); }
+  function vsHtml(g) {
+    var r = g.all.map(vrec).filter(Boolean)[0];
+    if (g.vs === "confirmed") return '<span class="tag vok" title="' + esc("An analyst confirmed these reports describe a real incident (" + day(r.at) + (r.r ? ": " + r.r : "") + "). Figures and statements in them stay as reported.") + '">Analyst confirmed</span>';
+    if (g.vs === "rejected") return '<span class="tag vno" title="' + esc("An analyst rejected this incident (" + day(r.at) + "): " + ((VWHY.filter(function (w) { return w[0] === r.why; })[0] || [0, "other reason"])[1]) + (r.r ? ". " + r.r : "")) + '">Rejected</span>';
+    if (g.vs === "sent") return '<span class="tag vsent" title="A decision was sent from this device; it shows here once it is recorded (usually within a few minutes)">Decision sent</span>';
+    return "";
+  }
+  function vsSel() {
+    var n = { review: 0, confirmed: 0, rejected: 0 };
+    allItems(cur.data).forEach(function (i) { var s = istat(i); if (s === "confirmed" || s === "rejected") n[s]++; else if (reviewable(i) && inWin(i.date)) n.review++; });
+    var o = [["", "All but rejected"], ["review", "To review (" + num(n.review) + " reports)"], ["confirmed", "Analyst confirmed (" + num(n.confirmed) + ")"], ["rejected", "Rejected (" + num(n.rejected) + ")"]];
+    return '<select data-cff="vs" aria-label="Review status" title="Every incident is unverified until an analyst confirms it">' + o.map(function (x) {
+      return '<option value="' + x[0] + '"' + (F.vs === x[0] ? " selected" : "") + ">" + esc(x[1]) + "</option>"; }).join("") + "</select>";
+  }
+  // confirm / reject in the review queue; back to unverified in the confirmed and rejected lists
+  function reviewHtml(g, k) {
+    if (!F.vs || !g.all.every(reviewable)) return "";
+    if (F.vs === "review") return '<div class="cfrv"><button type="button" data-cfv="confirm_incident" data-k="' + k + '" title="Confirm these reports describe a real incident. Opens a GitHub issue to add your reason and submit">Confirm</button>' +
+      '<select data-cfvwhy="' + k + '" aria-label="Why reject">' + VWHY.map(function (w) { return '<option value="' + w[0] + '">' + esc(w[1]) + "</option>"; }).join("") + "</select>" +
+      '<button type="button" data-cfv="reject_incident" data-k="' + k + '" title="Reject this incident for the reason chosen. Opens a GitHub issue to add your reason and submit">Reject</button></div>';
+    return '<div class="cfrv"><button type="button" data-cfv="reset_incident" data-k="' + k + '" title="Take this incident back to unverified. Opens a GitHub issue to add your reason and submit">Back to unverified</button></div>';
+  }
+  var VWORD = { confirm_incident: "Confirm", reject_incident: "Reject", reset_incident: "Back to unverified" };
+  function decide(act, g, why) {
+    var c = byId(active), i = g.lead, fps = uniq(g.all.map(function (x) { return x.fp; }));
+    var block = { osap_decision: 1, action: act, conflict: active, reports: fps };
+    if (act === "reject_incident") block.why = why || "other";
+    block.seen = { asof: (cur.data && cur.data.asof) || "", status: g.vs };
+    var what = VWORD[act] + " the incident “" + (i.title_en || i.title || "") + "” (" + fps.length + " report" + (fps.length > 1 ? "s" : "") + ") on the " + (c ? c.name : active) + " tab" +
+      (act === "confirm_incident" ? ": the reports describe a real incident. Figures and statements in them stay as reported." : act === "reject_incident" ? ": " + ((VWHY.filter(function (w) { return w[0] === block.why; })[0] || [0, ""])[1]) + "." : ".");
+    var body = "Reason: \n\nWrite why on the Reason line above, then press Submit. OSAP records this decision within a few minutes, then answers and closes this issue. " +
+      "Only issues opened by the app's owner count; anyone else's are ignored.\n\nWhat this decides: " + what + "\n\n```json\n" + JSON.stringify(block, null, 1) + "\n```\n";
+    W.open(REPO + "/issues/new?title=" + encodeURIComponent((VTITLE + " " + VWORD[act] + ": " + (i.title_en || i.title || "")).slice(0, 120)) + "&body=" + encodeURIComponent(body), "_blank", "noopener,noreferrer");
+    try { var s0 = sent(), now = Date.now(); Object.keys(s0).forEach(function (k) { if (now - s0[k].t > 864e5) delete s0[k]; }); fps.forEach(function (fp) { s0[active + ":" + fp] = { t: now, a: act }; }); localStorage.setItem(SENTK, JSON.stringify(s0)); } catch (e) {}
+    sentC = null;
+    // show it as sent; recorded decisions arrive with the projection
+    vLoaded = 0; setTimeout(function () { loadVerified().then(function () { if (active) { list(); drawMap(); } }); }, 120000);
+    list(); drawMap();
+  }
+  D.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("#cf-rail [data-cfv]"); if (!b) return;
+    var k = +b.getAttribute("data-k"), g = (D.getElementById("cf-list")._groups || [])[k]; if (!g) return;
+    var w = D.querySelector('#cf-rail select[data-cfvwhy="' + k + '"]');
+    decide(b.getAttribute("data-cfv"), g, w && w.value);
+  });
 
   /* ---------- tab buttons (desktop row and phone menu) and the Conflicts menu ---------- */
   function addTabs() {
@@ -286,7 +362,7 @@
     rail().hidden = false; rail().innerHTML = '<div class="sec"><h2>' + esc(c.name) + '</h2><p class="cfsub">Loading reports, events and the front line…</p></div>';
     ensureMap(); clearMap(); hooks("clear");
     if (c.bounds && map) { map.invalidateSize(); map.fitBounds(c.bounds, { padding: [8, 8], animate: false }); }
-    var p = c.auto ? loadAuto(c) : Promise.all([load("data/live/conflicts/" + id + ".js"), load("data/live/conflicts/front/" + id + ".js").catch(function () {})]);
+    var p = c.auto ? loadAuto(c) : Promise.all([load("data/live/conflicts/" + id + ".js"), load("data/live/conflicts/front/" + id + ".js").catch(function () {}), loadVerified()]);
     p.then(function () { if (active !== id) return; render(c); if (F.days > 90 && needOlder()) loadOlder(); }, function (e) {
       if (active !== id) return;
       rail().innerHTML = '<div class="sec"><h2>' + esc(c.name) + '</h2><p class="cfbad">This conflict’s data could not be loaded (' + esc(e.message) + "). It is written by the refresh job; try again after the next refresh.</p></div>";
@@ -367,9 +443,9 @@
             (p.description ? "<div>" + esc(p.description) + "</div>" : "") +
             '<div class="cfm">' + (p.from || p.to ? esc(p.from || "?") + " to " + esc(p.to || "now") + "<br>" : "") +
             (p.claimed_by ? "Claimed by " + esc(p.claimed_by) + "<br>" : "") + (p.basis ? esc(p.basis) + "<br>" : "") +
-            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</div>" +
+            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") + "</div>" +
             (rs.length ? '<div class="cfm">Reports behind it:' + rs.map(function (r) {
-              return '<br><a href="' + url(r.link) + '" target="_blank" rel="noopener">' + esc(r.t) + "</a> (" + esc(r.outlet || "") + (r.date ? ", " + day(r.date) : "") + ")"; }).join("") +
+              return '<br><a href="' + url(r.link) + '" target="_blank" rel="noopener noreferrer">' + esc(r.t) + "</a> (" + esc(r.outlet || "") + (r.date ? ", " + day(r.date) : "") + ")"; }).join("") +
               ((p.reports || []).length > rs.length ? "<br>and " + ((p.reports || []).length - rs.length) + " more" : "") + "</div>" : "") +
             fpDiv(p.fp, "this area") + (p.fp ? "" : fpDiv(f.current.sha256, "the map version it comes from")), { maxWidth: 340 });
         } : null });
@@ -418,18 +494,19 @@
   var REPGAP = 26;
   /* NATO map symbols (assets/osap-symbols.js) when that file loaded */
   function sym() { return !!(W.OSAP_SYM && W.OSAP_SYM.mark && W.OSAP_SYM.classify); }
-  var repSyms = {};
+  var repSyms = {}, repConf = false;
   function repSym(i) { var k = W.OSAP_SYM.classify(kindName(i.kind)); return k === "a_incident" ? W.OSAP_SYM.classify(kindName(i.kind), i.title_en || i.title) : k; }
   function repDot(g) {
     var i = g.lead, rough = i.geo.p === "province";   // placed only to a province or region: a hollow ring at its centre, so it does not read as the exact spot
     var ro = { pane: "cfpane", radius: g.all.length > 1 ? 6.5 : 5, color: rough ? "#1D5A86" : "#fff", weight: rough ? 2 : 1.5, dashArray: rough ? "3 2" : null, fillColor: "#1D5A86", fillOpacity: rough ? 0.15 : 0.9 };
     var sk = sym() ? repSym(i) : null; if (sk) repSyms[sk] = 1;
+    if (g.vs === "confirmed") { repConf = true; L.extend(ro, { weight: 3, color: "#1F8A4C", dashArray: null }); if (!sk) ro.fillColor = "#1F8A4C"; }
     /* the symbol of what the report is about; placed only to a province: a dashed ring round it */
-    return (sk ? W.OSAP_SYM.mark([i.geo.la, i.geo.lo], sk, L.extend(ro, { scale: g.all.length > 1 ? 0.75 : 0.65, opacity: rough ? 0.75 : 1 })) : W.L.circleMarker([i.geo.la, i.geo.lo], ro)).bindPopup(repHtml(i, true) + alsoHtml(g), { maxWidth: 340 });
+    return (sk ? W.OSAP_SYM.mark([i.geo.la, i.geo.lo], sk, L.extend(ro, { scale: g.vs === "confirmed" ? 0.8 : g.all.length > 1 ? 0.75 : 0.65, opacity: rough ? 0.75 : 1 })) : W.L.circleMarker([i.geo.la, i.geo.lo], ro)).bindPopup(vsHtml(g) + repHtml(i, true) + alsoHtml(g), { maxWidth: 340 });
   }
   function drawRep() {
     if (lyr.rep) map.removeLayer(lyr.rep);
-    repSyms = {};
+    repSyms = {}; repConf = false;
     var L = W.L, z = map.getZoom(), gs = grouped(filtered()).filter(function (g) { return g.lead.geo && g.lead.geo.la != null; }), bins = [];
     gs.forEach(function (g) {
       var pt = map.project([g.lead.geo.la, g.lead.geo.lo], z), b = null;
@@ -458,7 +535,7 @@
   // where a front-line or control marker comes from: the named source, when it was taken, and that version's fingerprint
   function frontSrc(f, v) {
     var c = v || f.current || {}, s = (f.sources || []).filter(function (x) { return x.id === c.source; })[0] || {};
-    return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
+    return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener noreferrer">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
       (c.taken ? ", read " + when(c.taken) : "") + "</div>" + fpDiv(c.sha256, "the map version this comes from");
   }
   // the key to what drawMap put on the map; shown in the map's own legend while this tab's panel is open
@@ -490,6 +567,7 @@
     if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + (rk.length ? rk.map(function (k) { return '<div class="lg msyml">' + W.OSAP_SYM.sw(k) + "<div>" + esc(W.OSAP_SYM.m[k][0]) + "</div></div>"; }).join("") +
         '<div class="lg"><div><span class="d">News reports as NATO map symbols, placed at the place they name; unverified. Dashed ring: placed only to a province.</span></div></div>'
       : row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the centre of the province it names", true)) +
+      (repConf ? '<div class="lg"><span class="sw round" style="background:transparent;border:3px solid #1F8A4C"></span><div>Analyst confirmed<span class="d">An analyst confirmed the reports describe a real incident; figures stay as reported</span></div></div>' : "") +
       '<div class="lg"><span class="sw round cfrepn" style="position:static;display:inline-flex;width:18px;height:18px"><span style="font-size:10px">3</span></span><div>Reports close together<span class="d">Tap to zoom in or list them</span></div></div>');
     W.OSAP_LEGEND.set("cf", h.join(""), rail());
   }
@@ -514,6 +592,8 @@
     return allItems(d).filter(function (i) {
       if (!(inWin(i.date) && (!F.kind || i.kind === F.kind) && (!F.cc || i.cc === F.cc))) return false;
       if (F.att && !VIOLENT[family(i)]) return false;
+      var vs = istat(i);
+      if (F.vs === "review" ? vs === "confirmed" || vs === "rejected" || !reviewable(i) : F.vs ? vs !== F.vs : vs === "rejected") return false;
       if (!qs.length) return true;
       var txt = ((i.title_en || "") + " " + i.title + " " + (i.summary_en || i.summary || "") + " " + i.outlet + " " + kindName(i.kind) + " " + (i.place || "")).toLowerCase();
       return qs.every(function (re) { return re.test(txt); });
@@ -522,7 +602,7 @@
   function kindName(k) { var n = (cur.data && cur.data.kind_names) || (IDX && IDX.kind_names) || {}; return n[k] || k; }
   function repHtml(i, pop) {
     var t = i.title_en || i.title, orig = i.title_en && i.title_en !== i.title ? i.title : "";
-    return (pop ? "" : "") + '<a class="cft" href="' + url(i.link) + '" target="_blank" rel="noopener">' + esc(t) + "</a>" +
+    return (pop ? "" : "") + '<a class="cft" href="' + url(i.link) + '" target="_blank" rel="noopener noreferrer">' + esc(t) + "</a>" +
       (orig ? '<div class="cfm" lang="' + esc(i.lang || "") + '">' + esc(orig) + "</div>" : "") +
       '<div class="cfm">' + (i.tab ? '<span class="tag" title="A record of the country’s own ' + esc(i.tab) + ' layer, merged into this tab">' + esc(i.tab) + "</span>" +
         (i.ongoing ? '<span class="tag" title="A status that still holds; the date is when it began">Ongoing</span>' : "") : "") +
@@ -545,13 +625,13 @@
     o = o.filter(function (x) { var n = oname(x); if (seen[n]) return false; seen[n] = 1; return true; });
     return '<div class="cfm cfalso"><span class="tag claim" title="Reports grouped by machine as one incident: same kind, same place, within 36 hours, or near-identical headlines">' +
       (g.outlets.length > 1 ? "Reported by " + g.outlets.length + " outlets" : g.all.length + " reports") + "</span>" + (o.length ? "Also: " + o.map(function (x) {
-        return '<a href="' + url(x.link) + '" target="_blank" rel="noopener" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(oname(x) || "report") + "</a>"; }).join(" · ") : "") + "</div>";
+        return '<a href="' + url(x.link) + '" target="_blank" rel="noopener noreferrer" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(oname(x) || "report") + "</a>"; }).join(" · ") : "") + "</div>";
   }
   function ucdpHtml(e) {
     return "<b>" + esc(actors(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict)) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
       (e.end && e.end !== e.date ? " to " + day(e.end) : "") + "</div><div>" + esc(TYPEN[e.type] || "") + ". Deaths, UCDP best estimate: <b>" + num(e.best) + "</b> (range " + num(e.low) + " to " + num(e.high) + ")" +
       (e.civ ? ", of which civilians " + num(e.civ) : "") + ".</div>" + (e.headline ? '<div class="cfm">Source headline: ' + esc(e.headline) + "</div>" : "") +
-      '<div class="cfm">UCDP candidate event ' + esc(e.id) + ", provisional (revised by UCDP later). <a href=\"https://ucdp.uu.se/downloads/\" target=\"_blank\" rel=\"noopener\">UCDP</a>, CC BY 4.0</div>" +
+      '<div class="cfm">UCDP candidate event ' + esc(e.id) + ", provisional (revised by UCDP later). <a href=\"https://ucdp.uu.se/downloads/\" target=\"_blank\" rel=\"noopener noreferrer\">UCDP</a>, CC BY 4.0</div>" +
       '<div class="fp" title="SHA-256 fingerprint: ' + esc(e.fp || "") + '">SHA-256 ' + esc((e.fp || "").slice(0, 16)) + "…</div>";
   }
   function periodSel() {
@@ -620,6 +700,7 @@
     h.push('<div class="sec" id="cf-reps"><h3 style="margin-top:0">' + (d.auto ? "UCDP events" : "Recent reports") + '</h3><div class="cfctl">' + periodSel() +
       (allItems(d).length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.kind === k ? " selected" : "") + ">" + esc(kindName(k)) + " (" + kinds[k] + ")</option>"; }).join("") + "</select>" : "") +
+      (allItems(d).length ? vsSel() : "") +
       (Object.keys(ccs).length > 1 ? '<select data-cff="cc" aria-label="Country"><option value="">All countries</option>' + Object.keys(ccs).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.cc === k ? " selected" : "") + ">" + esc(cname(k)) + "</option>"; }).join("") + "</select>" : "") +
       (allItems(d).length ? '<input type="search" data-cff="q" placeholder="Search reports" value="' + esc(F.q) + '">' : "") + '</div><div id="cf-list"></div></div>');
@@ -642,7 +723,7 @@
   function uniq(a) { return a.filter(function (x, k) { return a.indexOf(x) === k; }); }
   var VIOLENT = { ied: 1, gun: 1, arson: 1 };
   function tabCounts(d) {
-    var now = Date.now(), all = allItems(d).filter(function (i) { return family(i) !== "ucdp"; });
+    var now = Date.now(), all = allItems(d).filter(function (i) { return family(i) !== "ucdp" && istat(i) !== "rejected"; });
     // the headline counts are attacks only (bombs, gunfire, strikes, arson): official activity, court news and comment stay in the list
     var wk = all.filter(function (i) { return VIOLENT[family(i)] && now - parseT(i.date) <= 7 * 864e5 && parseT(i.date) <= now + 36e5; });
     var g7 = grouped(wk), n = {};
@@ -660,7 +741,7 @@
       h.push('<p class="cfm cfcount">' + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : " reports") + ", newest first</p>");
       if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(gs.length) + ")</button></p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
-      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + "</li>"; }).join("") + "</ol>");
+      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + "</li>"; }).join("") + "</ol>");
       if (gs.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, gs.length - lim) + " more</button>");
       else if (F.days > 90 && needOlder() && cur.data.older.items) h.push(cur.data._olderP ? '<p class="cfm">Loading older reports…</p>' :
         (cur.data._olderFail ? '<p class="cfbad">Older reports could not be loaded.</p>' : "") +
@@ -681,7 +762,7 @@
         : "No machine-readable front-line or control source is known for this conflict, so no line is drawn. AXIOM OSAP does not draw lines itself.") + "</p>");
     } else {
       var cu = f.current, s = (f.sources || []).filter(function (x) { return x.id === cu.source; })[0] || {}, v = (f.versions || [])[0];
-      h.push('<p class="cfm"><b>Reported, not verified.</b> Source: <a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || cu.source) + "</a>" + (s.licence ? " (" + esc(s.licence) + ")" : "") +
+      h.push('<p class="cfm"><b>Reported, not verified.</b> Source: <a href="' + url(s.home) + '" target="_blank" rel="noopener noreferrer">' + esc(s.name || cu.source) + "</a>" + (s.licence ? " (" + esc(s.licence) + ")" : "") +
         (s.nc ? ' <span class="tag">nc</span>' : "") + ". Last changed " + when(v ? v.taken : cu.taken) + "; checked " + when(f.asof) + ".</p>");
       if (cu.kind === "areas" && cu.no_front) {
         // zones are not territory held, so their areas are not added up
@@ -703,17 +784,17 @@
       }).join("") + "</tbody></table></details>");
     }
     if (f && f.maps && f.maps.length) h.push("<h3>Control maps published in the feeds</h3><ol class=\"cfl\">" + f.maps.map(function (m) {
-      return '<li><a class="cft" href="' + url(m.link) + '" target="_blank" rel="noopener">' + esc(m.title) + '</a><div class="cfm">' + esc(m.outlet) + " · " + when(m.date) + "</div></li>"; }).join("") + "</ol>");
+      return '<li><a class="cft" href="' + url(m.link) + '" target="_blank" rel="noopener noreferrer">' + esc(m.title) + '</a><div class="cfm">' + esc(m.outlet) + " · " + when(m.date) + "</div></li>"; }).join("") + "</ol>");
     h.push("</div>");
     return h.join("");
   }
   function sourcesHtml(d, f) {
     var s = (d.sources || []).map(function (x) {
-      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + "</td><td>" + (x.url ? '<a href="' + url(x.url) + '" target="_blank" rel="noopener">' + esc(x.source) + "</a>" : esc(x.source || x.id)) +
+      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + "</td><td>" + (x.url ? '<a href="' + url(x.url) + '" target="_blank" rel="noopener noreferrer">' + esc(x.source) + "</a>" : esc(x.source || x.id)) +
         (x.nc ? ' <span class="tag">nc</span>' : "") + "</td><td>" + (x.ok ? (x.kept != null ? esc(x.kept) + " kept of " + esc(x.n) : esc(x.n) + " events") : esc(x.error || "")) + "</td></tr>";
     }).join("");
     var fs = f ? (f.sources || []).map(function (x) {
-      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + '</td><td><a href="' + url(x.home) + '" target="_blank" rel="noopener">' + esc(x.name) + "</a>" + (x.nc ? ' <span class="tag">nc</span>' : "") +
+      return "<tr><td>" + (x.ok ? '<span class="cfok">ok</span>' : '<span class="cfbad">failed</span>') + '</td><td><a href="' + url(x.home) + '" target="_blank" rel="noopener noreferrer">' + esc(x.name) + "</a>" + (x.nc ? ' <span class="tag">nc</span>' : "") +
         "</td><td>" + (x.ok ? esc(x.n) + (x.type === "wikimap" ? " town markers" : " areas") : esc(x.error || "")) + "</td></tr>";
     }).join("") : "";
     return '<div class="sec"><details><summary>Sources and how this tab is made</summary><p class="cfnote">Reports come from the national outlets the Local news tab reads, the conflict’s own outlets and Bing News searches, kept when they name this conflict and report violence or its direct effects. ' +

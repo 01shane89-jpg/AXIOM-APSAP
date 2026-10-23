@@ -7,7 +7,7 @@
 ["r12651735",11.05151,114.28364,"ph",{"name":"Rancudo Airfield","name:en":"Rancudo Airfield","operator":"Philippine Air Force","addr:city":"Kalayaan","addr:province":"Palawan","addr:postcode":"5322","aeroway":"aerodrome","icao":"RPPN","aerodrome:type":"airfield","military":"airfield"}],
 ["w1025409072",10.93907,114.09388,"cn",{"name":"永暑岛医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1545458342",11.38437,114.29926,"vn",{"aeroway":"helipad"}],
-["w421404266",10.37745,114.36583,"tw",{"name":"太平島機場","name:en":"Taiping Island Airport","operator":"國防部","aeroway":"aerodrome","icao":"RCSP","military":"airfield"}],
+["w421404266",10.37745,114.36583,"tw",{"name":"太平島機場","name:en":"Taiping Island Airport","operator":"國防部","aeroway":"aerodrome","icao":"RCSP","military":"airfield","wikidata":"Q704675"}],
 ["w558033884",10.92372,114.07138,"cn",{"name":"渚碧礁机场","name:en":"Zhubi Airport","aeroway":"aerodrome","military":"airfield","wikidata":"Q59619231"}],
 ["w610144900",11.42966,114.33216,"vn",{"aeroway":"helipad"}],
 ["w614046133",11.42844,114.331,"vn",{"name":"Bệnh xá Đảo Song Tử Tây","name:en":"Song Tu Tay Island Hospital","amenity":"hospital"}],

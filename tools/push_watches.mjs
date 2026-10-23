@@ -1,5 +1,5 @@
 // Push watches (run by .github/workflows/refresh-flood.yml, job "push", after each refresh on main; or by hand with Node 18+).
-// For each watch in data/push/watches.json (added from the app's Push to phone button, see tools/push_admin.mjs):
+// For each watch kept on OSAP's server (added from the app's Push to phone button; tools/push_lib.mjs fetchList):
 //   1. The watch's country page is opened headless on the repo's own data (index.html?watchscan=1, network cut off) and
 //      window.OSAP_WATCH.matches(watch) lists the reports it matches: the app's own rules (area, categories, severity, words,
 //      last 7 days, grouped into events), so a push and the in-app Watch never disagree.
@@ -16,16 +16,18 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { readList } from "./push_lib.mjs";
+import { fetchList } from "./push_lib.mjs";
+import { rulesForPage } from "./tiers.mjs";
 
 const STATE = process.env.PUSH_STATE || ".push-state/state.json";
 const NTFY = (process.env.PUSH_NTFY || "https://ntfy.sh").replace(/\/$/, "");
 const LIVE = "https://01shane89-jpg.github.io/AXIOM-APSAP/";
 const TEST = !!process.env.PUSH_TEST, DRY = !!process.env.PUSH_DRY;
-const MAX_AGE_H = +(process.env.PUSH_MAX_AGE_H || 48), PER_WATCH = 3, PER_RUN = 40, KEEP_KEYS = 4000;
+const MAX_AGE_H = +(process.env.PUSH_MAX_AGE_H || 48), PER_WATCH = 3, PER_RUN = +(process.env.PUSH_PER_RUN || 60), KEEP_KEYS = 4000;
 const now = Date.now();
 
-const list = readList().watches;
+let list;
+try { list = (await fetchList()).watches; } catch (e) { console.log("push: could not read the push list:", e.message); process.exit(0); }
 if (!list.length) { console.log("push: no push watches"); process.exit(0); }
 
 function loadState() { try { return JSON.parse(fs.readFileSync(STATE, "utf8")); } catch (e) { return { watches: {} }; } }
@@ -59,12 +61,24 @@ async function scan() {
   const LEAFLET = "assets/vendor/leaflet-1.9.4.js";
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => (/leaflet(\.min)?\.js$/.test(r.request().url()) && fs.existsSync(LEAFLET)
     ? r.fulfill({ status: 200, contentType: "text/javascript", body: fs.readFileSync(LEAFLET, "utf8") }) : r.abort()));
+  // a Mid account's watch is checked on a page that leaves out the files Mid cannot open (assets/osap-datagate.js, with the
+  // plan's rules from tools/tiers.mjs), so its alerts carry only what that account sees in the app
+  const midCtx = list.some((w) => w.plan === "mid") ? await browser.newContext({ serviceWorkers: "block" }) : null;
+  if (midCtx) {
+    await midCtx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => (/leaflet(\.min)?\.js$/.test(r.request().url()) && fs.existsSync(LEAFLET)
+      ? r.fulfill({ status: 200, contentType: "text/javascript", body: fs.readFileSync(LEAFLET, "utf8") }) : r.abort()));
+    const R = rulesForPage();
+    await midCtx.addInitScript((p) => { try {
+      localStorage.setItem("osap-auth", JSON.stringify({ access_token: "push-scan", until: Date.now() + 864e5 }));
+      localStorage.setItem("osap-tier-plan", JSON.stringify(p));
+    } catch (e) {} }, { tier: "mid", data: R.data, dataDefault: R.dataDefault });
+  }
   const byCc = {};
-  list.forEach((w) => { (byCc[w.cc] = byCc[w.cc] || []).push(w); });
+  list.forEach((w) => { const k = w.cc + (w.plan === "mid" ? "|mid" : ""); (byCc[k] = byCc[k] || []).push(w); });
   const out = {}, failed = [], queue = Object.keys(byCc);
   await Promise.all([0, 1, 2].map(async () => {
     while (queue.length) {
-      const cc = queue.shift(), p = await ctx.newPage();
+      const key = queue.shift(), cc = key.split("|")[0], p = await (key.endsWith("|mid") ? midCtx : ctx).newPage();
       try {
         await p.goto(base + (cc === "th" ? "" : cc + "/") + "timeline", { timeout: 30000 });
         await p.waitForFunction(() => window.OSAP_WATCH && window.TSAP, null, { timeout: 30000 });
@@ -73,12 +87,13 @@ async function scan() {
           const n = await p.evaluate(() => (window.TSAP.records || []).length);
           same = n === last ? same + 1 : 0; last = n; await p.waitForTimeout(1000);
         }
-        for (const w of byCc[cc]) {
+        if (key.endsWith("|mid") && !(await p.evaluate(() => !!(window.OSAP_DATA && window.OSAP_DATA.plan() && window.OSAP_DATA.plan().tier === "mid")))) throw new Error("Mid's data rules did not take");
+        for (const w of byCc[key]) {
           out[w.id] = await p.evaluate((w) => {
             return window.OSAP_WATCH.matches(w);
           }, { area: w.area, layers: w.layers, kw: w.kw, q: w.q, minSev: w.minSev, conf: w.conf });
         }
-      } catch (e) { failed.push(cc + ": " + String(e.message || e).split("\n")[0]); }
+      } catch (e) { failed.push(key + ": " + String(e.message || e).split("\n")[0]); }
       finally { await p.close(); }
     }
   }));
@@ -127,7 +142,9 @@ function alertFor(w, m) {
 const matches = await scan();
 const state = TEST ? { watches: {} } : loadState();
 const next = { watches: {}, at: new Date(now).toISOString() };
-let sentTotal = 0, noted = 0, failedSends = 0;
+let sentTotal = 0, noted = 0, failedSends = 0, held = 0;
+// 1. what is new for each watch
+const jobs = [];
 for (const w of list) {
   const ms = matches[w.id];
   const prev = state.watches[w.id];
@@ -146,25 +163,35 @@ for (const w of list) {
   }
   fresh.sort((a, b) => (msOf(b.ts) || 0) - (msOf(a.ts) || 0));
   const todo = TEST ? ms.slice().sort((a, b) => (msOf(b.ts) || 0) - (msOf(a.ts) || 0)).slice(0, 1) : fresh.slice(0, PER_WATCH);
-  for (const m of todo) {
-    if (sentTotal >= PER_RUN) break;
-    if (await send(w, alertFor(w, m))) { sentTotal++; sent[m.gk + ""] = now; } else failedSends++;
+  if (first) noted++;
+  jobs.push({ w, ms, seen, sent, first, fresh, todo, done: 0 });
+}
+// 2. sending in rounds, the newest alert of every watch first, so with many accounts no watch waits behind another's backlog.
+//    An alert the run's cap holds back is not marked seen, so the next run sends it.
+for (let round = 0; round < PER_WATCH; round++) {
+  for (const j of jobs) {
+    const m = j.todo[round]; if (!m) continue;
+    if (sentTotal >= PER_RUN) continue;
+    if (await send(j.w, alertFor(j.w, m))) { sentTotal++; j.done++; j.sent[m.gk + ""] = now; } else failedSends++;
   }
+}
+for (const j of jobs) {
+  const { w, seen, sent, fresh, todo } = j;
+  j.todo.slice(j.done).forEach((m) => { if (!sent[m.gk + ""] && sentTotal >= PER_RUN) { delete seen[m.k]; held++; } });
   const more = TEST ? 0 : fresh.length - todo.length;
   if (more > 0 && sentTotal < PER_RUN) {
     const ok = await send(w, { title: one("OSAP watch: " + w.name, 120), message: `${more} more new report${more === 1 ? "" : "s"} matched this watch. Open OSAP to see them all.`,
       click: LIVE + "#" + (w.cc === "th" ? "" : w.cc + "/") + "timeline", tags: ["osap"], priority: 2 });
     if (ok) { sentTotal++; fresh.slice(todo.length).forEach((m) => { sent[m.gk + ""] = now; }); }
-  }
-  if (first) noted++;
+  } else if (more > 0) fresh.slice(todo.length).forEach((m) => { delete seen[m.k]; held++; });
   // keep the newest KEEP_KEYS seen keys, and sent events for 4 days (event ids are only stable while the event is open)
   const ks = Object.keys(seen); if (ks.length > KEEP_KEYS) ks.sort((a, b) => seen[a] - seen[b]).slice(0, ks.length - KEEP_KEYS).forEach((k) => delete seen[k]);
   Object.keys(sent).forEach((k) => { if (now - sent[k] > 4 * 864e5) delete sent[k]; });
   next.watches[w.id] = { seen, sent, checked: now };
-  console.log(`push: ${w.id} (${w.cc}): ${ms.length} matching, ${first ? "first check, noted only" : fresh.length + " new, " + todo.length + " sent" + (more > 0 ? ", +" + more + " summarised" : "")}`);
+  console.log(`push: ${w.id} (${w.cc}${w.plan === "mid" ? ", mid" : ""}): ${j.ms.length} matching, ${j.first ? "first check, noted only" : fresh.length + " new, " + j.done + " sent" + (more > 0 ? ", +" + more + " more" : "")}`);
 }
 if (!TEST) saveState(next);
-console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent, ${failedSends} failed, ${noted} new watch(es) noted`);
+console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent, ${failedSends} failed, ${held} held for the next run, ${noted} new watch(es) noted`);
 // a test run reads its channels back from ntfy.sh, to prove the alerts arrived (counts only)
 if (TEST && !DRY) {
   for (const t of [...new Set(list.map((w) => w.topic))]) {

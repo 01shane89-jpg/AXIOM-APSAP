@@ -235,7 +235,7 @@
     }
     /* shown reviews under the sign-in form (assets/osap-reviews.js) */
     if (wall) h += '<div id="tr-reviews"></div>';
-    h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener">Refunds</a></p>';
+    h += '<p class="trlegal"><a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a> · <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener noreferrer">Refunds</a></p>';
     BOX.className = wall ? "trwall" : "";
     BOX.innerHTML = h + "</div>";
     if (wall && W.OSAP_REVIEWS) W.OSAP_REVIEWS.wall(BOX.querySelector("#tr-reviews"));
@@ -474,7 +474,10 @@
       D.addEventListener("click", guard, true);
       D.addEventListener("change", function (e) { var r = e.target.closest && e.target.closest(".dsrow[data-tier-need]"); if (r && e.target.type === "checkbox") e.target.checked = false; }, true);
       new MutationObserver(drawSoon).observe(D.body, { childList: true, subtree: true });
-      setInterval(function () { session(); }, 20 * 60000);
+      /* renewed before it runs out (session() renews in its last five minutes), and as soon as the app is opened again: a
+         phone stops the timers while OSAP is in the background, and a feed asked for with a run-out sign-in is refused */
+      setInterval(function () { session(); }, 4 * 60000);
+      D.addEventListener("visibilitychange", function () { if (!D.hidden) session(); });
       fromEmail().then(function (done) {
         if (done) return;
         /* a reset link opened in this tab, and the page reloaded before the new password was saved */
@@ -483,11 +486,12 @@
         if (isWall()) open("signin", MOVED ? MOVED_MSG : "");
         else if (MOVED) open("plans", MOVED_MSG);
       });
-      /* a token that had run out was renewed after the page had asked for its data, or the plan kept on this device was lower
-         than the one read now (so files it includes were skipped): load once more. Files this plan cannot open do not count. */
+      /* a token that had run out was renewed after the page had asked for its data (the gate refused those files, 401, and
+         the saved copies were shown), or the plan kept on this device was lower than the one read now (so files it includes
+         were skipped): load once more. Files this plan cannot open do not count. */
       try {
         var gate = W.OSAP_DATA, opens = function (u) { return !gate || gate.ok(u); };
-        if (sessionStorage.getItem(K_RELOAD) !== "1" && ((gate && gate.skipped().some(opens)) || (tier() !== "free" && W.performance && performance.getEntriesByType &&
+        if (sessionStorage.getItem(K_RELOAD) !== "1" && ((gate && gate.late && gate.late() && CFG.signedIn) || (gate && gate.skipped().some(opens)) || (tier() !== "free" && W.performance && performance.getEntriesByType &&
           performance.getEntriesByType("resource").some(function (r) { return /\/data\//.test(r.name) && r.responseStatus === 402 && opens(r.name); })))) {
           sessionStorage.setItem(K_RELOAD, "1"); location.reload();
         } else sessionStorage.removeItem(K_RELOAD);

@@ -3,7 +3,7 @@
 ["n4647646968",-18.13203,125.78695,"au",{"name":"Fossil Downs Station","aeroway":"aerodrome","iata":"FSL"}],
 ["w1301421974",-18.19165,125.56264,"au",{"name":"Fitzroy Crossing Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w188462255",-18.69389,125.89262,"au",{"name":"Cadjebut Airport","aeroway":"aerodrome"}],
-["w189308775",-18.18182,125.56019,"au",{"name":"Fitzroy Crossing Airport","aeroway":"aerodrome","icao":"YFTZ","iata":"FIZ"}],
+["w189308775",-18.18182,125.56019,"au",{"name":"Fitzroy Crossing Airport","aeroway":"aerodrome","icao":"YFTZ","iata":"FIZ","wikidata":"Q8563472"}],
 ["w189802278",-18.12404,124.27442,"au",{"name":"Myroodan Station Airport","aeroway":"aerodrome","icao":"YMYR"}],
 ["w190581268",-18.49154,124.85091,"au",{"name":"Noonkanbah Airport","aeroway":"aerodrome","iata":"NKB"}],
 ["w194040987",-18.99532,125.51094,"au",{"name":"Djugerari","aeroway":"aerodrome"}],

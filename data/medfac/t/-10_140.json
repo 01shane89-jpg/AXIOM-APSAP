@@ -9,7 +9,7 @@
 ["w240949332",-8.52392,140.41962,"id",{"name":"Bandar Udara Internasional Mopah","name:en":"Mopah International Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAKK","iata":"MKQ","aerodrome:type":"international","wikidata":"Q3613163"}],
 ["w556663306",-8.4815,140.39121,"id",{"name":"RS. Angkatan Laut, Merauke","amenity":"hospital","healthcare":"hospital"}],
 ["w677378858",-8.25649,141.76522,"pg",{"name":"Mukvi Airstrip","aeroway":"aerodrome","icao":"AYUJ"}],
-["w677378924",-8.04646,141.72225,"pg",{"name":"Suki Airport","aeroway":"aerodrome","icao":"AYSU","iata":"SKC"}],
+["w677378924",-8.04646,141.72225,"pg",{"name":"Suki Airport","aeroway":"aerodrome","icao":"AYSU","iata":"SKC","wikidata":"Q7635846"}],
 ["w788128784",-8.48196,140.38851,"id",{"name":"Rumah Sakit Umum Daerah Merauke","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+62 971 321124","addr:housenumber":"1","addr:street":"Jl. Soekarjo Wiryopranoto","addr:city":"Maro, Kec. Merauke, Kabupaten Merauke, Papua","addr:postcode":"99613"}],
-["w793232990",-8.85536,141.2574,"pg",{"name":"Bensbach Airstrip","aeroway":"aerodrome","icao":"AYBH","iata":"BSP"}],
-["w834606077",-8.714,141.64384,"pg",{"name":"Morehead Airport","aeroway":"aerodrome","icao":"AYEH","iata":"MHY"}]]
+["w793232990",-8.85536,141.2574,"pg",{"name":"Bensbach Airstrip","aeroway":"aerodrome","icao":"AYBH","iata":"BSP","wikidata":"Q620063"}],
+["w834606077",-8.714,141.64384,"pg",{"name":"Morehead Airport","aeroway":"aerodrome","icao":"AYEH","iata":"MHY","wikidata":"Q12694029"}]]

@@ -6,5 +6,5 @@
 ["n1042097182",-28.76109,141.20679,"au",{"name":"Omicron Station Airport","aeroway":"aerodrome"}],
 ["n1042099033",-28.7333,140.05,"au",{"name":"Tenneco Station One Airport","aeroway":"aerodrome"}],
 ["n1042099078",-28.4083,140.81022,"au",{"name":"Toolachie Airport","aeroway":"aerodrome"}],
-["w857391068",-28.09769,140.1965,"au",{"name":"Moomba Airport","operator":"SANTOS","operator:type":"private","aeroway":"aerodrome","icao":"YOOM","iata":"MOO"}],
-["w858364910",-28.05973,141.53471,"au",{"name":"Orientos","aeroway":"aerodrome","iata":"OXO"}]]
+["w857391068",-28.09769,140.1965,"au",{"name":"Moomba Airport","operator":"SANTOS","operator:type":"private","aeroway":"aerodrome","icao":"YOOM","iata":"MOO","wikidata":"Q6907395"}],
+["w858364910",-28.05973,141.53471,"au",{"name":"Orientos","aeroway":"aerodrome","iata":"OXO","wikidata":"Q21957732"}]]

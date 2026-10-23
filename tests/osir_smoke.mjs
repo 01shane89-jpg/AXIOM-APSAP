@@ -6,6 +6,11 @@
 // source listed, printing named after the report. Negative checks: no records means no report; making it changes no record;
 // text typed into the window is shown as text, not run as HTML. Analyst sections: graded claims, assessment, confidence,
 // indicators and outside sources render in order, tagged Analyst, with markup kept as text and only https links linked.
+// Refinements (2026-10-22): records per day for short periods, change from the previous period, version and supersedes, page
+// footer, Save draft / Open draft (a hostile draft file is read as data), and the catalogue's proposed letter beside a claim.
+// AI draft: Fill from AI draft fills only empty fields, never the Summary; parts as drafted are tagged AI generated, edited parts
+// "Analyst, edited from AI draft".
+// Multi-country: a report kept as Part 1, the next country added as Part 2, Shane's order kept, joined fingerprint over the parts.
 // Run from the repo root: node tests/osir_smoke.mjs   (needs the playwright package and Chromium; OUT=dir keeps a screenshot and PDF)
 import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
@@ -162,6 +167,136 @@ ok(await p.evaluate((r0) => JSON.stringify(window.TSAP.records.map((x) => [x.id,
 await p.click("#osir-back");
 ok(await p.evaluate(() => document.getElementById("os-anx").open && document.getElementById("os-an-conf").value === "MODERATE" && document.querySelectorAll("#osirdlg [data-out]").length === 2), "Change choices keeps the analyst sections");
 await p.click("#os-close");
+
+/* refinements: a 30-day OSIR charts records per day and compares with the 30 days before; remade for the same subject it is
+   version 2 and supersedes the first; the printed pages carry the report number and page X of Y; a draft saved to a file opens
+   again with what was typed (and a hostile file is read as data); a claim from one of the report's own sources shows the
+   catalogue's proposed letter without setting it */
+const last = await p.evaluate(() => { const d = window.TSAP.records.map((r) => (r.date || r.ts || "").slice(0, 10)).filter((x) => /^\d{4}-\d{2}-\d{2}$/.test(x)).sort(); return d[d.length - 1]; });
+const from30 = new Date(Date.parse(last + "T00:00:00Z") - 29 * 864e5).toISOString().slice(0, 10);
+await p.evaluate(([f, t]) => window.OSAP_OSIR.open({ from: f, to: t }), [from30, last]);
+await p.waitForFunction(() => window.OSAP_OSIR._state().data, null, { timeout: 30000 });
+const has30 = await p.evaluate(() => !document.getElementById("os-go").disabled);
+ok(has30, "a 30-day period to " + last + " has records");
+await p.fill("#os-subj", "Refinement check");
+for (const round of [1, 2]) {
+  await p.click("#os-go");
+  await p.waitForSelector("#brief .osir", { timeout: 30000 });
+  if (round === 1) { await p.click("#osir-back"); await p.waitForFunction(() => !document.getElementById("osirdlg").hidden && !document.getElementById("os-go").disabled, null, { timeout: 20000 }); }
+}
+const rf = await p.evaluate(() => {
+  const a = document.querySelector("#brief .osir"), q = (s) => a.querySelector('[data-osf="' + s + '"]');
+  return { fig: [...a.querySelectorAll(".tlrside h4")].map((h) => h.textContent).join("|"), aria: (a.querySelector("svg.tlrbars") || { getAttribute: () => "" }).getAttribute("aria-label"),
+    ver: (q("version") || {}).textContent || "", change: (q("change") || {}).textContent || "", kinds: q("change-kind") ? q("change-kind").querySelectorAll("tbody tr").length : 0,
+    changeH: (q("change-h") || {}).textContent || "", peace: !!q("change-peace") || /Peace talks tracker/.test(a.textContent), page: (document.getElementById("osir-page") || {}).textContent || "", no: a.getAttribute("data-osir"), sum: (q("summary") || {}).textContent || "" };
+});
+ok(/Records per day/.test(rf.fig) && rf.aria === "Records per day" && !/Busiest month/.test(rf.sum), "30 days: Figure 2 is records per day (" + rf.fig + ")");
+ok(/Change from the previous period/.test(rf.changeH) && /against the 30 days before/.test(rf.change) && rf.kinds > 0, "change from the previous 30 days: " + rf.change.slice(0, 90) + "… (" + rf.kinds + " kinds)");
+ok(rf.peace, "Thailand: the peace tracker's lines for the period are listed with the change");
+ok(/^Version 2, supersedes OSIR-TH-\d{6}Z[A-Z]{3}\d\d$/.test(rf.ver), "remade for the same subject: " + rf.ver);
+ok(rf.page.includes(rf.no) && /counter\(page\)/.test(rf.page) && /counter\(pages\)/.test(rf.page), "printed pages carry the report number and page X of Y");
+await p.click("#osir-close");
+ok(await p.evaluate(() => !document.getElementById("osir-page")), "closing the report removes the page footer style");
+
+/* save a draft, change the window, open the draft again */
+await p.evaluate(([f, t]) => window.OSAP_OSIR.open({ from: f, to: t }), [from30, last]);
+await p.waitForFunction(() => window.OSAP_OSIR._state().data, null, { timeout: 30000 });
+await p.evaluate(() => { document.getElementById("os-anx").open = true; });
+await p.click("#os-cl-add");
+const src0 = await p.evaluate(() => { const r = window.OSAP_OSIR._state().data.recs.find((x) => x.src && x.src.proposed); return r ? { name: r.src.name, p: String(r.src.proposed).slice(0, 1) } : null; });
+if (src0) {
+  await p.fill("#os-cl-0-src", src0.name);
+  ok(await p.evaluate((w) => { const s = document.getElementById("os-cl-0-r"); return s.value === "" && s.options[0].textContent === "— (proposed " + w + "?)"; }, src0.p), "claim from " + src0.name + ": proposed " + src0.p + "? shown, not set");
+} else ok(true, "no source with a proposed letter in this period (skipped)");
+await p.fill("#os-cl-0-claim", "Draft claim <b>kept</b>"); await p.selectOption("#os-cl-0-c", "3");
+await p.fill("#os-sum", "Draft summary");
+const [dl] = await Promise.all([p.waitForEvent("download"), p.click("#os-save")]);
+const dpath = await dl.path(); const dtext = await readFile(dpath, "utf8"); const dj = JSON.parse(dtext);
+ok(/^OSIR-draft-TH-\d{12}\.json$/.test(dl.suggestedFilename()) && dj.schema === "osap-osir-draft/1" && dj.claims[0].claim === "Draft claim <b>kept</b>" && dj.summary === "Draft summary", "Save draft: a JSON file with what was typed (" + dl.suggestedFilename() + ")");
+await p.fill("#os-sum", ""); await p.click('[data-cldel="0"]');
+await p.setInputFiles("#os-file", { name: "d.json", mimeType: "application/json", buffer: Buffer.from(dtext) });
+await p.waitForFunction(() => document.getElementById("os-sum") && document.getElementById("os-sum").value === "Draft summary", null, { timeout: 20000 });
+ok(await p.evaluate(() => document.getElementById("os-cl-0-claim").value === "Draft claim <b>kept</b>" && document.getElementById("os-cl-0-c").value === "3" && /Draft opened/.test(document.getElementById("os-note").textContent)), "Open draft: summary and claims come back");
+const bad = JSON.stringify({ schema: "osap-osir-draft/1", summary: 42, claims: [{ claim: "x".repeat(5000), r: "Z", c: "<img src=x onerror=window.__xss4=1>" }], an: { conf: "CERTAIN", assess: "<script>window.__xss5=1</script>" } });
+await p.setInputFiles("#os-file", { name: "bad.json", mimeType: "application/json", buffer: Buffer.from(bad) });
+await p.waitForFunction(() => document.getElementById("os-cl-0-claim") && document.getElementById("os-cl-0-claim").value.length === 1000, null, { timeout: 20000 });
+ok(await p.evaluate(() => document.getElementById("os-sum").value === "" && document.getElementById("os-cl-0-r").value === "" && document.getElementById("os-cl-0-c").value === "" && document.getElementById("os-an-conf").value === "" && !window.__xss4 && !window.__xss5), "a hostile draft file: wrong types dropped, unknown grades refused, text cut to the limits, nothing run");
+await p.setInputFiles("#os-file", { name: "no.json", mimeType: "application/json", buffer: Buffer.from('{"hello":1}') });
+await p.waitForFunction(() => /Could not open that file/.test(document.getElementById("os-note").textContent), null, { timeout: 10000 });
+ok(true, "a file that is not a draft is refused with a message");
+await p.click("#os-close");
+
+/* AI draft: "Fill from AI draft" fills only empty fields and never the Summary; parts as drafted are tagged AI generated, an
+   edited part "Analyst, edited from AI draft"; citations name the records; a hostile draft's markup stays text */
+await p.evaluate(() => {
+  window.OSAP_OSIRDRAFT = { label: "Draft, AI-generated, not analyst-approved", topics: { "th|cf-thailand-deep-south|30": { cc: "th", scope: "cf-thailand-deep-south", name: "Thailand Deep South",
+    from: "2026-09-24", to: "2026-10-23", records: 597, made: "2026-10-23 05:41Z", model: "openai/gpt-4o-mini",
+    claims: [{ claim: "Malaysia named a new facilitator [1] <img src=x onerror=window.__xss6=1>", source: "Bernama", refs: [1], cred: "2", rel: "B" }],
+    assess: { text: "The records suggest a leadership change [1][2].", refs: [1, 2] }, alt: { text: "An administrative transition [2].", refs: [2] }, conf: "MODERATE", confNote: "Few sources [1].",
+    ind: [{ text: "First meeting with the Thai panel [2]", refs: [2] }], gaps: [{ text: "Who proposed the change", refs: [] }],
+    refs: [{ n: 1, key: "a", source: "Bernama", title: "x", url: "https://www.bernama.com/x", ts: "2026-10-16T09:00" }, { n: 2, key: "b", source: "The Star", title: "y", url: "", ts: "2026-10-17T01:00" }] } } };
+});
+await p.evaluate(() => window.OSAP_OSIR.open({ scope: "cf-thailand-deep-south" }));
+await p.waitForFunction(() => window.OSAP_OSIR._state().data && document.getElementById("os-ai-fill"), null, { timeout: 30000 });
+await p.evaluate(() => { document.getElementById("os-anx").open = true; });
+await p.fill("#os-sum", "My own bottom line");
+await p.fill("#os-an-alt", "My own alternatives");
+await p.click("#os-ai-fill");
+const af = await p.evaluate(() => ({ sum: document.getElementById("os-sum").value, assess: document.getElementById("os-an-assess").value, alt: document.getElementById("os-an-alt").value,
+  conf: document.getElementById("os-an-conf").value, r: document.getElementById("os-cl-0-r").value, c: document.getElementById("os-cl-0-c").value, note: document.getElementById("os-cl-0-note").value,
+  gaps: document.getElementById("os-an-gaps").value }));
+ok(af.sum === "My own bottom line", "the Summary is never filled from the AI draft");
+ok(af.alt === "My own alternatives", "a field the analyst typed in is not overwritten");
+ok(af.assess === "The records suggest a leadership change (Bernama, 16 Oct 2026) (The Star, 17 Oct 2026)." && af.conf === "MODERATE", "drafted text filled with citations naming the records: " + af.assess);
+ok(af.r === "" && af.c === "" && /AI proposes credibility 2/.test(af.note) && /Catalogue proposes reliability B/.test(af.note), "grades left for the analyst; proposals written in the note");
+await p.fill("#os-an-gaps", af.gaps + "\nAnd one of mine");
+await p.click("#os-go");
+await p.waitForSelector("#brief .osir", { timeout: 30000 });
+const ar = await p.evaluate(() => {
+  const a = document.querySelector("#brief .osir"), hs = {}; [...a.querySelectorAll("h4.oss")].forEach((h) => { const t = h.cloneNode(true); const tags = [...t.querySelectorAll(".aitag")].map((x) => x.textContent); t.querySelectorAll(".aitag").forEach((x) => x.remove()); hs[t.textContent.replace(/^3\.\d+ /, "").trim()] = tags; });
+  return { hs, ai: (a.querySelector('[data-osf="ai-draft"]') || {}).textContent || "", row: (a.querySelector('[data-osf="an-claims"] tbody tr') || {}).outerHTML || "", sum: (a.querySelector('[data-osf="analyst"]') || {}).textContent || "", xss: !!window.__xss6 };
+});
+ok(JSON.stringify(ar.hs["Assessment"]) === '["AI generated"]' && JSON.stringify(ar.hs["Analytic confidence"]) === '["AI generated"]', "parts as drafted are tagged AI generated");
+ok(JSON.stringify(ar.hs["Intelligence gaps"]) === '["Analyst, edited from AI draft"]' && JSON.stringify(ar.hs["Alternative explanations"]) === '["Analyst"]', "an edited part says so; the analyst's own part stays Analyst");
+ok(/data-ai="ai"/.test(ar.row) && />AI</.test(ar.row) && /&lt;img/.test(ar.row) && !ar.xss, "a drafted claim row is marked AI; its markup stays text");
+ok(/filled from a draft by openai\/gpt-4o-mini/.test(ar.ai) && /as drafted, tagged AI generated/.test(ar.ai) && /never AI-drafted/.test(ar.ai), "contributors: " + ar.ai.slice(0, 120));
+ok(ar.sum === "My own bottom line", "the report's Summary is the analyst's own");
+await p.click("#osir-close");
+
+/* multi-country: keep Thailand as Part 1, switch to Malaysia, make the joined report */
+await p.evaluate(() => { try { sessionStorage.removeItem("osap-osir-parts"); } catch (e) {} window.OSAP_OSIR.open({ from: "", to: "" }); });
+await p.waitForFunction(() => window.OSAP_OSIR._state().data && !document.getElementById("os-go").disabled, null, { timeout: 30000 });
+await p.fill("#os-subj", "Thai-Malaysian border");
+await p.click("#os-go");
+await p.waitForSelector("#brief .osir", { timeout: 30000 });
+const thFp = await p.evaluate(() => new Promise((res) => { (function w(n) { const t = (document.getElementById("osir-fp") || {}).textContent || ""; if (/^[0-9a-f]{64}$/.test(t) || n > 300) res(t); else setTimeout(() => w(n + 1), 200); })(0); }));
+await p.click("#osir-addc");
+await p.waitForFunction(() => !document.getElementById("osirdlg").hidden && document.getElementById("os-parts"), null, { timeout: 20000 });
+const held = await p.evaluate(() => ({ parts: JSON.parse(sessionStorage.getItem("osap-osir-parts") || "[]").map((x) => [x.cc, x.fp, !!x.main, !!x.att, !!x.src]), go: document.getElementById("os-go").disabled, box: document.getElementById("os-parts").textContent }));
+ok(held.parts.length === 1 && held.parts[0][0] === "th" && held.parts[0][1] === thFp && held.parts[0].slice(2).every(Boolean), "Add another country: Thailand kept as Part 1 with its fingerprint and sections");
+ok(held.go && /already a part/.test(held.box), "the same country cannot be added twice: Make OSIR is off and says why");
+await p.evaluate(() => { const c = document.getElementById("os-cc"); c.value = "my"; c.dispatchEvent(new Event("change")); });
+await p.waitForFunction(() => window.TSAP && window.TSAP.country === "my" && window.OSAP_OSIR && window.OSAP_OSIR._state().data && document.getElementById("osirdlg") && !document.getElementById("osirdlg").hidden && !document.getElementById("os-go").disabled, null, { timeout: 150000 });
+ok(await p.evaluate(() => /Make OSIR adds this country as Part 2/.test((document.getElementById("os-parts") || {}).textContent || "")), "back on Malaysia: the window says it will be Part 2");
+await p.click("#os-go");
+await p.waitForSelector('#brief .osir[data-joined="1"]', { timeout: 30000 });
+await p.waitForFunction(() => /^[0-9a-f]{64}$/.test((document.getElementById("osir-jfp") || {}).textContent || ""), null, { timeout: 90000 });
+const jr = await p.evaluate(() => {
+  const a = document.querySelector("#brief .osir");
+  const order = [...a.querySelectorAll("table.osf th, h3.tls, .osend")].map((e) => e.textContent.replace(/^\d+/, "").replace(/\s*(Automatic|Analyst|AI generated)$/, "").trim());
+  return { order, no: a.getAttribute("data-osir"), ctry: a.querySelector('[data-osf="countries"]').textContent, heads: [...a.querySelectorAll("h4.osparth")].map((h) => h.textContent.split(" (")[0]),
+    fp: document.getElementById("osir-fp").textContent, jfp: document.getElementById("osir-jfp").textContent, foot: a.querySelector("footer.tlrf").textContent, maps: a.querySelectorAll(".tlrfig svg").length,
+    dupIds: (() => { const ids = [...a.querySelectorAll("[id]")].map((e) => e.id); return ids.filter((x, i) => ids.indexOf(x) !== i); })(), addc: document.getElementById("osir-addc").hidden };
+});
+const WANTJ = ["Subject", "Date generated", "Country/s", "OSINT disclaimer", "Summary", "Main content", "END OF REPORT", "Attachments", "Contributors", "Sources"];
+ok(JSON.stringify(jr.order) === JSON.stringify(WANTJ), "joined report keeps Shane's section order");
+ok(/^OSIR-TH-MY-\d{6}Z[A-Z]{3}\d\d$/.test(jr.no) && jr.ctry === "Part 1: Thailand; Part 2: Malaysia", "joined report number " + jr.no + "; countries: " + jr.ctry);
+ok(JSON.stringify(jr.heads) === JSON.stringify(["Part 1: Thailand", "Part 2: Malaysia", "Part 1: Thailand", "Part 2: Malaysia", "Part 1: Thailand", "Part 2: Malaysia", "Part 1: Thailand", "Part 2: Malaysia"]), "each section holds Part 1 then Part 2 (summary, main content, attachments, sources)");
+const jWant = await p.evaluate(async ([a, b]) => { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(a + "\n" + b)); return [...new Uint8Array(h)].map((x) => x.toString(16).padStart(2, "0")).join(""); }, [thFp, jr.fp]);
+ok(jr.jfp === jWant && jr.foot.includes(thFp), "joined fingerprint = SHA-256 over the part fingerprints in order; Part 1's is listed");
+ok(!jr.dupIds.length && jr.addc, "no duplicate ids across parts (" + jr.maps + " maps); a joined report cannot be kept again");
+await p.click("#osir-close");
+await p.evaluate(() => { try { sessionStorage.removeItem("osap-osir-parts"); } catch (e) {} });
 
 /* phone: the window fits */
 await p.setViewportSize({ width: 390, height: 800 });

@@ -151,7 +151,7 @@
 ["w1376673028",23.12116,93.44977,"mm",{"amenity":"hospital"}],
 ["w1376673032",23.23342,93.72123,"mm",{"amenity":"hospital"}],
 ["w1530688651",22.61626,92.63827,"in",{"amenity":"hospital"}],
-["w156047357",23.84095,92.62123,"in",{"name":"Aizawl Lengpui Airport","operator":"AAI","aeroway":"aerodrome","icao":"VELP","iata":"AJL"}],
+["w156047357",23.84095,92.62123,"in",{"name":"Aizawl Lengpui Airport","operator":"AAI","aeroway":"aerodrome","icao":"VELP","iata":"AJL","wikidata":"Q3504954"}],
 ["w173331025",22.65783,92.16925,"bd",{"name":"Rangamati Govt: Hospital","amenity":"hospital"}],
 ["w258470389",22.18931,92.22652,"bd",{"name":"Bandarban Sadar Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w258476710",22.17811,92.33707,"bd",{"name":"Rowangchhari Upazila Health Complex","amenity":"hospital"}],
@@ -166,6 +166,6 @@
 ["w487812363",23.73192,92.71663,"in",{"name":"Aizawl Civil Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"State Governement","operator:type":"government","addr:full":"Aizawl","addr:district":"Aizawl","addr:postcode":"796001"}],
 ["w530156250",22.24594,92.01958,"bd",{"name":"BGC Trust Medical College বিজিসি ট্রাস্ট মেডিকেল কলেজ","amenity":"hospital"}],
 ["w641625290",23.73133,92.70787,"in",{"name":"Ebenezar Hospital Area","amenity":"hospital","healthcare":"hospital"}],
-["w662506631",23.73663,92.70936,"in",{"name":"Aizawl Adventist Hospital","amenity":"hospital"}],
-["w662521134",22.90681,92.75862,"in",{"name":"Christian Hospital, Serkawn","amenity":"hospital","addr:full":"Lunglei-Thenzawl Road,Near SBI ATM,Serkawn","addr:subdistrict":"Lunglei","addr:district":"Lunglei","addr:postcode":"796691"}],
+["w662506631",23.73663,92.70936,"in",{"name":"Aizawl Adventist Hospital","amenity":"hospital","wikidata":"Q4699417"}],
+["w662521134",22.90681,92.75862,"in",{"name":"Christian Hospital, Serkawn","amenity":"hospital","addr:full":"Lunglei-Thenzawl Road,Near SBI ATM,Serkawn","addr:subdistrict":"Lunglei","addr:district":"Lunglei","addr:postcode":"796691","wikidata":"Q5109740"}],
 ["w819669252",23.32879,92.85612,"in",{"name":"Serchhip Helipad","aeroway":"helipad"}]]

@@ -8,6 +8,8 @@
 <script src="assets/osap-start.js"></script>
 <script src="assets/osap-mycountries.js"></script>
 <script src="assets/osap-lock.js"></script>
+<script src="assets/osap-vault.js"></script>
+<script src="assets/osap-wipe.js"></script>
 <script src="assets/osap-tier.js"></script>
 <script src="assets/osap-datagate.js"></script>
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
@@ -16,6 +18,7 @@
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>
+<script src="assets/osap-coverage.js"></script>
 <script src="assets/osap-locate.js"></script>
 <script src="assets/osap-keydates.js"></script>
 <script src="assets/osap-empty.js"></script>
@@ -156,11 +159,14 @@ data-ev-tlr="1"
 
 # move saved data to another device: encrypted backup file, no account (claude/move-device)
 <script src="assets/osap-move.js"></script>
+<script src="assets/osap-safety.js"></script>
 
 # sync my devices: encrypted relay sync of saved data, no account (claude/device-sync)
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-sync.js"></script>
 <script src="assets/osap-team.js"></script>
+<script src="assets/osap-case-crypto.js"></script>
+<script src="assets/osap-cases.js"></script>
 <script src="assets/osap-photocheck.js"></script>
 
 # the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
@@ -180,3 +186,6 @@ L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
+<script src="assets/osap-milref.js"></script>
+<script src="assets/osap-milmap.js"></script>
+<script src="assets/osap-protect.js"></script>

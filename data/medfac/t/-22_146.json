@@ -19,7 +19,7 @@
 ["w1244578461",-21.77442,147.94665,"au",{"aeroway":"helipad"}],
 ["w1270442288",-21.88541,147.96648,"au",{"aeroway":"helipad"}],
 ["w1343299889",-21.82154,147.98067,"au",{"aeroway":"helipad"}],
-["w259144815",-20.54629,147.838,"au",{"name":"Collinsville Multi-Purpose Health Service","amenity":"hospital","healthcare":"hospital"}],
+["w259144815",-20.54629,147.838,"au",{"name":"Collinsville Multi-Purpose Health Service","amenity":"hospital","healthcare":"hospital","wikidata":"Q85138643"}],
 ["w259475047",-20.59954,147.85061,"au",{"name":"Collinsville","operator":"Whitsunday Regional Council","operator:type":"government","aeroway":"aerodrome","icao":"YCSV","iata":"KCE"}],
 ["w390950065",-20.04637,146.27364,"au",{"name":"Charters Towers Aerodrome","aeroway":"aerodrome","icao":"YCHT","iata":"CXT"}],
 ["w621842234",-20.076,146.26424,"au",{"name":"Charters Towers Health Services","amenity":"hospital","healthcare":"hospital","operator":"Queensland Health","operator:type":"government"}]]

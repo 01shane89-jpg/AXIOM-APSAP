@@ -84,6 +84,22 @@
     { "cc": "lt",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-lithuania", "lang": "en", "nc": true },
     { "cc": "is",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland", "lang": "en", "nc": true },
     { "cc": "ua",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ukraine", "lang": "en", "nc": true },
-    { "cc": "il",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel", "lang": "en", "nc": true }
+    { "cc": "il",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel", "lang": "en", "nc": true },
+    { "cc": "ca",  "agency": "NAAD (Canada's public alerting system: Environment Canada and provincial alerts)", "url": "https://rss.naad-adna.pelmorex.com/", "lang": "en", "max_age_days": 3, "exclude": "\\btest\\b|en vigueur|terminé|levé|avertissement|bulletin météo|veille|alerte" },
+    { "cc": "au",  "agency": "NSW Rural Fire Service (major incidents)", "url": "https://www.rfs.nsw.gov.au/feeds/majorIncidents.xml", "lang": "en" },
+    { "cc": "au",  "agency": "Queensland Fire Department (bushfire alerts)", "url": "https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert.xml", "lang": "en", "max_age_days": 7 },
+    { "cc": "mx",  "agency": "Servicio Meteorológico Nacional (CAP)", "url": "https://smn.conagua.gob.mx/tools/PHP/feedsmn/cap.php", "lang": "es", "max_age_days": 7 },
+    { "cc": "ru",  "agency": "EMERCOM of Russia (MChS) operational information", "url": "https://mchs.gov.ru/deyatelnost/press-centr/operativnaya-informaciya/rss", "lang": "ru", "max_age_days": 7 },
+    { "cc": "mm",  "agency": "Department of Meteorology and Hydrology (flood and river warnings)", "url": "https://www.moezala.gov.mm/rss.xml", "lang": "my", "max_age_days": 7 },
+    { "cc": "bw",  "agency": "Botswana Meteorological Services (CAP, via the alert hub's public source bucket)", "url": "https://cap-sources.s3.amazonaws.com/bw-met-en/rss.xml", "lang": "en", "max_age_days": 7, "exclude": "\\btest(ing)?\\b" },
+    { "cc": "qa",  "agency": "Qatar Civil Aviation Authority, Meteorology Department (CAP, via the alert hub's public source bucket)", "url": "https://cap-sources.s3.amazonaws.com/qa-caa-en/rss.xml", "lang": "en", "max_age_days": 7, "exclude": "\\btest(ing)?\\b" },
+    { "cc": "id",  "agency": "BMKG (Indonesian Agency for Meteorology, Climatology and Geophysics) nowcast warnings", "url": "https://www.bmkg.go.id/alerts/nowcast/en/rss.xml", "lang": "en", "max_age_days": 2 },
+    { "cc": "fi",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland", "lang": "en", "nc": true },
+    { "cc": "sg",  "agency": "Meteorological Service Singapore (haze and weather updates)", "url": "https://www.weather.gov.sg/feed/", "lang": "en", "max_age_days": 7 },
+    { "cc": "vc",  "agency": "NEMO St Vincent and the Grenadines (situation reports)", "url": "https://nemo.gov.vc/nemo/index.php?format=feed&type=rss", "lang": "en", "max_age_days": 14 },
+    { "cc": "co",  "agency": "IDEAM (weather and hydrology bulletins and alerts)", "url": "https://www.ideam.gov.co/rss.xml", "lang": "es", "max_age_days": 3 },
+    { "cc": "om",  "agency": "Oman Meteorology, National Early Warning Centre (storm analyses and alerts)", "url": "https://met.caa.gov.om/feed/", "lang": "ar", "max_age_days": 14 },
+    { "cc": "ci",  "agency": "SODEXAM (Côte d'Ivoire weather service)", "url": "https://sodexam.com/feed/", "lang": "fr", "max_age_days": 14, "match": "[Aa][Ll][Ee][Rr][Tt][Ee]|[Rr][Ii][Ss][Qq][Uu][Ee]|[Pp][Ll][Uu][Ii][Ee]|[Oo][Rr][Aa][Gg]|[Vv][Ii][Gg][Ii][Ll][Aa][Nn][Cc][Ee]|[Ii][Nn][Oo][Nn][Dd]|[Cc][Hh][Aa][Ll][Ee][Uu][Rr]|[Ss][ÉéEe][Cc][Hh][Ee][Rr][Ee][Ss][Ss][Ee]" },
+    { "cc": "sv",  "agency": "Protección Civil El Salvador (alerts and emergency notices)", "url": "https://www.proteccioncivil.gob.sv/feed", "lang": "es", "max_age_days": 14, "match": "[Aa]lerta|[Ee]mergencia|[Ll]luvia|[Ss]ismo|[Tt]ormenta|[Ii]nundaci|[Dd]eslizamiento|[Aa]viso|[Tt]sunami|[Vv]olc" }
   ]
 }

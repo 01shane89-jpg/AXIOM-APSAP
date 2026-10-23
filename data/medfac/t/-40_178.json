@@ -1,6 +1,6 @@
 [["n12610695823",-38.66983,178.02512,"nz",{"name":"Hand Therapy","amenity":"clinic","healthcare":"clinic"}],
 ["n12610757397",-38.66993,178.02527,"nz",{"name":"Three Rivers Medical","amenity":"clinic","healthcare":"clinic"}],
-["n6816252544",-38.66468,178.0227,"nz",{"name":"City Medical Gisborne","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;clinic","phone":"+64 6 868 6104","addr:housenumber":"134","addr:street":"Derby Street","addr:city":"Gisborne","addr:postcode":"4010"}],
+["n6816252544",-38.66468,178.0227,"nz",{"name":"City Medical Gisborne","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;clinic","phone":"+64 6 868 6104","addr:housenumber":"134","addr:street":"Derby Street","addr:city":"Gisborne","addr:postcode":"4010","opening_hours":"Mo-Fr 08:00-17:30"}],
 ["w1218864721",-38.05482,178.30447,"nz",{"name":"Te Puia Springs Hospital Heliport","aeroway":"helipad"}],
 ["w138915055",-38.05532,178.30515,"nz",{"name":"Te Puia Springs Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w455898997",-38.66438,178.02666,"nz",{"name":"St John Ambulance Station","emergency":"ambulance_station","operator":"St John Ambulance"}],

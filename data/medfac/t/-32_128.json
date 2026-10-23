@@ -1,5 +1,5 @@
-[["n1042093412",-31.63798,129.01071,"au",{"name":"Border Village Airport","aeroway":"aerodrome","icao":"YBOV"}],
-["n1042093731",-31.70683,128.87786,"au",{"name":"Eucla Airport","aeroway":"aerodrome","icao":"YECL","iata":"EUC"}],
+[["n1042093412",-31.63798,129.01071,"au",{"name":"Border Village Airport","aeroway":"aerodrome","icao":"YBOV","wikidata":"Q97700427"}],
+["n1042093731",-31.70683,128.87786,"au",{"name":"Eucla Airport","aeroway":"aerodrome","icao":"YECL","iata":"EUC","wikidata":"Q21924115"}],
 ["n1042093905",-30.71702,129.51385,"au",{"name":"Hughes Siding Airport","aeroway":"aerodrome","icao":"YHGS"}],
 ["n1042095369",-31.8267,128.23,"au",{"name":"Mundrabilla Motel Airport","aeroway":"aerodrome","icao":"YMDT"}],
 ["n1967797507",-31.5435,129.22178,"au",{"aeroway":"aerodrome"}],

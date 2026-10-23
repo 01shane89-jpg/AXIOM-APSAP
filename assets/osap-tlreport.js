@@ -77,12 +77,23 @@
     return String(r.prov || "").split(/,|\band\b/).map(function (p) { return p.replace(/\(.*$/, "").replace(/\s+(province|state|region|division)$/i, "").trim(); })
       .filter(function (p) { return p && p.length < 30; });
   }
-  /* the records a report covers: this country's own dated records in the scope and range, oldest first */
+  /* a custom topic: the user's own words, in the watch-word syntax (assets/osap-boolq.js: words side by side all appear; OR,
+     NOT, "exact phrase", brackets). Matched against what the record says (kind, headline, summary, original-language text,
+     place), not OSAP's own notes about it. An unreadable string matches nothing and says why (kwOf(s).err). */
+  function kwOf(s, on) {
+    s = String(s || "").trim();
+    if (!s) return on ? { ok: false, empty: true, err: "", q: "", terms: [], test: function () { return false; } } : null;
+    var B = window.OSAP_BOOLQ;
+    return B ? B.compile(s) : { ok: false, err: "the word search did not load", q: s, terms: [], test: function () { return false; } };
+  }
+  function kwText(r) { return [r.cat, r.title, r.detail, r.orig, r.place, r.prov].filter(Boolean).join(" \n "); }
+  /* the records a report covers: this country's own dated records in the scope and range (and custom topic words), oldest first */
   function pick(opt, enough) {
     var R = (window.TSAP && window.TSAP.records) || [], sc = opt.scope != null ? scopeOf(opt.scope) : { layers: opt.layer ? [opt.layer] : null };
-    var ids = sc.ids ? sc.ids.reduce(function (o, id) { o[id] = 1; return o; }, {}) : null;
+    var ids = sc.ids ? sc.ids.reduce(function (o, id) { o[id] = 1; return o; }, {}) : null, kq = kwOf(opt.kw, opt.kwOn);
     function keep(r) {
       if (r.xcc || !r.src || (sc.layers && sc.layers.indexOf(r.layer) < 0) || (ids && !ids[r.id])) return false;
+      if (kq && !kq.test(kwText(r))) return false;
       var w = when(r); if (!w) return false;
       if (opt.since) { if (w.timed ? w.ms < opt.since : w.day < new Date(opt.since).toISOString().slice(0, 10)) return false; }
       if (opt.from && w.day < opt.from) return false;
@@ -132,6 +143,7 @@
     ".tlr table.tlrkt col.ckn{width:34px}.tlr table.tlrkt col.ckd{width:104px}.tlr table.tlrkt td.kn{padding-left:0}.tlr table.tlrkt td.kd{white-space:normal!important;color:#3d4b57;font-variant-numeric:tabular-nums}.tlr table.tlrkt th:first-child{padding-left:0}" +
     ".tlr table.tlrkt .kt{font-weight:700;color:#1b232b}.tlr table.tlrkt .kt a{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}" +
     ".tlr table.tlrkt .km{color:#55616b;margin-top:1px}.tlr table.tlrkt .ks{margin-top:3px;color:#26323c}.tlr table.tlrkt .kw{margin-top:2px;color:#55616b;font-size:.9em}" +
+    ".tlr table.tlrkt .kp{margin:3px 0 0;padding-left:1.2em;color:#26323c}.tlr table.tlrkt .kp li{margin:1px 0}.tlr table.tlrkt .kc{color:#55616b;font-size:.88em}" +
     ".tlr .kb{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#12324a;color:#fff;font-size:10.5px;font-weight:700;box-sizing:border-box;font-family:system-ui,sans-serif}" +
     ".tlr .kb.ap{box-shadow:0 0 0 1.5px #fff,0 0 0 2.6px #12324a}.tlr .kb.no{background:#fff;color:#12324a;border:1.6px dashed #12324a}" +
     ".tlr .st{display:inline-block;white-space:nowrap;font-size:.82em;font-weight:600;border:1px solid #b9c3cb;border-radius:3px;padding:0 5px;color:#3d4b57;background:#f4f6f8;vertical-align:1px;line-height:1.5}" +
@@ -413,14 +425,23 @@
     try { list = (window.OSAP_EVENTS && window.OSAP_EVENTS.list()) || []; } catch (e) { list = []; }
     /* __rk is set on each record while the page groups events, so collect keys after the list is built */
     recs.forEach(function (r) { if (r.__rk) keys[r.__rk] = 1; });
+    /* most important first: severity, then the same kind rules as single records (a border fence cut counts like a clash) on
+       any of its headlines, then how many different sources reported it (not how many reports: one outlet's repeats add nothing) */
+    function rank(e) {
+      var txt = e.reports.map(function (p) { return p.title; }).join(" \n ").toLowerCase(), sc = 0, srcs = {};
+      RULES.forEach(function (x) { if (x[2].test(txt)) sc += x[1]; });
+      e.reports.forEach(function (p) { srcs[p.source] = 1; });
+      return (e.sev || 1) * 4 + sc + Math.min(6, Object.keys(srcs).length);
+    }
     return list.filter(function (e) { return e.reports.filter(function (p) { return keys[p.key]; }).length >= 2; })
-      .sort(function (a, b) { return (b.sev || 1) - (a.sev || 1) || b.reports.length - a.reports.length || b.to - a.to; })
+      .map(function (e) { e.__rank = rank(e); return e; })
+      .sort(function (a, b) { return b.__rank - a.__rank || b.reports.length - a.reports.length || b.to - a.to; })
       .slice(0, KEY_EVENTS)
       .sort(function (a, b) { return a.from - b.from; });
   }
   /* ---------- notable records: when too few incidents were reported by two sources, key events are filled with single
      records picked by fixed, stated rules (no AI). Each rule adds points; a record needs 4 to qualify; the best go in:
-     ceasefire or agreement 5, strike 4, clash 4, closure or suspension 3, deaths reported +3, injuries reported +1,
+     ceasefire or agreement 5, strike 4, clash 4, border security (fence or wire cut, illegal crossing, smuggling) 4, closure or suspension 3, deaths reported +3, injuries reported +1,
      escalation wording +2, highest severity +1, three or more of one kind the same day +2, first strong record of a surge week +2 (at least 3 records and twice the
      weekly average of the 4 weeks before). Several records of one kind on one day (e.g. many crossings closed) count once.
      Turning points (a headline that is an agreement, or a mass closure) are taken first, then the best record in each equal slice of the period, then the rest by score. */
@@ -429,6 +450,7 @@
     ["strike", 4, /\b(air or artillery strike|air ?strikes?|bomb(s|ed|ing)?|shell(s|ed|ing)?|artillery|rockets?|mortars?|missiles?|drone strikes?)\b/],
     ["clash", 4, /\b(armed clash|clash(es)?|firefights?|exchange of fire|skirmish(es)?|gunfights?|ambush(ed)?|grenades?|attack(s|ed)?)\b/],
     ["closure or suspension", 3, /\b(crossing closed|closes?|closed|closure|shut|suspend(s|ed)?|cancel(s|led)?|sever(s|ed)?)\b/],
+    ["border security", 4, /\b(border (fence|wall|wire)s?|fences?|barbed wire|concertina|razor wire|wire (was |were )?cut|illegal (border )?(crossings?|entr(y|ies)|routes?)|incursions?|infiltrat\w*|smuggl\w*|trafficking route)\b/],
     ["escalation", 2, /\b(war|launch(es|ed)?|opens?|captur(e|es|ed)|seiz(e|es|ed)|downgrad\w*|state of emergency|martial law|evacuat\w*|displac\w*|mobilis\w*|mobiliz\w*)\b/]
   ];
   function notable(recs, grouped, room) {
@@ -495,27 +517,80 @@
       .sort(function (a, b) { return a.from - b.from; });
   }
   var sumState = 0, sumWait = [];
+  /* the hourly summaries (evsum.js) and the drafts of the model on the Actions runner (evsum_ai.js), joined by assets/osap-evsum.js */
   function loadSummaries(cb) {
-    if (window.OSAP_EVSUM || sumState === 2) return cb();
+    if ((window.OSAP_EVSUM && window.OSAP_EVSUM_AI) || sumState === 2) { if (window.OSAP_EVSUM_MERGE) window.OSAP_EVSUM_MERGE(); return cb(); }
     sumWait.push(cb); if (sumState === 1) return;
     sumState = 1;
-    var s = document.createElement("script");
-    s.src = "data/live/evsum.js?t=" + Math.floor(Date.now() / 6e5);
-    s.onload = s.onerror = function () { sumState = 2; var w = sumWait; sumWait = []; w.forEach(function (f) { f(); }); };
-    document.body.appendChild(s);
-  }
-  function summaryFor(e) {
-    var d = window.OSAP_EVSUM, items = (d && d.items) || {}, top = null, topN = 1;
-    var ks = {}; e.reports.forEach(function (p) { ks[p.key] = 1; });
-    Object.keys(items).forEach(function (id) {
-      var n = (items[id].keys || []).filter(function (k) { return ks[k]; }).length;
-      if (n > topN || (n === topN && top && items[id].made > items[top].made)) { top = id; topN = n; }
+    var left = 2;
+    ["data/live/evsum.js", "data/live/evsum_ai.js"].forEach(function (f) {
+      var s = document.createElement("script");
+      s.src = f + "?t=" + Math.floor(Date.now() / 6e5);
+      s.onload = s.onerror = function () {
+        if (--left) return;
+        if (window.OSAP_EVSUM_MERGE) window.OSAP_EVSUM_MERGE();
+        sumState = 2; var w = sumWait; sumWait = []; w.forEach(function (f) { f(); });
+      };
+      document.body.appendChild(s);
     });
-    return top && topN >= 2 ? items[top] : null;
+  }
+  /* one summary per incident: each drafted summary goes to the key event sharing the most reports with it (at least two),
+     and each key event shows the summary sharing the most with it, so no summary is shown on two rows (two rows of one split
+     incident used to show the same "12 reports from 12 sources" summary) */
+  function assignSummaries(keyEv) {
+    var d = window.OSAP_EVSUM, items = (d && d.items) || {}, best = {}, mine = [];
+    /* an AI draft (from the model on the Actions runner) before a plain extract, then the most reports shared */
+    var w = function (x) { return x.n + (items[x.id].method !== "extract" ? 1000 : 0); };
+    keyEv.forEach(function (e, i) {
+      e.sum = null; if (!e.g) return;
+      var ks = {}; e.g.reports.forEach(function (p) { ks[p.key] = 1; });
+      Object.keys(items).forEach(function (id) {
+        var n = (items[id].keys || []).filter(function (k) { return ks[k]; }).length;
+        if (n < 2) return;
+        mine.push({ i: i, id: id, n: n });
+        var b = best[id]; if (!b || n > b.n) best[id] = { i: i, n: n };
+      });
+    });
+    mine.filter(function (x) { return best[x.id].i === x.i; })
+      .sort(function (a, b) { return w(b) - w(a) || String(items[b.id].made).localeCompare(String(items[a.id].made)); })
+      .forEach(function (x) { if (!keyEv[x.i].sum) keyEv[x.i].sum = items[x.id]; });
+  }
+  /* the incidents behind the records: the page's groups with two or more reports in them count once each, every other record
+     once. Counts records that report the same incident once, not once per report. */
+  function incidents(recs) {
+    var keys = {}, list = [];
+    recs.forEach(function (r) { if (r.__rk) keys[r.__rk] = 1; });
+    try { list = (window.OSAP_EVENTS && window.OSAP_EVENTS.list()) || []; } catch (e) { list = []; }
+    recs.forEach(function (r) { if (r.__rk) keys[r.__rk] = 1; });
+    var groups = 0, inGroups = 0;
+    list.forEach(function (e) { var n = e.reports.filter(function (p) { return keys[p.key]; }).length; if (n >= 2) { groups++; inGroups += n; } });
+    return { n: recs.length - inGroups + groups, groups: groups, grouped: inGroups, single: recs.length - inGroups };
+  }
+  function incText(inc) {
+    return "Counting each incident once, these records come to " + inc.n + " separate incidents or items: " + inc.groups + " incident" + (inc.groups === 1 ? "" : "s") +
+      " reported " + inc.grouped + " times between them (grouped automatically by time, place and wording) and " + inc.single + " single record" + (inc.single === 1 ? "" : "s") + ".";
+  }
+  /* an AI draft in full on a key-event row: the summary, key points, where sources differ and what is not established, each
+     statement followed by the sources it cites (by name, so the printed report keeps them) */
+  function aiSumHtml(s) {
+    var refs = s.refs || [];
+    function cited(t) {
+      var names = [];
+      var txt = String(t || "").replace(/(\s*\[(\d+)\])+/g, function (m) {
+        var ns = (m.match(/\d+/g) || []).map(function (n) { return refs[+n - 1] && refs[+n - 1].source; }).filter(Boolean)
+          .filter(function (x, i, a) { return a.indexOf(x) === i; });
+        return ns.length ? " \u0001" + ns.join("; ") + "\u0002" : "";
+      });
+      return esc(txt).replace(/\u0001([^\u0002]*)\u0002/g, '<span class="kc">($1)</span>');
+    }
+    return '<div class="ks">' + cited(s.summary) + aiTag(s) + "</div>" +
+      (s.points && s.points.length ? '<ul class="kp">' + s.points.map(function (p) { return "<li>" + cited(p.text + " " + (p.refs || []).map(function (n) { return "[" + n + "]"; }).join("")) + "</li>"; }).join("") + "</ul>" : "") +
+      (s.differ && s.differ.length ? '<div class="kw"><b>Where reports differ:</b> ' + s.differ.map(function (p) { return cited(p.text + " " + (p.refs || []).map(function (n) { return "[" + n + "]"; }).join("")); }).join(" ") + "</div>" : "") +
+      (s.unclear ? '<div class="kw"><b>Not established:</b> ' + esc(s.unclear) + "</div>" : "");
   }
   function aiTag(s) {
     var ai = s.method !== "extract";
-    return ' <span class="aitag" tabindex="0" title="' + (ai ? "Draft, AI-generated from the reports' headlines and summaries, not analyst-approved. Statements are what the sources said, not confirmed facts." :
+    return ' <span class="aitag" tabindex="0" title="' + (ai ? esc("Draft, AI-generated from the reports' headlines and summaries" + (s.model ? " by " + s.model : "") + (s.made ? " at " + s.made : "") + ", not analyst-approved. Statements are what the sources said, not confirmed facts.") :
       "Automatic extract by fixed rules (no AI), not analyst-approved.") + '">' + (ai ? "AI generated" : "Automatic") + "</span>";
   }
   /* ---------- the report ---------- */
@@ -603,8 +678,9 @@
       e.g.reports.forEach(function (p) { if (srcs.indexOf(p.source) < 0) srcs.push(p.source); });
       if (!u && e.g.reports[0]) u = safeUrl(e.g.reports[0].url);
       meta = e.g.reports.length + " reports from " + srcs.length + " source" + (srcs.length === 1 ? "" : "s") + ": " + srcs.slice(0, 4).join(", ") + (srcs.length > 4 ? " and " + (srcs.length - 4) + " more" : "") + (e.g.crossBorder ? "; also reported across the border" : "");
-      var s = summaryFor(e.g);
-      if (s) extra = '<div class="ks">' + esc(String(s.summary || "").replace(/\s*\[\d+\]/g, "")) + aiTag(s) + "</div>" +
+      var s = e.sum;
+      if (s && s.method !== "extract") extra = aiSumHtml(s);
+      else if (s) extra = '<div class="ks">' + esc(String(s.summary || "").replace(/\s*\[\d+\]/g, "")) + aiTag(s) + "</div>" +
         (s.differ && s.differ.length ? '<div class="kw"><b>Where reports differ:</b> ' + s.differ.map(function (p) { return esc(String(p.text || "").replace(/\s*\[\d+\]/g, "")); }).join(" ") + "</div>" : "");
       why = "reported by " + srcs.length + " sources";
     } else {
@@ -621,25 +697,26 @@
       '<div class="km">' + stChip(obs ? "observation" : e.c ? lead.type : "event") + " " + esc(meta) + (where ? " · <b>Where:</b> " + esc(where) : "") + "</div>" + extra +
       '<div class="kw"><b>Why listed:</b> ' + esc(why) + "</div>" + fp + "</td></tr>";
   }
-  /* records per month, as a small column chart; the busiest month stands out */
-  function barsSvg(recs) {
+  /* records per month (or, with byDay, per day), as a small column chart; the busiest one stands out */
+  function barsSvg(recs, byDay) {
     if (!recs.length) return "";
-    var a = recs[0].__tlw.day.slice(0, 7), b = recs[recs.length - 1].__tlw.day.slice(0, 7), months = [], c = {};
-    for (var y = +a.slice(0, 4), m = +a.slice(5, 7); ; ) { var k = y + "-" + ("0" + m).slice(-2); months.push(k); if (k >= b || months.length > 60) break; if (++m > 12) { m = 1; y++; } }
-    recs.forEach(function (r) { var k = r.__tlw.day.slice(0, 7); c[k] = (c[k] || 0) + 1; });
+    var L = byDay ? 10 : 7, a = recs[0].__tlw.day.slice(0, L), b = recs[recs.length - 1].__tlw.day.slice(0, L), months = [], c = {};
+    if (byDay) for (var t = Date.parse(a + "T00:00:00Z"); ; t += 864e5) { var kd = new Date(t).toISOString().slice(0, 10); months.push(kd); if (kd >= b || months.length > 62) break; }
+    else for (var y = +a.slice(0, 4), m = +a.slice(5, 7); ; ) { var k = y + "-" + ("0" + m).slice(-2); months.push(k); if (k >= b || months.length > 60) break; if (++m > 12) { m = 1; y++; } }
+    recs.forEach(function (r) { var k = r.__tlw.day.slice(0, L); c[k] = (c[k] || 0) + 1; });
     var mx = Math.max.apply(null, months.map(function (k) { return c[k] || 0; })), W = 196, H = 92, top = 14, bot = 16, ch = H - top - bot, bw = (W - 2) / months.length;
     var peak = months.filter(function (k) { return (c[k] || 0) === mx; })[0];
-    function mname(k, yr) { return new Date(k + "-01T00:00:00Z").toLocaleDateString("en-GB", yr ? { month: "short", year: "2-digit", timeZone: "UTC" } : { month: "short", timeZone: "UTC" }); }
+    function mname(k, yr) { return byDay ? new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }) : new Date(k + "-01T00:00:00Z").toLocaleDateString("en-GB", yr ? { month: "short", year: "2-digit", timeZone: "UTC" } : { month: "short", timeZone: "UTC" }); }
     var bars = months.map(function (k, i) {
       var h = mx ? (c[k] || 0) / mx * ch : 0;
       return '<rect x="' + (1 + i * bw + bw * 0.12).toFixed(1) + '" y="' + (top + ch - h).toFixed(1) + '" width="' + Math.max(1, bw * 0.76).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + (k === peak ? "#8a2a22" : "#12324a") + '"><title>' + esc(mname(k, true) + ": " + (c[k] || 0)) + "</title></rect>";
     }).join("");
     var px = 1 + months.indexOf(peak) * bw + bw / 2;
-    return { svg: '<svg class="tlrbars" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Records per month" font-family="system-ui,sans-serif" font-size="9" fill="#55616b">' +
+    return { svg: '<svg class="tlrbars" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Records per ' + (byDay ? "day" : "month") + '" font-family="system-ui,sans-serif" font-size="9" fill="#55616b">' +
       '<line x1="0" x2="' + W + '" y1="' + (top + ch + 0.5) + '" y2="' + (top + ch + 0.5) + '" stroke="#9fb0bf"/>' + bars +
       '<text x="' + Math.min(W - 2, Math.max(2, px)).toFixed(1) + '" y="' + (top + ch - (mx ? ch : 0) - 3).toFixed(1) + '" text-anchor="' + (px < 20 ? "start" : px > W - 20 ? "end" : "middle") + '" fill="#8a2a22" font-weight="700">' + mx + "</text>" +
       '<text x="1" y="' + (H - 3) + '">' + esc(mname(months[0], true)) + "</text>" + (months.length > 1 ? '<text x="' + (W - 1) + '" y="' + (H - 3) + '" text-anchor="end">' + esc(mname(months[months.length - 1], true)) + "</text>" : "") + "</svg>",
-      peak: peak, peakN: mx, mean: recs.length / months.length, label: mname(peak, true) };
+      peak: peak, peakN: mx, mean: recs.length / months.length, label: mname(peak, true), unit: byDay ? "day" : "month" };
   }
   /* the map's key, beside it: what each mark means, drawn with the same marks */
   function legendHtml(m, keyEv) {
@@ -685,7 +762,8 @@
     LN = layerNames();
     var o = OPT, all = pick(o), recs = all.length > MAX_ROWS ? all.slice(all.length - MAX_ROWS) : all;
     var now = Date.now(), evs = recs.length ? eventsFor(recs) : [], nts = recs.length ? notable(recs, evs, KEY_EVENTS - evs.length) : [];
-    var keyEv = recs.length ? keyEvents(recs, evs, nts) : [], m = recs.length ? mapSvg(recs, keyEv) : null;
+    var keyEv = recs.length ? keyEvents(recs, evs, nts) : [], m = recs.length ? mapSvg(recs, keyEv) : null, inc = recs.length ? incidents(recs) : null;
+    assignSummaries(keyEv);
     /* sources, numbered in order of first appearance */
     var srcs = [], sno = {};
     recs.forEach(function (r) { var k = r.src.id || r.src.name; if (!sno[k]) { srcs.push({ s: r.src, n: 0, urls: {} }); sno[k] = srcs.length; } var x = srcs[sno[k] - 1]; x.n++; var h = host(safeUrl(r.url)); if (h) x.urls[h] = 1; });
@@ -719,6 +797,7 @@
         kinds.event + " sourced report" + (kinds.event === 1 ? "" : "s") + ", " + kinds.claim + " official statement" + (kinds.claim === 1 ? "" : "s") + (kinds.observation ? ", " + kinds.observation + " instrument reading" + (kinds.observation === 1 ? "" : "s") : "") + "."
     ];
     if (bars && bars.peakN > 1) pts.push("Busiest month: " + new Date(bars.peak + "-01T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) + ", with " + bars.peakN + " records (the monthly average is " + (Math.round(bars.mean * 10) / 10) + ").");
+    if (inc.groups) pts.push(incText(inc));
     var tp = topN(perProv, 3); if (tp.length) pts.push("Most often named province" + (tp.length > 1 ? "s" : "") + ": " + list3(tp) + ".");
     var tc = topN(perCat, 3); if (tc.length) pts.push("Commonest kind" + (tc.length > 1 ? "s" : "") + " of record: " + list3(tc) + ".");
     if (keyEv.length) pts.push(keyEv.length + " key event" + (keyEv.length === 1 ? " is" : "s are") + " set out in Table 1" + (evs.length ? ", " + evs.length + " of them reported by two or more sources" : ", each a single report picked by fixed rules (no two sources reported the same incident)") + "." +
@@ -728,6 +807,7 @@
       '<div class="tlrglance"><div><b>' + recs.length + "</b><span>records" + (all.length > recs.length ? " (latest " + MAX_ROWS + " of " + all.length + ")" : "") + "</span></div>" +
       "<div><b>" + order.length + "</b><span>day" + (order.length === 1 ? "" : "s") + " with reporting</span></div>" +
       "<div><b>" + srcs.length + "</b><span>source" + (srcs.length === 1 ? "" : "s") + "</span></div>" +
+      '<div title="Reports of the same incident counted once"><b>' + inc.n + "</b><span>separate incident" + (inc.n === 1 ? "" : "s") + " or items</span></div>" +
       "<div><b>" + keyEv.length + "</b><span>key event" + (keyEv.length === 1 ? "" : "s") + "</span></div></div>" +
       '<ul class="tlrpts">' + pts.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
       '<p class="tlrcav"><b>Nothing in this report is confirmed.</b> "Reported" means a named source said it; "Observed" means an instrument reading. A credible source can still be wrong. Every entry links to its source and carries a SHA-256 fingerprint of the record as OSAP holds it.</p>' +
@@ -738,7 +818,7 @@
       '<p class="tlrsrcn">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". " + (m.zoomed ? "Zoomed to where the records are; the inset shows where that is in " + esc(cname()) + ". " : "") +
       "Positions are as precise as each source allows. Borders and names: Natural Earth (public domain).</p></section>" +
       '<section class="tlrkev"><h3 class="tls"><span class="no">3</span>Key events <span class="aitag" tabindex="0" title="Picked automatically by fixed rules, not reviewed by an analyst: first incidents reported by two or more sources (grouped by time, place and shared wording), then single records scored by kind (ceasefire or agreement, strike, clash, closure), reported deaths or injuries, escalation wording, severity and surges in the weekly count. Turning points come first, then the strongest record in each part of the period.">Automatic</span></h3>' +
-      (keyEv.length ? '<p class="bm">Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, closure), casualties, escalation wording and surges in reporting.</p>' : "") +
+      (keyEv.length ? '<p class="bm">Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, border security, closure), casualties, escalation wording and surges in reporting.</p>' : "") +
       (keyEv.length ? '<table class="tlrkt"><caption><b>Table 1.</b> Key events in date order; numbers match Figure 1</caption><colgroup><col class="ckn"><col class="ckd"><col></colgroup><thead><tr><th>No.</th><th>Date</th><th>Event</th></tr></thead><tbody>' + keyEv.map(rowHtml).join("") + "</tbody></table>"
         : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') + "</section>" +
       '<section class="tlrann"><h3 class="tls"><span class="no">A</span>Annex A. Chronology</h3>' + '<p class="bm">Every record, oldest first. Days are UTC (Zulu) dates; each time is shown in Zulu and local time.</p>' +
@@ -828,24 +908,68 @@
   }
   (function wait(n) { if (window.TSAP && window.OSAP_TIME) init(); else if (n < 240) setTimeout(function () { wait(n + 1); }, 250); })(0);
   /* the same content as data, for other report formats (the PowerPoint intelligence brief, assets/osap-intelbrief.js):
-     o = { scope, from, to, prov, area }; cb gets the records (oldest first, each with __tlw), the key events (numbered as on
+     o = { scope, from, to, prov, area, kw (custom topic words), kwName, kwOn (custom topic chosen, so no words match nothing) }; cb gets the records (oldest first, each with __tlw), the key events (numbered as on
      the map, each with how/where and, for one reported by two or more sources, its event summary), the map and chart SVGs,
      the Covers list and the provinces the country's records name, and this report's own HTML for a key-event row (rowHtml) and a
      chronology entry (entryHtml, with its source number) so the OSIR (assets/osap-osir.js) shows them the same way. Nothing is changed. */
+  function spanDays(recs) { return Math.round((Date.parse(recs[recs.length - 1].__tlw.day.slice(0, 10) + "T00:00:00Z") - Date.parse(recs[0].__tlw.day.slice(0, 10) + "T00:00:00Z")) / 864e5) + 1; }
   function data(o, cb) {
     loadSummaries(function () { loadRegions(function () {
       LN = layerNames();
       var all = pick(o), recs = all.length > MAX_ROWS ? all.slice(all.length - MAX_ROWS) : all;
       var evs = recs.length ? eventsFor(recs) : [], nts = recs.length ? notable(recs, evs, KEY_EVENTS - evs.length) : [];
       var keyEv = recs.length ? keyEvents(recs, evs, nts) : [];
-      keyEv.forEach(function (e) { e.sum = e.g ? summaryFor(e.g) : null; });
+      assignSummaries(keyEv);
       var provs = {};
-      pick({ scope: o.scope, from: o.from, to: o.to }).forEach(function (r) { provsOf(r).forEach(function (p) { provs[p] = (provs[p] || 0) + 1; }); });
-      cb({ cc: cc(), country: cname(), scope: scopeOf(o.scope), scopes: scopes(o), recs: recs, total: all.length, max: MAX_ROWS, keyEv: keyEv, grouped: evs.length,
-        map: recs.length ? mapSvg(recs, keyEv) : null, legend: recs.length ? legendHtml : null, bars: barsSvg(recs), period: periodText(recs, o),
+      pick({ scope: o.scope, from: o.from, to: o.to, kw: o.kw, kwOn: o.kwOn }).forEach(function (r) { provsOf(r).forEach(function (p) { provs[p] = (provs[p] || 0) + 1; }); });
+      /* a custom topic is named by the user (kwName) or by its words; scope.kw keeps the words for the report's provenance */
+      var sc = scopeOf(o.scope), kq = kwOf(o.kw, o.kwOn);
+      if (kq) sc = { layers: sc.layers, ids: sc.ids, label: String(o.kwName || "").trim().slice(0, 80) || kq.q || "Custom topic", kw: kq.q, kwOk: kq.ok, kwErr: kq.err || "", kwEmpty: !!kq.empty };
+      cb({ cc: cc(), country: cname(), scope: sc, scopes: scopes(o), recs: recs, total: all.length, max: MAX_ROWS, keyEv: keyEv, grouped: evs.length, incidents: recs.length ? incidents(recs) : null,
+        map: recs.length ? mapSvg(recs, keyEv) : null, legend: recs.length ? legendHtml : null, bars: barsSvg(recs), barsDay: recs.length && spanDays(recs) <= 45 ? barsSvg(recs, true) : null, period: periodText(recs, o),
         provinces: topN(provs, 200), provsOf: provsOf, layerName: function (l) { return LN[l] || l || ""; }, status: STATUS, appPeriod: appPeriod(),
         rowHtml: rowHtml, entryHtml: entry });
     }); });
   }
-  window.OSAP_TLREPORT = { open: open, eligible: eligible, data: data };
+  /* the custom topic box the PowerPoint brief and the OSIR windows share (p = their id prefix, st = their state, which keeps
+     scope "@kw", kw and kwName): the Topic list's last choice, the user's words with ready-made searches to start from, and
+     an optional name for the title. The count redraws as the words are typed; the last words are kept on this device. */
+  var KW_OPT = "@kw", KW_LS = "osap-custom-topic";
+  function kwLoad(st) { try { var v = JSON.parse(localStorage.getItem(KW_LS)); if (v && typeof v.kw === "string") { st.kw = v.kw.slice(0, 600); st.kwName = String(v.name || "").slice(0, 80); } } catch (e) {} }
+  function kwSave(st) { try { localStorage.setItem(KW_LS, JSON.stringify({ kw: st.kw || "", name: st.kwName || "" })); } catch (e) {} }
+  function kwHtml(p, st, d) {
+    if (st.scope !== KW_OPT) return "";
+    var B = window.OSAP_BOOLQ, pre = (B && B.presets) || [], err = d && d.scope && d.scope.kw && !d.scope.kwOk ? d.scope.kwErr : "";
+    return '<div class="' + p + 'w ' + p + 'kw">' +
+      '<label>Your words<input type="text" id="' + p + '-kw" maxlength="600" autocomplete="off" spellcheck="false" value="' + esc(st.kw || "") + '" placeholder="e.g. ferry OR boat AND (sank OR capsized)" aria-describedby="' + p + '-kwh"></label>' +
+      '<div class="' + p + 'kwr"><label>Start from<select id="' + p + '-kwp"><option value="">A ready-made search…</option>' +
+      pre.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name) + "</option>"; }).join("") + "</select></label>" +
+      '<label>Name for the title (optional)<input type="text" id="' + p + '-kwn" maxlength="80" autocomplete="off" value="' + esc(st.kwName || "") + '" placeholder="e.g. Ferry accidents"></label></div>' +
+      '<small id="' + p + '-kwh" class="obs">Words side by side must all appear; a comma or OR means any of them; NOT or a leading - leaves out; "quotes" for a phrase; ( ) to group. ' +
+      "Each word also finds longer forms (bomb finds bombing). Searched: headline, summary, original-language text and place, across all of " + esc(d ? d.country : "the country") + ".</small>" +
+      (err ? '<small class="' + p + 'kwe" role="alert">Cannot read these words: ' + esc(err) + ".</small>" : "") + "</div>";
+  }
+  function kwBind(box, p, st, refresh) {
+    var t = null, kw = box.querySelector("#" + p + "-kw"), kn = box.querySelector("#" + p + "-kwn"), kp = box.querySelector("#" + p + "-kwp");
+    if (!kw) return;
+    var later = function () { clearTimeout(t); t = setTimeout(function () { kwSave(st); refresh(); }, 350); };
+    kw.oninput = function () { st.kw = this.value; later(); };
+    kn.oninput = function () { st.kwName = this.value; later(); };
+    kp.onchange = function () {
+      var x = ((window.OSAP_BOOLQ || {}).presets || []).filter(function (y) { return y.id === kp.value; })[0]; if (!x) return;
+      st.kw = x.q; st.kwName = x.name; kwSave(st); refresh();
+    };
+  }
+  /* draw() rebuilds a window's HTML; keep the caret where it was in the box being typed in */
+  function keepFocus(box, redraw) {
+    var a = document.activeElement, id = a && box.contains(a) && a.id, s0 = null, s1 = null;
+    try { s0 = a.selectionStart; s1 = a.selectionEnd; } catch (e) {}
+    redraw();
+    var b = id && box.querySelector("#" + id); if (!b) return;
+    b.focus(); try { if (s0 != null) b.setSelectionRange(s0, s1); } catch (e) {}
+  }
+  /* what a window passes to data() for the chosen topic: the custom topic covers everything, narrowed by the words */
+  function kwOpts(st, o) { if (st.scope === KW_OPT) { o.scope = ""; o.kw = st.kw || ""; o.kwName = st.kwName || ""; o.kwOn = true; } return o; }
+  window.OSAP_TLREPORT = { open: open, eligible: eligible, data: data, incText: incText,
+    custom: { opt: KW_OPT, label: "Custom topic (your own words)…", load: kwLoad, html: kwHtml, bind: kwBind, opts: kwOpts, keepFocus: keepFocus } };
 })();

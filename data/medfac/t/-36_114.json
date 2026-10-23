@@ -1,3 +1,4 @@
 [["n1042095047",-34.01467,115.06478,"au",{"name":"Leeuwin Estate Airport","aeroway":"aerodrome"}],
 ["n1042096586",-34.02992,115.73788,"au",{"name":"Nannup Airport","aeroway":"aerodrome"}],
-["w98554634",-34.32919,115.15729,"au",{"name":"Tallinup Augusta Airport","aeroway":"aerodrome","icao":"YAUG","aerodrome:type":"public"}]]
+["n14276213002",-34.306,115.15818,"au",{"name":"Augusta Hospital","amenity":"hospital","healthcare":"hospital","contact:phone":"+61 8 9758 3222","addr:housenumber":"8","addr:street":"Donovan Street","opening_hours":"24/7"}],
+["w98554634",-34.32919,115.15729,"au",{"name":"Tallinup Augusta Airport","aeroway":"aerodrome","icao":"YAUG","aerodrome:type":"public","wikidata":"Q97700179"}]]

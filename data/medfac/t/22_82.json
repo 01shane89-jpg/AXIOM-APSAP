@@ -257,7 +257,7 @@
 ["w445425462",22.08485,82.1495,"in",{"name":"Jachman Memorail Mission Hospital","amenity":"hospital","addr:full":"Bilaspur","addr:district":"Bilaspur","addr:postcode":"495001"}],
 ["w446384956",22.3505,82.54856,"in",{"name":"N C HOSPITAL","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Nehru centenary hospital"}],
 ["w486698220",22.07783,82.14999,"in",{"name":"Kims Super Speciality Hospital","amenity":"hospital","addr:full":"Agrasen Square","addr:district":"Bilaspur","addr:postcode":"495001"}],
-["w663790822",22.08416,82.1772,"in",{"name":"Apollo Hospitals","amenity":"hospital","healthcare":"hospital","operator":"Apollo Hospitals"}],
+["w663790822",22.08416,82.1772,"in",{"name":"Apollo Hospitals","amenity":"hospital","healthcare":"hospital","operator":"Apollo Hospitals","wikidata":"Q54556842"}],
 ["w680641663",23.18624,82.96217,"in",{"aeroway":"helipad"}],
 ["w718334434",22.03087,82.9571,"in",{"aeroway":"helipad"}],
 ["w718833988",22.03125,82.9768,"in",{"aeroway":"helipad"}],

@@ -110,8 +110,9 @@
   }
   /* the cap on one team's sealed data */
   function capCheck(sizes) { var t = 0; sizes.forEach(function (s) { t += s; }); return { total: t, cap: CAP, full: t > CAP, pct: Math.min(100, Math.round(t / CAP * 100)) }; }
-  /* the last note under an old key: the team moved. It says when, never where: no key inside. */
-  function movedNote(at) { return { type: "moved", v: 1, at: at }; }
+  /* the last note under an old key: the team moved. It says when, and whether to new links or to a team case, never where:
+     no key and no case inside. */
+  function movedNote(at, toCase) { var n = { type: "moved", v: 1, at: at }; if (toCase) n.to = "case"; return n; }
   function isMoved(p) { return C.plain(p) && p.type === "moved"; }
   /* what is shared of a store: a point's photo count stays on each device */
   function shareText(k, text) {
@@ -204,9 +205,9 @@
       return S;
     }
     /* the bound workspace's shared stores as this device holds them now (writes waiting for the reload count as here) */
-    function storesOf(ws) {
+    function storesOf(ws, stored) {
       var r = reg(), w = wsOf(r, ws); if (!w) return null;
-      var S = w.id === r.active ? overlay(liveStores(), ws) : blob(ws), o = {};
+      var S = w.id === r.active ? (stored ? liveStores() : overlay(liveStores(), ws)) : blob(ws), o = {};
       Object.keys(S).forEach(function (k) { if (synced(k) && typeof S[k] === "string") o[k] = S[k]; });
       return o;
     }
@@ -296,14 +297,14 @@
               fetched[d] = C.fp(C.canon(p.u || {}));
               var S = okUnits(C.trusted(C.fromBucket(p.u)), synced);
               Object.keys(S).forEach(function (uk) { if (C.newer(S[uk], R[uk])) R[uk] = S[uk]; });
-            } else if (d === T.moved && isMoved(p)) moved = true;
+            } else if (d === T.moved && isMoved(p)) moved = p.to === "case" ? "case" : true;
             else if (p.type === "member" && d !== memTag && typeof p.call === "string" && members.length < 60) members.push({ call: cleanCall(p.call) || "?", at: +p.at || 0 });
           });
         }));
       }).then(function () {
         if (!reached) throw new Error("could not reach any relay. Check the connection; OSAP will try again.");
         if (moved) {
-          edit(t.id, function (x) { x.closed = { at: now }; });
+          edit(t.id, function (x) { x.closed = moved === "case" ? { at: now, toCase: true } : { at: now }; });
           LAST[t.id] = { at: now, ok: true, closed: true, msg: "" };
           return LAST[t.id];
         }
@@ -315,7 +316,11 @@
         var S = C.stamp(L, st.O, st.M, now, st.first && !t.owner), M = C.merge([st.M, S, R], now);
         var ch = writeTeam(t, M);
         st.M = M; st.first = false; st.O = {};
-        Object.keys(S).forEach(function (uk) { if (!S[uk].d) st.O[uk] = { t: S[uk].t, h: S[uk].h }; });
+        /* "held" is what is really stored here, not writes still waiting for the reload: a waiting item the page then
+           saves over (its old copy, without that item) was never here, so it is not counted as deleted here */
+        var Sb = storesOf(t.ws, true) || {}, shb = {}; Object.keys(Sb).forEach(function (k) { shb[k] = shareText(k, Sb[k]); });
+        var Lb = C.unitsOf([{ id: "T", name: t.name, created: 0 }], function () { return shb; }, synced);
+        Object.keys(S).forEach(function (uk) { if (!S[uk].d && uk in Lb) st.O[uk] = { t: S[uk].t, h: C.fp(C.canon(Lb[uk])) }; });
         var B = C.buckets(M, NBT), at = Math.floor(now / 1000);
         return Promise.all(B.map(function (b, i) { return C.seal(K, T.b[i], { type: "bucket", v: 1, u: b }); })).then(function (sealed) {
           var cap = capCheck(sealed.map(function (s) { return s.length; })), out = [], big = 0;
@@ -354,6 +359,7 @@
       call = cleanCall(call); if (!call) return Promise.reject(new Error("Type a call sign (up to 24 characters, not an email address)."));
       var r = reg(), w = wsOf(r, ws); if (!w) return Promise.reject(new Error("That workspace is not on this device."));
       if (teamOfWs(ws)) return Promise.reject(new Error("This workspace is already shared with a team."));
+      if (W.OSAP_CASES && W.OSAP_CASES.caseOf && W.OSAP_CASES.caseOf(ws)) return Promise.reject(new Error("This workspace is a team case. Use another workspace for a team link."));
       var mat = newMaterial(), c = cfg(), t = { id: "tm-" + C.hex(C.rand(6)), name: cleanName(name) || cleanName(w.name) || "Team", role: "e", owner: true, ws: ws, call: call, since: Date.now() };
       t.code = encode(mat, "e", t.name);
       c.teams.push(t);
@@ -412,6 +418,24 @@
         return dropState(Ko.pk);
       }).then(function () { return syncTeam(id); }).then(function () { return team(id); });
     }
+    /* the owner moves the team to a team case (assets/osap-cases.js): the case is made from the team's workspace first, so
+       nothing is closed unless the case exists; then a "moved to a team case" note goes under the old key and this device
+       leaves the team link, so the workspace is synced by the case alone. */
+    function caseReady() { return !!(W.OSAP_CASES && W.OSAP_CASES.create && W.OSAP_CASES.on && W.OSAP_CASES.on()); }
+    function toCase(id) {
+      var t = team(id); if (!t || !t.owner || t.role !== "e" || t.closed) return Promise.reject(new Error("Only the team's owner can move it to a team case."));
+      if (!caseReady()) return Promise.reject(new Error("Team cases need you signed in with the Full plan."));
+      var cs, told = false;
+      return syncTeam(id).then(function () { return W.OSAP_CASES.create(t.ws, t.name, t.call, { fromTeam: true }); }).then(function (c) {
+        cs = c;
+        var old = decode(t.code), K;
+        return teamKeys(old).then(function (k) { K = k; return tags(K); }).then(function (T) {
+          return C.seal(K, T.moved, movedNote(Date.now(), true)).then(function (s) { return C.event(K, T.moved, s, Math.floor(Date.now() / 1000)); });
+        }).then(function (ev) {
+          return Promise.all(relays().map(function (u) { return C.relayPub(u, [ev], WAIT); }));
+        }).then(function (res) { told = res.some(function (r) { return r && r.ok >= 1; }); }, function () { told = false; });
+      }).then(function () { return leave(id); }).then(function () { return { case: cs, told: told }; });
+    }
     function leave(id) {
       var t = team(id); if (!t) return Promise.resolve();
       var d = decode(t.code), c = cfg();
@@ -465,9 +489,10 @@
     function base() { return W.location.origin + W.location.pathname; }
     function roleTxt(t) { return t.role === "e" ? (t.owner ? "Owner (editor)" : "Editor") : "Viewer"; }
     function wsName(id) { var w = wsOf(reg(), id); return w ? w.name : ""; }
+    function movedTxt(t) { return t.closed && t.closed.toCase ? "moved to a team case" : "moved to new links"; }
     function stateTxt(t) {
       var L = LAST[t.id];
-      if (t.closed) return "This team has moved to new links.";
+      if (t.closed) return "This team has " + movedTxt(t) + ".";
       if (busy[t.id]) return "Syncing…";
       if (!L) return t.last ? "Last synced " + ago(t.last) + " (" + when(t.last) + ")." : "Waiting to sync…";
       if (L.gone) return L.msg;
@@ -513,7 +538,9 @@
         title = "Team: " + t.name;
         h = '<p class="mvok">' + esc(roleTxt(t)) + " · call sign <b>" + esc(t.call) + "</b> · workspace <b>" + esc(wsName(t.ws) || "deleted") + "</b></p>" +
           '<p class="mvmsg" role="status" data-tm-state>' + esc(stateTxt(t)) + "</p>";
-        if (t.closed) {
+        if (t.closed && t.closed.toCase) {
+          h += '<p data-tm-tocase-note>The owner moved this team to a team case, where each member is a named OSAP account with a role (lead, analyst or viewer) checked by OSAP\'s server. What you already have stays in your workspace. Ask the owner to invite your OSAP account: the invite then shows in My work &gt; Workspaces &gt; Team cases.</p>';
+        } else if (t.closed) {
           h += "<p>The owner made new team links, so this team's old key is closed. What you already have stays in your workspace. Ask the owner for the new link and paste it here, or leave the team.</p>" +
             '<label class="mvf">New team link<input data-tm-paste autocomplete="off" spellcheck="false"></label><div class="mvbtns"><button type="button" class="refresh" data-tm-read>Continue</button></div>';
         } else {
@@ -528,7 +555,10 @@
             "<p>Viewer link: can see the team's items, cannot change them.</p>" + linkBox("v", viewerCode(t.code)) +
             '<p class="obs">Anyone with a link is in the team, so send it only to members, in a private message. The key is in the part after #, which browsers never send to a server.</p>' +
             (t.owner && t.role === "e" ? "<h3>Remove someone</h3><p>A link cannot be taken back, so to remove someone, make new team links. OSAP makes a new team key, copies the team's items to it, and leaves a last note under the old key saying the team has moved (with no new key in it). Then send the new links to the members who stay. Whoever does not get a new link keeps what they already had, but sees nothing new and cannot add to the team.</p>" +
-              '<div class="mvbtns"><button type="button" data-tm-rekey>Make new team links</button></div>' : "") +
+              '<div class="mvbtns"><button type="button" data-tm-rekey>Make new team links</button></div>' +
+              (caseReady() ? "<h3>Move to a team case</h3><p>A team case shares this workspace with named OSAP accounts instead of links. Each member has a role (lead, analyst or viewer) that OSAP\'s server checks on every request, removing someone takes effect at once, and every change to members is recorded. The items stay sealed on members\' devices.</p>" +
+                "<p>OSAP makes the case from this workspace with you as lead, then leaves a last note under the team key saying the team moved to a team case (with nothing in it that leads to the case). Members on the old links keep what they have and are told to ask you for an invite. You then invite each member by the email of their OSAP account.</p>" +
+                '<div class="mvbtns"><button type="button" data-tm-tocase>Move to a team case</button></div>' : "") : "") +
             "<h3>Your call sign</h3>" + '<div class="tmlink"><input data-tm-call maxlength="' + CALL_MAX + '" autocomplete="off" value="' + esc(t.call) + '"><button type="button" data-tm-setcall>Save</button></div>';
         }
         h += '<p><button type="button" class="mvlink" data-tm-leave>Leave this team on this device</button></p>';
@@ -599,6 +629,16 @@
         rekey(tm.id).then(function () { UI.ok = "New team links made. The old links are closed. Send the new editor or viewer link to each member who stays."; render(); }, fail);
         return;
       }
+      if (t.closest("[data-tm-tocase]")) {
+        if (!confirm("Move the team \"" + tm.name + "\" to a team case? The team links stop working for new changes, and you then invite each member by their OSAP account.")) return;
+        UI.ok = "Making the team case…"; UI.msg = ""; render();
+        toCase(tm.id).then(function (r) {
+          closeP();
+          if (W.OSAP_CASES.open) W.OSAP_CASES.open("case", r.case.id);
+          toast(r.told ? "Team moved to a team case. Invite each member by email." : "Team case made. The relays did not take the note closing the old links, so members on them see no new changes but are not told why.");
+        }, fail);
+        return;
+      }
       if (t.closest("[data-tm-leave]")) {
         if (!confirm("Leave the team \"" + tm.name + "\" on this device? The workspace and its items stay here; they stop syncing with the team." + (tm.owner ? " You are the owner: the team goes on without you, and no one can make new team links." : ""))) return;
         leave(tm.id).then(function () { UI.view = "list"; UI.id = ""; UI.ok = "You left the team. The workspace stays on this device."; render(); });
@@ -609,7 +649,7 @@
     /* ---------- what the workspace panel and the Sync panel show ---------- */
     function wsHtml(ws) {
       var t = teamOfWs(ws);
-      if (t) return '<div class="tmws" data-tm-ws><span><b>Team: ' + esc(t.name) + '</b> <i class="obs">' + esc(roleTxt(t)) + " · " + esc(t.call) + " · " + esc(t.closed ? "moved to new links" : stateTxt(t)) + "</i>" +
+      if (t) return '<div class="tmws" data-tm-ws><span><b>Team: ' + esc(t.name) + '</b> <i class="obs">' + esc(roleTxt(t)) + " · " + esc(t.call) + " · " + esc(t.closed ? movedTxt(t) : stateTxt(t)) + "</i>" +
         (t.role === "v" ? '<i class="obs">Read-only for you: viewer link.</i>' : "") + '</span><button type="button" class="refresh" data-tm-open="' + esc(t.id) + '">Team</button></div>';
       return '<div class="tmws" data-tm-ws><span><b>Team</b> <i class="obs">Share this workspace with your team: everyone sees the same items, with who added each one.</i></span><button type="button" class="refresh" data-tm-share="' + esc(ws) + '">Share with a team</button></div>';
     }
@@ -617,7 +657,7 @@
     function syncHtml(inTeam) {
       var L = cfg().teams;
       return '<section class="tmsy" data-tm-sync>' + (inTeam ? "" : "<h3>Team workspaces</h3>") +
-        (L.length ? "<ul>" + L.map(function (t) { return "<li><span><b>" + esc(t.name) + '</b> <i class="obs">' + esc(roleTxt(t)) + " · " + esc(wsName(t.ws) || "workspace deleted") + " · " + esc(t.closed ? "moved to new links" : stateTxt(t)) + '</i></span><button type="button" data-tm-open="' + esc(t.id) + '">Open</button></li>'; }).join("") + "</ul>"
+        (L.length ? "<ul>" + L.map(function (t) { return "<li><span><b>" + esc(t.name) + '</b> <i class="obs">' + esc(roleTxt(t)) + " · " + esc(wsName(t.ws) || "workspace deleted") + " · " + esc(t.closed ? movedTxt(t) : stateTxt(t)) + '</i></span><button type="button" data-tm-open="' + esc(t.id) + '">Open</button></li>'; }).join("") + "</ul>"
           : '<p class="obs">No teams on this device. Share a workspace from My work &gt; Workspaces, or join with a link you were sent.</p>') +
         (allowed() ? '<div class="mvbtns"><button type="button" data-tm-paste-open>Join a team with a link or code</button></div>' : '<p class="obs">' + esc(UPGRADE) + "</p>") + "</section>";
     }
@@ -642,9 +682,12 @@
     D.head.appendChild(css);
 
     W.OSAP_TEAM = { open: openP, close: closeP, create: create, join: join, syncNow: syncTeam, syncAll: syncAll, rekey: rekey, leave: leave, list: function () { return cfg().teams.map(function (t) { return { id: t.id, name: t.name, role: t.role, owner: !!t.owner, ws: t.ws, call: t.call, closed: !!t.closed }; }); },
-      status: function (id) { return { busy: !!busy[id], last: LAST[id] || null }; }, teamOf: function (ws) { var t = teamOfWs(ws); return t ? { id: t.id, name: t.name, role: t.role } : null; },
+      status: function (id) { return { busy: !!busy[id], last: LAST[id] || null }; }, teamOf: function (ws) { var t = teamOfWs(ws); return t ? { id: t.id, name: t.name, role: t.role, closed: !!t.closed } : null; }, toCase: toCase,
       link: function (id, kind) { var t = team(id), c = !t ? "" : kind === "e" ? (t.role === "e" ? t.code : "") : viewerCode(t.code); return c ? linkFor(base(), c) : ""; },
-      wsHtml: wsHtml, tag: tag, syncHtml: function () { return syncHtml(false); }, allowed: allowed, core: core };
+      wsHtml: wsHtml, tag: tag, syncHtml: function () { return syncHtml(false); }, allowed: allowed, core: core,
+      /* the workspace side of a team sync, for team cases (assets/osap-cases.js): which stores are shared, a workspace's shared
+         stores now, and writing a merged state back (the open workspace through the reload bar) */
+      engine: { synced: synced, storesOf: storesOf, wsSig: wsSig, writeTeam: writeTeam, stampBy: stampBy, okUnits: okUnits, shareText: shareText, localText: localText, bar: bar, wsName: wsName, NBT: NBT, CAP: CAP } };
     start();
     /* a team link opened in this tab (kept by assets/osap-sync-boot.js): offer to join once the plan is known */
     var pend = sget(LINK);

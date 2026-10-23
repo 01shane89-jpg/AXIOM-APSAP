@@ -1,8 +1,8 @@
 {
  "schema": "osap-entities/1",
- "asof": "2026-10-14",
+ "asof": "2026-10-21",
  "area": "Thailand Deep South",
- "note": "Reference list of organisations, units and agencies named in Deep South reporting, for the analyst workspace's entity database and link analysis. Organisations only: no private individuals. Each role line is a draft (AI-generated, not analyst-approved); being listed is not a finding about what a group did. Mentions in reports are found by matching the aliases in the report text: a machine match, not a claim.",
+ "note": "Reference list of organisations, units and agencies named in Deep South reporting, for the analyst workspace's entity database and link analysis. Organisations, plus named public officeholders with their office and dates (entity type \"official\"): no private individuals. Each role line is a draft (AI-generated, not analyst-approved); being listed is not a finding about what a group did. Mentions in reports are found by matching the aliases in the report text: a machine match, not a claim.",
  "entities": [
   {
    "id": "ent:ds:brn",
@@ -308,6 +308,73 @@
    "src": "https://en.wikipedia.org/wiki/South_Thailand_insurgency",
    "srcname": "Wikipedia",
    "fp": "b9b81879bb20c460e2a4e8895785d2da780f2f5da525ce318a772cb42cdc79d9"
+  },
+  {
+   "id": "ent:ds:ahmad-norihan",
+   "type": "entity",
+   "entity_type": "official",
+   "group": "Peace process",
+   "name": "Ahmad Norihan Jalal",
+   "aliases": [
+    "Ahmad Norihan Jalal",
+    "Ahmad Norihan",
+    "Norihan Jalal",
+    "Norihan"
+   ],
+   "office": "Malaysian facilitator, Thailand–BRN peace dialogue",
+   "from": "2026-10-16",
+   "until": null,
+   "public_official": true,
+   "role": "Malaysia's facilitator for the Thailand–BRN peace dialogue since 16 Oct 2026; retired lieutenant general and former Director General of Defence Intelligence.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://www.thestar.com.my/news/nation/2026/10/17/ex-defence-intelligence-chief-to-lead-southern-thai-peace-talks",
+   "srcname": "The Star, 17 Oct 2026",
+   "fp": "f3d4de0bd49878662e55e0d54b3d262035ea8df61ebefa67b1a30502797d7a49"
+  },
+  {
+   "id": "ent:ds:rabin-basir",
+   "type": "entity",
+   "entity_type": "official",
+   "group": "Peace process",
+   "name": "Mohd Rabin Basir",
+   "aliases": [
+    "Mohd Rabin Basir",
+    "Rabin Basir",
+    "Mohd Rabin"
+   ],
+   "office": "Malaysian facilitator, Thailand–BRN peace dialogue",
+   "from": "2024-07-01",
+   "until": "2026-10-16",
+   "until_note": "Replaced on 16 Oct 2026; a July 2026 report suggests the post may have been open earlier.",
+   "public_official": true,
+   "role": "Malaysia's facilitator for the peace dialogue from July 2024, replaced on 16 Oct 2026; former Director General of Malaysia's National Security Council.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://www.malaymail.com/news/malaysia/2024/07/05/former-nsc-d-g-mohd-rabin-appointed-as-new-malaysian-facilitator-for-southern-thailand-peace-talks/142845",
+   "srcname": "Malay Mail, 5 Jul 2024",
+   "fp": "d569443f2d39265b2154563199bf270e8f935d44640cc9a5b62aca652f10a898"
+  },
+  {
+   "id": "ent:ds:thanut",
+   "type": "entity",
+   "entity_type": "official",
+   "group": "Peace process",
+   "name": "Thanut Suvarnananda",
+   "aliases": [
+    "Thanut Suvarnananda",
+    "Thanut"
+   ],
+   "office": "Chief of the Thai peace dialogue panel; director of the National Intelligence Agency",
+   "from": "2026-05",
+   "until": null,
+   "public_official": true,
+   "role": "Leads the Thai government's peace dialogue panel since May 2026; director of the National Intelligence Agency.",
+   "role_status": "Draft, AI-generated, not analyst-approved",
+   "status": "reference",
+   "src": "https://www.bangkokpost.com/thailand/general/3268324/new-southern-peace-negotiator-promises-to-be-openminded",
+   "srcname": "Bangkok Post, 9 Jun 2026",
+   "fp": "c486318bf117de1671fc1f1b856649fde987d7e23dc3b7312704e5ee613fe51d"
   },
   {
    "id": "ent:ds:akps",

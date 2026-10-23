@@ -2,7 +2,8 @@
    only to me", with an entity database, possible insurgent bed-down locations, "link analysis, timeline, saved reports, saved
    images, saved locations").
    Only a device unlocked with the owner's Face ID (assets/osap-lock.js, Settings > Hidden areas) gets it: there the toolbar gains
-   an "Analyst" button after My work. On every other device this file stops at the first line and adds nothing.
+   an "Analyst" button after My work. So does a member of a team case whose workspace is open (assets/osap-cases.js). On every
+   other device this file stops at the first line and adds nothing.
    Tabs, all built from what this page already holds (window.ASAP_DS, the Deep South reporting) and the analyst's own work:
    - Entities: the reference list in data/thailand/deepsouth-entities.js (window.OSAP_DS_ENT: organisations, units and agencies,
      no private people; each role line a draft, AI-generated) plus the analyst's own entities and notes, with how many reports in
@@ -35,7 +36,10 @@
   "use strict";
   var W = window;
   if (W.OSAP_LOCK && W.OSAP_LOCK.isOpen()) main();
-  else if (W.OSAP_TIER && W.OSAP_TIER.ready) W.OSAP_TIER.ready.then(function () { if (W.OSAP_TIER.owner()) main(); });
+  else if (W.OSAP_TIER && W.OSAP_TIER.ready) W.OSAP_TIER.ready.then(function () { if (W.OSAP_TIER.owner() || inCase()) main(); });
+  /* or a member of a team case whose workspace is open (assets/osap-cases.js, Shane 2026-10-23): the workspace then holds the
+     case's entities and links, synced sealed with its members; the server checked membership when the case was fetched */
+  function inCase() { return !!(W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase()); }
 })(function () {
   "use strict";
   var W = window, D = document;
@@ -44,7 +48,7 @@
   var LOCAL_H = 7, LOCAL_N = "Thailand";
   var TABS = [["ents", "Entities"], ["links", "Links"], ["struct", "Structure"], ["time", "Timeline"], ["saved", "Saved"], ["bed", "Bed-down"]];
   var PERIODS = [[30, "30 days"], [90, "90 days"], [365, "1 year"], [0, "All kept"]];
-  var TYPES = ["organisation", "armed group", "unit", "police or security force", "agency", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
+  var TYPES = ["organisation", "armed group", "unit", "police or security force", "agency", "official (public officeholder)", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
   var RELS = ["member of", "commands", "support node for", "supplies", "funds", "beds down at", "uses route", "operates in", "attributed to", "targeted", "occurred in", "responded to", "arrested or detained by", "linked by evidence to", "captured", "possibly linked to", "works with", "opposes", "talks with", "other"];
   /* how sure the analyst is of a link they record; drawn the link-analysis way: solid, long dashes, short dashes */
   var CONFS = [["suspected", "Suspected"], ["probable", "Probable"], ["confirmed", "Confirmed"]];
@@ -178,7 +182,7 @@
       "#anws details{margin:6px 0}#anws summary{cursor:pointer;font-weight:600}#anws .angraph{width:100%;height:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px;background:var(--surface2,#f5f7f9)}" +
       "#anws .angraph text{font-size:13px;fill:var(--ink,#1d2329);pointer-events:none;paint-order:stroke;stroke:var(--surface2,#f5f7f9);stroke-width:3px;stroke-linejoin:round}#anws .angraph text.anbx{font-size:12px;font-weight:600;stroke:none;fill:#1d2329}#anws .angraph text.ancnt{font-size:10px;font-weight:700;fill:#fff;stroke:none}#anws .angraph text.anrel{font-size:11.5px;fill:#2b8a3e;font-weight:600}#anws .angraph text.annr{fill:#343a40;font-weight:500;font-style:italic}#anws .angraph text.annl{font-size:12.5px;font-weight:700}#anws .angraph text.anrel.anau{fill:#7048e8}#anws .anpa{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}#anws .anauto table{table-layout:fixed}#anws .anauto td{font-size:12px;white-space:normal;overflow-wrap:anywhere}#anws .anauto td:first-child{width:38%}#anws .angraph g[data-an-node]{cursor:pointer}#anws .answ{display:inline-block;width:26px;height:14px;border:1.6px solid;border-radius:3px;background:#fff;flex:none}#anws .anln{display:inline-block;width:26px;height:0;flex:none}#anws .anscroll{overflow-x:auto;border:1px solid var(--line,#d5dbe1);border-radius:6px}#anws .anscroll .angraph{border:0;width:100%;max-width:none;height:auto}#anws .angraph text.anlane{font-size:12px;font-weight:700;fill:var(--muted,#56626f);stroke:none;text-transform:uppercase;letter-spacing:.04em}#anws .angraph circle,#anws .angraph rect{cursor:pointer}#anws .ankey{display:flex;flex-wrap:wrap;gap:0 14px;margin:4px 0 8px}#anws .ankey .lgh{flex-basis:100%}#anws .ankey .lg{display:flex;align-items:center;gap:6px;font-size:11.5px}#anws .ankey .msyfr{flex-basis:100%}" +
       "#anws .anday{font-weight:700;margin:10px 0 2px}#anws .anit{margin:3px 0 3px 8px;padding-left:8px;border-left:3px solid var(--line,#d5dbe1)}#anws .anit.mine{border-left-color:#2b8a3e}" +
-      "#anws .anbar{display:inline-block;height:8px;background:#e67700;border-radius:2px;vertical-align:middle;margin-right:4px}#anws .anwarn{background:rgba(230,119,0,.1);border-left:3px solid #e67700;padding:6px 10px;margin:6px 0}" +
+      "#anws .anbar{display:inline-block;height:8px;background:#e67700;border-radius:2px;vertical-align:middle;margin-right:4px}#anws .anwarn{background:rgba(230,119,0,.1);border-left:3px solid #e67700;padding:6px 10px;margin:6px 0}#anws .anappr{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}#anws .anchip{font-size:12px;padding:2px 8px;border-radius:10px;border:1px solid var(--line);background:var(--surface2)}#anws .anchip.approved{border-color:#2f9e44;color:#2b8a3e}#anws .anchip.rejected{border-color:#e03131;color:#c92a2a}#anws .anchip.changed{border-color:#e67700}#anws .anok{background:rgba(47,158,68,.1);border-left:3px solid #2f9e44;padding:6px 10px;margin:6px 0}" +
       "#anws .atk-pph{display:flex;flex-wrap:wrap;gap:4px}#anws .atk-pph img{width:84px;height:84px;object-fit:cover;border-radius:4px}#anws .atk-pph button{padding:0;border:none;min-height:0}" +
       "#atk-tools [data-an-btn] svg{width:20px;height:20px}" +
       ".leaflet-pane.leaflet-anpane-pane{visibility:visible!important}";
@@ -208,13 +212,37 @@
   function close() { if (S.el) S.el.hidden = true; if (S.layer && W.__asapMap) { W.__asapMap.removeLayer(S.layer); S.layer = null; } if (W.OSAP_SPLIT) W.OSAP_SPLIT.apply(); paintBtn(); }
   function isOpen() { return !!(S.el && !S.el.hidden); }
 
+  /* in a team case, an analyst's own entity or link is a proposal until a lead of the case approves it (assets/osap-cases.js
+     records the lead's decision on the server; an edit after approval shows as changed). Nothing here is approved by OSAP. */
+  function rawItem(store, id) { var L = store === K_ENT ? ownEnts().items : ownLinks().items; return L.filter(function (x) { return x.id === id; })[0] || null; }
+  function approval(store, id) {
+    var C = W.OSAP_CASES, it = rawItem(store, id), st = C && C.itemState && it ? C.itemState(store, it) : null;
+    if (!st) return "";
+    var label = st.state === "approved" ? "Approved by " + st.by : st.state === "rejected" ? "Rejected by " + st.by : st.state === "changed" ? "Changed since a lead's decision (" + st.was + "): proposal again" : "Proposal, not approved by a lead";
+    return '<div class="anappr" data-an-appr="' + esc(st.state) + '"><span class="anchip ' + esc(st.state) + '">' + esc(label) + "</span>" +
+      (st.lead && st.state !== "approved" ? '<button type="button" data-an-approve="' + esc(store) + "|" + esc(id) + '">Approve</button>' : "") +
+      (st.lead && st.state !== "rejected" ? '<button type="button" data-an-reject="' + esc(store) + "|" + esc(id) + '">Reject</button>' : "") + "</div>";
+  }
+  function decideItem(spec, state) {
+    var p = spec.split("|"), it = rawItem(p[0], p.slice(1).join("|")); if (!it || !W.OSAP_CASES) return;
+    var why = prompt((state === "approved" ? "Approve" : "Reject") + ": reason (optional, sealed in the case record)", "");
+    if (why === null) return;
+    W.OSAP_CASES.decide(p[0], it, state, why).then(function () { toast(state === "approved" ? "Approved. Members see it as approved." : "Rejected."); render(); }, function (er) { toast(String(er && er.message || er)); });
+  }
+  W.addEventListener("osap-cases-change", function () { if (isOpen()) render(); });
+  /* the team case the open workspace belongs to, if any: whose entities and links these are, and whether this member may change them */
+  function caseNote() {
+    var c = W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase(); if (!c) return "";
+    return '<p class="anok" data-an-case>Team case <b>' + esc(c.name) + "</b> · your role: " + esc(c.roleName) + ". Entities and links you add sync, sealed, with the case's members, each with your call sign." +
+      (c.role === "viewer" ? " As a viewer you can read them; changes you make stay on this device." : "") + "</p>";
+  }
   function render() {
     var el = S.el; if (!el) return;
     var X = index(), h = '<div class="anbox"><div class="chead"><h2>Analyst workspace</h2>' +
       '<label class="anal">Period <select id="an-days">' + PERIODS.map(function (p) { return '<option value="' + p[0] + '"' + (p[0] === S.days ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select></label>" +
       '<button type="button" class="x" data-an="close" aria-label="Close">\u00d7</button></div>' +
-      '<p class="anal">Only on this device, while it is unlocked with your Face ID. Thailand Deep South reporting: ' + num(X.rows.length) + " reports in the period" +
-      ((W.ASAP_DS || {}).asof ? ", read " + esc(W.ASAP_DS.asof) : "") + ". Your entities, links and notes stay in this browser.</p>" +
+      caseNote() + '<p class="anal">' + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "" : "Only on this device, while it is unlocked with your Face ID. ") + "Thailand Deep South reporting: " + num(X.rows.length) + " reports in the period" +
+      ((W.ASAP_DS || {}).asof ? ", read " + esc(W.ASAP_DS.asof) : "") + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "." : ". Your entities, links and notes stay in this browser.") + "</p>" +
       '<div class="antabs" role="tablist">' + TABS.map(function (t) { return '<button type="button" role="tab" data-an-tab="' + t[0] + '" aria-pressed="' + (S.tab === t[0]) + '">' + t[1] + "</button>"; }).join("") + "</div>";
     if (S.entsErr) h += '<p class="anwarn">' + esc(S.entsErr) + "</p>";
     h += S.tab === "links" ? tabLinks(X) : S.tab === "struct" ? tabStruct(X) : S.tab === "time" ? tabTime(X) : S.tab === "saved" ? tabSaved() : S.tab === "bed" ? tabBed() : tabEnts(X);
@@ -237,20 +265,20 @@
         return '<div class="ancard' + (S.sel === e.id ? " sel" : "") + '"><b>' + esc(e.name) + '</b> <span class="anal">' + esc(e.type || "") + " \u00b7 " + num(n) + " mention" + (n === 1 ? "" : "s") + "</span>" +
           (e.aliases.length > 1 || e.ref ? '<div class="anal">Also: ' + esc(e.aliases.filter(function (a) { return a !== e.name; }).join(", ")) + "</div>" : "") +
           (e.role ? "<div>" + esc(e.role) + " " + AI + "</div>" : "") +
-          (e.ref && safeUrl(e.src) ? '<div class="anal">Source: <a href="' + esc(e.src) + '" target="_blank" rel="noopener">' + esc(e.srcname || "link") + "</a>" + (e.fp ? " \u00b7 SHA-256 " + esc(String(e.fp).slice(0, 12)) + "\u2026" : "") + "</div>" : "") +
+          (e.ref && safeUrl(e.src) ? '<div class="anal">Source: <a href="' + esc(e.src) + '" target="_blank" rel="noopener noreferrer">' + esc(e.srcname || "link") + "</a>" + (e.fp ? " \u00b7 SHA-256 " + esc(String(e.fp).slice(0, 12)) + "\u2026" : "") + "</div>" : "") +
           (note ? '<div><b>Your note:</b> ' + esc(note) + "</div>" : "") +
           '<div class="anrow"><button type="button" data-an-go="time" data-an-e="' + esc(e.id) + '">Timeline</button><button type="button" data-an-go="links" data-an-e="' + esc(e.id) + '">Links</button>' +
           '<button type="button" data-an-note="' + esc(e.id) + '">' + (note ? "Edit note" : "Add note") + "</button>" +
           '<label title="Your designation, drawn as the symbol frame on the link chart. Your judgement, this browser only.">Side <select data-an-side="' + esc(e.id) + '">' +
           SIDES.map(function (o) { return '<option value="' + o[0] + '"' + (sideOf(e.id) === o[0] ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select></label>" +
-          (e.own ? '<button type="button" data-an-del="' + esc(e.id) + '">Delete</button>' : "") + "</div></div>";
+          (e.own ? '<button type="button" data-an-del="' + esc(e.id) + '">Delete</button>' : "") + "</div>" + (e.own ? approval(K_ENT, e.id) : "") + "</div>";
       }).join("");
     });
     if (!E.length) h += '<p class="obs">' + (W.OSAP_DS_ENT ? "No entity matches." : "Loading the entity list\u2026") + "</p>";
     h += '<details><summary>Add your own entity</summary><form id="an-addent" class="anrow">' +
       '<label>Name <input name="name" required maxlength="120"></label><label>Type <select name="type">' + TYPES.map(function (t) { return "<option>" + esc(t) + "</option>"; }).join("") + "</select></label>" +
       '<label>Other names (comma between) <input name="aliases" maxlength="400"></label><label>Note <input name="note" maxlength="1000"></label><button type="submit" class="go">Add</button></form>' +
-      '<p class="anal">Organisations, units and places. A private person only when sanctioned or charged. Kept in this browser only.</p></details>';
+      '<p class="anal">Organisations, units, places and public officeholders. A private person only when sanctioned or charged. Kept in this browser only.</p></details>';
     return h;
   }
 
@@ -261,7 +289,7 @@
     "ent:ds:isoc4": "la_c2", "ent:ds:army4": "la_c2", "ent:ds:sbpac": "la_gov", "ent:ds:rangers": "la_armed", "ent:ds:or-sor": "la_security",
     "ent:ds:chor-ror-bor": "la_security", "ent:ds:bpp": "la_border", "ent:ds:police9": "la_police", "ent:ds:marines-nara": "la_amphib",
     "ent:ds:thai-panel": "la_gov", "ent:ds:my-facilitator": "la_gov", "ent:ds:akps": "la_border", "ent:ds:gof": "la_police", "ent:ds:my-customs": "la_customs", "ent:ds:dsw": "la_org" };
-  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", "police or security force": "la_police", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place",
+  var SYM_TYPE = { "armed group": "la_armed", unit: "la_armed", "police or security force": "la_police", agency: "la_gov", organisation: "la_group", "person (sanctioned or charged only)": "la_person", official: "la_person", "official (public officeholder)": "la_person", place: "la_place", "site (bed-down, cache, safe house)": "la_place",
     "incident: bombing or IED": "la_bomb", "incident: shooting or armed attack": "la_shoot", "incident: seizure, arrest or raid": "la_seize" };
   function symOf(e) { if (e && (e.type === "route" || e.type === "vehicle" || e.type === "other")) return ""; var k = e && (SYM_ID[e.id] || SYM_TYPE[e.type] || "la_group"), sd = e && sideOf(e.id);
     if (sd && W.OSAP_SYM && W.OSAP_SYM.d[k + "_" + sd]) return k + "_" + sd; return W.OSAP_SYM && W.OSAP_SYM.d[k] ? k : ""; }
@@ -300,7 +328,7 @@
     if (S.sel && nodes[S.sel]) { keep[S.sel] = 1; E.forEach(function (e) { if (e.a === S.sel || e.b === S.sel) keep[e.a] = keep[e.b] = 1; }); }
     N = N.filter(function (n) { return keep[n.id]; });
     E = E.filter(function (e) { return keep[e.a] && keep[e.b]; });
-    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.type = kind[n.id][1] || ""; n.person = /^person/.test(n.type); } });
+    N.forEach(function (n) { n.sym = n.kind === "ent" ? sym[n.id] || "" : W.OSAP_SYM && W.OSAP_SYM.d.la_place ? "la_place" : ""; if (kind[n.id]) { n.group = kind[n.id][0]; n.type = kind[n.id][1] || ""; n.person = /^(person|official)/.test(n.type); } });
     return { N: N, E: E, nodes: nodes, P: P };
   }
   /* a small force layout, started from a circle so the same data always draws the same picture */
@@ -527,7 +555,7 @@
         var o = G.nodes[e.a === S.sel ? e.b : e.a] || {};
         if (e.kind === "auto") return "<tr><td>" + esc(o.label) + "</td><td>" + AUTO + " " + esc(e.rel) + ' <span class="anal">\u00b7 ' + esc(e.basis) + "</span></td><td>" + propActs(e) + "</td></tr>";
         return "<tr><td>" + esc(o.label) + "</td><td>" + (e.kind === "own" ? "<b>Your link:</b> " + esc(e.rel) + (e.note ? " \u00b7 " + esc(e.note) : "") : "Named together in " + num(e.n) + " report" + (e.n === 1 ? "" : "s") + " (machine match)") + "</td><td>" +
-          (e.kind === "own" ? '<button type="button" data-an-unlink="' + esc(e.id) + '">Remove</button>' : "<details><summary>Reports</summary>" + e.rep.slice(0, 12).map(repLine).join("") + "</details>") + "</td></tr>";
+          (e.kind === "own" ? '<button type="button" data-an-unlink="' + esc(e.id) + '">Remove</button>' + approval(K_LINK, e.id) : "<details><summary>Reports</summary>" + e.rep.slice(0, 12).map(repLine).join("") + "</details>") + "</td></tr>";
       }).join("") + "</table>";
     }
     return h + autoList(G) + linkForm(X);
@@ -551,7 +579,7 @@
     var rows = P.links.filter(function (p) { return p.rel !== "occurred in"; }).concat(P.links.filter(function (p) { return p.rel === "occurred in"; }));
     return h + "<table><tr><th>Proposed link</th><th>Why (from the report)</th></tr>" + rows.slice(0, 150).map(function (p) {
       return "<tr><td><b>" + esc(nm(p.a)) + '</b> <span class="anal">' + esc(p.rel) + "</span> <b>" + esc(nm(p.b)) + "</b></td><td>" + esc(p.basis) + (p.mt ? ' <span class="anal">(machine-translated)</span>' : "") +
-        '<div class="anal">' + p.urls.slice(0, 3).map(function (u, i) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener">source ' + (i + 1) + "</a>"; }).join(" \u00b7 ") + "</div>" + propActs(p) + "</td></tr>";
+        '<div class="anal">' + p.urls.slice(0, 3).map(function (u, i) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">source ' + (i + 1) + "</a>"; }).join(" \u00b7 ") + "</div>" + propActs(p) + "</td></tr>";
     }).join("") + "</table></details>";
   }
   function nameOf(id) { var e = entities().filter(function (x) { return x.id === id; })[0]; return e ? e.name : id; }
@@ -581,7 +609,7 @@
   }
   function repLine(i) {
     var u = safeUrl(i.link);
-    return '<div class="anit"><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(titleOf(i)) + '</a> <span class="anal">' + esc(i.outlet || "") + " \u00b7 " + esc(String(i.date || "").replace("T", " ")) +
+    return '<div class="anit"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(titleOf(i)) + '</a> <span class="anal">' + esc(i.outlet || "") + " \u00b7 " + esc(String(i.date || "").replace("T", " ")) +
       (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (i.mt ? " \u00b7 machine-translated" : "") + "</span></div>";
   }
 
@@ -707,12 +735,12 @@
       if (d !== day) { day = d; h += '<div class="anday">' + esc(d) + "</div>"; }
       if (x.r) {
         var i = x.r.i, s = seenMs(i);
-        h += '<div class="anit"><a href="' + esc(safeUrl(i.link)) + '" target="_blank" rel="noopener">' + esc(titleOf(i)) + '</a><div class="anal">' + esc(i.outlet || "") + (i.state ? " (government statement, a claim)" : "") +
+        h += '<div class="anit"><a href="' + esc(safeUrl(i.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(titleOf(i)) + '</a><div class="anal">' + esc(i.outlet || "") + (i.state ? " (government statement, a claim)" : "") +
           " \u00b7 " + esc(i.kind || "") + (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (isFinite(s) ? " \u00b7 seen " + esc(zl(s)) : "") +
           (x.r.ents.length ? " \u00b7 names: " + esc(x.r.ents.map(function (id) { var e = X.E.filter(function (y) { return y.id === id; })[0]; return e ? e.name : id; }).join(", ")) : "") + "</div></div>";
       } else if (x.mine === "report") {
         var sn = x.it.snap || {};
-        h += '<div class="anit mine"><b>You saved:</b> ' + (safeUrl(sn.url) ? '<a href="' + esc(sn.url) + '" target="_blank" rel="noopener">' + esc(sn.title || "report") + "</a>" : esc(sn.title || "report")) +
+        h += '<div class="anit mine"><b>You saved:</b> ' + (safeUrl(sn.url) ? '<a href="' + esc(sn.url) + '" target="_blank" rel="noopener noreferrer">' + esc(sn.title || "report") + "</a>" : esc(sn.title || "report")) +
           '<div class="anal">' + esc(zl(x.t)) + (x.it.note ? " \u00b7 note: " + esc(x.it.note) : "") + "</div></div>";
       } else {
         h += '<div class="anit mine"><b>Your point:</b> ' + esc(x.it.n || "Point") + '<div class="anal">' + esc(zl(x.t)) + " \u00b7 " + (+x.it.lat).toFixed(5) + ", " + (+x.it.lon).toFixed(5) + "</div></div>";
@@ -728,7 +756,7 @@
     var R = savedReports().sort(function (a, b) { return String(b.at || "").localeCompare(String(a.at || "")); }), P = points(), Ph = P.filter(function (p) { return p.ph > 0; });
     var h = "<h3>Saved reports (" + R.length + ")</h3>" + (R.length ? "<table><tr><th>Report</th><th>Source</th><th>Your note</th><th></th></tr>" + R.map(function (it) {
       var s = it.snap || {}, has = s.lat != null && s.lon != null;
-      return "<tr><td>" + (safeUrl(s.url) ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + "</a>" : esc(s.title)) + '<div class="anal">' + esc([s.place, s.ts, (it.cc || "").toUpperCase()].filter(Boolean).join(" \u00b7 ")) +
+      return "<tr><td>" + (safeUrl(s.url) ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : esc(s.title)) + '<div class="anal">' + esc([s.place, s.ts, (it.cc || "").toUpperCase()].filter(Boolean).join(" \u00b7 ")) +
         (s.fp ? " \u00b7 SHA-256 " + esc(String(s.fp).slice(0, 12)) + "\u2026" : "") + "</div></td><td>" + esc(s.source || "") + (it.grade && W.OSAP_GRADE ? " " + W.OSAP_GRADE.badge(it.grade) : "") + (s.status ? '<div class="anal">' + esc(s.status) + "</div>" : "") + "</td><td>" + esc(it.note || "") + "</td><td>" +
         (has ? '<button type="button" data-an-fly="' + (+s.lat) + "," + (+s.lon) + '">Map</button>' : "") + "</td></tr>";
     }).join("") + "</table>" : '<p class="obs">None yet. Save a report from its card (My work).</p>');
@@ -812,6 +840,8 @@
     if ((b = t.closest("[data-an-accept]"))) { var row = b.closest("[data-an-prow]"), cf = row && row.querySelector("[data-an-pconf]"); accept(b.getAttribute("data-an-accept"), cf ? cf.value : "suspected"); return; }
     if ((b = t.closest("[data-an-reject]"))) { reject(b.getAttribute("data-an-reject")); return; }
     if (t.closest("[data-an-unreject]")) { lsSet(K_REJ, []); render(); return; }
+    if ((b = t.closest("[data-an-approve]"))) { decideItem(b.getAttribute("data-an-approve"), "approved"); return; }
+    if ((b = t.closest("[data-an-reject]"))) { decideItem(b.getAttribute("data-an-reject"), "rejected"); return; }
     if ((b = t.closest("[data-an-unlink]"))) { var lid = b.getAttribute("data-an-unlink"), L3 = ownLinks(); L3.items = L3.items.filter(function (l) { return l.id !== lid; }); lsSet(K_LINK, L3); render(); return; }
     if ((b = t.closest("[data-an-fly]"))) { var c = b.getAttribute("data-an-fly").split(",").map(Number), m = W.__asapMap; if (m && isFinite(c[0])) { if (W.OSAP_SPLIT && !W.OSAP_SPLIT.on()) close(); m.setView([c[0], c[1]], Math.max(m.getZoom(), 13)); } return; }
     if ((b = t.closest("[data-an-edit]"))) { if (W.OSAP_POINTS) W.OSAP_POINTS.edit(b.getAttribute("data-an-edit")); return; }
@@ -857,7 +887,7 @@
     if (!list) { if (n < 100) setTimeout(function () { addBtn(n + 1); }, 150); return; }
     if (list.querySelector("[data-an-btn]")) return;
     style();
-    var b = D.createElement("button"); b.type = "button"; b.setAttribute("data-an-btn", ""); b.title = "Analyst workspace (owner only): entities, links, timeline, saved items, bed-down indicator";
+    var b = D.createElement("button"); b.type = "button"; b.setAttribute("data-an-btn", ""); b.title = "Analyst workspace (owner, or members of the open team case): entities, links, timeline, saved items, bed-down indicator";
     b.setAttribute("aria-label", "Analyst"); b.innerHTML = ICON + '<span class="atk-l">Analyst</span>';
     b.addEventListener("click", function (e) { e.stopPropagation(); if (isOpen()) close(); else open(); });
     var mine = list.querySelector('[data-atk="mine"]');

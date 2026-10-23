@@ -46,5 +46,5 @@
 ["w725954347",27.19346,97.00299,"in",{"name":"Vijanagar ALG","aeroway":"aerodrome","icao":"VE91","military":"airfield"}],
 ["w845485153",27.19106,97.00583,"in",{"aeroway":"helipad"}],
 ["w909012357",27.72579,97.87136,"mm",{"aeroway":"helipad"}],
-["w96583772",27.94206,96.13484,"in",{"name":"Tezu","aeroway":"aerodrome","icao":"VETJ","iata":"TEI","military":"airfield"}],
+["w96583772",27.94206,96.13484,"in",{"name":"Tezu","aeroway":"aerodrome","icao":"VETJ","iata":"TEI","military":"airfield","wikidata":"Q6588390"}],
 ["w997221491",27.30087,96.1129,"in",{"aeroway":"helipad"}]]

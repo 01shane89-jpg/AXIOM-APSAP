@@ -11,5 +11,5 @@
 ["w1024452957",-30.09276,145.94809,"au",{"name":"Bourke Multi-Purpose Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"NSW Health","operator:type":"government","addr:housenumber":"26","addr:street":"Tarcoon Street"}],
 ["w1302171882",-31.50739,145.82546,"au",{"name":"Cobar Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"NSW Health","operator:type":"government","website":"https://www.nsw.gov.au/departments-and-agencies/wnswlhd/service-directory/cobar-health-service","addr:housenumber":"33","addr:street":"Woodiwiss Avenue"}],
 ["w231890622",-31.53935,145.79394,"au",{"name":"Cobar Airport","operator":"Cobar Shire Council","aeroway":"aerodrome","icao":"YCBA","iata":"CAZ","aerodrome:type":"public"}],
-["w350231798",-30.03835,145.9458,"au",{"name":"Bourke Airport","aeroway":"aerodrome","icao":"YBKE","iata":"BRK"}],
+["w350231798",-30.03835,145.9458,"au",{"name":"Bourke Airport","aeroway":"aerodrome","icao":"YBKE","iata":"BRK","wikidata":"Q17526"}],
 ["w762438252",-30.31676,145.42538,"au",{"name":"Helipad - Irrigation Helipad","emergency":"landing_site","operator":"National Parks and Wildlife Service","aeroway":"helipad","surface":"grass"}]]

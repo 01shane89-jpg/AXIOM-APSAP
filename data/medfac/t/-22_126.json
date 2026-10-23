@@ -2,5 +2,5 @@
 ["n1998048516",-20.14161,127.9828,"au",{"name":"Balgo Clinic","amenity":"hospital","healthcare":"hospital"}],
 ["n4019567327",-21.35633,127.85674,"au",{"name":"Airport","aeroway":"aerodrome"}],
 ["w188846548",-20.1089,127.61845,"au",{"name":"Mulan","aeroway":"aerodrome","iata":"LGE"}],
-["w188864734",-20.15158,127.97678,"au",{"name":"Balgo Hill Airport","aeroway":"aerodrome","icao":"YBGO","iata":"BQW"}],
+["w188864734",-20.15158,127.97663,"au",{"name":"Balgo Hill Airport","aeroway":"aerodrome","icao":"YBGO","iata":"BQW","wikidata":"Q4850789"}],
 ["w919605937",-20.10234,127.59378,"au",{"amenity":"clinic","healthcare":"clinic"}]]
