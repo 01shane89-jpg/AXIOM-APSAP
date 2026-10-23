@@ -7653,21 +7653,32 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* broadcast programme posts (episodes, replays, live streams) carry a show's name, not an incident */
   var EV_SHOW = /\b(part \d+|playback|full episode|episode \d+|livestream|live stream|live:|highlights|replay|webcast|newscast|bulletin \d+|24 oras|tv patrol|news patrol)\b/i;
   /* nSame() for two grouped records, by counting shared word numbers: the record being placed (a) has its words marked in
-     EVW_MARK, so each comparison is a short array walk instead of two object scans (same rule, same answer) */
-  var EVW_ID = Object.create(null), EVW_N = 0, EVW_MARK = [], EVW_STAMP = 0, EVW_CUR = null;
+     EVW_MARK, so each comparison is a short array walk instead of two object scans. Unlike nSame(), at least one shared word
+     must be a distinctive one: words every incident report uses (killed, injured, police, clash, dates, programme names) are
+     marked in EVW_GEN and never make two reports one incident on their own (an "Albania protests: 10 dead, 25 injured" bulletin
+     had joined a Narathiwat shooting on "dead" and "injured"). Words in very many of this page's headlines (a province's name
+     in its own conflict feed) count as generic too, for each build (EVW_HI). */
+  var EVW_ID = Object.create(null), EVW_N = 0, EVW_MARK = [], EVW_STAMP = 0, EVW_CUR = null, EVW_GEN = [], EVW_HI = [];
+  function evGen(w) { return EVW_GEN[w] || EVW_HI[w]; }
+  var EV_GENERIC = /^(\d+|dead|death|deaths|died|dies|kill|kills|killed|killing|killings|injure|injured|injures|injuring|injury|injuries|wound|wounds|wounded|hurt|people|person|persons|police|policeman|policemen|officer|officers|official|officials|soldier|soldiers|ranger|rangers|army|military|troops|security|forces|attack|attacks|attacked|attackers|shooting|shootings|shot|shoots|gunmen|gunman|clash|clashes|fight|fighting|fighters|incident|incidents|province|provinces|provincial|district|districts|village|villages|town|city|area|areas|today|yesterday|tonight|update|updates|latest|breaking|live|video|watch|midday|morning|evening|night|week|weekend|report|reports|reported|reporting|man|men|woman|women|local|residents|three|four|five|seven|eight|nine|more|least|after|near|over|during|before|amid|says|said|told|following|january|february|march|april|june|july|august|september|october|november|december|monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
   /* a title's word numbers never change (EVW_ID only grows), so each title is split once per page, not on every rebuild: the
      neighbours' reports come back as fresh copies each time a hidden scan returns, and their titles repeat */
   var EVW_T = new Map();
   function evWords(r) {
     var t = String(r.title || ""), ids = EVW_T.get(t); if (ids) return ids;
-    ids = []; for (var k in nWords(t)) ids.push(EVW_ID[k] || (EVW_ID[k] = ++EVW_N));
+    /* plurals as their singular, so "fence wires" and "border wire" share a word */
+    ids = []; for (var k0 in nWords(t)) { var k = k0.length > 4 && /[^s]s$/.test(k0) ? k0.slice(0, -1) : k0; if (ids.indexOf(EVW_ID[k]) >= 0 && EVW_ID[k]) continue; if (!EVW_ID[k]) { EVW_ID[k] = ++EVW_N; if (EV_GENERIC.test(k)) EVW_GEN[EVW_N] = 1; } ids.push(EVW_ID[k]); }
     EVW_T.set(t, ids); return ids;
   }
   function evMark(r) { EVW_STAMP++; EVW_CUR = r; for (var i = 0; i < r.__wi.length; i++) EVW_MARK[r.__wi[i]] = EVW_STAMP; }
-  function evSame(a, b) {
+  /* close: the two reports name the same town or district (not only a province). There, headlines worded differently still
+     match on two shared words, one of them distinctive ("Kelantan-Thailand border concertina wire found cut 11 times" and
+     "Fence wires cut at 13 illegal border crossing points along Rantau Panjang"); elsewhere a third of all their words must be
+     shared, as before. */
+  function evSame(a, b, close) {
     if (a !== EVW_CUR) evMark(a);
-    var bw = b.__wi, n = 0; for (var i = 0; i < bw.length; i++) if (EVW_MARK[bw[i]] === EVW_STAMP) n++;
-    return n >= 2 && n / Math.max(1, a.__wi.length + bw.length - n) >= 0.3;
+    var bw = b.__wi, n = 0, nd = 0; for (var i = 0; i < bw.length; i++) if (EVW_MARK[bw[i]] === EVW_STAMP) { n++; if (!evGen(bw[i])) nd++; }
+    return n >= 2 && nd >= 1 && (close || n / Math.max(1, a.__wi.length + bw.length - n) >= 0.3);
   }
   function evPair(a, b) {
     /* one source's own reports are separate issues (bulletins, catalogue rows, an account's posts), never one event */
@@ -7680,7 +7691,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (a.magnitude != null || b.magnitude != null) {
       if (!(a.quake || b.quake || /quake/i.test(a.title + " " + b.title))) return false;
     }
-    var words = evSame(a, b);
+    var close = samePlace && a.prec !== "province" && b.prec !== "province" && !/\bprovince\b/i.test(a.place);
+    var words = evSame(a, b, close);
     if (la && lb) return words;
     /* one or both have no map point: wording alone, tighter in time */
     if (!words) return false;
@@ -7756,6 +7768,50 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var EVR_T = new Map();
   function evRoutine(t) { var v = EVR_T.get(t); if (v === undefined) { v = NROUTINE.test(t) || EV_SHOW.test(t); EVR_T.set(t, v); } return v; }
   function evSig() { return R.length + ":" + (R[0] ? R[0].id : "") + ":" + (R.length ? R[R.length - 1].id : "") + ":" + Object.keys(EV_SPLIT).length + ":" + XBV; }
+  /* SPLIT INCIDENTS. Reports arrive in time order and each joins the open event it matches best, so when an incident's first
+     reports do not match each other it opens two events that then both grow (one Si Sakhon clash, 16 Oct 2026, came out as
+     seven events, each counted as an incident). Afterwards, events whose reports are within a day of each other are joined
+     when at least two of their reports pair by the same rule (one, when either holds no more than two), or when most of the
+     placed reports of both name the same town or district (not only a province), as long as the joined event spans no more
+     than three days. Only events sharing a distinctive headline word are compared. */
+  function evMerge(all) {
+    var n = all.length, par = new Array(n), lo = new Array(n), hi = new Array(n), plc = new Array(n), WI = Object.create(null), D = 864e5, i, w;
+    function town(r) { return r.place && r.prec !== "province" && !/\b(province|state|region|country)\b/i.test(r.place) ? r.place : ""; }
+    for (i = 0; i < n; i++) {
+      par[i] = i; lo[i] = all[i].m[0].__t.ms; hi[i] = all[i].m[all[i].m.length - 1].__t.ms;
+      var pc = {}, pn = 0, top = "";
+      all[i].m.forEach(function (r) { if (!r.place) return; pn++; var t = town(r); if (t && (pc[t] = (pc[t] || 0) + 1) > (pc[top] || 0)) top = t; });
+      plc[i] = top && pc[top] * 2 > pn ? top : "";
+      for (w in all[i].w) if (!evGen(w)) (WI[w] || (WI[w] = [])).push(i);
+    }
+    function root(x) { while (par[x] !== x) x = par[x] = par[par[x]]; return x; }
+    for (i = 0; i < n; i++) {
+      var e = all[i], seen = Object.create(null);
+      for (w in e.w) {
+        if (evGen(w)) continue;
+        var l = WI[w];
+        for (var q = 0; q < l.length; q++) {
+          var j = l[q]; if (j <= i || seen[j]) continue;
+          var f = all[j]; if (f.m[0].__t.ms > hi[i] + D) break;
+          seen[j] = 1;
+          var ri = root(i), rj = root(j); if (ri === rj) continue;
+          if (Math.max(hi[ri], hi[rj]) - Math.min(lo[ri], lo[rj]) > 3 * D) continue;
+          var need = plc[i] && plc[i] === plc[j] ? 1 : e.m.length <= 2 || f.m.length <= 2 ? 1 : 2, got = 0;
+          for (var a = 0; a < e.m.length && got < need; a++) for (var b = 0; b < f.m.length && got < need; b++) if (evPair(e.m[a], f.m[b])) got++;
+          if (got < need) continue;
+          par[rj] = ri; lo[ri] = Math.min(lo[ri], lo[rj]); hi[ri] = Math.max(hi[ri], hi[rj]);
+        }
+      }
+    }
+    var out = [], at = {};
+    for (i = 0; i < n; i++) {
+      var r0 = root(i);
+      if (at[r0] == null) { at[r0] = out.length; out.push({ t0: all[r0].t0, m: [] }); }
+      Array.prototype.push.apply(out[at[r0]].m, all[i].m);
+    }
+    out.forEach(function (e) { e.m.sort(function (a, b) { return a.__t.ms - b.__t.ms; }); });
+    return out;
+  }
   /* clusters: records in time order, each joins the open event it matches best (an event stays open for 48 h after its first
      report and holds at most 40 reports), or starts its own */
   function evBuild() {
@@ -7769,6 +7825,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       r.__t = evMs(r); r.__wi = evWords(r);
       return isFinite(r.__t.ms);
     }).sort(function (a, b) { return a.__t.ms - b.__t.ms; });
+    /* words in more than 2% of the headlines (and at least 30) are generic for this build */
+    var df = []; EVW_HI = [];
+    recs.forEach(function (r) { for (var i = 0; i < r.__wi.length; i++) df[r.__wi[i]] = (df[r.__wi[i]] || 0) + 1; });
+    var hiN = Math.max(30, recs.length * 0.02); df.forEach(function (c, w) { if (c > hiN) EVW_HI[w] = 1; });
     var open = [], all = [], o0 = 0, EW = Object.create(null), MAG = [], hs = 0;
     /* an index from each word to the events whose reports use it (EW), and the events holding a magnitude reading (MAG): only
        events that share two words with a report, or hold a magnitude when the report does too, can take it, since a pair needs
@@ -7803,6 +7863,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (best) add(best, r);
       else { var ne = { t0: r.__t.ms, ix: open.length, m: [], w: Object.create(null), mag: 0 }; add(ne, r); open.push(ne); all.push(ne); }
     });
+    all = evMerge(all);
     var byRec = {}, list = [];
     all.forEach(function (e) {
       /* an event needs two reports, at least one of them from this country */
@@ -7811,6 +7872,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (loc0 !== e.m[0]) { e.m.splice(e.m.indexOf(loc0), 1); e.m.unshift(loc0); }
       var ev = { id: "ev-" + rk(e.m[0]), m: e.m };
       list.push(ev); e.m.forEach(function (r) { byRec[r.id] = ev; });
+      /* how many of the other reports each one shares wording with: the headline is the most typical report */
+      e.m.forEach(function (r) { r.__cen = 0; });
+      if (e.m.length <= 80) e.m.forEach(function (r, i) { for (var j = i + 1; j < e.m.length; j++) if (evSame(r, e.m[j])) { r.__cen++; e.m[j].__cen++; } });
     });
     EVC = { sig: sig, byRec: byRec, list: list };
     return EVC;
@@ -7827,7 +7891,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var oa = a.type === "claim" || a.type === "observation" ? 1 : 0, ob = b.type === "claim" || b.type === "observation" ? 1 : 0;
       if (!!a.xcc !== !!b.xcc) return a.xcc ? 1 : -1;
       if (oa !== ob) return ob - oa;
-      return (b.news || b.social ? 0 : 1) - (a.news || a.social ? 0 : 1) || b.sev - a.sev;
+      return (b.__cen || 0) - (a.__cen || 0) || (b.news || b.social ? 0 : 1) - (a.news || a.social ? 0 : 1) || b.sev - a.sev;
     })[0];
     var srcs = []; members.forEach(function (r) { if (r.src && srcs.indexOf(r.src.name) < 0) srcs.push(r.src.name); });
     var xcc = []; members.forEach(function (r) { if (r.xcc && xcc.indexOf(r.xcc) < 0) xcc.push(r.xcc); });

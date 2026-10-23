@@ -567,6 +567,7 @@
     /* automatic summary: counts by fixed rules, no AI */
     var pts = [pl(recs.length, "dated record") + " from " + pl(srcs.length, "source") + ", " + fmtShort(first.day) + " to " + fmtShort(last.day) + ": " +
       pl(kinds.event || 0, "sourced report") + ", " + pl(kinds.claim || 0, "official statement") + (kinds.observation ? ", " + pl(kinds.observation, "instrument reading") : "") + "."];
+    if (d.incidents && d.incidents.groups && W.OSAP_TLREPORT.incText) pts.push(W.OSAP_TLREPORT.incText(d.incidents));
     if (bars && bars.peakN > 1) pts.push(bars.unit === "day" ? "Busiest day: " + fmtShort(bars.peak) + ", with " + bars.peakN + " records (the daily average is " + (Math.round(bars.mean * 10) / 10) + ")." :
       "Busiest month: " + new Date(bars.peak + "-01T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) + ", with " + bars.peakN + " records (the monthly average is " + (Math.round(bars.mean * 10) / 10) + ").");
     var tp = topN(perProv, 3); if (tp.length) pts.push("Most often named province" + (tp.length > 1 ? "s" : "") + ": " + list3(tp) + ".");
@@ -616,7 +617,7 @@
       '<div data-part="sum"><ul class="tlrpts" data-osf="summary">' + pts.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>" +
       /* 6: Main content: key events, where, trend */
       '<h3 class="tls"><span class="no">3</span>Main content</h3><div data-part="main">' + anMain +
-      '<h4 class="oss">' + kNo + ' Key events' + tag("Automatic", "Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, closure), casualties, escalation wording and surges in reporting.") + "</h4>" +
+      '<h4 class="oss">' + kNo + ' Key events' + tag("Automatic", "Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, border security, closure), casualties, escalation wording and surges in reporting.") + "</h4>" +
       (keyEv.length ? '<table class="tlrkt" data-osf="keyevents"><caption><b>Table 1.</b> Key events in date order; numbers match Figure 1. Each is what its sources reported, not a confirmed fact.</caption><colgroup><col class="ckn"><col class="ckd"><col></colgroup><thead><tr><th>No.</th><th>Date</th><th>Event</th></tr></thead><tbody>' +
         keyEv.map(d.rowHtml).join("") + "</tbody></table>" : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') +
       (m ? '<h4 class="oss">' + wNo + ' Where</h4><p class="tlrfigc"><b>Figure 1.</b> Records and key events, ' + esc(d.period) + '</p><div class="tlrfig">' + m.svg + '<aside class="tlrside">' + d.legend(m, keyEv) +
