@@ -1523,7 +1523,6 @@
     {"cc":"om","outlet":"Al Roya","url":"https://alroya.om/rss/category/all","lang":"ar"},
     {"cc":"bb","outlet":"CBC Barbados","url":"https://www.cbc.bb/feed/","lang":"en"},
     {"cc":"gm","outlet":"Kerr Fatou","url":"https://www.kerrfatou.com/feed/","lang":"en"},
-    {"cc":"bt","outlet":"Kuensel","url":"https://kuenselonline.com/feed/posts","lang":"en","state":true},
     {"cc":"bt","outlet":"Daily Bhutan","url":"https://www.dailybhutan.com/rss","lang":"en"},
     {"cc":"dm","outlet":"Emo News","url":"https://emonewsdm.com/feed.xml","lang":"en"},
     {"cc":"cv","outlet":"Balai","url":"https://www.balai.cv/feed/","lang":"pt"},
