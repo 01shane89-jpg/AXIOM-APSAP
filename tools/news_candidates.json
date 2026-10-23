@@ -1,455 +1,553 @@
 {
-"note": "PROBE BRANCH ONLY: warning feed candidates (round W1) plus the CAP bucket list",
+"note": "PROBE BRANCH ONLY: warning feed discovery round W2",
 "feeds": [
 {
-"cc": "ca",
-"outlet": "NAAD (Canada public alerts)",
-"url": "https://rss.naad-adna.pelmorex.com/",
-"lang": "en"
-},
-{
-"cc": "ca",
-"outlet": "NAAD (Canada public alerts)",
-"url": "https://rss1.naad-adna.pelmorex.com/",
-"lang": "en"
-},
-{
-"cc": "ca",
-"outlet": "Environment Canada warnings",
-"url": "https://weather.gc.ca/rss/battleboard/on1_e.xml",
-"lang": "en"
-},
-{
-"cc": "ca",
-"outlet": "Environment Canada warnings",
-"url": "https://weather.gc.ca/rss/warning/on-143_e.xml",
-"lang": "en"
-},
-{
-"cc": "ca",
-"outlet": "Environment Canada warnings",
-"url": "https://dd.weather.gc.ca/alerts/cap/",
+"cc": "id",
+"outlet": "BMKG nowcast",
+"url": "https://www.bmkg.go.id/alerts/nowcast/en/rss.xml",
 "lang": "en"
 },
 {
 "cc": "id",
-"outlet": "BMKG (CAP)",
-"url": "https://signature.bmkg.go.id/alert/public/en/rss.xml",
-"lang": "en"
-},
-{
-"cc": "id",
-"outlet": "BMKG (CAP)",
-"url": "https://signature.bmkg.go.id/alert/public/id/rss.xml",
-"lang": "en"
-},
-{
-"cc": "id",
-"outlet": "BMKG earthquakes",
-"url": "https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.xml",
+"outlet": "BMKG nowcast",
+"url": "https://www.bmkg.go.id/alerts/nowcast/id/rss.xml",
 "lang": "id"
 },
 {
-"cc": "au",
-"outlet": "NSW Rural Fire Service major incidents",
-"url": "https://www.rfs.nsw.gov.au/feeds/majorIncidents.xml",
+"cc": "id",
+"outlet": "BMKG nowcast",
+"url": "https://bmkg.go.id/alerts/nowcast/en",
 "lang": "en"
 },
 {
-"cc": "au",
-"outlet": "Queensland Fire Department incidents",
-"url": "https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert.xml",
+"cc": "fi",
+"outlet": "MeteoAlarm Finland",
+"url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland",
 "lang": "en"
 },
 {
-"cc": "au",
-"outlet": "Emergency WA",
-"url": "https://www.emergency.wa.gov.au/data/message_DFESCap.xml",
+"cc": "fi",
+"outlet": "FMI CAP",
+"url": "https://alerts.fmi.fi/cap/feed/rss_en-GB.rss",
 "lang": "en"
 },
 {
-"cc": "au",
-"outlet": "Emergency WA",
-"url": "https://api.emergency.wa.gov.au/v1/cap",
+"cc": "fi",
+"outlet": "FMI CAP",
+"url": "https://alerts.fmi.fi/cap/feed/atom_en-GB.xml",
 "lang": "en"
 },
 {
-"cc": "au",
-"outlet": "SA Country Fire Service",
-"url": "https://data.eso.sa.gov.au/prod/cfs/criimson/cfs_current_incidents.xml",
-"lang": "en"
-},
-{
-"cc": "au",
-"outlet": "Tasmania Fire Service",
-"url": "https://www.fire.tas.gov.au/Show?pageId=colBushfireSummariesRss",
-"lang": "en"
-},
-{
-"cc": "th",
-"outlet": "Thai Meteorological Department",
-"url": "https://www.tmd.go.th/en/rss/warning",
-"lang": "en"
-},
-{
-"cc": "th",
-"outlet": "Thai Meteorological Department",
-"url": "https://www.tmd.go.th/feeds/warning.xml",
-"lang": "en"
-},
-{
-"cc": "th",
-"outlet": "Thai Meteorological Department",
-"url": "https://tmd.go.th/api/xml/WeatherWarningNews",
-"lang": "en"
-},
-{
-"cc": "vn",
-"outlet": "NCHMF Vietnam",
-"url": "https://nchmf.gov.vn/Kttv/vi-VN/1/canh-bao-thoi-tiet-nguy-hiem-37.rss",
-"lang": "vi"
-},
-{
-"cc": "vn",
-"outlet": "NCHMF Vietnam",
-"url": "https://nchmf.gov.vn/kttv/vi-VN/1/rss.html",
-"lang": "vi"
+"cc": "tr",
+"outlet": "Kandilli quakes",
+"url": "http://www.koeri.boun.edu.tr/scripts/lst0.asp",
+"lang": "tr"
 },
 {
 "cc": "kr",
-"outlet": "Korea Meteorological Administration",
-"url": "https://www.weather.go.kr/w/rss/warning.do",
-"lang": "en"
+"outlet": "KMA warnings",
+"url": "https://www.kma.go.kr/weather/warning/rss.jsp",
+"lang": "ko"
 },
 {
-"cc": "kr",
-"outlet": "Korea Meteorological Administration",
-"url": "https://www.kma.go.kr/XML/weather/sfc_web_map.xml",
-"lang": "en"
-},
-{
-"cc": "cl",
-"outlet": "SENAPRED (Chile civil protection)",
-"url": "https://senapred.cl/feed/",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "SENAPRED (Chile civil protection)",
-"url": "https://senapred.cl/alertas/feed/",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "SHOA tsunami bulletins",
-"url": "https://www.shoa.cl/php/rss.php",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "SMN Mexico (CAP)",
-"url": "https://smn.conagua.gob.mx/tools/PHP/feedsmn/cap.php",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "SMN Mexico (CAP)",
-"url": "https://smn.conagua.gob.mx/tools/RESOURCES/AvisoCiclones/rss.xml",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "SASMEX seismic alerts",
-"url": "https://rss.sasmex.net/api/v1/alerts/latest/cap/",
-"lang": "es"
-},
-{
-"cc": "mx",
-"outlet": "SASMEX seismic alerts",
-"url": "http://www.sasmex.net/alertas/rss.xml",
-"lang": "es"
-},
-{
-"cc": "ar",
-"outlet": "SMN Argentina alerts",
-"url": "https://ssl.smn.gob.ar/CAP/AR.php",
-"lang": "es"
-},
-{
-"cc": "ar",
-"outlet": "SMN Argentina alerts",
-"url": "https://ssl.smn.gob.ar/feeds/avisocorto_GeoRSS.xml",
-"lang": "es"
-},
-{
-"cc": "tr",
-"outlet": "AFAD (Türkiye disaster authority)",
-"url": "https://deprem.afad.gov.tr/rss",
-"lang": "tr"
-},
-{
-"cc": "tr",
-"outlet": "AFAD (Türkiye disaster authority)",
-"url": "https://www.afad.gov.tr/rss",
-"lang": "tr"
-},
-{
-"cc": "tr",
-"outlet": "MGM Meteouyarı",
-"url": "https://www.mgm.gov.tr/FTPDATA/analiz/sonSOA.xml",
-"lang": "tr"
-},
-{
-"cc": "tr",
-"outlet": "MGM Meteouyarı",
-"url": "https://meteoalarm.mgm.gov.tr/cap/rss.xml",
-"lang": "tr"
-},
-{
-"cc": "ru",
-"outlet": "EMERCOM (MChS) alerts",
-"url": "https://mchs.gov.ru/deyatelnost/press-centr/operativnaya-informaciya/rss",
-"lang": "ru"
-},
-{
-"cc": "ru",
-"outlet": "EMERCOM (MChS) alerts",
-"url": "https://mchs.gov.ru/rss",
-"lang": "ru"
-},
-{
-"cc": "ph",
-"outlet": "PHIVOLCS",
-"url": "https://www.phivolcs.dost.gov.ph/index.php/rss",
-"lang": "en"
+"cc": "th",
+"outlet": "TMD warning",
+"url": "https://data.tmd.go.th/api/WeatherWarningNews/v1/?uid=api&ukey=api12345",
+"lang": "th"
 },
 {
 "cc": "za",
-"outlet": "SA Weather Service warnings",
-"url": "https://www.weathersa.co.za/home/warnings/rss",
-"lang": "en"
-},
-{
-"cc": "za",
-"outlet": "SA Weather Service warnings",
+"outlet": "SAWS CAP",
 "url": "https://caps.weathersa.co.za/Home/RssFeed",
 "lang": "en"
 },
 {
-"cc": "ke",
-"outlet": "Kenya Meteorological Department",
-"url": "https://meteo.go.ke/feed/",
+"cc": "us",
+"outlet": "NWS atom",
+"url": "https://api.weather.gov/alerts/active.atom?severity=Extreme,Severe",
 "lang": "en"
+}
+],
+"discover": [
+{
+"cc": "ae",
+"outlet": "NCM UAE",
+"home": "https://www.ncm.gov.ae/"
 },
 {
-"cc": "ke",
-"outlet": "Kenya Meteorological Department",
-"url": "https://meteo.go.ke/rss.xml",
-"lang": "en"
+"cc": "ae",
+"outlet": "NCEMA",
+"home": "https://www.ncema.gov.ae/"
 },
 {
-"cc": "bd",
-"outlet": "Bangladesh Meteorological Department",
-"url": "https://live6.bmd.gov.bd/cap/rss.xml",
-"lang": "en"
+"cc": "af",
+"outlet": "ANDMA",
+"home": "https://andma.gov.af/en"
 },
 {
-"cc": "bd",
-"outlet": "Bangladesh Meteorological Department",
-"url": "https://bmd.gov.bd/rss",
-"lang": "en"
+"cc": "am",
+"outlet": "MES Armenia",
+"home": "https://www.mes.am/en/"
 },
 {
-"cc": "lk",
-"outlet": "Disaster Management Centre Sri Lanka",
-"url": "https://www.dmc.gov.lk/index.php?option=com_dmcreports&view=reports&Itemid=273&report_type_id=1&lang=en&format=feed&type=rss",
-"lang": "en"
+"cc": "am",
+"outlet": "Armhydromet",
+"home": "https://www.meteo.am/"
 },
 {
-"cc": "lk",
-"outlet": "Disaster Management Centre Sri Lanka",
-"url": "https://www.dmc.gov.lk/index.php?format=feed&type=rss",
-"lang": "en"
+"cc": "ao",
+"outlet": "INAMET",
+"home": "https://inamet.gov.ao/"
 },
 {
-"cc": "np",
-"outlet": "Nepal DHM flood alerts",
-"url": "https://www.dhm.gov.np/rss",
-"lang": "en"
+"cc": "ar",
+"outlet": "SMN Argentina",
+"home": "https://www.smn.gob.ar/"
 },
 {
-"cc": "np",
-"outlet": "Nepal DHM flood alerts",
-"url": "http://hydrology.gov.np/rss",
-"lang": "en"
-},
-{
-"cc": "sg",
-"outlet": "Singapore NEA",
-"url": "https://www.nea.gov.sg/rss/weather-warnings",
-"lang": "en"
-},
-{
-"cc": "sg",
-"outlet": "Singapore NEA",
-"url": "https://api-open.data.gov.sg/v2/real-time/api/weather?api=twenty-four-hr-forecast",
-"lang": "en"
-},
-{
-"cc": "jm",
-"outlet": "Jamaica Met Service",
-"url": "https://metservice.gov.jm/feed/",
-"lang": "en"
-},
-{
-"cc": "jm",
-"outlet": "Jamaica Met Service",
-"url": "https://www.metservice.gov.jm/rss",
-"lang": "en"
+"cc": "az",
+"outlet": "Azerbaijan National Hydrometeorology",
+"home": "https://meteo.az/"
 },
 {
 "cc": "bb",
 "outlet": "Barbados Met Services",
-"url": "https://www.barbadosweather.org/rss/warnings.xml",
-"lang": "en"
+"home": "https://www.barbadosweather.org/"
 },
 {
-"cc": "tt",
-"outlet": "TT Met Service",
-"url": "https://www.metoffice.gov.tt/rss/warnings",
-"lang": "en"
+"cc": "bb",
+"outlet": "Barbados DEM",
+"home": "https://dem.gov.bb/"
 },
 {
-"cc": "tt",
-"outlet": "TT Met Service",
-"url": "https://metoffice.gov.tt/feed/",
-"lang": "en"
+"cc": "bd",
+"outlet": "Bangladesh Met Department",
+"home": "https://www.bmd.gov.bd/"
+},
+{
+"cc": "bd",
+"outlet": "FFWC Bangladesh",
+"home": "https://www.ffwc.gov.bd/"
+},
+{
+"cc": "bf",
+"outlet": "ANAM Burkina",
+"home": "https://www.meteoburkina.bf/"
+},
+{
+"cc": "bo",
+"outlet": "SENAMHI Bolivia",
+"home": "https://senamhi.gob.bo/"
+},
+{
+"cc": "bs",
+"outlet": "Bahamas Met",
+"home": "https://www.bahamasweather.org.bs/"
+},
+{
+"cc": "bs",
+"outlet": "NEMA Bahamas",
+"home": "https://nema.gov.bs/"
+},
+{
+"cc": "bt",
+"outlet": "NCHM Bhutan",
+"home": "https://www.nchm.gov.bt/"
+},
+{
+"cc": "by",
+"outlet": "Belhydromet",
+"home": "https://belgidromet.by/"
+},
+{
+"cc": "cl",
+"outlet": "DMC Chile",
+"home": "https://www.meteochile.gob.cl/"
+},
+{
+"cc": "cl",
+"outlet": "SENAPRED",
+"home": "https://senapred.cl/"
+},
+{
+"cc": "co",
+"outlet": "IDEAM",
+"home": "https://www.ideam.gov.co/"
+},
+{
+"cc": "co",
+"outlet": "UNGRD",
+"home": "https://portal.gestiondelriesgo.gov.co/"
 },
 {
 "cc": "cu",
-"outlet": "INSMET Cuba",
-"url": "https://www.insmet.cu/asp/genesis.asp?TB0=RSSFEED",
-"lang": "es"
+"outlet": "INSMET",
+"home": "https://www.insmet.cu/"
 },
 {
-"cc": "co",
-"outlet": "UNGRD Colombia",
-"url": "https://portal.gestiondelriesgo.gov.co/_layouts/15/listfeed.aspx",
-"lang": "es"
+"cc": "dm",
+"outlet": "Dominica Met",
+"home": "https://www.weather.gov.dm/"
 },
 {
-"cc": "co",
-"outlet": "UNGRD Colombia",
-"url": "https://www.ideam.gov.co/rss",
-"lang": "es"
+"cc": "dz",
+"outlet": "ONM Algeria",
+"home": "https://www.meteo.dz/"
 },
 {
-"cc": "pe",
-"outlet": "INDECI Peru",
-"url": "https://www.gob.pe/institucion/indeci/noticias.rss",
-"lang": "es"
+"cc": "eg",
+"outlet": "EMA Egypt",
+"home": "https://ema.gov.eg/"
 },
 {
-"cc": "pe",
-"outlet": "INDECI Peru",
-"url": "https://www.gob.pe/institucion/senamhi/noticias.rss",
-"lang": "es"
-},
-{
-"cc": "ec",
-"outlet": "IGEPN Ecuador volcano and quake",
-"url": "https://www.igepn.edu.ec/rss",
-"lang": "es"
-},
-{
-"cc": "gr",
-"outlet": "Greek civil protection 112",
-"url": "https://civilprotection.gov.gr/rss.xml",
-"lang": "el"
-},
-{
-"cc": "af",
-"outlet": "Afghanistan ANDMA",
-"url": "https://andma.gov.af/en/rss.xml",
-"lang": "en"
-},
-{
-"cc": "ht",
-"outlet": "Haiti DGPC",
-"url": "https://www.protectioncivile.gouv.ht/feed/",
-"lang": "fr"
+"cc": "et",
+"outlet": "EMI Ethiopia",
+"home": "https://www.ethiomet.gov.et/"
 },
 {
 "cc": "fj",
-"outlet": "Fiji Met Service",
-"url": "https://www.met.gov.fj/rss.xml",
-"lang": "en"
+"outlet": "Fiji Met",
+"home": "https://www.met.gov.fj/"
 },
 {
 "cc": "fj",
-"outlet": "Fiji Met Service",
-"url": "https://www.met.gov.fj/index.php?format=feed&type=rss",
-"lang": "en"
+"outlet": "NDMO Fiji",
+"home": "https://www.ndmo.gov.fj/"
 },
 {
-"cc": "to",
-"outlet": "Tonga Met Service",
-"url": "https://met.gov.to/index_files/rss.xml",
-"lang": "en"
+"cc": "ge",
+"outlet": "NEA Georgia",
+"home": "https://meteo.gov.ge/"
 },
 {
-"cc": "to",
-"outlet": "Tonga Met Service",
-"url": "https://met.gov.to/feed/",
-"lang": "en"
+"cc": "gh",
+"outlet": "GMet",
+"home": "https://www.meteo.gov.gh/"
 },
 {
-"cc": "ws",
-"outlet": "Samoa Met Service",
-"url": "https://www.samet.gov.ws/feed/",
-"lang": "en"
+"cc": "id",
+"outlet": "BMKG",
+"home": "https://www.bmkg.go.id/"
 },
 {
-"cc": "ws",
-"outlet": "Samoa Met Service",
-"url": "https://samet.gov.ws/feed/",
-"lang": "en"
+"cc": "id",
+"outlet": "BNPB",
+"home": "https://bnpb.go.id/"
 },
 {
-"cc": "pw",
-"outlet": "Palau NEMO",
-"url": "https://www.palaugov.pw/feed/",
-"lang": "en"
+"cc": "jm",
+"outlet": "ODPEM",
+"home": "https://www.odpem.org.jm/"
 },
 {
-"cc": "tl",
-"outlet": "Timor-Leste DNMG",
-"url": "https://www.meteo.tl/feed/",
-"lang": "en"
+"cc": "jm",
+"outlet": "Jamaica Met",
+"home": "https://metservice.gov.jm/"
+},
+{
+"cc": "ke",
+"outlet": "KMD",
+"home": "https://meteo.go.ke/"
+},
+{
+"cc": "ke",
+"outlet": "NDMA Kenya",
+"home": "https://www.ndma.go.ke/"
+},
+{
+"cc": "kg",
+"outlet": "MChS Kyrgyzstan",
+"home": "https://mchs.gov.kg/"
 },
 {
 "cc": "kh",
-"outlet": "Cambodia NCDM",
-"url": "https://ncdm.gov.kh/feed/",
-"lang": "en"
+"outlet": "NCDM Cambodia",
+"home": "https://ncdm.gov.kh/"
 },
 {
-"cc": "mm",
-"outlet": "Myanmar DMH",
-"url": "https://www.moezala.gov.mm/rss.xml",
-"lang": "en"
+"cc": "kr",
+"outlet": "KMA",
+"home": "https://www.weather.go.kr/w/index.do"
 },
 {
-"cc": "la",
-"outlet": "Laos DMH",
-"url": "https://dmh.gov.la/feed/",
-"lang": "en"
+"cc": "kz",
+"outlet": "Kazhydromet",
+"home": "https://www.kazhydromet.kz/en"
+},
+{
+"cc": "lb",
+"outlet": "Lebanon Met",
+"home": "https://www.meteo.gov.lb/"
+},
+{
+"cc": "lk",
+"outlet": "Sri Lanka Met",
+"home": "https://www.meteo.gov.lk/"
+},
+{
+"cc": "lk",
+"outlet": "DMC Sri Lanka",
+"home": "https://www.dmc.gov.lk/"
+},
+{
+"cc": "ma",
+"outlet": "DGM Morocco",
+"home": "https://www.marocmeteo.ma/"
+},
+{
+"cc": "mv",
+"outlet": "Maldives Met",
+"home": "https://www.meteorology.gov.mv/"
+},
+{
+"cc": "mv",
+"outlet": "NDMC Maldives",
+"home": "https://ndmc.gov.mv/"
+},
+{
+"cc": "mw",
+"outlet": "DCCMS Malawi",
+"home": "https://www.metmalawi.gov.mw/"
+},
+{
+"cc": "ni",
+"outlet": "INETER",
+"home": "https://www.ineter.gob.ni/"
+},
+{
+"cc": "np",
+"outlet": "DHM Nepal",
+"home": "https://www.dhm.gov.np/"
+},
+{
+"cc": "np",
+"outlet": "BIPAD Nepal",
+"home": "https://bipad.gov.np/"
+},
+{
+"cc": "om",
+"outlet": "Oman Met",
+"home": "https://www.met.gov.om/"
+},
+{
+"cc": "pe",
+"outlet": "SENAMHI Peru",
+"home": "https://www.senamhi.gob.pe/"
+},
+{
+"cc": "pe",
+"outlet": "INDECI",
+"home": "https://www.indeci.gob.pe/"
+},
+{
+"cc": "sa",
+"outlet": "NCM Saudi",
+"home": "https://ncm.gov.sa/"
+},
+{
+"cc": "sv",
+"outlet": "MARN El Salvador",
+"home": "https://www.snet.gob.sv/"
+},
+{
+"cc": "sv",
+"outlet": "Proteccion Civil SV",
+"home": "https://www.proteccioncivil.gob.sv/"
+},
+{
+"cc": "th",
+"outlet": "TMD Thailand",
+"home": "https://www.tmd.go.th/en/"
+},
+{
+"cc": "th",
+"outlet": "DDPM Thailand",
+"home": "https://www.disaster.go.th/"
+},
+{
+"cc": "tn",
+"outlet": "INM Tunisia",
+"home": "https://www.meteo.tn/"
+},
+{
+"cc": "tr",
+"outlet": "MGM Turkey",
+"home": "https://www.mgm.gov.tr/"
+},
+{
+"cc": "tr",
+"outlet": "AFAD",
+"home": "https://www.afad.gov.tr/"
+},
+{
+"cc": "tt",
+"outlet": "ODPM",
+"home": "https://www.odpm.gov.tt/"
+},
+{
+"cc": "tt",
+"outlet": "TT Met",
+"home": "https://www.metoffice.gov.tt/"
+},
+{
+"cc": "ug",
+"outlet": "UNMA",
+"home": "https://www.unma.go.ug/"
+},
+{
+"cc": "uy",
+"outlet": "INUMET",
+"home": "https://www.inumet.gub.uy/"
+},
+{
+"cc": "uy",
+"outlet": "SINAE",
+"home": "https://www.gub.uy/sistema-nacional-emergencias/"
+},
+{
+"cc": "uz",
+"outlet": "Uzhydromet",
+"home": "https://meteo.uz/"
+},
+{
+"cc": "vc",
+"outlet": "NEMO SVG",
+"home": "https://nemo.gov.vc/"
+},
+{
+"cc": "ve",
+"outlet": "INAMEH",
+"home": "https://www.inameh.gob.ve/"
+},
+{
+"cc": "vn",
+"outlet": "NCHMF",
+"home": "https://nchmf.gov.vn/"
+},
+{
+"cc": "vn",
+"outlet": "VNDMA",
+"home": "https://phongchongthientai.mard.gov.vn/"
+},
+{
+"cc": "za",
+"outlet": "SAWS",
+"home": "https://www.weathersa.co.za/"
+},
+{
+"cc": "zw",
+"outlet": "MSD Zimbabwe",
+"home": "https://www.weatherzw.org.zw/"
+},
+{
+"cc": "ws",
+"outlet": "Samoa Met",
+"home": "https://www.samet.gov.ws/"
+},
+{
+"cc": "to",
+"outlet": "Tonga Met",
+"home": "https://www.met.gov.to/"
+},
+{
+"cc": "gd",
+"outlet": "NaDMA Grenada",
+"home": "https://www.nadma.gd/"
+},
+{
+"cc": "lc",
+"outlet": "NEMO Saint Lucia",
+"home": "https://www.nemo.gov.lc/"
+},
+{
+"cc": "kn",
+"outlet": "NEMA SKN",
+"home": "https://www.nema.gov.kn/"
+},
+{
+"cc": "ag",
+"outlet": "Antigua Met",
+"home": "https://www.antiguamet.com/"
+},
+{
+"cc": "sr",
+"outlet": "Meteo Suriname",
+"home": "https://www.meteosur.sr/"
+},
+{
+"cc": "pw",
+"outlet": "NWS Guam (Palau)",
+"home": "https://www.weather.gov/gum/"
+},
+{
+"cc": "sg",
+"outlet": "MSS Singapore",
+"home": "https://www.weather.gov.sg/"
 },
 {
 "cc": "bn",
-"outlet": "Brunei Met Department",
-"url": "https://www.met.gov.bn/rss",
-"lang": "en"
+"outlet": "BDMD Brunei",
+"home": "https://www.met.gov.bn/"
+},
+{
+"cc": "la",
+"outlet": "DMH Laos",
+"home": "https://dmh.gov.la/"
+},
+{
+"cc": "tl",
+"outlet": "DNMG Timor-Leste",
+"home": "https://www.meteo.tl/"
+},
+{
+"cc": "iq",
+"outlet": "Iraq Met",
+"home": "https://meteoseism.gov.iq/"
+},
+{
+"cc": "ye",
+"outlet": "Yemen Met",
+"home": "https://www.yms.gov.ye/"
+},
+{
+"cc": "ps",
+"outlet": "Palestine Met",
+"home": "https://www.pmd.ps/"
+},
+{
+"cc": "xk",
+"outlet": "AMMK Kosovo",
+"home": "https://www.ammk-rks.net/"
+},
+{
+"cc": "xk",
+"outlet": "Kosovo Emergency",
+"home": "https://ame.rks-gov.net/"
+},
+{
+"cc": "al",
+"outlet": "IGEWE Albania",
+"home": "https://www.geo.edu.al/"
+},
+{
+"cc": "kw",
+"outlet": "Kuwait Met",
+"home": "https://www.met.gov.kw/"
+},
+{
+"cc": "li",
+"outlet": "Liechtenstein govt",
+"home": "https://www.llv.li/"
+},
+{
+"cc": "mc",
+"outlet": "Monaco govt",
+"home": "https://www.gouv.mc/"
+},
+{
+"cc": "sm",
+"outlet": "San Marino PC",
+"home": "https://www.protezionecivile.sm/"
 }
 ]
 }
