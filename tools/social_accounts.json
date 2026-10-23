@@ -3963,13 +3963,6 @@
   },
   {
    "cc": "ar",
-   "channel_id": "UC26-8MfW_FZxAoEI-J3RMeQ",
-   "name": "Ejército Argentino",
-   "kind": "government (military)",
-   "lang": "es"
-  },
-  {
-   "cc": "ar",
    "channel_id": "UCZ8TQfdJ3Zt7laIrG_nXRGw",
    "name": "PFAOficial (Policía Federal Argentina)",
    "kind": "government",
@@ -4298,13 +4291,6 @@
    "lang": "fr"
   },
   {
-   "cc": "gb",
-   "channel_id": "UCMasyWuE1P2AaEKw_FkGq9g",
-   "name": "UK Parliament",
-   "kind": "government",
-   "lang": "en"
-  },
-  {
    "cc": "gn",
    "channel_id": "UC0VvoE_Oy21wB-U9N7Q1E5Q",
    "name": "Présidence de la République de Guinée",
@@ -4407,13 +4393,6 @@
    "channel_id": "UCGnlgHCdAsCNeAdNRTbS4hg",
    "name": "RTÉ - IRELAND’S NATIONAL PUBLIC SERVICE MEDIA",
    "kind": "public broadcaster",
-   "lang": "en"
-  },
-  {
-   "cc": "ie",
-   "channel_id": "UCjfwRSvcaGpInbj888JycaA",
-   "name": "Óglaigh na hÉireann / Irish Defence Forces",
-   "kind": "government (military)",
    "lang": "en"
   },
   {
@@ -4712,13 +4691,6 @@
   },
   {
    "cc": "ph",
-   "channel_id": "UCtGmCfZ4O1zrl9c8BEhGvRg",
-   "name": "House of Representatives",
-   "kind": "government",
-   "lang": "en"
-  },
-  {
-   "cc": "ph",
    "channel_id": "UCR1TNyQRJPiaSNu9cezMsCQ",
    "name": "DFA Philippines",
    "kind": "government",
@@ -4869,13 +4841,6 @@
    "channel_id": "UCCW8a4CgTbBWzid3IJYomFQ",
    "name": "Prime Minister's Office, Singapore",
    "kind": "government",
-   "lang": "en"
-  },
-  {
-   "cc": "sg",
-   "channel_id": "UC4BCUrNe2X5UJkvzeRG12gQ",
-   "name": "Ministry of Defence Singapore",
-   "kind": "government (military)",
    "lang": "en"
   },
   {
