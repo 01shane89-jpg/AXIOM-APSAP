@@ -104,7 +104,10 @@ async function modelCall(user) {
       headers: { authorization: "Bearer " + TOKEN, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body) }); } finally { clearTimeout(to); }
     if (r.status === 429) { const w = +(r.headers.get("retry-after") || 0); if (!w || w > 70) { stop = "rate limit (HTTP 429)"; return null; } await sleep(w * 1000 + 500); continue; }
     if (!r.ok) { const t = (await r.text()).slice(0, 200); if ([401, 403, 404].includes(r.status)) stop = "HTTP " + r.status; throw new Error("HTTP " + r.status + ": " + t); }
-    const j = JSON.parse(await r.text()), c = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
+    const raw = await r.text();
+    // from Actions runners models.github.ai has answered every path with 200 text/plain "OK" (see refresh_evsum.mjs): stop cleanly, no draft
+    if (!/^\s*\{/.test(raw)) { stop = "GitHub Models answered without a model reply (" + (r.headers.get("content-type") || "no type") + ": " + raw.slice(0, 40).trim() + ")"; return null; }
+    const j = JSON.parse(raw), c = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
     try { return { o: JSON.parse(String(c).replace(/^```(json)?|```$/g, "")), model: j.model || MODEL, usage: j.usage }; } catch (e) { throw new Error("reply was not JSON"); }
   }
   stop = "rate limit (HTTP 429)"; return null;
