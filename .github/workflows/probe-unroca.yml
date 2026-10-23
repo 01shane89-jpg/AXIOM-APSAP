@@ -12,13 +12,9 @@ jobs:
       - run: |
           set +e
           UA='Mozilla/5.0 (OSAP research probe)'
-          for u in https://www.unroca.org/ https://www.unroca.org/thailand/report/2022/ https://www.unroca.org/api/ https://www.unroca.org/en/ ; do
-            echo "=== $u"; curl -sSL -m 30 -A "$UA" -o p.html -w '%{http_code} %{size_download} %{content_type} %{url_effective}\n' "$u"
-            head -c 1500 p.html; echo
-            grep -oiE '(src|href)="[^"]+\.(js|json|csv|xlsx)[^"]*"' p.html | head -30
-            grep -oiE '"/?api/[^"]+"|https?://[^"]*api[^"]*' p.html | sort -u | head -30
-          done
-          for js in $(grep -oiE 'src="[^"]+\.js[^"]*"' p.html | sed 's/src="//;s/"$//' | head -8); do
-            case $js in http*) U=$js;; /*) U=https://www.unroca.org$js;; *) U=https://www.unroca.org/$js;; esac
-            echo "=== JS $U"; curl -sSL -m 30 -A "$UA" "$U" | grep -oE '"[^"]*(api|\.json|export|download)[^"]{0,80}"' | sort -u | head -40
-          done
+          curl -sSL -m 30 -A "$UA" -o app.js 'https://www.unroca.org/static/unroca_spa/public/unroca-javascript.min.js?v=2018-12'
+          wc -c app.js
+          echo "=== url-ish strings"
+          grep -oE '"[^" ]*/[^" ]*"|'"'"'[^'"' "']*/[^'"' "']*'"'" app.js | sort -u | head -150
+          echo "=== http calls"
+          grep -oE '\$http[.a-z]*\([^)]{0,160}' app.js | head -60
