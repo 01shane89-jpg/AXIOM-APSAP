@@ -1,41 +1,77 @@
 {
- "note": "PROBE BRANCH ONLY: regional outlet candidates",
+ "note": "PROBE BRANCH ONLY: think-tank round 3",
  "feeds": [],
  "discover": [
   {
-   "cc": "cz",
-   "outlet": "amo|AMO (Association for International Affairs)",
-   "home": "https://www.amo.cz/en/",
+   "cc": "np",
+   "outlet": "iids|Institute for Integrated Development Studies",
+   "home": "https://iids.org.np/",
    "lang": "en"
   },
   {
-   "cc": "cz",
-   "outlet": "iir|Institute of International Relations Prague",
-   "home": "https://www.iir.cz/en",
+   "cc": "np",
+   "outlet": "niice|NIICE Nepal",
+   "home": "https://niice.org.np/",
    "lang": "en"
   },
   {
-   "cc": "cz",
-   "outlet": "europeum|EUROPEUM",
-   "home": "https://www.europeum.org/en/",
+   "cc": "np",
+   "outlet": "cesif|Centre for Social Innovation and Foreign Policy",
+   "home": "https://cesif.org/",
    "lang": "en"
   },
   {
-   "cc": "be",
-   "outlet": "egmont|Egmont Institute",
-   "home": "https://www.egmontinstitute.be/",
+   "cc": "np",
+   "outlet": "aidia|Asian Institute of Diplomacy and International Affairs",
+   "home": "https://aidiaasia.org/",
    "lang": "en"
   },
   {
-   "cc": "ar",
-   "outlet": "cari|CARI",
-   "home": "https://www.cari.org.ar/",
+   "cc": "np",
+   "outlet": "samriddhi|Samriddhi Foundation",
+   "home": "https://samriddhi.org/",
    "lang": "en"
   },
   {
-   "cc": "ar",
-   "outlet": "cippec|CIPPEC",
-   "home": "https://www.cippec.org/",
+   "cc": "lv",
+   "outlet": "liia|Latvian Institute of International Affairs",
+   "home": "https://www.liia.lv/en",
+   "lang": "en"
+  },
+  {
+   "cc": "lv",
+   "outlet": "providus|PROVIDUS",
+   "home": "https://providus.lv/",
+   "lang": "lv"
+  },
+  {
+   "cc": "lv",
+   "outlet": "stratcom|NATO StratCom COE",
+   "home": "https://stratcomcoe.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "lv",
+   "outlet": "biceps|BICEPS Riga",
+   "home": "https://biceps.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "si",
+   "outlet": "ifimes|IFIMES",
+   "home": "https://www.ifimes.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "si",
+   "outlet": "cep-si|Centre for European Perspective",
+   "home": "https://www.cep.si/",
+   "lang": "en"
+  },
+  {
+   "cc": "si",
+   "outlet": "imad|IMAD Slovenia",
+   "home": "https://www.umar.gov.si/en/",
    "lang": "en"
   },
   {
@@ -51,27 +87,69 @@
    "lang": "en"
   },
   {
-   "cc": "tz",
-   "outlet": "repoa|REPOA",
-   "home": "https://www.repoa.or.tz/",
+   "cc": "sk",
+   "outlet": "adapt|Adapt Institute",
+   "home": "https://www.adaptinstitute.org/",
    "lang": "en"
   },
   {
-   "cc": "lv",
-   "outlet": "liia|Latvian Institute of International Affairs",
-   "home": "https://www.liia.lv/en",
+   "cc": "sk",
+   "outlet": "ineko|INEKO",
+   "home": "https://www.ineko.sk/",
+   "lang": "sk"
+  },
+  {
+   "cc": "sk",
+   "outlet": "sspi|Slovak Security Policy Institute",
+   "home": "https://slovaksecurity.org/",
    "lang": "en"
   },
   {
-   "cc": "si",
-   "outlet": "ifimes|IFIMES",
-   "home": "https://www.ifimes.org/en",
+   "cc": "do",
+   "outlet": "funglode|FUNGLODE",
+   "home": "https://funglode.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "crees|CREES Dominicana",
+   "home": "https://crees.org.do/",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "outlet": "ojd|Observatorio Político Dominicano",
+   "home": "https://www.opd.org.do/",
+   "lang": "es"
+  },
+  {
+   "cc": "gy",
+   "outlet": "ccprg|Caribbean Policy Research Institute",
+   "home": "https://capricaribbean.org/",
    "lang": "en"
   },
   {
-   "cc": "zm",
-   "outlet": "zipar|ZIPAR",
-   "home": "https://www.zipar.org.zm/",
+   "cc": "gy",
+   "outlet": "guyanaobs|Guyana Standard Analysis",
+   "home": "https://www.guyanastandard.com/category/opinion/",
+   "lang": "en"
+  },
+  {
+   "cc": "ug",
+   "outlet": "acode|ACODE",
+   "home": "https://www.acode-u.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "ug",
+   "outlet": "eprc|Economic Policy Research Centre",
+   "home": "https://eprcug.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "ug",
+   "outlet": "udn|Uganda Debt Network",
+   "home": "https://www.udn.or.ug/",
    "lang": "en"
   },
   {
@@ -87,45 +165,207 @@
    "lang": "en"
   },
   {
-   "cc": "sn",
-   "outlet": "wathi|WATHI",
-   "home": "https://www.wathi.org/",
+   "cc": "no",
+   "outlet": "cmi|Chr. Michelsen Institute",
+   "home": "https://www.cmi.no/",
    "lang": "en"
   },
   {
-   "cc": "ie",
-   "outlet": "iiea|IIEA",
-   "home": "https://www.iiea.com/",
+   "cc": "no",
+   "outlet": "fni|Fridtjof Nansen Institute",
+   "home": "https://www.fni.no/",
    "lang": "en"
   },
   {
-   "cc": "pe",
-   "outlet": "iep|Instituto de Estudios Peruanos",
-   "home": "https://iep.org.pe/",
+   "cc": "ar",
+   "outlet": "cari|CARI",
+   "home": "https://www.cari.org.ar/",
+   "lang": "es"
+  },
+  {
+   "cc": "ar",
+   "outlet": "cadal|CADAL",
+   "home": "https://www.cadal.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "ar",
+   "outlet": "flibertad|Fundación Libertad",
+   "home": "https://libertad.org.ar/",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "outlet": "lyd|Libertad y Desarrollo",
+   "home": "https://lyd.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "outlet": "espaciopublico|Espacio Público",
+   "home": "https://www.espaciopublico.cl/",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "outlet": "athenalab|AthenaLab",
+   "home": "https://www.athenalab.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "cy",
+   "outlet": "cceia|Cyprus Center for European and International Affairs",
+   "home": "https://cceia.unic.ac.cy/",
    "lang": "en"
   },
   {
-   "cc": "hr",
-   "outlet": "irmo|IRMO",
-   "home": "https://irmo.hr/en/",
+   "cc": "cy",
+   "outlet": "priocy|PRIO Cyprus Centre",
+   "home": "https://cyprus.prio.org/",
    "lang": "en"
   },
   {
-   "cc": "bg",
-   "outlet": "csd|Center for the Study of Democracy",
-   "home": "https://csd.eu/",
+   "cc": "ma",
+   "outlet": "mipa|Moroccan Institute for Policy Analysis",
+   "home": "https://mipa.institute/en/",
    "lang": "en"
   },
   {
-   "cc": "ch",
-   "outlet": "cssethz|CSS ETH Zurich",
-   "home": "https://css.ethz.ch/en/",
+   "cc": "ma",
+   "outlet": "ires|IRES Maroc",
+   "home": "https://www.ires.ma/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ma",
+   "outlet": "amis|AMIS Morocco",
+   "home": "https://www.amis-maroc.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ci",
+   "outlet": "cires|CIRES Côte d'Ivoire",
+   "home": "https://www.cires-ci.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ci",
+   "outlet": "indigo|Indigo Côte d'Ivoire",
+   "home": "https://indigo-ci.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "tz",
+   "outlet": "repoa|REPOA",
+   "home": "https://www.repoa.or.tz/",
    "lang": "en"
+  },
+  {
+   "cc": "tz",
+   "outlet": "esrf|ESRF",
+   "home": "https://esrf.or.tz/",
+   "lang": "en"
+  },
+  {
+   "cc": "tz",
+   "outlet": "policyforum|Policy Forum Tanzania",
+   "home": "https://www.policyforum-tz.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "zm",
+   "outlet": "zipar|ZIPAR",
+   "home": "https://www.zipar.org.zm/",
+   "lang": "en"
+  },
+  {
+   "cc": "zm",
+   "outlet": "pmrc|PMRC Zambia",
+   "home": "https://www.pmrczambia.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "outlet": "cddgh|CDD-Ghana",
+   "home": "https://cddgh.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "outlet": "ieagh|IEA Ghana",
+   "home": "https://ieagh.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "outlet": "kaiptc|KAIPTC",
+   "home": "https://www.kaiptc.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "tn",
+   "outlet": "albawsala|Al Bawsala",
+   "home": "https://www.albawsala.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "tn",
+   "outlet": "ites|ITES Tunisia",
+   "home": "https://www.ites.tn/",
+   "lang": "fr"
+  },
+  {
+   "cc": "tn",
+   "outlet": "nawaat|Nawaat analysis",
+   "home": "https://nawaat.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "is",
+   "outlet": "ams|Institute of International Affairs Iceland",
+   "home": "https://ams.hi.is/en/",
+   "lang": "en"
+  },
+  {
+   "cc": "bf",
+   "outlet": "freeafrik|Free Afrik",
+   "home": "https://freeafrik.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "bj",
+   "outlet": "cifred|CIFRED Benin",
+   "home": "https://cifred.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "gn",
+   "outlet": "ceda|CEDA Guinée",
+   "home": "https://www.guinee-ceda.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "dz",
+   "outlet": "cread|CREAD Algérie",
+   "home": "https://www.cread.dz/",
+   "lang": "fr"
   },
   {
    "cc": "dk",
-   "outlet": "diis|DIIS",
-   "home": "https://www.diis.dk/en",
+   "outlet": "dfp|Tænketanken Europa",
+   "home": "https://thinkeuropa.dk/",
+   "lang": "da"
+  },
+  {
+   "cc": "dk",
+   "outlet": "cms|Centre for Military Studies",
+   "home": "https://cms.polsci.ku.dk/english/",
+   "lang": "en"
+  },
+  {
+   "cc": "ee",
+   "outlet": "rkk|Estonian Foreign Policy Institute",
+   "home": "https://efpi.icds.ee/en/",
    "lang": "en"
   },
   {
@@ -135,208 +375,136 @@
    "lang": "en"
   },
   {
-   "cc": "pl",
-   "outlet": "pism|PISM",
-   "home": "https://www.pism.pl/",
+   "cc": "lt",
+   "outlet": "gsc|Geopolitics and Security Studies Center",
+   "home": "https://www.geopolitika.lt/",
    "lang": "en"
   },
   {
-   "cc": "cm",
-   "outlet": "nkafu|Nkafu Policy Institute",
-   "home": "https://nkafu.org/",
+   "cc": "lu",
+   "outlet": "luxinst|Institut Grand-Ducal",
+   "home": "https://www.igd.lu/",
+   "lang": "fr"
+  },
+  {
+   "cc": "pa",
+   "outlet": "cieps2|Instituto de Estudios Nacionales",
+   "home": "https://www.iden.up.ac.pa/",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "outlet": "fosdeh|FOSDEH",
+   "home": "https://fosdeh.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "outlet": "asj|ASJ Honduras",
+   "home": "https://asjhonduras.com/",
+   "lang": "es"
+  },
+  {
+   "cc": "ba",
+   "outlet": "atlanticba|Atlantic Initiative",
+   "home": "https://atlanticinitiative.org/",
    "lang": "en"
   },
   {
-   "cc": "ug",
-   "outlet": "acode|ACODE",
-   "home": "https://www.acode-u.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "lk",
-   "outlet": "lki|LKI",
-   "home": "https://lki.lk/",
-   "lang": "en"
-  },
-  {
-   "cc": "lk",
-   "outlet": "verite|Verité Research",
-   "home": "https://www.veriteresearch.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "kz",
-   "outlet": "kisi|KazISS",
-   "home": "https://kisi.kz/en/",
-   "lang": "en"
-  },
-  {
-   "cc": "by",
-   "outlet": "newbelarus|Center for New Ideas",
-   "home": "https://newbelarus.vision/",
-   "lang": "en"
-  },
-  {
-   "cc": "md",
-   "outlet": "ipre|IPRE",
-   "home": "https://ipre.md/",
-   "lang": "en"
-  },
-  {
-   "cc": "ge",
-   "outlet": "gfsis|GFSIS",
-   "home": "https://gfsis.org.ge/",
-   "lang": "en"
-  },
-  {
-   "cc": "ge",
-   "outlet": "gip|Georgian Institute of Politics",
-   "home": "https://gip.ge/",
-   "lang": "en"
-  },
-  {
-   "cc": "am",
-   "outlet": "apri|APRI Armenia",
-   "home": "https://apri.institute/",
-   "lang": "en"
-  },
-  {
-   "cc": "az",
-   "outlet": "topcenter|Topchubashov Center",
-   "home": "https://top-center.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "mk",
-   "outlet": "idscs|IDSCS",
-   "home": "https://idscs.org.mk/en/",
-   "lang": "en"
-  },
-  {
-   "cc": "rs",
-   "outlet": "bcsp|Belgrade Centre for Security Policy",
-   "home": "https://bezbednost.org/en/",
-   "lang": "en"
-  },
-  {
-   "cc": "al",
-   "outlet": "aiis|Albanian Institute for International Studies",
-   "home": "https://aiis-albania.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "sa",
-   "outlet": "kfcris|KFCRIS",
-   "home": "https://www.kfcris.com/en",
-   "lang": "en"
-  },
-  {
-   "cc": "ae",
-   "outlet": "epc|Emirates Policy Center",
-   "home": "https://epc.ae/en",
-   "lang": "en"
-  },
-  {
-   "cc": "lb",
-   "outlet": "ifi|Issam Fares Institute",
-   "home": "https://www.aub.edu.lb/ifi/",
-   "lang": "en"
-  },
-  {
-   "cc": "iq",
-   "outlet": "bayan|Al-Bayan Center",
-   "home": "https://www.bayancenter.org/en/",
-   "lang": "en"
-  },
-  {
-   "cc": "eg",
-   "outlet": "ecss|ECSS",
-   "home": "https://ecss.com.eg/",
-   "lang": "en"
-  },
-  {
-   "cc": "ng",
-   "outlet": "cddwa|CDD West Africa",
-   "home": "https://www.cddwestafrica.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "so",
-   "outlet": "hips|Heritage Institute",
-   "home": "https://heritageinstitute.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "ss",
-   "outlet": "sudd|Sudd Institute",
-   "home": "https://www.suddinstitute.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "sn",
-   "outlet": "timbuktu|Timbuktu Institute",
-   "home": "https://timbuktu-institute.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "co",
-   "outlet": "fip|Fundación Ideas para la Paz",
-   "home": "https://ideaspaz.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "np",
-   "outlet": "cesif|CESIF",
-   "home": "https://cesifnepal.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "dz",
-   "outlet": "carec|CREAD",
-   "home": "https://www.cread.dz/",
-   "lang": "en"
-  },
-  {
-   "cc": "is",
-   "outlet": "ams|Institute of International Affairs Iceland",
-   "home": "https://ams.hi.is/en/",
-   "lang": "en"
-  },
-  {
-   "cc": "cy",
-   "outlet": "prio-cyprus|PRIO Cyprus Centre",
-   "home": "https://cyprus.prio.org/",
+   "cc": "ba",
+   "outlet": "pod|Populari",
+   "home": "https://www.populari.org/",
    "lang": "en"
   },
   {
    "cc": "mg",
-   "outlet": "sefafi|SeFaFi",
-   "home": "https://www.sefafi.mg/",
+   "outlet": "sefafi|SEFAFI",
+   "home": "https://sefafi.mg/",
+   "lang": "fr"
+  },
+  {
+   "cc": "pg",
+   "outlet": "pngnri|PNG National Research Institute",
+   "home": "https://pngnri.org/",
    "lang": "en"
   },
   {
-   "cc": "do",
-   "outlet": "funglode|FUNGLODE",
-   "home": "https://www.funglode.org/",
+   "cc": "cd",
+   "outlet": "ebuteli|Ebuteli",
+   "home": "https://www.ebuteli.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "cg",
+   "outlet": "cerapc|Congo Analysis",
+   "home": "https://www.adiac-congo.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ne",
+   "outlet": "lasdel|LASDEL",
+   "home": "https://www.lasdel.net/",
+   "lang": "fr"
+  },
+  {
+   "cc": "bo",
+   "outlet": "fundappac|Fundación Jubileo",
+   "home": "https://jubileobolivia.org.bo/",
+   "lang": "es"
+  },
+  {
+   "cc": "lk",
+   "outlet": "ips|Institute of Policy Studies Sri Lanka",
+   "home": "https://www.ips.lk/",
    "lang": "en"
   },
   {
-   "cc": "gy",
-   "outlet": "ercguyana|ERC Guyana",
-   "home": "https://www.ercguyana.org/",
+   "cc": "lk",
+   "outlet": "cpalanka|Centre for Policy Alternatives",
+   "home": "https://www.cpalanka.org/",
    "lang": "en"
   },
   {
-   "cc": "ci",
-   "outlet": "cires|CIRES",
-   "home": "https://www.cires-ci.com/",
+   "cc": "sv",
+   "outlet": "fusades|FUSADES",
+   "home": "https://fusades.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "outlet": "icefi|ICEFI",
+   "home": "https://icefi.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "fj",
+   "outlet": "pacificpol|Pacific Policy Research",
+   "home": "https://www.pina.com.fj/",
    "lang": "en"
   },
   {
-   "cc": "bf",
-   "outlet": "cgd|CGD Burkina",
-   "home": "https://www.cgd-igd.org/",
+   "cc": "vu",
+   "outlet": "vupolicy|Vanuatu Daily Post opinion",
+   "home": "https://www.dailypost.vu/opinion/",
    "lang": "en"
+  },
+  {
+   "cc": "bh",
+   "outlet": "bahraincentre|Bahrain Institute for Political Development",
+   "home": "https://www.bipd.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "td",
+   "outlet": "chadpol|Tchad Infos analyses",
+   "home": "https://tchadinfos.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ni",
+   "outlet": "funides|FUNIDES",
+   "home": "https://funides.com/",
+   "lang": "es"
   }
  ]
 }
