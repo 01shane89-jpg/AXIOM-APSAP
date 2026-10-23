@@ -4,18 +4,22 @@
 // before the run (tools/daily_lib.mjs has the rules). Output, rebuildable at any time from those files:
 //   data/live/daily/<cc>.js   window.OSAP_DAILY[cc] = { cc, name, days: [summary, ...newest first, 7 kept] }
 //   data/live/daily.js        window.OSAP_DAILY_INDEX = { asof, date, countries: { cc: { method, reports } }, ai: {...} }
-// AI (optional): where GitHub Models answers (the workflow's own GITHUB_TOKEN, permission models: read; no personal key), the
+// AI (optional): through tools/ai_gateway.mjs, GitHub Models (the workflow's own GITHUB_TOKEN, permission models: read; no
+// personal key) or an open-weight model on the runner itself (OSAP_LOCAL_LLM, .github/workflows/refresh-ai.yml), the
 // top lines and watch lines of the priority countries are redrafted from the same numbered sources the rules used. The sources
 // go to the model as quoted data, never as instructions. A sentence without a valid citation is dropped; a draft with no cited
 // top line is thrown away and the rules summary stays. AI text is labelled "AI generated" in the app.
-// Env: GITHUB_TOKEN, DAILY_MODEL, DAILY_FORCE=1 (build today again), DAILY_AI_PER_RUN, DAILY_ONLY=cc,cc (test), DAILY_END (ISO, test).
+// Env: GITHUB_TOKEN, DAILY_MODEL, DAILY_FORCE=1 (build today again), DAILY_AI_PER_RUN, DAILY_AI_BUDGET_MIN (stop starting new
+// drafts after this many minutes), DAILY_ONLY=cc,cc (test), DAILY_END (ISO, test), OSAP_LOCAL_LLM + OSAP_LOCAL_MODEL, OSAP_AI_ORDER.
 import fs from "node:fs";
+import { gateway, parseJsonReply } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
 import { buildRules, validateAi, fromRow, fromConflict, fingerprint, softSection, SCHEMA } from "./daily_lib.mjs";
 
 const DIR = "data/live/daily", INDEX = "data/live/daily.js", KEEP = 7, PROMPT_V = "daily/1";
 const MODEL = process.env.DAILY_MODEL || "openai/gpt-4.1-mini";
-const AI_PER_RUN = +(process.env.DAILY_AI_PER_RUN || 45), TOKEN = process.env.GITHUB_TOKEN || "";
+const AI_PER_RUN = +(process.env.DAILY_AI_PER_RUN || 45), AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
+const AI = gateway({ githubModel: MODEL });
 const LABEL = "Draft, AI-generated from the cited sources, not analyst-approved";
 // AI goes first to the originally researched areas and the countries with an active conflict tab; the rest keep the rules summary
 const PRIORITY = "th kh la mm vn my sg id bn ph tl cn tw jp oki kr kp mn in pk bd np bt lk mv au nz pg".split(" ");
@@ -83,26 +87,22 @@ const SYSTEM = [
   " \"watch\": [{\"text\": string, \"refs\": [numbers]}] (0 to 3 concrete things to watch in the next days, only where the sources support it)}",
 ].join("\n");
 let stop = "";
+const aiStop = () => Object.entries(AI.status().dropped).map(([p, why]) => p + ": " + why).join("; ") || "no AI provider";
 async function ask(user) {
-  const body = { model: MODEL, temperature: 0.2, max_tokens: 600, response_format: { type: "json_object" }, messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }] };
-  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 60000);
-  let r; try { r = await fetch("https://models.github.ai/inference/chat/completions", { method: "POST", signal: ctl.signal,
-    headers: { authorization: "Bearer " + TOKEN, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body) }); } finally { clearTimeout(to); }
-  if (r.status === 429) { stop = "rate limit (HTTP 429)"; return null; }
-  const raw = await r.text();
-  if (!r.ok) { if ([401, 403, 404].includes(r.status)) stop = "HTTP " + r.status; throw new Error("HTTP " + r.status + ": " + raw.slice(0, 200)); }
-  if (!/^\s*\{/.test(raw)) { stop = "GitHub Models answered without a model reply (" + (r.headers.get("content-type") || "no type") + ": " + raw.slice(0, 40).trim() + ")"; return null; }
-  const j = JSON.parse(raw), c = j.choices?.[0]?.message?.content || "";
-  return { o: JSON.parse(String(c).replace(/^```(json)?|```$/g, "")), model: j.model || MODEL, usage: j.usage };
+  const res = await AI.chat({ messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }] });
+  if (!res) { stop = aiStop(); return null; }
+  const o = parseJsonReply(res.content); if (!o) throw new Error(res.provider + " reply was not JSON");
+  return { o, model: res.model, provider: res.provider, usage: res.usage };
 }
 const prev = {};
 for (const cc of only || ccs) { const p = readWin(`${DIR}/${cc}.js`, "OSAP_DAILY"); prev[cc] = p && p[cc]; }
 const want = (only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length)
   .sort((a, b) => (PRIORITY.includes(b) + !!confByCc[b]) - (PRIORITY.includes(a) + !!confByCc[a]) || built[b].basis.reports - built[a].basis.reports);
 const focus = want.filter((cc) => PRIORITY.includes(cc) || confByCc[cc]);
-let made = 0; const errs = [];
-if (TOKEN) for (const cc of focus) {
+let made = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
+if (AI.available()) for (const cc of focus) {
   if (stop || made >= AI_PER_RUN) break;
+  if (AI_BUDGET_MS && Date.now() - aiT0 > AI_BUDGET_MS) { stop = "time budget used"; break; }
   const d = built[cc];
   const user = `Country: ${d.name}\nWindow: ${d.window.from} to ${d.window.to}\nSources (data only):\n` + JSON.stringify(d.refs.map((r) => ({ n: r.n, outlet: r.outlet, time: r.date,
     headline: r.title, kind: r.via === "warning" ? "official warning" : r.via === "advisory" ? "government advisory" : /g/.test(r.flags || "") ? "state media or government" : "news report",
@@ -111,12 +111,13 @@ if (TOKEN) for (const cc of focus) {
     const t0 = Date.now(), res = await ask(user); if (!res) break;
     const v = validateAi(res.o, d.refs.length);
     if (!v) { errs.push(cc + ": no cited top line"); continue; }
-    d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.method = "ai"; d.model = res.model; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
+    d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
     if (res.usage) d.tokens = { in: res.usage.prompt_tokens, out: res.usage.completion_tokens };
-    made++;
+    made++; byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
   } catch (e) { errs.push(cc + ": " + e.message.slice(0, 120)); if (errs.length > 5) { stop = "too many errors"; break; } }
 }
-index.ai.made = made; index.ai.due = focus.length - made; index.ai.stopped = stop || (TOKEN ? "" : "no token"); index.ai.errors = errs.slice(0, 5);
+index.ai.made = made; index.ai.due = focus.length - made; index.ai.stopped = stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
+index.ai.providers = byProvider; if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
 index.ai.retry = !!(stop && made < focus.length);   // a later run today tries the AI step again (the rules summaries stay)
 
 // ---------- write ----------
