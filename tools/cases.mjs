@@ -33,7 +33,7 @@ export const NAME_MAX = 60, CALL_MAX = 24, REASON_MAX = 300, LOG_MAX = 200;
 export class CaseError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
-const deny = () => new CaseError(404, "No such case.");
+export const deny = () => new CaseError(404, "No such case.");
 const no = (m) => new CaseError(403, m);
 const bad = (m) => new CaseError(400, m);
 
@@ -75,7 +75,7 @@ export function actorOf(u) {
 }
 
 /* ---------- store helpers: Netlify Blobs (get, getWithMetadata, setJSON with onlyIfNew / onlyIfMatch, delete) ---------- */
-async function readCase(store, id) {
+export async function readCase(store, id) {
   const r = await store.getWithMetadata(caseKey(id), { type: "json" });
   return r && r.data ? { c: r.data, etag: r.etag } : null;
 }
@@ -110,7 +110,7 @@ const leads = (c) => Object.values(c.members).filter((m) => m.role === "lead").l
 export function viewOf(c, actor) {
   const role = roleIn(c, actor), lead = role === "lead";
   return {
-    id: c.id, name: c.name, created: c.created, version: c.version, role,
+    id: c.id, name: c.name, created: c.created, version: c.version, epoch: c.epoch || 1, role,
     members: Object.entries(c.members).map(([uid, m]) => ({ uid, role: m.role, call: m.call || "", since: m.since, me: uid === actor.uid, ...(lead ? { email: m.email || "" } : {}) })),
     invites: lead ? Object.values(c.invites || {}).map((v) => ({ email: v.email, role: v.role, at: v.at })) : undefined,
   };
@@ -184,7 +184,7 @@ export async function run(store, actor, body, opts = {}) {
     const mine = await store.get(await uKey(actor.uid), { type: "json" });
     if (((mine && mine.cases) || []).length >= MAX_CASES) throw bad("You are in " + MAX_CASES + " cases already. Leave one first.");
     const id = newId();
-    const c = { schema: SCHEMA, id, name, created: new Date(now).toISOString(), by: actor.uid, version: 0, members: {}, invites: {} };
+    const c = { schema: SCHEMA, id, name, created: new Date(now).toISOString(), by: actor.uid, version: 0, epoch: 1, members: {}, invites: {} };
     c.members[actor.uid] = { role: "lead", call: cleanCall(b.call), email: actor.email, since: c.created, by: actor.uid };
     return commit(store, actor, null, c, { action: "create", target: { kind: "case", id }, detail: { name }, reason, op, opKey, now, after: [async () => addTo(store, await uKey(actor.uid), id)] });
   }
@@ -266,6 +266,7 @@ export async function run(store, actor, body, opts = {}) {
         const from = c.members[uid].role;
         if (from === "lead" && leads(c) === 1 && Object.keys(c.members).length > 1) throw bad("A case needs at least one lead. Make someone else lead first.");
         delete c.members[uid];
+        c.epoch = (c.epoch || 1) + 1; // content added from now on is sealed under a key the removed person never had
         step = { action: b.cmd, target: { kind: "member", id: uid }, detail: { role: from }, after: [async () => dropFrom(store, await uKey(uid), c.id)] };
         break;
       }
