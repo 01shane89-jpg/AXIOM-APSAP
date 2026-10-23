@@ -198,10 +198,13 @@ const forged = await N.p.evaluate((id) => OSAP_TIER.token().then((t) => fetch("a
 ok(forged === 403, "a save sent around the app by a viewer is refused by the server", forged);
 
 // 9. the case record
-await click(L, "#casedlg [data-cs-log]");
-await L.p.waitForFunction(() => /Case record/.test(document.getElementById("casedlg").textContent) && document.querySelectorAll("#casedlg li .obs").length > 4, null, { timeout: 15000 });
+/* the panel redraws when a background sync ends, so press the button until the record shows */
+for (let i = 0; i < 5 && !/made the case/.test(await msg(L)); i++) {
+  if (await L.p.locator("#casedlg [data-cs-log]").count()) await click(L, "#casedlg [data-cs-log]");
+  await L.p.waitForFunction(() => /made the case/.test(document.getElementById("casedlg").textContent), null, { timeout: 3000 }).catch(() => {});
+}
 const rec = await msg(L);
-ok(/LEAD 6 made the case/.test(rec) && /invited someone as Analyst/.test(rec) && /ANA 2 joined/.test(rec) && /removed a member/.test(rec) && /rotated out/.test(rec) && /Analyst to Viewer/.test(rec), "the case record shows who did what and why");
+ok(/LEAD 6 made the case/.test(rec) && /invited someone as Analyst/.test(rec) && /ANA 2 joined/.test(rec) && /removed a member/.test(rec) && /rotated out/.test(rec) && /Analyst to Viewer/.test(rec), "the case record shows who did what and why", rec.split("Case record")[1]);
 ok(!/view@test.org/.test(rec.split("Case record")[1] || ""), "the record carries no emails");
 
 // 10. on a phone
