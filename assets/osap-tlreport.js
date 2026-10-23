@@ -632,25 +632,26 @@
       '<div class="km">' + stChip(obs ? "observation" : e.c ? lead.type : "event") + " " + esc(meta) + (where ? " · <b>Where:</b> " + esc(where) : "") + "</div>" + extra +
       '<div class="kw"><b>Why listed:</b> ' + esc(why) + "</div>" + fp + "</td></tr>";
   }
-  /* records per month, as a small column chart; the busiest month stands out */
-  function barsSvg(recs) {
+  /* records per month (or, with byDay, per day), as a small column chart; the busiest one stands out */
+  function barsSvg(recs, byDay) {
     if (!recs.length) return "";
-    var a = recs[0].__tlw.day.slice(0, 7), b = recs[recs.length - 1].__tlw.day.slice(0, 7), months = [], c = {};
-    for (var y = +a.slice(0, 4), m = +a.slice(5, 7); ; ) { var k = y + "-" + ("0" + m).slice(-2); months.push(k); if (k >= b || months.length > 60) break; if (++m > 12) { m = 1; y++; } }
-    recs.forEach(function (r) { var k = r.__tlw.day.slice(0, 7); c[k] = (c[k] || 0) + 1; });
+    var L = byDay ? 10 : 7, a = recs[0].__tlw.day.slice(0, L), b = recs[recs.length - 1].__tlw.day.slice(0, L), months = [], c = {};
+    if (byDay) for (var t = Date.parse(a + "T00:00:00Z"); ; t += 864e5) { var kd = new Date(t).toISOString().slice(0, 10); months.push(kd); if (kd >= b || months.length > 62) break; }
+    else for (var y = +a.slice(0, 4), m = +a.slice(5, 7); ; ) { var k = y + "-" + ("0" + m).slice(-2); months.push(k); if (k >= b || months.length > 60) break; if (++m > 12) { m = 1; y++; } }
+    recs.forEach(function (r) { var k = r.__tlw.day.slice(0, L); c[k] = (c[k] || 0) + 1; });
     var mx = Math.max.apply(null, months.map(function (k) { return c[k] || 0; })), W = 196, H = 92, top = 14, bot = 16, ch = H - top - bot, bw = (W - 2) / months.length;
     var peak = months.filter(function (k) { return (c[k] || 0) === mx; })[0];
-    function mname(k, yr) { return new Date(k + "-01T00:00:00Z").toLocaleDateString("en-GB", yr ? { month: "short", year: "2-digit", timeZone: "UTC" } : { month: "short", timeZone: "UTC" }); }
+    function mname(k, yr) { return byDay ? new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }) : new Date(k + "-01T00:00:00Z").toLocaleDateString("en-GB", yr ? { month: "short", year: "2-digit", timeZone: "UTC" } : { month: "short", timeZone: "UTC" }); }
     var bars = months.map(function (k, i) {
       var h = mx ? (c[k] || 0) / mx * ch : 0;
       return '<rect x="' + (1 + i * bw + bw * 0.12).toFixed(1) + '" y="' + (top + ch - h).toFixed(1) + '" width="' + Math.max(1, bw * 0.76).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + (k === peak ? "#8a2a22" : "#12324a") + '"><title>' + esc(mname(k, true) + ": " + (c[k] || 0)) + "</title></rect>";
     }).join("");
     var px = 1 + months.indexOf(peak) * bw + bw / 2;
-    return { svg: '<svg class="tlrbars" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Records per month" font-family="system-ui,sans-serif" font-size="9" fill="#55616b">' +
+    return { svg: '<svg class="tlrbars" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Records per ' + (byDay ? "day" : "month") + '" font-family="system-ui,sans-serif" font-size="9" fill="#55616b">' +
       '<line x1="0" x2="' + W + '" y1="' + (top + ch + 0.5) + '" y2="' + (top + ch + 0.5) + '" stroke="#9fb0bf"/>' + bars +
       '<text x="' + Math.min(W - 2, Math.max(2, px)).toFixed(1) + '" y="' + (top + ch - (mx ? ch : 0) - 3).toFixed(1) + '" text-anchor="' + (px < 20 ? "start" : px > W - 20 ? "end" : "middle") + '" fill="#8a2a22" font-weight="700">' + mx + "</text>" +
       '<text x="1" y="' + (H - 3) + '">' + esc(mname(months[0], true)) + "</text>" + (months.length > 1 ? '<text x="' + (W - 1) + '" y="' + (H - 3) + '" text-anchor="end">' + esc(mname(months[months.length - 1], true)) + "</text>" : "") + "</svg>",
-      peak: peak, peakN: mx, mean: recs.length / months.length, label: mname(peak, true) };
+      peak: peak, peakN: mx, mean: recs.length / months.length, label: mname(peak, true), unit: byDay ? "day" : "month" };
   }
   /* the map's key, beside it: what each mark means, drawn with the same marks */
   function legendHtml(m, keyEv) {
@@ -843,6 +844,7 @@
      the map, each with how/where and, for one reported by two or more sources, its event summary), the map and chart SVGs,
      the Covers list and the provinces the country's records name, and this report's own HTML for a key-event row (rowHtml) and a
      chronology entry (entryHtml, with its source number) so the OSIR (assets/osap-osir.js) shows them the same way. Nothing is changed. */
+  function spanDays(recs) { return Math.round((Date.parse(recs[recs.length - 1].__tlw.day.slice(0, 10) + "T00:00:00Z") - Date.parse(recs[0].__tlw.day.slice(0, 10) + "T00:00:00Z")) / 864e5) + 1; }
   function data(o, cb) {
     loadSummaries(function () { loadRegions(function () {
       LN = layerNames();
@@ -856,7 +858,7 @@
       var sc = scopeOf(o.scope), kq = kwOf(o.kw, o.kwOn);
       if (kq) sc = { layers: sc.layers, ids: sc.ids, label: String(o.kwName || "").trim().slice(0, 80) || kq.q || "Custom topic", kw: kq.q, kwOk: kq.ok, kwErr: kq.err || "", kwEmpty: !!kq.empty };
       cb({ cc: cc(), country: cname(), scope: sc, scopes: scopes(o), recs: recs, total: all.length, max: MAX_ROWS, keyEv: keyEv, grouped: evs.length,
-        map: recs.length ? mapSvg(recs, keyEv) : null, legend: recs.length ? legendHtml : null, bars: barsSvg(recs), period: periodText(recs, o),
+        map: recs.length ? mapSvg(recs, keyEv) : null, legend: recs.length ? legendHtml : null, bars: barsSvg(recs), barsDay: recs.length && spanDays(recs) <= 45 ? barsSvg(recs, true) : null, period: periodText(recs, o),
         provinces: topN(provs, 200), provsOf: provsOf, layerName: function (l) { return LN[l] || l || ""; }, status: STATUS, appPeriod: appPeriod(),
         rowHtml: rowHtml, entryHtml: entry });
     }); });

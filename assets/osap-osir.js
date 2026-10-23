@@ -8,6 +8,12 @@
    - OSAP writes no judgments. The automatic summary is counts by fixed rules and says so; the analyst summary is what the person
      typed, marked as theirs. Event summaries written by AI keep their small "AI generated" tag.
    - Every record keeps its source link and SHA-256 fingerprint; the report fingerprint covers all of them in order.
+   - Refinements (Shane 2026-10-22, "do all the refinements"): a records-per-day chart for periods of 45 days or less; a change
+     from the previous period of the same length (counts by kind and province, plus the Deep South peace tracker's lines for
+     the period), by fixed rules; the report number and "page X of Y" on every printed page (browsers that print page-margin
+     boxes); "Save draft" / "Open draft" (a JSON file on the analyst's own device, nothing stored online); a version number and
+     a "supersedes" line when a report is remade for the same country and subject on this device; the catalogue's proposed
+     reliability letter shown beside a claim whose source is one of the report's own (a proposal, never set for the analyst).
    - Analyst sections (Shane 2026-10-21, after the Malaysia facilitator product: "yes please do"): optional graded claims
      (Admiralty source reliability A-F, information credibility 1-6), assessment, alternative explanations, confidence,
      relevance, indicators to watch, intelligence gaps, and outside sources the analyst cites. Each is what the person typed,
@@ -15,7 +21,7 @@
    - Built in the browser; nothing is sent anywhere and no record is changed. */
 (function () {
   "use strict";
-  var W = window, D = document, PEND = "osap-osir-pending", WHO = "osap-osir-by";
+  var W = window, D = document, PEND = "osap-osir-pending", WHO = "osap-osir-by", VERS = "osap-osir-versions", DRAFT = "osap-osir-draft/1", DRAFT_MAX = 1048576;
   var MON = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
   var PRESETS = [["7", "7 days"], ["14", "14 days"], ["30", "30 days"], ["90", "90 days"], ["182", "6 months"], ["365", "1 year"], ["all", "All dates"]];
   var DISCLAIMER = "This report was compiled only from publicly available information (open sources). It holds no classified or proprietary material. " +
@@ -61,6 +67,70 @@
   function claimUsed(c) { return !!(c.claim.trim() || c.src.trim() || c.note.trim()); }
   function outUsed(x) { return !!(x.title.trim() || x.url.trim()); }
   function grade(r, c) { return (r || "") + (c || "") || "—"; }
+  /* the catalogue's proposed reliability letter for one of this report's own sources, by name (case and spacing ignored) */
+  function srcKey(n) { return String(n || "").toLowerCase().replace(/\s+/g, " ").trim(); }
+  function proposedFor(name) {
+    var k = srcKey(name), d = S.data; if (!k || !d) return "";
+    for (var i = 0; i < d.recs.length; i++) { var s = d.recs[i].src || {}; if (s.proposed && srcKey(s.name) === k) return String(s.proposed).slice(0, 1); }
+    return "";
+  }
+  function srcNames() {
+    var d = S.data, seen = {}, out = []; if (!d) return out;
+    d.recs.forEach(function (r) { var s = r.src || {}, k = srcKey(s.name); if (k && !seen[k]) { seen[k] = 1; out.push(s.name); } });
+    return out.slice(0, 300);
+  }
+  /* draft file: what the analyst typed in this window, saved to and opened from their own device; nothing is stored online */
+  function draftData() {
+    return { schema: DRAFT, saved: new Date().toISOString(), cc: S.cc, region: S.region === "@area" ? "" : S.region, scope: S.scope, kw: S.kw || "", kwName: S.kwName || "",
+      from: S.from, to: S.to, subject: S.subjectSet ? S.subject : "", by: S.by, summary: S.summary, an: S.an, claims: S.claims, outs: S.outs };
+  }
+  function saveDraft() {
+    var name = "OSIR-draft-" + String(S.cc || "xx").toUpperCase() + "-" + new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "") + ".json";
+    var a = D.createElement("a"), u = URL.createObjectURL(new Blob([JSON.stringify(draftData(), null, 1)], { type: "application/json" }));
+    a.href = u; a.download = name; D.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+    setNote("Draft saved to your device as " + name + ". Open it here later with Open draft.");
+  }
+  /* a draft file is the analyst's own, but read as untrusted data: known fields only, strings cut to the window's own limits */
+  function str(v, n) { return typeof v === "string" ? v.slice(0, n) : ""; }
+  function pickOf(v, list) { return list.indexOf(v) >= 0 ? v : ""; }
+  function readDraft(o) {
+    if (!o || o.schema !== DRAFT) throw new Error("not an OSIR draft file");
+    var a = o.an || {}, day = function (v) { return /^\d{4}-\d{2}-\d{2}$/.test(v || "") ? v : ""; };
+    return {
+      cc: str(o.cc, 8), region: str(o.region, 120), scope: str(o.scope, 120), kw: str(o.kw, 600), kwName: str(o.kwName, 80), from: day(o.from), to: day(o.to),
+      subject: str(o.subject, 200), by: str(o.by, 120), summary: str(o.summary, 4000),
+      an: { assess: str(a.assess, 4000), alt: str(a.alt, 4000), conf: pickOf(a.conf, CONF), confNote: str(a.confNote, 400), relLabel: str(a.relLabel, 60) || "Relevance", rel: str(a.rel, 4000), ind: str(a.ind, 4000), gaps: str(a.gaps, 4000) },
+      claims: (Array.isArray(o.claims) ? o.claims : []).slice(0, MAXROWS).map(function (c) { c = c || {}; return { claim: str(c.claim, 1000), src: str(c.src, 200), r: pickOf(c.r, REL), c: pickOf(c.c, CRED), note: str(c.note, 400) }; }),
+      outs: (Array.isArray(o.outs) ? o.outs : []).slice(0, MAXROWS).map(function (x) { x = x || {}; return { title: str(x.title, 300), url: str(x.url, 600), r: pickOf(x.r, REL), note: str(x.note, 300) }; })
+    };
+  }
+  function openDraft(file) {
+    if (!file) return;
+    if (file.size > DRAFT_MAX) { setNote("That file is too large to be an OSIR draft.", true); return; }
+    var fr = new FileReader();
+    fr.onload = function () {
+      var g; try { g = readDraft(JSON.parse(String(fr.result))); } catch (e) { setNote("Could not open that file: " + e.message + ".", true); return; }
+      var other = g.cc && g.cc !== S.cc;
+      ["region", "scope", "kw", "kwName", "from", "to", "by", "summary"].forEach(function (k) { S[k] = g[k]; });
+      if (other) S.region = "";
+      S.subject = g.subject; S.subjectSet = !!g.subject.trim(); S.an = g.an; S.claims = g.claims; S.outs = g.outs; S.anOpen = anUsed();
+      S.draftNote = "Draft opened (" + pl(g.claims.length, "claim") + ")." + (other ? " It was made for another country (" + g.cc.toUpperCase() + "); its region was left out." : "");
+      refresh();
+    };
+    fr.onerror = function () { setNote("Could not read that file.", true); };
+    fr.readAsText(file);
+  }
+  function setNote(t, bad) { var n = BOX && BOX.querySelector("#os-note"); if (n) { n.textContent = t; n.className = "osn" + (bad ? " bad" : ""); } }
+  /* versions: reports made on this device for the same country and subject; each new one supersedes the one before */
+  function versKey(cc, subj) { return String(cc || "") + "|" + srcKey(subj); }
+  function versGet() { try { var v = JSON.parse(getLS(VERS) || "{}"); return v && typeof v === "object" ? v : {}; } catch (e) { return {}; } }
+  function versOf(cc, subj) { var l = versGet()[versKey(cc, subj)]; return Array.isArray(l) ? l : []; }
+  function versAdd(cc, subj, no, t) {
+    var v = versGet(), k = versKey(cc, subj), l = Array.isArray(v[k]) ? v[k] : [];
+    l.push({ no: no, t: t }); v[k] = l.slice(-20);
+    var keys = Object.keys(v); if (keys.length > 60) keys.sort(function (a, b) { return (v[a][v[a].length - 1] || {}).t - (v[b][v[b].length - 1] || {}).t; }).slice(0, keys.length - 60).forEach(function (x) { delete v[x]; });
+    setLS(VERS, JSON.stringify(v));
+  }
   function css() {
     if (D.getElementById("osir-css")) return;
     var st = D.createElement("style"); st.id = "osir-css";
@@ -96,6 +166,10 @@
       ".tlr.osir table.oscl{width:100%;border-collapse:collapse;table-layout:auto;margin:4px 0 8px;font-size:.95em}.tlr.osir table.oscl td{white-space:normal!important;overflow-wrap:anywhere}.tlr.osir table.oscl td:nth-child(2){width:42%}.tlr.osir table.oscl td:nth-child(3){width:22%}.tlr.osir table.oscl th,.tlr.osir table.oscl td{border-bottom:1px solid #d5dde4;padding:3px 6px;text-align:left;vertical-align:top}" +
       ".tlr.osir table.oscl th{color:#12324a;font-weight:600}.tlr.osir table.oscl td.g{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}.tlr.osir .osanb{white-space:pre-wrap;margin:2px 0 8px}" +
       ".tlr.osir ul.osli{margin:2px 0 8px;padding-left:18px}.tlr.osir .osconf b{letter-spacing:.06em}" +
+      ".tlr.osir table.osch{border-collapse:collapse;margin:4px 0 8px;font-size:.95em}.tlr.osir table.osch th,.tlr.osir table.osch td{padding:2px 10px 2px 0;text-align:right;border-bottom:1px solid #d5dde4}" +
+      ".tlr.osir table.osch th:first-child,.tlr.osir table.osch td:first-child{text-align:left}.tlr.osir table.osch caption{text-align:left;caption-side:top;padding-bottom:2px}" +
+      ".tlr.osir .osdual{display:flex;flex-wrap:wrap;gap:18px}.tlr.osir .osdual>div{flex:1 1 230px;min-width:0}.tlr.osir ul.ospeace{margin:2px 0 8px;padding-left:18px}" +
+      "#osirdlg .osprop{font-weight:400;color:var(--muted);font-size:12px}" +
       ".tlr.osir ul.oscon{margin:4px 0 0;padding-left:18px}.tlr.osir .mg{font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-all}" +
       "@media print{.tlr.osir h4.oss .aitag::after,.tlr.osir p.bm>.aitag::after{content:none}html.briefing .tlr.osir .osatt{break-before:page;page-break-before:always}html.briefing .tlr.osir table.osf th{width:96px}}";
     D.head.appendChild(st);
@@ -140,8 +214,11 @@
       '<label class="osw">Prepared by <small>(optional: your name, role or team, as it should appear under Contributors)</small><input type="text" id="os-by" maxlength="120" value="' + esc(S.by) + '"></label>' +
       '<label class="osw">Analyst summary <small>(optional: your own words, shown first and marked as yours; OSAP\'s automatic summary follows)</small><textarea id="os-sum" maxlength="4000">' + esc(S.summary) + "</textarea></label>" + anHtml() + "</div>" +
       '<div class="osn' + (bad ? " bad" : "") + '" id="os-note" aria-live="polite">' + note + "</div>" +
-      '<div class="osb"><button type="button" class="refresh primary" id="os-go"' + (!d || !d.recs.length ? " disabled" : "") + ">Make OSIR</button>" +
-      '<button type="button" class="refresh" id="os-close">Close</button></div></div>';
+      '<div class="osb"><button type="button" class="refresh primary" id="os-go"' + (!d || !d.recs.length || S.making ? " disabled" : "") + ">" + (S.making ? "Making…" : "Make OSIR") + "</button>" +
+      '<button type="button" class="refresh" id="os-save" title="Save what you typed to a file on this device">Save draft</button>' +
+      '<button type="button" class="refresh" id="os-open" title="Open a draft file saved from this window">Open draft</button><input type="file" id="os-file" accept=".json,application/json" hidden>' +
+      '<button type="button" class="refresh" id="os-close">Close</button></div>' +
+      '<p class="obs" style="margin:8px 0 0;font-size:12px">Drafts are files on your device; OSAP stores nothing online. A report remade for the same country and subject on this device gets the next version number and a "supersedes" line.</p></div>';
     BOX.querySelector("#os-x").onclick = close; BOX.querySelector("#os-close").onclick = close;
     BOX.querySelector("#os-cc").onchange = function () { switchCountry(this.value); };
     BOX.querySelector("#os-reg").onchange = function () { S.region = this.value; refresh(); };
@@ -156,22 +233,27 @@
       b.onclick = function () { var v = b.getAttribute("data-osp"); if (v === "all") { S.from = ""; S.to = ""; } else { S.from = iso(Date.now() - (+v - 1) * 864e5); S.to = today(); } refresh(); };
     });
     BOX.querySelector("#os-go").onclick = make;
+    BOX.querySelector("#os-save").onclick = saveDraft;
+    var fi = BOX.querySelector("#os-file"); BOX.querySelector("#os-open").onclick = function () { fi.value = ""; fi.click(); }; fi.onchange = function () { openDraft(fi.files && fi.files[0]); };
+    if (S.draftNote && d) { setNote(S.draftNote + " " + BOX.querySelector("#os-note").textContent); S.draftNote = ""; }
     bindAn();
   }
   /* the analyst sections in the window: graded claims, free-text parts, outside sources */
+  function propLabel(src) { var p = proposedFor(src); return p ? "— (proposed " + p + "?)" : "—"; }
   function anHtml() {
     var a = S.an, sel = function (list, cur, blank) { return '<option value="">' + blank + "</option>" + list.map(function (v) { return '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + v + "</option>"; }).join(""); };
     var ta = function (k, lab, hint) { return '<label class="osw">' + lab + (hint ? " <small>(" + hint + ")</small>" : "") + '<textarea id="os-an-' + k + '" data-an="' + k + '" maxlength="4000">' + esc(a[k]) + "</textarea></label>"; };
     return '<details class="osx" id="os-anx"' + (S.anOpen || anUsed() ? " open" : "") + '><summary>Analyst sections <small>(optional: graded claims, assessment, confidence, indicators, gaps, outside sources; each is shown as yours)</small></summary><div class="osg">' +
-      '<div class="osw"><b>Graded claims</b> <small>Source reliability A–F, information credibility 1–6 (Admiralty). A credible source can still be wrong.</small></div>' +
+      '<div class="osw"><b>Graded claims</b> <small>Source reliability A–F, information credibility 1–6 (Admiralty). A credible source can still be wrong. Pick one of the report\'s own sources and the catalogue\'s proposed letter shows in the list (for example "— (proposed B?)"); it is only a proposal until you choose a letter.</small></div>' +
       S.claims.map(function (c, i) {
         return '<div class="osrow" data-cl="' + i + '"><label class="osw2">Claim ' + (i + 1) + '<textarea id="os-cl-' + i + '-claim" data-clk="claim" maxlength="1000">' + esc(c.claim) + "</textarea></label>" +
-          '<label>Source / originator<input type="text" id="os-cl-' + i + '-src" data-clk="src" maxlength="200" value="' + esc(c.src) + '"></label>' +
-          '<label>Reliability<select id="os-cl-' + i + '-r" data-clk="r" aria-label="Source reliability, claim ' + (i + 1) + '">' + sel(REL, c.r, "—") + "</select></label>" +
+          '<label>Source / originator<input type="text" id="os-cl-' + i + '-src" data-clk="src" maxlength="200" list="os-srcs" value="' + esc(c.src) + '"></label>' +
+          '<label>Reliability<select id="os-cl-' + i + '-r" data-clk="r" aria-label="Source reliability, claim ' + (i + 1) + '">' + sel(REL, c.r, propLabel(c.src)) + "</select></label>" +
           '<label>Credibility<select id="os-cl-' + i + '-c" data-clk="c" aria-label="Information credibility, claim ' + (i + 1) + '">' + sel(CRED, c.c, "—") + "</select></label>" +
           '<button type="button" class="refresh" data-cldel="' + i + '" aria-label="Remove claim ' + (i + 1) + '">×</button>' +
           '<label class="osw2">Corroboration <small>(optional)</small><input type="text" id="os-cl-' + i + '-note" data-clk="note" maxlength="400" value="' + esc(c.note) + '"></label></div>';
       }).join("") +
+      '<datalist id="os-srcs">' + srcNames().map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + "</datalist>" +
       (S.claims.length < MAXROWS ? '<button type="button" class="refresh osadd" id="os-cl-add">Add claim</button>' : "") +
       ta("assess", "Assessment") + ta("alt", "Alternative explanations") +
       '<label>Analytic confidence<select id="os-an-conf">' + sel(CONF, a.conf, "Not stated") + "</select></label>" +
@@ -195,7 +277,10 @@
     det.ontoggle = function () { S.anOpen = det.open; };
     each("[data-an]", function (el) { el.oninput = function () { S.an[el.getAttribute("data-an")] = el.value; }; });
     BOX.querySelector("#os-an-conf").onchange = function () { S.an.conf = this.value; };
-    each("[data-cl]", function (row) { var c = S.claims[+row.getAttribute("data-cl")]; Array.prototype.forEach.call(row.querySelectorAll("[data-clk]"), function (el) { el.oninput = el.onchange = function () { c[el.getAttribute("data-clk")] = el.value; }; }); });
+    each("[data-cl]", function (row) {
+      var c = S.claims[+row.getAttribute("data-cl")], r = row.querySelector('[data-clk="r"]');
+      Array.prototype.forEach.call(row.querySelectorAll("[data-clk]"), function (el) { el.oninput = el.onchange = function () { c[el.getAttribute("data-clk")] = el.value; if (el.getAttribute("data-clk") === "src" && r && r.options[0]) r.options[0].textContent = propLabel(el.value); }; });
+    });
     each("[data-out]", function (row) { var x = S.outs[+row.getAttribute("data-out")]; Array.prototype.forEach.call(row.querySelectorAll("[data-outk]"), function (el) { el.oninput = el.onchange = function () { x[el.getAttribute("data-outk")] = el.value; }; }); });
     var again = function (focus) { S.anOpen = true; draw(); var f = focus && BOX.querySelector(focus); if (f) f.focus(); };
     var ca = BOX.querySelector("#os-cl-add"); if (ca) ca.onclick = function () { S.claims.push({ claim: "", src: "", r: "", c: "", note: "" }); again("#os-cl-" + (S.claims.length - 1) + "-claim"); };
@@ -240,10 +325,40 @@
 
   /* ---------- the report ---------- */
   var EL = null, fpJobs = [], title0 = "";
+  /* the period before this one, of the same length (only when both dates are set) */
+  function prevPeriod(from, to) {
+    if (!from || !to || to < from) return null;
+    var f = Date.parse(from + "T00:00:00Z"), t = Date.parse(to + "T00:00:00Z"), n = Math.round((t - f) / 864e5) + 1;
+    return { from: iso(f - n * 864e5), to: iso(f - 864e5), days: n };
+  }
+  /* the Deep South peace tracker (Thailand only), loaded on first use; its lines are claims with their sources */
+  function peace(cc, cb) {
+    if (cc !== "th") return cb(null);
+    if (W.OSAP_DSPEACE) return cb(W.OSAP_DSPEACE);
+    var done = false, fin = function () { if (!done) { done = true; cb(W.OSAP_DSPEACE || null); } };
+    var sc = D.createElement("script"); sc.src = "data/thailand/deepsouth-peace.js"; sc.onload = sc.onerror = fin; D.head.appendChild(sc); setTimeout(fin, 5000);
+  }
   function make() {
-    var d = S.data; if (!d || !d.recs.length) return;
+    var d = S.data; if (!d || !d.recs.length || S.making) return;
     setLS(WHO, S.by.trim());
-    var html = build(d, { subject: S.subject.trim() || autoSubject(d), by: S.by.trim(), summary: S.summary.trim(), region: regionText(d), now: Date.now(), an: anData() });
+    var pp = prevPeriod(S.from, S.to), n = S.seq;
+    S.making = true; draw();
+    var go = function (base, pc) {
+      S.making = false;
+      if (n !== S.seq || !BOX || BOX.hidden) return;
+      make2(d, base, pc);
+    };
+    peace(d.cc, function (pc) {
+      if (!pp) return go(null, pc);
+      var o = opts(); o.from = pp.from; o.to = pp.to;
+      W.OSAP_TLREPORT.data(o, function (b) { go({ from: pp.from, to: pp.to, days: pp.days, recs: b.recs, total: b.total }, pc); });
+    });
+  }
+  function make2(d, base, pc) {
+    var now = Date.now(), subject = S.subject.trim() || autoSubject(d), prior = versOf(d.cc, subject);
+    var html = build(d, { subject: subject, by: S.by.trim(), summary: S.summary.trim(), region: regionText(d), now: now, an: anData(),
+      base: base, peace: pc, from: S.from, to: S.to, version: prior.length + 1, supersedes: prior.length ? prior[prior.length - 1].no : "" });
+    versAdd(d.cc, subject, "OSIR-" + String(d.cc).toUpperCase() + "-" + dtg(now).replace(/ /g, ""), now);
     close();
     EL = D.getElementById("brief"); if (!EL) return;
     EL.hidden = false; D.documentElement.classList.add("briefing");
@@ -251,7 +366,15 @@
     D.getElementById("osir-close").onclick = closeReport;
     D.getElementById("osir-back").onclick = function () { closeReport(); BOX.hidden = false; draw(); };
     D.getElementById("osir-print").onclick = printIt;
+    pageFooter(EL.querySelector(".osir").getAttribute("data-osir"));
     fill(d.recs);
+  }
+  /* the report number and "page X of Y" in the bottom margin of every printed page (browsers that print page-margin boxes) */
+  function pageFooter(no) {
+    var st = D.getElementById("osir-page"); if (!st) { st = D.createElement("style"); st.id = "osir-page"; D.head.appendChild(st); }
+    var q = String(no).replace(/[^A-Z0-9-]/gi, "");
+    st.textContent = "@media print{@page{@bottom-left{content:'" + q + " \\B7  UNCLASSIFIED // OPEN SOURCE';font:8.5px system-ui,sans-serif;color:#55616b}" +
+      "@bottom-right{content:'Page ' counter(page) ' of ' counter(pages);font:8.5px system-ui,sans-serif;color:#55616b}}}";
   }
   /* the analyst sections as the report uses them: trimmed, empty rows left out */
   function anData() {
@@ -260,8 +383,39 @@
       claims: S.claims.filter(claimUsed).map(function (c) { return { claim: t(c.claim), src: t(c.src), r: c.r, c: c.c, note: t(c.note) }; }),
       outs: S.outs.filter(outUsed).map(function (x) { return { title: t(x.title) || t(x.url), url: t(x.url), r: x.r, note: t(x.note) }; }) };
   }
+  /* change from the previous period: counts by kind and province side by side, and the peace tracker's lines in this period */
+  function change(d, o) {
+    var b = o.base, pc = o.peace, h = "";
+    var rows = function (cur, prev, n) {
+      var ks = Object.keys(cur).concat(Object.keys(prev)).filter(function (k, i, a) { return a.indexOf(k) === i; });
+      ks.sort(function (x, y) { return ((cur[y] || 0) + (prev[y] || 0)) - ((cur[x] || 0) + (prev[x] || 0)) || x.localeCompare(y); });
+      return ks.slice(0, n).map(function (k) { var c = cur[k] || 0, p = prev[k] || 0, dl = c - p; return "<tr><td>" + esc(k) + "</td><td>" + c + "</td><td>" + p + "</td><td>" + (dl > 0 ? "+" : dl < 0 ? "\u2212" : "") + Math.abs(dl) + "</td></tr>"; }).join("");
+    };
+    var count = function (recs, f) { var o2 = {}; recs.forEach(function (r) { f(r).forEach(function (k) { if (k) o2[k] = (o2[k] || 0) + 1; }); }); return o2; };
+    if (b) {
+      var cat = function (r) { return [r.cat || "Other"]; };
+      var cK = count(d.recs, cat), pK = count(b.recs, cat), cP = count(d.recs, d.provsOf), pP = count(b.recs, d.provsOf);
+      var head = "<thead><tr><th></th><th>This period</th><th>Previous</th><th>Change</th></tr></thead>";
+      var dt = d.total - b.total;
+      h += '<p class="bm" data-osf="change">' + esc(fmtShort(o.from) + " to " + fmtShort(o.to)) + " against the " + b.days + " days before (" + esc(fmtShort(b.from) + " to " + fmtShort(b.to)) + "): " +
+        pl(d.total, "record") + " against " + b.total + " (" + (dt > 0 ? "+" : dt < 0 ? "\u2212" : "") + Math.abs(dt) + ")." +
+        (d.recs.length < d.total || b.recs.length < b.total ? " The tables count the latest " + d.recs.length + " and " + b.recs.length + " records the report holds." : "") + "</p>" +
+        '<div class="osdual"><div><table class="osch" data-osf="change-kind"><caption><b>Table 2.</b> Records by kind</caption>' + head + "<tbody>" + rows(cK, pK, 8) + "</tbody></table></div>" +
+        (Object.keys(cP).length || Object.keys(pP).length ? '<div><table class="osch" data-osf="change-prov"><caption><b>Table 3.</b> Records by province</caption>' + head + "<tbody>" + rows(cP, pP, 8) + "</tbody></table></div>" : "") + "</div>";
+    }
+    if (pc && o.from && o.to) {
+      var ln = (pc.rounds || []).filter(function (r) { return r.date >= o.from && r.date <= o.to; });
+      h += '<p class="bm" style="margin-bottom:0"><b>Peace talks tracker</b> (OSAP\'s hand-kept Deep South tracker; each line is what an official, a party or an outlet said, with its source). ' + (ln.length ? "Lines dated in this period:" : "No line is dated in this period.") + "</p>" +
+        (ln.length ? '<ul class="ospeace" data-osf="change-peace">' + ln.map(function (r) {
+          var e = (r.evidence || [])[0] || {}, u = safeUrl(e.src);
+          return "<li>" + esc(fmtShort(r.date)) + (r.place ? ", " + esc(r.place) : "") + ": " + esc(r.what) + (u ? ' (<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(e.srcname || host(u)) + "</a>)" : "") + "</li>";
+        }).join("") + "</ul>" : "") +
+        (pc.status && pc.status.short ? '<p class="bm">Tracker status as of ' + esc(fmtShort(pc.status.asof)) + ": " + esc(pc.status.short) + "</p>" : "");
+    }
+    return h;
+  }
   function build(d, o) {
-    var recs = d.recs, keyEv = d.keyEv, m = d.map, bars = d.bars, now = o.now;
+    var recs = d.recs, keyEv = d.keyEv, m = d.map, bars = d.barsDay || d.bars, now = o.now;
     var no = "OSIR-" + String(d.cc).toUpperCase() + "-" + dtg(now).replace(/ /g, "");
     /* sources, numbered in order of first appearance (the same numbers as each chronology entry) */
     var srcs = [], sno = {};
@@ -276,7 +430,8 @@
     /* automatic summary: counts by fixed rules, no AI */
     var pts = [pl(recs.length, "dated record") + " from " + pl(srcs.length, "source") + ", " + fmtShort(first.day) + " to " + fmtShort(last.day) + ": " +
       pl(kinds.event || 0, "sourced report") + ", " + pl(kinds.claim || 0, "official statement") + (kinds.observation ? ", " + pl(kinds.observation, "instrument reading") : "") + "."];
-    if (bars && bars.peakN > 1) pts.push("Busiest month: " + new Date(bars.peak + "-01T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) + ", with " + bars.peakN + " records (the monthly average is " + (Math.round(bars.mean * 10) / 10) + ").");
+    if (bars && bars.peakN > 1) pts.push(bars.unit === "day" ? "Busiest day: " + fmtShort(bars.peak) + ", with " + bars.peakN + " records (the daily average is " + (Math.round(bars.mean * 10) / 10) + ")." :
+      "Busiest month: " + new Date(bars.peak + "-01T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) + ", with " + bars.peakN + " records (the monthly average is " + (Math.round(bars.mean * 10) / 10) + ").");
     var tp = topN(perProv, 3); if (tp.length) pts.push("Most often named province" + (tp.length > 1 ? "s" : "") + ": " + list3(tp) + ".");
     var tc = topN(perCat, 3); if (tc.length) pts.push("Commonest kind" + (tc.length > 1 ? "s" : "") + " of record: " + list3(tc) + ".");
     pts.push(keyEv.length ? pl(keyEv.length, "key event") + " in the main content" + (d.grouped ? ", " + d.grouped + " of them reported by two or more sources" : "") + "." : "No record meets the rules for a key event.");
@@ -297,7 +452,7 @@
       (an.ind ? h4("Indicators to watch") + lines(an.ind, "an-ind") : "") +
       (an.gaps ? h4("Intelligence gaps") + lines(an.gaps, "an-gaps") : "");
     var anParts = sub, graded = an.claims.some(function (c) { return c.r || c.c; }) || an.outs.some(function (x) { return x.r; });
-    var kNo = "3." + (++sub), wNo = "3." + (++sub);
+    var kNo = "3." + (++sub), wNo = "3." + (++sub), ch = change(d, o), cNo = ch ? "3." + (++sub) : "";
     var period = d.period + (recs.length < d.total ? " (latest " + recs.length + " of " + d.total + " records)" : "");
     var gen = T().dualT(now, { date: true });
 
@@ -308,7 +463,7 @@
       '<div class="tlrsubt">' + esc(no) + "</div></div></header><div class=\"tlrrule\"></div>" +
       /* 1-3: Subject, Date generated, Country/s */
       '<table class="osf"><tbody><tr><th scope="row">Subject</th><td><b data-osf="subject">' + esc(o.subject) + '</b><br><small>Covers ' + esc(d.scope && d.scope.label && S.scope ? d.scope.label : "all reporting") + ", " + esc(period) + (d.scope && d.scope.kw ? '; custom topic: records whose text matches <span data-osf="words">' + esc(d.scope.kw) + "</span>" : "") + "</small></td></tr>" +
-      '<tr><th scope="row">Date generated</th><td data-osf="generated">' + esc(dtg(now)) + " · " + esc(gen) + "</td></tr>" +
+      '<tr><th scope="row">Date generated</th><td><span data-osf="generated">' + esc(dtg(now)) + " · " + esc(gen) + '</span><br><small data-osf="version">Version ' + (o.version || 1) + (o.supersedes ? ", supersedes " + esc(o.supersedes) : ", the first on this subject made on this device") + "</small></td></tr>" +
       '<tr><th scope="row">Country/s</th><td data-osf="countries">' + esc(d.country) + (S.region ? " (" + esc(S.region === "@area" ? "drawn area" : S.region) + ")" : "") + "</td></tr></tbody></table>" +
       /* 4: OSINT disclaimer */
       '<h3 class="tls"><span class="no">1</span>OSINT disclaimer</h3><p class="osdisc" data-osf="disclaimer">' + esc(DISCLAIMER) + "</p>" +
@@ -324,9 +479,10 @@
       (keyEv.length ? '<table class="tlrkt" data-osf="keyevents"><caption><b>Table 1.</b> Key events in date order; numbers match Figure 1. Each is what its sources reported, not a confirmed fact.</caption><colgroup><col class="ckn"><col class="ckd"><col></colgroup><thead><tr><th>No.</th><th>Date</th><th>Event</th></tr></thead><tbody>' +
         keyEv.map(d.rowHtml).join("") + "</tbody></table>" : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') +
       (m ? '<h4 class="oss">' + wNo + ' Where</h4><p class="tlrfigc"><b>Figure 1.</b> Records and key events, ' + esc(d.period) + '</p><div class="tlrfig">' + m.svg + '<aside class="tlrside">' + d.legend(m, keyEv) +
-        (bars ? "<div><h4>Figure 2. Records per month</h4>" + bars.svg + "</div>" : "") + "</aside></div>" +
+        (bars ? "<div><h4>Figure 2. Records per " + (bars.unit || "month") + "</h4>" + bars.svg + "</div>" : "") + "</aside></div>" +
         '<p class="tlrsrcn">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") +
         ". Positions are as precise as each source allows. Borders and names: Natural Earth (public domain).</p>" : "") +
+      (ch ? '<h4 class="oss" data-osf="change-h">' + cNo + " Change from the previous period" + tag("Automatic", "Counts by fixed rules, this period against the one before it of the same length (no AI), not analyst-approved. More or fewer records can mean more or less reporting, not more or less activity.") + "</h4>" + ch : "") +
       /* 7: End of report */
       '<div class="osend" data-osf="end">END OF REPORT</div>' +
       /* 8: Attachments */
@@ -377,7 +533,7 @@
       setTimeout(function () { try { W.print(); } catch (e) {} setTimeout(back, 3000); }, 60);
     });
   }
-  function closeReport() { if (!EL) return; EL.hidden = true; EL.innerHTML = ""; D.documentElement.classList.remove("briefing"); }
+  function closeReport() { var st = D.getElementById("osir-page"); if (st) st.remove(); if (!EL) return; EL.hidden = true; EL.innerHTML = ""; D.documentElement.classList.remove("briefing"); }
   D.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
     if (BOX && !BOX.hidden) close(); else if (EL && !EL.hidden && EL.querySelector(".osir")) closeReport();
