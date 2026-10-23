@@ -74,9 +74,13 @@ jobs:
           path: |
             ~/.cache/osap-llm
             ~/.cache/pip
-          key: osap-llm-${{ steps.pick.outputs.file }}-llamacpp-0.3.2-v1
+          key: osap-llm-${{ steps.pick.outputs.file }}-llamacpp-0.3.2-v2
+      # Built from source (about 5 minutes; pip keeps the built wheel in the cache). The project's prebuilt CPU wheel index
+      # served a musl build that can't load on Ubuntu. Native CPU tuning is off so the cached wheel runs on any runner CPU.
       - name: Install the model server
-        run: python -m pip install --quiet "llama-cpp-python[server]==0.3.2" --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+        env:
+          CMAKE_ARGS: "-DGGML_NATIVE=OFF -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON"
+        run: python -m pip install --quiet "llama-cpp-python[server]==0.3.2"
       - name: Download the model (once; kept in the cache)
         env:
           F: ${{ steps.pick.outputs.file }}
