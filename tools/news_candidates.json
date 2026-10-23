@@ -3,921 +3,178 @@
  "feeds": [],
  "discover": [
   {
-   "cc": "kw",
-   "outlet": "KUNA",
-   "home": "https://www.kuna.net.kw/",
-   "lang": "ar",
+   "cc": "sm",
+   "outlet": "San Marino Fixing",
+   "home": "https://www.sanmarinofixing.com/",
+   "lang": "it"
+  },
+  {
+   "cc": "li",
+   "outlet": "Liechtensteiner Vaterland",
+   "home": "https://www.vaterland.li/",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "outlet": "Liechtensteiner Volksblatt",
+   "home": "https://www.volksblatt.li/",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "outlet": "Regierung Liechtenstein",
+   "home": "https://www.regierung.li/",
+   "lang": "de",
    "state": true
   },
   {
-   "cc": "kw",
-   "outlet": "Arab Times",
-   "home": "https://www.arabtimesonline.com/",
-   "lang": "en"
+   "cc": "mc",
+   "outlet": "Monaco-Matin",
+   "home": "https://www.monacomatin.mc/",
+   "lang": "fr"
   },
   {
-   "cc": "kw",
-   "outlet": "Al Qabas",
-   "home": "https://www.alqabas.com/",
-   "lang": "ar"
-  },
-  {
-   "cc": "kw",
-   "outlet": "Al Jarida",
-   "home": "https://www.aljarida.com/",
-   "lang": "ar"
-  },
-  {
-   "cc": "kw",
-   "outlet": "Kuwait Times",
-   "home": "https://kuwaittimes.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "om",
-   "outlet": "Oman News Agency",
-   "home": "https://omannews.gov.om/",
-   "lang": "ar",
+   "cc": "mc",
+   "outlet": "Gouvernement Princier",
+   "home": "https://www.gouv.mc/",
+   "lang": "fr",
    "state": true
   },
   {
-   "cc": "om",
-   "outlet": "Muscat Daily",
-   "home": "https://www.muscatdaily.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "om",
-   "outlet": "Al Roya",
-   "home": "https://alroya.om/",
-   "lang": "ar"
-  },
-  {
-   "cc": "om",
-   "outlet": "Atheer",
-   "home": "https://www.atheer.om/",
-   "lang": "ar"
-  },
-  {
-   "cc": "bn",
-   "outlet": "Borneo Bulletin",
-   "home": "https://borneobulletin.com.bn/",
-   "lang": "en"
-  },
-  {
-   "cc": "bn",
-   "outlet": "Pelita Brunei",
-   "home": "https://www.pelitabrunei.gov.bn/",
-   "lang": "ms",
-   "state": true
-  },
-  {
-   "cc": "bn",
-   "outlet": "Biz Brunei",
-   "home": "https://www.biz-brunei.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bb",
-   "outlet": "Barbados Advocate",
-   "home": "https://www.barbadosadvocate.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bb",
-   "outlet": "GIS Barbados",
-   "home": "https://gisbarbados.gov.bb/",
+   "cc": "sc",
+   "outlet": "Seychelles Nation",
+   "home": "https://www.nation.sc/",
    "lang": "en",
    "state": true
   },
   {
-   "cc": "bb",
-   "outlet": "CBC Barbados",
-   "home": "https://www.cbc.bb/",
-   "lang": "en"
-  },
-  {
-   "cc": "gm",
-   "outlet": "Kerr Fatou",
-   "home": "https://kerrfatou.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "gm",
-   "outlet": "Fatu Network",
-   "home": "https://fatunetwork.net/",
-   "lang": "en"
-  },
-  {
-   "cc": "gm",
-   "outlet": "Askanwi",
-   "home": "https://askanwi.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bt",
-   "outlet": "Kuensel",
-   "home": "https://kuenselonline.com/",
+   "cc": "sc",
+   "outlet": "Seychelles News Agency",
+   "home": "https://www.seychellesnewsagency.com/",
    "lang": "en",
    "state": true
   },
   {
-   "cc": "bt",
-   "outlet": "Daily Bhutan",
-   "home": "https://dailybhutan.com/",
+   "cc": "sc",
+   "outlet": "Today in Seychelles",
+   "home": "https://www.todayinseychelles.com/",
    "lang": "en"
   },
   {
-   "cc": "dm",
-   "outlet": "Emo News",
-   "home": "https://emonewsdm.com/",
+   "cc": "sz",
+   "outlet": "Swaziland News",
+   "home": "https://www.swazilandnews.co.za/",
    "lang": "en"
   },
   {
-   "cc": "dm",
-   "outlet": "GIS Dominica",
-   "home": "https://news.gov.dm/",
+   "cc": "sz",
+   "outlet": "Eswatini Observer",
+   "home": "https://new.observer.org.sz/",
+   "lang": "en"
+  },
+  {
+   "cc": "eh",
+   "outlet": "SPS",
+   "home": "https://www.spsrasd.info/",
    "lang": "en",
    "state": true
+  },
+  {
+   "cc": "eh",
+   "outlet": "Por un Sahara Libre",
+   "home": "https://porunsaharalibre.org/",
+   "lang": "es"
+  },
+  {
+   "cc": "ls",
+   "outlet": "The Post Lesotho",
+   "home": "https://www.thepost.co.ls/",
+   "lang": "en"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Lesotho Government",
+   "home": "https://www.gov.ls/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "nr",
+   "outlet": "Nauru Government Information Office",
+   "home": "https://naurunews.nr/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "tv",
+   "outlet": "Tuvalu Government",
+   "home": "https://www.tuvalu.tv/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "gd",
+   "outlet": "Grenada Informer",
+   "home": "https://www.grenadainformer.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "gd",
+   "outlet": "GIS Grenada",
+   "home": "https://www.gov.gd/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "ki",
+   "outlet": "Kiribati Government",
+   "home": "https://www.president.gov.ki/",
+   "lang": "en",
+   "state": true
+  },
+  {
+   "cc": "kn",
+   "outlet": "SKN Times",
+   "home": "https://www.sknvibes.com/",
+   "lang": "en"
   },
   {
    "cc": "gw",
-   "outlet": "Gbissau.com",
-   "home": "https://gbissau.com/",
+   "outlet": "Rádio Sol Mansi",
+   "home": "https://www.radiosolmansi.net/",
    "lang": "pt"
   },
   {
    "cc": "km",
-   "outlet": "Al-Watwan",
-   "home": "https://alwatwan.net/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "km",
-   "outlet": "La Gazette des Comores",
-   "home": "https://lagazettedescomores.com/",
+   "outlet": "Comores Infos",
+   "home": "https://www.comores-infos.net/",
    "lang": "fr"
   },
   {
-   "cc": "cv",
-   "outlet": "Inforpress",
-   "home": "https://inforpress.cv/",
-   "lang": "pt",
-   "state": true
-  },
-  {
-   "cc": "cv",
-   "outlet": "Santiago Magazine",
-   "home": "https://santiagomagazine.cv/",
-   "lang": "pt"
-  },
-  {
-   "cc": "cv",
-   "outlet": "Balai",
-   "home": "https://www.balai.cv/",
-   "lang": "pt"
-  },
-  {
-   "cc": "cv",
-   "outlet": "RTC",
-   "home": "https://www.rtc.cv/",
-   "lang": "pt",
-   "state": true
-  },
-  {
-   "cc": "mv",
-   "outlet": "Edition.mv",
-   "home": "https://edition.mv/",
-   "lang": "en"
-  },
-  {
-   "cc": "mv",
-   "outlet": "Avas",
-   "home": "https://avas.mv/",
-   "lang": "dv"
-  },
-  {
-   "cc": "mv",
-   "outlet": "Mihaaru",
-   "home": "https://mihaaru.com/",
-   "lang": "dv"
-  },
-  {
-   "cc": "mv",
-   "outlet": "Raajje.mv",
-   "home": "https://raajje.mv/",
-   "lang": "en"
-  },
-  {
-   "cc": "mw",
-   "outlet": "Zodiak",
-   "home": "https://www.zodiakmalawi.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "mw",
-   "outlet": "MANA",
-   "home": "https://www.mana.mw/",
+   "cc": "pw",
+   "outlet": "Palau Government",
+   "home": "https://www.palaugov.pw/",
    "lang": "en",
    "state": true
   },
   {
-   "cc": "mw",
-   "outlet": "Malawi Voice",
-   "home": "https://www.malawivoice.com/",
+   "cc": "er",
+   "outlet": "Eritrean Press",
+   "home": "https://www.eritreanpress.com/",
    "lang": "en"
   },
   {
    "cc": "lr",
-   "outlet": "Liberian Observer",
-   "home": "https://www.liberianobserver.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "lr",
-   "outlet": "The Bush Chicken",
-   "home": "https://bushchicken.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bz",
-   "outlet": "Channel 5 Belize",
-   "home": "https://edition.channel5belize.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bz",
-   "outlet": "7 News Belize",
-   "home": "https://www.7newsbelize.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bz",
-   "outlet": "The Reporter",
-   "home": "https://www.reporter.bz/",
-   "lang": "en"
-  },
-  {
-   "cc": "bz",
-   "outlet": "San Pedro Sun",
-   "home": "https://www.sanpedrosun.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "gq",
-   "outlet": "Guinea Ecuatorial Press",
-   "home": "https://www.guineaecuatorialpress.com/",
-   "lang": "es",
+   "outlet": "Liberia News Agency",
+   "home": "https://www.liberianewsagency.com/",
+   "lang": "en",
    "state": true
-  },
-  {
-   "cc": "gq",
-   "outlet": "ASODEGUE",
-   "home": "https://www.asodegue.org/",
-   "lang": "es"
-  },
-  {
-   "cc": "ao",
-   "outlet": "ANGOP",
-   "home": "https://www.angop.ao/",
-   "lang": "pt",
-   "state": true
-  },
-  {
-   "cc": "ao",
-   "outlet": "Novo Jornal",
-   "home": "https://novojornal.co.ao/",
-   "lang": "pt"
-  },
-  {
-   "cc": "ao",
-   "outlet": "Jornal de Angola",
-   "home": "https://www.jornaldeangola.ao/",
-   "lang": "pt",
-   "state": true
-  },
-  {
-   "cc": "ao",
-   "outlet": "Club-K",
-   "home": "https://club-k.net/",
-   "lang": "pt"
-  },
-  {
-   "cc": "dj",
-   "outlet": "La Voix de Djibouti",
-   "home": "https://www.lavoixdedjibouti.info/",
-   "lang": "fr"
   },
   {
    "cc": "ga",
-   "outlet": "Gabon Media Time",
-   "home": "https://www.gabonmediatime.com/",
+   "outlet": "Gabon24",
+   "home": "https://www.gabon24.ga/",
    "lang": "fr"
-  },
-  {
-   "cc": "ga",
-   "outlet": "L'Union",
-   "home": "https://www.union.sonapresse.com/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "sl",
-   "outlet": "Awoko",
-   "home": "https://awokonewspaper.sl/",
-   "lang": "en"
-  },
-  {
-   "cc": "sl",
-   "outlet": "Sierra Leone News Agency",
-   "home": "https://slenanews.sl/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "tg",
-   "outlet": "République Togolaise",
-   "home": "https://www.republicoftogo.com/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "tg",
-   "outlet": "Togo Breaking News",
-   "home": "https://togobreakingnews.info/",
-   "lang": "fr"
-  },
-  {
-   "cc": "tg",
-   "outlet": "ATOP",
-   "home": "https://www.atop.tg/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "tm",
-   "outlet": "Turkmenistan Today",
-   "home": "https://tdh.gov.tm/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "tm",
-   "outlet": "Orient",
-   "home": "https://orient.tm/",
-   "lang": "ru"
-  },
-  {
-   "cc": "tm",
-   "outlet": "Turkmenportal",
-   "home": "https://turkmenportal.com/",
-   "lang": "ru"
-  },
-  {
-   "cc": "tm",
-   "outlet": "Azatlyk",
-   "home": "https://www.azathabar.com/",
-   "lang": "tk"
-  },
-  {
-   "cc": "tn",
-   "outlet": "TAP",
-   "home": "https://www.tap.info.tn/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "tn",
-   "outlet": "Business News",
-   "home": "https://www.businessnews.com.tn/",
-   "lang": "fr"
-  },
-  {
-   "cc": "tn",
-   "outlet": "L'Economiste Maghrébin",
-   "home": "https://www.leconomistemaghrebin.com/",
-   "lang": "fr"
-  },
-  {
-   "cc": "tn",
-   "outlet": "Nawaat",
-   "home": "https://nawaat.org/",
-   "lang": "fr"
-  },
-  {
-   "cc": "tn",
-   "outlet": "Mosaïque FM",
-   "home": "https://www.mosaiquefm.net/",
-   "lang": "ar"
-  },
-  {
-   "cc": "mt",
-   "outlet": "Times of Malta",
-   "home": "https://timesofmalta.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "mt",
-   "outlet": "MaltaToday",
-   "home": "https://www.maltatoday.com.mt/",
-   "lang": "en"
-  },
-  {
-   "cc": "mt",
-   "outlet": "Malta Independent",
-   "home": "https://www.independent.com.mt/",
-   "lang": "en"
-  },
-  {
-   "cc": "mt",
-   "outlet": "TVM News",
-   "home": "https://tvmnews.mt/",
-   "lang": "mt"
-  },
-  {
-   "cc": "na",
-   "outlet": "Informanté",
-   "home": "https://informante.web.na/",
-   "lang": "en"
-  },
-  {
-   "cc": "na",
-   "outlet": "The Economist Namibia",
-   "home": "https://economist.com.na/",
-   "lang": "en"
-  },
-  {
-   "cc": "na",
-   "outlet": "NAMPA",
-   "home": "https://www.nampa.org/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "na",
-   "outlet": "Namibian Sun",
-   "home": "https://www.namibiansun.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bj",
-   "outlet": "La Nation Bénin",
-   "home": "https://lanationbenin.info/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "bj",
-   "outlet": "Banouto",
-   "home": "https://www.banouto.bj/",
-   "lang": "fr"
-  },
-  {
-   "cc": "bj",
-   "outlet": "Matin Libre",
-   "home": "https://matinlibre.com/",
-   "lang": "fr"
-  },
-  {
-   "cc": "bj",
-   "outlet": "Fraternité",
-   "home": "https://fraternitebj.info/",
-   "lang": "fr"
-  },
-  {
-   "cc": "er",
-   "outlet": "ERENA",
-   "home": "https://erena.org/",
-   "lang": "ti"
-  },
-  {
-   "cc": "er",
-   "outlet": "TesfaNews",
-   "home": "https://tesfanews.net/",
-   "lang": "en"
-  },
-  {
-   "cc": "er",
-   "outlet": "Eritrea Hub",
-   "home": "https://eritreahub.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "er",
-   "outlet": "Madote",
-   "home": "https://www.madote.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "mu",
-   "outlet": "L'Express Maurice",
-   "home": "https://lexpress.mu/",
-   "lang": "fr"
-  },
-  {
-   "cc": "mu",
-   "outlet": "Le Mauricien",
-   "home": "https://www.lemauricien.com/",
-   "lang": "fr"
-  },
-  {
-   "cc": "mu",
-   "outlet": "ION News",
-   "home": "https://ionnews.mu/",
-   "lang": "en"
-  },
-  {
-   "cc": "py",
-   "outlet": "Última Hora",
-   "home": "https://www.ultimahora.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "py",
-   "outlet": "Hoy",
-   "home": "https://www.hoy.com.py/",
-   "lang": "es"
-  },
-  {
-   "cc": "py",
-   "outlet": "IP Paraguay",
-   "home": "https://www.ip.gov.py/",
-   "lang": "es",
-   "state": true
-  },
-  {
-   "cc": "py",
-   "outlet": "El Nacional",
-   "home": "https://elnacional.com.py/",
-   "lang": "es"
-  },
-  {
-   "cc": "ss",
-   "outlet": "City Review",
-   "home": "https://cityreviewss.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "ss",
-   "outlet": "No. 1 Citizen",
-   "home": "https://www.onecitizendaily.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "tt",
-   "outlet": "Newsday TT",
-   "home": "https://newsday.co.tt/",
-   "lang": "en"
-  },
-  {
-   "cc": "tt",
-   "outlet": "Trinidad Guardian",
-   "home": "https://www.guardian.co.tt/",
-   "lang": "en"
-  },
-  {
-   "cc": "uy",
-   "outlet": "El País Uruguay",
-   "home": "https://www.elpais.com.uy/",
-   "lang": "es"
-  },
-  {
-   "cc": "uy",
-   "outlet": "El Observador",
-   "home": "https://www.elobservador.com.uy/",
-   "lang": "es"
-  },
-  {
-   "cc": "uy",
-   "outlet": "Búsqueda",
-   "home": "https://www.busqueda.com.uy/",
-   "lang": "es"
-  },
-  {
-   "cc": "uy",
-   "outlet": "Subrayado",
-   "home": "https://www.subrayado.com.uy/",
-   "lang": "es"
-  },
-  {
-   "cc": "zw",
-   "outlet": "The Herald",
-   "home": "https://www.herald.co.zw/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "zw",
-   "outlet": "The Chronicle",
-   "home": "https://www.chronicle.co.zw/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "zw",
-   "outlet": "ZimLive",
-   "home": "https://www.zimlive.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "zw",
-   "outlet": "Zimbabwe Situation",
-   "home": "https://www.zimbabwesituation.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "tj",
-   "outlet": "Khovar",
-   "home": "https://khovar.tj/",
-   "lang": "ru",
-   "state": true
-  },
-  {
-   "cc": "tj",
-   "outlet": "Radio Ozodi",
-   "home": "https://www.ozodi.org/",
-   "lang": "tg"
-  },
-  {
-   "cc": "tj",
-   "outlet": "News.tj",
-   "home": "https://news.tj/",
-   "lang": "ru"
-  },
-  {
-   "cc": "to",
-   "outlet": "Talanoa 'o Tonga",
-   "home": "https://talanoaotonga.to/",
-   "lang": "en"
-  },
-  {
-   "cc": "ws",
-   "outlet": "Samoa Observer",
-   "home": "https://www.samoaobserver.ws/",
-   "lang": "en"
-  },
-  {
-   "cc": "cf",
-   "outlet": "ACAP",
-   "home": "https://acap.cf/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "cf",
-   "outlet": "Centrafrique le Défi",
-   "home": "https://centrafriqueledefi.com/",
-   "lang": "fr"
-  },
-  {
-   "cc": "cf",
-   "outlet": "RJDH",
-   "home": "https://rjdh.org/",
-   "lang": "fr"
-  },
-  {
-   "cc": "ge",
-   "outlet": "InterPressNews",
-   "home": "https://www.interpressnews.ge/",
-   "lang": "en"
-  },
-  {
-   "cc": "ge",
-   "outlet": "Agenda.ge",
-   "home": "https://agenda.ge/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "ge",
-   "outlet": "Georgia Today",
-   "home": "https://georgiatoday.ge/",
-   "lang": "en"
-  },
-  {
-   "cc": "ge",
-   "outlet": "1TV Georgia",
-   "home": "https://1tv.ge/",
-   "lang": "en"
-  },
-  {
-   "cc": "ge",
-   "outlet": "Netgazeti",
-   "home": "https://netgazeti.ge/",
-   "lang": "ka"
-  },
-  {
-   "cc": "ge",
-   "outlet": "Publika",
-   "home": "https://publika.ge/",
-   "lang": "ka"
-  },
-  {
-   "cc": "jm",
-   "outlet": "Radio Jamaica News",
-   "home": "https://radiojamaicanewsonline.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "jm",
-   "outlet": "JIS",
-   "home": "https://jis.gov.jm/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "mr",
-   "outlet": "AMI",
-   "home": "https://ami.mr/",
-   "lang": "fr",
-   "state": true
-  },
-  {
-   "cc": "mr",
-   "outlet": "Alakhbar",
-   "home": "https://alakhbar.info/",
-   "lang": "ar"
-  },
-  {
-   "cc": "ae",
-   "outlet": "WAM",
-   "home": "https://www.wam.ae/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "ae",
-   "outlet": "Al Khaleej",
-   "home": "https://www.alkhaleej.ae/",
-   "lang": "ar"
-  },
-  {
-   "cc": "ae",
-   "outlet": "Al Bayan",
-   "home": "https://www.albayan.ae/",
-   "lang": "ar"
-  },
-  {
-   "cc": "ae",
-   "outlet": "Emarat Al Youm",
-   "home": "https://www.emaratalyoum.com/",
-   "lang": "ar"
-  },
-  {
-   "cc": "bh",
-   "outlet": "BNA",
-   "home": "https://www.bna.bh/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "bh",
-   "outlet": "GDN Online",
-   "home": "https://www.gdnonline.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bh",
-   "outlet": "Al Ayam",
-   "home": "https://www.alayam.com/",
-   "lang": "ar"
-  },
-  {
-   "cc": "bh",
-   "outlet": "Al Watan",
-   "home": "https://alwatannews.net/",
-   "lang": "ar"
-  },
-  {
-   "cc": "bo",
-   "outlet": "Erbol",
-   "home": "https://erbol.com.bo/",
-   "lang": "es"
-  },
-  {
-   "cc": "bo",
-   "outlet": "ABI",
-   "home": "https://abi.bo/",
-   "lang": "es",
-   "state": true
-  },
-  {
-   "cc": "bo",
-   "outlet": "Brújula Digital",
-   "home": "https://brujuladigital.net/",
-   "lang": "es"
-  },
-  {
-   "cc": "bo",
-   "outlet": "Correo del Sur",
-   "home": "https://correodelsur.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "bo",
-   "outlet": "El Diario",
-   "home": "https://www.eldiario.net/",
-   "lang": "es"
-  },
-  {
-   "cc": "bw",
-   "outlet": "Mmegi",
-   "home": "https://www.mmegi.bw/",
-   "lang": "en"
-  },
-  {
-   "cc": "bw",
-   "outlet": "Daily News Botswana",
-   "home": "https://dailynews.gov.bw/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "gh",
-   "outlet": "Citi Newsroom",
-   "home": "https://citinewsroom.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "gh",
-   "outlet": "GNA",
-   "home": "https://gna.org.gh/",
-   "lang": "en",
-   "state": true
-  },
-  {
-   "cc": "gh",
-   "outlet": "Modern Ghana",
-   "home": "https://www.modernghana.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "gh",
-   "outlet": "Pulse Ghana",
-   "home": "https://www.pulse.com.gh/",
-   "lang": "en"
-  },
-  {
-   "cc": "ee",
-   "outlet": "ERR News",
-   "home": "https://news.err.ee/",
-   "lang": "en"
-  },
-  {
-   "cc": "ee",
-   "outlet": "Delfi",
-   "home": "https://www.delfi.ee/",
-   "lang": "et"
-  },
-  {
-   "cc": "ni",
-   "outlet": "La Prensa",
-   "home": "https://www.laprensani.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "ni",
-   "outlet": "100% Noticias",
-   "home": "https://100noticias.com.ni/",
-   "lang": "es"
-  },
-  {
-   "cc": "ni",
-   "outlet": "Artículo 66",
-   "home": "https://www.articulo66.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "ni",
-   "outlet": "El 19 Digital",
-   "home": "https://www.el19digital.com/",
-   "lang": "es",
-   "state": true
-  },
-  {
-   "cc": "bs",
-   "outlet": "Nassau Guardian",
-   "home": "https://thenassauguardian.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "lc",
-   "outlet": "St Lucia News Online",
-   "home": "https://www.stlucianewsonline.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "lc",
-   "outlet": "HTS",
-   "home": "https://htsstlucia.org/",
-   "lang": "en"
-  },
-  {
-   "cc": "fm",
-   "outlet": "Kaselehlie Press",
-   "home": "https://www.kpress.info/",
-   "lang": "en"
   }
  ]
 }
