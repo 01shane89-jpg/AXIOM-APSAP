@@ -50,9 +50,17 @@ const KINDS = [
   ["attack_on_facility", /\b(?:attack\w* on|stormed|storm\w*)\b.*\b(?:station|office|base|outpost|school|checkpoint)\b/i],
   ["statistics", /\b(?:statistic\w*|incidents? (?:this|last) (?:year|month)|since 2004|year-to-date|\d[\d,]* incidents)\b|สถิติ/i],
 ];
-export function classify(text) { for (const [k, re] of KINDS) if (re.test(text)) return k; return "other"; }
+// Training, exercises, drills and courses (IED-awareness training, an evacuation drill) are not attacks: kind "training", unless the
+// headline also says someone was hurt or attacked (an attack on a training camp stays an attack).
+const TRAINING = /\b(?:training|trainees?|drills?|exercises?|workshops?|seminars?|rehears\w*|simulation)\b|ฝึกอบรม|ฝึกซ้อม|ฝึกปฏิบัติ|ซ้อมแผน|อบรม|การฝึก|สัมมนา|\b(?:latihan|kursus|bengkel)\b/i;
+const HARM = /\b(?:killed|kill\w*|dead|died|death|injur\w*|wound\w*|hurt|attack\w*|ambush\w*|gunm[ae]n|shot|opened fire|insurgent\w*|militant\w*)\b|เสียชีวิต|บาดเจ็บ|คนร้าย|ลอบ|ผู้ก่อความไม่สงบ|ซุ่ม/i;
+export function training(text) { const t = String(text || ""); return TRAINING.test(t) && !HARM.test(t); }
+export function classify(text) { if (training(text)) return "training"; for (const [k, re] of KINDS) if (re.test(text)) return k; return "other"; }
 // the kind and the words that decided it (for claim evidence); null when nothing matched
-export function kindWords(text) { for (const [k, re] of KINDS) { const m = String(text || "").match(re); if (m) return { kind: k, words: m[0].trim() }; } return null; }
+export function kindWords(text) {
+  if (training(text)) return { kind: "training", words: String(text).match(TRAINING)[0].trim() };
+  for (const [k, re] of KINDS) { const m = String(text || "").match(re); if (m) return { kind: k, words: m[0].trim() }; } return null;
+}
 const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12 };
 // Casualty figures only when the headline states them plainly (under 100, so a long-run toll is never read as one incident's)
 export function figure(text, re) {
@@ -139,7 +147,7 @@ const DOMAIN = (link) => { try { return new URL(link).hostname.replace(/^www\./,
 export function markAlerts(items, textOf) {
   // exp: the explosive words matched while the job still held the summary (it is not stored: tools/outlet_text.mjs)
   for (const i of items) if (!i.exp && EXPLOSIVE.test(textOf(i))) i.exp = 1;
-  const cand = items.filter((i) => i.date && !i.seed && i.exp && !/^(legal|peace_talks|statistics)$/.test(i.kind || ""));
+  const cand = items.filter((i) => i.date && !i.seed && i.exp && !/^(legal|peace_talks|statistics|training)$/.test(i.kind || ""));
   for (const i of items) { delete i.alert; delete i.corrob; i.tier = tierOf(i); }
   for (const i of cand) {
     if (i.tier === "official") { i.alert = "official"; continue; }
@@ -164,12 +172,30 @@ const PLACES = [
 ].flatMap((p) => p.th.map((t) => ({ t, name: p.name, re: p.re }))).sort((a, b) => b.t.length - a.t.length);
 const TH_PLACE = new RegExp(PLACES.map((p) => esc(p.t)).join("|"), "g");
 const BY_TH = Object.fromEntries(PLACES.map((p) => [p.t, p]));
+// The same guard for the security-force abbreviations, agencies and public officials the model garbles ("อส." came out as
+// "Mumbai", "'ทวี'" as "Tway"). Each term: the Thai pattern, the English put in its place, and what an English translation must
+// still say when the Thai has the term. Officials are public officeholders only; a bare common word (ทวี also means "to increase")
+// is matched only in the forms that are unmistakably the name (in quotes, with a rank, or with the surname).
+const TERMS = [
+  { th: /อส\./g, en: "Or Sor volunteer", ok: /\bOr Sor\b|volunteer|defen[cs]e corps/i },
+  { th: /ชรบ\./g, en: "village defence volunteer", ok: /village defen[cs]e|Chor Ror Bor|volunteer/i },
+  { th: /ทหารพราน/g, en: "ranger", ok: /ranger|Thahan Phran/i },
+  { th: /กอ\.รมน\.(?:\s*ภาค\s*4)?/g, en: "ISOC", ok: /\bISOC\b|Internal Security Operations/i },
+  { th: /ศอ\.บต\./g, en: "SBPAC", ok: /\bSBPAC\b|Southern Border Provinces Administrat/i },
+  { th: /บีอาร์เอ็น/g, en: "BRN", ok: /\bBRN\b|Barisan/i },
+  { th: /พูโล/g, en: "PULO", ok: /\bPULO\b/i },
+  { th: /ทวี\s*สอดส่อง|พ\.ต\.อ\.\s*ทวี|(?<=['‘’"“”])ทวี(?=['‘’"“”])/g, en: "Thawee Sodsong", ok: /Thawee|Sodsong/i },
+  { th: /อนุทิน(?:\s*ชาญวีรกูล)?/g, en: "Anutin Charnvirakul", ok: /Anutin/i },
+];
 export function placeSubst(text) {
-  return String(text || "").replace(TH_PLACE, (m) => " " + BY_TH[m].name + " ").replace(/ {2,}/g, " ").trim();
+  let t = String(text || "").replace(TH_PLACE, (m) => " " + BY_TH[m].name + " ");
+  for (const x of TERMS) t = t.replace(x.th, " " + x.en + " ");
+  return t.replace(/ {2,}/g, " ").trim();
 }
 export function placeMismatch(orig, en) {
   if (!orig || !en) return false;
   const seen = new Set(String(orig).match(TH_PLACE) || []);
   for (const t of seen) if (!BY_TH[t].re.test(en)) return true;
+  for (const x of TERMS) { x.th.lastIndex = 0; if (x.th.test(orig) && !x.ok.test(en)) return true; }
   return false;
 }

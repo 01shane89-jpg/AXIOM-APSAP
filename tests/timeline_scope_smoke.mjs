@@ -60,10 +60,13 @@ const listed = (p) => p.evaluate(() => {
   await p.evaluate(() => window.OSAP_TLREPORT.open()); await p.waitForSelector(".tlr h2", { timeout: 20000 });
   ok(/Deep South/.test(await p.textContent(".tlr h2")), "report from the Deep South timeline is titled Deep South");
   ok(await p.evaluate(() => document.getElementById("tlr-layer").value === "cf-thailand-deep-south"), "report Covers: Deep South");
-  const dsFp = await p.evaluate(() => document.querySelectorAll("[data-tlfp]").length);
+  // the report lists at most its latest 1500 rows, so compare the record totals it states, not the rows drawn
+  const total = () => p.evaluate(() => { const t = document.querySelector(".tlrglance > div").textContent; const m = /of (\d+)\)/.exec(t); return m ? +m[1] : parseInt(t, 10); });
+  const dsN = await total();
   await p.selectOption("#tlr-layer", ""); await p.waitForSelector(".tlr h2");
   ok((await p.textContent(".tlr h2")).trim() === "Thailand", "report switches to All Thailand");
-  ok(await p.evaluate((n) => document.querySelectorAll("[data-tlfp]").length > n, dsFp), "All Thailand report has more entries");
+  const allN = await total();
+  ok(allN > dsN, `All Thailand report has more records (${allN} > ${dsN})`);
   ok(await p.evaluate(() => ![...document.querySelectorAll("#tlr-layer option")].some((o) => o.value === "insurgency")), "the taken-over layer is not listed twice");
   await p.click("#tlr-close");
   // switch to all
