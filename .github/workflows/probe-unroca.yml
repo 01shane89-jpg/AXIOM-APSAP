@@ -1,0 +1,21 @@
+name: probe-unroca
+on:
+  push:
+    branches: [claude/milref-unroca]
+    paths: [.github/workflows/probe-unroca.yml]
+permissions: { contents: read }
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: |
+          set +e
+          UA='Mozilla/5.0 (OSAP research probe)'
+          for u in /thailand/ /thailand /en/thailand/ /en/thailand /en/thailand/report/2022/ /thailand/report/2022/ /en/country-profile/thailand/ /en/#!/thailand /reporting/ ; do
+            for al in '' 'en'; do
+              printf '%s AL=%s -> ' "$u" "$al"; curl -sSL -m 30 -A "$UA" ${al:+-H "Accept-Language: $al"} -o r.html -w '%{http_code} %{size_download} %{url_effective}' "https://www.unroca.org$u"; printf ' | %s\n' "$(grep -o '<title>[^<]*' r.html | head -1)"
+            done
+          done
+          curl -sSL -m 30 -A "$UA" -o app.js 'https://www.unroca.org/static/unroca_spa/public/unroca-javascript.min.js?v=2018-12'
+          echo "=== routes"; grep -oE '\.when\("[^"]+"' app.js | sort -u; grep -oE 'html5Mode\([^)]*\)|hashPrefix\([^)]*\)' app.js | sort -u
