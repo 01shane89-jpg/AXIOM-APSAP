@@ -49,7 +49,7 @@ const SIP = { cc: "th", name: "Thailand", read: NOWS, years: [2016, 2026], kind:
   { r: "Thailand", s: "Sweden", oy: 2025, no: 4, d: "Gripen-E", w: "fighter/ground-attack aircraft", st: "New", c: "SEK5.3 b deal; delivery planned by 2030", tt: 126, td: 0, u: ["oy"], fp: "c".repeat(64) },
   { r: "Thailand", s: "China<img src=x onerror=window.__xss=1>", oy: 2017, no: 7, d: "VT-4 ARV", w: "armoured recovery vehicle", dn: 7, dy: "2017; 2018", st: "New", tt: 12.6, td: 12.6, fp: "d".repeat(64) }] },
   exp: { total: 1, deals: [{ r: "Bhutan", s: "Thailand", oy: 2021, no: 15, d: "First Win", w: "armoured personnel carrier", dn: 15, dy: "2021", st: "New", tt: 4.5, td: 4.5, fp: "e".repeat(64) }] } };
-const UNR = { cc: "th", name: "Thailand", read: NOWS, url: "https://www.unroca.org/thailand/", kind: "source-claims", reports: [2025, 2024, 2022, 1993],
+const UNR = { cc: "th", name: "Thailand", read: NOWS, url: "https://www.unroca.org/en/thailand/", kind: "source-claims", reports: [2025, 2024, 2022, 1993],
   hold: [{ k: "bt", y: 2025, n: 826, s: [[2024, 790]], fp: "1".repeat(64) }, { k: "ws", y: 2025, n: 44, cl: true, fp: "2".repeat(64) }],
   dom: [{ k: "lcas", dom: 277, imp: 10, cd: true, fp: "3".repeat(64) }],
   imp: [{ p: "United States", pcc: "us", o: { bt: 125, acv: 396 }, t: { bt: 125, acv: 219 }, fp: "4".repeat(64) }, { p: "Sweden<img src=x onerror=window.__xss=1>", o: { mml_gen: 65 }, tc: ["mml_gen"], fp: "5".repeat(64) }],
@@ -96,7 +96,7 @@ async function open(cc, opts) {
   ok(/Arms transfers/.test(r.text) && /Non-commercial source/.test(r.text) && /Received by Thailand \(2\)/.test(r.text) && /Supplied by Thailand \(1\)/.test(r.text) && /Gripen-E/.test(r.text) && /First Win/.test(r.text) && /Bhutan/.test(r.text) && /2016 to 2026/.test(r.text), "SIPRI arms transfers: both sides, years, non-commercial tag");
   ok(r.links.some((u) => /sipri\.org\/databases\/armstransfers/.test(u)) && r.links.some((u) => /sipri\.org\/about\/terms-and-conditions/.test(u)), "SIPRI credited with its terms");
   ok(/UN Register of Conventional Arms/.test(r.text) && /Official report \(claim\)/.test(r.text) && /4 reports filed, the latest for 2025/.test(r.text) && /826/.test(r.text) && /What Thailand reported/.test(r.text) && /United States/.test(r.text) && /Bhutan/.test(r.text), "UN Register: reports, holdings, both sides per partner");
-  ok(r.links.some((u) => u === "https://www.unroca.org/thailand/report/2025/") && r.links.some((u) => /un\.org\/en\/about-us\/terms-of-use/.test(u)), "UN Register: links each report and credits the UN terms");
+  ok(r.links.some((u) => u === "https://www.unroca.org/en/thailand/report/2025/") && r.links.some((u) => /un\.org\/en\/about-us\/terms-of-use/.test(u)), "UN Register: links each report and credits the UN terms");
   ok(r.arts && (() => { const t = r.text; return t.indexOf("Arms transfers") < t.indexOf("UN Register of Conventional Arms") && t.indexOf("UN Register of Conventional Arms") < t.indexOf("Forces and units"); })(), "UN Register sits after the SIPRI transfers, before the order of battle");
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   if (process.env.SHOTS) { await p.evaluate(() => document.getElementById("milref").scrollIntoView()); await p.screenshot({ path: process.env.SHOTS + "/milref-brief.png" });

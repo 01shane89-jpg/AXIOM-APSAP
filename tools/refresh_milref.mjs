@@ -139,10 +139,6 @@ if (process.env.MILREF_UNROCA !== "0") {
     log("UNROCA countries matched:", Object.keys(ids).length, "not in the register:", CCS.filter((c) => c !== "oki" && !ids[c]).join(" ") || "none");
   } catch (e) { log("UNROCA country list:", e.message); }
   fs.mkdirSync(OUT + "/unroca", { recursive: true });
-  // the page links each country's profile and its reports by year: say in the log when the register's addresses stop answering
-  for (const c of Object.keys(ids).slice(0, 1)) for (const u of [UNR + "/" + ids[c].slug + "/", UNR + "/" + ids[c].slug + "/report/2022/"]) {
-    try { const r = await fetch(u, { method: "GET", headers: { "user-agent": UA } }); log("UNROCA link", u, "HTTP", r.status); } catch (e) { log("UNROCA link", u, e.message); }
-  }
   const todo = CCS.filter((c) => c !== "oki" && ids[c]);
   async function unOne(cc) {
     let old = null; try { old = JSON.parse(fs.readFileSync(OUT + "/unroca/" + cc + ".json", "utf8")); } catch (e) {}
@@ -152,7 +148,7 @@ if (process.env.MILREF_UNROCA !== "0") {
         try {
           const r = unrocaFrom(await getJson(UNR + "/api/" + encodeURIComponent(ids[cc].slug) + "/", 60000));
           if (!r) throw new Error("no country profile in the answer");
-          rec = Object.assign({ cc, name: NAMES[cc], read: STAMP, url: UNR + "/" + ids[cc].slug + "/", source: UNROCA_SRC, kind: "source-claims" }, r);
+          rec = Object.assign({ cc, name: NAMES[cc], read: STAMP, url: UNR + "/en/" + ids[cc].slug + "/", source: UNROCA_SRC, kind: "source-claims" }, r);
           ok++;
         } catch (e) { if (i) { bad.push(cc); log(cc, "UNROCA:", e.message); } else await sleep(3000); }
       }
@@ -161,6 +157,11 @@ if (process.env.MILREF_UNROCA !== "0") {
     if (rec) { fs.writeFileSync(OUT + "/unroca/" + cc + ".json", JSON.stringify(rec) + "\n"); unCount[cc] = [rec.reports[0] || 0, rec.hold.length]; }
   }
   { let i = 0; await Promise.all(Array.from({ length: 3 }, async () => { while (i < todo.length) await unOne(todo[i++]); })); }
+  // the page links each report as <url>report/<year>/ (the register's site has no page per country): say when that stops answering
+  for (const c of todo.slice(0, 1)) {
+    try { const r = JSON.parse(fs.readFileSync(OUT + "/unroca/" + c + ".json", "utf8")), u = r.url + "report/" + r.reports[0] + "/";
+      if (r.reports[0]) { const a = await fetch(u, { headers: { "user-agent": UA } }); log("UNROCA report link", u, "HTTP", a.status); } } catch (e) { log("UNROCA report link:", e.message); }
+  }
   log("UNROCA read:", ok, "of", todo.length, "failed:", bad.join(" ") || "none", "with holdings:", Object.values(unCount).filter((v) => v[1]).length, "minutes:", Math.round((Date.now() - t0) / 60000));
 }
 
