@@ -3,466 +3,340 @@
  "feeds": [],
  "discover": [
   {
-   "cc": "am",
-   "outlet": "Azatutyun",
-   "home": "https://www.azatutyun.am/",
-   "lang": "hy"
-  },
-  {
-   "cc": "am",
-   "outlet": "CivilNet",
-   "home": "https://civilnet.am/",
+   "cc": "at",
+   "outlet": "AIES",
+   "home": "https://www.aies.at/",
    "lang": "en"
   },
   {
-   "cc": "am",
-   "outlet": "Panorama.am",
-   "home": "https://www.panorama.am/",
+   "cc": "at",
+   "outlet": "oiip",
+   "home": "https://www.oiip.ac.at/",
    "lang": "en"
   },
   {
-   "cc": "am",
-   "outlet": "ARKA",
-   "home": "https://arka.am/",
+   "cc": "be",
+   "outlet": "Egmont Institute",
+   "home": "https://www.egmontinstitute.be/",
    "lang": "en"
   },
   {
-   "cc": "ge",
-   "outlet": "Interpressnews",
-   "home": "https://www.interpressnews.ge/",
+   "cc": "ch",
+   "outlet": "CSS ETH Zurich",
+   "home": "https://css.ethz.ch/en/",
    "lang": "en"
   },
   {
-   "cc": "ge",
-   "outlet": "Agenda.ge",
-   "home": "https://agenda.ge/",
+   "cc": "ch",
+   "outlet": "GCSP",
+   "home": "https://www.gcsp.ch/",
    "lang": "en"
   },
   {
-   "cc": "ge",
-   "outlet": "Business Media Georgia",
-   "home": "https://bm.ge/",
+   "cc": "nl",
+   "outlet": "HCSS",
+   "home": "https://hcss.nl/",
    "lang": "en"
   },
   {
-   "cc": "ge",
-   "outlet": "1TV Georgia",
-   "home": "https://1tv.ge/",
+   "cc": "cz",
+   "outlet": "AMO",
+   "home": "https://www.amo.cz/en/",
    "lang": "en"
   },
   {
-   "cc": "by",
-   "outlet": "Radio Svaboda",
-   "home": "https://www.svaboda.org/",
-   "lang": "be"
+   "cc": "cz",
+   "outlet": "IIR Prague",
+   "home": "https://www.iir.cz/en",
+   "lang": "en"
   },
   {
-   "cc": "by",
-   "outlet": "Belsat",
-   "home": "https://belsat.eu/",
-   "lang": "be"
+   "cc": "sk",
+   "outlet": "GLOBSEC",
+   "home": "https://www.globsec.org/",
+   "lang": "en"
   },
   {
-   "cc": "by",
-   "outlet": "SB Belarus Today",
-   "home": "https://www.sb.by/",
-   "lang": "ru"
+   "cc": "ro",
+   "outlet": "New Strategy Center",
+   "home": "https://www.newstrategycenter.ro/",
+   "lang": "en"
   },
   {
-   "cc": "mk",
-   "outlet": "Sloboden Pecat",
-   "home": "https://www.slobodenpecat.mk/",
-   "lang": "mk"
+   "cc": "gr",
+   "outlet": "ELIAMEP",
+   "home": "https://www.eliamep.gr/en/",
+   "lang": "en"
   },
   {
-   "cc": "mk",
-   "outlet": "SDK",
-   "home": "https://sdk.mk/",
-   "lang": "mk"
+   "cc": "lv",
+   "outlet": "LIIA",
+   "home": "https://www.liia.lv/en",
+   "lang": "en"
+  },
+  {
+   "cc": "lt",
+   "outlet": "EESC Vilnius",
+   "home": "https://www.eastcenter.org/en/",
+   "lang": "en"
+  },
+  {
+   "cc": "xk",
+   "outlet": "KCSS",
+   "home": "https://qkss.org/en",
+   "lang": "en"
   },
   {
    "cc": "al",
-   "outlet": "Top Channel",
-   "home": "https://top-channel.tv/",
-   "lang": "sq"
-  },
-  {
-   "cc": "al",
-   "outlet": "Tirana Times",
-   "home": "https://www.tiranatimes.com/",
+   "outlet": "IDM Albania",
+   "home": "https://idmalbania.org/",
    "lang": "en"
   },
   {
-   "cc": "ba",
-   "outlet": "RSE",
-   "home": "https://www.slobodnaevropa.org/",
-   "lang": "bs"
+   "cc": "mk",
+   "outlet": "MCMS",
+   "home": "https://www.mcms.mk/en",
+   "lang": "en"
   },
   {
-   "cc": "ba",
-   "outlet": "Oslobodjenje",
-   "home": "https://www.oslobodjenje.ba/",
-   "lang": "bs"
+   "cc": "bd",
+   "outlet": "CPD Bangladesh",
+   "home": "https://cpd.org.bd/",
+   "lang": "en"
   },
   {
-   "cc": "ba",
-   "outlet": "Nezavisne",
-   "home": "https://www.nezavisne.com/",
-   "lang": "sr"
+   "cc": "bd",
+   "outlet": "BIPSS",
+   "home": "https://bipss.org.bd/",
+   "lang": "en"
   },
   {
-   "cc": "cu",
-   "outlet": "Granma",
-   "home": "https://www.granma.cu/",
+   "cc": "gh",
+   "outlet": "CDD-Ghana",
+   "home": "https://cddgh.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "outlet": "IMANI Africa",
+   "home": "https://imaniafrica.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "na",
+   "outlet": "IPPR Namibia",
+   "home": "https://ippr.org.na/",
+   "lang": "en"
+  },
+  {
+   "cc": "bw",
+   "outlet": "BIDPA",
+   "home": "https://www.bidpa.bw/",
+   "lang": "en"
+  },
+  {
+   "cc": "zm",
+   "outlet": "PMRC Zambia",
+   "home": "https://www.pmrczambia.com/",
+   "lang": "en"
+  },
+  {
+   "cc": "tz",
+   "outlet": "REPOA",
+   "home": "https://www.repoa.or.tz/",
+   "lang": "en"
+  },
+  {
+   "cc": "ae",
+   "outlet": "Emirates Policy Center",
+   "home": "https://www.epc.ae/en",
+   "lang": "en"
+  },
+  {
+   "cc": "bh",
+   "outlet": "Derasat",
+   "home": "https://www.derasat.org.bh/en/",
+   "lang": "en"
+  },
+  {
+   "cc": "jm",
+   "outlet": "CAPRI",
+   "home": "https://www.capricaribbean.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "co",
+   "outlet": "Fundacion Ideas para la Paz",
+   "home": "https://ideaspaz.org/",
    "lang": "es"
   },
   {
-   "cc": "cu",
-   "outlet": "Cubadebate",
-   "home": "https://www.cubadebate.cu/",
+   "cc": "cl",
+   "outlet": "CEP Chile",
+   "home": "https://www.cepchile.cl/",
    "lang": "es"
   },
   {
-   "cc": "cu",
-   "outlet": "Diario de Cuba",
-   "home": "https://www.diariodecuba.com/",
+   "cc": "bo",
+   "outlet": "Fundacion Milenio",
+   "home": "https://www.fundacion-milenio.org/",
    "lang": "es"
   },
   {
-   "cc": "do",
-   "outlet": "Listin Diario",
-   "home": "https://listindiario.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "do",
-   "outlet": "El Caribe",
-   "home": "https://www.elcaribe.com.do/",
-   "lang": "es"
-  },
-  {
-   "cc": "gt",
-   "outlet": "Soy502",
-   "home": "https://www.soy502.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "gt",
-   "outlet": "Plaza Publica",
-   "home": "https://www.plazapublica.com.gt/",
-   "lang": "es"
-  },
-  {
-   "cc": "sv",
-   "outlet": "El Diario de Hoy",
-   "home": "https://www.elsalvador.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "sv",
-   "outlet": "La Prensa Grafica",
-   "home": "https://www.laprensagrafica.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "sv",
-   "outlet": "El Faro",
-   "home": "https://elfaro.net/",
-   "lang": "es"
-  },
-  {
-   "cc": "sv",
-   "outlet": "Diario El Mundo",
-   "home": "https://diario.elmundo.sv/",
-   "lang": "es"
-  },
-  {
-   "cc": "hn",
-   "outlet": "La Prensa HN",
-   "home": "https://www.laprensa.hn/",
-   "lang": "es"
-  },
-  {
-   "cc": "hn",
-   "outlet": "El Heraldo HN",
-   "home": "https://www.elheraldo.hn/",
+   "cc": "uy",
+   "outlet": "CERES Uruguay",
+   "home": "https://www.ceres-uy.org/",
    "lang": "es"
   },
   {
    "cc": "pa",
-   "outlet": "Telemetro",
-   "home": "https://www.telemetro.com/",
+   "outlet": "CIEPS Panama",
+   "home": "https://www.cieps.org.pa/",
    "lang": "es"
   },
   {
-   "cc": "uy",
-   "outlet": "Subrayado",
-   "home": "https://www.subrayado.com.uy/",
-   "lang": "es"
-  },
-  {
-   "cc": "uy",
-   "outlet": "El Pais UY",
-   "home": "https://www.elpais.com.uy/",
-   "lang": "es"
-  },
-  {
-   "cc": "bo",
-   "outlet": "Pagina Siete",
-   "home": "https://www.paginasiete.bo/",
-   "lang": "es"
-  },
-  {
-   "cc": "bo",
-   "outlet": "El Deber",
-   "home": "https://www.eldeber.com.bo/",
-   "lang": "es"
-  },
-  {
-   "cc": "bo",
-   "outlet": "La Razon",
-   "home": "https://www.la-razon.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "py",
-   "outlet": "Ultima Hora",
-   "home": "https://www.ultimahora.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "py",
-   "outlet": "IP Paraguay",
-   "home": "https://www.ip.gov.py/",
+   "cc": "gt",
+   "outlet": "ASIES",
+   "home": "https://www.asies.org.gt/",
    "lang": "es"
   },
   {
    "cc": "cr",
-   "outlet": "CRHoy",
-   "home": "https://www.crhoy.com/",
+   "outlet": "Estado de la Nacion",
+   "home": "https://www.estadonacion.or.cr/",
    "lang": "es"
   },
   {
-   "cc": "cr",
-   "outlet": "Teletica",
-   "home": "https://www.teletica.com/",
-   "lang": "es"
-  },
-  {
-   "cc": "cr",
-   "outlet": "El Observador CR",
-   "home": "https://www.elobservador.cr/",
-   "lang": "es"
-  },
-  {
-   "cc": "tz",
-   "outlet": "The Citizen",
-   "home": "https://www.thecitizen.co.tz/",
+   "cc": "np",
+   "outlet": "CESIF",
+   "home": "https://www.cesifnepal.org/",
    "lang": "en"
   },
   {
-   "cc": "tz",
-   "outlet": "IPP Media",
-   "home": "https://www.ippmedia.com/",
+   "cc": "mg",
+   "outlet": "CREAM",
+   "home": "https://www.cream.mg/",
+   "lang": "fr"
+  },
+  {
+   "cc": "sn",
+   "outlet": "Timbuktu Institute",
+   "home": "https://www.timbuktu-institute.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ml",
+   "outlet": "Mali Institute",
+   "home": "https://www.mali-mali.org/",
+   "lang": "fr"
+  },
+  {
+   "cc": "ci",
+   "outlet": "CIRES",
+   "home": "https://www.cires-ci.com/",
+   "lang": "fr"
+  },
+  {
+   "cc": "mt",
+   "outlet": "MEDAC",
+   "home": "https://www.um.edu.mt/medac/",
    "lang": "en"
   },
   {
-   "cc": "tz",
-   "outlet": "MwanaHALISI",
-   "home": "https://mwanahalisionline.com/",
-   "lang": "sw"
-  },
-  {
-   "cc": "zm",
-   "outlet": "ZNBC",
-   "home": "https://www.znbc.co.zm/",
+   "cc": "cy",
+   "outlet": "PRIO Cyprus Centre",
+   "home": "https://www.prio-cyprus-centre.org/",
    "lang": "en"
   },
   {
-   "cc": "zm",
-   "outlet": "Times of Zambia",
-   "home": "https://www.times.co.zm/",
+   "cc": "is",
+   "outlet": "Institute of International Affairs Iceland",
+   "home": "https://ams.hi.is/en/",
    "lang": "en"
   },
   {
-   "cc": "zw",
-   "outlet": "The Herald ZW",
-   "home": "https://www.herald.co.zw/",
+   "cc": "lu",
+   "outlet": "IDEA Luxembourg",
+   "home": "https://www.idea.lu/",
    "lang": "en"
   },
   {
-   "cc": "zw",
-   "outlet": "ZimLive",
-   "home": "https://www.zimlive.com/",
+   "cc": "fj",
+   "outlet": "Pacific Policy Research Centre",
+   "home": "https://www.pacificpolicy.org/",
    "lang": "en"
   },
   {
-   "cc": "zw",
-   "outlet": "Chronicle ZW",
-   "home": "https://www.chronicle.co.zw/",
+   "cc": "pg",
+   "outlet": "PNG NRI",
+   "home": "https://pngnri.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "ss",
+   "outlet": "Sudd Institute",
+   "home": "https://www.suddinstitute.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "ss",
+   "outlet": "Ebony Center",
+   "home": "https://ebrafoundation.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "so",
+   "outlet": "Heritage Institute Somalia",
+   "home": "https://www.heritageinstitute.org/",
    "lang": "en"
   },
   {
    "cc": "mz",
-   "outlet": "Noticias MZ",
-   "home": "https://www.jornalnoticias.co.mz/",
+   "outlet": "CDD Mozambique",
+   "home": "https://www.cddmoz.org/",
    "lang": "pt"
   },
   {
-   "cc": "mz",
-   "outlet": "Carta de Mocambique",
-   "home": "https://cartamz.com/",
+   "cc": "ao",
+   "outlet": "CEIC Angola",
+   "home": "https://www.ucan.edu/ceic/",
    "lang": "pt"
   },
   {
-   "cc": "tg",
-   "outlet": "Republic of Togo",
-   "home": "https://www.republicoftogo.com/",
+   "cc": "sr",
+   "outlet": "AdeKUS",
+   "home": "https://www.adekus.edu/",
+   "lang": "nl"
+  },
+  {
+   "cc": "mw",
+   "outlet": "IPR Malawi",
+   "home": "https://www.ipr.mw/",
+   "lang": "en"
+  },
+  {
+   "cc": "zw",
+   "outlet": "SAPST",
+   "home": "https://www.sapst.org/",
+   "lang": "en"
+  },
+  {
+   "cc": "dz",
+   "outlet": "CREAD",
+   "home": "https://www.cread.dz/",
    "lang": "fr"
   },
   {
-   "cc": "tg",
-   "outlet": "Togo First",
-   "home": "https://www.togofirst.com/",
+   "cc": "tn",
+   "outlet": "FES Tunisia",
+   "home": "https://www.fes-tunisia.org/",
    "lang": "fr"
   },
   {
-   "cc": "ga",
-   "outlet": "Gabon Media Time",
-   "home": "https://www.gabonmediatime.com/",
+   "cc": "mr",
+   "outlet": "CMSP",
+   "home": "https://www.cmsp.mr/",
    "lang": "fr"
-  },
-  {
-   "cc": "ge",
-   "outlet": "Georgia Today",
-   "home": "https://georgiatoday.ge/",
-   "lang": "en"
-  },
-  {
-   "cc": "ee",
-   "outlet": "ERR",
-   "home": "https://www.err.ee/",
-   "lang": "et"
-  },
-  {
-   "cc": "lv",
-   "outlet": "LSM",
-   "home": "https://www.lsm.lv/",
-   "lang": "lv"
-  },
-  {
-   "cc": "lv",
-   "outlet": "Diena",
-   "home": "https://www.diena.lv/",
-   "lang": "lv"
-  },
-  {
-   "cc": "me",
-   "outlet": "RTCG",
-   "home": "https://www.rtcg.me/",
-   "lang": "sr"
-  },
-  {
-   "cc": "mv",
-   "outlet": "Edition.mv",
-   "home": "https://edition.mv/",
-   "lang": "en"
-  },
-  {
-   "cc": "mv",
-   "outlet": "Sun Online",
-   "home": "https://sun.mv/",
-   "lang": "en"
-  },
-  {
-   "cc": "mv",
-   "outlet": "Avas",
-   "home": "https://avas.mv/",
-   "lang": "en"
-  },
-  {
-   "cc": "bh",
-   "outlet": "BNA",
-   "home": "https://www.bna.bh/",
-   "lang": "en"
-  },
-  {
-   "cc": "bh",
-   "outlet": "Al Ayam",
-   "home": "https://www.alayam.com/",
-   "lang": "ar"
-  },
-  {
-   "cc": "om",
-   "outlet": "Muscat Daily",
-   "home": "https://www.muscatdaily.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "om",
-   "outlet": "ONA",
-   "home": "https://omannews.gov.om/",
-   "lang": "en"
-  },
-  {
-   "cc": "ae",
-   "outlet": "Gulf News",
-   "home": "https://gulfnews.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "ae",
-   "outlet": "WAM",
-   "home": "https://www.wam.ae/",
-   "lang": "en"
-  },
-  {
-   "cc": "kw",
-   "outlet": "KUNA",
-   "home": "https://www.kuna.net.kw/",
-   "lang": "en"
-  },
-  {
-   "cc": "kw",
-   "outlet": "Arab Times",
-   "home": "https://www.arabtimesonline.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "kw",
-   "outlet": "Al Qabas",
-   "home": "https://www.alqabas.com/",
-   "lang": "ar"
-  },
-  {
-   "cc": "kw",
-   "outlet": "Al Jarida",
-   "home": "https://www.aljarida.com/",
-   "lang": "ar"
-  },
-  {
-   "cc": "bt",
-   "outlet": "Kuensel",
-   "home": "https://kuenselonline.com/",
-   "lang": "en"
-  },
-  {
-   "cc": "bt",
-   "outlet": "BBS",
-   "home": "https://www.bbs.bt/",
-   "lang": "en"
-  },
-  {
-   "cc": "bn",
-   "outlet": "Borneo Bulletin",
-   "home": "https://borneobulletin.com.bn/",
-   "lang": "en"
-  },
-  {
-   "cc": "bn",
-   "outlet": "RTB News",
-   "home": "https://www.rtbnews.rtb.gov.bn/",
-   "lang": "en"
   }
  ]
 }
