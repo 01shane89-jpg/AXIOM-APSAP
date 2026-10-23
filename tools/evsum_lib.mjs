@@ -21,7 +21,8 @@ export function unsupportedNames(out, input) {
     words.slice(1).forEach((w) => {
       if (!/^\p{Lu}/u.test(w) || w.length < 3) return;
       const k = w.toLowerCase().replace(/['’]s$/, "");
-      if (!NAMEOK.has(k) && !src.includes(k)) bad.add(w);
+      // a demonym or plural of a reported name passes (Malaysian for Malaysia): its stem is enough
+      if (!NAMEOK.has(k) && !src.includes(k) && !(k.length >= 7 && src.includes(k.slice(0, k.length - 3)))) bad.add(w);
     });
   }
   return [...bad];
