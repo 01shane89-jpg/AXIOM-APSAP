@@ -448,7 +448,7 @@
         (window.OSAP_LOC.on() ? "Using your location. Your position stays on this device." : "Start on your own country and see where you are on the map. Your position stays on this device.") + '">' +
         (window.OSAP_LOC.on() ? "My location" : "Use my location") + "</button>" : "") +
       '<button type="button" class="tdmap" data-go="map">Open map</button></div>' + (MY() ? MY().headHtml(CC) : "");
-    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + keyDatesHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + (window.OSAP_ECON ? window.OSAP_ECON.cardHtml(CC) : "") + "</div><div class=\"tdcol tdc3\">" + (MY() ? MY().cardHtml(CC) : "") + storiesHtml() + newHtml() + "</div></div>" +
+    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + keyDatesHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + (window.OSAP_ECON ? window.OSAP_ECON.cardHtml(CC) : "") + (window.OSAP_RISK ? window.OSAP_RISK.cardHtml(CC) : "") + "</div><div class=\"tdcol tdc3\">" + (MY() ? MY().cardHtml(CC) : "") + storiesHtml() + newHtml() + "</div></div>" +
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
