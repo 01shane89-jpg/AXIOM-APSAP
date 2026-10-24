@@ -5450,7 +5450,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!i.mt) return "";
     var ln = LANGN[i.lang] || i.lang;
     return i.mt === "untranslated" ? "Not translated yet (the free translation quota ran out); shown in the original " + ln + "."
-      : "English is a machine translation (" + i.mt + ") of the original " + ln + " text, which is kept" + (i.mt_split ? ", translated phrase by phrase" : "") + ". It may be wrong.";
+      : "English is a machine translation (" + i.mt + ") of the original " + ln + " text, which is kept. It may be wrong.";
   }
   /* English only on a report: words the refresh job could not translate are never shown as the report's English text; they stay
      under "<language> original". A part still in another script inside an English headline ("Analysis: ... | สถานการณ์ติดตาม |",
