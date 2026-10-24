@@ -103,6 +103,7 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+<script src="assets/osap-tak.js"></script>
 <script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
 

@@ -380,7 +380,7 @@
   function ll(P, ring) { var o = P.map(function (p) { return p[1] + "," + p[0] + ",0"; }); if (ring && P.length) o.push(P[0][1] + "," + P[0][0] + ",0"); return o.join(" "); }
   function features(get, areas) {
     var F = [], S = arr(json(get(SHAPES) || "[]", [])).filter(okShape);
-    arr(json(get(PTS) || "[]", [])).forEach(function (p) { if (p && isFinite(p.lat) && isFinite(p.lon)) { var m = /([0-9a-f]{6})$/.exec(p.sym || ""); F.push({ g: "Point", kind: "point", name: p.n, note: p.note, cc: p.cc, P: [[+p.lat, +p.lon]], col: m ? "#" + m[1] : "#0ca678", photos: +p.ph || 0 }); } });
+    arr(json(get(PTS) || "[]", [])).forEach(function (p) { if (p && isFinite(p.lat) && isFinite(p.lon)) { var m = /([0-9a-f]{6})$/.exec(p.sym || ""); var sd = /^ms:(\d{20})$/.exec(p.sym || ""); F.push({ g: "Point", kind: "point", name: p.n, note: p.note, cc: p.cc, P: [[+p.lat, +p.lon]], col: m ? "#" + m[1] : "#0ca678", photos: +p.ph || 0, sidc: sd ? sd[1] : "" }); } });
     Object.keys(areas).forEach(function (c) { F.push({ g: "Polygon", kind: "drawn-area", name: "Drawn area, " + cName(c), cc: c, P: areas[c], col: "#1c7ed6" }); });
     arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) F.push({ g: "Polygon", kind: a.type, name: a.type + " " + a.name, note: a.notes, cc: a.cc, P: a.pts, col: a.type === "TAI" ? "#c92a2a" : "#1971c2" }); });
     arr(json(get("osap-routes") || "[]", [])).forEach(function (x) { var w = arr(x && x.wps).filter(function (p) { return p && isFinite(p.lat); }); if (w.length > 1) F.push({ g: "LineString", kind: "route", name: x.name, note: "Waypoints of a planned route (" + (x.mode || "") + ")", cc: x.cc, P: w.map(function (p) { return [+p.lat, +p.lon]; }), col: "#7048e8" }); });
@@ -410,7 +410,7 @@
           var geo = f.g === "Point" ? "<Point><coordinates>" + ll(f.P) + "</coordinates></Point>" : f.g === "LineString" ? "<LineString><tessellate>1</tessellate><coordinates>" + ll(f.P) + "</coordinates></LineString>"
             : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + ll(f.P, true) + "</coordinates></LinearRing></outerBoundaryIs>" +
               (f.H || []).map(function (h) { return "<innerBoundaryIs><LinearRing><coordinates>" + ll(h, true) + "</coordinates></LinearRing></innerBoundaryIs>"; }).join("") + "</Polygon>";
-          return "<Placemark><name>" + xesc(f.name || "") + "</name>" + (f.note || f.cc ? "<description>" + xesc([f.note || "", f.cc ? cName(f.cc) : ""].filter(String).join("\n")) + "</description>" : "") + "<Style>" + st + "</Style>" + geo + "</Placemark>";
+          return "<Placemark><name>" + xesc(f.name || "") + "</name>" + (f.note || f.cc ? "<description>" + xesc([f.note || "", f.cc ? cName(f.cc) : ""].filter(String).join("\n")) + "</description>" : "") + "<Style>" + st + "</Style>" + (f.sidc ? '<ExtendedData><Data name="sidc"><value>' + f.sidc + "</value></Data></ExtendedData>" : "") + geo + "</Placemark>";
         }).join("") + "</Folder>";
       }).join("") + "</Document></kml>\n";
   }
@@ -531,6 +531,7 @@
       (W.OSAP_CASES && W.OSAP_CASES.wsHtml ? W.OSAP_CASES.wsHtml(w.id) : "") +
       (groups || '<p class="obs">Nothing saved in this workspace yet. Drop a point, draw an area, save a route or import a KML file.</p>') +
       '<div class="wsbtns"><button type="button" class="refresh" data-ws-act="zip">Export workspace (.zip)</button><button type="button" class="refresh" data-ws-act="kml">Export KML</button>' +
+      (W.OSAP_TAK ? '<button type="button" class="refresh" data-ws-act="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package (ATAK, WinTAK)</button>' : "") +
       '<label class="refresh wsfile">Import KML, KMZ or workspace<input type="file" accept=".kml,.kmz,.zip,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/zip" data-ws-file hidden></label></div>' +
       '<p class="obs">KML and KMZ files are added to this workspace: placemarks become map points, lines and polygons become imported shapes. Descriptions are kept as plain text; nothing in a file is run or fetched.</p></section>' +
       "<h3>Other workspaces</h3>" + (others.length ? '<ul class="wslist">' + others.map(function (x) {
@@ -558,6 +559,7 @@
     if ((b = t.closest("[data-ws-act]"))) {
       var a = b.getAttribute("data-ws-act");
       if (a === "kml") { exportKml(); say("KML saved to your downloads."); }
+      else if (a === "tak") { try { var tw = active(); say(W.OSAP_TAK.save({ id: "ws|" + tw.id, name: tw.name, file: "osap-" + fname(tw.name), kml: toKml(tw.name, features(raw, liveAreas(raw, liveKeys()))) })); } catch (e) { say("The TAK package could not be made: " + e.message); } }
       else if (a === "zip") { say("Packing the workspace …"); exportZip().then(function (n) { say("Workspace saved to your downloads" + (n ? ", with " + n + " photo" + (n === 1 ? "" : "s") : "") + "."); }, function () { say("The workspace could not be packed."); }); }
     }
   });
