@@ -202,6 +202,18 @@ for (const i of fresh) {
   const o = byLink.get(i.link), keepDate = o && o.date && !searchDated(o) && searchDated(i);
   byLink.set(i.link, { ...(o || {}), ...i, ...(keepDate ? { date: o.date, via: o.via, outlet: o.outlet } : {}), first_seen: (o && o.first_seen) || stamp });
 }
+// ...and from the news history (data/history/th.js), which keeps the outlets' own copies after they leave the live news list, so
+// a search date already stored is put right on a later run too
+try {
+  const t = fs.readFileSync("data/history/th.js", "utf8"), h = JSON.parse(t.slice(t.indexOf('["th"]=') + 7).trim().replace(/;$/, ""));
+  const own = new Map((h.news || []).filter((n) => n.link && n.date && !searchDated(n)).map((n) => [n.link, n]));
+  let fixed = 0;
+  for (const i of byLink.values()) {
+    const n = own.get(i.link);
+    if (n && searchDated(i) && i.date !== n.date) { i.date = n.date; i.via = n.via || "RSS"; i.outlet = n.outlet || i.outlet; fixed++; }
+  }
+  console.log("Deep South: " + fixed + " search dates replaced by the outlet's own date from the news history");
+} catch (e) { console.log("Deep South: news history unreadable, search dates kept (" + e.message + ")"); }
 // Page links have no date: dated by first sighting. A page's first run is a baseline (old stories) and never alerts.
 const hadFeed = new Set((prev.items || []).map((i) => i.feed));
 for (const i of byLink.values()) if (i.undated) {
