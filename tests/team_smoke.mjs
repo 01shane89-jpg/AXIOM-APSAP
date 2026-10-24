@@ -29,15 +29,16 @@ function ok(c, m, x) { console.log((c ? "PASS " : "FAIL ") + m + (x === undefine
 
 /* ---------- the stand-in relay: checks each event's id and signature, keeps the newest per author and name ---------- */
 const RELAY = "wss://relay.test/", store = new Map(), seen = [], refused = [];
+let nCtx = 0;
 function keep(e) { const d = (e.tags.find((t) => t[0] === "d") || [])[1] || "", k = e.pubkey + ":" + e.kind + ":" + d, old = store.get(k); if (!old || e.created_at >= old.created_at) store.set(k, e); }
-function relayFor(ctx) {
+function relayFor(ctx, dev) {
   return ctx.routeWebSocket(RELAY, (ws) => {
     ws.onMessage(async (m) => {
       let a; try { a = JSON.parse(m); } catch { return; }
       if (a[0] === "EVENT") {
         const e = a[1];
         if (!(await C.checkEvent(e, e.pubkey))) { refused.push(e); ws.send(JSON.stringify(["OK", e && e.id, false, "invalid: bad signature"])); return; }
-        seen.push(e); keep(e);
+        seen.push({ e, dev }); keep(e);
         ws.send(JSON.stringify(["OK", e.id, true, ""]));
       } else if (a[0] === "REQ") {
         const f = a[2];
@@ -51,7 +52,8 @@ function relayFor(ctx) {
 async function ready(p) { await p.waitForFunction(() => window.OSAP_TEAM && window.OSAP_WS && window.__asapMap, null, { timeout: 30000 }); await p.waitForTimeout(400); }
 async function device(seed, vp, url) {
   const ctx = await browser.newContext({ viewport: vp || { width: 1200, height: 800 }, serviceWorkers: "block" });
-  await relayFor(ctx);
+  const dev = ++nCtx;
+  await relayFor(ctx, dev);
   await ctx.grantPermissions(["clipboard-read", "clipboard-write"], { origin: base });
   const p = await ctx.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));
   p.on("dialog", (d) => d.accept());
@@ -60,7 +62,7 @@ async function device(seed, vp, url) {
     if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); localStorage.setItem("osap-home", "map"); sessionStorage.setItem("osap-today", "0"); for (const k in S) localStorage.setItem(k, S[k]); }
   }, seed);
   await p.goto(url || base + "#th/map"); await ready(p);
-  return { ctx, p, errs };
+  return { ctx, p, errs, dev };
 }
 const tid = (D) => D.p.evaluate(() => (OSAP_TEAM.list()[0] || {}).id);
 async function synced(D) {
@@ -140,10 +142,11 @@ ok(await B.p.evaluate(() => /^V1\./.test(JSON.parse(localStorage.getItem("osap-t
 if (OUT) await B.p.screenshot({ path: OUT + "/team-viewer.png" });
 
 /* the viewer changes something in the team workspace: it stays on its device, nothing is published */
-const before = seen.length;
+/* count only what B sends: the owner A also syncs every minute on its own, which can land in this window */
+const fromB = () => seen.filter((x) => x.dev === B.dev).length, before = fromB();
 await B.p.evaluate(() => { const r = JSON.parse(localStorage.getItem("osap-ws")), w = r.list.find((x) => x.name === "Ops North"), d = JSON.parse(localStorage.getItem("osap-ws-data-" + w.id)); const L = JSON.parse(d.keys["osap-atak-pts"]); L.push({ id: "pt-v", n: "Viewer try", lat: 1, lon: 1 }); d.keys["osap-atak-pts"] = JSON.stringify(L); localStorage.setItem("osap-ws-data-" + w.id, JSON.stringify(d)); });
 await synced(B);
-ok(seen.length === before, "a viewer's sync publishes nothing", seen.length - before);
+ok(fromB() === before, "a viewer's sync publishes nothing", fromB() - before);
 /* the viewer goes around the app: an event under the team's key, sealed with the team's AES key, signed with another key */
 const forged = await B.p.evaluate(async () => {
   const C = window.OSAP_SYNC_CORE, t = JSON.parse(localStorage.getItem("osap-team")).teams[0], m = OSAP_TEAM.core.decode(t.code), K = await OSAP_TEAM.core.teamKeys(m);
