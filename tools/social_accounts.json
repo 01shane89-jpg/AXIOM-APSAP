@@ -27,6 +27,318 @@
    "kind": "news desk"
   },
   {
+   "cc": "dk",
+   "handle": "politiken.dk",
+   "kind": "news desk",
+   "lang": "da"
+  },
+  {
+   "cc": "dk",
+   "handle": "information.dk",
+   "kind": "news desk",
+   "lang": "da"
+  },
+  {
+   "cc": "dk",
+   "handle": "jyllands-posten.dk",
+   "kind": "news desk",
+   "lang": "da"
+  },
+  {
+   "cc": "no",
+   "handle": "vg.no",
+   "kind": "news desk",
+   "lang": "no"
+  },
+  {
+   "cc": "no",
+   "handle": "morgenbladet.no",
+   "kind": "news desk",
+   "lang": "no"
+  },
+  {
+   "cc": "lu",
+   "handle": "reporter.lu",
+   "kind": "news desk",
+   "lang": "lb"
+  },
+  {
+   "cc": "ge",
+   "handle": "civil.ge",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "za",
+   "handle": "groundup.org.za",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "cn",
+   "handle": "hongkongfp.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "handle": "scroll.in",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ru",
+   "handle": "meduza.io",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "handle": "kyivindependent.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "es",
+   "handle": "elpais.com",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "es",
+   "handle": "eldiario.es",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ie",
+   "handle": "rte.ie",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "ie",
+   "handle": "irishtimes.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ie",
+   "handle": "thejournal.ie",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "nl",
+   "handle": "nrc.nl",
+   "kind": "news desk",
+   "lang": "nl"
+  },
+  {
+   "cc": "nl",
+   "handle": "volkskrant.nl",
+   "kind": "news desk",
+   "lang": "nl"
+  },
+  {
+   "cc": "de",
+   "handle": "spiegel.de",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "handle": "zeit.de",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "at",
+   "handle": "derstandard.at",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "*",
+   "handle": "bellingcat.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "occrp.org",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "icij.org",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "euobserver.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "politico.eu",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "france24.com",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "crisisgroup.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "au",
+   "handle": "news.abc.net.au",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "eurasianet.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "br",
+   "handle": "apublica.org",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "revistapiaui.bsky.social",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "cz",
+   "handle": "denikn.cz",
+   "kind": "news desk",
+   "lang": "cs"
+  },
+  {
+   "cc": "ge",
+   "handle": "ocmedia.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "hr",
+   "handle": "telegram.hr",
+   "kind": "news desk",
+   "lang": "hr"
+  },
+  {
+   "cc": "il",
+   "handle": "timesofisrael.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jp",
+   "handle": "japantimes.co.jp",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "handle": "hankyoreh.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "handle": "thekoreaherald.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lv",
+   "handle": "rebaltica.bsky.social",
+   "kind": "news desk",
+   "lang": "lv"
+  },
+  {
+   "cc": "mm",
+   "handle": "frontiermyanmar.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "mx",
+   "handle": "pajaropolitico.bsky.social",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "my",
+   "handle": "malaysiakini.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "nl",
+   "handle": "nieuws.nos.nl",
+   "kind": "public broadcaster",
+   "lang": "nl"
+  },
+  {
+   "cc": "pl",
+   "handle": "notesfrompoland.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ru",
+   "handle": "en.zona.media",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sk",
+   "handle": "dennikn.bsky.social",
+   "kind": "news desk",
+   "lang": "sk"
+  },
+  {
+   "cc": "tr",
+   "handle": "bianet-eng.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "handle": "pravda.ua",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ar",
+   "handle": "infobae.bsky.social",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "es",
+   "handle": "publico.es",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
    "cc": "de",
    "handle": "bsi.bund.de",
    "kind": "government",
@@ -299,6 +611,144 @@
    "channel": "InaTEWS_BMKG",
    "kind": "disaster agency",
    "lang": "id"
+  },
+  {
+   "cc": "ru",
+   "channel": "mod_russia",
+   "kind": "government (military)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "tass_agency",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "rian_ru",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "mchs_official",
+   "kind": "government",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "rbc_news",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "meduzalive",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ir",
+   "channel": "farsna",
+   "kind": "state media",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "irna_1313",
+   "kind": "state media",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "presstv",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ir",
+   "channel": "iranintltv",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "by",
+   "channel": "nexta_live",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "by",
+   "channel": "zerkalo_io",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "by",
+   "channel": "radiosvaboda",
+   "kind": "state-funded (US)",
+   "lang": "be"
+  },
+  {
+   "cc": "by",
+   "channel": "belta_telegramm",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "channel": "kloopnews",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "tj",
+   "channel": "asiaplus",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ps",
+   "channel": "QudsN",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ps",
+   "channel": "WAFAgency",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "tr",
+   "channel": "anadoluajansi",
+   "kind": "state media",
+   "lang": "tr"
+  },
+  {
+   "cc": "cu",
+   "channel": "cubadebate",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "la",
+   "channel": "laotiantimes",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "md",
+   "channel": "newsmakerlive",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "iq",
+   "channel": "shafaaqnews",
+   "kind": "news desk",
+   "lang": "ar"
   }
  ],
  "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets. Channels added on 2026-10-23 (given by channel id) were found the same way (tools/probe_youtube.mjs from GitHub's runners) and kept only when they are the country's own government, parliament, armed forces, police, public or state broadcaster, or an established news outlet, with a video in the last month.",
