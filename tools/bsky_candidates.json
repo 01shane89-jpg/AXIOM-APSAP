@@ -1,13 +1,598 @@
-[["dk","dr.dk"],["dk","politiken.dk"],["dk","information.dk"],["dk","berlingske.dk"],["dk","tv2.dk"],["dk","altinget.dk"],["dk","zetland.dk"],["dk","jyllands-posten.dk"],["dk","stm.dk"],["dk","um.dk"],
-["no","nrk.no"],["no","aftenposten.no"],["no","dagbladet.no"],["no","vg.no"],["no","morgenbladet.no"],["no","e24.no"],["no","klassekampen.no"],["no","regjeringen.no"],["no","forsvaret.no"],
-["lu","rtl.lu"],["lu","wort.lu"],["lu","reporter.lu"],["lu","lequotidien.lu"],["lu","virgule.lu"],
-["ee","err.ee"],["ee","postimees.ee"],["ee","news.err.ee"],["lt","lrt.lt"],["lt","delfi.lt"],["lt","15min.lt"],["lv","lsm.lv"],["lv","rebaltica.lv"],["lv","meduza.io"],
-["is","ruv.is"],["is","heimildin.is"],["is","grapevine.is"],["sk","dennikn.sk"],["sk","sme.sk"],["sk","aktuality.sk"],["ba","n1info.ba"],["ba","istinomer.ba"],["mk","meta.mk"],["no","nettavisen.no"],
-["ar","lanacion.com.ar"],["ar","clarin.com"],["ar","pagina12.com.ar"],["ar","eldiarioar.com"],["ar","infobae.com"],["ar","chequeado.com"],["ar","perfil.com"],
-["pa","prensa.com"],["ni","confidencial.digital"],["ni","laprensani.com"],["ni","divergentes.com"],["sv","elfaro.net"],["sv","gatoencerrado.news"],["gy","stabroeknews.com"],["kg","kloop.kg"],["by","zerkalo.io"],["ge","civil.ge"],["ge","oc-media.org"],["ge","jam-news.net"],
-["ly","libyaobserver.ly"],["na","namibian.com.na"],["bw","mmegi.bw"],["mu","lexpress.mu"],["mu","defimedia.info"],["fj","fijivillage.com"],["fj","fbcnews.com.fj"],["fj","fijitimes.com.fj"],["pg","postcourier.com.pg"],["vu","dailypost.vu"],["ws","samoaobserver.ws"],["to","matangitonga.to"],["tl","tatoli.tl"],["cd","actualite.cd"],
-["za","dailymaverick.co.za"],["za","news24.com"],["za","mg.co.za"],["za","groundup.org.za"],["ke","nation.africa"],["ng","premiumtimesng.com"],["ng","thecable.ng"],["gh","citinewsroom.com"],["zw","zimlive.com"],["zw","newzimbabwe.com"],["mw","nyasatimes.com"],["ug","monitor.co.ug"],["tz","thecitizen.co.tz"],
-["ph","rappler.com"],["ph","inquirer.net"],["hk","hongkongfp.com"],["np","kathmandupost.com"],["pk","dawn.com"],["in","thewire.in"],["in","scroll.in"],["mm","frontiermyanmar.net"],["mm","irrawaddy.com"],["kh","cambojanews.com"],["ru","meduza.io"],["ru","novayagazeta.eu"],["ua","kyivindependent.com"],["ua","pravda.com.ua"],["tw","focustaiwan.tw"],
-["es","elpais.com"],["es","eldiario.es"],["mx","animalpolitico.com"],["mx","proceso.com.mx"],["cl","ciperchile.cl"],["co","lasillavacia.com"],["ve","efectococuyo.com"],["pe","ojo-publico.com"],["br","agenciapublica.org"],["br","piaui.com.br"],
-["ie","rte.ie"],["ie","irishtimes.com"],["ie","thejournal.ie"],["nl","nos.nl"],["nl","nrc.nl"],["nl","volkskrant.nl"],["de","tagesschau.de"],["de","spiegel.de"],["de","zeit.de"],["at","derstandard.at"],["at","orf.at"],["ch","srf.ch"],["fi","yle.fi"],["fi","hs.fi"],["se","svt.se"],["se","dn.se"],
-["*","rferl.org"],["*","eurasianet.org"],["*","bellingcat.com"],["*","occrp.org"],["*","balkaninsight.com"],["*","euobserver.com"],["*","politico.eu"],["*","rnz.co.nz"],["*","abc.net.au"],["*","dw.com"],["*","france24.com"],["*","crisisgroup.org"],["*","icij.org"],["*","acleddata.com"]]
+[
+[
+"dk",
+"?DR Nyheder"
+],
+[
+"dk",
+"?TV 2 Nyheder"
+],
+[
+"dk",
+"?Altinget"
+],
+[
+"no",
+"?NRK"
+],
+[
+"no",
+"?Dagbladet"
+],
+[
+"no",
+"?E24"
+],
+[
+"lu",
+"?RTL Today Luxembourg"
+],
+[
+"ee",
+"?ERR News"
+],
+[
+"ee",
+"?Postimees"
+],
+[
+"lt",
+"?LRT"
+],
+[
+"lt",
+"?Delfi Lithuania"
+],
+[
+"lv",
+"?LSM English"
+],
+[
+"lv",
+"?Re:Baltica"
+],
+[
+"is",
+"?RÚV English"
+],
+[
+"is",
+"?Heimildin"
+],
+[
+"sk",
+"?Denník N"
+],
+[
+"sk",
+"?SME"
+],
+[
+"ba",
+"?N1 BiH"
+],
+[
+"ba",
+"?Istinomjer"
+],
+[
+"mk",
+"?Meta.mk"
+],
+[
+"ar",
+"?La Nación Argentina"
+],
+[
+"ar",
+"?Clarín"
+],
+[
+"ar",
+"?Página 12"
+],
+[
+"ar",
+"?elDiarioAR"
+],
+[
+"ar",
+"?Infobae"
+],
+[
+"pa",
+"?La Prensa Panamá"
+],
+[
+"ni",
+"?Confidencial"
+],
+[
+"ni",
+"?La Prensa Nicaragua"
+],
+[
+"ni",
+"?Divergentes"
+],
+[
+"sv",
+"?GatoEncerrado"
+],
+[
+"gy",
+"?Stabroek News"
+],
+[
+"kg",
+"?Kloop"
+],
+[
+"by",
+"?Zerkalo"
+],
+[
+"by",
+"?Belsat"
+],
+[
+"ge",
+"?OC Media"
+],
+[
+"ge",
+"?JAMnews"
+],
+[
+"ly",
+"?Libya Observer"
+],
+[
+"ly",
+"?Libya Herald"
+],
+[
+"na",
+"?The Namibian"
+],
+[
+"bw",
+"?Mmegi"
+],
+[
+"mu",
+"?l'express Maurice"
+],
+[
+"fj",
+"?Fiji Times"
+],
+[
+"fj",
+"?Fijivillage"
+],
+[
+"fj",
+"?FBC News"
+],
+[
+"pg",
+"?Post-Courier"
+],
+[
+"vu",
+"?Daily Post Vanuatu"
+],
+[
+"ws",
+"?Samoa Observer"
+],
+[
+"to",
+"?Matangi Tonga"
+],
+[
+"cd",
+"?Actualite.cd"
+],
+[
+"ke",
+"?Nation Africa"
+],
+[
+"ke",
+"?The Standard Kenya"
+],
+[
+"ng",
+"?Premium Times"
+],
+[
+"ng",
+"?TheCable"
+],
+[
+"gh",
+"?Citi Newsroom"
+],
+[
+"gh",
+"?GhanaWeb"
+],
+[
+"zw",
+"?ZimLive"
+],
+[
+"zw",
+"?NewZimbabwe"
+],
+[
+"zw",
+"?263Chat"
+],
+[
+"mw",
+"?Nyasa Times"
+],
+[
+"ug",
+"?Daily Monitor Uganda"
+],
+[
+"tz",
+"?The Citizen Tanzania"
+],
+[
+"ph",
+"?Rappler"
+],
+[
+"np",
+"?Kathmandu Post"
+],
+[
+"pk",
+"?Dawn News"
+],
+[
+"mm",
+"?Frontier Myanmar"
+],
+[
+"mm",
+"?The Irrawaddy"
+],
+[
+"mm",
+"?Myanmar Now"
+],
+[
+"kh",
+"?CamboJA News"
+],
+[
+"kh",
+"?VOD Cambodia"
+],
+[
+"ru",
+"?Novaya Gazeta Europe"
+],
+[
+"ru",
+"?Mediazona"
+],
+[
+"ua",
+"?Ukrainska Pravda"
+],
+[
+"ua",
+"?Ukrinform"
+],
+[
+"tw",
+"?Focus Taiwan"
+],
+[
+"tw",
+"?Taipei Times"
+],
+[
+"mx",
+"?Animal Político"
+],
+[
+"mx",
+"?Proceso"
+],
+[
+"cl",
+"?CIPER"
+],
+[
+"co",
+"?La Silla Vacía"
+],
+[
+"ve",
+"?Efecto Cocuyo"
+],
+[
+"pe",
+"?Ojo Público"
+],
+[
+"br",
+"?Agência Pública"
+],
+[
+"br",
+"?piauí"
+],
+[
+"nl",
+"?NOS"
+],
+[
+"de",
+"?tagesschau"
+],
+[
+"at",
+"?ORF"
+],
+[
+"fi",
+"?Yle News"
+],
+[
+"se",
+"?SVT Nyheter"
+],
+[
+"se",
+"?Dagens Nyheter"
+],
+[
+"*",
+"?RFE/RL"
+],
+[
+"*",
+"?Eurasianet"
+],
+[
+"*",
+"?Balkan Insight"
+],
+[
+"*",
+"?RNZ Pacific"
+],
+[
+"*",
+"?ABC News Australia"
+],
+[
+"*",
+"?DW News"
+],
+[
+"*",
+"?ACLED"
+],
+[
+"pl",
+"?Notes from Poland"
+],
+[
+"pl",
+"?OKO.press"
+],
+[
+"cz",
+"?Seznam Zprávy"
+],
+[
+"cz",
+"?Deník N"
+],
+[
+"hu",
+"?telex"
+],
+[
+"hu",
+"?444"
+],
+[
+"ro",
+"?G4Media"
+],
+[
+"bg",
+"?Mediapool"
+],
+[
+"rs",
+"?N1 Srbija"
+],
+[
+"rs",
+"?BIRN"
+],
+[
+"hr",
+"?Telegram.hr"
+],
+[
+"si",
+"?Delo"
+],
+[
+"md",
+"?NewsMaker"
+],
+[
+"am",
+"?CivilNet"
+],
+[
+"am",
+"?Azatutyun"
+],
+[
+"az",
+"?Meydan TV"
+],
+[
+"kz",
+"?Vlast.kz"
+],
+[
+"tr",
+"?Medyascope"
+],
+[
+"tr",
+"?bianet"
+],
+[
+"il",
+"?Haaretz"
+],
+[
+"il",
+"?Times of Israel"
+],
+[
+"lb",
+"?L'Orient Today"
+],
+[
+"sy",
+"?Enab Baladi"
+],
+[
+"iq",
+"?Shafaq News"
+],
+[
+"ir",
+"?IranWire"
+],
+[
+"af",
+"?Amu TV"
+],
+[
+"af",
+"?Zan Times"
+],
+[
+"bd",
+"?The Daily Star Bangladesh"
+],
+[
+"bd",
+"?Netra News"
+],
+[
+"lk",
+"?Daily Mirror Sri Lanka"
+],
+[
+"sg",
+"?CNA"
+],
+[
+"sg",
+"?The Straits Times"
+],
+[
+"my",
+"?Malaysiakini"
+],
+[
+"id",
+"?Tempo"
+],
+[
+"th",
+"?Prachatai"
+],
+[
+"vn",
+"?VnExpress"
+],
+[
+"jp",
+"?Japan Times"
+],
+[
+"jp",
+"?NHK World"
+],
+[
+"kr",
+"?Korea Herald"
+],
+[
+"kr",
+"?Hankyoreh"
+],
+[
+"au",
+"?ABC News"
+],
+[
+"nz",
+"?RNZ"
+],
+[
+"ca",
+"?CBC News"
+],
+[
+"sd",
+"?Sudan Tribune"
+],
+[
+"sd",
+"?Radio Dabanga"
+],
+[
+"so",
+"?Hiiraan"
+],
+[
+"et",
+"?Addis Standard"
+],
+[
+"ss",
+"?Radio Tamazuj"
+],
+[
+"sn",
+"?Seneweb"
+],
+[
+"ml",
+"?Studio Tamani"
+],
+[
+"bf",
+"?Lefaso"
+],
+[
+"ne",
+"?ActuNiger"
+],
+[
+"cm",
+"?Mimi Mefo Info"
+]
+]
