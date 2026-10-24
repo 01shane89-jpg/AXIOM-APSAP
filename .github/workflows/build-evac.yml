@@ -35,5 +35,5 @@ jobs:
           git add source/sof data/sof
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git commit -m "Refresh embassy and evacuation points $(date -u +%Y-%m-%d)"
-          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 10; done
+          bash tools/push_rebase.sh "${GITHUB_REF_NAME}" "" 3 && exit 0
           exit 1

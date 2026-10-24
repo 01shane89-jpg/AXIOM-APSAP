@@ -57,5 +57,5 @@ jobs:
           # Drop other changed files so the rebase can run; other jobs commit to main too, so rebase onto it and retry.
           git checkout -- .
           b="${GITHUB_REF#refs/heads/}"
-          for i in 1 2 3 4; do git pull -q --rebase -X theirs origin "$b" && git push -q origin "HEAD:$b" && exit 0; sleep 7; done
+          bash tools/push_rebase.sh "$b" theirs 4 && exit 0
           exit 1

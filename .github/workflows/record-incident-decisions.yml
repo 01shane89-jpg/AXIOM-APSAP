@@ -50,10 +50,7 @@ jobs:
           git add data/decisions/conflicts data/live/conflicts/verified.js
           git commit -m "Record incident decisions $(date -u +'%Y-%m-%d %H:%MZ')"
           # the refresh jobs commit to main all the time: rebase onto it and retry. Only this job writes these paths.
-          for i in 1 2 3 4 5; do
-            git pull --rebase origin main && git push && exit 0
-            git rebase --abort 2>/dev/null || true; sleep $((i * 4))
-          done
+          bash tools/push_rebase.sh main "" 5 && exit 0
           exit 1
       # Recorded decisions are answered and closed only once the commit is pushed; refused ones (with the reason) either way.
       - name: Answer and close the decision issues

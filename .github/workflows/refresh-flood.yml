@@ -383,7 +383,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/live/evsum.js data/live/aiwatch.js
           git commit -m "Refresh event summaries $(date -u +'%Y-%m-%d %H:%MZ')"
-          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          bash tools/push_rebase.sh main theirs 3 && exit 0
           exit 1
 
   # Daily country summaries (tools/refresh_daily.mjs): once a UTC day, the first run after 0000Z writes one summary per country from
@@ -436,7 +436,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/live/daily.js data/live/daily
           git commit -m "Refresh daily summaries $(date -u +'%Y-%m-%d %H:%MZ')"
-          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          bash tools/push_rebase.sh main theirs 3 && exit 0
           exit 1
 
   # Push watches (tools/push_watches.mjs): after each refresh, every account's watches kept on OSAP's server (Mid and Full plans,

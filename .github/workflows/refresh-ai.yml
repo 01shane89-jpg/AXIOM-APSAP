@@ -186,5 +186,5 @@ jobs:
           git add data/live/osirdraft.js
           [ -f data/live/conflicts/suggest.js ] && git add data/live/conflicts/suggest.js
           git commit -m "AI drafts of the daily and incident summaries $(date -u +'%Y-%m-%d %H:%MZ')"
-          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          bash tools/push_rebase.sh main theirs 3 && exit 0
           exit 1
