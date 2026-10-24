@@ -70,6 +70,8 @@ jobs:
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
       - run: node tests/osirdraft.test.mjs
+      # morning brief push: once a local morning per phone channel, Full-only summary kept from Mid (tools/push_brief.mjs)
+      - run: node tests/push_brief.test.mjs
       # event-summary drafts give only figures their reports give (tools/evsum_lib.mjs)
       - run: node tests/evsum_lib.test.mjs
       # AI gateway: a slow reply from the runner's model skips one request; two in a row drop it for the run (tools/ai_gateway.mjs)
