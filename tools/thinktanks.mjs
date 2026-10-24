@@ -55,11 +55,9 @@ const TT = [
   ["gmf", "German Marshall Fund", "https://www.gmfus.org/", ["https://www.gmfus.org/rss.xml", "https://www.gmfus.org/feed"]],
   ["fpri", "Foreign Policy Research Institute", "https://www.fpri.org/", ["https://www.fpri.org/feed/"]],
   ["quincy", "Quincy Institute", "https://quincyinst.org/", ["https://quincyinst.org/feed/"]],
-  // regional bodies and institutes added 2026-10-24 (Africa, Indian Ocean, Pacific, Latin America, Europe)
+  // regional bodies and institutes added 2026-10-24 (West and East Africa, Indian Ocean, Pacific, Latin America, Europe)
   ["ecowas", "ECOWAS Commission", "https://www.ecowas.int/", ["https://www.ecowas.int/feed/"]],
   ["igad", "IGAD", "https://igad.int/", ["https://igad.int/feed/"]],
-  ["ipss", "IPSS Addis Ababa", "https://ipss-addis.org/", ["https://ipss-addis.org/feed/"]],
-  ["aiac", "Africa Is a Country", "https://africasacountry.com/", ["https://africasacountry.com/feed/"]],
   ["coi", "Indian Ocean Commission", "https://www.commissionoceanindien.org/", ["https://www.commissionoceanindien.org/feed/"]],
   ["ffa", "Pacific Islands Forum Fisheries Agency", "https://www.ffa.int/", ["https://www.ffa.int/feed/"]],
   ["dialogo", "Diálogo Americas", "https://dialogo-americas.com/", ["https://dialogo-americas.com/feed/"]],
@@ -283,8 +281,11 @@ function fixDate(d) {
   return isNaN(t) ? "" : new Date(t).toISOString();
 }
 
-// Institutes that cover one country only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
-const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"], idesa: ["ar"], poderciudadano: ["ar"], acep: ["gh"], penplusbytes: ["gh"], rebaltica: ["lv"], pciudadana: ["do"], cespad: ["hn"], cedla: ["bo"], solon: ["bo"], cristosal: ["sv"], varberg: ["is"], ciaaf: ["bj"], cadep: ["py"], baseis: ["py"], mahein: ["tl"], glps: ["xk"] };
+// Institutes that cover one country (or one regional body's members) only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
+const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"], idesa: ["ar"], poderciudadano: ["ar"], acep: ["gh"], penplusbytes: ["gh"], rebaltica: ["lv"], pciudadana: ["do"], cespad: ["hn"], cedla: ["bo"], solon: ["bo"], cristosal: ["sv"], varberg: ["is"], ciaaf: ["bj"], cadep: ["py"], baseis: ["py"], mahein: ["tl"], glps: ["xk"],
+  // regional bodies whose whole remit is their members: an item naming no country is filed under every member
+  coi: ["km", "mg", "mu", "sc"], igad: ["dj", "er", "et", "ke", "so", "sd", "ss", "ug"],
+  ffa: ["ck", "fj", "fm", "ki", "mh", "nr", "nu", "pg", "pw", "sb", "to", "tv", "vu", "ws"] };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
