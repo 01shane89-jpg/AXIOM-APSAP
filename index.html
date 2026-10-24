@@ -3736,6 +3736,40 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return { radius: rad, color: tok("--surface"), weight: 1.4, fillColor: c, fillOpacity: 0.95 };
   }
   var shown = [];
+  /* one story, one card: the same article can reach the page twice, as a news headline and again as the layer feed's copy of that
+     headline sorted into a topic (organized crime, drugs), or as a data set's search result. On the Master timeline and in its
+     report those copies are one item: the fullest copy stays (a conflict tab's live report, then a news headline, then the layer
+     feed's automatic copy) and the other copies' topics show as extra tags on it (STORY_ALSO). Two records are one story only when
+     they link the same article and either give the same headline or are both headline records (news, the layer feed, a conflict
+     tab's live reports), whose copies are often translated apart: records that only cite one shared page (a gauge list, a data
+     file) stay apart. Each tab still lists its own copy. */
+  var STORY_ALSO = {};
+  function storyUrl(r) { return r.url && typeof r.url === "string" ? storyLinkKey(r.url.trim()) : ""; }
+  function storyTitle(r) { return String(r.title || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim(); }
+  function storyKey(r) { return r.__sk != null ? r.__sk : (r.__sk = storyUrl(r)); }
+  function storyRank(r) { return r.lf ? 1 : r.news ? 2 : r.ds && /^Live report/.test(r.cat || "") ? 3 : 0; }
+  function storyDedup(list, also) {
+    var by = Object.create(null), out = [], A = also || {};
+    list.forEach(function (r) {
+      var k = storyKey(r); if (!k) { out.push(r); return; }
+      var c = by[k] || (by[k] = []), t = storyTitle(r);
+      for (var i = 0; i < c.length; i++) {
+        var p = c[i];
+        if (!((storyRank(p) && storyRank(r)) || storyTitle(p) === t) || !!p.xcc !== !!r.xcc) continue;
+        if (storyRank(r) > storyRank(p)) { out[out.indexOf(p)] = r; c[i] = r; A[r.id] = [p].concat(A[p.id] || []); delete A[p.id]; }
+        else (A[p.id] || (A[p.id] = [])).push(r);
+        return;
+      }
+      c.push(r); out.push(r);
+    });
+    return out;
+  }
+  /* the extra topic tags for a story that also came in through other layers */
+  function storyChips(r) {
+    var also = STORY_ALSO[r.id], seen = {}; if (!also) return "";
+    seen[r.layer] = 1;
+    return also.map(function (o) { if (seen[o.layer]) return ""; seen[o.layer] = 1; return chip("l-" + o.layer, (LBY[o.layer] || { name: o.layer }).name); }).join("");
+  }
   /* a hidden scan copy (?watchscan=1) only reports its records back; it never shows the list or the map, so it draws neither */
   var SCAN_COPY = /[?&]watchscan=1(&|$)/.test(location.search);
   function render() {
@@ -3743,7 +3777,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var dsRecOn = Object.keys(DS).some(function (k) { return LBY[k] && !LBY[k].sof && k !== "alerts"; });
     /* a topic scope shows the topic's records on the map and in the list whatever the data set ticks */
     var sc = scoped(), mapped = function (r) { return DS[r.layer] || (sc && sc.layers.indexOf(r.layer) >= 0); };
-    shown = R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || mapped(r)); });
+    shown = storyDedup(R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || mapped(r)); }), STORY_ALSO = {});
     scopeUi();
     if (typeof rvSoon === "function") rvSoon();
     var list = document.getElementById("tl-list");
@@ -3784,7 +3818,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       d.type = "button"; d.className = "tlrow"; d.setAttribute("data-id", r.id);
       d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + '</span>' +
         '<span class="tln">' + esc(r.title) + "</span>" +
-        '<span class="tlm">' + chip("l-" + r.layer, (LBY[r.layer] || { name: r.layer }).name) + chip("t-" + r.type, r.type) +
+        '<span class="tlm">' + chip("l-" + r.layer, (LBY[r.layer] || { name: r.layer }).name) + storyChips(r) + chip("t-" + r.type, r.type) +
         '<span class="tls">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.src.name) + (r.prov ? " · " + esc(r.prov) : "") + "</span></span>";
       d.addEventListener("click", function () { select(r.id, true); });
       list.appendChild(d);
@@ -5597,20 +5631,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   /* one copy per news story, as tools/news_dedupe.mjs does in the refresh job: the same article under a link that differs only by
      tracking tags, "www." or "/amp", or the same headline (5 words or more) within 3 days. The newer copy is kept. */
+  /* an article's link without what differs between copies of it: tracking tags, "www.", "/amp", http or https */
+  function storyLinkKey(u) {
+    try {
+      var x = new URL(u), q = [];
+      x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
+      return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
+    } catch (e) { return String(u || ""); }
+  }
   function sameStory(list) {
     function title(t) {
       t = String(t || "").toLowerCase().replace(/\s[-–|]\s[^-–|]{2,40}$/, "");
       t = t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
       return t.split(" ").length >= 5 ? t : "";
     }
-    function link(u) {
-      try {
-        var x = new URL(u), q = [];
-        x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
-        return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
-      } catch (e) { return String(u || ""); }
-    }
-    var L = {}, T = {};
+    var link = storyLinkKey, L = {}, T = {};
     return list.slice().sort(function (a, b) { return (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : 0; }).filter(function (i) {
       var l = link(i.link); if (L[l]) return false; L[l] = 1;
       var t = title(i.title), d = Date.parse(i.date) || 0;
@@ -6810,7 +6845,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var pic = r.img || r.thumb;
       return '<button type="button" class="rvcard' + (pic ? " haspic" : "") + '" data-rv="' + esc(r.id) + '">' + (pic ? '<img class="rvpic" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") + '<span class="rvt">' + esc(fmtTs(r)) + "</span>" +
         '<span class="rvh">' + esc(r.title) + "</span>" +
-        '<span class="rvm">' + chip("l-" + r.layer, ln) + chip("t-" + r.type, st) + "</span>" +
+        '<span class="rvm">' + chip("l-" + r.layer, ln) + (current === "timeline" ? storyChips(r) : "") + chip("t-" + r.type, st) + "</span>" +
         '<span class="rvs">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.src ? r.src.name : "") + (r.place ? " · " + esc(r.place) : (r.lat == null ? " · no map location" : "")) + "</span></button>";
     }).join("") +
       (list.length > cap ? (cap < 200 ? '<p class="rvnote"><button type="button" class="refresh" data-rv-more>Show all ' + list.length + "</button></p>" :
@@ -8094,8 +8129,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var out = [];
     R.forEach(function (r) {
       if (!wMatch(w, r)) return;
-      var k = rk(r), v = EV_ON ? evOfRec(r) : null;
-      out.push({ k: k, gk: v ? v.id : k, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wWordsWhich(w, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
+      /* copies of one story (a headline and the layer feed's copy of it, same link) share one alert group, so one story sends one alert */
+      var k = rk(r), v = EV_ON ? evOfRec(r) : null, sk = storyKey(r);
+      out.push({ k: k, gk: v ? v.id : sk ? "s:" + sk : k, sk: sk, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wWordsWhich(w, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
         src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", grp: v ? v.m.length : 0, place: r.place || "" });
     });
     return out;
@@ -8111,6 +8147,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       wMatches(w).forEach(function (m) {
         var k = m.k; if (seen[k]) return;
         seen[k] = now;
+        /* another copy of this story was already noted in an earlier check */
+        if (m.sk) { if (seen["s:" + m.sk]) return; seen["s:" + m.sk] = now; }
         if (first) return;
         if (grp[m.gk]) { grp[m.gk].n++; return; }
         var h = { w: w.id, wn: w.name, cc: CC, k: k, t: m.t, ts: m.ts, sev: m.sev, layer: m.layer, src: m.src, st: m.st, url: m.url, n: 1, grp: m.grp, at: now };
@@ -8706,7 +8744,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   evRefresh();
   /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
   requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
-  window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP,
+  window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP, storyDedup: storyDedup,
     /* the Master timeline as the reader sees it: its topic scope (null for the whole country), the view open now, the records it lists and
        the filters in force; read by the Timeline report */
     timeline: function () {
