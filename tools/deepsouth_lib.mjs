@@ -185,6 +185,9 @@ const TERMS = [
   { th: /บีอาร์เอ็น/g, en: "BRN", ok: /\bBRN\b|Barisan/i },
   { th: /พูโล/g, en: "PULO", ok: /\bPULO\b/i },
   { th: /ทวี\s*สอดส่อง|พ\.ต\.อ\.\s*ทวี|(?<=['‘’"“”])ทวี(?=['‘’"“”])/g, en: "Thawee Sodsong", ok: /Thawee|Sodsong/i },
+  // titles the model turned into foreign ones ("Fourth Division Commander", "Ninth Circuit Court of Appeal")
+  { th: /แม่ทัพภาค(?:ที่)?\s*4/g, en: "4th Army Area commander", ok: /\b(?:4th|Fourth) Army\b|Army Area 4|Region 4 Army/i },
+  { th: /ศาลอุทธรณ์ภาค\s*9/g, en: "Region 9 Court of Appeal", ok: /Region 9|Ninth Region|Region IX/i },
   { th: /คาร์บอมบ์/g, en: "car bomb", ok: /\bcar[- ]?bombs?\b/i },
   { th: /อนุทิน(?:\s*ชาญวีรกูล)?/g, en: "Anutin Charnvirakul", ok: /Anut?h?in|Charnvirakul/i },
 ];
