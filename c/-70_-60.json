@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-10-24T11:24:34.795Z","cell":"-70_-60","st":[{"id":"SAWB","n":"Gustavo Marambio Arpt","c":"AQ","la":-64.2383,"lo":-56.6308,"el":232,"m":{"raw":"METAR SAWB 241100Z 29008KT CAVOK 08/M24 Q0993","t":1792839600000,"cat":"VFR","wd":290,"ws":8,"wg":null,"vis":6,"visp":true,"cig":null,"sky":null,"tc":8,"dc":-24,"alt":29.32,"wx":null},"f":null}]}
