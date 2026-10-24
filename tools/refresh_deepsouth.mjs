@@ -31,6 +31,7 @@ async function get(url, accept) {
 import { classify, figure, place, relevant, markAlerts, KILLED, INJURED, placeSubst, placeMismatch } from "./deepsouth_lib.mjs";
 import { staleSearchResult } from "./conflict_lib.mjs";
 import { stripOutletText } from "./outlet_text.mjs";
+import { searchDated } from "./news_dedupe.mjs";
 import { readIndex, plan as capturePlan, write as captureWrite, toCapture, toTranslation } from "./capture_lib.mjs";
 import { plan as claimPlan, RULES as CLAIM_RULES } from "./claim_lib.mjs";
 import { build as buildIncidents } from "./incident_lib.mjs";
@@ -195,7 +196,12 @@ if (PROBE) {
 // Merge with what earlier runs kept (by link), drop items older than a year, translate what is new, sort and place.
 const byLink = new Map();
 for (const i of prev.items || []) if (i && i.link) byLink.set(i.link, i);
-for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
+// An article's date from its outlet's own feed is kept over a search engine's date for the same link, which can be hours off
+// (Khaosod and Naewna articles came 7 hours early through Bing, 22 and 20 Oct 2026).
+for (const i of fresh) {
+  const o = byLink.get(i.link), keepDate = o && o.date && !searchDated(o) && searchDated(i);
+  byLink.set(i.link, { ...(o || {}), ...i, ...(keepDate ? { date: o.date, via: o.via, outlet: o.outlet } : {}), first_seen: (o && o.first_seen) || stamp });
+}
 // Page links have no date: dated by first sighting. A page's first run is a baseline (old stories) and never alerts.
 const hadFeed = new Set((prev.items || []).map((i) => i.feed));
 for (const i of byLink.values()) if (i.undated) {
