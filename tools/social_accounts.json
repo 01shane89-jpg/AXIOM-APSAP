@@ -71,6 +71,90 @@
    "channel": "InaTEWS_BMKG",
    "kind": "disaster agency",
    "lang": "id"
+  },
+  {
+   "cc": "kg",
+   "channel": "akipress",
+   "kind": "news agency",
+   "lang": "ru"
+  },
+  {
+   "cc": "md",
+   "channel": "tv8md",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "md",
+   "channel": "ipn_md",
+   "kind": "news agency",
+   "lang": "ro"
+  },
+  {
+   "cc": "ve",
+   "channel": "elpitazo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "channel": "cibercuba",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ir",
+   "channel": "mehrnews",
+   "kind": "state media",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "bbcpersian",
+   "kind": "public broadcaster (UK)",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "radiofarda",
+   "kind": "state-funded (US)",
+   "lang": "fa"
+  },
+  {
+   "cc": "it",
+   "channel": "repubblica",
+   "kind": "news desk",
+   "lang": "it"
+  },
+  {
+   "cc": "br",
+   "channel": "cnnbrasil",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "*",
+   "channel": "alarabiya",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "*",
+   "channel": "france24_ar",
+   "kind": "public broadcaster (France)",
+   "lang": "ar"
+  },
+  {
+   "cc": "*",
+   "channel": "rfi_fr",
+   "kind": "public broadcaster (France)",
+   "lang": "fr"
+  },
+  {
+   "cc": "*",
+   "channel": "trtworld",
+   "kind": "state media",
+   "lang": "en"
   }
  ],
  "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets. Channels added on 2026-10-23 (given by channel id) were found the same way (tools/probe_youtube.mjs from GitHub's runners) and kept only when they are the country's own government, parliament, armed forces, police, public or state broadcaster, or an established news outlet, with a video in the last month.",
