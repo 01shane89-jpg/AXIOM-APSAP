@@ -6,8 +6,8 @@
      hospital and landing-site copy the Medical plan reads, the last 7 days of the news search, and every data file this
      session has already read;
    - the app itself (the service worker's normal warm-up).
-   Only that tile service is saved in bulk: its licence allows it (Sentinel-2 cloudless 2021 is CC BY-NC-SA 4.0,
-   non-commercial, tagged so it can be dropped before any sale). Esri, OpenStreetMap's own tile server and OpenTopoMap forbid
+   Only that tile service is saved in bulk: its licence allows it (Sentinel-2 cloudless 2016 is CC BY 4.0, commercial use
+   allowed with credit; the 2021 mosaic it replaced was non-commercial, so saved 2021 tiles no longer show). Esri, OpenStreetMap's own tile server and OpenTopoMap forbid
    or discourage bulk downloads, so those maps are only kept as they are viewed (the service worker's capped tile cache).
    NASA GIBS's OpenStreetMap label and road overlays were checked for the names (2026-10-01) but serve empty tiles in Web
    Mercator, so the Offline map has no street names; OSAP's own borders, records and points draw over it from saved data.
@@ -23,7 +23,7 @@
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var OFFLINE = "osap-offline", DATA = "asap-data", KEY = "osap-offline", MAX_POS = 6000, PAR = 4;
   var TILES = [
-    { id: "img", name: "Imagery", url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg", kb: 16 }
+    { id: "img", name: "Imagery", url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", kb: 16 }
   ];
   var ZMIN = 4, ZTOP = 13, ZLIST = [8, 9, 10, 11, 12, 13];
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -336,9 +336,9 @@
       '<p class="obs">' + (UI.use != null ? "OSAP uses " + mb(UI.use) + " on this device" + (UI.quota ? " of about " + mb(UI.quota) + " allowed" : "") + ". " : "") +
       (UI.persisted === true ? "Kept until you delete it." : UI.persisted === false ? "The browser may clear saved maps if the device runs short of space; installing OSAP to the home screen makes that less likely." : "") + "</p>" +
       '<details class="offnote"><summary>Which maps can be saved, and what still needs signal</summary>' +
-      "<p>The Offline map is Sentinel-2 cloudless 2021 satellite imagery by EOX (10 m, CC BY-NC-SA 4.0, non-commercial), which allows saving tiles. It has no street names; OSAP's own borders, reports and your points still draw on it. " +
+      "<p>The Offline map is Sentinel-2 cloudless 2016 satellite imagery by EOX (10 m, CC BY 4.0), which allows saving tiles. It has no street names; OSAP's own borders, reports and your points still draw on it. " +
       "Saved detail stops at zoom 13; closer in, the map enlarges the saved picture.</p>" +
-      "<p>The Grey, Streets, Topographic and Esri satellite maps cannot be saved in bulk under their providers' terms. Parts of them you have already looked at are kept (up to 1,500 squares) and show offline.</p>" +
+      "<p>The Grey, Streets and Topographic maps cannot be saved in bulk under their providers' terms. Parts of them you have already looked at are kept (up to 1,500 squares) and show offline.</p>" +
       "<p>Terrain for viewshed and line of sight is Terrain Tiles on AWS (open data, mostly SRTM), saved separately above. In Japan, offline terrain uses these tiles, not GSI's finer ones.</p>" +
       "<p>Saved evacuation plans open offline; planning a new evacuation or road route needs signal.</p>" +
       "<p>Still needs signal: live weather and radar, road routing, satellite fire and flood layers, Refresh now, AI summaries and anything fetched from another website.</p></details></div>";

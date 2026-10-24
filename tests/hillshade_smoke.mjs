@@ -33,19 +33,20 @@ const layers = () => p.evaluate(() => [...document.querySelectorAll("#map .leafl
 
 await load("#th");
 const rows = await p.evaluate(() => [...document.querySelectorAll('#ml-panel input[data-hs]')].map((i) => i.dataset.hs));
-ok(rows.join() === "world,jp", "Layers menu lists the world hillshade and Japan relief rows: " + rows.join());
+ok(rows.join() === "jp", "Layers menu lists the Japan relief row (Esri World Hillshade was removed for licensing): " + rows.join());
 ok(await p.evaluate(() => /Elevation and terrain analysis/.test(document.querySelector("#ml-panel").textContent)), "rows sit under the Elevation and terrain analysis heading");
-asked.length = 0; await tick("world", true); await p.waitForTimeout(800);
+ok(!asked.some((u) => /arcgisonline|World_Hillshade/.test(u)), "nothing is asked of Esri");
+await tick("jp", true); await p.waitForTimeout(800);
 let L1 = await layers();
-ok(L1.length === 1 && L1[0].blend === "multiply", "ticking the world hillshade adds one multiplied layer in the base-map pane");
-ok(asked.some((u) => u.includes("server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/")), "it asks Esri World Hillshade for tiles");
+ok(L1.length === 1 && L1[0].blend === "multiply", "ticking Japan relief adds one multiplied layer in the base-map pane");
 await p.evaluate(() => { const r = document.querySelector("#ml-hsop"); r.value = "0.8"; r.dispatchEvent(new Event("input")); });
 ok((await layers())[0].op === "0.8", "the Shading slider sets the layer opacity");
 // another tab opens: extrasOff switches the other overlays off, not this one
 await p.evaluate(() => { location.hash = "#th/alerts"; }); await p.waitForTimeout(1500);
-ok((await layers()).length === 1 && await p.evaluate(() => document.querySelector('#ml-panel input[data-hs="world"]').checked), "the hillshade stays on when another tab opens");
+ok((await layers()).length === 1 && await p.evaluate(() => document.querySelector('#ml-panel input[data-hs="jp"]').checked), "the hillshade stays on when another tab opens");
 await load("#th");
 ok((await layers()).length === 1, "a reload brings the hillshade back (saved on this device)");
+await tick("jp", false); await p.waitForTimeout(300);
 // Japan layer asks GSI only for tiles inside Japan
 await p.evaluate(() => window.FW.map.setView([13.7, 100.5], 8, { animate: false })); await p.waitForTimeout(500);
 asked.length = 0; await tick("jp", true); await p.waitForTimeout(800);
@@ -61,7 +62,7 @@ await load("#jp");
 await p.evaluate(() => window.__asapMap.setView([35.36, 138.73], 9, { animate: false }));
 await p.waitForTimeout(1500);
 ok(asked.some((u) => u.includes("cyberjapandata.gsi.go.jp/xyz/hillshademap/")), "over Japan it asks GSI for hillshade tiles");
-await tick("world", false); await tick("jp", false); await p.waitForTimeout(300);
+await tick("jp", false); await p.waitForTimeout(300);
 ok((await layers()).length === 0, "unticking removes the layers");
 
 // ---------- 3D elevation in Japan (assets/osap-3d.js demTile), with made-up tiles instead of the network ----------

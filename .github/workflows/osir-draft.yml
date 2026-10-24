@@ -7,10 +7,9 @@ name: Draft OSIR analyst sections (AI)
 # reads it, and every filled part stays tagged AI generated (draft, not analyst-approved) until the analyst edits it.
 # Run it by hand with a country (and optionally a topic and days) to draft one topic on demand. A run on any branch other than
 # main parks its output on claude/osirdraft-preview-data instead of committing.
+# The daily drafting of the watched topics moved to .github/workflows/refresh-ai.yml (every 3 hours, on the runner's own model,
+# because GitHub Models answers these runners with "OK" and no reply); this workflow keeps the on-demand run for one topic.
 on:
-  schedule:
-    # after the morning event summaries, off the hour
-    - cron: "41 5 * * *"
   workflow_dispatch:
     inputs:
       cc:

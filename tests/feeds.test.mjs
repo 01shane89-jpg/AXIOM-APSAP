@@ -148,6 +148,14 @@ console.log("feeds tests passed");
     n("Ministry statement on flood aid", "2026-09-29T03:00", "https://m.gov/x?id=6", "Ministry"),                             // real query differs: kept
   ]);
   assert.deepEqual(out.map((i) => i.link), ["https://a.com/1?utm_source=x", "https://c.com/3", "https://g1.com/r", "https://g1.com/d", "https://h.bj/1", "https://h.bj/2", "https://m.gov/x?id=5", "https://m.gov/x?id=6"]);
+  // the outlet's own copy of an article (its feed's date) is kept over a search engine's copy of the same link, even a newer one
+  // (Bing dated a Khaosod article 7 hours before Khaosod's own feed, 22 Oct 2026)
+  const own = dedupeStories([
+    { title: "Pattani market shooting leaves two hurt in Nong Chik", date: "2026-10-22T15:16", link: "https://www.khaosod.co.th/n/1", outlet: "ข่าวสด (via Bing News search)", via: "search" },
+    { title: "Two hurt in Pattani shooting at Nong Chik market today", date: "2026-10-22T08:16", link: "https://khaosod.co.th/n/1/", outlet: "Khaosod", via: "RSS" },
+    { title: "Only found by a search engine, and that is fine", date: "2026-10-22T07:00", link: "https://x.th/2", outlet: "x.th (via Bing News search)", via: "search" },
+  ]);
+  assert.deepEqual(own.map((i) => i.outlet + " " + i.date), ["Khaosod 2026-10-22T08:16", "x.th (via Bing News search) 2026-10-22T07:00"]);
   console.log("news dedupe tests passed");
 }
 
