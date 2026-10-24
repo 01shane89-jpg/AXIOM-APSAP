@@ -154,5 +154,5 @@ jobs:
           git commit -m "Refresh conflict tabs $(date -u +'%Y-%m-%d %H:%MZ')"
           # Drop other changed files (the shared translation cache, which the 15-minute refresh commits) so the rebase can run.
           git checkout -- .
-          for i in 1 2 3 4; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 7; done
+          bash tools/push_rebase.sh main theirs 4 && exit 0
           exit 1

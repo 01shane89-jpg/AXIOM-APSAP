@@ -36,5 +36,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -qm "Deep South district outlines from geoBoundaries $(date -u +'%Y-%m-%d %H:%MZ')"
           b="${GITHUB_REF#refs/heads/}"
-          for i in 1 2 3 4; do git pull -q --rebase origin "$b" && git push -q origin "HEAD:$b" && exit 0; sleep 7; done
+          bash tools/push_rebase.sh "$b" "" 4 && exit 0
           exit 1

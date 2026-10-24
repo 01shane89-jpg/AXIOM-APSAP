@@ -86,5 +86,5 @@ jobs:
           git add -A data/live/gnss
           git commit -qm "Refresh GPS interference map $(date -u +'%Y-%m-%d %H:%MZ')"
           git checkout -- . 2>/dev/null || true
-          for i in 1 2 3 4; do git pull -q --rebase -X theirs origin main && git push -q && exit 0; sleep 7; done
+          bash tools/push_rebase.sh main theirs 4 && exit 0
           exit 1

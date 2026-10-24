@@ -73,5 +73,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -qm "Refresh measured mobile coverage $(date -u +'%Y-%m-%d')"
           git checkout -- .
-          for i in 1 2 3 4; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 7; done
+          bash tools/push_rebase.sh main theirs 4 && exit 0
           exit 1
