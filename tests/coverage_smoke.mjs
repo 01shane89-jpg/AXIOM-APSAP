@@ -65,6 +65,18 @@ async function open(opts) {
   const { p, ctx, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   const sx = await p.evaluate(() => { const t = document.getElementById("today"); return t.scrollWidth - t.clientWidth; });
   ok(sx <= 1, `phone: nothing scrolls sideways (${sx} px)`);
+  // Most covered / Blindspots sit side by side inside the card, and the selected one is readable in every theme
+  // (it was white text on the light Grey/Dark accent, about 1.8:1)
+  const seg = await p.evaluate(() => { const c = document.getElementById("td-cover").getBoundingClientRect(), bs = [...document.querySelectorAll('#td-cover [data-cvview]')].map((b) => b.getBoundingClientRect());
+    return { row: bs.length === 2 && Math.abs(bs[0].top - bs[1].top) < 1, inside: bs.every((r) => r.left >= c.left && r.right <= c.right + 0.5) }; });
+  ok(seg.row && seg.inside, `phone: the coverage toggle is one row inside the card (${JSON.stringify(seg)})`);
+  for (const theme of ["light", "grey", "dark"]) {
+    const cr = await p.evaluate((t) => { document.documentElement.setAttribute("data-map", t);
+      const b = document.querySelector('#td-cover [data-cvview][aria-pressed="true"]'), s = getComputedStyle(b);
+      const L = (c) => { const v = c.match(/[\d.]+/g).slice(0, 3).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+      const a = L(s.color), g = L(s.backgroundColor); return (Math.max(a, g) + 0.05) / (Math.min(a, g) + 0.05); }, theme);
+    ok(cr >= 4.5, `phone ${theme}: the selected coverage toggle reads at ${cr.toFixed(1)}:1`);
+  }
   await p.locator("#td-cover").scrollIntoViewIfNeeded();
   if (SHOTS) await p.screenshot({ path: SHOTS + "/coverage-phone.png" });
   ok(!errors.length, "phone: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
