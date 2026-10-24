@@ -2,40 +2,184 @@
 "feeds": [],
 "discover": [
 {
-"cc": "gn",
-"outlet": "ledjely|Ledjely",
-"home": "https://www.ledjely.com/",
-"lang": "fr"
-},
-{
-"cc": "jm",
-"outlet": "nationwide|Nationwide News",
-"home": "https://nationwideradiojm.com/",
+"cc": "pg",
+"outlet": "kalang|Kalang Advertising",
+"home": "https://kalangfm.com/",
 "lang": "en"
 },
 {
-"cc": "tn",
-"outlet": "tunnum|Tunisie Num\u00e9rique",
-"home": "https://www.tunisienumerique.com/",
-"lang": "fr"
+"cc": "lk",
+"outlet": "lankac|Lanka C News",
+"home": "https://lankacnews.com/",
+"lang": "si"
 },
 {
-"cc": "al",
-"outlet": "abcal|ABC News Albania",
-"home": "https://abcnews.al/",
-"lang": "sq"
+"cc": "lk",
+"outlet": "tamilwin|Tamilwin",
+"home": "https://tamilwin.com/",
+"lang": "ta"
 },
 {
-"cc": "bf",
-"outlet": "obspaalga|L'Observateur Paalga",
-"home": "https://www.lobservateur.bf/",
-"lang": "fr"
+"cc": "lk",
+"outlet": "virakesari|Virakesari",
+"home": "https://www.virakesari.lk/",
+"lang": "ta"
 },
 {
-"cc": "by",
-"outlet": "belta|BelTA",
-"home": "https://eng.belta.by/",
+"cc": "lk",
+"outlet": "newswirelk|Infolanka",
+"home": "https://www.infolanka.com/",
 "lang": "en"
+},
+{
+"cc": "ge",
+"outlet": "imedi|Imedi",
+"home": "https://info.imedi.ge/en",
+"lang": "en"
+},
+{
+"cc": "ge",
+"outlet": "onge|On.ge",
+"home": "https://on.ge/",
+"lang": "ka"
+},
+{
+"cc": "ge",
+"outlet": "rustavi2|Rustavi 2",
+"home": "https://rustavi2.ge/en",
+"lang": "en"
+},
+{
+"cc": "ge",
+"outlet": "commersant|Commersant.ge",
+"home": "https://commersant.ge/",
+"lang": "ka"
+},
+{
+"cc": "tz",
+"outlet": "globalpub|Global Publishers",
+"home": "https://globalpublishers.co.tz/",
+"lang": "sw"
+},
+{
+"cc": "tz",
+"outlet": "zanzibarleo|Zanzibar Leo",
+"home": "https://zanzibarleo.co.tz/",
+"lang": "sw"
+},
+{
+"cc": "kh",
+"outlet": "kohsantepheap|Koh Santepheap",
+"home": "https://kohsantepheapdaily.com.kh/",
+"lang": "km"
+},
+{
+"cc": "kh",
+"outlet": "postkhmer|Post Khmer",
+"home": "https://www.postkhmer.com/",
+"lang": "km"
+},
+{
+"cc": "lt",
+"outlet": "lzinios|Lietuvos \u017einios",
+"home": "https://www.lzinios.lt/",
+"lang": "lt"
+},
+{
+"cc": "lt",
+"outlet": "respublika|Respublika",
+"home": "https://www.respublika.lt/",
+"lang": "lt"
+},
+{
+"cc": "lt",
+"outlet": "klaipeda|Klaip\u0117da",
+"home": "https://www.kl.lt/",
+"lang": "lt"
+},
+{
+"cc": "lt",
+"outlet": "madeinvilnius|Made in Vilnius",
+"home": "https://madeinvilnius.lt/",
+"lang": "lt"
+},
+{
+"cc": "is",
+"outlet": "vb|Vi\u00f0skiptabla\u00f0i\u00f0",
+"home": "https://www.vb.is/",
+"lang": "is"
+},
+{
+"cc": "is",
+"outlet": "mannlif|Mannl\u00edf",
+"home": "https://www.mannlif.is/",
+"lang": "is"
+},
+{
+"cc": "is",
+"outlet": "akureyrinet|Akureyri.net",
+"home": "https://www.akureyri.net/",
+"lang": "is"
+},
+{
+"cc": "is",
+"outlet": "nutiminn|N\u00fat\u00edminn",
+"home": "https://www.nutiminn.is/",
+"lang": "is"
+},
+{
+"cc": "ee",
+"outlet": "parnu|P\u00e4rnu Postimees",
+"home": "https://parnu.postimees.ee/",
+"lang": "et"
+},
+{
+"cc": "ee",
+"outlet": "sakala|Sakala",
+"home": "https://sakala.postimees.ee/",
+"lang": "et"
+},
+{
+"cc": "iq",
+"outlet": "kirkuknow|Kirkuk Now",
+"home": "https://kirkuknow.com/en",
+"lang": "en"
+},
+{
+"cc": "iq",
+"outlet": "nrt|NRT",
+"home": "https://www.nrttv.com/en",
+"lang": "en"
+},
+{
+"cc": "iq",
+"outlet": "drawmedia|Draw Media",
+"home": "https://drawmedia.net/",
+"lang": "ku"
+},
+{
+"cc": "iq",
+"outlet": "alghad|Alghad Press",
+"home": "https://www.alghadpress.com/",
+"lang": "ar"
+},
+{
+"cc": "iq",
+"outlet": "alforat|Al-Furat News",
+"home": "https://alforatnews.iq/",
+"lang": "ar"
+},
+{
+"cc": "iq",
+"outlet": "ultra|Ultra Iraq",
+"home": "https://ultrairaq.ultrasawt.com/",
+"lang": "ar"
+},
+{
+"cc": "la",
+"outlet": "laostar|Lao Star",
+"home": "https://www.laostar.la/",
+"lang": "lo"
 }
 ]
 }
