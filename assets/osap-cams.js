@@ -2,7 +2,9 @@
    bodies publish themselves, openly, with no key, account or login: road cameras (open-data feeds and the camera lists on their
    own public 511 traveller websites), and volcano, river and weather cameras (each source's type in data/cams/index.json says
    which; tools/build_cams.mjs rebuilds the lists weekly). Never private or unsecured cameras. A row of buttons under the switch
-   picks which kinds are drawn (kept on this device).
+   picks which kinds are drawn (kept on this device). The same switch carries the surveillance cameras mapped in OpenStreetMap
+   (assets/osap-surveil.js keeps its own source, layer and pop-ups; its button here is the "Surveillance" kind, and its messages
+   sit under the buttons), so Map overlays has one Cameras switch.
    Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
    closures. It is not a data set: it never filters reports, and nothing here creates or changes a record.
    - Off by default. Switched on, the page reads the camera list of each agency whose area is on screen (zoom 8 and closer), and
@@ -30,8 +32,11 @@
     ocean: { n: "Sea", t: "Ocean buoy camera", c: "#0c8599", z: 4 } }; // z: a kind spread thinly enough to show from further out
   var KINDS = { dwr: 1, hls: 1, jma: 1 };
   function typeOf(s) { return TYPES[s && s.type] ? s.type : "road"; }
+  /* the surveillance cameras' kind button: not a source type here, it switches assets/osap-surveil.js */
+  var SVK = "surveil", SVC = "#c2255c";
+  function svSync() { if (W.OSAP_SURVEIL && W.OSAP_SURVEIL.set) W.OSAP_SURVEIL.set(S.on && !OFF[SVK]); }
   var OFF = {};
-  try { (JSON.parse(localStorage.getItem("osap-cam-off") || "[]") || []).forEach(function (k) { if (TYPES[k]) OFF[k] = 1; }); } catch (e) {}
+  try { (JSON.parse(localStorage.getItem("osap-cam-off") || "[]") || []).forEach(function (k) { if (TYPES[k] || k === SVK) OFF[k] = 1; }); } catch (e) {}
   function saveOff() { try { localStorage.setItem("osap-cam-off", JSON.stringify(Object.keys(OFF))); } catch (e) {} }
 
   /* ---------- the source index and the per-agency lists ---------- */
@@ -354,16 +359,19 @@
       '<p class="pwr-m">Only cameras a government agency or public body publishes itself, openly, with no account or login. Left out on purpose: the FAA\'s aviation weather cameras (shared only under an agreement), and any camera list that needs a key. Other countries have no such feed yet, need a key (South Korea), sit behind a robot check (Philippines, Bangkok), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
   }
   function secHtml() {
-    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Public cameras</b><i>Official road, river, volcano, weather and sea cameras: hover or tap a camera</i></span></label>' +
+    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Cameras</b><i>Official road, river, volcano, weather and sea cameras, and surveillance cameras mapped in OpenStreetMap: hover or tap a camera</i></span></label>' +
       '<div class="cam-kinds" data-camkinds role="group" aria-label="Kinds of camera to show">' + Object.keys(TYPES).map(function (k) {
-        return '<button type="button" data-camkind="' + k + '" aria-pressed="' + !OFF[k] + '"><span style="background:' + TYPES[k].c + '"></span>' + TYPES[k].n + "</button>"; }).join("") + "</div>" +
+        return '<button type="button" data-camkind="' + k + '" aria-pressed="' + !OFF[k] + '"><span style="background:' + TYPES[k].c + '"></span>' + TYPES[k].n + "</button>"; }).join("") +
+        '<button type="button" data-camkind="' + SVK + '" aria-pressed="' + !OFF[SVK] + '" title="Community-mapped in OpenStreetMap, from street zoom"><span style="background:' + SVC + '"></span>Surveillance</button>' + "</div>" +
       '<p class="mlkey pwr-m" data-cammsg aria-live="polite" hidden></p>' +
+      '<div data-camsv></div>' +
       '<details class="cam-cov"><summary>Where cameras are available</summary><div data-camcov></div></details>';
   }
   function paintSec() {
     if (!sec) return;
     var i = sec.querySelector("input[data-cam]"); if (i) i.checked = S.on;
     var kb = sec.querySelector("[data-camkinds]"); if (kb) kb.hidden = !S.on;
+    var sv = sec.querySelector("[data-camsv]"); if (sv) sv.hidden = !S.on || !!OFF[SVK];
     Array.prototype.forEach.call(sec.querySelectorAll("[data-camkind]"), function (b) { b.setAttribute("aria-pressed", String(!OFF[b.getAttribute("data-camkind")])); });
     var m = sec.querySelector("[data-cammsg]"); if (m) { m.textContent = S.msg; m.hidden = !S.msg; }
     var cv = sec.querySelector("[data-camcov]"); if (cv && sec.querySelector(".cam-cov").open) cv.innerHTML = coverage();
@@ -379,6 +387,7 @@
     if (!map) return;
     S.on = !!on;
     if (S.on) loadIndex().then(draw); else draw();
+    svSync();
     paintSec();
   }
   var css = D.createElement("style");
@@ -410,12 +419,15 @@
       sec.addEventListener("click", function (e) {
         var b = e.target && e.target.closest && e.target.closest("[data-camkind]"); if (!b) return;
         var k = b.getAttribute("data-camkind"); if (OFF[k]) delete OFF[k]; else OFF[k] = 1;
-        saveOff(); paintSec(); draw();
+        saveOff(); paintSec();
+        if (k === SVK) svSync(); else draw();
       });
       sec.querySelector(".cam-cov").addEventListener("toggle", function (e) { if (e.target.open) { loadIndex(); paintSec(); } });
     }
     if (home.id === "ml-extra" && !home.querySelector("#pwr-sec") && !sec.querySelector(".mlh")) sec.insertAdjacentHTML("afterbegin", '<div class="mlh">Infrastructure</div>');
     home.appendChild(sec); home.hidden = false;
+    /* the surveillance cameras' messages and attribution sit under the kind buttons */
+    if (W.OSAP_SURVEIL && W.OSAP_SURVEIL.adopt) W.OSAP_SURVEIL.adopt(sec.querySelector("[data-camsv]"));
     paintSec();
     return true;
   }
