@@ -262,10 +262,10 @@ if (todo.length) {
   const bad = tr.map((r, k) => (r.en && r.tool && !sane(origOf(k), r.en) ? k : -1)).filter((k) => k >= 0);
   if (bad.length) {
     bad.forEach((k) => forget(texts[k].text, texts[k].lang));
-    bad.forEach((k) => { tr[k] = { en: null, tool: tr[k].tool }; });   // no fallback service since 2026-10-17 (tools/translate.mjs); retried next run
-    console.log("Deep South: " + bad.length + " model translations failed the check and were dropped");
     // public headlines only (never summaries' outlet text): the rule each one failed, for tuning the check
     bad.filter((k) => k < todo.length).slice(0, 12).forEach((k) => console.log("  rejected (" + why(origOf(k), tr[k].en) + "): " + String(texts[k].text).slice(0, 90) + " -> " + String(tr[k].en).slice(0, 110)));
+    bad.forEach((k) => { tr[k] = { en: null, tool: tr[k].tool }; });   // no fallback service since 2026-10-17 (tools/translate.mjs); retried next run
+    console.log("Deep South: " + bad.length + " model translations failed the check and were dropped");
   }
   todo.forEach((i, n) => {
     const t = tr[n].en, sm = tr[todo.length + n].en;
