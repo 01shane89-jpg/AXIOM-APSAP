@@ -3567,13 +3567,27 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var me = f.properties.n === C.ne;
       return me ? { stroke: false, fill: false } : { color: tok("--muted"), weight: 0.8, opacity: 0.6, fillColor: tok("--surface"), fillOpacity: 0.12 };
     } }).addTo(map);
-    /* open country: a thick two-tone border (dark casing under a bright line) so it reads on light, dark and satellite base
-       maps alike; fixed colours because the base map choice, not the page theme, decides what it sits on */
+    /* open country: a very fine line in the accent colour, no shade over its land. The 1:50m shape draws at once; the
+       country's 1:10m outline (data/basemap/outline-10m/, tools/build_outline10m.mjs) then replaces it so the line follows
+       the real coast. The colour follows the theme. */
     var cme = window.COUNTRY_BASE.features.concat((window.WORLD_BASE || {}).features || []).filter(function (f) { return f.properties.n === C.ne; });
-    if (cme.length) [{ color: "#0B1620", weight: 6, opacity: 0.55 }, { color: "#4DB8FF", weight: 3, opacity: 1 }].forEach(function (st) {
-      L.geoJSON({ type: "FeatureCollection", features: cme }, { pane: "cbase", interactive: false, style: function () {
-        return { color: st.color, weight: st.weight, opacity: st.opacity, fill: false, lineJoin: "round" }; } }).addTo(map);
-    });
+    var cmeSt = function () { return { color: tok("--accent"), weight: 1, opacity: 0.95, fill: false, lineJoin: "round" }; };
+    var cmeL = cme.length ? L.geoJSON({ type: "FeatureCollection", features: cme }, { pane: "cbase", interactive: false, style: cmeSt }).addTo(map) : null;
+    if (cmeL) {
+      if (window.MutationObserver) new MutationObserver(function () { cmeL.setStyle(cmeSt()); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-map"] });
+      var cmeSlug = C.ne.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      var cmeS = document.createElement("script"); cmeS.async = true; cmeS.src = "data/basemap/outline-10m/" + cmeSlug + ".js";
+      cmeS.onload = function () {
+        var d = (window.OSAP_OUTLINE10 || {})[C.ne]; if (!d) return;
+        var rings = d.l.map(function (a) {
+          var x = a[0], y = a[1], pts = [[y / d.s, x / d.s]];
+          for (var i = 2; i < a.length; i += 2) { x += a[i]; y += a[i + 1]; pts.push([y / d.s, x / d.s]); }
+          return pts;
+        });
+        cmeL.clearLayers(); cmeL.addLayer(L.polyline(rings, L.extend(cmeSt(), { pane: "cbase", interactive: false })));
+      };
+      document.head.appendChild(cmeS);
+    }
   }
   var cseg = document.getElementById("country-seg");
   /* the open US state's outline, over the country outline */
