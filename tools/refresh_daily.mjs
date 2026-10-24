@@ -89,9 +89,10 @@ const SYSTEM = [
 let stop = "";
 const aiStop = () => Object.entries(AI.status().dropped).map(([p, why]) => p + ": " + why).join("; ") || "no AI provider";
 async function ask(user) {
-  const res = await AI.chat({ messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }] });
+  // 900 tokens: the runner's small model writes long sentences, and a reply cut off at 600 was not valid JSON (24 Oct, 6 of 19)
+  const res = await AI.chat({ messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }], max_tokens: 900 });
   if (!res) { stop = aiStop(); return null; }
-  const o = parseJsonReply(res.content); if (!o) throw new Error(res.provider + " reply was not JSON");
+  const o = parseJsonReply(res.content); if (!o) throw Object.assign(new Error(res.provider + " reply was not JSON"), { soft: true });
   return { o, model: res.model, provider: res.provider, usage: res.usage };
 }
 const prev = {};
@@ -99,7 +100,7 @@ for (const cc of only || ccs) { const p = readWin(`${DIR}/${cc}.js`, "OSAP_DAILY
 const want = (only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length)
   .sort((a, b) => (PRIORITY.includes(b) + !!confByCc[b]) - (PRIORITY.includes(a) + !!confByCc[a]) || built[b].basis.reports - built[a].basis.reports);
 const focus = want.filter((cc) => PRIORITY.includes(cc) || confByCc[cc]);
-let made = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
+let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
 if (AI.available()) for (const cc of focus) {
   if (stop || made >= AI_PER_RUN) break;
   if (AI_BUDGET_MS && Date.now() - aiT0 > AI_BUDGET_MS) { stop = "time budget used"; break; }
@@ -114,7 +115,10 @@ if (AI.available()) for (const cc of focus) {
     d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
     if (res.usage) d.tokens = { in: res.usage.prompt_tokens, out: res.usage.completion_tokens };
     made++; byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
-  } catch (e) { errs.push(cc + ": " + e.message.slice(0, 120)); if (errs.length > 5) { stop = "too many errors"; break; } }
+  } catch (e) {
+    // a reply that is not JSON costs that country its AI line, not the run: only failures of the model itself stop it
+    errs.push(cc + ": " + e.message.slice(0, 120)); if (!e.soft && ++hardErrs > 5) { stop = "too many errors"; break; }
+  }
 }
 index.ai.made = made; index.ai.due = focus.length - made; index.ai.stopped = stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
 index.ai.providers = byProvider; if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
