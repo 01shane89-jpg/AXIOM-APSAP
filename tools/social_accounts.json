@@ -199,6 +199,150 @@
    "handle": "crisisgroup.org",
    "kind": "think tank",
    "lang": "en"
+  },
+  {
+   "cc": "au",
+   "handle": "news.abc.net.au",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "eurasianet.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "br",
+   "handle": "apublica.org",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "revistapiaui.bsky.social",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "cz",
+   "handle": "denikn.cz",
+   "kind": "news desk",
+   "lang": "cs"
+  },
+  {
+   "cc": "ge",
+   "handle": "ocmedia.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "hr",
+   "handle": "telegram.hr",
+   "kind": "news desk",
+   "lang": "hr"
+  },
+  {
+   "cc": "il",
+   "handle": "timesofisrael.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jp",
+   "handle": "japantimes.co.jp",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "handle": "hankyoreh.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "handle": "thekoreaherald.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lv",
+   "handle": "rebaltica.bsky.social",
+   "kind": "news desk",
+   "lang": "lv"
+  },
+  {
+   "cc": "mm",
+   "handle": "frontiermyanmar.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "mx",
+   "handle": "pajaropolitico.bsky.social",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "my",
+   "handle": "malaysiakini.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "nl",
+   "handle": "nieuws.nos.nl",
+   "kind": "public broadcaster",
+   "lang": "nl"
+  },
+  {
+   "cc": "pl",
+   "handle": "notesfrompoland.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ru",
+   "handle": "en.zona.media",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sk",
+   "handle": "dennikn.bsky.social",
+   "kind": "news desk",
+   "lang": "sk"
+  },
+  {
+   "cc": "th",
+   "handle": "prachatai.com",
+   "kind": "news desk",
+   "lang": "th"
+  },
+  {
+   "cc": "tr",
+   "handle": "bianet-eng.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "handle": "pravda.ua",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ar",
+   "handle": "infobae.bsky.social",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "es",
+   "handle": "publico.es",
+   "kind": "news desk",
+   "lang": "es"
   }
  ],
  "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run.",
