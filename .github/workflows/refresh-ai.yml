@@ -35,7 +35,7 @@ on:
         required: false
         default: "45"
       task:
-        description: "daily, evsum (incident summaries), osir (OSIR analyst sections), code (incident record suggestions) or both (evsum, osir and code)"
+        description: "daily, evsum (incident summaries), osir (OSIR analyst sections), code (incident record suggestions), both (evsum, osir and code) or cycle (the 3-hourly round, started by refresh-keeper.yml when the schedule is skipped)"
         required: false
         default: "both"
 
@@ -133,7 +133,7 @@ jobs:
           node tools/refresh_evsum.mjs
       # the daily run has no time left for it (daily 90 + incidents 60 minutes); the 3-hourly runs draft whatever topics are due
       - name: Draft OSIR analyst sections
-        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'osir' || inputs.task == 'both')) }}
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'osir' || inputs.task == 'both' || inputs.task == 'cycle')) }}
         timeout-minutes: 40
         continue-on-error: true
         env:
@@ -149,7 +149,7 @@ jobs:
           npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
           node tools/refresh_osirdraft.mjs
       - name: Suggest incident record fields
-        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'code' || inputs.task == 'both')) }}
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'code' || inputs.task == 'both' || inputs.task == 'cycle')) }}
         timeout-minutes: 30
         continue-on-error: true
         env:

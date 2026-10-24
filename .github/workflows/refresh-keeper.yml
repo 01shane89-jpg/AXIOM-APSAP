@@ -59,6 +59,14 @@ jobs:
                 echo "$(date -u +%H:%MZ) a conflict refresh is still waiting or running; skipping this round"
               fi
             fi
+            # the 3-hourly AI drafts (refresh-ai.yml: incident summaries, OSIR sections, record suggestions). Its "53 */3" schedule started
+            # 5 runs (1 cancelled) of the 8 due in the 24 h to 24 Oct 2026 18:53Z, so OSIR drafts went 6 h and more between rounds. When no run of it has been
+            # created in the last 3 h 20 min, start the same round by hand (task=cycle). Only recent runs count, as for the conflict tabs.
+            since=$(date -u -d '200 minutes ago' +%Y-%m-%dT%H:%M:%SZ)
+            aw=$(gh run list --workflow refresh-ai.yml --branch main --limit 20 --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1)
+            if [ "$aw" = "0" ]; then
+              gh workflow run refresh-ai.yml --ref main -f task=cycle && echo "$(date -u +%H:%MZ) started the AI drafts round" || echo "$(date -u +%H:%MZ) could not start the AI drafts round"
+            fi
             # data health: alert on the ntfy health channel when the published data has stopped (never fails the keeper)
             timeout 90 node tools/health.mjs watch || echo "$(date -u +%H:%MZ) health check did not finish"
             [ $(( $(date +%s) + 900 )) -lt "$end" ] || break
