@@ -31,6 +31,7 @@ async function get(url, accept) {
 import { classify, figure, place, relevant, markAlerts, KILLED, INJURED, placeSubst, placeMismatch } from "./deepsouth_lib.mjs";
 import { staleSearchResult } from "./conflict_lib.mjs";
 import { stripOutletText } from "./outlet_text.mjs";
+import { searchDated } from "./news_dedupe.mjs";
 import { readIndex, plan as capturePlan, write as captureWrite, toCapture, toTranslation } from "./capture_lib.mjs";
 import { plan as claimPlan, RULES as CLAIM_RULES } from "./claim_lib.mjs";
 import { build as buildIncidents } from "./incident_lib.mjs";
@@ -209,7 +210,24 @@ if (PROBE) {
 // Merge with what earlier runs kept (by link), drop items older than a year, translate what is new, sort and place.
 const byLink = new Map();
 for (const i of prev.items || []) if (i && i.link) byLink.set(i.link, i);
-for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
+// An article's date from its outlet's own feed is kept over a search engine's date for the same link, which can be hours off
+// (Khaosod and Naewna articles came 7 hours early through Bing, 22 and 20 Oct 2026).
+for (const i of fresh) {
+  const o = byLink.get(i.link), keepDate = o && o.date && !searchDated(o) && searchDated(i);
+  byLink.set(i.link, { ...(o || {}), ...i, ...(keepDate ? { date: o.date, via: o.via, outlet: o.outlet } : {}), first_seen: (o && o.first_seen) || stamp });
+}
+// ...and from the news history (data/history/th.js), which keeps the outlets' own copies after they leave the live news list, so
+// a search date already stored is put right on a later run too
+try {
+  const t = fs.readFileSync("data/history/th.js", "utf8"), h = JSON.parse(t.slice(t.indexOf('["th"]=') + 7).trim().replace(/;$/, ""));
+  const own = new Map((h.news || []).filter((n) => n.link && n.date && !searchDated(n)).map((n) => [n.link, n]));
+  let fixed = 0;
+  for (const i of byLink.values()) {
+    const n = own.get(i.link);
+    if (n && searchDated(i) && i.date !== n.date) { i.date = n.date; i.via = n.via || "RSS"; i.outlet = n.outlet || i.outlet; fixed++; }
+  }
+  console.log("Deep South: " + fixed + " search dates replaced by the outlet's own date from the news history");
+} catch (e) { console.log("Deep South: news history unreadable, search dates kept (" + e.message + ")"); }
 // Page links have no date: dated by first sighting. A page's first run is a baseline (old stories) and never alerts.
 const hadFeed = new Set((prev.items || []).map((i) => i.feed));
 for (const i of byLink.values()) if (i.undated) {
@@ -230,32 +248,49 @@ if (todo.length) {
   // Search results cut headlines off with "..." and open with "ด่วน!" ("urgent"); the model invents text for such fragments, so both are
   // dropped from what it is given (the original stays as published).
   // Deep South place names go to the model already in English, so it cannot turn "ระแงะ" into a place in another country.
-  const clean = (t) => placeSubst(decodeEntities(t).replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").trim());
+  const clean = (t) => placeSubst(decodeEntities(t).replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").replace(/\s+(?:จ|อ)\.\s*$/, "").trim());
   // The open model sometimes invents text or loops ("police, police, ..."). A translation is kept only when it carries every number in
   // the original (as digits or, up to twenty, as a word), brings in no year the original does not have (Thai years are Buddhist Era:
   // 2569 or "ปี 69" is 2026), and repeats no word run. A rejected model translation is asked once more of the fallback service;
   // if that fails too the original Thai is shown and the item is retried on the next run.
   const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
     "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
-  const has = (en, x) => new RegExp("(^|\\D)" + x + "(\\D|$)").test(en) || (+x <= 20 && new RegExp("\\b" + WORDS[+x] + "\\b", "i").test(en));
+  const ORD = ["zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
+    "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth", "twentieth"];
+  // how often a number appears in the English: as digits ("4", "4th") or a word ("four", "fourth"); a Thai headline giving
+  // "killed 1 injured 1" needs two of them, so a dropped figure is caught. "a"/"an" does not count as one: it let "injured 1"
+  // through as "shot and killed a volunteer".
+  const count = (en, x) => (en.match(new RegExp("(^|\\D)" + x + "(?:st|nd|rd|th)?(?=\\D|$)", "g")) || []).length +
+    (+x <= 20 ? (en.match(new RegExp("\\b(?:" + WORDS[+x] + "|" + ORD[+x] + ")\\b", "gi")) || []).length : 0);
+  const has = (en, x, n = 1) => count(en, x) >= n;
   // the forms a number in the Thai may take in English: itself, a word, or a Buddhist Era year as a Common Era one
   const forms = (x) => [x, ...(+x >= 2400 && +x <= 2700 ? [String(+x - 543)] : []), ...(x.length === 2 ? [String(1957 + +x)] : [])];
-  const sane = (orig, en) => {
-    if (!en) return false;
-    const o = clean(orig), nums = (o.match(/\d+/g) || []).filter((x) => x.length < 5);
-    if (nums.some((x) => !forms(x).some((f) => has(en, f)))) return false;
+  // why a translation fails the check ("" when it passes), so the job log shows which rule holds headlines back
+  const why = (orig, en) => {
+    if (!en) return "empty";
+    const o = clean(orig).replace(/(\d),(?=\d{3}(?!\d))/g, "$1"), nums = (o.match(/\d+/g) || []).filter((x) => x.length < 5);
+    en = en.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    const need = (x) => (+x <= 20 ? nums.filter((y) => +y === +x).length : 1);
+    const lost = nums.find((x) => !forms(x).some((f) => has(en, f, need(x)))); if (lost) return "number " + lost + " missing";
     const ys = new Set(nums.flatMap(forms).map(Number));
-    if ((en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).some((y) => !ys.has(+y))) return false;
-    if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return false;
-    if (placeMismatch(orig, en)) return false;
-    return en.length < 4 * o.length + 40;
+    const yr = (en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).find((y) => !ys.has(+y)); if (yr) return "year " + yr + " added";
+    // a figure of two or more digits the Thai does not have was made up ("from 35 years and four months to 20 years")
+    const added = (en.match(/\d{2,}/g) || []).find((x) => x.length < 5 && !ys.has(+x)); if (added) return "number " + added + " added";
+    if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return "repeated words";
+    // a Thai headline that reports only wounded ("บาดเจ็บ 1") must not come out as a killing
+    if (/เจ็บ/.test(o) && !/เสียชีวิต|ดับ|ตาย|สังหาร|พลีชีพ|ศพ/.test(o) && /\b(?:kill\w*|dead|died|death)\b/i.test(en)) return "wounded became killed";
+    if (placeMismatch(orig, en)) return "place or term lost";
+    return en.length < 4 * o.length + 40 ? "" : "too long";
   };
+  const sane = (orig, en) => !why(orig, en);
   const texts = [...todo.map((i) => ({ text: clean(i.title), lang: i.lang })), ...todo.map((i) => ({ text: clean(i.summary), lang: i.lang }))];
   const tr = await translateAll(texts);
   const origOf = (k) => (k < todo.length ? todo[k].title : todo[k - todo.length].summary);
   const bad = tr.map((r, k) => (r.en && r.tool && !sane(origOf(k), r.en) ? k : -1)).filter((k) => k >= 0);
   if (bad.length) {
     bad.forEach((k) => forget(texts[k].text, texts[k].lang));
+    // public headlines only (never summaries' outlet text): the rule each one failed, for tuning the check
+    bad.filter((k) => k < todo.length).slice(0, 12).forEach((k) => console.log("  rejected (" + why(origOf(k), tr[k].en) + "): " + String(texts[k].text).slice(0, 90) + " -> " + String(tr[k].en).slice(0, 110)));
     bad.forEach((k) => { tr[k] = { en: null, tool: tr[k].tool }; });   // no fallback service since 2026-10-17 (tools/translate.mjs); retried next run
     console.log("Deep South: " + bad.length + " model translations failed the check and were dropped");
   }
