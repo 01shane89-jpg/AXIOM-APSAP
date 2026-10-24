@@ -12,7 +12,7 @@ on:
     # after the 15-minute feed refresh has written the hazard and outbreak files, off the hour
     - cron: "37 */6 * * *"
   workflow_dispatch:
-  # TEMPORARY test run on the PR branch (removed before review), run 4
+  # TEMPORARY test run on the PR branch (removed before review), run 5
   push:
     branches: [claude/risk-ratings]
     paths: [.github/workflows/refresh-risk.yml]

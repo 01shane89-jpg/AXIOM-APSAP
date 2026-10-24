@@ -4,7 +4,7 @@
 // Inputs, all keyless and free:
 //  - World Bank World Development Indicators and Worldwide Governance Indicators (CC BY 4.0): political stability and absence
 //    of violence/terrorism, rule of law, intentional homicides (UNODC), deaths before age 5 (UN IGME), population, access to electricity,
-//    internet use: the most recent value of each (mrnev=1). Slow-moving, so read once a week and kept in data/live/risk/_wb.json.
+//    internet use: the most recent value of each. Slow-moving, so read once a week and kept in data/live/risk/_wb.json.
 //  - OSAP's own feeds in data/live: conflict deaths (UCDP GED and candidate events, data/live/conflicts/history/cc and
 //    data/live/ucdp), WHO Disease Outbreak News and CDC travel health notices, GDACS alerts, USGS earthquakes, official
 //    warnings, tropical cyclone forecasts, volcanic ash advisories and IODA internet outage signals.
@@ -54,11 +54,12 @@ if (wbOld && process.env.RISK_WB !== "0") {
   const next = { schema: "osap-risk-wb/1", read: STAMP, series: {}, ids: {}, errors: {} };
   for (const d of WB) {
     for (const id of d.ids) {
-      for (const extra of ["", "&source=3"]) {
+      // the latest value of each country first (small and quick); the Governance Indicators do not take mrnev, so a year range next
+      for (const extra of ["&mrnev=1", "&date=" + (Y - 10) + ":" + Y, "&date=" + (Y - 10) + ":" + Y + "&source=3"]) {
         if (next.series[d.k]) break;
-        if (extra && !/WGI|\.EST$/.test(id)) continue;
+        if (/source=3/.test(extra) && !/WGI|\.EST$/.test(id)) continue;
         for (let attempt = 0; attempt < 2 && !next.series[d.k]; attempt++) try {
-          const j = await getJson("https://api.worldbank.org/v2/country/all/indicator/" + id + "?format=json&per_page=20000&mrnev=1" + extra);
+          const j = await getJson("https://api.worldbank.org/v2/country/all/indicator/" + id + "?format=json&per_page=20000" + extra);
           const rows = (Array.isArray(j) && j[1]) || [], o = {};
           for (const r of rows) if (r && r.value != null && isFinite(r.value) && /^[A-Z]{3}$/.test(r.countryiso3code || "")) (o[r.countryiso3code] = o[r.countryiso3code] || []).push([String(r.date), +r.value]);
           for (const a in o) o[a].sort((x, y) => x[0].localeCompare(y[0]));
