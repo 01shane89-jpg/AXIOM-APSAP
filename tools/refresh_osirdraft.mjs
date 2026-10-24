@@ -5,25 +5,30 @@
 // assets/osap-osir.js ("Fill from AI draft").
 //   1. Records come from the page itself: the country is opened headless (index.html?watchscan=1, network cut off, the repo's own
 //      data files only) and window.OSAP_TLREPORT.data() gives the same records the OSIR window would use for that topic and period.
-//   2. Drafting goes through GitHub Models with the workflow's own GITHUB_TOKEN (permission models: read). No personal key.
+//   2. Drafting goes through tools/ai_gateway.mjs: GitHub Models with the workflow's own GITHUB_TOKEN (permission models: read; no
+//      personal key), else the open-weight model .github/workflows/refresh-ai.yml serves on the runner (OSAP_LOCAL_LLM).
 //      Records go to the model as quoted data and are never followed as instructions (tools/osirdraft_lib.mjs checks every reply).
 //   3. The draft never holds a Summary (bottom line): the analyst writes that. Nothing is approved, merged or published by the job,
 //      and no record is changed; in the window every filled part stays tagged AI generated until the analyst edits it.
 //   4. Budget: GitHub Models' free limit (about 150 requests a day for small models) is shared with the event summaries
 //      (tools/refresh_evsum.mjs, up to 140 a day). This job drafts at most OSIRDRAFT_PER_DAY a day and none once the two together
 //      reach OSIRDRAFT_SHARED_CAP.
-// Env: GITHUB_TOKEN (none: list the records only, draft nothing), OSIRDRAFT_MODEL, OSIRDRAFT_CC + OSIRDRAFT_SCOPE + OSIRDRAFT_DAYS
+// Env: GITHUB_TOKEN and/or OSAP_LOCAL_LLM (neither: list the records only, draft nothing), OSIRDRAFT_AI_BUDGET_MIN, OSIRDRAFT_MODEL, OSIRDRAFT_CC + OSIRDRAFT_SCOPE + OSIRDRAFT_DAYS
 // (one topic on demand; it is drafted even if its daily draft is fresh), CHROME_PATH.
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
+import { gateway, parseJsonReply } from "./ai_gateway.mjs";
 import { SYSTEM, PROMPT_V, LABEL, MAX_RECS, input, check, clean, pick } from "./osirdraft_lib.mjs";
 
 const OUT = "data/live/osirdraft.js", TOPICS = "tools/osirdraft_topics.json", EVSUM = "data/live/evsum.js";
 const MODEL = process.env.OSIRDRAFT_MODEL || "openai/gpt-4o-mini";
+// OSIRDRAFT_MAX_RECS: fewer records per prompt for the runner's model (its 8192-token window holds the records and a 1600-token reply)
+const REC_N = Math.min(MAX_RECS, +(process.env.OSIRDRAFT_MAX_RECS || MAX_RECS));
 const PER_DAY = +(process.env.OSIRDRAFT_PER_DAY || 10), SHARED_CAP = +(process.env.OSIRDRAFT_SHARED_CAP || 148), EVERY_H = 20, MIN_RECS = 3, KEEP_DAYS = 30;
-const TOKEN = process.env.GITHUB_TOKEN || "";
+const AI = gateway({ githubModel: MODEL, timeoutMs: { github: 90000 } }), AI_BUDGET_MS = +(process.env.OSIRDRAFT_AI_BUDGET_MIN || 0) * 60e3, T_START = Date.now();
+const aiStop = () => Object.entries(AI.status().dropped).map(([p, why]) => p + ": " + why).join("; ") || "no AI provider (listing only)";
 const now = new Date(), stamp = now.toISOString().slice(0, 16).replace("T", " ") + "Z", today = now.toISOString().slice(0, 10);
 const iso = (ms) => new Date(ms).toISOString().slice(0, 10);
 const madeMs = (t) => Date.parse(String(t && t.made).replace(" ", "T")) || 0;
@@ -97,27 +102,18 @@ async function records(list) {
 let stop = "";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function modelCall(user) {
-  const body = { model: MODEL, temperature: 0.2, max_tokens: 1600, response_format: { type: "json_object" }, messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }] };
-  for (let attempt = 0; attempt < 2; attempt++) {
-    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 90000);
-    let r; try { r = await fetch("https://models.github.ai/inference/chat/completions", { method: "POST", signal: ctl.signal,
-      headers: { authorization: "Bearer " + TOKEN, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body) }); } finally { clearTimeout(to); }
-    if (r.status === 429) { const w = +(r.headers.get("retry-after") || 0); if (!w || w > 70) { stop = "rate limit (HTTP 429)"; return null; } await sleep(w * 1000 + 500); continue; }
-    if (!r.ok) { const t = (await r.text()).slice(0, 200); if ([401, 403, 404].includes(r.status)) stop = "HTTP " + r.status; throw new Error("HTTP " + r.status + ": " + t); }
-    const raw = await r.text();
-    // from Actions runners models.github.ai has answered every path with 200 text/plain "OK" (see refresh_evsum.mjs): stop cleanly, no draft
-    if (!/^\s*\{/.test(raw)) { stop = "GitHub Models answered without a model reply (" + (r.headers.get("content-type") || "no type") + ": " + raw.slice(0, 40).trim() + ")"; return null; }
-    const j = JSON.parse(raw), c = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
-    try { return { o: JSON.parse(String(c).replace(/^```(json)?|```$/g, "")), model: j.model || MODEL, usage: j.usage }; } catch (e) { throw new Error("reply was not JSON"); }
-  }
-  stop = "rate limit (HTTP 429)"; return null;
+  if (AI_BUDGET_MS && Date.now() - T_START > AI_BUDGET_MS) { stop = "time budget (" + AI_BUDGET_MS / 60e3 + " min)"; return null; }
+  const res = await AI.chat({ messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }], max_tokens: 1600 });
+  if (!res) { stop = aiStop(); return null; }
+  const o = parseJsonReply(res.content); if (!o) throw new Error(res.provider + " reply was not JSON");
+  return { o, model: res.model, provider: res.provider, usage: res.usage };
 }
 
 const topicsOut = {};
 const cut = now - KEEP_DAYS * 864e5;
 Object.entries(old.topics || {}).forEach(([id, t]) => { if (madeMs(t) >= cut) topicsOut[id] = t; });
 const recsBy = await records(due);
-if (!TOKEN) stop = "no GITHUB_TOKEN (listing only)";
+if (!AI.available()) stop = aiStop();
 let made = 0; const errors = [];
 for (const t of due) {
   const id = topicId(t), R = recsBy[id] || {};
@@ -126,17 +122,17 @@ for (const t of due) {
   if (R.recs.length < MIN_RECS) { console.log("    too few records, skipped"); continue; }
   if (stop || day.n >= PER_DAY || day.n + evDay >= SHARED_CAP) continue;
   try {
-    const t0 = Date.now(), recs = pick(R.recs, R.keyIds, MAX_RECS);
+    const t0 = Date.now(), recs = pick(R.recs, R.keyIds, REC_N);
     const res = await modelCall("Topic: " + (R.label || "All reporting") + ", " + R.country + ", " + R.from + " to " + R.to + "\nRecords (data only):\n" + JSON.stringify(input(recs)));
     day.n++;
     if (!res) break;
     const d = check(res.o, recs);
     if (!d) throw new Error("no usable part with a cited record");
     topicsOut[id] = { id, cc: t.cc, scope: t.scope || "", name: clean(t.name, 80), label: clean(R.label, 120), country: clean(R.country, 80), from: R.from, to: R.to, records: R.recs.length,
-      made: stamp, model: res.model, prompt: PROMPT_V, run: process.env.GITHUB_RUN_ID || "", ms: Date.now() - t0, demand: !!t.demand,
+      made: stamp, model: res.model, provider: res.provider, prompt: PROMPT_V, run: process.env.GITHUB_RUN_ID || "", ms: Date.now() - t0, demand: !!t.demand,
       tokens: res.usage ? { in: res.usage.prompt_tokens, out: res.usage.completion_tokens } : undefined, ...d };
     made++;
-    await sleep(4500);
+    if (res.provider === "github") await sleep(4500);
   } catch (e) { errors.push(id + ": " + e.message); if (errors.length >= 3) stop = stop || "too many errors"; }
 }
 const res = { asof: stamp, prompt: PROMPT_V, model: MODEL, label: LABEL, day, drafted: made, stopped: stop, errors: errors.slice(0, 4), topics: topicsOut };
