@@ -2,118 +2,112 @@
 "feeds": [],
 "discover": [
 {
-"cc": "pa",
-"outlet": "foco|Foco Panam\u00e1",
-"home": "https://www.focopanama.com/",
-"lang": "es"
-},
-{
-"cc": "hn",
-"outlet": "tunota|Tu Nota",
-"home": "https://www.tunota.com/",
-"lang": "es"
-},
-{
-"cc": "lu",
-"outlet": "delano|Delano",
-"home": "https://delano.lu/",
+"cc": "tt",
+"outlet": "ispi|ISPI",
+"home": "https://www.ispionline.it/en/",
 "lang": "en"
 },
 {
-"cc": "lu",
-"outlet": "journal|Journal.lu",
-"home": "https://www.journal.lu/",
-"lang": "de"
-},
-{
-"cc": "pg",
-"outlet": "pngnri|PNG NRI",
-"home": "https://pngnri.org/",
+"cc": "tt",
+"outlet": "iai|Istituto Affari Internazionali",
+"home": "https://www.iai.it/en",
 "lang": "en"
 },
 {
-"cc": "pg",
-"outlet": "pngattitude|PNG Attitude",
-"home": "https://www.pngattitude.com/",
+"cc": "tt",
+"outlet": "frs|Fondation pour la recherche strat\u00e9gique",
+"home": "https://www.frstrategie.org/",
 "lang": "en"
 },
 {
-"cc": "mg",
-"outlet": "orange|Orange Actu Madagascar",
-"home": "https://actu.orange.mg/",
-"lang": "fr"
-},
-{
-"cc": "zm",
-"outlet": "zambiareports|Zambia Reports",
-"home": "https://zambiareports.com/",
+"cc": "tt",
+"outlet": "iris|IRIS France",
+"home": "https://www.iris-france.org/",
 "lang": "en"
 },
 {
-"cc": "zm",
-"outlet": "zambianeye|Zambian Eye",
-"home": "https://zambianeye.com/",
+"cc": "tt",
+"outlet": "egmont|Egmont Institute",
+"home": "https://www.egmontinstitute.be/",
 "lang": "en"
 },
 {
-"cc": "zm",
-"outlet": "phoenix|Phoenix FM",
-"home": "https://www.radiophoenixzambia.com/",
+"cc": "tt",
+"outlet": "prif|PRIF Blog",
+"home": "https://blog.prif.org/",
 "lang": "en"
 },
 {
-"cc": "la",
-"outlet": "vientianemai|Vientiane Mai",
-"home": "https://www.vientianemai.net/",
-"lang": "lo"
+"cc": "tt",
+"outlet": "nupi|NUPI",
+"home": "https://www.nupi.no/en",
+"lang": "en"
 },
 {
-"cc": "la",
-"outlet": "lao27|Lao27",
-"home": "https://lao27.la/",
-"lang": "lo"
+"cc": "tt",
+"outlet": "diis|DIIS",
+"home": "https://www.diis.dk/en",
+"lang": "en"
 },
 {
-"cc": "la",
-"outlet": "laophattana|Pathet Lao",
-"home": "https://www.pathetlao.org/",
-"lang": "lo"
+"cc": "tt",
+"outlet": "elcano|Real Instituto Elcano",
+"home": "https://www.realinstitutoelcano.org/en/",
+"lang": "en"
 },
 {
-"cc": "tz",
-"outlet": "eatv|EATV",
-"home": "https://www.eatv.tv/",
-"lang": "sw"
+"cc": "tt",
+"outlet": "cidob|CIDOB",
+"home": "https://www.cidob.org/en",
+"lang": "en"
 },
 {
-"cc": "tz",
-"outlet": "ayotv|Ayo TV",
-"home": "https://ayotv.co.tz/",
-"lang": "sw"
+"cc": "tt",
+"outlet": "pism|PISM",
+"home": "https://pism.pl/en",
+"lang": "en"
 },
 {
-"cc": "tz",
-"outlet": "wasafi|Wasafi Media",
-"home": "https://wasafimedia.co.tz/",
-"lang": "sw"
+"cc": "tt",
+"outlet": "biepag|BiEPAG",
+"home": "https://biepag.eu/",
+"lang": "en"
 },
 {
-"cc": "kh",
-"outlet": "cnc|CNC Cambodia",
-"home": "https://cnc.com.kh/",
-"lang": "km"
+"cc": "tt",
+"outlet": "lsee|LSEE Blog (LSE)",
+"home": "https://blogs.lse.ac.uk/lsee/",
+"lang": "en"
 },
 {
-"cc": "kh",
-"outlet": "dap|DAP News",
-"home": "https://www.dap-news.com/",
-"lang": "km"
+"cc": "tt",
+"outlet": "arabreform|Arab Reform Initiative",
+"home": "https://www.arab-reform.net/",
+"lang": "en"
 },
 {
-"cc": "kh",
-"outlet": "nkd|Nokorwat News",
-"home": "https://www.nokorwatnews.com/",
-"lang": "km"
+"cc": "tt",
+"outlet": "merip|MERIP",
+"home": "https://merip.org/",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "stratpol|STRATPOL",
+"home": "https://stratpol.sk/",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "ineko|INEKO",
+"home": "https://www.ineko.sk/",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "crasc|CRASC Algeria",
+"home": "https://www.crasc.dz/",
+"lang": "en"
 }
 ]
 }
