@@ -2,231 +2,39 @@
 "feeds": [],
 "discover": [
 {
-"cc": "cl",
-"outlet": "eldesconcierto|El Desconcierto",
-"home": "https://www.eldesconcierto.cl/",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "theclinic|The Clinic",
-"home": "https://www.theclinic.cl/",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "exante|Ex-Ante",
-"home": "https://www.ex-ante.cl/",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "eldinamo|El D\u00ednamo",
-"home": "https://www.eldinamo.cl/",
-"lang": "es"
-},
-{
-"cc": "cl",
-"outlet": "interferencia|Interferencia",
-"home": "https://interferencia.cl/",
-"lang": "es"
-},
-{
-"cc": "lk",
-"outlet": "slmirror|Sri Lanka Mirror",
-"home": "https://srilankamirror.com/",
-"lang": "en"
-},
-{
-"cc": "tz",
-"outlet": "mwanahalisi|MwanaHalisi",
-"home": "https://mwanahalisionline.com/",
-"lang": "sw"
-},
-{
-"cc": "bo",
-"outlet": "unitel|Unitel",
-"home": "https://unitel.bo/",
-"lang": "es"
-},
-{
-"cc": "bo",
-"outlet": "reduno|Red Uno",
-"home": "https://www.reduno.com.bo/",
-"lang": "es"
-},
-{
-"cc": "bo",
-"outlet": "vision360|Visi\u00f3n 360",
-"home": "https://www.vision360.bo/",
-"lang": "es"
-},
-{
-"cc": "bo",
-"outlet": "urgente|Urgente.bo",
-"home": "https://urgente.bo/",
-"lang": "es"
-},
-{
-"cc": "ma",
-"outlet": "hespressar|Hespress (Arabic)",
-"home": "https://www.hespress.com/",
-"lang": "ar"
-},
-{
-"cc": "ma",
-"outlet": "barlamane|Barlamane",
-"home": "https://www.barlamane.com/",
-"lang": "ar"
-},
-{
-"cc": "ma",
-"outlet": "h24info|H24info",
-"home": "https://www.h24info.ma/",
+"cc": "gn",
+"outlet": "ledjely|Ledjely",
+"home": "https://www.ledjely.com/",
 "lang": "fr"
 },
 {
-"cc": "ma",
-"outlet": "leconomiste|L'Economiste",
-"home": "https://www.leconomiste.com/",
+"cc": "jm",
+"outlet": "nationwide|Nationwide News",
+"home": "https://nationwideradiojm.com/",
+"lang": "en"
+},
+{
+"cc": "tn",
+"outlet": "tunnum|Tunisie Num\u00e9rique",
+"home": "https://www.tunisienumerique.com/",
 "lang": "fr"
 },
 {
-"cc": "ma",
-"outlet": "goud|Goud",
-"home": "https://www.goud.ma/",
-"lang": "ar"
+"cc": "al",
+"outlet": "abcal|ABC News Albania",
+"home": "https://abcnews.al/",
+"lang": "sq"
 },
 {
-"cc": "et",
-"outlet": "addisstandard|Addis Standard",
-"home": "https://addisstandard.com/",
-"lang": "en"
+"cc": "bf",
+"outlet": "obspaalga|L'Observateur Paalga",
+"home": "https://www.lobservateur.bf/",
+"lang": "fr"
 },
 {
-"cc": "et",
-"outlet": "ethinsight|Ethiopia Insight",
-"home": "https://www.ethiopia-insight.com/",
-"lang": "en"
-},
-{
-"cc": "et",
-"outlet": "borkena|Borkena",
-"home": "https://borkena.com/",
-"lang": "en"
-},
-{
-"cc": "et",
-"outlet": "addisfortune|Addis Fortune",
-"home": "https://addisfortune.news/",
-"lang": "en"
-},
-{
-"cc": "et",
-"outlet": "ena|ENA",
-"home": "https://www.ena.et/",
-"lang": "en"
-},
-{
-"cc": "et",
-"outlet": "ethmonitor|Ethiopian Monitor",
-"home": "https://ethiopianmonitor.com/",
-"lang": "en"
-},
-{
-"cc": "et",
-"outlet": "wazema|Wazema Radio",
-"home": "https://wazemaradio.com/",
-"lang": "am"
-},
-{
-"cc": "et",
-"outlet": "ethobserver|Ethiopia Observer",
-"home": "https://www.ethiopiaobserver.com/",
-"lang": "en"
-},
-{
-"cc": "pg",
-"outlet": "pngbn|PNG Business News",
-"home": "https://www.pngbusinessnews.com/",
-"lang": "en"
-},
-{
-"cc": "gy",
-"outlet": "villagevoice|Village Voice",
-"home": "https://villagevoicenews.com/",
-"lang": "en"
-},
-{
-"cc": "gy",
-"outlet": "guyanatimes|Guyana Times",
-"home": "https://guyanatimesgy.com/",
-"lang": "en"
-},
-{
-"cc": "iq",
-"outlet": "ina|Iraqi News Agency",
-"home": "https://ina.iq/eng/",
-"lang": "en"
-},
-{
-"cc": "iq",
-"outlet": "basnews|Basnews",
-"home": "https://www.basnews.com/en",
-"lang": "en"
-},
-{
-"cc": "iq",
-"outlet": "rudaw|Rudaw",
-"home": "https://www.rudaw.net/english",
-"lang": "en"
-},
-{
-"cc": "ge",
-"outlet": "ipn|Interpressnews",
-"home": "https://www.interpressnews.ge/en/",
-"lang": "en"
-},
-{
-"cc": "ge",
-"outlet": "1tv|1TV Georgia",
-"home": "https://1tv.ge/en/",
-"lang": "en"
-},
-{
-"cc": "ge",
-"outlet": "bmge|BM.ge",
-"home": "https://bm.ge/en",
-"lang": "en"
-},
-{
-"cc": "sk",
-"outlet": "novinysk|Noviny.sk",
-"home": "https://noviny.sk/",
-"lang": "sk"
-},
-{
-"cc": "la",
-"outlet": "laotiantimes2|Lao News Agency (English)",
-"home": "https://kpl.gov.la/En/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "sfpa|Slovak Foreign Policy Association",
-"home": "https://www.sfpa.sk/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "ivo|IVO Slovakia",
-"home": "https://www.ivo.sk/",
-"lang": "sk"
-},
-{
-"cc": "tt",
-"outlet": "atlantska|Atlantic Initiative BiH",
-"home": "https://atlantskainicijativa.org/",
+"cc": "by",
+"outlet": "belta|BelTA",
+"home": "https://eng.belta.by/",
 "lang": "en"
 }
 ]
