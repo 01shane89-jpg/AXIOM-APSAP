@@ -157,24 +157,6 @@
    "lang": "en"
   },
   {
-   "cc": "ph",
-   "channel": "inquirer",
-   "kind": "news desk",
-   "lang": "en"
-  },
-  {
-   "cc": "br",
-   "channel": "folha",
-   "kind": "news desk",
-   "lang": "pt"
-  },
-  {
-   "cc": "br",
-   "channel": "estadao",
-   "kind": "news desk",
-   "lang": "pt"
-  },
-  {
    "cc": "br",
    "channel": "metropoles",
    "kind": "news desk",
@@ -197,12 +179,6 @@
    "channel": "fanatelevision",
    "kind": "state media",
    "lang": "am"
-  },
-  {
-   "cc": "so",
-   "channel": "garoweonline",
-   "kind": "news desk",
-   "lang": "en"
   },
   {
    "cc": "iq",
