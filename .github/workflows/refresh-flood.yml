@@ -284,6 +284,11 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' && !startsWith(inputs.only, 'probe') }}
         run: node tools/health.mjs build
         continue-on-error: true
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/live data/history
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
         id: commit
