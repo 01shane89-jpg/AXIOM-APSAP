@@ -37,6 +37,11 @@ jobs:
           # minutes of OpenStreetMap tile reads per run; the rest of the build takes about 15
           INFRA_OSM_MIN: "85"
         run: node tools/build_infra.mjs
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/infra
       - name: Commit
         run: |
           node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed

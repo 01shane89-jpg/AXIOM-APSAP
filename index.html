@@ -49,6 +49,7 @@
 </script>
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
 <!-- lock my saved work: a locked device has no saved work in plain storage before any feature reads it (assets/osap-vault.js) -->
+<script src="assets/osap-sold.js"></script>
 <script src="assets/osap-vault.js"></script>
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-lock.js"></script>
@@ -466,6 +467,7 @@ tbody tr:hover{background:var(--surface2)}
 .obs{color:var(--muted);font-size:11.5px}
 
 .note{font-size:12px;color:var(--muted);line-height:1.5}
+#tl-built{overflow-wrap:anywhere}
 .note p{margin:0 0 7px}
 .note p:last-child{margin-bottom:0}
 .note b{color:var(--ink);font-weight:600}
@@ -1389,7 +1391,8 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
      commercial use allowed with credit; it replaced the Esri canvas (whose terms need a paid plan to sell, and forbid packaging
      its tiles) on 2026-10-17. If the drawing engine cannot start, the plain OpenStreetMap tiles stand in, greyed to match. */
   var GREY = { light: "https://tiles.openfreemap.org/styles/positron", dark: "https://tiles.openfreemap.org/styles/dark" };
-  var OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  /* the sold version (assets/osap-sold.js) has no raster stand-in: tile.openstreetmap.org is not for paid products */
+  var OSM_TILES = window.OSAP_SOLD ? "" : "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
   var OFM_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>';
   function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
   function isDark() { return theme() !== "light"; } /* Grey and Dark both use the dark style; Grey lifts it to slate with --base-filter */
@@ -1495,7 +1498,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       L.DomUtil.remove(this._box); this._box = null;
     },
     /* for the 3D view, which draws plain tiles: the OpenStreetMap tiles of the same map (unless the stand-in already is them) */
-    rasterTwin: function () { return this._fb ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
+    rasterTwin: function () { return this._fb || !this.options.fallback ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
     /* no engine (old phone, no WebGL, offline before the style was saved): the plain OpenStreetMap tiles instead */
     _fail: function () {
       if (this._fb || !this.options.fallback) return;
@@ -1549,7 +1552,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
     else if (b.vector) {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
-      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: b.url, max: b.max }).addTo(map);
+      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: window.OSAP_SOLD ? "" : b.url, max: b.max }).addTo(map);
     }
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
@@ -8896,7 +8899,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
   html.phone{--sab:env(safe-area-inset-bottom,0px);--bar-h:calc(64px + var(--sab))}
   html.phone .shell{display:block}
-  html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,64px);max-height:none!important;z-index:1200;overflow-y:auto;overscroll-behavior:contain;
+  /* the sheet scrolls up and down only: nothing in it scrolls it sideways (a long unbroken line such as the timeline's
+     SHA-256 build fingerprint made it wider than the screen, so a slightly slanted swipe on iPhone slid the whole list
+     left or right and cut off its text); long words wrap instead */
+  html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,64px);max-height:none!important;z-index:1200;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y pinch-zoom;overflow-wrap:break-word;
     border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.18);font-size:14px;padding:0 14px 16px;box-sizing:border-box;transition:height .2s ease}
   html.phone .rail.dragging{transition:none}
   html.phone[data-sheet="bar"] .rail{overflow:hidden}
@@ -9008,6 +9014,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var h = document.createElement("div"); h.id = "rail-handle";
   h.innerHTML = '<button type="button" class="grab"><i></i><b></b><small></small></button><span class="chev" aria-hidden="true">&#9650;</span>';
   rail.insertBefore(h, rail.firstChild);
+  /* a sideways scroll can still come from script (a focus or scrollIntoView): put the sheet straight back */
+  rail.addEventListener("scroll", function () { if (on() && rail.scrollLeft) rail.scrollLeft = 0; }, { passive: true });
   var STATES = ["bar", "half", "full"];
   /* whether a panel holds any text: stops at the first word, where reading textContent copied out the whole list each time */
   function hasText(el) {

@@ -9,6 +9,12 @@ on:
     branches: [main]
 permissions:
   contents: read
+# One run per PR (a newer push cancels the older run) and one at a time on main (a waiting run is replaced by the newest push,
+# which carries every commit before it). Without this, superseded runs of the ~60-minute map-smoke filled the 20 concurrent
+# jobs on 24 Oct 2026 (22 runs at once) and scheduled refresh jobs (refresh-ai 01:23Z, 02:53Z, 03:53Z) never started.
+concurrency:
+  group: check-index-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   required-lines:
     runs-on: ubuntu-latest
@@ -86,6 +92,8 @@ jobs:
       - run: node tests/translate_keep.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
+      # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
+      - run: node tests/nc_strip.test.mjs
       - run: node tests/stories.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
@@ -133,6 +141,8 @@ jobs:
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/area_report_smoke.mjs
+      # sold version: no tile.openstreetmap.org or Esri request once assets/osap-sold.js says true
+      - run: node tests/sold_mode_smoke.mjs
       # OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
       - run: node tests/osir_smoke.mjs
       # one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
@@ -243,6 +253,8 @@ jobs:
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
+      # the phone bottom sheet scrolls up and down only, never sideways (index.html phone layout)
+      - run: node tests/phone_sheet_sideways_smoke.mjs
       - run: node tests/mycountries_smoke.mjs
       - run: node tests/empty_states_smoke.mjs
       - run: node tests/report_english_smoke.mjs
