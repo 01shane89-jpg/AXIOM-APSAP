@@ -35,7 +35,7 @@ jobs:
           # and cut any long wait the script marked (<name>.skip: "from to", seconds after the title card)
           for f in walkthrough/*.webm; do
             cut=$(cat "${f%.webm}.cut" 2>/dev/null || echo 0); vf="null"
-            if [ -f "${f%.webm}.skip" ]; then read a b < "${f%.webm}.skip"; vf="select='not(between(t,$a,$b))',setpts=N/(25*TB)"; fi
+            if [ -f "${f%.webm}.skip" ]; then read a b < "${f%.webm}.skip" || true; vf="select='not(between(t,$a,$b))',setpts=N/(25*TB)"; fi
             ffmpeg -v error -ss "$cut" -i "$f" -vf "$vf" -r 25 -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart "pub/$(basename "${f%.webm}").mp4"
           done
           cp walkthrough-log.txt pub/log.txt && ls -la pub
