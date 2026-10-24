@@ -1,0 +1,206 @@
+{
+ "at": "2026-10-24T12:05:40.771Z",
+ "results": [],
+ "agg": [
+  {
+   "cc": "ml",
+   "outlet": "Google News search",
+   "url": "https://news.google.com/rss/search?q=Mali&hl=en&gl=US&ceid=US:en",
+   "status": 200,
+   "final": "https://news.google.com/rss/search?q=Mali&hl=en-US&gl=US&ceid=US:en",
+   "n": 100,
+   "newest": "2026-10-23T19:57",
+   "last7": 55,
+   "oldest": "2021-05-25T07:00",
+   "undated": 0,
+   "sample": [
+    "2 days after Burkina Faso voted to reinstate the death penalty, Mali broadens powers to re",
+    "Mali: Army, Russia’s ‘Africa Corps’ Commit New Abuses - Human Rights Watch",
+    "Mali shocks Spain at FIBA Women's Basketball World Cup - ESPN",
+    "Dust Storm Sweeps Over Mali - NASA Science (.gov)",
+    "Mali forces, Russian backers kill scores of civilians in drone strikes, report says - Reut"
+   ],
+   "ms": 546
+  },
+  {
+   "cc": "ml",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Mali&format=rss",
+   "status": 200,
+   "n": 11,
+   "newest": "2026-10-23T12:03",
+   "last7": 9,
+   "oldest": "2023-06-30T09:19",
+   "undated": 0,
+   "sample": [
+    "Islamic State-linked militants kill at least 48 civilians in eastern Mali, sources say",
+    "Mali suspends entry of citizens of 1 country, lists exceptions to the ban",
+    "Attack by Islamic State-Affiliated Group in Mali Kills 48 People, Official Says",
+    "Mali’s military and armed groups committing abuses against civilians: HRW",
+    "Mali Votes 119 to Widen Nationality Loss"
+   ],
+   "ms": 602
+  },
+  {
+   "cc": "so",
+   "outlet": "Google News search",
+   "url": "https://news.google.com/rss/search?q=Somalia&hl=en&gl=US&ceid=US:en",
+   "status": 200,
+   "final": "https://news.google.com/rss/search?q=Somalia&hl=en-US&gl=US&ceid=US:en",
+   "n": 100,
+   "newest": "2026-10-24T12:03",
+   "last7": 89,
+   "oldest": "2026-06-30T07:00",
+   "undated": 0,
+   "sample": [
+    "Trump’s Obsession With Somalia Isn’t Just Racist. It’s Been Lethal. - The Intercept",
+    "Ilhan Omar doubles down on ‘real name’ when confronted at Mall of Somalia - Fox News",
+    "Over 800,000 People at Risk of Displacement as Floods Threaten Somalia, IOM Warns - Intern",
+    "Hijacking pirates exploit regional chaos to return to seas off Somalia - The Guardian",
+    "The human cost of surging US air strikes in Somalia - Al Jazeera"
+   ],
+   "ms": 529
+  },
+  {
+   "cc": "so",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Somalia&format=rss",
+   "status": 200,
+   "n": 12,
+   "newest": "2026-10-22T13:03",
+   "last7": 7,
+   "oldest": "2026-09-18T04:17",
+   "undated": 0,
+   "sample": [
+    "The human cost of surging US air strikes in Somalia",
+    "Houthis eye Somalia as new base for operations",
+    "After years of drought, flooding could now push parts of Somalia toward famine",
+    "Netanyahu’s Somalia map revives fears of partition",
+    "Black Hawk Down veteran recalls AK-47 wound and arterial bleeding in Somalia firefight"
+   ],
+   "ms": 310
+  },
+  {
+   "cc": "ht",
+   "outlet": "Google News search",
+   "url": "https://news.google.com/rss/search?q=Haiti&hl=en&gl=US&ceid=US:en",
+   "status": 200,
+   "final": "https://news.google.com/rss/search?q=Haiti&hl=en-US&gl=US&ceid=US:en",
+   "n": 102,
+   "newest": "2026-10-24T08:04",
+   "last7": 78,
+   "oldest": "2026-09-01T07:00",
+   "undated": 0,
+   "sample": [
+    "El Salvador says Haiti gangs holding 4 force members hostage, announces new rescue mission",
+    "El Salvador sends troops to Haiti to rescue four service members - CNN",
+    "Miami to host USMNT's Concacaf Nations League QF away leg vs. Haiti - ESPN",
+    "USMNT’s Concacaf Nations League quarterfinal away leg vs. Haiti moved to Miami - The New Y",
+    "Haiti move Nations League home clash with USA to Miami amid gang violence crisis - The Gua"
+   ],
+   "ms": 453
+  },
+  {
+   "cc": "ht",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Haiti&format=rss",
+   "status": 200,
+   "n": 12,
+   "newest": "2026-10-23T13:33",
+   "last7": 12,
+   "oldest": "2026-10-19T05:52",
+   "undated": 0,
+   "sample": [
+    "Salvadoran troops land in Haiti aboard Pentagon plane amid crisis over ambushed soldiers",
+    "El Salvador sends troops to Haiti to rescue four service members",
+    "El Salvador deploys special forces on Haiti rescue mission",
+    "Bukele launches military rescue operation in Haiti; US backs effort",
+    "Angry at gangs that ambushed Salvadoran soldiers, Bukele deploys special forces to Haiti"
+   ],
+   "ms": 320
+  },
+  {
+   "cc": "mn",
+   "outlet": "Google News search",
+   "url": "https://news.google.com/rss/search?q=Mongolia&hl=en&gl=US&ceid=US:en",
+   "status": 200,
+   "final": "https://news.google.com/rss/search?q=Mongolia&hl=en-US&gl=US&ceid=US:en",
+   "n": 100,
+   "newest": "2026-10-24T08:15",
+   "last7": 70,
+   "oldest": "2023-09-04T07:00",
+   "undated": 0,
+   "sample": [
+    "Chinese state media takes aim at Japanese firm KDDI over Mongolia wildfire - South China M",
+    "KDDI subsidiary faces criticism and questions over Mongolian wildfire - The Japan Times",
+    "Japanese company slammed over Mongolia grassland fire - China Daily",
+    "Mongolia’s Former Minister of Health Dr Chinburen Jigjidsuren Will Join the International ",
+    "Japanese-linked company involved in the China-Mongolia border fire should also apologize t"
+   ],
+   "ms": 370
+  },
+  {
+   "cc": "mn",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Mongolia&format=rss",
+   "status": 200,
+   "n": 11,
+   "newest": "2026-10-24T02:08",
+   "last7": 7,
+   "oldest": "2023-12-20T16:07",
+   "undated": 0,
+   "sample": [
+    "Japan's KDDI apologizes over huge wildfire in Mongolia",
+    "Inside The Women-Only Expedition Across Mongolia’s Wildest Landscapes",
+    "Chinese state media takes aim at Japanese firm KDDI over Mongolia wildfire",
+    "Japanese telecom firm sorry over huge Mongolia wildfire",
+    "Japan Firm Apologizes over Huge Forest Fire in Mongolia"
+   ],
+   "ms": 374
+  },
+  {
+   "cc": "bt",
+   "outlet": "Google News search",
+   "url": "https://news.google.com/rss/search?q=Bhutan&hl=en&gl=US&ceid=US:en",
+   "status": 200,
+   "final": "https://news.google.com/rss/search?q=Bhutan&hl=en-US&gl=US&ceid=US:en",
+   "n": 100,
+   "newest": "2026-10-24T07:43",
+   "last7": 26,
+   "oldest": "2026-05-15T07:00",
+   "undated": 0,
+   "sample": [
+    "What happened when the only country to ban TV lifted the ban? - Aeon",
+    "Tackling stray dogs in Bhutan - The Economist",
+    "ADB Approves $17.4 Million to Protect Bhutan Families from Middle East Impacts - Asian Dev",
+    "Lonely Planet's 12 underrated travel destinations to visit in 2027 - qz.com",
+    "Practical Cooperation: How China and Bhutan Engage Beyond Borders - orfonline.org"
+   ],
+   "ms": 415
+  },
+  {
+   "cc": "bt",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Bhutan&format=rss",
+   "status": 200,
+   "n": 12,
+   "newest": "2026-10-23T11:01",
+   "last7": 4,
+   "oldest": "2022-01-26T18:28",
+   "undated": 0,
+   "sample": [
+    "Bhutan to unveil Gelephu City's spiritual foundation on November 1",
+    "New e-gate terminal at India-Bhutan border to allow biometric clearance",
+    "Bhutan turns former military range into solar farm as winter power crunch deepens",
+    "Bhutan, Australia strengthen cooperation through new research hub",
+    "Tackling stray dogs in Bhutan"
+   ],
+   "ms": 202
+  }
+ ],
+ "cap": {
+  "url": "https://cap-sources.s3.amazonaws.com/",
+  "prefixes": [],
+  "feeds": []
+ }
+}
