@@ -337,6 +337,234 @@
    "handle": "publico.es",
    "kind": "news desk",
    "lang": "es"
+  },
+  {
+   "cc": "de",
+   "handle": "bsi.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "fr",
+   "handle": "meteofrance.com",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "gb",
+   "handle": "metoffice.gov.uk",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "ncsc.gov.uk",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "nl",
+   "handle": "knmi.nl",
+   "kind": "government",
+   "lang": "nl"
+  },
+  {
+   "cc": "es",
+   "handle": "aemet.es",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "fi",
+   "handle": "valtioneuvosto.fi",
+   "kind": "government",
+   "lang": "fi"
+  },
+  {
+   "cc": "*",
+   "handle": "ec.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "europarl.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "consilium.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "europol.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "unhcr.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "unocha.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "who.int",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "icrc.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "wfp.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "unicef.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "fao.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "msf.org",
+   "kind": "NGO",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "hrw.org",
+   "kind": "NGO",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "sipri.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "csis.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "rand.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "brookings.edu",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "cfr.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "carnegieendowment.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "foreignpolicy.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "foreignaffairs.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "economist.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "bloomberg.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "semafor.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "devex.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jp",
+   "handle": "nikkei.com",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "tr",
+   "handle": "medyascope.tv",
+   "kind": "news desk",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "handle": "bianet.org",
+   "kind": "news desk",
+   "lang": "tr"
+  },
+  {
+   "cc": "ae",
+   "handle": "thenationalnews.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "co",
+   "handle": "elespectador.com",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "handle": "elcomercio.pe",
+   "kind": "news desk",
+   "lang": "es"
   }
  ],
  "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run.",
