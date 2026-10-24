@@ -238,6 +238,8 @@ jobs:
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
+      # the phone bottom sheet scrolls up and down only, never sideways (index.html phone layout)
+      - run: node tests/phone_sheet_sideways_smoke.mjs
       - run: node tests/mycountries_smoke.mjs
       - run: node tests/empty_states_smoke.mjs
       - run: node tests/report_english_smoke.mjs
