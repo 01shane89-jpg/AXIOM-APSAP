@@ -70,14 +70,19 @@
     border: th ? ["data/thailand/border-conflict.js"] : [],
     feeds: ["data/sof/exercises-outside.js", "data/live/air-quality.js", "data/live/reliefweb.js", "data/live/outages.js", "data/live/outbreaks.js",
       "data/live/maritime.js", "data/live/sanctions.js", "data/live/displacement.js", "data/live/ifrc.js", "data/live/cdc.js", "data/live/navwarnings.js",
-      "data/live/ucdp.js", "data/live/deepsouth.js"]
+      "data/live/ucdp.js"].concat(th ? ["data/live/deepsouth.js"] : [])
   };
   window.OSAP_TH = th;
   L.th.forEach(function (s) {
     if (window.OSAP_DATA && !window.OSAP_DATA.ok(s)) return;
     var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = s; document.head.appendChild(l);
   });
-  window.OSAP_WRITE = function (k) { document.write(L[k].map(function (s) { return '<script src="' + s + '"><\/script>'; }).join("")); };
+  window.OSAP_WRITE = function (k) {
+    document.write(L[k].map(function (s) { return '<script src="' + s + '"><\/script>'; }).join(""));
+    /* Thailand's Deep South reporting (about 1.7 MB) makes records only in Thailand; elsewhere it is read only by the feed list and
+       the analyst workspace, so it loads once the page is up instead of holding up every other country's start */
+    if (k === "feeds" && !th && window.OSAP_LATER) window.OSAP_LATER("data/live/deepsouth.js");
+  };
 })();
 </script>
 <script src="assets/osap-tier.js"></script>
@@ -3736,14 +3741,53 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return { radius: rad, color: tok("--surface"), weight: 1.4, fillColor: c, fillOpacity: 0.95 };
   }
   var shown = [];
+  /* one story, one card: the same article can reach the page twice, as a news headline and again as the layer feed's copy of that
+     headline sorted into a topic (organized crime, drugs), or as a data set's search result. On the Master timeline and in its
+     report those copies are one item: the fullest copy stays (a conflict tab's live report, then a news headline, then the layer
+     feed's automatic copy) and the other copies' topics show as extra tags on it (STORY_ALSO). Two records are one story only when
+     they link the same article and either give the same headline or are both headline records (news, the layer feed, a conflict
+     tab's live reports), whose copies are often translated apart: records that only cite one shared page (a gauge list, a data
+     file) stay apart. Each tab still lists its own copy. */
+  var STORY_ALSO = {};
+  function storyUrl(r) { return r.url && typeof r.url === "string" ? storyLinkKey(r.url.trim()) : ""; }
+  function storyTitle(r) { return String(r.title || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim(); }
+  function storyKey(r) { return r.__sk != null ? r.__sk : (r.__sk = storyUrl(r)); }
+  function storyRank(r) { return r.lf ? 1 : r.news ? 2 : r.ds && /^Live report/.test(r.cat || "") ? 3 : 0; }
+  function storyDedup(list, also) {
+    var by = Object.create(null), out = [], A = also || {};
+    list.forEach(function (r) {
+      var k = storyKey(r); if (!k) { out.push(r); return; }
+      var c = by[k] || (by[k] = []), t = storyTitle(r);
+      for (var i = 0; i < c.length; i++) {
+        var p = c[i];
+        if (!((storyRank(p) && storyRank(r)) || storyTitle(p) === t) || !!p.xcc !== !!r.xcc) continue;
+        if (storyRank(r) > storyRank(p)) { out[out.indexOf(p)] = r; c[i] = r; A[r.id] = [p].concat(A[p.id] || []); delete A[p.id]; }
+        else (A[p.id] || (A[p.id] = [])).push(r);
+        return;
+      }
+      c.push(r); out.push(r);
+    });
+    return out;
+  }
+  /* the extra topic tags for a story that also came in through other layers */
+  function storyChips(r) {
+    var also = STORY_ALSO[r.id], seen = {}; if (!also) return "";
+    seen[r.layer] = 1;
+    return also.map(function (o) { if (seen[o.layer]) return ""; seen[o.layer] = 1; return chip("l-" + o.layer, (LBY[o.layer] || { name: o.layer }).name); }).join("");
+  }
   /* a hidden scan copy (?watchscan=1) only reports its records back; it never shows the list or the map, so it draws neither */
   var SCAN_COPY = /[?&]watchscan=1(&|$)/.test(location.search);
+  /* while the page builds, the list is drawn once at the end (renderHeld below, before the loading cover lifts): drawn as the
+     view opened, it was drawn again ungrouped, again for any added neighbours and again grouped, about a second on a phone */
+  var RENDER_HOLD = true, RENDER_HELD = false;
+  function renderHeld() { RENDER_HOLD = false; if (RENDER_HELD && current !== "timeline") render(); }
   function render() {
     if (SCAN_COPY) return;
+    if (RENDER_HOLD) { RENDER_HELD = true; return; }
     var dsRecOn = Object.keys(DS).some(function (k) { return LBY[k] && !LBY[k].sof && k !== "alerts"; });
     /* a topic scope shows the topic's records on the map and in the list whatever the data set ticks */
     var sc = scoped(), mapped = function (r) { return DS[r.layer] || (sc && sc.layers.indexOf(r.layer) >= 0); };
-    shown = R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || mapped(r)); });
+    shown = storyDedup(R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || mapped(r)); }), STORY_ALSO = {});
     scopeUi();
     if (typeof rvSoon === "function") rvSoon();
     var list = document.getElementById("tl-list");
@@ -3784,7 +3828,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       d.type = "button"; d.className = "tlrow"; d.setAttribute("data-id", r.id);
       d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + '</span>' +
         '<span class="tln">' + esc(r.title) + "</span>" +
-        '<span class="tlm">' + chip("l-" + r.layer, (LBY[r.layer] || { name: r.layer }).name) + chip("t-" + r.type, r.type) +
+        '<span class="tlm">' + chip("l-" + r.layer, (LBY[r.layer] || { name: r.layer }).name) + storyChips(r) + chip("t-" + r.type, r.type) +
         '<span class="tls">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.src.name) + (r.prov ? " · " + esc(r.prov) : "") + "</span></span>";
       d.addEventListener("click", function () { select(r.id, true); });
       list.appendChild(d);
@@ -5597,20 +5641,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   /* one copy per news story, as tools/news_dedupe.mjs does in the refresh job: the same article under a link that differs only by
      tracking tags, "www." or "/amp", or the same headline (5 words or more) within 3 days. The newer copy is kept. */
+  /* an article's link without what differs between copies of it: tracking tags, "www.", "/amp", http or https */
+  function storyLinkKey(u) {
+    try {
+      var x = new URL(u), q = [];
+      x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
+      return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
+    } catch (e) { return String(u || ""); }
+  }
   function sameStory(list) {
     function title(t) {
       t = String(t || "").toLowerCase().replace(/\s[-–|]\s[^-–|]{2,40}$/, "");
       t = t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
       return t.split(" ").length >= 5 ? t : "";
     }
-    function link(u) {
-      try {
-        var x = new URL(u), q = [];
-        x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
-        return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
-      } catch (e) { return String(u || ""); }
-    }
-    var L = {}, T = {};
+    var link = storyLinkKey, L = {}, T = {};
     return list.slice().sort(function (a, b) { return (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : 0; }).filter(function (i) {
       var l = link(i.link); if (L[l]) return false; L[l] = 1;
       var t = title(i.title), d = Date.parse(i.date) || 0;
@@ -5997,7 +6042,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var F = window.OSAP_LAYERFEED;
     if (!F || F.cc !== CC) return;
     var used = {}; Object.keys(TD).forEach(function (lid) { TD[lid].events.forEach(function (e) { if (e.src) used[e.src] = 1; }); });
-    (window.ASAP_DS && window.ASAP_DS.items || []).forEach(function (i) { if (i.link) used[i.link] = 1; });
+    /* Deep South links are records only in Thailand (addDeepSouth); elsewhere that file loads after the start, so it is not used here */
+    if (CC === "th") (window.ASAP_DS && window.ASAP_DS.items || []).forEach(function (i) { if (i.link) used[i.link] = 1; });
     (F.items || []).forEach(function (i) {
       if (!i.u || used[i.u] || !LBY[i.l] || LBY[i.l].sof) return;
       used[i.u] = 1;
@@ -6810,7 +6856,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var pic = r.img || r.thumb;
       return '<button type="button" class="rvcard' + (pic ? " haspic" : "") + '" data-rv="' + esc(r.id) + '">' + (pic ? '<img class="rvpic" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") + '<span class="rvt">' + esc(fmtTs(r)) + "</span>" +
         '<span class="rvh">' + esc(r.title) + "</span>" +
-        '<span class="rvm">' + chip("l-" + r.layer, ln) + chip("t-" + r.type, st) + "</span>" +
+        '<span class="rvm">' + chip("l-" + r.layer, ln) + (current === "timeline" ? storyChips(r) : "") + chip("t-" + r.type, st) + "</span>" +
         '<span class="rvs">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.src ? r.src.name : "") + (r.place ? " · " + esc(r.place) : (r.lat == null ? " · no map location" : "")) + "</span></button>";
     }).join("") +
       (list.length > cap ? (cap < 200 ? '<p class="rvnote"><button type="button" class="refresh" data-rv-more>Show all ' + list.length + "</button></p>" :
@@ -8094,8 +8140,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var out = [];
     R.forEach(function (r) {
       if (!wMatch(w, r)) return;
-      var k = rk(r), v = EV_ON ? evOfRec(r) : null;
-      out.push({ k: k, gk: v ? v.id : k, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wWordsWhich(w, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
+      /* copies of one story (a headline and the layer feed's copy of it, same link) share one alert group, so one story sends one alert */
+      var k = rk(r), v = EV_ON ? evOfRec(r) : null, sk = storyKey(r);
+      out.push({ k: k, gk: v ? v.id : sk ? "s:" + sk : k, sk: sk, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wWordsWhich(w, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
         src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", grp: v ? v.m.length : 0, place: r.place || "" });
     });
     return out;
@@ -8111,6 +8158,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       wMatches(w).forEach(function (m) {
         var k = m.k; if (seen[k]) return;
         seen[k] = now;
+        /* another copy of this story was already noted in an earlier check */
+        if (m.sk) { if (seen["s:" + m.sk]) return; seen["s:" + m.sk] = now; }
         if (first) return;
         if (grp[m.gk]) { grp[m.gk].n++; return; }
         var h = { w: w.id, wn: w.name, cc: CC, k: k, t: m.t, ts: m.ts, sev: m.sev, layer: m.layer, src: m.src, st: m.st, url: m.url, n: 1, grp: m.grp, at: now };
@@ -8703,10 +8752,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       return { id: v.id, title: v.head.title, countries: [CC].concat(v.xcc), crossBorder: v.xcc.length > 0, lat: v.loc ? v.loc.lat : null, lon: v.loc ? v.loc.lon : null,
         from: v.t0.ms, to: v.t1.ms, sev: v.sev, layer: v.layer, reports: v.m.map(function (r) { return { key: rk(r), cc: r.xcc || CC, title: r.title, source: r.src.name, url: r.url, ts: r.issued || r.ts, status: (STATE[r.type] || [r.type])[0] }; }) }; });
   } };
-  evRefresh();
+  renderHeld(); evRefresh();
   /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
   requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
-  window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP,
+  window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP, storyDedup: storyDedup,
     /* the Master timeline as the reader sees it: its topic scope (null for the whole country), the view open now, the records it lists and
        the filters in force; read by the Timeline report */
     timeline: function () {
@@ -8857,10 +8906,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var map = window.__asapMap, rail = document.querySelector(".rail");
   if (!map || !rail) return;
   function on() { return mq.matches; }
+  var first = true;
   function apply() {
     root.classList.toggle("phone", on());
     if (on() && !root.getAttribute("data-sheet")) root.setAttribute("data-sheet", "bar");
-    window.dispatchEvent(new Event("resize"));
+    /* on the first call the page is still being built: the resize waits for the first frame, which has laid the page out once
+       already, instead of making the browser lay out the half-built page there and then (about 0.4 s on a phone) */
+    if (first) { first = false; requestAnimationFrame(function () { setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 0); }); }
+    else window.dispatchEvent(new Event("resize"));
     setTimeout(function () { map.invalidateSize(); if (on() && map.__lastFit) map.fitBounds(map.__lastFit[0], map.__lastFit[1]); }, 250);
   }
   /* menus in place of the country and tab rows */

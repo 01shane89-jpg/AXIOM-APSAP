@@ -33,10 +33,12 @@ await p.waitForTimeout(9000);
 await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
 const rec0 = await p.evaluate(() => JSON.stringify(window.TSAP.records.map((r) => [r.id, r.title, r.detail, r.lat, r.lon, r.ts, r.layer])));
 
-/* an independent count: the same parser over the same record text, this country's own dated sourced records, any date */
+/* an independent count: the same parser over the same record text, this country's own dated sourced records, any date,
+   one record per story (the brief counts a story carried by two feeds once, as the timeline does) */
 const expect = (q) => p.evaluate((q) => {
   const c = window.OSAP_BOOLQ.compile(q);
-  return window.TSAP.records.filter((r) => !r.xcc && r.src && (r.ts || r.issued) && c.test([r.cat, r.title, r.detail, r.orig, r.place, r.prov].filter(Boolean).join(" \n "))).length;
+  const m = window.TSAP.records.filter((r) => !r.xcc && r.src && (r.ts || r.issued) && c.test([r.cat, r.title, r.detail, r.orig, r.place, r.prov].filter(Boolean).join(" \n ")));
+  return (window.TSAP.storyDedup ? window.TSAP.storyDedup(m, {}) : m).length;
 }, q);
 
 for (const W of [{ name: "Intelligence brief", api: "OSAP_INTELBRIEF", run: "intelbrief", px: "ib", box: "ibdlg", go: ["#ib-go", "#ib-pdf"] },
