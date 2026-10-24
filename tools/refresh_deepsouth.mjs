@@ -260,6 +260,8 @@ if (todo.length) {
     const lost = nums.find((x) => !forms(x).some((f) => has(en, f, need(x)))); if (lost) return "number " + lost + " missing";
     const ys = new Set(nums.flatMap(forms).map(Number));
     const yr = (en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).find((y) => !ys.has(+y)); if (yr) return "year " + yr + " added";
+    // a figure of two or more digits the Thai does not have was made up ("from 35 years and four months to 20 years")
+    const added = (en.match(/\d{2,}/g) || []).find((x) => x.length < 5 && !ys.has(+x)); if (added) return "number " + added + " added";
     if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return "repeated words";
     // a Thai headline that reports only wounded ("บาดเจ็บ 1") must not come out as a killing
     if (/เจ็บ/.test(o) && !/เสียชีวิต|ดับ|ตาย|สังหาร|พลีชีพ|ศพ/.test(o) && /\b(?:kill\w*|dead|died|death)\b/i.test(en)) return "wounded became killed";
