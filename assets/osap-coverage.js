@@ -45,8 +45,17 @@
   function plural(n, one, many) { return n + " " + (n === 1 ? one : many || one + "s"); }
 
   var CSS = ".tdcover{grid-column:1/-1;text-align:left}.cvhead{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}.tdcover h2{margin:0}" +
-    ".cvsub{font-size:12px;color:var(--muted)}.cvtabs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}.cvtabs button{min-height:32px;padding:3px 12px;font-weight:600;border-radius:999px}" +
-    ".cvtabs button[aria-pressed=true]{background:var(--accent,#1f5f99);color:#fff;border-color:var(--accent,#1f5f99)}.cvtabs .cvsm{font-weight:500;font-size:12.5px;min-height:28px}" +
+    ".cvsub{font-size:12px;color:var(--muted)}" +
+    // Most covered / Blindspots: one segmented control in the theme's own colours, two equal halves that always fit the width.
+    // Every state sets both background and colour (the browser's default button look, and white on the light Grey/Dark
+    // accent, was what made it look washed out and mismatched on a phone).
+    ".cvtabs{display:flex;gap:2px;padding:2px;margin:8px 0 4px;max-width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--line);border-radius:6px}" +
+    ".cvtabs button{flex:1 1 0;min-width:0;min-height:34px;padding:4px 8px;font:inherit;font-size:13px;font-weight:600;line-height:1.2;border:1px solid transparent;border-radius:4px;" +
+    "background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cvtabs button:hover{color:var(--ink)}" +
+    ".cvtabs button[aria-pressed=true]{background:var(--accent-soft,#D6E3EE);color:var(--ink);border-color:var(--accent,#1D5A86)}" +
+    // the blindspot kind filter: a wrapping row of small chips with the same selected look
+    ".cvtabs.cvkinds{flex-wrap:wrap;gap:6px;padding:0;background:none;border:0;border-radius:0}" +
+    ".cvtabs .cvsm{flex:0 1 auto;min-height:30px;padding:3px 10px;font-weight:500;font-size:12.5px;border-color:var(--line);background:var(--surface)}" +
     ".cvlist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:0 18px}" +
     ".cvlist>li{padding:8px 0;border-top:1px solid var(--line-soft,var(--line));font-size:13.5px;line-height:1.4;overflow-wrap:anywhere;min-width:0}" +
     ".cvt{font-weight:600;text-decoration:none;color:var(--ink)}.cvt:hover{text-decoration:underline}" +
@@ -111,7 +120,7 @@
     h += '<div class="cvtabs" role="group" aria-label="Show"><button type="button" data-cvview="top" aria-pressed="' + (view === "top") + '">Most covered</button>' +
       '<button type="button" data-cvview="blind" aria-pressed="' + (view === "blind") + '">Blindspots (' + nb + ")</button></div>";
     if (view === "blind") {
-      h += '<div class="cvtabs" role="group" aria-label="Blindspot kind"><button type="button" class="cvsm" data-cvb="" aria-pressed="' + (!bsel) + '">All</button>' +
+      h += '<div class="cvtabs cvkinds" role="group" aria-label="Blindspot kind"><button type="button" class="cvsm" data-cvb="" aria-pressed="' + (!bsel) + '">All</button>' +
         Object.keys(BLIND).map(function (k) { var n = all.filter(function (s) { return s.b === k; }).length;
           return '<button type="button" class="cvsm" data-cvb="' + k + '" aria-pressed="' + (bsel === k) + '" title="' + esc(BLIND[k][1]) + '">' + esc(BLIND[k][0]) + " (" + n + ")</button>"; }).join("") + "</div>";
     }
