@@ -87,6 +87,8 @@ jobs:
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/econ.test.mjs
+      # risk rating equivalents: the formula, the job on the repo's feeds, official advisories never an input (tools/risk_lib.mjs)
+      - run: node tests/risk.test.mjs
       - run: node tests/milref.test.mjs
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
@@ -140,6 +142,7 @@ jobs:
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs
       - run: node tests/econ_smoke.mjs
+      - run: node tests/risk_smoke.mjs
       - run: node tests/milref_smoke.mjs
       - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs

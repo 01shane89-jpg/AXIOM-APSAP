@@ -72,7 +72,8 @@ async function open(cc, opts) {
     const arts = [...document.querySelectorAll("#brief article")].map((a) => a.id || a.className), e = document.getElementById("econ");
     return { arts, text: e.textContent, rows: e.querySelectorAll("table tr").length, links: e.querySelectorAll("a[href^=http]").length };
   });
-  ok(b.arts[1] === "econ" && b.arts[2] === "report", "economic page sits after the brief and before the country report (" + b.arts.join(", ") + ")");
+  // other pages (the risk equivalent, assets/osap-risk.js) also sit between the brief and the report, in the order their files load
+  ok(b.arts.indexOf("econ") > 0 && b.arts.indexOf("econ") < b.arts.indexOf("report"), "economic page sits after the brief and before the country report (" + b.arts.join(", ") + ")");
   ok(/Fuel \(diesel\)/.test(b.text) && /Official claims/.test(b.text) && /IMF/.test(b.text) && /Thresholds/.test(b.text), "brief page lists fuel, inflation as official claims and the thresholds");
   ok(b.links >= 6, `brief page links its sources (${b.links})`);
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
