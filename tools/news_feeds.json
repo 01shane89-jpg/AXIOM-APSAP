@@ -1697,7 +1697,6 @@
     {"cc":"lt","outlet":"Vakarų ekspresas","url":"https://ve.lt/rss","lang":"lt"},
     {"cc":"lk","outlet":"Tamil Guardian","url":"https://www.tamilguardian.com/rss.xml","lang":"en"},
     {"cc":"sb","outlet":"Solomon Business Magazine","url":"https://sbm.sb/feed/","lang":"en"},
-    {"cc":"oki","outlet":"Yaeyama Mainichi","url":"https://www.y-mainichi.co.jp/feed","lang":"ja"},
     {"cc":"oki","outlet":"Yaeyama Nippo","url":"https://www.yaeyama-nippo.co.jp/feed","lang":"ja"},
     {"cc":"py","outlet":"La Clave","url":"https://www.laclave.com.py/feed/","lang":"es"},
     {"cc":"py","outlet":"Paraguay.com","url":"https://www.paraguay.com/index.atom","lang":"es"},
