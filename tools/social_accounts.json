@@ -337,6 +337,504 @@
    "handle": "publico.es",
    "kind": "news desk",
    "lang": "es"
+  },
+  {
+   "cc": "de",
+   "handle": "bsi.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "fr",
+   "handle": "meteofrance.com",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "gb",
+   "handle": "metoffice.gov.uk",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "ncsc.gov.uk",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "nl",
+   "handle": "knmi.nl",
+   "kind": "government",
+   "lang": "nl"
+  },
+  {
+   "cc": "es",
+   "handle": "aemet.es",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "fi",
+   "handle": "valtioneuvosto.fi",
+   "kind": "government",
+   "lang": "fi"
+  },
+  {
+   "cc": "*",
+   "handle": "ec.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "europarl.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "consilium.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "europol.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "unhcr.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "unocha.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "who.int",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "icrc.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "wfp.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "unicef.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "fao.org",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "msf.org",
+   "kind": "NGO",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "hrw.org",
+   "kind": "NGO",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "sipri.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "csis.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "rand.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "brookings.edu",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "cfr.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "carnegieendowment.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "foreignpolicy.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "foreignaffairs.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "economist.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "bloomberg.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "semafor.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "devex.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jp",
+   "handle": "nikkei.com",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "tr",
+   "handle": "medyascope.tv",
+   "kind": "news desk",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "handle": "bianet.org",
+   "kind": "news desk",
+   "lang": "tr"
+  },
+  {
+   "cc": "ae",
+   "handle": "thenationalnews.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "co",
+   "handle": "elespectador.com",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "handle": "elcomercio.pe",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "*",
+   "handle": "breakingdefense.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "chathamhouse.org",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "defensenews.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "ecfr.eu",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "globalvoices.org",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "au",
+   "handle": "lowyinstitute.bsky.social",
+   "kind": "think tank",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "newhumanitarian.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ru",
+   "handle": "theins.press",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "warontherocks.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "codastory.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ar",
+   "handle": "cenital.com",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "au",
+   "handle": "crikey.com.au",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "be",
+   "handle": "lesoir.be",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "be",
+   "handle": "rtbf-info.be",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "be",
+   "handle": "vrtnws.be",
+   "kind": "public broadcaster",
+   "lang": "nl"
+  },
+  {
+   "cc": "br",
+   "handle": "aosfatos.org",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "folha.com",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "g1portal.bsky.social",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "intercept.com.br",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "nucleo.jor.br",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "ca",
+   "handle": "theglobeandmail.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ch",
+   "handle": "letemps.ch",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ch",
+   "handle": "nzz.ch",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "ch",
+   "handle": "republik.ch",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "co",
+   "handle": "cuestionpublica.com",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cy",
+   "handle": "cyprus-mail.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "fr",
+   "handle": "lemonde.fr",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "fr",
+   "handle": "liberation.fr",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "fr",
+   "handle": "mediapart.fr",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "fr",
+   "handle": "monde-diplomatique.fr",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "gb",
+   "handle": "channel4news.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "financialtimes.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "news.sky.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "the-independent.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gr",
+   "handle": "kathimerini.gr",
+   "kind": "news desk",
+   "lang": "el"
+  },
+  {
+   "cc": "in",
+   "handle": "thehindu.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "it",
+   "handle": "ilpost.it",
+   "kind": "news desk",
+   "lang": "it"
+  },
+  {
+   "cc": "jp",
+   "handle": "asia.nikkei.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lb",
+   "handle": "megaphone.news",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "nz",
+   "handle": "newsroom.co.nz",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "nz",
+   "handle": "thespinoff.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ps",
+   "handle": "972mag.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "handle": "npr.org",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "handle": "propublica.org",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "id",
+   "handle": "jakpost.bsky.social",
+   "kind": "news desk",
+   "lang": "en"
   }
  ],
  "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run.",
@@ -521,6 +1019,126 @@
    "channel": "shafaaqnews",
    "kind": "news desk",
    "lang": "ar"
+  },
+  {
+   "cc": "kg",
+   "channel": "akipress",
+   "kind": "news agency",
+   "lang": "ru"
+  },
+  {
+   "cc": "md",
+   "channel": "tv8md",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "md",
+   "channel": "ipn_md",
+   "kind": "news agency",
+   "lang": "ro"
+  },
+  {
+   "cc": "ve",
+   "channel": "elpitazo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "channel": "cibercuba",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ir",
+   "channel": "mehrnews",
+   "kind": "state media",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "bbcpersian",
+   "kind": "public broadcaster (UK)",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "radiofarda",
+   "kind": "state-funded (US)",
+   "lang": "fa"
+  },
+  {
+   "cc": "it",
+   "channel": "repubblica",
+   "kind": "news desk",
+   "lang": "it"
+  },
+  {
+   "cc": "br",
+   "channel": "cnnbrasil",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "*",
+   "channel": "alarabiya",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "*",
+   "channel": "france24_ar",
+   "kind": "public broadcaster (France)",
+   "lang": "ar"
+  },
+  {
+   "cc": "*",
+   "channel": "rfi_fr",
+   "kind": "public broadcaster (France)",
+   "lang": "fr"
+  },
+  {
+   "cc": "*",
+   "channel": "trtworld",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "br",
+   "channel": "metropoles",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "ro",
+   "channel": "g4media",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "ro",
+   "channel": "digi24ro",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "et",
+   "channel": "fanatelevision",
+   "kind": "state media",
+   "lang": "am"
+  },
+  {
+   "cc": "iq",
+   "channel": "baghdadtoday",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "cn",
+   "channel": "voachinese",
+   "kind": "state-funded (US)",
+   "lang": "zh"
   }
  ],
  "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets. Channels added on 2026-10-23 (given by channel id) were found the same way (tools/probe_youtube.mjs from GitHub's runners) and kept only when they are the country's own government, parliament, armed forces, police, public or state broadcaster, or an established news outlet, with a video in the last month.",

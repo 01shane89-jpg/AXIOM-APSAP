@@ -37,6 +37,8 @@ jobs:
           ROUNDS: ${{ inputs.rounds || '7' }}
           # main publishes to live-drones, the page's source; a test run on any other branch publishes to live-drones-test
           TARGET: ${{ github.ref == 'refs/heads/main' && 'live-drones' || 'live-drones-test' }}
+          # sold version: adsb.fi (non-commercial terms) is not asked (tools/nc_strip.mjs)
+          OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

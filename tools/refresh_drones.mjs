@@ -15,6 +15,7 @@
 // A drone is flagged only on a stated reason (aircraft type code, ADS-B emitter category B6 "unmanned", the type
 // description, or a call sign family publicly tied to drones), and the reason is kept with the item.
 import fs from "fs";
+import { COMMERCIAL } from "./nc_strip.mjs";
 
 const OUT = process.argv[2] || "drones.json";
 const PREV = process.argv[3] || OUT;
@@ -102,8 +103,8 @@ async function main() {
   let primary = await pull(SRC.lol, "/mil", "military", false);
   for (const t of Object.keys(UAS_TYPES)) { await sleep(GAP); await pull(SRC.lol, "/type/" + t, "type " + t, true); }
   // adsb.fi adds type descriptions and aircraft adsb.lol's receivers miss; when adsb.lol fails it is the fallback
-  await sleep(1500);
-  await pull(SRC.fi, "/mil", "military", false);
+  // (not in the sold version: adsb.fi's terms are non-commercial, tools/nc_strip.mjs)
+  if (!COMMERCIAL) { await sleep(1500); await pull(SRC.fi, "/mil", "military", false); }
 
   // short trails: this snapshot plus up to 60 minutes of earlier positions from the previous file
   let prev = null;
@@ -125,7 +126,7 @@ async function main() {
   const out = {
     schema: "osap-live-air/1", built: new Date(now).toISOString(),
     note: "Positions the aircraft broadcast (ADS-B/MLAT) as passed on by community receiver networks. Reported positions, not verified. Only aircraft broadcasting ADS-B appear; most military drones fly with it off and small drones (Remote ID) are in no public feed.",
-    sources: Object.fromEntries(Object.entries(SRC).map(([k, s]) => [k, { name: s.name, site: s.site, licence: s.licence, nc: s.nc, track: s.track("{hex}") }])),
+    sources: Object.fromEntries(Object.entries(SRC).filter(([, s]) => !(COMMERCIAL && s.nc)).map(([k, s]) => [k, { name: s.name, site: s.site, licence: s.licence, nc: s.nc, track: s.track("{hex}") }])),
     status, drones, military: ac.length - drones, ac,
     nopos: [...nopos.values()].filter((x) => !seen.has(x.hex)),
   };

@@ -284,6 +284,11 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' && !startsWith(inputs.only, 'probe') }}
         run: node tools/health.mjs build
         continue-on-error: true
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/live data/history
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
         id: commit
@@ -300,8 +305,10 @@ jobs:
           git add data/thailand/flood-live-snapshot.js data/live data/history $(ls -d data/captures data/claims data/decisions 2>/dev/null)
           git commit -m "Refresh live snapshots${LANE:+ ($LANE)} $(date -u +'%Y-%m-%d %H:%MZ')"
           # Pulling takes over a minute, and merges or the other refresh jobs often land on main meanwhile, so try a few times.
+          # A pull or push that hangs is stopped after a few minutes and tried again: on 23 Oct 2026 one pull hung for 10 minutes
+          # twice in a few hours, holding that round's news back and the next round in the queue behind it.
           for i in 1 2 3 4 5; do
-            git pull --rebase -X theirs origin main && git push && exit 0
+            timeout 180 git pull --rebase -X theirs origin main && timeout 120 git push && exit 0
             git rebase --abort 2>/dev/null || true; sleep $((i * 5))
           done
           exit 1

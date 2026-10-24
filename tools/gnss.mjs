@@ -17,6 +17,7 @@
 // Few aircraft means no data, not no jamming.
 import fs from "fs";
 import path from "path";
+import { usable } from "./nc_strip.mjs";
 
 export const DEG = 1, MIN = 10, BAD = 0.1, KEEP_DAYS = 14, HOUR = 3600e3;
 export const LEVELS = [[0.5, "high"], [0.25, "medium"], [BAD, "low"]];
@@ -80,10 +81,10 @@ export function level(n, b) {
   return "low";
 }
 const iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z");
-export const SOURCES = [
+export const SOURCES = usable([
   { name: "adsb.fi", site: "https://adsb.fi/", licence: "adsb.fi open data terms (non-commercial)", nc: true },
   { name: "adsb.lol", site: "https://adsb.lol/", licence: "ODbL 1.0", nc: false },
-];
+]);
 /** One output file: every cell with at least MIN aircraft-hours, as [south lat, west lon, aircraft-hours, bad, GPS lost]. */
 export function build(hours, extra) {
   const t = sum(hours), cells = [];

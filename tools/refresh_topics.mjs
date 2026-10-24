@@ -21,11 +21,14 @@ let prev = { items: [] };
 try { const t = fs.readFileSync(OUT, "utf8"); prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, "")); } catch (e) {}
 const byLink = new Map((prev.items || []).map((i) => [i.link, i]));
 const status = [];
+// each search starts at least a second after the one before, counted from its start (no further second after a slow answer)
+let lastSearch = 0;
 for (const t of topics || []) {
   if (!/^[a-z0-9-]+$/.test(t.id || "")) { console.log("skipped a data set with a bad id:", t.id); continue; }
   const own = compileTopics([t]);
   for (const q of (t.searches || []).slice(0, MAX_SEARCHES)) {
     const url = "https://www.bing.com/news/search?q=" + encodeURIComponent(q) + "&format=rss";
+    { const w = lastSearch + 1000 - Date.now(); if (w > 0) await sleep(w); lastSearch = Date.now(); }
     try {
       if (!(await robotsAllow(url))) throw new Error("robots.txt does not allow this search");
       const list = parseFeed(await getFeed(url)).slice(0, 25);
@@ -48,7 +51,6 @@ for (const t of topics || []) {
       }
       status.push({ topic: t.id, q, ok: true, n, off });
     } catch (e) { status.push({ topic: t.id, q, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
-    await sleep(1000);
   }
 }
 const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 16), count = {};
