@@ -42,7 +42,10 @@ function kit(p) {
     c.style.display = "";
   }, [text, sub || ""]);
   k.nocap = () => p.evaluate(() => { const c = document.getElementById("wt-cap"); if (c) c.style.display = "none"; });
-  k.t0 = Date.now(); k.marks = [];
+  k.t0 = Date.now(); k.marks = []; k.skip = null;
+  // a stretch of waiting to cut from the video: from skipFrom() to skipTo(), seconds from the page's start
+  k.skipFrom = () => { k.skip = [(Date.now() - k.t0) / 1000]; };
+  k.skipTo = () => { if (k.skip) k.skip[1] = (Date.now() - k.t0) / 1000; };
   k.title = async (text, sub, ms) => {
     await p.evaluate(([t, s]) => {
       const old = document.getElementById("wt-title"); if (old) old.remove();
@@ -157,7 +160,10 @@ async function finish(name, n, s) {
   const v = s.p.video();
   await s.ctx.close();
   await rename(await v.path(), join(OUT, `${n}-${name}.webm`));
-  await writeFile(join(OUT, `${n}-${name}.cut`), String(Math.max(0, (s.k.marks[0] || 0) - 0.2).toFixed(2)));
+  const cut = Math.max(0, (s.k.marks[0] || 0) - 0.2);
+  await writeFile(join(OUT, `${n}-${name}.cut`), cut.toFixed(2));
+  // <nn>-<name>.skip: a waiting stretch to cut, in seconds of the trimmed video ("from to")
+  if (s.k.skip && s.k.skip[1] > s.k.skip[0] + 1) await writeFile(join(OUT, `${n}-${name}.skip`), `${(s.k.skip[0] - cut).toFixed(2)} ${(s.k.skip[1] - cut).toFixed(2)}`);
 }
 
 /* ---------- the videos, in the user guide's order ---------- */
@@ -220,7 +226,9 @@ const SCENES = [
     await k.caption("Open forecasts and warnings for the full weather view", "One-page brief, detailed report and the military-style 5-day chart.");
     await k.press("Open forecasts and warnings"); await k.wait(3000);
     await k.caption("The 5-day chart: day and night, winds, illumination and mission impacts", "Hour by hour, for the point you choose.");
-    await p.keyboard.press("Escape"); await p.evaluate(() => window.OSAP_WX && window.OSAP_WX.chart()); await k.wait(5000);
+    await p.keyboard.press("Escape"); await p.evaluate(() => window.OSAP_WX && window.OSAP_WX.chart());
+    await p.waitForFunction(() => { const b = document.getElementById("brief"); return b && !b.hidden && b.textContent.length > 200; }, null, { timeout: 60000 }).catch(() => console.log("  5-day chart not ready"));
+    await k.wait(3000);
     await k.wheel(500, 4, 1500, 0.5, 0.5);
   }],
   ["overlays", "Map overlays and base maps", "Infrastructure, aircraft, ships, borders and more", { z: 11 }, async ({ k, p }) => {
@@ -231,7 +239,7 @@ const SCENES = [
     await p.keyboard.press("Escape"); await k.click("#ml-close, .ml-close, [aria-label='Close']"); await k.wait(1000);
     await k.caption("Base map: Grey, Streets, Topographic, Satellite, Hybrid and Offline");
     await k.tool("basemap"); await k.wait(2000);
-    await k.click('[data-pk="hybrid"]'); await k.wait(4000);
+    await k.press("Hybrid"); await k.wait(4000);
     await k.caption("Grid and Crosshair: MGRS lines that get finer as you zoom in");
     await k.tool("Grid"); await k.wait(1500); await k.tool("Crosshair"); await k.wait(3500);
     await k.caption("3D: tilt and turn the map over real ground");
@@ -339,9 +347,12 @@ const SCENES = [
     await k.caption("Evac: set where the people are, then Work out the options");
     await k.tool("evac"); await k.wait(1500);
     await p.evaluate((a) => window.OSAP_EPE && window.OSAP_EPE.open({ at: a }), AT); await k.wait(2000);
-    await k.click('[data-ep="plan"]');
-    await p.waitForFunction(() => /Work out again/.test((document.getElementById("epe") || {}).textContent || ""), null, { timeout: 120000 }).catch(() => console.log("  evacuation options not ready"));
-    await k.wait(3000);
+    await k.click('[data-ep="plan"]'); await k.wait(4000);
+    // routing every option takes minutes: the wait is cut from the video
+    await k.caption("OSAP routes each option and weighs the incidents near it", "This takes a few minutes; the wait is cut from the video.");
+    await k.wait(1500); k.skipFrom();
+    await p.waitForFunction(() => /Work out again/.test((document.getElementById("epe") || {}).textContent || ""), null, { timeout: 420000 }).catch(() => console.log("  evacuation options not ready"));
+    k.skipTo(); await k.wait(3000);
     await k.caption("Routes to the U.S. embassy or consulate, airports, airfields and seaports", "The first choice has the fewest incidents near the route.");
     await k.wait(4000);
     await k.scrollIn("#epe", 400, 4, 1600);
