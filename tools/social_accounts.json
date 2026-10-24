@@ -6862,6 +6862,230 @@
    "name": "Armáda České republiky",
    "kind": "government (military)",
    "lang": "cs"
+  },
+  {
+   "cc": "sc",
+   "channel_id": "UCuCpt9DsyJZYwNlQ-dFDMvA",
+   "name": "Seychelles Nation",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ba",
+   "channel_id": "UCPCOvHq2iCRvt4NrOp5sunQ",
+   "name": "Face TV",
+   "kind": "news desk",
+   "lang": "bs"
+  },
+  {
+   "cc": "ba",
+   "channel_id": "UC3vOfPEJbQi2WaAZy-oRDqw",
+   "name": "RTRS vijesti",
+   "kind": "public broadcaster",
+   "lang": "sr"
+  },
+  {
+   "cc": "bt",
+   "channel_id": "UCynkfpZZuc1Em-BuE80sxFw",
+   "name": "Kuensel",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ga",
+   "channel_id": "UCPP6ZxvWbQFTx1s9tBwbTpQ",
+   "name": "Gabon Media Time",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "mg",
+   "channel_id": "UCEGz7uOqsNyHZZTlPtzMBmw",
+   "name": "TV Plus Madagascar",
+   "kind": "news desk",
+   "lang": "mg"
+  },
+  {
+   "cc": "mr",
+   "channel_id": "UCvY-xtIbnfH1j4lM7T3I5ag",
+   "name": "Taqadoumy TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sz",
+   "channel_id": "UC1qR3DUpzzIBZUwNuRuniDg",
+   "name": "Times of Eswatini",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "zw",
+   "channel_id": "UCYhEQp1ZItUXsr_qKOKSr-w",
+   "name": "ZTN Prime",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ci",
+   "channel_id": "UCCihDvmcTRdmmV80wBznQOA",
+   "name": "RTI (Radiodiffusion Télévision Ivoirienne)",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "ee",
+   "channel_id": "UCvAWW5QCfZxUabzyKP6AJkw",
+   "name": "RusDelfi",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "lt",
+   "channel_id": "UCqiHhRc5RGjaeFyFb4nSvFw",
+   "name": "Delfi Литва",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "lt",
+   "channel_id": "UCvEFtIm2D5ePEBbKaAyvZ2w",
+   "name": "Delfi",
+   "kind": "news desk",
+   "lang": "lt"
+  },
+  {
+   "cc": "lt",
+   "channel_id": "UCti3BRyfvIzcNQCQv470FRw",
+   "name": "LNK Televizija",
+   "kind": "news desk",
+   "lang": "lt"
+  },
+  {
+   "cc": "is",
+   "channel_id": "UCpkcJlssp52fP6xHFUYT9ag",
+   "name": "mbl.is",
+   "kind": "news desk",
+   "lang": "is"
+  },
+  {
+   "cc": "kw",
+   "channel_id": "UCTny7s_VPsTS_TtnWIlJF6w",
+   "name": "Alrai",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "lu",
+   "channel_id": "UCh3MNRzicd8Yb_EX3Ml2JNA",
+   "name": "Luxemburger Wort",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "ml",
+   "channel_id": "UCeVw6sWzHkfdNh4ple3eJVw",
+   "name": "Joliba FM",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "pg",
+   "channel_id": "UCPLECk9Uw7HATirXNnPr6lw",
+   "name": "TVWAN",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tg",
+   "channel_id": "UCQqwwww6kzwr1vcBn1Q5UEA",
+   "name": "New World TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "bj",
+   "channel_id": "UCpA6a10JxgGXT1aA6ZTNCwQ",
+   "name": "SRTB (Bénin)",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "pa",
+   "channel_id": "UCm-EJjdw2bKskUFF5YyWYog",
+   "name": "Telemetro",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "channel_id": "UCsOiRor7ATAU3NCTAFehOYw",
+   "name": "Canal 10 El Salvador",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "tl",
+   "channel_id": "UCk7S6u3HFjklczqBpJbeZEg",
+   "name": "GMN TV",
+   "kind": "news desk",
+   "lang": "tet"
+  },
+  {
+   "cc": "cf",
+   "channel_id": "UCMBVDqHX7-8CHgYXSopeC2A",
+   "name": "Corbeau News TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ne",
+   "channel_id": "UCE7bKuILlt674IFH9x4Dnxw",
+   "name": "Groupe Labari (RTL Niger)",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ls",
+   "channel_id": "UCJmfW-w47fd83HLWfKhyHmQ",
+   "name": "Lesotho Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ni",
+   "channel_id": "UC4pq8ra-SB_ZqXqfgnxRVWg",
+   "name": "Nicaragua Actual",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "la",
+   "channel_id": "UCjtOePaRAtTLufe1-lxwmrg",
+   "name": "Lao Economic News Channel",
+   "kind": "news desk",
+   "lang": "lo"
+  },
+  {
+   "cc": "om",
+   "channel_id": "UCYBRcqEAVdjbCzDIa9W0vYA",
+   "name": "Oman Observer",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "me",
+   "channel_id": "UCuHHGaVLghYGdsAyzhFuW2w",
+   "name": "Euronews Montenegro",
+   "kind": "news desk",
+   "lang": "sr"
+  },
+  {
+   "cc": "al",
+   "channel_id": "UC8X73IwfsLqlTaAHbXG05lg",
+   "name": "News24 Albania",
+   "kind": "news desk",
+   "lang": "sq"
   }
  ]
 }
