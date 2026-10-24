@@ -7,7 +7,10 @@
      map records one. The pop-up lists operator, zone, mount, height, direction, reference and, where OSM has one, a link to the feed.
    - Community-mapped, so coverage is uneven and a camera on the map may be gone, or one on the ground unmapped. Positions and facts
      are OpenStreetMap's, not a verified register.
-   window.OSAP_SURVEIL {set, state, query, draw, dirOf, kindOf}. */
+   - Map overlays has one Cameras switch: where the public cameras (assets/osap-cams.js) are on the page, they adopt this overlay
+     (adopt(slot)); their switch and their "Surveillance" kind button turn it on and off, and only its messages and attribution
+     show, under their kind buttons. Its own switch is drawn only on a page without them.
+   window.OSAP_SURVEIL {set, adopt, state, query, draw, dirOf, kindOf}. */
 (function () {
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
@@ -86,7 +89,7 @@
       ["start_date", "Installed"], ["ref", "Reference"]];
     var feed = safeUrl(t["contact:webcam"] || t.webcam || t.url || t.contact_webcam);
     var id = e.type + "/" + e.id;
-    return '<div class="pop"><div class="tier" style="color:' + TYPES[kind].col + '">' + esc(TYPES[kind].name) + " · OpenStreetMap</div>" +
+    return '<div class="pop"><div class="tier" style="color:' + TYPES[kind].col + '">Surveillance camera · ' + esc(TYPES[kind].name) + " · OpenStreetMap</div>" +
       (t.name ? "<h3>" + esc(t.name) + "</h3>" : "") +
       "<dl>" +
       (dir != null ? "<dt>Facing</dt><dd>" + Math.round(dir) + "° (" + compassOf(dir) + ")</dd>" : "") +
@@ -168,8 +171,11 @@
   function soon() { if (!t0) t0 = setTimeout(load, 700); }
 
   /* ---------- the row in Map overlays > Infrastructure, the legend ---------- */
-  var sec = null;
+  var sec = null, slot = null;
   function secHtml() {
+    /* inside the Cameras section the switch is theirs: only the messages and the attribution here */
+    if (slot) return '<p class="mlkey sv-m" data-svmsg aria-live="polite"></p>' +
+      '<p class="mlkey sv-m" data-svcopy>Surveillance cameras: &copy; OpenStreetMap contributors (ODbL), community-mapped and uneven, not a verified register.</p>';
     return '<div class="sv-t">Surveillance cameras</div>' +
       '<label class="mlrow"><input type="checkbox" data-sv="on"' + (S.on ? " checked" : "") + '><span><b>Surveillance cameras</b><i>Every camera mapped in OpenStreetMap for the area, with the way it faces and its type</i></span></label>' +
       '<p class="mlkey sv-m" data-svmsg aria-live="polite"></p>' +
@@ -179,6 +185,7 @@
     if (sec) {
       var i = sec.querySelector('input[data-sv="on"]'); if (i) i.checked = S.on;
       var m = sec.querySelector("[data-svmsg]"); if (m) { m.textContent = S.msg; m.hidden = !S.msg; }
+      var cp = sec.querySelector("[data-svcopy]"); if (cp) cp.hidden = !S.on;
     }
     legend();
   }
@@ -193,7 +200,7 @@
     if (!map) return;
     S.on = !!on;
     key = ""; load(); paint();
-    if (on && map.getZoom() < CAMZ && W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast("Zoom in to a street to see surveillance cameras");
+    if (on && !slot && map.getZoom() < CAMZ && W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast("Zoom in to a street to see surveillance cameras");
   }
   function onChange(e) { if (e.target && e.target.getAttribute("data-sv") === "on") set(e.target.checked); }
 
@@ -206,6 +213,7 @@
 
   function panes() { if (!map.getPane("svpt")) { map.createPane("svpt"); map.getPane("svpt").style.zIndex = 656; } }
   function mount() {
+    if (slot) { if (sec && sec.parentNode !== slot) slot.appendChild(sec); return true; }
     var home = D.getElementById("ml-infra") || D.getElementById("ml-extra");
     if (!home) return false;
     if (sec && sec.parentNode === home) return true;
@@ -214,6 +222,15 @@
     home.appendChild(sec); home.hidden = false;
     paint();
     return true;
+  }
+  /* the Cameras section takes this overlay in: its own switch goes, its messages move under their kind buttons */
+  function adopt(el) {
+    if (!el || el === slot) return;
+    slot = el;
+    if (!sec) { sec = D.createElement("div"); sec.id = "sv-sec"; sec.addEventListener("change", onChange); }
+    sec.innerHTML = secHtml();
+    slot.appendChild(sec);
+    paint();
   }
   function init() {
     map = W.__asapMap;
@@ -225,7 +242,7 @@
     paint();
     return true;
   }
-  W.OSAP_SURVEIL = { set: set, query: query, draw: draw, pop: pop, dirOf: dirOf, kindOf: kindOf,
+  W.OSAP_SURVEIL = { set: set, adopt: adopt, query: query, draw: draw, pop: pop, dirOf: dirOf, kindOf: kindOf,
     state: function () { return { on: S.on, msg: S.msg, drawn: L0 ? L0.getLayers().length : 0 }; } };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();

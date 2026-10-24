@@ -1,4 +1,5 @@
-// Headless check of the surveillance-camera overlay (assets/osap-surveil.js): its switch sits in Map overlays > Infrastructure;
+// Headless check of the surveillance-camera overlay (assets/osap-surveil.js): it shares the one Cameras switch in Map overlays >
+// Infrastructure > Roads with the public cameras (its own "Surveillance" kind button there), and still draws in a conflict tab;
 // man_made=surveillance points load from OpenStreetMap (Overpass, answered here by a fixture) only when switched on and zoomed in to a
 // street/block; cameras are coloured by type, a cone shows the way each faces, the pop-up lists the details and a feed link when OSM
 // has one; a busy server is reported, not hidden; a data set change switches it off. Run from the repo root: node tests/surveil_smoke.mjs
@@ -75,12 +76,13 @@ const om = async (p, want) => {
   ok(!(await p.evaluate(() => !!document.querySelector("#atk-tools [data-osv]"))), "desktop: no toolbar button of its own");
   let s = await st(p); ok(!s.on && s.drawn === 0, "desktop: starts off, nothing drawn");
   await om(p, true);
-  ok(await shown(p, '#atk-om #sv-sec input[data-sv="on"]'), "desktop: the switch is in the Overlays sheet");
-  ok(await p.evaluate(() => { const e = document.getElementById("sv-sec"), h = e.parentElement; return h.id === "ml-infra" ? !h.hidden : /Infrastructure/.test(e.textContent); }), "desktop: under an Infrastructure heading");
+  ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: the one Cameras switch is in the Overlays sheet");
+  ok(await p.evaluate(() => { const e = document.getElementById("sv-sec"); return !!e && !!e.closest("#cam-sec [data-camsv]") && !!e.closest("#ml-infra") && !document.querySelector('input[data-sv="on"]'); }), "desktop: no switch of its own, it sits inside the Cameras section under Infrastructure");
+  ok(/^Cameras$/.test(await p.evaluate(() => document.querySelector("#cam-sec .mlrow b").textContent)), "desktop: the switch is called Cameras");
   // zoomed out: switching on asks you to zoom in, fetches nothing
   await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 6, { animate: false }));
   const qn = queries.length;
-  await p.check('#sv-sec input[data-sv="on"]'); await p.waitForTimeout(800);
+  await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(800);
   s = await st(p);
   ok(/Zoom in/.test(s.msg) && queries.length === qn, "desktop: zoomed out asks to zoom in and fetches nothing: " + s.msg.slice(0, 60));
   // zoom in: the cameras load, the guard post is left out (6 of 7), the ALPR and fixed ones draw
@@ -90,6 +92,17 @@ const om = async (p, want) => {
   ok(/6 cameras on screen/.test(s.msg) && /3 show the way they face/.test(s.msg), "desktop: count and how many face a known way: " + s.msg.slice(0, 80));
   ok(await p.evaluate(() => window.__asapMap.getPane("svpt").querySelectorAll("path").length >= 3), "desktop: a direction cone is drawn for the cameras that face a known way");
   ok(await p.evaluate(() => /Surveillance cameras/.test(document.body.innerHTML) && /direction a camera faces/.test(document.body.innerHTML)), "desktop: legend with the camera types and the cone note");
+  ok(await shown(p, "#cam-sec [data-svmsg]") && await shown(p, "#cam-sec [data-svcopy]"), "desktop: its count and the OpenStreetMap attribution show under the kind buttons");
+  // its kind button turns only the surveillance cameras off, and back on; the public cameras stay on
+  await p.click('#cam-sec [data-camkind="surveil"]'); await p.waitForTimeout(600);
+  s = await st(p);
+  const cOn = await p.evaluate(() => window.OSAP_CAMS.state().on);
+  ok(!s.on && s.drawn === 0 && cOn && /surveil/.test(await p.evaluate(() => localStorage.getItem("osap-cam-off"))), "desktop: Surveillance button off hides them, public cameras stay on, kept on this device");
+  await p.click('#cam-sec [data-camkind="surveil"]'); await p.waitForTimeout(1600);
+  s = await st(p); ok(s.on && s.drawn === 6, "desktop: Surveillance button on draws them again (" + s.drawn + ")");
+  // the one switch off turns both off
+  await p.uncheck("#cam-sec input[data-cam]"); await p.waitForTimeout(600);
+  s = await st(p); ok(!s.on && s.drawn === 0 && !(await p.evaluate(() => window.OSAP_CAMS.state().on)), "desktop: the Cameras switch off turns both off");
   await ctx.close();
   void errors;
 }
@@ -100,7 +113,7 @@ const om = async (p, want) => {
   const html = await p.evaluate(() => window.OSAP_SURVEIL.pop("fixed",
     { man_made: "surveillance", "camera:type": "fixed", "camera:direction": "90", operator: "City Hall", "camera:mount": "pole", "contact:webcam": "https://example.gov/cam7.jpg", name: "Bridge <b>x</b>" },
     { type: "node", id: 7 }));
-  ok(/Fixed camera · OpenStreetMap/.test(html), "pop-up names the camera type and OpenStreetMap");
+  ok(/Surveillance camera · Fixed camera · OpenStreetMap/.test(html), "pop-up says surveillance camera, names its type and OpenStreetMap (told apart from the agencies' public cameras)");
   ok(/Facing<\/dt><dd>90° \(E\)/.test(html), "pop-up: the way the camera faces, in degrees and compass");
   ok(/example\.gov\/cam7\.jpg/.test(html) && /Open this camera’s feed/.test(html), "pop-up: a feed link when OSM records one");
   ok(/City Hall/.test(html) && /pole/.test(html) && !/<b>x<\/b>/.test(html), "pop-up: operator and mount shown, name escaped");
@@ -114,16 +127,30 @@ const om = async (p, want) => {
   const { ctx, p } = await open("", "busy");
   await om(p, true);
   await p.evaluate(() => window.__asapMap.setView([13.753, 100.503], 15, { animate: false }));
-  await p.check('#sv-sec input[data-sv="on"]'); await p.waitForTimeout(2000);
+  await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(2000);
   const s = await st(p);
   ok(/did not load|busy/.test(s.msg) && s.drawn === 0, "desktop: a busy Overpass server is reported, not hidden: " + s.msg.slice(0, 70));
+  await ctx.close();
+}
+
+// ---------- a conflict tab keeps both camera layers visible (it hides the panes it does not know) ----------
+{
+  const { ctx, p } = await open();
+  await p.evaluate(() => window.__asapMap.setView([13.753, 100.503], 15, { animate: false }));
+  await om(p, true);
+  await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1600);
+  await om(p, false);
+  await p.evaluate(() => { const b = document.querySelector('button[data-cf="thailand-deep-south"]') || [...document.querySelectorAll("button[data-cf]")][0]; if (b) b.click(); });
+  const inCf = await p.waitForFunction(() => document.documentElement.hasAttribute("data-cf"), null, { timeout: 30000 }).then(() => true, () => false);
+  const vis = await p.evaluate(() => [".leaflet-svpt-pane", ".leaflet-campt-pane"].map((s) => { const e = document.querySelector(s); return e ? getComputedStyle(e).visibility : "none"; }));
+  ok(inCf && vis[0] === "visible" && vis[1] === "visible", "conflict tab: surveillance and public camera panes stay visible " + JSON.stringify(vis));
   await ctx.close();
 }
 
 // ---------- phone: the switch is in the Layers panel ----------
 {
   const { ctx, p, errors } = await open("", "ok", { viewport: { width: 390, height: 780 }, isMobile: true, hasTouch: true });
-  ok(await p.evaluate(() => !!document.querySelector('#sv-sec input[data-sv="on"]')), "phone: the surveillance switch exists in the layers UI");
+  ok(await p.evaluate(() => !!document.querySelector("#cam-sec input[data-cam]") && !!document.querySelector("#cam-sec #sv-sec")), "phone: the Cameras switch carries the surveillance cameras in the layers UI");
   ok(errors.length === 0, "phone: no page errors " + errors.slice(0, 2).join(" | "));
   await ctx.close();
 }
