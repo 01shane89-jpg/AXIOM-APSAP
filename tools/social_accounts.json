@@ -7086,6 +7086,27 @@
    "name": "News24 Albania",
    "kind": "news desk",
    "lang": "sq"
+  },
+  {
+   "cc": "km",
+   "channel_id": "UC35gylQAQSckibGVfBTguNg",
+   "name": "FCBK FM",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "lr",
+   "channel_id": "UCUYIS4QoJPcPZ4zaZOcCN6Q",
+   "name": "Spoon Talk Live (Spoon Network)",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "mc",
+   "channel_id": "UCruc0IJTMxi0aeMLEBBMfTw",
+   "name": "TVMonaco",
+   "kind": "public broadcaster",
+   "lang": "fr"
   }
  ]
 }
