@@ -2,7 +2,7 @@
 // Mapterhorn is answered by made-up files, so the check is the same every run: a coverage file (PMTiles of one polygon,
 // "ukengland", 1 m, over London), its source list, and terrarium elevation tiles that exist down to zoom 12 everywhere and
 // to zoom 16 only inside the polygon (north-south ridges, so the shading shows).
-// Checks: Elevation and terrain analysis lists LiDAR hillshade and LiDAR coverage above the Esri row, which no longer claims
+// Checks: Elevation and terrain analysis lists LiDAR hillshade and LiDAR coverage above the Japan row (the Esri row was removed), and do not claim
 // LiDAR everywhere; coverage paints the polygon in the 1 m class colour and nothing outside it; the legend lists the classes
 // and names the model at the map centre (and "no LiDAR" outside); OSAP_LIDAR.at finds the model inside and none outside;
 // the hillshade draws shaded tiles from Mapterhorn, enlarging zoom 12 outside the polygon with each missing tile asked once;
@@ -132,6 +132,8 @@ async function open(opt) {
       const a = rg ? +rg[1] : 0, b = rg ? Math.min(+rg[2], COVF.length - 1) : COVF.length - 1, body = COVF.subarray(a, b + 1);
       return r.fulfill({ status: rg ? 206 : 200, headers: { ...CORS, "Content-Type": "application/octet-stream", "Content-Range": `bytes ${a}-${b}/${COVF.length}`, "Content-Length": String(body.length), ETag: '"cov1"' }, body });
     }
+    /* the Satellite base map (Sentinel-2 cloudless): plain grey squares, so the map has a picture and no loading error */
+    if (/tiles\.maps\.eox\.at\//.test(u)) { const g = Buffer.alloc(256 * 256 * 3, 110); return r.fulfill({ status: 200, contentType: "image/png", headers: CORS, body: png(256, 256, g) }); }
     if (/elevation-tiles-prod\/terrarium\//.test(u)) {
       /* the fallback source: flat 50 m, so a fallback is easy to tell from Mapterhorn's heights */
       const rgb = Buffer.alloc(256 * 256 * 3); for (let k = 0; k < rgb.length; k += 3) { rgb[k] = 128; rgb[k + 1] = 50; }
@@ -167,9 +169,7 @@ const colourAt = (p, cls, ll) => p.evaluate(([cls, ll]) => {
   const { ctx, p, errors, asked } = await open();
   await load(p);
   const order = await p.evaluate(() => [...document.querySelectorAll("#ml-elev input[type=checkbox]")].map((i) => i.dataset.lidar || i.dataset.hs));
-  ok(order.slice(0, 4).join() === "hs,cov,world,jp", "Elevation and terrain analysis lists LiDAR hillshade and LiDAR coverage above the Esri and Japan rows: " + order.join());
-  const esri = await p.evaluate(() => document.querySelector('#ml-elev input[data-hs="world"]').closest("label").textContent);
-  ok(/Esri hillshade/.test(esri) && !/LiDAR where published/.test(esri) && /30 m satellite/.test(esri), "the Esri row says it is LiDAR only in parts of the US and Europe: " + esri.slice(0, 90));
+  ok(order.slice(0, 3).join() === "hs,cov,jp", "Elevation and terrain analysis lists LiDAR hillshade and LiDAR coverage above the Japan row (no Esri row): " + order.join());
   ok(asked.cov === 0 && asked.mt.length === 0, "nothing is downloaded from Mapterhorn before a row is switched on");
 
   /* coverage */

@@ -2735,9 +2735,8 @@
   /* The print map's tiles are read straight from the network, not through the app's service worker (cache "no-store" is
      passed through untouched by sw.js): on Shane's iPhone (2026-10-09, Bangkok) most tiles of the CONOP map never came back
      inside the wait and the map printed as a small patch on grey. Six tiles at a time, 20 s each; a tile that fails or times
-     out is looked for in the saved offline and map tiles (only a copy a canvas may read), then asked for once more, then
-     taken from Esri's street map so the page is never blank where a picture can be had. */
-  var TILE_ALT = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
+     out is looked for in the saved offline and map tiles (only a copy a canvas may read), then asked for once more. (Esri's street map was the last resort until 2026-10-17; its terms need a paid plan for a
+     product that is sold, so a tile that still fails is left grey and the caption says so.) */
   var tileQ = [], tileRun = 0;
   function tileSlot(fn) {
     return new Promise(function (res) {
@@ -2776,7 +2775,7 @@
     if (y < 0 || y >= n) return Promise.resolve(null);
     function at(T) { return T.replace("{z}", z).replace("{x}", x).replace("{y}", y); }
     var url = at(TILE_URL);
-    return tileNet(url).then(function (im) { return im ? { im: im } : tileSaved(url).then(function (sv) { return sv ? { im: sv } : tileNet(url).then(function (r) { return r ? { im: r } : tileNet(at(TILE_ALT)).then(function (e) { return e ? { im: e, alt: 1 } : null; }); }); }); });
+    return tileNet(url).then(function (im) { return im ? { im: im } : tileSaved(url).then(function (sv) { return sv ? { im: sv } : tileNet(url).then(function (r) { return r ? { im: r } : null; }); }); });
   }
   /* what the caption says about the basemap: none at all, squares missing (left grey), or squares from the fallback map */
   function baseNote(m, none) {
