@@ -17,6 +17,12 @@
 //   reset_incident    { conflict, reports: [fp, ...] }        back to unverified (undoes an earlier decision on these reports)
 // A confirmation says the reports describe a real incident. It does not make any figure, party or claim in them true: casualty figures
 // stay "as reported", and statements by any party stay claims.
+// A confirmation may carry the incident's coded record ("coding", checked by checkCoding() in assets/osap-cf-code.js): event type and
+// sub-event type, two actors with what each attribution rests on, the place with its precision (1 to 3), and the fatalities one of the
+// incident's reports gives, cited by that report. The page offers rule and AI suggestions for each field; the analyst ticks every field
+// before the issue opens, and a coding with a field left unticked is refused. The record keeps what the analyst was shown for each
+// field and whether they accepted or changed it, plus the AI suggestions on file for the reports (data/live/conflicts/suggest.js,
+// copied from the job's own file, never from the issue), so it can always be told what the AI proposed and what the analyst decided.
 //
 // Store: data/decisions/conflicts/<YYYY-MM-DD>/<HHMM>.ndjson, append-only, never pruned (tools/capture_lib.mjs write());
 // index.json maps decision_id -> 1. decision_id is "cfdec-issue-<number>", so an issue is recorded once. Each record keeps a copy of
@@ -24,6 +30,7 @@
 // reads correctly after the reports age out of the tab.
 import crypto from "node:crypto";
 import { readBody } from "./decision_lib.mjs";
+import CODE from "../assets/osap-cf-code.js";
 
 export const SCHEMA = "osap-incident-decision/1";
 export const TITLE = "OSAP incident decision:";
@@ -33,8 +40,9 @@ const sha = (s) => crypto.createHash("sha256").update(s).digest("hex");
 const FP = /^[0-9a-f]{64}$/, CF = /^[a-z0-9][a-z0-9-]{0,60}$/;
 export { readBody };
 
-// known: Map conflict id -> Map fp -> report (the job's own records). Returns { action, conflict, reports, why? } or { why }.
-export function check(data, known) {
+// known: Map conflict id -> Map fp -> report (the job's own records). parties: { conflict id: [party names] }.
+// Returns { action, conflict, reports, why?, coding? } or { why }.
+export function check(data, known, parties = {}) {
   if (!data || data.osap_decision !== 1) return { why: "not an OSAP decision (osap_decision must be 1)" };
   if (!STATUS[data.action]) return { why: "unknown action (confirm_incident, reject_incident or reset_incident)" };
   if (typeof data.conflict !== "string" || !CF.test(data.conflict)) return { why: "conflict must be a conflict id" };
@@ -49,6 +57,12 @@ export function check(data, known) {
   if (data.action === "reject_incident") {
     if (data.why != null && !WHY.includes(data.why)) return { why: "why must be one of " + WHY.join(", ") };
     out.why = data.why || "other";
+  }
+  if (data.coding != null) {
+    if (data.action !== "confirm_incident") return { why: "only a confirmation carries a coded record" };
+    const c = CODE.checkCoding(data.coding, new Map(r.map((x) => [x, reps.get(x)])), parties[data.conflict] || []);
+    if (!c.coding) return { why: "coded record: " + c.why };
+    out.coding = c.coding;
   }
   return out;
 }
@@ -65,7 +79,8 @@ function snap(i) {
 
 // issues: the GitHub API's open issues. owner: the repository owner's login. known: see check(). index: the store's index.
 // Pure. Returns { records, index, replies: [{ number, recorded, text }] }.
-export function plan(issues, owner, known, index, recorded) {
+// ctx: { parties: { conflict: [names] }, suggest: the AI suggestion file's object (data/live/conflicts/suggest.js) }.
+export function plan(issues, owner, known, index, recorded, ctx = {}) {
   const records = [], next = { ...index }, replies = [];
   const mine = issues.filter((i) => !i.pull_request && String(i.title || "").startsWith(TITLE))
     .sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.number - b.number));
@@ -75,11 +90,12 @@ export function plan(issues, owner, known, index, recorded) {
     if (!i.user || String(i.user.login).toLowerCase() !== String(owner).toLowerCase()) continue;
     if (next[id]) { replies.push({ number: i.number, recorded: true, text: "Recorded earlier as " + id + "." }); continue; }
     const b = readBody(i.body);
-    const c = b.why ? b : check(b.data, known);
+    const c = b.why ? b : check(b.data, known, ctx.parties || {});
     if (!c.action) { replies.push({ number: i.number, recorded: false, text: "Not recorded: " + c.why + ". Nothing changed. Open a new decision from the app to try again." }); continue; }
     const reps = known.get(c.conflict);
     records.push({ schema: SCHEMA, type: "decision", decision_id: id, action: c.action, status: STATUS[c.action], conflict: c.conflict, reports: c.reports,
       ...(c.why ? { why: c.why } : {}), reason: b.reason,
+      ...(c.coding ? { record: c.coding, ai_suggestions: aiOnFile(ctx.suggest, c.conflict, c.reports) } : {}),
       incident_id: "inc-" + sha(c.conflict + "|" + c.reports.join(",")).slice(0, 20),
       report_copies: c.reports.map((fp) => snap(reps.get(fp))),
       actor: { login: i.user.login, authority: "repository owner (opened the decision issue)" },
@@ -90,6 +106,14 @@ export function plan(issues, owner, known, index, recorded) {
     replies.push({ number: i.number, recorded: true, text: "Recorded as " + id + " (" + STATUS[c.action] + "). It shows in the app within a few minutes." });
   }
   return { records, index: next, replies };
+}
+
+// the AI suggestions the job holds for these reports, as they stood when the decision was recorded (proposals, never the record)
+function aiOnFile(sug, conflict, reports) {
+  const m = sug && sug.by && sug.by[conflict], out = [];
+  if (!m) return out;
+  for (const fp of reports) if (m[fp]) out.push({ fp, provider: String(m[fp].p || ""), model: String(m[fp].m || "").slice(0, 120), prompt: String(sug.pv || ""), at: String(m[fp].at || ""), fields: m[fp].f || {} });
+  return out;
 }
 
 // The decisions in force, in the order they were made: a later decision on a report replaces an earlier one, and reset takes the
@@ -115,7 +139,7 @@ export function inForce(decisions) {
     const copies = (d.report_copies || []).filter((c) => live.includes(c.fp));
     const lead = copies.find((c) => c.geo) || copies[0] || null;
     (incidents[d.conflict] || (incidents[d.conflict] = [])).push({ incident_id: d.incident_id, status: d.status, reports: live, decision_id: d.decision_id,
-      decided_at: d.decided_at, reason: d.reason || "", ...(d.why ? { why: d.why } : {}), lead });
+      decided_at: d.decided_at, reason: d.reason || "", ...(d.why ? { why: d.why } : {}), ...(d.record ? { record: d.record } : {}), lead });
   }
   return { by, incidents, count: ds.length };
 }
