@@ -28,8 +28,8 @@ await p.waitForTimeout(2500);
 await p.waitForFunction(() => window.__asapMap && window.OSAP_BASEMAP, null, { timeout: 60000 });
 await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
 await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 12, { animate: false }));
-const vb = () => Object.values(window.__asapMap._layers).find((l) => l.rasterTwin);
-await p.waitForFunction(() => { const l = Object.values(window.__asapMap._layers).find((x) => x.rasterTwin); return l && (l._gl || l._fb); }, null, { timeout: 30000 }).catch(() => {});
+const vb = () => Object.values(window.__asapMap._layers).find((l) => l.rasterTwin && !l.options.plain);
+await p.waitForFunction(() => { const l = Object.values(window.__asapMap._layers).find((x) => x.rasterTwin && !x.options.plain); return l && (l._gl || l._fb); }, null, { timeout: 30000 }).catch(() => {});
 const idle = () => p.evaluate((src) => new Promise((r) => { const l = eval("(" + src + ")")(); if (!l || !l._gl) return r(false);
   const g = l._gl; if (g.loaded() && g.areTilesLoaded()) return r(true); g.once("idle", () => r(true)); setTimeout(() => r(false), 25000); }), vb.toString());
 ok(await idle(), "Streets: the English map engine started and drew Bangkok");
@@ -59,9 +59,10 @@ d = await aligned(); ok(d < 2, "lined up after the window is resized (" + d.toFi
 const twin = await p.evaluate((src) => { const l = eval("(" + src + ")")(); return l.rasterTwin(); }, vb.toString());
 ok(twin && /tile\.openstreetmap\.org/.test(twin.url), "3D is given the plain OpenStreetMap tiles of the same map");
 await p.evaluate(() => window.OSAP_BASEMAP.set("grey")); await p.waitForTimeout(300);
-ok(await p.evaluate(() => !document.querySelector(".osap-vbase") && !Object.values(window.__asapMap._layers).some((l) => l.rasterTwin)), "switching to Grey removes the English map");
+/* Grey is drawn by the same engine since 2026-10-17 (OpenFreeMap, no labels, class basefilter), so only the labelled Streets layer must go */
+ok(await p.evaluate(() => !document.querySelector(".osap-vbase:not(.basefilter)") && !Object.values(window.__asapMap._layers).some((l) => l.rasterTwin && !l.options.plain)), "switching to Grey removes the English map");
 await p.evaluate(() => window.OSAP_BASEMAP.set("streets")); await p.waitForTimeout(300);
-ok(await p.evaluate(() => document.querySelectorAll(".osap-vbase").length === 1), "switching back draws it once");
+ok(await p.evaluate(() => document.querySelectorAll(".osap-vbase").length === 1 && !document.querySelector(".osap-vbase.basefilter")), "switching back draws it once, and Grey's map is gone");
 ok(errors.length === 0, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await ctx.close();
 
