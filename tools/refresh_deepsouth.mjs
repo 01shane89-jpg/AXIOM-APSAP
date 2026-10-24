@@ -244,16 +244,18 @@ if (todo.length) {
   const has = (en, x) => new RegExp("(^|\\D)" + x + "(\\D|$)").test(en) || (+x <= 20 && new RegExp("\\b" + WORDS[+x] + "\\b", "i").test(en));
   // the forms a number in the Thai may take in English: itself, a word, or a Buddhist Era year as a Common Era one
   const forms = (x) => [x, ...(+x >= 2400 && +x <= 2700 ? [String(+x - 543)] : []), ...(x.length === 2 ? [String(1957 + +x)] : [])];
-  const sane = (orig, en) => {
-    if (!en) return false;
+  // why a translation fails the check ("" when it passes), so the job log shows which rule holds headlines back
+  const why = (orig, en) => {
+    if (!en) return "empty";
     const o = clean(orig), nums = (o.match(/\d+/g) || []).filter((x) => x.length < 5);
-    if (nums.some((x) => !forms(x).some((f) => has(en, f)))) return false;
+    const lost = nums.find((x) => !forms(x).some((f) => has(en, f))); if (lost) return "number " + lost + " missing";
     const ys = new Set(nums.flatMap(forms).map(Number));
-    if ((en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).some((y) => !ys.has(+y))) return false;
-    if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return false;
-    if (placeMismatch(orig, en)) return false;
-    return en.length < 4 * o.length + 40;
+    const yr = (en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).find((y) => !ys.has(+y)); if (yr) return "year " + yr + " added";
+    if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return "repeated words";
+    if (placeMismatch(orig, en)) return "place or term lost";
+    return en.length < 4 * o.length + 40 ? "" : "too long";
   };
+  const sane = (orig, en) => !why(orig, en);
   const texts = [...todo.map((i) => ({ text: clean(i.title), lang: i.lang })), ...todo.map((i) => ({ text: clean(i.summary), lang: i.lang }))];
   const tr = await translateAll(texts);
   const origOf = (k) => (k < todo.length ? todo[k].title : todo[k - todo.length].summary);
@@ -262,6 +264,8 @@ if (todo.length) {
     bad.forEach((k) => forget(texts[k].text, texts[k].lang));
     bad.forEach((k) => { tr[k] = { en: null, tool: tr[k].tool }; });   // no fallback service since 2026-10-17 (tools/translate.mjs); retried next run
     console.log("Deep South: " + bad.length + " model translations failed the check and were dropped");
+    // public headlines only (never summaries' outlet text): the rule each one failed, for tuning the check
+    bad.filter((k) => k < todo.length).slice(0, 12).forEach((k) => console.log("  rejected (" + why(origOf(k), tr[k].en) + "): " + String(texts[k].text).slice(0, 90) + " -> " + String(tr[k].en).slice(0, 110)));
   }
   todo.forEach((i, n) => {
     const t = tr[n].en, sm = tr[todo.length + n].en;
