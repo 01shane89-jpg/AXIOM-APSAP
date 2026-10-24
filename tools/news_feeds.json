@@ -1740,6 +1740,16 @@
     {"cc":"bj","outlet":"Bénin Intelligent","url":"https://beninintelligent.bj/feed/","lang":"fr"},
     {"cc":"mr","outlet":"Le Quotidien de Nouakchott","url":"https://lequotidien.mr/?feed=rss2","lang":"ar"},
     {"cc":"mr","outlet":"Elhourriya","url":"https://elhourriya.net/?feed=rss2","lang":"ar"},
-    {"cc":"td","outlet":"Le Pays Tchad","url":"https://www.lepaystchad.com/feed/","lang":"fr"}
+    {"cc":"td","outlet":"Le Pays Tchad","url":"https://www.lepaystchad.com/feed/","lang":"fr"},
+    {"cc":"cl","outlet":"The Clinic","url":"https://www.theclinic.cl/feed","lang":"es"},
+    {"cc":"cl","outlet":"Ex-Ante","url":"https://www.ex-ante.cl/feed","lang":"es"},
+    {"cc":"cl","outlet":"Interferencia","url":"https://interferencia.cl/rss.xml","lang":"es"},
+    {"cc":"bo","outlet":"Visión 360","url":"https://www.vision360.bo/rss/noticias","lang":"es"},
+    {"cc":"ma","outlet":"Hespress (Arabic)","url":"https://www.hespress.com/feed","lang":"ar"},
+    {"cc":"ma","outlet":"Barlamane","url":"https://barlamane.com/feed/","lang":"ar"},
+    {"cc":"et","outlet":"Addis Fortune","url":"https://addisfortune.news/feed","lang":"en"},
+    {"cc":"et","outlet":"Wazema Radio","url":"https://wazemaradio.com/rss.xml","lang":"am"},
+    {"cc":"gy","outlet":"Village Voice","url":"https://villagevoicenews.com/feed/","lang":"en"},
+    {"cc":"gy","outlet":"Guyana Times","url":"https://guyanatimesgy.com/feed/","lang":"en"}
   ]
 }
