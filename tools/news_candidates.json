@@ -2,184 +2,118 @@
 "feeds": [],
 "discover": [
 {
+"cc": "pa",
+"outlet": "foco|Foco Panam\u00e1",
+"home": "https://www.focopanama.com/",
+"lang": "es"
+},
+{
+"cc": "hn",
+"outlet": "tunota|Tu Nota",
+"home": "https://www.tunota.com/",
+"lang": "es"
+},
+{
+"cc": "lu",
+"outlet": "delano|Delano",
+"home": "https://delano.lu/",
+"lang": "en"
+},
+{
+"cc": "lu",
+"outlet": "journal|Journal.lu",
+"home": "https://www.journal.lu/",
+"lang": "de"
+},
+{
 "cc": "pg",
-"outlet": "kalang|Kalang Advertising",
-"home": "https://kalangfm.com/",
+"outlet": "pngnri|PNG NRI",
+"home": "https://pngnri.org/",
 "lang": "en"
 },
 {
-"cc": "lk",
-"outlet": "lankac|Lanka C News",
-"home": "https://lankacnews.com/",
-"lang": "si"
-},
-{
-"cc": "lk",
-"outlet": "tamilwin|Tamilwin",
-"home": "https://tamilwin.com/",
-"lang": "ta"
-},
-{
-"cc": "lk",
-"outlet": "virakesari|Virakesari",
-"home": "https://www.virakesari.lk/",
-"lang": "ta"
-},
-{
-"cc": "lk",
-"outlet": "newswirelk|Infolanka",
-"home": "https://www.infolanka.com/",
+"cc": "pg",
+"outlet": "pngattitude|PNG Attitude",
+"home": "https://www.pngattitude.com/",
 "lang": "en"
 },
 {
-"cc": "ge",
-"outlet": "imedi|Imedi",
-"home": "https://info.imedi.ge/en",
+"cc": "mg",
+"outlet": "orange|Orange Actu Madagascar",
+"home": "https://actu.orange.mg/",
+"lang": "fr"
+},
+{
+"cc": "zm",
+"outlet": "zambiareports|Zambia Reports",
+"home": "https://zambiareports.com/",
 "lang": "en"
 },
 {
-"cc": "ge",
-"outlet": "onge|On.ge",
-"home": "https://on.ge/",
-"lang": "ka"
-},
-{
-"cc": "ge",
-"outlet": "rustavi2|Rustavi 2",
-"home": "https://rustavi2.ge/en",
+"cc": "zm",
+"outlet": "zambianeye|Zambian Eye",
+"home": "https://zambianeye.com/",
 "lang": "en"
 },
 {
-"cc": "ge",
-"outlet": "commersant|Commersant.ge",
-"home": "https://commersant.ge/",
-"lang": "ka"
-},
-{
-"cc": "tz",
-"outlet": "globalpub|Global Publishers",
-"home": "https://globalpublishers.co.tz/",
-"lang": "sw"
-},
-{
-"cc": "tz",
-"outlet": "zanzibarleo|Zanzibar Leo",
-"home": "https://zanzibarleo.co.tz/",
-"lang": "sw"
-},
-{
-"cc": "kh",
-"outlet": "kohsantepheap|Koh Santepheap",
-"home": "https://kohsantepheapdaily.com.kh/",
-"lang": "km"
-},
-{
-"cc": "kh",
-"outlet": "postkhmer|Post Khmer",
-"home": "https://www.postkhmer.com/",
-"lang": "km"
-},
-{
-"cc": "lt",
-"outlet": "lzinios|Lietuvos \u017einios",
-"home": "https://www.lzinios.lt/",
-"lang": "lt"
-},
-{
-"cc": "lt",
-"outlet": "respublika|Respublika",
-"home": "https://www.respublika.lt/",
-"lang": "lt"
-},
-{
-"cc": "lt",
-"outlet": "klaipeda|Klaip\u0117da",
-"home": "https://www.kl.lt/",
-"lang": "lt"
-},
-{
-"cc": "lt",
-"outlet": "madeinvilnius|Made in Vilnius",
-"home": "https://madeinvilnius.lt/",
-"lang": "lt"
-},
-{
-"cc": "is",
-"outlet": "vb|Vi\u00f0skiptabla\u00f0i\u00f0",
-"home": "https://www.vb.is/",
-"lang": "is"
-},
-{
-"cc": "is",
-"outlet": "mannlif|Mannl\u00edf",
-"home": "https://www.mannlif.is/",
-"lang": "is"
-},
-{
-"cc": "is",
-"outlet": "akureyrinet|Akureyri.net",
-"home": "https://www.akureyri.net/",
-"lang": "is"
-},
-{
-"cc": "is",
-"outlet": "nutiminn|N\u00fat\u00edminn",
-"home": "https://www.nutiminn.is/",
-"lang": "is"
-},
-{
-"cc": "ee",
-"outlet": "parnu|P\u00e4rnu Postimees",
-"home": "https://parnu.postimees.ee/",
-"lang": "et"
-},
-{
-"cc": "ee",
-"outlet": "sakala|Sakala",
-"home": "https://sakala.postimees.ee/",
-"lang": "et"
-},
-{
-"cc": "iq",
-"outlet": "kirkuknow|Kirkuk Now",
-"home": "https://kirkuknow.com/en",
+"cc": "zm",
+"outlet": "phoenix|Phoenix FM",
+"home": "https://www.radiophoenixzambia.com/",
 "lang": "en"
-},
-{
-"cc": "iq",
-"outlet": "nrt|NRT",
-"home": "https://www.nrttv.com/en",
-"lang": "en"
-},
-{
-"cc": "iq",
-"outlet": "drawmedia|Draw Media",
-"home": "https://drawmedia.net/",
-"lang": "ku"
-},
-{
-"cc": "iq",
-"outlet": "alghad|Alghad Press",
-"home": "https://www.alghadpress.com/",
-"lang": "ar"
-},
-{
-"cc": "iq",
-"outlet": "alforat|Al-Furat News",
-"home": "https://alforatnews.iq/",
-"lang": "ar"
-},
-{
-"cc": "iq",
-"outlet": "ultra|Ultra Iraq",
-"home": "https://ultrairaq.ultrasawt.com/",
-"lang": "ar"
 },
 {
 "cc": "la",
-"outlet": "laostar|Lao Star",
-"home": "https://www.laostar.la/",
+"outlet": "vientianemai|Vientiane Mai",
+"home": "https://www.vientianemai.net/",
 "lang": "lo"
+},
+{
+"cc": "la",
+"outlet": "lao27|Lao27",
+"home": "https://lao27.la/",
+"lang": "lo"
+},
+{
+"cc": "la",
+"outlet": "laophattana|Pathet Lao",
+"home": "https://www.pathetlao.org/",
+"lang": "lo"
+},
+{
+"cc": "tz",
+"outlet": "eatv|EATV",
+"home": "https://www.eatv.tv/",
+"lang": "sw"
+},
+{
+"cc": "tz",
+"outlet": "ayotv|Ayo TV",
+"home": "https://ayotv.co.tz/",
+"lang": "sw"
+},
+{
+"cc": "tz",
+"outlet": "wasafi|Wasafi Media",
+"home": "https://wasafimedia.co.tz/",
+"lang": "sw"
+},
+{
+"cc": "kh",
+"outlet": "cnc|CNC Cambodia",
+"home": "https://cnc.com.kh/",
+"lang": "km"
+},
+{
+"cc": "kh",
+"outlet": "dap|DAP News",
+"home": "https://www.dap-news.com/",
+"lang": "km"
+},
+{
+"cc": "kh",
+"outlet": "nkd|Nokorwat News",
+"home": "https://www.nokorwatnews.com/",
+"lang": "km"
 }
 ]
 }
