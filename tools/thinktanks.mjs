@@ -157,6 +157,13 @@ const TT = [
   ["baseis", "BASE-IS", "https://www.baseis.org.py/", ["https://www.baseis.org.py/feed/"]],
   ["mahein", "Fundasaun Mahein", "https://www.fundasaunmahein.org/", ["https://www.fundasaunmahein.org/feed/"]],
   ["glps", "Group for Legal and Political Studies", "https://legalpoliticalstudies.org/", ["https://legalpoliticalstudies.org/feed/"]],
+  // regional institutes added 2026-10-24 (Africa-wide governance, Pacific, Caribbean, Latin America, Eastern Europe)
+  ["moibrahim", "Mo Ibrahim Foundation", "https://mo.ibrahim.foundation/", ["https://mo.ibrahim.foundation/feed"]],
+  ["forumsec", "Pacific Islands Forum Secretariat", "https://forumsec.org/", ["https://forumsec.org/rss.xml"]],
+  ["griffith", "Griffith Asia Institute (Asia Insights)", "https://blogs.griffith.edu.au/asiainsights/", ["https://blogs.griffith.edu.au/asiainsights/feed/"]],
+  ["cdb", "Caribbean Development Bank", "https://www.caribank.org/", ["https://www.caribank.org/rss.xml"]],
+  ["aulablog", "AULA Blog (American University)", "https://aulablog.net/", ["https://aulablog.net/feed/"]],
+  ["osw", "OSW Centre for Eastern Studies", "https://www.osw.waw.pl/en", ["https://www.osw.waw.pl/en/rss.xml"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
