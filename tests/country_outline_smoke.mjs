@@ -1,6 +1,7 @@
 // Headless check of the open country on the map (index.html, "outline basemap"): the open country's land is left clear (no
 // shade over it) and drawn with a very fine line in the theme's accent colour, swapped for its 1:10m outline once that file
-// arrives; on the light, grey and dark themes, desktop and phone.
+// arrives, plus a fine dashed line on its 12 nm territorial sea limit (data/basemap/ts12/); on the light, grey and dark themes,
+// desktop and phone.
 // Run from the repo root: node tests/country_outline_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -28,7 +29,8 @@ for (const [vn, vo] of Object.entries(VIEWS)) for (const theme of ["light", "gre
   await p.goto(base + "#ph/map", { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.__asapMap && window.__asapMap.getPane("cbase"), null, { timeout: 60000 });
   await p.waitForTimeout(2500);
-  await p.waitForFunction(() => window.OSAP_OUTLINE10 && window.OSAP_OUTLINE10.Philippines, null, { timeout: 30000 }).catch(() => {});
+  await p.waitForFunction(() => window.OSAP_OUTLINE10 && window.OSAP_OUTLINE10.Philippines && window.OSAP_TS12 && window.OSAP_TS12.PHL, null, { timeout: 30000 }).catch(() => {});
+  await p.waitForTimeout(300);
   const r = await p.evaluate(() => {
     const m = window.__asapMap, ps = [], me = [];
     m.eachLayer((l) => {
@@ -37,15 +39,17 @@ for (const [vn, vo] of Object.entries(VIEWS)) for (const theme of ["light", "gre
       if ((l.feature && l.feature.properties.n === "Philippines") || (!l.feature && l.getLatLngs)) me.push(l);
     });
     const shaded = ps.filter((x) => x.n === "Philippines" && x.o.fill !== false && (x.o.fillOpacity || 0) > 0).length;
-    const lines = me.filter((l) => l.options.stroke !== false).map((l) => ({ w: l.options.weight, c: l.options.color, pts: l.getLatLngs().flat(3).length, feat: !!l.feature }));
+    const all = me.filter((l) => l.options.stroke !== false).map((l) => ({ w: l.options.weight, c: l.options.color, pts: l.getLatLngs().flat(3).length, feat: !!l.feature, k: l.options.cmeKind || "", dash: l.options.dashArray }));
+    const lines = all.filter((l) => !l.k), ts = all.filter((l) => l.k === "ts");
     const acc = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
-    return { n: ps.length, shaded, lines, acc };
+    return { n: ps.length, shaded, lines, ts, acc };
   });
   const tag = vn + "/" + theme;
   ok(r.shaded === 0, tag + ": the open country is not shaded");
   ok(r.lines.length === 1 && r.lines[0].w <= 1.2, tag + ": one very fine line round the open country (" + JSON.stringify(r.lines.map((l) => l.w)) + ")");
   ok(r.lines.length && r.lines[0].c.toLowerCase() === r.acc.toLowerCase(), tag + ": the line is the theme's accent colour (" + (r.lines[0] || {}).c + " vs " + r.acc + ")");
   ok(r.lines.length && !r.lines[0].feat && r.lines[0].pts > 3000, tag + ": the line is the detailed 1:10m outline (" + (r.lines[0] || {}).pts + " points)");
+  ok(r.ts.length === 1 && r.ts[0].w <= 1.2 && !!r.ts[0].dash && r.ts[0].c.toLowerCase() === r.acc.toLowerCase(), tag + ": a fine dashed line on the territorial sea limit (" + JSON.stringify(r.ts) + ")");
   ok(!errors.length, tag + ": no page errors" + (errors.length ? " (" + errors[0] + ")" : ""));
   if (OUT) {
     const om = p.getByRole("button", { name: "Open map" }).first();
