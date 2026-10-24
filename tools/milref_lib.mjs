@@ -116,10 +116,11 @@ export function unitsFrom(rows, clsName, cap = CAPS.units) {
     const q = qid(b, "u"); if (!/^Q\d+$/.test(q)) continue;
     const name = goodName(val(b, "en")) || goodName(val(b, "mul")); if (!name) continue;
     let u = m.get(q);
-    if (!u) m.set(q, (u = { q, n: name, cls: [], p: "", hq: "", at: null, sl: +val(b, "sl") || 0 }));
+    if (!u) m.set(q, (u = { q, n: name, cls: [], p: "", hq: "", hk: "", at: null, sl: +val(b, "sl") || 0 }));
     const c = clsName[qid(b, "cls")]; if (c && !u.cls.includes(c)) u.cls.push(c);
     const p = qid(b, "parent"); if (!u.p && /^Q\d+$/.test(p) && p !== q) u.p = p;
     if (!u.hq) u.hq = goodName(val(b, "hqen"));
+    if (!u.hk && /^Q\d+$/.test(qid(b, "hq"))) u.hk = qid(b, "hq");
     if (!u.at) u.at = point(val(b, "coord"));
   }
   let list = [...m.values()];
@@ -133,6 +134,7 @@ export function unitsFrom(rows, clsName, cap = CAPS.units) {
     const r = { q: u.q, n: u.n, t: clean(u.cls.slice(0, 2).join(", "), 80), e: echelonOf(u.cls, u.n), sl: u.sl };
     if (u.p && inList.has(u.p)) r.p = u.p;
     if (u.hq) r.hq = u.hq;
+    if (u.hk) r.hk = u.hk;
     if (u.at) { r.la = u.at[0]; r.lo = u.at[1]; }
     return withFp(r);
   }).sort((a, b) => ECH_ORDER.indexOf(a.e) - ECH_ORDER.indexOf(b.e) || b.sl - a.sl || a.n.localeCompare(b.n));
@@ -169,6 +171,7 @@ export function equipFrom(rows, clsName, opName, cap = CAPS.equip) {
       const r = { q: e.q, n: e.n, t: clean(e.cls.slice(0, 2).join(", "), 80), k: instKind(e.cls.join(" ") + " " + e.n), sl: e.sl, via: "op" };
       if (e.at) { r.la = e.at[0]; r.lo = e.at[1]; }
       if (ops.length) r.op = ops.join("; ");
+      if (e.ops.length) r.opq = e.ops.slice(0, 6);
       if (!e.end && !e.ret) inst.push(r);
       continue;
     }
@@ -222,7 +225,7 @@ export function instFrom(rows, clsName, extra = [], cap = CAPS.inst) {
   }
   for (const x of extra) {
     const have = out.get(x.q);
-    if (have) { if (x.op) have.op = x.op; if (have.la == null && x.la != null) { have.la = x.la; have.lo = x.lo; } }
+    if (have) { if (x.op) have.op = x.op; if (x.opq) have.opq = x.opq; if (have.la == null && x.la != null) { have.la = x.la; have.lo = x.lo; } }
     else out.set(x.q, { ...x });
   }
   return [...out.values()].map((r) => { const o = { ...r }; delete o.via; delete o.fp; return withFp(o); })
@@ -396,4 +399,25 @@ export function unrocaIds(list, ccs) {
     if (/^[a-z]{2}$/.test(cc) && /^[a-z0-9-]+$/.test(slug) && (!ccs || want.has(cc)) && !out[cc]) out[cc] = { slug, name: clean(c.name_en, 80) };
   }
   return out;
+}
+
+/* ---------- garrisons: which unit is based at which installation (Wikidata only, each link says why) ---------- */
+// A link is made only where Wikidata states it: the unit's headquarters location (P159) is the installation itself, the
+// installation lists the unit as an occupant (P466), or the unit is recorded as the installation's operator (P137).
+// Nothing is guessed from distance or names. units[].g = [[installation QID, property]], inst[].u = [[unit QID, property]].
+// hk (the unit's P159 item) and opq (the installation's operator items) are working fields, dropped here.
+const VIA_ORDER = ["P159", "P466", "P137"];
+export function garrisons(units, inst, occRows = []) {
+  const U = new Map(units.map((u) => [u.q, u])), S = new Map(inst.map((x) => [x.q, x]));
+  const links = new Map();
+  const add = (u, s, via) => { if (!U.has(u) || !S.has(s)) return; const k = u + "|" + s, h = links.get(k); if (!h || VIA_ORDER.indexOf(via) < VIA_ORDER.indexOf(h[2])) links.set(k, [u, s, via]); };
+  for (const u of units) if (u.hk) add(u.q, u.hk, "P159");
+  for (const b of occRows || []) add(qid(b, "u"), qid(b, "s"), "P466");
+  for (const x of inst) for (const o of x.opq || []) add(o, x.q, "P137");
+  const g = {}, at = {};
+  for (const [u, s, via] of links.values()) { (g[u] = g[u] || []).push([s, via]); (at[s] = at[s] || []).push([u, via]); }
+  const bySl = (M) => (a, b) => ((M.get(b[0]) || {}).sl || 0) - ((M.get(a[0]) || {}).sl || 0) || a[0].localeCompare(b[0]);
+  const outU = units.map((u) => { const r = { ...u }; delete r.fp; delete r.hk; if (g[u.q]) r.g = g[u.q].sort(bySl(S)).slice(0, 4); return withFp(r); });
+  const outS = inst.map((x) => { const r = { ...x }; delete r.fp; delete r.opq; if (at[x.q]) r.u = at[x.q].sort(bySl(U)).slice(0, 12); return withFp(r); });
+  return { units: outU, inst: outS, links: links.size };
 }

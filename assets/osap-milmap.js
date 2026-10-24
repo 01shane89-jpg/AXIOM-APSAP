@@ -60,6 +60,10 @@
     var k = kindOf(s), u = wdUrl(s.q), rows = "";
     if (s.t) rows += "<dt>Recorded as</dt><dd>" + esc(s.t) + "</dd>";
     if (s.op) rows += "<dt>Operator</dt><dd>" + esc(s.op) + "</dd>";
+    /* units Wikidata bases here (the unit's HQ is this place, or the place lists it as occupant or operator) */
+    var un = {}, f = S.file; ((f && f.wd && f.wd.units) || []).forEach(function (x) { un[x.q] = x.n; });
+    var based = (s.u || []).map(function (v) { return un[v[0]]; }).filter(Boolean);
+    if (based.length) rows += "<dt>Units based here</dt><dd>" + based.map(esc).join(", ") + "</dd>";
     var sd = W.OSAP_SIDES, side = sd && sd.get(String(cc()).toLowerCase() === "oki" ? "jp" : cc());
     return '<div class="pop mmpop"><div class="tier">' + esc(ONE[k]) + " · Wikidata</div>" +
       "<h3>" + esc(s.n || ONE[k]) + "</h3>" + (rows ? "<dl>" + rows + "</dl>" : "") +

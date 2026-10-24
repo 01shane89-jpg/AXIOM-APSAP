@@ -188,5 +188,36 @@ ok(!/href=/.test(C.unrocaHtml({ url: "javascript:alert(1)", reports: [2020], hol
 ok(/Missiles and launchers <b><span title="The report gives no number: the items are classified">classified/.test(UH), "UN Register section: a classified figure with no number reads classified, not 0");
 ok(C.unrocaFile("oki") === "data/live/milref/unroca/jp.json" && C.unrocaFile("../x") === "", "UN Register file per country");
 
+// ---------- garrisons ----------
+{
+  const U0 = [L.withFp({ q: "Q1", n: "Army", e: "branch", sl: 9, hk: "Q50" }), L.withFp({ q: "Q2", n: "1st Division", e: "division", sl: 5, p: "Q1", hk: "Q77" }), L.withFp({ q: "Q3", n: "2nd Wing", e: "brigade", sl: 3 })];
+  const S0 = [L.withFp({ q: "Q50", n: "Camp One", k: "barracks", sl: 4 }), L.withFp({ q: "Q60", n: "Air Base Two", k: "air", sl: 6, opq: ["Q3", "Q999"] })];
+  const occ = [b({ s: "Q60", u: "Q2" }), b({ s: "Q50", u: "Q1" }), b({ s: "Q61", u: "Q1" }), b({ s: "Q60", u: "Q404" })];
+  const G = L.garrisons(U0, S0, occ);
+  const u1 = G.units.find((u) => u.q === "Q1"), u2 = G.units.find((u) => u.q === "Q2"), u3 = G.units.find((u) => u.q === "Q3");
+  ok(u1.g.length === 1 && u1.g[0].join() === "Q50,P159", "garrison: a unit whose HQ (P159) is a listed installation, the stronger property kept when two say the same");
+  ok(u2.g.join() === "Q60,P466" && u3.g.join() === "Q60,P137", "garrison: occupant (P466) and operator (P137) links");
+  ok(G.links === 3 && !G.units.some((u) => "hk" in u) && !G.inst.some((x) => "opq" in x), "garrison: unknown units and installations are not linked; working fields dropped");
+  const base2 = G.inst.find((x) => x.q === "Q60");
+  ok(base2.u.map((x) => x[0]).join() === "Q2,Q3" && G.inst.find((x) => x.q === "Q50").u.join() === "Q1,P159", "garrison: each installation lists its units, best-known first");
+  ok([...G.units, ...G.inst].every((r) => r.fp === L.fp(r)) && u1.fp !== U0[0].fp, "garrison: records re-fingerprinted with their links");
+  const ux = L.unitsFrom([b({ u: "Q7", en: "Fleet", cls: "Q8", hq: "Q50", hqen: "Camp One", sl: 1 })], { Q8: "fleet" });
+  ok(ux[0].hk === "Q50" && ux[0].hq === "Camp One", "units keep the HQ item for linking");
+}
+// ---------- force summary ----------
+{
+  const M = { fig: { personnel: { v: 455000, unit: "people", year: "2020" }, spend_usd: { v: 5983978404, unit: "US$", year: "2025" } },
+    wd: { units: [{ q: "Q1", n: "Army<b>", e: "branch", sl: 9 }, { q: "Q2", n: "1st Div", e: "division" }, { q: "Q3", n: "2nd Div", e: "division" }, { q: "Q4", n: "Wing", e: "brigade" }],
+      equip: [{ c: "air", qty: "11" }, { c: "air" }, { c: "sea" }, { c: "land", out: "2001" }, { c: "land", old: "1950" }],
+      inst: [{ k: "air", u: [["Q4", "P137"]] }, { k: "naval" }, { k: "air" }], found: { units: 10 } } };
+  const H = C.forceHtml(M);
+  ok(/455,000<\/b> armed forces personnel \(2020\)/.test(H) && /US\$ 5\.98 billion<\/b> military spending/.test(H), "force summary: personnel and spending with years");
+  ok(/Army&lt;b&gt;/.test(H) && /<b>2<\/b> divisions · <b>1<\/b> brigades/.test(H) && /the 4 best-known of 10/.test(H), "force summary: branches escaped, formations by echelon, how many of Wikidata's are held");
+  ok(/<b>2<\/b> aircraft types · <b>1<\/b> ships/.test(H) && /a quantity is given for 1/.test(H) && !/land systems/.test(H), "force summary: equipment in service only (retired and pre-1960 left out)");
+  ok(/<b>2<\/b> air bases · <b>1<\/b> naval bases/.test(H) && /1 with units Wikidata bases there/.test(H) && /data-mrsum-un/.test(H) && /data-mrsum-sip/.test(H), "force summary: installations, garrisons, slots for UN and SIPRI");
+  ok(/holdings reported for <b>2025<\/b>: Battle tanks <b>826/.test(C.sumUn({ hold: [{ k: "bt", y: 2025, n: 826 }], reports: [2025] })) && /3 reports filed \(latest 2024\), no holdings/.test(C.sumUn({ hold: [], reports: [2024, 2020, 2010] })) && /not in the register/.test(C.sumUn(null)), "force summary: UN line for holdings, reports only, not in the register");
+  ok(/<b>4<\/b> received · <b>0<\/b> supplied/.test(C.sumSip({ imp: { total: 4 }, exp: { total: 0 } })) && /could not be read/.test(C.sumSip({ err: true })), "force summary: SIPRI line");
+}
+
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);
