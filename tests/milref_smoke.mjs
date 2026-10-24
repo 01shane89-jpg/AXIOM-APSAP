@@ -24,13 +24,13 @@ let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
 // ---------- the fixture ----------
-const E = "http://www.wikidata.org/entity/", ENT = /^(u|cls|parent|eq|op|s)$/;
+const E = "http://www.wikidata.org/entity/", ENT = /^(u|cls|parent|eq|op|s|hq)$/;
 const b = (o) => { const r = {}; for (const k in o) r[k] = { value: ENT.test(k) && /^Q\d+$/.test(o[k]) ? E + o[k] : String(o[k]) }; return r; };
 const XSS = '<img src=x onerror="window.__xss=1">';
-const units = L.unitsFrom([
+const units0 = L.unitsFrom([
   b({ u: "Q947702", en: "Royal Thai Armed Forces", cls: "Q1", sl: 40 }),
   b({ u: "Q2749588", en: "Royal Thai Army", cls: "Q2", parent: "Q947702", sl: 30 }),
-  b({ u: "Q2427907", en: "Royal Thai Navy", cls: "Q3", parent: "Q947702", sl: 30 }),
+  b({ u: "Q2427907", en: "Royal Thai Navy", cls: "Q3", parent: "Q947702", hq: "Q600", hqen: "Sattahip Naval Base", sl: 30 }),
   b({ u: "Q13012495", en: "31st Infantry Regiment", cls: "Q4", parent: "Q2749588", hqen: "Lopburi", coord: "Point(100.626944 14.8)", sl: 2 }),
   b({ u: "Q99", en: XSS, cls: "Q4", parent: "Q2749588", sl: 0 })
 ], { Q1: "armed forces", Q2: "army", Q3: "navy", Q4: "infantry regiment" });
@@ -41,7 +41,8 @@ const { equip, inst: viaOp } = L.equipFrom([
   b({ eq: "Q107410541", en: "USS Stark County", op: "Q2427907", cls: "Q12", sl: 2 }),
   b({ eq: "Q126192389", en: "Chiang Mai Air Force Base", op: "Q404766", cls: "Q13", coord: "Point(98.9626 18.7668)", sl: 3 })
 ], { Q10: "aircraft family", Q11: "guided missile frigate", Q12: "museum ship", Q13: "airbase" }, opName);
-const inst = L.instFrom([b({ s: "Q600", en: "Sattahip Naval Base", cls: "Q14", coord: "Point(100.9 12.666)", sl: 7 })], { Q14: "naval base" }, viaOp);
+const inst0 = L.instFrom([b({ s: "Q600", en: "Sattahip Naval Base", cls: "Q14", coord: "Point(100.9 12.666)", sl: 7 })], { Q14: "naval base" }, viaOp);
+const { units, inst } = L.garrisons(units0, inst0, [b({ s: "Q126192389", u: "Q13012495" })]);
 const fig = {};
 for (const [d, s] of [[L.WB[0], [["2024", 1.1], ["2025", 1.0377]]], [L.WB[1], [["2025", 5983978404.68]]], [L.WB[3], [["2020", 455000]]], [L.WB[5], [["2025", 33000000]]]]) fig[d.k] = L.figureRecord(d, s, "th");
 const NOWS = new Date().toISOString().slice(0, 16) + "Z";
@@ -79,7 +80,10 @@ async function open(cc, opts) {
     const links = [...m.querySelectorAll("a[href]")].map((a) => a.href);
     return { arts, text: m.textContent, links, fps: m.querySelectorAll("code.mrfp").length, fpTitle: (m.querySelector("code.mrfp") || {}).title || "",
       nested: (() => { const rows = [...m.querySelectorAll(".mru")]; const reg = rows.find((x) => /31st Infantry Regiment/.test(x.textContent)); return reg ? parseInt(reg.style.paddingLeft, 10) : -1; })(),
-      retired: (m.querySelector("details.mrout") || {}).textContent || "", xss: !!window.__xss, imgs: m.querySelectorAll("img").length };
+      retired: (m.querySelector("details.mrout") || {}).textContent || "", xss: !!window.__xss, imgs: m.querySelectorAll("img").length,
+      garrison: (() => { const g = [...m.querySelectorAll(".mrg")].find((x) => /Sattahip/.test(x.textContent)); return g ? { text: g.textContent, title: g.title } : null; })(),
+      chiangTitle: (() => { const row = [...m.querySelectorAll(".mrinst tr")].find((x) => /Chiang Mai/.test(x.textContent)); const sp = row && row.querySelector("td:last-child span[title]"); return sp ? sp.title : ""; })(),
+      details: m.querySelectorAll(".mrtree details").length, openDetails: m.querySelectorAll(".mrtree details[open]").length };
   });
   const iRep = r.arts.indexOf("report"), iMil = r.arts.indexOf("milref");
   ok(iRep >= 0 && iMil === iRep + 1, "military reference page sits right after the country report (" + r.arts.join(", ") + ")");
@@ -95,6 +99,9 @@ async function open(cc, opts) {
   ok(!r.xss && r.imgs === 0, "external text is escaped");
   ok(/Arms transfers/.test(r.text) && /Non-commercial source/.test(r.text) && /Received by Thailand \(2\)/.test(r.text) && /Supplied by Thailand \(1\)/.test(r.text) && /Gripen-E/.test(r.text) && /First Win/.test(r.text) && /Bhutan/.test(r.text) && /2016 to 2026/.test(r.text), "SIPRI arms transfers: both sides, years, non-commercial tag");
   ok(r.links.some((u) => /sipri\.org\/databases\/armstransfers/.test(u)) && r.links.some((u) => /sipri\.org\/about\/terms-and-conditions/.test(u)), "SIPRI credited with its terms");
+  ok(/Force summary/.test(r.text) && /Service branches\s*Royal Thai (Army|Navy)/.test(r.text) && /holdings reported for 2025: Battle tanks 826/.test(r.text) && /2 received · 1 supplied/.test(r.text) && /Installations\s*1 air bases · 1 naval bases/.test(r.text), "force summary: branches, formations, equipment, installations, UN holdings and SIPRI counts");
+  ok(r.garrison && /Sattahip Naval Base/.test(r.garrison.text) && /P159/.test(r.garrison.title) && /Based here: 31st Infantry Regiment/.test(r.text) && r.chiangTitle && /P466/.test(r.chiangTitle), "garrisons: unit HQ at a base (P159), base listing its occupant (P466), each saying which property");
+  ok(r.details >= 2 && r.openDetails >= 1, "order of battle is a collapsible tree (" + r.details + " levels with units under them)");
   ok(/UN Register of Conventional Arms/.test(r.text) && /Official report \(claim\)/.test(r.text) && /4 reports filed, the latest for 2025/.test(r.text) && /826/.test(r.text) && /What Thailand reported/.test(r.text) && /United States/.test(r.text) && /Bhutan/.test(r.text), "UN Register: reports, holdings, both sides per partner");
   ok(r.links.some((u) => u === "https://www.unroca.org/en/thailand/report/2025/") && r.links.some((u) => /un\.org\/en\/about-us\/terms-of-use/.test(u)), "UN Register: links each report and credits the UN terms");
   ok(r.arts && (() => { const t = r.text; return t.indexOf("Arms transfers") < t.indexOf("UN Register of Conventional Arms") && t.indexOf("UN Register of Conventional Arms") < t.indexOf("Forces and units"); })(), "UN Register sits after the SIPRI transfers, before the order of battle");
