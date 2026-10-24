@@ -241,14 +241,22 @@ if (todo.length) {
   // if that fails too the original Thai is shown and the item is retried on the next run.
   const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
     "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
-  const has = (en, x) => new RegExp("(^|\\D)" + x + "(\\D|$)").test(en) || (+x <= 20 && new RegExp("\\b" + WORDS[+x] + "\\b", "i").test(en));
+  const ORD = ["zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
+    "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth", "twentieth"];
+  // how often a number appears in the English: as digits ("4", "4th"), a word ("four", "fourth") or, for one, "a"/"an"
+  // ("1 ราย" = "a police officer"); a Thai headline giving "killed 1 injured 1" needs two of them, so a dropped figure is caught
+  const count = (en, x) => (en.match(new RegExp("(^|\\D)" + x + "(?:st|nd|rd|th)?(?=\\D|$)", "g")) || []).length +
+    (+x <= 20 ? (en.match(new RegExp("\\b(?:" + WORDS[+x] + "|" + ORD[+x] + (+x === 1 ? "|an?" : "") + ")\\b", "gi")) || []).length : 0);
+  const has = (en, x, n = 1) => count(en, x) >= n;
   // the forms a number in the Thai may take in English: itself, a word, or a Buddhist Era year as a Common Era one
   const forms = (x) => [x, ...(+x >= 2400 && +x <= 2700 ? [String(+x - 543)] : []), ...(x.length === 2 ? [String(1957 + +x)] : [])];
   // why a translation fails the check ("" when it passes), so the job log shows which rule holds headlines back
   const why = (orig, en) => {
     if (!en) return "empty";
-    const o = clean(orig), nums = (o.match(/\d+/g) || []).filter((x) => x.length < 5);
-    const lost = nums.find((x) => !forms(x).some((f) => has(en, f))); if (lost) return "number " + lost + " missing";
+    const o = clean(orig).replace(/(\d),(?=\d{3}(?!\d))/g, "$1"), nums = (o.match(/\d+/g) || []).filter((x) => x.length < 5);
+    en = en.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    const need = (x) => (+x <= 20 ? nums.filter((y) => +y === +x).length : 1);
+    const lost = nums.find((x) => !forms(x).some((f) => has(en, f, need(x)))); if (lost) return "number " + lost + " missing";
     const ys = new Set(nums.flatMap(forms).map(Number));
     const yr = (en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).find((y) => !ys.has(+y)); if (yr) return "year " + yr + " added";
     if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return "repeated words";
@@ -265,14 +273,29 @@ if (todo.length) {
     // public headlines only (never summaries' outlet text): the rule each one failed, for tuning the check
     bad.filter((k) => k < todo.length).slice(0, 12).forEach((k) => console.log("  rejected (" + why(origOf(k), tr[k].en) + "): " + String(texts[k].text).slice(0, 90) + " -> " + String(tr[k].en).slice(0, 110)));
     bad.forEach((k) => { tr[k] = { en: null, tool: tr[k].tool }; });   // no fallback service since 2026-10-17 (tools/translate.mjs); retried next run
-    console.log("Deep South: " + bad.length + " model translations failed the check and were dropped");
+    // Headlines the model cut short or thinned out ("Narathiwat, fighting!") are tried once more phrase by phrase: Thai headlines put a
+    // space between phrases, each phrase goes to the model alone and the English phrases are joined in the same order. The joined text
+    // must pass the same check; the item is marked mt_split so the reader knows it was put together that way.
+    const TH = /[\u0E00-\u0E7F]/, heads = bad.filter((k) => k < todo.length);
+    const parts = heads.map((k) => texts[k].text.split(/(?<=[\u0E00-\u0E7F!?])\s+|\s+(?=[\u0E00-\u0E7F])/).filter(Boolean));
+    const segs = parts.flatMap((p, n) => p.filter((x) => TH.test(x)).map((x) => ({ text: x, lang: texts[heads[n]].lang })));
+    const st = segs.length ? await translateAll(segs) : [];
+    let at = 0, rescued = 0;
+    heads.forEach((k, n) => {
+      const en = parts[n].map((x) => (TH.test(x) ? (st[at++] || {}).en : x));
+      if (parts[n].length < 2 || en.some((x) => !x)) return;
+      const joined = en.map((x) => x.trim().replace(/[.]$/, "")).join(" ").replace(/\s+([,!?])/g, "$1");
+      if (sane(origOf(k), joined)) { tr[k] = { en: joined, tool: st[0].tool, split: true }; if (rescued++ < 8) console.log("  rescued: " + String(texts[k].text).slice(0, 90) + " -> " + joined.slice(0, 140)); }
+    });
+    console.log("Deep South: " + bad.length + " model translations failed the check and were dropped; " + rescued + " headlines rescued phrase by phrase");
   }
   todo.forEach((i, n) => {
     const t = tr[n].en, sm = tr[todo.length + n].en;
     i.mt = tr[n].tool || tr[todo.length + n].tool || "untranslated";
     i.summary_en = sane(i.summary, sm) ? sm.slice(0, 400) : null;
     delete i.mt_rejected; delete i.title_from_summary; delete i.mt_redo;
-    if (sane(i.title, t)) i.title_en = t;
+    delete i.mt_split;
+    if (sane(i.title, t)) { i.title_en = t; if (tr[n].split) i.mt_split = true; }
     else if (i.summary_en) { i.title_en = i.summary_en.split(/(?<=[.!?])\s/)[0].slice(0, 160); i.title_from_summary = true; }
     else { i.title_en = null; if (t) i.mt_rejected = true; }
   });

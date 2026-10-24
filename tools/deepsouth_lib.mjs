@@ -185,7 +185,7 @@ const TERMS = [
   { th: /บีอาร์เอ็น/g, en: "BRN", ok: /\bBRN\b|Barisan/i },
   { th: /พูโล/g, en: "PULO", ok: /\bPULO\b/i },
   { th: /ทวี\s*สอดส่อง|พ\.ต\.อ\.\s*ทวี|(?<=['‘’"“”])ทวี(?=['‘’"“”])/g, en: "Thawee Sodsong", ok: /Thawee|Sodsong/i },
-  { th: /อนุทิน(?:\s*ชาญวีรกูล)?/g, en: "Anutin Charnvirakul", ok: /Anutin/i },
+  { th: /อนุทิน(?:\s*ชาญวีรกูล)?/g, en: "Anutin Charnvirakul", ok: /Anut?h?in|Charnvirakul/i },
 ];
 export function placeSubst(text) {
   let t = String(text || "").replace(TH_PLACE, (m) => " " + BY_TH[m].name + " ");
