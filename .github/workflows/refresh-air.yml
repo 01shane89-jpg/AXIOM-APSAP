@@ -45,6 +45,8 @@ jobs:
           # main publishes to live-air, the page's source; a test run on any other branch publishes to live-air-test
           TARGET: ${{ github.ref == 'refs/heads/main' && 'live-air' || 'live-air-test' }}
           GNSS_DIR: data/live/gnss
+          # sold version: adsb.fi and OpenSky (non-commercial terms) are not asked (tools/nc_strip.mjs)
+          OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
           GNSS_FLUSH: ${{ inputs.gnss_flush || '0' }}
         run: |
           git config user.name "github-actions[bot]"
@@ -65,6 +67,11 @@ jobs:
           if [ -f data/live/gnss/latest.json ]; then
             node -e 'const j=require("./data/live/gnss/latest.json");console.log("GPS interference", j.from, "to", j.to, j.hours + " h", JSON.stringify(j.counts), j.cells.length + " cells");const t=j.cells.filter(c=>c[3]/c[2]>0.25).sort((a,b)=>b[3]/b[2]-a[3]/a[2]).slice(0,25);console.log(JSON.stringify(t))'
           fi
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/live/gnss
       # Only main commits, and only data/live/gnss (written when an hour completed). Other refresh jobs commit to main too,
       # so rebase onto it and retry.
       - name: Commit GPS interference map
