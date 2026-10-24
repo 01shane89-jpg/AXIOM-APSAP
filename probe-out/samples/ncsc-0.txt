@@ -1,0 +1,124 @@
+https://www.ncsc.gov.uk/api/1/services/v1/all-rss-feed.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.ncsc.gov.uk/">
+  <channel>
+    <title>All Feed</title>
+    <link>https://www.ncsc.gov.uk/</link>
+    <description>This includes feeds from report, guidance and blog-post</description>
+    <language>en</language>
+    
+    <item>
+  <title>Critical security issue affecting PHP</title>
+  <link>https://www.ncsc.gov.uk/news/critical-security-issue-affecting-php</link>
+  <description>Updated: The NCSC is encouraging UK organisations to take immediate action to mitigate a security issue affecting PHP (CVE-2026-109618 and CVE-2026-109619).</description>
+  <pubDate>Wed, 21 Oct 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/news/critical-security-issue-affecting-php</guid>
+    </item>
+<item>
+  <title>Introducing a new AI chapter in the NCSC research problem book</title>
+  <link>https://www.ncsc.gov.uk/blogs/introducing-new-ai-chapter-ncsc-research-problem-book</link>
+  <description>A revolution is underway at the intersection of AI and cyber security.</description>
+  <pubDate>Tue, 20 Oct 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/blogs/introducing-new-ai-chapter-ncsc-research-problem-book</guid>
+    </item>
+<item>
+  <title>Using TLS to protect data</title>
+  <link>https://www.ncsc.gov.uk/guidance/using-tls-to-protect-data</link>
+  <description>Recommended profiles to securely configure TLS for the most common versions and scenarios, with additional guidance for managing older versions.</description>
+  <pubDate>Thu, 15 Oct 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/guidance/using-tls-to-protect-data</guid>
+    </item>
+<item>
+  <title>Post-quantum updates to our TLS guidance</title>
+  <link>https://www.ncsc.gov.uk/blogs/post-quantum-updates-to-our-tls-guidance</link>
+  <description>The NCSC publishes its recommendations for configuring post-quantum cryptography in TLS. Now is time to migrate.</description>
+  <pubDate>Thu, 15 Oct 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/blogs/post-quantum-updates-to-our-tls-guidance</guid>
+    </item>
+<item>
+  <title>Help the NCSC understand how organisations approach external attack surface risk</title>
+  <link>https://www.ncsc.gov.uk/blogs/help-ncsc-understand-how-organisations-approach-external-attack-surface-risk</link>
+  <description>We're looking to hear from people involved in evaluating, selecting or adopting EASM.</description>
+  <pubDate>Mon, 12 Oct 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/blogs/help-ncsc-understand-how-organisations-approach-external-attack-surface-risk</guid>
+    </item>
+<item>
+  <title>China-linked malicious actors called out by UK and international partners for targeting sensitive data globally</title>
+  <link>https://www.ncsc.gov.uk/news/china-linked-actors-called-out-by-uk-and-international-partners-for-targeting-sensitive-data</link>
+  <description>Joint advisory with international partners highlights malicious targeting of organisations from a range of sectors across the globe.</description>
+  <pubDate>Thu, 08 Oct 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/news/china-linked-actors-called-out-by-uk-and-international-partners-for-targeting-sensitive-data</guid>
+    </item>
+<item>
+  <title>Incident affecting ASOS customers</title>
+  <link>https://www.ncsc.gov.uk/news/incident-affecting-asos-customers</link>
+  <description>ASOS has said it is investigating a cyber incident and that some customer personal information may have been accessed.</description>
+  <pubDate>Tue, 06 Oct 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/news/incident-affecting-asos-customers</guid>
+    </item>
+<item>
+  <title>Exploitation of vulnerabilities affecting Citrix NetScaler ADC and Citrix NetScaler Gateway</title>
+  <link>https://www.ncsc.gov.uk/news/exploitation-of-vulnerabilities-affecting-citrix-netscaler-adc-and-citrix-netscaler-gateway</link>
+  <description>The NCSC is urging UK organisations to promptly mitigate vulnerabilities affecting Citrix NetScaler ADC and Gateway, two of which are being actively exploited.</description>
+  <pubDate>Mon, 28 Sep 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/news/exploitation-of-vulnerabilities-affecting-citrix-netscaler-adc-and-citrix-netscaler-gateway</guid>
+    </item>
+<item>
+  <title>One does not simply defend agentically</title>
+  <link>https://www.ncsc.gov.uk/blogs/one-does-not-simply-defend-agentically</link>
+  <description>Defenders can’t use AI in the same way attackers can, but there’s much they can do to unlock the potential of agentic cyber defence.</description>
+  <pubDate>Mon, 21 Sep 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/blogs/one-does-not-simply-defend-agentically</guid>
+    </item>
+<item>
+  <title>Adversary simulation: what you need to know</title>
+  <link>https://www.ncsc.gov.uk/guidance/adversary-simulation-what-you-need-to-know</link>
+  <description>Adversary simulation ('red teaming') tests your ability to prevent, detect and respond to cyber attacks.</description>
+  <pubDate>Thu, 17 Sep 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/guidance/adversary-simulation-what-you-need-to-know</guid>
+    </item>
+<item>
+  <title>Cyber Adversary Simulation (CyAS): scheme documents now available</title>
+  <link>https://www.ncsc.gov.uk/blogs/cyber-adversary-simulation-cyas-scheme-documents-now-available</link>
+  <description>Our view of good cyber adversary simulation – and how assured providers can deliver it.</description>
+  <pubDate>Thu, 17 Sep 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/blogs/cyber-adversary-simulation-cyas-scheme-documents-now-available</guid>
+    </item>
+<item>
+  <title>Iranian cyber targeting of dissidents, activists and journalists</title>
+  <link>https://www.ncsc.gov.uk/news/iranian-cyber-targeting-of-dissidents-activists-and-journalists</link>
+  <description>Advisory on CHOSEN BRICK malware, including technical analysis and advice to help individuals and organisations protect themselves.</description>
+  <pubDate>Tue, 15 Sep 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/news/iranian-cyber-targeting-of-dissidents-activists-and-journalists</guid>
+    </item>
+<item>
+  <title>UK and allies expose spyware used by Iranian state actors to target dissidents, activists and journalists</title>
+  <link>https://www.ncsc.gov.uk/news/uk-allies-expose-spyware-iranian-state-actors-target-dissidents-activists-journalists</link>
+  <description>UK and allies provide advice to help organisations and individuals at risk detect and counter the threat from CHOSEN BRICK malware.</description>
+  <pubDate>Tue, 15 Sep 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/news/uk-allies-expose-spyware-iranian-state-actors-target-dissidents-activists-journalists</guid>
+    </item>
+<item>
+  <title>The hidden risks of shadow AI</title>
+  <link>https://www.ncsc.gov.uk/blogs/the-hidden-risks-of-shadow-ai</link>
+  <description>Understanding why staff use unapproved AI tools is key to managing the security challenges they can create.</description>
+  <pubDate>Mon, 07 Sep 2026 12:00:00 +0000</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://www.ncsc.gov.uk/blogs/the-hidden-risks-of-shadow-ai</guid>
+    </item>
+<item>
+  <title>Disruptive cyber activity highlights risk from internet-exposed systems and edge devices</title>
+  <li

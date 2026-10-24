@@ -1,0 +1,104 @@
+https://www.bmkg.go.id/alerts/nowcast/en/rss.xml
+<?xml version="1.0" encoding="UTF-8"?>
+    <?xml-stylesheet type="text/xsl" href="/cap/nowcast-rss-style.xsl"?>
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+        <channel>
+            <title>BMKG Weather Alerts</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/rss.xml</link>
+            <description>Weather Alerts from BMKG (Indonesia Agency for Meteorology, Climatology, and Geophysics)</description>
+            <atom:link href="https://www.bmkg.go.id/alerts/nowcast/en/rss.xml" rel="self" type="application/rss+xml"/>
+            <language>en</language>
+            <copyright>public domain</copyright>
+            <pubDate>Sat, 24 Oct 2026 12:00:34 +0000</pubDate>
+            <lastBuildDate>Sat, 24 Oct 2026 12:00:34 +0000</lastBuildDate>
+            <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+            
+        <item>
+            <title>Thunderstorm This Evening in Jambi</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CJI20261024003_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 24 October 2026, 18:50 WIB in parts of Jambi especially in: JANGKAT TIMUR, LEMBAH MASURAI.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 24 October 2026, 20:50 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.24.12.15.003</guid>
+            <pubDate>Sat, 24 Oct 2026 18:40:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Evening in Kalimantan Tengah</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CKG20261024001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 24 October 2026, 18:35 WIB in parts of Kalimantan Tengah especially in: MENTAYA HULU.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 24 October 2026, 20:00 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.24.12.62.001</guid>
+            <pubDate>Sat, 24 Oct 2026 18:25:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm Tonight in Sulawesi Barat</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CSK20261024004_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 24 October 2026, 19:34 WITA in parts of Sulawesi Barat especially in: BUDONG-BUDONG, KAROSSA, PANGALE, TOPOYO.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 24 October 2026, 21:00 WITA.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.24.12.76.004</guid>
+            <pubDate>Sat, 24 Oct 2026 19:04:00 +0800</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm Tonight in Kalimantan Selatan</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CKS20261024001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 24 October 2026, 19:06 WITA in parts of Kalimantan Selatan especially in: BUNGUR, HALONG, HAMPANG, HANTAKAN, PAMUKAN BARAT, PARAMASAN, SIMPANG EMPAT, TAPIN TENGAH.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 24 October 2026, 21:54 WITA.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.24.12.63.001</guid>
+            <pubDate>Sat, 24 Oct 2026 18:54:00 +0800</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Evening in Kalimantan Barat</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CKB20261024002_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 24 October 2026, 18:00 WIB in parts of Kalimantan Barat especially in: MEMPAWAH HULU, SOMPAK.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 24 October 2026, 20:00 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.24.12.61.002</guid>
+            <pubDate>Sat, 24 Oct 2026 17:50:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Evening in Jawa Tengah</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CJH20261024002_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 24 October 2026, 17:35 WIB in parts of Jawa Tengah especially in: BANGSRI, BANJAREJO, BLORA, GABUS, JAPAH, JEPON, KARANGAWEN, TODANAN, TUNJUNGAN.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 24 October 2026, 19:30 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.24.12.33.002</guid>
+            <pubDate>Sat, 24 Oct 2026 17:25:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Evening in Riau</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CRU20261024005_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 24 October 2026, 17:30 WIB in parts of Riau especially in: BANDAR PETALANGAN, BATANG CENAKU, BUKIT BATU, BUKIT BATU, BUKIT RAYA, KAMPAR, KAMPAR KIRI, KAMPAR KIRI HULU, KAMPAR TIMUR, KAMPAR UTARA, LIMA PULUH, LIRIK, MANDAU, MANDAU, MARPOYAN DAMAI, PANGKALAN LESUNG, PASIR PENYU, PAYUNG SEKAKI, PEKANBARU KOTA, PINGGIR, PINGGIR, RUMBAI, RUMBAI PESISIR, RUMBIO JAYA, SAIL, SENAPELAN, SIAK KECIL, SUKAJADI, SUNGAI MANDAU, TAMBANG, TAMPAN, TAPUNG, TENAYAN RAYA, XIII KOTO KAMPAR.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 24 October 2026, 20:30 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.24.12.14.005</guid>
+            <pubDate>Sat, 24 Oct 2026 17:20:0

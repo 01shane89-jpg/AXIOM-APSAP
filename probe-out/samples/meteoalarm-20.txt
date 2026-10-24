@@ -1,0 +1,72 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-luxembourg
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-luxembourg"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:LU</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:06:03.268269Z</updated>
+  <entry>
+    <cap:polygon>49.8204,5.7447 49.8204,6.3996 49.8349,6.3802 49.8500,6.3642 49.8469,6.3433 49.8344,6.3329 49.8379,6.3195 49.8516,6.3190 49.8688,6.3090 49.8651,6.2972 49.8783,6.2813 49.8761,6.2750 49.8813,6.2603 49.8950,6.2422 49.8997,6.2328 49.9114,6.2262 49.9128,6.2333 49.9204,6.2291 49.9229,6.2139 49.9286,6.2249 49.9349,6.2232 49.9450,6.2161 49.9498,6.2235 49.9500,6.2116 49.9549,6.2061 49.9479,6.1977 49.9559,6.1925 49.9680,6.1886 49.9557,6.1901 49.9514,6.1795 49.9696,6.1637 49.9855,6.1680 49.9872,6.1556 49.9944,6.1484 49.9943,6.1419 49.9987,6.1370 50.0093,6.1487 50.0107,6.1384 50.0189,6.1281 50.0224,6.1456 50.0298,6.1285 50.0412,6.1334 50.0533,6.1206 50.0599,6.1229 50.0560,6.1199 50.0580,6.1120 50.0659,6.1124 50.0688,6.1208 50.0749,6.1272 50.0719,6.1198 50.0742,6.1149 50.0944,6.1204 50.0927,6.1305 50.1010,6.1237 50.1037,6.1305 50.1035,6.1351 50.1068,6.1297 50.1130,6.1337 50.1147,6.1274 50.1217,6.1289 50.1242,6.1363 50.1292,6.1369 50.1297,6.1306 50.1350,6.1224 50.1360,6.1114 50.1478,6.1156 50.1499,6.1241 50.1552,6.1143 50.1633,6.1198 50.1705,6.1024 50.1689,6.0937 50.1719,6.0847 50.1707,6.0798 50.1625,6.0810 50.1565,6.0789 50.1527,6.0621 50.1623,6.0302 50.1820,6.0246 50.1746,5.9972 50.1748,5.9711 50.1312,5.9624 50.1127,5.8981 50.0787,5.8881 50.0610,5.8565 50.0464,5.8716 50.0254,5.8583 50.0089,5.8210 49.9888,5.8425 49.9755,5.8346 49.9622,5.8070 49.9604,5.7792 49.9143,5.7709 49.9007,5.7383 49.8796,5.7898 49.8666,5.7792 49.8680,5.7628 49.8469,5.7595 49.8341,5.7433 49.8236,5.7488 49.8204,5.7447</cap:polygon>
+    <link title="Luxembourg-North" href="https://meteoalarm.org?polygon=f0af55d9-594a-4921-988a-9378c5e52ed3,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Luxembourg-North</cap:areaDesc>
+    <cap:event>no text</cap:event>
+    <cap:sent>2026-10-24T03:50:46+00:00</cap:sent>
+    <cap:expires>2026-10-25T08:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T18:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.442.0.LU.261024045046.510119701</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-luxembourg/f0af55d9-594a-4921-988a-9378c5e52ed3"/>
+    <link title="Luxembourg" rel="related" href="https://meteoalarm.org?region=LU" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T03:50:46Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-luxembourg/f0af55d9-594a-4921-988a-9378c5e52ed3?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Rain Warning issued for Luxembourg - Luxembourg-North</title>
+    <updated>2026-10-24T03:50:46Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>49.8203,5.7459 49.7937,5.7586 49.7969,5.7894 49.7481,5.8350 49.7248,5.8265 49.7269,5.8446 49.7275,5.8700 49.7092,5.8873 49.6809,5.8629 49.6654,5.9118 49.6390,5.9082 49.6273,5.8875 49.6082,5.8771 49.5966,5.8489 49.5904,5.8506 49.5893,5.8735 49.5742,5.8736 49.5550,5.8480 49.5435,5.8113 49.5375,5.8175 49.5430,5.8371 49.5298,5.8465 49.5257,5.8351 49.5141,5.8494 49.5060,5.8590 49.5002,5.8725 49.4976,5.8974 49.5022,5.9076 49.5010,5.9418 49.4914,5.9727 49.4567,5.9910 49.4566,6.0012 49.4540,6.0114 49.4559,6.0295 49.4506,6.0287 49.4481,6.0416 49.4672,6.0553 49.4657,6.0723 49.4642,6.0791 49.4562,6.0863 49.4535,6.1009 49.4636,6.0973 49.4706,6.1017 49.4728,6.1105 49.4733,6.1219 49.4940,6.1276 49.4930,6.1414 49.4936,6.1620 49.4972,6.1553 49.5030,6.1531 49.5104,6.1756 49.5078,6.2071 49.5148,6.2411 49.5040,6.2785 49.4886,6.2992 49.4784,6.3180 49.4622,6.3677 49.4976,6.3654 49.5333,6.3552 49.5532,6.3811 49.5580,6.3812 49.5631,6.3724 49.5720,6.3550 49.5790,6.3633 49.5783,6.3808 49.5869,6.3734 49.5938,6.3748 49.6005,6.3856 49.6025,6.3961 49.6193,6.4189 49.6589,6.4383 49.6652,6.4235 49.7143,6.4978 49.7274,6.4943 49.7263,6.5099 49.7305,6.5015 49.7540,6.4998 49.7623,6.5174 49.7736,6.5090 49.7906,6.5049 49.8053,6.5302 49.8113,6.5253 49.8000,6.5112 49.8086,6.5050 49.8118,6.4865 49.8221,6.4712 49.8111,6.4545 49.8101,6.4302 49.8203,6.3995 49.8203,5.7459</cap:polygon>
+    <link title="Luxembourg-South" href="https://meteoalarm.org?polygon=b90a0c51-2237-4fe4-a299-b23b4fd5e4ff,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Luxembourg-South</cap:areaDesc>
+    <cap:event>no text</cap:event>
+    <cap:sent>2026-10-24T03:50:46+00:00</cap:sent>
+    <cap:expires>2026-10-25T08:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T18:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.442.0.LU.261024045046.510119711</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-luxembourg/b90a0c51-2237-4fe4-a299-b23b4fd5e4ff"/>
+    <link title="Luxembourg" rel="related" href="https://meteoalarm.org?region=LU" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T03:50:46Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-luxembourg/b90a0c51-2237-4fe4-a299-b23b4fd5e4ff?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Rain Warning issued for Luxembourg - Luxembourg-South</title>
+    <updated>2026-10-24T03:50:46Z</updated>
+  </entry>
+</feed>

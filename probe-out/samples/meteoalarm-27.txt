@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:PT</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:06:06.380403Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT015</value>
+    </cap:geocode>
+    <link title="Leiria" href="https://meteoalarm.org?geocode=EMMA_ID:PT015" hreflang="en"/>
+    <cap:areaDesc>Leiria</cap:areaDesc>
+    <cap:event>Yellow Coastal Event Warning</cap:event>
+    <cap:sent>2026-10-21T18:20:18+00:00</cap:sent>
+    <cap:expires>2026-10-23T21:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-21T18:20:18+00:00</cap:effective>
+    <cap:onset>2026-10-23T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261021182018.PO-07-4487</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/85553029-e357-4a73-a91a-37041320e484"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-21T18:20:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/85553029-e357-4a73-a91a-37041320e484?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Portugal - Leiria</title>
+    <updated>2026-10-21T18:20:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT010</value>
+    </cap:geocode>
+    <link title="Aveiro" href="https://meteoalarm.org?geocode=EMMA_ID:PT010" hreflang="en"/>
+    <cap:areaDesc>Aveiro</cap:areaDesc>
+    <cap:event>Yellow Coastal Event Warning</cap:event>
+    <cap:sent>2026-10-21T18:20:18+00:00</cap:sent>
+    <cap:expires>2026-10-23T21:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-21T18:20:18+00:00</cap:effective>
+    <cap:onset>2026-10-23T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261021182018.PO-07-4485</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/1b00b6c4-c727-4e67-9df1-7c312987957a"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-21T18:20:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/1b00b6c4-c727-4e67-9df1-7c312987957a?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Portugal - Aveiro</title>
+    <updated>2026-10-21T18:20:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT013</value>
+    </cap:geocode>
+    <link title="Coimbra" href="https://meteoalarm.org?geocode=EMMA_ID:PT013" hreflang="en"/>
+    <cap:areaDesc>Coimbra</cap:areaDesc>
+    <cap:event>Yellow Coastal Event Warning</cap:event>
+    <cap:sent>2026-10-21T18:20:18+00:00</cap:sent>
+    <cap:expires>2026-10-23T21:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-21T18:20:18+00:00</cap:effective>
+    <cap:onset>2026-10-23T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261021182018.PO-07-4486</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/501ffe4b-a739-4561-91ba-c02f604c6c49"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-21T18:20:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/501ffe4b-a739-4561-91ba-c02f604c6c49?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Portugal - Coimbra</title>
+    <updated>2026-10-21T18:20:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT009</value>
+    </cap:geocode>
+    <link title="Porto" href="https://meteoalarm.org?geocode=EMMA_ID:PT009" hreflang="en"/>
+    <cap:areaDesc>Porto</cap:areaDesc>
+    <cap:event>Yellow Coastal Event Warning</cap:event>
+    <cap:sent>2026-10-21T18:20:18+00:00</cap:sent>
+    <cap:expires>2026-10-23T21:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-21T18:20:18+00:00</cap:effective>
+    <cap:onset>2026-10-23T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261021182018.PO-07-4484</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/36ae9049-e811-4fb3-b78b-5a86d945d0e7"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-21T18:20:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/36ae9049-e811-4fb3-b78b-5a86d945d0e7?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Portugal - Porto</title>
+    <updated>2026-10-21T18:20:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT022</value>
+    </cap:geocode>
+    <link title="Braga" href="https://meteoalarm.org?geocode=EMMA_ID:PT022" hreflang="en"/>
+    <cap:areaDesc>Braga</cap:areaDesc>
+    <cap:event>Yellow Coastal Event Warning</cap:event>
+    <cap:sent>2026-10-21T18:20:18+00:00</cap:sent>
+    <cap:expires>2026-10-23T21:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-21T18:20:18+00:00</cap:effective>
+    <cap:onset>2026-10-23T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261021182018.PO-07-4483</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds

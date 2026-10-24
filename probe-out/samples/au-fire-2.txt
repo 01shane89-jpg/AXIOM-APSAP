@@ -1,0 +1,153 @@
+https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert.json
+{
+	"type" : "FeatureCollection",
+	"name" : "QFDWarnings",
+	"crs" : {
+		"type" : "name",
+		"properties" : {
+			"name" : "EPSG:3857"
+		}
+	},
+	"features" : [
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 15941975.3322315663, -1522934.6074200794 ]
+			},
+			"properties" : {
+				"OBJECTID" : 39558,
+				"UniqueID" : "QF7-26-123875",
+				"WarningTitle" : "Information - COEN",
+				"WarningLevel" : "Information",
+				"CallToAction" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningText" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"Header" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningLevelSort" : 100,
+				"WarningArea" : "COEN",
+				"CurrentStatus" : "Going",
+				"Location" : "Birthday Mountain Rd",
+				"Jurisdiction" : "7 Far Northern Region",
+				"Latitude" : -13.55258,
+				"Longitude" : 143.209201,
+				"VehiclesAssigned" : 0,
+				"VehiclesOnRoute" : 0,
+				"VehiclesOnScene" : 0,
+				"GroupedType" : "FIRE VEGETATION",
+				"Locality" : "COEN",
+				"ItemDateTimeUTM" : "20260915171121",
+				"ItemDateTimeLocal_ISO" : "2026-09-16T03:11:21+10:00",
+				"PublishDateLocal_ISO" : "2026-10-24T22:05:59+10:00",
+				"ItemExpiryDateTimeLocal_ISO" : "2026-09-17T03:11:21+10:00",
+				"EventType" : "Fire",
+				"MIN_ID" : "13646688",
+				"Incident_Type" : "FIRE BUSHFIRE EXPOSURES",
+				"MIN_Details" : "GRASS FIRE - UHF15",
+				"Location_Name" : "SR 23/10 - ARCHER RIVER/ BIRTHDAY MOUNTAIN",
+				"Cross_Street" : "UNNAMED COEN RD/PENINSULA DEVELOPMENTAL RD",
+				"LGA" : null,
+				"Command_Channel" : null,
+				"Primary_TAC_Channel" : null,
+				"SubType" : "VEGETATION",
+				"MajorType" : "FIRE",
+				"IsPubliclyShared" : "YES"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 16093489.7308019996, -1757547.511784435 ]
+			},
+			"properties" : {
+				"OBJECTID" : 39560,
+				"UniqueID" : "QF7-26-131683",
+				"WarningTitle" : "Information - GINGER CREEK",
+				"WarningLevel" : "Information",
+				"CallToAction" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningText" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"Header" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningLevelSort" : 100,
+				"WarningArea" : "GINGER CREEK",
+				"CurrentStatus" : "Going",
+				"Location" : "Unknown",
+				"Jurisdiction" : "7 Far Northern Region",
+				"Latitude" : -15.592222,
+				"Longitude" : 144.570278,
+				"VehiclesAssigned" : 0,
+				"VehiclesOnRoute" : 0,
+				"VehiclesOnScene" : 0,
+				"GroupedType" : "FIRE VEGETATION",
+				"Locality" : "GINGER CREEK",
+				"ItemDateTimeUTM" : "20260928161611",
+				"ItemDateTimeLocal_ISO" : "2026-09-29T02:16:11+10:00",
+				"PublishDateLocal_ISO" : "2026-10-24T22:05:59+10:00",
+				"ItemExpiryDateTimeLocal_ISO" : "2026-09-30T02:16:11+10:00",
+				"EventType" : "Fire",
+				"MIN_ID" : "13654670",
+				"Incident_Type" : "FIRE BUSHFIRE",
+				"MIN_Details" : "WILDFIRE DETECTED",
+				"Location_Name" : "SR 23/10 - LAURA AREA",
+				"Cross_Street" : null,
+				"LGA" : null,
+				"Command_Channel" : null,
+				"Primary_TAC_Channel" : null,
+				"SubType" : "VEGETATION",
+				"MajorType" : "FIRE",
+				"IsPubliclyShared" : "YES"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 16515965.9000369254, -2702151.4670125647 ]
+			},
+			"properties" : {
+				"OBJECTID" : 39562,
+				"UniqueID" : "QF2-26-135712",
+				"WarningTitle" : "Information - COMET",
+				"WarningLevel" : "Information",
+				"CallToAction" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningText" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"Header" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningLevelSort" : 100,
+				"WarningArea" : "COMET",
+				"CurrentStatus" : "Going",
+				"Location" : "CAPRICORN HWY",
+				"Jurisdiction" : "2 Central Region",
+				"Latitude" : -23.578677,
+				"Longitude" : 148.365446,
+				"VehiclesAssigned" : 0,
+				"VehiclesOnRoute" : 0,
+				"VehiclesOnScene" : 0,
+				"GroupedType" : "FIRE VEGETATION",
+				"Locality" : "COMET",
+				"ItemDateTimeUTM" : "20261006003004",
+				"ItemDateTimeLocal_ISO" : "2026-10-06T10:30:04+10:00",
+				"PublishDateLocal_ISO" : "2026-10-24T22:05:59+10:00",
+				"ItemExpiryDateTimeLocal_ISO" : "2026-10-07T10:30:04+10:00",
+				"EventType" : "Fire",
+				"MIN_ID" : "13658788",
+				"Incident_Type" : "FIRE PRIMARY INDUSTRY",
+				"MIN_Details" : "YAMALA COTTON GIN FIRE",
+				"Location_Name" : "SR 23/10",
+				"Cross_Street" : "LOCHLEES RD/UNNAMED COMET RD",
+				"LGA" : null,
+				"Command_Channel" : null,
+				"Primary_TAC_Channel" : null,
+				"SubType" : "VEGETATION",
+				"MajorType" : "FIRE",
+				"IsPubliclyShared" : "YES"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 15923480.1554337163, -1913421.6012136098 ]
+			},
+			"properties" : {
+				"OBJECTID" : 39563,
+				"UniqueID" : "QF7-26-138281",
+				"WarningTitle" : "Information - STRATH

@@ -1,0 +1,145 @@
+https://www.belfercenter.org/
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+  <head>
+          <!-- Start cookieyes banner -->
+      <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/f3f55b74053c2391466d58c7/script.js"></script>
+      <!-- End cookieyes banner -->
+        <meta charset="utf-8" />
+<link rel="preconnect" href="//www.googletagmanager.com" crossorigin="anonymous" />
+<link rel="preconnect" href="//www.google-analytics.com" crossorigin="anonymous" />
+<link rel="preconnect" href="//stats.g.doubleclick.net" crossorigin="anonymous" />
+<link rel="preload" href="/themes/custom/belfer/assets/fonts/icomoon.woff2?dl8yb7" as="font" crossorigin="anonymous" />
+<meta name="description" content="The Belfer Center is the hub of Harvard Kennedy School&#039;s research and training in international security and diplomacy, environmental and resource issues, and science and technology policy." />
+<link rel="canonical" href="https://www.belfercenter.org/" />
+<link rel="shortlink" href="https://www.belfercenter.org/" />
+<link rel="image_src" href="https://www.belfercenter.org/sites/default/files/styles/1200x630/public/2024-08/Belfer%20Center%20logo%20image.jpg?itok=05GNzJn4" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.belfercenter.org/sites/default/files/styles/1200x630/public/2024-08/Belfer%20Center%20logo%20image.jpg?itok=05GNzJn4" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="Generator" content="Interactive Strategies (https://www.interactivestrategies.com)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="manifest" href="https://www.belfercenter.org/themes/custom/belfer/assets/pwa/manifest.json?v=20230824" crossorigin="use-credentials" />
+<link rel="apple-touch-icon" href="https://www.belfercenter.org/themes/custom/belfer/assets/pwa/icons/apple-touch-icon.png?v=20230824" sizes="180x180" type="image/png" />
+<link rel="mask-icon" href="https://www.belfercenter.org/themes/custom/belfer/assets/pwa/icons/favicon.svg?v=20230824" color="#ffffff" />
+<meta name="msapplication-config" content="/themes/custom/belfer/assets/pwa/browserconfig.xml?v=20230824" />
+<meta name="msapplication-TileColor" content="#ffffff" />
+<meta name="theme-color" content="#ff0000" />
+<style>@font-face{font-family:'icomoon';src:url('/themes/custom/belfer/assets/fonts/icomoon.woff2?dl8yb7')format('woff2');font-weight:normal;font-style:normal;font-display:swap;}</style>
+<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "name": "The Belfer Center for Science and International Affairs",
+            "url": "https://www.belfercenter.org",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.belfercenter.org/themes/custom/belfer/assets/images/belfer-center-logo-white.svg",
+                "width": "271",
+                "height": "58"
+            },
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "79 John F. Kennedy Street",
+                "addressLocality": "Cambridge",
+                "addressRegion": "MA",
+                "postalCode": "02138",
+                "addressCountry": "US"
+            },
+            "sameAs": [
+                "https://www.linkedin.com/company/belfercenter/",
+                "https://www.instagram.com/belfercenter/",
+                "https://www.youtube.com/user/BelferCenter",
+                "https://www.facebook.com/belfercenter/",
+                "https://soundcloud.com/belfercenter"
+            ]
+        }
+    ]
+}</script>
+<link rel="icon" href="/core/misc/favicon.ico" type="image/vnd.microsoft.icon" />
+
+    <title>The Belfer Center for Science and International Affairs | Harvard Kennedy School</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_yqcdrA_a_xWgB-RtEko_8Sc7ANRGWCcXi9XHWV411Oc.css?delta=0&amp;language=en&amp;theme=belfer&amp;include=eJxFjEEKgDAMBD9U6pMksbGVphqy7cHfK6J4WYYZWBZdxScmSOCX9VhqvId07oSKLzQBKAuCkVN2soIp-TDS-Js4dhusG4qkgBNd2vN-AVnSKME" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_to27CHd21dQn6QRIdSJ595nJDzYWcm_Sm4PTLvIlXNM.css?delta=1&amp;language=en&amp;theme=belfer&amp;include=eJxFjEEKgDAMBD9U6pMksbGVphqy7cHfK6J4WYYZWBZdxScmSOCX9VhqvId07oSKLzQBKAuCkVN2soIp-TDS-Js4dhusG4qkgBNd2vN-AVnSKME" />
+
+    
+
+    
+    <link rel="preload" href="/themes/custom/belfer/assets/fonts/icomoon.woff2?de47sx" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/themes/custom/belfer/assets/fonts/canela-medium.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/themes/custom/belfer/assets/fonts/gt-america-standard-regular.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/themes/custom/belfer/assets/fonts/gt-america-standard-regular-italic.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/themes/custom/belfer/assets/fonts/gt-america-standard-bold.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/themes/custom/belfer/assets/fonts/gt-america-standard-bold-italic.woff2" as="font" crossorigin="anonymous">
+
+    <style>
+      @font-face {
+        font-family: 'icomoon';
+        src: url('/themes/custom/belfer/assets/fonts/icomoon.woff2?de47sx') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'Canela';
+        src: url('/themes/custom/belfer/assets/fonts/canela-medium.woff2') format("woff2");
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'GT-American-Standard';
+        src: url('/themes/custom/belfer/assets/fonts/gt-america-standard-regular.woff2') format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'GT-American-Standard';
+        src: url('/themes/custom/belfer/assets/fonts/gt-america-standard-regular-italic.woff2') format("woff2");
+        font-weight: 400;
+        font-style: italic;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'GT-American-Standard';
+        src: url('/themes/custom/belfer/assets/fonts/gt-america-standard-bold.woff2') format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'GT-American-Standard';
+        src: url('/themes/custom/belfer/assets/fonts/gt-america-standard-bold-italic.woff2') format("woff2");
+        font-weight: 700;
+        font-style: italic;
+        font-display: swap;
+      }
+    </style>
+
+        <link rel="preconnect" href="//www.googletagmanager.com" crossorigin="anonymous">
+    <link rel="preconnect" href="//www.google-analytics.com" crossorigin="anonymous">
+    <link rel="preconnect" href="//www.google.com" crossorigin="anonymous">
+    <link rel="preconnect" href="//stats.g.doubleclick.net" crossorigin="anonymous">
+
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="manifest" href="/themes/custom/belfer/assets/pwa/manifest.json" crossorigin="use-credentials">
+    <link rel="icon" href="/themes/custom/belfer/assets/pwa/icons/favicon.ico">
+    <link rel="icon" href="/themes/custom/belfer/assets/pwa/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/themes/custom/belfer/assets/pwa/icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#ff0000">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().ge

@@ -1,0 +1,127 @@
+https://environment.data.gov.uk/flood-monitoring/id/floods
+{ 
+  "@context" : "http://environment.data.gov.uk/flood-monitoring/meta/context.jsonld" ,
+  "meta" : { 
+    "publisher" : "Environment Agency" ,
+    "licence" : "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" ,
+    "documentation" : "http://environment.data.gov.uk/flood-monitoring/doc/reference" ,
+    "version" : "0.9" ,
+    "comment" : "Status: Beta service" ,
+    "hasFormat" : [ "http://environment.data.gov.uk/flood-monitoring/id/floods.csv", "http://environment.data.gov.uk/flood-monitoring/id/floods.rdf", "http://environment.data.gov.uk/flood-monitoring/id/floods.ttl", "http://environment.data.gov.uk/flood-monitoring/id/floods.html" ]
+  }
+   ,
+  "items" : [ { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/122FWC045" ,
+    "description" : "North Sea at Scarborough - Sandside" ,
+    "eaAreaName" : "Yorkshire" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122FWC045" ,
+      "county" : "North Yorkshire" ,
+      "notation" : "122FWC045" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122FWC045/polygon" ,
+      "riverOrSea" : "North Sea"
+    }
+     ,
+    "floodAreaID" : "122FWC045" ,
+    "isTidal" : true ,
+    "message" : "There is no longer a threat of flooding. \nCoastal conditions are expected to improve and no flooding is expected.   \nWe will continue to monitor the situation and will issue further alerts or warnings if necessary.   \nContinue to take care on waterside roads and footpaths and don't put yourself in unnecessary danger.  \n" ,
+    "severity" : "Warning no longer in force" ,
+    "severityLevel" : 4 ,
+    "timeMessageChanged" : "2026-10-24T09:21:00" ,
+    "timeRaised" : "2026-10-24T09:21:41" ,
+    "timeSeverityChanged" : "2026-10-24T09:21:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/122WAC953" ,
+    "description" : "North Sea coast from Whitby to Filey" ,
+    "eaAreaName" : "Yorkshire" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122WAC953" ,
+      "county" : "East Riding of Yorkshire, North Yorkshire" ,
+      "notation" : "122WAC953" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122WAC953/polygon" ,
+      "riverOrSea" : "North Sea"
+    }
+     ,
+    "floodAreaID" : "122WAC953" ,
+    "isTidal" : true ,
+    "message" : "There is no longer a threat of flooding.\nCoastal conditions are expected to improve and no flooding is expected.  \nWe will continue to monitor the situation and will issue further alerts or warnings if necessary.  \nContinue to take care on waterside roads and footpaths and don't put yourself in unnecessary danger.  \n" ,
+    "severity" : "Warning no longer in force" ,
+    "severityLevel" : 4 ,
+    "timeMessageChanged" : "2026-10-24T09:22:00" ,
+    "timeRaised" : "2026-10-24T09:22:32" ,
+    "timeSeverityChanged" : "2026-10-24T09:22:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/111WATCHXH" ,
+    "description" : "Christchurch Harbour" ,
+    "eaAreaName" : "Wessex" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/111WATCHXH" ,
+      "county" : "Bournemouth, Christchurch and Poole" ,
+      "notation" : "111WATCHXH" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/111WATCHXH/polygon" ,
+      "riverOrSea" : "English Channel"
+    }
+     ,
+    "floodAreaID" : "111WATCHXH" ,
+    "isTidal" : true ,
+    "message" : "High tides this evening may lead to flooding. \nFlooding is possible from 07:15 pm to 11:15 pm on Saturday 24th October 26. \nFlooding for Christchurch Harbour and the tidal stretches of the Lower Stour and Avon is possible for the evening tide at 9.15pm on Saturday 24/10/26.  Stormy weather systems will cause sea levels to be higher than forecasted in the tide tables.  Sea spray overtopping is possible and high-water levels in the harbour are forecast.  A level of 1.29 mAOD is expected with Force 8 South Westerly wind.  Flooding to roads and low-lying land is possible and conditions can apply two hours either side of high tide. \nWe are closely monitoring the situation . \nTake care and avoid walking, cycling or driving through flood water.   \nThis message will be updated by 2:30PM on Sunday 25 October or as the situation changes.\n\n" ,
+    "severity" : "Flood alert" ,
+    "severityLevel" : 3 ,
+    "timeMessageChanged" : "2026-10-24T11:43:00" ,
+    "timeRaised" : "2026-10-24T11:43:50" ,
+    "timeSeverityChanged" : "2026-10-24T11:43:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/065WAC404" ,
+    "description" : "Climping Seafront" ,
+    "eaAreaName" : "Solent and South Downs" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/065WAC404" ,
+      "county" : "West Sussex" ,
+      "notation" : "065WAC404" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/065WAC404/polygon" ,
+      "riverOrSea" : "English Channel"
+    }
+     ,
+    "floodAreaID" : "065WAC404" ,
+    "isTidal" : true ,
+    "message" : "High tides on Saturday may lead to flooding. \nFlooding is possible for 2 hours either side of Saturday evening's tide at 23:00 on 24/10/2026. \nStorm Boelo could cause overtopping of the beach, affecting Climping Street Car Park. A small amount of water may then flow or be directed westwards along Mill Lane towards residential property in Climping Street. This event will increase tide table values by 0.26 m. Total forecast tide is 5.87 metres Chart Datum (2.82 mAOD) at Littlehampton. Strong Westerly Force 7 wind. Similar conditions will be experienced until 27th October. Sunday's tide at 11:15 on 25/10/2026 is forecast to be 10 cm lower (2.72 mAOD). \nWe are closely monitoring the situation . We routinely check the condition of the beach at Climping. \nConsider activating any flood protection products you may have. Access could be restricted. Take care if visiting Climping beach. \nThis message will be updated by 6:00PM on Sunday 25 October or as the situation changes.\n" ,
+    "severity" : "Flood alert" ,
+    "severityLevel" : 3 ,
+    "timeMessageChanged" : "2026-10-24T12:05:00" ,
+    "timeRaised" : "2026-10-24T12:05:10" ,
+    "timeSeverityChanged" : "2026-10-24T12:05:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/034WAF428" ,
+    "description" : "Lower River Soar in Leicestershire" ,
+    "eaAreaName" : "East Midlands" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/034WAF428" ,
+      "county" : "Derbyshire, Leicestershire, Nottinghamshire" ,
+      "notation" : "034WAF428" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/034WAF428/polygon" ,
+      "riverOrSea" : "River Soar"
+    }
+     ,
+    "floodAreaID" : "034WAF428" ,
+    "isTidal" : false ,
+    "message" : "There is no longer a threat of flooding.\nFurther rainfall is forecast but no further flooding is expected.  \nWe will continue to monitor the situation and will issue further alerts or warnings if necessary.  \nContinue to take care on waterside roads and footpaths and don't put yourself in unnecessary danger.  \n" ,
+    "severity" : "Warning no longer in force" ,
+    "severityLevel" : 4 ,
+    "timeMessageChanged" : "2026-10-23T16:18:00" ,
+    "timeRaised" : "2026-10-23T16:18:53" ,
+    "timeSeverityChanged" : "2026-10-23T16:18:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/111WAFWDRS" ,
+    "description" : "West Dorset Rivers and Streams" ,
+    "eaAreaName" : "Wessex" ,
+    "eaRegionName" : "No lon

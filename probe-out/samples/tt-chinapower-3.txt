@@ -1,0 +1,12 @@
+https://chinapower.csis.org/robots.txt
+Sitemap: https://chinapower.csis.org/sitemap.xml
+Sitemap: https://chinapower.csis.org/news-sitemap.xml
+Crawl-delay: 10
+# START YOAST BLOCK
+# ---------------------------
+User-agent: *
+Disallow:
+
+Sitemap: http://chinapower.csis.org/sitemap_index.xml
+# ---------------------------
+# END YOAST BLOCK

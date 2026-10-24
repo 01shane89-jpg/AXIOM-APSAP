@@ -1,0 +1,124 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:NO</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:05:52.545659Z</updated>
+  <entry>
+    <cap:polygon>58.4702,8.68 58.1732,8.1467 58.1543,7.9947 58.0428,8.0677 58.0777,8.2053 58.0777,8.2055 58.0928,8.2647 58.0933,8.267 58.0943,8.2698 58.0955,8.2725 58.2053,8.4982 58.2055,8.4985 58.2953,8.6798 58.2965,8.682 58.387,8.8337 58.4702,8.68 58.4702,8.68</cap:polygon>
+    <link title="Lyngoer - Oksoey" href="https://meteoalarm.org?polygon=d4893189-6767-4a29-bb73-1c9d6140e51b,1,0,1" hreflang="en"/>
+    <cap:areaDesc>Lyngoer - Oksoey</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T12:02:36+00:00</cap:sent>
+    <cap:expires>2026-10-25T12:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024114535.091</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/d4893189-6767-4a29-bb73-1c9d6140e51b"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T12:02:36Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/d4893189-6767-4a29-bb73-1c9d6140e51b?index_info=1&amp;index_area=0&amp;index_polygon=1</id>
+    <title>Yellow Wind Warning issued for Norway - Lyngoer - Oksoey</title>
+    <updated>2026-10-24T12:02:36Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>58.6808,9.0262 58.4702,8.68 58.387,8.8337 58.4172,8.8837 58.5517,9.1107 58.6068,9.205 58.6808,9.0262 58.6808,9.0262</cap:polygon>
+    <link title="Lyngoer - Oksoey" href="https://meteoalarm.org?polygon=d4893189-6767-4a29-bb73-1c9d6140e51b,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Lyngoer - Oksoey</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T12:02:36+00:00</cap:sent>
+    <cap:expires>2026-10-25T12:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024114535.091</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/d4893189-6767-4a29-bb73-1c9d6140e51b"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T12:02:36Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/d4893189-6767-4a29-bb73-1c9d6140e51b?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Lyngoer - Oksoey</title>
+    <updated>2026-10-24T12:02:36Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>58.9227,9.435 58.7972,9.2227 58.6808,9.0262 58.6068,9.205 58.6858,9.3395 58.8195,9.5702 58.8358,9.6318 58.9227,9.435 58.9227,9.435</cap:polygon>
+    <link title="Swedish border - Lyngoer" href="https://meteoalarm.org?polygon=88c248d3-22d2-470b-93ec-d10872d77497,1,0,2" hreflang="en"/>
+    <cap:areaDesc>Swedish border - Lyngoer</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T12:02:31+00:00</cap:sent>
+    <cap:expires>2026-10-25T12:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024115029.038</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/88c248d3-22d2-470b-93ec-d10872d77497"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T12:02:31Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/88c248d3-22d2-470b-93ec-d10872d77497?index_info=1&amp;index_area=0&amp;index_polygon=2</id>
+    <title>Yellow Wind Warning issued for Norway - Swedish border - Lyngoer</title>
+    <updated>2026-10-24T12:02:31Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>59.0532,10.0107 59.0517,9.8402 59.0647,9.7702 58.9227,9.435 58.8358,9.6318 58.8378,9.6387 58.9197,9.9473 58.9345,10.0557 59.0532,10.0107 59.0532,10.0107</cap:polygon>
+    <link title="Swedish border - Lyngoer" href="https://meteoalarm.org?polygon=88c248d3-22d2-470b-93ec-d10872d77497,1,0,1" hreflang="en"/>
+    <cap:areaDesc>Swedish border - Lyngoer</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T12:02:31+00:00</cap:sent>
+    <cap:expires>2026-10-25T12:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024115029.038</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/88c248d3-22d2-470b-93ec-d10872d77497"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T12:02:31Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/88c248d3-22d2-470b-93ec-d10872d77497?index_info=1&amp;index_area=0&amp;index_polygon=1</id>
+    <title>Yellow Wind Warning issued for Norway - Swedish border - Lyngoer</title>
+    <updated>2026-10-24T12:02:31Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>59.5312,10.6052 59.5232,10.4392 59.5158,10.3553 59.4777,10.318 59.436,10.3803 59.4128,10.4658 59.3612,10.4472 59.3197,10.4883 59.2905,10.4822 59.219,10.4087 59.0533,10.0108 58.9345,10.0557 58.9493,10.164 58.96,10.2342 59.0437,10.6532 58.9392,10.9042 58.9447,10.9277 58.9612,10.9847 58.9792,11.0682 58.9947,11.0942 59.0012,11.1012 59.0177,11.1182 59.0787,11.1532 59.0825,11.1777 59.0857,11.2097 59.0877,11.2262 59.1252,11.1948 59.1482,11.1317 59.1942,10.8377 59.2767,10.7432 59.3152,10.7407 59.3328,10.7018 59.4235,10.6793 59.4867,10.7112 59.493,10.6952 59.4917,10.6752 59.5087,10.6642 59.5218,10.6457 59.5312,10.6052 59.5312,10.6052</cap:polygon>
+    <link title="Swedish border - Lyngoer" href="https:

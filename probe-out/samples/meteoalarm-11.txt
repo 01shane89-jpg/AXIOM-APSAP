@@ -1,0 +1,152 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:DE</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:05:40.608870Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE060</value>
+    </cap:geocode>
+    <link title="Kreis Schleswig-Flensburg - Küste" href="https://meteoalarm.org?geocode=EMMA_ID:DE060" hreflang="en"/>
+    <cap:areaDesc>Kreis Schleswig-Flensburg - Küste</cap:areaDesc>
+    <cap:event>wind gusts</cap:event>
+    <cap:sent>2026-10-24T11:33:00+00:00</cap:sent>
+    <cap:expires>2026-10-24T22:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T16:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1792841580000.9fe6a09e-5aaf-4e59-83b5-d36554f926e2.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T11:33:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4?index_info=1&amp;index_area=7&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Germany - Kreis Schleswig-Flensburg - Küste</title>
+    <updated>2026-10-24T11:33:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE061</value>
+    </cap:geocode>
+    <link title="Kreis Ostholstein - Küste" href="https://meteoalarm.org?geocode=EMMA_ID:DE061" hreflang="en"/>
+    <cap:areaDesc>Kreis Ostholstein - Küste</cap:areaDesc>
+    <cap:event>wind gusts</cap:event>
+    <cap:sent>2026-10-24T11:33:00+00:00</cap:sent>
+    <cap:expires>2026-10-24T22:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T16:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1792841580000.9fe6a09e-5aaf-4e59-83b5-d36554f926e2.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T11:33:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4?index_info=1&amp;index_area=6&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Germany - Kreis Ostholstein - Küste</title>
+    <updated>2026-10-24T11:33:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE037</value>
+    </cap:geocode>
+    <link title="Kreis Plön - Küste" href="https://meteoalarm.org?geocode=EMMA_ID:DE037" hreflang="en"/>
+    <cap:areaDesc>Kreis Plön - Küste</cap:areaDesc>
+    <cap:event>wind gusts</cap:event>
+    <cap:sent>2026-10-24T11:33:00+00:00</cap:sent>
+    <cap:expires>2026-10-24T22:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T16:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1792841580000.9fe6a09e-5aaf-4e59-83b5-d36554f926e2.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T11:33:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4?index_info=1&amp;index_area=5&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Germany - Kreis Plön - Küste</title>
+    <updated>2026-10-24T11:33:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE265</value>
+    </cap:geocode>
+    <link title="Hansestadt Lübeck" href="https://meteoalarm.org?geocode=EMMA_ID:DE265" hreflang="en"/>
+    <cap:areaDesc>Hansestadt Lübeck</cap:areaDesc>
+    <cap:event>wind gusts</cap:event>
+    <cap:sent>2026-10-24T11:33:00+00:00</cap:sent>
+    <cap:expires>2026-10-24T22:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T16:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1792841580000.9fe6a09e-5aaf-4e59-83b5-d36554f926e2.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T11:33:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4?index_info=1&amp;index_area=4&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Germany - Hansestadt Lübeck</title>
+    <updated>2026-10-24T11:33:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE156</value>
+    </cap:geocode>
+    <link title="Stadt Flensburg" href="https://meteoalarm.org?geocode=EMMA_ID:DE156" hreflang="en"/>
+    <cap:areaDesc>Stadt Flensburg</cap:areaDesc>
+    <cap:event>wind gusts</cap:event>
+    <cap:sent>2026-10-24T11:33:00+00:00</cap:sent>
+    <cap:expires>2026-10-24T22:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T16:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1792841580000.9fe6a09e-5aaf-4e59-83b5-d36554f926e2.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/cd39e47c-4bd8-44e3-8260-ec21fd1adaf4"/

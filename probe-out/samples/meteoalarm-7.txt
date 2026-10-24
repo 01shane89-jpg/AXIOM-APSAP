@@ -1,0 +1,134 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-denmark
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-denmark"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:DK</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:06:04.112873Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DK005</value>
+    </cap:geocode>
+    <link title="Syd- og Sønderjylland" href="https://meteoalarm.org?geocode=EMMA_ID:DK005" hreflang="en"/>
+    <cap:areaDesc>Syd- og Sønderjylland</cap:areaDesc>
+    <cap:event>Moderate Wind</cap:event>
+    <cap:sent>2026-10-23T16:01:29+00:00</cap:sent>
+    <cap:expires>2026-10-25T05:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.208.0.20261023160129.1_SJ_1202610230201</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/cc81df1e-5806-4bf9-90e2-994e7d15591a"/>
+    <link title="Denmark" rel="related" href="https://meteoalarm.org?region=DK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-23T16:01:29Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/cc81df1e-5806-4bf9-90e2-994e7d15591a?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Denmark - Syd- og Sønderjylland</title>
+    <updated>2026-10-23T16:01:29Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DK801</value>
+    </cap:geocode>
+    <link title="Vadehavet" href="https://meteoalarm.org?geocode=EMMA_ID:DK801" hreflang="en"/>
+    <cap:areaDesc>Vadehavet</cap:areaDesc>
+    <cap:event>Severe Coastal event</cap:event>
+    <cap:sent>2026-10-23T16:01:29+00:00</cap:sent>
+    <cap:expires>2026-10-26T03:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-25T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.208.0.20261023160129.7_C1_1202610230203</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/9e3b62b3-d24a-49b5-b897-644d826b1abb"/>
+    <link title="Denmark" rel="related" href="https://meteoalarm.org?region=DK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-23T16:01:29Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/9e3b62b3-d24a-49b5-b897-644d826b1abb?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Coastalevent Warning issued for Denmark - Vadehavet</title>
+    <updated>2026-10-23T16:01:29Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DK802</value>
+    </cap:geocode>
+    <link title="Centrale Vestkyst" href="https://meteoalarm.org?geocode=EMMA_ID:DK802" hreflang="en"/>
+    <cap:areaDesc>Centrale Vestkyst</cap:areaDesc>
+    <cap:event>Severe Coastal event</cap:event>
+    <cap:sent>2026-10-23T16:01:29+00:00</cap:sent>
+    <cap:expires>2026-10-26T03:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-25T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.208.0.20261023160129.7_C2_2202610230203</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/01e1ca06-7465-4f59-9bc0-37b064b79b79"/>
+    <link title="Denmark" rel="related" href="https://meteoalarm.org?region=DK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-23T16:01:29Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/01e1ca06-7465-4f59-9bc0-37b064b79b79?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Coastalevent Warning issued for Denmark - Centrale Vestkyst</title>
+    <updated>2026-10-23T16:01:29Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DK002</value>
+    </cap:geocode>
+    <link title="Midt- og Vestjylland" href="https://meteoalarm.org?geocode=EMMA_ID:DK002" hreflang="en"/>
+    <cap:areaDesc>Midt- og Vestjylland</cap:areaDesc>
+    <cap:event>Moderate Wind</cap:event>
+    <cap:sent>2026-10-23T16:01:29+00:00</cap:sent>
+    <cap:expires>2026-10-25T05:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.208.0.20261023160129.1_VJ_1202610230201</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/0b9067c2-a6fb-4e17-97bb-5f62d7cc2371"/>
+    <link title="Denmark" rel="related" href="https://meteoalarm.org?region=DK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-23T16:01:29Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-denmark/0b9067c2-a6fb-4e17-97bb-5f62d7cc2371?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Denmark - Midt- og Vestjylland</title>
+    <updated>2026-10-23T16:01:29Z</updated>
+  </entry>
+</feed>

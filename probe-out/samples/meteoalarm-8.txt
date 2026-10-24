@@ -1,0 +1,88 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-estonia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-estonia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:EE</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:06:04.763324Z</updated>
+  <entry>
+    <cap:polygon>58.9909,23.0513 58.9858,22.8864 58.9834,22.8726 58.9981,22.8504 59.3382,22.8386 59.4833,23.1917 59.4817,23.5217 59.7033,24.4817 59.8267,25.5783 59.8155,26.0055 59.6124,25.9985 59.6361,25.9634 59.5874,25.9767 59.5781,25.9311 59.6166,25.9112 59.6254,25.8668 59.5733,25.8692 59.5686,25.7859 59.6208,25.7848 59.6712,25.6948 59.6542,25.6705 59.5798,25.7076 59.5645,25.6581 59.6143,25.5693 59.6152,25.5250 59.6476,25.4971 59.6038,25.4932 59.5475,25.5534 59.5228,25.5399 59.5187,25.4643 59.4894,25.4144 59.4977,25.3187 59.5287,25.2699 59.5024,25.2122 59.5406,25.1339 59.5027,25.1773 59.4768,25.1507 59.5063,25.0862 59.4944,24.9329 59.5486,24.8866 59.5719,24.7962 59.5289,24.7935 59.4871,24.8376 59.4442,24.7865 59.4484,24.7467 59.4554,24.7006 59.4731,24.7287 59.4858,24.7079 59.4655,24.6905 59.4694,24.6459 59.4491,24.6834 59.4289,24.6643 59.4619,24.5743 59.4376,24.5419 59.4697,24.4602 59.4733,24.3597 59.4260,24.3425 59.3942,24.2330 59.3974,24.1790 59.3769,24.2320 59.3445,24.2408 59.3889,24.0371 59.3541,24.0368 59.3091,24.1167 59.2706,24.0915 59.2912,24.0326 59.2699,23.8834 59.2894,23.8233 59.2737,23.7315 59.2515,23.7449 59.2301,23.7091 59.2476,23.6604 59.2145,23.5588 59.2293,23.5076 59.1906,23.4849 59.0902,23.5418 59.0777,23.4346 59.0287,23.4496 59.0256,23.4042 59.0019,23.4271 59.0019,23.4271 59.0019,23.4267 59.0018,23.4268 59.0005,23.3761 59.0360,23.3309 59.0188,23.2685 59.0532,23.1892 59.0277,23.1169 58.9936,23.1455 58.9909,23.0513</cap:polygon>
+    <link title="Western Gulf of Finland" href="https://meteoalarm.org?polygon=c89e8856-c512-4879-98bd-fa8d991d7037,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Western Gulf of Finland</cap:areaDesc>
+    <cap:event>Wind Level 1</cap:event>
+    <cap:sent>2026-10-24T11:29:23+00:00</cap:sent>
+    <cap:expires>2026-10-26T09:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-25T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.233.0.20261024112923.7937</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-estonia/c89e8856-c512-4879-98bd-fa8d991d7037"/>
+    <link title="Estonia" rel="related" href="https://meteoalarm.org?region=EE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T11:29:23Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-estonia/c89e8856-c512-4879-98bd-fa8d991d7037?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Estonia - Western Gulf of Finland</title>
+    <updated>2026-10-24T11:29:23Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>59.6124,25.9985 59.8155,26.0055 59.9000,26.1533 59.9377,26.4354 59.8222,26.6289 59.6624,26.8167 59.6185,27.0534 59.6524,27.3853 59.4746,28.0412 59.4066,27.9340 59.3950,27.8132 59.4176,27.7389 59.4144,27.5944 59.4464,27.3783 59.4359,26.9611 59.5464,26.6248 59.5116,26.5070 59.5823,26.2726 59.5851,26.0999 59.6183,26.0517 59.6124,25.9985</cap:polygon>
+    <link title="Eastern Gulf of Finland" href="https://meteoalarm.org?polygon=8fa9ed32-2218-44d8-9ea8-876bc7af6264,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Eastern Gulf of Finland</cap:areaDesc>
+    <cap:event>Wind Level 1</cap:event>
+    <cap:sent>2026-10-24T11:28:26+00:00</cap:sent>
+    <cap:expires>2026-10-26T13:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-25T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.233.0.20261024112826.7940</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-estonia/8fa9ed32-2218-44d8-9ea8-876bc7af6264"/>
+    <link title="Estonia" rel="related" href="https://meteoalarm.org?region=EE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T11:28:26Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-estonia/8fa9ed32-2218-44d8-9ea8-876bc7af6264?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Estonia - Eastern Gulf of Finland</title>
+    <updated>2026-10-24T11:28:26Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>57.9142,22.0429 57.7682,22.0594 57.7682,22.0594 57.7494,21.9161 57.7867,21.7167 57.8950,21.6133 58.2890,21.3870 58.5666,21.4320 58.6411,21.5044 58.6883,21.6067 58.8317,21.6967 58.9183,21.6517 59.0567,21.8500 59.2450,22.3083 59.2917,22.5195 59.2917,22.7333 59.3382,22.8386 58.9981,22.8504 59.0057,22.7178 59.0729,22.6963 59.0933,22.5830 59.0314,22.5713 59.0278,22.4793 58.9993,22.4943 58.9937,22.4365 58.9624,22.4713 58.9686,22.4133 58.9374,22.3956 58.9413,22.0431 58.9213,22.0488 58.9071,22.1354 58.8817,22.1735 58.8902,22.3961 58.8408,22.4551 58.8106,22.4580 58.8068,22.4336 58.7719,22.4795 58.7512,22.4621 58.7326,22.5031 58.7157,22.4663 58.6876,22.5601 58.6388,22.5601 58.6380,22.5614 58.6404,22.5364 58.5808,22.4730 58.5703,22.2874 58.5297,22.2824 58.5398,22.3016 58.5200,22.3152 58.4858,22.2849 58.4898,22.2444 58.5356,22.2394 58.5462,22.2038 58.5135,22.2007 58.4820,22.1183 58.4171,22.1057 58.4190,22.0773 58.5056,22.0086 58.5169,21.9172 58.4890,21.9230 58.4789,21.8943 58.5015,21.8380 58.4821,21.8340 58.4690,21.9032 58.4048,21.9527 58.3658,22.0228 58.3684,21.9799 58.3361,21.9841 58.3566,21.9369 58.3080,21.9454 58.3530,21.8614 58.3074,21.9091 58.2962,21.8955 58.3103,21.8345 58.2799,21.8310 58.2239,21.9973 58.2492,22.0015 58.1773,22.0636 58.1590,22.2084 58.1397,22.2239 58.0658,22.1677 58.0879,22.1042 57.9827,22.0197 57.9769,21.9789 57.9469,21.9827 57.9142,22.0429</cap:polygon>
+    <link title="Northern Baltic Sea" href="https://meteoalarm.org?polygon=8f634f41-a418-431a-a6dd-0a51afd4905d,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Northern Baltic Sea</cap:areaDesc>
+    <cap:event>Wind Level 1</cap:event>
+    <cap:sent>2026-10-24T11:16:54+00:00</cap:sent>
+    <cap:expires>2026-10-26T21:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-25T22:00:00+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.233.0.20261024111654.7812</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-estonia/8f634f41-a418-431a-a6dd-0a51afd4905d"/>
+    <link title="Estonia" rel="related" href="https://meteoalarm.org?region=EE" hreflang="en"/>
+    <author>
+ 

@@ -1,0 +1,2 @@
+https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en
+{"WFIRE":{"name":"Fire Danger Warning","code":"WFIRER","type":"Red","actionCode":"ISSUE","issueTime":"2026-10-23T06:00:00+08:00","updateTime":"2026-10-23T06:00:00+08:00"}}

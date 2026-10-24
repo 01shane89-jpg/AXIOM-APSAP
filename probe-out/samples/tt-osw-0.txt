@@ -1,0 +1,83 @@
+https://www.osw.waw.pl/en/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:schema="http://schema.org/" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" version="2.0" xml:base="https://www.osw.waw.pl/en">
+  <channel>
+    <title>osw.waw.pl</title>
+    <link>https://www.osw.waw.pl/en</link>
+    <description>OSW - the latest publications</description>
+    <language>en</language>
+    
+    <item>
+  <title>Russia–US talks: no breakthrough, no concessions</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-22/russia-us-talks-no-breakthrough-no-concessions</link>
+  <description>On 21 October, Vladimir Putin held three hours of talks in St Petersburg with Steve Witkoff, President Donald Trump’s special envoy. The meeting was also attended by Putin’s foreign policy adviser Yuri Ushakov and the Russian laeader’s special envoy for international investment cooperation Kirill Dmitriev. Trump’s son-in-law Jared Kushner joined the meeting remotely.</description>
+  <pubDate>Thu, 22 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Witold Rodkiewicz</dc:creator>
+    <guid isPermaLink="false">34405</guid>
+    </item>
+<item>
+  <title>Germany freezes CO2 price under ‘national ETS2’ for 2027</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-22/germany-freezes-co2-price-under-national-ets2-2027</link>
+  <description>On 15 October, the Bundestag passed an amendment to the Fuel Emissions Trading Act (Brennstoffemissionshandelsgesetz, BEHG), maintaining the current CO2 price range of €55–65 per tonne in 2027 under Germany’s national carbon pricing system for sectors outside the EU’s Emissions Trading System (EU ETS), particularly transport and buildings. The government opted for this change in response to the EU’s decision to postpone the launch of ETS2 from 2027 to 2028 and to prevent a sharp rise in prices.</description>
+  <pubDate>Thu, 22 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Michał Kędzierski</dc:creator>
+    <guid isPermaLink="false">34404</guid>
+    </item>
+<item>
+  <title>Albania: escalation of protests</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-22/albania-escalation-protests</link>
+  <description>Since mid-October, violence has escalated during the ongoing anti-government protests in Albania, which began in May. Until recently, the demonstrations, driven primarily by demands for the resignation of Prime Minister Edi Rama, had remained peaceful.</description>
+  <pubDate>Thu, 22 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Michał Kucharski</dc:creator>
+    <guid isPermaLink="false">34403</guid>
+    </item>
+<item>
+  <title>Romania’s new government: crisis over, uncertainty ahead</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-22/romanias-new-government-crisis-over-uncertainty-ahead</link>
+  <description>On 20 October, the Romanian parliament approved the government led by Luca Niculescu, a non-partisan diplomat, in a vote of confidence (see Appendix). The cabinet secured 280 votes in favour and 58 against, exceeding the required threshold of 233. It was backed primarily by the post-communist, centre-left Social Democratic Party (PSD), the centre-right National Liberal Party (PNL) and the Democratic Alliance of Hungarians in Romania (UDMR), which represents the Hungarian minority.</description>
+  <pubDate>Thu, 22 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Kamil Całus</dc:creator>
+    <guid isPermaLink="false">34401</guid>
+    </item>
+<item>
+  <title>Vučić or the students? Serbia ahead of the parliamentary elections</title>
+  <link>https://www.osw.waw.pl/en/publikacje/osw-commentary/2026-10-21/vucic-or-students-serbia-ahead-parliamentary-elections</link>
+  <description>On 25 October, Serbia will hold its third snap parliamentary election in the last six years. The election was called following months of student demonstrations, which erupted after the collapse of a railway station canopy in Novi Sad in November 2024. Over time, the protest movement evolved into a political project – the Student List (SL). It is this party that will be the main challenger to the Serbian Progressive Party (SNS), which has been in power since 2012 and is led by the country’s former president, Aleksandar Vučić.</description>
+  <pubDate>Wed, 21 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Jan Nowinowski</dc:creator>
+    <guid isPermaLink="false">34400</guid>
+    </item>
+<item>
+  <title>Russian government reshuffle: further mobilisation of resources for a protracted war</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-21/russian-government-reshuffle-further-mobilisation-resources-a</link>
+  <description>On 21 October, the State Duma (the lower house of parliament) approved changes to the Russian government proposed by the prime minister but drawn up in the Kremlin. The reshuffle is the largest since May 2024 and primarily affects deputy prime ministerial posts, whose number increased from eight to nine. Irina Okladnikova, previously first deputy finance minister, replaced Dmitry Grigorenko, a close associate of Prime Minister Mikhail Mishustin, as deputy prime minister and head of the government apparatus.</description>
+  <pubDate>Wed, 21 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Maria Domańska, Iwona Wiśniewska</dc:creator>
+    <guid isPermaLink="false">34399</guid>
+    </item>
+<item>
+  <title>Devastating Russian attacks on energy infrastructure. Day 1700 of the war</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-20/devastating-russian-attacks-energy-infrastructure-day-1700-war</link>
+  <description/>
+  <pubDate>Tue, 20 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Krzysztof Nieczypor, Mateusz Goliszewski, Jacek Tarociński</dc:creator>
+    <guid isPermaLink="false">34396</guid>
+    </item>
+<item>
+  <title>Czech municipal and Senate elections: a warning for the governing coalition</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-20/czech-municipal-and-senate-elections-a-warning-governing-coalition</link>
+  <description>A week-long series of elections to the Czech Senate (the upper house) and local councils concluded on 17 October. One-third of the Senate is elected every two years for a term of six years. Of the 27 seats contested, the liberal Mayors and Independents (STAN) won 10, followed by the right-wing Civic Democratic Party (ODS) with seven. The ODS will therefore retain the largest parliamentary group in the Senate, formed jointly with the liberal TOP 09 party, as well as the Senate presidency.</description>
+  <pubDate>Tue, 20 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Krzysztof Dębiec</dc:creator>
+    <guid isPermaLink="false">34394</guid>
+    </item>
+<item>
+  <title>New law on the Foundation for Displacement, Expulsion, Reconciliation: putting Germany first</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-20/new-law-foundation-displacement-expulsion-reconciliation-putting</link>
+  <description>On 16 October, the Bundestag held the first reading of the government’s draft law on the Foundation for Displacement, Expulsion, Reconciliation (Stiftung Flucht, Vertreibung, Versöhnung, SFVV). Established in 2008, the foundation is tasked with preserving the memory of forced migrations in the 20th century, including the displacement of Germans during and after the Second World War, particularly from the former eastern territories of the German Reich and Czechoslovakia.</description>
+  <pubDate>Tue, 20 Oct 2026 14:00:00 +0200</pubDate>
+    <dc:creator>Kamil Frymark</dc:creator>
+    <guid isPermaLink="false">34393</guid>
+    </item>
+<item>
+  <title>Data centres in 

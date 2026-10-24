@@ -1,0 +1,78 @@
+https://blogs.griffith.edu.au/asiainsights/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Griffith Asia Insights</title>
+	<atom:link href="https://blogs.griffith.edu.au/asiainsights/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blogs.griffith.edu.au/asiainsights/</link>
+	<description>Asia Insights is published by the Griffith Asia Institute. It offers latest commentary on Asia-Pacific affairs and aims to inform and foster academic scholarship, public awareness and considered and responsive policy making.</description>
+	<lastBuildDate>Sat, 24 Oct 2026 06:40:49 +0000</lastBuildDate>
+	<language>en-AU</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.3</generator>
+
+<image>
+	<url>https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2020/05/cropped-site-icon-20-32x32.jpg</url>
+	<title>Griffith Asia Insights</title>
+	<link>https://blogs.griffith.edu.au/asiainsights/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Remembering Colin Mackerras: Chinese opera, scholarship and enduring friendship</title>
+		<link>https://blogs.griffith.edu.au/asiainsights/remembering-colin-mackerras-scholar-mentor-and-friend/</link>
+		
+		<dc:creator><![CDATA[Griffith Asia Institute]]></dc:creator>
+		<pubDate>Thu, 22 Oct 2026 22:30:00 +0000</pubDate>
+				<category><![CDATA[Asia Pioneers]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[Colin Mackerras]]></category>
+		<category><![CDATA[Professor Emeritus Colin Mackerras]]></category>
+		<category><![CDATA[Remembering Colin Mackerras]]></category>
+		<category><![CDATA[Xiaohuan Zhao]]></category>
+		<guid isPermaLink="false">https://blogs.griffith.edu.au/asiainsights/?p=12667</guid>
+
+					<description><![CDATA[<p><a href="https://blogs.griffith.edu.au/asiainsights">Griffith Asia Insights</a><br />
+<a href="https://blogs.griffith.edu.au/asiainsights/remembering-colin-mackerras-scholar-mentor-and-friend/">Remembering Colin Mackerras: Chinese opera, scholarship and enduring friendship</a></p>
+<p>XIAOHUAN ZHAO&#160; &#124;&#160; Colin Mackerras’s death earlier this month is a profound loss to Chinese studies in Australia and around the world. To me, he was also a close friend and a generous mentor—a connection made all the more meaningful by his friendship and collaboration with William Dolby (1936–2015), my respected teacher and mentor at [&#8230;]</p>
+<p>The post <a href="https://blogs.griffith.edu.au/asiainsights/remembering-colin-mackerras-scholar-mentor-and-friend/">Remembering Colin Mackerras: Chinese opera, scholarship and enduring friendship</a> appeared first on <a href="https://blogs.griffith.edu.au/asiainsights">Griffith Asia Insights</a>.<br />
+<a href="https://blogs.griffith.edu.au/asiainsights/author/gaigriffith-edu-au/">Griffith Asia Institute</a></p>
+]]></description>
+										<content:encoded><![CDATA[<p><a href="https://blogs.griffith.edu.au/asiainsights">Griffith Asia Insights</a><br />
+<a href="https://blogs.griffith.edu.au/asiainsights/remembering-colin-mackerras-scholar-mentor-and-friend/">Remembering Colin Mackerras: Chinese opera, scholarship and enduring friendship</a></p>
+
+<p class="wp-block-paragraph">XIAOHUAN ZHAO&nbsp; |&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Colin Mackerras’s death earlier this month is a profound loss to Chinese studies in Australia and around the world. To me, he was also a close friend and a generous mentor—a connection made all the more meaningful by his friendship and collaboration with William Dolby (1936–2015), my respected teacher and mentor at the University of Edinburgh. Bill’s research on Chinese drama and theatre gives their friendship a particular resonance for me, as I remember Colin’s extensive work on opera. I have long admired the breadth of his learning, the clarity of his writing and his conviction that Chinese theatre deserves to be understood not simply as an art form but as a vital part of social and cultural history. It is difficult to imagine our field without him; it is easier to see how much of its intellectual landscape he helped shape.</p>
+
+
+
+<p class="wp-block-paragraph">Colin’s scholarship on <em>xiqu</em>, or Chinese opera, was pioneering. In <em>The Rise of the Peking Opera, 1770–1870</em> (1973), he placed Jingju within the political, economic and social currents of the late Qing, showing how performance and historical change illuminate one another. His <em>Chinese Drama: A Historical Survey</em> (1990) and the volume he edited, <em>Chinese Theater: From Its Origins to the Present Day</em> (1983), opened the richness of Chinese theatrical traditions to generations of readers. His work offered both meticulous historical documentation and an accessible way into a complex, living performance culture.</p>
+
+
+
+<p class="wp-block-paragraph">Colin’s intellectual curiosity extended beyond opera. His research on China’s ethnic minorities asked readers to attend to questions of identity, cultural preservation and the effects of modernisation. Across these areas, he connected careful scholarship with a larger human concern: how people make meaning through their traditions and negotiate change. His standing was international, yet his influence was felt just as strongly in the conversations, teaching and collegial exchanges that shape a field.</p>
+
+
+
+<figure class="wp-block-image size-full is-resized"><img fetchpriority="high" decoding="async" width="601" height="253" src="https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-2.jpeg" alt="" class="wp-image-12668" style="aspect-ratio:2.375494071146245;width:601px;height:auto" srcset="https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-2.jpeg 601w, https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-2-300x126.jpeg 300w, https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-2-200x84.jpeg 200w" sizes="(max-width: 601px) 100vw, 601px" /><figcaption class="wp-element-caption"><em>Colin Mackerras speaking to NACTA students about Chinese opera. Date unknown. Photograph by Wang Chengguang, NACTA; shared with Xiaohuan Zhao.</em>  </figcaption></figure>
+
+
+
+<p class="wp-block-paragraph">I treasure the memory of being with Colin at the Chinese Studies Association of Australia biennial conference in Melbourne on 1 December 2025. The photograph from that occasion now carries a particular poignancy. Another image shows him speaking to students at NACTA about Chinese opera. Although its date is unknown, it captures something enduring about him: his willingness to share his knowledge directly with those eager to learn. For me, these images recall not only an eminent scholar, but the friend and mentor whose companionship meant so much over the years.</p>
+
+
+
+<figure class="wp-block-image size-full is-resized"><img decoding="async" width="602" height="451" src="https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-3.jpeg" alt="" class="wp-image-12669" style="aspect-ratio:1.334811529933481;width:602px;height:auto" srcset="https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-3.jpeg 602w, https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-3-134x100.jpeg 134w, https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2026/10/image-3-300x225.jpeg 300w" sizes="(max-width: 602px) 100vw, 602px" /><figcaption class="wp-element-caption"><em>Colin Mackerras and Xiaohuan Zhao at the CSAA Biennial Conference, Melbourne, 1 December 2025. Photograph supplied b

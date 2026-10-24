@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-netherlands
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-netherlands"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:NL</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:06:05.296682Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>NL009</value>
+    </cap:geocode>
+    <link title="Zuid-Holland" href="https://meteoalarm.org?geocode=EMMA_ID:NL009" hreflang="en"/>
+    <cap:areaDesc>Zuid-Holland</cap:areaDesc>
+    <cap:event>Moderate wind warning</cap:event>
+    <cap:sent>2026-10-24T10:52:43+00:00</cap:sent>
+    <cap:expires>2026-10-25T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:52:43+00:00</cap:effective>
+    <cap:onset>2026-10-24T20:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.528.0.NL.261024125243.0_FX_ZH</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/ce9db52c-5664-4d73-a77b-062fab523bcb"/>
+    <link title="The Netherlands" rel="related" href="https://meteoalarm.org?region=NL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:52:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/ce9db52c-5664-4d73-a77b-062fab523bcb?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for The Netherlands - Zuid-Holland</title>
+    <updated>2026-10-24T10:52:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>NL010</value>
+    </cap:geocode>
+    <link title="Zeeland" href="https://meteoalarm.org?geocode=EMMA_ID:NL010" hreflang="en"/>
+    <cap:areaDesc>Zeeland</cap:areaDesc>
+    <cap:event>Moderate wind warning</cap:event>
+    <cap:sent>2026-10-24T10:52:43+00:00</cap:sent>
+    <cap:expires>2026-10-25T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:52:43+00:00</cap:effective>
+    <cap:onset>2026-10-24T20:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.528.0.NL.261024125243.0_FX_ZE</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/89419fb5-6d6a-4e38-ba53-1947f89aa1be"/>
+    <link title="The Netherlands" rel="related" href="https://meteoalarm.org?region=NL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:52:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/89419fb5-6d6a-4e38-ba53-1947f89aa1be?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for The Netherlands - Zeeland</title>
+    <updated>2026-10-24T10:52:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>NL019</value>
+    </cap:geocode>
+    <link title="Waddeneilanden" href="https://meteoalarm.org?geocode=EMMA_ID:NL019" hreflang="en"/>
+    <cap:areaDesc>Waddeneilanden</cap:areaDesc>
+    <cap:event>Moderate wind warning</cap:event>
+    <cap:sent>2026-10-24T10:52:43+00:00</cap:sent>
+    <cap:expires>2026-10-26T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:52:43+00:00</cap:effective>
+    <cap:onset>2026-10-24T20:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.528.0.NL.261024125243.0_FX_WAE</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/17810e77-c906-4673-b0d4-1024a4c2eb8e"/>
+    <link title="The Netherlands" rel="related" href="https://meteoalarm.org?region=NL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:52:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/17810e77-c906-4673-b0d4-1024a4c2eb8e?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for The Netherlands - Waddeneilanden</title>
+    <updated>2026-10-24T10:52:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>NL806</value>
+    </cap:geocode>
+    <link title="Waddenzee" href="https://meteoalarm.org?geocode=EMMA_ID:NL806" hreflang="en"/>
+    <cap:areaDesc>Waddenzee</cap:areaDesc>
+    <cap:event>Moderate wind warning</cap:event>
+    <cap:sent>2026-10-24T10:52:43+00:00</cap:sent>
+    <cap:expires>2026-10-26T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:52:43+00:00</cap:effective>
+    <cap:onset>2026-10-24T20:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.528.0.NL.261024125243.0_FX_WAD</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/1047dee3-3f67-4fea-8ee9-f369ba852b74"/>
+    <link title="The Netherlands" rel="related" href="https://meteoalarm.org?region=NL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:52:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-netherlands/1047dee3-3f67-4fea-8ee9-f369ba852b74?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for The Netherlands - Waddenzee</title>
+    <updated>2026-10-24T10:52:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>NL011</value>
+    </cap:geocode>
+    <link title="Noord-Holland" href="https://meteoalarm.org?geocode=EMMA_ID:NL011" hreflang="en"/>
+    <cap:areaDesc>Noord-Holland</cap:areaDesc>
+    <cap:event>Moderate wind warning</cap:event>
+    <cap:sent>2026-10-24T10:52:43+00:00</cap:sent>
+    <cap:expires>2026-10-26T01:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:52:43+00:00</cap:effective>
+    <cap:onset>2026-10-24T20:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.528.0.NL.261024125243.0_FX_NH</cap:identifier>
+    <link type="application/ca

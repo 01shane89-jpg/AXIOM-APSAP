@@ -1,0 +1,147 @@
+https://www.caribank.org/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:schema="http://schema.org/" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" version="2.0" xml:base="https://www.caribank.org/">
+  <channel>
+    <title>Caribbean Development Bank</title>
+    <link>https://www.caribank.org/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Enhancing the Quality of the Belize National Quality Infrastructure </title>
+  <link>https://www.caribank.org/work-with-us/procurement/procurement-notices/enhancing-quality-belize-national-quality-infrastructure</link>
+  <description>
+
+&lt;span class="field--wrap field--node field--node--rss field--node--title"&gt;Enhancing the Quality of the Belize National Quality Infrastructure &lt;/span&gt;
+&lt;span&gt;&lt;span lang about="https://www.caribank.org/user/297" typeof="schema:Person" property="schema:name" datatype content="alice.castro@caribank.org"&gt;alice.castro@c…&lt;/span&gt;&lt;/span&gt;
+&lt;span&gt;&lt;time datetime="2023-04-19T13:35:27+00:00" title="Wednesday, April 19, 2023 - 13:35"&gt;Wed, 04/19/2023 - 13:35&lt;/time&gt;
+&lt;/span&gt;
+
+
+
+            &lt;div class="field--wrap field--node field--node--rss field--node--body"&gt;&lt;p align="center" style="text-align:center"&gt;&lt;a name="_Hlk131589886"&gt;(This is a republication of the original notice published September 30, 2021)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;The Government of Belize (GOB) has received financing from the Caribbean Development Bank (CDB) in an amount equivalent EUR115,595, to assist in financing the enhancement of the national quality infrastructure in Belize.&amp;nbsp; Payments by CDB will be made only at the request of GOB and upon approval by CDB and will be subject in all respects to the terms and conditions of the Financing Agreement.&amp;nbsp; The Financing Agreement prohibits withdrawal from the financing account for the purpose of any payment to persons or entities, or for any import of goods, if such payment or import, to the knowledge of CDB, is prohibited by a decision of the United Nations Security Council taken under Chapter VII of the Charter of the United Nations.&amp;nbsp; No party other than GOB shall derive any rights from the Financing Agreement or have any claim to the proceeds of the Financing.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;The following consultancy assignments will be procured under the project:&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Consultancy Services- Design and deliver a capacity development module for stakeholders of BBS and BBS staff to audit and implement ISO/IEC 17025:2017 based quality management systems&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;It is expected that these will be procured during the period: August 2021–December 2023.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;The following goods and/or works and/or non-consultancy services will be procured under the project:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Purchasing and delivery of equipment&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;It is expected that these will be procured during the period: August 2021–December 2023.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;/div&gt;
+      
+&lt;div class="field--wrap field--node field--node--rss field--node--field-cdb-country-tag"&gt;
+  &lt;a href="https://www.caribank.org/countries-and-members/borrowing-members/belize" hreflang="en"&gt;Belize&lt;/a&gt;&lt;/div&gt;
+
+
+
+  &lt;div class="field--wrap field--node--field-sector-tag field-display--above"&gt;
+    &lt;div class="field--label"&gt;Sector&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;a href="https://www.caribank.org/our-work/sectors/trade" hreflang="en"&gt;Trade&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+
+&lt;div class="paragraph-list "&gt;
+      
+
+    
+    	
+                &lt;div class="paragraph--margin-bottom--big paragraph--padding--normal paragraph paragraph--type--cdb-multiple-paragraphs paragraph--view-mode--default"&gt;
+                  &lt;div class="container "&gt;
+        
+                  &lt;h3 class="text-uppercase mp-title"&gt;
+          Eligibility
+          &lt;/h3&gt;
+        
+                  &lt;div class="paragraph--description"&gt;
+            
+
+
+            &lt;div class="field--wrap field--paragraph field--paragraph--default field--paragraph--field-cdb-description"&gt;&lt;p style="text-align:justify"&gt;Consultants and/or Contractors and/or Suppliers from member countries of CDB will be eligible to participate in these procurement opportunities. &amp;nbsp;For Goods and Services procured with funds from the project, the eligibility for procurement shall be extended to countries eligible for procurement under EU-funded projects, which are not CDB Member Countries.&lt;a name="_Hlk47875546"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style="text-align:justify"&gt;&lt;a name="_Hlk47875546"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+      
+          &lt;/div&gt;
+        
+        
+
+                  &lt;/div&gt;
+              &lt;/div&gt;
+    
+
+    
+      
+
+    
+    	
+                &lt;div class="paragraph--margin-bottom--big paragraph--padding--normal paragraph paragraph--type--cdb-multiple-paragraphs paragraph--view-mode--default paragraph-bg bg-teal"&gt;
+                  &lt;div class="container "&gt;
+        
+                  &lt;h3 class="text-uppercase mp-title"&gt;
+          Instructions
+          &lt;/h3&gt;
+        
+                  &lt;div class="paragraph--description"&gt;
+            
+
+
+            &lt;div class="field--wrap field--paragraph field--paragraph--default field--paragraph--field-cdb-description"&gt;&lt;p class="text-align-justify" style="text-indent: 0.5in;"&gt;Belize Bureau of Standards (BBS) is the Implementing Agency for the project. &amp;nbsp;Further general details of the project itself, can be obtained by contacting the project coordinator at the address below.&lt;/p&gt;
+&lt;/div&gt;
+      
+          &lt;/div&gt;
+        
+        
+
+                  &lt;/div&gt;
+              &lt;/div&gt;
+    
+
+    
+      
+
+    
+    	
+                &lt;div class="paragraph--margin-bottom--big paragraph paragraph--type--cdb-multiple-paragraphs paragraph--view-mode--default"&gt;
+                  &lt;div class="container "&gt;
+        
+                  &lt;h3 class="text-uppercase mp-title"&gt;
+          Contact
+          &lt;/h3&gt;
+        
+        
+        &lt;div class="multiple-paragraphs-list"&gt;
+      
+
+
+
+  
+  
+&lt;div class="paragraph paragraph--type--grid paragraph--view-mode--first-level"&gt;
+      &lt;div class="row justify-content-between grid--padding grid--padding--t90"&gt;
+                                                                                                                                                                                                                                                &lt;div class="col-md-6 col-c2"&gt;
+            
+
+&lt;div class="paragraph paragraph--type--cdb-people paragraph--settins--p-title paragraph--view-mode--first-level"&gt;
+  
+&lt;h5 class="field--wrap field--paragraph field--paragraph--field-cdb-title"&gt;
+      Address and Contact Information of Implementing Agency
+  &lt;/h5&gt;&lt;h5 class="people--name"&gt;Samantha Budna Banner&lt;/h5&gt;
+
+
+      &lt;div class="field--wrap field--paragraph--field-cdb-department field-display--hidden"&gt;
+              &lt;div&gt;Belize Bureau of Standards (BBS)&lt;/div&gt;
+          &lt;/div&gt;
+  &lt;div class="people--job"&gt;Director&lt;/div&gt;
+&lt;div class="field--wrap field--paragraph field--paragraph--field-cdb-phone-text"

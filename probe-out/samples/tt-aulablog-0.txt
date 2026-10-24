@@ -1,0 +1,98 @@
+https://aulablog.net/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	>
+
+<channel>
+	<title>AULA Blog</title>
+	<atom:link href="https://aulablog.net/feed/" rel="self" type="application/rss+xml" />
+	<link>https://aulablog.net</link>
+	<description>Center for Latin American and Latino Studies, American University</description>
+	<lastBuildDate>Wed, 21 Oct 2026 16:09:34 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+
+<image>
+	<url>https://aulablog.net/wp-content/uploads/2026/05/cropped-depositphotos_8937839_l-2015-1.jpg?w=32</url>
+	<title>AULA Blog</title>
+	<link>https://aulablog.net</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">37746636</site><cloud domain='aulablog.net' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+<source:cloud xmlns:source='https://source.scripting.com/'>https://aulablog.net/?rsscloud=notify</source:cloud>
+<atom:link rel="search" type="application/opensearchdescription+xml" href="https://aulablog.net/osd.xml" title="AULA Blog" />
+	<atom:link rel='hub' href='https://aulablog.net/?pushpress=hub'/>
+	<item>
+		<title>Part 3: Songs of Sovereignty:</title>
+		<link>https://aulablog.net/2026/10/21/part-3-songs-of-sovereignty/</link>
+					<comments>https://aulablog.net/2026/10/21/part-3-songs-of-sovereignty/#respond</comments>
+		
+		<dc:creator><![CDATA[clalsstaff]]></dc:creator>
+		<pubDate>Wed, 21 Oct 2026 16:09:34 +0000</pubDate>
+				<category><![CDATA[Argentina]]></category>
+		<category><![CDATA[2026 FIFA World Cup]]></category>
+		<category><![CDATA[football]]></category>
+		<category><![CDATA[identity]]></category>
+		<category><![CDATA[soccer]]></category>
+		<category><![CDATA[sports]]></category>
+		<category><![CDATA[world-cup]]></category>
+		<guid isPermaLink="false">http://aulablog.net/?p=8897</guid>
+
+					<description><![CDATA[Geopolitics &#38; International Declarations Julia Lisco, Researcher at American University’s Center for Latin American &#38; Latino Studies and the Immigration Lab, International Affairs Policy Analysis in Global Migration MA candidate Singing and soccer are so deeply intertwined; they exist at the core of sports fandom. Throughout a game, crowds will sing songs, often with altered [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="has-medium-font-size wp-block-paragraph"><strong>Geopolitics &amp; International Declarations</strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Julia Lisco</strong>, Researcher at American University’s Center for Latin American &amp; Latino Studies and the Immigration Lab, International Affairs Policy Analysis in Global Migration MA candidate</p>
+
+
+
+<figure class="wp-block-image size-large is-resized"><a href="https://aulablog.net/wp-content/uploads/2026/10/image-3.png"><img width="682" height="511" data-attachment-id="8898" data-permalink="https://aulablog.net/2026/10/21/part-3-songs-of-sovereignty/image-30/" data-orig-file="https://aulablog.net/wp-content/uploads/2026/10/image-3.png" data-orig-size="682,511" data-comments-opened="1" data-image-title="image" data-image-description="" data-image-caption="" data-large-file="https://aulablog.net/wp-content/uploads/2026/10/image-3.png?w=600" src="https://aulablog.net/wp-content/uploads/2026/10/image-3.png?w=682" alt="" class="wp-image-8898" style="width:840px;height:auto" srcset="https://aulablog.net/wp-content/uploads/2026/10/image-3.png 682w, https://aulablog.net/wp-content/uploads/2026/10/image-3.png?w=150 150w, https://aulablog.net/wp-content/uploads/2026/10/image-3.png?w=300 300w" sizes="(max-width: 682px) 100vw, 682px" /></a><figcaption class="wp-element-caption"><em>Image by Julia Lisco of her and her family in Scotland kits with a Scotland flag at the June 6th, 2026, Scotland v Bolivia FIFA World Cup 2026 warm-up game.</em></figcaption></figure>
+
+
+
+<p class="wp-block-paragraph">Singing and soccer are so deeply intertwined; they exist at the core of sports fandom. Throughout a game, crowds will sing songs, often with altered lyrics, in support of a player or to express their discontent with the actions on the field.</p>
+
+
+
+<p class="wp-block-paragraph">Occasionally, chants are politically informed, particularly at the national-team level, even at the World Cup despite FIFA’s attempts to <a href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/stadiums/fan-safety">prohibit political statements</a>. These policies did not stop politically charged chants from ringing out among the fans after kick-off across several matches.</p>
+
+
+
+<p class="wp-block-paragraph"><em>Australian Fans and Current Politics</em></p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://sports.yahoo.com/articles/australian-soccer-fans-anti-donald-185430787.html?guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&amp;guce_referrer_sig=AQAAAL5M6YyLCEpkhZsqm8EapIsy0NqzZniU8tybyWxyP8GHHM6XcNnCwYr2xmXcxO9E-fYvt4yCYHtXl-4hs7gVAulkQ2TPyEh5XXVucBK90UQ8-msqlwTJpg_-kiFV1fj1H580ypNrM2zzuXiOMRiT2vtS0CpT2WBysT1X6-gztRld&amp;guccounter=2">Australian fans drew international ire</a> with their chant, crafted specifically for this World Cup. Cries of “Aussie boys are on a bender, Donald Trump is a sex offender” echoed in stadiums, pubs, and across America and Canada. The chant is believed to be in reference to the President’s alleged relationship with convicted sex offender Jeffrey Epstein, and his inclusion in the Epstein Files.</p>
+
+
+
+<p class="wp-block-paragraph"><em>Argentina and Historical Memory</em></p>
+
+
+
+<p class="wp-block-paragraph">Argentina is infamous for its political and anti-English chants, even when they are not playing England. In <em>The Five-Minute Ritual</em>, I discuss their 2026 semi-final clash, the hostility that permeated the match, and the Falklands context, but the hostility was not contained to these events.</p>
+
+
+
+<p class="wp-block-paragraph">The 1982 Falklands War is frequently referenced in Argentinian songs. <a href="https://www.nytimes.com/athletic/7443080/2026/07/14/argentina-england-falkland-islands-world-cup/">One of the most famous</a> Argentinian football chants, regardless of tournament or opponent, is “Y ya lo ve, y ya lo ve, El que no salta, Es un ingles!” (“And now you see, and now you see, whoever doesn’t jump is English!”), which is sung while fans across the stadium jump in unison.</p>
+
+
+
+<p class="wp-block-paragraph">After Argentina beat Switzerland on July 11, 2026, in the quarter-finals, <a href="https://x.com/AFASeleccionEN/status/2074669124890866047?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E2074669124890866047%7Ctwgr%5Ec2def685ead1a3886cd0d1928762b8abb62e7106%7Ctwcon%5Es1_c10&amp;ref_url=https%3A%2F%2Fwww.nytimes.com%2Fathletic%2F7443080%2F2026%2F07%2F14%2Fargentina-england-falkland-islands-world-cup%2F">videos were posted online of players singing</a>: “Por Malvinas, por el Diego, por la ultima de Leo” (“For the Malvinas [The Falklands], for Diego [Maradona], for Leo [Messi]’s last one”) from the locker room; and in 2022, while on the hunt for the World Cup trophy, <a href="https://www.nytimes.com/athletic/7443080/2026/07/14/argentina-england-falkland-islands-world-cup/">several long chants</a> included call-outs to the war and berating the English.</p>
+
+
+
+<p class="wp-block-paragraph">This animosity is healthily returned by English fans. Enzo Fernandez, a high-profile Argentinian player, has played in England since 2023. J

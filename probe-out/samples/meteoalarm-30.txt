@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:SK</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:05:39.099826Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK706</value>
+    </cap:geocode>
+    <link title="Poprad" href="https://meteoalarm.org?geocode=EMMA_ID:SK706" hreflang="en"/>
+    <cap:areaDesc>Poprad</cap:areaDesc>
+    <cap:event>Moderate wind on mountains warning</cap:event>
+    <cap:sent>2026-10-24T09:52:22+00:00</cap:sent>
+    <cap:expires>2026-10-26T01:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T07:42:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261024074200.6adc615d_PP</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/f02048ba-3e22-40e4-8075-939c441bee0f"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T09:52:22Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/f02048ba-3e22-40e4-8075-939c441bee0f?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Slovakia - Poprad</title>
+    <updated>2026-10-24T09:52:22Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK505</value>
+    </cap:geocode>
+    <link title="Liptovský Mikuláš" href="https://meteoalarm.org?geocode=EMMA_ID:SK505" hreflang="en"/>
+    <cap:areaDesc>Liptovský Mikuláš</cap:areaDesc>
+    <cap:event>Moderate wind on mountains warning</cap:event>
+    <cap:sent>2026-10-24T09:52:22+00:00</cap:sent>
+    <cap:expires>2026-10-26T01:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T07:42:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261024074200.6adc615d_LM</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/c0ad701f-58ee-4397-a6f5-457c8dc8de87"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T09:52:22Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/c0ad701f-58ee-4397-a6f5-457c8dc8de87?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Slovakia - Liptovský Mikuláš</title>
+    <updated>2026-10-24T09:52:22Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK510</value>
+    </cap:geocode>
+    <link title="Tvrdošín" href="https://meteoalarm.org?geocode=EMMA_ID:SK510" hreflang="en"/>
+    <cap:areaDesc>Tvrdošín</cap:areaDesc>
+    <cap:event>Moderate wind on mountains warning</cap:event>
+    <cap:sent>2026-10-24T09:52:22+00:00</cap:sent>
+    <cap:expires>2026-10-26T01:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T07:42:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261024074200.6adc615d_TS</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/7dcee0da-d902-445b-a84a-841627f07f5e"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T09:52:22Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/7dcee0da-d902-445b-a84a-841627f07f5e?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Slovakia - Tvrdošín</title>
+    <updated>2026-10-24T09:52:22Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK507</value>
+    </cap:geocode>
+    <link title="Námestovo" href="https://meteoalarm.org?geocode=EMMA_ID:SK507" hreflang="en"/>
+    <cap:areaDesc>Námestovo</cap:areaDesc>
+    <cap:event>Moderate wind on mountains warning</cap:event>
+    <cap:sent>2026-10-24T09:52:22+00:00</cap:sent>
+    <cap:expires>2026-10-26T01:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T07:42:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261024074200.6adc615d_NO</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/6f99768a-e252-441f-acd8-3c832553f8bc"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T09:52:22Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/6f99768a-e252-441f-acd8-3c832553f8bc?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Slovakia - Námestovo</title>
+    <updated>2026-10-24T09:52:22Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK603</value>
+    </cap:geocode>
+    <link title="Brezno" href="https://meteoalarm.org?geocode=EMMA_ID:SK603" hreflang="en"/>
+    <cap:areaDesc>Brezno</cap:areaDesc>
+    <cap:event>Moderate wind on mountains warning</cap:event>
+    <cap:sent>2026-10-24T09:52:22+00:00</cap:sent>
+    <cap:expires>2026-10-26T01:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T07:42:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261024074200.6adc615d_BR</cap:identifier>
+    <link type="application/cap+xml" href="https:/

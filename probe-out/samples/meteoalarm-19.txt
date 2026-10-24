@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-lithuania
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-lithuania"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:LT</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-24T12:06:03.785084Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT801</value>
+    </cap:geocode>
+    <link title="South Eastern Baltic, Curonian Lagoon" href="https://meteoalarm.org?geocode=EMMA_ID:LT801" hreflang="en"/>
+    <cap:areaDesc>South Eastern Baltic, Curonian Lagoon</cap:areaDesc>
+    <cap:event>Dangerous wind</cap:event>
+    <cap:sent>2026-10-24T10:04:24+00:00</cap:sent>
+    <cap:expires>2026-10-25T20:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:04:24+00:00</cap:effective>
+    <cap:onset>2026-10-24T10:04:22+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.261024130424__000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/9a40189d-94c6-47cd-9547-44bb276055f4"/>
+    <link title="Lithuania" rel="related" href="https://meteoalarm.org?region=LT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:04:24Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/9a40189d-94c6-47cd-9547-44bb276055f4?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Lithuania - South Eastern Baltic, Curonian Lagoon</title>
+    <updated>2026-10-24T10:04:24Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT010</value>
+    </cap:geocode>
+    <link title="Vilnius county" href="https://meteoalarm.org?geocode=EMMA_ID:LT010" hreflang="en"/>
+    <cap:areaDesc>Vilnius county</cap:areaDesc>
+    <cap:event>Dangerous fog</cap:event>
+    <cap:sent>2026-10-24T08:43:02+00:00</cap:sent>
+    <cap:expires>2026-10-25T04:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T08:43:02+00:00</cap:effective>
+    <cap:onset>2026-10-24T21:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.261024114302_04_000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/7eb8a0b7-aa62-4857-8ac2-7a713a8617ae"/>
+    <link title="Lithuania" rel="related" href="https://meteoalarm.org?region=LT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T08:43:02Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/7eb8a0b7-aa62-4857-8ac2-7a713a8617ae?index_info=1&amp;index_area=2&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Lithuania - Vilnius county</title>
+    <updated>2026-10-24T08:43:02Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT009</value>
+    </cap:geocode>
+    <link title="Utena county" href="https://meteoalarm.org?geocode=EMMA_ID:LT009" hreflang="en"/>
+    <cap:areaDesc>Utena county</cap:areaDesc>
+    <cap:event>Dangerous fog</cap:event>
+    <cap:sent>2026-10-24T08:43:02+00:00</cap:sent>
+    <cap:expires>2026-10-25T04:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T08:43:02+00:00</cap:effective>
+    <cap:onset>2026-10-24T21:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.261024114302_04_000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/7eb8a0b7-aa62-4857-8ac2-7a713a8617ae"/>
+    <link title="Lithuania" rel="related" href="https://meteoalarm.org?region=LT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T08:43:02Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/7eb8a0b7-aa62-4857-8ac2-7a713a8617ae?index_info=1&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Lithuania - Utena county</title>
+    <updated>2026-10-24T08:43:02Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT001</value>
+    </cap:geocode>
+    <link title="Alytus county" href="https://meteoalarm.org?geocode=EMMA_ID:LT001" hreflang="en"/>
+    <cap:areaDesc>Alytus county</cap:areaDesc>
+    <cap:event>Dangerous fog</cap:event>
+    <cap:sent>2026-10-24T08:43:02+00:00</cap:sent>
+    <cap:expires>2026-10-25T04:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T08:43:02+00:00</cap:effective>
+    <cap:onset>2026-10-24T21:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.261024114302_04_000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/7eb8a0b7-aa62-4857-8ac2-7a713a8617ae"/>
+    <link title="Lithuania" rel="related" href="https://meteoalarm.org?region=LT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T08:43:02Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/7eb8a0b7-aa62-4857-8ac2-7a713a8617ae?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Lithuania - Alytus county</title>
+    <updated>2026-10-24T08:43:02Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT003</value>
+    </cap:geocode>
+    <link title="Klaipėda county" href="https://meteoalarm.org?geocode=EMMA_ID:LT003" hreflang="en"/>
+    <cap:areaDesc>Klaipėda county</cap:areaDesc>
+    <cap:event>Dangerous wind</cap:event>
+    <cap:sent>2026-10-24T08:43:02+00:00</cap:sent>
+    <cap:expires>2026-10-26T19:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T08:43:02+00:00</cap:effective>
+    <cap:onset>2026-10-25T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.261024114302_01_000</cap:identifier>
+    <link type="application/cap+xml" 

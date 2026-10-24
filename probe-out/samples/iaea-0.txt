@@ -1,0 +1,127 @@
+https://www.iaea.org/feeds/topnews
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="http://www.iaea.org/">
+  <channel>
+    <title>IAEA Top News</title>
+    <link>http://www.iaea.org/</link>
+    <description><![CDATA[Top stories from the International Atomic Energy Agency]]></description>
+    <language>en</language>
+        <pubDate>Fri, 23 Oct 26 15:55:00 +0200</pubDate>
+<item>
+  <title>Update 372 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-372-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/situation_in_ukraine_banner.jpg?itok=8UDjJgGc" type="image/jpeg" length="21888"/><guid isPermaLink="false">290184</guid>
+          <pubDate>
+26-10-23  15:55
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>What is Nuclear Fuel?</title>
+  <link>http://www.iaea.org/newscenter/news/what-is-nuclear-fuel</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/fuel-banner.png?itok=KwnV0GVQ" type="image/png" length="34416"/><guid isPermaLink="false">290182</guid>
+          <pubDate>
+26-10-23  08:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Mission Finds Kenya Committed to Safe Management of Radioactive Waste as it Develops a Nuclear Power Programme</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-mission-finds-kenya-committed-to-safe-management-of-radioactive-waste-as-it-develops-a-nuclear-power-programme</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/kenyaflag.jpeg?itok=SajmiRvh" type="image/jpeg" length="16130"/><guid isPermaLink="false">290161</guid>
+          <pubDate>
+26-10-22  14:18
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Atoms4Food: Protecting Biodiversity</title>
+  <link>http://www.iaea.org/newscenter/multimedia/videos/atoms4food-protecting-biodiversity</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/atoms4food-biodiversity-thumbnail-horizontal-16x9.png?itok=E0JNiydg" type="image/png" length="229375"/><guid isPermaLink="false">290153</guid>
+          <pubDate>
+26-10-20  13:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Mission Says UAE Response to Barakah Nuclear Power Plant Event in May 2026 was Effective</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-mission-says-uae-response-to-barakah-nuclear-power-plant-event-in-may-2026-was-effective</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/iaea-06.jpg?itok=RsNQNcRA" type="image/jpeg" length="33280"/><guid isPermaLink="false">290151</guid>
+          <pubDate>
+26-10-20  10:56
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>From Farm to Fork: How Nuclear Science Helps Put Food on Our Tables</title>
+  <link>http://www.iaea.org/newscenter/news/from-farm-to-fork-how-nuclear-science-helps-put-food-on-our-tables</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/world-food-day-2026-from-farm-to-fork.png?itok=5yijM23p" type="image/png" length="175434"/><guid isPermaLink="false">290113</guid>
+          <pubDate>
+26-10-16  14:35
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Update 371 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-371-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/situation_in_ukraine_banner.jpg?itok=8UDjJgGc" type="image/jpeg" length="21888"/><guid isPermaLink="false">290143</guid>
+          <pubDate>
+26-10-16  05:01
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Burkina Faso Grows More Rice with Nuclear Science</title>
+  <link>http://www.iaea.org/newscenter/news/burkina-faso-grows-more-rice-with-nuclear-science</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Fatma Sarsu|Department of Nuclear Sciences and Applications, Dejana Tadic|Department of Nuclear Sciences and Applications</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/gloria_kabre_rice_0.png?itok=-QOG1Rk1" type="image/png" length="385367"/><guid isPermaLink="false">290144</guid>
+          <pubDate>
+26-10-15  23:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Burkina Faso Grows More Rice with Nuclear Science</title>
+  <link>http://www.iaea.org/newscenter/news/burkina-faso-grows-more-rice-with-nuclear-science</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Fatma Sarsu|Department of Nuclear Sciences and Applications, Dejana Tadic|Department of Nuclear Sciences and Applications</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/gloria_kabre_rice_0.png?itok=-QOG1Rk1" type="image/png" length="385367"/><guid isPermaLink="false">290144</guid>
+          <pubDate>
+26-10-15  23:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Training Centre Builds Practical Skills for Nuclear Security</title>
+  <link>http://www.iaea.org/news/photoessay/iaea-training-centre-builds-practical-skills-for-nuclear-security</link>
+  <description>The IAEA’s Nuclear Security Training and Demonstration Centre, the world’s first international training centre dedicated to enhancing nuclear security, opened its doors in Seibersdorf, Austria, in October 2023.</description>
+  <guid isPermaLink="false">290116</guid>
+          <pubDate>
+26-10-13  23:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Nuclear Technologies in Space: From Batteries to Future Rockets</title>
+  <link>http://www.iaea.org/newscenter/news/nuclear-technologies-in-space-from-batteries-to-future-rockets</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Anna Chtorkh|IAEA Office of Public Information and Communication</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/banner-image-space_0.png?itok=yytkpyW_" type="image/png" length="277462"/><guid isPermaLink="false">290098</guid>
+          <pubDate>
+26-10-12  08:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Update 370 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-370-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-10/situation_in_ukraine

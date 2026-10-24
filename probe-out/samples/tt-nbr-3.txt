@@ -1,0 +1,11 @@
+https://www.nbr.org/robots.txt
+User-agent: *
+Disallow: /wp-content/uploads/wc-logs/
+Disallow: /wp-content/uploads/woocommerce_transient_files/
+Disallow: /wp-content/uploads/woocommerce_uploads/
+Disallow: /*?add-to-cart=
+Disallow: /*?*add-to-cart=
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+
+Sitemap: https://www.nbr.org/wp-sitemap.xml
