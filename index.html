@@ -49,12 +49,15 @@
 </script>
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
 <!-- lock my saved work: a locked device has no saved work in plain storage before any feature reads it (assets/osap-vault.js) -->
+<script src="assets/osap-sold.js"></script>
 <script src="assets/osap-vault.js"></script>
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-lock.js"></script>
 <!-- panic wipe: Settings > Erase this device, or #panic on the address (assets/osap-wipe.js) -->
 <script src="assets/osap-wipe.js"></script>
 <script src="assets/osap-datagate.js"></script>
+<!-- button feedback: a held button shows it is pressed, and a press that waits on downloads shows a bar (assets/osap-press.js) -->
+<script src="assets/osap-press.js"></script>
 <script>
 /* Data files the page writes in further down instead of plain tags: Thailand's own files only when Thailand opens (no country
    in the address, or #th/…; another country never builds the flood and border views, and switching country reloads the page),
@@ -318,7 +321,10 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 /* the report prints as long as it is: the app pins html and body to one screen (and a phone-width print page matches the phone layout), which cut a print to its first page */
 @media print{html.briefing,html.briefing body{height:auto!important;max-height:none!important;min-height:0!important;overflow:visible!important;position:static!important}html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;inset:auto;min-height:0;padding:0;background:#fff;overflow:visible}
-html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
+html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}
+/* printed reports: white paper to the end of the last page (the app background printed as a grey block), and the long
+   military reference in one column (two grid columns left the pages after the short column half empty) */
+html.briefing,html.briefing body{background:#fff!important}html.briefing .bpage.bmilref .bcols{display:block}}
 /* on touch screens an open brief or report is the page itself: the map and panels behind it are taken out of rendering and the report scrolls as the document, so pinch-zooming it stays cheap (zooming a fixed overlay over the live map ran iPhone Safari out of memory, which reloads the page back to the map) */
 @media screen and (hover:none),screen and (max-width:700px){html.briefing body>*:not(#brief):not(.bmeasure){display:none!important}html.briefing:root,html.briefing:root body{height:auto!important;overflow:visible!important}html.briefing #brief{position:relative;inset:auto;min-height:100vh;overflow:visible}}
 .bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{margin:4px 0}
@@ -1387,7 +1393,8 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
      commercial use allowed with credit; it replaced the Esri canvas (whose terms need a paid plan to sell, and forbid packaging
      its tiles) on 2026-10-17. If the drawing engine cannot start, the plain OpenStreetMap tiles stand in, greyed to match. */
   var GREY = { light: "https://tiles.openfreemap.org/styles/positron", dark: "https://tiles.openfreemap.org/styles/dark" };
-  var OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  /* the sold version (assets/osap-sold.js) has no raster stand-in: tile.openstreetmap.org is not for paid products */
+  var OSM_TILES = window.OSAP_SOLD ? "" : "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
   var OFM_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>';
   function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
   function isDark() { return theme() !== "light"; } /* Grey and Dark both use the dark style; Grey lifts it to slate with --base-filter */
@@ -1493,7 +1500,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       L.DomUtil.remove(this._box); this._box = null;
     },
     /* for the 3D view, which draws plain tiles: the OpenStreetMap tiles of the same map (unless the stand-in already is them) */
-    rasterTwin: function () { return this._fb ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
+    rasterTwin: function () { return this._fb || !this.options.fallback ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
     /* no engine (old phone, no WebGL, offline before the style was saved): the plain OpenStreetMap tiles instead */
     _fail: function () {
       if (this._fb || !this.options.fallback) return;
@@ -1547,7 +1554,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
     else if (b.vector) {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
-      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: b.url, max: b.max }).addTo(map);
+      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: window.OSAP_SOLD ? "" : b.url, max: b.max }).addTo(map);
     }
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);

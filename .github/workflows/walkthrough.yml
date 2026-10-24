@@ -1,17 +1,22 @@
-# Records the sample OSAP walkthrough video (tools/walkthrough.mjs) where the map tiles load, and pushes the .webm to the
-# media/walkthrough branch (artifacts cannot be fetched from the build sessions). Writes nothing to main.
-name: Record walkthrough video
+# Records the OSAP walkthrough videos (tools/walkthrough.mjs) where the map tiles load, and pushes them as small .mp4
+# files to the media/walkthrough branch (artifacts cannot be fetched from the build sessions). Writes nothing to main.
+name: Record walkthrough videos
 on:
   push:
     branches: [claude/walkthrough-videos]
     paths: [tools/walkthrough.mjs, .github/workflows/walkthrough.yml]
   workflow_dispatch:
+    inputs:
+      only:
+        description: Videos to record (names, comma-separated; empty records all)
+        required: false
+        default: ""
 permissions:
   contents: write
 jobs:
   record:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -19,14 +24,28 @@ jobs:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
-      - run: OUT=walkthrough node tools/walkthrough.mjs
-      - name: Push the video to media/walkthrough
+      - run: OUT=walkthrough node tools/walkthrough.mjs 2>&1 | tee walkthrough-log.txt
+        env:
+          ONLY: ${{ inputs.only }}
+      - name: Convert to MP4 (H.264, plays everywhere)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
+          mkdir pub
+          # start each video at its opening title card (tools/walkthrough.mjs writes the second to <name>.cut)
+          # and cut any long wait the script marked (<name>.skip: "from to", seconds after the title card)
+          for f in walkthrough/*.webm; do
+            cut=$(cat "${f%.webm}.cut" 2>/dev/null || echo 0); vf="null"
+            if [ -f "${f%.webm}.skip" ]; then read a b < "${f%.webm}.skip" || true; vf="select='not(between(t,$a,$b))',setpts=N/(25*TB)"; fi
+            ffmpeg -v error -ss "$cut" -i "$f" -vf "$vf" -r 25 -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart "pub/$(basename "${f%.webm}").mp4"
+          done
+          cp walkthrough-log.txt pub/log.txt && ls -la pub
+      - name: Push the videos to media/walkthrough
         env:
           TOKEN: ${{ github.token }}
         run: |
-          mkdir pub && cp walkthrough/walkthrough.webm pub/ && cd pub
+          cd pub
           git init -q -b media/walkthrough
-          git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q --allow-empty -m "walkthrough video from ${GITHUB_SHA::7}" 
-          git add walkthrough.webm
-          git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q --amend -m "walkthrough video from ${GITHUB_SHA::7}"
+          git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q --allow-empty -m "walkthrough videos from ${GITHUB_SHA::7}" 
+          git add *.mp4 log.txt
+          git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q --amend -m "walkthrough videos from ${GITHUB_SHA::7}"
           git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/walkthrough

@@ -53,6 +53,11 @@ jobs:
           git add -f data/live/milref
           git commit -qm "Test output (milref) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/milref-preview-data
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/live/milref
       - name: Commit if anything changed
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |

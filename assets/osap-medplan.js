@@ -1117,7 +1117,7 @@
     "#medplan ul.mppic{list-style:none;margin:2px 0 6px;padding:0;display:grid;gap:4px}#medplan ul.mppic li{background:#ffe8a3;color:#3d2900;border-left:4px solid #a35f00;border-radius:4px;padding:5px 8px;font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
     "#medplan ul.mppic li b{display:block;font-size:13px;letter-spacing:.01em}#medplan ul.mppic li span{display:block;color:#3d2900}#medplan table.mpage tr.mpstale td,#medplan table.mpage tr.mpstale th{color:#8a4b00}:root[data-map=grey] #medplan table.mpage tr.mpstale td,:root[data-map=dark] #medplan table.mpage tr.mpstale td,:root[data-map=grey] #medplan table.mpage tr.mpstale th,:root[data-map=dark] #medplan table.mpage tr.mpstale th{color:#F5C877}" +
     "#medplan ul.mpvl{list-style:none;margin:0 0 4px;padding:0;columns:2 300px;column-gap:18px}#medplan ul.mpvl li{break-inside:avoid;margin:0 0 3px;font-size:12.5px}#medplan .mpvm{display:inline-block;width:1.2em;text-align:center;font-weight:700}#medplan .mpv-ok .mpvm{color:#1e7a3a}#medplan .mpv-warning .mpvm{color:#a35f00}#medplan .mpv-blocking{color:#8b0d02}#medplan .mpv-blocking .mpvm{color:#b3261e}" +
-    "@media print{.mpdoc{font-size:9.6px}.mpdoc h3{break-after:avoid;font-size:12px}.mpdoc tr,.mpdoc figure,.mpdoc .mppst{break-inside:avoid}.mpdoc .aitag::after{content:none}}" +
+    "@media print{#brief .mpdoc table:is(.mproles,:has(td.mpfac)):not(.mpage) th,#brief .mpdoc table:is(.mproles,:has(td.mpfac)):not(.mpage) td.n,#brief .mpdoc table:is(.mproles,:has(td.mpfac)):not(.mpage) td.n *{white-space:normal}#brief .mpdoc td .sub{overflow-wrap:anywhere}#brief .mpdoc table:is(.mproles,:has(td.mpfac)):not(.mpage){table-layout:auto}#brief .mpdoc td.mpfac{width:34%}.mpdoc{font-size:9.6px}.mpdoc h3{break-after:avoid;font-size:12px}.mpdoc tr,.mpdoc figure,.mpdoc .mppst{break-inside:avoid}.mpdoc .aitag::after{content:none}}" +
     "@media (max-width:700px){.mpdoc .mpgrid{grid-template-columns:1fr}.mpdoc td.n{white-space:normal}}" +
     /* Shane 2026-10-10: on his iPhone the CONOP tables ran off the left of the screen and the From column wrapped a few letters a line;
        every print-view table stacks as labelled cards on a phone screen (paper keeps the columns), and the page clears the status bar */
@@ -2727,7 +2727,8 @@
   }
 
   /* ---------- the printed map: OpenStreetMap tiles and the plan drawn on a canvas, so it prints on every device ---------- */
-  var TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  /* the sold version (assets/osap-sold.js) prints the plan on a plain map: tile.openstreetmap.org is not for paid products */
+  var TILE_URL = W.OSAP_SOLD ? "" : "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
   function wpx(p, z) {
     var n = 256 * Math.pow(2, z), la = Math.max(-85, Math.min(85, p[0])) * Math.PI / 180;
     return [(p[1] + 180) / 360 * n, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n];
@@ -2772,7 +2773,7 @@
   }
   function tileImg(z, x, y) {
     var n = Math.pow(2, z); x = ((x % n) + n) % n;
-    if (y < 0 || y >= n) return Promise.resolve(null);
+    if (y < 0 || y >= n || !TILE_URL) return Promise.resolve(null);
     function at(T) { return T.replace("{z}", z).replace("{x}", x).replace("{y}", y); }
     var url = at(TILE_URL);
     return tileNet(url).then(function (im) { return im ? { im: im } : tileSaved(url).then(function (sv) { return sv ? { im: sv } : tileNet(url).then(function (r) { return r ? { im: r } : null; }); }); });

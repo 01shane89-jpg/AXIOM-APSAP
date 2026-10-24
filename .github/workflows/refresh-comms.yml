@@ -59,6 +59,11 @@ jobs:
           done
           python tools/build_comms_coverage.py data/comms/cov ${{ steps.q.outputs.args }}
           du -sh data/comms/cov
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/comms
       - name: Commit on main
         if: ${{ github.ref == 'refs/heads/main' && env.SKIP != '1' }}
         run: |
