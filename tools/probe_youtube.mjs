@@ -1,4 +1,4 @@
-import "./probe_tg.mjs";
+import "./probe_bsky.mjs";
 // Test only: finds YouTube channels for broadcasters and official agencies by name, and checks each one posts.
 // For every query in tools/youtube_candidates.json it reads YouTube's public channel search (no account, key or Data API),
 // takes the best channel results, then reads that channel's Videos page for the latest upload time. Prints one line per
