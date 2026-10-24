@@ -1,0 +1,59 @@
+name: Refresh risk rating equivalents
+
+# Every 6 hours (tools/refresh_risk.mjs): a derived five-level risk rating ("OSAP risk equivalent", modelled on commercial
+# country and city ratings such as Crisis24's) for every country and its major cities, from World Bank WDI and Worldwide
+# Governance Indicators (CC BY 4.0, read once a week) and the feeds OSAP already holds in data/live (UCDP conflict deaths,
+# WHO and CDC notices, GDACS, USGS, official warnings, cyclone forecasts, IODA). Writes data/live/risk/<cc>.json and
+# data/live/risk/index.json; the Today screen and the Country brief read them (assets/osap-risk.js). Not an official
+# advisory: official advisories are never an input. Keyless, no account. A run on any branch other than main parks its
+# output on claude/risk-preview-data instead of committing.
+on:
+  schedule:
+    # after the 15-minute feed refresh has written the hazard and outbreak files, off the hour
+    - cron: "37 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-risk-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  risk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Work out the ratings
+        timeout-minutes: 15
+        run: node tools/refresh_risk.mjs
+      - name: Park test output on a preview-data branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan risk-preview-data
+          git rm -rqf --cached .
+          git add -f data/live/risk
+          git commit -qm "Test output (risk) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/risk-preview-data
+      - name: Commit if anything changed
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/live/risk 2>/dev/null || true
+          if git diff --quiet -- data/live/risk; then echo "no change"; exit 0; fi
+          git config user.name "asap-risk-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live/risk
+          git commit -m "Refresh risk rating equivalents $(date -u +'%Y-%m-%d %H:%MZ')"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          exit 1

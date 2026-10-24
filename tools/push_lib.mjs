@@ -4,6 +4,7 @@
 // the phone subscribes to. The list is data/push/watches.json in this public repository, so nothing secret may go in it.
 import fs from "node:fs";
 import { createRequire } from "node:module";
+import { tzOk } from "./push_brief.mjs";
 // the app's own Boolean parser (assets/osap-boolq.js), so a push watch is read exactly as the page reads it
 const BOOLQ = createRequire(import.meta.url)("../assets/osap-boolq.js");
 
@@ -73,5 +74,7 @@ export function validate(w) {
   const conf = w.conf === "ied" ? "ied" : undefined;   // Deep South IED watch: only reports confirmed by an official source or corroborated
   // the plan of the account that keeps the watch (the server says it): the push job checks a Mid watch with Mid's data only
   const plan = w.plan === "mid" ? "mid" : "full";
-  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic, plan } };
+  // the morning brief (tools/push_brief.mjs): the phone's time zone, and brief: false when the watch is left out of it
+  const tz = tzOk(w.tz) ? w.tz : undefined, brief = w.brief === false ? false : undefined;
+  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic, plan, ...(tz ? { tz } : {}), ...(brief === false ? { brief } : {}) } };
 }

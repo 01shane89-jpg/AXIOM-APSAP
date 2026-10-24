@@ -6,18 +6,21 @@
 //   2. Reports not seen before for that watch, dated in the last PUSH_MAX_AGE_H hours, are sent to the watch's ntfy.sh channel:
 //      one alert per event, at most PER_WATCH per watch per run, then one "and N more" alert. A report joining an event that was
 //      already sent is noted, not sent again. The first check of a new watch only notes what is already there.
-//   3. What was seen is kept in PUSH_STATE (the job keeps it in the Actions cache, never in the repo). Losing it only means the
+//   3. Once a local morning, each ntfy channel also gets a morning brief for the countries its watches are on
+//      (tools/push_brief.mjs), sent after the alerts and inside the same per-run cap.
+//   4. What was seen is kept in PUSH_STATE (the job keeps it in the Actions cache, never in the repo). Losing it only means the
 //      next check notes everything again without sending.
 // A push is a notice about a report, never a finding: it carries the source, the report's status and "reported, not verified".
 // Report text is data; nothing in it is followed. Logs name watch ids and counts only, never report text.
 // Env: PUSH_STATE (default .push-state/state.json), PUSH_TEST=1 (send the newest match of each watch as a test, keep no state),
-//      PUSH_DRY=1 (send nothing, print what would be sent; still keeps state), PUSH_NTFY (default https://ntfy.sh), CHROME_PATH.
+//      PUSH_BRIEF=0 (no morning briefs), PUSH_DRY=1 (send nothing, print what would be sent; still keeps state), PUSH_NTFY (default https://ntfy.sh), CHROME_PATH.
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fetchList } from "./push_lib.mjs";
 import { rulesForPage } from "./tiers.mjs";
+import * as BRIEF from "./push_brief.mjs";
 
 const STATE = process.env.PUSH_STATE || ".push-state/state.json";
 const NTFY = (process.env.PUSH_NTFY || "https://ntfy.sh").replace(/\/$/, "");
@@ -75,7 +78,7 @@ async function scan() {
   }
   const byCc = {};
   list.forEach((w) => { const k = w.cc + (w.plan === "mid" ? "|mid" : ""); (byCc[k] = byCc[k] || []).push(w); });
-  const out = {}, failed = [], queue = Object.keys(byCc);
+  const out = {}, failed = [], queue = Object.keys(byCc), meta = { tz: {}, names: {} };
   await Promise.all([0, 1, 2].map(async () => {
     while (queue.length) {
       const key = queue.shift(), cc = key.split("|")[0], p = await (key.endsWith("|mid") ? midCtx : ctx).newPage();
@@ -88,6 +91,9 @@ async function scan() {
           same = n === last ? same + 1 : 0; last = n; await p.waitForTimeout(1000);
         }
         if (key.endsWith("|mid") && !(await p.evaluate(() => !!(window.OSAP_DATA && window.OSAP_DATA.plan() && window.OSAP_DATA.plan().tier === "mid")))) throw new Error("Mid's data rules did not take");
+        // each country's main time zone and name, from the page (the morning brief's clock for watches sent without one)
+        if (!meta.tz[cc]) Object.assign(meta.tz, await p.evaluate(() => window.OSAP_TZMAP || {}));
+        meta.names[cc] = await p.evaluate((c) => { const n = window.OSAP_WATCH.countryName && window.OSAP_WATCH.countryName(c); return typeof n === "string" ? n : ""; }, cc);
         for (const w of byCc[key]) {
           out[w.id] = await p.evaluate((w) => {
             return window.OSAP_WATCH.matches(w);
@@ -99,7 +105,7 @@ async function scan() {
   }));
   await browser.close(); srv.close();
   if (failed.length) console.log("push: failed countries: " + failed.join("; "));
-  return out;
+  return { out, meta };
 }
 
 // ---------- 2. sending ----------
@@ -139,7 +145,7 @@ function alertFor(w, m) {
   };
 }
 
-const matches = await scan();
+const { out: matches, meta } = await scan();
 const state = TEST ? { watches: {} } : loadState();
 const next = { watches: {}, at: new Date(now).toISOString() };
 let sentTotal = 0, noted = 0, failedSends = 0, held = 0;
@@ -190,6 +196,24 @@ for (const j of jobs) {
   next.watches[w.id] = { seen, sent, checked: now };
   console.log(`push: ${w.id} (${w.cc}${w.plan === "mid" ? ", mid" : ""}): ${j.ms.length} matching, ${j.first ? "first check, noted only" : fresh.length + " new, " + j.done + " sent" + (more > 0 ? ", +" + more + " more" : "")}`);
 }
+// 3. morning briefs, one a local day per channel, after the alerts and inside the same cap. A channel one of whose countries did
+//    not load this run waits for the next check (still inside its morning), so a brief never says "nothing" for want of data.
+let briefs = 0, briefsHeld = 0;
+next.briefs = TEST ? {} : { ...(state.briefs || {}) };
+if (process.env.PUSH_BRIEF !== "0") {
+  for (const ch of BRIEF.channels(list, meta.tz)) {
+    const day = TEST ? BRIEF.local(now, ch.tz).date : BRIEF.dueDate(ch, now, next.briefs[ch.topic]);
+    if (!day) continue;
+    if (ch.watches.some((w) => !matches[w.id])) { briefsHeld++; continue; }
+    if (sentTotal >= PER_RUN) { briefsHeld++; continue; }
+    const msg = BRIEF.compose(ch, { matches, names: meta.names, daily: (cc) => BRIEF.dailyOf(cc, now), now, live: LIVE, test: TEST });
+    if (!msg) continue;
+    if (await send(ch.watches[0], msg)) { sentTotal++; briefs++; next.briefs[ch.topic] = day; } else failedSends++;
+  }
+  // forget channels that no longer have a watch
+  const live = new Set(list.map((w) => w.topic)); Object.keys(next.briefs).forEach((t) => { if (!live.has(t)) delete next.briefs[t]; });
+}
+console.log(`push: ${briefs} morning brief(s) sent, ${briefsHeld} held for the next check`);
 if (!TEST) saveState(next);
 console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent, ${failedSends} failed, ${held} held for the next run, ${noted} new watch(es) noted`);
 // a test run reads its channels back from ntfy.sh, to prove the alerts arrived (counts only)

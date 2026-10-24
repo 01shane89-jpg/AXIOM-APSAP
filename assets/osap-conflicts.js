@@ -74,7 +74,15 @@
     // analyst review: status tags and the confirm / reject buttons of the review queue
     ".tag.vok{border-color:#1F8A4C!important;color:#1F8A4C!important;font-weight:600}.tag.vno{border-color:var(--bad,#C0392B)!important;color:var(--bad,#C0392B)!important}.tag.vsent{border-style:dashed!important}" +
     "#cf-rail .cfrv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:5px 0 0}#cf-rail .cfrv button,#cf-rail .cfrv select{font:inherit;font-size:12px;padding:3px 9px;min-height:28px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}" +
-    "#cf-rail .cfrv button[data-cfv=confirm_incident]{border-color:#1F8A4C;color:#1F8A4C;font-weight:600}#cf-rail .cfrv button[data-cfv=reject_incident]{border-color:var(--bad,#C0392B);color:var(--bad,#C0392B)}"
+    "#cf-rail .cfrv button[data-cfcode]{border-color:#1F8A4C;color:#1F8A4C;font-weight:600}#cf-rail .cfrv button[data-cfv=reject_incident]{border-color:var(--bad,#C0392B);color:var(--bad,#C0392B)}",
+    // the incident record: the coded line of a confirmed incident, and the per-field coding form of the review queue
+    "#cf-rail .cfrec{margin:4px 0 0;padding:4px 7px;border-left:3px solid #1F8A4C;background:var(--surface-2,rgba(31,138,76,.06));font-size:12px;line-height:1.45}" +
+    "#cf-rail .cfcf{margin:6px 0 2px;padding:7px 8px;border:1px solid #1F8A4C;border-radius:5px;font-size:12px}#cf-rail .cfcf h4{margin:0 0 4px;font-size:12px}" +
+    "#cf-rail .cfcf .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 6px;align-items:center;padding:5px 0;border-top:1px solid var(--line-soft)}#cf-rail .cfcf .r>.c{grid-column:1/-1}" +
+    "#cf-rail .cfcf .c{display:flex;flex-wrap:wrap;gap:4px}#cf-rail .cfcf input,#cf-rail .cfcf select{font:inherit;font-size:12px;padding:2px 5px;min-height:26px;max-width:100%;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)}" +
+    "#cf-rail .cfcf input[type=number]{width:88px}#cf-rail .cfcf input[data-f=n],#cf-rail .cfcf input[data-f=a1],#cf-rail .cfcf input[data-f=a2]{min-width:120px;flex:1}#cf-rail .cfcf select{max-width:100%}#cf-rail .cfcf .sg{flex-basis:100%;color:var(--muted);font-size:11px}#cf-rail .cfcf .sg b{font-weight:600}" +
+    "#cf-rail .cfcf label.ck{white-space:nowrap;cursor:pointer}#cf-rail .cfcf .go{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}#cf-rail .cfcf .go button{font:inherit;font-size:12px;padding:3px 9px;min-height:28px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}" +
+    "#cf-rail .cfcf .go button[data-cfrec]{border-color:#1F8A4C;color:#1F8A4C;font-weight:600}#cf-rail .cfcf .go button[disabled]{opacity:.5;cursor:not-allowed}#cf-rail .cfcf .er{color:var(--bad,#C0392B)}"
   ].join("\n");
   D.head.appendChild(css);
 
@@ -216,9 +224,15 @@
   var VWHY = [["not_incident", "Not a real incident"], ["not_this_conflict", "Not this conflict"], ["wrong_place_or_time", "Wrong place or time"], ["duplicate", "Duplicate of another incident"], ["other", "Other reason"]];
   var vLoaded = 0;
   // the projection, read again when a tab opens (a decision recorded meanwhile shows without a reload); a missing file is no decisions
+  // with it: the incident record's field rules (assets/osap-cf-code.js, once) and the AI suggestions (data/live/conflicts/suggest.js);
+  // either missing only leaves the coding form without those suggestions
+  var codeP = null;
   function loadVerified() {
     if (Date.now() - vLoaded < 60000) return Promise.resolve();
-    return load("data/live/conflicts/verified.js?m=" + Math.floor(Date.now() / 60000)).then(function () { vLoaded = Date.now(); }, function () {});
+    var m = Math.floor(Date.now() / 60000);
+    if (!codeP) codeP = W.OSAP_CF_CODE ? Promise.resolve() : load("assets/osap-cf-code.js").catch(function () { codeP = null; });
+    return Promise.all([load("data/live/conflicts/verified.js?m=" + m).catch(function () {}), load("data/live/conflicts/suggest.js?m=" + m).catch(function () {}), codeP])
+      .then(function () { vLoaded = Date.now(); });
   }
   function vrec(i) { var v = W.OSAP_CF_VERIFIED, m = v && v.by && active && v.by[active]; return m && i && i.fp ? m[i.fp] || null : null; }
   var sentC = null;   // read once, again after each decision sent
@@ -233,11 +247,146 @@
   function reviewable(i) { return !!(i && !i.tab && /^[0-9a-f]{64}$/.test(i.fp || "") && family(i) !== "ucdp"); }
   function vsHtml(g) {
     var r = g.all.map(vrec).filter(Boolean)[0];
-    if (g.vs === "confirmed") return '<span class="tag vok" title="' + esc("An analyst confirmed these reports describe a real incident (" + day(r.at) + (r.r ? ": " + r.r : "") + "). Figures and statements in them stay as reported.") + '">Analyst confirmed</span>';
+    if (g.vs === "confirmed") return '<span class="tag vok" title="' + esc("An analyst confirmed these reports describe a real incident (" + day(r.at) + (r.r ? ": " + r.r : "") + "). Figures and statements in them stay as reported.") + '">Analyst confirmed</span>' + recHtml(r);
     if (g.vs === "rejected") return '<span class="tag vno" title="' + esc("An analyst rejected this incident (" + day(r.at) + "): " + ((VWHY.filter(function (w) { return w[0] === r.why; })[0] || [0, "other reason"])[1]) + (r.r ? ". " + r.r : "")) + '">Rejected</span>';
     if (g.vs === "sent") return '<span class="tag vsent" title="A decision was sent from this device; it shows here once it is recorded (usually within a few minutes)">Decision sent</span>';
     return "";
   }
+  /* ---------- the incident record (ACLED-style): what an analyst coded when confirming ----------
+     Event type, actors (with what each attribution rests on), place with its precision, and the fatalities one report gives, as
+     reported. The fields come from assets/osap-cf-code.js; tools/cf_decision_lib.mjs checks and records them. */
+  function incOf(r) { var v = W.OSAP_CF_VERIFIED, l = r && v && v.incidents && v.incidents[active]; return (l || []).filter(function (x) { return x.incident_id === r.inc; })[0] || null; }
+  var BASISN = { named_by_source: "named by the source", claimed_by_actor: "claimed by the actor", attributed_by_party: "attributed by a party", unidentified: "not identified" };
+  function actorTxt(a) { return a ? esc(a.name) + ' <span class="cfm">(' + esc(BASISN[a.basis] || a.basis) + ")</span>" : ""; }
+  function recHtml(r) {
+    var x = incOf(r), c = x && x.record; if (!c) return "";
+    var pl = c.place || {}, f = c.fatalities || {};
+    return '<div class="cfrec" title="The analyst\u2019s coded record of this incident. Fatalities are as the cited report gives them; actors are as attributed, not established fact.">' +
+      "<b>" + esc(c.event_type) + "</b> · " + esc(c.sub_event_type) + "<br>" + actorTxt(c.actor1) + (c.actor2 ? " · against " + actorTxt(c.actor2) : "") + "<br>" +
+      esc(pl.n || (pl.la != null ? (+pl.la).toFixed(3) + ", " + (+pl.lo).toFixed(3) : "")) + ' <span class="cfm">(geo precision ' + esc(pl.precision) + ")</span> · " +
+      (f.n == null ? "fatalities not given" : num(f.n) + " killed, as reported by " + esc(f.outlet || "the cited report")) + "</div>";
+  }
+  // the confirmed list's coded incidents as a CSV file, ACLED-like columns (built here from the projection; nothing is sent anywhere)
+  function recCsv() {
+    var C = W.OSAP_CF_CODE, v = W.OSAP_CF_VERIFIED, l = (v && v.incidents && v.incidents[active]) || [];
+    var rows = l.filter(function (x) { return x.status === "confirmed" && x.record; }).map(function (x) {
+      var c = x.record, pl = c.place || {}, f = c.fatalities || {};
+      return { incident_id: x.incident_id, conflict: active, event_date: x.lead ? String(x.lead.date || "").slice(0, 10) : "", event_type: c.event_type, sub_event_type: c.sub_event_type,
+        actor1: c.actor1 && c.actor1.name, actor1_basis: c.actor1 && c.actor1.basis, actor2: c.actor2 && c.actor2.name, actor2_basis: c.actor2 && c.actor2.basis,
+        location: pl.n, latitude: pl.la, longitude: pl.lo, geo_precision: pl.precision, fatalities_reported: f.n, fatalities_source: f.n == null ? "" : (f.outlet || "") + " " + (f.from_fp || "").slice(0, 16),
+        reports: x.reports.length, sources: x.lead ? (x.lead.outlet || "") + " " + (x.lead.link || "") : "", decision_id: x.decision_id, decided_at: x.decided_at, analyst_reason: x.reason };
+    });
+    if (!C || !rows.length) return;
+    var a = D.createElement("a"), u = URL.createObjectURL(new Blob([C.csv(rows)], { type: "text/csv" }));
+    a.href = u; a.download = "osap-incident-record-" + active + "-" + new Date().toISOString().slice(0, 10) + ".csv"; D.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+  }
+  function codedN() { var v = W.OSAP_CF_VERIFIED, l = (v && v.incidents && v.incidents[active]) || []; return l.filter(function (x) { return x.status === "confirmed" && x.record; }).length; }
+
+  /* the coding form: one row per field, each with the suggestion it starts from (AI, else rules) and a "Checked" box the analyst
+     ticks. Changing a field unticks it. The decision issue opens only when every field is ticked; the job refuses it otherwise. */
+  function sugFor(g) {
+    var C = W.OSAP_CF_CODE, d = cur.data, parties = (d && d.parties) || [], reps = [g.lead].concat(g.all.filter(function (x) { return x !== g.lead; }));
+    var S = W.OSAP_CF_SUGGEST, sm = S && S.by && S.by[active], ru = C ? C.rules(g.lead, parties) : {}, out = {};
+    // rules over the whole incident: the first pinned report's place; the lowest figure any report's headline gives (cited)
+    var pin = reps.filter(function (x) { return x.geo && x.geo.la != null; })[0];
+    if (pin && C) ru.place = C.rules(pin, parties).place;
+    var low = reps.filter(function (x) { return typeof x.killed === "number"; }).sort(function (a, b) { return a.killed - b.killed; })[0];
+    ru.fatalities = low ? { n: low.killed, from_fp: low.fp } : null;
+    (C ? C.FIELDS : []).forEach(function (f) {
+      var ai = null;
+      if (sm) for (var k = 0; k < reps.length && !ai; k++) { var s = sm[reps[k].fp]; if (s && s.f && s.f[f] != null) ai = { v: s.f[f], fp: reps[k].fp, m: s.m || s.p || "model" }; }
+      if (ai && f === "sub_event_type" && out.event_type && out.event_type.v !== (sm[ai.fp].f.event_type || "")) ai = null;
+      if (ai && f === "place") ai.v = { n: ai.v, la: ru.place ? ru.place.la : null, lo: ru.place ? ru.place.lo : null, precision: ru.place ? ru.place.precision : 3, from_fp: ru.place ? ru.place.from_fp : null };
+      if (ai && f === "fatalities") ai.v = { n: ai.v, from_fp: ai.fp };
+      out[f] = ai ? { src: "ai", v: ai.v, m: ai.m } : ru[f] != null ? { src: "rules", v: ru[f] } : null;
+    });
+    // a sub-event type must sit under the event type suggested
+    if (out.sub_event_type && !(out.event_type && C.isSub(out.event_type.v, out.sub_event_type.v))) out.sub_event_type = null;
+    return out;
+  }
+  function opts(list, sel, blank) {
+    return (blank != null ? '<option value="">' + esc(blank) + "</option>" : "") + list.map(function (o) { var v = Array.isArray(o) ? o[0] : o, t = Array.isArray(o) ? o[1] : o;
+      return '<option value="' + esc(v) + '"' + (String(v) === String(sel == null ? "" : sel) ? " selected" : "") + ">" + esc(t) + "</option>"; }).join("");
+  }
+  function sgTxt(s) { return s ? '<span class="sg">' + (s.src === "ai" ? '<b>AI suggestion</b> <span title="' + esc("Suggested by " + s.m + "; a draft, not analyst-approved") + '">(AI generated)</span>' : "<b>Rule suggestion</b> (from the report\u2019s kind, the conflict\u2019s parties and the place found)") + "</span>" : '<span class="sg">No suggestion: code it yourself</span>'; }
+  function formHtml(g, k) {
+    var C = W.OSAP_CF_CODE; if (!C) return '<div class="cfcf"><p class="er">The incident record\u2019s field list could not be loaded. Reload the page and try again.</p></div>';
+    var sg = g._sg = sugFor(g), d = cur.data || {}, parties = d.parties || [], prev = g.vs === "confirmed" ? (incOf(g.all.map(vrec).filter(Boolean)[0]) || {}).record : null;
+    function v(f) { return prev ? prev[f] : sg[f] ? sg[f].v : null; }
+    var et = v("event_type") || "", se = v("sub_event_type") || "", a1 = v("actor1") || {}, a2 = v("actor2") || {}, pl = v("place") || {}, fa = v("fatalities") || {};
+    var actorsL = uniq(parties.concat(C.GENERIC));
+    var pins = [], seen = {};
+    g.all.forEach(function (x) { if (x.geo && x.geo.la != null) { var key = (+x.geo.la).toFixed(3) + "," + (+x.geo.lo).toFixed(3); if (!seen[key]) { seen[key] = 1; pins.push(x); } } });
+    var pinSel = pl.from_fp && pins.some(function (x) { return x.fp === pl.from_fp; }) ? pl.from_fp : "";
+    function row(f, label, ctl) { return '<div class="r" data-row="' + f + '"><b>' + label + '</b><label class="ck"><input type="checkbox" data-ck="' + f + '"> Checked</label><div class="c">' + ctl + (prev ? "" : sgTxt(sg[f])) + "</div></div>"; }
+    var bas = C.BASIS;
+    return '<div class="cfcf" data-cfform="' + k + '"><h4>Incident record: check every field, then record it</h4>' +
+      '<p class="cfm">Suggestions are proposals; nothing counts until you tick it. Figures stay as the cited report gives them; actors are as attributed.</p>' +
+      row("event_type", "Event type", '<select data-f="event_type">' + opts(Object.keys(C.TYPES), et, "Choose") + "</select>") +
+      row("sub_event_type", "Sub-event", '<select data-f="sub_event_type">' + opts(C.TYPES[et] || [], se, "Choose") + "</select>") +
+      row("actor1", "Actor 1", '<input data-f="a1" list="cfactors-' + k + '" value="' + esc(a1.name || "") + '" placeholder="Side that acted"><select data-f="a1b">' + opts(bas, a1.basis || "named_by_source") + "</select>") +
+      row("actor2", "Actor 2", '<input data-f="a2" list="cfactors-' + k + '" value="' + esc(a2.name || "") + '" placeholder="Side acted on (blank: none)"><select data-f="a2b">' + opts(bas, a2.basis || "named_by_source") + "</select>") +
+      row("place", "Place", '<select data-f="pin" aria-label="Place from">' + opts(pins.map(function (x) { return [x.fp, (x.geo.n || "pin") + (x.geo.p === "province" ? " (province centre)" : "") + " · " + oname(x)]; }).concat([["", "My own place or coordinates"]]), pinSel) + "</select>" +
+        '<input data-f="n" value="' + esc(pl.n || "") + '" placeholder="Place name"><input data-f="la" type="number" step="any" value="' + esc(pl.la == null ? "" : pl.la) + '" placeholder="Lat"><input data-f="lo" type="number" step="any" value="' + esc(pl.lo == null ? "" : pl.lo) + '" placeholder="Lon">' +
+        '<select data-f="prec" aria-label="Geo precision">' + opts(C.PRECISION, pl.precision || 3) + "</select>") +
+      row("fatalities", "Fatalities", '<input data-f="fn" type="number" min="0" step="1" value="' + esc(fa.n == null ? "" : fa.n) + '" placeholder="Not given"><select data-f="ffp" aria-label="As reported by">' +
+        opts(g.all.map(function (x) { return [x.fp, "As reported by " + oname(x) + (typeof x.killed === "number" ? " (headline: " + x.killed + ")" : "")]; }), fa.from_fp || g.lead.fp) + "</select>") +
+      '<datalist id="cfactors-' + k + '">' + actorsL.map(function (a) { return '<option value="' + esc(a) + '">'; }).join("") + "</datalist>" +
+      '<div class="go"><button type="button" data-cfrec="' + k + '" disabled title="Tick every field first">Record (opens a GitHub issue)</button><button type="button" data-cfcancel="' + k + '">Cancel</button><span class="er" data-er></span></div></div>';
+  }
+  function formRead(box, g) {
+    var q = function (f) { var e = box.querySelector('[data-f="' + f + '"]'); return e ? e.value.trim() : ""; };
+    var ticked = [].slice.call(box.querySelectorAll("input[data-ck]:checked")).map(function (e) { return e.getAttribute("data-ck"); });
+    var la = q("la"), lo = q("lo"), pin = q("pin"), fn = q("fn");
+    var c = { event_type: q("event_type"), sub_event_type: q("sub_event_type"), actor1: q("a1") ? { name: q("a1"), basis: q("a1b") } : null, actor2: q("a2") ? { name: q("a2"), basis: q("a2b") } : null,
+      place: { n: q("n"), la: la === "" ? null : +la, lo: lo === "" ? null : +lo, precision: +q("prec"), from_fp: pin || null }, fatalities: fn === "" ? { n: null, from_fp: null } : { n: +fn, from_fp: q("ffp") }, checked: ticked, shown: {} };
+    var sg = g._sg || {};
+    Object.keys(sg).forEach(function (f) { var s = sg[f]; if (!s) return; var x = s.v;
+      c.shown[f] = { src: s.src, v: f === "place" && x ? { n: x.n, precision: x.precision } : f === "fatalities" && x ? x.n : (f === "actor1" || f === "actor2") && x ? x.name : x }; });
+    return c;
+  }
+  function formCheck(box, g) {
+    var C = W.OSAP_CF_CODE, c = formRead(box, g), reps = new Map(g.all.map(function (x) { return [x.fp, x]; }));
+    var r = C.checkCoding(c, reps, (cur.data && cur.data.parties) || []), b = box.querySelector("[data-cfrec]"), er = box.querySelector("[data-er]");
+    b.disabled = !r.coding; b.title = r.coding ? "Opens a GitHub issue to add your reason and submit" : r.why; er.textContent = c.checked.length === C.FIELDS.length && !r.coding ? r.why : "";
+    return r.coding ? c : null;
+  }
+  function openForm(k) {
+    var li = D.querySelector('#cf-list li[data-k="' + k + '"]'), g = (D.getElementById("cf-list")._groups || [])[k]; if (!li || !g) return;
+    var old = li.querySelector(".cfcf"); if (old) { old.remove(); return; }
+    li.insertAdjacentHTML("beforeend", formHtml(g, k));
+  }
+  D.addEventListener("click", function (e) {
+    var t = e.target.closest && e.target.closest("#cf-rail [data-cfcode],#cf-rail [data-cfrec],#cf-rail [data-cfcancel],#cf-rail [data-cfcsv]"); if (!t) return;
+    if (t.hasAttribute("data-cfcsv")) return recCsv();
+    if (t.hasAttribute("data-cfcode")) return openForm(+t.getAttribute("data-cfcode"));
+    var k = +(t.getAttribute("data-cfrec") || t.getAttribute("data-cfcancel")), box = t.closest(".cfcf");
+    if (t.hasAttribute("data-cfcancel")) { if (box) box.remove(); return; }
+    var g = (D.getElementById("cf-list")._groups || [])[k], c = box && g && formCheck(box, g); if (!c) return;
+    decide("confirm_incident", g, null, c);
+  });
+  function formChange(e) {
+    var box = e.target.closest && e.target.closest("#cf-rail .cfcf"); if (!box) return;
+    var k = +box.getAttribute("data-cfform"), g = (D.getElementById("cf-list")._groups || [])[k]; if (!g) return;
+    var f = e.target.getAttribute("data-f"), C = W.OSAP_CF_CODE;
+    if (f) {
+      // a changed field needs ticking again
+      var row = e.target.closest("[data-row]"), ck = row && row.querySelector("input[data-ck]"); if (ck) ck.checked = false;
+      if (f === "event_type" && e.type === "change") { var s = box.querySelector('[data-f="sub_event_type"]'); s.innerHTML = opts(C.TYPES[e.target.value] || [], "", "Choose"); box.querySelector('input[data-ck="sub_event_type"]').checked = false; }
+      if (f === "pin" && e.type === "change") {
+        var x = g.all.filter(function (r) { return r.fp === e.target.value; })[0];
+        box.querySelector('[data-f="n"]').value = x ? x.geo.n || "" : ""; box.querySelector('[data-f="la"]').value = x ? x.geo.la : ""; box.querySelector('[data-f="lo"]').value = x ? x.geo.lo : "";
+        if (x) box.querySelector('[data-f="prec"]').value = x.geo.p === "province" ? "3" : "1";
+      }
+      // typed coordinates are the analyst's own, not a report's pin
+      if ((f === "la" || f === "lo") && box.querySelector('[data-f="pin"]').value) box.querySelector('[data-f="pin"]').value = "";
+    }
+    formCheck(box, g);
+  }
+  D.addEventListener("change", formChange);
+  D.addEventListener("input", formChange);
+
   function vsSel() {
     var n = { review: 0, confirmed: 0, rejected: 0 };
     allItems(cur.data).forEach(function (i) { var s = istat(i); if (s === "confirmed" || s === "rejected") n[s]++; else if (reviewable(i) && inWin(i.date)) n.review++; });
@@ -248,19 +397,29 @@
   // confirm / reject in the review queue; back to unverified in the confirmed and rejected lists
   function reviewHtml(g, k) {
     if (!F.vs || !g.all.every(reviewable)) return "";
-    if (F.vs === "review") return '<div class="cfrv"><button type="button" data-cfv="confirm_incident" data-k="' + k + '" title="Confirm these reports describe a real incident. Opens a GitHub issue to add your reason and submit">Confirm</button>' +
+    if (F.vs === "review") return '<div class="cfrv"><button type="button" data-cfcode="' + k + '" title="Confirm these reports describe a real incident and code its record: check each field, then a GitHub issue opens to add your reason and submit">Confirm and code</button>' +
       '<select data-cfvwhy="' + k + '" aria-label="Why reject">' + VWHY.map(function (w) { return '<option value="' + w[0] + '">' + esc(w[1]) + "</option>"; }).join("") + "</select>" +
       '<button type="button" data-cfv="reject_incident" data-k="' + k + '" title="Reject this incident for the reason chosen. Opens a GitHub issue to add your reason and submit">Reject</button></div>';
-    return '<div class="cfrv"><button type="button" data-cfv="reset_incident" data-k="' + k + '" title="Take this incident back to unverified. Opens a GitHub issue to add your reason and submit">Back to unverified</button></div>';
+    return '<div class="cfrv">' + (g.vs === "confirmed" ? '<button type="button" data-cfcode="' + k + '" title="Check and change this incident\u2019s coded record; a new decision replaces the earlier one">' + (recOf(g) ? "Edit record" : "Code record") + "</button>" : "") +
+      '<button type="button" data-cfv="reset_incident" data-k="' + k + '" title="Take this incident back to unverified. Opens a GitHub issue to add your reason and submit">Back to unverified</button></div>';
   }
+  function codeTxt(c, g) {
+    var by = function (fp) { var x = g.all.filter(function (r) { return r.fp === fp; })[0]; return x ? oname(x) : "a report"; }, pl = c.place;
+    return "\n\nIncident record (each field checked by the analyst):\n- Event: " + c.event_type + " / " + c.sub_event_type +
+      "\n- Actor 1: " + (c.actor1 ? c.actor1.name + " (" + (BASISN[c.actor1.basis] || c.actor1.basis) + ")" : "none") + "\n- Actor 2: " + (c.actor2 ? c.actor2.name + " (" + (BASISN[c.actor2.basis] || c.actor2.basis) + ")" : "none") +
+      "\n- Place: " + (pl.n || "") + (pl.la != null ? " (" + pl.la + ", " + pl.lo + ")" : "") + ", geo precision " + pl.precision + (pl.from_fp ? ", pin of " + by(pl.from_fp) + "'s report" : ", the analyst's own coordinates") +
+      "\n- Fatalities: " + (c.fatalities.n == null ? "not given" : c.fatalities.n + ", as reported by " + by(c.fatalities.from_fp));
+  }
+  function recOf(g) { var x = incOf(g.all.map(vrec).filter(Boolean)[0]); return x && x.record; }
   var VWORD = { confirm_incident: "Confirm", reject_incident: "Reject", reset_incident: "Back to unverified" };
-  function decide(act, g, why) {
+  function decide(act, g, why, coding) {
     var c = byId(active), i = g.lead, fps = uniq(g.all.map(function (x) { return x.fp; }));
     var block = { osap_decision: 1, action: act, conflict: active, reports: fps };
     if (act === "reject_incident") block.why = why || "other";
+    if (coding) block.coding = coding;
     block.seen = { asof: (cur.data && cur.data.asof) || "", status: g.vs };
     var what = VWORD[act] + " the incident “" + (i.title_en || i.title || "") + "” (" + fps.length + " report" + (fps.length > 1 ? "s" : "") + ") on the " + (c ? c.name : active) + " tab" +
-      (act === "confirm_incident" ? ": the reports describe a real incident. Figures and statements in them stay as reported." : act === "reject_incident" ? ": " + ((VWHY.filter(function (w) { return w[0] === block.why; })[0] || [0, ""])[1]) + "." : ".");
+      (act === "confirm_incident" ? ": the reports describe a real incident. Figures and statements in them stay as reported." + (coding ? codeTxt(coding, g) : "") : act === "reject_incident" ? ": " + ((VWHY.filter(function (w) { return w[0] === block.why; })[0] || [0, ""])[1]) + "." : ".");
     var body = "Reason: \n\nWrite why on the Reason line above, then press Submit. OSAP records this decision within a few minutes, then answers and closes this issue. " +
       "Only issues opened by the app's owner count; anyone else's are ignored.\n\nWhat this decides: " + what + "\n\n```json\n" + JSON.stringify(block, null, 1) + "\n```\n";
     W.open(REPO + "/issues/new?title=" + encodeURIComponent((VTITLE + " " + VWORD[act] + ": " + (i.title_en || i.title || "")).slice(0, 120)) + "&body=" + encodeURIComponent(body), "_blank", "noopener,noreferrer");
@@ -739,7 +898,8 @@
       if (F.att || F.win) h.push('<p class="cfm cfpick">Showing ' + (F.att ? "attacks only (bombings, shootings, strikes, clashes, arson)" : "every kind") + (F.win ? ", " + esc(F.win.label.toLowerCase()) : "") +
         ' · <button type="button" data-cfclr="1">Show all reports</button></p>');
       h.push('<p class="cfm cfcount">' + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : " reports") + ", newest first</p>");
-      if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(gs.length) + ")</button></p>");
+      if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(gs.length) + ")</button>" +
+        (F.vs === "confirmed" && codedN() ? ' <button type="button" class="refresh" data-cfcsv="1" title="Download the coded incident records of this tab (CSV, ACLED-like columns). Fatalities are as reported; actors are as attributed.">Download incident record (' + num(codedN()) + ")</button>" : "") + "</p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
       h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + "</li>"; }).join("") + "</ol>");
       if (gs.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, gs.length - lim) + " more</button>");

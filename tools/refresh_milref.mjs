@@ -20,7 +20,7 @@
 // Writes data/live/milref/<cc>.json for every country and data/live/milref/index.json (counts per country). A country whose
 // Wikidata queries fail keeps the previous run's lists. Exit code 0 unless nothing at all could be read.
 import fs from "node:fs";
-import { UNIT_ROOTS, INST_ROOTS, CAPS, WB, unitsFrom, equipFrom, instFrom, wbSeriesBy, figureRecord, qidByIso, qid, val, sipriFrom, sipriIds, SIPRI_YEARS, unrocaFrom, unrocaIds } from "./milref_lib.mjs";
+import { UNIT_ROOTS, INST_ROOTS, CAPS, WB, unitsFrom, equipFrom, instFrom, wbSeriesBy, figureRecord, qidByIso, qid, val, sipriFrom, sipriIds, SIPRI_YEARS, unrocaFrom, unrocaIds, garrisons } from "./milref_lib.mjs";
 import { A3 } from "./econ_lib.mjs";
 
 const OUT = process.env.MILREF_OUT || "data/live/milref";
@@ -198,8 +198,8 @@ async function country(cc) {
   OPTIONAL { ?u wdt:P159 ?hq. OPTIONAL { ?hq rdfs:label ?hqen. FILTER(LANG(?hqen) = "en") } OPTIONAL { ?hq wdt:P625 ?coord } }
 }`);
   await names(uRows.map((b) => qid(b, "cls")));
-  const units = unitsFrom(uRows, clsName);
-  const opName = {}; units.forEach((u) => (opName[u.q] = u.n));
+  const units0 = unitsFrom(uRows, clsName);
+  const opName = {}; units0.forEach((u) => (opName[u.q] = u.n));
   // operators: every live unit found (not only the capped list) and the country item itself (small states such as Tuvalu
   // record their patrol boats against the country)
   const ops = [...new Set(uRows.map((b) => qid(b, "u")).filter((x) => /^Q\d+$/.test(x)))].concat(Q);
@@ -237,8 +237,17 @@ async function country(cc) {
   OPTIONAL { ?s wdt:P625 ?coord }
 }`);
   await names(sRows.map((b) => qid(b, "cls")));
-  const inst = instFrom(sRows, clsName, viaOp);
-  return { q: Q, units, equip, inst, raw: { units: new Set(uRows.map((b) => qid(b, "u"))).size, equip: new Set(eRows.map((b) => qid(b, "eq"))).size } };
+  const inst0 = instFrom(sRows, clsName, viaOp);
+  // garrisons: installations that list a unit as an occupant (P466); the unit's own headquarters (P159) and the operator
+  // links (P137) are already in hand. A failed query only loses the occupant links.
+  let occ = [];
+  const sq = inst0.map((x) => x.q);
+  for (let i = 0; i < sq.length; i += 800) {
+    try { occ = occ.concat(await sparql(`SELECT ?s ?u WHERE { VALUES ?s { ${V(sq.slice(i, i + 800))} } ?s wdt:P466 ?u. }`)); } catch (e) { log(cc, "occupants:", e.message); }
+  }
+  const G = garrisons(units0, inst0, occ);
+  const units = G.units, inst = G.inst;
+  return { q: Q, units, equip, inst, links: G.links, raw: { units: new Set(uRows.map((b) => qid(b, "u"))).size, equip: new Set(eRows.map((b) => qid(b, "eq"))).size } };
 }
 
 // ---------- 3. per country ----------
@@ -275,7 +284,7 @@ async function one(cc) {
   index.all[cc] = { n: NAMES[cc], u: (w.units || []).length, e: (w.equip || []).filter((x) => !x.out).length, i: (w.inst || []).length, f: Object.keys(fig).length, st: w.stale ? 1 : 0 };
   const sc = sipriCount[cc === "oki" ? "jp" : cc]; if (sc) { index.all[cc].ti = sc[0]; index.all[cc].te = sc[1]; }
   const uc = unCount[cc === "oki" ? "jp" : cc]; if (uc) { if (uc[0]) index.all[cc].ur = uc[0]; if (uc[1]) index.all[cc].uh = uc[1]; }
-  if (W) log(cc, "units", W.units.length + "/" + W.raw.units, "equipment", W.equip.length + "/" + W.raw.equip, "installations", W.inst.length);
+  if (W) log(cc, "units", W.units.length + "/" + W.raw.units, "equipment", W.equip.length + "/" + W.raw.equip, "installations", W.inst.length, "garrison links", W.links);
 }
 { let i = 0; await Promise.all(Array.from({ length: PAR }, async () => { while (i < CCS.length) await one(CCS[i++]); })); }
 index.all = Object.fromEntries(Object.entries(index.all).sort((a, b) => a[0].localeCompare(b[0]))); // stable order: small diffs

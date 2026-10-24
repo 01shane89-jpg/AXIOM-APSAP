@@ -5068,6 +5068,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (kd) window.OSAP_KEYDATES.fillBrief();
     /* economic stress signals (assets/osap-econ.js) add their own page after the one-page brief once their file has loaded */
     if (window.OSAP_ECON) window.OSAP_ECON.intoBrief(briefEl, CC, C.name);
+    /* risk rating equivalents (assets/osap-risk.js): derived by OSAP, never official; its own page and a line under the official advisory */
+    if (window.OSAP_RISK) window.OSAP_RISK.intoBrief(briefEl, CC, C.name);
     /* open military reference (assets/osap-milref.js): forces, equipment and installations as source claims, its own page */
     if (window.OSAP_MILREF) window.OSAP_MILREF.intoBrief(briefEl, CC, C.name);
     document.getElementById("brief-close").addEventListener("click", closeBrief);
@@ -9164,6 +9166,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-3d.js"></script>
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
+<!-- TAK data package export for ATAK and WinTAK, used by Workspaces, My work, Route, Evac, Med plan and Landing zones (assets/osap-tak.js) -->
+<script src="assets/osap-tak.js"></script>
 <!-- the analyst workspace: only on a device unlocked with the owner's Face ID (assets/osap-lock.js); adds nothing elsewhere -->
 <script src="assets/osap-an-auto.js"></script>
 <script src="assets/osap-analyst.js"></script>
@@ -9210,6 +9214,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-gnss.js"></script>
 <!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
 <script src="assets/osap-econ.js"></script>
+<!-- risk rating equivalents: derived five-level country and city ratings, a card on Today and a page in the Country brief (data/live/risk, every 6 h) -->
+<script src="assets/osap-risk.js"></script>
 <script src="assets/osap-milref.js"></script>
 <script src="assets/osap-milmap.js"></script>
 <!-- photo and video check: metadata, sun and shadow, reverse image search links, video frames, all on the device (My work, a point's popup) -->

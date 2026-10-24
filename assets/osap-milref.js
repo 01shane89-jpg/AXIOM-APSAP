@@ -130,7 +130,45 @@
     h += "<h4>Exports by recipient, all reports " + '<span class="bm">(' + (U.exp || []).length + ")</span></h4>" + unSide(U.exp, name, "Recipient", lim);
     return h;
   }
-  var core = { esc: esc, unrocaFile: unrocaFile, unrocaHtml: unrocaHtml, wdUrl: wdUrl, fileOf: fileOf, sipriFile: sipriFile, sipriHtml: sipriHtml, fig: fig, tree: tree, size: size, groups: groups, CATS: CATS, KIND: KIND };
+
+  /* ---- force summary: one table drawn from every source on the page, each row naming its source ---- */
+  var ECHN = { force: "armed forces", branch: "service branches", command: "commands and districts", corps: "corps", division: "divisions", brigade: "brigades, wings and regiments", battalion: "battalions and squadrons", other: "other units" };
+  var KINDN = { air: "air bases", naval: "naval bases", depot: "depots", hq: "headquarters", barracks: "barracks and camps", range: "ranges", base: "other bases" };
+  function counts(L, key) { var o = {}; (L || []).forEach(function (x) { var k = key(x); if (k) o[k] = (o[k] || 0) + 1; }); return o; }
+  function forceHtml(M) {
+    var F = M.fig || {}, w = M.wd || {}, U = w.units || [], E = (w.equip || []).filter(function (e) { return !e.out && !e.old; }), I = w.inst || [];
+    var rows = [];
+    var pers = F.personnel, sp = F.spend_usd, gdp = F.spend_gdp;
+    if (pers || sp) rows.push(["People and money", (pers ? "<b>" + esc(fig(pers.v, pers.unit)) + "</b> armed forces personnel (" + esc(pers.year) + ")" : "") + (pers && sp ? " · " : "") +
+      (sp ? "<b>" + esc(fig(sp.v, sp.unit)) + "</b> military spending (" + esc(sp.year) + ")" + (gdp ? ", " + esc(fig(gdp.v, gdp.unit)) + " of GDP" : "") : ""), "IISS and SIPRI via the World Bank"]);
+    var br = U.filter(function (u) { return u.e === "branch"; }).sort(function (a, b) { return (b.sl || 0) - (a.sl || 0); }).slice(0, 8);
+    if (br.length) rows.push(["Service branches", br.map(function (u) { return link(wdUrl(u.q), esc(u.n)); }).join(" · "), "Wikidata"]);
+    var ec = counts(U, function (u) { return u.e !== "force" && u.e !== "branch" ? u.e : ""; });
+    var ecs = ["command", "corps", "division", "brigade", "battalion", "other"].filter(function (k) { return ec[k]; }).map(function (k) { return "<b>" + ec[k] + "</b> " + esc(ECHN[k]); });
+    if (ecs.length) rows.push(["Formations recorded", ecs.join(" · ") + (w.found && w.found.units > U.length ? ' <span class="bm">(the ' + U.length + " best-known of " + w.found.units + ")</span>" : ""), "Wikidata"]);
+    var cc = counts(E, function (e) { return e.c; }), qn = E.filter(function (e) { return e.qty; }).length;
+    var cs = CATS.filter(function (c) { return cc[c[0]]; }).map(function (c) { return "<b>" + cc[c[0]] + "</b> " + esc(c[1].toLowerCase()); });
+    if (cs.length) rows.push(["Equipment in service", cs.join(" · ") + ' <span class="bm">(' + (qn ? "a quantity is given for " + qn : "no quantities given") + ")</span>", "Wikidata"]);
+    var kc = counts(I, function (x) { return x.k || "base"; }), based = I.filter(function (x) { return (x.u || []).length; }).length;
+    var ks = ["air", "naval", "hq", "barracks", "depot", "range", "base"].filter(function (k) { return kc[k]; }).map(function (k) { return "<b>" + kc[k] + "</b> " + esc(KINDN[k]); });
+    if (ks.length) rows.push(["Installations", ks.join(" · ") + (based ? ' <span class="bm">(' + based + " with units linked by Wikidata)</span>" : ""), "Wikidata"]);
+    rows.push(["Declared to the UN", '<span data-mrsum-un class="bm">Loading…</span>', "UN Register (government reports)"]);
+    rows.push(["Arms deals, last ten years", '<span data-mrsum-sip class="bm">Loading…</span>', "SIPRI trade register"]);
+    return '<table class="btwo mrsum"><tr><th style="width:20%">What</th><th>Summary (claims, as each source gives them)</th><th style="width:20%">Source</th></tr>' +
+      rows.map(function (r) { return "<tr><td>" + esc(r[0]) + "</td><td>" + r[1] + '</td><td class="bm">' + esc(r[2]) + "</td></tr>"; }).join("") + "</table>";
+  }
+  function sumUn(U) {
+    if (!U || U.err) return U && U.err ? "could not be read just now" : "not in the register";
+    var H = U.hold || [];
+    if (H.length) return "holdings reported for <b>" + esc(H[0].y) + "</b>: " + H.map(function (x) { return esc(UNCAT[x.k] || x.k) + " <b>" + unN(x.n, x.cl) + "</b>"; }).join(" · ");
+    var r = U.reports || [];
+    return r.length ? r.length + " report" + (r.length === 1 ? "" : "s") + " filed (latest " + esc(r[0]) + "), no holdings declared" : "no report filed";
+  }
+  function sumSip(S) {
+    if (!S || S.err) return S && S.err ? "could not be read just now" : "no SIPRI record";
+    return "<b>" + ((S.imp && S.imp.total) || 0) + "</b> received · <b>" + ((S.exp && S.exp.total) || 0) + "</b> supplied";
+  }
+  var core = { esc: esc, forceHtml: forceHtml, sumUn: sumUn, sumSip: sumSip, garrisonVia: VIA, unrocaFile: unrocaFile, unrocaHtml: unrocaHtml, wdUrl: wdUrl, fileOf: fileOf, sipriFile: sipriFile, sipriHtml: sipriHtml, fig: fig, tree: tree, size: size, groups: groups, CATS: CATS, KIND: KIND };
   if (!D) return { core: core };
 
   /* ================= browser ================= */
@@ -173,22 +211,39 @@
       '<p class="bm">Official and research estimates, published by the World Bank (CC BY 4.0) from SIPRI and IISS. TIV is SIPRI\'s trend-indicator value: a measure of the volume of major arms transferred, not their price. Personnel counts include paramilitary forces where IISS judges they can support the regular forces.</p>';
   }
 
-  function unitsHtml(units, lim) {
+  var VIA = { P159: "Wikidata: the unit's headquarters location (P159) is this installation", P466: "Wikidata: the installation lists the unit as an occupant (P466)", P137: "Wikidata: the unit is recorded as the installation's operator (P137)" };
+  function mgrsOf(la, lo) { return la != null && W.MGRS_OF ? W.MGRS_OF(la, lo, 3) : ""; }
+  /* the order of battle as a collapsible tree, every level (guarded against loops); garrisons from Wikidata's own links */
+  function unitsHtml(units, lim, inst) {
     if (!units || !units.length) return '<p class="bm">Wikidata records no current armed forces or units for this country.</p>';
-    var t = tree(units), shown = 0, seen = {};
+    var t = tree(units), shown = 0, seen = {}, S = {};
+    (inst || []).forEach(function (x) { S[x.q] = x; });
+    function base(u) {
+      /* P159 and P466 say where the unit is based; P137 only that it operates the place (a branch may operate dozens) */
+      var one = function (gv) { var x = S[gv[0]]; if (!x) return ""; var m = mgrsOf(x.la, x.lo);
+        return '<span class="mrg" title="' + esc(VIA[gv[1]] || "Wikidata") + '">' + link(wdUrl(x.q), esc(x.n)) + (m ? ' <span class="bm">(' + esc(m) + ")</span>" : "") + "</span>"; };
+      var G = u.g || [], at = G.filter(function (v) { return v[1] !== "P137"; }), op = G.filter(function (v) { return v[1] === "P137"; });
+      return (at.length ? '<span class="bm"> · based at </span>' + at.map(one).join(", ") : "") + (op.length ? '<span class="bm"> · operates </span>' + op.map(one).join(", ") : "") +
+        (u.gn ? '<span class="bm"> and ' + (u.gn - G.length) + " more</span>" : "");
+    }
+    function line(u, depth, n) {
+      return link(wdUrl(u.q), esc(u.n)) + (u.t ? '<span class="bm"> · ' + esc(u.t) + "</span>" : "") +
+        (u.hq && !(u.g || []).some(function (gv) { return S[gv[0]] && S[gv[0]].n === u.hq; }) ? '<span class="bm"> · HQ ' + esc(u.hq) + (u.la != null && W.MGRS_OF ? " (" + esc(W.MGRS_OF(u.la, u.lo, 3)) + ")" : "") + "</span>" : "") + base(u) +
+        (n ? '<span class="bm"> · ' + n + " under it</span>" : "") + fpTag(u.fp);
+    }
     function row(u, depth) {
-      if (seen[u.q] || shown >= lim) return ""; seen[u.q] = 1; shown++;
-      var n = size(u.q, t.kids), kids = t.kids[u.q] || [];
-      var line = '<div class="mru" style="padding-left:' + (depth * 14) + 'px">' + link(wdUrl(u.q), esc(u.n)) + (u.t ? '<span class="bm"> · ' + esc(u.t) + "</span>" : "") +
-        (u.hq ? '<span class="bm"> · HQ ' + esc(u.hq) + (u.la != null && W.MGRS_OF ? " (" + esc(W.MGRS_OF(u.la, u.lo, 3)) + ")" : "") + "</span>" : "") +
-        (n ? '<span class="bm"> · ' + n + " under it</span>" : "") + fpTag(u.fp) + "</div>";
-      if (!kids.length || depth >= 3) return line;
-      return line + kids.map(function (k) { return row(k, depth + 1); }).join("");
+      if (seen[u.q] || shown >= lim || depth > 12) return ""; seen[u.q] = 1; shown++;
+      var n = size(u.q, t.kids), kids = (t.kids[u.q] || []).slice().sort(function (a, b) { return size(b.q, t.kids) - size(a.q, t.kids) || (b.sl || 0) - (a.sl || 0); });
+      var pad = ' style="padding-left:' + (depth * 14) + 'px"';
+      if (!kids.length) return '<div class="mru"' + pad + ">" + line(u, depth, 0) + "</div>";
+      return '<details class="mrn"' + (depth < 1 ? " open" : "") + '><summary class="mru"' + pad + ">" + line(u, depth, n) + "</summary>" + kids.map(function (k) { return row(k, depth + 1); }).join("") + "</details>";
     }
     var big = t.roots.slice().sort(function (a, b) { return size(b.q, t.kids) - size(a.q, t.kids); });
     var h = big.map(function (r) { return row(r, 0); }).join("");
-    var rest = units.length - shown;
-    return '<div class="mrtree">' + h + "</div>" + (rest > 0 ? '<p class="bm">' + rest + " more unit" + (rest === 1 ? "" : "s") + " held for this country are not listed here (deeper levels and smaller units).</p>" : "");
+    var rest = units.length - shown, based = units.filter(function (u) { return (u.g || []).length; }).length;
+    return '<p class="bm">Open a unit to see what sits under it. Parent links are Wikidata\'s "parent organization" and "part of"; ' +
+      (based ? based + " unit" + (based === 1 ? " is" : "s are") + " linked by Wikidata to an installation they are based at or operate (hover a base for the property that says so)." : "no unit has a garrison Wikidata links to an installation.") + "</p>" +
+      '<div class="mrtree">' + h + "</div>" + (rest > 0 ? '<p class="bm">' + rest + " more unit" + (rest === 1 ? "" : "s") + " held for this country are not listed here.</p>" : "");
   }
 
   function equipHtml(equip, lim) {
@@ -211,28 +266,30 @@
     return h;
   }
 
-  function instHtml(inst, lim) {
+  function instHtml(inst, lim, units) {
+    var UN = {}; (units || []).forEach(function (u) { UN[u.q] = u; });
     if (!inst || !inst.length) return '<p class="bm">Wikidata records no military installations for this country.</p>';
-    return '<table class="btwo mrinst"><tr><th style="width:36%">Installation</th><th style="width:20%">Kind</th><th style="width:22%">Grid (MGRS)</th><th>Operator</th></tr>' +
+    return '<table class="btwo mrinst"><tr><th style="width:30%">Installation</th><th style="width:15%">Kind</th><th style="width:17%">Grid (MGRS)</th><th>Operator and units based here</th></tr>' +
       inst.slice(0, lim).map(function (s) {
         return "<tr><td>" + link(wdUrl(s.q), esc(s.n)) + fpTag(s.fp) + '</td><td class="bm">' + esc(KIND[s.k] || "Military base") + '</td><td class="mg">' + (s.la != null && W.MGRS_OF ? esc(W.MGRS_OF(s.la, s.lo, 3)) : '<span class="bm">no location</span>') +
-          '</td><td class="bm">' + esc(s.op || "") + "</td></tr>";
+          '</td><td class="bm">' + esc(s.op || "") + ((s.u || []).length ? (s.op ? "<br>" : "") + "Based here: " + s.u.map(function (uv) { var u = UN[uv[0]]; return u ? '<span title="' + esc(VIA[uv[1]] || "Wikidata") + '">' + link(wdUrl(u.q), esc(u.n)) + (uv[1] === "P137" ? " (operator)" : "") + "</span>" : ""; }).filter(Boolean).join(", ") + (s.un ? " and " + (s.un - s.u.length) + " more" : "") : "") + "</td></tr>";
       }).join("") + "</table>" + (inst.length > lim ? '<p class="bm">' + (inst.length - lim) + " more installations held.</p>" : "") +
       '<p class="bm">Grid references are 100 m (MGRS on WGS84) from the point Wikidata gives; a base\'s point is often its centre or its gate, not its outline.</p>';
   }
 
   function briefHtml(M, name, lim) {
-    lim = lim || { units: 160, equip: 60, inst: 120 };
+    lim = lim || { units: 600, equip: 60, inst: 120 };
     var w = M.wd || {}, z = T().asofT(M.asof);
     var h = '<article class="bpage bmilref" id="milref"><header><div><b>AXIOM OSAP</b> · Military reference (open sources)</div><h2>' + esc(name || M.name) + "</h2><div>Read " + esc(z) +
       (w.stale ? ", Wikidata lists from an earlier run" : "") + "</div></header>" +
       '<p class="bwarn">' + CLAIM + " " + esc(NOTE) + "</p>";
+    h += '<h3>Force summary <span class="bm">from the sources below</span></h3>' + forceHtml(M);
     h += "<h3>Key figures</h3>" + figuresHtml(M.fig || {}, M.cc);
     h += '<h3>Arms transfers <span class="bm">SIPRI trade register</span></h3><div data-mrsipri><p class="bm">Loading the SIPRI register…</p></div>';
     h += '<h3>UN Register of Conventional Arms <span class="bm">official government reports</span></h3><div data-mrun><p class="bm">Loading the UN Register record…</p></div>';
-    h += "<h3>Forces and units (order of battle) " + '<span class="bm">' + (w.units ? w.units.length : 0) + (w.found && w.found.units > (w.units || []).length ? " of " + w.found.units + " on Wikidata" : "") + "</span></h3>" + unitsHtml(w.units, lim.units);
+    h += "<h3>Forces and units (order of battle) " + '<span class="bm">' + (w.units ? w.units.length : 0) + (w.found && w.found.units > (w.units || []).length ? " of " + w.found.units + " on Wikidata" : "") + "</span></h3>" + unitsHtml(w.units, lim.units, w.inst);
     h += "<h3>Equipment recorded as operated " + '<span class="bm">' + (w.equip || []).filter(function (e) { return !e.out; }).length + " with no end of service recorded" + ((w.equip || []).length >= 1500 ? " (the 1,500 best-known kept; Wikidata lists more)" : "") + "</span></h3>" + equipHtml(w.equip, lim.equip);
-    h += "<h3>Installations " + '<span class="bm">' + (w.inst || []).length + "</span></h3>" + instHtml(w.inst, lim.inst);
+    h += "<h3>Installations " + '<span class="bm">' + (w.inst || []).length + "</span></h3>" + instHtml(w.inst, lim.inst, w.units);
     h += '<footer>Sources: ' + link("https://www.wikidata.org/" + (w.q ? "wiki/" + esc(w.q) : ""), "Wikidata") + " (CC0 1.0), read " + esc(w.read ? T().asofT(w.read) : "never") + "; " +
       link("https://datacatalog.worldbank.org/search/dataset/0037712", "World Bank World Development Indicators") + " (CC BY 4.0), from the SIPRI Military Expenditure and Arms Transfers databases and IISS, The Military Balance; " +
       link("https://www.sipri.org/databases/armstransfers", "SIPRI Arms Transfers Database") + " trade register (" + link("https://www.sipri.org/about/terms-and-conditions", "© SIPRI") + ", non-commercial use); " +
@@ -250,14 +307,15 @@
       var art = box.firstChild, rep = el.querySelector("#report");
       if (rep) rep.parentNode.insertBefore(art, rep.nextSibling); else el.appendChild(art);
       var box2 = art.querySelector && art.querySelector("[data-mrsipri]");
-      if (box2) loadSipri(cc, function (S) { box2.innerHTML = sipriHtml(S, name); });
+      var put = function (sel, html) { var e = art.querySelector(sel); if (e) { e.innerHTML = html; e.className = ""; } };
+      if (box2) loadSipri(cc, function (S) { box2.innerHTML = sipriHtml(S, name); put("[data-mrsum-sip]", sumSip(S)); });
       var box3 = art.querySelector && art.querySelector("[data-mrun]");
-      if (box3) loadSipri(cc, function (U) { box3.innerHTML = unrocaHtml(U, name); }, unrocaFile);
+      if (box3) loadSipri(cc, function (U) { box3.innerHTML = unrocaHtml(U, name); put("[data-mrsum-un]", sumUn(U)); }, unrocaFile);
     });
   }
 
   var CSS = ".mrtag{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid currentColor;border-radius:9px;padding:0 6px;line-height:16px;color:#12324a}" +
-    ".mrnc{color:#8a4b00}.bmilref .mrun td{word-break:break-word}.bmilref .mrsip td div.bm{margin-top:1px}.mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
+    ".mrnc{color:#8a4b00}.mrtree details>summary{cursor:pointer;list-style-position:inside}.mrtree details>summary::marker{color:#12324a}.mrg a{font-weight:600}.bmilref .mrun td{word-break:break-word}.bmilref .mrsip td div.bm{margin-top:1px}.mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
     ".bmilref h4{font-size:11px;margin:6px 0 2px;color:#12324a}.mrtree .mru{border-bottom:1px solid #eee;padding-top:1px;padding-bottom:1px;overflow-wrap:anywhere}" +
     ".bpage.bmilref td{white-space:normal;overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
     /* a phone: each table row becomes one wrapped line (the column headings drop), so nothing squeezes or scrolls sideways */

@@ -917,6 +917,12 @@
     } else saveFile(base + ".kml", new Blob([k], { type: "application/vnd.google-earth.kml+xml" }));
     S.msg = (kmz ? "KMZ" : "KML") + " saved to your downloads."; render();
   }
+  /* the package for ATAK and WinTAK (assets/osap-tak.js): origin, destinations, nodes and findings as markers, the lines as KML */
+  function takPkg(id) {
+    var pk = pkgOf(id); if (!pk) return;
+    try { S.msg = W.OSAP_TAK.save({ id: "epe|" + pk.id, name: pk.name, file: "osap-evac-" + fname(pk.name), kml: toKml(pk), color: "#e8590c", now: Date.now() }); } catch (e) { S.msg = "The TAK package could not be made: " + e.message; }
+    render();
+  }
   /* the package as a page to print or save as PDF */
   function printHtml(pk) {
     var pl = pk.plan;
@@ -1366,7 +1372,7 @@
       (p ? '<div class="epebtns"><button type="button" data-ep="pkg"' + (S.kbusy ? " disabled" : "") + ">Make a route package of this plan</button></div>" : "") +
       (list.length ? '<ul class="epekept">' + list.map(function (x) {
         return "<li><span><b>" + E(x.name) + '</b> <i class="obs">' + E(x.plan.opts.length) + " options, " + E(x.n) + " findings · frozen " + E(dual(x.made, true)) + '</i></span><span class="epepkb">' +
-          '<button type="button" data-ep-act="' + E(x.id) + '">Active mode</button><button type="button" data-ep-print="' + E(x.id) + '">Print</button><button type="button" data-ep-kml="' + E(x.id) + '">KML</button><button type="button" data-ep-kmz="' + E(x.id) + '">KMZ</button>' +
+          '<button type="button" data-ep-act="' + E(x.id) + '">Active mode</button><button type="button" data-ep-print="' + E(x.id) + '">Print</button><button type="button" data-ep-kml="' + E(x.id) + '">KML</button><button type="button" data-ep-kmz="' + E(x.id) + '">KMZ</button>' + (W.OSAP_TAK ? '<button type="button" data-ep-tak="' + E(x.id) + '" title="' + E(W.OSAP_TAK.tip) + '">TAK</button>' : "") +
           '<button type="button" data-ep-pdel="' + E(x.id) + '" aria-label="Delete package ' + E(x.name) + '">×</button></span></li>';
       }).join("") + "</ul>" : '<p class="obs">None yet.</p>') + "</section>";
   }
@@ -1391,6 +1397,7 @@
     else if (b.hasAttribute("data-ep-print")) printPkg(b.getAttribute("data-ep-print"));
     else if (b.hasAttribute("data-ep-kml")) exportPkg(b.getAttribute("data-ep-kml"), false);
     else if (b.hasAttribute("data-ep-kmz")) exportPkg(b.getAttribute("data-ep-kmz"), true);
+    else if (b.hasAttribute("data-ep-tak")) takPkg(b.getAttribute("data-ep-tak"));
     else if (b.hasAttribute("data-ep-pdel")) delPkg(b.getAttribute("data-ep-pdel"));
     else if (b.hasAttribute("data-ep-pass")) { if (S.active) { var kp = +b.getAttribute("data-ep-pass"); S.active.passed = S.active.passed === kp ? kp - 1 : kp; render(); draw(); } }
     else if (k === "pick") { if (S.picking) { pickEnd(); render(); } else pickStart(); }

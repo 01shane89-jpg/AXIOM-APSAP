@@ -153,7 +153,7 @@ const server = createServer(async (rq, rs) => {
 await new Promise((x) => server.once("listening", x));
 const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
-const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1280, height: 860 } });
+const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1280, height: 860 }, timezoneId: "Asia/Bangkok" });
 const outside = [];
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (x) => { outside.push(x.request().url()); x.abort(); });
 await ctx.addInitScript(() => { try {
@@ -176,6 +176,11 @@ ok(kept && kept.watches.length === 1 && kept.watches[0].id === "wpage123" && /^o
 ok(/Status:\s*On\./.test(await p.evaluate(() => document.querySelector("#watchdlg .wnotif").textContent)), "the status turns On at once");
 ok(/1 of 25 push watches used on your Full plan/.test(await p.evaluate(() => document.querySelector("#watchdlg .wnotif").textContent)), "the panel says how many of the plan's push watches are used");
 ok(!outside.some((u) => /github\.com/.test(u)), "nothing went to GitHub");
+/* morning brief: the watch carries the phone's time zone; unticking "In my morning brief" sends brief: false at once */
+ok(kept && kept.watches[0].tz === "Asia/Bangkok" && kept.watches[0].brief === undefined, "the pushed watch carries the phone's time zone and is in the morning brief");
+await p.evaluate((s) => document.querySelector(s).click(), "#watchdlg [data-push-brief]");
+await p.waitForFunction(() => /Left out of your morning brief/.test((document.querySelector("#push-send-out") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
+ok((await pageStore.get("watches")).watches[0].brief === false, "unticking In my morning brief leaves the watch out on the server");
 await p.evaluate((s) => document.querySelector(s).click(), "#watchdlg [data-push-stop]"); await p.waitForTimeout(800);
 ok((await pageStore.get("watches")).watches.length === 0, "Stop push alerts removes it from the server");
 ok(/Status:\s*Off\./.test(await p.evaluate(() => document.querySelector("#watchdlg .wnotif").textContent)), "and the status turns Off");

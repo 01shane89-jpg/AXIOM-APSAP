@@ -47,6 +47,7 @@ jobs:
       - run: node tests/incidents.test.mjs
       - run: node tests/decisions.test.mjs
       - run: node tests/cf_decisions.test.mjs
+      - run: node tests/cf_code.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
@@ -54,6 +55,7 @@ jobs:
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
       - run: node tests/geo.test.mjs
+      - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/deepsouth_border.test.mjs
       - run: node tests/entities.test.mjs
@@ -70,6 +72,8 @@ jobs:
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
       - run: node tests/osirdraft.test.mjs
+      # morning brief push: once a local morning per phone channel, Full-only summary kept from Mid (tools/push_brief.mjs)
+      - run: node tests/push_brief.test.mjs
       # event-summary drafts give only figures their reports give (tools/evsum_lib.mjs)
       - run: node tests/evsum_lib.test.mjs
       # AI gateway: a slow reply from the runner's model skips one request; two in a row drop it for the run (tools/ai_gateway.mjs)
@@ -83,6 +87,8 @@ jobs:
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/econ.test.mjs
+      # risk rating equivalents: the formula, the job on the repo's feeds, official advisories never an input (tools/risk_lib.mjs)
+      - run: node tests/risk.test.mjs
       - run: node tests/milref.test.mjs
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
@@ -136,6 +142,7 @@ jobs:
       - run: node tests/analyst_smoke.mjs
       - run: node tests/seal_sw_smoke.mjs
       - run: node tests/econ_smoke.mjs
+      - run: node tests/risk_smoke.mjs
       - run: node tests/milref_smoke.mjs
       - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs
@@ -177,6 +184,7 @@ jobs:
       - run: node tests/sw_data_smoke.mjs
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
+      - run: node tests/tak_smoke.mjs
       - run: node tests/move_smoke.mjs
       - run: node tests/protect_smoke.mjs
       - run: node tests/safety_smoke.mjs

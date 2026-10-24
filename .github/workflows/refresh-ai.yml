@@ -12,6 +12,9 @@ name: AI drafts on the runner
 # Every 3 hours, after the incident summaries: AI drafts of the OSIR analyst sections for the watched topics that are due
 # (tools/refresh_osirdraft.mjs, each topic at most every 20 hours), written to data/live/osirdraft.js. .github/workflows/osir-draft.yml
 # keeps the on-demand run for one topic.
+# Every 3 hours, after the OSIR sections: AI suggestions for the conflict tabs' incident record (tools/refresh_cfcode.mjs: event type,
+# actors, place, fatalities for each new undecided report, checked against its headline), written to data/live/conflicts/suggest.js.
+# They are proposals the review queue offers beside its rule suggestions; only the analyst's ticked fields make a record.
 # Free while the repository is public (standard GitHub-hosted runners: 4 CPUs, 16 GB).
 on:
   schedule:
@@ -32,7 +35,7 @@ on:
         required: false
         default: "45"
       task:
-        description: "daily, evsum (incident summaries), osir (OSIR analyst sections) or both (evsum and osir)"
+        description: "daily, evsum (incident summaries), osir (OSIR analyst sections), code (incident record suggestions) or both (evsum, osir and code)"
         required: false
         default: "both"
 
@@ -145,6 +148,17 @@ jobs:
         run: |
           npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
           node tools/refresh_osirdraft.mjs
+      - name: Suggest incident record fields
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'code' || inputs.task == 'both')) }}
+        timeout-minutes: 30
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OSAP_LOCAL_LLM: http://127.0.0.1:8080
+          OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
+          CFCODE_AI_BUDGET_MIN: "20"
+          CFCODE_PER_RUN: ${{ inputs.per_run || '120' }}
+        run: node tools/refresh_cfcode.mjs
       - name: Model server log (tail)
         if: ${{ always() }}
         run: tail -15 llm.log || true
@@ -156,20 +170,21 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan ai-preview-data
           git rm -rqf --cached .
-          for p in data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (AI drafts on the runner) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/ai-preview-data-$MODEL_KEY
       - name: Commit the summaries if they changed
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
-          git add -N data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js 2>/dev/null || true
-          if git diff --quiet -- data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js; then echo "no change"; exit 0; fi
+          git add -N data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js 2>/dev/null || true
+          if git diff --quiet -- data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js; then echo "no change"; exit 0; fi
           git config user.name "asap-ai-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/live/daily.js data/live/daily
           [ -f data/live/evsum_ai.js ] && git add data/live/evsum_ai.js
           git add data/live/osirdraft.js
+          [ -f data/live/conflicts/suggest.js ] && git add data/live/conflicts/suggest.js
           git commit -m "AI drafts of the daily and incident summaries $(date -u +'%Y-%m-%d %H:%MZ')"
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
           exit 1
