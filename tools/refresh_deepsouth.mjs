@@ -283,7 +283,6 @@ if (todo.length) {
     i.mt = tr[n].tool || tr[todo.length + n].tool || "untranslated";
     i.summary_en = sane(i.summary, sm) ? sm.slice(0, 400) : null;
     delete i.mt_rejected; delete i.title_from_summary; delete i.mt_redo;
-    delete i.mt_split;
     if (sane(i.title, t)) i.title_en = t;
     else if (i.summary_en) { i.title_en = i.summary_en.split(/(?<=[.!?])\s/)[0].slice(0, 160); i.title_from_summary = true; }
     else { i.title_en = null; if (t) i.mt_rejected = true; }
