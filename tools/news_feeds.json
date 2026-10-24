@@ -1750,6 +1750,8 @@
     {"cc":"et","outlet":"Addis Fortune","url":"https://addisfortune.news/feed","lang":"en"},
     {"cc":"et","outlet":"Wazema Radio","url":"https://wazemaradio.com/rss.xml","lang":"am"},
     {"cc":"gy","outlet":"Village Voice","url":"https://villagevoicenews.com/feed/","lang":"en"},
-    {"cc":"gy","outlet":"Guyana Times","url":"https://guyanatimesgy.com/feed/","lang":"en"}
+    {"cc":"gy","outlet":"Guyana Times","url":"https://guyanatimesgy.com/feed/","lang":"en"},
+    {"cc":"jm","outlet":"Nationwide News","url":"https://nationwideradiojm.com/feed/","lang":"en"},
+    {"cc":"al","outlet":"ABC News Albania","url":"https://abcnews.al/feed/","lang":"sq"}
   ]
 }
