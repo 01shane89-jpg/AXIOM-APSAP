@@ -9,12 +9,14 @@
       where only that account and the refresh job (signed by GitHub itself) can read it. Every Mid and Full account has its
       own push watches, up to its plan's limit (tools/tiers.mjs PUSH; 2026-10-23, personal real-time alerts). Until 2026-10-21
       the watch went into a public GitHub issue and data/push/watches.json, readable by anyone (Shane 2026-10-20).
-   A push is a notice about a report, never a finding. "Send a test alert" posts one line to the channel from this browser. */
+   A push is a notice about a report, never a finding. "Send a test alert" posts one line to the channel from this browser.
+   Morning brief (2026-10-24, tools/push_brief.mjs): once a day, from 0600 on this phone's clock (the time zone sent with the
+   watch), the channel also gets one brief for the countries its push watches are on. "In my morning brief" leaves a watch out. */
 (function () {
   "use strict";
   var API = "/api/osap-push";
   var NTFY = "https://ntfy.sh";
-  var T_KEY = "asap-push-topic", MAX_PTS = 150;
+  var T_KEY = "asap-push-topic", NB_KEY = "osap-push-nobrief", MAX_PTS = 150;
   var LIST = null, LIST_AT = 0, LIST_ERR = "", LIM = null;
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -72,12 +74,17 @@
   }
   var LABEL = { on: "Push: on", other: "Push: on (other device)", off: "Push to phone" };
 
+  /* whether a watch is in the morning brief (on unless turned off here) */
+  function inBrief(id) { return !lsGet(NB_KEY, {})[id]; }
+  function setBrief(id, on) { var o = lsGet(NB_KEY, {}); if (on) delete o[id]; else o[id] = 1; lsSet(NB_KEY, o); }
+  function myTz() { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || undefined; } catch (e) { return undefined; } }
   /* the watch as the push job takes it (tools/push_lib.mjs keeps only these fields) */
   function payload(w) {
     var a = w.area;
     if (a && a.length > MAX_PTS) { var step = a.length / MAX_PTS, o = []; for (var i = 0; i < MAX_PTS; i++) o.push(a[Math.floor(i * step)]); a = o; }
     return { v: 1, id: w.id, name: w.name, cc: w.cc, area: a ? a.map(function (p) { return [Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]; }) : null,
-      layers: w.layers || [], kw: w.kw || [], q: w.q || undefined, minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic() };
+      layers: w.layers || [], kw: w.kw || [], q: w.q || undefined, minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic(),
+      tz: myTz(), brief: inBrief(w.id) ? undefined : false };
   }
   function subLinks(t) {
     return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener noreferrer">Open ' + esc(t) + " in ntfy</a>";
@@ -105,6 +112,9 @@
       '<p>In ntfy tap <b>+</b> and enter <code class="pushtopic">' + esc(t) + '</code> <button type="button" class="refresh" data-push-copy>Copy</button><br>' + subLinks(t) +
       ' · <button type="button" class="refresh" data-push-test>Send a test alert</button> <span class="obs" id="push-test-out"></span></p>' +
       "<h3>3. Send this watch to OSAP</h3>" +
+      '<p><label><input type="checkbox" data-push-brief' + (inBrief(id) ? " checked" : "") + "> In my morning brief</label> " +
+      '<span class="obs">Once a day, from 0600 your time, one alert sums up the countries your push watches are on: what matched in the last 24 hours' +
+      (LIM && LIM.plan === "full" ? ", with the top line of OSAP's daily summary" : "") + ".</span></p>" +
       "<p>Keeps the watch on OSAP's server. OSAP's refresh job then checks it after every refresh, " +
       "about every 15 minutes, and sends new matching reports from the last 48 hours: one alert per event, up to 3 per check, then a count.</p>" +
       '<p><button type="button" class="refresh primary" data-push-send>' + (st === "on" || st === "other" ? "Send the watch again" : "Send to OSAP") + "</button>" +
@@ -113,6 +123,7 @@
         "<li>The watch is kept on OSAP's server in your account's own list, readable only by your account and OSAP's own refresh job. It is not in OSAP's public project files, and no other account can see it.</li>" +
         "<li>ntfy.sh carries the alerts, so it sees them, and anyone who knows the channel name can read them: keep the name to yourself, and keep private details out of a watch. Protected mode turns push off.</li>" +
         "<li>Push watches come with the Mid plan (up to 5) and the Full plan (up to 25). Each is checked with the data your plan opens, so an alert never carries what your plan cannot see in OSAP.</li>" +
+        "<li>The morning brief is sent once a day on the first check after 0600 in the time zone of the device that sent the watch, and is skipped if OSAP cannot check by 1100.</li>" +
         "<li>The first check only notes what is already there; only later arrivals are sent. Editing the watch here does not change the pushed copy: send it again.</li>" +
         "<li>Alerts are as new as the last refresh plus the sources' own delay. A push is a notice about a report, never a finding: reported, not verified.</li>" +
         "<li>Email or text messages would need an account or a stored address, so they are not offered. ntfy can forward to other apps from your phone.</li></ul></details></div>";
@@ -135,9 +146,19 @@
     if (!el) { setTimeout(hook, 1000); return; }
     new MutationObserver(function () { if (el.querySelector(".wrow") && !el.querySelector(".pushbox")) { decorate(); loadList(decorate); } }).observe(el, { childList: true });
     el.addEventListener("click", function (e) {
-      var t = e.target.closest && e.target.closest("[data-push-open],[data-push-back],[data-push-close],[data-push-copy],[data-push-test],[data-push-send],[data-push-stop]");
+      var t = e.target.closest && e.target.closest("[data-push-brief],[data-push-open],[data-push-back],[data-push-close],[data-push-copy],[data-push-test],[data-push-send],[data-push-stop]");
       if (!t) return;
       var box = el.querySelector(".pushbox"), id = box ? box.getAttribute("data-id") : null;
+      if (t.hasAttribute("data-push-brief")) {
+        setBrief(id, t.checked);
+        var bw = byId(id), bo = el.querySelector("#push-send-out");
+        if (bw && onServer(id)) {   /* already pushed: send the change at once */
+          if (bo) bo.textContent = "Saving…";
+          call("POST", payload(bw)).then(function (o) { took(o); if (bo) bo.textContent = t.checked ? "In your morning brief." : "Left out of your morning brief."; },
+            function (er) { LIST_AT = 0; if (bo) bo.textContent = er.message; });
+        }
+        return;
+      }
       if (t.hasAttribute("data-push-open")) { id = t.getAttribute("data-push-open"); loadList(function () { panel(id); }); return; }
       if (t.hasAttribute("data-push-back")) { window.OSAP_WATCH.open(); return; }
       if (t.hasAttribute("data-push-close")) { el.hidden = true; el.innerHTML = ""; return; }

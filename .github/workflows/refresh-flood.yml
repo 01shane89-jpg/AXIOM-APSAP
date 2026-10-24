@@ -443,7 +443,9 @@ jobs:
   # each checked with its plan's data; added from the app's Push to
   # phone button; read with this job's GitHub OIDC token, so no secret, see tools/push_lib.mjs) is checked by opening its country's page headless on the new data, and new matching reports are sent to the
   # watch's ntfy.sh channel. No key or account: ntfy.sh takes anonymous posts. What was already seen is kept in the Actions cache,
-  # not in the repo. "push-test" (any branch) sends the newest match of each watch once, marked [test], and keeps nothing.
+  # not in the repo. Once a local morning (from 0600 on the phone's clock) each channel also gets a morning brief for the
+  # countries its watches are on (tools/push_brief.mjs). "push-test" (any branch) sends the newest match of each watch and each
+  # channel's brief once, marked [test], and keeps nothing.
   push:
     needs: refresh
     if: ${{ always() && ((!inputs.only && inputs.lane != 'fast' && github.ref == 'refs/heads/main') || inputs.only == 'push' || inputs.only == 'push-test') }}
