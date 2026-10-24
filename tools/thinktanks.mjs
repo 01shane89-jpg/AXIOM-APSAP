@@ -141,6 +141,17 @@ const TT = [
   ["cpalanka", "Centre for Policy Alternatives", "https://www.cpalanka.org/", ["https://www.cpalanka.org/feed/"]],
   ["bipd", "Bahrain Institute for Political Development", "https://www.bipd.org/", ["https://www.bipd.org/pages/rssfeed.aspx"]],
   ["asj", "ASJ Honduras", "https://asjhonduras.com/", ["https://asjhonduras.com/feed/"]],
+  ["idesa", "IDESA", "https://idesa.org/", ["https://idesa.org/rss"]],
+  ["poderciudadano", "Poder Ciudadano", "https://poderciudadano.org/", ["https://poderciudadano.org/rss"]],
+  ["acep", "Africa Centre for Energy Policy", "https://acep.africa/", ["https://acep.africa/rss"]],
+  ["penplusbytes", "Penplusbytes", "https://www.penplusbytes.org/", ["https://www.penplusbytes.org/rss"]],
+  ["rebaltica", "Re:Baltica", "https://en.rebaltica.lv/", ["https://en.rebaltica.lv/rss"]],
+  ["pciudadana", "Participación Ciudadana", "https://pciudadana.org/", ["https://pciudadana.org/rss"]],
+  ["cespad", "CESPAD", "https://cespad.org.hn/", ["https://cespad.org.hn/rss.xml"]],
+  ["cedla", "CEDLA", "https://cedla.org/", ["https://cedla.org/rss"]],
+  ["solon", "Fundación Solón", "https://fundacionsolon.org/", ["https://fundacionsolon.org/rss"]],
+  ["cristosal", "Cristosal", "https://cristosal.org/", ["https://cristosal.org/rss"]],
+  ["varberg", "Varðberg", "https://vardberg.is/", ["https://vardberg.is/rss"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
@@ -258,7 +269,7 @@ function fixDate(d) {
 }
 
 // Institutes that cover one country only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
-const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"] };
+const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"], idesa: ["ar"], poderciudadano: ["ar"], acep: ["gh"], penplusbytes: ["gh"], rebaltica: ["lv"], pciudadana: ["do"], cespad: ["hn"], cedla: ["bo"], solon: ["bo"], cristosal: ["sv"], varberg: ["is"] };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;

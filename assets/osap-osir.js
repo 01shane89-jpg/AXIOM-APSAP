@@ -690,8 +690,9 @@
   function resume() {
     var p = null;
     try { p = JSON.parse(sessionStorage.getItem(PEND) || "null"); sessionStorage.removeItem(PEND); } catch (e) {}
-    if (p && p.cc === W.TSAP.country && Date.now() - p.t < 120000) setTimeout(function () { open({ from: p.from, to: p.to, scope: "", region: "" }); }, 2500);
+    /* on a slow device the country's records can arrive well after the page: keep trying for a minute, as open() refuses until they are in */
+    if (p && p.cc === W.TSAP.country && Date.now() - p.t < 300000) (function again(n) { if (!open({ from: p.from, to: p.to, scope: "", region: "" }) && n < 60) setTimeout(function () { again(n + 1); }, 1000); })(0);
   }
-  (function wait(i) { if (W.TSAP && W.OSAP_TLREPORT && W.OSAP_TIME) resume(); else if (i < 240) setTimeout(function () { wait(i + 1); }, 250); })(0);
+  (function wait(i) { if (W.TSAP && W.OSAP_TLREPORT && W.OSAP_TIME) setTimeout(resume, 2500); else if (i < 720) setTimeout(function () { wait(i + 1); }, 250); })(0);
   W.OSAP_OSIR = { open: open, close: close, _state: function () { return S; }, _build: build };
 })();
