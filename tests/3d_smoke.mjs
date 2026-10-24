@@ -24,11 +24,12 @@ async function open(opts, classic) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [], libs = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
-  await ctx.addInitScript((classic) => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap-mapsets-th") == null) localStorage.setItem("osap-mapsets-th", JSON.stringify(["flood", "crime", "crisis"])); if (classic) localStorage.setItem("osap-ui", "classic"); } catch (e) {} }, classic);
+  await ctx.addInitScript((classic) => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-map-layers", JSON.stringify({ base: "topo" })); if (localStorage.getItem("osap-mapsets-th") == null) localStorage.setItem("osap-mapsets-th", JSON.stringify(["flood", "crime", "crisis"])); if (classic) localStorage.setItem("osap-ui", "classic"); } catch (e) {} }, classic);
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   p.on("request", (r) => { if (/maplibre-gl/.test(r.url())) libs.push(r.url()); });
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(3500);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
+  // a plain-tile base map (Topographic), since the Grey and Streets maps are drawn by this same engine and need it at once.
   // "while the app starts": the app waits 5 s after the page's load event before it fetches the engine in idle time
   // (osap-3d.js preload). Count only engine requests that began before that, so a slow start on a busy runner, where the
   // idle fetch can land inside the fixed waits above, is not taken for an early download.
@@ -328,7 +329,7 @@ function pmFixture() {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1000, height: 700 } });
   const seen = new Set(); let busy = 0, missing = 0;
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
-    const u = r.request().url(), m = /World_Imagery\/MapServer\/tile\/(\d+)\//.exec(u);
+    const u = r.request().url(), m = /s2cloudless_3857\/default\/g\/(\d+)\//.exec(u);
     if (/elevation-tiles|terrarium/.test(u)) return r.fulfill({ status: 200, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "image/png" }, body: png });
     if (!m) return r.abort();
     if (!seen.has(u)) { seen.add(u); busy++; return r.fulfill({ status: 429, headers: { "Access-Control-Allow-Origin": "*" }, body: "" }); }

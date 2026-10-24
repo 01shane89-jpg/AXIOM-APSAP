@@ -2,7 +2,7 @@
    Loaded the first time it is used (assets/osap-route.js, nvLoad). window.OSAP_NAV.open(snapshot) takes the route the
    analyst planned (its line, the router's turns, waypoints, hazards found along it) and runs a full-screen navigation view:
    - a follow-me map turned to the direction of travel (or north up), tilted in 3D or flat, on the Streets map with English
-     labels (OpenFreeMap vector, as the main map) or Esri satellite; the camera moves smoothly between position fixes;
+     labels (OpenFreeMap vector, as the main map) or Sentinel-2 cloudless satellite; the camera moves smoothly between position fixes;
    - the "you are here" arrow is a marker drawn above the map and the route line, never under it;
    - a large next-turn banner (turn arrow, distance, road), the turn after it when close, and the lanes to use where
      OpenStreetMap maps them (FOSSGIS OSRM returns them; Valhalla does not);
@@ -23,7 +23,7 @@
   "use strict";
   var W = window, D = document, G = W.OSAP_GEO;
   var PK = "osap-nav-prefs";
-  var GLLIB = "assets/vendor/maplibre-gl-5.24.0", ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/";
+  var GLLIB = "assets/vendor/maplibre-gl-5.24.0", S2 = "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg";
   var STREETS = "https://tiles.openfreemap.org/styles/liberty";
   var EN_NAME = ["coalesce", ["get", "name:en"], ["get", "name:latin"], ["get", "name_en"], ["get", "name"]];
   var S = null;
@@ -754,14 +754,13 @@
     });
   }
   function satStyle() {
-    var t = function (n) { return { type: "raster", tiles: [ESRI + n + "/MapServer/tile/{z}/{y}/{x}"], tileSize: 256, maxzoom: 19 }; };
-    return { version: 8, sources: { sat: t("World_Imagery"), rd: t("Reference/World_Transportation"), pl: t("Reference/World_Boundaries_and_Places") },
-      layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } }, { id: "sat", type: "raster", source: "sat", paint: { "raster-fade-duration": 0 } },
-        { id: "rd", type: "raster", source: "rd", paint: { "raster-opacity": 0.8, "raster-fade-duration": 0 } }, { id: "pl", type: "raster", source: "pl", paint: { "raster-fade-duration": 0 } }] };
+    /* Sentinel-2 cloudless 2016 (EOX, CC BY 4.0, 10 m): towns, fields and rivers round the route; the route line is drawn on top */
+    return { version: 8, sources: { sat: { type: "raster", tiles: [S2], tileSize: 256, maxzoom: 14 } },
+      layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } }, { id: "sat", type: "raster", source: "sat", paint: { "raster-fade-duration": 0 } }] };
   }
   var ATTR = {
     streets: '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
-    sat: "Esri, Maxar, Earthstar Geographics · © OpenStreetMap",
+    sat: '<a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0',
     osm: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
   };
   /* the route, travelled part and hazards drawn on top of whichever base map */
