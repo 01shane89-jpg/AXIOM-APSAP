@@ -15,6 +15,9 @@ for (const k of KEEP) {
   fs.cpSync(src, path.join(OUT, k), { recursive: true });
   n++;
 }
+// what this deploy was built from: tools/netlify_ignore.mjs reads it back from the live site to batch production deploys
+const COMMIT = /^[0-9a-f]{40}$/.test(process.env.COMMIT_REF || "") ? process.env.COMMIT_REF : null;
+fs.writeFileSync(path.join(OUT, "build.json"), JSON.stringify({ commit: COMMIT, built_at: new Date().toISOString(), context: process.env.CONTEXT || null }) + "\n");
 // the sold version (cost review 2026-10-24): the site's environment variable OSAP_COMMERCIAL=true turns the app's switch on
 // (assets/osap-sold.js); the repository variable of the same name strips the data (tools/nc_strip.mjs)
 if (/^(1|true|yes|on)$/i.test(String(process.env.OSAP_COMMERCIAL || "").trim())) {
