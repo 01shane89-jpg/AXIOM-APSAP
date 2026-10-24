@@ -9,6 +9,9 @@ name: AI drafts on the runner
 # Every 3 hours (and after the daily step): detailed summaries of incidents reported by two or more sources (tools/refresh_evsum.mjs
 # EVSUM_AI_ONLY), the ones most likely to be OSIR key events first, written to data/live/evsum_ai.js. Each draft is checked: every
 # statement cites its reports and every figure is one a report gives.
+# Every 3 hours, after the incident summaries: AI drafts of the OSIR analyst sections for the watched topics that are due
+# (tools/refresh_osirdraft.mjs, each topic at most every 20 hours), written to data/live/osirdraft.js. .github/workflows/osir-draft.yml
+# keeps the on-demand run for one topic.
 # Free while the repository is public (standard GitHub-hosted runners: 4 CPUs, 16 GB).
 on:
   schedule:
@@ -29,7 +32,7 @@ on:
         required: false
         default: "45"
       task:
-        description: "daily, evsum (incident summaries) or both"
+        description: "daily, evsum (incident summaries), osir (OSIR analyst sections) or both (evsum and osir)"
         required: false
         default: "both"
 
@@ -99,7 +102,7 @@ jobs:
           for i in $(seq 1 90); do curl -sf http://127.0.0.1:8080/v1/models >/dev/null && { echo "server up after ${i}x2 s"; exit 0; }; sleep 2; done
           tail -30 llm.log; exit 1
       - name: Redraft the daily summaries' top lines
-        if: ${{ (github.event_name == 'schedule' && github.event.schedule == '23 1 * * *') || (github.event_name != 'schedule' && inputs.task != 'evsum') }}
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule == '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'daily' || inputs.task == 'both' || inputs.task == '')) }}
         timeout-minutes: 90
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -111,7 +114,7 @@ jobs:
           DAILY_AI_BUDGET_MIN: "80"
         run: node tools/refresh_daily.mjs
       - name: Draft incident summaries
-        if: ${{ github.event_name == 'schedule' || inputs.task != 'daily' }}
+        if: ${{ github.event_name == 'schedule' || (inputs.task != 'daily' && inputs.task != 'osir') }}
         timeout-minutes: 60
         continue-on-error: true
         env:
@@ -125,6 +128,23 @@ jobs:
         run: |
           npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
           node tools/refresh_evsum.mjs
+      # the daily run has no time left for it (daily 90 + incidents 60 minutes); the 3-hourly runs draft whatever topics are due
+      - name: Draft OSIR analyst sections
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'osir' || inputs.task == 'both')) }}
+        timeout-minutes: 40
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OSAP_LOCAL_LLM: http://127.0.0.1:8080
+          OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
+          OSIRDRAFT_AI_BUDGET_MIN: "30"
+          OSIRDRAFT_MAX_RECS: "20"
+          # the shared cap guards GitHub Models' free daily limit; the runner's own model has none
+          OSIRDRAFT_SHARED_CAP: "100000"
+          OSIRDRAFT_CC: ${{ inputs.only }}
+        run: |
+          npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
+          node tools/refresh_osirdraft.mjs
       - name: Model server log (tail)
         if: ${{ always() }}
         run: tail -15 llm.log || true
@@ -136,19 +156,20 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan ai-preview-data
           git rm -rqf --cached .
-          for p in data/live/daily.js data/live/daily data/live/evsum_ai.js; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (AI drafts on the runner) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/ai-preview-data-$MODEL_KEY
       - name: Commit the summaries if they changed
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
-          git add -N data/live/daily.js data/live/daily data/live/evsum_ai.js 2>/dev/null || true
-          if git diff --quiet -- data/live/daily.js data/live/daily data/live/evsum_ai.js; then echo "no change"; exit 0; fi
+          git add -N data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js 2>/dev/null || true
+          if git diff --quiet -- data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js; then echo "no change"; exit 0; fi
           git config user.name "asap-ai-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/live/daily.js data/live/daily
           [ -f data/live/evsum_ai.js ] && git add data/live/evsum_ai.js
+          git add data/live/osirdraft.js
           git commit -m "AI drafts of the daily and incident summaries $(date -u +'%Y-%m-%d %H:%MZ')"
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
           exit 1

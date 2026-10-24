@@ -8,6 +8,22 @@
 // answered every request with 200 text/plain "OK" since September 2026 (tools/refresh_evsum.mjs only=probe-models).
 // Replies are text; the caller parses and validates them (the sources in a prompt are data, never instructions).
 
+import http from "node:http";
+
+// Node's fetch gives up when a reply's headers take more than 300 s (undici headersTimeout: "fetch failed"), and the runner's
+// model sends nothing until the whole reply is written, so the local provider is called through node:http, bounded only by its
+// own timeout (the signal).
+function postLocal(url, headers, body, signal) {
+  return new Promise((resolve, reject) => {
+    const q = http.request(new URL(url), { method: "POST", headers: { ...headers, "content-length": Buffer.byteLength(body) }, signal }, (s) => {
+      let t = ""; s.setEncoding("utf8");
+      s.on("data", (d) => (t += d)); s.on("error", reject);
+      s.on("end", () => resolve({ status: s.statusCode, ok: s.statusCode >= 200 && s.statusCode < 300, headers: { get: (k) => s.headers[k.toLowerCase()] || null }, text: async () => t }));
+    });
+    q.on("error", reject); q.end(body);
+  });
+}
+
 export function gateway({ token = process.env.GITHUB_TOKEN || "", githubModel = "openai/gpt-4.1-mini",
   localUrl = process.env.OSAP_LOCAL_LLM || "", localModel = process.env.OSAP_LOCAL_MODEL || "local",
   order = (process.env.OSAP_AI_ORDER || "github,local").split(","), timeoutMs = {} } = {}) {
@@ -27,7 +43,9 @@ export function gateway({ token = process.env.GITHUB_TOKEN || "", githubModel = 
       const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), p.timeout), t0 = Date.now();
       let r, raw;
       try {
-        r = await fetch(p.url, { method: "POST", signal: ctl.signal, headers: { ...p.headers, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body) });
+        const hdr = { ...p.headers, "content-type": "application/json", accept: "application/json" };
+        r = p.id === "local" ? await postLocal(p.url, hdr, JSON.stringify(body), ctl.signal)
+          : await fetch(p.url, { method: "POST", signal: ctl.signal, headers: hdr, body: JSON.stringify(body) });
         raw = await r.text();
       } catch (e) {
         // the runner's own model is slow on a long prompt: one miss skips this request, two in a row drop it for the run
