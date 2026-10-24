@@ -139,8 +139,23 @@ async function readFeed(f) {
 }
 const byHost = {};
 for (const f of feeds) { let h = f.url; try { h = new URL(f.url).hostname; } catch (e) {} (byHost[h] = byHost[h] || []).push(f); }
-const hosts = Object.values(byHost);
-await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) { await readFeed(f); if (f.search) await sleep(1000); } }));   // a second between searches on the same engine
+// Searches on the same engine start at least SEARCH_GAP apart (counted from one request's start to the next, not after each
+// answer, so a slow answer is not followed by a further second of waiting). Bing serves about 290 searches a run: waiting a full
+// second after each answer had made that one queue about 12 minutes, the whole news step's length, and the step hit its
+// 14-minute limit on about one run in five (2026-10-23), which left those runs with no news update at all.
+const SEARCH_GAP = Number(process.env.SEARCH_GAP_MS || 1000), lastSearch = {};
+async function searchSlot(f) {
+  let h = ""; try { h = new URL(f.url).hostname; } catch (e) {}
+  const wait = (lastSearch[h] || 0) + SEARCH_GAP - Date.now();
+  if (wait > 0) await sleep(wait);
+  lastSearch[h] = Date.now();
+}
+async function readPaced(f) { if (f.search) await searchSlot(f); return readFeed(f); }
+// the longest queue (the search engine's) starts first, so it is never left waiting for a free lane behind short ones
+const hosts = Object.values(byHost).sort((a, b) => b.length - a.length);
+const T0 = Date.now(), took = (t) => ((Date.now() - t) / 1000).toFixed(0) + " s";
+await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) await readPaced(f); }));
+console.log("timing: feeds read in", took(T0));
 // Every country in the picker must have news. Any country left with no working source this run (its outlets down,
 // or an empty search) gets a Bing News search for its name, tried quoted and then plain; marked as a search like the others.
 const working = () => new Set(status.filter((s) => s.ok && s.n > 0 && !s.st).map((s) => s.cc));
@@ -149,8 +164,7 @@ for (const c of COUNTRIES) {
   for (const q of ['"' + c.name + '"', c.name]) {
     const url = "https://www.bing.com/news/search?q=" + encodeURIComponent(q) + "&format=rss";
     if (feeds.some((f) => f.url === url)) continue;
-    await readFeed({ cc: c.id, outlet: "Bing News search (fallback)", url, lang: "en", search: true, nc: true });
-    await sleep(1000);
+    await readPaced({ cc: c.id, outlet: "Bing News search (fallback)", url, lang: "en", search: true, nc: true });
     if (working().has(c.id)) break;
   }
 }
@@ -158,10 +172,10 @@ for (const c of COUNTRIES) {
 // left the state view with a few dozen headlines (Missouri, 2026-10-20). Marked as a search (nc) like the others.
 const stOk = () => new Set(status.filter((s) => s.ok && s.n > 0 && s.st).map((s) => s.st));
 for (const [code, name] of US_STATES) {
-  await readFeed({ cc: "us", st: code, outlet: "Bing News search", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(stateQuery(code, name)) + "&format=rss",
+  await readPaced({ cc: "us", st: code, outlet: "Bing News search", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(stateQuery(code, name)) + "&format=rss",
     lang: "en", search: true, nc: true });
-  await sleep(1000);
 }
+console.log("timing: fallback and US state searches done at", took(T0));
 console.log("US states with news: " + stOk().size + " of " + US_STATES.length);
 // Coverage: how many countries have at least one working news source this run, and which have none.
 const ok = working(), ids = COUNTRIES.map((c) => c.id);
@@ -207,13 +221,15 @@ async function ogImage(url) {
   } catch (e) { return ""; } finally { clearTimeout(t); }
 }
 {
+  const t1 = Date.now();
   const need = Object.entries(items).filter(([k]) => !k.includes(":")).flatMap(([, l]) => l).filter((i) => !i.img && /^https:\/\//.test(i.link || "")).slice(0, OG_MAX);
   let got = 0;
-  for (let k = 0; k < need.length; k += 8) {
-    const res = await Promise.all(need.slice(k, k + 8).map((i) => ogImage(i.link)));
+  // 16 pages at a time (different outlets, first 96 KB only): with 8 at a time, a few slow sites in each batch held the rest
+  for (let k = 0; k < need.length; k += 16) {
+    const res = await Promise.all(need.slice(k, k + 16).map((i) => ogImage(i.link)));
     res.forEach((u, j) => { if (u) { need[k + j].img = u; got++; } });
   }
-  console.log("article-page pictures:", got, "of", need.length, "items without a feed picture");
+  console.log("article-page pictures:", got, "of", need.length, "items without a feed picture; timing", took(t1));
 }
 const all = [...new Set(Object.values(items).flat())];
 // The model translates about 400 texts a run and the cache holds 6,000, so with every country's outlets the order matters:
@@ -224,7 +240,9 @@ for (const [cc, list] of Object.entries(items)) for (const i of list) if (!areaO
 const ord = [...all].sort((a, b) => (FIRST.has(areaOf.get(b)) - FIRST.has(areaOf.get(a))) || (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
 // English already stored with the history is reused (tools/history.mjs), so a story keeps its translation after the cache drops it
 console.log("translations reused from the history:", seed(storedTranslations("news", Object.keys(items).filter((k) => !k.includes(":")))));
+const t2 = Date.now();
 const tr = await translateAll(ord.map((i) => ({ text: i.title, lang: i.lang })));
+console.log("timing: translation", took(t2));
 ord.forEach((i, n) => { i.title_en = tr[n].en; i._t = tr[n].tool; });
 all.forEach((i) => {
   i.mt = /^en\b/i.test(i.lang || "") ? null : (i._t || "untranslated");

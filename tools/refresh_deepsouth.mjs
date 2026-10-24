@@ -75,7 +75,14 @@ function pageLinks(html, base) {
 }
 const { feeds } = JSON.parse(fs.readFileSync("tools/deepsouth_feeds.json", "utf8"));
 const status = [], fresh = [], probe = [];
-for (const f of feeds) {
+// The outlets' own feeds are read a few at a time beside the searches, which go one by one, each starting at least a second after
+// the one before (counted from its start, so a slow answer is not followed by a further second). Reading every feed one after
+// another took about 3 minutes a run. Results are kept in the feeds' listed order, so the merge below is the same either way.
+const out = feeds.map(() => ({ fresh: [], status: [], probe: [] }));
+let lastSearch = 0;
+async function readOne(f, k) {
+  const fresh = out[k].fresh, status = out[k].status, probe = out[k].probe;
+  if (f.search) { const w = lastSearch + 1000 - Date.now(); if (w > 0) await sleep(w); lastSearch = Date.now(); }
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
     // Bing sometimes answers a quick run of searches with a short empty page instead of the feed: one more try after a pause
@@ -104,7 +111,14 @@ for (const f of feeds) {
     status.push({ id: f.id, source: f.outlet, url: f.url, ok: false, error });
     if (PROBE) probe.push({ id: f.id, url: f.url, ok: false, error });
   }
-  if (f.search) await sleep(1000);
+}
+{
+  const t0 = Date.now(), srch = [], own = [];
+  feeds.forEach((f, k) => (f.search ? srch : own).push(k));
+  await Promise.all([(async () => { for (const k of srch) await readOne(feeds[k], k); })(),
+    ...Array.from({ length: 4 }, async () => { for (let k; (k = own.shift()) !== undefined; ) await readOne(feeds[k], k); })]);
+  out.forEach((o) => { fresh.push(...o.fresh); status.push(...o.status); probe.push(...o.probe); });
+  console.log("Deep South: " + feeds.length + " feeds and searches read in " + ((Date.now() - t0) / 1000).toFixed(0) + " s");
 }
 // Thailand's general outlets, already read by the news step this run: keep only their Deep South items (no second fetch)
 try {
