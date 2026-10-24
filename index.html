@@ -1382,7 +1382,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
      its tiles) on 2026-10-17. If the drawing engine cannot start, the plain OpenStreetMap tiles stand in, greyed to match. */
   var GREY = { light: "https://tiles.openfreemap.org/styles/positron", dark: "https://tiles.openfreemap.org/styles/dark" };
   var OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
-  var OFM_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>';
+  var OFM_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>';
   function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
   function isDark() { return theme() !== "light"; } /* Grey and Dark both use the dark style; Grey lifts it to slate with --base-filter */
   var baseLayer = null;   /* made once VectorBase is defined (below) */
