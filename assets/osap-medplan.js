@@ -140,7 +140,14 @@
     if (!LSC) { LSC = {}; setTimeout(function () { LSC = null; }, 0); }
     return (LSC[k] = v);
   }
-  function lsSet(k, v) { LSC = null; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function lsSet(k, v) { LSC = null; BW = FV = null; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  /* bestWay and fieldVals are asked for again and again while one drawing sorts and fits hospitals (inside sort comparators,
+     once per hospital per casualty type and role): each answer is kept until the current script finishes, and sooner when the
+     plan's place, data or a saved setting changes */
+  var BW = null, FV = null;
+  function stSig() { var s = ST; return s ? [s, s.o, s.x, s.wx, s.ss, s.fac, s.rts, s.leg, s.sea, s.route] : []; }
+  function sigSame(a, b) { if (a.length !== b.length) return false; for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) return false; return true; }
+  function endOfTask(fn) { if (W.queueMicrotask) W.queueMicrotask(fn); else Promise.resolve().then(fn); }
   /* side panel: the plan docked to the right (bottom half on a phone) so the map stays usable. The choice is the one split view
      setting on this device (W.OSAP_SPLIT, assets/osap-split.js) that Find LZ, Watch and NAI/TAI share; this key is only the fallback. */
   var DOCK_KEY = "osap.medplan.dock";
@@ -1169,6 +1176,12 @@
     return ST.ss;
   }
   function fieldVals() {
+    var sg = stSig();
+    if (!FV || !sigSame(FV.sg, sg)) { FV = { sg: sg, v: fieldVals0() }; endOfTask(function () { FV = null; }); }
+    /* a copy: callers edit what they get back before saving it */
+    var o = {}; for (var k in FV.v) o[k] = FV.v[k]; return o;
+  }
+  function fieldVals0() {
     var v = lsGet(fieldsKey()) || {}, out = {}, c = curSet();
     Object.keys(v).forEach(function (k) { if (!LOC_RE.test(k)) out[k] = v[k]; });
     var x = c && placeSets().filter(function (y) { return y.id === c.id; })[0];
@@ -1538,6 +1551,13 @@
   function airOn() { return fieldVals().air !== 0; }
   /* the fastest way to surgical care for a hospital: [seconds from injury, "road" or "air"] */
   function bestWay(f) {
+    var sg = stSig();
+    if (!BW || !sigSame(BW.sg, sg)) { BW = { sg: sg, m: new Map() }; endOfTask(function () { BW = null; }); }
+    var e = BW.m.get(f);
+    if (!e || e.s !== f.s || e.m !== f.m) { e = { s: f.s, m: f.m, v: bestWay0(f) }; BW.m.set(f, e); }
+    return e.v && e.v.slice();
+  }
+  function bestWay0(f) {
     var g = groundTotal(f), a = airOn() ? airTotal(f) : null;
     if (g == null && a == null) return null;
     return g != null && (a == null || g <= a) ? [g, "road"] : [a, "air"];
