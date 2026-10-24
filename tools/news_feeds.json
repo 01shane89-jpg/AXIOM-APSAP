@@ -1752,6 +1752,15 @@
     {"cc":"gy","outlet":"Village Voice","url":"https://villagevoicenews.com/feed/","lang":"en"},
     {"cc":"gy","outlet":"Guyana Times","url":"https://guyanatimesgy.com/feed/","lang":"en"},
     {"cc":"jm","outlet":"Nationwide News","url":"https://nationwideradiojm.com/feed/","lang":"en"},
-    {"cc":"al","outlet":"ABC News Albania","url":"https://abcnews.al/feed/","lang":"sq"}
+    {"cc":"al","outlet":"ABC News Albania","url":"https://abcnews.al/feed/","lang":"sq"},
+    {"cc":"lk","outlet":"Lanka C News","url":"https://www.lankacnews.com/feeds/posts/default","lang":"si"},
+    {"cc":"ge","outlet":"On.ge","url":"https://on.ge/rss","lang":"ka"},
+    {"cc":"tz","outlet":"Global Publishers","url":"https://globalpublishers.co.tz/feed/","lang":"sw"},
+    {"cc":"kh","outlet":"Post Khmer","url":"https://postkhmer.com/feed","lang":"km"},
+    {"cc":"lt","outlet":"Respublika","url":"https://www.respublika.lt/feed.php?format=rss","lang":"lt"},
+    {"cc":"is","outlet":"Akureyri.net","url":"https://www.akureyri.net/is/feed","lang":"is"},
+    {"cc":"ee","outlet":"Pärnu Postimees","url":"https://parnu.postimees.ee/rss","lang":"et"},
+    {"cc":"ee","outlet":"Sakala","url":"https://sakala.postimees.ee/rss","lang":"et"},
+    {"cc":"iq","outlet":"Ultra Iraq","url":"https://ultrairaq.ultrasawt.com/rss.xml","lang":"ar"}
   ]
 }
