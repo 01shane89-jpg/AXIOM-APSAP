@@ -3,7 +3,7 @@
 // Not an official travel advisory and not an analyst assessment; official advisories are never an input.
 // Inputs, all keyless and free:
 //  - World Bank World Development Indicators and Worldwide Governance Indicators (CC BY 4.0): political stability and absence
-//    of violence/terrorism, rule of law, intentional homicides (UNODC), deaths before age 5 (UN IGME), access to electricity,
+//    of violence/terrorism, rule of law, intentional homicides (UNODC), deaths before age 5 (UN IGME), population, access to electricity,
 //    internet use. Slow-moving, so read once a week and kept in data/live/risk/_wb.json.
 //  - OSAP's own feeds in data/live: conflict deaths (UCDP GED and candidate events, data/live/conflicts/history/cc and
 //    data/live/ucdp), WHO Disease Outbreak News and CDC travel health notices, GDACS alerts, USGS earthquakes, official
@@ -30,7 +30,7 @@ fs.mkdirSync(OUT, { recursive: true });
 function loadJs(file) {
   try { const w = {}; vm.runInNewContext(fs.readFileSync(file, "utf8"), { window: w }, { timeout: 20000 }); return w; } catch (e) { return null; }
 }
-async function getJson(url, ms = 90000) {
+async function getJson(url, ms = 180000) {
   const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms);
   try { const r = await fetch(url, { headers: { "user-agent": UA, accept: "application/json" }, signal: ac.signal }); if (!r.ok) throw new Error("HTTP " + r.status); return await r.json(); }
   finally { clearTimeout(t); }
@@ -43,6 +43,7 @@ const WB = [
   { k: "rl", ids: ["GOV_WGI_RL.EST", "RL.EST"], page: "GOV_WGI_RL_EST" },
   { k: "homicide", ids: ["VC.IHR.PSRC.P5"] },
   { k: "u5", ids: ["SH.DYN.MORT"] },
+  { k: "pop", ids: ["SP.POP.TOTL"] },
   { k: "elec", ids: ["EG.ELC.ACCS.ZS"] },
   { k: "net", ids: ["IT.NET.USER.ZS"] }
 ];
@@ -56,7 +57,7 @@ if (wbOld && process.env.RISK_WB !== "0") {
       for (const extra of ["", "&source=3"]) {
         if (next.series[d.k]) break;
         if (extra && !/WGI|\.EST$/.test(id)) continue;
-        try {
+        for (let attempt = 0; attempt < 2 && !next.series[d.k]; attempt++) try {
           const j = await getJson("https://api.worldbank.org/v2/country/all/indicator/" + id + "?format=json&per_page=20000&date=2005:" + Y + extra);
           const rows = (Array.isArray(j) && j[1]) || [], o = {};
           for (const r of rows) if (r && r.value != null && isFinite(r.value) && /^[A-Z]{3}$/.test(r.countryiso3code || "")) (o[r.countryiso3code] = o[r.countryiso3code] || []).push([String(r.date), +r.value]);
@@ -147,10 +148,11 @@ for (const cc of list) {
   const C = COUNTRIES.find((c) => c.id === cc), a3 = cc === "oki" ? "JPN" : C.a3, ucc = cc;
   const a2 = cc === "oki" ? "JP" : cc.toUpperCase();
   const I = { pv: wbInd("pv", a3, a2, 6), rl: wbInd("rl", a3, a2, 6), homicide: wbInd("homicide", a3, a2, 10), u5: wbInd("u5", a3, a2, 8), elec: wbInd("elec", a3, a2, 8), net: wbInd("net", a3, a2, 8) };
+  const pop = wbInd("pop", a3, a2, 8);
   const rows = conflictRows(ucc);
   if (rows) {
     const d = deathsFrom(rows, since365);
-    I.deaths = { n: d.n, events: d.events, window: since365 + " to " + iso(NOW), src: "https://ucdp.uu.se/", note: "UCDP Georeferenced Event Dataset and monthly candidate events; candidate data lags one to two months." };
+    I.deaths = { n: d.n, events: d.events, popM: pop ? pop.v / 1e6 : 0, window: since365 + " to " + iso(NOW), src: "https://ucdp.uu.se/", note: "UCDP Georeferenced Event Dataset and monthly candidate events; candidate data lags one to two months." };
   }
   const who = ((WHO && WHO.items) || []).filter((x) => (x.ccs || []).includes(cc === "oki" ? "jp" : cc) && x.date >= since90);
   const cdc = ((CDC && CDC.items) || []).filter((x) => (x.ccs || []).includes(cc === "oki" ? "jp" : cc) && x.date >= since90);
@@ -165,7 +167,7 @@ for (const cc of list) {
   // the cities: local conflict deaths (50 km) and local hazard events; crime, health and infrastructure stay national
   const cityOut = cities.map((ct) => {
     const Ic = Object.assign({}, I);
-    if (rows) { const d = deathsFrom(rows, since365, ct, 50); Ic.deaths = Object.assign({}, I.deaths, { n: d.n, events: d.events, note: "Within 50 km of the city. " + I.deaths.note }); }
+    if (rows) { const d = deathsFrom(rows, since365, ct, 50); Ic.deaths = Object.assign({}, I.deaths, { n: d.n, events: d.events, popM: ct.pop > 0 ? ct.pop / 1e6 : 0, note: "Within 50 km of the city; per million of the city's people. " + I.deaths.note }); }
     const hzc = hazardEvents({
       gdacs: gdacsPts.filter((g) => km(ct.lat, ct.lon, g.lat, g.lon) <= 150),
       quakes: quakePts.filter((q) => km(ct.lat, ct.lon, q.lat, q.lon) <= 200),

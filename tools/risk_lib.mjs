@@ -18,6 +18,11 @@ const r1 = (v) => Math.round(v * 10) / 10;
 export const wgiPts = (est) => clamp((1.5 - est) / 4 * 100);
 // conflict deaths in the past 365 days (UCDP best estimate), on a log scale: 0 -> 0, 10 -> 26, 100 -> 50, 1,000 -> 75, 10,000+ -> 100
 export const deathsPts = (n) => clamp(Math.log10(1 + Math.max(0, n)) / 4 * 100);
+// conflict deaths per million people in the past 365 days, log scale: 1 -> 10, 10 -> 35, 100 -> 67, 1,000+ -> 100
+export const perMillionPts = (d) => clamp(Math.log10(1 + Math.max(0, d)) / 3 * 100);
+// the conflict-deaths score: half the count, half the count per million people (a country of 200 million with 2,000 deaths is
+// not a war zone end to end); the count alone where the population is not known
+export function deathsScore(n, popM) { return popM > 0 ? (deathsPts(n) + perMillionPts(n / popM)) / 2 : deathsPts(n); }
 // intentional homicides per 100,000 people (UNODC via the World Bank), log scale: 1 -> 18, 5 -> 46, 10 -> 61, 25 -> 83, 50+ -> 100
 export const homicidePts = (h) => clamp(Math.log10(1 + Math.max(0, h)) / Math.log10(51) * 100);
 // a 0-100 coverage figure where higher is better (% with electricity, % using the internet)
@@ -50,13 +55,14 @@ export function withEvents(base, events, baseShare) {
 }
 
 // ---------- the categories ----------
-// Security and conflict: World Bank "Political Stability and Absence of Violence/Terrorism" 40%, conflict deaths 60%, or the
+// Security and conflict: World Bank "Political Stability and Absence of Violence/Terrorism" 40%, the conflict-deaths score 60%, or the
 // conflict-deaths score alone when that is higher
 export function security(I) {
   const m = mix([
     { k: "pv", name: "Political stability and absence of violence/terrorism (WGI)", v: I.pv && I.pv.v, year: I.pv && I.pv.y, pts: I.pv ? wgiPts(I.pv.v) : null, w: 0.4, src: I.pv && I.pv.src },
     { k: "deaths", name: "Conflict deaths, past 365 days (UCDP)", v: I.deaths ? I.deaths.n : null, year: I.deaths && I.deaths.window, events: I.deaths && I.deaths.events,
-      pts: I.deaths ? deathsPts(I.deaths.n) : null, w: 0.6, src: I.deaths && I.deaths.src, note: I.deaths && I.deaths.note }
+      per_million: I.deaths && I.deaths.popM > 0 ? Math.round(I.deaths.n / I.deaths.popM * 10) / 10 : undefined,
+      pts: I.deaths ? deathsScore(I.deaths.n, I.deaths.popM) : null, w: 0.6, src: I.deaths && I.deaths.src, note: I.deaths && I.deaths.note }
   ]);
   // a war is a war whatever the governance estimate says: the conflict-deaths score alone counts when it is higher
   const d = m.parts[1].pts;

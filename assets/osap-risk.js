@@ -77,7 +77,7 @@
   /* ---------- the country brief page ---------- */
   function partsRows(cat) {
     var rows = (cat.parts || []).map(function (p) {
-      var val = p.v == null ? '<span class="bm">no figure</span>' : esc(num(p.v)) + (p.events != null ? '<span class="bm"> (' + esc(p.events) + " events)</span>" : "");
+      var val = p.v == null ? '<span class="bm">no figure</span>' : esc(num(p.v)) + (p.events != null ? '<span class="bm"> (' + esc(p.events) + " events" + (p.per_million != null ? ", " + esc(num(p.per_million)) + " per million people" : "") + ")</span>" : "");
       return '<tr><td class="w">' + link(p.src, esc(p.name)) + (p.year ? '<span class="bm"> · ' + esc(p.year) + "</span>" : "") + (p.note ? '<div class="bm">' + esc(p.note) + "</div>" : "") +
         "</td><td>" + val + "</td><td>" + (p.pts == null ? "–" : esc(num(p.pts))) + '</td><td class="bm">' + esc(Math.round((p.w || 0) * 100)) + "%" +
         (cat.base_share != null && cat.base_share < 1 && cat.base_share > 0 ? " × " + esc(Math.round(cat.base_share * 100)) + "%" : "") + "</td></tr>";
@@ -118,7 +118,7 @@
         "Cities: the capital and the largest cities of a million people or more (" + link((R.sources && R.sources.cities && R.sources.cities.url) || "https://www.geonames.org/", "GeoNames") + ", CC BY 4.0).</p>";
     }
     h += '<h3>Method</h3><p class="bm">Levels: score 0–19 Minimal, 20–39 Low, 40–59 Moderate, 60–79 High, 80–100 Extreme. ' +
-      "Security: World Bank Political Stability and Absence of Violence/Terrorism 40% (an estimate of +1.5 or better scores 0, −2.5 scores 100) and UCDP conflict deaths in the past 365 days 60% (log scale: 10 deaths 26 points, 100 deaths 50, 1,000 deaths 75, 10,000 or more 100), or the conflict-deaths score alone when that is higher. " +
+      "Security: World Bank Political Stability and Absence of Violence/Terrorism 40% (an estimate of +1.5 or better scores 0, −2.5 scores 100) and the UCDP conflict deaths of the past 365 days 60%, scored half on the count (log scale: 10 deaths 26 points, 100 deaths 50, 1,000 deaths 75, 10,000 or more 100) and half per million people (1 per million 10 points, 10 35, 100 67, 1,000 or more 100); the conflict-deaths score alone counts when it is higher than the mix. " +
       "Crime: UNODC intentional homicides per 100,000 60% (log scale: 1 scores 18, 10 scores 61, 50 or more 100) and World Bank Rule of Law 40%. " +
       "Health: 70% of the under-5 mortality score (UN IGME deaths before age 5 per 1,000 live births, log scale: 3 or fewer scores 0, 10 scores 33, 30 scores 62, 120 or more 100), plus WHO outbreak notices in the past 90 days (15 each) and CDC travel health notices (level 3: 30, level 2: 15, level 1: 5), notices at most 45. " +
       "Natural hazards now: events in force only: GDACS red 60, orange 35, green 5 (green at most 15); earthquakes M7+ 50, M6+ 25 (past 7 days); official warnings extreme 30, severe 15 (at most 45); a tropical cyclone within 300 km in the next 72 hours 40 (hurricane force) or 15; a volcanic ash advisory 15. " +

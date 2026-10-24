@@ -27,7 +27,10 @@ const s2 = L.security({});
 ok(s2.score === null, "no inputs: no score (not zero)");
 const s3 = L.security({ pv: { v: -0.5, y: "2024" }, deaths: { n: 99, events: 5 } });
 ok(near(s3.score, 50), "security mixes WGI 40% and deaths 60% (" + s3.score + ")");
-const s4 = L.security({ pv: { v: -0.3 }, deaths: { n: 80000 } });
+ok(near(L.perMillionPts(99), 66.7, 0.1) && L.perMillionPts(5000) === 100, "deaths per million on a log scale");
+ok(near(L.deathsScore(2665, 130), (L.deathsPts(2665) + L.perMillionPts(20.5)) / 2, 0.01) && L.deathsScore(2665, 130) < L.deathsPts(2665), "a large country's deaths are weighed by population too");
+ok(L.deathsScore(500, 0) === L.deathsPts(500), "population unknown: the count alone");
+const s4 = L.security({ pv: { v: -0.3 }, deaths: { n: 80000, popM: 37 } });
 ok(s4.score === 100 && s4.by_deaths, "a war counts in full even with a mild governance estimate (" + s4.score + ")");
 
 // health: notices capped
@@ -46,7 +49,7 @@ ok(L.hazards([]).score === 0 && L.hazards([], false).score === null, "no event i
 ok(L.hazards(L.hazardEvents({ quakes: [{ mag: 5.9, place: "x", time: 0 }, { mag: 7.1, place: "y", time: 0 }] })).score === 50, "earthquakes below M6 ignored, M7+ 50");
 
 // overall: weighted mean, floored at one below the worst category
-const war = L.rate({ pv: { v: -2.5 }, deaths: { n: 20000 }, homicide: { v: 1 }, rl: { v: 1.5 }, u5: { v: 3 }, elec: { v: 100 }, net: { v: 95 } }, { hazards: [] });
+const war = L.rate({ pv: { v: -2.5 }, deaths: { n: 20000, popM: 20 }, homicide: { v: 1 }, rl: { v: 1.5 }, u5: { v: 3 }, elec: { v: 100 }, net: { v: 95 } }, { hazards: [] });
 ok(war.cats.security.level === 5 && war.overall.level === 5 && war.overall.floor === "security", "a war zone with good services is Extreme overall: security sets the floor");
 const sick = L.rate({ pv: { v: 1.5 }, deaths: { n: 0 }, homicide: { v: 1 }, rl: { v: 1.5 }, u5: { v: 200 }, elec: { v: 100 }, net: { v: 95 } },
   { health: [{ pts: 45 }], hazards: [] });
@@ -62,7 +65,7 @@ ok(L.deathsFrom([{ date: "2026-01-01", lat: 13.75, lon: 100.5, best: 3 }, { date
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "risk-"));
 const out = path.join(tmp, "out"); fs.mkdirSync(out);
 const wbFix = { schema: "osap-risk-wb/1", read: new Date().toISOString().slice(0, 16) + "Z", ids: { pv: "GOV_WGI_PV.EST" },
-  series: { pv: { THA: [["2023", -0.6]], UKR: [["2023", -2.0]], SGP: [["2023", 1.5]] }, rl: { THA: [["2023", 0]], SGP: [["2023", 1.8]] }, homicide: { THA: [["2021", 4.4]], SGP: [["2021", 0.1]] },
+  series: { pop: { THA: [["2024", 71.7e6]], UKR: [["2024", 37e6]], SGP: [["2024", 5.9e6]] }, pv: { THA: [["2023", -0.6]], UKR: [["2023", -2.0]], SGP: [["2023", 1.5]] }, rl: { THA: [["2023", 0]], SGP: [["2023", 1.8]] }, homicide: { THA: [["2021", 4.4]], SGP: [["2021", 0.1]] },
     u5: { THA: [["2023", 8.5]], SGP: [["2023", 2.1]] }, elec: { THA: [["2022", 100]], SGP: [["2022", 100]] }, net: { THA: [["2023", 88]], SGP: [["2023", 96]] } } };
 fs.writeFileSync(path.join(out, "_wb.json"), JSON.stringify(wbFix));
 const run = (live) => execFileSync(process.execPath, ["tools/refresh_risk.mjs"], { env: Object.assign({}, process.env, { RISK_OUT: out, RISK_WB: "0", RISK_ONLY: "th,ua,sg", RISK_LIVE: live }), encoding: "utf8" });
