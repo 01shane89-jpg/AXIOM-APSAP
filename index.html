@@ -49,6 +49,7 @@
 </script>
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
 <!-- lock my saved work: a locked device has no saved work in plain storage before any feature reads it (assets/osap-vault.js) -->
+<script src="assets/osap-sold.js"></script>
 <script src="assets/osap-vault.js"></script>
 <script src="assets/osap-sync-boot.js"></script>
 <script src="assets/osap-lock.js"></script>
@@ -1387,7 +1388,8 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
      commercial use allowed with credit; it replaced the Esri canvas (whose terms need a paid plan to sell, and forbid packaging
      its tiles) on 2026-10-17. If the drawing engine cannot start, the plain OpenStreetMap tiles stand in, greyed to match. */
   var GREY = { light: "https://tiles.openfreemap.org/styles/positron", dark: "https://tiles.openfreemap.org/styles/dark" };
-  var OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  /* the sold version (assets/osap-sold.js) has no raster stand-in: tile.openstreetmap.org is not for paid products */
+  var OSM_TILES = window.OSAP_SOLD ? "" : "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
   var OFM_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>';
   function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
   function isDark() { return theme() !== "light"; } /* Grey and Dark both use the dark style; Grey lifts it to slate with --base-filter */
@@ -1493,7 +1495,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       L.DomUtil.remove(this._box); this._box = null;
     },
     /* for the 3D view, which draws plain tiles: the OpenStreetMap tiles of the same map (unless the stand-in already is them) */
-    rasterTwin: function () { return this._fb ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
+    rasterTwin: function () { return this._fb || !this.options.fallback ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
     /* no engine (old phone, no WebGL, offline before the style was saved): the plain OpenStreetMap tiles instead */
     _fail: function () {
       if (this._fb || !this.options.fallback) return;
@@ -1547,7 +1549,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
     else if (b.vector) {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
-      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: b.url, max: b.max }).addTo(map);
+      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: window.OSAP_SOLD ? "" : b.url, max: b.max }).addTo(map);
     }
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);

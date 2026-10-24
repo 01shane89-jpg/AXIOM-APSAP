@@ -18,7 +18,8 @@
   var LIVE = "https://axiom-osap.netlify.app/";
   /* OpenStreetMap's own tiles (CORS allowed; one picture asks for a handful, within its tile policy), drawn greyed. Was the Esri
      canvas until 2026-10-17: Esri's terms need a paid plan for a product that is sold */
-  var TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png", CREDIT = "Map: \u00a9 OpenStreetMap contributors, Natural Earth";
+  /* the sold version (assets/osap-sold.js) draws outlines only: tile.openstreetmap.org is not for paid products */
+  var TILES = window.OSAP_SOLD ? "" : "https://tile.openstreetmap.org/{z}/{x}/{y}.png", CREDIT = "Map: \u00a9 OpenStreetMap contributors, Natural Earth";
   var PRANK = { exact: 3, approx: 2, province: 1 };
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -279,7 +280,7 @@
     /* live tiles first; a tile the browser will not let a picture use (no CORS) spoils the canvas, so check and fall back */
     var x0 = Math.floor(ox / 256), x1 = Math.floor((ox + W) / 256), y0 = Math.floor(oy / 256), y1 = Math.floor((oy + H) / 256), n = Math.pow(2, z), jobs = [];
     for (var tx = x0; tx <= x1; tx++) for (var ty = y0; ty <= y1; ty++) {
-      if (ty < 0 || ty >= n) continue;
+      if (ty < 0 || ty >= n || !TILES) continue;
       (function (tx, ty) {
         var wx = ((tx % n) + n) % n;
         jobs.push(loadImg(TILES.replace("{z}", z).replace("{y}", ty).replace("{x}", wx), true, 4500).then(function (im) { return { im: im, x: tx * 256 - ox, y: ty * 256 - oy }; }));
@@ -287,7 +288,7 @@
     }
     return Promise.all(jobs).then(function (ts) {
       var got = ts.filter(function (t) { return t.im; });
-      if (got.length >= ts.length * 0.6) {
+      if (got.length && got.length >= ts.length * 0.6) {
         ctx.filter = "grayscale(1)"; got.forEach(function (t) { ctx.drawImage(t.im, t.x, t.y, 256, 256); }); ctx.filter = "none";
         try { ctx.getImageData(0, 0, 1, 1); outlines(ctx, z, ox, oy, false); return finish(CREDIT); }
         catch (e) {}
@@ -439,7 +440,7 @@
     frame(9); bg();
     var x0 = Math.floor(ox / 256), x1 = Math.floor((ox + w) / 256), y0 = Math.floor(oy / 256), y1 = Math.floor((oy + h) / 256), n = Math.pow(2, z), jobs = [];
     for (var tx = x0; tx <= x1; tx++) for (var ty = y0; ty <= y1; ty++) {
-      if (ty < 0 || ty >= n) continue;
+      if (ty < 0 || ty >= n || !TILES) continue;
       (function (tx, ty) {
         var wx = ((tx % n) + n) % n;
         jobs.push(loadImg(TILES.replace("{z}", z).replace("{y}", ty).replace("{x}", wx), true, 4500).then(function (im) { return { im: im, x: tx * 256 - ox, y: ty * 256 - oy }; }));
@@ -447,7 +448,7 @@
     }
     return Promise.all(jobs).then(function (ts) {
       var got = ts.filter(function (t) { return t.im; });
-      if (got.length >= ts.length * 0.6) {
+      if (got.length && got.length >= ts.length * 0.6) {
         ctx.filter = "grayscale(1)"; got.forEach(function (t) { ctx.drawImage(t.im, t.x, t.y, 256, 256); }); ctx.filter = "none";
         try { ctx.getImageData(0, 0, 1, 1); outlines(ctx, z, ox, oy, false, w, h); return marks(CREDIT); } catch (e) {}
       }
