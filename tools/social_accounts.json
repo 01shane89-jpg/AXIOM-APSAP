@@ -5752,6 +5752,48 @@
    "name": "President of the Republic of Kosovo",
    "kind": "government",
    "lang": "sq"
+  },
+  {
+   "cc": "dk",
+   "channel_id": "UCQZjKJUL5nqbeMt9LNCTOzQ",
+   "name": "Forsvaret (Danish Defence)",
+   "kind": "government (military)",
+   "lang": "da"
+  },
+  {
+   "cc": "no",
+   "channel_id": "UC-c4gdop7SsZow7fsZyRrnA",
+   "name": "Forsvaret (Norwegian Armed Forces)",
+   "kind": "government (military)",
+   "lang": "no"
+  },
+  {
+   "cc": "kw",
+   "channel_id": "UCXwnjEZ93jDooPjDSh-aHhQ",
+   "name": "Kuwait News Agency (KUNA)",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "lr",
+   "channel_id": "UCb6U-hOTIm1iQbDC6xoMu0A",
+   "name": "Executive Mansion - Liberia",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "hr",
+   "channel_id": "UC6eB2yV7T6Sr483zMmK22GA",
+   "name": "MORH (Croatian Ministry of Defence)",
+   "kind": "government (military)",
+   "lang": "hr"
+  },
+  {
+   "cc": "cz",
+   "channel_id": "UCwO4B145mbWEy4F67iL9ssw",
+   "name": "Armáda České republiky",
+   "kind": "government (military)",
+   "lang": "cs"
   }
  ]
 }
