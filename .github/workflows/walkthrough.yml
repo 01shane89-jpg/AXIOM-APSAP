@@ -24,7 +24,7 @@ jobs:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
-      - run: OUT=walkthrough node tools/walkthrough.mjs 2>&1 | tee walkthrough/log.txt
+      - run: OUT=walkthrough node tools/walkthrough.mjs 2>&1 | tee walkthrough-log.txt
         env:
           ONLY: ${{ inputs.only }}
       - name: Convert to MP4 (H.264, plays everywhere)
@@ -33,7 +33,7 @@ jobs:
           mkdir pub
           # start each video at its opening title card (tools/walkthrough.mjs writes the second to <name>.cut)
           for f in walkthrough/*.webm; do cut=$(cat "${f%.webm}.cut" 2>/dev/null || echo 0); ffmpeg -v error -ss "$cut" -i "$f" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart "pub/$(basename "${f%.webm}").mp4"; done
-          cp walkthrough/log.txt pub/ && ls -la pub
+          cp walkthrough-log.txt pub/log.txt && ls -la pub
       - name: Push the videos to media/walkthrough
         env:
           TOKEN: ${{ github.token }}
