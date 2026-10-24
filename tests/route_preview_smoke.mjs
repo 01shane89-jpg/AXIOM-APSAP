@@ -37,7 +37,7 @@ function side(t, off) { const p = at(t), ux = (B[1] - A[1]), uy = (B[0] - A[0]),
 const tOf = (lat) => (lat - A[0]) / (B[0] - A[0]);
 const J = (r, body, status) => r.fulfill({ status: status || 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(body) });
 const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
-let calls = { kv: 0, px: 0, esri: 0, ovp: 0, road: 0 };
+let calls = { kv: 0, px: 0, ovp: 0, road: 0 };
 
 async function open(offline) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
@@ -85,7 +85,6 @@ async function open(offline) {
         links: [{ rel: "license", title: "License for this object (CC-BY-SA-4.0)" }] }] });
       return J(r, { type: "FeatureCollection", features: [] });
     }
-    if (/World_Imagery\/MapServer\/identify/.test(u)) { calls.esri++; return J(r, { results: [{ layerId: 0, attributes: { "DATE (YYYYMMDD)": "20260305", "RESOLUTION (M)": "0.5", SOURCE: "Vantor", DESCRIPTION: "WV02" } }] }); }
     if (/open-meteo\.com\/v1\/elevation/.test(u)) { const n = new URL(u).searchParams.get("latitude").split(",").length; return J(r, { elevation: Array.from({ length: n }, (_, i) => 20 + i * 3) }); }
     if (/\.(jpg|png)|export\?|\/tile\//.test(u)) return r.fulfill({ status: 200, contentType: "image/png", headers: { "access-control-allow-origin": "*" }, body: PNG });
     r.abort();
@@ -159,7 +158,7 @@ let ctx, errors, p;
   const ni = s.pts.findIndex((x) => !x.street);
   await p.evaluate((i) => document.querySelector('#rtpv [data-pvi="' + i + '"]').click(), ni); await p.waitForTimeout(400);
   v = await p.evaluate(() => ({ t: document.querySelector("#rtpv .rtpv-view").textContent, c: document.querySelector("#rtpv .rtpv-chain").textContent, tab: window.OSAP_PREVIEW.state().tab, img: !!document.querySelector("#rtpv .rtpv-satw img") }));
-  ok(v.tab === "sat" && v.img && /05 MAR 2026/.test(v.t) && /Street-level imagery unavailable here: using satellite/.test(v.c), "no street picture: satellite with its capture date, and the fallback said in words");
+  ok(v.tab === "sat" && v.img && /2016 \(one-year mosaic\)/.test(v.t) && /Street-level imagery unavailable here: using satellite/.test(v.c), "no street picture: satellite with its capture date, and the fallback said in words");
   const g = await p.evaluate(() => { const a = document.querySelector("#rtpv .rtpv-ext"); return a ? { h: a.href, t: a.textContent } : null; });
   ok(g && /map_action=pano/.test(g.h) && /heading=1[89]\d/.test(g.h) && !/key=/.test(g.h) && /leaves OSAP/.test(g.t), "only where no open picture exists: a keyless Google link facing the route, marked as leaving OSAP");
   await p.click('#rtpv [data-tab="terrain"]'); await p.waitForFunction(() => /Steepest/.test(document.querySelector("#rtpv .rtpv-view").textContent), null, { timeout: 10000 });
@@ -209,9 +208,9 @@ let ctx, errors, p;
   v = await p.evaluate(() => ({ ins: document.querySelector("#rtdv .rtdv-ins").textContent, tag: document.querySelector("#rtdv .rtdv-tag").textContent, img: (document.querySelector("#rtdv .rtdv-iimg") || {}).style?.backgroundImage || "" }));
   ok(/KartaView · 12 JUN 2026/.test(v.ins) && /url\(/.test(v.img), "a street picture near the car appears in the corner with its source and date (" + v.ins.slice(0, 80) + ")");
   ok(!/someone/.test(v.ins + v.tag), "the corner picture never names who took it");
-  await p.waitForFunction(() => /captured 05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
+  await p.waitForFunction(() => /captured 2016 \(one-year mosaic\)/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
   v = await p.evaluate(() => document.querySelector("#rtdv .rtdv-tag").textContent);
-  ok(/3D satellite view · captured 05 MAR 2026/.test(v) && /how it looked then, not now/.test(v), "the 3D view is labelled as dated satellite over a terrain model (" + v.slice(0, 120) + ")");
+  ok(/3D satellite view · captured 2016 \(one-year mosaic\)/.test(v) && /how it looked then, not now/.test(v), "the 3D view is labelled as dated satellite over a terrain model (" + v.slice(0, 120) + ")");
   if (OUT) await p.screenshot({ path: OUT + "/drive-3d.png" });
   await p.click('#rtdv [data-dv="play"]'); await p.waitForTimeout(300);
   const pz = (await st(p)).drive.m; await p.waitForTimeout(600);
@@ -257,10 +256,10 @@ let ctx, errors, p;
   ok((await st(p)).drive.yaw === 0, "Look ahead turns the view back along the road");
   if (playing0) await p.click('#rtdv [data-dv="play"]');   /* driving on, so the pieces ahead keep loading */
   /* where no street picture exists: satellite, dated, said in words */
-  await seek(0.85); await p.waitForFunction(() => /05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent) && /to the end/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 10000 }).catch(() => {});
+  await seek(0.85); await p.waitForFunction(() => /2016 \(one-year mosaic\)/.test(document.querySelector("#rtdv .rtdv-tag").textContent) && /to the end/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 10000 }).catch(() => {});
   d = (await st(p)).drive;
   v = await p.evaluate(() => ({ tag: document.querySelector("#rtdv .rtdv-tag").textContent, img: !!document.querySelector("#rtdv .rtpv-satw img") }));
-  ok(d.kind === "sat" && v.img && /Satellite · captured 05 MAR 2026/.test(v.tag) && /No street pictures from here to the end/.test(v.tag) && !/Skip ahead/.test(v.tag), "a stretch without street pictures shows dated satellite, labelled as such, and says how far it runs (" + d.kind + ": " + v.tag.slice(0, 160) + ")");
+  ok(d.kind === "sat" && v.img && /Satellite · captured 2016 \(one-year mosaic\)/.test(v.tag) && /No street pictures from here to the end/.test(v.tag) && !/Skip ahead/.test(v.tag), "a stretch without street pictures shows dated satellite, labelled as such, and says how far it runs (" + d.kind + ": " + v.tag.slice(0, 160) + ")");
   /* a gap with pictures after it: say how long it is and offer to skip it */
   await seek(0.38); await p.waitForFunction(() => /No street pictures for the next/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
   v = await p.evaluate(() => document.querySelector("#rtdv .rtdv-tag").textContent);

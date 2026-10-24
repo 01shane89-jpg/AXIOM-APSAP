@@ -115,7 +115,7 @@
   var BASES = {
     streets: { name: "Streets", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "© OpenStreetMap contributors" },
     topo: { name: "Topographic", url: "https://a.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17, attr: "© OpenTopoMap (CC-BY-SA), OpenStreetMap contributors" },
-    sat: { name: "Satellite", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, attr: "Imagery © Esri, Maxar, Earthstar Geographics (Esri terms of use)" },
+    sat: { name: "Satellite", url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", max: 14, attr: "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0" },
     none: { name: "Outlines only", url: "", max: 19, attr: "Borders: Natural Earth (public domain)" }
   };
   function base() { var b = "streets"; try { b = localStorage.getItem("osap-arp-base") || b; } catch (e) {} return BASES[b] ? b : "streets"; }

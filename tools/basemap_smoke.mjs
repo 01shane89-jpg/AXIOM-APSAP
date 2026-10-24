@@ -18,8 +18,8 @@ if (!base) {
   await new Promise((r) => server.once("listening", r));
   base = `http://127.0.0.1:${server.address().port}/`;
 }
-const HOST = { grey: /services\.arcgisonline/, streets: /openfreemap/, topo: /opentopomap/, sat: /server\.arcgisonline.*World_Imagery/,
-  hybrid: /server\.arcgisonline.*World_Imagery/, clarity: /clarity\.maptiles/, s2: /maps\.eox\.at/, daily: /gibs\.earthdata/ };
+const HOST = { grey: /openfreemap/, streets: /openfreemap/, topo: /opentopomap/, sat: /maps\.eox\.at\/wmts\/1\.0\.0\/s2cloudless_3857/,
+  daily: /gibs\.earthdata/, offline: /maps\.eox\.at\/wmts\/1\.0\.0\/s2cloudless_3857/ };
 await mkdir("probe-out", { recursive: true });
 const browser = await chromium.launch();
 let failed = 0;
