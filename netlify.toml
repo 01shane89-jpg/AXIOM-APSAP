@@ -5,10 +5,9 @@
   publish = "_site"
   functions = "netlify/functions"
   edge_functions = "netlify/edge-functions"
-  # a data refresh (most commits) needs no new deploy: the data comes from GitHub Pages. Skipped (exit 0) only when there
-  # is an earlier build to compare with and nothing but data changed since; the first build, and a deploy started by hand
-  # for the same commit, always run.
-  ignore = '''[ -n "$CACHED_COMMIT_REF" ] && [ "$CACHED_COMMIT_REF" != "$COMMIT_REF" ] && git diff --quiet "$CACHED_COMMIT_REF" "$COMMIT_REF" -- . ':(exclude)data' ':(exclude)source''''
+  # batch the builds: production builds only when the site itself changed, at most once per 8-hour block (00, 08, 16 UTC),
+  # because each production deploy costs 15 credits. "[deploy now]" in a PR title deploys at once. See tools/netlify_ignore.mjs.
+  ignore = "node tools/netlify_ignore.mjs"
 
 # Free data, after the gate let it through: straight from GitHub Pages
 [[redirects]]
