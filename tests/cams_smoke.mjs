@@ -123,7 +123,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   ok(!s.on && s.drawn === 0 && reads.length === 0, "desktop: starts off, nothing read (" + reads.join(",") + ")");
   ok(!(await p.evaluate(() => !!document.querySelector("#atk-tools [data-ocam]"))), "desktop: no toolbar button of its own");
   await om(p, true);
-  ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Public cameras switch in the Overlays sheet");
+  ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Cameras switch in the Overlays sheet");
   ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement; return h.id === "ml-roads" && !!h.querySelector("[data-roads]") && !!h.closest("#ml-infra") && !h.closest("#ml-infra").hidden; }), "desktop: under Infrastructure > Roads, next to road closures");
   await p.evaluate(() => window.__asapMap.setView([22.57, 88.36], 9, { animate: false }));
   await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1500);
@@ -290,7 +290,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await p.evaluate(() => { window.OSAP_ATAK.mode(false); if (window.OSAP_TOOLS) window.OSAP_TOOLS.fold(false); }); await p.waitForTimeout(200);
   await p.evaluate(() => document.querySelector(".mlctl .mlbtn").click()); await p.waitForTimeout(200);
-  ok(await shown(p, "#cam-sec input[data-cam]"), "phone classic: Public cameras switch in the Layers panel");
+  ok(await shown(p, "#cam-sec input[data-cam]"), "phone classic: Cameras switch in the Layers panel");
   await p.check("#cam-sec input[data-cam]");
   await p.evaluate(() => document.querySelector(".mlctl .mlbtn").click()); await p.waitForTimeout(200);
   await at(p, [51.507, -0.128], 13);
