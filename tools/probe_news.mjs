@@ -68,8 +68,10 @@ console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f
 {
   const { discover = [] } = JSON.parse(fs.readFileSync("tools/news_candidates.json", "utf8"));
   const COMMON = ["/feed", "/feed/", "/rss", "/rss.xml", "/rss/", "/index.xml", "/feed.xml", "/atom.xml", "/rss/all.xml", "/rss/news.xml"];
-  const out = await pool(discover, 8, async (d) => {
-    const r = { ...d, tried: [] };
+  const keep = setInterval(() => {}, 1000); // a hung body read must not end the process with a pending await
+  const out = await pool(discover, 8, (d) => { const r0 = { ...d, tried: [] }; return Promise.race([one(d, r0), new Promise((ok) => setTimeout(() => ok({ ...r0, error: "outlet timed out" }), 120000))]); });
+  clearInterval(keep);
+  async function one(d, r) {
     try {
       const h = await get(d.home, 20000);
       r.status = h.status; r.final = h.final; r.bytes = h.body.length; r.links = (h.body.match(/<a\s/gi) || []).length;
@@ -87,7 +89,7 @@ console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f
       }
     } catch (e) { r.error = e.name === "AbortError" ? "timed out" : e.message; }
     return r;
-  });
+  }
   fs.writeFileSync("probe-out/discover.json", JSON.stringify(out, null, 1));
 }
 process.exit(0);
