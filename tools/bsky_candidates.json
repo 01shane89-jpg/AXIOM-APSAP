@@ -1,598 +1,566 @@
 [
 [
-"dk",
-"?DR Nyheder"
+"fr",
+"?Le Monde"
 ],
 [
-"dk",
-"?TV 2 Nyheder"
+"fr",
+"?Libération"
 ],
 [
-"dk",
-"?Altinget"
+"fr",
+"?Mediapart"
 ],
 [
-"no",
-"?NRK"
+"fr",
+"?franceinfo"
 ],
 [
-"no",
-"?Dagbladet"
+"it",
+"?Il Post"
 ],
 [
-"no",
-"?E24"
+"it",
+"?la Repubblica"
 ],
 [
-"lu",
-"?RTL Today Luxembourg"
+"it",
+"?Domani"
 ],
 [
-"ee",
-"?ERR News"
+"pt",
+"?Público Portugal"
 ],
 [
-"ee",
-"?Postimees"
+"pt",
+"?Expresso"
 ],
 [
-"lt",
-"?LRT"
+"pt",
+"?Observador"
 ],
 [
-"lt",
-"?Delfi Lithuania"
+"be",
+"?Le Soir"
 ],
 [
-"lv",
-"?LSM English"
+"be",
+"?De Standaard"
 ],
 [
-"lv",
-"?Re:Baltica"
+"be",
+"?RTBF info"
 ],
 [
-"is",
-"?RÚV English"
+"be",
+"?VRT NWS"
 ],
 [
-"is",
-"?Heimildin"
+"ch",
+"?Tages-Anzeiger"
 ],
 [
-"sk",
-"?Denník N"
+"ch",
+"?Le Temps"
 ],
 [
-"sk",
-"?SME"
+"ch",
+"?NZZ"
 ],
 [
-"ba",
-"?N1 BiH"
+"ch",
+"?Republik"
 ],
 [
-"ba",
-"?Istinomjer"
+"se",
+"?Aftonbladet"
 ],
 [
-"mk",
-"?Meta.mk"
+"se",
+"?Expressen"
 ],
 [
-"ar",
-"?La Nación Argentina"
-],
-[
-"ar",
-"?Clarín"
-],
-[
-"ar",
-"?Página 12"
-],
-[
-"ar",
-"?elDiarioAR"
-],
-[
-"ar",
-"?Infobae"
-],
-[
-"pa",
-"?La Prensa Panamá"
-],
-[
-"ni",
-"?Confidencial"
-],
-[
-"ni",
-"?La Prensa Nicaragua"
-],
-[
-"ni",
-"?Divergentes"
-],
-[
-"sv",
-"?GatoEncerrado"
-],
-[
-"gy",
-"?Stabroek News"
-],
-[
-"kg",
-"?Kloop"
-],
-[
-"by",
-"?Zerkalo"
-],
-[
-"by",
-"?Belsat"
-],
-[
-"ge",
-"?OC Media"
-],
-[
-"ge",
-"?JAMnews"
-],
-[
-"ly",
-"?Libya Observer"
-],
-[
-"ly",
-"?Libya Herald"
-],
-[
-"na",
-"?The Namibian"
-],
-[
-"bw",
-"?Mmegi"
-],
-[
-"mu",
-"?l'express Maurice"
-],
-[
-"fj",
-"?Fiji Times"
-],
-[
-"fj",
-"?Fijivillage"
-],
-[
-"fj",
-"?FBC News"
-],
-[
-"pg",
-"?Post-Courier"
-],
-[
-"vu",
-"?Daily Post Vanuatu"
-],
-[
-"ws",
-"?Samoa Observer"
-],
-[
-"to",
-"?Matangi Tonga"
-],
-[
-"cd",
-"?Actualite.cd"
-],
-[
-"ke",
-"?Nation Africa"
-],
-[
-"ke",
-"?The Standard Kenya"
-],
-[
-"ng",
-"?Premium Times"
-],
-[
-"ng",
-"?TheCable"
-],
-[
-"gh",
-"?Citi Newsroom"
-],
-[
-"gh",
-"?GhanaWeb"
-],
-[
-"zw",
-"?ZimLive"
-],
-[
-"zw",
-"?NewZimbabwe"
-],
-[
-"zw",
-"?263Chat"
-],
-[
-"mw",
-"?Nyasa Times"
-],
-[
-"ug",
-"?Daily Monitor Uganda"
-],
-[
-"tz",
-"?The Citizen Tanzania"
-],
-[
-"ph",
-"?Rappler"
-],
-[
-"np",
-"?Kathmandu Post"
-],
-[
-"pk",
-"?Dawn News"
-],
-[
-"mm",
-"?Frontier Myanmar"
-],
-[
-"mm",
-"?The Irrawaddy"
-],
-[
-"mm",
-"?Myanmar Now"
-],
-[
-"kh",
-"?CamboJA News"
-],
-[
-"kh",
-"?VOD Cambodia"
-],
-[
-"ru",
-"?Novaya Gazeta Europe"
-],
-[
-"ru",
-"?Mediazona"
-],
-[
-"ua",
-"?Ukrainska Pravda"
-],
-[
-"ua",
-"?Ukrinform"
-],
-[
-"tw",
-"?Focus Taiwan"
-],
-[
-"tw",
-"?Taipei Times"
-],
-[
-"mx",
-"?Animal Político"
-],
-[
-"mx",
-"?Proceso"
-],
-[
-"cl",
-"?CIPER"
-],
-[
-"co",
-"?La Silla Vacía"
-],
-[
-"ve",
-"?Efecto Cocuyo"
-],
-[
-"pe",
-"?Ojo Público"
-],
-[
-"br",
-"?Agência Pública"
-],
-[
-"br",
-"?piauí"
-],
-[
-"nl",
-"?NOS"
-],
-[
-"de",
-"?tagesschau"
-],
-[
-"at",
-"?ORF"
+"se",
+"?Sveriges Radio Ekot"
 ],
 [
 "fi",
-"?Yle News"
+"?Helsingin Sanomat"
 ],
 [
-"se",
-"?SVT Nyheter"
+"fi",
+"?Yle Uutiset"
 ],
 [
-"se",
-"?Dagens Nyheter"
+"gb",
+"?BBC News"
 ],
 [
-"*",
-"?RFE/RL"
+"gb",
+"?Financial Times"
 ],
 [
-"*",
-"?Eurasianet"
+"gb",
+"?The Independent"
 ],
 [
-"*",
-"?Balkan Insight"
+"gb",
+"?Sky News"
 ],
 [
-"*",
-"?RNZ Pacific"
+"gb",
+"?Channel 4 News"
 ],
 [
-"*",
-"?ABC News Australia"
+"us",
+"?NPR"
 ],
 [
-"*",
-"?DW News"
+"us",
+"?ProPublica"
 ],
 [
-"*",
-"?ACLED"
-],
-[
-"pl",
-"?Notes from Poland"
-],
-[
-"pl",
-"?OKO.press"
-],
-[
-"cz",
-"?Seznam Zprávy"
-],
-[
-"cz",
-"?Deník N"
-],
-[
-"hu",
-"?telex"
-],
-[
-"hu",
-"?444"
-],
-[
-"ro",
-"?G4Media"
-],
-[
-"bg",
-"?Mediapool"
-],
-[
-"rs",
-"?N1 Srbija"
-],
-[
-"rs",
-"?BIRN"
-],
-[
-"hr",
-"?Telegram.hr"
-],
-[
-"si",
-"?Delo"
-],
-[
-"md",
-"?NewsMaker"
-],
-[
-"am",
-"?CivilNet"
-],
-[
-"am",
-"?Azatutyun"
-],
-[
-"az",
-"?Meydan TV"
-],
-[
-"kz",
-"?Vlast.kz"
-],
-[
-"tr",
-"?Medyascope"
-],
-[
-"tr",
-"?bianet"
-],
-[
-"il",
-"?Haaretz"
-],
-[
-"il",
-"?Times of Israel"
-],
-[
-"lb",
-"?L'Orient Today"
-],
-[
-"sy",
-"?Enab Baladi"
-],
-[
-"iq",
-"?Shafaq News"
-],
-[
-"ir",
-"?IranWire"
-],
-[
-"af",
-"?Amu TV"
-],
-[
-"af",
-"?Zan Times"
-],
-[
-"bd",
-"?The Daily Star Bangladesh"
-],
-[
-"bd",
-"?Netra News"
-],
-[
-"lk",
-"?Daily Mirror Sri Lanka"
-],
-[
-"sg",
-"?CNA"
-],
-[
-"sg",
-"?The Straits Times"
-],
-[
-"my",
-"?Malaysiakini"
-],
-[
-"id",
-"?Tempo"
-],
-[
-"th",
-"?Prachatai"
-],
-[
-"vn",
-"?VnExpress"
-],
-[
-"jp",
-"?Japan Times"
-],
-[
-"jp",
-"?NHK World"
-],
-[
-"kr",
-"?Korea Herald"
-],
-[
-"kr",
-"?Hankyoreh"
-],
-[
-"au",
-"?ABC News"
-],
-[
-"nz",
-"?RNZ"
+"us",
+"?Reuters World"
 ],
 [
 "ca",
-"?CBC News"
+"?The Globe and Mail"
 ],
 [
-"sd",
-"?Sudan Tribune"
+"ca",
+"?Toronto Star"
 ],
 [
-"sd",
-"?Radio Dabanga"
+"ca",
+"?CBC"
 ],
 [
-"so",
-"?Hiiraan"
+"gr",
+"?Kathimerini"
 ],
 [
-"et",
-"?Addis Standard"
+"gr",
+"?Solomon"
 ],
 [
-"ss",
-"?Radio Tamazuj"
+"cy",
+"?Cyprus Mail"
 ],
 [
-"sn",
-"?Seneweb"
+"mt",
+"?Times of Malta"
 ],
 [
-"ml",
-"?Studio Tamani"
+"mt",
+"?The Shift News"
 ],
 [
-"bf",
-"?Lefaso"
+"ro",
+"?Recorder"
 ],
 [
-"ne",
-"?ActuNiger"
+"ro",
+"?HotNews"
 ],
 [
-"cm",
-"?Mimi Mefo Info"
+"bg",
+"?BIRD.bg"
+],
+[
+"hu",
+"?Telex English"
+],
+[
+"hu",
+"?HVG"
+],
+[
+"rs",
+"?Vreme"
+],
+[
+"rs",
+"?CINS"
+],
+[
+"me",
+"?Vijesti"
+],
+[
+"al",
+"?Exit News"
+],
+[
+"xk",
+"?Kosovo 2.0"
+],
+[
+"xk",
+"?Prishtina Insight"
+],
+[
+"md",
+"?Ziarul de Gardă"
+],
+[
+"am",
+"?EVN Report"
+],
+[
+"az",
+"?Turan"
+],
+[
+"kz",
+"?Orda.kz"
+],
+[
+"uz",
+"?Gazeta.uz"
+],
+[
+"in",
+"?The Hindu"
+],
+[
+"in",
+"?Indian Express"
+],
+[
+"in",
+"?Newslaundry"
+],
+[
+"in",
+"?Alt News"
+],
+[
+"pk",
+"?The Express Tribune"
+],
+[
+"bd",
+"?Prothom Alo"
+],
+[
+"lk",
+"?Groundviews"
+],
+[
+"np",
+"?Nepali Times"
+],
+[
+"id",
+"?Jakarta Post"
+],
+[
+"id",
+"?Project Multatuli"
+],
+[
+"ph",
+"?PCIJ"
+],
+[
+"ph",
+"?VERA Files"
+],
+[
+"sg",
+"?Mothership"
+],
+[
+"sg",
+"?Rice Media"
+],
+[
+"vn",
+"?Luat Khoa"
+],
+[
+"tw",
+"?The Reporter Taiwan"
+],
+[
+"tw",
+"?Taiwan News"
+],
+[
+"tw",
+"?CommonWealth"
+],
+[
+"jp",
+"?Nikkei Asia"
+],
+[
+"jp",
+"?Kyodo"
+],
+[
+"kr",
+"?Yonhap"
+],
+[
+"au",
+"?The Guardian Australia"
+],
+[
+"au",
+"?The Conversation"
+],
+[
+"au",
+"?SBS News"
+],
+[
+"au",
+"?Crikey"
+],
+[
+"nz",
+"?The Spinoff"
+],
+[
+"nz",
+"?Stuff"
+],
+[
+"nz",
+"?Newsroom NZ"
+],
+[
+"za",
+"?News24"
+],
+[
+"za",
+"?Mail & Guardian"
+],
+[
+"za",
+"?Scrolla"
+],
+[
+"ng",
+"?HumAngle"
+],
+[
+"ng",
+"?Foundation for Investigative Journalism"
+],
+[
+"ke",
+"?The Elephant"
+],
+[
+"eg",
+"?Mada Masr"
+],
+[
+"tn",
+"?Inkyfada"
+],
+[
+"tn",
+"?Nawaat"
+],
+[
+"ma",
+"?Le Desk"
+],
+[
+"lb",
+"?Megaphone"
+],
+[
+"jo",
+"?7iber"
+],
+[
+"ps",
+"?+972 Magazine"
+],
+[
+"il",
+"?Haaretz English"
+],
+[
+"ir",
+"?Iran International"
+],
+[
+"af",
+"?Kabul Now"
+],
+[
+"br",
+"?Folha de S.Paulo"
+],
+[
+"br",
+"?g1"
+],
+[
+"br",
+"?Intercept Brasil"
+],
+[
+"br",
+"?Aos Fatos"
+],
+[
+"br",
+"?Núcleo"
+],
+[
+"ar",
+"?Cenital"
+],
+[
+"ar",
+"?El Destape"
+],
+[
+"cl",
+"?La Tercera"
+],
+[
+"cl",
+"?Fast Check CL"
+],
+[
+"co",
+"?Cambio Colombia"
+],
+[
+"co",
+"?Cuestión Pública"
+],
+[
+"pe",
+"?IDL-Reporteros"
+],
+[
+"pe",
+"?Salud con lupa"
+],
+[
+"ec",
+"?GK"
+],
+[
+"ec",
+"?Plan V"
+],
+[
+"bo",
+"?Muy Waso"
+],
+[
+"gt",
+"?Plaza Pública"
+],
+[
+"gt",
+"?Prensa Comunitaria"
+],
+[
+"hn",
+"?Contracorriente"
+],
+[
+"cr",
+"?La Voz de Guanacaste"
+],
+[
+"cu",
+"?El Toque"
+],
+[
+"cu",
+"?14ymedio"
+],
+[
+"ve",
+"?Armando.info"
+],
+[
+"do",
+"?Diario Libre"
+],
+[
+"uy",
+"?la diaria"
+],
+[
+"py",
+"?El Surtidor"
+],
+[
+"*",
+"?Rest of World"
+],
+[
+"*",
+"?The New Humanitarian"
+],
+[
+"*",
+"?Global Voices"
+],
+[
+"*",
+"?Coda Story"
+],
+[
+"*",
+"?Chatham House"
+],
+[
+"*",
+"?Lowy Institute"
+],
+[
+"*",
+"?ECFR"
+],
+[
+"*",
+"?War on the Rocks"
+],
+[
+"*",
+"?ISW"
+],
+[
+"*",
+"?IISS"
+],
+[
+"*",
+"?Long War Journal"
+],
+[
+"*",
+"?Janes"
+],
+[
+"*",
+"?Breaking Defense"
+],
+[
+"*",
+"?Defense News"
+],
+[
+"*",
+"?The Insider"
+],
+[
+"*",
+"?Novaya Gazeta"
 ]
 ]
