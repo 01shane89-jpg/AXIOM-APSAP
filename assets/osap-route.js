@@ -971,7 +971,8 @@ function main() {
       src.forEach(function (h) {
         var lo = h.p[1]; while (lo < lo0 - 180) lo += 360; while (lo > lo1 + 180) lo -= 360;
         if (h.p[0] < lat0 - pad || h.p[0] > lat1 + pad || lo < lo0 - pad * 3 || lo > lo1 + pad * 3) return;
-        var t = Date.parse(String(h.date || "").slice(0, 10)), age = isFinite(t) ? Math.max(0, Math.round((now - t) / 36e5)) : null;
+        // dates are kept to the day, so the age is counted from midnight UTC and rounded down: a report dated today is under 24 h old
+        var t = Date.parse(String(h.date || "").slice(0, 10)), age = isFinite(t) ? Math.max(0, Math.floor((now - t) / 36e5)) : null;
         if (days && age != null && age > days * 24) return;
         var nr = near(r, [h.p[0], lo], pts); if (nr.d > buf) return;
         out.push({ kind: h.kind, layer: apiLayer(h.kind), at_km: Math.round(nr.along / 100) / 10, off_km: Math.round(nr.d / 100) / 10, src: h.src || "", age_h: age, text: h.title || "", url: h.url || null, p: h.p.slice() });
