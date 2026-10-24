@@ -1641,6 +1641,23 @@
     {"cc":"mr","outlet":"Alakhbar","url":"https://www.alakhbar.info/latest/rss/","lang":"ar"},
     {"cc":"gh","outlet":"Pulse Ghana","url":"https://www.pulse.com.gh/rss-articles.xml","lang":"en"},
     {"cc":"mc","outlet":"Gouvernement Princier","url":"https://www.gouv.mc/rss/feed/portail-gouv-actualites-fr","lang":"fr","state":true},
-    {"cc":"ls","outlet":"Lesotho Government","url":"https://www.gov.ls/feed/","lang":"en","state":true}
+    {"cc":"ls","outlet":"Lesotho Government","url":"https://www.gov.ls/feed/","lang":"en","state":true},
+    {"cc":"sv","outlet":"Diario El Salvador","url":"https://diarioelsalvador.com/rss.xml","lang":"es","state":true},
+    {"cc":"sv","outlet":"Última Hora SV","url":"https://ultimahora.sv/rss","lang":"es"},
+    {"cc":"mu","outlet":"Inside News","url":"https://www.inside.news/rss","lang":"fr"},
+    {"cc":"bt","outlet":"Kuensel","url":"https://kuenselonline.com/feed/posts","lang":"en"},
+    {"cc":"ge","outlet":"Radio Tavisupleba (RFE/RL Georgia)","url":"https://www.radiotavisupleba.ge/api/","lang":"ka"},
+    {"cc":"mk","outlet":"MakFax","url":"https://makfax.com.mk/rss","lang":"mk"},
+    {"cc":"mk","outlet":"Nezavisen","url":"https://nezavisen.mk/rss","lang":"mk"},
+    {"cc":"mk","outlet":"Plusinfo","url":"https://plusinfo.mk/rss","lang":"mk"},
+    {"cc":"mw","outlet":"Times 360 Malawi","url":"https://times.mw/rss","lang":"en"},
+    {"cc":"tz","outlet":"Jamhuri","url":"https://www.jamhurimedia.co.tz/rss","lang":"sw"},
+    {"cc":"tj","outlet":"Sputnik Tajikistan","url":"https://tj.sputniknews.ru/export/rss2/archive/index.xml","lang":"ru","state":true},
+    {"cc":"zw","outlet":"263Chat","url":"https://www.263chat.com/rss","lang":"en"},
+    {"cc":"to","outlet":"Tonga Broadcasting Commission","url":"https://tbc.to/rss","lang":"to","state":true},
+    {"cc":"zm","outlet":"Zambian Observer","url":"https://zambianobserver.com/rss","lang":"en"},
+    {"cc":"gm","outlet":"The Alkamba Times","url":"https://alkambatimes.com/rss","lang":"en"},
+    {"cc":"bo","outlet":"Brújula Digital","url":"https://brujuladigital.net/rss.xml","lang":"es"},
+    {"cc":"bo","outlet":"EJU","url":"https://eju.tv/rss","lang":"es"}
   ]
 }

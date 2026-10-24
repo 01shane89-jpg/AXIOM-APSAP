@@ -3563,10 +3563,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (!TH && window.COUNTRY_BASE) {
     map.createPane("cbase"); map.getPane("cbase").style.zIndex = 250; map.getPane("cbase").style.pointerEvents = "none";
     var cbase = L.geoJSON({ type: "FeatureCollection", features: window.COUNTRY_BASE.features.concat((window.WORLD_BASE || {}).features || []) }, { pane: "cbase", interactive: false, style: function (f) {
+      /* the open country is left clear (no shade over its land) and drawn by the outline below instead */
       var me = f.properties.n === C.ne;
-      return { color: me ? tok("--accent") : tok("--muted"), weight: me ? 1.6 : 0.8, opacity: me ? 0.9 : 0.6,
-               fillColor: tok("--surface"), fillOpacity: me ? 0.35 : 0.12 };
+      return me ? { stroke: false, fill: false } : { color: tok("--muted"), weight: 0.8, opacity: 0.6, fillColor: tok("--surface"), fillOpacity: 0.12 };
     } }).addTo(map);
+    /* open country: a thick two-tone border (dark casing under a bright line) so it reads on light, dark and satellite base
+       maps alike; fixed colours because the base map choice, not the page theme, decides what it sits on */
+    var cme = window.COUNTRY_BASE.features.concat((window.WORLD_BASE || {}).features || []).filter(function (f) { return f.properties.n === C.ne; });
+    if (cme.length) [{ color: "#0B1620", weight: 6, opacity: 0.55 }, { color: "#4DB8FF", weight: 3, opacity: 1 }].forEach(function (st) {
+      L.geoJSON({ type: "FeatureCollection", features: cme }, { pane: "cbase", interactive: false, style: function () {
+        return { color: st.color, weight: st.weight, opacity: st.opacity, fill: false, lineJoin: "round" }; } }).addTo(map);
+    });
   }
   var cseg = document.getElementById("country-seg");
   /* the open US state's outline, over the country outline */

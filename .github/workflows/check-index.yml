@@ -197,6 +197,7 @@ jobs:
       - run: node tests/privacy_smoke.mjs
       - run: node tests/vault_smoke.mjs
       - run: node tests/borders_smoke.mjs
+      - run: node tests/country_outline_smoke.mjs
       - run: node tests/wrap_smoke.mjs
       - run: node tests/evac_smoke.mjs
       - run: node tests/evacroute_smoke.mjs
