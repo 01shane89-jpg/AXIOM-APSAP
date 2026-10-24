@@ -211,14 +211,16 @@ const SCENES = [
     await k.caption("Clear map takes everything off");
     await k.wait(2500);
   }],
-  ["weather", "Weather", "Radar, models, warnings and the 5-day chart", { z: 6, at: [13.2, 101.0] }, async ({ k }) => {
+  ["weather", "Weather", "Radar, models, warnings and the 5-day chart", { z: 6, at: [13.2, 101.0] }, async ({ k, p }) => {
     await k.caption("Weather: radar, satellite rain, cloud, wind, temperature and air quality", "Plus cyclones and official warnings.");
     await k.tool("weather"); await k.wait(4500);
     await k.press("Rain radar…"); await k.wait(4000);
     await k.caption("Model time looks ahead up to 72 hours");
     await k.wait(3500);
     await k.caption("Open forecasts and warnings for the full weather view", "One-page brief, detailed report and the military-style 5-day chart.");
-    await k.press("Open forecasts and warnings"); await k.wait(6000);
+    await k.press("Open forecasts and warnings"); await k.wait(3000);
+    await k.caption("The 5-day chart: day and night, winds, illumination and mission impacts", "Hour by hour, for the point you choose.");
+    await p.keyboard.press("Escape"); await p.evaluate(() => window.OSAP_WX && window.OSAP_WX.chart()); await k.wait(5000);
     await k.wheel(500, 4, 1500, 0.5, 0.5);
   }],
   ["overlays", "Map overlays and base maps", "Infrastructure, aircraft, ships, borders and more", { z: 11 }, async ({ k, p }) => {
@@ -337,10 +339,12 @@ const SCENES = [
     await k.caption("Evac: set where the people are, then Work out the options");
     await k.tool("evac"); await k.wait(1500);
     await p.evaluate((a) => window.OSAP_EPE && window.OSAP_EPE.open({ at: a }), AT); await k.wait(2000);
-    await k.press("Work out the options"); await k.wait(40000);
+    await k.click('[data-ep="plan"]');
+    await p.waitForFunction(() => /Work out again/.test((document.getElementById("epe") || {}).textContent || ""), null, { timeout: 120000 }).catch(() => console.log("  evacuation options not ready"));
+    await k.wait(3000);
     await k.caption("Routes to the U.S. embassy or consulate, airports, airfields and seaports", "The first choice has the fewest incidents near the route.");
     await k.wait(4000);
-    await k.scrollIn("#epe, .epe-panel", 400, 4, 1600);
+    await k.scrollIn("#epe", 400, 4, 1600);
     await k.caption("Roles P, A, C, E; legs, corridors, LZs and border crossings", "OSAP never marks a route Available: only you do.");
     await k.wait(4500);
   }],
@@ -360,7 +364,7 @@ const SCENES = [
     await k.caption("The ground that can be seen from the point", "Terrain only: buildings and trees are not modelled. Grey means no data, not 'not visible'.");
     await k.wait(6000);
   }],
-  ["comms", "Comms planning", "PACE plans, coverage, links and networks", { z: 11 }, async ({ k }) => {
+  ["comms", "Comms planning", "PACE plans, coverage, links and networks", { z: 11, list: true }, async ({ k }) => {
     await k.caption("Comms: Plan, Coverage, Link, Networks, Equipment and Status");
     await k.tool("comms"); await k.wait(5000);
     await k.press("Coverage"); await k.wait(4000);
