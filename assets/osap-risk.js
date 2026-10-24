@@ -92,7 +92,7 @@
     var h = '<article class="bpage brisk" id="risk"><header><div><b>AXIOM OSAP</b> · Risk rating equivalent</div><h2>' + esc(name || R.name) + "</h2><div>Computed " + esc(z) + "</div></header>" +
       '<p class="bwarn">' + tag() + " " + esc(NOTE) + "</p>" +
       '<div class="rkhead rkbig">' + badge(O.level) + '<span> overall · score ' + esc(num(O.score)) + " of 100" +
-      (O.floor ? " · raised to one below the worst category" : "") + "</span></div>" +
+      (O.floor === "security" ? " · raised to the security level" : O.floor ? " · raised to one below the worst category" : "") + "</span></div>" +
       (O.missing && O.missing.length ? '<p class="bm">Partial: no data for ' + esc(O.missing.join(", ")) + "; the overall score is the weighted mean of the categories that have data.</p>" : "");
     h += '<table class="btwo rkcats"><tr><th style="width:36%">Category</th><th style="width:20%">Level</th><th>Score</th><th>Weight</th></tr>' + CATS.map(function (k, i) {
       var x = (R.cats || {})[k[0]] || {};
@@ -101,7 +101,7 @@
     h += "<h3>What each score is made of</h3>";
     CATS.forEach(function (k) {
       var x = (R.cats || {})[k[0]] || {};
-      h += "<h4>" + esc(k[1]) + " " + badge(x.level, true) + "</h4>";
+      h += "<h4>" + esc(k[1]) + " " + badge(x.level, true) + "</h4>" + (x.by_deaths ? '<p class="bm">The conflict-deaths score alone is higher than the mix, so it is the score.</p>' : "");
       var rows = partsRows(x);
       h += rows ? '<table class="btwo rkparts"><tr><th style="width:52%">Indicator or event</th><th>Value</th><th>Points</th><th>Weight</th></tr>' + rows + "</table>"
         : '<p class="bm">' + (k[0] === "hazards" && x.score === 0 ? "No hazard event in force near this country." : "No figure for this category.") + "</p>";
@@ -118,13 +118,13 @@
         "Cities: the capital and the largest cities of a million people or more (" + link((R.sources && R.sources.cities && R.sources.cities.url) || "https://www.geonames.org/", "GeoNames") + ", CC BY 4.0).</p>";
     }
     h += '<h3>Method</h3><p class="bm">Levels: score 0–19 Minimal, 20–39 Low, 40–59 Moderate, 60–79 High, 80–100 Extreme. ' +
-      "Security: World Bank Political Stability and Absence of Violence/Terrorism 40% (an estimate of +1.5 or better scores 0, −2.5 scores 100) and UCDP conflict deaths in the past 365 days 60% (log scale: 10 deaths 26 points, 100 deaths 50, 1,000 deaths 75, 10,000 or more 100). " +
+      "Security: World Bank Political Stability and Absence of Violence/Terrorism 40% (an estimate of +1.5 or better scores 0, −2.5 scores 100) and UCDP conflict deaths in the past 365 days 60% (log scale: 10 deaths 26 points, 100 deaths 50, 1,000 deaths 75, 10,000 or more 100), or the conflict-deaths score alone when that is higher. " +
       "Crime: UNODC intentional homicides per 100,000 60% (log scale: 1 scores 18, 10 scores 61, 50 or more 100) and World Bank Rule of Law 40%. " +
-      "Health: 70% of the lack of health service coverage (UHC index), plus WHO outbreak notices in the past 90 days (15 each) and CDC travel health notices (level 3: 30, level 2: 15, level 1: 5), notices at most 45. " +
+      "Health: 70% of the under-5 mortality score (UN IGME deaths before age 5 per 1,000 live births, log scale: 3 or fewer scores 0, 10 scores 33, 30 scores 62, 120 or more 100), plus WHO outbreak notices in the past 90 days (15 each) and CDC travel health notices (level 3: 30, level 2: 15, level 1: 5), notices at most 45. " +
       "Natural hazards now: events in force only: GDACS red 60, orange 35, green 5 (green at most 15); earthquakes M7+ 50, M6+ 25 (past 7 days); official warnings extreme 30, severe 15 (at most 45); a tropical cyclone within 300 km in the next 72 hours 40 (hurricane force) or 15; a volcanic ash advisory 15. " +
       "Infrastructure: 80% of the share of people without electricity (half) and not using the internet (half), plus a large IODA internet outage signal in the past week (40, or 20). " +
-      "Overall: weighted mean (security 35%, crime 20%, health, hazards and infrastructure 15% each) of the categories with data, never more than one level below the worst category. Rule " + esc(R.rule || "") + ".</p>" +
-      '<footer>Sources: World Bank WDI and Worldwide Governance Indicators (CC BY 4.0); UCDP (CC BY 4.0); WHO; U.S. CDC; GDACS; USGS; national warning agencies; IODA; GeoNames (CC BY 4.0). ' +
+      "Overall: weighted mean (security 35%, crime 20%, health, hazards and infrastructure 15% each) of the categories with data, never below the security level and never more than one level below any other category. Rule " + esc(R.rule || "") + ".</p>" +
+      '<footer>Sources: World Bank WDI and Worldwide Governance Indicators (CC BY 4.0); UCDP (CC BY 4.0); UN IGME and UNODC via the World Bank; WHO; U.S. CDC; GDACS; USGS; national warning agencies; IODA; GeoNames (CC BY 4.0). ' +
       (R.fp ? "Record fingerprint SHA-256 " + esc(R.fp) + "." : "") + "</footer></article>";
     return h;
   }

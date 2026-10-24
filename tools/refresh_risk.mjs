@@ -3,7 +3,7 @@
 // Not an official travel advisory and not an analyst assessment; official advisories are never an input.
 // Inputs, all keyless and free:
 //  - World Bank World Development Indicators and Worldwide Governance Indicators (CC BY 4.0): political stability and absence
-//    of violence/terrorism, rule of law, intentional homicides (UNODC), UHC service coverage index (WHO), access to electricity,
+//    of violence/terrorism, rule of law, intentional homicides (UNODC), deaths before age 5 (UN IGME), access to electricity,
 //    internet use. Slow-moving, so read once a week and kept in data/live/risk/_wb.json.
 //  - OSAP's own feeds in data/live: conflict deaths (UCDP GED and candidate events, data/live/conflicts/history/cc and
 //    data/live/ucdp), WHO Disease Outbreak News and CDC travel health notices, GDACS alerts, USGS earthquakes, official
@@ -42,13 +42,13 @@ const WB = [
   { k: "pv", ids: ["GOV_WGI_PV.EST", "PV.EST"], page: "GOV_WGI_PV_EST" },
   { k: "rl", ids: ["GOV_WGI_RL.EST", "RL.EST"], page: "GOV_WGI_RL_EST" },
   { k: "homicide", ids: ["VC.IHR.PSRC.P5"] },
-  { k: "uhc", ids: ["SH.UHC.SRVS.CV.XD"] },
+  { k: "u5", ids: ["SH.DYN.MORT"] },
   { k: "elec", ids: ["EG.ELC.ACCS.ZS"] },
   { k: "net", ids: ["IT.NET.USER.ZS"] }
 ];
 let wb = null;
 try { wb = JSON.parse(fs.readFileSync(OUT + "/_wb.json", "utf8")); } catch (e) {}
-const wbOld = !wb || !wb.read || NOW - Date.parse(wb.read) > 7 * DAY || process.env.RISK_WB === "1";
+const wbOld = !wb || !wb.read || NOW - Date.parse(wb.read) > 7 * DAY || WB.some((d) => !(wb.series || {})[d.k]) || process.env.RISK_WB === "1";
 if (wbOld && process.env.RISK_WB !== "0") {
   const next = { schema: "osap-risk-wb/1", read: STAMP, series: {}, ids: {}, errors: {} };
   for (const d of WB) {
@@ -146,7 +146,7 @@ let n = 0;
 for (const cc of list) {
   const C = COUNTRIES.find((c) => c.id === cc), a3 = cc === "oki" ? "JPN" : C.a3, ucc = cc;
   const a2 = cc === "oki" ? "JP" : cc.toUpperCase();
-  const I = { pv: wbInd("pv", a3, a2, 6), rl: wbInd("rl", a3, a2, 6), homicide: wbInd("homicide", a3, a2, 10), uhc: wbInd("uhc", a3, a2, 10), elec: wbInd("elec", a3, a2, 8), net: wbInd("net", a3, a2, 8) };
+  const I = { pv: wbInd("pv", a3, a2, 6), rl: wbInd("rl", a3, a2, 6), homicide: wbInd("homicide", a3, a2, 10), u5: wbInd("u5", a3, a2, 8), elec: wbInd("elec", a3, a2, 8), net: wbInd("net", a3, a2, 8) };
   const rows = conflictRows(ucc);
   if (rows) {
     const d = deathsFrom(rows, since365);

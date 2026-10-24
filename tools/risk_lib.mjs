@@ -20,7 +20,7 @@ export const wgiPts = (est) => clamp((1.5 - est) / 4 * 100);
 export const deathsPts = (n) => clamp(Math.log10(1 + Math.max(0, n)) / 4 * 100);
 // intentional homicides per 100,000 people (UNODC via the World Bank), log scale: 1 -> 18, 5 -> 46, 10 -> 61, 25 -> 83, 50+ -> 100
 export const homicidePts = (h) => clamp(Math.log10(1 + Math.max(0, h)) / Math.log10(51) * 100);
-// a 0-100 coverage figure where higher is better (UHC service coverage index, % with electricity, % using the internet)
+// a 0-100 coverage figure where higher is better (% with electricity, % using the internet)
 export const lackPts = (pct) => clamp(100 - pct);
 
 // the weights of the categories in the overall score (renormalised over the categories that have data)
@@ -50,13 +50,18 @@ export function withEvents(base, events, baseShare) {
 }
 
 // ---------- the categories ----------
-// Security and conflict: World Bank "Political Stability and Absence of Violence/Terrorism" 40%, conflict deaths 60%
+// Security and conflict: World Bank "Political Stability and Absence of Violence/Terrorism" 40%, conflict deaths 60%, or the
+// conflict-deaths score alone when that is higher
 export function security(I) {
-  return mix([
+  const m = mix([
     { k: "pv", name: "Political stability and absence of violence/terrorism (WGI)", v: I.pv && I.pv.v, year: I.pv && I.pv.y, pts: I.pv ? wgiPts(I.pv.v) : null, w: 0.4, src: I.pv && I.pv.src },
     { k: "deaths", name: "Conflict deaths, past 365 days (UCDP)", v: I.deaths ? I.deaths.n : null, year: I.deaths && I.deaths.window, events: I.deaths && I.deaths.events,
       pts: I.deaths ? deathsPts(I.deaths.n) : null, w: 0.6, src: I.deaths && I.deaths.src, note: I.deaths && I.deaths.note }
   ]);
+  // a war is a war whatever the governance estimate says: the conflict-deaths score alone counts when it is higher
+  const d = m.parts[1].pts;
+  if (d != null && m.score != null && d > m.score) { m.score = d; m.by_deaths = true; }
+  return m;
 }
 // Crime: intentional homicide rate 60%, World Bank "Rule of Law" 40%
 export function crime(I) {
@@ -65,7 +70,10 @@ export function crime(I) {
     { k: "rl", name: "Rule of law (WGI)", v: I.rl && I.rl.v, year: I.rl && I.rl.y, pts: I.rl ? wgiPts(I.rl.v) : null, w: 0.4, src: I.rl && I.rl.src }
   ]);
 }
-// Health and medical: 70% of the lack of health service coverage (WHO/World Bank UHC index), plus outbreak notices
+// child deaths before age 5 per 1,000 live births (UN IGME via the World Bank), a broad measure of a health system, log scale:
+// 3 or fewer -> 0, 10 -> 33, 30 -> 62, 120+ -> 100
+export const u5Pts = (m) => clamp((Math.log10(Math.max(3, m)) - Math.log10(3)) / (Math.log10(120) - Math.log10(3)) * 100);
+// Health and medical: 70% of the under-5 mortality score, plus outbreak notices
 // (WHO Disease Outbreak News in the past 90 days 15 each; CDC travel health notice level 3: 30, level 2: 15, level 1: 5), notices capped at 45
 export function outbreakEvents(who, cdc) {
   const ev = [];
@@ -74,7 +82,7 @@ export function outbreakEvents(who, cdc) {
   return capEvents(ev, 45);
 }
 export function health(I, events) {
-  const base = mix([{ k: "uhc", name: "Health service coverage index (UHC, 0-100)", v: I.uhc && I.uhc.v, year: I.uhc && I.uhc.y, pts: I.uhc ? lackPts(I.uhc.v) : null, w: 1, src: I.uhc && I.uhc.src }]);
+  const base = mix([{ k: "u5", name: "Deaths before age 5 per 1,000 live births (UN IGME)", v: I.u5 && I.u5.v, year: I.u5 && I.u5.y, pts: I.u5 ? u5Pts(I.u5.v) : null, w: 1, src: I.u5 && I.u5.src }]);
   return withEvents(base, events, 0.7);
 }
 // Natural hazards now: events in force only (there is no free, keyless structural hazard index in OSAP yet).
@@ -120,15 +128,17 @@ function capEvents(ev, cap) {
 }
 
 // ---------- the overall rating ----------
-// the weighted mean of the category scores that have data; the overall level is never more than one below the worst category
-// (a war zone with good hospitals is not "Low")
+// the weighted mean of the category scores that have data; the overall level is never below the security level (security sets
+// the floor, as it does in commercial travel-risk ratings) and never more than one below any other category's level
 export function overall(cats) {
   const have = CATS.filter((c) => cats[c.k] && cats[c.k].score != null);
   if (!have.length) return { score: null, level: 0, label: "", missing: CATS.map((c) => c.name) };
   const tw = have.reduce((s, c) => s + c.w, 0), score = r1(have.reduce((s, c) => s + cats[c.k].score * c.w, 0) / tw);
-  const worst = Math.max(...have.map((c) => levelOf(cats[c.k].score)));
-  const level = Math.max(levelOf(score), worst - 1);
-  return { score, level, label: LEVELS[level], floor: level > levelOf(score) ? worst - 1 : undefined, missing: CATS.filter((c) => !have.includes(c)).map((c) => c.name) };
+  const sec = cats.security && cats.security.score != null ? levelOf(cats.security.score) : 0;
+  const other = Math.max(0, ...have.filter((c) => c.k !== "security").map((c) => levelOf(cats[c.k].score) - 1));
+  const level = Math.max(levelOf(score), sec, other);
+  const floor = level > levelOf(score) ? (level === sec ? "security" : "category") : undefined;
+  return { score, level, label: LEVELS[level], floor, missing: CATS.filter((c) => !have.includes(c)).map((c) => c.name) };
 }
 // all categories for one place
 export function rate(I, ev) {

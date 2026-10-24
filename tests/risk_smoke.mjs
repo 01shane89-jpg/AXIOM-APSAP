@@ -18,7 +18,7 @@ const root = process.cwd();
 // the fixture: the job's own output for Thailand, with a hostile city name and event text added
 const tmp = fs.mkdtempSync(join(os.tmpdir(), "risk-smoke-"));
 fs.writeFileSync(join(tmp, "_wb.json"), JSON.stringify({ read: new Date().toISOString().slice(0, 16) + "Z", ids: { pv: "GOV_WGI_PV.EST", rl: "GOV_WGI_RL.EST" },
-  series: { pv: { THA: [["2023", -0.6]] }, rl: { THA: [["2023", 0]] }, homicide: { THA: [["2021", 4.4]] }, uhc: { THA: [["2021", 82]] }, elec: { THA: [["2022", 100]] }, net: { THA: [["2023", 88]] } } }));
+  series: { pv: { THA: [["2023", -0.6]] }, rl: { THA: [["2023", 0]] }, homicide: { THA: [["2021", 4.4]] }, u5: { THA: [["2023", 8.5]] }, elec: { THA: [["2022", 100]] }, net: { THA: [["2023", 88]] } } }));
 execFileSync(process.execPath, ["tools/refresh_risk.mjs"], { env: Object.assign({}, process.env, { RISK_OUT: tmp, RISK_WB: "0", RISK_ONLY: "th" }), stdio: "inherit" });
 const TH = JSON.parse(fs.readFileSync(join(tmp, "th.json"), "utf8"));
 fs.rmSync(tmp, { recursive: true, force: true });
@@ -71,7 +71,7 @@ async function open(cc, opts) {
       adv: adv ? adv.textContent : "", advAfter: adv && adv.previousElementSibling && adv.previousElementSibling.classList.contains("radv"), xss: !!window.__xss, imgs: e.querySelectorAll("img").length };
   });
   ok(b.arts.indexOf("risk") > 0 && b.arts.indexOf("risk") < b.arts.indexOf("report"), "risk page sits after the brief and before the country report (" + b.arts.join(", ") + ")");
-  ok(/What each score is made of/.test(b.text) && /Conflict deaths, past 365 days/.test(b.text) && /Intentional homicides/.test(b.text) && /Method/.test(b.text) && /never more than one level below/.test(b.text), "indicator table and the method on the page");
+  ok(/What each score is made of/.test(b.text) && /Conflict deaths, past 365 days/.test(b.text) && /Intentional homicides/.test(b.text) && /Method/.test(b.text) && /never below the security level/.test(b.text), "indicator table and the method on the page");
   ok(/Major cities/.test(b.text) && /Bangkok/.test(b.text) && /national figures/.test(b.text), "cities table says which parts are national");
   ok(b.wb >= 4 && b.bad === 0, "World Bank figures link to their source (" + b.wb + "), no javascript: links");
   ok(/OSAP risk equivalent/.test(b.adv) && /not an official level/.test(b.adv) && b.advAfter, "one line under the official advisory, kept separate from it");
