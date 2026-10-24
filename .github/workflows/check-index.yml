@@ -47,6 +47,7 @@ jobs:
       - run: node tests/incidents.test.mjs
       - run: node tests/decisions.test.mjs
       - run: node tests/cf_decisions.test.mjs
+      - run: node tests/cf_code.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs

@@ -16,19 +16,24 @@ export const REPLIES = path.join(process.env.RUNNER_TEMP || os.tmpdir(), "osap-c
 // a conflict file's object: "(window.X=window.X||{})[id]={...};"
 function readJs(f) { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.indexOf("={") + 1).replace(/;\s*$/, "")); }
 
-// Map conflict id -> Map fp -> report, from every conflict's current and older file.
-export function knownReports(dir = CF_DIR) {
+// Map conflict id -> Map fp -> report, from every conflict's current and older file. parties (when given) is filled with each
+// conflict's party names from its current file.
+export function knownReports(dir = CF_DIR, parties = null) {
   const known = new Map();
   if (!fs.existsSync(dir)) return known;
   for (const f of fs.readdirSync(dir).sort()) {
     const m = f.match(/^([a-z0-9][a-z0-9-]*?)(\.older)?\.js$/);
-    if (!m || /^(index|auto|bundle|verified)$/.test(m[1])) continue;
+    if (!m || /^(index|auto|bundle|verified|suggest)$/.test(m[1])) continue;
     let o; try { o = readJs(path.join(dir, f)); } catch (e) { continue; }
     if (!known.has(m[1])) known.set(m[1], new Map());
+    if (parties && !m[2] && Array.isArray(o.parties)) parties[m[1]] = o.parties.map(String);
     for (const i of o.items || []) if (i && /^[0-9a-f]{64}$/.test(i.fp || "")) known.get(m[1]).set(i.fp, i);
   }
   return known;
 }
+
+// the AI suggestion file (tools/refresh_cfcode.mjs); none is no suggestions
+export function readSuggest(f = path.join(CF_DIR, "suggest.js")) { try { return readJs(f); } catch (e) { return null; } }
 
 export function readDecisions(dir = DEC_DIR) {
   const out = [];
@@ -52,7 +57,8 @@ async function main() {
     const res = await fetch(url, { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-refresh" }, signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error("issues HTTP " + res.status);
     const issues = (await res.json()).filter((i) => String(i.title || "").startsWith(TITLE));
-    const d = plan(issues, owner, knownReports(), readIndex(DEC_DIR), recorded);
+    const parties = {}, known = knownReports(CF_DIR, parties);
+    const d = plan(issues, owner, known, readIndex(DEC_DIR), recorded, { parties, suggest: readSuggest() });
     write(DEC_DIR, d.records, d.index, { collected: recorded });
     fs.writeFileSync(REPLIES, JSON.stringify(d.replies));
     console.log(`incident decisions: ${issues.length} decision issues open, ${d.records.length} recorded, ${d.replies.filter((r) => !r.recorded).length} refused`);
