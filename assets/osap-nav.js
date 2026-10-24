@@ -880,7 +880,7 @@
   function lfInit(why) {
     var L = W.L, box = S.el.querySelector(".nvmap"); if (!L) return;
     S.lf = L.map(box, { zoomControl: false, attributionControl: false }).setView(S.R.c[0], 16);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(S.lf);
+    if (!W.OSAP_SOLD) L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(S.lf);   /* not in the sold version */
     S.lfD = L.polyline([], { color: "#8a96a3", weight: 7, opacity: 0.85 }).addTo(S.lf);
     L.polyline(S.R.c, { color: "#0b3d91", weight: 11 }).addTo(S.lf).bringToBack();
     S.lfR = L.polyline(S.R.c, { color: "#2f8cff", weight: 7 }).addTo(S.lf);

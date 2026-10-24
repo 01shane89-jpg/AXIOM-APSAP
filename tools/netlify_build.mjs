@@ -15,4 +15,12 @@ for (const k of KEEP) {
   fs.cpSync(src, path.join(OUT, k), { recursive: true });
   n++;
 }
+// the sold version (cost review 2026-10-24): the site's environment variable OSAP_COMMERCIAL=true turns the app's switch on
+// (assets/osap-sold.js); the repository variable of the same name strips the data (tools/nc_strip.mjs)
+if (/^(1|true|yes|on)$/i.test(String(process.env.OSAP_COMMERCIAL || "").trim())) {
+  const f = path.join(OUT, "assets", "osap-sold.js"), t = fs.readFileSync(f, "utf8");
+  if (!/window\.OSAP_SOLD = false;/.test(t)) throw new Error("netlify_build: assets/osap-sold.js has no switch line");
+  fs.writeFileSync(f, t.replace("window.OSAP_SOLD = false;", "window.OSAP_SOLD = true;"));
+  console.log("netlify_build: sold version (OSAP_SOLD = true)");
+}
 console.log("netlify_build: copied " + n + " entries into _site");

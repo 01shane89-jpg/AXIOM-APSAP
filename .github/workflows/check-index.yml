@@ -131,6 +131,8 @@ jobs:
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/area_report_smoke.mjs
+      # sold version: no tile.openstreetmap.org or Esri request once assets/osap-sold.js says true
+      - run: node tests/sold_mode_smoke.mjs
       # OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
       - run: node tests/osir_smoke.mjs
       # one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
