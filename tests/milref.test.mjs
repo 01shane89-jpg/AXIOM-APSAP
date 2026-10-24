@@ -201,6 +201,8 @@ ok(C.unrocaFile("oki") === "data/live/milref/unroca/jp.json" && C.unrocaFile("..
   const base2 = G.inst.find((x) => x.q === "Q60");
   ok(base2.u.map((x) => x[0]).join() === "Q2,Q3" && G.inst.find((x) => x.q === "Q50").u.join() === "Q1,P159", "garrison: each installation lists its units, best-known first");
   ok([...G.units, ...G.inst].every((r) => r.fp === L.fp(r)) && u1.fp !== U0[0].fp, "garrison: records re-fingerprinted with their links");
+  const many = L.garrisons([L.withFp({ q: "Q1", n: "Air Force", sl: 9 })], [1, 2, 3, 4, 5].map((i) => L.withFp({ q: "Q7" + i, n: "Base " + i, sl: i, opq: ["Q1"] })));
+  ok(many.units[0].g.length === 4 && many.units[0].gn === 5 && many.units[0].g[0][0] === "Q75", "garrison: a unit linked to many places keeps the four best-known and the full count");
   const ux = L.unitsFrom([b({ u: "Q7", en: "Fleet", cls: "Q8", hq: "Q50", hqen: "Camp One", sl: 1 })], { Q8: "fleet" });
   ok(ux[0].hk === "Q50" && ux[0].hq === "Camp One", "units keep the HQ item for linking");
 }
@@ -214,7 +216,7 @@ ok(C.unrocaFile("oki") === "data/live/milref/unroca/jp.json" && C.unrocaFile("..
   ok(/455,000<\/b> armed forces personnel \(2020\)/.test(H) && /US\$ 5\.98 billion<\/b> military spending/.test(H), "force summary: personnel and spending with years");
   ok(/Army&lt;b&gt;/.test(H) && /<b>2<\/b> divisions · <b>1<\/b> brigades/.test(H) && /the 4 best-known of 10/.test(H), "force summary: branches escaped, formations by echelon, how many of Wikidata's are held");
   ok(/<b>2<\/b> aircraft types · <b>1<\/b> ships/.test(H) && /a quantity is given for 1/.test(H) && !/land systems/.test(H), "force summary: equipment in service only (retired and pre-1960 left out)");
-  ok(/<b>2<\/b> air bases · <b>1<\/b> naval bases/.test(H) && /1 with units Wikidata bases there/.test(H) && /data-mrsum-un/.test(H) && /data-mrsum-sip/.test(H), "force summary: installations, garrisons, slots for UN and SIPRI");
+  ok(/<b>2<\/b> air bases · <b>1<\/b> naval bases/.test(H) && /1 with units linked by Wikidata/.test(H) && /data-mrsum-un/.test(H) && /data-mrsum-sip/.test(H), "force summary: installations, garrisons, slots for UN and SIPRI");
   ok(/holdings reported for <b>2025<\/b>: Battle tanks <b>826/.test(C.sumUn({ hold: [{ k: "bt", y: 2025, n: 826 }], reports: [2025] })) && /3 reports filed \(latest 2024\), no holdings/.test(C.sumUn({ hold: [], reports: [2024, 2020, 2010] })) && /not in the register/.test(C.sumUn(null)), "force summary: UN line for holdings, reports only, not in the register");
   ok(/<b>4<\/b> received · <b>0<\/b> supplied/.test(C.sumSip({ imp: { total: 4 }, exp: { total: 0 } })) && /could not be read/.test(C.sumSip({ err: true })), "force summary: SIPRI line");
 }

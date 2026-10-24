@@ -417,7 +417,7 @@ export function garrisons(units, inst, occRows = []) {
   const g = {}, at = {};
   for (const [u, s, via] of links.values()) { (g[u] = g[u] || []).push([s, via]); (at[s] = at[s] || []).push([u, via]); }
   const bySl = (M) => (a, b) => ((M.get(b[0]) || {}).sl || 0) - ((M.get(a[0]) || {}).sl || 0) || a[0].localeCompare(b[0]);
-  const outU = units.map((u) => { const r = { ...u }; delete r.fp; delete r.hk; if (g[u.q]) r.g = g[u.q].sort(bySl(S)).slice(0, 4); return withFp(r); });
-  const outS = inst.map((x) => { const r = { ...x }; delete r.fp; delete r.opq; if (at[x.q]) r.u = at[x.q].sort(bySl(U)).slice(0, 12); return withFp(r); });
+  const outU = units.map((u) => { const r = { ...u }; delete r.fp; delete r.hk; if (g[u.q]) { r.g = g[u.q].sort(bySl(S)).slice(0, 4); if (g[u.q].length > 4) r.gn = g[u.q].length; } return withFp(r); });
+  const outS = inst.map((x) => { const r = { ...x }; delete r.fp; delete r.opq; if (at[x.q]) { r.u = at[x.q].sort(bySl(U)).slice(0, 12); if (at[x.q].length > 12) r.un = at[x.q].length; } return withFp(r); });
   return { units: outU, inst: outS, links: links.size };
 }

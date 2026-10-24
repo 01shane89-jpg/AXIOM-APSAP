@@ -151,7 +151,7 @@
     if (cs.length) rows.push(["Equipment in service", cs.join(" · ") + ' <span class="bm">(' + (qn ? "a quantity is given for " + qn : "no quantities given") + ")</span>", "Wikidata"]);
     var kc = counts(I, function (x) { return x.k || "base"; }), based = I.filter(function (x) { return (x.u || []).length; }).length;
     var ks = ["air", "naval", "hq", "barracks", "depot", "range", "base"].filter(function (k) { return kc[k]; }).map(function (k) { return "<b>" + kc[k] + "</b> " + esc(KINDN[k]); });
-    if (ks.length) rows.push(["Installations", ks.join(" · ") + (based ? ' <span class="bm">(' + based + " with units Wikidata bases there)</span>" : ""), "Wikidata"]);
+    if (ks.length) rows.push(["Installations", ks.join(" · ") + (based ? ' <span class="bm">(' + based + " with units linked by Wikidata)</span>" : ""), "Wikidata"]);
     rows.push(["Declared to the UN", '<span data-mrsum-un class="bm">Loading…</span>', "UN Register (government reports)"]);
     rows.push(["Arms deals, last ten years", '<span data-mrsum-sip class="bm">Loading…</span>', "SIPRI trade register"]);
     return '<table class="btwo mrsum"><tr><th style="width:20%">What</th><th>Summary (claims, as each source gives them)</th><th style="width:20%">Source</th></tr>' +
@@ -219,8 +219,12 @@
     var t = tree(units), shown = 0, seen = {}, S = {};
     (inst || []).forEach(function (x) { S[x.q] = x; });
     function base(u) {
-      return (u.g || []).map(function (gv) { var x = S[gv[0]]; if (!x) return ""; var m = mgrsOf(x.la, x.lo);
-        return '<span class="bm"> · based at </span><span class="mrg" title="' + esc(VIA[gv[1]] || "Wikidata") + '">' + link(wdUrl(x.q), esc(x.n)) + (m ? ' <span class="bm">(' + esc(m) + ")</span>" : "") + "</span>"; }).join("");
+      /* P159 and P466 say where the unit is based; P137 only that it operates the place (a branch may operate dozens) */
+      var one = function (gv) { var x = S[gv[0]]; if (!x) return ""; var m = mgrsOf(x.la, x.lo);
+        return '<span class="mrg" title="' + esc(VIA[gv[1]] || "Wikidata") + '">' + link(wdUrl(x.q), esc(x.n)) + (m ? ' <span class="bm">(' + esc(m) + ")</span>" : "") + "</span>"; };
+      var G = u.g || [], at = G.filter(function (v) { return v[1] !== "P137"; }), op = G.filter(function (v) { return v[1] === "P137"; });
+      return (at.length ? '<span class="bm"> · based at </span>' + at.map(one).join(", ") : "") + (op.length ? '<span class="bm"> · operates </span>' + op.map(one).join(", ") : "") +
+        (u.gn ? '<span class="bm"> and ' + (u.gn - G.length) + " more</span>" : "");
     }
     function line(u, depth, n) {
       return link(wdUrl(u.q), esc(u.n)) + (u.t ? '<span class="bm"> · ' + esc(u.t) + "</span>" : "") +
@@ -238,7 +242,7 @@
     var h = big.map(function (r) { return row(r, 0); }).join("");
     var rest = units.length - shown, based = units.filter(function (u) { return (u.g || []).length; }).length;
     return '<p class="bm">Open a unit to see what sits under it. Parent links are Wikidata\'s "parent organization" and "part of"; ' +
-      (based ? based + " unit" + (based === 1 ? " has" : "s have") + " a garrison that Wikidata links to an installation (hover a base for the property that says so)." : "no unit has a garrison Wikidata links to an installation.") + "</p>" +
+      (based ? based + " unit" + (based === 1 ? " is" : "s are") + " linked by Wikidata to an installation they are based at or operate (hover a base for the property that says so)." : "no unit has a garrison Wikidata links to an installation.") + "</p>" +
       '<div class="mrtree">' + h + "</div>" + (rest > 0 ? '<p class="bm">' + rest + " more unit" + (rest === 1 ? "" : "s") + " held for this country are not listed here.</p>" : "");
   }
 
@@ -268,7 +272,7 @@
     return '<table class="btwo mrinst"><tr><th style="width:30%">Installation</th><th style="width:15%">Kind</th><th style="width:17%">Grid (MGRS)</th><th>Operator and units based here</th></tr>' +
       inst.slice(0, lim).map(function (s) {
         return "<tr><td>" + link(wdUrl(s.q), esc(s.n)) + fpTag(s.fp) + '</td><td class="bm">' + esc(KIND[s.k] || "Military base") + '</td><td class="mg">' + (s.la != null && W.MGRS_OF ? esc(W.MGRS_OF(s.la, s.lo, 3)) : '<span class="bm">no location</span>') +
-          '</td><td class="bm">' + esc(s.op || "") + ((s.u || []).length ? (s.op ? "<br>" : "") + "Based here: " + s.u.map(function (uv) { var u = UN[uv[0]]; return u ? '<span title="' + esc(VIA[uv[1]] || "Wikidata") + '">' + link(wdUrl(u.q), esc(u.n)) + "</span>" : ""; }).filter(Boolean).join(", ") : "") + "</td></tr>";
+          '</td><td class="bm">' + esc(s.op || "") + ((s.u || []).length ? (s.op ? "<br>" : "") + "Based here: " + s.u.map(function (uv) { var u = UN[uv[0]]; return u ? '<span title="' + esc(VIA[uv[1]] || "Wikidata") + '">' + link(wdUrl(u.q), esc(u.n)) + (uv[1] === "P137" ? " (operator)" : "") + "</span>" : ""; }).filter(Boolean).join(", ") + (s.un ? " and " + (s.un - s.u.length) + " more" : "") : "") + "</td></tr>";
       }).join("") + "</table>" + (inst.length > lim ? '<p class="bm">' + (inst.length - lim) + " more installations held.</p>" : "") +
       '<p class="bm">Grid references are 100 m (MGRS on WGS84) from the point Wikidata gives; a base\'s point is often its centre or its gate, not its outline.</p>';
   }
