@@ -3530,13 +3530,48 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var me = f.properties.n === C.ne;
       return me ? { stroke: false, fill: false } : { color: tok("--muted"), weight: 0.8, opacity: 0.6, fillColor: tok("--surface"), fillOpacity: 0.12 };
     } }).addTo(map);
-    /* open country: a thick two-tone border (dark casing under a bright line) so it reads on light, dark and satellite base
-       maps alike; fixed colours because the base map choice, not the page theme, decides what it sits on */
+    /* open country: a very fine line in the accent colour, no shade over its land. The 1:50m shape draws at once; the
+       country's 1:10m outline (data/basemap/outline-10m/, tools/build_outline10m.mjs) then replaces it so the line follows
+       the real coast. Its territorial sea (12 nm, data/basemap/ts12/, tools/build_ts12.mjs) adds a fine dashed line, and
+       waters it shares or disputes with a neighbour a dotted one. The colour follows the theme. */
     var cme = window.COUNTRY_BASE.features.concat((window.WORLD_BASE || {}).features || []).filter(function (f) { return f.properties.n === C.ne; });
-    if (cme.length) [{ color: "#0B1620", weight: 6, opacity: 0.55 }, { color: "#4DB8FF", weight: 3, opacity: 1 }].forEach(function (st) {
-      L.geoJSON({ type: "FeatureCollection", features: cme }, { pane: "cbase", interactive: false, style: function () {
-        return { color: st.color, weight: st.weight, opacity: st.opacity, fill: false, lineJoin: "round" }; } }).addTo(map);
-    });
+    var CME_DASH = { ts: "4 3", tsd: "1 4" };
+    var cmeSt = function (k) { return { color: tok("--accent"), weight: 1, opacity: k ? 0.8 : 0.95, fill: false, lineJoin: "round", dashArray: CME_DASH[k] || null }; };
+    var cmeL = cme.length ? L.geoJSON({ type: "FeatureCollection", features: cme }, { pane: "cbase", interactive: false, style: function () { return cmeSt(); } }).addTo(map) : null;
+    var cmeTs = L.layerGroup().addTo(map);
+    var cmeRings = function (d, s) {
+      return d.map(function (a) {
+        var x = a[0], y = a[1], pts = [[y / s, x / s]];
+        for (var i = 2; i < a.length; i += 2) { x += a[i]; y += a[i + 1]; pts.push([y / s, x / s]); }
+        return pts;
+      });
+    };
+    var CME_A3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS",
+      cn: "CHN", tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG", in: "IND", pk: "PAK", np: "NPL",
+      bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
+    var cmeA3 = C.a3 || CME_A3[C.id];
+    if (cmeL && cmeA3) {
+      var tsS = document.createElement("script"); tsS.async = true; tsS.src = "data/basemap/ts12/" + cmeA3.toLowerCase() + ".js";
+      tsS.onload = function () {
+        var d = (window.OSAP_TS12 || {})[cmeA3]; if (!d) return;
+        [["ts", d.l], ["tsd", d.d]].forEach(function (kl) {
+          if (kl[1] && kl[1].length) cmeTs.addLayer(L.polyline(cmeRings(kl[1], d.s), L.extend(cmeSt(kl[0]), { pane: "cbase", interactive: false, cmeKind: kl[0] })));
+        });
+      };
+      document.head.appendChild(tsS);
+    }
+    if (cmeL) {
+      if (window.MutationObserver) new MutationObserver(function () {
+        cmeL.setStyle(cmeSt()); cmeTs.eachLayer(function (l) { l.setStyle(cmeSt(l.options.cmeKind)); });
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-map"] });
+      var cmeSlug = C.ne.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      var cmeS = document.createElement("script"); cmeS.async = true; cmeS.src = "data/basemap/outline-10m/" + cmeSlug + ".js";
+      cmeS.onload = function () {
+        var d = (window.OSAP_OUTLINE10 || {})[C.ne]; if (!d) return;
+        cmeL.clearLayers(); cmeL.addLayer(L.polyline(cmeRings(d.l, d.s), L.extend(cmeSt(), { pane: "cbase", interactive: false })));
+      };
+      document.head.appendChild(cmeS);
+    }
   }
   var cseg = document.getElementById("country-seg");
   /* the open US state's outline, over the country outline */

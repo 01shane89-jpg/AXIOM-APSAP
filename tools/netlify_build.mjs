@@ -15,4 +15,7 @@ for (const k of KEEP) {
   fs.cpSync(src, path.join(OUT, k), { recursive: true });
   n++;
 }
+// what this deploy was built from: tools/netlify_ignore.mjs reads it back from the live site to batch production deploys
+const COMMIT = /^[0-9a-f]{40}$/.test(process.env.COMMIT_REF || "") ? process.env.COMMIT_REF : null;
+fs.writeFileSync(path.join(OUT, "build.json"), JSON.stringify({ commit: COMMIT, built_at: new Date().toISOString(), context: process.env.CONTEXT || null }) + "\n");
 console.log("netlify_build: copied " + n + " entries into _site");

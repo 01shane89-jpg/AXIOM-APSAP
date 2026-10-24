@@ -9,6 +9,12 @@ on:
     branches: [main]
 permissions:
   contents: read
+# One run per PR (a newer push cancels the older run) and one at a time on main (a waiting run is replaced by the newest push,
+# which carries every commit before it). Without this, superseded runs of the ~60-minute map-smoke filled the 20 concurrent
+# jobs on 24 Oct 2026 (22 runs at once) and scheduled refresh jobs (refresh-ai 01:23Z, 02:53Z, 03:53Z) never started.
+concurrency:
+  group: check-index-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   required-lines:
     runs-on: ubuntu-latest
@@ -29,6 +35,8 @@ jobs:
       # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
       - run: node tests/cases.test.mjs
       - run: node tests/case_vault.test.mjs
+      # Netlify production deploys come in batches (tools/netlify_ignore.mjs): 15 credits each
+      - run: node tests/netlify_ignore.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
