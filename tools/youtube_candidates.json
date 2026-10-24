@@ -1,450 +1,190 @@
 [
- {
-  "cc": "ad",
-  "q": "Andorra news TV"
- },
- {
-  "cc": "ad",
-  "q": "Andorra news today"
- },
- {
-  "cc": "ag",
-  "q": "Antigua news TV"
- },
- {
-  "cc": "ag",
-  "q": "Antigua news today"
- },
- {
-  "cc": "bw",
-  "q": "Botswana news TV"
- },
- {
-  "cc": "bw",
-  "q": "Botswana news today"
- },
- {
-  "cc": "er",
-  "q": "Eritrea news TV"
- },
- {
-  "cc": "er",
-  "q": "Eritrea news today"
- },
- {
-  "cc": "gq",
-  "q": "Guinea Ecuatorial actualité journal télévisé"
- },
- {
-  "cc": "gq",
-  "q": "Guinea Ecuatorial info TV"
- },
- {
-  "cc": "km",
-  "q": "Comores actualité journal télévisé"
- },
- {
-  "cc": "km",
-  "q": "Comores info TV"
- },
- {
-  "cc": "lr",
-  "q": "Liberia news TV"
- },
- {
-  "cc": "lr",
-  "q": "Liberia news today"
- },
- {
-  "cc": "to",
-  "q": "Tonga news TV"
- },
- {
-  "cc": "to",
-  "q": "Tonga news today"
- },
- {
-  "cc": "vu",
-  "q": "Vanuatu news TV"
- },
- {
-  "cc": "vu",
-  "q": "Vanuatu news today"
- },
- {
-  "cc": "bs",
-  "q": "Bahamas news TV"
- },
- {
-  "cc": "bs",
-  "q": "Bahamas news today"
- },
- {
-  "cc": "cf",
-  "q": "Centrafrique actualité journal télévisé"
- },
- {
-  "cc": "cf",
-  "q": "Centrafrique info TV"
- },
- {
-  "cc": "cg",
-  "q": "Congo Brazzaville actualité journal télévisé"
- },
- {
-  "cc": "cg",
-  "q": "Congo Brazzaville info TV"
- },
- {
-  "cc": "cv",
-  "q": "Cabo Verde notícias televisão"
- },
- {
-  "cc": "cv",
-  "q": "Cabo Verde jornal"
- },
- {
-  "cc": "gd",
-  "q": "Grenada news TV"
- },
- {
-  "cc": "gd",
-  "q": "Grenada news today"
- },
- {
-  "cc": "gw",
-  "q": "Guiné-Bissau notícias televisão"
- },
- {
-  "cc": "gw",
-  "q": "Guiné-Bissau jornal"
- },
- {
-  "cc": "kn",
-  "q": "St Kitts Nevis news TV"
- },
- {
-  "cc": "kn",
-  "q": "St Kitts Nevis news today"
- },
- {
-  "cc": "ne",
-  "q": "Niger actualité journal télévisé"
- },
- {
-  "cc": "ne",
-  "q": "Niger info TV"
- },
- {
-  "cc": "pw",
-  "q": "Palau news TV"
- },
- {
-  "cc": "pw",
-  "q": "Palau news today"
- },
- {
-  "cc": "st",
-  "q": "São Tomé notícias televisão"
- },
- {
-  "cc": "st",
-  "q": "São Tomé jornal"
- },
- {
-  "cc": "vc",
-  "q": "St Vincent news TV"
- },
- {
-  "cc": "vc",
-  "q": "St Vincent news today"
- },
- {
-  "cc": "zm",
-  "q": "Zambia news TV"
- },
- {
-  "cc": "zm",
-  "q": "Zambia news today"
- },
- {
-  "cc": "bf",
-  "q": "Burkina Faso actualité journal télévisé"
- },
- {
-  "cc": "bf",
-  "q": "Burkina Faso info TV"
- },
- {
-  "cc": "bi",
-  "q": "Burundi actualité journal télévisé"
- },
- {
-  "cc": "bi",
-  "q": "Burundi info TV"
- },
- {
-  "cc": "bn",
-  "q": "Brunei news TV"
- },
- {
-  "cc": "bn",
-  "q": "Brunei news today"
- },
- {
-  "cc": "dj",
-  "q": "Djibouti actualité journal télévisé"
- },
- {
-  "cc": "dj",
-  "q": "Djibouti info TV"
- },
- {
-  "cc": "dm",
-  "q": "Dominica news TV"
- },
- {
-  "cc": "dm",
-  "q": "Dominica news today"
- },
- {
-  "cc": "fj",
-  "q": "Fiji news TV"
- },
- {
-  "cc": "fj",
-  "q": "Fiji news today"
- },
- {
-  "cc": "kw",
-  "q": "Kuwait news TV"
- },
- {
-  "cc": "kw",
-  "q": "Kuwait news today"
- },
- {
-  "cc": "li",
-  "q": "Liechtenstein news TV"
- },
- {
-  "cc": "li",
-  "q": "Liechtenstein news today"
- },
- {
-  "cc": "ls",
-  "q": "Lesotho news TV"
- },
- {
-  "cc": "ls",
-  "q": "Lesotho news today"
- },
- {
-  "cc": "na",
-  "q": "Namibia news TV"
- },
- {
-  "cc": "na",
-  "q": "Namibia news today"
- },
- {
-  "cc": "ni",
-  "q": "Nicaragua news TV"
- },
- {
-  "cc": "ni",
-  "q": "Nicaragua news today"
- },
- {
-  "cc": "sb",
-  "q": "Solomon Islands news TV"
- },
- {
-  "cc": "sb",
-  "q": "Solomon Islands news today"
- },
- {
-  "cc": "sl",
-  "q": "Sierra Leone news TV"
- },
- {
-  "cc": "sl",
-  "q": "Sierra Leone news today"
- },
- {
-  "cc": "ss",
-  "q": "South Sudan news TV"
- },
- {
-  "cc": "ss",
-  "q": "South Sudan news today"
- },
- {
-  "cc": "td",
-  "q": "Tchad actualité journal télévisé"
- },
- {
-  "cc": "td",
-  "q": "Tchad info TV"
- },
- {
-  "cc": "tm",
-  "q": "Turkmenistan news TV"
- },
- {
-  "cc": "tm",
-  "q": "Turkmenistan news today"
- },
- {
-  "cc": "ws",
-  "q": "Samoa news TV"
- },
- {
-  "cc": "ws",
-  "q": "Samoa news today"
- },
- {
-  "cc": "bz",
-  "q": "Belize news TV"
- },
- {
-  "cc": "bz",
-  "q": "Belize news today"
- },
- {
-  "cc": "cd",
-  "q": "RDC Congo actualité journal télévisé"
- },
- {
-  "cc": "cd",
-  "q": "RDC Congo info TV"
- },
- {
-  "cc": "gm",
-  "q": "Gambia news TV"
- },
- {
-  "cc": "gm",
-  "q": "Gambia news today"
- },
- {
-  "cc": "gy",
-  "q": "Guyana news TV"
- },
- {
-  "cc": "gy",
-  "q": "Guyana news today"
- },
- {
-  "cc": "la",
-  "q": "Laos news TV"
- },
- {
-  "cc": "la",
-  "q": "Laos news today"
- },
- {
-  "cc": "mu",
-  "q": "Maurice actualité journal télévisé"
- },
- {
-  "cc": "mu",
-  "q": "Maurice info TV"
- },
- {
-  "cc": "mw",
-  "q": "Malawi news TV"
- },
- {
-  "cc": "mw",
-  "q": "Malawi news today"
- },
- {
-  "cc": "mz",
-  "q": "Moçambique notícias televisão"
- },
- {
-  "cc": "mz",
-  "q": "Moçambique jornal"
- },
- {
-  "cc": "om",
-  "q": "Oman news TV"
- },
- {
-  "cc": "om",
-  "q": "Oman news today"
- },
- {
-  "cc": "sd",
-  "q": "Sudan news TV"
- },
- {
-  "cc": "sd",
-  "q": "Sudan news today"
- },
- {
-  "cc": "sr",
-  "q": "Suriname news TV"
- },
- {
-  "cc": "sr",
-  "q": "Suriname news today"
- },
- {
-  "cc": "tj",
-  "q": "Tajikistan news TV"
- },
- {
-  "cc": "tj",
-  "q": "Tajikistan news today"
- },
- {
-  "cc": "cy",
-  "q": "Cyprus news TV"
- },
- {
-  "cc": "cy",
-  "q": "Cyprus news today"
- },
- {
-  "cc": "mt",
-  "q": "Malta news TV"
- },
- {
-  "cc": "mt",
-  "q": "Malta news today"
- },
- {
-  "cc": "me",
-  "q": "Montenegro news TV"
- },
- {
-  "cc": "me",
-  "q": "Montenegro news today"
- },
- {
-  "cc": "al",
-  "q": "Albania news TV"
- },
- {
-  "cc": "al",
-  "q": "Albania news today"
- },
- {
-  "cc": "xk",
-  "q": "Kosovo news TV"
- },
- {
-  "cc": "xk",
-  "q": "Kosovo news today"
- },
- {
-  "cc": "mk",
-  "q": "Macedonia news TV"
- },
- {
-  "cc": "mk",
-  "q": "Macedonia news today"
- }
+{
+"cc": "sm",
+"q": "San Marino RTV"
+},
+{
+"cc": "sm",
+"q": "Libertas San Marino"
+},
+{
+"cc": "sm",
+"q": "GiornaleSM"
+},
+{
+"cc": "sc",
+"q": "SBC Seychelles"
+},
+{
+"cc": "sc",
+"q": "Seychelles Nation"
+},
+{
+"cc": "sc",
+"q": "Paradise FM Seychelles"
+},
+{
+"cc": "km",
+"q": "ORTC Comores"
+},
+{
+"cc": "km",
+"q": "Al-Watwan Comores"
+},
+{
+"cc": "km",
+"q": "FCBK FM Comores"
+},
+{
+"cc": "ag",
+"q": "ABS Television Antigua"
+},
+{
+"cc": "ag",
+"q": "Antigua Observer"
+},
+{
+"cc": "er",
+"q": "Eri-TV"
+},
+{
+"cc": "er",
+"q": "Erena radio"
+},
+{
+"cc": "gq",
+"q": "TVGE Guinea Ecuatorial"
+},
+{
+"cc": "gq",
+"q": "Asonga TV"
+},
+{
+"cc": "lr",
+"q": "ELBC Liberia"
+},
+{
+"cc": "lr",
+"q": "Spoon TV Liberia"
+},
+{
+"cc": "lr",
+"q": "OK FM Liberia"
+},
+{
+"cc": "bw",
+"q": "Botswana TV BTV"
+},
+{
+"cc": "bw",
+"q": "Mmegi"
+},
+{
+"cc": "bw",
+"q": "Duma FM"
+},
+{
+"cc": "to",
+"q": "Tonga Broadcasting Commission"
+},
+{
+"cc": "to",
+"q": "Kaniva Tonga"
+},
+{
+"cc": "eh",
+"q": "RASD TV"
+},
+{
+"cc": "sz",
+"q": "Eswatini TV"
+},
+{
+"cc": "sz",
+"q": "Times of Eswatini"
+},
+{
+"cc": "st",
+"q": "TVS S\u00e3o Tom\u00e9"
+},
+{
+"cc": "st",
+"q": "T\u00e9la N\u00f3n"
+},
+{
+"cc": "kw",
+"q": "KTV Kuwait"
+},
+{
+"cc": "kw",
+"q": "Al Rai TV Kuwait"
+},
+{
+"cc": "kw",
+"q": "Kuwait Times"
+},
+{
+"cc": "bn",
+"q": "RTB Brunei"
+},
+{
+"cc": "bn",
+"q": "Borneo Bulletin"
+},
+{
+"cc": "li",
+"q": "Landesspital Liechtenstein 1FLTV"
+},
+{
+"cc": "li",
+"q": "Vaterland Liechtenstein"
+},
+{
+"cc": "mc",
+"q": "Monaco Info TV"
+},
+{
+"cc": "mc",
+"q": "Monaco Matin"
+},
+{
+"cc": "ad",
+"q": "Andorra Televisi\u00f3"
+},
+{
+"cc": "ad",
+"q": "Diari d'Andorra"
+},
+{
+"cc": "gd",
+"q": "GBN Grenada"
+},
+{
+"cc": "gd",
+"q": "Grenada Government Information Service"
+},
+{
+"cc": "pw",
+"q": "Palau Oceania Television"
+},
+{
+"cc": "fm",
+"q": "FSM Information Services"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands Journal"
+},
+{
+"cc": "ki",
+"q": "Kiribati Broadcasting Publications Authority"
+},
+{
+"cc": "nr",
+"q": "Nauru Government Information Office"
+},
+{
+"cc": "tv",
+"q": "Tuvalu Broadcasting Corporation"
+}
 ]
