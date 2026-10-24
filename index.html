@@ -463,6 +463,7 @@ tbody tr:hover{background:var(--surface2)}
 .obs{color:var(--muted);font-size:11.5px}
 
 .note{font-size:12px;color:var(--muted);line-height:1.5}
+#tl-built{overflow-wrap:anywhere}
 .note p{margin:0 0 7px}
 .note p:last-child{margin-bottom:0}
 .note b{color:var(--ink);font-weight:600}
@@ -8893,7 +8894,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
   html.phone{--sab:env(safe-area-inset-bottom,0px);--bar-h:calc(64px + var(--sab))}
   html.phone .shell{display:block}
-  html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,64px);max-height:none!important;z-index:1200;overflow-y:auto;overscroll-behavior:contain;
+  /* the sheet scrolls up and down only: nothing in it scrolls it sideways (a long unbroken line such as the timeline's
+     SHA-256 build fingerprint made it wider than the screen, so a slightly slanted swipe on iPhone slid the whole list
+     left or right and cut off its text); long words wrap instead */
+  html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,64px);max-height:none!important;z-index:1200;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y pinch-zoom;overflow-wrap:break-word;
     border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.18);font-size:14px;padding:0 14px 16px;box-sizing:border-box;transition:height .2s ease}
   html.phone .rail.dragging{transition:none}
   html.phone[data-sheet="bar"] .rail{overflow:hidden}
@@ -9005,6 +9009,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var h = document.createElement("div"); h.id = "rail-handle";
   h.innerHTML = '<button type="button" class="grab"><i></i><b></b><small></small></button><span class="chev" aria-hidden="true">&#9650;</span>';
   rail.insertBefore(h, rail.firstChild);
+  /* a sideways scroll can still come from script (a focus or scrollIntoView): put the sheet straight back */
+  rail.addEventListener("scroll", function () { if (on() && rail.scrollLeft) rail.scrollLeft = 0; }, { passive: true });
   var STATES = ["bar", "half", "full"];
   /* whether a panel holds any text: stops at the first word, where reading textContent copied out the whole list each time */
   function hasText(el) {
