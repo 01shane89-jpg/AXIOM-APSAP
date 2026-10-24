@@ -9,6 +9,7 @@
 <script src="assets/osap-mycountries.js"></script>
 <script src="assets/osap-lock.js"></script>
 <script src="assets/osap-vault.js"></script>
+<script src="assets/osap-sold.js"></script>
 <script src="assets/osap-wipe.js"></script>
 <script src="assets/osap-tier.js"></script>
 <script src="assets/osap-datagate.js"></script>

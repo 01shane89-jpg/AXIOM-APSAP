@@ -2747,7 +2747,8 @@
   }
 
   /* ---------- the printed map: OpenStreetMap tiles and the plan drawn on a canvas, so it prints on every device ---------- */
-  var TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  /* the sold version (assets/osap-sold.js) prints the plan on a plain map: tile.openstreetmap.org is not for paid products */
+  var TILE_URL = W.OSAP_SOLD ? "" : "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
   function wpx(p, z) {
     var n = 256 * Math.pow(2, z), la = Math.max(-85, Math.min(85, p[0])) * Math.PI / 180;
     return [(p[1] + 180) / 360 * n, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n];
@@ -2792,7 +2793,7 @@
   }
   function tileImg(z, x, y) {
     var n = Math.pow(2, z); x = ((x % n) + n) % n;
-    if (y < 0 || y >= n) return Promise.resolve(null);
+    if (y < 0 || y >= n || !TILE_URL) return Promise.resolve(null);
     function at(T) { return T.replace("{z}", z).replace("{x}", x).replace("{y}", y); }
     var url = at(TILE_URL);
     return tileNet(url).then(function (im) { return im ? { im: im } : tileSaved(url).then(function (sv) { return sv ? { im: sv } : tileNet(url).then(function (r) { return r ? { im: r } : null; }); }); });

@@ -608,6 +608,7 @@
     function mx(p) { return (p / S0 - 0.5) * WM; }
     function my(p) { return (0.5 - p / S0) * WM; }
     if (win.w > 4000 || win.h > 4000 || win.x0 < 0 || win.x0 + win.w > S0) return Promise.resolve(null);
+    if (W.OSAP_SOLD) return Promise.resolve(null);   /* sold version (assets/osap-sold.js): Esri's service needs an ArcGIS licence to sell */
     var url = LC + "?bbox=" + [mx(win.x0), my(win.y0 + win.h), mx(win.x0 + win.w), my(win.y0)].map(function (v) { return v.toFixed(2); }).join(",") +
       "&bboxSR=3857&imageSR=3857&size=" + win.w + "," + win.h + "&format=png&interpolation=RSP_NearestNeighbor&renderingRule=" +
       encodeURIComponent('{"rasterFunction":"None"}') + "&time=" + Date.UTC(LC_YEAR, 0, 1) + "&f=image";

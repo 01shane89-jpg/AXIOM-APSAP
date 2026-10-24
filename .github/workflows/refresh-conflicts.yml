@@ -136,6 +136,11 @@ jobs:
           git commit -qm "Test output (${ONLY:-conflicts}) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data-${ONLY:-conflicts}"
         continue-on-error: true
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/live/conflicts
       # Only main commits snapshots, and only data/live/conflicts. The 15-minute refresh commits to main too, so rebase onto it and retry.
       - name: Commit if the conflict data changed
         if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-conflicts' && inputs.only != 'probe-sites' }}

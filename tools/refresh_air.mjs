@@ -23,17 +23,19 @@
 import fs from "fs";
 import path from "path";
 import * as gnss from "./gnss.mjs";
+import { COMMERCIAL, usable } from "./nc_strip.mjs";
 
 const OUT = process.argv[2] || "air-out";
 const PREV = process.argv[3] || OUT;
 const BUDGET = (+process.argv[4] || 330) * 1000; // stop asking after this long so a sweep publishes on time
 const UA = "AXIOM-OSAP/1.0 (+https://01shane89-jpg.github.io/AXIOM-APSAP/; live air traffic layer)";
-const SRC = [
+// sold version (OSAP_COMMERCIAL, tools/nc_strip.mjs): the sources with non-commercial terms (adsb.fi, OpenSky) are not asked
+const SRC = usable([
   { id: "fi", name: "adsb.fi", site: "https://adsb.fi/", url: (la, lo) => `https://opendata.adsb.fi/api/v3/lat/${la}/lon/${lo}/dist/250`,
     licence: "adsb.fi open data terms", nc: true, track: "https://globe.adsb.fi/?icao={hex}", gap: 1100, wait429: 10000 },
   { id: "lol", name: "adsb.lol", site: "https://adsb.lol/", url: (la, lo) => `https://api.adsb.lol/v2/point/${la}/${lo}/250`,
     licence: "ODbL 1.0", nc: false, track: "https://globe.adsb.lol/?icao={hex}", gap: 6000, wait429: 30000 },
-];
+]);
 const OSKY = { id: "osky", name: "OpenSky Network", site: "https://opensky-network.org/", url: "https://opensky-network.org/api/states/all",
   licence: "OpenSky Network terms (non-commercial and research use)", nc: true, track: "https://map.opensky-network.org/?icao={hex}" };
 const CELL = 10, EMPTY_EVERY = 6, MAX_AGE = 300, CARRY = 15 * 60, OSKY_EVERY = 15 * 60e3, R_NM = 240;
@@ -95,7 +97,7 @@ async function main() {
   let prev = null;
   try { prev = JSON.parse(fs.readFileSync(path.join(PREV, "index.json"), "utf8")); } catch (e) { prev = null; }
   if (prev && prev.schema !== "osap-air-traffic/1") prev = null;
-  const ALL = [...SRC, OSKY], OI = SRC.length;
+  const ALL = COMMERCIAL ? SRC.slice() : [...SRC, OSKY], OI = SRC.length;
   const C = circles(), sweep = ((prev && prev.sweep) | 0) + 1;
   const last = prev && Array.isArray(prev.circ) && prev.circ.length === C.length ? prev.circ : C.map(() => null);
   const todo = [];
@@ -147,7 +149,7 @@ async function main() {
   // OpenSky's whole-world snapshot, at most every 15 minutes (anonymous: 400 credits a day, 4 per world call)
   let oskyAt = (prev && prev.osky_at) || 0;
   async function opensky() {
-    if (Date.now() - oskyAt < OSKY_EVERY) return;
+    if (COMMERCIAL || Date.now() - oskyAt < OSKY_EVERY) return;
     const st = stat[OI]; st.asked++;
     const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
     try {
