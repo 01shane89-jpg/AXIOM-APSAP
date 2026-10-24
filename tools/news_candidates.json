@@ -2,195 +2,231 @@
 "feeds": [],
 "discover": [
 {
-"cc": "tt",
-"outlet": "agsiw|Arab Gulf States Institute",
-"home": "https://agsiw.org/",
+"cc": "cl",
+"outlet": "eldesconcierto|El Desconcierto",
+"home": "https://www.eldesconcierto.cl/",
+"lang": "es"
+},
+{
+"cc": "cl",
+"outlet": "theclinic|The Clinic",
+"home": "https://www.theclinic.cl/",
+"lang": "es"
+},
+{
+"cc": "cl",
+"outlet": "exante|Ex-Ante",
+"home": "https://www.ex-ante.cl/",
+"lang": "es"
+},
+{
+"cc": "cl",
+"outlet": "eldinamo|El D\u00ednamo",
+"home": "https://www.eldinamo.cl/",
+"lang": "es"
+},
+{
+"cc": "cl",
+"outlet": "interferencia|Interferencia",
+"home": "https://interferencia.cl/",
+"lang": "es"
+},
+{
+"cc": "lk",
+"outlet": "slmirror|Sri Lanka Mirror",
+"home": "https://srilankamirror.com/",
+"lang": "en"
+},
+{
+"cc": "tz",
+"outlet": "mwanahalisi|MwanaHalisi",
+"home": "https://mwanahalisionline.com/",
+"lang": "sw"
+},
+{
+"cc": "bo",
+"outlet": "unitel|Unitel",
+"home": "https://unitel.bo/",
+"lang": "es"
+},
+{
+"cc": "bo",
+"outlet": "reduno|Red Uno",
+"home": "https://www.reduno.com.bo/",
+"lang": "es"
+},
+{
+"cc": "bo",
+"outlet": "vision360|Visi\u00f3n 360",
+"home": "https://www.vision360.bo/",
+"lang": "es"
+},
+{
+"cc": "bo",
+"outlet": "urgente|Urgente.bo",
+"home": "https://urgente.bo/",
+"lang": "es"
+},
+{
+"cc": "ma",
+"outlet": "hespressar|Hespress (Arabic)",
+"home": "https://www.hespress.com/",
+"lang": "ar"
+},
+{
+"cc": "ma",
+"outlet": "barlamane|Barlamane",
+"home": "https://www.barlamane.com/",
+"lang": "ar"
+},
+{
+"cc": "ma",
+"outlet": "h24info|H24info",
+"home": "https://www.h24info.ma/",
+"lang": "fr"
+},
+{
+"cc": "ma",
+"outlet": "leconomiste|L'Economiste",
+"home": "https://www.leconomiste.com/",
+"lang": "fr"
+},
+{
+"cc": "ma",
+"outlet": "goud|Goud",
+"home": "https://www.goud.ma/",
+"lang": "ar"
+},
+{
+"cc": "et",
+"outlet": "addisstandard|Addis Standard",
+"home": "https://addisstandard.com/",
+"lang": "en"
+},
+{
+"cc": "et",
+"outlet": "ethinsight|Ethiopia Insight",
+"home": "https://www.ethiopia-insight.com/",
+"lang": "en"
+},
+{
+"cc": "et",
+"outlet": "borkena|Borkena",
+"home": "https://borkena.com/",
+"lang": "en"
+},
+{
+"cc": "et",
+"outlet": "addisfortune|Addis Fortune",
+"home": "https://addisfortune.news/",
+"lang": "en"
+},
+{
+"cc": "et",
+"outlet": "ena|ENA",
+"home": "https://www.ena.et/",
+"lang": "en"
+},
+{
+"cc": "et",
+"outlet": "ethmonitor|Ethiopian Monitor",
+"home": "https://ethiopianmonitor.com/",
+"lang": "en"
+},
+{
+"cc": "et",
+"outlet": "wazema|Wazema Radio",
+"home": "https://wazemaradio.com/",
+"lang": "am"
+},
+{
+"cc": "et",
+"outlet": "ethobserver|Ethiopia Observer",
+"home": "https://www.ethiopiaobserver.com/",
+"lang": "en"
+},
+{
+"cc": "pg",
+"outlet": "pngbn|PNG Business News",
+"home": "https://www.pngbusinessnews.com/",
+"lang": "en"
+},
+{
+"cc": "gy",
+"outlet": "villagevoice|Village Voice",
+"home": "https://villagevoicenews.com/",
+"lang": "en"
+},
+{
+"cc": "gy",
+"outlet": "guyanatimes|Guyana Times",
+"home": "https://guyanatimesgy.com/",
+"lang": "en"
+},
+{
+"cc": "iq",
+"outlet": "ina|Iraqi News Agency",
+"home": "https://ina.iq/eng/",
+"lang": "en"
+},
+{
+"cc": "iq",
+"outlet": "basnews|Basnews",
+"home": "https://www.basnews.com/en",
+"lang": "en"
+},
+{
+"cc": "iq",
+"outlet": "rudaw|Rudaw",
+"home": "https://www.rudaw.net/english",
+"lang": "en"
+},
+{
+"cc": "ge",
+"outlet": "ipn|Interpressnews",
+"home": "https://www.interpressnews.ge/en/",
+"lang": "en"
+},
+{
+"cc": "ge",
+"outlet": "1tv|1TV Georgia",
+"home": "https://1tv.ge/en/",
+"lang": "en"
+},
+{
+"cc": "ge",
+"outlet": "bmge|BM.ge",
+"home": "https://bm.ge/en",
+"lang": "en"
+},
+{
+"cc": "sk",
+"outlet": "novinysk|Noviny.sk",
+"home": "https://noviny.sk/",
+"lang": "sk"
+},
+{
+"cc": "la",
+"outlet": "laotiantimes2|Lao News Agency (English)",
+"home": "https://kpl.gov.la/En/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "arabcenter|Arab Center Washington DC",
-"home": "https://arabcenterdc.org/",
+"outlet": "sfpa|Slovak Foreign Policy Association",
+"home": "https://www.sfpa.sk/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "mecouncil|Middle East Council on Global Affairs",
-"home": "https://mecouncil.org/",
-"lang": "en"
+"outlet": "ivo|IVO Slovakia",
+"home": "https://www.ivo.sk/",
+"lang": "sk"
 },
 {
 "cc": "tt",
-"outlet": "epc|Emirates Policy Center",
-"home": "https://epc.ae/en/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "grc|Gulf Research Center",
-"home": "https://www.grc.net/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "convafrica|The Conversation Africa",
-"home": "https://theconversation.com/africa",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "accord|ACCORD",
-"home": "https://www.accord.org.za/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "ipss|IPSS Addis Ababa",
-"home": "https://ipss-addis.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "timbuktu|Timbuktu Institute",
-"home": "https://timbuktu-institute.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "cddwa|CDD West Africa",
-"home": "https://www.cddwestafrica.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "enact|ENACT Africa",
-"home": "https://enactafrica.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "aiac|Africa Is a Country",
-"home": "https://africasacountry.com/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "ecowas|ECOWAS Commission",
-"home": "https://www.ecowas.int/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "igad|IGAD",
-"home": "https://igad.int/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "sadc|SADC",
-"home": "https://www.sadc.int/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "coi|Indian Ocean Commission",
-"home": "https://www.commissionoceanindien.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "caricom|CARICOM Secretariat",
-"home": "https://caricom.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "oecs|OECS Commission",
-"home": "https://www.oecs.int/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "cdema|CDEMA",
-"home": "https://www.cdema.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "impacs|CARICOM IMPACS",
-"home": "https://caricomimpacs.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "capri|CAPRI Caribbean",
-"home": "https://www.capricaribbean.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "globalam|Global Americans",
-"home": "https://theglobalamericans.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "aq|Americas Quarterly",
-"home": "https://www.americasquarterly.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "dialogo|Dialogo Americas",
-"home": "https://dialogo-americas.com/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "spc|Pacific Community (SPC)",
-"home": "https://www.spc.int/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "sprep|SPREP",
-"home": "https://www.sprep.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "ffa|Pacific Islands Forum Fisheries Agency",
-"home": "https://www.ffa.int/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "coe|Council of Europe",
-"home": "https://www.coe.int/en/web/portal/home",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "osce|OSCE",
-"home": "https://www.osce.org/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "lieinst|Liechtenstein-Institut",
-"home": "https://www.liechtenstein-institut.li/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "martens|Wilfried Martens Centre",
-"home": "https://www.martenscentre.eu/",
-"lang": "en"
-},
-{
-"cc": "tt",
-"outlet": "rstatecraft|Responsible Statecraft",
-"home": "https://responsiblestatecraft.org/",
+"outlet": "atlantska|Atlantic Initiative BiH",
+"home": "https://atlantskainicijativa.org/",
 "lang": "en"
 }
 ]
