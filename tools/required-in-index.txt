@@ -13,6 +13,7 @@
 <script src="assets/osap-wipe.js"></script>
 <script src="assets/osap-tier.js"></script>
 <script src="assets/osap-datagate.js"></script>
+<script src="assets/osap-press.js"></script>
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-boolq.js"></script>
