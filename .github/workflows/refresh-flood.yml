@@ -304,11 +304,13 @@ jobs:
           node tools/seal_hidden.mjs --check
           git add data/thailand/flood-live-snapshot.js data/live data/history $(ls -d data/captures data/claims data/decisions 2>/dev/null)
           git commit -m "Refresh live snapshots${LANE:+ ($LANE)} $(date -u +'%Y-%m-%d %H:%MZ')"
-          # Pulling takes over a minute, and merges or the other refresh jobs often land on main meanwhile, so try a few times.
-          # A pull or push that hangs is stopped after a few minutes and tried again: on 23 Oct 2026 one pull hung for 10 minutes
-          # twice in a few hours, holding that round's news back and the next round in the queue behind it.
+          # Merges or the other refresh jobs often land on main meanwhile, so try a few times.
+          # The checkout is one commit deep, and a plain pull into it can run for over 15 minutes: from 05:20Z on 24 Oct 2026
+          # every news-lane pull hit the 3-minute stop five times and no news was saved for 3.5 hours. So only main's newest
+          # commit is fetched (seconds), and this run's one commit is replayed onto it. A fetch or push that hangs is still
+          # stopped and tried again.
           for i in 1 2 3 4 5; do
-            timeout 180 git pull --rebase -X theirs origin main && timeout 120 git push && exit 0
+            timeout 180 git fetch -q --depth=1 origin main && git rebase -q -X theirs --onto FETCH_HEAD HEAD~1 && timeout 120 git push origin HEAD:main && exit 0
             git rebase --abort 2>/dev/null || true; sleep $((i * 5))
           done
           exit 1
