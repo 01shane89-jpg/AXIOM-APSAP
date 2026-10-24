@@ -7030,6 +7030,62 @@
    "name": "GMN TV",
    "kind": "news desk",
    "lang": "tet"
+  },
+  {
+   "cc": "cf",
+   "channel_id": "UCMBVDqHX7-8CHgYXSopeC2A",
+   "name": "Corbeau News TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ne",
+   "channel_id": "UCE7bKuILlt674IFH9x4Dnxw",
+   "name": "Groupe Labari (RTL Niger)",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ls",
+   "channel_id": "UCJmfW-w47fd83HLWfKhyHmQ",
+   "name": "Lesotho Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ni",
+   "channel_id": "UC4pq8ra-SB_ZqXqfgnxRVWg",
+   "name": "Nicaragua Actual",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "la",
+   "channel_id": "UCjtOePaRAtTLufe1-lxwmrg",
+   "name": "Lao Economic News Channel",
+   "kind": "news desk",
+   "lang": "lo"
+  },
+  {
+   "cc": "om",
+   "channel_id": "UCYBRcqEAVdjbCzDIa9W0vYA",
+   "name": "Oman Observer",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "me",
+   "channel_id": "UCuHHGaVLghYGdsAyzhFuW2w",
+   "name": "Euronews Montenegro",
+   "kind": "news desk",
+   "lang": "sr"
+  },
+  {
+   "cc": "al",
+   "channel_id": "UC8X73IwfsLqlTaAHbXG05lg",
+   "name": "News24 Albania",
+   "kind": "news desk",
+   "lang": "sq"
   }
  ]
 }
