@@ -1285,7 +1285,7 @@
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
       '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">Print CONOP</button>' +
-      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Print intelligence annex</button>' + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
+      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Print intelligence annex</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
@@ -2881,6 +2881,43 @@
     return all.filter(function (x) { return x.id === id; })[0] || null;
   }
 
+  /* ---------- TAK data package (assets/osap-tak.js) for ATAK and WinTAK ----------
+     The POI, the hospitals the plan routes to (role, trauma level, grid, published contacts, source), the planner's CCP, AXP and
+     HLZ grids as markers, and the road routes to the hospitals as KML lines. An automatic draft, said so in every description. */
+  function xq(t) { return String(t == null ? "" : t).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/[<>&'"]/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c]; }); }
+  function medKml(s) {
+    var v = fieldVals(), DRAFT = "Automatic draft from open data (OSAP medical plan), not analyst-approved. Confirm capability, contacts, access and status before use.";
+    function pm(name, lat, lon, col, desc) {
+      return "<Placemark><name>" + xq(name) + "</name><description>" + xq(desc) + "</description><Style><IconStyle><color>" + col + "</color></IconStyle></Style>" +
+        "<Point><coordinates>" + (+lon).toFixed(6) + "," + (+lat).toFixed(6) + ",0</coordinates></Point></Placemark>";
+    }
+    var h = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xq("Medical plan, " + s.name) + "</name><description>" + xq(DRAFT + " Built " + new Date(s.at).toISOString() + ".") + "</description>";
+    h += pm("POI", s.o[0], s.o[1], "ff2a2ac9", "Anticipated point of injury. " + grid(s.o[0], s.o[1]) + ". " + DRAFT);
+    if (s.fac) picks(s).forEach(function (p) {
+      var f = p.f;
+      h += pm(p.why.join(", ") + ": " + f.name, f.lat, f.lon, "ff3e8a2b", [p.reason, tierLabel(f), grid(f.lat, f.lon), f.phone ? "Phone (published): " + f.phone : "", f.web || "", "Source: " + (f.osm || f.src || "not given"), DRAFT].filter(Boolean).join("\n"));
+    });
+    SITE_MK.forEach(function (x) { var g = parseGrid(v[x[0]]); if (g) h += pm(x[1], g[0], g[1], "ff00a5ff", x[2] + " (entered by the planner). " + grid(g[0], g[1]) + (v[x[0] + "_note"] ? ". " + v[x[0] + "_note"] : "")); });
+    (s.rts || []).forEach(function (x) {
+      if (!x.r || !x.r.line || x.r.line.length < 2) return;
+      var L = x.r.line, st = Math.max(1, Math.ceil(L.length / 3000)), c = L.filter(function (q, i) { return i % st === 0 || i === L.length - 1; });
+      h += "<Placemark><name>" + xq("Route to " + x.f.name) + "</name><description>" + xq(x.why.join(", ") + ". " + Math.round(x.r.m / 100) / 10 + " km, " + mins(x.r.s) + " by road (" + (x.r.host || "routing service") + "). " + DRAFT) + "</description>" +
+        "<Style><LineStyle><color>ff3e8a2b</color><width>4</width></LineStyle></Style><LineString><tessellate>1</tessellate><coordinates>" + c.map(function (q) { return (+q[1]).toFixed(6) + "," + (+q[0]).toFixed(6) + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>";
+    });
+    return h + "</Document></kml>";
+  }
+  function takMsg(t) {
+    var hd = D.querySelector("#medplan .mphead"); if (!hd) return;
+    var m = D.getElementById("mp-takmsg");
+    if (!m) { m = D.createElement("p"); m.id = "mp-takmsg"; m.className = "obs noprint"; m.setAttribute("role", "status"); hd.parentNode.insertBefore(m, hd.nextSibling); }
+    m.textContent = t;
+  }
+  function takExport() {
+    var s = ST; if (!s || !s.o) return;
+    try { takMsg(W.OSAP_TAK.save({ id: "medplan|" + s.cc + "|" + s.at, name: "Medical plan " + s.name, file: "osap-medplan-" + String(s.name || "").replace(/[^A-Za-z0-9]+/g, "-").slice(0, 30), kml: medKml(s) })); }
+    catch (e) { takMsg("The TAK package could not be made: " + e.message); }
+  }
+
   /* ---------- print view: the whole plan as pages in OSAP's report overlay, with the map, then Print or Save as PDF ---------- */
   /* ---------- the plan as one record (assets/osap-medplan-model.js, Build Plan v2 phase 0) ----------
      Everything the plan worked out goes into one MedicalPlan record; its validation (VALID, WARNING, BLOCKING) is shown at the
@@ -3379,6 +3416,7 @@
     if (k === "legacyuse" || k === "legacydrop") { legacyMove(k === "legacyuse"); render(); build(); return; }
     if (k === "print") { printView(); return; }
     if (k === "printc") { printView("conop"); return; }
+    if (k === "tak") { takExport(); return; }
     if (k === "airfit") { if (!dockOn()) close(); mapShow(); airFit(); return; }
     if (k === "strat") { if (!dockOn()) close(); mapShow(); stratFit(); return; }
     if (k === "live") { ST.forceLive = true; build(); return; }
@@ -3460,6 +3498,6 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, _takKml: medKml, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();

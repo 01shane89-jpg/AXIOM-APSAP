@@ -292,7 +292,7 @@
           return { type: "Feature", geometry: o.lat != null ? { type: "Point", coordinates: [o.lon, o.lat] } : null, properties: p };
         }) };
         download(base + ".geojson", "application/geo+json", JSON.stringify(fc, null, 1));
-      } else if (fmt === "kml") {
+      } else if (fmt === "kml" || fmt === "tak") {
         var x = function (s) { return String(s == null ? "" : s).replace(/[<>&'"]/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c]; }).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ""); };
         var pts = rows.filter(function (o) { return o.lat != null; });
         var kml = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + x("OSAP " + meta.country + " " + meta.generated_utc) + "</name>" +
@@ -305,6 +305,11 @@
               "<ExtendedData>" + Object.keys(o).filter(function (k) { return k !== "lat" && k !== "lon"; }).map(function (k) { return '<Data name="' + k + '"><value>' + x(o[k]) + "</value></Data>"; }).join("") + "</ExtendedData>" +
               "<Point><coordinates>" + o.lon + "," + o.lat + "</coordinates></Point></Placemark>";
           }).join("") + "</Document></kml>";
+        if (fmt === "tak") {
+          /* reports become CoT markers (red spot markers) with the same description: source, link, SHA-256, claim status */
+          try { toast(window.OSAP_TAK.save({ id: "work|" + CC + "|" + S.tab, name: "OSAP " + meta.country + " " + S.tab, file: base, kml: kml, color: "#c92a2a" })); } catch (e) { toast("The TAK package could not be made: " + e.message); }
+          return;
+        }
         download(base + ".kml", "application/vnd.google-earth.kml+xml", kml);
       }
       toast("Exported " + rows.length + " items.");
@@ -523,8 +528,9 @@
       (A ? '<label class="wkchk"><input type="checkbox" data-wk-uarea' + (ua ? " checked" : "") + "> Only the drawn area</label>" : "") + "</div>" +
       '<p class="obs"><b>' + S.list.length + "</b> items · period: " + esc(PR.label) + (ua ? " · inside the drawn area" : A ? "" : " · no drawn area") + (S.note ? "<br>" + esc(S.note) : "") + "</p>" +
       '<p class="wkbtns"><button type="button" class="refresh primary" data-wk-exp="sitrep">Situation report (print or PDF)</button>' +
-      '<button type="button" class="refresh" data-wk-exp="kml">KML</button><button type="button" class="refresh" data-wk-exp="geojson">GeoJSON</button><button type="button" class="refresh" data-wk-exp="csv">CSV</button></p>' +
-      '<p class="obs">KML holds only items with a map location. The situation report lists the newest 300; CSV and GeoJSON hold every item. To save a PDF, choose "Save as PDF" in the print dialog. Your grades go in the analyst_grade columns.</p>';
+      '<button type="button" class="refresh" data-wk-exp="kml">KML</button><button type="button" class="refresh" data-wk-exp="geojson">GeoJSON</button><button type="button" class="refresh" data-wk-exp="csv">CSV</button>' +
+      (window.OSAP_TAK ? '<button type="button" class="refresh" data-wk-exp="tak" title="' + esc(window.OSAP_TAK.tip) + '">TAK package</button>' : "") + "</p>" +
+      '<p class="obs">KML and the TAK package (ATAK, WinTAK) hold only items with a map location. The situation report lists the newest 300; CSV and GeoJSON hold every item. To save a PDF, choose "Save as PDF" in the print dialog. Your grades go in the analyst_grade columns.</p>';
   }
   function openRecordKey(k) {
     var r = recByKey(k); if (!r || !window.TSAP) return;

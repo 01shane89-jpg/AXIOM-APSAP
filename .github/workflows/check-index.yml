@@ -54,6 +54,7 @@ jobs:
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
       - run: node tests/geo.test.mjs
+      - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/deepsouth_border.test.mjs
       - run: node tests/entities.test.mjs
@@ -177,6 +178,7 @@ jobs:
       - run: node tests/sw_data_smoke.mjs
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
+      - run: node tests/tak_smoke.mjs
       - run: node tests/move_smoke.mjs
       - run: node tests/protect_smoke.mjs
       - run: node tests/safety_smoke.mjs

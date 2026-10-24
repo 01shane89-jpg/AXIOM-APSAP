@@ -519,7 +519,7 @@
       if (r.warn.length) h += '<p class="lzmsg err">' + r.warn.map(esc).join(" ") + "</p>";
       h += '<p class="lzsm">Candidates from open data: verify on the ground and on current imagery before use. Not checked: soil and surface firmness, crops, ' +
         "small trees, poles and wires missing from OpenStreetMap; approach paths use assumed obstacle heights. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL)" + (r.counts.lcOk ? "; built-up land, trees and water also from Esri / Impact Observatory Sentinel-2 10 m land cover (" + LC_YEAR + ", CC BY 4.0)" : "") + ".</p>" +
-        '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button><button type="button" data-lz="clear">Clear marks</button></div>';
+        '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button>' + (W.OSAP_TAK && allC(r).length ? '<button type="button" data-lz="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + '<button type="button" data-lz="clear">Clear marks</button></div>';
     }
     c.innerHTML = h; c.hidden = false; syncDock();
     legend();
@@ -533,6 +533,24 @@
       (ST.res.small && ST.res.small.length ? '<div class="lg"><span class="sw" style="background:rgba(123,31,162,.3);border:2px dashed #7b1fa2;border-radius:50%"></span><div>Candidate, ' + SMALL + " m only<span class=\"d\">UH-60 and smaller</span></div></div>" : "") +
       '<div class="lg"><span class="sw" style="background:#1565c0;border-radius:50%"></span><div>Mapped helipad or airfield</div></div>' +
       (S.mask ? '<div class="lg"><span class="sw" style="background:rgba(198,40,40,.45)"></span><div>Blocked: obstacle<span class="d">Buildings, trees, wires, water, fences (OpenStreetMap)</span></div></div><div class="lg"><span class="sw" style="background:rgba(239,108,0,.45)"></span><div>Blocked: too steep</div></div>' : ""));
+  }
+  /* the search as KML for the TAK package (assets/osap-tak.js): each candidate a marker with its details, its circle an area,
+     mapped helipads and airfields as markers; every one labelled a candidate from open data */
+  function lzKml(r) {
+    function xq(t) { return String(t == null ? "" : t).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/[<>&'"]/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c]; }); }
+    function circ(lat, lon, rad) { var o = []; for (var i = 0; i <= 32; i++) { var t = i / 32 * 2 * Math.PI; o.push((lon + rad * Math.sin(t) / (111320 * Math.cos(lat * Math.PI / 180))).toFixed(7) + "," + (lat + rad * Math.cos(t) / 110540).toFixed(7) + ",0"); } return o.join(" "); }
+    var NOTE = "Candidate from open data, verify on the ground and on current imagery before use (OSAP landing zone finder: slope from AWS Terrain Tiles, obstacles from OpenStreetMap). Not checked: surface firmness, crops, small trees, poles and wires missing from the data, wind.";
+    var h = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xq("Candidate LZs") + "</name><description>" + xq(NOTE) + "</description>";
+    allC(r).forEach(function (k) {
+      var col = k.small ? "ffa21f7b" : k.caution ? "ff0051e6" : "ff327d2e", d = k.small || r.size;
+      var desc = [grid(k.lat, k.lon), "Clear about " + k.clearD + " m across (needs " + d + " m)", "Aircraft: " + kCraft(k), "Slope " + k.mean.toFixed(1) + "° average, " + k.max.toFixed(1) + "° steepest" + (k.caution ? " (caution: over 7°)" : ""),
+        "Elevation " + k.elev + " m", "Approach and departure: " + apprText(k), k.near.length ? "Nearest obstacle: " + k.near[0].n + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir : "", NOTE].filter(Boolean).join("\n");
+      var nm = "LZ " + k.rank + " (candidate" + (k.small ? ", " + k.small + " m only" : "") + ")";
+      h += "<Placemark><name>" + xq(nm) + "</name><description>" + xq(desc) + "</description><Style><IconStyle><color>" + col + "</color></IconStyle></Style><Point><coordinates>" + k.lon.toFixed(6) + "," + k.lat.toFixed(6) + ",0</coordinates></Point></Placemark>" +
+        "<Placemark><name>" + xq(nm + " " + d + " m") + "</name><Style><LineStyle><color>" + col + "</color><width>2</width></LineStyle><PolyStyle><color>4d" + col.slice(2) + "</color></PolyStyle></Style><Polygon><outerBoundaryIs><LinearRing><coordinates>" + circ(k.lat, k.lon, d / 2) + "</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark>";
+    });
+    r.pads.forEach(function (p) { h += "<Placemark><name>" + xq((p.kind === "aerodrome" ? "Airfield" : "Helipad") + (p.name ? ": " + p.name : "")) + "</name><description>" + xq(grid(p.lat, p.lon) + "\nMapped in OpenStreetMap, not verified: status, size and access unknown.\n" + p.osm) + "</description><Style><IconStyle><color>ffc06515</color></IconStyle></Style><Point><coordinates>" + p.lon.toFixed(6) + "," + p.lat.toFixed(6) + ",0</coordinates></Point></Placemark>"; });
+    return h + "</Document></kml>";
   }
   /* every candidate in rank order: the chosen size first, then the 50 m only spots */
   function allC(r) { return r ? r.cands.concat(r.small || []) : []; }
@@ -719,6 +737,7 @@
     else if (a === "tap") { if (ST.arm) { tapEnd(); render(); return; } ST.arm = true; map.getContainer().style.cursor = "crosshair"; map.once("click", onTap); ST.msg = "Tap the map where to search."; ST.err = ""; render(); }
     else if (a === "find") { if (!ST.poly) { var inp = card.querySelector("#lz-at"); if (inp && inp.value.trim()) { typed(); return; } } find(); }
     else if (a === "sat") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set("sat"); }
+    else if (a === "tak" && ST.res) { try { ST.msg = W.OSAP_TAK.save({ id: "lz|" + ST.res.o.join(","), name: "Candidate LZs " + grid(ST.res.o[0], ST.res.o[1]), file: "osap-lz", kml: lzKml(ST.res) }); ST.err = ""; } catch (x) { ST.err = "The TAK package could not be made: " + x.message; } render(); }
     else if (a === "clear") { RUN++; ST.res = null; ST.msg = ""; ST.err = ""; draw(); render(); }
   }
   function onChange(e) {
@@ -753,6 +772,6 @@
        analyst's own LZ size and slope settings unless given; the card and its marks are left as they are */
     scan: function (o, radius, opt) { opt = opt || {}; return scan([+o[0], +o[1]], Math.min(5000, Math.max(200, +radius || 2000)), +opt.size || S.d, +opt.slope || S.s, null, opt.prog, null).then(function (r) { if (r) { delete r.OBC; delete r.win; } return r; }); },
     sizes: SIZES, slopes: SLOPES,
-    analyse: analyse, windowFor: windowFor, obCls: obCls, surfCls: surfCls, edt: edt, query: overpassQuery
+    _kml: lzKml, analyse: analyse, windowFor: windowFor, obCls: obCls, surfCls: surfCls, edt: edt, query: overpassQuery
   };
 })();

@@ -299,7 +299,7 @@ function main() {
       '<div id="rt-haz"></div><div id="rt-mob"></div></div>' +
       '<div class="sec rtsec"><details id="rt-dirbox"><summary>Turn-by-turn directions</summary><div id="rt-dir"></div></details></div>' +
       '<div class="sec rtsec"><h2>Save and share</h2><div class="rtbtns">' +
-      '<button type="button" data-rt="gpx">GPX</button><button type="button" data-rt="kml">KML</button><button type="button" data-rt="geojson">GeoJSON</button>' +
+      '<button type="button" data-rt="gpx">GPX</button><button type="button" data-rt="kml">KML</button><button type="button" data-rt="geojson">GeoJSON</button>' + (W.OSAP_TAK ? '<button type="button" data-rt="tak" title="' + E(W.OSAP_TAK.tip) + '">TAK package</button>' : "") +
       '<button type="button" data-rt="print">Print</button><button type="button" data-rt="link">Copy link</button><button type="button" data-rt="text">Copy as text</button>' +
       '<button type="button" data-rt="import">Import GPX/KML</button><input type="file" id="rt-file" accept=".gpx,.kml,.geojson,.json,application/gpx+xml,application/vnd.google-earth.kml+xml,application/geo+json" hidden></div>' +
       '<form id="rt-saveform" class="rtfind"><input type="text" id="rt-name" maxlength="60" placeholder="Name this route" aria-label="Route name"><button type="submit">Save</button></form>' +
@@ -374,7 +374,7 @@ function main() {
     else if (k === "rev") { S.wps.reverse(); changed(); }
     else if (k === "clear") { S.wps = []; changed(); }
     else if (k === "now") { S.depart = null; setDepInput(); retime(); }
-    else if (k === "gpx" || k === "kml" || k === "geojson") exportFile(k);
+    else if (k === "gpx" || k === "kml" || k === "geojson" || k === "tak") exportFile(k);
     else if (k === "print") printSheet();
     else if (k === "link") copy(shareLink(), b);
     else if (k === "text") copy(asText(), b);
@@ -1593,7 +1593,7 @@ function main() {
         "\n<rte><name>" + xmlEsc(nm) + "</name>" + S.wps.map(function (w, i) { return '<rtept lat="' + w.lat + '" lon="' + w.lon + '"><name>' + xmlEsc(wpName(i)) + "</name></rtept>"; }).join("") + "</rte>\n" +
         "<trk><name>" + xmlEsc(nm) + "</name><trkseg>" + c.map(function (p) { return '<trkpt lat="' + p[0].toFixed(6) + '" lon="' + p[1].toFixed(6) + '"/>'; }).join("") + "</trkseg></trk>\n</gpx>\n";
       type = "application/gpx+xml"; ext = "gpx";
-    } else if (kind === "kml") {
+    } else if (kind === "kml" || kind === "tak") {
       body = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xmlEsc(nm) + "</name>\n" +
         '<Style id="r"><LineStyle><color>ffd67e1c</color><width>4</width></LineStyle></Style>\n' +
         S.wps.map(function (w, i) { return "<Placemark><name>" + xmlEsc(wpName(i)) + "</name><description>" + xmlEsc(G.mgrs(w.lat, w.lon) || "") + "</description><Point><coordinates>" + w.lon + "," + w.lat + "</coordinates></Point></Placemark>"; }).join("\n") +
@@ -1604,6 +1604,12 @@ function main() {
         features: S.wps.map(function (w, i) { return { type: "Feature", properties: { name: wpName(i), mgrs: G.mgrs(w.lat, w.lon) }, geometry: { type: "Point", coordinates: [w.lon, w.lat] } }; })
           .concat([{ type: "Feature", properties: { name: nm, distance_m: r ? Math.round(r.m) : null, duration_s: r ? Math.round(r.total) : null }, geometry: { type: "LineString", coordinates: c.map(function (p) { return [+p[1].toFixed(6), +p[0].toFixed(6)]; }) } }]) }, null, 1);
       type = "application/geo+json"; ext = "geojson";
+    }
+    if (kind === "tak") {
+      /* waypoints as markers, the route line as a KML overlay (assets/osap-tak.js) */
+      if (!W.OSAP_TAK) { msg("The TAK package module is not loaded."); return; }
+      try { msg(W.OSAP_TAK.save({ id: "route|" + nm, name: nm, file: nm.replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "_").slice(0, 50) || "route", kml: body, color: "#1c7ed6" })); } catch (e) { msg("The TAK package could not be made: " + e.message); }
+      return;
     }
     var a = D.createElement("a"), url = URL.createObjectURL(new Blob([body], { type: type }));
     a.href = url; a.download = nm.replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "_").slice(0, 50) + "." + ext; D.body.appendChild(a); a.click();
