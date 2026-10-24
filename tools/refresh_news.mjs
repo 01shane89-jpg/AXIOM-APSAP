@@ -220,8 +220,7 @@ async function ogImage(url) {
     return /^https:\/\/[^\s<>"]+$/i.test(u) && u.length < 600 ? u : "";
   } catch (e) { return ""; } finally { clearTimeout(t); }
 }
-// read while the headlines are translated below (the two never touch the same fields); awaited before anything is written
-const pictures = (async () => {
+{
   const t1 = Date.now();
   const need = Object.entries(items).filter(([k]) => !k.includes(":")).flatMap(([, l]) => l).filter((i) => !i.img && /^https:\/\//.test(i.link || "")).slice(0, OG_MAX);
   let got = 0;
@@ -231,7 +230,7 @@ const pictures = (async () => {
     res.forEach((u, j) => { if (u) { need[k + j].img = u; got++; } });
   }
   console.log("article-page pictures:", got, "of", need.length, "items without a feed picture; timing", took(t1));
-})();
+}
 const all = [...new Set(Object.values(items).flat())];
 // The model translates about 400 texts a run and the cache holds 6,000, so with every country's outlets the order matters:
 // headlines of the original 28 areas first, then every other headline (newest first). Summaries are not translated: outlet text
@@ -244,7 +243,6 @@ console.log("translations reused from the history:", seed(storedTranslations("ne
 const t2 = Date.now();
 const tr = await translateAll(ord.map((i) => ({ text: i.title, lang: i.lang })));
 console.log("timing: translation", took(t2));
-await pictures;
 ord.forEach((i, n) => { i.title_en = tr[n].en; i._t = tr[n].tool; });
 all.forEach((i) => {
   i.mt = /^en\b/i.test(i.lang || "") ? null : (i._t || "untranslated");
