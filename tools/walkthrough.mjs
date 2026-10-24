@@ -224,11 +224,7 @@ const SCENES = [
     await k.caption("Model time looks ahead up to 72 hours");
     await k.wait(3500);
     await k.caption("Open forecasts and warnings for the full weather view", "One-page brief, detailed report and the military-style 5-day chart.");
-    await k.press("Open forecasts and warnings"); await k.wait(3000);
-    await k.caption("The 5-day chart: day and night, winds, illumination and mission impacts", "Hour by hour, for the point you choose.");
-    await p.keyboard.press("Escape"); await p.evaluate(() => window.OSAP_WX && window.OSAP_WX.chart());
-    await p.waitForFunction(() => { const b = document.getElementById("brief"); return b && !b.hidden && b.textContent.length > 200; }, null, { timeout: 60000 }).catch(() => console.log("  5-day chart not ready"));
-    await k.wait(3000);
+    await k.press("Open forecasts and warnings"); await k.wait(6000);
     await k.wheel(500, 4, 1500, 0.5, 0.5);
   }],
   ["overlays", "Map overlays and base maps", "Infrastructure, aircraft, ships, borders and more", { z: 11 }, async ({ k, p }) => {
@@ -239,7 +235,7 @@ const SCENES = [
     await p.keyboard.press("Escape"); await k.click("#ml-close, .ml-close, [aria-label='Close']"); await k.wait(1000);
     await k.caption("Base map: Grey, Streets, Topographic, Satellite, Hybrid and Offline");
     await k.tool("basemap"); await k.wait(2000);
-    await k.press("Hybrid"); await k.wait(4000);
+    await k.wait(4000); await p.keyboard.press("Escape");
     await k.caption("Grid and Crosshair: MGRS lines that get finer as you zoom in");
     await k.tool("Grid"); await k.wait(1500); await k.tool("Crosshair"); await k.wait(3500);
     await k.caption("3D: tilt and turn the map over real ground");
