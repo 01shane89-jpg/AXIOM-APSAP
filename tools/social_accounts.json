@@ -71,6 +71,144 @@
    "channel": "InaTEWS_BMKG",
    "kind": "disaster agency",
    "lang": "id"
+  },
+  {
+   "cc": "ru",
+   "channel": "mod_russia",
+   "kind": "government (military)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "tass_agency",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "rian_ru",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "mchs_official",
+   "kind": "government",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "rbc_news",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "meduzalive",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ir",
+   "channel": "farsna",
+   "kind": "state media",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "irna_1313",
+   "kind": "state media",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "presstv",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ir",
+   "channel": "iranintltv",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "by",
+   "channel": "nexta_live",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "by",
+   "channel": "zerkalo_io",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "by",
+   "channel": "radiosvaboda",
+   "kind": "state-funded (US)",
+   "lang": "be"
+  },
+  {
+   "cc": "by",
+   "channel": "belta_telegramm",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "channel": "kloopnews",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "tj",
+   "channel": "asiaplus",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ps",
+   "channel": "QudsN",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ps",
+   "channel": "WAFAgency",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "tr",
+   "channel": "anadoluajansi",
+   "kind": "state media",
+   "lang": "tr"
+  },
+  {
+   "cc": "cu",
+   "channel": "cubadebate",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "la",
+   "channel": "laotiantimes",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "md",
+   "channel": "newsmakerlive",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "iq",
+   "channel": "shafaaqnews",
+   "kind": "news desk",
+   "lang": "ar"
   }
  ],
  "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets. Channels added on 2026-10-23 (given by channel id) were found the same way (tools/probe_youtube.mjs from GitHub's runners) and kept only when they are the country's own government, parliament, armed forces, police, public or state broadcaster, or an established news outlet, with a video in the last month.",
