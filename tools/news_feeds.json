@@ -1761,6 +1761,9 @@
     {"cc":"is","outlet":"Akureyri.net","url":"https://www.akureyri.net/is/feed","lang":"is"},
     {"cc":"ee","outlet":"Pärnu Postimees","url":"https://parnu.postimees.ee/rss","lang":"et"},
     {"cc":"ee","outlet":"Sakala","url":"https://sakala.postimees.ee/rss","lang":"et"},
-    {"cc":"iq","outlet":"Ultra Iraq","url":"https://ultrairaq.ultrasawt.com/rss.xml","lang":"ar"}
+    {"cc":"iq","outlet":"Ultra Iraq","url":"https://ultrairaq.ultrasawt.com/rss.xml","lang":"ar"},
+    {"cc":"hn","outlet":"Tu Nota","url":"https://www.tunota.com/feed","lang":"es"},
+    {"cc":"zm","outlet":"Zambian Eye","url":"https://zambianeye.com/feed/","lang":"en"},
+    {"cc":"kh","outlet":"DAP News","url":"https://dap-news.com/feed/","lang":"km"}
   ]
 }
