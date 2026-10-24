@@ -15,11 +15,15 @@ export function storyLink(u) {
     return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q ? "?" + q : "");
   } catch (e) { return String(u || ""); }
 }
-// items newest first; keeps the first (newest) copy of each story
+// a copy found through a search engine: its date is the engine's, which for the same article can differ by hours between
+// searches (Bing gave one Daily News article as 02:28 and 16:28 UTC, and Khaosod and Naewna articles 7 hours before their own feeds)
+export const searchDated = (i) => i.via === "search" || /\(via [^)]*search\)$/i.test(i.outlet || "");
+// items newest first; keeps the first (newest) copy of each story, except that the outlet's own copy of an article (its feed
+// or page, with the outlet's date) is kept over a search engine's copy of the same link
 export function dedupeStories(items) {
-  const links = new Set(), titles = new Map();
+  const links = new Set(), titles = new Map(), own = new Set(items.filter((i) => !searchDated(i)).map((i) => storyLink(i.link)));
   return items.filter((i) => {
-    const l = storyLink(i.link); if (links.has(l)) return false; links.add(l);
+    const l = storyLink(i.link); if (links.has(l) || (searchDated(i) && own.has(l))) return false; links.add(l);
     const t = storyTitle(i.title), d = Date.parse(i.date) || 0;
     if (t) { const was = titles.get(t); if (was !== undefined && Math.abs(was - d) <= DAYS * 864e5) return false; titles.set(t, d); }
     return true;

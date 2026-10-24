@@ -35,6 +35,8 @@ jobs:
       # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
       - run: node tests/cases.test.mjs
       - run: node tests/case_vault.test.mjs
+      # Netlify production deploys come in batches (tools/netlify_ignore.mjs): 15 credits each
+      - run: node tests/netlify_ignore.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -141,6 +143,8 @@ jobs:
       - run: node tests/osir_smoke.mjs
       # one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
       - run: node tests/incident_dedup_smoke.mjs
+      # one story that came in twice (a headline and the layer feed's or a conflict tab's copy of it) is one timeline item and one alert (index.html storyDedup)
+      - run: node tests/story_dedup_smoke.mjs
       # incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
       - run: node tests/evsum_ai_smoke.mjs
       - run: node tests/points_smoke.mjs
