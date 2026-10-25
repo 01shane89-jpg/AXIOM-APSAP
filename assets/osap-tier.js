@@ -186,7 +186,7 @@
   var WHAT = {
     free: "The map for every country, search, weather, warnings, floods, earthquakes and storms, and headline news with source links.",
     mid: "Everything in Free, plus every reporting data set (conflict, border, insurgency, crime, health, infrastructure, transport, social media), every map overlay, history, and Route, Area, Point, Watch, 3D, Med plan, Evac and Comms planning.",
-    full: "Everything in Mid, plus My work, AI area summaries and reports, daily and event summaries, claims and captures, and the SOF reference data.",
+    full: "Everything in Mid, plus My work, AI area summaries and reports, daily and event summaries, claims and captures, and the crisis-response reference data (embassies, airports, seaports, hospitals and crossings).",
   };
   function render() {
     if (!BOX || BOX.hidden) return;

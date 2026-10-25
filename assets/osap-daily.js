@@ -2,7 +2,7 @@
    Self-contained block loaded before assets/osap-today.js, which mounts it at the top of Today (window.OSAP_DAILYQ.mount).
    Shows the summary the refresh job builds once a day for the open country (data/live/daily/<cc>.js, written by
    tools/refresh_daily.mjs): top lines (a BLUF when an AI draft exists), key events of the last 24 hours with every source link,
-   and what to watch. Aimed at analysts and special operations teams: news filtered to security, conflict, crime, unrest,
+   and what to watch. Aimed at analysts and security teams: news filtered to security, conflict, crime, unrest,
    disasters, infrastructure, health threats and politics.
    - Nothing here is an assessment. Events are the outlets' own headlines; government and state-media lines are marked as claims.
    - "Automatic" summaries are built by rules with no AI. An AI draft carries the small "AI generated" tag (full wording in its

@@ -114,7 +114,7 @@ if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1])))
     const body = items.map((x) => "  " + JSON.stringify(x)).join(",\n");
     const head = { schema: "osap-relevance-sample/1", snapshot: "data/live/social.js " + (social.asof || ""), policy_at_sampling: policyVersion(relText), seed,
       allocation: ALLOC, population,
-      label_rule: "relevant = a post an intelligence analyst or a US SOF team in that country would want: security, conflict, crime, politics and government, disasters and weather, health emergencies, transport and service disruption, economy affecting stability, foreign affairs. not_relevant = sport, celebrity, entertainment, lifestyle, promotions, routine ceremonies with no security or policy content. unclear = cannot tell from the text.",
+      label_rule: "relevant = a post an intelligence analyst or a security team in that country would want: security, conflict, crime, politics and government, disasters and weather, health emergencies, transport and service disruption, economy affecting stability, foreign affairs. not_relevant = sport, celebrity, entertainment, lifestyle, promotions, routine ceremonies with no security or policy content. unclear = cannot tell from the text.",
       labelled_by: null };
     fs.writeFileSync(SAMPLE, JSON.stringify(head, null, 1).replace(/\n\}$/, ",\n \"items\": [\n") + body + "\n ]\n}\n");
     console.log("sample:", items.length, "posts", JSON.stringify(population));
