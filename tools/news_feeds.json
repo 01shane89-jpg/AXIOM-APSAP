@@ -1808,6 +1808,11 @@
     {"cc":"th","outlet":"Thai PBS World","url":"https://www.thaipbsworld.com/","lang":"en","html":true,"match":"^/(?:politics|around-thailand|asean)/\\d+$"},
     {"cc":"th","outlet":"Daily News","url":"https://www.dailynews.co.th/","lang":"th","html":true,"match":"^https://www\\.dailynews\\.co\\.th/news/\\d+/$"},
     {"cc":"th","outlet":"The Nation Thailand","url":"https://www.nationthailand.com/","lang":"en","html":true,"match":"^/news/(?:policy|general|thailand|politics|asean)/\\d{8}$"},
+    {"cc":"fm","outlet":"Guam Daily Post (Micronesia)","url":"https://www.postguam.com/search/?f=rss&t=article&l=50&s=start_time&sd=desc","lang":"en","covers":["fm","mh","pw","ki","nr","tv"]},
+    {"cc":"mh","outlet":"Pacific Daily News (Micronesia)","url":"https://www.guampdn.com/search/?f=rss&t=article&l=50&s=start_time&sd=desc","lang":"en","covers":["fm","mh","pw","ki","nr","tv"]},
+    {"cc":"ki","outlet":"Lowy Interpreter (Pacific)","url":"https://www.lowyinstitute.org/the-interpreter/rss.xml","lang":"en","covers":["fj","pg","sb","vu","ws","to","tv","ki","nr","mh","fm","pw","tl"]},
+    {"cc":"nr","outlet":"Devpolicy Blog (Pacific)","url":"https://devpolicy.org/feed/","lang":"en","covers":["fj","pg","sb","vu","ws","to","tv","ki","nr","mh","fm","pw","tl"]},
+    {"cc":"tv","outlet":"UN News Asia Pacific (Pacific)","url":"https://news.un.org/feed/subscribe/en/news/region/asia-pacific/feed/rss.xml","lang":"en","covers":["fj","pg","sb","vu","ws","to","tv","ki","nr","mh","fm","pw","tl"]},
     {"cc":"th","outlet":"Prachachat","url":"https://www.prachachat.net/feed","lang":"th"},
     {"cc":"th","outlet":"Thai PBS","url":"https://news.thaipbs.or.th/rss/news","lang":"th","state":true},
     {"cc":"th","outlet":"Nation TV","url":"https://www.nationtv.tv/","lang":"th","html":true,"match":"^/news/(?:current-issue|region|politics|crime)/\\d+$"}
