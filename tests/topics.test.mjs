@@ -55,6 +55,18 @@ assert.equal(relevance(R, "Mass shooting at Bangkok mall"), "strong");
 assert.equal(relevance(R, "Shooting at football match"), "strong");               // a sport's name alone is not a competition word
 assert.equal(relevance(R, "Goalkeeper shot dead outside stadium"), "strong");     // "shot dead" still counts
 assert.equal(relevance(R, "Gunman opens fire at championship venue"), "strong");
+// English security words must not match inside other words, often in the original-language headline that is checked beside the
+// English one: "coup" in French "Coupe" (cup) let a football story through Story coverage; "stab" in "stable", "terror" in a
+// Spanish horror film ("cine de terror"), "coup" in "couple"
+assert.equal(relevance(R, "Football: United States to host first Women’s Club World Cup in 2028 \n Foot : les États-Unis accueilleront la première Coupe du monde des clubs féminine en 2028"), "drop");
+assert.equal(relevance(R, "Congo Volleyball Cup: V. Club eliminates Mazembe \n Coupe du Congo de volleyball"), "drop");
+assert.notEqual(relevance(R, "Couple chooses to rob for wedding expenses"), "strong");
+assert.equal(relevance(R, "Hollywood stunt couple sue surveyors"), "drop");
+assert.equal(relevance(R, "Infant found in shopping bag stable after rescue"), "strong");  // "rescue", not "stable"
+assert.equal(relevance(R, "Horror cinema by the river: films to watch for free \n Cine de terror junto al río"), "drop");
+for (const t of ["Coup attempt foiled in capital", "Two coups in three years", "Coup d'état in the capital", "Man stabbed outside bar",
+  "Teen stabs classmate", "Probable terrorist attack plan in Sarcelles", "Anti-terror police raid flat", "Counter-terrorism unit deployed",
+  "Terror plot foiled", "Prepare for state-sponsored terrorism"]) assert.equal(relevance(R, t), "strong", "should be strong: " + t);
 console.log("topics tests passed:", cfg.topics.length, "data sets");
 
 // a data set marked "relevance": "exempt" (the ET tab's UFO and UAP reports) is kept whatever the word lists say,
