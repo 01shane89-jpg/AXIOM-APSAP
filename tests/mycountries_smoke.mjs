@@ -171,7 +171,8 @@ let pick = null;
   const s = await p.evaluate(() => ({ txt: document.querySelector("#today .mcnew").textContent, n: window.OSAP_MYCC.newCount(), since: window.OSAP_MYCC.since(),
     tags: document.querySelectorAll("#today .tdtags .mcnewtag, #today .tdal .mcnewtag").length }));
   ok(s.since === pick, "the count starts from the stored last look");
-  ok(s.n > 0 && new RegExp("^" + s.n + " new since \\d{4}Z").test(s.txt), "Today says \"N new since HHMMZ\"", s.txt);
+  /* a last look over 20 h back also names the day ("since 24 Oct 2026 1242Z"): the newest story in the snapshot can be that old */
+  ok(s.n > 0 && new RegExp("^" + s.n + " new since (?:\\d{1,2} [A-Z][a-z]{2} \\d{4} )?\\d{4}Z").test(s.txt), "Today says \"N new since HHMMZ\"", s.txt);
   /* new lines on the summary carry a New tag; when none of them made the summary the note points to the full lists instead */
   ok(s.tags > 0 ? /marked New below/.test(s.txt) : /All local news and All alerts/.test(s.txt), "new lines carry a New tag, or the note names the full lists", s.tags + " " + s.txt);
   const wrong = await p.evaluate((t) => {
