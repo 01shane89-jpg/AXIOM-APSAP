@@ -37,7 +37,7 @@ export function countriesNamed(countries, text) {
   return hits.sort((a, b) => a[0] - b[0]).map((h) => h[1]);
 }
 
-// The relevance check (tools/relevance.json): what an analyst or a special operations team in the country would want.
+// The relevance check (tools/relevance.json): what an analyst or a security team in the country would want.
 // 1. a strong word keeps it; 2. a drop word leaves it out; 3. a keep word keeps it; 4. anything else is left out.
 // topics: the data sets (tools/topics.json); one marked "relevance": "exempt" is kept whatever the lists say, because its
 // subject is not a security word (the ET tab's UFO and UAP reports), still minus its own exclude words.

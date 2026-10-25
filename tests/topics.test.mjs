@@ -36,7 +36,7 @@ for (const t of cfg.topics) {
 }
 assert.equal(compileTopics(cfg.topics).length, cfg.topics.length);
 
-// the relevance check (tools/relevance.json): what an analyst or a special operations team in the country would want
+// the relevance check (tools/relevance.json): what an analyst or a security team in the country would want
 const R = compileRelevance(JSON.parse(fs.readFileSync(new URL("../tools/relevance.json", import.meta.url), "utf8")));
 const kept = (t) => ["strong", "keep"].includes(relevance(R, t));
 for (const t of ["Bomb blast kills two rangers in Narathiwat", "Footballer killed in bombing at stadium", "Coup attempt foiled in capital",

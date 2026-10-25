@@ -2,7 +2,7 @@
    Saves one country on this device so OSAP opens and works with no signal:
    - map tiles for the "Offline map" base map (Sentinel-2 cloudless satellite imagery from EOX) for the whole country or for
      what the map shows now, up to a chosen detail level;
-   - the country's data files (layers, brief, SOF notes, news and social posts, history, terrain, daily summary), the stored
+   - the country's data files (layers, brief, crisis-response notes, news and social posts, history, terrain, daily summary), the stored
      hospital and landing-site copy the Medical plan reads, the last 7 days of the news search, and every data file this
      session has already read;
    - the app itself (the service worker's normal warm-up).
@@ -73,7 +73,7 @@
     Object.keys((M.layers || {})[c] || {}).forEach(function (l) { L.push("data/layers/" + c + "/" + l + ".js"); });
     if ((M.sof || []).indexOf(c) >= 0) L.push("data/sof/" + c + ".js");
     if ((M.brief || []).indexOf(c) >= 0) L.push("data/brief/" + c + ".js");
-    /* SOF notes for the neighbours too (countries whose box touches this one's, padded 1.5 degrees): saved evacuation
+    /* Crisis-response notes for the neighbours too (countries whose box touches this one's, padded 1.5 degrees): saved evacuation
        plans (assets/osap-evac.js) read them for the crossing points */
     var me = cinfo(c).bounds;
     if (me) (W.OSAP_COUNTRIES || []).forEach(function (o) {

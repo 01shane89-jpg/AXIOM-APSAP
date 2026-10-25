@@ -250,7 +250,7 @@ all.forEach((i) => {
   delete i._t;
 });
 saveCache();
-// Only news that matters to an analyst or a special operations team in the country is kept (tools/relevance.json, checked on
+// Only news that matters to an analyst or a security team in the country is kept (tools/relevance.json, checked on
 // the English headline once it is translated): sport, celebrity, entertainment and lifestyle never reach Local news, Top stories
 // or the history. The outlets still count as working sources.
 {
