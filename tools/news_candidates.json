@@ -3,110 +3,122 @@
 "discover": [
 {
 "cc": "tt",
-"outlet": "ispi|ISPI",
-"home": "https://www.ispionline.it/en/",
+"outlet": "visegrad|Visegrad Insight",
+"home": "https://visegradinsight.eu/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "iai|Istituto Affari Internazionali",
-"home": "https://www.iai.it/en",
+"outlet": "kafkadesk|Kafkadesk",
+"home": "https://kafkadesk.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "frs|Fondation pour la recherche strat\u00e9gique",
-"home": "https://www.frstrategie.org/",
+"outlet": "ifimes|IFIMES",
+"home": "https://www.ifimes.org/en",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "iris|IRIS France",
-"home": "https://www.iris-france.org/",
+"outlet": "esi|European Stability Initiative",
+"home": "https://www.esiweb.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "egmont|Egmont Institute",
-"home": "https://www.egmontinstitute.be/",
+"outlet": "transconflict|TransConflict",
+"home": "https://www.transconflict.com/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "prif|PRIF Blog",
-"home": "https://blog.prif.org/",
+"outlet": "montaigne|Institut Montaigne",
+"home": "https://www.institutmontaigne.org/en",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "nupi|NUPI",
-"home": "https://www.nupi.no/en",
+"outlet": "iresma|IRES Maroc",
+"home": "https://www.ires.ma/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "diis|DIIS",
-"home": "https://www.diis.dk/en",
+"outlet": "dohainst|Arab Center for Research and Policy Studies",
+"home": "https://www.dohainstitute.org/en",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "elcano|Real Instituto Elcano",
-"home": "https://www.realinstitutoelcano.org/en/",
+"outlet": "ebuteli|Ebuteli",
+"home": "https://www.ebuteli.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "cidob|CIDOB",
-"home": "https://www.cidob.org/en",
+"outlet": "crg|Congo Research Group",
+"home": "https://www.congoresearchgroup.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "pism|PISM",
-"home": "https://pism.pl/en",
+"outlet": "kst|Kivu Security Tracker",
+"home": "https://kivusecurity.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "biepag|BiEPAG",
-"home": "https://biepag.eu/",
+"outlet": "amshi|Institute of International Affairs (Iceland)",
+"home": "https://ams.hi.is/en/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "lsee|LSEE Blog (LSE)",
-"home": "https://blogs.lse.ac.uk/lsee/",
+"outlet": "funides|FUNIDES",
+"home": "https://funides.com/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "arabreform|Arab Reform Initiative",
-"home": "https://www.arab-reform.net/",
+"outlet": "ieepp|IEEPP Nicaragua",
+"home": "https://www.ieepp.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "merip|MERIP",
-"home": "https://merip.org/",
+"outlet": "oxus|Oxus Society",
+"home": "https://oxussociety.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "stratpol|STRATPOL",
-"home": "https://stratpol.sk/",
+"outlet": "eurasianet|Eurasianet",
+"home": "https://eurasianet.org/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "ineko|INEKO",
-"home": "https://www.ineko.sk/",
+"outlet": "crrc|CRRC Georgia blog",
+"home": "https://crrc-caucasus.blogspot.com/",
 "lang": "en"
 },
 {
 "cc": "tt",
-"outlet": "crasc|CRASC Algeria",
-"home": "https://www.crasc.dz/",
+"outlet": "gip|Georgian Institute of Politics",
+"home": "https://gip.ge/",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "topchubashov|Topchubashov Center",
+"home": "https://top-center.org/",
+"lang": "en"
+},
+{
+"cc": "tt",
+"outlet": "eviews|EVN Report analysis",
+"home": "https://evnreport.com/",
 "lang": "en"
 }
 ]
