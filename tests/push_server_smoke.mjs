@@ -181,6 +181,14 @@ ok(kept && kept.watches[0].tz === "Asia/Bangkok" && kept.watches[0].brief === un
 await p.evaluate((s) => document.querySelector(s).click(), "#watchdlg [data-push-brief]");
 await p.waitForFunction(() => /Left out of your morning brief/.test((document.querySelector("#push-send-out") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
 ok((await pageStore.get("watches")).watches[0].brief === false, "unticking In my morning brief leaves the watch out on the server");
+/* flash alerts only (tools/flash_lib.mjs): ticking it on a pushed watch saves it on the server at once, unticking takes it off */
+ok(await p.evaluate(() => { const c = document.querySelector("#watchdlg [data-push-flash]"); return !!c && !c.checked; }), "the panel offers Flash alerts only, unticked");
+await p.evaluate(() => document.querySelector("#watchdlg [data-push-flash]").click());
+await p.waitForFunction(() => /Saved: flash alerts only/.test((document.querySelector("#push-send-out") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
+ok((await pageStore.get("watches")).watches[0].flash === true, "ticking Flash alerts only saves the watch with flash on the server");
+await p.evaluate(() => document.querySelector("#watchdlg [data-push-flash]").click());
+await p.waitForFunction(() => /Saved: every matching report/.test((document.querySelector("#push-send-out") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
+ok(!(await pageStore.get("watches")).watches[0].flash, "unticking it saves the watch without flash");
 await p.evaluate((s) => document.querySelector(s).click(), "#watchdlg [data-push-stop]"); await p.waitForTimeout(800);
 ok((await pageStore.get("watches")).watches.length === 0, "Stop push alerts removes it from the server");
 ok(/Status:\s*Off\./.test(await p.evaluate(() => document.querySelector("#watchdlg .wnotif").textContent)), "and the status turns Off");

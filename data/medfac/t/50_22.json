@@ -145,7 +145,7 @@
 ["n9552489644",50.52863,22.71189,"pl",{"name":"Oddział F","amenity":"clinic"}],
 ["n9552489645",50.52906,22.71336,"pl",{"name":"Izba Przyjęć Ginekologiczno-Położnicza","amenity":"clinic"}],
 ["n9552489646",50.52886,22.71429,"pl",{"name":"Izba Przyjęć","amenity":"clinic"}],
-["n9604979669",51.56058,23.60344,"by",{"name":"Амбулаторыя","official_name":"Тамашоўская амбулаторыя агульнай практыкі","amenity":"clinic","healthcare":"doctor","phone":"+375 162 519337"}],
+["n9604979669",51.56058,23.60344,"by",{"name":"Амбулаторыя","official_name":"Тамашоўская амбулаторыя агульнай практыкі","amenity":"clinic","healthcare":"doctor","phone":"+375 162 519337","opening_hours":"Mo-Fr 08:00-18:30; Sa 09:00-13:00"}],
 ["n9778863254",50.52952,22.7171,"pl",{"name":"Stacja Pogotowia Ratunkowego","official_name":"Rejonowa Stacja Pogotowia Ratunkowego i Transportu Sanitarnego w Biłgoraju","emergency":"ambulance_station","operator":"Samodzielna Publiczna Stacja Pogotowia Ratunkowego i Transportu Sanitarnego w Zamościu","operator:type":"public","phone":"+48 84 686 00 56"}],
 ["n9905437306",50.03219,22.03897,"pl",{"name":"Humanicus","amenity":"clinic","contact:phone":"+48660776007","contact:website":"https://humanicus.pl/","addr:housenumber":"29","addr:street":"Litewska","addr:city":"Rzeszów","opening_hours":"Mo-Fr 08:00-21:00; Sa 08:00-16:00"}],
 ["n9915246582",51.25932,22.5645,"pl",{"name":"Izba Przyjęć Planowych","amenity":"clinic","healthcare":"clinic"}],

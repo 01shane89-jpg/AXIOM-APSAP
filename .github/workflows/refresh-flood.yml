@@ -446,9 +446,15 @@ jobs:
   # not in the repo. Once a local morning (from 0600 on the phone's clock) each channel also gets a morning brief for the
   # countries its watches are on (tools/push_brief.mjs). "push-test" (any branch) sends the newest match of each watch and each
   # channel's brief once, marked [test], and keeps nothing.
+  # Since 2026-10-24 (flash alerts, tools/flash_lib.mjs) it also runs after the fast lane, so a quake, warning or other hazard
+  # alert goes out a few minutes after it lands instead of waiting for the next news run. One check at a time per branch: two
+  # checks side by side would each start from the same seen list and send the same alert twice.
   push:
     needs: refresh
-    if: ${{ always() && ((!inputs.only && inputs.lane != 'fast' && github.ref == 'refs/heads/main') || inputs.only == 'push' || inputs.only == 'push-test') }}
+    if: ${{ always() && ((!inputs.only && github.ref == 'refs/heads/main') || inputs.only == 'push' || inputs.only == 'push-test') }}
+    concurrency:
+      group: push-watches-${{ github.ref }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 12
     permissions:

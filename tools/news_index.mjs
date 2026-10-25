@@ -22,7 +22,7 @@ const { topics } = JSON.parse(fs.readFileSync("tools/topics.json", "utf8"));
 const T = compileTopics(topics);
 // the tabs each headline is listed under in the app's Reports section (tools/view_reports.json)
 const V = compileViews(JSON.parse(fs.readFileSync("tools/view_reports.json", "utf8"))), vcount = {};
-// Only news that matters to an analyst or a special operations team in the country goes into the pool (tools/relevance.json);
+// Only news that matters to an analyst or a security team in the country goes into the pool (tools/relevance.json);
 // sport, celebrity, entertainment and lifestyle stay in each country's Local news tab and are not searched.
 const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), topics), relN = {}, dropped = [];
 
