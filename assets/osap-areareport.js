@@ -114,12 +114,15 @@
   /* ---------- maps: Web Mercator tiles under an SVG of the area and its marks ---------- */
   var BASES = {
     streets: { name: "Streets", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "© OpenStreetMap contributors" },
-    topo: { name: "Topographic", url: "https://a.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17, attr: "© OpenTopoMap (CC-BY-SA), OpenStreetMap contributors" },
-    sat: { name: "Satellite", url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", max: 14, attr: "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0" },
+    topo: { name: "Topographic", url: (window.OSAP_HOST ? window.OSAP_HOST("topo") : "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png").replace("{s}", "a"), max: 17, attr: "© OpenTopoMap (CC-BY-SA), OpenStreetMap contributors" },
+    sat: { name: "Satellite", url: window.OSAP_HOST ? window.OSAP_HOST("sat") : "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", max: 14, attr: "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0" },
     none: { name: "Outlines only", url: "", max: 19, attr: "Borders: Natural Earth (public domain)" }
   };
-  /* the sold version (assets/osap-sold.js) has no Streets backdrop: tile.openstreetmap.org is not for paid products */
+  /* the sold version (assets/osap-sold.js) has no Streets backdrop: tile.openstreetmap.org is not for paid products; nor
+     Topographic (OpenTopoMap's volunteer server) or Satellite unless the sold build has its own imagery host */
   if (window.OSAP_SOLD) delete BASES.streets;
+  if (!BASES.topo.url) delete BASES.topo;
+  if (!BASES.sat.url) delete BASES.sat;
   function base() { var b = BASES.streets ? "streets" : "none"; try { b = localStorage.getItem("osap-arp-base") || b; } catch (e) {} return BASES[b] ? b : BASES.streets ? "streets" : "none"; }
   function wx(lon, z) { return (lon + 180) / 360 * 256 * Math.pow(2, z); }
   function wy(lat, z) { var s = Math.sin(Math.max(-85, Math.min(85, lat)) * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * 256 * Math.pow(2, z); }

@@ -42,9 +42,13 @@
   "use strict";
   var W = window, D = document;
   var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
-  var OSRM = ["https://routing.openstreetmap.de/routed-car/", "https://router.project-osrm.org/"];
+  /* road routers (assets/osap-sold.js): FOSSGIS and the OSRM demo server in the free version; in the sold version only its own
+     routers, and with none every drive time is the labelled straight-line estimate below */
+  var NOROAD = "no road router in this version";
+  function host(k, free) { return W.OSAP_HOST ? W.OSAP_HOST(k) : free; }
+  var OSRM = [host("osrm", "https://routing.openstreetmap.de/") && host("osrm", "https://routing.openstreetmap.de/") + "routed-car/", host("osrmDemo", "https://router.project-osrm.org/")].filter(Boolean);
   var METEO = "https://api.open-meteo.com/v1/forecast";
-  var VH = "https://valhalla1.openstreetmap.de/", VALHALLA = VH + "isochrone";
+  var VH = host("valhalla", "https://valhalla1.openstreetmap.de/"), VALHALLA = VH + "isochrone", VHN = VH ? VH.split("/")[2] : "Valhalla";
   var WIKIDATA = "https://query.wikidata.org/sparql";
   var MAX_HOSP = 14, MAX_CLIN = 8, MAX_AIR = 12, MAX_ROUTE = 32, KEY = "osap-medplan-";
   /* planning assumptions, shown wherever they are used */
@@ -870,7 +874,7 @@
   function osrmGo(path, ms) {
     var errs = [];
     function go(i) {
-      if (i >= OSRM.length) return Promise.reject(new Error(errs.join("; ")));
+      if (i >= OSRM.length) return Promise.reject(new Error(errs.join("; ") || NOROAD));
       return getJSON(OSRM[i] + path, ms).then(function (j) {
         if (!j || j.code !== "Ok") throw new Error((j && (j.message || j.code)) || "no answer");
         return { j: j, host: OSRM[i] };
@@ -891,12 +895,13 @@
       return vhMatrix(o, list).catch(function (e2) {
         /* no router answered: a labelled estimate so the golden hour can still be judged */
         list.forEach(function (f) { f.rm = f.m * 1.4; f.s = f.rm / (50000 / 3600); f.est = true; });
-        throw new Error(e1.message + "; valhalla1.openstreetmap.de: " + e2.message);
+        throw new Error(e1.message + "; " + VHN + ": " + e2.message);
       });
     });
   }
   /* FOSSGIS Valhalla when no OSRM server answers: drive times (sources_to_targets) and routes */
   function vhMatrix(o, list) {
+    if (!VH) return Promise.reject(new Error(NOROAD));
     var j = { sources: [{ lat: +o[0].toFixed(5), lon: +o[1].toFixed(5) }], targets: list.map(function (f) { return { lat: +f.lat.toFixed(5), lon: +f.lon.toFixed(5) }; }), costing: "auto" };
     return getJSON(VH + "sources_to_targets?json=" + encodeURIComponent(JSON.stringify(j)), 30000).then(function (r) {
       var row = r && r.sources_to_targets && r.sources_to_targets[0]; if (!row) throw new Error("no matrix");
@@ -915,6 +920,7 @@
     return out;
   }
   function vhRoute(o, f) {
+    if (!VH) return Promise.reject(new Error(NOROAD));
     var j = { locations: [{ lat: +o[0].toFixed(5), lon: +o[1].toFixed(5) }, { lat: +f.lat.toFixed(5), lon: +f.lon.toFixed(5) }], costing: "auto", directions_options: { units: "kilometers" } };
     return getJSON(VH + "route?json=" + encodeURIComponent(JSON.stringify(j)), 30000).then(function (r) {
       var t = r && r.trip, lg = t && t.legs && t.legs[0]; if (!lg) throw new Error("no route");
@@ -938,9 +944,10 @@
       }); });
       return { s: R.duration, m: R.distance, line: ((R.geometry && R.geometry.coordinates) || []).map(function (c) { return [c[1], c[0]]; }),
         roads: roads.filter(function (x) { return x.m >= 1000; }).slice(0, 8), host: r.host };
-    }).catch(function (e1) { return vhRoute(o, f).catch(function (e2) { throw new Error(e1.message + "; valhalla1.openstreetmap.de: " + e2.message); }); });
+    }).catch(function (e1) { return vhRoute(o, f).catch(function (e2) { throw new Error(e1.message + "; " + VHN + ": " + e2.message); }); });
   }
   function isochrone(o) {
+    if (!VH) return Promise.reject(new Error(NOROAD));
     var j = { locations: [{ lat: +o[0].toFixed(5), lon: +o[1].toFixed(5) }], costing: "auto", contours: [{ time: 30 }, { time: GOLDEN_MIN - PREP_MIN }], polygons: true, generalize: 150 };
     return getJSON(VALHALLA + "?json=" + encodeURIComponent(JSON.stringify(j)), 25000).then(function (g) {
       if (!g || !g.features || !g.features.length) throw new Error("no drive-time area");

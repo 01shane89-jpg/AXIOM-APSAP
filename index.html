@@ -1404,20 +1404,21 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   /* ---------- map layers: base map choice, flood overlays with one opacity slider, road closures ----------
      Every choice here is a display layer only (tiles drawn by their publishers); nothing is added to the record list.
      The choice is remembered on this device. */
+  var STREETS_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>';
   var BASES = {
     grey: { name: "Grey", note: "Plain OpenStreetMap map with no labels, follows the light or dark theme" },
     /* drawn on the device from OpenFreeMap's OpenStreetMap vector tiles so every name can be shown in English (see VectorBase);
        if the drawing engine cannot start, the plain OpenStreetMap tiles (names in local script) stand in */
     streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names, labelled in English",
       vector: "https://tiles.openfreemap.org/styles/liberty", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19,
-      attr: '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>' },
-    topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17,
+      attr: STREETS_ATTR },
+    topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: window.OSAP_HOST("topo"), max: 17,
       attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener noreferrer">OpenTopoMap</a> (CC-BY-SA)' },
     /* satellite imagery. Licences are tagged so restricted ones can be dropped before any commercial use. EOX Sentinel-2
        cloudless 2016 is CC BY 4.0 (commercial use allowed with credit); it replaced Esri World Imagery, Hybrid and Clarity
        (Esri terms of use, not cleared for sale) and the 2021 mosaic (CC BY-NC-SA 4.0, non-commercial) */
     sat: { name: "Satellite", note: "Sentinel-2 cloudless by EOX: a cloud-free mosaic of 2016 Sentinel-2 images, one look for the whole world (10 m). Shows towns, fields, forest, rivers and big roads; too coarse for single buildings or vehicles",
-      url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", max: 14, zmax: 16, lic: "CC BY 4.0",
+      url: window.OSAP_HOST("sat"), max: 14, zmax: 16, lic: "CC BY 4.0",
       attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0' },
     daily: { name: "Daily satellite", note: "NASA MODIS true colour from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
       url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg", max: 9, lic: "public domain",
@@ -1425,9 +1426,18 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     /* the one map OSAP saves to the device for offline use (assets/osap-offline.js): CC BY 4.0 allows saving its tiles.
        Detail stops at zoom 13 so it never asks for squares a download did not save; closer in it enlarges them */
     offline: { name: "Offline map", note: "Sentinel-2 cloudless 2016 satellite imagery (10 m). The map Offline maps and data saves to this device, so it works with no signal",
-      url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", max: 13, zmax: 16, lic: "CC BY 4.0",
+      url: window.OSAP_HOST("sat"), max: 13, zmax: 16, lic: "CC BY 4.0",
       attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0' }
   };
+  /* The sold version (assets/osap-sold.js) leaves out the free hosts whose terms do not cover a paid product (2026-10-25):
+     - Satellite and the Offline map (EOX's hosted tiles) unless the sold build names its own imagery host;
+     - OpenTopoMap's volunteer server: its Topographic map is drawn instead from OpenFreeMap's vector tiles with English
+       names and hill shading from Terrain Tiles on AWS (open data; the 3D view's elevation), without contour lines. */
+  if (!BASES.sat.url) { delete BASES.sat; delete BASES.offline; }
+  if (!BASES.topo.url) BASES.topo = { name: "Topographic", note: "OpenStreetMap roads, rivers and names in English over hill shading of the terrain",
+    vector: "https://tiles.openfreemap.org/styles/liberty", hill: true, url: "", max: 19,
+    attr: STREETS_ATTR + ', hill shading: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">Terrain Tiles on AWS</a> (Mapzen, SRTM and others)' };
+
   /* ---------- a vector base map with English labels ----------
      OpenStreetMap raster tiles carry each place's name in its own script (Thai in Thailand). The vector tiles keep every
      recorded name, so the map is drawn on the device (the MapLibre engine the 3D view already ships) with each label
@@ -1456,7 +1466,16 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   }
   /* plain: drop every label (symbol) layer, for the Grey map */
   function plainStyle(st) { st.layers = (st.layers || []).filter(function (l) { return l.type !== "symbol"; }); return st; }
-  function styleFor(o, st) { return o.plain ? plainStyle(st) : englishStyle(st); }
+  /* hill: shading of the ground under the roads and names (the Topographic map in the sold version), from the same open
+     elevation tiles as the 3D view, put below the first label layer */
+  function hillStyle(st) {
+    st.sources = st.sources || {}; st.layers = st.layers || [];
+    st.sources.osaphill = { type: "raster-dem", tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"], tileSize: 256, maxzoom: 14, encoding: "terrarium" };
+    var i = 0; while (i < st.layers.length && st.layers[i].type !== "symbol" && st.layers[i]["source-layer"] !== "transportation") i++;   /* under roads and names */
+    st.layers.splice(i, 0, { id: "osap-hill", type: "hillshade", source: "osaphill", paint: { "hillshade-exaggeration": 0.4, "hillshade-shadow-color": "#3d3424", "hillshade-highlight-color": "#ffffff" } });
+    return st;
+  }
+  function styleFor(o, st) { st = o.plain ? plainStyle(st) : englishStyle(st); return o.hill ? hillStyle(st) : st; }
   function getStyle(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error("style " + r.status); return r.json(); }); }
   var VectorBase = L.Layer.extend({
     PAD: 0.15,
@@ -1551,10 +1570,10 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     var b = BASES[k];
     /* imagery can be zoomed closer than the other maps */
     var zmax = b.zmax || 13; map.setMaxZoom(zmax); if (map.getZoom() > zmax) map.setZoom(zmax);
-    if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
+    if (!b.url && !b.vector) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
     else if (b.vector) {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
-      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: window.OSAP_SOLD ? "" : b.url, max: b.max }).addTo(map);
+      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: window.OSAP_SOLD ? "" : b.url, max: b.max, hill: b.hill }).addTo(map);
     }
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);

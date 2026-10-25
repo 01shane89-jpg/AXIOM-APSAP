@@ -28,15 +28,21 @@ function main() {
   var PKEY = "osap-route-prefs", CKEY = "osap-route-cur", SKEY = "osap-routes", MAX_WP = 25, MAX_SAVED = 100, MAX_FILE = 5 * 1024 * 1024;
   /* routing and data hosts: all free and keyless, CORS open (checked from GitHub Actions, tools/probe_route.sh).
      The FOSSGIS servers ask for fair use; nc marks sources to review before any commercial use (licence policy). */
+  /* the routers to use (assets/osap-sold.js decides; loaded on its own, the free ones) */
+  function host(k, free) { return W.OSAP_HOST ? W.OSAP_HOST(k) : free; }
   var HOST = {
-    osrm: { name: "FOSSGIS OSRM (routing.openstreetmap.de)", url: "https://routing.openstreetmap.de/", data: "OpenStreetMap contributors, ODbL", nc: true },
-    valhalla: { name: "FOSSGIS Valhalla (valhalla1.openstreetmap.de)", url: "https://valhalla1.openstreetmap.de/", data: "OpenStreetMap contributors, ODbL", nc: true },
+    osrm: { name: "FOSSGIS OSRM (routing.openstreetmap.de)", url: host("osrm", "https://routing.openstreetmap.de/"), data: "OpenStreetMap contributors, ODbL", nc: true },
+    valhalla: { name: "FOSSGIS Valhalla (valhalla1.openstreetmap.de)", url: host("valhalla", "https://valhalla1.openstreetmap.de/"), data: "OpenStreetMap contributors, ODbL", nc: true },
     elev: { name: "Open-Meteo Elevation (Copernicus DEM GLO-90)", url: "https://open-meteo.com/en/docs/elevation-api", nc: true },
     wx: { name: "Open-Meteo forecast", url: "https://open-meteo.com/", nc: true },
     geo: { name: "Open-Meteo geocoding (GeoNames)", url: "https://open-meteo.com/en/docs/geocoding-api" },
     photon: { name: "Photon (Komoot, OpenStreetMap)", url: "https://photon.komoot.io/", nc: true },
     overpass: { name: "Overpass API (overpass-api.de, OpenStreetMap)", url: "https://overpass-api.de/api/interpreter", data: "OpenStreetMap contributors, ODbL" }
   };
+  /* the sold version (assets/osap-sold.js) has no FOSSGIS routers, only its own (OSAP_OSRM_URL, OSAP_VALHALLA_URL); with
+     neither, road modes say so and Straight line and the cross-country speeds still work */
+  if (W.OSAP_SOLD) { HOST.osrm.name = "OSAP's OSRM router"; HOST.valhalla.name = "OSAP's Valhalla router"; }
+  var NOROAD = "road routing is not part of this version yet; use Straight line";
   var MODES = [
     { id: "car", name: "Drive", road: "car", icon: "🚗" }, { id: "truck", name: "Truck", road: "truck" },
     { id: "foot", name: "Walk", road: "foot" }, { id: "bike", name: "Cycle", road: "bike" }, { id: "line", name: "Straight line" }];
@@ -100,6 +106,7 @@ function main() {
   /* ---------- routing ---------- */
   /* hd: the direction the person is moving (navigation re-routes), so the new route starts the way they are going */
   function osrm(profile, wps, hd) {
+    if (!HOST.osrm.url) return Promise.reject(new Error(NOROAD));
     var c = wps.map(function (w) { return w.lon.toFixed(6) + "," + w.lat.toFixed(6); }).join(";");
     var br = hd != null && isFinite(hd) ? "&bearings=" + Math.round((hd % 360 + 360) % 360) + ",60" + wps.slice(1).map(function () { return ";"; }).join("") : "";
     return getJSON(HOST.osrm.url + "routed-" + profile + "/route/v1/driving/" + c + "?overview=full&geometries=geojson&steps=true&alternatives=" + (wps.length === 2 && br === "" ? "3" : "false") + br, 25000)
@@ -152,6 +159,7 @@ function main() {
     20: ["off ramp", "right"], 21: ["off ramp", "left"], 22: ["fork", "straight"], 23: ["fork", "right"], 24: ["fork", "left"], 25: ["merge", "straight"],
     26: ["roundabout", ""], 27: ["exit roundabout", ""], 28: ["notification", "straight"], 29: ["notification", "straight"], 37: ["merge", "right"], 38: ["merge", "left"] };
   function valhalla(costing, wps, extra, hd) {
+    if (!HOST.valhalla.url) return Promise.reject(new Error(NOROAD));
     var q = { locations: wps.map(function (w, i) { var l = { lat: w.lat, lon: w.lon, type: i === 0 || i === wps.length - 1 ? "break" : "through" }; if (!i && hd != null && isFinite(hd)) { l.heading = Math.round((hd % 360 + 360) % 360); l.heading_tolerance = 60; } return l; }), costing: costing,
       units: "kilometers", alternates: wps.length === 2 ? 2 : 0, directions_options: { units: "kilometers", language: "en-US" } };
     if (extra) Object.keys(extra).forEach(function (k) { q[k] = extra[k]; });
@@ -184,9 +192,11 @@ function main() {
   }
   function roadRoutes(mode, wps, hd) {
     var o = { car: ["car", "auto"], truck: [null, "truck"], foot: ["foot", "pedestrian"], bike: ["bike", "bicycle"] }[mode];
+    if (!HOST.osrm.url && !HOST.valhalla.url) return Promise.reject(new Error(NOROAD));
+    if (!HOST.osrm.url) o = [null, o[1]];
     var first = o[0] ? osrm(o[0], wps, hd) : valhalla(o[1], wps, null, hd);
     return first.catch(function (e1) {
-      if (!o[0]) throw e1;
+      if (!o[0] || !HOST.valhalla.url) throw e1;
       return valhalla(o[1], wps, null, hd).then(function (r) { r.forEach(function (x) { x.note = "OSRM did not answer (" + e1.message + "); routed by Valhalla."; }); return r; },
         function (e2) { throw new Error("OSRM: " + e1.message + "; Valhalla: " + e2.message); });
     });
@@ -304,7 +314,7 @@ function main() {
       '<button type="button" data-rt="import">Import GPX/KML</button><input type="file" id="rt-file" accept=".gpx,.kml,.geojson,.json,application/gpx+xml,application/vnd.google-earth.kml+xml,application/geo+json" hidden></div>' +
       '<form id="rt-saveform" class="rtfind"><input type="text" id="rt-name" maxlength="60" placeholder="Name this route" aria-label="Route name"><button type="submit">Save</button></form>' +
       '<p class="obs" id="rt-msg" role="status"></p><div id="rt-saved"></div>' +
-      '<p class="obs rtsrc">Sources: roads ' + E(HOST.osrm.name) + " and " + E(HOST.valhalla.name) + " (" + E(HOST.osrm.data) + ", fair use); elevation " + E(HOST.elev.name) +
+      '<p class="obs rtsrc">Sources: roads ' + ([HOST.osrm, HOST.valhalla].filter(function (h) { return h.url; }).map(function (h) { return E(h.name); }).join(" and ") || "none in this version") + " (" + E(HOST.osrm.data) + (W.OSAP_SOLD ? "" : ", fair use") + "); elevation " + E(HOST.elev.name) +
       "; weather " + E(HOST.wx.name) + "; places " + E(HOST.geo.name) + " and " + E(HOST.photon.name) + ". Bearings: " + G.MODEL + " magnetic model, WGS 84.</p></div>";
     el("rt-unit").value = S.unit; el("rt-buf").value = el("rt-sbuf").value = String(S.buf);
     setDepInput();
