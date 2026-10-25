@@ -27,7 +27,7 @@ const LIVE = new Set(["active", "trialing", "past_due"]);
 export function planFromEvent(ev, prices) {
   if (!ev || !/^subscription\./.test(ev.event_type || "")) return null;
   const d = ev.data || {}, uid = d.custom_data && d.custom_data.osap_uid;
-  if (!uid || typeof uid !== "string") return null;
+  if (!uid || typeof uid !== "string" || d.custom_data.osap_team) return null; // a team's subscription: teamEvent
   const ids = (d.items || []).map((i) => i && i.price && i.price.id).filter(Boolean);
   const has = (t) => ids.some((id) => (prices[t] || []).includes(id));
   const paid = has("full") ? "full" : has("mid") ? "mid" : null;
@@ -40,4 +40,65 @@ export function applyPlan(appMeta, plan) {
   const roles = [].concat(m.roles || []).filter((r) => r !== "mid" && r !== "full");
   if (plan.tier !== "free") roles.push(plan.tier);
   return { ...m, roles, osap_plan: { tier: plan.tier, subscription: plan.subscription, status: plan.status, at: plan.at } };
+}
+
+/* ---------- Team, Organisation and pilot (tools/teams.mjs, netlify/functions/osap-teams.mjs) ---------- */
+// The Paddle prices behind tools/tiers.mjs quote() lines, from Netlify environment variables (one price id each).
+export const PRICE_ENV = { team_month: "PADDLE_PRICE_TEAM_MONTH", team_year: "PADDLE_PRICE_TEAM_YEAR", org_base: "PADDLE_PRICE_ORG_BASE", org_seat: "PADDLE_PRICE_ORG_SEAT", pilot: "PADDLE_PRICE_PILOT" };
+export function priceIds(get) {
+  const out = {};
+  for (const [k, v] of Object.entries(PRICE_ENV)) { const id = String(get(v) || "").split(",")[0].trim(); if (id) out[k] = id; }
+  return out;
+}
+/**
+ * Which Paddle the server talks to. Sandbox unless the Netlify environment says PADDLE_ENV=live (Shane 2026-10-25: sandbox
+ * only until OSAP's own Paddle account exists). A live setting with a sandbox client token, or the other way round, is refused,
+ * so a half-switched setup cannot take real money against test prices.
+ */
+export function paddleEnv(get) {
+  const live = String(get("PADDLE_ENV") || "").trim().toLowerCase() === "live";
+  const token = String(get("PADDLE_CLIENT_TOKEN") || ""), key = String(get("PADDLE_API_KEY") || "");
+  const tokenSandbox = /^test_/.test(token);
+  if (!token || !key) return { ok: false, why: "Payments for teams are not switched on yet." };
+  if (live === tokenSandbox) return { ok: false, why: "Payments are set up inconsistently (live and sandbox mixed). Nothing was charged." };
+  if ((/sdbx/.test(key) && live) || (/_live_/.test(key) && !live)) return { ok: false, why: "Payments are set up inconsistently (live and sandbox mixed). Nothing was charged." };
+  return { ok: true, live, base: live ? "https://api.paddle.com" : "https://sandbox-api.paddle.com", key, token };
+}
+/** One Paddle API call; throws with Paddle's own error code and detail (never the key) when it refuses. */
+export async function paddleCall(env, method, path, body, fetchFn = fetch) {
+  const r = await fetchFn(env.base + path, { method, headers: { authorization: "Bearer " + env.key, "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error("Paddle: " + ((j.error && (j.error.detail || j.error.code)) || r.status)); e.status = 502; throw e; }
+  return j.data;
+}
+/**
+ * What a Paddle event means for a team, or null. prices: priceIds(). Kinds:
+ *   pilot         a paid pilot's one-off transaction completed: { team, transaction }
+ *   link          a team's first subscription transaction completed: { team, subscription } (so later events find the team)
+ *   subscription  subscription.*: { team?, subscription, status, plan, interval, seats, periodEnds, launch, credit }
+ */
+export function teamEvent(ev, prices) {
+  if (!ev || !ev.data) return null;
+  const d = ev.data, cd = d.custom_data || {}, type = String(ev.event_type || "");
+  const base = { event: ev.event_id || null, at: ev.occurred_at || null, team: typeof cd.osap_team === "string" ? cd.osap_team : null };
+  const qty = {};
+  for (const i of d.items || []) {
+    const id = (i && i.price && i.price.id) || (i && i.price_id);
+    for (const [k, p] of Object.entries(prices)) if (id && id === p) qty[k] = (qty[k] || 0) + (Number(i.quantity) || 1);
+  }
+  if (type === "transaction.completed") {
+    if (!base.team) return null;
+    if (qty.pilot && !d.subscription_id) return { ...base, kind: "pilot", transaction: d.id || null };
+    if (d.subscription_id) return { ...base, kind: "link", subscription: d.subscription_id, transaction: d.id || null };
+    return null;
+  }
+  if (!/^subscription\./.test(type)) return null;
+  let plan = null, interval = null, seats = 0;
+  if (qty.team_month || qty.team_year) { plan = "team"; interval = qty.team_year ? "year" : "month"; seats = qty.team_year || qty.team_month; }
+  else if (qty.org_base) { plan = "org"; interval = "year"; seats = 25 + (qty.org_seat || 0); }
+  // only a team's own prices count: a Mid or Full checkout opened by a page with a team id in it changes no team
+  if (!plan) return null;
+  const per = d.current_billing_period || {};
+  return { ...base, kind: "subscription", subscription: d.id || null, status: d.status || null, plan, interval, seats: seats || null,
+    periodEnds: per.ends_at || d.next_billed_at || null, launch: cd.osap_launch === "1", credit: cd.osap_credit === "1" };
 }

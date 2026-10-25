@@ -3,6 +3,11 @@
 // variable OSAP_OWNERS (comma-separated). Only the owner can list accounts (netlify/functions/osap-users.mjs).
 import { betaActive } from "./codes.mjs";
 
+/** A seat on a team (tools/teams.mjs writes app_metadata.osap_seat = { team, until }): open until its paid-through date. */
+export function seatActive(m, now = Date.now()) {
+  const s = m && m.osap_seat;
+  return !!(s && typeof s.team === "string" && s.until && Date.parse(s.until) > now);
+}
 export function isOwner(u, ownersCsv) {
   if (!u) return false;
   const roles = [].concat((u.app_metadata || u.appMetadata || {}).roles || []);
@@ -17,6 +22,7 @@ export function planOf(u, ownersCsv, tierOfRoles) {
   if (isOwner(u, ownersCsv)) return "full";
   const m = u.app_metadata || u.appMetadata || {};
   if (betaActive(m)) return "full"; // a beta tester code (tools/codes.mjs)
+  if (seatActive(m)) return "full"; // a seat on a paid Team, Organisation or pilot (tools/teams.mjs)
   return tierOfRoles(m.roles);
 }
 /** The row the owner sees for one account: no password, no tokens, nothing but email, times and plan. */
