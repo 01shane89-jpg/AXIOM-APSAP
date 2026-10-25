@@ -101,6 +101,9 @@
   var PX_API = ["https://api.panoramax.xyz/api"];
   function kvUrl(n) { var m = String(n || "").match(/^(storage\d+)\/(files\/photo\/[\w/.-]+\.jpg)$/); return m ? "https://" + m[1] + ".openstreetcam.org/" + m[2] : ""; }
   function pdate(s) { var t = Date.parse(String(s || "").replace(" ", "T").replace(/(\.\d+)?$/, "") + (/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? "" : "Z")); return isFinite(t) && t > Date.UTC(2000, 0, 1) && t < Date.now() + DAY ? t : null; }
+  /* the Satellite map's tiles: "" in the sold version until it has its own imagery host (assets/osap-sold.js); street
+     pictures, terrain and the map then carry the preview on their own */
+  var SAT = W.OSAP_HOST ? W.OSAP_HOST("sat") : "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", NOSAT = "no satellite map in this version";
   var PROVIDERS = {
     kartaview: {
       id: "kartaview", name: "KartaView", tier: 1, kind: "street", cachePolicy: "METADATA_ONLY", licence: "CC BY-SA 4.0", home: "https://kartaview.org/",
@@ -148,21 +151,21 @@
     },
     satellite: {
       id: "satellite", name: "Sentinel-2 cloudless 2016 (EOX)", tier: 3, kind: "aerial", cachePolicy: "TEMPORARY", licence: "CC BY 4.0 (the map's own Satellite layer)", home: "https://s2maps.eu",
-      tiles: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", z: 14,
-      isAvailable: online,
+      tiles: SAT, z: 14,
+      isAvailable: function () { return !!SAT && online(); },
       /* one cloud-free mosaic of 2016 images for the whole world, so the date is the same everywhere and needs no lookup */
-      find: function () { return Promise.resolve([{ prov: "satellite", date: Date.UTC(2016, 6, 1), approx: "2016 (one-year mosaic)", res: 10, src: "Cloud-free mosaic of 2016 Sentinel-2 images" }]); },
+      find: function () { if (!SAT) return Promise.reject(new Error(NOSAT)); return Promise.resolve([{ prov: "satellite", date: Date.UTC(2016, 6, 1), approx: "2016 (one-year mosaic)", res: 10, src: "Cloud-free mosaic of 2016 Sentinel-2 images" }]); },
       /* the picture about 600 m across centred on the point, in Web Mercator so the route can be drawn on top: the few
          zoom-14 tiles that cover it, each placed as a share of the frame */
       image: function (lat, lon, w, h, halfM) {
         var x = G.wrap(lon) * 20037508.34 / 180, y = Math.log(Math.tan((90 + lat) * RAD / 2)) * 6378137, s = 1 / Math.cos(lat * RAD), hx = halfM * s, hy = halfM * s * h / w;
         var O = 20037508.34, T = 2 * O / Math.pow(2, this.z), x0 = x - hx, y1 = y + hy, sx = w / (2 * hx), sy = h / (2 * hy), tiles = [];
-        for (var tx = Math.floor((x0 + O) / T); tx <= Math.floor((x + hx + O) / T); tx++)
+        if (SAT) for (var tx = Math.floor((x0 + O) / T); tx <= Math.floor((x + hx + O) / T); tx++)
           for (var ty = Math.floor((O - y1) / T); ty <= Math.floor((O - (y - hy)) / T); ty++)
             tiles.push({ url: this.tiles.replace("{z}", this.z).replace("{y}", ty).replace("{x}", tx), l: ((tx * T - O) - x0) * sx / w * 100, t: (y1 - (O - ty * T)) * sy / h * 100, w: T * sx / w * 100, h: T * sy / h * 100 });
         return { tiles: tiles, x0: x0, y1: y1, sx: sx, sy: sy };
       },
-      attribution: function () { return "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0"; }
+      attribution: function () { return !SAT ? "" : "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0"; }
     },
     terrain: { id: "terrain", name: "Modelled terrain (Copernicus GLO-90 DEM, Open-Meteo)", tier: 4, kind: "terrain", cachePolicy: "TEMPORARY", simulated: true, licence: "Copernicus DEM, open", home: "https://open-meteo.com/en/docs/elevation-api", isAvailable: online },
     map: { id: "map", name: "Analytical map (OpenStreetMap)", tier: 5, kind: "map", cachePolicy: "LOCAL", licence: "ODbL", home: "https://www.openstreetmap.org/copyright", isAvailable: function () { return true; } }
@@ -1001,7 +1004,7 @@
       '<span class="rtdv-note">' + (a.k === "stale" ? "STALE, over 3 years old. " : "") + "Visual reference: how this looked then, not now</span>";
     else { var s = f.sat || {}, a2 = s.date ? ageOf(s.date) : null, gp = drvGap(f.m);
       var gl = gp.end != null ? (gp.last ? "No street pictures from here to the end (" + dist(gp.end - f.m) + ")." : "No street pictures for the next " + dist(gp.end - f.m) + ".") : "No street pictures for at least " + dist(Math.max(0, gp.known - f.m)) + ".";
-      top.innerHTML = '<span class="rtdv-badge ' + (a2 ? a2.cls : "unk") + '">Satellite · ' + E(s.date ? "captured " + sdstr(s) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : f.sat ? "date not published" : "checking date…") + "</span>" +
+      top.innerHTML = '<span class="rtdv-badge ' + (a2 ? a2.cls : "unk") + '">Satellite · ' + E(s.date ? "captured " + sdstr(s) + " · " + ageTxt(s.date) + " old" : s.err ? (SAT ? "date lookup failed" : NOSAT) : f.sat ? "date not published" : "checking date…") + "</span>" +
         '<span class="rtdv-note">' + E(chunkAt(f.m).st === "err" ? "Street picture services did not answer here (" + (chunkAt(f.m).note || "error") + ")." : gl) + " Direction of travel is up." +
         (!gp.last && (gp.end == null || gp.end - f.m > 500) ? ' <button type="button" data-dv="skip">Skip ahead ▶▶</button>' : "") + "</span>"; }
     var ah = drvAhead(d.m);
@@ -1168,10 +1171,10 @@
       if (S.drv !== d || !d.on || d.mode !== "3d") return;
       var p = at(S.R, d.m).p, line = { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: S.R.coords.map(function (c) { return [G.wrap(c[1]), c[0]]; }) } };
       var hz = { type: "FeatureCollection", features: (S.snap.haz || []).filter(function (h) { return h.p; }).map(function (h) { return { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [G.wrap(h.p[1]), h.p[0]] } }; }) };
-      var style = { version: 8, sources: { sat: { type: "raster", tiles: [PROVIDERS.satellite.tiles], tileSize: 256, maxzoom: PROVIDERS.satellite.z },
+      var style = { version: 8, sources: { sat: { type: "raster", tiles: [SAT || "data:,"], tileSize: 256, maxzoom: PROVIDERS.satellite.z },
           dem: { type: "raster-dem", tiles: [DEM3], tileSize: 256, maxzoom: 14, encoding: "terrarium" }, rt: { type: "geojson", data: line }, hz: { type: "geojson", data: hz } },
         layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } },
-          { id: "sat", type: "raster", source: "sat", paint: { "raster-fade-duration": 0 } },
+          { id: "sat", type: "raster", source: "sat", layout: { visibility: SAT ? "visible" : "none" }, paint: { "raster-fade-duration": 0 } },
           { id: "rtc", type: "line", source: "rt", layout: { "line-join": "round", "line-cap": "round" }, paint: { "line-color": "#0b3d6b", "line-width": 9, "line-opacity": 0.55 } },
           { id: "rtl", type: "line", source: "rt", layout: { "line-join": "round", "line-cap": "round" }, paint: { "line-color": "#4dabf7", "line-width": 5, "line-opacity": 0.9 } },
           { id: "hz", type: "circle", source: "hz", paint: { "circle-color": "#e03131", "circle-radius": 7, "circle-stroke-color": "#fff", "circle-stroke-width": 2, "circle-pitch-alignment": "map" } }],
@@ -1245,7 +1248,7 @@
   }
   function d3Tag() {
     var d = S.drv, s = d.sat || {}, a = s.date ? ageOf(s.date) : null;
-    return '<span class="rtdv-badge ' + (a ? a.cls : "unk") + '">3D satellite view · ' + E(s.date ? "captured " + sdstr(s) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : d.sat ? "date not published" : "checking date…") + "</span>" +
+    return '<span class="rtdv-badge ' + (a ? a.cls : "unk") + '">3D satellite view · ' + E(s.date ? "captured " + sdstr(s) + " · " + ageTxt(s.date) + " old" : s.err ? (SAT ? "date lookup failed" : NOSAT) : d.sat ? "date not published" : "checking date…") + "</span>" +
       '<span class="rtdv-note">Satellite pictures over a terrain model: how it looked then, not now.' + (d.demErr > 3 ? " Elevation is not loading, so the ground may look flat." : "") + "</span>";
   }
   function drvMode(m) {
