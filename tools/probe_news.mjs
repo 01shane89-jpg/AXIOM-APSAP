@@ -74,6 +74,12 @@ console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f
       const h = await get(d.home, 20000);
       r.status = h.status; r.final = h.final; r.bytes = h.body.length; r.links = (h.body.match(/<a\s/gi) || []).length;
       r.title = (h.body.match(/<title[^>]*>([^<]{0,120})/i) || [])[1];
+      if (d.hrefs) {   // page-list candidates: same-site links with headline-length text, to write a match pattern
+        const host = new URL(h.final || d.home).host, seen = new Set();
+        r.hrefs = [...h.body.matchAll(/<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]{0,600}?)<\/a>/gi)].map((m) => [m[1], m[2].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()])
+          .filter(([u, t]) => t.length >= 25 && !seen.has(u) && seen.add(u) && (() => { try { return new URL(u, d.home).host === host; } catch (e) { return false; } })()).slice(0, 40).map(([u, t]) => u + " | " + t.slice(0, 70));
+        r.dates = (h.body.match(/20\d\d-\d\d-\d\d[T ]\d\d:\d\d|\d{1,2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* 20\d\d|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{1,2}, 20\d\d/g) || []).slice(0, 8);
+      }
       const alts = [...h.body.matchAll(/<link[^>]+>/gi)].map((m) => m[0]).filter((t) => /application\/(rss|atom)\+xml/i.test(t))
         .map((t) => (t.match(/href=["']([^"']+)/i) || [])[1]).filter(Boolean);
       const anchors = [...h.body.matchAll(/href=["']([^"']*(?:rss|feed)[^"']*)["']/gi)].map((m) => m[1]).slice(0, 12);
