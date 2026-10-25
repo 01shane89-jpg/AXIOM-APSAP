@@ -51,12 +51,12 @@ try { const t = readJs("data/live/topics.js"); (t.items || []).forEach((i) => { 
 catch (e) { console.error("topics.js unreadable (no data-set searches yet):", e.message); }
 
 const clip = (s, n) => { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
-const count = {};
+const count = {}, left = new Set();   // left: links this run's relevance check left out
 const rows = [...pool.values()].sort((a, b) => (b.i.date > a.i.date ? 1 : b.i.date < a.i.date ? -1 : 0)).map(({ i, ccs, tp }) => {
   const en = i.title_en || i.title, orig = i.title && i.title !== en ? i.title : "", full = clip(i.summary_en || i.summary, 400), sum = SUM ? clip(full, SUM) : "";
   const rel = itemRelevance(REL, i);
   relN[rel] = (relN[rel] || 0) + 1;
-  if (rel === "drop" || rel === "none") { dropped.push({ cc: [...ccs].join(","), why: rel === "drop" ? "sport, celebrity or lifestyle" : "no security, politics or public-safety word", title: en, outlet: i.outlet, date: i.date }); return null; }
+  if (rel === "drop" || rel === "none") { left.add(i.link); dropped.push({ cc: [...ccs].join(","), why: rel === "drop" ? "sport, celebrity or lifestyle" : "no security, politics or public-safety word", title: en, outlet: i.outlet, date: i.date }); return null; }
   const ids = [...new Set([...tp, ...topicsOf(T, en + " \n " + orig + " \n " + full, [...ccs])])].filter((id) => T.some((t) => t.id === id));
   ids.forEach((id) => (count[id] = (count[id] || 0) + 1));
   // headline only (English and original): a summary often names side topics, which would list the story under the wrong tab
@@ -73,14 +73,18 @@ if (process.env.NEWSIX_DROPPED) fs.writeFileSync(process.env.NEWSIX_DROPPED, JSO
 // Busy countries keep only their newest headlines in data/history (tools/history.mjs caps each file), which can be a few days'
 // worth. Headlines this index already listed inside the window stay listed when their history copy has rolled off, so a
 // search still covers the full DAYS days. Rows carried over keep the data sets and tabs they were given when first written.
+// A headline this run checked and left out (tools/relevance.json) is not carried back from an earlier day, so a fixed word list
+// also clears the days Story coverage and news search already read. Rows that rolled off are not rechecked: their summary,
+// which may be what kept them, is gone.
 const seen = new Set(rows.map((r) => r[5]));
-let carried = 0;
+let carried = 0, recheck = 0;
 try {
   for (const f of fs.readdirSync(DIR)) {
     if (!/^\d{4}-\d{2}-\d{2}\.js$/.test(f) || f.slice(0, 10) < cutoff.slice(0, 10)) continue;
     let old; try { old = readJs(DIR + "/" + f); } catch (e) { console.error("index day unreadable:", f, e.message); continue; }
     for (const r of Array.isArray(old) ? old : []) {
       if (!Array.isArray(r) || r.length < 10 || !r[5] || seen.has(r[5]) || r[1] < cutoff) continue;
+      if (left.has(r[5])) { seen.add(r[5]); recheck++; continue; }
       seen.add(r[5]); rows.push(r); carried++;
       String(r[8] || "").split(",").filter(Boolean).forEach((id) => (count[id] = (count[id] || 0) + 1));
       String(r[9] || "").split(",").filter(Boolean).forEach((id) => (vcount[id] = (vcount[id] || 0) + 1));
@@ -88,6 +92,7 @@ try {
   }
 } catch (e) {}
 if (carried) console.log(`carried over ${carried} headlines already in the index whose history copy has rolled off`);
+if (recheck) console.log(`relevance: ${recheck} headlines already in the index left out by this run's check`);
 const byDay = {};
 rows.forEach((r) => (byDay[r[1].slice(0, 10)] = byDay[r[1].slice(0, 10)] || []).push(r));
 fs.mkdirSync(DIR, { recursive: true });
