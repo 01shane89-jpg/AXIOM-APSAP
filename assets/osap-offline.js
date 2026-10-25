@@ -22,9 +22,11 @@
   var W = window, D = document;
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var OFFLINE = "osap-offline", DATA = "asap-data", KEY = "osap-offline", MAX_POS = 6000, PAR = 4;
+  /* the imagery is the Satellite map's (assets/osap-sold.js): none in the sold version until it has its own imagery host,
+     and then a download saves the data only */
   var TILES = [
-    { id: "img", name: "Imagery", url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", kb: 16 }
-  ];
+    { id: "img", name: "Imagery", url: W.OSAP_HOST ? W.OSAP_HOST("sat") : "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", kb: 16 }
+  ].filter(function (t) { return t.url; });
   var ZMIN = 4, ZTOP = 13, ZLIST = [8, 9, 10, 11, 12, 13];
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function cc() { return (W.TSAP && W.TSAP.country) || ((location.hash || "").replace("#", "").split("/")[0]) || "th"; }
@@ -331,11 +333,12 @@
       (JOB && JOB.phase !== "terrain" ? '<div class="offprog"><progress max="1" value="0"></progress><span></span></div><div class="offbtns"><button type="button" class="refresh" data-off-stop>Stop</button></div>' : JOB ? "" :
         '<div class="offbtns"><button type="button" class="refresh" data-off-dl' + (can && !big ? "" : " disabled") + ">" + (p ? "Download or update" : "Download for offline") + "</button>" +
         (p ? '<button type="button" data-off-del="' + esc(c) + '">Delete ' + esc(ci.name) + "</button>" : "") +
-        '<button type="button" data-off-use>Show the Offline map</button></div>') + "</section>" + terrainSec(c, ci) +
+        (TILES.length ? '<button type="button" data-off-use>Show the Offline map</button>' : "") + "</div>") + "</section>" + terrainSec(c, ci) +
       "<h3>Saved on this device</h3>" + (saved ? '<ul class="offlist">' + saved + "</ul>" : '<p class="obs">Nothing yet.</p>') +
       '<p class="obs">' + (UI.use != null ? "OSAP uses " + mb(UI.use) + " on this device" + (UI.quota ? " of about " + mb(UI.quota) + " allowed" : "") + ". " : "") +
       (UI.persisted === true ? "Kept until you delete it." : UI.persisted === false ? "The browser may clear saved maps if the device runs short of space; installing OSAP to the home screen makes that less likely." : "") + "</p>" +
       '<details class="offnote"><summary>Which maps can be saved, and what still needs signal</summary>' +
+      (TILES.length ? "" : "<p>This version has no Offline map: a download saves the country's data and terrain only.</p>") +
       "<p>The Offline map is Sentinel-2 cloudless 2016 satellite imagery by EOX (10 m, CC BY 4.0), which allows saving tiles. It has no street names; OSAP's own borders, reports and your points still draw on it. " +
       "Saved detail stops at zoom 13; closer in, the map enlarges the saved picture.</p>" +
       "<p>The Grey, Streets and Topographic maps cannot be saved in bulk under their providers' terms. Parts of them you have already looked at are kept (up to 1,500 squares) and show offline.</p>" +
