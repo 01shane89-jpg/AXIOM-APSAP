@@ -123,6 +123,40 @@
    "html": true
   },
   {
+   "id": "prd-narathiwat",
+   "outlet": "Narathiwat Provincial Public Relations Office",
+   "url": "https://narathiwat.prd.go.th/th/content/category/index/id/9",
+   "lang": "th",
+   "state": true,
+   "tier": "official",
+   "all": true,
+   "html": true
+  },
+  {
+   "id": "prd-songkhla",
+   "outlet": "Songkhla Provincial Public Relations Office",
+   "url": "https://songkhla.prd.go.th/th/content/category/index/id/9",
+   "lang": "th",
+   "state": true,
+   "tier": "official",
+   "html": true
+  },
+  {
+   "id": "sbpac",
+   "outlet": "Southern Border Provinces Administrative Centre (SBPAC)",
+   "url": "https://www.sbpac.go.th/home/?feed=rss2",
+   "lang": "th",
+   "state": true,
+   "tier": "official",
+   "all": true
+  },
+  {
+   "id": "mgr-south",
+   "outlet": "MGR Online (South)",
+   "url": "https://mgronline.com/store/rss/south.xml",
+   "lang": "th"
+  },
+  {
    "id": "isranews-south",
    "outlet": "Isranews Southern News Center",
    "url": "https://www.isranews.org/article/south-news.html",

@@ -1802,6 +1802,11 @@
     {"cc":"uy","outlet":"Presidencia de Uruguay","url":"https://www.gub.uy/presidencia/comunicacion/noticias","lang":"es","tier":"official","state":true,"html":true,"match":"^/presidencia/comunicacion/noticias/[a-z0-9-]{15,}$"},
     {"cc":"sv","outlet":"Diario El Mundo","url":"https://diario.elmundo.sv/","lang":"es","html":true,"match":"^https://diario\\.elmundo\\.sv/nacionales/"},
     {"cc":"et","outlet":"EBC","url":"https://www.ebc.et/","lang":"am","state":true,"html":true,"match":"/Home/NewsDetails\\?NewsId=\\d+"},
-    {"cc":"mm","outlet":"Eleven Myanmar","url":"https://elevenmyanmar.com/","lang":"en","html":true,"match":"^https://elevenmyanmar\\.com/news/[a-z0-9-]{20,}$"}
+    {"cc":"mm","outlet":"Eleven Myanmar","url":"https://elevenmyanmar.com/","lang":"en","html":true,"match":"^https://elevenmyanmar\\.com/news/[a-z0-9-]{20,}$"},
+    {"cc":"th","outlet":"Thai Post","url":"https://www.thaipost.net/feed/","lang":"th"},
+    {"cc":"th","outlet":"INN News","url":"https://www.innnews.co.th/feed/","lang":"th"},
+    {"cc":"th","outlet":"Thai PBS World","url":"https://www.thaipbsworld.com/","lang":"en","html":true,"match":"^/(?:politics|around-thailand|asean)/\\d+$"},
+    {"cc":"th","outlet":"Daily News","url":"https://www.dailynews.co.th/","lang":"th","html":true,"match":"^https://www\\.dailynews\\.co\\.th/news/\\d+/$"},
+    {"cc":"th","outlet":"The Nation Thailand","url":"https://www.nationthailand.com/","lang":"en","html":true,"match":"^/news/(?:policy|general|thailand|politics|asean)/\\d{8}$"}
   ]
 }
