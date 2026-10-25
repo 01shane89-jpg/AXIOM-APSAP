@@ -1764,6 +1764,11 @@
     {"cc":"iq","outlet":"Ultra Iraq","url":"https://ultrairaq.ultrasawt.com/rss.xml","lang":"ar"},
     {"cc":"hn","outlet":"Tu Nota","url":"https://www.tunota.com/feed","lang":"es"},
     {"cc":"zm","outlet":"Zambian Eye","url":"https://zambianeye.com/feed/","lang":"en"},
-    {"cc":"kh","outlet":"DAP News","url":"https://dap-news.com/feed/","lang":"km"}
+    {"cc":"kh","outlet":"DAP News","url":"https://dap-news.com/feed/","lang":"km"},
+    {"cc":"th","outlet":"Thai Post","url":"https://www.thaipost.net/feed/","lang":"th"},
+    {"cc":"th","outlet":"INN News","url":"https://www.innnews.co.th/feed/","lang":"th"},
+    {"cc":"th","outlet":"Thai PBS World","url":"https://www.thaipbsworld.com/","lang":"en","html":true,"match":"^/(?:politics|around-thailand|asean)/\\d+$"},
+    {"cc":"th","outlet":"Daily News","url":"https://www.dailynews.co.th/","lang":"th","html":true,"match":"^https://www\\.dailynews\\.co\\.th/news/\\d+/$"},
+    {"cc":"th","outlet":"The Nation Thailand","url":"https://www.nationthailand.com/","lang":"en","html":true,"match":"^/news/(?:policy|general|thailand|politics|asean)/\\d{8}$"}
   ]
 }
