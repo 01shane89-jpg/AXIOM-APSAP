@@ -1807,6 +1807,9 @@
     {"cc":"th","outlet":"INN News","url":"https://www.innnews.co.th/feed/","lang":"th"},
     {"cc":"th","outlet":"Thai PBS World","url":"https://www.thaipbsworld.com/","lang":"en","html":true,"match":"^/(?:politics|around-thailand|asean)/\\d+$"},
     {"cc":"th","outlet":"Daily News","url":"https://www.dailynews.co.th/","lang":"th","html":true,"match":"^https://www\\.dailynews\\.co\\.th/news/\\d+/$"},
-    {"cc":"th","outlet":"The Nation Thailand","url":"https://www.nationthailand.com/","lang":"en","html":true,"match":"^/news/(?:policy|general|thailand|politics|asean)/\\d{8}$"}
+    {"cc":"th","outlet":"The Nation Thailand","url":"https://www.nationthailand.com/","lang":"en","html":true,"match":"^/news/(?:policy|general|thailand|politics|asean)/\\d{8}$"},
+    {"cc":"th","outlet":"Prachachat","url":"https://www.prachachat.net/feed","lang":"th"},
+    {"cc":"th","outlet":"Thai PBS","url":"https://news.thaipbs.or.th/rss/news","lang":"th","state":true},
+    {"cc":"th","outlet":"Nation TV","url":"https://www.nationtv.tv/","lang":"th","html":true,"match":"^/news/(?:current-issue|region|politics|crime)/\\d+$"}
   ]
 }

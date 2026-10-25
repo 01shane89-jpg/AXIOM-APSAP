@@ -157,6 +157,25 @@
    "lang": "th"
   },
   {
+   "id": "matichon-region",
+   "outlet": "Matichon (regional)",
+   "url": "https://www.matichon.co.th/region/feed",
+   "lang": "th"
+  },
+  {
+   "id": "khaosod-region",
+   "outlet": "Khaosod (around Thailand)",
+   "url": "https://www.khaosod.co.th/around-thailand/feed",
+   "lang": "th"
+  },
+  {
+   "id": "thaipbs-th",
+   "outlet": "Thai PBS",
+   "url": "https://news.thaipbs.or.th/rss/news",
+   "lang": "th",
+   "state": true
+  },
+  {
    "id": "isranews-south",
    "outlet": "Isranews Southern News Center",
    "url": "https://www.isranews.org/article/south-news.html",
@@ -678,6 +697,13 @@
    "id": "my-malaymail",
    "outlet": "Malay Mail",
    "url": "https://www.malaymail.com/feed/rss/malaysia",
+   "lang": "en",
+   "tier": "international"
+  },
+  {
+   "id": "my-malaysiakini",
+   "outlet": "Malaysiakini",
+   "url": "https://www.malaysiakini.com/rss/en/news.rss",
    "lang": "en",
    "tier": "international"
   },
