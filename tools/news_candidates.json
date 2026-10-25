@@ -1,410 +1,205 @@
 {
- "note": "Data-set specialist feeds (commercial-safe) probe",
+ "note": "Deep South commercial-safe candidates",
  "feeds": [
   {
-   "cc": "xx",
-   "outlet": "The Record",
-   "url": "https://therecord.media/feed",
-   "topic": "cyber",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Thai PBS World",
+   "url": "https://www.thaipbsworld.com/feed/",
+   "lang": "en"
   },
   {
-   "cc": "xx",
-   "outlet": "BleepingComputer",
-   "url": "https://www.bleepingcomputer.com/feed/",
-   "topic": "cyber",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Thai PBS",
+   "url": "https://www.thaipbs.or.th/rss/news",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "SecurityWeek",
-   "url": "https://www.securityweek.com/feed/",
-   "topic": "cyber",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Thairath",
+   "url": "https://www.thairath.co.th/rss/news",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "Krebs on Security",
-   "url": "https://krebsonsecurity.com/feed/",
-   "topic": "cyber",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Daily News",
+   "url": "https://www.dailynews.co.th/feed/",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "CISA advisories",
-   "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
-   "topic": "cyber",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Komchadluek",
+   "url": "https://www.komchadluek.net/rss",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "The Hacker News",
-   "url": "https://feeds.feedburner.com/TheHackersNews",
-   "topic": "cyber",
-   "inmain": true
+   "cc": "th",
+   "outlet": "The Nation Thailand",
+   "url": "https://www.nationthailand.com/rss",
+   "lang": "en"
   },
   {
-   "cc": "xx",
-   "outlet": "Dark Reading",
-   "url": "https://www.darkreading.com/rss.xml",
-   "topic": "cyber",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Thai News Agency",
+   "url": "https://tna.mcot.net/feed",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "CyberScoop",
-   "url": "https://cyberscoop.com/feed/",
-   "topic": "cyber",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Thai Post",
+   "url": "https://www.thaipost.net/feed/",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "Aviation Herald",
-   "url": "https://avherald.com/h?subscribe=rss",
-   "topic": "air-crashes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Siam Rath",
+   "url": "https://siamrath.co.th/rss",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "Aviation Safety Network",
-   "url": "https://aviation-safety.net/news/rss.php",
-   "topic": "air-crashes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Spring News",
+   "url": "https://www.springnews.co.th/feed",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "Simple Flying",
-   "url": "https://simpleflying.com/feed/",
-   "topic": "air-crashes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "INN News",
+   "url": "https://www.innnews.co.th/feed/",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "The Aviationist",
-   "url": "https://theaviationist.com/feed/",
-   "topic": "air-crashes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "MGR Online South",
+   "url": "https://mgronline.com/rss/south",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "AeroTime",
-   "url": "https://www.aerotime.aero/feed",
-   "topic": "air-crashes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "BenarNews Thai",
+   "url": "https://www.benarnews.org/thai/rss",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "Aerossurance",
-   "url": "https://aerossurance.com/feed/",
-   "topic": "air-crashes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Wartani",
+   "url": "https://wartani.com/feed",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "FlightGlobal",
-   "url": "https://www.flightglobal.com/rss",
-   "topic": "air-crashes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Deep South Watch",
+   "url": "https://deepsouthwatch.org/th/rss.xml",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "NHC Atlantic",
-   "url": "https://www.nhc.noaa.gov/index-at.xml",
-   "topic": "storms",
-   "inmain": false
+   "cc": "my",
+   "outlet": "The Star Nation",
+   "url": "https://www.thestar.com.my/rss/News/Nation",
+   "lang": "en"
   },
   {
-   "cc": "xx",
-   "outlet": "NHC East Pacific",
-   "url": "https://www.nhc.noaa.gov/index-ep.xml",
-   "topic": "storms",
-   "inmain": false
+   "cc": "th",
+   "outlet": "PPTV",
+   "url": "https://www.pptvhd36.com/rss/news",
+   "lang": "th"
   },
   {
-   "cc": "xx",
-   "outlet": "NHC Central Pacific",
-   "url": "https://www.nhc.noaa.gov/index-cp.xml",
-   "topic": "storms",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "JTWC",
-   "url": "https://www.metoc.navy.mil/jtwc/rss/jtwc.rss",
-   "topic": "storms",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Severe Weather Europe",
-   "url": "https://www.severe-weather.eu/feed/",
-   "topic": "storms",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "InciWeb",
-   "url": "https://inciweb.wildfire.gov/incidents/rss.xml",
-   "topic": "wildfires",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Wildfire Today",
-   "url": "https://wildfiretoday.com/feed/",
-   "topic": "wildfires",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "The Debrief",
-   "url": "https://thedebrief.org/feed/",
-   "topic": "uap",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "The Black Vault",
-   "url": "https://www.theblackvault.com/documentarchive/feed/",
-   "topic": "uap",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Liberation Times",
-   "url": "https://www.liberationtimes.com/home?format=rss",
-   "topic": "uap",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "USNI News",
-   "url": "https://news.usni.org/feed",
-   "topic": "south-china-sea",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Naval News",
-   "url": "https://www.navalnews.com/feed/",
-   "topic": "south-china-sea",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Maritime Executive",
-   "url": "https://maritime-executive.com/rss",
-   "topic": "south-china-sea",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "gCaptain",
-   "url": "https://gcaptain.com/feed/",
-   "topic": "shipping",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Seatrade Maritime",
-   "url": "https://www.seatrade-maritime.com/rss.xml",
-   "topic": "shipping",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "BenarNews",
-   "url": "https://www.benarnews.org/english/rss",
-   "topic": "south-china-sea",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Taiwan News",
-   "url": "https://www.taiwannews.com.tw/en/rss",
-   "topic": "taiwan-strait",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Focus Taiwan",
-   "url": "https://focustaiwan.tw/rss/aall.xml",
-   "topic": "taiwan-strait",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Taipei Times",
-   "url": "https://www.taipeitimes.com/xml/index.rss",
-   "topic": "taiwan-strait",
-   "inmain": true
-  },
-  {
-   "cc": "xx",
-   "outlet": "SubTel Forum",
-   "url": "https://subtelforum.com/feed/",
-   "topic": "undersea-cables",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Submarine Networks",
-   "url": "https://www.submarinenetworks.com/en/?format=feed&type=rss",
-   "topic": "undersea-cables",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Mining.com",
-   "url": "https://www.mining.com/feed/",
-   "topic": "mn-mining-border",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Mongolian Mining Journal",
-   "url": "https://www.mongolianminingjournal.com/rss",
-   "topic": "mn-mining-border",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "CIDRAP",
-   "url": "https://www.cidrap.umn.edu/news/rss.xml",
-   "topic": "outbreaks",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Outbreak News Today",
-   "url": "https://outbreaknewstoday.com/feed/",
-   "topic": "outbreaks",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "CDC Newsroom",
-   "url": "https://tools.cdc.gov/api/v2/resources/media/132608.rss",
-   "topic": "outbreaks",
-   "inmain": false
-  },
-  {
-   "cc": "xx",
-   "outlet": "Daily NK",
-   "url": "https://www.dailynk.com/english/feed/",
-   "topic": "korea-dmz",
-   "inmain": true
-  },
-  {
-   "cc": "xx",
-   "outlet": "Yonhap North Korea",
-   "url": "https://en.yna.co.kr/RSS/nk.xml",
-   "topic": "korea-dmz",
-   "inmain": true
-  },
-  {
-   "cc": "xx",
-   "outlet": "VolcanoDiscovery",
-   "url": "https://www.volcanodiscovery.com/news.rss",
-   "topic": "ph-volcanoes",
-   "inmain": false
+   "cc": "th",
+   "outlet": "Channel 7",
+   "url": "https://news.ch7.com/rss/feed",
+   "lang": "th"
   }
  ],
  "discover": [
   {
-   "cc": "xx",
-   "outlet": "Aviation Herald",
-   "home": "https://avherald.com/"
+   "cc": "th",
+   "outlet": "Thai PBS World",
+   "home": "https://www.thaipbsworld.com/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "Aviation Safety Network",
-   "home": "https://aviation-safety.net/"
+   "cc": "th",
+   "outlet": "Thai PBS",
+   "home": "https://www.thaipbs.or.th/news",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "Simple Flying",
-   "home": "https://simpleflying.com/"
+   "cc": "th",
+   "outlet": "Thairath",
+   "home": "https://www.thairath.co.th/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "The Aviationist",
-   "home": "https://theaviationist.com/"
+   "cc": "th",
+   "outlet": "Daily News",
+   "home": "https://www.dailynews.co.th/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "AeroTime",
-   "home": "https://www.aerotime.aero/"
+   "cc": "th",
+   "outlet": "Komchadluek",
+   "home": "https://www.komchadluek.net/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "Aerossurance",
-   "home": "https://aerossurance.com/"
+   "cc": "th",
+   "outlet": "The Nation",
+   "home": "https://www.nationthailand.com/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "FlightGlobal",
-   "home": "https://www.flightglobal.com/"
+   "cc": "th",
+   "outlet": "MGR Online",
+   "home": "https://mgronline.com/south",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "NHC Atlantic",
-   "home": "https://www.nhc.noaa.gov/"
+   "cc": "th",
+   "outlet": "Deep South Watch",
+   "home": "https://deepsouthwatch.org/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "NHC East Pacific",
-   "home": "https://www.nhc.noaa.gov/"
+   "cc": "th",
+   "outlet": "Wartani",
+   "home": "https://wartani.com/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "NHC Central Pacific",
-   "home": "https://www.nhc.noaa.gov/"
+   "cc": "th",
+   "outlet": "SBPAC",
+   "home": "https://www.sbpac.go.th/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "JTWC",
-   "home": "https://www.metoc.navy.mil/"
+   "cc": "th",
+   "outlet": "Narathiwat PRD",
+   "home": "https://narathiwat.prd.go.th/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "Severe Weather Europe",
-   "home": "https://www.severe-weather.eu/"
+   "cc": "th",
+   "outlet": "Songkhla PRD",
+   "home": "https://songkhla.prd.go.th/",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "The Debrief",
-   "home": "https://thedebrief.org/"
+   "cc": "th",
+   "outlet": "BenarNews Thai",
+   "home": "https://www.benarnews.org/thai",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "The Black Vault",
-   "home": "https://www.theblackvault.com/"
+   "cc": "th",
+   "outlet": "Channel 3",
+   "home": "https://ch3plus.com/news",
+   "hrefs": true
   },
   {
-   "cc": "xx",
-   "outlet": "Liberation Times",
-   "home": "https://www.liberationtimes.com/"
-  },
-  {
-   "cc": "xx",
-   "outlet": "SubTel Forum",
-   "home": "https://subtelforum.com/"
-  },
-  {
-   "cc": "xx",
-   "outlet": "Submarine Networks",
-   "home": "https://www.submarinenetworks.com/"
-  },
-  {
-   "cc": "xx",
-   "outlet": "Mining.com",
-   "home": "https://www.mining.com/"
-  },
-  {
-   "cc": "xx",
-   "outlet": "Mongolian Mining Journal",
-   "home": "https://www.mongolianminingjournal.com/"
+   "cc": "th",
+   "outlet": "Thai Post",
+   "home": "https://www.thaipost.net/",
+   "hrefs": true
   }
  ]
 }
