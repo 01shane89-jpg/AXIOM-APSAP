@@ -76,5 +76,7 @@ export function validate(w) {
   const plan = w.plan === "mid" ? "mid" : "full";
   // the morning brief (tools/push_brief.mjs): the phone's time zone, and brief: false when the watch is left out of it
   const tz = tzOk(w.tz) ? w.tz : undefined, brief = w.brief === false ? false : undefined;
-  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic, plan, ...(tz ? { tz } : {}), ...(brief === false ? { brief } : {}) } };
+  // flash only: send only serious events carried by an official source or two or more sources (tools/flash_lib.mjs)
+  const flash = w.flash === true || w.flash === 1;
+  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic, plan, ...(tz ? { tz } : {}), ...(brief === false ? { brief } : {}), ...(flash ? { flash: true } : {}) } };
 }
