@@ -23,7 +23,7 @@ const C = [{ id: "ph", name: "Philippines" }, { id: "cn", name: "China" }, { id:
 assert.deepEqual(countriesNamed(C, "China and the Philippines trade accusations"), ["cn", "ph"]);
 assert.deepEqual(countriesNamed(C, "Floods in Nigeria"), ["ng"]);             // "Niger" is not found inside "Nigeria"
 
-// the shipped config: valid ids, unique, every set has words, at most 4 searches each
+// the shipped config: valid ids, unique, every set has words, at most 4 searches each, well-formed feeds
 const cfg = JSON.parse(fs.readFileSync(new URL("../tools/topics.json", import.meta.url), "utf8"));
 const ids = cfg.topics.map((t) => t.id);
 assert.equal(new Set(ids).size, ids.length, "duplicate data-set id");
@@ -31,6 +31,8 @@ for (const t of cfg.topics) {
   assert.match(t.id, /^[a-z0-9-]+$/, t.id);
   assert.ok(t.name && t.words.length, t.id + " needs a name and words");
   assert.ok(!t.searches || t.searches.length <= 4, t.id + " has more than 4 searches");
+  // specialist feeds are read directly and kept in the sold version: a name, an https address, never a search engine
+  for (const f of t.feeds || []) assert.ok(f.name && /^https:\/\//.test(f.url) && !/bing\.com|news\.google\./.test(f.url), t.id + " has a bad feed " + JSON.stringify(f));
 }
 assert.equal(compileTopics(cfg.topics).length, cfg.topics.length);
 
