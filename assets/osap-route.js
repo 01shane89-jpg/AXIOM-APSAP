@@ -300,7 +300,7 @@ function main() {
       '<div class="sec rtsec"><details id="rt-dirbox"><summary>Turn-by-turn directions</summary><div id="rt-dir"></div></details></div>' +
       '<div class="sec rtsec"><h2>Save and share</h2><div class="rtbtns">' +
       '<button type="button" data-rt="gpx">GPX</button><button type="button" data-rt="kml">KML</button><button type="button" data-rt="geojson">GeoJSON</button>' + (W.OSAP_TAK ? '<button type="button" data-rt="tak" title="' + E(W.OSAP_TAK.tip) + '">TAK package</button>' : "") +
-      '<button type="button" data-rt="print">Print</button><button type="button" data-rt="link">Copy link</button><button type="button" data-rt="text">Copy as text</button>' +
+      '<button type="button" data-rt="print">Export PDF</button><button type="button" data-rt="link">Copy link</button><button type="button" data-rt="text">Copy as text</button>' +
       '<button type="button" data-rt="import">Import GPX/KML</button><input type="file" id="rt-file" accept=".gpx,.kml,.geojson,.json,application/gpx+xml,application/vnd.google-earth.kml+xml,application/geo+json" hidden></div>' +
       '<form id="rt-saveform" class="rtfind"><input type="text" id="rt-name" maxlength="60" placeholder="Name this route" aria-label="Route name"><button type="submit">Save</button></form>' +
       '<p class="obs" id="rt-msg" role="status"></p><div id="rt-saved"></div>' +
@@ -1237,7 +1237,7 @@ function main() {
       '<p class="obs">SP, CP and RP are control points spaced evenly along the line for reporting progress. BX is a border crossing mapped in OpenStreetMap, WX a water crossing on a cross-country line, CHK a checkpoint and INC an incident reported within 1 km of the line.</p>' +
       '<p class="obs"><b>Safety weighting is an estimate from open reporting.</b> It counts what OSAP holds within ' + EV_R / 1000 + " km of each line from the last " + ev.days + " days (this country's reports, UCDP conflict events, road closures, disaster alerts and storms), weighted by kind (conflict events and violent reports 3, closures and disasters 2, other reports 1) and fading with age. " +
       ev.n + " lines to " + ev.nCand + " nearest points were weighed. It is not a threat assessment: no reports is not the same as safe, and roads, posts and crossings change. Confirm with the post and on the ground.</p>" +
-      '<div class="rtbtns"><button type="button" data-rt="evsave" class="rtgo">Keep for offline use</button><button type="button" data-rt="preview">Preview route</button><button type="button" data-rt="print">Print</button></div>' + '<div id="rt-evsaved"></div>';
+      '<div class="rtbtns"><button type="button" data-rt="evsave" class="rtgo">Keep for offline use</button><button type="button" data-rt="preview">Preview route</button><button type="button" data-rt="print">Export PDF</button></div>' + '<div id="rt-evsaved"></div>';
     evSavedUi();
   }
   function evAll() { var a = lsGet(EV_KEY, []); return Array.isArray(a) ? a.filter(function (x) { return x && x.id && x.route && Array.isArray(x.route.coords); }) : []; }
@@ -1664,8 +1664,7 @@ function main() {
       (S.srch && !S.srch.stale ? "<h2>Along the route within " + S.srch.buf + " km</h2>" + grab("rt-brief") + grab("rt-rx") + grab("rt-brep") : "") +
       "<h2>Light</h2>" + grab("rt-sun") + "<h2>Weather</h2>" + grab("rt-wx") + "<h2>Hazards within " + S.buf + " km</h2>" + grab("rt-haz") + "<h2>Directions</h2>" + grab("rt-dir");
     D.documentElement.classList.add("rtprinting");
-    var done = function () { D.documentElement.classList.remove("rtprinting"); W.removeEventListener("afterprint", done); };
-    W.addEventListener("afterprint", done); W.print(); setTimeout(done, 60000);
+    W.OSAP_PDF.print({ title: "Route plan: " + routeName(), root: pr }).then(function () { D.documentElement.classList.remove("rtprinting"); });
   }
   function savedAll() { var a = lsGet(SKEY, []); return Array.isArray(a) ? a.filter(function (x) { return x && x.id && Array.isArray(x.wps); }) : []; }
   function saveRoute(name) {

@@ -473,8 +473,8 @@
       "#seatr #st-castext{width:100%;box-sizing:border-box;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;margin-top:6px}#seatr .stnow{margin:6px 0}" +
       ".stmk.now{background:#0a7d32}.stmk.wp{background:#111}.stmk.hosp{background:#D7141A}.stmk.af{background:#1d5fa8}.stmk.osmh{background:#8a8f96}" +
       "html.seatr-picking .leaflet-container{cursor:crosshair}" +
-      ".stdoc h2{font-size:17px}.stdoc h3{font-size:13px;margin:12px 0 4px;break-after:avoid}.stdoc table{border-collapse:collapse;width:100%;font-size:10.5px}.stdoc th,.stdoc td{border-bottom:1px solid #ccd;padding:2px 4px;text-align:left;vertical-align:top}" +
-      ".stdoc td.n{text-align:right;white-space:nowrap}.stdoc tr{break-inside:avoid}.stdoc .obs{color:#56626f}.stdoc svg{width:100%;height:auto;border:1px solid #ccd;background:#dfe9f3}.stdoc figure{margin:6px 0;break-inside:avoid}" +
+      ".stdoc h2{font-size:17px}.stdoc h3{font-size:13px;margin:12px 0 4px;break-after:avoid}.stdoc table{border-collapse:collapse;width:100%;font-size:10.5px}.stdoc th,.stdoc td{border-bottom:1px solid #ccd;padding:2px 4px;text-align:left;vertical-align:top;white-space:normal}" +
+      ".bpage.stdoc td:first-child{white-space:normal}.stdoc td.n{text-align:right;white-space:nowrap}.stdoc td.n .obs{white-space:normal;display:inline-block;max-width:30mm;text-align:right}.stdoc tr{break-inside:avoid}.stdoc .obs{color:#56626f}.stdoc svg{width:100%;height:auto;border:1px solid #ccd;background:#dfe9f3}.stdoc figure{margin:6px 0;break-inside:avoid}" +
       ".stdoc .stsign p{margin:14px 0}.stdoc .stbad{color:#b02a1e;font-weight:600}" +
       "@media (max-width:700px){#seatr .stwp input{width:110px}}";
     D.head.appendChild(s);
@@ -517,7 +517,7 @@
   function render() {
     var el = box(), res = S.res;
     var head = '<div class="chead"><h2>Sea transit medical assessment</h2><span class="aitag" tabindex="0" title="Draft worked out by fixed rules from open data on this device. Not AI and not analyst-approved. Distances are spatial separation only: no point is ever called covered.">Automatic draft</span>' +
-      '<button type="button" data-st="print"' + (res ? "" : " disabled") + ">Print assessment</button><button type=\"button\" data-st=\"close\">Close</button></div>";
+      '<button type="button" data-st="print"' + (res ? "" : " disabled") + ">Assessment (PDF)</button><button type=\"button\" data-st=\"close\">Close</button></div>";
     var route = '<h3>1. Transit corridor</h3>' + wpHtml() +
       '<div class="stbtns"><button type="button" data-st="pick"' + (S.picking ? ' aria-pressed="true"' : "") + ">" + (S.picking ? "Done picking" : "Pick on map") + '</button><button type="button" data-st="example">Example: Manila to Colombo</button>' + (P.wps.length ? '<button type="button" data-st="reverse">Reverse</button><button type="button" data-st="clear">Clear</button>' : "") + "</div>" +
       '<form id="st-add" class="stbtns" autocomplete="off"><input id="st-grid" maxlength="60" placeholder="Add a waypoint: lat, lon or MGRS" aria-label="Add a waypoint by grid"><input id="st-name" maxlength="40" placeholder="Name (optional)" aria-label="Waypoint name"><button type="submit">Add</button></form>' +
@@ -792,7 +792,7 @@
   function printView() {
     var res = S.res, el = D.getElementById("brief"); if (!res || !el) return false;
     var f = P.f || {};
-    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="std-print">Print or save PDF</button> <button type="button" class="refresh" id="std-close">Back</button> <span class="obs">Every page as it prints. Choose "Save as PDF" in the print dialog to keep a copy.</span></div>' +
+    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="std-print">Export PDF</button> <button type="button" class="refresh" id="std-close">Back</button> <span class="obs">Every page as it prints. Choose "Save as PDF" in the print dialog to keep a copy.</span></div>' +
       '<article class="bpage stdoc"><header><h2>Sea transit medical support assessment</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<p class="obs">' + E(P.wps[0].n || "Start") + " to " + E(P.wps[P.wps.length - 1].n || "End") + " · worked out " + E(dual(res.at)) + "</p></header>" +
       "<p><b>Plan status:</b> " + E(stName(stNow().s)) + (stNow().t ? " since " + E(zulu(stNow().t)) : "") + (lastFix() ? " · last logged position " + E(ll(lastFix().lat, lastFix().lon)) + " at " + E(zulu(lastFix().t)) : "") + "</p>" +
@@ -807,7 +807,7 @@
       '<div class="stsign"><p>Master review: ____________________ Date: __________</p><p>Medical authority review: ____________________ Date: __________</p><p>Company authorisation: ____________________ Date: __________</p></div>' +
       "</article>";
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
-    D.getElementById("std-print").addEventListener("click", function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); });
+    D.getElementById("std-print").addEventListener("click", function () { var h = el.querySelector("h2,h1"); W.OSAP_PDF.print({ title: h ? h.textContent : "Sea transit medical assessment", root: el }); });
     D.getElementById("std-close").addEventListener("click", function () { el.hidden = true; el.innerHTML = ""; D.documentElement.classList.remove("briefing"); var b = D.querySelector('#seatr [data-st="print"]'); if (b) b.focus(); });
     return true;
   }

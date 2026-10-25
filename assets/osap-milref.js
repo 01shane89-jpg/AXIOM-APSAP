@@ -317,7 +317,7 @@
   var CSS = ".mrtag{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid currentColor;border-radius:9px;padding:0 6px;line-height:16px;color:#12324a}" +
     ".mrnc{color:#8a4b00}.mrtree details>summary{cursor:pointer;list-style-position:inside}.mrtree details>summary::marker{color:#12324a}.mrg a{font-weight:600}.bmilref .mrun td{word-break:break-word}.bmilref .mrsip td div.bm{margin-top:1px}.mrfp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;color:#777;cursor:help}" +
     ".bmilref h4{font-size:11px;margin:6px 0 2px;color:#12324a}.mrtree .mru{border-bottom:1px solid #eee;padding-top:1px;padding-bottom:1px;overflow-wrap:anywhere}" +
-    ".bpage.bmilref td{white-space:normal;overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
+    ".bpage.bmilref td,.bpage.bmilref td:first-child{white-space:normal;overflow-wrap:anywhere}.mrout summary{cursor:pointer;color:#12324a;margin:4px 0}" +
     /* a phone: each table row becomes one wrapped line (the column headings drop), so nothing squeezes or scrolls sideways */
     "@media screen and (max-width:640px){.bmilref table,.bmilref tbody,.bmilref tr,.bmilref td{display:block;width:auto!important}.bmilref tr:first-child{display:none}" +
     ".bmilref tr{border-bottom:1px solid #ddd;padding:3px 0}.bpage.bmilref td{display:inline;border:0;padding:0 6px 0 0}.bpage.bmilref .mg{white-space:normal}.bpage.bmilref,.bpage.bmilref *{overflow-wrap:anywhere;min-width:0}}" +

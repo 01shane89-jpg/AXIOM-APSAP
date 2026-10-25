@@ -777,10 +777,10 @@
     var sc = scopeOf(o.scope);
     function opt(x) { return '<option value="' + esc(x.v) + '"' + (x.v === o.scope ? " selected" : "") + ">" + esc(x.label) + "</option>"; }
     var layerOpts = scopes(o, true).map(opt).join("");
-    var bar = '<div class="bbar noprint tlrbar"><button type="button" class="refresh primary" id="tlr-print">Print</button> <button type="button" class="refresh" id="tlr-close">Close</button> ' +
+    var bar = '<div class="bbar noprint tlrbar"><button type="button" class="refresh primary" id="tlr-print">Export PDF</button> <button type="button" class="refresh" id="tlr-close">Close</button> ' +
       '<label for="tlr-layer">Covers</label> <select id="tlr-layer" class="mini">' + layerOpts + "</select> " +
       '<label for="tlr-from">From</label> <input id="tlr-from" class="mini" type="date" value="' + esc(o.from || "") + '"> <label for="tlr-to">To</label> <input id="tlr-to" class="mini" type="date" value="' + esc(o.to || "") + '">' +
-      ' <span class="obs">Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>';
+      ' <span class="obs">Export PDF opens the print dialog: choose "Save as PDF" and A4 or Letter.</span></div>';
     var subject = esc(cname()) + (o.scope === "ev" ? ": event report" : sc.label ? ": " + esc(sc.label) : "") +
       (o.scope === "ev" ? '<div class="tlrsubt" style="font-size:14px;margin-top:3px">' + esc(sc.label.length > 140 ? sc.label.slice(0, 137) + "…" : sc.label) + "</div>" : "");
     var head = '<header class="tlrh"><img src="' + esc(logoSrc()) + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Timeline report</div><h2>' + subject + "</h2>" +
@@ -859,7 +859,10 @@
     document.getElementById("tlr-close").addEventListener("click", close);
     document.getElementById("tlr-print").addEventListener("click", function () {
       /* print once every fingerprint is on the page */
-      Promise.all(fpJobs).catch(function () {}).then(function () { setTimeout(function () { try { window.print(); } catch (e) {} }, 60); });
+      Promise.all(fpJobs).catch(function () {}).then(function () {
+        var k = el.querySelector(".tlrk"), h = el.querySelector(".tlrh h2");
+        window.OSAP_PDF.print({ title: (k ? k.textContent.replace(/^AXIOM OSAP\s*·\s*/, "") + ": " : "") + (h ? h.textContent : ""), root: el });
+      });
     });
     ["tlr-layer", "tlr-from", "tlr-to"].forEach(function (id) {
       document.getElementById(id).addEventListener("change", function () {

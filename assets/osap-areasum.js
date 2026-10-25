@@ -244,7 +244,7 @@
     LAST = { g: g, refs: refs, at: Date.now() };
     var km2 = spec ? 0 : areaKm2(g.P);
     box.hidden = false;
-    box.innerHTML = '<div class="pkghead"><h2>' + esc(spec ? spec.title || "Summary" : "Area summary") + '</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+    box.innerHTML = '<div class="pkghead"><h2>' + esc(spec ? spec.title || "Summary" : "Area summary") + '</h2><button type="button" class="refresh" data-as-pdf="1" title="This summary with its numbered sources, as a PDF">Export PDF</button><button type="button" class="x" aria-label="Close">×</button></div>' +
       '<div class="asum">' +
       '<p class="obs">' + (spec ? esc(spec.sub || "") : "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km²") + " · " + esc(g.period) + " · written " + esc(T().dualT(LAST.at)) + "</p>" +
       (!spec && window.OSAP_AREAREPORT ? '<p><button type="button" class="refresh" data-as-report="1" title="Printable report on this area with an overview map and a map per section">Full report with maps</button></p>' : "") +
@@ -270,6 +270,7 @@
     var r = e.target.closest && e.target.closest("[data-asref]");
     if (r) { e.preventDefault(); var li = e.currentTarget.querySelector("#asref-" + r.getAttribute("data-asref")); if (li) { li.scrollIntoView({ behavior: "smooth", block: "center" }); li.classList.add("hl"); setTimeout(function () { li.classList.remove("hl"); }, 1600); } return; }
     if (e.target.closest && e.target.closest("[data-as-report]")) { window.OSAP_AREAREPORT.open(); return; }
+    if (e.target.closest && e.target.closest("[data-as-pdf]")) { var bx = e.currentTarget, h = bx.querySelector(".pkghead h2"), a = bx.querySelector(".asum"); if (a) window.OSAP_PDF.panel(a, { title: h ? h.textContent : "Summary" }); return; }
     var go = e.target.closest && e.target.closest("[data-as-ai]");
     if (go) { runAi(e.currentTarget, go); return; }
     if (e.target.closest && e.target.closest("[data-as-aiset]") && window.OSAP_AI) window.OSAP_AI.open();

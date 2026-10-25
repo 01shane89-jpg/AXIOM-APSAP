@@ -344,9 +344,7 @@
             "<td>" + esc(claimStatus(r)) + (gradeCode(WORK.items[keyOf(r)]) ? '<div class="wkps">Analyst grade ' + esc(gradeCode(WORK.items[keyOf(r)])) + "</div>" : "") + "</td><td>" + esc(r.src ? r.src.name : "") + (u ? '<div class="wkps">' + esc(u) + "</div>" : "") + '<div class="wkps wkfp">' + esc(fps[i] || "") + "</div></td></tr>";
         }).join("") + "</table></div>";
       document.documentElement.classList.add("wk-printing");
-      var done = function () { document.documentElement.classList.remove("wk-printing"); window.removeEventListener("afterprint", done); };
-      window.addEventListener("afterprint", done);
-      setTimeout(function () { window.print(); setTimeout(done, 1500); }, 60);
+      window.OSAP_PDF.print({ title: (el.querySelector("h1") || {}).textContent || "Situation report", root: el }).then(function () { document.documentElement.classList.remove("wk-printing"); });
     });
   }
 
@@ -527,7 +525,7 @@
       '<button type="button" data-wk-scope="all" aria-pressed="' + (sc === "all") + '">All reports</button></span>' +
       (A ? '<label class="wkchk"><input type="checkbox" data-wk-uarea' + (ua ? " checked" : "") + "> Only the drawn area</label>" : "") + "</div>" +
       '<p class="obs"><b>' + S.list.length + "</b> items · period: " + esc(PR.label) + (ua ? " · inside the drawn area" : A ? "" : " · no drawn area") + (S.note ? "<br>" + esc(S.note) : "") + "</p>" +
-      '<p class="wkbtns"><button type="button" class="refresh primary" data-wk-exp="sitrep">Situation report (print or PDF)</button>' +
+      '<p class="wkbtns"><button type="button" class="refresh primary" data-wk-exp="sitrep">Situation report (PDF)</button>' +
       '<button type="button" class="refresh" data-wk-exp="kml">KML</button><button type="button" class="refresh" data-wk-exp="geojson">GeoJSON</button><button type="button" class="refresh" data-wk-exp="csv">CSV</button>' +
       (window.OSAP_TAK ? '<button type="button" class="refresh" data-wk-exp="tak" title="' + esc(window.OSAP_TAK.tip) + '">TAK package</button>' : "") + "</p>" +
       '<p class="obs">KML and the TAK package (ATAK, WinTAK) hold only items with a map location. The situation report lists the newest 300; CSV and GeoJSON hold every item. To save a PDF, choose "Save as PDF" in the print dialog. Your grades go in the analyst_grade columns.</p>';
