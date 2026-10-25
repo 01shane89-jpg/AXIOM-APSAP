@@ -5005,8 +5005,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         .filter(function (x) { var s = exStatus(x); return s !== "completed"; }).slice(0, lim.ex);
       ex = list("Military exercises, current and upcoming", xs, function (x) { return "<tr><td>" + esc(x.start ? x.start.slice(5) + (x.end && x.end !== x.start ? " to " + x.end.slice(5) : "") : "Dates TBC") + '</td><td class="w">' + bl(x.src, esc(exName(x))) + '<span class="bm"> · ' + (x.us_participation ? "U.S. taking part" : "no U.S. role stated") + "</span></td></tr>"; }, "btwo");
     }
-    return '<div class="bbar noprint"><button type="button" class="refresh primary" id="brief-print">Print</button> <button type="button" class="refresh" id="brief-close">Close</button>' +
-      ' <a class="refresh" href="#report" onclick="document.getElementById(\'report\').scrollIntoView();return false">Country report</a> <span class="obs">The brief fits one page on A4 or Letter; the country report prints after it on its own pages. Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>' +
+    return '<div class="bbar noprint"><button type="button" class="refresh primary" id="brief-print">Export PDF</button> <button type="button" class="refresh" id="brief-close">Close</button>' +
+      ' <a class="refresh" href="#report" onclick="document.getElementById(\'report\').scrollIntoView();return false">Country report</a> <span class="obs">The brief fits one page on A4 or Letter; the country report prints after it on its own pages. Export PDF opens the print dialog: choose "Save as PDF" and A4 or Letter.</span></div>' +
       '<article class="bpage"><header><div><b>AXIOM OSAP</b> · Country brief</div><h2>' + esc(C.name) + "</h2><div>Compiled " + esc(z) + " from public sources held in the app</div></header>" +
       '<p class="bwarn">Every item is a report or reference entry, not a finding. None has been confirmed by an analyst. Check locations and facilities before relying on them.</p>' +
       (a ? "<h3>" + bl(a.src || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", "U.S. travel advisory: Level " + esc(String(a.level)) + ", " + esc(a.level_text || "")) + '</h3><p class="bm">State Department claim, issued ' + esc(a.issued || "") + (a.updated ? ", updated " + esc(a.updated) : "") +
@@ -5017,7 +5017,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<div class="bcols"><div>' + fac + "</div><div>" + rec + ex + "</div></div>" +
       '<footer>Grid references are MGRS on WGS84: 1 m where the source gives an exact point, 1 km where the place is approximate. Every record in the app links to its source and carries a SHA-256 fingerprint. ' +
       "Sun and moon times are computed, accurate to a minute or two. Headings and items link to their sources.</footer>" +
-      (SRCS.length ? '<div class="po bsrcs"><b>Sources.</b> ' + SRCS.map(function (u, i) { return (i + 1) + " " + esc(u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "").slice(0, 70)); }).join(" · ") + "</div>" : "") + "</article>";
+      (SRCS.length ? '<div class="po bsrcs"><b>Sources.</b> ' + SRCS.map(function (u, i) { var t = esc(u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "").slice(0, 70)); return (i + 1) + " " + (/^https?:\/\//.test(u) ? '<a href="' + esc(u) + '">' + t + "</a>" : t); }).join(" · ") + "</div>" : "") + "</article>";
   }
   /* fit one printed page: lay the brief out at printable width (A4 and Letter both fit 186 x 250 mm) and trim the longest lists until it fits */
   function fitBrief() {
@@ -5092,7 +5092,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     /* open military reference (assets/osap-milref.js): forces, equipment and installations as source claims, its own page */
     if (window.OSAP_MILREF) window.OSAP_MILREF.intoBrief(briefEl, CC, C.name);
     document.getElementById("brief-close").addEventListener("click", closeBrief);
-    document.getElementById("brief-print").addEventListener("click", function () { try { window.print(); } catch (e) {} });
+    document.getElementById("brief-print").addEventListener("click", function () { window.OSAP_PDF.print({ title: C.name + ": country brief" + (document.getElementById("report") ? " and country report" : ""), root: briefEl }); });
     if (toReport) { var r = document.getElementById("report"); if (r) r.scrollIntoView(); } else briefEl.scrollTop = 0;
   }
   function closeBrief() { briefEl.hidden = true; briefEl.innerHTML = ""; document.documentElement.classList.remove("briefing"); }
@@ -9133,6 +9133,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
 <!-- source grading (Admiralty / NATO A-F, 1-6) for My work; before osap-work.js, which reads it on load (assets/osap-grade.js) -->
 <script src="assets/osap-grade.js"></script>
+<script src="assets/osap-pdf.js"></script>
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>

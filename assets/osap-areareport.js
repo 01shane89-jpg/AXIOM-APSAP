@@ -292,10 +292,10 @@
     var pseg = D.getElementById("period-seg"), cur = pseg && pseg.querySelector("button.on,button[aria-pressed=\"true\"]");
     var popt = [["24h", "Last 24 hours"], ["7", "Last 7 days"], ["14", "Last 14 days"], ["30", "Last 30 days"], ["90", "Last 90 days"], ["all", "All dates"]].map(function (p) {
       return '<option value="' + p[0] + '"' + (cur && cur.getAttribute("data-p") === p[0] ? " selected" : "") + ">" + p[1] + "</option>"; }).join("");
-    var bar = '<div class="bbar noprint tlrbar arpbar"><button type="button" class="refresh primary" id="arp-print">Print</button> <button type="button" class="refresh" id="arp-close">Close</button> ' +
+    var bar = '<div class="bbar noprint tlrbar arpbar"><button type="button" class="refresh primary" id="arp-print">Export PDF</button> <button type="button" class="refresh" id="arp-close">Close</button> ' +
       '<label for="arp-period">Period</label> <select id="arp-period" class="mini">' + (cur && cur.getAttribute("data-p") === "custom" ? '<option value="" selected>' + esc(c.g.period) + "</option>" : "") + popt + "</select> " +
       '<label for="arp-base">Map</label> <select id="arp-base" class="mini">' + bopt + "</select>" +
-      ' <span class="obs">Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>';
+      ' <span class="obs">Export PDF opens the print dialog: choose "Save as PDF" and A4 or Letter.</span></div>';
     var head = '<header class="tlrh"><img src="' + esc(logoSrc()) + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Area report</div><h2>Activity in the drawn area</h2>' +
       '<div class="tlrsubt">' + esc(A0.ccName ? A0.ccName() : "") + " · about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km² · centre " + esc(grid(cen[0], cen[1])) + " · " + esc(c.g.period) + "</div></div>" +
       '<div class="tlrg">Generated <br><b>' + esc(T().dualT(now, { date: true })) + "</b></div></header><div class=\"tlrrule\"></div>";
@@ -389,7 +389,7 @@
       var imgs = Array.prototype.slice.call(el.querySelectorAll("img.arpt"));
       var tiles = Promise.all(imgs.map(function (im) { return im.complete ? 0 : new Promise(function (r) { im.addEventListener("load", r); im.addEventListener("error", r); }); }));
       Promise.race([Promise.all([Promise.all(fpJobs).catch(function () {}), tiles]), new Promise(function (r) { setTimeout(r, 6000); })])
-        .then(function () { setTimeout(function () { try { W.print(); } catch (x) {} }, 80); });
+        .then(function () { W.OSAP_PDF.print({ title: "Area report: activity in the drawn area", root: el }); });
     }
   }
   function onChange(e) {

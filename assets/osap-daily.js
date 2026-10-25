@@ -144,7 +144,7 @@
     h += '<div class="dlfoot"><span>From ' + (b.reports || 0) + " report" + (b.reports === 1 ? "" : "s") + " by " + (b.outlets || 0) + " outlet" + (b.outlets === 1 ? "" : "s") +
       "; sport, celebrity and lifestyle left out. Reports are the sources' claims, not verified." + ((d.gaps || []).length ? " " + esc(d.gaps.join(" ")) : "") + "</span>" +
       (all.days.length > 1 ? '<label>Day <select data-dlday aria-label="Summary day">' + all.days.map(function (x, i) { return '<option value="' + i + '"' + (i === sel ? " selected" : "") + ">" + esc(x.date) + (i === 0 ? " (latest)" : "") + "</option>"; }).join("") + "</select></label>" : "") +
-      '<button type="button" class="refresh" data-dlprint>Print</button></div>';
+      '<button type="button" class="refresh" data-dlprint>Export PDF</button></div>';
     el.innerHTML = h;
   }
   function printIt() {
@@ -163,9 +163,7 @@
       '<p class="pm">From ' + (b.reports || 0) + " reports by " + (b.outlets || 0) + " outlets. Situational awareness only: reports are the sources' claims and are not verified; statements by any government, including figures, are its claims. " +
       ((d.gaps || []).length ? "Gaps: " + esc(d.gaps.join(" ")) + " " : "") + "SHA-256 " + esc(d.fp || "") + "</p>";
     D.documentElement.classList.add("dlprinting");
-    var done = function () { D.documentElement.classList.remove("dlprinting"); W.removeEventListener("afterprint", done); };
-    W.addEventListener("afterprint", done);
-    setTimeout(function () { W.print(); setTimeout(done, 1000); }, 50);
+    W.OSAP_PDF.print({ title: d.name + ": daily summary", root: p, ai: ai || !!(d.ai_watch || []).length }).then(function () { D.documentElement.classList.remove("dlprinting"); });
   }
   function load() {
     if (state) return; state = 1;

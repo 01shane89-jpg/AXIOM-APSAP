@@ -598,8 +598,8 @@
     var period = d.period + (recs.length < d.total ? " (latest " + recs.length + " of " + d.total + " records)" : "");
     var gen = T().dualT(now, { date: true });
 
-    var html = '<div class="bbar noprint tlrbar"><button type="button" class="refresh primary" id="osir-print">Print</button> <button type="button" class="refresh" id="osir-back">Change choices</button> ' +
-      '<button type="button" class="refresh" id="osir-close">Close</button> <button type="button" class="refresh" id="osir-addc" title="Keep this report as a part and add another country\'s part to it">Add another country</button> <span class="obs">Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>' +
+    var html = '<div class="bbar noprint tlrbar"><button type="button" class="refresh primary" id="osir-print">Export PDF</button> <button type="button" class="refresh" id="osir-back">Change choices</button> ' +
+      '<button type="button" class="refresh" id="osir-close">Close</button> <button type="button" class="refresh" id="osir-addc" title="Keep this report as a part and add another country\'s part to it">Add another country</button> <span class="obs">Export PDF opens the print dialog: choose "Save as PDF" and A4 or Letter.</span></div>' +
       '<article class="bpage tlr osir" data-osir="' + esc(no) + '"><div class="osban">UNCLASSIFIED // OPEN SOURCE</div>' +
       '<header class="tlrh"><img src="' + esc((D.querySelector(".brand .logo") || {}).src || "assets/logo.png") + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Open Source Intelligence Report</div><h2>OSIR</h2>' +
       '<div class="tlrsubt">' + esc(no) + "</div></div></header><div class=\"tlrrule\"></div>" +
@@ -670,14 +670,12 @@
       });
     });
   }
-  /* print once every fingerprint is on the page; the document title becomes the file name Save as PDF offers */
+  /* export once every fingerprint is on the page; the report number becomes the file name Save as PDF offers */
   function printIt() {
     var a = EL && EL.querySelector(".osir"); if (!a) return;
     Promise.all(fpJobs).catch(function () {}).then(function () {
-      title0 = D.title; D.title = a.getAttribute("data-osir");
-      var back = function () { D.title = title0; W.removeEventListener("afterprint", back); };
-      W.addEventListener("afterprint", back);
-      setTimeout(function () { try { W.print(); } catch (e) {} setTimeout(back, 3000); }, 60);
+      var no = a.getAttribute("data-osir"), s = a.querySelector('[data-osf="subject"]');
+      W.OSAP_PDF.print({ title: "OSIR " + no + (s ? ": " + s.textContent : ""), file: no, root: EL, footer: no + " · UNCLASSIFIED // OPEN SOURCE" });
     });
   }
   function closeReport() { var st = D.getElementById("osir-page"); if (st) st.remove(); if (!EL) return; EL.hidden = true; EL.innerHTML = ""; D.documentElement.classList.remove("briefing"); }

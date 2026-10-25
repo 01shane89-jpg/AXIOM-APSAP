@@ -842,7 +842,13 @@
     else if (t.hasAttribute("data-wxbrief")) openBrief();
     else if (t.hasAttribute("data-wxreport")) openReport();
     else if (t.hasAttribute("data-wxchart")) openChart();
-    else if (t.getAttribute("data-wxb") === "print") window.print();
+    else if (t.getAttribute("data-wxb") === "print") {
+      /* the page's own heading names it; the 5-day chart prints landscape with narrow margins (chartPageStyle) */
+      var pg = document.querySelector("#brief #wxc-page,#brief #wxr-page,#brief #wxb-page");
+      var chart = !!(pg && pg.id === "wxc-page"), nm = pg && pg.querySelector("h2");
+      window.OSAP_PDF.print({ title: (chart ? "5-day weather chart" : pg && pg.id === "wxr-page" ? "Detailed weather report" : "Weather brief") + (nm ? ": " + nm.textContent : ""),
+        root: document.getElementById("brief"), landscape: chart, margin: chart ? "9mm 7mm" : undefined });
+    }
     else if (t.getAttribute("data-wxb") === "close") closeBrief();
   });
   document.addEventListener("change", function (e) {
@@ -869,9 +875,9 @@
     var SRC = [];
     function src(url) { var n = SRC.indexOf(url); if (n < 0) { SRC.push(url); n = SRC.length - 1; } return '<sup class="po">' + (n + 1) + "</sup>"; }
     function bl(url, html) { return url ? '<a class="bl" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + html + "</a>" + src(url) : html; }
-    var o = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Print</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
+    var o = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Export PDF</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
       Object.keys(PERIODS).map(function (k) { return '<button type="button" class="refresh' + (k === ST.per ? " primary" : "") + '" data-wxper="' + k + '">' + PERIODS[k].name + "</button>"; }).join(" ") +
-      ' <span class="obs">One page on A4 or Letter. Use the print dialog&rsquo;s &ldquo;Save as PDF&rdquo; to keep a copy.</span></div>';
+      ' <span class="obs">One page on A4 or Letter. Export PDF opens the print dialog: choose &ldquo;Save as PDF&rdquo;.</span></div>';
     o += '<article class="bpage wxbp" id="wxb-page"><header><div><b>AXIOM OSAP</b> · Weather brief · ' + esc(P.name) + "</div><h2>" + esc(R.name) + "</h2><div>Valid " + esc(zt(t0, tz, true)) + " to " + esc(zt(t1, tz, true)) +
       ". Compiled " + esc(zt(now, tz, true)) + ". Reference point " + esc(ref.name) + " " + esc(mgrs(ref.lat, ref.lon) || ll(ref.lat, ref.lon)) + ".</div></header>";
     o += '<p class="bwarn">Model forecast (Open-Meteo), not an official forecast and not observed. Official warnings below take precedence. Impact colours use generic planning thresholds, not doctrine. Not analyst-approved.</p>';
@@ -1077,8 +1083,8 @@
         (n === 1 ? "<h2>" + esc(R.name) + "</h2><div>Compiled " + esc(zt(now, tz, true)) + ". Reference point " + esc(ref.name) + " " + esc(mgrs(ref.lat, ref.lon) || ll(ref.lat, ref.lon)) +
           ". Times Zulu / local (" + esc(tz) + ", " + esc(offLbl(D)) + ").</div>" : "<h2>" + esc(title) + "</h2><div>" + esc(R.name) + "</div>") + "</header>" + body + "</article>";
     }
-    var o = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Print</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
-      '<button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <span class="obs">Four pages on A4 or Letter. Use the print dialog&rsquo;s &ldquo;Save as PDF&rdquo; to keep a copy.</span></div>';
+    var o = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Export PDF</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
+      '<button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <span class="obs">Four pages on A4 or Letter. Export PDF opens the print dialog: choose &ldquo;Save as PDF&rdquo;.</span></div>';
 
     /* page 1: summary, warnings, meteogram, 72 h impacts */
     var hz = [];
@@ -1358,9 +1364,9 @@
     H.forEach(function (h) { h.v = half(D, h.t0, h.t1); });
     var rn = rwyNum(), T0 = days[0].t0, T1 = days[days.length - 1].t1;
     function row(label, f, cls) { return '<tr class="' + (cls || "") + '"><th>' + label + "</th>" + H.map(function (h) { return '<td class="' + (h.n ? "h1" : "h0") + '">' + (h.v ? f(h.v, h) : "–") + "</td>"; }).join("") + "</tr>"; }
-    var bar = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Print</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
+    var bar = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Export PDF</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
       '<label class="obs">Crosswind runway <select data-wxrwy="1">' + Array.apply(null, Array(18)).map(function (_, k) { var n = k + 1; return '<option value="' + n + '"' + ((rn - 1) % 18 + 1 === n ? " selected" : "") + ">" + rwyName(n) + "</option>"; }).join("") + "</select></label>" +
-      ' <span class="obs">One landscape page. Use the print dialog&rsquo;s &ldquo;Save as PDF&rdquo; to keep a copy.</span></div>';
+      ' <span class="obs">One landscape page. Export PDF opens the print dialog: choose &ldquo;Save as PDF&rdquo;.</span></div>';
     var avc = ST.av && ST.av.list && ST.av.list.length ? ST.av.list[0] : null;
     var o = bar + '<article class="bpage wxcp' + (avc ? " wxcpav" : "") + '" id="wxc-page"><div class="wxcban">OPEN-SOURCE MODEL FORECAST · PLANNING USE ONLY · NOT AN OFFICIAL FORECAST</div>' +
       "<h2>" + esc(String(ref.name).toUpperCase()) + " 5-DAY FORECAST</h2>" +

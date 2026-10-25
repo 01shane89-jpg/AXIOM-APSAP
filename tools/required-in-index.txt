@@ -17,6 +17,7 @@
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-boolq.js"></script>
+<script src="assets/osap-pdf.js"></script>
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>

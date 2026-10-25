@@ -898,7 +898,7 @@
       if (F.att || F.win) h.push('<p class="cfm cfpick">Showing ' + (F.att ? "attacks only (bombings, shootings, strikes, clashes, arson)" : "every kind") + (F.win ? ", " + esc(F.win.label.toLowerCase()) : "") +
         ' · <button type="button" data-cfclr="1">Show all reports</button></p>');
       h.push('<p class="cfm cfcount">' + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : " reports") + ", newest first</p>");
-      if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(gs.length) + ")</button>" +
+      if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Export PDF (' + num(gs.length) + ")</button>" +
         (F.vs === "confirmed" && codedN() ? ' <button type="button" class="refresh" data-cfcsv="1" title="Download the coded incident records of this tab (CSV, ACLED-like columns). Fatalities are as reported; actors are as attributed.">Download incident record (' + num(codedN()) + ")</button>" : "") + "</p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
       h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + "</li>"; }).join("") + "</ol>");
@@ -1009,9 +1009,7 @@
           (others.length ? '<div class="cfpm">Also reported: ' + others.map(function (x) { return esc(x.outlet || "report") + " (" + esc(when(x.date)) + ") " + esc(x.link || "") + (x.fp ? " · SHA-256 " + esc(String(x.fp).slice(0, 16)) + "…" : ""); }).join("; ") + "</div>" : "") + "</li>";
       }).join("") + "</ol>";
     D.documentElement.classList.add("cfprinting");
-    var done = function () { D.documentElement.classList.remove("cfprinting"); W.removeEventListener("afterprint", done); };
-    W.addEventListener("afterprint", done);
-    setTimeout(function () { W.print(); setTimeout(done, 1000); }, 50);
+    W.OSAP_PDF.print({ title: (el.querySelector("h1") || {}).textContent || "Report list", root: el }).then(function () { D.documentElement.classList.remove("cfprinting"); });
   }
   D.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-cfprint]"); if (b) { e.preventDefault(); printList(); } });
   /* ---------- rail events ---------- */

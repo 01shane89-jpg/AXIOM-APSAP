@@ -949,7 +949,7 @@
     var w = W.open("", "_blank");
     if (!w) { S.msg = "The print page was blocked by the browser. Allow pop-ups for this site and try again."; render(); return; }
     w.document.open(); w.document.write(printHtml(pk)); w.document.close();
-    setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 300);
+    setTimeout(function () { W.OSAP_PDF.print({ title: "Evacuation route package: " + pk.name, root: w.document.body, win: w }); }, 300);
   }
 
   /* active mode: the P route only and one card that counts down */
@@ -1372,7 +1372,7 @@
       (p ? '<div class="epebtns"><button type="button" data-ep="pkg"' + (S.kbusy ? " disabled" : "") + ">Make a route package of this plan</button></div>" : "") +
       (list.length ? '<ul class="epekept">' + list.map(function (x) {
         return "<li><span><b>" + E(x.name) + '</b> <i class="obs">' + E(x.plan.opts.length) + " options, " + E(x.n) + " findings · frozen " + E(dual(x.made, true)) + '</i></span><span class="epepkb">' +
-          '<button type="button" data-ep-act="' + E(x.id) + '">Active mode</button><button type="button" data-ep-print="' + E(x.id) + '">Print</button><button type="button" data-ep-kml="' + E(x.id) + '">KML</button><button type="button" data-ep-kmz="' + E(x.id) + '">KMZ</button>' + (W.OSAP_TAK ? '<button type="button" data-ep-tak="' + E(x.id) + '" title="' + E(W.OSAP_TAK.tip) + '">TAK</button>' : "") +
+          '<button type="button" data-ep-act="' + E(x.id) + '">Active mode</button><button type="button" data-ep-print="' + E(x.id) + '">Export PDF</button><button type="button" data-ep-kml="' + E(x.id) + '">KML</button><button type="button" data-ep-kmz="' + E(x.id) + '">KMZ</button>' + (W.OSAP_TAK ? '<button type="button" data-ep-tak="' + E(x.id) + '" title="' + E(W.OSAP_TAK.tip) + '">TAK</button>' : "") +
           '<button type="button" data-ep-pdel="' + E(x.id) + '" aria-label="Delete package ' + E(x.name) + '">×</button></span></li>';
       }).join("") + "</ul>" : '<p class="obs">None yet.</p>') + "</section>";
   }

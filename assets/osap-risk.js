@@ -154,7 +154,7 @@
     ".rktag{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid currentColor;border-radius:9px;padding:0 6px;line-height:16px;color:var(--accent)}" +
     ".rkhead{margin:2px 0 8px;font-size:13px}.rkbig .rkb{font-size:15px;line-height:26px;padding:0 12px}.rkchips{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px}" +
     ".rkchip{white-space:nowrap}.rkcities{font-size:12.5px;margin:8px 0 0;overflow-wrap:anywhere}.rkcard .tdlink{min-height:40px}" +
-    ".brisk h4{margin:10px 0 4px;font-size:13px}.brisk table.btwo td,.brisk table.btwo th{vertical-align:middle}.rkadv{font-size:12.5px;margin:6px 0 10px}" +
+    ".brisk h4{margin:10px 0 4px;font-size:13px}.bpage.brisk td .bm{white-space:normal}.brisk table.btwo td,.brisk table.btwo th{vertical-align:middle}.rkadv{font-size:12.5px;margin:6px 0 10px}" +
     "@media print{.brisk{break-before:page}.rkb{border:1px solid #000}}";
   (function () { var s = D.createElement("style"); s.textContent = CSS; (D.head || D.documentElement).appendChild(s); })();
 

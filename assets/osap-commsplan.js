@@ -80,7 +80,7 @@
     }
     var a = p.area, ar = a ? "Centre <code>" + E(mgrs(a.lat, a.lon)) + "</code> (" + f(a.lat, 4) + ", " + f(a.lon, 4) + "), radius" : "No area set. Area lets other tools (medical plan, evacuation) find this plan.";
     var h = '<div class="sec cpsec"><div class="cpbtns"><select data-cpa="pick" aria-label="PACE plan">' + d.plans.map(function (x) { return '<option value="' + E(x.id) + '"' + (x.id === p.id ? " selected" : "") + ">" + E(x.name) + "</option>"; }).join("") + "</select>" +
-      '<button type="button" data-cpa="new">New</button><button type="button" data-cpa="copy">Copy</button><button type="button" data-cpa="print">Print</button><button type="button" data-cpa="text">Copy as text</button><button type="button" class="cpdel" data-cpa="del">Delete</button></div>' +
+      '<button type="button" data-cpa="new">New</button><button type="button" data-cpa="copy">Copy</button><button type="button" data-cpa="print">Export PDF</button><button type="button" data-cpa="text">Copy as text</button><button type="button" class="cpdel" data-cpa="del">Delete</button></div>' +
       '<div class="cprow"><label class="cpw">Plan name<input data-cpf="name" value="' + E(p.name) + '" maxlength="80"></label>' +
       '<label class="cpw">Mission<input data-cpf="mission" value="' + E(p.mission) + '" maxlength="160"></label>' +
       '<label class="cpw">Team / stations<input data-cpf="team" value="' + E(p.team) + '" maxlength="160"></label></div>' +
@@ -128,10 +128,7 @@
     });
     pr.innerHTML = h + "<p>Planning document made in OSAP on this device. Coverage expectations are estimates with their basis shown, not guarantees.</p>";
     D.documentElement.classList.add("cpprinting");
-    var done = function () { D.documentElement.classList.remove("cpprinting"); W.removeEventListener("afterprint", done); };
-    W.addEventListener("afterprint", done);
-    try { W.print(); } catch (e) {}
-    setTimeout(done, 1500);
+    W.OSAP_PDF.print({ title: (pr.querySelector("h1") || {}).textContent || "Communications plan", root: pr }).then(function () { D.documentElement.classList.remove("cpprinting"); });
   }
   function planAction(a, t) {
     var d = loadPace(), p = curPlan(d), now = Date.now();
@@ -1285,7 +1282,7 @@
     box.innerHTML = '<div class="sec cpsec"><h3>Comms annex</h3><p>One document for <b>' + E(p.name) + "</b>, ready to print or paste into an order:</p><ul>" +
       "<li>PACE by phase: " + p.phases.length + " phase" + (p.phases.length === 1 ? "" : "s") + "</li><li>Channel plan: " + A.ch.length + "</li><li>Contacts and windows: " + A.ct.length + "</li><li>Satellite pointing: " + A.sats.length + "</li>" +
       "<li>Power: " + f(A.pr.wh_day, 0) + " Wh a day" + (isFinite(A.pr.batteries_mission) ? ", " + A.pr.batteries_mission + " batteries" : "") + "</li><li>COMSEC status: " + A.cs.length + " (administrative only)</li></ul>" +
-      '<div class="cpbtns"><button type="button" class="cpgo" data-ax="print">Print the annex</button><button type="button" data-ax="text">Copy as text</button></div><p class="obs" id="cp-msg">Fill the parts on the Plan, Equipment and Status tabs; empty parts are left out.</p></div>';
+      '<div class="cpbtns"><button type="button" class="cpgo" data-ax="print">Export annex PDF</button><button type="button" data-ax="text">Copy as text</button></div><p class="obs" id="cp-msg">Fill the parts on the Plan, Equipment and Status tabs; empty parts are left out.</p></div>';
   }
   function annexAct(t) {
     var a = t.getAttribute("data-ax"); if (!a) return;
@@ -1310,10 +1307,7 @@
     if (A.cs.length) h += "<h2>" + n++ + ". COMSEC status (administrative only)</h2>" + tab(["Short title", "Edition", "Equipment", "Status", "Expires"], A.cs.map(function (x) { return [x.st, x.ed, x.eq, x.status, x.expires]; }));
     pr.innerHTML = h + "<p>Planning document made in OSAP on this device. Coverage and pointing figures are estimates with their basis shown, not guarantees.</p>";
     D.documentElement.classList.add("cpprinting");
-    var done = function () { D.documentElement.classList.remove("cpprinting"); W.removeEventListener("afterprint", done); };
-    W.addEventListener("afterprint", done);
-    try { W.print(); } catch (e) {}
-    setTimeout(done, 1500);
+    W.OSAP_PDF.print({ title: (pr.querySelector("h1") || {}).textContent || "Communications plan", root: pr }).then(function () { D.documentElement.classList.remove("cpprinting"); });
   }
 
   /* offline comms package: every Comms planning record in this workspace as one file to keep, carry or load on another device */

@@ -414,7 +414,7 @@
       PV = D.createElement("div"); PV.id = "ibpv"; PV.setAttribute("role", "dialog"); PV.setAttribute("aria-label", "Intelligence brief pages");
       D.body.appendChild(PV);
     }
-    PV.innerHTML = '<div class="ibpvb"><button type="button" class="refresh primary" id="ibpv-print">Print / Save as PDF</button><button type="button" class="refresh" id="ibpv-close">Close</button>' +
+    PV.innerHTML = '<div class="ibpvb"><button type="button" class="refresh primary" id="ibpv-print">Export PDF</button><button type="button" class="refresh" id="ibpv-close">Close</button>' +
       "<span>In the print window choose Save as PDF (on a phone: Print, then Share or Save to Files). One slide per page, landscape.</span></div>" +
       '<div class="ibpvp">' + pres.html() + "</div>";
     PV.hidden = false; PV.scrollTop = 0;
@@ -428,12 +428,10 @@
   function printPages(name) {
     var pg = D.createElement("style"); pg.id = "ib-page"; pg.textContent = "@page{size:13.333in 7.5in;margin:0!important}@media print{@page{size:13.333in 7.5in;margin:0!important}}";
     D.head.appendChild(pg); D.documentElement.classList.add("ibprint");
-    var t0 = D.title; D.title = name;
-    var done = function () { if (!pg.parentNode) return; D.documentElement.classList.remove("ibprint"); if (pg.parentNode) pg.parentNode.removeChild(pg); D.title = t0; W.removeEventListener("afterprint", done); };
-    W.addEventListener("afterprint", done);
-    /* print() blocks on a desktop; a phone opens its print sheet later and may never send afterprint: the page title comes back
-       after a pause, and the print-only styles (which change nothing on screen) go when the pages are closed */
-    setTimeout(function () { try { W.print(); } catch (e) {} setTimeout(function () { D.title = t0; }, 3000); }, 60);
+    var done = function () { if (!pg.parentNode) return; D.documentElement.classList.remove("ibprint"); pg.parentNode.removeChild(pg); };
+    /* the slides set their own page, so no running header or footer; OSAP_PDF names the file and waits for the print dialog (a
+       phone may never send afterprint: the print-only styles, which change nothing on screen, go when the pages are closed) */
+    W.OSAP_PDF.print({ title: name, file: name, root: PV, bare: true }).then(done);
     unprint = done;
   }
 

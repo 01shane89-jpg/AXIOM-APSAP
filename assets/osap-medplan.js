@@ -132,6 +132,8 @@
   function G() { return W.OSAP_GEO; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function clip(s, n) { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+  /* the printed document's own heading, for the PDF's running header and file name */
+  function pdfTitle(el, dflt) { var h = el.querySelector(".mpdh h2, h2, h1"); return h ? h.textContent.replace(/\s+/g, " ").trim() : dflt; }
   function T() { return W.OSAP_TIME || { dualT: function (ms) { return new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; } }; }
   function dual(ms, date) { return T().dualT(ms, { date: !!date }); }
   function cc() { var a = A(); return (a && a.cc) || (W.TSAP && W.TSAP.country) || ""; }
@@ -1291,8 +1293,8 @@
     var el = box(), s = ST, km2 = s.P ? areaKm2(s.P) : 0, v = fieldVals();
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
-      '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">Print CONOP</button>' +
-      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Print intelligence annex</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
+      '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' +
+      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
@@ -3069,7 +3071,7 @@
     var key = '<div class="mpkeyd">' + legendItems().filter(function (x) { return !(split && /^Air reach/.test(x[3])); }).map(function (x) {
       return "<span>" + (x[0] === "ln" || x[0] === "dl" ? '<i style="color:' + x[1] + (x[0] === "dl" ? ";border-top-style:dashed" : "") + '"></i>' : '<b style="background:' + x[1] + ';color:#fff;padding:0 3px">' + esc(x[2]) + "</b> ") + esc(x[3]) + "</span>";
     }).join("") + "</div>";
-    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpd-print"' + (held ? " disabled" : "") + '>Print or save PDF</button> <button type="button" class="refresh" id="mpd-close">Back to the plan</button> ' +
+    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpd-print"' + (held ? " disabled" : "") + '>Export PDF</button> <button type="button" class="refresh" id="mpd-close">Back to the plan</button> ' +
       (held ? '<span class="obs mpwarn" id="mpd-held">' + esc(held) + "</span>" : '<span class="obs">This is every page as it prints. In the print dialog choose "Save as PDF" (iPhone: Share, then Print, then pinch out) to keep a copy.</span>') + "</div>" +
       '<article class="bpage mpdoc mpplanp"><header class="mpdh"><h2>' + esc(title) + '</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<span class="obs">Built ' + esc(dual(s.at, true)) + " · " + esc(fieldLabel(s.from)) + " <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + ")</span></header>" +
@@ -3110,7 +3112,7 @@
         return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
       }).catch(function () { var cap = sm.querySelector("figcaption"); if (cap) cap.textContent = "The map could not be drawn on this device."; })]);
     }
-    D.getElementById("mpd-print").addEventListener("click", function () { if (this.disabled) return; ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
+    D.getElementById("mpd-print").addEventListener("click", function () { if (this.disabled) return; ready.then(function () { W.OSAP_PDF.print({ title: pdfTitle(el, "Medical plan"), root: el }); }); });
     D.getElementById("mpd-close").addEventListener("click", function () { s.printHeld = false; el.hidden = true; el.innerHTML = ""; el.classList.remove("mpbrief"); D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp="print"]'); if (b) b.focus(); });
     return ready;
   }
@@ -3308,7 +3310,7 @@
   function assessView(id) {
     var f = find(id), s = ST, el = D.getElementById("brief"); if (!f || !el || f.kind !== "hospital") return false;
     var known = (s.rts || []).filter(function (x) { return x.f === f && x.r; })[0], rt = known ? known.r : null;
-    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpa-print">Print or save PDF</button> <button type="button" class="refresh" id="mpa-close">Back to the plan</button> ' +
+    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpa-print">Export PDF</button> <button type="button" class="refresh" id="mpa-close">Back to the plan</button> ' +
       '<span class="obs">Every page as it prints.</span></div>' +
       '<article class="bpage mpdoc"><header class="mpdh"><h2>Hospital assessment: ' + esc(f.name) + '</h2><span class="aitag" title="Built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<span class="obs">For the medical plan, ' + esc(s.name) + " · built " + esc(dual(Date.now(), true)) + " · point of injury <code>" + esc(grid(s.o[0], s.o[1])) + "</code></span></header>" +
@@ -3335,7 +3337,7 @@
       if (cap) cap.textContent = baseNote(m, "The basemap could not be loaded; drawn without it. ") + "POI point of injury, H this hospital, L nearest helipad, A nearest airfield; red line the road route. Straight north up, zoom " + m.z + ".";
       return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
     }).catch(function () { var cap = D.getElementById("mpa-cap"); if (cap) cap.textContent = "The map could not be drawn on this device."; });
-    D.getElementById("mpa-print").addEventListener("click", function () { ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
+    D.getElementById("mpa-print").addEventListener("click", function () { ready.then(function () { W.OSAP_PDF.print({ title: pdfTitle(el, "Hospital assessment"), root: el }); }); });
     D.getElementById("mpa-close").addEventListener("click", closeA);
     if (!el.__mpChk) { el.addEventListener("submit", chkSubmit); el.__mpChk = true; }
     return ready;

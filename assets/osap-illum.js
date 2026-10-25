@@ -267,7 +267,7 @@
     var pt = ST.pt || defaultPoint(), tz = ST.tz || zone(), start = ST.start || todayLocal(tz), nights = Math.max(1, Math.min(62, +ST.nights || 14));
     var N = compute(pt, start, nights, tz), now = Date.now();
     var zl = tzAbbr(tz, N.length ? N[0].mid : now);
-    var bar = '<div class="bbar noprint ilbar"><button type="button" class="refresh primary" data-il="print">Print</button> <button type="button" class="refresh" data-il="close">Close</button>' +
+    var bar = '<div class="bbar noprint ilbar"><button type="button" class="refresh primary" data-il="print">Export PDF</button> <button type="button" class="refresh" data-il="close">Close</button>' +
       '<form data-ilform><label>Point <input name="pt" type="text" value="' + esc(ST.ptText || "") + '" placeholder="MGRS or lat, lon" aria-label="Point as MGRS or latitude, longitude"></label>' +
       '<label>First night <input name="start" type="date" value="' + esc(start) + '"></label>' +
       '<label>Nights <input name="nights" type="number" min="1" max="62" value="' + nights + '"></label> <button type="submit" class="refresh primary">Show</button></form>' +
@@ -314,7 +314,7 @@
     if (!t) return;
     if (t.hasAttribute("data-ilopen")) { ST.keep = false; return open(); }
     var a = t.getAttribute("data-il");
-    if (a === "print") W.print();
+    if (a === "print") { var h = D.querySelector("#il-page h2"); W.OSAP_PDF.print({ title: "Night illumination" + (h ? ": " + h.textContent : ""), root: D.getElementById("brief") }); }
     else if (a === "close") close();
     else if (a === "wx") { ST.keep = false; ST.pt = null; ST.ptText = ""; ST.err = ""; render(); }
     else if (a === "centre") { ST.keep = true; ST.pt = mapCentre(); ST.ptText = ""; ST.err = ""; render(); }

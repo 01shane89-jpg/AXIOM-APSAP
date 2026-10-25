@@ -4,7 +4,7 @@
      labels them, so the guide must change with the app: a renamed button means a line here changes too.
    - Works offline: the text is in this file (cached with the app) and the pictures are assets/guide/<name>.jpg, which the
      service worker keeps after install. A picture that is not there yet is left out, never shown broken.
-   - "Print or save PDF" prints the same content with every section open and the app hidden, so the paper copy and the
+   - "Export PDF" prints the same content with every section open and the app hidden, so the paper copy and the
      screen copy never drift apart.
    - The pictures are taken by tools/guide_shots.mjs on a phone-sized screen, run where the live map services can be reached.
    Nothing here reads or changes a record, a setting or a saved item.
@@ -228,7 +228,7 @@
         "Only capabilities from a credible source count: an official register or your own check. OpenStreetMap and Wikipedia are shown but never qualify.",
         "Record your own check on a hospital under " + b("Assessment") + ". It replaces older checks and expires after the hours you set.",
         "The status at the top is GREEN (complete), AMBER (needs medical checks) or RED (a blocking error). The checklist under it says what is missing.",
-        b("Print view (map and details)") + " shows every page with maps, then " + b("Print or save PDF") + "."]) +
+        b("Print view (map and details)") + " shows every page with maps, then " + b("Export PDF") + "."]) +
       tip("The plan is an automatic draft from open data, not AI and not approved. Acceptance is never assumed: call the receiving hospital. Drive times assume no traffic.") },
 
     { id: "evac", t: "Evacuation plan", h:
@@ -247,7 +247,7 @@
         b("Add a cross-border option") + " routes to the nearest official border crossings.",
         b("Check along the route") + " groups hazards in the corridor by km and shows phone coverage by stretch, fuel (the longest stretch without it), U.S. posts and hospitals near the line. The card then shows data freshness and how complete OSAP's checks are. Tick the map layers you want; Sustainment and Medical start off.",
         b("Open in Route (checkpoints, print)") + " takes an option to Route to print it. " + b("Where this route can be seen from") + " shows the ground that overlooks it.",
-        b("Make a route package of this plan") + " freezes it with everything found. Each finding keeps its source, when it was fetched, its basis and a SHA-256 fingerprint. Packages open with no connection; " + b("Print") + " (or save as PDF), " + b("KML") + " and " + b("KMZ") + " for ATAK-style viewers.",
+        b("Make a route package of this plan") + " freezes it with everything found. Each finding keeps its source, when it was fetched, its basis and a SHA-256 fingerprint. Packages open with no connection; " + b("Export PDF") + ", " + b("KML") + " and " + b("KMZ") + " for ATAK-style viewers.",
         b("Active mode") + " shows only the P route and one large card: next node, route status, next hazard, the A route, next fuel, next air option and the distance left. Tick each node as you pass it, or tick " + b("Count from My location") + ".",
         "Plans are kept on this device, up to 20; route packages, up to 5."]) +
       tip("OSAP never proposes Available: only you do. An embassy is shown as a place to go, not a confirmed evacuation point. Call the post first.") },
@@ -276,7 +276,7 @@
     { id: "comms", t: "Comms planning", h:
       fig("comms", "Comms planning on the Coverage tab") +
       ul(["Tap " + b("Comms") + " on the toolbar; tap it again to go back. Or open Overlays, Infrastructure, " + b("Communications infrastructure") + ". From Route, " + b("Comms along route") + " opens it on the route.",
-        b("Plan") + ": build a PACE plan by phase, with method, device, net, expected coverage, failure trigger and what to do next. Print it or copy it as text.",
+        b("Plan") + ": build a PACE plan by phase, with method, device, net, expected coverage, failure trigger and what to do next. Export it as a PDF or copy it as text.",
         b("Coverage") + ": " + b("Will I have phone signal?") + " at a place, along a line or along your planned route. Answers are Likely, Possible, No sign of coverage or Unknown.",
         b("Link") + ": a radio link budget with free-space loss, margin, radio horizon and Fresnel zone, the terrain between two points, and " + b("Radio coverage from a point") + ": where a radio there could be heard over the ground (green likely, orange marginal). Long-press the map, " + b("Terrain") + ", " + b("Radio coverage from here") + " does the same for that spot.",
         b("Networks") + ": reported internet outages, the masts on the map and a switch for each phone network. Each network has its own colour, for its masts and for the places phones picked up its cells (OpenCelliD); tick or untick a network to show or hide it. Tap a mast to see the networks heard round it.",
@@ -288,7 +288,7 @@
       fig("reports", "The Reports menu") +
       ul(["Tap " + b("Reports") + " for every report OSAP makes: country brief, country report, daily summary, weather brief, 5-day weather chart and detailed weather, night illumination, timeline report, area summary, medical plan, route plan and situation report.",
         "A greyed entry says what to do first, for example " + b("Draw an area first") + " or " + b("Plan a route first") + ".",
-        "Each report opens as a page you can print or save as PDF.",
+        "Each report opens as a page with one " + b("Export PDF") + " button. It opens the print dialog: choose " + b("Save as PDF") + " and A4 or Letter. Every page carries the report's title, when it was exported (Zulu and local time), " + b("Page X of Y") + " and, where any part is AI generated, a note saying so; source links stay clickable in the PDF.",
         "The country brief ends with the country's " + b("Key dates") + ": every holiday, election, religious date and anniversary of the past 7 and next 60 days, with its source."]) },
 
     { id: "settings", t: "Settings", h:
@@ -358,7 +358,7 @@
     box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-labelledby", "guide-h");
     box.innerHTML =
       '<div class="ghead"><h2 id="guide-h">User guide</h2>' +
-      '<button type="button" class="gbtn" data-g="print">Print or save PDF</button>' +
+      '<button type="button" class="gbtn" data-g="print">Export PDF</button>' +
       '<button type="button" class="gx" data-g="close" aria-label="Close the guide">&times;</button></div>' +
       '<div class="gbody"><p class="gsub">AXIOM OSAP, Open Source Awareness Platform. Short help for each part of the app. It works with no signal.</p>' +
       '<input type="search" class="gfind" placeholder="Find in the guide" aria-label="Find in the guide">' +
@@ -415,7 +415,7 @@
   function print() {
     var f = box.querySelector(".gfind"); if (f.value) { f.value = ""; filter(""); }
     Array.prototype.forEach.call(box.querySelectorAll("img[loading=lazy]"), function (im) { im.loading = "eager"; });
-    setTimeout(function () { W.print(); }, 300);
+    setTimeout(function () { W.OSAP_PDF.print({ title: "AXIOM OSAP user guide", root: box }); }, 300);
   }
   function style() {
     var css = D.createElement("style"); css.id = "guide-css";
@@ -449,7 +449,8 @@
       "html.guide-open #guidedlg .gbtn,html.guide-open #guidedlg .gx,html.guide-open #guidedlg .gfind,html.guide-open #guidedlg .gtop{display:none}" +
       "html.guide-open #guidedlg .gtoc a{background:none;padding:0 6px;min-height:0}" +
       "html.guide-open #guidedlg .gsec{break-inside:auto}html.guide-open #guidedlg .gsec>h2{break-after:avoid}" +
-      "html.guide-open #guidedlg .gfig{break-inside:avoid}html.guide-open #guidedlg .gfig img{max-width:220px}}";
+      "html.guide-open #guidedlg .gfig{break-inside:avoid;float:right;width:56mm;margin:0 0 3mm 5mm}html.guide-open #guidedlg .gfig img{max-width:100%;max-height:105mm;width:auto}" +
+      "html.guide-open #guidedlg .gfig figcaption{font-size:8.5pt}html.guide-open #guidedlg .gsec{clear:both;display:flow-root}}";
     D.head.appendChild(css);
   }
 
