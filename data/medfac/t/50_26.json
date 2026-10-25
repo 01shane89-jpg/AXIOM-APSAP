@@ -22,7 +22,7 @@
 ["n3813709638",50.53475,26.042,"ua",{"name":"ФАП","amenity":"clinic","addr:city":"Грушвиця Друга"}],
 ["n4022028366",50.5233,27.69392,"ua",{"amenity":"hospital"}],
 ["n4118586091",50.73519,26.33916,"ua",{"amenity":"hospital"}],
-["n4200547397",51.8113,27.05612,"by",{"name":"Альманская ўрачэбная амбулаторыя","amenity":"hospital","healthcare":"hospital","phone":"+375 80165573243","addr:housenumber":"1А","addr:street":"Праектная вуліца"}],
+["n4200547397",51.8113,27.05612,"by",{"name":"Альманская ўрачэбная амбулаторыя","amenity":"hospital","healthcare":"hospital","phone":"+375 80165573243","addr:housenumber":"1А","addr:street":"Праектная вуліца","opening_hours":"Mo-Fr 08:00-20:00; Sa 08:00-16:00; "}],
 ["n4205400237",50.52011,26.23333,"ua",{"amenity":"hospital"}],
 ["n4449739557",51.86253,26.79135,"by",{"name":"Амбулаторыя","amenity":"clinic","healthcare":"clinic"}],
 ["n4526330373",50.60352,26.39495,"ua",{"name":"Медичний заклад","amenity":"hospital"}],

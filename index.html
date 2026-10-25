@@ -4637,7 +4637,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
                   alerts: "Rules run over every record in this build",
                   timeline: R.length + " records · " + srcIds.length + " sources" };
   var current = null;
-  /* ---------- SOF reference layers: crisis response and partner engagement ----------
+  /* ---------- Reference layers: crisis response and partner engagement ----------
      Reference data from public sources (schema apsap-sof/1), packaged per country. These are
      reference points and announced plans, not events: they never enter the Timeline or Alerts. */
   var SOF = (window.ASAP_SOF || {})[CC] || null, SOF_OUT = window.ASAP_SOF_OUT || null;
@@ -8206,8 +8206,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (!wMatch(w, r)) return;
       /* copies of one story (a headline and the layer feed's copy of it, same link) share one alert group, so one story sends one alert */
       var k = rk(r), v = EV_ON ? evOfRec(r) : null, sk = storyKey(r);
+      /* for flash alerts (tools/flash_lib.mjs): how many different sources carry the event, and whether one of them is an
+         official statement or an instrument reading rather than news or social media (an outlet's own social account is media) */
+      var mem = v ? v.m : [r], off = mem.some(function (x) { return (x.type === "claim" || x.type === "observation") && !x.news && !x.social; }) ? 1 : 0;
       out.push({ k: k, gk: v ? v.id : sk ? "s:" + sk : k, sk: sk, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wWordsWhich(w, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
-        src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", grp: v ? v.m.length : 0, place: r.place || "" });
+        src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", grp: v ? v.m.length : 0, place: r.place || "",
+        ns: v ? v.srcs.length : 1, off: off, t0: v ? v.t0.ms : (r.__t && r.__t.ms) || null });
     });
     return out;
   }

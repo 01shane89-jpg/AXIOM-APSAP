@@ -49,6 +49,47 @@ export const PUSH = { free: 0, mid: 5, full: 25 };
 // all accounts' push watches together, the most one refresh job checks (oldest kept first)
 export const PUSH_TOTAL = 3000;
 
+// Team, Organisation and the paid pilot (Shane 2026-10-25, the approved 90-day launch plan). These are ways to pay, not more
+// tiers: every seat holder gets Full, for as long as the team has paid (tools/teams.mjs, netlify/functions/osap-teams.mjs).
+// US dollars, before the launch offer. As with PRICES, the charge is the Paddle price, so change both together.
+//   team   US$39 a seat a month or US$390 a seat a year, 3 seats at least
+//   org    US$12,000 a year for 25 seats, US$400 a year for each seat over 25
+//   pilot  US$2,500 once for 60 days and up to 25 seats; the US$2,500 comes off the first Organisation year
+export const BUSINESS = {
+  team: { name: "Team", intervals: ["month", "year"], seat: { month: 39, year: 390 }, minSeats: 3, maxSeats: 500 },
+  org: { name: "Organisation", intervals: ["year"], base: 12000, included: 25, extraSeat: 400, minSeats: 25, maxSeats: 500 },
+  pilot: { name: "Paid pilot", intervals: ["once"], price: 2500, days: 60, seats: 25, credit: 2500, creditDays: 30 },
+};
+// the launch offer: the first 10 Team or Organisation customers get 30% off their first year in return for a short testimonial
+export const LAUNCH = { percent: 30, customers: 10, plans: ["team", "org"] };
+// a seat stays open this many days past the paid-through date, so a card renewal a day late does not lock a team out
+export const SEAT_GRACE_DAYS = 3;
+const cents = (usd) => Math.round(usd * 100);
+/**
+ * What a Team, Organisation or pilot costs, in US cents: { plan, interval, seats, lines: [{ key, qty, unit }], subtotal,
+ * discount: { cents, percent, recurIntervals, parts }, total }, or null when the plan, interval or seats are not allowed.
+ * lines[].key names the Paddle price (tools/paddle.mjs priceIds). launch: the launch offer applies; credit: the pilot's
+ * US$2,500 is still unused (Organisation only). "First year" is 12 monthly charges or one yearly one.
+ */
+export function quote(plan, interval, seats, { launch = false, credit = false } = {}) {
+  const P = BUSINESS[plan];
+  if (!P || !P.intervals.includes(interval)) return null;
+  const n = plan === "pilot" ? P.seats : Math.floor(Number(seats));
+  if (plan !== "pilot" && (!Number.isFinite(n) || n < P.minSeats || n > P.maxSeats)) return null;
+  const lines = plan === "team" ? [{ key: "team_" + interval, qty: n, unit: cents(P.seat[interval]) }]
+    : plan === "org" ? [{ key: "org_base", qty: 1, unit: cents(P.base) }, ...(n > P.included ? [{ key: "org_seat", qty: n - P.included, unit: cents(P.extraSeat) }] : [])]
+    : [{ key: "pilot", qty: 1, unit: cents(P.price) }];
+  const subtotal = lines.reduce((s, l) => s + l.qty * l.unit, 0);
+  const parts = [];
+  const offer = launch && LAUNCH.plans.includes(plan), pilotCredit = credit && plan === "org";
+  if (offer) parts.push({ kind: "launch", cents: Math.round(subtotal * LAUNCH.percent / 100) });
+  if (pilotCredit) parts.push({ kind: "pilot", cents: Math.min(cents(BUSINESS.pilot.credit), subtotal - (parts[0] ? parts[0].cents : 0)) });
+  const off = parts.reduce((s, x) => s + x.cents, 0);
+  // a monthly Team keeps the launch percentage for 12 charges; anything yearly or once takes it off the first charge only
+  const discount = off ? { cents: off, percent: offer && !pilotCredit ? LAUNCH.percent : null, recurIntervals: interval === "month" ? 12 : 1, parts } : null;
+  return { plan, interval, seats: n, lines, subtotal, discount, total: subtotal - off };
+}
+
 export const rank = (t) => Math.max(0, TIERS.indexOf(t));
 export const allows = (have, need) => rank(have) >= rank(need);
 /** The tier a path needs ("data/…" or "/data/…"); null for anything that is not data. */
@@ -67,6 +108,6 @@ export function tierOfRoles(roles) {
 /** What the page needs to draw its locks (no secrets). data is DATA as [pattern, tier] strings, so the page can leave out the
  *  files the plan cannot open instead of asking for each and being refused (assets/osap-datagate.js applies them like tierOfPath). */
 export function rulesForPage() {
-  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT, features: FEATURES, push: PUSH,
+  return { tiers: TIERS, names: NAMES, prices: PRICES, trialDays: TRIAL_DAYS, business: BUSINESS, launch: LAUNCH, tools: TOOLS, sets: SETS, setsDefault: SETS_DEFAULT, features: FEATURES, push: PUSH,
     data: DATA.map(([re, t]) => [re.source, t]), dataDefault: DATA_DEFAULT };
 }

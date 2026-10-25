@@ -10,6 +10,10 @@
 //      (tools/push_brief.mjs), sent after the alerts and inside the same per-run cap.
 //   4. What was seen is kept in PUSH_STATE (the job keeps it in the Actions cache, never in the repo). Losing it only means the
 //      next check notes everything again without sending.
+// Flash alerts (tools/flash_lib.mjs): a serious event carried by an official source or by two or more different sources is sent
+// first, marked FLASH, at ntfy's top priority. A watch set to "flash only" sends nothing else. A serious event sent while one
+// non-official source carried it gets one follow-up when more sources, or an official one, report it.
+// Since 2026-10-24 the job also runs after the fast lane (hazards, warnings), so those alerts no longer wait for the news lane.
 // A push is a notice about a report, never a finding: it carries the source, the report's status and "reported, not verified".
 // Report text is data; nothing in it is followed. Logs name watch ids and counts only, never report text.
 // Env: PUSH_STATE (default .push-state/state.json), PUSH_TEST=1 (send the newest match of each watch as a test, keep no state),
@@ -21,6 +25,7 @@ import { createRequire } from "node:module";
 import { fetchList } from "./push_lib.mjs";
 import { rulesForPage } from "./tiers.mjs";
 import * as BRIEF from "./push_brief.mjs";
+import { isFlash, upgradeOf, wanted, lagMin, median } from "./flash_lib.mjs";
 
 const STATE = process.env.PUSH_STATE || ".push-state/state.json";
 const NTFY = (process.env.PUSH_NTFY || "https://ntfy.sh").replace(/\/$/, "");
@@ -134,13 +139,28 @@ async function send(w, msg) {
   }
   return false;
 }
+function carriedBy(m) {
+  const n = +m.ns || 1;
+  return (m.off ? "Official source" + (n > 1 ? ` and ${n - 1} more` : "") : n > 1 ? `${n} different sources` : "One source so far");
+}
 function alertFor(w, m) {
-  const sev = SEVN[m.sev || 1] || "", url = /^https?:\/\//.test(m.url) ? m.url : "";
+  const sev = SEVN[m.sev || 1] || "", url = /^https?:\/\//.test(m.url) ? m.url : "", fl = isFlash(m);
   return {
-    title: one((TEST ? "[test] " : "") + "OSAP watch: " + w.name, 120),
-    message: one(m.rt || m.t, 300) + "\n" + one([m.rsrc || m.src, m.st, sev && sev + " severity", zulu(m.ts)].filter(Boolean).join(" · "), 200) +
+    title: one((TEST ? "[test] " : "") + (fl ? "FLASH · " : "OSAP watch: ") + w.name, 120),
+    message: (fl ? "First report. " + carriedBy(m) + ".\n" : "") + one(m.rt || m.t, 300) + "\n" + one([m.rsrc || m.src, m.st, !fl && sev && sev + " severity", zulu(m.ts)].filter(Boolean).join(" · "), 200) +
       (m.grp > 1 ? `\nPart of an event with ${m.grp} reports: ${one(m.t, 120)}` : "") + (m.word ? `\nMatched "${one(m.word, 60)}".` : "") + "\nReported, not verified. Tap to open in OSAP.",
-    click: link(m.k, w.cc), tags: ["osap"], priority: (m.sev || 1) >= 3 ? 4 : 3,
+    click: link(m.k, w.cc), tags: fl ? ["rotating_light", "osap"] : ["osap"], priority: fl ? 5 : (m.sev || 1) >= 3 ? 4 : 3,
+    actions: url ? [{ action: "view", label: "Source", url, clear: false }] : undefined,
+  };
+}
+/* the one follow-up for a serious event first sent on a single source */
+function upgradeFor(w, m) {
+  const url = /^https?:\/\//.test(m.url) ? m.url : "";
+  return {
+    title: one((isFlash(m) ? "FLASH update · " : "OSAP watch update: ") + w.name, 120),
+    message: "Now reported by " + carriedBy(m).toLowerCase().replace(/^official/, "an official") + ".\n" + one(m.t, 200) + "\nLatest: " +
+      one([m.rsrc || m.src, zulu(m.ts)].filter(Boolean).join(" · "), 160) + "\nReported, not verified. Tap to open in OSAP.",
+    click: link(m.k, w.cc), tags: ["osap"], priority: isFlash(m) ? 5 : 3,
     actions: url ? [{ action: "view", label: "Source", url, clear: false }] : undefined,
   };
 }
@@ -148,29 +168,35 @@ function alertFor(w, m) {
 const { out: matches, meta } = await scan();
 const state = TEST ? { watches: {} } : loadState();
 const next = { watches: {}, at: new Date(now).toISOString() };
-let sentTotal = 0, noted = 0, failedSends = 0, held = 0;
+let sentTotal = 0, noted = 0, failedSends = 0, held = 0, flashSent = 0, upSent = 0;
+const lags = [];
 // 1. what is new for each watch
 const jobs = [];
 for (const w of list) {
   const ms = matches[w.id];
   const prev = state.watches[w.id];
   if (!ms) { if (prev) next.watches[w.id] = prev; continue; }   // country failed to load: keep what was seen
-  const seen = (prev && prev.seen) || {}, sent = (prev && prev.sent) || {}, first = !prev && !TEST;
-  const fresh = [], groups = {};
+  const seen = (prev && prev.seen) || {}, sent = (prev && prev.sent) || {}, sm = (prev && prev.sm) || {}, first = !prev && !TEST;
+  const fresh = [], groups = {}, ups = [];
   for (const m of ms) {
     if (seen[m.k]) continue;
     seen[m.k] = now;
     if (first) continue;
     const t = msOf(m.ts);
     if (!TEST && (!isFinite(t) || now - t > MAX_AGE_H * 36e5 || t > now + 36e5)) continue;
-    if (sent[m.gk + ""]) continue;                       // this event was already sent
+    if (sent[m.gk + ""]) {                               // this event was already sent: at most one follow-up when more sources carry it
+      if (!TEST && !groups[m.gk] && upgradeOf(sm[m.gk + ""], m)) { groups[m.gk] = 1; ups.push(m); }
+      continue;
+    }
     if (groups[m.gk]) continue;
+    if (!wanted(w, m)) continue;                         // a flash-only watch sends flash alerts only
     groups[m.gk] = 1; fresh.push(m);
   }
-  fresh.sort((a, b) => (msOf(b.ts) || 0) - (msOf(a.ts) || 0));
+  // flash alerts first, then the newest
+  fresh.sort((a, b) => (isFlash(b) ? 1 : 0) - (isFlash(a) ? 1 : 0) || (msOf(b.ts) || 0) - (msOf(a.ts) || 0));
   const todo = TEST ? ms.slice().sort((a, b) => (msOf(b.ts) || 0) - (msOf(a.ts) || 0)).slice(0, 1) : fresh.slice(0, PER_WATCH);
   if (first) noted++;
-  jobs.push({ w, ms, seen, sent, first, fresh, todo, done: 0 });
+  jobs.push({ w, ms, seen, sent, sm, first, fresh, todo, done: 0, ups: ups.slice(0, PER_WATCH), upDone: 0 });
 }
 // 2. sending in rounds, the newest alert of every watch first, so with many accounts no watch waits behind another's backlog.
 //    An alert the run's cap holds back is not marked seen, so the next run sends it.
@@ -178,23 +204,36 @@ for (let round = 0; round < PER_WATCH; round++) {
   for (const j of jobs) {
     const m = j.todo[round]; if (!m) continue;
     if (sentTotal >= PER_RUN) continue;
-    if (await send(j.w, alertFor(j.w, m))) { sentTotal++; j.done++; j.sent[m.gk + ""] = now; } else failedSends++;
+    if (await send(j.w, alertFor(j.w, m))) {
+      sentTotal++; j.done++; j.sent[m.gk + ""] = now; j.sm[m.gk + ""] = { ns: +m.ns || 1, off: m.off ? 1 : 0 };
+      if (isFlash(m)) flashSent++;
+      lags.push(lagMin(m, now));
+    } else failedSends++;
+  }
+}
+// follow-ups for serious events first sent on a single source, after every watch's new alerts
+for (const j of jobs) {
+  for (const m of j.ups) {
+    if (sentTotal >= PER_RUN) { delete j.seen[m.k]; held++; continue; }
+    if (await send(j.w, upgradeFor(j.w, m))) { sentTotal++; upSent++; j.upDone++; j.sm[m.gk + ""] = { ...(j.sm[m.gk + ""] || {}), up: 1 }; }
+    else { failedSends++; delete j.seen[m.k]; }
   }
 }
 for (const j of jobs) {
-  const { w, seen, sent, fresh, todo } = j;
+  const { w, seen, sent, sm, fresh, todo } = j;
   j.todo.slice(j.done).forEach((m) => { if (!sent[m.gk + ""] && sentTotal >= PER_RUN) { delete seen[m.k]; held++; } });
   const more = TEST ? 0 : fresh.length - todo.length;
   if (more > 0 && sentTotal < PER_RUN) {
-    const ok = await send(w, { title: one("OSAP watch: " + w.name, 120), message: `${more} more new report${more === 1 ? "" : "s"} matched this watch. Open OSAP to see them all.`,
+    const ok = await send(w, { title: one("OSAP watch: " + w.name, 120), message: `${more} more new ${w.flash ? "flash event" : "report"}${more === 1 ? "" : "s"} matched this watch. Open OSAP to see them all.`,
       click: LIVE + "#" + (w.cc === "th" ? "" : w.cc + "/") + "timeline", tags: ["osap"], priority: 2 });
     if (ok) { sentTotal++; fresh.slice(todo.length).forEach((m) => { sent[m.gk + ""] = now; }); }
   } else if (more > 0) fresh.slice(todo.length).forEach((m) => { delete seen[m.k]; held++; });
   // keep the newest KEEP_KEYS seen keys, and sent events for 4 days (event ids are only stable while the event is open)
   const ks = Object.keys(seen); if (ks.length > KEEP_KEYS) ks.sort((a, b) => seen[a] - seen[b]).slice(0, ks.length - KEEP_KEYS).forEach((k) => delete seen[k]);
   Object.keys(sent).forEach((k) => { if (now - sent[k] > 4 * 864e5) delete sent[k]; });
-  next.watches[w.id] = { seen, sent, checked: now };
-  console.log(`push: ${w.id} (${w.cc}${w.plan === "mid" ? ", mid" : ""}): ${j.ms.length} matching, ${j.first ? "first check, noted only" : fresh.length + " new, " + j.done + " sent" + (more > 0 ? ", +" + more + " more" : "")}`);
+  Object.keys(sm).forEach((k) => { if (!sent[k]) delete sm[k]; });
+  next.watches[w.id] = { seen, sent, sm, checked: now };
+  console.log(`push: ${w.id} (${w.cc}${w.plan === "mid" ? ", mid" : ""}${w.flash ? ", flash only" : ""}): ${j.ms.length} matching, ${j.first ? "first check, noted only" : fresh.length + " new, " + j.done + " sent" + (more > 0 ? ", +" + more + " more" : "") + (j.upDone ? ", " + j.upDone + " follow-up" + (j.upDone === 1 ? "" : "s") : "")}`);
 }
 // 3. morning briefs, one a local day per channel, after the alerts and inside the same cap. A channel one of whose countries did
 //    not load this run waits for the next check (still inside its morning), so a brief never says "nothing" for want of data.
@@ -215,7 +254,9 @@ if (process.env.PUSH_BRIEF !== "0") {
 }
 console.log(`push: ${briefs} morning brief(s) sent, ${briefsHeld} held for the next check`);
 if (!TEST) saveState(next);
-console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent, ${failedSends} failed, ${held} held for the next run, ${noted} new watch(es) noted`);
+console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent (${flashSent} flash, ${upSent} follow-up), ${failedSends} failed, ${held} held for the next run, ${noted} new watch(es) noted`);
+// how long after the first report an alert went out (minutes, counts only): the number to beat
+{ const md = median(lags), ln = lags.filter((x) => x != null); if (ln.length) console.log(`push: first report to alert: median ${md} min, fastest ${Math.min(...ln)} min, over ${ln.length} alert(s)`); }
 // a test run reads its channels back from ntfy.sh, to prove the alerts arrived (counts only)
 if (TEST && !DRY) {
   for (const t of [...new Set(list.map((w) => w.topic))]) {

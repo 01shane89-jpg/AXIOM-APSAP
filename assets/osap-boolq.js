@@ -129,7 +129,7 @@
   }
 
   /* ---------- quick searches ---------- */
-  /* Built for what an analyst or a SOF team in country would watch (the same scope as tools/relevance.json). English, since
+  /* Built for what an analyst or a security team in country would watch (the same scope as tools/relevance.json). English, since
      OSAP translates headlines; the original-language text is matched too. */
   var PRESETS = [
     { id: "ied", name: "Bombs and IEDs", q: '(bomb OR IED OR explosive OR explosion OR blast OR detonat OR grenade OR landmine OR "car bomb" OR "suicide bomber" OR "bomb disposal" OR "suspicious object") NOT (bombshell OR bombard OR "photo bomb")' },

@@ -143,15 +143,17 @@
   }
 
   /* ---------- Paddle checkout ---------- */
-  var paddleP = null;
-  function paddle() {
+  var paddleP = null, onPaid = null;
+  /* token and sandbox: from the account (personal plans) or from the team checkout the server built */
+  function paddle(token, sandbox) {
     if (paddleP) return paddleP;
+    var pc = CFG.paddle || {}; token = token || pc.token; if (sandbox == null) sandbox = pc.sandbox;
     paddleP = new Promise(function (ok, no) {
       var s = D.createElement("script"); s.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
       s.onload = function () {
         try {
-          if (CFG.paddle.sandbox) W.Paddle.Environment.set("sandbox");
-          W.Paddle.Initialize({ token: CFG.paddle.token, eventCallback: function (ev) { if (ev && ev.name === "checkout.completed") paid(); } });
+          if (sandbox) W.Paddle.Environment.set("sandbox");
+          W.Paddle.Initialize({ token: token, eventCallback: function (ev) { if (ev && ev.name === "checkout.completed") (onPaid || paid)(); } });
           ok(W.Paddle);
         } catch (e) { no(e); }
       };
@@ -176,6 +178,7 @@
     if (!CFG.signedIn) { UI.after = t; UI.mode = "signin"; say("Sign in or create an account first, so the plan is yours on every device."); return; }
     if (!CFG.paddle || !CFG.paddle.prices[t]) { say("Payments are not switched on yet."); return; }
     UI.busy = true; say("Opening checkout…");
+    onPaid = null;
     paddle().then(function (P) {
       UI.busy = false; say("");
       P.Checkout.open({ items: [{ priceId: CFG.paddle.prices[t], quantity: 1 }], customer: CFG.email ? { email: CFG.email } : undefined, customData: { osap_uid: CFG.uid } });
@@ -186,19 +189,21 @@
   var WHAT = {
     free: "The map for every country, search, weather, warnings, floods, earthquakes and storms, and headline news with source links.",
     mid: "Everything in Free, plus every reporting data set (conflict, border, insurgency, crime, health, infrastructure, transport, social media), every map overlay, history, and Route, Area, Point, Watch, 3D, Med plan, Evac and Comms planning.",
-    full: "Everything in Mid, plus My work, AI area summaries and reports, daily and event summaries, claims and captures, and the SOF reference data.",
+    full: "Everything in Mid, plus My work, AI area summaries and reports, daily and event summaries, claims and captures, and the crisis-response reference data (embassies, airports, seaports, hospitals and crossings).",
   };
   function render() {
     if (!BOX || BOX.hidden) return;
     var dis = UI.busy ? " disabled" : "", me = tier();
     var wall = isWall(), stay = wall || UI.recover;
-    var title = UI.mode === "newpw" ? (UI.recover ? "Choose a new password" : "Change password") : wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : "Plan and sign-in";
+    var title = UI.mode === "newpw" ? (UI.recover ? "Choose a new password" : "Change password") : wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : UI.mode === "team" ? "Team and organisation" : "Plan and sign-in";
     /* the sign-in screen is the first thing people see: the logo and name above the form, as on the loading screen */
     var h = '<div class="cbox">' + (wall ? '<div class="trbrand"><img src="assets/logo-cover.webp" alt=""><span>AXIOM OSAP</span></div>' : "") + '<div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
       '<p class="trmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
     if (wall && UI.mode === "signin") h += '<p>OSAP needs an account, on the Free plan too. Sign in, or create a free account with your email.</p>';
     if (UI.mode === "users") {
       h += usersHtml();
+    } else if (UI.mode === "team") {
+      h += teamHtml();
     } else if (UI.mode === "signin" || UI.mode === "signup") {
       var up = UI.mode === "signup";
       h += '<form data-tr-form="' + UI.mode + '"><label>Email<input type="email" name="email" autocomplete="username" autocapitalize="none" spellcheck="false" required value="' + esc(UI.email || "") + '"></label>' +
@@ -229,6 +234,7 @@
           '<button type="button" class="refresh" data-tr="signout"' + dis + ">Sign out</button>"
         : '<button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="signup">Create an account</button>') + "</div>";
       if (CFG.signedIn && me !== "free" && !CFG.owner && !CFG.beta) h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
+      h += teamPlansHtml();
       /* a beta tester code from the owner (tools/codes.mjs) */
       if (CFG.signedIn && me !== "full") h += '<form data-tr-form="code" class="trcode"><label>Beta tester code<input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OSAP-XXXX-XXXX-XXXX" required></label>' +
         '<div class="trbtns"><button type="submit" class="refresh"' + dis + ">Use code</button></div></form>";
@@ -282,6 +288,164 @@
     UI.codes = null; render();
     codesApi().then(function (j) { UI.codes = j; render(); }, function (err) { UI.codes = { codes: [] }; say(String(err && err.message || err)); });
   }
+  /* ---------- Team, Organisation and paid pilot (netlify/functions/osap-teams.mjs, tools/teams.mjs) ----------
+     Each seat holder gets Full. The server works out every price, seat and discount and builds the Paddle checkout; this
+     page only shows the team and sends what the admin asks for. */
+  var TM = { data: null, cases: null, quoteFor: null };
+  function teamsApi(body) {
+    return session().then(function (a) {
+      if (!a) throw new Error("Sign in first.");
+      return fetch("api/osap-teams", body ? { method: "POST", headers: { authorization: "Bearer " + a.access_token, "content-type": "application/json" }, body: JSON.stringify(body), cache: "no-store" }
+        : { headers: { authorization: "Bearer " + a.access_token }, cache: "no-store" });
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || "The team service did not answer (" + r.status + ")."); return j; });
+    });
+  }
+  function opId() { var b = new Uint8Array(12); (W.crypto || W.msCrypto).getRandomValues(b); return "tm-" + Array.prototype.map.call(b, function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
+  function teamCmd(body, busyMsg, doneMsg) {
+    body.op = opId(); UI.busy = true; say(busyMsg);
+    return teamsApi(body).then(function (j) {
+      UI.busy = false;
+      var bad = (j.cases || []).filter(function (c) { return !c.ok; });
+      UI.msg = doneMsg + (bad.length ? " " + bad.length + " team case change" + (bad.length === 1 ? "" : "s") + " did not go through (" + bad.map(function (c) { return c.error; }).join("; ") + ")." : "");
+      /* joining a paid team, or leaving one, changes this account's plan: a new token, then start again with it */
+      if ((body.cmd === "accept" && j.team && j.team.seat && tier() !== "full") || (body.cmd === "leave" && !CFG.owner)) {
+        var a = lGet(K_AUTH);
+        return (a && a.refresh_token ? tokenGrant({ grant_type: "refresh_token", refresh_token: a.refresh_token }).catch(function () {}) : Promise.resolve())
+          .then(function () { return refreshPlan().catch(function () {}); }).then(function () { UI.busy = true; say(UI.msg + " Reloading…"); setTimeout(function () { location.reload(); }, 800); });
+      }
+      return loadTeam(true);
+    }).catch(fail);
+  }
+  function loadTeam(keepMsg) {
+    if (!keepMsg) UI.msg = "";
+    return teamsApi().then(function (j) {
+      TM.data = j;
+      if (j.seatChanged) refreshPlan().catch(function () {});
+      /* an admin links cases they lead: the list comes from Team cases (api/osap-cases) */
+      if (j.team && j.team.role === "admin" && !TM.cases) return session().then(function (a) {
+        return fetch("api/osap-cases", { headers: { authorization: "Bearer " + a.access_token }, cache: "no-store" }).then(function (r) { return r.ok ? r.json() : { cases: [] }; });
+      }).then(function (c) { TM.cases = (c.cases || []).filter(function (x) { return x.role === "lead"; }); }, function () { TM.cases = []; });
+    }).then(function () { render(); }, function (err) { TM.data = TM.data || { team: null, invites: [] }; say(String(err && err.message || err)); });
+  }
+  function usd(c) { return "US$" + (c / 100).toLocaleString("en-US", { minimumFractionDigits: c % 100 ? 2 : 0 }); }
+  /* the same sums as tools/tiers.mjs quote(), for the price shown while choosing; the server's own sums are what is charged */
+  function tmQuote(plan, interval, seats, launch) {
+    var B = CFG.rules.business || {}, P = B[plan], L = CFG.rules.launch || {};
+    if (!P) return null;
+    var n = plan === "pilot" ? P.seats : Math.floor(Number(seats));
+    if (plan !== "pilot" && !(n >= P.minSeats && n <= P.maxSeats)) return null;
+    var sub = plan === "team" ? n * P.seat[interval] * 100 : plan === "org" ? (P.base + Math.max(0, n - P.included) * P.extraSeat) * 100 : P.price * 100;
+    var off = launch && (L.plans || []).indexOf(plan) >= 0 ? Math.round(sub * L.percent / 100) : 0;
+    return { seats: n, subtotal: sub, off: off, total: sub - off };
+  }
+  function tmPriceLine(plan, interval, seats, launch) {
+    var q = tmQuote(plan, interval, seats, launch), P = (CFG.rules.business || {})[plan];
+    if (!q) return P ? P.name + " has " + P.minSeats + " to " + P.maxSeats + " seats." : "";
+    var per = plan === "team" ? (interval === "month" ? " a month" : " a year") : plan === "org" ? " a year" : " once, for " + P.days + " days";
+    return q.seats + " seats: " + usd(q.total) + per + (q.off ? " (" + usd(q.subtotal) + " less the launch offer" + (interval === "month" ? ", for the first 12 months" : " for the first year") + ")" : "") + ".";
+  }
+  var TMWHAT = {
+    team: "Full for every seat, a shared team with an admin, and team cases you invite seats into. 3 seats or more, monthly or yearly.",
+    org: "Full for 25 seats, more seats as you need them, yearly with one invoice for the organisation.",
+    pilot: "60 days of Full for up to 25 seats. The US$2,500 comes off your first Organisation year if you stay.",
+  };
+  function teamPlansHtml() {
+    var B = CFG.rules.business;
+    if (!B) return "";
+    return "<h3>Teams and organisations</h3><p>Team US$" + B.team.seat.month + " a seat a month or US$" + B.team.seat.year + " a seat a year (" + B.team.minSeats + " seats or more). Organisation US$" +
+      B.org.base.toLocaleString("en-US") + " a year for " + B.org.included + " seats, US$" + B.org.extraSeat + " a year for each seat more. Paid pilot US$" + B.pilot.price.toLocaleString("en-US") + " for " + B.pilot.days + " days.</p>" +
+      '<div class="trbtns"><button type="button" class="refresh" data-tr="team"' + (UI.busy ? " disabled" : "") + ">" + (CFG.signedIn ? "Team plans and my team" : "Team plans") + "</button></div>";
+  }
+  function teamHtml() {
+    var d = TM.data, dis = UI.busy ? " disabled" : "";
+    if (!CFG.signedIn) return "<p>Sign in first: a team belongs to the account that sets it up.</p>" + '<div class="trbtns"><button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="plans">Back</button></div>';
+    if (!d) return '<p class="obs">Loading your team…</p>';
+    var h = "";
+    if (d.payments && d.payments.sandbox) h += '<p class="trtest">Test payments: checkout uses Paddle\'s sandbox. No real card is charged.</p>';
+    (d.invites || []).forEach(function (v) {
+      h += '<div class="trnewcode"><p>You are invited to the team <b>' + esc(v.name) + "</b>. Joining gives you a seat with Full while the team has paid.</p>" +
+        '<div class="trbtns"><button type="button" class="refresh primary" data-tm="accept" data-team="' + esc(v.id) + '"' + dis + '>Join</button><button type="button" class="refresh" data-tm="decline" data-team="' + esc(v.id) + '"' + dis + ">Decline</button></div></div>";
+    });
+    var t = d.team;
+    if (!t) {
+      var p = TM.form || { plan: "team", interval: "year", seats: 3, launch: false };
+      var B = CFG.rules.business, L = CFG.rules.launch || {};
+      h += "<p>Set up a team and pay for its seats. You become its admin and take the first seat.</p>" +
+        '<form data-tr-form="tmnew"><label>Team name<input name="name" maxlength="60" required autocomplete="organization"></label>' +
+        '<label>Plan<select name="plan">' + ["team", "org", "pilot"].map(function (k) { return '<option value="' + k + '"' + (p.plan === k ? " selected" : "") + ">" + esc(B[k].name) + "</option>"; }).join("") + "</select></label>" +
+        '<p class="obs">' + esc(TMWHAT[p.plan]) + "</p>" +
+        (p.plan === "team" ? '<label>Paid<select name="interval"><option value="year"' + (p.interval === "year" ? " selected" : "") + '>Yearly</option><option value="month"' + (p.interval === "month" ? " selected" : "") + ">Monthly</option></select></label>" : "") +
+        (p.plan === "pilot" ? "" : '<label>Seats<input type="number" name="seats" min="' + B[p.plan].minSeats + '" max="' + B[p.plan].maxSeats + '" value="' + esc(p.seats) + '" required></label>') +
+        ((L.plans || []).indexOf(p.plan) >= 0 && d.launchLeft > 0 ? '<label class="trcheck"><input type="checkbox" name="launch"' + (p.launch ? " checked" : "") + "> Launch offer: " + L.percent + "% off the first year for one of the first " + L.customers + " customers (" + d.launchLeft + " left), in return for a short testimonial we may quote.</label>" : "") +
+        '<p class="trprice" data-tm-price>' + esc(tmPriceLine(p.plan, p.plan === "team" ? p.interval : p.plan === "org" ? "year" : "once", p.seats, p.launch && d.launchLeft > 0)) + "</p>" +
+        '<div class="trbtns"><button type="submit" class="refresh primary"' + dis + ">Set up the team</button><button type=\"button\" class=\"refresh\" data-tr=\"plans\">Back</button></div></form>" +
+        '<p class="obs">Prices are in US dollars, before any sales tax. Paddle handles payment and sends the receipts.</p>';
+      return h;
+    }
+    var admin = t.role === "admin", B2 = CFG.rules.business[t.plan] || { name: t.plan };
+    var state = { unpaid: "not paid yet", active: "paid", past_due: "payment late, seats open for now", ended: "ended" }[t.status] || t.status;
+    h += "<p><b>" + esc(t.name) + "</b>: " + esc(B2.name) + (t.interval && t.interval !== "once" ? ", " + (t.interval === "month" ? "monthly" : "yearly") : "") + ", " + t.used + " of " + t.seats + " seats used, " + esc(state) +
+      (t.until && t.status !== "unpaid" ? ", seats open until " + esc(String(t.until).slice(0, 10)) : "") + ". You are " + (admin ? "an admin" : "a member") + (t.seat ? " and have Full through this team" : "") + ".</p>";
+    if (t.pilot) h += '<p class="obs">Pilot ends ' + esc(String(t.pilot.ends).slice(0, 10)) + "." + (t.pilot.credit ? " Its US$" + CFG.rules.business.pilot.credit.toLocaleString("en-US") + " comes off your first Organisation year." : "") + "</p>";
+    if (admin) {
+      if (t.quote && (t.status === "unpaid" || t.status === "ended" || (t.plan === "org" && t.pilot && t.pilot.credit))) {
+        h += '<p class="trprice">To pay: ' + usd(t.quote.total) + (t.quote.discount ? " (" + usd(t.quote.subtotal) + " less " + usd(t.quote.discount.cents) + (t.quote.discount.recurIntervals > 1 ? " each month for 12 months" : "") + ")" : "") + "</p>" +
+          '<div class="trbtns"><button type="button" class="refresh primary" data-tm="pay"' + dis + ">Pay for the team</button></div>";
+      }
+      if (t.plan === "pilot" && t.pilot) h += '<form data-tr-form="tmorg"><label>Move to Organisation: seats<input type="number" name="seats" min="25" max="500" value="' + Math.max(25, t.used) + '" required></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Choose Organisation</button></div></form>";
+      if ((t.status === "active" || t.status === "past_due") && t.plan !== "pilot") h += '<form data-tr-form="tmseats"><label>Seats (Paddle charges or credits the difference now)<input type="number" name="seats" min="' + Math.max(t.used, (CFG.rules.business[t.plan] || {}).minSeats || 1) + '" max="500" value="' + t.seats + '" required></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Change seats</button></div></form>";
+      var linked = (t.cases || []).map(function (id) { var c = (TM.cases || []).filter(function (x) { return x.id === id; })[0]; return { id: id, name: c ? c.name : "a case you no longer lead" }; });
+      h += '<h3>Invite</h3><form data-tr-form="tminvite"><label>Email<input type="email" name="email" required autocapitalize="none" spellcheck="false"></label>' +
+        (linked.length ? "<p>Also invite them into these team cases:</p>" + linked.map(function (c) { return '<label class="trcheck"><input type="checkbox" name="case" value="' + esc(c.id) + '" checked> ' + esc(c.name) + "</label>"; }).join("") +
+          '<label>Case role<select name="crole"><option value="analyst">Analyst</option><option value="viewer">Viewer</option></select></label>' : "") +
+        '<div class="trbtns"><button type="submit" class="refresh primary"' + dis + ">Invite</button></div></form>";
+      h += '<h3>People</h3><div class="trusers"><table><thead><tr><th>Email</th><th>Call sign</th><th>Role</th><th></th></tr></thead><tbody>' +
+        t.members.map(function (m) {
+          return "<tr><td>" + esc(m.email || "") + (m.me ? " <i>you</i>" : "") + "</td><td>" + esc(m.call) + "</td><td>" + (m.admin ? "admin" : "member") + "</td><td>" + (m.me ? "" :
+            '<button type="button" class="refresh" data-tm="' + (m.admin ? "unadmin" : "admin") + '" data-member="' + esc(m.uid) + '"' + dis + ">" + (m.admin ? "Not admin" : "Make admin") + "</button> " +
+            '<button type="button" class="refresh" data-tm="remove" data-member="' + esc(m.uid) + '"' + dis + ">Remove</button>") + "</td></tr>";
+        }).join("") + (t.invites || []).map(function (v) {
+          return "<tr><td>" + esc(v.email) + "</td><td></td><td><i>invited</i></td><td><button type=\"button\" class=\"refresh\" data-tm=\"uninvite\" data-email=\"" + esc(v.email) + '"' + dis + ">Cancel</button></td></tr>";
+        }).join("") + "</tbody></table></div>";
+      h += "<h3>Team cases</h3><p>Link cases you lead. New seats can be invited into them, and anyone removed from the team is removed from them.</p>" +
+        (linked.length ? "<ul>" + linked.map(function (c) { return "<li>" + esc(c.name) + ' <button type="button" class="refresh" data-tm="unlink" data-case="' + esc(c.id) + '"' + dis + ">Unlink</button></li>"; }).join("") + "</ul>" : "") ;
+      var free = (TM.cases || []).filter(function (c) { return (t.cases || []).indexOf(c.id) < 0; });
+      h += free.length ? '<form data-tr-form="tmlink"><label>Case<select name="case">' + free.map(function (c) { return '<option value="' + esc(c.id) + '">' + esc(c.name) + "</option>"; }).join("") + '</select></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Link case</button></div></form>"
+        : '<p class="obs">' + (TM.cases ? "No other case you lead to link. Make one in Team cases." : "Loading your cases…") + "</p>";
+    } else {
+      h += "<p>People: " + t.members.map(function (m) { return esc(m.call || "member") + (m.admin ? " (admin)" : ""); }).join(", ") + ".</p>";
+    }
+    h += '<div class="trbtns"><button type="button" class="refresh" data-tm="leave"' + dis + '>Leave the team</button><button type="button" class="refresh" data-tr="plans">Back</button></div>';
+    if (admin && t.status !== "unpaid") h += '<p class="obs">Receipts, card changes and cancelling: use the link in the Paddle receipt email.</p>';
+    return h;
+  }
+  /* the checkout the server built: Paddle opens it by transaction id, then the webhook marks the team paid */
+  function teamPay(id) {
+    UI.busy = true; say("Opening checkout…");
+    teamsApi({ cmd: "checkout", team: id }).then(function (j) {
+      onPaid = function () { teamPaid(id); };
+      return paddle(j.token, j.sandbox).then(function (P) {
+        UI.busy = false; say(j.sandbox ? "Test checkout (Paddle sandbox): no real card is charged." : "");
+        P.Checkout.open({ transactionId: j.transaction, customer: j.email ? { email: j.email } : undefined });
+      });
+    }).catch(fail);
+  }
+  function teamPaid(id) {
+    say("Payment done. Opening the team's seats…");
+    var n = 0;
+    (function poll() {
+      teamsApi().then(function (j) {
+        TM.data = j;
+        if (j.team && j.team.id === id && j.team.seat) {
+          var a = lGet(K_AUTH);
+          (a && a.refresh_token ? tokenGrant({ grant_type: "refresh_token", refresh_token: a.refresh_token }).catch(function () {}) : Promise.resolve())
+            .then(function () { return refreshPlan().catch(function () {}); }).then(function () { say("The team is paid and your seat has Full. Reloading…"); setTimeout(function () { location.reload(); }, 800); });
+        } else if (++n < 20) setTimeout(poll, 3000);
+        else say("Payment done, but the team has not switched on yet. Reload in a minute; if it still has not, reply to your Paddle receipt.");
+      }, function () { if (++n < 20) setTimeout(poll, 3000); });
+    })();
+  }
   function loadUsers() {
     UI.users = null; render();
     session().then(function (a) {
@@ -298,7 +462,7 @@
     if (!CFG) return;
     if (!BOX) {
       BOX = D.createElement("div"); BOX.id = "tierdlg"; BOX.hidden = true; BOX.setAttribute("role", "dialog"); BOX.setAttribute("aria-modal", "true"); BOX.setAttribute("aria-labelledby", "tr-h");
-      BOX.addEventListener("click", onClick); BOX.addEventListener("submit", onSubmit); D.body.appendChild(BOX);
+      BOX.addEventListener("click", onClick); BOX.addEventListener("submit", onSubmit); BOX.addEventListener("change", onTeamInput); BOX.addEventListener("input", onTeamInput); D.body.appendChild(BOX);
     }
     UI.mode = mode || "plans"; UI.msg = msg || "";
     if (UI.recover) UI.mode = "newpw";
@@ -331,7 +495,9 @@
   }
   function onSubmit(e) {
     e.preventDefault();
-    var f = e.target, k = f.getAttribute("data-tr-form"), em = f.email ? f.email.value.trim() : "", pw = f.password ? f.password.value : "";
+    var f = e.target, k = f.getAttribute("data-tr-form");
+    if (/^tm/.test(k)) { teamSubmit(f, k); return; }
+    var em = f.email ? f.email.value.trim() : "", pw = f.password ? f.password.value : "";
     if (em) UI.email = em;
     if (k === "code") {
       UI.busy = true; say("Checking the code…");
@@ -373,10 +539,58 @@
       }).catch(fail);
     }
   }
+  function teamForm(f) {
+    var p = { name: f.name ? f.name.value : "", plan: f.plan.value, interval: f.interval ? f.interval.value : "year", seats: f.seats ? f.seats.value : 0, launch: !!(f.launch && f.launch.checked) };
+    if (p.plan === "org") p.interval = "year";
+    if (p.plan === "pilot") p.interval = "once";
+    return p;
+  }
+  /* choosing a plan redraws the form (seats and how it is paid differ); typing seats updates only the price line */
+  function onTeamInput(e) {
+    var f = e.target.form;
+    if (!f || f.getAttribute("data-tr-form") !== "tmnew") return;
+    var p = teamForm(f), was = TM.form || {};
+    if (p.plan !== was.plan) { var B = CFG.rules.business[p.plan]; if (p.plan !== "pilot" && !(p.seats >= B.minSeats)) p.seats = B.minSeats; TM.form = p; render(); var n = BOX.querySelector('input[name="name"]'); if (n) n.value = p.name; return; }
+    TM.form = p;
+    var el = BOX.querySelector("[data-tm-price]"); if (el) el.textContent = tmPriceLine(p.plan, p.interval, p.seats, p.launch && TM.data && TM.data.launchLeft > 0);
+  }
+  function teamSubmit(f, k) {
+    var t = TM.data && TM.data.team;
+    if (k === "tmnew") {
+      var p = teamForm(f); TM.form = p;
+      teamCmd({ cmd: "create", name: p.name, plan: p.plan, interval: p.interval, seats: Number(p.seats), launch: p.launch }, "Setting up the team…", "Team set up. Pay for it to open the seats.");
+      return;
+    }
+    if (!t) return;
+    if (k === "tminvite") {
+      var cs = Array.prototype.filter.call(f.querySelectorAll('input[name="case"]'), function (x) { return x.checked; }).map(function (x) { return { "case": x.value, role: f.crole ? f.crole.value : "analyst" }; });
+      teamCmd({ cmd: "invite", team: t.id, email: f.email.value.trim(), cases: cs }, "Inviting…", "Invited. They join from Settings > Plan and sign-in > Team plans, signed in with that email.");
+    } else if (k === "tmlink") teamCmd({ cmd: "link", team: t.id, "case": f["case"].value }, "Linking the case…", "Case linked.");
+    else if (k === "tmorg") teamCmd({ cmd: "plan", team: t.id, plan: "org", seats: Number(f.seats.value) }, "Choosing Organisation…", "Organisation chosen. Pay for it below; the pilot's credit is taken off.");
+    else if (k === "tmseats") {
+      UI.busy = true; say("Changing seats with Paddle…");
+      teamsApi({ cmd: "seats", team: t.id, seats: Number(f.seats.value) }).then(function () {
+        UI.busy = false; UI.msg = "Paddle is changing your seats. They show here once Paddle confirms, usually within a minute.";
+        setTimeout(function () { loadTeam(true); }, 5000); render();
+      }).catch(fail);
+    }
+  }
+  function teamClick(b) {
+    var k = b.getAttribute("data-tm"), t = TM.data && TM.data.team, id = b.getAttribute("data-team") || (t && t.id);
+    if (k === "pay") { teamPay(id); return; }
+    if (k === "accept") { teamCmd({ cmd: "accept", team: id }, "Joining…", "You joined the team."); return; }
+    if (k === "decline") { teamCmd({ cmd: "decline", team: id }, "Declining…", "Invite declined."); return; }
+    if (k === "remove") { if (!W.confirm("Remove this person from the team? They lose the seat and are removed from the team's cases.")) return; teamCmd({ cmd: "remove", team: id, member: b.getAttribute("data-member") }, "Removing…", "Removed."); return; }
+    if (k === "admin" || k === "unadmin") { teamCmd({ cmd: "admin", team: id, member: b.getAttribute("data-member"), on: k === "admin" }, "Saving…", "Saved."); return; }
+    if (k === "uninvite") { teamCmd({ cmd: "uninvite", team: id, email: b.getAttribute("data-email") }, "Cancelling the invite…", "Invite cancelled."); return; }
+    if (k === "unlink") { teamCmd({ cmd: "unlink", team: id, "case": b.getAttribute("data-case") }, "Unlinking…", "Case unlinked."); return; }
+    if (k === "leave") { if (!W.confirm("Leave the team? You lose the seat and leave the team's cases.")) return; teamCmd({ cmd: "leave", team: id }, "Leaving…", "You left the team."); }
+  }
   function onClick(e) {
     var t = e.target;
     if (t === BOX || (t.closest && t.closest(".x"))) { close(); return; }
-    var b = t.closest && t.closest("[data-tr],[data-tr-buy],[data-tr-off]"); if (!b || UI.busy) return;
+    var b = t.closest && t.closest("[data-tr],[data-tr-buy],[data-tr-off],[data-tm]"); if (!b || UI.busy) return;
+    if (b.hasAttribute("data-tm")) { teamClick(b); return; }
     if (b.hasAttribute("data-tr-off")) {
       if (!W.confirm("Turn this code off? If someone used it, their account goes back to its own plan.")) return;
       UI.busy = true; say("Turning the code off…");
@@ -390,6 +604,7 @@
       UI.mode = k; say(""); return;
     }
     if (k === "users") { UI.msg = ""; UI.newCode = null; loadUsers(); return; }
+    if (k === "team") { UI.mode = "team"; UI.msg = ""; TM.data = null; TM.cases = null; render(); if (CFG.signedIn) loadTeam(); return; }
     if (k === "copy") {
       var done = function () { say("Code copied."); };
       try { navigator.clipboard.writeText(UI.newCode).then(done, function () { say("Copy did not work: select the code and copy it."); }); } catch (e2) { say("Copy did not work: select the code and copy it."); }
@@ -460,6 +675,8 @@
       "#tierdlg table{border-collapse:collapse;width:100%;font-size:12px}#tierdlg th,#tierdlg td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line,rgba(127,127,127,.35));white-space:nowrap}" +
       "#tierdlg td i{font-size:11px;color:var(--muted)}#tierdlg h3{margin:16px 0 4px;font-size:15px}#tierdlg td .refresh{min-height:32px;font-size:12px}" +
       "#tierdlg .trnewcode{border:1px solid #1c7ed6;border-radius:6px;padding:4px 10px;margin:8px 0}#tierdlg .trnewcode code{font-size:16px;font-weight:700;user-select:all}" +
+      "#tierdlg select{font:inherit;font-size:16px;padding:8px;min-height:44px}#tierdlg label.trcheck{flex-direction:row;align-items:flex-start;gap:8px;font-weight:400}#tierdlg label.trcheck input{width:auto;min-height:0;margin-top:3px}" +
+      "#tierdlg .trtest{background:#fff3bf;color:#5c3c00;border-radius:4px;padding:4px 8px;font-weight:600}#tierdlg p.trprice{font-weight:700}#tierdlg .cbox:has([data-tr-form=tminvite]){max-width:760px}" +
       "#tierdlg form.trcode{margin-top:12px}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
     D.head.appendChild(s);
   }

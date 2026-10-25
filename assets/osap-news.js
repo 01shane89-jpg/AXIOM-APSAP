@@ -9,7 +9,7 @@
    - Where: this country (headlines filed under it: its own outlets, or a search result that names it) or every country.
    - Data sets: saved keyword filters from tools/topics.json; pick one to see its latest headlines, or combine with words.
    - More: a link to the same words in Bing News, for reporting the pool does not hold. It leaves the app.
-   Only news that matters to an analyst or a special operations team is in the pool (tools/relevance.json).
+   Only news that matters to an analyst or a security team is in the pool (tools/relevance.json).
    Every line is a source's headline with its outlet, time and link, not a verified report. */
 (function () {
   "use strict";
