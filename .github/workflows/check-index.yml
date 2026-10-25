@@ -101,6 +101,9 @@ jobs:
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
       - run: node tests/nc_strip.test.mjs
       - run: node tests/stories.test.mjs
+      # news relevance word lists, and the pool rechecking the rows it carries over (tools/relevance.json, tools/news_index.mjs)
+      - run: node tests/topics.test.mjs
+      - run: node tests/news_index_relevance.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
       # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note

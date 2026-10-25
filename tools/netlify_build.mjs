@@ -23,7 +23,21 @@ fs.writeFileSync(path.join(OUT, "build.json"), JSON.stringify({ commit: COMMIT, 
 if (/^(1|true|yes|on)$/i.test(String(process.env.OSAP_COMMERCIAL || "").trim())) {
   const f = path.join(OUT, "assets", "osap-sold.js"), t = fs.readFileSync(f, "utf8");
   if (!/window\.OSAP_SOLD = false;/.test(t)) throw new Error("netlify_build: assets/osap-sold.js has no switch line");
-  fs.writeFileSync(f, t.replace("window.OSAP_SOLD = false;", "window.OSAP_SOLD = true;"));
-  console.log("netlify_build: sold version (OSAP_SOLD = true)");
+  // the sold version's own hosts (sell blockers, 2026-10-25): a satellite tile address and road routers, https only; a
+  // missing or malformed one leaves that feature out of the sold app (assets/osap-sold.js OSAP_HOST)
+  const hosts = soldHosts(process.env);
+  if (!/window\.OSAP_SOLD_HOSTS = \{\};/.test(t)) throw new Error("netlify_build: assets/osap-sold.js has no hosts line");
+  fs.writeFileSync(f, t.replace("window.OSAP_SOLD = false;", "window.OSAP_SOLD = true;").replace("window.OSAP_SOLD_HOSTS = {};", "window.OSAP_SOLD_HOSTS = " + JSON.stringify(hosts) + ";"));
+  console.log("netlify_build: sold version (OSAP_SOLD = true), own hosts: " + (Object.keys(hosts).join(", ") || "none"));
 }
 console.log("netlify_build: copied " + n + " entries into _site");
+
+// OSAP_SAT_TILES (with {z}, {x} and {y}), OSAP_OSRM_URL and OSAP_VALHALLA_URL (ending in /) from the site's environment
+function soldHosts(env) {
+  const out = {}, ok = (v) => /^https:\/\/[A-Za-z0-9.-]+(:443)?\/[^\s"'<>\\]*$/.test(v);
+  const sat = String(env.OSAP_SAT_TILES || "").trim(), osrm = String(env.OSAP_OSRM_URL || "").trim(), vh = String(env.OSAP_VALHALLA_URL || "").trim();
+  if (ok(sat) && /\{z\}/.test(sat) && /\{x\}/.test(sat) && /\{y\}/.test(sat)) out.sat = sat;
+  if (ok(osrm)) out.osrm = osrm.endsWith("/") ? osrm : osrm + "/";
+  if (ok(vh)) out.valhalla = vh.endsWith("/") ? vh : vh + "/";
+  return out;
+}

@@ -100,7 +100,9 @@
   /* ---------- small islands: the outlines leave many out (Ko Phi Phi reads as 26 km offshore), so a point the outlines call
      sea is checked against the road network: a mapped road within ROAD_M means land with roads (an island), and the caller
      keeps its land behaviour. The same public OSRM servers the medical plan already routes with; only the point is sent. */
-  var OSRM = ["https://routing.openstreetmap.de/routed-car/", "https://router.project-osrm.org/"], ROAD_M = 300;
+  var ROAD_M = 300;   /* the sold version's own router only (assets/osap-sold.js); with none, no island check */
+  var OSRM = (window.OSAP_HOST ? [window.OSAP_HOST("osrm") && window.OSAP_HOST("osrm") + "routed-car/", window.OSAP_HOST("osrmDemo")]
+    : ["https://routing.openstreetmap.de/routed-car/", "https://router.project-osrm.org/"]).filter(Boolean);
   function roadNear(lat, lon, ms) {
     var path = "nearest/v1/driving/" + lon.toFixed(5) + "," + lat.toFixed(5) + "?number=1";
     function go(i) {
