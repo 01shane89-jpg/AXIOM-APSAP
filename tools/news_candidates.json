@@ -1,835 +1,1631 @@
 {
-"note": "PROBE BRANCH ONLY (never merged), round 2",
-"feeds": [
-{
-"cc": "ph",
-"outlet": "PNA syndication",
-"url": "https://syndication.pna.gov.ph/rss",
-"lang": "en",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "MND PLA activities (English list)",
-"url": "https://www.mnd.gov.tw/en/news/PlaactList",
-"lang": "en",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "MOFA Taiwan RSS",
-"url": "https://en.mofa.gov.tw/Rss.aspx?n=1447",
-"lang": "en",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "CWA earthquake",
-"url": "https://www.cwa.gov.tw/rss/Data/cwa_eq.xml",
-"lang": "zh",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "CWA typhoon",
-"url": "https://www.cwa.gov.tw/rss/Data/cwa_typhoon.xml",
-"lang": "zh",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "UDN society",
-"url": "https://udn.com/rssfeed/news/2/6639",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "UDN breaking",
-"url": "https://udn.com/rssfeed/news/1/1",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "KMA special reports RSS",
-"url": "https://www.weather.go.kr/w/rss/warning/wrn.do",
-"lang": "ko",
-"kind": "official",
-"state": true
-},
-{
-"cc": "kr",
-"outlet": "KMA (old) warnings",
-"url": "https://www.kma.go.kr/weather/special/special_rss.jsp",
-"lang": "ko",
-"kind": "official",
-"state": true
-},
-{
-"cc": "th",
-"outlet": "Thai PBS news",
-"url": "https://www.thaipbs.or.th/rss/news",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Philstar Pilipino Star Ngayon",
-"url": "https://www.philstar.com/rss/psn",
-"lang": "tl",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Philstar regions",
-"url": "https://www.philstar.com/rss/region",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:mindanews.com",
-"url": "https://www.bing.com/news/search?q=site%3Amindanews.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:pna.gov.ph",
-"url": "https://www.bing.com/news/search?q=site%3Apna.gov.ph&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:newsinfo.inquirer.net Mindanao",
-"url": "https://www.bing.com/news/search?q=site%3Anewsinfo.inquirer.net%20Mindanao&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:mb.com.ph",
-"url": "https://www.bing.com/news/search?q=site%3Amb.com.ph&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:news.abs-cbn.com",
-"url": "https://www.bing.com/news/search?q=site%3Anews.abs-cbn.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: Army soldiers killed OR clash Mindanao",
-"url": "https://www.bing.com/news/search?q=Army%20soldiers%20killed%20OR%20clash%20Mindanao&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: Philippine Coast Guard Chinese vessel",
-"url": "https://www.bing.com/news/search?q=Philippine%20Coast%20Guard%20Chinese%20vessel&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: PNP police shot dead",
-"url": "https://www.bing.com/news/search?q=PNP%20police%20shot%20dead&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: site:thaipbsworld.com",
-"url": "https://www.bing.com/news/search?q=site%3Athaipbsworld.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: site:nationthailand.com",
-"url": "https://www.bing.com/news/search?q=site%3Anationthailand.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: site:thairath.co.th",
-"url": "https://www.bing.com/news/search?q=site%3Athairath.co.th&format=rss&setlang=th",
-"lang": "th",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: Thai police arrested",
-"url": "https://www.bing.com/news/search?q=Thai%20police%20arrested&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "tw",
-"outlet": "Bing News search: site:focustaiwan.tw",
-"url": "https://www.bing.com/news/search?q=site%3Afocustaiwan.tw&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "tw",
-"outlet": "Bing News search: Kinmen China coast guard",
-"url": "https://www.bing.com/news/search?q=Kinmen%20China%20coast%20guard&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "tw",
-"outlet": "Bing News search: 金門 海警",
-"url": "https://www.bing.com/news/search?q=%E9%87%91%E9%96%80%20%E6%B5%B7%E8%AD%A6&format=rss&setlang=zh",
-"lang": "zh",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "kr",
-"outlet": "Bing News search: site:koreajoongangdaily.joins.com",
-"url": "https://www.bing.com/news/search?q=site%3Akoreajoongangdaily.joins.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "kr",
-"outlet": "Bing News search: 북한 오물풍선 OR 무인기 OR 도발",
-"url": "https://www.bing.com/news/search?q=%EB%B6%81%ED%95%9C%20%EC%98%A4%EB%AC%BC%ED%92%8D%EC%84%A0%20OR%20%EB%AC%B4%EC%9D%B8%EA%B8%B0%20OR%20%EB%8F%84%EB%B0%9C&format=rss&setlang=ko",
-"lang": "ko",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "kr",
-"outlet": "Bing News search: 합참 북한",
-"url": "https://www.bing.com/news/search?q=%ED%95%A9%EC%B0%B8%20%EB%B6%81%ED%95%9C&format=rss&setlang=ko",
-"lang": "ko",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: site:montsame.mn",
-"url": "https://www.bing.com/news/search?q=site%3Amontsame.mn&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: Mongolia police",
-"url": "https://www.bing.com/news/search?q=Mongolia%20police&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: Монгол осол",
-"url": "https://www.bing.com/news/search?q=%D0%9C%D0%BE%D0%BD%D0%B3%D0%BE%D0%BB%20%D0%BE%D1%81%D0%BE%D0%BB&format=rss&setlang=mn",
-"lang": "mn",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: Улаанбаатар цагдаа",
-"url": "https://www.bing.com/news/search?q=%D0%A3%D0%BB%D0%B0%D0%B0%D0%BD%D0%B1%D0%B0%D0%B0%D1%82%D0%B0%D1%80%20%D1%86%D0%B0%D0%B3%D0%B4%D0%B0%D0%B0&format=rss&setlang=mn",
-"lang": "mn",
-"kind": "search",
-"search": true,
-"nc": true
-}
-],
-"discover": [
-{
-"cc": "th",
-"outlet": "Thai News Agency",
-"home": "https://tna.mcot.net/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "PPTV",
-"home": "https://www.pptvhd36.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Amarin TV",
-"home": "https://www.amarintv.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Naewna",
-"home": "https://www.naewna.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Post Today",
-"home": "https://www.posttoday.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Komchadluek",
-"home": "https://www.komchadluek.net/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Nation TV",
-"home": "https://www.nationtv.tv/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Thai PBS",
-"home": "https://www.thaipbs.or.th/news",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "NNT (PRD)",
-"home": "https://thainews.prd.go.th/",
-"lang": "th",
-"kind": "official"
-},
-{
-"cc": "th",
-"outlet": "The Phuket News",
-"home": "https://www.thephuketnews.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Daily News",
-"home": "https://www.dailynews.co.th/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Thai MFA",
-"home": "https://www.mfa.go.th/en/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "th",
-"outlet": "Chiang Mai News",
-"home": "https://www.chiangmainews.co.th/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Hat Yai Focus",
-"home": "https://www.hatyaifocus.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Korat Daily",
-"home": "https://www.koratdaily.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "SunStar",
-"home": "https://www.sunstar.com.ph/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Daily Tribune",
-"home": "https://tribune.net.ph/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Abante",
-"home": "https://www.abante.com.ph/",
-"lang": "tl",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Zamboanga Times",
-"home": "https://zambotimes.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Philippine News Agency",
-"home": "https://www.pna.gov.ph/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "ph",
-"outlet": "PAGASA",
-"home": "https://bagong.pagasa.dost.gov.ph/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "ph",
-"outlet": "Armed Forces of the Philippines",
-"home": "https://www.afp.mil.ph/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "ph",
-"outlet": "Mindanao Examiner",
-"home": "https://www.mindanaoexaminer.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Manila Standard",
-"home": "https://manilastandard.net/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Politiko",
-"home": "https://politiko.com.ph/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Cebu Daily News",
-"home": "https://cebudailynews.inquirer.net/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "The Freeman (Cebu)",
-"home": "https://www.philstar.com/the-freeman",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Montsame English",
-"home": "https://montsame.mn/en",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Montsame Mongolian",
-"home": "https://montsame.mn/mn",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "The UB Post",
-"home": "https://theubpost.mn/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "GoGo.mn",
-"home": "https://gogo.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Eagle News",
-"home": "https://eagle.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Unuudur",
-"home": "https://unuudur.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "isee.mn",
-"home": "https://isee.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "iToim",
-"home": "https://itoim.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "News.mn",
-"home": "https://news.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Mongolia Weekly",
-"home": "https://www.mongoliaweekly.org/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "NEMA",
-"home": "https://nema.gov.mn/",
-"lang": "mn",
-"kind": "official"
-},
-{
-"cc": "mn",
-"outlet": "Police (police.gov.mn)",
-"home": "https://police.gov.mn/",
-"lang": "mn",
-"kind": "official"
-},
-{
-"cc": "mn",
-"outlet": "Zindaa",
-"home": "https://news.zindaa.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Mongolian Economy",
-"home": "https://www.mongolianeconomy.mn/en",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Ikon",
-"home": "https://ikon.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Mongolia Government",
-"home": "https://mongolia.gov.mn/",
-"lang": "mn",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Korea JoongAng Daily",
-"home": "https://koreajoongangdaily.joins.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Arirang",
-"home": "https://www.arirang.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "KBS News",
-"home": "https://news.kbs.co.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "MBC News",
-"home": "https://imnews.imbc.com/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Busan Ilbo",
-"home": "https://www.busan.com/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Kookje",
-"home": "https://www.kookje.co.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Jeju Ilbo",
-"home": "https://www.jejuilbo.net/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Kyeongin Ilbo",
-"home": "https://www.kyeongin.com/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Gangwon Ilbo",
-"home": "https://www.kwnews.co.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Ministry of National Defense",
-"home": "https://www.mnd.go.kr/",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Joint Chiefs of Staff",
-"home": "https://www.jcs.mil.kr/",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Korea Coast Guard",
-"home": "https://www.kcg.go.kr/kcg/index.do",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Korea Meteorological Administration",
-"home": "https://www.weather.go.kr/w/index.do",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Ministry of Unification",
-"home": "https://www.unikorea.go.kr/",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Yonhap English",
-"home": "https://en.yna.co.kr/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Kookbang Ilbo",
-"home": "https://kookbang.dema.mil.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Korea Bizwire",
-"home": "https://koreabizwire.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Focus Taiwan",
-"home": "https://focustaiwan.tw/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Taipei Times",
-"home": "https://www.taipeitimes.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Taiwan News",
-"home": "https://www.taiwannews.com.tw/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "RTI English",
-"home": "https://en.rti.org.tw/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "The News Lens",
-"home": "https://international.thenewslens.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Storm Media",
-"home": "https://www.storm.mg/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "China Times",
-"home": "https://www.chinatimes.com/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "SETN",
-"home": "https://www.setn.com/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "TVBS",
-"home": "https://news.tvbs.com.tw/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Up Media",
-"home": "https://www.upmedia.mg/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Coast Guard Administration",
-"home": "https://www.cga.gov.tw/GipOpen/wSite/mp?mp=999",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Mainland Affairs Council",
-"home": "https://www.mac.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "National Police Agency",
-"home": "https://www.npa.gov.tw/ch/index",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Presidential Office",
-"home": "https://www.president.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "MND (Chinese)",
-"home": "https://www.mnd.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Military News Agency",
-"home": "https://mna.gpwb.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Taiwan CDC",
-"home": "https://www.cdc.gov.tw/",
-"lang": "zh",
-"kind": "official"
-}
-]
+ "note": "Commercial-safe replacements for Bing News searches (thread 'Replace Bing news with commercial-safe sources', 2026-10-25): direct outlet feeds for the countries that lose most news in sold mode.",
+ "feeds": [
+  {
+   "cc": "au",
+   "outlet": "SBS News",
+   "url": "https://www.sbs.com.au/news/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "9News",
+   "url": "https://www.9news.com.au/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "news.com.au national",
+   "url": "https://www.news.com.au/content-feeds/latest-news-national/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "The Canberra Times",
+   "url": "https://www.canberratimes.com.au/rss.xml",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "The Age",
+   "url": "https://www.theage.com.au/rss/feed.xml",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "Brisbane Times",
+   "url": "https://www.brisbanetimes.com.au/rss/feed.xml",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "WAtoday",
+   "url": "https://www.watoday.com.au/rss/feed.xml",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "Crikey",
+   "url": "https://www.crikey.com.au/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "The New Daily",
+   "url": "https://www.thenewdaily.com.au/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "Michael West Media",
+   "url": "https://michaelwest.com.au/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "InnovationAus",
+   "url": "https://www.innovationaus.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "Australian Defence Magazine",
+   "url": "https://www.australiandefence.com.au/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "ABC Pacific",
+   "url": "https://www.abc.net.au/pacific/feed/8015018/rss.xml",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Arab News",
+   "url": "https://www.arabnews.com/cat/1/rss.xml",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Arab News Saudi",
+   "url": "https://www.arabnews.com/taxonomy/term/1/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Gulf Times",
+   "url": "https://www.gulf-times.com/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "qa",
+   "outlet": "The Peninsula",
+   "url": "https://thepeninsulaqatar.com/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Kuwait Times",
+   "url": "https://kuwaittimes.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Arab Times",
+   "url": "https://www.arabtimesonline.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bh",
+   "outlet": "GDN Online",
+   "url": "https://www.gdnonline.com/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bh",
+   "outlet": "Daily Tribune",
+   "url": "https://www.newsofbahrain.com/rss.xml",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "The Irrawaddy",
+   "url": "https://www.irrawaddy.com/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Mizzima",
+   "url": "https://eng.mizzima.com/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Frontier Myanmar",
+   "url": "https://www.frontiermyanmar.net/en/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Global New Light of Myanmar",
+   "url": "https://www.gnlm.com.mm/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "BNI Online",
+   "url": "https://www.bnionline.net/en/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Shan Herald",
+   "url": "https://english.shannews.org/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Myanmar Now Burmese",
+   "url": "https://myanmar-now.org/mm/feed/",
+   "lang": "my",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "Times of Malta",
+   "url": "https://timesofmalta.com/rss/latest",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "MaltaToday",
+   "url": "https://www.maltatoday.com.mt/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "Malta Independent",
+   "url": "https://www.independent.com.mt/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "Newsbook EN",
+   "url": "https://newsbook.com.mt/en/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "El Observador",
+   "url": "https://www.elobservador.com.uy/rss/elobservador.xml",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "El País Uruguay",
+   "url": "https://www.elpais.com.uy/rss",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "Subrayado",
+   "url": "https://www.subrayado.com.uy/rss",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "Caras y Caretas",
+   "url": "https://www.carasycaretas.com.uy/feed",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "El Faro",
+   "url": "https://elfaro.net/rss",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "La Prensa Gráfica",
+   "url": "https://www.laprensagrafica.com/arc/outboundfeeds/rss/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "Revista Factum",
+   "url": "https://www.revistafactum.com/feed/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "El Mundo SV",
+   "url": "https://diario.elmundo.sv/feed",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "et",
+   "outlet": "Ethiopia Insight",
+   "url": "https://www.ethiopia-insight.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "et",
+   "outlet": "Ethiopian Herald",
+   "url": "https://www.press.et/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Al-Sahwa Net",
+   "url": "https://alsahwa-yemen.net/en/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Saba (Aden)",
+   "url": "https://www.saba.ye/en/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Yemen Online",
+   "url": "https://www.yemenonline.info/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "la",
+   "outlet": "Vientiane Times",
+   "url": "https://www.vientianetimes.org.la/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "oki",
+   "outlet": "Stars and Stripes Pacific",
+   "url": "https://www.stripes.com/rss/theaters/asia_pacific",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "oki",
+   "outlet": "Yaeyama Mainichi",
+   "url": "https://www.y-mainichi.co.jp/rss.xml",
+   "lang": "ja",
+   "kind": "news"
+  },
+  {
+   "cc": "bw",
+   "outlet": "Mmegi",
+   "url": "https://www.mmegi.bw/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bw",
+   "outlet": "The Patriot",
+   "url": "https://www.thepatriot.co.bw/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "ANGOP",
+   "url": "https://www.angop.ao/feed/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "Novo Jornal",
+   "url": "https://www.novojornal.co.ao/rss",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "Ver Angola",
+   "url": "https://www.verangola.net/va/rss",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "cv",
+   "outlet": "A Semana",
+   "url": "https://www.asemana.publ.cv/spip.php?page=backend",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ws",
+   "outlet": "Samoa Observer",
+   "url": "https://www.samoaobserver.ws/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ws",
+   "outlet": "Samoa Government",
+   "url": "https://www.samoagovt.ws/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Sahara Press Service",
+   "url": "https://www.spsrasd.info/news/en/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "eh",
+   "outlet": "WSRW",
+   "url": "https://wsrw.org/en/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "li",
+   "outlet": "Liechtensteiner Vaterland",
+   "url": "https://www.vaterland.li/rss",
+   "lang": "de",
+   "kind": "news"
+  },
+  {
+   "cc": "li",
+   "outlet": "Landtag Liechtenstein",
+   "url": "https://www.landtag.li/rss",
+   "lang": "de",
+   "kind": "news"
+  },
+  {
+   "cc": "mc",
+   "outlet": "Monaco-Matin",
+   "url": "https://www.monacomatin.mc/rss",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini Observer",
+   "url": "https://www.observer.org.sz/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bi",
+   "outlet": "Ikiriho",
+   "url": "https://www.ikiriho.org/feed/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "bi",
+   "outlet": "RTNB",
+   "url": "https://www.rtnb.bi/feed/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "km",
+   "outlet": "Al-Fajr Comores",
+   "url": "https://alfajrquotidien.net/feed/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "km",
+   "outlet": "Comores Infos",
+   "url": "https://www.comoresinfos.net/feed/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "st",
+   "outlet": "Téla Nón",
+   "url": "https://www.telanon.info/feed/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "gq",
+   "outlet": "Diario Rombe",
+   "url": "https://www.diariorombe.es/feed/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Lesotho Times",
+   "url": "https://lestimes.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Sunday Express",
+   "url": "https://sundayexpress.co.ls/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "pw",
+   "outlet": "Island Times",
+   "url": "https://islandtimes.org/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "pg",
+   "outlet": "Business Advantage PNG",
+   "url": "https://www.businessadvantagepng.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "pg",
+   "outlet": "PNG Post-Courier",
+   "url": "https://www.postcourier.com.pg/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "fj",
+   "outlet": "PINA Pacnews",
+   "url": "https://pina.com.fj/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "fj",
+   "outlet": "Pacific Islands Forum",
+   "url": "https://forumsec.org/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "nz",
+   "outlet": "PMN Pacific",
+   "url": "https://www.pmn.co.nz/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "gm",
+   "outlet": "State House Gambia",
+   "url": "https://statehouse.gov.gm/feed",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ae",
+   "outlet": "WAM",
+   "url": "https://www.wam.ae/en/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ae",
+   "outlet": "The Arabian Post",
+   "url": "https://thearabianpost.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "om",
+   "outlet": "Oman Daily",
+   "url": "https://www.omandaily.om/rss",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "om",
+   "outlet": "Atheer",
+   "url": "https://www.atheer.om/feed/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Saudi Press Agency",
+   "url": "https://www.spa.gov.sa/en/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Okaz",
+   "url": "https://www.okaz.com.sa/rss",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Al Yaum",
+   "url": "https://www.alyaum.com/rss",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Al Madina",
+   "url": "https://www.al-madina.com/rss",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Argaam",
+   "url": "https://www.argaam.com/en/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bt",
+   "outlet": "Bhutan Broadcasting",
+   "url": "https://www.bbs.bt/news/?feed=rss2",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "er",
+   "outlet": "Eritrea Ministry of Information",
+   "url": "https://shabait.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ki",
+   "outlet": "Kiribati Updates",
+   "url": "https://kiribatiupdates.com.ki/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "nr",
+   "outlet": "Nauru Bulletin",
+   "url": "https://www.naurugov.nr/rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "fm",
+   "outlet": "FSM Information Services",
+   "url": "https://gov.fm/index.php/component/content/?format=feed&type=rss",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mh",
+   "outlet": "Marshall Islands Journal",
+   "url": "https://marshallislandsjournal.com/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bn",
+   "outlet": "The Scoop",
+   "url": "https://thescoop.co/feed/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bn",
+   "outlet": "RTB News",
+   "url": "https://www.rtbnews.rtb.gov.bn/feed",
+   "lang": "en",
+   "kind": "news"
+  }
+ ],
+ "discover": [
+  {
+   "cc": "sa",
+   "outlet": "Arab News",
+   "home": "https://www.arabnews.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Saudi Gazette",
+   "home": "https://saudigazette.com.sa/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Okaz",
+   "home": "https://www.okaz.com.sa/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Al Watan SA",
+   "home": "https://www.alwatan.com.sa/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "sa",
+   "outlet": "Al Eqtisadiah",
+   "home": "https://www.aleqt.com/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Gulf Times",
+   "home": "https://www.gulf-times.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "qa",
+   "outlet": "The Peninsula",
+   "home": "https://thepeninsulaqatar.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "qa",
+   "outlet": "Al Jazeera Arabic",
+   "home": "https://www.aljazeera.net/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Kuwait Times",
+   "home": "https://kuwaittimes.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Arab Times",
+   "home": "https://www.arabtimesonline.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "kw",
+   "outlet": "Al Seyassah",
+   "home": "https://alseyassah.com/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "bh",
+   "outlet": "GDN",
+   "home": "https://www.gdnonline.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bh",
+   "outlet": "BNA",
+   "home": "https://www.bna.bh/en/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bh",
+   "outlet": "Daily Tribune",
+   "home": "https://www.newsofbahrain.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bh",
+   "outlet": "Al Bilad",
+   "home": "https://www.albiladpress.com/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "ae",
+   "outlet": "WAM",
+   "home": "https://www.wam.ae/en",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ae",
+   "outlet": "Al Ittihad",
+   "home": "https://www.alittihad.ae/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "ae",
+   "outlet": "The Arabian Post",
+   "home": "https://thearabianpost.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "om",
+   "outlet": "Oman Daily",
+   "home": "https://www.omandaily.om/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "om",
+   "outlet": "Atheer",
+   "home": "https://www.atheer.om/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "om",
+   "outlet": "Oman Observer",
+   "home": "https://www.omanobserver.om/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Saba (Sanaa)",
+   "home": "https://www.saba.ye/en",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Al-Sahwa Net",
+   "home": "https://alsahwa-yemen.net/en",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Yemen Online",
+   "home": "https://www.yemenonline.info/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Aden Al-Ghad",
+   "home": "https://adengad.net/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Al Masdar",
+   "home": "https://almasdaronline.net/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "ye",
+   "outlet": "Khabar Agency",
+   "home": "https://khabaragency.net/",
+   "lang": "ar",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "The Irrawaddy",
+   "home": "https://www.irrawaddy.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Mizzima",
+   "home": "https://eng.mizzima.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Frontier Myanmar",
+   "home": "https://www.frontiermyanmar.net/en/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "GNLM",
+   "home": "https://www.gnlm.com.mm/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Eleven Myanmar",
+   "home": "https://elevenmyanmar.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Khit Thit Media",
+   "home": "https://yktnews.com/",
+   "lang": "my",
+   "kind": "news"
+  },
+  {
+   "cc": "mm",
+   "outlet": "Narinjara",
+   "home": "https://www.narinjara.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "la",
+   "outlet": "Vientiane Times",
+   "home": "https://www.vientianetimes.org.la/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "la",
+   "outlet": "Lao News Agency KPL",
+   "home": "https://kpl.gov.la/En/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "la",
+   "outlet": "Lao Economic Daily",
+   "home": "https://laoedaily.com.la/",
+   "lang": "lo",
+   "kind": "news"
+  },
+  {
+   "cc": "oki",
+   "outlet": "Stars and Stripes",
+   "home": "https://www.stripes.com/theaters/asia_pacific/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "oki",
+   "outlet": "Yaeyama Mainichi",
+   "home": "https://www.y-mainichi.co.jp/",
+   "lang": "ja",
+   "kind": "news"
+  },
+  {
+   "cc": "oki",
+   "outlet": "Okinawa Prefecture",
+   "home": "https://www.pref.okinawa.jp/",
+   "lang": "ja",
+   "kind": "news"
+  },
+  {
+   "cc": "oki",
+   "outlet": "NHK Okinawa",
+   "home": "https://www.nhk.or.jp/okinawa/",
+   "lang": "ja",
+   "kind": "news"
+  },
+  {
+   "cc": "oki",
+   "outlet": "Okinawa Times+",
+   "home": "https://www.okinawatimes.co.jp/",
+   "lang": "ja",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "The Australian",
+   "home": "https://www.theaustralian.com.au/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "Sky News Australia",
+   "home": "https://www.skynews.com.au/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "The West Australian",
+   "home": "https://thewest.com.au/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "Defence (AU)",
+   "home": "https://www.defence.gov.au/news-events",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "ASPI Strategist",
+   "home": "https://www.aspistrategist.org.au/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "The Mandarin",
+   "home": "https://www.themandarin.com.au/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "Times of Malta",
+   "home": "https://timesofmalta.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "MaltaToday",
+   "home": "https://www.maltatoday.com.mt/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "Malta Independent",
+   "home": "https://www.independent.com.mt/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mt",
+   "outlet": "Newsbook",
+   "home": "https://newsbook.com.mt/en/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "El Observador",
+   "home": "https://www.elobservador.com.uy/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "El País UY",
+   "home": "https://www.elpais.com.uy/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "Subrayado",
+   "home": "https://www.subrayado.com.uy/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "Presidencia UY",
+   "home": "https://www.gub.uy/presidencia/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "uy",
+   "outlet": "La República UY",
+   "home": "https://www.diariolarepublica.net/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "El Faro",
+   "home": "https://elfaro.net/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "La Prensa Gráfica",
+   "home": "https://www.laprensagrafica.com/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "El Mundo",
+   "home": "https://diario.elmundo.sv/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "Presidencia SV",
+   "home": "https://www.presidencia.gob.sv/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "sv",
+   "outlet": "Revista Factum",
+   "home": "https://www.revistafactum.com/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "et",
+   "outlet": "Ethiopian Herald",
+   "home": "https://www.press.et/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "et",
+   "outlet": "EBC",
+   "home": "https://www.ebc.et/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "et",
+   "outlet": "Ethiopia Insight",
+   "home": "https://www.ethiopia-insight.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "et",
+   "outlet": "Addis Zeybe",
+   "home": "https://addiszeybe.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "et",
+   "outlet": "Ethiopian Business Review",
+   "home": "https://ethiopianbusinessreview.net/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bw",
+   "outlet": "Mmegi",
+   "home": "https://www.mmegi.bw/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bw",
+   "outlet": "The Patriot",
+   "home": "https://www.thepatriot.co.bw/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bw",
+   "outlet": "Botswana Gazette",
+   "home": "https://www.thegazette.news/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "ANGOP",
+   "home": "https://www.angop.ao/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "Novo Jornal",
+   "home": "https://www.novojornal.co.ao/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "Ver Angola",
+   "home": "https://www.verangola.net/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "RNA",
+   "home": "https://rna.ao/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ao",
+   "outlet": "Lusa Angola",
+   "home": "https://www.rtp.pt/noticias/mundo",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "cv",
+   "outlet": "A Semana",
+   "home": "https://www.asemana.publ.cv/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "ws",
+   "outlet": "Samoa Observer",
+   "home": "https://www.samoaobserver.ws/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ws",
+   "outlet": "Samoa Govt",
+   "home": "https://www.samoagovt.ws/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "eh",
+   "outlet": "SPS",
+   "home": "https://www.spsrasd.info/news/en",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "eh",
+   "outlet": "WSRW",
+   "home": "https://wsrw.org/en",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Futuro Sahara",
+   "home": "https://futurosahara.net/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Le360 Sahara",
+   "home": "https://fr.le360.ma/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "li",
+   "outlet": "Vaterland",
+   "home": "https://www.vaterland.li/",
+   "lang": "de",
+   "kind": "news"
+  },
+  {
+   "cc": "li",
+   "outlet": "Landtag",
+   "home": "https://www.landtag.li/",
+   "lang": "de",
+   "kind": "news"
+  },
+  {
+   "cc": "li",
+   "outlet": "Liewo",
+   "home": "https://www.liewo.li/",
+   "lang": "de",
+   "kind": "news"
+  },
+  {
+   "cc": "mc",
+   "outlet": "Monaco-Matin",
+   "home": "https://www.monacomatin.mc/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "mc",
+   "outlet": "Monaco Info",
+   "home": "https://www.monacoinfo.com/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini Observer",
+   "home": "https://www.observer.org.sz/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Eswatini Govt",
+   "home": "https://www.gov.sz/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bi",
+   "outlet": "Ikiriho",
+   "home": "https://www.ikiriho.org/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "bi",
+   "outlet": "RTNB",
+   "home": "https://www.rtnb.bi/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "bi",
+   "outlet": "Jimbere",
+   "home": "https://www.jimberemag.org/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "bi",
+   "outlet": "Burundi Presidency",
+   "home": "https://www.presidence.gov.bi/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "km",
+   "outlet": "Al-Fajr",
+   "home": "https://alfajrquotidien.net/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "km",
+   "outlet": "Comores Infos",
+   "home": "https://www.comoresinfos.net/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "km",
+   "outlet": "Comores Presidency",
+   "home": "https://beit-salam.km/",
+   "lang": "fr",
+   "kind": "news"
+  },
+  {
+   "cc": "st",
+   "outlet": "STP Digital",
+   "home": "https://www.stpdigital.net/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "st",
+   "outlet": "Governo STP",
+   "home": "https://www.gov.st/",
+   "lang": "pt",
+   "kind": "news"
+  },
+  {
+   "cc": "gq",
+   "outlet": "Ahora EG",
+   "home": "https://www.ahoraeg.com/",
+   "lang": "es",
+   "kind": "news"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Lesotho Times",
+   "home": "https://lestimes.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Sunday Express",
+   "home": "https://sundayexpress.co.ls/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Lesotho Govt",
+   "home": "https://www.gov.ls/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "pw",
+   "outlet": "Island Times",
+   "home": "https://islandtimes.org/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "pg",
+   "outlet": "Post-Courier",
+   "home": "https://www.postcourier.com.pg/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "pg",
+   "outlet": "Business Advantage PNG",
+   "home": "https://www.businessadvantagepng.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "pg",
+   "outlet": "PNG PM Office",
+   "home": "https://www.pm.gov.pg/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "fj",
+   "outlet": "PINA",
+   "home": "https://pina.com.fj/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "fj",
+   "outlet": "Pacific Islands Forum",
+   "home": "https://forumsec.org/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "nz",
+   "outlet": "PMN",
+   "home": "https://www.pmn.co.nz/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "au",
+   "outlet": "ABC Pacific",
+   "home": "https://www.abc.net.au/pacific",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "gm",
+   "outlet": "State House",
+   "home": "https://statehouse.gov.gm/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "gm",
+   "outlet": "The Point",
+   "home": "https://thepoint.gm/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "gm",
+   "outlet": "Kerr Fatou",
+   "home": "https://www.kerrfatou.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bt",
+   "outlet": "BBS",
+   "home": "https://www.bbs.bt/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bt",
+   "outlet": "Kuensel",
+   "home": "https://kuenselonline.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bt",
+   "outlet": "Bhutan PMO",
+   "home": "https://www.pmo.gov.bt/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "er",
+   "outlet": "Shabait",
+   "home": "https://shabait.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "er",
+   "outlet": "Eritrea Ministry of Info (EN)",
+   "home": "https://www.shabait.com/category/news/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sc",
+   "outlet": "SBC",
+   "home": "https://www.sbc.sc/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sc",
+   "outlet": "State House SC",
+   "home": "https://www.statehouse.gov.sc/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "ki",
+   "outlet": "Kiribati Updates",
+   "home": "https://kiribatiupdates.com.ki/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "nr",
+   "outlet": "Nauru Govt",
+   "home": "https://www.naurugov.nr/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "nr",
+   "outlet": "Nauru Bulletin",
+   "home": "https://www.naurugov.nr/government-information-office/nauru-bulletin",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "fm",
+   "outlet": "FSM Govt",
+   "home": "https://gov.fm/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mh",
+   "outlet": "Marshall Islands Journal",
+   "home": "https://marshallislandsjournal.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "mh",
+   "outlet": "RMI Govt",
+   "home": "https://rmigovernment.org/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bn",
+   "outlet": "The Scoop",
+   "home": "https://thescoop.co/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bn",
+   "outlet": "RTB News",
+   "home": "https://www.rtbnews.rtb.gov.bn/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bn",
+   "outlet": "Brunei PMO",
+   "home": "https://www.pmo.gov.bn/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bb",
+   "outlet": "Barbados Today",
+   "home": "https://barbadostoday.bb/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bb",
+   "outlet": "CBC Barbados",
+   "home": "https://www.cbc.bb/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "bb",
+   "outlet": "Nation News",
+   "home": "https://www.nationnews.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "gd",
+   "outlet": "The New Today",
+   "home": "https://www.thenewtodaygrenada.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "lc",
+   "outlet": "St Lucia Times",
+   "home": "https://stluciatimes.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "lc",
+   "outlet": "The Voice SLU",
+   "home": "https://thevoiceslu.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "lc",
+   "outlet": "St Lucia Star",
+   "home": "https://stluciastar.com/",
+   "lang": "en",
+   "kind": "news"
+  },
+  {
+   "cc": "sm",
+   "outlet": "San Marino RTV",
+   "home": "https://www.sanmarinortv.sm/",
+   "lang": "it",
+   "kind": "news"
+  },
+  {
+   "cc": "sm",
+   "outlet": "Il Nuovo SM",
+   "home": "https://www.ilnuovosm.com/",
+   "lang": "it",
+   "kind": "news"
+  }
+ ]
 }
