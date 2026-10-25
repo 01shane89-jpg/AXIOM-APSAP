@@ -1,204 +1,331 @@
 {
- "note": "Deep South commercial-safe candidates",
+ "note": "Pacific micro-states probe",
  "feeds": [
   {
-   "cc": "th",
-   "outlet": "Thai PBS World",
-   "url": "https://www.thaipbsworld.com/feed/",
-   "lang": "en"
+   "cc": "xx",
+   "outlet": "Marianas Variety",
+   "url": "https://mvariety.com/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "Thai PBS",
-   "url": "https://www.thaipbs.or.th/rss/news",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "Marianas Variety (rss)",
+   "url": "https://www.mvariety.com/search/?f=rss&t=article&c=news&l=50&s=start_time&sd=desc"
   },
   {
-   "cc": "th",
-   "outlet": "Thairath",
-   "url": "https://www.thairath.co.th/rss/news",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "Saipan Tribune",
+   "url": "https://www.saipantribune.com/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "Daily News",
-   "url": "https://www.dailynews.co.th/feed/",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "Guam Daily Post",
+   "url": "https://www.postguam.com/search/?f=rss&t=article&l=50&s=start_time&sd=desc"
   },
   {
-   "cc": "th",
-   "outlet": "Komchadluek",
-   "url": "https://www.komchadluek.net/rss",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "Pacific Daily News",
+   "url": "https://www.guampdn.com/search/?f=rss&t=article&l=50&s=start_time&sd=desc"
   },
   {
-   "cc": "th",
-   "outlet": "The Nation Thailand",
-   "url": "https://www.nationthailand.com/rss",
-   "lang": "en"
+   "cc": "xx",
+   "outlet": "KUAM News",
+   "url": "https://www.kuam.com/search/?f=rss&t=article&l=50&s=start_time&sd=desc"
   },
   {
-   "cc": "th",
-   "outlet": "Thai News Agency",
-   "url": "https://tna.mcot.net/feed",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "Pacific News Center",
+   "url": "https://www.pncguam.com/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "Thai Post",
-   "url": "https://www.thaipost.net/feed/",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "PINA Pacnews",
+   "url": "https://pina.com.fj/category/pacnews/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "Siam Rath",
-   "url": "https://siamrath.co.th/rss",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "FBC News Pacific",
+   "url": "https://www.fbcnews.com.fj/news/pacific/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "Spring News",
-   "url": "https://www.springnews.co.th/feed",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "Fiji Times Pacific",
+   "url": "https://www.fijitimes.com.fj/category/pacific/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "INN News",
-   "url": "https://www.innnews.co.th/feed/",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "SPC news",
+   "url": "https://www.spc.int/rss.xml"
   },
   {
-   "cc": "th",
-   "outlet": "MGR Online South",
-   "url": "https://mgronline.com/rss/south",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "SPREP news",
+   "url": "https://www.sprep.org/rss.xml"
   },
   {
-   "cc": "th",
-   "outlet": "BenarNews Thai",
-   "url": "https://www.benarnews.org/thai/rss",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "Pacific Islands Forum",
+   "url": "https://forumsec.org/rss.xml"
   },
   {
-   "cc": "th",
-   "outlet": "Wartani",
-   "url": "https://wartani.com/feed",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "US Interior Office of Insular Affairs",
+   "url": "https://www.doi.gov/oia/press-releases/rss"
   },
   {
-   "cc": "th",
-   "outlet": "Deep South Watch",
-   "url": "https://deepsouthwatch.org/th/rss.xml",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "US Embassy FSM",
+   "url": "https://fm.usembassy.gov/feed/"
   },
   {
-   "cc": "my",
-   "outlet": "The Star Nation",
-   "url": "https://www.thestar.com.my/rss/News/Nation",
-   "lang": "en"
+   "cc": "xx",
+   "outlet": "US Embassy Marshall Islands",
+   "url": "https://mh.usembassy.gov/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "PPTV",
-   "url": "https://www.pptvhd36.com/rss/news",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "US Embassy Palau",
+   "url": "https://pw.usembassy.gov/feed/"
   },
   {
-   "cc": "th",
-   "outlet": "Channel 7",
-   "url": "https://news.ch7.com/rss/feed",
-   "lang": "th"
+   "cc": "xx",
+   "outlet": "UN News Asia Pacific",
+   "url": "https://news.un.org/feed/subscribe/en/news/region/asia-pacific/feed/rss.xml"
+  },
+  {
+   "cc": "xx",
+   "outlet": "ReliefWeb Kiribati",
+   "url": "https://reliefweb.int/updates/rss.xml?search=primary_country.iso3%3Akir"
+  },
+  {
+   "cc": "xx",
+   "outlet": "ReliefWeb Marshall Is",
+   "url": "https://reliefweb.int/updates/rss.xml?search=primary_country.iso3%3Amhl"
+  },
+  {
+   "cc": "xx",
+   "outlet": "ReliefWeb Tuvalu",
+   "url": "https://reliefweb.int/updates/rss.xml?search=primary_country.iso3%3Atuv"
+  },
+  {
+   "cc": "xx",
+   "outlet": "ReliefWeb FSM",
+   "url": "https://reliefweb.int/updates/rss.xml?search=primary_country.iso3%3Afsm"
+  },
+  {
+   "cc": "xx",
+   "outlet": "ReliefWeb Nauru",
+   "url": "https://reliefweb.int/updates/rss.xml?search=primary_country.iso3%3Anru"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Matangi Tonga",
+   "url": "https://matangitonga.to/rss.xml"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Talamua",
+   "url": "https://talamua.com/feed/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Lowy Interpreter Pacific",
+   "url": "https://www.lowyinstitute.org/the-interpreter/rss.xml"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Devpolicy Blog",
+   "url": "https://devpolicy.org/feed/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Pacific Beat ABC",
+   "url": "https://www.abc.net.au/pacific/feed/2942460/rss.xml"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Taiwan MOFA news",
+   "url": "https://en.mofa.gov.tw/Rss.aspx?n=1405"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Islands Business",
+   "url": "https://islandsbusiness.com/feed/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Benar Pacific",
+   "url": "https://www.benarnews.org/english/news/pacific/rss.xml"
+  },
+  {
+   "cc": "xx",
+   "outlet": "The Guam Guardian",
+   "url": "https://www.guamguardian.com/feed/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Kwajalein Hourglass",
+   "url": "https://home.army.mil/kwajalein/index.php/hourglass/rss"
+  },
+  {
+   "cc": "xx",
+   "outlet": "RMI Embassy US",
+   "url": "https://www.rmiembassyus.org/feed/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Palau Island Times",
+   "url": "https://islandtimes.org/feed/"
   }
  ],
  "discover": [
   {
-   "cc": "th",
-   "outlet": "Thai PBS World",
-   "home": "https://www.thaipbsworld.com/",
+   "cc": "xx",
+   "outlet": "https://mvariety.com/",
+   "home": "https://mvariety.com/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Thai PBS",
-   "home": "https://www.thaipbs.or.th/news",
+   "cc": "xx",
+   "outlet": "https://www.postguam.com/",
+   "home": "https://www.postguam.com/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Thairath",
-   "home": "https://www.thairath.co.th/",
+   "cc": "xx",
+   "outlet": "https://www.saipantribune.com/",
+   "home": "https://www.saipantribune.com/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Daily News",
-   "home": "https://www.dailynews.co.th/",
+   "cc": "xx",
+   "outlet": "https://www.kuam.com/",
+   "home": "https://www.kuam.com/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Komchadluek",
-   "home": "https://www.komchadluek.net/",
+   "cc": "xx",
+   "outlet": "https://www.pncguam.com/",
+   "home": "https://www.pncguam.com/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "The Nation",
-   "home": "https://www.nationthailand.com/",
+   "cc": "xx",
+   "outlet": "https://pina.com.fj/",
+   "home": "https://pina.com.fj/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "MGR Online",
-   "home": "https://mgronline.com/south",
+   "cc": "xx",
+   "outlet": "https://www.fbcnews.com.fj/",
+   "home": "https://www.fbcnews.com.fj/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Deep South Watch",
-   "home": "https://deepsouthwatch.org/",
+   "cc": "xx",
+   "outlet": "https://www.spc.int/updates",
+   "home": "https://www.spc.int/updates",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Wartani",
-   "home": "https://wartani.com/",
+   "cc": "xx",
+   "outlet": "https://www.sprep.org/news",
+   "home": "https://www.sprep.org/news",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "SBPAC",
-   "home": "https://www.sbpac.go.th/",
+   "cc": "xx",
+   "outlet": "https://www.doi.gov/oia",
+   "home": "https://www.doi.gov/oia",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Narathiwat PRD",
-   "home": "https://narathiwat.prd.go.th/",
+   "cc": "xx",
+   "outlet": "https://fm.usembassy.gov/",
+   "home": "https://fm.usembassy.gov/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Songkhla PRD",
-   "home": "https://songkhla.prd.go.th/",
+   "cc": "xx",
+   "outlet": "https://mh.usembassy.gov/",
+   "home": "https://mh.usembassy.gov/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "BenarNews Thai",
-   "home": "https://www.benarnews.org/thai",
+   "cc": "xx",
+   "outlet": "https://www.abc.net.au/pacific",
+   "home": "https://www.abc.net.au/pacific",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Channel 3",
-   "home": "https://ch3plus.com/news",
+   "cc": "xx",
+   "outlet": "https://www.rmiembassyus.org/",
+   "home": "https://www.rmiembassyus.org/",
    "hrefs": true
   },
   {
-   "cc": "th",
-   "outlet": "Thai Post",
-   "home": "https://www.thaipost.net/",
+   "cc": "xx",
+   "outlet": "https://kiribatiupdates.com.ki/",
+   "home": "https://kiribatiupdates.com.ki/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.naurugov.nr/",
+   "home": "https://www.naurugov.nr/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://tuvalu.tv/",
+   "home": "https://tuvalu.tv/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://rmigovernment.org/",
+   "home": "https://rmigovernment.org/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.fsmgov.org/",
+   "home": "https://www.fsmgov.org/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.parliament.gov.ki/",
+   "home": "https://www.parliament.gov.ki/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.nitijela.org/",
+   "home": "https://www.nitijela.org/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.fsmcongress.fm/",
+   "home": "https://www.fsmcongress.fm/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.tuvaluparliament.tv/",
+   "home": "https://www.tuvaluparliament.tv/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.pmn.co.nz/",
+   "home": "https://www.pmn.co.nz/",
+   "hrefs": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "https://www.guampdn.com/",
+   "home": "https://www.guampdn.com/",
    "hrefs": true
   }
  ]
