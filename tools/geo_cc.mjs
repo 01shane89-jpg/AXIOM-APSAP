@@ -64,7 +64,9 @@ const ALIASES = { mm: ["Burma"], vn: ["Viet Nam"], la: ["Lao PDR", "Lao People's
   cd: ["Democratic Republic of the Congo", "DR Congo", "DRC", "Congo, Democratic Republic of the", "Congo (Kinshasa)"], cg: ["Republic of the Congo", "Congo (Brazzaville)", "Congo, Republic of the"],
   ci: ["Cote d'Ivoire", "Côte d'Ivoire", "Ivory Coast"], cz: ["Czechia", "Czech Republic"], tr: ["Türkiye", "Turkiye", "Turkey"], ps: ["Palestine", "West Bank", "Gaza", "State of Palestine", "occupied Palestinian territory"],
   mk: ["North Macedonia", "Macedonia"], md: ["Moldova, Republic of", "Republic of Moldova"], tz: ["Tanzania, United Republic of", "United Republic of Tanzania"], bo: ["Bolivia (Plurinational State of)"],
-  ve: ["Venezuela (Bolivarian Republic of)"], sz: ["Eswatini", "Swaziland"], cv: ["Cabo Verde", "Cape Verde"], fm: ["Micronesia, Federated States of", "Micronesia (Federated States of)"],
+  ve: ["Venezuela (Bolivarian Republic of)"], sz: ["Eswatini", "Swaziland"], cv: ["Cabo Verde", "Cape Verde"], fm: ["Micronesia, Federated States of", "Micronesia (Federated States of)", "FSM", "Pohnpei", "Chuuk", "Kosrae", "Palikir"],
+  // Pacific micro-states: regional outlets often name only the capital or main atoll, never the country
+  ki: ["Tarawa", "Kiritimati", "Banaba"], mh: ["Majuro", "Kwajalein", "Ebeye"], tv: ["Funafuti"], nr: ["Yaren"],
   va: ["Holy See", "Vatican"], eh: ["Western Sahara"], xk: ["Kosovo"], la2: [] };
 const NAME_IDS = {};
 const norm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z ]+/g, " ").replace(/\s+/g, " ").trim();
@@ -99,7 +101,7 @@ for (const n of ["American Samoa", "New Mexico", "Nuevo México", "Nouveau-Mexiq
 
 // Country ids named in free text (whole names only; longest names first so "South Sudan" wins over "Sudan").
 // otherLangs: also read the French and Spanish names above.
-const byLength = (ids) => Object.keys(ids).filter((n) => n.length > 3 || /^(uk|usa|drc|rdc)$/.test(n)).sort((a, b) => b.length - a.length);
+const byLength = (ids) => Object.keys(ids).filter((n) => n.length > 3 || /^(uk|usa|drc|rdc|fsm)$/.test(n)).sort((a, b) => b.length - a.length);
 const NAME_LIST = byLength(NAME_IDS), OTHER_LIST = byLength(OTHER_IDS);
 export function ccsInText(text, otherLangs = false) {
   const [list, ids] = otherLangs ? [OTHER_LIST, OTHER_IDS] : [NAME_LIST, NAME_IDS];
