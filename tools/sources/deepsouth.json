@@ -2690,6 +2690,102 @@
    },
    "cadence": "news lane, about every 15 min",
    "active": true
+  },
+  {
+   "source_id": "matichon-region",
+   "publisher": "Matichon (regional)",
+   "url": "https://www.matichon.co.th/region/feed",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "khaosod-region",
+   "publisher": "Khaosod (around Thailand)",
+   "url": "https://www.khaosod.co.th/around-thailand/feed",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "thaipbs-th",
+   "publisher": "Thai PBS",
+   "url": "https://news.thaipbs.or.th/rss/news",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": true,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "my-malaysiakini",
+   "publisher": "Malaysiakini",
+   "url": "https://www.malaysiakini.com/rss/en/news.rss",
+   "connector": "rss",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South and the Malaysian side of the border (Kelantan, Perak, Kedah, Perlis)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
   }
  ]
 }
