@@ -1,0 +1,891 @@
+[
+ {
+  "cc": "th",
+  "outlet": "https://thainews.prd.go.th/",
+  "home": "https://thainews.prd.go.th/",
+  "hrefs": [],
+  "tried": [
+   {
+    "url": "https://thainews.prd.go.th/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://thainews.prd.go.th/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://thainews.prd.go.th/",
+  "bytes": 39579,
+  "links": 1,
+  "dates": []
+ },
+ {
+  "cc": "th",
+  "outlet": "https://deepsouthwatch.org/",
+  "home": "https://deepsouthwatch.org/",
+  "hrefs": [
+   "/th/node/12816 | ชายแดนใต้/ปาตานี 2547-2564: ก้าวเข้าปีที่สิบเก้า สันติภาพจะเดินหน้าไปถ",
+   "/th/node/11928 | อัลกอริทึมของความแปรปรวนในความรุนแรง 15 ปีชายแดนใต้/ปาตานี",
+   "/th/node/11893 | 15 เวทีความรู้สาธารณะโดดเด่นหนุนเสริมสันติภาพชายแดนใต้/ปาตานี ปี 2561",
+   "/th/node/11885 | การเลือกตั้งคลุกข้าวยำ: ประชาธิปไตยที่ไม่เสรีสองเด้งในชายแดนใต้/ปาตานี",
+   "/th/node/11868 | คนรุ่นใหม่ กาแฟ และองค์ความรู้: บันทึกภาคสนามจากอาเจะห์ในห้วงครบรอบ 13",
+   "/th/node/11856 | ทบทวน “สันติสุข” และทำความรู้จัก “สันติภาพที่ไร้เสรี” ใต้เงาอำนาจนิยม"
+  ],
+  "tried": [
+   {
+    "url": "https://deepsouthwatch.org/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/rss.xml",
+    "status": 200,
+    "n": 10,
+    "last7": 0,
+    "newest": "2022-01-10T16:35",
+    "sample": [
+     "Mon, 10 Jan 2022 16:35:42 +0000 ชายแดนใต้/ปาตานี 2547-2564: ก้าวเข้าปีที่สิบเก้า สันติภาพจะเดินหน้าไปถึงไหนในปี 2565?",
+     "Wed, 17 Nov 2021 04:54:18 +0000 สรุปเหตุการณ์ในพื้นที่จังหวัดชายแดนภาคใต้ ประจำเดือนตุลาคม 2564"
+    ]
+   },
+   {
+    "url": "https://deepsouthwatch.org/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://deepsouthwatch.org/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://deepsouthwatch.org/",
+  "bytes": 16789,
+  "links": 20,
+  "title": "DSW ศูนย์เฝ้าระวังสถานการณ์ภาคใต้ | DeepSouthWatch.org",
+  "dates": []
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.dsj.in.th/",
+  "home": "https://www.dsj.in.th/",
+  "hrefs": true,
+  "tried": [],
+  "error": "fetch failed"
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.isranews.org/",
+  "home": "https://www.isranews.org/",
+  "hrefs": [],
+  "tried": [
+   {
+    "url": "https://www.isranews.org/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/rss.xml",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/index.xml",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/feed.xml",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/atom.xml",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/rss/all.xml",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.isranews.org/rss/news.xml",
+    "status": 500,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.isranews.org/",
+  "bytes": 1008,
+  "links": 0,
+  "dates": []
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.nationtv.tv/",
+  "home": "https://www.nationtv.tv/",
+  "hrefs": [
+   "/ | เกาะติดสถานการณ์ข่าว ข่าวด่วน ข่าววันนี้ เนชั่นทีวี | เนชั่นออนไลน์",
+   "/news/current-issue/378985264 | สุดรันทด! ครอบครัวพิการ 6 ชีวิต อ.ประโคนชัย วอนช่วย หลังกู้เงินตำรวจ 2",
+   "/business/378985184 | &quot;สุชาติ&quot; เผยเยอรมนีมอบเงินให้เปล่า 570 ล้าน ดันไทย Net Zero ",
+   "/business/economy/378985190 | “ดร.วสุวีร์ สอดส่อง” ถอดบทเรียน Local AI เกาหลีใต้ หนุนคนหน้างานแก้ปัญ",
+   "/business/378985244 | ราคาน้ำมันพรุ่งนี้ (25 ต.ค. 69) อัปเดตราคาน้ำมันล่าสุด ปั๊มใหญ่ ราคาน้",
+   "/business/378985213 | ราคาน้ำมันพรุ่งนี้ (24 ต.ค. 69) อัปเดตราคาน้ำมันล่าสุด ปั๊มใหญ่ ราคาน้",
+   "/news/current-issue/378985229 | “สุชาติ” ส่งชุดเฉพาะกิจลงพื้นที่ตรวจสอบที่ดินสามี “บุ๋ม ปนัดดา” บุกรุก",
+   "/news/foreign/378985129 | สรุปสงครามตะวันออกกลาง สหรัฐฯ รับเจรจาอิหร่านยาก ฮอร์มุซยังปิด สรุปสถา",
+   "/nation-story/story/378985222 | STORY : กลับอังกฤษ 50 วันของแฮร์รี-เมแกน: เมื่อความพยายาม “คืนดี” ดูคล",
+   "/news/politics/378985258 | อาลัย &quot;สุรศักดิ์ ชิงนวรรณ์&quot; สส.สระแก้ว 2 สมัย สังกัดพรรคกล้า",
+   "/news/politics/378985252 | “ภคมน” จี้รัฐบาลอย่ากลัวซักฟอก! เย้ยล็อกวัน 27 ต.ค. เพราะไปดูฤกษ์ดูดวง",
+   "/blogs/exclusive/special-report/378984987 | บทบรรณาธิการ : ซักฟอกอลเวง “ละเลงวาทกรรม“ กล้าธรรมค้ำน้ำเงิน บทบรรณาธิ",
+   "/blogs/exclusive/special-report/378984651 | “ส้ม” วิ่งชนกำแพง เจ็บแรงเพราะสนิมเนื้อใน ติดหล่ม ”บันเทิงธิปไตย“ &quo",
+   "/news/foreign/378985263 | อ.กฤษฎา ชำแหละม็อบฝรั่งเศส รวบพันคน กาง 3 ฉากทัศน์ยุโรป &quot;อ.กฤษฎา&",
+   "/news/foreign/378985249 | “ฝรั่งเศส” ยกระดับรักษาความปลอดภัย รับมือประท้วงระลอกใหม่ ฝรั่งเศสยกระ"
+  ],
+  "tried": [
+   {
+    "url": "https://www.nationtv.tv/feed",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/feed/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/rss",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/rss.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/rss/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/index.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/feed.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/atom.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/rss/all.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.nationtv.tv/rss/news.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.nationtv.tv/",
+  "bytes": 209967,
+  "links": 52,
+  "title": "เกาะติดสถานการณ์ข่าว ข่าวด่วน ข่าววันนี้ ข่าวล่าสุด เนชั่นทีวี | เนชั่นออนไลน์",
+  "dates": [
+   "2026-10-04T15:57",
+   "2026-10-04T15:46",
+   "2026-10-04T19:08",
+   "2026-10-02T11:39",
+   "2026-10-04T15:07",
+   "2026-10-25T13:03",
+   "2026-10-25T12:55",
+   "2026-10-25T12:21"
+  ]
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.tnnthailand.com/",
+  "home": "https://www.tnnthailand.com/",
+  "hrefs": [],
+  "tried": [
+   {
+    "url": "https://www.tnnthailand.com/feed",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/feed/",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/rss.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/index.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/feed.xml",
+    "status": 200,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/atom.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/rss/all.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.tnnthailand.com/rss/news.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 403,
+  "final": "https://www.tnnthailand.com/",
+  "bytes": 5783,
+  "links": 0,
+  "title": "Just a moment...",
+  "dates": []
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.bernama.com/",
+  "home": "https://www.bernama.com/",
+  "hrefs": [
+   "https://www.bernama.com/tam/index.php | &#2980;&#2990;&#3007;&#2996;&#3021;",
+   "news.php?id=2625311 | Sultan Of Selangor: Criticisms Aimed At Safeguarding People's Well-bei",
+   "news.php?id=2625296 | Bernama, NST Journalists Injured In Menglembu Road Accident",
+   "news.php?id=2625294 | Orang Besar Istana Syed Budriz Putra Jamalullail Leads Six Selangor Ho",
+   "news.php?id=2625280 | Anwar Congratulates Sultan Of Selangor On Silver Jubilee Of Reign",
+   "general/news.php?id=2625325 | Anwar Prays For Speedy Recovery Of Two Journalists Injured In Accident",
+   "general/news.php?id=2625321 | Form Six Students To Receive Allowance From First Semester Next Year -",
+   "general/news.php?id=2625319 | Body Of Doctor Buried In Paya Terubong Landslide Recovered",
+   "news.php?id=2625196 | Waze Ban For Civil Servants Takes Into Account Security Risks, Soverei",
+   "news.php?id=2625193 | Reject Politics Of Hatred, Strengthen Unity For Stability - Anwar",
+   "news.php?id=2625168 | ASA Honours Contributions Of Broadcasting Industry Workers – Fahmi",
+   "news.php?id=2624786 | Media Innovation Fund: Embrace AI Without Sacrificing Workforce - Fahm",
+   "news.php?id=2624779 | The Next Act For Malaysian Cinema: Bigger Audiences, Bolder Ambitions",
+   "general/news.php?id=2625318 | Sabah, Sarawak People Uphold Malaysia’s Sovereignty - Mustapha",
+   "general/news.php?id=2625317 | 2,200 Riders Join Taiping Heritage Ride To Showcase Town's Tourism App",
+   "general/news.php?id=2625316 | Teo Extends Condolences Over Passing Of Makkal Osai Senior Editor Raja",
+   "world/news.php?id=2625309 | Malaysian Runners Build Bonds At Jakarta Running Festival",
+   "world/news.php?id=2625299 | Cambodia Resets Economic Growth With Small Industries, Smart Agricultu",
+   "world/news.php?id=2625253 | Top News Headlines In Indonesia, Myanmar, Philippines, Singapore, Thai",
+   "crime_courts/news.php?id=2625298 | 3,200 Participate In 2026 LIMA Run To Promote LIMA 2027",
+   "crime_courts/news.php?id=2625285 | Paya Terubong Landslide: One Dead, Two Escape",
+   "politics/news.php?id=2625198 | Melaka Polls: MCA Will Not Recognise Candidates Announced Without Part",
+   "politics/news.php?id=2625195 | Melaka Polls: Zahid Urges BN Machinery To Strengthen Unity, Intensify ",
+   "sports/news.php?id=2625302 | Sivasangari Claims Maiden Silicon Valley Open Title, Eyes Platinum Bre",
+   "sports/news.php?id=2625291 | M’sia Must Learn From Thailand, Indonesia To Improve Para Asiad Perfor"
+  ],
+  "tried": [
+   {
+    "url": "https://www.bernama.com/en/rssfeed.php",
+    "status": 200,
+    "n": 10,
+    "last7": 0,
+    "newest": null,
+    "sample": [
+     "- General : Anwar Prays For Speedy Recovery Of Two Journalists Injured In Accident",
+     "- General : Form Six Students To Receive Allowance From First Semester Next Year - Fadhlina"
+    ]
+   },
+   {
+    "url": "https://www.bernama.com/feed",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/feed/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/rss",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/rss/",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.bernama.com/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://www.bernama.com/en/",
+  "bytes": 93325,
+  "links": 301,
+  "title": "BERNAMA - Malaysian National News Agency",
+  "dates": [
+   "Oct 25, 2026"
+  ]
+ },
+ {
+  "cc": "th",
+  "outlet": "https://theactive.thaipbs.or.th/",
+  "home": "https://theactive.thaipbs.or.th/",
+  "hrefs": [
+   "https://theactive.thaipbs.or.th/playlist/shortclip | Short Clip &amp; Interview",
+   "https://theactive.thaipbs.or.th/news/law-rights-20261025 | ดัชนี ‘หลักนิติธรรมไทย’ ปี 2026 ร่วงอยู่อันดับ 80 โลก",
+   "https://theactive.thaipbs.or.th/news/sustainable-20261025 | เปิด 7 ข้อเรียกร้องกลุ่มอนุรักษ์สิ่งแวดล้อมอุดรธานี จี้รัฐทบทวน-ชะลอเห",
+   "https://theactive.thaipbs.or.th/news/urban-20261024 | เรียกร้องยุติร่างผังเมืองรวม กทม.ฉบับปรับปรุงใหม่ หวั่นเมืองขยาย พื้นท",
+   "https://theactive.thaipbs.or.th/read/in-memory-of-tak-bai | ตากใบรำลึก | บาดแผล-ความทรงจำ ปฏิรูปกระบวนการยุติธรรม ไม่มีวันหมดอายุ",
+   "https://theactive.thaipbs.or.th/read/kaeng-hang-maeo | ความเป็นธรรมจัดสรรน้ำ “คนแก่งหางแมว” มีอ่างแล้ว ต้องมีน้ำใช้ ?",
+   "https://theactive.thaipbs.or.th/read/6oct19-chaturonchaisaeng | 50 ปี 6 ตุลา 19 : ความรุนแรงไม่เคยถูกเรียนรู้ และการต่อสู้ครั้งสุดท้าย",
+   "https://theactive.thaipbs.or.th/data/thaipbs | #ThaiPBS ตอนนี้ เถียงอะไรกันอยู่: เสียงสะท้อนโลกออนไลน์ “สื่อสาธารณะ” ",
+   "https://theactive.thaipbs.or.th/data/thailand-flood-2026 | ไม่ใช่แค่กรุงเทพฯ 31 จังหวัด ยังน้ำท่วมอยู่ 3 ล้านชีวิต ยังสู้น้ำ",
+   "https://theactive.thaipbs.or.th/data/romklao-distribution | ยกระดับบริหารจัดการ กู้วิกฤตน้ำท่วม ‘ร่มเกล้า’ ลดความซ้ำซ้อน กระจายควา",
+   "https://theactive.thaipbs.or.th/video/%e0%b8%84%e0%b8%99%e0%b8%81%e0%b9%88%e0%b8%ad-%e0%b9%84%e0%b8%a1%e0%b9%88%e0%b8%a3%e0%b8%b1%e0%b8%9a%e0%b8%9c%e0%b8%b4%e0%b8%94-%e0%b8%aa%e0%b8%b4%e0%b9%88%e0%b8%87%e0%b9%81%e0%b8%a7 | “คนก่อ ไม่รับผิด” สิ่งแวดล้อม - ชีวิต ต้องรับเคราะห์ (22 ต.ค.69) | ตรง",
+   "https://theactive.thaipbs.or.th/video/%e0%b9%84%e0%b8%97%e0%b8%a2%e0%b8%9e%e0%b8%b5%e0%b8%9a%e0%b8%b5%e0%b9%80%e0%b8%ad%e0%b8%aa%e0%b8%8a%e0%b8%b5%e0%b9%89%e0%b9%81%e0%b8%88%e0%b8%87-%e0%b8%81%e0%b8%a1%e0%b8%98-%e0%b8%9e%e0%b8%b1%e0%b8%92 | ไทยพีบีเอสชี้แจง กมธ.พัฒนาการเมือง สส. กรณีเปลี่ยนที่มางบฯ (22 ต.ค.69)",
+   "https://theactive.thaipbs.or.th/video/%e0%b8%81%e0%b8%a1%e0%b8%98-%e0%b8%9e%e0%b8%b1%e0%b8%92%e0%b8%99%e0%b8%b2%e0%b8%81%e0%b8%b2%e0%b8%a3%e0%b9%80%e0%b8%a1%e0%b8%b7%e0%b8%ad%e0%b8%87-%e0%b8%a7%e0%b8%b8%e0%b8%92%e0%b8%b4%e0%b8%aa%e0%b8%a0 | กมธ.พัฒนาการเมือง วุฒิสภา รับหนังสือภาคประชาชน ค้าน 4 กฎหมาย (21 ต.ค.6",
+   "https://theactive.thaipbs.or.th/video/pollution-20261021 | \"น้ำสีรุ้ง\" คลองเขาไม้แก้ว ปราจีนบุรี หวั่นกระทบ ช้าง-คน-ผู้บริโภค (21",
+   "https://theactive.thaipbs.or.th/podcast/public-health-20260917 | พ.ร.บ.สุขภาพจิต (ฉบับใหม่) ปิดช่องเสพซ้ำ (17 ก.ย.69) | ตรงประเด็น",
+   "https://theactive.thaipbs.or.th/podcast/the-active-podcast-ep-300 | EP.300 Momentary Coffee &amp; Host-tell โฮสเทลของนักเล่า พลังขับเคลื่อ",
+   "https://theactive.thaipbs.or.th/podcast/the-active-podcast-ep-299 | EP.299 ทำงานศิลปะยังไงให้เกิดมิตรภาพ ภูเก็ต ยินดีที่ได้รู้จัก",
+   "https://theactive.thaipbs.or.th/view/law-marginal-people | เจตนารมณ์ วันชนเผ่าพื้นเมืองโลก ขับเคลื่อน พ.ร.บ.ชาติพันธุ์",
+   "https://theactive.thaipbs.or.th/view/road-to-bangkok-worldpride-2030 | Road to Bangkok WorldPride 2030",
+   "https://theactive.thaipbs.or.th/view/suburban-train | ถ้ารถไฟไม่เข้าเมือง ? แต่คนชานเมืองยังต้องเดินทาง",
+   "https://theactive.thaipbs.or.th/about-us | About Us &#038; Contact Us"
+  ],
+  "tried": [
+   {
+    "url": "https://theactive.thaipbs.or.th/feed",
+    "status": 200,
+    "n": 5,
+    "last7": 0,
+    "newest": "2020-07-12T06:33",
+    "sample": [
+     "Sun, 12 Jul 2020 06:33:20 +0000 Reprehenderit delectus magni enim placeat",
+     "Sun, 12 Jul 2020 01:54:39 +0000 Ipsam minus praesentium id deserunt vitae qui"
+    ]
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/feed/",
+    "status": 200,
+    "n": 5,
+    "last7": 0,
+    "newest": "2020-07-12T06:33",
+    "sample": [
+     "Sun, 12 Jul 2020 06:33:20 +0000 Reprehenderit delectus magni enim placeat",
+     "Sun, 12 Jul 2020 01:54:39 +0000 Ipsam minus praesentium id deserunt vitae qui"
+    ]
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/rss",
+    "status": 200,
+    "n": 5,
+    "last7": 0,
+    "newest": "2020-07-12T06:33",
+    "sample": [
+     "Sun, 12 Jul 2020 06:33:20 +0000 Reprehenderit delectus magni enim placeat",
+     "Sun, 12 Jul 2020 01:54:39 +0000 Ipsam minus praesentium id deserunt vitae qui"
+    ]
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/rss.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/rss/",
+    "status": 200,
+    "n": 5,
+    "last7": 0,
+    "newest": "2020-07-12T06:33",
+    "sample": [
+     "Sun, 12 Jul 2020 06:33:20 +0000 Reprehenderit delectus magni enim placeat",
+     "Sun, 12 Jul 2020 01:54:39 +0000 Ipsam minus praesentium id deserunt vitae qui"
+    ]
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/index.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/feed.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/atom.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/rss/all.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://theactive.thaipbs.or.th/rss/news.xml",
+    "status": 404,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 200,
+  "final": "https://theactive.thaipbs.or.th/",
+  "bytes": 141242,
+  "links": 240,
+  "title": "The Active | The Power of Active Citizen",
+  "dates": [
+   "2020-07-17T11:21",
+   "2020-06-17T16:00",
+   "2020-07-17T11:21",
+   "25 October 2026"
+  ]
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.pattanipost.com/",
+  "home": "https://www.pattanipost.com/",
+  "hrefs": true,
+  "tried": [],
+  "error": "fetch failed"
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.yala.go.th/",
+  "home": "https://www.yala.go.th/",
+  "hrefs": [],
+  "tried": [
+   {
+    "url": "https://www.yala.go.th/feed",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/feed/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/rss",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/rss.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/rss/",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/index.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/feed.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/atom.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/rss/all.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   },
+   {
+    "url": "https://www.yala.go.th/rss/news.xml",
+    "status": 403,
+    "n": 0,
+    "last7": 0,
+    "newest": null,
+    "sample": []
+   }
+  ],
+  "status": 403,
+  "final": "https://www.yala.go.th/",
+  "bytes": 8154,
+  "links": 2,
+  "title": "Access denied | www.yala.go.th used Cloudflare to restrict access | www.yala.go.th | Cloudflare",
+  "dates": [
+   "2026-10-25 06:27"
+  ]
+ },
+ {
+  "cc": "th",
+  "outlet": "https://www.isoc5.net/",
+  "home": "https://www.isoc5.net/",
+  "hrefs": true,
+  "tried": [],
+  "error": "fetch failed"
+ }
+]
