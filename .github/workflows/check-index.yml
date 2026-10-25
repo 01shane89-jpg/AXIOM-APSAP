@@ -86,6 +86,8 @@ jobs:
       - run: node tests/tw_kr_designations.test.mjs
       - run: node tests/medplan_model.test.mjs
       - run: node tests/boolq.test.mjs
+      # flash alerts: which push alerts are flash first reports, flash-only watches, one corroboration follow-up (tools/flash_lib.mjs)
+      - run: node tests/flash.test.mjs
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/econ.test.mjs

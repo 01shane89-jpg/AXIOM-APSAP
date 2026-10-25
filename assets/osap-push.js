@@ -11,12 +11,14 @@
       the watch went into a public GitHub issue and data/push/watches.json, readable by anyone (Shane 2026-10-20).
    A push is a notice about a report, never a finding. "Send a test alert" posts one line to the channel from this browser.
    Morning brief (2026-10-24, tools/push_brief.mjs): once a day, from 0600 on this phone's clock (the time zone sent with the
-   watch), the channel also gets one brief for the countries its push watches are on. "In my morning brief" leaves a watch out. */
+   watch), the channel also gets one brief for the countries its push watches are on. "In my morning brief" leaves a watch out.
+   Flash alerts (2026-10-24, tools/flash_lib.mjs): a serious event carried by an official source or by two or more different
+   sources is sent first, marked FLASH, at ntfy's top priority; "Flash alerts only" makes a watch send nothing else. */
 (function () {
   "use strict";
   var API = "/api/osap-push";
   var NTFY = "https://ntfy.sh";
-  var T_KEY = "asap-push-topic", NB_KEY = "osap-push-nobrief", MAX_PTS = 150;
+  var T_KEY = "asap-push-topic", NB_KEY = "osap-push-nobrief", F_KEY = "osap-push-flash", MAX_PTS = 150;
   var LIST = null, LIST_AT = 0, LIST_ERR = "", LIM = null;
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -77,6 +79,9 @@
   /* whether a watch is in the morning brief (on unless turned off here) */
   function inBrief(id) { return !lsGet(NB_KEY, {})[id]; }
   function setBrief(id, on) { var o = lsGet(NB_KEY, {}); if (on) delete o[id]; else o[id] = 1; lsSet(NB_KEY, o); }
+  /* "Flash alerts only", per watch: this browser's choice, else the pushed copy's */
+  function flashOf(id) { var f = lsGet(F_KEY, {}) || {}; if (Object.prototype.hasOwnProperty.call(f, id)) return !!f[id]; var s = onServer(id); return !!(s && s.flash); }
+  function setFlash(id, on) { var f = lsGet(F_KEY, {}) || {}; f[id] = !!on; lsSet(F_KEY, f); }
   function myTz() { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || undefined; } catch (e) { return undefined; } }
   /* the watch as the push job takes it (tools/push_lib.mjs keeps only these fields) */
   function payload(w) {
@@ -84,7 +89,7 @@
     if (a && a.length > MAX_PTS) { var step = a.length / MAX_PTS, o = []; for (var i = 0; i < MAX_PTS; i++) o.push(a[Math.floor(i * step)]); a = o; }
     return { v: 1, id: w.id, name: w.name, cc: w.cc, area: a ? a.map(function (p) { return [Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]; }) : null,
       layers: w.layers || [], kw: w.kw || [], q: w.q || undefined, minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic(),
-      tz: myTz(), brief: inBrief(w.id) ? undefined : false };
+      tz: myTz(), brief: inBrief(w.id) ? undefined : false, flash: flashOf(w.id) || undefined };
   }
   function subLinks(t) {
     return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener noreferrer">Open ' + esc(t) + " in ntfy</a>";
@@ -117,6 +122,9 @@
       (LIM && LIM.plan === "full" ? ", with the top line of OSAP's daily summary" : "") + ".</span></p>" +
       "<p>Keeps the watch on OSAP's server. OSAP's refresh job then checks it after every refresh, " +
       "about every 15 minutes, and sends new matching reports from the last 48 hours: one alert per event, up to 3 per check, then a count.</p>" +
+      '<p class="pushflash"><label><input type="checkbox" id="push-flash" data-push-flash' + (flashOf(id) ? " checked" : "") + "> <b>Flash alerts only</b></label><br>" +
+      '<span class="obs">Flash alerts are serious events (attacks, deaths, explosions, curfews, evacuations and the like) reported by an official source or by two or more different sources. ' +
+      "They come first, marked FLASH, at ntfy's loudest setting, whether or not this is ticked. Ticked, the watch sends nothing else. A serious event first sent on one source gets one update when more sources report it.</span></p>" +
       '<p><button type="button" class="refresh primary" data-push-send>' + (st === "on" || st === "other" ? "Send the watch again" : "Send to OSAP") + "</button>" +
       (st === "on" || st === "other" ? ' <button type="button" class="refresh" data-push-stop>Stop push alerts</button>' : "") + ' <span class="obs" id="push-send-out" role="status"></span></p>' +
       '<details class="wlimits"><summary>Who can see it, and the limits</summary><ul>' +
@@ -146,9 +154,19 @@
     if (!el) { setTimeout(hook, 1000); return; }
     new MutationObserver(function () { if (el.querySelector(".wrow") && !el.querySelector(".pushbox")) { decorate(); loadList(decorate); } }).observe(el, { childList: true });
     el.addEventListener("click", function (e) {
-      var t = e.target.closest && e.target.closest("[data-push-brief],[data-push-open],[data-push-back],[data-push-close],[data-push-copy],[data-push-test],[data-push-send],[data-push-stop]");
+      var t = e.target.closest && e.target.closest("[data-push-flash],[data-push-brief],[data-push-open],[data-push-back],[data-push-close],[data-push-copy],[data-push-test],[data-push-send],[data-push-stop]");
       if (!t) return;
       var box = el.querySelector(".pushbox"), id = box ? box.getAttribute("data-id") : null;
+      if (t.hasAttribute("data-push-flash")) {
+        setFlash(id, t.checked);
+        var fw = byId(id), fo = el.querySelector("#push-send-out");
+        if (fw && onServer(id)) {   /* already pushed: send the change at once */
+          if (fo) fo.textContent = "Saving…";
+          call("POST", payload(fw)).then(function (o) { took(o); if (fo) fo.textContent = t.checked ? "Saved: flash alerts only." : "Saved: every matching report."; },
+            function (er) { LIST_AT = 0; if (fo) fo.textContent = er.message; });
+        } else if (fo) fo.textContent = "Saved here. It applies when you send the watch to OSAP.";
+        return;
+      }
       if (t.hasAttribute("data-push-brief")) {
         setBrief(id, t.checked);
         var bw = byId(id), bo = el.querySelector("#push-send-out");
