@@ -294,7 +294,7 @@
 ["w491369201",25.2554,51.44151,"qa",{"name":"Yara Medical Center","name:en":"Yara Medical Center","amenity":"clinic","addr:street":"Al Waab Street"}],
 ["w491380565",25.34665,51.46493,"qa",{"name":"Alsafwa Medical Center","name:en":"Alsafwa Medical Center","amenity":"clinic","addr:street":"Al Khafji Street"}],
 ["w491644569",25.27326,51.49128,"qa",{"name":"Janin Medical Center","name:en":"Janin Medical Center","amenity":"hospital","addr:street":"Al Amir"}],
-["w51568129",25.91665,50.59136,"bh",{"name":"قاعدة الشيخ عيسى الجوية","name:en":"Shaikh Isa Air Base","aeroway":"aerodrome","icao":"OBBS","military":"airfield"}],
+["w51568129",25.91665,50.59136,"bh",{"name":"قاعدة الشيخ عيسى الجوية","name:en":"Shaikh Isa Air Base","aeroway":"aerodrome","icao":"OBBS","military":"airfield","wikidata":"Q82928"}],
 ["w540035762",25.27938,51.60411,"qa",{"name":"Qatar Airways Clinic","name:en":"Qatar Airways Clinic","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"Qatar Airways"}],
 ["w564850993",25.23248,51.56076,"qa",{"amenity":"clinic","healthcare":"clinic"}],
 ["w568730719",25.96293,51.40255,"qa",{"aeroway":"helipad","surface":"paved"}],

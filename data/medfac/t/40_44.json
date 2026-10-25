@@ -587,7 +587,7 @@
 ["w1290887772",41.74196,44.72229,"ge",{"name":"სამედიცინო მოლი","amenity":"clinic","healthcare":"clinic"}],
 ["w1291365811",41.37953,44.41825,"ge",{"name":"კაზრეთის საავადმყოფო","name:en":"Kazreti Hospital","amenity":"hospital"}],
 ["w1296450903",41.2473,45.25369,"az",{"name":"Xəstəxana","amenity":"hospital","addr:city":"Yuxarı Salahlı"}],
-["w1301828963",41.12344,45.42225,"az",{"name":"Ağstafa Aerodromu","aeroway":"aerodrome","icao":"UBBA"}],
+["w1301828963",41.12344,45.42225,"az",{"name":"Ağstafa Aerodromu","aeroway":"aerodrome","icao":"UBBA","wikidata":"Q1094289"}],
 ["w1302096333",41.11273,45.44043,"az",{"name":"Ağstafa Mərkəzi Xəstəxanası","amenity":"hospital"}],
 ["w1302759737",41.11464,45.44983,"az",{"name":"Ağstafa Dəmiryolu Xəstəxanası","amenity":"hospital"}],
 ["w1303153860",41.11966,45.44831,"az",{"name":"Ağstafa Uşaq Xəstəxanası","amenity":"hospital"}],
