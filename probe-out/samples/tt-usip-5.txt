@@ -1,0 +1,6 @@
+https://www.usip.org/robots.txt
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+
+Sitemap: https://www.usip.org/sitemaps.xml

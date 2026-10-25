@@ -1,0 +1,102 @@
+https://www.ecdc.europa.eu/en/taxonomy/term/1307/feed
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.ecdc.europa.eu/en">
+  <channel>
+    <title>News</title>
+    <link>https://www.ecdc.europa.eu/en</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Importation of Ebola cases to Kenya and Nigeria: ECDC assesses the threat</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/importation-ebola-cases-kenya-and-nigeria-ecdc-assesses-threat</link>
+  <description>&lt;p&gt;With cases of Ebola disease caused by Bundibugyo virus recently detected in Kenya and Nigeria, ECDC reiterates the low risk for Europe while highlighting the need for preparedness.&lt;/p&gt;
+</description>
+  <pubDate>Fri, 23 Oct 2026 16:42:20 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/importation-ebola-cases-kenya-and-nigeria-ecdc-assesses-threat</guid>
+    </item>
+<item>
+  <title>Respiratory infections season</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/respiratory-infections-season</link>
+  <description>&lt;p&gt;As the colder months approach in Europe, respiratory infections including influenza, respiratory syncytial virus (RSV) infections, COVID-19, pneumococcal disease and others can lead to serious illness and increase the burden on healthcare services throughout Europe.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 22 Oct 2026 11:59:31 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/respiratory-infections-season</guid>
+    </item>
+<item>
+  <title>Protect yourself and others during the cold season</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/protect-yourself-and-others-during-cold-season</link>
+  <description>&lt;p&gt;As the colder months approach in Europe, respiratory infections including influenza, respiratory syncytial virus (RSV) infections, COVID-19, pneumococcal disease and others can lead to serious illness and increase the burden on healthcare services throughout Europe.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 22 Oct 2026 11:59:28 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/protect-yourself-and-others-during-cold-season</guid>
+    </item>
+<item>
+  <title>Severely ill patient in France becomes first ever human infected with Shamonda virus</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/severely-ill-patient-france-becomes-first-ever-human-infected-shamonda-virus</link>
+  <description>&lt;p&gt;The European Centre for Disease Prevention and Control (ECDC) is carefully monitoring the situation after the French authorities announced the first ever reported human infection with Shamonda virus (SHAV), a disease that has until now only affected animals.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 22 Oct 2026 11:13:22 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/severely-ill-patient-france-becomes-first-ever-human-infected-shamonda-virus</guid>
+    </item>
+<item>
+  <title>Ebola disease: Multi-country outbreak 2026</title>
+  <link>https://www.ecdc.europa.eu/en/ebola-disease-multi-country-outbreak-2026</link>
+  <description>&lt;p&gt;Since May 2026, an Ebola virus disease outbreak caused by Bundibugyo virus has been ongoing in the Democratic Republic of the Congo (DRC).&lt;/p&gt;
+</description>
+  <pubDate>Mon, 19 Oct 2026 17:36:21 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/ebola-disease-multi-country-outbreak-2026</guid>
+    </item>
+<item>
+  <title>Strengthening public health emergency operations centres in Europe through exchange of good practices</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/strengthening-public-health-emergency-operations-centres-europe-through-exchange-good</link>
+  <description>&lt;p&gt;A three-day training workshop organised by ECDC and WHO/Europe and hosted by the Slovenian National Institute of Public Health (NIPH) brought together participants from the EU and a number of accession countries to strengthen their national Public Health Emergency Operations Centres (PHEOCs) and to ensure they operate in line with EU and international standards.&lt;/p&gt;
+</description>
+  <pubDate>Fri, 16 Oct 2026 15:00:29 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/strengthening-public-health-emergency-operations-centres-europe-through-exchange-good</guid>
+    </item>
+<item>
+  <title>Record-high West Nile virus infections reported amid spread to new parts of Europe</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/record-high-west-nile-virus-infections-reported-amid-spread-new-parts-europe</link>
+  <description>&lt;p&gt;With the EU experiencing its most intense West Nile virus season to date and detections of the virus in new areas further north in Europe, ECDC calls for sustained prevention, surveillance and mosquito control.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 15 Oct 2026 13:59:43 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/record-high-west-nile-virus-infections-reported-amid-spread-new-parts-europe</guid>
+    </item>
+<item>
+  <title>ECDC closely monitoring situation following case of pneumonia of unknown origin in Russia</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/ecdc-closely-monitoring-situation-following-case-pneumonia-unknown-origin-russia</link>
+  <description>&lt;p&gt;Following the reported death of a laboratory worker in Irkutsk, Russia, from pneumonia that is suspected to be pneumonic plague, ECDC is closely monitoring the situation.&amp;nbsp;&lt;/p&gt;
+</description>
+  <pubDate>Tue, 06 Oct 2026 14:31:22 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/ecdc-closely-monitoring-situation-following-case-pneumonia-unknown-origin-russia</guid>
+    </item>
+<item>
+  <title>Chikungunya virus disease worldwide overview</title>
+  <link>https://www.ecdc.europa.eu/en/chikungunya-monthly</link>
+  <description>&lt;p&gt;Every month ECDC provides detailed epidemiological overview of the worldwide transmission of chikungunya virus disease in its weekly threat report (Communicable Diseases Threat Report).&lt;/p&gt;
+</description>
+  <pubDate>Mon, 05 Oct 2026 16:05:05 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/chikungunya-monthly</guid>
+    </item>
+<item>
+  <title>EU-led assessment to Albania will strengthen cross-sector response to antimicrobial resistance </title>
+  <link>https://www.ecdc.europa.eu/en/news-events/eu-led-assessment-albania-will-strengthen-cross-sector-response-antimicrobial</link>
+  <description>&lt;p&gt;An EU-led mission of experts to Albania this week will identify priority gaps, define areas for further action and support the strengthening of national responses to antimicrobial resistance (AMR) in the country.&lt;/p&gt;
+</description>
+  <pubDate>Mon, 05 Oct 2026 13:04:11 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/eu-led-assessment-albania-will-strengthen-cross-sector-response-antimicrobial</guid>
+    </item>
+
+  </channel>
+</rss>

@@ -1,0 +1,149 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ireland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ireland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:IE</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:35:46.424131Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>EI805</value>
+    </cap:geocode>
+    <link title="From Slyne Head to Rossan Point to Fair Head" href="https://meteoalarm.org?geocode=EMMA_ID:EI805" hreflang="en"/>
+    <cap:areaDesc>From Slyne Head to Rossan Point to Fair Head</cap:areaDesc>
+    <cap:event>Red Gale</cap:event>
+    <cap:sent>2026-10-24T15:56:43+00:00</cap:sent>
+    <cap:expires>2026-10-25T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T09:28:15+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Extreme</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.261024165643.042586db-9640-4a29-9fe1-148f918339ea</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T15:56:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66?index_info=0&amp;index_area=0&amp;index_geocode=4</id>
+    <title>Red Wind Warning issued for Ireland - From Slyne Head to Rossan Point to Fair Head</title>
+    <updated>2026-10-24T15:56:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>EI821</value>
+    </cap:geocode>
+    <link title="From Slyne Head to Rossan Point to Fair Head" href="https://meteoalarm.org?geocode=EMMA_ID:EI821" hreflang="en"/>
+    <cap:areaDesc>From Slyne Head to Rossan Point to Fair Head</cap:areaDesc>
+    <cap:event>Red Gale</cap:event>
+    <cap:sent>2026-10-24T15:56:43+00:00</cap:sent>
+    <cap:expires>2026-10-25T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T09:28:15+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Extreme</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.261024165643.042586db-9640-4a29-9fe1-148f918339ea</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T15:56:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66?index_info=0&amp;index_area=0&amp;index_geocode=3</id>
+    <title>Red Wind Warning issued for Ireland - From Slyne Head to Rossan Point to Fair Head</title>
+    <updated>2026-10-24T15:56:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>EI820</value>
+    </cap:geocode>
+    <link title="From Slyne Head to Rossan Point to Fair Head" href="https://meteoalarm.org?geocode=EMMA_ID:EI820" hreflang="en"/>
+    <cap:areaDesc>From Slyne Head to Rossan Point to Fair Head</cap:areaDesc>
+    <cap:event>Red Gale</cap:event>
+    <cap:sent>2026-10-24T15:56:43+00:00</cap:sent>
+    <cap:expires>2026-10-25T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T09:28:15+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Extreme</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.261024165643.042586db-9640-4a29-9fe1-148f918339ea</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T15:56:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66?index_info=0&amp;index_area=0&amp;index_geocode=2</id>
+    <title>Red Wind Warning issued for Ireland - From Slyne Head to Rossan Point to Fair Head</title>
+    <updated>2026-10-24T15:56:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>EI819</value>
+    </cap:geocode>
+    <link title="From Slyne Head to Rossan Point to Fair Head" href="https://meteoalarm.org?geocode=EMMA_ID:EI819" hreflang="en"/>
+    <cap:areaDesc>From Slyne Head to Rossan Point to Fair Head</cap:areaDesc>
+    <cap:event>Red Gale</cap:event>
+    <cap:sent>2026-10-24T15:56:43+00:00</cap:sent>
+    <cap:expires>2026-10-25T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T09:28:15+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Extreme</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.261024165643.042586db-9640-4a29-9fe1-148f918339ea</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T15:56:43Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/4b7dfeb1-b60b-4fe2-aaab-6af448cb5f66?index_info=0&amp;index_area=0&amp;index_geocode=1</id>
+    <title>Red Wind Warning issued for Ireland - From Slyne Head to Rossan Point to Fair Head</title>
+    <updated>2026-10-24T15:56:43Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>EI822</value>
+    </cap:geocode>
+    <link title="From Slyne Head to Rossan Point to Fair Head" href="https://meteoalarm.org?geocode=EMMA_ID:EI822" hreflang="en"/>
+    <cap:areaDesc>From Slyne Head to Rossan Point to Fair Head</cap:areaDesc>
+    <cap:event>Red Gale</cap:event>
+    <cap:sent>2026-10-24T15:56:43+00:00</cap:sent>
+    <cap:expires>2026-10-25T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T09:28:15+00:00</cap:effective>
+    <cap:

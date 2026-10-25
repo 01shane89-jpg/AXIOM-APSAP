@@ -1,0 +1,156 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bosnia-herzegovina
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bosnia-herzegovina"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:BA</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:36:57.521709Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>BA010</value>
+    </cap:geocode>
+    <link title="Trebinje" href="https://meteoalarm.org?geocode=EMMA_ID:BA010" hreflang="en"/>
+    <cap:areaDesc>Trebinje</cap:areaDesc>
+    <cap:event>Wind Yellow Warning</cap:event>
+    <cap:sent>2026-10-24T10:26:14+00:00</cap:sent>
+    <cap:expires>2026-10-26T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:26:14+00:00</cap:effective>
+    <cap:onset>2026-10-26T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.70.1.BA.261024122614.83318883</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/e01bdfbe-d204-4c28-bcb7-c9e440d78f78"/>
+    <link title="Bosnia-Herzegovina" rel="related" href="https://meteoalarm.org?region=BA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:26:14Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/e01bdfbe-d204-4c28-bcb7-c9e440d78f78?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Bosnia-Herzegovina - Trebinje</title>
+    <updated>2026-10-24T10:26:14Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>BA003</value>
+    </cap:geocode>
+    <link title="Banja Luka" href="https://meteoalarm.org?geocode=EMMA_ID:BA003" hreflang="en"/>
+    <cap:areaDesc>Banja Luka</cap:areaDesc>
+    <cap:event>Rain Yellow Warning</cap:event>
+    <cap:sent>2026-10-24T10:23:20+00:00</cap:sent>
+    <cap:expires>2026-10-24T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:23:20+00:00</cap:effective>
+    <cap:onset>2026-10-24T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.70.1.BA.261024122320.59706147</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/1ceb20c5-b8b5-4b0c-9a05-a994d5358c2c"/>
+    <link title="Bosnia-Herzegovina" rel="related" href="https://meteoalarm.org?region=BA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:23:20Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/1ceb20c5-b8b5-4b0c-9a05-a994d5358c2c?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Bosnia-Herzegovina - Banja Luka</title>
+    <updated>2026-10-24T10:23:20Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>BA010</value>
+    </cap:geocode>
+    <link title="Trebinje" href="https://meteoalarm.org?geocode=EMMA_ID:BA010" hreflang="en"/>
+    <cap:areaDesc>Trebinje</cap:areaDesc>
+    <cap:event>Rain Yellow Warning</cap:event>
+    <cap:sent>2026-10-24T10:23:20+00:00</cap:sent>
+    <cap:expires>2026-10-24T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:23:20+00:00</cap:effective>
+    <cap:onset>2026-10-24T14:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.70.1.BA.261024122320.63528503</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/403a2cf4-c1e8-4ed4-996c-4338887fac30"/>
+    <link title="Bosnia-Herzegovina" rel="related" href="https://meteoalarm.org?region=BA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:23:20Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/403a2cf4-c1e8-4ed4-996c-4338887fac30?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Bosnia-Herzegovina - Trebinje</title>
+    <updated>2026-10-24T10:23:20Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>BA003</value>
+    </cap:geocode>
+    <link title="Banja Luka" href="https://meteoalarm.org?geocode=EMMA_ID:BA003" hreflang="en"/>
+    <cap:areaDesc>Banja Luka</cap:areaDesc>
+    <cap:event>Rain Yellow Warning</cap:event>
+    <cap:sent>2026-10-23T09:54:57+00:00</cap:sent>
+    <cap:expires>2026-10-24T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-23T09:54:57+00:00</cap:effective>
+    <cap:onset>2026-10-24T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.70.1.BA.261023115457.99738534</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/b8ba789f-802c-4296-95ea-50c35aed2a39"/>
+    <link title="Bosnia-Herzegovina" rel="related" href="https://meteoalarm.org?region=BA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-23T09:54:57Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bosnia-herzegovina/b8ba789f-802c-4296-95ea-50c35aed2a39?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Bosnia-Herzegovina - Banja Luka</title>
+    <updated>2026-10-23T09:54:57Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>BA006</value>
+    </cap:geocode>
+    <link title="Sarajevo" href="https://meteoalarm.org?geocode=EMMA_ID:BA006" hreflang="en"/>
+    <cap:areaDesc>Sarajevo</cap:areaDesc>
+    <cap:event>Rain Yellow Warning</cap:event>
+    <cap:sent>2026-10-22T06:28:29+00:00</cap:sent>
+    <cap:expires>2026-10-24T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-22T06:28:29+00:00</cap:effective>
+    <cap:onset>2026-10-23T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.70.0.BA.261022082829.20621439<

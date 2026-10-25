@@ -1,0 +1,92 @@
+https://eurasianet.org/rss
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://eurasianet.org/">
+  <channel>
+    <title/>
+    <link>https://eurasianet.org/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Kazakhstan wins some and loses some</title>
+  <link>https://eurasianet.org/kazakhstan-wins-some-and-loses-some</link>
+  <description>IFC delivers some good news, Hague arbitration court some bad. </description>
+  <pubDate>Oct 23, 2026</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://eurasianet.org/92789</guid>
+    </item>
+<item>
+  <title>Azerbaijan, Kazakhstan and China coordinating logistics along Middle Corridor</title>
+  <link>https://eurasianet.org/azerbaijan-kazakhstan-and-china-coordinating-logistics-along-middle-corridor</link>
+  <description>Partner post from Central Asia-Caucasus Analyst. </description>
+  <pubDate>Oct 23, 2026</pubDate>
+    <dc:creator>Vusal Guliyev</dc:creator>
+    <guid isPermaLink="true">https://eurasianet.org/92790</guid>
+    </item>
+<item>
+  <title>Azerbaijani-Turkish rancor reaching new heights</title>
+  <link>https://eurasianet.org/azerbaijani-turkish-rancor-reaching-new-heights</link>
+  <description>Efforts to defuse tension appear to fall short. </description>
+  <pubDate>Oct 22, 2026</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://eurasianet.org/92788</guid>
+    </item>
+<item>
+  <title>Turkmenistan striving to raise higher education standards</title>
+  <link>https://eurasianet.org/turkmenistan-striving-to-raise-higher-education-standards</link>
+  <description>Ashgabat seeks to match skills with future economic needs. </description>
+  <pubDate>Oct 21, 2026</pubDate>
+    <dc:creator>S7+</dc:creator>
+    <guid isPermaLink="true">https://eurasianet.org/92786</guid>
+    </item>
+<item>
+  <title>Iran ups trade engagement with Central Asian states</title>
+  <link>https://eurasianet.org/iran-ups-trade-engagement-with-central-asian-states</link>
+  <description>Tehran striving to broaden trade ties. </description>
+  <pubDate>Oct 21, 2026</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://eurasianet.org/92787</guid>
+    </item>
+<item>
+  <title>India shakes up Shanghai Cooperation Organization meeting</title>
+  <link>https://eurasianet.org/india-shakes-up-shanghai-cooperation-organization-meeting</link>
+  <description>Complaints underscore lack of SCO cohesion. </description>
+  <pubDate>Oct 20, 2026</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://eurasianet.org/92785</guid>
+    </item>
+<item>
+  <title>Rubio’s trip generates hopeful reaction in Central Asia</title>
+  <link>https://eurasianet.org/rubios-trip-generates-hopeful-reaction-in-central-asia</link>
+  <description>Washington raises expectations. </description>
+  <pubDate>Oct 20, 2026</pubDate>
+    <dc:creator>S7+</dc:creator>
+    <guid isPermaLink="true">https://eurasianet.org/92784</guid>
+    </item>
+<item>
+  <title>Rubio’s visit to Central Asia boosts trade ties</title>
+  <link>https://eurasianet.org/rubios-visit-to-central-asia-boosts-trade-ties</link>
+  <description>Deals worth at least $12 billion signed.</description>
+  <pubDate>Oct 19, 2026</pubDate>
+    <dc:creator>S7+</dc:creator>
+    <guid isPermaLink="true">https://eurasianet.org/92783</guid>
+    </item>
+<item>
+  <title>Millions of Afghans face famine conditions</title>
+  <link>https://eurasianet.org/millions-of-afghans-face-famine-conditions</link>
+  <description>Food security crisis fosters spread of instability. </description>
+  <pubDate>Oct 16, 2026</pubDate>
+    <dc:creator>S7+</dc:creator>
+    <guid isPermaLink="true">https://eurasianet.org/92782</guid>
+    </item>
+<item>
+  <title>Evaluating potential risks and rewards of Kazakhstan’s one-chamber legislature</title>
+  <link>https://eurasianet.org/evaluating-potential-risks-and-rewards-of-kazakhstans-one-chamber-legislature</link>
+  <description>Eurasianet commentary </description>
+  <pubDate>Oct 16, 2026</pubDate>
+    <dc:creator>Aidana Sachs</dc:creator>
+    <guid isPermaLink="true">https://eurasianet.org/92780</guid>
+    </item>
+
+  </channel>
+</rss>

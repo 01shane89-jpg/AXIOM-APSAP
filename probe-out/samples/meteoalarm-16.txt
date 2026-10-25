@@ -1,0 +1,92 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:IL</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:36:01.836741Z</updated>
+  <entry>
+    <cap:polygon>31.23960346,34.68954248 31.24915259,34.5804060801841 31.22345073,34.41212580910485 31.21922135,34.38443435093831 31.21825004,34.3780747886214 31.18900182,34.36134466326274 31.17523448,34.28361826945991 31.17290282,34.28449464731216 31.17033435,34.28520741489206 31.16433192,34.28745952234101 31.15883652,34.28963983200271 31.15865298,34.28971265142025 31.14411356,34.29484703299329 31.1385082,34.2968264857559 31.12848792,34.30052785607757 31.12778011,34.30086561086102 31.10922916,34.3074962250725 31.05799695,34.32579338715698 31.04312226,34.3313698277571 31.0377014,34.33340159141221 31.02349384,34.33999567066547 31.01075234,34.34488615877098 30.9483296,34.36882482560702 30.91467198,34.38179300094805 30.87213607,34.39825633476391 30.8592572,34.40323789271639 30.79161251,34.43882135959109 30.98228876,34.6014969803303 31.08612087,34.7350078178282 31.20012214,34.85869469890338 31.22008882,34.8803577584672 31.22486417,34.88553883017642 31.21891725,34.86510827728767 31.2175725,34.79852355217366 31.23546661,34.73682228070805 31.23673649,34.72496926074393 31.23664838,34.72331588453682 31.23960346,34.68954248</cap:polygon>
+    <link title="Western Negev" href="https://meteoalarm.org?polygon=70ea04d3-d98c-40db-99bc-e8e107d05396,0,2,0" hreflang="en"/>
+    <cap:areaDesc>Western Negev</cap:areaDesc>
+    <cap:event>FOG</cap:event>
+    <cap:sent>2026-10-25T03:40:08+00:00</cap:sent>
+    <cap:expires>2026-10-25T08:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:40:08+00:00</cap:effective>
+    <cap:onset>2026-10-25T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.376.0.261025054008.59362</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/70ea04d3-d98c-40db-99bc-e8e107d05396"/>
+    <link title="Israel" rel="related" href="https://meteoalarm.org?region=IL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:40:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/70ea04d3-d98c-40db-99bc-e8e107d05396?index_info=0&amp;index_area=2&amp;index_polygon=0</id>
+    <title>Yellow Fog Warning issued for Israel - Western Negev</title>
+    <updated>2026-10-25T03:40:08Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>30.97506616,35.23509639 30.96922607,35.22966511 30.96598562,35.22967894 30.95970384,35.22663323 30.95618224,35.22068458 30.95622983,35.21744851 30.96041768,35.21668708 30.96872458,35.21804664 30.97033781,35.21671643 30.97089431,35.21625756 30.97119175,35.20242694 30.96539181,35.19171936 30.963733,35.1910423 30.95810471,35.18874504 30.94947916,35.19142193 30.94142154,35.20386178 30.94038426,35.20581471 30.94038426,35.20602286 30.94032639,35.20592365 30.93660921,35.19955135 30.9272489,35.18350509 30.90285465,35.120643 30.87283097,35.07654571 30.87133885,35.076817 30.82596348,35.01913644 30.82527256,35.01615458 30.797387,35.0096057 30.79703759,35.00998007 30.78248757,35.00921428 30.75995576,34.97618485 30.748798,34.95982868 30.74207956,34.93892686 30.7282747,34.8959784 30.73836172,34.89697289 30.75563661,34.88612255 30.75806366,34.87227409 30.76762909,34.86556401 30.77666156,34.86579292 30.84566383,34.78933378 30.87170009,34.8401614 30.91373466,34.92222068 31.34412539,35.24826493 31.34112383,35.25003603 31.28728852,35.28394335 31.20127354,35.28897596 31.10450395,35.2946378 31.08103883,35.29601071 31.05264655,35.30724615 30.97506616,35.23509639</cap:polygon>
+    <link title="North Eastern Negev" href="https://meteoalarm.org?polygon=70ea04d3-d98c-40db-99bc-e8e107d05396,0,1,0" hreflang="en"/>
+    <cap:areaDesc>North Eastern Negev</cap:areaDesc>
+    <cap:event>FOG</cap:event>
+    <cap:sent>2026-10-25T03:40:08+00:00</cap:sent>
+    <cap:expires>2026-10-25T08:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:40:08+00:00</cap:effective>
+    <cap:onset>2026-10-25T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.376.0.261025054008.59362</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/70ea04d3-d98c-40db-99bc-e8e107d05396"/>
+    <link title="Israel" rel="related" href="https://meteoalarm.org?region=IL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:40:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/70ea04d3-d98c-40db-99bc-e8e107d05396?index_info=0&amp;index_area=1&amp;index_polygon=0</id>
+    <title>Yellow Fog Warning issued for Israel - North Eastern Negev</title>
+    <updated>2026-10-25T03:40:08Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>30.76408145,34.58265841 30.72160891,34.47506131 30.72132106,34.47414107 30.79161251,34.43882136 30.98228876,34.60149698 31.00403044,34.62945317 31.08612087,34.73500782 31.20012214,34.8586947 31.22008882,34.88035776 31.22486417,34.88553883 31.232352,34.89366283 31.24024102,34.9022221 31.24654714,34.90906399 31.27560053,34.97864717 31.30181724,35.07066989 31.31755099,35.10160522 31.32622379,35.11865747 31.33684841,35.12984003 31.36115099,35.16589785 31.36248004,35.18135983 31.3739705,35.2173025 31.37649831,35.2252096 31.3773363,35.22783087 31.37146376,35.23213367 31.34412539,35.24826493 30.91373466,34.92222068 30.87170009,34.8401614 30.84566383,34.78933378 30.82008568,34.72453581 30.77379517,34.6072665 30.76408145,34.58265841</cap:polygon>
+    <link title="North Western Negev" href="https://meteoalarm.org?polygon=70ea04d3-d98c-40db-99bc-e8e107d05396,0,0,0" hreflang="en"/>
+    <cap:areaDesc>North Western Negev</cap:areaDesc>
+    <cap:event>FOG</cap:event>
+    <cap:sent>2026-10-25T03:40:08+00:00</cap:sent>
+    <cap:expires>2026-10-25T08:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:40:08+00:00</cap:effective>
+    <cap:onset>2026-10-25T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.376.0.261025054008.59362</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/70ea04d3-d98c-40db-99bc-e8e107d05396"/>
+    <link title="Israel" rel="related" href="https://meteoalarm.org?region=IL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoa

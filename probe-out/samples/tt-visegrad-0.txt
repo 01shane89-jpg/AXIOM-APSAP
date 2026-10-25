@@ -1,0 +1,60 @@
+https://visegradinsight.eu/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Visegrad Insight</title>
+	<atom:link href="https://visegradinsight.eu/feed/" rel="self" type="application/rss+xml" />
+	<link>https://visegradinsight.eu/</link>
+	<description>Your Central European Intelligence</description>
+	<lastBuildDate>Sat, 24 Oct 2026 12:18:45 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://visegradinsight.eu/app/uploads/2021/07/cropped-2021-Visegrad-Insight-Favicon-32x32.png</url>
+	<title>Visegrad Insight</title>
+	<link>https://visegradinsight.eu/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Serbia’s Balancing Act Is Running Out of Time</title>
+		<link>https://visegradinsight.eu/serbian-elections-forecast-economic-dimension/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=serbian-elections-forecast-economic-dimension</link>
+		
+		<dc:creator><![CDATA[Arslan Suleymanov]]></dc:creator>
+		<pubDate>Sat, 24 Oct 2026 06:00:38 +0000</pubDate>
+				<category><![CDATA[Analysis]]></category>
+		<category><![CDATA[Economic Security]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[Economy]]></category>
+		<category><![CDATA[Elections]]></category>
+		<category><![CDATA[FDI]]></category>
+		<category><![CDATA[Investment]]></category>
+		<category><![CDATA[Serbia]]></category>
+		<category><![CDATA[Western Balkans]]></category>
+		<guid isPermaLink="false">https://visegradinsight.eu/?p=38847</guid>
+
+					<description><![CDATA[<p>Chinese capital, Russian energy and the European market formed the basis of Serbia&#8217;s economic model for many years and helped the country become an unavoidable factor in the Western Balkans. At the same time, Belgrade sought to maintain good relations with Washington, whose decisions on sanctions against the oil company<a class="more-link" href="https://visegradinsight.eu/serbian-elections-forecast-economic-dimension/">Read more</a></p>
+<p>The post <a href="https://visegradinsight.eu/serbian-elections-forecast-economic-dimension/">Serbia’s Balancing Act Is Running Out of Time</a> appeared first on <a href="https://visegradinsight.eu">Visegrad Insight</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><a href="https://visegradinsight.eu/membership-account/membership-checkout/?level=11"><img fetchpriority="high" decoding="async" class="aligncenter wp-image-38768 size-full" src="http://visegradinsight.eu/app/uploads/2026/10/Banners-7-1.jpg" alt="" width="1584" height="396" srcset="https://visegradinsight.eu/app/uploads/2026/10/Banners-7-1.jpg 1584w, https://visegradinsight.eu/app/uploads/2026/10/Banners-7-1-300x75.jpg 300w, https://visegradinsight.eu/app/uploads/2026/10/Banners-7-1-1024x256.jpg 1024w, https://visegradinsight.eu/app/uploads/2026/10/Banners-7-1-768x192.jpg 768w, https://visegradinsight.eu/app/uploads/2026/10/Banners-7-1-1536x384.jpg 1536w, https://visegradinsight.eu/app/uploads/2026/10/Banners-7-1-640x160.jpg 640w, https://visegradinsight.eu/app/uploads/2026/10/Banners-7-1-1200x300.jpg 1200w" sizes="(max-width: 639px) 98vw, (max-width: 1199px) 64vw, 770px" /></a></p>
+<p>Chinese capital, Russian energy and the European market formed the basis of Serbia&#8217;s economic model for many years and helped the country become an unavoidable factor in the Western Balkans. At the same time, Belgrade sought to maintain good relations with Washington, whose decisions on sanctions against the oil company NIS now directly affect the Serbian economy.</p>
+<p>Balancing between different partners, however, is becoming increasingly difficult amid sharpening geopolitical confrontation. The prolonged protests against the rule of Aleksandar Vučić are also shaking the domestic political stability that the authorities long presented as a competitive advantage for attracting investment.</p>
+<p>President Vučić has resigned and called early elections for 25 October. After the end of his presidential term, he is signalling that he may move to the post of prime minister, in the manner of current Bulgarian Prime Minister Rumen Radev.</p>
+<p>Belgrade has so far managed simultaneously to negotiate accession to the EU, deepen its energy cooperation with Moscow, attract Chinese investment in infrastructure and maintain a security dialogue with the United States. This was a system of Serbian diplomacy rather than a contradiction, with each of its pillars performing a different function. Until recently, Serbia managed to avoid having to define itself and take a firm side, but in the current situation this already looks almost impossible.</p>
+<p>As the Serbian geopolitics and security expert Nikola Lunić <a href="https://neweasterneurope.eu/2026/06/30/serbias-four-pillars-are-cracking/">points out</a> in an analysis, &#8216;<i>what once generated diplomatic space is generating suspicion</i>&#8216;. Brussels is now questioning Serbia&#8217;s strategic orientation. Washington doubts its reliability as a partner. Moscow, which closely monitors Serbia&#8217;s role as an indirect supplier of artillery ammunition to Ukraine (although Belgrade has never officially acknowledged this), has moved from tolerating Serbian pragmatism to actively testing its limits. At the same time, Beijing is watching the country&#8217;s political instability and reassessing the sustainability of its investments.</p>
+<p>For years, the EU tolerated the multi-vector nature of Serbian diplomacy in exchange for regional stability, but Brussels is now showing growing unease about Belgrade&#8217;s policy. The reasons are both domestic political developments in the country and Serbia&#8217;s refusal to align with the EU&#8217;s Common Foreign and Security Policy, above all by imposing sanctions on Russia over the war in Ukraine. In April this year, for example, Belgrade <a href="https://www.reuters.com/world/eu-reconsidering-funds-serbia-justice-laws-eroding-trust-2026-02-13/">lost access</a> to 1.5 billion euros in European funding.</p>
+<h3><b>Economic model under pressure</b></h3>
+<p>In practice, the Serbian economy is entering a period of trials of a kind it has not experienced for years. After a long period of stable growth and inflows of foreign investment, the country, which remains one of the fastest-growing economies in the Western Balkans, faces a combination of domestic political instability and mounting foreign policy risks. Mass protests against Vučić&#8217;s rule, heavy dependence on Chinese capital and increasingly complicated relations with Russia call into question the sustainability of the economic model Belgrade has followed over the past decade. In practice, the increasingly complex balance between relations with Moscow, Beijing and Brussels is creating political risks in Belgrade that are beginning to affect the economic outlook.</p>
+<p>The first signs that the existing model is wavering are already visible in the macroeconomic indicators. After a strong post-pandemic rebound, the Serbian economy is beginning to slow. In 2025 GDP grew by around two per cent, compared with almost four per cent a year earlier, the lowest result since the pandemic. Weaker external demand in Europe, declining investment activity and domestic political uncertainty are gradually beginning to constrain economic activity. Nevertheless, Belgrade continues to rely on large-scale infrastructure projects and preparations for the Expo 2027 world exhibition as drivers of economic growth.<img decoding="async" class="aligncenter size-full wp-image-38848" src="http://visegradinsight.eu/app/uploads/2026/10/chart-5-inflation

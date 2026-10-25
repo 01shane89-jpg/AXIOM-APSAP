@@ -1,0 +1,77 @@
+https://www.bmkg.go.id/alerts/nowcast/en/rss.xml
+<?xml version="1.0" encoding="UTF-8"?>
+    <?xml-stylesheet type="text/xsl" href="/cap/nowcast-rss-style.xsl"?>
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+        <channel>
+            <title>BMKG Weather Alerts</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/rss.xml</link>
+            <description>Weather Alerts from BMKG (Indonesia Agency for Meteorology, Climatology, and Geophysics)</description>
+            <atom:link href="https://www.bmkg.go.id/alerts/nowcast/en/rss.xml" rel="self" type="application/rss+xml"/>
+            <language>en</language>
+            <copyright>public domain</copyright>
+            <pubDate>Sun, 25 Oct 2026 05:00:34 +0000</pubDate>
+            <lastBuildDate>Sun, 25 Oct 2026 05:00:34 +0000</lastBuildDate>
+            <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+            
+        <item>
+            <title>Thunderstorm This Afternoon in Kep. Bangka Belitung</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CBB20261025004_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 25 October 2026, 12:05 WIB in parts of Kep. Bangka Belitung especially in: AIR GEGAS, BUKITINTAN, GABEK, GERUNGGANG, GIRIMAYA, KOBA, MERAWANG, NAMANG, PANGKALAN BARU, RANGKUI, TAMAN SARI.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 25 October 2026, 14:00 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.25.05.19.004</guid>
+            <pubDate>Sun, 25 Oct 2026 11:55:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Sumatera Utara</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CSU20261025002_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 25 October 2026, 12:10 WIB in parts of Sumatera Utara especially in: ADIAN KOTING, AFULU, ALASA, ALASA TALUMUZOI, AMANDRAYA, ANDAM DEWI, ANGKOLA BARAT, ANGKOLA SANGKUNUR, ANGKOLA SELATAN, ANGKOLA TIMUR, ARAMO, ARSE, BADIRI, BAKTIRAJA, BARUS, BARUS UTARA, BATAHAN, BATANG ANGKOLA, BATANG NATAL, BATANG ONANG, BATANG TORU, BAWOLATO, BERAMPU, BORONADU, BOTOMUZOI, DOLOK SANGGUL, FANAYAMA, GAROGA, GIDO, GOMO, GUNUNGSITOLI, GUNUNGSITOLI ALO'OA, GUNUNGSITOLI BARAT, GUNUNGSITOLI IDANOI, GUNUNGSITOLI SELATAN, GUNUNGSITOLI UTARA, HARIAN, HIBALA, HILIDUHO, HILIMEGAI, HILISALAWA'AHE, HILISERANGKAI, HULU SIHAPAS, HURUNA, HUTA BARGOT, IDANOGAWO, IDANOTAE, KERAJAAN, KOLANG, LAE PARIRA, LAHEWA, LAHEWA TIMUR, LAHOMI, LAHUSA, LINGGA BAYU, LINTONG NIHUTA, LOLOFITU MOI, LOLOMATUA, LOLOWAU, LOTU, LUAHAGUNDRE MANIAMOLO, LUMUT, MA'U, MANDREHE, MANDREHE BARAT, MANDREHE UTARA, MANDUAMAS, MANIAMOLO, MARANCAR, MAZINO, MAZO, MORO'O, MUARA, MUARA BATANG GADIS, MUARA BATANG TORU, NAGA JUANG, NAINGGOLAN, NAMOHALU ESIWA, NATAL, O'O'U, ONAN GANJANG, ONOHAZUMBA, ONOLALU, PADANG BOLAK JULU, PADANGSIDIMPUAN ANGKOLA JULU, PADANGSIDIMPUAN BATUNADUA, PADANGSIDIMPUAN HUTAIMBARU, PADANGSIDIMPUAN SELATAN, PADANGSIDIMPUAN TENGGARA, PADANGSIDIMPUAN UTARA, PAGARAN, PAGINDAR, PAHAE JAE, PAHAE JULU, PAKKAT, PALIPI, PANDAN, PANGARIBUAN, PANGURURAN, PANYABUNGAN BARAT, PARANGINAN, PARLILITAN, PARMONANGAN, PASARIBU TOBING, PEGAGAN HILIR, PERGETTENG GETTENG SENGKUT, PINANGSORI, POLLUNG, PULAU-PULAU BATU, PULAU-PULAU BATU BARAT, PULAU-PULAU BATU TIMUR, PURBA TUA, RANTO BAEK, RONGGUR NIHUTA, SAIPAR DOLOK HOLE, SALAK, SARUDIK, SAWO, SAYUR MATINGGI, SIABU, SIATAS BARITA, SIBABANGUN, SIBOLGA KOTA, SIBOLGA SAMBAS, SIBOLGA SELATAN, SIBOLGA UTARA, SIBORONG-BORONG, SIDIKALANG, SIDUA'ORI, SIEMPAT NEMPU, SIEMPAT NEMPU HILIR, SIEMPAT NEMPU HULU, SIEMPAT RUBE, SIJAMAPOLANG, SILIMA PUNGGA PUNGGA, SIMANGUMBAN, SINUNUKAN, SIPAHUTAR, SIPIROK, SIPOHOLON, SIRANDORUNG, SIROMBU, SITAHUIS, SITELU TALI URANG JEHE, SITELU TALI URANG JULU, SITINJO, SITIO-TIO, SITOLU ORI, SOGAE'ADU, SOMAMBAWA, SOMOLO-MOLO, SORKAM, SORKAM BARAT, SOSOR GADONG, SUKA BANGUN, SUMBUL, SUSUA, TANAH MASA, TANO TOMBANGAN ANGKOLA, TAPIAN NAULI, TARABINTANG, TARUTUNG, TELUK DALAM, TIGALINGGA, TINADA, TOMA, TUGALA OYO, TUHEMBERUA, TUKKA, ULU IDANOTAE, ULUGAWO, ULUNOYO, ULUSUSUA, UMBUNASI.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 25 October 2026, 15:11 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.25.05.12.002</guid>
+            <pubDate>Sun, 25 Oct 2026 11:40:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Jawa Barat</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CJB20261025002_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 25 October 2026, 11:48 WIB in parts of Jawa Barat especially in: BOJONG, CIAMPEL, CIKALONGWETAN, CISARUA, NGAMPRAH, PARONGPONG, SERANGPANJANG, WANAYASA.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 25 October 2026, 13:38 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.25.05.32.002</guid>
+            <pubDate>Sun, 25 Oct 2026 11:38:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Jawa Timur</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CJT20261025001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 25 October 2026, 11:40 WIB in parts of Jawa Timur especially in: KASIMAN, SINGGAHAN.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 25 October 2026, 14:00 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.25.05.35.001</guid>
+            <pubDate>Sun, 25 Oct 2026 11:30:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Kalimantan Utara</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CKU20261025001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 25 October 2026, 12:40 WITA in parts of Kalimantan Utara especially in: KAYAN HILIR, LUMBIS OGONG, MALINAU BARAT, MALINAU SELATAN, MALINAU SELATAN HULU, TANA LIA.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 25 October 2026, 15:30 WITA.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.10.25.05.65.0

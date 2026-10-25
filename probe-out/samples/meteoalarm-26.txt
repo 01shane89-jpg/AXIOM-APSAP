@@ -1,0 +1,156 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:PL</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:35:08.049101Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL805</value>
+    </cap:geocode>
+    <link title="Eastern coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL805" hreflang="en"/>
+    <cap:areaDesc>Eastern coastal zone</cap:areaDesc>
+    <cap:event>Orange Wind warning</cap:event>
+    <cap:sent>2026-10-24T23:23:18+00:00</cap:sent>
+    <cap:expires>2026-10-25T15:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T23:19:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T05:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261024232318.PL805_01181</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/b48f232c-13fa-421a-af72-2107477c662c"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T23:23:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/b48f232c-13fa-421a-af72-2107477c662c?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Poland - Eastern coastal zone</title>
+    <updated>2026-10-24T23:23:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL804</value>
+    </cap:geocode>
+    <link title="Central coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL804" hreflang="en"/>
+    <cap:areaDesc>Central coastal zone</cap:areaDesc>
+    <cap:event>Orange Wind warning</cap:event>
+    <cap:sent>2026-10-24T23:11:10+00:00</cap:sent>
+    <cap:expires>2026-10-25T15:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T23:10:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T05:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261024231110.PL804_01401</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/85752e15-3ff0-4019-af12-d88e260c7ad8"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T23:11:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/85752e15-3ff0-4019-af12-d88e260c7ad8?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Poland - Central coastal zone</title>
+    <updated>2026-10-24T23:11:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL803</value>
+    </cap:geocode>
+    <link title="Western coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL803" hreflang="en"/>
+    <cap:areaDesc>Western coastal zone</cap:areaDesc>
+    <cap:event>Orange Wind warning</cap:event>
+    <cap:sent>2026-10-24T23:04:12+00:00</cap:sent>
+    <cap:expires>2026-10-25T15:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T23:03:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T03:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261024230412.PL803_01471</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/7e3b57e2-fd40-4a04-8087-af99e5746c74"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T23:04:12Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/7e3b57e2-fd40-4a04-8087-af99e5746c74?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Poland - Western coastal zone</title>
+    <updated>2026-10-24T23:04:12Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL2461</value>
+    </cap:geocode>
+    <link title="Śląskie Province Bielsko-Biała County" href="https://meteoalarm.org?geocode=EMMA_ID:PL2461" hreflang="en"/>
+    <cap:areaDesc>Śląskie Province Bielsko-Biała County</cap:areaDesc>
+    <cap:event>Yellow Wind warning</cap:event>
+    <cap:sent>2026-10-24T09:42:00+00:00</cap:sent>
+    <cap:expires>2026-10-25T20:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T09:42:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.Sk20261024094216930.PL2461</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/87da8d83-4ebe-46e4-80e2-ddb59dba49a9"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T09:42:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/87da8d83-4ebe-46e4-80e2-ddb59dba49a9?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Poland - Śląskie Province Bielsko-Biała County</title>
+    <updated>2026-10-24T09:42:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL2417</value>
+    </cap:geocode>
+    <link title="Śląskie Province Żywiecki County" href="https://meteoalarm.org?geocode=EMMA_ID:PL2417" hreflang="en"/>
+    <cap:areaDesc>Śląskie Province Żywiecki County</cap:areaDesc>
+    <cap:event>Yellow Wind warning</cap:event>
+    <cap:sent>2026-10-24T09:42:00+00:00</cap:sent>
+    <cap:expires>2026-10-25T20:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T09:42:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <c

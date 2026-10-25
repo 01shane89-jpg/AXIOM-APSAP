@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-latvia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-latvia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:LV</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:35:51.939371Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LV804</value>
+    </cap:geocode>
+    <link title="Gulf of Riga West" href="https://meteoalarm.org?geocode=EMMA_ID:LV804" hreflang="en"/>
+    <cap:areaDesc>Gulf of Riga West</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-10-25T02:29:18+00:00</cap:sent>
+    <cap:expires>2026-10-26T20:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T06:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T06:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.428.0.LV.261025052918.104123</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/d9e5fa5e-b12a-4e8a-974f-57a9c6824b3a"/>
+    <link title="Latvia" rel="related" href="https://meteoalarm.org?region=LV" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T02:29:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/d9e5fa5e-b12a-4e8a-974f-57a9c6824b3a?index_info=0&amp;index_area=2&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Latvia - Gulf of Riga West</title>
+    <updated>2026-10-25T02:29:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LV802</value>
+    </cap:geocode>
+    <link title="Gulf of Riga East" href="https://meteoalarm.org?geocode=EMMA_ID:LV802" hreflang="en"/>
+    <cap:areaDesc>Gulf of Riga East</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-10-25T02:29:18+00:00</cap:sent>
+    <cap:expires>2026-10-26T20:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T06:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T06:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.428.0.LV.261025052918.104123</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/d9e5fa5e-b12a-4e8a-974f-57a9c6824b3a"/>
+    <link title="Latvia" rel="related" href="https://meteoalarm.org?region=LV" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T02:29:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/d9e5fa5e-b12a-4e8a-974f-57a9c6824b3a?index_info=0&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Latvia - Gulf of Riga East</title>
+    <updated>2026-10-25T02:29:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LV801</value>
+    </cap:geocode>
+    <link title="Southern Gulf of Riga" href="https://meteoalarm.org?geocode=EMMA_ID:LV801" hreflang="en"/>
+    <cap:areaDesc>Southern Gulf of Riga</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-10-25T02:29:18+00:00</cap:sent>
+    <cap:expires>2026-10-26T20:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T06:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T06:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.428.0.LV.261025052918.104123</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/d9e5fa5e-b12a-4e8a-974f-57a9c6824b3a"/>
+    <link title="Latvia" rel="related" href="https://meteoalarm.org?region=LV" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T02:29:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/d9e5fa5e-b12a-4e8a-974f-57a9c6824b3a?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Latvia - Southern Gulf of Riga</title>
+    <updated>2026-10-25T02:29:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LV804</value>
+    </cap:geocode>
+    <link title="Gulf of Riga West" href="https://meteoalarm.org?geocode=EMMA_ID:LV804" hreflang="en"/>
+    <cap:areaDesc>Gulf of Riga West</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-10-25T02:07:18+00:00</cap:sent>
+    <cap:expires>2026-10-26T20:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T14:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-24T14:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.428.0.LV.261025050718.104121</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/0299cd4f-ebc2-4492-a5c4-c77489472ebc"/>
+    <link title="Latvia" rel="related" href="https://meteoalarm.org?region=LV" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T02:07:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/0299cd4f-ebc2-4492-a5c4-c77489472ebc?index_info=0&amp;index_area=2&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Latvia - Gulf of Riga West</title>
+    <updated>2026-10-25T02:07:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LV802</value>
+    </cap:geocode>
+    <link title="Gulf of Riga East" href="https://meteoalarm.org?geocode=EMMA_ID:LV802" hreflang="en"/>
+    <cap:areaDesc>Gulf of Riga East</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-10-25T02:07:18+00:00</cap:sent>
+    <cap:expires>2026-10-26T20:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T14:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-24T14:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.428.0.LV.261025050718.104121</cap:identifier>
+    <link type="application/cap+xml" href="https://f

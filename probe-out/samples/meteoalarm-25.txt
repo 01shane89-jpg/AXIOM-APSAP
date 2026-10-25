@@ -1,0 +1,124 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:NO</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T05:05:22.950496Z</updated>
+  <entry>
+    <cap:polygon>61.298,4.4903 61.3027,4.6917 61.4032,4.7402 61.5632,4.7767 61.7027,4.8447 62.0217,5.0192 62.034,4.8643 61.9435,4.7838 61.9433,4.7838 61.8233,4.6783 61.6573,4.534 61.6572,4.534 61.6555,4.5327 61.6537,4.532 61.652,4.5315 61.6118,4.5268 61.4327,4.5058 61.298,4.4903 61.298,4.4903</cap:polygon>
+    <link title="Fedje - Maaloey" href="https://meteoalarm.org?polygon=5325ec6a-81d0-4a41-a5b9-0f8ca9bf7976,1,0,1" hreflang="en"/>
+    <cap:areaDesc>Fedje - Maaloey</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T20:50:47+00:00</cap:sent>
+    <cap:expires>2026-10-25T10:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T21:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024205030.050</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/5325ec6a-81d0-4a41-a5b9-0f8ca9bf7976"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T20:50:47Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/5325ec6a-81d0-4a41-a5b9-0f8ca9bf7976?index_info=1&amp;index_area=0&amp;index_polygon=1</id>
+    <title>Yellow Wind Warning issued for Norway - Fedje - Maaloey</title>
+    <updated>2026-10-24T20:50:47Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>60.7737,4.605 60.7867,4.6945 60.8532,4.7027 60.949,4.6967 61.0522,4.6747 61.1565,4.6952 61.3027,4.6917 61.298,4.4903 61.2533,4.4853 61.0742,4.4648 61.0732,4.4648 61.034,4.4655 61.0333,4.4655 61.0277,4.4662 61.0258,4.4665 61.0242,4.4673 61.0035,4.4787 60.8302,4.5743 60.7737,4.605 60.7737,4.605</cap:polygon>
+    <link title="Fedje - Maaloey" href="https://meteoalarm.org?polygon=5325ec6a-81d0-4a41-a5b9-0f8ca9bf7976,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Fedje - Maaloey</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T20:50:47+00:00</cap:sent>
+    <cap:expires>2026-10-25T10:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T21:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024205030.050</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/5325ec6a-81d0-4a41-a5b9-0f8ca9bf7976"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T20:50:47Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/5325ec6a-81d0-4a41-a5b9-0f8ca9bf7976?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Fedje - Maaloey</title>
+    <updated>2026-10-24T20:50:47Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>62.9098,6.4753 62.8382,6.6072 62.9522,7.0817 63.0378,7.471 63.1437,7.7712 63.2637,7.8767 63.3897,7.8462 63.449,7.9983 63.5052,8.3647 63.5922,8.5632 63.7878,8.1958 63.6915,8.0332 63.5475,7.7928 63.5463,7.791 63.4788,7.6983 63.4192,7.6 63.2745,7.3637 63.1295,7.1298 63.0427,6.8693 62.9358,6.5523 62.9098,6.4753 62.9098,6.4753</cap:polygon>
+    <link title="Ona - Froeya" href="https://meteoalarm.org?polygon=b3c0ab78-75f7-4b97-8be5-b747d3b715b7,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Ona - Froeya</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T15:22:04+00:00</cap:sent>
+    <cap:expires>2026-10-25T19:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024152148.025</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b3c0ab78-75f7-4b97-8be5-b747d3b715b7"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T15:22:04Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b3c0ab78-75f7-4b97-8be5-b747d3b715b7?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Ona - Froeya</title>
+    <updated>2026-10-24T15:22:04Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>59.921,4.9727 59.9242,5.0788 60.0142,5.0677 60.1237,5.0572 60.2232,5.0228 60.3472,4.9843 60.4473,4.9607 60.5707,4.8495 60.6612,4.7957 60.7867,4.6945 60.7738,4.605 60.6568,4.6688 60.4833,4.7623 60.3097,4.8548 60.153,4.9027 59.9755,4.9562 59.921,4.9727 59.921,4.9727</cap:polygon>
+    <link title="Karmoey - Fedje" href="https://meteoalarm.org?polygon=2111c40c-57c4-49fb-bdc5-d26710f0f2bd,1,0,1" hreflang="en"/>
+    <cap:areaDesc>Karmoey - Fedje</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-10-24T15:21:13+00:00</cap:sent>
+    <cap:expires>2026-10-25T19:00:00+00:00</cap:expires>
+    <cap:onset>2026-10-24T16:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261024124434.060</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/2111c40c-57c4-49fb-bdc5-d26710f0f2bd"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T15:21:13Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/2111c40c-57c4-49fb-bdc5-d26710f0f2bd?index_info=1&amp;index_area=0&amp;index_polygon=1</id>
+    <title>Yellow Wind Warning issued for Norway - Karmoey - Fedje</title>
+    <updated>2026-10-24T15:21:13Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>59.3467,5.1937 59.581,5.1982 59.6838,5.1683 59.7672,5.1293 59.9242,5.0788 59.921,4.9727 59.7978,5.009 59.6448,5.0393 59.4828,4.9338 59.3123,4.8238 59.311,4.8232 59.298,4.8173 59.3467,5.1937 59.3467,5.1937</cap:polygon>
+    <link title="Karmoey - Fedje" 

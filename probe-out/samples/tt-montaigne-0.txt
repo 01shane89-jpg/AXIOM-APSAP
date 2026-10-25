@@ -1,0 +1,74 @@
+https://www.institutmontaigne.org/en/rss_en.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://www.institutmontaigne.org/en" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Institut Montaigne</title>
+    <link>https://www.institutmontaigne.org/en</link>
+    <description><![CDATA[]]></description>
+    <language>en</language>
+        <atom:link rel="self" href="https://www.institutmontaigne.org/en/rss_en.xml"></atom:link>
+<lastBuildDate>Sun, 25 Oct 2026 05:26:59 +0100</lastBuildDate>
+<pubDate>Thu, 22 Oct 26 15:18:01 +0200</pubDate>
+<item>
+  <title>Marco Rubio before the acropolis: the temptation of a war of civilizations</title>
+  <link>https://www.institutmontaigne.org/en/expressions/marco-rubio-acropolis-temptation-war-civilizations</link>
+  <description><p>On October 7, 2026, in Athens, Secretary of State Marco Rubio delivered a speech in which, by retracing the entire history of Western civilization, he portrayed Persia and Iran as the United States’ age-old adversaries. Such a vision, expressed through ill-informed rhetoric, encapsulated the extent of the American shift toward viewing international politics as an extension of fundamental conflicts between irreconcilable civilizations. For the White House, "America First" is now synonymous…</description>
+  <guid isPermaLink="false">61c35f48-45c5-4aa6-9968-f5d9f9083686</guid>
+          <pubDate>2026-10-22T15:18:01+0200
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>Marco Rubio before the acropolis: the temptation of a war of civilizations</dc:title>
+          <dc:description>&lt;p&gt;On October 7, 2026, in Athens, Secretary of State Marco Rubio delivered a speech in which, by retracing the entire history of Western civilization, he portrayed Persia and Iran as the United States’ age-old adversaries. Such a vision, expressed through ill-informed rhetoric, encapsulated the extent of the American shift toward viewing international politics as an extension of fundamental conflicts between irreconcilable civilizations. For the White House, &quot;America First&quot; is now synonymous…</dc:description>
+          <dc:date>2026-10-22T15:18:01+02:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title>Chinese commercial influx: Europe is turning assertive</title>
+  <link>https://www.institutmontaigne.org/en/expressions/chinese-commercial-influx-europe-turning-assertive</link>
+  <description><p>After years of a widening trade deficit—which is projected to exceed €400 billion in 2026, compared with €164 billion in 2019—the Europeans set a deadline in Beijing: reach a cooperative solution by October, failing which the EU could impose trade barriers on an unprecedented scale. The measures taken in recent months, combined with the recent shift in Germany’s position, now make such a change possible.&nbsp;</p></description>
+  <guid isPermaLink="false">651c0528-a14d-421d-acea-3c12568c3677</guid>
+          <pubDate>2026-10-07T13:24:27+0200
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>Chinese commercial influx: Europe is turning assertive</dc:title>
+          <dc:description>&lt;p&gt;After years of a widening trade deficit—which is projected to exceed €400 billion in 2026, compared with €164 billion in 2019—the Europeans set a deadline in Beijing: reach a cooperative solution by October, failing which the EU could impose trade barriers on an unprecedented scale. The measures taken in recent months, combined with the recent shift in Germany’s position, now make such a change possible.&amp;nbsp;&lt;/p&gt;</dc:description>
+          <dc:date>2026-10-07T13:24:27+02:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title>[Decoding France] - The Extremes Dominate as the 2027 Presidential Race Gets Underway</title>
+  <link>https://www.institutmontaigne.org/en/expressions/decoding-france-extremes-dominate-2027-presidential-race-gets-underway</link>
+  <description></description>
+  <guid isPermaLink="false">e276f1f7-d362-47f5-9518-49488bc4a672</guid>
+          <pubDate>2026-09-29T11:59:34+0200
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>[Decoding France] - The Extremes Dominate as the 2027 Presidential Race Gets Underway</dc:title>
+          <dc:date>2026-09-29T11:59:34+02:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title>A New European Left?</title>
+  <link>https://www.institutmontaigne.org/en/expressions/new-european-left</link>
+  <description><p>In the Netherlands, Rob Jetten of the center-left D66 party defeated Geert Wilders’ far-right Party for Freedom in the 2025 October parliamentary elections and became prime minister. In Greece, Alexis Tsipras is preparing his return. In the United Kingdom, despite the significant challenges he faces, Keir Starmer has led the first Labor government in fourteen years since July 2024. In Spain, Pedro Sánchez, president of the PSOE (Spanish Socialist Party), has led the government since 2018. In…</description>
+  <guid isPermaLink="false">9d166815-65d7-4007-9fed-7445da14916f</guid>
+          <pubDate>2026-09-22T16:47:05+0200
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>A New European Left?</dc:title>
+          <dc:description>&lt;p&gt;In the Netherlands, Rob Jetten of the center-left D66 party defeated Geert Wilders’ far-right Party for Freedom in the 2025 October parliamentary elections and became prime minister. In Greece, Alexis Tsipras is preparing his return. In the United Kingdom, despite the significant challenges he faces, Keir Starmer has led the first Labor government in fourteen years since July 2024. In Spain, Pedro Sánchez, president of the PSOE (Spanish Socialist Party), has led the government since 2018. In…</dc:description>
+          <dc:date>2026-09-22T16:47:05+02:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title>China’s Escalation Dominance: Neutralizing the EU’s Economic Security Agenda</title>
+  <link>https://www.institutmontaigne.org/en/expressions/chinas-escalation-dominance-neutralizing-eus-economic-security-agenda</link>
+  <description><p>As the EU seeks to protect its industrial base by strengthening its economic security strategy towards China, Beijing is threatening escalation, betting that Europeans have too much to lose to respond firmly. At the same time, China continues to portray its industrial success as the product of ingenuity and hard work alone, downplaying the decisive role of extensive state intervention in its economy. What should Europe do? With a new mechanism for trade and investment consultations between…</description>
+  <guid isPermaLink="false">ced6dfdd-4a51-4e8d-99e5-2e509ef95583</guid>
+          <pubDate>2026-09-15T16:46:31+0200
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>China’s Escalation Dominance: Neutralizing the EU’s Economic Security Agenda</dc:title>
+          <dc:description>&lt;p&gt;As the EU seeks to protect its industrial base by strengthening its economic security strategy towards China, Beijing is threatening escalation, betting that Europeans have too much to lose to respond firmly. At the same time, China continues to portray its industrial success as the product of ingenuity and hard work alone, downplaying the decisive role of extensive state intervention in its economy. What should Europe do? With a new mechanism for trade and investment consultations between…</dc:description>
+          <dc:date>2026-09-15T16:46:31+02:00</dc:date>
+          <dc:language>EN</dc:language>

@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:FR</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:37:09.351187Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR302</value>
+    </cap:geocode>
+    <link title="Pas-de-Calais" href="https://meteoalarm.org?geocode=EMMA_ID:FR069" hreflang="en"/>
+    <cap:areaDesc>Pas-de-Calais</cap:areaDesc>
+    <cap:event>Moderate flooding warning</cap:event>
+    <cap:sent>2026-10-25T03:05:00+00:00</cap:sent>
+    <cap:expires>2026-10-25T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T03:04:37+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20261025040500.796024</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/717a013a-9025-49cc-bc15-461708a3830b"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:05:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/717a013a-9025-49cc-bc15-461708a3830b?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Flooding Warning issued for France - Pas-de-Calais</title>
+    <updated>2026-10-25T03:05:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR222</value>
+    </cap:geocode>
+    <link title="Oise" href="https://meteoalarm.org?geocode=EMMA_ID:FR072" hreflang="en"/>
+    <cap:areaDesc>Oise</cap:areaDesc>
+    <cap:event>Moderate rain-flood warning</cap:event>
+    <cap:sent>2026-10-25T03:04:55+00:00</cap:sent>
+    <cap:expires>2026-10-25T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T03:04:37+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.0.FR.20261025040455.409022</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/53e0f0f1-de33-496f-8c91-85d246467a77"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:04:55Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/53e0f0f1-de33-496f-8c91-85d246467a77?index_info=1&amp;index_area=23&amp;index_geocode=0</id>
+    <title>Yellow Rain-flood Warning issued for France - Oise</title>
+    <updated>2026-10-25T03:04:55Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR221</value>
+    </cap:geocode>
+    <link title="Aisne" href="https://meteoalarm.org?geocode=EMMA_ID:FR073" hreflang="en"/>
+    <cap:areaDesc>Aisne</cap:areaDesc>
+    <cap:event>Moderate rain-flood warning</cap:event>
+    <cap:sent>2026-10-25T03:04:55+00:00</cap:sent>
+    <cap:expires>2026-10-25T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T03:04:37+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.0.FR.20261025040455.409022</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/53e0f0f1-de33-496f-8c91-85d246467a77"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:04:55Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/53e0f0f1-de33-496f-8c91-85d246467a77?index_info=1&amp;index_area=22&amp;index_geocode=0</id>
+    <title>Yellow Rain-flood Warning issued for France - Aisne</title>
+    <updated>2026-10-25T03:04:55Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR411</value>
+    </cap:geocode>
+    <link title="Meurthe-et-Moselle" href="https://meteoalarm.org?geocode=EMMA_ID:FR088" hreflang="en"/>
+    <cap:areaDesc>Meurthe-et-Moselle</cap:areaDesc>
+    <cap:event>Moderate rain-flood warning</cap:event>
+    <cap:sent>2026-10-25T03:04:55+00:00</cap:sent>
+    <cap:expires>2026-10-25T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T03:04:37+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.0.FR.20261025040455.409022</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/53e0f0f1-de33-496f-8c91-85d246467a77"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:04:55Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/53e0f0f1-de33-496f-8c91-85d246467a77?index_info=1&amp;index_area=21&amp;index_geocode=0</id>
+    <title>Yellow Rain-flood Warning issued for France - Meurthe-et-Moselle</title>
+    <updated>2026-10-25T03:04:55Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR301</value>
+    </cap:geocode>
+    <link title="Nord" href="https://meteoalarm.org?geocode=EMMA_ID:FR070" hreflang="en"/>
+    <cap:areaDesc>Nord</cap:areaDesc>
+    <cap:event>Moderate rain-flood warning</cap:event>
+    <cap:sent>2026-10-25T03:04:55+00:00</cap:sent>
+    <cap:expires>2026-10-25T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-25T03:04:37+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.0.FR.20261025040455.409022</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/53e0f0f1-de33-496f-8c91-

@@ -1,0 +1,143 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:FI</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:37:01.629488Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI813</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri" href="https://meteoalarm.org?geocode=EMMA_ID:FI813" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri</cap:areaDesc>
+    <cap:event>Storm warning</cap:event>
+    <cap:sent>2026-10-25T03:06:10+00:00</cap:sent>
+    <cap:expires>2026-10-25T18:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:06:10+00:00</cap:effective>
+    <cap:onset>2026-10-25T06:00:00+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261025030610.989DS729t94EI4zuDQdd</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/05da3856-5f94-4d4c-a60b-36bde5af6ac5"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:06:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/05da3856-5f94-4d4c-a60b-36bde5af6ac5?index_info=2&amp;index_area=0&amp;index_geocode=2</id>
+    <title>Orange Wind Warning issued for Finland - Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri</title>
+    <updated>2026-10-25T03:06:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI803</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri" href="https://meteoalarm.org?geocode=EMMA_ID:FI803" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri</cap:areaDesc>
+    <cap:event>Storm warning</cap:event>
+    <cap:sent>2026-10-25T03:06:10+00:00</cap:sent>
+    <cap:expires>2026-10-25T18:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:06:10+00:00</cap:effective>
+    <cap:onset>2026-10-25T06:00:00+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261025030610.989DS729t94EI4zuDQdd</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/05da3856-5f94-4d4c-a60b-36bde5af6ac5"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:06:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/05da3856-5f94-4d4c-a60b-36bde5af6ac5?index_info=2&amp;index_area=0&amp;index_geocode=1</id>
+    <title>Orange Wind Warning issued for Finland - Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri</title>
+    <updated>2026-10-25T03:06:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI812</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri" href="https://meteoalarm.org?geocode=EMMA_ID:FI812" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri</cap:areaDesc>
+    <cap:event>Storm warning</cap:event>
+    <cap:sent>2026-10-25T03:06:10+00:00</cap:sent>
+    <cap:expires>2026-10-25T18:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:06:10+00:00</cap:effective>
+    <cap:onset>2026-10-25T06:00:00+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261025030610.989DS729t94EI4zuDQdd</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/05da3856-5f94-4d4c-a60b-36bde5af6ac5"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:06:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/05da3856-5f94-4d4c-a60b-36bde5af6ac5?index_info=2&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Finland - Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri</title>
+    <updated>2026-10-25T03:06:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI802</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI802" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Wave height warning</cap:event>
+    <cap:sent>2026-10-25T03:06:10+00:00</cap:sent>
+    <cap:expires>2026-10-25T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-25T03:06:10+00:00</cap:effective>
+    <cap:onset>2026-10-25T09:00:00+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261025030610.Ns9KgeAxbJ30UAEd87QK</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/67dee8de-542d-458b-af90-14466699d9d8"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-25T03:06:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/67dee8de-542d-458b-af90-14466699d9d8?index_info=2&amp;index_area=0&amp;index_geocode=4</id>
+    <title>Orange Coastalevent Warning issued for Finland - Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</title>
+    <updated>2026-10-25T03:06:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI807</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsio

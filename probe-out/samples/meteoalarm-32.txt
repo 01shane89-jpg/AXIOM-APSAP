@@ -1,0 +1,152 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:ES</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:37:08.319732Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES840</value>
+    </cap:geocode>
+    <link title="Costa - Gipuzkoa litoral" href="https://meteoalarm.org?geocode=EMMA_ID:ES840" hreflang="en"/>
+    <cap:areaDesc>Costa - Gipuzkoa litoral</cap:areaDesc>
+    <cap:event>Moderate coastalevent warning</cap:event>
+    <cap:sent>2026-10-24T16:20:09+00:00</cap:sent>
+    <cap:expires>2026-10-25T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T16:16:45+00:00</cap:effective>
+    <cap:onset>2026-10-25T13:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261024162009.752001COCO252358809</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/85cdc7b9-73f9-4022-99f7-4cabf02c09af"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T16:20:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/85cdc7b9-73f9-4022-99f7-4cabf02c09af?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Spain - Costa - Gipuzkoa litoral</title>
+    <updated>2026-10-24T16:20:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES844</value>
+    </cap:geocode>
+    <link title="Costa - Litoral occidental asturiano" href="https://meteoalarm.org?geocode=EMMA_ID:ES844" hreflang="en"/>
+    <cap:areaDesc>Costa - Litoral occidental asturiano</cap:areaDesc>
+    <cap:event>Moderate coastalevent warning</cap:event>
+    <cap:sent>2026-10-24T16:18:08+00:00</cap:sent>
+    <cap:expires>2026-10-25T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T16:16:20+00:00</cap:effective>
+    <cap:onset>2026-10-25T13:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261024161808.633301COCO252358688</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/bec226ed-5ecf-4bda-8f5f-b61db35b4f50"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T16:18:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/bec226ed-5ecf-4bda-8f5f-b61db35b4f50?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Spain - Costa - Litoral occidental asturiano</title>
+    <updated>2026-10-24T16:18:08Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES843</value>
+    </cap:geocode>
+    <link title="Costa - Litoral oriental asturiano" href="https://meteoalarm.org?geocode=EMMA_ID:ES843" hreflang="en"/>
+    <cap:areaDesc>Costa - Litoral oriental asturiano</cap:areaDesc>
+    <cap:event>Moderate coastalevent warning</cap:event>
+    <cap:sent>2026-10-24T16:18:08+00:00</cap:sent>
+    <cap:expires>2026-10-25T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T16:16:20+00:00</cap:effective>
+    <cap:onset>2026-10-25T13:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261024161808.633302COCO252358688</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/9207a855-e3c4-4f1f-ba33-816fbec549e4"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T16:18:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/9207a855-e3c4-4f1f-ba33-816fbec549e4?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Spain - Costa - Litoral oriental asturiano</title>
+    <updated>2026-10-24T16:18:08Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES846</value>
+    </cap:geocode>
+    <link title="Costa - Noroeste de A Coruña" href="https://meteoalarm.org?geocode=EMMA_ID:ES846" hreflang="en"/>
+    <cap:areaDesc>Costa - Noroeste de A Coruña</cap:areaDesc>
+    <cap:event>Moderate coastalevent warning</cap:event>
+    <cap:sent>2026-10-24T08:42:09+00:00</cap:sent>
+    <cap:expires>2026-10-25T02:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T08:38:27+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261024084209.711501COCO250331329</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/baefa5d4-8720-449a-9b37-5788b3c5fc82"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T08:42:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/baefa5d4-8720-449a-9b37-5788b3c5fc82?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Spain - Costa - Noroeste de A Coruña</title>
+    <updated>2026-10-24T08:42:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES842</value>
+    </cap:geocode>
+    <link title="Costa - Litoral cántabro" href="https://meteoalarm.org?geocode=EMMA_ID:ES842" hreflang="en"/>
+    <cap:areaDesc>Costa - Litoral cántabro</cap:areaDesc>
+    <cap:event>Moderate coastalevent warning</cap:event>
+    <cap:sent>2026-10-24T08:42:09+00:00</cap:sent>
+    <cap:expires>2026-10-25T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-10-24T08:38:56+00:00</cap:effective>
+    <cap:onset>2026-10-25T13:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:ur

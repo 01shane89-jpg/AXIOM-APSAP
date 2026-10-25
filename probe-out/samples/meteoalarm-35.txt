@@ -1,0 +1,73 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ukraine
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ukraine"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2023-11-02:UA</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-10-25T04:36:29.055201Z</updated>
+  <entry>
+    <cap:polygon>51.924393,25.592697 51.89525,25.705876 51.848838,25.640123 51.803519,25.631826 51.755499,25.681337 51.641205,25.608514 51.539964,25.565176 51.479453,25.641801 51.417064,25.646491 51.37769,25.840711 51.318008,25.851092 51.276466,25.934152 51.176884,26.067732 51.123395,25.99473 51.05061,26.091169 50.97318,26.082826 50.935391,26.000699 50.865836,25.991679 50.798409,25.890139 50.687276,25.869181 50.647009,25.823743 50.669689,25.742346 50.724743,25.69396 50.649266,25.352531 50.607412,25.398351 50.583614,25.318768 50.532952,25.270667 50.508276,25.157902 50.460057,25.134991 50.418882,25.166699 50.331113,25.166321 50.287237,25.112613 50.341725,25.016829 50.351232,24.855793 50.33766,24.777279 50.374235,24.721104 50.413614,24.59657 50.493399,24.587769 50.555566,24.516498 50.540906,24.448318 50.591262,24.39957 50.573281,24.317939 50.583578,24.230494 50.633849,24.172295 50.637538,24.097894 50.72549,24.01845 50.834674,23.985205 50.835622,24.093373 50.89208,24.06415 50.951318,23.969638 51.070866,23.912475 51.099615,23.856835 51.158169,23.858504 51.213406,23.743382 51.278227,23.70837 51.327392,23.635595 51.409146,23.6979 51.445433,23.651037 51.577007,23.664658 51.62146,23.604073 51.667488,23.782716 51.642565,23.86926 51.608303,23.880223 51.580074,23.996325 51.666752,24.120621 51.716892,24.270098 51.75109,24.319415 51.813648,24.299224 51.878444,24.372418 51.902651,24.625586 51.881145,24.749604 51.911337,24.918908 51.897961,24.966161 51.953464,25.099755 51.968046,25.264223 51.931761,25.348298 51.924393,25.592697</cap:polygon>
+    <link title="Chernivtsi oblast, Ivano-Frankivsk oblast, Khmelnytskyi oblast, Lviv oblast, Rivne oblast, Ternopil oblast, Volyn oblast" href="https://meteoalarm.org?polygon=12401659-d53c-4099-a5d0-673e2275ce83,0,0,6" hreflang="en"/>
+    <cap:areaDesc>Chernivtsi oblast, Ivano-Frankivsk oblast, Khmelnytskyi oblast, Lviv oblast, Rivne oblast, Ternopil oblast, Volyn oblast</cap:areaDesc>
+    <cap:event>Fog warning</cap:event>
+    <cap:sent>2026-10-24T10:32:33+00:00</cap:sent>
+    <cap:expires>2026-10-25T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:32:33+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.804.0.GB.261024103233.OcCoD2Szne4TEX4taBGo</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukraine/12401659-d53c-4099-a5d0-673e2275ce83"/>
+    <link title="Ukraine" rel="related" href="https://meteoalarm.org?region=UA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:32:33Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukraine/12401659-d53c-4099-a5d0-673e2275ce83?index_info=0&amp;index_area=0&amp;index_polygon=6</id>
+    <title>Yellow Fog Warning issued for Ukraine - Chernivtsi oblast, Ivano-Frankivsk oblast, Khmelnytskyi oblast, Lviv oblast, Rivne oblast, Ternopil oblast, Volyn oblast</title>
+    <updated>2026-10-24T10:32:33Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>51.517297,27.66295 51.435069,27.504931 51.34174,27.522214 51.310542,27.440729 51.236304,27.463521 51.14294,27.364017 51.052726,27.317384 51.000176,27.19999 50.895971,27.256251 50.795932,27.233974 50.7223,27.275728 50.670044,27.212762 50.606042,27.224818 50.562096,27.196327 50.551929,27.050872 50.47739,26.73526 50.389428,26.682511 50.368183,26.601749 50.307231,26.548004 50.260478,26.471008 50.264099,26.394927 50.178749,26.273466 50.179699,26.220449 50.227532,26.193 50.255416,26.060483 50.229059,26.019402 50.257225,25.942433 50.191467,25.857238 50.152114,25.62538 50.166158,25.476011 50.053757,25.431952 50.002946,25.349094 50.130848,25.197503 50.20265,25.169584 50.279515,25.204609 50.287237,25.112613 50.331113,25.166321 50.418882,25.166699 50.460057,25.134991 50.508276,25.157902 50.532952,25.270667 50.583614,25.318768 50.607412,25.398351 50.649266,25.352531 50.724743,25.69396 50.669689,25.742346 50.647009,25.823743 50.687276,25.869181 50.798409,25.890139 50.865836,25.991679 50.935391,26.000699 50.97318,26.082826 51.05061,26.091169 51.123395,25.99473 51.176884,26.067732 51.276466,25.934152 51.318008,25.851092 51.37769,25.840711 51.417064,25.646491 51.479453,25.641801 51.539964,25.565176 51.641205,25.608514 51.755499,25.681337 51.803519,25.631826 51.848838,25.640123 51.89525,25.705876 51.924393,25.592697 51.932158,25.989732 51.912237,26.095143 51.862313,26.190807 51.862964,26.371025 51.799808,26.469889 51.824603,26.611442 51.801592,26.752604 51.735933,26.948359 51.768834,26.994577 51.773442,27.201322 51.663852,27.208196 51.60622,27.267278 51.610818,27.455812 51.637176,27.549992 51.592115,27.729501 51.517297,27.66295</cap:polygon>
+    <link title="Chernivtsi oblast, Ivano-Frankivsk oblast, Khmelnytskyi oblast, Lviv oblast, Rivne oblast, Ternopil oblast, Volyn oblast" href="https://meteoalarm.org?polygon=12401659-d53c-4099-a5d0-673e2275ce83,0,0,5" hreflang="en"/>
+    <cap:areaDesc>Chernivtsi oblast, Ivano-Frankivsk oblast, Khmelnytskyi oblast, Lviv oblast, Rivne oblast, Ternopil oblast, Volyn oblast</cap:areaDesc>
+    <cap:event>Fog warning</cap:event>
+    <cap:sent>2026-10-24T10:32:33+00:00</cap:sent>
+    <cap:expires>2026-10-25T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-10-24T10:32:33+00:00</cap:effective>
+    <cap:onset>2026-10-24T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.804.0.GB.261024103233.OcCoD2Szne4TEX4taBGo</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukraine/12401659-d53c-4099-a5d0-673e2275ce83"/>
+    <link title="Ukraine" rel="related" href="https://meteoalarm.org?region=UA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-24T10:32:33Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukraine/12401659-d53c-4099-a5d0-673e2275ce83?index_info=0&amp;index_area=0&amp;index_polygon=5</id>
+    <title>Yellow Fog Warning issued for Ukraine - Chernivtsi oblast, Ivano-Frankivsk oblast, Khmelnytskyi oblast, Lviv oblast, Rivne oblast, Ternopil oblast, Volyn oblast</title>
+    <updated>2026-10-24T10:32:33Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>50.287237,25.112613 50.279515,25.204609 50.20265,25.169584 50.130848,25.197503 50.002946,25.349094 49.969573,25.412045 49.865371,25.371208 49.82792,25.285515 49.827239,25.083257 49.745925,25.114987 49.736053,25.022506 49.614272,24.95
