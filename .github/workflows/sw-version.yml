@@ -25,7 +25,9 @@ jobs:
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           for i in 1 2 3 4 5; do
-            git fetch -q origin main && git reset -q --hard origin/main
+            # only main's newest commit: a plain fetch into the one-commit-deep checkout ran past the 5-minute limit on 25 Oct 2026,
+            # so that push's VERSION was never set (same cause as tools/push_rebase.sh)
+            timeout 120 git fetch -q --depth=1 origin main && git reset -q --hard FETCH_HEAD || { sleep 5; continue; }
             node tools/sw_version.mjs --hash
             if git diff --quiet -- sw.js; then echo "sw.js VERSION already current"; exit 0; fi
             git commit -q -m "Set sw.js VERSION" -- sw.js
