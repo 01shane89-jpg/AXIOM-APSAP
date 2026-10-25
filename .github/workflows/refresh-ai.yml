@@ -1,4 +1,6 @@
 name: AI drafts on the runner
+# the run's title names its task, so refresh-keeper.yml can tell whether today's daily pass has started
+run-name: "AI drafts (${{ github.event_name == 'schedule' && (github.event.schedule == '23 1 * * *' && 'daily' || 'cycle') || inputs.task || 'both' }})"
 
 # AI drafts (labelled "AI generated", never analyst-approved) from an open-weight model that runs on the Actions runner itself,
 # so no key, no account and no case material sent to an outside service. GitHub Models has answered every request from these
