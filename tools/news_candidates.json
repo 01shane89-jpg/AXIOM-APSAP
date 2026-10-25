@@ -1,180 +1,171 @@
 {
- "note": "Round 2: page-list (html) candidates for Bing-dependent countries; hrefs dumped to write match patterns.",
- "feeds": [],
- "discover": [
+ "note": "Round 3: page-list candidates checked with the app's own list parser.",
+ "feeds": [
   {
    "cc": "qa",
    "outlet": "Gulf Times",
-   "home": "https://www.gulf-times.com/",
-   "hrefs": true
+   "url": "https://www.gulf-times.com/",
+   "lang": "en",
+   "html": true,
+   "match": "/article/\\d+/(?:qatar|region)/"
   },
   {
    "cc": "qa",
    "outlet": "The Peninsula",
-   "home": "https://thepeninsulaqatar.com/",
-   "hrefs": true
+   "url": "https://thepeninsulaqatar.com/",
+   "lang": "en",
+   "html": true,
+   "match": "^/article/\\d+/\\d+/20\\d\\d/"
   },
   {
    "cc": "kw",
    "outlet": "Kuwait Times",
-   "home": "https://kuwaittimes.com/",
-   "hrefs": true
+   "url": "https://kuwaittimes.com/",
+   "lang": "en",
+   "html": true,
+   "match": "/article/\\d+/kuwait/"
   },
   {
    "cc": "kw",
    "outlet": "Arab Times",
-   "home": "https://www.arabtimesonline.com/",
-   "hrefs": true
-  },
-  {
-   "cc": "kw",
-   "outlet": "Al Seyassah",
-   "home": "https://alseyassah.com/",
-   "hrefs": true
+   "url": "https://www.arabtimesonline.com/",
+   "lang": "en",
+   "html": true,
+   "match": "^https://www\\.arabtimesonline\\.com/news/[a-z0-9-]{20,}/$"
   },
   {
    "cc": "sa",
    "outlet": "Saudi Gazette",
-   "home": "https://saudigazette.com.sa/",
-   "hrefs": true
+   "url": "https://saudigazette.com.sa/",
+   "lang": "en",
+   "html": true,
+   "match": "/article/\\d+/saudi-arabia/"
   },
   {
    "cc": "sa",
    "outlet": "Okaz",
-   "home": "https://www.okaz.com.sa/",
-   "hrefs": true
+   "url": "https://www.okaz.com.sa/",
+   "lang": "ar",
+   "html": true,
+   "match": "^https://www\\.okaz\\.com\\.sa/(?:local|politics|economy)/na/\\d+$"
   },
   {
    "cc": "om",
    "outlet": "Oman Observer",
-   "home": "https://www.omanobserver.om/",
-   "hrefs": true
+   "url": "https://www.omanobserver.om/",
+   "lang": "en",
+   "html": true,
+   "match": "/article/\\d+/oman/"
   },
   {
    "cc": "ae",
    "outlet": "Al Ittihad",
-   "home": "https://www.alittihad.ae/",
-   "hrefs": true
+   "url": "https://www.alittihad.ae/",
+   "lang": "ar",
+   "html": true,
+   "match": "aletihad\\.ae/news/(?:الإمارات|عربي-ودولي)/\\d+/"
   },
   {
    "cc": "bw",
    "outlet": "Mmegi",
-   "home": "https://www.mmegi.bw/",
-   "hrefs": true
-  },
-  {
-   "cc": "bw",
-   "outlet": "The Patriot",
-   "home": "https://www.thepatriot.co.bw/",
-   "hrefs": true
+   "url": "https://www.mmegi.bw/",
+   "lang": "en",
+   "html": true,
+   "match": "^https://www\\.mmegi\\.bw/news/[a-z0-9-]+/news$"
   },
   {
    "cc": "ao",
    "outlet": "Novo Jornal",
-   "home": "https://www.novojornal.co.ao/",
-   "hrefs": true
+   "url": "https://www.novojornal.co.ao/",
+   "lang": "pt",
+   "html": true,
+   "match": "^/(?:politica|sociedade|economia)/detalhe/[a-z0-9-]+-\\d+\\.html$"
   },
   {
    "cc": "ao",
    "outlet": "Ver Angola",
-   "home": "https://www.verangola.net/",
-   "hrefs": true
+   "url": "https://www.verangola.net/",
+   "lang": "pt",
+   "html": true,
+   "match": "/va/pt/\\d{6}/[A-Za-z]+/\\d+/"
   },
   {
-   "cc": "ws",
-   "outlet": "Samoa Observer",
-   "home": "https://www.samoaobserver.ws/",
-   "hrefs": true
+   "cc": "ao",
+   "outlet": "Rádio Nacional de Angola",
+   "url": "https://rna.ao/",
+   "lang": "pt",
+   "html": true,
+   "match": "pages/new\\.php\\?uid=\\d+",
+   "state": true
   },
   {
    "cc": "eh",
-   "outlet": "SPS",
-   "home": "https://www.spsrasd.info/news/en",
-   "hrefs": true
+   "outlet": "Sahara Press Service",
+   "url": "https://www.spsrasd.info/news/en",
+   "lang": "en",
+   "html": true,
+   "match": "^/en/20\\d\\d/\\d\\d/\\d\\d/\\d+\\.html$",
+   "state": true
   },
   {
    "cc": "li",
-   "outlet": "Vaterland",
-   "home": "https://www.vaterland.li/",
-   "hrefs": true
-  },
-  {
-   "cc": "li",
-   "outlet": "Liewo",
-   "home": "https://www.liewo.li/",
-   "hrefs": true
+   "outlet": "Liechtensteiner Vaterland",
+   "url": "https://www.vaterland.li/",
+   "lang": "de",
+   "html": true,
+   "match": "^/liechtenstein/(?:politik|wirtschaft|gesellschaft)/[a-z0-9-]+-art-\\d+$"
   },
   {
    "cc": "la",
    "outlet": "Vientiane Times",
-   "home": "https://www.vientianetimes.org.la/",
-   "hrefs": true
-  },
-  {
-   "cc": "la",
-   "outlet": "KPL",
-   "home": "https://kpl.gov.la/En/",
-   "hrefs": true
+   "url": "https://www.vientianetimes.org.la/",
+   "lang": "en",
+   "html": true,
+   "match": "freefreenews/freecontent_[A-Za-z0-9_]+\\.php",
+   "state": true
   },
   {
    "cc": "uy",
    "outlet": "El Observador",
-   "home": "https://www.elobservador.com.uy/",
-   "hrefs": true
+   "url": "https://www.elobservador.com.uy/",
+   "lang": "es",
+   "html": true,
+   "match": "^https://www\\.elobservador\\.com\\.uy/(?:nacional|economia-y-empresas|uruguay|politica)/"
   },
   {
    "cc": "uy",
-   "outlet": "Subrayado",
-   "home": "https://www.subrayado.com.uy/",
-   "hrefs": true
-  },
-  {
-   "cc": "uy",
-   "outlet": "Presidencia UY",
-   "home": "https://www.gub.uy/presidencia/comunicacion/noticias",
-   "hrefs": true
+   "outlet": "Presidencia de Uruguay",
+   "url": "https://www.gub.uy/presidencia/comunicacion/noticias",
+   "lang": "es",
+   "html": true,
+   "match": "^/presidencia/comunicacion/noticias/[a-z0-9-]{15,}$",
+   "state": true
   },
   {
    "cc": "sv",
-   "outlet": "El Mundo",
-   "home": "https://diario.elmundo.sv/",
-   "hrefs": true
-  },
-  {
-   "cc": "oki",
-   "outlet": "Stars and Stripes Asia-Pacific",
-   "home": "https://www.stripes.com/theaters/asia_pacific/",
-   "hrefs": true
+   "outlet": "Diario El Mundo",
+   "url": "https://diario.elmundo.sv/",
+   "lang": "es",
+   "html": true,
+   "match": "^https://diario\\.elmundo\\.sv/nacionales/"
   },
   {
    "cc": "et",
    "outlet": "EBC",
-   "home": "https://www.ebc.et/",
-   "hrefs": true
-  },
-  {
-   "cc": "ao",
-   "outlet": "RNA",
-   "home": "https://rna.ao/",
-   "hrefs": true
+   "url": "https://www.ebc.et/",
+   "lang": "am",
+   "html": true,
+   "match": "/Home/NewsDetails\\?NewsId=\\d+",
+   "state": true
   },
   {
    "cc": "mm",
    "outlet": "Eleven Myanmar",
-   "home": "https://elevenmyanmar.com/",
-   "hrefs": true
-  },
-  {
-   "cc": "oki",
-   "outlet": "NHK Okinawa",
-   "home": "https://www.nhk.or.jp/okinawa/",
-   "hrefs": true
-  },
-  {
-   "cc": "li",
-   "outlet": "Landtag",
-   "home": "https://www.landtag.li/",
-   "hrefs": true
+   "url": "https://elevenmyanmar.com/",
+   "lang": "en",
+   "html": true,
+   "match": "^https://elevenmyanmar\\.com/news/[a-z0-9-]{20,}$"
   }
- ]
+ ],
+ "discover": []
 }

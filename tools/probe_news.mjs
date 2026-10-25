@@ -1,7 +1,7 @@
 // Checks candidate news feeds (tools/news_candidates.json) and a few no-key aggregators from GitHub Actions, where the
 // hourly job runs. Writes probe-out/news-probe.json only; never touches data/. Run with only=probe-news.
 import fs from "node:fs";
-import { parseFeed } from "./feedparse.mjs";
+import { parseFeed, parseList } from "./feedparse.mjs";
 
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-OSAP feed check)";
 async function get(url, ms = 15000) {
@@ -16,10 +16,10 @@ async function check(f) {
   const t0 = Date.now();
   try {
     const r = await get(f.url);
-    const items = r.status < 400 ? parseFeed(r.body) : [];
+    const items = r.status < 400 ? (f.html ? parseList(r.body, f.url, f.match) : parseFeed(r.body)) : [];
     const dates = items.map((i) => Date.parse(i.date)).filter((d) => !isNaN(d)).sort((a, b) => b - a);
     return { ...f, status: r.status, final: r.final !== f.url ? r.final : undefined, n: items.length, newest: dates[0] ? new Date(dates[0]).toISOString().slice(0, 16) : null, last7: dates.filter((d) => d > Date.now() - 7 * 864e5).length, oldest: dates.length ? new Date(dates[dates.length - 1]).toISOString().slice(0, 16) : null,
-      undated: items.length - dates.length, sample: items.slice(0, 5).map((i) => i.title.slice(0, 90)), ms: Date.now() - t0, head: items.length ? undefined : r.body.slice(0, 160) };
+      undated: items.length - dates.length, sample: items.slice(0, 5).map((i) => (i.date || "-") + " " + i.title.slice(0, 90)), ms: Date.now() - t0, head: items.length ? undefined : r.body.slice(0, 160) };
   } catch (e) { return { ...f, error: e.name === "AbortError" ? "timed out" : e.message, ms: Date.now() - t0 }; }
 }
 async function pool(list, conc, fn) {
