@@ -1,171 +1,410 @@
 {
- "note": "Round 3: page-list candidates checked with the app's own list parser.",
+ "note": "Data-set specialist feeds (commercial-safe) probe",
  "feeds": [
   {
-   "cc": "qa",
-   "outlet": "Gulf Times",
-   "url": "https://www.gulf-times.com/",
-   "lang": "en",
-   "html": true,
-   "match": "/article/\\d+/(?:qatar|region)/"
+   "cc": "xx",
+   "outlet": "The Record",
+   "url": "https://therecord.media/feed",
+   "topic": "cyber",
+   "inmain": false
   },
   {
-   "cc": "qa",
-   "outlet": "The Peninsula",
-   "url": "https://thepeninsulaqatar.com/",
-   "lang": "en",
-   "html": true,
-   "match": "^/article/\\d+/\\d+/20\\d\\d/"
+   "cc": "xx",
+   "outlet": "BleepingComputer",
+   "url": "https://www.bleepingcomputer.com/feed/",
+   "topic": "cyber",
+   "inmain": false
   },
   {
-   "cc": "kw",
-   "outlet": "Kuwait Times",
-   "url": "https://kuwaittimes.com/",
-   "lang": "en",
-   "html": true,
-   "match": "/article/\\d+/kuwait/"
+   "cc": "xx",
+   "outlet": "SecurityWeek",
+   "url": "https://www.securityweek.com/feed/",
+   "topic": "cyber",
+   "inmain": false
   },
   {
-   "cc": "kw",
-   "outlet": "Arab Times",
-   "url": "https://www.arabtimesonline.com/",
-   "lang": "en",
-   "html": true,
-   "match": "^https://www\\.arabtimesonline\\.com/news/[a-z0-9-]{20,}/$"
+   "cc": "xx",
+   "outlet": "Krebs on Security",
+   "url": "https://krebsonsecurity.com/feed/",
+   "topic": "cyber",
+   "inmain": false
   },
   {
-   "cc": "sa",
-   "outlet": "Saudi Gazette",
-   "url": "https://saudigazette.com.sa/",
-   "lang": "en",
-   "html": true,
-   "match": "/article/\\d+/saudi-arabia/"
+   "cc": "xx",
+   "outlet": "CISA advisories",
+   "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
+   "topic": "cyber",
+   "inmain": false
   },
   {
-   "cc": "sa",
-   "outlet": "Okaz",
-   "url": "https://www.okaz.com.sa/",
-   "lang": "ar",
-   "html": true,
-   "match": "^https://www\\.okaz\\.com\\.sa/(?:local|politics|economy)/na/\\d+$"
+   "cc": "xx",
+   "outlet": "The Hacker News",
+   "url": "https://feeds.feedburner.com/TheHackersNews",
+   "topic": "cyber",
+   "inmain": true
   },
   {
-   "cc": "om",
-   "outlet": "Oman Observer",
-   "url": "https://www.omanobserver.om/",
-   "lang": "en",
-   "html": true,
-   "match": "/article/\\d+/oman/"
+   "cc": "xx",
+   "outlet": "Dark Reading",
+   "url": "https://www.darkreading.com/rss.xml",
+   "topic": "cyber",
+   "inmain": false
   },
   {
-   "cc": "ae",
-   "outlet": "Al Ittihad",
-   "url": "https://www.alittihad.ae/",
-   "lang": "ar",
-   "html": true,
-   "match": "aletihad\\.ae/news/(?:الإمارات|عربي-ودولي)/\\d+/"
+   "cc": "xx",
+   "outlet": "CyberScoop",
+   "url": "https://cyberscoop.com/feed/",
+   "topic": "cyber",
+   "inmain": false
   },
   {
-   "cc": "bw",
-   "outlet": "Mmegi",
-   "url": "https://www.mmegi.bw/",
-   "lang": "en",
-   "html": true,
-   "match": "^https://www\\.mmegi\\.bw/news/[a-z0-9-]+/news$"
+   "cc": "xx",
+   "outlet": "Aviation Herald",
+   "url": "https://avherald.com/h?subscribe=rss",
+   "topic": "air-crashes",
+   "inmain": false
   },
   {
-   "cc": "ao",
-   "outlet": "Novo Jornal",
-   "url": "https://www.novojornal.co.ao/",
-   "lang": "pt",
-   "html": true,
-   "match": "^/(?:politica|sociedade|economia)/detalhe/[a-z0-9-]+-\\d+\\.html$"
+   "cc": "xx",
+   "outlet": "Aviation Safety Network",
+   "url": "https://aviation-safety.net/news/rss.php",
+   "topic": "air-crashes",
+   "inmain": false
   },
   {
-   "cc": "ao",
-   "outlet": "Ver Angola",
-   "url": "https://www.verangola.net/",
-   "lang": "pt",
-   "html": true,
-   "match": "/va/pt/\\d{6}/[A-Za-z]+/\\d+/"
+   "cc": "xx",
+   "outlet": "Simple Flying",
+   "url": "https://simpleflying.com/feed/",
+   "topic": "air-crashes",
+   "inmain": false
   },
   {
-   "cc": "ao",
-   "outlet": "Rádio Nacional de Angola",
-   "url": "https://rna.ao/",
-   "lang": "pt",
-   "html": true,
-   "match": "pages/new\\.php\\?uid=\\d+",
-   "state": true
+   "cc": "xx",
+   "outlet": "The Aviationist",
+   "url": "https://theaviationist.com/feed/",
+   "topic": "air-crashes",
+   "inmain": false
   },
   {
-   "cc": "eh",
-   "outlet": "Sahara Press Service",
-   "url": "https://www.spsrasd.info/news/en",
-   "lang": "en",
-   "html": true,
-   "match": "^/en/20\\d\\d/\\d\\d/\\d\\d/\\d+\\.html$",
-   "state": true
+   "cc": "xx",
+   "outlet": "AeroTime",
+   "url": "https://www.aerotime.aero/feed",
+   "topic": "air-crashes",
+   "inmain": false
   },
   {
-   "cc": "li",
-   "outlet": "Liechtensteiner Vaterland",
-   "url": "https://www.vaterland.li/",
-   "lang": "de",
-   "html": true,
-   "match": "^/liechtenstein/(?:politik|wirtschaft|gesellschaft)/[a-z0-9-]+-art-\\d+$"
+   "cc": "xx",
+   "outlet": "Aerossurance",
+   "url": "https://aerossurance.com/feed/",
+   "topic": "air-crashes",
+   "inmain": false
   },
   {
-   "cc": "la",
-   "outlet": "Vientiane Times",
-   "url": "https://www.vientianetimes.org.la/",
-   "lang": "en",
-   "html": true,
-   "match": "freefreenews/freecontent_[A-Za-z0-9_]+\\.php",
-   "state": true
+   "cc": "xx",
+   "outlet": "FlightGlobal",
+   "url": "https://www.flightglobal.com/rss",
+   "topic": "air-crashes",
+   "inmain": false
   },
   {
-   "cc": "uy",
-   "outlet": "El Observador",
-   "url": "https://www.elobservador.com.uy/",
-   "lang": "es",
-   "html": true,
-   "match": "^https://www\\.elobservador\\.com\\.uy/(?:nacional|economia-y-empresas|uruguay|politica)/"
+   "cc": "xx",
+   "outlet": "NHC Atlantic",
+   "url": "https://www.nhc.noaa.gov/index-at.xml",
+   "topic": "storms",
+   "inmain": false
   },
   {
-   "cc": "uy",
-   "outlet": "Presidencia de Uruguay",
-   "url": "https://www.gub.uy/presidencia/comunicacion/noticias",
-   "lang": "es",
-   "html": true,
-   "match": "^/presidencia/comunicacion/noticias/[a-z0-9-]{15,}$",
-   "state": true
+   "cc": "xx",
+   "outlet": "NHC East Pacific",
+   "url": "https://www.nhc.noaa.gov/index-ep.xml",
+   "topic": "storms",
+   "inmain": false
   },
   {
-   "cc": "sv",
-   "outlet": "Diario El Mundo",
-   "url": "https://diario.elmundo.sv/",
-   "lang": "es",
-   "html": true,
-   "match": "^https://diario\\.elmundo\\.sv/nacionales/"
+   "cc": "xx",
+   "outlet": "NHC Central Pacific",
+   "url": "https://www.nhc.noaa.gov/index-cp.xml",
+   "topic": "storms",
+   "inmain": false
   },
   {
-   "cc": "et",
-   "outlet": "EBC",
-   "url": "https://www.ebc.et/",
-   "lang": "am",
-   "html": true,
-   "match": "/Home/NewsDetails\\?NewsId=\\d+",
-   "state": true
+   "cc": "xx",
+   "outlet": "JTWC",
+   "url": "https://www.metoc.navy.mil/jtwc/rss/jtwc.rss",
+   "topic": "storms",
+   "inmain": false
   },
   {
-   "cc": "mm",
-   "outlet": "Eleven Myanmar",
-   "url": "https://elevenmyanmar.com/",
-   "lang": "en",
-   "html": true,
-   "match": "^https://elevenmyanmar\\.com/news/[a-z0-9-]{20,}$"
+   "cc": "xx",
+   "outlet": "Severe Weather Europe",
+   "url": "https://www.severe-weather.eu/feed/",
+   "topic": "storms",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "InciWeb",
+   "url": "https://inciweb.wildfire.gov/incidents/rss.xml",
+   "topic": "wildfires",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Wildfire Today",
+   "url": "https://wildfiretoday.com/feed/",
+   "topic": "wildfires",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "The Debrief",
+   "url": "https://thedebrief.org/feed/",
+   "topic": "uap",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "The Black Vault",
+   "url": "https://www.theblackvault.com/documentarchive/feed/",
+   "topic": "uap",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Liberation Times",
+   "url": "https://www.liberationtimes.com/home?format=rss",
+   "topic": "uap",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "USNI News",
+   "url": "https://news.usni.org/feed",
+   "topic": "south-china-sea",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Naval News",
+   "url": "https://www.navalnews.com/feed/",
+   "topic": "south-china-sea",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Maritime Executive",
+   "url": "https://maritime-executive.com/rss",
+   "topic": "south-china-sea",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "gCaptain",
+   "url": "https://gcaptain.com/feed/",
+   "topic": "shipping",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Seatrade Maritime",
+   "url": "https://www.seatrade-maritime.com/rss.xml",
+   "topic": "shipping",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "BenarNews",
+   "url": "https://www.benarnews.org/english/rss",
+   "topic": "south-china-sea",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Taiwan News",
+   "url": "https://www.taiwannews.com.tw/en/rss",
+   "topic": "taiwan-strait",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Focus Taiwan",
+   "url": "https://focustaiwan.tw/rss/aall.xml",
+   "topic": "taiwan-strait",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Taipei Times",
+   "url": "https://www.taipeitimes.com/xml/index.rss",
+   "topic": "taiwan-strait",
+   "inmain": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "SubTel Forum",
+   "url": "https://subtelforum.com/feed/",
+   "topic": "undersea-cables",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Submarine Networks",
+   "url": "https://www.submarinenetworks.com/en/?format=feed&type=rss",
+   "topic": "undersea-cables",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Mining.com",
+   "url": "https://www.mining.com/feed/",
+   "topic": "mn-mining-border",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Mongolian Mining Journal",
+   "url": "https://www.mongolianminingjournal.com/rss",
+   "topic": "mn-mining-border",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "CIDRAP",
+   "url": "https://www.cidrap.umn.edu/news/rss.xml",
+   "topic": "outbreaks",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Outbreak News Today",
+   "url": "https://outbreaknewstoday.com/feed/",
+   "topic": "outbreaks",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "CDC Newsroom",
+   "url": "https://tools.cdc.gov/api/v2/resources/media/132608.rss",
+   "topic": "outbreaks",
+   "inmain": false
+  },
+  {
+   "cc": "xx",
+   "outlet": "Daily NK",
+   "url": "https://www.dailynk.com/english/feed/",
+   "topic": "korea-dmz",
+   "inmain": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "Yonhap North Korea",
+   "url": "https://en.yna.co.kr/RSS/nk.xml",
+   "topic": "korea-dmz",
+   "inmain": true
+  },
+  {
+   "cc": "xx",
+   "outlet": "VolcanoDiscovery",
+   "url": "https://www.volcanodiscovery.com/news.rss",
+   "topic": "ph-volcanoes",
+   "inmain": false
   }
  ],
- "discover": []
+ "discover": [
+  {
+   "cc": "xx",
+   "outlet": "Aviation Herald",
+   "home": "https://avherald.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Aviation Safety Network",
+   "home": "https://aviation-safety.net/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Simple Flying",
+   "home": "https://simpleflying.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "The Aviationist",
+   "home": "https://theaviationist.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "AeroTime",
+   "home": "https://www.aerotime.aero/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Aerossurance",
+   "home": "https://aerossurance.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "FlightGlobal",
+   "home": "https://www.flightglobal.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "NHC Atlantic",
+   "home": "https://www.nhc.noaa.gov/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "NHC East Pacific",
+   "home": "https://www.nhc.noaa.gov/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "NHC Central Pacific",
+   "home": "https://www.nhc.noaa.gov/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "JTWC",
+   "home": "https://www.metoc.navy.mil/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Severe Weather Europe",
+   "home": "https://www.severe-weather.eu/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "The Debrief",
+   "home": "https://thedebrief.org/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "The Black Vault",
+   "home": "https://www.theblackvault.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Liberation Times",
+   "home": "https://www.liberationtimes.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "SubTel Forum",
+   "home": "https://subtelforum.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Submarine Networks",
+   "home": "https://www.submarinenetworks.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Mining.com",
+   "home": "https://www.mining.com/"
+  },
+  {
+   "cc": "xx",
+   "outlet": "Mongolian Mining Journal",
+   "home": "https://www.mongolianminingjournal.com/"
+  }
+ ]
 }
