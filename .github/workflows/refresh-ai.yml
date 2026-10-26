@@ -55,6 +55,7 @@ jobs:
     permissions:
       contents: write
       models: read
+      actions: read
     env:
       MODEL_KEY: ${{ inputs.model || 'phi-3.5-mini' }}
     steps:
@@ -67,6 +68,18 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.11"
+      # GitHub often starts the 01:23 cron hours late, after refresh-keeper.yml has already run today's daily pass (26 Oct 2026:
+      # keeper 02:30Z, cron 06:24Z), so the late cron spent 80 minutes redrafting the same lines and held the 3-hourly round back.
+      - name: Check whether today's daily pass already ran
+        id: today
+        if: ${{ github.event_name == 'schedule' && github.event.schedule == '23 1 * * *' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh run list -R "$GITHUB_REPOSITORY" --workflow refresh-ai.yml --branch main --limit 30 --json databaseId,createdAt,displayTitle,conclusion \
+            --jq "[.[]|select(.databaseId != $GITHUB_RUN_ID and .createdAt > \"$(date -u +%F)\" and .conclusion == \"success\" and (.displayTitle|test(\"[(](daily|both)[)]\")))]|length" || echo 0)
+          echo "daily runs already done today: $n"
+          [ "${n:-0}" -gt 0 ] && echo "done=1" >> "$GITHUB_OUTPUT"; true
       - name: Pick the model file
         id: pick
         run: |
@@ -107,7 +120,7 @@ jobs:
           for i in $(seq 1 90); do curl -sf http://127.0.0.1:8080/v1/models >/dev/null && { echo "server up after ${i}x2 s"; exit 0; }; sleep 2; done
           tail -30 llm.log; exit 1
       - name: Redraft the daily summaries' top lines
-        if: ${{ (github.event_name == 'schedule' && github.event.schedule == '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'daily' || inputs.task == 'both' || inputs.task == '')) }}
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule == '23 1 * * *' && steps.today.outputs.done != '1') || (github.event_name != 'schedule' && (inputs.task == 'daily' || inputs.task == 'both' || inputs.task == '')) }}
         timeout-minutes: 90
         env:
           GITHUB_TOKEN: ${{ github.token }}
