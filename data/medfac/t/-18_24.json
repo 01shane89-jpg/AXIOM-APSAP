@@ -67,7 +67,7 @@
 ["w1488059930",-17.84394,25.85004,"zm",{"name":"Batoka Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"Gandhi Avenue","addr:city":"Livingstone"}],
 ["w1488635797",-17.77179,25.27044,"zm",{"name":"Kazungula District Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"Mambova Road","addr:city":"Kazungula"}],
 ["w192039345",-17.81833,25.81698,"zm",{"name":"Harry Mwaanga Nkumbula International Airport","aeroway":"aerodrome","icao":"FLHN","iata":"LVI","aerodrome:type":"international","wikidata":"Q1431890"}],
-["w192347460",-17.83121,25.16658,"bw",{"name":"Kasane Airport","operator":"Botswana Department of Civil Aviation","aeroway":"aerodrome","icao":"FBKE","iata":"BBK","aerodrome:type":"public"}],
+["w192347460",-17.83121,25.16658,"bw",{"name":"Kasane Airport","operator":"Botswana Department of Civil Aviation","aeroway":"aerodrome","icao":"FBKE","iata":"BBK","aerodrome:type":"public","wikidata":"Q1431675"}],
 ["w237174210",-17.63379,24.17736,"na",{"name":"Katima Mulilo Airport","aeroway":"aerodrome","icao":"FYKM","iata":"MPA","wikidata":"Q219287"}],
 ["w242698719",-17.89803,25.86732,"zm",{"aeroway":"helipad"}],
 ["w244026490",-17.49844,24.27922,"na",{"name":"Katima Mulilo State Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"Katima Mulilo"}],

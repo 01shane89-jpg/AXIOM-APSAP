@@ -9,7 +9,7 @@
 ["n8516746612",14.43966,-0.66869,"bf",{"name":"CSPS de Boukessi","amenity":"hospital","operator":"Public"}],
 ["n8520302205",14.69338,-0.2492,"bf",{"name":"CSPS de Soukoundou","amenity":"hospital","operator":"Public"}],
 ["n8520685765",14.666,-0.43984,"bf",{"name":"CSPS d'Oursi","amenity":"hospital","operator":"Public"}],
-["w1072982749",14.12571,-1.62438,"bf",{"name":"Djibo Airport","aeroway":"aerodrome","icao":"DFCJ","iata":"XDJ"}],
+["w1072982749",14.12571,-1.62438,"bf",{"name":"Djibo Airport","aeroway":"aerodrome","icao":"DFCJ","iata":"XDJ","wikidata":"Q1657268"}],
 ["w1073808089",14.02164,-0.06821,"bf",{"name":"Dori Airport","aeroway":"aerodrome","icao":"DFEE","iata":"DOR","wikidata":"Q1655895"}],
 ["w1073812984",14.45509,-0.21804,"bf",{"name":"Gorom-Gorom","aeroway":"aerodrome","icao":"DFEG","iata":"XGG","wikidata":"Q3914151"}],
 ["w157920887",14.03505,-0.0346,"bf",{"name":"Centre Hospitalier Régional de Dori","amenity":"hospital"}],

@@ -50,7 +50,7 @@
 ["w1077519853",-18.43669,-66.56465,"bo",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1164590141",-18.88203,-66.7772,"bo",{"name":"Hospital de Segundo Nivel Challapata","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Gobierno Autónomo Municipal de Challapata","operator:type":"government","addr:city":"Challapata"}],
 ["w1218532507",-19.00949,-66.7758,"bo",{"name":"Caja Nacional de Salud","amenity":"hospital","healthcare":"hospital"}],
-["w1496206598",-19.88959,-67.69186,"bo",{"name":"Centro de Salud Tahua","amenity":"clinic","healthcare:speciality":"general;dentistry;vaccination;nursery;gynaecology","emergency":"yes","operator":"Gobierno Autónomo Municipal de Tahua","operator:type":"government","addr:city":"Tahua","opening_hours":"Mo-Su 09:12:00,1430-17:30"}],
+["w1496206598",-19.88959,-67.69186,"bo",{"name":"Centro de Salud Tahua","amenity":"clinic","healthcare:speciality":"general;dentistry;vaccination;nursery;gynaecology","emergency":"yes","operator":"Gobierno Autónomo Municipal de Tahua","operator:type":"government","addr:city":"Tahua","opening_hours":"Mo-Su 09:00-12:00,14:30-17:30"}],
 ["w264042755",-18.2794,-66.84921,"bo",{"name":"Hospital San Martin de Porres","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}],
 ["w292909269",-18.1711,-67.01764,"bo",{"name":"Centro de Salud de Machacamarca","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","addr:city":"Machacamarca","addr:postcode":"ORU"}],
 ["w381420965",-18.41318,-66.56185,"bo",{"name":"Centro Medico de Catavi","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:city":"Catavi"}],

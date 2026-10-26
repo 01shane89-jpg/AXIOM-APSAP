@@ -271,7 +271,7 @@
 ["w1010997446",12.51808,-1.44654,"bf",{"amenity":"hospital"}],
 ["w1028697769",12.50692,-1.56617,"bf",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1063645240",12.35119,-1.56403,"bf",{"aeroway":"helipad"}],
-["w1065505212",13.43988,-1.99256,"bf",{"name":"Seguenega Airport","aeroway":"aerodrome","icao":"DFCS"}],
+["w1065505212",13.43988,-1.99256,"bf",{"name":"Seguenega Airport","aeroway":"aerodrome","icao":"DFCS","wikidata":"Q16899901"}],
 ["w1072990016",13.07789,-1.09882,"bf",{"aeroway":"aerodrome","military":"airfield"}],
 ["w1072994192",12.98074,-0.16119,"bf",{"aeroway":"helipad"}],
 ["w1072994193",12.98167,-0.16343,"bf",{"aeroway":"aerodrome"}],

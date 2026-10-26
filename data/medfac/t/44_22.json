@@ -26,7 +26,7 @@
 ["n2123796454",44.2841,23.79258,"ro",{"aeroway":"helipad"}],
 ["n2149014244",45.79123,23.88922,"ro",{"name":"Spital","amenity":"hospital"}],
 ["n2281271454",45.91198,23.16362,"ro",{"name":"Spital TBC","amenity":"hospital"}],
-["n2392507501",44.02841,22.95272,"bg",{"name":"Здравна служба Кутово","name:en":"Health Service Kutovo","amenity":"hospital","healthcare":"hospital"}],
+["n2392507501",44.02833,22.95279,"bg",{"name":"Здравна служба Кутово","name:en":"Health Service Kutovo","amenity":"hospital","healthcare":"hospital"}],
 ["n257751470",45.75028,22.90701,"ro",{"name":"Ambulatoriul de Specialitate","amenity":"clinic","healthcare":"clinic","operator":"Spitalul Municipal Dr. Alexandru Simionescu Hunedoara","addr:housenumber":"19","addr:street":"Strada Victoriei","addr:city":"Hunedoara"}],
 ["n257751934",45.74884,22.90886,"ro",{"name":"Secția de Boli Infecțioase","amenity":"hospital","operator":"Spitalul Municipal Dr. Alexandru Simionescu Hunedoara"}],
 ["n263020486",45.84802,23.01469,"ro",{"name":"Spitalul CFR","amenity":"hospital"}],

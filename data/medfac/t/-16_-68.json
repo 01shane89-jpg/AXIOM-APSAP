@@ -3,7 +3,7 @@
 ["n1042076484",-14.47657,-66.03388,"bo",{"name":"Nuevo Mundo Airport","aeroway":"aerodrome"}],
 ["n1042076615",-14.4863,-66.30713,"bo",{"name":"Retiro Airport","aeroway":"aerodrome"}],
 ["n1042076806",-14.32305,-66.12731,"bo",{"name":"Urusi Airport","aeroway":"aerodrome"}],
-["n1042076833",-14.63617,-66.74998,"bo",{"name":"Venecia Airport","aeroway":"aerodrome"}],
+["n1042076833",-14.63617,-66.74998,"bo",{"name":"Venecia Airport","aeroway":"aerodrome","icao":"SLVE","wikidata":"Q16902606"}],
 ["n11076009422",-14.91208,-67.11073,"bo",{"name":"P.S. Villa Aroma","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Ministerio de Salud y Deportes","operator:type":"public","addr:city":"Villa Aroma"}],
 ["n12032634097",-15.55591,-67.33375,"bo",{"name":"Centro de Salud Sapecho","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","emergency":"yes","operator:type":"government","addr:city":"Sapecho"}],
 ["n12043040340",-15.83177,-67.56763,"bo",{"name":"C.I.S. Caranavi","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"Ministerio de Salud y Deportes","operator:type":"public","addr:street":"Avenida Mariscal Santa Cruz","addr:city":"Caranavi"}],

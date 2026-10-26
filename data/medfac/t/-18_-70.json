@@ -50,6 +50,8 @@
 ["n13701363981",-16.52417,-68.14984,"bo",{"amenity":"clinic","healthcare":"clinic","addr:city":"Ciudad Satélite","osap:withheld":"1"}],
 ["n13841773990",-16.54546,-68.06952,"bo",{"name":"Clínica Los Andes","amenity":"clinic","healthcare":"clinic","addr:street":"Calle José Maria Aguirre Acha","addr:city":"La Paz"}],
 ["n13958750825",-16.34786,-69.23013,"pe",{"amenity":"clinic","healthcare":"clinic"}],
+["n14262149944",-16.51271,-68.129,"bo",{"name":"CENTROMED","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"podiatry","phone":"+591 71214659","addr:housenumber":"2523","addr:street":"Avenida Ecuador","addr:city":"La Paz"}],
+["n14290091323",-16.52416,-68.19892,"bo",{"name":"Consultorio Medico Tata Santiago","amenity":"hospital","healthcare":"clinic","healthcare:speciality":"general","emergency":"yes","operator":"Dra. Amy L. Salazar H.","operator:type":"private","addr:housenumber":"2215","addr:street":"Calle 4 P. Nolasco Crespo","addr:city":"El Alto"}],
 ["n1446614487",-16.51372,-68.12146,"bo",{"name":"Clínica Alemana","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:street":"Avenida 6 de Agosto","addr:city":"La Paz","opening_hours":"24/7"}],
 ["n1470833140",-16.50994,-68.12528,"bo",{"name":"Clínica Santa María","amenity":"clinic","healthcare":"clinic","addr:housenumber":"2487","addr:street":"Calle Pedro Salazar"}],
 ["n1952728153",-16.5074,-68.14385,"bo",{"name":"Centro de Salud Villa Nueva Potosí","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","emergency":"no"}],
@@ -227,7 +229,7 @@
 ["n5686373022",-16.54191,-68.07966,"bo",{"name":"Clínica Cordes","amenity":"clinic","healthcare":"clinic"}],
 ["n5700171723",-16.51028,-68.15789,"bo",{"name":"Fundación CEREFE","amenity":"clinic","healthcare":"clinic","addr:street":"Calle 6"}],
 ["n5851696288",-16.51529,-68.15464,"bo",{"amenity":"clinic","healthcare":"clinic","addr:city":"El Alto","osap:withheld":"1"}],
-["n5908932686",-16.51523,-68.12887,"bo",{"name":"Clinica Rengel","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;diagnostic_radiology","emergency":"yes","contact:phone":"2 2414444","addr:housenumber":"2762","addr:street":"Calle Victor Sanjines","addr:city":"La Paz"}],
+["n5908932686",-16.51523,-68.12887,"bo",{"name":"Clinica Rengel","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;diagnostic_radiology","emergency":"yes","contact:phone":"2 2414444","addr:housenumber":"2762","addr:street":"Calle Victor Sanjines","addr:city":"La Paz","opening_hours":"24/7"}],
 ["n6036659186",-16.52261,-68.16931,"bo",{"name":"Primeros Auxilios","amenity":"clinic"}],
 ["n6044417387",-16.17576,-69.54062,"pe",{"name":"Centro de salud Mullacontihueco","amenity":"hospital","operator":"Gobierno Regional","addr:full":"Centro Poblado Mulla Contihueco"}],
 ["n6168661791",-16.50275,-68.11951,"bo",{"name":"Centro Integral de Rehabilitación Infantil - CNS","amenity":"hospital","healthcare":"hospital","operator":"Caja Nacional de Salud CNS","addr:housenumber":"150","addr:street":"Calle Rosendo Villalobos","addr:city":"La Paz"}],
@@ -408,7 +410,7 @@
 ["w573328935",-16.08272,-69.63813,"pe",{"name":"Hospital de Ilave","amenity":"hospital","emergency":"yes","operator":"MINSA","phone":"+51 51 552041","addr:housenumber":"685","addr:street":"Atahualpa"}],
 ["w584004710",-16.50496,-68.12019,"bo",{"name":"Hospital COSSMIL","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"COSSMIL","operator:type":"government","contact:website":"http://www.ejercito.mil.bo/","addr:street":"Avenida Bautista Saavedra","addr:city":"La Paz"}],
 ["w625106651",-16.56932,-68.08973,"bo",{"name":"Centro de Salud Mallasa","amenity":"clinic","healthcare":"clinic"}],
-["w626021856",-16.51519,-68.12887,"bo",{"healthcare":"clinic"}],
+["w626021856",-16.51519,-68.12887,"bo",{"name":"Clínica Rengel","healthcare":"clinic"}],
 ["w653366498",-16.49427,-68.177,"bo",{"name":"Clínica Santa Maria de los Angeles","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;dentistry;emergency;ophthalmology;community","emergency":"yes","addr:street":"Avenida 16 de Julio","addr:city":"El Alto"}],
 ["w656838983",-16.54432,-68.18756,"bo",{"amenity":"clinic","healthcare":"clinic"}],
 ["w657041343",-16.4895,-68.20434,"bo",{"name":"Hospital Del Norte","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","phone":"2864070","addr:street":"Avenida Juan Pablo II","addr:city":"El Alto"}],
@@ -454,4 +456,5 @@
 ["w906965669",-16.21795,-69.47668,"pe",{"name":"Pueblo Libre","amenity":"clinic","operator":"Gobierno Regional","phone":"+51 51 554008","addr:street":"Avenida Túpac Amaru"}],
 ["w923959075",-16.592,-68.85178,"bo",{"name":"Caja Ferroviaria del Seguro Social Micro Hospital Guaqui","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:city":"Puerto Guaqui"}],
 ["w938580375",-16.50232,-68.11792,"bo",{"name":"Centro Integral de Rehabilitación Infantil Juana Azurduy de Padilla","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"Calle Villalobos"}],
-["w943920691",-16.52562,-68.10859,"bo",{"name":"Clínica del Sur","amenity":"clinic","healthcare":"clinic","addr:housenumber":"3353","addr:street":"Avenida Hernando Siles","addr:city":"La Paz"}]]
+["w943920691",-16.52562,-68.10859,"bo",{"name":"Clínica del Sur","amenity":"clinic","healthcare":"clinic","addr:housenumber":"3353","addr:street":"Avenida Hernando Siles","addr:city":"La Paz"}],
+["w961164520",-16.50552,-68.13448,"bo",{"name":"Consultorio Médico Tata Santiago","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Dra. Amy L. Salazar H.","operator:type":"private","addr:housenumber":"2215","addr:street":"CAlle 4 - Pedro Nolasco","addr:city":"El Alto"}]]

@@ -145,7 +145,7 @@
 ["w822068361",-19.04901,-65.26565,"bo",{"name":"Seguro Social Universitario","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"SSU","operator:type":"public","addr:city":"Sucre"}],
 ["w843361519",-19.56427,-65.76846,"bo",{"name":"Hospital Madre Teresa de Calcuta","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","addr:city":"Potosí"}],
 ["w874944908",-19.58898,-65.75813,"bo",{"name":"CIES (Regional Potosi)","amenity":"clinic","healthcare":"clinic","addr:housenumber":"92","addr:street":"Calle Cobija","addr:city":"Potosí"}],
-["w879047021",-19.04377,-65.2433,"bo",{"name":"Caja de Salud CORDES","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"CORDES","operator:type":"private","addr:city":"Sucre"}],
+["w879047021",-19.04377,-65.2433,"bo",{"name":"Caja de Salud CORDES","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"CORDES","operator:type":"private","addr:housenumber":"417","addr:street":"Avenida Emilio Mendizábal","addr:city":"Sucre"}],
 ["w918067323",-19.02833,-65.266,"bo",{"name":"Centro de Salud Patacón","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:city":"Sucre"}],
 ["w939062647",-19.05743,-65.27113,"bo",{"name":"Centro de Salud Villa Rosario","amenity":"clinic","healthcare":"clinic"}],
 ["w944031373",-19.02314,-65.2824,"bo",{"name":"Centro de Salud Casegural","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:street":"Calle Nueva Ilusión","addr:city":"Sucre"}]]
