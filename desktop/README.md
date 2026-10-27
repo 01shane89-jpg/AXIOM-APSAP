@@ -15,6 +15,10 @@ offline, and it updates itself whenever the website does. Rebuild the program on
 version such as `0.1.0` (or push a tag `desktop-v0.1.0`). A version with a hyphen (`0.1.0-preview.1`) makes a pre-release. The installers are not code-signed, so Windows and
 macOS warn on first start (the release notes say how to get past it).
 
+Release files have fixed names, so these links always give the newest release (the company website uses them):
+`https://github.com/01shane89-jpg/AXIOM-APSAP/releases/latest/download/` + `AXIOM-OSAP-Windows.exe`,
+`AXIOM-OSAP-Mac-Apple-silicon.dmg`, `AXIOM-OSAP-Mac-Intel.dmg`, `AXIOM-OSAP-Linux.AppImage`, `AXIOM-OSAP-Linux.deb`.
+
 ## Local
 
 ```
