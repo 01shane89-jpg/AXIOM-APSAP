@@ -60,7 +60,7 @@
     rtpvpane: 1, rtpvtop: 1, wxlbl: 1, wxvec: 1, cbase: 1, stlines: 1, hybpane: 1, satpane: 1, roadpane: 1, tooltipPane: 1, popupPane: 1, rvpane: 1 };
   var PANE = { cfpane: "Conflict tab layers", dsbpane: "Conflict tab layers", terpane: "Terrain, flashpoints and presence", fpzone: "Terrain, flashpoints and presence",
     infpt: "Infrastructure", milpt: "Military installations", pwrpt: "Power", pwrpane: "Power", airpane: "Live aircraft", campt: "Cameras", dcpt: "Data centres", svpt: "Surveillance",
-    mobpane: "Movement and traffic", mobrx: "Movement and traffic", sidespane: "Military sites", lzpane: "Landing zones", evpane: "Incidents",
+    mobpane: "Movement and traffic", mobrx: "Movement and traffic", sidespane: "Military sites", lzpane: "Landing zones", dzpane: "Drop zones", evpane: "Incidents",
     wxpane: "Weather stations", atakpane: "My map points", anpane: "Analyst workspace", routewppane: "Route", vspane: "Terrain" };
   function objects(P) {
     var a = A(), map = W.__asapMap, out = [], seen = {};

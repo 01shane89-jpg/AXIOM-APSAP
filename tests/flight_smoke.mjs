@@ -1,6 +1,6 @@
 // Headless check of the flight planner for airborne operations (assets/osap-flight.js) on a desktop and a phone.
-// Saved map points stand in for the analyst's own (departure airfield, DZ, landing strip); a stub of the shared DZ store
-// (window.OSAP_DZ) stands in for the DZSO tool. No network: every outside request is refused.
+// Saved map points stand in for the analyst's own (departure airfield, DZ, landing strip); the shared DZ store
+// (window.OSAP_DZ, assets/osap-dz.js) holds one saved DZ. No network: every outside request is refused.
 // Checks: no toolbar button, the Route tab's "Plan a flight" opens it; saved points and a typed MGRS grid are added in flight
 // order (first = departure, second = landing, later ones before the landing); roles change to IP and DZ; legs give nm, true
 // and magnetic course, the drop speed on the IP-to-DZ run-in and cruise elsewhere; times run forward from take-off and back
@@ -39,9 +39,8 @@ for (const vp of [{ width: 1400, height: 900, tag: "desktop" }, { width: 390, he
   const errors = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.addInitScript((pts) => {
-    try { if (!sessionStorage.getItem("fl-init")) { sessionStorage.setItem("fl-init", "1"); localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-atak-pts", JSON.stringify(pts)); localStorage.removeItem("osap-flight-cur"); } } catch (e) {}
-    const dz = { id: "dz1", name: "Tadia", cc: "th", pi: [15.101, 100.951], axis: 60, len_m: 1200, wid_m: 500, shape: "rect", alt_ft: 1250 };
-    window.OSAP_DZ = { list: () => [dz], get: (id) => (id === "dz1" ? dz : null), save: (z) => Object.assign({}, z, { id: z.id || "dz2" }), remove: () => {}, on: () => {} };
+    try { if (!sessionStorage.getItem("fl-init")) { sessionStorage.setItem("fl-init", "1"); localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-atak-pts", JSON.stringify(pts)); localStorage.removeItem("osap-flight-cur");
+      localStorage.setItem("osap-dz", JSON.stringify([{ id: "dztadia1", name: "Tadia", cc: "th", pi: [15.101, 100.951], axis: 60, len_m: 1200, wid_m: 500, shape: "rect", alt_ft: 1250 }])); } } catch (e) {}
   }, PTS);
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + "#th", { waitUntil: "domcontentloaded" });
@@ -101,12 +100,16 @@ for (const vp of [{ width: 1400, height: 900, tag: "desktop" }, { width: 390, he
   const d = await dl;
   ok(!!d && /\.zip$/.test(d.suggestedFilename()), vp.tag + ": TAK package downloaded (" + (d ? d.suggestedFilename() : "none") + ")");
   /* the shared DZ store */
-  await p.selectOption('[data-fldz="2"]', "dz1"); await p.waitForTimeout(200);
+  await p.selectOption('[data-fldz="2"]', "dztadia1"); await p.waitForTimeout(200);
   st = await p.evaluate(() => window.OSAP_FLIGHT.state().plan);
-  const fd = await p.evaluate(() => window.OSAP_FLIGHT.forDz("dz1"));
-  ok(st.pts[2].dzId === "dz1" && Math.abs(st.pts[2].lat - 15.101) < 1e-9 && st.dzLen === 1200 && st.altFt === 1250, vp.tag + ": saved DZ sets the DZ point, size and drop altitude");
+  const fd = await p.evaluate(() => window.OSAP_FLIGHT.forDz("dztadia1"));
+  ok(st.pts[2].dzId === "dztadia1" && Math.abs(st.pts[2].lat - 15.101) < 1e-9 && st.dzLen === 1200 && st.altFt === 1250, vp.tag + ": saved DZ sets the DZ point, size and drop altitude");
   ok(fd && fd.acft === "C-17A Globemaster III" && fd.alt_ft === 1250 && fd.ias_kt === 135 && fd.axis >= 0 && fd.axis < 360 && /^2026-11-01T03:00/.test(fd.tot), vp.tag + ": forDz for the DZSO tool " + JSON.stringify(fd));
   ok((await p.evaluate(() => window.OSAP_FLIGHT.forDz("nope"))) === null, vp.tag + ": forDz of an unknown DZ is null");
+  /* Save DZ writes the run-in and drop time back to the shared store, keeping the id */
+  await p.click('[data-fldzsave="2"]'); await p.waitForTimeout(150);
+  const sz = await p.evaluate(() => window.OSAP_DZ.get("dztadia1"));
+  ok(sz && sz.acft === "C-17A Globemaster III" && sz.alt_ft === 1250 && sz.axis === fd.axis && /^2026-11-01T03:00/.test(sz.tot) && (await p.evaluate(() => window.OSAP_DZ.list().length)) === 1, vp.tag + ": Save DZ updates the shared drop zone in place");
   /* a bad grid is refused, nothing added */
   await p.fill("#fl-q", "not a grid"); await p.click('[data-fl="add"]'); await p.waitForTimeout(100);
   ok((await p.evaluate(() => window.OSAP_FLIGHT.state().plan.pts.length)) === 4 && /not understood/.test(await p.textContent("#fl-card .flmsg.err")), vp.tag + ": a bad grid is refused");

@@ -71,6 +71,8 @@ jobs:
       - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
+      # DZSO sheet maths and the shared drop zone store (assets/osap-dzso.js, assets/osap-dz.js)
+      - run: node tests/dzso.test.mjs
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
       - run: node tests/osirdraft.test.mjs
@@ -260,6 +262,8 @@ jobs:
       - run: node tests/medplan_conflict_map_smoke.mjs
       - run: node tests/seatransit_smoke.mjs
       - run: node tests/lz_smoke.mjs
+      # DZSO sheet: long-press Plans, point pop-up, Area menu, winds and drift, hazards, hospitals, save, PDF (assets/osap-dzso.js)
+      - run: node tests/dzso_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
       - run: node tests/terrain_smoke.mjs
       - run: node tests/lidar_smoke.mjs
