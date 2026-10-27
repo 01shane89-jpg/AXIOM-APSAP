@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan or Evacuate from here), Find LZ, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan, Evacuate from here or DZSO sheet here), Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -12,7 +12,7 @@
    assets/osap-points.js (when loaded) gives each point a name, a note and photos, and the Point tool adds one.
    The magnifying glass loads assets/osap-search.js (Search places) on its first press.
    Find LZ and Area > Landing zones load assets/osap-lz.js (the landing zone finder) on first use; Evac loads assets/osap-epe.js
-   (the evacuation planner) the same way.
+   (the evacuation planner) and the DZSO sheet loads assets/osap-dzso.js the same way.
    Uses window.OSAP_GEO (grid maths), OSAP_MEASURE, OSAP_ROUTE_SEED, OSAP_LOC, OSAP_AOI, OSAP_WATCH and TSAP.areaApi. */
 (function () {
   "use strict";
@@ -381,7 +381,7 @@
         var PX = W.OSAP_POINTS;
         d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">" + (typeof p.addedBy === "string" && p.addedBy ? "added by " + esc(p.addedBy.slice(0, 24)) + (+p.addedAt > 0 && W.OSAP_TIME ? ", " + esc(W.OSAP_TIME.dualT(+p.addedAt, { date: true })) : "") : "your own mark") + "</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
-          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="routeto">Route to</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? '<button type="button" data-pp="photo">Check a photo here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
+          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="routeto">Route to</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? '<button type="button" data-pp="photo">Check a photo here</button>' : "") + '<button type="button" data-pp="dzso">DZSO sheet</button>' + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-pp]"); if (!b) return; var k = b.getAttribute("data-pp");
           map.closePopup();
@@ -390,6 +390,7 @@
           else if (k === "photo") W.OSAP_PHOTOCHECK.open({ lat: p.lat, lon: p.lon, place: p.n });
           /* Route from starts a new route at this point; Route to adds it to the end of the route being planned. Both keep its name. */
           else if (k === "route" || k === "routeto") { if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED([[p.lat, p.lon, p.n]], { append: k === "routeto" }); }
+          else if (k === "dzso") dzsoGo({ at: [p.lat, p.lon], name: p.n });
           else act(k, L.latLng(p.lat, p.lon));
         });
         if (PX && p.ph) PX.thumbs(d.querySelector(".atk-pph"), p.id);
@@ -435,6 +436,20 @@
     D.head.appendChild(sc);
   }
   W.OSAP_EPE_GO = epeGo;
+  /* the DZSO sheet lives in assets/osap-dzso.js, fetched the first time Plans > DZSO sheet here, a point's DZSO sheet button or
+     Area > Drop zone (DZSO) is used. opts: { at: [lat, lon], name, id } */
+  var dzWait = null;
+  function dzsoGo(opts) {
+    function go(Z) { Z.open(opts || {}); }
+    if (W.OSAP_DZSO && W.OSAP_DZSO.open) { go(W.OSAP_DZSO); return; }
+    if (dzWait) { dzWait.push(go); return; } dzWait = [go];
+    var sc = D.createElement("script"); sc.src = "assets/osap-dzso.js";
+    sc.onload = function () { var f = dzWait; dzWait = null; if (W.OSAP_DZSO && W.OSAP_DZSO.open) f.forEach(function (g) { g(W.OSAP_DZSO); }); };
+    sc.onerror = function () { dzWait = null; sc.remove(); toast("The DZSO sheet could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  W.OSAP_DZSO_GO = dzsoGo;
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "dzso", label: "Drop zone (DZSO)", point: true, run: function () { dzsoGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "lz", label: "Landing zones", run: function () { lzLoad(function (Z) { Z.area(); }); } });
 
   /* ---------- the radial menu ---------- */
@@ -446,7 +461,7 @@
      Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
   function radNow() { return RAD; }
   function plansOpen(r, ll) {
-    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat([["evac", "Evacuate from here"]]);
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat([["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"]]);
     pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
     pop.hidden = false; pop._for = "plans"; pop._ll = ll;
     /* under the Plans button, kept inside the map */
@@ -498,6 +513,8 @@
     else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: P }); }
     /* Evacuate from here: this point is the origin */
     else if (k === "evac") epeGo({ at: P, how: "Long-press on the map" });
+    /* DZSO sheet: this point is the drop zone's point of impact */
+    else if (k === "dzso") dzsoGo({ at: P });
     else if (k === "nai" || k === "watch") {
       var A = W.TSAP && W.TSAP.areaApi; if (!A || !A.setArea) return;
       A.setArea(circle(ll, radius())); setTimeout(paintTools, 30);
