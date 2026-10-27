@@ -436,6 +436,19 @@
     D.head.appendChild(sc);
   }
   W.OSAP_EPE_GO = epeGo;
+  /* the flight planner (airborne operations) lives in assets/osap-flight.js, fetched the first time "Plan a flight" (Route tab)
+     is used. opts: { at: [lat, lon], name, cc, role } adds that point */
+  var flWait = null;
+  function flightGo(opts) {
+    function go(F) { F.open(opts || {}); }
+    if (W.OSAP_FLIGHT) { go(W.OSAP_FLIGHT); return; }
+    if (flWait) { flWait.push(go); return; } flWait = [go];
+    var sc = D.createElement("script"); sc.src = "assets/osap-flight.js";
+    sc.onload = function () { var f = flWait; flWait = null; if (W.OSAP_FLIGHT) f.forEach(function (g) { g(W.OSAP_FLIGHT); }); };
+    sc.onerror = function () { flWait = null; sc.remove(); toast("The flight planner could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  W.OSAP_FLIGHT_GO = flightGo;
   /* the DZSO sheet lives in assets/osap-dzso.js, fetched the first time Plans > DZSO sheet here, a point's DZSO sheet button or
      Area > Drop zone (DZSO) is used. opts: { at: [lat, lon], name, id } */
   var dzWait = null;
