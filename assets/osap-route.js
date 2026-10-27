@@ -291,7 +291,8 @@ function main() {
       '<label class="rtchk"><input type="checkbox" id="rt-onlycc"' + (S.onlyCc ? " checked" : "") + "> Search " + E(ctx.name) + " only</label>" +
       '<div id="rt-found"></div><div id="rt-pts" class="rtrow"></div>' +
       '<div class="rtbtns"><button type="button" data-rt="tap" id="rt-tapbtn"></button><button type="button" data-rt="me">My location</button>' +
-      '<button type="button" data-rt="rev">Reverse</button><button type="button" data-rt="clear">Clear</button></div>' +
+      '<button type="button" data-rt="rev">Reverse</button><button type="button" data-rt="clear">Clear</button>' +
+      '<button type="button" data-rt="new" title="Keep this route on the map (saved under Saved routes) and start another">New route</button></div><div id="rt-onmap"></div>' +
       '<ol id="rt-wps" class="rtwps"></ol>' +
       '<div class="rtrow"><label>Depart (Zulu) <input type="datetime-local" id="rt-dep" step="60"></label><button type="button" data-rt="now">Now</button></div>' +
       '<div class="rtrow"><label>Stop at each waypoint <input type="number" id="rt-stop" min="0" max="1440" step="5" value="' + S.stopMin + '"> min</label>' +
@@ -387,14 +388,16 @@ function main() {
     if (b.hasAttribute("data-evopen")) { evOpen(b.getAttribute("data-evopen")); return; }
     if (b.hasAttribute("data-evdel")) { var ei = b.getAttribute("data-evdel"); lsSet(EV_KEY, evAll().filter(function (x) { return x.id !== ei; })); evSavedUi(); return; }
     if (b.hasAttribute("data-zoom")) { var p = b.getAttribute("data-zoom").split(","); S.ctx.map.setView([+p[0], +p[1]], Math.max(S.ctx.map.getZoom(), 12)); return; }
+    if (b.hasAttribute("data-show")) { showSaved(b.getAttribute("data-show")); return; }
     if (b.hasAttribute("data-load")) { loadRoute(b.getAttribute("data-load")); return; }
-    if (b.hasAttribute("data-del")) { var id = b.getAttribute("data-del"); lsSet(SKEY, savedAll().filter(function (x) { return x.id !== id; })); savedUi(); return; }
+    if (b.hasAttribute("data-del")) { var id = b.getAttribute("data-del"); lsSet(SKEY, savedAll().filter(function (x) { return x.id !== id; })); savedUi(); drawKept(); return; }
     var k = b.getAttribute("data-rt");
     if (k === "tap") { S.tap = !S.tap; modesUi(); }
     else if (k === "addpt") { var sp = el("rt-ptsel"), pt = sp && ptsHere().filter(function (x) { return x.id === sp.value; })[0]; if (pt) { S.fitNext = true; add(pt.lat, pt.lon, pt.n); } }
     else if (k === "me") myLocation();
     else if (k === "rev") { S.wps.reverse(); changed(); }
     else if (k === "clear") { S.wps = []; changed(); }
+    else if (k === "new") newRoute();
     else if (k === "now") { S.depart = null; setDepInput(); retime(); }
     else if (k === "gpx" || k === "kml" || k === "geojson" || k === "tak") exportFile(k);
     else if (k === "print") printSheet();
@@ -430,7 +433,7 @@ function main() {
     if (S.wps.length >= MAX_WP) { msg("Up to " + MAX_WP + " waypoints."); return; }
     S.wps.push(cleanWps([{ lat: lat, lon: lon, name: name }])[0]); changed();
   }
-  function changed() { S.wps = cleanWps(S.wps); keepCur(); wpsUi(); drawWps(); plan(); }
+  function changed() { S.wps = cleanWps(S.wps); keepCur(); wpsUi(); drawKept(); drawWps(); plan(); }
   function retime() { S.routes.forEach(function (r) { r.cum = null; }); afterRoute(true); }
 
   /* ---------- finding places ---------- */
@@ -546,7 +549,7 @@ function main() {
     /* waypoints get a pane of their own above the lines, so the route never draws over them */
     if (!map.getPane("routewppane")) { map.createPane("routewppane"); map.getPane("routewppane").style.zIndex = 662; }
     if (!S.svg) S.svg = L.svg({ pane: "routepane" });
-    if (!S.layer) { S.layer = L.layerGroup(); S.lines = L.layerGroup().addTo(S.layer); S.marks = L.layerGroup().addTo(S.layer); S.hz = L.layerGroup().addTo(S.layer); S.rxl = L.layerGroup().addTo(S.layer); }
+    if (!S.layer) { S.layer = L.layerGroup(); S.kept = L.layerGroup().addTo(S.layer); S.lines = L.layerGroup().addTo(S.layer); S.marks = L.layerGroup().addTo(S.layer); S.hz = L.layerGroup().addTo(S.layer); S.rxl = L.layerGroup().addTo(S.layer); }
     if (!S.ctx.layer.hasLayer(S.layer)) S.ctx.layer.addLayer(S.layer);
   }
   function drawRoute() {
@@ -566,6 +569,7 @@ function main() {
       main.addTo(S.lines);
     }
     legend();
+    drawKept();
     drawWps();
   }
   function drawWps() {
@@ -1690,14 +1694,82 @@ function main() {
     D.documentElement.classList.add("rtprinting");
     W.OSAP_PDF.print({ title: "Route plan: " + routeName(), root: pr }).then(function () { D.documentElement.classList.remove("rtprinting"); });
   }
+  /* several routes on the map at once: a saved route marked "on the map" is drawn in its own colour with its name, beside the
+     route being planned. Each keeps the line it was saved with (thinned), so showing it needs no router. */
+  var KCOL = ["#2b8a3e", "#ae3ec9", "#d6336c", "#0c8599", "#f08c00", "#5f3dc4", "#a61e4d", "#495057"];
+  function sameWps(a, b) { return a.length === b.length && a.every(function (w, i) { return Math.abs(w.lat - b[i].lat) < 1e-6 && Math.abs(w.lon - b[i].lon) < 1e-6; }); }
+  function curLine() {
+    var r = S.routes[S.sel]; if (!r || !r.coords || r.coords.length < 2) return null;
+    var c = r.coords.map(function (x) { return x.lat != null ? [x.lat, x.lng] : [x[0], x[1]]; }), step = Math.max(1, Math.ceil(c.length / 1500)), o = [];
+    for (var i = 0; i < c.length; i += step) o.push([Math.round(c[i][0] * 1e5) / 1e5, Math.round(c[i][1] * 1e5) / 1e5]);
+    var z = c[c.length - 1]; o.push([Math.round(z[0] * 1e5) / 1e5, Math.round(z[1] * 1e5) / 1e5]);
+    return { line: o, m: Math.round(r.m || 0), s: Math.round(r.total || r.s || 0), road: !!r.road };
+  }
+  function keptLine(x) { return Array.isArray(x.line) && x.line.length > 1 ? x.line : x.wps.map(function (w) { return [w.lat, w.lon]; }); }
+  function drawKept() {
+    if (!S.kept) return; S.kept.clearLayers();
+    savedAll().forEach(function (x) {
+      if (!x.show || sameWps(x.wps, S.wps)) return;
+      var col = KCOL.indexOf(x.color) >= 0 ? x.color : KCOL[0], ln = keptLine(x), straight = !(Array.isArray(x.line) && x.line.length > 1);
+      L.polyline(ln, { pane: "routepane", renderer: S.svg, color: "#fff", weight: 7, opacity: 0.85, interactive: false }).addTo(S.kept);
+      var pl = L.polyline(ln, { pane: "routepane", renderer: S.svg, color: col, weight: 4, opacity: 0.95, dashArray: straight ? "8 6" : null });
+      pl.bindPopup(function () {
+        var d = D.createElement("div"); d.setAttribute("data-keep-pop", "1");
+        d.innerHTML = "<h3>" + E(x.name) + "</h3><p>" + (x.m ? E(dist(x.m)) + (x.s ? " · " + E(dur(x.s)) : "") + " · " : "") + x.wps.length + " waypoints</p><p class=\"obs\">Saved route " + E(String(x.saved).slice(0, 10)) + (straight ? ", drawn as straight lines between its waypoints (saved before routes kept their line)" : "") + ". A planning aid, not a record.</p>" +
+          '<div class="rtpb"><button type="button" data-kl="1">Edit this route</button><button type="button" data-kh="1">Hide</button></div>';
+        d.querySelector("[data-kl]").addEventListener("click", function (e) { L.DomEvent.stop(e); S.ctx.map.closePopup(); loadRoute(x.id); });
+        d.querySelector("[data-kh]").addEventListener("click", function (e) { L.DomEvent.stop(e); S.ctx.map.closePopup(); showSaved(x.id, false); });
+        return d;
+      });
+      pl.addTo(S.kept);
+      /* its name at the middle of the line (a marker rather than a permanent tooltip, so clearing the layer always takes it away) */
+      L.marker(ln[Math.floor(ln.length / 2)], { pane: "routewppane", interactive: false, keyboard: false,
+        icon: L.divIcon({ className: "rtkn", html: '<span class="rtkname" style="border-left:4px solid ' + col + '">' + E(x.name) + "</span>", iconSize: [0, 0] }) }).addTo(S.kept);
+      if (S.ctx.put) S.ctx.put("rtk:" + x.id, pl);
+    });
+    onMapUi();
+  }
+  /* the routes on the map, listed under the waypoints so they can be found and hidden without scrolling to Saved routes */
+  function onMapUi() {
+    var box = el("rt-onmap"); if (!box) return;
+    var on = savedAll().filter(function (x) { return x.show; });
+    box.innerHTML = on.length ? '<p class="obs rtonmap">Also on the map: ' + on.map(function (x) {
+      return '<button type="button" class="linkish" data-show="' + E(x.id) + '" title="Hide ' + E(x.name) + '"><span class="rtsw" style="background:' + (KCOL.indexOf(x.color) >= 0 ? x.color : KCOL[0]) + '"></span>' + E(x.name) + " ×</button>"; }).join(" ") + "</p>" : "";
+  }
+  function showSaved(id, v) {
+    var list = savedAll(), x = list.filter(function (r) { return r.id === id; })[0]; if (!x) return;
+    x.show = v == null ? !x.show : !!v; lsSet(SKEY, list); savedUi(); drawKept();
+  }
+  /* a route saved without a name: "WING 2 to SFRE AOB" when its ends are named, else Route 1, Route 2… so routes on the map read apart */
+  function autoName(list) {
+    var a = S.wps[0], z = S.wps[S.wps.length - 1];
+    if (a.name && z.name) return clean(a.name + " to " + z.name, 60);
+    for (var n = 1; ; n++) if (!list.some(function (x) { return x.name === "Route " + n; })) return "Route " + n;
+  }
+  function nextColor(list) { var used = list.filter(function (x) { return x.show; }).map(function (x) { return x.color; }); return KCOL.filter(function (c) { return used.indexOf(c) < 0; })[0] || KCOL[list.length % KCOL.length]; }
+  /* New route: the route being planned stays on the map (saved, if it is not already) and the waypoints clear for the next one */
+  function newRoute() {
+    if (S.wps.length < 2) { S.wps = []; changed(); return; }
+    var list = savedAll(), x = list.filter(function (r) { return sameWps(r.wps, S.wps); })[0];
+    if (x) { x.show = true; if (!x.line) { var cl = curLine(); if (cl) { x.line = cl.line; x.m = cl.m; x.s = cl.s; } } if (!x.color) x.color = nextColor(list); lsSet(SKEY, list); }
+    else if (!saveRoute(el("rt-name") && el("rt-name").value)) return;
+    var nm = (savedAll().filter(function (r) { return sameWps(r.wps, S.wps); })[0] || {}).name || "the route";
+    S.wps = []; changed(); savedUi();
+    msg(nm + " stays on the map. Add the waypoints of the next route.");
+    if (W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast(nm + " stays on the map. Tap the map for the next route.");
+  }
   function savedAll() { var a = lsGet(SKEY, []); return Array.isArray(a) ? a.filter(function (x) { return x && x.id && Array.isArray(x.wps); }) : []; }
   function saveRoute(name) {
     if (S.wps.length < 2) { msg("Add at least two waypoints first."); return; }
     var list = savedAll(); if (list.length >= MAX_SAVED) { msg("Up to " + MAX_SAVED + " saved routes. Delete some first."); return; }
     var b = new Uint8Array(4); crypto.getRandomValues(b);
-    list.unshift({ id: "rt-" + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return x.toString(16); }).join(""), name: clean(name, 60) || routeName(), cc: S.ctx.cc, mode: S.mode, speed: S.speed, stopMin: S.stopMin, wps: S.wps.slice(), saved: new Date().toISOString() });
-    msg(lsSet(SKEY, list) ? "Saved in this browser." : "This browser would not save it (storage full or blocked).");
-    el("rt-name").value = ""; savedUi();
+    var cl = curLine() || {}, rec = { id: "rt-" + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return x.toString(16); }).join(""), name: clean(name, 60) || autoName(list), cc: S.ctx.cc, mode: S.mode, speed: S.speed, stopMin: S.stopMin, wps: S.wps.slice(), saved: new Date().toISOString(),
+      line: cl.line, m: cl.m, s: cl.s, show: true, color: nextColor(list) };
+    list.unshift(rec);
+    var ok = lsSet(SKEY, list);
+    msg(ok ? "Saved in this browser. It stays on the map when you plan another route." : "This browser would not save it (storage full or blocked).");
+    el("rt-name").value = ""; savedUi(); drawKept();
+    return ok;
   }
   function loadRoute(id) {
     var x = savedAll().filter(function (r) { return r.id === id; })[0]; if (!x) return;
@@ -1708,6 +1780,7 @@ function main() {
     var box = el("rt-saved"), list = savedAll(); if (!box) return;
     box.innerHTML = list.length ? "<h3>Saved routes</h3><ul class=\"rtsaved\">" + list.map(function (x) {
       return "<li><span><b>" + E(x.name) + '</b> <i class="obs">' + E((MODES.filter(function (m) { return m.id === x.mode; })[0] || {}).name || "") + " · " + x.wps.length + " points · " + E(String(x.saved).slice(0, 10)) + "</i></span>" +
+        '<button type="button" data-show="' + E(x.id) + '" aria-pressed="' + !!x.show + '" title="Show this route on the map beside the one being planned"><span class="rtsw" style="background:' + (KCOL.indexOf(x.color) >= 0 ? x.color : KCOL[0]) + '"></span>' + (x.show ? "On map" : "Show") + "</button>" +
         '<button type="button" data-load="' + E(x.id) + '">Load</button><button type="button" data-del="' + E(x.id) + '" aria-label="Delete ' + E(x.name) + '">×</button></li>';
     }).join("") + "</ul>" : "";
   }
@@ -1751,7 +1824,9 @@ function main() {
 
   /* ---------- styles ---------- */
   var st = D.createElement("style");
-  st.textContent = ".rtsec h2{font-size:14px;margin:0 0 6px}.rtsec h3{font-size:12.5px;margin:10px 0 4px}.rtseg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}" +
+  st.textContent = ".rtkn{background:none;border:0}.rtkname{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;background:rgba(20,24,28,.85);color:#fff;border-radius:3px;font:700 10.5px/14px 'IBM Plex Mono',monospace;padding:1px 5px}" +
+    ".rtsaved .rtsw,.rtonmap .rtsw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}.rtsaved button[aria-pressed=true]{border-color:var(--accent)}.rtonmap .linkish{margin-right:6px}" +
+    ".rtsec h2{font-size:14px;margin:0 0 6px}.rtsec h3{font-size:12.5px;margin:10px 0 4px}.rtseg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}" +
     ".rtseg button,.rtbtns button,.rtfind button,.rtalts button,.rtrow button,.rtsaved button{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--surface2,var(--surface));color:var(--ink);border-radius:4px;padding:5px 9px;min-height:32px;cursor:pointer}" +
     ".rtseg button[aria-pressed=true],.rtalts button[aria-pressed=true],.rtbtns button[aria-pressed=true]{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}" +
     ".rtbtns{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.rtfind{display:flex;gap:4px;margin:4px 0}.rtfind input{flex:1;min-width:0;font:inherit;font-size:13px;padding:5px 7px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)}" +
