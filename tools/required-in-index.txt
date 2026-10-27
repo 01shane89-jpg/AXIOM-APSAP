@@ -79,6 +79,7 @@ function openRec(id) { if (!(window.ASAP_PHONE && window.ASAP_PHONE.on())) setVi
 window.TSAP.areaApi
 
 # ATAK-style map controls (claude/atak-controls)
+<script src="assets/osap-dz.js"></script>
 <script src="assets/osap-atak.js"></script>
 
 # tidy screen: one view chooser (Overlays), one country picker, Reports/Settings menus (claude/ui-cleanup)
