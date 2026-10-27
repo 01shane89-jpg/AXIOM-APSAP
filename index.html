@@ -1670,10 +1670,14 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         version: "1.3.0", TIME: new Date(Date.now() - 864e5).toISOString().slice(0, 10), pane: "fldpane", maxZoom: 13, opacity: ML.op, attribution: "NASA FIRMS / GIBS" }); } }
   };
   var fldOn = {};
+  /* every way a satellite layer goes on or off (its tick, Clear map, a tab change) says so, so the weather legend and the
+     ticks elsewhere follow it (Shane 2026-10-27: the flood legend stayed after Clear map) */
   function setFlood(k, on) {
+    var was = !!ML[k];
     ML[k] = !!on; mlSet();
     if (on && !fldOn[k]) fldOn[k] = FLOODX[k].layer().addTo(map);
     if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
+    if (was !== !!on) document.dispatchEvent(new CustomEvent("osap:floodx", { detail: { id: k, on: !!on } }));
   }
   function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(fldOp(k)); }); }
   /* ---------- elevation shading: hillshade tiles built from LiDAR where a government publishes it, satellite elevation elsewhere ----------
@@ -3877,7 +3881,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (RENDER_HOLD) { RENDER_HELD = true; return; }
     var dsRecOn = Object.keys(DS).some(function (k) { return LBY[k] && !LBY[k].sof && k !== "alerts"; });
     /* a topic scope shows the topic's records on the map and in the list whatever the data set ticks */
-    var sc = scoped(), mapped = function (r) { return DS[r.layer] || (sc && sc.layers.indexOf(r.layer) >= 0); };
+    /* ...except under an open conflict tab, whose own panel switches its records on and off (Placed reports) */
+    var sc = document.documentElement.getAttribute("data-cf") ? null : scoped(), mapped = function (r) { return DS[r.layer] || (sc && sc.layers.indexOf(r.layer) >= 0); };
     shown = storyDedup(R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || mapped(r)); }), STORY_ALSO = {});
     scopeUi();
     if (typeof rvSoon === "function") rvSoon();
@@ -4229,8 +4234,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   new MutationObserver(function () {
     var cf = document.documentElement.getAttribute("data-cf"), t = topicNow();
     if (t) { TOPIC = t; SCOPED = true; }
-    var back = cfWas && !cf; cfWas = cf;
-    if (back && current === "timeline") render(); else scopeUi();
+    var back = cfWas && !cf, opened = cf && !cfWas; cfWas = cf;
+    if ((back || opened) && current === "timeline") render(); else scopeUi();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-cf", "data-view"] });
   var pbOn = document.getElementById("pb-on"), pbBody = document.getElementById("pb-body");
   var pbDay = document.getElementById("pb-day"), pbPlay = document.getElementById("pb-play");
@@ -6556,6 +6561,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the open tab is drawn by its own tab's code into a layer of its own (DSG), with the panel output thrown away. The
      Timeline lists the ticked sets' records (every record when none is ticked) and maps only the ticked ones. */
   var DSG = {}, dsLg = {}, dsPrev = null, dsStamp = 0, dsTry = {};
+  /* the open tab whose "not on the map" note was answered: its set unticked, or Clear map pressed while it was open. The note
+     stays away until another tab is opened (Shane 2026-10-27, Utah: after Clear map the Earthquakes note would not go) */
+  var dsHintGone = null;
   /* the headings the Data sets list is grouped under (Shane 2026-09-30: data sets are only the topics and areas that filter
      the reporting). The conflict tabs ("cf-") sit with Conflict and security; a set in none of the groups goes under
      "More topics" */
@@ -6634,6 +6642,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function dsSet(v, on) {
     if (on) DS[v] = 1; else delete DS[v];
+    if (v === current && !on) dsHintGone = current;
     try { localStorage.setItem(DS_KEY, JSON.stringify(Object.keys(DS))); } catch (e) {}
     var l = LBY[current] || {};
     if (v === current && l.sof) { if (on) sofLayer.addTo(map); else map.removeLayer(sofLayer); }
@@ -6664,7 +6673,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (window.OSAP_LEGEND && window.OSAP_LEGEND.refresh) window.OSAP_LEGEND.refresh();
     var list = dsList(), l = LBY[current];
     var mine = l && list.some(function (x) { return x.id === current; });
-    if (mine && !DS[current]) dsHint.innerHTML = "<span>" + esc(l.name) + ' is not on the map</span><button type="button" data-dsshow="' + esc(current) + '">Show on map</button>';
+    if (mine && !DS[current] && dsHintGone !== current) dsHint.innerHTML = "<span>" + esc(l.name) + ' is not on the map</span><button type="button" data-dsshow="' + esc(current) + '">Show on map</button>';
     else dsHint.innerHTML = "";
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
@@ -6781,13 +6790,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var o = e.target.closest && e.target.closest("[data-dsopen]");
     if (o) {
       var ov = o.getAttribute("data-dsopen"), ob = seg.querySelector('[data-view="' + ov + '"]');
+      /* the open tab's name pressed again closes it: back to All reports (Shane 2026-10-27, Utah: Earthquakes and hazards
+         stayed chosen and could not be deselected) */
+      if (ov === current && ov !== "timeline" && !document.documentElement.getAttribute("data-cf")) { ob = seg.querySelector('[data-view="timeline"]'); ov = "timeline"; }
       if (ob && (ov !== current || document.documentElement.getAttribute("data-cf"))) ob.click();
       document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: ov }));
       return;
     }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
-    if (!on) { dsCfClear(); var DX = window.OSAP_DISASTERX; if (DX) DX.list().forEach(function (x) { if (x.on) DX.set(x.id, false); }); dsExtra().forEach(function (x) { if (x.on()) x.set(false); }); }
+    if (!on) { dsHintGone = current; dsCfClear(); var DX = window.OSAP_DISASTERX; if (DX) DX.list().forEach(function (x) { if (x.on) DX.set(x.id, false); }); dsExtra().forEach(function (x) { if (x.on()) x.set(false); }); }
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
     dsSet(current, !!DS[current]);
   });
@@ -6797,6 +6809,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     else { var mb = document.querySelector(".mlctl .mlbtn"); if (mb && mb.getAttribute("aria-expanded") !== "true") mb.click(); }
   });
   document.addEventListener("osap:period", function () { dsStamp++; dsSync(); });
+  /* a satellite layer switched from elsewhere (the Weather panel, Clear map): its tick and the count follow */
+  document.addEventListener("osap:floodx", function () { setTimeout(dsUi, 0); });
   /* conflict tabs hide the note; tabs merged into a conflict tab drop out of the list once the conflicts code has run */
   new MutationObserver(function () { dsUi(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-cf"] });
   setTimeout(dsUi, 1500);
@@ -6804,6 +6818,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
     if (v === current) return;
+    dsHintGone = null;
     /* Route is a map tool, not a data set: opening it, or going back from it, keeps the map where the analyst left it
        (the planner fits to a route only once one is planned or asked for) */
     var keep = !fromLoad && (v === "route" || current === "route");

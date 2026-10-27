@@ -1979,8 +1979,9 @@
     var l = LBYK[k];
     ON[k] = !!on; LS[k] = !!on; lsave();
     if (l.mirror) {
-      var src = document.querySelector('#ml-panel input[data-fx="' + l.mirror + '"]');
+      var src = document.querySelector('#ml-panel input[data-fx="' + l.mirror + '"]'), DX = window.OSAP_DISASTERX;
       if (src && src.checked !== !!on) { src.checked = !!on; src.dispatchEvent(new Event("change", { bubbles: true })); }
+      else if (!src && DX) DX.set(l.mirror, !!on);
     } else if (l.grid) {
       if (!LYR[k]) LYR[k] = L.layerGroup();
       if (on) { LYR[k].addTo(map); gridSoon(); } else { map.removeLayer(LYR[k]); LYR[k].clearLayers(); }
@@ -2054,23 +2055,30 @@
       var b = e.target.closest && e.target.closest("[data-wxopen]"), v = document.querySelector('#view-seg button[data-view="weather"]'); if (!b || !v) return;
       v.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "weather" }));
     });
-    /* keep the mirrored flood rows in step with the originals */
-    document.getElementById("ml-panel").addEventListener("change", function (e) {
-      var fx = e.target.dataset && e.target.dataset.fx; if (!fx) return;
+    /* keep the mirrored flood rows in step with the layers themselves: index.html's setFlood says each change, whether made
+       by a tick, by Clear map or by a tab change */
+    function mirrorSync(fx, v) {
       LAY.forEach(function (l) {
         if (l.mirror !== fx) return;
-        var mine = box.querySelector('input[data-wxl="' + l.k + '"]'); if (mine) mine.checked = e.target.checked;
-        var row = box.querySelector('.wxrow[data-wxrow="' + l.k + '"]'); if (row) row.classList.toggle("on", e.target.checked);
-        ON[l.k] = e.target.checked; legendDraw();
+        var mine = box.querySelector('input[data-wxl="' + l.k + '"]'); if (mine) mine.checked = v;
+        var row = box.querySelector('.wxrow[data-wxrow="' + l.k + '"]'); if (row) row.classList.toggle("on", v);
+        ON[l.k] = v;
       });
-    });
+      legendDraw();
+    }
+    document.addEventListener("osap:floodx", function (e) { var d = e.detail || {}; if (d.id) mirrorSync(d.id, !!d.on); });
     return true;
+  }
+  /* a satellite flood layer's real state (index.html's window.OSAP_DISASTERX), not a tick that may be stale */
+  function floodOn(fx) {
+    var DX = window.OSAP_DISASTERX, x = DX && DX.list().filter(function (y) { return y.id === fx; })[0];
+    return x ? !!x.on : !!(document.querySelector('#ml-panel input[data-fx="' + fx + '"]') || {}).checked;
   }
   /* the map legend: one small box listing the weather layers that are on */
   var legCtl = null;
   function legendDraw() {
     if (!map) return;
-    var on = LAY.filter(function (l) { return l.mirror ? !!(document.querySelector('#ml-panel input[data-fx="' + l.mirror + '"]') || {}).checked : ON[l.k]; });
+    var on = LAY.filter(function (l) { return l.mirror ? floodOn(l.mirror) : ON[l.k]; });
     if (!on.length) { if (legCtl) { map.removeControl(legCtl); legCtl = null; } return; }
     if (!legCtl) {
       var Ctl = L.Control.extend({ options: { position: "bottomleft" }, onAdd: function () { var d = L.DomUtil.create("div", "leaflet-control wxlegend"); L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d); return d; } });

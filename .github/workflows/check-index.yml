@@ -179,6 +179,7 @@ jobs:
       - run: node tests/cf_verify_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/cf_history_range_smoke.mjs
+      - run: node tests/cf_datasets_smoke.mjs
       - run: node tests/violence_history_smoke.mjs
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
