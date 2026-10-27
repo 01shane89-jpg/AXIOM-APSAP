@@ -586,6 +586,8 @@ function main() {
       m.addTo(S.marks);
       if (S.ctx.put) S.ctx.put("rt:" + i, m);
     });
+    /* the list beside the map (index.html) lists the route and its waypoints by name */
+    D.dispatchEvent(new Event("osap:route"));
   }
   function legend() {
     var Lg = W.OSAP_LEGEND; if (!Lg) return;
@@ -1829,6 +1831,14 @@ function main() {
     exposure: function (coords, days) { var r = apiLine(coords); if (r.coords.length < 2) return { score: 0, hits: [] }; var c = r.coords; return withWps([{ lat: c[0][0], lon: c[0][1] }, { lat: c[c.length - 1][0], lon: c[c.length - 1][1] }], function () { return evExposure(r, evHaz(+days || 30)); }); },
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
     line: function () { var r = S.routes[S.sel]; return r && r.coords && r.coords.length > 1 ? r.coords.map(function (c) { return c.lat != null ? [c.lat, c.lng] : [c[0], c[1]]; }) : null; } };
+  /* the route as one item for the list beside the map (index.html rvSofItems): its name, length and time, and each waypoint
+     with its NATO kind, so the line and its waypoints are listed together, by name */
+  W.OSAP_ROUTETAB.summary = function () {
+    if (!S.ctx || !S.wps.length) return null;
+    var r = S.routes[S.sel], n = S.wps.length;
+    return { name: routeName(), dist: r ? dist(r.m) : "", time: r ? dur(r.total != null ? r.total : r.s) : "", road: !!(r && r.road),
+      stops: S.wps.map(function (w, i) { return { i: i, name: wpName(i), kind: i === 0 ? "Start point" : i === n - 1 ? "Release point" : "Waypoint", lat: w.lat, lon: w.lon }; }) };
+  };
   if (W.OSAP_ROUTE_WAIT && D.documentElement.getAttribute("data-view") === "route") W.OSAP_ROUTE_WAIT();
 }
   /* when the page opens straight on this tab, this file can arrive before assets/osap-geo.js has run */
