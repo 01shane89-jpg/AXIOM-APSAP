@@ -284,6 +284,7 @@ function main() {
       '<option value="xc"' + (S.evFoot === "xc" ? " selected" : "") + '>Cross-country, over open ground</option><option value="paths"' + (S.evFoot === "paths" ? " selected" : "") + ">On roads and paths only</option></select></label>" +
       '<label>Incidents from the last <select id="rt-evdays"><option>7</option><option>14</option><option selected>30</option><option>90</option></select> days</label></div>' +
       '<div class="rtbtns"><button type="button" data-rt="evac" class="rtgo">Plan evacuation route</button></div></details><div id="rt-evres"></div><div id="rt-evsaved"></div></div>' +
+      '<div class="sec rtsec" id="rt-flight"><h2>Flight plan</h2><p><button type="button" class="linkish" data-rt="flight">Plan a flight (airborne operation)</button> <span class="obs">aircraft, departure airfield, checkpoints, IP, drop zone and landing, as straight air legs with times.</span></p></div>' +
       '<div class="sec rtsec"><h2>Travel by</h2><div class="rtseg" role="group" aria-label="Travel by" id="rt-modes"></div><div id="rt-speed"></div></div>' +
       '<div class="sec rtsec"><h2>Waypoints</h2>' +
       '<form id="rt-find" class="rtfind" autocomplete="off"><input type="search" id="rt-q" placeholder="Place, lat/lon or MGRS" aria-label="Add a waypoint: place, lat/lon or MGRS" maxlength="120">' +
@@ -400,6 +401,7 @@ function main() {
       if (W.OSAP_COMMSPLAN && D.documentElement.getAttribute("data-view") === "comms") { W.OSAP_COMMSPLAN_WANT = null; W.OSAP_COMMSPLAN.routeCorridor(); }
       else if (W.TSAP && W.TSAP.setView) { W.TSAP.setView("comms"); D.dispatchEvent(new Event("osap:view")); } }
     else if (k === "evsave") evSave();
+    else if (k === "flight") { if (W.OSAP_FLIGHT_GO) W.OSAP_FLIGHT_GO({}); }
     else if (k === "epe") { if (W.OSAP_EPE_GO) W.OSAP_EPE_GO(S.wps.length ? { at: [S.wps[0].lat, S.wps[0].lon], how: "Route waypoint A" } : {}); }
     else if (k === "goto") { var to = el(b.getAttribute("data-to")); if (to) { if (to.tagName === "DETAILS") to.open = true; to.scrollIntoView({ behavior: "smooth", block: "start" }); } }
   }
