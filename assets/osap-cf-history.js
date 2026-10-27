@@ -339,7 +339,9 @@
     live: function (cid) { return !!(ctab() && ctab().active() === cid); },
     intro: function (x) { var pre = +String(x.since || "").slice(0, 4) < 1989;
       return "From " + day(x.start) + (pre ? " (UCDP’s records begin in 1989; this conflict began " + day(x.since) + ")" : ", the start of this conflict") + " to " + day(x.last || x.asof) + "."; },
-    none: "The history for this conflict is not built yet. It is written by the weekly refresh." });
+    none: "The history for this conflict is not built yet. It is written by the weekly refresh.",
+    /* the country's copy steps aside while this one draws, and comes back when it is switched off */
+    toggled: function () { if (W.OSAP_VIOLENCE_HISTORY && W.OSAP_VIOLENCE_HISTORY.redraw) W.OSAP_VIOLENCE_HISTORY.redraw(); } });
   /* for other parts of OSAP: show the history for a span of dates on the open conflict tab (switches the layer on) */
   W.OSAP_CF_HISTORY = { span: CF.span, show: CF.show };
   (W.OSAP_CF_HOOKS = W.OSAP_CF_HOOKS || []).push({
@@ -358,8 +360,10 @@
   var win = null;
   var VH = make({ root: "vh", key: "osap-vh", lg: "vh", pane: "vhpane", more: true,
     home: function () { return null; },
-    /* a conflict tab draws its own history; this one waits underneath until the tab closes */
-    live: function (cid) { return cid === "cc/" + cc() && !D.documentElement.hasAttribute("data-cf"); },
+    /* a conflict tab draws its own history when its panel's History of violence is ticked; this one waits underneath
+       until then. Ticked in Data sets with the tab's own switch off, it draws on the tab too (Shane 2026-10-27: Haiti gang war,
+       History of violence ticked in Data sets, nothing on the map) */
+    live: function (cid) { return cid === "cc/" + cc() && !(D.documentElement.hasAttribute("data-cf") && CF.isOn() && CF.id()); },
     intro: function (x) { return "Every event UCDP placed in " + esc(x.name) + " (inside the country’s outline as this map draws it), from " + day(x.start) + ", when UCDP’s records begin, to " + day(x.last || x.asof) + "."; },
     none: "The history for this country could not be loaded. It is written by the weekly refresh; if it was built, your plan may not include conflict data.",
     after: head, toggled: function () { if (W.OSAP_DATASETS && W.OSAP_DATASETS.refresh) W.OSAP_DATASETS.refresh(); } });
@@ -407,5 +411,5 @@
   new MutationObserver(function () { VH.redraw(); }).observe(D.documentElement, { attributes: true, attributeFilter: ["data-cf"] });
   /* switched on last time: back on the map once the map exists */
   (function wait(n) { if (W.__asapMap && W.L) { if (VH.isOn()) VH.open("cc/" + cc()); } else if (n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
-  W.OSAP_VIOLENCE_HISTORY = { open: openWin, close: closeWin, span: VH.span, show: function (a, b) { if (VH.id() !== "cc/" + cc()) VH.open("cc/" + cc()); return VH.show(a, b); } };
+  W.OSAP_VIOLENCE_HISTORY = { open: openWin, close: closeWin, span: VH.span, redraw: function () { VH.redraw(); }, show: function (a, b) { if (VH.id() !== "cc/" + cc()) VH.open("cc/" + cc()); return VH.show(a, b); } };
 })();

@@ -74,8 +74,9 @@ await settle(p).catch(() => {});
 const r = await p.evaluate(() => {
   const vis = (sel) => { const e = document.querySelector(sel); return e ? getComputedStyle(e).visibility : "none"; };
   return { cf: document.documentElement.getAttribute("data-cf"), mk: document.querySelectorAll(".leaflet-mpmkpane-pane .leaflet-marker-icon").length, vmk: vis(".leaflet-mpmkpane-pane"), vln: vis(".leaflet-mppane-pane"),
-    ln: document.querySelectorAll(".leaflet-mppane-pane path, .leaflet-mppane-pane canvas").length, over: vis(".leaflet-overlay-pane") };
+    ln: document.querySelectorAll(".leaflet-mppane-pane path, .leaflet-mppane-pane canvas").length, over: vis(".leaflet-marker-pane") };
 });
+// Leaflet's own marker pane stays hidden on a conflict tab (the overlay pane no longer is: the Flood data set draws there)
 ok(!!r.cf && r.over === "hidden", "inside the conflict tab (" + r.cf + "), where the page's other layers are hidden");
 ok(r.mk > 0 && r.vmk === "visible", "the plan's markers show in the conflict tab (" + r.mk + ", " + r.vmk + ")");
 ok(r.ln > 0 && r.vln === "visible", "the plan's rings and routes show in the conflict tab (" + r.ln + ", " + r.vln + ")");
