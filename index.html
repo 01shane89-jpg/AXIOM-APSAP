@@ -6884,7 +6884,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         /* a popup built as an element (route waypoints, planners) is read the same way as one written as text */
         var root = pc && pc.nodeType === 1 ? pc : (rvTpl.innerHTML = typeof pc === "string" ? pc : "", rvTpl.content);
         var h = root.querySelector("h3") || root.querySelector("b") || root.querySelector("p"), t = root.querySelector(".tier"), nm = h ? h.textContent.trim() : (m.options && m.options.title) || "";
-        m.__rvItem = { id: k, sof: true, lat: ll.lat, lon: ll.lng, ts: "", title: nm ? nm.slice(0, 160) : "Map item", tier: t ? t.textContent : "" };
+        var tier = t ? t.textContent : "";
+        /* another saved route shown on the Route map with the one being planned ("rtk:<saved route id>") is its own route item */
+        if (/^rtk:/.test(k)) { var sr = rvSavedRoute(k.slice(4)); nm = (sr && sr.name) || nm || "Saved route"; tier = "Saved route"; }
+        m.__rvItem = { id: k, sof: true, lat: ll.lat, lon: ll.lng, ts: "", title: nm ? nm.slice(0, 160) : "Map item", tier: tier };
       }
       out.push(m.__rvItem);
     });
@@ -6895,6 +6898,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      each by name and MGRS) folded inside it. The analyst's saved points (Point on the map toolbar) are listed by name, symbol
      and MGRS. Both are the analyst's own planning marks kept in this browser, never reports. */
   var rvRtOpen = false;
+  function rvSavedRoute(id) { try { var a = JSON.parse(localStorage.getItem("osap-routes") || "[]"); return Array.isArray(a) ? a.filter(function (x) { return x && x.id === id; })[0] || null : null; } catch (e) { return null; } }
   function rvGrid(lat, lon) { var G = window.OSAP_GEO; return (G && G.mgrs && G.mgrs(lat, lon)) || (lat.toFixed(5) + ", " + lon.toFixed(5)); }
   function rvRouteItem() {
     var T = window.OSAP_ROUTETAB, s = T && T.summary ? T.summary() : null;
