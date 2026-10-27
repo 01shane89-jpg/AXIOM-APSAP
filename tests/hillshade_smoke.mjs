@@ -33,9 +33,9 @@ const layers = () => p.evaluate(() => [...document.querySelectorAll("#map .leafl
 
 await load("#th");
 const rows = await p.evaluate(() => [...document.querySelectorAll('#ml-panel input[data-hs]')].map((i) => i.dataset.hs));
-ok(rows.join() === "jp", "Layers menu lists the Japan relief row (Esri World Hillshade was removed for licensing): " + rows.join());
+ok(rows.join() === "jp,world", "Layers menu lists the Japan relief and Esri hillshade rows (Esri only in the free app): " + rows.join());
 ok(await p.evaluate(() => /Elevation and terrain analysis/.test(document.querySelector("#ml-panel").textContent)), "rows sit under the Elevation and terrain analysis heading");
-ok(!asked.some((u) => /arcgisonline|World_Hillshade/.test(u)), "nothing is asked of Esri");
+ok(!asked.some((u) => /World_Hillshade/.test(u)), "nothing is asked of Esri hillshade until it is ticked");
 await tick("jp", true); await p.waitForTimeout(800);
 let L1 = await layers();
 ok(L1.length === 1 && L1[0].blend === "multiply", "ticking Japan relief adds one multiplied layer in the base-map pane");
