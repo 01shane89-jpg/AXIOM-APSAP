@@ -1,0 +1,49 @@
+# Captures caption-free screenshots of each OSAP feature for the company website's product tour.
+# Runs the public OSAP app (01shane89-jpg/axiom-apsap, main) on a runner where map tiles load,
+# and pushes the JPEGs to the website-shots-out branch. Writes nothing else.
+name: Website tour screenshots
+on:
+  push:
+    branches: [website-shots]
+  workflow_dispatch:
+    inputs:
+      only:
+        description: Scenes to capture (names, comma-separated; empty captures all)
+        required: false
+        default: ""
+permissions:
+  contents: write
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          path: self
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          repository: 01shane89-jpg/axiom-apsap
+          ref: main
+          path: osap
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - working-directory: osap
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1
+          npx playwright install --with-deps chromium
+          cp ../self/shots.mjs tools/shots.mjs
+          OUT=../out node tools/shots.mjs 2>&1 | tee ../out-log.txt
+        env:
+          ONLY: ${{ inputs.only }}
+      - name: Push the screenshots to website-shots-out
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          cp out-log.txt out/log.txt; cd out
+          git init -q -b website-shots-out
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q -m "tour screenshots from axiom-apsap main"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" website-shots-out
