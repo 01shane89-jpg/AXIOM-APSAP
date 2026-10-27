@@ -1,0 +1,88 @@
+01-today-01.jpg	Today opens each time you start OSAP
+01-today-02.jpg	Pick any country from the list at the top
+01-today-03.jpg	The daily summary and top stories
+01-today-04.jpg	Economy, key dates and travel advisories
+01-today-05.jpg	Search the news from the box at the top
+01-today-06.jpg	Open map takes you to the map
+02-map-screen-01.jpg	The map: the open country's reporting, in NATO symbols
+02-map-screen-02.jpg	Set the period: 24 h to All, or Custom
+02-map-screen-03.jpg	The title names what you are looking at
+02-map-screen-04.jpg	The Data badge says how fresh the data is
+02-map-screen-05.jpg	Tap a report for its details, source link and fingerprint
+02-map-screen-06.jpg	Tap the grid strip to switch MGRS, decimal degrees or DMS
+03-search-01.jpg	Search finds places and grids
+03-search-02.jpg	It also finds tools, data sets and settings
+03-search-03.jpg	And countries by name or code
+04-data-sets-01.jpg	Data sets are the reporting topics
+04-data-sets-02.jpg	Tick a set to show it on the map; tap its name for its list
+04-data-sets-03.jpg	Clear map takes everything off
+05-weather-01.jpg	Weather: radar, satellite rain, cloud, wind, temperature and air quality
+05-weather-02.jpg	Model time looks ahead up to 72 hours
+05-weather-03.jpg	Open forecasts and warnings for the full weather view
+06-overlays-01.jpg	Overlays: map layers that are not reports
+06-overlays-02.jpg	Infrastructure: communications, power, airfields, ports, bridges and more
+06-overlays-03.jpg	Base map: Grey, Streets, Topographic, Satellite, Hybrid and Offline
+06-overlays-04.jpg	Grid and Crosshair: MGRS lines that get finer as you zoom in
+06-overlays-05.jpg	3D: tilt and turn the map over real ground
+07-long-press-01.jpg	Press and hold anywhere on the map (right-click with a mouse)
+07-long-press-02.jpg	Measure, Route, Point, NAI/TAI, Watch, Plans, Find LZ and Terrain
+07-long-press-03.jpg	Plans: a medical plan or an evacuation plan from here
+08-measure-01.jpg	Tap Measure, then tap the map to add numbered points
+08-measure-02.jpg	Each leg shows its distance and true bearing
+08-measure-03.jpg	The card lists every leg: true, magnetic and back bearing
+09-route-01.jpg	Route: add waypoints by place, grid, map tap or your location
+09-route-02.jpg	Distance, time, arrival and up to 3 alternatives
+09-route-03.jpg	Navigate starts turn-by-turn; Preview route steps through pictures
+10-area-01.jpg	Area: Lasso, Polygon, Circle or Square
+10-area-02.jpg	A drawn area filters the map and the list to what is inside
+10-area-03.jpg	Summarise area, Landing zones, Satellite before/after
+11-satellite-01.jpg	Satellite before/after compares two Sentinel-2 passes
+11-satellite-02.jpg	It lists the passes for the last 90 days with the cloud %
+11-satellite-03.jpg	Side by side, or Swipe on map
+12-points-01.jpg	Point: at the map centre, a tap on the map, or your position
+12-points-02.jpg	Give it a name, a note and an icon
+12-points-03.jpg	Photos keep their original and a SHA-256 fingerprint
+13-watch-01.jpg	Watch: an area, categories, words and severity
+13-watch-02.jpg	OSAP checks every 15 minutes while open
+14-my-work-01.jpg	My work: What's new and Saved work
+14-my-work-02.jpg	Save, mark reviewed, add notes and grade reports (A1 to F6)
+14-my-work-03.jpg	Workspaces: one per job, with import and export of KML and .zip
+15-teams-01.jpg	Share a workspace with a team by link, or as a team case
+15-teams-02.jpg	Each item shows the call sign of who added it, and when
+15-teams-03.jpg	In a case, analysts propose entities and links; a lead approves
+16-photo-check-01.jpg	Photo check reads a picture's metadata on this device
+16-photo-check-02.jpg	Sun and shadow: the sun's direction and height for a place and time
+16-photo-check-03.jpg	Reverse image search links: Google Lens, Bing, Yandex and TinEye
+17-medical-plan-01.jpg	Med plan plans for the map centre or a drawn area
+17-medical-plan-02.jpg	Hospitals, most capable first, with drive times against the golden hour
+17-medical-plan-03.jpg	Status GREEN, AMBER or RED, with a checklist of what is missing
+18-evacuation-01.jpg	Evac: set where the people are, then Work out the options
+18-evacuation-02.jpg	OSAP routes each option and weighs the incidents near it
+18-evacuation-03.jpg	Routes to the U.S. embassy or consulate, airports, airfields and seaports
+18-evacuation-04.jpg	Roles P, A, C, E; legs, corridors, LZs and border crossings
+19-landing-zones-01.jpg	Long-press, then Find LZ
+19-landing-zones-02.jpg	Up to 8 numbered candidates: clear ground, slope, obstacles and aircraft
+20-terrain-01.jpg	Long-press, Terrain: viewshed, reverse viewshed, line of sight and more
+20-terrain-02.jpg	Set the heights and range, then CALCULATE
+20-terrain-03.jpg	The ground that can be seen from the point
+21-comms-01.jpg	Comms: Plan, Coverage, Link, Networks, Equipment and Status
+21-comms-02.jpg	Will I have phone signal? Likely, Possible, No sign or Unknown
+21-comms-03.jpg	Radio link budgets and radio coverage over the ground
+21-comms-04.jpg	Masts and each phone network in its own colour
+22-osir-01.jpg	Reports holds every printable report OSAP makes
+22-osir-02.jpg	OSIR: an Open Source Intelligence Report
+22-osir-03.jpg	Choose country, region, topic and dates
+22-osir-04.jpg	Make OSIR
+22-osir-05.jpg	Summary, key events, map and chronology
+22-osir-06.jpg	Every record keeps its source link and SHA-256 fingerprint
+23-conflict-tabs-01.jpg	Conflict tabs: one per active conflict worldwide
+23-conflict-tabs-02.jpg	Violence history: small red dots and a heat map
+23-conflict-tabs-03.jpg	The Timeline report turns the records into a printable product
+24-settings-01.jpg	The gear: map colours, grid format and distance units
+24-settings-02.jpg	Language, My countries, and the user guide
+24-settings-03.jpg	Offline maps: save a country so OSAP works with no signal
+24-settings-04.jpg	Move to another device, or Sync my devices: no account
+25-reading-01.jpg	Every report is what a source said
+25-reading-02.jpg	Each report links to the original
+25-reading-03.jpg	A record fingerprint (SHA-256) shows the report is the one you saw
+25-reading-04.jpg	AI generated, Automatic and Automatic draft tags
