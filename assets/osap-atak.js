@@ -19,7 +19,7 @@
   var W = window, D = document, map = W.__asapMap, L = W.L;
   if (!map || !L || /[?&]watchscan=1/.test(location.search)) return;
   var G = function () { return W.OSAP_GEO; };
-  var K_UI = "osap-ui", K_FOLD = "osap-atak-fold", K_FMT = "osap-atak-fmt", K_PTS = "osap-atak-pts", K_R = "osap-atak-r";
+  var K_UI = "osap-ui", K_FOLD = "osap-atak-fold", K_FMT = "osap-atak-fmt", K_PTS = "osap-atak-pts", K_R = "osap-atak-r", K_PTG = "osap-atak-ptgrid";
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -231,7 +231,7 @@
     }
     else if (k === "point") {
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
-      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : []));
+      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]]));
     }
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
@@ -257,6 +257,8 @@
       if (k === "centre") ptAdd(map.getCenter());
       else if (k === "me" && hm) ptAdd(L.latLng(hm.lat, hm.lon));
       else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
+      /* each saved point's MGRS under its name on the map; a device choice */
+      else if (k === "grid") { lsSet(K_PTG, ptGrid() ? null : "1"); ptDraw(); toast(ptGrid() ? "Points show their MGRS" : "Points show their names only"); }
     }
   });
   /* Search places lives in assets/osap-search.js, fetched the first time the magnifying glass is pressed */
@@ -347,15 +349,20 @@
      neighbour-report caches (index.html "asap-xrecs-*", fetched again when needed) and tries once more. */
   function ptsSave(a) {
     var v = JSON.stringify(a.slice(-500));
-    try { localStorage.setItem(K_PTS, v); return true; } catch (e) {}
+    try { localStorage.setItem(K_PTS, v); ptsSaid(); return true; } catch (e) {}
     try { for (var i = localStorage.length - 1; i >= 0; i--) { var k = localStorage.key(i); if (k && k.indexOf("asap-xrecs-") === 0) localStorage.removeItem(k); } } catch (e) {}
-    try { localStorage.setItem(K_PTS, v); return true; } catch (e) { return false; }
+    try { localStorage.setItem(K_PTS, v); ptsSaid(); return true; } catch (e) { return false; }
   }
+  /* other tools that list the points (Route > Waypoints > Saved point) hear of each change */
+  function ptsSaid() { setTimeout(function () { D.dispatchEvent(new Event("osap:points")); }, 0); }
   var SAVE_FAIL = "Point not saved: this browser's storage for OSAP is full. Delete some saved items or workspaces, then try again.";
   function ptsHere() { var c = cc(); return ptsAll().filter(function (p) { return p.cc === c; }); }
+  function ptGrid() { return lsGet(K_PTG) === "1"; }
+  /* the label beside a point: its name, the photo count, and its MGRS when Point > Show MGRS on points is on */
+  function ptLab(p) { return esc(p.n) + (p.ph ? CAM + p.ph : "") + (ptGrid() ? '<br><b class="atk-pg">' + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</b>" : ""); }
   /* a point with no chosen icon: the NATO (2525D) point-of-interest symbol; the teal diamond if the symbols did not load */
   function defIcon(p) {
-    var lab = "<span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", d = W.OSAP_SYM && W.OSAP_SYM.d && W.OSAP_SYM.d.g_poi;
+    var lab = "<span>" + ptLab(p) + "</span>", d = W.OSAP_SYM && W.OSAP_SYM.d && W.OSAP_SYM.d.g_poi;
     if (!d) return L.divIcon({ className: "atk-pt", html: "<i></i>" + lab, iconSize: [18, 18], iconAnchor: [9, 9] });
     var sc = 0.75, w = Math.round(d[1] * sc), h = Math.round(d[2] * sc);
     return L.divIcon({ className: "atk-pt", html: '<i class="atk-def" style="width:' + w + "px;height:" + h + 'px">' + d[0] + "</i>" + lab.replace("<span>", '<span style="left:' + (w + 2) + "px;top:" + Math.max(0, Math.round(h / 2 - 8)) + 'px">'),
@@ -367,20 +374,22 @@
       /* the point's own icon (assets/osap-milsym.js: a military symbol, a shape or a pin); the teal diamond otherwise */
       var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,
-        icon: sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] })
+        icon: sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + ptLab(p) + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] })
           : defIcon(p) });
       m.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "atk-ptpop";
         var PX = W.OSAP_POINTS;
         d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">" + (typeof p.addedBy === "string" && p.addedBy ? "added by " + esc(p.addedBy.slice(0, 24)) + (+p.addedAt > 0 && W.OSAP_TIME ? ", " + esc(W.OSAP_TIME.dualT(+p.addedAt, { date: true })) : "") : "your own mark") + "</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
-          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? '<button type="button" data-pp="photo">Check a photo here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
+          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="routeto">Route to</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? '<button type="button" data-pp="photo">Check a photo here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-pp]"); if (!b) return; var k = b.getAttribute("data-pp");
           map.closePopup();
           if (k === "del") ptDel(p.id);
           else if (k === "edit") PX.edit(p.id);
           else if (k === "photo") W.OSAP_PHOTOCHECK.open({ lat: p.lat, lon: p.lon, place: p.n });
+          /* Route from starts a new route at this point; Route to adds it to the end of the route being planned. Both keep its name. */
+          else if (k === "route" || k === "routeto") { if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED([[p.lat, p.lon, p.n]], { append: k === "routeto" }); }
           else act(k, L.latLng(p.lat, p.lon));
         });
         if (PX && p.ph) PX.thumbs(d.querySelector(".atk-pph"), p.id);
@@ -675,7 +684,7 @@
     /* dropped points */
     ".atk-pt{background:none;border:0}.atk-pt i{position:absolute;left:3px;top:3px;width:12px;height:12px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5);box-sizing:border-box}" +
     ".atk-pt i.atk-def{left:0;top:0;background:none;border:0;transform:none;box-shadow:none}.atk-pt i.atk-def svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 1px rgba(0,0,0,.6))}" +
-    ".atk-pt span{position:absolute;left:19px;top:1px;padding:0 4px;border-radius:3px;background:rgba(20,24,28,.85);color:#fff;font:700 10.5px/15px 'IBM Plex Mono',monospace;white-space:nowrap}" +
+    ".atk-pt span{position:absolute;left:19px;top:1px;padding:0 4px;border-radius:3px;background:rgba(20,24,28,.85);color:#fff;font:700 10.5px/15px 'IBM Plex Mono',monospace;white-space:nowrap}.atk-pt span .atk-pg{font-weight:500;font-size:10px;line-height:13px;color:#cfe8ff}" +
     ".atk-ptpop .atk-note{white-space:pre-wrap;word-break:break-word;margin:4px 0}" +
     ".atk-ptpop code{display:block;font:12px/1.4 'IBM Plex Mono',monospace;margin:3px 0 0}.atk-ptpop .obs{color:var(--muted);font-size:11.5px}.atk-ptpop p{margin:6px 0}" +
     ".atk-pb{display:flex;flex-wrap:wrap;gap:4px}.atk-pb button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:4px;padding:4px 8px;min-height:30px;cursor:pointer}" +
