@@ -93,7 +93,13 @@
   /* ---------- new since you last looked ---------- */
   var view = { cc: null, base: null };
   function seenAll() { var s = lsGet(K_SEEN); return s && typeof s === "object" ? s : {}; }
-  function markSeen(id) { var s = seenAll(); s[id] = Date.now(); lsSet(K_SEEN, s); }
+  /* stories stamped up to an hour ahead (newCount's clock allowance) are already on screen when the user looks, so the
+     look covers them too: otherwise they stayed "new" after looking until their time passed */
+  function markSeen(id) {
+    var s = seenAll(), t = Date.now(), lim = t + 36e5;
+    if (id === cc()) ((W.TSAP && W.TSAP.records) || []).forEach(function (r) { if (counted(r)) { var ms = recMs(r); if (ms > t && ms <= lim) t = ms; } });
+    s[id] = t; lsSet(K_SEEN, s);
+  }
   /* the first draw of Today for a country takes the stored time as this look's baseline, and stores now */
   function enter(id) {
     if (view.cc === id) return;
