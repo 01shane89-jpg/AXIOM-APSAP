@@ -739,6 +739,8 @@ html.phone .pcol{display:none!important}
 html.mapfull header,html.mapfull .rail,html.mapfull #rv,html.mapfull #rail-handle{display:none!important}
 html.mapfull #map,html.phone.mapfull #map{position:fixed!important;left:0!important;top:0!important;width:100vw!important;height:100svh!important;z-index:1500}
 html.mapfull body{overflow:hidden}
+.rvstops{display:flex;flex-direction:column;gap:4px;margin:4px 0 0 12px;padding-left:8px;border-left:2px solid var(--line)}
+.rvstop{padding:6px 10px}
 .rvcard.haspic{display:grid;grid-template-columns:1fr 92px;column-gap:10px}
 .rvcard.haspic>:not(.rvpic){grid-column:1}
 .rvpic{grid-column:2;grid-row:1/5;width:92px;height:70px;object-fit:cover;border-radius:4px;background:var(--surface)}
@@ -6872,23 +6874,65 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      cards are read from what is on the map, each marker's own popup heading, and open that popup */
   var rvTpl = document.createElement("template");
   function rvSofItems() {
-    var out = [];
+    var out = [], rt = current === "route";
     Object.keys(sofM || {}).forEach(function (k) {
+      /* the route's waypoints are listed inside the route's own item (rvRouteItem), not one by one */
+      if (rt && /^rt:\d+$/.test(k)) return;
       var m = sofM[k];
       if (!m.__rvItem) {
         var ll = m.getLatLng ? m.getLatLng() : (m.getBounds ? m.getBounds().getCenter() : null), pc = m.getPopup && m.getPopup() ? m.getPopup().getContent() : "";
         if (!ll) return;
-        rvTpl.innerHTML = typeof pc === "string" ? pc : "";
-        var h = rvTpl.content.querySelector("h3") || rvTpl.content.querySelector("p"), t = rvTpl.content.querySelector(".tier");
-        m.__rvItem = { id: k, sof: true, lat: ll.lat, lon: ll.lng, ts: "", title: h ? h.textContent.slice(0, 160) : "Map item", tier: t ? t.textContent : "" };
+        /* a popup built as an element (route waypoints, planners) is read the same way as one written as text */
+        var root = pc && pc.nodeType === 1 ? pc : (rvTpl.innerHTML = typeof pc === "string" ? pc : "", rvTpl.content);
+        var h = root.querySelector("h3") || root.querySelector("b") || root.querySelector("p"), t = root.querySelector(".tier"), nm = h ? h.textContent.trim() : (m.options && m.options.title) || "";
+        var tier = t ? t.textContent : "";
+        /* another saved route shown on the Route map with the one being planned ("rtk:<saved route id>") is its own route item */
+        if (/^rtk:/.test(k)) { var sr = rvSavedRoute(k.slice(4)); nm = (sr && sr.name) || nm || "Saved route"; tier = "Saved route"; }
+        m.__rvItem = { id: k, sof: true, lat: ll.lat, lon: ll.lng, ts: "", title: nm ? nm.slice(0, 160) : "Map item", tier: tier };
       }
       out.push(m.__rvItem);
     });
+    if (rt) { var ri = rvRouteItem(); if (ri) out.unshift(ri); out = out.concat(rvPointItems()); }
     return out;
+  }
+  /* ROUTE TAB. The planned route is one item: its name, length and time, with its waypoints (start, waypoints, release point,
+     each by name and MGRS) folded inside it. The analyst's saved points (Point on the map toolbar) are listed by name, symbol
+     and MGRS. Both are the analyst's own planning marks kept in this browser, never reports. */
+  var rvRtOpen = false;
+  function rvSavedRoute(id) { try { var a = JSON.parse(localStorage.getItem("osap-routes") || "[]"); return Array.isArray(a) ? a.filter(function (x) { return x && x.id === id; })[0] || null : null; } catch (e) { return null; } }
+  function rvGrid(lat, lon) { var G = window.OSAP_GEO; return (G && G.mgrs && G.mgrs(lat, lon)) || (lat.toFixed(5) + ", " + lon.toFixed(5)); }
+  function rvRouteItem() {
+    var T = window.OSAP_ROUTETAB, s = T && T.summary ? T.summary() : null;
+    if (!s || !s.stops.length) return null;
+    var stops = s.stops.map(function (w) { return { id: "rt:" + w.i, sof: true, lat: w.lat, lon: w.lon, ts: "", title: w.name, tier: w.kind + " · " + rvGrid(w.lat, w.lon) }; });
+    return { id: "rt:route", sof: true, route: true, lat: stops[0].lat, lon: stops[0].lon, ts: "", title: s.name, stops: stops,
+      tier: ["Route", s.dist, s.time].filter(Boolean).join(" · ") };
+  }
+  function rvPointItems() {
+    var A = window.OSAP_ATAK, P = A && A.pts && A.pts.all ? A.pts.all() : [], c = (window.TSAP && window.TSAP.country) || "", S = window.OSAP_MSYM;
+    return P.filter(function (p) { return p.cc === c; }).map(function (p) {
+      var sy = p.sym && S && S.valid && S.valid(p.sym) ? S.label(p.sym) : "";
+      return { id: "pt:" + p.id, sof: true, pt: true, lat: p.lat, lon: p.lon, ts: "", title: String(p.n || "Point").slice(0, 160), tier: ["Saved point", sy, rvGrid(p.lat, p.lon)].filter(Boolean).join(" · ") };
+    });
+  }
+  /* the saved point's own marker (drawn by assets/osap-atak.js in its own pane), found by where it sits */
+  function rvPtMarker(r) {
+    var hit = null;
+    map.eachLayer(function (l) { if (!hit && l.options && l.options.pane === "atakpane" && l.getLatLng && l.getPopup && l.getPopup()) { var ll = l.getLatLng(); if (Math.abs(ll.lat - r.lat) < 1e-9 && Math.abs(ll.lng - r.lon) < 1e-9) hit = l; } });
+    return hit;
+  }
+  function rvIn(box, r) { return r.stops ? r.stops.some(function (w) { return box.contains([w.lat, w.lon]); }) : box.contains([r.lat, r.lon]); }
+  function rvSofCard(r, cls) { return '<button type="button" class="rvcard' + (cls || "") + '" data-rv="' + esc(r.id) + '"><span class="rvt">' + esc(r.tier) + '</span><span class="rvh">' + esc(r.title) + "</span></button>"; }
+  function rvRouteCard(r) {
+    var n = r.stops.length, ends = n > 1 ? r.stops[0].title + " → " + r.stops[n - 1].title : r.stops[0].title;
+    return '<div class="rvgrp"><button type="button" class="rvcard rvroute" data-rv="rt:route" aria-expanded="' + (rvRtOpen ? "true" : "false") + '"><span class="rvt">' + esc(r.tier) + "</span>" +
+      '<span class="rvh">' + esc(r.title) + '</span><span class="rvs">' + esc(ends) + " · " + (rvRtOpen ? "hide" : "show") + " its " + n + " waypoint" + (n === 1 ? "" : "s") + "</span></button>" +
+      (rvRtOpen ? '<div class="rvstops">' + r.stops.map(function (w) { return rvSofCard(w, " rvstop"); }).join("") + "</div>" : "") + "</div>";
   }
   function rvMarker(r) {
     var l = LBY[current] || {};
     if (r.xcc && current !== "timeline") return XAM[r.id] || null;
+    if (r.pt) return rvPtMarker(r);
     if (r.sof || l.sof) return sofM[r.id] || null;
     if (l.curated) return (CM && CM[r.id]) || null;
     if (r.evv) return (markers && markers[r.evv.m[0].id]) || null;
@@ -6902,7 +6946,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var phone = rvPhone(), all = rvRecords(), b = map.getBounds(),
       inArea = AREA ? { contains: function (p) { return inPoly(p[0], p[1], AREA); } } : (rvMode === "list" && !phone ? null : b);
     var located = all.filter(function (r) { return r.lat != null && isFinite(r.lat) && isFinite(r.lon); });
-    var list = inArea ? located.filter(function (r) { return inArea.contains([r.lat, r.lon]); }) : all.slice();
+    var list = inArea ? located.filter(function (r) { return rvIn(inArea, r); }) : all.slice();
     list.sort(function (a, c) { return a.ts < c.ts ? 1 : (a.ts > c.ts ? -1 : 0); });
     if (current === "timeline") list = evCollapse(list);
     rvShown = list;
@@ -6916,7 +6960,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cap = phone && !rvAll ? 3 : 200;
     rvList.innerHTML = list.slice(0, cap).map(function (r) {
       if (r.evv) return evCard(r);
-      if (r.sof) return '<button type="button" class="rvcard" data-rv="' + esc(r.id) + '"><span class="rvt">' + esc(r.tier) + '</span><span class="rvh">' + esc(r.title) + "</span></button>";
+      if (r.stops) return rvRouteCard(r);
+      if (r.sof) return rvSofCard(r);
       var st = STATE[r.type] ? STATE[r.type][0] : r.type, ln = LBY[r.layer] ? LBY[r.layer].name : r.layer;
       var pic = r.img || r.thumb;
       return '<button type="button" class="rvcard' + (pic ? " haspic" : "") + '" data-rv="' + esc(r.id) + '">' + (pic ? '<img class="rvpic" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") + '<span class="rvt">' + esc(fmtTs(r)) + "</span>" +
@@ -6981,6 +7026,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (open) box.innerHTML = feedsHtml();
   }
   function rvSoon() { if (!rvT) rvT = setTimeout(rvRender, 120); }
+  /* the Route tab's list follows the route and the saved points as they change, not only when the map moves */
+  document.addEventListener("osap:route", function () { if (current === "route") rvSoon(); });
+  document.addEventListener("osap:points", function () { if (current === "route") rvSoon(); });
   /* MAP ITEMS WITH A POPUP. Reference points, hazards, quakes, storms, road closures, terrain, flashpoints, Open data, gauges and
      the like carry their details in a small popup. Opening one shows those details in the Report panel instead (on a phone, the
      full sheet), with the item's source links, its place and grid reference, and a SHA-256 fingerprint of exactly what is shown,
@@ -7033,7 +7081,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   });
   /* marker hover lights its card; hooks are added once per marker */
   function rvHook(list) {
-    list.slice(0, 200).forEach(function (r) {
+    list.slice(0, 200).reduce(function (a, r) { return a.concat(r.stops && rvRtOpen ? r.stops : [r]); }, []).forEach(function (r) {
       var m = rvMarker(r);
       if (!m || m.__rv) return;
       m.__rv = r.id;
@@ -7052,7 +7100,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!r || r.lat == null || !isFinite(r.lat)) return;
     rvRing = L.circleMarker([r.lat, r.lon], { pane: "rvpane", radius: 13, color: tok("--accent"), weight: 3, fill: false, interactive: false }).addTo(map);
   }
-  function rvById(id) { for (var i = 0; i < rvShown.length; i++) if (rvShown[i].id === id) return rvShown[i]; return null; }
+  function rvById(id) {
+    for (var i = 0; i < rvShown.length; i++) {
+      if (rvShown[i].id === id) return rvShown[i];
+      var st = rvShown[i].stops; if (st) for (var j = 0; j < st.length; j++) if (st[j].id === id) return st[j];
+    }
+    return null;
+  }
   rvList.addEventListener("mouseover", function (e) { var c = e.target.closest && e.target.closest(".rvcard"); if (c) rvRingAt(rvById(c.getAttribute("data-rv"))); });
   rvList.addEventListener("mouseleave", function () { rvRingAt(null); });
   rvList.addEventListener("focusin", function (e) { var c = e.target.closest && e.target.closest(".rvcard"); if (c) rvRingAt(rvById(c.getAttribute("data-rv"))); });
@@ -7071,7 +7125,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     Array.prototype.forEach.call(rvList.querySelectorAll(".rvcard.on"), function (x) { x.classList.remove("on"); });
     c.classList.add("on");
     if (r && r.evv) { evOpen(r.evv, "rv-pkg"); var pe = document.getElementById("rv-pkg"); if (pe && !rvPhone()) pe.scrollTop = 0; return; }
-    if (r && r.sof) { var sm = sofM[id]; if (sm) { map.panTo([r.lat, r.lon]); sm.openPopup(); } return; }
+    /* the route's item folds its waypoints open or shut and brings the whole route into view (never closer in) */
+    if (r && r.stops) {
+      rvRtOpen = !rvRtOpen;
+      var rb = L.latLngBounds(r.stops.map(function (w) { return [w.lat, w.lon]; }));
+      if (!map.getBounds().contains(rb)) map.fitBounds(rb, { padding: [40, 40], maxZoom: map.getZoom() });
+      rvRender();
+      var rc = rvList.querySelector('[data-rv="rt:route"]'); if (rc) rc.focus({ preventScroll: true });
+      return;
+    }
+    if (r && r.sof) { var sm = sofM[id] || rvMarker(r); if (sm) { map.panTo([r.lat, r.lon]); sm.openPopup(); } return; }
     select(id, undefined, "rv-pkg");
     var pk = document.getElementById("rv-pkg"); if (pk && !rvPhone()) pk.scrollTop = 0;
   });
@@ -9188,6 +9251,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-reviews.js"></script>
 <script src="assets/osap-milsym.js"></script>
 <script src="assets/osap-points.js"></script>
+<!-- saved points shrink and group when the map is zoomed out, so they do not pile up (assets/osap-ptdeclutter.js) -->
+<script src="assets/osap-ptdeclutter.js"></script>
 <script src="assets/osap-3d.js"></script>
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
