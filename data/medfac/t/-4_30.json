@@ -315,7 +315,7 @@
 ["w787521886",-3.33585,30.07173,"bi",{"name":"CDS NYARURAMBI","amenity":"hospital","healthcare":"hospital"}],
 ["w787522106",-3.33117,30.02441,"bi",{"name":"CDS NYABIBUYE","amenity":"hospital","healthcare":"hospital"}],
 ["w787538427",-2.998,30.32185,"bi",{"name":"CDS RUGONGO","amenity":"hospital","healthcare":"hospital"}],
-["w787540867",-2.98634,30.35341,"bi",{"name":"CDS MURAMBA","amenity":"hospital","healthcare":"hospital"}],
+["w787540867",-2.98639,30.35338,"bi",{"name":"CDS Muramba.","healthcare":"clinic"}],
 ["w787540984",-3.02632,30.36029,"bi",{"name":"CDS KIBIMBA","amenity":"hospital","healthcare":"hospital"}],
 ["w788392106",-3.04357,30.31265,"bi",{"name":"CDS BONERO","amenity":"hospital","healthcare":"hospital"}],
 ["w788392704",-3.09093,30.33702,"bi",{"name":"CDS KIYANZA","amenity":"hospital","healthcare":"hospital"}],
