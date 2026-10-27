@@ -32,12 +32,16 @@ if (/^(1|true|yes|on)$/i.test(String(process.env.OSAP_COMMERCIAL || "").trim()))
 }
 console.log("netlify_build: copied " + n + " entries into _site");
 
-// OSAP_SAT_TILES (with {z}, {x} and {y}), OSAP_OSRM_URL and OSAP_VALHALLA_URL (ending in /) from the site's environment
+// OSAP_SAT_TILES (with {z}, {x} and {y}), OSAP_OSRM_URL and OSAP_VALHALLA_URL (ending in /) and OSAP_ESRI_KEY from the site's environment
 function soldHosts(env) {
   const out = {}, ok = (v) => /^https:\/\/[A-Za-z0-9.-]+(:443)?\/[^\s"'<>\\]*$/.test(v);
   const sat = String(env.OSAP_SAT_TILES || "").trim(), osrm = String(env.OSAP_OSRM_URL || "").trim(), vh = String(env.OSAP_VALHALLA_URL || "").trim();
   if (ok(sat) && /\{z\}/.test(sat) && /\{x\}/.test(sat) && /\{y\}/.test(sat)) out.sat = sat;
   if (ok(osrm)) out.osrm = osrm.endsWith("/") ? osrm : osrm + "/";
   if (ok(vh)) out.valhalla = vh.endsWith("/") ? vh : vh + "/";
+  // OSAP_ESRI_KEY: an ArcGIS Location Platform API key (2026-10-27, Shane chose Esri for the sold version's imagery). It is
+  // used in the browser, as Esri intends for basemap keys, so restrict it to the site's address in the Esri dashboard
+  const ek = String(env.OSAP_ESRI_KEY || "").trim();
+  if (/^[A-Za-z0-9._-]{20,600}$/.test(ek)) out.esriKey = ek;
   return out;
 }
