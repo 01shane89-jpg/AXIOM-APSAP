@@ -1407,21 +1407,35 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
      Every choice here is a display layer only (tiles drawn by their publishers); nothing is added to the record list.
      The choice is remembered on this device. */
   var STREETS_ATTR = '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>';
+  /* Esri maps (assets/osap-sold.js OSAP_ESRI): Esri's public servers in the free app; in the sold version the ArcGIS Location
+     Platform with the site's own key, which licenses them for a paid product, or none without a key */
+  function esriTiles(svc, q) { var u = window.OSAP_ESRI ? window.OSAP_ESRI(svc) : ""; return u && q ? u + (u.indexOf("?") < 0 ? "?" : "&") + q : u; }
+  var ESRI_IMG = esriTiles("World_Imagery", "blankTile=false");
   var BASES = {
     grey: { name: "Grey", note: "Plain OpenStreetMap map with no labels, follows the light or dark theme" },
     /* drawn on the device from OpenFreeMap's OpenStreetMap vector tiles so every name can be shown in English (see VectorBase);
        if the drawing engine cannot start, the plain OpenStreetMap tiles (names in local script) stand in */
-    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names, labelled in English",
-      vector: "https://tiles.openfreemap.org/styles/liberty", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19,
-      attr: STREETS_ATTR },
+    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names, labelled in English, over light shading of the hills",
+      vector: "https://tiles.openfreemap.org/styles/liberty", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, hill: 0.25,
+      attr: STREETS_ATTR + ', hill shading: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">Terrain Tiles on AWS</a>' },
     topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: window.OSAP_HOST("topo"), max: 17,
       attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener noreferrer">OpenTopoMap</a> (CC-BY-SA)' },
     /* satellite imagery. Licences are tagged so restricted ones can be dropped before any commercial use. EOX Sentinel-2
-       cloudless 2016 is CC BY 4.0 (commercial use allowed with credit); it replaced Esri World Imagery, Hybrid and Clarity
-       (Esri terms of use, not cleared for sale) and the 2021 mosaic (CC BY-NC-SA 4.0, non-commercial) */
-    sat: { name: "Satellite", note: "Sentinel-2 cloudless by EOX: a cloud-free mosaic of 2016 Sentinel-2 images, one look for the whole world (10 m). Shows towns, fields, forest, rivers and big roads; too coarse for single buildings or vehicles",
-      url: window.OSAP_HOST("sat"), max: 14, zmax: 16, lic: "CC BY 4.0",
-      attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0' },
+       cloudless 2016 is CC BY 4.0 (commercial use allowed with credit); Esri World Imagery, Hybrid and Clarity are under
+       Esri's public terms of use (restricted). The sold version (assets/osap-sold.js) uses them only through its own ArcGIS
+       Location Platform key; without one it leaves them out below and keeps Satellite on Sentinel-2 or its own imagery host
+       (licence swap 2026-10-24; Esri back 2026-10-27, Shane: "the map bases in OSAP suck now", and chose Esri for the sold version) */
+    sat: { name: "Satellite", note: "Esri World Imagery (Maxar and others): sharp aerial and satellite photos, about 30 to 60 cm in most cities and towns. Zooms in as far as the pictures go, then enlarges the closest one (image dates vary by place)",
+      url: ESRI_IMG, max: 20, zmax: 20, deep: 1, lic: "restricted",
+      attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community' },
+    hybrid: { name: "Hybrid", note: "The same sharp imagery with borders, place names and roads on top",
+      url: ESRI_IMG, max: 20, zmax: 20, deep: 1, lic: "restricted",
+      labels: [esriTiles("Reference/World_Transportation"), esriTiles("Reference/World_Boundaries_and_Places")],
+      attr: 'Imagery and labels &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community' },
+    /* Esri World Imagery (Clarity): the same providers with less colour processing, and often a different capture date */
+    clarity: { name: "Satellite, second look", note: "Esri World Imagery (Clarity): often a different or newer picture of the same place, less colour-processed. Can look hazier",
+      url: window.OSAP_SOLD ? "" : "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
+      attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community (World Imagery Clarity)' },
     daily: { name: "Daily satellite", note: "NASA MODIS true colour from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
       url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg", max: 9, lic: "public domain",
       attr: "NASA Worldview / GIBS, MODIS Terra corrected reflectance" },
@@ -1435,7 +1449,15 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
      - Satellite and the Offline map (EOX's hosted tiles) unless the sold build names its own imagery host;
      - OpenTopoMap's volunteer server: its Topographic map is drawn instead from OpenFreeMap's vector tiles with English
        names and hill shading from Terrain Tiles on AWS (open data; the 3D view's elevation), without contour lines. */
-  if (!BASES.sat.url) { delete BASES.sat; delete BASES.offline; }
+  /* Clarity is not offered on the Location Platform, so the sold version never has it */
+  if (!BASES.clarity.url) delete BASES.clarity;
+  if (!ESRI_IMG) {
+    delete BASES.hybrid;
+    BASES.sat = { name: "Satellite", note: "Sentinel-2 cloudless by EOX: a cloud-free mosaic of 2016 Sentinel-2 images, one look for the whole world (10 m). Shows towns, fields, forest, rivers and big roads; too coarse for single buildings or vehicles",
+      url: window.OSAP_HOST("sat"), max: 14, zmax: 16, lic: "CC BY 4.0", attr: BASES.offline.attr };
+  }
+  if (!BASES.sat.url) delete BASES.sat;
+  if (!BASES.offline.url) delete BASES.offline;
   if (!BASES.topo.url) BASES.topo = { name: "Topographic", note: "OpenStreetMap roads, rivers and names in English over hill shading of the terrain",
     vector: "https://tiles.openfreemap.org/styles/liberty", hill: true, url: "", max: 19,
     attr: STREETS_ATTR + ', hill shading: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">Terrain Tiles on AWS</a> (Mapzen, SRTM and others)' };
@@ -1470,14 +1492,14 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function plainStyle(st) { st.layers = (st.layers || []).filter(function (l) { return l.type !== "symbol"; }); return st; }
   /* hill: shading of the ground under the roads and names (the Topographic map in the sold version), from the same open
      elevation tiles as the 3D view, put below the first label layer */
-  function hillStyle(st) {
+  function hillStyle(st, ex) {
     st.sources = st.sources || {}; st.layers = st.layers || [];
     st.sources.osaphill = { type: "raster-dem", tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"], tileSize: 256, maxzoom: 14, encoding: "terrarium" };
     var i = 0; while (i < st.layers.length && st.layers[i].type !== "symbol" && st.layers[i]["source-layer"] !== "transportation") i++;   /* under roads and names */
-    st.layers.splice(i, 0, { id: "osap-hill", type: "hillshade", source: "osaphill", paint: { "hillshade-exaggeration": 0.4, "hillshade-shadow-color": "#3d3424", "hillshade-highlight-color": "#ffffff" } });
+    st.layers.splice(i, 0, { id: "osap-hill", type: "hillshade", source: "osaphill", paint: { "hillshade-exaggeration": ex || 0.4, "hillshade-shadow-color": "#3d3424", "hillshade-highlight-color": "#ffffff" } });
     return st;
   }
-  function styleFor(o, st) { st = o.plain ? plainStyle(st) : englishStyle(st); return o.hill ? hillStyle(st) : st; }
+  function styleFor(o, st) { st = o.plain ? plainStyle(st) : englishStyle(st); return o.hill ? hillStyle(st, typeof o.hill === "number" ? o.hill : 0) : st; }
   function getStyle(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error("style " + r.status); return r.json(); }); }
   var VectorBase = L.Layer.extend({
     PAD: 0.15,
@@ -1559,7 +1581,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function mlGet() { try { return JSON.parse(localStorage.getItem("asap-map-layers")) || {}; } catch (e) { return {}; } }
   function mlSet() { try { localStorage.setItem("asap-map-layers", JSON.stringify(ML)); } catch (e) {} }
   var ML = mlGet();
-  if (/^(hybrid|clarity|s2)$/.test(ML.base)) ML.base = "sat"; /* Esri and 2021 imagery maps were retired */
+  if (!BASES[ML.base] && /^(hybrid|clarity|s2)$/.test(ML.base) && BASES.sat) ML.base = "sat"; /* the 2021 mosaic was retired; the sold version has no Esri maps */
   if (!BASES[ML.base]) ML.base = "grey";
   var hybLabels = null;
   map.createPane("hybpane"); map.getPane("hybpane").style.zIndex = 450; map.getPane("hybpane").style.pointerEvents = "none";
@@ -1656,12 +1678,17 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(fldOp(k)); }); }
   /* ---------- elevation shading: hillshade tiles built from LiDAR where a government publishes it, satellite elevation elsewhere ----------
      Display only, drawn in the base-map pane and multiplied into whatever base map is chosen (so it also carries into the 3D view).
-     Licences tagged like the base maps: GSI tiles are free with credit. Esri World Hillshade was removed (Esri terms of use, not cleared for sale). */
+     Licences tagged like the base maps: GSI tiles are free with credit; Esri World Hillshade is under Esri's terms of use (restricted; sold version only with its Location Platform key). */
   var HSX = {
     jp: { name: "Japan relief (GSI)", note: "Sharper shading of Japan and Okinawa from GSI, the national mapping agency. Draws only inside Japan. In 3D, Japan uses GSI elevation: 5 m LiDAR (airborne laser survey) where it exists, 10 m elsewhere",
       url: "https://cyberjapandata.gsi.go.jp/xyz/hillshademap/{z}/{x}/{y}.png", max: 16, min: 2, bounds: [[20, 122], [46, 154]], lic: "GSI terms (credit)",
-      attr: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer">GSI Japan</a> hillshade' }
+      attr: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer">GSI Japan</a> hillshade' },
+    world: { name: "Esri hillshade", note: "Esri World Hillshade, worldwide. Sharp (1 m LiDAR) only in parts of the US and Europe; about 30 m satellite elevation elsewhere, including most of South-East Asia",
+      url: esriTiles("Elevation/World_Hillshade"), max: 16, lic: "restricted",
+      attr: 'Hillshade &copy; Esri, USGS, NGA, NASA, CGIAR and national elevation agencies (<a href="https://www.arcgis.com/home/item.html?id=3af669838f594b378f90c10f98e46a7f" target="_blank" rel="noopener noreferrer">coverage</a>)' }
   };
+  /* the sold version has Esri World Hillshade only with its ArcGIS Location Platform key */
+  if (!HSX.world.url) delete HSX.world;
   if (!(ML.hsop > 0)) ML.hsop = 0.55;
   var hsOn = {};
   function setShade(k, on) {
@@ -5109,7 +5136,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
       ['Streets base map: vector tiles and style by <a href="https://openfreemap.org/">OpenFreeMap</a> (free, no key) &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data from OpenStreetMap; labels shown in English where OpenStreetMap records an English or Latin-letter name. Drawn with <a href="https://maplibre.org/">MapLibre GL JS</a> (BSD-3-Clause). If it cannot be drawn, tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation stand in, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
-      ['Satellite and Offline maps: <a href="https://s2maps.eu">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016). Licence: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.'],
+      ['Offline map (and Satellite in the sold version): <a href="https://s2maps.eu">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016). Licence: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.'],
+      ['Satellite, Hybrid and Satellite, second look base maps and Esri hillshade: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> (and Clarity), Esri reference labels and World Hillshade, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin, USGS and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use); the sold version uses them only under its own ArcGIS Location Platform licence.'],
+      ['Streets hill shading: <a href="https://registry.opendata.aws/terrain-tiles/">Terrain Tiles on AWS</a> (Mapzen; SRTM, GMTED, ETOPO1 and national elevation data).'],
       ['Daily satellite base map: NASA MODIS Terra corrected reflectance via <a href="https://www.earthdata.nasa.gov/gibs">NASA GIBS</a> (public domain).'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
       ['Road closures: <a href="https://www.nzta.govt.nz/">NZ Transport Agency Waka Kotahi</a> (CC BY 4.0); <a href="https://www.bison-fute.gouv.fr/">Bison Futé</a> / DIR, Ministère de la Transition écologique (Licence Ouverte 2.0); <a href="https://www.mainroads.wa.gov.au/">Main Roads Western Australia</a> (CC BY 4.0); <a href="https://www.drivebc.ca/">DriveBC</a>, Province of British Columbia (Open Government Licence – British Columbia); <a href="https://www.digitraffic.fi/">Fintraffic Digitraffic</a> (CC BY 4.0). Shown as each agency published them.'],

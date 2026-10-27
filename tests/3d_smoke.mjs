@@ -329,7 +329,7 @@ function pmFixture() {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1000, height: 700 } });
   const seen = new Set(); let busy = 0, missing = 0;
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
-    const u = r.request().url(), m = /s2cloudless_3857\/default\/g\/(\d+)\//.exec(u);
+    const u = r.request().url(), m = /(?:s2cloudless_3857\/default\/g|World_Imagery\/MapServer\/tile)\/(\d+)\//.exec(u);   /* Satellite: Esri in the free app, Sentinel-2 in the sold one */
     if (/elevation-tiles|terrarium/.test(u)) return r.fulfill({ status: 200, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "image/png" }, body: png });
     if (!m) return r.abort();
     if (!seen.has(u)) { seen.add(u); busy++; return r.fulfill({ status: 429, headers: { "Access-Control-Allow-Origin": "*" }, body: "" }); }

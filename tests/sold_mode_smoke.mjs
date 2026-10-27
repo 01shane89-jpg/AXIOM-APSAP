@@ -26,12 +26,13 @@ const check = (ok, m) => { console.log((ok ? "PASS " : "FAIL ") + m); if (!ok) f
 
 async function run(sold, hosts) {
   const page = await browser.newPage({ viewport: { width: 1200, height: 800 }, serviceWorkers: "block" });
-  const errors = [], osm = [], esri = [], eox = [], otm = [], rtr = [], own = [];
+  const errors = [], osm = [], esri = [], esriLp = [], eox = [], otm = [], rtr = [], own = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
     if (/tile\.openstreetmap\.org/.test(u)) osm.push(u);
-    if (/arcgis\.com/.test(u)) esri.push(u);
+    if (/arcgis(online)?\.com/.test(u)) esri.push(u);
+    if (/^https:\/\/i?basemaps-api\.arcgis\.com\/.*[?&]token=TESTKEY/.test(u)) esriLp.push(u);
     if (/tiles\.maps\.eox\.at/.test(u)) eox.push(u);
     if (/opentopomap\.org/.test(u)) otm.push(u);
     if (/routing\.openstreetmap\.de|router\.project-osrm\.org|valhalla1\.openstreetmap\.de/.test(u)) rtr.push(u);
@@ -48,22 +49,26 @@ async function run(sold, hosts) {
   const flag = await page.evaluate(() => window.OSAP_SOLD);
   const bases = await page.evaluate(() => window.OSAP_BASEMAP.list().map((b) => b.id));
   const routers = await page.evaluate(() => ["osrm", "osrmDemo", "valhalla"].map((k) => window.OSAP_HOST(k)));
+  const hs = await page.evaluate(() => [...document.querySelectorAll("#ml-panel input[data-hs]")].map((i) => i.dataset.hs));
   /* the Topographic and Satellite maps, where offered (Topographic stays raster in the normal app, so it loads with WebGL off) */
   await page.evaluate(() => window.OSAP_BASEMAP.set("topo"));
   await page.waitForTimeout(2500);
   await page.evaluate(() => window.OSAP_BASEMAP.set("sat"));
   await page.waitForTimeout(2500);
   await page.close();
-  return { flag, bases, routers, osm: osm.length, esri: esri.length, eox: eox.length, otm: otm.length, rtr: rtr.length, own: own.length, errors };
+  return { flag, bases, hs, routers, osm: osm.length, esri: esri.length, esriLp: esriLp.length, eox: eox.length, otm: otm.length, rtr: rtr.length, own: own.length, errors };
 }
 
 const normal = await run(false), sold = await run(true), soldOwn = await run(true, OWN);
+const soldEsri = await run(true, { esriKey: "TESTKEY_abcdefghijklmnopqrstuvwxyz" });
 check(normal.flag === false && sold.flag === true, "the switch reaches the page (normal " + normal.flag + ", sold " + sold.flag + ")");
 check(normal.osm > 0, "normal app: no WebGL, so the OpenStreetMap raster stand-in loads (" + normal.osm + " tile requests)");
 check(sold.osm === 0, "sold app: no tile.openstreetmap.org request (" + sold.osm + ")");
 check(sold.esri === 0, "sold app: no Esri request (" + sold.esri + ")");
 check(!sold.errors.length, "sold app: no page errors " + sold.errors.slice(0, 3).join(" | "));
-check(normal.otm > 0 && normal.eox > 0, "normal app: Topographic asks OpenTopoMap (" + normal.otm + ") and Satellite asks EOX (" + normal.eox + ")");
+check(normal.otm > 0 && normal.esri > 0, "normal app: Topographic asks OpenTopoMap (" + normal.otm + ") and Satellite asks Esri World Imagery (" + normal.esri + ")");
+check(["sat", "hybrid", "clarity", "offline"].every((k) => normal.bases.indexOf(k) >= 0), "normal app: Satellite, Hybrid, second look and Offline map offered (" + normal.bases.join(",") + ")");
+check(sold.bases.indexOf("hybrid") < 0 && sold.bases.indexOf("clarity") < 0 && sold.hs.indexOf("world") < 0, "sold app: no Esri Hybrid, second look or hillshade (" + sold.bases.join(",") + "; shading " + sold.hs.join(",") + ")");
 check(sold.otm === 0 && sold.eox === 0, "sold app: no OpenTopoMap (" + sold.otm + ") or EOX (" + sold.eox + ") request");
 check(sold.bases.indexOf("topo") >= 0 && sold.bases.indexOf("sat") < 0 && sold.bases.indexOf("offline") < 0,
   "sold app with no imagery host: Topographic offered (vector), Satellite and Offline map left out (" + sold.bases.join(",") + ")");
@@ -71,8 +76,14 @@ check(normal.routers.every(Boolean), "normal app: the free routers are named (" 
 check(sold.routers.every((x) => x === "") && sold.rtr === 0, "sold app: no free router named or asked (" + sold.rtr + " requests)");
 check(soldOwn.bases.indexOf("sat") >= 0 && soldOwn.bases.indexOf("offline") >= 0 && soldOwn.own > 0 && soldOwn.eox === 0,
   "sold app with its own imagery host: Satellite back on that host (" + soldOwn.own + " requests), still no EOX (" + soldOwn.eox + ")");
+check(soldOwn.esri === 0, "sold app with its own imagery host: no Esri request (" + soldOwn.esri + ")");
 check(soldOwn.routers[0] === OWN.osrm && soldOwn.routers[1] === "" && soldOwn.routers[2] === "", "sold app with its own OSRM: only that router (" + soldOwn.routers.join(", ") + ")");
 check(!soldOwn.errors.length, "sold app with own hosts: no page errors " + soldOwn.errors.slice(0, 3).join(" | "));
+check(soldEsri.bases.indexOf("sat") >= 0 && soldEsri.bases.indexOf("hybrid") >= 0 && soldEsri.bases.indexOf("clarity") < 0 && soldEsri.hs.indexOf("world") >= 0,
+  "sold app with an Esri key: Satellite, Hybrid and Esri hillshade offered, no Clarity (" + soldEsri.bases.join(",") + "; shading " + soldEsri.hs.join(",") + ")");
+check(soldEsri.esriLp > 0 && soldEsri.esriLp === soldEsri.esri && soldEsri.eox === 0,
+  "sold app with an Esri key: every Esri request goes to the Location Platform with the key (" + soldEsri.esriLp + " of " + soldEsri.esri + "), no EOX (" + soldEsri.eox + ")");
+check(!soldEsri.errors.length, "sold app with an Esri key: no page errors " + soldEsri.errors.slice(0, 3).join(" | "));
 await browser.close();
 server.close();
 console.log(failed ? failed + " failed" : "all passed");

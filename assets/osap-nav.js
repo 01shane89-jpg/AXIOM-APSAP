@@ -24,13 +24,16 @@
   var W = window, D = document, G = W.OSAP_GEO;
   var PK = "osap-nav-prefs";
   var GLLIB = "assets/vendor/maplibre-gl-5.24.0", S2 = W.OSAP_HOST ? W.OSAP_HOST("sat") : "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg";   /* "" in the sold version until it has its own imagery host (assets/osap-sold.js) */
+  /* sharp Esri World Imagery where this version has it (assets/osap-sold.js OSAP_ESRI: free app, or the sold app with its
+     Location Platform key); else the 10 m Sentinel-2 mosaic above */
+  var ESRI = W.OSAP_ESRI ? W.OSAP_ESRI("World_Imagery") : "", SAT = ESRI || S2;
   var STREETS = "https://tiles.openfreemap.org/styles/liberty";
   var EN_NAME = ["coalesce", ["get", "name:en"], ["get", "name:latin"], ["get", "name_en"], ["get", "name"]];
   var S = null;
 
   function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  var P = (function () { var p = lsGet(PK, {}) || {}; return { mute: !!p.mute, style: p.style === "sat" && S2 ? "sat" : "streets", dim: p.dim === "2d" ? "2d" : "3d", up: p.up === "north" ? "north" : "head", night: !!p.night }; })();
+  var P = (function () { var p = lsGet(PK, {}) || {}; return { mute: !!p.mute, style: p.style === "sat" && SAT ? "sat" : "streets", dim: p.dim === "2d" ? "2d" : "3d", up: p.up === "north" ? "north" : "head", night: !!p.night }; })();
   function savePrefs() { lsSet(PK, { mute: P.mute, style: P.style, dim: P.dim, up: P.up, night: P.night }); }
   function E(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function clean(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 80); }
@@ -661,7 +664,7 @@
     var nt = el.querySelector('[data-nv="night"]'); nt.textContent = "Night"; nt.setAttribute("aria-pressed", String(P.night)); nt.setAttribute("aria-label", P.night ? "Night mode is on (red, dim). Turn it off" : "Night mode: red and dim, for dark-adapted eyes"); nt.title = nt.getAttribute("aria-label");
     el.classList.toggle("night", P.night);
     if (S.lf) { d.hidden = true; u.hidden = true; s.hidden = true; }
-    if (!S2) s.hidden = true;   /* no satellite map to switch to */
+    if (!SAT) s.hidden = true;   /* no satellite map to switch to */
   }
   function onClick(e) {
     var b = e.target.closest && e.target.closest("button[data-nv]"); if (!b || !S) return;
@@ -755,15 +758,16 @@
     });
   }
   function satStyle() {
-    /* Sentinel-2 cloudless 2016 (EOX, CC BY 4.0, 10 m): towns, fields and rivers round the route; the route line is drawn on top.
+    /* Esri World Imagery (30-60 cm in towns) or Sentinel-2 cloudless 2016 (EOX, CC BY 4.0, 10 m) round the route; the route line is drawn on top.
        With no imagery host (sold version without its own) a plain ground colour stands in when the street map fails */
-    if (!S2) return { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } }] };
-    return { version: 8, sources: { sat: { type: "raster", tiles: [S2], tileSize: 256, maxzoom: 14 } },
+    if (!SAT) return { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } }] };
+    return { version: 8, sources: { sat: { type: "raster", tiles: [SAT], tileSize: 256, maxzoom: ESRI ? 19 : 14 } },
       layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } }, { id: "sat", type: "raster", source: "sat", paint: { "raster-fade-duration": 0 } }] };
   }
   var ATTR = {
     streets: '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
-    sat: '<a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0',
+    sat: ESRI ? "Imagery © Esri, Maxar, Earthstar Geographics and the GIS user community" :
+      '<a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0',
     osm: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
   };
   /* the route, travelled part and hazards drawn on top of whichever base map */
@@ -817,7 +821,7 @@
       });
     }).catch(function (e) { if (S === s) lfInit("The map engine did not load (" + e.message + "), so the map stays north up and flat."); });
   }
-  function attr() { var a = S.el.querySelector(".nvattr"); a.innerHTML = S.lf ? (W.OSAP_SOLD ? "" : ATTR.osm) : P.style === "sat" && !S2 ? "" : ATTR[P.style] || ""; }
+  function attr() { var a = S.el.querySelector(".nvattr"); a.innerHTML = S.lf ? (W.OSAP_SOLD ? "" : ATTR.osm) : P.style === "sat" && !SAT ? "" : ATTR[P.style] || ""; }
   function setStyle() {
     if (!S || !S.gl) return; var s = S;
     (P.style === "sat" ? Promise.resolve(satStyle()) : streetsStyle().catch(function () { P.style = "sat"; sideUi(); return satStyle(); })).then(function (st) {

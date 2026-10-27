@@ -10,7 +10,8 @@ window.OSAP_SOLD = false;
 /* the sold version's own hosts for those services, which the Netlify build writes here from the site's environment
    (empty until they exist): sat = a satellite tile address with {z} {x} {y} (OSAP_SAT_TILES: a licensed EOX link or a
    self-hosted copy of Sentinel-2 cloudless 2016, which is CC BY 4.0); osrm = an OSRM server laid out like FOSSGIS's
-   (routed-car/, routed-foot/, routed-bike/; OSAP_OSRM_URL); valhalla = a Valhalla server (OSAP_VALHALLA_URL). */
+   (routed-car/, routed-foot/, routed-bike/; OSAP_OSRM_URL); valhalla = a Valhalla server (OSAP_VALHALLA_URL); esriKey = an
+   ArcGIS Location Platform API key (OSAP_ESRI_KEY), which licenses Esri's imagery, labels and hillshade for a paid product. */
 window.OSAP_SOLD_HOSTS = {};
 /* window.OSAP_HOST(k): the address the app uses for service k. The free version uses the free hosts below; the sold
    version uses only its own host, or "" when it has none, and the feature that needs it is left out. */
@@ -28,3 +29,16 @@ window.OSAP_SOLD_HOSTS = {};
     return typeof v === "string" && /^https:\/\/[^\s"'<>]+$/.test(v) ? v : "";
   };
 })();
+/* window.OSAP_ESRI(svc): the tile address of Esri basemap service svc (World_Imagery, Elevation/World_Hillshade,
+   Reference/World_Transportation, Reference/World_Boundaries_and_Places), {z}/{y}/{x}. The free version uses Esri's public
+   servers; the sold version uses the ArcGIS Location Platform with its own key (pay as you go, 2 million tiles a month
+   free, then about US$0.15 per 1,000 as of Sept 2026), or "" when it has no key, and the Esri maps are left out. */
+window.OSAP_ESRI = function (svc) {
+  var tile = "/MapServer/tile/{z}/{y}/{x}";
+  if (!window.OSAP_SOLD) return "https://server.arcgisonline.com/ArcGIS/rest/services/" + svc + tile;
+  var k = (window.OSAP_SOLD_HOSTS || {}).esriKey;
+  if (typeof k !== "string" || !/^[A-Za-z0-9._-]{20,600}$/.test(k)) return "";
+  /* imagery and hillshade come from the imagery basemap host, reference labels from the basemap host */
+  var host = /^Reference\//.test(svc) ? "https://basemaps-api.arcgis.com" : "https://ibasemaps-api.arcgis.com";
+  return host + "/arcgis/rest/services/" + svc + tile + "?token=" + encodeURIComponent(k);
+};

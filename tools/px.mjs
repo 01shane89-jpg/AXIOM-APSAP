@@ -7,7 +7,7 @@
 export const PX_HOSTS = [
   // base maps and overlays
   "tile.openstreetmap.org", "tiles.openfreemap.org", "server.arcgisonline.com", "services.arcgisonline.com",
-  "clarity.maptiles.arcgis.com", "ic.imagery1.arcgis.com", ".tile.opentopomap.org", "tiles.maps.eox.at",
+  "clarity.maptiles.arcgis.com", "ibasemaps-api.arcgis.com", "basemaps-api.arcgis.com", "ic.imagery1.arcgis.com", ".tile.opentopomap.org", "tiles.maps.eox.at",
   "gibs.earthdata.nasa.gov", "cyberjapandata.gsi.go.jp", "s3.amazonaws.com", "storage.googleapis.com",
   "tiles.mapterhorn.com", "download.mapterhorn.com", "api.rainviewer.com", "tilecache.rainviewer.com", "nowcoast.noaa.gov",
   // weather, search, routing, places
