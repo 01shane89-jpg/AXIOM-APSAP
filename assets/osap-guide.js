@@ -140,7 +140,7 @@
       ul(["Tap " + b("Point") + " and choose " + b("At the map centre") + ", " + b("Tap the map to place it") + " or " + b("At my position") + ".",
         "Give it a name, a note and an icon (military symbol, shape or pin). Edits save as you type.",
         b("Take photo") + " or " + b("Add from library") + " adds pictures. Each original is kept unchanged with its SHA-256 fingerprint, on this device only.",
-        "Tap a point on the map for " + b("Measure from") + ", " + b("Route from") + ", " + b("Medical plan here") + ", " + b("Check a photo here") + ", " + b("Copy") + " and " + b("Remove") + "."]) +
+        "Tap a point on the map for " + b("Measure from") + ", " + b("Route from") + ", " + b("Route to") + " (adds it to the end of the route you are planning), " + b("Medical plan here") + ", " + b("Check a photo here") + ", " + b("Copy") + " and " + b("Remove") + "."]) +
       tip("Points and photos stay on this device unless you turn on Sync my devices, which sends points (not photos) locked with your sync code. Clearing this site's data in the browser removes them, so use Move to another device to keep a copy.") },
 
     { id: "watch", t: "Watches and alerts", h:

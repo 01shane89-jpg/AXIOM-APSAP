@@ -6462,7 +6462,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   /* Route: route planning (assets/osap-route.js, loaded the first time the tab opens). The analyst's own plan, kept in this
      browser; never a record. The Measure tool's "Plan route" hands its points over through OSAP_ROUTE_SEED. */
-  var routeSeed = null, routeLoading = false;
+  var routeSeed = null, routeAppend = false, routeLoading = false;
   function showRoute() {
     sofLayer.clearLayers(); sofM = {};
     if (!window.OSAP_ROUTETAB) {
@@ -6476,8 +6476,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }
       return;
     }
-    var seed = routeSeed; routeSeed = null;
-    window.OSAP_ROUTETAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; }, seed: seed });
+    var seed = routeSeed, app = routeAppend; routeSeed = null; routeAppend = false;
+    window.OSAP_ROUTETAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; }, seed: seed, seedAppend: app });
   }
   /* Comms: communication masts, radio and TV towers and a phone coverage check (assets/osap-comms.js, loaded the first time
      the tab opens). The coverage answer is an estimate from public data, worked out in this browser; never a record.
@@ -6506,7 +6506,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (current === "comms" && window.OSAP_COMMSPLAN && window.OSAP_COMMSPLAN.radioFrom) { window.OSAP_COMMSPLAN.radioFrom(at[0], at[1]); return; }
     window.OSAP_COMMSPLAN_WANT = { radio: at }; setView("comms"); document.dispatchEvent(new Event("osap:view"));
   } });
-  window.OSAP_ROUTE_SEED = function (pts) { routeSeed = pts; if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
+  /* pts: [[lat, lon, name?], ...]; o.append adds them after the route's waypoints (a saved point's "Route to") instead of starting again */
+  window.OSAP_ROUTE_SEED = function (pts, o) { routeSeed = pts; routeAppend = !!(o && o.append); if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
 
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
      flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off

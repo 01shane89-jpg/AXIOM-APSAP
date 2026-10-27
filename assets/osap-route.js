@@ -289,7 +289,7 @@ function main() {
       '<form id="rt-find" class="rtfind" autocomplete="off"><input type="search" id="rt-q" placeholder="Place, lat/lon or MGRS" aria-label="Add a waypoint: place, lat/lon or MGRS" maxlength="120">' +
       '<button type="submit">Add</button></form>' +
       '<label class="rtchk"><input type="checkbox" id="rt-onlycc"' + (S.onlyCc ? " checked" : "") + "> Search " + E(ctx.name) + " only</label>" +
-      '<div id="rt-found"></div>' +
+      '<div id="rt-found"></div><div id="rt-pts" class="rtrow"></div>' +
       '<div class="rtbtns"><button type="button" data-rt="tap" id="rt-tapbtn"></button><button type="button" data-rt="me">My location</button>' +
       '<button type="button" data-rt="rev">Reverse</button><button type="button" data-rt="clear">Clear</button></div>' +
       '<ol id="rt-wps" class="rtwps"></ol>' +
@@ -347,6 +347,17 @@ function main() {
         '<button type="button" data-wx="' + i + '" aria-label="Remove ' + LET.charAt(i) + '">×</button></span></li>';
     }).join("");
   }
+  /* the analyst's saved points in this country (Point on the map toolbar, assets/osap-atak.js) as waypoints */
+  function ptsHere() { var A = W.OSAP_ATAK; return A && A.points ? A.points().filter(function (p) { return p && isFinite(p.lat) && isFinite(p.lon); }) : []; }
+  function ptsUi() {
+    var box = el("rt-pts"); if (!box) return;
+    var P = ptsHere(), cur = el("rt-ptsel"), was = cur ? cur.value : "";
+    if (!P.length) { box.innerHTML = ""; box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<label>Saved point <select id="rt-ptsel">' + P.map(function (p) {
+      return '<option value="' + E(p.id) + '"' + (p.id === was ? " selected" : "") + ">" + E(clean(p.n, 40) || "Point") + " · " + E(G.mgrs(p.lat, p.lon, 5) || G.fmtLL(p.lat, p.lon)) + "</option>"; }).join("") +
+      '</select></label><button type="button" data-rt="addpt">Add</button>';
+  }
   function msg(t) { var m = el("rt-msg"); if (m) m.textContent = t || ""; }
 
   /* ---------- events ---------- */
@@ -380,6 +391,7 @@ function main() {
     if (b.hasAttribute("data-del")) { var id = b.getAttribute("data-del"); lsSet(SKEY, savedAll().filter(function (x) { return x.id !== id; })); savedUi(); return; }
     var k = b.getAttribute("data-rt");
     if (k === "tap") { S.tap = !S.tap; modesUi(); }
+    else if (k === "addpt") { var sp = el("rt-ptsel"), pt = sp && ptsHere().filter(function (x) { return x.id === sp.value; })[0]; if (pt) { S.fitNext = true; add(pt.lat, pt.lon, pt.n); } }
     else if (k === "me") myLocation();
     else if (k === "rev") { S.wps.reverse(); changed(); }
     else if (k === "clear") { S.wps = []; changed(); }
@@ -1776,8 +1788,18 @@ function main() {
   function show(ctx) {
     S.ctx = ctx; S.layer = null; S.srch = null; S.stok++;
     var fromUrl = fromLink();
-    if (ctx.seed && ctx.seed.length) { S.wps = cleanWps(ctx.seed.map(function (p) { return { lat: p[0], lon: p[1] }; })); keepCur(); }
-    skeleton(); modesUi(); wpsUi(); savedUi(); ensureLayer(); drawWps();
+    /* seed points [lat, lon, name?]: a fresh route, or (seedAppend, a saved point's "Route to") added after the waypoints kept */
+    var note = "";
+    if (ctx.seed && ctx.seed.length) {
+      var sw = ctx.seed.map(function (p) { return { lat: p[0], lon: p[1], name: p[2] || "" }; });
+      var nm = sw[0].name || "the point", full = ctx.seedAppend && S.wps.length >= MAX_WP;
+      S.wps = cleanWps(ctx.seedAppend ? S.wps.concat(sw) : sw); keepCur();
+      if (ctx.seedAppend) note = full ? "Up to " + MAX_WP + " waypoints; " + nm + " was not added." : S.wps.length > 1 ? "Route to " + nm + ": added as " + LET.charAt(S.wps.length - 1) + "." :
+        nm + " is A, the only waypoint. Add a start (tap the map or a saved point), then press Reverse.";
+    }
+    skeleton(); modesUi(); wpsUi(); savedUi(); ptsUi(); ensureLayer(); drawWps();
+    if (note) { msg(note); if (W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast(note); }
+    if (!D.__rtPts) { D.__rtPts = true; D.addEventListener("osap:points", function () { if (isRoute()) ptsUi(); }); }
     if (S.wps.length >= 2) planNow(); else afterRoute();
     /* opening the tab keeps the map where it was; zoom to the route only for a shared link or measured points handed over.
        A route kept from before stays drawn where it is; "Zoom to route" in its summary brings it into view. */
