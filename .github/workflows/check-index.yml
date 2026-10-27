@@ -166,6 +166,7 @@ jobs:
       # incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
       - run: node tests/evsum_ai_smoke.mjs
       - run: node tests/points_smoke.mjs
+      - run: node tests/points_declutter_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
@@ -231,7 +232,9 @@ jobs:
       - run: node tests/evac_smoke.mjs
       - run: node tests/evacroute_smoke.mjs
       - run: node tests/route_wpdel_smoke.mjs
+      - run: node tests/rv_mapitems_smoke.mjs
       - run: node tests/route_keepview_smoke.mjs
+      - run: node tests/route_savedpts_smoke.mjs
       # Route > Plan a flight: airborne operation flight plan (assets/osap-flight.js)
       - run: node tests/flight_smoke.mjs
       - run: node tests/evac_lz_airfield_smoke.mjs
