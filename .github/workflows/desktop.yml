@@ -115,12 +115,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ startsWith(github.ref, 'refs/tags/desktop-v') && github.ref_name || format('desktop-v{0}', inputs.version) }}
         run: |
-          cd out && sha256sum * > SHA256SUMS.txt && ls -la
+          # Fixed file names (no version) so the company website can link to
+          # releases/latest/download/<name> and always hand out the newest build.
+          cd out
+          take() { local f; f=$(ls $1 2>/dev/null | head -1); [ -n "$f" ] || { echo "::error::no file matching $1"; exit 1; }; mv "$f" "$2"; }
+          take '*arm64*.dmg' AXIOM-OSAP-Mac-Apple-silicon.dmg
+          take '*.dmg' AXIOM-OSAP-Mac-Intel.dmg
+          take '*.exe' AXIOM-OSAP-Windows.exe
+          take '*.AppImage' AXIOM-OSAP-Linux.AppImage
+          take '*.deb' AXIOM-OSAP-Linux.deb
+          sha256sum * > SHA256SUMS.txt && ls -la
           pre=""; [[ "${TAG#desktop-v}" == *-* ]] && pre="--prerelease"
           cat > notes.md <<'NOTES'
           AXIOM OSAP desktop program. It opens the live OSAP site in its own window, updates itself the same way the website does, and works offline after the first start with internet.
 
-          **Download:** Windows `.exe`, Mac `.dmg` (`arm64` = Apple silicon, `x64` = Intel), Linux `.AppImage` or `.deb`. `SHA256SUMS.txt` lists each file's fingerprint.
+          **Download:** Windows `.exe`, Mac `.dmg` (Apple silicon for M1 and newer, Intel for older Macs), Linux `.AppImage` or `.deb`. You sign in with your OSAP account the same as on the website. `SHA256SUMS.txt` lists each file's fingerprint.
 
           These files are not code-signed, so the first start shows a warning:
           - **Windows:** "Windows protected your PC". Click **More info**, then **Run anyway**.

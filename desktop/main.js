@@ -8,7 +8,9 @@ const path = require("node:path");
 const fs = require("node:fs");
 
 // The one place the app's address lives. OSAP_URL overrides it for testing a preview or a local server.
-const APP_URL = process.env.OSAP_URL || "https://01shane89-jpg.github.io/AXIOM-APSAP/";
+// The Netlify site is the only one that can sign people in; the old GitHub Pages copy redirects there, and that
+// redirect would leave this window (it would open in the normal browser), so the program starts on Netlify directly.
+const APP_URL = process.env.OSAP_URL || "https://axiom-osap.netlify.app/";
 const APP = new URL(APP_URL);
 // OSAP_SMOKE=1: load the site, print the page title and quit (exit 1 if it never loads). Used by the build workflow.
 const SMOKE = process.env.OSAP_SMOKE === "1";
