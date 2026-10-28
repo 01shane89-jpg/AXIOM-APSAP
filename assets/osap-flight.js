@@ -7,15 +7,19 @@
    - Legs: great-circle lines (OSAP_GEO, WGS 84) with distance in nautical miles, true and magnetic course (WMM 2025), the
      airspeed used (the drop speed on the run-in from the IP to a DZ, cruise elsewhere), leg time and the time at each point in
      Zulu and local. Times run forward from take-off, or back from the time over the first DZ.
+   - Winds (Shane 2026-10-28): none, one wind the analyst sets, or forecast winds aloft (Open-Meteo, keyless; only the leg
+     middles and dates are sent, when "Get forecast winds" is pressed) at cruise altitude and, on the run-in, at the drop
+     altitude over the ground. Each leg then gets the wind, heading true and magnetic and ground speed (the wind triangle), and
+     leg times run on ground speed.
    - The DZ is drawn as a 2525D area labelled "DZ", its long side on the run-in course, centred on the point given.
      The shared DZ store (window.OSAP_DZ, assets/osap-dz-store.js, the DZSO tool) is used when it is there: pick a saved DZ, or
      save this one. window.OSAP_FLIGHT.forDz(dzId) gives the DZSO sheet the aircraft, drop altitude, drop speed, run-in and time.
    - Map symbols: MIL-STD-2525D control measures (Airfield, Air Control Point with its label), drawn by milsymbol.
    - Export: KML (points carry their 2525D SIDC), GPX route, TAK data package (assets/osap-tak.js), copy as text, Export PDF.
-   Plans are kept in this browser only (localStorage "osap-flight-cur", "osap-flights"); nothing is sent anywhere.
-   A planning aid built by the analyst: straight lines at a set airspeed, no wind, airspace, terrain clearance, threat, weight
+   Plans are kept in this browser only (localStorage "osap-flight-cur", "osap-flights"); nothing else is sent anywhere.
+   A planning aid built by the analyst: straight lines at a set airspeed with model or set winds, no airspace, terrain clearance, threat, weight
    or fuel planning. It is not a flight plan; aircrew plan and fly the real route. W.OSAP_FLIGHT = { open, close, isOpen, add,
-   state, legs, forDz, kml, gpx }. */
+   state, legs, forDz, kml, gpx, windTri, interpWind }. */
 (function () {
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
@@ -40,7 +44,7 @@
   var SYMNAME = { dep: "Airfield", land: "Airfield", cp: "Air Control Point", ip: "Air Control Point" };
 
   function acft(id) { return ACFT.filter(function (a) { return a.id === id; })[0] || ACFT[0]; }
-  function blank() { var a = ACFT[0]; return { id: "f" + Date.now().toString(36), name: "", acft: a.id, kt: a.kt, drop: a.drop, range: a.range, altFt: 1000, timeMode: "dep", t: null, dzLen: 1000, dzWid: 400, pts: [] }; }
+  function blank() { var a = ACFT[0]; return { id: "f" + Date.now().toString(36), name: "", acft: a.id, kt: a.kt, drop: a.drop, range: a.range, altFt: 1000, cruiseFt: 5000, wind: "none", man: { dir: 0, kt: 0 }, wx: null, timeMode: "dep", t: null, dzLen: 1000, dzWid: 400, pts: [] }; }
   function cleanPt(p) {
     if (!p || !isFinite(p.lat) || !isFinite(p.lon) || Math.abs(p.lat) > 90) return null;
     var o = { role: ROLES.some(function (r) { return r[0] === p.role; }) ? p.role : "cp", name: clean(p.name, 60), lat: +p.lat, lon: wrap(+p.lon), cc: clean(p.cc, 8) };
@@ -56,9 +60,93 @@
     b.altFt = +p.altFt > 0 && +p.altFt <= 40000 ? +p.altFt : 1000; b.timeMode = p.timeMode === "tot" ? "tot" : "dep"; b.t = isFinite(p.t) && p.t > 0 ? +p.t : null;
     b.dzLen = +p.dzLen >= 50 && +p.dzLen <= 10000 ? +p.dzLen : 1000; b.dzWid = +p.dzWid >= 50 && +p.dzWid <= 10000 ? +p.dzWid : 400;
     b.pts = (Array.isArray(p.pts) ? p.pts : []).map(cleanPt).filter(Boolean).slice(0, MAX_PTS);
+    b.cruiseFt = +p.cruiseFt >= 0 && +p.cruiseFt <= 45000 ? +p.cruiseFt : 5000;
+    b.wind = p.wind === "fc" || p.wind === "man" ? p.wind : "none";
+    if (p.man && isFinite(p.man.dir) && isFinite(p.man.kt)) b.man = { dir: ((+p.man.dir % 360) + 360) % 360, kt: Math.max(0, Math.min(250, +p.man.kt)) };
+    b.wx = cleanWx(p.wx);
     return b;
   }
-  var S = { plan: cleanPlan(lsGet(CKEY, null)), arm: false, msg: "", err: "", q: "" };
+  /* ---------- winds aloft ---------- */
+  /* forecast winds kept with the plan: { at, src, legs: [{ lat, lon (leg middle), elev (m), alt (ft MSL the wind is for),
+     h: [[unix s, from deg, kt], ...] }] }, one entry per leg in order */
+  function cleanWx(x) {
+    if (!x || !Array.isArray(x.legs) || !isFinite(x.at)) return null;
+    var legs = x.legs.slice(0, MAX_PTS).map(function (l) {
+      if (!l || !isFinite(l.lat) || !isFinite(l.lon) || !isFinite(l.alt) || !Array.isArray(l.h)) return null;
+      return { lat: +l.lat, lon: +l.lon, elev: isFinite(l.elev) ? +l.elev : 0, alt: +l.alt, h: l.h.slice(0, 200).filter(function (r) { return Array.isArray(r) && r.length === 3 && r.every(isFinite); }) };
+    });
+    return { at: +x.at, src: clean(x.src, 80) || "Open-Meteo", legs: legs };
+  }
+  /* the wind triangle: true course tc, true airspeed tas, wind from dir at kt -> heading, ground speed, wind correction angle */
+  function windTri(tc, tas, dir, kt) {
+    var d = (dir - tc) * Math.PI / 180, xw = kt * Math.sin(d), s = Math.max(-1, Math.min(1, xw / tas)), wca = Math.asin(s) * 180 / Math.PI;
+    return { hdg: ((tc + wca) % 360 + 360) % 360, gs: tas * Math.cos(wca * Math.PI / 180) - kt * Math.cos(d), wca: wca, head: kt * Math.cos(d), cross: xw };
+  }
+  /* the wind at height hM (metres above sea level) from levels [{ h (m MSL), dir (from), kt }]: straight-line vector mean
+     between the two levels round it; below the lowest or above the highest, that level's wind */
+  function interpWind(levels, hM) {
+    var L2 = (levels || []).filter(function (l) { return l && isFinite(l.h) && isFinite(l.dir) && isFinite(l.kt); }).sort(function (a, b) { return a.h - b.h; });
+    if (!L2.length) return null;
+    function vec(l) { var t = l.dir * Math.PI / 180; return [l.kt * Math.sin(t), l.kt * Math.cos(t)]; }
+    var lo = L2[0], hi = L2[L2.length - 1], f = 0;
+    if (hM <= lo.h) hi = lo; else if (hM >= hi.h) lo = hi;
+    else for (var i = 0; i + 1 < L2.length; i++) if (hM >= L2[i].h && hM <= L2[i + 1].h) { lo = L2[i]; hi = L2[i + 1]; f = hi.h > lo.h ? (hM - lo.h) / (hi.h - lo.h) : 0; break; }
+    var a = vec(lo), b = vec(hi), x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f, kt = Math.hypot(x, y);
+    return { dir: kt < 0.05 ? 0 : (Math.atan2(x, y) * 180 / Math.PI + 360) % 360, kt: kt };
+  }
+  /* the altitude a leg is flown at, in feet above sea level: the run-in at the drop altitude over the DZ, the rest at cruise */
+  function legAlt(plan, runin, elevM) { return runin ? plan.altFt + Math.round((elevM || 0) / FT) : plan.cruiseFt; }
+  var FT = 0.3048;
+  /* the forecast wind for leg i at time ms, or why there is none */
+  function fcWind(plan, i, a, b, runin, ms) {
+    var wx = plan.wx, l = wx && wx.legs[i];
+    if (!l || !l.h.length) return { err: "no forecast for this leg" };
+    var g = G(), mid = g.dest([a.lat, a.lon], g.inverse([a.lat, a.lon], [b.lat, b.lon]).b1, g.dist([a.lat, a.lon], [b.lat, b.lon]) / 2);
+    if (g.dist(mid, [l.lat, l.lon]) > 5000 || Math.abs(l.alt - legAlt(plan, runin, l.elev)) > 300) return { err: "the route or altitude changed since the winds were read" };
+    var tS = ms / 1000, best = null;
+    l.h.forEach(function (r) { if (!best || Math.abs(r[0] - tS) < Math.abs(best[0] - tS)) best = r; });
+    if (Math.abs(best[0] - tS) > 3 * 3600) return { err: "the forecast read does not cover this time" };
+    return { dir: best[1], kt: best[2], src: wx.src + " " + new Date(best[0] * 1000).toISOString().slice(11, 13) + "00Z" };
+  }
+  /* read the forecast winds for every leg: one Open-Meteo request (keyless; the leg middles and the dates are all that is sent),
+     winds at 10, 80, 120 and 180 m above the ground and on the pressure levels from 1000 to 200 hPa, each hour from the day
+     before the plan to the day after, turned into the wind at the leg's own altitude */
+  var METEO = "https://api.open-meteo.com/v1/forecast", HPA = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200], AGL = [10, 80, 120, 180];
+  function wxUrl(mids, ms) {
+    var v = [];
+    AGL.forEach(function (h) { v.push("wind_speed_" + h + "m", "wind_direction_" + h + "m"); });
+    HPA.forEach(function (h) { v.push("wind_speed_" + h + "hPa", "wind_direction_" + h + "hPa", "geopotential_height_" + h + "hPa"); });
+    var d0 = new Date(ms - 864e5).toISOString().slice(0, 10), d1 = new Date(ms + 864e5).toISOString().slice(0, 10);
+    return METEO + "?latitude=" + mids.map(function (m) { return m[0].toFixed(3); }).join(",") + "&longitude=" + mids.map(function (m) { return wrap(m[1]).toFixed(3); }).join(",") +
+      "&hourly=" + v.join(",") + "&wind_speed_unit=kn&timeformat=unixtime&timezone=GMT&start_date=" + d0 + "&end_date=" + d1;
+  }
+  /* the levels of hour i at one place, heights in metres above sea level */
+  function levelsAt(j, i) {
+    var h = j.hourly, el = isFinite(j.elevation) ? j.elevation : 0, out = [];
+    AGL.forEach(function (m) { var k = h["wind_speed_" + m + "m"], d = h["wind_direction_" + m + "m"]; if (k && d && isFinite(k[i]) && k[i] !== null && isFinite(d[i]) && d[i] !== null) out.push({ h: el + m, kt: k[i], dir: d[i] }); });
+    HPA.forEach(function (p) { var k = h["wind_speed_" + p + "hPa"], d = h["wind_direction_" + p + "hPa"], z = h["geopotential_height_" + p + "hPa"];
+      if (k && d && z && [k[i], d[i], z[i]].every(function (x) { return x !== null && isFinite(x); }) && z[i] > el + 180) out.push({ h: z[i], kt: k[i], dir: d[i] }); });
+    return out;
+  }
+  function getWinds() {
+    var p = S.plan, R = legs1(p, null), g = G();
+    if (!R.legs.length) { S.err = "Add at least two points first."; render(); return; }
+    var mid = R.t[0] + (R.t[R.t.length - 1] - R.t[0]) / 2;
+    if (mid > Date.now() + 15 * 864e5) { S.err = "The forecast reaches about 15 days ahead; this plan is later than that. Set one wind instead, or read the winds nearer the time."; render(); return; }
+    var mids = R.legs.map(function (l) { return g.dest([l.a.lat, l.a.lon], l.tc, l.m / 2); }), ac = W.AbortController ? new AbortController() : null, to = setTimeout(function () { if (ac) ac.abort(); }, 25000), plan = p;
+    S.wxBusy = true; S.err = ""; S.msg = "Reading forecast winds for " + mids.length + " leg" + (mids.length === 1 ? "" : "s") + "…"; render();
+    fetch(wxUrl(mids, mid), { signal: ac ? ac.signal : undefined }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (js) {
+      var arr = Array.isArray(js) ? js : [js];
+      if (arr.length !== mids.length || arr.some(function (j) { return !j || !j.hourly || !Array.isArray(j.hourly.time); })) throw new Error("the answer did not match the legs");
+      plan.wx = { at: Date.now(), src: "Open-Meteo", legs: R.legs.map(function (l, k) {
+        var j = arr[k], el = isFinite(j.elevation) ? j.elevation : 0, alt = legAlt(plan, l.runin, el), hm = alt * FT;
+        return { lat: mids[k][0], lon: mids[k][1], elev: el, alt: alt, h: j.hourly.time.map(function (ts, i) { var w = interpWind(levelsAt(j, i), hm); return w ? [ts, Math.round(w.dir), Math.round(w.kt * 10) / 10] : null; }).filter(Boolean) };
+      }) };
+      plan.wind = "fc"; S.msg = "Forecast winds read for every leg. Leg times now use ground speed."; S.err = "";
+    }).catch(function (e) { S.err = "The forecast winds did not load (" + (e && e.name === "AbortError" ? "no answer in 25 s" : e && e.message || "network error") + "). Times stay as they were."; })
+      .then(function () { clearTimeout(to); S.wxBusy = false; if (plan === S.plan) changed(); });
+  }
+  var S = { plan: cleanPlan(lsGet(CKEY, null)), arm: false, msg: "", err: "", q: "", wxBusy: false };
   function keep() { lsSet(CKEY, S.plan); }
   /* a saved drop zone this plan drops on was changed (dragged on the map from the DZSO sheet, or edited there): follow it. The
      PI, size and lead come across; a new run-in axis swings the IP round the DZ at the same distance so the run-in lines up. */
@@ -87,14 +175,27 @@
   /* ---------- the sums ---------- */
   /* legs of a plan: [{ i, a, b, m, nm, tc, mc, kt, s, runin }], with the time at every point (pt times, ms) and warnings */
   function legs(plan) {
-    var g = G(), P = plan.pts, out = [], warn = [], t = [], cum = 0, yr = new Date().getUTCFullYear() + (new Date().getUTCMonth() / 12);
+    var first = legs1(plan, null);
+    return plan.wind === "none" ? first : legs1(plan, first.t);
+  }
+  /* one pass: with tt (the point times of a pass without wind) each leg takes the wind at the time it is flown */
+  function legs1(plan, tt) {
+    var g = G(), P = plan.pts, out = [], warn = [], t = [], cum = 0, yr = new Date().getUTCFullYear() + (new Date().getUTCMonth() / 12), noWind = 0;
     for (var i = 0; i + 1 < P.length; i++) {
       var a = P[i], b = P[i + 1], inv = g.inverse([a.lat, a.lon], [b.lat, b.lon]), dec = 0;
       try { dec = g.decl(a.lat, a.lon, yr) || 0; } catch (e) { dec = 0; }
-      var runin = b.role === "dz" && a.role === "ip", kt = runin ? plan.drop : plan.kt, s = inv.m / NM / kt * 3600;
-      out.push({ i: i, a: a, b: b, m: inv.m, nm: inv.m / NM, tc: inv.b1, tcIn: inv.b2, mc: ((inv.b1 - dec) % 360 + 360) % 360, kt: kt, s: s, at: cum, runin: runin });
+      var runin = b.role === "dz" && a.role === "ip", kt = runin ? plan.drop : plan.kt, w = null;
+      if (tt && plan.wind === "man") w = { dir: plan.man.dir, kt: plan.man.kt, src: "set by you" };
+      else if (tt && plan.wind === "fc") { w = fcWind(plan, i, a, b, runin, (tt[i] + tt[i + 1]) / 2); if (w.err) { noWind++; w = null; } }
+      var tri = w ? windTri(inv.b1, kt, w.dir, w.kt) : null, gs = tri ? tri.gs : kt;
+      if (tri && gs < 30) warn.push("Leg " + tag(P, i) + " to " + tag(P, i + 1) + ": the wind leaves a ground speed of " + Math.round(gs) + " kt, so it is timed at 30 kt.");
+      gs = Math.max(30, gs);
+      var s = inv.m / NM / gs * 3600, wca = tri ? tri.wca : 0;
+      out.push({ i: i, a: a, b: b, m: inv.m, nm: inv.m / NM, tc: inv.b1, tcIn: inv.b2, mc: ((inv.b1 - dec) % 360 + 360) % 360, kt: kt, gs: gs, wind: w,
+        hdg: ((inv.b1 + wca) % 360 + 360) % 360, mh: ((inv.b1 + wca - dec) % 360 + 360) % 360, s: s, at: cum, runin: runin });
       cum += s;
     }
+    if (noWind) warn.push("No forecast wind for " + noWind + " leg" + (noWind === 1 ? "" : "s") + " (the route, altitude or time changed since the winds were read): press Get forecast winds again. Those legs are timed with no wind.");
     var nm = out.reduce(function (x, l) { return x + l.nm; }, 0);
     /* the first DZ sets the time over target */
     var dzI = -1; P.some(function (p, k) { if (p.role === "dz") { dzI = k; return true; } return false; });
@@ -158,7 +259,7 @@
     "#fl-card .fltag{font:700 11px ui-monospace,Menlo,Consolas,monospace;text-align:center;border-radius:4px;padding:2px 0;background:#e3f2f4;color:#0b4f5c}#fl-card li.dz .fltag{background:#fde2e2;color:#8a1c1c}" +
     "#fl-card .flg{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;color:var(--muted,#555)}#fl-card .flnm{width:100%}" +
     "#fl-card .flsub{grid-column:2/4;display:flex;flex-wrap:wrap;gap:4px;align-items:center}" +
-    "#fl-card table{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums}#fl-card th,#fl-card td{text-align:left;padding:3px 4px;border-top:1px solid var(--line,#ddd);vertical-align:top}#fl-card th{font-weight:600;color:var(--muted,#555)}" +
+    "#fl-card .fltw{overflow-x:auto;margin:0 -2px}#fl-card table{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums}#fl-card th,#fl-card td{text-align:left;padding:3px 4px;border-top:1px solid var(--line,#ddd);vertical-align:top}#fl-card th{font-weight:600;color:var(--muted,#555)}" +
     "#fl-card tr.runin td{background:rgba(198,40,40,.06)}#fl-card .flwarn{margin:6px 0;padding:5px 7px;border-left:3px solid #e65100;background:rgba(230,81,0,.07)}" +
     "#fl-card .flmsg{margin:6px 0;color:var(--muted,#555)}#fl-card .flmsg.err{color:#b71c1c}#fl-card .flsm{font-size:11.5px;color:var(--muted,#555)}" +
     "#fl-card .fltag2{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);font-weight:400}" +
@@ -206,12 +307,12 @@
 
   function render() {
     var c = ensure(), p = S.plan, a = acft(p.acft), R = legs(p), P = p.pts, sp = savedPts(), dzs = savedDzs();
-    var h = "<h3>" + IC + ' Flight plan <span class="fltag2" tabindex="0" title="Worked out by fixed rules in this browser: straight lines at the speed set here, no wind. Not AI, not analyst-approved, not a flight plan.">Planning aid</span>' +
+    var h = "<h3>" + IC + ' Flight plan <span class="fltag2" tabindex="0" title="Worked out by fixed rules in this browser: straight lines at the speed set here, with the winds chosen. Not AI, not analyst-approved, not a flight plan.">Planning aid</span>' +
       (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-fl="close" aria-label="Close the flight plan">Close</button></h3>';
     h += '<h4>Aircraft</h4><div class="flac">' + acSym(a, 22) + '<select id="fl-ac" aria-label="Aircraft type">' + ACFT.map(function (x) { return '<option value="' + x.id + '"' + (x.id === a.id ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></div>" +
       '<div class="flrow"><label>Cruise <input type="number" id="fl-kt" min="40" max="700" step="5" value="' + p.kt + '"> kt</label><label>Drop speed <input type="number" id="fl-drop" min="40" max="400" step="5" value="' + p.drop + '"> kt</label></div>' +
       '<div class="flrow"><label>Drop altitude <input type="number" id="fl-alt" min="100" max="40000" step="50" value="' + p.altFt + '"> ft AGL</label><label>Range <input type="number" id="fl-rng" min="0" max="10000" step="50" value="' + p.range + '"> nm</label></div>' +
-      '<p class="flsm">Typical published figures for the type; set the ones the aircrew give you. Speeds are airspeeds with no wind.</p>';
+      '<p class="flsm">Typical published figures for the type; set the ones the aircrew give you. Speeds are true airspeeds.</p>';
     h += '<h4>Route</h4><ol class="flpts">' + P.map(function (q, k) {
       var dzSel = q.role === "dz" && dzs.length ? '<select data-fldz="' + k + '" aria-label="Saved drop zone"><option value="">Saved DZ…</option>' + dzs.map(function (z) { return '<option value="' + esc(z.id) + '"' + (z.id === q.dzId ? " selected" : "") + ">" + esc(z.name || z.id) + "</option>"; }).join("") + "</select>" : "";
       return '<li class="' + q.role + '"><span class="fltag">' + esc(tag(P, k)) + '</span><input class="flnm" type="text" maxlength="60" data-flnm="' + k + '" value="' + esc(q.name) + '" placeholder="Name" aria-label="Name of point ' + (k + 1) + '">' +
@@ -227,10 +328,20 @@
     h += '<h4>Timing</h4><div class="flrow"><select id="fl-tm" aria-label="Time is for"><option value="dep"' + (p.timeMode === "dep" ? " selected" : "") + '>Take off at</option><option value="tot"' + (p.timeMode === "tot" ? " selected" : "") + ">Over the DZ at</option></select>" +
       '<input type="datetime-local" id="fl-t" step="60" value="' + zIso(p.t || Date.now()) + '" aria-label="Time (Zulu)"> Z <button type="button" data-fl="now">Now</button></div>';
     h += '<div class="flrow"><label>DZ length <input type="number" id="fl-dzl" min="50" max="10000" step="50" value="' + p.dzLen + '"> m</label><label>width <input type="number" id="fl-dzw" min="50" max="10000" step="50" value="' + p.dzWid + '"> m</label></div>';
+    h += '<h4>Winds</h4><div class="flrow"><select id="fl-wm" aria-label="Winds"><option value="none"' + (p.wind === "none" ? " selected" : "") + '>No wind</option><option value="fc"' + (p.wind === "fc" ? " selected" : "") + '>Forecast winds aloft</option><option value="man"' + (p.wind === "man" ? " selected" : "") + ">One wind I set</option></select>" +
+      '<label>Cruise <input type="number" id="fl-cru" min="0" max="45000" step="500" value="' + p.cruiseFt + '"> ft MSL</label></div>' +
+      (p.wind === "man" ? '<div class="flrow"><label>From <input type="number" id="fl-wd" min="0" max="360" step="5" value="' + Math.round(p.man.dir) + '">°</label><label>at <input type="number" id="fl-wk" min="0" max="250" step="1" value="' + Math.round(p.man.kt) + '"> kt</label></div>' : "") +
+      (p.wind === "fc" ? '<div class="flrow"><button type="button" data-fl="wx"' + (S.wxBusy ? " disabled" : "") + ">" + (S.wxBusy ? "Reading…" : p.wx ? "Read forecast winds again" : "Get forecast winds") + "</button>" +
+        (p.wx ? '<span class="flsm">Read ' + esc(when(p.wx.at)) + "</span>" : "") + "</div>" : "") +
+      '<p class="flsm">' + (p.wind === "fc" ? "Model winds from Open-Meteo at each leg's middle, at cruise altitude and, on the run-in, at the drop altitude over the ground; only the leg middles and dates are sent. Model winds are not a forecast from the aircrew's weather office." :
+        p.wind === "man" ? "One wind for every leg, as you set it." : "Legs are timed at airspeed. Pick forecast winds or set one wind to time them on ground speed.") + "</p>";
     if (R.legs.length) {
-      h += '<h4>Legs</h4><table><thead><tr><th>Leg</th><th>Course T/M</th><th>nm</th><th>kt</th><th>Time</th><th>At end (Zulu / local)</th></tr></thead><tbody>' +
-        R.legs.map(function (l) { return '<tr class="' + (l.runin ? "runin" : "") + '"><td>' + esc(tag(P, l.i)) + "→" + esc(tag(P, l.i + 1)) + (l.runin ? " <small>run-in</small>" : "") + "</td><td>" + deg(l.tc) + " / " + deg(l.mc) + "M</td><td>" + l.nm.toFixed(1) + "</td><td>" + l.kt + "</td><td>" + hm(l.s) + "</td><td>" + esc(when(R.t[l.i + 1])) + "</td></tr>"; }).join("") +
-        "</tbody></table>" +
+      var wcol = p.wind !== "none";
+      h += '<h4>Legs</h4><div class="fltw"><table><thead><tr><th>Leg</th><th>Course T/M</th>' + (wcol ? "<th>Wind</th><th>Heading T/M</th>" : "") + "<th>nm</th><th>" + (wcol ? "TAS/GS" : "kt") + "</th><th>Time</th><th>At end (Zulu / local)</th></tr></thead><tbody>" +
+        R.legs.map(function (l) { return '<tr class="' + (l.runin ? "runin" : "") + '"><td>' + esc(tag(P, l.i)) + "→" + esc(tag(P, l.i + 1)) + (l.runin ? " <small>run-in</small>" : "") + "</td><td>" + deg(l.tc) + " / " + deg(l.mc) + "M</td>" +
+          (wcol ? "<td>" + (l.wind ? deg(l.wind.dir) + " " + Math.round(l.wind.kt) + " kt" : "none") + "</td><td>" + deg(l.hdg) + " / " + deg(l.mh) + "M</td>" : "") +
+          "<td>" + l.nm.toFixed(1) + "</td><td>" + (wcol ? l.kt + "/" + Math.round(l.gs) : l.kt) + "</td><td>" + hm(l.s) + "</td><td>" + esc(when(R.t[l.i + 1])) + "</td></tr>"; }).join("") +
+        "</tbody></table></div>" +
         '<p><b>' + Math.round(R.nm) + " nm, " + hm(R.s) + " flying.</b> Take off " + esc(when(R.t[0])) + (R.dzI > 0 ? "; over " + esc(label(P, R.dzI)) + " " + esc(when(R.t[R.dzI])) + ", run-in " + deg(dzAxis(R, R.dzI)) + " true at " + p.altFt + " ft AGL" : "") + "; land " + esc(when(R.t[P.length - 1])) + ".</p>";
     }
     h += R.warn.map(function (w) { return '<p class="flwarn">' + esc(w) + "</p>"; }).join("");
@@ -240,7 +351,7 @@
       (W.OSAP_PDF ? '<button type="button" data-fl="pdf">Export PDF</button>' : "") + '<button type="button" data-fl="text">Copy as text</button><button type="button" data-fl="fit">Show on map</button></div>';
     var sv = lsGet(SKEY, []) || [];
     if (sv.length) h += '<div class="flrow"><select id="fl-open" aria-label="Open a saved plan"><option value="">Open a saved plan…</option>' + sv.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name || "Unnamed plan") + "</option>"; }).join("") + '</select><button type="button" data-fl="delsaved">Delete selected</button></div>';
-    h += '<p class="flsm">Planning aid only: great-circle lines (WGS 84) timed at the airspeeds set here, magnetic course from ' + esc(G().MODEL || "WMM") + ". No wind, airspace, terrain clearance, threat, weight or fuel planning. Not a flight plan: aircrew plan and fly the real route. Kept in this browser only.</p>";
+    h += '<p class="flsm">Planning aid only: great-circle lines (WGS 84) timed at the airspeeds set here, magnetic course from ' + esc(G().MODEL || "WMM") + ". Winds only as shown. No airspace, terrain clearance, threat, weight or fuel planning. Not a flight plan: aircrew plan and fly the real route. Kept in this browser only.</p>";
     c.innerHTML = h; c.hidden = false; syncDock();
     if (!W.ms && W.OSAP_MSYM && W.OSAP_MSYM.load) W.OSAP_MSYM.load().then(function () { if (card && !card.hidden) { render(); draw(); } }, function () {});
   }
@@ -345,6 +456,7 @@
     else if (a === "tap") { if (S.arm) { tapEnd(); render(); return; } S.arm = true; map.getContainer().style.cursor = "crosshair"; map.once("click", onTap); S.msg = "Tap the map where the point goes."; S.err = ""; render(); }
     else if (a === "add") typed();
     else if (a === "now") { S.plan.t = Date.now(); changed(); }
+    else if (a === "wx") { if (!S.wxBusy) getWinds(); }
     else if (a === "fit") fit();
     else if (a === "new") { tapEnd(); S.plan = blank(); S.msg = "New plan."; S.err = ""; changed(); }
     else if (a === "save") savePlan();
@@ -365,6 +477,10 @@
     else if (t.id === "fl-dzl") { if (+t.value >= 50 && +t.value <= 10000) p.dzLen = +t.value; }
     else if (t.id === "fl-dzw") { if (+t.value >= 50 && +t.value <= 10000) p.dzWid = +t.value; }
     else if (t.id === "fl-tm") p.timeMode = t.value === "tot" ? "tot" : "dep";
+    else if (t.id === "fl-wm") p.wind = t.value === "fc" || t.value === "man" ? t.value : "none";
+    else if (t.id === "fl-cru") { if (+t.value >= 0 && +t.value <= 45000) p.cruiseFt = +t.value; }
+    else if (t.id === "fl-wd") { if (+t.value >= 0 && +t.value <= 360) p.man.dir = +t.value % 360; }
+    else if (t.id === "fl-wk") { if (+t.value >= 0 && +t.value <= 250) p.man.kt = +t.value; }
     else if (t.id === "fl-t") { var ms = Date.parse(t.value + ":00Z"); if (isFinite(ms)) p.t = ms; }
     else if (t.id === "fl-name") { p.name = clean(t.value, 60); keep(); return; }
     else if (t.id === "fl-q") { S.q = t.value; return; }
@@ -404,7 +520,7 @@
   }
 
   /* ---------- exports ---------- */
-  var CAVEAT = "Planning aid from AXIOM OSAP: great-circle legs at set airspeeds, no wind, airspace, terrain clearance, threat or fuel planning. Not a flight plan.";
+  var CAVEAT = "Planning aid from AXIOM OSAP: great-circle legs at set airspeeds, winds only as shown (model or set by you), no airspace, terrain clearance, threat or fuel planning. Not a flight plan.";
   function kml(plan) {
     var P = plan.pts, R = legs(plan), a = acft(plan.acft), pm = [];
     P.forEach(function (q, k) {
@@ -418,7 +534,7 @@
       pm.push("<Placemark><name>" + xesc(label(P, k)) + "</name><description>" + xesc(desc) + '</description><styleUrl>#pt</styleUrl><ExtendedData><Data name="sidc"><value>' + sc + "</value></Data></ExtendedData><Point><coordinates>" + q.lon.toFixed(6) + "," + q.lat.toFixed(6) + ",0</coordinates></Point></Placemark>");
     });
     R.legs.forEach(function (l) {
-      pm.push("<Placemark><name>" + xesc(tag(P, l.i) + " to " + tag(P, l.i + 1)) + "</name><description>" + xesc(deg(l.tc) + " true / " + deg(l.mc) + " magnetic, " + l.nm.toFixed(1) + " nm at " + l.kt + " kt, " + hm(l.s)) + "</description><styleUrl>#" + (l.runin ? "runin" : "leg") + "</styleUrl><LineString><tessellate>1</tessellate><coordinates>" +
+      pm.push("<Placemark><name>" + xesc(tag(P, l.i) + " to " + tag(P, l.i + 1)) + "</name><description>" + xesc(deg(l.tc) + " true / " + deg(l.mc) + " magnetic, " + l.nm.toFixed(1) + " nm at " + l.kt + " kt" + (l.wind ? ", wind " + deg(l.wind.dir) + " " + Math.round(l.wind.kt) + " kt, heading " + deg(l.hdg) + " true, ground speed " + Math.round(l.gs) + " kt" : "") + ", " + hm(l.s)) + "</description><styleUrl>#" + (l.runin ? "runin" : "leg") + "</styleUrl><LineString><tessellate>1</tessellate><coordinates>" +
         G().path([l.a.lat, l.a.lon], [l.b.lat, l.b.lon], 20).map(function (c) { return wrap(c[1]).toFixed(6) + "," + c[0].toFixed(6) + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>");
     });
     return '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xesc(planName()) + "</name><description>" + xesc(a.name + ", cruise " + plan.kt + " kt, drop " + plan.drop + " kt. " + CAVEAT) + "</description>" +
@@ -433,7 +549,7 @@
   }
   function text(plan) {
     var P = plan.pts, R = legs(plan), a = acft(plan.acft), out = [planName(), a.name + " · cruise " + plan.kt + " kt · drop " + plan.drop + " kt at " + plan.altFt + " ft AGL", ""];
-    P.forEach(function (q, k) { out.push(label(P, k) + " (" + roleName(q.role) + ") " + grid(q.lat, q.lon) + " · " + when(R.t[k])); if (R.legs[k]) { var l = R.legs[k]; out.push("   " + deg(l.tc) + "T/" + deg(l.mc) + "M  " + l.nm.toFixed(1) + " nm  " + l.kt + " kt  " + hm(l.s) + (l.runin ? "  run-in" : "")); } });
+    P.forEach(function (q, k) { out.push(label(P, k) + " (" + roleName(q.role) + ") " + grid(q.lat, q.lon) + " · " + when(R.t[k])); if (R.legs[k]) { var l = R.legs[k]; out.push("   " + deg(l.tc) + "T/" + deg(l.mc) + "M  " + l.nm.toFixed(1) + " nm  " + l.kt + " kt" + (l.wind ? "  wind " + deg(l.wind.dir) + "/" + Math.round(l.wind.kt) + "  hdg " + deg(l.hdg) + "T/" + deg(l.mh) + "M  GS " + Math.round(l.gs) : "") + "  " + hm(l.s) + (l.runin ? "  run-in" : "")); } });
     out.push("", "Total " + Math.round(R.nm) + " nm, " + hm(R.s) + " flying.");
     R.warn.forEach(function (w) { out.push("Note: " + w); });
     out.push(CAVEAT);
@@ -443,7 +559,7 @@
     var root = D.createElement("div"), P = S.plan.pts, R = legs(S.plan), a = acft(S.plan.acft);
     root.innerHTML = "<h1>" + esc(planName()) + "</h1><p>" + esc(a.name) + " · cruise " + S.plan.kt + " kt · drop " + S.plan.drop + " kt at " + S.plan.altFt + " ft AGL · DZ " + S.plan.dzLen + " × " + S.plan.dzWid + " m</p>" +
       "<table><thead><tr><th>Point</th><th>Role</th><th>Grid</th><th>Time (Zulu / local)</th><th>Next leg</th></tr></thead><tbody>" +
-      P.map(function (q, k) { var l = R.legs[k]; return "<tr><td>" + esc(label(P, k)) + "</td><td>" + esc(roleName(q.role)) + "</td><td>" + esc(grid(q.lat, q.lon)) + "</td><td>" + esc(when(R.t[k])) + "</td><td>" + (l ? deg(l.tc) + "T / " + deg(l.mc) + "M, " + l.nm.toFixed(1) + " nm, " + l.kt + " kt, " + hm(l.s) : "") + "</td></tr>"; }).join("") +
+      P.map(function (q, k) { var l = R.legs[k]; return "<tr><td>" + esc(label(P, k)) + "</td><td>" + esc(roleName(q.role)) + "</td><td>" + esc(grid(q.lat, q.lon)) + "</td><td>" + esc(when(R.t[k])) + "</td><td>" + (l ? deg(l.tc) + "T / " + deg(l.mc) + "M, " + l.nm.toFixed(1) + " nm, " + l.kt + " kt" + (l.wind ? ", wind " + deg(l.wind.dir) + " " + Math.round(l.wind.kt) + " kt, heading " + deg(l.hdg) + "T / " + deg(l.mh) + "M, GS " + Math.round(l.gs) + " kt" : "") + ", " + hm(l.s) : "") + "</td></tr>"; }).join("") +
       "</tbody></table><p><b>Total " + Math.round(R.nm) + " nm, " + hm(R.s) + " flying.</b></p>" + R.warn.map(function (w) { return "<p>" + esc(w) + "</p>"; }).join("") + "<p><small>" + esc(CAVEAT) + "</small></p>";
     root.style.display = "none"; D.body.appendChild(root);
     Promise.resolve(W.OSAP_PDF.print({ title: "Flight plan: " + planName(), root: root })).then(function () { root.remove(); }, function () { root.remove(); });
@@ -458,7 +574,7 @@
   function close() { tapEnd(); if (card) card.hidden = true; syncDock(); layer.clearLayers(); }
   function isOpen() { return !!card && !card.hidden; }
   W.OSAP_FLIGHT = {
-    open: open, close: close, isOpen: isOpen, add: add, legs: legs, kml: kml, gpx: gpx, text: text, aircraft: ACFT,
+    open: open, close: close, isOpen: isOpen, add: add, legs: legs, windTri: windTri, interpWind: interpWind, kml: kml, gpx: gpx, text: text, aircraft: ACFT,
     state: function () { return { plan: JSON.parse(JSON.stringify(S.plan)), msg: S.msg, err: S.err, drawn: layer.getLayers().length }; },
     load: function (p) { tapEnd(); S.plan = cleanPlan(p); changed(true); },
     /* for the DZSO tool: the plan that drops on this saved DZ (the current plan first, then the saved ones), or null */
