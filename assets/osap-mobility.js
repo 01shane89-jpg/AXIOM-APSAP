@@ -16,7 +16,6 @@
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
   var GSW = "https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png";
-  var OVERPASS = "https://overpass-api.de/api/interpreter";
   var MINZ = 9, RXZ = 11, KEY = "osap-mobility";
   /* slope limits in degrees: below go = go, below nogo = slow-go, above = no-go. wet multiplies both. */
   var MOVERS = {
@@ -180,13 +179,25 @@
   }
   function rxQuery(b) {
     var bb = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(4); }).join(",");
-    return "[out:json][timeout:25][maxsize:8000000][bbox:" + bb + "];(" +
+    return "[out:json][timeout:25][bbox:" + bb + "];(" +
       'node["barrier"="border_control"];way["barrier"="border_control"];' +
       'way["landuse"="military"];relation["landuse"="military"];way["military"~"^(danger_area|range|training_area|base|barracks|airfield|checkpoint)$"];node["military"="checkpoint"];' +
       'way["boundary"="protected_area"];relation["boundary"="protected_area"];way["leisure"="nature_reserve"];' +
       'node["ford"]["ford"!="no"];way["ford"]["ford"!="no"];' +
       'way["highway"]["maxweight"];way["highway"]["maxheight"];way["bridge"]["maxweight"];' +
       ");out geom(" + bb + ") 1500;";
+  }
+  /* the same ask in Postpass SQL, cut to the view (a range or a reserve can be huge); exported for the tests */
+  function rxSql(b) {
+    var env = "ST_MakeEnvelope(" + [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map(function (v) { return v.toFixed(4); }).join(",") + ",4326)";
+    var where = "(tags->>'barrier' = 'border_control' OR tags->>'landuse' = 'military'" +
+      " OR tags->>'military' IN ('danger_area','range','training_area','base','barracks','airfield','checkpoint')" +
+      " OR tags->>'boundary' = 'protected_area' OR tags->>'leisure' = 'nature_reserve'" +
+      " OR (tags ? 'ford' AND tags->>'ford' <> 'no')" +
+      " OR (tags ? 'highway' AND (tags ? 'maxweight' OR tags ? 'maxheight')) OR (tags ? 'bridge' AND tags ? 'maxweight'))";
+    var cut = "CASE WHEN GeometryType(geom) = 'POINT' THEN geom ELSE ST_ClipByBox2D(geom, " + env + ") END";
+    return "(SELECT osm_type, osm_id, tags, " + cut + " AS geom FROM postpass_pointpolygon WHERE " + where + " AND geom && " + env + " LIMIT 1500)" +
+      " UNION ALL (SELECT osm_type, osm_id, tags, ST_ClipByBox2D(geom, " + env + ") AS geom FROM postpass_line WHERE " + where + " AND geom && " + env + " LIMIT 1500)";
   }
   function rxLoad() {
     rxT = 0;
@@ -197,10 +208,10 @@
     if (k === rxKey) return; rxKey = k;
     if (rxCache[k]) { rxDraw(rxCache[k]); return; }
     if (rxBusy) rxBusy.abort();
-    var ctl = rxBusy = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 30000);
+    var ctl = rxBusy = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 90000);
     rxMsg = "Loading restrictions from OpenStreetMap…"; note();
-    fetch(OVERPASS, { method: "POST", body: "data=" + encodeURIComponent(rxQuery(b)), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ctl.signal })
-      .then(function (r) { if (!r.ok) throw new Error(r.status === 429 ? "busy" : "HTTP " + r.status); return r.json(); })
+    /* Postpass first, then each Overpass server (assets/osap-osm.js) */
+    window.OSAP_OSM.query({ sql: rxSql(b), ql: rxQuery(b), signal: ctl.signal, ppMs: 25000, opMs: 25000 })
       .then(function (j) {
         clearTimeout(to); rxBusy = null;
         var els = (j.elements || []).slice(0, 1500);
@@ -297,7 +308,7 @@
       note(); legend(); if (was !== isWet()) redraw();
     },
     state: function () { return { on: S.on, rx: S.rx, mover: S.mover, wet: S.wet, wetNow: isWet(), model: S.model }; },
-    classify: classify, rxKind: rxKind, rxDraw: function (els) { rxDraw(els); }, MOVERS: MOVERS
+    classify: classify, rxKind: rxKind, rxQuery: rxQuery, rxSql: rxSql, rxDraw: function (els) { rxDraw(els); }, MOVERS: MOVERS
   };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();
