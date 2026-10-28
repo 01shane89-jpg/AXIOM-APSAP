@@ -1,0 +1,16 @@
+# Test only: asks the Overpass hosts the power grid's queries (tools/probe_power.sh). Prints to the log; writes nothing to the repo.
+name: Probe power grid
+on:
+  push:
+    branches: [claude/th-power-lines]
+    paths: [tools/probe_power.sh, .github/workflows/probe-power.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_power.sh
