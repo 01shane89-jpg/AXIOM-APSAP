@@ -32,21 +32,29 @@ const FIX = { elements: [
   { type: "node", id: 6, lat: 13.7550, lon: 100.5050, tags: { man_made: "surveillance", "surveillance:type": "guard" } },
   { type: "node", id: 7, lat: 13.7560, lon: 100.5060, tags: { man_made: "surveillance", "camera:type": "fixed", "contact:webcam": "https://example.gov/cam7.jpg", name: "Bridge cam <b>x</b>" } }
 ] };
-async function open(hash = "", overpass = "ok", opts = {}) {
+/* the same cameras as Postpass answers them (GeoJSON points, osm_type letters) */
+const PPFIX = { type: "FeatureCollection", features: FIX.elements.map((e) => ({ type: "Feature", geometry: { type: "Point", coordinates: [e.lon, e.lat] }, properties: { osm_type: "N", osm_id: e.id, tags: e.tags } })) };
+/* postpass: down (default: the Overpass fixture answers) | ok */
+async function open(hash = "", overpass = "ok", opts = {}, postpass = "down") {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
-  const errors = [], queries = [];
+  const errors = [], queries = [], pp = [];
+  await ctx.route(/postpass\.geofabrik\.de/, (r) => {
+    pp.push(decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")));
+    if (postpass === "down") return r.fulfill({ status: 503, body: "down" });
+    return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(PPFIX) });
+  });
   await ctx.route(/overpass|maps\.mail\.ru/, async (r) => {
     queries.push(decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")));
     if (overpass === "busy") return r.fulfill({ status: 429, body: "busy" });
     return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FIX) });
   });
-  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*(overpass|maps\.mail\.ru))/, (r) => r.abort());
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!postpass\.)(?!.*(overpass|maps\.mail\.ru))/, (r) => r.abort());
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + hash, { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_SURVEIL, null, { timeout: 60000 }); await settle(p);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  return { ctx, p, errors, queries };
+  return { ctx, p, errors, queries, pp };
 }
 const st = (p) => p.evaluate(() => window.OSAP_SURVEIL.state());
 const om = async (p, want) => {
@@ -122,6 +130,17 @@ const om = async (p, want) => {
   await ctx.close();
 }
 
+// ---------- Postpass answers first; Overpass is not asked ----------
+{
+  const { ctx, p, errors, queries, pp } = await open("", "ok", {}, "ok");
+  await p.evaluate(() => { window.__asapMap.setView([13.753, 100.503], 16, { animate: false }); window.OSAP_SURVEIL.set(true); });
+  await p.waitForFunction(() => / on screen/.test(window.OSAP_SURVEIL.state().msg), null, { timeout: 15000 }).catch(() => {});
+  const s = await st(p);
+  ok(pp.length === 1 && queries.length === 0 && s.drawn > 0, "postpass: cameras drawn from Postpass, Overpass not asked (" + pp.length + "/" + queries.length + ", " + s.drawn + " drawn): " + s.msg.slice(0, 60));
+  ok(/man_made' = 'surveillance'/.test(pp[0] || ""), "postpass: asks for man_made=surveillance in the view");
+  ok(errors.length === 0, "postpass: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 // ---------- busy server is reported ----------
 {
   const { ctx, p } = await open("", "busy");

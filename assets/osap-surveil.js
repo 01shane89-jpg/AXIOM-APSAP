@@ -2,7 +2,8 @@
    it faces, the type of camera and all the details the map carries. A view over public map data; it never changes a record and is
    not a data set (it never filters reporting). Its switch sits in Map overlays > Infrastructure (#ml-infra), or at the foot of the
    Layers menu on a page without that block.
-   - man_made=surveillance points (cameras and automatic number-plate readers), read live from the keyless Overpass API, from a
+   - man_made=surveillance points (cameras and automatic number-plate readers), read live through OSAP_OSM (assets/osap-osm.js:
+     Geofabrik's keyless Postpass first, the public Overpass servers when it fails), from a
      street/block zoom (dense: a city holds thousands). Coloured by the type of camera; a cone shows the direction it faces when the
      map records one. The pop-up lists operator, zone, mount, height, direction, reference and, where OSM has one, a link to the feed.
    - Community-mapped, so coverage is uneven and a camera on the map may be gone, or one on the ground unmapped. Positions and facts
@@ -10,13 +11,11 @@
    - Map overlays has one Cameras switch: where the public cameras (assets/osap-cams.js) are on the page, they adopt this overlay
      (adopt(slot)); their switch and their "Surveillance" kind button turn it on and off, and only its messages and attribution
      show, under their kind buttons. Its own switch is drawn only on a page without them.
-   window.OSAP_SURVEIL {set, adopt, state, query, draw, dirOf, kindOf}. */
+   window.OSAP_SURVEIL {set, adopt, state, query, ppQuery, draw, dirOf, kindOf}. */
 (function () {
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
   var D = document, W = window;
-  /* same keyless servers the grid and comms overlays use (POST, so the service worker never caches them) */
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var CAMZ = 13, MAX = 6000;
   var TYPES = {
     fixed: { name: "Fixed camera", col: "#1971c2" },
@@ -124,6 +123,10 @@
     var bb = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(4); }).join(",");
     return "[out:json][timeout:25][bbox:" + bb + '];nwr["man_made"="surveillance"];out center tags ' + (MAX + 500) + ";";
   }
+  /* the same ask in Postpass SQL; exported for the tests */
+  function ppQuery(b) {
+    return "SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE tags->>'man_made' = 'surveillance' AND " + W.OSAP_OSM.env(b) + " LIMIT " + (MAX + 500);
+  }
   var busy = null, key = "", cache = {}, t0 = 0;
   function load() {
     t0 = 0;
@@ -138,17 +141,7 @@
     if (cache[k]) { done(draw(cache[k], z)); return; }
     var ctl = busy = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 90000);
     S.msg = "Loading cameras from OpenStreetMap…"; paint();
-    var body = "data=" + encodeURIComponent(query(b));
-    var go = function (i) {
-      var one = new AbortController(), slow = false, st = setTimeout(function () { slow = true; one.abort(); }, 35000);
-      ctl.signal.addEventListener("abort", function () { one.abort(); });
-      return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: one.signal })
-        .then(function (r) { if (!r.ok) throw new Error(r.status === 429 || r.status === 504 ? "busy" : "HTTP " + r.status); return r.json(); })
-        /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: a failure, not "no cameras" */
-        .then(function (j) { if (j && j.remark && /error/i.test(j.remark)) throw new Error(/timed? ?out|memory/i.test(j.remark) ? "busy" : "remark"); return j; })
-        .then(function (j) { clearTimeout(st); return j; }, function (e) { clearTimeout(st); if (ctl.signal.aborted) throw e; if (i + 1 < OVERPASS.length) return go(i + 1); throw slow ? new Error("busy") : e; });
-    };
-    go(0).then(function (j) {
+    W.OSAP_OSM.query({ sql: ppQuery(b), ql: query(b), signal: ctl.signal }).then(function (j) {
       clearTimeout(to); if (busy === ctl) busy = null;
       var els = j.elements || [];
       var ks = Object.keys(cache); if (ks.length > 12) delete cache[ks[0]];
@@ -159,7 +152,8 @@
       if (busy !== ctl) return;
       busy = null; key = "";
       if (e && e.name === "AbortError" && !S.on) return;
-      S.msg = "The cameras did not load from OpenStreetMap" + (e && e.message === "busy" ? " (the free server is busy; pan or zoom to try again)." : " (no answer; pan or zoom to try again).");
+      S.msg = "The cameras did not load from OpenStreetMap" + (e && e.message === "busy" ? " (the free servers are busy" : " (no server answered") +
+        (W.OSAP_OSM.dark().length ? ": " + W.OSAP_OSM.dark().join(", ") : "") + "; pan or zoom to try again).";
       paint();
     });
   }
@@ -234,7 +228,7 @@
   }
   function init() {
     map = W.__asapMap;
-    if (!map || !W.L || !mount()) return false;
+    if (!map || !W.L || !W.OSAP_OSM || !mount()) return false;
     panes();
     L0 = L.layerGroup().addTo(map);
     map.on("moveend", function () { if (S.on) soon(); });
@@ -242,7 +236,7 @@
     paint();
     return true;
   }
-  W.OSAP_SURVEIL = { set: set, adopt: adopt, query: query, draw: draw, pop: pop, dirOf: dirOf, kindOf: kindOf,
+  W.OSAP_SURVEIL = { set: set, adopt: adopt, query: query, ppQuery: ppQuery, draw: draw, pop: pop, dirOf: dirOf, kindOf: kindOf,
     state: function () { return { on: S.on, msg: S.msg, drawn: L0 ? L0.getLayers().length : 0 }; } };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();
