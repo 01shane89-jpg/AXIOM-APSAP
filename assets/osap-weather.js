@@ -750,17 +750,29 @@
       .then(redraw);
   }
   /* tap the map: the next click on the map (not on a marker) becomes the spot */
-  function pickStart() {
+  /* brief: the spot opens the one-page brief at once (the Weather toolbar's "Weather brief for a spot") */
+  function pickStart(brief) {
     if (!map) return;
     if (ST.picking) return pickStop();
-    ST.picking = true; map.getContainer().classList.add("wxpicking"); redraw();
-    ST.pickFn = function (e) { pickStop(); chooseSpot(e.latlng.lat, e.latlng.lng, "Spot " + ll(e.latlng.lat, e.latlng.lng)); };
+    ST.picking = true; ST.pickBrief = !!brief; map.getContainer().classList.add("wxpicking"); redraw(); pickPaint();
+    ST.pickFn = function (e) {
+      var b = ST.pickBrief; pickStop();
+      if (b) briefAt({ lat: e.latlng.lat, lon: e.latlng.lng }); else chooseSpot(e.latlng.lat, e.latlng.lng, "Spot " + ll(e.latlng.lat, e.latlng.lng));
+    };
     map.once("click", ST.pickFn);
   }
   function pickStop() {
     if (map && ST.pickFn) map.off("click", ST.pickFn);
-    ST.picking = false; ST.pickFn = null; if (map) map.getContainer().classList.remove("wxpicking"); redraw();
+    ST.picking = false; ST.pickBrief = false; ST.pickFn = null; if (map) map.getContainer().classList.remove("wxpicking"); redraw(); pickPaint();
   }
+  function pickPaint() {
+    var b = document.querySelector("#ml-wx [data-wxbpick]"); if (!b) return;
+    var on = !!(ST.picking && ST.pickBrief);
+    b.setAttribute("aria-pressed", String(on)); b.textContent = on ? "Tap the map for the spot… (Esc to cancel)" : "Weather brief for a spot: tap the map";
+  }
+  /* what the one-page brief covers right now, for the Weather toolbar's button */
+  function placeLabel() { var R = region(); return R.kind === "area" ? "drawn area" : R.kind === "country" ? R.name : R.kind === "spot" ? R.center.name : R.pname; }
+  function placeLabelPaint() { var b = document.querySelector('#ml-wx [data-wxbrief]'); if (b) b.textContent = "One-page weather brief: " + placeLabel(); }
   /* the chosen province or spot is outlined on the map while the weather section is showing */
   var OUT = { key: "", lyr: null };
   function outlineSync() {
@@ -833,9 +845,14 @@
       function (e) { ST.busy = false; ST.err = e.message || String(e); redraw(); throw e; });
   }
   document.addEventListener("click", function (e) {
-    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxreport],[data-wxchart],[data-wxb],[data-wxpick],[data-wxfound]");
+    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxreport],[data-wxchart],[data-wxb],[data-wxpick],[data-wxbpick],[data-wxfound]");
     if (!t) return;
     if (t.hasAttribute("data-wxpick")) return pickStart();
+    if (t.hasAttribute("data-wxbpick")) {
+      /* on a phone the toolbar sheet covers the map: close it so the map can be tapped */
+      if (!ST.picking && W.innerWidth <= 700) { var x = document.querySelector("#atk-om [data-om=x]"); if (x) x.click(); }
+      return pickStart(true);
+    }
     if (t.hasAttribute("data-wxfound")) { var g = ST.found && ST.found.list[+t.getAttribute("data-wxfound")]; if (g) chooseSpot(g.lat, g.lon, g.name + (g.admin1 && g.admin1 !== g.name ? ", " + g.admin1 : "")); return; }
     if (t.hasAttribute("data-wxper")) { ST.per = t.getAttribute("data-wxper"); lsSet("osap-wx-per", ST.per); if (document.getElementById("wxb-page")) openBrief(); redraw(); }
     else if (t.hasAttribute("data-wxgo")) go(true).catch(function () {});
@@ -866,7 +883,7 @@
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && ST.picking) pickStop(); });
   /* a new drawn area or a new country resets the brief */
   W.addEventListener("storage", function () { var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; redraw(); } });
-  setInterval(function () { outlineSync(); if (!document.getElementById("wx-ops")) return; var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; go().catch(function () {}); } }, 2000);
+  setInterval(function () { outlineSync(); placeLabelPaint(); if (!document.getElementById("wx-ops")) return; var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; go().catch(function () {}); } }, 2000);
 
   /* ---------- the printable one-page weather brief (uses the page's #brief overlay and its print rules) ---------- */
   function briefHtml(D, lim) {
@@ -930,12 +947,25 @@
     }
     var imp = "<h3>Impacts at " + esc(ref.name) + "</h3>" + matrixHtml(A, D, "wxbm") +
       '<p class="bm wxthr"><b>Generic planning thresholds, not doctrine.</b> ' + THR.map(function (t) { return "<b>" + esc(t.short) + "</b> R: " + esc(t.red) + "; A: " + esc(t.amber) + "."; }).join(" ") + "</p>";
-    o += '<div class="bcols"><div>' + sum + haz + "</div><div>" + spread + sea + aqh + "</div></div>" + fct + upw + lit + imp;
+    o += '<div class="bcols"><div>' + sum + briefObs(ref, tz) + haz + "</div><div>" + spread + sea + aqh + "</div></div>" + fct + upw + lit + imp;
     o += '<footer>Forecast: Open-Meteo.com (CC BY 4.0), best-match blend of national weather models; marine and air quality: Open-Meteo (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information). ' +
       "Ceilings are estimated from model cloud layers; visibility is the model&rsquo;s. Sun and moon computed, accurate to a minute or two. BMNT and EENT are nautical twilight (sun 12° below the horizon). " +
       "Warnings are the agencies&rsquo; statements as the app last read them. Times are Zulu / local (" + esc(tz) + ").</footer>" +
       (SRC.length ? '<div class="po bsrcs"><b>Sources.</b> ' + SRC.map(function (u, i) { return (i + 1) + " " + esc(u.replace(/^https?:\/\/(www\.)?/, "").slice(0, 70)); }).join(" · ") + "</div>" : "") + "</article>";
     return o;
+  }
+  /* observed now: the nearest airfield's METAR, decoded, and whether a TAF is in force, in one short paragraph, so the model brief starts from what is being reported */
+  function briefObs(ref, tz) {
+    var A = ST.av && ST.av.key === avRefKey(ref) ? ST.av : null, h = '<h3>Observed now, nearest airfield (METAR via NOAA AWC)</h3>';
+    if (!A || A.busy) return h + '<p class="bm">Reading the nearest airfield reports…</p>';
+    if (A.err) return h + '<p class="bm">Airfield reports could not be loaded (' + esc(A.err) + ").</p>";
+    var s = A.list[0];
+    if (!s) return h + '<p class="bm">No airfield with a METAR or TAF within ' + AV_FAR + " km of " + esc(ref.name) + ".</p>";
+    var m = s.m, f = s.f, old = m && Date.now() - m.t > 2 * 36e5;
+    return h + '<p class="bm wxbobs"><b>' + esc(s.id) + "</b> " + esc(s.n || "") + ", " + Math.round(s.km) + " km " + bearing(ref.lat, ref.lon, s.la, s.lo) + " of " + esc(ref.name) +
+      (A.far ? " (nearest; none within " + AV_NEAR + " km)" : "") + (m && m.cat ? ' <span class="avcat" style="background:' + (CATC[m.cat] || "#666") + '">' + esc(m.cat) + "</span>" : "") +
+      (m ? ". METAR " + esc(zt(m.t, tz, true)) + ", " + esc(ageTxt(m.t)) + (old ? " (OLD)" : "") + ": " + esc(avDecoded(m)) + "." : ". No recent METAR.") +
+      (f ? " TAF in force to " + esc(f.vt ? zt(f.vt, tz, true) : "?") + " (full text in the Weather view)." : "") + "</p>";
   }
   function aqiName(v) { return v <= 50 ? "good" : v <= 100 ? "moderate" : v <= 150 ? "unhealthy for sensitive groups" : v <= 200 ? "unhealthy" : v <= 300 ? "very unhealthy" : "hazardous"; }
   function fitBrief(D) {
@@ -949,15 +979,36 @@
       if (lim[order[i]] > 1) lim[order[i]]--; html = briefHtml(D, lim);
     }
     /* still too long (many time blocks): a smaller type size, down to 7.4 px */
-    for (var fs = 8.2; !fits() && fs >= 7.4; fs -= 0.4) { html = html.replace(/<article class="bpage wxbp"( style="[^"]*")?/, '<article class="bpage wxbp" style="font-size:' + fs.toFixed(1) + 'px"'); m.innerHTML = html; }
+    for (var fs = 8.2; !fits() && fs >= 7.39; fs -= 0.4) { html = html.replace(/<article class="bpage wxbp"( style="[^"]*")?/, '<article class="bpage wxbp" style="font-size:' + fs.toFixed(1) + 'px"'); m.innerHTML = html; }
     m.parentNode.removeChild(m);
     return html;
   }
   function openBrief() {
     var el = document.getElementById("brief");
     if (!el) return;
-    function show(D) { el.innerHTML = fitBrief(D); el.hidden = false; document.documentElement.classList.add("briefing"); el.scrollTop = 0; }
-    if (ST.data) show(ST.data); else go().then(show, function () {});
+    function page(html) { el.innerHTML = html; el.hidden = false; document.documentElement.classList.add("briefing"); el.scrollTop = 0; }
+    function show(D) { avLoad(D.pts[0]); page(fitBrief(D)); }
+    if (ST.data) return show(ST.data);
+    /* while the forecast loads (and if it fails) the overlay says so, with Close and Try again, never an endless wait */
+    var R = ST.R || region(), bar = '<div class="bbar noprint"><button type="button" class="refresh" data-wxb="close">Close</button></div>';
+    page(bar + '<article class="bpage wxbp" id="wxb-page"><header><div><b>AXIOM OSAP</b> · Weather brief</div><h2>' + esc(R.name) + '</h2></header><p class="obs">Asking Open-Meteo for the model forecast…</p></article>');
+    go().then(function (D) { if (document.getElementById("wxb-page")) show(D); }, function (e) {
+      if (document.getElementById("wxb-page")) page(bar + '<article class="bpage wxbp" id="wxb-page"><header><div><b>AXIOM OSAP</b> · Weather brief</div><h2>' + esc(R.name) + '</h2></header><p class="obs"><span class="badge stale">FAILED</span> The forecast could not be loaded (' +
+        esc(e && e.message || String(e)) + '). <button type="button" class="refresh" data-wxbrief="1">Try again</button></p></article>');
+    });
+  }
+  /* a brief for a place chosen elsewhere: the drawn area ({area: true}) or a point ({lat, lon, name}) with the usual 25 km around it.
+     The choice is remembered like any other Weather place, so the Weather view shows the same place afterwards. */
+  function briefAt(o) {
+    o = o || {};
+    if (o.area) { if (!areaKey(lsGet("asap-area-" + cc()))) return false; setPlace({ k: "area" }); }
+    else if (isFinite(o.lat) && isFinite(o.lon)) {
+      var la = +(+o.lat).toFixed(4), lo = +(+o.lon).toFixed(4);
+      setPlace({ k: "spot", lat: la, lon: lo, name: String(o.name || "").slice(0, 80) || (mgrs(la, lo) ? "Point " + mgrs(la, lo) : "Point " + ll(la, lo)), km: 25 });
+    }
+    ST.found = null; ST.data = null; ST.err = "";
+    openBrief();
+    return true;
   }
   function closeBrief() {
     var el = document.getElementById("brief");
@@ -1542,13 +1593,14 @@
       (A.built ? " (last filed " + esc(zt(Date.parse(A.built), tz, true)) + ")" : "") + ". Times Zulu and local. Colour: VFR green, MVFR blue, IFR red, LIFR magenta (ceiling and visibility). Not for flight planning; use the official briefing service.</p></div>";
   }
   /* loads once per reference point; redraws whichever of the section and the chart is open */
+  function avRefKey(ref) { return ref.lat.toFixed(3) + "," + ref.lon.toFixed(3); }
   function avLoad(ref) {
-    var key = ref.lat.toFixed(3) + "," + ref.lon.toFixed(3);
+    var key = avRefKey(ref);
     if (ST.av && ST.av.key === key && (ST.av.busy || Date.now() - ST.av.at < AV_TTL)) return;
     ST.av = { key: key, busy: true, at: Date.now(), list: [] };
     avNear(ref.lat, ref.lon, 3).then(function (r) { if (ST.av.key !== key) return; ST.av = { key: key, at: Date.now(), list: r.list, far: r.far, built: r.built }; },
       function (e) { if (ST.av.key !== key) return; ST.av = { key: key, at: Date.now(), list: [], err: e.message || String(e) }; })
-      .then(function () { redraw(); if (document.getElementById("wxc-page") && ST.data) openChart(true); });
+      .then(function () { redraw(); if (document.getElementById("wxc-page") && ST.data) openChart(true); else if (document.getElementById("wxb-page") && ST.data) openBrief(); });
   }
 
   /* ---------- weather map layers ---------- */
@@ -2009,6 +2061,9 @@
     var wxv = document.querySelector('#view-seg button[data-view="weather"]');
     return '<div id="ml-wx"><div class="mlh">Weather</div>' +
       (wxv ? '<button type="button" class="wxopen" data-wxopen="1">Open forecasts and warnings</button>' : "") +
+      '<button type="button" class="wxopen" data-wxbrief="1">One-page weather brief: ' + esc(placeLabel()) + "</button>" +
+      '<button type="button" class="wxopen" data-wxbpick="1" aria-pressed="false">Weather brief for a spot: tap the map</button>' +
+      '<p class="mlkey">For an area, draw it with Area, then Weather brief. Long-press any point, then Plans, for a brief there.</p>' +
       '<button type="button" class="wxopen" data-ilopen="1">Night illumination: sun, twilight and moon</button>' +
       /* the weather model and the forecast hour drive every model layer below (rain, cloud, wind, temperature) */
       '<div class="wxmodel"><label class="mlop">Weather model <select id="wx-model">' + MAP_MODELS.map(function (m) { return '<option value="' + m[0] + '"' + (m[0] === MODEL ? " selected" : "") + ">" + esc(m[1]) + "</option>"; }).join("") +
@@ -2191,7 +2246,7 @@
     map.on("moveend", function () { if (gridOn()) gridSoon(); if (ON.warn && LYR.warn) { map.removeLayer(LYR.warn); LYR.warn = warnLayer(opOf("warn", 0.8)).addTo(map); } });
     setInterval(function () { if (ON.radar && LYR.radar) { RV.at = 0; map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
     legendDraw();
-    W.OSAP_WX = { region: region, brief: openBrief, report: openReport, chart: openChart,
+    W.OSAP_WX = { region: region, brief: openBrief, briefAt: briefAt, report: openReport, chart: openChart,
       /* for the Today card: the chosen province or spot (null for the whole country or a drawn area), the province list, and choosing one */
       placePoint: function (c) { var pl = place(c, lsGet("asap-area-" + c)); return pl.k === "reg" ? { name: pl.n, lat: pl.la, lon: pl.lo } : pl.k === "spot" ? { name: pl.name, lat: pl.lat, lon: pl.lon } : null; },
       regions: function (c, cb) { var l = regsFor(c); if (!l) loadRegs(c, cb); return l ? l.map(function (r) { return r[0]; }) : null; },
@@ -2199,6 +2254,8 @@
       airfields: avNear,
       _test: { cells: function (k) { var n = 0, w = 0; if (LYR[k]) LYR[k].eachLayer(function (l) { if (l.setBounds) { n++; if (l.options.fillOpacity > 0) w++; } }); return { all: n, wet: w }; }, rainCol: rainCol, flowCol: flowCol, MAP_MODELS: MAP_MODELS, flowState: function () { return { on: FLOW.on, frames: FLOW.frames || 0, still: FLOW.still, field: !!FLOW.f, parts: FLOW.parts.length }; }, chartHtml: chartHtml, avwxHtml: avwxHtml, tafLines: tafLines, avDecoded: avDecoded, stability: stability, daFt: daFt, paFt: paFt, agreement: agreement, meteogram: meteogram, analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
   }
+  /* Area > Weather brief: the one-page brief for the drawn shape (osap-atak.js asks for a shape first when there is none) */
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "wxbrief", label: "Weather brief", run: function () { if (W.OSAP_WX && W.OSAP_WX.briefAt) W.OSAP_WX.briefAt({ area: true }); } });
   function boot() { map = W.__asapMap; if (!map || !W.L || !W.TSAP || !W.OSAP_TIME) return setTimeout(boot, 300); init(); }
   boot();
 })();
