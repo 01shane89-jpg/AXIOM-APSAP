@@ -2,7 +2,10 @@
    One sheet for the Drop Zone Safety Officer of an airborne operation, for a drop zone (DZ) shared with the flight planner
    through window.OSAP_DZ (assets/osap-dz.js):
    - the DZ: point of impact (PI) as MGRS, elevation, rectangle or circle with its run-in axis (true and magnetic), drawn on
-     the map, and a planning check of its length against the number of jumpers per pass;
+     the map, and a planning check of its length against the number of jumpers per pass. The DZ is edited on the map too
+     (Shane 2026-10-27: "edit the dz shape and angle/ approach from the map"): drag the PI ring to move it, a corner to
+     resize (the circle's edge handle for its diameter), the turn handle on the run-in line to set the approach; a saved DZ
+     saves each change, so the flight planner follows it;
    - winds for the hours round the drop time (Open-Meteo model, keyless): surface wind and gusts, winds at 80, 120 and 180 m
      and at the 925 and 850 hPa levels, the mean wind from the ground to the drop altitude, the drift from the planning
      formula D = K x A x V (metres; K the load constant, A the drop altitude in hundreds of feet, V the mean wind in knots) and
@@ -15,7 +18,9 @@
      turbines, water, wetland, trees, roads, railways, fences and walls and buildings, each kind with how many are inside the DZ
      (plus a margin) and the nearest one's distance and direction from the PI, drawn on the map;
    - medical: the nearest hospitals from OSAP's stored copy of OpenStreetMap (data/medfac) with distance, direction and a flight
-     time estimate, and one press to open the medical plan or the evacuation planner from the PI;
+     time estimate, and one press to open the medical plan or the evacuation planner from the PI; Ground evacuation (Shane
+     2026-10-27: "see ground evac for the med plan from the dz") adds the road distance and drive time to each hospital and draws
+     the road route, with the medical plan's own routing (OSAP_MEDPLAN.road: OSRM, then Valhalla, else a labelled estimate);
    - comms, personnel and markings fields and a short DZSO checklist the DZSO fills in, kept with the DZ in this browser only;
    - Export PDF: the whole sheet with a north-up DZ diagram drawn to scale.
    Opened from long-press > Plans > "DZSO sheet here", a dropped point's "DZSO sheet" button and the Area menu ("Drop zone
@@ -175,7 +180,7 @@
   function prof(id) { return PROFILES.filter(function (p) { return p.id === id; })[0] || PROFILES[0]; }
   function keepLim() { lsSet({ prof: LIM.prof, wind: LIM.wind, gust: LIM.gust, K: LIM.K, vis: LIM.vis, pad: LIM.pad, perYd: LIM.perYd, kn: LIM.kn }); }
 
-  var ST = { dz: null, saved: false, arm: false, wx: null, wxErr: "", wxBusy: false, hz: null, hzErr: "", hzBusy: false, hosp: null, hospErr: "", hospBusy: false, meas: { kt: "", gust: "", dir: "" }, run: 0 };
+  var ST = { dz: null, saved: false, arm: false, edit: true, acOther: false, wx: null, wxErr: "", wxBusy: false, hz: null, hzErr: "", hzBusy: false, hosp: null, hospErr: "", hospBusy: false, meas: { kt: "", gust: "", dir: "" }, run: { wx: 0, hz: 0, hosp: 0, gnd: 0 }, gnd: { on: false, busy: false, err: "", host: "", sel: 0, rt: null, rtBusy: false, rtErr: "" }, hzT0: 0, hzTry: "" };
   function store() { return W.OSAP_DZ; }
   function newDz(at, name) {
     var c = store() ? store().clean : function (x) { return x; };
@@ -184,26 +189,105 @@
 
   /* ---------- the map ---------- */
   if (!map.getPane("dzpane")) { map.createPane("dzpane"); map.getPane("dzpane").style.zIndex = 667; }
-  var rend = L.svg({ pane: "dzpane" }), layer = L.layerGroup().addTo(map), hzLayer = L.layerGroup().addTo(map);
+  var rend = L.svg({ pane: "dzpane" }), layer = L.layerGroup().addTo(map), hzLayer = L.layerGroup().addTo(map), gLayer = L.layerGroup().addTo(map);
+  var hLayer = L.layerGroup().addTo(map), HS = {}, DRAG = null;
   function drawDz() {
-    layer.clearLayers(); if (!ST.dz || !isOpen()) return;
-    var dz = ST.dz, o = { pane: "dzpane", renderer: rend, interactive: false };
+    layer.clearLayers(); hLayer.clearLayers(); HS = {}; if (!ST.dz || !isOpen()) return;
+    drawShape(); if (ST.edit) drawHandles();
+  }
+  /* where the DZ starts along the run-in axis in fromUv's frame: the leading edge for a rectangle, the near edge of a circle */
+  function edge0(dz) { return dz.shape === "circle" ? -dz.len_m / 2 : 0; }
+  function drawShape() {
+    layer.clearLayers();
+    var dz = ST.dz, o = { pane: "dzpane", renderer: rend, interactive: false }, e0 = edge0(dz);
     L.polygon(outline(dz), Object.assign({ color: "#ffeb3b", weight: 3, fillColor: "#ffeb3b", fillOpacity: 0.12 }, o)).addTo(layer);
-    if (dz.shape !== "circle") {
-      var a = fromUv(dz, -1500, 0), b = fromUv(dz, dz.len_m, 0);
-      L.polyline([a, b], Object.assign({ color: "#ffeb3b", weight: 2, dashArray: "8 6" }, o)).addTo(layer);
-      var tip = fromUv(dz, -40, 0), l1 = fromUv(dz, -110, -35), l2 = fromUv(dz, -110, 35);
-      L.polygon([tip, l1, l2], Object.assign({ color: "#ffeb3b", weight: 1, fillColor: "#ffeb3b", fillOpacity: 1 }, o)).addTo(layer);
-    }
+    var a = fromUv(dz, e0 - 1500, 0), b = fromUv(dz, dz.shape === "circle" ? dz.len_m / 2 : dz.len_m, 0);
+    L.polyline([a, b], Object.assign({ color: "#ffeb3b", weight: 2, dashArray: "8 6" }, o)).addTo(layer);
+    var tip = fromUv(dz, e0 - 40, 0), l1 = fromUv(dz, e0 - 110, -35), l2 = fromUv(dz, e0 - 110, 35);
+    L.polygon([tip, l1, l2], Object.assign({ color: "#ffeb3b", weight: 1, fillColor: "#ffeb3b", fillOpacity: 1 }, o)).addTo(layer);
     L.circleMarker(dz.pi, Object.assign({ radius: 6, color: "#fff", weight: 2, fillColor: "#d32f2f", fillOpacity: 1 }, o)).addTo(layer);
     L.marker(dz.pi, { pane: "dzpane", interactive: false, icon: L.divIcon({ className: "dzlbl", html: "<span>PI " + esc(dz.name) + "</span>", iconSize: [0, 0] }) }).addTo(layer);
-    var h = totHour();
+    var h = DRAG ? null : totHour();
     if (h && h.rp) {
       L.polyline([dz.pi, h.rp], Object.assign({ color: "#e040fb", weight: 2, dashArray: "3 5" }, o)).addTo(layer);
       L.circleMarker(h.rp, Object.assign({ radius: 5, color: "#fff", weight: 2, fillColor: "#e040fb", fillOpacity: 1 }, o)).addTo(layer);
       L.marker(h.rp, { pane: "dzpane", interactive: false, icon: L.divIcon({ className: "dzlbl", html: "<span>Drift-only RP " + zc(h.t) + "</span>", iconSize: [0, 0] }) }).addTo(layer);
     }
   }
+
+  /* ---------- editing the DZ on the map: drag handles, mouse or finger ---------- */
+  function mpp() { return 40075016.686 * Math.cos(ST.dz.pi[0] * R) / Math.pow(2, map.getZoom() + 8); }
+  function handles(dz) {
+    var w = dz.wid_m / 2, out = [{ k: "mv", at: dz.pi, cls: "m", lbl: "Drag to move the drop zone" }];
+    if (dz.shape === "circle") out.push({ k: "rad", at: fromUv(dz, 0, dz.len_m / 2), cls: "c", lbl: "Drag to change the diameter" });
+    else [[0, -w], [0, w], [dz.len_m, w], [dz.len_m, -w]].forEach(function (c, i) { out.push({ k: "c" + i, at: fromUv(dz, c[0], c[1]), cls: "c", lbl: "Drag to resize the drop zone" }); });
+    out.push({ k: "rot", at: fromUv(dz, edge0(dz) - 110 - 60 * mpp(), 0), cls: "r", txt: "\u21bb", lbl: "Drag to turn the run-in (approach)" });
+    return out;
+  }
+  function drawHandles() {
+    handles(ST.dz).forEach(function (h) {
+      var m = L.marker(h.at, { pane: "dzpane", keyboard: false, interactive: true, zIndexOffset: 1000, bubblingMouseEvents: false,
+        icon: L.divIcon({ className: "dzh dzh-" + h.cls, html: h.txt || "", iconSize: [30, 30], iconAnchor: [15, 15] }) }).addTo(hLayer);
+      var el = m.getElement(); el.setAttribute("data-dzh", h.k); el.setAttribute("aria-label", h.lbl); el.title = h.lbl;
+      HS[h.k] = m;
+    });
+    HS.tip = L.marker(ST.dz.pi, { pane: "dzpane", interactive: false, icon: L.divIcon({ className: "dzlbl dztip", html: "", iconSize: [0, 0] }) }).addTo(hLayer);
+  }
+  function moveHandles(tip, at) {
+    handles(ST.dz).forEach(function (h) { if (HS[h.k]) HS[h.k].setLatLng(h.at); });
+    if (HS.tip) { HS.tip.setLatLng(at); var e = HS.tip.getElement(); if (e) e.innerHTML = "<span>" + esc(tip) + "</span>"; }
+  }
+  function r10(m) { return Math.round(m / 10) * 10; }
+  function sizeTxt(dz) { return dz.shape === "circle" ? dz.len_m + " m across" : dz.len_m + " x " + dz.wid_m + " m, PI " + dz.pi_lead_m + " m in"; }
+  /* one drag step: the DZ as it was when the drag began (z0) and the point under the finger (p) give the new DZ */
+  function dragTo(k, z0, p) {
+    var dz = ST.dz, q = uv(z0, p);
+    if (k === "mv") { dz.pi = [+p[0].toFixed(6), +p[1].toFixed(6)]; return grid(dz.pi); }
+    if (k === "rot") { dz.axis = Math.round(bearing(p, z0.pi)) % 360; return "Run-in " + dir3(dz.axis) + "° true"; }
+    if (k === "rad") { dz.len_m = Math.max(10, Math.min(20000, r10(2 * Math.hypot.apply(null, local(z0.pi, p))))); return sizeTxt(dz); }
+    var i = +k.charAt(1), lead = i < 2;
+    dz.wid_m = Math.max(10, Math.min(20000, r10(2 * Math.abs(q[1]))));
+    if (lead) {
+      /* the leading edge moves; the far edge and the PI stay where they are, so the PI can not fall outside the DZ */
+      var u0 = Math.min(r10(q[0]), z0.pi_lead_m, z0.len_m - 10);
+      dz.len_m = Math.min(20000, z0.len_m - u0); dz.pi_lead_m = Math.max(0, z0.pi_lead_m - u0);
+    } else dz.len_m = Math.max(10, z0.pi_lead_m, Math.min(20000, r10(q[0])));
+    return sizeTxt(dz);
+  }
+  function evPt(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, L.Util.wrapNum(ll.lng, [-180, 180], true)]; }
+  /* caught on the window before the page's own map handlers (map drag, long-press menu, report pop-ups) see a handle press */
+  function hDown(e) {
+    var t = e.target.closest && e.target.closest("[data-dzh]"); if (!t || !ST.dz || !isOpen() || (e.pointerType === "mouse" && e.button !== 0)) return;
+    e.preventDefault(); e.stopPropagation();
+    try { t.setPointerCapture(e.pointerId); } catch (x) {}
+    DRAG = { k: t.getAttribute("data-dzh"), id: e.pointerId, z0: JSON.parse(JSON.stringify(ST.dz)), moved: false };
+    map.dragging.disable(); t.classList.add("on");
+  }
+  function hMove(e) {
+    if (!DRAG || e.pointerId !== DRAG.id) return;
+    e.preventDefault(); e.stopPropagation();
+    var p = evPt(e), tip = dragTo(DRAG.k, DRAG.z0, p); DRAG.moved = true;
+    drawShape(); moveHandles(tip, DRAG.k === "mv" ? fromUv(ST.dz, edge0(ST.dz), 0) : p);
+  }
+  function hUp(e) {
+    if (!DRAG || e.pointerId !== DRAG.id) return;
+    e.preventDefault(); e.stopPropagation();
+    var d = DRAG; DRAG = null; map.dragging.enable(); hTapT = Date.now();
+    if (!d.moved) { drawDz(); return; }
+    if (d.k === "mv") ST.dz.elev_m = null;
+    keep(); paint(); drawDz();
+    if (d.k === "mv") refresh(); else if (ST.hz) drawHz();
+  }
+  var hTapT = 0;
+  W.addEventListener("pointerdown", hDown, true);
+  W.addEventListener("pointermove", hMove, true);
+  W.addEventListener("pointerup", hUp, true);
+  W.addEventListener("pointercancel", hUp, true);
+  /* the tap or click that ends a handle drag must not open a report under it, and iOS must not start a text-select callout */
+  W.addEventListener("click", function (e) { if ((e.target.closest && e.target.closest("[data-dzh]")) || Date.now() - hTapT < 400) { if (e.target.closest && e.target.closest("#dzso")) return; e.preventDefault(); e.stopPropagation(); } }, true);
+  W.addEventListener("touchstart", function (e) { if (e.target.closest && e.target.closest("[data-dzh]")) { e.preventDefault(); e.stopPropagation(); } }, { capture: true, passive: false });
+  W.addEventListener("contextmenu", function (e) { if (e.target.closest && e.target.closest("[data-dzh]")) { e.preventDefault(); e.stopPropagation(); } }, true);
+  map.on("zoomend", function () { if (ST.dz && isOpen() && ST.edit && !DRAG) drawDz(); });
   function drawHz() {
     hzLayer.clearLayers(); if (!ST.hz || !isOpen()) return;
     ST.hz.items.forEach(function (it) {
@@ -218,21 +302,22 @@
   /* ---------- data ---------- */
   function getJSON(url, ms) {
     var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms);
-    return fetch(url, { signal: ac ? ac.signal : undefined }).then(function (r) { clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); },
-      function (e) { clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : "network error"); });
+    /* the timer runs until the whole body is read: a server that sends its headers and then stalls must still time out */
+    return fetch(url, { signal: ac ? ac.signal : undefined }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) { clearTimeout(t); return j; }, function (e) { clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : e && /^HTTP /.test(e.message) ? e.message : "network error"); });
   }
   var HV = ["temperature_2m", "dew_point_2m", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "wind_speed_80m", "wind_direction_80m", "wind_speed_120m", "wind_direction_120m",
     "wind_speed_180m", "wind_direction_180m", "wind_speed_925hPa", "wind_direction_925hPa", "geopotential_height_925hPa", "wind_speed_850hPa", "wind_direction_850hPa", "geopotential_height_850hPa",
     "cloud_cover_low", "visibility", "precipitation", "weather_code", "pressure_msl"];
   function loadWx() {
-    var dz = ST.dz, run = ST.run; ST.wxBusy = true; ST.wxErr = ""; paint();
+    var dz = ST.dz, run = ++ST.run.wx; ST.wxBusy = true; ST.wxErr = ""; paint();
     var u = METEO + "?latitude=" + dz.pi[0].toFixed(4) + "&longitude=" + dz.pi[1].toFixed(4) + "&hourly=" + HV.join(",") + "&wind_speed_unit=kn&timeformat=unixtime&timezone=auto&forecast_days=10";
     getJSON(u, 25000).then(function (j) {
-      if (run !== ST.run) return;
+      if (run !== ST.run.wx) return;
       if (!j || !j.hourly || !Array.isArray(j.hourly.time)) throw new Error("no forecast in the answer");
       ST.wx = { j: j, at: Date.now(), elev: isFinite(j.elevation) ? j.elevation : null, off: +j.utc_offset_seconds || 0, tz: j.timezone || "" };
       if (ST.wx.elev !== null && ST.dz.elev_m == null) { ST.dz.elev_m = Math.round(ST.wx.elev); keep(); }
-    }).catch(function (e) { if (run === ST.run) { ST.wx = null; ST.wxErr = e.message || "failed"; } }).then(function () { if (run === ST.run) { ST.wxBusy = false; paint(); drawDz(); } });
+    }).catch(function (e) { if (run === ST.run.wx) { ST.wx = null; ST.wxErr = e.message || "failed"; } }).then(function () { if (run === ST.run.wx) { ST.wxBusy = false; paint(); drawDz(); } });
   }
   function levelsAt(j, i, elev) {
     var h = j.hourly, out = [[10, "10m"], [80, "80m"], [120, "120m"], [180, "180m"]].map(function (x) { return { h: x[0], kt: h["wind_speed_" + x[1]] && h["wind_speed_" + x[1]][i], dir: h["wind_direction_" + x[1]] && h["wind_direction_" + x[1]][i], lab: x[1] }; });
@@ -264,24 +349,30 @@
   function post(url, body, ms) {
     var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms);
     return fetch(url, { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac ? ac.signal : undefined }).then(function (r) {
-      clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json();
-    }, function (e) { clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : "network error"); }).then(function (j) {
+      if (!r.ok) throw new Error(r.status === 429 ? "busy (HTTP 429)" : r.status === 504 ? "timed out (HTTP 504)" : "HTTP " + r.status); return r.json();
+    }).then(function (j) { clearTimeout(t); return j; }, function (e) {
+      clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : e && /^(HTTP|busy|timed)/.test(e.message) ? e.message : e && e.name === "SyntaxError" ? "not a JSON answer" : "network error");
+    }).then(function (j) {
       if (j && j.remark && /error|timed out|runtime/i.test(j.remark)) throw new Error("Overpass: " + String(j.remark).slice(0, 120));
       return j;
     });
   }
-  function overpass(q) {
-    var body = "data=" + encodeURIComponent(q), tried = [];
+  /* the servers one after another, each with its own time limit, and the whole lookup capped so it always ends in an answer
+     or a failure the sheet shows; live() false stops it (the DZ moved, the sheet closed) */
+  function overpass(q, live) {
+    var body = "data=" + encodeURIComponent(q), tried = [], t0 = Date.now(), CAP = 100000;
     function go(i) {
-      if (i >= OVERPASS.length) return Promise.reject(new Error("every Overpass server failed (" + tried.join("; ") + ")"));
-      return post(OVERPASS[i], body, 45000).catch(function (e) { tried.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1); });
+      if (live && !live()) return Promise.reject(new Error("stopped"));
+      if (i >= OVERPASS.length || Date.now() - t0 > CAP - 10000) return Promise.reject(new Error("no Overpass server answered (" + (tried.join("; ") || "none tried") + ")"));
+      var host = OVERPASS[i].split("/")[2]; ST.hzTry = host + (i ? " (server " + (i + 1) + " of " + OVERPASS.length + ")" : ""); paintHz();
+      return post(OVERPASS[i], body, Math.min(30000, CAP - (Date.now() - t0))).catch(function (e) { tried.push(host + ": " + e.message); return go(i + 1); });
     }
     return go(0);
   }
   function hzRadius(dz) { return Math.min(4000, Math.round(Math.max(dz.len_m, dz.wid_m) + 800)); }
   function hzQuery(dz) {
     var a = "(around:" + hzRadius(dz) + "," + dz.pi[0].toFixed(5) + "," + dz.pi[1].toFixed(5) + ")";
-    return "[out:json][timeout:40];(" +
+    return "[out:json][timeout:25];(" +
       'way["power"~"^(line|minor_line|cable)$"]' + a + ";" +
       'nwr["man_made"~"^(mast|tower|communications_tower|chimney|water_tower)$"]' + a + ";" +
       'node["power"="generator"]["generator:source"="wind"]' + a + ";" +
@@ -337,30 +428,67 @@
     return { items: items, sum: sum };
   }
   function loadHz() {
-    var dz = ST.dz, run = ST.run; ST.hzBusy = true; ST.hzErr = ""; paint();
-    overpass(hzQuery(dz)).then(function (j) {
-      if (run !== ST.run) return;
+    var dz = ST.dz, run = ++ST.run.hz; ST.hzBusy = true; ST.hzErr = ""; ST.hzT0 = Date.now(); ST.hzTry = ""; paint();
+    overpass(hzQuery(dz), function () { return run === ST.run.hz; }).then(function (j) {
+      if (run !== ST.run.hz) return;
       ST.hz = analyseHz(j.elements || [], dz); ST.hz.at = Date.now(); ST.hz.r = hzRadius(dz); ST.hz.dzKey = dzKey(dz);
-    }).catch(function (e) { if (run === ST.run) { ST.hz = null; ST.hzErr = e.message || "failed"; } }).then(function () { if (run === ST.run) { ST.hzBusy = false; paint(); drawHz(); } });
+    }).catch(function (e) { if (run === ST.run.hz) { ST.hz = null; ST.hzErr = e.message || "failed"; } }).then(function () { if (run === ST.run.hz) { ST.hzBusy = false; paint(); drawHz(); } });
   }
   function dzKey(dz) { return [dz.pi.join(","), dz.axis, dz.shape, dz.len_m, dz.wid_m, dz.pi_lead_m].join("|"); }
   function loadHosp() {
-    var dz = ST.dz, run = ST.run, P = W.OSAP_HOSP && W.OSAP_HOSP.provider && W.OSAP_HOSP.provider("osm");
+    var dz = ST.dz, run = ++ST.run.hosp, P = W.OSAP_HOSP && W.OSAP_HOSP.provider && W.OSAP_HOSP.provider("osm");
     if (!P || !P.stored) { ST.hospErr = "the hospital data layer is not loaded on this page"; paint(); return; }
     ST.hospBusy = true; ST.hospErr = ""; paint();
     P.stored(dz.pi, HOSP_R).then(function (st) {
-      if (run !== ST.run) return;
+      if (run !== ST.run.hosp) return;
       var H = (st.els || []).filter(function (e) { var t = e.tags || {}; return (t.amenity === "hospital" || t.healthcare === "hospital") && (t.name || t["name:en"]); }).map(function (e) {
         var p = [e.lat, e.lon], t = e.tags; return { name: t["name:en"] || t.name, local: t["name:en"] && t.name !== t["name:en"] ? t.name : "", p: p, m: Math.hypot.apply(null, local(dz.pi, p)), brg: bearing(dz.pi, p), er: t.emergency || "", heli: !!(t["emergency:helipad"] || t.helipad), url: "https://www.openstreetmap.org/" + (e.type || "node") + "/" + e.id };
       }).filter(function (h) { return h.m <= HOSP_R; }).sort(function (a, b) { return a.m - b.m; });
       ST.hosp = { list: H.slice(0, HOSP_N), n: H.length, at: st.at || "", missing: st.missing || [] };
-    }).catch(function (e) { if (run === ST.run) { ST.hosp = null; ST.hospErr = (e && e.message) || "failed"; } }).then(function () { if (run === ST.run) { ST.hospBusy = false; paint(); } });
+    }).catch(function (e) { if (run === ST.run.hosp) { ST.hosp = null; ST.hospErr = (e && e.message) || "failed"; } }).then(function () { if (run === ST.run.hosp) { ST.hospBusy = false; paint(); if (ST.gnd.on) loadGnd(); } });
   }
+  /* ---------- ground evacuation: road distance and drive time to each hospital, and the road route to one ---------- */
+  function road() { return W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.road; }
+  function loadGnd() {
+    var G0 = ST.gnd, H = ST.hosp && ST.hosp.list, R = road(); gLayer.clearLayers(); G0.rt = null; G0.rtErr = "";
+    if (!H || !H.length) { paint(); return; }
+    if (!R) { G0.err = "the medical plan's road routing is not loaded on this page"; paint(); return; }
+    var run = ++ST.run.gnd, pi = ST.dz.pi.slice(), P = H.map(function (x) { return { lat: x.p[0], lon: x.p[1], m: x.m }; });
+    G0.busy = true; G0.err = ""; G0.host = ""; paint();
+    function take() { H.forEach(function (x, i) { var q = P[i]; x.road = q.s != null && isFinite(q.s) ? { s: q.s, m: q.rm, est: !!q.est } : null; }); }
+    R.times(pi, P).then(function (host) { if (run !== ST.run.gnd) return; take(); G0.host = String(host || "").split("/")[2] || ""; },
+      function (e) { if (run !== ST.run.gnd) return; take(); G0.err = (e && e.message) || "failed"; })
+      .then(function () {
+        if (run !== ST.run.gnd) return;
+        G0.busy = false;
+        /* the road route to the hospital nearest by road, or the one picked before */
+        var by = H.map(function (x, i) { return [x.road && !x.road.est ? x.road.s : Infinity, i]; }).sort(function (a, b) { return a[0] - b[0]; });
+        G0.sel = Math.min(G0.sel, H.length - 1); if (!(G0.picked && G0.sel >= 0)) G0.sel = by[0][0] < Infinity ? by[0][1] : 0;
+        paint(); if (!G0.err) loadRoute(G0.sel);
+      });
+  }
+  function loadRoute(i) {
+    var G0 = ST.gnd, H = ST.hosp && ST.hosp.list, R = road(), x = H && H[i]; if (!x || !R) return;
+    var run = ++ST.run.gnd; G0.sel = i; G0.rt = null; G0.rtErr = ""; G0.rtBusy = true; gLayer.clearLayers(); paint();
+    R.route(ST.dz.pi.slice(), { lat: x.p[0], lon: x.p[1] }).then(function (r) { if (run !== ST.run.gnd) return; G0.rt = { i: i, r: r }; },
+      function (e) { if (run === ST.run.gnd) G0.rtErr = (e && e.message) || "failed"; })
+      .then(function () { if (run !== ST.run.gnd) return; G0.rtBusy = false; paint(); drawGnd(); });
+  }
+  function drawGnd() {
+    gLayer.clearLayers(); var rt = ST.gnd.rt; if (!ST.gnd.on || !rt || !isOpen() || !rt.r.line || rt.r.line.length < 2) return;
+    var o = { pane: "dzpane", renderer: rend, interactive: false };
+    L.polyline(rt.r.line, Object.assign({ color: "#fff", weight: 7, opacity: 0.85 }, o)).addTo(gLayer);
+    L.polyline(rt.r.line, Object.assign({ color: "#2e7d32", weight: 4 }, o)).addTo(gLayer);
+    var x = ST.hosp.list[rt.i]; if (x) L.marker(x.p, { pane: "dzpane", interactive: false, icon: L.divIcon({ className: "dzlbl", html: "<span>" + esc(x.name) + ": " + fmtM(rt.r.m) + ", " + mins(rt.r.s) + " by road</span>", iconSize: [0, 0] }) }).addTo(gLayer);
+  }
+  function mins(s) { return s < 5940 ? Math.max(1, Math.round(s / 60)) + " min" : Math.floor(s / 3600) + " h " + p2(Math.round(s / 60) % 60); }
+  function roadTxt(x) { var r = x.road; return !r ? "-" : (r.est ? "~" : "") + fmtM(r.m) + ", " + (r.est ? "~" : "") + mins(r.s) + (r.est ? " (estimate)" : ""); }
+  /* each lookup has its own run number: a Refresh of one (winds) no longer orphans the others, which left the hazards on
+     "Asking OpenStreetMap" for good (Shane 2026-10-27: "Hazards never populated") */
   function refresh(what) {
-    ST.run++;
     if (!what || what.wx) { ST.wx = null; loadWx(); }
     if (!what || what.hz) { ST.hz = null; hzLayer.clearLayers(); loadHz(); }
-    if (!what || what.hosp) { ST.hosp = null; loadHosp(); }
+    if (!what || what.hosp) { ST.hosp = null; ST.run.gnd++; ST.gnd.busy = ST.gnd.rtBusy = false; ST.gnd.rt = null; ST.gnd.picked = false; gLayer.clearLayers(); loadHosp(); }
   }
 
   /* ---------- light ---------- */
@@ -392,6 +520,9 @@
     "#dzso .bad{color:#b71c1c;font-weight:600}#dzso .warn{border:1px solid #e65100;border-left-width:4px;padding:5px 8px;margin:8px 0;border-radius:4px}" +
     "#dzso .chk label{display:flex;gap:6px;align-items:flex-start;margin:3px 0}#dzso .fl{display:grid;grid-template-columns:minmax(10em,auto) 1fr;gap:4px 10px;align-items:center}#dzso .fl input{width:100%}" +
     "#dzso .meas{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;border:1px solid var(--line,#ddd);border-radius:6px;padding:6px 9px}#dzso .big{font-size:15px}" +
+    ".dzh{border-radius:50%;background:#fff;border:2px solid #c49000;box-shadow:0 1px 4px rgba(0,0,0,.5);touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;font:700 17px/1 system-ui,sans-serif;color:#7a5a00;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}" +
+    ".dzh.dzh-c{border-radius:5px;width:18px!important;height:18px!important;margin:-9px 0 0 -9px!important;cursor:nwse-resize;background:#ffeb3b;border-color:#000}.dzh.dzh-m{background:transparent;border:2px dashed #fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);cursor:move}" +
+    ".dzh.dzh-c::after{content:'';position:absolute;inset:-12px}.dzh.on{outline:3px solid #0b7285}.dztip span{transform:translate(18px,-130%);color:#fff}.dztip span:empty{display:none}" +
     ".dzlbl span{display:inline-block;transform:translate(9px,-50%);white-space:nowrap;font:600 11px/1.2 system-ui,sans-serif;background:rgba(0,0,0,.72);color:#ffeb3b;border-radius:3px;padding:1px 4px}" +
     "@media (max-width:700px){#dzso{padding:6px}#dzso .g,#dzso .fl{grid-template-columns:1fr;gap:2px 0}#dzso .g>span{margin-top:6px;font-size:12px}}" +
     ".dzp h2{font-size:15px;margin:10px 0 4px}.dzp table{border-collapse:collapse;width:100%;font-size:10px}.dzp th,.dzp td{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top}.dzp th{background:#eef1f4}" +
@@ -435,7 +566,9 @@
       '<button type="button" class="pri" data-dz="save">' + (ST.saved ? "Saved" : "Save drop zone") + "</button>" + (ST.saved ? '<button type="button" data-dz="del">Delete</button>' : "") + "</div>" +
       '<span>Name</span><div><input class="w" data-f="name" value="' + esc(dz.name) + '" maxlength="80"></div>' +
       '<span>Point of impact</span><div class="r"><b class="pt">' + esc(grid(dz.pi)) + "</b> <span class=\"obs pt\">" + dz.pi[0].toFixed(5) + ", " + dz.pi[1].toFixed(5) + "</span>" +
-      '<button type="button" data-dz="pick" aria-pressed="' + ST.arm + '">Pick on map</button><button type="button" data-dz="centre">Map centre</button><button type="button" data-dz="show">Show on map</button></div>' +
+      '<button type="button" data-dz="pick" aria-pressed="' + ST.arm + '">Pick on map</button><button type="button" data-dz="centre">Map centre</button><button type="button" data-dz="show">Show on map</button>' +
+      '<button type="button" data-dz="edit" aria-pressed="' + ST.edit + '">Edit on map</button></div>' +
+      (ST.edit ? '<span></span><p class="obs">On the map: drag the dashed ring at the PI to move the DZ, ' + (dz.shape === "circle" ? "the square on the edge to change its size" : "a yellow corner to change its size") + ", and \u21bb on the run-in line to turn the approach." + (ST.saved ? " Each change is saved." : " Save the drop zone to keep the changes.") + "</p>" : "") +
       '<span>Type a grid</span><div class="r"><input class="w" data-f="grid" placeholder="MGRS or lat, lon" aria-label="Point of impact as MGRS or lat, lon"><button type="button" data-dz="grid">Set</button></div>' +
       "<span>Elevation</span><div>" + (dz.elev_m != null ? Math.round(dz.elev_m) + " m / " + Math.round(dz.elev_m / FT) + " ft MSL <span class=\"obs\">(model terrain, about 90 m detail)</span>" : ST.wxBusy ? "reading…" : "not known") + "</div>" +
       "<span>Shape</span><div class=\"r\">" + sel("shape", [["rect", "Rectangle"], ["circle", "Circle"]], dz.shape) + "</div>" +
@@ -455,7 +588,7 @@
   function secDrop(dz) {
     var p = prof(LIM.prof), fl = W.OSAP_FLIGHT && W.OSAP_FLIGHT.forDz && ST.saved ? W.OSAP_FLIGHT.forDz(dz.id) : null;
     var h = "<h3>Drop</h3><div class=\"g\">" +
-      '<span>Aircraft</span><div><input class="w" data-f="acft" value="' + esc(dz.acft) + '" maxlength="40" placeholder="e.g. C-130J, C-17, CH-47"></div>' +
+      '<span>Aircraft</span><div class="r">' + acftSel(dz.acft) + "</div>" +
       '<span>Drop time (Zulu)</span><div class="r"><input type="datetime-local" data-f="tot" value="' + esc(totInput(dz)) + '"> ' + (dz.tot ? '<span class="obs">' + esc(zd(Date.parse(dz.tot)) + " " + zc(Date.parse(dz.tot))) + (ST.wx ? ", " + lc(Date.parse(dz.tot), ST.wx.off) + " local" : "") + "</span>" : '<span class="obs">not set: the next 12 hours are shown</span>') + "</div>" +
       '<span>Drop altitude</span><div class="r"><input type="number" min="100" max="40000" step="50" data-f="alt_ft" value="' + (dz.alt_ft || "") + '"> ft above the DZ' + (dz.alt_ft && dz.elev_m != null ? ' = <b>' + Math.round(dz.alt_ft + dz.elev_m / FT) + " ft MSL</b>" : "") + "</div>" +
       "<span>Load</span><div class=\"r\">" + sel("prof", PROFILES.map(function (x) { return [x.id, x.label]; }), LIM.prof) + "</div>" +
@@ -464,6 +597,15 @@
       '<p class="obs">' + esc(p.note) + "</p>";
     if (fl) h += '<p>From the flight plan: ' + esc([fl.acft, fl.alt_ft ? fl.alt_ft + " ft" : "", fl.tot ? zd(Date.parse(fl.tot)) + " " + zc(Date.parse(fl.tot)) : "", isFinite(fl.axis) ? "run-in " + dir3(fl.axis) + "°" : "", fl.ias_kt ? fl.ias_kt + " kt" : ""].filter(Boolean).join(", ")) + ' <button type="button" data-dz="fromflight">Use these</button></p>';
     return h;
+  }
+  /* the aircraft drop-down: the shared list (OSAP_DZ.aircraft, also the flight planner's), with a typed name kept as its own
+     option and "Other" for typing one */
+  function acftSel(cur) {
+    var A = ((store() && store().aircraft) || []).filter(function (a) { return a.id !== "custom"; }), known = A.some(function (a) { return a.name === cur; });
+    var typed = ST.acOther || (cur && !known), h = '<select data-f="acsel" aria-label="Aircraft"><option value=""' + (!cur && !ST.acOther ? " selected" : "") + ">Choose the aircraft</option>" +
+      A.map(function (a) { return '<option value="' + esc(a.name) + '"' + (a.name === cur ? " selected" : "") + ">" + esc(a.name) + "</option>"; }).join("") +
+      '<option value="__other"' + (typed ? " selected" : "") + ">Other (type it)</option></select>";
+    return h + (typed ? '<input class="w" data-f="acft" value="' + esc(cur) + '" maxlength="40" placeholder="Type the aircraft" aria-label="Aircraft (typed)">' : "");
   }
   function measVerdict() {
     var m = ST.meas, kt = num(m.kt), g = num(m.gust); if (kt === null && g === null) return null;
@@ -509,9 +651,16 @@
       '<div class="tw"><table><tr>' + rows.map(function (r) { return "<th>" + r[0] + "</th>"; }).join("") + "</tr><tr>" + rows.map(function (r) { return "<td>" + t(r[1]) + "</td>"; }).join("") + "</tr></table></div>" +
       '<p class="obs">Zulu then local. Computed on this device for a flat horizon at sea level (OSAP night illumination method); terrain moves real times.</p>';
   }
+  function hzBusyTxt(dz) {
+    return "Asking OpenStreetMap (Overpass" + (ST.hzTry ? ": " + esc(ST.hzTry) : "") + ") for power lines, water, trees, roads and buildings within " + fmtM(hzRadius(dz)) + "… " +
+      Math.round((Date.now() - ST.hzT0) / 1000) + ' s <button type="button" data-dz="hz">Try again</button>';
+  }
+  /* the busy line only, so a long lookup shows it is still going without repainting the whole sheet under the finger */
+  function paintHz() { var b = el && el.querySelector("[data-hzbusy]"); if (b && ST.hzBusy) b.innerHTML = hzBusyTxt(ST.dz); }
+  setInterval(function () { if (ST.hzBusy && isOpen()) paintHz(); }, 1000);
   function secHz(dz) {
     var h = "<h3>Hazards in and round the DZ</h3>";
-    if (ST.hzBusy) return h + '<p class="obs">Asking OpenStreetMap (Overpass) for power lines, water, trees, roads and buildings within ' + fmtM(hzRadius(dz)) + "…</p>";
+    if (ST.hzBusy) return h + '<p class="obs" data-hzbusy>' + hzBusyTxt(dz) + "</p>";
     if (ST.hzErr) return h + '<p class="bad">The hazard lookup failed: ' + esc(ST.hzErr) + '. That is a failure, not "no hazards". <button type="button" data-dz="hz">Try again</button></p>';
     if (!ST.hz) return h;
     var stale = ST.hz.dzKey !== dzKey(dz), S = ST.hz.sum, inn = ST.hz.items.filter(function (i) { return i.inDz; }).sort(function (a, b) { return KINDS[b.k].sev - KINDS[a.k].sev || a.m - b.m; });
@@ -532,14 +681,27 @@
     if (ST.hospBusy) h += '<p class="obs">Reading OSAP\'s stored hospital list…</p>';
     else if (ST.hospErr) h += '<p class="bad">The hospital list could not be read: ' + esc(ST.hospErr) + ".</p>";
     else if (ST.hosp && !ST.hosp.list.length) h += '<p class="obs">No named hospital in OSAP\'s stored copy within ' + fmtM(HOSP_R) + (ST.hosp.missing.length ? " (not yet stored: " + esc(ST.hosp.missing.join(", ")) + ")" : "") + ". Use the medical plan for a wider search.</p>";
-    else if (ST.hosp) h += '<div class="tw"><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at ' + LIM.kn + ' kt</th><th>Emergency dept.</th></tr></thead><tbody>' +
-      ST.hosp.list.map(function (x) {
-        return '<tr><td><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + "</a>" + (x.local ? '<br><span class="obs">' + esc(x.local) + "</span>" : "") + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + " (" + dir3(x.brg) + "°)</td><td>" +
-          Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td><td>" + (x.er === "yes" ? "Mapped yes" : x.er === "no" ? "Mapped no" : "Not mapped") + (x.heli ? ", helipad" : "") + "</td></tr>";
-      }).join("") + "</tbody></table></div>" +
+    else if (ST.hosp) h += '<div class="tw"><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at ' + LIM.kn + " kt</th>" + (ST.gnd.on ? "<th>By road</th>" : "") + "<th>Emergency dept.</th></tr></thead><tbody>" +
+      ST.hosp.list.map(function (x, i) {
+        return '<tr' + (ST.gnd.on && ST.gnd.sel === i && (ST.gnd.rt || ST.gnd.rtBusy) ? ' class="tot"' : "") + '><td><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + "</a>" + (x.local ? '<br><span class="obs">' + esc(x.local) + "</span>" : "") + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + " (" + dir3(x.brg) + "°)</td><td>" +
+          Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td>" +
+          (ST.gnd.on ? "<td>" + (ST.gnd.busy ? "…" : esc(roadTxt(x))) + (x.road && !ST.gnd.busy ? ' <button type="button" data-dz="groute" data-i="' + i + '" aria-pressed="' + (ST.gnd.sel === i && !!ST.gnd.rt) + '">Route</button>' : "") + "</td>" : "") +
+          "<td>" + (x.er === "yes" ? "Mapped yes" : x.er === "no" ? "Mapped no" : "Not mapped") + (x.heli ? ", helipad" : "") + "</td></tr>";
+      }).join("") + "</tbody></table></div>" + secGnd() +
       '<p class="obs">Straight-line distance; air time at <input type="number" min="40" max="400" step="10" data-f="kn" value="' + LIM.kn + '" aria-label="Cruise speed in knots"> kt with no start-up or loading time. From OSAP\'s stored copy of OpenStreetMap' + (ST.hosp.at ? " (" + esc(ST.hosp.at.slice(0, 10)) + ")" : "") + "; trauma level and capability are in the medical plan.</p>";
-    h += '<p class="r"><button type="button" data-dz="medplan">Medical plan from the PI</button><button type="button" data-dz="evac">Evacuate from the PI</button></p>';
+    h += '<p class="r"><button type="button" data-dz="gnd" aria-pressed="' + ST.gnd.on + '">Ground evacuation</button><button type="button" data-dz="medplan">Medical plan from the PI</button><button type="button" data-dz="evac">Evacuate from the PI</button></p>';
     return h;
+  }
+  function secGnd() {
+    var G0 = ST.gnd; if (!G0.on) return "";
+    if (G0.busy) return '<p class="obs">Asking the road router for drive times from the PI…</p>';
+    var h = "";
+    if (G0.err) h += '<p class="bad">No road router answered (' + esc(G0.err) + "): the road figures are straight-line estimates (distance x 1.4 at 50 km/h), not a route. <button type=\"button\" data-dz=\"gnd-retry\">Try again</button></p>";
+    var rt = G0.rt, x = rt && ST.hosp.list[rt.i];
+    if (G0.rtBusy) h += '<p class="obs">Working out the road route…</p>';
+    else if (G0.rtErr) h += '<p class="bad">The road route could not be worked out: ' + esc(G0.rtErr) + '. <button type="button" data-dz="groute" data-i="' + G0.sel + '">Try again</button></p>';
+    else if (x) h += "<p><b>Road route to " + esc(x.name) + ":</b> " + fmtM(rt.r.m) + ", " + mins(rt.r.s) + (rt.r.roads && rt.r.roads.length ? " via " + esc(rt.r.roads.slice(0, 4).map(function (r) { return r.n; }).join(", ")) : "") + ", drawn on the map in green.</p>";
+    return h + '<p class="obs">Road drive time from the PI with no traffic, checkpoints, road damage, loading or start-up time' + (G0.host ? " (" + esc(G0.host) + ", OpenStreetMap roads)" : "") + ". The same routing as the medical plan; confirm the route on the ground.</p>";
   }
   function secFields(dz) {
     var f = dz.fields;
@@ -561,25 +723,49 @@
     function X(xy) { return (Wd / 2 + xy[0] * s).toFixed(1); }
     function Y(xy) { return (Hd / 2 - xy[1] * s).toFixed(1); }
     function pl(pts) { return pts.map(function (p) { var q = local(dz.pi, p); return X(q) + "," + Y(q); }).join(" "); }
-    var g = '<svg viewBox="0 0 ' + Wd + " " + Hd + '" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif" font-size="11"><rect width="' + Wd + '" height="' + Hd + '" fill="#f7f8f6"/>';
+    var g = '<svg viewBox="0 0 ' + Wd + " " + Hd + '" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif" font-size="11"><rect width="' + Wd + '" height="' + Hd + '" fill="#f7f8f6"/>' + imagery(dz, Wd, Hd, s);
     if (ST.hz) ST.hz.items.forEach(function (it) {
       var k = KINDS[it.k];
       if (it.pt) { var q = local(dz.pi, it.pt); if (Math.abs(q[0]) > ext || Math.abs(q[1]) > ext) return; g += '<circle cx="' + X(q) + '" cy="' + Y(q) + '" r="' + (it.k === "bldg" ? 1.6 : 3) + '" fill="' + k.c + '"/>'; }
       else if (it.line) g += (it.closed ? '<polygon fill="' + k.c + '" fill-opacity=".25"' : '<polyline fill="none"') + ' stroke="' + k.c + '" stroke-width="' + (it.closed ? 0.8 : (k.w || 2) * 0.8) + '" points="' + pl(it.line) + '"/>';
     });
-    g += '<polygon points="' + ol.map(function (q) { return X(q) + "," + Y(q); }).join(" ") + '" fill="#ffeb3b" fill-opacity=".25" stroke="#c49000" stroke-width="2"/>';
-    if (dz.shape !== "circle") {
-      var a = local(dz.pi, fromUv(dz, -Math.min(1500, ext), 0)), b = local(dz.pi, fromUv(dz, dz.len_m, 0)), t = local(dz.pi, fromUv(dz, -30, 0)), l1 = local(dz.pi, fromUv(dz, -30 - 50 / s / 2, -18 / s / 2)), l2 = local(dz.pi, fromUv(dz, -30 - 50 / s / 2, 18 / s / 2));
-      g += '<line x1="' + X(a) + '" y1="' + Y(a) + '" x2="' + X(b) + '" y2="' + Y(b) + '" stroke="#c49000" stroke-width="1.5" stroke-dasharray="7 5"/><polygon points="' + [t, l1, l2].map(function (q) { return X(q) + "," + Y(q); }).join(" ") + '" fill="#c49000"/>';
-    }
+    if (ST.gnd.on && ST.gnd.rt && ST.gnd.rt.r.line && ST.gnd.rt.r.line.length > 1) { var gl = pl(ST.gnd.rt.r.line); g += '<polyline fill="none" stroke="#fff" stroke-width="5" points="' + gl + '"/><polyline fill="none" stroke="#2e7d32" stroke-width="3" points="' + gl + '"/>'; }
+    g += '<polygon points="' + ol.map(function (q) { return X(q) + "," + Y(q); }).join(" ") + '" fill="#ffeb3b" fill-opacity=".2" stroke="#ffeb3b" stroke-width="2.5"/>';
+    var e0 = edge0(dz), a = local(dz.pi, fromUv(dz, e0 - Math.min(1500, ext), 0)), b = local(dz.pi, fromUv(dz, dz.shape === "circle" ? dz.len_m / 2 : dz.len_m, 0)), t = local(dz.pi, fromUv(dz, e0 - 30, 0)), l1 = local(dz.pi, fromUv(dz, e0 - 30 - 50 / s / 2, -18 / s / 2)), l2 = local(dz.pi, fromUv(dz, e0 - 30 - 50 / s / 2, 18 / s / 2));
+    g += '<line x1="' + X(a) + '" y1="' + Y(a) + '" x2="' + X(b) + '" y2="' + Y(b) + '" stroke="#ffeb3b" stroke-width="1.8" stroke-dasharray="7 5"/><polygon points="' + [t, l1, l2].map(function (q) { return X(q) + "," + Y(q); }).join(" ") + '" fill="#ffeb3b" stroke="#000" stroke-width=".6"/>';
     var th = totHour();
-    if (th && th.rp) { var r = local(dz.pi, th.rp); if (Math.abs(r[0]) < ext && Math.abs(r[1]) < ext) g += '<line x1="' + X([0, 0]) + '" y1="' + Y([0, 0]) + '" x2="' + X(r) + '" y2="' + Y(r) + '" stroke="#9c27b0" stroke-dasharray="3 4"/><circle cx="' + X(r) + '" cy="' + Y(r) + '" r="4" fill="#9c27b0"/><text x="' + (+X(r) + 6) + '" y="' + (+Y(r) - 4) + '" fill="#6a1b9a">RP (drift only)</text>'; }
-    g += '<circle cx="' + X([0, 0]) + '" cy="' + Y([0, 0]) + '" r="5" fill="#d32f2f" stroke="#fff" stroke-width="1.5"/><text x="' + (Wd / 2 + 8) + '" y="' + (Hd / 2 - 7) + '" font-weight="700">PI</text>';
+    if (th && th.rp) { var r = local(dz.pi, th.rp); if (Math.abs(r[0]) < ext && Math.abs(r[1]) < ext) g += '<line x1="' + X([0, 0]) + '" y1="' + Y([0, 0]) + '" x2="' + X(r) + '" y2="' + Y(r) + '" stroke="#9c27b0" stroke-dasharray="3 4"/><circle cx="' + X(r) + '" cy="' + Y(r) + '" r="4" fill="#9c27b0"/><text x="' + (+X(r) + 6) + '" y="' + (+Y(r) - 4) + '" fill="#6a1b9a" stroke="#fff" stroke-width="3" paint-order="stroke">RP (drift only)</text>'; }
+    g += '<circle cx="' + X([0, 0]) + '" cy="' + Y([0, 0]) + '" r="5" fill="#d32f2f" stroke="#fff" stroke-width="1.5"/><text x="' + (Wd / 2 + 8) + '" y="' + (Hd / 2 - 7) + '" font-weight="700" stroke="#fff" stroke-width="3" paint-order="stroke">PI</text>';
     /* north arrow and scale */
-    g += '<path d="M' + (Wd - 26) + " 46 L" + (Wd - 20) + " 26 L" + (Wd - 14) + ' 46 Z" fill="#333"/><text x="' + (Wd - 24) + '" y="20" font-weight="700">N</text>';
+    g += '<rect x="' + (Wd - 34) + '" y="6" width="28" height="46" rx="3" fill="#fff" fill-opacity=".85"/><path d="M' + (Wd - 26) + " 46 L" + (Wd - 20) + " 26 L" + (Wd - 14) + ' 46 Z" fill="#333"/><text x="' + (Wd - 24) + '" y="20" font-weight="700">N</text>';
     var bar = [100, 200, 250, 500, 1000, 2000].filter(function (m) { return m * s <= Wd / 4; }).pop() || 100;
-    g += '<line x1="' + pad + '" y1="' + (Hd - pad) + '" x2="' + (pad + bar * s).toFixed(1) + '" y2="' + (Hd - pad) + '" stroke="#333" stroke-width="3"/><text x="' + pad + '" y="' + (Hd - pad - 6) + '">' + fmtM(bar) + "</text>";
+    g += '<rect x="' + (pad - 6) + '" y="' + (Hd - pad - 20) + '" width="' + (bar * s + 12).toFixed(1) + '" height="28" rx="3" fill="#fff" fill-opacity=".85"/><line x1="' + pad + '" y1="' + (Hd - pad) + '" x2="' + (pad + bar * s).toFixed(1) + '" y2="' + (Hd - pad) + '" stroke="#333" stroke-width="3"/><text x="' + pad + '" y="' + (Hd - pad - 6) + '">' + fmtM(bar) + "</text>";
     return g + "</svg>";
+  }
+  /* satellite imagery under the PDF diagram (Shane 2026-10-27: the exported DZ map was blank): Esri World Imagery tiles where
+     this version has them (assets/osap-sold.js OSAP_ESRI), placed in the diagram's own east-north metres; with none the
+     diagram keeps its plain background */
+  function imagery(dz, Wd, Hd, s) {
+    var url = W.OSAP_ESRI ? W.OSAP_ESRI("World_Imagery") : ""; if (!url) return "";
+    var c = Math.cos(dz.pi[0] * R), z = Math.max(3, Math.min(18, Math.ceil(Math.log(156543.03 * c * s * 2) / Math.LN2))), n = Math.pow(2, z);
+    function tx(lon) { return (lon + 180) / 360 * n; }
+    function ty(lat) { var t = Math.sin(lat * R); return (0.5 - Math.log((1 + t) / (1 - t)) / (4 * Math.PI)) * n; }
+    function lon(x) { return x / n * 360 - 180; }
+    function lat(y) { var k = Math.PI - 2 * Math.PI * y / n; return Math.atan(Math.sinh(k)) / R; }
+    var nw = unlocal(dz.pi, [-Wd / 2 / s, Hd / 2 / s]), se = unlocal(dz.pi, [Wd / 2 / s, -Hd / 2 / s]), out = "";
+    for (var y = Math.floor(ty(nw[0])); y <= Math.floor(ty(se[0])); y++) for (var x = Math.floor(tx(nw[1])); x <= Math.floor(tx(se[1])); x++) {
+      if (y < 0 || y >= n) continue;
+      var a = local(dz.pi, [lat(y), lon(x)]), b = local(dz.pi, [lat(y + 1), lon(x + 1)]);
+      var u = url.replace("{z}", z).replace("{y}", y).replace("{x}", ((x % n) + n) % n);
+      out += '<image href="' + esc(u) + '" x="' + (Wd / 2 + a[0] * s).toFixed(1) + '" y="' + (Hd / 2 - a[1] * s).toFixed(1) + '" width="' + ((b[0] - a[0]) * s + 0.6).toFixed(1) + '" height="' + ((a[1] - b[1]) * s + 0.6).toFixed(1) + '" preserveAspectRatio="none"/>';
+    }
+    return out + '<text x="' + (Wd - 6) + '" y="' + (Hd - 6) + '" text-anchor="end" font-size="8.5" fill="#fff" stroke="#000" stroke-width="2" paint-order="stroke">Imagery © Esri, Maxar, Earthstar Geographics and the GIS user community</text>';
+  }
+  /* the PDF waits (up to 12 s) for the imagery to load, so the print engine never draws the map before its tiles arrive */
+  function imagesReady(root) {
+    var hs = Array.prototype.map.call(root.querySelectorAll("image"), function (i) { return i.getAttribute("href"); }).filter(Boolean);
+    return Promise.race([Promise.all(hs.map(function (h) { return new Promise(function (r) { var im = new Image(); im.onload = im.onerror = function () { r(); }; im.src = h; }); })),
+      new Promise(function (r) { setTimeout(r, 12000); })]);
   }
   function printSheet() {
     var dz = ST.dz, d = D.createElement("div"); d.className = "dzp";
@@ -602,9 +788,11 @@
     if (ST.hz) h += "<h2>Hazards (OpenStreetMap)</h2><table><thead><tr><th>Hazard</th><th>Within " + fmtM(ST.hz.r) + "</th><th>In DZ +" + HZ_MARGIN + " m</th><th>Nearest to the PI</th></tr></thead><tbody>" + ORDER.map(function (k) {
       var s = ST.hz.sum[k], nn = s.near; return "<tr><td>" + KINDS[k].n + "</td><td>" + s.n + "</td><td>" + s.inDz + "</td><td>" + (nn ? (nn.m < 1 ? "at the PI" : fmtM(nn.m) + " " + compass(nn.brg)) + (nn.name ? ", " + esc(nn.name) : "") : "none mapped") + "</td></tr>";
     }).join("") + "</tbody></table><p>OpenStreetMap contributors (https://www.openstreetmap.org/copyright). Only mapped features; walk the DZ.</p>";
-    if (ST.hosp && ST.hosp.list.length) h += "<h2>Nearest hospitals</h2><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at " + LIM.kn + " kt</th><th>Source</th></tr></thead><tbody>" + ST.hosp.list.map(function (x) {
-      return "<tr><td>" + esc(x.name) + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + "</td><td>" + Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td><td>" + esc(x.url) + "</td></tr>";
-    }).join("") + "</tbody></table>";
+    var gd = ST.gnd.on && ST.hosp && ST.hosp.list.some(function (x) { return x.road; });
+    if (ST.hosp && ST.hosp.list.length) h += "<h2>Nearest hospitals</h2><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at " + LIM.kn + " kt</th>" + (gd ? "<th>By road</th>" : "") + "<th>Source</th></tr></thead><tbody>" + ST.hosp.list.map(function (x) {
+      return "<tr><td>" + esc(x.name) + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + "</td><td>" + Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td>" + (gd ? "<td>" + esc(roadTxt(x)) + "</td>" : "") + "<td>" + esc(x.url) + "</td></tr>";
+    }).join("") + "</tbody></table>" + (gd ? (function () { var rt = ST.gnd.rt, x = rt && ST.hosp.list[rt.i]; return "<p>" + (x ? "Road route to " + esc(x.name) + ": " + fmtM(rt.r.m) + ", " + mins(rt.r.s) + (rt.r.roads && rt.r.roads.length ? " via " + esc(rt.r.roads.slice(0, 4).map(function (r) { return r.n; }).join(", ")) : "") + " (on the diagram in green). " : "") +
+      "Road drive times with no traffic, checkpoints, damage or loading time" + (ST.gnd.host ? ", " + esc(ST.gnd.host) : "") + (ST.gnd.err ? "; no router answered, so the road figures are straight-line estimates" : "") + ".</p>"; })() : "");
     h += "<h2>Comms, personnel and markings</h2>" + kv(FIELDS.map(function (x) { return [x[1], f[x[0]] || "________________"]; }));
     h += "<h2>DZSO checks</h2>" + kv(CHECKS.map(function (x) { return [f[x[0]] === true ? "[x]" : "[ ]", x[1]]; }));
     d.innerHTML = h;
@@ -626,12 +814,16 @@
     if (k === "close") close();
     else if (k === "pick") { if (ST.arm) { tapEnd(); paint(); } else tapStart(); }
     else if (k === "centre") { var c = map.getCenter(); setPi([c.lat, L.Util.wrapNum(c.lng, [-180, 180], true)]); }
+    else if (k === "edit") { ST.edit = !ST.edit; paint(); drawDz(); }
     else if (k === "show") { try { map.fitBounds(L.latLngBounds(outline(dz)).pad(0.6), { maxZoom: 16 }); } catch (x) {} if (W.OSAP_SPLIT && W.OSAP_SPLIT.on() && W.innerWidth <= 700 && W.OSAP_SPLIT.stop) try { W.OSAP_SPLIT.stop(el, "map"); } catch (x) {} }
     else if (k === "grid") { var i = el.querySelector('[data-f="grid"]'), g = G(), p = g && g.parse(i && i.value); if (p) setPi([p.lat, p.lon]); else if (i) { i.setCustomValidity("Not a grid OSAP can read"); i.reportValidity(); } }
     else if (k === "save") { if (!store()) return; var d = store().save(dz); if (d) { ST.dz = d; ST.saved = true; } paint(); }
     else if (k === "del") { if (store() && W.confirm("Delete the drop zone " + dz.name + " from this browser?")) { store().remove(dz.id); ST.saved = false; ST.dz = newDz(dz.pi, dz.name); paint(); } }
-    else if (k === "wx") { ST.run++; loadWx(); }
-    else if (k === "hz") { ST.run++; loadHz(); }
+    else if (k === "wx") loadWx();
+    else if (k === "hz") loadHz();
+    else if (k === "gnd") { ST.gnd.on = !ST.gnd.on; ST.gnd.picked = false; if (ST.gnd.on) loadGnd(); else { ST.run.gnd++; ST.gnd.busy = ST.gnd.rtBusy = false; gLayer.clearLayers(); paint(); } }
+    else if (k === "gnd-retry") loadGnd();
+    else if (k === "groute") { ST.gnd.picked = true; loadRoute(+b.getAttribute("data-i") || 0); }
     else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: dz.pi.slice() }); }
     else if (k === "evac") { if (W.OSAP_EPE_GO) W.OSAP_EPE_GO({ at: dz.pi.slice(), how: "DZSO sheet: " + dz.name }); }
     else if (k === "fromflight") {
@@ -639,7 +831,11 @@
       if (fl.acft) dz.acft = String(fl.acft).slice(0, 40); if (+fl.alt_ft > 0) dz.alt_ft = +fl.alt_ft; if (fl.tot && isFinite(Date.parse(fl.tot))) dz.tot = new Date(Date.parse(fl.tot)).toISOString().slice(0, 16) + ":00Z";
       if (isFinite(fl.axis)) dz.axis = ((+fl.axis % 360) + 360) % 360; keep(); paint(); drawDz();
     }
-    else if (k === "pdf") { if (W.OSAP_PDF) W.OSAP_PDF.panel(printSheet(), { title: "DZSO sheet: " + dz.name }); }
+    else if (k === "pdf") {
+      if (!W.OSAP_PDF || b.disabled) return;
+      var sh = printSheet(); b.disabled = true; b.textContent = "Loading the map…";
+      imagesReady(sh).then(function () { b.disabled = false; b.textContent = "Export PDF"; return W.OSAP_PDF.panel(sh, { title: "DZSO sheet: " + dz.name }); });
+    }
   }
   function onChange(e) {
     var t = e.target, f = t.getAttribute && t.getAttribute("data-f"); if (!f) return;
@@ -651,7 +847,8 @@
     else if (/^(len_m|wid_m|pi_lead_m)$/.test(f) && n !== null) { dz[f] = Math.max(f === "pi_lead_m" ? 0 : 10, Math.min(20000, n)); geo = true; }
     else if (f === "axis" && n !== null) { dz.axis = ((n % 360) + 360) % 360; geo = true; }
     else if (f === "alt_ft") dz.alt_ft = n !== null ? Math.max(100, Math.min(40000, n)) : null;
-    else if (f === "acft") dz.acft = String(v).slice(0, 40);
+    else if (f === "acft") dz.acft = String(v).trim().slice(0, 40);
+    else if (f === "acsel") { if (v === "__other") { ST.acOther = true; keep(); paint(); var ti = el.querySelector('[data-f="acft"]'); if (ti) ti.focus(); return; } ST.acOther = false; dz.acft = String(v).slice(0, 40); }
     else if (f === "tot") { var ms = v ? Date.parse(v + ":00Z") : NaN; dz.tot = isFinite(ms) ? new Date(ms).toISOString().slice(0, 16) + ":00Z" : ""; }
     else if (f === "jumpers") dz.fields.jumpers = n !== null ? String(Math.max(1, Math.round(n))) : "";
     else if (f === "prof") { var p = prof(v); LIM.prof = p.id; LIM.wind = p.wind; LIM.gust = p.gust; LIM.K = p.K; if (!dz.alt_ft || PROFILES.some(function (x) { return x.alt === dz.alt_ft; })) dz.alt_ft = p.alt; keepLim(); }
@@ -682,13 +879,13 @@
       if (!at) { var c = map.getCenter(); at = [c.lat, L.Util.wrapNum(c.lng, [-180, 180], true)]; }
       ST.dz = newDz(at, o.name); ST.saved = false;
     }
-    ST.meas = { kt: "", gust: "", dir: "" };
+    ST.meas = { kt: "", gust: "", dir: "" }; ST.acOther = false;
     el.hidden = false; paint(); drawDz(); refresh();
     /* bring the DZ into view when it is off the map (a saved DZ, the Area menu on another part of the country) */
     try { var bb = L.latLngBounds(outline(ST.dz)); if (!map.getBounds().contains(bb)) map.fitBounds(bb.pad(0.8), { maxZoom: 15 }); } catch (x) {}
     var f = el.querySelector('[data-dz="close"]'); if (f) f.focus({ preventScroll: true });
   }
-  function close() { tapEnd(); ST.run++; if (el) el.hidden = true; layer.clearLayers(); hzLayer.clearLayers(); }
+  function close() { tapEnd(); ST.run.wx++; ST.run.hz++; ST.run.hosp++; ST.run.gnd++; ST.gnd.busy = ST.gnd.rtBusy = false; gLayer.clearLayers(); if (DRAG) { DRAG = null; map.dragging.enable(); } if (el) el.hidden = true; layer.clearLayers(); hLayer.clearLayers(); hzLayer.clearLayers(); }
   W.OSAP_DZSO = { open: open, close: close, isOpen: isOpen, core: CORE, _print: printSheet,
-    state: function () { return { dz: ST.dz, saved: ST.saved, wx: !!ST.wx, wxErr: ST.wxErr, hz: ST.hz ? { n: ST.hz.items.length, sum: ST.hz.sum } : null, hzErr: ST.hzErr, hosp: ST.hosp, hospErr: ST.hospErr, hours: hours(), lim: LIM }; } };
+    state: function () { return { dz: ST.dz, saved: ST.saved, edit: ST.edit, handles: Object.keys(HS).filter(function (k) { return k !== "tip"; }), wx: !!ST.wx, wxErr: ST.wxErr, hz: ST.hz ? { n: ST.hz.items.length, sum: ST.hz.sum } : null, hzErr: ST.hzErr, hosp: ST.hosp, hospErr: ST.hospErr, hours: hours(), lim: LIM }; } };
 })(typeof window !== "undefined" ? window : globalThis);
