@@ -1,6 +1,8 @@
 [["n1042036749",4.13786,15.15406,"cf",{"name":"Gamboula Airport","aeroway":"aerodrome","icao":"FEGG","wikidata":"Q16891521"}],
 ["n1042036821",5.50417,14.0983,"cm",{"name":"Bétaré Oya Airport","aeroway":"aerodrome"}],
 ["n1042036842",4.4739,14.36223,"cm",{"name":"Aéroport de Batouri","name:en":"Batouri Airport","aeroway":"aerodrome","icao":"FKKI","iata":"OUR","wikidata":"Q2265760"}],
+["n14243538170",4.44095,14.35493,"cm",{"name":"Hôpital catholique","healthcare":"hospital","addr:city":"Batouri"}],
+["n1849281871",4.44854,14.37266,"cm",{"name":"Hôpital de Batouri","healthcare":"hospital","addr:city":"Batouri"}],
 ["n2589437009",5.95854,15.52599,"cf",{"name":"Enfant Jésus Yole","amenity":"hospital","operator:type":"private","addr:city":"Yole"}],
 ["n2590840279",5.83061,15.8657,"cf",{"name":"PS Koursou","amenity":"hospital","operator:type":"government","addr:full":"NANA-MAMBERE, Bouar, Doaka-Koursou, Koursou","addr:city":"Koursou"}],
 ["n2661637074",4.93629,15.87675,"cf",{"name":"Hôpital Préfectoral de Carnot","amenity":"hospital","operator:type":"government","addr:full":"MAMBERE-KADEI, Carnot, Carnot, Carnot, Kpogom","addr:city":"Carnot"}],

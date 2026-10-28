@@ -9,6 +9,7 @@
 ["w1110812582",7.26526,15.11367,"cm",{"name":"Aérodrome de Dompta","operator":"COTCO","aeroway":"aerodrome","aerodrome:type":"airfield"}],
 ["w1239732146",6.84713,14.47263,"cm",{"aeroway":"helipad"}],
 ["w261556664",6.85277,15.37637,"cf",{"name":"Toubangko2","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:full":"OUHAM-PENDE, Koui, Koui, Toubanco2","addr:city":"Toubanco2"}],
+["w261735724",6.02147,14.64735,"cf",{"name":"Centre de Santé de Koundé","amenity":"clinic","healthcare":"clinic","operator:type":"government","addr:full":"NANA-MAMBERE, Baboua, Kounde, Kounde","addr:city":"Kounde"}],
 ["w278033382",6.58363,15.35441,"cf",{"name":"Kella Moelle","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:full":"OUHAM-PENDE, Koui, Koui, Kella Moelle","addr:city":"Kella Moelle"}],
 ["w278482030",7.06269,15.78496,"cf",{"name":"Kounpala","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:full":"OUHAM-PENDE, Bocaranga, Loura, Kounpala","addr:city":"Kounpala"}],
 ["w316960577",6.69265,14.34618,"cm",{"amenity":"hospital","emergency":"no"}],

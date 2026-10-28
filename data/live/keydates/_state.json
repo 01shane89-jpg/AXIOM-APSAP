@@ -1,6 +1,6 @@
 {
  "schema": "osap-keydates-state/1",
- "checked": "2026-10-27 08:04Z",
+ "checked": "2026-10-28 08:45Z",
  "years": [
   2026,
   2027
@@ -23,8 +23,6 @@
     "Cook Islands",
     "South Ossetia",
     "Isle of Man",
-    "Guam",
-    "Northern Mariana Islands",
     "Transnistria"
    ]
   },

@@ -27,7 +27,7 @@
 ["n7371472722",5.16985,18.86012,"cf",{"amenity":"hospital"}],
 ["n8951441258",4.37217,18.57461,"cf",{"name":"Hôpital pédiatrique","amenity":"hospital","healthcare":"hospital"}],
 ["n8951524536",4.37341,18.57365,"cf",{"name":"Institut Pasteur","amenity":"hospital","healthcare":"hospital"}],
-["n9828658453",5.71108,19.07133,"cf",{"name":"Aéroport de Sibut","name:en":"Sibut Airport","aeroway":"aerodrome","icao":"FEFU"}],
+["n9828658453",5.71108,19.07133,"cf",{"name":"Aéroport de Sibut","name:en":"Sibut Airport","aeroway":"aerodrome","icao":"FEFU","wikidata":"Q7507325"}],
 ["r10756531",4.39567,18.52184,"cf",{"name":"Aéroport International de Bangui M'Poko","name:en":"Bangui M'Poko International Airport","phone":"+23621614947","website":"https://www.aeroport-bangui.com/en/index_en.php","aeroway":"aerodrome","icao":"FEFF","iata":"BGF","aerodrome:type":"international","wikidata":"Q790043"}],
 ["r12837198",4.40914,18.55315,"cf",{"name":"Hôpital de l'Amitié","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:housenumber":"1359","addr:street":"Avenue de l'Indépendance"}],
 ["r2841624",4.39192,18.56082,"cf",{"name":"Emergency","amenity":"hospital","healthcare":"hospital","operator:type":"NGO","addr:street":"Avenue de l'Indépendance"}],
