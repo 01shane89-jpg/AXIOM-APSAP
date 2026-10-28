@@ -484,7 +484,7 @@
   }
   function ft(v) { if (v == null) return "none"; if (v < 1000) return Math.max(100, Math.round(v / 100) * 100) + " ft"; return (Math.round(v / 500) * 500).toLocaleString("en-GB") + " ft"; }
   function vis(v) { if (v == null) return "–"; if (v >= 9999) return "10 km+"; if (v >= 5000) return Math.round(v / 1000) + " km"; if (v >= 1000) return (v / 1000).toFixed(1) + " km"; return Math.round(v / 50) * 50 + " m"; }
-  var RAG = ["G", "A", "R"], RAGN = ["Green: little or no effect", "Amber: degraded", "Red: severe or unsafe"];
+  var RAG = ["G", "A", "R"], RAGN = ["Good (green): little or no effect", "Marginal (amber): possible, but take care", "No-go (red): unsafe or not possible"];
 
   /* ---------- the analysis for a period ---------- */
   /* Impacts rate the chosen place (the reference point), as a weather officer briefs a mission location; the worst anywhere in
@@ -662,7 +662,7 @@
   if (!PERIODS[ST.per]) ST.per = "h24";
   function ragCell(c, why, lbl) {
     if (c < 0) return '<td class="wxc wxn" title="' + esc(why) + '">–</td>';
-    return '<td class="wxc wx' + RAG[c].toLowerCase() + '" title="' + esc(RAGN[c] + (why ? ": " + why : "")) + '">' + (lbl || RAG[c]) + "</td>";
+    return '<td class="wxc wx' + RAG[c].toLowerCase() + '" title="' + esc(RAGN[c] + (why ? ": " + why : "")) + '">' + (lbl || RATES[c]) + "</td>";
   }
   function matrixHtml(A, D, cls) {
     var rs = A.blocks, hasSea = rs.some(function (r) { return r.w.wave != null; });
@@ -801,15 +801,15 @@
     if (!A.blocks.length) return head + '<p class="obs">The model returned no hours for this period.</p></div>';
     return head + '<p class="obs"><span class="badge stale">MODEL</span> Open-Meteo forecast, fetched ' + esc(zt(D.at, D.tz, true)) + ". Worst case over " + D.pts.length + " points in the region" +
       (D.sea.length ? " and " + D.sea.filter(function (p) { return p.m; }).length + " offshore" : "") + ". Reference point: " + esc(ref.name) + (mgrs(ref.lat, ref.lon) ? " (" + esc(mgrs(ref.lat, ref.lon)) + ")" : "") + ".</p>" +
-      '<p class="wxsyn">' + esc(synopsis(A, D)) + "</p>" +
+      easyHtml(D) + '<h3>Details for specialists</h3><p class="wxsyn">' + esc(synopsis(A, D)) + "</p>" +
       '<h3>Airfield reports near ' + esc(ref.name) + ' <span class="badge">OFFICIAL</span></h3>' + avwxHtml((avLoad(ref), ST.av), ref, D.tz, false) +
       '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <span class="obs">Hour by hour, 16 days, model agreement, sea, air, light; four printed pages.</span></p>' +
       "<h3>Next 7 days at " + esc(ref.name) + "</h3>" + meteogram(D, 7) +
       "<h3>Impacts at " + esc(ref.name) + "</h3>" + matrixHtml(A, D, "wxsm") +
-      '<p class="note">Generic planning thresholds, for illustration only: not doctrine and not any unit&rsquo;s limits. Hover or tap a cell for the reason. G green, A amber, R red.</p>' +
+      '<p class="note">Generic planning thresholds, for illustration only: not doctrine and not any unit&rsquo;s limits. Hover or tap a cell for the reason.</p>' + legendHtml() +
       "<h3>Forecast at " + esc(ref.name) + "</h3>" + fcTable(A, D) +
       '<p class="note">Ceiling is estimated from the model&rsquo;s cloud layers (lowest layer at 60% cover or more), not observed. Wind in knots (direction from, true); G = gusts. HI heat index, WC wind chill. Official warnings take precedence over this model output.</p>' +
-      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <button type="button" class="refresh" data-wxchart="1">5-day chart</button> <button type="button" class="refresh" data-ilopen="1">Night illumination</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p></div>';
+      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <button type="button" class="refresh" data-wxeasy="1">Easy-read page</button> <button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <button type="button" class="refresh" data-wxchart="1">5-day chart</button> <button type="button" class="refresh" data-ilopen="1">Night illumination</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p>' + termsHtml() + "</div>";
   }
   /* where the section goes: above the storms, warnings and forecast of the Weather view; for countries that have no Weather view
      (those with automatic global feeds only), at the top of the Live hazards view */
@@ -845,7 +845,7 @@
       function (e) { ST.busy = false; ST.err = e.message || String(e); redraw(); throw e; });
   }
   document.addEventListener("click", function (e) {
-    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxreport],[data-wxchart],[data-wxb],[data-wxpick],[data-wxbpick],[data-wxfound]");
+    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxeasy],[data-wxreport],[data-wxchart],[data-wxb],[data-wxpick],[data-wxbpick],[data-wxfound]");
     if (!t) return;
     if (t.hasAttribute("data-wxpick")) return pickStart();
     if (t.hasAttribute("data-wxbpick")) {
@@ -857,13 +857,14 @@
     if (t.hasAttribute("data-wxper")) { ST.per = t.getAttribute("data-wxper"); lsSet("osap-wx-per", ST.per); if (document.getElementById("wxb-page")) openBrief(); redraw(); }
     else if (t.hasAttribute("data-wxgo")) go(true).catch(function () {});
     else if (t.hasAttribute("data-wxbrief")) openBrief();
+    else if (t.hasAttribute("data-wxeasy")) openEasy();
     else if (t.hasAttribute("data-wxreport")) openReport();
     else if (t.hasAttribute("data-wxchart")) openChart();
     else if (t.getAttribute("data-wxb") === "print") {
       /* the page's own heading names it; the 5-day chart prints landscape with narrow margins (chartPageStyle) */
-      var pg = document.querySelector("#brief #wxc-page,#brief #wxr-page,#brief #wxb-page");
+      var pg = document.querySelector("#brief #wxc-page,#brief #wxr-page,#brief #wxb-page,#brief #wxe-page");
       var chart = !!(pg && pg.id === "wxc-page"), nm = pg && pg.querySelector("h2");
-      window.OSAP_PDF.print({ title: (chart ? "5-day weather chart" : pg && pg.id === "wxr-page" ? "Detailed weather report" : "Weather brief") + (nm ? ": " + nm.textContent : ""),
+      window.OSAP_PDF.print({ title: (chart ? "5-day weather chart" : pg && pg.id === "wxr-page" ? "Detailed weather report" : pg && pg.id === "wxe-page" ? "Weather, easy read" : "Weather brief") + (nm ? ": " + nm.textContent : ""),
         root: document.getElementById("brief"), landscape: chart, margin: chart ? "9mm 7mm" : undefined });
     }
     else if (t.getAttribute("data-wxb") === "close") closeBrief();
@@ -884,6 +885,185 @@
   /* a new drawn area or a new country resets the brief */
   W.addEventListener("storage", function () { var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; redraw(); } });
   setInterval(function () { outlineSync(); placeLabelPaint(); if (!document.getElementById("wx-ops")) return; var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; go().catch(function () {}); } }, 2000);
+
+  /* ---------- easy read: the forecast for people who are not weather specialists ----------
+     A day-by-day picture strip (like a phone weather app), a plain-language summary and a Good / Marginal / No-go line for flying,
+     driving and boats. Everything is made by fixed rules from the same model numbers as the tables below; it is not a forecaster's
+     or an AI's text. Speeds are given in mph and knots, temperatures in °C and °F, times in local and Zulu. */
+  var RATE = ["Good", "Marginal", "No-go"], RATEW = ["little or no effect", "possible, but take care: slower, harder or less safe", "unsafe or not possible"];
+  var RATES = ["✓", "!", "✕"];
+  function kt2mph(v) { return Math.round(v * 1.15078); }
+  function windWords(kt, gust, dir) {
+    if (kt == null) return "wind not available";
+    var s = kt < 3 ? "calm" : "wind from the " + compassWord(dir) + " at " + kt2mph(kt) + " mph (" + Math.round(kt) + " kt)";
+    if (gust != null && gust >= kt + 8 && gust >= 15) s += ", gusts to " + kt2mph(gust) + " mph (" + Math.round(gust) + " kt)";
+    return s;
+  }
+  function compassWord(d) {
+    if (d == null) return "variable direction";
+    return ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"][Math.round(d / 45) % 8];
+  }
+  /* local clock and Zulu, e.g. "Thu 14:00 local (0700Z)" */
+  function whenWords(ms, tz) {
+    var loc = "";
+    try { loc = new Date(ms).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: tz }); } catch (e) { loc = new Date(ms).toISOString().slice(11, 16); }
+    return loc.replace(",", "") + " local (" + zOnly(ms) + ")";
+  }
+  function partOfDay(ms, tz) {
+    var h = 12;
+    try { h = +new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", hour: "numeric" }).format(new Date(ms)) % 24; } catch (e) {}
+    return h < 6 ? "night" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening";
+  }
+  function dayName(ms, tz, i) {
+    if (i === 0) return "Today";
+    try { return new Date(ms).toLocaleDateString("en-GB", { weekday: "short", timeZone: tz }); } catch (e) { return dayLbl(ms, tz); }
+  }
+  /* one local day at the reference point: picture, high and low, chance and amount of rain, strongest wind */
+  function easyDays(D, n) {
+    var p = D.pts[0], tz = D.tz, out = [], start = hourNow();
+    for (var d = 0; d < n; d++) {
+      var t1 = nextLocalMidnight(start + 36e5, tz), ix = hrsFrom(p, start, t1);
+      if (!ix.length) break;
+      var o = { t0: start, lbl: dayName(start + 36e5, tz, d), date: dayLbl(start + 36e5, tz), hi: null, lo: null, pp: null, pr: 0, sn: 0, wind: null, gust: null, ts: 0, cloud: 0, nc: 0, fog: 0, dirs: [], spd: [] };
+      ix.forEach(function (i) {
+        var T = at(p, "temperature_2m", i); if (T != null) { if (o.hi == null || T > o.hi) o.hi = T; if (o.lo == null || T < o.lo) o.lo = T; }
+        var pp = at(p, "precipitation_probability", i); if (pp != null && (o.pp == null || pp > o.pp)) o.pp = pp;
+        o.pr += at(p, "precipitation", i) || 0; o.sn += at(p, "snowfall", i) || 0;
+        var ws = at(p, "wind_speed_10m", i), wg = at(p, "wind_gusts_10m", i);
+        if (ws != null && (o.wind == null || ws > o.wind)) o.wind = ws; if (wg != null && (o.gust == null || wg > o.gust)) o.gust = wg;
+        o.dirs.push(at(p, "wind_direction_10m", i)); o.spd.push(ws);
+        o.ts = Math.max(o.ts, tsState(p, i));
+        var c = at(p, "cloud_cover", i); if (c != null) { o.cloud += c; o.nc++; }
+        var code = at(p, "weather_code", i); if (code === 45 || code === 48) o.fog++;
+      });
+      o.cloud = o.nc ? o.cloud / o.nc : null; o.dir = vecMean(o.dirs, o.spd); delete o.dirs; delete o.spd;
+      o.kind = o.ts === 2 ? "storm" : o.sn >= 1 ? "snow" : o.pr >= 2 || (o.pp != null && o.pp >= 60 && o.pr >= 0.5) ? "rain" : o.pr >= 0.3 ? "showers" : o.fog >= 3 ? "fog" :
+        o.cloud == null ? "cloud" : o.cloud < 25 ? "sun" : o.cloud < 70 ? "part" : "cloud";
+      if (o.ts === 1 && o.kind !== "storm") o.tsMaybe = true;
+      out.push(o);
+      start = t1;
+    }
+    return out;
+  }
+  var KIND = { sun: "Sunny", part: "Some cloud", cloud: "Cloudy", showers: "Showers", rain: "Rain", storm: "Storms", snow: "Snow", fog: "Fog" };
+  /* small pictures drawn here (no image files), each with its words for screen readers */
+  function wxIcon(k) {
+    var sun = '<circle cx="16" cy="16" r="6" fill="#f5b400"/><g stroke="#f5b400" stroke-width="2" stroke-linecap="round"><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.1 2.1M23.1 23.1l2.1 2.1M6.8 25.2l2.1-2.1M23.1 8.9l2.1-2.1"/></g>';
+    var cloud = function (x, y, f) { return '<path transform="translate(' + x + " " + y + ')" d="M8 22h15a5 5 0 0 0 .6-10A7 7 0 0 0 10 10.5 5.8 5.8 0 0 0 8 22z" fill="' + f + '" stroke="#7b8794" stroke-width="1"/>'; };
+    var drops = '<g stroke="#1e6fd9" stroke-width="2" stroke-linecap="round"><path d="M11 25l-1.5 4M16 25l-1.5 4M21 25l-1.5 4"/></g>';
+    var g = { sun: sun, part: '<g transform="translate(-5 -5) scale(.8)">' + sun + "</g>" + cloud(2, 2, "#e9edf1"), cloud: cloud(0, -2, "#d5dbe1"),
+      showers: '<g transform="translate(-5 -6) scale(.7)">' + sun + "</g>" + cloud(1, -4, "#d5dbe1") + drops, rain: cloud(0, -5, "#b9c3cd") + drops,
+      storm: cloud(0, -6, "#9aa5b1") + '<path d="M17 18l-4 7h4l-2 6 6-9h-4l2-4z" fill="#f59e0b" stroke="#b45309" stroke-width=".6"/>',
+      snow: cloud(0, -5, "#d5dbe1") + '<g fill="#5b8fd9"><circle cx="11" cy="26" r="1.6"/><circle cx="16" cy="28" r="1.6"/><circle cx="21" cy="26" r="1.6"/></g>',
+      fog: '<g stroke="#8a96a3" stroke-width="2.2" stroke-linecap="round"><path d="M5 11h22M3 16h24M6 21h20M4 26h18"/></g>' }[k] || "";
+    return '<svg class="wxico" viewBox="0 0 32 32" role="img" aria-label="' + esc(KIND[k] || "") + '">' + g + "</svg>";
+  }
+  function stripHtml(days, tz) {
+    return '<div class="wxstrip" role="list" aria-label="Weather day by day">' + days.map(function (d) {
+      return '<div class="wxday" role="listitem" title="' + esc(d.date) + '"><b>' + esc(d.lbl) + "</b>" + wxIcon(d.kind) + '<span class="wxdk">' + esc(KIND[d.kind]) + (d.tsMaybe ? ", storms possible" : "") + "</span>" +
+        '<span class="wxdt"><b>' + (d.hi != null ? Math.round(d.hi) + "°" : "–") + '</b> <span class="wxdl">' + (d.lo != null ? Math.round(d.lo) + "°C" : "") + "</span></span>" +
+        '<span class="wxdf">' + (d.hi != null ? Math.round(cToF(d.hi)) + "° / " + Math.round(cToF(d.lo)) + "°F" : "") + "</span>" +
+        '<span class="wxdr" title="Highest chance of rain in the day, and the total">💧 ' + (d.pp != null ? Math.round(d.pp) + "%" : "–") + (d.pr >= 0.1 ? " · " + (d.pr < 10 ? d.pr.toFixed(1) : Math.round(d.pr)) + " mm" : "") + "</span>" +
+        '<span class="wxdw" title="Strongest wind and gusts in the day">💨 ' + (d.wind != null ? kt2mph(d.wind) + (d.gust != null && d.gust >= d.wind + 8 ? "–" + kt2mph(d.gust) : "") + " mph" : "–") + "</span></div>";
+    }).join("") + "</div>";
+  }
+  /* Good / Marginal / No-go for each kind of activity over the next 3 days, from the same limits as the impact table */
+  var FAM = [["Flying", "Air", { fwl: "light planes", fwm: "transport planes", fwh: "jets", rwl: "light helicopters", rwm: "medium helicopters", rwh: "heavy helicopters", uas1: "small drones", uas3: "medium drones", uas4: "large drones", isr: "air observation" }],
+    ["On the ground", "Ground", { gwl: "light vehicles off-road", gwh: "heavy vehicles off-road", trk: "tracked vehicles off-road", per: "people on foot", obs: "ground observation" }],
+    ["On the water", "Maritime", { sb: "small boats", pc: "patrol craft", sh: "ships" }]];
+  function activityLines(D) {
+    var A = analyse(D, "h72"), tz = D.tz, out = [];
+    if (!A.blocks.length) return out;
+    FAM.forEach(function (f) {
+      var ids = Object.keys(f[2]), worst = -1, first = null, who = {}, why = "";
+      A.blocks.forEach(function (r) {
+        r.imp.forEach(function (x) { if (ids.indexOf(x.id) < 0 || x.c < 0) return; if (x.c > worst) { worst = x.c; first = r; why = x.why; who = {}; } if (x.c === worst && r === first) who[f[2][x.id]] = 1; });
+      });
+      if (worst < 0) return;
+      var names = Object.keys(who), s;
+      if (worst === 0) s = "Good for the next 3 days.";
+      else {
+        var span = A.blocks.filter(function (r) { return r.imp.some(function (x) { return ids.indexOf(x.id) >= 0 && x.c === worst; }); });
+        var last = span[span.length - 1];
+        s = RATE[worst] + " at times in the next 3 days" + (span.length === A.blocks.length ? " (the whole time)" : ", first from " + whenWords(first.b.t0, tz) +
+          (span.length > 1 ? "; " + span.length + " of " + A.blocks.length + " six-hour periods, the last ending " + whenWords(last.b.t1, tz) : " to " + whenWords(first.b.t1, tz))) +
+          ". Mainly " + plainWhy(why) + ". Affects " + (names.length > 4 ? names.slice(0, 4).join(", ") + " and " + (names.length - 4) + " more" : names.join(", ")) + ".";
+      }
+      out.push({ name: f[0], c: worst, text: s });
+    });
+    return out;
+  }
+  /* the limit reasons in everyday words: "ceiling about 300 ft" is a low cloud base */
+  function plainWhy(w) { return String(w || "the weather").replace(/ceiling about/g, "low cloud, base about").replace(/\bts\b/g, "thunderstorms"); }
+  /* the plain-language summary: right now, rain, storms, heat or cold, and the activity lines */
+  function easySummary(D, days) {
+    var p = D.pts[0], tz = D.tz, now = hourNow(), ix = hrsFrom(p, now, now + 36e5)[0], s = [];
+    if (ix != null) {
+      var T = at(p, "temperature_2m", ix), fl = at(p, "apparent_temperature", ix), code = at(p, "weather_code", ix);
+      s.push("<b>Now:</b> " + esc(String(WMO[code] || (KIND[days[0] && days[0].kind] || "")).toLowerCase() || "no sky data") + ", " + esc(T != null ? Math.round(T) + "°C (" + Math.round(cToF(T)) + "°F)" : "temperature not available") +
+        (fl != null && T != null && Math.abs(fl - T) >= 3 ? ", feels like " + esc(Math.round(fl) + "°C (" + Math.round(cToF(fl)) + "°F)") : "") + ", " + esc(windWords(at(p, "wind_speed_10m", ix), at(p, "wind_gusts_10m", ix), at(p, "wind_direction_10m", ix))) + ".");
+    }
+    /* rain in the next 24 hours: when it starts and how much */
+    var r24 = hrsFrom(p, now, now + DMS), wetI = null, tot = 0;
+    r24.forEach(function (i) { var v = at(p, "precipitation", i) || 0, pp = at(p, "precipitation_probability", i); tot += v; if (wetI == null && (v >= 0.5 || (pp != null && pp >= 60 && v >= 0.1))) wetI = i; });
+    s.push("<b>Next 24 hours:</b> " + (wetI == null ? (tot >= 0.2 ? "mostly dry, a few light spots of rain possible." : "dry.") :
+      "rain from about " + esc(whenWords(p.h.t[wetI], tz)) + ", about " + esc(tot < 10 ? tot.toFixed(1) : String(Math.round(tot))) + " mm (" + esc((tot / 25.4).toFixed(2)) + " in) in total."));
+    var st = days.filter(function (d) { return d.ts; })[0];
+    if (st) {
+      var sI = null; hrsFrom(p, st.t0, st.t0 + 30 * 36e5).some(function (i) { if (tsState(p, i)) { sI = i; return true; } return false; });
+      s.push("<b>Thunderstorms:</b> " + (st.ts === 2 ? "likely" : "possible") + " " + esc(st.lbl === "Today" ? "today" : "on " + st.lbl) + (sI != null ? " " + esc(partOfDay(p.h.t[sI], tz)) + ", from about " + esc(whenWords(p.h.t[sI], tz)) : "") +
+        ". Lightning, sudden strong gusts and heavy rain; stay off high ground and out of the water.");
+    } else s.push("<b>Thunderstorms:</b> none expected in the next " + days.length + " days.");
+    var hot = days.slice(0, 3).reduce(function (m, d) { return d.hi != null && d.hi > m ? d.hi : m; }, -99), cold = days.slice(0, 3).reduce(function (m, d) { return d.lo != null && d.lo < m ? d.lo : m; }, 99);
+    var hiI = null; hrsFrom(p, now, now + 3 * DMS).forEach(function (i) { var v = heatIndex(at(p, "temperature_2m", i), at(p, "relative_humidity_2m", i)); if (v != null && (hiI == null || v > hiI)) hiI = v; });
+    if (hiI != null && hiI >= 32) s.push("<b>Heat:</b> feels like up to " + esc(degCF(hiI)) + " in the next 3 days. " + (hiI >= 41 ? "Dangerous heat for hard work outdoors: water, shade and rest breaks." : "Hard work outdoors is tiring: drink water and take breaks."));
+    else if (hot >= 32) s.push("<b>Heat:</b> up to " + esc(degCF(hot)) + " in the next 3 days.");
+    if (cold <= 0) s.push("<b>Cold:</b> down to " + esc(degCF(cold)) + "; ice and frost likely.");
+    return s;
+  }
+  function legendHtml() {
+    return '<p class="wxleg2">' + RATE.map(function (r, i) { return '<span class="wxc wx' + RAG[i].toLowerCase() + ' wxlegc">' + RATES[i] + "</span> <b>" + r + "</b>: " + RATEW[i]; }).join(" &nbsp; ") + "</p>";
+  }
+  /* the easy-read block: the Weather section shows it first; the printable easy-read page wraps it */
+  function easyHtml(D, print) {
+    var days = easyDays(D, 7), acts = activityLines(D);
+    return '<div class="wxez">' + stripHtml(days, D.tz) +
+      '<ul class="wxezs">' + easySummary(D, days).map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>" +
+      (acts.length ? '<table class="wxact"><caption>What the weather means, next 3 days</caption>' + acts.map(function (a) {
+        return '<tr><th scope="row">' + esc(a.name) + '</th><td class="wxc wx' + RAG[a.c].toLowerCase() + '">' + RATES[a.c] + " " + RATE[a.c] + "</td><td>" + esc(a.text) + "</td></tr>";
+      }).join("") + "</table>" + legendHtml() : "") +
+      '<p class="note">Automatic plain-language reading of the model forecast at ' + esc(D.pts[0].name) + ", made by fixed rules (not a forecaster, not AI). Limits are generic planning figures, not any unit&rsquo;s. Official warnings come first." +
+      (print ? "" : ' <button type="button" class="refresh" data-wxeasy="1">Print this (easy-read page)</button>') + "</p></div>";
+  }
+  /* what the short words in the detailed tables mean */
+  var TERMS = [["Ceiling", "height of the lowest layer of cloud that covers more than half the sky; low ceilings stop flying"], ["Visibility (vis)", "how far you can see"],
+    ["kt", "knots: 1 kt = 1.15 mph = 1.85 km/h"], ["G (in wind)", "gusts, e.g. 230/12G24KT = wind from 230° at 12 kt, gusting 24 kt"], ["HI, WC", "heat index (how hot it feels), wind chill (how cold it feels)"],
+    ["SKC, FEW, SCT, BKN, OVC", "clear, a few clouds, scattered, broken (mostly cloudy), overcast"], ["RA, SHRA, TS, FG, DZ, SN", "rain, showers, thunderstorm, fog, drizzle, snow; - light, + heavy"],
+    ["METAR, TAF", "an airfield's observed weather report, and its official forecast"], ["VFR, MVFR, IFR, LIFR", "good, marginal, poor and very poor flying conditions by cloud and visibility"],
+    ["BMNT, EENT", "first and last light usable without night vision (nautical twilight)"], ["Z, Zulu", "UTC, the same clock worldwide; local time is shown beside it"], ["hPa", "air pressure level: 850 hPa is about 5,000 ft up"]];
+  function termsHtml() {
+    return '<details class="wxterms"><summary>What do these terms mean?</summary><dl>' + TERMS.map(function (t) { return "<dt>" + esc(t[0]) + "</dt><dd>" + esc(t[1]) + "</dd>"; }).join("") + "</dl></details>";
+  }
+  /* the printable easy-read page (one page) */
+  function easyPage(D) {
+    var R = D.R, now = Date.now();
+    return '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Export PDF</button> <button type="button" class="refresh" data-wxb="close">Close</button> <span class="obs">One page. Export PDF opens the print dialog: choose &ldquo;Save as PDF&rdquo;.</span></div>' +
+      '<article class="bpage wxbp wxep" id="wxe-page"><header><div><b>AXIOM OSAP</b> · Weather, easy read</div><h2>' + esc(R.name) + "</h2><div>Made " + esc(zt(now, D.tz, true)) + ". Times are local with Zulu (UTC) in brackets.</div></header>" +
+      '<p class="bwarn">Model forecast (Open-Meteo), not an official forecast. Official warnings take precedence. Not analyst-approved.</p>' + easyHtml(D, true) +
+      '<h3>Words used</h3><dl class="wxtermp">' + TERMS.slice(0, 6).map(function (t) { return "<dt>" + esc(t[0]) + "</dt><dd>" + esc(t[1]) + "</dd>"; }).join("") + "</dl>" +
+      "<footer>Forecast: Open-Meteo.com (CC BY 4.0), best-match blend of national weather models. Pictures and sentences are made by fixed rules from the numbers. The detailed brief and report carry the full tables.</footer></article>";
+  }
+  function openEasy() {
+    var el = document.getElementById("brief");
+    if (!el) return;
+    function page(html) { el.innerHTML = html; el.hidden = false; document.documentElement.classList.add("briefing"); el.scrollTop = 0; }
+    if (ST.data) return page(easyPage(ST.data));
+    var bar = '<div class="bbar noprint"><button type="button" class="refresh" data-wxb="close">Close</button></div>';
+    page(bar + '<article class="bpage wxbp wxep" id="wxe-page"><p class="obs">Asking Open-Meteo for the model forecast…</p></article>');
+    go().then(function (D) { if (document.getElementById("wxe-page")) page(easyPage(D)); }, function (e) {
+      if (document.getElementById("wxe-page")) page(bar + '<article class="bpage wxbp wxep" id="wxe-page"><p class="obs"><span class="badge stale">FAILED</span> The forecast could not be loaded (' + esc(e && e.message || String(e)) + '). <button type="button" class="refresh" data-wxeasy="1">Try again</button></p></article>');
+    });
+  }
 
   /* ---------- the printable one-page weather brief (uses the page's #brief overlay and its print rules) ---------- */
   function briefHtml(D, lim) {
@@ -945,8 +1125,8 @@
       D.aq.t.forEach(function (t, i) { if (t < t0 || t >= t1) return; var v = D.aq.v.us_aqi[i]; if (v != null && (aqi == null || v > aqi)) aqi = v; var d = D.aq.v.dust[i]; if (d != null && (dust == null || d > dust)) dust = d; });
       if (aqi != null) aqh = "<h3>" + bl("https://open-meteo.com/en/docs/air-quality-api", "Air quality") + '</h3><p class="bm">Worst US AQI at the reference point ' + Math.round(aqi) + " (" + aqiName(aqi) + ")" + (dust != null && dust >= 50 ? ", dust up to " + Math.round(dust) + " µg/m³ (can cut visibility)" : "") + ". CAMS model, not measured.</p>";
     }
-    var imp = "<h3>Impacts at " + esc(ref.name) + "</h3>" + matrixHtml(A, D, "wxbm") +
-      '<p class="bm wxthr"><b>Generic planning thresholds, not doctrine.</b> ' + THR.map(function (t) { return "<b>" + esc(t.short) + "</b> R: " + esc(t.red) + "; A: " + esc(t.amber) + "."; }).join(" ") + "</p>";
+    var imp = "<h3>Impacts at " + esc(ref.name) + "</h3>" + matrixHtml(A, D, "wxbm") + legendHtml() +
+      '<p class="bm wxthr"><b>Generic planning thresholds, not doctrine.</b> ' + THR.map(function (t) { return "<b>" + esc(t.short) + "</b> No-go: " + esc(t.red) + "; marginal: " + esc(t.amber) + "."; }).join(" ") + "</p>";
     o += '<div class="bcols"><div>' + sum + briefObs(ref, tz) + haz + "</div><div>" + spread + sea + aqh + "</div></div>" + fct + upw + lit + imp;
     o += '<footer>Forecast: Open-Meteo.com (CC BY 4.0), best-match blend of national weather models; marine and air quality: Open-Meteo (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information). ' +
       "Ceilings are estimated from model cloud layers; visibility is the model&rsquo;s. Sun and moon computed, accurate to a minute or two. BMNT and EENT are nautical twilight (sun 12° below the horizon). " +
@@ -1012,7 +1192,7 @@
   }
   function closeBrief() {
     var el = document.getElementById("brief");
-    if (!el || !el.querySelector("#wxb-page,#wxr-page,[data-wxb]")) return;
+    if (!el || !el.querySelector("#wxb-page,#wxr-page,#wxe-page,[data-wxb]")) return;
     chartPageStyle(false);
     el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("briefing");
   }
@@ -1148,7 +1328,7 @@
       "<h3>Next 7 days</h3><p class=\"wxsum\">" + esc(synopsis(A7, D).replace(/^At [^,]+, /, "")) + "</p>" +
       "<h3>Warnings, cyclones and floods (" + hz.length + ")</h3>" + (hz.length ? '<table class="btwo wxhz">' + hz.join("") + "</table>" : '<p class="bm">None in the app&rsquo;s feeds for this region' + (H.warnFeeds && !H.warnFeeds.length ? " (no machine-readable national warning feed is set up for this country; check its weather agency)" : "") + ".</p>") +
       "<h3>" + bl("https://open-meteo.com/", "7-day meteogram at " + esc(ref.name)) + "</h3>" + meteogram(D, 7) +
-      "<h3>Impacts at " + esc(ref.name) + ", next 72 hours</h3>" + matrixHtml(A72, D, "wxbm");
+      "<h3>Impacts at " + esc(ref.name) + ", next 72 hours</h3>" + matrixHtml(A72, D, "wxbm") + legendHtml();
 
     /* page 2: hour by hour, next 48 hours, at the reference point */
     var t0 = hourNow(), ix = hrsFrom(ref, t0, t0 + 48 * 36e5);
@@ -2061,6 +2241,7 @@
     var wxv = document.querySelector('#view-seg button[data-view="weather"]');
     return '<div id="ml-wx"><div class="mlh">Weather</div>' +
       (wxv ? '<button type="button" class="wxopen" data-wxopen="1">Open forecasts and warnings</button>' : "") +
+      '<button type="button" class="wxopen" data-wxeasy="1">Easy-read weather: pictures by day, in plain words</button>' +
       '<button type="button" class="wxopen" data-wxbrief="1">One-page weather brief: ' + esc(placeLabel()) + "</button>" +
       '<button type="button" class="wxopen" data-wxbpick="1" aria-pressed="false">Weather brief for a spot: tap the map</button>' +
       '<p class="mlkey">For an area, draw it with Area, then Weather brief. Long-press any point, then Plans, for a brief there.</p>' +
@@ -2206,6 +2387,12 @@
       "table.wxm{border-collapse:collapse;width:100%;font-size:12px;margin:4px 0;table-layout:auto}table.wxm th,table.wxm td{border:1px solid rgba(128,128,128,.35);padding:2px 3px;text-align:center;white-space:nowrap}",
       "table.wxm td.wxt{text-align:left;white-space:normal}table.wxm tr.wxg td{text-align:left;font-weight:600;background:rgba(128,128,128,.12)}table.wxm th{font-weight:600;font-size:11px}",
       "td.wxc{font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;cursor:help}td.wxg{background:#2e7d32;color:#fff}td.wxa{background:#f9a825;color:#111}td.wxr{background:#c62828;color:#fff}td.wxn{color:#888}",
+      "span.wxlegc{display:inline-block;min-width:1.5em;text-align:center;font-weight:700;border-radius:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}span.wxg{background:#2e7d32;color:#fff}span.wxa{background:#f9a825;color:#111}span.wxr{background:#c62828;color:#fff}.wxleg2{margin:3px 0;font-size:.92em;line-height:1.5}",
+      ".wxez{margin:6px 0 10px}.wxstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:4px;margin:4px 0 8px}.wxday{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px;padding:5px 2px;border:1px solid var(--line,#ccd);border-radius:8px;background:var(--surface,#fff);font-size:12px;line-height:1.25}",
+      ".wxday svg.wxico{width:40px;height:40px}.wxdk{font-weight:600}.wxdt b{font-size:15px}.wxdl,.wxdf{color:var(--muted,#667)}.wxdf{font-size:11px}.wxez ul.wxezs{margin:4px 0 6px;padding-left:18px;line-height:1.45}.wxez ul.wxezs li{margin:2px 0}",
+      "table.wxact{border-collapse:collapse;width:100%;margin:4px 0;font-size:13px}table.wxact caption{text-align:left;font-weight:700;margin-bottom:2px}table.wxact th,table.wxact td{border:1px solid rgba(128,128,128,.35);padding:3px 5px;vertical-align:top;text-align:left}table.wxact th{white-space:nowrap}table.wxact td:last-child{white-space:normal;min-width:12em}.wxez p.note{font-size:.9em}@media (max-width:600px){.wxstrip,.wxep .wxstrip{grid-template-columns:repeat(4,1fr)}table.wxact th,table.wxact td.wxc{white-space:normal}}table.wxact td.wxc{white-space:nowrap;cursor:default}",
+      ".wxterms{margin:8px 0}.wxterms summary{cursor:pointer;font-weight:600}.wxterms dl,dl.wxtermp{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;margin:4px 0}.wxterms dt,dl.wxtermp dt{font-weight:700}.wxterms dd,dl.wxtermp dd{margin:0}",
+      ".wxep{font-size:11px}.wxep .wxstrip{grid-template-columns:repeat(7,1fr)}.wxep .wxday{border-color:#bbb;background:#fff;color:#111}@media print{.wxep .wxday{break-inside:avoid}.wxep table.wxact{font-size:10.5px}}",
       "b.wxr{background:#c62828;color:#fff;padding:0 3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}b.wxa{background:#f9a825;color:#111;padding:0 3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}",
       "table.wxf td{vertical-align:top}.wxbp table.wxbt{table-layout:auto}.wxbp table.wxbt th,.wxbp table.wxbt td{padding:1px 3px;white-space:nowrap}.wxbp table.wxbt td:first-child{white-space:normal}",
       ".wxbp table.wxm{font-size:inherit}.wxbp details.wxthr summary{cursor:pointer}.wxbp details.wxthr table td{padding:1px 3px}",
@@ -2246,7 +2433,7 @@
     map.on("moveend", function () { if (gridOn()) gridSoon(); if (ON.warn && LYR.warn) { map.removeLayer(LYR.warn); LYR.warn = warnLayer(opOf("warn", 0.8)).addTo(map); } });
     setInterval(function () { if (ON.radar && LYR.radar) { RV.at = 0; map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
     legendDraw();
-    W.OSAP_WX = { region: region, brief: openBrief, briefAt: briefAt, report: openReport, chart: openChart,
+    W.OSAP_WX = { region: region, brief: openBrief, briefAt: briefAt, easy: openEasy, report: openReport, chart: openChart,
       /* for the Today card: the chosen province or spot (null for the whole country or a drawn area), the province list, and choosing one */
       placePoint: function (c) { var pl = place(c, lsGet("asap-area-" + c)); return pl.k === "reg" ? { name: pl.n, lat: pl.la, lon: pl.lo } : pl.k === "spot" ? { name: pl.name, lat: pl.lat, lon: pl.lon } : null; },
       regions: function (c, cb) { var l = regsFor(c); if (!l) loadRegs(c, cb); return l ? l.map(function (r) { return r[0]; }) : null; },
