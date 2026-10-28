@@ -21,6 +21,10 @@
      terminal speed and rises in thin air, the jumper moving with the wind at each height) and under canopy, either flown to the
      DZ from over it or drifted down from upwind; the high altitude release point, where the canopies open, the still-air canopy
      reach and a wind table from exit to the ground. The forecast read keeps the DZ winds level by level for it.
+   - Jumpmaster brief: one printed page a DZ (Export PDF) with the timeline to the DZ (warnings, green and red light for each
+     pass), the release point grid, course, heading and speeds, the winds (forecast at the ground and level by level for
+     freefall), the light and moon at the DZ (OSAP night illumination), and the DZSO sheet's limits, comms and markings for a
+     saved drop zone, with the forecast ground wind checked against the limit.
    - The DZ is drawn as a 2525D area labelled "DZ", its long side on the run-in course, centred on the point given.
      The shared DZ store (window.OSAP_DZ, assets/osap-dz-store.js, the DZSO tool) is used when it is there: pick a saved DZ, or
      save this one. window.OSAP_FLIGHT.forDz(dzId) gives the DZSO sheet the aircraft, drop altitude, drop speed, run-in and time.
@@ -29,7 +33,7 @@
    Plans are kept in this browser only (localStorage "osap-flight-cur", "osap-flights"); nothing else is sent anywhere.
    A planning aid built by the analyst: straight lines at a set airspeed with model or set winds, no airspace, terrain clearance, threat, weight
    or fuel planning. It is not a flight plan; aircrew plan and fly the real route. W.OSAP_FLIGHT = { open, close, isOpen, add,
-   state, legs, forDz, kml, gpx, windTri, interpWind, drops, ffDrift }. */
+   state, legs, forDz, kml, gpx, windTri, interpWind, drops, ffDrift, brief }. */
 (function () {
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
@@ -506,7 +510,7 @@
     if (S.msg || S.err) h += '<p class="flmsg' + (S.err ? " err" : "") + '" role="status">' + esc(S.err || S.msg) + "</p>";
     h += '<h4>Save and share</h4><div class="flrow"><input type="text" id="fl-name" maxlength="60" placeholder="Name this plan" value="' + esc(p.name) + '" aria-label="Plan name"><button type="button" data-fl="save">Save</button><button type="button" data-fl="new">New plan</button></div>' +
       '<div class="flrow"><button type="button" data-fl="kml">KML</button><button type="button" data-fl="gpx">GPX</button>' + (W.OSAP_TAK ? '<button type="button" data-fl="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") +
-      (W.OSAP_PDF ? '<button type="button" data-fl="pdf">Export PDF</button>' : "") + '<button type="button" data-fl="text">Copy as text</button><button type="button" data-fl="fit">Show on map</button></div>';
+      (W.OSAP_PDF ? '<button type="button" data-fl="pdf">Export PDF</button>' + (R.dzI > 0 ? '<button type="button" data-fl="brief" title="One page a DZ: timeline, release point, winds, light and the DZSO sheet\'s limits and comms">Jumpmaster brief</button>' : "") : "") + '<button type="button" data-fl="text">Copy as text</button><button type="button" data-fl="fit">Show on map</button></div>';
     var sv = lsGet(SKEY, []) || [];
     if (sv.length) h += '<div class="flrow"><select id="fl-open" aria-label="Open a saved plan"><option value="">Open a saved plan…</option>' + sv.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name || "Unnamed plan") + "</option>"; }).join("") + '</select><button type="button" data-fl="delsaved">Delete selected</button></div>';
     h += '<p class="flsm">Planning aid only: great-circle lines (WGS 84) timed at the airspeeds set here, magnetic course from ' + esc(G().MODEL || "WMM") + ". Winds only as shown. No airspace, terrain clearance, threat, weight or fuel planning. Not a flight plan: aircrew plan and fly the real route. Kept in this browser only.</p>";
@@ -672,6 +676,7 @@
     else if (a === "tak") { try { S.msg = W.OSAP_TAK.save({ id: "flight|" + S.plan.id, name: planName(), file: "osap-flight", kml: kml(S.plan) }); S.err = ""; } catch (x) { S.err = "The TAK package could not be made: " + x.message; } render(); }
     else if (a === "text") { var s = text(S.plan); try { navigator.clipboard.writeText(s).then(function () { S.msg = "Copied."; render(); }, function () { S.err = "The clipboard is not available here."; render(); }); } catch (x) { S.err = "The clipboard is not available here."; render(); } }
     else if (a === "pdf") pdf();
+    else if (a === "brief") brief();
   }
   function onChange(e) {
     var t = e.target, p = S.plan, k;
@@ -790,8 +795,8 @@
     return out.join("\n");
   }
   function pdf() {
-    var root = D.createElement("div"), P = S.plan.pts, R = legs(S.plan), a = acft(S.plan.acft);
-    root.innerHTML = "<h1>" + esc(planName()) + "</h1><p>" + esc(a.name) + " · cruise " + S.plan.kt + " kt · drop " + S.plan.drop + " kt at " + S.plan.altFt + " ft AGL · DZ " + S.plan.dzLen + " × " + S.plan.dzWid + " m</p>" +
+    var P = S.plan.pts, R = legs(S.plan), a = acft(S.plan.acft);
+    var html = "<h1>" + esc(planName()) + "</h1><p>" + esc(a.name) + " · cruise " + S.plan.kt + " kt · drop " + S.plan.drop + " kt at " + S.plan.altFt + " ft AGL · DZ " + S.plan.dzLen + " × " + S.plan.dzWid + " m</p>" +
       "<table><thead><tr><th>Point</th><th>Role</th><th>Grid</th><th>Time (Zulu / local)</th><th>Next leg</th></tr></thead><tbody>" +
       P.map(function (q, k) { var l = R.legs[k]; return "<tr><td>" + esc(label(P, k)) + "</td><td>" + esc(roleName(q.role)) + "</td><td>" + esc(grid(q.lat, q.lon)) + "</td><td>" + esc(when(R.t[k])) + "</td><td>" + (l ? deg(l.tc) + "T / " + deg(l.mc) + "M, " + l.nm.toFixed(1) + " nm, " + l.kt + " kt" + (l.wind ? ", wind " + deg(l.wind.dir) + " " + Math.round(l.wind.kt) + " kt, heading " + deg(l.hdg) + "T / " + deg(l.mh) + "M, GS " + Math.round(l.gs) + " kt" : "") + ", " + hm(l.s) : "") + "</td></tr>"; }).join("") +
       "</tbody></table><p><b>Total " + Math.round(R.nm) + " nm, " + hm(R.s) + " flying.</b></p>" +
@@ -800,8 +805,91 @@
         x.calls.map(function (c) { return "<tr><td>" + c.what + "</td><td>" + esc(when(c.t)) + "</td></tr>"; }).join("") +
         x.passes.map(function (ps) { return "<tr><td><b>Pass " + ps.n + "</b> (" + ps.jumpers + " jumpers) green / red</td><td>" + esc(when(ps.green)) + " / " + esc(when(ps.red)) + "</td></tr>"; }).join("") + "</tbody></table>" +
         x.warn.map(function (w) { return "<p>" + esc(w) + "</p>"; }).join(""); }).join("") + R.warn.map(function (w) { return "<p>" + esc(w) + "</p>"; }).join("") + "<p><small>" + esc(CAVEAT) + "</small></p>";
-    root.style.display = "none"; D.body.appendChild(root);
-    Promise.resolve(W.OSAP_PDF.print({ title: "Flight plan: " + planName(), root: root })).then(function () { root.remove(); }, function () { root.remove(); });
+    sheet("Flight plan: " + planName(), html);
+  }
+
+  /* ---------- the jumpmaster brief: one page a DZ ---------- */
+  /* the light and the moon for the night round time ms at q (OSAP night illumination, computed on the device) */
+  var LIGHT = [["Sunset", "rise", "down"], ["End of civil twilight", "civil", "down"], ["End of nautical twilight", "naut", "down"], ["Start of nautical twilight", "naut", "up"], ["Start of civil twilight", "civil", "up"], ["Sunrise", "rise", "up"]];
+  function lightAt(q, ms) {
+    var C = W.OSAP_ILLUM && W.OSAP_ILLUM.core; if (!C) return null;
+    /* local noon before the time to local noon after it, by the sun's own clock at the DZ */
+    var off = q.lon / 15 * 36e5, lt = ms + off, noon = Math.floor((lt - 12 * 36e5) / 864e5) * 864e5 + 12 * 36e5 - off;
+    var n = C.night(q.lat, q.lon, noon, noon + 864e5), alt = C.sunAlt(ms, q.lat, q.lon);
+    return { n: n, at: alt > -0.833 ? "day" : alt > -6 ? "civil twilight" : alt > -12 ? "nautical twilight" : "dark" };
+  }
+  /* the forecast at the DZ: elevation and the wind nearest the ground (10 m) at time ms */
+  function dzGround(plan, q, ms) {
+    var g = G(), e = plan.wind === "fc" && plan.wx ? (plan.wx.dz || []).filter(function (x) { return g.dist([x.lat, x.lon], [q.lat, q.lon]) < 500; })[0] : null;
+    if (!e) return null;
+    var out = { elev: e.elev }, tS = ms / 1000, best = null;
+    (e.lv || []).forEach(function (r) { if (!best || Math.abs(r[0] - tS) < Math.abs(best[0] - tS)) best = r; });
+    if (best && Math.abs(best[0] - tS) <= 3 * 3600 && best[1].length) { var lo = best[1].slice().sort(function (a, b) { return a[0] - b[0]; })[0]; out.wind = { dir: lo[1], kt: lo[2], h: lo[0] }; }
+    return out;
+  }
+  /* the DZSO sheet's own limits (localStorage "osap-dzso"), when it has been used in this browser */
+  function dzsoLimits() { var v = lsGet("osap-dzso", null); return v && isFinite(v.wind) ? { prof: clean(v.prof, 10), wind: +v.wind, gust: isFinite(v.gust) ? +v.gust : null, vis: isFinite(v.vis) ? +v.vis : null } : null; }
+  var BRIEF_F = [["cs_ac", "Aircraft call sign"], ["cs_dz", "DZ call sign"], ["g2a", "Ground to air"], ["g2a2", "Alternate"], ["code", "Code letter / marking"], ["smoke", "Wind signal"], ["abort", "No-drop signal"],
+    ["dzso", "DZSO"], ["medic", "Medic"], ["assembly", "Assembly"]];
+  var BRIEF_CSS = "#pdfx-sheet .flbr{font:11px/1.3 system-ui,-apple-system,'Segoe UI',sans-serif;color:#000}#pdfx-sheet .flbr+.flbr{break-before:page}#pdfx-sheet .flbr h1{font-size:16px;margin:0 0 2px}#pdfx-sheet .flbr .sub{margin:0 0 6px}" +
+    "#pdfx-sheet .flbr .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 16px}#pdfx-sheet .flbr h2{font-size:12px;margin:7px 0 2px;padding-bottom:1px;border-bottom:1.5px solid #000;text-transform:uppercase;letter-spacing:.03em;break-after:avoid}" +
+    "#pdfx-sheet .flbr table{width:100%;table-layout:fixed;border-collapse:collapse;font-variant-numeric:tabular-nums}#pdfx-sheet .flbr td,#pdfx-sheet .flbr th{border-bottom:1px solid #bbb;padding:1.5px 3px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}#pdfx-sheet .flbr th{font-weight:600}" +
+    "#pdfx-sheet .flbr td:first-child{color:#333;width:38%;padding-right:8px}#pdfx-sheet .flbr tr.k td{font-weight:700;background:#e8f5e9}#pdfx-sheet .flbr tr.r td{font-weight:700;background:#fdecea}#pdfx-sheet .flbr .g{font-family:ui-monospace,Menlo,Consolas,monospace}" +
+    "#pdfx-sheet .flbr .over{color:#b71c1c;font-weight:700}#pdfx-sheet .flbr .ok{color:#1b5e20;font-weight:700}#pdfx-sheet .flbr .note{font-size:10px;color:#333;margin:4px 0 0}#pdfx-sheet .flbr p{margin:2px 0}";
+  function briefHtml(plan) {
+    var P = plan.pts, R = legs(plan), X = drops(plan, R), a = acft(plan.acft), J = plan.jump, Lm = dzsoLimits();
+    var row = function (k, v, cls) { return "<tr" + (cls ? ' class="' + cls + '"' : "") + "><td>" + esc(k) + "</td><td>" + v + "</td></tr>"; }, tw = function (ms) { return esc(when(ms)); };
+    return X.map(function (x) {
+      var q = P[x.k], leg = R.legs[x.k - 1], z = q.dzId && W.OSAP_DZ && W.OSAP_DZ.get ? W.OSAP_DZ.get(q.dzId) : null, f = (z && z.fields) || {}, gr = dzGround(plan, q, x.green), lt = lightAt(q, x.green);
+      /* timeline: every point to the DZ, the warnings, the lights, then the rest of the route */
+      var tl = [];
+      P.forEach(function (p2, k) { if (k < x.k) tl.push([label(P, k) + (k ? "" : " take-off"), R.t[k]]); });
+      x.calls.forEach(function (c) { tl.push([c.what + " warning", c.t]); });
+      x.passes.forEach(function (ps) { tl.push(["Green light, pass " + ps.n + " (" + ps.jumpers + ")", ps.green, "k"]); tl.push(["Red light, pass " + ps.n, ps.red, "r"]); });
+      tl.push(["Over the PI (" + label(P, x.k) + ")", R.t[x.k]]);
+      P.forEach(function (p2, k) { if (k > x.k) tl.push([label(P, k) + (k === P.length - 1 ? " landing" : ""), R.t[k]]); });
+      tl.sort(function (u, v) { return u[1] - v[1]; });
+      var h = '<section class="flbr"><style>' + BRIEF_CSS + "</style><h1>Jumpmaster brief: " + esc(label(P, x.k)) + "</h1>" +
+        '<p class="sub">' + esc(planName()) + " · " + esc(a.name) + " · " + J.total + " jumpers, " + J.doors + " door" + (J.doors === 1 ? "" : "s") + ", " + x.passes.length + " pass" + (x.passes.length === 1 ? "" : "es") + " · " + esc((JUMPS.filter(function (j) { return j[0] === J.type; })[0] || JUMPS[0])[1]) + "</p><div class=\"cols\"><div>" +
+        "<h2>Timeline (Zulu / local)</h2><table>" + tl.map(function (t) { return row(t[0], tw(t[1]), t[2]); }).join("") + "</table>" +
+        "<h2>Release point</h2><table>" +
+        row(x.rk, '<span class="g">' + esc(grid(x.carp[0], x.carp[1])) + "</span>", "k") + row("PI", '<span class="g">' + esc(grid(x.pi[0], x.pi[1])) + "</span>") +
+        row("Before the PI", Math.round(x.along) + " m along the run-in") +
+        row("Run-in course", deg(x.axis) + " true" + (leg ? " / " + deg(leg.mc) + " magnetic" : "")) +
+        (leg && leg.wind ? row("Heading", deg(leg.hdg) + " true / " + deg(leg.mh) + " magnetic") : "") +
+        row("Speed", plan.drop + " kt, " + Math.round(x.gs) + " kt ground speed") +
+        row("Drop altitude", plan.altFt + " ft AGL" + (gr && isFinite(gr.elev) ? " (" + Math.round(plan.altFt + gr.elev / FT) + " ft MSL, DZ " + Math.round(gr.elev / FT) + " ft)" : "")) +
+        (x.ff ? row("Opening", x.ff.open + " ft AGL, freefall about " + Math.round(x.ff.ffS) + " s") + row("Under canopy", Math.round(x.ff.canS / 60) + " min" + (x.ff.canM > 0.5 ? ", canopies open " + Math.round(x.ff.canM) + " m upwind" : ", open over the DZ") + "; reach " + (x.ff.reach / 1000).toFixed(1) + " km")
+          : row("Drift", Math.round(x.drift) + " m (K " + J.K + ")")) +
+        row("Forward throw", J.ft + " m") + row("Exit", "every " + J.ei + " s; passes " + J.gap + " min apart") + row("DZ", plan.dzLen + " × " + plan.dzWid + " m") + "</table></div><div>" +
+        "<h2>Winds</h2><table>" + row("For the drop", x.wind ? (x.ff ? "levels below" : deg(x.wind.dir) + " " + Math.round(x.wind.kt) + " kt mean to " + plan.altFt + " ft") + " (" + esc(x.wind.src) + ")" : "none set") +
+        (leg && leg.wind ? row("Run-in at drop altitude", deg(leg.wind.dir) + " " + Math.round(leg.wind.kt) + " kt") : "") +
+        (gr && gr.wind ? row("Ground (" + gr.wind.h + " m), forecast", deg(gr.wind.dir) + " " + Math.round(gr.wind.kt) + " kt") : row("Ground", "read it on the DZ")) +
+        (x.ff ? x.ff.table.map(function (r) { return row(r.ft + " ft" + (r.what ? " (" + r.what + ")" : ""), deg(r.dir) + " " + Math.round(r.kt) + " kt"); }).join("") : "") + "</table>" +
+        "<h2>Limits (DZSO sheet)</h2><table>" + (Lm ? row("Surface wind", Lm.wind + " kt" + (Lm.gust ? ", gust " + Lm.gust + " kt" : "")) + (Lm.vis ? row("Visibility", Lm.vis + " km") : "") +
+          (gr && gr.wind ? row("Forecast against it", gr.wind.kt > Lm.wind ? '<span class="over">over the limit (' + Math.round(gr.wind.kt) + " kt)</span>" : '<span class="ok">within (' + Math.round(gr.wind.kt) + " kt)</span>") : "")
+          : row("Limits", "not set: open the DZSO sheet for this DZ")) + "</table>" +
+        "<h2>Light at the DZ</h2><table>" + (lt ? row("At green light", lt.at) + LIGHT.map(function (L0) { var e = lt.n[L0[1]], t = e && e[L0[2]]; return t ? row(L0[0], tw(t)) : ""; }).join("") +
+          row("Moon", (lt.n.il ? Math.round(lt.n.il.frac * 100) + "% lit" + (lt.n.il.name ? ", " + esc(lt.n.il.name) : "") : "") + (lt.n.moonAlways ? "; " + lt.n.moonAlways + " all night" : "")) +
+          lt.n.moonrise.slice(0, 1).map(function (t) { return row("Moonrise", tw(t)); }).join("") + lt.n.moonset.slice(0, 1).map(function (t) { return row("Moonset", tw(t)); }).join("")
+          : row("Light", "not loaded on this page")) + "</table>" +
+        "<h2>Comms and markings (DZSO sheet)</h2><table>" + (BRIEF_F.filter(function (b) { return f[b[0]]; }).map(function (b) { return row(b[1], esc(f[b[0]])); }).join("") || row("Comms", z ? "none filled in on the DZSO sheet" : "this DZ is not a saved drop zone: save it and fill in the DZSO sheet")) + "</table>" +
+        "</div></div>" + (x.warn.length ? x.warn.map(function (w) { return '<p class="note">Note: ' + esc(w) + "</p>"; }).join("") : "") +
+        '<p class="note">' + esc(CAVEAT) + " Light: computed on this device for a flat horizon at sea level.</p></section>";
+      return h;
+    }).join("");
+  }
+  function brief() {
+    var html = briefHtml(S.plan);
+    if (!html) { S.err = "Set a drop zone first."; render(); return; }
+    sheet("Jumpmaster brief: " + planName(), html);
+  }
+  /* print html on its own: OSAP_PDF's print sheet (#pdfx-sheet), which hides the rest of the page while it prints */
+  function sheet(title, html) {
+    var s = D.getElementById("pdfx-sheet"); if (!s) { s = D.createElement("div"); s.id = "pdfx-sheet"; D.body.appendChild(s); }
+    s.innerHTML = html; D.documentElement.classList.add("pdfx-sheet");
+    var end = function () { D.documentElement.classList.remove("pdfx-sheet"); s.innerHTML = ""; };
+    Promise.resolve(W.OSAP_PDF.print({ title: title, root: s })).then(end, end);
   }
 
   /* ---------- open, close, the API ---------- */
@@ -813,7 +901,7 @@
   function close() { tapEnd(); if (card) card.hidden = true; syncDock(); layer.clearLayers(); }
   function isOpen() { return !!card && !card.hidden; }
   W.OSAP_FLIGHT = {
-    open: open, close: close, isOpen: isOpen, add: add, legs: legs, windTri: windTri, interpWind: interpWind, drops: drops, ffDrift: ffDrift, kml: kml, gpx: gpx, text: text, aircraft: ACFT,
+    open: open, close: close, isOpen: isOpen, add: add, legs: legs, windTri: windTri, interpWind: interpWind, drops: drops, ffDrift: ffDrift, brief: briefHtml, kml: kml, gpx: gpx, text: text, aircraft: ACFT,
     state: function () { return { plan: JSON.parse(JSON.stringify(S.plan)), msg: S.msg, err: S.err, drawn: layer.getLayers().length }; },
     load: function (p) { tapEnd(); S.plan = cleanPlan(p); changed(true); },
     /* for the DZSO tool: the plan that drops on this saved DZ (the current plan first, then the saved ones), or null */
