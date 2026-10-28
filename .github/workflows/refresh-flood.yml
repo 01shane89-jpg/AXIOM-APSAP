@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt); empty runs all"
         required: false
         default: ""
       lane:
@@ -195,6 +195,13 @@ jobs:
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'storms' }}
         timeout-minutes: 4
         run: node tools/refresh_storms.mjs
+        continue-on-error: true
+      # Live OpenStreetMap sources the map asks from the browser (Postpass, then the Overpass servers): one tiny question to each,
+      # into data/live/osm-sources.js, which the data health below lists as a key feed (tools/refresh_osm_sources.mjs).
+      - name: Check the live OpenStreetMap sources (Postpass and Overpass)
+        if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'osm' }}
+        timeout-minutes: 2
+        run: node tools/refresh_osm_sources.mjs
         continue-on-error: true
       # Every other free, no-login feed (tools/refresh_dense.mjs): writes data/live/x/feeds.js and one file per country.
       - name: Pull the dense open-data feeds (hazards, aviation, cyber, sanctions, travel advice, health, economy, elections)
