@@ -59,14 +59,15 @@ async function open(opts, stored) {
     r.fulfill({ status: 404, body: "" });
   });
   const errors = [];
+  // Postpass is down here (aborted with everything else), so the masts come from the Overpass servers
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.route(/overpass|maps\.mail\.ru/, (r) => {
     overpassCalls++;
     const q = decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")), bb = q.match(/\((-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+)\)/);
     if (bb) overpassSpans.push(Math.max(bb[3] - bb[1], bb[4] - bb[2]));
     // the first server answers like a real overloaded Overpass: 200, no elements, an error remark
-    const body = /maps\.mail\.ru/.test(r.request().url()) ? { elements: [], remark: "runtime error: Query ran out of memory in \"query\" at line 1. It would need at least 32 MB of RAM to continue." } : OSM;
-    if (/maps\.mail\.ru/.test(r.request().url())) remarkCalls++;
+    const body = /overpass-api\.de/.test(r.request().url()) ? { elements: [], remark: "runtime error: Query ran out of memory in \"query\" at line 1. It would need at least 32 MB of RAM to continue." } : OSM;
+    if (/overpass-api\.de/.test(r.request().url())) remarkCalls++;
     if (/\[~/.test(q)) keyFilter++;
     const send = () => r.fulfill({ contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(body) }).catch(() => {});
     if (overpassDelay) setTimeout(send, overpassDelay); else send();

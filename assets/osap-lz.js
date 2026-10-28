@@ -6,7 +6,8 @@
    - slope comes from the AWS Terrain Tiles elevation model (terrarium PNG, keyless, the same tiles the 3D view uses; about
      30 m detail in most of the world, so a ditch or a bank narrower than that is not seen), measured across about 60 m so
      the model's own noise (it includes some tree and roof height) is not read as steep ground;
-   - obstacles come from OpenStreetMap for the area (one Overpass request, POST so the service worker never caches it):
+   - obstacles come from OpenStreetMap for the area (one request through OSAP_OSM, assets/osap-osm.js: Geofabrik's Postpass
+     first, clipped to the window, then the public Overpass servers; POST so the service worker never caches it):
      buildings, trees and forest, power and cable lines, masts and towers, wind turbines, water, wetland, railways, roads
      from residential up (street lights, signs, traffic; tracks and unclassified rural roads are not blocked), walls, fences
      and hedges, and built-up land use (where buildings may be unmapped). Sports pitches, parks and airfields inside
@@ -41,7 +42,6 @@
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var map = W.__asapMap; if (!map || !W.L) return;
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var ZA = 14, ZD = 13, KEY = "osap-lz", MAXC = 8, NEAR = 300;
   var LC = "https://ic.imagery1.arcgis.com/arcgis/rest/services/Sentinel2_10m_LandCover/ImageServer/exportImage", LC_YEAR = 2024;
   /* Esri land cover class -> obstacle class here: 1 water, 2 trees, 4 flooded vegetation, 7 built area */
@@ -164,27 +164,32 @@
       'nwr["leisure"~"^(pitch|park|recreation_ground|golf_course|stadium|sports_centre)$"];nwr["aeroway"~"^(helipad|heliport|aerodrome|runway|apron|taxiway)$"];' +
       ");out geom qt;";
   }
-  function post(url, body, ms) {
-    var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms);
-    return fetch(url, { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac ? ac.signal : undefined }).then(function (r) {
-      clearTimeout(t); if (!r.ok) throw new Error(r.status === 429 ? "busy (429)" : "HTTP " + r.status); return r.json();
-    }, function (e) { clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : "network error"); }).then(function (j) {
-      /* Overpass can answer 200 with a remark and no elements when it gives up: that is a failure, not an empty map */
-      if (j && j.remark && /runtime error|out of memory|timed out|Query run out/i.test(j.remark)) throw new Error("server gave up (" + String(j.remark).slice(0, 80) + ")");
-      return j;
-    });
+  /* the same ask in Postpass SQL: both OpenStreetMap tables, cut to the window (a forest or a river can be country-sized);
+     exported for the tests */
+  var LANDUSE = "'forest','orchard','vineyard','plant_nursery','residential','industrial','commercial','retail','construction','quarry','landfill','cemetery','allotments','greenhouse_horticulture','garages','reservoir','basin','farmland','farmyard','meadow','grass','paddy','recreation_ground'";
+  function sqlQuery(b) {
+    var env = "ST_MakeEnvelope(" + [b[1], b[0], b[3], b[2]].map(function (v) { return v.toFixed(5); }).join(",") + ",4326)";
+    var notTunnel = "coalesce(tags->>'tunnel', '') <> 'yes'";
+    var area = "(tags ? 'building' OR tags ? 'building:part' OR tags->>'landuse' IN (" + LANDUSE + ")" +
+      " OR tags->>'natural' IN ('wood','water','wetland','glacier','scrub','grassland','heath','sand','beach','bare_rock','scree','tree','tree_row')" +
+      " OR tags->>'waterway' IN ('river','canal','stream','drain','ditch','riverbank','dam','weir')" +
+      " OR tags->>'power' IN ('line','minor_line') OR tags ? 'aerialway' OR tags->>'communication' = 'line' OR tags->>'telecom' = 'line'" +
+      " OR tags->>'man_made' IN ('mast','tower','chimney','communications_tower','water_tower','antenna','flagpole','silo')" +
+      " OR (tags->>'power' = 'generator' AND tags->>'generator:source' = 'wind')" +
+      " OR (tags->>'railway' IN ('rail','light_rail','tram','narrow_gauge','subway','monorail') AND " + notTunnel + ")" +
+      " OR (tags->>'highway' ~ '^(motorway|trunk|primary|secondary|tertiary|residential|living_street)(_link)?$' AND " + notTunnel + ")" +
+      " OR tags->>'barrier' IN ('wall','fence','hedge','city_wall','retaining_wall','guard_rail')" +
+      " OR tags->>'leisure' IN ('pitch','park','recreation_ground','golf_course','stadium','sports_centre')" +
+      " OR tags->>'aeroway' IN ('helipad','heliport','aerodrome','runway','apron','taxiway'))";
+    var clip = "CASE WHEN GeometryType(geom) = 'POINT' THEN geom ELSE ST_ClipByBox2D(geom, " + env + ") END";
+    return "SELECT osm_type, osm_id, tags, " + clip + " AS geom FROM postpass_pointpolygon WHERE " + area + " AND geom && " + env +
+      " UNION ALL SELECT osm_type, osm_id, tags, ST_ClipByBox2D(geom, " + env + ") AS geom FROM postpass_line WHERE " + area + " AND geom && " + env;
   }
-  function overpass(q) {
-    var body = "data=" + encodeURIComponent(q), errs = [];
-    function go(i) {
-      if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
-      return post(OVERPASS[i], body, 45000).catch(function (e) {
-        /* busy or overloaded (429, 502-504): wait a moment and ask the same server once more before the next one */
-        if (/429|HTTP 50[234]/.test(e.message) && !go["r" + i]) { go["r" + i] = 1; return new Promise(function (r) { setTimeout(r, 4000); }).then(function () { return go(i); }); }
-        errs.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1);
-      });
-    }
-    return go(0);
+  function overpass(b) {
+    /* Postpass gets 45 s (a built-up window is a big answer), each Overpass server 45 s */
+    return W.OSAP_OSM.query({ sql: sqlQuery(b), ql: overpassQuery(b), ppMs: 45000, opMs: 45000 }).catch(function (e) {
+      throw new Error(e.message === "busy" ? "the free servers are busy" + (W.OSAP_OSM.dark().length ? " (" + W.OSAP_OSM.dark().join(", ") + ")" : "") : e.message);
+    });
   }
   /* what an OpenStreetMap object means here: [class, "a"rea | "l"ine | "p"oint, margin in metres] */
   function obCls(t) {
@@ -648,7 +653,7 @@
     var win = windowFor(o, radius + size / 2 + APPR + 20);
     var nw = fromCell(win, -0.5, -0.5), se = fromCell(win, win.w - 0.5, win.h - 0.5);
     var bbox = [se[0], nw[1], nw[0], se[1]];
-    var osm = overpass(overpassQuery(bbox)).then(function (j) { return j.elements || []; });
+    var osm = overpass(bbox).then(function (j) { return j.elements || []; });
     osm.catch(function () {});
     var dem = demFor(win, prog), lc = landcover(win);
     return Promise.all([dem, osm, lc]).then(function (v) {
@@ -772,6 +777,6 @@
        analyst's own LZ size and slope settings unless given; the card and its marks are left as they are */
     scan: function (o, radius, opt) { opt = opt || {}; return scan([+o[0], +o[1]], Math.min(5000, Math.max(200, +radius || 2000)), +opt.size || S.d, +opt.slope || S.s, null, opt.prog, null).then(function (r) { if (r) { delete r.OBC; delete r.win; } return r; }); },
     sizes: SIZES, slopes: SLOPES,
-    _kml: lzKml, analyse: analyse, windowFor: windowFor, obCls: obCls, surfCls: surfCls, edt: edt, query: overpassQuery
+    _kml: lzKml, analyse: analyse, windowFor: windowFor, obCls: obCls, surfCls: surfCls, edt: edt, query: overpassQuery, sql: sqlQuery
   };
 })();
