@@ -35,15 +35,14 @@ jobs:
           npm install --no-save --no-audit --no-fund playwright@1
           npx playwright install --with-deps chromium
           cp ../self/shots.mjs tools/shots.mjs
-          OUT=../out node tools/shots.mjs 2>&1 | tee ../out-log.txt
-        env:
-          ONLY: ${{ inputs.only }}
+          ONLY="${{ inputs.only }}"; [ -z "$ONLY" ] && ONLY="$(cat ../self/only.txt 2>/dev/null || true)"
+          OUT=../out ONLY="$ONLY" node tools/shots.mjs 2>&1 | tee ../out-log.txt
       - name: Push the screenshots to website-shots-out
         env:
           TOKEN: ${{ github.token }}
         run: |
           cp out-log.txt out/log.txt; cd out
-          git init -q -b website-shots-out
+          BR="$(cat ../self/outbranch.txt 2>/dev/null || echo website-shots-out)"; git init -q -b "$BR"
           git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q -m "tour screenshots from axiom-apsap main"
-          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" website-shots-out
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$BR"

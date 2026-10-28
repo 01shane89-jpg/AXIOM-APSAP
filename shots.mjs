@@ -176,8 +176,21 @@ async function finish(name, n, s) {
   if (s.k.skip && s.k.skip[1] > s.k.skip[0] + 1) await writeFile(join(OUT, `${n}-${name}.skip`), `${(s.k.skip[0] - cut).toFixed(2)} ${(s.k.skip[1] - cut).toFixed(2)}`);
 }
 
+// hero tiles for the company website: the conflict tab's map as it opens, plus the whole window
+async function hero({ k, p }, name) {
+  await p.evaluate(() => { const c = document.getElementById("wt-cur"); if (c) c.remove(); });
+  await p.mouse.move(1, 700);
+  await k.wait(4000);
+  await p.locator("#map").screenshot({ path: join(OUT, `${name}-map.jpg`), type: "jpeg", quality: 92 });
+  await p.screenshot({ path: join(OUT, `${name}-full.jpg`), type: "jpeg", quality: 92 });
+  console.log("  hero", name);
+}
 /* ---------- the videos, in the user guide's order ---------- */
 const SCENES = [
+  ["hero-ua", "Russia-Ukraine", "", { hash: "#cf-russia-ukraine", at: false, settle: 15000 }, async (s) => hero(s, "hero-ua")],
+  ["hero-mm", "Myanmar", "", { hash: "#cf-myanmar", at: false, settle: 15000 }, async (s) => hero(s, "hero-mm")],
+  ["hero-sd", "Sudan", "", { hash: "#cf-sudan", at: false, settle: 15000 }, async (s) => hero(s, "hero-sd")],
+  ["hero-mx", "Mexico", "", { hash: "#cf-mexico-cartels", at: false, settle: 15000 }, async (s) => hero(s, "hero-mx")],
   ["today", "Today", "The start screen for your country", { today: true, settle: 9000 }, async ({ k, p }) => {
     await k.caption("Today opens each time you start OSAP", "Weather, warnings, top stories, a daily summary and what is new since your last visit.");
     await k.wait(5000);
