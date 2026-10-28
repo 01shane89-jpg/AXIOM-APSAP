@@ -1,5 +1,5 @@
 // Headless check of the power grid section (assets/osap-power.js): its switches sit in Map overlays (Infrastructure); lines, substations
-// and plants load from OpenStreetMap (Overpass, answered here by a fixture) only when switched on and zoomed in, 200 kV and up at
+// load from OpenStreetMap (Postpass first, then the Overpass servers, both answered here by fixtures) only when switched on and zoomed in, 200 kV and up at
 // region zoom and everything close in, coloured by voltage with a map legend; a busy server is reported, not hidden; the plants switch
 // hands over to the stored all-fuel plants (assets/osap-infra.js, fixture here) with the fuel filter under it and never asks Overpass;
 // outage headlines come from the news pool; classic layout on a phone.
@@ -36,9 +36,21 @@ const FIX = { elements: [
   { type: "way", id: 7, center: { lat: 13.71, lon: 100.49 }, tags: { power: "plant", name: "Big plant", "plant:output:electricity": "1,200 MW" } },
   { type: "way", id: 8, center: { lat: 13.77, lon: 100.51 }, tags: { power: "plant", name: "Rooftop", "plant:output:electricity": "2 MW" } }
 ] };
-async function open(opts, hash = "", overpass = "ok") {
+/* the same grid as Postpass answers it: GeoJSON, osm_type letters, a line as a MultiLineString, substations as points */
+const PPFIX = { type: "FeatureCollection", features: FIX.elements.filter((e) => e.tags.power !== "plant").map((e) => ({ type: "Feature",
+  geometry: e.geometry ? { type: "MultiLineString", coordinates: [e.geometry.map((g) => [g.lon, g.lat])] } : { type: "Point", coordinates: [(e.center || e).lon, (e.center || e).lat] },
+  properties: { osm_type: e.type[0].toUpperCase(), osm_id: e.id, tags: e.tags } })) };
+/* overpass: ok | busy | slow | remark | remark1; postpass: ok | down | slow | bad (200 but not GeoJSON) */
+async function open(opts, hash = "", overpass = "ok", postpass = "down") {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
-  const errors = [], queries = [];
+  const errors = [], queries = [], pp = [];
+  await ctx.route(/postpass\.geofabrik\.de/, async (r) => {
+    pp.push(decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")));
+    if (postpass === "down") return r.fulfill({ status: 503, body: "down" });
+    if (postpass === "bad") return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ error: "query failed" }) });
+    if (postpass === "slow") await new Promise((res) => setTimeout(res, 1500));
+    return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(PPFIX) });
+  });
   await ctx.route(/overpass/, async (r) => {
     queries.push(decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")));
     if (overpass === "busy") return r.fulfill({ status: 429, body: "busy" });
@@ -47,7 +59,7 @@ async function open(opts, hash = "", overpass = "ok") {
     if (overpass === "remark" || (overpass === "remark1" && queries.length === 1)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ elements: [], remark: 'runtime error: Query ran out of memory in "query" at line 1. It would need at least 32 MB of RAM to continue.' }) });
     return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FIX) });
   });
-  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*overpass)/, (r) => r.abort());
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*overpass)(?!postpass\.)/, (r) => r.abort());
   /* the stored plants for Thailand: a big coal plant and a small solar farm */
   await ctx.route(/\/data\/infra\/index\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ v: 1, at: "2026-10-04T00:00Z", sources: {}, countries: { th: { plant: 2 } } }) }));
   await ctx.route(/\/data\/infra\/th\/plant\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ v: 1, cc: "th", layer: "plant", lines: [], items: [
@@ -57,7 +69,7 @@ async function open(opts, hash = "", overpass = "ok") {
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + hash, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_POWER, null, { timeout: 60000 }); await settle(p);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  return { ctx, p, errors, queries };
+  return { ctx, p, errors, queries, pp };
 }
 const grid = (p) => p.evaluate(() => {
   const pp = document.querySelector(".leaflet-pwrpt-pane"), st = window.OSAP_POWER.state();
@@ -71,7 +83,7 @@ const om = async (p, want) => {
 };
 // ---------- pure helpers ----------
 {
-  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  const { ctx, p, errors, queries: opq } = await open({ viewport: { width: 1360, height: 860 } }, "", "ok", "ok");
   const u = await p.evaluate(() => { const P = window.OSAP_POWER; return {
     kv: [P.kv({ voltage: "400000;220000" }), P.kv({ voltage: "" }), P.kv({ voltage: "33000" })],
     mw: [P.mw({ "plant:output:electricity": "1,200 MW" }), P.mw({ "plant:output:electricity": "1.5 GW" }), P.mw({ "plant:output:electricity": "yes" })],
@@ -104,7 +116,7 @@ const om = async (p, want) => {
   ok(g.legend, "desktop: voltage legend on the map");
   await p.check('#pwr-sec input[data-pwr="subs"]'); await p.check('#pwr-sec input[data-pwr="plants"]'); await p.waitForTimeout(1800);
   g = await grid(p);
-  ok(g.subs === 2 && g.plants === 2 && g.osmPlants === 0, "desktop: substations from Overpass, plants from the stored all-fuel list, none from Overpass (" + g.subs + " subs, " + g.plants + " plants, " + g.osmPlants + " live)");
+  ok(g.subs === 2 && g.plants === 2 && g.osmPlants === 0, "desktop: substations from Postpass, plants from the stored all-fuel list, none from Overpass (" + g.subs + " subs, " + g.plants + " plants, " + g.osmPlants + " live)");
   ok(await p.evaluate(() => !document.querySelector('#inf-sec input[data-inf="plant"]') || document.querySelector('#inf-sec input[data-inf="plant"]').closest(".mlrow").hidden), "desktop: one Power plants switch only (the power grid's)");
   const chips = await p.evaluate(() => Array.from(document.querySelectorAll('#pwr-sec [data-inffuel] button[data-fuel]')).map((b) => b.textContent));
   ok(chips.length === 2 && /Coal 1/.test(chips[0]) && /Solar 1/.test(chips[1]), "desktop: fuel filter under the plants switch, with counts: " + chips.join(" | "));
@@ -128,15 +140,31 @@ const om = async (p, want) => {
   await p.uncheck('#pwr-sec input[data-pwr="lines"]'); await p.uncheck('#pwr-sec input[data-pwr="subs"]'); await p.uncheck('#pwr-sec input[data-pwr="plants"]'); await p.waitForTimeout(500);
   g = await grid(p);
   ok(g.paths.length === 0 && g.subs === 0 && g.plants === 0 && !g.legend, "desktop: all off clears the map and the legend");
+  ok(opq.length === 0, "desktop: Postpass answered, so no Overpass server was asked (" + opq.length + ")");
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
   await ctx.close();
 }
-// ---------- the queries sent: 200 kV and up at region zoom, everything close in ----------
+// ---------- the Postpass SQL sent: 200 kV and up at region zoom, everything close in; Overpass left alone ----------
+{
+  const { ctx, p, errors, queries, pp } = await open({ viewport: { width: 1360, height: 860 } }, "", "ok", "ok");
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 9, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(1500);
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 12, { animate: false }); }); await p.waitForTimeout(1500);
+  ok(pp.length === 2 && queries.length === 0, "postpass: one query per view, Overpass never asked (" + pp.length + " Postpass, " + queries.length + " Overpass)");
+  ok(/postpass_line/.test(pp[0] || "") && /voltage/.test(pp[0] || "") && !/substation/.test(pp[0] || ""), "postpass: region zoom asks only for 200 kV+ lines");
+  ok(/'line' OR/.test(pp[1] || "") && /ST_MakeEnvelope\(100\.\d+,13\.\d+,100\.\d+,13\.\d+,4326\)/.test(pp[1] || ""), "postpass: close in asks for every line inside the view (west, south, east, north)");
+  const g = await grid(p);
+  ok(g.paths.length === 4 && /on screen/.test(g.st.msg), "postpass: GeoJSON drawn as lines (" + g.paths.length + "): " + g.st.msg);
+  await p.evaluate(() => window.OSAP_POWER.set("subs", true)); await p.waitForTimeout(1500);
+  ok(/postpass_pointpolygon/.test(pp[pp.length - 1] || "") && (await grid(p)).subs === 2, "postpass: substations asked for and drawn as points");
+  ok(errors.length === 0, "postpass: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- Postpass down: the Overpass servers take over with their own queries ----------
 {
   const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } });
   await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 9, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(1500);
   await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 12, { animate: false }); }); await p.waitForTimeout(1500);
-  ok(queries.length === 2, "queries: one per view (" + queries.length + ")");
+  ok(queries.length === 2, "fallback: Postpass down, one Overpass query per view (" + queries.length + ")");
   ok(/voltage/.test(queries[0] || "") && !/substation/.test(queries[0] || ""), "queries: region zoom asks only for 200 kV+ lines");
   ok(/way\["power"="line"\];/.test(queries[1] || ""), "queries: close in asks for every line");
   await p.evaluate(() => window.OSAP_POWER.set("plants", true)); await p.waitForTimeout(800);
@@ -146,12 +174,21 @@ const om = async (p, want) => {
   ok(errors.length === 0, "queries: no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// ---------- Postpass answering 200 with something that is not GeoJSON is a failure, not an empty grid ----------
+{
+  const { ctx, p, errors, queries, pp } = await open({ viewport: { width: 1360, height: 860 } }, "", "ok", "bad");
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(2000);
+  const g = await grid(p);
+  ok(pp.length === 1 && queries.length === 1 && g.st.drawn.lines.length === 4, "postpass bad answer: falls through to Overpass, which draws (" + g.st.drawn.lines.length + " lines): " + g.st.msg);
+  ok(errors.length === 0, "postpass bad answer: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 // ---------- busy server ----------
 {
   const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } }, "", "busy");
   await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(2000);
   const g = await grid(p);
-  ok(/busy/.test(g.st.msg) && queries.length === 3, "busy: tries every Overpass server, then says the server is busy (" + queries.length + " tries): " + g.st.msg);
+  ok(/busy/.test(g.st.msg) && queries.length === 3, "busy: Postpass down, tries every Overpass server, then says the server is busy (" + queries.length + " tries): " + g.st.msg);
   ok(errors.length === 0, "busy: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -172,13 +209,13 @@ const om = async (p, want) => {
 }
 // ---------- panning while a view is loading: the newer view still draws ----------
 {
-  const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } }, "", "slow");
+  const { ctx, p, errors, pp } = await open({ viewport: { width: 1360, height: 860 } }, "", "ok", "slow");
   await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(300);
   await p.evaluate(() => window.__asapMap.setView([13.9, 100.7], 10, { animate: false }));
   await p.waitForFunction(() => /on screen|did not load/.test(window.OSAP_POWER.state().msg), null, { timeout: 15000 }).catch(() => {});
   await p.waitForTimeout(500);
   const g = await grid(p);
-  ok(queries.length === 2 && g.st.drawn.lines.length > 0 && /on screen/.test(g.st.msg), "pan while loading: the newer view draws, no \"did not load\" (" + queries.length + " queries, " + g.st.drawn.lines.length + " lines): " + g.st.msg);
+  ok(pp.length === 2 && g.st.drawn.lines.length > 0 && /on screen/.test(g.st.msg), "pan while loading: the newer view draws, no \"did not load\" (" + pp.length + " queries, " + g.st.drawn.lines.length + " lines): " + g.st.msg);
   ok(errors.length === 0, "pan while loading: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -203,7 +240,7 @@ const om = async (p, want) => {
 }
 // ---------- phone, classic controls ----------
 {
-  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }, "", "ok", "ok");
   await p.evaluate(() => { window.OSAP_ATAK.mode(false); if (window.OSAP_TOOLS) window.OSAP_TOOLS.fold(false); }); await p.waitForTimeout(200);
   await p.evaluate(() => document.querySelector(".mlctl .mlbtn").click()); await p.waitForTimeout(200);
   ok(await shown(p, '#pwr-sec input[data-pwr="lines"]'), "phone classic: Power grid switches in the Layers panel");
