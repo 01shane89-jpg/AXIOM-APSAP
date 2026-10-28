@@ -3,7 +3,7 @@
    one after another. Probed 2026-10-28 from GitHub runners (tools/probe_power.sh): Postpass answered every Thailand view in
    0.2 to 8 s; overpass-api.de refused (406), maps.mail.ru answered one view in 20 to 30 s and 504'd on the rest, kumi.systems and
    private.coffee never answered. So a feature that asks Overpass alone often gets nothing.
-   - OSAP_OSM.query({ sql, ql, signal, ppMs, opMs }) -> Promise of { elements, via }: Postpass when there is SQL, else or on failure
+   - OSAP_OSM.query({ sql, ql, signal, ppMs, opMs }) -> Promise of { elements, via, at } (at: the data's time when known): Postpass when there is SQL, else or on failure
      each Overpass server with the Overpass QL. Elements are always Overpass-shaped: lines as ways with geometry [{lat, lon}],
      points with center (and lat/lon for nodes), areas as a closed way or a relation with outer/inner member rings.
      Fails with Error("busy") when the servers were busy or slow, another Error when nothing answered, AbortError when aborted.
@@ -82,13 +82,14 @@
         /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: a failure, not an empty map */
         .then(function (j) {
           if (j && j.remark && /error/i.test(j.remark)) { var b = /timed? ?out|memory/i.test(j.remark); note(ops[i], false, b ? "busy" : "error remark", 0); throw new Error(b ? "busy" : "remark"); }
-          return { elements: j.elements || [], via: host(ops[i]) };
+          return { elements: j.elements || [], via: host(ops[i]), at: (j.osm3s && j.osm3s.timestamp_osm_base) || "" };
         })
         .catch(function (e) { if (signal && signal.aborted) throw e; if (e.message === "busy") busy = true; errs.push(host(ops[i]) + ": " + e.message); return op(i + 1); });
     };
     if (!o.sql) return op(0);
     return post(POSTPASS, "data=" + encodeURIComponent(o.sql), o.ppMs || 30000, signal)
-      .then(function (j) { return { elements: elements(j), via: host(POSTPASS) }; })
+      /* Postpass reads a live copy of OpenStreetMap kept within minutes of the main database: "now" is the honest stamp */
+      .then(function (j) { return { elements: elements(j), via: host(POSTPASS), at: new Date().toISOString().slice(0, 19) + "Z" }; })
       .catch(function (e) {
         if (signal && signal.aborted) throw e;
         if (e.message === "not GeoJSON") note(POSTPASS, false, "not GeoJSON", 0);

@@ -4,7 +4,7 @@ name: Probe OpenStreetMap sources
 on:
   push:
     branches: [claude/th-power-lines, claude/osm-reader, claude/osm-reader-2]
-    paths: [tools/probe_power.sh, tools/probe_osm.mjs, assets/osap-osm.js, assets/osap-power.js, assets/osap-surveil.js, assets/osap-lz.js, .github/workflows/probe-power.yml]
+    paths: [tools/probe_power.sh, tools/probe_osm.mjs, assets/osap-osm.js, assets/osap-power.js, assets/osap-surveil.js, assets/osap-lz.js, assets/osap-comms.js, assets/osap-seatransit.js, tools/probe_osm.mjs, .github/workflows/probe-power.yml]
   workflow_dispatch:
 permissions:
   contents: read

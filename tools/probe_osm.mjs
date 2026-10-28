@@ -14,7 +14,12 @@ const B = (s, w, n, e) => ({ getSouth: () => s, getWest: () => w, getNorth: () =
 const power = lift("assets/osap-power.js", "  var HVRE", "  var busy = null", "ppQuery", { ALLZ: 11, MINZ: 13 });
 const surveil = lift("assets/osap-surveil.js", "  function ppQuery", "  var busy = null", "ppQuery", { MAX: 6000 });
 const lz = lift("assets/osap-lz.js", "  var LANDUSE", "  function overpass(b)", "sqlQuery");
+const sea = lift("assets/osap-seatransit.js", "  function aroundSql", "  var OSM_KM", "aroundSql", { wrap: (x) => x });
+const comms = lift("assets/osap-comms.js", "  function sqlQuery", "  function post(q, sql)", "sqlQuery");
+const line = (a, b, n) => Array.from({ length: n + 1 }, (_, i) => ({ lat: a[0] + (b[0] - a[0]) * i / n, lon: a[1] + (b[1] - a[1]) * i / n }));
 const cases = [
+  ["sea transit Phuket-Singapore 300 km", sea(line([7.8, 98.3], [1.3, 103.8], 20), 300, "tags->>'healthcare' = 'hyperbaric_chamber' OR tags->>'healthcare:speciality' ~* '(hyperbaric|burn)' OR tags->>'emergency' = 'air_rescue_service'")],
+  ["comms 1 degree Bangkok", comms(13.5, 100.25, 14.5, 101.25)],
   ["power z8 Bangkok", power(B(11.4, 99.5, 15.9, 101.7), 8, { lines: true, subs: true })],
   ["power z13 Chiang Mai", power(B(18.76, 98.95, 18.82, 99.02), 13, { lines: true, subs: true })],
   ["surveil z16 Bangkok Silom", surveil(B(13.72, 100.52, 13.735, 100.54))],
