@@ -1,1 +1,1 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-10-29"]=[["","2026-10-29T11:06","There are no tropical cyclones at this time.","","NHC Central Pacific","https://www.nhc.noaa.gov/","","","storms","flood,weather,hazards"]];
+window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-10-29"]=[["","2026-10-29T17:05","There are no tropical cyclones at this time.","","NHC Central Pacific","https://www.nhc.noaa.gov/","","","storms","flood,weather,hazards"]];
