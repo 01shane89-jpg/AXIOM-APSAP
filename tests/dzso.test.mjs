@@ -85,6 +85,8 @@ ok(C.lightAt(10) === "Day" && C.lightAt(-3) === "Civil twilight" && C.lightAt(-9
   ok(S.list("th").length === 1 && S.list("ph").length === 0, "list filters by country");
   ok(S.save({ name: "bad", pi: [95, 0] }) === null, "a point off the globe is refused");
   ok(S.clean({ pi: [1, 2], tot: "tomorrow" }).tot === "", "a drop time that is not ISO Zulu is dropped");
+  ok(S.clean({ pi: [1, 2], elev_m: null }).elev_m === null && S.clean({ pi: [1, 2], elev_m: 0 }).elev_m === 0, "an unknown elevation stays unknown (not 0 m), a real 0 m stays");
+  ok(Array.isArray(S.aircraft) && S.aircraft.some((a) => a.name === "C-130J Super Hercules") && S.aircraft.every((a) => a.name.length <= 40), "the shared aircraft list fits the 40-character acft field");
   mem["osap-dz"] = "not json"; ok(S.list().length === 0, "a broken store reads as empty, never throws");
   mem["osap-dz"] = JSON.stringify([{ pi: [1, 2] }, null, { pi: "x" }]); ok(S.list().length === 1, "bad rows in the store are skipped");
   const b = S.save({ name: "Tadia DZ", pi: [15.1, 100.1], fields: { dzso: "Cpt B", g2a: "34.55" } });
