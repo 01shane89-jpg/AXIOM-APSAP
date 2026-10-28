@@ -67,17 +67,25 @@ const OSM = { elements: [
   { type: "way", id: 7, tags: { power: "line", voltage: "115000" }, geometry: [{ lat: 13.744, lon: LINE_LON }, { lat: 13.768, lon: LINE_LON }] },
   { type: "node", id: 8, lat: 13.7505, lon: 100.5005, tags: { aeroway: "helipad", name: "Test Pad" } }
 ] };
+/* the same obstacles as Postpass answers them: closed ways as polygons, the line as a line, the helipad as a point */
+const PPOSM = { type: "FeatureCollection", features: OSM.elements.map((e) => {
+  const c = (e.geometry || []).map((g) => [g.lon, g.lat]), closed = c.length > 3 && c[0][0] === c[c.length - 1][0] && c[0][1] === c[c.length - 1][1];
+  return { type: "Feature", properties: { osm_type: e.type[0].toUpperCase(), osm_id: e.id, tags: e.tags },
+    geometry: e.type === "node" ? { type: "Point", coordinates: [e.lon, e.lat] } : closed ? { type: "Polygon", coordinates: [c] } : { type: "LineString", coordinates: c } };
+}) };
 const inBox = (p, s, w, n, e) => p[0] >= s && p[0] <= n && p[1] >= w && p[1] <= e;
 const metres = (a, b) => { const r = Math.PI / 180, x = (b[1] - a[1]) * r * Math.cos((a[0] + b[0]) / 2 * r), y = (b[0] - a[0]) * r; return Math.hypot(x, y) * 6371008.8; };
 
-async function open(opts, osmFail) {
+/* osmFail: every OpenStreetMap server answers 504; ppDown: Postpass alone is down and Overpass answers */
+async function open(opts, osmFail, ppDown) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
-  const errors = [];
+  const errors = [], pp = [];
   let overpassCalls = 0;
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
     const m = u.match(/elevation-tiles-prod\/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);
     if (m) return r.fulfill({ status: 200, contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: tile(+m[1], +m[2], +m[3]) });
+    if (/postpass\.geofabrik\.de/.test(u)) { pp.push(r.request().postData() || ""); overpassCalls++; return osmFail || ppDown ? r.fulfill({ status: 503, body: "down" }) : r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(PPOSM) }); }
     if (/\/api\/interpreter/.test(u)) { overpassCalls++; return osmFail ? r.fulfill({ status: 504, body: "busy" }) : r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(OSM) }); }
     return r.abort();
   });
@@ -85,9 +93,31 @@ async function open(opts, osmFail) {
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK, null, { timeout: 60000 }); await p.waitForTimeout(3500);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  return { ctx, p, errors, calls: () => overpassCalls };
+  return { ctx, p, errors, pp, calls: () => overpassCalls };
 }
 const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.state().busy && (window.OSAP_LZ.state().res || window.OSAP_LZ.state().err), null, { timeout: 60000 });
+
+/* ---------- Postpass down: the Overpass servers give the same answer ---------- */
+const candsOf = (p) => p.evaluate(() => { const s = window.OSAP_LZ.state(); return s.res ? s.res.cands.map((k) => k.lat.toFixed(5) + "," + k.lon.toFixed(5)).join(" ") : "err " + s.err; });
+let viaPostpass = "";
+{
+  const { ctx, p, errors, pp, calls } = await open({ viewport: { width: 1366, height: 860 } }, false, true);
+  await p.evaluate((c) => window.__asapMap.setView(c, 14), C0);
+  await p.evaluate(() => (window.OSAP_AREA_TOOLS || []).filter((t) => t.id === "lz")[0].run()); await p.waitForFunction(() => window.OSAP_LZ, null, { timeout: 15000 });
+  await p.evaluate((c) => window.OSAP_LZ.at(c), C0); await done(p);
+  const viaOverpass = await candsOf(p);
+  ok(pp.length === 1 && calls() === 2 && !/^err/.test(viaOverpass), "fallback: Postpass down, one Overpass server answers and the search runs (" + calls() + " calls)");
+  ok(/postpass_pointpolygon/.test(decodeURIComponent(pp[0])) && /ST_ClipByBox2D/.test(decodeURIComponent(pp[0])), "postpass: asks both tables, clipped to the window");
+  await ctx.close();
+  const o = await open({ viewport: { width: 1366, height: 860 } });
+  await o.p.evaluate((c) => window.__asapMap.setView(c, 14), C0);
+  await o.p.evaluate(() => (window.OSAP_AREA_TOOLS || []).filter((t) => t.id === "lz")[0].run()); await o.p.waitForFunction(() => window.OSAP_LZ, null, { timeout: 15000 });
+  await o.p.evaluate((c) => window.OSAP_LZ.at(c), C0); await done(o.p);
+  viaPostpass = await candsOf(o.p);
+  ok(o.calls() === 1 && viaPostpass === viaOverpass, "postpass: Postpass alone answers and the candidates are the same as Overpass's (" + o.calls() + " calls)");
+  ok(errors.length === 0 && o.errors.length === 0, "fallback: no page errors " + errors.concat(o.errors).join(" | "));
+  await o.ctx.close();
+}
 
 /* ---------- desktop ---------- */
 {
