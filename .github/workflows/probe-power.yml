@@ -1,9 +1,10 @@
-# Test only: asks the Overpass hosts the power grid's queries (tools/probe_power.sh). Prints to the log; writes nothing to the repo.
-name: Probe power grid
+# Test only: sends the app's own OpenStreetMap queries to Postpass (tools/probe_osm.mjs) and the power grid's to Postpass and
+# Overpass (tools/probe_power.sh). Prints to the log; writes nothing to the repo.
+name: Probe OpenStreetMap sources
 on:
   push:
-    branches: [claude/th-power-lines]
-    paths: [tools/probe_power.sh, .github/workflows/probe-power.yml]
+    branches: [claude/th-power-lines, claude/osm-reader, claude/osm-reader-2]
+    paths: [tools/probe_power.sh, tools/probe_osm.mjs, assets/osap-osm.js, assets/osap-power.js, assets/osap-surveil.js, assets/osap-lz.js, .github/workflows/probe-power.yml]
   workflow_dispatch:
 permissions:
   contents: read
@@ -13,4 +14,4 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - run: bash tools/probe_power.sh
+      - run: node tools/probe_osm.mjs
