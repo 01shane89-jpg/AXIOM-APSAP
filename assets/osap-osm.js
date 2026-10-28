@@ -4,7 +4,8 @@
    0.2 to 8 s; overpass-api.de refused (406), maps.mail.ru answered one view in 20 to 30 s and 504'd on the rest, kumi.systems and
    private.coffee never answered. So a feature that asks Overpass alone often gets nothing.
    - OSAP_OSM.query({ sql, ql, signal, ppMs, opMs }) -> Promise of { elements, via }: Postpass when there is SQL, else or on failure
-     each Overpass server with the Overpass QL. Elements are always Overpass-shaped (type, id, tags, geometry [{lat, lon}] or center).
+     each Overpass server with the Overpass QL. Elements are always Overpass-shaped: lines as ways with geometry [{lat, lon}],
+     points with center (and lat/lon for nodes), areas as a closed way or a relation with outer/inner member rings.
      Fails with Error("busy") when the servers were busy or slow, another Error when nothing answered, AbortError when aborted.
    - A server that failed is tried last for the next 10 minutes (never dropped: the next one may be down too).
    - OSAP_OSM.health() -> { host: { ok, fail, last, err, ms } } for this page, so a panel can say which source went dark.
@@ -39,9 +40,16 @@
       var base = { type: OSMT[p.osm_type] || "way", id: p.osm_id, tags: p.tags || {} };
       var ll = function (c) { return { lat: c[1], lon: c[0] }; };
       var add = function (o) { var e = { type: base.type, id: base.id, tags: base.tags }; for (var k in o) e[k] = o[k]; out.push(e); };
-      if (g.type === "Point") add({ center: ll(g.coordinates) });
+      if (g.type === "Point") { var c = ll(g.coordinates); add(base.type === "node" ? { lat: c.lat, lon: c.lon, center: c } : { center: c }); }
       else if (g.type === "LineString") add({ geometry: g.coordinates.map(ll) });
       else if (g.type === "MultiLineString") g.coordinates.forEach(function (part) { add({ geometry: part.map(ll) }); });
+      /* an area: a closed way when it is one ring, else a multipolygon relation of outer and inner rings (holes kept) */
+      else if (g.type === "Polygon" || g.type === "MultiPolygon") {
+        var polys = g.type === "Polygon" ? [g.coordinates] : g.coordinates, mem = [];
+        polys.forEach(function (rs) { rs.forEach(function (r, i) { mem.push({ type: "way", role: i ? "inner" : "outer", geometry: r.map(ll) }); }); });
+        if (mem.length === 1) add({ type: "way", geometry: mem[0].geometry });
+        else if (mem.length) add({ type: "relation", members: mem });
+      }
     });
     return out;
   }
