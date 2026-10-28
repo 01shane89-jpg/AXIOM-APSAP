@@ -311,10 +311,25 @@
       ppSel("tags->>'healthcare' IN ('blood_bank','blood_donation') OR tags->>'amenity' = 'blood_bank'", o, 200000, 40)].join(" UNION ALL ");
   }
   function pSql(o) { return ppSel("(tags->>'office' = 'diplomatic' OR tags->>'amenity' = 'embassy') AND tags->>'country' = 'US'", o, 1500000, 40); }
-  /* Postpass first (one try, 25 s), then the hedged Overpass lookup below with its own budget */
+  /* Postpass first; when it fails or has not answered in HEDGE_MS, the hedged Overpass lookup below starts beside it and
+     the first good answer wins. The whole lookup still ends within ms + 25 s (Postpass gets 10 s more than Overpass alone). */
   function osmQ(q, ms, sql) {
     if (!W.OSAP_OSM || !sql) return overpass(q, ms);
-    return W.OSAP_OSM.query({ sql: sql, ppMs: 25000 }).catch(function () { return overpass(q, ms); });
+    ms = ms || 45000;
+    var t0 = Date.now(), end = ms + 25000, ac = W.AbortController ? new AbortController() : null, op = null, pe = null, done = false;
+    return new Promise(function (res, rej) {
+      function win(j) { if (done) return; done = true; clearTimeout(h); if (ac) try { ac.abort(); } catch (x) {} res(j); }
+      function lose(e) { if (done) return; done = true; clearTimeout(h); if (ac) try { ac.abort(); } catch (x) {} rej(e); }
+      function fallback() {
+        if (op || done) return;
+        op = overpass(q, ms, Math.max(5000, end - (Date.now() - t0))).then(win, function (e) { if (pe) lose(new Error("Postpass: " + pe.message + "; " + e.message)); else op = "failed:" + e.message; });
+      }
+      var h = setTimeout(fallback, HEDGE_MS);
+      W.OSAP_OSM.query({ sql: sql, ppMs: end - 5000, signal: ac ? ac.signal : undefined }).then(win, function (e) {
+        pe = e || new Error("failed");
+        if (typeof op === "string") lose(new Error("Postpass: " + pe.message + "; " + op.slice(7))); else fallback();
+      });
+    });
   }
   /* U.S. diplomatic posts (phones for the embassy rows): its own small request after the extras, never blocking them */
   function pQuery(o) {
