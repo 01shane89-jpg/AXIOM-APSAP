@@ -389,24 +389,21 @@
   }
 
   /* Many buildings whose outline was traced by a computer carry nothing, while OpenStreetMap volunteers have named the
-     place or tagged its use at that spot. On a tap (never before), ask OpenStreetMap (Overpass, keyless) what building
+     place or tagged its use at that spot. On a tap (never before), ask OpenStreetMap (OSAP_OSM: Postpass first, then Overpass; keyless) what building
      outlines contain the tapped point and which named places are within 25 m. Shown under its own heading with links,
      so it is never mixed up with the building data; only the tapped point is sent. */
-  var OVP = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var osmMemo = {};
   function osmAsk(lat, lon) {
     var k = lat.toFixed(5) + "," + lon.toFixed(5);
     if (osmMemo[k]) return osmMemo[k];
     var q = "[out:json][timeout:8];is_in(" + lat + "," + lon + ")->.a;(way(pivot.a)[building];relation(pivot.a)[building];way(pivot.a)[amenity];relation(pivot.a)[amenity];);out tags 6;" +
       "node(around:25," + lat + "," + lon + ")[name];out tags center 8;";
-    function go(i) {
-      if (i >= OVP.length) return Promise.reject(new Error("OpenStreetMap could not be reached"));
-      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, 9000);
-      return fetch(OVP[i], { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac && ac.signal })
-        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-        .then(function (j) { clearTimeout(t); return j; }, function () { clearTimeout(t); return go(i + 1); });
-    }
-    var p = osmMemo[k] = go(0).then(null, function (e) { delete osmMemo[k]; throw e; });
+    var pt = "ST_SetSRID(ST_MakePoint(" + lon + "," + lat + "),4326)";
+    var sql = "(SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE (tags ? 'building' OR tags ? 'amenity')" +
+      " AND GeometryType(geom) IN ('POLYGON','MULTIPOLYGON') AND ST_Intersects(geom, " + pt + ") LIMIT 6)" +
+      " UNION ALL (SELECT osm_type, osm_id, tags, geom FROM postpass_pointpolygon WHERE osm_type = 'N' AND tags ? 'name' AND geom && ST_Expand(" + pt + ", 0.0005)" +
+      " AND ST_DWithin(geom::geography, " + pt + "::geography, 25) LIMIT 8)";
+    var p = osmMemo[k] = W.OSAP_OSM.query({ sql: sql, ql: q, ppMs: 9000, opMs: 9000 }).then(null, function () { throw new Error("OpenStreetMap could not be reached"); }).then(null, function (e) { delete osmMemo[k]; throw e; });
     return p;
   }
   function tidy(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 80); }

@@ -6,7 +6,7 @@
    The user sets the anticipated point of injury (POI: tap the map, type an MGRS or lat, lon grid, or use the area's centre,
    a CCP, AXP or HLZ). Everything is measured from it:
    - receiving hospitals from OSAP's stored copy of OpenStreetMap (data/medfac, built by tools/build_medfac.mjs every four
-     weeks, so the plan never depends on a live Overpass answer; Overpass is asked live only where the stored copy does
+     weeks, so the plan never depends on a live answer; OpenStreetMap is asked live (Postpass, then Overpass) only where the stored copy does
      not yet cover a country in reach, or when the user asks) and OSAP's sourced facility list (data/sof). Ranked by
      trauma level (Shane 2026-10-02): Level 1 first, only where a source documents it, and only those can be picked; every
      other hospital reads "No verified trauma designation" and is listed for reference only, with its observed T-class and capability flags. Hospitals with nothing listed are kept apart, and
@@ -296,6 +296,41 @@
       'nwr["emergency"="air_rescue_service"](around:400000,' + la + "," + lo + ");out center tags 40;" +
       '(nwr["healthcare:speciality"~"hyperbaric|diving|decompression",i](around:500000,' + la + "," + lo + ');nwr["healthcare"]["name"~"hyperbaric|decompression|recompression",i](around:500000,' + la + "," + lo + ');nwr["amenity"~"^(hospital|clinic)$"]["name"~"hyperbaric|decompression|recompression",i](around:500000,' + la + "," + lo + '););out center tags 20;' +
       '(nwr["healthcare"="blood_bank"](around:200000,' + la + "," + lo + ');nwr["healthcare"="blood_donation"](around:200000,' + la + "," + lo + ');nwr["amenity"="blood_bank"](around:200000,' + la + "," + lo + '););out center tags 40;';
+  }
+  /* the same asks in Postpass SQL (one SELECT per kind, each with its own distance and cap) */
+  function ppNear(o, m) { return W.OSAP_OSM.near([[o[0], ((o[1] + 540) % 360) - 180]], m); }
+  function ppSel(where, o, m, lim) { return "(SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE (" + where + ") AND " + ppNear(o, m) + " LIMIT " + lim + ")"; }
+  function oSql(o, rH, rC, rA) {
+    return [ppSel("tags->>'amenity' = 'hospital' OR tags->>'healthcare' = 'hospital'", o, rH, 300), ppSel("tags->>'amenity' = 'clinic' OR tags->>'healthcare' = 'clinic'", o, rC, 200),
+      ppSel("tags->>'aeroway' IN ('helipad','heliport','aerodrome')", o, rA, 400), ppSel("tags->>'emergency' = 'ambulance_station'", o, Math.max(rC, 30000), 40)].join(" UNION ALL ");
+  }
+  /* not sent for now: a 200-500 km tag scan ran Postpass past 300 s (probe 2026-10-28), so the extras stay on Overpass and the stored copy */
+  function xSql(o) {
+    var nm = "tags->>'name' ~* '(hyperbaric|decompression|recompression)'";
+    return [ppSel("tags->>'emergency' = 'air_rescue_service'", o, 400000, 40),
+      ppSel("tags->>'healthcare:speciality' ~* '(hyperbaric|diving|decompression)' OR (tags ? 'healthcare' AND " + nm + ") OR (tags->>'amenity' IN ('hospital','clinic') AND " + nm + ")", o, 500000, 20),
+      ppSel("tags->>'healthcare' IN ('blood_bank','blood_donation') OR tags->>'amenity' = 'blood_bank'", o, 200000, 40)].join(" UNION ALL ");
+  }
+  function pSql(o) { return ppSel("(tags->>'office' = 'diplomatic' OR tags->>'amenity' = 'embassy') AND tags->>'country' = 'US'", o, 1500000, 40); }
+  /* Postpass first; when it fails or has not answered in HEDGE_MS, the hedged Overpass lookup below starts beside it and
+     the first good answer wins. The whole lookup still ends within ms + 25 s (Postpass gets 10 s more than Overpass alone). */
+  function osmQ(q, ms, sql) {
+    if (!W.OSAP_OSM || !sql) return overpass(q, ms);
+    ms = ms || 45000;
+    var t0 = Date.now(), end = ms + 25000, ac = W.AbortController ? new AbortController() : null, op = null, pe = null, done = false;
+    return new Promise(function (res, rej) {
+      function win(j) { if (done) return; done = true; clearTimeout(h); if (ac) try { ac.abort(); } catch (x) {} res(j); }
+      function lose(e) { if (done) return; done = true; clearTimeout(h); if (ac) try { ac.abort(); } catch (x) {} rej(e); }
+      function fallback() {
+        if (op || done) return;
+        op = overpass(q, ms, Math.max(5000, end - (Date.now() - t0))).then(win, function (e) { if (pe) lose(new Error("Postpass: " + pe.message + "; " + e.message)); else op = "failed:" + e.message; });
+      }
+      var h = setTimeout(fallback, HEDGE_MS);
+      W.OSAP_OSM.query({ sql: sql, ppMs: end - 5000, signal: ac ? ac.signal : undefined }).then(win, function (e) {
+        pe = e || new Error("failed");
+        if (typeof op === "string") lose(new Error("Postpass: " + pe.message + "; " + op.slice(7))); else fallback();
+      });
+    });
   }
   /* U.S. diplomatic posts (phones for the embassy rows): its own small request after the extras, never blocking them */
   function pQuery(o) {
@@ -1343,7 +1378,7 @@
       s.stored = st;
       var mine = st ? clipEls(st.els, o, s.radii) : [];
       if (st && !st.missing.length && !live) return { els: mine };
-      return overpass(oQuery(o, rH, rC, rA)).then(function (j) {
+      return osmQ(oQuery(o, rH, rC, rA), undefined, oSql(o, rH, rC, rA)).then(function (j) {
         s.osmAt = Date.now(); s.osmBase = j.osm3s && j.osm3s.timestamp_osm_base;
         return { els: (j.elements || []).concat(mine) };
       }, function (e) { s.osmErr = e.message; return st ? { els: mine } : null; });
@@ -1388,11 +1423,11 @@
         if (ST !== s) return;
         if (sx) { s.xAt = sx.at; s.xMiss = sx.missing; }
         if (sx && !sx.missing.length) { s.x = sortX(sx.els, o); xShow(); return pGo(); }
-        return overpass(xQuery(o), 30000).then(function (j) { if (ST !== s) return; s.xMiss = []; s.xLive = true; s.x = sortX((sx ? sx.els : []).concat(j.elements || []), o); xShow(); },
+        return osmQ(xQuery(o), 30000).then(function (j) { if (ST !== s) return; s.xMiss = []; s.xLive = true; s.x = sortX((sx ? sx.els : []).concat(j.elements || []), o); xShow(); },
           function (e) { if (ST !== s) return; if (sx && sx.near.length > sx.missing.length) { s.x = sortX(sx.els, o); s.xPart = e.message; } else s.xErr = e.message; xShow(); }).then(pGo);
       });
     };
-    var pGo = function () { if (ST !== s) return; overpass(pQuery(o), 30000).then(function (j) { if (ST !== s) return; s.xPost = sortX(j.elements, o); ocRender(); }, function () {}); };
+    var pGo = function () { if (ST !== s) return; osmQ(pQuery(o), 30000, pSql(o)).then(function (j) { if (ST !== s) return; s.xPost = sortX(j.elements, o); ocRender(); }, function () {}); };
     facP.then(xGo, xGo);
     /* road reach round the POI: none at sea */
     seaP.then(function () {

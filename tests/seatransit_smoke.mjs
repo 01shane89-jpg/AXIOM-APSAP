@@ -30,7 +30,13 @@ function series(n, keys) {
   const time = Array.from({ length: 192 }, (_, i) => new Date(t0 + i * 3600000).toISOString().slice(0, 16));
   return Array.from({ length: n }, () => ({ hourly: Object.assign({ time }, ...Object.entries(keys).map(([k, v]) => ({ [k]: time.map(() => v) }))) }));
 }
-await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => { const u = r.request().url(); if (/overpass|interpreter/.test(u)) { osmCalls.push(decodeURIComponent(r.request().postData() || ""));
+await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => { const u = r.request().url(); if (/postpass\.geofabrik\.de/.test(u)) { osmCalls.push(decodeURIComponent(r.request().postData() || ""));
+    /* Postpass answers GeoJSON: the same three places */
+    return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ type: "FeatureCollection", features: [
+      { type: "Feature", geometry: { type: "Point", coordinates: [98.39, 7.89] }, properties: { osm_type: "N", osm_id: 9001, tags: { healthcare: "hyperbaric_chamber", name: "Test Phuket Chamber" } } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [103.99, 1.35] }, properties: { osm_type: "N", osm_id: 9002, tags: { emergency: "air_rescue_service", name: "Test Air Rescue Base", operator: "Test Operator" } } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [101.69, 3.14] }, properties: { osm_type: "W", osm_id: 9003, tags: { "healthcare:speciality": "burn", name: "Test Burns Unit" } } }] }) }); }
+    if (/overpass|interpreter/.test(u)) { osmCalls.push(decodeURIComponent(r.request().postData() || ""));
     return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ osm3s: { timestamp_osm_base: "2026-10-10T00:00:00Z" }, elements: [
       { type: "node", id: 9001, lat: 7.89, lon: 98.39, tags: { healthcare: "hyperbaric_chamber", name: "Test Phuket Chamber" } },
       { type: "node", id: 9002, lat: 1.35, lon: 103.99, tags: { emergency: "air_rescue_service", name: "Test Air Rescue Base", operator: "Test Operator" } },
@@ -96,7 +102,7 @@ else {
   ok(/3a\. Sea state and wind along the corridor/.test(wx.t) && /not vessel, aircraft, hoist or boat-transfer limits/.test(wx.t), "the section says the flags are planning cues, not limits");
   await p.waitForFunction(() => /Test Phuket Chamber/.test(document.getElementById("seatr").textContent), null, { timeout: 30000 });
   const sp = await p.evaluate(() => { const t = document.getElementById("seatr").textContent, o = window.OSAP_SEATRANSIT.state().res.osmSpec; return { t, hb: o.hb.length, air: o.air.length, burn: o.burn.length }; });
-  ok(osmCalls.length === 1 && /hyperbaric_chamber/.test(osmCalls[0]) && /air_rescue_service/.test(osmCalls[0]) && /around:300000/.test(osmCalls[0]), "one OpenStreetMap query for chambers, burns units and air rescue bases within 300 km of the corridor");
+  ok(osmCalls.length === 1 && /hyperbaric_chamber/.test(osmCalls[0]) && /air_rescue_service/.test(osmCalls[0]) && /ST_DWithin\(geom::geography, .*, 300000\)/.test(osmCalls[0]) && /^data=SELECT/.test(osmCalls[0]), "one OpenStreetMap query for chambers, burns units and air rescue bases within 300 km of the corridor, answered by Postpass");
   ok(sp.hb === 1 && sp.air === 1 && sp.burn === 1 && /Test Air Rescue Base/.test(sp.t) && /Test Burns Unit/.test(sp.t), "mapped chamber, burns unit and air rescue base listed with distance from the corridor");
   ok(/5a\. Specialist care and rescue aviation/.test(sp.t) && /Neurosurgery/.test(sp.t) && /A mapped air rescue base is not a tasking/.test(sp.t), "specialist section: sourced capabilities by type, OSM labelled reference only");
   // in transit: plan status, position log, casualty request message

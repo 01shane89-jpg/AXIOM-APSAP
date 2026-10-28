@@ -268,18 +268,37 @@
   }
 
   /* bridges, tunnels, ferries, border posts, checkpoints, passes, fords, flood-prone road, towns, fuel, hospitals, airfields and
-     ports along the line, from OpenStreetMap through Overpass (the Route tab's mirrors). One query; failure is reported, not fatal. */
+     ports along the line, from OpenStreetMap through the Route tab's reader (Postpass first, then the Overpass servers). One
+     query; failure is reported, not fatal. */
   function featQuery(R) {
     var tot = R.cum[R.cum.length - 1], n = Math.min(160, Math.max(20, Math.round(tot / 1500))), pts = [];
     for (var i = 0; i < n; i++) pts.push(at(R, tot * i / (n - 1)).p);
     var line = pts.map(function (p) { return p[0].toFixed(5) + "," + G.wrap(p[1]).toFixed(5); }).join(",");
     function A(m) { return "(around:" + m + "," + line + ")"; }
-    return "[out:json][timeout:60][maxsize:64000000];" +
+    return "[out:json][timeout:60];" +
       '(way["highway"]["bridge"]["bridge"!="no"]' + A(30) + ';way["highway"]["tunnel"]["tunnel"!="no"]["tunnel"!="building_passage"]' + A(30) + ';way["route"="ferry"]' + A(60) + ";)->.d;.d out tags geom 600;" +
       '(node["barrier"="border_control"]' + A(800) + ';node["military"="checkpoint"]' + A(500) + ';node["mountain_pass"="yes"]' + A(200) + ";" +
       'node["ford"]["ford"!="no"]' + A(40) + ';way["highway"]["ford"]["ford"!="no"]' + A(40) + ';way["highway"]["flood_prone"="yes"]' + A(30) + ";" +
       'nwr["amenity"="fuel"]' + A(800) + ';nwr["amenity"="hospital"]' + A(3000) + ';nwr["aeroway"="aerodrome"]' + A(3000) + ";" +
       'nwr["landuse"="port"]' + A(3000) + ';nwr["industrial"="port"]' + A(3000) + ';node["place"~"^(city|town)$"]' + A(2000) + ";)->.o;.o out tags center 1500;";
+  }
+  /* the same ask in Postpass SQL: bridges, tunnels and ferries with their line, everything else as a point */
+  function featSql(R) {
+    var tot = R.cum[R.cum.length - 1], n = Math.min(160, Math.max(20, Math.round(tot / 1500))), pts = [];
+    for (var i = 0; i < n; i++) { var q = at(R, tot * i / (n - 1)).p; pts.push([q[0], G.wrap(q[1])]); }
+    var O = W.OSAP_OSM; if (!O || O.crossesDateLine(pts)) return null;
+    var N = function (m) { return O.near(pts, m); };
+    var hw = "tags ? 'highway'";
+    var lines = "(" + hw + " AND tags ? 'bridge' AND tags->>'bridge' <> 'no' AND " + N(30) + ")" +
+      " OR (" + hw + " AND tags ? 'tunnel' AND tags->>'tunnel' NOT IN ('no','building_passage') AND " + N(30) + ")" +
+      " OR (tags->>'route' = 'ferry' AND " + N(60) + ")";
+    var pts2 = "(tags->>'barrier' = 'border_control' AND " + N(800) + ") OR (tags->>'military' = 'checkpoint' AND " + N(500) + ") OR (tags->>'mountain_pass' = 'yes' AND " + N(200) + ")" +
+      " OR (tags ? 'ford' AND tags->>'ford' <> 'no' AND " + N(40) + ") OR (" + hw + " AND tags->>'flood_prone' = 'yes' AND " + N(30) + ")" +
+      " OR (tags->>'amenity' = 'fuel' AND " + N(800) + ") OR ((tags->>'amenity' = 'hospital' OR tags->>'aeroway' = 'aerodrome' OR tags->>'landuse' = 'port' OR tags->>'industrial' = 'port') AND " + N(3000) + ")" +
+      " OR (tags->>'place' IN ('city','town') AND " + N(2000) + ")";
+    return "(SELECT osm_type, osm_id, tags, geom FROM postpass_line WHERE " + lines + " LIMIT 600)" +
+      " UNION ALL (SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE " + pts2 + " LIMIT 1200)" +
+      " UNION ALL (SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_line WHERE NOT (" + lines + ") AND (" + pts2 + ") LIMIT 300)";
   }
   function name(t) { return clean(t["name:en"] || t.name || t["bridge:name"] || t["tunnel:name"] || t.ref || "", 70); }
   function wayLen(g) { var m = 0; for (var i = 1; i < g.length; i++) m += hav([g[i - 1].lat, g[i - 1].lon], [g[i].lat, g[i].lon]); return m; }
@@ -677,7 +696,8 @@
     render(undefined);
     if (!S.R.road || !online() || !S.snap.overpass) { render(null); return; }
     var q = "[out:json][timeout:20];way[\"highway\"](around:25," + p.lat.toFixed(6) + "," + G.wrap(p.lon).toFixed(6) + ");out tags 8;";
-    var pr = S.cache[key] || (S.cache[key] = S.snap.overpass(q, 20000).catch(function (e) { delete S.cache[key]; throw e; }));
+    var ll = [[p.lat, G.wrap(p.lon)]], sq = W.OSAP_OSM ? "SELECT osm_type, osm_id, tags, geom FROM postpass_line WHERE tags ? 'highway' AND " + W.OSAP_OSM.near(ll, 25) + " LIMIT 8" : null;
+    var pr = S.cache[key] || (S.cache[key] = S.snap.overpass(q, 20000, sq).catch(function (e) { delete S.cache[key]; throw e; }));
     pr.then(function (j) {
       if (S.pts[S.cur] !== p) return;
       var ord = ["motorway", "trunk", "primary", "secondary", "tertiary", "unclassified", "residential", "service", "track"], best = null;
@@ -1281,7 +1301,7 @@
   function features(again) {
     if (!S.snap.overpass || !S.R.coords.length || !online()) { S.featErr = !online() ? "Offline: bridges, tunnels and support along the route were not looked up." : ""; settings(); return; }
     S.featBusy = true; S.featErr = ""; progress(); var tok = S.tok;
-    S.snap.overpass(featQuery(S.R), 70000).then(function (j) {
+    S.snap.overpass(featQuery(S.R), 70000, featSql(S.R)).then(function (j) {
       if (tok !== S.tok) return;
       S.feats = readFeats(j); S.featBusy = false; rebuild(true);
     }, function (e) {

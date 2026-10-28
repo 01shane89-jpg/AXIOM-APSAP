@@ -142,6 +142,14 @@ async function open(opts, o) {
   const J = (r, b) => r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(b) });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
+    /* Postpass is down unless the case asks for it, so the Overpass checks below still run; with o.postpass it answers GeoJSON */
+    if (/postpass\.geofabrik\.de/.test(u)) {
+      const q = decodeURIComponent((r.request().postData() || "").replace(/\+/g, " "));
+      calls.pp = (calls.pp || 0) + 1; (calls.ppSql = calls.ppSql || []).push(q);
+      if (!o.postpass) return r.fulfill({ status: 503, body: "" });
+      const els = /air_rescue_service/.test(q) ? OSMX.elements.filter((e) => !e.tags.country) : /'country' = 'US'/.test(q) ? OSMX.elements.filter((e) => e.tags.country) : OSM.elements;
+      return J(r, { type: "FeatureCollection", features: els.map((e) => ({ type: "Feature", properties: { osm_type: e.type.charAt(0).toUpperCase(), osm_id: e.id, tags: e.tags }, geometry: { type: "Point", coordinates: [e.lon != null ? e.lon : e.center.lon, e.lat != null ? e.lat : e.center.lat] } })) });
+    }
     if (/overpass|interpreter/.test(u)) {
       const q = decodeURIComponent(r.request().postData() || ""), x = /air_rescue_service/.test(q);
       if (x) { calls.overpassX++; return o.xFails ? r.fulfill({ status: 504, body: "" }) : J(r, OSMX); }
@@ -788,6 +796,21 @@ async function openPlan(p) {
   ok(s3.stop === "half", "phone: dragging the bar up settles on Half " + JSON.stringify(s3));
   await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(150);
   ok(!errors.length, "phone: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- Postpass answers: the plan reads hospitals and U.S. posts from it; the wide-radius extras stay on Overpass ----------
+{
+  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { postpass: true, overpassFails: true });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await medBtn(p);
+  await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"); return t && /Near Hospital/.test(document.getElementById("mp-fac").textContent); }, null, { timeout: 25000 }).catch(() => {});
+  await p.waitForFunction(() => /Test Air Rescue/.test((document.getElementById("mp-mev") || {}).textContent || ""), null, { timeout: 25000 }).catch(() => {});
+  const fac = await p.textContent("#mp-fac"), sql = (calls.ppSql || []).join("\n");
+  ok(/Near Hospital/.test(fac) && !/could not be reached/.test(fac), "postpass: hospitals come from Postpass " + fac.slice(0, 200));
+  ok(/Test Air Rescue/.test(await p.textContent("#mp-mev")), "postpass: the air rescue base still shows (extras from Overpass)");
+  ok(calls.overpass === 0 && calls.overpassX === 1 && !calls.overpassP, "postpass: Overpass is asked only for the extras when Postpass answers " + JSON.stringify(calls).slice(0, 300));
+  ok(/postpass_pointpolygon/.test(sql) && /ST_DWithin\(geom::geography/.test(sql) && /'hospital'/.test(sql) && !/'air_rescue_service'/.test(sql), "postpass: SQL asks by true distance, no wide-radius extras scan");
+  ok(!errors.length, "postpass: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- OSAP's stored copy covers the area: Overpass is not asked, and when it is down the plan still lists hospitals ----------
