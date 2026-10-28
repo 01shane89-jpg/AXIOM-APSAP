@@ -2,9 +2,10 @@
    Self-contained block loaded after the main page script. Its switches sit in Map overlays > Infrastructure (#ml-infra, next to
    Communications), or at the foot of the Layers menu on a page without that block. It is not a data set: it never filters reports.
    - Power plants: the switch is here, the plants are drawn by assets/osap-infra.js (every fuel, merged from WRI, Wikidata and
-     OpenStreetMap, coloured by fuel with a fuel filter under the switch). Only the grid is read live from Overpass.
-   - Transmission lines and substations: OpenStreetMap power=line and power=substation for the area on screen, read first from
-     Geofabrik's keyless Postpass API and, only when that fails, from the public Overpass servers. 200 kV and up from zoom 8, everything down to distribution feeders' parents (power=line, not minor_line) from zoom 11.
+     OpenStreetMap, coloured by fuel with a fuel filter under the switch). Only the grid is read live from OpenStreetMap.
+   - Transmission lines and substations: OpenStreetMap power=line and power=substation for the area on screen, read through
+     OSAP_OSM (assets/osap-osm.js: Geofabrik's keyless Postpass first, the public Overpass servers when it fails). 200 kV and up
+     from zoom 8, every power=line from zoom 11, and from zoom 13 the local distribution lines too (power=minor_line), drawn thin.
      Coloured by voltage. Community-mapped: coverage is uneven between countries and some lines have no voltage.
    - Outage reporting: headlines from the news pool (data/live/news-index/<day>.js) filed under this country in the last three days that
      talk about blackouts, power cuts, load shedding or attacks on grid assets. Each line is a source's headline, not a verified report.
@@ -13,13 +14,7 @@
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
   var D = document, W = window;
-  /* probed 2026-10-28 from GitHub runners with Thailand views (tools/probe_power.sh): Postpass answered every query in 0.5 to 6 s
-     with CORS; of the Overpass servers overpass-api.de refused (406), maps.mail.ru answered one phone-sized view in 20 to 30 s and
-     504'd or timed out on the rest, and kumi.systems timed out on all. Overpass was the only source until then, so the lines
-     often never came. Postpass leads; the Overpass servers stay as the fallback. */
-  var POSTPASS = "https://postpass.geofabrik.de/api/interpreter";
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
-  var HVZ = 8, ALLZ = 11, DAYS = 3;
+  var HVZ = 8, ALLZ = 11, MINZ = 13, DAYS = 3;
   var BANDS = [
     { min: 500, col: "#c2255c", w: 3.6, l: "500 kV and up" },
     { min: 300, col: "#e8590c", w: 3, l: "300 to 499 kV" },
@@ -78,12 +73,13 @@
     var n = { lines: 0, subs: 0 };
     (els || []).forEach(function (e) {
       var t = e.tags || {};
-      if (t.power === "line" || t.power === "cable") {
+      if (t.power === "line" || t.power === "cable" || t.power === "minor_line") {
         if (!S.lines || !e.geometry) return;
         var pts = e.geometry.filter(function (g) { return g && g.lat != null; }).map(function (g) { return [g.lat, g.lon]; });
         if (pts.length < 2) return;
-        var b = band(kv(t));
-        L.polyline(pts, { pane: "pwrpane", color: b.col, weight: b.w, opacity: 0.9, dashArray: t.power === "cable" ? "4 4" : null, lgk: "pwr:" + b.min, lgl: b.l })
+        /* a local distribution line with no voltage is still a low-voltage line, not an unknown one */
+        var minor = t.power === "minor_line", b = minor && kv(t) == null ? BANDS[4] : band(kv(t));
+        L.polyline(pts, { pane: "pwrpane", color: b.col, weight: minor ? 1.1 : b.w, opacity: minor ? 0.8 : 0.9, dashArray: t.power === "cable" ? "4 4" : null, lgk: "pwr:" + b.min, lgl: b.l })
           .bindPopup(osmPop("line", t, e), { maxWidth: 300 }).addTo(lineL);
         n.lines++;
       } else if (t.power === "substation") {
@@ -101,36 +97,20 @@
   function query(b, z, want) {
     var bb = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(4); }).join(",");
     var all = z >= ALLZ, q = "[out:json][timeout:25][bbox:" + bb + "];";
-    var lines = want.lines ? (all ? 'way["power"="line"];way["power"="cable"]' + HV + ";" : 'way["power"="line"]' + HV + ";") : "";
+    var lines = want.lines ? (all ? 'way["power"="line"];way["power"="cable"]' + HV + ";" + (z >= MINZ ? 'way["power"="minor_line"];' : "") : 'way["power"="line"]' + HV + ";") : "";
     var pts = want.subs ? (all ? 'nwr["power"="substation"];' : 'nwr["power"="substation"]' + HV + ";") : "";
     return q + (lines ? "(" + lines + ")->.l;.l out geom(" + bb + ") 4000;" : "") + (pts ? "(" + pts + ")->.p;.p out center tags 1500;" : "");
   }
   /* the same ask in Postpass SQL (PostGIS over OpenStreetMap: postpass_line, postpass_pointpolygon); exported for the tests */
   var HVRE = "'^([2-9][0-9]{5}|[1-9][0-9]{6})'";
   function ppQuery(b, z, want) {
-    var all = z >= ALLZ, env = "geom && ST_MakeEnvelope(" + [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map(function (v) { return v.toFixed(4); }).join(",") + ",4326)";
+    var all = z >= ALLZ, env = W.OSAP_OSM.env(b);
     var hv = "tags->>'voltage' ~ " + HVRE, parts = [];
     if (want.lines) parts.push("(SELECT osm_type, osm_id, tags, geom FROM postpass_line WHERE " +
-      (all ? "(tags->>'power' = 'line' OR (tags->>'power' = 'cable' AND " + hv + "))" : "tags->>'power' = 'line' AND " + hv) + " AND " + env + " LIMIT 4000)");
+      (all ? "(tags->>'power' = 'line'" + (z >= MINZ ? " OR tags->>'power' = 'minor_line'" : "") + " OR (tags->>'power' = 'cable' AND " + hv + "))" : "tags->>'power' = 'line' AND " + hv) + " AND " + env + " LIMIT 4000)");
     if (want.subs) parts.push("(SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE tags->>'power' = 'substation'" +
       (all ? "" : " AND " + hv) + " AND " + env + " LIMIT 1500)");
     return parts.join(" UNION ALL ");
-  }
-  /* Postpass GeoJSON -> the Overpass elements draw() reads: one way per line part, a centre per substation */
-  var OSMT = { N: "node", W: "way", R: "relation" };
-  function ppElements(j) {
-    if (!j || !Array.isArray(j.features)) throw new Error("remark");
-    var out = [];
-    j.features.forEach(function (f) {
-      var g = f && f.geometry, p = (f && f.properties) || {}, t = p.tags || {};
-      if (!g || !g.coordinates) return;
-      var base = { type: OSMT[p.osm_type] || "way", id: p.osm_id, tags: t };
-      var ll = function (c) { return { lat: c[1], lon: c[0] }; };
-      if (g.type === "Point") out.push(Object.assign({ center: ll(g.coordinates) }, base));
-      else if (g.type === "LineString") out.push(Object.assign({ geometry: g.coordinates.map(ll) }, base));
-      else if (g.type === "MultiLineString") g.coordinates.forEach(function (part) { out.push(Object.assign({ geometry: part.map(ll) }, base)); });
-    });
-    return { elements: out };
   }
   var busy = null, key = "", cache = {}, t0 = 0;
   function load() {
@@ -140,34 +120,14 @@
     var z = map.getZoom();
     if (z < HVZ) { lineL.clearLayers(); ptL.clearLayers(); key = ""; S.msg = "Zoom in to a region to see transmission lines and substations."; paint(); return; }
     var b = map.getBounds().pad(0.1), want = { lines: S.lines, subs: S.subs };
-    var k = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(2); }).join(",") + "|" + (z >= ALLZ ? "a" : "h") + "|" + +want.lines + +want.subs;
+    var k = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(2); }).join(",") + "|" + (z >= MINZ ? "m" : z >= ALLZ ? "a" : "h") + "|" + +want.lines + +want.subs;
     if (k === key) return; key = k;
     if (busy) { busy.abort(); busy = null; }
     if (cache[k]) { done(draw(cache[k], z), z); return; }
     var ctl = busy = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 90000);
     S.msg = "Loading the grid from OpenStreetMap…"; paint();
-    var body = "data=" + encodeURIComponent(query(b, z, want)), ppBody = "data=" + encodeURIComponent(ppQuery(b, z, want));
-    /* Postpass first (its own 30 s), then each Overpass server */
-    var pp = function () {
-      var one = new AbortController(), st = setTimeout(function () { one.abort(); }, 30000);
-      ctl.signal.addEventListener("abort", function () { one.abort(); });
-      return fetch(POSTPASS, { method: "POST", body: ppBody, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: one.signal })
-        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-        .then(ppElements)
-        .then(function (j) { clearTimeout(st); return j; }, function (e) { clearTimeout(st); if (ctl.signal.aborted) throw e; return go(0); });
-    };
-    var go = function (i) {
-      /* each server gets 35 s (the query asks for 25), then the next one is tried */
-      var one = new AbortController(), slow = false, st = setTimeout(function () { slow = true; one.abort(); }, 35000);
-      ctl.signal.addEventListener("abort", function () { one.abort(); });
-      /* POST so the service worker never caches it */
-      return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: one.signal })
-        .then(function (r) { if (!r.ok) throw new Error(r.status === 429 || r.status === 504 ? "busy" : "HTTP " + r.status); return r.json(); })
-        /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: that is a failure, not an empty grid */
-        .then(function (j) { if (j && j.remark && /error/i.test(j.remark)) throw new Error(/timed? ?out|memory/i.test(j.remark) ? "busy" : "remark"); return j; })
-        .then(function (j) { clearTimeout(st); return j; }, function (e) { clearTimeout(st); if (ctl.signal.aborted) throw e; if (i + 1 < OVERPASS.length) return go(i + 1); throw slow ? new Error("busy") : e; });
-    };
-    pp().then(function (j) {
+    /* Postpass first, then each Overpass server (assets/osap-osm.js) */
+    W.OSAP_OSM.query({ sql: ppQuery(b, z, want), ql: query(b, z, want), signal: ctl.signal }).then(function (j) {
       clearTimeout(to); if (busy === ctl) busy = null;
       var els = j.elements || [];
       var ks = Object.keys(cache); if (ks.length > 16) delete cache[ks[0]];
@@ -179,7 +139,8 @@
       if (busy !== ctl) return;
       busy = null; key = "";
       if (e && e.name === "AbortError" && !anyOn()) return;
-      S.msg = "The grid did not load from OpenStreetMap" + (e && e.message === "busy" ? " (the free server is busy; pan or zoom to try again)." : " (no answer; pan or zoom to try again).");
+      S.msg = "The grid did not load from OpenStreetMap" + (e && e.message === "busy" ? " (the free servers are busy" : " (no server answered") +
+        (W.OSAP_OSM.dark().length ? ": " + W.OSAP_OSM.dark().join(", ") : "") + "; pan or zoom to try again).";
       paint();
     });
   }
@@ -187,7 +148,7 @@
     var bits = [];
     if (S.lines) bits.push(n.lines + " line" + (n.lines === 1 ? "" : "s"));
     if (S.subs) bits.push(n.subs + " substation" + (n.subs === 1 ? "" : "s"));
-    S.msg = bits.join(", ") + " on screen" + (z < ALLZ ? " (200 kV and up; zoom in closer for all of them)." : ".");
+    S.msg = bits.join(", ") + " on screen" + (z < ALLZ ? " (200 kV and up; zoom in closer for all of them)." : S.lines && z < MINZ ? " (zoom in to street level for local distribution lines too)." : ".");
     paint();
     if (map) map.fire("layeradd", { layer: lineL });
   }
@@ -247,7 +208,7 @@
   /* ---------- the rows in Map overlays > Infrastructure, the legend ---------- */
   function switches() {
     return [["plants", "Power plants", "Every fuel, coloured by fuel, with a fuel filter (WRI, Wikidata, OpenStreetMap)"],
-      ["lines", "Transmission lines", "Coloured by voltage: 200 kV and up from region zoom, every line close in"],
+      ["lines", "Transmission lines", "Coloured by voltage: 200 kV and up from region zoom, every line close in, local lines at street level"],
       ["subs", "Substations", "Switching and transformer stations"]].map(function (r) {
       return '<label class="mlrow"><input type="checkbox" data-pwr="' + r[0] + '"' + (S[r[0]] ? " checked" : "") + "><span><b>" + r[1] + "</b><i>" + esc(r[2]) + "</i></span></label>" +
         /* osap-infra.js fills this with the fuel filter and the plant count */
@@ -314,7 +275,7 @@
   }
   function init() {
     map = W.__asapMap;
-    if (!map || !W.L || !mount()) return false;
+    if (!map || !W.L || !W.OSAP_OSM || !mount()) return false;
     panes();
     lineL = L.layerGroup().addTo(map); ptL = L.layerGroup().addTo(map);
     map.on("moveend", function () { if (anyOn()) soon(); });
@@ -327,6 +288,6 @@
       return { plants: S.plants, lines: S.lines, subs: S.subs, msg: S.msg, news: S.news ? S.news.length : null,
         drawn: { lines: lineL ? lineL.getLayers().map(function (l) { return l.options.color; }) : [], points: ptL ? ptL.getLayers().length : 0 } };
     },
-    query: query, ppQuery: ppQuery, ppElements: ppElements, draw: draw, kv: kv, mw: mw, band: band, isOutage: isOutage };
+    query: query, ppQuery: ppQuery, draw: draw, kv: kv, mw: mw, band: band, isOutage: isOutage };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();

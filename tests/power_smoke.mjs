@@ -159,6 +159,29 @@ const om = async (p, want) => {
   ok(errors.length === 0, "postpass: no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// ---------- street zoom: local distribution lines too, drawn thin ----------
+{
+  const { ctx, p, errors, pp } = await open({ viewport: { width: 1360, height: 860 } }, "", "ok", "ok");
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 12, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(1500);
+  ok(!/minor_line/.test(pp[0] || "") && /street level/.test((await grid(p)).st.msg), "local lines: not asked for at zoom 12, the note says zoom in: " + (await grid(p)).st.msg);
+  await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 13, { animate: false })); await p.waitForTimeout(1500);
+  ok(/'minor_line'/.test(pp[pp.length - 1] || ""), "local lines: asked for from zoom 13 (" + pp.length + " queries)");
+  const d = await p.evaluate(() => { const L = window.L, g = L.layerGroup(); const P = window.OSAP_POWER; P.draw([{ type: "way", id: 9, tags: { power: "minor_line" }, geometry: [{ lat: 13.75, lon: 100.5 }, { lat: 13.76, lon: 100.51 }] }], 13);
+    return P.state().drawn.lines; });
+  ok(d.length === 1 && d[0] === "#5c7cfa", "local lines: a distribution line with no voltage is drawn as under 100 kV (" + d.join() + ")");
+  ok(errors.length === 0, "local lines: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- a source that failed is asked last for a while, not dropped ----------
+{
+  const { ctx, p, errors, queries, pp } = await open({ viewport: { width: 1360, height: 860 } }, "", "remark1", "down");
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(1500);
+  const r = await p.evaluate(() => window.OSAP_OSM.query({ ql: "[out:json];node(1);out;" }).then((j) => j.via, (e) => "fail " + e.message));
+  ok(r === "maps.mail.ru", "order: the server that just failed is tried after the ones that answered (" + r + ")");
+  ok(pp.length === 1, "order: SQL-less queries never go to Postpass (" + pp.length + ")");
+  ok(errors.length === 0, "order: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 // ---------- Postpass down: the Overpass servers take over with their own queries ----------
 {
   const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } });
@@ -188,7 +211,11 @@ const om = async (p, want) => {
   const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } }, "", "busy");
   await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(2000);
   const g = await grid(p);
-  ok(/busy/.test(g.st.msg) && queries.length === 3, "busy: Postpass down, tries every Overpass server, then says the server is busy (" + queries.length + " tries): " + g.st.msg);
+  const nOp = await p.evaluate(() => window.OSAP_OSM.OVERPASS.length);
+  ok(/busy/.test(g.st.msg) && queries.length === nOp, "busy: Postpass down, tries every Overpass server, then says the server is busy (" + queries.length + " tries): " + g.st.msg);
+  ok(/postpass\.geofabrik\.de/.test(g.st.msg) && /overpass-api\.de/.test(g.st.msg), "busy: the note names the sources that went dark: " + g.st.msg);
+  const h = await p.evaluate(() => window.OSAP_OSM.health());
+  ok(h["postpass.geofabrik.de"] && h["postpass.geofabrik.de"].fail === 1 && h["overpass-api.de"].fail === 1, "busy: health() counts each failure per source " + JSON.stringify(Object.keys(h)));
   ok(errors.length === 0, "busy: no page errors " + errors.join(" | "));
   await ctx.close();
 }

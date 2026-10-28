@@ -73,6 +73,7 @@ jobs:
       - run: node tests/illum.test.mjs
       # DZSO sheet maths and the shared drop zone store (assets/osap-dzso.js, assets/osap-dz.js)
       - run: node tests/dzso.test.mjs
+      - run: node tests/osm_reader.test.mjs
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
       - run: node tests/osirdraft.test.mjs
