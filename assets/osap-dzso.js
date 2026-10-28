@@ -18,7 +18,9 @@
      turbines, water, wetland, trees, roads, railways, fences and walls and buildings, each kind with how many are inside the DZ
      (plus a margin) and the nearest one's distance and direction from the PI, drawn on the map;
    - medical: the nearest hospitals from OSAP's stored copy of OpenStreetMap (data/medfac) with distance, direction and a flight
-     time estimate, and one press to open the medical plan or the evacuation planner from the PI;
+     time estimate, and one press to open the medical plan or the evacuation planner from the PI; Ground evacuation (Shane
+     2026-10-27: "see ground evac for the med plan from the dz") adds the road distance and drive time to each hospital and draws
+     the road route, with the medical plan's own routing (OSAP_MEDPLAN.road: OSRM, then Valhalla, else a labelled estimate);
    - comms, personnel and markings fields and a short DZSO checklist the DZSO fills in, kept with the DZ in this browser only;
    - Export PDF: the whole sheet with a north-up DZ diagram drawn to scale.
    Opened from long-press > Plans > "DZSO sheet here", a dropped point's "DZSO sheet" button and the Area menu ("Drop zone
@@ -178,7 +180,7 @@
   function prof(id) { return PROFILES.filter(function (p) { return p.id === id; })[0] || PROFILES[0]; }
   function keepLim() { lsSet({ prof: LIM.prof, wind: LIM.wind, gust: LIM.gust, K: LIM.K, vis: LIM.vis, pad: LIM.pad, perYd: LIM.perYd, kn: LIM.kn }); }
 
-  var ST = { dz: null, saved: false, arm: false, edit: true, acOther: false, wx: null, wxErr: "", wxBusy: false, hz: null, hzErr: "", hzBusy: false, hosp: null, hospErr: "", hospBusy: false, meas: { kt: "", gust: "", dir: "" }, run: { wx: 0, hz: 0, hosp: 0 }, hzT0: 0, hzTry: "" };
+  var ST = { dz: null, saved: false, arm: false, edit: true, acOther: false, wx: null, wxErr: "", wxBusy: false, hz: null, hzErr: "", hzBusy: false, hosp: null, hospErr: "", hospBusy: false, meas: { kt: "", gust: "", dir: "" }, run: { wx: 0, hz: 0, hosp: 0, gnd: 0 }, gnd: { on: false, busy: false, err: "", host: "", sel: 0, rt: null, rtBusy: false, rtErr: "" }, hzT0: 0, hzTry: "" };
   function store() { return W.OSAP_DZ; }
   function newDz(at, name) {
     var c = store() ? store().clean : function (x) { return x; };
@@ -187,7 +189,7 @@
 
   /* ---------- the map ---------- */
   if (!map.getPane("dzpane")) { map.createPane("dzpane"); map.getPane("dzpane").style.zIndex = 667; }
-  var rend = L.svg({ pane: "dzpane" }), layer = L.layerGroup().addTo(map), hzLayer = L.layerGroup().addTo(map);
+  var rend = L.svg({ pane: "dzpane" }), layer = L.layerGroup().addTo(map), hzLayer = L.layerGroup().addTo(map), gLayer = L.layerGroup().addTo(map);
   var hLayer = L.layerGroup().addTo(map), HS = {}, DRAG = null;
   function drawDz() {
     layer.clearLayers(); hLayer.clearLayers(); HS = {}; if (!ST.dz || !isOpen()) return;
@@ -443,14 +445,50 @@
         var p = [e.lat, e.lon], t = e.tags; return { name: t["name:en"] || t.name, local: t["name:en"] && t.name !== t["name:en"] ? t.name : "", p: p, m: Math.hypot.apply(null, local(dz.pi, p)), brg: bearing(dz.pi, p), er: t.emergency || "", heli: !!(t["emergency:helipad"] || t.helipad), url: "https://www.openstreetmap.org/" + (e.type || "node") + "/" + e.id };
       }).filter(function (h) { return h.m <= HOSP_R; }).sort(function (a, b) { return a.m - b.m; });
       ST.hosp = { list: H.slice(0, HOSP_N), n: H.length, at: st.at || "", missing: st.missing || [] };
-    }).catch(function (e) { if (run === ST.run.hosp) { ST.hosp = null; ST.hospErr = (e && e.message) || "failed"; } }).then(function () { if (run === ST.run.hosp) { ST.hospBusy = false; paint(); } });
+    }).catch(function (e) { if (run === ST.run.hosp) { ST.hosp = null; ST.hospErr = (e && e.message) || "failed"; } }).then(function () { if (run === ST.run.hosp) { ST.hospBusy = false; paint(); if (ST.gnd.on) loadGnd(); } });
   }
+  /* ---------- ground evacuation: road distance and drive time to each hospital, and the road route to one ---------- */
+  function road() { return W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.road; }
+  function loadGnd() {
+    var G0 = ST.gnd, H = ST.hosp && ST.hosp.list, R = road(); gLayer.clearLayers(); G0.rt = null; G0.rtErr = "";
+    if (!H || !H.length) { paint(); return; }
+    if (!R) { G0.err = "the medical plan's road routing is not loaded on this page"; paint(); return; }
+    var run = ++ST.run.gnd, pi = ST.dz.pi.slice(), P = H.map(function (x) { return { lat: x.p[0], lon: x.p[1], m: x.m }; });
+    G0.busy = true; G0.err = ""; G0.host = ""; paint();
+    function take() { H.forEach(function (x, i) { var q = P[i]; x.road = q.s != null && isFinite(q.s) ? { s: q.s, m: q.rm, est: !!q.est } : null; }); }
+    R.times(pi, P).then(function (host) { if (run !== ST.run.gnd) return; take(); G0.host = String(host || "").split("/")[2] || ""; },
+      function (e) { if (run !== ST.run.gnd) return; take(); G0.err = (e && e.message) || "failed"; })
+      .then(function () {
+        if (run !== ST.run.gnd) return;
+        G0.busy = false;
+        /* the road route to the hospital nearest by road, or the one picked before */
+        var by = H.map(function (x, i) { return [x.road && !x.road.est ? x.road.s : Infinity, i]; }).sort(function (a, b) { return a[0] - b[0]; });
+        G0.sel = Math.min(G0.sel, H.length - 1); if (!(G0.picked && G0.sel >= 0)) G0.sel = by[0][0] < Infinity ? by[0][1] : 0;
+        paint(); if (!G0.err) loadRoute(G0.sel);
+      });
+  }
+  function loadRoute(i) {
+    var G0 = ST.gnd, H = ST.hosp && ST.hosp.list, R = road(), x = H && H[i]; if (!x || !R) return;
+    var run = ++ST.run.gnd; G0.sel = i; G0.rt = null; G0.rtErr = ""; G0.rtBusy = true; gLayer.clearLayers(); paint();
+    R.route(ST.dz.pi.slice(), { lat: x.p[0], lon: x.p[1] }).then(function (r) { if (run !== ST.run.gnd) return; G0.rt = { i: i, r: r }; },
+      function (e) { if (run === ST.run.gnd) G0.rtErr = (e && e.message) || "failed"; })
+      .then(function () { if (run !== ST.run.gnd) return; G0.rtBusy = false; paint(); drawGnd(); });
+  }
+  function drawGnd() {
+    gLayer.clearLayers(); var rt = ST.gnd.rt; if (!ST.gnd.on || !rt || !isOpen() || !rt.r.line || rt.r.line.length < 2) return;
+    var o = { pane: "dzpane", renderer: rend, interactive: false };
+    L.polyline(rt.r.line, Object.assign({ color: "#fff", weight: 7, opacity: 0.85 }, o)).addTo(gLayer);
+    L.polyline(rt.r.line, Object.assign({ color: "#2e7d32", weight: 4 }, o)).addTo(gLayer);
+    var x = ST.hosp.list[rt.i]; if (x) L.marker(x.p, { pane: "dzpane", interactive: false, icon: L.divIcon({ className: "dzlbl", html: "<span>" + esc(x.name) + ": " + fmtM(rt.r.m) + ", " + mins(rt.r.s) + " by road</span>", iconSize: [0, 0] }) }).addTo(gLayer);
+  }
+  function mins(s) { return s < 5940 ? Math.max(1, Math.round(s / 60)) + " min" : Math.floor(s / 3600) + " h " + p2(Math.round(s / 60) % 60); }
+  function roadTxt(x) { var r = x.road; return !r ? "-" : (r.est ? "~" : "") + fmtM(r.m) + ", " + (r.est ? "~" : "") + mins(r.s) + (r.est ? " (estimate)" : ""); }
   /* each lookup has its own run number: a Refresh of one (winds) no longer orphans the others, which left the hazards on
      "Asking OpenStreetMap" for good (Shane 2026-10-27: "Hazards never populated") */
   function refresh(what) {
     if (!what || what.wx) { ST.wx = null; loadWx(); }
     if (!what || what.hz) { ST.hz = null; hzLayer.clearLayers(); loadHz(); }
-    if (!what || what.hosp) { ST.hosp = null; loadHosp(); }
+    if (!what || what.hosp) { ST.hosp = null; ST.run.gnd++; ST.gnd.busy = ST.gnd.rtBusy = false; ST.gnd.rt = null; ST.gnd.picked = false; gLayer.clearLayers(); loadHosp(); }
   }
 
   /* ---------- light ---------- */
@@ -643,14 +681,27 @@
     if (ST.hospBusy) h += '<p class="obs">Reading OSAP\'s stored hospital list…</p>';
     else if (ST.hospErr) h += '<p class="bad">The hospital list could not be read: ' + esc(ST.hospErr) + ".</p>";
     else if (ST.hosp && !ST.hosp.list.length) h += '<p class="obs">No named hospital in OSAP\'s stored copy within ' + fmtM(HOSP_R) + (ST.hosp.missing.length ? " (not yet stored: " + esc(ST.hosp.missing.join(", ")) + ")" : "") + ". Use the medical plan for a wider search.</p>";
-    else if (ST.hosp) h += '<div class="tw"><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at ' + LIM.kn + ' kt</th><th>Emergency dept.</th></tr></thead><tbody>' +
-      ST.hosp.list.map(function (x) {
-        return '<tr><td><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + "</a>" + (x.local ? '<br><span class="obs">' + esc(x.local) + "</span>" : "") + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + " (" + dir3(x.brg) + "°)</td><td>" +
-          Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td><td>" + (x.er === "yes" ? "Mapped yes" : x.er === "no" ? "Mapped no" : "Not mapped") + (x.heli ? ", helipad" : "") + "</td></tr>";
-      }).join("") + "</tbody></table></div>" +
+    else if (ST.hosp) h += '<div class="tw"><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at ' + LIM.kn + " kt</th>" + (ST.gnd.on ? "<th>By road</th>" : "") + "<th>Emergency dept.</th></tr></thead><tbody>" +
+      ST.hosp.list.map(function (x, i) {
+        return '<tr' + (ST.gnd.on && ST.gnd.sel === i && (ST.gnd.rt || ST.gnd.rtBusy) ? ' class="tot"' : "") + '><td><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + "</a>" + (x.local ? '<br><span class="obs">' + esc(x.local) + "</span>" : "") + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + " (" + dir3(x.brg) + "°)</td><td>" +
+          Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td>" +
+          (ST.gnd.on ? "<td>" + (ST.gnd.busy ? "…" : esc(roadTxt(x))) + (x.road && !ST.gnd.busy ? ' <button type="button" data-dz="groute" data-i="' + i + '" aria-pressed="' + (ST.gnd.sel === i && !!ST.gnd.rt) + '">Route</button>' : "") + "</td>" : "") +
+          "<td>" + (x.er === "yes" ? "Mapped yes" : x.er === "no" ? "Mapped no" : "Not mapped") + (x.heli ? ", helipad" : "") + "</td></tr>";
+      }).join("") + "</tbody></table></div>" + secGnd() +
       '<p class="obs">Straight-line distance; air time at <input type="number" min="40" max="400" step="10" data-f="kn" value="' + LIM.kn + '" aria-label="Cruise speed in knots"> kt with no start-up or loading time. From OSAP\'s stored copy of OpenStreetMap' + (ST.hosp.at ? " (" + esc(ST.hosp.at.slice(0, 10)) + ")" : "") + "; trauma level and capability are in the medical plan.</p>";
-    h += '<p class="r"><button type="button" data-dz="medplan">Medical plan from the PI</button><button type="button" data-dz="evac">Evacuate from the PI</button></p>';
+    h += '<p class="r"><button type="button" data-dz="gnd" aria-pressed="' + ST.gnd.on + '">Ground evacuation</button><button type="button" data-dz="medplan">Medical plan from the PI</button><button type="button" data-dz="evac">Evacuate from the PI</button></p>';
     return h;
+  }
+  function secGnd() {
+    var G0 = ST.gnd; if (!G0.on) return "";
+    if (G0.busy) return '<p class="obs">Asking the road router for drive times from the PI…</p>';
+    var h = "";
+    if (G0.err) h += '<p class="bad">No road router answered (' + esc(G0.err) + "): the road figures are straight-line estimates (distance x 1.4 at 50 km/h), not a route. <button type=\"button\" data-dz=\"gnd-retry\">Try again</button></p>";
+    var rt = G0.rt, x = rt && ST.hosp.list[rt.i];
+    if (G0.rtBusy) h += '<p class="obs">Working out the road route…</p>';
+    else if (G0.rtErr) h += '<p class="bad">The road route could not be worked out: ' + esc(G0.rtErr) + '. <button type="button" data-dz="groute" data-i="' + G0.sel + '">Try again</button></p>';
+    else if (x) h += "<p><b>Road route to " + esc(x.name) + ":</b> " + fmtM(rt.r.m) + ", " + mins(rt.r.s) + (rt.r.roads && rt.r.roads.length ? " via " + esc(rt.r.roads.slice(0, 4).map(function (r) { return r.n; }).join(", ")) : "") + ", drawn on the map in green.</p>";
+    return h + '<p class="obs">Road drive time from the PI with no traffic, checkpoints, road damage, loading or start-up time' + (G0.host ? " (" + esc(G0.host) + ", OpenStreetMap roads)" : "") + ". The same routing as the medical plan; confirm the route on the ground.</p>";
   }
   function secFields(dz) {
     var f = dz.fields;
@@ -678,6 +729,7 @@
       if (it.pt) { var q = local(dz.pi, it.pt); if (Math.abs(q[0]) > ext || Math.abs(q[1]) > ext) return; g += '<circle cx="' + X(q) + '" cy="' + Y(q) + '" r="' + (it.k === "bldg" ? 1.6 : 3) + '" fill="' + k.c + '"/>'; }
       else if (it.line) g += (it.closed ? '<polygon fill="' + k.c + '" fill-opacity=".25"' : '<polyline fill="none"') + ' stroke="' + k.c + '" stroke-width="' + (it.closed ? 0.8 : (k.w || 2) * 0.8) + '" points="' + pl(it.line) + '"/>';
     });
+    if (ST.gnd.on && ST.gnd.rt && ST.gnd.rt.r.line && ST.gnd.rt.r.line.length > 1) { var gl = pl(ST.gnd.rt.r.line); g += '<polyline fill="none" stroke="#fff" stroke-width="5" points="' + gl + '"/><polyline fill="none" stroke="#2e7d32" stroke-width="3" points="' + gl + '"/>'; }
     g += '<polygon points="' + ol.map(function (q) { return X(q) + "," + Y(q); }).join(" ") + '" fill="#ffeb3b" fill-opacity=".2" stroke="#ffeb3b" stroke-width="2.5"/>';
     var e0 = edge0(dz), a = local(dz.pi, fromUv(dz, e0 - Math.min(1500, ext), 0)), b = local(dz.pi, fromUv(dz, dz.shape === "circle" ? dz.len_m / 2 : dz.len_m, 0)), t = local(dz.pi, fromUv(dz, e0 - 30, 0)), l1 = local(dz.pi, fromUv(dz, e0 - 30 - 50 / s / 2, -18 / s / 2)), l2 = local(dz.pi, fromUv(dz, e0 - 30 - 50 / s / 2, 18 / s / 2));
     g += '<line x1="' + X(a) + '" y1="' + Y(a) + '" x2="' + X(b) + '" y2="' + Y(b) + '" stroke="#ffeb3b" stroke-width="1.8" stroke-dasharray="7 5"/><polygon points="' + [t, l1, l2].map(function (q) { return X(q) + "," + Y(q); }).join(" ") + '" fill="#ffeb3b" stroke="#000" stroke-width=".6"/>';
@@ -736,9 +788,11 @@
     if (ST.hz) h += "<h2>Hazards (OpenStreetMap)</h2><table><thead><tr><th>Hazard</th><th>Within " + fmtM(ST.hz.r) + "</th><th>In DZ +" + HZ_MARGIN + " m</th><th>Nearest to the PI</th></tr></thead><tbody>" + ORDER.map(function (k) {
       var s = ST.hz.sum[k], nn = s.near; return "<tr><td>" + KINDS[k].n + "</td><td>" + s.n + "</td><td>" + s.inDz + "</td><td>" + (nn ? (nn.m < 1 ? "at the PI" : fmtM(nn.m) + " " + compass(nn.brg)) + (nn.name ? ", " + esc(nn.name) : "") : "none mapped") + "</td></tr>";
     }).join("") + "</tbody></table><p>OpenStreetMap contributors (https://www.openstreetmap.org/copyright). Only mapped features; walk the DZ.</p>";
-    if (ST.hosp && ST.hosp.list.length) h += "<h2>Nearest hospitals</h2><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at " + LIM.kn + " kt</th><th>Source</th></tr></thead><tbody>" + ST.hosp.list.map(function (x) {
-      return "<tr><td>" + esc(x.name) + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + "</td><td>" + Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td><td>" + esc(x.url) + "</td></tr>";
-    }).join("") + "</tbody></table>";
+    var gd = ST.gnd.on && ST.hosp && ST.hosp.list.some(function (x) { return x.road; });
+    if (ST.hosp && ST.hosp.list.length) h += "<h2>Nearest hospitals</h2><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at " + LIM.kn + " kt</th>" + (gd ? "<th>By road</th>" : "") + "<th>Source</th></tr></thead><tbody>" + ST.hosp.list.map(function (x) {
+      return "<tr><td>" + esc(x.name) + "</td><td>" + fmtM(x.m) + " " + compass(x.brg) + "</td><td>" + Math.max(1, Math.round(x.m / (LIM.kn * KT) / 60)) + " min</td>" + (gd ? "<td>" + esc(roadTxt(x)) + "</td>" : "") + "<td>" + esc(x.url) + "</td></tr>";
+    }).join("") + "</tbody></table>" + (gd ? (function () { var rt = ST.gnd.rt, x = rt && ST.hosp.list[rt.i]; return "<p>" + (x ? "Road route to " + esc(x.name) + ": " + fmtM(rt.r.m) + ", " + mins(rt.r.s) + (rt.r.roads && rt.r.roads.length ? " via " + esc(rt.r.roads.slice(0, 4).map(function (r) { return r.n; }).join(", ")) : "") + " (on the diagram in green). " : "") +
+      "Road drive times with no traffic, checkpoints, damage or loading time" + (ST.gnd.host ? ", " + esc(ST.gnd.host) : "") + (ST.gnd.err ? "; no router answered, so the road figures are straight-line estimates" : "") + ".</p>"; })() : "");
     h += "<h2>Comms, personnel and markings</h2>" + kv(FIELDS.map(function (x) { return [x[1], f[x[0]] || "________________"]; }));
     h += "<h2>DZSO checks</h2>" + kv(CHECKS.map(function (x) { return [f[x[0]] === true ? "[x]" : "[ ]", x[1]]; }));
     d.innerHTML = h;
@@ -767,6 +821,9 @@
     else if (k === "del") { if (store() && W.confirm("Delete the drop zone " + dz.name + " from this browser?")) { store().remove(dz.id); ST.saved = false; ST.dz = newDz(dz.pi, dz.name); paint(); } }
     else if (k === "wx") loadWx();
     else if (k === "hz") loadHz();
+    else if (k === "gnd") { ST.gnd.on = !ST.gnd.on; ST.gnd.picked = false; if (ST.gnd.on) loadGnd(); else { ST.run.gnd++; ST.gnd.busy = ST.gnd.rtBusy = false; gLayer.clearLayers(); paint(); } }
+    else if (k === "gnd-retry") loadGnd();
+    else if (k === "groute") { ST.gnd.picked = true; loadRoute(+b.getAttribute("data-i") || 0); }
     else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: dz.pi.slice() }); }
     else if (k === "evac") { if (W.OSAP_EPE_GO) W.OSAP_EPE_GO({ at: dz.pi.slice(), how: "DZSO sheet: " + dz.name }); }
     else if (k === "fromflight") {
@@ -828,7 +885,7 @@
     try { var bb = L.latLngBounds(outline(ST.dz)); if (!map.getBounds().contains(bb)) map.fitBounds(bb.pad(0.8), { maxZoom: 15 }); } catch (x) {}
     var f = el.querySelector('[data-dz="close"]'); if (f) f.focus({ preventScroll: true });
   }
-  function close() { tapEnd(); ST.run.wx++; ST.run.hz++; ST.run.hosp++; if (DRAG) { DRAG = null; map.dragging.enable(); } if (el) el.hidden = true; layer.clearLayers(); hLayer.clearLayers(); hzLayer.clearLayers(); }
+  function close() { tapEnd(); ST.run.wx++; ST.run.hz++; ST.run.hosp++; ST.run.gnd++; ST.gnd.busy = ST.gnd.rtBusy = false; gLayer.clearLayers(); if (DRAG) { DRAG = null; map.dragging.enable(); } if (el) el.hidden = true; layer.clearLayers(); hLayer.clearLayers(); hzLayer.clearLayers(); }
   W.OSAP_DZSO = { open: open, close: close, isOpen: isOpen, core: CORE, _print: printSheet,
     state: function () { return { dz: ST.dz, saved: ST.saved, edit: ST.edit, handles: Object.keys(HS).filter(function (k) { return k !== "tip"; }), wx: !!ST.wx, wxErr: ST.wxErr, hz: ST.hz ? { n: ST.hz.items.length, sum: ST.hz.sum } : null, hzErr: ST.hzErr, hosp: ST.hosp, hospErr: ST.hospErr, hours: hours(), lim: LIM }; } };
 })(typeof window !== "undefined" ? window : globalThis);
