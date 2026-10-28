@@ -81,8 +81,8 @@ await p.waitForFunction(() => window.OSAP_FLIGHT.state().plan.wx, null, { timeou
 await p.waitForTimeout(200);
 const fc = await legsOf();
 const q = new URL(asked[0]);
-ok(asked.length === 1 && q.searchParams.get("latitude").split(",").length === 3 && /^2026-10-28$/.test(q.searchParams.get("start_date")) && /^2026-10-30$/.test(q.searchParams.get("end_date")) &&
-  [...q.searchParams.keys()].sort().join() === "end_date,hourly,latitude,longitude,start_date,timeformat,timezone,wind_speed_unit", "one request with only the 3 leg middles, the dates and the variables");
+ok(asked.length === 1 && q.searchParams.get("latitude").split(",").length === 4 && /^2026-10-28$/.test(q.searchParams.get("start_date")) && /^2026-10-30$/.test(q.searchParams.get("end_date")) &&
+  [...q.searchParams.keys()].sort().join() === "end_date,hourly,latitude,longitude,start_date,timeformat,timezone,wind_speed_unit", "one request with only the 3 leg middles and the DZ, the dates and the variables");
 ok(fc.legs.filter((l) => !l.runin).every((l) => l.w && l.w.dir === 270 && l.w.kt === 40), "cruise legs (8000 ft) get the pressure-level wind 270/40");
 ok(fc.legs[1].runin && fc.legs[1].w && fc.legs[1].w.dir === 90 && fc.legs[1].w.kt === 10, "the run-in (500 ft over a 20 m DZ) gets the low wind 090/10");
 ok(Math.abs(fc.legs[0].gs - 340) < 1 && Math.abs(fc.legs[1].gs - 120) < 1 && !fc.warn.length, "ground speeds 340 kt cruise, 120 kt run-in, no warnings");
