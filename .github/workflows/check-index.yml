@@ -244,6 +244,7 @@ jobs:
       - run: node tests/flight_winds_smoke.mjs
       - run: node tests/flight_drop_smoke.mjs
       - run: node tests/flight_harp_smoke.mjs
+      - run: node tests/flight_brief_smoke.mjs
       - run: node tests/evac_lz_airfield_smoke.mjs
       - run: node tests/evac_foot_xc_smoke.mjs
       - run: node tests/epe_smoke.mjs
