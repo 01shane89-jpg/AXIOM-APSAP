@@ -798,7 +798,7 @@ async function openPlan(p) {
   ok(!errors.length, "phone: no page errors " + errors.join(" | "));
   await ctx.close();
 }
-// ---------- Postpass answers: the plan reads hospitals, extras and posts from it and Overpass is not asked ----------
+// ---------- Postpass answers: the plan reads hospitals and U.S. posts from it; the wide-radius extras stay on Overpass ----------
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { postpass: true, overpassFails: true });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
@@ -807,9 +807,9 @@ async function openPlan(p) {
   await p.waitForFunction(() => /Test Air Rescue/.test((document.getElementById("mp-mev") || {}).textContent || ""), null, { timeout: 25000 }).catch(() => {});
   const fac = await p.textContent("#mp-fac"), sql = (calls.ppSql || []).join("\n");
   ok(/Near Hospital/.test(fac) && !/could not be reached/.test(fac), "postpass: hospitals come from Postpass " + fac.slice(0, 200));
-  ok(/Test Air Rescue/.test(await p.textContent("#mp-mev")), "postpass: the air rescue base comes from Postpass");
-  ok(calls.overpass === 0 && calls.overpassX === 0 && !calls.overpassP, "postpass: Overpass is not asked when Postpass answers " + JSON.stringify(calls).slice(0, 300));
-  ok(/postpass_pointpolygon/.test(sql) && /ST_DWithin\(geom::geography/.test(sql) && /'hospital'/.test(sql) && /'air_rescue_service'/.test(sql), "postpass: SQL asks by true distance for each kind");
+  ok(/Test Air Rescue/.test(await p.textContent("#mp-mev")), "postpass: the air rescue base still shows (extras from Overpass)");
+  ok(calls.overpass === 0 && calls.overpassX === 1 && !calls.overpassP, "postpass: Overpass is asked only for the extras when Postpass answers " + JSON.stringify(calls).slice(0, 300));
+  ok(/postpass_pointpolygon/.test(sql) && /ST_DWithin\(geom::geography/.test(sql) && /'hospital'/.test(sql) && !/'air_rescue_service'/.test(sql), "postpass: SQL asks by true distance, no wide-radius extras scan");
   ok(!errors.length, "postpass: no page errors " + errors.join(" | "));
   await ctx.close();
 }

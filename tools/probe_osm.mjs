@@ -17,14 +17,13 @@ const lz = lift("assets/osap-lz.js", "  var LANDUSE", "  function overpass(b)", 
 const sea = lift("assets/osap-seatransit.js", "  function aroundSql", "  var OSM_KM", "aroundSql", { wrap: (x) => x });
 const comms = lift("assets/osap-comms.js", "  function sqlQuery", "  function post(q, sql)", "sqlQuery");
 const W0 = { OSAP_OSM: O };
-const med = new Function("W", (() => { const t = readFileSync("assets/osap-medplan.js", "utf8"); return t.slice(t.indexOf("  function ppNear"), t.indexOf("  /* Postpass first (one try")); })() + "; return { oSql, xSql, pSql };")(W0);
+const med = new Function("W", (() => { const t = readFileSync("assets/osap-medplan.js", "utf8"); return t.slice(t.indexOf("  function ppNear"), t.indexOf("  /* Postpass first;")); })() + "; return { oSql, xSql, pSql };")(W0);
 const epe = new Function("W", "wrap", (() => { const t = readFileSync("assets/osap-epe.js", "utf8"); return t.slice(t.indexOf("  function sqlNear"), t.indexOf("  function osmCls")) + t.slice(t.indexOf("  function depSql"), t.indexOf("  function depKind")) + t.slice(t.indexOf("  function susSql"), t.indexOf("  /* fuel and supplies within 1 km")); })() + "; return { ovSql, circSql, depSql, susSql };")(W0, (x) => x);
 const rte = new Function("W", (() => { const t = readFileSync("assets/osap-route.js", "utf8"); return t.slice(t.indexOf("  function sqlPts"), t.indexOf("  function afKind")); })() + "; return { sqlPts };")(W0);
 const road = [[13.75, 100.50], [13.9, 100.6], [14.1, 100.65], [14.35, 100.6], [14.6, 100.55], [14.9, 100.4]];
 const line = (a, b, n) => Array.from({ length: n + 1 }, (_, i) => ({ lat: a[0] + (b[0] - a[0]) * i / n, lon: a[1] + (b[1] - a[1]) * i / n }));
 const cases = [
   ["med plan Bangkok 50/20/30 km", med.oSql([13.75, 100.5], 50000, 20000, 30000)],
-  ["med plan extras Bangkok", med.xSql([13.75, 100.5])],
   ["med plan US posts Bangkok 1500 km", med.pSql([13.75, 100.5])],
   ["med plan Louisiana 50/20/30 km", med.oSql([30.45, -91.15], 50000, 20000, 30000)],
   ["evac airfields 25 km corridor", epe.ovSql(road, 25000)],

@@ -304,6 +304,7 @@
     return [ppSel("tags->>'amenity' = 'hospital' OR tags->>'healthcare' = 'hospital'", o, rH, 300), ppSel("tags->>'amenity' = 'clinic' OR tags->>'healthcare' = 'clinic'", o, rC, 200),
       ppSel("tags->>'aeroway' IN ('helipad','heliport','aerodrome')", o, rA, 400), ppSel("tags->>'emergency' = 'ambulance_station'", o, Math.max(rC, 30000), 40)].join(" UNION ALL ");
   }
+  /* not sent for now: a 200-500 km tag scan ran Postpass past 300 s (probe 2026-10-28), so the extras stay on Overpass and the stored copy */
   function xSql(o) {
     var nm = "tags->>'name' ~* '(hyperbaric|decompression|recompression)'";
     return [ppSel("tags->>'emergency' = 'air_rescue_service'", o, 400000, 40),
@@ -1422,7 +1423,7 @@
         if (ST !== s) return;
         if (sx) { s.xAt = sx.at; s.xMiss = sx.missing; }
         if (sx && !sx.missing.length) { s.x = sortX(sx.els, o); xShow(); return pGo(); }
-        return osmQ(xQuery(o), 30000, xSql(o)).then(function (j) { if (ST !== s) return; s.xMiss = []; s.xLive = true; s.x = sortX((sx ? sx.els : []).concat(j.elements || []), o); xShow(); },
+        return osmQ(xQuery(o), 30000).then(function (j) { if (ST !== s) return; s.xMiss = []; s.xLive = true; s.x = sortX((sx ? sx.els : []).concat(j.elements || []), o); xShow(); },
           function (e) { if (ST !== s) return; if (sx && sx.near.length > sx.missing.length) { s.x = sortX(sx.els, o); s.xPart = e.message; } else s.xErr = e.message; xShow(); }).then(pGo);
       });
     };
