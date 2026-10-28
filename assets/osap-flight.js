@@ -17,6 +17,10 @@
      door that fit past the PI at the run-in ground speed and exit interval), green and red light times for each pass, and the
      20, 10, 6 and 1 minute and 30 second time warnings, drawn on the map and in every export. Planning estimates only: the
      aircrew's computed air release point replaces them.
+   - Freefall (HARP): with a ram-air load, the drift is worked level by level from exit to opening (a fall rate that builds to
+     terminal speed and rises in thin air, the jumper moving with the wind at each height) and under canopy, either flown to the
+     DZ from over it or drifted down from upwind; the high altitude release point, where the canopies open, the still-air canopy
+     reach and a wind table from exit to the ground. The forecast read keeps the DZ winds level by level for it.
    - The DZ is drawn as a 2525D area labelled "DZ", its long side on the run-in course, centred on the point given.
      The shared DZ store (window.OSAP_DZ, assets/osap-dz-store.js, the DZSO tool) is used when it is there: pick a saved DZ, or
      save this one. window.OSAP_FLIGHT.forDz(dzId) gives the DZSO sheet the aircraft, drop altitude, drop speed, run-in and time.
@@ -25,7 +29,7 @@
    Plans are kept in this browser only (localStorage "osap-flight-cur", "osap-flights"); nothing else is sent anywhere.
    A planning aid built by the analyst: straight lines at a set airspeed with model or set winds, no airspace, terrain clearance, threat, weight
    or fuel planning. It is not a flight plan; aircrew plan and fly the real route. W.OSAP_FLIGHT = { open, close, isOpen, add,
-   state, legs, forDz, kml, gpx, windTri, interpWind, drops }. */
+   state, legs, forDz, kml, gpx, windTri, interpWind, drops, ffDrift }. */
 (function () {
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
@@ -72,15 +76,19 @@
     b.wx = cleanWx(p.wx);
     var j = p.jump || {}, jd = jumpDef(j.type);
     b.jump = { type: jd.type, K: num(j.K, 0, 10, jd.K), ft: num(j.ft, 0, 3000, jd.ft), total: Math.round(num(j.total, 1, 2000, jd.total)), doors: j.doors === 1 || j.doors === 2 ? j.doors : jd.doors,
-      ei: num(j.ei, 0.2, 10, jd.ei), gap: num(j.gap, 1, 120, jd.gap) };
+      ei: num(j.ei, 0.2, 10, jd.ei), gap: num(j.gap, 1, 120, jd.gap), open: Math.round(num(j.open, 500, 35000, jd.open)), cdr: num(j.cdr, 1, 15, jd.cdr), cfs: num(j.cfs, 0, 60, jd.cfs),
+      cm: j.cm === "drift" ? "drift" : "fly" };
     return b;
   }
   function num(v, lo, hi, d) { v = +v; return v !== null && isFinite(v) && v >= lo && v <= hi ? v : d; }
   /* the drop: load type with its drift constant K (D = K x A x V, the formula the DZSO sheet uses), forward throw in metres,
      jumpers in all, doors used, seconds between jumpers in a door, minutes between passes. All are typical planning figures the
      jumpmaster and aircrew replace with their own. */
-  var JUMPS = [["sl", "Static line personnel", 3.0, 230], ["cds", "Equipment (CDS / heavy drop)", 1.5, 230], ["own", "Own figures", 3.0, 230]];
-  function jumpDef(t) { var x = JUMPS.filter(function (j) { return j[0] === t; })[0] || JUMPS[0]; return { type: x[0], K: x[2], ft: x[3], total: 20, doors: 2, ei: 1, gap: 8 }; }
+  var JUMPS = [["sl", "Static line personnel", 3.0, 230], ["cds", "Equipment (CDS / heavy drop)", 1.5, 230], ["ff", "Freefall, ram-air canopy (HARP)", 0, 300], ["own", "Own figures", 3.0, 230]];
+  /* freefall adds the opening altitude (ft AGL), the canopy's rate of descent (m/s) and forward speed (kt), and the canopy plan:
+     "fly" (jumpers open over the DZ and fly to it) or "drift" (they open upwind and drift down with the wind) */
+  function jumpDef(t) { var x = JUMPS.filter(function (j) { return j[0] === t; })[0] || JUMPS[0], ff = x[0] === "ff";
+    return { type: x[0], K: x[2], ft: x[3], total: ff ? 8 : 20, doors: ff ? 1 : 2, ei: 1, gap: 8, open: 4000, cdr: 5, cfs: 20, cm: "fly" }; }
 
   /* ---------- winds aloft ---------- */
   /* forecast winds kept with the plan: { at, src, legs: [{ lat, lon (leg middle), elev (m), alt (ft MSL the wind is for),
@@ -93,7 +101,11 @@
     });
     var dz = (Array.isArray(x.dz) ? x.dz : []).slice(0, MAX_PTS).map(function (l) {
       if (!l || !isFinite(l.lat) || !isFinite(l.lon) || !isFinite(l.alt) || !Array.isArray(l.h)) return null;
-      return { lat: +l.lat, lon: +l.lon, elev: isFinite(l.elev) ? +l.elev : 0, alt: +l.alt, h: l.h.slice(0, 200).filter(function (r) { return Array.isArray(r) && r.length === 3 && r.every(isFinite); }) };
+      var o = { lat: +l.lat, lon: +l.lon, elev: isFinite(l.elev) ? +l.elev : 0, alt: +l.alt, h: l.h.slice(0, 200).filter(function (r) { return Array.isArray(r) && r.length === 3 && r.every(isFinite); }) };
+      /* the winds level by level (m above the DZ), hour by hour, for freefall: [[unix s, [[h, from, kt], ...]], ...] */
+      if (Array.isArray(l.lv)) o.lv = l.lv.slice(0, 48).filter(function (r) { return Array.isArray(r) && isFinite(r[0]) && Array.isArray(r[1]); }).map(function (r) {
+        return [+r[0], r[1].slice(0, 30).filter(function (v) { return Array.isArray(v) && v.length === 3 && v.every(isFinite); })]; });
+      return o;
     }).filter(Boolean);
     return { at: +x.at, src: clean(x.src, 80) || "Open-Meteo", legs: legs, dz: dz };
   }
@@ -182,9 +194,12 @@
         /* at each DZ: the mean wind from the ground to the drop altitude, hour by hour (the DZSO sheet's own vector mean) */
         dz: dzs.map(function (q, k) {
           var j = arr[mids.length + k], el = isFinite(j.elevation) ? j.elevation : 0;
-          return { lat: q[0], lon: q[1], elev: el, alt: plan.altFt, h: j.hourly.time.map(function (ts, i) {
+          var lvs = [];
+          var h = j.hourly.time.map(function (ts, i) {
             var lv = levelsAt(j, i).map(function (x) { return { h: x.h - el, kt: x.kt, dir: x.dir }; }), w = C.meanWind(lv, plan.altFt * FT);
-            return w ? [ts, Math.round(w.dir), Math.round(w.kt * 10) / 10] : null; }).filter(Boolean) };
+            if (Math.abs(ts * 1000 - mid) <= 12 * 3600e3) lvs.push([ts, lv.map(function (x) { return [Math.round(x.h), Math.round(x.dir), Math.round(x.kt * 10) / 10]; })]);
+            return w ? [ts, Math.round(w.dir), Math.round(w.kt * 10) / 10] : null; }).filter(Boolean);
+          return { lat: q[0], lon: q[1], elev: el, alt: plan.altFt, h: h, lv: lvs };
         }) };
         plan.wind = "fc"; S.msg = "Forecast winds read for every leg" + (dzs.length ? " and the mean wind to drop altitude at each DZ" : "") + ". Leg times now use ground speed."; S.err = "";
       });
@@ -279,21 +294,76 @@
     if (Math.abs(best[0] - tS) > 3 * 3600) return { err: "the forecast read does not cover the drop time" };
     return { dir: best[1], kt: best[2], src: "Open-Meteo mean wind to " + plan.altFt + " ft, " + new Date(best[0] * 1000).toISOString().slice(11, 13) + "00Z" };
   }
+  /* freefall: the winds level by level over DZ point q at time ms ([{ h m above the DZ, dir, kt }]), from the wind set by the
+     analyst (the same at every level) or the forecast read */
+  function ffLevels(plan, q, ms) {
+    if (plan.wind === "man") return { lv: [{ h: 0, dir: plan.man.dir, kt: plan.man.kt }], elev: 0, src: "the wind you set, the same at every level" };
+    if (plan.wind !== "fc" || !plan.wx) return null;
+    var g = G(), e = (plan.wx.dz || []).filter(function (x) { return g.dist([x.lat, x.lon], [q.lat, q.lon]) < 500 && x.lv && x.lv.length; })[0];
+    if (!e) return { err: "read the forecast winds again for this DZ" };
+    var tS = ms / 1000, best = null;
+    e.lv.forEach(function (r) { if (!best || Math.abs(r[0] - tS) < Math.abs(best[0] - tS)) best = r; });
+    if (Math.abs(best[0] - tS) > 3 * 3600) return { err: "the forecast read does not cover the drop time" };
+    return { lv: best[1].map(function (v) { return { h: v[0], dir: v[1], kt: v[2] }; }), elev: e.elev, src: "Open-Meteo levels, " + new Date(best[0] * 1000).toISOString().slice(11, 13) + "00Z" };
+  }
+  /* where the air carries a freefall jumper from exit (exitM above the DZ) to opening (openM) and on down under canopy: freefall
+     stepped every quarter second, the fall speed building to a belly-to-earth terminal speed of about 54 m/s at sea level that
+     rises as the air thins (standard atmosphere), the jumper moving with the wind at each height; under canopy the rate of
+     descent set, carried by the wind only when the canopy plan is "drift". Returns metres downwind east and north. */
+  function ffDrift(lv, elevM, exitM, openM, cdr, drift) {
+    var L2 = (lv || []).slice().sort(function (a, b) { return a.h - b.h; }), h = exitM, v = 0, t = 0, e = 0, n = 0, dt = 0.25;
+    function wv(hh) { var w = interpWind(L2, hh); if (!w) return [0, 0]; var r = (w.dir + 180) * Math.PI / 180; return [w.kt * KT * Math.sin(r), w.kt * KT * Math.cos(r)]; }
+    while (h > openM && t < 600) {
+      var sig = Math.pow(Math.max(0.05, 1 - 2.25577e-5 * (h + (elevM || 0))), 4.2559), vt = 54 / Math.sqrt(sig), u = wv(h);
+      v += 9.80665 * (1 - (v / vt) * (v / vt)) * dt; h -= v * dt; t += dt; e += u[0] * dt; n += u[1] * dt;
+    }
+    var fe = e, fn = n, ffS = t, canS = openM / cdr, ce = 0, cn = 0, ws = 0;
+    for (var c = openM; c > 0; c -= cdr) { var u2 = wv(Math.max(0, c - cdr / 2)), st = Math.min(1, c / cdr); ws += Math.hypot(u2[0], u2[1]) * st; if (drift) { ce += u2[0] * st; cn += u2[1] * st; } }
+    return { e: fe + ce, n: fn + cn, ce: ce, cn: cn, ff: Math.hypot(fe, fn), can: Math.hypot(ce, cn), ffS: ffS, canS: canS, canWind: canS > 0 ? ws / canS / KT : 0 };
+  }
+  /* the wind table for the jumpmaster: exit, every 2,000 ft down, opening and the ground */
+  function ffTable(lv, exitFt, openFt) {
+    var hs = [exitFt], out = [];
+    for (var f = Math.floor((exitFt - 1) / 2000) * 2000; f > 0; f -= 2000) if (f !== openFt) hs.push(f);
+    hs.push(openFt); hs.push(0);
+    hs = hs.filter(function (x, i) { return hs.indexOf(x) === i; }).sort(function (a, b) { return b - a; });
+    hs.forEach(function (f) { var w = interpWind(lv, f * FT); if (w) out.push({ ft: f, dir: w.dir, kt: w.kt, what: f === exitFt ? "exit" : f === openFt ? "opening" : f === 0 ? "ground" : "" }); });
+    return out;
+  }
   /* each DZ of the plan: [{ k, pi, axis, gs, wind, drift, rp (drift only), carp, along, passes: [{ n, jumpers, green, red, redAt }],
      perDoor (fit in the DZ), stick (s), room (m past the PI), warn: [] }] */
   function drops(plan, R) {
     var g = G(), P = plan.pts, J = plan.jump, C = core(), out = [];
     P.forEach(function (q, k) {
       if (q.role !== "dz" || !k) return;
-      var leg = R.legs[k - 1], ax = dzAxis(R, k), gs = leg ? leg.gs : plan.drop, pi = [q.lat, q.lon], w = dzWind(plan, q, R.t[k]), warn = [];
-      if (w && w.err) { warn.push("No drift: " + w.err + "."); w = null; }
-      var dr = w && J.K > 0 ? (C ? C.drift(J.K, plan.altFt, w.kt) : J.K * (plan.altFt / 100) * w.kt) : 0;
-      if (!w) warn.push(plan.wind === "none" ? "No wind is set, so the release point has forward throw only." : "No wind for the drop, so the release point has forward throw only.");
-      var rp = dr > 0 ? g.dest(pi, w.dir, dr) : pi, carp = J.ft > 0 ? g.dest(rp, ax + 180, J.ft) : rp;
+      var leg = R.legs[k - 1], ax = dzAxis(R, k), gs = leg ? leg.gs : plan.drop, pi = [q.lat, q.lon], ffM = J.type === "ff", ff = null, w, dr, rp, warn = [];
+      if (ffM) {
+        /* freefall: the HARP is the PI moved upwind by all the drift the air gives from exit to the ground (to opening only when
+           the jumpers fly their canopies to the DZ), then back along the run-in by the forward throw */
+        var lvl = ffLevels(plan, q, R.t[k]), op = Math.min(J.open, plan.altFt);
+        if (lvl && lvl.err) { warn.push("No drift: " + lvl.err + "."); lvl = null; }
+        if (J.open >= plan.altFt) warn.push("The opening altitude (" + J.open + " ft) is not below the exit altitude (" + plan.altFt + " ft AGL): there is no freefall.");
+        var fd = ffDrift(lvl ? lvl.lv : [], lvl ? lvl.elev : 0, plan.altFt * FT, op * FT, J.cdr, J.cm === "drift");
+        dr = Math.hypot(fd.e, fd.n); w = lvl ? { dir: (Math.atan2(-fd.e, -fd.n) * 180 / Math.PI + 360) % 360, kt: 0, src: lvl.src } : null;
+        rp = dr > 0.5 ? g.dest(pi, w.dir, dr) : pi;
+        /* where the canopies open: over the PI, or upwind of it by the canopy drift */
+        var opAt = fd.can > 0.5 ? g.dest(pi, (Math.atan2(-fd.ce, -fd.cn) * 180 / Math.PI + 360) % 360, fd.can) : pi;
+        ff = { open: op, ffS: fd.ffS, canS: fd.canS, ffM: fd.ff, canM: fd.can, canWind: fd.canWind, reach: J.cfs * KT * fd.canS, table: lvl ? ffTable(lvl.lv, plan.altFt, op) : [], openAt: opAt };
+        if (!lvl) warn.push(plan.wind === "none" ? "No wind is set, so the HARP has forward throw only." : "No wind for the drop, so the HARP has forward throw only.");
+        if (lvl && J.cm === "fly" && J.cfs > 0 && fd.canWind >= J.cfs) warn.push("The mean wind under canopy (" + Math.round(fd.canWind) + " kt) is as strong as the canopy's forward speed (" + J.cfs + " kt): jumpers who open over the DZ cannot hold over it.");
+      } else {
+        w = dzWind(plan, q, R.t[k]);
+        if (w && w.err) { warn.push("No drift: " + w.err + "."); w = null; }
+        dr = w && J.K > 0 ? (C ? C.drift(J.K, plan.altFt, w.kt) : J.K * (plan.altFt / 100) * w.kt) : 0;
+        if (!w) warn.push(plan.wind === "none" ? "No wind is set, so the release point has forward throw only." : "No wind for the drop, so the release point has forward throw only.");
+        rp = dr > 0 ? g.dest(pi, w.dir, dr) : pi;
+      }
+      var carp = J.ft > 0 ? g.dest(rp, ax + 180, J.ft) : rp;
       var inv = g.inverse(carp, pi), along = inv.m * Math.cos((inv.b1 - ax) * Math.PI / 180), mps = gs * KT;
       var green = R.t[k] - along / mps * 1000;
       var len = plan.dzLen, lead = isFinite(q.lead) && q.lead !== undefined ? Math.min(q.lead, len) : len / 2, room = len - lead;
-      var maxS = room / mps, fit = Math.max(1, Math.floor(maxS / J.ei) + 1), wantPerDoor = Math.ceil(J.total / J.doors), perDoor = Math.min(wantPerDoor, fit);
+      /* freefall jumpers fly their canopies onto the DZ, so its length past the PI does not cap a pass */
+      var maxS = room / mps, wantPerDoor = Math.ceil(J.total / J.doors), fit = ffM ? wantPerDoor : Math.max(1, Math.floor(maxS / J.ei) + 1), perDoor = Math.min(wantPerDoor, fit);
       var perPass = perDoor * J.doors, n = Math.ceil(J.total / perPass), left = J.total, passes = [];
       for (var i = 0; i < n; i++) {
         var jp = Math.min(perPass, left), pd = Math.ceil(jp / J.doors), st = (pd - 1) * J.ei, gi = green + i * J.gap * 60000;
@@ -301,8 +371,8 @@
         left -= jp;
       }
       if (wantPerDoor > fit) warn.push(wantPerDoor + " jumpers a door need " + Math.round((wantPerDoor - 1) * J.ei * mps) + " m past the PI at " + Math.round(gs) + " kt ground speed; this DZ has " + Math.round(room) + " m, so " + fit + " a door fit and it takes " + n + " passes.");
-      if (w && C && C.drift && w.kt > 0 && J.K === 0) warn.push("K is 0: no drift worked out.");
-      out.push({ k: k, pi: pi, axis: ax, gs: gs, wind: w, drift: dr, rp: rp, carp: carp, along: along, green: green, passes: passes, perDoor: perDoor, fit: fit, room: room, warn: warn,
+      if (!ffM && w && C && C.drift && w.kt > 0 && J.K === 0) warn.push("K is 0: no drift worked out.");
+      out.push({ k: k, rk: ffM ? "HARP" : "CARP", ff: ff, pi: pi, axis: ax, gs: gs, wind: w, drift: dr, rp: rp, carp: carp, along: along, green: green, passes: passes, perDoor: perDoor, fit: fit, room: room, warn: warn,
         calls: WARN.map(function (x) { return { t: green - x[0] * 1000, what: x[1] }; }) });
     });
     return out;
@@ -447,23 +517,36 @@
   function dropHtml(p, R) {
     var J = p.jump, P = p.pts, X = drops(p, R), zt = function (ms) { return esc(when(ms)); };
     var h = '<h4>Drop</h4><div class="flrow"><select id="fl-jt" aria-label="Load">' + JUMPS.map(function (j) { return '<option value="' + j[0] + '"' + (j[0] === J.type ? " selected" : "") + ">" + esc(j[1]) + "</option>"; }).join("") + "</select>" +
-      '<label>K <input type="number" id="fl-k" min="0" max="10" step="0.1" value="' + J.K + '"></label><label>Forward throw <input type="number" id="fl-ft" min="0" max="3000" step="10" value="' + J.ft + '"> m</label></div>' +
+      (J.type === "ff" ? "" : '<label>K <input type="number" id="fl-k" min="0" max="10" step="0.1" value="' + J.K + '"></label>') + '<label>Forward throw <input type="number" id="fl-ft" min="0" max="3000" step="10" value="' + J.ft + '"> m</label></div>' +
       '<div class="flrow"><label>Jumpers <input type="number" id="fl-jn" min="1" max="2000" step="1" value="' + J.total + '"></label><label>Doors <select id="fl-jd"><option value="1"' + (J.doors === 1 ? " selected" : "") + '>1</option><option value="2"' + (J.doors === 2 ? " selected" : "") + ">2</option></select></label>" +
       '<label>Exit every <input type="number" id="fl-ei" min="0.2" max="10" step="0.1" value="' + J.ei + '"> s</label><label>Passes every <input type="number" id="fl-gap" min="1" max="120" step="1" value="' + J.gap + '"> min</label></div>' +
-      '<p class="flsm">Typical planning figures: K 3.0 personnel, 1.5 equipment, as on the DZSO sheet; forward throw about 230 m for a fixed-wing personnel drop. Use the figures your jumpmaster and aircrew give you.</p>';
+      (J.type === "ff" ? '<div class="flrow"><label>Opening <input type="number" id="fl-op" min="500" max="35000" step="100" value="' + J.open + '"> ft AGL</label>' +
+        '<label>Canopy descent <input type="number" id="fl-cdr" min="1" max="15" step="0.5" value="' + J.cdr + '"> m/s</label><label>Canopy speed <input type="number" id="fl-cfs" min="0" max="60" step="1" value="' + J.cfs + '"> kt</label>' +
+        '<label>Under canopy <select id="fl-cm"><option value="fly"' + (J.cm === "fly" ? " selected" : "") + '>open over the DZ and fly to it</option><option value="drift"' + (J.cm === "drift" ? " selected" : "") + ">open upwind and drift down</option></select></label></div>" +
+        '<p class="flsm">Exit altitude is the drop altitude above (' + p.altFt + ' ft AGL). Freefall is worked level by level with the winds from exit to opening, at a belly-to-earth fall rate of about 54 m/s at sea level, faster in thin air. Typical ram-air figures: 5 m/s descent, 20 kt forward speed. Use the figures from your jumpmaster and SOP.</p>'
+      : '<p class="flsm">Typical planning figures: K 3.0 personnel, 1.5 equipment, as on the DZSO sheet; forward throw about 230 m for a fixed-wing personnel drop. Use the figures your jumpmaster and aircrew give you.</p>');
     X.forEach(function (x) {
       var nm = label(P, x.k);
       h += '<div class="fldrop"><p><b>' + esc(nm) + "</b>: run-in " + deg(x.axis) + " true at " + Math.round(x.gs) + " kt ground speed, " + p.altFt + " ft AGL.</p>" +
-        "<p>Wind for the drift: " + (x.wind ? deg(x.wind.dir) + " " + Math.round(x.wind.kt) + " kt (" + esc(x.wind.src) + "), drift " + Math.round(x.drift) + " m (D = K × A × V)" : "none") + ". " +
-        'CARP <span class="flg">' + esc(grid(x.carp[0], x.carp[1])) + "</span>, " + Math.round(x.along) + " m before the PI along the run-in.</p>" +
+        (x.ff ? ffHtml(x) : "<p>Wind for the drift: " + (x.wind ? deg(x.wind.dir) + " " + Math.round(x.wind.kt) + " kt (" + esc(x.wind.src) + "), drift " + Math.round(x.drift) + " m (D = K × A × V)" : "none") + ". ") +
+        x.rk + ' <span class="flg">' + esc(grid(x.carp[0], x.carp[1])) + "</span>, " + Math.round(x.along) + " m before the PI along the run-in.</p>" +
         '<div class="fltw"><table><thead><tr><th>Pass</th><th>Jumpers</th><th>Green light</th><th>Red light</th></tr></thead><tbody>' +
         x.passes.map(function (ps) { return "<tr><td>" + ps.n + "</td><td>" + ps.jumpers + "</td><td>" + zt(ps.green) + "</td><td>" + zt(ps.red) + " <small>(" + Math.round(ps.stick) + " s)</small></td></tr>"; }).join("") + "</tbody></table></div>" +
-        '<p class="flsm">' + x.perDoor + " a door a pass (room for " + x.fit + " in the " + Math.round(x.room) + " m past the PI).</p>" +
+        (x.ff ? "" : '<p class="flsm">' + x.perDoor + " a door a pass (room for " + x.fit + " in the " + Math.round(x.room) + " m past the PI).</p>") +
         '<div class="fltw"><table class="flcalls"><thead><tr><th>Time warning (pass 1)</th><th>Zulu / local</th></tr></thead><tbody>' +
         x.calls.map(function (c) { return "<tr><td>" + c.what + "</td><td>" + zt(c.t) + "</td></tr>"; }).join("") + "<tr><td><b>Green light</b></td><td>" + zt(x.passes[0].green) + "</td></tr></tbody></table></div>" +
         x.warn.map(function (w) { return '<p class="flwarn">' + esc(w) + "</p>"; }).join("") + "</div>";
     });
-    return h + '<p class="flsm">The CARP here is a planning estimate: the PI moved upwind by the drift and back along the run-in by the forward throw. It is not the aircrew\'s computed air release point, which replaces it.</p>';
+    return h + '<p class="flsm">The ' + (J.type === "ff" ? "HARP" : "CARP") + ' here is a planning estimate: the PI moved upwind by the drift and back along the run-in by the forward throw. It is not the aircrew\'s computed air release point, which replaces it.</p>';
+  }
+  /* the freefall part of a DZ's drop block: drift in freefall and under canopy, canopy reach and the winds level by level */
+  function ffHtml(x) {
+    var f = x.ff, mi = function (s) { return Math.floor(s / 60) + " min " + pad(Math.round(s % 60)) + " s"; };
+    return "<p>" + (x.wind ? "Winds: " + esc(x.wind.src) + "." : "Winds: none.") + " Freefall to " + f.open + " ft AGL about " + Math.round(f.ffS) + " s, drift " + Math.round(f.ffM) + " m; under canopy " + mi(f.canS) +
+      (f.canM > 0.5 ? ", drift " + Math.round(f.canM) + " m (canopies open upwind at " + '<span class="flg">' + esc(grid(f.openAt[0], f.openAt[1])) + "</span>)" : ", flown to the DZ") +
+      "; total drift " + Math.round(x.drift) + " m" + (x.wind && x.drift > 0.5 ? " toward " + deg(x.wind.dir + 180) : "") + ". Canopy reach in still air about " + (f.reach / 1000).toFixed(1) + " km. " +
+      (f.table.length ? '</p><div class="fltw"><table class="flff"><thead><tr><th>Height (ft AGL)</th><th>Wind from</th><th>kt</th></tr></thead><tbody>' +
+        f.table.map(function (r) { return "<tr><td>" + r.ft + (r.what ? " <small>(" + r.what + ")</small>" : "") + "</td><td>" + deg(r.dir) + "</td><td>" + Math.round(r.kt) + "</td></tr>"; }).join("") + "</tbody></table></div><p>" : "");
   }
 
   /* ---------- the map ---------- */
@@ -502,7 +585,12 @@
           L.polyline([x.carp, x.passes[0].redAt], { pane: "flpane", renderer: rend, color: "#2e7d32", weight: 5, opacity: 0.8, lgk: "flight", lgl: "Green light to red light (pass 1)" }).addTo(layer);
           L.circleMarker(x.carp, { pane: "flpane", renderer: rend, radius: 6, color: "#fff", weight: 2, fillColor: "#2e7d32", fillOpacity: 1, interactive: false }).addTo(layer);
           L.circleMarker(x.passes[0].redAt, { pane: "flpane", renderer: rend, radius: 5, color: "#fff", weight: 2, fillColor: "#c62828", fillOpacity: 1, interactive: false }).addTo(layer);
-          tagMark(x.carp, "CARP", "flcarp");
+          tagMark(x.carp, x.rk, "flcarp");
+          /* freefall: where the canopies open, with the still-air reach round it */
+          if (x.ff) {
+            if (x.ff.reach > 0) L.circle(x.ff.openAt, { pane: "flpane", renderer: rend, radius: x.ff.reach, color: "#2e7d32", weight: 1.5, dashArray: "6 6", fill: false, lgk: "flight", lgl: "Canopy reach in still air" }).addTo(layer);
+            if (x.ff.canM > 0.5) { L.circleMarker(x.ff.openAt, { pane: "flpane", renderer: rend, radius: 4, color: "#fff", weight: 2, fillColor: "#1565c0", fillOpacity: 1, interactive: false }).addTo(layer); tagMark(x.ff.openAt, "Canopies open", "flcarp"); }
+          }
         }
       } else L.marker([q.lat, q.lon], { pane: "flpane", icon: icon(P, k), title: label(P, k) + " (" + (SYMNAME[q.role] || "") + ")", keyboard: false }).addTo(layer);
     });
@@ -595,7 +683,12 @@
     else if (t.id === "fl-dzl") { if (+t.value >= 50 && +t.value <= 10000) p.dzLen = +t.value; }
     else if (t.id === "fl-dzw") { if (+t.value >= 50 && +t.value <= 10000) p.dzWid = +t.value; }
     else if (t.id === "fl-tm") p.timeMode = t.value === "tot" ? "tot" : "dep";
-    else if (t.id === "fl-jt") { var jd = jumpDef(t.value); p.jump.type = jd.type; p.jump.K = jd.K; p.jump.ft = jd.ft; }
+    else if (t.id === "fl-jt") { var jd = jumpDef(t.value), wasFf = p.jump.type === "ff"; p.jump.type = jd.type; p.jump.K = jd.K; p.jump.ft = jd.ft;
+      if (jd.type === "ff" && !wasFf) { p.jump.total = jd.total; p.jump.doors = jd.doors; if (p.altFt < p.jump.open + 1000) { p.altFt = 12500; S.msg = "Drop altitude set to 12,500 ft AGL for freefall: change it if your exit altitude differs."; } } }
+    else if (t.id === "fl-op") p.jump.open = Math.round(num(t.value, 500, 35000, p.jump.open));
+    else if (t.id === "fl-cdr") p.jump.cdr = num(t.value, 1, 15, p.jump.cdr);
+    else if (t.id === "fl-cfs") p.jump.cfs = num(t.value, 0, 60, p.jump.cfs);
+    else if (t.id === "fl-cm") p.jump.cm = t.value === "drift" ? "drift" : "fly";
     else if (t.id === "fl-k") p.jump.K = num(t.value, 0, 10, p.jump.K);
     else if (t.id === "fl-ft") p.jump.ft = num(t.value, 0, 3000, p.jump.ft);
     else if (t.id === "fl-jn") p.jump.total = Math.round(num(t.value, 1, 2000, p.jump.total));
@@ -659,7 +752,7 @@
       pm.push("<Placemark><name>" + xesc(label(P, k)) + "</name><description>" + xesc(desc) + '</description><styleUrl>#pt</styleUrl><ExtendedData><Data name="sidc"><value>' + sc + "</value></Data></ExtendedData><Point><coordinates>" + q.lon.toFixed(6) + "," + q.lat.toFixed(6) + ",0</coordinates></Point></Placemark>");
     });
     drops(plan, R).forEach(function (x) {
-      pm.push("<Placemark><name>" + xesc("CARP " + tag(P, x.k)) + "</name><description>" + xesc(dropLine(x) + " " + CAVEAT) + "</description><styleUrl>#pt</styleUrl><Point><coordinates>" + x.carp[1].toFixed(6) + "," + x.carp[0].toFixed(6) + ",0</coordinates></Point></Placemark>");
+      pm.push("<Placemark><name>" + xesc(x.rk + " " + tag(P, x.k)) + "</name><description>" + xesc(dropLine(x) + " " + CAVEAT) + "</description><styleUrl>#pt</styleUrl><Point><coordinates>" + x.carp[1].toFixed(6) + "," + x.carp[0].toFixed(6) + ",0</coordinates></Point></Placemark>");
     });
     R.legs.forEach(function (l) {
       pm.push("<Placemark><name>" + xesc(tag(P, l.i) + " to " + tag(P, l.i + 1)) + "</name><description>" + xesc(deg(l.tc) + " true / " + deg(l.mc) + " magnetic, " + l.nm.toFixed(1) + " nm at " + l.kt + " kt" + (l.wind ? ", wind " + deg(l.wind.dir) + " " + Math.round(l.wind.kt) + " kt, heading " + deg(l.hdg) + " true, ground speed " + Math.round(l.gs) + " kt" : "") + ", " + hm(l.s)) + "</description><styleUrl>#" + (l.runin ? "runin" : "leg") + "</styleUrl><LineString><tessellate>1</tessellate><coordinates>" +
@@ -676,8 +769,10 @@
       P.map(function (q, k) { return pt(q, k, "wpt"); }).join("\n") + "\n<rte><name>" + xesc(planName()) + "</name>" + P.map(function (q, k) { return pt(q, k, "rtept"); }).join("") + "</rte>\n</gpx>\n";
   }
   function dropLine(x) {
-    return "Run-in " + deg(x.axis) + " true at " + Math.round(x.gs) + " kt GS. Wind " + (x.wind ? deg(x.wind.dir) + " " + Math.round(x.wind.kt) + " kt, drift " + Math.round(x.drift) + " m" : "none") +
-      ". CARP " + grid(x.carp[0], x.carp[1]) + ", " + Math.round(x.along) + " m before the PI (planning estimate, not the aircrew's CARP).";
+    var f = x.ff;
+    return "Run-in " + deg(x.axis) + " true at " + Math.round(x.gs) + " kt GS. " + (f ? "Freefall " + Math.round(f.ffS) + " s to " + f.open + " ft AGL, drift " + Math.round(f.ffM) + " m; canopy " + Math.round(f.canS / 60) + " min" + (f.canM > 0.5 ? ", drift " + Math.round(f.canM) + " m" : ", flown to the DZ") + "; total drift " + Math.round(x.drift) + " m (" + (x.wind ? x.wind.src : "no wind") + ")"
+      : "Wind " + (x.wind ? deg(x.wind.dir) + " " + Math.round(x.wind.kt) + " kt, drift " + Math.round(x.drift) + " m" : "none")) +
+      ". " + x.rk + " " + grid(x.carp[0], x.carp[1]) + ", " + Math.round(x.along) + " m before the PI (planning estimate, not the aircrew's release point).";
   }
   function text(plan) {
     var P = plan.pts, R = legs(plan), a = acft(plan.acft), out = [planName(), a.name + " · cruise " + plan.kt + " kt · drop " + plan.drop + " kt at " + plan.altFt + " ft AGL", ""];
@@ -685,6 +780,7 @@
     out.push("", "Total " + Math.round(R.nm) + " nm, " + hm(R.s) + " flying.");
     drops(plan, R).forEach(function (x) {
       out.push("", label(P, x.k) + ": " + dropLine(x));
+      if (x.ff) x.ff.table.forEach(function (r) { out.push("   Wind " + r.ft + " ft" + (r.what ? " (" + r.what + ")" : "") + "  " + deg(r.dir) + "/" + Math.round(r.kt)); });
       x.calls.forEach(function (c) { out.push("   " + c.what + "  " + when(c.t)); });
       x.passes.forEach(function (ps) { out.push("   Pass " + ps.n + ": " + ps.jumpers + " jumpers, green " + when(ps.green) + ", red " + when(ps.red)); });
       x.warn.forEach(function (w) { out.push("   Note: " + w); });
@@ -699,7 +795,8 @@
       "<table><thead><tr><th>Point</th><th>Role</th><th>Grid</th><th>Time (Zulu / local)</th><th>Next leg</th></tr></thead><tbody>" +
       P.map(function (q, k) { var l = R.legs[k]; return "<tr><td>" + esc(label(P, k)) + "</td><td>" + esc(roleName(q.role)) + "</td><td>" + esc(grid(q.lat, q.lon)) + "</td><td>" + esc(when(R.t[k])) + "</td><td>" + (l ? deg(l.tc) + "T / " + deg(l.mc) + "M, " + l.nm.toFixed(1) + " nm, " + l.kt + " kt" + (l.wind ? ", wind " + deg(l.wind.dir) + " " + Math.round(l.wind.kt) + " kt, heading " + deg(l.hdg) + "T / " + deg(l.mh) + "M, GS " + Math.round(l.gs) + " kt" : "") + ", " + hm(l.s) : "") + "</td></tr>"; }).join("") +
       "</tbody></table><p><b>Total " + Math.round(R.nm) + " nm, " + hm(R.s) + " flying.</b></p>" +
-      drops(S.plan, R).map(function (x) { return "<h2>" + esc(label(P, x.k)) + "</h2><p>" + esc(dropLine(x)) + "</p><table><thead><tr><th>Call</th><th>Zulu / local</th></tr></thead><tbody>" +
+      drops(S.plan, R).map(function (x) { return "<h2>" + esc(label(P, x.k)) + "</h2><p>" + esc(dropLine(x)) + "</p>" +
+        (x.ff && x.ff.table.length ? "<table><thead><tr><th>Height (ft AGL)</th><th>Wind</th></tr></thead><tbody>" + x.ff.table.map(function (r) { return "<tr><td>" + r.ft + (r.what ? " (" + r.what + ")" : "") + "</td><td>" + deg(r.dir) + " " + Math.round(r.kt) + " kt</td></tr>"; }).join("") + "</tbody></table>" : "") + "<table><thead><tr><th>Call</th><th>Zulu / local</th></tr></thead><tbody>" +
         x.calls.map(function (c) { return "<tr><td>" + c.what + "</td><td>" + esc(when(c.t)) + "</td></tr>"; }).join("") +
         x.passes.map(function (ps) { return "<tr><td><b>Pass " + ps.n + "</b> (" + ps.jumpers + " jumpers) green / red</td><td>" + esc(when(ps.green)) + " / " + esc(when(ps.red)) + "</td></tr>"; }).join("") + "</tbody></table>" +
         x.warn.map(function (w) { return "<p>" + esc(w) + "</p>"; }).join(""); }).join("") + R.warn.map(function (w) { return "<p>" + esc(w) + "</p>"; }).join("") + "<p><small>" + esc(CAVEAT) + "</small></p>";
@@ -716,7 +813,7 @@
   function close() { tapEnd(); if (card) card.hidden = true; syncDock(); layer.clearLayers(); }
   function isOpen() { return !!card && !card.hidden; }
   W.OSAP_FLIGHT = {
-    open: open, close: close, isOpen: isOpen, add: add, legs: legs, windTri: windTri, interpWind: interpWind, drops: drops, kml: kml, gpx: gpx, text: text, aircraft: ACFT,
+    open: open, close: close, isOpen: isOpen, add: add, legs: legs, windTri: windTri, interpWind: interpWind, drops: drops, ffDrift: ffDrift, kml: kml, gpx: gpx, text: text, aircraft: ACFT,
     state: function () { return { plan: JSON.parse(JSON.stringify(S.plan)), msg: S.msg, err: S.err, drawn: layer.getLayers().length }; },
     load: function (p) { tapEnd(); S.plan = cleanPlan(p); changed(true); },
     /* for the DZSO tool: the plan that drops on this saved DZ (the current plan first, then the saved ones), or null */
@@ -728,7 +825,7 @@
         var R = legs(p);
         var x = drops(p, R).filter(function (d) { return d.k === k; })[0];
         return { plan_id: p.id, acft: acft(p.acft).name, alt_ft: p.altFt, ias_kt: k && p.pts[k - 1].role === "ip" ? p.drop : p.kt, axis: Math.round(dzAxis(R, k)), tot: new Date(R.t[k]).toISOString(),
-          carp: x ? [+x.carp[0].toFixed(6), +x.carp[1].toFixed(6)] : null, green: x ? new Date(x.green).toISOString() : null, passes: x ? x.passes.length : 0 };
+          carp: x ? [+x.carp[0].toFixed(6), +x.carp[1].toFixed(6)] : null, release: x ? x.rk : null, open_ft: x && x.ff ? x.ff.open : null, green: x ? new Date(x.green).toISOString() : null, passes: x ? x.passes.length : 0 };
       }
       return null;
     }
