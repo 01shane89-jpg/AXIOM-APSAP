@@ -8,6 +8,7 @@
      points with center (and lat/lon for nodes), areas as a closed way or a relation with outer/inner member rings.
      Fails with Error("busy") when the servers were busy or slow, another Error when nothing answered, AbortError when aborted.
    - A server that failed is tried last for the next 10 minutes (never dropped: the next one may be down too).
+   - OSAP_OSM.env(bounds), near([[lat, lon], ...], metres), geo(pts), crossesDateLine(pts): SQL pieces for callers' Postpass queries.
    - OSAP_OSM.health() -> { host: { ok, fail, last, err, ms } } for this page, so a panel can say which source went dark.
    Nothing here writes anything; the answers are views over community-mapped public data. */
 (function () {
@@ -57,6 +58,21 @@
   function env(b) {
     return "geom && ST_MakeEnvelope(" + [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map(function (v) { return v.toFixed(4); }).join(",") + ",4326)";
   }
+  /* "near this point or line" for Postpass SQL: a box test the index can use, then the true distance in metres.
+     pts are [lat, lon] pairs (one pair for a point); lon must not cross the date line (callers send no SQL then). */
+  function geo(pts) {
+    var ll = pts.map(function (p) { return (+p[1]).toFixed(5) + " " + (+p[0]).toFixed(5); });
+    return pts.length === 1 ? "ST_SetSRID(ST_MakePoint(" + ll[0].replace(" ", ",") + "),4326)" : "ST_GeomFromText('LINESTRING(" + ll.join(",") + ")',4326)";
+  }
+  function near(pts, m) {
+    var g = geo(pts), lat = Math.min(80, Math.max.apply(null, pts.map(function (p) { return Math.abs(+p[0]); })));
+    var deg = m / 111000 / Math.max(0.17, Math.cos(lat * Math.PI / 180)) + 0.001;
+    return "(geom && ST_Expand(" + g + ", " + deg.toFixed(4) + ") AND ST_DWithin(geom::geography, " + g + "::geography, " + Math.round(m) + "))";
+  }
+  function crossesDateLine(pts) {
+    var lo = pts.map(function (p) { return +p[1]; });
+    return Math.max.apply(null, lo) - Math.min.apply(null, lo) > 180 || lo.some(function (x) { return x < -180 || x > 180; });
+  }
   function post(u, body, ms, signal) {
     var one = new AbortController(), slow = false, t0 = Date.now();
     var st = setTimeout(function () { slow = true; one.abort(); }, ms);
@@ -104,5 +120,5 @@
     var now = Date.now();
     return Object.keys(H).filter(function (k) { return H[k].bad && now - H[k].bad < COOL; });
   }
-  W.OSAP_OSM = { query: query, elements: elements, env: env, health: health, dark: dark, POSTPASS: POSTPASS, OVERPASS: OVERPASS.slice() };
+  W.OSAP_OSM = { query: query, elements: elements, env: env, geo: geo, near: near, crossesDateLine: crossesDateLine, health: health, dark: dark, POSTPASS: POSTPASS, OVERPASS: OVERPASS.slice() };
 })();
