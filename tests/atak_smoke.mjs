@@ -65,6 +65,10 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   await longPress(p);
   ok(await shown(p, "#atk-ring"), "phone: long-press opens the radial menu");
   ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 10, "phone: radial has 9 actions (Plans, Find LZ and Terrain included) and close");
+  // a long-press must not select map text (iPhone Copy / Look Up bubble over the radius "km"); fields and text outside the map still select
+  ok(await p.evaluate(() => { const us = (e) => e && getComputedStyle(e).userSelect, sc = document.querySelector("#map .leaflet-control-scale-line");
+    return us(document.querySelector("#atk-ring .atk-rr span:last-child")) === "none" && us(document.querySelector("#atk-ring [data-rk] span")) === "none" && (!sc || us(sc) === "none"); }), "phone: map labels (radius km, ring names, scale) are not selectable");
+  ok(await p.evaluate(() => { const i = document.querySelector("#map input"), o = document.querySelector("header, .rail, #rv"); return (!i || getComputedStyle(i).userSelect !== "none") && !!o && getComputedStyle(o).userSelect !== "none"; }), "phone: map fields and text outside the map stay selectable");
   if (OUT) await p.screenshot({ path: OUT + "/phone-radial.png" });
   await ringBtn(p, "pin");
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").length === 1 && document.querySelectorAll(".leaflet-atakpane-pane .atk-pt").length === 1), "phone: Drop point draws P1 and keeps it");
