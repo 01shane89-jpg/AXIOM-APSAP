@@ -1,0 +1,9 @@
+  hero hero-ua
+PASS 01 hero-ua
+  hero hero-mm
+PASS 02 hero-mm
+  hero hero-sd
+PASS 03 hero-sd
+  hero hero-mx
+PASS 04 hero-mx
+all videos recorded
