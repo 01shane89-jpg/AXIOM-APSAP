@@ -51,12 +51,21 @@ const OSM = { elements: [
   { type: "node", id: 4, lat: PI[0] + dLat(600), lon: PI[1] + dLon(1500), tags: { man_made: "mast", height: "60" } }
 ] };
 
+/* the test features as Postpass would send them: GeoJSON with osm_type, osm_id and tags; a closed way is a polygon */
+function geojson(o) {
+  return { type: "FeatureCollection", features: o.elements.map((e) => {
+    const c = e.geometry ? e.geometry.map((q) => [q.lon, q.lat]) : null, closed = c && c.length > 3 && c[0][0] === c[c.length - 1][0] && c[0][1] === c[c.length - 1][1];
+    return { type: "Feature", properties: { osm_type: e.type[0].toUpperCase(), osm_id: e.id, tags: e.tags }, geometry: e.type === "node" ? { type: "Point", coordinates: [e.lon, e.lat] } : closed ? { type: "Polygon", coordinates: [c] } : { type: "LineString", coordinates: c } };
+  }) };
+}
 async function open(opts, flags = {}) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
-  const errors = [], hits = { meteo: 0, overpass: 0 };
+  const errors = [], hits = { meteo: 0, overpass: 0, postpass: 0 };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
     if (/api\.open-meteo\.com\/v1\/forecast/.test(u) && /wind_speed_925hPa/.test(u)) { hits.meteo++; return r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(meteo()) }); }
+    /* Geofabrik Postpass answers the same features as GeoJSON (or fails with the flag, so Overpass is tried next) */
+    if (/postpass\.geofabrik\.de/.test(u)) { hits.postpass++; return flags.osmFail || flags.ppFail ? r.fulfill({ status: 503, headers: { "Access-Control-Allow-Origin": "*" }, body: "down" }) : r.fulfill({ status: 200, contentType: "application/geo+json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(geojson(OSM)) }); }
     if (/\/api\/interpreter/.test(u)) { hits.overpass++; return flags.osmFail ? r.fulfill({ status: 504, headers: { "Access-Control-Allow-Origin": "*" }, body: "busy" }) : r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(OSM) }); }
     return r.abort();
   });
@@ -90,7 +99,7 @@ const text = (p) => p.evaluate(() => (document.getElementById("dzso") || {}).inn
   const mg = await p.evaluate((c) => window.OSAP_GEO.mgrs(c[0], c[1], 5), PI);
   ok(Math.abs(s.dz.pi[0] - PI[0]) < 1e-4 && Math.abs(s.dz.pi[1] - PI[1]) < 1e-4 && (await text(p)).includes(mg), "desktop: the sheet opens at the long-pressed point with its MGRS " + mg);
   ok(s.dz.elev_m === 24 && /24 m \/ 79 ft MSL/.test(await text(p)), "desktop: elevation comes from the model terrain: " + s.dz.elev_m);
-  ok(hits.meteo === 1 && hits.overpass === 1, "desktop: one forecast and one Overpass request: " + JSON.stringify(hits));
+  ok(hits.meteo === 1 && hits.postpass === 1 && hits.overpass === 0, "desktop: one forecast and one Postpass request (Overpass not needed): " + JSON.stringify(hits));
 
   /* drop time, altitude and the axis */
   await p.fill('#dzso [data-f="tot"]', TOTS); await p.dispatchEvent('#dzso [data-f="tot"]', "change");
@@ -156,6 +165,16 @@ const text = (p) => p.evaluate(() => (document.getElementById("dzso") || {}).inn
   ok(/34\.550/.test(pdf.text) && /\[x\]/.test(pdf.text) && /375 m/.test(pdf.text) && /not an official drop zone survey/i.test(pdf.text), "desktop: the printed sheet carries the fields, checks, drift and the planning-aid label");
   if (OUT) await p.screenshot({ path: OUT + "/dzso-desktop.png" });
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+
+/* ---------- Postpass down: Overpass answers instead ---------- */
+{
+  const { ctx, p, errors, hits } = await open({ viewport: { width: 1280, height: 800 } }, { ppFail: true });
+  await p.evaluate((c) => window.OSAP_DZSO_GO({ at: c }), PI); await settled(p);
+  const s = await p.evaluate(() => window.OSAP_DZSO.state());
+  ok(hits.postpass === 1 && hits.overpass === 1 && s.hz && s.hz.sum.power.n === 1 && s.hz.sum.river.n === 1, "fallback: with Postpass down the hazards come from Overpass: " + JSON.stringify(hits));
+  ok(errors.length === 0, "fallback: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 

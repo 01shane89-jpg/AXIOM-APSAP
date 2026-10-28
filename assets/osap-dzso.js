@@ -14,7 +14,7 @@
    - the DZSO's own reading at the DZ (anemometer wind and gust) against the same limits: the reading decides, the model does not;
    - light: sunset, end of civil and nautical twilight (EECT, EENT), BMNT, BMCT, sunrise, the moon and percent illuminated for
      the night round the drop time (OSAP_ILLUM's own astronomy, no network), and whether the drop time is day, twilight or dark;
-   - hazards in and round the DZ from OpenStreetMap (one Overpass request): power lines and cables, masts and towers, wind
+   - hazards in and round the DZ from OpenStreetMap (one Geofabrik Postpass request, else Overpass): power lines and cables, masts and towers, wind
      turbines, water, wetland, trees, roads, railways, fences and walls and buildings, each kind with how many are inside the DZ
      (plus a margin) and the nearest one's distance and direction from the PI, drawn on the map;
    - medical: the nearest hospitals from OSAP's stored copy of OpenStreetMap (data/medfac) with distance, direction and a flight
@@ -135,8 +135,11 @@
   var D = document, map = W.__asapMap, L = W.L;
   if (!map || !L) { W.OSAP_DZSO = { core: CORE }; return; }
   var METEO = "https://api.open-meteo.com/v1/forecast";
+  var POSTPASS = "https://postpass.geofabrik.de/api/interpreter";
   var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
-  var KEY = "osap-dzso", HOSP_R = 80000, HOSP_N = 6, HZ_MARGIN = 50;
+  var KEY = "osap-dzso", HOSP_R = 80000, HOSP_N = 6, HZ_MARGIN = 50, HZ_FAR = 10000;
+  /* the kinds searched out to HZ_FAR, not just round the DZ */
+  var FAR = { power: 1, mast: 1, wind: 1 };
   /* load profiles: limits and the drift constant are placeholders for the DZSO to set from the unit's SOP */
   var PROFILES = [
     { id: "sl", label: "Static line personnel", wind: 13, gust: 13, K: 3.0, alt: 1250, note: "13 kt is the static line training limit commonly applied under TC 3-21.220; K = 3.0 is the personnel drift constant used with D = KAV. Confirm both against your SOP." },
@@ -359,23 +362,65 @@
   }
   /* the servers one after another, each with its own time limit, and the whole lookup capped so it always ends in an answer
      or a failure the sheet shows; live() false stops it (the DZ moved, the sheet closed) */
-  function overpass(q, live) {
+  function overpass(q, live, pq) {
     var body = "data=" + encodeURIComponent(q), tried = [], t0 = Date.now(), CAP = 100000;
+    /* Geofabrik Postpass first (SQL over a PostGIS copy of OpenStreetMap; quick, and up when the public Overpass servers are
+       not, as they were on 28 Oct 2026), then each Overpass server */
+    function pp() {
+      if (!pq) return go(0);
+      ST.hzTry = POSTPASS.split("/")[2]; paintHz();
+      return post(POSTPASS, "data=" + encodeURIComponent(pq), 30000).then(ppEls).catch(function (e) { tried.push(POSTPASS.split("/")[2] + ": " + e.message); return go(0); });
+    }
     function go(i) {
       if (live && !live()) return Promise.reject(new Error("stopped"));
       if (i >= OVERPASS.length || Date.now() - t0 > CAP - 10000) return Promise.reject(new Error("no Overpass server answered (" + (tried.join("; ") || "none tried") + ")"));
       var host = OVERPASS[i].split("/")[2]; ST.hzTry = host + (i ? " (server " + (i + 1) + " of " + OVERPASS.length + ")" : ""); paintHz();
       return post(OVERPASS[i], body, Math.min(30000, CAP - (Date.now() - t0))).catch(function (e) { tried.push(host + ": " + e.message); return go(i + 1); });
     }
-    return go(0);
+    return pp();
+  }
+  /* the hazard ask in Postpass SQL: the far kinds out to HZ_FAR, the rest round the DZ, each clipped to its box so a big forest
+     or a long line comes back small */
+  function ppHz(dz) {
+    function box(m) { var a = m / 110574, b = m / (111320 * Math.cos(dz.pi[0] * R)); return "ST_MakeEnvelope(" + [dz.pi[1] - b, dz.pi[0] - a, dz.pi[1] + b, dz.pi[0] + a].map(function (v) { return v.toFixed(5); }).join(",") + ",4326)"; }
+    function sel(env, where, n) { return "(SELECT osm_type, osm_id, tags, ST_Intersection(geom, " + env + ") AS geom FROM postpass_pointlinepolygon WHERE (" + where + ") AND geom && " + env + " LIMIT " + n + ")"; }
+    function inn(k, vals) { return "tags->>'" + k + "' IN (" + vals.map(function (v) { return "'" + v + "'"; }).join(",") + ")"; }
+    var far = [inn("power", ["line", "minor_line", "cable"]), inn("man_made", ["mast", "tower", "communications_tower", "chimney", "water_tower"]), "(tags->>'power' = 'generator' AND tags->>'generator:source' = 'wind')"].join(" OR ");
+    var near = [inn("natural", ["water", "wetland", "wood", "tree_row"]), inn("landuse", ["reservoir", "basin", "forest"]), inn("waterway", ["river", "canal", "stream", "drain", "ditch"]),
+      inn("railway", ["rail", "light_rail", "narrow_gauge"]), inn("highway", ["motorway", "trunk", "primary", "secondary", "tertiary", "unclassified", "residential", "service", "track"]),
+      inn("barrier", ["fence", "wall", "city_wall"]), "tags ? 'building'"].join(" OR ");
+    return sel(box(HZ_FAR), far, 1500) + " UNION ALL " + sel(box(hzRadius(dz)), "(" + near + ") AND NOT (" + far + ")", 4000);
+  }
+  /* Postpass GeoJSON -> the Overpass elements analyseHz reads: a node per point, a way per line part or outer ring */
+  function ppEls(j) {
+    if (!j || !Array.isArray(j.features)) throw new Error("not a Postpass answer");
+    var out = [], T = { N: "node", W: "way", R: "relation" };
+    j.features.forEach(function (f) {
+      var g = f && f.geometry, p = (f && f.properties) || {}, t = typeof p.tags === "string" ? JSON.parse(p.tags) : p.tags || {};
+      if (!g || !g.coordinates) return;
+      var id = (T[p.osm_type] || "way") + "/" + p.osm_id, ll = function (c) { return { lat: c[1], lon: c[0] }; };
+      function way(cs) { if (cs.length > 1) out.push({ type: "way", id: id, tags: t, geometry: cs.map(ll) }); }
+      if (g.type === "Point") out.push({ type: "node", id: id, tags: t, lat: g.coordinates[1], lon: g.coordinates[0] });
+      else if (g.type === "MultiPoint") g.coordinates.forEach(function (c) { out.push({ type: "node", id: id, tags: t, lat: c[1], lon: c[0] }); });
+      else if (g.type === "LineString") way(g.coordinates);
+      else if (g.type === "MultiLineString") g.coordinates.forEach(way);
+      else if (g.type === "Polygon") way(g.coordinates[0]);
+      else if (g.type === "MultiPolygon") g.coordinates.forEach(function (pg) { way(pg[0]); });
+      else if (g.type === "GeometryCollection") (g.geometries || []).forEach(function (x) { ppEls({ features: [{ geometry: x, properties: p }] }).elements.forEach(function (e) { out.push(e); }); });
+    });
+    return { elements: out };
   }
   function hzRadius(dz) { return Math.min(4000, Math.round(Math.max(dz.len_m, dz.wid_m) + 800)); }
   function hzQuery(dz) {
-    var a = "(around:" + hzRadius(dz) + "," + dz.pi[0].toFixed(5) + "," + dz.pi[1].toFixed(5) + ")";
+    var c = "," + dz.pi[0].toFixed(5) + "," + dz.pi[1].toFixed(5) + ")", a = "(around:" + hzRadius(dz) + c, f = "(around:" + HZ_FAR + c;
+    /* power lines, masts and wind turbines out to HZ_FAR and in their own output, so the nearest is always found (Shane
+       2026-10-28 doubted "no power lines": the one he could see was beyond the old 1.8 km search) and the 4000-element cap on
+       buildings and roads can never crowd them out */
     return "[out:json][timeout:25];(" +
-      'way["power"~"^(line|minor_line|cable)$"]' + a + ";" +
-      'nwr["man_made"~"^(mast|tower|communications_tower|chimney|water_tower)$"]' + a + ";" +
-      'node["power"="generator"]["generator:source"="wind"]' + a + ";" +
+      'way["power"~"^(line|minor_line|cable)$"]' + f + ";" +
+      'nwr["man_made"~"^(mast|tower|communications_tower|chimney|water_tower)$"]' + f + ";" +
+      'node["power"="generator"]["generator:source"="wind"]' + f + ";" +
+      ");out geom 1500;(" +
       'nwr["natural"="water"]' + a + ";" + 'nwr["landuse"~"^(reservoir|basin)$"]' + a + ";" +
       'way["waterway"~"^(river|canal|stream|drain|ditch)$"]' + a + ";" + 'nwr["natural"="wetland"]' + a + ";" +
       'nwr["natural"~"^(wood|tree_row)$"]' + a + ";" + 'nwr["landuse"="forest"]' + a + ";" +
@@ -406,6 +451,7 @@
     return null;
   }
   function analyseHz(els, dz) {
+    var r = hzRadius(dz);
     var items = [], sum = {};
     ORDER.forEach(function (k) { sum[k] = { n: 0, inDz: 0, near: null }; });
     (els || []).forEach(function (e) {
@@ -419,7 +465,7 @@
         if (!inDz) inDz = touches(Object.assign({}, dz, { len_m: dz.len_m + 2 * HZ_MARGIN, wid_m: dz.wid_m + 2 * HZ_MARGIN, pi_lead_m: (+dz.pi_lead_m || 0) + HZ_MARGIN }), ln, closed);
       });
       if (!isFinite(nb.m)) return;
-      var s = sum[k]; s.n++; if (inDz) s.inDz++;
+      var s = sum[k]; if (nb.m <= r) s.n++; if (inDz) s.inDz++;
       var it = { k: k, name: String(t.name || t.ref || "").slice(0, 60), m: nb.m, brg: nb.m > 0.5 ? bearing(dz.pi, nb.p) : null, inDz: inDz, id: e.type + "/" + e.id, pt: g.pt || null, line: lines && lines[0], closed: closed,
         extra: k === "power" ? (t.voltage ? Math.round(+String(t.voltage).split(/[;,]/)[0] / 1000) + " kV" : "") : k === "mast" && t.height ? t.height + " m tall" : k === "road" ? t.highway : "" };
       if (!s.near || nb.m < s.near.m) s.near = it;
@@ -429,9 +475,9 @@
   }
   function loadHz() {
     var dz = ST.dz, run = ++ST.run.hz; ST.hzBusy = true; ST.hzErr = ""; ST.hzT0 = Date.now(); ST.hzTry = ""; paint();
-    overpass(hzQuery(dz), function () { return run === ST.run.hz; }).then(function (j) {
+    overpass(hzQuery(dz), function () { return run === ST.run.hz; }, ppHz(dz)).then(function (j) {
       if (run !== ST.run.hz) return;
-      ST.hz = analyseHz(j.elements || [], dz); ST.hz.at = Date.now(); ST.hz.r = hzRadius(dz); ST.hz.dzKey = dzKey(dz);
+      ST.hz = analyseHz(j.elements || [], dz); ST.hz.at = Date.now(); ST.hz.via = ST.hzTry.replace(/ \(.*$/, ""); ST.hz.r = hzRadius(dz); ST.hz.dzKey = dzKey(dz);
     }).catch(function (e) { if (run === ST.run.hz) { ST.hz = null; ST.hzErr = e.message || "failed"; } }).then(function () { if (run === ST.run.hz) { ST.hzBusy = false; paint(); drawHz(); } });
   }
   function dzKey(dz) { return [dz.pi.join(","), dz.axis, dz.shape, dz.len_m, dz.wid_m, dz.pi_lead_m].join("|"); }
@@ -652,7 +698,7 @@
       '<p class="obs">Zulu then local. Computed on this device for a flat horizon at sea level (OSAP night illumination method); terrain moves real times.</p>';
   }
   function hzBusyTxt(dz) {
-    return "Asking OpenStreetMap (Overpass" + (ST.hzTry ? ": " + esc(ST.hzTry) : "") + ") for power lines, water, trees, roads and buildings within " + fmtM(hzRadius(dz)) + "… " +
+    return "Asking OpenStreetMap (" + (ST.hzTry ? esc(ST.hzTry) : "Postpass, then Overpass") + ") for power lines, water, trees, roads and buildings within " + fmtM(hzRadius(dz)) + "… " +
       Math.round((Date.now() - ST.hzT0) / 1000) + ' s <button type="button" data-dz="hz">Try again</button>';
   }
   /* the busy line only, so a long lookup shows it is still going without repainting the whole sheet under the finger */
@@ -671,9 +717,9 @@
       ORDER.map(function (k) {
         var s = S[k], n = s.near;
         return '<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;background:' + KINDS[k].c + '"></span>' + KINDS[k].n + "</td><td>" + s.n + '</td><td class="' + (s.inDz && KINDS[k].sev >= 2 ? "bad" : "") + '">' + s.inDz + "</td><td>" +
-          (n ? (n.m < 1 ? "at the PI" : fmtM(n.m) + " " + compass(n.brg) + " (" + dir3(n.brg) + "°)") + (n.name ? ", " + esc(n.name) : "") + (n.extra ? ", " + esc(n.extra) : "") : "none mapped") + "</td></tr>";
+          (n ? (n.m < 1 ? "at the PI" : fmtM(n.m) + " " + compass(n.brg) + " (" + dir3(n.brg) + "°)") + (n.name ? ", " + esc(n.name) : "") + (n.extra ? ", " + esc(n.extra) : "") : "none mapped within " + fmtM(FAR[k] ? HZ_FAR : ST.hz.r)) + "</td></tr>";
       }).join("") + "</tbody></table></div>" +
-      '<p class="obs">OpenStreetMap through Overpass, read ' + zc(ST.hz.at) + ". Only what volunteers have mapped: wires, fences, ditches, single trees and poles are often missing. Walk the DZ. " + (inn.length ? inn.length + " mapped features touch the DZ or its " + HZ_MARGIN + " m margin." : "") + ' <button type="button" data-dz="hz">Refresh</button></p>';
+      '<p class="obs">OpenStreetMap' + (ST.hz.via ? " through " + esc(ST.hz.via) : "") + ', read ' + zc(ST.hz.at) + ". The nearest power line, mast or wind turbine is looked for out to " + fmtM(HZ_FAR) + ". Only what volunteers have mapped: wires, fences, ditches, single trees and poles are often missing. Walk the DZ. " + (inn.length ? inn.length + " mapped features touch the DZ or its " + HZ_MARGIN + " m margin." : "") + ' <button type="button" data-dz="hz">Refresh</button></p>';
     return h;
   }
   function secMed(dz) {
@@ -712,7 +758,7 @@
       '<p class="obs">' + (ST.saved ? "Kept with this drop zone in this browser only." : "Save the drop zone to keep these in this browser.") + " Do not type personal phone numbers here.</p>";
   }
   function secMethod() {
-    return '<h3>Method and sources</h3><p class="obs">Winds and weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> model forecast. Hazards: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors (Overpass). Hospitals: OSAP\'s stored OpenStreetMap copy. Light: OSAP night illumination. Magnetic declination: WMM2025. ' +
+    return '<h3>Method and sources</h3><p class="obs">Winds and weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> model forecast. Hazards: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors (Geofabrik Postpass, else Overpass). Hospitals: OSAP\'s stored OpenStreetMap copy. Light: OSAP night illumination. Magnetic declination: WMM2025. ' +
       "Fixed rules, no AI. A planning aid for the DZSO: not an official drop zone survey, not analyst-approved; the limits are the DZSO's own settings.</p>";
   }
 
@@ -786,7 +832,7 @@
     }
     if (L0) { var n = L0.n; h += "<h2>Light</h2>" + kv([["At the drop time", L0.at], ["Sunset / EECT / EENT", [n.rise.down, n.civil.down, n.naut.down].map(function (t) { return t == null ? "-" : zc(t); }).join(" / ")], ["BMNT / BMCT / Sunrise", [n.naut.up, n.civil.up, n.rise.up].map(function (t) { return t == null ? "-" : zc(t); }).join(" / ")], ["Moon", Math.round(n.il.frac * 100) + "% lit" + (n.moonrise.length ? ", rises " + n.moonrise.map(zc).join(", ") : "") + (n.moonset.length ? ", sets " + n.moonset.map(zc).join(", ") : "")]]); }
     if (ST.hz) h += "<h2>Hazards (OpenStreetMap)</h2><table><thead><tr><th>Hazard</th><th>Within " + fmtM(ST.hz.r) + "</th><th>In DZ +" + HZ_MARGIN + " m</th><th>Nearest to the PI</th></tr></thead><tbody>" + ORDER.map(function (k) {
-      var s = ST.hz.sum[k], nn = s.near; return "<tr><td>" + KINDS[k].n + "</td><td>" + s.n + "</td><td>" + s.inDz + "</td><td>" + (nn ? (nn.m < 1 ? "at the PI" : fmtM(nn.m) + " " + compass(nn.brg)) + (nn.name ? ", " + esc(nn.name) : "") : "none mapped") + "</td></tr>";
+      var s = ST.hz.sum[k], nn = s.near; return "<tr><td>" + KINDS[k].n + "</td><td>" + s.n + "</td><td>" + s.inDz + "</td><td>" + (nn ? (nn.m < 1 ? "at the PI" : fmtM(nn.m) + " " + compass(nn.brg)) + (nn.name ? ", " + esc(nn.name) : "") : "none mapped within " + fmtM(FAR[k] ? HZ_FAR : ST.hz.r)) + "</td></tr>";
     }).join("") + "</tbody></table><p>OpenStreetMap contributors (https://www.openstreetmap.org/copyright). Only mapped features; walk the DZ.</p>";
     var gd = ST.gnd.on && ST.hosp && ST.hosp.list.some(function (x) { return x.road; });
     if (ST.hosp && ST.hosp.list.length) h += "<h2>Nearest hospitals</h2><table><thead><tr><th>Hospital</th><th>From the PI</th><th>Air at " + LIM.kn + " kt</th>" + (gd ? "<th>By road</th>" : "") + "<th>Source</th></tr></thead><tbody>" + ST.hosp.list.map(function (x) {

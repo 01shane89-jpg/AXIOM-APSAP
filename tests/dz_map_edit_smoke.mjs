@@ -51,13 +51,19 @@ function meteo() {
     wind_speed_850hPa: f(8), wind_direction_850hPa: f(270), geopotential_height_850hPa: f(1500), cloud_cover_low: f(10), visibility: f(24000), precipitation: f(0), weather_code: f(1), pressure_msl: f(1009) } };
 }
 
+/* a 115 kV line running north-south 4 km east of the PI: outside the old 1.8 km hazard search */
+const FARLINE = { type: "way", id: 9, tags: { power: "line", voltage: "115000" }, geometry: [-3000, 3000].map((n) => ({ lat: PI[0] + n / 110574, lon: PI[1] + 4000 / (111320 * Math.cos(PI[0] * Math.PI / 180)) })) };
 async function open(opts, flags = {}) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [], hits = { overpass: 0, tiles: 0 };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, async (r) => {
     const u = r.request().url();
     if (/api\.open-meteo\.com\/v1\/forecast/.test(u) && /wind_speed_925hPa/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(meteo()) });
-    if (/\/api\/interpreter/.test(u)) { hits.overpass++; if (flags.osmSlow) await new Promise((w) => setTimeout(w, flags.osmSlow)); return r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify({ elements: [] }) }); }
+    if (/postpass\.geofabrik\.de/.test(u)) {
+      if (flags.osmSlow) await new Promise((w) => setTimeout(w, flags.osmSlow));
+      return r.fulfill({ status: 200, contentType: "application/geo+json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify({ type: "FeatureCollection", features: flags.farLine ? [{ type: "Feature", properties: { osm_type: "W", osm_id: 9, tags: FARLINE.tags }, geometry: { type: "LineString", coordinates: FARLINE.geometry.map((q) => [q.lon, q.lat]) } }] : [] }) });
+    }
+    if (/\/api\/interpreter/.test(u)) { hits.overpass++; if (flags.osmSlow) await new Promise((w) => setTimeout(w, flags.osmSlow)); return r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify({ elements: flags.farLine ? [FARLINE] : [] }) }); }
     if (/World_Imagery\/MapServer\/tile\//.test(u)) { hits.tiles++; return r.fulfill({ status: 200, contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: TILE }); }
     return r.abort();
   });
@@ -198,6 +204,19 @@ async function mouseDrag(p, from, to) {
   const t = await p.textContent("#dzso");
   ok(!/Asking OpenStreetMap/.test(t) && /Hazards in and round the DZ/.test(t) && (await p.evaluate(() => !!window.OSAP_DZSO.state().hz)), "hazards: they still fill in after a winds Refresh (no longer stuck on Asking OpenStreetMap)");
   ok(errors.length === 0, "hazards: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+
+/* ---------- hazards: a power line 4 km away is found and named, not "none" ---------- */
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1280, height: 800 } }, { farLine: true });
+  await p.evaluate(() => window.OSAP_DZSO_GO({ id: "dztest01" })); await settled(p);
+  const s = await p.evaluate(() => window.OSAP_DZSO.state().hz.sum.power);
+  const t = await p.textContent("#dzso");
+  ok(s.n === 0 && s.near && Math.abs(s.near.m - 4000) < 20, "hazards: the power line 4 km east is the nearest one (outside the DZ search, so counted 0 there): " + (s.near && Math.round(s.near.m)));
+  ok(/4\.0 km E \(090°\), 115 kV/.test(t) && /out to 10 km/.test(t), "hazards: the table names it, 4.0 km E, 115 kV, and says power lines are looked for out to 10 km");
+  ok(/none mapped within 10 km/.test(t) && /none mapped within 1\.8 km/.test(t), "hazards: an empty row says how far it looked");
+  ok(errors.length === 0, "far line: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 
