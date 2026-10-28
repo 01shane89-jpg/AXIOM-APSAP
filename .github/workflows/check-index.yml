@@ -291,6 +291,7 @@ jobs:
       - run: node tests/custom_topic_smoke.mjs
       - run: node tests/wxchart_smoke.mjs
       - run: node tests/avwx_smoke.mjs
+      - run: node tests/wxbrief_area_smoke.mjs
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs

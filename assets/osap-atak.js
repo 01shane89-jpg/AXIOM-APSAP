@@ -474,7 +474,7 @@
      Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
   function radNow() { return RAD; }
   function plansOpen(r, ll) {
-    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat([["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"]]);
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat([["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
     pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
     pop.hidden = false; pop._for = "plans"; pop._ll = ll;
     /* under the Plans button, kept inside the map */
@@ -528,6 +528,8 @@
     else if (k === "evac") epeGo({ at: P, how: "Long-press on the map" });
     /* DZSO sheet: this point is the drop zone's point of impact */
     else if (k === "dzso") dzsoGo({ at: P });
+    /* one-page weather brief for this point and 25 km around it (assets/osap-weather.js) */
+    else if (k === "wxbrief") { if (W.OSAP_WX && W.OSAP_WX.briefAt) W.OSAP_WX.briefAt({ lat: P[0], lon: P[1] }); else toast("Weather is still loading. Try again in a moment."); }
     else if (k === "nai" || k === "watch") {
       var A = W.TSAP && W.TSAP.areaApi; if (!A || !A.setArea) return;
       A.setArea(circle(ll, radius())); setTimeout(paintTools, 30);
@@ -601,7 +603,7 @@
     }).join("") || '<p class="obs">No data sets on this tab.</p>';
     var mk = om.querySelector("#atk-marks"), P = ptsHere(), A = W.OSAP_AOI ? W.OSAP_AOI.list(cc()) : [];
     mk.innerHTML = (P.length || A.length ? "" : '<p class="obs">Use Point on the toolbar, or long-press the map, to add a point. Long-press to save an NAI/TAI.</p>') +
-      P.map(function (p) { return '<div class="atk-mk"><button type="button" data-mk-go="' + esc(p.id) + '"><i class="atk-dot"></i>' + esc(p.n) + (p.ph ? " <span class=\"obs\">" + CAM + p.ph + "</span>" : "") + ' <code>' + esc(fmtPt(p.lat, p.lon, "mgrs")) + '</code></button>' + (W.OSAP_POINTS ? '<button type="button" class="atk-ic" data-mk-ed="' + esc(p.id) + '" aria-label="Edit ' + esc(p.n) + '" title="Name, note and photos">' + I.pen + "</button>" : "") + '<button type="button" class="atk-ic" data-mk-del="' + esc(p.id) + '" aria-label="Remove ' + esc(p.n) + '">' + I.x + "</button></div>"; }).join("") +
+      P.map(function (p) { return '<div class="atk-mk"><button type="button" data-mk-go="' + esc(p.id) + '"><i class="atk-dot"></i>' + esc(p.n) + (p.ph ? " <span class=\"obs\">" + CAM + p.ph + "</span>" : "") + ' <code>' + esc(fmtPt(p.lat, p.lon, "mgrs")) + '</code></button>' + (W.OSAP_WX && W.OSAP_WX.briefAt ? '<button type="button" class="atk-ic" data-mk-wx="' + esc(p.id) + '" aria-label="Weather brief at ' + esc(p.n) + '" title="One-page weather brief here">' + I.cloud + "</button>" : "") + (W.OSAP_POINTS ? '<button type="button" class="atk-ic" data-mk-ed="' + esc(p.id) + '" aria-label="Edit ' + esc(p.n) + '" title="Name, note and photos">' + I.pen + "</button>" : "") + '<button type="button" class="atk-ic" data-mk-del="' + esc(p.id) + '" aria-label="Remove ' + esc(p.n) + '">' + I.x + "</button></div>"; }).join("") +
       A.map(function (a) { return '<div class="atk-mk"><button type="button" data-aoi-go="' + esc(a.id) + '"><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(a.name) + "</button></div>"; }).join("");
     om.querySelector("#atk-classic").checked = !on();
   }
@@ -629,6 +631,7 @@
     if (t.closest("[data-om=x]")) { omClose(); return; }
     if ((b = t.closest(".atk-dsb[data-ds]"))) { press('#view-seg button[data-view="' + b.getAttribute("data-ds") + '"]'); setTimeout(omPaint, 60); return; }
     if ((b = t.closest("[data-mk-del]"))) { ptDel(b.getAttribute("data-mk-del")); return; }
+    if ((b = t.closest("[data-mk-wx]"))) { var pw = ptsAll().filter(function (x) { return x.id === b.getAttribute("data-mk-wx"); })[0]; if (pw && W.OSAP_WX) { omClose(); W.OSAP_WX.briefAt({ lat: pw.lat, lon: pw.lon, name: pw.n }); } return; }
     if ((b = t.closest("[data-mk-ed]"))) { if (phone()) omClose(); if (W.OSAP_POINTS) W.OSAP_POINTS.edit(b.getAttribute("data-mk-ed")); return; }
     if ((b = t.closest("[data-mk-go]"))) { var p = ptsAll().filter(function (x) { return x.id === b.getAttribute("data-mk-go"); })[0]; if (p) { if (phone()) omClose(); map.setView([p.lat, p.lon], Math.max(map.getZoom(), 12)); } return; }
     if ((b = t.closest("[data-aoi-go]"))) { if (W.OSAP_AOI) { omClose(); W.OSAP_AOI.open(b.getAttribute("data-aoi-go")); } return; }

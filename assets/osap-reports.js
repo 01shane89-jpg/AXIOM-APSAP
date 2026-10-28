@@ -35,7 +35,7 @@
     ["daily", "Country", "Daily summary", "Key events of the last 24 hours with every source, in Today",
       function () { return !!(W.OSAP_TODAY && W.OSAP_DAILYQ) || "Not available for this view"; },
       function () { W.OSAP_TODAY.show(); setTimeout(function () { var d = D.getElementById("td-daily"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "start" }); }, 120); }],
-    ["wxbrief", "Country", "Weather brief", "One page: impacts, forecast and light for the country or the drawn area",
+    ["wxbrief", "Country", "Weather brief", "One page: observed now, impacts, forecast, upper winds, light and warnings for the country, the drawn area or a chosen spot",
       function () { return !!(W.OSAP_WX && W.OSAP_WX.brief) || "Weather is still loading"; }, function () { W.OSAP_WX.brief(); }],
     ["wxchart", "Country", "5-day weather chart", "Military-style chart: night and day halves, winds, crosswind, DA/PA, light, illumination and mission impacts",
       function () { return !!(W.OSAP_WX && W.OSAP_WX.chart) || "Weather is still loading"; }, function () { W.OSAP_WX.chart(); }],
