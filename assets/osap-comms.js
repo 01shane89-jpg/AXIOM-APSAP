@@ -1,5 +1,5 @@
 /* AXIOM OSAP: the Comms tab (view id "comms"), communications on every country. Loaded only when the tab is first opened.
-   - Masts and towers: OpenStreetMap communication masts and towers for the area on screen (Overpass, keyless), sorted into
+   - Masts and towers: OpenStreetMap communication masts and towers for the area on screen (OSAP_OSM: Postpass first, then Overpass; keyless), sorted into
      mobile phone masts, radio and TV broadcast towers, and other communication masts (the mapper did not say what they carry).
      Community-mapped: many countries are only partly mapped, so a place with no mast on the map may still have masts.
    - Measured coverage: where phones actually ran speed tests on a mobile network (Ookla Open Data, the two newest quarters,
@@ -127,9 +127,9 @@
 function main() {
   var W = window, D = document, G = W.OSAP_GEO;
   var KEY = "osap-comms", COV = W.OSAP_COMMS_COV || "data/comms/cov/", MASTS = W.OSAP_COMMS_MASTS || "data/comms/masts/";
-  /* probed 2026-10-01 from a GitHub runner: maps.mail.ru answered every mast query in 10-16 s (Bangkok zoom 9: 575 masts);
-     overpass-api.de, overpass.kumi.systems and overpass.private.coffee gave no answer within 60 s */
-  var OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+  /* masts are read through OSAP_OSM (assets/osap-osm.js): Postpass first, then the public Overpass servers. Probed 2026-10-01
+     from a GitHub runner: maps.mail.ru answered every mast query in 10-16 s; the other Overpass servers gave no answer in 60 s.
+     By 2026-10-28 maps.mail.ru mostly 504'd too, while Postpass answered in under 3 s. */
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png", DEMZ = 12;
   var MASTZ = 9, COVZ = 5, BOX = 0.25, MAX_BOXES = 30, VIEW_BOXES = 64, R_CHECK = 35000, R_BCAST = 60000;
   var KINDS = {
@@ -172,13 +172,14 @@ function main() {
     /* every mast and tower, sorted into kinds here: a key-pattern filter on the server made the same query time out (504) */
     return "[out:json][timeout:25];nwr[\"man_made\"~\"^(mast|tower|communications_tower)$\"]" + bb + ";out center tags 10000;";
   }
-  function post(q, i) {
-    var c = withTimeout(35000);
-    return fetch(OVERPASS[i], { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: c && c.signal })
-      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: a failure, not "no masts here" */
-      .then(function (j) { if (!j || (j.remark && /error/i.test(j.remark))) throw new Error("remark"); return j; })
-      .catch(function (err) { if (i + 1 < OVERPASS.length) return post(q, i + 1); throw err; });
+  /* the same ask in Postpass SQL */
+  function sqlQuery(s, w, n, e) {
+    return "SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE tags->>'man_made' IN ('mast','tower','communications_tower') AND " +
+      "geom && ST_MakeEnvelope(" + [w, s, e, n].map(function (v) { return v.toFixed(4); }).join(",") + ",4326) LIMIT 10000";
+  }
+  function post(q, sql) {
+    var c = withTimeout(80000);
+    return W.OSAP_OSM.query({ sql: sql, ql: q, signal: c && c.signal });
   }
   /* loads every missing box in the area, one request per block of up to 4 x 4 boxes (one degree), at most two at a time;
      draws as each block arrives. With cap, only the cap boxes nearest the middle are loaded (a wide screen at zoom 9 holds 200+). */
@@ -196,7 +197,7 @@ function main() {
     blk.forEach(function (b) { S.boxWait[boxKey(b[0], b[1])] = p; });
     S.mastBusy++; paintStatus();
     queue.push(function () {
-      return post(query(j0 * BOX, i0 * BOX, (j1 + 1) * BOX, (i1 + 1) * BOX), 0).then(function (j) {
+      return post(query(j0 * BOX, i0 * BOX, (j1 + 1) * BOX, (i1 + 1) * BOX), sqlQuery(j0 * BOX, i0 * BOX, (j1 + 1) * BOX, (i1 + 1) * BOX)).then(function (j) {
         (j.elements || []).forEach(function (el) {
           var lat = el.lat != null ? el.lat : el.center && el.center.lat, lon = el.lon != null ? el.lon : el.center && el.center.lon;
           if (lat != null && lon != null) addMast(el.type + "/" + el.id, lat, lon, el.tags || {});
@@ -1060,7 +1061,7 @@ function main() {
   function paintSources() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-src"); if (!el) return;
     var c = S.cov;
-    el.innerHTML = 'Sources: masts and towers, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL) via Overpass, read live. ' +
+    el.innerHTML = 'Sources: masts and towers, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL) via Geofabrik Postpass or Overpass, read live. ' +
       'Measured coverage, <a href="https://github.com/teamookla/ookla-open-data" target="_blank" rel="noopener noreferrer">Speedtest by Ookla Global Fixed and Mobile Network Performance Maps</a>' +
       (c ? ", " + E((c.periods || []).join(" and ")) : "") + " (CC BY-NC-SA 4.0, non-commercial). " +
       'Coverage by network, <a href="https://opencellid.org" target="_blank" rel="noopener noreferrer">OpenCelliD</a> (CC BY-SA 4.0), ' + OCID_AT + ' copy published as PMTiles by the UN Smart Maps group on Source Cooperative; network names from the MCC-MNC list (cavoq/mcc-mnc-list, from Wikipedia, CC BY-SA 4.0). ' +
