@@ -30,23 +30,8 @@
   function toast(t) { if (W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast(t); }
   function wrap(lon) { return L.Util.wrapNum(lon, [-180, 180], true); }
 
-  /* typical published figures, rounded; every one can be changed in the plan. kt = cruise true airspeed, drop = typical
-     personnel drop airspeed, range = typical range in nm with a load, for a soft warning only */
-  var ACFT = [
-    { id: "c130h", name: "C-130H Hercules", kt: 290, drop: 130, range: 2000, sym: "110107" },
-    { id: "c130j", name: "C-130J Super Hercules", kt: 320, drop: 130, range: 1800, sym: "110107" },
-    { id: "c17", name: "C-17A Globemaster III", kt: 450, drop: 135, range: 2400, sym: "110107" },
-    { id: "a400m", name: "A400M Atlas", kt: 400, drop: 130, range: 1800, sym: "110107" },
-    { id: "c27j", name: "C-27J Spartan", kt: 300, drop: 120, range: 1000, sym: "110107" },
-    { id: "c295", name: "C-295 (CASA)", kt: 260, drop: 110, range: 1500, sym: "110107" },
-    { id: "cn235", name: "CN-235 (CASA)", kt: 240, drop: 110, range: 1500, sym: "110107" },
-    { id: "dhc6", name: "DHC-6 Twin Otter", kt: 150, drop: 90, range: 700, sym: "110113" },
-    { id: "c208", name: "Cessna 208 Caravan", kt: 180, drop: 90, range: 900, sym: "110113" },
-    { id: "uh60", name: "UH-60 Black Hawk", kt: 145, drop: 70, range: 300, sym: "110200" },
-    { id: "ch47", name: "CH-47 Chinook", kt: 150, drop: 80, range: 350, sym: "110200" },
-    { id: "mi17", name: "Mi-8/Mi-17", kt: 125, drop: 70, range: 300, sym: "110200" },
-    { id: "v22", name: "CV-22 / MV-22 Osprey", kt: 240, drop: 110, range: 800, sym: "110114" },
-    { id: "custom", name: "Other (set your own)", kt: 200, drop: 110, range: 0, sym: "110107" }];
+  /* the aircraft list lives in the shared drop zone store (assets/osap-dz.js), so the DZSO sheet offers the same types */
+  var ACFT = (W.OSAP_DZ && W.OSAP_DZ.aircraft) || [{ id: "custom", name: "Other (set your own)", kt: 200, drop: 110, range: 0, sym: "110107" }];
   var ROLES = [["dep", "Departure airfield"], ["cp", "Checkpoint"], ["ip", "Initial point (IP)"], ["dz", "Drop zone (DZ)"], ["land", "Landing airfield"]];
   var RSHORT = { dep: "DEP", cp: "CP", ip: "IP", dz: "DZ", land: "LDG" };
   /* 2525D: version 10, reality, friend, symbol set, present, entity, no modifiers */
@@ -60,6 +45,7 @@
     if (!p || !isFinite(p.lat) || !isFinite(p.lon) || Math.abs(p.lat) > 90) return null;
     var o = { role: ROLES.some(function (r) { return r[0] === p.role; }) ? p.role : "cp", name: clean(p.name, 60), lat: +p.lat, lon: wrap(+p.lon), cc: clean(p.cc, 8) };
     if (p.dzId) o.dzId = clean(p.dzId, 80);
+    if (p.dzId && isFinite(p.lead) && p.lead !== null && +p.lead >= 0 && +p.lead <= 10000) o.lead = +p.lead;
     return o;
   }
   function cleanPlan(p) {
@@ -74,6 +60,29 @@
   }
   var S = { plan: cleanPlan(lsGet(CKEY, null)), arm: false, msg: "", err: "", q: "" };
   function keep() { lsSet(CKEY, S.plan); }
+  /* a saved drop zone this plan drops on was changed (dragged on the map from the DZSO sheet, or edited there): follow it. The
+     PI, size and lead come across; a new run-in axis swings the IP round the DZ at the same distance so the run-in lines up. */
+  function follow(id) {
+    if (!W.OSAP_DZ) return;
+    var P = S.plan.pts, moved = false, msg = "";
+    P.forEach(function (q, k) {
+      if (q.role !== "dz" || !q.dzId || (id && q.dzId !== id)) return;
+      var z = W.OSAP_DZ.get(q.dzId); if (!z) return;
+      var lead = z.shape !== "circle" && isFinite(z.pi_lead_m) ? +z.pi_lead_m : undefined;
+      var len = Math.max(50, Math.min(10000, +z.len_m || S.plan.dzLen)), wid = z.shape === "circle" ? len : Math.max(50, Math.min(10000, +z.wid_m || S.plan.dzWid));
+      var same = Math.abs(q.lat - z.pi[0]) < 1e-6 && Math.abs(q.lon - z.pi[1]) < 1e-6 && S.plan.dzLen === len && S.plan.dzWid === wid && q.lead === lead;
+      var ip = k > 0 && P[k - 1].role === "ip" ? P[k - 1] : null, g = G(), turn = false;
+      if (ip && isFinite(z.axis)) { var inv = g.inverse([ip.lat, ip.lon], [z.pi[0], z.pi[1]]); turn = Math.abs(((inv.b2 - z.axis + 540) % 360) - 180) > 0.5; }
+      if (same && !turn) return;
+      if (turn) { var n = g.dest([z.pi[0], z.pi[1]], z.axis + 180, g.inverse([ip.lat, ip.lon], [q.lat, q.lon]).m); ip.lat = n[0]; ip.lon = wrap(n[1]); }
+      q.lat = +z.pi[0]; q.lon = wrap(+z.pi[1]); S.plan.dzLen = len; S.plan.dzWid = wid;
+      if (lead === undefined) delete q.lead; else q.lead = lead;
+      moved = true; msg = "DZ " + (z.name || "") + " updated from the saved drop zone" + (turn ? ": IP moved onto the new run-in " + deg(z.axis) + "." : ".");
+    });
+    if (!moved) return;
+    S.msg = msg; keep(); if (card && !card.hidden) { render(); draw(); }
+  }
+  if (W.OSAP_DZ && W.OSAP_DZ.on) W.OSAP_DZ.on(follow);
 
   /* ---------- the sums ---------- */
   /* legs of a plan: [{ i, a, b, m, nm, tc, mc, kt, s, runin }], with the time at every point (pt times, ms) and warnings */
@@ -102,9 +111,11 @@
     }
     return { legs: out, nm: nm, s: cum, t: t, t0: t0, dzI: dzI, warn: warn };
   }
-  /* the DZ box: length along the run-in course, centred on the point */
+  /* the DZ box: length along the run-in course, centred on the point, or with the point lead m from the leading edge when the
+     saved drop zone says so (the same box the DZSO sheet draws) */
   function dzBox(p, axis, len, wid) {
-    var g = G(), c = [p.lat, p.lon], f = g.dest(c, axis, len / 2), r = g.dest(c, axis + 180, len / 2);
+    var g = G(), c = [p.lat, p.lon], ld = isFinite(p.lead) && p.lead !== undefined ? Math.min(p.lead, len) : len / 2;
+    var f = g.dest(c, axis, len - ld), r = g.dest(c, axis + 180, ld);
     return [g.dest(f, axis - 90, wid / 2), g.dest(f, axis + 90, wid / 2), g.dest(r, axis + 90, wid / 2), g.dest(r, axis - 90, wid / 2)];
   }
   function dzAxis(R, k) { var l = R.legs[k - 1]; return l ? l.tcIn : (R.legs[k] ? R.legs[k].tc : 0); }
@@ -304,6 +315,7 @@
     var z = null; try { z = W.OSAP_DZ.get(id); } catch (e) {}
     var q = S.plan.pts[k]; if (!q || !z || !Array.isArray(z.pi)) return;
     q.lat = +z.pi[0]; q.lon = wrap(+z.pi[1]); q.dzId = z.id; q.name = clean(z.name, 60) || q.name; q.cc = clean(z.cc, 8) || q.cc;
+    if (z.shape !== "circle" && isFinite(z.pi_lead_m)) q.lead = +z.pi_lead_m; else delete q.lead;
     if (+z.len_m > 0) S.plan.dzLen = Math.min(10000, +z.len_m); if (+z.wid_m > 0) S.plan.dzWid = Math.min(10000, +z.wid_m);
     if (+z.alt_ft > 0) S.plan.altFt = Math.min(40000, +z.alt_ft);
     var R = legs(S.plan), ax = dzAxis(R, k);

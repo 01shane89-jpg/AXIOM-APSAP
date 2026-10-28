@@ -276,6 +276,9 @@ jobs:
       # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
       - run: sudo apt-get install -y --no-install-recommends poppler-utils
       - run: node tests/pdf_export_smoke.mjs
+      # Drop zone edited on the map (move, resize, turn the run-in, phone touch), aircraft drop-down, hazards after a Refresh,
+      # satellite map in the PDF (poppler, installed above), flight plan following the saved DZ (assets/osap-dzso.js, assets/osap-dz.js, assets/osap-flight.js)
+      - run: node tests/dz_map_edit_smoke.mjs
       - run: node tests/intelbrief_smoke.mjs
       # custom topic (own words, watch-word syntax) in the PowerPoint brief and OSIR windows
       - run: node tests/custom_topic_smoke.mjs
