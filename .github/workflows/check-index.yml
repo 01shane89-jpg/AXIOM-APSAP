@@ -241,6 +241,10 @@ jobs:
       - run: node tests/route_multi_smoke.mjs
       # Route > Plan a flight: airborne operation flight plan (assets/osap-flight.js)
       - run: node tests/flight_smoke.mjs
+      - run: node tests/flight_winds_smoke.mjs
+      - run: node tests/flight_drop_smoke.mjs
+      - run: node tests/flight_harp_smoke.mjs
+      - run: node tests/flight_brief_smoke.mjs
       - run: node tests/evac_lz_airfield_smoke.mjs
       - run: node tests/evac_foot_xc_smoke.mjs
       - run: node tests/epe_smoke.mjs
