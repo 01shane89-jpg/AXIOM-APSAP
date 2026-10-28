@@ -424,6 +424,16 @@
     return "[out:json][timeout:60];(nwr[\"aeroway\"~\"^(aerodrome|airstrip|heliport|helipad)$\"]" + ar + ";nwr[\"military\"=\"airfield\"]" + ar + ";nwr[\"amenity\"=\"ferry_terminal\"]" + ar + ";);out center tags qt 400;";
   }
   function circQ(c) { return "[out:json][timeout:60];(nwr[\"aeroway\"~\"^(aerodrome|airstrip|heliport|helipad)$\"](around:" + Math.round(c.km * 1000) + "," + q5(c.lat) + "," + q5(wrap(c.lon)) + ");nwr[\"military\"=\"airfield\"](around:" + Math.round(c.km * 1000) + "," + q5(c.lat) + "," + q5(wrap(c.lon)) + ");nwr[\"amenity\"=\"ferry_terminal\"](around:" + Math.round(c.km * 1000) + "," + q5(c.lat) + "," + q5(wrap(c.lon)) + "););out center tags qt 200;"; }
+  /* the same asks in Postpass SQL (Postpass first, then Overpass, through the Route engine's reader); null across the date line */
+  function sqlNear(pts, where, m, lim, lines) {
+    var O = W.OSAP_OSM, ll = pts.map(function (p) { return [p[0], wrap(p[1])]; });
+    if (!O || O.crossesDateLine(ll)) return null;
+    var pt = "SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE (" + where + ") AND " + O.near(ll, m) + " LIMIT " + lim;
+    return lines ? "(" + pt + ") UNION ALL (SELECT osm_type, osm_id, tags, geom FROM postpass_line WHERE (" + lines + ") AND " + O.near(ll, m) + " LIMIT " + lim + ")" : pt;
+  }
+  var AF = "tags->>'aeroway' IN ('aerodrome','airstrip','heliport','helipad') OR tags->>'military' = 'airfield' OR tags->>'amenity' = 'ferry_terminal'";
+  function ovSql(pts, R) { return sqlNear(pts, AF, R, 400); }
+  function circSql(c) { return sqlNear([[c.lat, c.lon]], AF, c.km * 1000, 200); }
   function osmCls(t) {
     var ty = String(t["aerodrome:type"] || t.aerodrome || "").toLowerCase();
     if (t.amenity === "ferry_terminal") return ["Ferry terminal", "Ferry terminal"];
@@ -454,8 +464,8 @@
         (nr.seaports || []).forEach(function (r) { var i = r.x.i; add({ id: "ref:" + (i.id || i.name), cls: "Seaport", kind: i.kind || "Seaport", name: clean(i.name, 90), lat: +i.lat, lon: +i.lon, src: safeUrl(i.src) || "UN/LOCODE", basis: "reference list" }); });
       }, function () { notes.push("The reference airports and seaports did not load for part of the line."); }); });
     }, Promise.resolve());
-    function osm(q, what) {
-      return engine().then(function (Rt) { return Rt.overpass(q, 70000); }).then(function (j) {
+    function osm(q, what, sql) {
+      return engine().then(function (Rt) { return Rt.overpass(q, 70000, sql); }).then(function (j) {
         j.elements.forEach(function (e) {
           var t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
           if (lat == null || lon == null || t.disused === "yes" || t.abandoned === "yes" || /\bmodel\b|aeromodel/i.test([t["aerodrome:type"], t.name].join(" "))) return;
@@ -469,9 +479,9 @@
       var jobs = [];
       for (var i = 0; i < pieces; i++) (function (i) {
         var seg = along(c, 60, i / pieces, (i + 1) / pieces);
-        jobs.push(function () { if (tok !== S.atok) return; S.amsg = "Asking OpenStreetMap along the corridor, part " + (i + 1) + " of " + pieces + "…"; var m2 = D.getElementById("epe-amsg"); if (m2) m2.textContent = S.amsg; return osm(ovq(seg, Math.min(25000, w * 1000)), "part " + (i + 1) + " of the corridor"); });
+        jobs.push(function () { if (tok !== S.atok) return; S.amsg = "Asking OpenStreetMap along the corridor, part " + (i + 1) + " of " + pieces + "…"; var m2 = D.getElementById("epe-amsg"); if (m2) m2.textContent = S.amsg; return osm(ovq(seg, Math.min(25000, w * 1000)), "part " + (i + 1) + " of the corridor", ovSql(seg, Math.min(25000, w * 1000))); });
       })(i);
-      circles(o).forEach(function (cc0) { if (cc0.km > w) jobs.push(function () { if (tok !== S.atok) return; return osm(circQ(cc0), "the circle round " + cc0.key); }); });
+      circles(o).forEach(function (cc0) { if (cc0.km > w) jobs.push(function () { if (tok !== S.atok) return; return osm(circQ(cc0), "the circle round " + cc0.key, circSql(cc0)); }); });
       return jobs.reduce(function (pr, f) { return pr.then(f); }, Promise.resolve());
     }).then(function () {
       if (tok !== S.atok) return;
@@ -537,6 +547,16 @@
     return "[out:json][timeout:60];(way[\"bridge\"][\"bridge\"!=\"no\"][\"highway\"]" + ar(30) + ";way[\"tunnel\"][\"tunnel\"!=\"no\"][\"highway\"]" + ar(30) + ";way[\"route\"=\"ferry\"]" + ar(40) +
       ";node[\"railway\"=\"level_crossing\"]" + ar(30) + ";node[\"highway\"=\"motorway_junction\"]" + ar(30) + ";node[\"barrier\"=\"border_control\"]" + ar(80) + ";);out geom tags qt 800;";
   }
+  /* dependencies: bridges, tunnels and ferries with their line (each near point must lie along the route), points as points */
+  function depSql(pts) {
+    var O = W.OSAP_OSM, ll = pts.map(function (p) { return [p[0], wrap(p[1])]; });
+    if (!O || O.crossesDateLine(ll)) return null;
+    var N = function (m) { return O.near(ll, m); };
+    return "(SELECT osm_type, osm_id, tags, geom FROM postpass_line WHERE ((tags ? 'highway' AND ((tags ? 'bridge' AND tags->>'bridge' <> 'no') OR (tags ? 'tunnel' AND tags->>'tunnel' <> 'no')) AND " + N(30) + ")" +
+      " OR (tags->>'route' = 'ferry' AND " + N(40) + ")) LIMIT 800)" +
+      " UNION ALL (SELECT osm_type, osm_id, tags, geom FROM postpass_pointpolygon WHERE osm_type = 'N' AND (((tags->>'railway' = 'level_crossing' OR tags->>'highway' = 'motorway_junction') AND " + N(30) + ")" +
+      " OR (tags->>'barrier' = 'border_control' AND " + N(80) + ")) LIMIT 800)";
+  }
   function depKind(t) {
     if (t.barrier === "border_control") return "border";
     if (t.route === "ferry") return "ferry";
@@ -572,7 +592,7 @@
         jobs.push(function () {
           if (tok !== S.dtok) return;
           var seg = along(l.coords, 80, i / pieces, (i + 1) / pieces);
-          return engine().then(function (Rt) { return Rt.overpass(depQ(seg), 70000); }).then(function (j) {
+          return engine().then(function (Rt) { return Rt.overpass(depQ(seg), 70000, depSql(seg)); }).then(function (j) {
             j.elements.forEach(function (e) {
               var t = e.tags || {}, k = depKind(t), g = e.geometry ? e.geometry.map(function (x) { return [x.lat, x.lon]; }) : [[e.lat, e.lon]];
               if (!g.length || !isFinite(g[0][0])) return;
@@ -696,6 +716,13 @@
     return "[out:json][timeout:60];(nwr[\"amenity\"=\"fuel\"]" + ar(1000) + ";node[\"amenity\"=\"drinking_water\"]" + ar(500) + ";nwr[\"shop\"~\"^(supermarket|convenience)$\"]" + ar(1000) +
       ";nwr[\"tourism\"~\"^(hotel|motel|guest_house)$\"]" + ar(1000) + ";);out center tags qt 2000;";
   }
+  function susSql(pts) {
+    var O = W.OSAP_OSM, ll = pts.map(function (p) { return [p[0], wrap(p[1])]; });
+    if (!O || O.crossesDateLine(ll)) return null;
+    var N = function (m) { return O.near(ll, m); };
+    return "SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ((tags->>'amenity' = 'fuel' OR tags->>'shop' IN ('supermarket','convenience') OR tags->>'tourism' IN ('hotel','motel','guest_house')) AND " + N(1000) + ")" +
+      " OR (osm_type = 'N' AND tags->>'amenity' = 'drinking_water' AND " + N(500) + ") LIMIT 2000";
+  }
   /* fuel and supplies within 1 km of the road legs, and the longest stretch without fuel */
   function sustain(o, tok) {
     var fuel = [], cnt = { water: 0, shop: 0, lodging: 0 }, notes = [], jobs = [], seen = {};
@@ -705,7 +732,7 @@
       for (var i = 0; i < pieces; i++) (function (i) {
         jobs.push(function () {
           if (tok !== S.ptok) return;
-          return engine().then(function (Rt) { return Rt.overpass(susQ(along(l.coords, 80, i / pieces, (i + 1) / pieces)), 70000); }).then(function (j) {
+          return engine().then(function (Rt) { var seg = along(l.coords, 80, i / pieces, (i + 1) / pieces); return Rt.overpass(susQ(seg), 70000, susSql(seg)); }).then(function (j) {
             j.elements.forEach(function (e) {
               var t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon, key = e.type + e.id;
               if (lat == null || seen[key]) return; seen[key] = 1;

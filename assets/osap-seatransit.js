@@ -377,25 +377,30 @@
       return { label: g[1], list: L };
     });
   }
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
-  function overpass(q, ms) {
-    var body = "data=" + encodeURIComponent(q), errs = [];
-    function go(i) {
-      if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
-      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms);
-      return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac ? ac.signal : undefined })
-        .then(function (r) { clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-        .then(function (j) { if (j && j.remark && /runtime error|timed? ?out|out of memory|too many/i.test(j.remark)) throw new Error("incomplete answer"); return j; })
-        .catch(function (e) { clearTimeout(t); errs.push(OVERPASS[i].split("/")[2] + ": " + (e && e.name === "AbortError" ? "no answer" : e.message)); return go(i + 1); });
-    }
-    return go(0);
+  /* OpenStreetMap through OSAP_OSM (assets/osap-osm.js): Postpass first when there is SQL, then the public Overpass servers */
+  function overpass(q, ms, sql) {
+    var ac = W.AbortController ? new AbortController() : null;
+    if (ac) setTimeout(function () { ac.abort(); }, ms);
+    return W.OSAP_OSM.query({ sql: sql, ql: q, signal: ac ? ac.signal : undefined, ppMs: 60000, opMs: ms }).then(function (j) { return j; }, function (e) {
+      throw new Error(e && e.name === "AbortError" ? "no answer" : e.tried && e.tried.length ? e.tried.join("; ") : e.message);
+    });
+  }
+  /* Postpass SQL for "within km of this line": a box test first, then the true distance; none for a line across the date line */
+  function aroundSql(pts, km, where) {
+    var lons = pts.map(function (p) { return wrap(p.lon); });
+    if (Math.max.apply(null, lons) - Math.min.apply(null, lons) > 180) return null;
+    var line = "ST_GeomFromText('LINESTRING(" + pts.map(function (p) { return wrap(p.lon).toFixed(3) + " " + p.lat.toFixed(3); }).join(",") + ")', 4326)";
+    var deg = km / 111 / Math.max(0.2, Math.cos(Math.min(80, Math.max.apply(null, pts.map(function (p) { return Math.abs(p.lat); }))) * Math.PI / 180));
+    return "SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE (" + where + ") AND geom && ST_Expand(" + line + ", " + deg.toFixed(2) + ")" +
+      " AND ST_DWithin(geom::geography, " + line + "::geography, " + km * 1000 + ") LIMIT 400";
   }
   var OSM_KM = 300;
   function osmSpecLoad(res) {
     var pts = densify(P.wps, 100), ll2 = pts.map(function (p) { return p.lat.toFixed(3) + "," + wrap(p.lon).toFixed(3); }).join(","), A = "(around:" + OSM_KM * 1000 + "," + ll2 + ")";
     var q = '[out:json][timeout:90];(nwr["healthcare"="hyperbaric_chamber"]' + A + ';nwr["healthcare:speciality"~"hyperbaric"]' + A + ';nwr["healthcare:speciality"~"burn"]' + A + ';nwr["emergency"="air_rescue_service"]' + A + ";);out center tags 400;";
-    return overpass(q, 100000).then(function (j) {
-      var out = { hb: [], burn: [], air: [], at: (j.osm3s && j.osm3s.timestamp_osm_base) || "" }, seen = {};
+    var sql = aroundSql(pts, OSM_KM, "tags->>'healthcare' = 'hyperbaric_chamber' OR tags->>'healthcare:speciality' ~* '(hyperbaric|burn)' OR tags->>'emergency' = 'air_rescue_service'");
+    return overpass(q, 100000, sql).then(function (j) {
+      var out = { hb: [], burn: [], air: [], at: j.at || "" }, seen = {};
       (j.elements || []).forEach(function (e) {
         var t = e.tags || {}, la = e.lat != null ? e.lat : e.center && e.center.lat, lo = e.lon != null ? e.lon : e.center && e.center.lon;
         if (la == null || lo == null || seen[e.type + e.id]) return; seen[e.type + e.id] = 1;

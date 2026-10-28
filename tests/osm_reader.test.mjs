@@ -37,6 +37,9 @@ const fail = (st) => Promise.resolve({ ok: false, status: st, json: () => Promis
   assert.deepEqual([els[5].type, els[5].members.map((m) => m.role).join()], ["relation", "outer,inner"]);
   assert.throws(() => O.elements({ error: "x" }), /not GeoJSON/);
   assert.equal(O.env({ getWest: () => 1, getSouth: () => 2, getEast: () => 3, getNorth: () => 4 }), "geom && ST_MakeEnvelope(1.0000,2.0000,3.0000,4.0000,4326)");
+  assert.equal(O.near([[13.7, 100.5]], 25), "(geom && ST_Expand(ST_SetSRID(ST_MakePoint(100.50000,13.70000),4326), 0.0012) AND ST_DWithin(geom::geography, ST_SetSRID(ST_MakePoint(100.50000,13.70000),4326)::geography, 25))");
+  assert.match(O.near([[1, 100], [2, 101]], 300000), /LINESTRING\(100\.00000 1\.00000,101\.00000 2\.00000\)/);
+  assert.equal(O.crossesDateLine([[0, 179], [0, -179]]), true); assert.equal(O.crossesDateLine([[0, 100], [0, 120]]), false);
 }
 // ---------- Postpass answers: Overpass never asked ----------
 {

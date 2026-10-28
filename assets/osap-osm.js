@@ -3,11 +3,12 @@
    one after another. Probed 2026-10-28 from GitHub runners (tools/probe_power.sh): Postpass answered every Thailand view in
    0.2 to 8 s; overpass-api.de refused (406), maps.mail.ru answered one view in 20 to 30 s and 504'd on the rest, kumi.systems and
    private.coffee never answered. So a feature that asks Overpass alone often gets nothing.
-   - OSAP_OSM.query({ sql, ql, signal, ppMs, opMs }) -> Promise of { elements, via }: Postpass when there is SQL, else or on failure
+   - OSAP_OSM.query({ sql, ql, signal, ppMs, opMs }) -> Promise of { elements, via, at } (at: the data's time when known): Postpass when there is SQL, else or on failure
      each Overpass server with the Overpass QL. Elements are always Overpass-shaped: lines as ways with geometry [{lat, lon}],
      points with center (and lat/lon for nodes), areas as a closed way or a relation with outer/inner member rings.
      Fails with Error("busy") when the servers were busy or slow, another Error when nothing answered, AbortError when aborted.
    - A server that failed is tried last for the next 10 minutes (never dropped: the next one may be down too).
+   - OSAP_OSM.env(bounds), near([[lat, lon], ...], metres), geo(pts), crossesDateLine(pts): SQL pieces for callers' Postpass queries.
    - OSAP_OSM.health() -> { host: { ok, fail, last, err, ms } } for this page, so a panel can say which source went dark.
    Nothing here writes anything; the answers are views over community-mapped public data. */
 (function () {
@@ -57,6 +58,21 @@
   function env(b) {
     return "geom && ST_MakeEnvelope(" + [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map(function (v) { return v.toFixed(4); }).join(",") + ",4326)";
   }
+  /* "near this point or line" for Postpass SQL: a box test the index can use, then the true distance in metres.
+     pts are [lat, lon] pairs (one pair for a point); lon must not cross the date line (callers send no SQL then). */
+  function geo(pts) {
+    var ll = pts.map(function (p) { return (+p[1]).toFixed(5) + " " + (+p[0]).toFixed(5); });
+    return pts.length === 1 ? "ST_SetSRID(ST_MakePoint(" + ll[0].replace(" ", ",") + "),4326)" : "ST_GeomFromText('LINESTRING(" + ll.join(",") + ")',4326)";
+  }
+  function near(pts, m) {
+    var g = geo(pts), lat = Math.min(80, Math.max.apply(null, pts.map(function (p) { return Math.abs(+p[0]); })));
+    var deg = m / 111000 / Math.max(0.17, Math.cos(lat * Math.PI / 180)) + 0.001;
+    return "(geom && ST_Expand(" + g + ", " + deg.toFixed(4) + ") AND ST_DWithin(geom::geography, " + g + "::geography, " + Math.round(m) + "))";
+  }
+  function crossesDateLine(pts) {
+    var lo = pts.map(function (p) { return +p[1]; });
+    return Math.max.apply(null, lo) - Math.min.apply(null, lo) > 180 || lo.some(function (x) { return x < -180 || x > 180; });
+  }
   function post(u, body, ms, signal) {
     var one = new AbortController(), slow = false, t0 = Date.now();
     var st = setTimeout(function () { slow = true; one.abort(); }, ms);
@@ -82,13 +98,14 @@
         /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: a failure, not an empty map */
         .then(function (j) {
           if (j && j.remark && /error/i.test(j.remark)) { var b = /timed? ?out|memory/i.test(j.remark); note(ops[i], false, b ? "busy" : "error remark", 0); throw new Error(b ? "busy" : "remark"); }
-          return { elements: j.elements || [], via: host(ops[i]) };
+          return { elements: j.elements || [], via: host(ops[i]), at: (j.osm3s && j.osm3s.timestamp_osm_base) || "" };
         })
         .catch(function (e) { if (signal && signal.aborted) throw e; if (e.message === "busy") busy = true; errs.push(host(ops[i]) + ": " + e.message); return op(i + 1); });
     };
     if (!o.sql) return op(0);
     return post(POSTPASS, "data=" + encodeURIComponent(o.sql), o.ppMs || 30000, signal)
-      .then(function (j) { return { elements: elements(j), via: host(POSTPASS) }; })
+      /* Postpass reads a live copy of OpenStreetMap kept within minutes of the main database: "now" is the honest stamp */
+      .then(function (j) { return { elements: elements(j), via: host(POSTPASS), at: new Date().toISOString().slice(0, 19) + "Z" }; })
       .catch(function (e) {
         if (signal && signal.aborted) throw e;
         if (e.message === "not GeoJSON") note(POSTPASS, false, "not GeoJSON", 0);
@@ -103,5 +120,5 @@
     var now = Date.now();
     return Object.keys(H).filter(function (k) { return H[k].bad && now - H[k].bad < COOL; });
   }
-  W.OSAP_OSM = { query: query, elements: elements, env: env, health: health, dark: dark, POSTPASS: POSTPASS, OVERPASS: OVERPASS.slice() };
+  W.OSAP_OSM = { query: query, elements: elements, env: env, geo: geo, near: near, crossesDateLine: crossesDateLine, health: health, dark: dark, POSTPASS: POSTPASS, OVERPASS: OVERPASS.slice() };
 })();

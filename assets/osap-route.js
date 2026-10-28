@@ -37,7 +37,7 @@ function main() {
     wx: { name: "Open-Meteo forecast", url: "https://open-meteo.com/", nc: true },
     geo: { name: "Open-Meteo geocoding (GeoNames)", url: "https://open-meteo.com/en/docs/geocoding-api" },
     photon: { name: "Photon (Komoot, OpenStreetMap)", url: "https://photon.komoot.io/", nc: true },
-    overpass: { name: "Overpass API (overpass-api.de, OpenStreetMap)", url: "https://overpass-api.de/api/interpreter", data: "OpenStreetMap contributors, ODbL" }
+    overpass: { name: "OpenStreetMap via Geofabrik Postpass or the Overpass API", url: "https://postpass.geofabrik.de/", data: "OpenStreetMap contributors, ODbL" }
   };
   /* the sold version (assets/osap-sold.js) has no FOSSGIS routers, only its own (OSAP_OSRM_URL, OSAP_VALHALLA_URL); with
      neither, road modes say so and Straight line and the cross-country speeds still work */
@@ -1020,19 +1020,16 @@ function main() {
      line, surface as tagged). Model-aircraft fields and disused or abandoned ones are left out. The reference airports
      (OurAirports, with published runway data) are merged in and win over an OpenStreetMap point within 3 km of them. Mapped is
      not open: every airfield needs checking for status, access and runway condition. */
-  var OVERPASS_ALL = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
-  function overpassAny(q, ms) {
-    var body = "data=" + encodeURIComponent(q), errs = [];
-    function go(i) {
-      if (i >= OVERPASS_ALL.length) return Promise.reject(new Error(errs.join("; ")));
-      return getJSON(OVERPASS_ALL[i], ms || 45000, { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then(function (j) {
-        /* Overpass can answer 200 with a remark and no elements when it gives up: that is a failure, not an empty map */
-        if (j && j.remark && /runtime error|out of memory|timed out|Query run out/i.test(j.remark)) throw new Error("server gave up");
-        if (!j || !Array.isArray(j.elements)) throw new Error("no answer");
-        return j;
-      }).catch(function (e) { errs.push(OVERPASS_ALL[i].split("/")[2] + ": " + e.message); return go(i + 1); });
-    }
-    return go(0);
+  /* OpenStreetMap through OSAP_OSM (assets/osap-osm.js): Postpass first when the caller gives SQL, then each Overpass server */
+  function overpassAny(q, ms, sql) {
+    return W.OSAP_OSM.query({ sql: sql, ql: q, ppMs: Math.min(ms || 45000, 45000), opMs: ms || 45000 }).catch(function (e) {
+      throw new Error(e.tried && e.tried.length ? e.tried.join("; ") : e.message);
+    });
+  }
+  /* SQL helpers for those queries: points (centres) or lines near a point or a line; null across the date line */
+  function sqlPts(where, pts, m, lim) {
+    if (W.OSAP_OSM.crossesDateLine(pts)) return null;
+    return "SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE (" + where + ") AND " + W.OSAP_OSM.near(pts, m) + (lim ? " LIMIT " + lim : "");
   }
   function afKind(t) {
     var ty = String(t["aerodrome:type"] || t.aerodrome || "").toLowerCase();
@@ -1057,7 +1054,8 @@ function main() {
   function evAirfields(p, EV, notes, radii, want) {
     var refP = EV ? EV.nearest(p).then(function (nr) { return nr.airports || []; }, function () { return []; }) : Promise.resolve([]);
     function look(i) {
-      return overpassAny(afQuery(p, radii[i]), 45000).then(function (j) {
+      var sq = sqlPts("tags->>'aeroway' IN ('aerodrome','airstrip','heliport') OR tags->>'military' = 'airfield'", [[p[0], G.wrap(p[1])]], radii[i], 2000);
+      return overpassAny(afQuery(p, radii[i]), 45000, sq).then(function (j) {
         var out = [], seen = {};
         j.elements.forEach(function (e) {
           var t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
@@ -1090,7 +1088,9 @@ function main() {
     var osm = c.filter(function (x) { return /^osm:/.test(x.i.id || ""); });
     if (!osm.length) return Promise.resolve();
     var q = "[out:json][timeout:30];(" + osm.map(function (x) { return 'way["aeroway"="runway"](around:3000,' + x.i.lat.toFixed(5) + "," + G.wrap(x.i.lon).toFixed(5) + ");"; }).join("") + ");out tags geom qt;";
-    return overpassAny(q, 30000).then(function (j) {
+    var sq = osm.map(function (x) { return W.OSAP_OSM.near([[x.i.lat, G.wrap(x.i.lon)]], 3000); }).join(" OR ");
+    sq = "SELECT osm_type, osm_id, tags, geom FROM postpass_line WHERE tags->>'aeroway' = 'runway' AND (" + sq + ") LIMIT 200";
+    return overpassAny(q, 30000, sq).then(function (j) {
       j.elements.forEach(function (e) {
         var g = (e.geometry || []).filter(function (x) { return x && x.lat != null; }); if (g.length < 2) return;
         var m = 0; for (var k = 1; k < g.length; k++) m += hav([g[k - 1].lat, g[k - 1].lon], [g[k].lat, g[k].lon]);
@@ -1510,7 +1510,7 @@ function main() {
     var line = pts.map(function (x) { return x.p[0].toFixed(5) + "," + G.wrap(x.p[1]).toFixed(5); }).join(",");
     function A1(m) { return "(around:" + m + "," + line + ")"; }
     var far = Math.min(bufM, 2000), ins = sample(r, Math.min(25, Math.max(3, Math.round(r.m / 10000))));
-    return "[out:json][timeout:45][maxsize:32000000];(" +
+    return "[out:json][timeout:45];(" +
       'node["barrier"="border_control"]' + A1(1000) + ';way["barrier"="border_control"]' + A1(1000) + ';node["military"="checkpoint"]' + A1(1000) + ";" +
       'way["landuse"="military"]' + A1(far) + ';relation["landuse"="military"]' + A1(far) + ';way["military"~"^(danger_area|range|training_area|base|barracks|airfield)$"]' + A1(far) + ";" +
       'way["boundary"="protected_area"]' + A1(far) + ';way["leisure"="nature_reserve"]' + A1(far) + ";" +
@@ -1521,19 +1521,33 @@ function main() {
       "(" + ins.map(function (x) { return "is_in(" + x.p[0].toFixed(5) + "," + G.wrap(x.p[1]).toFixed(5) + ");"; }).join("") + ")->.a;" +
       '(area.a["landuse"="military"];area.a["boundary"="protected_area"];area.a["leisure"="nature_reserve"];)->.b;(way(pivot.b);relation(pivot.b););out tags center 100;';
   }
+  /* the same ask in Postpass SQL: each kind at its own distance from the route, and _in on areas the route runs through */
+  function rxSql(r, bufM) {
+    var pts = sample(r, Math.min(150, Math.max(20, Math.round(r.m / 2000)))).map(function (x) { return [x.p[0], G.wrap(x.p[1])]; });
+    if (W.OSAP_OSM.crossesDateLine(pts)) return null;
+    var far = Math.min(bufM, 2000), N = W.OSAP_OSM.near, line = W.OSAP_OSM.geo(pts);
+    var area = "(tags->>'landuse' = 'military' OR tags->>'military' IN ('danger_area','range','training_area','base','barracks','airfield') OR tags->>'boundary' = 'protected_area' OR tags->>'leisure' = 'nature_reserve')";
+    var where = "((tags->>'barrier' = 'border_control' OR tags->>'military' = 'checkpoint') AND " + N(pts, 1000) + ")" +
+      " OR (" + area + " AND " + N(pts, far) + ")" +
+      " OR (tags ? 'ford' AND tags->>'ford' <> 'no' AND " + N(pts, 60) + ")" +
+      " OR (((tags ? 'highway' AND (tags ? 'maxweight' OR tags ? 'maxheight')) OR (tags ? 'bridge' AND tags ? 'maxweight')) AND " + N(pts, 40) + ")";
+    var tg = "tags || jsonb_build_object('_in', CASE WHEN " + area + " AND GeometryType(geom) IN ('POLYGON','MULTIPOLYGON') AND ST_Intersects(geom, " + line + ") THEN 'yes' ELSE '' END)";
+    return "(SELECT osm_type, osm_id, " + tg + " AS tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE " + where + " LIMIT 500)" +
+      " UNION ALL (SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_line WHERE " + where + " LIMIT 500)";
+  }
   function restrictions(tok) {
     var q = S.srch, r = q.r, box = el("rt-rx"); if (!box) return;
     box.innerHTML = '<h3>Movement restrictions</h3><p class="obs">Loading from OpenStreetMap…</p>';
-    getJSON(HOST.overpass.url, 60000, { method: "POST", body: "data=" + encodeURIComponent(rxQuery(r, q.buf * 1000)), headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then(function (j) {
+    overpassAny(rxQuery(r, q.buf * 1000), 60000, rxSql(r, q.buf * 1000)).then(function (j) {
       if (tok !== S.stok) return;
       var els = (j && j.elements) || [], out = [], seen = {}, inside = false, cor = corridor(r, 2500);
       els.forEach(function (e) {
         if (e.type === "count") { inside = true; return; }
         var t = e.tags || {}, k = rxKind(t); if (!k) return;
-        var key = e.type + "/" + e.id; if (seen[key]) { if (inside) seen[key].inside = true; return; }
+        var key = e.type + "/" + e.id; if (seen[key]) { if (inside || t._in === "yes") seen[key].inside = true; return; }
         var lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
         var n = lat != null ? near(r, [+lat, +lon], cor.pts) : null;
-        var x = { k: k, lbl: RXL[k][0], col: RXL[k][1], name: clean(t.name || t["name:en"] || t.ref || "", 80), inside: inside, lat: +lat, lon: +lon, along: n ? n.along : 0, d: n ? n.d : null, area: k === "mil" || k === "prot",
+        var x = { k: k, lbl: RXL[k][0], col: RXL[k][1], name: clean(t.name || t["name:en"] || t.ref || "", 80), inside: inside || t._in === "yes", lat: +lat, lon: +lon, along: n ? n.along : 0, d: n ? n.d : null, area: k === "mil" || k === "prot",
           detail: clean([t.maxweight ? "max weight " + t.maxweight : "", t.maxheight ? "max height " + t.maxheight : "", t.access && t.access !== "yes" ? "access " + t.access : "", t.operator || ""].filter(Boolean).join(" · "), 120),
           url: "https://www.openstreetmap.org/" + (e.type === "relation" ? "relation" : e.type === "way" ? "way" : "node") + "/" + (+e.id) };
         seen[key] = x; out.push(x);
@@ -1542,7 +1556,7 @@ function main() {
       q.rx = out; rxUi(); glance(); legend();
     }).catch(function (e) {
       if (tok !== S.stok) return;
-      q.rxErr = "OpenStreetMap restrictions did not load (" + (e.status === 429 || e.status === 504 ? "the free server is busy" : e.message) + "). Search again in a minute.";
+      q.rxErr = "OpenStreetMap restrictions did not load (" + (/busy/.test(e.message) ? "the free servers are busy" : e.message) + "). Search again in a minute.";
       box.innerHTML = '<h3>Movement restrictions</h3><p class="rtbad">' + E(q.rxErr) + "</p>"; glance();
     });
   }
@@ -1895,7 +1909,7 @@ function main() {
     alternates: alternates, hazards: apiHazards,
     /* Overpass with the four mirrors in turn (the evacuation corridor's air and sea nodes), and the landing zone candidates
        round a point as Nearest landing zone finds them: [{ k: "lz", i: { name, lat, lon, kind, note, src } }] */
-    overpass: function (q, ms) { return overpassAny(q, ms); },
+    overpass: function (q, ms, sql) { return overpassAny(q, ms, sql); },
     /* the way round a lost point (a bridge, tunnel or ferry): Valhalla from a to b keeping off the points in o.avoid ([lat, lon]),
        { coords, m, s, src }; rejects when the router has no answer */
     detour: function (a, b, o) {
