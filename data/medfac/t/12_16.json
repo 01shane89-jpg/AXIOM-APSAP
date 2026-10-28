@@ -19,6 +19,8 @@
 ["n6810754985",13.65087,16.49801,"td",{"name":"Hôpital provincial de moussoro","amenity":"clinic"}],
 ["n7740686423",12.21655,16.46677,"td",{"name":"Maïngara مائقانا","aeroway":"aerodrome"}],
 ["n8363578837",13.64036,16.4703,"td",{"name":"HPM2","amenity":"hospital"}],
+["w1568403332",12.09577,17.24501,"td",{"amenity":"clinic"}],
+["w1568403335",12.0958,17.24515,"td",{"amenity":"clinic"}],
 ["w390039985",12.59507,16.54988,"td",{"amenity":"hospital"}],
 ["w486508593",12.37877,17.06022,"td",{"amenity":"hospital"}],
 ["w783961645",13.13806,16.7794,"td",{"amenity":"hospital","healthcare":"hospital"}],

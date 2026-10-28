@@ -54,7 +54,7 @@
 ["w185761188",7.91882,16.64497,"td",{"name":"Hôpital de Goré","amenity":"hospital","operator:type":"government"}],
 ["w192960272",7.92272,16.63063,"td",{"name":"Ancien Hôpital de Goré","amenity":"hospital","operator:type":"government"}],
 ["w196875074",7.95503,16.57036,"td",{"name":"Centre de Santé de Beureuh","amenity":"clinic","operator:type":"government"}],
-["w222749310",6.34423,16.32211,"cf",{"name":"Aéroport de Bozoum","name:en":"Bozoum Airport","aeroway":"aerodrome","icao":"FEGZ","iata":"BOZ","wikidata":"Q3813693"}],
+["w222749310",6.34425,16.32215,"cf",{"name":"Aéroport de Bozoum","name:en":"Bozoum Airport","aeroway":"aerodrome","icao":"FEGZ","iata":"BOZ","wikidata":"Q3813693"}],
 ["w232937344",6.58272,16.38001,"cf",{"name":"Ndol Bassai","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:city":"Ndol Bassai"}],
 ["w233809693",6.57771,16.00193,"cf",{"name":"PS de Tolle","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:city":"Tolle"}],
 ["w236025596",7.41727,17.12984,"cf",{"name":"PS de Bondjomo","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:city":"Bondjomo"}],
@@ -82,4 +82,5 @@
 ["w772696199",6.06136,17.44302,"cf",{"name":"Poste de Santé de Ndow-Kota","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:full":"OUHAM, Bossangoa, Koro-Mpoko, Ndow-Kota","addr:city":"Ndow-Kota"}],
 ["w779907398",6.84858,17.27743,"cf",{"name":"Poste de Santé de Ngbawele","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:city":"Ngbawele"}],
 ["w783882043",7.23297,16.44536,"cf",{"name":"HP de Paoua","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:city":"Paoua"}],
-["w783882044",6.50906,17.45217,"cf",{"name":"CS ACABEF","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:city":"Bossangoa"}]]
+["w783882044",6.50906,17.45217,"cf",{"name":"CS ACABEF","amenity":"hospital","healthcare":"hospital","operator:type":"government","addr:city":"Bossangoa"}],
+["w786136267",6.20578,16.14325,"cf",{"name":"Poste de Santé de Koundé","amenity":"clinic","healthcare":"clinic","operator:type":"government","addr:full":"OUHAM-PENDE, Bozoum, Birvan-Bole, Kounde","addr:city":"Kounde"}]]

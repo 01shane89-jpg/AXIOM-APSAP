@@ -1,4 +1,5 @@
-[["n1042040057",4.15667,21.66753,"cd",{"name":"Kotakoli Airport","aeroway":"aerodrome","icao":"FZFP","iata":"KLI","wikidata":"Q6433854"}],
+[["n1042036685",5.02241,21.19829,"cf",{"name":"Aéroport d'Alindao","name:en":"Alindao Airport","aeroway":"aerodrome","icao":"FEFA","wikidata":"Q2376734"}],
+["n1042040057",4.15667,21.66753,"cd",{"name":"Kotakoli Airport","aeroway":"aerodrome","icao":"FZFP","iata":"KLI","wikidata":"Q6433854"}],
 ["n11208049868",5.78501,20.67428,"cf",{"aeroway":"helipad"}],
 ["n2663462940",5.76432,20.6677,"cf",{"name":"ACABEF Antenne Ouaka","amenity":"hospital","healthcare":"hospital","operator":"Association Centrafricaine pour le Bien-Etre Familial","operator:type":"private","addr:full":"OUAKA, Bambari, Bambari, Bambari, Centre Ville","addr:city":"Bambari"}],
 ["n2663462971",5.76839,20.65173,"cf",{"name":"Centre de Santé Notre-Dame de la Victoire","amenity":"hospital","healthcare":"hospital","operator:type":"private","addr:full":"OUAKA, Bambari, Bambari, Kidigra, Kidigra","addr:city":"Kidigra"}],
