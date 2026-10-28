@@ -34,6 +34,7 @@
     { "id": "ucdp", "file": "data/live/ucdp.js", "name": "UCDP conflict events", "maxMin": 90 },
     { "id": "roads", "file": "data/live/roads.js", "name": "Road closures", "maxMin": 90 },
     { "id": "wx", "file": "data/live/wx-forecast.js", "name": "Weather forecast", "maxMin": 90 },
-    { "id": "evsum", "file": "data/live/evsum.js", "name": "Event summaries (AI draft)", "maxMin": 180 }
+    { "id": "evsum", "file": "data/live/evsum.js", "name": "Event summaries (AI draft)", "maxMin": 180 },
+    { "id": "osm", "file": "data/live/osm-sources.js", "name": "Live map data (OpenStreetMap via Postpass)", "maxMin": 120, "key": true }
   ]
 }
