@@ -171,6 +171,7 @@ jobs:
       - run: node tests/evsum_ai_smoke.mjs
       - run: node tests/points_smoke.mjs
       - run: node tests/points_declutter_smoke.mjs
+      - run: node tests/places_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
