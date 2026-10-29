@@ -1,10 +1,13 @@
 // Protected mode's relay (assets/osap-protect.js): fetches one outside address for a signed-in page, so that the map tile,
 // weather or search service sees OSAP's server instead of the user's address. Only the hosts in tools/px.mjs; the user's
 // cookies, referrer and address are never passed on, only what the request is for (Accept, Range, and a POST body for the
-// Overpass and Wikidata queries). Nothing is logged or kept.
+// Postpass, Overpass and Wikidata queries). Nothing is logged or kept.
 import { pxAllowed } from "../../tools/px.mjs";
 
 const MAX_BODY = 64 * 1024, MAX_OUT = 40 * 1024 * 1024, WAIT = 20000;
+// OpenStreetMap queries (Postpass, Overpass: assets/osap-osm.js) can take half a minute on a built-up area; Netlify wants the
+// first byte of an edge answer within 40 s
+const QUERY_WAIT = 38000, QUERY = /^(postpass\.geofabrik\.de|overpass-api\.de|maps\.mail\.ru|overpass\.kumi\.systems|overpass\.private\.coffee)$/;
 const UA = "AXIOM-OSAP privacy relay (+https://axiom-osap.netlify.app)";
 // a verified sign-in is kept for a minute per token, as the data gate does (a map pan asks for dozens of tiles at once)
 const seen = new Map();
@@ -35,7 +38,7 @@ export default async (req) => {
     body = buf; headers["content-type"] = req.headers.get("content-type") || "application/x-www-form-urlencoded";
   }
   let up;
-  try { up = await fetch(u, { method: req.method, headers, body, redirect: "follow", signal: AbortSignal.timeout(WAIT) }); }
+  try { up = await fetch(u, { method: req.method, headers, body, redirect: "follow", signal: AbortSignal.timeout(QUERY.test(new URL(u).hostname) ? QUERY_WAIT : WAIT) }); }
   catch { return plain("upstream unreachable", 502); }
   if (up.url && !pxAllowed(up.url)) return plain("redirected away", 502);
   if (+(up.headers.get("content-length") || 0) > MAX_OUT) return plain("too large", 502);

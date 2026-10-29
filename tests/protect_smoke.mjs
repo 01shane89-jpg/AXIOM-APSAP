@@ -84,6 +84,10 @@ async function open(protect, home) {
   ok(/var PATHS = (\{[^}]*\})/.test(src) && JSON.stringify(JSON.parse(/var PATHS = (\{[^}]*\})/.exec(src)[1])) === JSON.stringify(PX_PATHS), "the bucket paths match");
   ok(pxAllowed("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/3/2/1"), "a listed tile host is relayed");
   ok(pxAllowed("https://a.tile.opentopomap.org/3/2/1.png"), "a listed sub-host is relayed");
+  /* every OpenStreetMap source OSAP_OSM (assets/osap-osm.js) asks, Postpass first: else the LZ finder, power lines, cameras
+     and the rest find nothing in protected mode */
+  ok(pxAllowed("https://postpass.geofabrik.de/api/interpreter") && pxAllowed("https://maps.mail.ru/osm/tools/overpass/api/interpreter"), "Postpass and every Overpass server are relayed");
+  ok(!pxAllowed("https://maps.mail.ru/other/"), "only the Overpass path of maps.mail.ru is relayed");
   for (const u of ["http://tile.openstreetmap.org/1/1/1.png", "https://evil.example/?tile.openstreetmap.org", "https://tile.openstreetmap.org.evil.example/1/1/1.png",
     "https://tile.opentopomap.org.evil/1", "https://user:pw@tile.openstreetmap.org/1/1/1.png", "https://tile.openstreetmap.org:8443/1/1/1.png",
     "https://s3.amazonaws.com/other-bucket/x", "https://ntfy.sh/topic", "https://nos.lol/", "https://huggingface.co/x", "javascript:alert(1)", "not a url"])

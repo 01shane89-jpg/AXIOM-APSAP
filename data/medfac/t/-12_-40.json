@@ -58,6 +58,7 @@
 ["n13269918300",-10.44073,-38.37696,"br",{"name":"Estratégia de Saúde da Família Maria Hilda Félix Carvalho","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Município de Antas","operator:type":"public","addr:street":"Rua Aureliano Nobre","addr:city":"Antas","addr:postcode":"48420-000"}],
 ["n13271958894",-10.41136,-38.25956,"br",{"name":"Estratégia de Saúde da Família IV Frei Apolônio","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Município de Antas","operator:type":"public","addr:street":"Rua do Posto","addr:city":"Antas","addr:postcode":"48420-000"}],
 ["n13368662711",-11.25539,-39.3741,"br",{"name":"Clínica da Mulher","healthcare":"clinic"}],
+["n14261954901",-11.2044,-38.00565,"br",{"name":"Posto de saúde","amenity":"clinic","addr:street":"Rua. 8 de maio","addr:postcode":"48475-000"}],
 ["n1750574655",-10.06166,-38.35854,"br",{"name":"Posto de Saúde da Família","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["n1751007447",-10.06977,-38.35189,"br",{"name":"Centro Médico Fausto Cardoso","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["n1849977458",-11.62245,-38.80422,"br",{"name":"Unidade de Saúde de Biritinga","amenity":"hospital"}],

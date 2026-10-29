@@ -33,6 +33,7 @@
 ["n13980806300",-6.62144,-39.50469,"br",{"name":"posto de saúde São bartolomeu","amenity":"hospital","healthcare":"hospital"}],
 ["n14022613692",-6.44024,-39.29846,"br",{"amenity":"clinic","healthcare":"clinic"}],
 ["n14201079449",-6.61757,-39.19579,"br",{"name":"Posto de Saúde João de Souza Guedes","amenity":"clinic","healthcare":"clinic","addr:city":"Várzea Alegre","addr:postcode":"63.540-000"}],
+["n14246457578",-7.44567,-38.72475,"br",{"name":"UBS Umburanas - João Leite Fernandes","amenity":"clinic","healthcare":"clinic"}],
 ["n1883262298",-6.91961,-38.32362,"br",{"amenity":"hospital","healthcare":"hospital"}],
 ["n2149595800",-7.77831,-38.02297,"br",{"name":"Posto de Saúde","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"no"}],
 ["n2710111412",-6.05463,-38.46282,"br",{"name":"Posto de Saúde","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","emergency":"no","addr:street":"Avenida José Milton de Morais","addr:city":"Pereiro","addr:postcode":"63.460-000"}],

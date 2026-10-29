@@ -21,6 +21,8 @@
 ["n13944150945",-2.05313,-44.50396,"br",{"name":"UBS Nossa Sra. dos Navegantes","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Prefeitura de Guimarães","operator:type":"government_facility-public"}],
 ["n14220087267",-2.50332,-44.29414,"br",{"name":"Clínica Rhinus","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"otolaryngology","phone":"+55 98 3199-1706;+55 98 3015-1537","website":"https://clinicarhinus.com.br/","addr:housenumber":"10","addr:street":"Rua das Andirobas","addr:city":"São Luís","addr:postcode":"65075-040","opening_hours":"Mo-Fr 08:00-18:00; Sa 09:00-12:00"}],
 ["n14231494996",-2.53312,-44.2075,"br",{"name":"Clínica Semeando","amenity":"clinic","addr:street":"Avenida Joaquim Mochel","addr:city":"São Luís","addr:postcode":"65054-415"}],
+["n14239801442",-2.53619,-44.22223,"br",{"name":"Auditra - Medicina do Trabalho","amenity":"clinic","healthcare:speciality":"occupational","addr:housenumber":"15","addr:street":"Avenida Melo Povoa","addr:city":"São Luís","addr:postcode":"65051-550"}],
+["n14256550001",-3.47037,-44.87024,"br",{"name":"Unidade Básica de Saúde","amenity":"clinic","addr:street":"Rua Coronel Lourenço Pinto","addr:postcode":"65350000"}],
 ["n3066720227",-2.52769,-44.25462,"br",{"name":"iMedical","amenity":"hospital","emergency":"no","phone":"+55 98 20167676","website":"https://www.imedicalma.com.br/","addr:housenumber":"987","addr:street":"Av. Daniel de La Touche","addr:city":"São Luís","addr:postcode":"65074-115"}],
 ["n4058574330",-3.67648,-45.37889,"br",{"name":"Hospital Macrorregional de Santa Inês","amenity":"hospital"}],
 ["n4061779074",-3.63605,-45.17906,"br",{"name":"Hospital Municipal de Igarapé do Meio","amenity":"hospital"}],

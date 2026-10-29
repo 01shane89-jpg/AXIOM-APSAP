@@ -314,6 +314,8 @@
 ["w154253214",-16.43891,-49.19923,"br",{"name":"Dezoito Airport","aeroway":"aerodrome","icao":"SWDT","wikidata":"Q31203290"}],
 ["w1548198011",-16.75198,-49.37876,"br",{"name":"UBS Residencial Santa Fé","amenity":"hospital","healthcare":"hospital","operator":"Sistema Unico de Saúde"}],
 ["w1549728660",-16.73586,-49.26143,"br",{"name":"Encore","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"cardiology;cardiothoracic_surgery","emergency":"yes","opening_hours":"24/7"}],
+["w1565091635",-16.63486,-49.20329,"br",{"name":"Hospital CORA","amenity":"hospital","healthcare":"hospital"}],
+["w1572581071",-16.64272,-49.43286,"br",{"name":"Unidade Básica de Saúde (UBS) - Pontakayana","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Sistema Único de Saúde","operator:type":"public","addr:housenumber":"301-369","addr:street":"Rua dos Abacateiros","addr:city":"Trindade","addr:postcode":"75380000","opening_hours":"Mo-Fr 07:00-16:00"}],
 ["w158900920",-16.04003,-48.0364,"br",{"name":"Hospital Regional de Santa Maria","amenity":"hospital","healthcare":"hospital"}],
 ["w225056446",-16.82598,-49.87874,"br",{"name":"Aeroporto de Palmeiras de Goiás","aeroway":"aerodrome","icao":"SWGP"}],
 ["w237096675",-16.02068,-48.0848,"br",{"name":"UBS 01 do Gama","amenity":"clinic","healthcare":"clinic","operator":"Sistema Único de Saúde","operator:type":"public"}],

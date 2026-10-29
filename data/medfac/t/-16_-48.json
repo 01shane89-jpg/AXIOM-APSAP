@@ -38,6 +38,7 @@
 ["n13905501754",-15.73624,-47.75215,"br",{"name":"Clinica Almada","amenity":"clinic","healthcare":"clinic"}],
 ["n14092545675",-15.88368,-47.8208,"br",{"name":"Renal Vida Jardim Botânico","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"nephrology","addr:street":"avenida das paineiras, quadra 01, bloco F, salas 201 a 204","addr:city":"Brasília","addr:postcode":"71681-030"}],
 ["n14092594784",-15.88366,-47.8209,"br",{"name":"iluminar hospital dia","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"nephrology;anaesthetics;cardiology;endocrinology;infectious_diseases;oncology;haematology;rheumatology;gynaecology;neurology;pneumologia","addr:street":"avenida das paineiras, quadra 01, bloco F, salas 101 e 102","addr:city":"Brasília","addr:postcode":"71681-030"}],
+["n14307329692",-15.64469,-47.82445,"br",{"name":"posto de saude","amenity":"hospital","healthcare":"hospital"}],
 ["n1724375802",-15.73564,-47.8955,"br",{"name":"Santa Lucia Prontonorte","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["n1879747700",-15.89615,-46.10192,"br",{"name":"Aeroporto de Arinos","aeroway":"aerodrome"}],
 ["n2525832430",-15.79949,-47.89084,"br",{"name":"Hospital SARAH","amenity":"hospital","healthcare":"hospital","phone":"+55 61 3319 1111","addr:street":"SMHS Q 501 Conjunto"}],

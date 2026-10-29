@@ -90,7 +90,7 @@
 ["w145297975",-20.45198,-54.64455,"br",{"name":"Unidade Básica de Saúde Doutor Nicolau Fragelli","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;exames_labarotariais;vaccination;paediatrics","operator":"Secretaria Municipal de Saúde","phone":"+55 67 2020 1935","addr:street":"Avenida dos Crisântemos","addr:postcode":"79110-524","opening_hours":"Mo-Fr 07:00-11:00, 13:00-17:00; PH off"}],
 ["w1458900099",-20.47059,-54.67713,"br",{"name":"Aeroporto Internacional de Campo Grande","name:en":"Campo Grande International Airport","aeroway":"aerodrome","icao":"SBCG","iata":"CGR","wikidata":"Q607211"}],
 ["w153035076",-20.51407,-54.65449,"br",{"name":"Hospital Regional de Mato Grosso do Sul","amenity":"hospital","healthcare":"hospital","operator":"Sistema Único de Saúde","website":"https://www.hospitalregional.ms.gov.br/","addr:street":"Avenida Engenheiro Luthero Lopes"}],
-["w153505704",-20.46386,-54.59358,"br",{"name":"UNIDERP Odonto","amenity":"clinic","healthcare":"clinic","addr:street":"Avenida Ricardo Brandão"}],
+["w153505704",-20.46387,-54.59351,"br",{"name":"UNIDERP Odonto","amenity":"clinic","healthcare":"clinic","addr:street":"Avenida Ricardo Brandão"}],
 ["w153515673",-20.45395,-54.61668,"br",{"name":"Santa Casa de Misericórdia","amenity":"hospital","healthcare":"hospital"}],
 ["w154081452",-20.46862,-54.60913,"br",{"name":"Hemosul","amenity":"clinic","healthcare":"clinic","addr:housenumber":"1304","addr:street":"Avenida Fernando Corrêa da Costa","addr:postcode":"79004-310"}],
 ["w154250776",-20.57218,-54.71657,"br",{"name":"Aeroporto Fazenda São José","aeroway":"aerodrome"}],

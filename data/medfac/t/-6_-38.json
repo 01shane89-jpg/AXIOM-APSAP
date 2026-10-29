@@ -39,7 +39,7 @@
 ["n7656436128",-5.59506,-36.96198,"br",{"name":"Aeródromo de Assú","aeroway":"aerodrome"}],
 ["n8521147068",-5.06323,-36.0465,"br",{"name":"HOSPITAL","amenity":"hospital","healthcare":"hospital"}],
 ["n9401313634",-4.86319,-37.25192,"br",{"name":"Aeródromo Tarcísio Rosado","aeroway":"aerodrome"}],
-["n9670966965",-4.71244,-37.35331,"br",{"name":"UBS - Salgadinho","amenity":"clinic","healthcare":"clinic","operator":"Sistema Único de Saúde","addr:street":"Av 22 de Janeiro"}],
+["n9670966965",-4.71242,-37.35326,"br",{"name":"UBS - Salgadinho","amenity":"clinic","healthcare":"clinic","operator":"Sistema Único de Saúde","addr:street":"Av 22 de Janeiro"}],
 ["n9696359459",-5.45687,-37.52043,"br",{"name":"Laboratório Feldman","amenity":"clinic","healthcare":"clinic"}],
 ["n9699375321",-5.45995,-37.51981,"br",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"orthodontics","addr:city":"Governador Dix-Sept Rosado","addr:postcode":"59790-000","osap:withheld":"1"}],
 ["n9699375322",-5.45917,-37.51606,"br",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;orthodontics","osap:withheld":"1"}],

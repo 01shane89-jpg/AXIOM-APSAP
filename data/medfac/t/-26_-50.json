@@ -353,7 +353,7 @@
 ["n8872888156",-24.78783,-49.99459,"br",{"aeroway":"helipad"}],
 ["n8975278165",-25.4617,-49.21484,"br",{"name":"Unidade Municipal de Saúde Camargo","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;vaccination","operator":"Prefeitura Municipal de Curitiba","operator:type":"public","phone":"+554133612501","addr:housenumber":"364","addr:street":"Rua Pedro Violani","addr:city":"Curitiba","addr:postcode":"82940-280"}],
 ["n9243077065",-25.47769,-49.32892,"br",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
-["n9356999451",-25.77738,-48.5196,"br",{"name":"UPA Praia Grande","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"2994","addr:street":"Rua 19 de Dezembro","addr:city":"Matinhos","addr:postcode":"83260-000"}],
+["n9356999451",-25.78699,-48.52326,"br",{"name":"UPA Praia Grande","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"2994","addr:street":"Rua 19 de Dezembro","addr:city":"Matinhos","addr:postcode":"83260-000"}],
 ["n9409524360",-25.43008,-49.26855,"br",{"name":"GNDI Centro Clínico C.Q.V (Centro de Qualidade de Vida Clinipam)","amenity":"clinic","healthcare":"clinic","operator":"GNDI Sul - Clinipam","addr:housenumber":"556","addr:street":"Rua XV de Novembro"}],
 ["n9719484073",-25.45275,-49.24452,"br",{"name":"Prf Curitiba","aeroway":"helipad"}],
 ["r10758966",-25.49725,-49.33911,"br",{"name":"Unidade de Pronto Atendimento CIC","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Secretaria Municipal da Saúde","operator:type":"public","addr:housenumber":"3370","addr:street":"Rua Senador Accioly Filho","addr:city":"Curitiba","addr:postcode":"81350-260","opening_hours":"24/7"}],

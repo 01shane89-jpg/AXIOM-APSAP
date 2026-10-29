@@ -185,10 +185,22 @@
     return "SELECT osm_type, osm_id, tags, " + clip + " AS geom FROM postpass_pointpolygon WHERE " + area + " AND geom && " + env +
       " UNION ALL SELECT osm_type, osm_id, tags, ST_ClipByBox2D(geom, " + env + ") AS geom FROM postpass_line WHERE " + area + " AND geom && " + env;
   }
+  /* OSAP_OSM comes from index.html; a page opened from an older saved copy of index.html has no such script tag, so it is
+     fetched here once rather than leaving the search spinning on "Loading elevation…" */
+  var osmWait = null;
+  function osmLib() {
+    if (W.OSAP_OSM) return Promise.resolve(W.OSAP_OSM);
+    return osmWait || (osmWait = new Promise(function (res, rej) {
+      var sc = D.createElement("script"); sc.src = "assets/osap-osm.js";
+      sc.onload = function () { if (W.OSAP_OSM) res(W.OSAP_OSM); else { osmWait = null; rej(new Error("the OpenStreetMap reader did not start")); } };
+      sc.onerror = function () { osmWait = null; sc.remove(); rej(new Error("the OpenStreetMap reader could not load")); };
+      D.head.appendChild(sc);
+    }));
+  }
   function overpass(b) {
     /* Postpass gets 45 s (a built-up window is a big answer), each Overpass server 45 s */
-    return W.OSAP_OSM.query({ sql: sqlQuery(b), ql: overpassQuery(b), ppMs: 45000, opMs: 45000 }).catch(function (e) {
-      throw new Error(e.message === "busy" ? "the free servers are busy" + (W.OSAP_OSM.dark().length ? " (" + W.OSAP_OSM.dark().join(", ") + ")" : "") : e.message);
+    return osmLib().then(function (O) { return O.query({ sql: sqlQuery(b), ql: overpassQuery(b), ppMs: 45000, opMs: 45000 }); }).catch(function (e) {
+      throw new Error(e.message === "busy" ? "the free servers are busy" + (W.OSAP_OSM && W.OSAP_OSM.dark().length ? " (" + W.OSAP_OSM.dark().join(", ") + ")" : "") : e.message);
     });
   }
   /* what an OpenStreetMap object means here: [class, "a"rea | "l"ine | "p"oint, margin in metres] */
@@ -648,7 +660,12 @@
      Used by find() below and by Route > Evacuation route ("nearest landing zone"). prog(done, total) reports elevation tiles;
      busy() is called before the heavy work and may return false to stop. Resolves the analysis (cands best first, pads, warn,
      bounds) or rejects with "elevation: ..." or the Overpass failure; never resolves "no landing zone" for a failed request. */
-  function scan(o, radius, size, slope, poly, prog, busy, small) {
+  function scan() {
+    /* any slip before the first request (a missing script, bad input) ends as a failed search, never a search that spins for ever */
+    var a = arguments;
+    return Promise.resolve().then(function () { return scanNow.apply(null, a); });
+  }
+  function scanNow(o, radius, size, slope, poly, prog, busy, small) {
     /* the window reaches APPR past the farthest LZ edge, so approach paths can be checked */
     var win = windowFor(o, radius + size / 2 + APPR + 20);
     var nw = fromCell(win, -0.5, -0.5), se = fromCell(win, win.w - 0.5, win.h - 0.5);

@@ -6,6 +6,7 @@
 ["n2127242885",-29.09275,-56.54995,"ar",{"name":"Hospital Doctor Miguel Sussini","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Hospital Doctor Miguel Sussini","phone":"+54 3772 470005;+54 3772 470011","addr:housenumber":"1248","addr:street":"Manuel Belgrano","addr:city":"Alvear","addr:postcode":"3344"}],
 ["n3818034958",-28.54032,-56.04081,"ar",{"name":"Sala de Primeros auxilios Mima Correa","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Avenida Uruguay","addr:city":"santo tome","addr:postcode":"3340"}],
 ["n3994349960",-28.05434,-56.01485,"ar",{"name":"Hospital Dr. Miguel Sussini","amenity":"hospital","healthcare":"hospital","phone":"+54 3756 482811","addr:street":"Avenida Lavalle","addr:city":"Gobernador Ingeniero Valentín Virasoro","addr:postcode":"3342"}],
+["n4262630790",-28.63314,-56.0427,"br",{"amenity":"clinic","healthcare":"clinic"}],
 ["n4587250595",-29.77104,-57.0848,"br",{"name":"Maximagem","amenity":"clinic","healthcare":"clinic"}],
 ["n5115911678",-28.39159,-57.89438,"ar",{"name":"Hospital Inmaculada Concepción","amenity":"hospital","healthcare":"hospital","phone":"+54 3782 497000","addr:street":"Capitan Arbo y Blanco","addr:city":"Concepción","addr:postcode":"3423"}],
 ["n5118110277",-29.17288,-56.64715,"ar",{"name":"Hospital San Antonio de Padua","amenity":"hospital","healthcare":"hospital","addr:street":"Avenida Augusto Ballester","addr:city":"La Cruz","addr:postcode":"3346"}],

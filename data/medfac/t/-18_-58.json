@@ -61,7 +61,7 @@
 ["w1312688501",-16.27035,-56.62381,"br",{"name":"Hospital Geral de Poconé Dr. Nicolau Fontanilas Frageli","amenity":"hospital","healthcare":"hospital","phone":"+55 65 3345 1963","addr:housenumber":"406","addr:street":"Avenida Dom Aquino","addr:city":"Poconé","addr:postcode":"78175-000"}],
 ["w1312689873",-16.2723,-56.65091,"br",{"name":"Aeroporto de Poconé","aeroway":"aerodrome"}],
 ["w1312947544",-16.0639,-57.68306,"br",{"amenity":"hospital","healthcare":"hospital"}],
-["w1505711024",-16.68898,-56.17657,"br",{"name":"Aeródromo do Posto de Proteção Ambiental São Luis","aeroway":"aerodrome","icao":"SWWW"}],
+["w1505711024",-16.68898,-56.17657,"br",{"name":"Aeródromo do Posto de Proteção Ambiental São Luis","aeroway":"aerodrome","icao":"SWWW","wikidata":"Q31205794"}],
 ["w1505711029",-16.77001,-56.17255,"br",{"name":"Aeródromo do Posto de Proteção Ambiental Santo André","aeroway":"aerodrome","icao":"SSAM"}],
 ["w396390728",-16.04347,-57.63086,"br",{"name":"Aeroporto Internacional de Cáceres","name:en":"Cáceres Airport","operator":"DAC","aeroway":"aerodrome","icao":"SWKC","iata":"CCX","wikidata":"Q9585902"}],
 ["w544672576",-16.06561,-57.68561,"br",{"name":"Clinicaceres","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"gynaecology;obstetrics","operator":"Dr Tanaka","addr:housenumber":"92","addr:street":"Rua João Pessoa","addr:city":"Cáceres","addr:postcode":"78200-000","wikidata":"Q130191513"}],

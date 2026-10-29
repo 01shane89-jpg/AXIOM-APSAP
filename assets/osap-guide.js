@@ -91,7 +91,7 @@
       ul(["Press and hold anywhere on the map (right-click with a mouse) for a ring of actions at that point.",
         b("Measure") + " and " + b("Route") + " start from the point. " + b("Point") + " drops a mark there.",
         b("NAI/TAI") + " and " + b("Watch") + " draw a circle of the chosen " + b("Radius") + " and open the save form or the watch form. They replace any area already drawn.",
-        b("Plans") + " offers " + b("Med plan from here") + " and " + b("Evacuate from here") + ".",
+        b("Plans") + " offers " + b("Med plan from here") + ", " + b("Hospital assessment here") + " and " + b("Evacuate from here") + ".",
         b("Find LZ") + " searches for landing zones round the point. " + b("Terrain") + " opens viewshed, line of sight, elevation and radio coverage.",
         b("Copy") + " copies the grid. Tap the grid chip to copy it too."]) +
       tip("The ring does not open while the Measure card is open or while you are drawing an area.") },
@@ -227,6 +227,7 @@
         "The table of Primary, Secondary and Tertiary hospitals covers major trauma, severe head injury, major burn and complex limb trauma. It says when to bypass a hospital and go straight to the next.",
         "Only capabilities from a credible source count: an official register or your own check. OpenStreetMap and Wikipedia are shown but never qualify.",
         "Record your own check on a hospital under " + b("Assessment") + ". It replaces older checks and expires after the hours you set.",
+        "One hospital on its own, with no plan: press " + b("Hospital assessment") + " in a hospital's map popup, or long-press, " + b("Plans") + ", " + b("Hospital assessment here") + ", or " + b("Reports") + ", " + b("Hospital assessment") + ". It prints with " + b("Export PDF") + ".",
         "The status at the top is GREEN (complete), AMBER (needs medical checks) or RED (a blocking error). The checklist under it says what is missing.",
         b("Print view (map and details)") + " shows every page with maps, then " + b("Export PDF") + "."]) +
       tip("The plan is an automatic draft from open data, not AI and not approved. Acceptance is never assumed: call the receiving hospital. Drive times assume no traffic.") },
