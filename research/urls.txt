@@ -424,3 +424,9 @@ bkk_bnh_llms https://www.bnhhospital.com/llms.txt
 bkk_bnh_sitemap https://www.bnhhospital.com/sitemap.xml
 bkk_bnh_wiki https://en.wikipedia.org/wiki/BNH_Hospital
 bkk_jci_th https://www.jointcommissioninternational.org/about-jci/accredited-organizations/?c=Thailand
+bkk_bum_full https://www.bumrungrad.com/llms-full.txt
+bkk_bum_bloodblog https://www.bumrungrad.com/en/health-blog/august-2016/blood-types-transfusions
+bkk_bum_orblog https://www.bumrungrad.com/en/health-blog/may-2020/operating-room-cleaning-disinfecting
+bkk_sv_sitemap https://www.samitivejhospitals.com/sitemap.xml
+bkk_bnh_pages1 https://www.bnhhospital.com/page-sitemap1.xml
+bkk_bnh_pages2 https://www.bnhhospital.com/page-sitemap2.xml
