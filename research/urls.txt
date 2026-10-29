@@ -430,3 +430,10 @@ bkk_bum_orblog https://www.bumrungrad.com/en/health-blog/may-2020/operating-room
 bkk_sv_sitemap https://www.samitivejhospitals.com/sitemap.xml
 bkk_bnh_pages1 https://www.bnhhospital.com/page-sitemap1.xml
 bkk_bnh_pages2 https://www.bnhhospital.com/page-sitemap2.xml
+bkk_bnh_er https://www.bnhhospital.com/th/emergency-department/
+bkk_bnh_er_en https://www.bnhhospital.com/emergency-medical-care-for-tourists/
+bkk_bnh_icu https://www.bnhhospital.com/intensive-care-unit-icu/
+bkk_bnh_img https://www.bnhhospital.com/diagnostic-imaging-centre/
+bkk_bnh_surg https://www.bnhhospital.com/surgery-and-urology-department/
+bkk_bnh_about https://www.bnhhospital.com/about-bnh/
+bkk_sv_centers https://www.samitivejhospitals.com/sitemap-centers-en.xml
