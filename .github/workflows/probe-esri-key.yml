@@ -28,7 +28,7 @@ jobs:
           sha=$(echo "$GITHUB_SHA" | cut -c1-7)
           for i in $(seq 1 60); do
             code=$(curl -sS -o out.json -w '%{http_code}' "$u" || true)
-            if [ "$code" = "200" ] && jq -e . out.json >/dev/null 2>&1; then break; fi
+            if [ "$code" = "200" ] && jq -e ".tileChecks or (.key == false)" out.json >/dev/null 2>&1; then break; fi
             echo "try $i: $code"; sleep 20
           done
           jq -c . out.json | fold -w 3800 > chunks.txt; wc -l chunks.txt
