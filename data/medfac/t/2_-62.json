@@ -46,6 +46,7 @@
 ["n13541338556",2.81316,-60.77904,"br",{"name":"Unidade Básica de Saúde Maria das Dores Pereira da Silva","amenity":"clinic","healthcare":"clinic","addr:housenumber":"507","addr:street":"rua equinócio","addr:city":"Boa Vista","addr:postcode":"69317378"}],
 ["n13924374833",2.80842,-60.74395,"br",{"name":"Emergência Dr. Marcus Brunner","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Rua Delman Veras"}],
 ["n13924374834",2.80848,-60.74428,"br",{"name":"Pronto Atendimento Cosme e Silva","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"community","operator":"SESAU-RR","operator:type":"public","addr:street":"Rua Delman Veras","addr:city":"Boa Vista"}],
+["n14259028790",2.76171,-60.58731,"br",{"name":"Aeroleves","aeroway":"aerodrome","icao":"SSC2"}],
 ["n1701714478",2.81459,-60.66892,"br",{"name":"Hospital Lotty Íris","amenity":"hospital","healthcare":"hospital","emergency":"no","addr:housenumber":"72","addr:street":"Rua José Coelho","addr:city":"Boa Vista","addr:postcode":"69301-300","opening_hours":"24/7"}],
 ["n3186494805",2.80525,-60.74557,"br",{"name":"UBS Pintolândia","amenity":"clinic","healthcare":"clinic"}],
 ["n3512338292",2.84881,-60.74818,"br",{"name":"Posto de saúde","amenity":"clinic"}],

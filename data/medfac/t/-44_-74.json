@@ -19,6 +19,8 @@
 ["n13604421290",-43.9742,-72.41104,"cl",{"name":"Helipuerto La Junta","aeroway":"helipad","surface":"paved"}],
 ["n13751446606",-42.4702,-73.77136,"cl",{"name":"Hospital de Dia","amenity":"doctors","healthcare":"hospital","healthcare:speciality":"physiotherapy;psychiatry","operator":"Extensión Hospital de Castro","operator:type":"public","addr:housenumber":"1080","addr:street":"Facundo Pérez Bórquez","addr:city":"Castro","addr:postcode":"5700701"}],
 ["n14206277848",-42.47924,-73.76782,"cl",{"amenity":"clinic","healthcare":"clinic","addr:city":"Castro","osap:withheld":"1"}],
+["n14302991701",-42.48042,-73.76715,"cl",{"name":"Clínica Chiloé","amenity":"clinic","phone":"+56 65 268 5231","website":"http://www.clinicachiloe.cl","addr:housenumber":"549","addr:street":"Emilio Sotomayor","addr:postcode":"5700587","opening_hours":"Mo-Fr 08:00-20:30; Sa 08:30-16:00"}],
+["n14303383401",-42.48126,-73.76809,"cl",{"name":"Clínica Chiloé","amenity":"clinic","addr:housenumber":"557","addr:street":"Freire"}],
 ["n1534142831",-42.43972,-73.6002,"cl",{"name":"CESFAM Curaco de Vélez","official_name":"Centro de Salud Familiar","amenity":"clinic","healthcare":"clinic","addr:housenumber":"06","addr:street":"Gabriela Mistral","addr:city":"Curaco de Vélez"}],
 ["n6010002336",-42.42093,-73.3056,"cl",{"name":"Centro Antención Primaria","amenity":"doctors","healthcare":"clinic","healthcare:speciality":"general","opening_hours":"24/7"}],
 ["n7095421785",-42.02497,-73.90587,"cl",{"name":"Posta de Salud Rural Coipomó","amenity":"doctors","healthcare":"clinic"}],

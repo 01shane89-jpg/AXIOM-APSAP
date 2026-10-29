@@ -45,7 +45,7 @@
 ["w1544799067",-30.28712,-54.75059,"br",{"name":"Estância Cerro","aeroway":"aerodrome","icao":"SI59"}],
 ["w223056577",-30.25234,-54.91645,"br",{"name":"Hospital Nossa Senhora Auxiliadora","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"2257","addr:street":"Rua 7 de Setembro","addr:postcode":"97590-000"}],
 ["w223214666",-30.27581,-54.92099,"br",{"name":"Aeroporto de Rosário do Sul","name:en":"Rosário do Sul Airport","addr:city":"Rosário do Sul","aeroway":"aerodrome","icao":"SSRZ","wikidata":"Q12694736"}],
-["w238456998",-31.33316,-54.1026,"br",{"name":"Hospital URCAMP","amenity":"hospital","healthcare":"hospital","contact:phone":"+55 53 242 7433","addr:housenumber":"169","addr:street":"Rua General Flores da Cunha","addr:postcode":"96400-350"}],
+["w238456998",-31.33312,-54.1025,"br",{"name":"Hospital URCAMP","amenity":"hospital","healthcare":"hospital","contact:phone":"+55 53 242 7433","addr:housenumber":"169","addr:street":"Rua General Flores da Cunha","addr:postcode":"96400-350"}],
 ["w241627490",-30.25169,-54.91663,"br",{"amenity":"clinic","healthcare":"clinic"}],
 ["w241628141",-31.32608,-54.11222,"br",{"name":"Hospital Pronto Socorro Santa Casa","amenity":"hospital","healthcare":"hospital"}],
 ["w271991001",-31.73437,-54.08917,"br",{"name":"Roso","addr:city":"Aceguá","aeroway":"aerodrome","icao":"SWNW"}],

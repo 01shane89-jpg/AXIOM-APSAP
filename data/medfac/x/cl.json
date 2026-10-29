@@ -1,0 +1,9 @@
+[["n4214077691",-45.56912,-72.07402,"cl",{"name":"Banco de Sangre XI Región","healthcare":"blood_donation"}],
+["n7253887756",-34.15477,-70.76641,"cl",{"healthcare":"blood_donation"}],
+["n7647728730",-33.43196,-70.62832,"cl",{"name":"Banco Sangre Clínica Santa María","healthcare":"blood_donation","addr:street":"Fernando Manterola","addr:city":"Providencia"}],
+["n8301362125",-33.43009,-70.6145,"cl",{"name":"Banco de Sangre","healthcare":"blood_donation","healthcare:speciality":"paediatrics"}],
+["w1204518803",-36.82398,-73.04489,"cl",{"name":"Centro de Sangre Concepción","healthcare":"blood_donation","phone":"+56 412 723 928","website":"https://donasangreconcepcion.cl","addr:housenumber":"1111","addr:street":"Barros Arana","addr:city":"Concepción","opening_hours":"We-Fr 13:30-18:30"}],
+["w317615633",-36.82862,-73.03952,"cl",{"name":"Casa del Donante","healthcare":"blood_donation","phone":"+56 412 723 928","website":"https://donasangreconcepcion.cl/","addr:housenumber":"45","addr:street":"Enrique Molina","addr:city":"Concepción","opening_hours":"Mo-Fr 10:00-19:00"}],
+["w447563400",-33.41858,-70.60516,"cl",{"name":"Centro Metropolitano de Sangre - Dona Sangre","healthcare":"blood_donation","addr:housenumber":"0115","addr:street":"Avenida Vitacura","addr:city":"Providencia"}],
+["w510782895",-36.83065,-73.03956,"cl",{"name":"Centro de Sangre Concepción","amenity":"blood_bank","phone":"+56412723928","website":"https://www.centrosangreconcepcion.cl/","addr:housenumber":"190","addr:street":"Beltrán Mathieu","addr:city":"Concepción"}],
+["w818928226",-33.4319,-70.6283,"cl",{"name":"Banco Sangre Clínica Santa María","healthcare":"blood_donation"}]]
