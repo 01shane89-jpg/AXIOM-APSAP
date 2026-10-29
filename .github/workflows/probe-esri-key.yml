@@ -26,7 +26,7 @@ jobs:
           u="https://deploy-preview-${n}--axiom-osap.netlify.app"
           for i in $(seq 1 60); do
             c=$(curl -sS "$u/build.json" | jq -r .commit || true)
-            [ "$c" = "$GITHUB_SHA" ] && break
+            curl -sS "$u/assets/osap-sold.js" | grep -q '"esriKey"' && break
             echo "try $i: preview at $c"; sleep 20
           done
           node tools/esri_render_probe.mjs "$u/"
