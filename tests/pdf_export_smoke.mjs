@@ -240,6 +240,15 @@ const click = (p, sel, timeout) => p.waitForSelector(sel, { state: "attached", t
     await click(p, "#mpd-print");
   }, { wait: 90000 });
   await p.evaluate(() => { const b = document.getElementById("mpd-close"); if (b) b.click(); const c = document.querySelector('#medplan [data-mp="close"]'); if (c) c.click(); });
+  /* one hospital on its own (no plan): the hospitals round the map centre, the nearest assessed */
+  await check("hospital", "Hospital assessment (standalone)", p, async () => {
+    await p.evaluate(() => window.OSAP_MEDPLAN.hospital({ at: [13.75, 100.5], pick: true }));
+    await p.waitForSelector("#brief table.mpsolo [data-solo-pick]", { timeout: 90000 });
+    await click(p, "#brief table.mpsolo [data-solo-pick]");
+    await p.waitForFunction(() => { const c = document.getElementById("mps-fp"); return c && /^[0-9a-f]{64}$/.test(c.textContent); }, null, { timeout: 60000 });
+    await click(p, '#brief [data-solo="print"]');
+  }, { wait: 90000 });
+  await p.evaluate(() => { const b = document.querySelector('#brief [data-solo="close"]'); if (b) b.click(); });
   await check("seatransit", "Sea transit medical assessment", p, async () => {
     await p.evaluate(() => window.OSAP_REPORTS.run("seatransit"));
     await click(p, '#seatr [data-st="example"]'); await click(p, '#seatr [data-st="run"]');
