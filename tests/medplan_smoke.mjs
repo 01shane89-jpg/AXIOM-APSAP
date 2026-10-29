@@ -331,6 +331,26 @@ async function openPlan(p) {
     "stabilization: an emergency department OpenStreetMap lists is never a stabilization stop; the plan says none is documented and names the nearest for reference only " + JSON.stringify(stb) + " " + roles[3][0]);
   ok(await p.evaluate(() => /Alternate MTFs, major trauma \(documented by a credible source\): ALT PRI/.test(document.querySelector("#mp-pst .mpalts").textContent) && [...document.querySelectorAll(".mpicon.alt")].every((m) => /^ALT (PRI|SEC|TER)$/.test(m.textContent))), "alternates: only documented alternates, listed per role and marked ALT on the map");
   ok(/Main roads: Rama IV Road \(5\.0 km\) → 3 Sukhumvit Road \(2\.5 km\)/.test(rt), "desktop: each route lists its main roads");
+  /* Shane 2026-10-29: "i need to be able to easily turn on/off the objects on the map": one chip per kind of object */
+  const lyr = () => p.evaluate(() => ({ chips: [...document.querySelectorAll("#mp-layers [data-mp-lyr]")].map((b) => b.textContent + ":" + b.getAttribute("aria-pressed")),
+    mk: [...document.querySelectorAll(".mpicon")].map((m) => m.textContent), paths: window.OSAP_MEDPLAN._shown().filter((g) => g === "rt").length, n: window.OSAP_MEDPLAN._shown().length,
+    lg: (document.querySelector('[data-lg="medplan"]') || {}).textContent || "", hide: localStorage.getItem("osap-medplan-hide") }));
+  const ly0 = await lyr();
+  ok(["Point of injury:true", "Planned hospitals:true", "Routes:true", "Road reach:true"].every((c) => ly0.chips.includes(c)) && ly0.chips.includes("All off:null"), "layers: a chip for each kind of map object, all on to start " + JSON.stringify(ly0.chips));
+  await p.click('#mp-layers [data-mp-lyr="mtf"]'); await p.waitForTimeout(150);
+  const ly1 = await lyr();
+  ok(!ly1.mk.some((t) => /^(PRI|SEC|TER)$/.test(t)) && ly1.mk.some((t) => /^(POI|S)$/.test(t)) && !/Primary MTF/.test(ly1.lg) && /"mtf"/.test(ly1.hide || "") && ly1.chips.includes("Planned hospitals:false"), "layers: Planned hospitals off takes the PRI/SEC/TER marks and their key off the map, kept on the device " + JSON.stringify(ly1));
+  await p.click('#mp-layers [data-mp-lyr="rt"]'); await p.waitForTimeout(150);
+  const ly2 = await lyr();
+  ok(ly1.paths > 0 && !ly2.paths && !/Route to (Primary|Secondary)/.test(ly2.lg), "layers: Routes off takes the route lines off the map " + ly1.paths + " -> " + ly2.paths);
+  ok(/Route to the Primary|Primary/.test(await p.textContent("#mp-pst")) && /min/.test(await p.textContent("#mp-rt")), "layers: hiding map objects leaves the plan's text untouched");
+  await p.click('#mp-layers [data-mp-lyr="*off"]'); await p.waitForTimeout(150);
+  const ly3 = await lyr();
+  ok(!ly3.mk.length && !ly3.paths && ly3.chips.filter((c) => /:false$/.test(c)).length === ly3.chips.length - 2 && !ly3.n, "layers: All off clears the plan from the map " + JSON.stringify(ly3));
+  ok(await p.evaluate(() => !document.querySelector('#medplan [data-mp-opt="gr"]').checked), "layers: the Road reach chip and the section 1 ground rings switch are the same setting");
+  await p.click('#mp-layers [data-mp-lyr="*on"]'); await p.waitForTimeout(150);
+  const ly4 = await lyr();
+  ok(ly4.mk.length === ly0.mk.length && ly4.n === ly0.n && ly4.hide === "[]", "layers: All on puts every object back " + ly4.mk.length + "/" + ly0.mk.length + " marks, " + ly4.paths + "/" + ly0.paths + " lines");
   const ghs = await p.textContent("#mp-gh");
   ok(/60 minutes from injury/.test(ghs) && /10 minutes to treat and load/.test(ghs) && /green 30 minutes/.test(ghs) && /light blue ring/.test(ghs), "desktop: golden-hour section states its thresholds, the road reach and the air rings");
   const ems = await p.textContent("#mp-ems");
@@ -793,6 +813,12 @@ async function openPlan(p) {
   await p.waitForFunction(() => /1669/.test(document.getElementById("mp-ems").textContent), null, { timeout: 10000 });
   ok(true, "phone: emergency numbers still show when OpenStreetMap is down");
   ok(await p.evaluate(() => document.getElementById("medplan").scrollWidth <= window.innerWidth + 1 && document.querySelector("#medplan .mpbox").getBoundingClientRect().width <= window.innerWidth), "phone: the plan fits the screen width");
+  const plz = await p.evaluate(() => { const L = document.getElementById("mp-layers"), b = L && L.querySelector('[data-mp-lyr="poi"]'), r = b && b.getBoundingClientRect();
+    return { n: L ? L.querySelectorAll("[data-mp-lyr]").length : 0, h: r ? Math.round(r.height) : 0, oneRow: L ? getComputedStyle(L).flexWrap : "", w: L ? Math.round(L.getBoundingClientRect().width) : 0, vw: innerWidth }; });
+  ok(plz.n >= 3 && plz.h >= 34 && plz.oneRow === "nowrap" && plz.w <= plz.vw, "phone: the map object chips are one swipeable row with tap-sized buttons " + JSON.stringify(plz));
+  await p.tap('#mp-layers [data-mp-lyr="poi"]'); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => ![...document.querySelectorAll(".mpicon")].some((m) => /^(POI|S)$/.test(m.textContent)) && document.querySelector('#mp-layers [data-mp-lyr="poi"]').getAttribute("aria-pressed") === "false"), "phone: tapping a chip hides that object");
+  await p.tap('#mp-layers [data-mp-lyr="poi"]'); await p.waitForTimeout(100);
   if (OUT) await p.screenshot({ path: OUT + "/phone-plan.png" });
   await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
   const hs = await p.evaluate(() => { const r = document.querySelector("#medplan .mpbox").getBoundingClientRect(), hit = document.elementFromPoint(20, 120); return { top: Math.round(r.top), vh: innerHeight, w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")) }; });
