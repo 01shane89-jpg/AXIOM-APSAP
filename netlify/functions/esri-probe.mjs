@@ -22,23 +22,27 @@ export default async () => {
   out.navStyle = { status: sj.status, tokenInUrls: !!(sj.t && sj.t.includes(k)), sources: sj.j && sj.j.sources ? Object.keys(sj.j.sources).map((s) => red(JSON.stringify(sj.j.sources[s])).slice(0, 300)) : null,
     sprite: sj.j && red(JSON.stringify(sj.j.sprite)).slice(0, 300), glyphs: sj.j && red(String(sj.j.glyphs)).slice(0, 300) };
   const sm = await get("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/self");
-  out.staticTiles = { status: sm.status, body: sm.t ? red(sm.t.slice(0, 3000)) : null };
-  out.raster = {};
-  for (const host of ["https://ibasemaps-api.arcgis.com", "https://basemaps-api.arcgis.com"]) {
-    const root = await get(host + "/arcgis/rest/services?f=json");
-    const svcs = [];
-    const add = (j) => (j && j.services || []).forEach((s) => svcs.push(s.name + "/" + s.type));
-    add(root.j);
-    for (const f of (root.j && root.j.folders) || []) add((await get(host + "/arcgis/rest/services/" + f + "?f=json")).j);
-    const tiles = {};
-    for (const s of svcs) {
-      const [name, type] = [s.slice(0, s.lastIndexOf("/")), s.slice(s.lastIndexOf("/") + 1)];
-      const u = host + "/arcgis/rest/services/" + name + "/" + type + (type === "MapServer" ? "/tile/3/3/6" : "/tile/3/3/6.pbf");
-      const r = await get(u);
-      tiles[s] = r.status + " " + (r.type || "");
-    }
-    out.raster[host] = { status: root.status, err: root.j && root.j.error, folders: root.j && root.j.folders, tiles };
-  }
+  out.staticTiles = { status: sm.status, list: sm.j && sm.j.styles ? sm.j.styles.map((x) => x.path) : null };
+  const dims = async (u) => {
+    try {
+      const r = await fetch(u + (u.includes("?") ? "&" : "?") + "token=" + encodeURIComponent(k), { headers: { referer: REF } });
+      const b = new Uint8Array(await r.arrayBuffer());
+      let w = null, h = null;
+      if (b[0] === 0x89 && b[1] === 0x50) { w = (b[16] << 24) | (b[17] << 16) | (b[18] << 8) | b[19]; h = (b[20] << 24) | (b[21] << 16) | (b[22] << 8) | b[23]; }
+      else if (b[0] === 0xff && b[1] === 0xd8) { for (let i = 2; i < b.length - 9;) { if (b[i] !== 0xff) break; const m = b[i + 1], L = (b[i + 2] << 8) | b[i + 3]; if (m >= 0xc0 && m <= 0xc3) { h = (b[i + 5] << 8) | b[i + 6]; w = (b[i + 7] << 8) | b[i + 8]; break; } i += 2 + L; } }
+      return r.status + " " + r.headers.get("content-type") + " " + b.length + "B " + w + "x" + h;
+    } catch (e) { return "err " + (e.message || e); }
+  };
+  out.tileChecks = {
+    staticNav: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/navigation/static/tile/3/3/6"),
+    staticOpenStreets: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/open/streets/static/tile/3/3/6"),
+    staticNova: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/nova/static/tile/3/3/6"),
+    soldImagery: await dims("https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/3/3/6"),
+    soldHillshade: await dims("https://ibasemaps-api.arcgis.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/3/3/6"),
+    soldTransport: await dims("https://basemaps-api.arcgis.com/arcgis/rest/services/Reference/World_Transportation/MapServer/tile/3/3/6"),
+    soldPlaces: await dims("https://basemaps-api.arcgis.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/3/3/6"),
+    vectorTile: await dims("https://basemaps-api.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/3/3/6.pbf")
+  };
   return new Response(JSON.stringify(out, null, 1), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
 };
 export const config = { path: "/api/esri-probe" };
