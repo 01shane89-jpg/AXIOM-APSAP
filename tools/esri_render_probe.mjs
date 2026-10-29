@@ -24,7 +24,14 @@ const browser = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable
 const page = await browser.newPage({ viewport: { width: 900, height: 650 }, serviceWorkers: "block" });
 const st = {}, errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
-await page.route(/arcgis\.com\//, (r) => r.continue({ headers: { ...r.request().headers(), referer: "https://axiom-osap.netlify.app/", origin: "https://axiom-osap.netlify.app" } }));
+// the browser will not let a page change Referer or Origin, so Esri's requests are made from here with the live site's, and
+// handed back to the page as if Esri allowed this address
+await page.route(/arcgis\.com\//, async (r) => {
+  try {
+    const res = await r.fetch({ headers: { ...r.request().headers(), referer: "https://axiom-osap.netlify.app/", origin: "https://axiom-osap.netlify.app" } });
+    await r.fulfill({ response: res, headers: { ...res.headers(), "access-control-allow-origin": "*" } });
+  } catch (e) { await r.abort().catch(() => {}); }
+});
 page.on("response", (r) => { const u = r.url(); if (/arcgis\.com/.test(u)) { const h = new URL(u).host; const k = h + " " + r.status(); st[k] = (st[k] || 0) + 1; } });
 await page.addInitScript(() => { localStorage.setItem("osap-home", JSON.stringify("map")); });
 await page.goto(base + "#th");
