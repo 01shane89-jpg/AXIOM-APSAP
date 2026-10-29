@@ -435,10 +435,23 @@
       AF: L.filter(function (l) { return l.kind === "airfield"; }).slice(0, 8), E: E.slice(0, 5), nH: H.length, nC: C.length };
   }
   function richness(f) { return (f.er ? 2 : 0) + (f.beds ? 1 : 0) + (f.specRaw ? 1 : 0) + (f.phone ? 1 : 0) + (f.web ? 1 : 0) + (f.addr ? 1 : 0) + (/no name|withheld/.test(f.name) ? -3 : 0) + (/[a-z]/i.test(f.name) ? 1 : 0); }
+  /* two named entries 250 m apart can be two hospitals in a dense city (Shane 2026-10-29: Samitivej Sukhumvit was shown
+     under a clinic next door): close entries are one hospital only when a name is missing, the scripts differ (a Thai and
+     an English entry), or the names share a distinctive word (Latin) or one contains the other (Thai) */
+  var THAI_GEN = /\u0e42\u0e23\u0e07\u0e1e\u0e22\u0e32\u0e1a\u0e32\u0e25|\s+/g;
+  function sameSite(a, b) {
+    var x = String(a.name || ""), y = String(b.name || ""), un = /no name|withheld/;
+    if (un.test(x) || un.test(y) || x.toLowerCase() === y.toLowerCase()) return true;
+    var lx = /[a-z]/i.test(x), ly = /[a-z]/i.test(y);
+    if (lx !== ly) return true;
+    if (lx) { var wy = words(y); return words(x).some(function (w) { return wy.indexOf(w) >= 0; }); }
+    var tx = x.replace(THAI_GEN, ""), ty = y.replace(THAI_GEN, "");
+    return !tx || !ty || tx.indexOf(ty) >= 0 || ty.indexOf(tx) >= 0;
+  }
   function dedupe(L) {
     var out = [];
     L.forEach(function (f) {
-      var d = out.filter(function (g) { var m = hav([f.lat, f.lon], [g.lat, g.lon]); return m < 250 || (m < 1500 && f.name.toLowerCase() === g.name.toLowerCase() && !/no name|withheld/.test(f.name)); })[0];
+      var d = out.filter(function (g) { var m = hav([f.lat, f.lon], [g.lat, g.lon]); return (m < 250 && sameSite(f, g)) || (m < 1500 && f.name.toLowerCase() === g.name.toLowerCase() && !/no name|withheld/.test(f.name)); })[0];
       if (!d) { out.push(f); return; }
       var keep = richness(f) > richness(d) ? f : d, other = keep === f ? d : f;
       ["phone", "ephone", "web", "addr", "er", "beds", "specRaw", "spec", "op"].forEach(function (k) { if (!keep[k] && other[k]) keep[k] = other[k]; });
@@ -843,7 +856,14 @@
     var a = x.s == null ? Infinity : x.s, b = y.s == null ? Infinity : y.s;
     return rankOf(y) - rankOf(x) || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || x.m - y.m;
   }
-  /* hospitals for the plan: the nearest ten, plus the best-ranked of the rest, plus sourced hospitals OSM lacks */
+  /* a hospital a credible source documents for a Secondary or Tertiary role of any casualty type (Shane 2026-10-29:
+     Bumrungrad never appeared, because in a city with 180 hospitals only the ten nearest and the four best-ranked were
+     kept): these are kept in the list, nearest first, up to MAX_DOC more, so a documented hospital is never dropped for
+     being eleventh nearest */
+  var MAX_DOC = 10;
+  function roleFit(f) { return CATS.some(function (c) { return ["secondary", "tertiary"].some(function (r) { return stageFit(f, c.stages[r]).ok; }); }); }
+  /* hospitals for the plan: the nearest ten, plus the documented ones above, plus the best-ranked of the rest, plus sourced
+     hospitals OSM lacks */
   function pickHosp(F, o, rH, sofList) {
     var H = F.H.map(function (f) { return capability(f, sofList); });
     /* one sourced record describes one hospital: when two OSM entries match it, the one sharing its name (else the
@@ -878,9 +898,13 @@
        entries with no name are left out */
     var U = H.filter(function (f) { return f.tier === 0 && !f.sofRec && !/no name/.test(f.name); }), nNo = H.filter(function (f) { return f.tier === 0 && !f.sofRec && /no name/.test(f.name); }).length;
     H = H.filter(function (f) { return f.tier > 0 || f.sofRec; });
-    function near10(L, n) { L.sort(function (x, y) { return x.m - y.m; }); return L.slice(0, 10).concat(L.slice(10).sort(byCap).slice(0, n - 10)); }
+    function near10(L, n, keep) {
+      L.sort(function (x, y) { return x.m - y.m; });
+      var rest = L.slice(10), doc = keep ? rest.filter(keep).slice(0, MAX_DOC) : [];
+      return L.slice(0, 10).concat(doc, rest.filter(function (f) { return doc.indexOf(f) < 0; }).sort(byCap).slice(0, n - 10));
+    }
     F.U = near10(U, 10); F.nU = U.length; F.nNo = nNo;
-    return near10(H, MAX_HOSP).concat(farDoc(o, rH, sofList, used));
+    return near10(H, MAX_HOSP, roleFit).concat(farDoc(o, rH, sofList, used));
   }
   /* Shane 2026-10-03: when nothing near has the documented capability, the plan finds the nearest that does instead of
      stopping at "Gap". So the sourced hospitals beyond the search radius that a credible source documents (capabilities
@@ -3782,6 +3806,6 @@
   /* road: the plan's own road routing for other tools (the DZSO sheet's ground evacuation): times(o, places) fills each place's
      s (seconds), rm (metres) and est (true when no router answered and it is the labelled straight-line estimate) and gives the
      router used; route(o, place) gives { s, m, line, roads, host } */
-  W.OSAP_MEDPLAN = { road: { times: driveTimes, route: route }, open: open, close: close, _takKml: medKml, printView: printView, assessView: assessView, hospital: hospital, _solo: function () { return SOLO; }, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { road: { times: driveTimes, route: route }, open: open, close: close, _takKml: medKml, printView: printView, assessView: assessView, hospital: hospital, _solo: function () { return SOLO; }, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _hosp: function () { return ST && ST.fac ? ST.fac.H : []; }, _capOk: capOk, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();
