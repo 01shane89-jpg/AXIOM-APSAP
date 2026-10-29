@@ -30,6 +30,17 @@ if (/^(1|true|yes|on)$/i.test(String(process.env.OSAP_COMMERCIAL || "").trim()))
   fs.writeFileSync(f, t.replace("window.OSAP_SOLD = false;", "window.OSAP_SOLD = true;").replace("window.OSAP_SOLD_HOSTS = {};", "window.OSAP_SOLD_HOSTS = " + JSON.stringify(hosts) + ";"));
   console.log("netlify_build: sold version (OSAP_SOLD = true), own hosts: " + (Object.keys(hosts).join(", ") || "none"));
 }
+// not sold: the free version still gets the site's Esri key (2026-10-29), for the Esri maps that only the key opens (the
+// Basemap Styles service: assets/osap-sold.js OSAP_ESRI_STYLE). Imagery, labels and hillshade stay on Esri's public servers.
+else {
+  const ek = soldHosts(process.env).esriKey;
+  if (ek) {
+    const f = path.join(OUT, "assets", "osap-sold.js"), t = fs.readFileSync(f, "utf8");
+    if (!/window\.OSAP_SOLD_HOSTS = \{\};/.test(t)) throw new Error("netlify_build: assets/osap-sold.js has no hosts line");
+    fs.writeFileSync(f, t.replace("window.OSAP_SOLD_HOSTS = {};", "window.OSAP_SOLD_HOSTS = " + JSON.stringify({ esriKey: ek }) + ";"));
+    console.log("netlify_build: free version, with the Esri key for the Esri base maps");
+  }
+}
 console.log("netlify_build: copied " + n + " entries into _site");
 
 // OSAP_SAT_TILES (with {z}, {x} and {y}), OSAP_OSRM_URL and OSAP_VALHALLA_URL (ending in /) and OSAP_ESRI_KEY from the site's environment

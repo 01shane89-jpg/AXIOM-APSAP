@@ -265,7 +265,7 @@
     var out = [];
     map.eachLayer(function (l) {
       /* the English Streets map is drawn by its own engine on the 2D map; 3D draws the same OpenStreetMap map from its plain tiles */
-      if (l.rasterTwin && map.hasLayer(l)) { var t = l.rasterTwin(); if (t) out.push({ urls: [t.url], z: 0, op: 1, min: 0, max: t.max, tms: false, attr: t.attr, base: true }); return; }
+      if (l.rasterTwin && map.hasLayer(l)) { var t = l.rasterTwin(); if (t) out.push({ urls: [t.url], z: 0, op: 1, min: 0, max: t.max, tms: false, attr: t.attr, base: true, size: t.size }); return; }
       if (!(l instanceof L.TileLayer) || !map.hasLayer(l)) return;
       /* the Elevation and LiDAR shading is multiplied into the 2D base map; 3D has no multiply, so it shades from the elevation instead */
       if (/(^| )osap-hs( |$)/.test(l.options.className || "")) return;
@@ -589,7 +589,7 @@
       R.forEach(function (r, i) {
         var viaUs = demProto && !/\{bbox/.test(r.urls[0]);
         if (viaUs) TPL[i] = { urls: r.urls, base: r.base };
-        style.sources["r" + i] = { type: "raster", tiles: viaUs ? ["osapr://" + i + "/{z}/{x}/{y}"] : r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" };
+        style.sources["r" + i] = { type: "raster", tiles: viaUs ? ["osapr://" + i + "/{z}/{x}/{y}"] : r.urls, tileSize: r.size || 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" };
         style.layers.push({ id: "r" + i, type: "raster", source: "r" + i, paint: { "raster-opacity": r.op, "raster-fade-duration": 120, "raster-contrast": r.base ? 0.06 : 0, "raster-saturation": r.base ? 0.08 : 0 } });
         if (r.base) hillAt = style.layers.length;
         if (r.attr && attrs.indexOf(r.attr) < 0) attrs.push(r.attr);
@@ -779,7 +779,7 @@
           /* new ids each time, so a tile still on its way for a picture just switched off is never drawn in the new one */
           var k = TPL.length, id = "r" + k, viaUs = demProto && !/\{bbox/.test(r.urls[0]);
           TPL[k] = viaUs ? { urls: r.urls, base: r.base } : null;
-          gl.addSource(id, { type: "raster", tiles: viaUs ? ["osapr://" + k + "/{z}/{x}/{y}"] : r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" });
+          gl.addSource(id, { type: "raster", tiles: viaUs ? ["osapr://" + k + "/{z}/{x}/{y}"] : r.urls, tileSize: r.size || 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" });
           var before = r.base ? "hill" : ["bld", "bldp", "vf"].filter(function (x) { return gl.getLayer(x); })[0];
           gl.addLayer({ id: id, type: "raster", source: id, paint: { "raster-opacity": r.op, "raster-fade-duration": 120, "raster-contrast": r.base ? 0.06 : 0, "raster-saturation": r.base ? 0.08 : 0 } }, before);
           rIds.push(id);

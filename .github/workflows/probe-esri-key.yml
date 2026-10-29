@@ -1,41 +1,39 @@
-# TEMPORARY (removed before merge): reads the deploy preview's /api/esri-probe (which Esri basemaps the site's key can use)
-# and Esri's public catalogue, and prints both as notices. Writes nothing.
+# TEMPORARY (removed before merge): draws some Esri maps from the PR's deploy preview (tools/esri_render_probe.mjs) and
+# prints what Esri answered, with small pictures as base64 notices. Writes nothing.
 name: Probe Esri key
 on:
   push:
     branches: [claude/all-esri-basemaps]
-    paths: [netlify/functions/esri-probe.mjs, .github/workflows/probe-esri-key.yml]
+    paths: [tools/esri_render_probe.mjs, .github/workflows/probe-esri-key.yml, index.html, assets/osap-sold.js, assets/osap-atak.js]
 permissions:
   contents: read
   pull-requests: read
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
-      - name: Public Esri catalogue
-        run: |
-          for f in "" Canvas Elevation Ocean Reference Specialty; do
-            curl -sS "https://server.arcgisonline.com/ArcGIS/rest/services/${f}?f=json" | jq -c '[.folders, [.services[]? | .name + "/" + .type]]' | cut -c1-3800 | sed 's/^/::notice title=public '"$f"'::/'
-          done
-      - name: Key probe from the deploy preview
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1 && npx playwright install --with-deps chromium
+      - name: Wait for this commit's deploy preview, then draw
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           n=$(gh api "repos/${GITHUB_REPOSITORY}/pulls?head=${GITHUB_REPOSITORY_OWNER}:claude/all-esri-basemaps&state=open" --jq '.[0].number')
-          echo "PR $n"
-          u="https://deploy-preview-${n}--axiom-osap.netlify.app/api/esri-probe"
-          sha=$(echo "$GITHUB_SHA" | cut -c1-7)
+          u="https://deploy-preview-${n}--axiom-osap.netlify.app"
           for i in $(seq 1 60); do
-            code=$(curl -sS -o out.json -w '%{http_code}' "$u" || true)
-            if [ "$code" = "200" ] && jq -e ".tileChecks2 or (.key == false)" out.json >/dev/null 2>&1; then break; fi
-            echo "try $i: $code"; sleep 20
+            c=$(curl -sS "$u/build.json" | jq -r .commit || true)
+            [ "$c" = "$GITHUB_SHA" ] && break
+            echo "try $i: preview at $c"; sleep 20
           done
-          jq -c . out.json | fold -w 3800 > chunks.txt; wc -l chunks.txt
-          sed -n '1,10p' chunks.txt | nl -ba | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
-      - name: More 11
-        run: sed -n '11,20p' chunks.txt | nl -ba -v 11 | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
-      - name: More 21
-        run: sed -n '21,30p' chunks.txt | nl -ba -v 21 | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
-      - name: More 31
-        run: sed -n '31,40p' chunks.txt | nl -ba -v 31 | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
+          node tools/esri_render_probe.mjs "$u/"
+          ls -la probe-out
+      - name: Pictures 1
+        run: for f in probe-out/esri_arcgis_navigation.jpg probe-out/esri_arcgis_topographic.jpg; do base64 -w0 "$f" | fold -w 4000 | nl -ba | sed "s|^ *\([0-9]*\)\t|::notice title=$(basename $f) \1::|"; done
+      - name: Pictures 2
+        run: for f in probe-out/esri_arcgis_outdoor.jpg probe-out/esri_open_streets.jpg; do base64 -w0 "$f" | fold -w 4000 | nl -ba | sed "s|^ *\([0-9]*\)\t|::notice title=$(basename $f) \1::|"; done
+      - name: Pictures 3
+        run: for f in probe-out/esri_arcgis_dark-gray.jpg probe-out/esri_open_hybrid.jpg; do base64 -w0 "$f" | fold -w 4000 | nl -ba | sed "s|^ *\([0-9]*\)\t|::notice title=$(basename $f) \1::|"; done

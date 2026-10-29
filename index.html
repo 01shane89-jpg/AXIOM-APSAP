@@ -528,6 +528,8 @@ select.mini{
 .mlrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
 .mlrow input{margin-top:3px;flex:none}
 .mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.mlmore>summary{cursor:pointer;font-weight:600;padding:6px 0;color:var(--ink)}
+.mlh2{font-size:11px;color:var(--muted);margin:8px 0 2px;font-weight:600}
 .mlbtn2{flex:none;font:inherit;font-size:13px;font-weight:600;min-height:32px;padding:4px 10px;border:1px solid var(--accent);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
@@ -1434,7 +1436,10 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community' },
     hybrid: { name: "Hybrid", note: "The same sharp imagery with borders, place names and roads on top",
       url: ESRI_IMG, max: 20, zmax: 20, deep: 1, lic: "restricted",
-      labels: [esriTiles("Reference/World_Transportation"), esriTiles("Reference/World_Boundaries_and_Places")],
+      /* the Location Platform has no Reference services (404 with the key, 2026-10-29): the sold version takes the same labels
+         as Esri's plain imagery-labels tiles (512 pixels) instead */
+      labels: window.OSAP_SOLD ? [window.OSAP_ESRI_STATIC ? window.OSAP_ESRI_STATIC("arcgis/imagery/labels") : ""] : [esriTiles("Reference/World_Transportation"), esriTiles("Reference/World_Boundaries_and_Places")],
+      labelSize: window.OSAP_SOLD ? 512 : 256,
       attr: 'Imagery and labels &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community' },
     /* Esri World Imagery (Clarity): the same providers with less colour processing, and often a different capture date */
     clarity: { name: "Satellite, second look", note: "Esri World Imagery (Clarity): often a different or newer picture of the same place, less colour-processed. Can look hazier",
@@ -1465,6 +1470,68 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   if (!BASES.topo.url) BASES.topo = { name: "Topographic", note: "OpenStreetMap roads, rivers and names in English over hill shading of the terrain",
     vector: "https://tiles.openfreemap.org/styles/liberty", hill: true, url: "", max: 19,
     attr: STREETS_ATTR + ', hill shading: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">Terrain Tiles on AWS</a> (Mapzen, SRTM and others)' };
+
+  /* ---------- Esri maps: every full map the site's ArcGIS Location Platform key can use ----------
+     Read from Esri's Basemap Styles service (styles/self, with the key) on 2026-10-29: 43 ArcGIS styles and 18 Open Basemaps
+     styles (the 16 "OSM" styles are deprecated by Esri and left out). Listed here are the complete maps; the parts Esri also
+     sells separately (a map's base or labels alone, "detail" layers) and the imagery styles (the Satellite and Hybrid maps
+     above already are Esri World Imagery) are not. Each is drawn on the device from Esri's vector tiles with English names
+     (assets/osap-sold.js OSAP_ESRI_STYLE), and falls back to Esri's plain tiles of the same map. Without the key (GitHub
+     Pages, a local copy) the list is empty. Display layers only, like every base map; Esri's tiles are paid for by the key
+     (2 million a month free, then about US$0.15 per 1,000, Sept 2026). Shane 2026-10-29: "Add all the esri maps that are
+     available in my API account". */
+  var ESRI_ATTR = 'Powered by <a href="https://www.esri.com" target="_blank" rel="noopener noreferrer">Esri</a>. Sources: Esri, TomTom, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors and the GIS user community';
+  var ESRI_OPEN_ATTR = 'Powered by <a href="https://www.esri.com" target="_blank" rel="noopener noreferrer">Esri</a>. Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors, Microsoft, Esri Community Maps contributors';
+  var ESRI_GROUPS = [
+    ["Roads and places", [
+      ["arcgis/navigation", "Navigation", "Esri's road map for driving: bold roads, road numbers, towns and points of interest"],
+      ["arcgis/navigation-night", "Navigation, night", "The navigation map in dark colours, easy on the eyes at night"],
+      ["arcgis/streets", "Esri Streets", "Esri's classic street map: roads, places and land use"],
+      ["arcgis/streets-night", "Esri Streets, night", "The street map in dark colours"],
+      ["arcgis/streets-relief", "Esri Streets with relief", "The street map over shaded hills and mountains"],
+      ["arcgis/community", "Community", "Esri's street map with detail added by local governments and the GIS community"],
+      ["open/navigation", "OSM Navigation", "Esri's navigation look drawn from OpenStreetMap data"],
+      ["open/navigation-dark", "OSM Navigation, dark", "OpenStreetMap navigation map in dark colours"],
+      ["open/streets", "OSM Streets", "Esri's street look drawn from OpenStreetMap data"],
+      ["open/streets-night", "OSM Streets, night", "OpenStreetMap street map in dark colours"],
+      ["open/streets-relief", "OSM Streets with relief", "OpenStreetMap street map over shaded hills"],
+      ["open/osm-style", "OpenStreetMap style", "The familiar OpenStreetMap look, served by Esri"],
+      ["open/osm-style-relief", "OpenStreetMap style with relief", "The OpenStreetMap look over shaded hills"]]],
+    ["Terrain and sea", [
+      ["arcgis/topographic", "Esri Topographic", "Esri's topographic map: relief, contours in many places, roads, rivers and places"],
+      ["arcgis/outdoor", "Outdoor", "Terrain with contours, trails, parks and peaks, for ground away from towns"],
+      ["arcgis/terrain", "Terrain", "Shaded relief with water, borders and big roads only, so the ground stands out"],
+      ["arcgis/hillshade/light", "Hillshade", "Shaded relief of the ground alone, light"],
+      ["arcgis/hillshade/dark", "Hillshade, dark", "Shaded relief of the ground alone, dark"],
+      ["arcgis/oceans", "Oceans", "The sea floor in depth shades with undersea feature names, and plain land"]]],
+    ["Grey and dark", [
+      ["arcgis/light-gray", "Light grey canvas", "Quiet light grey map that lets reports and overlays stand out"],
+      ["arcgis/dark-gray", "Dark grey canvas", "Quiet dark grey map that lets reports and overlays stand out"],
+      ["open/light-gray", "OSM light grey", "Light grey canvas drawn from OpenStreetMap data"],
+      ["open/dark-gray", "OSM dark grey", "Dark grey canvas drawn from OpenStreetMap data"],
+      ["arcgis/human-geography", "Human geography", "Muted map that brings out where people live and how land is used"],
+      ["arcgis/human-geography-dark", "Human geography, dark", "The human geography map in dark colours"]]],
+    ["Imagery", [
+      ["open/hybrid", "Imagery with OSM labels", "Esri World Imagery with OpenStreetMap roads and names in English on top"]]],
+    ["Other looks", [
+      ["arcgis/charted-territory", "Charted territory", "Old atlas style"],
+      ["arcgis/colored-pencil", "Coloured pencil", "Hand-drawn look"],
+      ["arcgis/nova", "Nova", "Glowing lines on black"],
+      ["arcgis/modern-antique", "Modern antique", "Parchment tones"],
+      ["arcgis/midcentury", "Midcentury", "1950s print colours"],
+      ["arcgis/newspaper", "Newspaper", "Black and white print look"],
+      ["open/blueprint", "Blueprint", "White lines on blue, drawn from OpenStreetMap data"]]]
+  ];
+  /* the maps Esri also serves as plain tiles (static-basemap-tiles-service/v1/self, 2026-10-29), 512 pixels square: the
+     stand-in when the vector map cannot be drawn, and the 3D view's copy. The rest have no stand-in */
+  var ESRI_STATIC = /^(arcgis\/(navigation|navigation-night|streets|streets-night|outdoor|light-gray|dark-gray|community|nova|midcentury|newspaper|human-geography|human-geography-dark)|open\/(dark-gray|light-gray|navigation|navigation-dark|osm-style|streets))$/;
+  var ESRI_TILE = 512;
+  if (window.OSAP_ESRI_STYLE && window.OSAP_ESRI_STYLE("arcgis/navigation")) ESRI_GROUPS.forEach(function (g) {
+    g[1].forEach(function (s) {
+      BASES["esri:" + s[0]] = { name: s[1], note: s[2], group: g[0], esri: 1, vector: window.OSAP_ESRI_STYLE(s[0]), url: ESRI_STATIC.test(s[0]) ? window.OSAP_ESRI_STATIC(s[0]) : "",
+        max: 19, zmax: 19, lic: "Esri (ArcGIS Location Platform)", attr: /^open\//.test(s[0]) ? ESRI_OPEN_ATTR : ESRI_ATTR };
+    });
+  });
 
   /* ---------- a vector base map with English labels ----------
      OpenStreetMap raster tiles carry each place's name in its own script (Thai in Thailand). The vector tiles keep every
@@ -1503,7 +1570,8 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     st.layers.splice(i, 0, { id: "osap-hill", type: "hillshade", source: "osaphill", paint: { "hillshade-exaggeration": ex || 0.4, "hillshade-shadow-color": "#3d3424", "hillshade-highlight-color": "#ffffff" } });
     return st;
   }
-  function styleFor(o, st) { st = o.plain ? plainStyle(st) : englishStyle(st); return o.hill ? hillStyle(st, typeof o.hill === "number" ? o.hill : 0) : st; }
+  /* Esri's styles (o.esri) come already labelled in English (OSAP_ESRI_STYLE asks for language=en) and are drawn as Esri made them */
+  function styleFor(o, st) { if (o.esri) return st; st = o.plain ? plainStyle(st) : englishStyle(st); return o.hill ? hillStyle(st, typeof o.hill === "number" ? o.hill : 0) : st; }
   function getStyle(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error("style " + r.status); return r.json(); }); }
   var VectorBase = L.Layer.extend({
     PAD: 0.15,
@@ -1547,12 +1615,14 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       L.DomUtil.remove(this._box); this._box = null;
     },
     /* for the 3D view, which draws plain tiles: the OpenStreetMap tiles of the same map (unless the stand-in already is them) */
-    rasterTwin: function () { return this._fb || !this.options.fallback ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
+    rasterTwin: function () { return this._fb || !this.options.fallback ? null : { url: this.options.fallback, max: this.options.max, size: this.options.tileSize || 256, attr: this.options.twinAttr || "&copy; OpenStreetMap contributors" }; },
     /* no engine (old phone, no WebGL, offline before the style was saved): the plain OpenStreetMap tiles instead */
     _fail: function () {
       if (this._fb || !this.options.fallback) return;
       if (this._box) this._box.style.visibility = "hidden";
+      var big = this.options.tileSize === 512;   /* Esri's plain tiles are 512 pixels: one level down in Leaflet's 256-pixel count */
       this._fb = L.tileLayer(this.options.fallback, { maxNativeZoom: this.options.max, maxZoom: this._map.getMaxZoom(), attribution: "",
+        tileSize: big ? 512 : 256, zoomOffset: big ? -1 : 0, minNativeZoom: big ? 1 : 0,
         className: this.options.fbClass || "" });
       /* marked, so the map's loading bar (assets/osap-maploading.js) still counts a picture that failed before it started watching */
       this._fb.on("tileerror", function (e) { if (e.tile) e.tile.classList.add("osap-tile-fail"); }).addTo(this._map);
@@ -1601,14 +1671,18 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     if (!b.url && !b.vector) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
     else if (b.vector) {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
-      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: window.OSAP_SOLD ? "" : b.url, max: b.max, hill: b.hill }).addTo(map);
+      /* an Esri map's stand-in is Esri's own plain tiles of it (licensed by the key, so the sold version keeps it too) */
+      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: window.OSAP_SOLD && !b.esri ? "" : b.url, max: b.max, hill: b.hill,
+        esri: b.esri, tileSize: b.esri ? ESRI_TILE : 256, twinAttr: b.esri ? b.attr : "" }).addTo(map);
     }
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
       var url = b.url.replace("{date}", new Date(Date.now() - 864e5).toISOString().slice(0, 10));
       altBase = new (b.deep ? DeepTiles : L.TileLayer)(url, { maxNativeZoom: b.max, maxZoom: zmax, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
       altBase.bringToBack();
-      if (b.labels) hybLabels = L.layerGroup(b.labels.map(function (u) { return L.tileLayer(u, { pane: "hybpane", maxNativeZoom: Math.min(b.max, 19), maxZoom: zmax }); })).addTo(map);
+      var big = b.labelSize === 512;
+      if (b.labels) hybLabels = L.layerGroup(b.labels.filter(Boolean).map(function (u) { return L.tileLayer(u, { pane: "hybpane", maxNativeZoom: Math.min(b.max, 19), maxZoom: zmax,
+        tileSize: big ? 512 : 256, zoomOffset: big ? -1 : 0, minNativeZoom: big ? 1 : 0 }); })).addTo(map);
     }
   }
   map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
@@ -1760,6 +1834,10 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   /* the agency notices (several hundred KB, for a handful of countries) load after the page is up */
   window.OSAP_LATER("data/live/roads.js", function () { if (ML.roads) drawRoads(); });
   window.addEventListener("hashchange", function () { if (ML.roads) setTimeout(drawRoads, 300); });
+  function baseRow(k) {
+    return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
+  }
+  function esriKeys() { return Object.keys(BASES).filter(function (k) { return BASES[k].group; }); }
   var LayersCtl = L.Control.extend({
     options: { position: "topright" },
     onAdd: function () {
@@ -1768,9 +1846,12 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         /* the base map list sits in its own block: with the tactical toolbar on it is hidden here, because the toolbar has its
            own Base map button (osap-atak.js, through window.OSAP_BASEMAP below); classic controls keep it in Layers */
         '<div class="mlpanel" id="ml-panel" hidden><div class="mlbase"><div class="mlh">Base map</div>' +
-        Object.keys(BASES).map(function (k) {
-          return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
-        }).join("") + "</div>" +
+        Object.keys(BASES).filter(function (k) { return !BASES[k].group; }).map(baseRow).join("") +
+        /* the Esri maps (many) fold away under one line, open when one of them is the map in use */
+        (esriKeys().length ? '<details class="mlmore"' + (BASES[ML.base] && BASES[ML.base].group ? " open" : "") + "><summary>Esri maps (" + esriKeys().length + ")</summary>" +
+          ESRI_GROUPS.map(function (g) {
+            return '<div class="mlh2">' + g[0] + "</div>" + esriKeys().filter(function (k) { return BASES[k].group === g[0]; }).map(baseRow).join("");
+          }).join("") + "</details>" : "") + "</div>" +
         /* flooding and fires are natural disasters: they sit in Data sets > Natural disasters (dsUi, through window.OSAP_DISASTERX),
            not here (Shane 2026-10-01) */
         '<div id="ml-elev"><div class="mlh">Elevation and terrain analysis</div>' +
@@ -1824,7 +1905,8 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   /* the base map choice for other controls (the toolbar's Base map button): list, current, set; setting also ticks the
      matching radio in Layers so both stay in step */
   window.OSAP_BASEMAP = {
-    list: function () { return Object.keys(BASES).map(function (k) { return { id: k, name: BASES[k].name, note: BASES[k].note }; }); },
+    /* group: the Esri maps' heading (Roads and places, Terrain and sea, ...); the other maps have none */
+    list: function () { return Object.keys(BASES).map(function (k) { return { id: k, name: BASES[k].name, note: BASES[k].note, group: BASES[k].group || "" }; }); },
     get: function () { return ML.base; },
     set: function (k) {
       if (!BASES[k]) return;
@@ -5149,6 +5231,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
       ['Offline map (and Satellite in the sold version): <a href="https://s2maps.eu">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016). Licence: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.'],
       ['Satellite, Hybrid and Satellite, second look base maps and Esri hillshade: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> (and Clarity), Esri reference labels and World Hillshade, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin, USGS and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use); the sold version uses them only under its own ArcGIS Location Platform licence.'],
+      ['Esri maps (Navigation, Esri Streets, Esri Topographic, Outdoor, Terrain, Oceans, grey canvases, human geography, the OpenStreetMap-based Open Basemaps and the other Esri looks): <a href="https://developers.arcgis.com/rest/basemap-styles/">ArcGIS Basemap Styles service</a> and Static Basemap Tiles service, &copy; Esri and its data providers (Open Basemaps: &copy; OpenStreetMap contributors, ODbL). Licence: ArcGIS Location Platform, through the site\'s own API key (cleared for a paid product).'],
       ['Streets hill shading: <a href="https://registry.opendata.aws/terrain-tiles/">Terrain Tiles on AWS</a> (Mapzen; SRTM, GMTED, ETOPO1 and national elevation data).'],
       ['Daily satellite base map: NASA MODIS Terra corrected reflectance via <a href="https://www.earthdata.nasa.gov/gibs">NASA GIBS</a> (public domain).'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],

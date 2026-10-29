@@ -42,3 +42,21 @@ window.OSAP_ESRI = function (svc) {
   var host = /^Reference\//.test(svc) ? "https://basemaps-api.arcgis.com" : "https://ibasemaps-api.arcgis.com";
   return host + "/arcgis/rest/services/" + svc + tile + "?token=" + encodeURIComponent(k);
 };
+/* window.OSAP_ESRI_STYLE(path): the address of an Esri vector basemap style from the ArcGIS Basemap Styles service (v2),
+   path such as "arcgis/navigation" or "open/streets", labelled in English; window.OSAP_ESRI_STATIC(path): the same map as
+   plain tiles (the Static Basemap Tiles service) for the 3D view and for a phone that cannot draw the vector map. Both use the
+   site's ArcGIS Location Platform key (OSAP_ESRI_KEY), which the Netlify build writes for the free and the sold version alike;
+   with no key (GitHub Pages, a local copy) both are "" and those maps are left out. The styles the key can use were read from
+   Esri's styles/self service with the key on 2026-10-29 (Shane: "Add all the esri maps that are available in my API account"). */
+(function () {
+  function key() { var k = (window.OSAP_SOLD_HOSTS || {}).esriKey; return typeof k === "string" && /^[A-Za-z0-9._-]{20,600}$/.test(k) ? k : ""; }
+  function okPath(p) { return /^(arcgis|open)\/[a-z-]+(\/[a-z-]+)?$/.test(String(p)); }
+  window.OSAP_ESRI_STYLE = function (path) {
+    var k = key(); if (!k || !okPath(path)) return "";
+    return "https://basemapstyles-api.arcgis.com/arcgis/rest/services/styles/v2/styles/" + path + "?language=en&token=" + encodeURIComponent(k);
+  };
+  window.OSAP_ESRI_STATIC = function (path) {
+    var k = key(); if (!k || !okPath(path)) return "";
+    return "https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/" + path + "/static/tile/{z}/{y}/{x}?language=en&token=" + encodeURIComponent(k);
+  };
+})();
