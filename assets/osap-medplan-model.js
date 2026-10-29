@@ -158,7 +158,8 @@
       var path = [];
       stops.forEach(function (r) {
         var stage = r === last ? "definitive" : STAGE[r.role] === "definitive" ? "definitive" : "stabilization";
-        path.push({ stage: stage, role: r.role, facility_id: r.facility.id, name: r.facility.name, way: r.way, time_s: r.time_s, basis: "estimate" });
+        path.push({ stage: stage, role: r.role, facility_id: r.facility.id, name: r.facility.name, way: r.way, time_s: r.time_s, basis: "estimate", decided_by: r.decided_by || "rule",
+          computed_facility_id: r.computed ? (r.computed.facility ? r.computed.facility.id : null) : undefined });
         addFac(stage === "definitive" ? defi : stab, r.facility, { for: [c.id], role: r.role, way: r.way, time_s: r.time_s });
       });
       /* alternate MTFs: another hospital that also qualifies on documented care; never a planned stop */
@@ -175,6 +176,14 @@
       var decisions = rows.filter(function (r) { return r.decision; }).map(function (r) { return Object.assign({ to_role: r.role }, r.decision); });
       profiles.push({ id: c.id, label: c.label, pathway: path, gaps: gaps, stabilization_gap: rows.some(function (r) { return r.role === "stabilization" && r.state !== "filled"; }), bypass: path.length && stops.length < filled.length, decisions: decisions });
     });
+    /* the planner's own choices (Shane 2026-10-29), each beside the rule's computed recommendation it overrode */
+    var mine = [];
+    (I.categories || []).forEach(function (c) { (c.rows || []).forEach(function (r) {
+      if (r.analyst) mine.push({ casualty_category: c.id, role: r.role, chosen: { facility_id: r.analyst.facility_id, name: r.analyst.name }, decided_by: r.analyst.decided_by, decided_at: r.analyst.decided_at, reason: r.analyst.reason,
+        not_documented: r.analyst.not_documented, not_documented_names: r.analyst.not_documented_names || r.analyst.not_documented, computed: r.computed && r.computed.facility ? { facility_id: r.computed.facility.id, name: r.computed.facility.name, time_s: r.computed.time_s, way: r.computed.way, documented: r.computed.met } : null,
+        computed_at_decision: r.analyst.computed_at_decision, replaced: r.analyst.replaced, same_as_computed: r.analyst.same_as_computed });
+      else if (r.analyst_missing) mine.push({ casualty_category: c.id, role: r.role, chosen: { facility_id: r.analyst_missing.facility_id, name: r.analyst_missing.name }, decided_by: "planner on this device", in_plan: false });
+    }); });
     var trauma = profiles.filter(function (p) { return p.id === "cat.major_trauma"; })[0] || profiles[0] || null;
     var def = trauma ? trauma.pathway.filter(function (x) { return x.stage === "definitive"; })[0] : null;
     var defF = def ? F[def.facility_id] : null;
@@ -224,6 +233,7 @@
       pending: (I.pending || []).slice(),
       /* hospital records the plan needs to choose a hospital that could not be read on this device: [{ name, error }] */
       hospital_sources_failed: (I.hospital_sources_failed || []).map(function (x) { return { name: str(x.name), error: str(x.error) }; }),
+      analyst_decisions: mine,
       approvals: { state: "AUTOMATED_DRAFT", history: [] },
       source_manifest: (I.sources || []).slice(),
       definitive: defF ? { facility_id: defF.id, name: defF.name, time_s: def.time_s, way: def.way } : null,
@@ -295,6 +305,12 @@
         : "No landing port is known within reach: no road leg. Plan air extraction (accepted deck or hoist), prolonged onboard care and early diversion, through the responsible RCC.");
     }
     var stab = p.stabilization_facilities[0], def = p.definitive;
+    (p.analyst_decisions || []).forEach(function (d) {
+      var rl = d.role.charAt(0).toUpperCase() + d.role.slice(1);
+      if (d.in_plan === false) add("analyst." + d.role, "warning", "Your " + rl, d.chosen.name + " is not in this plan (turned off or out of reach); the computed pick is used.");
+      else add("analyst." + d.role, d.not_documented && d.not_documented.length ? "warning" : "ok", "Your " + rl + " (analyst decision)", d.chosen.name + (d.not_documented && d.not_documented.length ? ": not documented by a credible source: " + (d.not_documented_names || d.not_documented).join(", ") : "") +
+        (d.same_as_computed ? "; same as the computed pick." : "; computed pick: " + (d.computed ? d.computed.name : "none documented") + "."));
+    });
     add("stabilization", stab ? "ok" : "warning", "Stabilization facility", stab ? stab.name : "None documented by a credible source; stabilize en route or confirm a local facility.");
     add("definitive", def ? "ok" : "warning", "Definitive care facility", def ? def.name : "No hospital with the needed care documented by a credible source.");
     var r0 = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; })[0];

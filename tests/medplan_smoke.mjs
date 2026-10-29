@@ -421,6 +421,31 @@ async function openPlan(p) {
   await p.selectOption("#medplan [data-mp-base]", "");
   await p.waitForFunction(() => /nearest air rescue base in OpenStreetMap/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
   ok((await airMin()) === withBase, "air times: back to the nearest air rescue base");
+  /* Shane 2026-10-29: "i want to decide which hospital i go to": the planner's choice carries the plan; the computed pick stays */
+  const selOpts = await p.evaluate(() => [...document.querySelectorAll('#mp-pst [data-mp-sel="primary"] option')].map((o) => [o.value, o.textContent]));
+  const nearId = (selOpts.find((o) => /Near Hospital/.test(o[1])) || [])[0];
+  ok(/^Computed: H3 Far North Hospital$/.test(selOpts[0][1]) && selOpts[0][0] === "" && nearId && /not documented: emergency department/.test(selOpts.find((o) => o[0] === nearId)[1]), "choice: each role offers the computed pick first, then every hospital saying what is not documented " + JSON.stringify(selOpts.slice(0, 4)));
+  await p.selectOption('#mp-pst [data-mp-sel="primary"]', nearId);
+  await p.waitForFunction(() => !!document.querySelector("#mp-pst .mpmine"), null, { timeout: 8000 }).catch(() => {});
+  const mine = await p.evaluate(() => { const r = window.OSAP_MEDPLAN._roles().find((x) => x.casualty_category === "cat.major_trauma" && x.role === "primary"), card = [...document.querySelectorAll("#mp-pst tr[data-mp-role]")].find((t) => /Your choice/.test(t.textContent));
+    return { chose: r.choice.f.name, comp: r.computed && r.computed.f.name, by: r.analyst && r.analyst.decided_by, nd: r.analyst && r.analyst.not_documented, card: card ? card.textContent : "", saved: JSON.stringify(window.OSAP_MEDPLAN._fields().mtfsel || null),
+      mk: [...document.querySelectorAll(".mpicon")].map((m) => m.textContent), rt: document.getElementById("mp-rt").textContent }; });
+  ok(mine.chose === "Near Hospital" && mine.comp === "Far North Hospital" && mine.by === "planner on this device" && /"primary":\{"id":"[^"]+","name":"Near Hospital","at":"20/.test(mine.saved) && /"computed":\{"id":"[^"]+","name":"Far North Hospital"\}/.test(mine.saved),
+    "choice: the planner's Primary is recorded as an analyst decision, with the computed pick kept beside it " + JSON.stringify({ chose: mine.chose, comp: mine.comp, saved: mine.saved }));
+  ok(/Your choice/.test(mine.card) && /your choice \(analyst decision, /.test(mine.card) && /computed recommendation: Far North Hospital/.test(mine.card) && /Not documented by a credible source for Primary: emergency department/.test(mine.card) && mine.nd.includes("ed.basic"),
+    "choice: the card says it is your choice, names what no credible source documents, and keeps the computed recommendation with its evidence " + mine.card.slice(0, 600));
+  ok(mine.mk.includes("PRI") && /Near Hospital/.test(mine.rt), "choice: your Primary carries the map mark and the route");
+  await p.fill('#mp-pst [data-mp-selwhy="primary"]', "Unit SOP: closest ER"); await p.press('#mp-pst [data-mp-selwhy="primary"]', "Tab"); await p.waitForTimeout(300);
+  const rec = await p.evaluate(() => { const v = document.getElementById("mp-val").textContent; return { why: (window.OSAP_MEDPLAN._fields().mtfsel || {}).primary, val: v.slice(v.indexOf("Your Primary"), v.indexOf("Your Primary") + 200), card: document.getElementById("mp-pst").textContent }; });
+  ok(rec.why && rec.why.reason === "Unit SOP: closest ER" && /analyst decision, [^)]*: Unit SOP: closest ER\)/.test(rec.card) && /Your Primary \(analyst decision\):? ?Near Hospital: not documented by a credible source: emergency department; computed pick: Far North Hospital\./.test(rec.val),
+    "choice: the reason is kept, and Plan status flags the undocumented choice beside the computed pick " + JSON.stringify({ val: rec.val }));
+  await p.click('#medplan [data-mp="print"]'); await p.waitForFunction(() => /Your choice/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 15000 }).catch(() => {});
+  const prt = await p.evaluate(() => { const b = document.getElementById("brief"); return { t: b.textContent, sel: !!b.querySelector("select[data-mp-sel]") }; });
+  ok(/Your choice/.test(prt.t) && /computed recommendation: Far North Hospital/.test(prt.t) && /Unit SOP: closest ER/.test(prt.t), "choice: the printed plan shows your choice, the reason and the computed recommendation " + JSON.stringify({ sel: prt.sel }));
+  await p.click("#mpd-close"); await p.waitForTimeout(300);
+  await p.selectOption('#mp-pst [data-mp-sel="primary"]', "");
+  await p.waitForFunction(() => !document.querySelector("#mp-pst .mpmine"), null, { timeout: 8000 }).catch(() => {});
+  ok(/Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(await p.textContent("#mp-pst")) && !(await p.$("#mp-pst .mpmine")), "choice: back to Computed restores the rule's pick " + (await p.textContent("#mp-pst")).slice(0, 400));
   /* turning a hospital off: it leaves the picks and the map, the next one is picked, and the choice is kept */
   const offId = await p.evaluate(() => { const r = [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => /Sourced Trauma Centre/.test(x.textContent)); return r && r.querySelector("[data-mp-off]").getAttribute("data-mp-off"); });
   const mk0 = await p.evaluate(() => document.querySelectorAll(".mpicon").length);
