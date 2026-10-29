@@ -4727,7 +4727,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (SOF[k] || []).forEach(function (i) {
         if (i.lat == null || i.lon == null) return;
         var m = L.marker([i.lat, i.lon], { icon: sofIcon(k), keyboard: false, pane: "tlpane" });
-        m.bindPopup('<div class="pop"><div class="tier" style="color:' + tok(SOFK[k].color) + '">' + esc(SOFK[k].label.replace(/s$/, "")) + " · reference</div><h3>" + esc(i.name) + "</h3>" + sofFacts(k, i) + srcFoot(i) + "</div>", { maxWidth: 320 });
+        m.bindPopup('<div class="pop"><div class="tier" style="color:' + tok(SOFK[k].color) + '">' + esc(SOFK[k].label.replace(/s$/, "")) + " · reference</div><h3>" + esc(i.name) + "</h3>" + sofFacts(k, i) + srcFoot(i) +
+          /* a hospital's own standalone assessment (assets/osap-medplan.js picks the button up) */
+          (k === "hospitals" ? '<p><button type="button" class="refresh" data-hosp-assess="' + esc(i.id || "") + '" data-lat="' + i.lat + '" data-lon="' + i.lon + '" data-name="' + esc(i.name) + '">Hospital assessment</button></p>' : "") + "</div>", { maxWidth: 320 });
         sofLayer.addLayer(m); sofM[i.id] = m;
       });
     });
