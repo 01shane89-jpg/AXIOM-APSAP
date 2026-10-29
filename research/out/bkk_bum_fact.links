@@ -1,0 +1,232 @@
+href="/CMSTemplates/BIHSite/css/template/ie6-fix.css"media="all" />
+href="/CMSTemplates/BIHSite/css/template/ie7-fix.css"media="all" />
+href="/CMSTemplates/BIHInterSite/css/main-ie8.css" rel="stylesheet" />
+href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css">
+href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.0.2/dist/css/splide.min.css">
+href="/App_Themes/Default/Images/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
+href="/App_Themes/Default/Images/favicon.ico" type="image/x-icon" rel="icon"/>
+href="https://www.bumrungrad.com/en/about-us/bumrungrad-factsheet" rel="canonical" />
+href="https://www.bumrungrad.com/ar/about-us/bumrungrad-factsheet" rel="alternate" hreflang="ar" />
+href="https://www.bumrungrad.com/bn/about-us/bumrungrad-factsheet" rel="alternate" hreflang="bn-bd" />
+href="https://www.bumrungrad.com/de/about-us/bumrungrad-factsheet" rel="alternate" hreflang="de-de" />
+href="https://www.bumrungrad.com/en/about-us/bumrungrad-factsheet" rel="alternate" hreflang="en-us" />
+href="https://www.bumrungrad.com/mm/about-us/bumrungrad-factsheet" rel="alternate" hreflang="my-mm" />
+href="https://www.bumrungrad.com/id/about-us/bumrungrad-factsheet" rel="alternate" hreflang="id-id" />
+href="https://www.bumrungrad.com/jp/about-us/bumrungrad-factsheet" rel="alternate" hreflang="ja-jp" />
+href="https://www.bumrungrad.com/kh/about-us/bumrungrad-factsheet" rel="alternate" hreflang="km-kh" />
+href="https://www.bumrungrad.com/th/about-us/bumrungrad-factsheet" rel="alternate" hreflang="th-th" />
+href="https://www.bumrungrad.com/vn/about-us/bumrungrad-factsheet" rel="alternate" hreflang="vi-vn" />
+href="https://www.bumrungrad.com/zh/about-us/bumrungrad-factsheet" rel="alternate" hreflang="zh-cn" />
+href="https://www.bumrungrad.com/en/about-us/bumrungrad-factsheet" rel="alternate" hreflang="x-default" />
+href="/CMSPages/GetCSS.aspx?stylesheetname=Bootstrap" type="text/css" rel="stylesheet" media="screen"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=BIH2019" type="text/css" rel="stylesheet" media="all"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=ResponsiveTables" type="text/css" rel="stylesheet" media="screen"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=BIHCheckout2019" type="text/css" rel="stylesheet" media="screen"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=customChatBotCss" type="text/css" rel="stylesheet" media="screen"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=BIHSmartBanner" type="text/css" rel="stylesheet" media="screen"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=BIHB8DPhoneInputInter" type="text/css" rel="stylesheet" media="screen"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=BIHB8DCss" type="text/css" rel="stylesheet" media="screen"/>
+href="/CMSPages/GetCSS.aspx?stylesheetname=BIHB8DCustomCss" type="text/css" rel="stylesheet" media="screen"/>
+href="/css/2020/loading/loading.css" rel="stylesheet" />
+href="/css/modallogin/customstyle.css" rel="stylesheet" />
+href="#" class="btn-back d-flex align-items-center justify-content-center w-30px">
+href="#" class="btnSearchText d-flex align-items-center px-2">
+href="#searchbar" data-toggle="collapse" aria-expanded="true">
+href="/en" id="p_lt_zoneNavbar_BIHHeader2019_aHomeLogo" class="navbar-brand mr-auto">
+href="#" style="content: 's'">
+href="/account/profile" id="aProfile" style="display: none;">
+href="javascript:void(0)" id="aSignOut" style="display: none;">
+href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+href="/ar/about-us/bumrungrad-factsheet">AR - العربية
+href="/de/about-us/bumrungrad-factsheet">DE - Deutsch
+href="/mm/about-us/bumrungrad-factsheet">MM - မြန်မာ
+href="/id/about-us/bumrungrad-factsheet">ID - Bahasa
+href="/jp/about-us/bumrungrad-factsheet">JP - 日本語
+href="/kh/about-us/bumrungrad-factsheet">KH - Cambodia
+href="/th/about-us/bumrungrad-factsheet">TH - ไทย
+href="/vn/about-us/bumrungrad-factsheet">VN - Vietnam
+href="/zh/about-us/bumrungrad-factsheet">ZH - 中文(简体)
+href="/bn/about-us/bumrungrad-factsheet">BN - বাংলা
+href="/en" id="p_lt_zoneNavbar_BIHHeader2019_a3" class="navbar-brand">
+href="#" style="content: 's'">
+href="/account/profile" id="aProfileMobile" style="display: none;">
+href="javascript:void(0)" id="aSignOutMobile" style="display: none;">
+href="https://telehealth.bumrungrad.com/" class="nav-link telemedicine-link" style="font-size: 0.75rem; text-align: center; padding: 1rem 5px 0.85rem 5px;">
+href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN
+href="/ar/about-us/bumrungrad-factsheet">AR - العربية
+href="/de/about-us/bumrungrad-factsheet">DE - Deutsch
+href="/mm/about-us/bumrungrad-factsheet">MM - မြန်မာ
+href="/id/about-us/bumrungrad-factsheet">ID - Bahasa
+href="/jp/about-us/bumrungrad-factsheet">JP - 日本語
+href="/kh/about-us/bumrungrad-factsheet">KH - Cambodia
+href="/th/about-us/bumrungrad-factsheet">TH - ไทย
+href="/vn/about-us/bumrungrad-factsheet">VN - Vietnam
+href="/zh/about-us/bumrungrad-factsheet">ZH - 中文(简体)
+href="/bn/about-us/bumrungrad-factsheet">BN - বাংলা
+href="#submenu-1" class="nav-link collapsed" data-toggle="collapse" aria-expanded="false">About Bumrungrad
+href="/en/about-us/bumrungrad-international-hospital" class="nav-link">About Bumrungrad
+href="/en/about-us/international-hospital-accreditation" class="nav-link">Accreditation and Awards
+href="/en/about-us/bumrungrad-factsheet" class="nav-link">Factsheet
+href="https://investor.bumrungrad.com" class="nav-link">Investor Relations
+href="/en/about-us/bumrungrad-hospital-foundation" class="nav-link">The Bumrungrad Foundation
+href="/en/about-us/bumrungrad-mission" class="nav-link">Vision/Mission and Values
+href="/en/about-us/excellence-clinical-outcomes" class="nav-link">Excellence clinical outcomes
+href="/en/about-us/bumrungrad-international-hospital" class="nav-link">About Bumrungrad
+href="/en/about-us/international-hospital-accreditation" class="nav-link">Accreditation and Awards
+href="/en/about-us/bumrungrad-factsheet" class="nav-link">Factsheet
+href="https://investor.bumrungrad.com" class="nav-link">Investor Relations
+href="/en/about-us/bumrungrad-hospital-foundation" class="nav-link">The Bumrungrad Foundation
+href="/en/about-us/bumrungrad-mission" class="nav-link">Vision/Mission and Values
+href="/en/about-us/excellence-clinical-outcomes" class="nav-link">Excellence clinical outcomes
+href="#submenu-2" class="nav-link collapsed" data-toggle="collapse" aria-expanded="false">Patient Services
+href="/en/application" class="nav-link">Bumrungrad application
+href="/en/patient-services/bumrungrad-languages" class="nav-link">Bumrungrad in your Language
+href="/en/wallet/split-payment" class="nav-link">Bumrungrad Split Payment 
+href="/en/wallet" class="nav-link">Bumrungrad Wallet
+href="/en/health-vault" class="nav-link">Bumrungrad Health Vault
+href="/en/centers/expatriate-liaison" class="nav-link">Expatriate Liaison Center  
+href="https://www.bumrungrad.com/en/anywhere" class="nav-link">Healthcare to your home
+href="/en/health-risk-assessment" class="nav-link">Health Risk Assessment
+href="/en/patient-services/hotels-near-bumrungrad" class="nav-link">Recommended Accommodations
+href="/en/patient-services/inpatient-accommodation/overview" class="nav-link">Inpatient Rooms
+href="/en/insurance" class="nav-link">Insurance We Accept
+href="/en/contact-us/international-referral-offices" class="nav-link">International Referral Offices
+href="/en/patient-services/medical-coordination-office" class="nav-link">Medical Coordination Office
+href="/en/contact-us/feedback" class="nav-link">Patient Feedback
+href="/en/privilege" class="nav-link">Patient Privilege
+href="/en/patient-services/patient-services-overview" class="nav-link">Patient Services Overview
+href="/en/patient-finance-information" class="nav-link">Payment Options
+href="https://www.bumrungrad.com/en/anywhere#med2home" class="nav-link">Med2Home – Online Medication Order & Delivery
+href="/en/anywhere#telemedicine-by-appointment" class="nav-link">Tele-Consultation with Doctor
+href="/en/anywhere#telemedicine-on-demand" class="nav-link">Telemedicine on demand 
+href="/en/pre-registration" class="nav-link">Pre-Registration
+href="/en/application" class="nav-link">Bumrungrad application
+href="/en/patient-services/bumrungrad-languages" class="nav-link">Bumrungrad in your Language
+href="/en/wallet/split-payment" class="nav-link">Bumrungrad Split Payment 
+href="/en/wallet" class="nav-link">Bumrungrad Wallet
+href="/en/health-vault" class="nav-link">Bumrungrad Health Vault
+href="/en/centers/expatriate-liaison" class="nav-link">Expatriate Liaison Center  
+href="https://www.bumrungrad.com/en/anywhere" class="nav-link">Healthcare to your home
+href="/en/health-risk-assessment" class="nav-link">Health Risk Assessment
+href="/en/patient-services/hotels-near-bumrungrad" class="nav-link">Recommended Accommodations
+href="/en/patient-services/inpatient-accommodation/overview" class="nav-link">Inpatient Rooms
+href="/en/insurance" class="nav-link">Insurance We Accept
+href="/en/contact-us/international-referral-offices" class="nav-link">International Referral Offices
+href="/en/patient-services/medical-coordination-office" class="nav-link">Medical Coordination Office
+href="/en/contact-us/feedback" class="nav-link">Patient Feedback
+href="/en/privilege" class="nav-link">Patient Privilege
+href="/en/patient-services/patient-services-overview" class="nav-link">Patient Services Overview
+href="/en/patient-finance-information" class="nav-link">Payment Options
+href="https://www.bumrungrad.com/en/anywhere#med2home" class="nav-link">Med2Home – Online Medication Order & Delivery
+href="/en/anywhere#telemedicine-by-appointment" class="nav-link">Tele-Consultation with Doctor
+href="/en/anywhere#telemedicine-on-demand" class="nav-link">Telemedicine on demand 
+href="/en/pre-registration" class="nav-link">Pre-Registration
+href="/en/medical-travel" class="nav-link collapsed">Medical Travel
+href="/en/packages" class="nav-link collapsed">Packages
+href="#submenu-5" class="nav-link collapsed" data-toggle="collapse" aria-expanded="false">Insurance
+href="/en/insurance" class="nav-link">Insurance What Do We Accept?
+href="/en/insurance-information-guides" class="nav-link">Insurance Information Guides
+href="/en/insurance/good-vibes" class="nav-link">Insurance Good Vibes
+href="/en/insurance/packages-and-promotion" class="nav-link">Insurance Packages and Promotion
+href="/en/insurance" class="nav-link">Insurance What Do We Accept?
+href="/en/insurance-information-guides" class="nav-link">Insurance Information Guides
+href="/en/insurance/good-vibes" class="nav-link">Insurance Good Vibes
+href="/en/insurance/packages-and-promotion" class="nav-link">Insurance Packages and Promotion
+href="#submenu-6" class="nav-link collapsed" data-toggle="collapse" aria-expanded="false">Contact Us
+href="/en/contact-us/referring-patients" class="nav-link">Air and Ground Ambulance Service
+href="https://www.facebook.com/profile.php?id=100092618381751" class="nav-link">Bumrungrad Careers
+href="/en/contact-us/contact-details" class="nav-link">Hospital Contact Information
+href="/en/contact-us/international-referral-offices" class="nav-link">International Referral Offices
+href="/en/contact-us/map-bumrungrad-directions" class="nav-link">Map, Directions & Taxi Info
+href="/en/medical-record-request" class="nav-link">Medical Record Request
+href="/en/contact-us/inquiry" class="nav-link">Send us an Inquiry
+href="/en/anywhere" class="nav-link">Teleconsultation with our Doctors
+href="/en/contact-us/referring-patients" class="nav-link">Air and Ground Ambulance Service
+href="https://www.facebook.com/profile.php?id=100092618381751" class="nav-link">Bumrungrad Careers
+href="/en/contact-us/contact-details" class="nav-link">Hospital Contact Information
+href="/en/contact-us/international-referral-offices" class="nav-link">International Referral Offices
+href="/en/contact-us/map-bumrungrad-directions" class="nav-link">Map, Directions & Taxi Info
+href="/en/medical-record-request" class="nav-link">Medical Record Request
+href="/en/contact-us/inquiry" class="nav-link">Send us an Inquiry
+href="/en/anywhere" class="nav-link">Teleconsultation with our Doctors
+href="/en/search-for-a-thailand-doctor" class="nav-link collapsed">Find a Doctor
+href="/en/clinics-and-centers" class="nav-link collapsed">Clinics & Centers
+href="/en/conditions-treatments" class="nav-link collapsed">Conditions & Treatments
+href="https://www.bumrungrad.com/en/book-appointment" class="nav-link collapsed">Book Appointment
+href="/en/contact-us/inquiry" class="nav-link collapsed">Send Inquiry
+href="tel:1378" class="nav-link emergency-link">1378 (Thailand Only)
+href="tel:+6620668888" class="nav-link call-link">+66 2066 8888
+href="/en/search-for-a-thailand-doctor">Find a Doctor
+href="/en/clinics-and-centers">Clinics & Centers
+href="/en/conditions-treatments">Conditions & Treatments
+href="https://www.bumrungrad.com/en/book-appointment">Book Appointment
+href="/en/contact-us/inquiry">Send Inquiry
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_WEBSITE_DYNAMICSUSI&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=openid&response_type=id_token&prompt=login" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_WEBSITE_PHONESUSI&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=openid&response_type=id_token&prompt=login" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=google" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=apple" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=facebook" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=twitter" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_WEBSITE_DYNAMICSUSI&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=openid&response_type=id_token&prompt=login" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_WEBSITE_PHONESUSI&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=openid&response_type=id_token&prompt=login" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=google" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=apple" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=facebook" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=twitter" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_WEBSITE_DYNAMICSUSI&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=openid&response_type=id_token&prompt=login" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_WEBSITE_PHONESUSI&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=openid&response_type=id_token&prompt=login" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=google" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=apple" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=facebook" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="https://auth.bumrungrad.com/bhcustomer.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SocialLogin&client_id=f69ed5ba-0572-474a-81ca-85a78c63c117&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fwww.bumrungrad.com%2Faccount%2FloadingProfile&scope=offline_access+openid&response_type=id_token&prompt=login&social=twitter" class="btn btn-white btn-md btn-block btnblockstyle left-icon" onclick="setRedirectUrl()">
+href="/" class="breadcrumbs__link">Home
+href="/en/about-us/bumrungrad-international-hospital" class="breadcrumbs__link">About Us
+href="/en/about-us/bumrungrad-factsheet" class="breadcrumbs__link">Factsheet
+href="/en/search-for-a-thailand-doctor" class="col-3 quickaccess__item quickaccess__item--doctor d-md-none">
+href="/en/search-for-a-thailand-doctor" class="col-3 quickaccess__item quickaccess__item--doctor d-none d-md-flex">
+href="/en/contact-us/inquiry" class="col-3 quickaccess__item quickaccess__item--conditions d-md-none">
+href="/en/contact-us/inquiry" class="col-3 quickaccess__item quickaccess__item--conditions d-none d-md-flex">
+href="/en/book-appointment" class="col-3 quickaccess__item quickaccess__item--appointment d-md-none">
+href="/en/book-appointment" class="col-3 quickaccess__item quickaccess__item--appointment d-none d-md-flex">
+href="/en/anywhere" class="col-3 quickaccess__item quickaccess__item--anywhere d-md-none">
+href="/en/anywhere" class="col-3 quickaccess__item quickaccess__item--anywhere d-none d-md-flex">
+href="tel:1378" class="phone-number">
+href="tel:+6620668888" class="phone-number">
+href="/en/contact-us/subscribe" class="btn btn--outline--white">Sign Up Now
+href="/en/contact-us/map-bumrungrad-directions" class="btn btn--outline--white">Get Directions
+href="https://www.facebook.com/Bumrungrad" class="footer__social__link">
+href="https://twitter.com/bumrungradH" class="footer__social__link">
+href="https://www.youtube.com/user/BumrungradInter" class="footer__social__link">
+href="https://www.instagram.com/bumrungrad_international/?hl=th" class="footer__social__link">
+href="https://bhx.one/wxCTC9" class="footer__social__link">
+href="https://www.bumrungrad.com/en/anywhere#telemedicine-on-demand​" class="footer__sitemap__list__item__link">Teleconsultation with our Doctors
+href="https://www.bumrungrad.com/en/book-appointment" class="footer__sitemap__list__item__link">Book Appointment
+href="/en/contact-us/inquiry" class="footer__sitemap__list__item__link">Send Inquiry
+href="/en/search-for-a-thailand-doctor" class="footer__sitemap__list__item__link">Find a Doctor
+href="/en/conditions-treatments" class="footer__sitemap__list__item__link">See Conditions and Treatments
+href="/en/clinics-and-centers" class="footer__sitemap__list__item__link">View Our Clinics and Centers
+href="/en/contact-us/subscribe" class="footer__sitemap__list__item__link">Subscribe to Free E-Newsletter
+href="/laboratory/en" class="footer__sitemap__list__item__link">Laboratory Services
+href="/en/irb" class="footer__sitemap__list__item__link">BI-IRB
+href="https://www.bumrungrad.com/en/anywhere" class="footer__sitemap__list__item__link">Healthcare to your home
+href="https://www.bumrungrad.com/en/anywhere" class="footer__sitemap__list__item__link">Med2Home – Online Medication Order & Delivery
+href="/en/health-risk-assessment" class="footer__sitemap__list__item__link">Health Risk Assessment
+href="/en/wallet" class="footer__sitemap__list__item__link">Bumrungrad Wallet
+href="https://investor.bumrungrad.com" class="footer__sitemap__list__item__link">Investor Relations
+href="https://investor.bumrungrad.com/company_profile.html" class="footer__sitemap__list__item__link">Corporate Information
+href="https://investor.bumrungrad.com/newsroom_set.html" class="footer__sitemap__list__item__link">Newsroom
+href="https://investor.bumrungrad.com/cg.html" class="footer__sitemap__list__item__link">Corporate Governance
+href="https://investor.bumrungrad.com/email_alerts.html" class="footer__sitemap__list__item__link">Information Request
+href="https://investor.bumrungrad.com/investor_kits.html" class="footer__sitemap__list__item__link">Investor Kits
+href="/en/health-blog" class="footer__sitemap__list__item__link">Bumrungrad Health Blog
+href="/en/bumrungrad-news" class="footer__sitemap__list__item__link">News
+href="/en/health-vault" class="footer__sitemap__list__item__link">Bumrungrad Health Vault
+href="/en/about-us/bumrungrad-international-hospital" class="footer__sitemap__list__item__link">About Bumrungrad
+href="/en/application" class="footer__sitemap__list__item__link">Bumrungrad application
+href="/en/clinics-and-centers" class="footer__sitemap__list__item__link">Our Clinics and Centers
+href="/en/services-and-facilities/inpatient-accommodation/overview" class="footer__sitemap__list__item__link">Inpatient Rooms
+href="/en/patient-services/bumrungrad-food-beverage" class="footer__sitemap__list__item__link">Food & Beverage & Shopping
+href="https://www.jointcommission.org/en/contact-us/report-a-patient-safety-event" class="footer__sitemap__list__item__link">Report patient safety issues to JCI
+href="/en/privacy-policy" class="footer__copyright__term__link">Privacy Policy
+href="/en/terms-of-service" class="footer__copyright__term__link">Terms of Services
+href="/en/cookies-policy" class="footer__copyright__term__link">Cookies Policy
