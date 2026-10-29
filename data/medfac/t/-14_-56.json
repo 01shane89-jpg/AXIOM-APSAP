@@ -36,6 +36,7 @@
 ["n13189241677",-12.53316,-55.73531,"br",{"name":"Vida Cardio","amenity":"clinic","healthcare":"clinic"}],
 ["n13189283141",-12.54621,-55.72789,"br",{"name":"CEO","amenity":"clinic","healthcare":"clinic"}],
 ["n13189354877",-12.54725,-55.72852,"br",{"name":"Clinica Revitalle","amenity":"clinic","healthcare":"clinic"}],
+["n14248702102",-13.00357,-55.96373,"br",{"aeroway":"helipad"}],
 ["n2117170668",-12.54147,-55.72495,"br",{"name":"Hospital Regional de Sorriso","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"3125","addr:street":"Avenida Porto Alegre","addr:city":"Sorriso","addr:postcode":"78890-000"}],
 ["n5115106567",-12.54057,-55.7242,"br",{"name":"Unidade de Pronto Atendimento (UPA)","amenity":"clinic"}],
 ["n5115106568",-12.53981,-55.72454,"br",{"name":"Ambulatório Multiprofissional de Especialidades (AME)","amenity":"clinic"}],

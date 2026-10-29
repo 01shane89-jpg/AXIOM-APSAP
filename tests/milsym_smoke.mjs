@@ -115,7 +115,14 @@ const sym = (p) => p.evaluate(() => (JSON.parse(localStorage.getItem("osap-atak-
   await p.click('#ms-pick [data-dom="cm"]'); await p.waitForTimeout(200);
   await p.fill("#ms-pick .ms-q", "checkpoint"); await p.waitForTimeout(400);
   ok(await p.evaluate(() => !!document.querySelector('#ms-pick [data-fn="25:130300"]')), "desktop: map graphics include Checkpoint");
+  // the Medical row: a red cross in a frame for hospitals, and the 2525D Medical Treatment Facility (Hospital)
+  await p.waitForFunction(() => document.querySelectorAll("#ms-pick .ms-med .ms-t svg").length === 3, null, { timeout: 20000 }).catch(() => {});
+  const med = await p.evaluate(() => [...document.querySelectorAll("#ms-pick .ms-med [data-sym]")].map((b) => b.getAttribute("data-sym") + "|" + b.title + "|" + !!b.querySelector("svg")));
+  ok(med.length === 3 && med[0] === "sh:medcross:e03131|Hospital, red cross|true" && med[1] === "ms:10032000001207020000|Medical Treatment Facility (Hospital), friend (2525D)|true" && med[2].startsWith("ms:10042000001207020000|"), "desktop: the Medical row offers the red cross and the 2525D hospital " + JSON.stringify(med));
   if (OUT) await p.screenshot({ path: OUT + "/desktop-picker.png" });
+  await p.click('#ms-pick .ms-med [data-sym="sh:medcross:e03131"]'); await p.waitForTimeout(200);
+  ok(!(await shown(p, "#ms-pick")) && /Hospital, red cross/.test(await p.textContent("#pt-ed .pt-icl")), "desktop: picking the red cross sets it on the point");
+  await p.click('#pt-ed [data-pe="icon"]'); await p.waitForTimeout(300);
   await p.keyboard.press("Escape");
   ok(!(await shown(p, "#ms-pick")) && await shown(p, "#pt-ed"), "desktop: Escape closes the picker first, not the point sheet");
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));

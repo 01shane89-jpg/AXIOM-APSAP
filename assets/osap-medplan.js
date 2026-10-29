@@ -571,7 +571,7 @@
   var SURG = /surg|orthopa|trauma|cardiothoracic|vascular|anaesthe|anesthe|burn/i, ICU = /intensive|critical/i, SPECIAL = /neurosurg|trauma|cardiothoracic|burn|vascular/i;
   var LOW_TXT = "Not picked for any casualty type: the needed capabilities are not documented by a credible source";
   function inAnyRole(f) { return !!ST && !!ST.fac && planRoles(ST).some(function (r) { return r.choice && r.choice.f === f; }); }
-  function lowTag(f) { return f.kind === "hospital" && !inAnyRole(f) ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
+  function lowTag(f) { return f.kind === "hospital" && !(ST && ST.solo) && !inAnyRole(f) ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
   /* the stated trauma level as a number (1 to 5), or null where the source names a trauma centre without a level */
   function lvlOf(tr) { var m = tr && /level\s*(i{1,3}|iv|v|[1-5])\b/i.exec(tr.text); return m ? +({ i: 1, ii: 2, iii: 3, iv: 4, v: 5 }[m[1].toLowerCase()] || m[1]) : null; }
   var ROMAN = ["", "I", "II", "III", "IV", "V"];
@@ -1916,7 +1916,13 @@
       "?h wdt:P31/wdt:P279* wd:Q16917 . OPTIONAL { ?h wdt:P1329 ?phone } OPTIONAL { ?h wdt:P856 ?web } OPTIONAL { ?h wdt:P6801 ?beds } " +
       'SERVICE wikibase:label { bd:serviceParam wikibase:language "en,th,[AUTO_LANGUAGE]" . } } LIMIT 2000';
     getJSON(WIKIDATA + "?format=json&query=" + encodeURIComponent(q), 30000, { Accept: "application/sparql-results+json" }).then(function (j) {
-      if (ST !== s) return;
+      if (ST !== s && SOLO !== s) return;
+      if (s.solo) return withSolo(s, function () { wdApply(s, H, j); });
+      wdApply(s, H, j);
+    }, function (e) { if (ST !== s && SOLO !== s) return; s.wdErr = e.message; if (s.solo) soloDone(s); else srcRender(); });
+  }
+  /* Wikidata's phone, website and beds onto the hospitals that lack them (a plan's, or a standalone assessment's) */
+  function wdApply(s, H, j) {
       var by = {};
       ((j.results || {}).bindings || []).forEach(function (b) {
         var id = (b.h.value.match(/Q\d+$/) || [""])[0], m = /Point\(([-\d.]+) ([-\d.]+)\)/.exec((b.c || {}).value || ""); if (!id || !m) return;
@@ -1936,9 +1942,9 @@
         if (f.wd.used.length) n++;
       });
       s.wdAt = Date.now(); s.wdN = n;
+      if (s.solo) { soloDone(s); return; }
       if (n) { s.fac.H.sort(byCap); facRender(); pickRender(); mapShow(); }
       srcRender();
-    }, function (e) { if (ST !== s) return; s.wdErr = e.message; srcRender(); });
   }
   function wdNote(f, what) {
     return f.wd && f.wd.used.indexOf(what) >= 0 ? " (" + link("https://www.wikidata.org/wiki/" + f.wd.q, "Wikidata " + f.wd.q) + ", " + esc(f.wd.how) + ")" : "";
@@ -3363,7 +3369,7 @@
     var tb = asTable;
     var R = assessRows(f, s), gaps = R.filter(function (x) { return /mpnk/.test(x[1]); }).map(function (x) { return x[0]; });
     return "<h3>Location</h3>" + tb([["Grid (MGRS)", "<code>" + esc(grid(f.lat, f.lon)) + "</code>"], ["Lat, lon", f.lat.toFixed(5) + ", " + f.lon.toFixed(5)]].concat(f.alias && f.alias !== f.name ? [["Also mapped as", esc(f.alias)]] : [])) +
-      "<h3>From the point of injury</h3><div id=\"mpa-times\">" + tb(assessTimes(f, s, r)) + "</div>" +
+      (s.solo ? (s.from ? "<h3>From the chosen point</h3><div id=\"mpa-times\">" + tb(soloTimes(f, s, r)) + "</div>" : "") : "<h3>From the point of injury</h3><div id=\"mpa-times\">" + tb(assessTimes(f, s, r)) + "</div>") +
       (f.gov ? "<h3>Official record</h3>" + tb(govRows(f.gov, s)) : "") +
       "<h3>Capability and services</h3>" + tb(R.slice(0, R.findIndex(function (x) { return x[0] === "Helipad"; }))) +
       "<h3>Capability flags</h3><div id=\"mpa-caps\">" + capTable(f, s) + "</div>" +
@@ -3383,6 +3389,7 @@
   }
   function assessView(id) {
     var f = find(id), s = ST, el = D.getElementById("brief"); if (!f || !el || f.kind !== "hospital") return false;
+    SOLO = null;
     var known = (s.rts || []).filter(function (x) { return x.f === f && x.r; })[0], rt = known ? known.r : null;
     el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpa-print">Export PDF</button> <button type="button" class="refresh" id="mpa-close">Back to the plan</button> ' +
       '<span class="obs">Every page as it prints.</span></div>' +
@@ -3417,21 +3424,251 @@
     return ready;
   }
 
+  /* ---------- standalone hospital assessment (Shane 2026-10-29: "i want stand alone") ----------
+     One hospital's assessment with no medical plan built: from a hospital's map popup, long-press > Plans > Hospital
+     assessment here, or Reports > Hospital assessment. It reads the sources the plan reads (OSAP's stored OpenStreetMap
+     copy, live Overpass only where the copy is missing, OSAP's sourced list, the hospitals' own websites, official records,
+     published phone numbers, Wikidata) round the hospital, rates it with the same rules and prints the same sections, so a
+     standalone assessment and the plan's never disagree. A chosen point (the long-pressed spot) adds the straight line,
+     road time and route from there. It keeps its own state: the plan's state is swapped in only while a page is drawn,
+     synchronously, so an open plan is never touched. Hospitals with no documented capability are listed too: an
+     assessment states the gaps rather than leaving the hospital out. */
+  var SOLO = null, SOLO_R = 25000, SOLO_RULE = "osap.hospital.assess/1", SOLO_NEAR = 150;
+  var SOLO_TAG = '<span class="aitag" title="Built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>';
+  function withSolo(s, fn) {
+    var o = [ST, GOV, GOV_P]; ST = s; GOV = s.gov ? s.gov.ix : null; GOV_P = s.gov ? s.gov.p : null;
+    try { return fn(); } finally { ST = o[0]; GOV = o[1]; GOV_P = o[2]; }
+  }
+  /* every hospital within SOLO_R of the point, nearest first, rated as the plan rates them */
+  function soloLoad(s) {
+    var o = s.o, R = { h: SOLO_R, c: 0, a: 60000, e: 0 };
+    var sofP = loadSof(s.cc).then(null, function (e) { s.sofErr = e.message; return null; }),
+      webP = twice(function () { return loadWeb(s.cc); }).then(null, function (e) { s.webErr = e.message; return null; }),
+      govP = twice(function () { return loadGov(s.cc); }).then(null, function (e) { s.govErr = e.message; return null; }),
+      phP = loadPhones(s.cc).then(null, function (e) { s.phErr = e.message; return null; });
+    var facP = storedFac(o, R.a).catch(function (e) { s.storedErr = e.message; return null; }).then(function (st) {
+      if (SOLO !== s) return null;
+      s.stored = st;
+      var mine = st ? clipEls(st.els, o, R) : [];
+      if (st && !st.missing.length) return { els: mine };
+      return osmQ(oQuery(o, R.h, 1000, R.a), undefined, oSql(o, R.h, 1000, R.a)).then(function (j) {
+        s.osmAt = Date.now(); s.osmBase = j.osm3s && j.osm3s.timestamp_osm_base;
+        return { els: (j.elements || []).filter(function (e) { var t = e.tags || {}; return t.aeroway || t.amenity === "hospital" || t.healthcare === "hospital"; }).concat(mine) };
+      }, function (e) { s.osmErr = e.message; return st ? { els: mine } : null; });
+    });
+    return Promise.all([facP, sofP, webP, govP, phP]).then(function (r) {
+      if (SOLO !== s) return false;
+      s.gov = r[3]; s.web = r[2]; s.ph = r[4];
+      var got = r[0], sof = r[1], hosp = r[2] || (sof && sof.hospitals) ? hp("web").fold(sof && sof.hospitals, r[2], s.cc) : null;
+      if (!got && !(hosp && hosp.length)) throw new Error(s.osmErr || s.storedErr || s.sofErr || "no answer");
+      withSolo(s, function () {
+        var F = sortOsm(got ? got.els : [], o), H = pickHosp(F, o, R.h, hosp);
+        F.H = H.filter(function (f) { return !f.far; }).concat(F.U || []).sort(function (a, b) { return a.m - b.m; });
+        F.U = []; F.C = []; F.E = []; s.fac = F; s.sofList = hosp; s.phN = applyPhones(s);
+      });
+      return true;
+    });
+  }
+  /* the hospital a popup asked for: by OSAP's list id, the record id, else the same name close by */
+  function soloFind(s, q) {
+    var L = s.fac.H, bare = function (x) { return String(x || "").replace(/^(sof:)+/, ""); };
+    if (q.sof) { var k = bare(q.sof), a = L.filter(function (f) { return (f.sofRec && bare(f.sofRec.id) === k) || bare(f.id) === k; })[0]; if (a) return a; }
+    if (q.id) { var b = L.filter(function (f) { return f.id === q.id; })[0]; if (b) return b; }
+    if (q.name) {
+      var n = String(q.name).toLowerCase(), w = words(q.name);
+      var c = L.filter(function (f) { return f.m < 1500 && (f.name.toLowerCase() === n || (w.length && words(f.name).some(function (x) { return w.indexOf(x) >= 0; }))); })[0]; if (c) return c;
+    }
+    return null;
+  }
+  /* open({ at, sof, name }) assesses that hospital (a popup); open({ at, from, pick: true }) lists the hospitals round the
+     point, or opens the one within SOLO_NEAR m of it; with no "at" the map centre is used */
+  function hospital(q) {
+    q = q || {};
+    var at = q.at || mapCentre(); if (!at || !isFinite(at[0]) || !isFinite(at[1])) return Promise.resolve(false);
+    style();
+    var a = A(), s = { solo: true, q: q, o: [+at[0], +at[1]], pt: q.from || null, from: null, at: Date.now(), cc: cc(), opener: D.activeElement };
+    s.name = a && a.ccName ? a.ccName() : String(s.cc).toUpperCase();
+    ccAt(s);
+    SOLO = s;
+    soloShell(s, '<header class="mpdh"><h2>Hospital assessment' + (q.name ? ": " + esc(q.name) : "") + "</h2>" + SOLO_TAG + '</header><p class="obs mpwait">Looking up ' + (q.name ? "this hospital" : "the hospitals round " + esc(grid(s.o[0], s.o[1]))) + " in OSAP's sources…</p>");
+    s.ready = soloLoad(s).then(function (ok) {
+      if (!ok || SOLO !== s) return;
+      wdHosp(s, s.o, SOLO_R);
+      var f = q.pick ? (s.fac.H[0] && s.fac.H[0].m <= SOLO_NEAR ? s.fac.H[0] : null) : soloFind(s, q);
+      if (f) return soloOpen(s, f);
+      soloList(s, q.pick ? "" : "OSAP could not match " + (q.name || "this hospital") + " to a record here. Pick it from the hospitals nearby.");
+    }).catch(function (e) {
+      if (SOLO !== s) return;
+      soloShell(s, '<header class="mpdh"><h2>Hospital assessment</h2>' + SOLO_TAG + '</header><p class="obs mpwarn"><b>The hospital lookup failed</b>: ' + esc(clip(e.message, 220)) +
+        '. This does not mean there is no hospital here: ask locally and check national sources. <button type="button" class="refresh noprint" data-solo="retry">Try again</button></p>');
+    });
+    return s.ready;
+  }
+  function soloShell(s, doc) {
+    var el = D.getElementById("brief"); if (!el) return null;
+    el.innerHTML = '<div class="bbar noprint">' + (s.f ? '<button type="button" class="refresh primary" data-solo="print">Export PDF</button> <button type="button" class="refresh" data-solo="map">Show on map</button> ' : "") +
+      (s.f && s.fac && s.fac.H.length > 1 ? '<button type="button" class="refresh" data-solo="list">Other hospitals here</button> ' : "") + '<button type="button" class="refresh" data-solo="close">Close</button>' +
+      (s.f ? ' <span class="obs">Every page as it prints.</span>' : "") + "</div>" + '<article class="bpage mpdoc" id="mps-doc">' + doc + "</article>";
+    stackTables(el.querySelector(".mpdoc")); el.classList.add("mpbrief");
+    el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
+    if (!el.__mpSolo) { el.addEventListener("click", soloClick); el.__mpSolo = true; }
+    if (!el.__mpChk) { el.addEventListener("submit", chkSubmit); el.__mpChk = true; }
+    return el;
+  }
+  function soloList(s, note) {
+    s.f = null;
+    var L = s.fac.H.slice(0, 30);
+    soloShell(s, withSolo(s, function () {
+      return '<header class="mpdh"><h2>Hospital assessment</h2>' + SOLO_TAG + '<span class="obs">' + esc(s.name) + " · hospitals within " + SOLO_R / 1000 + " km of <code>" + esc(grid(s.o[0], s.o[1])) + "</code>, nearest first. Pick one to assess.</span></header>" +
+        (note ? '<p class="obs mpwarn">' + esc(note) + "</p>" : "") +
+        (L.length ? '<table class="mpas mpsolo"><thead><tr><th>Hospital</th><th>Distance</th><th>Trauma level</th><th>Assess</th></tr></thead><tbody>' + L.map(function (f) {
+          return "<tr><td><b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? '<span class="sub">' + esc(f.alias) + "</span>" : "") + "</td><td>" + esc(km(f.m)) + " " + card(f.brg) + "</td><td>" +
+            esc(f.trauma ? tierLabel(f) : eqText(f) ? eqText(f) : NK_LVL) + (!f.trauma && eqText(f) ? ' <span class="obs">(equivalent, assessed)</span>' : "") +
+            '</td><td><button type="button" class="refresh" data-solo-pick="' + esc(f.id) + '">Assess</button></td></tr>';
+        }).join("") + "</tbody></table>" :
+          '<p class="obs mpwarn">No hospital within ' + SOLO_R / 1000 + " km in OSAP's sources (OpenStreetMap, OSAP's sourced list and official records). This does not mean there is none: ask locally and check national sources.</p>");
+    }));
+  }
+  function soloOpen(s, f) {
+    s.f = f; s.r = null; s.wait = !!s.pt;
+    s.from = s.pt && hav(s.pt, [f.lat, f.lon]) > 300 ? s.pt : null;
+    soloShell(s, withSolo(s, function () {
+      return '<header class="mpdh"><h2>Hospital assessment: ' + esc(f.name) + "</h2>" + SOLO_TAG +
+        '<span class="obs">Standalone assessment · ' + esc(s.name) + " · built " + esc(dual(s.at, true)) + (s.from ? " · from the chosen point <code>" + esc(grid(s.from[0], s.from[1])) + "</code>" : "") + "</span></header>" +
+        '<figure><img id="mpa-map" alt="Map: this hospital' + (s.from ? ", the chosen point and the road route" : "") + ', the nearest helipad and airfield"><figcaption id="mpa-cap">Drawing the map…</figcaption></figure>' +
+        '<div id="mpa-body">' + soloBody(s) + "</div>";
+    }));
+    soloFp(s);
+    var rP = s.from ? route(s.from, f).then(function (r) { return r; }, function (e) { return { err: e.message }; }) : Promise.resolve(null);
+    s.mapReady = rP.then(function (r) {
+      if (SOLO !== s || s.f !== f) return null;
+      s.wait = false;
+      if (r) { s.r = r; var t = D.getElementById("mpa-times"); if (t) t.innerHTML = withSolo(s, function () { return asTable(soloTimes(f, s, r)); }); soloFp(s); }
+      return withSolo(s, function () { return soloMap(s, f, r); });
+    }).then(function (m) {
+      var im = D.getElementById("mpa-map"), cap = D.getElementById("mpa-cap"); if (!im || !m || SOLO !== s || s.f !== f) return;
+      im.src = m.url;
+      if (cap) cap.textContent = baseNote(m, "The basemap could not be loaded; drawn without it. ") + "H this hospital, L nearest helipad, A nearest airfield" + (s.from ? ", P the chosen point; red line the road route" : "") + ". North up, zoom " + m.z + ".";
+      return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
+    }).catch(function () { var cap = D.getElementById("mpa-cap"); if (cap && SOLO === s) cap.textContent = "The map could not be drawn on this device."; });
+    return s.mapReady;
+  }
+  function soloBody(s) { return withSolo(s, function () { return assessHtml(s.f, s, s.r) + '<div id="mps-age">' + soloAgeHtml(s, s.f) + "</div>" + soloSrcHtml(s); }); }
+  /* Wikidata answered after the page was drawn: the body again, the map kept */
+  function soloDone(s) {
+    if (SOLO !== s || !s.f) return;
+    var b = D.getElementById("mpa-body"); if (!b) return;
+    b.innerHTML = soloBody(s); stackTables(b); soloFp(s);
+  }
+  function soloTimes(f, s, r) {
+    var p = s.from, m = hav(p, [f.lat, f.lon]), b = brg(p, [f.lat, f.lon]), kn = num("rwkn"), L = [];
+    L.push(["Straight line", esc(km(m)) + ", " + Math.round(b) + "° " + card(b) + " from the chosen point <code>" + esc(grid(p[0], p[1])) + "</code>"]);
+    L.push(["By road", r && r.line ? esc(mins(r.s)) + ", " + esc(km(r.m)) + ' <span class="obs">(open roads: no traffic, checkpoints or damage)</span>' : r && r.err ? nk("No road time: " + clip(r.err, 120)) : "Working out the road time…"]);
+    if (r && r.line && r.roads.length) L.push(["Main roads", esc(r.roads.map(function (q) { return q.n; }).join(" → "))]);
+    L.push(["By air, flight only", esc(mins(flightS(m, kn))) + " straight line at " + kn + ' kn <span class="obs">(planning only: no launch, inbound or handover time, and no confirmed aircraft; a Med plan from this point counts those)</span>']);
+    return L;
+  }
+  function soloMap(s, f, r) {
+    var items = [], pts = [[f.lat, f.lon]];
+    if (r && r.line && r.line.length) { items.push(["line", r.line, RT_STYLE[0]]); r.line.forEach(function (q, i) { if (i % 10 === 0) pts.push(q); }); }
+    var hpd = nearestTo(f, s.fac.L.filter(function (l) { return l.kind !== "airfield"; })), af = nearestTo(f, s.fac.AF);
+    if (hpd && hpd.m < 5000) { items.push(["mk", [hpd.x.lat, hpd.x.lon], "L", "air"]); pts.push([hpd.x.lat, hpd.x.lon]); }
+    if (af && af.m < 30000) { items.push(["mk", [af.x.lat, af.x.lon], "A", "air"]); pts.push([af.x.lat, af.x.lon]); }
+    items.push(["mk", [f.lat, f.lon], "H", "h", "", 1]);
+    if (s.from) { items.push(["mk", s.from, "P", "o", "", 2]); pts.push(s.from); }
+    if (pts.length < 2) pts.push([f.lat + 0.01, f.lon + 0.01], [f.lat - 0.01, f.lon - 0.01]);
+    return mapImage(900, 520, { items: items, pts: pts });
+  }
+  /* how old each thing the assessment rests on is */
+  function soloAgeHtml(s, f) {
+    var at = s.stored && s.stored.at ? String(s.stored.at).slice(0, 10) : "", sf = sofOf(s.cc), I = FI(), ck = I ? I.forFacility(checks(), f.id) : [];
+    var none = '<span class="obs">None for this country</span>';
+    return "<h3>Data age</h3>" + asTable([
+      ["Built", esc(dual(s.at, true))],
+      ["OpenStreetMap", s.osmBase ? "Live, data as of " + esc(String(s.osmBase).slice(0, 16).replace("T", " ")) + "Z" : at ? "OSAP stored copy, data as of " + esc(at) : nk(s.storedErr ? "Stored copy not read: " + clip(s.storedErr, 120) : "")],
+      ["OSAP sourced list", sf ? "As of " + esc(sf.asof || "undated") : s.sofErr ? nk("Not read: " + clip(s.sofErr, 120)) : none],
+      ["Hospitals' websites", s.web ? "Read " + esc(String(s.web.read_at || "").slice(0, 10)) : s.webErr ? nk("Not read: " + clip(s.webErr, 120)) : none],
+      ["Official record", f.gov ? "Built " + esc(f.gov.retrieved || "undated") : s.gov ? nk("No official record matched this hospital.") : s.govErr ? nk("Not read: " + clip(s.govErr, 120)) : none],
+      ["Published phone numbers", s.ph ? "Read " + esc(String(s.ph.read_at || "").slice(0, 10)) : s.phErr ? nk("Not read: " + clip(s.phErr, 120)) : none],
+      ["Wikidata", s.wdAt ? "Read " + esc(dual(s.wdAt, true)) : s.wdErr ? nk("Not reached: " + clip(s.wdErr, 120)) : "Reading…"],
+      ["Planner's check", ck.length ? "Latest " + esc(dual(Date.parse(ck[ck.length - 1].at), true)) : nk("Never checked on this device.")]]);
+  }
+  function soloAge(s) { var el = D.getElementById("mps-age"); if (el && s.f) el.innerHTML = withSolo(s, function () { return soloAgeHtml(s, s.f); }); }
+  function soloSrcHtml(s) {
+    var L = [[SRC.medfac, "the hospitals, helipads and airfields"]];
+    if (s.osmAt || s.osmErr) L.push([SRC.osm, s.osmErr ? "not reached: " + s.osmErr : "read " + dual(s.osmAt, true)]);
+    if (sofOf(s.cc)) L.push([SRC.sof, "as of " + (sofOf(s.cc).asof || "")]);
+    if (s.gov) L.push([SRC.gov, "built " + String(s.gov.ix.doc.built || "").slice(0, 10)]);
+    if (s.web) L.push([SRC.web, "read " + String(s.web.read_at || "").slice(0, 10)]);
+    if (s.ph) L.push([SRC.ph, "read " + String(s.ph.read_at || "").slice(0, 10)]);
+    L.push([SRC.wdh, s.wdErr ? "not reached: " + s.wdErr : s.wdAt ? "read " + dual(s.wdAt, true) : "reading…"]);
+    if (s.from) L.push([SRC.osrm, s.r && s.r.host ? "answered by " + String(s.r.host).split("/")[2] : s.r && s.r.err ? "not reached: " + s.r.err : "reading…"]);
+    L.push([SRC.tricare, "regional call centres as published"]);
+    return "<h3>Sources and fingerprint</h3><ul>" + L.map(function (x) { return srcLi(x[0], x[1]); }).join("") + "</ul>" +
+      '<p class="obs mpfp">Each line above says where it comes from; a source\'s statement is that source\'s claim. Assessment fingerprint (SHA-256 of the assessment record: the hospital, every stated capability with its status, confidence and source, the trauma designation and equivalent level, contacts, the chosen point and road time, and when it was built; rule ' + SOLO_RULE + '): <code id="mps-fp">computing…</code></p>';
+  }
+  /* the record the fingerprint covers */
+  function soloRecord(s, f) {
+    var C = f.caps || {};
+    return { schema: "osap-hospital-assessment/1", rule: SOLO_RULE, built: new Date(s.at).toISOString(), cc: s.cc,
+      facility: { id: f.id, name: f.name, lat: +(+f.lat).toFixed(6), lon: +(+f.lon).toFixed(6), osm: f.osm || "", sof: f.sofRec ? f.sofRec.id || f.sofRec.name || "" : "", gov: f.gov ? f.gov.hcode || "" : "" },
+      trauma: f.trauma ? { text: f.trauma.text || "", src: f.trauma.src || "" } : null, equivalent: f.eq && f.eq.level ? f.eq.level : null,
+      caps: Object.keys(C).sort().filter(function (k) { return C[k] && (C[k].status !== "UNKNOWN" || C[k].now); }).map(function (k) {
+        var x = C[k]; return [k, x.status, x.confidence || "", x.source ? x.source.url || x.source.name || "" : "", x.how || "", x.now ? x.now.state : ""];
+      }),
+      contacts: [f.phone || "", f.ephone || "", f.web || "", f.addr || ""], from: s.from, road: s.r && s.r.line ? [Math.round(s.r.s), Math.round(s.r.m)] : null };
+  }
+  function soloFp(s) {
+    var f = s.f; if (!f) return;
+    var rec = withSolo(s, function () { return soloRecord(s, f); }), H = W.OSAP_HOSP;
+    sha(H && H.canon ? H.canon(rec) : JSON.stringify(rec)).then(function (h) {
+      if (SOLO !== s || s.f !== f) return;
+      s.fp = h; var c = D.getElementById("mps-fp"); if (c) c.textContent = h || "not available in this browser";
+    });
+  }
+  function soloClose() {
+    var el = D.getElementById("brief"), s = SOLO; SOLO = null;
+    if (el) { el.hidden = true; el.innerHTML = ""; el.classList.remove("mpbrief"); }
+    D.documentElement.classList.remove("briefing");
+    var o = s && s.opener; if (o && o.focus && D.contains(o)) { try { o.focus(); } catch (e) {} }
+  }
+  function soloClick(e) {
+    var s = SOLO, b = e.target.closest && e.target.closest("[data-solo],[data-solo-pick]"); if (!b || !s) return;
+    if (b.hasAttribute("data-solo-pick")) { var id = b.getAttribute("data-solo-pick"), f = s.fac && s.fac.H.filter(function (x) { return x.id === id; })[0]; if (f) soloOpen(s, f); return; }
+    var k = b.getAttribute("data-solo"), el = D.getElementById("brief");
+    if (k === "close") soloClose();
+    else if (k === "list") soloList(s);
+    else if (k === "retry") hospital(s.q);
+    else if (k === "map") { var f2 = s.f; soloClose(); if (f2) mapFocus(f2.lat, f2.lon); }
+    else if (k === "print") (s.mapReady || Promise.resolve()).then(function () { if (SOLO === s) W.OSAP_PDF.print({ title: pdfTitle(el, "Hospital assessment"), root: el }); });
+  }
+  /* a hospital's map popup (OSAP's sourced hospitals layer) carries a Hospital assessment button */
+  D.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-hosp-assess]"); if (!b) return;
+    var la = +b.getAttribute("data-lat"), lo = +b.getAttribute("data-lon"); if (!isFinite(la) || !isFinite(lo)) return;
+    e.preventDefault();
+    try { if (W.__asapMap) W.__asapMap.closePopup(); } catch (x) {}
+    hospital({ at: [la, lo], sof: b.getAttribute("data-hosp-assess") || "", name: b.getAttribute("data-name") || "" });
+  });
+
   /* a planner's check from the assessment form: saved, the hospital's flags worked out again, the plan re-picked */
   function chkSubmit(e) {
     var fm = e.target.closest && e.target.closest("form[data-mp-chk]"); if (!fm) return;
     e.preventDefault();
-    var I = FI(), f = find(fm.getAttribute("data-mp-chk")), msg = fm.querySelector(".mpchkmsg"); if (!I || !f) return;
+    var sid = fm.getAttribute("data-mp-chk"), so = SOLO && SOLO.f && SOLO.f.id === sid ? SOLO : null;
+    var I = FI(), f = so ? so.f : find(sid), msg = fm.querySelector(".mpchkmsg"); if (!I || !f) return;
     var g = function (n) { return fm.elements[n] ? fm.elements[n].value : ""; };
     var c = I.makeCheck({ facility_id: f.id, facility_name: f.name, cap: g("cap"), exists: g("exists"), now: g("now"), method: g("method"), contact_role: g("role"), note: g("note"), valid_h: g("h") }, new Date().toISOString());
     if (c.errors) { if (msg) msg.textContent = "Not recorded: check " + c.errors.join(", ") + "."; return; }
     var L = I.addCheck(checks(), c); lsSet(chkKey(), L);
     if (checks().length !== L.length) { if (msg) msg.textContent = "Not recorded: this device's storage is full."; return; }
-    f.caps = capFlags(f, f.sofRec); f.tc = tClass(f.caps); f.eq = equivLevel(f.caps);
-    var cp = D.getElementById("mpa-caps"), ck = D.getElementById("mpa-chk");
-    if (cp) cp.innerHTML = capTable(f, ST);
-    if (ck) { ck.innerHTML = chkHtml(f); var m2 = ck.querySelector(".mpchkmsg"); if (m2) m2.textContent = "Recorded " + (CAP_NAME[c.cap] || c.cap) + ", " + dual(Date.parse(c.at), true) + "."; var b = ck.querySelector("button[type=submit]"); if (b) b.focus(); }
-    offChanged();
+    var redo = function () {
+      f.caps = capFlags(f, f.sofRec); f.tc = tClass(f.caps); f.eq = equivLevel(f.caps);
+      var cp = D.getElementById("mpa-caps"), ck = D.getElementById("mpa-chk");
+      if (cp) cp.innerHTML = capTable(f, so || ST);
+      if (ck) { ck.innerHTML = chkHtml(f); var m2 = ck.querySelector(".mpchkmsg"); if (m2) m2.textContent = "Recorded " + (CAP_NAME[c.cap] || c.cap) + ", " + dual(Date.parse(c.at), true) + "."; var b = ck.querySelector("button[type=submit]"); if (b) b.focus(); }
+    };
+    if (so) { withSolo(so, redo); soloAge(so); soloFp(so); } else { redo(); offChanged(); }
   }
 
   /* ---------- picking the point of injury on the map ---------- */
@@ -3585,6 +3822,6 @@
   /* road: the plan's own road routing for other tools (the DZSO sheet's ground evacuation): times(o, places) fills each place's
      s (seconds), rm (metres) and est (true when no router answered and it is the labelled straight-line estimate) and gives the
      router used; route(o, place) gives { s, m, line, roads, host } */
-  W.OSAP_MEDPLAN = { road: { times: driveTimes, route: route }, open: open, close: close, _takKml: medKml, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _shown: function () { return ST ? shownItems().map(function (x) { return x.g; }) : []; }, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { road: { times: driveTimes, route: route }, open: open, close: close, _takKml: medKml, printView: printView, assessView: assessView, hospital: hospital, _solo: function () { return SOLO; }, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _shown: function () { return ST ? shownItems().map(function (x) { return x.g; }) : []; }, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();

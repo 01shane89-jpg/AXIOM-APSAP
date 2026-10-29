@@ -109,6 +109,7 @@
 ["w1359026490",-22.2314,-54.80564,"br",{"name":"Mackenzie Hospital Presbiteriano","amenity":"hospital","healthcare":"hospital"}],
 ["w1413821086",-22.24035,-54.75318,"br",{"name":"Posto de saúde do Parque das Nações II","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:housenumber":"449","addr:street":"Avenida José Valério dos Santos","addr:city":"Dourados-MS","addr:postcode":"79842-080","opening_hours":"Mo-Fr 07:00 - 17:00"}],
 ["w1481246659",-22.26067,-54.84865,"br",{"name":"Hospital Regional De Dourados","amenity":"hospital","healthcare":"hospital","opening_hours":"24/7"}],
+["w1567007350",-22.33899,-54.55831,"br",{"name":"Aeródromo Asas do MS","aeroway":"aerodrome","icao":"SSXA"}],
 ["w168157706",-22.64101,-55.8296,"py",{"name":"Aeropuerto Internacional Dr. Augusto Roberto Fuster","name:en":"Dr. Augusto Roberto Fuster International Airport","aeroway":"aerodrome","icao":"SGPJ","iata":"PJC","wikidata":"Q1657937"}],
 ["w168348752",-23.0689,-54.20238,"br",{"name":"Posto de Saúde do Bairro Varjão","amenity":"clinic","healthcare":"clinic","operator":"Sistema Único de Saúde"}],
 ["w172954970",-22.53335,-55.7384,"py",{"name":"Hospital San Francisco","amenity":"hospital","healthcare":"hospital"}],

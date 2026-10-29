@@ -171,6 +171,7 @@ jobs:
       - run: node tests/evsum_ai_smoke.mjs
       - run: node tests/points_smoke.mjs
       - run: node tests/points_declutter_smoke.mjs
+      - run: node tests/places_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
@@ -267,6 +268,8 @@ jobs:
       - run: node tests/medplan_hang_smoke.mjs
       - run: node tests/medplan_equiv.test.mjs
       - run: node tests/medplan_conflict_map_smoke.mjs
+      # one hospital's standalone assessment: map popup, long-press Plans, Reports, planner's check, PDF, open plan untouched
+      - run: node tests/hospital_assess_smoke.mjs
       - run: node tests/seatransit_smoke.mjs
       - run: node tests/lz_smoke.mjs
       # DZSO sheet: long-press Plans, point pop-up, Area menu, winds and drift, hazards, hospitals, save, PDF (assets/osap-dzso.js)

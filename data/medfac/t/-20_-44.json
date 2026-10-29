@@ -185,7 +185,7 @@
 ["w1039441468",-19.92712,-43.97767,"br",{"name":"URS - Campos Sales","amenity":"clinic","healthcare":"clinic"}],
 ["w1047141013",-19.76287,-42.07678,"br",{"name":"Unidade Básica de Saúde","healthcare":"clinic"}],
 ["w1071549304",-19.91663,-43.91191,"br",{"name":"Instituto Mario Penna","amenity":"hospital","healthcare":"hospital"}],
-["w1071846226",-19.92593,-43.93187,"br",{"name":"Semper Hospital Geral","amenity":"hospital","healthcare":"hospital"}],
+["w1071846226",-19.92552,-43.93087,"br",{"name":"Semper Hospital Geral","amenity":"hospital","healthcare":"hospital"}],
 ["w1074404476",-19.92881,-43.92352,"br",{"name":"Centro de Saúde Carlos Chagas","amenity":"hospital","healthcare":"hospital","phone":"+55 31 3246 0235","addr:housenumber":"1715","addr:street":"Avenida Francisco Sales"}],
 ["w1074422726",-19.95036,-43.98071,"br",{"name":"Hospital Espírita André Luiz","amenity":"hospital","healthcare":"hospital","addr:housenumber":"7","addr:street":"Rua Úrsula Paulino","addr:postcode":"30570-000"}],
 ["w1075950933",-19.92753,-43.92666,"br",{"name":"Instituto de Olhos de Belo Horizonte","amenity":"hospital","healthcare":"hospital","addr:housenumber":"541","addr:street":"Rua Padre Rolim","addr:postcode":"30130-090"}],

@@ -231,7 +231,7 @@
     }
     else if (k === "point") {
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
-      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]]));
+      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
     }
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
@@ -258,6 +258,7 @@
       else if (k === "me" && hm) ptAdd(L.latLng(hm.lat, hm.lon));
       else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
       /* each saved point's MGRS under its name on the map; a device choice */
+      else if (k === "places") W.OSAP_PLACES.open();
       else if (k === "grid") { lsSet(K_PTG, ptGrid() ? null : "1"); ptDraw(); toast(ptGrid() ? "Points show their MGRS" : "Points show their names only"); }
     }
   });
@@ -371,6 +372,8 @@
   function ptDraw() {
     ptLayer.clearLayers();
     ptsHere().forEach(function (p) {
+      /* a point hidden in My places (its own box, or a folder above it, unticked: assets/osap-places.js) is not drawn */
+      if (W.OSAP_PLACES && !W.OSAP_PLACES.shown("pt:" + p.id)) return;
       /* the point's own icon (assets/osap-milsym.js: a military symbol, a shape or a pin); the teal diamond otherwise */
       var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,
@@ -470,11 +473,11 @@
     ["measure", "Measure", I.ruler], ["route", "Route", I.route], ["pin", "Point", I.pin],
     ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["plans", "Plans", I.plans], ["lz", "Find LZ", I.heli], ["terrain", "Terrain", I.mtn], ["copy", "Copy", I.copy]
   ];
-  /* "Plans" opens a short list: Med plan from here (once assets/osap-medplan.js has loaded; it loads after this file) and
-     Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
+  /* "Plans" opens a short list: Med plan from here and Hospital assessment here (once assets/osap-medplan.js has loaded; it
+     loads after this file) and Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
   function radNow() { return RAD; }
   function plansOpen(r, ll) {
-    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat([["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
     pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
     pop.hidden = false; pop._for = "plans"; pop._ll = ll;
     /* under the Plans button, kept inside the map */
@@ -524,6 +527,8 @@
     else if (k === "copy") copy(fmtPt(P[0], P[1]));
     /* the medical plan from this point as the point of injury; no drawn area needed */
     else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: P }); }
+    /* one hospital's standalone assessment: the hospital here, else the hospitals round this point to pick from */
+    else if (k === "hosp") { if (W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital) W.OSAP_MEDPLAN.hospital({ at: P, from: P, pick: true }); }
     /* Evacuate from here: this point is the origin */
     else if (k === "evac") epeGo({ at: P, how: "Long-press on the map" });
     /* DZSO sheet: this point is the drop zone's point of impact */

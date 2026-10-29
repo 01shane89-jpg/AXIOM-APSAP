@@ -16,6 +16,6 @@
 ["n13071380840",-9.10377,-50.57178,"br",{"name":"Fazenda Piquia","addr:city":"Santana Do Araguaia","aeroway":"aerodrome","icao":"SNC8"}],
 ["n13071380843",-9.32058,-50.23911,"br",{"name":"FAZENDA BACABA - GRUPO IJP","aeroway":"aerodrome","icao":"SJ3J"}],
 ["n13071380846",-9.07612,-50.62968,"br",{"name":"Fazenda Cristalino","aeroway":"aerodrome","icao":"SNE3"}],
-["n14232848601",-8.02223,-50.04274,"br",{"name":"Hospital Regional","amenity":"hospital","phone":"(94) 3424-9500","addr:street":"Avenida Brasil","addr:postcode":"68550-005","opening_hours":"24/7"}],
+["n14232848601",-8.02223,-50.04274,"br",{"name":"Hospital Regional","amenity":"hospital","phone":"+55 94 3424 9500","addr:street":"Avenida Brasil","addr:postcode":"68550-005","opening_hours":"24/7"}],
 ["w179199721",-9.31996,-50.32802,"br",{"name":"Aeródromo de Santana do Araguaia","name:en":"Santana do Araguaia Airport","aeroway":"aerodrome","icao":"SD12","iata":"CMP","wikidata":"Q8214032"}],
 ["w956515347",-9.98113,-51.14065,"br",{"name":"Aeroporto de Vila Rica","name:en":"Vila Rica Airport","aeroway":"aerodrome","icao":"SWVC","iata":"VLP","wikidata":"Q9586667"}]]
