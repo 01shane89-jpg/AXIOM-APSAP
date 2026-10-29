@@ -31,4 +31,11 @@ jobs:
             if [ "$code" = "200" ] && jq -e . out.json >/dev/null 2>&1; then break; fi
             echo "try $i: $code"; sleep 20
           done
-          jq -c . out.json | fold -w 3800 | nl -ba | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
+          jq -c . out.json | fold -w 3800 > chunks.txt; wc -l chunks.txt
+          sed -n '1,10p' chunks.txt | nl -ba | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
+      - name: More 11
+        run: sed -n '11,20p' chunks.txt | nl -ba -v 11 | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
+      - name: More 21
+        run: sed -n '21,30p' chunks.txt | nl -ba -v 21 | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
+      - name: More 31
+        run: sed -n '31,40p' chunks.txt | nl -ba -v 31 | sed 's/^ *\([0-9]*\)\t/::notice title=probe \1::/'
