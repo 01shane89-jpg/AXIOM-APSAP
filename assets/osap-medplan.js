@@ -1109,6 +1109,9 @@
     "#medplan{position:fixed;inset:0;z-index:4000;background:rgba(10,16,24,.45);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:16px}" +
     "#medplan[hidden]{display:none}#medplan .mpbox{background:var(--surface,#fff);color:var(--ink,#1b2733);max-width:1040px;width:100%;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.35);padding:12px 16px 18px;box-sizing:border-box}" +
     "#medplan .mphead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:sticky;top:-16px;background:var(--surface,#fff);padding:6px 0;z-index:1;border-bottom:1px solid var(--line,#d5dbe1)}" +
+    "#medplan .mplayers{flex:1 0 100%;display:flex;flex-wrap:wrap;gap:4px;align-items:center}#medplan .mplayers:empty{display:none}#medplan .mplyl{font-size:12px;color:var(--muted,#56626F);margin-right:2px;white-space:nowrap;flex:none}" +
+    "#medplan .mplyr{min-height:30px;padding:2px 10px;border-radius:15px;border:1px solid var(--line,#b9c2cb);background:var(--surface,#fff);color:var(--muted,#56626F);font-size:12.5px;cursor:pointer;text-decoration:line-through}" +
+    "#medplan .mplyr.on{background:#0b4f8a;border-color:#0b4f8a;color:#fff;text-decoration:none}#medplan .mplyr.mplya{text-decoration:none;color:var(--text,#1b2733)}" +
     "#medplan .mpsel{margin:6px 0 10px;padding:8px 10px;border:1px solid var(--line,#d5dbe1);border-radius:6px}#medplan .mpselr{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:6px}#medplan .mpselr select{max-width:100%;min-height:34px}#medplan .mpselr label{display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:100%}#medplan .mpmine{display:inline-block;margin:2px 0;padding:1px 7px;border-radius:9px;background:#0b4f8a;color:#fff;font-size:11.5px;font-weight:600}" +
     "#medplan .mphead h2{margin:0;font-size:17px;flex:1 1 auto}#medplan .mpcc{font-weight:400;color:var(--muted,#56626F)}#medplan .mphead button{min-height:32px}" +
     "#medplan h3{font-size:14px;margin:14px 0 4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#medplan p{margin:4px 0;line-height:1.45}#medplan h4{font-size:13px;margin:8px 0 2px}" +
@@ -1154,7 +1157,7 @@
     ".mpicon.air{background:#1d5fa8}.mpicon.e{background:#b35c00}.mpicon.o{background:#111;border-radius:10px}" +
     "#mp-pickbar{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:4001;background:#111;color:#fff;border-radius:6px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:14px;box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
     "#mp-pickbar button{min-height:30px}" +
-    "@media (max-width:700px){#medplan{padding:0}#medplan .mpbox{border-radius:0;min-height:100%;padding:0 10px 18px}#medplan .mphead{top:0;gap:6px}#medplan .mphead h2{font-size:15px}#medplan .mphead .aitag{order:3}#medplan .mpgrid input{min-height:34px}#mp-pickbar{top:auto;bottom:80px;width:calc(100% - 32px);box-sizing:border-box}}" +
+    "@media (max-width:700px){#medplan{padding:0}#medplan .mpbox{border-radius:0;min-height:100%;padding:0 10px 18px}#medplan .mphead{top:0;gap:6px}#medplan .mplayers{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}#medplan .mphead .mplyr{flex:none;min-height:36px}#medplan .mphead h2{font-size:15px}#medplan .mphead .aitag{order:3}#medplan .mpgrid input{min-height:34px}#mp-pickbar{top:auto;bottom:80px;width:calc(100% - 32px);box-sizing:border-box}}" +
     "#medplan.dock{inset:auto;top:var(--osplit-top,0px);right:0;bottom:0;width:min(520px,48vw);padding:0;background:none;pointer-events:none;overflow:visible}" +
     "#medplan.dock .mpbox{pointer-events:auto;height:100%;overflow:auto;border-radius:0;max-width:none;box-shadow:-4px 0 18px rgba(0,0,0,.3)}#medplan.dock .mphead{top:0}" +
     "@media (max-width:700px){#medplan.dock{top:auto;left:0;width:auto;height:55vh}#medplan.dock .mpbox{min-height:0;box-shadow:0 -4px 18px rgba(0,0,0,.3);border-top:3px solid var(--line,#d5dbe1)}}" +
@@ -1354,7 +1357,7 @@
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
       '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' +
-      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
+      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button><div id="mp-layers" class="mplayers noprint" role="group" aria-label="Medical plan objects on the map"></div></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
@@ -2756,47 +2759,82 @@
     return o;
   }
   /* what the map shows, once for the live map and once for the printed map: [kind, ...] items in drawing order */
-  function mapItems() {
+  /* map objects by kind, each switched on and off from the chips under the plan's title (Shane 2026-10-29: "i need to be
+     able to easily turn on/off the objects on the map"). What is hidden is a view choice kept on this device; the road and
+     air reach rings keep their section 1 settings (the same switch). Only the live map follows the chips: the printed plan
+     and the PDF always carry every object. */
+  var MAP_GROUPS = [["poi", "Point of injury"], ["mtf", "Planned hospitals"], ["alt", "Alternates"], ["rt", "Routes"], ["gr", "Road reach"], ["ar", "Air reach"],
+    ["air", "Air: pads, airfields, rescue"], ["cp", "Unit points"], ["bl", "Blood"], ["dc", "Chambers"], ["cl", "Clinics"], ["em", "Ambulance"], ["ev", "Evacuation out"]];
+  var HIDE_KEY = KEY + "hide";
+  function hiddenGroups() { var h = lsGet(HIDE_KEY); return Array.isArray(h) ? h : []; }
+  function groupOn(g) { return g === "gr" || g === "ar" ? ringsOn(g) : hiddenGroups().indexOf(g) < 0; }
+  function setGroup(g, on) {
+    if (g === "gr" || g === "ar") { var v = fieldVals(); v[g] = on ? 1 : 0; saveVals(v); return; }
+    var h = hiddenGroups().filter(function (x) { return x !== g; }); if (!on) h.push(g); lsSet(HIDE_KEY, h);
+  }
+  /* what the live map draws: every object of a kind switched on */
+  function shownItems() { return mapItems(true).filter(function (it) { return groupOn(it.g); }); }
+  /* the chips: one per kind the plan has, pressed when it is on the map, plus all on and all off */
+  function layerChips() {
+    var el = D.getElementById("mp-layers"); if (!el || !ST) return;
+    var all = mapItems(true), have = {}; all.forEach(function (it) { have[it.g] = (have[it.g] || 0) + 1; });
+    var G = MAP_GROUPS.filter(function (g) { return have[g[0]]; });
+    el.innerHTML = G.length ? '<span class="mplyl">On the map</span>' + G.map(function (g) { var on = groupOn(g[0]);
+      return '<button type="button" class="mplyr' + (on ? " on" : "") + '" data-mp-lyr="' + g[0] + '" aria-pressed="' + on + '" title="' + esc((on ? "Hide " : "Show ") + g[1].toLowerCase() + " on the map") + '">' + esc(g[1]) + "</button>"; }).join("") +
+      '<button type="button" class="mplyr mplya" data-mp-lyr="*on">All on</button><button type="button" class="mplyr mplya" data-mp-lyr="*off">All off</button>' : "";
+  }
+  function layerClick(k) {
+    var have = {}; mapItems(true).forEach(function (it) { have[it.g] = 1; });
+    if (k === "*on" || k === "*off") MAP_GROUPS.forEach(function (g) { if (have[g[0]]) setGroup(g[0], k === "*on"); });
+    else setGroup(k, !groupOn(k));
+    if (k === "gr" || k === "ar" || k.charAt(0) === "*") ghRender();
+    mapShow();
+    var b = D.querySelector('#mp-layers [data-mp-lyr="' + k + '"]'); if (b) b.focus();
+  }
+  function mapItems(every) {
     var s = ST, out = [], P = s.fac ? picks(s) : [], AM = s.fac ? altMarks(s) : {};
+    function add(g, it) { it.g = g; out.push(it); }
     function pk(f) { var x = P.filter(function (p) { return p.f === f; })[0]; return x ? x.role : ""; }
-    if (s.iso && ringsOn("gr")) (s.iso.features || []).forEach(function (f) {
+    if (s.iso && (every || ringsOn("gr"))) (s.iso.features || []).forEach(function (f) {
       var t = f.properties && f.properties.contour, g = f.geometry || {}, rings = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : g.type === "LineString" ? [[g.coordinates]] : [];
-      rings.forEach(function (pg) { out.push(["iso", pg[0].map(function (c) { return [c[1], c[0]]; }), t <= 30 ? "#1e7a3a" : "#c77700"]); });
+      rings.forEach(function (pg) { add("gr", ["iso", pg[0].map(function (c) { return [c[1], c[0]]; }), t <= 30 ? "#1e7a3a" : "#c77700"]); });
     });
-    if (ringsOn("ar")) airRings().forEach(function (r, i) { if (r.r > 0) out.push(["ring", s.o, r.r, i ? "#1d5fa8" : "#6fa8dc", r.t]); });
-    (s.rts || []).forEach(function (x) { if (x.r && x.r.line.length) out.push(["line", x.r.line, RT_ROLE[x.why[0]] || RT_STYLE[1]]); });
-    if (s.pac) Object.keys(s.pac).forEach(function (id) { ((s.pac[id] || {}).L || []).forEach(function (l) { if (PAC_STYLE[l.id] && l.coords.length > 1) out.push(["line", l.coords, PAC_STYLE[l.id]]); }); });
-    if (s.oc && s.oc.rt && s.oc.rt.line.length) out.push(["line", s.oc.rt.line, { color: "#6a3d9a", weight: 3, dashArray: "8 6" }]);
+    if (every || ringsOn("ar")) airRings().forEach(function (r, i) { if (r.r > 0) add("ar", ["ring", s.o, r.r, i ? "#1d5fa8" : "#6fa8dc", r.t]); });
+    (s.rts || []).forEach(function (x) { if (x.r && x.r.line.length) add("rt", ["line", x.r.line, RT_ROLE[x.why[0]] || RT_STYLE[1]]); });
+    if (s.pac) Object.keys(s.pac).forEach(function (id) { ((s.pac[id] || {}).L || []).forEach(function (l) { if (PAC_STYLE[l.id] && l.coords.length > 1) add("rt", ["line", l.coords, PAC_STYLE[l.id]]); }); });
+    if (s.oc && s.oc.rt && s.oc.rt.line.length) add("ev", ["line", s.oc.rt.line, { color: "#6a3d9a", weight: 3, dashArray: "8 6" }]);
     if (s.fac) {
-      s.fac.C.forEach(function (f, i) { out.push(["mk", [f.lat, f.lon], "C" + (i + 1), "", f.name]); });
-      s.fac.E.forEach(function (f, i) { out.push(["mk", [f.lat, f.lon], "E" + (i + 1), "e", f.name]); });
-      s.fac.L.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "L" + (i + 1), "air", l.name]); });
-      s.fac.AF.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "A" + (i + 1), "air", l.name]); });
+      s.fac.C.forEach(function (f, i) { add("cl", ["mk", [f.lat, f.lon], "C" + (i + 1), "", f.name]); });
+      s.fac.E.forEach(function (f, i) { add("em", ["mk", [f.lat, f.lon], "E" + (i + 1), "e", f.name]); });
+      s.fac.L.forEach(function (l, i) { add("air", ["mk", [l.lat, l.lon], "L" + (i + 1), "air", l.name]); });
+      s.fac.AF.forEach(function (l, i) { add("air", ["mk", [l.lat, l.lon], "A" + (i + 1), "air", l.name]); });
       /* only the hospitals the plan uses (Shane 2026-10-06): its picks, stabilization stops and documented alternates; the
          rest stay listed in section 2 for reference but are not drawn */
       s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f), a = !r && AM[f.id]; if (!r && !a) return;
-        out.push(["mk", [f.lat, f.lon], r ? PK_TXT[r] : a ? a.t : "H" + (i + 1), r === "Stabilization" ? "stb" : r ? "pk" : a ? "alt" : "", (r ? r + ": " : a ? a.tip + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (r || a ? "" : " · reference only, not a planned MTF"), !!(r || a)]); });
+        add(r ? "mtf" : "alt", ["mk", [f.lat, f.lon], r ? PK_TXT[r] : a ? a.t : "H" + (i + 1), r === "Stabilization" ? "stb" : r ? "pk" : a ? "alt" : "", (r ? r + ": " : a ? a.tip + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (r || a ? "" : " · reference only, not a planned MTF"), !!(r || a)]); });
       /* a stabilization stop from the hospitals with no details listed */
-      P.forEach(function (p) { if (s.fac.H.indexOf(p.f) < 0) out.push(["mk", [p.f.lat, p.f.lon], PK_TXT[p.role] || "H", p.role === "Stabilization" ? "stb" : "pk", p.role + ": " + facTag(s, p.f) + " " + p.f.name, true]); });
+      P.forEach(function (p) { if (s.fac.H.indexOf(p.f) < 0) add("mtf", ["mk", [p.f.lat, p.f.lon], PK_TXT[p.role] || "H", p.role === "Stabilization" ? "stb" : "pk", p.role + ": " + facTag(s, p.f) + " " + p.f.name, true]); });
     }
-    if (s.x) s.x.R.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "M" + (i + 1), "air", b.name + " (air rescue)"]); });
-    if (s.x) s.x.D.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "D" + (i + 1), "dc", b.name + " (decompression chamber)"]); });
-    if (s.x) s.x.B.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "B" + (i + 1), "bl", b.name + (b.bank ? " (blood bank)" : " (blood donation)")]); });
-    if (s.oc) s.oc.ap.forEach(function (a, i) { out.push(["mk", [a.lat, a.lon], "P" + (i + 1), "air", a.name]); });
+    if (s.x) s.x.R.forEach(function (b, i) { add("air", ["mk", [b.lat, b.lon], "M" + (i + 1), "air", b.name + " (air rescue)"]); });
+    if (s.x) s.x.D.forEach(function (b, i) { add("dc", ["mk", [b.lat, b.lon], "D" + (i + 1), "dc", b.name + " (decompression chamber)"]); });
+    if (s.x) s.x.B.forEach(function (b, i) { add("bl", ["mk", [b.lat, b.lon], "B" + (i + 1), "bl", b.name + (b.bank ? " (blood bank)" : " (blood donation)")]); });
+    if (s.oc) s.oc.ap.forEach(function (a, i) { add("air", ["mk", [a.lat, a.lon], "P" + (i + 1), "air", a.name]); });
     /* the unit's own points (section 9) as map objects once they hold a grid: CCP, AXP and HLZ, primary and alternate */
     var fv = fieldVals();
-    SITE_MK.forEach(function (m) { var g = parseGrid(fv[m[0]]); if (g) out.push(["mk", g, m[1], "cp", m[2] + ": " + clip(fv[m[0]], 120), true]); });
-    if (s.oc) out = out.concat(stratItems(s));
-    if (s.leg) { out.push(["line", [s.o, [s.leg.port.lat, s.leg.port.lon]], SEA_STYLE]); out.push(["mk", [s.leg.port.lat, s.leg.port.lon], "PORT", "pt", "Landing port: " + s.leg.port.name + " · " + nmTxt(s.leg.nm) + " by boat (straight line, not a navigation route)", true]); }
-    out.push(["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
+    SITE_MK.forEach(function (m) { var g = parseGrid(fv[m[0]]); if (g) add("cp", ["mk", g, m[1], "cp", m[2] + ": " + clip(fv[m[0]], 120), true]); });
+    if (s.oc) stratItems(s).forEach(function (x) { add("ev", x); });
+    if (s.leg) { add("ev", ["line", [s.o, [s.leg.port.lat, s.leg.port.lon]], SEA_STYLE]); add("ev", ["mk", [s.leg.port.lat, s.leg.port.lon], "PORT", "pt", "Landing port: " + s.leg.port.name + " · " + nmTxt(s.leg.nm) + " by boat (straight line, not a navigation route)", true]); }
+    add("poi", ["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
     return out;
   }
   /* the plan's own map key (Shane 2026-10-04: "legend needs to reflect the med plan"): only what the map is showing now,
      shared by the map legend and the printed map. [kind, colour, text, label, detail]: kind mk (a mark), ln (a line), dl (dashed) */
-  function legendItems() {
-    var s = ST, it = mapItems(), has = function (k, t) { return it.some(function (x) { return x[0] === "mk" && x[3] === k && (!t || t.test(x[2])); }); }, ln = function (c) { return it.some(function (x) { return x[0] === "line" && x[2].color === c; }); }, o = [];
-    var P = s.fac ? picks(s) : [], roles = P.map(function (p) { return PK_TXT[p.role]; }).filter(function (t) { return t !== "STB"; });
-    o.push(["mk", "#111", s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", s.from === "poi" ? "Point of injury" : "Plan centre", ""]);
+  function legendItems(live) {
+    var s = ST, it = live ? shownItems() : mapItems(), has = function (k, t) { return it.some(function (x) { return x[0] === "mk" && x[3] === k && (!t || t.test(x[2])); }); }, ln = function (c) { return it.some(function (x) { return x[0] === "line" && x[2].color === c; }); }, o = [];
+    /* the live key follows the map object chips (Shane 2026-10-29) */
+    var lv = function (g) { return !live || groupOn(g); };
+    var P = s.fac && lv("mtf") ? picks(s) : [], roles = P.map(function (p) { return PK_TXT[p.role]; }).filter(function (t) { return t !== "STB"; });
+    if (lv("poi")) o.push(["mk", "#111", s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", s.from === "poi" ? "Point of injury" : "Plan centre", ""]);
     if (has("stb")) o.push(["mk", "#b34700", "STB", "Stabilization stop", "Quickest hospital inside the golden hour with a documented emergency department, when the Primary is beyond it"]);
     /* one entry per role, never one combined chip (Shane 2026-10-04: "you merged the three options into 1") */
     var RL = { PRI: ["Primary MTF", "Quickest hospital giving a real step up in care"], SEC: ["Secondary MTF", "Surgery, blood, CT and ICU documented"], TER: ["Tertiary MTF", "Definitive specialty care documented"] };
@@ -2812,8 +2850,8 @@
     if (has("cp")) o.push(["mk", "#1e7a3a", "CCP AXP HLZ", "Unit points: casualty collection, ambulance exchange, landing zone", ""]);
     if (ln("#e06c00")) o.push(["ln", "#e06c00", "", "Route to stabilization stop", ""]);
     if (ln("#D7141A")) o.push(["ln", "#D7141A", "", "Route to Primary", ""]);
-    if ((s.rts || []).some(function (x) { return x.why[0] === "Secondary" && x.r; })) o.push(["ln", "#222", "", "Route to Secondary", ""]);
-    if ((s.rts || []).some(function (x) { return x.why[0] === "Tertiary" && x.r; })) o.push(["dl", "#222", "", "Route to Tertiary", ""]);
+    if (lv("rt") && (s.rts || []).some(function (x) { return x.why[0] === "Secondary" && x.r; })) o.push(["ln", "#222", "", "Route to Secondary", ""]);
+    if (lv("rt") && (s.rts || []).some(function (x) { return x.why[0] === "Tertiary" && x.r; })) o.push(["dl", "#222", "", "Route to Tertiary", ""]);
     if (ln("#1d5fa8")) o.push(["dl", "#1d5fa8", "", "Alternate (A) and contingency (C) road lines", ""]);
     if (ln("#6a3d9a")) o.push(["dl", "#6a3d9a", "", "Road to the airport for evacuation out of the country", ""]);
     if (ln("#0b6e4f") || ln("#7a1fa2")) o.push(["dl", "#0b6e4f", "", "Strategic evacuation East (green) and West (purple)", ""]);
@@ -2827,8 +2865,8 @@
     return k ? '<img alt="" src="' + S.uri(k) + '" style="width:22px;height:18px;object-fit:contain;flex:none;margin-right:3px">'
       : W.OSAP_REDCROSS ? '<span style="flex:none;margin-right:3px;display:inline-block;width:16px;height:16px">' + W.OSAP_REDCROSS(16) + "</span>" : "";
   }
-  function legendHtml() {
-    return "<h3>Medical plan</h3>" + legendItems().map(function (x) {
+  function legendHtml(live) {
+    return "<h3>Medical plan</h3>" + legendItems(live).map(function (x) {
       var sw = x[0] === "ln" || x[0] === "dl" ? '<span class="sw" style="height:0;border:0;border-top:3px ' + (x[0] === "dl" ? "dashed" : "solid") + " " + x[1] + ';margin-top:9px"></span>'
         : mpSw(x[2]) + '<span class="mprole" style="background:' + x[1] + (x[0] === "mka" ? ";border:1px dashed #fff" : "") + ';flex:none">' + esc(x[2]) + "</span>";
       return '<div class="lg">' + sw + "<div>" + esc(x[3]) + (x[4] ? '<span class="d">' + esc(x[4]) + "</span>" : "") + "</div></div>";
@@ -2857,14 +2895,15 @@
   }
   function mapShow() {
     var map = W.__asapMap; if (!map || !W.L || !ST) return;
-    var el0 = D.getElementById("medplan"); if (W.OSAP_LEGEND && el0 && !el0.hidden) W.OSAP_LEGEND.set("medplan", legendHtml(), el0);
+    var el0 = D.getElementById("medplan"); if (W.OSAP_LEGEND && el0 && !el0.hidden) W.OSAP_LEGEND.set("medplan", legendHtml(true), el0);
     if (layer) layer.remove();
     /* the plan draws in its own panes, so a view that hides the page's other layers (a conflict tab such as Deep South,
        assets/osap-conflicts.js) still shows it (Shane 2026-10-20: a plan from the Deep South tab drew nothing) */
     if (!map.getPane("mppane")) { map.createPane("mppane").style.zIndex = 450; map.createPane("mpmkpane").style.zIndex = 640; }
     var vp = { pane: "mppane" };
     layer = L.layerGroup();
-    mapItems().forEach(function (it) {
+    layerChips();
+    shownItems().forEach(function (it) {
       if (it[0] === "iso") L.polygon(it[1], Object.assign({ color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }, vp)).addTo(layer);
       else if (it[0] === "ring") L.circle(it[1], Object.assign({ radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }, vp)).addTo(layer);
       else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2], vp)).addTo(layer);
@@ -3766,6 +3805,7 @@
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
+    var lb = e.target.closest && e.target.closest("[data-mp-lyr]"); if (lb) { layerClick(lb.getAttribute("data-mp-lyr")); return; }
     var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn],[data-mp-siteroute],[data-mpa-add],[data-mpa-del],[data-mpa-conf],[data-mp-cat],[data-mp-seatr]"); if (!b) return;
     if (b.hasAttribute("data-mp-seatr")) { var o = ST && ST.o; close(); W.OSAP_SEATRANSIT.open(o ? { at: o } : {}); return; }
     if (b.hasAttribute("data-mp-cat")) { lsSet(CAT_KEY, b.getAttribute("data-mp-cat")); conopRender(); var cb = D.querySelector('#mp-conop [data-mp-cat="' + b.getAttribute("data-mp-cat") + '"]'); if (cb) cb.focus(); return; }
@@ -3870,6 +3910,6 @@
   /* road: the plan's own road routing for other tools (the DZSO sheet's ground evacuation): times(o, places) fills each place's
      s (seconds), rm (metres) and est (true when no router answered and it is the labelled straight-line estimate) and gives the
      router used; route(o, place) gives { s, m, line, roads, host } */
-  W.OSAP_MEDPLAN = { road: { times: driveTimes, route: route }, open: open, close: close, _takKml: medKml, printView: printView, assessView: assessView, hospital: hospital, _solo: function () { return SOLO; }, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _hosp: function () { return ST && ST.fac ? ST.fac.H : []; }, _capOk: capOk, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { road: { times: driveTimes, route: route }, open: open, close: close, _takKml: medKml, printView: printView, assessView: assessView, hospital: hospital, _solo: function () { return SOLO; }, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _hosp: function () { return ST && ST.fac ? ST.fac.H : []; }, _capOk: capOk, _shown: function () { return ST ? shownItems().map(function (x) { return x.g; }) : []; }, _equiv: equivLevel, _eqText: eqText, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();
