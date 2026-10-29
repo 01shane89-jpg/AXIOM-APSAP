@@ -424,3 +424,9 @@ bkk_bnh_llms 404 text/html 504746
 bkk_bnh_sitemap 200 text/xml 2249
 bkk_bnh_wiki 200 text/html 111660
 bkk_jci_th 404 text/html 196550
+bkk_bum_full 200 text/plain 6557
+bkk_bum_bloodblog 200 text/html 154123
+bkk_bum_orblog 200 text/html 144373
+bkk_sv_sitemap 200 text/xml 6245
+bkk_bnh_pages1 200 text/xml 92408
+bkk_bnh_pages2 200 text/xml 93475

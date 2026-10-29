@@ -1,0 +1,71 @@
+SOURCE https://www.bumrungrad.com/llms-full.txt
+# Bumrungrad International Hospital
+> Bumrungrad International Hospital is a multi-specialty quaternary care medical center in Bangkok, Thailand, providing complex clinical care for Thai and international patients. Founded in 1980, the headquarters operates as a centralized downtown medical campus where multi-disciplinary teams collaborate on patient care, serving patients from over 190 countries annually.
+## About
+- Founded: 1980; main campus at 33 Sukhumvit 3, Khlong Toei Nuea, Watthana, Bangkok 10110, Thailand
+- Campus type: centralized downtown medical campus with co-located specialty facilities and clinics
+- Medical staff: 1,200+ physicians and dentists, 900+ nurses, 4,800+ total employees
+- Contact: +66 2 066 8888 (general enquiries), +66 2 011 5222 (emergency)
+- Location: within walking distance of BTS Ploenchit and BTS Nana stations
+- Languages: Thai and English core services, supported by an International Patient Center with medical coordinators and interpreters covering 30+ languages, including Arabic, Chinese, Japanese, Russian, and regional Southeast Asian languages
+## Accreditation & Quality
+- Joint Commission International (JCI) accredited since 2002 - the first hospital in Southeast Asia to receive this accreditation
+- HA Thailand (Hospital Accreditation)
+- Global Healthcare Accreditation (GHA) for International Patient Services
+- DNV GL certification for Managing Infection Risk
+- Westgard Veritas certification for medical laboratory quality
+## Medical Technology
+- Robotic Surgery Center using the da Vinci XI system for urology, gynecology, and general surgery
+- Mako SmartRobotics and Mazor X Stealth Edition for orthopedic and spine surgery
+- Lunit INSIGHT AI-assisted analysis for chest X-ray and mammography
+- Smart Personalized HealthMatch and Biological Age assessment for preventive screening
+- Next-Generation Sequencing (NGS) for genomics
+- On-campus wellness and supportive care integration via Vitallife Wellness Center (preventive medicine) and Esperance Clinic (integrative cancer care)
+## Patient Services & Logistics
+- Direct billing agreements with contracted Thai and international insurance providers and Third-Party Administrators (TPAs)
+- Medical visa documentation support and airport concierge services
+- Remote care via the Bumrungrad Telehealth platform and Bumrungrad Anywhere application for virtual consultations and second opinions
+- Complimentary shuttle services between the campus and selected transit points; valet and multi-level parking on campus
+## Clinical Focus & Key Medical Centers
+The campus operates 60+ specialized centers and clinics across core multi-disciplinary areas, including:
+- **Cardiology & Cardiothoracic Surgery** - heart screenings, electrophysiology, open-heart surgery
+- **Oncology (Horizon Cancer Center)** - chemotherapy, targeted therapy, radiation, multi-disciplinary tumor boards
+- **Orthopedics & Spine Care** - robotic-assisted joint replacement, minimally invasive spine surgery (MISS)
+- **Gastroenterology & Hepatology** - advanced endoscopy, colonoscopy, digestive disease treatment
+- **Neurology & Neurosurgery** - stroke management, neuro-critical care, complex brain surgery
+## Patient Operational Guidelines
+- Appointment preparation: bring updated medical records, imaging discs, and current medications; fasting (8-12 hours) required for specific blood tests and metabolic screenings
+- Insurance verification: present valid insurance cards/policies at registration to confirm coverage and secure Letters of Guarantee (LOG)
+- Recommended to schedule appointments at least 48 hours in advance
+## Key Action Portals
+- [Thai Homepage](https://www.bumrungrad.com/th): Main site in Thai for domestic services and health articles
+- [English Homepage](https://www.bumrungrad.com/en): Main site for international patients
+- [Find a Doctor](https://www.bumrungrad.com/en/doctors): Physician database, filterable by specialty, subspecialty, and language
+- [Book an Appointment](https://www.bumrungrad.com/en/book-appointment): Online appointment scheduling (advance booking recommended)
+- [Medical Centers & Clinics](https://www.bumrungrad.com/en/clinics-and-centers): Index of specialized centers, hours, and services
+- [Packages and Promotions](https://www.bumrungrad.com/en/packages): Health check-up and screening packages with transparent pricing
+- [Contact Us](https://www.bumrungrad.com/en/contact-us/contact-details): Enquiries, hospital map, second-opinion and records submission, emergency hotline
+## Medical Travel, Insurance & Logistics
+- [Insurance Partners](https://www.bumrungrad.com/en/insurance): Contracted insurers and TPAs; cashless hospitalization and pre-authorization guidelines
+- [International Patient Services](https://www.bumrungrad.com/en/insurance-information-guides): Overseas coordination, embassy liaison, language assistance
+- [In-Hospital Facilities](https://www.bumrungrad.com/en/patient-services/patient-services-overview): On-campus amenities including business center, medical visa extension desk, prayer rooms, restaurants, accommodation options
+- [Medical Travel Guides](https://www.bumrungrad.com/en/medical-travel): Planning guidance for overseas patients - cost estimation, logistics, pre-arrival preparation
+## Affiliated Platforms
+- [Vitallife Wellness Center](https://www.vitallifeintegratedhealth.com): Anti-aging and preventive care programs
+- [Esperance Clinic](https://www.bumrungrad.com/th/centers/esperance-integrative-cancer-clinic): Integrative cancer care
+- [Bumrungrad Telehealth](https://telehealth.bumrungrad.com): Remote consultation and virtual care
+## Future Expansion
+- **Bumrungrad International Hospital Phuket** - upcoming multi-specialty campus extending Bumrungrad's care standards and technology to southern Thailand, serving regional residents, expatriates, and medical travelers
+## Alternative Language Gateways
+- [Arabic](https://www.bumrungrad.com/ar)
+- [Chinese](https://www.bumrungrad.com/zh)
+- [Japanese](https://www.bumrungrad.com/ja)
+- [Russian](https://www.bumrungrad.com/ru)
+- [Myanmar](https://www.bumrungrad.com/my)
+- [Khmer](https://www.bumrungrad.com/km)
+- [Vietnamese](https://www.bumrungrad.com/vi)
+- [Mongolian](https://www.bumrungrad.com/mn)
+- [Bengali](https://www.bumrungrad.com/bn)
+- [Bahasa Indonesia](https://www.bumrungrad.com/id)
+## See Also
+- [llms.txt](https://www.bumrungrad.com/llms.txt): Back to the primary short documentation index.
