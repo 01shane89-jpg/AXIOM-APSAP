@@ -6960,7 +6960,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function rvPointItems() {
     var A = window.OSAP_ATAK, P = A && A.pts && A.pts.all ? A.pts.all() : [], c = (window.TSAP && window.TSAP.country) || "", S = window.OSAP_MSYM;
-    return P.filter(function (p) { return p.cc === c; }).map(function (p) {
+    /* a point hidden in My places (assets/osap-places.js) is off the map, so it is not listed as in this map area */
+    return P.filter(function (p) { return p.cc === c && !(window.OSAP_PLACES && !window.OSAP_PLACES.shown("pt:" + p.id)); }).map(function (p) {
       var sy = p.sym && S && S.valid && S.valid(p.sym) ? S.label(p.sym) : "";
       return { id: "pt:" + p.id, sof: true, pt: true, lat: p.lat, lon: p.lon, ts: "", title: String(p.n || "Point").slice(0, 160), tier: ["Saved point", sy, rvGrid(p.lat, p.lon)].filter(Boolean).join(" · ") };
     });
@@ -9304,6 +9305,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-points.js"></script>
 <!-- saved points shrink and group when the map is zoomed out, so they do not pile up (assets/osap-ptdeclutter.js) -->
 <script src="assets/osap-ptdeclutter.js"></script>
+<!-- My places: folders for saved points, routes, drop zones and flight plans, with show/hide per folder (assets/osap-places.js) -->
+<script src="assets/osap-places.js"></script>
 <script src="assets/osap-3d.js"></script>
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>

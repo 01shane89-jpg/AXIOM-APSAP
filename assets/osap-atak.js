@@ -231,7 +231,7 @@
     }
     else if (k === "point") {
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
-      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]]));
+      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
     }
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
@@ -258,6 +258,7 @@
       else if (k === "me" && hm) ptAdd(L.latLng(hm.lat, hm.lon));
       else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
       /* each saved point's MGRS under its name on the map; a device choice */
+      else if (k === "places") W.OSAP_PLACES.open();
       else if (k === "grid") { lsSet(K_PTG, ptGrid() ? null : "1"); ptDraw(); toast(ptGrid() ? "Points show their MGRS" : "Points show their names only"); }
     }
   });
@@ -371,6 +372,8 @@
   function ptDraw() {
     ptLayer.clearLayers();
     ptsHere().forEach(function (p) {
+      /* a point hidden in My places (its own box, or a folder above it, unticked: assets/osap-places.js) is not drawn */
+      if (W.OSAP_PLACES && !W.OSAP_PLACES.shown("pt:" + p.id)) return;
       /* the point's own icon (assets/osap-milsym.js: a military symbol, a shape or a pin); the teal diamond otherwise */
       var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,

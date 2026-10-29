@@ -399,6 +399,7 @@ function main() {
     else if (k === "rev") { S.wps.reverse(); changed(); }
     else if (k === "clear") { S.wps = []; changed(); }
     else if (k === "new") newRoute();
+    else if (k === "places") { if (W.OSAP_PLACES) W.OSAP_PLACES.open(); }
     else if (k === "now") { S.depart = null; setDepInput(); retime(); }
     else if (k === "gpx" || k === "kml" || k === "geojson" || k === "tak") exportFile(k);
     else if (k === "print") printSheet();
@@ -1725,7 +1726,7 @@ function main() {
   function drawKept() {
     if (!S.kept) return; S.kept.clearLayers();
     savedAll().forEach(function (x) {
-      if (!x.show || sameWps(x.wps, S.wps)) return;
+      if (!x.show || sameWps(x.wps, S.wps) || (W.OSAP_PLACES && !W.OSAP_PLACES.shown("rt:" + x.id))) return;
       var col = KCOL.indexOf(x.color) >= 0 ? x.color : KCOL[0], ln = keptLine(x), straight = !(Array.isArray(x.line) && x.line.length > 1);
       L.polyline(ln, { pane: "routepane", renderer: S.svg, color: "#fff", weight: 7, opacity: 0.85, interactive: false }).addTo(S.kept);
       var pl = L.polyline(ln, { pane: "routepane", renderer: S.svg, color: col, weight: 4, opacity: 0.95, dashArray: straight ? "8 6" : null });
@@ -1744,6 +1745,8 @@ function main() {
       if (S.ctx.put) S.ctx.put("rtk:" + x.id, pl);
     });
     onMapUi();
+    /* My places (assets/osap-places.js) lists the saved routes and draws them on the other tabs */
+    setTimeout(function () { D.dispatchEvent(new Event("osap:routes")); }, 0);
   }
   /* the routes on the map, listed under the waypoints so they can be found and hidden without scrolling to Saved routes */
   function onMapUi() {
@@ -1794,7 +1797,7 @@ function main() {
   }
   function savedUi() {
     var box = el("rt-saved"), list = savedAll(); if (!box) return;
-    box.innerHTML = list.length ? "<h3>Saved routes</h3><ul class=\"rtsaved\">" + list.map(function (x) {
+    box.innerHTML = list.length ? "<h3>Saved routes" + (W.OSAP_PLACES ? ' <button type="button" class="linkish" data-rt="places" title="File saved routes and points in folders, and show or hide a whole folder">Folders</button>' : "") + "</h3><ul class=\"rtsaved\">" + list.map(function (x) {
       return "<li><span><b>" + E(x.name) + '</b> <i class="obs">' + E((MODES.filter(function (m) { return m.id === x.mode; })[0] || {}).name || "") + " · " + x.wps.length + " points · " + E(String(x.saved).slice(0, 10)) + "</i></span>" +
         '<button type="button" data-show="' + E(x.id) + '" aria-pressed="' + !!x.show + '" title="Show this route on the map beside the one being planned"><span class="rtsw" style="background:' + (KCOL.indexOf(x.color) >= 0 ? x.color : KCOL[0]) + '"></span>' + (x.show ? "On map" : "Show") + "</button>" +
         '<button type="button" data-load="' + E(x.id) + '">Load</button><button type="button" data-del="' + E(x.id) + '" aria-label="Delete ' + E(x.name) + '">×</button></li>';
@@ -1893,6 +1896,8 @@ function main() {
     skeleton(); modesUi(); wpsUi(); savedUi(); ptsUi(); ensureLayer(); drawWps();
     if (note) { msg(note); if (W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast(note); }
     if (!D.__rtPts) { D.__rtPts = true; D.addEventListener("osap:points", function () { if (isRoute()) ptsUi(); }); }
+    /* a folder or route switched on or off in My places */
+    if (!D.__rtPlc) { D.__rtPlc = true; D.addEventListener("osap:places", function () { if (isRoute()) { savedUi(); drawKept(); } }); }
     if (S.wps.length >= 2) planNow(); else afterRoute();
     /* opening the tab keeps the map where it was; zoom to the route only for a shared link or measured points handed over.
        A route kept from before stays drawn where it is; "Zoom to route" in its summary brings it into view. */
