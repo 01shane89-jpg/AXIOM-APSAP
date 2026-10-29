@@ -1,0 +1,153 @@
+{
+ "schema": "osap-hospital-evidence/1",
+ "cc": "th",
+ "read_at": "2026-10-29",
+ "method": "Pages fetched by GitHub Actions (research fetcher, plain HTTPS GET, browser user agent); sha256 is of the page as served. Each quote is verbatim from that page. Status REPORTED (hospital's own website, Admiralty B3): confirm current capability with the hospital.",
+ "why": "Shane 2026-10-29: Bumrungrad International Hospital never appeared on the medical plan. Its blood bank and operating theatres were not documented in OSAP's sources, so it could not qualify for Secondary.",
+ "not_read": [
+  {
+   "hospital": "Bangkok Hospital (headquarters, Soi Soonvijai)",
+   "why": "bangkokhospital.com answers 403 to automated reads (2026-10-04 and 2026-10-29); only its llms.txt was readable, which states JCI accreditation, hyperbaric oxygen therapy and stroke programmes (already in OSAP's record)"
+  }
+ ],
+ "hospitals": [
+  {
+   "sof": "sof:th:hospital:bumrungrad-international-hospital",
+   "name": "Bumrungrad International Hospital",
+   "srcname": "Bumrungrad International Hospital website",
+   "caps": {
+    "blood.bank": {
+     "src": "https://www.bumrungrad.com/Hospital-FAQs",
+     "sha256": "49a6b44eaf5fba0837949d473166c4da7b0dd8ab1c9d66956c17bcc6572c2873",
+     "quote": "Bumrungrad only uses blood supplied by International Federation of Red Cross and Red Crescent Societies (more commonly known as the Red Cross).",
+     "quote_basis": "the hospital states where the blood it transfuses comes from (hospital FAQ)"
+    },
+    "surg.or_emergency": {
+     "src": "https://www.bumrungrad.com/en/about-us/bumrungrad-factsheet",
+     "sha256": "d5775a784c3ab9c04d15b66a15c127f018b3d536276523dad47058354bcf8ac9",
+     "quote": "40 operating theaters",
+     "quote_basis": "hospital factsheet; the Emergency Center page adds: 24-hour onsite surgical team"
+    },
+    "ed.24_7": {
+     "src": "https://www.bumrungrad.com/en/centers/emergency-center-bangkok-thailand",
+     "sha256": "6b00d67c818766e976d680a277e4bb55778c90db66f14ae532bda2c8ac3678ec",
+     "quote": "24-hour emergency room"
+    },
+    "surg.general": {
+     "src": "https://www.bumrungrad.com/en/centers/emergency-center-bangkok-thailand",
+     "sha256": "6b00d67c818766e976d680a277e4bb55778c90db66f14ae532bda2c8ac3678ec",
+     "quote": "24-hour onsite surgical team"
+    }
+   },
+   "accreditation": {
+    "src": "https://www.bumrungrad.com/en/about-us/bumrungrad-factsheet",
+    "sha256": "d5775a784c3ab9c04d15b66a15c127f018b3d536276523dad47058354bcf8ac9",
+    "quote": "Asia’s first hospital to be accredited by the US-based Joint Commission International (JCI) in 2002; re-accredited in 2005, 2008, 2011, 2014, 2017, 2020, and 2023"
+   }
+  },
+  {
+   "new": {
+    "id": "sof:th:hospital:samitivej-srinakarin-hospital",
+    "name": "Samitivej Srinakarin Hospital",
+    "city": "Bangkok",
+    "address": "Srinakarin Road, Bangkok",
+    "type": "private",
+    "lat": 13.74869,
+    "lon": 100.63847,
+    "prec": "exact",
+    "coord_basis": "OpenStreetMap way 258733173 (ODbL)",
+    "notes": "Private hospital (BDMS group); the group's trauma centre is here per its website"
+   },
+   "srcname": "Samitivej Hospitals website",
+   "caps": {
+    "trauma.team": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "Samitivej Hospital Group has one of the leading trauma centers in Thailand, located at Samitivej Srinakarin."
+    },
+    "surg.general": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "We provide 24-hour general surgeon cover and our trauma center also has access to a wider team of very experienced specialists covering orthopedics, neurosurgery and cardiovascular thoracic surgery."
+    },
+    "surg.ortho": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "We provide 24-hour general surgeon cover and our trauma center also has access to a wider team of very experienced specialists covering orthopedics, neurosurgery and cardiovascular thoracic surgery."
+    },
+    "surg.neuro": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "We provide 24-hour general surgeon cover and our trauma center also has access to a wider team of very experienced specialists covering orthopedics, neurosurgery and cardiovascular thoracic surgery."
+    },
+    "dx.ct": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "State-of-the-art diagnostic tools, including ER mobile ultrasound, CT scanner and MRI with radiologists available 24/7 for accurate diagnosis"
+    },
+    "dx.mri": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "State-of-the-art diagnostic tools, including ER mobile ultrasound, CT scanner and MRI with radiologists available 24/7 for accurate diagnosis"
+    },
+    "dx.ultrasound": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "State-of-the-art diagnostic tools, including ER mobile ultrasound, CT scanner and MRI with radiologists available 24/7 for accurate diagnosis"
+    },
+    "surg.vascular": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "Surgeons whose expertise includes: general surgery, orthopedics, neurology, vascular surgery, cardiology, plastic surgery, facial bone surgery, urology, liver gastroenterology, colorectal surgery and much more."
+    },
+    "surg.plastic": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "Surgeons whose expertise includes: general surgery, orthopedics, neurology, vascular surgery, cardiology, plastic surgery, facial bone surgery, urology, liver gastroenterology, colorectal surgery and much more."
+    },
+    "surg.anaesthesia": {
+     "src": "https://samitivejhospitals.com/en/centers/samitivej-trauma-center",
+     "sha256": "a34a636729bdbd78ca3149b782e9623358889121ed210295de101e9d13c2234a",
+     "quote": "Our specialists cover various subspecialties, including emergency medicine, obstetrics and gynecology, anesthesiology, dentistry, radiology, rehabilitation and geriatrics."
+    }
+   }
+  },
+  {
+   "new": {
+    "id": "sof:th:hospital:bnh-hospital",
+    "name": "BNH Hospital",
+    "city": "Bangkok",
+    "address": "Convent Road, Silom, Bangkok",
+    "type": "private",
+    "lat": 13.72491,
+    "lon": 100.53498,
+    "prec": "exact",
+    "coord_basis": "OpenStreetMap way 1197051606 (ODbL)",
+    "notes": "Private hospital, Convent Road between Silom and Sathorn"
+   },
+   "srcname": "BNH Hospital website",
+   "caps": {
+    "ed.24_7": {
+     "src": "https://www.bnhhospital.com/emergency-medical-care-for-tourists/",
+     "sha256": "b9b929dd7b15ca2181c3bb084fea647367c269b6e6af2d4bedb7a343dc2d584e",
+     "quote": "24/7 Emergency Medical Care for Tourists"
+    },
+    "cc.icu": {
+     "src": "https://www.bnhhospital.com/intensive-care-unit-icu/",
+     "sha256": "b3a1c9995bba88e38b9cd0c88941a42aac74c97f7ad44d6ca2c341826b6eb2cf",
+     "quote": "Intensive care for severe cases and patients who require the use of a respirator"
+    },
+    "cc.ventilator": {
+     "src": "https://www.bnhhospital.com/intensive-care-unit-icu/",
+     "sha256": "b3a1c9995bba88e38b9cd0c88941a42aac74c97f7ad44d6ca2c341826b6eb2cf",
+     "quote": "Intensive care for severe cases and patients who require the use of a respirator"
+    },
+    "dx.ct": {
+     "src": "https://www.bnhhospital.com/diagnostic-imaging-centre/",
+     "sha256": "1cc71d6b255dac17196c39666d1089c5991e6280c2e1b4abd4086955e3b43375",
+     "quote": "BNH Hospital operates a 64 slice CT scanner"
+    }
+   }
+  }
+ ]
+}
