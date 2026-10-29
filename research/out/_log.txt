@@ -430,3 +430,10 @@ bkk_bum_orblog 200 text/html 144373
 bkk_sv_sitemap 200 text/xml 6245
 bkk_bnh_pages1 200 text/xml 92408
 bkk_bnh_pages2 200 text/xml 93475
+bkk_bnh_er 200 text/html 531374
+bkk_bnh_er_en 200 text/html 528081
+bkk_bnh_icu 200 text/html 527858
+bkk_bnh_img 200 text/html 521199
+bkk_bnh_surg 200 text/html 570317
+bkk_bnh_about 200 text/html 510775
+bkk_sv_centers 200 text/xml 107959
