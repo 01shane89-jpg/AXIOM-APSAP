@@ -119,6 +119,29 @@ let viaPostpass = "";
   await o.ctx.close();
 }
 
+/* ---------- a page from an older saved index.html has no OSAP_OSM: the finder fetches the reader itself ---------- */
+{
+  const o = await open({ viewport: { width: 1366, height: 860 } });
+  await o.p.evaluate((c) => { delete window.OSAP_OSM; window.__asapMap.setView(c, 14); }, C0);
+  await o.p.evaluate(() => (window.OSAP_AREA_TOOLS || []).filter((t) => t.id === "lz")[0].run()); await o.p.waitForFunction(() => window.OSAP_LZ, null, { timeout: 15000 });
+  await o.p.evaluate((c) => window.OSAP_LZ.at(c), C0); await done(o.p);
+  const got = await candsOf(o.p);
+  ok(got === viaPostpass && await o.p.evaluate(() => !!window.OSAP_OSM), "stale page: no OSAP_OSM, the finder loads assets/osap-osm.js and gives the same candidates (" + got.slice(0, 60) + ")");
+  ok(o.errors.length === 0, "stale page: no page errors " + o.errors.join(" | "));
+  await o.ctx.close();
+}
+/* ---------- the reader cannot be fetched either: an error line, never a search that spins for ever ---------- */
+{
+  const o = await open({ viewport: { width: 1366, height: 860 } });
+  await o.ctx.route(/assets\/osap-osm\.js/, (r) => r.abort());
+  await o.p.evaluate((c) => { delete window.OSAP_OSM; window.__asapMap.setView(c, 14); }, C0);
+  await o.p.evaluate(() => (window.OSAP_AREA_TOOLS || []).filter((t) => t.id === "lz")[0].run()); await o.p.waitForFunction(() => window.OSAP_LZ, null, { timeout: 15000 });
+  await o.p.evaluate((c) => window.OSAP_LZ.at(c), C0); await done(o.p);
+  const st = await o.p.evaluate(() => window.OSAP_LZ.state());
+  ok(!st.busy && !st.res && /OpenStreetMap obstacles did not load/.test(st.err), "no reader: the search ends with an error line (" + st.err.slice(0, 90) + ")");
+  await o.ctx.close();
+}
+
 /* ---------- desktop ---------- */
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1366, height: 860 } });
