@@ -1109,6 +1109,7 @@
     "#medplan{position:fixed;inset:0;z-index:4000;background:rgba(10,16,24,.45);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:16px}" +
     "#medplan[hidden]{display:none}#medplan .mpbox{background:var(--surface,#fff);color:var(--ink,#1b2733);max-width:1040px;width:100%;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.35);padding:12px 16px 18px;box-sizing:border-box}" +
     "#medplan .mphead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:sticky;top:-16px;background:var(--surface,#fff);padding:6px 0;z-index:1;border-bottom:1px solid var(--line,#d5dbe1)}" +
+    "#medplan .mpsel{margin:6px 0 10px;padding:8px 10px;border:1px solid var(--line,#d5dbe1);border-radius:6px}#medplan .mpselr{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:6px}#medplan .mpselr select{max-width:100%;min-height:34px}#medplan .mpselr label{display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:100%}#medplan .mpmine{display:inline-block;margin:2px 0;padding:1px 7px;border-radius:9px;background:#0b4f8a;color:#fff;font-size:11.5px;font-weight:600}" +
     "#medplan .mphead h2{margin:0;font-size:17px;flex:1 1 auto}#medplan .mpcc{font-weight:400;color:var(--muted,#56626F)}#medplan .mphead button{min-height:32px}" +
     "#medplan h3{font-size:14px;margin:14px 0 4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#medplan p{margin:4px 0;line-height:1.45}#medplan h4{font-size:13px;margin:8px 0 2px}" +
     "#medplan .obs{color:var(--muted,#56626F);font-size:12px}#medplan .mpwarn{color:#8a4b00}" +
@@ -1232,7 +1233,7 @@
      the place a plan was made for, never to the whole country. They are kept per place: a plan uses the set saved nearest to
      where it was opened, within 25 km, or starts an empty one. Unit, mission, frequencies, providers and timings stay per
      country. Values saved before this change (per country) are never used silently: section 9 offers them once. */
-  var LOC_RE = /^(recv[12]|ccp[12]|axp|hlz[12]|seaport|mbase)(_st|_at|_cap|_note)?$/, SITE_R = 25000, MAX_SETS = 40;
+  var LOC_RE = /^(recv[12]|ccp[12]|axp|hlz[12]|seaport|mbase|mtfsel)(_st|_at|_cap|_note)?$/, SITE_R = 25000, MAX_SETS = 40;
   function setsKey() { return KEY + "sites-" + (cc() || "x"); }
   function placeSets() { var v = lsGet(setsKey()); return Array.isArray(v) ? v.filter(function (x) { return x && x.id && Array.isArray(x.o); }) : []; }
   function curSet() {
@@ -1692,6 +1693,34 @@
     return r;
   }
   function capNames(L) { return L.map(function (k) { return (CAP_NAME[k] || k).replace(/^[A-Z](?=[a-z])/, function (c) { return c.toLowerCase(); }); }); }
+  /* the planner's own Primary, Secondary and Tertiary for major trauma (Shane 2026-10-29: "i want to decide which hospital
+     i go to"). The planner's choice is the analyst's decision and carries the routes, map and print; it never hides the
+     rule's computed recommendation, which stays on the card with its evidence, and a capability no credible source
+     documents for that role is named on the card and in the plan record. Kept for this place (a plan opened more than
+     25 km away starts without it), with when it was made, the reason given, the computed pick at that moment and the
+     choice it replaced. */
+  function selOf() { var v = fieldVals().mtfsel; return v && typeof v === "object" ? v : {}; }
+  function setSel(role, id, reason, computed) {
+    var v = fieldVals(), o = Object.assign({}, v.mtfsel && typeof v.mtfsel === "object" ? v.mtfsel : {}), prev = o[role] || null;
+    if (!id) delete o[role];
+    else if (prev && prev.id === id) o[role] = Object.assign({}, prev, { reason: clip(reason == null ? prev.reason || "" : reason, 200) });
+    else { var f = find(id); o[role] = { id: id, name: f ? f.name : "", at: new Date().toISOString(), reason: clip(reason || "", 200), computed: computed || null, replaced: prev ? { id: prev.id, name: prev.name, at: prev.at } : null }; }
+    v.mtfsel = o; saveVals(v);
+  }
+  function analystPick(row, st, H) {
+    var d = selOf()[row.role]; if (!d || !d.id) return;
+    var f = H.filter(function (x) { return x.id === d.id; })[0];
+    /* a chosen hospital that is not in this plan (turned off, out of reach, or the plan moved) leaves the computed pick */
+    if (!f) { row.analyst_missing = { facility_id: d.id, name: d.name || d.id }; return; }
+    var c0 = row.choice;
+    row.computed = c0 ? { facility_id: c0.facility_id, f: c0.f, way: c0.way, time_s: c0.time_to_required_care.s, met: c0.met } : null;
+    var fit = stageFit(f, st), b = bestWay(f);
+    row.choice = { facility_id: f.id, f: f, way: b[1], time_to_required_care: { s: Math.round(b[0]), basis: "estimate" }, met: fit.met, missing: fit.missing, unknown: fit.unknown.concat(fit.crowd), gain: fit.gain };
+    row.state = "filled";
+    row.bypassed = row.bypassed.filter(function (x) { return x.f !== f; });
+    row.analyst = { facility_id: f.id, name: f.name, decided_at: d.at || "", decided_by: "planner on this device", reason: d.reason || "", same_as_computed: !!(c0 && c0.f === f),
+      not_documented: fit.byDesig ? [] : st.required.filter(function (k) { return fit.met.indexOf(k) < 0; }), computed_at_decision: d.computed || null, replaced: d.replaced || null };
+  }
   function planRoles(s) {
     var H = ((s.fac && s.fac.H) || []).filter(function (f) { return !isOff(f) && bestWay(f); }).sort(function (a, b) { return bestWay(a)[0] - bestWay(b)[0] || byCap(a, b); });
     var rows = [];
@@ -1708,6 +1737,7 @@
         var row = { casualty_category: c.id, label: c.label, role: role, state: pick ? "filled" : "gap", bypassed: by.slice(0, 5), required: st.required, decision_note: DECISION_NOTE };
         if (role === "tertiary") row.specialty = c.specialty;
         if (pick) { var b = bestWay(pick.f); row.choice = { facility_id: pick.f.id, f: pick.f, way: b[1], time_to_required_care: { s: Math.round(b[0]), basis: "estimate" }, met: pick.fit.met, missing: pick.fit.missing, unknown: pick.fit.unknown.concat(pick.fit.crowd), gain: pick.fit.gain }; }
+        if (c.id === "cat.major_trauma") analystPick(row, st, H);
         rows.push(row);
       });
       var R3 = rows.slice(-3);
@@ -1813,10 +1843,17 @@
       if (r.role === "stabilization") { out.push({ f: f, role: nm, why: [nm], row: r, reason: "Stabilization stop for major trauma: " + stabWhy(r) }); return; }
       if (had) { had.why.push(nm); had.reason += "; also " + nm; return; }
       var byp = r.bypass ? "; bypass: going direct reaches " + (r.role === "primary" ? "Secondary" : "Tertiary") + " care in " + mins(r.bypass.direct_time.s) + " (via here " + mins(r.bypass.via_time.s) + "), so this is the stabilisation option" : "";
+      if (r.analyst) { out.push({ f: f, role: nm, why: [nm], row: r, reason: nm + " for major trauma: " + selWhy(r) + byp }); return; }
       out.push({ f: f, role: nm, why: [nm], row: r, reason: nm + " for major trauma: " + (f.far ? "found by the wider search (nothing nearer has it documented), " : "") + tierLabel(f) + ", " + mins(r.choice.time_to_required_care.s) + " from injury by " + r.choice.way + " (" + golden(r.choice.time_to_required_care.s).t.toLowerCase() + ")" +
         "; documented: " + andList(capNames(r.choice.met.concat(r.choice.gain.filter(function (k) { return r.choice.met.indexOf(k) < 0; })))) + byp });
     });
     return out;
+  }
+  function selWhy(r) {
+    var a = r.analyst, c = r.computed;
+    return "your choice (analyst decision" + (a.decided_at ? ", " + dual(Date.parse(a.decided_at)) : "") + (a.reason ? ": " + a.reason : "") + "), " + tierLabel(r.choice.f) + ", " + mins(r.choice.time_to_required_care.s) + " from injury by " + r.choice.way +
+      "; documented for this role: " + (r.choice.met.length ? andList(capNames(r.choice.met)) : "none") + (a.not_documented.length ? "; not documented by a credible source: " + andList(capNames(a.not_documented)) : "") +
+      "; computed recommendation: " + (a.same_as_computed ? "the same hospital" : c ? c.f.name + ", " + mins(c.time_s) + " by " + c.way + " (documented: " + andList(capNames(c.met)) + ")" : "none, no hospital has the needed care documented by a credible source");
   }
   /* the role table: one row per casualty type, Primary, Secondary and Tertiary (with its specialty) across */
   function rolesHtml(s) {
@@ -2045,7 +2082,8 @@
       var rw = p.row, lab = '<span class="mprole r-' + p.role.slice(0, 3).toLowerCase() + '">' + esc(p.why.join(" + ")) + "</span>" +
         '<span class="mprl">major trauma · ' + esc(mins(rw.choice.time_to_required_care.s)) + " by " + esc(rw.choice.way) + (rw.role !== "stabilization" && !rw.stop ? " · bypassed" : "") + "</span>";
       return '<tr data-mp-role="' + esc(p.role) + '"><td><span class="mprow">' + lab + "</span><b>" + esc(facTag(s, f) || "H" + (H + 1)) + " " + esc(f.name) + "</b>" +
-        '<span class="sub">' + esc(p.reason) + "</span>" + lowTag(f) + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
+        (rw.analyst ? '<span class="mpmine">Your choice</span>' : "") + '<span class="sub">' + esc(p.reason) + "</span>" +
+        (rw.analyst && rw.analyst.not_documented.length ? '<span class="sub mpwarn">Not documented by a credible source for ' + esc(ROLE_NAME[rw.role]) + ": " + esc(andList(capNames(rw.analyst.not_documented))) + ". Confirm with the hospital.</span>" : "") + lowTag(f) + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
         '<span class="mpact noprint"><button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' +
         '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button>' +
         '<button type="button" class="refresh" data-mp-offbtn="' + esc(f.id) + '" title="Leave this hospital out of the plan; the next one is picked">Turn off</button></span></td></tr>';
@@ -2053,11 +2091,26 @@
     /* a stabilization stop alone is not an MTF: the plan still says plainly that none is documented */
     if (!P.some(function (p) { return p.role !== "Stabilization"; })) { el.innerHTML = '<p class="obs mpwarn">' + (failed(s) ? "No hospitals could be chosen: the hospital lookup failed (" + esc(clip(lookupErr(s), 160)) + "). This does not mean there is no hospital."
       : "No Primary, Secondary or Tertiary for major trauma: no hospital within " + Math.round(s.radii.h / 1000) + " km" + (s.fac.H.some(function (f) { return f.far; }) ? ", nor OSAP's documented hospitals farther out (up to " + FAR_KM + " km)," : " (and OSAP has no documented hospital farther out, up to " + FAR_KM + " km)") + " has the needed capabilities documented by a credible source" + (s.fac.H.some(isOff) ? " (or the ones that do are turned off)" : "") +
-        ". The hospitals in section 2 are listed for reference only and are not eligible. Confirm a receiving facility through national or unit medical channels.") + "</p>" + (failed(s) ? "" : cards(P) + altsHtml(s) + rolesHtml(s)); return; }
-    el.innerHTML = cards(P) + altsHtml(s) + rolesHtml(s) +
+        ". The hospitals in section 2 are listed for reference only and are not eligible. Confirm a receiving facility through national or unit medical channels.") + "</p>" + (failed(s) ? "" : selHtml(s) + cards(P) + altsHtml(s) + rolesHtml(s)); return; }
+    el.innerHTML = selHtml(s) + cards(P) + altsHtml(s) + rolesHtml(s) +
       headHtml(s) +
       '<p class="obs">Above: the major trauma Primary, Secondary and Tertiary, which carry the routes, map and print. Times are from injury' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
       ". Confirm each by phone before relying on it.</p>";
+  }
+  /* the planner's choice, one line per role: the computed pick first, then every hospital in the plan by time, each saying
+     whether a credible source documents what that role needs; with a reason, kept for this place */
+  function selHtml(s) {
+    var R = planRoles(s).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.role !== "stabilization"; }), sel = selOf(), st0 = CATS.filter(function (c) { return c.id === "cat.major_trauma"; })[0].stages;
+    var H = s.fac.H.filter(function (f) { return !isOff(f) && bestWay(f); }).sort(function (a, b) { return bestWay(a)[0] - bestWay(b)[0]; });
+    if (!H.length) return "";
+    return '<div class="mpsel noprint"><b>Choose your own</b> <span class="obs">The computed pick stays shown on each card with its evidence. Your choice carries the routes, map and print.</span>' + R.map(function (r) {
+      var rn = ROLE_NAME[r.role], c = r.analyst ? r.computed : r.choice, d = sel[r.role] || {}, st = st0[r.role];
+      var opts = '<option value="">Computed: ' + esc(c ? facTag(s, c.f) + " " + c.f.name : "none documented") + "</option>" + H.map(function (f) {
+        var fit = stageFit(f, st), nd = fit.byDesig ? [] : st.required.filter(function (k) { return fit.met.indexOf(k) < 0; });
+        return '<option value="' + esc(f.id) + '"' + (d.id === f.id ? " selected" : "") + ">" + esc(facTag(s, f) + " " + clip(f.name, 60) + " · " + mins(bestWay(f)[0]) + " · " + (nd.length ? "not documented: " + andList(capNames(nd)) : "documented for " + rn)) + "</option>"; }).join("");
+      return '<div class="mpselr"><label>' + esc(rn) + ' <select data-mp-sel="' + r.role + '">' + opts + "</select></label>" +
+        (d.id ? '<label>Reason <input data-mp-selwhy="' + r.role + '" maxlength="200" placeholder="Optional" value="' + esc(d.reason || "") + '"></label>' : "") +
+        (r.analyst_missing ? '<span class="sub mpwarn">Your choice ' + esc(r.analyst_missing.name) + " is not in this plan (turned off or out of reach), so the computed pick is used.</span>" : "") + "</div>"; }).join("") + "</div>";
   }
   /* the alternate MTFs for major trauma, one line per role, each with how far it is confirmed */
   function altsHtml(s) {
@@ -3031,6 +3084,12 @@
         return { id: c.id, label: c.label, rows: R.filter(function (r) { return r.casualty_category === c.id; }).map(function (r) {
           return { role: r.role, state: r.state, stop: !!r.stop, stabilisation_option: !!r.stabilisation_option, way: r.choice ? r.choice.way : "", time_s: r.choice ? r.choice.time_to_required_care.s : null, facility: r.choice ? planFac(r.choice.f) : null,
             alt: r.alt ? { facility: planFac(r.alt.f), way: r.alt.way, time_s: r.alt.time_s } : null,
+            /* the planner's own choice (analyst decision) and the rule's computed pick it overrode, kept apart */
+            decided_by: r.analyst ? "analyst" : "rule",
+            analyst: r.analyst ? { facility_id: r.analyst.facility_id, name: r.analyst.name, decided_at: r.analyst.decided_at, decided_by: r.analyst.decided_by, reason: r.analyst.reason, not_documented: r.analyst.not_documented.slice(), not_documented_names: capNames(r.analyst.not_documented),
+              same_as_computed: r.analyst.same_as_computed, computed_at_decision: r.analyst.computed_at_decision, replaced: r.analyst.replaced } : null,
+            computed: r.analyst ? (r.computed ? { facility: planFac(r.computed.f), way: r.computed.way, time_s: r.computed.time_s, met: r.computed.met.slice() } : { facility: null }) : null,
+            analyst_missing: r.analyst_missing || null,
             decision: r.decision ? { rule: r.decision.rule, decision: r.decision.decision, reason: r.decision.reason, from: r.via.from, direct: r.decision.direct, via: r.decision.via, access: r.decision.access, golden_s: r.decision.golden_s, basis: "estimate" } : null };
         }) };
       }),
@@ -3748,6 +3807,11 @@
   function offChanged() { if (ST && ST.fac) { facRender(); pickRender(); routes(ST); mevRender(); ghRender(); mapShow(); srcRender(); } }
   function onChange(e) {
     var t = e.target;
+    if (t.hasAttribute && (t.hasAttribute("data-mp-sel") || t.hasAttribute("data-mp-selwhy"))) {
+      var sr = t.getAttribute("data-mp-sel") || t.getAttribute("data-mp-selwhy"), row = planRoles(ST).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.role === sr; })[0], cp = row && (row.analyst ? row.computed : row.choice);
+      if (t.hasAttribute("data-mp-sel")) setSel(sr, t.value, null, cp ? { id: cp.f.id, name: cp.f.name } : null); else setSel(sr, (selOf()[sr] || {}).id, t.value);
+      offChanged(); var sb2 = D.querySelector('#medplan [' + (t.hasAttribute("data-mp-sel") ? "data-mp-sel" : "data-mp-selwhy") + '="' + sr + '"]'); if (sb2) sb2.focus(); return;
+    }
     if (t.getAttribute && t.getAttribute("data-mpa")) { AIR_DRAFT[t.getAttribute("data-mpa")] = t.value; AIR_OPEN = true; return; }
     if (t.hasAttribute && t.hasAttribute("data-mp-base")) {
       var vb = fieldVals(); vb.mbase = t.value; saveVals(vb); timesChanged();
