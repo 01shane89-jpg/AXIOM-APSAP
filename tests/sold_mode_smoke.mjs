@@ -32,7 +32,7 @@ async function run(sold, hosts) {
     const u = r.request().url();
     if (/tile\.openstreetmap\.org/.test(u)) osm.push(u);
     if (/arcgis(online)?\.com/.test(u)) esri.push(u);
-    if (/^https:\/\/i?basemaps-api\.arcgis\.com\/.*[?&]token=TESTKEY/.test(u)) esriLp.push(u);
+    if (/^https:\/\/(i?basemaps-api|static-map-tiles-api|basemapstyles-api)\.arcgis\.com\/.*[?&]token=TESTKEY/.test(u)) esriLp.push(u);
     if (/tiles\.maps\.eox\.at/.test(u)) eox.push(u);
     if (/opentopomap\.org/.test(u)) otm.push(u);
     if (/routing\.openstreetmap\.de|router\.project-osrm\.org|valhalla1\.openstreetmap\.de/.test(u)) rtr.push(u);

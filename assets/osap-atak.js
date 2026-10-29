@@ -155,7 +155,8 @@
   }
   function popOpen(btn, items) {
     pop.innerHTML = items.map(function (it) {
-      return it ? '<button type="button" role="menuitem" data-pk="' + it[0] + '"' + (it[2] ? ' class="on"' : "") + ">" + esc(it[1]) + "</button>" : '<hr>';
+      /* [id, label, on]; [null, heading] a small heading; null a rule */
+      return !it ? "<hr>" : it[0] === null ? '<div class="atk-ph">' + esc(it[1]) + "</div>" : '<button type="button" role="menuitem" data-pk="' + esc(it[0]) + '"' + (it[2] ? ' class="on"' : "") + ">" + esc(it[1]) + "</button>";
     }).join("");
     pop.hidden = false; pop._for = btn.getAttribute("data-atk"); pop.style.left = "";
     var r = btn.getBoundingClientRect(), mr = mapEl.getBoundingClientRect();
@@ -163,6 +164,24 @@
     pop.style.right = (mr.right - r.left + 6) + "px";
   }
   function popClose() { pop.hidden = true; pop._for = null; }
+  /* the Base map list: the main maps, then one "Esri maps" line that opens the Esri maps (many, in headed groups) in the same
+     menu, with a way back (2026-10-29: all the Esri maps the site's key can use) */
+  function basemapPop(btn, esri) {
+    var BM = W.OSAP_BASEMAP; if (!BM || !btn) return;
+    var cur = BM.get(), all = BM.list(), ex = all.filter(function (x) { return x.group; }), it = [], g = null;
+    if (!esri) {
+      it = all.filter(function (x) { return !x.group; }).map(function (x) { return [x.id, x.name, x.id === cur]; });
+      if (ex.length) {
+        var on = ex.filter(function (x) { return x.id === cur; })[0];
+        it.push(null, ["_esri", (on ? "Esri: " + on.name : "Esri maps (" + ex.length + ")") + " \u203a", !!on]);
+      }
+    }
+    else {
+      it.push(["_back", "\u2039 Base maps"]);
+      ex.forEach(function (x) { if (x.group !== g) { g = x.group; it.push([null, g]); } it.push([x.id, x.name, x.id === cur]); });
+    }
+    popOpen(btn, it);
+  }
   function paintTools() {
     var mb = q("#meas-btn"), m = bar.querySelector('[data-atk="measure"]');
     if (m) m.setAttribute("aria-pressed", mb && mb.getAttribute("aria-pressed") === "true" ? "true" : "false");
@@ -186,11 +205,7 @@
     if (k === "today") { omClose(); if (W.OSAP_TODAY) W.OSAP_TODAY.show(); }
     else if (k === "search") search();
     else if (k === "datasets" || k === "overlays" || k === "weather") { if (!om.hidden && omMode === k) omClose(); else omOpen(k); }
-    else if (k === "basemap") {
-      var BM = W.OSAP_BASEMAP; if (!BM) return;
-      var cur = BM.get();
-      popOpen(b, BM.list().map(function (x) { return [x.id, x.name, x.id === cur]; }));
-    }
+    else if (k === "basemap") basemapPop(b, false);
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
     else if (k === "route" || k === "comms") {
       /* Route and Comms open their view in the list; pressed again they go back to the view that was open before */
@@ -239,7 +254,10 @@
     var b = e.target.closest("[data-pk]"); if (!b) return;
     var k = b.getAttribute("data-pk"), f = pop._for, pll = pop._ll; popClose(); pop._ll = null;
     if (f === "plans") { if (pll) act(k, pll); }
-    else if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
+    else if (f === "basemap") {
+      if (k === "_esri" || k === "_back") basemapPop(bar.querySelector('[data-atk="basemap"]'), k === "_esri");
+      else if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k);
+    }
     else if (f === "area") {
       /* area tools from other modules (a medical plan): W.OSAP_AREA_TOOLS = [{ id, label, run, point }, ...] */
       var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
@@ -698,8 +716,9 @@
     "#atk-tools .atk-fold{min-height:28px;color:#9fb3c1;border-bottom:1px solid rgba(255,255,255,.12);border-radius:7px 7px 0 0;margin-bottom:2px}" +
     "#atk-tools.folded{padding:2px}#atk-tools.folded .atk-list{display:none}#atk-tools.folded .atk-fold{border:0;min-height:40px;width:36px;border-radius:8px;margin:0}" +
     "#atk-tools .atk-n{position:absolute;top:2px;right:3px;min-width:16px;padding:0 4px;border-radius:8px;background:#e8590c;color:#fff;font:700 9.5px/16px system-ui,sans-serif}#atk-tools .atk-n.n2{background:#495057}" +
-    "#atk-pop{position:absolute;z-index:1001;display:flex;flex-direction:column;min-width:170px;padding:4px;background:rgba(20,24,28,.94);border-radius:9px;box-shadow:0 4px 14px rgba(0,0,0,.4)}" +
+    "#atk-pop{position:absolute;z-index:1001;display:flex;flex-direction:column;min-width:170px;max-height:calc(100% - 42px);overflow-y:auto;padding:4px;background:rgba(20,24,28,.94);border-radius:9px;box-shadow:0 4px 14px rgba(0,0,0,.4)}" +
     "#atk-pop button{text-align:left;padding:10px 12px;border:0;border-radius:6px;background:none;color:#e9eef2;font:500 14px/1.2 system-ui,-apple-system,sans-serif;cursor:pointer}#atk-pop button:hover,#atk-pop button.on{background:#0b7285;color:#fff}#atk-pop hr{border:0;border-top:1px solid rgba(255,255,255,.14);margin:3px 4px}" +
+    "#atk-pop .atk-ph{padding:8px 12px 2px;color:#9fb0bd;font:600 11px/1.2 system-ui,-apple-system,sans-serif;text-transform:uppercase;letter-spacing:.05em}" +
     /* readout strip */
     "#atk-bar{position:absolute;left:0;right:0;bottom:0;z-index:1000;margin:0!important;height:30px;align-items:center;gap:2px;padding:0 4px 0 6px;background:rgba(20,24,28,.86);color:#e9eef2;font:12px/1 'IBM Plex Mono',ui-monospace,monospace;box-sizing:border-box;white-space:nowrap;overflow:hidden}" +
     "#atk-bar button{border:0;background:none;color:inherit;font:inherit;cursor:pointer;height:30px;padding:0 6px;border-radius:5px}#atk-bar button:hover{background:rgba(255,255,255,.1)}" +
