@@ -2,15 +2,29 @@
 // Esri maps and reports whether Esri answered and drew them, with a small picture of each. Esri's key only accepts the live
 // site's address, so requests to Esri are sent with that Referer. Never prints the key.
 import { chromium } from "playwright";
-import { mkdir, writeFile } from "node:fs/promises";
-const base = process.argv[2];
+import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { createServer } from "node:http";
+import { extname, join, normalize } from "node:path";
+// the preview's copy of assets/osap-sold.js carries the key (the sign-in page covers the preview's map, so the map is
+// served here from this checkout with that one file taken from the preview)
+const soldJs = await (await fetch(process.argv[2] + "assets/osap-sold.js")).text();
+if (!/"esriKey"/.test(soldJs)) { console.log("::error::the preview has no Esri key"); process.exit(1); }
+const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".css": "text/css", ".webmanifest": "application/manifest+json" };
+const server = createServer(async (req, res) => {
+  const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
+  if (path === "assets/osap-sold.js") { res.writeHead(200, { "Content-Type": "text/javascript" }); return res.end(soldJs); }
+  try { const body = await readFile(join(process.cwd(), path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
+  catch { res.writeHead(404); res.end(); }
+}).listen(0, "127.0.0.1");
+await new Promise((r) => server.once("listening", r));
+const base = `http://127.0.0.1:${server.address().port}/`;
 const MAPS = ["esri:arcgis/navigation", "esri:arcgis/topographic", "esri:arcgis/outdoor", "esri:open/streets", "esri:arcgis/dark-gray", "esri:open/hybrid"];
 await mkdir("probe-out", { recursive: true });
 const browser = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader"] });
 const page = await browser.newPage({ viewport: { width: 900, height: 650 }, serviceWorkers: "block" });
 const st = {}, errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
-await page.route(/arcgis\.com\//, (r) => r.continue({ headers: { ...r.request().headers(), referer: "https://axiom-osap.netlify.app/" } }));
+await page.route(/arcgis\.com\//, (r) => r.continue({ headers: { ...r.request().headers(), referer: "https://axiom-osap.netlify.app/", origin: "https://axiom-osap.netlify.app" } }));
 page.on("response", (r) => { const u = r.url(); if (/arcgis\.com/.test(u)) { const h = new URL(u).host; const k = h + " " + r.status(); st[k] = (st[k] || 0) + 1; } });
 await page.addInitScript(() => { localStorage.setItem("osap-home", JSON.stringify("map")); });
 await page.goto(base + "#th");
@@ -27,4 +41,4 @@ for (const k of MAPS) {
   console.log("::notice title=" + k + "::" + JSON.stringify(st));
 }
 console.log("::notice title=errors::" + JSON.stringify(errors).slice(0, 1000));
-await browser.close();
+await browser.close(); server.close();
