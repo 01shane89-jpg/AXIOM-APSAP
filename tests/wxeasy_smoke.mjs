@@ -107,7 +107,7 @@ async function pages(p) {
   await p.waitForSelector("#wxb-page table.wxm", { timeout: 60000 });
   const b = await p.evaluate(() => { const g = document.getElementById("wxb-page"); return { cells: [...g.querySelectorAll("td.wxc")].map((x) => x.textContent.trim()), text: g.textContent }; });
   ok(b.cells.length && b.cells.every((c) => ["✓", "!", "✕", "–"].includes(c)) && b.cells.includes("✕"), "brief impact cells are ✓ ! ✕, not letters");
-  ok(/No-go: unsafe/.test(b.text) && /No-go: thunderstorms/.test(b.text), "brief legend and thresholds in words");
+  ok(/No-go: unsafe/.test(b.text) && (/No-go: thunderstorms/.test(b.text) || /Hover or tap a cell in the Weather view/.test(b.text)) && !/\bR: /.test(b.text), "brief legend and thresholds in words");
   const bp = await pages(p);
   ok(bp[0] === 1 && bp[1] === 1, "brief still prints on one page (A4 " + bp[0] + ", Letter " + bp[1] + ")");
   await p.click('[data-wxb="close"]');

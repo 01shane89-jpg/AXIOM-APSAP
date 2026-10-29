@@ -1126,7 +1126,8 @@
       if (aqi != null) aqh = "<h3>" + bl("https://open-meteo.com/en/docs/air-quality-api", "Air quality") + '</h3><p class="bm">Worst US AQI at the reference point ' + Math.round(aqi) + " (" + aqiName(aqi) + ")" + (dust != null && dust >= 50 ? ", dust up to " + Math.round(dust) + " µg/m³ (can cut visibility)" : "") + ". CAMS model, not measured.</p>";
     }
     var imp = "<h3>Impacts at " + esc(ref.name) + "</h3>" + matrixHtml(A, D, "wxbm") + legendHtml() +
-      '<p class="bm wxthr"><b>Generic planning thresholds, not doctrine.</b> ' + THR.map(function (t) { return "<b>" + esc(t.short) + "</b> No-go: " + esc(t.red) + "; marginal: " + esc(t.amber) + "."; }).join(" ") + "</p>";
+      (lim.thr === 0 ? '<p class="bm wxthr"><b>Generic planning thresholds, not doctrine.</b> Hover or tap a cell in the Weather view for each limit and the reason.</p>' :
+      '<p class="bm wxthr"><b>Generic planning thresholds, not doctrine.</b> ' + THR.map(function (t) { return "<b>" + esc(t.short) + "</b> No-go: " + esc(t.red) + "; marginal: " + esc(t.amber) + "."; }).join(" ") + "</p>");
     o += '<div class="bcols"><div>' + sum + briefObs(ref, tz) + haz + "</div><div>" + spread + sea + aqh + "</div></div>" + fct + upw + lit + imp;
     o += '<footer>Forecast: Open-Meteo.com (CC BY 4.0), best-match blend of national weather models; marine and air quality: Open-Meteo (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information). ' +
       "Ceilings are estimated from model cloud layers; visibility is the model&rsquo;s. Sun and moon computed, accurate to a minute or two. BMNT and EENT are nautical twilight (sun 12° below the horizon). " +
@@ -1152,7 +1153,8 @@
     var lim = { hz: 3, warn: 4, pts: 7, sea: 3, light: 4 }, order = ["pts", "warn", "hz", "light", "sea", "pts", "warn", "hz", "pts", "light", "sea", "pts", "warn", "pts", "light"];
     var m = document.createElement("div"); m.className = "bmeasure"; document.body.appendChild(m);
     var html = briefHtml(D, lim);
-    function fits() { var pg = m.querySelector(".bpage"); return !pg || pg.getBoundingClientRect().height <= m.getBoundingClientRect().width * 236 / 186; }
+    /* 218 mm of page per 186 mm of width: the print rules set the page about 8% taller than this measure, and US Letter is the shorter sheet */
+    function fits() { var pg = m.querySelector(".bpage"); return !pg || pg.getBoundingClientRect().height <= m.getBoundingClientRect().width * 218 / 186; }
     for (var i = 0; i <= order.length; i++) {
       m.innerHTML = html;
       if (fits() || i === order.length) break;
@@ -1160,6 +1162,8 @@
     }
     /* still too long (many time blocks): a smaller type size, down to 7.4 px */
     for (var fs = 8.2; !fits() && fs >= 7.39; fs -= 0.4) { html = html.replace(/<article class="bpage wxbp"( style="[^"]*")?/, '<article class="bpage wxbp" style="font-size:' + fs.toFixed(1) + 'px"'); m.innerHTML = html; }
+    /* last resort: the full list of limits gives way to a pointer to the Weather view, where every cell explains itself */
+    if (!fits()) { lim.thr = 0; var st = /<article class="bpage wxbp"( style="[^"]*")?/.exec(html); html = briefHtml(D, lim).replace(/<article class="bpage wxbp"/, st[0]); m.innerHTML = html; }
     m.parentNode.removeChild(m);
     return html;
   }
