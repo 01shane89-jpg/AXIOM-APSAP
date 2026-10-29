@@ -26,6 +26,8 @@ const PLACES = [
   { tag: "bavaria", cc: "de", c: [48.80, 11.35], r: "2", d: "100", want: 1 },
   { tag: "bangkok", cc: "th", c: [13.7465, 100.5348], r: "1", d: "50", want: 0 }
 ];
+/* PLACES='[{"tag":"slc","cc":"us","c":[40.76,-111.89],"r":"2","d":"100","want":0}]' searches those places instead */
+if (process.env.PLACES) PLACES.splice(0, PLACES.length, ...JSON.parse(process.env.PLACES));
 for (const P of PLACES) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 1000 } });
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });

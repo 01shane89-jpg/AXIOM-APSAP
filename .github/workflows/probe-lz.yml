@@ -11,6 +11,10 @@ on:
         description: "Site to test (blank = this checkout), e.g. https://axiom-osap.netlify.app/"
         required: false
         default: ""
+      places:
+        description: "JSON list of places (blank = the built-in three), see tools/lz_live.mjs"
+        required: false
+        default: ""
 permissions:
   contents: read
 jobs:
@@ -24,9 +28,10 @@ jobs:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
-      - run: mkdir -p lz-out && OUT=lz-out BASE="$BASE" node tools/lz_live.mjs
+      - run: mkdir -p lz-out && OUT=lz-out BASE="$BASE" PLACES="$PLACES" node tools/lz_live.mjs
         env:
           BASE: ${{ inputs.base }}
+          PLACES: ${{ inputs.places }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
