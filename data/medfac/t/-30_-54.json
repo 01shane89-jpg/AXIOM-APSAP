@@ -15,7 +15,7 @@
 ["n11966101812",-28.79293,-53.21834,"br",{"name":"Hospital Municipal Bom Pastor","amenity":"clinic","phone":"+55 55 3328 1360","addr:housenumber":"853","addr:street":"Rua Facco","addr:postcode":"98125-000"}],
 ["n12148689616",-29.73038,-53.18087,"br",{"name":"CAUZZO","amenity":"clinic","healthcare":"clinic"}],
 ["n12148717356",-29.7328,-53.17826,"br",{"name":"Pró-Vida","amenity":"clinic","healthcare":"clinic"}],
-["n12400456641",-29.71854,-52.43353,"br",{"name":"CEMAI","official_name":"Centro Materno de Atendimento Infantil CEMAI Dr. Albert Sabin","amenity":"clinic","healthcare":"clinic"}],
+["n12400456641",-29.71854,-52.43353,"br",{"name":"Centro Materno-Infantil (CEMAI)","official_name":"Centro Materno de Atendimento Infantil CEMAI Dr. Albert Sabin","amenity":"clinic","healthcare":"clinic"}],
 ["n12849786100",-29.68526,-53.57639,"br",{"aeroway":"helipad","surface":"concrete"}],
 ["n12856031652",-29.69912,-53.49321,"br",{"aeroway":"helipad"}],
 ["n13931257580",-29.31853,-52.06656,"br",{"name":"Centro de Saúde Doutor Menandro","amenity":"clinic","healthcare":"clinic"}],

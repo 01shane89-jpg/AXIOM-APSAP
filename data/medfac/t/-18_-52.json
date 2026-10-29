@@ -82,7 +82,7 @@
 ["w656007600",-17.77595,-50.9139,"br",{"name":"UBS Bairro Popular","amenity":"clinic","healthcare":"clinic"}],
 ["w681896143",-17.80532,-50.91057,"br",{"name":"Posto de Saúde do Gameleira","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"no","addr:street":"Avenida Adão Mota"}],
 ["w702903818",-17.40628,-50.37842,"br",{"name":"Hospital Público Municipal","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"Rua Leonardo Pires","addr:city":"Acreúna","addr:postcode":"75960000"}],
-["w750485914",-17.36019,-50.3385,"br",{"name":"Fazenda Canadá","aeroway":"aerodrome","icao":"SJER"}],
+["w750485914",-17.36019,-50.3385,"br",{"name":"Fazenda Canadá","aeroway":"aerodrome","icao":"SJER","wikidata":"Q12691594"}],
 ["w776129668",-17.83051,-51.77332,"br",{"name":"Aeroporto de Jataí","aeroway":"aerodrome","icao":"SWJW","iata":"JTI","wikidata":"Q9586097"}],
 ["w779908774",-17.77893,-50.9451,"br",{"name":"Posto de Saúde Vila Serpro","amenity":"clinic","healthcare":"clinic"}],
 ["w779911060",-17.79496,-50.94996,"br",{"name":"Posto de Saúde da Morada do Sol","amenity":"clinic","healthcare":"clinic"}],

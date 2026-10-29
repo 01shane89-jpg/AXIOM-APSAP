@@ -29,6 +29,13 @@
   var HQ = [["0", "None"], ["2", "Headquarters"], ["4", "Task force"], ["6", "Task force HQ"], ["1", "Feint or dummy"], ["3", "Feint or dummy HQ"], ["5", "Feint or dummy task force"], ["7", "Feint or dummy task force HQ"]];
   function amp(set) { return set === "10" || set === "11" ? ["Echelon", ECH] : set === "15" ? ["Mobility", MOB] : set === "30" || set === "35" ? ["Towed array", TOW] : null; }
   var SHAPES = ["diamond", "square", "circle", "triangle", "pentagon", "hexagon", "star", "cross", "flag"];
+  /* "medcross": a red cross inside a dark-outlined square, the map sign for a hospital or aid post (Shane 2026-10-29). It is
+     drawn inside a frame so it stays a map icon, not the bare protected red cross emblem. Not one of the colour rows. */
+  var MEDSHAPES = ["medcross"];
+  /* the Medical row above the tabs: the red cross and the 2525D land installation Medical Treatment Facility (Hospital),
+     set 20 entity 120702, as a friend and as a neutral */
+  var MEDICAL = [["sh:medcross:e03131", "Hospital, red cross"], ["ms:10032000001207020000", "Medical Treatment Facility (Hospital), friend (2525D)"],
+    ["ms:10042000001207020000", "Medical Treatment Facility (Hospital), neutral (2525D)"]];
   var COLOURS = ["15aabf", "1a73e8", "2b8a3e", "f59f00", "e03131", "ae3ec9", "212529", "ffffff"];
   var CNAME = { "15aabf": "teal", "1a73e8": "blue", "2b8a3e": "green", "f59f00": "amber", "e03131": "red", "ae3ec9": "purple", "212529": "black", "ffffff": "white" };
 
@@ -37,7 +44,7 @@
   function valid(s) {
     if (typeof s !== "string") return false;
     var m; if (RE_MS.test(s) || RE_PN.test(s)) return true;
-    return !!((m = RE_SH.exec(s)) && SHAPES.indexOf(m[1]) >= 0);
+    return !!((m = RE_SH.exec(s)) && (SHAPES.indexOf(m[1]) >= 0 || MEDSHAPES.indexOf(m[1]) >= 0));
   }
 
   /* ---------- lazy loading of milsymbol and the function list ---------- */
@@ -81,6 +88,7 @@
   };
   function shapeSvg(shape, col, px) {
     var dark = col === "ffffff" || col === "f59f00" ? "#222" : "#fff";
+    if (shape === "medcross") return '<svg viewBox="0 0 24 24" width="' + px + '" height="' + px + '" aria-hidden="true" style="filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"><rect x="1.5" y="1.5" width="21" height="21" rx="3" fill="#fff" stroke="#222" stroke-width="1.8"/><path d="M9.6 4.5h4.8v5.1h5.1v4.8h-5.1v5.1H9.6v-5.1H4.5V9.6h5.1z" fill="#' + col + '"/></svg>';
     var inner = shape === "flag" ? '<path d="M4 3h15l-3.5 5L19 13H4z" fill="#' + col + '" stroke="' + dark + '" stroke-width="1.6"/><path d="M4 22V2" stroke="' + dark + '" stroke-width="2.4" stroke-linecap="round"/>'
       : '<g fill="#' + col + '" stroke="' + dark + '" stroke-width="1.8">' + PATHS[shape] + "</g>";
     return '<svg viewBox="0 0 24 24" width="' + px + '" height="' + px + '" aria-hidden="true" style="filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.55))">' + inner + "</svg>";
@@ -111,7 +119,8 @@
     if (!valid(sym)) return "Default marker";
     var m;
     if ((m = RE_PN.exec(sym))) return "Pin, " + (CNAME[m[1]] || "#" + m[1]);
-    if ((m = RE_SH.exec(sym))) return m[1].charAt(0).toUpperCase() + m[1].slice(1) + ", " + (CNAME[m[2]] || "#" + m[2]);
+    if ((m = RE_SH.exec(sym)) && m[1] === "medcross") return "Hospital, red cross";
+    if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1) + ", " + (CNAME[m[2]] || "#" + m[2]);
     var d = RE_MS.exec(sym)[1], id = d.charAt(3), set = d.substr(4, 2), st = d.charAt(6), hq = d.charAt(7), ec = d.substr(8, 2), ent = d.substr(10, 6);
     var C = W.OSAP_MSCAT, out = [];
     var aff = AFF.filter(function (a) { return a[0] === id; })[0]; if (aff && set !== "25") out.push(aff[1]);
@@ -132,7 +141,7 @@
   var pk = D.createElement("aside"); pk.id = "ms-pick"; pk.className = "leaflet-control"; pk.hidden = true;
   pk.setAttribute("role", "dialog"); pk.setAttribute("aria-label", "Select an icon");
   pk.innerHTML = '<div class="ms-h"><button type="button" class="ms-back" data-mk="back" aria-label="Back to the point">‹ <span class="ms-pn">Point</span></button><h2>Select an icon</h2></div>' +
-    '<div class="ms-b"><div class="ms-rec"></div>' +
+    '<div class="ms-b"><div class="ms-quick"></div><div class="ms-rec"></div>' +
     '<div class="ms-tabs" role="tablist"><button type="button" role="tab" data-tab="mil">Military symbol</button><button type="button" role="tab" data-tab="shp">Shapes and pins</button></div>' +
     '<div class="ms-mil"></div><div class="ms-shp" hidden></div></div>' +
     '<div class="ms-foot"><div class="ms-now"></div><button type="button" class="pt-btn pri" data-mk="use">Use this symbol</button></div>';
@@ -145,6 +154,9 @@
   }
   function paintRecent() {
     var a = recent(), el = pk.querySelector(".ms-rec");
+    /* the 2525D tiles in the Medical row need milsymbol: load it, then paint the row again */
+    if (!ready()) load().then(function () { if (!pk.hidden) paintRecent(); }, function () {});
+    pk.querySelector(".ms-quick").innerHTML = '<h3>Medical</h3><div class="ms-row ms-med">' + MEDICAL.map(function (x) { return tile(x[0], x[1], x[0] === st.cur, 'data-sym="' + x[0] + '"'); }).join("") + "</div>";
     el.innerHTML = a.length ? '<h3>Recently used</h3><div class="ms-row">' + a.map(function (s) { return tile(s, label(s), false, 'data-sym="' + esc(s) + '"'); }).join("") + "</div>" : "";
   }
   function selectOpts(list, cur, none) { return (none ? '<option value="' + none[0] + '">' + esc(none[1]) + "</option>" : "") + list.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === cur ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join(""); }

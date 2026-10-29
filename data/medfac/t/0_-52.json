@@ -12,6 +12,7 @@
 ["n12116371611",0.04202,-51.05114,"br",{"name":"Privilege Odontologia Especializada","amenity":"clinic","healthcare":"clinic","phone":"+55 96 98131-9717","addr:housenumber":"86","addr:street":"Avenida Raimundo Álvares da Costa","addr:city":"Macapá","addr:postcode":"68900-074"}],
 ["n12234268460",0.03271,-51.06216,"br",{"amenity":"clinic","healthcare":"clinic"}],
 ["n13465240275",0.01741,-51.0616,"br",{"name":"Clínica do Coração","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"cardiology","website":"https://clinicor.com.br/","addr:housenumber":"3868","addr:street":"Rua Jovino Dinoá","addr:city":"Macapá","addr:postcode":"68902-030"}],
+["n14288434102",0.25608,-51.51463,"br",{"name":"UBS - Piaçacá - Unidade Básica de Saúde","amenity":"hospital"}],
 ["n2093407516",0.04022,-51.05882,"br",{"name":"Hospital Geral","amenity":"hospital","healthcare":"hospital"}],
 ["n4103707250",0.85504,-51.1813,"br",{"name":"SAMU","amenity":"hospital"}],
 ["n4268215986",0.03866,-51.08869,"br",{"name":"CASAI - Casa de Assistência ao Indígena","amenity":"hospital","healthcare":"hospital","addr:housenumber":"150","addr:street":"Travessa Joaquim Gouveia","addr:postcode":"68900-000"}],

@@ -19,6 +19,7 @@
 ["n1042088064",-11.37028,-55.38055,"br",{"name":"Aeródromo Panorama","aeroway":"aerodrome"}],
 ["n1042088070",-11.90337,-55.45494,"br",{"name":"Aeródromo Estância Rosália","aeroway":"aerodrome"}],
 ["n1042088086",-11.25807,-54.92698,"br",{"name":"Fazenda Rio Azul Airport","aeroway":"aerodrome"}],
+["n14287856888",-11.8554,-55.51714,"br",{"name":"Dermatologia Avançada","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"dermatology","emergency":"no","addr:housenumber":"2387","addr:street":"Avenida das Embaúbas","addr:city":"Sinop","addr:postcode":"78556-271"}],
 ["n7633744019",-10.80775,-55.45496,"br",{"name":"Posto de Saude Perin","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","opening_hours":"Mo-Su 08:00-20:00"}],
 ["w1006805507",-11.86196,-55.48648,"br",{"name":"BotoClinic","amenity":"clinic","healthcare":"clinic","addr:housenumber":"800","addr:street":"Avenida Alexandre Ferronato","addr:city":"Sinop","addr:postcode":"78557-247"}],
 ["w1117027187",-11.85825,-55.51445,"br",{"name":"Sinop Clínica","healthcare":"clinic"}],

@@ -27,7 +27,7 @@
 ["n13958489757",-15.87577,-52.26284,"br",{"name":"Centro de Atenção Psicossocial","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"psychiatry;psychology","operator":"Município de Barra do Garças","operator:type":"public","addr:housenumber":"961","addr:street":"Rua Rodrigo Firmino dos Santos","addr:city":"Barra do Garças","addr:postcode":"78603-397"}],
 ["n2636141309",-14.67592,-52.35412,"br",{"name":"Posto de Saúde da Família I","amenity":"clinic","healthcare":"clinic"}],
 ["n2823713640",-15.87779,-52.29261,"br",{"name":"Med Barra Hospital e Maternidade","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Medbarra Servicos Hospitalares Limitada","operator:type":"private","phone":"+55 66 3401 9876","addr:street":"Avenida Senador Valdon Varjão","addr:city":"Barra do Garças"}],
-["n2823714114",-15.89311,-52.26148,"br",{"name":"Centro de Saúde Uady Câmara Lopes","amenity":"hospital","healthcare":"hospital"}],
+["n2823714114",-15.89304,-52.26135,"br",{"name":"Centro de Saúde Uady Câmara Lopes","amenity":"hospital","healthcare":"hospital"}],
 ["n2823714115",-15.88375,-52.24711,"br",{"name":"Pronto Socorro Municipal","amenity":"hospital","healthcare":"hospital"}],
 ["n2823714116",-15.89207,-52.26401,"br",{"name":"Hospital Cristo Redentor","amenity":"hospital","healthcare":"hospital","addr:housenumber":"753","addr:street":"Rua Carajás","addr:city":"Barra do Garças","addr:postcode":"78600-013"}],
 ["n3270354762",-14.21661,-53.23091,"br",{"aeroway":"aerodrome"}],

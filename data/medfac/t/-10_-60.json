@@ -3,5 +3,7 @@
 ["n1042071531",-9.29139,-58.03305,"br",{"name":"Aeródromo Fazenda Costa Norte II","aeroway":"aerodrome"}],
 ["n1042087352",-9.39994,-58.22934,"br",{"name":"Aeródromo Fazenda Procomp","aeroway":"aerodrome"}],
 ["n1042087666",-9.86278,-58.23078,"br",{"name":"Aeródromo Fazenda Cotriguaçu","aeroway":"aerodrome"}],
+["n14259917965",-9.92747,-59.91557,"br",{"name":"Unidade Básica de Saúde Lúcia Helena do Nascimento Silva","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Município de Aripuanã","operator:type":"public","addr:street":"Rua Guarantã","addr:city":"Aripuanã","addr:postcode":"78325-000"}],
+["n14314241007",-9.90515,-58.564,"br",{"name":"Posto de Vacinação e Regulação","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Município de Cotriguaçu","operator:type":"public","addr:housenumber":"110","addr:street":"Rua Geneci Castanha","addr:city":"Cotriguaçu","addr:postcode":"78330-000"}],
 ["w1343765851",-9.77049,-58.06361,"br",{"name":"Aeródromo Fazenda Santa Luzia","aeroway":"aerodrome","icao":"SWSZ"}],
 ["w1497632455",-8.10051,-58.28391,"br",{"name":"Aeródromo Aldeia Pontal","aeroway":"aerodrome","icao":"SI8J"}]]

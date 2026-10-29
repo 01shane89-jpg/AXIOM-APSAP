@@ -101,7 +101,7 @@
 ["w1551739142",-16.44124,-41.03365,"br",{"aeroway":"helipad"}],
 ["w1556868880",-16.43757,-41.01,"br",{"amenity":"clinic","healthcare":"clinic"}],
 ["w1556868898",-16.44765,-41.00913,"br",{"amenity":"clinic","healthcare":"clinic"}],
-["w1558855313",-16.43721,-41.0035,"br",{"name":"Hospital São Miguel","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}],
+["w1558855313",-16.43739,-41.0035,"br",{"name":"Hospital São Miguel","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}],
 ["w180509435",-17.82323,-40.32934,"br",{"name":"Aeroporto Jorge Schieber","addr:city":"Nanuque","addr:postcode":"39860-000","aeroway":"aerodrome","icao":"SNNU","iata":"NNU","wikidata":"Q18472094"}],
 ["w286351734",-17.8925,-41.51349,"br",{"name":"Aeroporto de Teófilo Otoni","official_name":"Aeroporto Kemil Kumaira","addr:city":"Teófilo Otoni","aeroway":"aerodrome","icao":"SNTO","iata":"TFL","wikidata":"Q9586601"}],
 ["w302065925",-16.84005,-40.15553,"br",{"name":"Hospital Municipal de Jucuruçu","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"Município de Jucuruçu","operator:type":"public","phone":"+55 73 3662 2014","addr:housenumber":"26","addr:street":"Avenida Manoel Rodrigues da Silva","addr:city":"Jucuruçu","addr:postcode":"45834-000","opening_hours":"24/7"}],
