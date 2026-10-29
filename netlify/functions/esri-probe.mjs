@@ -33,7 +33,7 @@ export default async () => {
       return r.status + " " + r.headers.get("content-type") + " " + b.length + "B " + w + "x" + h;
     } catch (e) { return "err " + (e.message || e); }
   };
-  out.tileChecks = {
+  out.tileChecks2 = {
     staticNav: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/navigation/static/tile/3/3/6"),
     staticOpenStreets: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/open/streets/static/tile/3/3/6"),
     staticNova: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/nova/static/tile/3/3/6"),
@@ -41,6 +41,12 @@ export default async () => {
     soldHillshade: await dims("https://ibasemaps-api.arcgis.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/3/3/6"),
     soldTransport: await dims("https://basemaps-api.arcgis.com/arcgis/rest/services/Reference/World_Transportation/MapServer/tile/3/3/6"),
     soldPlaces: await dims("https://basemaps-api.arcgis.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/3/3/6"),
+    iTransport: await dims("https://ibasemaps-api.arcgis.com/arcgis/rest/services/Reference/World_Transportation/MapServer/tile/3/3/6"),
+    iPlaces: await dims("https://ibasemaps-api.arcgis.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/3/3/6"),
+    staticImgLabels: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/imagery/labels/static/tile/3/3/6"),
+    staticHillshade: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/hillshade/light/static/tile/3/3/6"),
+    staticEn: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/navigation/static/tile/3/3/6?language=en"),
+    staticZ19: await dims("https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/navigation/static/tile/18/123234/208960"),
     vectorTile: await dims("https://basemaps-api.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/3/3/6.pbf")
   };
   return new Response(JSON.stringify(out, null, 1), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
