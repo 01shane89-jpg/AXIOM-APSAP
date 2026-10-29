@@ -13,12 +13,12 @@ export const PX_HOSTS = [
   // weather, search, routing, places
   "api.open-meteo.com", "marine-api.open-meteo.com", "air-quality-api.open-meteo.com", "geocoding-api.open-meteo.com",
   "photon.komoot.io", "routing.openstreetmap.de", "valhalla1.openstreetmap.de", "router.project-osrm.org",
-  "overpass-api.de", "overpass.kumi.systems", "overpass.private.coffee", "query.wikidata.org", "www.wikidata.org",
+  "postpass.geofabrik.de", "overpass-api.de", "maps.mail.ru", "overpass.kumi.systems", "overpass.private.coffee", "query.wikidata.org", "www.wikidata.org",
   // hazard and situation feeds the page reads live
   "earthquake.usgs.gov", "www.gdacs.org", "eonet.gsfc.nasa.gov", "firms.modaps.eosdis.nasa.gov", "api-v3.thaiwater.net",
   "telemetry.dwr.go.th", "gistdaportal.gistda.or.th", "earth-search.aws.element84.com", "date.nager.at",
 ];
-export const PX_PATHS = { "s3.amazonaws.com": "/elevation-tiles-prod/", "storage.googleapis.com": "/global-surface-water/" };
+export const PX_PATHS = { "s3.amazonaws.com": "/elevation-tiles-prod/", "storage.googleapis.com": "/global-surface-water/", "maps.mail.ru": "/osm/tools/overpass/" };
 
 export function pxAllowed(u) {
   let url;

@@ -9,6 +9,8 @@ import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
 const OUT = process.env.OUT || "";
+/* BASE=https://axiom-osap.netlify.app/ runs the same searches on the live site instead of this checkout */
+const BASE = (process.env.BASE || "").replace(/\/?$/, "/").replace(/^\/$/, "");
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
@@ -24,13 +26,17 @@ const PLACES = [
   { tag: "bavaria", cc: "de", c: [48.80, 11.35], r: "2", d: "100", want: 1 },
   { tag: "bangkok", cc: "th", c: [13.7465, 100.5348], r: "1", d: "50", want: 0 }
 ];
+/* PLACES='[{"tag":"slc","cc":"us","c":[40.76,-111.89],"r":"2","d":"100","want":0}]' searches those places instead */
+if (process.env.PLACES) PLACES.splice(0, PLACES.length, ...JSON.parse(process.env.PLACES));
 for (const P of PLACES) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 1000 } });
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(), errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
-  p.on("response", (r) => { if (/interpreter|terrarium/.test(r.url()) && r.status() !== 200) console.log("HTTP", r.status(), r.url().slice(0, 110)); });
-  await p.goto(`http://127.0.0.1:${server.address().port}/#${P.cc}/`, { waitUntil: "domcontentloaded" });
+  p.on("response", (r) => { if ((/interpreter|terrarium|osap-lz|osap-osm/.test(r.url()) && r.status() !== 200) || (BASE && r.status() >= 400)) console.log("HTTP", r.status(), r.url().slice(0, 110)); });
+  p.on("requestfailed", (r) => console.log("FAILED", r.failure() && r.failure().errorText, r.url().slice(0, 110)));
+  p.on("console", (m) => { if (m.type() === "error" || m.type() === "warning") console.log("console." + m.type(), m.text().slice(0, 200)); });
+  await p.goto(`${BASE || "http://127.0.0.1:" + server.address().port + "/"}#${P.cc}/`, { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_AREA_TOOLS, null, { timeout: 60000 });
   await p.waitForTimeout(3000);
   await p.evaluate(() => window.OSAP_AREA_TOOLS.filter((t) => t.id === "lz")[0].run());
