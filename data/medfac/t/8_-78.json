@@ -3,6 +3,8 @@
 ["n1042073152",8.35,-76.33333,"co",{"name":"San José Mulatos Airport","aeroway":"aerodrome"}],
 ["n1042074222",8.5,-76.175,"co",{"name":"Santa Catalina Airport","aeroway":"aerodrome"}],
 ["n12843136590",8.42401,-76.78756,"co",{"name":"Cruz roja","amenity":"hospital"}],
+["n14270905285",9.01613,-76.26334,"co",{"name":"E.S.E CAMU Cornelio Valdelamar Peña","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"emergency","emergency":"yes","addr:city":"Puerto Escondido"}],
+["n14270905286",9.01938,-76.26099,"co",{"name":"Estacion de Policia Puerto Escondido","amenity":"hospital","healthcare":"hospital"}],
 ["n1656223074",8.25554,-76.14335,"co",{"amenity":"hospital","healthcare":"hospital"}],
 ["n1872973832",9.18553,-77.9837,"pa",{"name":"Mamitupo Airport","aeroway":"aerodrome","iata":"MPI","wikidata":"Q55872770"}],
 ["n3250528387",8.89714,-76.3545,"co",{"name":"Camu Los Cordobas","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],

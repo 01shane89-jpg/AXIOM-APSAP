@@ -5,6 +5,7 @@
 ["n11619973273",49.8772,-112.78059,"ca",{"name":"Picture Butte Fire Department","amenity":"fire_station","emergency":"ambulance_station"}],
 ["n11645851263",49.72599,-113.39284,"ca",{"aeroway":"helipad"}],
 ["n14011278923",49.33659,-113.57335,"ca",{"name":"Beck Farm Airport","aeroway":"aerodrome"}],
+["n14266351907",49.19488,-113.30102,"ca",{"name":"Cardston Community Health","amenity":"clinic","healthcare":"clinic","phone":"+1-403-653-5230","website":"https://www.albertahealthservices.ca/findhealth/Service.aspx?serviceAtFacilityID=1120302","addr:housenumber":"576","addr:street":"Main Street","addr:city":"Cardston","addr:province":"AB","opening_hours":"Mo-Fr 08:00-16:00"}],
 ["n3286196969",49.6916,-112.83802,"ca",{"amenity":"clinic","osap:withheld":"1"}],
 ["n7597371711",49.42309,-112.8634,"ca",{"name":"Magrath Community Health Centre","amenity":"clinic","healthcare":"clinic","phone":"+1-403-758-4422","website":"https://www.albertahealthservices.ca/findhealth/Facility.aspx?id=1057511","addr:housenumber":"37","addr:street":"2 Avenue North","addr:city":"Magrath","addr:province":"AB","addr:postcode":"T0K 1J0"}],
 ["n7638903312",49.13351,-112.04989,"ca",{"name":"Milk River Airport","aeroway":"aerodrome"}],

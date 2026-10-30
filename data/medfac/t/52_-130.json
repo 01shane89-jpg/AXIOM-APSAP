@@ -21,5 +21,5 @@
 ["w374515539",52.18388,-128.11366,"ca",{"aeroway":"helipad"}],
 ["w697348506",52.2625,-128.72217,"ca",{"name":"CVIHT","aeroway":"helipad"}],
 ["w744721944",52.18458,-128.15695,"ca",{"name":"Bella Bella (Campbell Island) Airport","aeroway":"aerodrome","icao":"CBBC","iata":"ZEL","wikidata":"Q1658122"}],
-["w744734229",52.16121,-128.14332,"ca",{"name":"ƛ̓uxválásu̓ilas (kwil-valas-iwaylas) Heiltsuk Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Vancouver Coastal Health","operator:type":"public","phone":"+1 250 957 2314","website":"https://www.vch.ca/en/location/bella-bella-hospital","addr:housenumber":"88","addr:street":"Waglisla Street","opening_hours:emergency":"24/7"}],
+["w744734229",52.16121,-128.14332,"ca",{"name":"ƛ̓uxválásu̓ilas (kwil-valas-iwaylas) Heiltsuk Hospital","name:en":"Heiltsuk Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Vancouver Coastal Health","operator:type":"public","phone":"+1 250 957 2314","website":"https://www.vch.ca/en/location/bella-bella-hospital","addr:housenumber":"88","addr:street":"Waglisla Street","opening_hours:emergency":"24/7"}],
 ["w744905207",52.13652,-128.05677,"ca",{"name":"Denny Island Airport","aeroway":"aerodrome","icao":"CYJQ","wikidata":"Q1654855"}]]

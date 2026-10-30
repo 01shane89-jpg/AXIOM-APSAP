@@ -81,6 +81,7 @@
 ["n9461127488",44.31995,-79.88648,"ca",{"name":"Angus Walk-In Clinic","amenity":"clinic","healthcare":"clinic","phone":"+1-705-424-5551","website":"https://www.anguswalkinclinic.com/","addr:housenumber":"18","addr:street":"King Street","addr:city":"Angus","addr:province":"Ontario","opening_hours":"Mo-Fr 09:00-17:00; Sa 10:00-13:00"}],
 ["n960876821",45.26726,-78.80604,"ca",{"name":"Kawagama Lake Seaplane Anchorage","aeroway":"aerodrome"}],
 ["n9831754145",44.03726,-79.47561,"ca",{"name":"Learning Centre for Autism","amenity":"clinic","healthcare":"clinic"}],
+["w1006594144",44.30278,-78.32738,"ca",{"name":"Kawartha Cardiology","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"cardiology","website":"https://www.kawarthacardiology.com/","addr:housenumber":"327","addr:street":"Charlotte Street","addr:city":"Peterborough","addr:province":"ON","addr:postcode":"K9J 0B2","opening_hours":"Mo-Fr 07:40-16:30"}],
 ["w101895048",45.61672,-79.40465,"ca",{"name":"Almaguin Highlands Health Centre","amenity":"clinic","healthcare":"clinic","addr:housenumber":"150","addr:street":"Huston Street","addr:city":"Burk's Falls"}],
 ["w109495557",44.41441,-79.66585,"ca",{"name":"Barrie (Royal Victoria Hospital) Heliport","aeroway":"helipad","surface":"asphalt"}],
 ["w109975140",44.40602,-79.70255,"ca",{"name":"Barrie Family Medicine (Clinic)","amenity":"clinic","healthcare":"clinic","addr:housenumber":"18","addr:street":"Cundles Rd E, Barrie","addr:city":"Barrie","addr:province":"ON","addr:postcode":"L4M 2Z5","opening_hours":"Mo-Fr 09:00-16:00"}],

@@ -26,5 +26,5 @@
 ["w670718748",53.9106,-122.76319,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"1488","addr:street":"Edmonton Street"}],
 ["w692305376",53.02368,-122.50842,"ca",{"name":"Quesnel Airport","aeroway":"aerodrome","icao":"CYQZ","iata":"YQZ","wikidata":"Q1432539"}],
 ["w799516851",52.98268,-122.50069,"ca",{"name":"Quesnel Hospital Heliport","aeroway":"helipad","surface":"paved"}],
-["w929819540",53.88386,-122.68141,"ca",{"name":"Prince George Airport","website":"https://www.pgairport.ca/","aeroway":"aerodrome","icao":"CYXS","iata":"YXS","wikidata":"Q779571"}],
+["w929819540",53.88379,-122.68141,"ca",{"name":"Prince George Airport","website":"https://www.pgairport.ca/","aeroway":"aerodrome","icao":"CYXS","iata":"YXS","wikidata":"Q779571"}],
 ["w961058486",52.1374,-122.14428,"ca",{"name":"Cariboo Memorial Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Interior Health","operator:type":"public","phone":"+1-250-392-4411","website":"https://www.interiorhealth.ca/locations/cariboo-memorial-hospital","addr:housenumber":"517","addr:street":"6th Avenue North","opening_hours:emergency":"24/7"}]]

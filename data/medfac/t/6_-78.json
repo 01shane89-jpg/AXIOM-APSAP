@@ -38,7 +38,7 @@
 ["w454574657",7.86608,-76.66539,"co",{"name":"Centro médico","amenity":"hospital"}],
 ["w463199118",6.31123,-76.13422,"co",{"name":"Hospital Iván Restrepo Gómez","amenity":"hospital","phone":"+57 604 8502131","addr:housenumber":"23-61","addr:street":"Carrera 32","addr:city":"Urrao"}],
 ["w489741217",6.78195,-76.12655,"co",{"name":"María Antonia Toro de Elejalde","amenity":"hospital","healthcare":"hospital"}],
-["w525378529",7.10725,-77.76632,"co",{"name":"Hospital Juradó","amenity":"hospital","healthcare":"hospital","addr:city":"Jurado"}],
+["w525378529",7.10726,-77.76632,"co",{"name":"Hospital Juradó","amenity":"hospital","healthcare":"hospital","addr:city":"Jurado"}],
 ["w552259946",7.88631,-76.63024,"co",{"name":"Clínica La Chinita","amenity":"hospital","healthcare":"hospital"}],
 ["w686625449",7.83326,-76.64553,"co",{"name":"Los Planes","aeroway":"aerodrome"}],
 ["w778876482",6.56749,-76.88716,"co",{"name":"Vigía Del Fuerte Airport","aeroway":"aerodrome","wikidata":"Q28163802"}],

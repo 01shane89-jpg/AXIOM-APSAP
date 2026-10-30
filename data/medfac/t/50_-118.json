@@ -8,7 +8,7 @@
 ["n268109545",50.6563,-117.54957,"ca",{"name":"CMH Galena Helipad","aeroway":"helipad"}],
 ["n2709317049",51.47857,-117.48234,"ca",{"aeroway":"helipad"}],
 ["n3624036109",51.42703,-116.17835,"ca",{"name":"Lake Louise Medical Clinic","amenity":"clinic","healthcare":"doctor"}],
-["n4003145609",51.41626,-116.24419,"ca",{"aeroway":"helipad"}],
+["n4003145609",51.41627,-116.24422,"ca",{"aeroway":"helipad"}],
 ["n4852049090",51.3963,-116.48634,"ca",{"name":"BC Ambulance Service Station 409","emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"208","addr:street":"1st Avenue"}],
 ["n4858168655",50.23875,-117.79498,"ca",{"name":"Arrow Lakes Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Interior Health","operator:type":"public","phone":"+1-250-265-3622","website":"https://www.interiorhealth.ca/locations/arrow-lakes-hospital","addr:housenumber":"97","addr:street":"1st Avenue NE","wikidata":"Q4796126"}],
 ["n5538085587",51.543,-117.62038,"ca",{"aeroway":"helipad"}],

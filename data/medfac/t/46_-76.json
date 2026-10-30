@@ -48,4 +48,4 @@
 ["w553646926",46.39113,-75.9796,"ca",{"name":"Hôpital de Maniwaki","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w648866762",47.93905,-74.09015,"ca",{"name":"Camp de Base Casey","website":"https://campdebasecasey.com/","aeroway":"aerodrome","icao":"CSQ4"}],
 ["w653004805",46.11864,-74.57961,"ca",{"name":"Centre de Santé Dentaire Mont-Tremblant","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"dentistry","operator":"Leblanc","operator:type":"private"}],
-["w730828499",47.93134,-74.6085,"ca",{"name":"Aéroport de Parent","name:en":"Parent Airport","aeroway":"aerodrome","icao":"CYPP"}]]
+["w730828499",47.93134,-74.6085,"ca",{"name":"Aéroport de Parent","name:en":"Parent Airport","aeroway":"aerodrome","icao":"CYPP","wikidata":"Q3914825"}]]

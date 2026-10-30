@@ -52,7 +52,7 @@
 ["n6456494546",10.46933,-73.25452,"co",{"name":"Rosario Pumarejo Lopez","amenity":"hospital","healthcare":"hospital"}],
 ["n703272392",10.02199,-73.95969,"co",{"name":"Potosi Suereste","aeroway":"aerodrome"}],
 ["n703272406",10.07364,-73.97102,"co",{"name":"Potosi Este","aeroway":"aerodrome"}],
-["n703272416",10.11666,-73.957,"co",{"name":"Betania / Calima","aeroway":"aerodrome"}],
+["n703272416",10.11559,-73.94657,"co",{"name":"Bethania / Calima","aeroway":"aerodrome","icao":"SQBE"}],
 ["n703272425",10.23237,-73.99597,"co",{"name":"Caracolicito","aeroway":"aerodrome"}],
 ["n703272552",10.12611,-73.61486,"co",{"name":"Maria Angola Sur","aeroway":"aerodrome"}],
 ["n703272553",10.15793,-73.6541,"co",{"name":"Maria Angola Sudoeste","aeroway":"aerodrome"}],

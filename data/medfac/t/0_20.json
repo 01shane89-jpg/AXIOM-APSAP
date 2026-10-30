@@ -3,4 +3,5 @@
 ["n1042040085",1.87118,21.76011,"cd",{"name":"Bosondjo Airport - CLOSED","aeroway":"aerodrome","icao":"FZBG"}],
 ["n1080892829",1.75,21.45,"cd",{"name":"Pimu","aeroway":"aerodrome"}],
 ["n1080893623",1.77795,20.90404,"cd",{"name":"Pimu","aeroway":"aerodrome"}],
-["w1037439610",0.38878,20.84331,"cd",{"amenity":"hospital","healthcare":"hospital"}]]
+["w1037439610",0.38878,20.84331,"cd",{"amenity":"hospital","healthcare":"hospital"}],
+["w1569396014",1.07273,20.02314,"cd",{"name":"CRC Ndeke","healthcare":"clinic","healthcare:speciality":"general","addr:city":"Ndeke"}]]

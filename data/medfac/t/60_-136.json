@@ -1,6 +1,7 @@
 [["n1042025504",60.69106,-135.03787,"ca",{"name":"Whitehorse Seaplane Base","operator":"City of Whitehorse","operator:type":"public","aeroway":"aerodrome","wikidata":"Q7996085"}],
 ["n11944657667",61.06319,-135.18368,"ca",{"aeroway":"aerodrome"}],
 ["n13074903201",60.16576,-134.7072,"ca",{"name":"Carcross Health Centre","healthcare":"clinic","phone":"+1-867-821-4444","website":"https://yukon.ca/en/places/carcross-health-centre","addr:housenumber":"1952","addr:street":"Tagish Avenue","opening_hours":"Mo-Fr 08:00-12:00, 13:00-16:30; Sa-Su, PH Off"}],
+["n14301488174",60.20321,-135.29537,"ca",{"aeroway":"helipad"}],
 ["n2138092195",60.17374,-134.69646,"ca",{"name":"Carcross Airport","operator":"Government of Yukon","operator:type":"public","website":"http://www.hpw.gov.yk.ca/airports/","aeroway":"aerodrome","wikidata":"Q3536441"}],
 ["n7351756588",60.73161,-135.06571,"ca",{"name":"Whitehorse Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Government of Yukon","phone":"+1 867 667 8864","addr:full":"9010 Quartz Road, 1st Floor"}],
 ["n8258643937",60.17252,-134.69684,"ca",{"name":"Carcross Water Aerodrome","operator":"J.E. Lishman","operator:type":"private","aeroway":"aerodrome","wikidata":"Q3536448"}],

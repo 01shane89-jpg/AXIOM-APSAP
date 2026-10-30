@@ -3,7 +3,7 @@
 ["n13469592191",46.41199,-63.78078,"ca",{"name":"Summerside Medical Centre","amenity":"clinic","healthcare":"clinic"}],
 ["n14077659668",46.35385,-63.3483,"ca",{"name":"Central Queens Health Centre","healthcare":"clinic","operator":"Health PEI"}],
 ["n14208126141",46.40839,-63.7816,"ca",{"name":"Maple","amenity":"clinic","healthcare":"clinic","website":"https://www.getmaple.ca/regions/prince-edward-island/","addr:housenumber":"95","addr:street":"Anna Drive"}],
-["r3441284",46.25544,-63.1005,"ca",{"name":"Queen Elizabeth Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;paediatrics;intensive;orthopaedics;dialysis;ophthalmology;emergency;surgery;oncology;radiology;maternity","emergency":"yes","operator":"Health PEI","operator:type":"government","addr:housenumber":"60","addr:street":"Riverside Drive","addr:city":"Charlottetown","addr:province":"PE","addr:postcode":"C1A8T5","wikidata":"Q7270342"}],
+["r3441284",46.25546,-63.10051,"ca",{"name":"Queen Elizabeth Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;paediatrics;intensive;orthopaedics;dialysis;ophthalmology;emergency;surgery;oncology;radiology;maternity","emergency":"yes","operator":"Health PEI","operator:type":"government","addr:housenumber":"60","addr:street":"Riverside Drive","addr:city":"Charlottetown","addr:province":"PE","addr:postcode":"C1A8T5","wikidata":"Q7270342"}],
 ["w1088035103",46.35138,-62.24429,"ca",{"name":"Souris Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1219364189",46.41082,-63.8039,"ca",{"name":"Sea isle medical","amenity":"clinic","healthcare":"clinic"}],
 ["w1243479380",46.41783,-63.77402,"ca",{"name":"Summerside (Prince County Hospital) Heliport","aeroway":"helipad","icao":"CCH6","surface":"asphalt"}],
@@ -15,4 +15,4 @@
 ["w398410808",46.25673,-63.09297,"ca",{"name":"Hillsborough Hospital","amenity":"hospital","healthcare":"hospital","emergency":"no","addr:housenumber":"115","addr:street":"Deacon Grove Lane","addr:city":"Charlottetown","wikidata":"Q5763705"}],
 ["w520349002",46.41766,-63.77306,"ca",{"name":"Prince County Hospital","amenity":"hospital","healthcare":"hospital","phone":"+1 902-438-4200","website":"https://www.princeedwardisland.ca/en/information/health-pei/prince-county-hospital","addr:housenumber":"65","addr:street":"Roy Boates Avenue","addr:city":"Summerside","addr:postcode":"C1N 2A9","wikidata":"Q7243873"}],
 ["w683520336",46.29762,-63.11969,"ca",{"aeroway":"helipad"}],
-["w740017652",46.28125,-63.15288,"ca",{"name":"Island EMS","emergency":"ambulance_station","addr:housenumber":"229","addr:street":"Sherwood Road","addr:city":"Charlottetown"}]]
+["w740017652",46.28128,-63.15289,"ca",{"name":"Island EMS","emergency":"ambulance_station","addr:housenumber":"229","addr:street":"Sherwood Road","addr:city":"Charlottetown"}]]

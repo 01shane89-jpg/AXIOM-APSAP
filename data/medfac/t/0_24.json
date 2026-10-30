@@ -1,5 +1,8 @@
 [["n1042040146",0.333,25.5,"cd",{"name":"Katende Airport","aeroway":"aerodrome"}],
 ["n1080894369",1.50861,25.30833,"cd",{"name":"Banalia","aeroway":"aerodrome","surface":"grass"}],
+["n14317960628",0.52359,25.16794,"cd",{"name":"Site H","amenity":"clinic","healthcare":"clinic"}],
+["n14317960640",0.51842,25.17001,"cd",{"name":"Sanatorium de Kisangani","amenity":"clinic","healthcare":"clinic"}],
+["n14318108751",0.51233,25.16079,"cd",{"name":"Centre de Santé RVA","healthcare":"clinic","healthcare:speciality":"general"}],
 ["n4330043966",1.54878,25.31055,"cd",{"name":"Centre de Sante Ste. Elisabeth","amenity":"clinic"}],
 ["n7033917690",0.54819,25.15808,"cd",{"name":"Centre de santé Sotexki","healthcare":"clinic"}],
 ["n8483516961",0.54472,25.16601,"cd",{"amenity":"clinic","healthcare":"clinic"}],

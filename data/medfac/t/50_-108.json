@@ -14,6 +14,7 @@
 ["w1333788325",50.9806,-107.13697,"ca",{"name":"Lucky Lake Health Center","amenity":"hospital","healthcare":"hospital"}],
 ["w1451541165",50.28514,-107.80313,"ca",{"name":"Conlon Eye Institute","amenity":"clinic","addr:housenumber":"215","addr:street":"Chaplin Street West"}],
 ["w1454486311",50.28273,-107.79354,"ca",{"name":"Canadian Mental Health Association","amenity":"clinic","phone":"+1-306-778-2440","addr:housenumber":"28","addr:street":"5th Avenue Northeast","opening_hours":"Mo-Fr 09:00-15:45"}],
+["w1481277531",50.28214,-107.79782,"ca",{"name":"Pratt Denture Clinic","amenity":"clinic"}],
 ["w211056105",50.80003,-106.50904,"ca",{"name":"Regency Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w211827597",50.80008,-106.50888,"ca",{"name":"Regency Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w230360143",50.29014,-107.68921,"ca",{"name":"Swift Current Airport","aeroway":"aerodrome","icao":"CYYN","iata":"YYN","wikidata":"Q3913112"}],
