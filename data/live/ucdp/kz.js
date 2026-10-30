@@ -1,1 +1,1 @@
-window.ASAP_UCDP_CC={"cc":"kz","asof":"2026-10-30 18:14Z","items":[]};
+window.ASAP_UCDP_CC={"cc":"kz","asof":"2026-10-30 18:23Z","items":[]};
