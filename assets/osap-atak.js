@@ -459,6 +459,8 @@
   W.OSAP_EPE_GO = epeGo;
   /* the flight planner (airborne operations) lives in assets/osap-flight.js, fetched the first time "Plan a flight" (Route tab)
      is used. opts: { at: [lat, lon], name, cc, role } adds that point */
+  /* both offer the aircraft catalogue (assets/osap-aircraft.js), fetched first so a saved plan's type is known when it loads */
+  function acReady() { return W.OSAP_DZ && W.OSAP_DZ.aircraftReady ? W.OSAP_DZ.aircraftReady() : Promise.resolve(); }
   var flWait = null;
   function flightGo(opts) {
     function go(F) { F.open(opts || {}); }
@@ -467,7 +469,7 @@
     var sc = D.createElement("script"); sc.src = "assets/osap-flight.js";
     sc.onload = function () { var f = flWait; flWait = null; if (W.OSAP_FLIGHT) f.forEach(function (g) { g(W.OSAP_FLIGHT); }); };
     sc.onerror = function () { flWait = null; sc.remove(); toast("The flight planner could not load. Check the connection."); };
-    D.head.appendChild(sc);
+    acReady().then(function () { D.head.appendChild(sc); });
   }
   W.OSAP_FLIGHT_GO = flightGo;
   /* the DZSO sheet lives in assets/osap-dzso.js, fetched the first time Plans > DZSO sheet here, a point's DZSO sheet button or
@@ -480,7 +482,7 @@
     var sc = D.createElement("script"); sc.src = "assets/osap-dzso.js";
     sc.onload = function () { var f = dzWait; dzWait = null; if (W.OSAP_DZSO && W.OSAP_DZSO.open) f.forEach(function (g) { g(W.OSAP_DZSO); }); };
     sc.onerror = function () { dzWait = null; sc.remove(); toast("The DZSO sheet could not load. Check the connection."); };
-    D.head.appendChild(sc);
+    acReady().then(function () { D.head.appendChild(sc); });
   }
   W.OSAP_DZSO_GO = dzsoGo;
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "dzso", label: "Drop zone (DZSO)", point: true, run: function () { dzsoGo({}); } });

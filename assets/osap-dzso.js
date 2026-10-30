@@ -649,7 +649,7 @@
   function acftSel(cur) {
     var A = ((store() && store().aircraft) || []).filter(function (a) { return a.id !== "custom"; }), known = A.some(function (a) { return a.name === cur; });
     var typed = ST.acOther || (cur && !known), h = '<select data-f="acsel" aria-label="Aircraft"><option value=""' + (!cur && !ST.acOther ? " selected" : "") + ">Choose the aircraft</option>" +
-      A.map(function (a) { return '<option value="' + esc(a.name) + '"' + (a.name === cur ? " selected" : "") + ">" + esc(a.name) + "</option>"; }).join("") +
+      (store() && store().aircraftOptions ? store().aircraftOptions({ sel: cur, byName: true, noCustom: true }) : A.map(function (a) { return '<option value="' + esc(a.name) + '"' + (a.name === cur ? " selected" : "") + ">" + esc(a.name) + "</option>"; }).join("")) +
       '<option value="__other"' + (typed ? " selected" : "") + ">Other (type it)</option></select>";
     return h + (typed ? '<input class="w" data-f="acft" value="' + esc(cur) + '" maxlength="40" placeholder="Type the aircraft" aria-label="Aircraft (typed)">' : "");
   }
