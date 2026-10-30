@@ -149,7 +149,7 @@
 ["n1230825607",3.46534,-76.52811,"co",{"name":"Forma Vital de Colombia S.a.","amenity":"hospital","contact:phone":"+57 602 6536880","addr:full":"CL 23 D N 5A-46"}],
 ["n1230825615",3.47245,-76.52113,"co",{"name":"Optikus","amenity":"hospital","contact:phone":"+57 602 6616964","addr:full":"AV 3 NORTE # 35NORTE - 61"}],
 ["n1230825626",3.44547,-76.49883,"co",{"name":"Ayuda Medica Diagnostica Ltda","emergency":"ambulance_station","contact:phone":"+57 602 4485986","addr:full":"CR 13 # 52 - 54"}],
-["n1230825645",3.44828,-76.53283,"co",{"name":"Comfenalco Valle","amenity":"hospital","contact:phone":"+57 602 8862727","addr:full":"CL 10 # 8 - 43"}],
+["n1230825645",3.44828,-76.53283,"co",{"name":"Clínica nueva de Cali","amenity":"hospital","contact:phone":"+57 602 8862727","addr:full":"CL 10 # 8 - 43","addr:street":"Calle 5"}],
 ["n1230825658",3.4133,-76.50074,"co",{"name":"Puesto de Salud El Vergel","amenity":"hospital","contact:phone":"+57 602 4374024","addr:full":"CL 46A # 34A - 04"}],
 ["n1230825675",3.47054,-76.5248,"co",{"name":"Ortho Clinic","amenity":"hospital","contact:phone":"+57 602 6827059","addr:full":"AV 2A NORTE # 28NORTE - 40"}],
 ["n1230825720",3.48257,-76.52809,"co",{"name":"Global Therapy","amenity":"hospital","contact:phone":"+57 602 3701977","addr:full":"AV 7 NORTE # 43NORTE - 48"}],

@@ -19,6 +19,8 @@
 ["n13547112724",49.02922,-118.46846,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"7649","addr:street":"22nd Street"}],
 ["n13551064819",49.09057,-118.67658,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"201","addr:street":"South Government Street"}],
 ["n13556729000",49.00861,-118.77805,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"661","addr:street":"Eighth Avenue"}],
+["n14305400987",49.87982,-119.5352,"ca",{"name":"Lakepoint Medical Clinic","amenity":"clinic","healthcare":"clinic","addr:housenumber":"525","addr:street":"Okanagan Highway"}],
+["n14305414402",49.82807,-119.62861,"ca",{"name":"SnoreMD","amenity":"clinic","healthcare":"clinic"}],
 ["n2988296051",49.45955,-119.60526,"ca",{"aeroway":"helipad"}],
 ["n2988296052",49.45945,-119.60501,"ca",{"aeroway":"helipad"}],
 ["n2988296053",49.4593,-119.60501,"ca",{"aeroway":"helipad"}],

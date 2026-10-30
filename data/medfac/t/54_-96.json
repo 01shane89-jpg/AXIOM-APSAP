@@ -6,5 +6,5 @@
 ["n9241608754",55.29054,-95.81107,"ca",{"name":"North Haven Landing Strip","name:en":"Utik Lake Dennis G Punches Airport","aeroway":"aerodrome","icao":"CDP3"}],
 ["n9945969156",54.22105,-95.76718,"ca",{"name":"Bolton Lake Lodge Airstrip","aeroway":"aerodrome"}],
 ["w280505693",54.83591,-94.05311,"ca",{"name":"Johnny McKay Memorial Centre","amenity":"hospital","healthcare":"hospital","addr:postcode":"R0B 0N0"}],
-["w485912957",54.9334,-95.27869,"ca",{"name":"Oxford House Airport","aeroway":"aerodrome","icao":"CYOH","iata":"YOH"}],
+["w485912957",54.9334,-95.27869,"ca",{"name":"Oxford House Airport","aeroway":"aerodrome","icao":"CYOH","iata":"YOH","wikidata":"Q3915927"}],
 ["w840776377",54.83924,-94.0789,"ca",{"name":"Gods River Airport","aeroway":"aerodrome","icao":"CZGI","iata":"ZGI","wikidata":"Q3275220"}]]

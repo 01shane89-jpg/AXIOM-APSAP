@@ -51,7 +51,7 @@
 ["w1349717485",51.60451,-127.86361,"ca",{"name":"Addenbroke Island","operator":"CCG","aeroway":"aerodrome","icao":"WCZ","iata":"CWCZ"}],
 ["w1478447653",50.72039,-127.50285,"ca",{"name":"Port Hardy Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Island Health","operator:type":"public","website":"https://www.islandhealth.ca/our-locations/hospitals-health-centre-locations/port-hardy-hospital","addr:housenumber":"9120","addr:street":"Granville Street","addr:city":"Port Hardy","opening_hours":"24/7"}],
 ["w318146175",50.68174,-127.36695,"ca",{"name":"Port Hardy Airport","aeroway":"aerodrome","icao":"CYZT","iata":"YZT","wikidata":"Q3914289"}],
-["w318146176",50.5748,-127.02858,"ca",{"name":"Port McNeill Airport","aeroway":"aerodrome","iata":"YMP","wikidata":"Q3915042"}],
+["w318146176",50.57479,-127.02827,"ca",{"name":"Port McNeill Airport","aeroway":"aerodrome","iata":"YMP","wikidata":"Q3915042"}],
 ["w318154132",50.58248,-126.91602,"ca",{"name":"Alert Bay Airport","aeroway":"aerodrome","icao":"CYAL","iata":"YAL","wikidata":"Q3913242"}],
 ["w373854464",51.24967,-127.83642,"ca",{"name":"CA-0580","aeroway":"helipad"}],
 ["w374512265",51.60451,-127.86361,"ca",{"name":"CWCZ","aeroway":"helipad"}],

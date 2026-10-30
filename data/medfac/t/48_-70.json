@@ -12,7 +12,7 @@
 ["w1506960788",48.74662,-69.08835,"ca",{"aeroway":"helipad"}],
 ["w1506960789",48.74651,-69.08814,"ca",{"aeroway":"helipad"}],
 ["w1506960790",48.74617,-69.08697,"ca",{"aeroway":"helipad"}],
-["w345624835",48.47794,-68.49669,"ca",{"name":"Aéroport de Rimouski","aeroway":"aerodrome","icao":"CYXK","iata":"YXK"}],
+["w345624835",48.47794,-68.49669,"ca",{"name":"Aéroport de Rimouski","phone":"+1-418-724-3177","addr:housenumber":"599","addr:street":"Rue des Voiliers","addr:city":"Rimouski","addr:province":"Québec","addr:postcode":"G5L 7M9","aeroway":"aerodrome","icao":"CYXK","iata":"YXK","wikidata":"Q3912794"}],
 ["w472834301",48.447,-68.5303,"ca",{"name":"Hôpital régional de Rimouski","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"150","addr:street":"Avenue Rouleau"}],
 ["w473131140",48.13284,-69.15899,"ca",{"name":"Centre de Santé et Services Sociaux des Basques","amenity":"hospital","healthcare":"hospital"}],
 ["w495299707",48.35206,-69.40724,"ca",{"name":"CSSS de la Haute-Côte-Nord","amenity":"hospital","healthcare":"hospital"}],

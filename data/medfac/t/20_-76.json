@@ -107,7 +107,7 @@
 ["w448257160",20.05123,-75.94426,"cu",{"name":"Policlínico EL Cobre","amenity":"clinic"}],
 ["w452565845",20.0227,-75.80718,"cu",{"name":"Hospital Gineco-Obstétrico Este","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"gynaecology;maternity","operator":"MINSAP","operator:type":"public"}],
 ["w453419206",20.03793,-75.80991,"cu",{"name":"Base de Ambulancias","emergency":"ambulance_station","operator":"SIUM"}],
-["w458003571",20.56498,-75.94489,"cu",{"amenity":"hospital","healthcare":"hospital","operator":"MINSAP","operator:type":"public"}],
+["w458003571",20.56498,-75.94489,"cu",{"name":"Hospital","amenity":"hospital","healthcare":"hospital","operator":"MINSAP","operator:type":"public"}],
 ["w461557343",20.33563,-74.48759,"cu",{"name":"Hospital Municipal Baracoa","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud Pública","operator:type":"public","phone":"21 647100","addr:street":"Bohórque","addr:postcode":"97310","opening_hours":"24/7"}],
 ["w462872431",20.24148,-74.93656,"cu",{"name":"Centro de Salud de La Caridad de los Indios","amenity":"clinic","healthcare":"clinic","addr:city":"La Caridad de los Indios"}],
 ["w466821730",20.13161,-75.21249,"cu",{"amenity":"clinic","healthcare":"clinic"}],

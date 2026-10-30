@@ -681,7 +681,7 @@
 ["w802399727",3.65806,31.72775,"ug",{"name":"Moyo Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w802410630",2.94637,30.93282,"ug",{"name":"Kuluva Hospital","amenity":"hospital","healthcare":"hospital","operator":"Church Of Uganda","wikidata":"Q16893723"}],
 ["w880688147",2.21963,30.65064,"cd",{"amenity":"hospital"}],
-["w882738625",2.2931,31.02624,"cd",{"name":"Mahagi","aeroway":"aerodrome","icao":"FZKC"}],
+["w882738625",2.2931,31.02624,"cd",{"name":"Mahagi","aeroway":"aerodrome","icao":"FZKC","wikidata":"Q20454112"}],
 ["w890773378",2.47687,31.08575,"ug",{"name":"Nebbi Hospital","amenity":"hospital","wikidata":"Q25066519"}],
 ["w892258001",2.5142,31.13456,"ug",{"name":"Nebbi Airport","aeroway":"aerodrome","wikidata":"Q3016016"}],
 ["w983834473",2.07548,30.1065,"cd",{"name":"CS Mbidjo","amenity":"clinic","healthcare":"clinic","operator":"MSP","operator:type":"government"}],

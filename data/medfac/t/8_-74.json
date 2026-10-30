@@ -124,7 +124,7 @@
 ["n992013819",8.21481,-73.23758,"co",{"amenity":"hospital"}],
 ["r19818765",8.24251,-72.26189,"ve",{"name":"Helipuerto del Cuartel Bicentenario Sucre","name:en":"Cuartel Bicentenario Sucre HLS","aeroway":"helipad"}],
 ["w1003983147",8.4042,-73.20887,"co",{"name":"Centro De Salud","amenity":"hospital"}],
-["w1005649885",9.36214,-73.59954,"co",{"name":"E.S.E Hospital Regional San Andrés","amenity":"hospital","healthcare":"hospital"}],
+["w1005649885",9.36214,-73.59954,"co",{"name":"E.S.E Hospital Regional San Andrés","amenity":"hospital","healthcare":"hospital","addr:street":"Calle 7","addr:city":"Chiriguaná"}],
 ["w1072457494",8.67625,-72.33486,"ve",{"name":"El Guayabo del Zulia Aeropuerto","name:en":"El Guayabo del Zulia Airport","aeroway":"aerodrome"}],
 ["w114595274",8.3111,-73.62726,"co",{"name":"Hospital Barahoja","amenity":"hospital"}],
 ["w1169205812",9.00698,-73.97249,"co",{"name":"Clinica Prevencion & Salud IPS","amenity":"hospital","healthcare":"hospital"}],
