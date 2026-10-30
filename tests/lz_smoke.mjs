@@ -53,6 +53,19 @@ function tile(z, x, y) {
 }
 
 /* ---------- made-up OpenStreetMap ---------- */
+/* a vector tile with one layer "building" holding two squares (one underground), as Overture's buildings tiles have them */
+function mvt() {
+  const vi = (n) => { const o = []; while (n > 127) { o.push((n & 127) | 128); n = Math.floor(n / 128); } o.push(n); return o; };
+  const fld = (f, t, body) => t === 2 ? [...vi(f * 8 + 2), ...vi(body.length), ...body] : [...vi(f * 8 + t), ...vi(body)];
+  const str = (x) => [...Buffer.from(x)];
+  const zz = (n) => (n << 1) ^ (n >> 31);
+  const sq = (x, y, d) => [9, zz(x), zz(y), 26, zz(d), 0, zz(0), zz(d), zz(-d), 0, 15];
+  const packed = (a) => a.flatMap(vi);
+  const feat = (tags, g) => fld(2, 2, [...fld(2, 2, packed(tags)), ...fld(3, 0, 3), ...fld(4, 2, packed(g))]);
+  const layer = [...fld(15, 0, 2), ...fld(1, 2, str("building")), ...feat([0, 0], sq(1000, 1000, 400)), ...feat([0, 1], sq(3000, 3000, 200)),
+    ...fld(3, 2, str("is_underground")), ...fld(4, 2, fld(7, 0, 0)), ...fld(4, 2, fld(7, 0, 1)), ...fld(5, 0, 4096)];
+  return fld(3, 2, layer);
+}
 const box = (s, w, n, e) => [{ lat: s, lon: w }, { lat: s, lon: e }, { lat: n, lon: e }, { lat: n, lon: w }, { lat: s, lon: w }];
 const C0 = [13.75, 100.5];
 const LINE_LON = 100.5035;
@@ -65,7 +78,9 @@ const OSM = { elements: [
   { type: "way", id: 5, tags: { building: "house" }, geometry: box(HOUSE[0] - 0.0001, HOUSE[1] - 0.0001, HOUSE[0] + 0.0001, HOUSE[1] + 0.0001) },
   { type: "way", id: 6, tags: { natural: "water" }, geometry: box(13.7525, 100.5045, 13.757, 100.5105) },
   { type: "way", id: 7, tags: { power: "line", voltage: "115000" }, geometry: [{ lat: 13.744, lon: LINE_LON }, { lat: 13.768, lon: LINE_LON }] },
-  { type: "node", id: 8, lat: 13.7505, lon: 100.5005, tags: { aeroway: "helipad", name: "Test Pad" } }
+  { type: "node", id: 8, lat: 13.7505, lon: 100.5005, tags: { aeroway: "helipad", name: "Test Pad" } },
+  /* a grass strip across the farmland, about 860 m long */
+  { type: "way", id: 9, tags: { aeroway: "runway", ref: "09/27", surface: "grass", width: "30" }, geometry: [{ lat: 13.7470, lon: 100.486 }, { lat: 13.7470, lon: 100.494 }] }
 ] };
 /* the same obstacles as Postpass answers them: closed ways as polygons, the line as a line, the helipad as a point */
 const PPOSM = { type: "FeatureCollection", features: OSM.elements.map((e) => {
@@ -194,10 +209,36 @@ let viaPostpass = "";
   const sm = await p.evaluate(() => { const r = window.OSAP_LZ.state().res; return { n: r.cands.length, small: (r.small || []).map((k) => ({ lat: k.lat, lon: k.lon, clearD: k.clearD, rank: k.rank, small: k.small })) }; });
   ok(sm.small.length >= 1 && sm.small.every((k, i) => k.small === 50 && k.clearD >= 50 && k.clearD < 100 && k.rank === sm.n + i + 1), "desktop: 50 m only spots are marked too, each 50 to 100 m clear, numbered after the rest " + JSON.stringify(sm.small.map((k) => [k.rank, k.clearD])));
   ok(sm.small.some((k) => inBox([k.lat, k.lon], 13.7383, 100.4965, 13.7400, 100.4983)), "desktop: the sports pitch in the village is one of the 50 m spots");
-  ok(await p.evaluate((n) => document.querySelectorAll("#lz-card li[data-lzi]").length === n && /Also 50 m only \(UH-60 and smaller\)/.test(document.getElementById("lz-card").textContent) && document.querySelectorAll(".leaflet-tooltip.lznum.s").length >= 1 && getComputedStyle(document.querySelector(".leaflet-tooltip.lznum.s")).backgroundColor === "rgb(123, 31, 162)", sm.n + sm.small.length), "desktop: the list has a 50 m only section and the map has purple numbered spots");
+  ok(await p.evaluate((n) => document.querySelectorAll("#lz-card li[data-lzi]").length === n && /Also 50 m only \(UH-60 and smaller\)/.test(document.getElementById("lz-card").textContent) && document.querySelectorAll(".leaflet-tooltip.lznum.s").length >= 1 && getComputedStyle(document.querySelector(".leaflet-tooltip.lznum.s")).backgroundColor === "rgb(123, 31, 162)", sm.n + sm.small.length + (await p.evaluate(() => { const a = window.OSAP_LZ.state().res.at; return a && (a.fits || a.small) ? 1 : 0; }))), "desktop: the list has a 50 m only section and the map has purple numbered spots");
   ok(await p.evaluate(() => { const t = [...document.querySelectorAll("#lz-card li[data-lzi] .lzac")].map((e) => e.textContent); return t.length && /^Aircraft: CH-47 with sling load, CH-47, UH-60, UH-1, AH-64, MH-6, OH-58/.test(t[0]) && t.some((x) => /^Aircraft: UH-60, UH-1, AH-64, MH-6, OH-58$/.test(x)); }), "desktop: each candidate lists the aircraft it takes (100 m: up to CH-47 with sling load; 50 m: UH-60 and smaller)");
   ok(await p.evaluate((sm) => window.OSAP_LZ.state().res.small.every((k) => !!k._m)), "desktop: every 50 m spot has its map mark", sm);
-  await p.click("#lz-card li[data-lzi='0']"); await p.waitForTimeout(500);
+  /* the search point itself (open farmland) is checked and offered as P, ahead of the ranked list */
+  const at = await p.evaluate(() => { const a = window.OSAP_LZ.state().res.at; return a && { fits: a.fits, clearD: a.clearD, why: a.why, m: !!a._m }; });
+  ok(at && at.fits && at.clearD >= 100 && at.m && await p.evaluate(() => { const l = document.querySelector("#lz-card li.p"); return !!l && /Your search point/.test(document.getElementById("lz-card").textContent) && l.querySelector("b.n").textContent === "P" && !!document.querySelector(".leaflet-tooltip.lznum.p"); }),
+    "desktop: the search point takes the LZ and is offered as P " + JSON.stringify(at));
+  /* the mapped runway is listed and drawn, with its length, width, surface and heading */
+  const rw = await p.evaluate(() => (window.OSAP_LZ.state().res.strips || []).map((t) => ({ kind: t.kind, ref: t.ref, len: t.len, wid: t.wid, surface: t.surface, hd: t.hd, m: !!t._m })));
+  ok(rw.length === 1 && rw[0].kind === "Runway" && rw[0].ref === "09/27" && Math.abs(rw[0].len - 864) < 20 && rw[0].wid === 30 && rw[0].surface === "grass" && Math.abs(rw[0].hd - 90) <= 1 && rw[0].m, "desktop: the mapped runway is listed with length, width, surface and heading " + JSON.stringify(rw));
+  ok(await p.evaluate(() => { const l = document.querySelector("#lz-card li[data-lzs]"); return !!l && /Runway 09\/27/.test(l.textContent) && /864 m × 30 m/.test(l.textContent) && /OpenStreetMap/.test(document.getElementById("lz-card").textContent); }), "desktop: the runway's list entry names it and its source");
+  ok(/Runway 09\/27/.test(await p.evaluate(() => window.OSAP_LZ._kml(window.OSAP_LZ.state().res))) && /LZ at search point/.test(await p.evaluate(() => window.OSAP_LZ._kml(window.OSAP_LZ.state().res))), "desktop: the TAK package carries the runway and the search point LZ");
+  await p.click("#lz-card li.p"); await p.waitForTimeout(400);
+  ok(/Candidate LZ at your search point: candidate from open data/.test(await p.evaluate(() => { const e = document.querySelector(".leaflet-popup-content"); return e ? e.textContent : ""; })), "desktop: P's pop-up says it is the search point and a candidate from open data");
+  /* building footprints: a vector tile decodes to its squares, the underground one flagged */
+  const mv = await p.evaluate((b) => window.OSAP_LZ.mvtPolys(new Uint8Array(b).buffer, "building").map((f) => ({ u: f.props.is_underground, n: f.rings[0].length, x: f.rings[0][0][0], y: f.rings[0][0][1], ext: f.ext })), mvt());
+  ok(mv.length === 2 && mv[0].u === false && mv[1].u === true && mv[0].n === 4 && mv[0].x === 1000 && mv[0].y === 1000 && mv[0].ext === 4096, "desktop: building footprint tiles decode " + JSON.stringify(mv));
+  /* with footprints loaded, land cover's "built area" no longer blocks bare ground on its own, and each footprint does;
+     with too few footprints for the built-up land (no coverage), land cover goes on blocking */
+  const fp = await p.evaluate(() => {
+    const L = window.OSAP_LZ, win = L.windowFor([13.75, 100.5], 600), n = win.w * win.h, E = new Float32Array(n).fill(100), lc = new Uint8Array(n).fill(11);
+    const at = (x, y) => y * win.w + x, mid = Math.floor(win.w / 2);
+    for (let y = mid - 20; y < mid + 20; y++) for (let x = mid - 20; x < mid + 20; x++) lc[at(x, y)] = 7;
+    const sq = [[mid + 30, mid + 30], [mid + 34, mid + 30], [mid + 34, mid + 34], [mid + 30, mid + 34]];
+    const o = { o: [13.75, 100.5], radius: 500, size: 50, slope: 7, lc };
+    const a = L.analyse(win, E, [], o), b = L.analyse(win, E, [], Object.assign({ bld: { rings: [sq], n: 200 } }, o)), c = L.analyse(win, E, [], Object.assign({ bld: { rings: [sq], n: 3 } }, o));
+    return { noFp: a.OBC[at(mid, mid)], fp: b.OBC[at(mid, mid)], fpBld: b.OBC[at(mid + 32, mid + 32)], thin: c.OBC[at(mid, mid)], fpOk: b.counts.fpOk, cover: (b.cands.filter((k) => /Built-up/.test(k.cover))[0] || {}).cover || "" };
+  });
+  ok(fp.noFp === 6 && fp.fp === 0 && fp.fpBld === 1 && fp.thin === 6 && fp.fpOk === 1, "desktop: footprints replace land cover's built-up guess (blocked only without them or where they are too few) " + JSON.stringify(fp));
+  await p.click("#lz-card li[data-lzi='1']"); await p.waitForTimeout(500);
   const pop = await p.evaluate(() => { const e = document.querySelector(".leaflet-popup-content"); return e ? e.textContent : ""; });
   ok(/candidate from open data, verify on the ground/.test(pop), "desktop: pop-up says candidate from open data, verify on the ground");
   ok(/Grid:\s*47P\s?[A-Z]{2}\s?\d{5}\s?\d{5}/.test(pop), "desktop: pop-up gives an MGRS grid (" + (pop.match(/Grid:[^C]*/) || [""])[0].trim() + ")");
