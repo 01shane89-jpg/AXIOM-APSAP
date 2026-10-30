@@ -58,7 +58,7 @@
   var SYMNAME = { dep: "Airfield", land: "Airfield", cp: "Air Control Point", ip: "Air Control Point" };
 
   function acft(id) { return ACFT.filter(function (a) { return a.id === id; })[0] || ACFT[0]; }
-  function blank() { var a = ACFT[0]; return { id: "f" + Date.now().toString(36), name: "", acft: a.id, kt: a.kt, drop: a.drop, range: a.range, altFt: 1000, cruiseFt: 5000, wind: "none", man: { dir: 0, kt: 0 }, wx: null, jump: jumpDef("sl"), timeMode: "dep", t: null, dzLen: 1000, dzWid: 400, pts: [] }; }
+  function blank() { var a = ACFT[0]; return { id: "f" + Date.now().toString(36), name: "", acft: a.id, kt: a.kt, drop: a.drop || 110, range: a.range, altFt: 1000, cruiseFt: 5000, wind: "none", man: { dir: 0, kt: 0 }, wx: null, jump: jumpDef("sl"), timeMode: "dep", t: null, dzLen: 1000, dzWid: 400, pts: [] }; }
   function cleanPt(p) {
     if (!p || !isFinite(p.lat) || !isFinite(p.lon) || Math.abs(p.lat) > 90) return null;
     var o = { role: ROLES.some(function (r) { return r[0] === p.role; }) ? p.role : "cp", name: clean(p.name, 60), lat: +p.lat, lon: wrap(+p.lon), cc: clean(p.cc, 8) };
@@ -70,7 +70,7 @@
     var b = blank(); if (!p || typeof p !== "object") return b;
     var a = acft(p.acft);
     b.id = clean(p.id, 40) || b.id; b.name = clean(p.name, 60); b.acft = a.id;
-    b.kt = +p.kt > 0 && +p.kt <= 700 ? +p.kt : a.kt; b.drop = +p.drop > 0 && +p.drop <= 400 ? +p.drop : a.drop; b.range = +p.range >= 0 && +p.range <= 10000 ? +p.range : a.range;
+    b.kt = +p.kt > 0 && +p.kt <= 700 ? +p.kt : a.kt; b.drop = +p.drop > 0 && +p.drop <= 400 ? +p.drop : a.drop || b.drop; b.range = +p.range >= 0 && +p.range <= 10000 ? +p.range : a.range;
     b.altFt = +p.altFt > 0 && +p.altFt <= 40000 ? +p.altFt : 1000; b.timeMode = p.timeMode === "tot" ? "tot" : "dep"; b.t = isFinite(p.t) && p.t > 0 ? +p.t : null;
     b.dzLen = +p.dzLen >= 50 && +p.dzLen <= 10000 ? +p.dzLen : 1000; b.dzWid = +p.dzWid >= 50 && +p.dzWid <= 10000 ? +p.dzWid : 400;
     b.pts = (Array.isArray(p.pts) ? p.pts : []).map(cleanPt).filter(Boolean).slice(0, MAX_PTS);
@@ -470,7 +470,7 @@
     var c = ensure(), p = S.plan, a = acft(p.acft), R = legs(p), P = p.pts, sp = savedPts(), dzs = savedDzs();
     var h = "<h3>" + IC + ' Flight plan <span class="fltag2" tabindex="0" title="Worked out by fixed rules in this browser: straight lines at the speed set here, with the winds chosen. Not AI, not analyst-approved, not a flight plan.">Planning aid</span>' +
       (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-fl="close" aria-label="Close the flight plan">Close</button></h3>';
-    h += '<h4>Aircraft</h4><div class="flac">' + acSym(a, 22) + '<select id="fl-ac" aria-label="Aircraft type">' + ACFT.map(function (x) { return '<option value="' + x.id + '"' + (x.id === a.id ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></div>" +
+    h += '<h4>Aircraft</h4><div class="flac">' + acSym(a, 22) + '<select id="fl-ac" aria-label="Aircraft type">' + (W.OSAP_DZ && W.OSAP_DZ.aircraftOptions ? W.OSAP_DZ.aircraftOptions({ sel: a.id }) : ACFT.map(function (x) { return '<option value="' + x.id + '"' + (x.id === a.id ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("")) + "</select></div>" +
       '<div class="flrow"><label>Cruise <input type="number" id="fl-kt" min="40" max="700" step="5" value="' + p.kt + '"> kt</label><label>Drop speed <input type="number" id="fl-drop" min="40" max="400" step="5" value="' + p.drop + '"> kt</label></div>' +
       '<div class="flrow"><label>Drop altitude <input type="number" id="fl-alt" min="100" max="40000" step="50" value="' + p.altFt + '"> ft AGL</label><label>Range <input type="number" id="fl-rng" min="0" max="10000" step="50" value="' + p.range + '"> nm</label></div>' +
       '<p class="flsm">Typical published figures for the type; set the ones the aircrew give you. Speeds are true airspeeds.</p>';
@@ -631,7 +631,8 @@
   }
   function tapEnd() { S.arm = false; map.getContainer().style.cursor = ""; map.off("click", onTap); }
   function onTap(e) { tapEnd(); add({ lat: e.latlng.lat, lon: e.latlng.lng, name: "", cc: W.TSAP && W.TSAP.country }); }
-  function setAcft(id) { var a = acft(id), p = S.plan; p.acft = a.id; p.kt = a.kt; p.drop = a.drop; p.range = a.range; changed(); }
+  /* a type with no typical drop speed in the catalogue keeps the drop speed already set */
+  function setAcft(id) { var a = acft(id), p = S.plan; p.acft = a.id; p.kt = a.kt; p.drop = a.drop || p.drop; p.range = a.range; changed(); }
   function fromDz(k, id) {
     var z = null; try { z = W.OSAP_DZ.get(id); } catch (e) {}
     var q = S.plan.pts[k]; if (!q || !z || !Array.isArray(z.pi)) return;

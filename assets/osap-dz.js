@@ -5,29 +5,44 @@
    A drop zone: { id, name, cc, pi: [lat, lon] (point of impact), axis (run-in heading, degrees true), shape ("rect" or
    "circle"), len_m, wid_m, pi_lead_m (point of impact from the leading edge), elev_m, tot (drop time, ISO Zulu), alt_ft (drop
    altitude above the DZ), acft (aircraft), fields { ... } (the DZSO's own notes), updated (ms) }.
-   window.OSAP_DZ = { list(cc?), get(id), save(dz) -> dz, remove(id), on(fn), clean(dz), aircraft }
-   aircraft: the one list of aircraft types both tools offer (the DZSO sheet's Aircraft drop-down, the flight planner's type);
+   window.OSAP_DZ = { list(cc?), get(id), save(dz) -> dz, remove(id), on(fn), clean(dz), aircraft, aircraftReady(),
+     aircraftOptions(o) }
+   aircraft: the one list of aircraft types every tool offers (the DZSO sheet's Aircraft drop-down, the flight planner's type, the
+   Route tab's aircraft), filled from assets/osap-aircraft.js by aircraftReady();
    a drop zone stores the type's name in acft, so either tool reads what the other picked. */
 (function () {
   "use strict";
   var W = window, KEY = "osap-dz", MAX = 200, subs = [];
-  /* typical published figures, rounded; every one can be changed in a flight plan. kt = cruise true airspeed, drop = typical
-     personnel drop airspeed, range = typical range in nm with a load, for a soft warning only; sym = 2525D air entity */
-  var AIRCRAFT = [
-    { id: "c130h", name: "C-130H Hercules", kt: 290, drop: 130, range: 2000, sym: "110107" },
-    { id: "c130j", name: "C-130J Super Hercules", kt: 320, drop: 130, range: 1800, sym: "110107" },
-    { id: "c17", name: "C-17A Globemaster III", kt: 450, drop: 135, range: 2400, sym: "110107" },
-    { id: "a400m", name: "A400M Atlas", kt: 400, drop: 130, range: 1800, sym: "110107" },
-    { id: "c27j", name: "C-27J Spartan", kt: 300, drop: 120, range: 1000, sym: "110107" },
-    { id: "c295", name: "C-295 (CASA)", kt: 260, drop: 110, range: 1500, sym: "110107" },
-    { id: "cn235", name: "CN-235 (CASA)", kt: 240, drop: 110, range: 1500, sym: "110107" },
-    { id: "dhc6", name: "DHC-6 Twin Otter", kt: 150, drop: 90, range: 700, sym: "110113" },
-    { id: "c208", name: "Cessna 208 Caravan", kt: 180, drop: 90, range: 900, sym: "110113" },
-    { id: "uh60", name: "UH-60 Black Hawk", kt: 145, drop: 70, range: 300, sym: "110200" },
-    { id: "ch47", name: "CH-47 Chinook", kt: 150, drop: 80, range: 350, sym: "110200" },
-    { id: "mi17", name: "Mi-8/Mi-17", kt: 125, drop: 70, range: 300, sym: "110200" },
-    { id: "v22", name: "CV-22 / MV-22 Osprey", kt: 240, drop: 110, range: 800, sym: "110114" },
-    { id: "custom", name: "Other (set your own)", kt: 200, drop: 110, range: 0, sym: "110107" }];
+  /* the aircraft types: the full catalogue lives in assets/osap-aircraft.js (over 200 types), fetched the first time a tool
+     asks through aircraftReady(), which fills this same array in place so a tool already holding it sees every type. Until
+     then it holds only "Other". */
+  var AIRCRAFT = [{ id: "custom", name: "Other (set your own)", g: "Other", kt: 200, range: 0, ceil: 0, drop: 110, sym: "110107" }], acWait = null;
+  function fillAircraft() { if (Array.isArray(W.OSAP_AIRCRAFT) && W.OSAP_AIRCRAFT.length > 1 && AIRCRAFT.length < 2) AIRCRAFT.splice.apply(AIRCRAFT, [0, AIRCRAFT.length].concat(W.OSAP_AIRCRAFT)); return AIRCRAFT; }
+  /* -> Promise of the full list; on a failed fetch it resolves with what it has ("Other"), and a later call tries again */
+  function aircraftReady() {
+    if (fillAircraft().length > 1) return Promise.resolve(AIRCRAFT);
+    if (acWait) return acWait;
+    acWait = new Promise(function (ok) {
+      var sc = document.createElement("script"); sc.src = "assets/osap-aircraft.js";
+      sc.onload = function () { acWait = null; ok(fillAircraft()); };
+      sc.onerror = function () { acWait = null; sc.remove(); ok(AIRCRAFT); };
+      document.head.appendChild(sc);
+    });
+    return acWait;
+  }
+  /* the <option>s for an aircraft drop-down, in <optgroup>s by group; o: { sel (the chosen id, or name with byName), byName
+     (option values are names, as the DZSO sheet stores), noCustom (leave "Other" out) } */
+  function aircraftOptions(o) {
+    o = o || {}; var h = "", g = null;
+    function e(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+    AIRCRAFT.forEach(function (a) {
+      if (o.noCustom && a.id === "custom") return;
+      if (a.g !== g) { h += (g === null ? "" : "</optgroup>") + '<optgroup label="' + e(a.g || "Other") + '">'; g = a.g; }
+      var v = o.byName ? a.name : a.id;
+      h += '<option value="' + e(v) + '"' + (v === o.sel ? " selected" : "") + ">" + e(a.name) + "</option>";
+    });
+    return h + (g === null ? "" : "</optgroup>");
+  }
   function read() { try { var a = JSON.parse(localStorage.getItem(KEY) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
   function write(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
   function num(v, lo, hi) { v = +v; return isFinite(v) && v >= lo && v <= hi ? v : null; }
@@ -68,5 +83,5 @@
   function on(fn) { if (typeof fn === "function") subs.push(fn); }
   /* another tab changed them */
   W.addEventListener("storage", function (e) { if (e.key === KEY) tell(null); });
-  W.OSAP_DZ = { list: list, get: get, save: save, remove: remove, on: on, clean: clean, KEY: KEY, aircraft: AIRCRAFT };
+  W.OSAP_DZ = { list: list, get: get, save: save, remove: remove, on: on, clean: clean, KEY: KEY, aircraft: AIRCRAFT, aircraftReady: aircraftReady, aircraftOptions: aircraftOptions };
 })();

@@ -58,15 +58,28 @@ function main() {
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
   var P0 = lsGet(PKEY, {}) || {};
   var S = {
-    ctx: null, wps: [], mode: "car", speed: 4, speedId: "foot", stopMin: 0, depart: null, unit: G.UNITS[P0.unit] ? P0.unit : "km", buf: [1, 5, 10, 25].indexOf(P0.buf) >= 0 ? P0.buf : 5,
+    ctx: null, wps: [], mode: "car", speed: 4, speedId: "foot", acft: "", stopMin: 0, depart: null, unit: G.UNITS[P0.unit] ? P0.unit : "km", buf: [1, 5, 10, 25].indexOf(P0.buf) >= 0 ? P0.buf : 5,
     tap: true, routes: [], sel: 0, err: "", busy: false, token: 0, elev: null, elevErr: "", wx: null, wxErr: "", haz: null, found: null, onlyCc: P0.onlyCc !== false,
     layer: null, hover: null, planT: 0, srch: null, stok: 0, evac: null, evTok: 0, evFoot: /^(both|paths|xc)$/.test(P0.evFoot) ? P0.evFoot : "both"
   };
   if (MODES.some(function (m) { return m.id === P0.mode; })) S.mode = P0.mode;
-  if (P0.speedId) { S.speedId = P0.speedId; S.speed = +P0.speed || 4; }
-  function prefs() { lsSet(PKEY, { unit: S.unit, buf: S.buf, mode: S.mode, speedId: S.speedId, speed: S.speed, onlyCc: S.onlyCc, evFoot: S.evFoot }); }
-  function keepCur() { lsSet(CKEY, { wps: S.wps, mode: S.mode, speedId: S.speedId, speed: S.speed, stopMin: S.stopMin }); }
-  (function () { var c = lsGet(CKEY, null); if (c && Array.isArray(c.wps)) { S.wps = cleanWps(c.wps); if (c.mode) S.mode = c.mode; S.stopMin = +c.stopMin || 0; } })();
+  if (P0.speedId) { S.speedId = P0.speedId; S.speed = +P0.speed || 4; S.acft = acId(P0.acft); }
+  function prefs() { lsSet(PKEY, { unit: S.unit, buf: S.buf, mode: S.mode, speedId: S.speedId, speed: S.speed, acft: S.acft, onlyCc: S.onlyCc, evFoot: S.evFoot }); }
+  function keepCur() { lsSet(CKEY, { wps: S.wps, mode: S.mode, speedId: S.speedId, speed: S.speed, acft: S.acft, stopMin: S.stopMin }); }
+  /* ---------- the aircraft type for straight air legs (Shane 2026-10-29: "For the routes I want to be able to pick the aircraft
+     type. Load all types in there") ----------
+     The types come from the one catalogue the flight planner and the DZSO sheet use (OSAP_DZ.aircraft, filled from
+     assets/osap-aircraft.js on first use). Picking a type sets the straight-line speed to its typical cruise, so every leg time
+     and arrival uses it; still air, no wind applied. S.acft holds the type's id, "" for none. */
+  function acId(v) { return typeof v === "string" && /^[a-z0-9]{1,16}$/.test(v) && v !== "custom" ? v : ""; }
+  function acList() { return (W.OSAP_DZ && W.OSAP_DZ.aircraft) || []; }
+  function acType(id) { return id ? acList().filter(function (a) { return a.id === id; })[0] || null : null; }
+  function setAcft(id) {
+    var a = acType(acId(id)); S.acft = a ? a.id : "";
+    if (a) { S.speed = Math.round(a.kt * 1.852); S.speedId = "acft"; }
+    else if (S.speedId === "acft") S.speedId = "custom";
+  }
+  (function () { var c = lsGet(CKEY, null); if (c && Array.isArray(c.wps)) { S.wps = cleanWps(c.wps); if (c.mode) S.mode = c.mode; S.stopMin = +c.stopMin || 0; if (c.speedId) { S.speedId = c.speedId; S.speed = +c.speed || S.speed; S.acft = acId(c.acft); } } })();
 
   function E(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function clean(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 80); }
@@ -328,13 +341,35 @@ function main() {
   }
   function modesUi() {
     el("rt-modes").innerHTML = MODES.map(function (m) { return '<button type="button" data-mode="' + m.id + '" aria-pressed="' + (S.mode === m.id) + '">' + E(m.name) + "</button>"; }).join("");
-    el("rt-speed").innerHTML = S.mode !== "line" ? "" :
+    el("rt-speed").innerHTML = S.mode !== "line" ? "" : acUi() +
       '<div class="rtrow"><label>Speed <select id="rt-spd">' + SPEEDS.map(function (s) { return '<option value="' + s[0] + '"' + (S.speedId === s[0] ? " selected" : "") + ">" + E(s[1]) + " · " + s[2] + " km/h</option>"; }).join("") +
+      (S.speedId === "acft" && acType(S.acft) ? '<option value="acft" selected>' + E(acType(S.acft).name) + " cruise · " + S.speed + " km/h</option>" : "") +
       '<option value="custom"' + (S.speedId === "custom" ? " selected" : "") + '>Custom</option></select></label><label>km/h <input type="number" id="rt-kmh" min="0.5" max="2000" step="0.5" value="' + S.speed + '"></label></div>' +
       '<p class="obs">Straight lines on the great circle between waypoints, at a steady speed. Use it for cross-country foot or vehicle legs, boats and aircraft; it knows nothing of terrain or obstacles.</p>';
     var fl = el("rt-evfootl"); if (fl) fl.hidden = S.mode !== "foot";
     el("rt-tapbtn").textContent = S.tap ? "Tap map: on" : "Tap map: off";
     el("rt-tapbtn").setAttribute("aria-pressed", String(S.tap));
+  }
+  /* the Aircraft row of Straight line: grouped drop-down, the type's figures, and a note when the route is longer than its range */
+  function acUi() {
+    var Z = W.OSAP_DZ, a = acType(S.acft);
+    if (Z && Z.aircraftReady && acList().length < 2 && !S.acWait) {
+      S.acWait = true;
+      Z.aircraftReady().then(function () { S.acWait = false; if (S.acft && !acType(S.acft)) S.acft = ""; if (S.mode === "line" && el("rt-speed")) modesUi(); });
+    }
+    var opts = Z && Z.aircraftOptions && acList().length > 1 ? Z.aircraftOptions({ sel: S.acft, noCustom: true }) : S.acWait ? '<option value="" disabled>Loading aircraft types…</option>' : "";
+    var h = '<div class="rtrow"><label>Aircraft <select id="rt-ac" aria-label="Aircraft type"><option value="">None (set a speed below)</option>' + opts + "</select></label></div>";
+    if (!a) return h;
+    h += '<p class="obs" id="rt-acinfo">' + E(a.name) + ": cruise " + a.kt + " kt (" + Math.round(a.kt * 1.852) + " km/h)" + (a.range ? ", typical range " + a.range.toLocaleString("en-US") + " nm" : "") +
+      (a.ceil ? ", ceiling " + a.ceil.toLocaleString("en-US") + " ft" : "") + ". Leg times use this cruise in still air, no wind or climb. Typical published figure, rounded; set the speed the aircrew gives you.</p>" +
+      '<div id="rt-acrng">' + acRange() + "</div>";
+    return h;
+  }
+  /* a note when the waypoints add up to more than the type's typical range; kept current as waypoints change (afterRoute) */
+  function acRange() {
+    var a = S.mode === "line" ? acType(S.acft) : null, nm = 0; if (!a || !a.range) return "";
+    for (var i = 0; i < S.wps.length - 1; i++) nm += G.dist([S.wps[i].lat, S.wps[i].lon], [S.wps[i + 1].lat, S.wps[i + 1].lon]) / 1852;
+    return nm > a.range ? '<p class="bad" id="rt-acrange">This route is ' + Math.round(nm).toLocaleString("en-US") + " nm, longer than the " + E(a.name) + "'s typical range of " + a.range.toLocaleString("en-US") + " nm. Plan fuel stops or refuelling.</p>" : "";
   }
   function wpsUi() {
     var box = el("rt-wps"); if (!box) return;
@@ -429,8 +464,9 @@ function main() {
     else if (id === "rt-evfoot") { S.evFoot = t.value; prefs(); }
     else if (id === "rt-stop") { S.stopMin = Math.max(0, Math.min(1440, +t.value || 0)); keepCur(); retime(); }
     else if (id === "rt-dep") { var ms = Date.parse(t.value + ":00Z"); if (isFinite(ms)) { S.depart = ms; retime(); } }
-    else if (id === "rt-spd") { S.speedId = t.value; var s = SPEEDS.filter(function (x) { return x[0] === t.value; })[0]; if (s) S.speed = s[2]; prefs(); modesUi(); plan(); }
-    else if (id === "rt-kmh") { var v = +t.value; if (v > 0 && v <= 2000) { S.speed = v; S.speedId = "custom"; prefs(); modesUi(); plan(); } }
+    else if (id === "rt-ac") { setAcft(t.value); prefs(); keepCur(); modesUi(); plan(); }
+    else if (id === "rt-spd") { if (t.value === "acft") return; S.speedId = t.value; S.acft = ""; var s = SPEEDS.filter(function (x) { return x[0] === t.value; })[0]; if (s) S.speed = s[2]; prefs(); keepCur(); modesUi(); plan(); }
+    else if (id === "rt-kmh") { var v = +t.value; if (v > 0 && v <= 2000) { S.speed = v; S.speedId = "custom"; S.acft = ""; prefs(); keepCur(); modesUi(); plan(); } }
   }
   function add(lat, lon, name) {
     if (S.wps.length >= MAX_WP) { msg("Up to " + MAX_WP + " waypoints."); return; }
@@ -500,6 +536,7 @@ function main() {
     evSync();
     if (S.pvR && S.pvR !== S.routes[S.sel] && W.OSAP_PREVIEW && W.OSAP_PREVIEW.isOpen()) { S.pvR = null; W.OSAP_PREVIEW.close(); }
     drawRoute(); sumUi(); wpsUi(); evUi(); if (!timeOnly) staleSearch();
+    var ar = el("rt-acrng"); if (ar) ar.innerHTML = acRange();
     if (!S.routes.length && S.fitNext && S.wps.length === 1 && !S.busy) { S.fitNext = false; fit(); }
     if (!S.routes.length) { ["rt-prof", "rt-sun", "rt-wx", "rt-haz", "rt-dir"].forEach(function (id) { var x = el(id); if (x) x.innerHTML = '<p class="obs">' + (S.busy ? "Planning…" : "Add at least two waypoints.") + "</p>"; }); mobUi(); return; }
     prep(S.routes[S.sel]);
@@ -1662,7 +1699,7 @@ function main() {
     msg("Saved " + a.download + ".");
   }
   function shareLink() {
-    var q = S.mode + "~" + (S.mode === "line" ? S.speed : "") + "~" + S.wps.map(function (w) { return w.lat.toFixed(5) + "," + w.lon.toFixed(5) + (w.name ? "," + w.name.replace(/[~|,]/g, " ") : ""); }).join("|");
+    var q = S.mode + "~" + (S.mode === "line" ? S.speed + (S.acft ? "@" + S.acft : "") : "") + "~" + S.wps.map(function (w) { return w.lat.toFixed(5) + "," + w.lon.toFixed(5) + (w.name ? "," + w.name.replace(/[~|,]/g, " ") : ""); }).join("|");
     /* after "#", so no server (GitHub Pages included) ever receives the waypoints; assets/osap-start.js reads it */
     return location.origin + location.pathname + "#" + S.ctx.cc + "/route?rt=" + encodeURIComponent(q);
   }
@@ -1677,13 +1714,14 @@ function main() {
     var wps = parts[2].split("|").map(function (x) { var f = x.split(","); return { lat: +f[0], lon: +f[1], name: f.slice(2).join(" ") }; });
     wps = cleanWps(wps); if (wps.length < 1) return false;
     if (MODES.some(function (x) { return x.id === parts[0]; })) S.mode = parts[0];
-    if (+parts[1] > 0 && +parts[1] <= 2000) { S.speed = +parts[1]; S.speedId = "custom"; }
+    var sp = parts[1].split("@");
+    if (+sp[0] > 0 && +sp[0] <= 2000) { S.speed = +sp[0]; S.speedId = "custom"; S.acft = ""; if (acId(sp[1])) { S.acft = acId(sp[1]); S.speedId = "acft"; } }
     S.wps = wps; keepCur();
     try { history.replaceState(null, "", location.pathname + location.search.replace(/([?&])rt=[^&]*&?/, "$1").replace(/[?&]$/, "") + location.hash); } catch (e) {}
     return true;
   }
   function asText() {
-    var r = S.routes[S.sel], dep = departMs(), L1 = ["AXIOM OSAP route (planning aid): " + routeName(), "Travel: " + (MODES.filter(function (m) { return m.id === S.mode; })[0] || {}).name + (S.mode === "line" ? " at " + S.speed + " km/h" : "")];
+    var r = S.routes[S.sel], dep = departMs(), L1 = ["AXIOM OSAP route (planning aid): " + routeName(), "Travel: " + (MODES.filter(function (m) { return m.id === S.mode; })[0] || {}).name + (S.mode === "line" ? " at " + S.speed + " km/h" + (acType(S.acft) ? " (" + acType(S.acft).name + " cruise, " + acType(S.acft).kt + " kt, still air)" : "") : "")];
     S.wps.forEach(function (w, i) { L1.push(LET.charAt(i) + ". " + (w.name || "") + "  " + (G.mgrs(w.lat, w.lon) || "") + "  " + G.fmtLL(w.lat, w.lon) + (r ? "  " + (i ? "arrive " : "depart ") + when(dep + r.t[r.bounds[i]] * 1000) : "")); });
     if (r) {
       L1.push("Total " + dist(r.m) + ", " + dur(r.total) + (r.src ? " (" + r.src.name + ")" : ""));
@@ -1782,7 +1820,7 @@ function main() {
     if (S.wps.length < 2) { msg("Add at least two waypoints first."); return; }
     var list = savedAll(); if (list.length >= MAX_SAVED) { msg("Up to " + MAX_SAVED + " saved routes. Delete some first."); return; }
     var b = new Uint8Array(4); crypto.getRandomValues(b);
-    var cl = curLine() || {}, rec = { id: "rt-" + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return x.toString(16); }).join(""), name: clean(name, 60) || autoName(list), cc: S.ctx.cc, mode: S.mode, speed: S.speed, stopMin: S.stopMin, wps: S.wps.slice(), saved: new Date().toISOString(),
+    var cl = curLine() || {}, rec = { id: "rt-" + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return x.toString(16); }).join(""), name: clean(name, 60) || autoName(list), cc: S.ctx.cc, mode: S.mode, speed: S.speed, acft: S.acft || undefined, stopMin: S.stopMin, wps: S.wps.slice(), saved: new Date().toISOString(),
       line: cl.line, m: cl.m, s: cl.s, show: true, color: nextColor(list) };
     list.unshift(rec);
     var ok = lsSet(SKEY, list);
@@ -1792,7 +1830,7 @@ function main() {
   }
   function loadRoute(id) {
     var x = savedAll().filter(function (r) { return r.id === id; })[0]; if (!x) return;
-    S.wps = cleanWps(x.wps); S.mode = x.mode || S.mode; if (x.speed) S.speed = +x.speed; S.stopMin = +x.stopMin || 0; el("rt-stop").value = S.stopMin;
+    S.wps = cleanWps(x.wps); S.mode = x.mode || S.mode; if (x.speed) { S.speed = +x.speed; S.speedId = "custom"; S.acft = ""; } if (acId(x.acft)) { S.acft = acId(x.acft); S.speedId = "acft"; } S.stopMin = +x.stopMin || 0; el("rt-stop").value = S.stopMin;
     modesUi(); changed(); fit();
   }
   function savedUi() {
@@ -1905,7 +1943,8 @@ function main() {
   }
   W.OSAP_ROUTETAB = { show: show, seed: function (pts) { if (S.ctx) { S.wps = cleanWps(pts.map(function (p) { return { lat: p[0], lon: p[1] }; })); changed(); fit(); } },
     route: function () { var r = S.routes[S.sel]; return r ? { coords: r.coords.slice(), xc: !!r.xc, road: !!r.road, water: (r.water || []).slice(), m: r.m, s: r.s } : null; },
-    state: function () { return { token: S.token, wps: S.wps.slice(), mode: S.mode, routes: S.routes.length, sel: S.sel, err: S.err, busy: S.busy, haz: S.haz && S.haz.hits.length, elev: !!S.elev, wx: !!S.wx }; },
+    state: function () { return { token: S.token, wps: S.wps.slice(), mode: S.mode, routes: S.routes.length, sel: S.sel, err: S.err, busy: S.busy, haz: S.haz && S.haz.hits.length, elev: !!S.elev, wx: !!S.wx,
+      speed: S.speed, acft: S.acft, m: S.routes[S.sel] ? S.routes[S.sel].m : null, s: S.routes[S.sel] ? S.routes[S.sel].s : null, legs: S.routes[S.sel] ? S.routes[S.sel].legs.map(function (l) { return l.s; }) : [] }; },
     hosts: HOST, preview: function () { preview(null); }, navigate: function () { navigate(null); },
     /* the evacuation engine for the evacuation planner (assets/osap-epe.js): evRun(to, start, o) -> { opts, nCand, notes };
        evShow(plan in the kept shape) opens one line here with its checkpoints */

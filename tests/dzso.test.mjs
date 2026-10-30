@@ -86,7 +86,16 @@ ok(C.lightAt(10) === "Day" && C.lightAt(-3) === "Civil twilight" && C.lightAt(-9
   ok(S.save({ name: "bad", pi: [95, 0] }) === null, "a point off the globe is refused");
   ok(S.clean({ pi: [1, 2], tot: "tomorrow" }).tot === "", "a drop time that is not ISO Zulu is dropped");
   ok(S.clean({ pi: [1, 2], elev_m: null }).elev_m === null && S.clean({ pi: [1, 2], elev_m: 0 }).elev_m === 0, "an unknown elevation stays unknown (not 0 m), a real 0 m stays");
+  /* the catalogue (assets/osap-aircraft.js) is fetched on first use; here it is already loaded, so aircraftReady fills the list at once */
+  ok(S.aircraft.length === 1 && S.aircraft[0].id === "custom", "before the catalogue loads the list holds only Other");
+  req("../assets/osap-aircraft.js"); const held = S.aircraft; S.aircraftReady();
+  ok(held === S.aircraft && S.aircraft.length > 200, "aircraftReady fills the same list in place (" + S.aircraft.length + " types)");
   ok(Array.isArray(S.aircraft) && S.aircraft.some((a) => a.name === "C-130J Super Hercules") && S.aircraft.every((a) => a.name.length <= 40), "the shared aircraft list fits the 40-character acft field");
+  ok(new Set(S.aircraft.map((a) => a.id)).size === S.aircraft.length && S.aircraft.every((a) => /^[a-z0-9]{1,16}$/.test(a.id) && a.kt >= 40 && a.kt <= 700 && a.range >= 0 && a.drop >= 0 && /^1[12]0\d{3}$/.test(a.sym) && a.g),
+    "every type has a unique id, a cruise speed, a group and a 2525D air entity");
+  ok(["c130h", "c130j", "c17", "a400m", "c27j", "c295", "cn235", "dhc6", "c208", "uh60", "ch47", "mi17", "v22", "custom"].every((id) => S.aircraft.some((a) => a.id === id)), "every id saved plans used before the catalogue is still there");
+  const oh = S.aircraftOptions({ sel: "c17" });
+  ok((oh.match(/<optgroup/g) || []).length >= 12 && /<option value="c17" selected>C-17A Globemaster III<\/option>/.test(oh) && !/value="custom"/.test(S.aircraftOptions({ noCustom: true })), "aircraftOptions groups the types and marks the chosen one");
   mem["osap-dz"] = "not json"; ok(S.list().length === 0, "a broken store reads as empty, never throws");
   mem["osap-dz"] = JSON.stringify([{ pi: [1, 2] }, null, { pi: "x" }]); ok(S.list().length === 1, "bad rows in the store are skipped");
   const b = S.save({ name: "Tadia DZ", pi: [15.1, 100.1], fields: { dzso: "Cpt B", g2a: "34.55" } });
