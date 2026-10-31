@@ -2,7 +2,7 @@
 // tools/refresh_cnpresence.mjs in data/cnpresence/<cc>.json). The country files are answered with made-up records, so the
 // check is the same every run.
 // Checks: a country with no hand-researched list (Vietnam) offers the data set; it lists Chinese-funded projects (with year and
-// amount), Chinese-run ports, and PRC-linked organisations on U.S. lists (one without a city is listed but has no pin); two
+// amount), Chinese-run ports, and China-linked organisations on U.S. lists (one without a city is listed but has no pin); two
 // organisations at one city share one pin whose pop-up names both; a project pop-up shows its source, licence and the
 // source's own claim wording with no "AI generated" tag (on the map or in the Reports panel); the Philippines keeps its hand-researched sea and land sections (with
 // the AI tag on those pop-ups) and adds the generated records; a country with no file (Japan) says none recorded instead of

@@ -268,7 +268,8 @@ async function uslists(mil) {
       const a2 = (COUNTRIES.find((c) => c.id === cc) || {}).a2 || "";
       let place = null;
       for (const a of here) {
-        const c = findCity(cc === "cn" ? String(a.country || "CN").toUpperCase() : a2, [a.city, a.state, ...String(a.address || "").split(/[,;]/).reverse()]);
+        /* only the address's own city and state fields: a street or district name can match a city elsewhere */
+        const c = findCity(cc === "cn" ? String(a.country || "CN").toUpperCase() : a2, [a.city, a.state]);
         if (c) { place = c; break; }
       }
       const where = here.map((a) => [a.city, a.state].filter(Boolean).join(", ")).filter(Boolean)[0] || "";
@@ -277,7 +278,8 @@ async function uslists(mil) {
         id: "cnp:us:" + fp(id, cc).slice(0, 16), src: "uslists", type: "presence", domain: "land", name, kind: "listed_company", sym: "pr_listed",
         lat: place ? r4(place.la) : null, lon: place ? r4(place.lo) : null, prec: place ? "city of the listed address (" + place.nm + ")" : "no position: listed address only",
         place: where || null, actor: name, state: "current",
-        why: clip("On the " + list1 + (start ? " since " + start : "") + ". PRC link: " + (why.length ? why.join("; ") : "listed at an address in China") + "." +
+        why: clip("On the " + list1 + (start ? " since " + start : "") + (progs ? " (programme " + progs + ")" : "") + ". China link: " + (why.length ? why.join("; ") : "listed at an address in China") + "." +
+          (inPRC && !cmic && !on1260 && progs && !/china|cmic|prc/i.test(progs) && /dprk|nkorea|iran|russia|syria|venez|cuba|burma|sdgt|narc|tco/i.test(progs) ? " The listing is under another country's or another sanctions programme; the China address may be a front or trading office." : "") +
           (e.federal_register_notice ? " Federal Register " + e.federal_register_notice + "." : ""), 400),
         list: list1, claim_status: "Listing by the U.S. government; a listing is a U.S. legal designation, not a finding of fact by OSAP", last_reported: start, lic: SOURCES.uslists.lic,
         evidence: [{ date: start, t: list1 + ": " + name, src: e.source_list_url || e.source_information_url || SOURCES.uslists.url, srcname: "U.S. Consolidated Screening List" }],
@@ -306,18 +308,33 @@ async function uslists(mil) {
 const PORT_OPS = "(cosco|china merchants|cmport|cm port|shanghai international port|sipg|qingdao port|tianjin port|ningbo|zhoushan port|guangzhou port|" +
   "beibu gulf|china harbour|\\ychec\\y|china communications construction|\\ycccc\\y|china ocean shipping|hutchison|yantian international|dalian port|" +
   "\\ychinese\\y|\\ychina\\y)";  // PostgreSQL regex: \\y is a word boundary
-async function ports() {
-  const sql = `SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ` +
-    `(coalesce(tags->>'operator','') ~* '${PORT_OPS}' OR coalesce(tags->>'owner','') ~* '${PORT_OPS}' OR coalesce(tags->>'operator:en','') ~* '${PORT_OPS}') AND ` +
-    `(tags->>'landuse' = 'port' OR tags->>'industrial' IN ('port','terminal','container_terminal','shipyard') OR tags ? 'harbour' OR tags->>'man_made' IN ('pier','quay') ` +
-    `OR coalesce(tags->>'seamark:type','') IN ('harbour','harbour_basin','berth') OR tags->>'amenity' = 'ferry_terminal' OR tags->>'port' IS NOT NULL)`;
-  let j = null, err;
-  for (let k = 0; k < 3 && !j; k++) {
-    try { j = JSON.parse(await get("https://postpass.geofabrik.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(sql), headers: { "content-type": "application/x-www-form-urlencoded" } }, 600000)); }
-    catch (e) { err = e; log("ports: postpass", e.message.slice(0, 160)); await new Promise((r) => setTimeout(r, 30000)); }
+/* the whole world in one regex query times out (HTTP 504), so it is read in tiles of 30 degrees of longitude by three latitude
+   bands, as tools/build_infra.mjs does; a tile that fails is retried once, and the source fails only if most tiles do */
+async function postpass(sql) {
+  let err;
+  for (let k = 0; k < 2; k++) {
+    try {
+      const j = JSON.parse(await get("https://postpass.geofabrik.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(sql), headers: { "content-type": "application/x-www-form-urlencoded" } }, 300000));
+      if (!j.features) throw new Error("no features");
+      return j.features;
+    } catch (e) { err = e; log("  postpass", e.message.slice(0, 120)); await new Promise((r) => setTimeout(r, 15000)); }
   }
-  if (!j || !j.features) throw err || new Error("no features");
-  log("ports:", j.features.length, "features");
+  throw err;
+}
+async function ports() {
+  const W = `(coalesce(tags->>'operator','') ~* '${PORT_OPS}' OR coalesce(tags->>'owner','') ~* '${PORT_OPS}' OR coalesce(tags->>'operator:en','') ~* '${PORT_OPS}') AND ` +
+    `(tags->>'landuse' = 'port' OR tags->>'industrial' IN ('port','terminal','container_terminal','shipyard') OR tags ? 'harbour' OR tags->>'man_made' IN ('pier','quay') ` +
+    `OR coalesce(tags->>'seamark:type','') IN ('harbour','harbour_basin','berth') OR tags->>'amenity' = 'ferry_terminal' OR tags ? 'port')`;
+  const feats = []; let bad = 0, n = 0;
+  for (let lon = -180; lon < 180; lon += 30) for (const [s0, n0] of [[-60, -10], [-10, 25], [25, 75]]) {
+    n++;
+    const env = `geom && ST_MakeEnvelope(${lon},${s0},${lon + 30},${n0},4326)`;
+    try { const f = await postpass(`SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${env} AND ${W}`); feats.push(...f); dbg("tile", lon, s0, f.length); }
+    catch (e) { bad++; log("ports: tile", lon, s0, "failed:", e.message.slice(0, 100)); }
+  }
+  if (bad > n / 2) throw new Error(bad + " of " + n + " tiles failed");
+  log("ports:", feats.length, "features,", bad, "tiles failed");
+  const j = { features: feats };
   const out = [];
   for (const f of j.features) {
     const t = f.properties.tags || f.properties || {}, c = f.geometry && f.geometry.coordinates; if (!c) continue;
