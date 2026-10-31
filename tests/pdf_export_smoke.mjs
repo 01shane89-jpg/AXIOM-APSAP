@@ -256,6 +256,16 @@ const click = (p, sel, timeout) => p.waitForSelector(sel, { state: "attached", t
     await click(p, '#seatr [data-st="print"]'); await click(p, "#std-print");
   }, { wait: 150000 });
   await p.evaluate(() => { const b = document.getElementById("std-close"); if (b) b.click(); const c = document.querySelector('#seatr [data-st="close"]'); if (c) c.click(); });
+  /* a site survey worksheet (assets/osap-survey.js): an airfield with surveyed fields and an obstacle */
+  await check("survey", "Site survey (LZ / airfield)", p, async () => {
+    await p.evaluate(() => window.OSAP_SURVEY_GO({ kind: "lz", at: [14.8, 100.65], len: 1000, wid: 30, axis: 90, name: "PDF test strip" }));
+    await p.waitForFunction(() => window.OSAP_SURVEY && window.OSAP_SURVEY.isOpen && window.OSAP_SURVEY.isOpen(), null, { timeout: 20000 });
+    await p.fill('#srv [data-o="surveyor"]', "Test surveyor, test unit"); await p.dispatchEvent('#srv [data-o="surveyor"]', "change");
+    await p.fill('#srv [data-o="remarks"]', "A long remark about the strip that should wrap inside its table cell and not run off the page. ".repeat(4)); await p.dispatchEvent('#srv [data-o="remarks"]', "change");
+    await click(p, '#srv [data-sv="obadd"]'); await p.fill('#srv [data-ob="d"][data-i="0"]', "Tree line at the west end");
+    await click(p, '#srv [data-sv="pdf"]');
+  });
+  await p.evaluate(() => { const c = document.querySelector('#srv [data-sv="close"]'); if (c) c.click(); });
   await check("commsplan", "Comms plan (PACE)", p, async () => {
     await p.evaluate(() => document.querySelector('#view-seg [data-view="comms"]').click());
     await p.waitForFunction(() => window.OSAP_COMMSPLAN && document.querySelector(".cptabs"), null, { timeout: 20000 });

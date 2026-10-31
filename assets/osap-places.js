@@ -5,7 +5,7 @@
      so nothing saved is ever lost by tidying.
    - It files what the other tools already keep, never a second copy: saved points (assets/osap-atak.js, "osap-atak-pts"),
      saved routes (assets/osap-route.js, "osap-routes"), drop zones (assets/osap-dz.js, "osap-dz"), saved flight plans
-     (assets/osap-flight.js, "osap-flights"), NAI/TAI areas (assets/osap-aoi.js, "osap-aoi"), imported KML shapes
+     (assets/osap-flight.js, "osap-flights"), site surveys (assets/osap-survey.js, "osap-surveys"), NAI/TAI areas (assets/osap-aoi.js, "osap-aoi"), imported KML shapes
      (assets/osap-ws.js, "osap-shapes") and saved viewsheds (assets/osap-terrain.js, "osap-viewsheds"); 2026-10-31 (Shane: "a
      folder system that will allow me to turn my saved map data on or off and choose what objects have showing on the map"). Only the folders, which item sits in which folder, and what is hidden are kept here,
      in localStorage "osap-places" (one of the Workspace stores in assets/osap-ws.js):
@@ -23,11 +23,11 @@
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
   if (!L || !map || W.OSAP_PLACES || /[?&]watchscan=1(&|$)/.test(location.search)) return;
-  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", MAX_FOLDERS = 200, MAX_DEPTH = 6;
+  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", SVKEY = "osap-surveys", MAX_FOLDERS = 200, MAX_DEPTH = 6;
   var KCOL = ["#2b8a3e", "#ae3ec9", "#d6336c", "#0c8599", "#f08c00", "#5f3dc4", "#a61e4d", "#495057"];
-  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan" };
+  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan", sv: "Site survey" };
   /* kinds whose on/off box lives here (the hide list); routes and viewsheds keep their own switch; drop zones and flight plans none */
-  var HIDE_RE = /^(pt|ai|sh):[\w-]{1,60}$/, ORDER = "ptaishrtvsdzfl";
+  var HIDE_RE = /^(pt|ai|sh):[\w-]{1,60}$/, ORDER = "ptaishrtvsdzflsv";
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } }
   function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
@@ -43,7 +43,7 @@
     });
     /* a parent that is gone, or a loop, puts the folder at the top */
     out.folders.forEach(function (f) { if (f.parent && (!seen[f.parent] || loops(out.folders, f))) f.parent = ""; });
-    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl|ai|sh|vs):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
+    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl|ai|sh|vs|sv):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
     ["off", "open"].forEach(function (n) { var o = obj(s[n]); Object.keys(o).forEach(function (k) { if (seen[k] && o[k]) out[n][k] = 1; }); });
     var h = obj(s.hide); Object.keys(h).forEach(function (k) { if (HIDE_RE.test(k) && h[k]) out.hide[k] = 1; });
     return out;
@@ -73,6 +73,8 @@
     (W.OSAP_AOI && W.OSAP_AOI.all ? W.OSAP_AOI.all() : arrOf(AKEY)).forEach(function (a) { if (a && typeof a.id === "string" && okPts(a.pts)) out.push({ key: "ai:" + a.id, kind: "ai", id: a.id, name: (a.type ? a.type + " " : "") + (a.name || "Area"), cc: a.cc, pts: a.pts }); });
     arrOf(SKEY).forEach(function (x) { if (x && typeof x.id === "string" && okPts(x.pts)) out.push({ key: "sh:" + x.id, kind: "sh", id: x.id, name: x.name || (x.kind === "line" ? "Line" : "Area"), cc: x.cc, pts: x.pts, line: x.kind === "line" }); });
     viewsheds().forEach(function (v) { out.push({ key: "vs:" + v.id, kind: "vs", id: v.id, name: v.name || "Viewshed", on: v.on !== false, at: [v.observer.lat, v.observer.lon] }); });
+    /* site surveys (assets/osap-survey.js, "osap-surveys"), read from storage since that file loads only when a survey is opened */
+    arrOf(SVKEY).forEach(function (x) { if (x && typeof x.id === "string" && x.g && Array.isArray(x.g.c)) out.push({ key: "sv:" + x.id, kind: "sv", id: x.id, name: x.name || "Site survey", cc: x.cc, at: x.g.c, svKind: x.kind }); });
     (Array.isArray(fl) ? fl : []).forEach(function (p) { if (p && typeof p.id === "string") out.push({ key: "fl:" + p.id, kind: "fl", id: p.id, name: p.name || "Flight plan", plan: p, at: p.pts && p.pts[0] ? [p.pts[0].lat, p.pts[0].lon] : null }); });
     return out.filter(function (x) { return /^[\w-]{1,60}$/.test(x.id); });
   }
@@ -186,8 +188,8 @@
       var box2 = vis === null ? '<span style="width:18px;flex:none"></span>' : '<input type="checkbox" data-pli="' + esc(x.key) + '"' + (vis ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map">';
       return '<li class="pli"><div class="plr' + (on && vis !== false ? "" : " dim") + '">' + box2 +
         (x.kind === "rt" ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
-        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
-        '<button type="button" data-plgo="' + esc(x.key) + '">' + (x.kind === "dz" || x.kind === "fl" ? "Open" : "Go to") + "</button>" +
+        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : x.kind === "sv" ? ({ dz: "DZ", hlz: "HLZ", lz: "LZ / airfield" }[x.svKind] || "Site") + " survey" : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
+        '<button type="button" data-plgo="' + esc(x.key) + '">' + (x.kind === "dz" || x.kind === "fl" || x.kind === "sv" ? "Open" : "Go to") + "</button>" +
         '<select data-plmv="' + esc(x.key) + '" aria-label="Move ' + esc(x.name) + ' to a folder" title="Move to a folder">' + folderOpts(s, s.of[x.key] || "") + "</select></div></li>";
     }
     function folderHtml(f, upOn) {
@@ -209,7 +211,7 @@
       return sub + its || (fid && !q ? '<li class="obs plempty">Empty folder</li>' : "");
     }
     var body = level("", true);
-    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), NAI/TAI areas (Area), imported KML shapes, viewsheds, drop zones and flight plans you save are listed here.") + "</p>";
+    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), NAI/TAI areas (Area), imported KML shapes, viewsheds, drop zones, flight plans and site surveys you save are listed here.") + "</p>";
     if (ui.edit) { var inp = box.querySelector(".plnm"); if (inp) { inp.focus(); inp.select(); } }
   }
   /* is folder id inside folder top (at any depth)? */
@@ -251,6 +253,7 @@
   }
   function goTo(key) {
     var x = items().filter(function (i) { return i.key === key; })[0]; if (!x) return;
+    if (x.kind === "sv") { if (W.OSAP_SURVEY_GO) W.OSAP_SURVEY_GO({ id: x.id }); closeIfFull(); return; }
     if (x.kind === "dz") { if (W.OSAP_DZSO_GO) W.OSAP_DZSO_GO({ id: x.id, at: x.at, name: x.name }); closeIfFull(); return; }
     if (x.kind === "fl") {
       if (!W.OSAP_FLIGHT_GO) return; W.OSAP_FLIGHT_GO({});

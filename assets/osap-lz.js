@@ -687,7 +687,8 @@
       "<p><b>Nearest obstacles beyond the edge:</b> " + (k.near.length ? k.near.slice(0, 5).map(function (o) { return esc(o.n) + " " + Math.round(o.m) + " m " + o.dir + (o.tall && o.m < 150 ? " (tall: check approach)" : ""); }).join("; ") : "none mapped within " + NEAR + " m") + "</p>" +
       (k.point ? "" : "<p><b>From search point:</b> " + esc(fmtKm(k.dist)) + ", " + Math.round(k.brg) + "° true</p>") +
       '<p class="obs">Approach paths assume heights (trees 15 m, buildings 8 m, built-up land 6 m, power lines 20 m, masts 50 m, roads 8 m) and look ' + APPR + " m out. " +
-      "Not checked: soil and surface firmness, crop height, rocks, stumps and holes, small trees, poles and wires missing from the data, wind. Elevation about 30 m detail (AWS Terrain Tiles).</p></div>";
+      "Not checked: soil and surface firmness, crop height, rocks, stumps and holes, small trees, poles and wires missing from the data, wind. Elevation about 30 m detail (AWS Terrain Tiles).</p>" +
+      (W.OSAP_SURVEY_GO && ST.res ? '<p><button type="button" data-lzsv="c:' + allC(ST.res).indexOf(k) + '">Survey this site</button></p>' : "") + "</div>";
   }
   function deg3(d) { return ("00" + Math.round(d) % 360).slice(-3); }
   /* "clear along 045°–225°, 090°–270°" or "confined: way in and out only from 045°" */
@@ -707,7 +708,8 @@
       var sty = { pane: "lzpane", renderer: rend, color: "#1565c0", weight: t.area ? 2 : 6, opacity: 0.85, fillColor: "#1565c0", fillOpacity: 0.25, lgk: "lz", lgl: "Mapped runway or strip" };
       var m = (t.area ? L.polygon(t.line, sty) : L.polyline(t.line, sty)).on("click", function () { popFit(m); })
         .bindPopup('<div class="pop lzpop" data-keep-pop="1"><div class="tier">' + esc(stripName(t)) + " · OpenStreetMap</div><p>" + esc(stripText(t)) + '</p><p><b>Grid (middle):</b> <span class="lzpt">' + esc(grid(t.lat, t.lon)) + "</span></p>" +
-          '<p class="obs">Prepared ground mapped by volunteers, not verified: status, surface condition, obstructions on and beside it, and access unknown. Land along its length; check the sides for poles, lights and signs. <a href="' + esc(t.osm) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></p></div>', { maxWidth: 320 });
+          '<p class="obs">Prepared ground mapped by volunteers, not verified: status, surface condition, obstructions on and beside it, and access unknown. Land along its length; check the sides for poles, lights and signs. <a href="' + esc(t.osm) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></p>' +
+          (W.OSAP_SURVEY_GO ? '<p><button type="button" data-lzsv="s:' + r.strips.indexOf(t) + '">Survey this airfield</button></p>' : "") + "</div>", { maxWidth: 320 });
       m.addTo(layer); t._m = m;
     });
     if (r.at && (r.at.fits || r.at.small)) {
@@ -978,6 +980,22 @@
     else return;
     keep();
   }
+  /* Survey this site / airfield (assets/osap-survey.js): the survey starts on the candidate or the mapped strip, with what the
+     search found kept as from-sources notes, never as the surveyor's own values */
+  D.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-lzsv]"); if (!b || !ST.res || !W.OSAP_SURVEY_GO) return;
+    var v = b.getAttribute("data-lzsv").split(":"), i = +v[1], at = Date.now();
+    if (v[0] === "s") {
+      var t = (ST.res.strips || [])[i]; if (!t) return;
+      W.OSAP_SURVEY_GO({ kind: "lz", at: [t.lat, t.lon], axis: t.hd, len: t.len, wid: t.wid || 30, name: stripName(t) });
+    } else {
+      var k = allC(ST.res)[i]; if (!k) return;
+      W.OSAP_SURVEY_GO({ kind: "hlz", at: [k.lat, k.lon], size: k.small || ST.res.size || S.d, axis: k.axes && k.axes.length ? k.axes[0] : 0, name: (k.point ? "HLZ at search point" : "HLZ " + k.rank),
+        finder: { at: at, clearD: k.clearD, slope: +k.mean.toFixed(1), smax: +k.max.toFixed(1), elev: k.elev, surface: k.surface || "", cover: k.cover || "", appr: apprText(k), craft: kCraft(k),
+          near: k.near.length ? k.near[0].n + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir : "" } });
+    }
+    map.closePopup();
+  });
   D.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-lzcopy]"); if (!b) return;
     var s = b.getAttribute("data-lzcopy");
