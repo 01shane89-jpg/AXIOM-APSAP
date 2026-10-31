@@ -1141,7 +1141,8 @@
   function drawSaved() {
     savedLay.clearLayers();
     vsAll().forEach(function (v) {
-      if (v.on === false) return;
+      /* off by its own switch, or its folder in My places (assets/osap-places.js) is unticked */
+      if (v.on === false || (W.OSAP_PLACES && !W.OSAP_PLACES.shown("vs:" + v.id))) return;
       (v.visible || []).forEach(function (q) { savedLay.addLayer(L.polygon([q.o].concat(q.h || []), { pane: "vspane", stroke: true, color: "#1b5e20", weight: 1, opacity: 0.7, fillColor: "#43a047", fillOpacity: 0.28, interactive: false })); });
       if (v.horizon && v.horizon.length > 2) savedLay.addLayer(L.polyline(v.horizon.concat([v.horizon[0]]), { pane: "vslines", color: "#ffd600", weight: 1.6, dashArray: "4 4", opacity: 0.9, interactive: false }));
       savedLay.addLayer(L.marker([v.observer.lat, v.observer.lon], { pane: "vslines", interactive: false, keyboard: false, icon: L.divIcon({ className: "vsname", html: "<span>" + esc(v.name) + "</span>", iconSize: null, iconAnchor: [0, 0] }) }));
@@ -1259,10 +1260,14 @@
   }
   /* Map overlays > Elevation and terrain analysis > Terrain analysis (index.html) */
   D.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-terrain-open]"); if (b) { e.preventDefault(); open(); } });
+  /* My places folders turned on or off */
+  D.addEventListener("osap:places", function () { drawSaved(); });
   W.OSAP_TERRAIN_TOOLS = W.OSAP_TERRAIN_TOOLS || [];
   W.OSAP_TERRAIN_ANALYSIS = {
     version: VERSION, open: open, close: close, isOpen: isOpen, menu: menu, viewshedAt: viewshedAt, reverseAt: reverseAt, losFrom: losFrom, line: line,
-    saved: function () { return vsAll(); }, save: function (name) { return saveVs("", name); }, showSaved: function (id) { var v = vsGet(id); if (!v) return; if (v.on === false) { vsSet(id, function (x) { x.on = true; }); drawSaved(); paintList(); } map.fitBounds(vsBounds(v), { padding: [30, 30], maxZoom: 14 }); },
+    saved: function () { return vsAll(); },
+    /* My places' box for a saved viewshed: the same switch as here; setOn(null) only redraws after a bulk change */
+    setOn: function (id, on) { if (id) vsSet(id, function (x) { x.on = !!on; }); drawSaved(); paintList(); if (isOpen()) render(); }, save: function (name) { return saveVs("", name); }, showSaved: function (id) { var v = vsGet(id); if (!v) return; if (v.on === false) { vsSet(id, function (x) { x.on = true; }); drawSaved(); paintList(); } map.fitBounds(vsBounds(v), { padding: [30, 30], maxZoom: 14 }); },
     elevationAt: elevationAt, profile: profile, viewshed: viewshed, corridor: function (pts, o) { return corridor(pts, o, APIE); }, routeExposure: routeExposure,
     slopeAt: function (p) { return slopeHere([+p[0], +p[1]]); }, losTo: function (p) { return ST.res ? losTo(p) : Promise.reject(new Error("no viewshed")); },
     state: function () { return { mode: S.mode, arm: ST.arm, line: { pts: ST.line.pts.slice(), result: ST.line.x ? pub(ST.line.x) : null }, obs: ST.obs, busy: ST.busy, err: ST.err, pass: ST.pass, stats: ST.res && ST.res.res.stats, grid: ST.grid && { n: ST.grid.n, res: ST.grid.res, z: ST.grid.z, coverage_pct: ST.grid.coverage_pct, sources: ST.grid.sources }, los: ST.los, marks: lay.getLayers().length + losLay.getLayers().length + lnMarks.getLayers().length, savedMarks: savedLay.getLayers().length, slope: ST.slope && { k: ST.slope.k, pct: ST.slope.pct.slice(), unk_pct: ST.slope.unk_pct, n: ST.slope.g.n }, slopeAt: ST.slopeAt, cor: ST.cor && { stats: ST.cor.stats, stations: ST.cor.stations.length, skipped: ST.cor.skipped, n: ST.cor.n }, corMarks: corLay.getLayers().length, settings: Object.assign({}, S) }; }

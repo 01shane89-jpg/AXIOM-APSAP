@@ -627,7 +627,9 @@
       return '<button type="button" class="atk-dsb' + (sel ? " on" : "") + (b.classList.contains("stub") ? " stub" : "") + '" data-ds="' + esc(v) + '" aria-pressed="' + sel + '">' + esc(b.textContent) + "</button>";
     }).join("") || '<p class="obs">No data sets on this tab.</p>';
     var mk = om.querySelector("#atk-marks"), P = ptsHere(), A = W.OSAP_AOI ? W.OSAP_AOI.list(cc()) : [];
-    mk.innerHTML = (P.length || A.length ? "" : '<p class="obs">Use Point on the toolbar, or long-press the map, to add a point. Long-press to save an NAI/TAI.</p>') +
+    /* My places (assets/osap-places.js): every saved map object in folders, each folder and item with its own on/off box */
+    mk.innerHTML = (W.OSAP_PLACES ? '<button type="button" class="atk-plc" data-mk-places="1" title="Folders for everything you saved to the map, each with an on/off box">My places: folders, show or hide</button>' : "") +
+      (P.length || A.length ? "" : '<p class="obs">Use Point on the toolbar, or long-press the map, to add a point. Long-press to save an NAI/TAI.</p>') +
       P.map(function (p) { return '<div class="atk-mk"><button type="button" data-mk-go="' + esc(p.id) + '"><i class="atk-dot"></i>' + esc(p.n) + (p.ph ? " <span class=\"obs\">" + CAM + p.ph + "</span>" : "") + ' <code>' + esc(fmtPt(p.lat, p.lon, "mgrs")) + '</code></button>' + (W.OSAP_WX && W.OSAP_WX.briefAt ? '<button type="button" class="atk-ic" data-mk-wx="' + esc(p.id) + '" aria-label="Weather brief at ' + esc(p.n) + '" title="One-page weather brief here">' + I.cloud + "</button>" : "") + (W.OSAP_POINTS ? '<button type="button" class="atk-ic" data-mk-ed="' + esc(p.id) + '" aria-label="Edit ' + esc(p.n) + '" title="Name, note and photos">' + I.pen + "</button>" : "") + '<button type="button" class="atk-ic" data-mk-del="' + esc(p.id) + '" aria-label="Remove ' + esc(p.n) + '">' + I.x + "</button></div>"; }).join("") +
       A.map(function (a) { return '<div class="atk-mk"><button type="button" data-aoi-go="' + esc(a.id) + '"><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(a.name) + "</button></div>"; }).join("");
     om.querySelector("#atk-classic").checked = !on();
@@ -658,6 +660,7 @@
     if ((b = t.closest("[data-mk-del]"))) { ptDel(b.getAttribute("data-mk-del")); return; }
     if ((b = t.closest("[data-mk-wx]"))) { var pw = ptsAll().filter(function (x) { return x.id === b.getAttribute("data-mk-wx"); })[0]; if (pw && W.OSAP_WX) { omClose(); W.OSAP_WX.briefAt({ lat: pw.lat, lon: pw.lon, name: pw.n }); } return; }
     if ((b = t.closest("[data-mk-ed]"))) { if (phone()) omClose(); if (W.OSAP_POINTS) W.OSAP_POINTS.edit(b.getAttribute("data-mk-ed")); return; }
+    if ((b = t.closest("[data-mk-places]"))) { omClose(); W.OSAP_PLACES.open(); return; }
     if ((b = t.closest("[data-mk-go]"))) { var p = ptsAll().filter(function (x) { return x.id === b.getAttribute("data-mk-go"); })[0]; if (p) { if (phone()) omClose(); map.setView([p.lat, p.lon], Math.max(map.getZoom(), 12)); } return; }
     if ((b = t.closest("[data-aoi-go]"))) { if (W.OSAP_AOI) { omClose(); W.OSAP_AOI.open(b.getAttribute("data-aoi-go")); } return; }
   });
@@ -755,6 +758,7 @@
     "#atk-om h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 8px}#atk-om h3 .obs{text-transform:none;letter-spacing:0;font-weight:400}#atk-om .obs{color:var(--muted);font-size:12px}" +
     "#atk-ds{display:flex;flex-wrap:wrap;gap:5px}.atk-dsb{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 11px;font:500 12.5px system-ui,sans-serif;cursor:pointer;min-height:32px}.atk-dsb.on{background:#0b7285;border-color:#0b7285;color:#fff}.atk-dsb.stub{opacity:.6}" +
     "#atk-ml #ml-panel{display:block!important;position:static!important;max-height:none!important;box-shadow:none!important;border:0!important;padding:0!important;margin:0!important;width:auto!important;background:none!important}" +
+    ".atk-plc{display:block;width:100%;margin:2px 0 6px;min-height:36px;font:inherit;font-weight:700;text-align:left;padding:6px 10px;border:1px solid var(--accent,#0b7285);border-radius:6px;background:none;color:var(--accent,#0b7285);cursor:pointer}" +
     ".atk-mk{display:flex;align-items:center;gap:4px;border-top:1px solid var(--line-soft,var(--line))}.atk-mk:first-child{border-top:0}.atk-mk>button:first-child{flex:1;text-align:left;border:0;background:none;color:inherit;font:inherit;padding:8px 2px;cursor:pointer;display:flex;align-items:center;gap:6px}" +
     ".atk-mk code{font:11.5px 'IBM Plex Mono',monospace;color:var(--muted)}.atk-dot{display:inline-block;width:9px;height:9px;background:#15aabf;transform:rotate(45deg);border:1.5px solid #fff;box-shadow:0 0 0 1px #15aabf}" +
     ".atk-sw{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.atk-sw input{margin-top:2px}" +

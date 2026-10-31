@@ -163,6 +163,8 @@
     var c = cc();
     shapes().forEach(function (s) {
       if (s.cc !== c) return;
+      /* unticked in My places (its own box, or a folder above it: assets/osap-places.js) */
+      if (W.OSAP_PLACES && !W.OSAP_PLACES.shown("sh:" + s.id)) return;
       var st = s.st || {}, o = { pane: "wsshapes", renderer: shSvg, color: col(st.line, "#e8590c"), weight: Math.min(8, Math.max(1, +st.w || 3)), opacity: isFinite(st.lop) ? Math.min(1, Math.max(0.2, +st.lop)) : 1 };
       var lay = s.kind === "line" ? L.polyline(s.pts, o) : L.polygon(s.pts, Object.assign(o, { fill: st.fill !== null, fillColor: col(st.fill, o.color), fillOpacity: isFinite(st.op) ? Math.min(0.8, Math.max(0, +st.op)) : 0.15 }));
       lay.bindPopup(function () {
@@ -599,6 +601,8 @@
   D.head.appendChild(css);
 
   /* ---------- start ---------- */
+  /* My places folders or boxes changed: imported shapes follow */
+  D.addEventListener("osap:places", function () { if (shLayer) drawShapes(); });
   recover();
   touch(reg());
   if (!watchWk()) setTimeout(watchWk, 1500);
