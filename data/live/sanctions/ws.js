@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"ws","asof":"2026-10-31 11:27Z","items":[{"id":"23824","n":"PRO-GAIN GROUP CORPORATION","t":"entity","p":"DPRK3","ccs":["tw","ws"]}]};
+window.ASAP_SANC_CC={"cc":"ws","asof":"2026-10-31 11:47Z","items":[{"id":"23824","n":"PRO-GAIN GROUP CORPORATION","t":"entity","p":"DPRK3","ccs":["tw","ws"]}]};
