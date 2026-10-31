@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "22f40c202435";
+const VERSION = "7f26ea87486b";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -446,6 +446,7 @@ const PRECACHE = [
 "assets/osap-socialstats.js",
 "assets/osap-geo.js",
 "assets/osap-measure.js",
+"assets/osap-rulers.js",
 "assets/osap-tools.js",
 "assets/osap-atak.js",
 "assets/osap-tidy.js",
@@ -455,6 +456,8 @@ const PRECACHE = [
 "assets/osap-places.js",
 "assets/osap-display.js",
 "assets/osap-3d.js",
+"assets/osap-heading.js",
+"assets/osap-compass.js",
 "assets/osap-ws.js",
 "assets/osap-tak.js",
 "assets/osap-an-auto.js",
@@ -476,6 +479,7 @@ const PRECACHE = [
 "assets/osap-evac.js",
 "assets/osap-dc.js",
 "assets/osap-infra.js",
+"assets/osap-bridges.js",
 "assets/osap-route.js",
 "assets/comms/radio-lib.js",
 "assets/osap-comms.js",
@@ -500,6 +504,7 @@ const PRECACHE = [
 "assets/osap-dz.js",
 "assets/osap-aircraft.js",
 "assets/osap-dzso.js",
+"assets/osap-survey.js",
 "assets/osap-terrain.js",
 "assets/terrain/terrain-provider.js",
 "assets/terrain/providers/remote-dem.js",

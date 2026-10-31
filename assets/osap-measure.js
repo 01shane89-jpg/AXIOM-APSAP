@@ -3,7 +3,8 @@
    Shows each leg's distance, true and magnetic bearing (World Magnetic Model 2025), the total, the area and perimeter of a
    closed shape, and every point as an MGRS grid reference and latitude/longitude, with copy buttons. Units: km, mi or nm;
    bearings in degrees or NATO mils (6400).
-   All maths runs in this browser (assets/osap-geo.js); nothing is sent anywhere and nothing is saved except the unit choice.
+   All maths runs in this browser (assets/osap-geo.js); nothing is sent anywhere. Nothing is saved except the unit choice, unless
+   the analyst taps Save: that keeps the line as a named, coloured ruler on the map and in My places (assets/osap-rulers.js).
    A measurement is the analyst's own working, never a record. "Plan route" hands the points to the Route tab when it is loaded. */
 (function () {
   "use strict";
@@ -106,6 +107,7 @@
       card.innerHTML = '<div class="mbar"><div class="msum" aria-live="polite">' + sum + "</div>" +
         '<button type="button" data-mcu="1" title="Change units">' + (S.mils ? S.unit + "·mil" : S.unit) + "</button>" +
         '<button type="button" data-m="undo" aria-label="Undo last point"' + (P.length ? "" : " disabled") + ">↶</button>" +
+        (P.length >= 2 && window.OSAP_RULERS ? '<button type="button" data-m="save" aria-label="Save as a ruler" title="Save as a ruler">Save</button>' : "") +
         '<button type="button" data-mo="1" aria-expanded="false" aria-label="Show details">▴</button>' +
         '<button type="button" class="mx" data-m="off" aria-label="Close measure">×</button></div>';
       fit(); return;
@@ -134,6 +136,7 @@
       '<button type="button" data-m="undo"' + (P.length ? "" : " disabled") + ">Undo</button>" +
       '<button type="button" data-m="clear"' + (P.length ? "" : " disabled") + ">Clear</button>" +
       (P.length >= 3 ? '<button type="button" data-m="close">' + (S.closed ? "Open shape" : "Close shape") + "</button>" : "") +
+      (P.length >= 2 && window.OSAP_RULERS ? '<button type="button" data-m="save" class="pri" title="Keep this line on the map as a named ruler (in My places, with an on/off box)">Save</button>' : "") +
       (P.length ? '<button type="button" data-m="copy">Copy all</button>' : "") +
       (P.length >= 2 && window.OSAP_ROUTE_SEED ? '<button type="button" data-m="route" class="pri">Plan route</button>' : "") +
       /* the ground along the line (Terrain analysis, assets/osap-terrain.js): A to B line of sight for two points, the
@@ -213,6 +216,7 @@
     else if (k === "clear") { S.pts = []; S.closed = false; }
     else if (k === "close") S.closed = !S.closed;
     else if (k === "copy") return copy(text(), b);
+    else if (k === "save") { if (window.OSAP_RULERS) { var id = window.OSAP_RULERS.save(S.pts.slice(), S.closed); if (id) { setOn(false); S.pts = []; S.closed = false; window.OSAP_RULERS.open(id); } } return; }
     else if (k === "profile") { if (window.OSAP_TERRAIN_ANALYSIS) window.OSAP_TERRAIN_ANALYSIS.line(S.pts.slice()); return; }
     else if (k === "route") { if (window.OSAP_ROUTE_SEED) { var pts = S.pts.slice(); setOn(false); window.OSAP_ROUTE_SEED(pts); } return; }
     draw(); ui();

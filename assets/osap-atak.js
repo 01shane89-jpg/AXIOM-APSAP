@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan, Evacuate from here or DZSO sheet here), Find LZ, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan, Evacuate from here, DZSO sheet here or Site survey here), Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -222,7 +222,7 @@
       var has = areaOn();
       /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
       popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).filter(function (x) { return x.id !== "med"; }).map(function (x) { return [x.id, x.label]; }),
-        has ? [null, ["edit", "Edit shape"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
+        has ? [null, ["edit", "Edit shape"], ["save", "Save shape (or NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "medplan") {
       var mp = D.getElementById("medplan");
@@ -265,7 +265,8 @@
       /* a tool marked point: true (the medical plan) runs without a shape, from the map centre */
       if (run && !areaOn() && !(at && at.point)) { areaWait(run, at ? at.label : "Summarise area"); return; }
       if (run) run();
-      else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
+      /* Save keeps the drawn shape as a plain Shape with its look; its form also offers NAI and TAI (assets/osap-aoi.js) */
+      else if (k === "save") { if (W.OSAP_AOI && W.OSAP_AOI.saveDrawn) W.OSAP_AOI.saveDrawn(); else press("[data-aoi-save]"); } else areaPress(k);
       setTimeout(paintTools, 30);
     }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
@@ -493,6 +494,20 @@
     acReady().then(function () { D.head.appendChild(sc); });
   }
   W.OSAP_DZSO_GO = dzsoGo;
+  /* the site survey (DZ, HLZ, airfield worksheet) lives in assets/osap-survey.js, fetched the first time Plans > Site survey here,
+     the Area menu, the DZSO sheet, the HLZ finder or My places opens it. opts: { kind, at, id, dz, dzId, name, size, finder } */
+  var svWait = null;
+  function surveyGo(opts) {
+    function go(Z) { Z.open(opts || {}); }
+    if (W.OSAP_SURVEY && W.OSAP_SURVEY.open) { go(W.OSAP_SURVEY); return; }
+    if (svWait) { svWait.push(go); return; } svWait = [go];
+    var sc = D.createElement("script"); sc.src = "assets/osap-survey.js";
+    sc.onload = function () { var f = svWait; svWait = null; if (W.OSAP_SURVEY && W.OSAP_SURVEY.open) f.forEach(function (g) { g(W.OSAP_SURVEY); }); };
+    sc.onerror = function () { svWait = null; sc.remove(); toast("The site survey could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  W.OSAP_SURVEY_GO = surveyGo;
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "survey", label: "Site survey (DZ, HLZ, airfield)", point: true, run: function () { surveyGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "dzso", label: "Drop zone (DZSO)", point: true, run: function () { dzsoGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "lz", label: "Landing zones", run: function () { lzLoad(function (Z) { Z.area(); }); } });
 
@@ -505,7 +520,7 @@
      loads after this file) and Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
   function radNow() { return RAD; }
   function plansOpen(r, ll) {
-    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"], ["survey", "Site survey here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
     pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
     pop.hidden = false; pop._for = "plans"; pop._ll = ll;
     /* under the Plans button, kept inside the map */
@@ -561,6 +576,8 @@
     else if (k === "evac") epeGo({ at: P, how: "Long-press on the map" });
     /* DZSO sheet: this point is the drop zone's point of impact */
     else if (k === "dzso") dzsoGo({ at: P });
+    /* site survey (DZ, HLZ or airfield worksheet) centred on this point */
+    else if (k === "survey") surveyGo({ at: P });
     /* one-page weather brief for this point and 25 km around it (assets/osap-weather.js) */
     else if (k === "wxbrief") { if (W.OSAP_WX && W.OSAP_WX.briefAt) W.OSAP_WX.briefAt({ lat: P[0], lon: P[1] }); else toast("Weather is still loading. Try again in a moment."); }
     else if (k === "nai" || k === "watch") {
