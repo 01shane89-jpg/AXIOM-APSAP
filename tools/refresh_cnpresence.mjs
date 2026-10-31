@@ -14,8 +14,9 @@
 //     or the Defense Department's Section 1260H list of Chinese military companies (read from OpenSanctions, CC BY-NC 4.0,
 //     non-commercial and tagged nc so the sold version drops it). Organisations only: no individuals are named.
 //     Placed at the listed city (GeoNames cities, CC BY 4.0) when the city can be found, otherwise listed without a pin.
-//   - OpenStreetMap (ODbL, through Geofabrik's keyless Postpass API): ports, terminals, quays and harbours whose operator or
-//     owner is a Chinese state port or shipping company (COSCO, China Merchants Port, SIPG and others) or CK Hutchison.
+//   - Ports and terminals run or owned by Chinese port groups (COSCO, China Merchants Port, SIPG and others, and Hong Kong's
+//     CK Hutchison): Wikidata operator and owner records (CC0), and OpenStreetMap operator and owner tags (ODbL, through
+//     Geofabrik's keyless Postpass API).
 // Every record is a claim by its source ("Reported, not verified"), not an OSAP finding, and carries a SHA-256 fingerprint.
 // A source that fails keeps its records from the last good run (its ok flag false), so a busy server never empties the layer.
 // Output: data/cnpresence/<cc>.json { v, cc, at, items: [presence records] } and data/cnpresence/index.json
@@ -79,8 +80,8 @@ const SOURCES = {
   dod1260h: { name: "Chinese military companies (DoD Section 1260H list, via OpenSanctions)", org: "U.S. Department of Defense; compiled by OpenSanctions",
     lic: "CC BY-NC 4.0 (non-commercial)", nc: true, url: "https://www.opensanctions.org/datasets/us_dod_chinese_milcorps/" },
   geonames: { name: "City positions for listed addresses (GeoNames cities over 15,000 people)", org: "GeoNames", lic: "CC BY 4.0", url: "https://www.geonames.org/" },
-  ports: { name: "Chinese-run ports and terminals (OpenStreetMap operator and owner tags)", org: "OpenStreetMap contributors (Geofabrik Postpass)",
-    lic: "ODbL 1.0", url: "https://www.openstreetmap.org/copyright" },
+  ports: { name: "Chinese-run ports and terminals (Wikidata operator and owner records; OpenStreetMap operator and owner tags)", org: "Wikidata; OpenStreetMap contributors (Geofabrik Postpass)",
+    lic: "CC0 (Wikidata); ODbL 1.0 (OpenStreetMap)", url: "https://www.wikidata.org/" },
 };
 
 /* ---------- last good run, so a failed source keeps its records ---------- */
@@ -314,7 +315,7 @@ async function postpass(sql) {
   let err;
   for (let k = 0; k < 2; k++) {
     try {
-      const j = JSON.parse(await get("https://postpass.geofabrik.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(sql), headers: { "content-type": "application/x-www-form-urlencoded" } }, 300000));
+      const j = JSON.parse(await get("https://postpass.geofabrik.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(sql), headers: { "content-type": "application/x-www-form-urlencoded" } }, 150000));
       if (!j.features) throw new Error("no features");
       return j.features;
     } catch (e) { err = e; log("  postpass", e.message.slice(0, 120)); await new Promise((r) => setTimeout(r, 15000)); }
@@ -353,6 +354,51 @@ async function ports() {
   return out;
 }
 
+/* ---------- Wikidata: ports and terminals operated or owned by Chinese port groups (CC0) ----------
+   OpenStreetMap tags few terminals with an operator, so Wikidata adds the ones it records: the companies are looked up by
+   name, then every site with coordinates that one of them (or a subsidiary of one) operates or owns, kept when it reads as a
+   port, terminal, harbour, quay or dock. */
+const PORT_GROUPS = ["COSCO Shipping Ports", "COSCO Shipping", "China COSCO Shipping", "China Merchants Port Holdings", "China Merchants Group",
+  "Shanghai International Port Group", "Qingdao Port International", "Ningbo Zhoushan Port", "China Harbour Engineering Company", "China Communications Construction Company",
+  "Hutchison Ports", "CK Hutchison Holdings", "Beibu Gulf Port", "Tianjin Port Group", "Dalian Port"];
+async function wdports() {
+  const roots = new Set();
+  for (const n of PORT_GROUPS) {
+    try {
+      const j = JSON.parse(await get("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=4&search=" + encodeURIComponent(n), {}, 60000));
+      for (const r of j.search || []) if (/compan|port|operator|terminal|shipping|holding|group|conglomerate|enterprise/i.test(r.description || "")) { roots.add(r.id); dbg("wd root", n, r.id, r.label, r.description); }
+    } catch (e) { log("wdports: search", n, e.message.slice(0, 80)); }
+  }
+  if (!roots.size) throw new Error("no companies found");
+  const q = `SELECT ?site ?siteLabel ?coord ?opLabel ?clsLabel ?start WHERE { VALUES ?root { ${[...roots].map((x) => "wd:" + x).join(" ")} }
+    ?op (wdt:P749|wdt:P127)* ?root . ?site (wdt:P137|wdt:P127|wdt:P749) ?op ; wdt:P625 ?coord . OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 5000`;
+  const j = JSON.parse(await get("https://query.wikidata.org/sparql", { method: "POST", body: "query=" + encodeURIComponent(q),
+    headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 240000));
+  const seen = new Map();
+  for (const b of j.results.bindings) {
+    const id = b.site.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
+    const words = [b.siteLabel && b.siteLabel.value, b.clsLabel && b.clsLabel.value].join(" ");
+    if (!/\b(port|terminal|harbou?r|quay|wharf|pier|dock|berth|seaport)\b/i.test(words)) continue;
+    const o = seen.get(id) || { id, name: b.siteLabel ? b.siteLabel.value : id, lon: +m[1], lat: +m[2], ops: new Set(), start: b.start ? b.start.value.slice(0, 4) : null };
+    if (b.opLabel) o.ops.add(b.opLabel.value); seen.set(id, o);
+  }
+  log("wdports:", roots.size, "companies,", seen.size, "port sites");
+  const out = [];
+  for (const o of seen.values()) {
+    const cc = ccOf(o.lat, o.lon); if (!cc || !IDS.has(cc) || cc === "cn" || cc === "tw") continue;
+    const op = [...o.ops].slice(0, 3).join(", ");
+    out.push({ cc, it: {
+      id: "cnp:wd:" + o.id, src: "ports", type: "presence", domain: "sea", name: clip(o.name, 140), kind: "port_terminal", sym: "pr_port",
+      lat: r4(o.lat), lon: r4(o.lon), prec: "Wikidata coordinates", actor: clip(op, 140), state: "current",
+      why: clip("Recorded in Wikidata as operated or owned by " + op + (o.start ? ", opened " + o.start : "") + ". Ownership and operating stakes change; check the source.", 300),
+      claim_status: CLAIM, last_reported: null, lic: "CC0 (Wikidata)",
+      evidence: [{ date: null, t: "Wikidata " + o.id, src: "https://www.wikidata.org/wiki/" + o.id, srcname: "Wikidata" }],
+      fp: fp("wdports", o.id, op, o.lat.toFixed(4), o.lon.toFixed(4)) } });
+  }
+  return out;
+}
+
 /* ---------- run every source, keep the last good copy of any that fails ---------- */
 const byCc = new Map(), status = {};
 const add = (list) => { for (const { cc, it } of list) (byCc.get(cc) || byCc.set(cc, []).get(cc)).push(it); };
@@ -376,7 +422,12 @@ let mil = null;
 if (!ONLY || ONLY.has("uslists")) { try { mil = await dod1260h(); } catch (e) { log("dod1260h failed:", e.message); } }
 await run("uslists", () => uslists(mil), ["dod1260h"]);
 if (!mil && status.dod1260h && status.dod1260h.ok) status.dod1260h = { ok: false, at: (prevIndex.sources.dod1260h || {}).at || null, n: 0, err: "list not read" };
-await run("ports", ports);
+await run("ports", async () => {
+  const errs = [], all = [];
+  for (const f of [wdports, ports]) { try { all.push(...(await f())); } catch (e) { errs.push(f.name + ": " + e.message); log("ports:", f.name, "failed:", e.message); } }
+  if (!all.length && errs.length) throw new Error(errs.join("; "));
+  const seen = new Set(); return all.filter(({ cc, it }) => { const k = cc + ":" + it.lat.toFixed(2) + "," + it.lon.toFixed(2) + ":" + it.name.toLowerCase(); return !seen.has(k) && seen.add(k); });
+});
 if (status.uslists && status.uslists.ok) status.geonames = { ok: !!CITIES, at: now };
 
 /* ---------- write ---------- */
