@@ -59,6 +59,11 @@ const DEFS = {
   pr_fishing: [U, "30", "140200", "Reported militia or fishing fleet", "Reported presence"],
   pr_research:[U, "30", "130105", "Reported research ship", "Reported presence"],
   pr_drone:   [U, "30", "120700", "Drone recovered at sea", "Reported presence"],
+  // global Chinese presence layer (tools/refresh_cnpresence.mjs): PRC-funded projects, PRC-linked listed companies, Chinese-run ports
+  pr_port:    [U, "20", "121309", "Reported Chinese-run or Chinese-funded port or terminal", "Reported presence"],
+  pr_power:   [U, "20", "120501", "Reported Chinese-funded power or energy project", "Reported presence"],
+  pr_transport:[U, "20", "121300", "Reported Chinese-funded road, rail, bridge or airport project", "Reported presence"],
+  pr_listed:  [U, "20", "120300", "Company on a U.S. restricted list with a Chinese address", "Reported presence"],
   // live aircraft (ADS-B positions the aircraft broadcast; unknown frame: a position report, not an identification)
   air_uav:    [U, "01", "110300", "Drone (unmanned aircraft), live ADS-B position", "Live aircraft"],
   air_fw:     [U, "01", "110100", "Military aircraft (fixed wing), live ADS-B position", "Live aircraft"],
