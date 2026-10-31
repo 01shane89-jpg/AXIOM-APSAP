@@ -20,6 +20,7 @@
      status()    "off" | "waiting" | "live" | "none" (started but this device sent no compass reading) | "denied"
      supported() true when the browser has the orientation event at all (desktop Chrome has it but never sends readings) */
 (function () {
+  if (window.OSAP_HEADING) return;   /* one reader per page (a test may have put a stand-in here first) */
   var W = window, subs = [], last = null, raw = null, sx = 0, sy = 0, cx = 0, cy = 0, camOk = false, smoothed = false, st = "off", perm = null, noneT = 0, gotAbs = false, pend = false;
   var declCache = { lat: 999, lon: 999, t: 0, v: 0 };
 

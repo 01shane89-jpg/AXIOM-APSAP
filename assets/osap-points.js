@@ -337,7 +337,7 @@
     var hd = S.hd;
     if (hd) h.innerHTML = "<b>" + esc(hdText(hd.mag != null ? hd.mag : hd.tru, hd.mag != null ? "magnetic" : "true")) + "</b>" + (hd.tru != null && hd.mag != null ? ' <span class="obs">(' + deg3(hd.tru) + "° true)</span>" : "") +
       ' <span class="obs">' + esc(hd.src) + (hd.acc != null ? " ±" + hd.acc + "°" : "") + (hd.basis === "top" ? ", phone lying flat: top edge, not the camera" : "") + "</span>";
-    else h.textContent = !H() ? "No compass helper on this page: the photo is saved without a heading." : H().supported && !H().supported() ? "This device has no compass: the photo is saved without a heading." : S.hdeny ? "Compass not allowed: the photo is saved without a heading." : "Starting compass… (turn the phone in a figure of eight if it stays empty)";
+    else h.textContent = !H() ? "No compass helper on this page: the photo is saved without a heading." : (H().supported && !H().supported()) || (H().status && H().status() === "none") ? "This device has no compass: the photo is saved without a heading." : S.hdeny ? "Compass not allowed: the photo is saved without a heading." : "Starting compass… (turn the phone in a figure of eight if it stays empty)";
     var ready = !!f || S.centre;
     take.classList.toggle("off", !ready); take.querySelector("input").disabled = !ready;
     sn.querySelector(".sn-centre").hidden = !!f || S.centre || !S.gerr;
@@ -348,7 +348,11 @@
     var h = H(); if (!h) return;
     var go = function (st) { if (st === "denied") { S.hdeny = true; sn.querySelector(".sn-allow").hidden = false; snPaint(); return; } if (st === "unsupported") { snPaint(); return; } S.hdeny = false; sn.querySelector(".sn-allow").hidden = true; if (!S.hsub) { S.hsub = onHd; h.start(onHd); } onHd(h.get && h.get()); };
     /* request() must run inside the tap that opened this sheet (iOS asks for motion access then) */
+    var answered = false, g0 = go; go = function (st) { answered = true; g0(st); };
     try { var p = h.request ? h.request() : null; if (p && p.then) p.then(go, function () { go("denied"); }); else go("granted"); } catch (e) { go("denied"); }
+    /* a browser that never answers (a computer without sensors can leave the question pending): listen anyway, so the
+       helper can report that no reading came (status "none") instead of "Starting compass…" for ever */
+    setTimeout(function () { if (!answered && !S.hsub && !sn.hidden) { S.hsub = onHd; h.start(onHd); } }, 3000);
   }
   function gpsStart() {
     var g = W.navigator.geolocation;
