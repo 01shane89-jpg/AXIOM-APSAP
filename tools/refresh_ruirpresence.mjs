@@ -171,7 +171,7 @@ const STATE_ORGS = {
     "Iran Khodro", "Bank Melli Iran", "Mahan Air", "Iran Air", "Atomic Energy Organization of Iran", "Ministry of Defence and Armed Forces Logistics", "Hezbollah"],
 };
 /* not places: events, crashes, lists, people; Soviet-era bodies are history, not present presence */
-const NOT_SITE = /\b(accident|incident|crash|collision|flight|hijacking|disaster|shootdown|bombing|attack|list|Wikimedia|event|battle|operation|human|ship|vessel|aircraft|airliner|submarine|wreck|space probe|spacecraft|lander|rover|film|album|book)\b/i;
+const NOT_SITE = /\b(accident|incident|crash|collision|flight|hijacking|disaster|shootdown|bombing|attack|list|Wikimedia|event|battle|operation|human|ship|vessel|aircraft|airliner|submarine|cruiser|frigate|destroyer|corvette|battleship|icebreaker|boat|wreck|space probe|spacecraft|lander|rover|film|album|book)\b/i;
 async function wikidata(key) {
   const A = ACTORS[key], roots = new Set([A.qid]);
   for (const n of STATE_ORGS[key]) {
@@ -196,7 +196,7 @@ async function wikidata(key) {
     if (!b.siteLabel || /^Q\d+$/.test(b.siteLabel.value)) continue;
     const id = b.site.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
     const cls = b.clsLabel ? b.clsLabel.value : "", opl = b.opLabel ? b.opLabel.value : "";
-    if (NOT_SITE.test(cls) || /^list of\b|\bflight \d/i.test(b.siteLabel.value) || /soviet|ussr|mojahedin|mujahedin|\bNCRI\b|opposition/i.test(opl)) { drop.add(id); continue; }
+    if (NOT_SITE.test(cls) || /^list of\b|\bflight \d/i.test(b.siteLabel.value) || /soviet|ussr|mojahedin|mujahedin|\bNCRI\b|opposition|lavochkin|south eastern railway/i.test(opl)) { drop.add(id); continue; }
     const o = seen.get(id) || { id, name: b.siteLabel.value, lon: +m[1], lat: +m[2], ops: new Set(), cls: new Set(), start: b.start ? b.start.value.slice(0, 4) : null, end: b.end ? b.end.value.slice(0, 4) : null };
     if (opl && !/^Q\d+$/.test(opl)) o.ops.add(opl); if (cls) o.cls.add(cls); if (b.c) (o.cs || (o.cs = new Set())).add(b.c.value.split("/").pop()); seen.set(id, o);
   }
