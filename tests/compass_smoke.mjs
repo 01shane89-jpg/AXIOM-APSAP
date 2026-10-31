@@ -54,8 +54,11 @@ const angDiff = (x, y) => Math.abs((((x - y) % 360) + 540) % 360 - 180);
   const brg = await txt(p, "#ocp .ocp-brg");
   ok(/From map centre to pointer/.test(brg) && /\b0(8\d|9\d)° T\b/.test(brg) && /° M/.test(brg) && /km/.test(brg), "desktop: bearing and distance from the map centre to the pointer, true and magnetic (" + brg + ")");
   await p.click('#ocp [data-ocp="start"]');
-  await p.waitForFunction(() => /no compass/i.test(document.querySelector("#ocp .ocp-st").textContent), null, { timeout: 8000 }).catch(() => {});
-  ok(/no compass/i.test(await txt(p, "#ocp .ocp-st")) && !(await p.evaluate(() => window.OSAP_COMPASS.state().running)), "desktop: Start compass on a computer says there is no compass and stops");
+  // a computer either has no orientation sensor (no reading comes) or its browser refuses or never answers the question:
+  // every way ends in a plain message and the compass not running
+  await p.waitForFunction(() => /no compass|refused/i.test(document.querySelector("#ocp .ocp-st").textContent), null, { timeout: 8000 }).catch(() => {});
+  const stMsg = await txt(p, "#ocp .ocp-st"), stRun = await p.evaluate(() => window.OSAP_COMPASS.state().running);
+  ok(/no compass|refused/i.test(stMsg) && !stRun, "desktop: Start compass on a computer says why there is no heading and stops (" + stMsg + ", running " + stRun + ")");
   await p.click('#ocp [data-ocp="unit"]'); await p.mouse.move(box.x, box.y + 1); await p.waitForTimeout(200);
   ok(/\d{4} mils T/.test(await txt(p, "#ocp .ocp-brg")), "desktop: Mils switches bearings to mils (" + await txt(p, "#ocp .ocp-brg") + ")");
   await p.keyboard.press("Escape"); await p.waitForTimeout(200);
