@@ -1999,14 +1999,17 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     }
     var PST = { current: "Current", past: "Past", cancelled: "Cancelled", proposed: "Proposed, not built", unclear: "Unclear" };
     /* records from data/cnpresence/<cc>.json (tools/refresh_cnpresence.mjs) carry src: each is its source's own claim, not an AI draft */
-    var PRSRC = { aiddata: "Chinese-funded project (AidData)", ports: "Chinese-run port", uslists: "On a U.S. restricted list", dod1260h: "On a U.S. restricted list" };
+    var PRSRC = { aiddata: "Chinese-funded project (AidData)", ports: "Chinese-run port", uslists: "On a U.S. restricted list", dod1260h: "On a U.S. restricted list", wikidata: "State-run or state-owned site (Wikidata)" };
+    /* the actor of a generated record (stamped when its file is read): Chinese unless it came from data/rupresence or data/irpresence */
+    var PRACT = { cn: ["Chinese presence", "CN"], ru: ["Russian presence", "RU"], ir: ["Iranian presence", "IR"] };
+    function prAct(p) { return PRACT[p.ak] || PRACT.cn; }
     function prEv(p) {
       return '<p class="obs" style="margin-bottom:0">' + (p.src ? "Source:" : "Reporting behind it:") + '</p><ul class="terev">' + (p.evidence || []).map(function (e) {
         return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
       }).join("") + "</ul>";
     }
     function prPop(p) {
-      if (p.src) return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + TE(PRSRC[p.src] || p.src) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
+      if (p.src) return '<div class="pop"><div class="tier" style="color:#8e1b1b">' + prAct(p)[0] + " · " + TE(PRSRC[p.src] || p.src) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
         (p.actor && p.actor !== p.name ? '<p class="obs">Actor: ' + TE(p.actor) + "</p>" : "") +
         (p.place ? '<p class="obs">Listed address: ' + TE(p.place) + "</p>" : "") +
         '<div class="terdraft">' + TE(p.claim_status || "Reported, not verified") + '</div><div class="why">' + TE(p.why) + "</div>" + prEv(p) +
@@ -2019,22 +2022,23 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     }
     /* several listed organisations at one city share one pin; its pop-up lists them */
     function prGroupPop(list) {
-      return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · On U.S. restricted lists · ' + list.length + " organisations</div><h3>" + TE(String(list[0].prec || "").replace(/^city of the listed address \(|\)$/g, "")) + "</h3>" +
+      return '<div class="pop"><div class="tier" style="color:#8e1b1b">' + prAct(list[0])[0] + " · On U.S. restricted lists · " + list.length + " organisations</div><h3>" + TE(String(list[0].prec || "").replace(/^city of the listed address \(|\)$/g, "")) + "</h3>" +
         '<div class="terdraft">Listings by the U.S. government, placed at the listed city</div><ul class="terev">' + list.slice(0, 60).map(function (p) {
           return "<li><b>" + TE(p.name) + "</b> · " + TE(p.list || "") + (p.evidence && p.evidence[0] ? " · " + src(p.evidence[0].src, "source") : "") + "</li>";
         }).join("") + "</ul>" + (list.length > 60 ? '<p class="obs">and ' + (list.length - 60) + " more in the list beside the map.</p>" : "") +
         '<p class="obs" style="font-size:10.5px">Licence: ' + TE(list[0].lic || "") + "</p></div>";
     }
-    /* the generated file for this country, read once */
-    var CNPD = null, cnpWait = null;
-    function loadCnp(cb) {
-      if (CNPD) return cb(CNPD);
-      if (cnpWait) return void cnpWait.push(cb);
-      cnpWait = [cb];
-      function fin(l) { var w = cnpWait; cnpWait = null; w.forEach(function (f) { f(l); }); }
-      fetch("data/cnpresence/" + cc + ".json").then(function (r) { return r.ok ? r.json() : { items: [] }; })
-        .then(function (j) { CNPD = (j && j.items) || []; fin(CNPD); }, function () { fin([]); });
+    /* the generated file for this country and actor (cn: data/cnpresence, ru: data/rupresence, ir: data/irpresence), read once */
+    var PRDIR = { cn: "cnpresence", ru: "rupresence", ir: "irpresence" }, PRD = {}, PRW = {};
+    function loadGen(ak, cb) {
+      if (PRD[ak]) return cb(PRD[ak]);
+      if (PRW[ak]) return void PRW[ak].push(cb);
+      PRW[ak] = [cb];
+      function fin(l) { var w = PRW[ak]; PRW[ak] = null; w.forEach(function (f) { f(l); }); }
+      fetch("data/" + PRDIR[ak] + "/" + cc + ".json").then(function (r) { return r.ok ? r.json() : { items: [] }; })
+        .then(function (j) { var l = (j && j.items) || []; l.forEach(function (p) { p.ak = ak; }); PRD[ak] = l; fin(l); }, function () { fin([]); });
     }
+    function loadCnp(cb) { loadGen("cn", cb); }
     function draw() {
       prLayer.clearLayers();
       if (D && ST.pr) (D.presence || []).forEach(function (p) {
@@ -2112,7 +2116,9 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         if (!hand) load(function () { hand = (D && D.presence) || []; done(); });
         loadCnp(function (l) { gen = l; done(); });
       },
-      icon: function (p) { return osapSym(p.sym || PRSYM[p.kind] || (p.domain === "sea" ? "pr_site" : "pr_commerce"), { text: "CN", cls: p.state === "current" || p.state === "unclear" ? "" : "old" }) || L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
+      loadActor: loadGen,
+      act: prAct,
+      icon: function (p) { return osapSym(p.sym || PRSYM[p.kind] || (p.domain === "sea" ? "pr_site" : "pr_commerce"), { text: prAct(p)[1], cls: p.state === "current" || p.state === "unclear" ? "" : "old" }) || L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
           html: '<div class="prpin' + (p.domain === "sea" ? " s" : "") + (p.state === "current" || p.state === "unclear" ? "" : " o") + '">CN</div>' }); },
       state: function (p) { return PST[p.state] || p.state; } };
     if (HASPR[cc]) {
@@ -3692,6 +3698,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
     { id: "partners", name: "Military exercises", title: "Military exercises", sof: true, live: true });
   if (window.OSAP_PR && (window.OSAP_PR.all || window.OSAP_PR.has[CC])) LAYERS.push({ id: "presence", name: "Chinese presence", title: "Chinese presence and influence", sof: true, live: true });
+  /* Russian and Iranian presence: the same pane, from data/rupresence and data/irpresence (tools/refresh_ruirpresence.mjs) */
+  if (window.OSAP_PR && window.OSAP_PR.loadActor) LAYERS.push({ id: "rupresence", name: "Russian presence", title: "Russian presence and influence", sof: true, live: true },
+    { id: "irpresence", name: "Iranian presence", title: "Iranian presence and influence", sof: true, live: true });
   LAYERS.push({ id: "hazards", name: "Earthquakes and hazards", title: "Earthquakes and hazards", sof: true, live: true },
     { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
@@ -4988,6 +4997,47 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         sec("China-linked organisations on U.S. restricted lists", us, "None listed at an address here.") +
         '<div class="sec"><p class="obs">Sources: ' + (hand.length ? "public reporting (hand-researched list); " : "") + "AidData Global Chinese Development Finance Dataset v3.0 (ODC-By; locations from OpenStreetMap, ODbL); " +
         "Wikidata operator and owner records (CC0); U.S. Consolidated Screening List (public domain); DoD Section 1260H list via OpenSanctions (CC BY-NC); city positions from GeoNames (CC BY).</p></div>";
+    });
+  }
+  /* Russian and Iranian presence (Shane 2026-10-31): sites abroad that the actor's state bodies, forces or companies operate or
+     own (Wikidata) and actor-linked organisations on U.S. restricted lists, as showPresence draws China's */
+  function showActorPresence(v) {
+    var P = window.OSAP_PR, ak = v === "rupresence" ? "ru" : "ir", nm = ak === "ru" ? "Russian" : "Iranian", home = ak === "ru" ? "Russia" : "Iran", CAP = 300;
+    sofLayer.clearLayers(); sofM = {};
+    railO.innerHTML = '<div class="sec"><p class="obs">Loading…</p></div>';
+    P.loadActor(ak, function (list) {
+      if (current !== v) return;
+      sofLayer.clearLayers(); sofM = {};
+      var groups = {};
+      list.forEach(function (p, i) {
+        if (p.lat == null || p.lon == null) return;
+        if (p.src === "uslists") { var k = p.lat + "," + p.lon; (groups[k] = groups[k] || []).push(i); return; }
+        var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: p.name, icon: P.icon(p) });
+        m.bindPopup(P.pop(p), { maxWidth: 340 }); sofLayer.addLayer(m); sofM["pr:" + i] = m;
+      });
+      Object.keys(groups).forEach(function (k) {
+        var ix = groups[k], ps = ix.map(function (i) { return list[i]; }), p = ps[0];
+        var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: ps.length > 1 ? ps.length + " listed organisations" : p.name,
+          icon: osapSym(p.sym || "pr_listed", { text: ps.length > 1 ? String(ps.length) : P.act(p)[1] }) || P.icon(p) });
+        m.bindPopup(ps.length > 1 ? P.groupPop(ps) : P.pop(p), { maxWidth: 360 }); sofLayer.addLayer(m);
+        ix.forEach(function (i) { sofM["pr:" + i] = m; });
+      });
+      function row(p) {
+        var i = list.indexOf(p), pin = p.lat != null && p.lon != null;
+        return '<button type="button" class="tlrow"' + (pin ? ' data-sof="pr:' + i + '"' : "") + '><span class="tln">' + esc(p.name) + "</span>" +
+          '<span class="tlm">' + chip(p.state === "current" ? "k" : "", P.state(p)) + '<span class="tls">' + esc(p.src === "wikidata" ? p.kind.replace(/_/g, " ") + " · " + p.actor :
+            (p.list || "") + (p.place ? " · " + p.place : "") + (pin ? "" : " · no map position")) + "</span></span></button>";
+      }
+      function sec(title, items, empty) {
+        return '<div class="sec"><h2>' + esc(title) + " (" + items.length + ")</h2>" + (items.length ? '<div class="tllist">' + items.slice(0, CAP).map(row).join("") + "</div>" +
+          (items.length > CAP ? '<p class="note">First ' + CAP + " shown here; the map shows every one with a position.</p>" : "") : '<p class="note">' + esc(empty) + "</p>") + "</div>";
+      }
+      var sites = list.filter(function (p) { return p.src === "wikidata"; }), us = list.filter(function (p) { return p.src === "uslists"; });
+      railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reported, not verified.</b> ' + esc(nm) + " state sites and " + esc(home) + "-linked organisations in " + esc(C.name) +
+        ", each as its source records it. A listing is a U.S. legal designation, not an OSAP finding. Faded pins are past or closed.</div></div>" +
+        sec(nm + " state-run and state-owned sites", sites, CC === ak ? "Not applicable to " + home + "." : "None recorded in Wikidata.") +
+        sec(home + "-linked organisations on U.S. restricted lists", us, "None listed at an address here.") +
+        '<div class="sec"><p class="obs">Sources: Wikidata operator and owner records (CC0); U.S. Consolidated Screening List (public domain); city positions from GeoNames (CC BY).</p></div>';
     });
   }
   function exPop(x) {
@@ -6647,7 +6697,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
-  function showSof(v) { if (v === "presence") showPresence(); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else if (v === "comms") showComms(); else showPartners(); }
+  function showSof(v) { if (v === "presence") showPresence(); else if (v === "rupresence" || v === "irpresence") showActorPresence(v); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else if (v === "comms") showComms(); else showPartners(); }
   /* ET: UFO and UAP reports (assets/osap-et.js, data/live/et.js); reported claims, never verified events */
   function showEt() {
     sofLayer.clearLayers(); sofM = {};
@@ -6727,7 +6777,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the reporting). The conflict tabs ("cf-") sit with Conflict and security; a set in none of the groups goes under
      "More topics" */
   var DS_NAT = "Natural disasters";
-  var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "partners", "presence"]],
+  var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "partners", "presence", "rupresence", "irpresence"]],
     ["Crime", ["crime", "scam", "aml"]],
     /* natural disasters also list the satellite layers (flooding now, flood history, fires now): window.OSAP_DISASTERX */
     ["Natural disasters", ["flood", "hazards"]],
@@ -6988,7 +7038,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { presence: "Public reporting · AidData · U.S. Consolidated Screening List · Wikidata · DoD 1260H via OpenSanctions; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
+    srcline.textContent = (l.sof && { presence: "Public reporting · AidData · U.S. Consolidated Screening List · Wikidata · DoD 1260H via OpenSanctions; reported, not verified",
+      rupresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", irpresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);

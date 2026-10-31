@@ -19,8 +19,9 @@ export const DATA = [
   [/^data\/live\/(evsum|evsum_ai|aiwatch)\.js$/, "full"],
   // the bundle AXIOM Analyst Work Station imports (tools/axiom_bundle.mjs)
   [/^data\/axiom\//, "full"],
-  // Chinese presence for every country (tools/refresh_cnpresence.mjs; Shane 2026-10-31: "Full only please")
-  [/^data\/cnpresence\//, "full"],
+  // Chinese, Russian and Iranian presence for every country (tools/refresh_cnpresence.mjs, refresh_ruirpresence.mjs;
+  // Shane 2026-10-31: "Full only please")
+  [/^data\/(cnpresence|rupresence|irpresence)\//, "full"],
   [/^data\/live\/daily(\/|\.js$)/, "full"],
   [/^source\/sof\//, "full"],
   // Free: the map itself, the country picker, weather, warnings and headline news
@@ -39,7 +40,7 @@ export const TOOLS = {
   mine: "full",
 };
 // Data sets (the ids in Data sets). A data set not listed needs SETS_DEFAULT.
-export const SETS = { news: "free", alerts: "free", flood: "free", hazards: "free", weather: "free", timeline: "free", presence: "full" };
+export const SETS = { news: "free", alerts: "free", flood: "free", hazards: "free", weather: "free", timeline: "free", presence: "full", rupresence: "full", irpresence: "full" };
 export const SETS_DEFAULT = "mid";
 // Features inside a tool. team: Team workspace (assets/osap-team.js), creating or joining a team; the owner always has Full.
 // Like every lock on the page it is a sign only: a team's data never passes through OSAP's server.
