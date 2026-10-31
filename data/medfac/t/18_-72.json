@@ -1,6 +1,6 @@
 [["n10206773142",18.03797,-71.74206,"do",{"name":"Unidad Barrio Alcoa","amenity":"hospital","healthcare":"hospital"}],
 ["n10271543412",18.17186,-71.74188,"do",{"name":"CENTRO DE SALUD  MENCIA","amenity":"hospital","healthcare":"hospital"}],
-["n10274351409",18.52154,-70.01436,"do",{"name":"CLIDERMES","amenity":"clinic","phone":"8095481878","website":"https://clidermes.negocio.site/?utm_source=gmb&utm_medium=referral","addr:housenumber":"53","addr:street":"Calle Duarte","opening_hours":"Mo-Fr 08:00-18:00; Sa 08:00-13:00"}],
+["n10274351409",18.52154,-70.01436,"do",{"name":"CLIDERMES","amenity":"clinic","phone":"8095481878","website":"https://clidermes.negocio.site/","addr:housenumber":"53","addr:street":"Calle Duarte","opening_hours":"Mo-Fr 08:00-18:00; Sa 08:00-13:00"}],
 ["n1042047831",18.42468,-70.7297,"do",{"name":"Aeropuerto de Azua","aeroway":"aerodrome","icao":"MDAD","wikidata":"Q2901155"}],
 ["n10582828906",18.27921,-70.33379,"do",{"amenity":"clinic","healthcare":"clinic","addr:city":"Baní","addr:postcode":"94000","osap:withheld":"1"}],
 ["n10590572792",18.27938,-70.32808,"do",{"name":"Instituto Regional Materno Infantil y Especialidades Medicas IRMIE","amenity":"clinic","healthcare":"clinic","phone":"+18098987300","website":"http://www.clinicairmie.net/","addr:housenumber":"48","addr:street":"Avenida Presidente Francisco Gregorio Billini","addr:city":"Bani","addr:postcode":"94000"}],

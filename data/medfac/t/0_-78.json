@@ -138,7 +138,7 @@
 ["w322943331",0.80442,-77.6764,"ec",{"name":"Subcentro de Salud","amenity":"hospital"}],
 ["w322948763",0.56698,-77.77128,"ec",{"name":"Junta Parroquial","amenity":"hospital"}],
 ["w322950963",0.63817,-77.75068,"ec",{"name":"Centro de Salud","amenity":"hospital"}],
-["w324836370",0.81579,-77.7169,"ec",{"name":"IESS - Hospital del día","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Instituto Ecuatoriano de Seguridad Social","operator:type":"government"}],
+["w324836370",0.81579,-77.7169,"ec",{"name":"IESS | Hospital del día","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Instituto Ecuatoriano de Seguridad Social","operator:type":"government"}],
 ["w333875900",0.62248,-77.94429,"ec",{"name":"Hospital Básico El Ángel","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministerio de Salud Pública","operator:type":"government","addr:street":"Esmeraldas","addr:city":"El Angel"}],
 ["w371654964",0.82805,-77.614,"co",{"name":"Hospital Civil de Ipiales","amenity":"hospital"}],
 ["w374957331",1.87728,-76.26483,"co",{"name":"Arsenio Repizo","amenity":"hospital"}],

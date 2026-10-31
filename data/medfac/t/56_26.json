@@ -59,7 +59,7 @@
 ["w329459938",57.63349,26.6713,"ee",{"name":"Varstu lennuväli","phone":"+372 5019372","website":"https://transpordiamet.ee/visuaallennuvaljad","aeroway":"aerodrome","icao":"EEVU"}],
 ["w335056500",57.78628,26.01226,"lv",{"name":"Sociālās palīdzības dienests","amenity":"hospital","addr:housenumber":"11","addr:street":"Ausekļa iela","addr:district":"Valkas novads","addr:city":"Valka","addr:postcode":"LV-4701"}],
 ["w348240110",57.17767,27.68252,"lv",{"name":"Viļakas SAC","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2","addr:street":"Parka iela","addr:district":"Balvu novads","addr:city":"Viļaka","addr:postcode":"LV-4583"}],
-["w51683663",57.93947,26.97871,"ee",{"name":"Ridali lennuväli","name:en":"Ridali Airfield","aeroway":"aerodrome","icao":"EERI"}],
+["w51683663",57.93947,26.97871,"ee",{"name":"Ridali lennuväli","name:en":"Ridali Airfield","aeroway":"aerodrome","icao":"EERI","wikidata":"Q3497703"}],
 ["w545297073",56.56639,27.34788,"lv",{"name":"Adamovas lidlauks","aeroway":"aerodrome"}],
 ["w545720175",57.10327,26.73347,"lv",{"name":"Staru lidlauks","aeroway":"aerodrome"}],
 ["w545806828",56.04286,26.369,"lv",{"name":"Līksnas lidlauks","website":"https://lidlauki.wordpress.com/2011/08/26/liksna-1836/","aeroway":"aerodrome"}],

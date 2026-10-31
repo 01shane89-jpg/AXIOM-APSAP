@@ -92,6 +92,7 @@
 ["w1441731612",-1.84695,-80.21446,"ec",{"name":"Hospital El Buen Samaritano","amenity":"hospital","healthcare":"hospital"}],
 ["w1488761200",-0.84597,-80.16216,"ec",{"name":"hospital  básico DR Anibal González Lava","amenity":"hospital","healthcare":"hospital"}],
 ["w1555869156",-1.09877,-80.4214,"ec",{"amenity":"hospital","healthcare":"hospital"}],
+["w1564782165",-1.87497,-80.08744,"ec",{"name":"Maternidad Belly Moran","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"gynaecology;community"}],
 ["w219062424",-0.94689,-80.6807,"ec",{"name":"Aeropuerto Internacional General Eloy Alfaro Delgado","name:en":"General Eloy Alfaro International Airport","operator":"Military of Ecuador","operator:type":"government","aeroway":"aerodrome","icao":"SEMT","iata":"MEC","aerodrome:type":"military/public","wikidata":"Q1444671"}],
 ["w219188925",-1.84485,-80.73696,"ec",{"name":"Manglaralto Airport","aeroway":"aerodrome","icao":"SEML"}],
 ["w234446323",-0.60796,-80.40255,"ec",{"name":"Aeropuerto Los Perales","aeroway":"aerodrome","icao":"SESV","iata":"BHA","wikidata":"Q8337035"}],

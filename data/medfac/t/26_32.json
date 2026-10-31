@@ -5,6 +5,7 @@
 ["n13083912855",27.15461,33.82161,"eg",{"name":"مستشفى الحياة","name:en":"Al Haya Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+20 100 6966 123","addr:housenumber":"107","addr:street":"شارع النصر","addr:city":"الغردقة"}],
 ["n13177009411",27.22085,33.83747,"eg",{"name":"Queens Clinics","amenity":"clinic","healthcare":"clinic"}],
 ["n13257159826",27.18917,33.83129,"eg",{"name":"Sindbad Club Clinic","amenity":"clinic","healthcare":"clinic","operator":"Sindbad Club","operator:type":"private"}],
+["n14293739659",27.15808,33.81861,"eg",{"name":"Europa Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n4030318934",26.11817,32.43293,"eg",{"name":"الوحده الصحية","amenity":"hospital","addr:street":"الصبريات"}],
 ["n4487345086",26.75552,33.94163,"eg",{"amenity":"hospital"}],
 ["n4575984692",26.27372,32.05638,"eg",{"name":"د.عبد الحميد زغلول","amenity":"clinic"}],

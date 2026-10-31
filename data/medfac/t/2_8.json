@@ -1,4 +1,5 @@
 [["n1042036823",2.87428,9.97711,"cm",{"name":"Aéroport de Kribi","name:en":"Kribi Airport","aeroway":"aerodrome","icao":"FKKB","iata":"KBI","wikidata":"Q3545300"}],
+["n14263823101",3.75402,8.77903,"gq",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
 ["n3255758384",3.99047,9.77368,"cm",{"name":"Centre de Santé Catholique Deo Gratias Douala-Boko","amenity":"clinic"}],
 ["n3255758387",3.97915,9.7678,"cm",{"name":"Centre de Santé La Persévérance","amenity":"clinic"}],
 ["n3255758432",3.99449,9.74833,"cm",{"name":"St. John Ambulance","emergency":"ambulance_station"}],

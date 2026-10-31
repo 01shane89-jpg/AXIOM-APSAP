@@ -3,5 +3,5 @@
 ["n12734115401",16.43217,38.69665,"er",{"name":"Kamchewa","amenity":"clinic"}],
 ["n4235826577",16.66522,38.50677,"er",{"name":"مطار نقف Nakfa Airfield","name:en":"Nakfa Airport","aeroway":"aerodrome","icao":"HHNF"}],
 ["w1291992160",16.65931,38.48512,"er",{"name":"مستشفى مدينة نقفة / Naqfa City Hospital","amenity":"hospital","healthcare":"hospital"}],
-["w885098345",17.33664,38.52052,"er",{"name":"Alghena","aeroway":"aerodrome","icao":"HHAL"}],
+["w885098345",17.33664,38.52052,"er",{"name":"Alghena","aeroway":"aerodrome","icao":"HHAL","wikidata":"Q11824205"}],
 ["w885583729",16.41057,39.18278,"er",{"name":"Gulbub Airstrip","aeroway":"aerodrome","icao":"HHMG","wikidata":"Q132346527"}]]

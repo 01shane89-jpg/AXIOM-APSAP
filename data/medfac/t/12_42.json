@@ -178,6 +178,7 @@
 ["w1239090263",13.73338,43.27081,"ye",{"aeroway":"helipad"}],
 ["w1239090264",13.73357,43.27051,"ye",{"aeroway":"helipad"}],
 ["w1246241560",13.17699,43.77989,"ye",{"amenity":"hospital","healthcare":"hospital"}],
+["w1316960455",13.06617,42.66014,"er",{"aeroway":"aerodrome","military":"airfield"}],
 ["w1443465045",13.96725,42.76948,"ye",{"aeroway":"aerodrome","military":"airfield"}],
 ["w1444043166",12.87214,43.51264,"ye",{"name":"مطار المخاء الدولي الجديد","name:en":"New Mocha International Airport","addr:city":"Dhubab","aeroway":"aerodrome"}],
 ["w1444043169",12.66314,43.40803,"ye",{"name":"مطار مايون","name:en":"Mayyun Airfield","aeroway":"aerodrome","military":"airfield"}],
@@ -189,6 +190,6 @@
 ["w815747658",12.18849,42.63772,"dj",{"name":"Aérodrome d'Assa-Gueyla مطار أسا غويلا","name:en":"Assa Gueyla Airport","aeroway":"aerodrome","icao":"HDAG","wikidata":"Q4808298"}],
 ["w840956007",13.30858,43.23163,"ye",{"aeroway":"helipad"}],
 ["w870451421",12.83966,43.02589,"er",{"name":"Haleb Airfield مطار هالب","name:en":"Haleb Airfield","aeroway":"aerodrome","icao":"HHHB"}],
-["w885173793",13.26413,42.37517,"er",{"name":"Beilul airfield በይሉል بيلول","name:en":"Beilul airfield","aeroway":"aerodrome","icao":"HHBL"}],
+["w885173793",13.26413,42.37517,"er",{"name":"Beilul airfield በይሉል بيلول","name:en":"Beilul airfield","aeroway":"aerodrome","icao":"HHBL","wikidata":"Q11824257"}],
 ["w936882537",12.16931,42.46453,"dj",{"aeroway":"aerodrome"}],
 ["w991049555",13.97852,43.86097,"ye",{"amenity":"hospital","healthcare":"hospital"}]]
