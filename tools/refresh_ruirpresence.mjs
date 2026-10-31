@@ -160,22 +160,48 @@ function siteKind(words) {
   if (/\b(railway|road|bridge|airport)\b/i.test(words)) return ["transport_project", "pr_transport"];
   return ["state_company_site", "pr_commerce"];
 }
+/* state bodies, forces and state-owned companies, looked up by name; their direct subsidiaries and parts are added */
+const STATE_ORGS = {
+  ru: ["Rosatom", "Gazprom", "Gazprom Neft", "Rosneft", "Transneft", "Zarubezhneft", "Russian Railways", "Roscosmos", "Rostec", "Rosoboronexport",
+    "Inter RAO", "RusHydro", "VTB Bank", "Sberbank", "Ministry of Defence of the Russian Federation", "Ministry of Foreign Affairs of Russia",
+    "Russian Armed Forces", "Russian Navy", "Russian Aerospace Forces", "Russian Ground Forces", "Wagner Group", "Africa Corps", "Rossotrudnichestvo",
+    "Federal Security Service", "Foreign Intelligence Service (Russia)", "GRU", "United Shipbuilding Corporation", "Novatek", "Lukoil"],
+  ir: ["Islamic Revolutionary Guard Corps", "Quds Force", "National Iranian Oil Company", "National Iranian Gas Company", "Ministry of Foreign Affairs of Iran",
+    "Islamic Republic of Iran Army", "Islamic Republic of Iran Navy", "Islamic Republic of Iran Shipping Lines", "MAPNA Group", "Khatam al-Anbiya Construction Headquarters",
+    "Iran Khodro", "Bank Melli Iran", "Mahan Air", "Iran Air", "Atomic Energy Organization of Iran", "Ministry of Defence and Armed Forces Logistics", "Hezbollah"],
+};
+/* not places: events, crashes, lists, people; Soviet-era bodies are history, not present presence */
+const NOT_SITE = /\b(accident|incident|crash|collision|flight|hijacking|disaster|shootdown|bombing|attack|list|Wikimedia|event|battle|operation|human|ship|vessel|aircraft|airliner|film|album|book)\b/i;
 async function wikidata(key) {
-  const A = ACTORS[key];
-  /* sites outside the home country whose operator or owner is a Russian (Iranian) organisation, its state or its forces */
-  const rows = [];
-  for (const prop of ["P137", "P127"]) rows.push(...(await sparql(`SELECT ?site ?siteLabel ?coord ?op ?opLabel ?clsLabel ?start ?end WHERE {
-      ?site wdt:${prop} ?op . ?op wdt:P17 wd:${A.qid} . ?site wdt:P625 ?coord ; wdt:P17 ?c . FILTER(?c != wd:${A.qid})
-      OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start } OPTIONAL { ?site wdt:P576 ?end }
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 20000`)));
-  const seen = new Map();
+  const A = ACTORS[key], roots = new Set([A.qid]);
+  for (const n of STATE_ORGS[key]) {
+    try {
+      const j = JSON.parse(await get("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=3&search=" + encodeURIComponent(n), {}, 60000));
+      const r = (j.search || []).find((x) => !/\b(person|human|footballer|album|film|song|village|river)\b/i.test(x.description || ""));
+      if (r) { roots.add(r.id); dbg("root", n, r.id, r.label, r.description); }
+    } catch (e) { log("wikidata: search", n, e.message.slice(0, 80)); }
+  }
+  const vals = (ids) => [...ids].map((x) => "wd:" + x).join(" ");
+  const ops = new Set(roots);
+  for (const b of await sparql(`SELECT DISTINCT ?sub WHERE { VALUES ?root { ${vals([...roots].filter((x) => x !== A.qid))} } ?sub wdt:P749|wdt:P127|wdt:P361 ?root . }`)) ops.add(b.sub.value.split("/").pop());
+  /* the country's military units (bases abroad are usually operated by a unit) */
+  for (const b of await sparql(`SELECT DISTINCT ?u WHERE { ?u wdt:P31/wdt:P279? wd:Q176799 ; wdt:P17 wd:${A.qid} . FILTER NOT EXISTS { ?u wdt:P576 ?e } }`)) ops.add(b.u.value.split("/").pop());
+  log("wikidata", key + ":", roots.size, "state bodies,", ops.size, "with subsidiaries, parts and units");
+  const rows = [], all = [...ops];
+  for (let i = 0; i < all.length; i += 200) rows.push(...(await sparql(`SELECT ?site ?siteLabel ?coord ?opLabel ?clsLabel ?start ?end WHERE { VALUES ?op { ${vals(all.slice(i, i + 200))} }
+      ?site wdt:P137|wdt:P127 ?op . ?site wdt:P625 ?coord . OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start } OPTIONAL { ?site wdt:P576 ?end }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }`)));
+  const seen = new Map(), drop = new Set();
   for (const b of rows) {
     if (!b.siteLabel || /^Q\d+$/.test(b.siteLabel.value)) continue;
     const id = b.site.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
+    const cls = b.clsLabel ? b.clsLabel.value : "", opl = b.opLabel ? b.opLabel.value : "";
+    if (NOT_SITE.test(cls) || /^list of\b|\bflight \d/i.test(b.siteLabel.value) || /soviet|ussr/i.test(opl)) { drop.add(id); continue; }
     const o = seen.get(id) || { id, name: b.siteLabel.value, lon: +m[1], lat: +m[2], ops: new Set(), cls: new Set(), start: b.start ? b.start.value.slice(0, 4) : null, end: b.end ? b.end.value.slice(0, 4) : null };
-    if (b.opLabel && !/^Q\d+$/.test(b.opLabel.value)) o.ops.add(b.opLabel.value); if (b.clsLabel) o.cls.add(b.clsLabel.value); seen.set(id, o);
+    if (opl && !/^Q\d+$/.test(opl)) o.ops.add(opl); if (cls) o.cls.add(cls); seen.set(id, o);
   }
-  log("wikidata", key + ":", rows.length, "rows,", seen.size, "sites");
+  for (const id of drop) seen.delete(id);
+  log("wikidata", key + ":", rows.length, "rows,", seen.size, "sites,", drop.size, "dropped as events, lists or Soviet-era");
   const out = [];
   for (const o of seen.values()) {
     const cc = ccOf(o.lat, o.lon); if (!cc || !IDS.has(cc) || cc === A.home) continue;
