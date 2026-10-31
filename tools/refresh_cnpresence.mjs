@@ -15,8 +15,9 @@
 //     non-commercial and tagged nc so the sold version drops it). Organisations only: no individuals are named.
 //     Placed at the listed city (GeoNames cities, CC BY 4.0) when the city can be found, otherwise listed without a pin.
 //   - Ports and terminals run or owned by Chinese port groups (COSCO, China Merchants Port, SIPG and others, and Hong Kong's
-//     CK Hutchison): Wikidata operator and owner records (CC0), and OpenStreetMap operator and owner tags (ODbL, through
-//     Geofabrik's keyless Postpass API).
+//     CK Hutchison) or their direct subsidiaries: Wikidata operator and owner records (CC0). OpenStreetMap was tried first: it
+//     tags only a handful of terminals with such an operator worldwide and a whole-world tag search times out at Postpass.
+//     Ports China financed are already among AidData's projects.
 // Every record is a claim by its source ("Reported, not verified"), not an OSAP finding, and carries a SHA-256 fingerprint.
 // A source that fails keeps its records from the last good run (its ok flag false), so a busy server never empties the layer.
 // Output: data/cnpresence/<cc>.json { v, cc, at, items: [presence records] } and data/cnpresence/index.json
@@ -80,8 +81,8 @@ const SOURCES = {
   dod1260h: { name: "Chinese military companies (DoD Section 1260H list, via OpenSanctions)", org: "U.S. Department of Defense; compiled by OpenSanctions",
     lic: "CC BY-NC 4.0 (non-commercial)", nc: true, url: "https://www.opensanctions.org/datasets/us_dod_chinese_milcorps/" },
   geonames: { name: "City positions for listed addresses (GeoNames cities over 15,000 people)", org: "GeoNames", lic: "CC BY 4.0", url: "https://www.geonames.org/" },
-  ports: { name: "Chinese-run ports and terminals (Wikidata operator and owner records; OpenStreetMap operator and owner tags)", org: "Wikidata; OpenStreetMap contributors (Geofabrik Postpass)",
-    lic: "CC0 (Wikidata); ODbL 1.0 (OpenStreetMap)", url: "https://www.wikidata.org/" },
+  ports: { name: "Chinese-run ports and terminals (Wikidata operator and owner records)", org: "Wikidata",
+    lic: "CC0", url: "https://www.wikidata.org/" },
 };
 
 /* ---------- last good run, so a failed source keeps its records ---------- */
@@ -305,57 +306,6 @@ async function uslists(mil) {
   return out;
 }
 
-/* ---------- OpenStreetMap: Chinese-run ports and terminals ---------- */
-const PORT_OPS = "(cosco|china merchants|cmport|cm port|shanghai international port|sipg|qingdao port|tianjin port|ningbo|zhoushan port|guangzhou port|" +
-  "beibu gulf|china harbour|\\ychec\\y|china communications construction|\\ycccc\\y|china ocean shipping|hutchison|yantian international|dalian port|" +
-  "\\ychinese\\y|\\ychina\\y)";  // PostgreSQL regex: \\y is a word boundary
-/* the whole world in one regex query times out (HTTP 504), so it is read in tiles of 30 degrees of longitude by three latitude
-   bands, as tools/build_infra.mjs does; a tile that fails is retried once, and the source fails only if most tiles do */
-async function postpass(sql) {
-  let err;
-  for (let k = 0; k < 2; k++) {
-    try {
-      const j = JSON.parse(await get("https://postpass.geofabrik.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(sql), headers: { "content-type": "application/x-www-form-urlencoded" } }, 150000));
-      if (!j.features) throw new Error("no features");
-      return j.features;
-    } catch (e) { err = e; log("  postpass", e.message.slice(0, 120)); await new Promise((r) => setTimeout(r, 15000)); }
-  }
-  throw err;
-}
-async function ports() {
-  const W = `(coalesce(tags->>'operator','') ~* '${PORT_OPS}' OR coalesce(tags->>'owner','') ~* '${PORT_OPS}' OR coalesce(tags->>'operator:en','') ~* '${PORT_OPS}') AND ` +
-    `(tags->>'landuse' = 'port' OR tags->>'industrial' IN ('port','terminal','container_terminal','shipyard') OR tags ? 'harbour' OR tags->>'man_made' IN ('pier','quay') ` +
-    `OR coalesce(tags->>'seamark:type','') IN ('harbour','harbour_basin','berth') OR tags->>'amenity' = 'ferry_terminal' OR tags ? 'port')`;
-  const feats = []; let bad = 0, n = 0;
-  const until = Date.now() + (+process.env.CNP_OSM_MIN || 8) * 60000;   // a time budget: Wikidata is the main port source
-  for (let lon = -180; lon < 180; lon += 30) for (const [s0, n0] of [[-60, -10], [-10, 25], [25, 75]]) {
-    n++;
-    if (Date.now() > until) { bad++; continue; }
-    const env = `geom && ST_MakeEnvelope(${lon},${s0},${lon + 30},${n0},4326)`;
-    try { const f = await postpass(`SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${env} AND ${W}`); feats.push(...f); dbg("tile", lon, s0, f.length); }
-    catch (e) { bad++; log("ports: tile", lon, s0, "failed:", e.message.slice(0, 100)); }
-  }
-  if (bad > n / 2) throw new Error(bad + " of " + n + " tiles failed or not reached in time");
-  log("ports:", feats.length, "features,", bad, "tiles failed");
-  const j = { features: feats };
-  const out = [];
-  for (const f of j.features) {
-    const t = f.properties.tags || f.properties || {}, c = f.geometry && f.geometry.coordinates; if (!c) continue;
-    const [lon, lat] = c, cc = ccOf(lat, lon);
-    if (!cc || !IDS.has(cc) || cc === "cn" || cc === "tw") continue;
-    const op = t["operator:en"] || t.operator || t.owner || "", name = t["name:en"] || t.name || (op + " terminal");
-    const type = f.properties.osm_type === "W" ? "way" : f.properties.osm_type === "R" ? "relation" : "node", oid = f.properties.osm_id;
-    out.push({ cc, it: {
-      id: "cnp:osm:" + type[0] + oid, src: "ports", type: "presence", domain: "sea", name: clip(name, 140), kind: "port_terminal", sym: "pr_port",
-      lat: r4(lat), lon: r4(lon), prec: "mapped feature", actor: clip(op, 140), state: "current",
-      why: clip("Port, terminal or quay mapped in OpenStreetMap with operator or owner \"" + op + "\"" + (t.start_date ? ", in use since " + t.start_date : "") + ". Operator tags are added by volunteers and may be out of date.", 300),
-      claim_status: CLAIM, last_reported: null, lic: SOURCES.ports.lic,
-      evidence: [{ date: null, t: "OpenStreetMap " + type + " " + oid, src: "https://www.openstreetmap.org/" + type + "/" + oid, srcname: "OpenStreetMap" }],
-      fp: fp("ports", type, oid, op, lat.toFixed(4), lon.toFixed(4)) } });
-  }
-  return out;
-}
-
 /* ---------- Wikidata: ports and terminals operated or owned by Chinese port groups (CC0) ----------
    OpenStreetMap tags few terminals with an operator, so Wikidata adds the ones it records: the companies are looked up by
    name, then every site with coordinates that one of them (or a subsidiary of one) operates or owns, kept when it reads as a
@@ -372,14 +322,22 @@ async function wdports() {
     } catch (e) { log("wdports: search", n, e.message.slice(0, 80)); }
   }
   if (!roots.size) throw new Error("no companies found");
-  const q = `SELECT ?site ?siteLabel ?coord ?opLabel ?clsLabel ?start WHERE { VALUES ?root { ${[...roots].map((x) => "wd:" + x).join(" ")} }
-    { BIND(?root AS ?op) } UNION { ?op wdt:P749|wdt:P127 ?root . }
+  const sparql = async (q) => {
+    const opt = { method: "POST", body: "query=" + encodeURIComponent(q), headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } };
+    try { return JSON.parse(await get("https://query.wikidata.org/sparql", opt, 120000)).results.bindings; }
+    catch (e) { log("wdports: retry after", e.message.slice(0, 80)); await new Promise((r) => setTimeout(r, 20000)); return JSON.parse(await get("https://query.wikidata.org/sparql", opt, 120000)).results.bindings; }
+  };
+  /* the companies' subsidiaries one level down, then the sites any of them operates or owns: both bound by VALUES, so cheap */
+  const vals = (ids) => [...ids].map((x) => "wd:" + x).join(" ");
+  const ops = new Set(roots);
+  for (const b of await sparql(`SELECT DISTINCT ?sub WHERE { VALUES ?root { ${vals(roots)} } ?sub wdt:P749|wdt:P127 ?root . }`)) ops.add(b.sub.value.split("/").pop());
+  log("wdports:", roots.size, "companies,", ops.size - roots.size, "subsidiaries");
+  const rows = [];
+  const all = [...ops];
+  for (let i = 0; i < all.length; i += 150) rows.push(...(await sparql(`SELECT ?site ?siteLabel ?coord ?opLabel ?clsLabel ?start WHERE { VALUES ?op { ${vals(all.slice(i, i + 150))} }
     ?site wdt:P137|wdt:P127|wdt:P749 ?op . ?site wdt:P625 ?coord . OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 5000`;
-  const j = JSON.parse(await get("https://query.wikidata.org/sparql", { method: "POST", body: "query=" + encodeURIComponent(q),
-    headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 240000)
-    .catch(async (e) => { log("wdports: first try", e.message.slice(0, 80)); await new Promise((r) => setTimeout(r, 20000));
-      return get("https://query.wikidata.org/sparql", { method: "POST", body: "query=" + encodeURIComponent(q), headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 240000); }));
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }`)));
+  const j = { results: { bindings: rows } };
   const seen = new Map();
   for (const b of j.results.bindings) {
     const id = b.site.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
@@ -427,12 +385,7 @@ let mil = null;
 if (!ONLY || ONLY.has("uslists")) { try { mil = await dod1260h(); } catch (e) { log("dod1260h failed:", e.message); } }
 await run("uslists", () => uslists(mil), ["dod1260h"]);
 if (!mil && status.dod1260h && status.dod1260h.ok) status.dod1260h = { ok: false, at: (prevIndex.sources.dod1260h || {}).at || null, n: 0, err: "list not read" };
-await run("ports", async () => {
-  const errs = [], all = [];
-  for (const f of [wdports, ports]) { try { all.push(...(await f())); } catch (e) { errs.push(f.name + ": " + e.message); log("ports:", f.name, "failed:", e.message); } }
-  if (!all.length && errs.length) throw new Error(errs.join("; "));
-  const seen = new Set(); return all.filter(({ cc, it }) => { const k = cc + ":" + it.lat.toFixed(2) + "," + it.lon.toFixed(2) + ":" + it.name.toLowerCase(); return !seen.has(k) && seen.add(k); });
-});
+await run("ports", wdports);
 if (status.uslists && status.uslists.ok) status.geonames = { ok: !!CITIES, at: now };
 
 /* ---------- write ---------- */

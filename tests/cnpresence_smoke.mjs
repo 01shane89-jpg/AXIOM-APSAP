@@ -117,7 +117,7 @@ async function popupOf(p, name) {
   const { ctx, p, errors, has } = await open("jp");
   ok(has, "Japan offers the data set");
   const r = await rail(p);
-  ok(/None recorded\./.test(r.text) && /None recorded in Wikidata or OpenStreetMap/.test(r.text) && /None listed at an address here/.test(r.text), "empty sections say none recorded");
+  ok(/None recorded\./.test(r.text) && /None recorded in Wikidata\./.test(r.text) && /None listed at an address here/.test(r.text), "empty sections say none recorded");
   ok(!errors.length, "no page errors: " + errors.join(" / "));
   await ctx.close();
 }

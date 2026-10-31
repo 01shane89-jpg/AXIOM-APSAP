@@ -3,7 +3,7 @@ name: Refresh Chinese presence
 # Once a month (tools/refresh_cnpresence.mjs): the "Chinese presence" data set for every country. AidData's Chinese development
 # finance projects (ODC-By; locations from OpenStreetMap, ODbL), PRC-linked organisations on the U.S. Consolidated Screening List
 # (public domain; DoD 1260H names via OpenSanctions, CC BY-NC, tagged nc) placed by GeoNames cities (CC BY), and Chinese-run
-# ports from OpenStreetMap operator tags (ODbL), into data/cnpresence/<cc>.json and data/cnpresence/index.json. Every record is
+# ports from Wikidata operator and owner records (CC0), into data/cnpresence/<cc>.json and data/cnpresence/index.json. Every record is
 # a source claim with a fingerprint. Keyless, no account. A run on any branch other than main parks its output on
 # claude/cnpresence-preview-data instead of committing.
 on:
