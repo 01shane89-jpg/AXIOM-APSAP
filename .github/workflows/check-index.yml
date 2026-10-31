@@ -158,6 +158,7 @@ jobs:
       - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
+      - run: node tests/draw_style_rulers_smoke.mjs
       - run: node tests/area_report_smoke.mjs
       # sold version: no tile.openstreetmap.org or Esri request once assets/osap-sold.js says true
       - run: node tests/sold_mode_smoke.mjs

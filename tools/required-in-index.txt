@@ -54,6 +54,7 @@
 <script src="assets/osap-socialstats.js"></script>
 <script src="assets/osap-geo.js"></script>
 <script src="assets/osap-measure.js"></script>
+<script src="assets/osap-rulers.js"></script>
 <script src="assets/osap-tools.js"></script>
 <script src="assets/osap-drones.js"></script>
 <script src="assets/osap-traffic.js"></script>

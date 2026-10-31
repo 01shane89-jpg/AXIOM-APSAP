@@ -6,10 +6,11 @@
    - It files what the other tools already keep, never a second copy: saved points (assets/osap-atak.js, "osap-atak-pts"),
      saved routes (assets/osap-route.js, "osap-routes"), drop zones (assets/osap-dz.js, "osap-dz"), saved flight plans
      (assets/osap-flight.js, "osap-flights"), NAI/TAI areas (assets/osap-aoi.js, "osap-aoi"), imported KML shapes
-     (assets/osap-ws.js, "osap-shapes") and saved viewsheds (assets/osap-terrain.js, "osap-viewsheds"); 2026-10-31 (Shane: "a
+     (assets/osap-ws.js, "osap-shapes"), saved viewsheds (assets/osap-terrain.js, "osap-viewsheds") and saved rulers
+     (assets/osap-rulers.js, "osap-rulers", 2026-10-31); 2026-10-31 (Shane: "a
      folder system that will allow me to turn my saved map data on or off and choose what objects have showing on the map"). Only the folders, which item sits in which folder, and what is hidden are kept here,
      in localStorage "osap-places" (one of the Workspace stores in assets/osap-ws.js):
-       { v: 1, folders: [{ id, name, parent }], of: { "<kind>:<id>": folderId }, off: { folderId: 1 }, hide: { "pt|ai|sh:<id>": 1 },
+       { v: 1, folders: [{ id, name, parent }], of: { "<kind>:<id>": folderId }, off: { folderId: 1 }, hide: { "pt|ai|sh|ru:<id>": 1 },
          open: { folderId: 1 } }
      An item with no folder (everything saved before folders existed) sits at the top of My places. Nothing is moved or rewritten.
    - On the map: a point, an NAI/TAI or an imported shape shows when its own box and every folder above it are on (its own tool
@@ -23,11 +24,11 @@
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
   if (!L || !map || W.OSAP_PLACES || /[?&]watchscan=1(&|$)/.test(location.search)) return;
-  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", MAX_FOLDERS = 200, MAX_DEPTH = 6;
+  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", UKEY = "osap-rulers", MAX_FOLDERS = 200, MAX_DEPTH = 6;
   var KCOL = ["#2b8a3e", "#ae3ec9", "#d6336c", "#0c8599", "#f08c00", "#5f3dc4", "#a61e4d", "#495057"];
-  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan" };
+  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", ru: "Ruler", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan" };
   /* kinds whose on/off box lives here (the hide list); routes and viewsheds keep their own switch; drop zones and flight plans none */
-  var HIDE_RE = /^(pt|ai|sh):[\w-]{1,60}$/, ORDER = "ptaishrtvsdzfl";
+  var HIDE_RE = /^(pt|ai|sh|ru):[\w-]{1,60}$/, ORDER = "ptaishrurtvsdzfl";
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } }
   function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
@@ -43,7 +44,7 @@
     });
     /* a parent that is gone, or a loop, puts the folder at the top */
     out.folders.forEach(function (f) { if (f.parent && (!seen[f.parent] || loops(out.folders, f))) f.parent = ""; });
-    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl|ai|sh|vs):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
+    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl|ai|sh|ru|vs):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
     ["off", "open"].forEach(function (n) { var o = obj(s[n]); Object.keys(o).forEach(function (k) { if (seen[k] && o[k]) out[n][k] = 1; }); });
     var h = obj(s.hide); Object.keys(h).forEach(function (k) { if (HIDE_RE.test(k) && h[k]) out.hide[k] = 1; });
     return out;
@@ -71,6 +72,7 @@
     routes().forEach(function (r) { out.push({ key: "rt:" + r.id, kind: "rt", id: r.id, name: r.name || "Route", cc: r.cc, show: !!r.show, color: KCOL.indexOf(r.color) >= 0 ? r.color : KCOL[0], r: r }); });
     (Z && Z.list ? Z.list() : []).forEach(function (d) { out.push({ key: "dz:" + d.id, kind: "dz", id: d.id, name: d.name, cc: d.cc, at: d.pi }); });
     (W.OSAP_AOI && W.OSAP_AOI.all ? W.OSAP_AOI.all() : arrOf(AKEY)).forEach(function (a) { if (a && typeof a.id === "string" && okPts(a.pts)) out.push({ key: "ai:" + a.id, kind: "ai", id: a.id, name: (a.type ? a.type + " " : "") + (a.name || "Area"), cc: a.cc, pts: a.pts }); });
+    (W.OSAP_RULERS ? W.OSAP_RULERS.all() : arrOf(UKEY)).forEach(function (r) { if (r && typeof r.id === "string" && okPts(r.pts)) out.push({ key: "ru:" + r.id, kind: "ru", id: r.id, name: r.name || "Ruler", cc: r.cc, pts: r.pts, color: r.col }); });
     arrOf(SKEY).forEach(function (x) { if (x && typeof x.id === "string" && okPts(x.pts)) out.push({ key: "sh:" + x.id, kind: "sh", id: x.id, name: x.name || (x.kind === "line" ? "Line" : "Area"), cc: x.cc, pts: x.pts, line: x.kind === "line" }); });
     viewsheds().forEach(function (v) { out.push({ key: "vs:" + v.id, kind: "vs", id: v.id, name: v.name || "Viewshed", on: v.on !== false, at: [v.observer.lat, v.observer.lon] }); });
     (Array.isArray(fl) ? fl : []).forEach(function (p) { if (p && typeof p.id === "string") out.push({ key: "fl:" + p.id, kind: "fl", id: p.id, name: p.name || "Flight plan", plan: p, at: p.pts && p.pts[0] ? [p.pts[0].lat, p.pts[0].lon] : null }); });
@@ -156,7 +158,7 @@
   function paint() {
     var box = el.querySelector(".cbox");
     box.innerHTML = '<div class="chead"><h2 id="plc-h">My places</h2><button type="button" class="x" data-pl="close">Close</button></div>' +
-      '<p class="obs">Everything you have saved to the map, in folders: points, routes, NAI/TAI areas, imported shapes, viewsheds, drop zones and flight plans. Tick a folder or an item to show or hide it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>' +
+      '<p class="obs">Everything you have saved to the map, in folders: points, routes, saved shapes and NAI/TAI areas, rulers, imported shapes, viewsheds, drop zones and flight plans. Tick a folder or an item to show or hide it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>' +
       '<div class="plbar"><button type="button" class="pri" data-pl="newf" data-fid="">New folder</button><button type="button" data-pl="all1" title="Tick every folder and item: everything you saved shows on the map">Show all</button><button type="button" data-pl="all0" title="Untick every item: nothing you saved shows on the map (nothing is deleted)">Hide all</button><input type="search" id="plc-q" placeholder="Find by name" aria-label="Find a place by name" value="' + esc(ui.q) + '"></div>' +
       '<div class="pltree"></div>';
     paintTree();
@@ -185,7 +187,7 @@
       var vis = HIDE_RE.test(x.key) ? !s.hide[x.key] : x.kind === "rt" ? x.show : x.kind === "vs" ? x.on : null, away = x.cc && here && x.cc !== here;
       var box2 = vis === null ? '<span style="width:18px;flex:none"></span>' : '<input type="checkbox" data-pli="' + esc(x.key) + '"' + (vis ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map">';
       return '<li class="pli"><div class="plr' + (on && vis !== false ? "" : " dim") + '">' + box2 +
-        (x.kind === "rt" ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
+        (x.kind === "rt" || (x.kind === "ru" && /^#[0-9a-f]{6}$/i.test(x.color || "")) ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
         '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
         '<button type="button" data-plgo="' + esc(x.key) + '">' + (x.kind === "dz" || x.kind === "fl" ? "Open" : "Go to") + "</button>" +
         '<select data-plmv="' + esc(x.key) + '" aria-label="Move ' + esc(x.name) + ' to a folder" title="Move to a folder">' + folderOpts(s, s.of[x.key] || "") + "</select></div></li>";
@@ -209,7 +211,7 @@
       return sub + its || (fid && !q ? '<li class="obs plempty">Empty folder</li>' : "");
     }
     var body = level("", true);
-    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), NAI/TAI areas (Area), imported KML shapes, viewsheds, drop zones and flight plans you save are listed here.") + "</p>";
+    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), shapes and NAI/TAI areas (Area), rulers (Save in Measure), imported KML shapes, viewsheds, drop zones and flight plans you save are listed here.") + "</p>";
     if (ui.edit) { var inp = box.querySelector(".plnm"); if (inp) { inp.focus(); inp.select(); } }
   }
   /* is folder id inside folder top (at any depth)? */
@@ -262,7 +264,7 @@
     if (x.kind === "pt") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
       map.setView(x.at, Math.max(map.getZoom(), 14));
-    } else if (x.kind === "ai" || x.kind === "sh") {
+    } else if (x.kind === "ai" || x.kind === "sh" || x.kind === "ru") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
       try { map.fitBounds(L.latLngBounds(x.pts), { padding: [40, 40], maxZoom: 15 }); } catch (e) {}
     } else if (x.kind === "vs") {
@@ -329,9 +331,9 @@
   function close() { if (el) el.hidden = true; ui.edit = ""; }
   function isOpen() { return !!el && !el.hidden; }
   /* the other tools changed what is saved: list it again */
-  ["osap:points", "osap:routes"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
+  ["osap:points", "osap:routes", "osap:rulers"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
   if (W.OSAP_DZ && W.OSAP_DZ.on) W.OSAP_DZ.on(function () { if (isOpen() && !ui.edit) paintTree(); });
-  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
+  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY || e.key === UKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
 
   W.OSAP_PLACES = { open: open, close: close, isOpen: isOpen, shown: shown, KEY: KEY,
     folderOf: function (key) { return read().of[key] || ""; },
