@@ -1,6 +1,8 @@
-/* AXIOM OSAP: named areas of interest (NAI and TAI).
-   Self-contained block loaded after the main page script. An area drawn on the map (Draw area, lasso or polygon) can be saved
-   as a Named Area of Interest (NAI) or a Target Area of Interest (TAI) with a name or number and optional notes.
+/* AXIOM OSAP: saved shapes and named areas of interest (NAI and TAI).
+   Self-contained block loaded after the main page script. An area drawn on the map (Draw area: lasso, polygon, circle or square)
+   can be saved as a plain Shape (2026-10-31, Shane's TAK comparison: not every drawn shape is an NAI or TAI), a Named Area of
+   Interest (NAI) or a Target Area of Interest (TAI) with a name or number and optional notes. Each saved shape is one record
+   here and keeps its own look (colour, fill opacity, solid/dashed/dotted line, line width), editable in its form.
    - Saved areas are the analyst's own shapes, kept in this browser only (localStorage "osap-aoi"). They never change a record.
    - Each country's saved areas are drawn on its map with their labels (NAI blue dashed, TAI red); tap a label for its card:
      use it as the map filter, watch it (keyword watch, which also works with Push to phone), edit, or delete.
@@ -12,7 +14,12 @@
   "use strict";
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var KEY = "osap-aoi", SHOW_KEY = "osap-aoi-show", MAX_AREAS = 300, MAX_PTS = 500, MAX_FILE = 5 * 1024 * 1024;
-  var TYPES = { NAI: { name: "Named Area of Interest", col: "#1971c2", dash: "8 5" }, TAI: { name: "Target Area of Interest", col: "#c92a2a", dash: null } };
+  var TYPES = { Shape: { name: "Drawn shape", col: "#1c7ed6", dash: null }, NAI: { name: "Named Area of Interest", col: "#1971c2", dash: "8 5" }, TAI: { name: "Target Area of Interest", col: "#c92a2a", dash: null } };
+  /* one-tap colours, the same set as the Draw area panel (index.html AREA_SW) */
+  var SWATCH = [["#e03131", "Red"], ["#f76707", "Orange"], ["#fab005", "Yellow"], ["#37b24d", "Green"], ["#0ca678", "Teal"], ["#1c7ed6", "Blue"], ["#15aabf", "Cyan"], ["#ae3ec9", "Purple"], ["#7048e8", "Violet"], ["#212529", "Black"]];
+  /* a saved look's line: "solid", "dash" or "dot"; none kept means the type's own line (NAI dashed, TAI and Shape solid) */
+  function dashOf(k, w) { return k === "dash" ? Math.round(w * 4) + " " + Math.round(w * 3) : k === "dot" ? "0.1 " + Math.round(w * 2.5 + 2) : null; }
+  function lineOf(a, st, w) { return st && st.dash ? { d: dashOf(st.dash, w), cap: st.dash === "dot" ? "round" : "butt" } : { d: TYPES[a.type].dash, cap: "butt" }; }
 
   function A() { return window.TSAP && window.TSAP.areaApi; }
   function cc() { var a = A(); return a ? a.cc : (window.TSAP && window.TSAP.country) || ""; }
@@ -67,17 +74,18 @@
     if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 640; map.getPane("areapane").style.pointerEvents = "none"; }
     if (layer) { map.removeLayer(layer); layer = null; }
     /* outlines thin out as the map zooms out, like the drawn area */
-    if (!map.__aoiZoom) { map.__aoiZoom = 1; map.on("zoomend", function () { var zw = A() && A().zoomW; if (layer && zw) layer.eachLayer(function (p) { p.setStyle({ weight: zw(p.__aoiW || 2) }); }); }); }
+    if (!map.__aoiZoom) { map.__aoiZoom = 1; map.on("zoomend", function () { var zw = A() && A().zoomW; if (layer && zw) layer.eachLayer(function (p) { var w = zw(p.__aoiW || 2); p.setStyle(p.__aoiDash ? { weight: w, dashArray: dashOf(p.__aoiDash, w) } : { weight: w }); }); }); }
     if (!shown()) return;
     /* an area unticked in My places (its own box, or a folder above it: assets/osap-places.js) is not drawn */
     var mine = forCc(cc()).filter(function (a) { return !(window.OSAP_PLACES && !window.OSAP_PLACES.shown("ai:" + a.id)); }); if (!mine.length) return;
     var svg = L.svg({ pane: "areapane" });
     layer = L.layerGroup(mine.map(function (a) {
-      var t = TYPES[a.type], st = okSt(a.st), zw = A() && A().zoomW;
-      var p = L.polygon(a.pts, { pane: "areapane", renderer: svg, color: st ? st.line : t.col, weight: zw ? zw(st ? st.w : 2) : 2, dashArray: t.dash,
+      var t = TYPES[a.type], st = okSt(a.st), zw = A() && A().zoomW, w = zw ? zw(st ? st.w : 2) : 2, ln = lineOf(a, st, w);
+      var p = L.polygon(a.pts, { pane: "areapane", renderer: svg, color: st ? st.line : t.col, weight: w, dashArray: ln.d, lineCap: ln.cap,
         fillColor: st ? st.fill : t.col, fillOpacity: st ? st.op : 0.06, interactive: false });
-      p.__aoiW = st ? st.w : 2;
+      p.__aoiW = st ? st.w : 2; p.__aoiDash = st && st.dash !== "solid" ? st.dash : "";
       p.bindTooltip('<span data-aoi-lbl="' + esc(a.id) + '">' + esc(label(a)) + '<span class="aoisz"> \u00b7 ' + esc(areaTxt(a)) + '</span></span><span class="aoidelx" role="button" aria-label="Delete ' + esc(label(a)) + '" title="Delete" data-aoi-delx="' + esc(a.id) + '">\u2715</span>', { permanent: true, direction: "center", className: "aoilbl aoi-" + a.type.toLowerCase(), interactive: true, opacity: 1 });
+      if (a.type === "Shape") p.on("tooltipopen", function (e) { var el = e.tooltip && e.tooltip.getElement(); if (el) el.style.borderColor = st ? st.line : t.col; });
       return p;
     })).addTo(map);
   }
@@ -125,12 +133,14 @@
         return '<label><input type="radio" name="aoi-type" value="' + k + '"' + (a.type === k ? " checked" : "") + "> <span><b>" + k + "</b> " + esc(TYPES[k].name) + "</span></label>"; }).join("") + "</fieldset>" +
       '<label>Name or number <input type="text" id="aoi-name" class="mini" maxlength="60" required value="' + esc(a.name) + '"></label>' +
       '<label class="aoinotes">Notes <span class="obs">(optional)</span><textarea id="aoi-notes" class="mini" rows="3" maxlength="1000">' + esc(a.notes || "") + "</textarea></label>" +
+      lookHtml(a) +
       '<p class="obs">' + esc(a.pts.length + " corners · about " + km2(a.pts)) + ". Kept in this browser only; use Export in the Watch panel to move it to another device.</p>" +
       '<p class="note" id="aoi-err" hidden></p>' +
       '<div class="wbtns"><button type="submit" class="refresh primary">' + (isNew ? "Save area" : "Save changes") + '</button><button type="button" class="refresh" data-aoi-x>Cancel</button></div></form></div>';
     el.hidden = false;
-    var f = el.querySelector("#aoi-form"), nm = el.querySelector("#aoi-name"), typed = !isNew;
+    var f = el.querySelector("#aoi-form"), nm = el.querySelector("#aoi-name"), typed = !isNew, look = lookState(a);
     nm.addEventListener("input", function () { typed = true; });
+    lookWire(el, look);
     Array.prototype.forEach.call(el.querySelectorAll('[name="aoi-type"]'), function (r) {
       r.addEventListener("change", function () { if (!typed && isNew) nm.value = nextNum(r.value, a.cc); }); });
     f.addEventListener("submit", function (ev) {
@@ -140,11 +150,46 @@
       var dup = all().filter(function (x) { return x.id !== a.id && x.cc === a.cc && x.type === ty && x.name.toLowerCase() === n.toLowerCase(); })[0];
       if (dup) { err.textContent = ty + " " + n + " already exists in this country. Use another name or number."; err.hidden = false; return; }
       var b = { id: a.id, type: ty, name: n, notes: cleanNotes(el.querySelector("#aoi-notes").value), cc: a.cc, pts: a.pts, created: a.created || Date.now(), updated: Date.now() };
-      if (okSt(a.st)) b.st = okSt(a.st);
+      /* the look: kept when the shape had one or it was changed here; an NAI or TAI never styled keeps its type's colours */
+      if (look.touched || okSt(a.st)) b.st = okSt(look.st);
       var bad = save(b); if (bad) { err.textContent = bad; err.hidden = false; return; }
       card(b.id, isNew ? "Saved." : "Changes saved.");
     });
     nm.focus(); if (isNew) nm.select();
+  }
+  /* ---------- a saved shape's look in its form: swatches, fill opacity, line style, width ---------- */
+  function lookState(a) {
+    var st = okSt(a.st), t = TYPES[a.type] || TYPES.Shape;
+    return { touched: false, st: st ? JSON.parse(JSON.stringify(st)) : { fill: t.col, line: t.col, op: 0.06, w: 2, dash: t.dash ? "dash" : "solid" } };
+  }
+  function lookHtml(a) {
+    var L0 = lookState(a).st, cur = L0.line.toLowerCase();
+    return '<fieldset class="aoilook"><legend>Look on the map</legend>' +
+      '<div class="aoisw" role="group" aria-label="Colour">' + SWATCH.map(function (c) { return '<button type="button" data-aoi-sw="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" title="' + c[1] + '" aria-pressed="' + (cur === c[0]) + '"></button>'; }).join("") + "</div>" +
+      '<label class="aoirow">Fill opacity <input type="range" min="0" max="100" step="1" data-aoi-op value="' + Math.round(L0.op * 100) + '"><output>' + Math.round(L0.op * 100) + "%</output></label>" +
+      '<div class="aoirow" role="group" aria-label="Line style">Line ' + [["solid", "Solid"], ["dash", "Dashed"], ["dot", "Dotted"]].map(function (x) {
+        return '<button type="button" data-aoi-ls="' + x[0] + '" aria-pressed="' + ((L0.dash || "solid") === x[0]) + '">' + x[1] + "</button>"; }).join("") + "</div>" +
+      '<label class="aoirow">Line width <input type="range" min="1" max="8" step="0.5" data-aoi-w value="' + L0.w + '"><output>' + L0.w + " px</output></label></fieldset>";
+  }
+  function lookWire(el, look) {
+    var box = el.querySelector(".aoilook"); if (!box) return;
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("button"); if (!b) return;
+      var v;
+      if ((v = b.getAttribute("data-aoi-sw"))) { look.st.fill = v; look.st.line = v; }
+      else if ((v = b.getAttribute("data-aoi-ls"))) look.st.dash = v;
+      else return;
+      look.touched = true;
+      Array.prototype.forEach.call(box.querySelectorAll("[data-aoi-sw]"), function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-aoi-sw") === look.st.line)); });
+      Array.prototype.forEach.call(box.querySelectorAll("[data-aoi-ls]"), function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-aoi-ls") === look.st.dash)); });
+    });
+    box.addEventListener("input", function (e) {
+      var t = e.target, o = t.parentNode.querySelector("output");
+      if (t.hasAttribute("data-aoi-op")) { look.st.op = Math.max(0, Math.min(1, +t.value / 100)); if (o) o.textContent = Math.round(look.st.op * 100) + "%"; }
+      else if (t.hasAttribute("data-aoi-w")) { look.st.w = Math.max(1, Math.min(8, +t.value || 2)); if (o) o.textContent = look.st.w + " px"; }
+      else return;
+      look.touched = true;
+    });
   }
   function card(id, note) {
     var a = get(id); if (!a) { close(); return; }
@@ -206,19 +251,23 @@
     undoEl.querySelector("button").onclick = function () { undoEl.hidden = true; clearTimeout(undoT); undo(); };
     clearTimeout(undoT); undoT = setTimeout(function () { undoEl.hidden = true; }, 8000);
   }
-  function saveDrawn() {
+  function saveDrawn(type) {
     var api = A(), P = api && api.area && api.area(); if (!P) return;
     var pts = okPts(P); if (!pts) return;
     var c = cc(), same = all().filter(function (x) { return x.cc === c && JSON.stringify(x.pts) === JSON.stringify(pts); })[0];
     if (same) { card(same.id, "This drawn area is already saved as " + label(same) + "."); return; }
-    /* the drawn area's own look (fill, opacity, outline colour and width) goes with it */
-    form({ id: newId(), type: "NAI", name: nextNum("NAI", c), notes: "", cc: c, pts: pts, st: api.style ? api.style() : null }, true);
+    /* the drawn area's own look (colour, fill opacity, line style and width) goes with it; a drawn solid line is kept as "solid" */
+    var st = api.style ? api.style() : null; if (st) st.dash = st.dash || "solid";
+    /* Save in the Draw area panel saves a plain Shape; "Save as NAI/TAI" (and the long-press menu) starts on NAI */
+    var ty = TYPES[type] ? type : "Shape";
+    form({ id: newId(), type: ty, name: nextNum(ty, c), notes: "", cc: c, pts: pts, st: st }, true);
   }
   function okSt(t) {
     if (!t || typeof t !== "object") return null;
     var hx = function (v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }, o = { fill: hx(t.fill), line: hx(t.line), op: +t.op, w: +t.w };
     if (!o.fill || !o.line || !isFinite(o.op) || !isFinite(o.w)) return null;
-    o.op = Math.max(0, Math.min(0.8, o.op)); o.w = Math.max(1, Math.min(8, o.w));
+    o.op = Math.max(0, Math.min(1, o.op)); o.w = Math.max(1, Math.min(8, o.w));
+    if (t.dash === "solid" || t.dash === "dash" || t.dash === "dot") o.dash = t.dash;
     /* drawn as a circle or square: kept so the card can give its radius or sides */
     if (t.kind === "circle" || t.kind === "rect") o.kind = t.kind;
     return o;
@@ -240,7 +289,7 @@
     var ctl = document.getElementById("area-ctl");
     if (!ctl) { setTimeout(hookCtl, 800); return; }
     new MutationObserver(decorateCtl).observe(ctl, { childList: true });
-    ctl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-aoi-save]")) { e.stopPropagation(); saveDrawn(); } });
+    ctl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-aoi-save]")) { e.stopPropagation(); saveDrawn("NAI"); } });
     decorateCtl();
   }
 
@@ -251,7 +300,8 @@
         var ring = a.pts.map(function (p) { return [p[1], p[0]]; }); ring.push(ring[0]);
         return { type: "Feature", id: a.id, geometry: { type: "Polygon", coordinates: [ring] },
           properties: { osap: "aoi", id: a.id, aoi_type: a.type, name: a.name, label: label(a), notes: a.notes || "", country: a.cc,
-            created: new Date(a.created || Date.now()).toISOString(), updated: new Date(a.updated || a.created || Date.now()).toISOString(), stroke: TYPES[a.type].col } };
+            created: new Date(a.created || Date.now()).toISOString(), updated: new Date(a.updated || a.created || Date.now()).toISOString(),
+            stroke: okSt(a.st) ? okSt(a.st).line : TYPES[a.type].col, osap_style: okSt(a.st) || undefined } };
       }) };
   }
   function exportGeo(scope) {
@@ -274,14 +324,14 @@
       rings.forEach(function (r, k) {
         var pts = Array.isArray(r) ? okPts(r.map(function (xy) { return Array.isArray(xy) ? [xy[1], xy[0]] : null; })) : null;
         if (!pts) { skipped++; return; }
-        var ty = String(p.aoi_type || p.type || p.kind || "").toUpperCase();
+        var ty = String(p.aoi_type || p.type || p.kind || "").toUpperCase(); if (ty === "SHAPE") ty = "Shape";
         var nm = clean(p.name || p.label || p.title || "", 60);
         var m = /^(NAI|TAI)\s*[-:#]?\s*(.+)$/i.exec(nm); if (m) { if (!TYPES[ty]) ty = m[1].toUpperCase(); nm = clean(m[2], 60); }
         if (!TYPES[ty]) ty = "NAI";
         var pc = String(p.country || "").toLowerCase();
         out.push({ id: typeof p.id === "string" && /^aoi-[a-z0-9]{4,40}$/.test(p.id) && rings.length === 1 ? p.id : newId(), type: ty, name: nm || "", notes: cleanNotes(p.notes || p.description || ""),
           cc: /^[a-z]{2,3}$/.test(pc) && (window.OSAP_WATCH ? window.OSAP_WATCH.countryName(pc) !== pc.toUpperCase() : true) ? pc : c, pts: pts,
-          created: Date.parse(p.created) || Date.now(), updated: Date.parse(p.updated) || Date.now() });
+          created: Date.parse(p.created) || Date.now(), updated: Date.parse(p.updated) || Date.now(), st: okSt(p.osap_style) || undefined });
       });
     });
     return { list: out, skipped: skipped + Math.max(0, feats.length - MAX_AREAS) };
@@ -322,12 +372,12 @@
   function section() {
     var note = lastNote; lastNote = "";
     var c = cc(), mine = forCc(c), others = all().length - mine.length;
-    return '<section class="aoisec" data-aoisec><h3>Named areas (NAI / TAI) in ' + esc(window.OSAP_WATCH ? window.OSAP_WATCH.countryName(c) : c) + "</h3>" +
+    return '<section class="aoisec" data-aoisec><h3>Saved shapes and named areas (NAI / TAI) in ' + esc(window.OSAP_WATCH ? window.OSAP_WATCH.countryName(c) : c) + "</h3>" +
       (mine.length ? '<div class="aoilist">' + mine.map(function (a) {
         return '<div class="wrow"><div><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> <b>" + esc(a.name) + "</b>" +
           (a.notes ? '<div class="obs">' + esc(a.notes.length > 120 ? a.notes.slice(0, 119) + "…" : a.notes) + "</div>" : "") + "</div>" +
           '<div class="wbtns"><button type="button" class="refresh" data-aoi-open="' + esc(a.id) + '">Open</button><button type="button" class="refresh" data-aoi-wpick="' + esc(a.id) + '">Watch</button></div></div>';
-      }).join("") + "</div>" : '<p class="obs">None yet. Draw an area on the map, then tap Save as NAI/TAI.</p>') +
+      }).join("") + "</div>" : '<p class="obs">None yet. Draw an area on the map, then tap Save.</p>') +
       (others > 0 ? '<p class="obs">' + others + " more saved for other countries (shown on their maps).</p>" : "") +
       '<p class="wbtns aoitools"><label class="aoishow"><input type="checkbox" data-aoi-show' + (shown() ? " checked" : "") + "> Show on the map</label>" +
         (mine.length ? '<button type="button" class="refresh" data-aoi-exp="cc">Export this country</button>' : "") +
@@ -377,7 +427,12 @@
     "#aoidlg .chead .x{font-size:26px;min-width:44px;min-height:44px;background:none;border:none;color:var(--ink);cursor:pointer}#aoidlg .obs{color:var(--muted)}" +
     "#aoidlg .wform textarea{width:100%;box-sizing:border-box;font:inherit}#aoidlg .aoinotes{flex-direction:column;align-items:stretch!important}#aoidlg .wbtns{display:flex;flex-wrap:wrap;gap:6px}" +
     "#aoidlg .wbtns .on{border-color:var(--accent);color:var(--accent)}.aoinote{white-space:normal;border-left:3px solid var(--line);padding-left:8px}" +
-    ".chip.aoichip{font-weight:700;text-transform:none}.chip.aoi-nai{color:#1971c2;border-color:#1971c2}.chip.aoi-tai{color:#c92a2a;border-color:#c92a2a}" +
+    ".chip.aoichip{font-weight:700;text-transform:none}.chip.aoi-nai{color:#1971c2;border-color:#1971c2}.chip.aoi-tai{color:#c92a2a;border-color:#c92a2a}.chip.aoi-shape{color:var(--ink);border-color:var(--line)}" +
+    ".leaflet-tooltip.aoi-shape{border:1.5px solid #1c7ed6}#aoidlg .aoilook{border:1px solid var(--line);border-radius:6px;padding:6px 10px 8px;margin:8px 0}#aoidlg .aoilook legend{font-weight:600;padding:0 4px}" +
+    "#aoidlg .aoisw{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin:2px 0 6px}#aoidlg .aoisw button{height:28px;min-width:0;padding:0;border:2px solid rgba(0,0,0,.15);border-radius:5px;cursor:pointer}" +
+    "#aoidlg .aoisw button[aria-pressed=true]{outline:2px solid var(--accent);outline-offset:1px;border-color:#fff}#aoidlg .aoirow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0}#aoidlg .aoirow input[type=range]{flex:1;min-width:120px}" +
+    "#aoidlg .aoirow button{font:inherit;font-size:12px;border:1px solid var(--line);background:none;color:var(--ink);border-radius:4px;padding:4px 8px;min-height:30px;cursor:pointer}#aoidlg .aoirow button[aria-pressed=true]{border-color:var(--accent);color:var(--accent);font-weight:700}" +
+    "@media (max-width:420px){#aoidlg .aoisw{grid-template-columns:repeat(5,1fr)}}" +
     ".leaflet-tooltip.aoilbl{font:700 11px/1.2 'IBM Plex Mono',monospace;padding:2px 6px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.3);cursor:pointer;pointer-events:auto;background:var(--surface,#fff);color:var(--ink,#111)}" +
     ".leaflet-tooltip.aoilbl{display:flex;align-items:center;gap:6px}.aoisz{font-weight:600;opacity:.85}" +
     ".aoidelx{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin:-2px -4px -2px 0;border-radius:50%;background:#c92a2a;color:#fff;font:700 12px/1 system-ui,sans-serif}" +
