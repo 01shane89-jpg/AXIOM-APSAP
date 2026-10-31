@@ -6841,7 +6841,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      it is intuitive): infrastructure first (communications, power: Shane could not find them lower down), then terrain, roads and movement, aircraft, then your own marking (country sides,
      boundaries), then display options. Sections not named here stay where their module put them. */
   var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#ml-sat"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/], ["#ml-warn", /^Airspace and sea warnings/],
-    [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/]];
+    [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/], ["#ml-disp", /^Map display/]];
   function mlArrange() {
     var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
     if (!base) return;
@@ -9452,6 +9452,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-ptdeclutter.js"></script>
 <!-- My places: folders for saved points, routes, drop zones and flight plans, with show/hide per folder (assets/osap-places.js) -->
 <script src="assets/osap-places.js"></script>
+<!-- Map display options in Map overlays: map scale, saved point names, grouping, points of interest (assets/osap-display.js) -->
+<script src="assets/osap-display.js"></script>
 <script src="assets/osap-3d.js"></script>
 <!-- the phone's compass, read in one place (assets/osap-heading.js), and the map compass behind the north arrow (assets/osap-compass.js) -->
 <script src="assets/osap-heading.js"></script>

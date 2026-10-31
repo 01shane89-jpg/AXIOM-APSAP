@@ -4,6 +4,7 @@
      then 80 %, 65 % and 50 %. Below zoom 9 their name labels are hidden; pointing at a symbol shows its name again.
    - Below zoom 13, points that would sit on top of each other on screen are shown as one symbol with a count. Pressing it zooms
      in until they separate; pointing at it lists their names.
+   - The grouping can be switched off in Map overlays > Map display (assets/osap-display.js).
    - Only how the points are drawn changes. The points themselves, their popups and where they are saved are not touched. */
 (function () {
   "use strict";
@@ -49,7 +50,7 @@
     for (var i = 0; i < ms.length; i++) {
       if (lead[i] != null) continue;
       lead[i] = i; var g = [i];
-      if (z < GROUP_BELOW) for (var j = i + 1; j < ms.length; j++) if (lead[j] == null && at[i].distanceTo(at[j]) < R) { lead[j] = i; g.push(j); }
+      if (z < GROUP_BELOW && grouping()) for (var j = i + 1; j < ms.length; j++) if (lead[j] == null && at[i].distanceTo(at[j]) < R) { lead[j] = i; g.push(j); }
       grp[i] = g;
     }
     ms.forEach(function (m, k) {
@@ -64,6 +65,8 @@
       else ic.title = m.options.title || "";
     });
   }
+  /* Map overlays > Map display > Group crowded saved points (assets/osap-display.js) can switch the grouping off; shrinking stays */
+  function grouping() { return !(W.OSAP_DISPLAY && W.OSAP_DISPLAY.get && !W.OSAP_DISPLAY.get("group")); }
   function soon() { if (!raf) raf = requestAnimationFrame(run); }
   map.on("zoomend", soon);
   /* the points are drawn again whenever one is added, edited or removed */
