@@ -101,6 +101,15 @@ for (const vp of [{ width: 1400, height: 900, tag: "desktop" }, { width: 390, he
   // a damaged hide list with an unknown kind is ignored
   await p.evaluate(() => { const s = JSON.parse(localStorage.getItem("osap-places")); s.hide["zz:x"] = 1; s.hide["<b>"] = 1; localStorage.setItem("osap-places", JSON.stringify(s)); });
   ok(await p.evaluate(() => !("zz:x" in window.OSAP_PLACES.state().hide)), T + ": an unknown kind in the hide list is dropped");
+  // Save to folder: bad items are dropped, names are text not markup, an unknown folder files at the top
+  const sv = await p.evaluate(() => {
+    const before = JSON.parse(localStorage.getItem("osap-atak-pts")).length;
+    const r = window.OSAP_PLACES.saveSet({ title: "T", tool: "test", items: [{ type: "pt", name: "<img src=x onerror=alert(1)>", lat: 14.1, lon: 100.1 }, { type: "pt", lat: 999, lon: 0 }, { type: "rt", line: [[1, 2]] }, { type: "zz" }, null] }, "fnope");
+    window.OSAP_PLACES.saveTo({ title: "<b>x</b>", items: [{ type: "pt", name: "<i>y</i>", lat: 14, lon: 100 }] });
+    const d = document.getElementById("plcsv"), html = d.innerHTML; d.hidden = true;
+    return { r, added: JSON.parse(localStorage.getItem("osap-atak-pts")).length - before, safe: !d.querySelector("img,b,i"), text: /&lt;i&gt;y&lt;\/i&gt;/.test(html) };
+  });
+  ok(sv.r.pts === 1 && sv.r.rts === 0 && sv.r.folder === "" && sv.added === 1 && sv.safe && sv.text, T + ": Save to folder keeps only well-formed items, shows names as text, files at the top for an unknown folder " + JSON.stringify(sv));
   ok(errors.length === 0, T + ": no page errors " + errors.join(" | "));
   await ctx.close();
 }

@@ -99,6 +99,7 @@
       pl.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", "1");
         d.innerHTML = "<h3>" + esc(x.name) + '</h3><p class="obs">Saved route, ' + x.wps.length + " waypoints. Your own plan kept in this browser, not a report.</p>" +
+          (typeof x.note === "string" && x.note ? '<p class="obs" style="white-space:pre-line">' + esc(x.note.slice(0, 1000)) + "</p>" : "") +
           '<div class="rtpb"><button type="button" data-plr="route">Open the Route tab</button><button type="button" data-plr="hide">Hide</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-plr]"); if (!b) return; map.closePopup();
@@ -135,6 +136,13 @@
     "#plc .plr select{font:inherit;font-size:12px;max-width:150px;min-height:30px;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:inherit}" +
     "#plc .plr input.plnm{font:inherit;font-weight:700;flex:1;min-width:120px;padding:3px 6px;border:1px solid var(--accent,#0b7285);border-radius:4px}" +
     "#plc .plsw{display:inline-block;width:12px;height:12px;border-radius:2px;flex:none}#plc .plempty{padding:4px 0 4px 30px}" +
+    "#plcsv{position:fixed;inset:0;z-index:100002;background:rgba(0,0,0,.45);overflow:auto;padding:16px}#plcsv[hidden]{display:none}" +
+    "#plcsv .cbox{max-width:520px;margin:0 auto;background:var(--surface,#fff);color:var(--ink,#111);border-radius:8px;padding:10px 16px 16px;font-size:13px;line-height:1.45}" +
+    "#plcsv .chead{display:flex;align-items:center;gap:8px;padding:6px 0}#plcsv .chead h2{margin:0;font-size:16px;flex:1}#plcsv .obs{color:var(--muted,#555);font-size:12px}" +
+    "#plcsv button{font:inherit;font-size:12.5px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 9px;min-height:32px;cursor:pointer}#plcsv button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:700}" +
+    "#plcsv .plsvl{display:flex;align-items:center;gap:8px;margin:6px 0}#plcsv .plsvl[hidden]{display:none}#plcsv select,#plcsv input[type=text]{flex:1;font:inherit;min-height:32px;padding:3px 6px;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:inherit}" +
+    "#plcsv .plsvlist{list-style:none;margin:6px 0;padding:0;max-height:40vh;overflow:auto;border:1px solid var(--line,#ddd);border-radius:5px}#plcsv .plsvlist li{padding:4px 8px;border-top:1px solid var(--line,#eee)}#plcsv .plsvlist li:first-child{border-top:0}" +
+    "#plcsv .plk{font-size:10.5px;color:var(--muted,#555);border:1px solid var(--line,#ccc);border-radius:3px;padding:0 4px}#plcsv .plbar{display:flex;gap:6px;margin-top:8px}" +
     "@media (max-width:700px){#plc{padding:6px}#plc .cbox{padding:8px 10px 12px}#plc .plr select{max-width:96px}#plc .plr select.plact{max-width:74px}#plc ul ul{margin-left:10px}}";
   function ensure() {
     if (el) return el;
@@ -338,10 +346,112 @@
   if (W.OSAP_DZ && W.OSAP_DZ.on) W.OSAP_DZ.on(function () { if (isOpen() && !ui.edit) paintTree(); });
   W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY || e.key === UKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
 
+  /* ---------- Save to folder: map items OSAP made (a medical plan's hospitals and routes, landing zone candidates) ----------
+     (Shane 2026-10-31: "if I made a folder called med plan, can I save all the routes and places in that folder for quick
+     reference later?") The tool hands over a set: { title, tool, note, items: [{ type: "pt", name, lat, lon, sym, note } |
+     { type: "rt", name, line: [[lat, lon], ...], note }] }. Saving keeps a COPY as the analyst's own saved point or saved route
+     (the same stores Point and Route use, so it shows, routes, exports and moves with the workspace like anything saved by
+     hand), filed in the folder chosen. Each copy keeps where it came from: from { tool, title, at } and a note that carries the
+     tool's own caveat (an automatic draft from open data stays marked as one). It is a snapshot: rebuilding the plan later
+     does not change it, and deleting it does not touch the plan. */
+  var PKEY = "osap-atak-pts", MAX_PTS = 500, MAX_RTS = 100, sv = null, svSet = null;
+  function clip(t, n) { return String(t == null ? "" : t).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n); }
+  function okLL(a, b) { return isFinite(a) && isFinite(b) && Math.abs(a) <= 90 && Math.abs(b) <= 180; }
+  function rid(p) { var b = new Uint8Array(4); crypto.getRandomValues(b); return p + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
+  /* only well-formed items, at most 60 */
+  function cleanSet(o) {
+    o = obj(o);
+    var its = (Array.isArray(o.items) ? o.items : []).map(function (x) {
+      if (!x || typeof x !== "object") return null;
+      if (x.type === "pt" && okLL(+x.lat, +x.lon)) return { type: "pt", name: clip(x.name, 80) || "Point", lat: +(+x.lat).toFixed(6), lon: +(+x.lon).toFixed(6), sym: typeof x.sym === "string" ? x.sym.slice(0, 40) : "", note: clip(x.note, 900) };
+      if (x.type === "rt" && Array.isArray(x.line)) {
+        var ln = x.line.filter(function (q) { return Array.isArray(q) && okLL(+q[0], +q[1]); }).map(function (q) { return [+(+q[0]).toFixed(6), +(+q[1]).toFixed(6)]; });
+        if (ln.length > 4000) { var st = Math.ceil(ln.length / 4000); ln = ln.filter(function (q, i) { return i % st === 0 || i === ln.length - 1; }); }
+        if (ln.length >= 2) return { type: "rt", name: clip(x.name, 60) || "Route", line: ln, note: clip(x.note, 900), m: isFinite(x.m) ? +x.m : undefined, s: isFinite(x.s) ? +x.s : undefined };
+      }
+      return null;
+    }).filter(Boolean).slice(0, 60);
+    return { title: clip(o.title, 60) || "Saved from OSAP", tool: clip(o.tool, 24) || "osap", note: clip(o.note, 600), items: its };
+  }
+  /* -> { folder, pts, rts, left } ; folder: an existing folder id, or { name, parent } for a new one */
+  function saveSet(set, folder, pick) {
+    set = cleanSet(set); var at = new Date().toISOString(), here = cc(), from = { tool: set.tool, title: set.title, at: at };
+    var s = read(), fid = "";
+    if (folder && typeof folder === "object") {
+      if (s.folders.length >= MAX_FOLDERS) return { err: "Up to " + MAX_FOLDERS + " folders." };
+      var par = folder.parent && byId(s)[folder.parent] && depth(s, folder.parent) < MAX_DEPTH ? folder.parent : "";
+      fid = newId(); s.folders.push({ id: fid, name: clip(folder.name, 60) || set.title, parent: par }); if (par) s.open[par] = 1;
+    } else if (typeof folder === "string" && byId(s)[folder]) fid = folder;
+    var P = jget(PKEY, []); P = Array.isArray(P) ? P : [];
+    var R = routes(), nP = 0, nR = 0, left = 0, cols = 0;
+    set.items.forEach(function (x, i) {
+      if (pick && !pick[i]) return;
+      var note = [x.note, set.note].filter(Boolean).join("\n").slice(0, 1000);
+      if (x.type === "pt") {
+        if (P.length >= MAX_PTS) { left++; return; }
+        var p = { id: rid("p"), cc: here, lat: x.lat, lon: x.lon, n: x.name, t: Date.now(), note: note, from: from };
+        if (x.sym) p.sym = x.sym;
+        P.push(p); if (fid) s.of["pt:" + p.id] = fid; nP++;
+      } else {
+        if (R.length >= MAX_RTS) { left++; return; }
+        var a = x.line[0], b = x.line[x.line.length - 1];
+        var r = { id: rid("rt-"), name: x.name, cc: here, mode: "car", wps: [{ lat: a[0], lon: a[1] }, { lat: b[0], lon: b[1] }], line: x.line, m: x.m, s: x.s,
+          saved: at, show: true, color: KCOL[(R.length + cols++) % KCOL.length], note: note, from: from };
+        R.push(r); if (fid) s.of["rt:" + r.id] = fid; nR++;
+      }
+    });
+    if (nP && !jset(PKEY, P)) return { err: "Not saved: this browser's storage for OSAP is full." };
+    if (nR && !jset(RKEY, R)) return { err: "Not saved: this browser's storage for OSAP is full." };
+    if (fid) delete s.off[fid];
+    write(s);
+    if (nP) D.dispatchEvent(new Event("osap:points"));
+    if (nR) D.dispatchEvent(new Event("osap:routes"));
+    return { folder: fid, pts: nP, rts: nR, left: left };
+  }
+  /* the small window: which folder (a new one named after the set, or one already made) and which items */
+  function saveTo(set) {
+    svSet = cleanSet(set);
+    if (!svSet.items.length) { toast("Nothing to save yet."); return; }
+    ensure();
+    if (!sv) {
+      sv = D.createElement("div"); sv.id = "plcsv"; sv.hidden = true; sv.setAttribute("role", "dialog"); sv.setAttribute("aria-labelledby", "plcsv-h");
+      D.body.appendChild(sv);
+      sv.addEventListener("click", function (e) {
+        if (e.target === sv) { sv.hidden = true; return; }
+        var b = e.target.closest("button[data-sv]"); if (!b) return;
+        var k = b.getAttribute("data-sv");
+        if (k === "x") { sv.hidden = true; return; }
+        if (k === "save") {
+          var sel = sv.querySelector("#plcsv-f").value, nm = sv.querySelector("#plcsv-n").value, pick = {};
+          sv.querySelectorAll("[data-svi]").forEach(function (c) { pick[+c.getAttribute("data-svi")] = c.checked; });
+          var r = saveSet(svSet, sel === "new" ? { name: nm, parent: "" } : sel.slice(4) ? sel.slice(4) : "", pick);
+          if (r.err) { toast(r.err); return; }
+          sv.hidden = true;
+          var f = r.folder ? byId(read())[r.folder] : null;
+          toast("Saved " + [r.pts ? r.pts + " point" + (r.pts === 1 ? "" : "s") : "", r.rts ? r.rts + " route" + (r.rts === 1 ? "" : "s") : ""].filter(Boolean).join(" and ") + " to " + (f ? f.name : "My places") + (r.left ? ". " + r.left + " left out: saved items are full." : ""));
+        }
+        if (k === "places") { sv.hidden = true; open(); }
+      });
+      sv.addEventListener("change", function (e) { if (e.target.id === "plcsv-f") sv.querySelector("#plcsv-nw").hidden = e.target.value !== "new"; });
+      sv.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.stopPropagation(); sv.hidden = true; } });
+    }
+    var s = read(), n = { pt: 0, rt: 0 }; svSet.items.forEach(function (x) { n[x.type]++; });
+    sv.innerHTML = '<div class="cbox"><div class="chead"><h2 id="plcsv-h">Save to My places</h2><button type="button" data-sv="x">Close</button></div>' +
+      '<p class="obs">Keeps a copy of ' + [n.pt ? n.pt + " place" + (n.pt === 1 ? "" : "s") : "", n.rt ? n.rt + " route" + (n.rt === 1 ? "" : "s") : ""].filter(Boolean).join(" and ") + " from " + esc(svSet.title) + " as your own saved points and routes, in one folder. Each keeps a note of where it came from" + (svSet.note ? " and that it is a draft from open data" : "") + ". Rebuilding the plan later does not change these copies.</p>" +
+      '<label class="plsvl">Folder <select id="plcsv-f"><option value="new" selected>New folder…</option>' + folderOpts(s, null, "fid:").replace('<option value="fid:">My places (top)</option>', '<option value="fid:">My places (top, no folder)</option>') + "</select></label>" +
+      '<label class="plsvl" id="plcsv-nw">Name <input type="text" id="plcsv-n" maxlength="60" value="' + esc(svSet.title) + '"></label>' +
+      '<ul class="plsvlist">' + svSet.items.map(function (x, i) { return '<li><label><input type="checkbox" data-svi="' + i + '" checked> ' + esc(x.name) + ' <span class="plk">' + (x.type === "pt" ? "Place" : "Route") + "</span></label></li>"; }).join("") + "</ul>" +
+      '<div class="plbar"><button type="button" class="pri" data-sv="save">Save</button><button type="button" data-sv="places">Open My places</button></div></div>';
+    sv.hidden = false;
+    var inp = sv.querySelector("#plcsv-n"); if (inp) { inp.focus(); inp.select(); }
+  }
+
   W.OSAP_PLACES = { open: open, close: close, isOpen: isOpen, shown: shown, KEY: KEY,
     folderOf: function (key) { return read().of[key] || ""; },
     state: function () { var s = read(); return { folders: s.folders.slice(), of: s.of, off: s.off, hide: s.hide, routesDrawn: rLayer.getLayers().length }; },
-    newFolder: newFolder, move: moveItem, remove: function (id) { delFolder(id, false); } };
+    newFolder: newFolder, move: moveItem, remove: function (id) { delFolder(id, false); },
+    /* Save to folder for map items other tools made: saveTo(set) asks which folder; saveSet(set, folder) saves without asking */
+    saveTo: saveTo, saveSet: saveSet };
   /* points and routes drawn before this file arrived honour the folders now */
   changed();
 })();
