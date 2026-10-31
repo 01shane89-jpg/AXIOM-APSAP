@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan, Evacuate from here or DZSO sheet here), Find LZ, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan, Evacuate from here, DZSO sheet here or Site survey here), Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -222,7 +222,7 @@
       var has = areaOn();
       /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
       popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).filter(function (x) { return x.id !== "med"; }).map(function (x) { return [x.id, x.label]; }),
-        has ? [null, ["edit", "Edit shape"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
+        has ? [null, ["edit", "Edit shape"], ["save", "Save shape (or NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "medplan") {
       var mp = D.getElementById("medplan");
@@ -246,7 +246,7 @@
     }
     else if (k === "point") {
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
-      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
+      popOpen(b, (W.OSAP_POINTS && W.OSAP_POINTS.snap ? [["snap", "Take a photo here (grid + heading)"]] : []).concat([["centre", "At the map centre"], ["tap", "Tap the map to place it"]], hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
     }
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
@@ -265,14 +265,17 @@
       /* a tool marked point: true (the medical plan) runs without a shape, from the map centre */
       if (run && !areaOn() && !(at && at.point)) { areaWait(run, at ? at.label : "Summarise area"); return; }
       if (run) run();
-      else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
+      /* Save keeps the drawn shape as a plain Shape with its look; its form also offers NAI and TAI (assets/osap-aoi.js) */
+      else if (k === "save") { if (W.OSAP_AOI && W.OSAP_AOI.saveDrawn) W.OSAP_AOI.saveDrawn(); else press("[data-aoi-save]"); } else areaPress(k);
       setTimeout(paintTools, 30);
     }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
     else if (f === "mine") press('[data-wk-btn="' + k + '"]');
     else if (f === "point") {
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
-      if (k === "centre") ptAdd(map.getCenter());
+      /* Photo to map (assets/osap-points.js): still inside this tap, so iOS can ask for compass access */
+      if (k === "snap") W.OSAP_POINTS.snap();
+      else if (k === "centre") ptAdd(map.getCenter());
       else if (k === "me" && hm) ptAdd(L.latLng(hm.lat, hm.lon));
       else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
       /* each saved point's MGRS under its name on the map; a device choice */
@@ -394,13 +397,19 @@
       if (W.OSAP_PLACES && !W.OSAP_PLACES.shown("pt:" + p.id)) return;
       /* the point's own icon (assets/osap-milsym.js: a military symbol, a shape or a pin); the teal diamond otherwise */
       var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
+      var ic = sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + ptLab(p) + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] }) : defIcon(p);
+      /* a photo point that has a heading: a wedge from the point the way the camera faced (turned on the svg, since
+         assets/osap-ptdeclutter.js sets the transform of the icon's children to shrink them) */
+      if (typeof p.az === "number" && isFinite(p.az)) {
+        var an = ic.options.iconAnchor;
+        ic.options.html = '<b class="atk-az" style="left:' + (an[0] - 30) + "px;top:" + (an[1] - 30) + 'px" aria-hidden="true"><svg viewBox="0 0 60 60" width="60" height="60" style="transform:rotate(' + Math.round(p.az) + 'deg)"><path d="M30 30 L22 3 A28 28 0 0 1 38 3 Z" fill="rgba(11,114,133,.35)" stroke="#0b7285" stroke-width="1.5"/></svg></b>' + ic.options.html;
+      }
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,
-        icon: sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + ptLab(p) + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] })
-          : defIcon(p) });
+        icon: ic });
       m.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "atk-ptpop";
         var PX = W.OSAP_POINTS;
-        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">" + (typeof p.addedBy === "string" && p.addedBy ? "added by " + esc(p.addedBy.slice(0, 24)) + (+p.addedAt > 0 && W.OSAP_TIME ? ", " + esc(W.OSAP_TIME.dualT(+p.addedAt, { date: true })) : "") : "your own mark") + "</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
+        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">" + (typeof p.addedBy === "string" && p.addedBy ? "added by " + esc(p.addedBy.slice(0, 24)) + (+p.addedAt > 0 && W.OSAP_TIME ? ", " + esc(W.OSAP_TIME.dualT(+p.addedAt, { date: true })) : "") : "your own mark") + "</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (typeof p.az === "number" ? '<p class="atk-paz">Facing <b>' + esc(("00" + Math.round(p.az) % 360).slice(-3)) + "\u00b0 " + (p.azRef === "true" ? "true" : "magnetic") + "</b> \u00b7 " + Math.round(p.az * 6400 / 360) % 6400 + " mils" + (p.azEd ? " (corrected)" : "") + (p.acc ? ' <span class="obs">GPS \u00b1' + esc(p.acc) + " m</span>" : "") + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
           '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="routeto">Route to</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? '<button type="button" data-pp="photo">Check a photo here</button>' : "") + '<button type="button" data-pp="dzso">DZSO sheet</button>' + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
@@ -485,6 +494,20 @@
     acReady().then(function () { D.head.appendChild(sc); });
   }
   W.OSAP_DZSO_GO = dzsoGo;
+  /* the site survey (DZ, HLZ, airfield worksheet) lives in assets/osap-survey.js, fetched the first time Plans > Site survey here,
+     the Area menu, the DZSO sheet, the HLZ finder or My places opens it. opts: { kind, at, id, dz, dzId, name, size, finder } */
+  var svWait = null;
+  function surveyGo(opts) {
+    function go(Z) { Z.open(opts || {}); }
+    if (W.OSAP_SURVEY && W.OSAP_SURVEY.open) { go(W.OSAP_SURVEY); return; }
+    if (svWait) { svWait.push(go); return; } svWait = [go];
+    var sc = D.createElement("script"); sc.src = "assets/osap-survey.js";
+    sc.onload = function () { var f = svWait; svWait = null; if (W.OSAP_SURVEY && W.OSAP_SURVEY.open) f.forEach(function (g) { g(W.OSAP_SURVEY); }); };
+    sc.onerror = function () { svWait = null; sc.remove(); toast("The site survey could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  W.OSAP_SURVEY_GO = surveyGo;
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "survey", label: "Site survey (DZ, HLZ, airfield)", point: true, run: function () { surveyGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "dzso", label: "Drop zone (DZSO)", point: true, run: function () { dzsoGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "lz", label: "Landing zones", run: function () { lzLoad(function (Z) { Z.area(); }); } });
 
@@ -497,7 +520,7 @@
      loads after this file) and Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
   function radNow() { return RAD; }
   function plansOpen(r, ll) {
-    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"], ["survey", "Site survey here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
     pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
     pop.hidden = false; pop._for = "plans"; pop._ll = ll;
     /* under the Plans button, kept inside the map */
@@ -553,6 +576,8 @@
     else if (k === "evac") epeGo({ at: P, how: "Long-press on the map" });
     /* DZSO sheet: this point is the drop zone's point of impact */
     else if (k === "dzso") dzsoGo({ at: P });
+    /* site survey (DZ, HLZ or airfield worksheet) centred on this point */
+    else if (k === "survey") surveyGo({ at: P });
     /* one-page weather brief for this point and 25 km around it (assets/osap-weather.js) */
     else if (k === "wxbrief") { if (W.OSAP_WX && W.OSAP_WX.briefAt) W.OSAP_WX.briefAt({ lat: P[0], lon: P[1] }); else toast("Weather is still loading. Try again in a moment."); }
     else if (k === "nai" || k === "watch") {
@@ -744,6 +769,7 @@
     "#atk-ring .atk-rr button{min-width:30px;height:26px;border:1px solid rgba(255,255,255,.25);border-radius:4px;background:none;color:#fff;font:600 11.5px system-ui,sans-serif;cursor:pointer}#atk-ring .atk-rr button[aria-pressed=true]{background:#0b7285;border-color:#0b7285}" +
     "@keyframes atkpop{from{opacity:0;scale:.4}to{opacity:1;scale:1}}@media (prefers-reduced-motion:reduce){#atk-ring [data-rk]{animation:none}}" +
     /* dropped points */
+    ".atk-pt .atk-az{position:absolute;width:60px;height:60px;pointer-events:none}.atk-pt .atk-az svg{display:block;transform-origin:30px 30px}.atk-paz{margin:4px 0}" +
     ".atk-pt{background:none;border:0}.atk-pt i{position:absolute;left:3px;top:3px;width:12px;height:12px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5);box-sizing:border-box}" +
     ".atk-pt i.atk-def{left:0;top:0;background:none;border:0;transform:none;box-shadow:none}.atk-pt i.atk-def svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 1px rgba(0,0,0,.6))}" +
     ".atk-pt span{position:absolute;left:19px;top:1px;padding:0 4px;border-radius:3px;background:rgba(20,24,28,.85);color:#fff;font:700 10.5px/15px 'IBM Plex Mono',monospace;white-space:nowrap}.atk-pt span .atk-pg{font-weight:500;font-size:10px;line-height:13px;color:#cfe8ff}" +

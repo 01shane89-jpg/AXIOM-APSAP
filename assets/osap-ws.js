@@ -21,7 +21,7 @@
   var W = window, D = document;
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var REG = "osap-ws", DATA = "osap-ws-data-", GO = "osap-ws-go", MSG = "osap-ws-msg", SHAPES = "osap-shapes", PTS = "osap-atak-pts";
-  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "osap-epe-pkgs", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds", "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej", "osap-places"];
+  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "osap-epe-pkgs", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds", "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej", "osap-places", "osap-rulers"];
   var AREA_RE = /^asap-area-([a-z]{2,3})$/, AREA_ANY = /^asap-area-[a-z]{2,3}(-st)?$/;
   var MAX_FILE = 25 * 1048576, MAX_UNZIP = 60 * 1048576, MAX_PTS = 500, MAX_SHAPES = 300, MAX_VERT = 2000, MAX_WS = 30, SHOW = 40;
 
@@ -303,6 +303,15 @@
     var sh = m && m[2] ? { circle: "circle", dot: "circle", square: "square", diamond: "diamond", star: "star", stars: "star" }[m[2].toLowerCase()] : "";
     return sh ? "sh:" + sh + ":" + c : "pn:" + c;
   }
+  /* the marker an OSAP export wrote (ExtendedData osap_icon, or a 2525D sidc), checked by pattern before it is kept */
+  var ICON_RE = /^ic:[a-z0-9_-]{1,40}:[0-9a-f]{6}$/;
+  function extSym(pm) {
+    var o = {};
+    Array.prototype.forEach.call(pm.getElementsByTagNameNS("*", "Data"), function (d) { var n = d.getAttribute("name"), v = kid(d, "value"); if (n && v) o[n] = txt(v).trim().slice(0, 64); });
+    if (ICON_RE.test(o.osap_icon || "")) return o.osap_icon;
+    if (/^\d{20}$/.test(o.sidc || "")) return "ms:" + o.sidc;
+    return undefined;
+  }
   function coords(s) {
     var o = [];
     String(s || "").trim().split(/\s+/).forEach(function (t) { var a = t.split(","); var lo = +a[0], la = +a[1]; if (a.length >= 2 && isFinite(la) && isFinite(lo) && la >= -90 && la <= 90 && lo >= -180 && lo <= 180) o.push([Math.round(la * 1e6) / 1e6, Math.round(lo * 1e6) / 1e6]); });
@@ -344,8 +353,9 @@
       if (!G.length) { R.skipped++; return; }
       G.forEach(function (g) {
         if (g.k === "pt") {
+          var es = extSym(pm); if (es && /^ic:/.test(es)) d = d.replace(/^Marker: [^\n]*\n?/, "");
           R.pts.push({ id: "p" + now.toString(36) + Math.random().toString(36).slice(2, 7), cc: ccFor(g.p[0], g.p[1]), lat: g.p[0], lon: g.p[1], n: name || "K" + (R.pts.length + 1),
-            note: clip((d + (folder ? "\n" + folder : "")).trim(), 2000).replace(/ ?\n ?/g, "\n"), t: now, sym: symOf(st), src: "KML " + clip(file, 80) });
+            note: clip((d + (folder ? "\n" + folder : "")).trim(), 2000).replace(/ ?\n ?/g, "\n"), t: now, sym: es || symOf(st), src: "KML " + clip(file, 80) });
         } else {
           var P = g.p; if (g.k === "poly" && P.length > 3 && P[0][0] === P[P.length - 1][0] && P[0][1] === P[P.length - 1][1]) P = P.slice(0, -1);
           if (P.length < (g.k === "line" ? 2 : 3)) { R.skipped++; return; }
@@ -382,9 +392,14 @@
   function ll(P, ring) { var o = P.map(function (p) { return p[1] + "," + p[0] + ",0"; }); if (ring && P.length) o.push(P[0][1] + "," + P[0][0] + ",0"); return o.join(" "); }
   function features(get, areas) {
     var F = [], S = arr(json(get(SHAPES) || "[]", [])).filter(okShape);
-    arr(json(get(PTS) || "[]", [])).forEach(function (p) { if (p && isFinite(p.lat) && isFinite(p.lon)) { var m = /([0-9a-f]{6})$/.exec(p.sym || ""); var sd = /^ms:(\d{20})$/.exec(p.sym || ""); F.push({ g: "Point", kind: "point", name: p.n, note: p.note, cc: p.cc, P: [[+p.lat, +p.lon]], col: m ? "#" + m[1] : "#0ca678", photos: +p.ph || 0, sidc: sd ? sd[1] : "" }); } });
+    arr(json(get(PTS) || "[]", [])).forEach(function (p) { if (p && isFinite(p.lat) && isFinite(p.lon)) { var m = /([0-9a-f]{6})$/.exec(p.sym || ""); var sd = /^ms:(\d{20})$/.exec(p.sym || "");
+      /* a marker-palette icon (assets/osap-milsym.js "ic:<id>:<rrggbb>"): its name goes into the description, so a KML viewer or ATAK (whose marker shows only the colour) still says what it is */
+      var ic = ICON_RE.test(p.sym || "") ? p.sym : "", icn = ic && W.OSAP_MSYM ? W.OSAP_MSYM.label(ic) : "";
+      F.push({ g: "Point", kind: "point", name: p.n, note: [icn && icn !== "Palette icon" ? "Marker: " + icn : "", p.note || ""].filter(String).join("\n"), cc: p.cc, P: [[+p.lat, +p.lon]], col: m ? "#" + m[1] : "#0ca678", photos: +p.ph || 0, sidc: sd ? sd[1] : "", icon: ic }); } });
     Object.keys(areas).forEach(function (c) { F.push({ g: "Polygon", kind: "drawn-area", name: "Drawn area, " + cName(c), cc: c, P: areas[c], col: "#1c7ed6" }); });
-    arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) F.push({ g: "Polygon", kind: a.type, name: a.type + " " + a.name, note: a.notes, cc: a.cc, P: a.pts, col: a.type === "TAI" ? "#c92a2a" : "#1971c2" }); });
+    arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) F.push({ g: "Polygon", kind: a.type, name: a.type + " " + a.name, note: a.notes, cc: a.cc, P: a.pts, col: a.st && /^#[0-9a-f]{6}$/i.test(a.st.line) ? a.st.line : a.type === "TAI" ? "#c92a2a" : "#1971c2", fill: a.st && /^#[0-9a-f]{6}$/i.test(a.st.fill) ? a.st.fill : undefined }); });
+    /* saved rulers (assets/osap-rulers.js): the measured line with its distance and bearing in the note */
+    arr(json(get("osap-rulers") || "[]", [])).forEach(function (r) { if (r && Array.isArray(r.pts) && r.pts.length > 1 && W.OSAP_RULERS) F.push({ g: "LineString", kind: "ruler", name: r.name, note: W.OSAP_RULERS.note(r), cc: r.cc, P: r.pts, col: /^#[0-9a-f]{6}$/i.test(r.col || "") ? r.col : "#e03131" }); });
     arr(json(get("osap-routes") || "[]", [])).forEach(function (x) { var w = arr(x && x.wps).filter(function (p) { return p && isFinite(p.lat); }); if (w.length > 1) F.push({ g: "LineString", kind: "route", name: x.name, note: "Waypoints of a planned route (" + (x.mode || "") + ")", cc: x.cc, P: w.map(function (p) { return [+p.lat, +p.lon]; }), col: "#7048e8" }); });
     /* saved viewsheds (assets/osap-terrain.js): the observer with its settings, the visible ground, the horizon */
     vsOf(get).forEach(function (v) {
@@ -412,7 +427,7 @@
           var geo = f.g === "Point" ? "<Point><coordinates>" + ll(f.P) + "</coordinates></Point>" : f.g === "LineString" ? "<LineString><tessellate>1</tessellate><coordinates>" + ll(f.P) + "</coordinates></LineString>"
             : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + ll(f.P, true) + "</coordinates></LinearRing></outerBoundaryIs>" +
               (f.H || []).map(function (h) { return "<innerBoundaryIs><LinearRing><coordinates>" + ll(h, true) + "</coordinates></LinearRing></innerBoundaryIs>"; }).join("") + "</Polygon>";
-          return "<Placemark><name>" + xesc(f.name || "") + "</name>" + (f.note || f.cc ? "<description>" + xesc([f.note || "", f.cc ? cName(f.cc) : ""].filter(String).join("\n")) + "</description>" : "") + "<Style>" + st + "</Style>" + (f.sidc ? '<ExtendedData><Data name="sidc"><value>' + f.sidc + "</value></Data></ExtendedData>" : "") + geo + "</Placemark>";
+          return "<Placemark><name>" + xesc(f.name || "") + "</name>" + (f.note || f.cc ? "<description>" + xesc([f.note || "", f.cc ? cName(f.cc) : ""].filter(String).join("\n")) + "</description>" : "") + "<Style>" + st + "</Style>" + (f.sidc || f.icon ? "<ExtendedData>" + (f.sidc ? '<Data name="sidc"><value>' + f.sidc + "</value></Data>" : "") + (f.icon ? '<Data name="osap_icon"><value>' + xesc(f.icon) + "</value></Data>" : "") + "</ExtendedData>" : "") + geo + "</Placemark>";
         }).join("") + "</Folder>";
       }).join("") + "</Document></kml>\n";
   }

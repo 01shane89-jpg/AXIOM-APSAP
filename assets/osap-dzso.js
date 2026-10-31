@@ -598,7 +598,7 @@
     if (!el) return;
     var dz = ST.dz, box = el.querySelector(".cbox"), sc = box.scrollTop;
     var h = '<div class="chead"><h2 id="dzso-h">DZSO sheet: ' + esc(dz.name) + ' <span class="tag" tabindex="0" title="Worked out by fixed rules from open data and model forecasts. Not an official drop zone survey, not analyst-approved and not AI.">Planning aid</span></h2>' +
-      '<button type="button" data-dz="pdf">Export PDF</button>' + (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-dz="close">Close</button></div>';
+      '<button type="button" data-dz="pdf">Export PDF</button>' + (W.OSAP_SURVEY_GO ? '<button type="button" data-dz="survey">Survey this DZ</button>' : "") + (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-dz="close">Close</button></div>';
     h += '<p class="obs">For the Drop Zone Safety Officer. Model winds and open map data only: the DZSO\'s own reading at the DZ and the aircrew decide. Not an official DZ survey.</p>';
     h += secDz(dz) + secDrop(dz) + secMeas() + secWx(dz) + secLight() + secHz(dz) + secMed(dz) + secFields(dz) + secMethod();
     box.innerHTML = h; box.scrollTop = sc;
@@ -865,6 +865,8 @@
     else if (k === "grid") { var i = el.querySelector('[data-f="grid"]'), g = G(), p = g && g.parse(i && i.value); if (p) setPi([p.lat, p.lon]); else if (i) { i.setCustomValidity("Not a grid OSAP can read"); i.reportValidity(); } }
     else if (k === "save") { if (!store()) return; var d = store().save(dz); if (d) { ST.dz = d; ST.saved = true; } paint(); }
     else if (k === "del") { if (store() && W.confirm("Delete the drop zone " + dz.name + " from this browser?")) { store().remove(dz.id); ST.saved = false; ST.dz = newDz(dz.pi, dz.name); paint(); } }
+    /* the DZ survey worksheet (assets/osap-survey.js) on this same drop zone */
+    else if (k === "survey") { if (W.OSAP_SURVEY_GO) W.OSAP_SURVEY_GO({ kind: "dz", dz: JSON.parse(JSON.stringify(dz)) }); }
     else if (k === "wx") loadWx();
     else if (k === "hz") loadHz();
     else if (k === "gnd") { ST.gnd.on = !ST.gnd.on; ST.gnd.picked = false; if (ST.gnd.on) loadGnd(); else { ST.run.gnd++; ST.gnd.busy = ST.gnd.rtBusy = false; gLayer.clearLayers(); paint(); } }

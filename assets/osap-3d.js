@@ -302,6 +302,7 @@
           r: Math.max(2.5, Math.min(l.getRadius ? (l instanceof L.Circle ? 6 : l.getRadius()) : 5, 14)), fo: o.fill === false ? 0 : o.fillOpacity == null ? 0.2 : o.fillOpacity, i: o.interactive !== false ? 1 : 0, z: paneZ(p) },
           geometry: { type: "Point", coordinates: [ll.lng, ll.lat] } });
       } else if (l instanceof L.Marker) {
+        if (o.o3skip) return;   /* drawn in 3D by its own file (the compass heading cone) */
         var m = l.getLatLng(); L2.push(l);
         if ((o.pane || "") === "atakpane") marks.push({ id: id, ll: m, n: o.title || "" });
         else if (l._icon && icons.length < 1500) icons.push({ id: id, ll: m, el: l._icon, z: paneZ(p) });
@@ -532,7 +533,7 @@
     });
   }
 
-  function open3d() {
+  function open3d(o) {
     if (view3) return;
     var box = D.createElement("div");
     box.id = "o3d"; box.className = "leaflet-control"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "3D terrain view");
@@ -554,6 +555,7 @@
     function fit() { var h = box.clientHeight; box.classList.toggle("o3-short", h > 0 && h < 560); box.classList.toggle("o3-tiny", h > 0 && h < 440); box.classList.toggle("o3-micro", h > 0 && h < 300); }
     var fitRO = W.ResizeObserver ? new ResizeObserver(fit) : null; if (fitRO) fitRO.observe(box); fit();
     var msg = box.querySelector(".o3-msg"), P = prefs(), gl = null, dead = false, markers = [];
+    if (o && o.flat) P.pitch = 0;   /* the compass's "Heading up" opens it flat (assets/osap-compass.js) */
     function say(t) { msg.textContent = t || ""; msg.hidden = !t; }
     function close(then) {
       if (dead) return; dead = true;
