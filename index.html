@@ -1998,14 +1998,42 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         '<p class="obs" style="font-size:10.5px">Levels: ' + TE((D.levels || {})[f.level] || "") + ". Record fingerprint " + TE(f.fp.slice(0, 16)) + "&hellip;</p></div>";
     }
     var PST = { current: "Current", past: "Past", cancelled: "Cancelled", proposed: "Proposed, not built", unclear: "Unclear" };
+    /* records from data/cnpresence/<cc>.json (tools/refresh_cnpresence.mjs) carry src: each is its source's own claim, not an AI draft */
+    var PRSRC = { aiddata: "Chinese-funded project (AidData)", ports: "Chinese-run port", uslists: "On a U.S. restricted list", dod1260h: "On a U.S. restricted list" };
+    function prEv(p) {
+      return '<p class="obs" style="margin-bottom:0">' + (p.src ? "Source:" : "Reporting behind it:") + '</p><ul class="terev">' + (p.evidence || []).map(function (e) {
+        return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
+      }).join("") + "</ul>";
+    }
     function prPop(p) {
+      if (p.src) return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + TE(PRSRC[p.src] || p.src) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
+        (p.actor && p.actor !== p.name ? '<p class="obs">Actor: ' + TE(p.actor) + "</p>" : "") +
+        (p.place ? '<p class="obs">Listed address: ' + TE(p.place) + "</p>" : "") +
+        '<div class="terdraft">' + TE(p.claim_status || "Reported, not verified") + '</div><div class="why">' + TE(p.why) + "</div>" + prEv(p) +
+        '<p class="obs" style="font-size:10.5px">Position: ' + TE(p.prec || "approximate") + ". Licence: " + TE(p.lic || "") + (p.nc ? " (non-commercial)" : "") +
+        ". Record fingerprint " + TE(String(p.fp || "").slice(0, 16)) + "&hellip;</p></div>";
       return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + (p.domain === "sea" ? "Sea" : "Land") + " · " + TE(p.kind.replace(/_/g, " ")) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
         '<p class="obs">Actor: ' + TE(p.actor) + "</p>" +
-        '<div class="terdraft">Reported, not verified. Summary <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(p.why) + "</div>" +
-        '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + p.evidence.map(function (e) {
-          return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
-        }).join("") + "</ul>" +
+        '<div class="terdraft">Reported, not verified. Summary <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(p.why) + "</div>" + prEv(p) +
         '<p class="obs" style="font-size:10.5px">Position approximate. Record fingerprint ' + TE(p.fp.slice(0, 16)) + "&hellip;</p></div>";
+    }
+    /* several listed organisations at one city share one pin; its pop-up lists them */
+    function prGroupPop(list) {
+      return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · On U.S. restricted lists · ' + list.length + " organisations</div><h3>" + TE(String(list[0].prec || "").replace(/^city of the listed address \(|\)$/g, "")) + "</h3>" +
+        '<div class="terdraft">Listings by the U.S. government, placed at the listed city</div><ul class="terev">' + list.slice(0, 60).map(function (p) {
+          return "<li><b>" + TE(p.name) + "</b> · " + TE(p.list || "") + (p.evidence && p.evidence[0] ? " · " + src(p.evidence[0].src, "source") : "") + "</li>";
+        }).join("") + "</ul>" + (list.length > 60 ? '<p class="obs">and ' + (list.length - 60) + " more in the list beside the map.</p>" : "") +
+        '<p class="obs" style="font-size:10.5px">Licence: ' + TE(list[0].lic || "") + "</p></div>";
+    }
+    /* the generated file for this country, read once */
+    var CNPD = null, cnpWait = null;
+    function loadCnp(cb) {
+      if (CNPD) return cb(CNPD);
+      if (cnpWait) return void cnpWait.push(cb);
+      cnpWait = [cb];
+      function fin(l) { var w = cnpWait; cnpWait = null; w.forEach(function (f) { f(l); }); }
+      fetch("data/cnpresence/" + cc + ".json").then(function (r) { return r.ok ? r.json() : { items: [] }; })
+        .then(function (j) { CNPD = (j && j.items) || []; fin(CNPD); }, function () { fin([]); });
     }
     function draw() {
       prLayer.clearLayers();
@@ -2076,9 +2104,15 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     /* countries with a presence layer get "Chinese presence" as a data set in the tab menu (built further down from
        window.OSAP_PR); the layer also comes on by itself in the maritime data set (the data-set switch turns extra
        layers off first, then this runs) and stays in the Layers menu as an overlay for any other data set */
-    window.OSAP_PR = { has: HASPR, pop: prPop,
-      load: function (cb) { if (!HASPR[cc]) return cb([]); load(function () { cb((D && D.presence) || []); }); },
-      icon: function (p) { return osapSym(PRSYM[p.kind] || (p.domain === "sea" ? "pr_site" : "pr_commerce"), { text: "CN", cls: p.state === "current" || p.state === "unclear" ? "" : "old" }) || L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
+    /* every country has the data set: the hand-researched list where there is one (HASPR), plus the generated records */
+    window.OSAP_PR = { has: HASPR, all: true, pop: prPop, groupPop: prGroupPop,
+      load: function (cb) {
+        var hand = HASPR[cc] ? null : [], gen = null;
+        function done() { if (hand && gen) cb(hand.concat(gen)); }
+        if (!hand) load(function () { hand = (D && D.presence) || []; done(); });
+        loadCnp(function (l) { gen = l; done(); });
+      },
+      icon: function (p) { return osapSym(p.sym || PRSYM[p.kind] || (p.domain === "sea" ? "pr_site" : "pr_commerce"), { text: "CN", cls: p.state === "current" || p.state === "unclear" ? "" : "old" }) || L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
           html: '<div class="prpin' + (p.domain === "sea" ? " s" : "") + (p.state === "current" || p.state === "unclear" ? "" : " o") + '">CN</div>' }); },
       state: function (p) { return PST[p.state] || p.state; } };
     if (HASPR[cc]) {
@@ -3657,7 +3691,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if ((window.ASAP_SOF || {})[CC]) LAYERS.push(
     { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
     { id: "partners", name: "Military exercises", title: "Military exercises", sof: true, live: true });
-  if (window.OSAP_PR && window.OSAP_PR.has[CC]) LAYERS.push({ id: "presence", name: "Chinese presence", title: "Chinese presence and influence", sof: true, live: true });
+  if (window.OSAP_PR && (window.OSAP_PR.all || window.OSAP_PR.has[CC])) LAYERS.push({ id: "presence", name: "Chinese presence", title: "Chinese presence and influence", sof: true, live: true });
   LAYERS.push({ id: "hazards", name: "Earthquakes and hazards", title: "Earthquakes and hazards", sof: true, live: true },
     { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
@@ -4907,29 +4941,53 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<div class="sec"><p class="obs">Map: blue = U.S. taking part, amber = other, faded = completed.</p></div>';
   }
   /* Chinese presence: held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying
-     cases on land. Records come from data/terrain/<cc>.js (loaded by the terrain block); each pin opens the same pop-up
-     with its sources as the Layers-menu overlay. */
+     cases on land (the hand-researched list in data/terrain/<cc>.js, Philippines only), plus for every country the generated
+     records in data/cnpresence/<cc>.json: Chinese-funded projects (AidData), Chinese-run ports (OpenStreetMap) and PRC-linked
+     organisations on U.S. restricted lists. Each pin opens a pop-up with its source; listed organisations at one city share a pin,
+     and those with no known city are listed without one. */
   function showPresence() {
-    var P = window.OSAP_PR;
+    var P = window.OSAP_PR, CAP = 300;
     sofLayer.clearLayers(); sofM = {};
     railO.innerHTML = '<div class="sec"><p class="obs">Loading…</p></div>';
     P.load(function (list) {
       if (current !== "presence") return;
       sofLayer.clearLayers(); sofM = {};
+      var groups = {};
       list.forEach(function (p, i) {
+        if (p.lat == null || p.lon == null) return;
+        if (p.src === "uslists" || p.src === "dod1260h") { var k = p.lat + "," + p.lon; (groups[k] = groups[k] || []).push(i); return; }
         var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: p.name, icon: P.icon(p) });
         m.bindPopup(P.pop(p), { maxWidth: 340 }); sofLayer.addLayer(m); sofM["pr:" + i] = m;
       });
+      Object.keys(groups).forEach(function (k) {
+        var ix = groups[k], ps = ix.map(function (i) { return list[i]; }), p = ps[0];
+        var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: ps.length > 1 ? ps.length + " listed organisations" : p.name,
+          icon: osapSym(p.sym || "pr_listed", { text: ps.length > 1 ? String(ps.length) : "CN" }) || P.icon(p) });
+        m.bindPopup(ps.length > 1 ? P.groupPop(ps) : P.pop(p), { maxWidth: 360 }); sofLayer.addLayer(m);
+        ix.forEach(function (i) { sofM["pr:" + i] = m; });
+      });
       function row(p) {
-        var i = list.indexOf(p);
-        return '<button type="button" class="tlrow" data-sof="pr:' + i + '"><span class="tln">' + esc(p.name) + "</span>" +
-          '<span class="tlm">' + chip(p.state === "current" ? "k" : "", P.state(p)) + '<span class="tls">' + esc(p.kind.replace(/_/g, " ") + " · " + p.actor) + "</span></span></button>";
+        var i = list.indexOf(p), pin = p.lat != null && p.lon != null;
+        return '<button type="button" class="tlrow"' + (pin ? ' data-sof="pr:' + i + '"' : "") + '><span class="tln">' + esc(p.name) + "</span>" +
+          '<span class="tlm">' + chip(p.state === "current" ? "k" : "", P.state(p)) + '<span class="tls">' + esc(p.src === "aiddata" ? p.kind.replace(/_/g, " ") + (p.year ? " · " + p.year : "") +
+            (p.amt ? " · USD " + (p.amt >= 1e9 ? (p.amt / 1e9).toFixed(1) + " bn" : Math.round(p.amt / 1e6) + " m") : "") : p.src === "ports" ? p.actor :
+            p.src ? (p.list || "") + (p.place ? " · " + p.place : "") + (pin ? "" : " · no map position") : p.kind.replace(/_/g, " ") + " · " + p.actor) + "</span></span></button>";
       }
-      var sea = list.filter(function (p) { return p.domain === "sea"; }), land = list.filter(function (p) { return p.domain !== "sea"; });
-      railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reported, not verified.</b> Chinese state presence and reported influence in ' + esc(C.name) +
-        ". Each item lists the reporting behind it. Positions are approximate; faded pins are past, cancelled or proposed.</div></div>" +
-        '<div class="sec"><h2>At sea (' + sea.length + ")</h2>" + (sea.length ? '<div class="tllist">' + sea.map(row).join("") + "</div>" : '<p class="note">None recorded.</p>') + "</div>" +
-        '<div class="sec"><h2>On land (' + land.length + ")</h2>" + (land.length ? '<div class="tllist">' + land.map(row).join("") + "</div>" : '<p class="note">None recorded.</p>') + "</div>";
+      function sec(title, items, empty) {
+        return '<div class="sec"><h2>' + esc(title) + " (" + items.length + ")</h2>" + (items.length ? '<div class="tllist">' + items.slice(0, CAP).map(row).join("") + "</div>" +
+          (items.length > CAP ? '<p class="note">First ' + CAP + " shown here; the map shows every one with a position.</p>" : "") : '<p class="note">' + esc(empty) + "</p>") + "</div>";
+      }
+      var hand = list.filter(function (p) { return !p.src; }), by = function (s) { return list.filter(function (p) { return p.src === s || (s === "uslists" && p.src === "dod1260h"); }); };
+      var sea = hand.filter(function (p) { return p.domain === "sea"; }), land = hand.filter(function (p) { return p.domain !== "sea"; });
+      var aid = by("aiddata"), ports = by("ports"), us = by("uslists");
+      railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reported, not verified.</b> Chinese state presence, finance and PRC-linked companies in ' + esc(C.name) +
+        ", each as its source records it. A listing or a loan is a source's claim, not an OSAP finding. Faded pins are past, cancelled or proposed.</div></div>" +
+        (hand.length ? sec("At sea", sea, "None recorded.") + sec("On land", land, "None recorded.") : "") +
+        sec("Chinese-funded projects", aid, CC === "cn" ? "Not applicable to China." : "None recorded. AidData covers 2000-2021 and low- and middle-income countries.") +
+        sec("Chinese-run ports and terminals", ports, CC === "cn" ? "Not applicable to China." : "None recorded in Wikidata.") +
+        sec("China-linked organisations on U.S. restricted lists", us, "None listed at an address here.") +
+        '<div class="sec"><p class="obs">Sources: ' + (hand.length ? "public reporting (hand-researched list); " : "") + "AidData Global Chinese Development Finance Dataset v3.0 (ODC-By; locations from OpenStreetMap, ODbL); " +
+        "Wikidata operator and owner records (CC0); U.S. Consolidated Screening List (public domain); DoD Section 1260H list via OpenSanctions (CC BY-NC); city positions from GeoNames (CC BY).</p></div>";
     });
   }
   function exPop(x) {
@@ -6930,7 +6988,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
+    srcline.textContent = (l.sof && { presence: "Public reporting · AidData · U.S. Consolidated Screening List · Wikidata · DoD 1260H via OpenSanctions; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);

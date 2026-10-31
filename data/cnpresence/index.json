@@ -1,0 +1,586 @@
+{
+ "v": 1,
+ "at": "2026-10-31T15:37Z",
+ "sources": {
+  "aiddata": {
+   "name": "Chinese development finance projects (GCDF v3.0 and GeoGCDF v3)",
+   "org": "AidData, William & Mary",
+   "lic": "ODC-By 1.0 (project data); locations from OpenStreetMap, ODbL",
+   "url": "https://www.aiddata.org/data/aiddatas-global-chinese-development-finance-dataset-version-3-0",
+   "cite": "Custer et al. 2023; Goodman et al., Sci Data 11, 529 (2024)",
+   "ok": true,
+   "at": "2026-10-31T15:37Z",
+   "n": 4915
+  },
+  "uslists": {
+   "name": "PRC-linked organisations on U.S. restricted-party lists (Consolidated Screening List)",
+   "org": "U.S. International Trade Administration (Commerce, State, Treasury lists)",
+   "lic": "U.S. government work, public domain",
+   "url": "https://www.trade.gov/consolidated-screening-list",
+   "ok": true,
+   "at": "2026-10-31T15:37Z",
+   "n": 2899
+  },
+  "dod1260h": {
+   "name": "Chinese military companies (DoD Section 1260H list, via OpenSanctions)",
+   "org": "U.S. Department of Defense; compiled by OpenSanctions",
+   "lic": "CC BY-NC 4.0 (non-commercial)",
+   "nc": true,
+   "url": "https://www.opensanctions.org/datasets/us_dod_chinese_milcorps/",
+   "ok": true,
+   "at": "2026-10-31T15:37Z",
+   "n": 152
+  },
+  "geonames": {
+   "name": "City positions for listed addresses (GeoNames cities over 15,000 people)",
+   "org": "GeoNames",
+   "lic": "CC BY 4.0",
+   "url": "https://www.geonames.org/",
+   "ok": true,
+   "at": "2026-10-31T15:37Z"
+  },
+  "ports": {
+   "name": "Chinese-run ports and terminals (Wikidata operator and owner records)",
+   "org": "Wikidata",
+   "lic": "CC0",
+   "url": "https://www.wikidata.org/",
+   "ok": true,
+   "at": "2026-10-31T15:37Z",
+   "n": 5
+  }
+ },
+ "countries": {
+  "ao": {
+   "aiddata": 239
+  },
+  "bj": {
+   "aiddata": 39
+  },
+  "dz": {
+   "aiddata": 10
+  },
+  "bw": {
+   "aiddata": 20
+  },
+  "za": {
+   "aiddata": 23,
+   "uslists": 2
+  },
+  "ml": {
+   "aiddata": 35
+  },
+  "et": {
+   "aiddata": 106,
+   "uslists": 1
+  },
+  "ne": {
+   "aiddata": 27
+  },
+  "ga": {
+   "aiddata": 34
+  },
+  "gq": {
+   "aiddata": 51
+  },
+  "bi": {
+   "aiddata": 25
+  },
+  "sd": {
+   "aiddata": 86,
+   "uslists": 1
+  },
+  "tz": {
+   "aiddata": 87
+  },
+  "gh": {
+   "aiddata": 80
+  },
+  "cd": {
+   "aiddata": 107
+  },
+  "sn": {
+   "aiddata": 39
+  },
+  "cg": {
+   "aiddata": 80
+  },
+  "gn": {
+   "aiddata": 30
+  },
+  "ng": {
+   "aiddata": 39
+  },
+  "cm": {
+   "aiddata": 40
+  },
+  "tg": {
+   "aiddata": 28
+  },
+  "cv": {
+   "aiddata": 42
+  },
+  "zm": {
+   "aiddata": 86
+  },
+  "cf": {
+   "aiddata": 18
+  },
+  "zw": {
+   "aiddata": 38
+  },
+  "km": {
+   "aiddata": 25
+  },
+  "td": {
+   "aiddata": 22
+  },
+  "dj": {
+   "aiddata": 33
+  },
+  "er": {
+   "aiddata": 24,
+   "uslists": 1
+  },
+  "ci": {
+   "aiddata": 51
+  },
+  "eg": {
+   "aiddata": 36,
+   "uslists": 1
+  },
+  "gw": {
+   "aiddata": 21
+  },
+  "mw": {
+   "aiddata": 37
+  },
+  "ke": {
+   "aiddata": 69,
+   "uslists": 1
+  },
+  "mg": {
+   "aiddata": 27
+  },
+  "ls": {
+   "aiddata": 19
+  },
+  "ss": {
+   "aiddata": 27
+  },
+  "mz": {
+   "aiddata": 32
+  },
+  "na": {
+   "aiddata": 37
+  },
+  "mu": {
+   "aiddata": 36
+  },
+  "lr": {
+   "aiddata": 35,
+   "uslists": 1
+  },
+  "ma": {
+   "aiddata": 9
+  },
+  "rw": {
+   "aiddata": 25
+  },
+  "sc": {
+   "aiddata": 27,
+   "uslists": 1
+  },
+  "sl": {
+   "aiddata": 45,
+   "uslists": 1
+  },
+  "ug": {
+   "aiddata": 29
+  },
+  "tn": {
+   "aiddata": 15
+  },
+  "mr": {
+   "aiddata": 32
+  },
+  "kh": {
+   "aiddata": 147
+  },
+  "ly": {
+   "aiddata": 1
+  },
+  "lk": {
+   "aiddata": 96
+  },
+  "la": {
+   "aiddata": 150,
+   "uslists": 3
+  },
+  "bd": {
+   "aiddata": 52,
+   "uslists": 2
+  },
+  "mm": {
+   "aiddata": 91,
+   "uslists": 2
+  },
+  "vn": {
+   "aiddata": 106,
+   "uslists": 1
+  },
+  "np": {
+   "aiddata": 54
+  },
+  "af": {
+   "aiddata": 22,
+   "uslists": 2
+  },
+  "ph": {
+   "aiddata": 56,
+   "uslists": 1
+  },
+  "th": {
+   "aiddata": 18,
+   "uslists": 7
+  },
+  "id": {
+   "aiddata": 118,
+   "ports": 1
+  },
+  "mv": {
+   "aiddata": 27
+  },
+  "pk": {
+   "aiddata": 145,
+   "uslists": 5
+  },
+  "tl": {
+   "aiddata": 21
+  },
+  "in": {
+   "aiddata": 20,
+   "uslists": 13
+  },
+  "hn": {
+   "aiddata": 1
+  },
+  "cr": {
+   "aiddata": 16
+  },
+  "ec": {
+   "aiddata": 43
+  },
+  "pe": {
+   "aiddata": 31,
+   "ports": 1,
+   "uslists": 1
+  },
+  "ve": {
+   "aiddata": 56,
+   "uslists": 1
+  },
+  "bo": {
+   "aiddata": 25
+  },
+  "br": {
+   "aiddata": 80,
+   "uslists": 1
+  },
+  "co": {
+   "aiddata": 17
+  },
+  "cu": {
+   "aiddata": 29
+  },
+  "ar": {
+   "aiddata": 51
+  },
+  "sr": {
+   "aiddata": 23
+  },
+  "gy": {
+   "aiddata": 21
+  },
+  "cl": {
+   "aiddata": 20
+  },
+  "to": {
+   "aiddata": 30
+  },
+  "pg": {
+   "aiddata": 62
+  },
+  "ws": {
+   "aiddata": 30
+  },
+  "vu": {
+   "aiddata": 17
+  },
+  "jm": {
+   "aiddata": 32
+  },
+  "fj": {
+   "aiddata": 33
+  },
+  "kz": {
+   "aiddata": 74,
+   "uslists": 1
+  },
+  "kg": {
+   "aiddata": 42
+  },
+  "ag": {
+   "aiddata": 23
+  },
+  "tj": {
+   "aiddata": 70,
+   "uslists": 2
+  },
+  "bs": {
+   "aiddata": 6
+  },
+  "gd": {
+   "aiddata": 28
+  },
+  "tt": {
+   "aiddata": 12
+  },
+  "bb": {
+   "aiddata": 13
+  },
+  "dm": {
+   "aiddata": 21
+  },
+  "uz": {
+   "aiddata": 56
+  },
+  "fm": {
+   "aiddata": 29
+  },
+  "lc": {
+   "aiddata": 2
+  },
+  "ht": {
+   "aiddata": 2
+  },
+  "mn": {
+   "aiddata": 41,
+   "uslists": 1
+  },
+  "ir": {
+   "aiddata": 61,
+   "uslists": 19
+  },
+  "tm": {
+   "aiddata": 15
+  },
+  "ru": {
+   "aiddata": 99,
+   "uslists": 19
+  },
+  "lb": {
+   "aiddata": 11,
+   "uslists": 2
+  },
+  "jo": {
+   "aiddata": 24,
+   "uslists": 1
+  },
+  "ye": {
+   "aiddata": 17,
+   "uslists": 2
+  },
+  "sy": {
+   "aiddata": 17,
+   "uslists": 4
+  },
+  "il": {
+   "aiddata": 13
+  },
+  "iq": {
+   "aiddata": 14,
+   "uslists": 2
+  },
+  "az": {
+   "aiddata": 10,
+   "uslists": 3
+  },
+  "kp": {
+   "aiddata": 15,
+   "uslists": 16
+  },
+  "ba": {
+   "aiddata": 12,
+   "uslists": 2
+  },
+  "by": {
+   "aiddata": 66,
+   "uslists": 1
+  },
+  "mk": {
+   "aiddata": 12
+  },
+  "al": {
+   "aiddata": 10,
+   "uslists": 1
+  },
+  "me": {
+   "aiddata": 7
+  },
+  "ua": {
+   "aiddata": 11,
+   "uslists": 1
+  },
+  "rs": {
+   "aiddata": 26,
+   "uslists": 1
+  },
+  "bg": {
+   "aiddata": 6
+  },
+  "bn": {
+   "aiddata": 7
+  },
+  "my": {
+   "aiddata": 29,
+   "uslists": 12
+  },
+  "ps": {
+   "aiddata": 5,
+   "uslists": 2
+  },
+  "uy": {
+   "aiddata": 9
+  },
+  "so": {
+   "aiddata": 3,
+   "uslists": 1
+  },
+  "mx": {
+   "aiddata": 14
+  },
+  "st": {
+   "aiddata": 6
+  },
+  "gm": {
+   "aiddata": 6
+  },
+  "bf": {
+   "aiddata": 8
+  },
+  "nr": {
+   "aiddata": 3
+  },
+  "sb": {
+   "aiddata": 7
+  },
+  "tr": {
+   "aiddata": 36,
+   "uslists": 5
+  },
+  "ge": {
+   "aiddata": 8,
+   "uslists": 3
+  },
+  "om": {
+   "aiddata": 7,
+   "uslists": 1
+  },
+  "md": {
+   "aiddata": 8
+  },
+  "am": {
+   "aiddata": 4
+  },
+  "ro": {
+   "aiddata": 4
+  },
+  "sv": {
+   "aiddata": 7
+  },
+  "pa": {
+   "aiddata": 7
+  },
+  "py": {
+   "aiddata": 2
+  },
+  "ki": {
+   "aiddata": 5
+  },
+  "mh": {
+   "aiddata": 2,
+   "uslists": 10
+  },
+  "cn": {
+   "uslists": 2488,
+   "dod1260h": 152
+  },
+  "us": {
+   "uslists": 11
+  },
+  "gb": {
+   "ports": 1,
+   "uslists": 9
+  },
+  "sg": {
+   "uslists": 15
+  },
+  "ae": {
+   "uslists": 11
+  },
+  "tw": {
+   "uslists": 8
+  },
+  "nl": {
+   "uslists": 3
+  },
+  "fr": {
+   "uslists": 4
+  },
+  "lu": {
+   "uslists": 1
+  },
+  "fi": {
+   "uslists": 1
+  },
+  "be": {
+   "uslists": 1
+  },
+  "ca": {
+   "uslists": 3
+  },
+  "hr": {
+   "uslists": 1
+  },
+  "sa": {
+   "uslists": 1
+  },
+  "de": {
+   "uslists": 5
+  },
+  "lv": {
+   "uslists": 1
+  },
+  "kr": {
+   "uslists": 1
+  },
+  "nz": {
+   "uslists": 1
+  },
+  "kw": {
+   "uslists": 1
+  },
+  "pl": {
+   "uslists": 1
+  },
+  "at": {
+   "uslists": 1
+  },
+  "es": {
+   "ports": 1
+  },
+  "gr": {
+   "ports": 1
+  }
+ }
+}

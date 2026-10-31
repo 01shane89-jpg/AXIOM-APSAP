@@ -1,0 +1,87 @@
+name: Refresh Chinese presence
+
+# Once a month (tools/refresh_cnpresence.mjs): the "Chinese presence" data set for every country. AidData's Chinese development
+# finance projects (ODC-By; locations from OpenStreetMap, ODbL), PRC-linked organisations on the U.S. Consolidated Screening List
+# (public domain; DoD 1260H names via OpenSanctions, CC BY-NC, tagged nc) placed by GeoNames cities (CC BY), and Chinese-run
+# ports from Wikidata operator and owner records (CC0), into data/cnpresence/<cc>.json and data/cnpresence/index.json. Every record is
+# a source claim with a fingerprint. Keyless, no account. A run on any branch other than main parks its output on
+# claude/cnpresence-preview-data instead of committing.
+on:
+  schedule:
+    - cron: "17 5 3 * *"
+  push:
+    branches: [claude/cn-presence*]
+    paths: [tools/refresh_cnpresence.mjs, .github/workflows/refresh-cnpresence.yml]
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Comma-separated sources to read (aiddata,uslists,ports; empty = all)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-cnpresence-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cnpresence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      # AidData's geospatial GeoPackage is a release asset of aiddata/gcdf-geospatial-data (public, read with the job's own token)
+      - name: Download AidData's geospatial GeoPackage
+        if: ${{ github.event.inputs.only == '' || contains(github.event.inputs.only, 'aiddata') }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/gcdf" && cd "$RUNNER_TEMP/gcdf"
+          gh api repos/aiddata/gcdf-geospatial-data/releases/latest --jq '.tag_name, (.assets[] | .name + "  " + (.size|tostring))'
+          url=$(gh api repos/aiddata/gcdf-geospatial-data/releases/latest --jq '[.assets[] | select(.name | test("gpkg"; "i"))][0].browser_download_url')
+          echo "asset: $url"
+          curl -fsSL --retry 3 -o asset "$url"
+          if unzip -tq asset >/dev/null 2>&1; then unzip -q asset; rm asset; else mv asset data.gpkg; fi
+          f=$(find . -iname '*.gpkg' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          ls -la; echo "CNP_GPKG=$RUNNER_TEMP/gcdf/${f#./}" >> "$GITHUB_ENV"
+      - name: Read projects, listed organisations and ports
+        timeout-minutes: 45
+        run: node --experimental-sqlite tools/refresh_cnpresence.mjs
+        env:
+          CNP_ONLY: ${{ github.event.inputs.only }}
+      - name: Park test output on a preview-data branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan cnpresence-preview-data
+          git rm -rqf --cached .
+          git add -f data/cnpresence
+          git commit -qm "Test output (cnpresence) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/cnpresence-preview-data
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial
+      # sources (the DoD 1260H names from OpenSanctions) are taken out of the files before they are committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/cnpresence
+      - name: Commit if anything changed
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/cnpresence 2>/dev/null || true
+          if git diff --quiet -- data/cnpresence; then echo "no change"; exit 0; fi
+          git config user.name "asap-cnpresence-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/cnpresence
+          git commit -m "Refresh Chinese presence $(date -u +'%Y-%m-%d %H:%MZ')"
+          bash tools/push_rebase.sh main theirs 3 && exit 0
+          exit 1
