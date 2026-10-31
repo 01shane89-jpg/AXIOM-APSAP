@@ -1,0 +1,59 @@
+name: Refresh Russian and Iranian presence
+
+# Once a month (tools/refresh_ruirpresence.mjs): the "Russian presence" and "Iranian presence" data sets for every country.
+# Russia- and Iran-linked organisations on the U.S. Consolidated Screening List (public domain) placed by GeoNames cities
+# (CC BY), and sites abroad that Russian or Iranian organisations, state bodies or forces operate or own, from Wikidata (CC0),
+# into data/rupresence/ and data/irpresence/ (<cc>.json and index.json). Every record is a source claim with a fingerprint.
+# Keyless, no account. A run on any branch other than main parks its output on claude/ruirpresence-preview-data instead.
+on:
+  schedule:
+    - cron: "47 5 3 * *"
+  push:
+    branches: [claude/ru-ir-presence*]
+    paths: [tools/refresh_ruirpresence.mjs, .github/workflows/refresh-ruirpresence.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-ruirpresence-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ruirpresence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Read listed organisations and sites abroad
+        timeout-minutes: 25
+        run: node tools/refresh_ruirpresence.mjs
+      - name: Park test output on a preview-data branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan ruirpresence-preview-data
+          git rm -rqf --cached .
+          git add -f data/rupresence data/irpresence
+          git commit -qm "Test output (ruirpresence) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/ruirpresence-preview-data
+      - name: Commit if anything changed
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/rupresence data/irpresence 2>/dev/null || true
+          if git diff --quiet -- data/rupresence data/irpresence; then echo "no change"; exit 0; fi
+          git config user.name "asap-ruirpresence-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/rupresence data/irpresence
+          git commit -m "Refresh Russian and Iranian presence $(date -u +'%Y-%m-%d %H:%MZ')"
+          bash tools/push_rebase.sh main theirs 3 && exit 0
+          exit 1
