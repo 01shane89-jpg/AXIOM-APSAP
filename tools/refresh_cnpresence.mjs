@@ -327,13 +327,15 @@ async function ports() {
     `(tags->>'landuse' = 'port' OR tags->>'industrial' IN ('port','terminal','container_terminal','shipyard') OR tags ? 'harbour' OR tags->>'man_made' IN ('pier','quay') ` +
     `OR coalesce(tags->>'seamark:type','') IN ('harbour','harbour_basin','berth') OR tags->>'amenity' = 'ferry_terminal' OR tags ? 'port')`;
   const feats = []; let bad = 0, n = 0;
+  const until = Date.now() + (+process.env.CNP_OSM_MIN || 15) * 60000;   // a time budget: Wikidata is the main port source
   for (let lon = -180; lon < 180; lon += 30) for (const [s0, n0] of [[-60, -10], [-10, 25], [25, 75]]) {
     n++;
+    if (Date.now() > until) { bad++; continue; }
     const env = `geom && ST_MakeEnvelope(${lon},${s0},${lon + 30},${n0},4326)`;
     try { const f = await postpass(`SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${env} AND ${W}`); feats.push(...f); dbg("tile", lon, s0, f.length); }
     catch (e) { bad++; log("ports: tile", lon, s0, "failed:", e.message.slice(0, 100)); }
   }
-  if (bad > n / 2) throw new Error(bad + " of " + n + " tiles failed");
+  if (bad > n / 2) throw new Error(bad + " of " + n + " tiles failed or not reached in time");
   log("ports:", feats.length, "features,", bad, "tiles failed");
   const j = { features: feats };
   const out = [];
