@@ -1,4 +1,4 @@
-{"cc":"pg","at":"2026-10-03T02:17:58Z","base":"2026-10-03T02:16:19Z","m":[
+{"cc":"pg","at":"2026-10-31T10:38:59Z","base":"2026-10-31T10:37:36Z","m":[
 ["n10169424463",-5.86243,144.88796,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10244950957",-6.07343,143.38058,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10302243383",-6.20143,145.06424,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
@@ -113,6 +113,7 @@
 ["n14141801164",-7.21714,146.81002,{"man_made":"tower","tower:type":"communication"}],
 ["n14206099183",-9.43289,147.35185,{"man_made":"mast","tower:type":"communication"}],
 ["n14212159336",-5.56138,145.29973,{"man_made":"tower","tower:type":"communication"}],
+["n14267997149",-6.22711,155.56593,{"man_made":"mast","tower:type":"communication"}],
 ["n2183357010",-6.06869,145.39525,{"man_made":"tower","tower:type":"communication"}],
 ["n2612551151",-5.42488,154.62503,{"man_made":"tower","tower:type":"communication"}],
 ["n2657771428",-5.45808,150.41435,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
@@ -139,8 +140,8 @@
 ["n6597909075",-4.18505,152.14145,{"man_made":"tower","tower:type":"communication"}],
 ["n6674322872",-5.49622,148.38853,{"man_made":"tower","tower:type":"communication"}],
 ["n6708822933",-4.56651,145.96321,{"man_made":"tower","tower:type":"communication"}],
-["n6992252874",-6.18551,155.53947,{"man_made":"mast","tower:type":"communication"}],
-["n6992252875",-6.18535,155.53935,{"man_made":"mast","tower:type":"communication"}],
+["n6992252874",-6.18543,155.53952,{"man_made":"mast","tower:type":"communication"}],
+["n6992252875",-6.18527,155.5394,{"man_made":"mast","tower:type":"communication"}],
 ["n7055670613",-6.74693,155.68692,{"man_made":"mast","tower:type":"communication"}],
 ["n7066079260",-6.29391,155.4708,{"man_made":"mast","tower:type":"communication"}],
 ["n7114121680",-6.21523,155.49826,{"man_made":"tower","tower:type":"communication"}],

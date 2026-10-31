@@ -1,4 +1,4 @@
-{"cc":"tw","at":"2026-10-03T02:12:10Z","base":"2026-10-03T02:10:11Z","m":[
+{"cc":"tw","at":"2026-10-31T10:24:14Z","base":"2026-10-31T10:22:20Z","m":[
 ["n10026959890",24.62935,120.84523,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10068611948",24.95261,121.04923,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10956630711",24.8101,121.02078,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
@@ -157,6 +157,11 @@
 ["n14081462645",24.14459,120.66626,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n14081462646",24.14457,120.66547,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n14203455442",25.11868,121.75246,{"man_made":"tower","tower:type":"communication"}],
+["n14283573467",25.23631,121.63475,{"man_made":"mast","name":"波浪偵測(海洋署)","tower:type":"communication"}],
+["n14307987844",24.92084,121.56767,{"man_made":"mast","tower:construction":"guyed_lattice","tower:type":"communication"}],
+["n14307987846",24.92096,121.56782,{"man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
+["n14307987847",24.92094,121.5678,{"man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
+["n14307987848",24.92089,121.56775,{"man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n1432980690",24.75464,120.98514,{"man_made":"tower","tower:type":"communication"}],
 ["n2119234142",23.82876,121.4927,{"communication:mobile_phone":"yes","man_made":"tower"}],
 ["n2300575308",25.13372,121.51277,{"man_made":"tower","name":"數位電視塔","tower:type":"communication"}],

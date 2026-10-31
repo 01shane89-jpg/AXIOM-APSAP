@@ -1,4 +1,4 @@
-{"cc":"tl","at":"2026-10-03T02:10:46Z","base":"2026-10-03T02:09:07Z","m":[
+{"cc":"tl","at":"2026-10-31T10:22:10Z","base":"2026-10-31T10:19:20Z","m":[
 ["n10108012566",-8.93127,126.22137,{"man_made":"tower","tower:type":"communication"}],
 ["n10578217447",-8.54882,125.52758,{"communication:3g":"yes","height":"10","man_made":"tower","tower:construction":"tsnumai_sirene_1","tower:type":"communication"}],
 ["n10979907547",-8.47425,126.5988,{"communication:3g":"yes","communication:gsm":"yes","communication:lte":"yes","communication:mobile_phone":"yes","man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],

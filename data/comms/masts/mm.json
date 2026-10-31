@@ -1,4 +1,4 @@
-{"cc":"mm","at":"2026-10-03T02:04:10Z","base":"2026-10-03T02:01:01Z","m":[
+{"cc":"mm","at":"2026-10-31T10:02:29Z","base":"2026-10-31T10:01:01Z","m":[
 ["n10069750675",23.9022,95.68263,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10110328070",20.96245,97.44876,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10690556232",16.85652,96.18296,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
@@ -294,6 +294,7 @@
 ["n14099915052",22.77033,95.39604,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n14102345144",17.48408,95.31367,{"man_made":"tower","tower:type":"communication"}],
 ["n14105426454",17.55902,95.27967,{"communication:microwave":"yes","communication:mobile_phone":"yes","man_made":"communications_tower","tower:type":"communication"}],
+["n14301551434",17.60338,95.15175,{"man_made":"tower","tower:type":"communication"}],
 ["n2695868352",22.94674,97.74444,{"communication:television":"yes","man_made":"mast","name":"Television Tower","tower:type":"communication"}],
 ["n2872925503",16.46825,97.63144,{"man_made":"tower","name":"Myanma Radio and Television Tower","operator":"Myanma Radio and Television","tower:type":"communication"}],
 ["n2925996570",21.15333,94.78696,{"man_made":"tower","tower:type":"communication"}],
@@ -539,6 +540,7 @@
 ["w1374854702",22.06484,96.01081,{"man_made":"tower","tower:type":"communication"}],
 ["w1374854703",22.06575,96.01145,{"man_made":"tower","tower:type":"communication"}],
 ["w1380463097",20.12348,96.21094,{"man_made":"tower","tower:type":"communication"}],
+["w1566480387",16.79049,96.20196,{"man_made":"tower","tower:type":"communication"}],
 ["w507277739",19.56782,93.93285,{"man_made":"tower","tower:type":"communication"}],
 ["w508698695",13.99292,98.12608,{"man_made":"tower","tower:type":"communication"}],
 ["w605978786",22.23262,97.41036,{"man_made":"tower","name":"broadcasting Tower","tower:type":"communication"}],

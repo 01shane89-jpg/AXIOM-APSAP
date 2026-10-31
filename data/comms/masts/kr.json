@@ -1,4 +1,4 @@
-{"cc":"kr","at":"2026-10-03T02:12:55Z","base":"2026-10-03T02:11:15Z","m":[
+{"cc":"kr","at":"2026-10-31T10:26:03Z","base":"2026-10-31T10:24:21Z","m":[
 ["n10046944018",37.35453,127.93925,{"communication:microwave":"yes","man_made":"tower","tower:type":"communication"}],
 ["n10102527115",35.20765,126.7617,{"man_made":"tower","material":"steel","tower:type":"communication"}],
 ["n10120273254",37.81581,127.58894,{"man_made":"tower","tower:type":"communication"}],
@@ -98,6 +98,7 @@
 ["n14199065949",35.45627,128.85036,{"man_made":"tower","tower:type":"communication"}],
 ["n14199065950",35.45626,128.85079,{"man_made":"tower","tower:type":"communication"}],
 ["n14219084723",37.45799,127.18787,{"man_made":"tower","tower:type":"communication"}],
+["n14292909933",37.46788,126.71746,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1799445223",38.06636,128.58569,{"man_made":"communications_tower","name":"KT"}],
 ["n1878883815",37.69617,128.75604,{"man_made":"tower","tower:type":"communication"}],
 ["n1885181337",38.21529,128.43835,{"man_made":"tower","tower:type":"communication"}],
@@ -265,7 +266,7 @@
 ["w1460725118",35.78865,126.99816,{"man_made":"tower","tower:type":"communication"}],
 ["w1492688556",35.87814,126.99171,{"man_made":"tower","tower:type":"communication"}],
 ["w1548724004",36.51809,129.43195,{"communication:mobile_phone":"yes","man_made":"mast","name":"봉화산 중계소","tower:type":"communication"}],
-["w228712482",37.55345,126.71398,{"man_made":"tower","tower:type":"communication"}],
+["w228712482",37.55346,126.71398,{"man_made":"tower","tower:type":"communication"}],
 ["w238866254",37.55116,126.98745,{"height":"60","man_made":"tower","structure":"lattice","tower:construction":"lattice","tower:type":"communication"}],
 ["w277973753",37.9592,124.74432,{"man_made":"tower","name":"진촌중계소","tower:type":"communication"}],
 ["w379943259",37.54771,126.99495,{"man_made":"tower","structure":"lattice","tower:type":"communication"}],
