@@ -74,6 +74,8 @@ jobs:
       - run: node tests/illum.test.mjs
       # DZSO sheet maths and the shared drop zone store (assets/osap-dzso.js, assets/osap-dz.js)
       - run: node tests/dzso.test.mjs
+      # site survey geometry: ends, corners, corridors, n:1 clearance (assets/osap-survey.js)
+      - run: node tests/survey.test.mjs
       - run: node tests/osm_reader.test.mjs
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
@@ -303,6 +305,9 @@ jobs:
       - run: node tests/dz_map_edit_smoke.mjs
       # Ground evacuation from the DZ: road distance and drive time to each hospital, the road route on the map and in the PDF
       - run: node tests/dz_ground_evac_smoke.mjs
+      # Site survey (DZ, HLZ, airfield): Plans / Area entries, Surveyed vs From sources, obstacles on the approach, save in My places,
+      # map handles, PDF, DZ shared with the DZSO sheet, HLZ finder hand-over (assets/osap-survey.js)
+      - run: node tests/survey_smoke.mjs
       - run: node tests/intelbrief_smoke.mjs
       # custom topic (own words, watch-word syntax) in the PowerPoint brief and OSIR windows
       - run: node tests/custom_topic_smoke.mjs
