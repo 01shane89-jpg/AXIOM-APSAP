@@ -281,7 +281,7 @@ async function uslists(mil) {
         lat: place ? r4(place.la) : null, lon: place ? r4(place.lo) : null, prec: place ? "city of the listed address (" + place.nm + ")" : "no position: listed address only",
         place: where || null, actor: name, state: "current",
         why: clip("On the " + list1 + (start ? " since " + start : "") + (progs ? " (programme " + progs + ")" : "") + ". China link: " + (why.length ? why.join("; ") : "listed at an address in China") + "." +
-          (inPRC && !cmic && !on1260 && progs && !/china|cmic|prc/i.test(progs) && /dprk|nkorea|iran|russia|syria|venez|cuba|burma|sdgt|narc|tco/i.test(progs) ? " The listing is under another country's or another sanctions programme; the China address may be a front or trading office." : "") +
+          (inPRC && !cmic && !on1260 && progs && !/china|cmic|prc/i.test(progs) && /dprk|nkorea|iran|russia|ukraine|cyber|election|syria|venez|cuba|burma|sdgt|narc|tco/i.test(progs) ? " The listing is under another country's or another sanctions programme; the China address may be a front or trading office." : "") +
           (e.federal_register_notice ? " Federal Register " + e.federal_register_notice + "." : ""), 400),
         list: list1, claim_status: "Listing by the U.S. government; a listing is a U.S. legal designation, not a finding of fact by OSAP", last_reported: start, lic: SOURCES.uslists.lic,
         evidence: [{ date: start, t: list1 + ": " + name, src: e.source_list_url || e.source_information_url || SOURCES.uslists.url, srcname: "U.S. Consolidated Screening List" }],
@@ -343,7 +343,8 @@ async function wdports() {
     const id = b.site.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
     const words = [b.siteLabel && b.siteLabel.value, b.clsLabel && b.clsLabel.value].join(" ");
     if (!/\b(port|terminal|harbou?r|quay|wharf|pier|dock|berth|seaport)\b/i.test(words)) continue;
-    const o = seen.get(id) || { id, name: b.siteLabel ? b.siteLabel.value : id, lon: +m[1], lat: +m[2], ops: new Set(), start: b.start ? b.start.value.slice(0, 4) : null };
+    if (!b.siteLabel || /^Q\d+$/.test(b.siteLabel.value)) continue;   // no English label: nothing to show
+    const o = seen.get(id) || { id, name: b.siteLabel.value, lon: +m[1], lat: +m[2], ops: new Set(), start: b.start ? b.start.value.slice(0, 4) : null };
     if (b.opLabel) o.ops.add(b.opLabel.value); seen.set(id, o);
   }
   log("wdports:", roots.size, "companies,", seen.size, "port sites");
