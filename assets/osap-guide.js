@@ -77,6 +77,7 @@
         b("Base map") + ": Grey, Streets, Topographic, Satellite, Hybrid, Sentinel-2 cloudless, Daily satellite and Offline map. Streets are labelled in English.",
         b("Grid") + " and " + b("Crosshair") + ": MGRS grid lines that get finer as you zoom in, and a cross on the map centre with its grid.",
         b("3D") + ": tilt and turn the map over real ground. Tap the compass for north-up and flat, " + b("2D") + " to go back.",
+        b("Compass") + ": tap the north arrow (top left of the map). On a phone it shows the way you face, true and magnetic, and a cone on your location dot; " + b("Heading up") + " turns the map to the way you face and " + b("North up") + " turns it back. On any device it gives the bearing and distance from you (or the map centre) to the map centre or the mouse pointer, in degrees or mils.",
         b("Measure") + ", " + b("Route") + ", " + b("Area") + ", " + b("Med plan") + ", " + b("Evac") + ", " + b("Comms") + ", " + b("Point") + " and " + b("Watch") + ": each has its own section below.",
         b("My work") + ": what is new since your last visit, and your saved work.",
         b("Reports") + " (phone) or the " + b("Reports") + " button in the header: every printable report OSAP makes.",
