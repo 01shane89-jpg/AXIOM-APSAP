@@ -78,7 +78,39 @@
     return mm ? mm[1] + "-" + mm[2] + "-" + mm[3] + " " + mm[4] + (/^[+-]\d\d:\d\d$/.test(tz) ? " UTC" + tz : " camera local time") : "";
   }
 
-  function addFiles(pid, files) {
+  /* GPS block a camera may have written into the photo itself (many phone browsers strip it): { lat, lon, dir, dirRef } */
+  function exifGps(buf) {
+    try {
+      var v = new DataView(buf), o = 2;
+      if (v.getUint16(0) !== 0xFFD8) return null;
+      while (o + 10 < v.byteLength) {
+        var m = v.getUint16(o), len = v.getUint16(o + 2);
+        if ((m & 0xFF00) !== 0xFF00 || m === 0xFFDA) return null;
+        if (m === 0xFFE1 && v.getUint32(o + 4) === 0x45786966) return tiffGps(v, o + 10);
+        o += 2 + len;
+      }
+    } catch (e) {}
+    return null;
+  }
+  function tiffGps(v, t) {
+    var le = v.getUint16(t) === 0x4949;
+    function u16(p) { return v.getUint16(p, le); }
+    function u32(p) { return v.getUint32(p, le); }
+    function find(p, tag) { for (var i = 0, n = u16(p); i < n && i < 400; i++) { var e = p + 2 + i * 12; if (u16(e) === tag) return e; } return 0; }
+    function rat(e, k) { var off = t + u32(e + 8) + k * 8, d = u32(off + 4); return d ? u32(off) / d : NaN; }
+    function ch(e) { return String.fromCharCode(v.getUint8(e + 8)); }
+    var i0 = t + u32(t + 4), g = find(i0, 0x8825); if (!g) return null;
+    var gp = t + u32(g + 8), la = find(gp, 2), lo = find(gp, 4), lr = find(gp, 1), or = find(gp, 3), dr = find(gp, 17), drr = find(gp, 16);
+    if (!la || !lo) return null;
+    function dms(e) { return rat(e, 0) + rat(e, 1) / 60 + rat(e, 2) / 3600; }
+    var lat = dms(la) * (lr && ch(lr) === "S" ? -1 : 1), lon = dms(lo) * (or && ch(or) === "W" ? -1 : 1);
+    if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+    var out = { lat: +lat.toFixed(6), lon: +lon.toFixed(6) };
+    if (dr) { var d = rat(dr, 0); if (isFinite(d)) { out.dir = +d.toFixed(1); out.dirRef = drr && ch(drr) === "T" ? "true" : drr && ch(drr) === "M" ? "magnetic" : "unstated"; } }
+    return out;
+  }
+
+  function addFiles(pid, files, geo) {
     var list = Array.prototype.slice.call(files || []), pt = find(pid);
     if (!pt || !list.length) return Promise.resolve(0);
     var room = MAX_PHOTOS - (pt.ph || 0), done = 0, skipped = [];
@@ -92,6 +124,9 @@
           return sha256(buf).then(function (h) {
             var r = { id: "ph" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), pid: pid, buf: buf, type: f.type, size: buf.byteLength,
               name: String(f.name || "photo").slice(0, 120), sha256: h, camera: exifTime(buf), file: f.lastModified ? iso(f.lastModified) : "", added: Date.now() };
+            /* where and which way the photo was taken (Photo to map): kept beside the original, never written into it */
+            if (geo) r.geo = geo;
+            var xg = exifGps(buf); if (xg) r.exifGps = xg;
             return tx("readwrite", function (s) { s.add(r); }).then(function () { done++; });
           });
         });
@@ -146,6 +181,7 @@
     '<div class="pt-b"><label class="pt-f"><span>Name</span><input id="pt-n" maxlength="60" autocomplete="off"></label>' +
     '<div class="pt-f"><span>Icon</span><button type="button" class="pt-icb" data-pe="icon" aria-label="Change icon"><span class="pt-icp"></span><span class="pt-icl"></span><span class="pt-icc">Change</span></button></div>' +
     '<div class="pt-grid"></div>' +
+    '<div class="pt-f pt-az" hidden><span>Heading (degrees)</span><div class="pt-azrow"><input id="pt-az" type="number" inputmode="decimal" min="0" max="359.9" step="1"><span class="obs pt-azl"></span></div></div>' +
     '<label class="pt-f"><span>Note</span><textarea id="pt-note" rows="3" maxlength="2000" placeholder="What is here, what you saw"></textarea></label>' +
     '<h3>Photos <span class="obs pt-cnt"></span></h3><div class="pt-phs"></div>' +
     '<div class="pt-add"><label class="pt-btn pri"><input type="file" accept="image/*" capture="environment" data-pf="cam">Take photo</label>' +
@@ -159,6 +195,12 @@
     ed.querySelector("h2").textContent = p.n;
     ed.querySelector(".pt-grid").innerHTML = "<code>" + esc(A.fmt(p.lat, p.lon, "mgrs")) + "</code> <code>" + esc(A.fmt(p.lat, p.lon, "dd")) + "</code>";
     ed.querySelector(".pt-cnt").textContent = p.ph ? "(" + p.ph + ")" : "";
+    /* a photo point's heading: as the compass read it, or as you corrected it */
+    var az = ed.querySelector(".pt-az"); az.hidden = p.src !== "photo";
+    if (p.src === "photo") {
+      var ai = ed.querySelector("#pt-az"); if (D.activeElement !== ai) ai.value = typeof p.az === "number" ? String(Math.round(p.az)) : "";
+      ed.querySelector(".pt-azl").textContent = typeof p.az === "number" ? hdText(p.az, p.azRef) + (p.azEd ? ", corrected by you (the compass reading stays with the photo)" : ", from the device compass") : "No heading was read. Type one to add it.";
+    }
     icPaint(p);
     thumbs(ed.querySelector(".pt-phs"), p.id, true);
   }
@@ -182,6 +224,15 @@
     if (p) setPt(cur, { n: n || p.n, note: note.trim() ? note : "" });
   }
   function edClose() { flush(); if (W.OSAP_MSYM) W.OSAP_MSYM.close(); ed.hidden = true; cur = null; revoke(ed.querySelector(".pt-phs")); ed.querySelector(".pt-phs").innerHTML = ""; }
+ ed.addEventListener("change", function (e) {
+    if (e.target.id !== "pt-az" || !cur) return;
+    var v = String(e.target.value).trim(), n = +v, p = find(cur);
+    if (!p) return;
+    if (v === "") setPt(cur, { az: "", azEd: 1 });
+    else if (isFinite(n) && n >= 0 && n < 360.5) setPt(cur, { az: +(n % 360).toFixed(1), azRef: p.azRef || "magnetic", azEd: 1 });
+    else toast("Heading is 0 to 359 degrees");
+    edPaint();
+  });
   ed.addEventListener("input", function (e) {
     if (e.target.id !== "pt-n" && e.target.id !== "pt-note") return;
     clearTimeout(saveT); saveT = setTimeout(function () { flush(); if (cur) ed.querySelector("h2").textContent = (find(cur) || {}).n || ""; }, 400);
@@ -202,7 +253,7 @@
       else if (k === "del") { var p = find(cur); if (p && W.confirm("Delete " + p.n + (p.ph ? " and its " + p.ph + " photo" + (p.ph > 1 ? "s" : "") : "") + " from this device?")) { var pid = cur; saveT = 0; edClose(); P.del(pid); } }
     }
   });
-  D.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (!vw.hidden) viewClose(); else if (!ed.hidden) edClose(); } });
+  D.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (!vw.hidden) viewClose(); else if (!ed.hidden) edClose(); else if (!sn.hidden) snClose(); } });
 
   /* ---------- the photo viewer: the original, full size, with its fingerprint and times ---------- */
   var vw = D.createElement("div"); vw.id = "pt-view"; vw.hidden = true; vw.setAttribute("role", "dialog"); vw.setAttribute("aria-label", "Photo");
@@ -217,12 +268,24 @@
       var p = find(r.pid) || {};
       vw.querySelector(".pt-vmeta").innerHTML = "<b>" + esc(p.n || "Point") + "</b> \u00b7 " + esc(r.name) + " \u00b7 " + esc(kb(r.size)) + " \u00b7 " + esc(r.type) +
         "<br>Taken: " + esc(r.camera || "not in the photo") + (r.file ? " \u00b7 File time: " + esc(r.file) : "") + " \u00b7 Added: " + esc(iso(r.added)) +
-        '<br>SHA-256: <code>' + esc(r.sha256 || "not available in this browser") + "</code>" +
+        '<br>SHA-256: <code>' + esc(r.sha256 || "not available in this browser") + "</code>" + geoHtml(r) +
         '<br><span class="obs">Original, unchanged, on this device only. Your own photo, not a report.</span>';
       var a = vw.querySelector('[data-pv="save"]'); a.href = u; a.setAttribute("download", r.name || "photo");
       vw.hidden = false;
       var x = vw.querySelector('[data-pv="x"]'); if (x) x.focus({ preventScroll: true });
     });
+  }
+  function geoHtml(r) {
+    var g = r.geo, x = r.exifGps, o = "";
+    if (g) {
+      o += "<br>Taken at: <code>" + esc(g.grid) + "</code> " + esc(g.at) + ' <span class="obs">(' + esc(g.pos.src) + (g.pos.acc != null ? " \u00b1" + g.pos.acc + " m" : "") + ")</span>";
+      var h = g.heading;
+      if (h) o += "<br>Facing: <b>" + esc(hdText(h.mag != null ? h.mag : h.tru, h.mag != null ? "magnetic" : "true")) + "</b>" + (h.tru != null && h.mag != null ? " (" + deg3(h.tru) + "\u00b0 true, declination " + h.decl + "\u00b0)" : "") +
+        ' <span class="obs">(' + esc(h.src) + (h.acc != null ? " \u00b1" + h.acc + "\u00b0" : "") + (h.basis === "top" ? ", phone was flat: top edge" : h.basis === "camera" ? ", camera direction" : "") + (h.turned != null ? "; " + h.turned + "\u00b0 different when the camera closed" : "") + ")</span>";
+      else o += '<br>Facing: <span class="obs">no compass reading</span>';
+    }
+    if (x) o += "<br>GPS written in the photo by the camera: <code>" + esc(A.fmt(x.lat, x.lon, "mgrs")) + "</code>" + (x.dir != null ? ", direction " + deg3(x.dir) + "\u00b0 " + esc(x.dirRef) : "");
+    return o;
   }
   function viewClose() { vw.hidden = true; revoke(vw); vw.querySelector(".pt-vimg").innerHTML = ""; vwCur = null; }
   vw.addEventListener("click", function (e) {
@@ -236,11 +299,127 @@
     }
   });
 
+  /* ---------- Photo to map: take a photo and save it at once as a point, with its grid and heading ----------
+     Point > "Take a photo here" opens this sheet. It watches the device GPS and (through assets/osap-heading.js, the shared
+     compass helper, when it is loaded) the compass while it is open. Pressing Take photo notes the fix and the heading at
+     that moment, opens the rear camera, and when the photo comes back saves a new point at that fix with the photo attached.
+     The photo is kept byte for byte; grid, heading, their sources and their accuracy are stored beside it, never written into it. */
+  var MIL = 6400 / 360;
+  function deg3(d) { d = ((Math.round(d) % 360) + 360) % 360; return ("00" + d).slice(-3); }
+  function hdText(az, ref) { return deg3(az) + "° " + (ref === "true" ? "true" : ref === "magnetic" ? "magnetic" : "(north not stated)") + " · " + Math.round((((az % 360) + 360) % 360) * MIL) + " mils"; }
+  function angDiff(a, b) { var d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; }
+  /* one heading reading from OSAP_HEADING, turned into what a photo needs: the way the camera faced */
+  function hdOf(r) {
+    if (!r) return null;
+    var mag = r.cam != null ? r.cam : r.mag, tru = r.cam != null ? r.camTru : r.tru;
+    if (mag == null && tru == null) return null;
+    return { mag: mag != null ? +(+mag).toFixed(1) : null, tru: tru != null ? +(+tru).toFixed(1) : null, decl: r.decl != null ? +(+r.decl).toFixed(1) : null,
+      acc: r.acc != null && r.acc >= 0 ? Math.round(r.acc) : null, basis: r.basis || (r.cam != null ? "camera" : "unstated"), src: String(r.src || "device compass").slice(0, 60), t: r.t || Date.now() };
+  }
+  var sn = D.createElement("aside"); sn.id = "pt-snap"; sn.className = "leaflet-control"; sn.hidden = true;
+  sn.setAttribute("role", "dialog"); sn.setAttribute("aria-label", "Take a photo and save it to the map");
+  sn.innerHTML = '<div class="pt-h"><h2>Photo to map</h2><button type="button" class="pt-ic" data-ps="x" aria-label="Close">×</button></div>' +
+    '<div class="pt-b"><dl class="sn-live"><dt>Grid</dt><dd class="sn-grid">Waiting for GPS…</dd><dt>Heading</dt><dd class="sn-hd">Starting compass…</dd></dl>' +
+    '<div class="pt-add"><label class="pt-btn pri sn-take"><input type="file" accept="image/*" capture="environment" data-ps="cam">Take photo</label>' +
+    '<button type="button" class="pt-btn sn-allow" data-ps="allow" hidden>Allow compass</button>' +
+    '<button type="button" class="pt-btn sn-centre" data-ps="centre" hidden>Use the map centre</button></div>' +
+    '<p class="obs sn-why"></p>' +
+    '<p class="obs">Point the phone at what you are photographing, then press Take photo: the grid and heading at that moment are saved with it. ' +
+    'The photo is kept unchanged on this device only, never uploaded; grid, heading, where each came from and how accurate it was are saved beside it. <span class="sn-room"></span></p></div>';
+  L.DomEvent.disableClickPropagation(sn); L.DomEvent.disableScrollPropagation(sn);
+  var S = { fix: null, gerr: "", wid: null, hd: null, hsub: null, centre: false, shot: null };
+  function H() { return W.OSAP_HEADING || null; }
+  function snPaint() {
+    var f = S.fix, g = sn.querySelector(".sn-grid"), h = sn.querySelector(".sn-hd"), why = sn.querySelector(".sn-why"), take = sn.querySelector(".sn-take");
+    if (S.centre) { var c = map.getCenter(); g.innerHTML = "<code>" + esc(A.fmt(c.lat, c.lng, "mgrs")) + '</code> <span class="obs">map centre, chosen by you (no GPS)</span>'; }
+    else if (f) g.innerHTML = "<code>" + esc(A.fmt(f.lat, f.lon, "mgrs")) + '</code> <span class="obs">device GPS ±' + Math.round(f.acc) + " m, " + Math.max(0, Math.round((Date.now() - f.t) / 1000)) + " s ago</span>";
+    else g.textContent = S.gerr || "Waiting for GPS…";
+    var hd = S.hd;
+    if (hd) h.innerHTML = "<b>" + esc(hdText(hd.mag != null ? hd.mag : hd.tru, hd.mag != null ? "magnetic" : "true")) + "</b>" + (hd.tru != null && hd.mag != null ? ' <span class="obs">(' + deg3(hd.tru) + "° true)</span>" : "") +
+      ' <span class="obs">' + esc(hd.src) + (hd.acc != null ? " ±" + hd.acc + "°" : "") + (hd.basis === "top" ? ", phone lying flat: top edge, not the camera" : "") + "</span>";
+    else h.textContent = !H() ? "No compass helper on this page: the photo is saved without a heading." : H().supported && !H().supported() ? "This device has no compass: the photo is saved without a heading." : S.hdeny ? "Compass not allowed: the photo is saved without a heading." : "Starting compass… (turn the phone in a figure of eight if it stays empty)";
+    var ready = !!f || S.centre;
+    take.classList.toggle("off", !ready); take.querySelector("input").disabled = !ready;
+    sn.querySelector(".sn-centre").hidden = !!f || S.centre || !S.gerr;
+    why.textContent = ready ? "" : S.gerr ? "Turn on location for this site, or place the photo at the map centre." : "Take photo unlocks when the GPS has a fix.";
+  }
+  function onHd(r) { var h = hdOf(r); if (h) { S.hd = h; if (!sn.hidden) snPaint(); } }
+  function hdStart() {
+    var h = H(); if (!h) return;
+    var go = function (st) { if (st === "denied") { S.hdeny = true; sn.querySelector(".sn-allow").hidden = false; snPaint(); return; } if (st === "unsupported") { snPaint(); return; } S.hdeny = false; sn.querySelector(".sn-allow").hidden = true; if (!S.hsub) { S.hsub = onHd; h.start(onHd); } onHd(h.get && h.get()); };
+    /* request() must run inside the tap that opened this sheet (iOS asks for motion access then) */
+    try { var p = h.request ? h.request() : null; if (p && p.then) p.then(go, function () { go("denied"); }); else go("granted"); } catch (e) { go("denied"); }
+  }
+  function gpsStart() {
+    var g = W.navigator.geolocation;
+    if (!g) { S.gerr = "This browser cannot read the GPS."; snPaint(); return; }
+    S.gerr = "";
+    S.wid = g.watchPosition(function (p) { var c = p.coords; S.fix = { lat: c.latitude, lon: c.longitude, acc: c.accuracy || 0, alt: c.altitude, t: p.timestamp || Date.now() }; S.gerr = ""; if (!sn.hidden) snPaint(); },
+      function (e) { S.gerr = e && e.code === 1 ? "Location is not allowed for this site." : "No GPS fix yet (" + (e && e.message || "error") + ")."; if (!sn.hidden) snPaint(); },
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 });
+  }
+  var tick = 0;
+  function snap() {
+    flush(); if (!ed.hidden) edClose(); map.closePopup();
+    S.fix = null; S.hd = null; S.centre = false; S.shot = null; S.hdeny = false;
+    sn.hidden = false; gpsStart(); hdStart(); snPaint();
+    clearInterval(tick); tick = setInterval(function () { if (!sn.hidden) snPaint(); }, 1000);
+    if (W.navigator.storage && W.navigator.storage.estimate) W.navigator.storage.estimate().then(function (e) {
+      var free = (e.quota || 0) - (e.usage || 0); sn.querySelector(".sn-room").textContent = e.quota ? "Room left for OSAP on this device: about " + (free >= 1073741824 ? (free / 1073741824).toFixed(1) + " GB" : kb(Math.max(0, free))) + (free < 60 * 1048576 ? " (low: a phone photo is often 2 to 6 MB)." : ".") : "";
+    }, function () {});
+  }
+  function snClose() {
+    sn.hidden = true; clearInterval(tick);
+    if (S.wid != null && W.navigator.geolocation) W.navigator.geolocation.clearWatch(S.wid); S.wid = null;
+    if (S.hsub && H() && H().stop) H().stop(S.hsub); S.hsub = null;
+  }
+  /* the moment Take photo is pressed: this is the grid and heading saved with the photo */
+  sn.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-ps]"); if (!b) return;
+    var k = b.getAttribute("data-ps");
+    if (k === "cam") { if (b.disabled) return; S.shot = { fix: S.centre ? null : S.fix, centre: S.centre ? map.getCenter() : null, hd: S.hd, t: Date.now() }; }
+    else if (k === "x") snClose();
+    else if (k === "allow") hdStart();
+    else if (k === "centre") { S.centre = true; snPaint(); }
+  });
+  sn.addEventListener("change", function (e) {
+    if (e.target.getAttribute("data-ps") !== "cam") return;
+    /* copied out first: clearing the input empties its live file list */
+    var files = Array.prototype.slice.call(e.target.files || []); if (!files.length) return;
+    var shot = S.shot || { fix: S.centre ? null : S.fix, centre: S.centre ? map.getCenter() : null, hd: S.hd, t: Date.now() }, after = S.hd;
+    var f = shot.fix, c = shot.centre;
+    if (!f && !c) { toast("No GPS fix: photo not saved."); e.target.value = ""; return; }
+    var lat = f ? f.lat : c.lat, lon = f ? f.lon : c.lng, hd = shot.hd, d = new Date(shot.t);
+    var geo = { lat: +lat.toFixed(6), lon: +lon.toFixed(6), grid: A.fmt(lat, lon, "mgrs"), at: iso(shot.t),
+      pos: f ? { src: "device GPS", acc: Math.round(f.acc), fixAt: iso(f.t), alt: f.alt != null ? Math.round(f.alt) : null } : { src: "map centre, chosen by the user (no GPS fix)", acc: null },
+      heading: hd ? { mag: hd.mag, tru: hd.tru, decl: hd.decl, acc: hd.acc, basis: hd.basis, src: hd.src, readAt: iso(hd.t) } : null };
+    if (hd && after && after !== hd) {
+      var a1 = hd.mag != null ? hd.mag : hd.tru, a2 = after.mag != null ? after.mag : after.tru;
+      if (a1 != null && a2 != null) geo.heading.after = +a2.toFixed(1), geo.heading.turned = Math.round(angDiff(a1, a2));
+    }
+    var name = "Photo " + ("0" + d.getUTCHours()).slice(-2) + ("0" + d.getUTCMinutes()).slice(-2) + "Z";
+    snClose();
+    var pt = P.add(L.latLng(lat, lon), name); e.target.value = "";
+    if (!pt) return;
+    var az = hd ? (hd.mag != null ? hd.mag : hd.tru) : null;
+    setPt(pt.id, { src: "photo", az: az != null ? az : "", azRef: az != null ? (hd.mag != null ? "magnetic" : "true") : "", azTru: hd && hd.tru != null && hd.mag != null ? hd.tru : "", acc: f ? Math.round(f.acc) : "" });
+    addFiles(pt.id, files, geo).then(function (n) {
+      if (cur === pt.id) edPaint();
+      if (n) toast("Photo saved to the map at " + geo.grid + (az != null ? ", facing " + deg3(az) + "°" : ", no heading") + (geo.heading && geo.heading.turned > 20 ? ". The phone turned " + geo.heading.turned + "° while the camera was open: check the heading." : ""));
+    });
+  });
+
   /* ---------- styles ---------- */
   var st = D.createElement("style");
   st.textContent =
     "#pt-ed{position:absolute;top:0;right:0;bottom:30px;z-index:1005;width:min(360px,92%);display:flex;flex-direction:column;background:var(--surface,#fff);color:var(--ink,#222);box-shadow:-4px 0 18px rgba(0,0,0,.3);font-size:13px}" +
-    "#pt-ed[hidden],#pt-view[hidden]{display:none!important}" +
+    "#pt-ed[hidden],#pt-view[hidden],#pt-snap[hidden]{display:none!important}" +
+    "#pt-snap{position:absolute;top:0;right:0;z-index:1006;width:min(360px,92%);display:flex;flex-direction:column;background:var(--surface,#fff);color:var(--ink,#222);box-shadow:-4px 0 18px rgba(0,0,0,.3);font-size:13px}" +
+    "#pt-snap .pt-h{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 14px;border-bottom:1px solid var(--line)}#pt-snap h2{font-size:15px;margin:0}" +
+    "#pt-snap .pt-b{padding:10px 14px;overflow:auto}#pt-snap .obs{color:var(--muted);font-size:11.5px}" +
+    ".sn-live{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0 0 6px}.sn-live dt{font-weight:600;font-size:12px}.sn-live dd{margin:0}.sn-live code{font:13px 'IBM Plex Mono',monospace}" +
+    ".sn-take{min-height:52px;font-size:15px;flex:1}.sn-take.off{opacity:.45;cursor:not-allowed}.pt-btn[hidden]{display:none}" +
+    ".pt-azrow{display:flex;align-items:center;gap:8px}.pt-azrow input{width:90px!important;flex:0 0 auto}.pt-az[hidden]{display:none}" +
     "#pt-ed .pt-h{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 14px;border-bottom:1px solid var(--line)}#pt-ed h2{font-size:15px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}" +
     "#pt-ed .pt-b{flex:1;overflow:auto;padding:10px 14px}#pt-ed h3{font-size:13px;margin:12px 0 6px}#pt-ed .obs{color:var(--muted);font-size:11.5px;font-weight:400}" +
     ".pt-ic{width:36px;height:36px;border:0;border-radius:6px;background:none;color:inherit;font-size:22px;line-height:1;cursor:pointer}" +
@@ -265,12 +444,12 @@
     ".pt-icb{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface,#fff);color:inherit;font:13px system-ui,-apple-system,sans-serif;text-align:left;cursor:pointer}" +
     ".pt-icb[hidden]{display:none}.pt-icp{flex:0 0 44px;display:flex;align-items:center;justify-content:center}.pt-icp svg{max-width:44px;max-height:40px}.pt-icl{flex:1;min-width:0}.pt-icc{color:#0b7285;font-weight:600}" +
     ".pt-icd{display:block;width:12px;height:12px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5)}" +
-    "@media (max-width:700px){#pt-ed{left:0;right:0;top:auto;width:auto;max-height:80%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}}";
+    "@media (max-width:700px){#pt-snap{left:0;right:0;top:auto;bottom:30px;width:auto;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}#pt-ed{left:0;right:0;top:auto;width:auto;max-height:80%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}}";
   D.head.appendChild(st);
-  mapEl.appendChild(ed); D.body.appendChild(vw);
-  W.addEventListener("hashchange", function () { if (!ed.hidden) edClose(); });
+  mapEl.appendChild(ed); mapEl.appendChild(sn); D.body.appendChild(vw);
+  W.addEventListener("hashchange", function () { if (!ed.hidden) edClose(); if (!sn.hidden) snClose(); });
 
-  W.OSAP_POINTS = { edit: edit, close: edClose, thumbs: function (el, pid) { return thumbs(el, pid, false); }, forget: forget, add: addFiles, photos: photosOf, view: view };
+  W.OSAP_POINTS = { edit: edit, close: edClose, thumbs: function (el, pid) { return thumbs(el, pid, false); }, forget: forget, add: addFiles, photos: photosOf, view: view, snap: snap, snapClose: snClose };
   /* osap-atak.js drew the points before this file loaded: draw again so their popups get the photo strip and Edit */
   P.draw(); P.paint();
 })();
