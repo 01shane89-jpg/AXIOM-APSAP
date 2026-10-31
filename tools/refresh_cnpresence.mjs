@@ -327,7 +327,7 @@ async function ports() {
     `(tags->>'landuse' = 'port' OR tags->>'industrial' IN ('port','terminal','container_terminal','shipyard') OR tags ? 'harbour' OR tags->>'man_made' IN ('pier','quay') ` +
     `OR coalesce(tags->>'seamark:type','') IN ('harbour','harbour_basin','berth') OR tags->>'amenity' = 'ferry_terminal' OR tags ? 'port')`;
   const feats = []; let bad = 0, n = 0;
-  const until = Date.now() + (+process.env.CNP_OSM_MIN || 15) * 60000;   // a time budget: Wikidata is the main port source
+  const until = Date.now() + (+process.env.CNP_OSM_MIN || 8) * 60000;   // a time budget: Wikidata is the main port source
   for (let lon = -180; lon < 180; lon += 30) for (const [s0, n0] of [[-60, -10], [-10, 25], [25, 75]]) {
     n++;
     if (Date.now() > until) { bad++; continue; }
@@ -373,10 +373,13 @@ async function wdports() {
   }
   if (!roots.size) throw new Error("no companies found");
   const q = `SELECT ?site ?siteLabel ?coord ?opLabel ?clsLabel ?start WHERE { VALUES ?root { ${[...roots].map((x) => "wd:" + x).join(" ")} }
-    ?op (wdt:P749|wdt:P127)* ?root . ?site (wdt:P137|wdt:P127|wdt:P749) ?op ; wdt:P625 ?coord . OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start }
+    { BIND(?root AS ?op) } UNION { ?op wdt:P749|wdt:P127 ?root . }
+    ?site wdt:P137|wdt:P127|wdt:P749 ?op . ?site wdt:P625 ?coord . OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start }
     SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 5000`;
   const j = JSON.parse(await get("https://query.wikidata.org/sparql", { method: "POST", body: "query=" + encodeURIComponent(q),
-    headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 240000));
+    headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 240000)
+    .catch(async (e) => { log("wdports: first try", e.message.slice(0, 80)); await new Promise((r) => setTimeout(r, 20000));
+      return get("https://query.wikidata.org/sparql", { method: "POST", body: "query=" + encodeURIComponent(q), headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 240000); }));
   const seen = new Map();
   for (const b of j.results.bindings) {
     const id = b.site.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
