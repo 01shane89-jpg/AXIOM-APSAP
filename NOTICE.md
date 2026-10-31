@@ -20,6 +20,7 @@ Some feeds are only free for non-commercial use. They are marked `"nc": true` in
 - **milsymbol 3.0.4** (`assets/vendor/milsymbol-3.0.4.js`, draws military symbols for map points): Copyright (c) 2017 Måns Beckman, spatialillusions.com. MIT licence, kept in the file header.
 - **PptxGenJS 4.0.1** (`assets/vendor/pptxgenjs-4.0.1.bundle.js`, loaded only when an intelligence brief is made as PowerPoint): Copyright (c) 2015-2022 Brent Ely. MIT licence. The bundle includes JSZip (Stuart Knightley and contributors), dual-licensed MIT or GPLv3 and used here under MIT. Full text in `assets/vendor/pptxgenjs-LICENSE.txt`.
 - **mil-std-2525 0.2.8** tables (symbol function names in `assets/osap-milsym-cat.js`): Copyright (c) Måns Beckman, spatialillusions.com. MIT licence.
+- **Maki 8.2.0** (Mapbox) and **Temaki 5.13.0** (rapideditor) map icons (pictures in the map point marker palettes, `assets/osap-icons-cat.js`, built by `tools/build_icon_palettes.mjs`): both dedicated to the public domain under CC0-1.0, no attribution required; credited here anyway. The lettered marker badges (ICP, CCP, HLZ and so on) are OSAP's own. No icon is copied from any TAK product.
 
 ## Services and data
 

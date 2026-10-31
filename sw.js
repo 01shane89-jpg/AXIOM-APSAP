@@ -461,6 +461,7 @@ const PRECACHE = [
 "data/thailand/deepsouth-entities.js",
 "assets/osap-milsym.js",
 "assets/osap-milsym-cat.js",
+"assets/osap-icons-cat.js",
 "assets/osap-maploading.js",
 "assets/osap-grid.js",
 "assets/osap-osm.js",
@@ -602,7 +603,7 @@ const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw
   /cctv\d*\.dot\.wi\.gov\//, /itsstreaming[\w-]*\.dotd\.la\.gov\//i, /\.its\.nv\.gov(:\d+)?\//, /publicstreamer\d*\.cotrip\.org(:\d+)?\//, /video\d*\.iowadot\.gov(:\d+)?\//,
   /skysfs\d*\.trafficwise\.org\//, /wzmedia\.dot\.ca\.gov(:\d+)?\//, /video\.deldot\.gov(:\d+)?\//, /strmr\d*\.sha\.maryland\.gov\//];
 // Saved after install rather than during it (see the top of this file).
-const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/vendor\/pptxgenjs/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
+const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/vendor\/pptxgenjs/, /^assets\/osap-milsym-cat/, /^assets\/osap-icons-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
 const DATA = "asap-data";
 const home = (u) => new URL(u, self.registration.scope).href;
