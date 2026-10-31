@@ -259,6 +259,13 @@ async function openPlan(p) {
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-fac .mptier")].every((t) => /Primary, Secondary and Tertiary are chosen per casualty type from capabilities documented by a credible source/.test(t.title) && /never worked out from what a hospital has/.test(t.title))), "desktop: each level label explains the ranking rule");
   ok(/24-hour emergency \(Test wiki\)/.test(fac), "desktop: an OSM hospital is matched to its sourced record");
   ok(/10 min/.test(fac) && /25 min/.test(fac), "desktop: drive times shown (10 min, 25 min)");
+  // Save to folder (assets/osap-places.js): the plan's hospitals, injury point and routes as the analyst's own copies in a new folder
+  await p.evaluate(() => document.querySelector('#medplan [data-mp="places"]').click()); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const d = document.getElementById("plcsv"); return !!d && !d.hidden && /Med plan/.test(d.querySelector("#plcsv-n").value) && d.querySelectorAll("[data-svi]").length >= 3; }), "desktop: Save to folder offers the plan's places and routes in a new folder named after the plan");
+  await p.evaluate(() => document.querySelector('#plcsv [data-sv="save"]').click()); await p.waitForTimeout(200);
+  const mpSaved = await p.evaluate(() => { const P = JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").filter((x) => x.from && x.from.tool === "medplan"), R = JSON.parse(localStorage.getItem("osap-routes") || "[]").filter((x) => x.from && x.from.tool === "medplan"), st = window.OSAP_PLACES.state(), f = st.folders.find((x) => /^Med plan/.test(x.name));
+    return { pts: P.length, rts: R.length, filed: !!f && P.concat(R).every((x) => st.of[(x.wps ? "rt:" : "pt:") + x.id] === f.id), hosp: P.some((x) => /Far North Hospital/.test(x.n) && x.sym === "ms:10042000001207020000"), poi: P.some((x) => /^POI/.test(x.n)), draft: P.concat(R).every((x) => /Automatic draft from open data/.test(x.note)) }; });
+  ok(mpSaved.pts >= 2 && mpSaved.rts >= 1 && mpSaved.filed && mpSaved.hosp && mpSaved.poi && mpSaved.draft, "desktop: the plan is saved as points and routes in its folder, hospitals with the hospital symbol, each marked as an automatic draft " + JSON.stringify(mpSaved));
   ok(/Near Hospital \(โรงพยาบาลใกล้\)/.test(fac) && order.length === 5, "desktop: a hospital mapped twice in OSM is listed once, with its other name");
   const gh = await p.$$eval("#mp-fac table", (t) => [...t[0].querySelectorAll("tbody tr")].map((r) => (r.querySelector(".mpgh") || {}).textContent || ""));
   ok(gh[0] === "Beyond golden hour" && gh[1] === "Inside golden hour" && gh[2] === "Inside golden hour", "desktop: golden-hour badges from treat-and-load plus drive: " + gh.join(", "));
