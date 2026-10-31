@@ -171,7 +171,7 @@ const STATE_ORGS = {
     "Iran Khodro", "Bank Melli Iran", "Mahan Air", "Iran Air", "Atomic Energy Organization of Iran", "Ministry of Defence and Armed Forces Logistics", "Hezbollah"],
 };
 /* not places: events, crashes, lists, people; Soviet-era bodies are history, not present presence */
-const NOT_SITE = /\b(accident|incident|crash|collision|flight|hijacking|disaster|shootdown|bombing|attack|list|Wikimedia|event|battle|operation|human|ship|vessel|aircraft|airliner|film|album|book)\b/i;
+const NOT_SITE = /\b(accident|incident|crash|collision|flight|hijacking|disaster|shootdown|bombing|attack|list|Wikimedia|event|battle|operation|human|ship|vessel|aircraft|airliner|submarine|wreck|space probe|spacecraft|lander|rover|film|album|book)\b/i;
 async function wikidata(key) {
   const A = ACTORS[key], roots = new Set([A.qid]);
   for (const n of STATE_ORGS[key]) {
@@ -188,22 +188,24 @@ async function wikidata(key) {
   for (const b of await sparql(`SELECT DISTINCT ?u WHERE { ?u wdt:P31/wdt:P279? wd:Q176799 ; wdt:P17 wd:${A.qid} . FILTER NOT EXISTS { ?u wdt:P576 ?e } }`)) ops.add(b.u.value.split("/").pop());
   log("wikidata", key + ":", roots.size, "state bodies,", ops.size, "with subsidiaries, parts and units");
   const rows = [], all = [...ops];
-  for (let i = 0; i < all.length; i += 200) rows.push(...(await sparql(`SELECT ?site ?siteLabel ?coord ?opLabel ?clsLabel ?start ?end WHERE { VALUES ?op { ${vals(all.slice(i, i + 200))} }
-      ?site wdt:P137|wdt:P127 ?op . ?site wdt:P625 ?coord . OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start } OPTIONAL { ?site wdt:P576 ?end }
+  for (let i = 0; i < all.length; i += 200) rows.push(...(await sparql(`SELECT ?site ?siteLabel ?coord ?opLabel ?clsLabel ?start ?end ?c WHERE { VALUES ?op { ${vals(all.slice(i, i + 200))} }
+      ?site wdt:P137|wdt:P127 ?op . ?site wdt:P625 ?coord . OPTIONAL { ?site wdt:P31 ?cls } OPTIONAL { ?site wdt:P571 ?start } OPTIONAL { ?site wdt:P576 ?end } OPTIONAL { ?site wdt:P17 ?c }
       SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }`)));
   const seen = new Map(), drop = new Set();
   for (const b of rows) {
     if (!b.siteLabel || /^Q\d+$/.test(b.siteLabel.value)) continue;
     const id = b.site.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
     const cls = b.clsLabel ? b.clsLabel.value : "", opl = b.opLabel ? b.opLabel.value : "";
-    if (NOT_SITE.test(cls) || /^list of\b|\bflight \d/i.test(b.siteLabel.value) || /soviet|ussr/i.test(opl)) { drop.add(id); continue; }
+    if (NOT_SITE.test(cls) || /^list of\b|\bflight \d/i.test(b.siteLabel.value) || /soviet|ussr|mojahedin|mujahedin|\bNCRI\b|opposition/i.test(opl)) { drop.add(id); continue; }
     const o = seen.get(id) || { id, name: b.siteLabel.value, lon: +m[1], lat: +m[2], ops: new Set(), cls: new Set(), start: b.start ? b.start.value.slice(0, 4) : null, end: b.end ? b.end.value.slice(0, 4) : null };
-    if (opl && !/^Q\d+$/.test(opl)) o.ops.add(opl); if (cls) o.cls.add(cls); seen.set(id, o);
+    if (opl && !/^Q\d+$/.test(opl)) o.ops.add(opl); if (cls) o.cls.add(cls); if (b.c) (o.cs || (o.cs = new Set())).add(b.c.value.split("/").pop()); seen.set(id, o);
   }
   for (const id of drop) seen.delete(id);
   log("wikidata", key + ":", rows.length, "rows,", seen.size, "sites,", drop.size, "dropped as events, lists or Soviet-era");
   const out = [];
   for (const o of seen.values()) {
+    /* Wikidata's own country first: a site it places only in the home country (a station near a border) is not abroad */
+    if (o.cs && o.cs.size && [...o.cs].every((c) => c === A.qid)) continue;
     const cc = ccOf(o.lat, o.lon); if (!cc || !IDS.has(cc) || cc === A.home) continue;
     const op = [...o.ops].slice(0, 3).join(", ") || A.name + " state body", cls = [...o.cls].slice(0, 3).join(", ");
     const [kind, sym] = siteKind(o.name + " " + cls + " " + op);
