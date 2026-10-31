@@ -181,6 +181,7 @@ jobs:
       # the map compass behind the north arrow and the shared phone-compass reader (assets/osap-compass.js, assets/osap-heading.js)
       - run: node tests/compass_smoke.mjs
       - run: node tests/milsym_smoke.mjs
+      - run: node tests/palettes_smoke.mjs
       - run: node tests/milsites_smoke.mjs
       - run: node tests/deepsouth_border_smoke.mjs
       - run: node tests/dspat_smoke.mjs

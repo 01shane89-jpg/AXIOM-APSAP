@@ -2,18 +2,24 @@
    - A point's icon is one short string kept with the point (localStorage "osap-atak-pts", field "sym"):
        "ms:<20-digit 2525D SIDC>"  a military symbol, drawn on this device by milsymbol (MIT, assets/vendor)
        "sh:<shape>:<rrggbb>"       a plain shape       "pn:<rrggbb>"  a pin       none: the default teal diamond
+       "ic:<icon id>:<rrggbb>"     an icon from one of the marker palettes (assets/osap-icons-cat.js, built by
+                                   tools/build_icon_palettes.mjs: incident command, hazards, responders and medical, air
+                                   operations, field and navigation, places): its frame drawn in the colour. The colour is
+                                   part of the string, so KML and ATAK exports keep it without the palette file.
    - The picker has four parts: affiliation (friend, hostile, neutral, unknown), domain (land, air, sea, subsurface, space,
      activities, map graphics, cyberspace), a searchable list of every 2525D function milsymbol can draw
      (assets/osap-milsym-cat.js, built by tools/build_milsym_catalog.mjs), and echelon, mobility, HQ/task force and the
-     two sector modifiers. A short row of recently used icons sits on top; plain shapes and pins are one tab away.
-   - milsymbol and the function list load only when the picker opens or a stored point uses a military symbol.
+     two sector modifiers. A short row of recently used icons sits on top; the other palettes and plain shapes and pins are
+     one tab away each (Shane 2026-10-31: "more map marker palettes").
+   - milsymbol and the function list load only when the picker opens or a stored point uses a military symbol; the palette
+     file loads only when a palette tab opens or a stored point uses one of its icons.
    The icon is the analyst's own mark on their own point: it is not a report and nothing is sent anywhere. */
 (function () {
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
   if (!L || !map) return;
   var mapEl = map.getContainer();
-  var LIB = "assets/vendor/milsymbol-3.0.4.js", CAT = "assets/osap-milsym-cat.js", K_RECENT = "osap-sym-recent";
+  var LIB = "assets/vendor/milsymbol-3.0.4.js", CAT = "assets/osap-milsym-cat.js", ICONS = "assets/osap-icons-cat.js", K_RECENT = "osap-sym-recent";
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -40,10 +46,10 @@
   var CNAME = { "15aabf": "teal", "1a73e8": "blue", "2b8a3e": "green", "f59f00": "amber", "e03131": "red", "ae3ec9": "purple", "212529": "black", "ffffff": "white" };
 
   /* a stored icon string is checked before it is used, so nothing else can reach the page's HTML */
-  var RE_MS = /^ms:(\d{20})$/, RE_SH = /^sh:([a-z]+):([0-9a-f]{6})$/, RE_PN = /^pn:([0-9a-f]{6})$/;
+  var RE_MS = /^ms:(\d{20})$/, RE_SH = /^sh:([a-z]+):([0-9a-f]{6})$/, RE_PN = /^pn:([0-9a-f]{6})$/, RE_IC = /^ic:([a-z0-9_-]{1,40}):([0-9a-f]{6})$/;
   function valid(s) {
     if (typeof s !== "string") return false;
-    var m; if (RE_MS.test(s) || RE_PN.test(s)) return true;
+    var m; if (RE_MS.test(s) || RE_PN.test(s) || RE_IC.test(s)) return true;
     return !!((m = RE_SH.exec(s)) && (SHAPES.indexOf(m[1]) >= 0 || MEDSHAPES.indexOf(m[1]) >= 0));
   }
 
@@ -66,6 +72,18 @@
     return libP;
   }
   function ready() { return !!(W.ms && W.ms.Symbol); }
+  /* the marker palettes: one data file, loaded on first use */
+  var icP = null, icIdx = null;
+  function loadIcons() {
+    if (!icP) {
+      icP = (W.OSAP_ICONS ? Promise.resolve() : inject(ICONS)).then(function () { if (!W.OSAP_ICONS || !W.OSAP_ICONS.i) throw new Error("Marker palettes did not load"); index(); });
+      icP.catch(function () { icP = null; });
+    }
+    return icP;
+  }
+  function icReady() { if (W.OSAP_ICONS && !icIdx) index(); return !!icIdx; }
+  function index() { icIdx = {}; W.OSAP_ICONS.i.forEach(function (r) { icIdx[r[0]] = r; }); }
+  function palName(id) { var P = W.OSAP_ICONS && W.OSAP_ICONS.pals || []; for (var i = 0; i < P.length; i++) if (P[i][0] === id) return P[i][1]; return ""; }
 
   /* ---------- drawing ---------- */
   var cache = {};
@@ -97,11 +115,37 @@
     var dark = col === "ffffff" || col === "f59f00" ? "#222" : "#fff";
     return '<svg viewBox="0 0 24 32" width="' + Math.round(px * 0.75) + '" height="' + px + '" aria-hidden="true" style="filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"><path d="M12 31s10-11.2 10-19A10 10 0 0 0 2 12c0 7.8 10 19 10 19z" fill="#' + col + '" stroke="' + dark + '" stroke-width="1.8"/><circle cx="12" cy="12" r="3.6" fill="' + dark + '"/></svg>';
   }
+  /* a palette icon: the picture (a public-domain glyph or OSAP's own letters) inside its frame, in the chosen colour */
+  function glyph(ref, x, y, sz, fill) {
+    var g = W.OSAP_ICONS.g[ref]; if (!g) return "";
+    return '<svg x="' + x + '" y="' + y + '" width="' + sz + '" height="' + sz + '" viewBox="' + esc(g[0]) + '"><g fill="' + fill + '">' + g[1].map(function (d) { return '<path d="' + esc(d) + '"/>'; }).join("") + "</g></svg>";
+  }
+  function letters(txt, avail, maxF, fill) {
+    var n = txt.length, fs = Math.max(6.5, Math.min(maxF, avail / (n * 0.62))), wide = n * fs * 0.62 > avail;
+    return '<text x="12" y="12.3" text-anchor="middle" dominant-baseline="central" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="' + fs.toFixed(1) + '" fill="' + fill + '"' +
+      (wide ? ' textLength="' + avail + '" lengthAdjust="spacingAndGlyphs"' : "") + ">" + esc(txt) + "</text>";
+  }
+  function icSvg(r, col, px) {
+    var fr = r[3], art = r[5], c = "#" + col, light = col === "ffffff" || col === "f2c200" || col === "f59f00", on = light ? "#222" : "#fff", body, inner, box, maxF, avail;
+    if (fr === "d") { body = '<path d="M12 .8 23.2 12 12 23.2 .8 12z" fill="#fff" stroke="' + c + '" stroke-width="2" stroke-linejoin="round"/>'; inner = c; box = [6.5, 6.5, 11]; maxF = 7.5; avail = 12.5; }
+    else if (fr === "b") { body = '<rect x="1" y="4" width="22" height="16" rx="3" fill="' + c + '" stroke="' + on + '" stroke-width="1.2"/>'; inner = on; box = [6.5, 6.5, 11]; maxF = 10.5; avail = 19.5; }
+    else if (fr === "s") { body = '<rect x="2" y="2" width="20" height="20" rx="3" fill="' + c + '" stroke="' + on + '" stroke-width="1.2"/>'; inner = on; box = [6, 6, 12]; maxF = 11; avail = 16.5; }
+    else if (fr === "o") { body = '<circle cx="12" cy="12" r="10.6" fill="' + c + '" stroke="' + on + '" stroke-width="1.3"/>'; inner = on; box = [6, 6, 12]; maxF = 10.5; avail = 15; }
+    else { body = '<circle cx="12" cy="12" r="10.4" fill="#fff" stroke="' + c + '" stroke-width="2.2"/>'; inner = c; box = [6, 6, 12]; maxF = 10.5; avail = 15; }
+    var pic = /^t:/.test(art) ? letters(art.slice(2), avail, maxF, inner) : glyph(art, box[0], box[1], box[2], inner);
+    return '<svg viewBox="0 0 24 24" width="' + px + '" height="' + px + '" aria-hidden="true" style="filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.55))">' + body + pic + "</svg>";
+  }
   /* -> {html, w, h, ax, ay, cy} for the map marker (cy: the middle of the frame, where the name label sits), or null when the point keeps the default diamond (or the library is not here yet) */
   function draw(sym, size) {
     if (!valid(sym)) return null;
     var px = size || 24, m;
     if ((m = RE_MS.exec(sym))) { if (!ready()) { need(); return null; } var r = msSvg(m[1], px); return r && { html: r.html, w: r.w, h: r.h, ax: r.ax, ay: r.ay, cy: r.cy }; }
+    if ((m = RE_IC.exec(sym))) {
+      if (!icReady()) { needIcons(); return null; }
+      var ir = icIdx[m[1]], ip = px + 6;
+      /* an icon this copy of OSAP does not know (a newer palette): keep the colour as a plain circle */
+      return { html: ir ? icSvg(ir, m[2], ip) : shapeSvg("circle", m[2], ip - 4), w: ip, h: ip, ax: ip / 2, ay: ip / 2, cy: ip / 2 };
+    }
     if ((m = RE_PN.exec(sym))) return { html: pinSvg(m[1], px + 4), w: Math.round((px + 4) * 0.75), h: px + 4, ax: Math.round((px + 4) * 0.375), ay: px + 3, cy: Math.round((px + 4) * 0.375) };
     m = RE_SH.exec(sym); return { html: shapeSvg(m[1], m[2], px - 2), w: px - 2, h: px - 2, ax: (px - 2) / 2, ay: (px - 2) / 2, cy: (px - 2) / 2 };
   }
@@ -112,6 +156,12 @@
     load().then(function () { var A = W.OSAP_ATAK; if (A && A.pts) { A.pts.draw(); A.pts.paint(); } }, function () {}).then(function () { needing = false; });
   }
 
+  var needingIc = false;
+  function needIcons() {
+    if (needingIc) return; needingIc = true;
+    loadIcons().then(function () { var A = W.OSAP_ATAK; if (A && A.pts) { A.pts.draw(); A.pts.paint(); } }, function () {}).then(function () { needingIc = false; });
+  }
+
   /* plain words for a stored icon, for the popup and the editor */
   function findFn(set, ent) { var C = W.OSAP_MSCAT, a = C && C.e[set] || []; for (var i = 0; i < a.length; i++) if (a[i][0] === ent) return a[i]; return null; }
   function findIn(list, code) { for (var i = 0; i < list.length; i++) if (list[i][0] === code) return list[i][1]; return ""; }
@@ -119,6 +169,7 @@
     if (!valid(sym)) return "Default marker";
     var m;
     if ((m = RE_PN.exec(sym))) return "Pin, " + (CNAME[m[1]] || "#" + m[1]);
+    if ((m = RE_IC.exec(sym))) { var ir = icReady() && icIdx[m[1]]; return ir ? ir[2] + " (" + palName(ir[1]) + ")" : "Palette icon"; }
     if ((m = RE_SH.exec(sym)) && m[1] === "medcross") return "Hospital, red cross";
     if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1) + ", " + (CNAME[m[2]] || "#" + m[2]);
     var d = RE_MS.exec(sym)[1], id = d.charAt(3), set = d.substr(4, 2), st = d.charAt(6), hq = d.charAt(7), ec = d.substr(8, 2), ent = d.substr(10, 6);
@@ -138,15 +189,21 @@
   function remember(sym) { if (!valid(sym)) return; var a = recent().filter(function (x) { return x !== sym; }); a.unshift(sym); lsSet(K_RECENT, JSON.stringify(a.slice(0, 12))); }
 
   /* ---------- the picker: a sheet over the point editor ---------- */
+  /* the palettes, one tab each: the 2525D builder, the icon palettes (assets/osap-icons-cat.js) and plain shapes and pins */
+  var TABS = [["mil", "Military (2525D)", "Every MIL-STD-2525D / APP-6 symbol, with affiliation, echelon and modifiers"],
+    ["p:inc", "Incident command", "Command posts, staging, bases and work areas (ICS terms)"], ["p:haz", "Hazards", "Explosive, CBRN, fire, weather and ground hazards, spill actions"],
+    ["p:resp", "Responders and medical", "Medical, fire, police, rescue and people"], ["p:air", "Air operations", "Landing and drop zones, aircraft and airspace"],
+    ["p:nav", "Field and navigation", "Waypoints, rendezvous, observation and terrain"], ["p:osm", "Places (OSM)", "Map icons for places and features, by theme (OpenStreetMap style)"],
+    ["shp", "Shapes and pins", "Plain shapes and pins in eight colours"]];
   var pk = D.createElement("aside"); pk.id = "ms-pick"; pk.className = "leaflet-control"; pk.hidden = true;
   pk.setAttribute("role", "dialog"); pk.setAttribute("aria-label", "Select an icon");
   pk.innerHTML = '<div class="ms-h"><button type="button" class="ms-back" data-mk="back" aria-label="Back to the point">‹ <span class="ms-pn">Point</span></button><h2>Select an icon</h2></div>' +
     '<div class="ms-b"><div class="ms-quick"></div><div class="ms-rec"></div>' +
-    '<div class="ms-tabs" role="tablist"><button type="button" role="tab" data-tab="mil">Military symbol</button><button type="button" role="tab" data-tab="shp">Shapes and pins</button></div>' +
-    '<div class="ms-mil"></div><div class="ms-shp" hidden></div></div>' +
+    '<div class="ms-tabs" role="tablist" aria-label="Marker palettes">' + TABS.map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" title="' + esc(t[2]) + '">' + esc(t[1]) + "</button>"; }).join("") + "</div>" +
+    '<div class="ms-mil"></div><div class="ms-pal" hidden></div><div class="ms-shp" hidden></div></div>' +
     '<div class="ms-foot"><div class="ms-now"></div><button type="button" class="pt-btn pri" data-mk="use">Use this symbol</button></div>';
   L.DomEvent.disableClickPropagation(pk); L.DomEvent.disableScrollPropagation(pk);
-  var st = { cb: null, tab: "mil", id: "1", dom: "land", set: "10", ent: "000000", ech: "00", hq: "0", m1: "00", m2: "00", plan: false, q: "", shown: 60 };
+  var st = { cb: null, tab: "mil", pal: "inc", col: "", pq: "", pshown: 240, id: "1", dom: "land", set: "10", ent: "000000", ech: "00", hq: "0", m1: "00", m2: "00", plan: false, q: "", shown: 60 };
   function sidc() { return "100" + (st.set === "25" ? "1" : st.id) + st.set + (st.plan ? "1" : "0") + st.hq + st.ech + st.ent + st.m1 + st.m2; }
   function tile(sym, title, pressed, attr) {
     var r = draw(sym, 22), inner = r ? r.html : '<span class="ms-def"></span>';
@@ -156,6 +213,7 @@
     var a = recent(), el = pk.querySelector(".ms-rec");
     /* the 2525D tiles in the Medical row need milsymbol: load it, then paint the row again */
     if (!ready()) load().then(function () { if (!pk.hidden) paintRecent(); }, function () {});
+    if (!icReady() && a.some(function (s) { return RE_IC.test(s); })) loadIcons().then(function () { if (!pk.hidden) paintRecent(); }, function () {});
     pk.querySelector(".ms-quick").innerHTML = '<h3>Medical</h3><div class="ms-row ms-med">' + MEDICAL.map(function (x) { return tile(x[0], x[1], x[0] === st.cur, 'data-sym="' + x[0] + '"'); }).join("") + "</div>";
     el.innerHTML = a.length ? '<h3>Recently used</h3><div class="ms-row">' + a.map(function (s) { return tile(s, label(s), false, 'data-sym="' + esc(s) + '"'); }).join("") + "</div>" : "";
   }
@@ -200,7 +258,7 @@
   function paintNow() {
     var el = pk.querySelector(".ms-now"), use = pk.querySelector('[data-mk="use"]');
     use.hidden = st.tab !== "mil";
-    if (st.tab !== "mil") { el.innerHTML = '<span class="obs">Tap a shape or pin to use it.</span>'; return; }
+    if (st.tab !== "mil") { el.innerHTML = '<span class="obs">' + (st.tab === "shp" ? "Tap a shape or pin to use it." : "Pick a colour if you want one, then tap an icon to use it.") + "</span>"; return; }
     if (!ready()) { el.innerHTML = ""; use.disabled = true; return; }
     use.disabled = false;
     var s = "ms:" + sidc(), r = draw(s, 30);
@@ -230,11 +288,54 @@
       '<h3>Pins</h3><div class="ms-row">' + COLOURS.map(function (c) { var k = "pn:" + c; return tile(k, label(k), k === st.cur, 'data-sym="' + k + '"'); }).join("") + "</div>" +
       '<h3>Default</h3><div class="ms-row">' + tile("", "Default marker (teal diamond)", !st.cur, 'data-sym=""') + "</div>";
   }
+  /* ---------- the icon palettes ---------- */
+  function icSym(r) { return "ic:" + r[0] + ":" + (st.col || r[4]); }
+  function paintPal() {
+    var el = pk.querySelector(".ms-pal"), want = st.tab;
+    if (!icReady()) {
+      el.innerHTML = '<p class="obs ms-load">Loading the marker palettes…</p>';
+      loadIcons().then(function () { if (!pk.hidden && st.tab === want) { paintPal(); paintRecent(); } }, function () {
+        if (st.tab === want) el.innerHTML = '<p class="obs">The marker palettes could not be loaded. They need one download while online; after that they work offline. Shapes and pins work now.</p>';
+      });
+      return;
+    }
+    var T = TABS.filter(function (t) { return t[0] === "p:" + st.pal; })[0];
+    el.innerHTML = '<p class="obs ms-pblurb">' + esc(T ? T[2] : "") + "</p>" +
+      '<div class="ms-cols" role="radiogroup" aria-label="Colour"><button type="button" role="radio" data-col="" aria-checked="' + !st.col + '" title="Each icon\'s own colour">Own</button>' +
+      COLOURS.map(function (c) { return '<button type="button" role="radio" data-col="' + c + '" aria-checked="' + (st.col === c) + '" title="' + CNAME[c] + '" aria-label="' + CNAME[c] + '"><i style="background:#' + c + '"></i></button>'; }).join("") + "</div>" +
+      '<input type="search" class="ms-pq" placeholder="Search every palette: hospital, HLZ, checkpoint…" aria-label="Search the marker palettes" value="' + esc(st.pq) + '">' +
+      '<div class="ms-pgrid"></div>';
+    paintGrid();
+  }
+  function palRows() {
+    var q = st.pq.toLowerCase().split(/\s+/).filter(Boolean), A = W.OSAP_ICONS.i;
+    if (!q.length) return A.filter(function (r) { return r[1] === st.pal; });
+    var out = A.filter(function (r) { var hay = (r[2] + " " + r[7] + " " + r[6] + " " + palName(r[1]) + " " + (/^t:/.test(r[5]) ? r[5].slice(2) : "")).toLowerCase(); for (var i = 0; i < q.length; i++) if (hay.indexOf(q[i]) < 0) return false; return true; });
+    /* names that start with the first word first, then the palette being looked at */
+    return out.map(function (r, i) { return [r, (r[2].toLowerCase().indexOf(q[0]) === 0 ? 0 : 2) + (r[1] === st.pal ? 0 : 1), i]; }).sort(function (a, b) { return a[1] - b[1] || a[2] - b[2]; }).map(function (x) { return x[0]; });
+  }
+  function paintGrid() {
+    var el = pk.querySelector(".ms-pgrid"); if (!el) return;
+    var R = palRows(), h = "", last = "", row = [];
+    function flush() { if (row.length) h += '<div class="ms-row">' + row.join("") + "</div>"; row = []; }
+    R.slice(0, st.pshown).forEach(function (r) {
+      var head = st.pq ? palName(r[1]) : r[6];
+      if (head !== last) { flush(); h += "<h4>" + esc(head) + "</h4>"; last = head; }
+      var k = icSym(r);
+      row.push(tile(k, r[2], k === st.cur, 'data-sym="' + esc(k) + '"'));
+    });
+    flush();
+    if (!R.length) h = '<p class="obs">No icon matches “' + esc(st.pq) + '”. Try another word (for example “medical”, “landing”, “fuel”), or the Military (2525D) tab.</p>';
+    if (R.length > st.pshown) h += '<button type="button" class="pt-btn ms-more" data-mk="pmore">Show more (' + (R.length - st.pshown) + ")</button>";
+    el.innerHTML = h;
+  }
   function tab(t) {
     st.tab = t;
+    var pal = /^p:(.+)$/.exec(t);
+    if (pal && pal[1] !== st.pal) { st.pal = pal[1]; st.pq = ""; st.pshown = 240; }
     Array.prototype.forEach.call(pk.querySelectorAll("[data-tab]"), function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-tab") === t)); });
-    pk.querySelector(".ms-mil").hidden = t !== "mil"; pk.querySelector(".ms-shp").hidden = t !== "shp";
-    if (t === "mil") paintMil(); else paintShp();
+    pk.querySelector(".ms-mil").hidden = t !== "mil"; pk.querySelector(".ms-shp").hidden = t !== "shp"; pk.querySelector(".ms-pal").hidden = !pal;
+    if (t === "mil") paintMil(); else if (pal) paintPal(); else paintShp();
     paintNow();
   }
   function done(sym) {
@@ -244,18 +345,29 @@
   }
   /* opens the picker; cb(sym) is called with the chosen icon ("" = default diamond) */
   function pick(cur, name, cb) {
-    st.cb = cb; st.cur = valid(cur) ? cur : ""; st.q = ""; st.shown = 60;
+    st.cb = cb; st.cur = valid(cur) ? cur : ""; st.q = ""; st.shown = 60; st.pq = ""; st.pshown = 240; st.col = "";
     var m = RE_MS.exec(st.cur || "");
     if (m) { var d = m[1]; st.id = d.charAt(3) === "0" ? "1" : d.charAt(3); st.set = d.substr(4, 2); st.plan = d.charAt(6) === "1"; st.hq = d.charAt(7); st.ech = d.substr(8, 2); st.ent = d.substr(10, 6); st.m1 = d.substr(16, 2); st.m2 = d.substr(18, 2); }
     pk.querySelector(".ms-pn").textContent = name || "Point";
     if (m && W.OSAP_MSCAT && W.OSAP_MSCAT.sets[st.set]) st.dom = W.OSAP_MSCAT.sets[st.set][1];
     pk.hidden = false; paintRecent();
-    tab(st.cur && !m ? "shp" : "mil");
+    var ic = RE_IC.exec(st.cur || "");
+    if (ic) {
+      /* the point already uses a palette icon: open that palette, with its colour picked if it is not the icon's own */
+      var openIc = function () { var r = icIdx[ic[1]]; if (r) { st.pal = r[1]; st.col = ic[2] === r[4] ? "" : ic[2]; } tab("p:" + st.pal); };
+      if (icReady()) openIc(); else { tab("p:" + st.pal); loadIcons().then(function () { if (!pk.hidden && st.cur === ic[0]) openIc(); }, function () {}); }
+    } else tab(st.cur && !m ? "shp" : "mil");
     var f = pk.querySelector(".ms-back"); if (f) f.focus({ preventScroll: true });
   }
   function close() { pk.hidden = true; st.cb = null; }
   var qT = 0;
+  var pqT = 0;
   pk.addEventListener("input", function (e) {
+    if (e.target.classList.contains("ms-pq")) {
+      clearTimeout(pqT); var v = e.target.value;
+      pqT = setTimeout(function () { st.pq = v.trim().slice(0, 60); st.pshown = 240; paintGrid(); }, 150);
+      return;
+    }
     if (!e.target.classList.contains("ms-q")) return;
     clearTimeout(qT); qT = setTimeout(function () {
       st.q = e.target.value.trim().slice(0, 60); st.shown = 60; paintList();
@@ -271,6 +383,11 @@
     var t = e.target, b;
     if ((b = t.closest("[data-sym]"))) { done(b.getAttribute("data-sym")); return; }
     if ((b = t.closest("[data-tab]"))) { tab(b.getAttribute("data-tab")); return; }
+    if ((b = t.closest("[data-col]"))) {
+      st.col = b.getAttribute("data-col");
+      Array.prototype.forEach.call(pk.querySelectorAll("[data-col]"), function (x) { x.setAttribute("aria-checked", String(x === b)); });
+      paintGrid(); return;
+    }
     if ((b = t.closest("[data-aff]"))) {
       st.id = b.getAttribute("data-aff");
       Array.prototype.forEach.call(pk.querySelectorAll("[data-aff]"), function (x) { x.setAttribute("aria-checked", String(x === b)); });
@@ -293,6 +410,7 @@
       if (k === "back") close();
       else if (k === "use" && ready()) done("ms:" + sidc());
       else if (k === "more") { st.shown += 120; paintList(); }
+      else if (k === "pmore") { st.pshown += 400; paintGrid(); }
     }
   });
   D.addEventListener("keydown", function (e) { if (e.key === "Escape" && !pk.hidden) { e.stopImmediatePropagation(); close(); } }, true);
@@ -309,7 +427,10 @@
     ".ms-row{display:flex;flex-wrap:wrap;gap:4px}.ms-t{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:2px;border:1px solid transparent;border-radius:6px;background:none;cursor:pointer}" +
     ".ms-t:hover,.ms-fn:hover{background:var(--surface2,#f1f3f5)}.ms-t[aria-pressed=true],.ms-fn[aria-pressed=true]{border-color:#1a73e8;box-shadow:inset 0 0 0 1px #1a73e8}.ms-t svg{max-width:40px;max-height:40px}" +
     ".ms-def{display:block;width:13px;height:13px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5)}" +
-    ".ms-tabs{display:flex;gap:4px;margin:8px 0;border-bottom:1px solid var(--line)}.ms-tabs button{flex:1;border:0;border-bottom:3px solid transparent;background:none;color:inherit;font:600 13px system-ui,-apple-system,sans-serif;min-height:38px;cursor:pointer}.ms-tabs [aria-selected=true]{border-bottom-color:#0b7285;color:#0b7285}" +
+    ".ms-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0;padding-bottom:6px;border-bottom:1px solid var(--line)}@media (max-width:700px){.ms-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.ms-tabs::-webkit-scrollbar{display:none}.ms-tabs button{white-space:nowrap}}.ms-tabs button{flex:1 0 auto;border:1px solid var(--line);border-radius:16px;background:var(--surface,#fff);color:inherit;font:600 12.5px system-ui,-apple-system,sans-serif;min-height:34px;padding:0 10px;cursor:pointer}.ms-tabs [aria-selected=true]{background:#0b7285;border-color:#0b7285;color:#fff}" +
+    ".ms-pblurb{margin:2px 0 6px}.ms-cols{display:flex;gap:3px;margin:0 0 6px}.ms-cols button{flex:1 1 0;display:flex;align-items:center;justify-content:center;min-width:0;min-height:34px;padding:0 4px;border:1px solid var(--line);border-radius:6px;background:var(--surface,#fff);color:inherit;font:600 12px system-ui,-apple-system,sans-serif;cursor:pointer}" +
+    ".ms-cols i{width:16px;height:16px;border-radius:50%;border:1px solid #333}.ms-cols [aria-checked=true]{border-color:#0b7285;box-shadow:inset 0 0 0 2px #0b7285}" +
+    ".ms-pq{width:100%;box-sizing:border-box;font:inherit;font-size:14px;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--surface,#fff);color:inherit;margin-bottom:4px}@media (pointer:coarse){.ms-pq{font-size:16px}}" +
     ".ms-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:4px 0 6px}.ms-seg button,.ms-dom button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:36px;border:1px solid var(--line);border-radius:6px;background:var(--surface,#fff);color:inherit;font:600 12.5px system-ui,-apple-system,sans-serif;cursor:pointer;padding:0 6px}" +
     ".ms-seg i{width:12px;height:12px;border:1px solid #333;border-radius:2px}.ms-seg [aria-checked=true],.ms-dom [aria-checked=true]{background:#0b7285;border-color:#0b7285;color:#fff}" +
     ".ms-dom{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 6px}.ms-dom button{flex:1 0 auto;min-height:32px;font-weight:500}" +
@@ -325,5 +446,5 @@
   D.head.appendChild(css);
   mapEl.appendChild(pk);
 
-  W.OSAP_MSYM = { draw: draw, label: label, pick: pick, close: close, valid: valid, load: load, recent: recent };
+  W.OSAP_MSYM = { draw: draw, label: label, pick: pick, close: close, valid: valid, load: load, loadIcons: loadIcons, recent: recent };
 })();

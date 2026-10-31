@@ -1,7 +1,8 @@
 // Headless check of Photo to map (assets/osap-points.js + the Point menu in assets/osap-atak.js):
 // Point > Take a photo here opens a sheet with the live GPS grid and compass heading; Take photo saves a new point at the
 // fix with the photo kept byte for byte, its grid, heading, sources and accuracy beside it; a heading wedge on the map;
-// the heading can be corrected; no GPS = Take photo locked, map centre offered; no compass = saved without a heading.
+// the heading can be corrected; OSAP camera shows grid, heading and time over the live picture and saves a clean still;
+// no GPS = Take photo locked, map centre offered; no compass = saved without a heading.
 // The compass is a stand-in for assets/osap-heading.js (window.OSAP_HEADING), the shared helper from the compass work.
 // Run from the repo root: node tests/photo_map_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
@@ -19,7 +20,7 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
-const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
+const browser = await chromium.launch({ ...(process.env.CHROME ? { executablePath: process.env.CHROME } : {}), args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] });
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s); return !!e && !e.hidden && getComputedStyle(e).display !== "none" && e.getClientRects().length > 0; }, s);
@@ -110,6 +111,41 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   await p.evaluate(() => document.querySelector('#pt-view [data-pv="x"]').click());
   ok(await p.evaluate((id) => !window.OSAP_PLACES || window.OSAP_PLACES.shown("pt:" + id), pt.id), "phone: the photo is a saved point in My places (pt:" + pt.id + ")");
   ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+
+// ---------- phone, OSAP camera with the data on screen (Chromium's fake camera) ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, geolocation: GEO, permissions: ["geolocation", "camera"] }, "granted");
+  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="snap"]'); await p.waitForTimeout(800);
+  ok(await shown(p, '#pt-snap [data-ps="osc"]') && await shown(p, '#pt-snap .sn-app'), "camera: sheet offers Open camera (data on screen) and Phone camera app");
+  await p.evaluate(() => window.OSAP_HEADING.emit({ mag: 300, tru: 299.2, decl: -0.8, cam: 271.2, camTru: 270.4, basis: "camera", acc: 8, src: "device compass", t: Date.now() }));
+  await p.click('#pt-snap [data-ps="osc"]');
+  await p.waitForFunction(() => { const v = document.querySelector("#pt-cam video"); return v && v.videoWidth > 0; }, null, { timeout: 15000 }).catch(() => {});
+  ok(await shown(p, "#pt-cam") && !(await shown(p, "#pt-snap")), "camera: the OSAP camera fills the screen");
+  ok(await p.evaluate(() => document.querySelector("#pt-cam video").videoWidth > 0), "camera: the live picture is running");
+  const hud = await p.evaluate(() => ({ hd: document.querySelector("#pt-cam .cm-hd").textContent, hd2: document.querySelector("#pt-cam .cm-hd2").textContent, grid: document.querySelector("#pt-cam .cm-grid").textContent, time: document.querySelector("#pt-cam .cm-time").textContent }));
+  ok(hud.hd === "271° M" && /4821 mils/.test(hud.hd2) && /270° T/.test(hud.hd2) && /±8°/.test(hud.hd2), "camera: heading on screen: " + hud.hd + " " + hud.hd2);
+  ok(/^47P PR 62366 21280/.test(hud.grid) && /±6 m/.test(hud.grid) && /\d\d:\d\d:\d\dZ/.test(hud.time) && /local/.test(hud.time), "camera: grid and Zulu + local time on screen: " + hud.grid + " | " + hud.time);
+  await p.evaluate(() => window.OSAP_HEADING.emit({ mag: 20, tru: 19, decl: -1, cam: 95, camTru: 94, basis: "camera", acc: 8, src: "device compass", t: Date.now() }));
+  ok(await p.textContent("#pt-cam .cm-hd") === "095° M", "camera: the heading on screen follows the phone");
+  if (OUT) await p.screenshot({ path: OUT + "/photo-map-camera.png" });
+  await p.click('#pt-cam [data-cm="shut"]');
+  await p.waitForFunction(() => /1 saved/.test(document.querySelector("#pt-cam .cm-n").textContent), null, { timeout: 15000 }).catch(() => {});
+  let P = await pts(p);
+  ok(P.length === 1 && P[0].src === "photo" && P[0].az === 95 && P[0].azTru === 94, "camera: shutter saves a point with the heading at the shutter: " + (P[0] && P[0].az));
+  ok(await shown(p, "#pt-cam") && /1 saved/.test(await p.textContent("#pt-cam .cm-n")), "camera: stays open for the next photo and counts what is saved");
+  const ph = await p.evaluate((pid) => window.OSAP_POINTS.photos(pid).then((a) => a.map((r) => ({ type: r.type, size: r.size, name: r.name, sha: r.sha256, geo: r.geo, head: Array.from(new Uint8Array(r.buf.slice(0, 3))) }))), P[0] && P[0].id);
+  /* a phone's takePhoto gives a JPEG; Chromium's fake camera gives a PNG: the bytes must match the type and the name */
+  const magic = ph[0] && (ph[0].type === "image/jpeg" ? ph[0].head.join() === "255,216,255" && /\.jpg$/.test(ph[0].name) : ph[0].type === "image/png" ? ph[0].head.join() === "137,80,78" && /\.png$/.test(ph[0].name) : false);
+  ok(ph.length === 1 && magic && ph[0].size > 1000 && /^OSAP-\d{8}T\d{6}Z\./.test(ph[0].name) && ph[0].sha.length === 64, "camera: the camera still is stored as it came, with its SHA-256 with its SHA-256: " + (ph[0] && ph[0].name + " " + ph[0].size + " B"));
+  ok(ph[0] && /OSAP camera/.test(ph[0].geo.capture.how) && /not drawn into the photo/.test(ph[0].geo.capture.overlay) && ph[0].geo.heading.mag === 95 && /^47P/.test(ph[0].geo.grid), "camera: how it was taken is recorded, data kept beside the photo: " + (ph[0] && ph[0].geo.capture.how));
+  await p.click('#pt-cam [data-cm="shut"]');
+  await p.waitForFunction(() => /2 saved/.test(document.querySelector("#pt-cam .cm-n").textContent), null, { timeout: 15000 }).catch(() => {});
+  ok((await pts(p)).length === 2, "camera: a second shot is a second point");
+  await p.click('#pt-cam [data-cm="x"]'); await p.waitForTimeout(300);
+  ok(!(await shown(p, "#pt-cam")) && !(await shown(p, "#pt-snap")) && await p.evaluate(() => !document.querySelector("#pt-cam video").srcObject && window.OSAP_HEADING._subs.length === 0), "camera: Done closes it and lets go of the camera and compass");
+  ok(errors.length === 0, "camera: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 
