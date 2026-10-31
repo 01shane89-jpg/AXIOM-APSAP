@@ -7,6 +7,8 @@
 // source's own claim wording with no "AI generated" tag (on the map or in the Reports panel); the Philippines keeps its hand-researched sea and land sections (with
 // the AI tag on those pop-ups) and adds the generated records; a country with no file (Japan) says none recorded instead of
 // failing; no page errors.
+// The Russian presence data set (data/rupresence, tools/refresh_ruirpresence.mjs) uses the same pane: its sections, actor-labelled
+// pop-ups, and an Iranian presence data set offered beside it.
 // Run from the repo root: node tests/cnpresence_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -34,10 +36,16 @@ const FILES = {
       actor: "Chinese state lenders and donors (official finance)", why: "Transport · committed 2018", amt: 5e7, year: 2018 }),
   ] },
 };
+const RU = { vn: { v: 1, cc: "vn", actor: "ru", at: "2026-10-31T12:00Z", items: [
+  rec({ id: "rip:ru:wd:Q1", src: "wikidata", domain: "land", name: "Test Embassy of Russia", kind: "diplomatic", sym: "pr_site", lat: 21.03, lon: 105.84, prec: "Wikidata coordinates",
+    actor: "Ministry of Foreign Affairs of Russia", why: "Embassy. Recorded in Wikidata as operated or owned by Ministry of Foreign Affairs of Russia.", lic: "CC0" }),
+  rec({ id: "rip:ru:us:a", src: "uslists", domain: "land", name: "Delta Test Shipping LLC", kind: "listed_company", sym: "pr_listed", lat: 10.82, lon: 106.63,
+    prec: "city of the listed address (Ho Chi Minh City)", place: "Ho Chi Minh City", actor: "Delta Test Shipping LLC", list: "Treasury SDN list", why: "On the Treasury SDN list (programme RUSSIA-EO14024).", lic: "U.S. government work, public domain" }),
+] } };
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
-  const m = path.match(/^data[\\/]cnpresence[\\/]([a-z]+)\.json$/);
-  if (m) { if (FILES[m[1]]) { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(FILES[m[1]])); } else { res.writeHead(404); res.end(); } return; }
+  const m = path.match(/^data[\\/](cnpresence|rupresence)[\\/]([a-z]+)\.json$/), F = m && (m[1] === "cnpresence" ? FILES : RU)[m[2]];
+  if (m) { if (F) { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(F)); } else { res.writeHead(404); res.end(); } return; }
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
 }).listen(0, "127.0.0.1");
@@ -47,7 +55,7 @@ const browser = await chromium.launch(process.env.CHROME ? { executablePath: pro
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
-async function open(cc) {
+async function open(cc, view = "presence") {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
@@ -56,12 +64,12 @@ async function open(cc) {
   await p.waitForFunction(() => window.TSAP && window.OSAP_PR, null, { timeout: 60000 });
   await p.waitForTimeout(2000);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
-  const has = await p.evaluate(() => !!document.querySelector('#view-seg [data-view="presence"]'));
+  const has = await p.evaluate((v) => !!document.querySelector('#view-seg [data-view="' + v + '"]'), view);
   if (has) {
     /* tick the data set in Map layers > Data sets (its pins), then open it (the list beside the map) */
-    await p.evaluate(() => { const i = document.querySelector('#ml-ds input[data-ds="presence"]'); if (i && !i.checked) i.click(); });
+    await p.evaluate((v) => { const i = document.querySelector('#ml-ds input[data-ds="' + v + '"]'); if (i && !i.checked) i.click(); }, view);
     await p.waitForTimeout(800);
-    await p.evaluate(() => document.querySelector('#view-seg [data-view="presence"]').click());
+    await p.evaluate((v) => document.querySelector('#view-seg [data-view="' + v + '"]').click(), view);
     await p.waitForFunction(() => { const r = document.getElementById("rail-sof"); return r && /Reported, not verified/.test(r.textContent); }, null, { timeout: 20000 });
     await p.waitForTimeout(1200);
   }
@@ -109,6 +117,19 @@ async function popupOf(p, name) {
   ok(r.h2.some((h) => /Chinese-funded projects \(1\)/.test(h)), "generated project added");
   const hp = await popupOf(p, "Mischief Reef");
   ok(hp && hp.ai, "hand-researched pop-up keeps its AI generated tag");
+  ok(!errors.length, "no page errors: " + errors.join(" / "));
+  await ctx.close();
+}
+// ---------- Vietnam: Russian presence (same pane, data/rupresence) ----------
+{
+  const { ctx, p, errors, has } = await open("vn", "rupresence");
+  ok(has, "Vietnam offers the Russian presence data set");
+  const r = await rail(p);
+  ok(r.h2.some((h) => /Russian state-run and state-owned sites \(1\)/.test(h)) && r.h2.some((h) => /Russia-linked organisations on U\.S\. restricted lists \(1\)/.test(h)), "Russian sections: " + r.h2.join(" | "));
+  ok(!/Chinese/.test(r.text), "no Chinese records or wording in the Russian data set");
+  const pr = await popupOf(p, "Test Embassy of Russia");
+  ok(pr && /^Russian presence/.test(pr.text.trim()) && /CC0/.test(pr.text) && !pr.ai, "Russian site pop-up: actor, licence, no AI tag");
+  ok(await p.evaluate(() => !!document.querySelector('#view-seg [data-view="irpresence"]')), "Iranian presence data set offered too");
   ok(!errors.length, "no page errors: " + errors.join(" / "));
   await ctx.close();
 }
