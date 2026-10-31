@@ -110,7 +110,10 @@
   function startCompass() {
     if (!H) return say("This browser cannot read a compass.");
     say("Asking for the compass…");
+    /* a browser that never answers the permission question (a computer with no sensors can leave it pending) is told apart after 4 s */
+    var late = setTimeout(function () { say("The compass did not answer. This device may have no compass. Bearings below still work."); }, 4000);
     H.request().then(function (r) {
+      clearTimeout(late);
       if (r === "denied") return say("Compass permission was refused. Allow motion and orientation for this site in the browser settings, then try again.");
       if (r === "unsupported") return say("This device has no compass. Bearings below still work.");
       running = true; H.start(onHeading); say("Hold the phone flat or upright, screen towards you.");
