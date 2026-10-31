@@ -155,6 +155,7 @@ jobs:
       - run: node tests/econ_smoke.mjs
       - run: node tests/risk_smoke.mjs
       - run: node tests/milref_smoke.mjs
+      - run: node tests/cnpresence_smoke.mjs
       - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
