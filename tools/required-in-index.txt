@@ -95,6 +95,7 @@ refresh: function () { dsUi(); }
 # saved points shrink and group when zoomed out (claude/points-declutter)
 <script src="assets/osap-ptdeclutter.js"></script>
 <script src="assets/osap-places.js"></script>
+<script src="assets/osap-display.js"></script>
 # 3D terrain view, scale bar and compass (claude/3d-terrain); MapLibre is loaded by it only when 3D is opened
 <script src="assets/osap-3d.js"></script>
 
