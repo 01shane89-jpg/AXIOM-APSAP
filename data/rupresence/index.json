@@ -1,0 +1,404 @@
+{
+ "v": 1,
+ "actor": "ru",
+ "at": "2026-10-31T16:43Z",
+ "sources": {
+  "uslists": {
+   "name": "Organisations on U.S. restricted-party lists (Consolidated Screening List)",
+   "org": "U.S. International Trade Administration (Commerce, State, Treasury lists)",
+   "lic": "U.S. government work, public domain",
+   "url": "https://www.trade.gov/consolidated-screening-list",
+   "ok": true,
+   "at": "2026-10-31T16:43Z",
+   "n": 6164
+  },
+  "wikidata": {
+   "name": "State-run and state-owned sites abroad (Wikidata operator and owner records)",
+   "org": "Wikidata",
+   "lic": "CC0",
+   "url": "https://www.wikidata.org/",
+   "ok": true,
+   "at": "2026-10-31T16:43Z",
+   "n": 100
+  },
+  "geonames": {
+   "name": "City positions for listed addresses (GeoNames cities over 15,000 people)",
+   "org": "GeoNames",
+   "lic": "CC BY 4.0",
+   "url": "https://www.geonames.org/",
+   "ok": true,
+   "at": "2026-10-31T16:43Z"
+  }
+ },
+ "countries": {
+  "ru": {
+   "uslists": 4794
+  },
+  "tr": {
+   "wikidata": 3,
+   "uslists": 107
+  },
+  "lu": {
+   "uslists": 9
+  },
+  "fi": {
+   "uslists": 10
+  },
+  "ro": {
+   "wikidata": 1,
+   "uslists": 2
+  },
+  "ua": {
+   "wikidata": 3,
+   "uslists": 94
+  },
+  "kz": {
+   "wikidata": 4,
+   "uslists": 14
+  },
+  "by": {
+   "wikidata": 1,
+   "uslists": 21
+  },
+  "ir": {
+   "wikidata": 1,
+   "uslists": 26
+  },
+  "gb": {
+   "uslists": 20
+  },
+  "vn": {
+   "uslists": 5
+  },
+  "cr": {
+   "uslists": 1
+  },
+  "ec": {
+   "uslists": 1
+  },
+  "pa": {
+   "uslists": 4
+  },
+  "ve": {
+   "uslists": 1
+  },
+  "cy": {
+   "uslists": 75
+  },
+  "gy": {
+   "uslists": 1
+  },
+  "fr": {
+   "wikidata": 6,
+   "uslists": 11
+  },
+  "ao": {
+   "uslists": 2
+  },
+  "ar": {
+   "uslists": 2
+  },
+  "de": {
+   "wikidata": 2,
+   "uslists": 11
+  },
+  "ca": {
+   "uslists": 8
+  },
+  "cz": {
+   "wikidata": 7,
+   "uslists": 8
+  },
+  "pe": {
+   "uslists": 2
+  },
+  "ht": {
+   "uslists": 1
+  },
+  "jm": {
+   "uslists": 1
+  },
+  "mx": {
+   "uslists": 2
+  },
+  "bb": {
+   "uslists": 1
+  },
+  "es": {
+   "wikidata": 1,
+   "uslists": 6
+  },
+  "it": {
+   "uslists": 4
+  },
+  "jp": {
+   "wikidata": 4,
+   "uslists": 1
+  },
+  "kp": {
+   "wikidata": 1,
+   "uslists": 10
+  },
+  "pl": {
+   "wikidata": 4,
+   "uslists": 5
+  },
+  "nl": {
+   "uslists": 14
+  },
+  "bg": {
+   "wikidata": 1,
+   "uslists": 7
+  },
+  "al": {
+   "uslists": 2
+  },
+  "be": {
+   "uslists": 6
+  },
+  "ba": {
+   "uslists": 3
+  },
+  "rs": {
+   "wikidata": 8,
+   "uslists": 11
+  },
+  "pk": {
+   "uslists": 8
+  },
+  "af": {
+   "uslists": 3
+  },
+  "az": {
+   "uslists": 4
+  },
+  "bd": {
+   "uslists": 2
+  },
+  "cn": {
+   "wikidata": 3,
+   "uslists": 296
+  },
+  "er": {
+   "uslists": 1
+  },
+  "et": {
+   "uslists": 1
+  },
+  "ge": {
+   "wikidata": 9,
+   "uslists": 5
+  },
+  "in": {
+   "wikidata": 1,
+   "uslists": 33
+  },
+  "iq": {
+   "uslists": 1
+  },
+  "jo": {
+   "uslists": 1
+  },
+  "lb": {
+   "uslists": 2
+  },
+  "ps": {
+   "uslists": 2
+  },
+  "sl": {
+   "uslists": 1
+  },
+  "so": {
+   "uslists": 1
+  },
+  "sy": {
+   "wikidata": 2,
+   "uslists": 9
+  },
+  "hr": {
+   "wikidata": 1,
+   "uslists": 3
+  },
+  "sd": {
+   "uslists": 3
+  },
+  "sa": {
+   "uslists": 1
+  },
+  "tj": {
+   "wikidata": 1,
+   "uslists": 3
+  },
+  "ye": {
+   "uslists": 1
+  },
+  "us": {
+   "wikidata": 8,
+   "uslists": 5
+  },
+  "lv": {
+   "uslists": 5
+  },
+  "ae": {
+   "uslists": 125
+  },
+  "mn": {
+   "uslists": 2
+  },
+  "th": {
+   "uslists": 15
+  },
+  "eg": {
+   "uslists": 1
+  },
+  "sg": {
+   "uslists": 18
+  },
+  "br": {
+   "uslists": 1
+  },
+  "ch": {
+   "wikidata": 1,
+   "uslists": 21
+  },
+  "at": {
+   "wikidata": 1,
+   "uslists": 5
+  },
+  "am": {
+   "wikidata": 18,
+   "uslists": 4
+  },
+  "my": {
+   "uslists": 11
+  },
+  "kw": {
+   "uslists": 1
+  },
+  "gr": {
+   "wikidata": 1,
+   "uslists": 2
+  },
+  "il": {
+   "uslists": 4
+  },
+  "sk": {
+   "uslists": 3
+  },
+  "md": {
+   "wikidata": 1,
+   "uslists": 9
+  },
+  "sc": {
+   "uslists": 17
+  },
+  "cf": {
+   "uslists": 7
+  },
+  "ee": {
+   "uslists": 13
+  },
+  "vc": {
+   "uslists": 3
+  },
+  "mt": {
+   "uslists": 10
+  },
+  "kg": {
+   "wikidata": 2,
+   "uslists": 18
+  },
+  "sm": {
+   "uslists": 1
+  },
+  "tm": {
+   "uslists": 1
+  },
+  "mc": {
+   "uslists": 1
+  },
+  "bf": {
+   "uslists": 1
+  },
+  "gn": {
+   "uslists": 1
+  },
+  "uz": {
+   "uslists": 11
+  },
+  "ie": {
+   "uslists": 5
+  },
+  "tw": {
+   "uslists": 1
+  },
+  "bs": {
+   "uslists": 1
+  },
+  "li": {
+   "uslists": 12
+  },
+  "hu": {
+   "wikidata": 2,
+   "uslists": 4
+  },
+  "qa": {
+   "uslists": 1
+  },
+  "si": {
+   "uslists": 1
+  },
+  "lr": {
+   "uslists": 11
+  },
+  "om": {
+   "uslists": 2
+  },
+  "mv": {
+   "uslists": 1
+  },
+  "kr": {
+   "wikidata": 1,
+   "uslists": 1
+  },
+  "ug": {
+   "uslists": 1
+  },
+  "mk": {
+   "uslists": 1
+  },
+  "lt": {
+   "uslists": 1
+  },
+  "tn": {
+   "uslists": 1
+  },
+  "bj": {
+   "uslists": 1
+  },
+  "me": {
+   "uslists": 1
+  },
+  "bz": {
+   "uslists": 1
+  },
+  "mh": {
+   "uslists": 8
+  },
+  "ag": {
+   "uslists": 2
+  },
+  "za": {
+   "uslists": 1
+  },
+  "ng": {
+   "uslists": 1
+  },
+  "zw": {
+   "uslists": 1
+  },
+  "ly": {
+   "wikidata": 1
+  }
+ }
+}
