@@ -33,7 +33,7 @@ const BR = { v: 1, cc: "th", at: IX.at, layer: "bridge", lines: [], items: [
 const line = (id, tags, a, b) => ({ type: "Feature", properties: { osm_type: "W", osm_id: id, tags }, geometry: { type: "LineString", coordinates: [a, b] } });
 const GJ = { type: "FeatureCollection", features: [
   line(101, { highway: "motorway", bridge: "yes", ref: "9", name: "Kanchanaphisek <b>Rd</b>", lanes: "3", maxweight: "25", "bridge:structure": "beam", material: "concrete", width: "12", layer: "1", oneway: "yes" }, [100.4990, 13.7500], [100.5020, 13.7502]),
-  line(102, { highway: "residential", bridge: "yes", maxweight: "5000 kg", maxheight: "14'0\"" }, [100.5040, 13.7510], [100.5043, 13.7512]),
+  line(102, { highway: "residential", bridge: "yes", maxweight: "5000 kg", maxheight: "14'0\"", maxwidth: "default" }, [100.5040, 13.7510], [100.5043, 13.7512]),
   line(103, { railway: "rail", bridge: "viaduct", gauge: "1000" }, [100.4980, 13.7490], [100.5010, 13.7485]),
   line(104, { highway: "footway", bridge: "yes" }, [100.5000, 13.7520], [100.5001, 13.7521])] };
 const OVER = { type: "FeatureCollection", features: [{ type: "Feature", properties: { osm_type: "W", osm_id: 900, tags: { waterway: "river", name: "Chao Phraya" } }, geometry: { type: "Point", coordinates: [100.5, 13.75] } },
@@ -116,7 +116,7 @@ const turnOn = async (p) => {
   ok(/Crosses<\/dt><dd data-brover="\d+">Chao Phraya, 35/.test(pop) && pp.some((q) => /ST_Crosses/.test(q)), "popup: what it crosses, asked when it opens (" + (/data-brover="\d+">([^<]*)/.exec(pop) || [])[1] + ")");
   ok(/Fingerprint <code class="fp">[0-9a-f]{16}/.test(pop), "popup: SHA-256 fingerprint of the record as read");
   pop = await popWith(p, "5000 kg");
-  ok(/Restrictive for heavy vehicles/.test(pop) && /Weight limit<\/dt><dd>5 t \(mapped as/.test(pop) && /Height limit<\/dt><dd>4\.27 m \(mapped as/.test(pop), "popup: kg and feet limits converted with the mapped text kept");
+  ok(/Restrictive for heavy vehicles/.test(pop) && /Weight limit<\/dt><dd>5 t \(mapped as/.test(pop) && /Height limit<\/dt><dd>4\.27 m \(mapped as/.test(pop) && /Width limit<\/dt><dd>the country's normal road limit/.test(pop), "popup: kg and feet limits converted with the mapped text kept");
   if (OUT) await p.screenshot({ path: OUT + "/bridges-desktop.png" });
   // ---------- footbridges from zoom 14 (an imagery base map zooms that close) ----------
   await p.evaluate(() => { const x = document.querySelector("#rv-pkg .pkghead .x"); if (x) x.click(); window.__asapMap.closePopup(); window.__asapMap.setMaxZoom(20); }); await p.waitForTimeout(800);

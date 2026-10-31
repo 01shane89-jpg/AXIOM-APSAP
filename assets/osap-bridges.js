@@ -119,13 +119,17 @@
   /* a limit as a number and unit; the mapped text alongside when it was not a plain number (feet, kg, "none") */
   function lim(raw, n, unit, dp) {
     if (raw == null || raw === "") return null;
+    /* special values mappers use (seen on Bangkok bridges, 31 Oct): the country's normal limit, or no limit at all */
+    if (/^default$/i.test(String(raw))) return "the country's normal road limit (no special sign)";
+    if (/^below_default$/i.test(String(raw))) return "below the country's normal limit (exact value not mapped)";
+    if (/^(none|no|unsigned)$/i.test(String(raw))) return "no limit (mapped as \u201c" + clip(raw, 12) + "\u201d)";
     if (n == null) return clip(raw, 30);
     var f = Math.pow(10, dp), plain = /^\s*[\d.]+\s*(t|m)?\s*$/i.test(String(raw));
     return (Math.round(n * f) / f) + " " + unit + (plain ? "" : " (mapped as \u201c" + clip(raw, 20) + "\u201d)");
   }
   function pop(e, r) {
     var t = e.tags || {}, ty = CLS[r.cls];
-    var nm = t["bridge:name"] || (t.man_made === "bridge" ? t.name : "") || "";
+    var nm = t["bridge:name:en"] || t["bridge:name"] || (t.man_made === "bridge" ? t.name : "") || "";
     var road = [t.ref, t["name:en"] || t.name].filter(Boolean).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(" · ");
     var title = nm || ("Bridge on " + (road || r.what.toLowerCase()));
     var u = "https://www.openstreetmap.org/" + e.type + "/" + encodeURIComponent(e.id);
@@ -142,7 +146,7 @@
       row("Structure", struct) +
       row("Material", clip(t["bridge:material"] || t.material || "", 30)) +
       '<dt>Crosses</dt><dd data-brover="' + e._n + '">Looking…</dd>';
-    var more = [["Lorry weight limit", t["maxweight:hgv"]], ["Weight limit, conditional", t["maxweight:conditional"]], ["Military load class (tagged)", t.mlc || t["maxweight:mlc"]],
+    var more = [["Lorry weight limit", t["maxweight:hgv"]], ["Weight limit signed", t["maxweight:signed"]], ["Weight limit, conditional", t["maxweight:conditional"]], ["Military load class (tagged)", t.mlc || t["maxweight:mlc"]],
       ["Speed limit", t.maxspeed], ["Surface", t.surface], ["Deck level", t.layer], ["Built", t.start_date], ["Operator", t.operator], ["Heavy vehicles", t.hgv],
       ["Gauge (mm)", r.rail ? t.gauge : null], ["Electrified", r.rail ? t.electrified : null], ["Tracks", r.rail ? t.tracks : null]]
       .filter(function (x) { return x[1] != null && x[1] !== ""; }).map(function (x) { return row(x[0], clip(x[1], 40)); }).join("");
