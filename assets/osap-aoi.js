@@ -69,7 +69,8 @@
     /* outlines thin out as the map zooms out, like the drawn area */
     if (!map.__aoiZoom) { map.__aoiZoom = 1; map.on("zoomend", function () { var zw = A() && A().zoomW; if (layer && zw) layer.eachLayer(function (p) { p.setStyle({ weight: zw(p.__aoiW || 2) }); }); }); }
     if (!shown()) return;
-    var mine = forCc(cc()); if (!mine.length) return;
+    /* an area unticked in My places (its own box, or a folder above it: assets/osap-places.js) is not drawn */
+    var mine = forCc(cc()).filter(function (a) { return !(window.OSAP_PLACES && !window.OSAP_PLACES.shown("ai:" + a.id)); }); if (!mine.length) return;
     var svg = L.svg({ pane: "areapane" });
     layer = L.layerGroup(mine.map(function (a) {
       var t = TYPES[a.type], st = okSt(a.st), zw = A() && A().zoomW;
@@ -390,6 +391,7 @@
   function start() { draw(); hookCtl(); hookWatch(); }
   /* labels give each area's size in the Measure unit: redraw when it changes, and once the page's geodesy has loaded */
   window.addEventListener("osap-meas-unit", function () { draw(); });
+  document.addEventListener("osap:places", function () { draw(); });
   window.addEventListener("load", function () { draw(); });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();

@@ -4,25 +4,30 @@
      everything inside it on the map. Folders can be made, renamed and deleted; deleting one moves what was in it up a level,
      so nothing saved is ever lost by tidying.
    - It files what the other tools already keep, never a second copy: saved points (assets/osap-atak.js, "osap-atak-pts"),
-     saved routes (assets/osap-route.js, "osap-routes"), drop zones (assets/osap-dz.js, "osap-dz") and saved flight plans
-     (assets/osap-flight.js, "osap-flights"). Only the folders, which item sits in which folder, and what is hidden are kept here,
+     saved routes (assets/osap-route.js, "osap-routes"), drop zones (assets/osap-dz.js, "osap-dz"), saved flight plans
+     (assets/osap-flight.js, "osap-flights"), NAI/TAI areas (assets/osap-aoi.js, "osap-aoi"), imported KML shapes
+     (assets/osap-ws.js, "osap-shapes") and saved viewsheds (assets/osap-terrain.js, "osap-viewsheds"); 2026-10-31 (Shane: "a
+     folder system that will allow me to turn my saved map data on or off and choose what objects have showing on the map"). Only the folders, which item sits in which folder, and what is hidden are kept here,
      in localStorage "osap-places" (one of the Workspace stores in assets/osap-ws.js):
-       { v: 1, folders: [{ id, name, parent }], of: { "<kind>:<id>": folderId }, off: { folderId: 1 }, hide: { "pt:<id>": 1 },
+       { v: 1, folders: [{ id, name, parent }], of: { "<kind>:<id>": folderId }, off: { folderId: 1 }, hide: { "pt|ai|sh:<id>": 1 },
          open: { folderId: 1 } }
      An item with no folder (everything saved before folders existed) sits at the top of My places. Nothing is moved or rewritten.
-   - On the map: a point shows when its own box and every folder above it are on (assets/osap-atak.js asks shown()); a saved
-     route shows when its "On map" switch (the Route tab's own) and its folders are on, in the Route tab and, from here, on the
-     other tabs too. Drop zones and flight plans open in their own tools.
-   Opened from Point > My places (folders) on the map toolbar and from Saved routes in the Route tab. These are the analyst's own
+   - On the map: a point, an NAI/TAI or an imported shape shows when its own box and every folder above it are on (its own tool
+     asks shown() and redraws on "osap:places"); a saved route or viewshed shows when its own on/off switch (the Route tab's, the
+     terrain panel's) and its folders are on. Show all / Hide all at the top set every item's own box at once. Drop zones and
+     flight plans are only drawn while open in their own tools, so they have no box here.
+   Opened from Overlays > Your marks, from Point > My places (folders) on the map toolbar and from Saved routes in the Route tab. These are the analyst's own
    planning marks kept in this browser only: not reports, not evidence; nothing is sent anywhere.
    window.OSAP_PLACES = { open, close, isOpen, shown(key), folderOf(key), state(), KEY } */
 (function () {
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
   if (!L || !map || W.OSAP_PLACES || /[?&]watchscan=1(&|$)/.test(location.search)) return;
-  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", MAX_FOLDERS = 200, MAX_DEPTH = 6;
+  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", MAX_FOLDERS = 200, MAX_DEPTH = 6;
   var KCOL = ["#2b8a3e", "#ae3ec9", "#d6336c", "#0c8599", "#f08c00", "#5f3dc4", "#a61e4d", "#495057"];
-  var KIND = { pt: "Point", rt: "Route", dz: "Drop zone", fl: "Flight plan" };
+  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan" };
+  /* kinds whose on/off box lives here (the hide list); routes and viewsheds keep their own switch; drop zones and flight plans none */
+  var HIDE_RE = /^(pt|ai|sh):[\w-]{1,60}$/, ORDER = "ptaishrtvsdzfl";
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } }
   function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
@@ -38,9 +43,9 @@
     });
     /* a parent that is gone, or a loop, puts the folder at the top */
     out.folders.forEach(function (f) { if (f.parent && (!seen[f.parent] || loops(out.folders, f))) f.parent = ""; });
-    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
+    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl|ai|sh|vs):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
     ["off", "open"].forEach(function (n) { var o = obj(s[n]); Object.keys(o).forEach(function (k) { if (seen[k] && o[k]) out[n][k] = 1; }); });
-    var h = obj(s.hide); Object.keys(h).forEach(function (k) { if (/^pt:[\w-]{1,60}$/.test(k) && h[k]) out.hide[k] = 1; });
+    var h = obj(s.hide); Object.keys(h).forEach(function (k) { if (HIDE_RE.test(k) && h[k]) out.hide[k] = 1; });
     return out;
   }
   function loops(list, f) { var by = {}, n = 0, p = f.parent; list.forEach(function (x) { by[x.id] = x; }); while (p && n++ < 50) { if (p === f.id) return true; p = by[p] ? by[p].parent : ""; } return n >= 50; }
@@ -56,12 +61,18 @@
 
   /* ---------- the items the other tools keep ---------- */
   function cc() { return (W.TSAP && W.TSAP.country) || ""; }
+  function arrOf(k) { var a = jget(k, []); return Array.isArray(a) ? a : []; }
+  function okPts(P) { return Array.isArray(P) && P.length > 1 && P.every(function (q) { return Array.isArray(q) && isFinite(q[0]) && isFinite(q[1]); }); }
+  function viewsheds() { return arrOf(VKEY).filter(function (v) { return v && typeof v.id === "string" && v.observer && isFinite(v.observer.lat) && isFinite(v.observer.lon); }); }
   function routes() { var a = jget(RKEY, []); return Array.isArray(a) ? a.filter(function (x) { return x && x.id && Array.isArray(x.wps); }) : []; }
   function items() {
     var out = [], A = W.OSAP_ATAK, Z = W.OSAP_DZ, fl = jget(FKEY, []);
     (A && A.pts ? A.pts.all() : []).forEach(function (p) { out.push({ key: "pt:" + p.id, kind: "pt", id: p.id, name: p.n || "Point", cc: p.cc, at: [p.lat, p.lon], sym: p.sym }); });
     routes().forEach(function (r) { out.push({ key: "rt:" + r.id, kind: "rt", id: r.id, name: r.name || "Route", cc: r.cc, show: !!r.show, color: KCOL.indexOf(r.color) >= 0 ? r.color : KCOL[0], r: r }); });
     (Z && Z.list ? Z.list() : []).forEach(function (d) { out.push({ key: "dz:" + d.id, kind: "dz", id: d.id, name: d.name, cc: d.cc, at: d.pi }); });
+    (W.OSAP_AOI && W.OSAP_AOI.all ? W.OSAP_AOI.all() : arrOf(AKEY)).forEach(function (a) { if (a && typeof a.id === "string" && okPts(a.pts)) out.push({ key: "ai:" + a.id, kind: "ai", id: a.id, name: (a.type ? a.type + " " : "") + (a.name || "Area"), cc: a.cc, pts: a.pts }); });
+    arrOf(SKEY).forEach(function (x) { if (x && typeof x.id === "string" && okPts(x.pts)) out.push({ key: "sh:" + x.id, kind: "sh", id: x.id, name: x.name || (x.kind === "line" ? "Line" : "Area"), cc: x.cc, pts: x.pts, line: x.kind === "line" }); });
+    viewsheds().forEach(function (v) { out.push({ key: "vs:" + v.id, kind: "vs", id: v.id, name: v.name || "Viewshed", on: v.on !== false, at: [v.observer.lat, v.observer.lon] }); });
     (Array.isArray(fl) ? fl : []).forEach(function (p) { if (p && typeof p.id === "string") out.push({ key: "fl:" + p.id, kind: "fl", id: p.id, name: p.name || "Flight plan", plan: p, at: p.pts && p.pts[0] ? [p.pts[0].lat, p.pts[0].lon] : null }); });
     return out.filter(function (x) { return /^[\w-]{1,60}$/.test(x.id); });
   }
@@ -145,8 +156,8 @@
   function paint() {
     var box = el.querySelector(".cbox");
     box.innerHTML = '<div class="chead"><h2 id="plc-h">My places</h2><button type="button" class="x" data-pl="close">Close</button></div>' +
-      '<p class="obs">Your saved points, routes, drop zones and flight plans in folders. Tick a folder to show or hide everything in it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>' +
-      '<div class="plbar"><button type="button" class="pri" data-pl="newf" data-fid="">New folder</button><input type="search" id="plc-q" placeholder="Find by name" aria-label="Find a place by name" value="' + esc(ui.q) + '"></div>' +
+      '<p class="obs">Everything you have saved to the map, in folders: points, routes, NAI/TAI areas, imported shapes, viewsheds, drop zones and flight plans. Tick a folder or an item to show or hide it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>' +
+      '<div class="plbar"><button type="button" class="pri" data-pl="newf" data-fid="">New folder</button><button type="button" data-pl="all1" title="Tick every folder and item: everything you saved shows on the map">Show all</button><button type="button" data-pl="all0" title="Untick every item: nothing you saved shows on the map (nothing is deleted)">Hide all</button><input type="search" id="plc-q" placeholder="Find by name" aria-label="Find a place by name" value="' + esc(ui.q) + '"></div>' +
       '<div class="pltree"></div>';
     paintTree();
   }
@@ -171,11 +182,11 @@
     function match(x) { return !q || x.name.toLowerCase().indexOf(q) >= 0; }
     function anyMatch(fid) { return (inF[fid] || []).some(match) || s.folders.some(function (f) { return f.parent === fid && (f.name.toLowerCase().indexOf(q) >= 0 || anyMatch(f.id)); }); }
     function itemRow(x, on) {
-      var vis = x.kind === "pt" ? !s.hide[x.key] : x.kind === "rt" ? x.show : null, away = x.cc && here && x.cc !== here;
+      var vis = HIDE_RE.test(x.key) ? !s.hide[x.key] : x.kind === "rt" ? x.show : x.kind === "vs" ? x.on : null, away = x.cc && here && x.cc !== here;
       var box2 = vis === null ? '<span style="width:18px;flex:none"></span>' : '<input type="checkbox" data-pli="' + esc(x.key) + '"' + (vis ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map">';
       return '<li class="pli"><div class="plr' + (on && vis !== false ? "" : " dim") + '">' + box2 +
         (x.kind === "rt" ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
-        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + KIND[x.kind] + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
+        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
         '<button type="button" data-plgo="' + esc(x.key) + '">' + (x.kind === "dz" || x.kind === "fl" ? "Open" : "Go to") + "</button>" +
         '<select data-plmv="' + esc(x.key) + '" aria-label="Move ' + esc(x.name) + ' to a folder" title="Move to a folder">' + folderOpts(s, s.of[x.key] || "") + "</select></div></li>";
     }
@@ -194,11 +205,11 @@
     }
     function level(fid, on) {
       var sub = s.folders.filter(function (f) { return f.parent === fid; }).sort(byName).map(function (f) { return folderHtml(f, on); }).join("");
-      var its = (inF[fid] || []).filter(match).sort(function (a, b) { return a.kind === b.kind ? byName(a, b) : "ptrtdzfl".indexOf(a.kind) - "ptrtdzfl".indexOf(b.kind); }).map(function (x) { return itemRow(x, on); }).join("");
+      var its = (inF[fid] || []).filter(match).sort(function (a, b) { return a.kind === b.kind ? byName(a, b) : ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind); }).map(function (x) { return itemRow(x, on); }).join("");
       return sub + its || (fid && !q ? '<li class="obs plempty">Empty folder</li>' : "");
     }
     var body = level("", true);
-    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), drop zones and flight plans you save are listed here.") + "</p>";
+    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), NAI/TAI areas (Area), imported KML shapes, viewsheds, drop zones and flight plans you save are listed here.") + "</p>";
     if (ui.edit) { var inp = box.querySelector(".plnm"); if (inp) { inp.focus(); inp.select(); } }
   }
   /* is folder id inside folder top (at any depth)? */
@@ -251,6 +262,12 @@
     if (x.kind === "pt") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
       map.setView(x.at, Math.max(map.getZoom(), 14));
+    } else if (x.kind === "ai" || x.kind === "sh") {
+      if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
+      try { map.fitBounds(L.latLngBounds(x.pts), { padding: [40, 40], maxZoom: 15 }); } catch (e) {}
+    } else if (x.kind === "vs") {
+      if (!folderOn(s, s.of[key] || "")) { showChain(s, s.of[key] || ""); write(s); }
+      if (W.OSAP_TERRAIN_ANALYSIS && W.OSAP_TERRAIN_ANALYSIS.showSaved) W.OSAP_TERRAIN_ANALYSIS.showSaved(x.id); else map.setView(x.at, Math.max(map.getZoom(), 13));
     } else if (x.kind === "rt") {
       if (!folderOn(s, s.of[key] || "")) { showChain(s, s.of[key] || ""); write(s); }
       if (!x.show) setRouteShow(x.id, true);
@@ -258,6 +275,25 @@
       try { map.fitBounds(L.latLngBounds(ln), { padding: [40, 40], maxZoom: 15 }); } catch (e) {}
     }
     closeIfFull();
+  }
+  /* a saved viewshed's own switch (the same one Map overlays > Elevation and the terrain panel show) */
+  function setVsOn(id, v) {
+    if (W.OSAP_TERRAIN_ANALYSIS && W.OSAP_TERRAIN_ANALYSIS.setOn) { W.OSAP_TERRAIN_ANALYSIS.setOn(id, v); return; }
+    var a = arrOf(VKEY); a.forEach(function (x) { if (x && x.id === id) x.on = !!v; }); if (!jset(VKEY, a)) toast("Not saved: this browser's storage for OSAP is full."); changed();
+  }
+  /* Show all ticks every folder and every item's own box; Hide all unticks every item (folders keep their boxes, so Show all
+     or one item's box brings things back one at a time). Nothing is deleted either way. */
+  function setAll(on) {
+    var s = read(), all = items();
+    if (on) { s.off = {}; s.hide = {}; } else all.forEach(function (x) { if (HIDE_RE.test(x.key)) s.hide[x.key] = 1; });
+    var rl = routes(), rch = false; rl.forEach(function (r) { if (!!r.show !== on) { r.show = on; rch = true; } });
+    if (rch && !jset(RKEY, rl)) toast("Not saved: this browser's storage for OSAP is full.");
+    var vl = arrOf(VKEY), vch = false; vl.forEach(function (v) { if (v && typeof v.id === "string" && (v.on !== false) !== on) { v.on = on; vch = true; } });
+    if (vch) jset(VKEY, vl);
+    write(s);
+    /* the terrain panel's own list and layer follow its store */
+    if (vch && W.OSAP_TERRAIN_ANALYSIS && W.OSAP_TERRAIN_ANALYSIS.setOn) try { W.OSAP_TERRAIN_ANALYSIS.setOn(null); } catch (e) {}
+    paintTree();
   }
   /* going to an item in a hidden folder turns that folder (and the ones above it) back on */
   function showChain(s, fid) { var by = byId(s), n = 0; while (fid && by[fid] && n++ < 50) { delete s.off[fid]; fid = by[fid].parent; } }
@@ -269,6 +305,7 @@
     var k;
     if ((k = b.getAttribute("data-pl")) === "close") close();
     else if (k === "newf") newFolder(b.getAttribute("data-fid") || "");
+    else if (k === "all1" || k === "all0") setAll(k === "all1");
     else if ((k = b.getAttribute("data-plfold")) != null) { var s = read(); if (s.open[k]) delete s.open[k]; else s.open[k] = 1; jset(KEY, s); paintTree(); }
     else if ((k = b.getAttribute("data-plgo")) != null) goTo(k);
   }
@@ -277,6 +314,7 @@
     if ((k = t.getAttribute("data-plf")) != null) { s = read(); if (t.checked) delete s.off[k]; else s.off[k] = 1; write(s); paintTree(); }
     else if ((k = t.getAttribute("data-pli")) != null) {
       if (/^rt:/.test(k)) { setRouteShow(k.slice(3), t.checked); paintTree(); return; }
+      if (/^vs:/.test(k)) { setVsOn(k.slice(3), t.checked); paintTree(); return; }
       s = read(); if (t.checked) delete s.hide[k]; else s.hide[k] = 1; write(s); paintTree();
     }
     else if ((k = t.getAttribute("data-plmv")) != null) moveItem(k, t.value);
@@ -293,7 +331,7 @@
   /* the other tools changed what is saved: list it again */
   ["osap:points", "osap:routes"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
   if (W.OSAP_DZ && W.OSAP_DZ.on) W.OSAP_DZ.on(function () { if (isOpen() && !ui.edit) paintTree(); });
-  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
+  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
 
   W.OSAP_PLACES = { open: open, close: close, isOpen: isOpen, shown: shown, KEY: KEY,
     folderOf: function (key) { return read().of[key] || ""; },
