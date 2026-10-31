@@ -1357,7 +1357,7 @@
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
       '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' +
-      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button><div id="mp-layers" class="mplayers noprint" role="group" aria-label="Medical plan objects on the map"></div></div>' +
+      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + (W.OSAP_PLACES && W.OSAP_PLACES.saveTo ? '<button type="button" class="refresh noprint" data-mp="places" title="Save the injury point, chosen hospitals, your sites and the road routes as your own points and routes in a My places folder">Save to folder</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button><div id="mp-layers" class="mplayers noprint" role="group" aria-label="Medical plan objects on the map"></div></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
@@ -3072,6 +3072,25 @@
     });
     return h + "</Document></kml>";
   }
+  /* Save to My places (assets/osap-places.js): the same objects as the TAK package (injury point, chosen hospitals with their
+     roles, the planner's own sites, the road routes), handed over as a set the analyst files in a folder. Saved as copies, each
+     marked as an automatic draft from open data, so a later rebuild of the plan changes nothing saved. */
+  function medSet(s) {
+    var v = fieldVals(), DRAFT = "Automatic draft from open data (OSAP medical plan), not analyst-approved. Confirm capability, contacts, access and status before use.", it = [];
+    it.push({ type: "pt", name: "POI (" + s.name + ")", lat: s.o[0], lon: s.o[1], note: "Anticipated point of injury. " + grid(s.o[0], s.o[1]) + "." });
+    if (s.fac) picks(s).forEach(function (p) {
+      var f = p.f;
+      it.push({ type: "pt", name: p.why.join(", ") + ": " + f.name, lat: f.lat, lon: f.lon, sym: "ms:10042000001207020000",
+        note: [p.reason, tierLabel(f), grid(f.lat, f.lon), f.phone ? "Phone (published): " + f.phone : "", f.web || "", "Source: " + (f.osm || f.src || "not given")].filter(Boolean).join(". ") });
+    });
+    SITE_MK.forEach(function (x) { var g = parseGrid(v[x[0]]); if (g) it.push({ type: "pt", name: x[1], lat: g[0], lon: g[1], note: x[2] + " (entered by the planner). " + grid(g[0], g[1]) + (v[x[0] + "_note"] ? ". " + v[x[0] + "_note"] : "") }); });
+    (s.rts || []).forEach(function (x) {
+      if (!x.r || !x.r.line || x.r.line.length < 2) return;
+      it.push({ type: "rt", name: "Route to " + x.f.name, line: x.r.line, m: x.r.m, s: x.r.s, note: x.why.join(", ") + ". " + Math.round(x.r.m / 100) / 10 + " km, " + mins(x.r.s) + " by road (" + (x.r.host || "routing service") + ")." });
+    });
+    return { title: "Med plan " + s.name, tool: "medplan", note: DRAFT, items: it };
+  }
+  function placesSave() { var s = ST; if (!s || !s.o || !W.OSAP_PLACES || !W.OSAP_PLACES.saveTo) return; W.OSAP_PLACES.saveTo(medSet(s)); }
   function takMsg(t) {
     var hd = D.querySelector("#medplan .mphead"); if (!hd) return;
     var m = D.getElementById("mp-takmsg");
@@ -3821,6 +3840,7 @@
     if (k === "print") { printView(); return; }
     if (k === "printc") { printView("conop"); return; }
     if (k === "tak") { takExport(); return; }
+    if (k === "places") { placesSave(); return; }
     if (k === "airfit") { if (!dockOn()) close(); mapShow(); airFit(); return; }
     if (k === "strat") { if (!dockOn()) close(); mapShow(); stratFit(); return; }
     if (k === "live") { ST.forceLive = true; build(); return; }

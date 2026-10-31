@@ -5,11 +5,12 @@
      so nothing saved is ever lost by tidying.
    - It files what the other tools already keep, never a second copy: saved points (assets/osap-atak.js, "osap-atak-pts"),
      saved routes (assets/osap-route.js, "osap-routes"), drop zones (assets/osap-dz.js, "osap-dz"), saved flight plans
-     (assets/osap-flight.js, "osap-flights"), NAI/TAI areas (assets/osap-aoi.js, "osap-aoi"), imported KML shapes
-     (assets/osap-ws.js, "osap-shapes") and saved viewsheds (assets/osap-terrain.js, "osap-viewsheds"); 2026-10-31 (Shane: "a
+     (assets/osap-flight.js, "osap-flights"), site surveys (assets/osap-survey.js, "osap-surveys"), NAI/TAI areas (assets/osap-aoi.js, "osap-aoi"), imported KML shapes
+     (assets/osap-ws.js, "osap-shapes"), saved viewsheds (assets/osap-terrain.js, "osap-viewsheds") and saved rulers
+     (assets/osap-rulers.js, "osap-rulers", 2026-10-31); 2026-10-31 (Shane: "a
      folder system that will allow me to turn my saved map data on or off and choose what objects have showing on the map"). Only the folders, which item sits in which folder, and what is hidden are kept here,
      in localStorage "osap-places" (one of the Workspace stores in assets/osap-ws.js):
-       { v: 1, folders: [{ id, name, parent }], of: { "<kind>:<id>": folderId }, off: { folderId: 1 }, hide: { "pt|ai|sh:<id>": 1 },
+       { v: 1, folders: [{ id, name, parent }], of: { "<kind>:<id>": folderId }, off: { folderId: 1 }, hide: { "pt|ai|sh|ru:<id>": 1 },
          open: { folderId: 1 } }
      An item with no folder (everything saved before folders existed) sits at the top of My places. Nothing is moved or rewritten.
    - On the map: a point, an NAI/TAI or an imported shape shows when its own box and every folder above it are on (its own tool
@@ -23,11 +24,11 @@
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
   if (!L || !map || W.OSAP_PLACES || /[?&]watchscan=1(&|$)/.test(location.search)) return;
-  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", MAX_FOLDERS = 200, MAX_DEPTH = 6;
+  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", UKEY = "osap-rulers", SVKEY = "osap-surveys", MAX_FOLDERS = 200, MAX_DEPTH = 6;
   var KCOL = ["#2b8a3e", "#ae3ec9", "#d6336c", "#0c8599", "#f08c00", "#5f3dc4", "#a61e4d", "#495057"];
-  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan" };
+  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", ru: "Ruler", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan", sv: "Site survey" };
   /* kinds whose on/off box lives here (the hide list); routes and viewsheds keep their own switch; drop zones and flight plans none */
-  var HIDE_RE = /^(pt|ai|sh):[\w-]{1,60}$/, ORDER = "ptaishrtvsdzfl";
+  var HIDE_RE = /^(pt|ai|sh|ru):[\w-]{1,60}$/, ORDER = "ptaishrurtvsdzflsv";
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } }
   function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
@@ -43,7 +44,7 @@
     });
     /* a parent that is gone, or a loop, puts the folder at the top */
     out.folders.forEach(function (f) { if (f.parent && (!seen[f.parent] || loops(out.folders, f))) f.parent = ""; });
-    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl|ai|sh|vs):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
+    var of = obj(s.of); Object.keys(of).forEach(function (k) { if (/^(pt|rt|dz|fl|ai|sh|ru|vs|sv):[\w-]{1,60}$/.test(k) && seen[of[k]]) out.of[k] = of[k]; });
     ["off", "open"].forEach(function (n) { var o = obj(s[n]); Object.keys(o).forEach(function (k) { if (seen[k] && o[k]) out[n][k] = 1; }); });
     var h = obj(s.hide); Object.keys(h).forEach(function (k) { if (HIDE_RE.test(k) && h[k]) out.hide[k] = 1; });
     return out;
@@ -71,8 +72,11 @@
     routes().forEach(function (r) { out.push({ key: "rt:" + r.id, kind: "rt", id: r.id, name: r.name || "Route", cc: r.cc, show: !!r.show, color: KCOL.indexOf(r.color) >= 0 ? r.color : KCOL[0], r: r }); });
     (Z && Z.list ? Z.list() : []).forEach(function (d) { out.push({ key: "dz:" + d.id, kind: "dz", id: d.id, name: d.name, cc: d.cc, at: d.pi }); });
     (W.OSAP_AOI && W.OSAP_AOI.all ? W.OSAP_AOI.all() : arrOf(AKEY)).forEach(function (a) { if (a && typeof a.id === "string" && okPts(a.pts)) out.push({ key: "ai:" + a.id, kind: "ai", id: a.id, name: (a.type ? a.type + " " : "") + (a.name || "Area"), cc: a.cc, pts: a.pts }); });
+    (W.OSAP_RULERS ? W.OSAP_RULERS.all() : arrOf(UKEY)).forEach(function (r) { if (r && typeof r.id === "string" && okPts(r.pts)) out.push({ key: "ru:" + r.id, kind: "ru", id: r.id, name: r.name || "Ruler", cc: r.cc, pts: r.pts, color: r.col }); });
     arrOf(SKEY).forEach(function (x) { if (x && typeof x.id === "string" && okPts(x.pts)) out.push({ key: "sh:" + x.id, kind: "sh", id: x.id, name: x.name || (x.kind === "line" ? "Line" : "Area"), cc: x.cc, pts: x.pts, line: x.kind === "line" }); });
     viewsheds().forEach(function (v) { out.push({ key: "vs:" + v.id, kind: "vs", id: v.id, name: v.name || "Viewshed", on: v.on !== false, at: [v.observer.lat, v.observer.lon] }); });
+    /* site surveys (assets/osap-survey.js, "osap-surveys"), read from storage since that file loads only when a survey is opened */
+    arrOf(SVKEY).forEach(function (x) { if (x && typeof x.id === "string" && x.g && Array.isArray(x.g.c)) out.push({ key: "sv:" + x.id, kind: "sv", id: x.id, name: x.name || "Site survey", cc: x.cc, at: x.g.c, svKind: x.kind }); });
     (Array.isArray(fl) ? fl : []).forEach(function (p) { if (p && typeof p.id === "string") out.push({ key: "fl:" + p.id, kind: "fl", id: p.id, name: p.name || "Flight plan", plan: p, at: p.pts && p.pts[0] ? [p.pts[0].lat, p.pts[0].lon] : null }); });
     return out.filter(function (x) { return /^[\w-]{1,60}$/.test(x.id); });
   }
@@ -95,6 +99,7 @@
       pl.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", "1");
         d.innerHTML = "<h3>" + esc(x.name) + '</h3><p class="obs">Saved route, ' + x.wps.length + " waypoints. Your own plan kept in this browser, not a report.</p>" +
+          (typeof x.note === "string" && x.note ? '<p class="obs" style="white-space:pre-line">' + esc(x.note.slice(0, 1000)) + "</p>" : "") +
           '<div class="rtpb"><button type="button" data-plr="route">Open the Route tab</button><button type="button" data-plr="hide">Hide</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-plr]"); if (!b) return; map.closePopup();
@@ -131,6 +136,13 @@
     "#plc .plr select{font:inherit;font-size:12px;max-width:150px;min-height:30px;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:inherit}" +
     "#plc .plr input.plnm{font:inherit;font-weight:700;flex:1;min-width:120px;padding:3px 6px;border:1px solid var(--accent,#0b7285);border-radius:4px}" +
     "#plc .plsw{display:inline-block;width:12px;height:12px;border-radius:2px;flex:none}#plc .plempty{padding:4px 0 4px 30px}" +
+    "#plcsv{position:fixed;inset:0;z-index:100002;background:rgba(0,0,0,.45);overflow:auto;padding:16px}#plcsv[hidden]{display:none}" +
+    "#plcsv .cbox{max-width:520px;margin:0 auto;background:var(--surface,#fff);color:var(--ink,#111);border-radius:8px;padding:10px 16px 16px;font-size:13px;line-height:1.45}" +
+    "#plcsv .chead{display:flex;align-items:center;gap:8px;padding:6px 0}#plcsv .chead h2{margin:0;font-size:16px;flex:1}#plcsv .obs{color:var(--muted,#555);font-size:12px}" +
+    "#plcsv button{font:inherit;font-size:12.5px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 9px;min-height:32px;cursor:pointer}#plcsv button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:700}" +
+    "#plcsv .plsvl{display:flex;align-items:center;gap:8px;margin:6px 0}#plcsv .plsvl[hidden]{display:none}#plcsv select,#plcsv input[type=text]{flex:1;font:inherit;min-height:32px;padding:3px 6px;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:inherit}" +
+    "#plcsv .plsvlist{list-style:none;margin:6px 0;padding:0;max-height:40vh;overflow:auto;border:1px solid var(--line,#ddd);border-radius:5px}#plcsv .plsvlist li{padding:4px 8px;border-top:1px solid var(--line,#eee)}#plcsv .plsvlist li:first-child{border-top:0}" +
+    "#plcsv .plk{font-size:10.5px;color:var(--muted,#555);border:1px solid var(--line,#ccc);border-radius:3px;padding:0 4px}#plcsv .plbar{display:flex;gap:6px;margin-top:8px}" +
     "@media (max-width:700px){#plc{padding:6px}#plc .cbox{padding:8px 10px 12px}#plc .plr select{max-width:96px}#plc .plr select.plact{max-width:74px}#plc ul ul{margin-left:10px}}";
   function ensure() {
     if (el) return el;
@@ -156,7 +168,7 @@
   function paint() {
     var box = el.querySelector(".cbox");
     box.innerHTML = '<div class="chead"><h2 id="plc-h">My places</h2><button type="button" class="x" data-pl="close">Close</button></div>' +
-      '<p class="obs">Everything you have saved to the map, in folders: points, routes, NAI/TAI areas, imported shapes, viewsheds, drop zones and flight plans. Tick a folder or an item to show or hide it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>' +
+      '<p class="obs">Everything you have saved to the map, in folders: points, routes, saved shapes and NAI/TAI areas, rulers, imported shapes, viewsheds, drop zones and flight plans. Tick a folder or an item to show or hide it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>' +
       '<div class="plbar"><button type="button" class="pri" data-pl="newf" data-fid="">New folder</button><button type="button" data-pl="all1" title="Tick every folder and item: everything you saved shows on the map">Show all</button><button type="button" data-pl="all0" title="Untick every item: nothing you saved shows on the map (nothing is deleted)">Hide all</button><input type="search" id="plc-q" placeholder="Find by name" aria-label="Find a place by name" value="' + esc(ui.q) + '"></div>' +
       '<div class="pltree"></div>';
     paintTree();
@@ -185,9 +197,9 @@
       var vis = HIDE_RE.test(x.key) ? !s.hide[x.key] : x.kind === "rt" ? x.show : x.kind === "vs" ? x.on : null, away = x.cc && here && x.cc !== here;
       var box2 = vis === null ? '<span style="width:18px;flex:none"></span>' : '<input type="checkbox" data-pli="' + esc(x.key) + '"' + (vis ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map">';
       return '<li class="pli"><div class="plr' + (on && vis !== false ? "" : " dim") + '">' + box2 +
-        (x.kind === "rt" ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
-        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
-        '<button type="button" data-plgo="' + esc(x.key) + '">' + (x.kind === "dz" || x.kind === "fl" ? "Open" : "Go to") + "</button>" +
+        (x.kind === "rt" || (x.kind === "ru" && /^#[0-9a-f]{6}$/i.test(x.color || "")) ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
+        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : x.kind === "sv" ? ({ dz: "DZ", hlz: "HLZ", lz: "LZ / airfield" }[x.svKind] || "Site") + " survey" : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
+        '<button type="button" data-plgo="' + esc(x.key) + '">' + (x.kind === "dz" || x.kind === "fl" || x.kind === "sv" ? "Open" : "Go to") + "</button>" +
         '<select data-plmv="' + esc(x.key) + '" aria-label="Move ' + esc(x.name) + ' to a folder" title="Move to a folder">' + folderOpts(s, s.of[x.key] || "") + "</select></div></li>";
     }
     function folderHtml(f, upOn) {
@@ -209,7 +221,7 @@
       return sub + its || (fid && !q ? '<li class="obs plempty">Empty folder</li>' : "");
     }
     var body = level("", true);
-    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), NAI/TAI areas (Area), imported KML shapes, viewsheds, drop zones and flight plans you save are listed here.") + "</p>";
+    box.innerHTML = body ? "<ul>" + body + "</ul>" : '<p class="obs">' + (q ? "Nothing by that name." : "Nothing saved yet. Points (Point on the toolbar), routes (Route tab), shapes and NAI/TAI areas (Area), rulers (Save in Measure), imported KML shapes, viewsheds, drop zones, flight plans and site surveys you save are listed here.") + "</p>";
     if (ui.edit) { var inp = box.querySelector(".plnm"); if (inp) { inp.focus(); inp.select(); } }
   }
   /* is folder id inside folder top (at any depth)? */
@@ -251,6 +263,7 @@
   }
   function goTo(key) {
     var x = items().filter(function (i) { return i.key === key; })[0]; if (!x) return;
+    if (x.kind === "sv") { if (W.OSAP_SURVEY_GO) W.OSAP_SURVEY_GO({ id: x.id }); closeIfFull(); return; }
     if (x.kind === "dz") { if (W.OSAP_DZSO_GO) W.OSAP_DZSO_GO({ id: x.id, at: x.at, name: x.name }); closeIfFull(); return; }
     if (x.kind === "fl") {
       if (!W.OSAP_FLIGHT_GO) return; W.OSAP_FLIGHT_GO({});
@@ -262,7 +275,7 @@
     if (x.kind === "pt") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
       map.setView(x.at, Math.max(map.getZoom(), 14));
-    } else if (x.kind === "ai" || x.kind === "sh") {
+    } else if (x.kind === "ai" || x.kind === "sh" || x.kind === "ru") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
       try { map.fitBounds(L.latLngBounds(x.pts), { padding: [40, 40], maxZoom: 15 }); } catch (e) {}
     } else if (x.kind === "vs") {
@@ -329,14 +342,116 @@
   function close() { if (el) el.hidden = true; ui.edit = ""; }
   function isOpen() { return !!el && !el.hidden; }
   /* the other tools changed what is saved: list it again */
-  ["osap:points", "osap:routes"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
+  ["osap:points", "osap:routes", "osap:rulers"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
   if (W.OSAP_DZ && W.OSAP_DZ.on) W.OSAP_DZ.on(function () { if (isOpen() && !ui.edit) paintTree(); });
-  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
+  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY || e.key === UKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
+
+  /* ---------- Save to folder: map items OSAP made (a medical plan's hospitals and routes, landing zone candidates) ----------
+     (Shane 2026-10-31: "if I made a folder called med plan, can I save all the routes and places in that folder for quick
+     reference later?") The tool hands over a set: { title, tool, note, items: [{ type: "pt", name, lat, lon, sym, note } |
+     { type: "rt", name, line: [[lat, lon], ...], note }] }. Saving keeps a COPY as the analyst's own saved point or saved route
+     (the same stores Point and Route use, so it shows, routes, exports and moves with the workspace like anything saved by
+     hand), filed in the folder chosen. Each copy keeps where it came from: from { tool, title, at } and a note that carries the
+     tool's own caveat (an automatic draft from open data stays marked as one). It is a snapshot: rebuilding the plan later
+     does not change it, and deleting it does not touch the plan. */
+  var PKEY = "osap-atak-pts", MAX_PTS = 500, MAX_RTS = 100, sv = null, svSet = null;
+  function clip(t, n) { return String(t == null ? "" : t).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n); }
+  function okLL(a, b) { return isFinite(a) && isFinite(b) && Math.abs(a) <= 90 && Math.abs(b) <= 180; }
+  function rid(p) { var b = new Uint8Array(4); crypto.getRandomValues(b); return p + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
+  /* only well-formed items, at most 60 */
+  function cleanSet(o) {
+    o = obj(o);
+    var its = (Array.isArray(o.items) ? o.items : []).map(function (x) {
+      if (!x || typeof x !== "object") return null;
+      if (x.type === "pt" && okLL(+x.lat, +x.lon)) return { type: "pt", name: clip(x.name, 80) || "Point", lat: +(+x.lat).toFixed(6), lon: +(+x.lon).toFixed(6), sym: typeof x.sym === "string" ? x.sym.slice(0, 40) : "", note: clip(x.note, 900) };
+      if (x.type === "rt" && Array.isArray(x.line)) {
+        var ln = x.line.filter(function (q) { return Array.isArray(q) && okLL(+q[0], +q[1]); }).map(function (q) { return [+(+q[0]).toFixed(6), +(+q[1]).toFixed(6)]; });
+        if (ln.length > 4000) { var st = Math.ceil(ln.length / 4000); ln = ln.filter(function (q, i) { return i % st === 0 || i === ln.length - 1; }); }
+        if (ln.length >= 2) return { type: "rt", name: clip(x.name, 60) || "Route", line: ln, note: clip(x.note, 900), m: isFinite(x.m) ? +x.m : undefined, s: isFinite(x.s) ? +x.s : undefined };
+      }
+      return null;
+    }).filter(Boolean).slice(0, 60);
+    return { title: clip(o.title, 60) || "Saved from OSAP", tool: clip(o.tool, 24) || "osap", note: clip(o.note, 600), items: its };
+  }
+  /* -> { folder, pts, rts, left } ; folder: an existing folder id, or { name, parent } for a new one */
+  function saveSet(set, folder, pick) {
+    set = cleanSet(set); var at = new Date().toISOString(), here = cc(), from = { tool: set.tool, title: set.title, at: at };
+    var s = read(), fid = "";
+    if (folder && typeof folder === "object") {
+      if (s.folders.length >= MAX_FOLDERS) return { err: "Up to " + MAX_FOLDERS + " folders." };
+      var par = folder.parent && byId(s)[folder.parent] && depth(s, folder.parent) < MAX_DEPTH ? folder.parent : "";
+      fid = newId(); s.folders.push({ id: fid, name: clip(folder.name, 60) || set.title, parent: par }); if (par) s.open[par] = 1;
+    } else if (typeof folder === "string" && byId(s)[folder]) fid = folder;
+    var P = jget(PKEY, []); P = Array.isArray(P) ? P : [];
+    var R = routes(), nP = 0, nR = 0, left = 0, cols = 0;
+    set.items.forEach(function (x, i) {
+      if (pick && !pick[i]) return;
+      var note = [x.note, set.note].filter(Boolean).join("\n").slice(0, 1000);
+      if (x.type === "pt") {
+        if (P.length >= MAX_PTS) { left++; return; }
+        var p = { id: rid("p"), cc: here, lat: x.lat, lon: x.lon, n: x.name, t: Date.now(), note: note, from: from };
+        if (x.sym) p.sym = x.sym;
+        P.push(p); if (fid) s.of["pt:" + p.id] = fid; nP++;
+      } else {
+        if (R.length >= MAX_RTS) { left++; return; }
+        var a = x.line[0], b = x.line[x.line.length - 1];
+        var r = { id: rid("rt-"), name: x.name, cc: here, mode: "car", wps: [{ lat: a[0], lon: a[1] }, { lat: b[0], lon: b[1] }], line: x.line, m: x.m, s: x.s,
+          saved: at, show: true, color: KCOL[(R.length + cols++) % KCOL.length], note: note, from: from };
+        R.push(r); if (fid) s.of["rt:" + r.id] = fid; nR++;
+      }
+    });
+    if (nP && !jset(PKEY, P)) return { err: "Not saved: this browser's storage for OSAP is full." };
+    if (nR && !jset(RKEY, R)) return { err: "Not saved: this browser's storage for OSAP is full." };
+    if (fid) delete s.off[fid];
+    write(s);
+    if (nP) D.dispatchEvent(new Event("osap:points"));
+    if (nR) D.dispatchEvent(new Event("osap:routes"));
+    return { folder: fid, pts: nP, rts: nR, left: left };
+  }
+  /* the small window: which folder (a new one named after the set, or one already made) and which items */
+  function saveTo(set) {
+    svSet = cleanSet(set);
+    if (!svSet.items.length) { toast("Nothing to save yet."); return; }
+    ensure();
+    if (!sv) {
+      sv = D.createElement("div"); sv.id = "plcsv"; sv.hidden = true; sv.setAttribute("role", "dialog"); sv.setAttribute("aria-labelledby", "plcsv-h");
+      D.body.appendChild(sv);
+      sv.addEventListener("click", function (e) {
+        if (e.target === sv) { sv.hidden = true; return; }
+        var b = e.target.closest("button[data-sv]"); if (!b) return;
+        var k = b.getAttribute("data-sv");
+        if (k === "x") { sv.hidden = true; return; }
+        if (k === "save") {
+          var sel = sv.querySelector("#plcsv-f").value, nm = sv.querySelector("#plcsv-n").value, pick = {};
+          sv.querySelectorAll("[data-svi]").forEach(function (c) { pick[+c.getAttribute("data-svi")] = c.checked; });
+          var r = saveSet(svSet, sel === "new" ? { name: nm, parent: "" } : sel.slice(4) ? sel.slice(4) : "", pick);
+          if (r.err) { toast(r.err); return; }
+          sv.hidden = true;
+          var f = r.folder ? byId(read())[r.folder] : null;
+          toast("Saved " + [r.pts ? r.pts + " point" + (r.pts === 1 ? "" : "s") : "", r.rts ? r.rts + " route" + (r.rts === 1 ? "" : "s") : ""].filter(Boolean).join(" and ") + " to " + (f ? f.name : "My places") + (r.left ? ". " + r.left + " left out: saved items are full." : ""));
+        }
+        if (k === "places") { sv.hidden = true; open(); }
+      });
+      sv.addEventListener("change", function (e) { if (e.target.id === "plcsv-f") sv.querySelector("#plcsv-nw").hidden = e.target.value !== "new"; });
+      sv.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.stopPropagation(); sv.hidden = true; } });
+    }
+    var s = read(), n = { pt: 0, rt: 0 }; svSet.items.forEach(function (x) { n[x.type]++; });
+    sv.innerHTML = '<div class="cbox"><div class="chead"><h2 id="plcsv-h">Save to My places</h2><button type="button" data-sv="x">Close</button></div>' +
+      '<p class="obs">Keeps a copy of ' + [n.pt ? n.pt + " place" + (n.pt === 1 ? "" : "s") : "", n.rt ? n.rt + " route" + (n.rt === 1 ? "" : "s") : ""].filter(Boolean).join(" and ") + " from " + esc(svSet.title) + " as your own saved points and routes, in one folder. Each keeps a note of where it came from" + (svSet.note ? " and that it is a draft from open data" : "") + ". Rebuilding the plan later does not change these copies.</p>" +
+      '<label class="plsvl">Folder <select id="plcsv-f"><option value="new" selected>New folder…</option>' + folderOpts(s, null, "fid:").replace('<option value="fid:">My places (top)</option>', '<option value="fid:">My places (top, no folder)</option>') + "</select></label>" +
+      '<label class="plsvl" id="plcsv-nw">Name <input type="text" id="plcsv-n" maxlength="60" value="' + esc(svSet.title) + '"></label>' +
+      '<ul class="plsvlist">' + svSet.items.map(function (x, i) { return '<li><label><input type="checkbox" data-svi="' + i + '" checked> ' + esc(x.name) + ' <span class="plk">' + (x.type === "pt" ? "Place" : "Route") + "</span></label></li>"; }).join("") + "</ul>" +
+      '<div class="plbar"><button type="button" class="pri" data-sv="save">Save</button><button type="button" data-sv="places">Open My places</button></div></div>';
+    sv.hidden = false;
+    var inp = sv.querySelector("#plcsv-n"); if (inp) { inp.focus(); inp.select(); }
+  }
 
   W.OSAP_PLACES = { open: open, close: close, isOpen: isOpen, shown: shown, KEY: KEY,
     folderOf: function (key) { return read().of[key] || ""; },
     state: function () { var s = read(); return { folders: s.folders.slice(), of: s.of, off: s.off, hide: s.hide, routesDrawn: rLayer.getLayers().length }; },
-    newFolder: newFolder, move: moveItem, remove: function (id) { delFolder(id, false); } };
+    newFolder: newFolder, move: moveItem, remove: function (id) { delFolder(id, false); },
+    /* Save to folder for map items other tools made: saveTo(set) asks which folder; saveSet(set, folder) saves without asking */
+    saveTo: saveTo, saveSet: saveSet };
   /* points and routes drawn before this file arrived honour the folders now */
   changed();
 })();

@@ -149,12 +149,13 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   await ctx.close();
 }
 
-// ---------- desktop, location refused, no compass helper ----------
+// ---------- desktop, location refused, a computer with no compass (the real helper, which gets no reading) ----------
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1280, height: 860 } }, null);
   await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="snap"]'); await p.waitForTimeout(1500);
   ok(await p.evaluate(() => document.querySelector('#pt-snap input[data-ps="cam"]').disabled), "no GPS: Take photo stays locked");
   ok(/not allowed/.test(await p.textContent("#pt-snap .sn-grid")) && await shown(p, '#pt-snap [data-ps="centre"]'), "no GPS: says why and offers the map centre");
+  await p.waitForFunction(() => /without a heading/.test(document.querySelector("#pt-snap .sn-hd").textContent), null, { timeout: 10000 }).catch(() => {});
   ok(/without a heading/.test(await p.textContent("#pt-snap .sn-hd")), "no compass: says the photo is saved without a heading");
   await p.click('#pt-snap [data-ps="centre"]');
   ok(/map centre, chosen by you/.test(await p.textContent("#pt-snap .sn-grid")) && !(await p.evaluate(() => document.querySelector('#pt-snap input[data-ps="cam"]').disabled)), "no GPS: map centre unlocks Take photo and is labelled as your choice");

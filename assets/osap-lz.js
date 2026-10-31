@@ -619,7 +619,7 @@
       h += '<p class="lzsm">Candidates from open data: verify on the ground and on current imagery before use. Not checked: soil and surface firmness, crops, ' +
         "small trees, poles and wires missing from OpenStreetMap; approach paths use assumed obstacle heights. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL)" +
         (r.counts.fp ? "; building footprints from Overture Maps (" + esc(r.fpRel) + ": Google Open Buildings CC BY 4.0, Microsoft ODbL, OpenStreetMap)" : "") + (r.counts.lcOk ? "; built-up land, trees and water also from Esri / Impact Observatory Sentinel-2 10 m land cover (" + LC_YEAR + ", CC BY 4.0)" : "") + ".</p>" +
-        '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button>' + (W.OSAP_TAK && allC(r).length ? '<button type="button" data-lz="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + '<button type="button" data-lz="clear">Clear marks</button></div>';
+        '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button>' + (W.OSAP_TAK && allC(r).length ? '<button type="button" data-lz="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + (W.OSAP_PLACES && W.OSAP_PLACES.saveTo && allC(r).length ? '<button type="button" data-lz="places" title="Save the candidate LZs as your own points in a My places folder">Save to folder</button>' : "") + '<button type="button" data-lz="clear">Clear marks</button></div>';
     }
     c.innerHTML = h; c.hidden = false; syncDock();
     legend();
@@ -655,6 +655,20 @@
     r.pads.forEach(function (p) { h += "<Placemark><name>" + xq((p.kind === "aerodrome" ? "Airfield" : "Helipad") + (p.name ? ": " + p.name : "")) + "</name><description>" + xq(grid(p.lat, p.lon) + "\nMapped in OpenStreetMap, not verified: status, size and access unknown.\n" + p.osm) + "</description><Style><IconStyle><color>ffc06515</color></IconStyle></Style><Point><coordinates>" + p.lon.toFixed(6) + "," + p.lat.toFixed(6) + ",0</coordinates></Point></Placemark>"; });
     return h + "</Document></kml>";
   }
+  /* Save to My places (assets/osap-places.js): the candidates, mapped strips and pads as the analyst's own points, each with
+     the finder's caveat; copies, so a new search changes nothing saved */
+  function lzSet(r) {
+    var NOTE = "Candidate from open data, verify on the ground and on current imagery before use (OSAP landing zone finder: slope from AWS Terrain Tiles, obstacles from OpenStreetMap).", it = [];
+    allC(r).forEach(function (k) {
+      var d = k.small || r.size;
+      it.push({ type: "pt", name: (k.point ? "HLZ at search point" : "HLZ " + k.rank) + (k.small ? " (" + k.small + " m only)" : ""), lat: k.lat, lon: k.lon,
+        note: [grid(k.lat, k.lon), "Clear about " + k.clearD + " m across (needs " + d + " m)", "Aircraft: " + kCraft(k), "Slope " + k.mean.toFixed(1) + "° average, " + k.max.toFixed(1) + "° steepest" + (k.caution ? " (caution: over 7°)" : ""),
+          "Elevation " + k.elev + " m", "Approach and departure: " + apprText(k), k.near.length ? "Nearest obstacle: " + k.near[0].n + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir : ""].filter(Boolean).join(". ") });
+    });
+    (r.strips || []).forEach(function (t) { if (isFinite(t.lat) && isFinite(t.lon)) it.push({ type: "pt", name: stripName(t), lat: t.lat, lon: t.lon, note: stripText(t) + ". Mapped in OpenStreetMap, not verified. " + (t.osm || "") }); });
+    (r.pads || []).forEach(function (p) { it.push({ type: "pt", name: (p.kind === "aerodrome" ? "Airfield" : "Helipad") + (p.name ? ": " + p.name : ""), lat: p.lat, lon: p.lon, note: "Mapped in OpenStreetMap, not verified: status, size and access unknown. " + (p.osm || "") }); });
+    return { title: "HLZs " + grid(r.o[0], r.o[1]), tool: "lz", note: NOTE, items: it };
+  }
   /* every candidate in rank order: the chosen size first, then the 50 m only spots */
   function allC(r) { return r ? (r.at && (r.at.fits || r.at.small) ? [r.at] : []).concat(r.cands, r.small || []) : []; }
   function lzNum(k) { return k.point ? "P" : String(k.rank); }
@@ -687,7 +701,8 @@
       "<p><b>Nearest obstacles beyond the edge:</b> " + (k.near.length ? k.near.slice(0, 5).map(function (o) { return esc(o.n) + " " + Math.round(o.m) + " m " + o.dir + (o.tall && o.m < 150 ? " (tall: check approach)" : ""); }).join("; ") : "none mapped within " + NEAR + " m") + "</p>" +
       (k.point ? "" : "<p><b>From search point:</b> " + esc(fmtKm(k.dist)) + ", " + Math.round(k.brg) + "° true</p>") +
       '<p class="obs">Approach paths assume heights (trees 15 m, buildings 8 m, built-up land 6 m, power lines 20 m, masts 50 m, roads 8 m) and look ' + APPR + " m out. " +
-      "Not checked: soil and surface firmness, crop height, rocks, stumps and holes, small trees, poles and wires missing from the data, wind. Elevation about 30 m detail (AWS Terrain Tiles).</p></div>";
+      "Not checked: soil and surface firmness, crop height, rocks, stumps and holes, small trees, poles and wires missing from the data, wind. Elevation about 30 m detail (AWS Terrain Tiles).</p>" +
+      (W.OSAP_SURVEY_GO && ST.res ? '<p><button type="button" data-lzsv="c:' + allC(ST.res).indexOf(k) + '">Survey this site</button></p>' : "") + "</div>";
   }
   function deg3(d) { return ("00" + Math.round(d) % 360).slice(-3); }
   /* "clear along 045°–225°, 090°–270°" or "confined: way in and out only from 045°" */
@@ -707,7 +722,8 @@
       var sty = { pane: "lzpane", renderer: rend, color: "#1565c0", weight: t.area ? 2 : 6, opacity: 0.85, fillColor: "#1565c0", fillOpacity: 0.25, lgk: "lz", lgl: "Mapped runway or strip" };
       var m = (t.area ? L.polygon(t.line, sty) : L.polyline(t.line, sty)).on("click", function () { popFit(m); })
         .bindPopup('<div class="pop lzpop" data-keep-pop="1"><div class="tier">' + esc(stripName(t)) + " · OpenStreetMap</div><p>" + esc(stripText(t)) + '</p><p><b>Grid (middle):</b> <span class="lzpt">' + esc(grid(t.lat, t.lon)) + "</span></p>" +
-          '<p class="obs">Prepared ground mapped by volunteers, not verified: status, surface condition, obstructions on and beside it, and access unknown. Land along its length; check the sides for poles, lights and signs. <a href="' + esc(t.osm) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></p></div>', { maxWidth: 320 });
+          '<p class="obs">Prepared ground mapped by volunteers, not verified: status, surface condition, obstructions on and beside it, and access unknown. Land along its length; check the sides for poles, lights and signs. <a href="' + esc(t.osm) + '" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></p>' +
+          (W.OSAP_SURVEY_GO ? '<p><button type="button" data-lzsv="s:' + r.strips.indexOf(t) + '">Survey this airfield</button></p>' : "") + "</div>", { maxWidth: 320 });
       m.addTo(layer); t._m = m;
     });
     if (r.at && (r.at.fits || r.at.small)) {
@@ -968,6 +984,7 @@
     else if (a === "tap") { if (ST.arm) { tapEnd(); render(); return; } ST.arm = true; map.getContainer().style.cursor = "crosshair"; map.once("click", onTap); ST.msg = "Tap the map where to search."; ST.err = ""; render(); }
     else if (a === "find") { if (!ST.poly) { var inp = card.querySelector("#lz-at"); if (inp && inp.value.trim()) { typed(); return; } } find(); }
     else if (a === "sat") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set("sat"); }
+    else if (a === "places" && ST.res && W.OSAP_PLACES) W.OSAP_PLACES.saveTo(lzSet(ST.res));
     else if (a === "tak" && ST.res) { try { ST.msg = W.OSAP_TAK.save({ id: "lz|" + ST.res.o.join(","), name: "Candidate LZs " + grid(ST.res.o[0], ST.res.o[1]), file: "osap-lz", kml: lzKml(ST.res) }); ST.err = ""; } catch (x) { ST.err = "The TAK package could not be made: " + x.message; } render(); }
     else if (a === "clear") { RUN++; ST.res = null; ST.msg = ""; ST.err = ""; draw(); render(); }
   }
@@ -978,6 +995,22 @@
     else return;
     keep();
   }
+  /* Survey this site / airfield (assets/osap-survey.js): the survey starts on the candidate or the mapped strip, with what the
+     search found kept as from-sources notes, never as the surveyor's own values */
+  D.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-lzsv]"); if (!b || !ST.res || !W.OSAP_SURVEY_GO) return;
+    var v = b.getAttribute("data-lzsv").split(":"), i = +v[1], at = Date.now();
+    if (v[0] === "s") {
+      var t = (ST.res.strips || [])[i]; if (!t) return;
+      W.OSAP_SURVEY_GO({ kind: "lz", at: [t.lat, t.lon], axis: t.hd, len: t.len, wid: t.wid || 30, name: stripName(t) });
+    } else {
+      var k = allC(ST.res)[i]; if (!k) return;
+      W.OSAP_SURVEY_GO({ kind: "hlz", at: [k.lat, k.lon], size: k.small || ST.res.size || S.d, axis: k.axes && k.axes.length ? k.axes[0] : 0, name: (k.point ? "HLZ at search point" : "HLZ " + k.rank),
+        finder: { at: at, clearD: k.clearD, slope: +k.mean.toFixed(1), smax: +k.max.toFixed(1), elev: k.elev, surface: k.surface || "", cover: k.cover || "", appr: apprText(k), craft: kCraft(k),
+          near: k.near.length ? k.near[0].n + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir : "" } });
+    }
+    map.closePopup();
+  });
   D.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-lzcopy]"); if (!b) return;
     var s = b.getAttribute("data-lzcopy");
