@@ -15,7 +15,9 @@
    - Refineries, LNG and oil terminals, fuel depots and oil and gas pipelines (OpenStreetMap).
    - Railways and stations: main and branch lines and railway stations (OpenStreetMap), stations also from Wikidata.
    - Bridges and tunnels: 150 m and longer on motorways, main roads and railways, with weight and height limits where mapped
-     (OpenStreetMap, Wikidata). Mobility planning should still check the crossing on the ground.
+     (OpenStreetMap, Wikidata). From street level (zoom 13) assets/osap-bridges.js, loaded the first time the switch is turned on,
+     adds every bridge in view read live from OpenStreetMap with a crossing summary (limits, width, structure, what it crosses);
+     the stored OpenStreetMap bridges it covers step aside. Mobility planning should still check the crossing on the ground.
    - Water and sewage works: drinking water treatment, desalination and sewage plants (OpenStreetMap, Wikidata).
    - Telephone exchanges: central offices of the fixed telephone network (OpenStreetMap, Wikidata).
    - Government, prisons and border crossings; police and fire stations (OpenStreetMap, Wikidata). Facility names only.
@@ -33,7 +35,7 @@
     { k: "cable", name: "Submarine cables", sub: "Cables and landing points (TeleGeography, non-commercial)", items: ["lp"], lines: "cable" },
     { k: "plant", name: "Power plants", sub: "Every fuel, coloured by fuel (WRI, Wikidata, OpenStreetMap). Small plants from zoom 8", items: ["plant"], pwr: true },
     { k: "rail", name: "Railways and stations", sub: "Main and branch lines, railway stations (OpenStreetMap, Wikidata). Stations from zoom 8", items: ["stn"], lines: "rail" },
-    { k: "bridge", name: "Bridges and tunnels", sub: "150 m and longer on motorways, main roads and railways, with weight and height limits where mapped (OpenStreetMap, Wikidata)", items: ["br", "tn"] },
+    { k: "bridge", name: "Bridges and tunnels", sub: "Major ones (150 m and longer) at any zoom; zoom in to street level for every bridge in view with its limits, width, structure and what it crosses (OpenStreetMap, live)", items: ["br", "tn"] },
     { k: "water", name: "Water and sewage works", sub: "Drinking water treatment, desalination and sewage plants (OpenStreetMap, Wikidata)", items: ["wat"] },
     { k: "telecom", name: "Telephone exchanges", sub: "Central offices of the fixed telephone network (OpenStreetMap, Wikidata)", items: ["tx"] },
     { k: "gov", name: "Government, prisons and border crossings", sub: "Ministries, parliaments, top courts, prisons, border crossings (OpenStreetMap, Wikidata)", items: ["gov"] },
@@ -155,7 +157,8 @@
       "<br>" + esc(i.la.toFixed(4) + ", " + i.lo.toFixed(4)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(i.la, i.lo)) : "") +
       (i.fp ? '<br>Fingerprint <code class="fp">' + esc(i.fp.slice(0, 16)) + "…</code>" : "") +
       (x.approx ? "<br>Placed to the nearest arc-minute by the source (about 2 km)." : "") +
-      (i.s === "osm" ? "<br>Community-mapped; may be incomplete or out of date." : "") + "</p></div>";
+      (i.s === "osm" ? "<br>Community-mapped; may be incomplete or out of date." : "") +
+      (i.k === "br" ? "<br>Zoom in to street level and tap the bridge for its full crossing summary." : "") + "</p></div>";
   }
   /* the other sources that list the same site */
   function also(i) {
@@ -205,6 +208,8 @@
     (d.items || []).forEach(function (i) {
       var k = kindOf(i); if (!k || !S.on[k] || i.la == null) return;
       if (k === "plant" && S.off[i.t]) return;
+      /* where the live street-level bridge view covers it, an OpenStreetMap bridge is drawn there instead (with its details) */
+      if (i.k === "br" && i.s === "osm" && W.OSAP_BRIDGES && W.OSAP_BRIDGES.covers(i.la, i.lo)) return;
       n.total[k] = (n.total[k] || 0) + 1;
       if (b.contains([i.la, i.lo])) (inView[k] = inView[k] || []).push(i);
     });
@@ -322,6 +327,11 @@
     S.on[k] = !!on;
     if (S.on[k]) { S.err = ""; load(k, function () { draw(); paint(); }); } else draw();
     paint();
+    /* every bridge in view, with details, from street level: its own file, read the first time the switch is turned on */
+    if (k === "bridge" && S.on[k] && !W.OSAP_BRIDGES && !D.getElementById("osap-bridges-js")) {
+      var sc = D.createElement("script"); sc.id = "osap-bridges-js"; sc.src = "assets/osap-bridges.js"; sc.async = true; D.body.appendChild(sc);
+    }
+    try { D.dispatchEvent(new CustomEvent("osap:infra", { detail: { k: k, on: S.on[k] } })); } catch (e) {}
   }
   var css = D.createElement("style");
   css.textContent =
@@ -362,7 +372,7 @@
     paint();
     return true;
   }
-  W.OSAP_INFRA = { set: set, load: load, fuel: fuel, fuels: FUELS.map(function (f) { return f[0]; }), kinds: KINDS.map(function (x) { return x.k; }), state: function () {
+  W.OSAP_INFRA = { set: set, load: load, redraw: function () { if (S.data) { draw(); paint(); } }, fuel: fuel, fuels: FUELS.map(function (f) { return f[0]; }), kinds: KINDS.map(function (x) { return x.k; }), state: function () {
     var shown = 0, s = S.n && S.n.shown || {}; Object.keys(s).forEach(function (k) { shown += s[k]; });
     return { on: Object.assign({}, S.on), busy: S.busy, err: S.err, msg: msg(), plantMsg: msg("plant"), off: Object.keys(S.off), shown: Object.assign({}, s), hidden: S.n ? S.n.hidden : 0,
       drawn: { points: ptL ? ptL.getLayers().length : 0, lines: lnL ? lnL.getLayers().length : 0 }, total: shown, mounted: !!(sec && sec.isConnected) };

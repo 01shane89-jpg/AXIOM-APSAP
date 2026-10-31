@@ -160,6 +160,7 @@ jobs:
       - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
+      - run: node tests/draw_style_rulers_smoke.mjs
       - run: node tests/area_report_smoke.mjs
       # sold version: no tile.openstreetmap.org or Esri request once assets/osap-sold.js says true
       - run: node tests/sold_mode_smoke.mjs
@@ -180,7 +181,10 @@ jobs:
       - run: node tests/places_all_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs
+      # the map compass behind the north arrow and the shared phone-compass reader (assets/osap-compass.js, assets/osap-heading.js)
+      - run: node tests/compass_smoke.mjs
       - run: node tests/milsym_smoke.mjs
+      - run: node tests/palettes_smoke.mjs
       - run: node tests/milsites_smoke.mjs
       - run: node tests/deepsouth_border_smoke.mjs
       - run: node tests/dspat_smoke.mjs
@@ -270,6 +274,8 @@ jobs:
       - run: node tests/nav_smoke.mjs
       - run: node tests/dc_smoke.mjs
       - run: node tests/infra_smoke.mjs
+      # Overlays > Infrastructure > Bridges and tunnels: every bridge in view with its details from street level (assets/osap-bridges.js)
+      - run: node tests/bridges_smoke.mjs
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
       - run: node tests/medplan_sea_smoke.mjs

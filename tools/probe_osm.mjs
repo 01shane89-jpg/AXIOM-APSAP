@@ -20,6 +20,7 @@ const W0 = { OSAP_OSM: O };
 const med = new Function("W", (() => { const t = readFileSync("assets/osap-medplan.js", "utf8"); return t.slice(t.indexOf("  function ppNear"), t.indexOf("  /* Postpass first;")); })() + "; return { oSql, xSql, pSql };")(W0);
 const epe = new Function("W", "wrap", (() => { const t = readFileSync("assets/osap-epe.js", "utf8"); return t.slice(t.indexOf("  function sqlNear"), t.indexOf("  function osmCls")) + t.slice(t.indexOf("  function depSql"), t.indexOf("  function depKind")) + t.slice(t.indexOf("  function susSql"), t.indexOf("  /* fuel and supplies within 1 km")); })() + "; return { ovSql, circSql, depSql, susSql };")(W0, (x) => x);
 const rte = new Function("W", (() => { const t = readFileSync("assets/osap-route.js", "utf8"); return t.slice(t.indexOf("  function sqlPts"), t.indexOf("  function afKind")); })() + "; return { sqlPts };")(W0);
+const brg = lift("assets/osap-bridges.js", "  function sqlFor", "  function overText", "{ sqlFor, overSql }", { FOOT: ["footway", "path", "steps", "cycleway", "pedestrian", "bridleway"], CAP: 2500 });
 const road = [[13.75, 100.50], [13.9, 100.6], [14.1, 100.65], [14.35, 100.6], [14.6, 100.55], [14.9, 100.4]];
 const line = (a, b, n) => Array.from({ length: n + 1 }, (_, i) => ({ lat: a[0] + (b[0] - a[0]) * i / n, lon: a[1] + (b[1] - a[1]) * i / n }));
 const cases = [
@@ -40,6 +41,11 @@ const cases = [
   ["LZ 2 km rural Thailand", lz([12.55, 99.40, 12.59, 99.44])],
   ["LZ 2 km Bangkok", lz([13.73, 100.50, 13.77, 100.54])],
   ["LZ 3 km Chiang Mai forest edge", lz([18.78, 98.88, 18.84, 98.94])],
+  ["bridges z13 Bangkok (desktop view)", brg.sqlFor(B(13.66, 100.36, 13.84, 100.66), false)],
+  ["bridges z14 Bangkok with footbridges", brg.sqlFor(B(13.72, 100.48, 13.78, 100.56), true)],
+  ["bridges z13 Kyiv", brg.sqlFor(B(50.38, 30.40, 50.52, 30.66), false)],
+  ["bridges z13 rural Laos", brg.sqlFor(B(19.80, 102.05, 19.95, 102.25), false)],
+  ["bridge crosses: Rama VIII Bridge line", brg.overSql([{ lat: 13.7695, lon: 100.4968 }, { lat: 13.7681, lon: 100.4995 }])],
 ];
 for (const [name, sql] of cases) {
   const t0 = Date.now();
@@ -50,3 +56,13 @@ for (const [name, sql] of cases) {
     console.log(name, "|", r.status, (txt.length / 1024).toFixed(0) + " KB", (Date.now() - t0) + " ms", "|", st);
   } catch (e) { console.log(name, "| failed", e.message, (Date.now() - t0) + " ms"); }
 }
+
+/* the tags real bridges carry, so the popup's rows match what is mapped */
+try {
+  const r = await fetch(O.POSTPASS, { method: "POST", body: "data=" + encodeURIComponent(brg.sqlFor(B(13.66, 100.36, 13.84, 100.66), false)), headers: { "Content-Type": "application/x-www-form-urlencoded", Origin: "https://axiom-osap.netlify.app" } });
+  const els = O.elements(await r.json()), c = {};
+  els.forEach((e) => Object.keys(e.tags || {}).forEach((k) => { c[k] = (c[k] || 0) + 1; }));
+  console.log("bridge tags, Bangkok z13 (" + els.length + " ways):", Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 60).map(([k, n]) => k + " " + n).join(", "));
+  const keys = ["maxweight", "maxheight", "maxwidth", "maxaxleload", "width", "bridge:structure", "material", "bridge:material", "mlc"];
+  keys.forEach((k) => { const v = {}; els.forEach((e) => { const x = (e.tags || {})[k]; if (x != null) v[x] = (v[x] || 0) + 1; }); console.log("  " + k + ":", JSON.stringify(Object.entries(v).sort((a, b) => b[1] - a[1]).slice(0, 12))); });
+} catch (e) { console.log("bridge tags | failed", e.message); }

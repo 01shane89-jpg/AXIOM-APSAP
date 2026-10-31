@@ -222,7 +222,7 @@
       var has = areaOn();
       /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
       popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).filter(function (x) { return x.id !== "med"; }).map(function (x) { return [x.id, x.label]; }),
-        has ? [null, ["edit", "Edit shape"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
+        has ? [null, ["edit", "Edit shape"], ["save", "Save shape (or NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "medplan") {
       var mp = D.getElementById("medplan");
@@ -265,7 +265,8 @@
       /* a tool marked point: true (the medical plan) runs without a shape, from the map centre */
       if (run && !areaOn() && !(at && at.point)) { areaWait(run, at ? at.label : "Summarise area"); return; }
       if (run) run();
-      else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
+      /* Save keeps the drawn shape as a plain Shape with its look; its form also offers NAI and TAI (assets/osap-aoi.js) */
+      else if (k === "save") { if (W.OSAP_AOI && W.OSAP_AOI.saveDrawn) W.OSAP_AOI.saveDrawn(); else press("[data-aoi-save]"); } else areaPress(k);
       setTimeout(paintTools, 30);
     }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
