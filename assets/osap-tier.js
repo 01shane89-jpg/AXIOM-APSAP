@@ -710,10 +710,12 @@
         var gate = W.OSAP_DATA, opens = function (u) { return !gate || gate.ok(u); };
         if (sessionStorage.getItem(K_RELOAD) !== "1" && ((gate && gate.late && gate.late() && CFG.signedIn) || (gate && gate.skipped().some(opens)) || (tier() !== "free" && W.performance && performance.getEntriesByType &&
           performance.getEntriesByType("resource").some(function (r) { return /\/data\//.test(r.name) && r.responseStatus === 402 && opens(r.name); })))) {
-          sessionStorage.setItem(K_RELOAD, "1"); location.reload();
+          /* behind the loading cover (still held for a run-out sign-in), so nothing on the page is tapped and then lost */
+          sessionStorage.setItem(K_RELOAD, "1"); if (W.OSAP_BOOT) W.OSAP_BOOT.show(); location.reload(); return;
         } else sessionStorage.removeItem(K_RELOAD);
       } catch (e) { /* no reload */ }
-    }, function () { readyDone(); /* not the Netlify site: no paywall here */ });
+      if (W.OSAP_DATA && W.OSAP_DATA.release) W.OSAP_DATA.release();
+    }, function () { readyDone(); /* not the Netlify site: no paywall here */ if (W.OSAP_DATA && W.OSAP_DATA.release) W.OSAP_DATA.release(); });
   }
 
   W.OSAP_TIER = {

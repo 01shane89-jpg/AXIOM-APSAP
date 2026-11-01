@@ -24,6 +24,9 @@
      old (Shane 2026-10-22: "data 30 h old" while the site was fresh). osap-tier.js loads once more after renewing. */
   var LATE = false;
   try { var au = JSON.parse(localStorage.getItem("osap-auth") || "null"); LATE = !!(au && au.access_token && !(au.until - Date.now() > 15000)); } catch (e) { /* no storage: signed out */ }
+  /* while that may happen the loading cover stays up (index.html OSAP_BOOT.hold), so the page is never seen, tapped (Today's
+     Open map) and then replaced; osap-tier.js lets it go once it knows (OSAP_DATA.release), the cover's own timer caps it */
+  var HOLD = LATE && W.OSAP_BOOT && W.OSAP_BOOT.hold ? W.OSAP_BOOT.hold() : null;
   var BASE = location.pathname.replace(/[^/]*$/, "");
   /* "data/…" for a file of this site, as tierOfPath reads it; null for anything else */
   function rel(u) {
@@ -75,6 +78,8 @@
     plan: function () { return PLAN; },
     /* true when this start's files were asked for with a sign-in that had run out (refused, so old saved copies were shown) */
     late: function () { return LATE; },
+    /* the start will not load again after all (or is about to, behind the cover): the cover may go when the page is ready */
+    release: function () { var h = HOLD; HOLD = null; if (h) h(); },
     /* the files left out so far (paths from the site root) */
     skipped: function () { return Object.keys(SKIP); },
     /* from assets/osap-tier.js once the plan is known: keep it for the next start, and use it from now on */
