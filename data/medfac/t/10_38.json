@@ -33,6 +33,7 @@
 ["n8856063517",10.59332,39.92178,"et",{"name:en":"Chirete health center","amenity":"hospital"}],
 ["w1000756517",11.88499,38.00924,"et",{"name":"Debre Tabor Airport","aeroway":"aerodrome","icao":"HADT","iata":"DBT"}],
 ["w1029271930",11.73533,38.46624,"et",{"amenity":"hospital"}],
+["w1573472556",11.11782,39.70798,"et",{"amenity":"hospital","healthcare":"hospital"}],
 ["w265936953",11.97626,38.98066,"et",{"name":"ላሊበላ ኤርፖርት","name:en":"Lalibela Airport","aeroway":"aerodrome","icao":"HALL","iata":"LLI","wikidata":"Q2466458"}],
 ["w317326006",10.33655,39.96047,"et",{"name":"Ataye Health Center","amenity":"clinic"}],
 ["w317326008",10.337,39.96083,"et",{"name":"Effesson Regional Hospital","amenity":"hospital","emergency":"no"}],

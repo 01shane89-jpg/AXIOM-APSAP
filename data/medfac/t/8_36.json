@@ -19,6 +19,8 @@
 ["n14235357781",8.281,37.7808,"et",{"name":"Wolkite Health Center","amenity":"clinic","healthcare":"centre","operator:type":"public","phone":"+251 11 330 0112"}],
 ["n14235357782",8.1755,37.8488,"et",{"name":"Attat Our Lady of Lourdes Catholic Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator:type":"private","phone":"+251 11 331 0021"}],
 ["n14235357783",8.2135,37.79445,"et",{"name":"Wolkite University Comprehensive Specialized Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator:type":"public","phone":"+251 11 322 0023"}],
+["n14257989902",8.48612,36.6484,"et",{"name":"Rapha medium clinic","amenity":"clinic","addr:street":"8.4861285, 36.6484068","opening_hours":"Mo-Sa 00:00-24:00"}],
+["n14283163701",8.48613,36.64846,"et",{"name":"Rapha medium clinic","amenity":"clinic"}],
 ["n2874060918",8.14732,37.97038,"et",{"name":"Get'E Clinic","amenity":"clinic"}],
 ["n2902330039",8.08227,37.99311,"et",{"name":"Dacuna Clinic","amenity":"clinic"}],
 ["n3181570568",8.00853,37.98034,"et",{"name":"Guakepece clinic","amenity":"clinic"}],
