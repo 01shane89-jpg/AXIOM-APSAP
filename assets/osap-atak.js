@@ -53,6 +53,7 @@
     x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
     pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
     search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>'),
+    view: ic('<rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/>'),
     plans: ic('<rect x="5" y="4" width="14" height="17" rx="1.5"/><path d="M9 4V2.8h6V4M8.5 10h7M8.5 14h7M8.5 18h4"/>'),
     evac: ic('<path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4M18 12H9"/>'),
     /* comms: a mast with radio waves either side */
@@ -94,10 +95,14 @@
        Home:   Today (the start screen; the header logo opens it too)
        Find:   Search
        Show:   Data sets (reporting topics), Weather, Overlays (map layers, your marks), Base map
-       Map:    Grid, Crosshair (osap-grid.js) and 3D (osap-3d.js) are added here, before Measure
-       Tools:  Measure, Route, Area (draw, summarise, NAI/TAI), Med plan, Evac, Comms, Point, Watch
-       Yours:  My work
-       Screen: Layout, Full
+       Map:    View, a drop-down for Grid, Crosshair (osap-grid.js), 3D (osap-3d.js), Compass, Layout and Full screen
+       Tools:  Measure, Route, Area (draw, summarise, NAI/TAI), Plans, Point, Watch
+       Yours:  My work, Reports (phone)
+     2026-11-01 (Shane picked "One Plans drop-down", thread "Make hidden features easier to find"): the toolbar was 21 buttons
+     and ran off a phone and a 1366 laptop. Med plan, Evac and Comms moved into the Plans drop-down with every other planning
+     tool (several were only reachable from inside another tool), and Grid, Crosshair, 3D, Layout and Full into View. Those
+     buttons stay in the DOM, hidden by CSS (FOLDED below), so other modules that add or paint them, the paywall locks and the
+     search keep working; the drop-downs press them.
      New map layers (power grid, communications towers) go in Overlays; area tools (a medical plan) go in the Area menu. */
   var TOOLS = [
     ["today", "Today", I.home, "Back to Today: weather, alerts and top stories"],
@@ -106,9 +111,12 @@
     ["weather", "Weather", I.cloud, "Weather: radar, cloud, wind, warnings, cyclones and forecasts"],
     ["overlays", "Overlays", I.layers, "Map overlays: flooding, terrain, roads, aircraft, your marks"],
     ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
+    ["view", "View", I.view, "View: grid lines, crosshair, 3D, compass, map and list layout, full screen"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
+    /* every planning tool in one drop-down (Shane 2026-11-01): medical, evacuation, flight, landing and drop zones, comms, terrain, weather */
+    ["plans", "Plans", I.plans, "Plans: medical plan, hospital assessment, evacuation, flight plan, landing zones, DZSO, site survey, comms, terrain analysis, weather brief"],
     /* its own button (Shane 2026-10-02): the plan for the drawn area, or from the map centre when nothing is drawn */
     ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map centre"],
     /* its own button next to Med plan (Shane 2026-10-03, EPE decision 1): ways out from one point, with the analyst's P/A/C/E roles */
@@ -193,6 +201,9 @@
     var evb = bar.querySelector('[data-atk="evac"]'), epe = D.getElementById("epe"); if (evb) evb.setAttribute("aria-pressed", String(!!(epe && !epe.hidden)));
     ["route", "comms"].forEach(function (v) { var vb = bar.querySelector('[data-atk="' + v + '"]'); if (vb) { vb.hidden = !q('#view-seg button[data-view="' + v + '"]'); vb.setAttribute("aria-pressed", String(onView(v))); } });
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
+    /* Plans is lit while one of its panels is open (Medical plan, Evac, Comms planning) */
+    var pb = bar.querySelector('[data-atk="plans"]');
+    if (pb) pb.setAttribute("aria-pressed", String(!!((mpe && !mpe.hidden) || (epe && !epe.hidden) || onView("comms"))));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
     if (lay) lay.hidden = !seg || phone();   /* on a phone the list sheet is dragged up and down instead */
   }
@@ -206,6 +217,8 @@
     else if (k === "search") search();
     else if (k === "datasets" || k === "overlays" || k === "weather") { if (!om.hidden && omMode === k) omClose(); else omOpen(k); }
     else if (k === "basemap") basemapPop(b, false);
+    else if (k === "view") popOpen(b, viewItems());
+    else if (k === "plans") popOpen(b, planItems());
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
     else if (k === "route" || k === "comms") {
       /* Route and Comms open their view in the list; pressed again they go back to the view that was open before */
@@ -243,14 +256,85 @@
     }
     else if (k === "point") {
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
-      popOpen(b, (W.OSAP_POINTS && W.OSAP_POINTS.snap ? [["snap", "Take a photo here (grid + heading)"]] : []).concat([["centre", "At the map centre"], ["tap", "Tap the map to place it"]], hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
+      popOpen(b, (W.OSAP_POINTS && W.OSAP_POINTS.snap ? [["snap", "Take a photo here (grid + heading)"]] : []).concat(W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? [["photo", "Check a photo or video"]] : [], [["centre", "At the map centre"], ["tap", "Tap the map to place it"]], hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
     }
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
+  /* ---------- View and Plans drop-downs ---------- */
+  function pressed(sel) { var b = q(sel); return !!b && b.getAttribute("aria-pressed") === "true"; }
+  function viewItems() {
+    var it = [[null, "Map"]];
+    if (q("#atk-tools [data-ogrid=lines]")) it.push(["lines", "Grid lines (MGRS)", pressed("#atk-tools [data-ogrid=lines]")], ["cross", "Crosshair", pressed("#atk-tools [data-ogrid=cross]")]);
+    if (q("#atk-tools [data-o3d]")) it.push(["3d", "3D terrain"]);
+    if (W.OSAP_COMPASS && W.OSAP_COMPASS.open) it.push(["compass", "Compass and bearings", !!(W.OSAP_COMPASS.isOpen && W.OSAP_COMPASS.isOpen())]);
+    var lay = bar.querySelector('[data-atk="layout"]');
+    /* not on a conflict tab, which keeps its own report list beside the map (osap-conflicts.js hides the Layout button there) */
+    if (lay && !lay.hidden && !root.getAttribute("data-cf")) {
+      var cur = q("#rv-seg [aria-pressed=true]") || q("#rv-seg .on"), mode = cur ? cur.getAttribute("data-rv-mode") : "";
+      it.push(null, [null, "Layout"], ["map", "Map only", mode === "map"], ["split", "Map and list", mode === "split"], ["list", "List", mode === "list"]);
+    }
+    it.push(null, ["full", "Full screen", root.classList.contains("mapfull")]);
+    return it;
+  }
+  function viewRun(k) {
+    if (k === "lines" || k === "cross") press('#atk-tools [data-ogrid="' + k + '"]');
+    else if (k === "3d") press("#atk-tools [data-o3d]");
+    else if (k === "compass") { if (W.OSAP_COMPASS.isOpen && W.OSAP_COMPASS.isOpen()) W.OSAP_COMPASS.close(); else W.OSAP_COMPASS.open(); }
+    else if (k === "map" || k === "split" || k === "list") press('#rv-seg [data-rv-mode="' + k + '"]');
+    else if (k === "full") press('#atk-tools [data-atk="full"]');
+    setTimeout(paintTools, 60);
+  }
+  /* the Plans list: [id, label, shown?, on?]; the old doors (ring > Plans, Route, Area, Reports) stay as they were */
+  function planList() {
+    var mp = D.getElementById("medplan"), ep = D.getElementById("epe"), cb = bar.querySelector('[data-atk="comms"]');
+    return [
+      [null, "Medical"],
+      ["medplan", "Medical plan", !!W.OSAP_MEDPLAN, !!(mp && !mp.hidden)],
+      ["hosp", "Hospital assessment", !!(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital)],
+      ["sea", "Sea transit medevac", !!(W.OSAP_SEATRANSIT && W.OSAP_SEATRANSIT.open)],
+      [null, "Movement"],
+      ["evac", "Evacuation plan (Evac)", true, !!(ep && !ep.hidden)],
+      ["flight", "Flight plan (airborne)", true],
+      ["lz", "Landing zones (HLZ finder)", true],
+      [null, "Airborne"],
+      ["dzso", "Drop zone (DZSO)", true],
+      ["survey", "Site survey (DZ, HLZ, airfield)", true],
+      [null, "Comms and ground"],
+      ["comms", "Comms planning", !!(cb && !cb.hidden), onView("comms")],
+      ["terrain", "Terrain analysis (viewshed, line of sight)", !!W.OSAP_TERRAIN_ANALYSIS],
+      [null, "Weather"],
+      ["wxbrief", "Weather brief", !!(W.OSAP_WX && W.OSAP_WX.brief)]
+    ].filter(function (x) { return x[0] === null || x[2]; });
+  }
+  function planItems() {
+    var it = planList().map(function (x) { return x[0] === null ? x : [x[0], x[1], !!x[3]]; });
+    /* a heading left with nothing under it is dropped */
+    it = it.filter(function (x, i) { return x[0] !== null || (it[i + 1] && it[i + 1][0] !== null); });
+    it.push(null, [null, (phone() ? "Long-press" : "Right-click") + " the map for plans at that spot"]);
+    return it;
+  }
+  function areaTool(k) {
+    var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0]; if (!at) return;
+    var run = function () { if (typeof at.run === "function") at.run(); };
+    if (!areaOn() && !at.point) areaWait(run, at.label); else run();
+  }
+  function planRun(k) {
+    if (k === "medplan" || k === "evac" || k === "comms") press('#atk-tools [data-atk="' + k + '"]');
+    else if (k === "hosp") W.OSAP_MEDPLAN.hospital({ pick: true });
+    else if (k === "sea") W.OSAP_SEATRANSIT.open();
+    else if (k === "flight") flightGo({});
+    else if (k === "lz") areaTool("lz");
+    else if (k === "dzso") dzsoGo({});
+    else if (k === "survey") surveyGo({});
+    else if (k === "terrain") W.OSAP_TERRAIN_ANALYSIS.open();
+    else if (k === "wxbrief") W.OSAP_WX.brief();
+    setTimeout(paintTools, 60);
+  }
   pop.addEventListener("click", function (e) {
     var b = e.target.closest("[data-pk]"); if (!b) return;
     var k = b.getAttribute("data-pk"), f = pop._for, pll = pop._ll; popClose(); pop._ll = null;
-    if (f === "plans") { if (pll) act(k, pll); }
+    if (f === "plans") { if (pll) act(k, pll); else planRun(k); }
+    else if (f === "view") viewRun(k);
     else if (f === "basemap") {
       if (k === "_esri" || k === "_back") basemapPop(bar.querySelector('[data-atk="basemap"]'), k === "_esri");
       else if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k);
@@ -272,6 +356,7 @@
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
       /* Photo to map (assets/osap-points.js): still inside this tap, so iOS can ask for compass access */
       if (k === "snap") W.OSAP_POINTS.snap();
+      else if (k === "photo") W.OSAP_PHOTOCHECK.open();
       else if (k === "centre") ptAdd(map.getCenter());
       else if (k === "me" && hm) ptAdd(L.latLng(hm.lat, hm.lon));
       else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
@@ -736,8 +821,8 @@
     "#atk-tools .atk-list{display:flex;flex-direction:column;gap:2px;overflow-y:auto;scrollbar-width:none}#atk-tools .atk-list::-webkit-scrollbar{display:none}" +
     "#atk-tools button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:48px;min-height:40px;padding:4px 2px;border:0;border-radius:7px;background:none;color:#e9eef2;cursor:pointer;font:600 9.5px/1.1 system-ui,-apple-system,sans-serif;letter-spacing:.01em}" +
     /* a thin line above the first button of each group */
-    "#atk-tools .atk-list>[data-atk=search],#atk-tools .atk-list>[data-atk=datasets],#atk-tools .atk-list>[data-ogrid=lines],#atk-tools .atk-list>[data-atk=measure],#atk-tools .atk-list>[data-atk=mine],#atk-tools .atk-list>[data-atk=layout]{margin-top:5px}" +
-    "#atk-tools .atk-list>[data-atk=search]::before,#atk-tools .atk-list>[data-atk=datasets]::before,#atk-tools .atk-list>[data-ogrid=lines]::before,#atk-tools .atk-list>[data-atk=measure]::before,#atk-tools .atk-list>[data-atk=mine]::before,#atk-tools .atk-list>[data-atk=layout]::before{content:'';position:absolute;left:8px;right:8px;top:-4px;border-top:1px solid rgba(255,255,255,.22)}" +
+    "#atk-tools .atk-list>[data-atk=search],#atk-tools .atk-list>[data-atk=datasets],#atk-tools .atk-list>[data-atk=measure],#atk-tools .atk-list>[data-atk=mine]{margin-top:5px}#atk-tools .atk-list>[data-atk=medplan],#atk-tools .atk-list>[data-atk=evac],#atk-tools .atk-list>[data-atk=comms],#atk-tools .atk-list>[data-atk=layout],#atk-tools .atk-list>[data-atk=full],#atk-tools .atk-list>[data-ogrid],#atk-tools .atk-list>[data-o3d]{display:none!important}" +
+    "#atk-tools .atk-list>[data-atk=search]::before,#atk-tools .atk-list>[data-atk=datasets]::before,#atk-tools .atk-list>[data-atk=measure]::before,#atk-tools .atk-list>[data-atk=mine]::before{content:'';position:absolute;left:8px;right:8px;top:-4px;border-top:1px solid rgba(255,255,255,.22)}" +
     "#atk-tools button:hover{background:rgba(255,255,255,.1)}#atk-tools button:focus-visible{outline:2px solid #4dabf7;outline-offset:-2px}" +
     "#atk-tools button[aria-pressed=true],#atk-tools button.on{background:#0b7285;color:#fff}#atk-tools button[hidden]{display:none}" +
     "#atk-tools .atk-fold{min-height:28px;color:#9fb3c1;border-bottom:1px solid rgba(255,255,255,.12);border-radius:7px 7px 0 0;margin-bottom:2px}" +
@@ -812,7 +897,14 @@
   }, true);
   if (W.OSAP_DATASETS && W.OSAP_DATASETS.onChange) W.OSAP_DATASETS.onChange(function () { omPaint(); });
 
-  W.OSAP_ATAK = { on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt, toast: toast,
+  /* the View and Plans drop-downs' items, for the search box (assets/osap-findall.js): [{ id, name, menu, run }] */
+  function menuTools() {
+    var out = [];
+    planList().forEach(function (x) { if (x[0]) out.push({ id: x[0], name: x[1], menu: "Plans", run: function () { planRun(x[0]); } }); });
+    viewItems().forEach(function (x) { if (x && x[0]) out.push({ id: x[0], name: x[1], menu: "View", run: function () { viewRun(x[0]); } }); });
+    return out;
+  }
+  W.OSAP_ATAK = { menuTools: menuTools, on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt, toast: toast,
     /* the readout's position format ("mgrs", "dd" or "dms"): read with no argument, set from Settings with one */
     posFmt: function (f) { if (f && FMTS.indexOf(f) >= 0) { fmt = f; lsSet(K_FMT, f); paintStrip(); } return fmt; },
     pts: { all: ptsAll, save: ptsSave, fail: SAVE_FAIL, draw: ptDraw, del: ptDel, paint: omPaint, add: ptAdd }, search: search };

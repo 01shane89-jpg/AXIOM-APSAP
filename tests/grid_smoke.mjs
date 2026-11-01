@@ -48,14 +48,18 @@ async function openLayers(p) {
   let g = await gridState(p);
   ok(!g.st.grid && !g.st.cross && g.paths === 0, "desktop: grid lines and crosshair start off");
   ok(!(await shown(p, "#osap-xhair")), "desktop: no crosshair by default");
-  ok(await shown(p, '#atk-tools [data-ogrid="lines"]') && await shown(p, '#atk-tools [data-ogrid="cross"]'), "desktop: Grid and Crosshair buttons on the toolbar");
-  ok(await p.evaluate(() => { const b = [...document.querySelectorAll("#atk-tools .atk-list > button")]; const i = (s) => b.findIndex((x) => x.matches(s)); return i('[data-atk="basemap"]') < i('[data-ogrid="lines"]') && i('[data-ogrid="cross"]') < i('[data-atk="measure"]'); }), "desktop: they sit between Base map and Measure");
+  // 2026-11-01: Grid and Crosshair live in the toolbar's View drop-down (their buttons stay in the DOM, hidden, and View presses them)
+  await p.click('#atk-tools [data-atk="view"]'); await p.waitForTimeout(200);
+  ok(await shown(p, '#atk-pop [data-pk="lines"]') && await shown(p, '#atk-pop [data-pk="cross"]'), "desktop: Grid and Crosshair in the toolbar's View menu");
+  await p.keyboard.press("Escape"); await p.waitForTimeout(150);
+  ok(!(await shown(p, '#atk-tools [data-ogrid="lines"]')), "desktop: no separate Grid button on the toolbar");
+  ok(await p.evaluate(() => { const b = [...document.querySelectorAll("#atk-tools .atk-list > button")]; const i = (s) => b.findIndex((x) => x.matches(s)); return i('[data-atk="basemap"]') < i('[data-atk="view"]') && i('[data-atk="view"]') < i('[data-atk="measure"]'); }), "desktop: View sits between Base map and Measure");
   const tb = await p.evaluate(() => { const r = document.getElementById("atk-tools").getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect(); return r.bottom <= m.bottom - 30; });
   ok(tb, "desktop: toolbar still fits above the readout");
   await openLayers(p);
   ok(!(await shown(p, "#atk-om #osap-gridrows")), "desktop: no Grid rows in the Overlays sheet any more");
   await p.click('#atk-om [data-om=x]');
-  await p.click('#atk-tools [data-ogrid="lines"]'); await p.waitForTimeout(300);
+  await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="lines"]')); await p.waitForTimeout(300);
   ok(await p.getAttribute('#atk-tools [data-ogrid="lines"]', "aria-pressed") === "true" && await p.getAttribute('#atk-tools [data-ogrid="cross"]', "aria-pressed") === "false", "desktop: Grid button shows pressed, Crosshair not");
   g = await gridState(p);
   ok(g.st.grid && g.paths > 0, "desktop: grid lines drawn when switched on (" + g.paths + " paths, spacing " + g.st.spacing + ")");
@@ -82,7 +86,7 @@ async function openLayers(p) {
   });
   ok(onLine && Math.min(onLine.de, onLine.dn) < onLine.sp * 0.02, "desktop: drawn line lies on a grid value " + JSON.stringify(onLine));
   // crosshair
-  await p.click('#atk-tools [data-ogrid="cross"]'); await p.waitForTimeout(250);
+  await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="cross"]')); await p.waitForTimeout(250);
   ok(await shown(p, "#osap-xhair"), "desktop: crosshair shown when switched on");
   const cx = await p.evaluate(() => { const r = document.getElementById("osap-xhair").getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect(), c = window.__asapMap.latLngToContainerPoint(window.__asapMap.getCenter());
     return { dx: Math.abs(r.left + r.width / 2 - m.left - c.x), dy: Math.abs(r.top + r.height / 2 - m.top - c.y), lbl: document.querySelector("#osap-xhair .xl").textContent, strip: (() => { const c = window.__asapMap.getCenter(); return window.OSAP_GEO.mgrs(c.lat, c.lng, 5); })() }; });
@@ -91,10 +95,10 @@ async function openLayers(p) {
   ok(await p.evaluate(() => getComputedStyle(document.getElementById("atk-cross")).display === "none"), "desktop: toolbar move marker yields to the crosshair");
   if (OUT) await p.screenshot({ path: OUT + "/grid-desk.png" });
   // off again, each on its own
-  await p.click('#atk-tools [data-ogrid="lines"]'); await p.waitForTimeout(200);
+  await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="lines"]')); await p.waitForTimeout(200);
   g = await gridState(p);
   ok(!g.st.grid && g.paths === 0 && await shown(p, "#osap-xhair"), "desktop: grid off leaves the crosshair on");
-  await p.click('#atk-tools [data-ogrid="lines"]'); await p.click('#atk-tools [data-ogrid="cross"]'); await p.waitForTimeout(200);
+  await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="lines"]')); await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="cross"]')); await p.waitForTimeout(200);
   ok((await gridState(p)).paths > 0 && !(await shown(p, "#osap-xhair")), "desktop: crosshair off leaves the grid on");
   // remembered on reload
   await p.reload({ waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.OSAP_GRID, null, { timeout: 60000 }); await settle(p, 2500);
