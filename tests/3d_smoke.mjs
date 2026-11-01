@@ -43,7 +43,7 @@ async function run3d(name, p, errors, libs, openSel, early) {
   ok(early === 0, name + ": 3D engine not downloaded while the app starts (it is fetched later, when idle)");
   const before = await p.evaluate(() => { const m = window.__asapMap; m.setView([18.79, 98.98], 10, { animate: false }); return { c: m.getCenter(), z: m.getZoom() }; });
   await p.waitForTimeout(300);
-  await p.click(openSel);
+  if (openSel === "view3d") { await p.click('#atk-tools [data-atk="view"]'); await p.click('#atk-pop [data-pk="3d"]'); } else await p.click(openSel);
   const flat0 = await p.waitForFunction(() => window.OSAP_3D.gl && { p: window.OSAP_3D.gl.getPitch() }, null, { timeout: 30000, polling: "raf" }).then((h) => h.jsonValue()).then((v) => v.p).catch(() => 99);
   await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.loaded && window.OSAP_3D.gl.isStyleLoaded(), null, { timeout: 30000 }).catch(() => {});
   ok(await shown(p, "#o3d .o3-map canvas"), name + ": 3D view opened with a WebGL canvas");
@@ -129,10 +129,12 @@ async function run3d(name, p, errors, libs, openSel, early) {
     await p.click(".lgctl .lgbtn"); await p.waitForTimeout(300);
     ok(!(await lgOv()) && (await lvl()), "phone: Legend shut again, the scale bar back level with the Legend button");
   }
-  ok(await shown(p, "#atk-tools [data-o3d]"), "phone: 3D button in the map toolbar");
+  await p.click('#atk-tools [data-atk="view"]'); await p.waitForTimeout(200);
+  ok(await shown(p, '#atk-pop [data-pk="3d"]'), "phone: 3D in the map toolbar's View menu");
+  await p.keyboard.press("Escape"); await p.waitForTimeout(150);
   ok(!(await shown(p, ".o3dctl")), "phone: classic 3D button hidden in toolbar mode");
   if (OUT) await p.screenshot({ path: OUT + "/phone-2d.png" });
-  await run3d("phone", p, errors, libs, "#atk-tools [data-o3d]", early);
+  await run3d("phone", p, errors, libs, "view3d", early);
   await ctx.close();
 }
 // ---------- desktop, classic controls ----------
@@ -147,7 +149,7 @@ async function run3d(name, p, errors, libs, openSel, early) {
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await p.evaluate(() => { window.__asapMap.setView([18.79, 98.98], 10, { animate: false }); });
-  await p.click("#atk-tools [data-o3d]");
+  await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="3d"]'));
   await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.isStyleLoaded(), null, { timeout: 30000 }).catch(() => {});
   await p.waitForTimeout(1500);
   const top = await p.evaluate(() => {

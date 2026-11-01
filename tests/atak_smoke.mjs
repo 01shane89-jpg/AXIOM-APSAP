@@ -157,7 +157,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   await p.click('#atk-pop [data-pk="poly"]'); await p.waitForTimeout(150);
   ok(await shown(p, "#area-ctl") && /corner/.test(await p.textContent("#area-ctl")), "desktop: drawing hint shows while drawing");
   await p.click('#area-ctl [data-area="cancel"]');
-  await p.click('#atk-tools [data-atk="layout"]'); await p.click('#atk-pop [data-pk="split"]'); await p.waitForTimeout(200);
+  await p.click('#atk-tools [data-atk="view"]'); await p.click('#atk-pop [data-pk="split"]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => localStorage.getItem("asap-rv-mode")) === "split", "desktop: Layout sets Map and list");
   if (OUT) await p.screenshot({ path: OUT + "/desk-split.png" });
   // classic switch and back

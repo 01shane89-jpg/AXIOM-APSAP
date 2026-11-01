@@ -292,12 +292,14 @@ const pane = (p) => p.textContent("#cp-pane");
 
   // its own toolbar button (Shane 2026-10-09): pressed while open it goes back, pressed again it opens Comms planning
   const atk = '#atk-tools [data-atk="comms"]';
-  ok(await p.evaluate((s) => { const b = document.querySelector(s); return !!b && !b.hidden && b.getAttribute("aria-label") === "Comms"; }, atk), "Comms button in the map toolbar");
-  await p.evaluate((s) => document.querySelector(s).scrollIntoView(), atk);
+  // 2026-11-01: Comms planning is in the toolbar's Plans drop-down; its hidden button keeps the open/back state, Plans lights
+  const viaPlans = async () => { await p.click('#atk-tools [data-atk="plans"]'); await p.click('#atk-pop [data-pk="comms"]'); };
+  ok(await p.evaluate((s) => { const b = document.querySelector(s); return !!b && !b.hidden && b.getAttribute("aria-label") === "Comms"; }, atk), "Comms button kept for the Plans menu");
+  ok(await p.evaluate(() => document.querySelector('#atk-tools [data-atk="plans"]').getAttribute("aria-pressed") === "true"), "Plans lit while Comms planning is open");
   ok(await p.evaluate((s) => document.querySelector(s).getAttribute("aria-pressed") === "true", atk), "Comms button shows pressed while Comms planning is open");
-  await p.click(atk); await p.waitForTimeout(300);
+  await viaPlans(); await p.waitForTimeout(300);
   ok(await p.evaluate((s) => document.documentElement.getAttribute("data-view") !== "comms" && document.querySelector(s).getAttribute("aria-pressed") === "false", atk), "Comms pressed again goes back to the view before");
-  await p.click(atk); await p.waitForFunction(() => document.documentElement.getAttribute("data-view") === "comms" && document.querySelector(".cptabs"), null, { timeout: 20000 });
+  await viaPlans(); await p.waitForFunction(() => document.documentElement.getAttribute("data-view") === "comms" && document.querySelector(".cptabs"), null, { timeout: 20000 });
   ok(await p.evaluate((s) => document.querySelector(s).getAttribute("aria-pressed") === "true", atk), "Comms button opens Comms planning");
 
   // last tab remembered

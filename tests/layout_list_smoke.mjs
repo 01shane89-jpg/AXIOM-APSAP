@@ -33,8 +33,9 @@ async function open(hash) {
   return { ctx, p, errors };
 }
 const view = (p, v) => p.evaluate((v) => { document.querySelector('#view-seg [data-view="' + v + '"]').click(); }, v);
-const layoutBtn = (p) => p.evaluate(() => { const b = document.querySelector('#atk-tools [data-atk="layout"]'), r = b.getBoundingClientRect(); return r.width > 0 && r.height > 0; });
-async function pickList(p) { await p.click('#atk-tools [data-atk="layout"]'); await p.waitForTimeout(200); await p.click('#atk-pop [data-pk="list"]'); await p.waitForTimeout(1500); }
+// 2026-11-01: Layout is in the toolbar's View drop-down; its hidden button still says whether the layout choice is offered
+const layoutBtn = async (p) => { await p.click('#atk-tools [data-atk="view"]'); await p.waitForTimeout(150); const on = await p.evaluate(() => !!document.querySelector('#atk-pop [data-pk="list"]')); await p.keyboard.press("Escape"); await p.waitForTimeout(100); return on; };
+async function pickList(p) { await p.click('#atk-tools [data-atk="view"]'); await p.waitForTimeout(200); await p.click('#atk-pop [data-pk="list"]'); await p.waitForTimeout(1500); }
 const cards = (p) => p.evaluate(() => [...document.querySelectorAll("#rv-list .rvcard")].filter((c) => { const r = c.getBoundingClientRect(); return r.width > 0 && r.top < innerHeight; }).length);
 // what fills the screen below the header: the widest visible map, report list or conflict panel, and the width left uncovered
 const cover = (p) => p.evaluate(() => {
@@ -48,14 +49,14 @@ const cover = (p) => p.evaluate(() => {
 // ---------- an ordinary tab: List shows the cards ----------
 {
   const { ctx, p, errors } = await open("#kp/timeline");
-  ok(await layoutBtn(p), "Master timeline: Layout button shown");
+  ok(await layoutBtn(p), "Master timeline: Layout offered in View");
   await pickList(p);
   ok(await p.evaluate(() => document.querySelector(".shell").classList.contains("rv-list")), "List chosen");
   const n = await cards(p); ok(n > 0, `List shows report cards on screen (${n})`);
   if (OUT) await p.screenshot({ path: OUT + "/layout-list-timeline.png" });
   // ---------- from the full-screen map ----------
   await p.click('#rv .rvhead [data-rv-mode="map"]'); await p.waitForTimeout(600);
-  await p.click('#atk-tools [data-atk="full"]'); await p.waitForTimeout(500);
+  await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="full"]')); await p.waitForTimeout(500);
   ok(await p.evaluate(() => document.documentElement.classList.contains("mapfull")), "full-screen map on");
   await pickList(p);
   ok(await p.evaluate(() => !document.documentElement.classList.contains("mapfull")), "List from full screen leaves full screen");
@@ -77,7 +78,7 @@ const cover = (p) => p.evaluate(() => {
   const c = await cover(p); ok(c.mapW > 300, `map on screen again (${c.mapW}px wide)`);
   ok(await p.evaluate(() => /layout list/.test(localStorage.getItem("osap-blank") || "")), "the blank screen is recorded for diagnosis");
   await p.evaluate(() => { document.getElementById("rv").style.removeProperty("display"); });
-  await p.click('#atk-tools [data-atk="layout"]'); await p.waitForTimeout(200); await p.click('#atk-pop [data-pk="list"]'); await p.waitForTimeout(4500);
+  await p.click('#atk-tools [data-atk="view"]'); await p.waitForTimeout(200); await p.click('#atk-pop [data-pk="list"]'); await p.waitForTimeout(4500);
   ok(await p.evaluate(() => document.querySelector(".shell").classList.contains("rv-list")), "a working List layout is left alone");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
   await ctx.close();
@@ -91,7 +92,7 @@ for (const [cc, tab, folded] of [["th", "cf-thailand-deep-south"], ["th", "cf-th
   await pickList(p);                                    // List chosen on another tab first (remembered)
   await view(p, tab); await p.waitForTimeout(2500);
   ok(await p.evaluate(() => document.documentElement.hasAttribute("data-cf")), `${tab}: conflict tab open`);
-  ok(!(await layoutBtn(p)), `${tab}: Layout button hidden (the tab keeps its own report list beside the map)`);
+  ok(!(await layoutBtn(p)), `${tab}: Layout not offered in View (the tab keeps its own report list beside the map)`);
   const c = await cover(p);
   ok(c.mapW > 300, `${tab}: map on screen after List on another tab (${c.mapW}px wide)`);
   ok(c.covered > 0.97, `${tab}: no blank column (${Math.round(c.covered * 100)}% of the width covered)`);

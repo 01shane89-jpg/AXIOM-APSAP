@@ -32,7 +32,13 @@
     area: "draw,polygon,lasso,circle,shape,nai,tai,aoi,summarise,summarize",
     lines: "mgrs,grid lines,utm,grid squares", cross: "crosshair,centre,center,reticle",
     "3d": "terrain,tilt,elevation,three d", comms: "radio,communications,pace,signal,phone coverage,mast,tower,network",
-    lz: "landing zone,helicopter,hlz,lz,lz finder,find lz", satba: "satellite imagery,before and after,change detection,sentinel",
+    "rep-osir": "osir,open source intelligence report,intel report", "rep-intelbrief": "powerpoint,pptx,slides,deck,intel brief,briefing",
+    "rep-sitrep": "sitrep,situation report", "rep-brief": "country brief,country profile", "rep-report": "pmesii,threat assessment,country report",
+    hosp: "hospital,trauma level,trauma centre,trauma center,hospital assessment,er,emergency room", sea: "ship,boat,voyage,maritime,at sea,sea transit,vessel,medevac at sea",
+    flight: "airborne,jump,drop,aircraft,flight plan,airdrop,parachute,c-130,fly", dzso: "drop zone,dz,dzso,parachute,airborne,jump",
+    survey: "site survey,hlz,dz,airfield,landing strip,survey", terrain: "viewshed,line of sight,los,terrain analysis,elevation profile,dead ground,observation",
+    wxbrief: "weather brief,forecast brief,weather report", compass: "bearing,heading,north,azimuth,direction", photo: "photo,picture,image,geolocate",
+        lz: "landing zone,helicopter,hlz,lz,lz finder,find lz", satba: "satellite imagery,before and after,change detection,sentinel",
     areareport: "area report,print area", watch: "alert me,notify,monitor,geofence,notification",
     point: "pin,marker,waypoint,drop a point,mark", overlays: "layers,map layers,flooding,roads,aircraft",
     basemap: "background,satellite,streets,topographic,topo,imagery", weather: "rain,radar,wind,forecast,storm,cyclone",
@@ -85,6 +91,19 @@
     if (ab && !ab.hidden) (W.OSAP_AREA_TOOLS || []).forEach(function (t) {
       if (!t || !t.id || !t.label || t.id === "med") return;
       out.push({ k: "area", grp: "Tools", id: t.id, name: t.id === "lz" ? "LZ finder (landing zones)" : t.label, sub: "Area menu", words: syn(t.id), el: ab, need: ab.getAttribute("data-tier-need") || tier("tool", "area") });
+    });
+    /* the toolbar's Plans and View drop-downs (2026-11-01): Flight plan, Hospital assessment, Sea transit, Terrain analysis,
+       Compass and the rest, each found by name; a tool already listed above (Med plan, the Area menu's LZ) is not repeated */
+    var have = {}; out.forEach(function (x) { if (x.id) have[x.id] = 1; });
+    if (W.OSAP_ATAK && W.OSAP_ATAK.menuTools) W.OSAP_ATAK.menuTools().forEach(function (t) {
+      if (have[t.id] || (t.id === "grid" && have.lines)) return; have[t.id] = 1;
+      out.push({ k: "fn", grp: "Tools", id: t.id, name: t.name, sub: t.menu + " menu", words: syn(t.id), run: t.run, weak: true });
+    });
+    /* every report OSAP makes (the Reports menu, assets/osap-reports.js), found by name: OSIR, the intelligence brief and the rest */
+    var names = {}; out.forEach(function (x) { names[String(x.name).toLowerCase()] = 1; });
+    if (W.OSAP_REPORTS && W.OSAP_REPORTS.list) W.OSAP_REPORTS.list().forEach(function (r) {
+      if (names[String(r.name).toLowerCase()]) return;
+      out.push({ k: "fn", grp: "Tools", id: "rep-" + r.id, name: r.name, sub: "Report" + (r.ready ? "" : " · " + r.hint), words: ["report"].concat(syn("rep-" + r.id)), run: function () { W.OSAP_REPORTS.run(r.id); }, weak: true });
     });
     if (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open) out.push({ k: "fn", grp: "Tools", id: "photocheck", name: "Photo check", sub: "Where and when a photo or video was taken, on this device", words: syn("photocheck"), run: function () { W.OSAP_PHOTOCHECK.open(); } });
     return out;
@@ -159,6 +178,9 @@
     (it.words || []).forEach(function (w) { w = fold(w); s = Math.max(s, qq.length < 3 ? (w === qq ? 75 : 0) : phraseScore(w, qq, it.langOnly ? 90 : 75)); });
     /* the words of a long description: a weak match, only for three letters or more */
     if (s === 0 && qq.length >= 3 && it.sub && it.k !== "country" && !it.langOnly) s = phraseScore(fold(it.sub), qq, 40) ? 22 : 0;
+    /* a drop-down item or a report ranks under a toolbar button or setting that an everyday word points to ("hospital" finds
+       Med plan first, "night" Dark map), unless its whole name is typed */
+    if (it.weak && s < 100) s = Math.min(s, 70);
     return s;
   }
   var KIND = { Countries: 0, Tools: 1, "Data sets": 2, Settings: 3 }, CAP = { Countries: 4, Tools: 5, "Data sets": 4, Settings: 4 };

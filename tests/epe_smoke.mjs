@@ -89,7 +89,7 @@ let state;
   ok(await p.evaluate(() => !!document.querySelector('#atk-tools [data-atk="evac"]')), "Evac button in the map toolbar");
   const order = await p.evaluate(() => [...document.querySelectorAll("#atk-tools [data-atk]")].map((b) => b.getAttribute("data-atk")));
   ok(order.indexOf("evac") === order.indexOf("medplan") + 1, "Evac sits straight after Med plan");
-  await p.click('#atk-tools [data-atk="evac"]');
+  await p.click('#atk-tools [data-atk="plans"]').then(() => p.click('#atk-pop [data-pk="evac"]'));
   await p.waitForFunction(() => { const e = document.getElementById("epe"); return e && !e.hidden; }, null, { timeout: 20000 });
   ok(await p.evaluate(() => /Where are the people/.test(document.getElementById("epe").textContent) && document.querySelector('#epe [data-ep="plan"]').disabled), "opens with no origin and asks for one");
   await p.waitForTimeout(300);

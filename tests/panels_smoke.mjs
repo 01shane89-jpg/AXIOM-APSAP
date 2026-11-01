@@ -115,7 +115,7 @@ async function openEvac(p) {
   await p.keyboard.press("Escape"); await p.waitForTimeout(200);
   ok(await p.evaluate(() => !document.querySelector(".pnmenu")), "Escape closes it");
   // the full-screen map hides the grips
-  await p.click('#atk-tools [data-atk="full"]'); await p.waitForTimeout(500);
+  await p.click('#atk-tools [data-atk="view"]').then(() => p.click('#atk-pop [data-pk="full"]')); await p.waitForTimeout(500);
   ok(await p.evaluate(() => !document.querySelector(".pngrip.on")), "no grips on the full-screen map");
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();

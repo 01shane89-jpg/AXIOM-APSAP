@@ -214,7 +214,7 @@ async function areaMenu(p) {
 /* the toolbar's Med plan button (it closes an open plan, so it is only pressed when the plan is shut) */
 async function medBtn(p) {
   await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (m && !m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
-  if (await p.evaluate(() => { const m = document.getElementById("medplan"); return !m || m.hidden; })) await p.click('#atk-tools [data-atk="medplan"]');
+  if (await p.evaluate(() => { const m = document.getElementById("medplan"); return !m || m.hidden; })) await p.click('#atk-tools [data-atk="plans"]').then(() => p.click('#atk-pop [data-pk="medplan"]'));
 }
 async function openPlan(p) {
   await medBtn(p);
