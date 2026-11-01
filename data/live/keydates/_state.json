@@ -1,6 +1,6 @@
 {
  "schema": "osap-keydates-state/1",
- "checked": "2026-10-31 08:35Z",
+ "checked": "2026-11-01 09:26Z",
  "years": [
   2026,
   2027
@@ -8,8 +8,8 @@
  "status": {
   "nager": {
    "ok": true,
-   "countries": 162,
-   "failed": 2
+   "countries": 164,
+   "failed": 0
   },
   "wikipedia": {
    "ok": true,
