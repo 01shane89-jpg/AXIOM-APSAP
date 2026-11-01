@@ -116,10 +116,10 @@ ok(await p.evaluate(() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l
 
 // My work offers Check a photo and lists the saved check
 await p.evaluate(() => window.OSAP_WORK.open("mine")); await p.waitForTimeout(300);
-ok(/Photo check: IMG_<b>1<\/b>\.jpg/.test(await p.textContent("#wk")) && /Your own photo check/.test(await p.textContent("#wk")), "My work lists the saved check");
-ok(await p.evaluate(() => !!document.querySelector('#wk [data-wk-act="photo"]')), "My work has Check a photo");
-await p.click('#wk [data-wk-act="photo"]'); await p.waitForTimeout(300);
-ok(await shown(p, "#phc") && !(await shown(p, "#wk")), "Check a photo opens the window from My work");
+ok(/Photo check: IMG_<b>1<\/b>\.jpg/.test(await p.textContent("#mywk")) && /Your own photo check/.test(await p.textContent("#mywk")), "My work lists the saved check");
+ok(await p.evaluate(() => !!document.querySelector('#mywk [data-wk-act="photo"]')), "My work has Check a photo");
+await p.click('#mywk [data-wk-act="photo"]'); await p.waitForTimeout(300);
+ok(await shown(p, "#phc") && !(await shown(p, "#mywk")), "Check a photo opens the window from My work");
 
 // a video: step a frame, take it as a picture
 const webm = await p.evaluate(async () => {

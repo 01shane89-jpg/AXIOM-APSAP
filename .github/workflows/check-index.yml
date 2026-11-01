@@ -180,6 +180,8 @@ jobs:
       - run: node tests/photo_map_smoke.mjs
       - run: node tests/places_smoke.mjs
       - run: node tests/places_all_smoke.mjs
+      # My work side panel on the left of the map, holding My places and saved reports (assets/osap-work.js #mywk)
+      - run: node tests/mywork_panel_smoke.mjs
       - run: node tests/map_display_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs

@@ -118,7 +118,7 @@
     ["comms", "Comms", I.radio, "Comms planning: PACE plan, phone coverage, radio links, networks, equipment and status"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
-    ["mine", "My work", I.work, "What's new since your last visit, and your saved work"],
+    ["mine", "My work", I.work, "My places (your saved map items in folders), saved reports and notes, and what's new since your last visit"],
     ["layout", "Layout", I.layout, "Map only, map with list, or list"],
     ["full", "Full", I.full, "Full-screen map"]
   ];
@@ -235,11 +235,8 @@
       setTimeout(paintTools, 60);
     }
     else if (k === "watch") press("#watch-btn");
-    else if (k === "mine") {
-      var nn = q('[data-wk-btn="new"] .wkn'), mn = q('[data-wk-btn="mine"] .wkn');
-      if (!q('[data-wk-btn="new"]')) press('[data-wk-btn="mine"]');
-      else popOpen(b, [["new", "What's new" + (nn ? " (" + nn.textContent + ")" : "")], ["mine", "Saved work" + (mn ? " (" + mn.textContent + ")" : "")]]);
-    }
+    /* My work drops down on the left of the map: My places and saved reports, with What's new, Trends and Export on its top row */
+    else if (k === "mine") { if (W.OSAP_WORK && W.OSAP_WORK.toggle) W.OSAP_WORK.toggle(); else press('[data-wk-btn="mine"]'); }
     else if (k === "layout") {
       var cur = q("#rv-seg [aria-pressed=true]") || q("#rv-seg .on"), mode = cur ? cur.getAttribute("data-rv-mode") : "";
       popOpen(b, [["map", "Map only", mode === "map"], ["split", "Map and list", mode === "split"], ["list", "List", mode === "list"]]);

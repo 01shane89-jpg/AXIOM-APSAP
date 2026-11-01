@@ -588,15 +588,22 @@
   D.addEventListener("keydown", function (e) { if (e.key === "Escape" && !box.hidden) close(); });
 
   /* the active workspace sits at the top of My work, with the button that opens this panel */
-  function paintBar() {
-    var wk = D.getElementById("wk"), head = wk && wk.querySelector(".chead"); if (!head) return;
+  /* and at the top of the My work side panel (#mywk, assets/osap-work.js), which holds My places */
+  function paintBar() { paintBarIn(D.getElementById("wk"), ".chead"); paintBarIn(D.getElementById("mywk"), ".mwhead"); }
+  function paintBarIn(wk, hs) {
+    var head = wk && wk.querySelector(hs); if (!head) return;
     var bar = wk.querySelector(".wsbar");
     if (!bar) { bar = D.createElement("div"); bar.className = "wsbar"; head.parentNode.insertBefore(bar, head.nextSibling); }
     var html = 'Workspace: <b>' + esc(active().name) + '</b> <button type="button" class="refresh" data-ws-panel>Workspaces</button>';
     if (bar.innerHTML !== html) bar.innerHTML = html;
   }
   D.addEventListener("click", function (e) { if (e.target.closest("[data-ws-panel]")) { e.preventDefault(); e.stopPropagation(); open(); } }, true);
-  function watchWk() { var wk = D.getElementById("wk"); if (!wk) return false; new MutationObserver(function () { if (!wk.hidden) paintBar(); }).observe(wk, { childList: true }); return true; }
+  function watchWk() {
+    var wk = D.getElementById("wk"); if (!wk) return false;
+    new MutationObserver(function () { if (!wk.hidden) paintBar(); }).observe(wk, { childList: true });
+    var mw = D.getElementById("mywk"); if (mw) new MutationObserver(function () { if (!mw.hidden) paintBar(); }).observe(mw, { attributes: true, attributeFilter: ["hidden"] });
+    return true;
+  }
 
   var css = D.createElement("style");
   css.textContent = "#wsdlg{position:fixed;inset:0;z-index:100002;overflow:auto;background:rgba(0,0,0,.45);padding:16px}" +

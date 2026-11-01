@@ -418,11 +418,15 @@
   box.id = "wk"; box.hidden = true; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-labelledby", "wk-h");
   var TABS = [["new", "What's new"], ["trends", "Trends"], ["mine", "My work"], ["export", "Export"]];
   function openWk(tab) {
+    /* My work (saved reports) and My places live in the side panel on the left of the map now */
+    if (tab === "mine") { if (WK.open) closeWk(); dockOpen("mine"); return; }
+    if (WK.tab === "mine") WK.tab = "new";
     WK.open = true; WK.tab = tab || WK.tab; box.hidden = false; renderTab();
     var x = box.querySelector(".x"); if (x) x.focus();
   }
   function closeWk() { WK.open = false; box.hidden = true; box.innerHTML = ""; }
   function renderTab() {
+    renderDock();
     if (!WK.open) return;
     var nNew = NEWK.length, body = "";
     if (WK.tab === "new") body = tabNew();
@@ -537,9 +541,9 @@
     if (rv && rv.hidden) { var b = document.querySelector('button[data-rv-mode="split"]'); if (b) b.click(); }
     setTimeout(function () { try { window.TSAP.select(r.id, true, "rv-pkg"); } catch (e) {} }, 80);
   }
-  box.addEventListener("click", function (e) {
+  box.addEventListener("click", function (e) { if (e.target === box) { closeWk(); return; } onWkClick(e); });
+  function onWkClick(e) {
     var t = e.target;
-    if (t === box) { closeWk(); return; }
     if (gradeEvent(e, renderTab)) return;
     if (t.closest && t.closest(".wksrc>summary")) { WK.srcOpen = !t.closest(".wksrc").open; return; }
     var sd = t.closest && t.closest("[data-wk-srcdel]");
@@ -548,7 +552,7 @@
     if (!b) return;
     if (b.classList.contains("x")) { closeWk(); return; }
     var a;
-    if ((a = b.getAttribute("data-wk-tab"))) { WK.tab = a; renderTab(); }
+    if ((a = b.getAttribute("data-wk-tab"))) { if (a === "mine") openWk("mine"); else { WK.tab = a; renderTab(); } }
     else if ((a = b.getAttribute("data-wk-open"))) openRecordKey(a);
     else if ((a = b.getAttribute("data-wk-unit"))) { WK.unit = a; renderTab(); }
     else if ((a = b.getAttribute("data-wk-f"))) { WK.savedF = a; renderTab(); }
@@ -561,8 +565,9 @@
       if (r) setFlag(r, a, !it[a]); else { it[a] = !it[a]; touch(it); prune(k); saveWork(); decorate(); badge(); }
       renderTab();
     } else if ((a = b.getAttribute("data-wk-del"))) { delete WORK.items[a]; saveWork(); decorate(); badge(); renderTab(); }
-  });
-  box.addEventListener("change", function (e) {
+  }
+  box.addEventListener("change", onWkChange);
+  function onWkChange(e) {
     var t = e.target;
     if (gradeEvent(e, renderTab)) return;
     if (t.hasAttribute("data-wk-srcset")) { var sk = t.getAttribute("data-wk-srcset"); if (WORK.srcRel[sk] && /^[A-F]$/.test(t.value)) { WORK.srcRel[sk].r = t.value; WORK.srcRel[sk].at = new Date().toISOString(); saveWork(); } return; }
@@ -574,8 +579,106 @@
       var r = recByKey(k);
       if (r) setNote(r, t.value); else { it.note = t.value.slice(0, 4000); touch(it); saveWork(); }
     }
-  });
+  }
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && WK.open) closeWk(); });
+
+  /* ---------- My work side panel ----------
+     (Shane 2026-11-01: "I want My places to be combined with My work and I want it to open to the left of the map. Make it a
+     drop down.") One panel that drops down on the left edge of the map, with two drop-down sections:
+       - My places: the folder tree of assets/osap-places.js (#plc, moved in here whole, so folders, tick boxes, Show all /
+         Hide all, Move, Go to and Save to folder all work as before);
+       - Saved reports: saved items, notes, review marks and grades (what the "My work" tab of the country window held).
+     It sits over the map rather than in front of the page, so the map stays usable beside it. What's new, Trends and Export
+     stay in the country window (#wk), one tap away on the panel's top row. Which sections are open is a device choice
+     (localStorage "osap-mywk"); nothing in a section is stored here. */
+  var DOCK_KEY = "osap-mywk", dock = document.createElement("aside"), DK = { open: false, sec: { places: true, mine: false } };
+  (function () { var v = lsGet(DOCK_KEY); if (v && typeof v === "object") DK.sec = { places: v.places !== false, mine: !!v.mine }; })();
+  dock.id = "mywk"; dock.hidden = true; dock.tabIndex = -1; dock.setAttribute("role", "region"); dock.setAttribute("aria-labelledby", "mywk-h");
+  dock.innerHTML = '<div class="mwhead"><h2 id="mywk-h">My work</h2><button type="button" class="x" data-mw="close" aria-label="Close My work">&times;</button></div>' +
+    '<div class="mwrow"></div>' +
+    '<div class="mwscroll">' +
+    '<section class="mwsec" data-mw-sec="places"><button type="button" class="mwhd" data-mw-tog="places" aria-expanded="true" aria-controls="mw-places"><span class="mwar" aria-hidden="true"></span>My places <span class="mwc"></span></button>' +
+    '<div class="mwbody" id="mw-places"></div></section>' +
+    '<section class="mwsec" data-mw-sec="mine"><button type="button" class="mwhd" data-mw-tog="mine" aria-expanded="false" aria-controls="mw-mine"><span class="mwar" aria-hidden="true"></span>Saved reports and notes <span class="mwc"></span></button>' +
+    '<div class="mwbody" id="mw-mine"></div></section></div>';
+  function dockSecOpen(k) { return !!DK.sec[k]; }
+  function placesCount() { try { var P = window.OSAP_PLACES; return P && P.count ? P.count() : null; } catch (e) { return null; } }
+  function renderDock() {
+    if (!DK.open) return;
+    var nNew = NEWK.length, nMine = myItems().length, nPl = placesCount();
+    dock.querySelector(".mwrow").innerHTML =
+      '<button type="button" data-mw-wk="new">What\'s new' + (nNew ? ' <span class="wkn">' + (nNew > 999 ? "999+" : nNew) + "</span>" : "") + "</button>" +
+      '<button type="button" data-mw-wk="trends">Trends</button><button type="button" data-mw-wk="export">Export</button>';
+    ["places", "mine"].forEach(function (k) {
+      var sec = dock.querySelector('[data-mw-sec="' + k + '"]'), on = dockSecOpen(k), hd = sec.querySelector(".mwhd");
+      hd.setAttribute("aria-expanded", String(on)); sec.classList.toggle("on", on);
+      sec.querySelector(".mwbody").hidden = !on;
+      var n = k === "mine" ? nMine : nPl;
+      hd.querySelector(".mwc").textContent = n == null ? "" : "(" + n + ")";
+    });
+    var mb = dock.querySelector("#mw-mine");
+    if (dockSecOpen("mine") && !mb.contains(document.activeElement)) mb.innerHTML = tabMine();
+  }
+  function dockMountPlaces() {
+    var P = window.OSAP_PLACES, host = dock.querySelector("#mw-places");
+    if (P && P.mount) P.mount(host);
+    else if (!host.firstChild) host.innerHTML = '<p class="obs">My places is still loading.</p>';
+  }
+  /* sec: "places" or "mine" opens that section (and keeps the other as it was); none toggles nothing but the panel */
+  function dockOpen(sec) {
+    if (!dock.parentNode) document.body.appendChild(dock);
+    if (sec === "places" || sec === "mine") { DK.sec[sec] = true; lsSet(DOCK_KEY, DK.sec); }
+    var was = DK.open; DK.open = true; dock.hidden = false;
+    dockMountPlaces(); renderDock(); dockPaintBtn();
+    var target = sec ? dock.querySelector('[data-mw-sec="' + sec + '"]') : null;
+    if (target) { var sc = dock.querySelector(".mwscroll"); sc.scrollTop = Math.max(0, target.offsetTop - sc.offsetTop); }
+    /* focus moves into the panel (for the keyboard and screen readers) without drawing a ring on a button */
+    if (!was) dock.focus({ preventScroll: true });
+    try { document.dispatchEvent(new CustomEvent("osap:mywk", { detail: { open: true } })); } catch (e) {}
+  }
+  function dockClose() {
+    if (!DK.open) return;
+    DK.open = false; dock.hidden = true; dockPaintBtn();
+    try { document.dispatchEvent(new CustomEvent("osap:mywk", { detail: { open: false } })); } catch (e) {}
+  }
+  function dockToggle(sec) { if (DK.open) dockClose(); else dockOpen(sec); }
+  /* the My work buttons (toolbar and classic map control) show when the panel is open */
+  function dockPaintBtn() {
+    Array.prototype.forEach.call(document.querySelectorAll('#atk-tools [data-atk="mine"], [data-wk-btn="mine"]'), function (b) { b.setAttribute("aria-pressed", String(DK.open)); });
+  }
+  /* is the panel over most of the map (a phone)? then jumping to something on the map closes it */
+  function dockCovers() {
+    if (!DK.open) return false;
+    var m = map && map.getContainer ? map.getContainer().getBoundingClientRect() : null;
+    return !m || dock.getBoundingClientRect().width > m.width * 0.6;
+  }
+  /* the part of the map the panel covers, as Leaflet padding for fitBounds */
+  function dockPad() {
+    if (!DK.open || dockCovers()) return [0, 0];
+    return [Math.round(dock.getBoundingClientRect().width) + 12, 0];
+  }
+  dock.addEventListener("click", function (e) {
+    var t = e.target, b = t.closest && t.closest("button");
+    if (t.closest && t.closest("#plc")) return;   /* My places handles its own clicks */
+    if (b && b.getAttribute("data-mw") === "close") { dockClose(); return; }
+    var a;
+    if (b && (a = b.getAttribute("data-mw-tog"))) {
+      DK.sec[a] = !DK.sec[a]; lsSet(DOCK_KEY, DK.sec);
+      if (a === "places" && DK.sec[a]) dockMountPlaces();
+      renderDock(); return;
+    }
+    if (b && (a = b.getAttribute("data-mw-wk"))) { openWk(a); return; }
+    if (b && b.hasAttribute("data-wk-open") && dockCovers()) dockClose();
+    if (b && b.getAttribute("data-wk-act") === "photo") dockClose();
+    onWkClick(e);
+  });
+  dock.addEventListener("change", function (e) { if (e.target.closest && e.target.closest("#plc")) return; onWkChange(e); });
+  dock.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || e.defaultPrevented) return;
+    var tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "textarea" || (tag === "input" && e.target.type !== "checkbox")) { e.target.blur(); return; }
+    e.stopPropagation(); dockClose();
+  });
 
   /* ---------- the report package: Save / Mark reviewed / Note, shown as the analyst's own section ---------- */
   function pkgBar(pkg) {
@@ -665,6 +768,23 @@
     ".wkctlmap{display:flex;flex-direction:column;gap:4px}.wkctlmap button{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 9px;min-height:32px;font-family:inherit;font-size:13px;font-weight:600;line-height:1.2;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25);text-align:left}" +
     ".rvcard .wkmark{float:right;font-size:10px;font-weight:700;color:var(--accent);margin-left:6px}" +
     ".wktoast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:100001;background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:6px;font-size:13px;max-width:90vw}" +
+    /* My work side panel: drops down on the left edge of the map, over the zoom buttons, clear of the toolbar on the right */
+    "#mywk{position:absolute;left:0;top:0;bottom:0;z-index:1003;width:min(340px,calc(100% - 84px));display:flex;flex-direction:column;background:var(--surface,#fff);color:var(--ink,#111);" +
+    "border-right:1px solid var(--line,#ccc);box-shadow:4px 0 16px rgba(0,0,0,.25);font:13px/1.45 'IBM Plex Sans',system-ui,sans-serif;cursor:auto;box-sizing:border-box;transform-origin:top;animation:mwdrop .16s ease-out}" +
+    "#mywk[hidden]{display:none}#mywk:focus{outline:none}html.atak #mywk{bottom:30px}@keyframes mwdrop{from{opacity:0;transform:translateY(-10px) scaleY(.96)}to{opacity:1;transform:none}}" +
+    "#mywk .mwhead{display:flex;align-items:center;gap:6px;padding:4px 4px 0 12px}#mywk .mwhead h2{flex:1;margin:0;font-size:16px}" +
+    "#mywk .mwhead .x{font-size:26px;min-width:44px;min-height:40px;background:none;border:none;color:var(--ink,#111);cursor:pointer}" +
+    "#mywk .wsbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 10px 4px;padding:4px 8px;background:var(--surface2,#f1f3f5);border-radius:6px;font-size:12px}#mywk .wsbar button{margin-left:auto;min-height:30px}" +
+    "#mywk .mwrow{display:flex;gap:4px;flex-wrap:wrap;padding:2px 10px 8px;border-bottom:1px solid var(--line,#ddd)}" +
+    "#mywk .mwrow button{font:inherit;font-size:12.5px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 9px;min-height:32px;cursor:pointer}" +
+    "#mywk .mwscroll{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 10px 12px}" +
+    "#mywk .mwsec{border-bottom:1px solid var(--line,#ddd)}" +
+    "#mywk .mwhd{display:flex;align-items:center;gap:6px;width:100%;background:none;border:0;padding:10px 2px;min-height:44px;color:inherit;font:inherit;font-size:14px;font-weight:700;text-align:left;cursor:pointer;position:sticky;top:0;background:var(--surface,#fff);z-index:3}" +
+    "#mywk .mwhd .mwc{font-weight:400;color:var(--muted,#555);font-size:12.5px}" +
+    "#mywk .mwar{display:inline-block;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid currentColor;transform:rotate(-90deg);transition:transform .12s}" +
+    "#mywk .mwsec.on .mwar{transform:none}#mywk .mwbody{padding:0 0 10px}#mywk .mwbody[hidden]{display:none}" +
+    "#mywk .obs{color:var(--muted,#555)}#mywk h3{font-size:13px;margin:14px 0 4px}#mywk .wkmine{padding:6px 8px}#mywk .seg{flex-wrap:wrap}#mywk .seg button{min-height:32px}" +
+    "@media (max-width:700px){#mywk{width:calc(100% - 64px)}#mywk .mwscroll{padding:0 8px 10px}}" +
     "#wk-print{display:none}" +
     "@media print{html.wk-printing body>*:not(#wk-print){display:none!important}html.wk-printing #wk-print{display:block;color:#000;background:#fff;font:10px/1.35 'IBM Plex Sans',Arial,sans-serif}" +
     "#wk-print h1{font-size:18px;margin:0 0 4px}#wk-print h2{font-size:13px;margin:12px 0 4px;break-after:avoid}#wk-print table{width:100%!important;border-collapse:collapse;table-layout:fixed}#wk-print th,#wk-print td{border:1px solid #999;padding:3px 4px;text-align:left;vertical-align:top;white-space:normal!important;background:none!important;color:#000;text-transform:none!important;letter-spacing:0!important;font-size:10px;font-family:inherit;overflow-wrap:anywhere}#wk-print th{font-weight:700}" +
@@ -682,10 +802,16 @@
         var d = L.DomUtil.create("div", "leaflet-control wkctlmap");
         d.innerHTML = '<button type="button" data-wk-btn="new">What\'s new</button><button type="button" data-wk-btn="mine">My work</button>';
         L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
-        d.addEventListener("click", function (e) { var b = e.target.closest("[data-wk-btn]"); if (b) openWk(b.getAttribute("data-wk-btn") === "new" ? "new" : "mine"); });
+        d.addEventListener("click", function (e) { var b = e.target.closest("[data-wk-btn]"); if (!b) return; if (b.getAttribute("data-wk-btn") === "new") openWk("new"); else dockToggle(); });
         return d; } });
       ctl = new Ctl().addTo(map).getContainer();
+      /* the My work panel lives inside the map, on its left edge, so it moves with the map's own layout */
+      map.getContainer().appendChild(dock);
+      L.DomEvent.disableClickPropagation(dock); L.DomEvent.disableScrollPropagation(dock);
+      ["mousedown", "touchstart", "pointerdown", "wheel", "keydown"].forEach(function (ev) { dock.addEventListener(ev, function (e) { e.stopPropagation(); }); });
     }
+    /* What's new counts and saved items change: the panel's counts follow */
+    ["osap:places", "osap:points", "osap:routes", "osap:rulers"].forEach(function (ev) { document.addEventListener(ev, function () { if (DK.open) renderDock(); }); });
     trackSeen(true);
     /* records keep arriving after load (feed history, hazards, live refresh), so the count follows them */
     setInterval(function () { trackSeen(false); }, 5000);
@@ -694,7 +820,9 @@
     new MutationObserver(function () { if (pend) return; pend = true; setTimeout(function () { pend = false; decorate(); }, 50); })
       .observe(document.body, { childList: true, subtree: true });
     decorate();
-    window.OSAP_WORK = { open: openWk, keyOf: keyOf, items: function () { return WORK.items; }, sourceDefaults: function () { return WORK.srcRel; }, addNote: addNote };
+    window.OSAP_WORK = { open: openWk, keyOf: keyOf, items: function () { return WORK.items; }, sourceDefaults: function () { return WORK.srcRel; }, addNote: addNote,
+      /* the My work side panel: dock(section) opens it ("places" or "mine" opens that section), undock() closes it */
+      dock: dockOpen, undock: dockClose, toggle: dockToggle, docked: function () { return DK.open; }, covers: dockCovers, pad: dockPad, sectionOpen: function (k) { return DK.open && dockSecOpen(k); } };
   }
   (function wait(n) { if (window.TSAP && window.TSAP.records) start(); else if (n < 200) setTimeout(function () { wait(n + 1); }, 100); })(0);
 })();
