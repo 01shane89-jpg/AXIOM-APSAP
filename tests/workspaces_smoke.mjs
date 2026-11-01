@@ -103,8 +103,8 @@ const SEED = {
 
   /* My work shows the workspace bar; it opens the panel */
   await p.evaluate(() => window.OSAP_WORK.open("mine")); await p.waitForTimeout(300);
-  ok(await shown(p, "#wk .wsbar"), "My work shows the active workspace", await p.evaluate(() => (document.querySelector("#wk .wsbar") || {}).textContent));
-  await p.click("#wk [data-ws-panel]"); await p.waitForTimeout(300);
+  ok(await shown(p, "#mywk .wsbar"), "My work shows the active workspace", await p.evaluate(() => (document.querySelector("#mywk .wsbar") || {}).textContent));
+  await p.click("#mywk [data-ws-panel]"); await p.waitForTimeout(300);
   ok(await shown(p, "#wsdlg .cbox"), "Workspaces button opens the panel");
   const groups = await p.$$eval("#wsdlg .wsg summary", (a) => a.map((x) => x.textContent));
   ok(groups.length === 6, "panel lists points, areas, NAI/TAI, routes, watches and saved reports", groups);
@@ -116,7 +116,7 @@ const SEED = {
   ok(!(await shown(p, "#wsdlg .cbox")) && Math.abs(c[0] - 13.75) < 0.01 && Math.abs(c[1] - 100.5) < 0.01, "Open on map centres the map on the point", c);
 
   /* a new workspace starts empty; the Default one is packed away whole */
-  await p.evaluate(() => { document.querySelector("#wk") && (document.querySelector("#wk").hidden = true); OSAP_WS.open(); });
+  await p.evaluate(() => { document.querySelector("#wk") && (document.querySelector("#wk").hidden = true); OSAP_WORK.undock(); OSAP_WS.open(); });
   await p.fill("#wsdlg .wsnew input", "Op Bravo");
   await Promise.all([p.waitForNavigation(), p.click("#wsdlg .wsnew button")]); await ready(p);
   R = await reg(p);

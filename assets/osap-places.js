@@ -143,6 +143,11 @@
     "#plcsv .plsvl{display:flex;align-items:center;gap:8px;margin:6px 0}#plcsv .plsvl[hidden]{display:none}#plcsv select,#plcsv input[type=text]{flex:1;font:inherit;min-height:32px;padding:3px 6px;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:inherit}" +
     "#plcsv .plsvlist{list-style:none;margin:6px 0;padding:0;max-height:40vh;overflow:auto;border:1px solid var(--line,#ddd);border-radius:5px}#plcsv .plsvlist li{padding:4px 8px;border-top:1px solid var(--line,#eee)}#plcsv .plsvlist li:first-child{border-top:0}" +
     "#plcsv .plk{font-size:10.5px;color:var(--muted,#555);border:1px solid var(--line,#ccc);border-radius:3px;padding:0 4px}#plcsv .plbar{display:flex;gap:6px;margin-top:8px}" +
+    /* inside the My work side panel on the left of the map (assets/osap-work.js #mywk): no backdrop, no box of its own */
+    "#plc.pldock{position:static;inset:auto;z-index:auto;background:none;overflow:visible;padding:0}#plc.pldock .cbox{max-width:none;margin:0;padding:0;border-radius:0;background:none}" +
+    "#plc.pldock .plbar input{min-width:100px}#plc.pldock .plr{flex-wrap:nowrap;gap:5px}#plc.pldock .pln{min-width:0}#plc.pldock .plr select{max-width:96px;flex:none}#plc.pldock .plr select.plact{max-width:74px}" +
+    "#plc.pldock .plr button{flex:none;padding:3px 7px}#plc.pldock ul ul{margin-left:10px;padding-left:5px}#plc.pldock .plempty{padding-left:24px}" +
+    "@media (max-width:700px){#plc.pldock .plr select{max-width:72px}#plc.pldock .plr select.plact{max-width:62px}#plc.pldock .plf>.plr [data-pl=newf]{padding:3px 5px}}" +
     "@media (max-width:700px){#plc{padding:6px}#plc .cbox{padding:8px 10px 12px}#plc .plr select{max-width:96px}#plc .plr select.plact{max-width:74px}#plc ul ul{margin-left:10px}}";
   function ensure() {
     if (el) return el;
@@ -161,14 +166,24 @@
       if (e.key === "Escape") { e.stopPropagation(); close(); }
     });
     el.addEventListener("focusout", function (e) { if (e.target.classList && e.target.classList.contains("plnm") && ui.edit) rename(e.target.getAttribute("data-fid"), e.target.value); });
-    el.addEventListener("click", function (e) { if (e.target === el) close(); });
-    if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
+    el.addEventListener("click", function (e) { if (e.target === el && !docked()) close(); });
     return el;
   }
+  /* docked: #plc sits in the My work side panel on the left of the map (Shane 2026-11-01: "I want My places to be combined with
+     My work and I want it to open to the left of the map. Make it a drop down."). The full window is only a fallback for a
+     page without My work. */
+  function docked() { return !!el && el.classList.contains("pldock"); }
+  function mount(host) {
+    ensure();
+    if (el.parentNode !== host) host.appendChild(el);
+    el.classList.add("pldock"); el.removeAttribute("role"); el.removeAttribute("aria-modal"); el.hidden = false;
+    ui.edit = ""; paint();
+  }
   function paint() {
-    var box = el.querySelector(".cbox");
-    box.innerHTML = '<div class="chead"><h2 id="plc-h">My places</h2><button type="button" class="x" data-pl="close">Close</button></div>' +
-      '<p class="obs">Everything you have saved to the map, in folders: points, routes, saved shapes and NAI/TAI areas, rulers, imported shapes, viewsheds, drop zones and flight plans. Tick a folder or an item to show or hide it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>' +
+    var box = el.querySelector(".cbox"), dk = docked();
+    box.innerHTML = (dk ? "" : '<div class="chead"><h2 id="plc-h">My places</h2><button type="button" class="x" data-pl="close">Close</button></div>') +
+      (dk ? '<p class="obs">Your own map items in folders. Tick a folder or an item to show or hide it on the map; the menu on each row files it in a folder.</p>'
+        : '<p class="obs">Everything you have saved to the map, in folders: points, routes, saved shapes and NAI/TAI areas, rulers, imported shapes, viewsheds, drop zones and flight plans. Tick a folder or an item to show or hide it on the map; use Move to file an item. Kept in this browser only, with the open workspace.</p>') +
       '<div class="plbar"><button type="button" class="pri" data-pl="newf" data-fid="">New folder</button><button type="button" data-pl="all1" title="Tick every folder and item: everything you saved shows on the map">Show all</button><button type="button" data-pl="all0" title="Untick every item: nothing you saved shows on the map (nothing is deleted)">Hide all</button><input type="search" id="plc-q" placeholder="Find by name" aria-label="Find a place by name" value="' + esc(ui.q) + '"></div>' +
       '<div class="pltree"></div>';
     paintTree();
@@ -274,18 +289,18 @@
     var s = read();
     if (x.kind === "pt") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
-      map.setView(x.at, Math.max(map.getZoom(), 14));
+      centreOn(x.at, Math.max(map.getZoom(), 14));
     } else if (x.kind === "ai" || x.kind === "sh" || x.kind === "ru") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
-      try { map.fitBounds(L.latLngBounds(x.pts), { padding: [40, 40], maxZoom: 15 }); } catch (e) {}
+      try { var o1 = pad(); o1.maxZoom = 15; map.fitBounds(L.latLngBounds(x.pts), o1); } catch (e) {}
     } else if (x.kind === "vs") {
       if (!folderOn(s, s.of[key] || "")) { showChain(s, s.of[key] || ""); write(s); }
-      if (W.OSAP_TERRAIN_ANALYSIS && W.OSAP_TERRAIN_ANALYSIS.showSaved) W.OSAP_TERRAIN_ANALYSIS.showSaved(x.id); else map.setView(x.at, Math.max(map.getZoom(), 13));
+      if (W.OSAP_TERRAIN_ANALYSIS && W.OSAP_TERRAIN_ANALYSIS.showSaved) W.OSAP_TERRAIN_ANALYSIS.showSaved(x.id); else centreOn(x.at, Math.max(map.getZoom(), 13));
     } else if (x.kind === "rt") {
       if (!folderOn(s, s.of[key] || "")) { showChain(s, s.of[key] || ""); write(s); }
       if (!x.show) setRouteShow(x.id, true);
       var ln = Array.isArray(x.r.line) && x.r.line.length > 1 ? x.r.line : x.r.wps.map(function (w) { return [w.lat, w.lon]; });
-      try { map.fitBounds(L.latLngBounds(ln), { padding: [40, 40], maxZoom: 15 }); } catch (e) {}
+      try { var o2 = pad(); o2.maxZoom = 15; map.fitBounds(L.latLngBounds(ln), o2); } catch (e) {}
     }
     closeIfFull();
   }
@@ -311,7 +326,20 @@
   /* going to an item in a hidden folder turns that folder (and the ones above it) back on */
   function showChain(s, fid) { var by = byId(s), n = 0; while (fid && by[fid] && n++ < 50) { delete s.off[fid]; fid = by[fid].parent; } }
   /* a full window hides the map: close it so the place is in view. Split view keeps it open beside the map. */
-  function closeIfFull() { if (!(W.OSAP_SPLIT && W.OSAP_SPLIT.on())) close(); }
+  function closeIfFull() {
+    /* the side panel leaves the map in view on a wide screen; on a phone it covers most of it, so it closes */
+    if (docked()) { if (W.OSAP_WORK && W.OSAP_WORK.covers && W.OSAP_WORK.covers()) close(); return; }
+    if (!(W.OSAP_SPLIT && W.OSAP_SPLIT.on())) close();
+  }
+  /* fitBounds / setView padding so what you go to is not under the side panel */
+  function pad() { var p = W.OSAP_WORK && W.OSAP_WORK.pad && docked() ? W.OSAP_WORK.pad() : [0, 0]; return { paddingTopLeft: [40 + p[0], 40], paddingBottomRight: [40, 40] }; }
+  function centreOn(at, z) {
+    var p = W.OSAP_WORK && W.OSAP_WORK.pad && docked() ? W.OSAP_WORK.pad()[0] : 0;
+    if (!p) { map.setView(at, z); return; }
+    /* put the point in the middle of the part of the map the panel leaves free */
+    var c = map.unproject(map.project(L.latLng(at), z).subtract([p / 2, 0]), z);
+    map.setView(c, z);
+  }
 
   function onClick(e) {
     var b = e.target.closest("button"); if (!b || !el.contains(b)) return;
@@ -338,9 +366,16 @@
       else if (/^mv:/.test(v)) moveFolder(k, v.slice(3));
     }
   }
-  function open() { ensure(); ui.edit = ""; el.hidden = false; paint(); var x = el.querySelector("[data-pl=close]"); if (x) x.focus({ preventScroll: true }); }
-  function close() { if (el) el.hidden = true; ui.edit = ""; }
-  function isOpen() { return !!el && !el.hidden; }
+  /* My places opens in the My work side panel when it is there (Point menu, Route > Saved routes, Overlays > Your marks,
+     Save to folder's "Open My places") */
+  function open() {
+    if (W.OSAP_WORK && W.OSAP_WORK.dock) { W.OSAP_WORK.dock("places"); return; }
+    ensure(); ui.edit = ""; el.hidden = false; paint(); var x = el.querySelector("[data-pl=close]"); if (x) x.focus({ preventScroll: true });
+  }
+  function close() { ui.edit = ""; if (docked()) { if (W.OSAP_WORK && W.OSAP_WORK.undock) W.OSAP_WORK.undock(); return; } if (el) el.hidden = true; }
+  function isOpen() { return docked() ? !!(W.OSAP_WORK && W.OSAP_WORK.sectionOpen && W.OSAP_WORK.sectionOpen("places")) : !!el && !el.hidden; }
+  /* how many things are saved here (this country and others), for the My work panel's section title */
+  function count() { try { return items().length; } catch (e) { return null; } }
   /* the other tools changed what is saved: list it again */
   ["osap:points", "osap:routes", "osap:rulers"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
   if (W.OSAP_DZ && W.OSAP_DZ.on) W.OSAP_DZ.on(function () { if (isOpen() && !ui.edit) paintTree(); });
@@ -446,7 +481,7 @@
     var inp = sv.querySelector("#plcsv-n"); if (inp) { inp.focus(); inp.select(); }
   }
 
-  W.OSAP_PLACES = { open: open, close: close, isOpen: isOpen, shown: shown, KEY: KEY,
+  W.OSAP_PLACES = { open: open, close: close, isOpen: isOpen, shown: shown, KEY: KEY, mount: mount, count: count,
     folderOf: function (key) { return read().of[key] || ""; },
     state: function () { var s = read(); return { folders: s.folders.slice(), of: s.of, off: s.off, hide: s.hide, routesDrawn: rLayer.getLayers().length }; },
     newFolder: newFolder, move: moveItem, remove: function (id) { delFolder(id, false); },

@@ -79,7 +79,7 @@
         b("3D") + ": tilt and turn the map over real ground. Tap the compass for north-up and flat, " + b("2D") + " to go back.",
         b("Compass") + ": tap the north arrow (top left of the map). On a phone it shows the way you face, true and magnetic, and a cone on your location dot; " + b("Heading up") + " turns the map to the way you face and " + b("North up") + " turns it back. On any device it gives the bearing and distance from you (or the map centre) to the map centre or the mouse pointer, in degrees or mils.",
         b("Measure") + ", " + b("Route") + ", " + b("Area") + ", " + b("Med plan") + ", " + b("Evac") + ", " + b("Comms") + ", " + b("Point") + " and " + b("Watch") + ": each has its own section below.",
-        b("My work") + ": what is new since your last visit, and your saved work.",
+        b("My work") + ": opens on the left of the map with My places (your saved map items in folders) and your saved reports and notes; What's new, Trends and Export are on its top row.",
         b("Reports") + " (phone) or the " + b("Reports") + " button in the header: every printable report OSAP makes.",
         b("Full") + ": full-screen map. Press Esc on a keyboard to leave."]) +
       fig("datasets", "Data sets: tick to show on the map") +
@@ -158,7 +158,7 @@
 
     { id: "mywork", t: "My work, workspaces and KML", h:
       fig("mywork", "My work") +
-      ul([b("My work") + " has " + b("What's new") + " (reports added since your last visit) and " + b("Saved work") + ".",
+      ul([b("My work") + " drops down on the left of the map, so the map stays in view. It has two sections you open and close: " + b("My places") + " (folders for your saved points, routes, shapes, rulers, drop zones and more, each with a box to show or hide it on the map) and " + b("Saved reports and notes") + ". Its top row opens " + b("What's new") + " (reports added since your last visit), " + b("Trends") + " and " + b("Export") + ".",
         "On any report use " + b("☆ Save") + ", " + b("Mark reviewed") + " and " + b("✎ Add note") + ". Reviewed means you looked at it; it does not verify the report.",
         b("Grade") + " a report the Admiralty / NATO way: source reliability A (completely reliable) to E (unreliable), F cannot be judged, and information credibility 1 (confirmed by other sources) to 5 (improbable), 6 cannot be judged, for example B2. Press " + b("?") + " beside it for what each one means. The grade shows as a badge wherever My work lists the report and goes into every export.",
         "A grade is always your own choice; OSAP never sets one. " + b("Default … for …") + " remembers a reliability for that source (its web domain), which pre-fills ungraded reports from it until you press " + b("Confirm") + " or set the credibility. Change or remove defaults under " + b("Grading and source defaults") + " in My work.",
