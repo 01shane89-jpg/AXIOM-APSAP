@@ -63,7 +63,7 @@ PWA_HEAD = ('<link rel="manifest" href="manifest.webmanifest"><meta name="theme-
 PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () {'
             ' var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now();'
             ' ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); });'
-            ' function reload() { if (!reloaded) { reloaded = true; location.reload(); } }'
+            ' function reload() { if (!reloaded) { reloaded = true; /* covered until the new copy replaces this one, so a tap meanwhile is not lost to it */ if (window.OSAP_BOOT && document.visibilityState !== "hidden") window.OSAP_BOOT.show(); location.reload(); } }'
             ' navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return;'
             ' if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); });'
             ' navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {'

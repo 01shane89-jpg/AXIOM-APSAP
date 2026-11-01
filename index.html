@@ -37,14 +37,20 @@
   /* the cover always reads the app's name, whichever country is opening (Shane, 2026-09-27) */
   function label() { t.textContent = "Loading AXIOM OSAP"; }
   label();
-  function done() { clearTimeout(timer); el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
+  function lift() { clearTimeout(timer); holds = 0; el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
+  /* a hold keeps the cover up while the start may still decide to load the page again (a sign-in that ran out while OSAP was
+     closed, assets/osap-tier.js), so Today never shows, takes a tap on Map and is then replaced by a fresh Today
+     (Shane 2026-10-31: "repeats the home page after I click maps"); done() waits for the last hold, the timer still caps it */
+  var holds = 0, want = false;
+  function done() { want = true; if (!holds) lift(); }
   window.OSAP_BOOT = {
     done: done,
+    hold: function () { var on = true; holds++; return function () { if (!on) return; on = false; holds = Math.max(0, holds - 1); if (!holds && want) lift(); }; },
     /* shown again the moment another country (or a fresh copy of this one) is asked for, until the new page replaces this one */
-    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(); clearTimeout(timer); timer = setTimeout(done, 20000); }
+    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(); want = false; clearTimeout(timer); timer = setTimeout(lift, 20000); }
   };
   /* never leave the page covered if something fails while it builds */
-  timer = setTimeout(done, 15000);
+  timer = setTimeout(lift, 15000);
 })();
 </script>
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
@@ -9631,5 +9637,5 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <!-- terrain analysis: viewshed and line of sight (Map overlays > Elevation and terrain analysis, long-press > Terrain) -->
 <script src="assets/osap-terrain.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
-<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage(window.OSAP_DATA && OSAP_DATA.plan() ? { warm: OSAP_DATA.plan() } : "warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; /* covered until the new copy replaces this one, so a tap meanwhile is not lost to it */ if (window.OSAP_BOOT && document.visibilityState !== "hidden") window.OSAP_BOOT.show(); location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage(window.OSAP_DATA && OSAP_DATA.plan() ? { warm: OSAP_DATA.plan() } : "warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
