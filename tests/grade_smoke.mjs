@@ -97,21 +97,21 @@ async function dl(p, click) { const [d] = await Promise.all([p.waitForEvent("dow
     ok((await p.textContent("#rv-pkg .wkg .wkgb")) === "B-", "badge B-");
     await p.click("#rv-pkg .wkpkg [data-p=saved]"); await p.waitForTimeout(300);
 
-    // My work
+    // My work: the side panel on the left of the map, Saved reports section
     await p.evaluate(() => window.OSAP_WORK.open("mine")); await p.waitForTimeout(500);
-    const badges = await p.$$eval("#wk .wkmine .wkh .wkgb", (L) => L.map((e) => e.textContent).sort());
+    const badges = await p.$$eval("#mywk .wkmine .wkh .wkgb", (L) => L.map((e) => e.textContent).sort());
     ok(badges.join() === "B-,B2", "My work lists both with badges", badges);
-    ok(/Graded 2/.test(await p.textContent('#wk [data-wk-f="graded"]')), "Graded filter counts 2");
-    await p.click('#wk [data-wk-f="graded"]'); await p.waitForTimeout(200);
-    ok((await p.$$("#wk .wkmine .wkg")).length === 2, "each listed item has its picker");
-    await p.selectOption(`#wk [data-wkg="${P.bk}"] [data-wkg-c]`, "3"); await p.waitForTimeout(300);
+    ok(/Graded 2/.test(await p.textContent('#mywk [data-wk-f="graded"]')), "Graded filter counts 2");
+    await p.click('#mywk [data-wk-f="graded"]'); await p.waitForTimeout(200);
+    ok((await p.$$("#mywk .wkmine .wkg")).length === 2, "each listed item has its picker");
+    await p.selectOption(`#mywk [data-wkg="${P.bk}"] [data-wkg-c]`, "3"); await p.waitForTimeout(300);
     ok((await item(p, P.bk)).grade.c === "3", "grading from My work stores B3");
-    await p.click("#wk .wksrc>summary"); await p.waitForTimeout(200);
-    ok(await p.evaluate((d) => !!document.querySelector(`#wk [data-wk-srcset="${d}"]`), P.dom), "source defaults are listed under Grading and source defaults");
+    await p.click("#mywk .wksrc>summary"); await p.waitForTimeout(200);
+    ok(await p.evaluate((d) => !!document.querySelector(`#mywk [data-wk-srcset="${d}"]`), P.dom), "source defaults are listed under Grading and source defaults");
     if (OUT) await p.screenshot({ path: OUT + "/grade-mywork.png", fullPage: false });
 
     // exports
-    await p.click('#wk [data-wk-tab="export"]'); await p.waitForTimeout(200);
+    await p.click('#mywk [data-mw-wk="export"]'); await p.waitForTimeout(200);   // the My work panel's Export opens the country window at Export
     await p.click('#wk [data-wk-scope="all"]'); await p.waitForTimeout(200);
     const csv = await dl(p, () => p.click('#wk [data-wk-exp="csv"]'));
     const head = csv.replace(/^\ufeff/, "").split("\r\n")[0].split(",");
@@ -124,12 +124,13 @@ async function dl(p, click) { const [d] = await Promise.all([p.waitForEvent("dow
     const kml = await dl(p, () => p.click('#wk [data-wk-exp="kml"]'));
     const located = gj.features.filter((f) => f.properties.analyst_grade && f.geometry).length;
     ok(located === 0 || /Analyst grade \(user&apos;s own judgement\): B[23]/.test(kml), "KML says the analyst grade (" + located + " located)");
-    await p.click('#wk [data-wk-tab="mine"]'); await p.waitForTimeout(200);
-    const nj = JSON.parse(await dl(p, () => p.click('#wk [data-wk-act="notes-out"]')));
+    await p.click('#wk [data-wk-tab="mine"]'); await p.waitForTimeout(200);   // the country window's My work tab hands over to the side panel
+    ok(await p.evaluate(() => { const d = document.getElementById("mywk"), w = document.getElementById("wk"); return d && !d.hidden && w.hidden; }), "My work tab opens the side panel and closes the window");
+    const nj = JSON.parse(await dl(p, () => p.click('#mywk [data-wk-act="notes-out"]')));
     ok(nj.schema === "osap-work/1" && nj.items.filter((x) => x.grade).length === 2 && nj.source_defaults[P.dom].r === "B", "notes JSON keeps osap-work/1 with grade and source_defaults");
 
     // the situation report
-    await p.click('#wk [data-wk-tab="export"]'); await p.waitForTimeout(200);
+    await p.click('#mywk [data-mw-wk="export"]'); await p.waitForTimeout(200);   // the My work panel's Export opens the country window at Export
     await p.click('#wk [data-wk-exp="sitrep"]'); await p.waitForTimeout(1500);
     const pr = await p.textContent("#wk-print");
     ok(/Grade B2/.test(pr) && /Grade B3/.test(pr) && /Admiralty \/ NATO grading/.test(pr), "the situation report shows the grades and the legend");
@@ -140,7 +141,7 @@ async function dl(p, click) { const [d] = await Promise.all([p.waitForEvent("dow
       { key: "00000000000000cc", cc: "th", saved: true, note: "", at: "2026-01-01T00:00:00.000Z", grade: { r: "e", c: "5", ai: true }, snap: { title: "E5" } }],
       source_defaults: { "d:<img>": { r: "A" }, "d:example.org": { r: "D", at: "2026-01-01T00:00:00Z" } } };
     await p.evaluate(() => window.OSAP_WORK.open("mine")); await p.waitForTimeout(300);
-    await p.setInputFiles("#wk [data-wk-import]", { name: "old.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(old)) });
+    await p.setInputFiles("#mywk [data-wk-import]", { name: "old.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(old)) });
     await p.waitForTimeout(600);
     const A = await item(p, "00000000000000aa"), B = await item(p, "00000000000000bb"), C = await item(p, "00000000000000cc");
     ok(A && A.note === "old note" && !A.grade, "an older osap-work/1 file without grades imports");
@@ -161,7 +162,7 @@ async function dl(p, click) { const [d] = await Promise.all([p.waitForEvent("dow
   const P = await pair(p);
   if (P) {
     await p.evaluate(() => window.OSAP_WORK.open("mine")); await p.waitForTimeout(300);
-    await p.evaluate(() => document.querySelector("#wk .x").click());
+    await p.evaluate(() => document.querySelector("#mywk [data-mw=close]").click());
     await openRec(p, P.a, P.ak).catch(() => {});
     const g = await p.$("#rv-pkg .wkg");
     if (g) {
@@ -171,7 +172,7 @@ async function dl(p, click) { const [d] = await Promise.all([p.waitForEvent("dow
       if (OUT) await p.screenshot({ path: OUT + "/grade-phone.png" });
     } else ok(true, "phone layout shows the report as a quick card; picker checked on desktop");
     await p.evaluate(() => window.OSAP_WORK.open("mine")); await p.waitForTimeout(400);
-    const ov = await p.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1 || [...document.querySelectorAll("#wk .wkg")].some((w) => w.getBoundingClientRect().right > window.innerWidth + 1));
+    const ov = await p.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1 || [...document.querySelectorAll("#mywk .wkg")].some((w) => w.getBoundingClientRect().right > window.innerWidth + 1) || (() => { const sc = document.querySelector("#mywk .mwscroll"); return sc.scrollWidth > sc.clientWidth + 1; })());
     ok(!ov, "My work with the picker has no sideways scroll on a phone");
   }
   ok(!errors.length, "no page errors on a phone" + (errors.length ? ": " + errors.join(" | ") : ""));
