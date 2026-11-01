@@ -1,4 +1,4 @@
-{"cc":"np","at":"2026-10-03T02:19:43Z","base":"2026-10-03T02:18:20Z","m":[
+{"cc":"np","at":"2026-11-01T10:52:02Z","base":"2026-11-01T10:49:57Z","m":[
 ["n10228890132",27.98704,81.76029,{"man_made":"communications_tower","tower:type":"communication"}],
 ["n10313490469",28.0675,84.05002,{"communication:mobile_phone":"yes","man_made":"tower","operator":"nepal_telecome","tower:construction":"tower","tower:type":"communication"}],
 ["n10826379568",27.65836,82.78538,{"communication:operator":"ncell","man_made":"tower","name":"Ncell Tower","tower:type":"communication"}],
@@ -240,6 +240,7 @@
 ["w1445335375",27.65303,83.45312,{"communication:television":"yes","man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["w341660464",27.92605,85.48708,{"man_made":"tower","tower:type":"communication"}],
 ["w488325501",28.52728,81.12531,{"man_made":"tower","name":"Radio Namaste","tower:construction":"freestanding","tower:type":"communication"}],
+["w499443852",27.56984,85.31553,{"man_made":"tower","name":"nepal telecom tower","operator":"gov","tower:type":"communication"}],
 ["w520809024",26.66152,87.34396,{"man_made":"tower","tower:construction":"lattice_steel","tower:type":"communication"}],
 ["w601010216",29.65241,81.86624,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
 ["w623371688",29.53617,82.03974,{"man_made":"tower","tower:type":"communication"}],

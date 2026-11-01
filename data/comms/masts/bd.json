@@ -1,4 +1,4 @@
-{"cc":"bd","at":"2026-10-03T02:21:33Z","base":"2026-10-03T02:20:29Z","m":[
+{"cc":"bd","at":"2026-11-01T10:54:39Z","base":"2026-11-01T10:53:00Z","m":[
 ["n10032702189",23.1663,91.06087,{"communication:3G":"yes","communication:4G+":"yes","communication:4g":"yes","communication:lte":"yes","communication:mobile_phone":"yes","man_made":"tower","name":"Banglalink Tower","tower:construction":"guyed_lattice","tower:type":"communication"}],
 ["n10032702560",23.16448,91.03407,{"communication:3G":"yes","communication:4G+":"yes","communication:lte+":"yes","communication:mobile_phone":"yes","man_made":"tower","tower:construction":"tower","tower:type":"communication"}],
 ["n10033022860",23.15491,91.05869,{"communication:3G":"yes","communication:4G+":"yes","communication:mobile_phone":"yes","man_made":"tower","tower:construction":"tower","tower:type":"communication"}],

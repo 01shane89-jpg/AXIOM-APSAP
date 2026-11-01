@@ -1,4 +1,4 @@
-{"cc":"bs","at":"2026-10-03T02:48:56Z","base":"2026-10-03T02:46:00Z","m":[
+{"cc":"bs","at":"2026-11-01T11:14:04Z","base":"2026-11-01T11:12:20Z","m":[
 ["n10305101427",26.53259,-78.67524,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10311612517",24.70298,-77.7638,{"man_made":"tower","tower:type":"communication"}],
 ["n10605010243",25.02659,-77.36159,{"man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
@@ -25,6 +25,7 @@
 ["n11963108249",25.06014,-77.34631,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n11964881738",25.0673,-77.34786,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n12011111397",25.0284,-77.33901,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
+["n12140946143",25.70809,-79.28528,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n12253975463",25.07524,-77.36311,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n12272167545",22.72785,-74.15413,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n12277643300",22.80378,-74.33826,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
@@ -54,6 +55,7 @@
 ["n14138470608",25.02275,-77.30902,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
 ["n14142727648",25.00028,-77.36093,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n14152692746",26.54068,-78.66783,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14330059969",24.05228,-74.53232,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
 ["n1889317222",26.5299,-78.69616,{"man_made":"tower","tower:type":"communication"}],
 ["n1896639194",26.56812,-78.58011,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1899323272",26.55496,-78.5998,{"man_made":"tower","operator":"BTC","tower:type":"communication"}],
@@ -67,6 +69,9 @@
 ["n3426204599",26.54262,-77.0568,{"man_made":"tower","name":"BTC","tower:type":"communication"}],
 ["n3464392593",24.17118,-76.44328,{"man_made":"tower","name":"BTC","tower:type":"communication"}],
 ["n3483139709",23.5017,-75.77107,{"man_made":"tower","tower:type":"communication"}],
+["n3542060102",25.74306,-79.28512,{"man_made":"tower","tower:type":"communication"}],
+["n3542060606",25.73043,-79.29489,{"man_made":"tower","name":"BTC","tower:type":"communication"}],
+["n3542061295",25.73073,-79.29566,{"man_made":"tower","operator":"Cable Bahamas","tower:type":"communication"}],
 ["n4131976548",24.77696,-76.21553,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n5086206109",25.0114,-77.37034,{"man_made":"mast","tower:type":"communication"}],
 ["n5088463670",25.04541,-77.31816,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],

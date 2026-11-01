@@ -1,4 +1,4 @@
-{"cc":"ao","at":"2026-10-03T02:25:43Z","base":"2026-10-03T02:24:35Z","m":[
+{"cc":"ao","at":"2026-11-01T11:00:30Z","base":"2026-11-01T10:59:06Z","m":[
 ["n10285576895",-9.06013,13.39987,{"communication:television":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10693430181",-16.65649,13.42313,{"man_made":"mast","tower:type":"communication"}],
 ["n10747955826",-15.75994,11.90452,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
@@ -21,6 +21,7 @@
 ["n14072485794",-12.36459,13.76154,{"man_made":"tower","tower:type":"communication"}],
 ["n14072825928",-12.38701,16.43324,{"man_made":"tower","tower:type":"communication"}],
 ["n14072960231",-12.78052,15.83348,{"man_made":"tower","tower:type":"communication"}],
+["n14287836644",-5.17016,12.50364,{"man_made":"tower","tower:type":"communication"}],
 ["n1952658817",-12.96509,13.60407,{"man_made":"mast","tower:type":"communication"}],
 ["n2148550723",-9.2203,20.32336,{"height":"82","man_made":"tower","name":"РРС2","operator":"проект","tower:type":"communication"}],
 ["n2182873016",-11.65646,13.84258,{"man_made":"tower","tower:type":"communication"}],

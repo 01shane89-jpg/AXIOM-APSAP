@@ -1,4 +1,4 @@
-{"cc":"lk","at":"2026-10-03T02:21:55Z","base":"2026-10-03T02:20:29Z","m":[
+{"cc":"lk","at":"2026-11-01T10:55:35Z","base":"2026-11-01T10:54:02Z","m":[
 ["n10002770434",7.47361,80.04719,{"man_made":"communications_tower","material":"metal","tower:construction":"lattice","tower:type":"communication"}],
 ["n10081829079",6.87883,79.94036,{"height":"70","man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n10091462929",6.98211,81.37934,{"man_made":"communications_tower","tower:type":"communication"}],
@@ -8,7 +8,7 @@
 ["n10572677204",6.3866,80.60182,{"man_made":"tower","tower:type":"communication"}],
 ["n10572677205",6.38626,80.60093,{"man_made":"tower","tower:type":"communication"}],
 ["n10582273930",5.94562,80.46199,{"communication:4g":"yes","communication:mobile_phone":"yes","man_made":"mast","operator":"Dialog","tower:type":"communication"}],
-["n10583707366",5.97018,80.44785,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n10583707366",5.97017,80.44791,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10583707368",5.97454,80.42739,{"communication:4g":"yes","communication:mobile_phone":"yes","man_made":"mast","operator":"Mobitel","tower:type":"communication"}],
 ["n10586370016",5.94738,80.49665,{"communication:mobile_phone":"yes","man_made":"tower","operator":"Hutch","tower:type":"communication"}],
 ["n10586370017",5.94031,80.58468,{"communication:mobile_phone":"yes","man_made":"tower","operator":"Hutch","tower:type":"communication"}],
@@ -44,7 +44,7 @@
 ["n11050442435",6.69458,79.92167,{"man_made":"tower","tower:type":"communication"}],
 ["n11083963325",6.7586,79.91185,{"man_made":"tower","tower:type":"communication"}],
 ["n11105814698",6.69494,79.98278,{"man_made":"tower","tower:type":"communication"}],
-["n11140115892",7.29049,81.85855,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"tower","tower:type":"communication"}],
+["n11140115892",7.29044,81.85856,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"tower","tower:type":"communication"}],
 ["n11140590396",7.29076,81.85066,{"man_made":"tower","tower:type":"communication"}],
 ["n11152270265",7.29555,80.63075,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n11215607258",6.75691,81.80719,{"man_made":"tower","tower:type":"communication"}],
@@ -114,6 +114,9 @@
 ["n14159516634",9.76236,79.86529,{"man_made":"communications_tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
 ["n14197356503",7.94516,81.24791,{"man_made":"tower","tower:type":"communication"}],
 ["n14221195193",7.52762,81.35719,{"man_made":"mast","tower:type":"communication"}],
+["n14294823698",6.02377,80.79605,{"man_made":"mast","tower:type":"communication"}],
+["n14299722802",7.21594,81.85152,{"man_made":"mast","tower:type":"communication"}],
+["n14335883333",6.00589,80.74778,{"man_made":"tower","tower:type":"communication"}],
 ["n1621585270",6.41676,79.99922,{"man_made":"tower","tower:type":"communication"}],
 ["n1839503054",6.89887,79.92532,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1902017890",7.01955,79.90023,{"man_made":"communications_tower","name":"Slt Training Centre"}],

@@ -1,4 +1,4 @@
-{"cc":"az","at":"2026-10-03T02:41:07Z","base":"2026-10-03T02:37:47Z","m":[
+{"cc":"az","at":"2026-11-01T11:13:30Z","base":"2026-11-01T11:12:20Z","m":[
 ["n11101768625",39.81427,46.76302,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n11413211501",40.7541,46.10357,{"man_made":"communications_tower","name":"Rabitə Qulləsi \\ Aşağı Seyfəli"}],
 ["n11506651367",40.85146,45.9295,{"man_made":"communications_tower"}],
@@ -153,6 +153,8 @@
 ["n14231289978",40.24852,50.8415,{"communication:radio":"yes","man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
 ["n14241833789",40.70893,46.36178,{"man_made":"mast","tower:type":"communication"}],
 ["n14241833790",40.69192,46.35688,{"man_made":"mast","tower:type":"communication"}],
+["n14247334968",40.66617,46.45605,{"man_made":"mast","tower:type":"communication"}],
+["n14316349302",39.41956,49.11435,{"man_made":"communications_tower","tower:type":"Rabitə Qulləsi Xıllı"}],
 ["n1754691533",40.45889,50.0535,{"man_made":"tower","tower:type":"communication"}],
 ["n2182527961",39.67578,46.89609,{"man_made":"mast","tower:type":"communication"}],
 ["n2204839230",38.89873,45.91565,{"man_made":"tower","tower:type":"communication"}],
@@ -241,6 +243,9 @@
 ["n8655748235",40.14264,46.75549,{"communication:mobile_phone":"yes","communication:radio":"yes","height":"16","man_made":"mast","material":"steel","tower:construction":"freestanding"}],
 ["n8715474903",41.14542,49.06445,{"man_made":"communications_tower","name":"Rabitə Qulləsi","tower:type":"communication"}],
 ["n8740229263",40.86483,49.35887,{"man_made":"communications_tower","tower:type":"Rabitə Qulləsi"}],
+["n8779432867",39.79598,44.95872,{"man_made":"mast","tower:type":"communication"}],
+["n8779432868",39.79553,44.95734,{"man_made":"mast","tower:type":"communication"}],
+["n8779432869",39.79562,44.95758,{"man_made":"mast","tower:type":"communication"}],
 ["n8857808111",40.42125,48.26013,{"man_made":"communications_tower","name":"Rabitə","tower:type":"communication"}],
 ["n8857808112",40.42104,48.26034,{"man_made":"communications_tower","name":"Rabitə Qulləsi","tower:type":"communication"}],
 ["n9041686215",40.46914,48.71011,{"man_made":"communications_tower","name":"Rabitə Qulləsi \\ Birinci Çaylı"}],
