@@ -1,6 +1,6 @@
 [["n11403856305",14.5749,-60.96453,"fr",{"name":"Centre de Santé Ducos","amenity":"clinic","healthcare":"clinic","addr:street":"Route du Morne Vert","addr:city":"Ducos"}],
 ["n11622099483",14.58602,-61.0209,"fr",{"aeroway":"helipad"}],
-["n12714895695",14.84047,-61.10632,"fr",{"name":"aérodrome de Chalvet","aeroway":"aerodrome"}],
+["n12714895695",14.84047,-61.10632,"fr",{"name":"Aérodrome de Chalvet","aeroway":"aerodrome"}],
 ["n13112506263",14.59291,-61.0069,"fr",{"aeroway":"helipad"}],
 ["n13329733873",14.06936,-60.94996,"lc",{"name":"Quay Medical Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"family_medicine;urgent_care","phone":"+1 758-727-7884","opening_hours":"Mo-Fr 09:00-17:00"}],
 ["n14140462405",14.6316,-60.98837,"fr",{"name":"Centre Maurice Despinoy","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"psychiatry","phone":"+33 596 488 999","website":"https://www.ch-despinoy.fr/"}],

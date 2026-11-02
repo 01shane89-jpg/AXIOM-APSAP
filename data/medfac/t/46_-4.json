@@ -130,7 +130,7 @@
 ["w646584182",47.68566,-2.45129,"fr",{"name":"Ambulance Azur","emergency":"ambulance_station","phone":"+33 2 97 26 67 55","website":"https://www.taxi-ambulance-azur.fr/","addr:housenumber":"14","addr:street":"Avenue de Bel-Air","addr:city":"Questembert","addr:postcode":"56230"}],
 ["w700875505",46.72213,-2.35263,"fr",{"name":"Hôpital local Dumonté","amenity":"hospital","healthcare":"hospital","phone":"+33 2 51 26 08 00","wikidata":"Q92063416"}],
 ["w710315294",47.67961,-2.77545,"fr",{"name":"Clinique Océane","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
-["w711868876",47.95796,-2.54791,"fr",{"name":"Centre hospitalier de Josselin","amenity":"hospital","operator:type":"public","phone":"+33 2 97 73 13 13","wikidata":"Q20971064"}],
+["w711868876",47.95794,-2.54805,"fr",{"name":"Centre hospitalier de Josselin","amenity":"hospital","healthcare":"hospital","operator:type":"public","phone":"+33 2 97 73 13 13","website":"https://www.ch-josselin.fr/","wikidata":"Q20971064"}],
 ["w71257691",47.81189,-3.26048,"fr",{"name":"Hôpital de jour Pierre Thalbot","amenity":"hospital","healthcare":"hospital","operator:type":"public","phone":"+33 2 97 02 39 39"}],
 ["w712640572",47.87536,-2.82766,"fr",{"aeroway":"helipad","surface":"grass"}],
 ["w71569525",47.32419,-2.42441,"fr",{"name":"Hôpital Intercommunal de la Presqu'ile Guérande","amenity":"hospital","healthcare":"hospital","wikidata":"Q92062539"}],

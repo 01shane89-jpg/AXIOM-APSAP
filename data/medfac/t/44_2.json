@@ -107,7 +107,6 @@
 ["w148955985",45.70068,3.13827,"fr",{"name":"Clinique de l'Auzon","amenity":"clinic"}],
 ["w150052617",45.72679,3.18798,"fr",{"name":"Pôle Santé Roland Garros","amenity":"clinic","healthcare":"clinic"}],
 ["w1501587104",44.6324,3.47776,"fr",{"name":"La Colagne","amenity":"clinic","healthcare":"clinic"}],
-["w1544591817",45.61221,3.20967,"fr",{"name":"Maison de Santé Pluridisciplinaire","amenity":"clinic"}],
 ["w158348696",44.80818,3.27918,"fr",{"name":"Centre hospitalier Fanny Ramadier","amenity":"hospital","phone":"+33 4 66 31 00 66","website":"https://www.ch-saint-chely.fr/","wikidata":"Q92062409"}],
 ["w160950250",44.70376,3.88465,"fr",{"name":"Aérodrome de Langogne - Lespéron","name:en":"Langogne - Lespéron Airport","aeroway":"aerodrome","icao":"LFHL","wikidata":"Q2875504"}],
 ["w161433241",45.84019,3.51802,"fr",{"name":"Ambulance Grange","emergency":"ambulance_station"}],
