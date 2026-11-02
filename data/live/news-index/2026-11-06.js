@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-11-06"]=[["th","2026-11-06T00:00","Turned the wrong card. The House lost its shape.","เปิดไพ่ผิดใบ เกมสภาเสียทรง","Daily News","https://www.dailynews.co.th/news/6322292/","","m","",""]];
