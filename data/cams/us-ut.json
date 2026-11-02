@@ -1987,7 +1987,6 @@
 ["172377",41.30701,-112.0055,"State St / US-89 @ 2700 N / SR-134, PLV","https://udottraffic.utah.gov/map/Cctv/172377"],
 ["172378",37.6099,-113.3698,"SR-56 RWIS WB @ Iron Mountain Summit / MP 43.1 RN","https://udottraffic.utah.gov/map/Cctv/172378"],
 ["172379",40.66384,-112.31933,"I-80 EB @ Milepost 95, TE","https://udottraffic.utah.gov/map/Cctv/172379"],
-["172380",41.14125,-112.02574,"I-15 SB @ 1900 N / MP 337.05, SUN","https://udottraffic.utah.gov/map/Cctv/172380"],
 ["172381",37.99682,-109.35375,"US-191 @ Milepost 80.76, SJ","https://udottraffic.utah.gov/map/Cctv/172381"],
 ["172382",40.35403,-112.0005,"Pony Express Pkwy @ Lone Tree Pkwy, EAG","https://udottraffic.utah.gov/map/Cctv/172382"],
 ["172383",40.41031,-111.9068,"3600 W @ Hardman Way / 1900 N, LHI","https://udottraffic.utah.gov/map/Cctv/172383"],
@@ -2083,4 +2082,7 @@
 ["172473",40.42814,-111.83036,"1200 E @ 3200 N, LHI","https://udottraffic.utah.gov/map/Cctv/172473"],
 ["172474",37.50877,-113.21306,"I-15 NB @ Milepost 44.12, RN","https://udottraffic.utah.gov/map/Cctv/172474"],
 ["172475",39.16115,-111.07109,"SR-10 @ Milepost 33.07, EM","https://udottraffic.utah.gov/map/Cctv/172475"],
-["172476",41.13585,-112.02578,"I-15 SB @ MP 336.97, SUN","https://udottraffic.utah.gov/map/Cctv/172476"]]}
+["172476",41.13585,-112.02578,"I-15 SB @ MP 336.97, SUN","https://udottraffic.utah.gov/map/Cctv/172476"],
+["172477",37.88878,-111.45809,"Portable RWIS 5","https://udottraffic.utah.gov/map/Cctv/172477"],
+["172478",39.97508,-112.06803,"US-6 @ Eureka Curves / MP 143, JU","https://udottraffic.utah.gov/map/Cctv/172478"],
+["172479",41.60333,-111.5608,"Blacksmith Fork Canyon Rd / SR-101 @ Hardware Ranch / MP 21.74, CA","https://udottraffic.utah.gov/map/Cctv/172479"]]}
