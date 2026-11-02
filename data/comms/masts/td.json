@@ -1,4 +1,4 @@
-{"cc":"td","at":"2026-10-03T09:56:54Z","base":"2026-10-03T09:54:21Z","m":[
+{"cc":"td","at":"2026-11-02T12:22:19Z","base":"2026-11-02T12:20:27Z","m":[
 ["n10098444298",12.11416,15.0784,{"man_made":"mast","tower:type":"radio"}],
 ["n10098444299",12.11432,15.0775,{"man_made":"mast","tower:type":"radio"}],
 ["n10098444300",12.11509,15.07796,{"man_made":"mast","tower:type":"radio"}],
@@ -45,6 +45,8 @@
 ["n13534663147",13.7537,21.36567,{"man_made":"tower","tower:type":"communication"}],
 ["n13545118182",13.96176,21.32297,{"man_made":"communications_tower","tower:type":"communication"}],
 ["n13725733598",12.80402,21.31977,{"man_made":"tower","tower:type":"communication"}],
+["n14302564637",13.45444,14.72787,{"man_made":"mast","tower:type":"communication"}],
+["n14302733954",13.45819,14.7109,{"man_made":"mast","tower:type":"communication"}],
 ["n1988133078",8.68363,16.83438,{"communication:mobile_phone":"yes","man_made":"mast"}],
 ["n1990987931",7.92775,16.63322,{"man_made":"tower","tower:type":"communication"}],
 ["n2006110586",7.92364,16.63425,{"man_made":"tower","name":"Antenne Communication Interne","tower:type":"communication"}],
