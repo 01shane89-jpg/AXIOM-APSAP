@@ -159,7 +159,10 @@ console.log("timing: feeds read in", took(T0));
 // A connection-level failure ("fetch failed": reset, DNS, TLS) can hit dozens of unrelated small sites in one run and be gone by the
 // next (about 35 failing sources most runs, 60 on 2026-10-28 04:12Z and 78 on 2026-10-30 08:16Z, nearly all "fetch failed"), so
 // those feeds get one more try after a short pause. The failed promise is dropped from the per-address cache so it is fetched again.
-const retry = new Set(status.filter((s) => !s.ok && /^fetch failed/.test(s.error)).map((s) => s.url));
+// A read that ran out of time ("timed out") spikes the same way (49 sources on 2026-11-03 04:23Z, cleared next run), so it is retried
+// too; at most RETRY_MAX feeds are retried, so a run where the runner's network is down does not add many minutes of more timeouts.
+const RETRY_MAX = 80;
+const retry = new Set(status.filter((s) => !s.ok && /^(fetch failed|timed out)/.test(s.error)).map((s) => s.url).slice(0, RETRY_MAX));
 if (retry.size) {
   for (let i = status.length; i--; ) if (!status[i].ok && retry.has(status[i].url)) status.splice(i, 1);
   for (const u of retry) { failed.delete(u); delete bodies[u]; }
@@ -167,7 +170,7 @@ if (retry.size) {
   const T1 = Date.now(), again = Object.values(byHost).map((q) => q.filter((f) => retry.has(f.url))).filter((q) => q.length);
   await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = again.shift()); ) for (const f of q) await readPaced(f); }));
   const still = new Set(status.filter((s) => !s.ok && retry.has(s.url)).map((s) => s.url)).size;
-  console.log("retry: " + retry.size + " feeds after a connection failure, " + (retry.size - still) + " answered the second time, in", took(T1));
+  console.log("retry: " + retry.size + " feeds after a connection failure or time-out, " + (retry.size - still) + " answered the second time, in", took(T1));
 }
 // Every country in the picker must have news. Any country left with no working source this run (its outlets down,
 // or an empty search) gets a Bing News search for its name, tried quoted and then plain; marked as a search like the others.
