@@ -1,0 +1,5 @@
+[["n10225565161",41.64147,41.6231,"ge",{"healthcare":"blood_donation"}],
+["n11584211269",41.70707,44.7965,"ge",{"healthcare":"blood_donation"}],
+["n4921000346",41.7211,44.72998,"ge",{"name":"ნაციონალური სისხლუს ბანკი","name:en":"National Blood Bank","healthcare":"blood_donation"}],
+["n5327627926",42.15993,42.33565,"ge",{"name":"სისხლის ბანკი","healthcare":"blood_donation"}],
+["n5610899522",41.73646,44.73786,"ge",{"name:en":"Cord Blood Bank Geocord","healthcare":"blood_donation","contact:phone":"+995 32 243 01 00","addr:housenumber":"4","addr:street":"ლისის ტბის მიმდებარე ტერიტორია"}]]

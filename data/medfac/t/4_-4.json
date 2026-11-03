@@ -19,6 +19,7 @@
 ["n13593579591",5.2739,-3.97092,"ci",{"name":"Clinique médicale Carly","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;paediatrics;gynaecology","phone":"+225 27 21 24 60 05","opening_hours":"24/7"}],
 ["n13740195968",5.81163,-2.86632,"gh",{"name":"Aowin Community Clinic","amenity":"clinic"}],
 ["n14154340670",5.21365,-3.76701,"ci",{"name":"Clinique Hope","amenity":"hospital","healthcare":"hospital"}],
+["n14292956655",5.56372,-2.00025,"gh",{"name":"Sedem Medical Center","amenity":"hospital","healthcare":"hospital","operator:type":"private"}],
 ["n1625055493",5.22018,-3.73645,"ci",{"name":"Clinique Siloé","amenity":"clinic","healthcare":"clinic"}],
 ["n2461273777",5.31144,-3.97348,"ci",{"name":"Clinique médicale Koko","amenity":"clinic","healthcare":"clinic","emergency":"no","addr:street":"Rue E 7","addr:city":"Marcory"}],
 ["n2493737349",5.2939,-3.95585,"ci",{"name":"Clinique Axe optique","amenity":"clinic","healthcare":"clinic"}],
