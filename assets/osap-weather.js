@@ -411,6 +411,12 @@
     ["uas3", "Air", "Drones, medium (Group 3, ScanEagle or Shadow class)", "Drone medium", { wind: 25, gust: 30, prh: 4, ts: 1, frz: 1 }, { wind: 18, gust: 22, prh: 1, vis: 3000, ts: 1 }],
     ["uas4", "Air", "Drones, large (Group 4–5, MQ-9 class)", "Drone large", { gust: 35, ts: 1, frz: 1 }, { gust: 25, ceil: 500, vis: 1600, ts: 1 }],
     ["isr", "Air", "Air observation (EO sensors)", "Air ISR", { ceil: 500, vis: 1000 }, { ceil: 1500, vis: 5000 }],
+    /* airborne (parachute) operations: the surface-wind limits match the DZSO sheet's load profiles (assets/osap-dzso.js: 13 kt static line, the
+       training limit commonly applied under TC 3-21.220; 18 kt ram-air free fall, a placeholder); "14 kt or more" is "over 13 kt". Static line
+       needs the cloud base above the usual 1,250 ft drop height and the DZ in sight; free fall needs the DZ in sight from altitude. Amber is
+       within about 3 kt of the limit, light rain or a lower cloud base. Generic figures: the unit's SOP and the DZSO decide. */
+    ["asl", "Airborne", "Parachute, static line (personnel)", "Static line", { wind: 14, gust: 14, ceil: 1250, vis: 1600, prh: 4, ts: 1, frz: 1 }, { wind: 10, gust: 11, ceil: 2000, vis: 4800, prh: 1, ts: 1 }],
+    ["amf", "Airborne", "Parachute, military free fall (ram-air)", "Free fall", { wind: 19, gust: 19, vis: 1600, prh: 4, ts: 1, frz: 1 }, { wind: 15, gust: 16, ceil: 3000, vis: 4800, prh: 1, ts: 1 }],
     ["gwl", "Ground", "Wheeled, light (4x4s, light trucks), off-road", "Wheeled light", { pr24: 40, sn: 15 }, { pr24: 20, sn: 5, vis: 200 }],
     ["gwh", "Ground", "Wheeled, heavy (MRAPs, heavy trucks), off-road", "Wheeled heavy", { pr24: 30, sn: 20 }, { pr24: 15, sn: 10, gust: 45, vis: 200 }],
     ["trk", "Ground", "Tracked (tanks, armoured carriers), off-road", "Tracked", { pr24: 75, sn: 40 }, { pr24: 40, sn: 20, vis: 200 }],
@@ -499,8 +505,8 @@
     o.wave = w.wave; o.where = { wave: w.where && w.where.wave };
     return o;
   }
-  function analyse(D, per) {
-    var BL = blocks(per, D.tz), ref = D.pts[0];
+  function analyse(D, per, own) {
+    var BL = own || blocks(per, D.tz), ref = D.pts[0];
     var rows = BL.map(function (b) {
       var list = D.pts.map(function (p) { return { p: p, a: agg(p, b) }; });
       var w = worst(list), hrs = (b.t1 - b.t0) / 36e5;
@@ -576,6 +582,10 @@
     }
     var r = tw(-0.833), nt = tw(-12);
     return { bmnt: nt[0], rise: r[0], set: r[1], eent: nt[1] };
+  }
+  function sunAlt(ms, lat, lon) {
+    var d = jd(ms), c = sunEq(d), H = AR * (280.16 + 360.9856235 * d) + AR * lon - c.ra, phi = AR * lat;
+    return Math.asin(Math.sin(phi) * Math.sin(c.dec) + Math.cos(phi) * Math.cos(c.dec) * Math.cos(H));
   }
   function moonAlt(ms, lat, lon) {
     var d = jd(ms), c = moonEq(d), H = AR * (280.16 + 360.9856235 * d) + AR * lon - c.ra, phi = AR * lat;
@@ -845,8 +855,9 @@
       function (e) { ST.busy = false; ST.err = e.message || String(e); redraw(); throw e; });
   }
   document.addEventListener("click", function (e) {
-    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxeasy],[data-wxreport],[data-wxchart],[data-wxb],[data-wxpick],[data-wxbpick],[data-wxfound]");
+    var t = e.target.closest && e.target.closest("[data-wxez],[data-wxper],[data-wxgo],[data-wxbrief],[data-wxeasy],[data-wxreport],[data-wxchart],[data-wxb],[data-wxpick],[data-wxbpick],[data-wxfound]");
     if (!t) return;
+    if (t.hasAttribute("data-wxez")) { ST.ezr = t.getAttribute("data-wxez"); if (t.hasAttribute("data-wxezd")) ST.ezd = +t.getAttribute("data-wxezd"); return easyRedraw(); }
     if (t.hasAttribute("data-wxpick")) return pickStart();
     if (t.hasAttribute("data-wxbpick")) {
       /* on a phone the toolbar sheet covers the map: close it so the map can be tapped */
@@ -918,61 +929,137 @@
     if (i === 0) return "Today";
     try { return new Date(ms).toLocaleDateString("en-GB", { weekday: "short", timeZone: tz }); } catch (e) { return dayLbl(ms, tz); }
   }
-  /* one local day at the reference point: picture, high and low, chance and amount of rain, strongest wind */
+  /* the forecast hours ix at point p summed into one card: high and low, chance and amount of rain, strongest wind, storms, sky */
+  function ezAgg(p, ix, o) {
+    o.hi = null; o.lo = null; o.pp = null; o.pr = 0; o.sn = 0; o.wind = null; o.gust = null; o.ts = 0; o.cloud = 0; o.nc = 0; o.fog = 0;
+    var dirs = [], spd = [];
+    ix.forEach(function (i) {
+      var T = at(p, "temperature_2m", i); if (T != null) { if (o.hi == null || T > o.hi) o.hi = T; if (o.lo == null || T < o.lo) o.lo = T; }
+      var pp = at(p, "precipitation_probability", i); if (pp != null && (o.pp == null || pp > o.pp)) o.pp = pp;
+      o.pr += at(p, "precipitation", i) || 0; o.sn += at(p, "snowfall", i) || 0;
+      var ws = at(p, "wind_speed_10m", i), wg = at(p, "wind_gusts_10m", i);
+      if (ws != null && (o.wind == null || ws > o.wind)) o.wind = ws; if (wg != null && (o.gust == null || wg > o.gust)) o.gust = wg;
+      dirs.push(at(p, "wind_direction_10m", i)); spd.push(ws);
+      o.ts = Math.max(o.ts, tsState(p, i));
+      var c = at(p, "cloud_cover", i); if (c != null) { o.cloud += c; o.nc++; }
+      var code = at(p, "weather_code", i); if (code === 45 || code === 48) o.fog++;
+    });
+    o.cloud = o.nc ? o.cloud / o.nc : null; o.dir = vecMean(dirs, spd);
+    /* fog needs 3 foggy hours in a day, or most of a shorter block */
+    var fogN = ix.length >= 12 ? 3 : Math.max(1, Math.ceil(ix.length / 2));
+    o.kind = o.ts === 2 ? "storm" : o.sn >= 1 ? "snow" : o.pr >= 2 || (o.pp != null && o.pp >= 60 && o.pr >= 0.5) ? "rain" : o.pr >= 0.3 ? "showers" : o.fog >= fogN ? "fog" :
+      o.cloud == null ? "cloud" : o.cloud < 25 ? "sun" : o.cloud < 70 ? "part" : "cloud";
+    if (o.ts === 1 && o.kind !== "storm") o.tsMaybe = true;
+    return o;
+  }
+  /* sun below the horizon at the place: clear and part-cloudy pictures show the moon */
+  function isNight(ms, p) { return sunAlt(ms, p.lat, p.lon) < -0.833 * AR; }
+  function nightKind(k, night) { return night && (k === "sun" || k === "part") ? (k === "sun" ? "moon" : "mpart") : k; }
+  /* one local day at the reference point */
   function easyDays(D, n) {
     var p = D.pts[0], tz = D.tz, out = [], start = hourNow();
     for (var d = 0; d < n; d++) {
       var t1 = nextLocalMidnight(start + 36e5, tz), ix = hrsFrom(p, start, t1);
       if (!ix.length) break;
-      var o = { t0: start, lbl: dayName(start + 36e5, tz, d), date: dayLbl(start + 36e5, tz), hi: null, lo: null, pp: null, pr: 0, sn: 0, wind: null, gust: null, ts: 0, cloud: 0, nc: 0, fog: 0, dirs: [], spd: [] };
-      ix.forEach(function (i) {
-        var T = at(p, "temperature_2m", i); if (T != null) { if (o.hi == null || T > o.hi) o.hi = T; if (o.lo == null || T < o.lo) o.lo = T; }
-        var pp = at(p, "precipitation_probability", i); if (pp != null && (o.pp == null || pp > o.pp)) o.pp = pp;
-        o.pr += at(p, "precipitation", i) || 0; o.sn += at(p, "snowfall", i) || 0;
-        var ws = at(p, "wind_speed_10m", i), wg = at(p, "wind_gusts_10m", i);
-        if (ws != null && (o.wind == null || ws > o.wind)) o.wind = ws; if (wg != null && (o.gust == null || wg > o.gust)) o.gust = wg;
-        o.dirs.push(at(p, "wind_direction_10m", i)); o.spd.push(ws);
-        o.ts = Math.max(o.ts, tsState(p, i));
-        var c = at(p, "cloud_cover", i); if (c != null) { o.cloud += c; o.nc++; }
-        var code = at(p, "weather_code", i); if (code === 45 || code === 48) o.fog++;
-      });
-      o.cloud = o.nc ? o.cloud / o.nc : null; o.dir = vecMean(o.dirs, o.spd); delete o.dirs; delete o.spd;
-      o.kind = o.ts === 2 ? "storm" : o.sn >= 1 ? "snow" : o.pr >= 2 || (o.pp != null && o.pp >= 60 && o.pr >= 0.5) ? "rain" : o.pr >= 0.3 ? "showers" : o.fog >= 3 ? "fog" :
-        o.cloud == null ? "cloud" : o.cloud < 25 ? "sun" : o.cloud < 70 ? "part" : "cloud";
-      if (o.ts === 1 && o.kind !== "storm") o.tsMaybe = true;
-      out.push(o);
+      out.push(ezAgg(p, ix, { t0: start, t1: t1, lbl: dayName(start + 36e5, tz, d), date: dayLbl(start + 36e5, tz) }));
       start = t1;
     }
     return out;
   }
-  var KIND = { sun: "Sunny", part: "Some cloud", cloud: "Cloudy", showers: "Showers", rain: "Rain", storm: "Storms", snow: "Snow", fog: "Fog" };
+  /* "Tue 14:00" on the local clock */
+  function locHM(ms, tz) {
+    try { return new Date(ms).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: tz }).replace(",", ""); }
+    catch (e) { return new Date(ms).toISOString().slice(11, 16); }
+  }
+  /* n blocks of hrs hours from this hour (the 24 h and 72 h cards), each labelled with its local start and Zulu */
+  function easyBlocks(D, hrs, n) {
+    var p = D.pts[0], tz = D.tz, out = [], start = hourNow();
+    for (var k = 0; k < n; k++) {
+      var t0 = start + k * hrs * 36e5, t1 = t0 + hrs * 36e5, ix = hrsFrom(p, t0, t1);
+      if (!ix.length) break;
+      var o = ezAgg(p, ix, { t0: t0, t1: t1, lbl: locHM(t0, tz), z: zOnly(t0) + "–" + zOnly(t1), date: whenWords(t0, tz) + " to " + whenWords(t1, tz) });
+      o.kind = nightKind(o.kind, isNight((t0 + t1) / 2, p));
+      out.push(o);
+    }
+    return out;
+  }
+  var KIND = { sun: "Sunny", part: "Some cloud", cloud: "Cloudy", showers: "Showers", rain: "Rain", storm: "Storms", snow: "Snow", fog: "Fog", moon: "Clear", mpart: "Some cloud" };
   /* small pictures drawn here (no image files), each with its words for screen readers */
   function wxIcon(k) {
     var sun = '<circle cx="16" cy="16" r="6" fill="#f5b400"/><g stroke="#f5b400" stroke-width="2" stroke-linecap="round"><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.1 2.1M23.1 23.1l2.1 2.1M6.8 25.2l2.1-2.1M23.1 8.9l2.1-2.1"/></g>';
+    var moon = '<path d="M20 5a11 11 0 1 0 7 19A9 9 0 0 1 20 5z" fill="#c9b458" stroke="#8a7a2c" stroke-width=".8"/>';
     var cloud = function (x, y, f) { return '<path transform="translate(' + x + " " + y + ')" d="M8 22h15a5 5 0 0 0 .6-10A7 7 0 0 0 10 10.5 5.8 5.8 0 0 0 8 22z" fill="' + f + '" stroke="#7b8794" stroke-width="1"/>'; };
     var drops = '<g stroke="#1e6fd9" stroke-width="2" stroke-linecap="round"><path d="M11 25l-1.5 4M16 25l-1.5 4M21 25l-1.5 4"/></g>';
     var g = { sun: sun, part: '<g transform="translate(-5 -5) scale(.8)">' + sun + "</g>" + cloud(2, 2, "#e9edf1"), cloud: cloud(0, -2, "#d5dbe1"),
+      moon: moon, mpart: '<g transform="translate(-4 -4) scale(.8)">' + moon + "</g>" + cloud(2, 2, "#e9edf1"),
       showers: '<g transform="translate(-5 -6) scale(.7)">' + sun + "</g>" + cloud(1, -4, "#d5dbe1") + drops, rain: cloud(0, -5, "#b9c3cd") + drops,
       storm: cloud(0, -6, "#9aa5b1") + '<path d="M17 18l-4 7h4l-2 6 6-9h-4l2-4z" fill="#f59e0b" stroke="#b45309" stroke-width=".6"/>',
       snow: cloud(0, -5, "#d5dbe1") + '<g fill="#5b8fd9"><circle cx="11" cy="26" r="1.6"/><circle cx="16" cy="28" r="1.6"/><circle cx="21" cy="26" r="1.6"/></g>',
       fog: '<g stroke="#8a96a3" stroke-width="2.2" stroke-linecap="round"><path d="M5 11h22M3 16h24M6 21h20M4 26h18"/></g>' }[k] || "";
     return '<svg class="wxico" viewBox="0 0 32 32" role="img" aria-label="' + esc(KIND[k] || "") + '">' + g + "</svg>";
   }
+  /* strongest wind and gust as "8–18" (gusts shown when 8 kt or more above the wind), in mph or knots */
+  function windSpan(d, f) { return d.wind == null ? "–" : f(d.wind) + (d.gust != null && d.gust >= d.wind + 8 ? "–" + f(d.gust) : ""); }
   function stripHtml(days, tz) {
-    return '<div class="wxstrip" role="list" aria-label="Weather day by day">' + days.map(function (d) {
-      return '<div class="wxday" role="listitem" title="' + esc(d.date) + '"><b>' + esc(d.lbl) + "</b>" + wxIcon(d.kind) + '<span class="wxdk">' + esc(KIND[d.kind]) + (d.tsMaybe ? ", storms possible" : "") + "</span>" +
+    return '<div class="wxstrip" role="list" aria-label="Weather ' + (days[0] && days[0].z ? "by time" : "day by day") + '">' + days.map(function (d) {
+      return '<div class="wxday" role="listitem" title="' + esc(d.date) + '"><b>' + esc(d.lbl) + "</b>" + (d.z ? '<span class="wxdz">' + esc(d.z) + "</span>" : "") + wxIcon(d.kind) + '<span class="wxdk">' + esc(KIND[d.kind]) + (d.tsMaybe ? ", storms possible" : "") + "</span>" +
         '<span class="wxdt"><b>' + (d.hi != null ? Math.round(d.hi) + "°" : "–") + '</b> <span class="wxdl">' + (d.lo != null ? Math.round(d.lo) + "°C" : "") + "</span></span>" +
         '<span class="wxdf">' + (d.hi != null ? Math.round(cToF(d.hi)) + "° / " + Math.round(cToF(d.lo)) + "°F" : "") + "</span>" +
-        '<span class="wxdr" title="Highest chance of rain in the day, and the total">💧 ' + (d.pp != null ? Math.round(d.pp) + "%" : "–") + (d.pr >= 0.1 ? " · " + (d.pr < 10 ? d.pr.toFixed(1) : Math.round(d.pr)) + " mm" : "") + "</span>" +
-        '<span class="wxdw" title="Strongest wind and gusts in the day">💨 ' + (d.wind != null ? kt2mph(d.wind) + (d.gust != null && d.gust >= d.wind + 8 ? "–" + kt2mph(d.gust) : "") + " mph" : "–") + "</span></div>";
+        '<span class="wxdr" title="Highest chance of rain, and the total">💧 ' + (d.pp != null ? Math.round(d.pp) + "%" : "–") + (d.pr >= 0.1 ? " · " + (d.pr < 10 ? d.pr.toFixed(1) : Math.round(d.pr)) + " mm" : "") + "</span>" +
+        '<span class="wxdw" title="Strongest wind and gusts, in mph and knots">💨 ' + windSpan(d, kt2mph) + (d.wind != null ? " mph" : "") + "</span>" +
+        (d.wind != null ? '<span class="wxdkt">' + windSpan(d, Math.round) + " kt</span>" : "") + "</div>";
     }).join("") + "</div>";
   }
-  /* Good / Marginal / No-go for each kind of activity over the next 3 days, from the same limits as the impact table */
+  /* the hour-by-hour table for one local day at the reference point */
+  function hourKind(p, i) {
+    var code = at(p, "weather_code", i), pr = at(p, "precipitation", i) || 0, sn = at(p, "snowfall", i) || 0, c = at(p, "cloud_cover", i), ts = tsState(p, i);
+    var k = ts === 2 || code >= 95 ? "storm" : sn >= 0.1 ? "snow" : pr >= 1 ? "rain" : pr >= 0.1 ? "showers" : code === 45 || code === 48 ? "fog" : c == null ? "cloud" : c < 25 ? "sun" : c < 70 ? "part" : "cloud";
+    return nightKind(k, isNight(p.h.t[i] + 18e5, p));
+  }
+  function hourHtml(D, day) {
+    var p = D.pts[0], tz = D.tz, ix = hrsFrom(p, Math.max(day.t0, hourNow()), day.t1);
+    if (!ix.length) return '<p class="obs">No forecast hours for this day.</p>';
+    var kt = function (v) { return v == null ? "–" : Math.round(v) + " kt <span class=\"wxl\">" + kt2mph(v) + " mph</span>"; };
+    var cf = function (v) { return v == null ? "–" : Math.round(v) + "°C <span class=\"wxl\">" + Math.round(cToF(v)) + "°F</span>"; };
+    /* wind first after the temperature, so a phone shows it without scrolling the table */
+    return '<div class="wxscroll"><table class="wxhh"><thead><tr><th scope="col">Local <span class="wxl">(Zulu)</span></th><th scope="col">Sky</th><th scope="col">Temp</th>' +
+      '<th scope="col">Wind <span class="wxl">(from)</span></th><th scope="col">Gusts</th><th scope="col">Rain</th><th scope="col">Cloud base</th><th scope="col">Visibility</th><th scope="col">Feels like</th></tr></thead><tbody>' +
+      ix.map(function (i) {
+        var t = p.h.t[i], pp = at(p, "precipitation_probability", i), pr = at(p, "precipitation", i) || 0;
+        var k = hourKind(p, i), code = at(p, "weather_code", i), ts = tsState(p, i), d = at(p, "wind_direction_10m", i), ws = at(p, "wind_speed_10m", i);
+        return "<tr" + (ts ? ' class="wxhts"' : "") + '><th scope="row">' + esc(locHM(t, tz).replace(/^\S+ /, "")) + ' <span class="wxl">' + esc(zOnly(t)) + "</span></th><td>" + wxIcon(k) + " " +
+          esc(WMO[code] || KIND[k] || "") + (ts && code < 95 ? ", storms possible" : "") + "</td><td>" + cf(at(p, "temperature_2m", i)) + "</td><td>" +
+          (ws != null && ws < 3 ? "calm" : kt(ws) + (d != null ? ' <span class="wxl">' + esc(compass(d)) + "</span>" : "")) + "</td><td>" + kt(at(p, "wind_gusts_10m", i)) + "</td><td>" +
+          (pp != null ? Math.round(pp) + "%" : "–") + (pr >= 0.1 ? " · " + pr.toFixed(1) + " mm" : "") + "</td><td>" + esc(ft(ceilingFt(p, i))) + "</td><td>" + esc(vis(at(p, "visibility", i))) + "</td><td>" +
+          cf(at(p, "apparent_temperature", i)) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+  /* one line for the chosen day in the hour-by-hour view */
+  function daySummary(D, day) {
+    var p = D.pts[0], tz = D.tz, s = [], ix = hrsFrom(p, Math.max(day.t0, hourNow()), day.t1);
+    s.push("<b>" + esc(day.lbl === "Today" ? "Today" : day.date) + ":</b> " + esc(KIND[day.kind]).toLowerCase() + ", " + (day.hi != null ? "high " + esc(degCF(day.hi)) + ", low " + esc(degCF(day.lo)) : "temperature not available") +
+      ", rain chance up to " + (day.pp != null ? Math.round(day.pp) + "%" : "–") + (day.pr >= 0.1 ? ", about " + esc(day.pr < 10 ? day.pr.toFixed(1) : String(Math.round(day.pr))) + " mm" : "") +
+      "; " + (day.wind == null ? "wind not available" : "wind up to " + kt2mph(day.wind) + " mph (" + Math.round(day.wind) + " kt)" + (day.gust != null ? ", gusts " + kt2mph(day.gust) + " mph (" + Math.round(day.gust) + " kt)" : "")) + ".");
+    var tsI = ix.filter(function (i) { return tsState(p, i); });
+    if (tsI.length) s.push("<b>Thunderstorms:</b> " + (tsI.some(function (i) { return tsState(p, i) === 2; }) ? "likely" : "possible") + " from about " + esc(whenWords(p.h.t[tsI[0]], tz)) + " to " + esc(whenWords(p.h.t[tsI[tsI.length - 1]] + 36e5, tz)) +
+      ". Lightning, sudden strong gusts and heavy rain; stay off high ground and out of the water.");
+    return s;
+  }
+  /* 3-hour periods over the rest of one local day, for its Good / Marginal / No-go lines */
+  function dayBlocks(day) {
+    var out = [], t = Math.max(day.t0, hourNow());
+    while (t < day.t1) { out.push({ t0: t, t1: Math.min(t + 3 * 36e5, day.t1) }); t += 3 * 36e5; }
+    return out;
+  }
+  /* Good / Marginal / No-go for each kind of activity, from the same limits as the impact table */
   var FAM = [["Flying", "Air", { fwl: "light planes", fwm: "transport planes", fwh: "jets", rwl: "light helicopters", rwm: "medium helicopters", rwh: "heavy helicopters", uas1: "small drones", uas3: "medium drones", uas4: "large drones", isr: "air observation" }],
+    ["Airborne operations", "Airborne", { asl: "static-line jumps", amf: "free-fall jumps" }],
     ["On the ground", "Ground", { gwl: "light vehicles off-road", gwh: "heavy vehicles off-road", trk: "tracked vehicles off-road", per: "people on foot", obs: "ground observation" }],
     ["On the water", "Maritime", { sb: "small boats", pc: "patrol craft", sh: "ships" }]];
-  function activityLines(D) {
-    var A = analyse(D, "h72"), tz = D.tz, out = [];
+  var EZW3 = { span: "in the next 3 days", unit: "six-hour periods", good: "Good for the next 3 days.", cap: "next 3 days" };
+  function activityLines(D, A, Wd) {
+    A = A || analyse(D, "h72"); Wd = Wd || EZW3;
+    var tz = D.tz, out = [];
     if (!A.blocks.length) return out;
     FAM.forEach(function (f) {
       var ids = Object.keys(f[2]), worst = -1, first = null, who = {}, why = "";
@@ -981,12 +1068,12 @@
       });
       if (worst < 0) return;
       var names = Object.keys(who), s;
-      if (worst === 0) s = "Good for the next 3 days.";
+      if (worst === 0) s = Wd.good;
       else {
         var span = A.blocks.filter(function (r) { return r.imp.some(function (x) { return ids.indexOf(x.id) >= 0 && x.c === worst; }); });
         var last = span[span.length - 1];
-        s = RATE[worst] + " at times in the next 3 days" + (span.length === A.blocks.length ? " (the whole time)" : ", first from " + whenWords(first.b.t0, tz) +
-          (span.length > 1 ? "; " + span.length + " of " + A.blocks.length + " six-hour periods, the last ending " + whenWords(last.b.t1, tz) : " to " + whenWords(first.b.t1, tz))) +
+        s = RATE[worst] + " at times " + Wd.span + (span.length === A.blocks.length ? " (the whole time)" : ", first from " + whenWords(first.b.t0, tz) +
+          (span.length > 1 ? "; " + span.length + " of " + A.blocks.length + " " + Wd.unit + ", the last ending " + whenWords(last.b.t1, tz) : " to " + whenWords(first.b.t1, tz))) +
           ". Mainly " + plainWhy(why) + ". Affects " + (names.length > 4 ? names.slice(0, 4).join(", ") + " and " + (names.length - 4) + " more" : names.join(", ")) + ".";
       }
       out.push({ name: f[0], c: worst, text: s });
@@ -1024,16 +1111,42 @@
   function legendHtml() {
     return '<p class="wxleg2">' + RATE.map(function (r, i) { return '<span class="wxc wx' + RAG[i].toLowerCase() + ' wxlegc">' + RATES[i] + "</span> <b>" + r + "</b>: " + RATEW[i]; }).join(" &nbsp; ") + "</p>";
   }
-  /* the easy-read block: the Weather section shows it first; the printable easy-read page wraps it */
+  /* the easy-read block: the Weather section shows it first; the printable easy-read page wraps it. A range picker (24 h, 72 h, week, hour by
+     hour for a chosen day) changes the cards and the Good / Marginal / No-go lines; the week is the default. */
+  var EZR = [["h24", "24 h"], ["h72", "72 h"], ["d7", "Week"], ["hr", "Hour by hour"]];
   function easyHtml(D, print) {
-    var days = easyDays(D, 7), acts = activityLines(D);
-    return '<div class="wxez">' + stripHtml(days, D.tz) +
-      '<ul class="wxezs">' + easySummary(D, days).map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>" +
-      (acts.length ? '<table class="wxact"><caption>What the weather means, next 3 days</caption>' + acts.map(function (a) {
+    var r = ST.ezr || "d7", days = easyDays(D, 7), di = Math.max(0, Math.min(ST.ezd || 0, days.length - 1)), day = days[di], body, head, A, Wd, sum;
+    if (r === "hr" && !day) r = "d7";
+    if (r === "h24") { body = stripHtml(easyBlocks(D, 3, 8), D.tz); A = analyse(D, "h24"); head = "Next 24 hours, every 3 hours";
+      Wd = { span: "in the next 24 hours", unit: "three-hour periods", good: "Good for the next 24 hours.", cap: "next 24 hours" }; }
+    else if (r === "h72") { body = stripHtml(easyBlocks(D, 6, 12), D.tz); A = analyse(D, "h72"); head = "Next 3 days, every 6 hours"; Wd = EZW3; }
+    else if (r === "hr") {
+      var dn = day.lbl === "Today" ? "today" : day.date;
+      body = '<div class="wxezd noprint" role="group" aria-label="Day">' + days.map(function (d, i) {
+        return '<button type="button" class="refresh' + (i === di ? " primary" : "") + '" data-wxez="hr" data-wxezd="' + i + '" aria-pressed="' + (i === di) + '">' + esc(d.lbl) + "</button>";
+      }).join(" ") + "</div>" + hourHtml(D, day);
+      A = analyse(D, "hr", dayBlocks(day)); head = "Hour by hour, " + (day.lbl === "Today" ? "today (" + day.date + ")" : day.date);
+      Wd = { span: dn === "today" ? "later today" : "on " + dn, unit: "three-hour periods", good: dn === "today" ? "Good for the rest of today." : "Good all day " + dn + ".", cap: dn === "today" ? "rest of today" : dn };
+      sum = daySummary(D, day);
+    }
+    else { body = stripHtml(days, D.tz); A = analyse(D, "h72"); head = "Next 7 days, day by day"; Wd = EZW3; }
+    var acts = activityLines(D, A, Wd);
+    return '<div class="wxez" data-ezr="' + r + '"' + (print ? ' data-print="1"' : "") + '><div class="wxezr noprint" role="group" aria-label="Forecast range">' + EZR.map(function (x) {
+        return '<button type="button" class="refresh' + (x[0] === r ? " primary" : "") + '" data-wxez="' + x[0] + '" aria-pressed="' + (x[0] === r) + '">' + x[1] + "</button>";
+      }).join(" ") + '</div><h4 class="wxezh">' + esc(head) + " at " + esc(D.pts[0].name) + "</h4>" + body +
+      '<ul class="wxezs">' + (sum || easySummary(D, days)).map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>" +
+      (acts.length ? '<table class="wxact"><caption>What the weather means, ' + esc(Wd.cap) + "</caption>" + acts.map(function (a) {
         return '<tr><th scope="row">' + esc(a.name) + '</th><td class="wxc wx' + RAG[a.c].toLowerCase() + '">' + RATES[a.c] + " " + RATE[a.c] + "</td><td>" + esc(a.text) + "</td></tr>";
       }).join("") + "</table>" + legendHtml() : "") +
-      '<p class="note">Automatic plain-language reading of the model forecast at ' + esc(D.pts[0].name) + ", made by fixed rules (not a forecaster, not AI). Limits are generic planning figures, not any unit&rsquo;s. Official warnings come first." +
+      '<p class="note">Automatic plain-language reading of the model forecast at ' + esc(D.pts[0].name) + ", made by fixed rules (not a forecaster, not AI). Limits are generic planning figures, not any unit&rsquo;s; airborne limits follow the DZSO sheet&rsquo;s defaults and the DZSO decides. Wind in knots and mph. Official warnings come first." +
       (print ? "" : ' <button type="button" class="refresh" data-wxeasy="1">Print this (easy-read page)</button>') + "</p></div>";
+  }
+  /* a range or day button: redraw every easy-read block on the page with the same forecast */
+  function easyRedraw() {
+    if (!ST.data) return;
+    [].slice.call(document.querySelectorAll(".wxez")).forEach(function (el) {
+      var b = document.createElement("div"); b.innerHTML = easyHtml(ST.data, el.hasAttribute("data-print")); el.parentNode.replaceChild(b.firstChild, el);
+    });
   }
   /* what the short words in the detailed tables mean */
   var TERMS = [["Ceiling", "height of the lowest layer of cloud that covers more than half the sky; low ceilings stop flying"], ["Visibility (vis)", "how far you can see"],
@@ -2397,6 +2510,13 @@
       "table.wxact{border-collapse:collapse;width:100%;margin:4px 0;font-size:13px}table.wxact caption{text-align:left;font-weight:700;margin-bottom:2px}table.wxact th,table.wxact td{border:1px solid rgba(128,128,128,.35);padding:3px 5px;vertical-align:top;text-align:left}table.wxact th{white-space:nowrap}table.wxact td:last-child{white-space:normal;min-width:12em}.wxez p.note{font-size:.9em}@media (max-width:600px){.wxstrip,.wxep .wxstrip{grid-template-columns:repeat(4,1fr)}table.wxact th,table.wxact td.wxc{white-space:normal}}table.wxact td.wxc{white-space:nowrap;cursor:default}",
       ".wxterms{margin:8px 0}.wxterms summary{cursor:pointer;font-weight:600}.wxterms dl,dl.wxtermp{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;margin:4px 0}.wxterms dt,dl.wxtermp dt{font-weight:700}.wxterms dd,dl.wxtermp dd{margin:0}",
       ".wxep{font-size:11px}.wxep .wxstrip{grid-template-columns:repeat(7,1fr)}.wxep .wxday{border-color:#bbb;background:#fff;color:#111}@media print{.wxep .wxday{break-inside:avoid}.wxep table.wxact{font-size:10.5px}}",
+      /* range picker, time cards and the hour-by-hour table */
+      ".wxezr,.wxezd{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 6px}.wxezr .refresh,.wxezd .refresh{min-height:32px}h4.wxezh{margin:2px 0 4px;font-size:13px}.wxdz{font-size:10px;color:var(--muted,#667)}.wxdkt{font-size:11px;color:var(--muted,#667)}",
+      ".wxez[data-ezr=h24] .wxstrip,.wxep .wxez[data-ezr=h24] .wxstrip{grid-template-columns:repeat(auto-fit,minmax(72px,1fr))}.wxez[data-ezr=h72] .wxstrip,.wxep .wxez[data-ezr=h72] .wxstrip{grid-template-columns:repeat(6,1fr)}",
+      "@media (max-width:600px){.wxez[data-ezr=h24] .wxstrip,.wxep .wxez[data-ezr=h24] .wxstrip,.wxez[data-ezr=h72] .wxstrip,.wxep .wxez[data-ezr=h72] .wxstrip{grid-template-columns:repeat(4,1fr)}}",
+      ".bpage table.wxhh,.bpage table.wxact{table-layout:auto}.bpage table.wxact td:last-child{width:100%}"+
+      "table.wxhh{border-collapse:collapse;width:100%;font-size:12px}table.wxhh th,table.wxhh td{border:1px solid rgba(128,128,128,.3);padding:1px 4px;text-align:left;white-space:nowrap;vertical-align:middle}table.wxhh thead th{font-size:11px}table.wxhh svg.wxico{width:18px;height:18px;vertical-align:middle}table.wxhh tr.wxhts td{background:rgba(245,158,11,.14)}table.wxhh .wxl{color:var(--muted,#667);font-size:.9em}",
+      ".wxep table.wxhh{font-size:10px}.wxep table.wxhh td,.wxep table.wxhh th{color:#111}@media print{.wxep table.wxhh{font-size:8.6px}.wxep table.wxhh svg.wxico{width:13px;height:13px}.wxep table.wxhh tr{break-inside:avoid}.wxep table.wxhh tr.wxhts td{-webkit-print-color-adjust:exact;print-color-adjust:exact}.wxep .wxez[data-ezr=h72] .wxday,.wxep .wxez[data-ezr=h24] .wxday{font-size:10px;padding:2px 1px;line-height:1.15}.wxep .wxez[data-ezr=h72] .wxday svg.wxico,.wxep .wxez[data-ezr=h24] .wxday svg.wxico{width:28px;height:28px}.wxep .wxez[data-ezr=h72] .wxdt b{font-size:13px}}",
       "b.wxr{background:#c62828;color:#fff;padding:0 3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}b.wxa{background:#f9a825;color:#111;padding:0 3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}",
       "table.wxf td{vertical-align:top}.wxbp table.wxbt{table-layout:auto}.wxbp table.wxbt th,.wxbp table.wxbt td{padding:1px 3px;white-space:nowrap}.wxbp table.wxbt td:first-child{white-space:normal}",
       ".wxbp table.wxm{font-size:inherit}.wxbp details.wxthr summary{cursor:pointer}.wxbp details.wxthr table td{padding:1px 3px}",

@@ -4,6 +4,10 @@
 // Now, Next 24 hours and when storms are likely; Flying reads No-go with the reason and when; Good / Marginal / No-go legend; impact cells
 // show ✓ ! ✕ instead of G A R; the terms list explains the short words; the easy page and the one-page brief each print on one page on A4
 // and Letter; a phone fits the strip without sideways scrolling; no page errors.
+// Shane 2026-11-02: "an option to do 24, 72hr, week, and an hour by hour for a chosen day", "wind speed in knots", "airborne operations as an
+// activity". Checks: the range picker (Week by default) gives 8 three-hour cards, 12 six-hour cards, 7 day cards, and an hour table for the day
+// picked (the storm day shows its storm hours); cards give wind in mph and kt; Airborne operations has its own Good / Marginal / No-go line;
+// each view prints on one page; the hour table fits a phone.
 // Open-Meteo is answered with the made-up forecast of tests/wxchart_smoke.mjs (a thunderstorm afternoon on day 3, fog on day 2, a dusty
 // windy day 4), so the check runs with no network.
 // Run from the repo root: node tests/wxeasy_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -98,6 +102,35 @@ async function pages(p) {
   ok(/Good: little or no effect/.test(r.text) && /Marginal: possible, but take care/.test(r.text) && /No-go: unsafe/.test(r.text), "legend spells out Good, Marginal, No-go");
   ok(/not a forecaster, not AI/.test(r.text) && /Not analyst-approved/.test(r.text), "says how it was made");
   ok(/Ceiling/.test(r.text) && /knots/.test(r.text), "words used: ceiling and knots explained");
+  ok(/\d+ kt$/.test(await p.evaluate(() => document.querySelector("#wxe-page .wxday .wxdkt").textContent)), "a card gives wind in knots too");
+  ok(r.acts.some((x) => /^Airborne operations/.test(x) && /(static-line|free-fall) jumps|Good for/.test(x)), "Airborne operations line: " + r.acts.find((x) => /^Airborne/.test(x)));
+  ok(await p.evaluate(() => document.querySelector('#wxe-page [data-wxez="d7"]').getAttribute("aria-pressed") === "true"), "Week is the default range");
+  /* each range, and the hour-by-hour day picker, on the printable page */
+  const view = async (sel) => { await p.click("#wxe-page " + sel); return p.evaluate(() => {
+    const g = document.getElementById("wxe-page");
+    return { cards: g.querySelectorAll(".wxday").length, zulu: [...g.querySelectorAll(".wxday .wxdz")].map((x) => x.textContent), head: (g.querySelector("h4.wxezh") || {}).textContent || "",
+      rows: g.querySelectorAll("table.wxhh tbody tr").length, ts: g.querySelectorAll("table.wxhh tr.wxhts").length, cap: (g.querySelector("table.wxact caption") || {}).textContent || "",
+      acts: [...g.querySelectorAll("table.wxact tr")].map((x) => x.textContent), sum: [...g.querySelectorAll("ul.wxezs li")].map((x) => x.textContent), hh: (g.querySelector("table.wxhh tbody tr") || {}).textContent || "" };
+  }); };
+  let v = await view('[data-wxez="h24"]');
+  ok(v.cards === 8 && v.zulu.length === 8 && /^\d{4}Z–\d{4}Z$/.test(v.zulu[0]) && /24 hours/.test(v.head) && /next 24 hours/.test(v.cap), `24 h: 8 three-hour cards with Zulu (${v.cards}, ${v.zulu[0]}), ${v.cap}`);
+  let pv = await pages(p); ok(pv[0] === 1 && pv[1] === 1, "24 h view prints on one page (A4 " + pv[0] + ", Letter " + pv[1] + ")");
+  v = await view('[data-wxez="h72"]');
+  ok(v.cards === 12 && /3 days/.test(v.head) && /next 3 days/.test(v.cap), `72 h: 12 six-hour cards (${v.cards}), ${v.cap}`);
+  pv = await pages(p); ok(pv[0] === 1 && pv[1] === 1, "72 h view prints on one page (A4 " + pv[0] + ", Letter " + pv[1] + ")");
+  v = await view('[data-wxez="hr"]');
+  ok(v.rows >= 1 && v.rows <= 24 && /Hour by hour, today/.test(v.head) && /\d{4}Z/.test(v.hh) && / kt/.test(v.hh) && /mph/.test(v.hh), `hour by hour: today's hours (${v.rows}) with Zulu, kt and mph: ${v.hh}`);
+  const stormI = r.kinds.indexOf("Storms");
+  v = await view(`[data-wxezd="${stormI}"]`);
+  ok(v.rows === 24, "a chosen later day has 24 hours (" + v.rows + ")");
+  ok(v.ts >= 3, "the storm day marks its storm hours (" + v.ts + ")");
+  ok(v.sum.some((x) => /^Thunderstorms: likely from about \w+ \d\d:\d\d local \(\d{4}Z\) to/.test(x)), "the day summary says when the storms are: " + v.sum.join(" | "));
+  ok(/^What the weather means, \w+ \d+ \w+/.test(v.cap) && v.acts.some((x) => /^Flying/.test(x) && /No-go/.test(x)) && v.acts.some((x) => /^Airborne operations/.test(x) && /No-go/.test(x)),
+    "the storm day rates Flying and Airborne operations No-go: " + v.acts.find((x) => /^Airborne/.test(x)));
+  pv = await pages(p); ok(pv[0] === 1 && pv[1] === 1, "hour-by-hour view prints on one page (A4 " + pv[0] + ", Letter " + pv[1] + ")");
+  if (OUT) await p.screenshot({ path: OUT + "/wxeasy-hours.png", fullPage: true });
+  v = await view('[data-wxez="d7"]');
+  ok(v.cards === 7 && !v.zulu.length && v.rows === 0, "back to Week: 7 day cards");
   if (OUT) await p.screenshot({ path: OUT + "/wxeasy-page.png", fullPage: true });
   const pg = await pages(p);
   ok(pg[0] === 1 && pg[1] === 1, "easy page prints on one page (A4 " + pg[0] + ", Letter " + pg[1] + ")");
@@ -143,6 +176,12 @@ async function pages(p) {
   await p.waitForSelector("#wxe-page .wxstrip", { timeout: 60000 });
   const r = await p.evaluate(() => ({ doc: document.documentElement.scrollWidth, vw: document.documentElement.clientWidth, pg: document.getElementById("wxe-page").scrollWidth, pw: document.getElementById("wxe-page").clientWidth }));
   ok(r.doc <= 391 && r.pg <= r.pw + 1, `phone: the page fits a 390 px screen (page ${r.doc}, content ${r.pg} of ${r.pw})`);
+  for (const sel of ['[data-wxez="h24"]', '[data-wxez="h72"]', '[data-wxez="hr"]']) {
+    await p.click("#wxe-page " + sel);
+    const q = await p.evaluate(() => ({ doc: document.documentElement.scrollWidth, pg: document.getElementById("wxe-page").scrollWidth, pw: document.getElementById("wxe-page").clientWidth }));
+    ok(q.doc <= 391 && q.pg <= q.pw + 1, `phone: ${sel} fits without sideways page scroll (page ${q.doc}, content ${q.pg} of ${q.pw})`);
+  }
+  if (OUT) await p.screenshot({ path: OUT + "/wxeasy-phone-hours.png", fullPage: true });
   if (OUT) await p.screenshot({ path: OUT + "/wxeasy-phone.png", fullPage: true });
   ok(!errors.length, "phone: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
