@@ -1,4 +1,4 @@
-{"cc":"cu","at":"2026-10-03T10:06:14Z","base":"2026-10-03T10:02:20Z","m":[
+{"cc":"cu","at":"2026-11-03T11:40:11Z","base":"2026-11-03T11:39:05Z","m":[
 ["n10062550497",20.26156,-76.54944,{"communication:television":"yes","man_made":"mast","name":"Torre de Santa Rosa","tower:construction":"lattice","tower:type":"communication"}],
 ["n10092559607",20.27401,-76.94777,{"communication:gsm":"yes","communication:gsm900":"yes","communication:lte+":"yes","communication:lte1800":"yes","communication:umts":"yes","communication:umts900":"yes","height":"42","man_made":"tower","tower:construction":"guyed_lattice","tower:type":"communication"}],
 ["n10565970392",22.97931,-82.37978,{"man_made":"mast","tower:type":"communication"}],
@@ -68,6 +68,7 @@
 ["n11823870410",22.82779,-82.28882,{"man_made":"tower","tower:type":"communication"}],
 ["n11823870411",22.82809,-82.28853,{"man_made":"tower","tower:type":"communication"}],
 ["n11831535918",22.52071,-80.16229,{"man_made":"tower","tower:construction":"freestanding","tower:type":"communication"}],
+["n11884242152",22.73329,-80.9188,{"man_made":"tower","tower:type":"communication"}],
 ["n12022785688",23.04308,-82.00787,{"communication:radio":"yes","man_made":"mast","name":"Radio Jaruco","tower:type":"communication"}],
 ["n12146416512",20.25434,-76.54017,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
 ["n12155612608",22.74278,-79.75839,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
@@ -110,6 +111,7 @@
 ["n14084730901",23.12133,-82.38144,{"man_made":"communications_tower","name":"Antena Etecsa 4G","operator":"Etecsa"}],
 ["n1412757392",21.94301,-79.17227,{"communication:radio":"yes","communication:television":"yes","man_made":"mast","name":"Radio y TV Jatibonico","tower:type":"communication"}],
 ["n1412757658",21.94214,-79.17131,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14284629888",20.24473,-76.96011,{"communication:gsm":"yes","communication:lte":"yes","communication:mobile_phone":"yes","communication:umts":"yes","height":"24","man_made":"tower","tower:construction":"monopole","tower:type":"communication"}],
 ["n2109608612",22.40472,-79.8936,{"communication:radio":"yes","man_made":"tower","tower:construction":"guyed_lattice","tower:type":"communication"}],
 ["n2158322652",21.8139,-79.97639,{"man_made":"tower","operator":"Radio Cuba","tower:type":"communication"}],
 ["n2219287581",22.4202,-79.93914,{"communication:radio":"yes","man_made":"tower","tower:construction":"guyed_lattice","tower:type":"communication"}],
@@ -368,7 +370,7 @@
 ["n9373738777",22.93853,-80.89964,{"man_made":"communications_tower","tower:type":"communication"}],
 ["n9376275022",19.94922,-77.37165,{"height":"28","man_made":"tower","tower:construction":"tower","tower:type":"communication"}],
 ["n9376291649",20.2773,-76.43368,{"man_made":"tower","tower:type":"communication"}],
-["n9405572993",22.38403,-79.55628,{"communication:mobile":"yes","communication:mobile_phone":"yes","communication:radio":"yes","communication:television":"yes","man_made":"tower","tower:type":"communication"}],
+["n9405572993",22.38403,-79.55628,{"communication:mobile":"yes","communication:mobile_phone":"yes","communication:radio":"yes","communication:television":"yes","man_made":"mast","tower:type":"communication"}],
 ["n9420049833",20.83666,-77.57525,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
 ["n9448085375",22.98539,-82.46425,{"communication:mobile_phone":"yes","man_made":"tower","operator":"ETECSA","tower:construction":"mast","tower:type":"communication"}],
 ["n9483167945",22.11117,-78.62651,{"communication:radio":"yes","man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],

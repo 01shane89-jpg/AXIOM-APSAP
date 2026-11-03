@@ -1,4 +1,4 @@
-{"cc":"hr","at":"2026-10-03T10:01:03Z","base":"2026-10-03T09:59:21Z","m":[
+{"cc":"hr","at":"2026-11-03T11:39:17Z","base":"2026-11-03T11:38:06Z","m":[
 ["n10004636620",45.26746,14.26752,{"man_made":"tower","tower:type":"communication"}],
 ["n10011841656",46.29571,16.01773,{"communication:television":"dvb-t2","frequency":"506 MHz","man_made":"tower","name":"Donja Višnjica","operator":"Odašiljači i veze d.o.o.","tower:type":"communication"}],
 ["n10040330846",45.88307,16.1757,{"man_made":"tower","tower:type":"communication"}],
@@ -284,6 +284,12 @@
 ["n14224929541",45.00307,13.72477,{"communication:mobile_phone":"yes","height":"7","man_made":"tower","material":"metal","tower:type":"communication"}],
 ["n14228273888",45.06784,15.61515,{"man_made":"mast","tower:type":"communication"}],
 ["n1423171768",45.11024,13.62678,{"man_made":"tower","tower:type":"communication"}],
+["n14310007224",45.03298,14.67108,{"man_made":"mast","tower:type":"communication"}],
+["n14310011518",45.03304,14.67136,{"man_made":"mast","tower:type":"communication"}],
+["n14321394201",45.7609,15.89412,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14338166901",44.34203,15.1214,{"height":"15","man_made":"tower","tower:construction":"metal","tower:type":"communication"}],
+["n14338166906",44.3526,15.11327,{"height":"15","man_made":"tower","tower:construction":"metal","tower:type":"communication"}],
+["n14343042011",44.54845,15.34854,{"man_made":"tower","tower:type":"communication"}],
 ["n1440378716",45.01997,14.12281,{"man_made":"tower","tower:type":"communication"}],
 ["n1447453022",42.65016,18.07206,{"man_made":"tower","tower:type":"communication"}],
 ["n1454179740",45.12482,13.74035,{"man_made":"tower","tower:type":"communication"}],
@@ -846,7 +852,6 @@
 ["w1447815685",45.24891,13.88937,{"man_made":"tower","operator":"Hrvatski Telekom d.d.","tower:construction":"lattice","tower:type":"communication"}],
 ["w1464544452",42.57706,18.30262,{"man_made":"tower","tower:type":"communication"}],
 ["w1553960762",44.06931,15.16428,{"communication:microwave":"yes","communication:mobile_phone":"yes","communication:radio":"fm;dab","communication:television":"dvb-t2","ele":"225","height":"85","man_made":"tower","material":"steel","name":"Ugljan - Mala Glava","ref":"ASR-0287","tower:construction":"lattice","tower:type":"communication"}],
-["w230371589",44.35261,15.11324,{"man_made":"tower","tower:construction":"metal","tower:type":"communication"}],
 ["w230441582",45.89951,15.94803,{"communication:microwave":"yes","communication:radio":"fm;dab","communication:television":"dvb-t2","ele":"1031","height":"169","man_made":"communications_tower","name":"Toranj Sljeme","name:en":"Zagreb TV Tower","operator":"Odašiljači i veze d.o.o.","start_date":"1976"}],
 ["w473096700",45.73791,16.4055,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["w527070911",44.2996,15.10322,{"man_made":"tower","tower:type":"communication"}],

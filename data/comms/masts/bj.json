@@ -1,4 +1,4 @@
-{"cc":"bj","at":"2026-10-03T09:38:48Z","base":"2026-10-03T09:37:05Z","m":[
+{"cc":"bj","at":"2026-11-03T11:24:39Z","base":"2026-07-24T11:04:51Z","m":[
 ["n10587164244",7.87016,1.82166,{"man_made":"tower","tower:type":"communication"}],
 ["n10889916373",12.293,2.92203,{"man_made":"tower","tower:type":"communication"}],
 ["n12565968207",6.44823,2.18073,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
@@ -16,7 +16,6 @@
 ["n13536705403",6.35221,2.40387,{"man_made":"tower","tower:type":"communication"}],
 ["n13858904608",6.49318,2.35822,{"man_made":"tower","tower:type":"communication"}],
 ["n13975711758",7.77541,2.19662,{"man_made":"tower","tower:type":"communication"}],
-["n14158440459",9.83545,1.38041,{"man_made":"tower","tower:construction":"freestanding","tower:type":"communication"}],
 ["n2499580590",6.42698,2.3488,{"man_made":"tower","name":"Station relais ORTB","tower:type":"communication"}],
 ["n2547923358",11.56211,3.12735,{"man_made":"tower","tower:type":"communication"}],
 ["n2547923359",11.56296,3.12799,{"man_made":"tower","tower:type":"communication"}],
