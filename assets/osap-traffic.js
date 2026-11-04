@@ -355,7 +355,7 @@
     if (!air) return false;
     if (!D.getElementById("ml-trair")) {
       var d = D.createElement("div"); d.id = "ml-trair";
-      d.innerHTML = '<label class="mlrow"><input type="checkbox" data-trf="air"' + (S.air ? " checked" : "") + '><span><b>All air traffic</b><i>Every aircraft broadcasting ADS-B, from adsb.fi, adsb.lol and OpenSky. Zoomed in, positions come live for the area on screen every 15 seconds; zoomed out, from OSAP's world sweep (5 to 15 minutes old). Each pop-up gives its age</i></span></label>' +
+      d.innerHTML = '<label class="mlrow"><input type="checkbox" data-trf="air"' + (S.air ? " checked" : "") + '><span><b>All air traffic</b><i>Every aircraft broadcasting ADS-B, from adsb.fi, adsb.lol and OpenSky. Zoomed in, positions come live for the area on screen every 15 seconds; zoomed out, from OSAP&#39;s world sweep (5 to 15 minutes old). Each pop-up gives its age</i></span></label>' +
         '<label class="mlrow trsub"><input type="checkbox" data-trf="ground"' + (S.ground ? " checked" : "") + '><span><b>Include aircraft on the ground</b></span></label>' +
         '<p class="mlkey" id="tra-st"></p>';
       d.style.cssText = "border-top:1px solid var(--line,#ddd);margin-top:6px;padding-top:4px";
