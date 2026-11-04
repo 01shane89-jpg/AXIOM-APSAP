@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan, Evacuate from here, DZSO sheet here or Site survey here), Find LZ, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan, Evacuate from here, DZSO sheet here, Site survey here or Dive plan here), Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -116,7 +116,7 @@
     ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
     /* every planning tool in one drop-down (Shane 2026-11-01): medical, evacuation, flight, landing and drop zones, comms, terrain, weather */
-    ["plans", "Plans", I.plans, "Plans: medical plan, hospital assessment, evacuation, flight plan, landing zones, DZSO, site survey, comms, terrain analysis, weather brief"],
+    ["plans", "Plans", I.plans, "Plans: medical plan, hospital assessment, dive plan, evacuation, flight plan, landing zones, DZSO, site survey, comms, terrain analysis, weather brief"],
     /* its own button (Shane 2026-10-02): the plan for the drawn area, or from the map centre when nothing is drawn */
     ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map centre"],
     /* its own button next to Med plan (Shane 2026-10-03, EPE decision 1): ways out from one point, with the analyst's P/A/C/E roles */
@@ -292,6 +292,7 @@
       ["medplan", "Medical plan", !!W.OSAP_MEDPLAN, !!(mp && !mp.hidden)],
       ["hosp", "Hospital assessment", !!(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital)],
       ["sea", "Sea transit medevac", !!(W.OSAP_SEATRANSIT && W.OSAP_SEATRANSIT.open)],
+      ["dive", "Dive plan and dive medical plan (Navy tables)", true],
       [null, "Movement"],
       ["evac", "Evacuation plan (Evac)", true, !!(ep && !ep.hidden)],
       ["flight", "Flight plan (airborne)", true],
@@ -326,6 +327,7 @@
     else if (k === "lz") areaTool("lz");
     else if (k === "dzso") dzsoGo({});
     else if (k === "survey") surveyGo({});
+    else if (k === "dive") diveGo({});
     else if (k === "terrain") W.OSAP_TERRAIN_ANALYSIS.open();
     else if (k === "wxbrief") W.OSAP_WX.brief();
     setTimeout(paintTools, 60);
@@ -589,6 +591,20 @@
     D.head.appendChild(sc);
   }
   W.OSAP_SURVEY_GO = surveyGo;
+  /* the dive plan and dive medical plan (US Navy Diving Manual Rev 7 tables) live in assets/osap-dive.js, fetched the first time
+     Plans > Dive plan, long-press > Plans > Dive plan here or the Area menu opens it. opts: { at, name, id } */
+  var dvWait = null;
+  function diveGo(opts) {
+    function go(Z) { Z.open(opts || {}); }
+    if (W.OSAP_DIVE && W.OSAP_DIVE.open) { go(W.OSAP_DIVE); return; }
+    if (dvWait) { dvWait.push(go); return; } dvWait = [go];
+    var sc = D.createElement("script"); sc.src = "assets/osap-dive.js";
+    sc.onload = function () { var f = dvWait; dvWait = null; if (W.OSAP_DIVE && W.OSAP_DIVE.open) f.forEach(function (g) { g(W.OSAP_DIVE); }); };
+    sc.onerror = function () { dvWait = null; sc.remove(); toast("The dive plan could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  W.OSAP_DIVE_GO = diveGo;
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "dive", label: "Dive plan (Navy dive tables)", point: true, run: function () { diveGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "survey", label: "Site survey (DZ, HLZ, airfield)", point: true, run: function () { surveyGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "dzso", label: "Drop zone (DZSO)", point: true, run: function () { dzsoGo({}); } });
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "lz", label: "Landing zones", run: function () { lzLoad(function (Z) { Z.area(); }); } });
@@ -602,7 +618,7 @@
      loads after this file) and Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
   function radNow() { return RAD; }
   function plansOpen(r, ll) {
-    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"], ["survey", "Site survey here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"], ["survey", "Site survey here"], ["dive", "Dive plan here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
     pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
     pop.hidden = false; pop._for = "plans"; pop._ll = ll;
     /* under the Plans button, kept inside the map */
@@ -660,6 +676,8 @@
     else if (k === "dzso") dzsoGo({ at: P });
     /* site survey (DZ, HLZ or airfield worksheet) centred on this point */
     else if (k === "survey") surveyGo({ at: P });
+    /* dive plan and dive medical plan for a dive site at this point */
+    else if (k === "dive") diveGo({ at: P });
     /* one-page weather brief for this point and 25 km around it (assets/osap-weather.js) */
     else if (k === "wxbrief") { if (W.OSAP_WX && W.OSAP_WX.briefAt) W.OSAP_WX.briefAt({ lat: P[0], lon: P[1] }); else toast("Weather is still loading. Try again in a moment."); }
     else if (k === "nai" || k === "watch") {

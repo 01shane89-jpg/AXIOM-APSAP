@@ -1,0 +1,20 @@
+# Test only: re-checks OSAP's copy of the US Navy Diving Manual Rev 7 air tables (data/dive/usn-rev7-air.json) cell by cell
+# against the public manual itself (NAVSEA SS521-AG-PRO-010, Distribution Statement A). See tools/probe_divetables.sh.
+# Writes nothing to the repo.
+name: Probe USN dive tables
+on:
+  push:
+    branches: [claude/dive-plan, main]
+    paths: [.github/workflows/probe-divetables.yml, tools/probe_divetables.sh, tools/divetables_extract.py, tools/probe_dive_sources.sh, data/dive/usn-rev7-air.json]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - run: bash tools/probe_divetables.sh divetables-out
+      - run: bash tools/probe_dive_sources.sh divetables-out

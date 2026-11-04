@@ -78,6 +78,8 @@ jobs:
       - run: node tests/dzso.test.mjs
       # site survey geometry: ends, corners, corridors, n:1 clearance (assets/osap-survey.js)
       - run: node tests/survey.test.mjs
+      # dive plan: US Navy Diving Manual Rev 7 tables read cell by cell, the manual's worked examples and rules (assets/osap-dive.js)
+      - run: node tests/dive.test.mjs
       - run: node tests/osm_reader.test.mjs
       - run: node tests/keydates.test.mjs
       - run: node tests/an_auto.test.mjs
@@ -319,6 +321,9 @@ jobs:
       # Site survey (DZ, HLZ, airfield): Plans / Area entries, Surveyed vs From sources, obstacles on the approach, save in My places,
       # map handles, PDF, DZ shared with the DZSO sheet, HLZ finder hand-over (assets/osap-survey.js)
       - run: node tests/survey_smoke.mjs
+      # Dive plan and dive medical plan: Plans / long-press / Area entries, Navy table reading, repetitive dive, marine forecast
+      # calls, chambers (military/civilian and hours only where tagged), DAN lines, save, PDF, tables unreachable, phone (assets/osap-dive.js)
+      - run: node tests/dive_smoke.mjs
       - run: node tests/intelbrief_smoke.mjs
       # custom topic (own words, watch-word syntax) in the PowerPoint brief and OSIR windows
       - run: node tests/custom_topic_smoke.mjs
