@@ -12,7 +12,7 @@
 ["w1251291589",38.13945,24.01443,"gr",{"name":"Marathon Wasser Airport","aeroway":"helipad"}],
 ["w1416697628",39.16923,25.93485,"gr",{"name":"Κοινοτικό Ιατρείο","amenity":"clinic","healthcare":"clinic"}],
 ["w1449595047",39.87476,25.27197,"gr",{"amenity":"hospital","healthcare":"hospital"}],
-["w228788343",38.96691,24.48508,"gr",{"name":"Κρατικός Αερολιμένας Σκύρου","name:en":"Skyros Airport","aeroway":"aerodrome","icao":"LGSY","iata":"SKU","wikidata":"Q3504030"}],
+["w228788343",38.96691,24.48508,"gr",{"name":"Κρατικός Αερολιμένας Σκύρου","name:en":"Skyros Airport","operator":"Υπηρεσία Πολιτικής Αεροπορίας","operator:type":"public","aeroway":"aerodrome","icao":"LGSY","iata":"SKU","wikidata":"Q3504030"}],
 ["w254303046",39.87085,25.26691,"gr",{"aeroway":"helipad"}],
 ["w265717748",38.00079,24.39174,"gr",{"aeroway":"helipad"}],
 ["w273321885",39.87549,25.06578,"gr",{"name":"Γενικό Νοσοκομείο Λήμνου","amenity":"hospital","healthcare":"hospital","wikidata":"Q112287485"}],
@@ -25,5 +25,5 @@
 ["w694639312",38.63785,24.109,"gr",{"name":"Γενικό Νοσοκομείο - Κέντρο Υγείας Κύμης \"Γεώργιος Παπανικολάου\"","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;surgery;orthopaedics;cardiology","emergency":"yes","operator":"Ε.Σ.Υ.","phone":"+302222029300","addr:street":"Κύμη - Μονή Σωτήρος","addr:city":"Κύμη","addr:postcode":"34003"}],
 ["w702560385",39.54143,24.99178,"gr",{"name":"Agios Efstratios Heliport","aeroway":"helipad","surface":"concrete"}],
 ["w738694449",39.90832,25.22167,"gr",{"aeroway":"helipad"}],
-["w941721471",39.919,25.23738,"gr",{"name":"Αερολιμένας Ήφαιστος","name:en":"Airport Ifestos","aeroway":"aerodrome","icao":"LGLM","iata":"LXS","wikidata":"Q2670580"}],
+["w941721471",39.919,25.23738,"gr",{"name":"Κρατικός Αερολιμένας Λήμνου «Ήφαιστος»","name:en":"Lemnos International Airport \"Hephaestus\"","operator":"Υπηρεσία Πολιτικής Αεροπορίας","operator:type":"public","aeroway":"aerodrome","icao":"LGLM","iata":"LXS","wikidata":"Q2670580"}],
 ["w96086566",39.13725,25.94356,"gr",{"name":"Lesvos Eressos Heliport","operator":"Community of Eressos","aeroway":"helipad","surface":"concrete"}]]

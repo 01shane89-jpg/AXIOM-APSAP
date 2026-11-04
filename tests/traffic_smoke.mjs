@@ -47,11 +47,22 @@ const SHIPS = { type: "FeatureCollection", attribution: { aishub: "Open Waters A
 
 async function open(opts, mode = {}) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
-  const errors = [], air = [], sea = [];
+  const errors = [], air = [], sea = [], live = [];
+  // live positions for the area on screen (netlify/edge-functions/osap-air.js); without mode.live the local server answers 404,
+  // as GitHub Pages would, and the page keeps to the sweep
+  if (mode.live) await ctx.route(/\/api\/air\?/, (r) => {
+    live.push(r.request().url());
+    if (mode.live === "down") return r.fulfill({ status: 502, contentType: "application/json", body: '{"error":"adsb.fi busy; adsb.lol HTTP 503"}' });
+    const t = Math.round(Date.now() / 1000);
+    return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-live/1", built: new Date().toISOString(), lat: 13.75, lon: 100.5, nm: 90,
+      src: { id: "lol", name: "adsb.lol", site: "https://adsb.lol/", licence: "ODbL 1.0", nc: false, track: "https://globe.adsb.lol/?icao={hex}" }, f: F,
+      ac: [["880844", "AIQ3074", "HS-BBD", "A320", "AIRBUS A-320", 13.95, 100.65, 37000, 452, 146, t - 2, 0, "7247", "A3", 0],
+        ["8a0001", "LIVE1", null, "AT76", null, 13.6, 100.7, 8000, 220, 30, t - 1, 0, null, "A2", 0]] }) });
+  });
   await ctx.route(/raw\.githubusercontent\.com\/.*\/live-air\//, (r) => {
     const u = r.request().url(); air.push(u);
     if (mode.air === "down") return r.fulfill({ status: 404, body: "404: Not Found" });
-    if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(INDEX) });
+    if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(mode.air === "stale" ? { ...INDEX, built: new Date(Date.now() - 340 * 60e3).toISOString() } : INDEX) });
     if (/a\/10_100\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-cell/1", built, cell: "10_100", ac: AC }) });
     return r.fulfill({ status: 404, body: "" });
   });
@@ -67,7 +78,7 @@ async function open(opts, mode = {}) {
   await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_TRAFFIC && document.getElementById("ml-sea"), null, { timeout: 60000 });
   await p.waitForTimeout(2500);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  return { ctx, p, errors, air, sea };
+  return { ctx, p, errors, air, sea, live };
 }
 const count = (p) => p.evaluate(() => { const L = window.OSAP_TRAFFIC.layers(); return { air: L.air.getLayers().length, sea: L.sea.getLayers().length, A: window.OSAP_TRAFFIC.air().shown, V: window.OSAP_TRAFFIC.sea().shown }; });
 const om = (p) => p.evaluate(() => window.OSAP_ATAK.overlays("overlays"));
@@ -95,6 +106,8 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   const st = await p.evaluate(() => document.getElementById("tra-st").textContent);
   ok(/9,123 aircraft worldwide/.test(st) && /5 on screen in the air/.test(st), "desktop: status line: " + st);
   ok(await p.evaluate(() => /Air traffic \(ADS-B\)/.test(document.body.innerHTML)), "desktop: air traffic legend on the map");
+  const age = await p.evaluate(() => (document.querySelector(".tra-age") || {}).textContent || "");
+  ok(/^data (under a minute|\d+ min) old \(swept /.test(age) && !/Stale/.test(age), "desktop: legend on the map gives the data age: " + age);
   await p.check('#ml-air input[data-trf="ground"]'); await p.waitForTimeout(400);
   ok((await count(p)).air === 6, "desktop: Include aircraft on the ground adds the one on the ground");
   let pop = await popWhere(p, "air", "AIQ3074");
@@ -157,6 +170,49 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   ok(/Could not load the live air traffic files \(HTTP 404/.test(a), "down: air says it could not load: " + a);
   ok(/Could not load ships \(HTTP 429/.test(s), "busy: ships say the feed refused: " + s);
   ok(errors.length === 0, "failing: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- sweep stopped: the map says the positions are old ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, { air: "stale" });
+  await p.evaluate(() => { window.__asapMap.setView([13.4, 100.6], 9, { animate: false }); }); await om(p);
+  await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1500);
+  const age = await p.evaluate(() => (document.querySelector(".tra-age") || {}).textContent || "");
+  const a = await p.evaluate(() => document.getElementById("tra-st").textContent);
+  ok(/^Stale: data 5 h 40 min old/.test(age) && /sweep has not run since/.test(age), "stale: legend on the map says stale with the age: " + age);
+  ok(/^Stale: OSAP's sweep has not run since/.test(a), "stale: status line says stale: " + a);
+  ok(errors.length === 0, "stale: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- live positions for the area on screen, Refresh now ----------
+{
+  const { ctx, p, errors, live } = await open({ viewport: { width: 1360, height: 860 } }, { live: "ok" });
+  await p.evaluate(() => { window.__asapMap.setView([13.7, 100.6], 9, { animate: false }); }); await om(p);
+  await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1800);
+  const q = live[0] ? new URL(live[0]).searchParams : null;
+  ok(q && Math.abs(+q.get("lat") - 13.7) < 0.01 && Math.abs(+q.get("lon") - 100.6) < 0.01 && +q.get("nm") > 0 && +q.get("nm") <= 250, "live: asks for the circle on screen " + (live[0] || "nothing"));
+  const c = await count(p);
+  ok(c.air === 2, "live: inside the live circle only the live answer is drawn (no sweep copies): " + c.air);
+  const age = await p.evaluate(() => (document.querySelector(".tra-age") || {}).textContent || "");
+  ok(/^Live for the area on screen: adsb\.lol, asked \d+ s ago \(updates every 15 s\)/.test(age), "live: legend says live, source and seconds: " + age);
+  const pop = await popWhere(p, "air", "LIVE1");
+  ok(/adsb\.lol live track/.test(pop) && /asked live by OSAP's server/.test(pop) && /ODbL/.test(pop), "live: pop-up credits the live source");
+  const n = live.length;
+  await p.click("#tra-st [data-trf-now]"); await p.waitForTimeout(800);
+  ok(live.length > n, "live: Refresh now asks again (" + n + " -> " + live.length + ")");
+  await p.evaluate(() => window.__asapMap.setView([20, 100], 4, { animate: false })); await p.waitForTimeout(1500);
+  const st = await p.evaluate(() => document.getElementById("tra-st").textContent);
+  ok(/Zoom in for live positions/.test(st), "live: zoomed out, says zoom in for live and keeps the sweep: " + st);
+  ok(errors.length === 0, "live: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, { live: "down" });
+  await p.evaluate(() => { window.__asapMap.setView([13.7, 100.6], 9, { animate: false }); }); await om(p);
+  await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1800);
+  const c = await count(p), st = await p.evaluate(() => document.getElementById("tra-st").textContent);
+  ok(c.air === 5 && /Live positions unavailable \(the live providers did not answer\)/.test(st), "live down: falls back to the sweep and says so (" + c.air + "): " + st);
+  ok(errors.length === 0, "live down: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- phone ----------

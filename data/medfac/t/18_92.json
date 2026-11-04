@@ -31,7 +31,7 @@
 ["w1378290094",18.99875,93.95397,"mm",{"amenity":"hospital"}],
 ["w1378290096",18.80363,93.9704,"mm",{"amenity":"hospital"}],
 ["w1378290155",18.88268,93.58963,"mm",{"amenity":"hospital"}],
-["w1378290221",19.98816,93.83114,"mm",{"amenity":"hospital"}],
+["w1378290221",19.98816,93.83114,"mm",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1378290235",19.1361,93.80178,"mm",{"amenity":"hospital"}],
 ["w1378290244",19.03911,93.69518,"mm",{"amenity":"hospital"}],
 ["w1378290320",19.21555,93.73559,"mm",{"amenity":"hospital"}],

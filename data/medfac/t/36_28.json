@@ -161,7 +161,7 @@
 ["w518795542",37.87647,29.01776,"tr",{"aeroway":"helipad"}],
 ["w519065360",37.82751,29.06258,"tr",{"aeroway":"helipad"}],
 ["w520733107",36.69949,28.92426,"tr",{"aeroway":"helipad"}],
-["w607700833",36.14174,29.57641,"gr",{"name":"Αερολιμένας Καστελλόριζου-Μεγίστης","name:en":"Kastelorizo Airport","aeroway":"aerodrome","icao":"LGKJ","iata":"KZS","wikidata":"Q2756463"}],
+["w607700833",36.14174,29.57641,"gr",{"name":"Δημοτικός Αερολιμένας Καστελόριζου","name:en":"Kastelorizo Airport","operator":"Υπηρεσία Πολιτικής Αεροπορίας","operator:type":"public","aeroway":"aerodrome","icao":"LGKJ","iata":"KZS","wikidata":"Q2756463"}],
 ["w607700834",36.14186,29.57734,"gr",{"aeroway":"helipad"}],
 ["w617806848",37.16552,28.36625,"tr",{"name":"Muğla Eğitim ve Araştırma Hastanesi","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Sağlık Bakanlığı","operator:type":"government"}],
 ["w647684598",37.32821,28.10227,"tr",{"aeroway":"helipad"}],
@@ -188,6 +188,6 @@
 ["w834937890",36.65354,29.12013,"tr",{"aeroway":"helipad","surface":"concrete"}],
 ["w84721791",37.78658,29.70061,"tr",{"name":"Denizli Çardak Havaalanı","name:en":"Denizli Çardak Airport","operator":"DHMİ","operator:type":"government","phone":"+90 258 846 11 40","website":"https://dhmi.gov.tr/Sayfalar/Havalimani/Cardak/AnaSayfa.aspx","aeroway":"aerodrome","icao":"LTAY","iata":"DNZ","aerodrome:type":"military/public","wikidata":"Q1431199"}],
 ["w848860753",37.96316,29.10748,"tr",{"name":"NOBEL FİZİK TEDAVİ VE REHABİLİTASYON TIP MERKEZİ","amenity":"clinic","healthcare":"clinic"}],
-["w889401178",36.40511,28.08639,"gr",{"name":"Κρατικός Αερολιμένας Ρόδου \"Διαγόρας\"","name:en":"Rhodes International Airport \"Diagoras\"","aeroway":"aerodrome","icao":"LGRP","iata":"RHO","aerodrome:type":"public","wikidata":"Q833555"}],
+["w889401178",36.40511,28.08639,"gr",{"name":"Διεθνής Αερολιμένας Ρόδου «Διαγόρας»","name:en":"Rhodes International Airport \"Diagoras\"","operator":"Fraport Greece","operator:type":"private","phone":"+30 2241 088700","website":"https://www.rho-airport.gr/","addr:city":"Παραδείσι","addr:postcode":"85106","aeroway":"aerodrome","icao":"LGRP","iata":"RHO","aerodrome:type":"public","wikidata":"Q833555"}],
 ["w913494354",36.62534,29.11755,"tr",{"name":"Fethiye 1 No'lu Sağlık Ocağı","amenity":"clinic","healthcare":"clinic"}],
 ["w953632280",36.15683,29.49253,"gr",{"name":"Ρω","aeroway":"helipad"}]]

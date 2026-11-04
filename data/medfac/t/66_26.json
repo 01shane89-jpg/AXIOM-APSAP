@@ -1,5 +1,6 @@
 [["n1042032468",66.71265,27.15688,"fi",{"name":"Kemijärven lentokenttä","name:en":"Kemijarvi Airport","operator":"Kemijärven kaupunki","website":"https://lentopaikat.fi/kemijarvi-efkm/","aeroway":"aerodrome","icao":"EFKM","wikidata":"Q4810203"}],
 ["n14234723110",67.69391,26.92681,"fi",{"aeroway":"helipad","surface":"asphalt"}],
+["n14331117862",66.37514,26.69382,"fi",{"name":"Vanttauskosken äitiys- ja lastenneuvola","name:en":"Vanttauskoski Maternity and child health guidance","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"maternity","operator":"Lapin hyvinvointialue","operator:type":"public","website":"https://lapha.fi/lastenneuvola","addr:housenumber":"5","addr:street":"Vanttauskuru"}],
 ["n7152028331",67.4177,26.59277,"fi",{"name":"Terveystalo","amenity":"clinic","healthcare":"clinic","addr:housenumber":"18","addr:street":"Jäämerentie","addr:city":"Sodankylä","addr:postcode":"99600"}],
 ["r3082812",67.39446,26.62,"fi",{"name":"Sodankylän lentoasema","name:en":"Sodankylä Airfield","operator":"Sodankylän kunta","website":"https://airportsodankyla.fi/","aeroway":"aerodrome","icao":"EFSO","iata":"SOT","aerodrome:type":"civil","wikidata":"Q268457"}],
 ["w397232055",67.43569,26.56578,"fi",{"aeroway":"helipad","surface":"sand"}],

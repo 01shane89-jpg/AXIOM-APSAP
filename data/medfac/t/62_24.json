@@ -34,6 +34,7 @@
 ["w1337572181",63.68286,25.96907,"fi",{"aeroway":"helipad"}],
 ["w1340649560",63.37074,25.57795,"fi",{"name":"Pihtiputaan terveysasema","amenity":"hospital","healthcare":"hospital","addr:city":"Pihtipudas"}],
 ["w134101597",62.87148,24.20756,"fi",{"name":"Soinin sosiaali- ja terveyspiste","amenity":"clinic","healthcare":"clinic","emergency":"yes","addr:housenumber":"6","addr:street":"Ähtärintie","addr:city":"Soini","addr:postcode":"63800"}],
+["w1416913919",62.8716,24.20677,"fi",{"amenity":"hospital","healthcare":"hospital"}],
 ["w149391108",63.60841,24.92394,"fi",{"name":"Reisjärven sosiaali- ja terveysasema","amenity":"clinic","healthcare":"clinic","addr:housenumber":"3","addr:street":"Savikontie","addr:city":"Reisjärvi","addr:postcode":"84900"}],
 ["w167037505",62.26298,24.71075,"fi",{"name":"Keuruun Terveyskeskus","amenity":"hospital","healthcare":"hospital"}],
 ["w167158026",62.13255,25.67453,"fi",{"name":"Psykiatrian poliklinikka","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"psychiatry","addr:housenumber":"2","addr:street":"Mikkolantie","addr:city":"Muurame","addr:postcode":"40950"}],

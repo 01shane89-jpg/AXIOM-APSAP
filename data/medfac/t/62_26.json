@@ -9,7 +9,7 @@
 ["n7674007992",63.07338,27.66166,"fi",{"name":"Terveystalo","amenity":"clinic","healthcare":"clinic","operator":"Terveystalo","operator:type":"private"}],
 ["n7677931974",63.07263,27.65697,"fi",{"name":"Mehiläinen Siilinjärvi työterveys","amenity":"clinic","healthcare":"clinic","operator":"Mehiläinen","operator:type":"private"}],
 ["n8893869751",62.89482,27.65608,"fi",{"name":"YTHS","amenity":"clinic","healthcare":"clinic","website":"https://www.yths.fi/palvelupisteet/kuopio/","addr:housenumber":"23","addr:street":"Niiralankatu","addr:city":"Kuopio","addr:postcode":"70600"}],
-["r14585241",63.56347,27.18219,"fi",{"healthcare":"hospital","website":"www.ylasavonsote.fi","addr:housenumber":"21-23","addr:street":"Riistakatu","addr:city":"Iisalmi","addr:postcode":"74101"}],
+["r14585241",63.56347,27.18219,"fi",{"healthcare":"hospital","website":"www.ylasavonsote.fi","addr:housenumber":"23","addr:street":"Riistakatu","addr:city":"Iisalmi","addr:postcode":"74101"}],
 ["w1032050860",63.6329,27.12358,"fi",{"name":"Iisalmi Partalan lentokenttä","name:en":"Iisalmi Partala Airfield","operator":"Iisalmen kaupunki","operator:type":"community","website":"http://www.lentopaikat.net/efii.shtml","addr:city":"Iisalmi","aeroway":"aerodrome","icao":"EFII","aerodrome:type":"gliding","wikidata":"Q3084269"}],
 ["w1059964324",63.17802,26.35492,"fi",{"name":"Keiteleen terveysasema","amenity":"hospital","healthcare":"hospital","addr:housenumber":"1","addr:street":"Sairaalatie","addr:city":"Keitele","addr:postcode":"72600","wikidata":"Q65237133"}],
 ["w1086178171",63.07437,27.66229,"fi",{"name":"Siilinjärven terveyskeskus","amenity":"clinic","healthcare":"clinic","addr:housenumber":"5","addr:street":"Kasurilantie","addr:city":"Siilinjärvi","addr:postcode":"71800"}],

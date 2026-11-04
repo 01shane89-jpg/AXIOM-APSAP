@@ -1,7 +1,8 @@
 name: Keep the 15-minute refresh running
 
 # GitHub runs scheduled workflows late or skips them when it is busy (the 15-minute cron in refresh-flood.yml has been firing
-# only about every 3 hours). This job starts both lanes of "Refresh live snapshots" on main every 15 minutes itself, for about 5 h 30 min (under
+# only about every 3 hours). This job starts both lanes of "Refresh live snapshots" on main every 15 minutes itself (and the
+# live air traffic and drone sweeps, the conflict tabs and the AI drafts), for about 5 h 30 min (under
 # GitHub's 6-hour job limit), then starts a fresh copy of itself so the chain carries on. The hourly schedule below restarts
 # the chain if it ever breaks. Only one keeper runs at a time: a new copy waits in the queue until the current one ends
 # (GitHub keeps at most one waiting), so the hand-over and the hourly restart never double up.
@@ -78,6 +79,20 @@ jobs:
                 gh workflow run refresh-ai.yml --ref main -f task=daily && echo "$(date -u +%H:%MZ) started the daily AI pass" || echo "$(date -u +%H:%MZ) could not start the daily AI pass"
               fi
             fi
+            # live air traffic (refresh-air.yml, about 14 min a run) and live drones (refresh-drones.yml, about 14 min): their own
+            # "every 15 minutes" schedules fired only every 4 to 8 hours in the week to 4 Nov 2026, so the air traffic map showed
+            # positions 5 h 40 min old. Each round, start one more run of each unless one is already waiting; a run started
+            # while another is going waits in that workflow's queue and begins the moment it ends, so the sweeps run back to back.
+            # Only runs from the last 2 hours count (a ghost run left "queued" for good must not stop the starts).
+            since=$(date -u -d '2 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+            for wf in refresh-air.yml refresh-drones.yml; do
+              lw=$(( $(gh run list --workflow $wf --branch main --status queued --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) + $(gh run list --workflow $wf --branch main --status pending --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) ))
+              if [ "$lw" = "0" ]; then
+                gh workflow run $wf --ref main && echo "$(date -u +%H:%MZ) started $wf" || echo "$(date -u +%H:%MZ) could not start $wf"
+              else
+                echo "$(date -u +%H:%MZ) a $wf run is still waiting; skipping this round"
+              fi
+            done
             # data health: alert on the ntfy health channel when the published data has stopped (never fails the keeper)
             timeout 90 node tools/health.mjs watch || echo "$(date -u +%H:%MZ) health check did not finish"
             [ $(( $(date +%s) + 900 )) -lt "$end" ] || break

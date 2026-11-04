@@ -1,7 +1,9 @@
 /* AXIOM OSAP · Live traffic: all aircraft (ADS-B) and ships (AIS) as Map overlays switches on every tab.
    Aircraft: the cells on screen from the live-air branch (tools/refresh_air.mjs, .github/workflows/refresh-air.yml), swept from
    the free, keyless aggregators adsb.fi and adsb.lol, plus OpenSky Network's anonymous world snapshot. None of them lets another site read it, so the page cannot ask them itself; positions
-   are a few minutes old (each pop-up gives the age). Ships: asked straight from Open Waters AIS (ais.openwaters.io/v1/vessels,
+   are a few minutes old (each pop-up gives the age). Zoomed in (the screen fits in a 250 nm circle), the area on screen is also
+   asked live every 15 s through OSAP's own server (/api/air, netlify/edge-functions/osap-air.js), which can read them; the sweep
+   fills in beyond that circle and stands in whenever the live answer fails. Ships: asked straight from Open Waters AIS (ais.openwaters.io/v1/vessels,
    no key, CORS open), which re-serves AISHub, Kystverket, Fintraffic and volunteer receivers, each with its own credit.
    Every item is a position the aircraft or ship itself broadcast, passed on as reported: not verified, not an identification,
    and not everything out there (transponders can be off, and areas without receivers show nothing). Read-only: it never adds
@@ -11,6 +13,8 @@
   var W = window, D = document;
   var AIR = "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-air/";
   var SEA = "https://ais.openwaters.io/v1/vessels";
+  // live positions for the area on screen, asked through OSAP's own server (netlify/edge-functions/osap-air.js) every 15 s
+  var LIVE = "/api/air", LIVE_EVERY = 15e3, LIVE_NM = 250, LIVE_OLD = 90e3;
   var EVERY = 60e3, AIR_STALE = 20 * 60e3, SEA_STALE = 6 * 3600e3, MAX_CELLS = 40, SEA_BOX = 10, MAX_BOXES = 8, LSK = "osap-traffic";
   var KINDS = [
     ["cargo", "Cargo", "#2e7d32"], ["tanker", "Tankers", "#c62828"], ["pass", "Passenger and ferries", "#1565c0"],
@@ -20,8 +24,8 @@
   var S = lsGet() || {};
   S.air = !!S.air; S.ground = !!S.ground; S.sea = !!S.sea; S.k = S.k || {};
   KINDS.forEach(function (k) { if (S.k[k[0]] == null) S.k[k[0]] = true; });
-  var map = null, ren = null, gAir = null, gSea = null, timer = null, mvT = null;
-  var A = { idx: null, cells: {}, err: "", busy: false, note: "", shown: 0 };
+  var map = null, ren = null, gAir = null, gSea = null, timer = null, mvT = null, tick = 0;
+  var A = { idx: null, cells: {}, err: "", busy: false, note: "", shown: 0, live: null, lerr: "", lbusy: false, loff: false, lnote: "" };
   var V = { list: {}, err: "", busy: false, note: "", shown: 0, trunc: false, attr: {}, at: 0 };
 
   function lsGet() { try { return JSON.parse(localStorage.getItem(LSK) || "null"); } catch (e) { return null; } }
@@ -29,7 +33,7 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function zt(ms) { return W.OSAP_TIME && W.OSAP_TIME.dualT ? W.OSAP_TIME.dualT(ms, { date: true }) : new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; }
-  function ago(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 60e3)); return m < 1 ? "under a minute ago" : m < 90 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; }
+  function ago(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 60e3)); return m < 1 ? "under a minute ago" : m < 60 ? m + " min ago" : m < 2880 ? Math.floor(m / 60) + " h" + (m % 60 ? " " + m % 60 + " min" : "") + " ago" : Math.round(m / 1440) + " days ago"; }
   function mgrs(lat, lon) { try { return W.MGRS_OF ? W.MGRS_OF(lat, lon) : ""; } catch (e) { return ""; } }
   function where(lat, lon) { var g = mgrs(lat, lon); return esc(lat.toFixed(4) + ", " + lon.toFixed(4)) + (g ? " · MGRS " + esc(g) : ""); }
   function sha256(s) {
@@ -69,7 +73,7 @@
   function acObj(x, f) { var o = {}; for (var i = 0; i < f.length; i++) o[f[i]] = x[i]; return o; }
   function acColour(a) { return EMERG[a.sqk] ? "#d50000" : a.fl & 4 ? "#9e9e9e" : a.fl & 1 ? "#33691e" : "#0277bd"; }
   function acPop(a) {
-    var s = (A.idx && A.idx.sources[a.src]) || {}, track = safeUrl(String(s.track || "").replace("{hex}", encodeURIComponent(a.hex)));
+    var s = a.S || (A.idx && A.idx.sources[a.src]) || {}, track = safeUrl(String(s.track || "").replace("{hex}", encodeURIComponent(a.hex)));
     var alt = a.fl & 4 ? "on the ground" : a.alt != null ? a.alt.toLocaleString() + " ft (barometric)" : "not sent", pos = a.pos * 1000;
     return '<div class="pop trafpop"><b>' + esc(a.fl & 1 ? "Military aircraft" : "Aircraft") + (a.cs ? " · " + esc(a.cs) : "") + "</b>" +
       (EMERG[a.sqk] ? '<p class="obs" style="margin:4px 0;color:#d50000"><b>Squawking ' + esc(EMERG[a.sqk]) + "</b>, as broadcast. Not confirmed.</p>" : "") +
@@ -83,7 +87,7 @@
       (a.fl & 1 ? '<p class="obs" style="margin:4px 0">Marked military in the aggregator\'s aircraft database.</p>' : "") +
       '<p class="obs" style="margin:4px 0">Source: ' + (track ? '<a href="' + esc(track) + '" target="_blank" rel="noopener noreferrer">' + esc(s.name || "") + " live track</a>" : esc(s.name || "")) +
         " (" + esc(s.licence || "") + (s.nc ? ", non-commercial source" : "") + ")</p>" +
-      '<p class="obs" style="font-size:10.5px">A position the aircraft broadcast, relayed by volunteer receivers and collected by OSAP every few minutes. Reported, not verified, and not an identification. Record fingerprint <span class="trfp" data-fp="' +
+      '<p class="obs" style="font-size:10.5px">A position the aircraft broadcast, relayed by volunteer receivers and ' + (a.live ? "asked live by OSAP's server for the area on screen." : "collected by OSAP every few minutes.") + ' Reported, not verified, and not an identification. Record fingerprint <span class="trfp" data-fp="' +
         esc([a.hex, a.cs, a.reg, a.t, a.lat, a.lon, a.alt, a.gs, a.trk, a.pos, s.name, a.sqk].join("␟")) + '">computing…</span></p></div>';
   }
   function acTip(a) {
@@ -107,6 +111,30 @@
       A.idx = j; A.err = "";
     }).catch(function (e) { A.err = String(e && e.message || e); }).then(function () { A.busy = false; airCells(); });
   }
+  // the circle that covers the screen (centre to the farthest corner), or null when that is wider than the providers answer for
+  function viewCircle() {
+    var c = map.getCenter(), b = map.getBounds(), r = 0;
+    [b.getNorthEast(), b.getNorthWest(), b.getSouthEast(), b.getSouthWest()].forEach(function (p) { r = Math.max(r, map.distance(c, p) / 1852); });
+    if (!(r > 0) || r > LIVE_NM || Math.abs(c.lat) > 85) return null;
+    return { lat: +c.lat.toFixed(3), lon: +(((c.lng + 180) % 360 + 360) % 360 - 180).toFixed(3), nm: Math.ceil(r) };
+  }
+  function liveFresh() { return A.live && Date.now() - Date.parse(A.live.built) < LIVE_OLD ? A.live : null; }
+  function liveLoad() {
+    if (!S.air || !map || A.loff || A.lbusy || !/^https?:$/.test(location.protocol)) return;
+    var c = viewCircle();
+    if (!c) { A.lnote = "zoom"; A.live = null; airDraw(); return; }
+    A.lnote = ""; A.lbusy = true;
+    getJson(LIVE + "?lat=" + c.lat + "&lon=" + c.lon + "&nm=" + c.nm, 12000).then(function (j) {
+      if (!j || j.schema !== "osap-air-live/1" || !Array.isArray(j.ac) || !Array.isArray(j.f) || !j.src) throw new Error("unexpected answer");
+      A.live = j; A.lerr = "";
+    }).catch(function (e) {
+      var m = String(e && e.message || e);
+      // no relay on this site (GitHub Pages, a local copy): stop asking and keep to the sweep
+      if (/^HTTP 404/.test(m)) A.loff = true;
+      A.lerr = /^HTTP 502/.test(m) ? "the live providers did not answer" : /^HTTP 401/.test(m) ? "sign in needed" : m;
+    }).then(function () { A.lbusy = false; airDraw(); });
+  }
+  function refreshNow() { if (!S.air) return; A.loff = false; airLoad(); liveLoad(); }
   function airCells() {
     if (!S.air || !A.idx || !map) { airDraw(); return; }
     var all = cellsInView(), want = all.filter(function (k) { return A.idx.cells[k]; });
@@ -120,9 +148,27 @@
       }).catch(function (e) { A.err = String(e && e.message || e); });
     })).then(airDraw);
   }
+  function addAc(a) {
+    var col = acColour(a), m = new Glyph([a.lat, a.lon], { renderer: ren, pane: "trafairpane", radius: EMERG[a.sqk] ? 8 : 5.5, hdg: a.fl & 4 ? null : a.trk,
+      shape: "air", color: "#fff", weight: 1, fillColor: col, fillOpacity: 0.95 });
+    m.bindPopup(function () { return acPop(a); }, { maxWidth: 330 });
+    m.bindTooltip(function () { return acTip(a); }, { direction: "top", offset: [0, -6] });
+    gAir.addLayer(m); A.shown++;
+  }
   function airDraw() {
     if (!gAir) return;
     gAir.clearLayers(); A.shown = 0;
+    var lv = S.air && map ? liveFresh() : null, lhex = {};
+    if (lv) {
+      var lb = map.getBounds().pad(0.15), lc = L.latLng(lv.lat, lv.lon), lnow = Date.now();
+      lv.ac.forEach(function (x) {
+        var a = acObj(x, lv.f); a.S = lv.src; a.live = true;
+        if (a.lat == null || a.lon == null || !a.hex) return;
+        lhex[a.hex] = 1;
+        if (!lb.contains([a.lat, a.lon]) || ((a.fl & 4) && !S.ground) || lnow - a.pos * 1000 > AIR_STALE) return;
+        addAc(a);
+      });
+    }
     if (S.air && A.idx && A.note !== "zoom") {
       var b = map.getBounds().pad(0.15), f = A.idx.f, now = Date.now();
       cellsInView().forEach(function (k) {
@@ -132,11 +178,9 @@
           if (a.lat == null || a.lon == null || !b.contains([a.lat, a.lon])) return;
           if ((a.fl & 4) && !S.ground) return;
           if (now - a.pos * 1000 > AIR_STALE) return;
-          var col = acColour(a), m = new Glyph([a.lat, a.lon], { renderer: ren, pane: "trafairpane", radius: EMERG[a.sqk] ? 8 : 5.5, hdg: a.fl & 4 ? null : a.trk,
-            shape: "air", color: "#fff", weight: 1, fillColor: col, fillOpacity: 0.95 });
-          m.bindPopup(function () { return acPop(a); }, { maxWidth: 330 });
-          m.bindTooltip(function () { return acTip(a); }, { direction: "top", offset: [0, -6] });
-          gAir.addLayer(m); A.shown++;
+          // inside the live circle the live answer is the picture; the sweep only fills in beyond it
+          if (lv && (lhex[a.hex] || map.distance(lc, [a.lat, a.lon]) / 1852 < lv.nm)) return;
+          addAc(a);
         });
       });
     }
@@ -259,19 +303,38 @@
     W.OSAP_LEGEND.set("traffic-air", S.air ? "<h3>Air traffic (ADS-B)</h3>" +
       [["#0277bd", "Aircraft"], ["#33691e", "Military (aggregator database)"], ["#d50000", "Emergency squawk"]].concat(S.ground ? [["#9e9e9e", "On the ground"]] : [])
         .map(function (r) { return '<p class="mlkey" style="margin:2px 0"><span style="background:' + r[0] + '"></span>' + r[1] + "</p>"; }).join("") +
-      '<p class="mlkey" style="margin:2px 0">Pointed to the heading. ' + (A.idx ? "Swept " + esc(zt(Date.parse(A.idx.built))) : "Loading") + ".</p>" : "");
+      '<p class="mlkey" style="margin:2px 0">Pointed to the heading.</p>' + airAge() : "");
     W.OSAP_LEGEND.set("traffic-sea", S.sea ? "<h3>Ships (AIS)</h3>" +
       KINDS.filter(function (k) { return S.k[k[0]]; }).map(function (k) { return '<p class="mlkey" style="margin:2px 0"><span style="background:' + k[2] + '"></span>' + esc(k[1]) + "</p>"; }).join("") +
       '<p class="mlkey" style="margin:2px 0">Pointed to the heading when moving; small dot when stopped.</p>' : "");
   }
+  // how old the aircraft on the map are, on the map itself (the legend), so old positions never pass for live ones
+  function secAgo(ms) { var x = Math.max(0, Math.round((Date.now() - ms) / 1000)); return x < 90 ? x + " s ago" : ago(ms); }
+  var NOWBTN = '<button type="button" class="trnow" data-trf-now="1">Refresh now</button>';
+  function liveLine() {
+    var lv = liveFresh();
+    if (A.loff && !lv) return "";
+    if (lv) return "<b>Live</b> for the area on screen: " + esc(lv.src.name) + ", asked " + esc(secAgo(Date.parse(lv.built))) + " (updates every 15 s).";
+    if (A.lnote === "zoom") return "Zoom in for live positions (the live feed answers for up to " + LIVE_NM + " nm around the centre).";
+    if (A.lerr) return "Live positions unavailable (" + esc(A.lerr) + ").";
+    return A.lbusy ? "Asking for live positions…" : "";
+  }
+  function airAge() {
+    var lv = S.air && map ? liveFresh() : null, ll = liveLine();
+    if (lv) return '<p class="mlkey tra-age" style="margin:2px 0">' + ll + " " + NOWBTN + "</p>";
+    if (!A.idx) return '<p class="mlkey" style="margin:2px 0">' + (A.err ? "Could not load the live files." : "Loading…") + "</p>";
+    var b = Date.parse(A.idx.built), old = Date.now() - b > AIR_STALE;
+    return '<p class="mlkey tra-age" style="margin:2px 0' + (old ? ";color:#c62828;font-weight:600" : "") + '">' + (old ? "Stale: " : "") + "data " + esc(ago(b).replace(" ago", "")) + " old (swept " + esc(zt(b)) + ")" +
+      (old ? ". OSAP's sweep has not run since; these positions are that old." : ".") + (ll ? " " + ll : "") + " " + NOWBTN + "</p>";
+  }
   function airStatus() {
     if (!S.air) return "Off. Switch on to load.";
     if (A.err && !A.idx) return "Could not load the live air traffic files (" + esc(A.err) + ").";
-    if (!A.idx) return "Loading…";
+    if (!A.idx) return "Loading…" + (liveLine() ? " " + liveLine() : "");
     var b = Date.parse(A.idx.built), old = Date.now() - b > AIR_STALE;
-    return (old ? '<b style="color:#c62828">Stale:</b> ' : "") + "Swept " + esc(zt(b)) + " (" + esc(ago(b)) + "), " + A.idx.total.toLocaleString() + " aircraft worldwide. " +
+    return (old ? '<b style="color:#c62828">Stale: OSAP\'s sweep has not run since.</b> ' : "") + "Swept " + esc(zt(b)) + " (" + esc(ago(b)) + "), " + A.idx.total.toLocaleString() + " aircraft worldwide. " +
       (A.note === "zoom" ? "<b>Zoom in to see them</b> (too much of the world on screen)." : A.shown.toLocaleString() + " on screen" + (S.ground ? "" : " in the air") + ".") +
-      (A.err ? " Last update failed (" + esc(A.err) + "); showing the previous one." : "");
+      (A.err ? " Last update failed (" + esc(A.err) + "); showing the previous one." : "") + (liveLine() ? " " + liveLine() : "") + " " + NOWBTN;
   }
   function seaStatus() {
     if (!S.sea) return "Off. Switch on to load.";
@@ -292,7 +355,7 @@
     if (!air) return false;
     if (!D.getElementById("ml-trair")) {
       var d = D.createElement("div"); d.id = "ml-trair";
-      d.innerHTML = '<label class="mlrow"><input type="checkbox" data-trf="air"' + (S.air ? " checked" : "") + '><span><b>All air traffic</b><i>Every aircraft broadcasting ADS-B, from adsb.fi, adsb.lol and OpenSky. OSAP sweeps the world about every five minutes; positions are typically 5 to 15 minutes old, each pop-up gives its age</i></span></label>' +
+      d.innerHTML = '<label class="mlrow"><input type="checkbox" data-trf="air"' + (S.air ? " checked" : "") + '><span><b>All air traffic</b><i>Every aircraft broadcasting ADS-B, from adsb.fi, adsb.lol and OpenSky. Zoomed in, positions come live for the area on screen every 15 seconds; zoomed out, from OSAP&#39;s world sweep (5 to 15 minutes old). Each pop-up gives its age</i></span></label>' +
         '<label class="mlrow trsub"><input type="checkbox" data-trf="ground"' + (S.ground ? " checked" : "") + '><span><b>Include aircraft on the ground</b></span></label>' +
         '<p class="mlkey" id="tra-st"></p>';
       d.style.cssText = "border-top:1px solid var(--line,#ddd);margin-top:6px;padding-top:4px";
@@ -317,7 +380,15 @@
     else if (map.hasLayer(gAir)) map.removeLayer(gAir);
     if (S.sea) { if (!map.hasLayer(gSea)) gSea.addTo(map); seaLoad(); }
     else if (map.hasLayer(gSea)) map.removeLayer(gSea);
-    if (any && !timer) timer = setInterval(function () { if (D.hidden) return; if (S.air) airLoad(); if (S.sea) seaLoad(); }, EVERY);
+    if (S.air) liveLoad();
+    // every 15 s: live positions for the area on screen; every fourth tick the sweep index and the ships
+    if (any && !timer) timer = setInterval(function () {
+      if (D.hidden) return;
+      tick++;
+      if (S.air) liveLoad();
+      if (tick % (EVERY / LIVE_EVERY)) return;
+      if (S.air) airLoad(); if (S.sea) seaLoad();
+    }, LIVE_EVERY);
     if (!any && timer) { clearInterval(timer); timer = null; }
     airDraw(); seaDraw();
   }
@@ -327,7 +398,8 @@
     var css = D.createElement("style");
     css.textContent = "#ml-trair .trsub{padding-left:22px}#ml-sea .trkinds{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin:2px 0 4px 22px;font-size:12px}" +
       "#ml-sea .trkinds label{display:flex;gap:5px;align-items:center;cursor:pointer}#ml-sea .trsw{display:inline-block;width:10px;height:10px;border-radius:2px;flex:none}" +
-      "@media (max-width:420px){#ml-sea .trkinds{grid-template-columns:1fr}}";
+      "@media (max-width:420px){#ml-sea .trkinds{grid-template-columns:1fr}}" +
+      ".trnow{font:inherit;font-size:11px;padding:1px 8px;margin-left:4px;border:1px solid var(--line,#bbb);border-radius:10px;background:var(--panel,#fff);color:inherit;cursor:pointer}";
     D.head.appendChild(css);
     ["trafseapane", "trafairpane"].forEach(function (p, i) { if (!map.getPane(p)) { map.createPane(p); map.getPane(p).style.zIndex = 660 + i; } });
     ren = L.canvas({ padding: 0.2, tolerance: 4 });
@@ -340,7 +412,7 @@
     map.on("moveend", function () {
       if (!(S.air || S.sea)) return;
       clearTimeout(mvT);
-      mvT = setTimeout(function () { if (S.air) airCells(); if (S.sea) seaLoad(); }, 500);
+      mvT = setTimeout(function () { if (S.air) { airCells(); liveLoad(); } if (S.sea) seaLoad(); }, 500);
     });
     // the pop-up may have been copied into the Details panel (phones) by now: fill every copy still waiting
     map.on("popupopen", function () {
@@ -349,10 +421,11 @@
         sha256(v).then(function (h) { f.textContent = h ? h.slice(0, 16) + "…" : "not available"; });
       });
     });
-    D.addEventListener("visibilitychange", function () { if (D.hidden) return; if (S.air) airLoad(); if (S.sea) seaLoad(); });
+    D.addEventListener("visibilitychange", function () { if (D.hidden) return; if (S.air) { airLoad(); liveLoad(); } if (S.sea) seaLoad(); });
+    D.addEventListener("click", function (e) { var t = e.target && e.target.closest && e.target.closest("[data-trf-now]"); if (t) { e.preventDefault(); refreshNow(); } });
     if (S.air || S.sea) run(); else panel();
   }
   W.OSAP_TRAFFIC = { air: function () { return A; }, sea: function () { return V; }, layers: function () { return { air: gAir, sea: gSea }; }, kindOf: kindOf, boxes: function () { return map && seaBoxes(); },
-    reload: function () { airLoad(); seaLoad(); } };
+    reload: function () { airLoad(); seaLoad(); }, refresh: refreshNow, live: function () { return liveFresh(); } };
   start(0);
 })();
