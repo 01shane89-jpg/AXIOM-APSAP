@@ -29,7 +29,7 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function zt(ms) { return W.OSAP_TIME && W.OSAP_TIME.dualT ? W.OSAP_TIME.dualT(ms, { date: true }) : new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; }
-  function ago(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 60e3)); return m < 1 ? "under a minute ago" : m < 90 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; }
+  function ago(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 60e3)); return m < 1 ? "under a minute ago" : m < 60 ? m + " min ago" : m < 2880 ? Math.floor(m / 60) + " h" + (m % 60 ? " " + m % 60 + " min" : "") + " ago" : Math.round(m / 1440) + " days ago"; }
   function mgrs(lat, lon) { try { return W.MGRS_OF ? W.MGRS_OF(lat, lon) : ""; } catch (e) { return ""; } }
   function where(lat, lon) { var g = mgrs(lat, lon); return esc(lat.toFixed(4) + ", " + lon.toFixed(4)) + (g ? " · MGRS " + esc(g) : ""); }
   function sha256(s) {
@@ -259,17 +259,24 @@
     W.OSAP_LEGEND.set("traffic-air", S.air ? "<h3>Air traffic (ADS-B)</h3>" +
       [["#0277bd", "Aircraft"], ["#33691e", "Military (aggregator database)"], ["#d50000", "Emergency squawk"]].concat(S.ground ? [["#9e9e9e", "On the ground"]] : [])
         .map(function (r) { return '<p class="mlkey" style="margin:2px 0"><span style="background:' + r[0] + '"></span>' + r[1] + "</p>"; }).join("") +
-      '<p class="mlkey" style="margin:2px 0">Pointed to the heading. ' + (A.idx ? "Swept " + esc(zt(Date.parse(A.idx.built))) : "Loading") + ".</p>" : "");
+      '<p class="mlkey" style="margin:2px 0">Pointed to the heading.</p>' + airAge() : "");
     W.OSAP_LEGEND.set("traffic-sea", S.sea ? "<h3>Ships (AIS)</h3>" +
       KINDS.filter(function (k) { return S.k[k[0]]; }).map(function (k) { return '<p class="mlkey" style="margin:2px 0"><span style="background:' + k[2] + '"></span>' + esc(k[1]) + "</p>"; }).join("") +
       '<p class="mlkey" style="margin:2px 0">Pointed to the heading when moving; small dot when stopped.</p>' : "");
+  }
+  // how old the aircraft on the map are, on the map itself (the legend), so old positions never pass for live ones
+  function airAge() {
+    if (!A.idx) return '<p class="mlkey" style="margin:2px 0">' + (A.err ? "Could not load the live files." : "Loading…") + "</p>";
+    var b = Date.parse(A.idx.built), old = Date.now() - b > AIR_STALE;
+    return '<p class="mlkey tra-age" style="margin:2px 0' + (old ? ";color:#c62828;font-weight:600" : "") + '">' + (old ? "Stale: " : "") + "data " + esc(ago(b).replace(" ago", "")) + " old (swept " + esc(zt(b)) + ")" +
+      (old ? ". OSAP's sweep has not run since; these positions are that old." : ".") + "</p>";
   }
   function airStatus() {
     if (!S.air) return "Off. Switch on to load.";
     if (A.err && !A.idx) return "Could not load the live air traffic files (" + esc(A.err) + ").";
     if (!A.idx) return "Loading…";
     var b = Date.parse(A.idx.built), old = Date.now() - b > AIR_STALE;
-    return (old ? '<b style="color:#c62828">Stale:</b> ' : "") + "Swept " + esc(zt(b)) + " (" + esc(ago(b)) + "), " + A.idx.total.toLocaleString() + " aircraft worldwide. " +
+    return (old ? '<b style="color:#c62828">Stale: OSAP\'s sweep has not run since.</b> ' : "") + "Swept " + esc(zt(b)) + " (" + esc(ago(b)) + "), " + A.idx.total.toLocaleString() + " aircraft worldwide. " +
       (A.note === "zoom" ? "<b>Zoom in to see them</b> (too much of the world on screen)." : A.shown.toLocaleString() + " on screen" + (S.ground ? "" : " in the air") + ".") +
       (A.err ? " Last update failed (" + esc(A.err) + "); showing the previous one." : "");
   }

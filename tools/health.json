@@ -1,5 +1,5 @@
 {
-  "about": "Data health (tools/health.mjs). Each refresh writes data/live/health.json from the files below; the keeper checks the published copy every 15 minutes and posts to the ntfy channel when data stops arriving. Ages are minutes. A feed's own stamp is when the refresh read it, up to about 25 minutes before the commit, and commits come every 15 to 35 minutes, so a feed read every run is normally up to about 60 minutes old: limits sit above that. 'key' feeds send a phone alert when stale; the rest only show in the app's data-health panel. Anyone can subscribe to the channel: it carries feed names and times only, never report content. ReliefWeb is not listed: its API needs a registered appname and its RSS refuses GitHub's runners (checked 2026-10-20), so it would sit amber for good; tools/refresh_feeds.mjs still tries the RSS each run.",
+  "about": "Data health (tools/health.mjs). Each refresh writes data/live/health.json from the files below; the keeper checks the published copy every 15 minutes and posts to the ntfy channel when data stops arriving. Ages are minutes. A feed's own stamp is when the refresh read it, up to about 25 minutes before the commit, and commits come every 15 to 35 minutes, so a feed read every run is normally up to about 60 minutes old: limits sit above that. 'key' feeds send a phone alert when stale; a feed with a 'url' instead of a 'file' is published outside main (live air traffic and drones, swept about every 15 minutes by refresh-air.yml and refresh-drones.yml, which the keeper starts) and is read from that address at build and at every watch; the rest only show in the app's data-health panel. Anyone can subscribe to the channel: it carries feed names and times only, never report content. ReliefWeb is not listed: its API needs a registered appname and its RSS refuses GitHub's runners (checked 2026-10-20), so it would sit amber for good; tools/refresh_feeds.mjs still tries the RSS each run.",
   "site": "https://01shane89-jpg.github.io/AXIOM-APSAP/",
   "topic": "osap-health-952c35918047",
   "amberMin": 40,
@@ -35,6 +35,8 @@
     { "id": "roads", "file": "data/live/roads.js", "name": "Road closures", "maxMin": 90 },
     { "id": "wx", "file": "data/live/wx-forecast.js", "name": "Weather forecast", "maxMin": 90 },
     { "id": "evsum", "file": "data/live/evsum.js", "name": "Event summaries (AI draft)", "maxMin": 180 },
-    { "id": "osm", "file": "data/live/osm-sources.js", "name": "Live map data (OpenStreetMap via Postpass)", "maxMin": 120, "key": true }
+    { "id": "osm", "file": "data/live/osm-sources.js", "name": "Live map data (OpenStreetMap via Postpass)", "maxMin": 120, "key": true },
+    { "id": "airtraffic", "url": "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-air/index.json", "stamp": "built", "name": "Live air traffic (ADS-B)", "maxMin": 45, "key": true },
+    { "id": "drones", "url": "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-drones/drones.json", "stamp": "built", "name": "Live drones and military aircraft", "maxMin": 45, "key": true }
   ]
 }

@@ -164,7 +164,19 @@ assert.equal(ago(3 * 86400000), "3 days");
 const C = JSON.parse(fs.readFileSync(new URL("../tools/health.json", import.meta.url), "utf8"));
 const ids = C.feeds.map((f) => f.id);
 assert.equal(new Set(ids).size, ids.length, "duplicate feed id");
-for (const f of C.feeds) { assert.ok(/^data\//.test(f.file), f.id + ": file under data/"); assert.ok(f.maxMin > 0, f.id + ": maxMin"); }
+for (const f of C.feeds) {
+  // a feed is either a file on main or (published on its own branch) a raw.githubusercontent.com address, never both
+  if (f.url) { assert.ok(!f.file, f.id + ": url or file, not both"); assert.match(f.url, /^https:\/\/raw\.githubusercontent\.com\/01shane89-jpg\/AXIOM-APSAP\/live-[a-z]+\//, f.id + ": url on a live- branch"); }
+  else assert.ok(/^data\//.test(f.file), f.id + ": file under data/");
+  assert.ok(f.maxMin > 0, f.id + ": maxMin");
+}
+// the live air traffic and drone sweeps are watched as key feeds (stale for 5 h 40 min on 4 Nov 2026 with no alert)
+for (const id of ["airtraffic", "drones"]) { const f = C.feeds.find((x) => x.id === id); assert.ok(f && f.key && f.url && f.stamp === "built" && f.maxMin <= 60, id + " watched"); }
+// their "built" stamp (ISO with milliseconds) is read, and a stale one alerts by name
+assert.equal(stampOf('{"schema":"osap-air-traffic/1","built":"2026-09-28T11:00:01.211Z","sweep":5}', "built"), "2026-09-28T11:00:01.211Z");
+ev = evaluate({ asof: iso(10), feeds: [feed("quakes", 20), { id: "airtraffic", name: "Live air traffic (ADS-B)", key: true, maxMin: 45, asof: iso(340) }] }, cfg, NOW);
+assert.equal(ev.state, "down");
+assert.deepEqual(ev.alerts, ["Live air traffic (ADS-B): last updated 5 h 40 min."]);
 assert.ok(C.feeds.some((f) => f.key), "at least one key feed");
 assert.match(C.topic, /^osap-health-[0-9a-f]{12}$/);
 assert.ok(C.downMin > C.amberMin);

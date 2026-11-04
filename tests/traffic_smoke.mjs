@@ -51,7 +51,7 @@ async function open(opts, mode = {}) {
   await ctx.route(/raw\.githubusercontent\.com\/.*\/live-air\//, (r) => {
     const u = r.request().url(); air.push(u);
     if (mode.air === "down") return r.fulfill({ status: 404, body: "404: Not Found" });
-    if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(INDEX) });
+    if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(mode.air === "stale" ? { ...INDEX, built: new Date(Date.now() - 340 * 60e3).toISOString() } : INDEX) });
     if (/a\/10_100\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-cell/1", built, cell: "10_100", ac: AC }) });
     return r.fulfill({ status: 404, body: "" });
   });
@@ -95,6 +95,8 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   const st = await p.evaluate(() => document.getElementById("tra-st").textContent);
   ok(/9,123 aircraft worldwide/.test(st) && /5 on screen in the air/.test(st), "desktop: status line: " + st);
   ok(await p.evaluate(() => /Air traffic \(ADS-B\)/.test(document.body.innerHTML)), "desktop: air traffic legend on the map");
+  const age = await p.evaluate(() => (document.querySelector(".tra-age") || {}).textContent || "");
+  ok(/^data (under a minute|\d+ min) old \(swept /.test(age) && !/Stale/.test(age), "desktop: legend on the map gives the data age: " + age);
   await p.check('#ml-air input[data-trf="ground"]'); await p.waitForTimeout(400);
   ok((await count(p)).air === 6, "desktop: Include aircraft on the ground adds the one on the ground");
   let pop = await popWhere(p, "air", "AIQ3074");
@@ -157,6 +159,18 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   ok(/Could not load the live air traffic files \(HTTP 404/.test(a), "down: air says it could not load: " + a);
   ok(/Could not load ships \(HTTP 429/.test(s), "busy: ships say the feed refused: " + s);
   ok(errors.length === 0, "failing: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- sweep stopped: the map says the positions are old ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, { air: "stale" });
+  await p.evaluate(() => { window.__asapMap.setView([13.4, 100.6], 9, { animate: false }); }); await om(p);
+  await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1500);
+  const age = await p.evaluate(() => (document.querySelector(".tra-age") || {}).textContent || "");
+  const a = await p.evaluate(() => document.getElementById("tra-st").textContent);
+  ok(/^Stale: data 5 h 40 min old/.test(age) && /sweep has not run since/.test(age), "stale: legend on the map says stale with the age: " + age);
+  ok(/^Stale: OSAP's sweep has not run since/.test(a), "stale: status line says stale: " + a);
+  ok(errors.length === 0, "stale: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- phone ----------
