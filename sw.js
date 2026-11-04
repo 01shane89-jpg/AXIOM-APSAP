@@ -429,6 +429,7 @@ const PRECACHE = [
 "assets/osap-boolq.js",
 "assets/osap-health.js",
 "assets/osap-ds-review.js",
+"assets/osap-carry.js",
 "assets/osap-sync-boot.js",
 "assets/osap-lock.js",
 "assets/osap-tier.js",
@@ -590,8 +591,8 @@ const PRECACHE = [
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 // The sign-in code (assets/osap-tier.js) too: a reset or confirmation link opened right after a deploy must run the new copy,
-// not the one the old version saved.
-const FRESH = [/\/index\.html$/, /\/$/, /\/data\//, /\/assets\/osap-tier\.js$/];
+// not the one the old version saved. The hand-off from the old address (assets/osap-carry.js) the same way.
+const FRESH = [/\/index\.html$/, /\/$/, /\/data\//, /\/assets\/osap-tier\.js$/, /\/assets\/osap-carry\.js$/];
 const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw\.githubusercontent\.com\/mlc-ai\//,  // OSAP's AI model (assets/osap-ai.js): WebLLM keeps its own copy
   // Mapterhorn's coverage file (assets/osap-lidar.js) is read in byte ranges, which the Cache API cannot keep
   /download\.mapterhorn\.com\//,
