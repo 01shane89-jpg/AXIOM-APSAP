@@ -391,7 +391,7 @@
     ".svlbl span{display:inline-block;transform:translate(8px,-50%);white-space:nowrap;font:600 11px/1.2 system-ui,sans-serif;background:rgba(0,0,0,.72);color:#00e5ff;border-radius:3px;padding:1px 4px}.svlbl.o span{color:#ffab00}.svlbl.n span{transform:translate(5px,-110%);font-size:10px}" +
     "@media (max-width:700px){#srv{padding:6px}#srv .g{grid-template-columns:1fr;gap:2px 0}#srv .g>span{margin-top:6px;font-size:12px}}" +
     ".svp h2{font-size:14px;margin:10px 0 4px}.svp table{border-collapse:collapse;width:100%;font-size:9.5px;table-layout:fixed}.svp th,.svp td{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}.svp th{background:#eef1f4}" +
-    ".svp p{margin:3px 0;font-size:10px}.svp svg{width:100%;max-width:640px;height:auto;border:1px solid #bbb}.svp .ph{display:flex;flex-wrap:wrap;gap:6px}.svp .ph img{max-height:150px;max-width:220px}";
+    ".svp .svdg{break-inside:avoid;page-break-inside:avoid}.svp p{margin:3px 0;font-size:10px}.svp svg{width:100%;max-width:640px;height:auto;border:1px solid #bbb}.svp .ph{display:flex;flex-wrap:wrap;gap:6px}.svp .ph img{max-height:150px;max-width:220px}";
   function ensure() {
     if (el) return el;
     if (!D.getElementById("srv-css")) { var st = D.createElement("style"); st.id = "srv-css"; st.textContent = CSS; D.head.appendChild(st); }
@@ -512,26 +512,67 @@
   }
 
   /* ---------- the PDF ---------- */
-  function diagram() {
-    var r = ST.r, g = r.g, K = KINDS[r.kind], Wd = 640, Hd = 420, pad = 18, ext = Math.max(g.len_m / 2 + Math.max(K.appr / 3, 100), g.wid_m), s = Math.min((Wd - 2 * pad) / (2 * ext), (Hd - 2 * pad) / (2 * ext));
+  /* the diagram's frame: 640 x 420 px, north up, scaled so the site and a third of its corridors fit */
+  function frame() {
+    var r = ST.r, g = r.g, K = KINDS[r.kind], Wd = 640, Hd = 420, pad = 18, ext = Math.max(g.len_m / 2 + Math.max(K.appr / 3, 100), g.wid_m);
+    return { Wd: Wd, Hd: Hd, pad: pad, ext: ext, s: Math.min((Wd - 2 * pad) / (2 * ext), (Hd - 2 * pad) / (2 * ext)) };
+  }
+  /* satellite imagery under the diagram (Shane 2026-11-04, iPhone: "No map populating here"): Esri World Imagery, else the
+     free Sentinel-2 cloudless mosaic, each tile fetched and embedded as a data: picture so the print engine (iOS Safari's
+     included) never draws the page before the map arrives and needs no network while printing. A tile that cannot be
+     fetched (no CORS, offline) falls back to its web address; no imagery at all leaves the plain background, said in the caption.
+     -> Promise of { svg, src } */
+  function imagery() {
+    var g = ST.r.g, F = frame(), c = Math.cos(g.c[0] * R);
+    var esri = W.OSAP_ESRI ? W.OSAP_ESRI("World_Imagery") : "", eox = W.OSAP_HOST ? W.OSAP_HOST("sat") : "";
+    var url = esri || eox, src = esri ? "Imagery \u00a9 Esri, Maxar, Earthstar Geographics and the GIS user community" : eox ? "Imagery: Sentinel-2 cloudless by EOX (Copernicus Sentinel data)" : "";
+    if (!url) return Promise.resolve({ svg: "", src: "" });
+    var zmax = esri ? 18 : 15, z = Math.max(3, Math.min(zmax, Math.ceil(Math.log(156543.03 * c * F.s * 2) / Math.LN2))), n = Math.pow(2, z);
+    function tx(lon) { return (lon + 180) / 360 * n; }
+    function ty(lat) { var t = Math.sin(lat * R); return (0.5 - Math.log((1 + t) / (1 - t)) / (4 * Math.PI)) * n; }
+    function lon(x) { return x / n * 360 - 180; }
+    function lat(y) { var k = Math.PI - 2 * Math.PI * y / n; return Math.atan(Math.sinh(k)) / R; }
+    var nw = unlocal(g.c, [-F.Wd / 2 / F.s, F.Hd / 2 / F.s]), se = unlocal(g.c, [F.Wd / 2 / F.s, -F.Hd / 2 / F.s]), T = [];
+    for (var y = Math.floor(ty(nw[0])); y <= Math.floor(ty(se[0])); y++) for (var x = Math.floor(tx(nw[1])); x <= Math.floor(tx(se[1])); x++) {
+      if (y < 0 || y >= n || T.length >= 40) continue;
+      var a = local(g.c, [lat(y), lon(x)]), b = local(g.c, [lat(y + 1), lon(x + 1)]);
+      T.push({ u: url.replace("{z}", z).replace("{y}", y).replace("{x}", ((x % n) + n) % n), x: (F.Wd / 2 + a[0] * F.s).toFixed(1), y: (F.Hd / 2 - a[1] * F.s).toFixed(1), w: ((b[0] - a[0]) * F.s + 0.6).toFixed(1), h: ((a[1] - b[1]) * F.s + 0.6).toFixed(1) });
+    }
+    function one(t) {
+      var ac = W.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ac) ac.abort(); }, 10000);
+      return fetch(t.u, { mode: "cors", signal: ac ? ac.signal : undefined }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.blob(); })
+        .then(function (bl) { return new Promise(function (ok, no) { var fr = new FileReader(); fr.onload = function () { ok(fr.result); }; fr.onerror = no; fr.readAsDataURL(bl); }); })
+        .then(function (d) { clearTimeout(tm); t.d = d; }, function () { clearTimeout(tm); });
+    }
+    return Promise.all(T.map(one)).then(function () {
+      var got = T.filter(function (t) { return t.d; }).length;
+      if (!got && !T.length) return { svg: "", src: "" };
+      return { svg: T.map(function (t) { return '<image href="' + esc(t.d || t.u) + '" x="' + t.x + '" y="' + t.y + '" width="' + t.w + '" height="' + t.h + '" preserveAspectRatio="none"/>'; }).join(""), src: src, got: got, n: T.length };
+    });
+  }
+  function diagram(img) {
+    var r = ST.r, g = r.g, K = KINDS[r.kind], F = frame(), Wd = F.Wd, Hd = F.Hd, pad = F.pad, ext = F.ext, s = F.s, sat = !!(img && img.svg);
     function X(xy) { return (Wd / 2 + xy[0] * s).toFixed(1); } function Y(xy) { return (Hd / 2 - xy[1] * s).toFixed(1); }
     function P(p) { var q = local(g.c, p); return [X(q), Y(q)]; }
     function pl(a) { return a.map(function (p) { return P(p).join(","); }).join(" "); }
-    var e = ends(g), out = '<svg viewBox="0 0 ' + Wd + " " + Hd + '" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif" font-size="11"><rect width="' + Wd + '" height="' + Hd + '" fill="#f7f8f6"/>';
-    if (K.appr) [-1, 1].forEach(function (sg) { var h = g.len_m / 2, w = (g.shape === "circle" ? g.len_m : g.wid_m) / 2, d = ext; out += '<polygon points="' + pl([toLL(g, sg * h, -w), toLL(g, sg * (h + d), -(w + d * 0.1)), toLL(g, sg * (h + d), w + d * 0.1), toLL(g, sg * h, w)]) + '" fill="none" stroke="#0097a7" stroke-dasharray="3 4"/>'; });
-    var O = r.auto.osm; (O && O.items || []).forEach(function (it) { var k = OB[it.k] || OB.bldg, q = local(g.c, it.at); if (Math.abs(q[0]) > ext * 1.2 || Math.abs(q[1]) > ext * 1.2) return; var c = P(it.at); out += it.line ? '<polyline fill="none" stroke="' + k.c + '" stroke-width="2" points="' + pl(it.line.filter(function (p) { var z = local(g.c, p); return Math.abs(z[0]) < ext * 1.5 && Math.abs(z[1]) < ext * 1.5; })) + '"/>' : '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="2.6" fill="' + k.c + '"/>'; });
-    out += '<polygon points="' + pl(outline(g)) + '" fill="#00bcd4" fill-opacity=".18" stroke="#00838f" stroke-width="2.2"/>';
+    var e = ends(g), out = '<svg viewBox="0 0 ' + Wd + " " + Hd + '" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif" font-size="11"><rect width="' + Wd + '" height="' + Hd + '" fill="#f7f8f6"/>' + (sat ? img.svg : "");
+    var cl = sat ? "#00e5ff" : "#0097a7";
+    if (K.appr) [-1, 1].forEach(function (sg) { var h = g.len_m / 2, w = (g.shape === "circle" ? g.len_m : g.wid_m) / 2, d = ext; out += '<polygon points="' + pl([toLL(g, sg * h, -w), toLL(g, sg * (h + d), -(w + d * 0.1)), toLL(g, sg * (h + d), w + d * 0.1), toLL(g, sg * h, w)]) + '" fill="none" stroke="' + cl + '" stroke-width="1.4" stroke-dasharray="4 4"/>'; });
+    var O = r.auto.osm; (O && O.items || []).forEach(function (it) { var k = OB[it.k] || OB.bldg, q = local(g.c, it.at); if (Math.abs(q[0]) > ext * 1.2 || Math.abs(q[1]) > ext * 1.2) return; var c = P(it.at); out += it.line ? '<polyline fill="none" stroke="' + k.c + '" stroke-width="2" points="' + pl(it.line.filter(function (p) { var z = local(g.c, p); return Math.abs(z[0]) < ext * 1.5 && Math.abs(z[1]) < ext * 1.5; })) + '"/>' : '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="2.6" fill="' + k.c + '" stroke="#fff" stroke-width=".6"/>'; });
+    /* a white halo under the outline so it reads on dark imagery */
+    out += '<polygon points="' + pl(outline(g)) + '" fill="#00bcd4" fill-opacity="' + (sat ? ".12" : ".18") + '" stroke="#fff" stroke-width="' + (sat ? 4.5 : 0) + '"/><polygon points="' + pl(outline(g)) + '" fill="none" stroke="' + (sat ? "#00e5ff" : "#00838f") + '" stroke-width="2.2"/>';
     var a = P(e.a), b = P(e.b), c0 = P(g.c);
-    out += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="#00838f" stroke-dasharray="6 4"/><text x="' + a[0] + '" y="' + (+a[1] - 6) + '" font-weight="700" stroke="#fff" stroke-width="3" paint-order="stroke">A</text><text x="' + b[0] + '" y="' + (+b[1] - 6) + '" font-weight="700" stroke="#fff" stroke-width="3" paint-order="stroke">B</text>';
+    out += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="' + (sat ? "#fff" : "#00838f") + '" stroke-dasharray="6 4"/><text x="' + a[0] + '" y="' + (+a[1] - 6) + '" font-weight="700" stroke="#fff" stroke-width="3" paint-order="stroke">A</text><text x="' + b[0] + '" y="' + (+b[1] - 6) + '" font-weight="700" stroke="#fff" stroke-width="3" paint-order="stroke">B</text>';
     e.corners.forEach(function (p, i) { var q = P(p); out += '<text x="' + (+q[0] + 3) + '" y="' + (+q[1] - 3) + '" font-size="9" stroke="#fff" stroke-width="3" paint-order="stroke">' + (i + 1) + "</text>"; });
     r.obst.forEach(function (x, i) { if (!x.at) return; var q = P(x.at); out += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="4" fill="#ffab00" stroke="#000"/><text x="' + (+q[0] + 6) + '" y="' + (+q[1] + 4) + '" font-size="9" stroke="#fff" stroke-width="3" paint-order="stroke">O' + (i + 1) + "</text>"; });
     out += '<circle cx="' + c0[0] + '" cy="' + c0[1] + '" r="4" fill="#006064" stroke="#fff"/>';
     out += '<rect x="' + (Wd - 34) + '" y="6" width="28" height="46" rx="3" fill="#fff" fill-opacity=".85"/><path d="M' + (Wd - 26) + " 46 L" + (Wd - 20) + " 26 L" + (Wd - 14) + ' 46 Z" fill="#333"/><text x="' + (Wd - 24) + '" y="20" font-weight="700">N</text>';
     var bar = [50, 100, 200, 250, 500, 1000, 2000].filter(function (m) { return m * s <= Wd / 4; }).pop() || 50;
-    out += '<line x1="' + pad + '" y1="' + (Hd - pad) + '" x2="' + (pad + bar * s).toFixed(1) + '" y2="' + (Hd - pad) + '" stroke="#333" stroke-width="3"/><text x="' + pad + '" y="' + (Hd - pad - 6) + '">' + fmtM(bar) + "</text>";
+    out += '<rect x="' + (pad - 6) + '" y="' + (Hd - pad - 20) + '" width="' + (bar * s + 12).toFixed(1) + '" height="28" rx="3" fill="#fff" fill-opacity=".85"/><line x1="' + pad + '" y1="' + (Hd - pad) + '" x2="' + (pad + bar * s).toFixed(1) + '" y2="' + (Hd - pad) + '" stroke="#333" stroke-width="3"/><text x="' + pad + '" y="' + (Hd - pad - 6) + '">' + fmtM(bar) + "</text>";
+    if (sat) out += '<text x="' + (Wd - 6) + '" y="' + (Hd - 6) + '" text-anchor="end" font-size="8.5" fill="#fff" stroke="#000" stroke-width="2" paint-order="stroke">' + esc(img.src) + "</text>";
     return out + "</svg>";
   }
-  function printSheet() {
+  function printSheet(img) {
     var r = ST.r, K = KINDS[r.kind], g = r.g, e = ends(g), A = r.auto, E = A.elev && A.elev.key === geoKey(g) ? A.elev : null, d = D.createElement("div"); d.className = "svp";
     var dec = A.decl && A.decl.v;
     function m(t) { return dec != null ? " / " + dir3((((t - dec) % 360) + 360) % 360) + "° mag" : ""; }
@@ -541,11 +582,12 @@
       tr([r.kind === "dz" ? "Run-in axis" : "Landing direction A to B", Math.round(g.axis) + "° true" + m(g.axis) + "; reciprocal " + dir3(g.axis + 180) + "° true" + m(g.axis + 180)]) +
       (r.kind === "dz" && ST.dz && g.shape === "rect" ? tr(["PI", esc(grid(dzFromG(ST.dz, g).pi)) + ", " + Math.round(ST.dz.pi_lead_m) + " m from the leading edge"]) : "") +
       (A.decl ? tr(["Declination (From sources)", Math.abs(A.decl.v).toFixed(1) + "° " + (A.decl.v >= 0 ? "E" : "W") + ", WMM2025"]) : "") + "</tbody></table>";
+    /* the diagram straight after the short Site table, heading and picture kept together, so page 1 holds both and leaves no gap */
+    h += '<div class="svdg"><h2>Diagram (north up)</h2>' + diagram(img) + (img && img.svg && img.got ? (img.got < img.n ? "<p>Some imagery tiles did not load; they are shown only if the printer can fetch them.</p>" : "") : "<p>No satellite imagery could be loaded for the diagram (offline or the imagery service did not answer).</p>") + "</div>";
     h += "<h2>Coordinates</h2><table><thead><tr><th>Point</th><th>MGRS</th><th>Lat, lon</th><th>Elevation (From sources)</th></tr></thead><tbody>";
     function row(n, p, z) { return tr([esc(n), esc(grid(p)), p[0].toFixed(5) + ", " + p[1].toFixed(5), z != null ? Math.round(z) + " m / " + Math.round(z / FT) + " ft" : "-"]); }
     h += row("Centre", g.c, E && E.z.c) + row("A, approach end", e.a, E && E.z.a) + row("B, departure end", e.b, E && E.z.b) + e.corners.map(function (p, i) { return row("Corner " + (i + 1), p, null); }).join("") + "</tbody></table>";
     if (E) h += "<p>Elevation " + esc(E.src) + (E.res ? ", about " + E.res + " m detail" : "") + ", read " + esc(stamp(E.at)) + ". Model gradient end to end " + (E.gl != null ? E.gl.toFixed(1) + "%" : "-") + ", side to side " + (E.gt != null ? E.gt.toFixed(1) + "%" : "-") + ".</p>";
-    h += "<h2>Diagram (north up)</h2>" + diagram();
     if (A.finder) { var F = A.finder; h += "<p>HLZ finder (From sources, computer search): " + esc([F.clearD ? "clear about " + F.clearD + " m" : "", F.slope != null ? "slope " + F.slope + "° avg" : "", F.appr ? "approach " + F.appr : "", F.surface ? "surface " + F.surface : ""].filter(Boolean).join("; ")) + ".</p>"; }
     secsFor(r.kind).forEach(function (s) {
       h += "<h2>" + esc(SECS[s].h) + '</h2><table><colgroup><col style="width:32%"><col style="width:40%"><col style="width:28%"></colgroup><thead><tr><th>Item</th><th>Surveyed</th><th>From sources (not surveyed)</th></tr></thead><tbody>' +
@@ -605,9 +647,9 @@
     else if (k === "del") { if (!W.confirm("Delete the survey " + r.name + " from this browser?")) return; removeRec(r.id); ST.saved = false; r.id = newId(); paint(); }
     else if (k === "pdf") {
       if (!W.OSAP_PDF || b.disabled) return;
-      var sh = printSheet(); b.disabled = true; b.textContent = "Preparing…";
-      var hold = D.createElement("div"); hold.style.cssText = "position:absolute;left:-9999px;top:0;width:800px"; hold.appendChild(sh); D.body.appendChild(hold);
-      photosReady(sh).then(function () { b.disabled = false; b.textContent = "Export PDF"; var p = W.OSAP_PDF.panel(sh, { title: KINDS[r.kind].s + " survey: " + r.name }); hold.remove(); return p; });
+      b.disabled = true; b.textContent = "Loading the map…";
+      var sh, hold = D.createElement("div"); hold.style.cssText = "position:absolute;left:-9999px;top:0;width:800px"; D.body.appendChild(hold);
+      imagery().catch(function () { return null; }).then(function (img) { sh = printSheet(img); hold.appendChild(sh); return photosReady(sh); }).then(function () { b.disabled = false; b.textContent = "Export PDF"; var p = W.OSAP_PDF.panel(sh, { title: KINDS[r.kind].s + " survey: " + r.name }); hold.remove(); return p; });
     }
   }
   function setKind(nk) { var r = ST.r; if (!KINDS[nk] || ST.saved || nk === r.kind) return; r.kind = nk; var K = KINDS[nk]; r.g.shape = K.shape; r.g.len_m = K.len; r.g.wid_m = K.wid; r.g = cleanG(r.g); if (nk === "dz") ST.dz = newDzFor(r); else ST.dz = null; if (/ survey$/.test(r.name)) r.name = K.s + " survey"; paint(); draw(); fillSoon(); }

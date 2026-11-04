@@ -57,6 +57,7 @@ function tile(z, x, y) {
   return png(256, 256, rgb);
 }
 const tiles = new Map();
+const SAT = png(4, 4, Buffer.alloc(4 * 4 * 3, 90));
 
 /* ---------- made-up OpenStreetMap, as Postpass GeoJSON ---------- */
 const ll = (p) => [p[1], p[0]];
@@ -71,6 +72,8 @@ async function open(opts, flags = {}) {
   const errors = [], hits = { postpass: 0, overpass: 0, tiles: 0 };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url(), m = u.match(/elevation-tiles-prod\/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);
+    /* satellite imagery tiles for the PDF diagram (Esri World Imagery): a small grey PNG, with CORS as Esri sends it */
+    if (/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile\//.test(u)) { hits.sat = (hits.sat || 0) + 1; return flags.satFail ? r.abort() : r.fulfill({ status: 200, contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: SAT }); }
     if (m) { hits.tiles++; if (!tiles.has(u)) tiles.set(u, tile(+m[1], +m[2], +m[3])); return r.fulfill({ status: 200, contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: tiles.get(u) }); }
     if (/postpass\.geofabrik\.de/.test(u)) { hits.postpass++; return flags.osmFail ? r.fulfill({ status: 503, headers: { "Access-Control-Allow-Origin": "*" }, body: "down" }) : r.fulfill({ status: 200, contentType: "application/geo+json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(OSM) }); }
     if (/\/api\/interpreter/.test(u)) { hits.overpass++; return r.fulfill({ status: 504, headers: { "Access-Control-Allow-Origin": "*" }, body: "busy" }); }
@@ -154,9 +157,11 @@ async function setF(p, sel, v) { await p.fill("#srv " + sel, String(v)); await p
   await settled(p);
 
   /* PDF */
-  await p.evaluate(() => { window.__pdf = null; window.__pdfHold = (info) => { const r = info.root; window.__pdf = { title: info.title, svg: !!r.querySelector("svg polygon"), inputs: r.querySelectorAll("input,select,button,textarea").length, text: r.innerText }; }; });
+  await p.evaluate(() => { window.__pdf = null; window.__pdfHold = (info) => { const r = info.root; window.__pdf = { title: info.title, svg: !!r.querySelector("svg polygon"), sat: [...r.querySelectorAll("svg image")].filter((i) => /^data:image\//.test(i.getAttribute("href") || "")).length, imgs: r.querySelectorAll("svg image").length, dgFirst: (() => { const h = [...r.querySelectorAll("h2")].map((x) => x.textContent); return h.indexOf("Diagram (north up)") >= 0 && h.indexOf("Diagram (north up)") < h.indexOf("Coordinates"); })(), inputs: r.querySelectorAll("input,select,button,textarea").length, text: r.innerText }; }; });
   await p.click('#srv [data-sv="pdf"]'); await p.waitForFunction(() => window.__pdf, null, { timeout: 15000 });
   const pdf = await p.evaluate(() => window.__pdf);
+  ok(pdf.imgs > 0 && pdf.sat === pdf.imgs && /Imagery © Esri/.test(pdf.text), "desktop: the PDF diagram has satellite imagery under it, every tile embedded as a picture (" + pdf.sat + " of " + pdf.imgs + "), with the imagery credit (Shane 2026-11-04: no map in the PDF)");
+  ok(pdf.dgFirst, "desktop: the diagram comes straight after the Site table, before Coordinates, so page 1 has no gap");
   ok(/^LZ survey: Test strip/.test(pdf.title) && pdf.svg && pdf.inputs === 0, "desktop: Export PDF prints the worksheet with the diagram and no form fields: " + pdf.title);
   ok(/Surveyed/.test(pdf.text) && /From sources \(not surveyed\)/.test(pdf.text) && /SSG Test/.test(pdf.text) && /Power line/.test(pdf.text) && /Tree line/.test(pdf.text) && /not the official form/.test(pdf.text) && /Photo east end/.test(pdf.text),
     "desktop: the printed worksheet keeps Surveyed and From sources apart and carries the obstacles, photo and the not-official label");
@@ -196,11 +201,15 @@ async function setF(p, sel, v) { await p.fill("#srv " + sel, String(v)); await p
 
 /* ---------- OpenStreetMap down ---------- */
 {
-  const { ctx, p, errors } = await open({ viewport: { width: 1280, height: 800 } }, { osmFail: true });
+  const { ctx, p, errors } = await open({ viewport: { width: 1280, height: 800 } }, { osmFail: true, satFail: true });
   await p.evaluate((c) => window.OSAP_SURVEY_GO({ at: c, kind: "lz" }), C0);
   await p.waitForFunction(() => window.OSAP_SURVEY && window.OSAP_SURVEY.isOpen && window.OSAP_SURVEY.isOpen(), null, { timeout: 15000 }); await settled(p);
   const t = await text(p);
   ok(/This is a failure, not "no obstacles"/.test(t), "failure: a failed OpenStreetMap lookup is reported as a failure");
+  await p.evaluate(() => { window.__pdf = null; window.__pdfHold = (info) => { const r = info.root; window.__pdf = { svg: !!r.querySelector("svg polygon"), text: r.innerText }; }; });
+  await p.click('#srv [data-sv="pdf"]'); await p.waitForFunction(() => window.__pdf, null, { timeout: 30000 });
+  const pf = await p.evaluate(() => window.__pdf);
+  ok(pf.svg && /did not load|No satellite imagery/.test(pf.text), "failure: with the imagery unreachable the PDF still prints the diagram and says the imagery did not load");
   ok(errors.length === 0, "failure: no page errors " + errors.join(" | "));
   await ctx.close();
 }
