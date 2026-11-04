@@ -190,6 +190,8 @@ jobs:
       - run: node tests/places_all_smoke.mjs
       # My work side panel on the left of the map, holding My places and saved reports (assets/osap-work.js #mywk)
       - run: node tests/mywork_panel_smoke.mjs
+      # Map overlays find box, section chips and folding headings; Settings headings (assets/osap-mlfold.js, assets/osap-tidy.js)
+      - run: node tests/mlfold_smoke.mjs
       - run: node tests/map_display_smoke.mjs
       - run: node tests/photocheck_smoke.mjs
       - run: node tests/3d_smoke.mjs

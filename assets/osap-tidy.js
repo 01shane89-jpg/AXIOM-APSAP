@@ -118,14 +118,18 @@
   function setPanel() {
     var A = W.OSAP_ATAK, M = W.OSAP_MEASURE, LOC = W.OSAP_LOC;
     var box = D.createElement("div"); box.className = "tpset";
-    var h = '<div class="tplbl">Map colours</div><div class="tptheme"></div>';
+    /* four headed groups (2026-11-01, thread "Make hidden features easier to find"): the list was 20 items with no headings */
+    var hd = function (t) { return '<div class="tphd" role="presentation">' + esc(t) + "</div>"; };
+    var h = hd("Display") + '<div class="tplbl">Map colours</div><div class="tptheme"></div>';
     if (A && A.posFmt) h += seg("fmt", "Grid format", [["mgrs", "MGRS"], ["dd", "Lat/long"], ["dms", "DMS"]], A.posFmt());
     if (M && M.prefs) h += seg("unit", "Distance units", [["km", "km"], ["mi", "miles"], ["nm", "nautical mi"]], M.prefs().unit);
+    if (LOC || W.OSAP_PROTECT) h += hd("Location and privacy");
     if (LOC) h += '<label class="tpchk"><input type="checkbox" data-tset="loc"' + (LOC.on() ? " checked" : "") + '> Use my location<span>Kept on this device only</span></label>';
     /* protected mode: the page contacts no outside service itself; maps, weather and search go through OSAP (assets/osap-protect.js) */
     if (W.OSAP_PROTECT) h += '<label class="tpchk"><input type="checkbox" data-tset="protect"' + (W.OSAP_PROTECT.on() ? " checked" : "") + '> Protected mode<span>' +
       "Outside services never see this device: maps, weather and search go through OSAP. Cameras, sync, push and AI download stay off. Reloads OSAP</span></label>";
     /* saving maps and data on this device for use with no signal (assets/osap-offline.js) */
+    if (W.OSAP_OFFLINE || W.OSAP_MOVE || W.OSAP_VAULT || W.OSAP_SYNC || W.OSAP_AI) h += hd("Data and devices");
     if (W.OSAP_OFFLINE) h += '<button type="button" role="menuitem" data-tp="@off">Offline maps and data</button>';
     /* carrying saved data to another device in a passphrase-locked file, no account (assets/osap-move.js) */
     if (W.OSAP_MOVE) h += '<button type="button" role="menuitem" data-tp="@move">Move to another device</button>';
@@ -136,6 +140,7 @@
     /* the AI model the AI summaries use where the browser has none of its own (assets/osap-ai.js) */
     if (W.OSAP_AI) h += '<button type="button" role="menuitem" data-tp="@ai">On-device AI</button>';
     /* pinned countries, role and the first-run setup again (assets/osap-mycountries.js) */
+    h += hd("Setup, help and safety");
     if (W.OSAP_MYCC) h += '<button type="button" role="menuitem" data-tp="@mycc">My countries and setup</button>';
     /* the user guide, offline and printable (assets/osap-guide.js) */
     if (W.OSAP_GUIDE) h += '<button type="button" role="menuitem" data-tp="@guide">User guide</button>';
@@ -321,6 +326,7 @@
     "#tidy-pop.tprep{box-sizing:border-box;max-height:calc(100vh - 16px);overflow:auto;display:block}#tidy-pop .tprg{break-inside:avoid;padding-bottom:4px}#tidy-pop .tprg [data-tp],#tidy-pop .tprg .tpoff{width:100%}" +
     "#tidy-pop .tpoff{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;font-size:14px;padding:8px 10px;min-height:40px;border-radius:6px;color:var(--muted)}#tidy-pop .tpoff b{font-weight:600}#tidy-pop .tpoff span{font-size:12px;font-style:italic}" +
     "@media (min-width:760px) and (min-height:500px){#tidy-pop.tprep{column-count:2;column-gap:8px;width:min(620px,calc(100vw - 16px))}}" +
+    "#tidy-pop .tphd{font:700 12px/1.2 system-ui,-apple-system,sans-serif;color:var(--ink);padding:10px 10px 2px;margin-top:4px;border-top:1px solid var(--line)}#tidy-pop .tphd:first-child{border-top:0;margin-top:0;padding-top:4px}" +
     "#tidy-pop .tpnone{margin:6px 10px;font-size:13px;color:var(--muted)}" +
     ".ohp .tpref{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:4px 0 8px}.ohp .tpref .obs{font-size:12px}" +
     /* phone: map credits as an "i" until tapped */
