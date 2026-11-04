@@ -5,7 +5,7 @@ name: Probe USN dive tables
 on:
   push:
     branches: [claude/dive-plan, main]
-    paths: [.github/workflows/probe-divetables.yml, tools/probe_divetables.sh, tools/divetables_extract.py, data/dive/usn-rev7-air.json]
+    paths: [.github/workflows/probe-divetables.yml, tools/probe_divetables.sh, tools/divetables_extract.py, tools/probe_dive_sources.sh, data/dive/usn-rev7-air.json]
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,3 +17,4 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
       - run: bash tools/probe_divetables.sh divetables-out
+      - run: bash tools/probe_dive_sources.sh divetables-out
