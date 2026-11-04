@@ -148,6 +148,7 @@ data-ev-tlr="1"
 <script src="assets/osap-seatransit.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
+<script src="assets/osap-medslide.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
 <script src="assets/osap-intelbrief.js"></script>
 # OSIR report format (claude/osir-report)

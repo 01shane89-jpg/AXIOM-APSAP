@@ -239,7 +239,15 @@ const click = (p, sel, timeout) => p.waitForSelector(sel, { state: "attached", t
     await p.waitForFunction(() => { const b = document.getElementById("mpd-print"); return b && !b.disabled; }, null, { timeout: 90000 });
     await click(p, "#mpd-print");
   }, { wait: 90000 });
-  await p.evaluate(() => { const b = document.getElementById("mpd-close"); if (b) b.click(); const c = document.querySelector('#medplan [data-mp="close"]'); if (c) c.click(); });
+  await p.evaluate(() => { const b = document.getElementById("mpd-close"); if (b) b.click(); });
+  await check("medslide", "Medical plan briefing slide", p, async () => {
+    if (!(await p.evaluate(() => !!document.querySelector('#medplan [data-mp="slide"]')))) await p.evaluate(() => window.OSAP_MEDPLAN.open({ centre: true }));
+    await p.waitForFunction(() => { const b = document.querySelector('#medplan [data-mp="print"]'); return b && !b.disabled; }, null, { timeout: 90000 });
+    await click(p, '#medplan [data-mp="slide"]');
+    await p.waitForFunction(() => { const b = document.querySelector('#brief [data-msb="pdf"]'); return b && !b.disabled; }, null, { timeout: 90000 });
+    await click(p, '#brief [data-msb="pdf"]');
+  }, { wait: 90000, maxPages: 1 });
+  await p.evaluate(() => { if (window.OSAP_MEDSLIDE) window.OSAP_MEDSLIDE.close(); const c = document.querySelector('#medplan [data-mp="close"]'); if (c) c.click(); });
   /* one hospital on its own (no plan): the hospitals round the map centre, the nearest assessed */
   await check("hospital", "Hospital assessment (standalone)", p, async () => {
     await p.evaluate(() => window.OSAP_MEDPLAN.hospital({ at: [13.75, 100.5], pick: true }));
