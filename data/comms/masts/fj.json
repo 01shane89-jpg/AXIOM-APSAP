@@ -1,4 +1,4 @@
-{"cc":"fj","at":"2026-10-04T10:17:40Z","base":"2026-10-04T10:16:26Z","m":[
+{"cc":"fj","at":"2026-11-04T12:19:04Z","base":"2026-11-04T12:15:28Z","m":[
 ["n10091201443",-16.6788,179.27154,{"man_made":"communications_tower"}],
 ["n10100851332",-16.62993,179.20812,{"man_made":"communications_tower"}],
 ["n10138705417",-16.5267,179.38622,{"man_made":"communications_tower"}],
@@ -20,8 +20,6 @@
 ["n6608825036",-18.19459,177.64902,{"man_made":"tower","tower:type":"communication"}],
 ["n6759786694",-18.13622,178.42874,{"man_made":"tower","tower:type":"communication"}],
 ["n7768202489",-18.10438,178.42996,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"metal","tower:type":"communication"}],
-["n9245406954",-17.61174,177.09074,{"man_made":"mast","name":"Tower","tower:type":"communication"}],
 ["n9421925882",-16.36616,179.36518,{"man_made":"mast","tower:type":"communication"}],
-["w1192475290",-16.73222,-179.7494,{"communication:mobile_phone":"yes","man_made":"tower","material":"steel","operator":"Digicom","tower:construction":"freestanding","tower:type":"communication"}],
 ["w720252124",-18.13617,178.4287,{"communication:radio":"yes","man_made":"tower","name":"Communication Fiji Limited","tower:type":"radar"}]
 ]}

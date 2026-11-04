@@ -1,4 +1,4 @@
-{"cc":"sv","at":"2026-10-04T10:08:44Z","base":"2026-10-04T10:07:06Z","m":[
+{"cc":"sv","at":"2026-11-04T12:00:37Z","base":"2026-11-04T11:54:10Z","m":[
 ["n10197729110",13.76808,-89.80258,{"man_made":"communications_tower","tower:type":"communication"}],
 ["n10197729111",13.7681,-89.80269,{"man_made":"communications_tower","tower:type":"communication"}],
 ["n10231929387",13.71931,-89.72824,{"communication:gsm":"yes","communication:lte":"yes","communication:lte+":"yes","communication:mobile":"yes","height":"20","man_made":"mast","operator":"CTE Telecom","tower:construction":"lattice","tower:type":"communication"}],
