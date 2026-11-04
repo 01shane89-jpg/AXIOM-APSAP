@@ -1,0 +1,25 @@
+# Test only: downloads the public US Navy Diving Manual Rev 7 (NAVSEA SS521-AG-PRO-010, Distribution Statement A) and
+# extracts the text of Chapter 9 (air decompression tables) so tools/divetables can be checked cell by cell against it.
+# Writes nothing to the repo; output is a workflow artifact.
+name: Probe USN dive tables
+on:
+  push:
+    branches: [claude/dive-plan]
+    paths: [.github/workflows/probe-divetables.yml, tools/probe_divetables.sh]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - run: bash tools/probe_divetables.sh divetables-out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: divetables-raw
+          path: divetables-out
+          retention-days: 7
