@@ -18,7 +18,7 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function zt(ms) { return W.OSAP_TIME && W.OSAP_TIME.dualT ? W.OSAP_TIME.dualT(ms, { date: true }) : new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; }
-  function ago(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 60e3)); return m < 1 ? "under a minute ago" : m < 90 ? m + " min ago" : Math.round(m / 60) + " h ago"; }
+  function ago(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 60e3)); return m < 1 ? "under a minute ago" : m < 60 ? m + " min ago" : m < 2880 ? Math.floor(m / 60) + " h" + (m % 60 ? " " + m % 60 + " min" : "") + " ago" : Math.round(m / 1440) + " days ago"; }
   function mgrs(lat, lon) { try { return W.MGRS_OF ? W.MGRS_OF(lat, lon) : ""; } catch (e) { return ""; } }
   function sha256(s) {
     if (!(W.crypto && crypto.subtle && W.TextEncoder)) return Promise.resolve("");
@@ -91,7 +91,10 @@
     W.OSAP_LEGEND.set("air", "<h3>Live aircraft (ADS-B)</h3>" +
       '<p class="mlkey" style="margin:2px 0"><span style="background:none;border-top:2px dashed #b8860b;height:0;vertical-align:middle"></span>Drone track, past hour' +
       (ON.mil ? ' <span style="background:none;border-top:2px dashed #607d8b;height:0;vertical-align:middle"></span>Military aircraft track' : "") + "</p>" +
-      '<p class="mlkey" style="margin:2px 0">' + (DATA ? "Updated " + esc(zt(Date.parse(DATA.built))) : "Loading") + ". Only aircraft broadcasting ADS-B.</p>");
+      (DATA ? (function (b, old) {
+        return '<p class="mlkey" style="margin:2px 0' + (old ? ";color:#c62828;font-weight:600" : "") + '">' + (old ? "Stale: " : "") + "data " + esc(ago(b).replace(" ago", "")) + " old (updated " + esc(zt(b)) + ").</p>";
+      })(Date.parse(DATA.built), Date.now() - Date.parse(DATA.built) > STALE) : '<p class="mlkey" style="margin:2px 0">Loading…</p>') +
+      '<p class="mlkey" style="margin:2px 0">Only aircraft broadcasting ADS-B.</p>');
   }
 
   function status() {

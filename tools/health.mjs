@@ -18,10 +18,17 @@ const SITE = (process.env.HEALTH_SITE || cfg.site).replace(/\/?$/, "/");
 const TOPIC = process.env.HEALTH_TOPIC || cfg.topic;
 const NTFY = "https://ntfy.sh/";
 
-function build() {
+// Feeds published outside main (live air traffic and drones, on their own branches, read by the page from
+// raw.githubusercontent.com) carry a "url" in tools/health.json instead of a "file": their time stamp is read from there.
+async function remoteText(f) {
+  try { const r = await get(f.url + (f.url.includes("?") ? "&" : "?") + "t=" + Date.now(), 20000); return r.ok ? await r.text() : null; } catch (e) { return null; }
+}
+
+async function build() {
   const feeds = [];
   for (const f of cfg.feeds) {
     const row = { id: f.id, name: f.name, key: !!f.key, maxMin: f.maxMin || cfg.defaultMaxMin, asof: null };
+    if (f.url) { const t = await remoteText(f); row.asof = t ? stampOf(t, f.stamp || "asof") : null; feeds.push(row); continue; }
     let text = null;
     try { text = fs.readFileSync(f.file, "utf8"); } catch (e) {}
     if (text) {
@@ -80,8 +87,22 @@ async function send(kind, ev) {
   console.log(`sent: ${title}`);
 }
 
+// the url feeds are read again at watch time, so a stalled sweep is caught within 15 minutes even while the published
+// health.json is older than that (an old reading of them is replaced; a published file without them gets them added)
+async function freshRemote(health) {
+  if (!health || !Array.isArray(health.feeds)) return;
+  for (const f of cfg.feeds.filter((x) => x.url)) {
+    const t = await remoteText(f), asof = t ? stampOf(t, f.stamp || "asof") : null;
+    const row = { id: f.id, name: f.name, key: !!f.key, maxMin: f.maxMin || cfg.defaultMaxMin, asof };
+    const i = health.feeds.findIndex((x) => x.id === f.id);
+    if (i >= 0) health.feeds[i] = row; else health.feeds.push(row);
+    console.log(`  ${f.name}: ${asof ? "published " + asof : "could not be read"}`);
+  }
+}
+
 async function watch() {
   const pub = await readPublished();
+  if (!pub.site) await freshRemote(pub.health);
   const ev = pub.site
     ? { state: "down", ageMin: null, problems: [], alerts: ["The app site " + SITE + " " + pub.site + "."], fp: "site" }
     : evaluate(pub.health, cfg);
@@ -126,7 +147,7 @@ async function test() {
 }
 
 const mode = process.argv[2];
-if (mode === "build") build();
+if (mode === "build") await build();
 else if (mode === "watch") await watch().catch((e) => { console.log("::warning::health watch: " + e.message); });
 else if (mode === "test") await test();
 else { console.log("usage: node tools/health.mjs build|watch|test"); process.exit(2); }
