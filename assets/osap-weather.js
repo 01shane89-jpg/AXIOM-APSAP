@@ -959,9 +959,10 @@
   function easyDays(D, n) {
     var p = D.pts[0], tz = D.tz, out = [], start = hourNow();
     for (var d = 0; d < n; d++) {
-      var t1 = nextLocalMidnight(start + 36e5, tz), ix = hrsFrom(p, start, t1);
+      /* from the hour now to the next local midnight: at 23:00 local today is one hour, not 23:00 to the midnight after next */
+      var t1 = nextLocalMidnight(start, tz), ix = hrsFrom(p, start, t1);
       if (!ix.length) break;
-      out.push(ezAgg(p, ix, { t0: start, t1: t1, lbl: dayName(start + 36e5, tz, d), date: dayLbl(start + 36e5, tz) }));
+      out.push(ezAgg(p, ix, { t0: start, t1: t1, lbl: dayName(start, tz, d), date: dayLbl(start, tz) }));
       start = t1;
     }
     return out;
