@@ -22,3 +22,5 @@ cat "$OUT/table_index.txt"
 awk -v o="$OUT/pages" 'BEGIN{p=1; system("mkdir -p " o)} {print > (o "/p" sprintf("%04d",p) ".txt")} /\f/{p++}' "$OUT/all.txt"
 grep -l -E "Table 9-(6|7|8|9)\b" "$OUT"/pages/*.txt > "$OUT/table_pages.txt"; cat "$OUT/table_pages.txt"
 rm -f "$OUT/rev7.pdf.keep"
+# print the chapter 9 table pages to the log (artifacts are not reachable from every reader)
+for n in $(seq 436 522); do f=$(printf "%s/pages/p%04d.txt" "$OUT" "$n"); [ -f "$f" ] && { echo "=== PAGE $n ==="; cat "$f"; }; done
