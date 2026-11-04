@@ -4,7 +4,7 @@
  "version": "26.1",
  "zip_sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667",
  "ged_last": "2025-12-31",
- "built": "2026-10-29 07:53Z",
+ "built": "2026-11-04 08:27Z",
  "conflicts": {
   "russia-ukraine": {
    "key": "9ce04ba12add",
@@ -1846,7 +1846,8 @@
    "GEDEvent_v26_0_9.csv"
   ],
   "missing": [
-   "GEDEvent_v26_0_10.csv (HTTP 404)"
+   "GEDEvent_v26_0_10.csv (HTTP 404)",
+   "GEDEvent_v26_0_11.csv (HTTP 404)"
   ]
  },
  "unmatched_names": {}
