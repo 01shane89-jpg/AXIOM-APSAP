@@ -16,9 +16,10 @@
   var STARTED_OUT = false; /* the page opened signed out, so nothing loaded: a sign-in from here reloads */
   var TIERS = ["free", "mid", "full"];
   /* The GitHub Pages copy has no gate, so it moves people to the Netlify site, where they must sign in (also at the top of
-     index.html; this one catches a page an old service worker still serves). Empty turns the move off. */
+     index.html; this one catches a page an old service worker still serves). Empty turns the move off. When
+     assets/osap-carry.js is carrying saved work across (or keeps the page on the old address to unlock it), it makes the move. */
   var MOVE_TO = "https://axiom-osap.netlify.app/";
-  if (MOVE_TO && /\.github\.io$/.test(location.hostname)) { location.replace(MOVE_TO + (location.search ? location.search + "&" : "?") + "from=pages" + location.hash); return; }
+  if (MOVE_TO && /\.github\.io$/.test(location.hostname) && !(W.OSAP_CARRY && W.OSAP_CARRY.handled)) { location.replace(MOVE_TO + (location.search ? location.search + "&" : "?") + "from=pages" + location.hash); return; }
   /* ?from=pages: moved here from the old address, often by a home-screen icon made there, which iPhone opens in a browser
      view with its own storage. Taken off the address now; the sign-in screen says to add OSAP to the home screen again. */
   var MOVED = /[?&]from=pages(&|$)/.test(location.search);

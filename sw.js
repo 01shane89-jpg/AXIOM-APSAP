@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "4c820b3abf47";
+const VERSION = "db85991ee436";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -429,6 +429,7 @@ const PRECACHE = [
 "assets/osap-boolq.js",
 "assets/osap-health.js",
 "assets/osap-ds-review.js",
+"assets/osap-carry.js",
 "assets/osap-sync-boot.js",
 "assets/osap-lock.js",
 "assets/osap-tier.js",
@@ -590,8 +591,8 @@ const PRECACHE = [
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 // The sign-in code (assets/osap-tier.js) too: a reset or confirmation link opened right after a deploy must run the new copy,
-// not the one the old version saved.
-const FRESH = [/\/index\.html$/, /\/$/, /\/data\//, /\/assets\/osap-tier\.js$/];
+// not the one the old version saved. The hand-off from the old address (assets/osap-carry.js) the same way.
+const FRESH = [/\/index\.html$/, /\/$/, /\/data\//, /\/assets\/osap-tier\.js$/, /\/assets\/osap-carry\.js$/];
 const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw\.githubusercontent\.com\/mlc-ai\//,  // OSAP's AI model (assets/osap-ai.js): WebLLM keeps its own copy
   // Mapterhorn's coverage file (assets/osap-lidar.js) is read in byte ranges, which the Cache API cannot keep
   /download\.mapterhorn\.com\//,

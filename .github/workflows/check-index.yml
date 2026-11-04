@@ -116,6 +116,8 @@ jobs:
       - run: node tests/news_index_relevance.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs
+      # the hand-off of saved work from the old github.io address (assets/osap-carry.js): the merge
+      - run: node tests/carry.test.mjs
       # team workspace: team links (key after #, editor and viewer), viewers cannot sign, call signs, the 2 MB cap, the moved note
       - run: node tests/team.test.mjs
       # GPS interference map: which aircraft reports count, hourly windows, grading, day files (tools/gnss.mjs)
@@ -216,6 +218,7 @@ jobs:
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/tak_smoke.mjs
       - run: node tests/move_smoke.mjs
+      - run: node tests/carry_smoke.mjs
       - run: node tests/protect_smoke.mjs
       - run: node tests/safety_smoke.mjs
       - run: node tests/wipe_smoke.mjs
@@ -335,3 +338,16 @@ jobs:
       - run: node tests/boolq_smoke.mjs
       # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
       - run: node tests/grade_smoke.mjs
+  carry-webkit:
+    # The hand-off of saved work from the old github.io address (assets/osap-carry.js) in WebKit, Safari's engine: the iPhone
+    # is where most saved work sits, and Safari is the browser that decides how long an address may be.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps webkit
+      - run: BROWSER=webkit node tests/carry_smoke.mjs

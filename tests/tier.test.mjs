@@ -208,7 +208,7 @@ ok(/\(api\|\\\.netlify\)/.test(sw), "sw.js never caches the sign-in and plan ans
 const tierJs = fs.readFileSync("assets/osap-tier.js", "utf8");
 ok(tierJs.includes('var MOVE_TO = "https://axiom-osap.netlify.app/";') && html.includes('location.replace("https://axiom-osap.netlify.app/"+(location.search?location.search+"&":"?")+"from=pages"+location.hash)'),
   "the GitHub Pages copy sends people to the Netlify site to sign in (index.html and osap-tier.js)");
-ok(html.includes("if(/\\.github\\.io$/.test(location.hostname))"), "only the github.io address is moved, never the Netlify site itself");
+ok(html.includes("if(/\\.github\\.io$/.test(location.hostname)&&!(window.OSAP_CARRY&&window.OSAP_CARRY.handled))"), "only the github.io address is moved, never the Netlify site itself, and only when the hand-off of saved work (assets/osap-carry.js) did not take over");
 ok(tierJs.includes('+ "from=pages" +'), "osap-tier.js marks the move too, so the Netlify site can say to add the home-screen icon again");
 ok(/const FRESH = \[[^\]]*osap-tier\\\.js/.test(sw), "sw.js asks the network first for the sign-in code, so an email link never runs an old copy");
 
