@@ -77,7 +77,7 @@
 ["n12752206726",20.51231,95.16708,"mm",{"name":"အင်တောတိုက်နယ်ဆေးရုံ","name:en":"In Taw Station Hospital","amenity":"hospital","beds":"16"}],
 ["n12752206727",21.68934,95.11015,"mm",{"name":"ကြက်ဆူကျင်းတိုက်နယ်ဆေးရုံ","name:en":"Kyet Su Kyin Station Hospital","amenity":"hospital","beds":"16"}],
 ["n12752206728",20.59323,95.23543,"mm",{"name":"ဖန်ခါးစမ်းတိုက်နယ်ဆေးရုံ","name:en":"Hpan Khar San Station Hospital","amenity":"hospital","beds":"16"}],
-["n12752206729",20.77149,94.44904,"mm",{"name":"သရက်တောတိုက်နယ်ဆေးရုံ","name:en":"Thayet Station Hospital","amenity":"hospital","beds":"16"}],
+["n12752206729",20.77144,94.44905,"mm",{"name":"သရက်တောတိုက်နယ်ဆေးရုံ","name:en":"Thayet Station Hospital","amenity":"hospital","beds":"16"}],
 ["n12752206730",20.07102,95.55669,"mm",{"name":"ဒန့်ဒလွန်ပင်တိုက်နယ်ဆေးရုံ","name:en":"Dant Da Lun Pin Station Hospital","amenity":"hospital","beds":"16"}],
 ["n12752206732",21.92613,94.36876,"mm",{"name":"ကျောတိုက်နယ်ဆေးရုံ","name:en":"Kyaw Station Hospital","amenity":"hospital","healthcare":"hospital","beds":"16","operator":"Ministry of Health and Sports","operator:type":"government","addr:city":"ကျော"}],
 ["n12752206734",20.22019,94.76368,"mm",{"name":"စကုဆေးရုံ","name:en":"Saku Station Hospital","amenity":"hospital","beds":"25"}],
@@ -91,7 +91,7 @@
 ["n12752206758",20.4503,94.24815,"mm",{"name":"‌စေတုတ္တရာမြို့နယ်ဆေးရုံ","name:en":"Sidoktaya Township Hospital","amenity":"hospital","healthcare":"hospital","beds":"25","addr:city":"Sidoktaya"}],
 ["n12752206759",20.20299,95.44686,"mm",{"name":"မြို့သစ်မြို့နယ်ဆေးရုံ","name:en":"Myothit Township Hospital","amenity":"hospital","beds":"25"}],
 ["n12752206760",20.32039,94.4932,"mm",{"name":"မဲဇလီတိုက်နယ်ဆေးရုံ","name:en":"Mae Zali Station Hospital","amenity":"hospital","healthcare":"hospital","beds":"16","operator":"Ministry of Health and Sports","operator:type":"government","addr:city":"မဲဇလီ"}],
-["n12774592430",20.54115,95.96908,"mm",{"name":"ရန်အောင်တိုက်နယ်ဆေးရုံ","name:en":"Yan Aung Station Hospital","amenity":"hospital","beds":"16"}],
+["n12774592430",20.54115,95.96908,"mm",{"name":"ရန်နောင်တိုက်နယ်ဆေးရုံ","name:en":"Yan Naung Station Hospital","amenity":"hospital","healthcare":"hospital","beds":"16"}],
 ["n12774592439",21.46122,95.86998,"mm",{"name":"ကန်နားတိုက်နယ်ဆေးရုံ","name:en":"Ka Nar Station Hospital","amenity":"hospital","beds":"16"}],
 ["n12774611605",20.76745,95.77319,"mm",{"name":"အလယ်ရွာတိုက်နယ်ဆေးရုံ","name:en":"Ah Lel Station Hospital","amenity":"hospital","beds":"16"}],
 ["n12774612360",21.89399,95.68467,"mm",{"name":"ငါန်းဇွန်မြို့နယ်ဆေးရုံ","name:en":"Ngazun Township Hospital","amenity":"hospital","beds":"50"}],
@@ -383,4 +383,4 @@
 ["w747503544",21.156,94.16084,"mm",{"name":"Domestic Airport(Saw)","aeroway":"aerodrome"}],
 ["w792484178",21.4612,95.86984,"mm",{"amenity":"hospital"}],
 ["w835679266",20.57366,94.65933,"mm",{"name":"ပြည်သူ့ဆေးရုံ (စလင်း)","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"Minbu-Saku-Pwintphyu-Salin Road","addr:city":"စလင်း"}],
-["w836650547",20.77145,94.44887,"mm",{"name":"ဆေးရုံ","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}]]
+["w836650547",20.77156,94.4489,"mm",{"amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}]]

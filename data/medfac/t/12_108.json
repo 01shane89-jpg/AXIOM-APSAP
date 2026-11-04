@@ -159,7 +159,7 @@
 ["w237186082",13.95698,109.04688,"vn",{"name":"Sân bay Phù Cát","name:en":"Phu Cat Airport","operator":"Tổng Công ty Cảng hàng không Việt Nam","operator:type":"government","phone":"+84 256 3822953","website":"https://acv.vn/phucatairport/","addr:province":"Bình Định","aeroway":"aerodrome","icao":"VVPC","iata":"UIH","wikidata":"Q193408"}],
 ["w239812405",12.66775,108.03934,"vn",{"name":"TT Y tế dự phòng Đăk Lăk","official_name":"Trung Tâm Y tế dự phòng tỉnh Đăk Lăk","amenity":"hospital","healthcare":"hospital","addr:housenumber":"72","addr:street":"Lê Duẩn"}],
 ["w241583289",13.91221,108.91416,"vn",{"name":"Trung tâm Y tế dự phòng Huyện Tây Sơn","amenity":"hospital","emergency":"yes"}],
-["w241804519",12.69343,108.04767,"vn",{"name":"Bệnh viện Đa khoa Buôn Ma Thuột","amenity":"hospital","healthcare":"hospital","addr:housenumber":"62","addr:street":"Nguyễn Đình Chiểu"}],
+["w241804519",12.69343,108.04767,"vn",{"name":"Bệnh viện Đa khoa Buôn Ma Thuột","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"62","addr:street":"Nguyễn Đình Chiểu"}],
 ["w242192328",12.69586,108.06676,"vn",{"name":"Bệnh viện Y học cổ truyền tỉnh Đắk Lắk","amenity":"hospital","healthcare":"hospital","addr:housenumber":"7","addr:street":"Đường Nguyễn Chí Thanh"}],
 ["w313408756",13.82031,109.15114,"vn",{"name":"Trung tâm Y tế Tuy Phước","name:en":"Tuy Phuoc Medical Center","amenity":"hospital","healthcare":"hospital"}],
 ["w314065247",13.80947,109.14767,"vn",{"name":"Trạm y tế thị trấn Diêu Trì","amenity":"clinic"}],

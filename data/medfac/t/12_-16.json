@@ -1,6 +1,6 @@
 [["n10230883317",13.97398,-14.56821,"sn",{"name":"PRESTAVET","amenity":"clinic"}],
 ["n10230883417",13.44008,-14.94822,"sn",{"amenity":"clinic","addr:street":"kolda-pata"}],
-["n1042041213",12.17808,-14.65354,"gw",{"name":"Aeroporte de Bafatá","aeroway":"aerodrome"}],
+["n1042041213",12.17808,-14.65354,"gw",{"name":"Aeroporto de Bafatá","aeroway":"aerodrome"}],
 ["n10759160780",13.57987,-15.6733,"gm",{"name":"RCH site","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"nurses_and_public_health_officers","operator":"immunization, antenatal services","operator:type":"government","opening_hours":"first tuesday of every month"}],
 ["n10787211671",13.57465,-15.639,"gm",{"name":"RCH","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"nurse;community;community_health_nurse;lab","opening_hours":"first tuesday of every month"}],
 ["n10787244198",13.53831,-15.63524,"gm",{"name":"Kubandar clinic","amenity":"clinic","healthcare":"clinic"}],

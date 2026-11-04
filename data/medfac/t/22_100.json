@@ -3,6 +3,7 @@
 ["n12353530387",23.41929,101.6825,"cn",{"name":"中西医结合医院","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"traditional_chinese_medicine","operator:type":"private"}],
 ["n12456486177",22.3498,101.97792,"la",{"name":"ສຸກສາລາ ມາລີເທົາ","name:en":"Malithao Health Center","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health","operator:type":"government"}],
 ["n13423158701",22.02975,100.7913,"cn",{"name":"景洪市第一人民医院","name:en":"The First People’s Hospital of Jinghong","amenity":"hospital"}],
+["n14251721571",22.42552,101.73733,"la",{"name":"ສຸກສາລາ ແຊວຈ້າຍ","name:en":"Xeochay Health Center","healthcare":"hospital","operator":"Ministry of Health"}],
 ["n3292457516",23.07999,101.05576,"cn",{"name":"ert","amenity":"hospital"}],
 ["n8099676317",22.03578,101.88394,"la",{"name":"ສຸກສາລາ ບ້ານຕ້າງ","name:en":"Bantang Health Center","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health","operator:type":"government","phone":"02052344532","opening_hours":"24/7"}],
 ["n8105231317",22.119,101.78419,"la",{"name":"ໂຮງໝໍເມືອງ ຍອດອູ","name:en":"Nyot-ou District Hospital","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health","operator:type":"government","phone":"020 99 688 817","opening_hours":"24/7"}],

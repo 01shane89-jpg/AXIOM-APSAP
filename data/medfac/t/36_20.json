@@ -25,7 +25,7 @@
 ["w173762845",36.7072,21.77033,"gr",{"name":"Helicopter Landing Pad","aeroway":"helipad"}],
 ["w274565872",37.78439,20.87584,"gr",{"name":"Γενικό Νοσοκομείο Ζακύνθου \"Άγιος Διονύσιος\"","amenity":"hospital","healthcare":"hospital","emergency":"yes","contact:phone":"+30 2695360500","contact:website":"www.zante-hospital.gr","wikidata":"Q21626776"}],
 ["w274596642",37.61364,21.49592,"gr",{"name":"Αεροδρόμιο Επιταλίου","name:en":"Epitalion Airport","aeroway":"aerodrome","icao":"LGEP","aerodrome:type":"airfield","wikidata":"Q20456934"}],
-["w299644678",37.75116,20.88433,"gr",{"name":"Κρατικός Αερολιμένας Ζακύνθου «Διονύσιος Σολωμός»","name:en":"Zakynthos International Airport \"Dionysios Solomos\"","aeroway":"aerodrome","icao":"LGZA","iata":"ZTH","aerodrome:type":"public","wikidata":"Q733326"}],
+["w299644678",37.75116,20.88433,"gr",{"name":"Διεθνής Αερολιμένας Ζακύνθου «Διονύσιος Σολωμός»","name:en":"Zakynthos International Airport \"Dionysios Solomos\"","operator":"Fraport Greece","operator:type":"private","website":"https://www.zth-airport.gr/","aeroway":"aerodrome","icao":"LGZA","iata":"ZTH","aerodrome:type":"public","wikidata":"Q733326"}],
 ["w31555109",37.92136,21.29024,"gr",{"name":"Αεροπορική Βάση Ανδραβίδας","name:en":"Andravida Air Base","aeroway":"aerodrome","icao":"LGAD","iata":"PYR","military":"airfield","wikidata":"Q4754715"}],
 ["w384157732",37.00121,21.65583,"gr",{"aeroway":"helipad"}],
 ["w495625590",37.67868,21.38553,"gr",{"amenity":"hospital","healthcare":"hospital"}],

@@ -98,6 +98,7 @@
 ["n14077873301",18.01704,102.6165,"la",{"name":"ໂຮງໝໍໂຊກດີວຽງຈັນ","name:en":"Sokdy Vientiane Hospital","amenity":"hospital","phone":"021 212 678","addr:street":"ຖະໜົນເຈົ້າອະນຸ","opening_hours":"24/7"}],
 ["n14208418986",18.78708,102.4669,"la",{"name":"ສຸກສາລາ ສົມສະນຸກ (ຫີນເຫີບ)","name:en":"Somsanouk Health Center (Hinheup)","healthcare":"hospital","operator":"Ministry of Health"}],
 ["n14208418987",18.32969,102.61304,"la",{"name":"ສຸກສາລາ ໂພນຄຳ (ທຸລະຄົມ)","name:en":"Phonkham Health Center (Thoulakhom)","healthcare":"hospital","operator":"Ministry of Health"}],
+["n14251770389",18.31439,102.11074,"la",{"name":"ສຸກສາລາ ບ້ານຊໍ້ (ບ້ານກ້ວຍ)","name:en":"Banxoh Health Center (Bankouay)","healthcare":"hospital","operator":"Ministry of Health"}],
 ["n1492972706",19.8775,102.13988,"la",{"name":"Lao Red Cross, blood donation","amenity":"hospital","healthcare":"hospital"}],
 ["n2093025769",18.47373,102.48517,"la",{"name":"Vientiane Provincial Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n2340078156",18.06439,102.53707,"la",{"name":"ໂຮງໝໍເມືອງ ນາຊາຍທອງ","name:en":"Naxaythong District Hospital","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health","operator:type":"government"}],
