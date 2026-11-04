@@ -1,0 +1,39 @@
+{
+ "schema": "osap-dive-contacts/1",
+ "read": "2026-11-04",
+ "about": "Diving emergency lines as DAN publishes them on its own pages, read from GitHub Actions on 2026-11-04 (tools/probe_dive_sources.sh). Not called or tested by OSAP. Call local emergency services (EMS) first for a life-threatening emergency.",
+ "dan": [
+  {
+   "org": "DAN (Divers Alert Network), Americas and worldwide",
+   "line": "Diving emergencies",
+   "tel": "+1-919-684-9111",
+   "note": "24 hours; accepts collect calls; English",
+   "src": "https://world.dan.org/about-dan/contact/"
+  },
+  {
+   "org": "DAN, Spanish",
+   "line": "Diving emergencies (Spanish)",
+   "tel": "+52-557-100-0540",
+   "note": "listed beside the English line",
+   "src": "https://world.dan.org/about-dan/contact/"
+  },
+  {
+   "org": "DAN, Portuguese",
+   "line": "Diving emergencies (Portuguese)",
+   "tel": "+55-11-3042-1157",
+   "note": "listed beside the English line",
+   "src": "https://world.dan.org/about-dan/contact/"
+  },
+  {
+   "org": "DAN Europe",
+   "line": "Diving emergencies",
+   "tel": "+39 06 4211 5685",
+   "note": "Europe and its overseas territories",
+   "src": "https://www.daneurope.org/en/"
+  }
+ ],
+ "more": {
+  "text": "DAN regional offices (Asia-Pacific, Japan, Southern Africa) list their own numbers",
+  "src": "https://world.dan.org/about-dan/contact/"
+ }
+}
