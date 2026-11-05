@@ -140,7 +140,8 @@
     return nearest(S.from).then(function (r) { S.near = r; S.msg = ""; drawNear(); paint(); return r; });
   }
   /* the closest NEAR_N of each kind among this country, the countries near the point and their neighbours */
-  function nearest(p) {
+  /* n: how many of each kind (default NEAR_N; the evacuation plan's ways out by direction ask for more) */
+  function nearest(p, n) {
     var c = cc(), ids = [c].concat(around(ptBox(p, 0.1), 0).filter(function (x) { return x !== c; }));
     ids = ids.concat(around(ptBox(p, 0.1), 3).filter(function (x) { return ids.indexOf(x) < 0; })).slice(0, 14);
     return Promise.all(ids.map(loadSof)).then(function () {
@@ -149,7 +150,7 @@
         out[K.k] = all.filter(function (x) { return x.k === K.k; }).map(function (x) {
           var inv = g ? g.inverse(p, [x.i.lat, x.i.lon]) : null;
           return { x: x, m: inv && isFinite(inv.m) ? inv.m : dist(p, [x.i.lat, x.i.lon]), brg: inv && isFinite(inv.b1) ? inv.b1 : null };
-        }).sort(function (a, b) { return a.m - b.m; }).slice(0, NEAR_N);
+        }).sort(function (a, b) { return a.m - b.m; }).slice(0, Math.max(1, Math.min(50, +n || NEAR_N)));
       });
       return out;
     });
