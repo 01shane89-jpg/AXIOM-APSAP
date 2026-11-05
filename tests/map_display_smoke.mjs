@@ -1,5 +1,5 @@
 // Headless check of Map overlays > Map display (assets/osap-display.js): the section sits last in Map overlays, after Dense
-// points; Map scale, Names on my saved points and Group crowded saved points each change the map and are remembered after a
+// points; Map scale, Names on my saved points, Grid on my saved points and Group crowded saved points each change the map and are remembered after a
 // reload; Points of interest stays off until asked, draws OpenStreetMap places (answered here by a stand-in Postpass) only from
 // street level, with NATO symbols, never shows a phone number, follows the kind ticks, and says so when no server answers.
 // Run from the repo root: node tests/map_display_smoke.mjs (needs playwright + Chromium; OUT=dir saves screenshots)
@@ -61,7 +61,7 @@ const tick = (k, v) => p.evaluate(([k, v]) => { const i = document.querySelector
 /* the section: last in Map overlays, right after Dense points, with the defaults */
 const sec = await p.evaluate(() => {
   const d = document.getElementById("ml-disp"), prev = d.previousElementSibling;
-  return { prev: prev && prev.id, head: d.querySelector(".mlh").textContent, on: Array.prototype.map.call(d.querySelectorAll(":scope > label input"), (i) => i.getAttribute("data-disp") + "=" + i.checked).join(" "),
+  return { prev: prev && prev.id, head: d.querySelector(".mlh").textContent, on: Array.prototype.map.call(d.querySelectorAll(":scope > label input[data-disp]"), (i) => i.getAttribute("data-disp") + "=" + i.checked).join(" "),
     kindsHidden: d.querySelector("[data-poikinds]").hidden, traffic: /traffic/i.test(d.textContent) };
 });
 ok(sec.head === "Map display" && sec.prev === "ml-heat", "Map display sits right after Dense points (" + sec.prev + ")");
@@ -80,6 +80,26 @@ ok(await labs() >= 3, "up close the saved points show their names (" + (await la
 await tick("ptlab", false);
 ok(await labs() === 0, "Names on my saved points off hides every name");
 
+/* Grid on my saved points: on and off by itself, with the names on or off, kept in step with Point > Show MGRS on points */
+const gbox = (v) => p.evaluate((v) => { const i = document.querySelector("#ml-disp input[data-ptgrid]"); if (i.checked !== v) i.click(); return i.checked; }, v);
+const shown = (sel) => p.evaluate((s) => Array.prototype.filter.call(document.querySelectorAll(".atk-pt:not(.atk-dc-hid) > span " + s), (e) => e.getClientRects().length > 0 && getComputedStyle(e).display !== "none").length, sel);
+ok(await p.evaluate(() => { const i = document.querySelector("#ml-disp input[data-ptgrid]"); return !!i && !i.checked && /Grid on my saved points/.test(i.parentNode.textContent); }), "Grid on my saved points is in Map display, off by default");
+await gbox(true);
+ok(await labs() >= 3 && await shown(".atk-pg") >= 3 && await shown(".atk-pn") === 0, "names off, grid on: only each point's grid shows beside its symbol");
+ok(/^\d{1,2}[C-X] [A-Z]{2} \d{5} \d{5}$/.test(await p.evaluate(() => document.querySelector(".atk-pt .atk-pg").textContent)), "the grid is a full MGRS reference");
+await tick("ptlab", true);
+ok(await shown(".atk-pg") >= 3 && await shown(".atk-pn") >= 3, "names on, grid on: the name with the grid under it");
+ok(await p.evaluate(() => localStorage.getItem("osap-atak-ptgrid") === "1" && document.documentElement.classList.contains("osap-ptgrid")), "the grid choice is kept on this device, shared with Point > Show MGRS on points");
+await p.evaluate(() => { const b = document.querySelector('#atk-tools [data-atk="point"]'); if (b) b.click(); });
+await p.waitForTimeout(300);
+const pm = await p.evaluate(() => { const i = document.querySelector('[data-pk="grid"]'); if (!i) return "none"; i.click(); return "clicked"; });
+await p.waitForTimeout(300);
+ok(pm === "clicked" && await p.evaluate(() => !document.querySelector("#ml-disp input[data-ptgrid]").checked) && await shown(".atk-pg") === 0, "turning it off from the Point menu clears the Map display box and the grids (" + pm + ")");
+await gbox(true); await gbox(false);
+ok(await shown(".atk-pg") === 0 && await shown(".atk-pn") >= 3, "names on, grid off: just the names, as before");
+await tick("ptlab", false);
+ok(await labs() === 0, "names off, grid off: no label at all");
+
 /* Group crowded saved points */
 await at([15.5, 101], 6);
 ok(await vis(".atk-pt.atk-dc-grp") === 1, "zoomed out, the three close points are grouped");
@@ -91,7 +111,7 @@ ok(await vis(".atk-pt.atk-dc-grp") === 0 && await vis(".atk-pt") === 3, "groupin
 await p.reload({ waitUntil: "domcontentloaded" });
 await boot();
 const kept = await p.evaluate(() => ({ s: getComputedStyle(document.querySelector(".o3s")).display, cls: document.documentElement.className, st: localStorage.getItem("osap-display"),
-  boxes: Array.prototype.map.call(document.querySelectorAll("#ml-disp > label input"), (i) => i.checked).join(",") }));
+  boxes: Array.prototype.map.call(document.querySelectorAll("#ml-disp > label input[data-disp]"), (i) => i.checked).join(",") }));
 ok(kept.s === "none" && /osap-noptlab/.test(kept.cls) && kept.boxes === "false,false,false,false", "after a reload the three choices are kept (" + kept.boxes + ")");
 await at([15.5, 101], 6);
 ok(await vis(".atk-pt.atk-dc-grp") === 0, "after a reload grouping stays off");

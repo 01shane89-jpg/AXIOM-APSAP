@@ -364,7 +364,7 @@
       else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
       /* each saved point's MGRS under its name on the map; a device choice */
       else if (k === "places") W.OSAP_PLACES.open();
-      else if (k === "grid") { lsSet(K_PTG, ptGrid() ? null : "1"); ptDraw(); toast(ptGrid() ? "Points show their MGRS" : "Points show their names only"); }
+      else if (k === "grid") { setGrid(!ptGrid()); toast(ptGrid() ? "Points show their grid (MGRS)" : "Points no longer show their grid"); }
     }
   });
   /* Search places lives in assets/osap-search.js, fetched the first time the magnifying glass is pressed */
@@ -464,8 +464,15 @@
   var SAVE_FAIL = "Point not saved: this browser's storage for OSAP is full. Delete some saved items or workspaces, then try again.";
   function ptsHere() { var c = cc(); return ptsAll().filter(function (p) { return p.cc === c; }); }
   function ptGrid() { return lsGet(K_PTG) === "1"; }
-  /* the label beside a point: its name, the photo count, and its MGRS when Point > Show MGRS on points is on */
-  function ptLab(p) { return esc(p.n) + (p.ph ? CAM + p.ph : "") + (ptGrid() ? '<br><b class="atk-pg">' + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</b>" : ""); }
+  /* the grid (MGRS) beside each saved point, on or off: a device choice, set from Point > Show MGRS on points or from
+     Map overlays > Map display (assets/osap-display.js), which hears "osap:ptgrid" to keep its box in step. The class on
+     <html> lets Map display hide the names on their own and still show the grid. */
+  function gridCls() { D.documentElement.classList.toggle("osap-ptgrid", ptGrid()); }
+  function setGrid(v) { lsSet(K_PTG, v ? "1" : null); gridCls(); ptDraw(); D.dispatchEvent(new Event("osap:ptgrid")); }
+  gridCls();
+  /* the label beside a point: its name and photo count (.atk-pn, hidden by Map display > Names on my saved points off),
+     and its MGRS (.atk-pg) when the grid is on */
+  function ptLab(p) { return '<b class="atk-pn">' + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</b>" + (ptGrid() ? '<b class="atk-pg">' + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</b>" : ""); }
   /* a point with no chosen icon: the NATO (2525D) point-of-interest symbol; the teal diamond if the symbols did not load */
   function defIcon(p) {
     var lab = "<span>" + ptLab(p) + "</span>", d = W.OSAP_SYM && W.OSAP_SYM.d && W.OSAP_SYM.d.g_poi;
@@ -872,7 +879,7 @@
     ".atk-pt .atk-az{position:absolute;width:60px;height:60px;pointer-events:none}.atk-pt .atk-az svg{display:block;transform-origin:30px 30px}.atk-paz{margin:4px 0}" +
     ".atk-pt{background:none;border:0}.atk-pt i{position:absolute;left:3px;top:3px;width:12px;height:12px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5);box-sizing:border-box}" +
     ".atk-pt i.atk-def{left:0;top:0;background:none;border:0;transform:none;box-shadow:none}.atk-pt i.atk-def svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 1px rgba(0,0,0,.6))}" +
-    ".atk-pt span{position:absolute;left:19px;top:1px;padding:0 4px;border-radius:3px;background:rgba(20,24,28,.85);color:#fff;font:700 10.5px/15px 'IBM Plex Mono',monospace;white-space:nowrap}.atk-pt span .atk-pg{font-weight:500;font-size:10px;line-height:13px;color:#cfe8ff}" +
+    ".atk-pt span{position:absolute;left:19px;top:1px;padding:0 4px;border-radius:3px;background:rgba(20,24,28,.85);color:#fff;font:700 10.5px/15px 'IBM Plex Mono',monospace;white-space:nowrap}.atk-pt span .atk-pn{font-weight:inherit}.atk-pt span .atk-pg{display:block;font-weight:500;font-size:10px;line-height:13px;color:#cfe8ff}" +
     ".atk-ptpop .atk-note{white-space:pre-wrap;word-break:break-word;margin:4px 0}" +
     ".atk-ptpop code{display:block;font:12px/1.4 'IBM Plex Mono',monospace;margin:3px 0 0}.atk-ptpop .obs{color:var(--muted);font-size:11.5px}.atk-ptpop p{margin:6px 0}" +
     ".atk-pb{display:flex;flex-wrap:wrap;gap:4px}.atk-pb button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:4px;padding:4px 8px;min-height:30px;cursor:pointer}" +
@@ -925,5 +932,7 @@
   W.OSAP_ATAK = { menuTools: menuTools, on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt, toast: toast,
     /* the readout's position format ("mgrs", "dd" or "dms"): read with no argument, set from Settings with one */
     posFmt: function (f) { if (f && FMTS.indexOf(f) >= 0) { fmt = f; lsSet(K_FMT, f); paintStrip(); } return fmt; },
+    /* the grid beside saved points: read with no argument, switch with one (Map overlays > Map display) */
+    ptGrid: function (v) { if (v !== undefined && !!v !== ptGrid()) setGrid(!!v); return ptGrid(); },
     pts: { all: ptsAll, save: ptsSave, fail: SAVE_FAIL, draw: ptDraw, del: ptDel, paint: omPaint, add: ptAdd }, search: search };
 })();

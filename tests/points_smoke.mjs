@@ -65,7 +65,7 @@ async function open(opts, ctxIn) {
   await p.fill("#pt-n", "Bridge <b>north</b>"); await p.fill("#pt-note", "Two trucks\nparked east side"); await p.waitForTimeout(700);
   P = await pts(p);
   ok(P[0].n === "Bridge <b>north</b>" && P[0].note === "Two trucks\nparked east side", "phone: name and note are saved as you type");
-  ok(await p.evaluate(() => { const s = document.querySelector(".atk-pt span"); return s && /Bridge <b>north<\/b>/.test(s.textContent) && !s.querySelector("b"); }), "phone: the map label shows the name as text, not markup");
+  ok(await p.evaluate(() => { const s = document.querySelector(".atk-pt span"); const n = s && s.querySelector(".atk-pn"); return s && /Bridge <b>north<\/b>/.test(s.textContent) && n && !n.children.length && !s.querySelector("b:not(.atk-pn):not(.atk-pg)"); }), "phone: the map label shows the name as text, not markup");
 
   // photos: a camera JPEG with EXIF time, then a PNG from the library, then a text file that is refused
   const jpg = withExif(Buffer.from((await p.evaluate(() => { const c = document.createElement("canvas"); c.width = 320; c.height = 200; const x = c.getContext("2d"); x.fillStyle = "#2b8a3e"; x.fillRect(0, 0, 320, 200); x.fillStyle = "#fff"; x.font = "40px sans-serif"; x.fillText("OSAP", 90, 115); return c.toDataURL("image/jpeg", 0.9); })).split(",")[1], "base64"));
