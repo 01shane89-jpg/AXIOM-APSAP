@@ -452,7 +452,10 @@
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
-      "Times are Zulu, then local.</p></footer>";
+      "Times are Zulu, then local.</p>" +
+      '<p class="tdlegal"><a href="https://axiom-inteligence-systems.com/#pricing" target="_blank" rel="noopener noreferrer">Pricing</a> · <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a> · ' +
+      '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener noreferrer">Refunds</a> · ' +
+      '<a href="mailto:support@axiom-inteligence-systems.com">support@axiom-inteligence-systems.com</a></p></footer>';
     box.scrollTop = y;
   }
   var rs = 0;
