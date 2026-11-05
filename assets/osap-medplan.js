@@ -1356,7 +1356,7 @@
     var el = box(), s = ST, km2 = s.P ? areaKm2(s.P) : 0, v = fieldVals();
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
-      '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' +
+      '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' + (W.OSAP_MEDSLIDE ? '<button type="button" class="refresh noprint" data-mp="slide" title="One landscape briefing slide: receiving facilities, PACE plans, the routes on a satellite map, times and contacts. PDF or PowerPoint">Briefing slide</button>' : "") +
       '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + (W.OSAP_PLACES && W.OSAP_PLACES.saveTo ? '<button type="button" class="refresh noprint" data-mp="places" title="Save the injury point, chosen hospitals, your sites and the road routes as your own points and routes in a My places folder">Save to folder</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button><div id="mp-layers" class="mplayers noprint" role="group" aria-label="Medical plan objects on the map"></div></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
@@ -2957,11 +2957,11 @@
     function one(name) { return caches.open(name).then(function (c) { return c.match(url, { ignoreVary: true }); }).then(function (r) { return r && r.type !== "opaque" && r.ok ? r.blob().then(blobImg) : null; }); }
     return one("osap-offline").then(function (im) { return im || one("asap-tiles"); }).catch(function () { return null; });
   }
-  function tileImg(z, x, y) {
-    var n = Math.pow(2, z); x = ((x % n) + n) % n;
-    if (y < 0 || y >= n || !TILE_URL) return Promise.resolve(null);
+  function tileImg(z, x, y, tpl) {
+    var n = Math.pow(2, z), T0 = tpl || TILE_URL; x = ((x % n) + n) % n;
+    if (y < 0 || y >= n || !T0) return Promise.resolve(null);
     function at(T) { return T.replace("{z}", z).replace("{x}", x).replace("{y}", y); }
-    var url = at(TILE_URL);
+    var url = at(T0);
     return tileNet(url).then(function (im) { return im ? { im: im } : tileSaved(url).then(function (sv) { return sv ? { im: sv } : tileNet(url).then(function (r) { return r ? { im: r } : null; }); }); });
   }
   /* what the caption says about the basemap: none at all, squares missing (left grey), or squares from the fallback map */
@@ -2988,10 +2988,27 @@
     }
     return { z: z, a: a, b: b };
   }
+  /* the briefing slide's map marks: a numbered red cross for each receiving facility, a black disc for the origin, with an
+     optional label beside it (text, drawn on the canvas, never markup) */
+  function slideMark(g, q, t, kind, label) {
+    g.save(); g.lineJoin = "round";
+    if (kind === "rc") {
+      var a = 7, b = 19; g.fillStyle = "#e0001b"; g.strokeStyle = "#fff"; g.lineWidth = 2;
+      g.beginPath(); g.moveTo(q[0] - a, q[1] - b); g.lineTo(q[0] + a, q[1] - b); g.lineTo(q[0] + a, q[1] - a); g.lineTo(q[0] + b, q[1] - a); g.lineTo(q[0] + b, q[1] + a); g.lineTo(q[0] + a, q[1] + a);
+      g.lineTo(q[0] + a, q[1] + b); g.lineTo(q[0] - a, q[1] + b); g.lineTo(q[0] - a, q[1] + a); g.lineTo(q[0] - b, q[1] + a); g.lineTo(q[0] - b, q[1] - a); g.lineTo(q[0] - a, q[1] - a); g.closePath();
+      g.fill(); g.stroke(); g.fillStyle = "#fff"; g.font = "800 14px system-ui, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(t, q[0], q[1] + 1);
+    } else {
+      g.fillStyle = "#000"; g.strokeStyle = "#fff"; g.lineWidth = 2; g.beginPath(); g.arc(q[0], q[1], 15, 0, 2 * Math.PI); g.fill(); g.stroke();
+      g.fillStyle = "#fff"; g.font = "800 11px system-ui, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(t, q[0], q[1] + 1);
+    }
+    if (label) { g.font = "700 13px system-ui, sans-serif"; g.textAlign = "left"; g.textBaseline = "middle"; g.lineWidth = 3; g.strokeStyle = "rgba(0,0,0,.8)"; g.strokeText(label, q[0] + 22, q[1] - 16); g.fillStyle = "#fff"; g.fillText(label, q[0] + 22, q[1] - 16); }
+    g.restore();
+  }
   function mapImage(Wd, Ht, focus) {
     var s = ST, items = focus ? focus.items : mapItems(), pts = focus ? focus.pts.slice() : groundPts(s);
     if (pts.length < 2) pts.push([s.o[0] + 0.05, s.o[1] + 0.05], [s.o[0] - 0.05, s.o[1] - 0.05]);
-    var fz = fitZoom(pts, Wd, Ht, focus && focus.minZ), z = fz.z, a = fz.a, b = fz.b;
+    var fz = fitZoom(pts, Wd, Ht, focus && focus.minZ), z = Math.max(1, fz.z - ((focus && focus.out) || 0)), a = fz.a, b = fz.b;
+    if (z !== fz.z) { var sc = Math.pow(2, z - fz.z); a = [a[0] * sc, a[1] * sc]; b = [b[0] * sc, b[1] * sc]; }
     var c0 = [(a[0] + b[0]) / 2 - Wd / 2, (a[1] + b[1]) / 2 - Ht / 2], K = 2;
     var cv = D.createElement("canvas"); cv.width = Wd * K; cv.height = Ht * K;
     var g = cv.getContext("2d"); g.scale(K, K);
@@ -2999,7 +3016,8 @@
     var jobs = [], alt = false;
     for (var tx = Math.floor(c0[0] / 256); tx <= Math.floor((c0[0] + Wd) / 256); tx++)
       for (var ty = Math.floor(c0[1] / 256); ty <= Math.floor((c0[1] + Ht) / 256); ty++)
-        (function (tx, ty) { jobs.push(tileImg(z, tx, ty).then(function (r) { return { im: r && r.im, alt: r && r.alt, x: tx * 256 - c0[0], y: ty * 256 - c0[1] }; })); })(tx, ty);
+        (function (tx, ty) { jobs.push(tileImg(z, tx, ty, focus && focus.tile).then(function (r) { return { im: r && r.im, alt: r && r.alt, x: tx * 256 - c0[0], y: ty * 256 - c0[1] }; })); })(tx, ty);
+    function attrTxt() { return (focus && focus.attrib) || (alt ? "Map data © OpenStreetMap contributors, Esri" : "Map data © OpenStreetMap contributors"); }
     function overlays() {
       var mpp = 156543.03392 * Math.cos(s.o[0] * Math.PI / 180) / Math.pow(2, z);
       items.forEach(function (it) {
@@ -3011,19 +3029,21 @@
       /* markers last, the plan's picks and the POI on top */
       items.filter(function (it) { return it[0] === "mk"; }).sort(function (x, y) { return (x[5] ? 1 : 0) - (y[5] ? 1 : 0); }).forEach(function (it) {
         var q = xy(it[1]); if (q[0] < -20 || q[1] < -20 || q[0] > Wd + 20 || q[1] > Ht + 20) return;
-        g.setLineDash([]); g.globalAlpha = 1; g.font = "700 11px system-ui, sans-serif";
+        g.setLineDash([]); g.globalAlpha = 1;
+        if (it[3] === "rc" || it[3] === "poi") { slideMark(g, q, it[2], it[3], it[6]); return; }
+        g.font = "700 11px system-ui, sans-serif";
         var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "pt" ? "#0b4f8a" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "stb" ? "#b34700" : it[3] === "alt" ? "#8a4b00" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : it[3] === "bl" ? "#a4005b" : it[3] === "dc" ? "#00727a" : it[3] === "cp" ? "#1e7a3a" : "#D7141A";
         g.fillStyle = bg; g.strokeStyle = it[3] === "pk" || it[3] === "stb" ? "#ffd166" : "#fff"; g.lineWidth = 2;
         g.beginPath(); g.rect(q[0] - w / 2, q[1] - h / 2, w, h); g.fill(); g.stroke();
         g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(it[2], q[0], q[1] + 0.5);
       });
       /* scale bar and attribution (no scale bar on a world map: Web Mercator scale changes with latitude) */
-      if (focus && focus.noScale) { g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - (alt ? 230 : 190), Ht - 16, alt ? 230 : 190, 16); g.fillStyle = "#222"; g.font = "10px system-ui, sans-serif"; g.fillText(alt ? "Map data © OpenStreetMap contributors, Esri" : "Map data © OpenStreetMap contributors", Wd - 6, Ht - 7); return; }
+      if (focus && focus.noScale) { g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - (alt ? 230 : 190), Ht - 16, alt ? 230 : 190, 16); g.fillStyle = "#222"; g.font = "10px system-ui, sans-serif"; g.fillText(attrTxt(), Wd - 6, Ht - 7); return; }
       var nice = [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000], L1 = nice.filter(function (m) { return m / mpp <= Wd / 5; }).pop() || 100, px = L1 / mpp;
       g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(8, Ht - 30, px + 70, 22); g.strokeStyle = "#111"; g.lineWidth = 2; g.setLineDash([]);
       g.beginPath(); g.moveTo(14, Ht - 14); g.lineTo(14 + px, Ht - 14); g.moveTo(14, Ht - 19); g.lineTo(14, Ht - 9); g.moveTo(14 + px, Ht - 19); g.lineTo(14 + px, Ht - 9); g.stroke();
       g.fillStyle = "#111"; g.font = "11px system-ui, sans-serif"; g.textAlign = "left"; g.fillText(L1 >= 1000 ? L1 / 1000 + " km" : L1 + " m", 20 + px, Ht - 13);
-      g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - (alt ? 230 : 190), Ht - 16, alt ? 230 : 190, 16); g.fillStyle = "#222"; g.font = "10px system-ui, sans-serif"; g.fillText(alt ? "Map data © OpenStreetMap contributors, Esri" : "Map data © OpenStreetMap contributors", Wd - 6, Ht - 7);
+      g.textAlign = "right"; g.font = "10px system-ui, sans-serif"; var aw = Math.min(Wd - 4, g.measureText(attrTxt()).width + 12); g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - aw, Ht - 16, aw, 16); g.fillStyle = "#222"; g.fillText(attrTxt(), Wd - 6, Ht - 7);
       g.textAlign = "center"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - 30, 6, 24, 30); g.fillStyle = "#111"; g.font = "700 12px system-ui, sans-serif"; g.fillText("N", Wd - 18, 16);
       g.beginPath(); g.moveTo(Wd - 18, 20); g.lineTo(Wd - 23, 33); g.lineTo(Wd - 13, 33); g.closePath(); g.fill();
     }
@@ -3198,7 +3218,7 @@
     var el = D.getElementById("mp-val"), s = ST; if (!el || !s) return;
     s.plan = planNow(s); el.innerHTML = valHtml(s.plan); picRender(); conopRender(); sheetSync(D.getElementById("medplan"));
     /* an open print view waiting on data rebuilds itself once the data is in */
-    if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(s.printMode); }
+    if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(s.printMode); else if (b && !b.hidden && b.querySelector(".msl-wrap")) slideOpen(); }
   }
 
   /* two printed products (Build Plan v2 phase 6): the Medical CONOP, what is needed during an emergency (page-1 CONOP, the
@@ -3297,6 +3317,82 @@
     D.getElementById("mpd-print").addEventListener("click", function () { if (this.disabled) return; ready.then(function () { W.OSAP_PDF.print({ title: pdfTitle(el, "Medical plan"), root: el }); }); });
     D.getElementById("mpd-close").addEventListener("click", function () { s.printHeld = false; el.hidden = true; el.innerHTML = ""; el.classList.remove("mpbrief"); D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp="print"]'); if (b) b.focus(); });
     return ready;
+  }
+
+  /* ---------- the one-page briefing slide (Shane 2026-11-04: "format a medplan briefing slide like this") ----------
+     The plan's own picks, routes, contacts and air times, handed to assets/osap-medslide.js as plain data, which lays them
+     out on one landscape page with the planner's own optional details (logos, unit line, POCs, PACE plans) and exports it
+     as a PDF or a PowerPoint file. Nothing here changes the plan. Air time is a number only when a CONFIRMED aircraft
+     competes for that hospital (OSAP_MEDAIR); every other air time reads UNVALIDATED. */
+  var SLIDE_COL = ["#29b6f6", "#00e676", "#2962ff", "#ffd600"];
+  var SLIDE_HEAD = { Primary: "Primary receiving facility", Secondary: "Secondary receiving facility", Tertiary: "Tertiary referral facility", Stabilization: "Stabilization stop" };
+  var SAT_ATTR = "Imagery © Esri, Maxar, Earthstar Geographics";
+  function originName(s) {
+    if (/^pt:/.test(s.from || "")) { var p = ownPt(s.from.slice(3)); if (p && p.n) return clip(p.n, 40); }
+    return s.from === "poi" ? "POI" : s.from === "c" ? "Plan centre" : clip(fieldLabel(s.from), 40);
+  }
+  function abbr(n) {
+    var w = String(n || "").replace(/\(.*?\)/g, " ").split(/[^A-Za-z\u00c0-\u024f]+/).filter(function (x) { return x && !/^(of|the|and|de|la|du|des|di|da)$/i.test(x); });
+    var a = w.map(function (x) { return x.charAt(0).toUpperCase(); }).join("");
+    return a.length >= 2 && a.length <= 6 ? a : clip(n, 24);
+  }
+  function slideData(s) {
+    var P = picks(s), rts = s.rts || [], T = tcArea(s.cc), tc = T ? TC_AREAS[T] : null, is = isosNear(s.o)[0];
+    var fac = P.map(function (p, i) {
+      var f = p.f, rt = rts.filter(function (x) { return x.f === f; })[0], r = rt && rt.r, m = airMission(f);
+      return { n: i + 1, id: f.id, head: p.why.map(function (w) { return SLIDE_HEAD[w] || w; }).join(" and "), name: f.name, short: abbr(f.name), level: tierLabel(f).replace(/ \(assessed from documented capabilities\)$/, ", assessed"),
+        addr: f.addr || "", grid: grid(f.lat, f.lon), ll: [f.lat, f.lon], phone: f.phone || "", ephone: f.ephone || "", web: f.web || "", col: SLIDE_COL[i % SLIDE_COL.length],
+        line: r && r.line && r.line.length > 1 ? r.line : null, road_m: r ? r.m : f.rm != null && !f.est ? f.rm : null, drive_s: r ? r.s : f.s != null ? f.s : null, est: !r && !!f.est,
+        routeNote: r ? "" : rt && rt.err ? "no road route: " + clip(rt.err, 80) : rt ? "route still reading" : "no road route", straight_m: f.m,
+        air: m ? { s: m.total_s, by: m.provider, basis: m.basis } : null };
+    });
+    var dmin = Math.min.apply(null, fac.map(function (x) { return x.straight_m; }).concat([Infinity])), thr = Math.max(3 * dmin, 30000);
+    fac.forEach(function (x) { x.far = fac.length > 1 && x.straight_m > thr; });
+    if (fac.length && fac.every(function (x) { return x.far; })) fac.forEach(function (x) { x.far = false; });
+    var contacts = [];
+    if (s.ems && s.ems.nums[0]) contacts.push({ l: "EMS", v: s.ems.nums.slice(0, 2).map(function (x) { return x.n; }).join(" / "), src: "Wikidata, read " + dual(s.ems.at, true) });
+    if (is) contacts.push({ l: "International SOS (" + is.c[0] + ")", v: is.c[3], src: "internationalsos.com, read " + ISOS_AT + "; members and clients only" });
+    if (tc) contacts.push({ l: "TRICARE " + tc.name, v: tc.tel + " / " + tc.us + " (U.S. toll-free)", src: "TRICARE.mil Overseas Resources" });
+    var o = originName(s);
+    return { cc: s.cc, country: s.name, origin: o, originGrid: grid(s.o[0], s.o[1]), originLL: s.o.slice(), built: dual(s.at, true), fac: fac, contacts: contacts,
+      emsHint: s.ems && s.ems.nums[0] ? "Local EMS " + s.ems.nums[0].n : "Local EMS", unitField: String(fieldVals().unit || ""),
+      fp: (function () { var c = D.getElementById("mp-fp"), t = c ? c.textContent : ""; return /^[0-9a-f]{64}$/.test(t) ? t.slice(0, 16) : ""; })(), noFac: !fac.length };
+  }
+  /* the slide's two maps: the receiving facilities near the origin with their road routes, and an inset with the long route
+     (a facility far beyond the others) or, with none, the wider area. Satellite imagery where this version has it */
+  function slideMaps(s, d, dim) {
+    var sat = W.OSAP_ESRI ? W.OSAP_ESRI("World_Imagery") : "";
+    function its(L, lab) {
+      var o = [];
+      L.forEach(function (x) { if (x.line) o.push(["line", x.line, { color: "#111", weight: 6 }], ["line", x.line, { color: x.col, weight: 3.5 }]); });
+      L.forEach(function (x) { o.push(["mk", x.ll, String(x.n), "rc", x.name, true]); });
+      var on = (W.OSAP_MEDSLIDE && W.OSAP_MEDSLIDE._mine().origin) || d.origin;
+      return o.concat([["mk", s.o, "POI", "poi", on, true, lab ? on : ""]]);
+    }
+    function pts(L) { var p = [s.o]; L.forEach(function (x) { p.push(x.ll); (x.line || []).forEach(function (q, i) { if (i % 8 === 0) p.push(q); }); }); return p; }
+    function one(Wd, Ht, f) {
+      var g = sat ? Object.assign({ tile: sat, attrib: SAT_ATTR }, f) : f;
+      return mapImage(Wd, Ht, g).then(function (m) {
+        if (sat && m.base) { m.sat = true; return m; }
+        return sat ? mapImage(Wd, Ht, f) : m;
+      });
+    }
+    var near = d.fac.filter(function (x) { return !x.far; }), far = d.fac.filter(function (x) { return x.far; });
+    var main = one(dim.mw, dim.mh, { items: its(near, true), pts: pts(near) });
+    var inset = far.length ? one(dim.iw, dim.ih, { items: its(far, false), pts: pts(far) }) : one(dim.iw, dim.ih, { items: its(d.fac, false), pts: pts(d.fac), out: 3 });
+    return Promise.all([main, inset]).then(function (r) {
+      function cap(m) { return (m.sat ? "Satellite imagery (Esri World Imagery)" : m.base ? "OpenStreetMap" : "No basemap could be loaded") + ", north up, zoom " + m.z + (m.miss ? ", " + m.miss + " squares missing" : ""); }
+      return { main: { url: r[0].url, cap: cap(r[0]) }, inset: { url: r[1].url, cap: cap(r[1]), kind: far.length ? "far" : "area", far: far.map(function (x) { return x.n; }) } };
+    });
+  }
+  function slideOpen() {
+    var s = ST; if (!s || !s.o || !W.OSAP_MEDSLIDE) return;
+    var pl = s.plan = planNow(s);
+    s.printMode = "slide"; s.printHeld = !!(pl && pl.pending.length);
+    var d = slideData(s); d.held = s.printHeld ? "Still reading " + pl.pending.join(", ") + ". The slide refreshes itself when they finish or fail." : "";
+    W.OSAP_MEDSLIDE.open(d, function (dim) { return ST === s ? slideMaps(s, d, dim) : Promise.reject(new Error("plan closed")); }, function () {
+      s.printHeld = false; var b = D.querySelector('#medplan [data-mp="slide"]'); if (b) b.focus();
+    });
   }
 
   /* ---------- hospital assessment: one hospital as printable pages, every gap stated ---------- */
@@ -3839,6 +3935,7 @@
     if (k === "legacyuse" || k === "legacydrop") { legacyMove(k === "legacyuse"); render(); build(); return; }
     if (k === "print") { printView(); return; }
     if (k === "printc") { printView("conop"); return; }
+    if (k === "slide") { slideOpen(); return; }
     if (k === "tak") { takExport(); return; }
     if (k === "places") { placesSave(); return; }
     if (k === "airfit") { if (!dockOn()) close(); mapShow(); airFit(); return; }
