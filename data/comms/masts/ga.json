@@ -1,4 +1,4 @@
-{"cc":"ga","at":"2026-10-04T10:20:09Z","base":"2026-10-04T10:18:36Z","m":[
+{"cc":"ga","at":"2026-11-05T12:14:53Z","base":"2026-11-05T12:12:38Z","m":[
 ["n10599813716",-1.56162,10.68625,{"man_made":"tower","tower:type":"communication"}],
 ["n11072766389",-1.03358,13.8359,{"man_made":"tower","tower:type":"communication"}],
 ["n11076555584",-0.83182,13.97596,{"man_made":"tower","tower:type":"communication"}],
@@ -28,7 +28,7 @@
 ["n13391815076",0.39649,9.46009,{"communication:lte":"yes","communication:mobile_phone":"yes","man_made":"tower","material":"steel","technology":"LTE;UMTS","tower:construction":"lattice","tower:type":"communication"}],
 ["n13397188585",-1.93457,13.17097,{"man_made":"tower","tower:type":"communication"}],
 ["n13643905278",0.42441,9.45412,{"communication:lte":"yes","communication:mobile_phone":"yes","man_made":"tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
-["n13660576374",0.42224,9.44401,{"communication:lte":"yes","communication:mobile_phone":"yes","man_made":"tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
+["n13660576374",0.42225,9.44402,{"communication:lte":"yes","communication:mobile_phone":"yes","man_made":"tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
 ["n13772555186",1.30827,11.65984,{"communication:lte":"yes","communication:mobile_phone":"yes","man_made":"tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
 ["n13969974523",-0.06177,11.16318,{"communication:mobile_phone":"yes","man_made":"tower","material":"steel","technology":"LTE","tower:construction":"freestanding","tower:type":"communication"}],
 ["n13970057849",-1.21431,13.83681,{"communication:mobile_phone":"yes","man_made":"tower","material":"steel","name":"Relais hertzien","technology":"LTE","tower:construction":"freestanding","tower:type":"communication"}],
@@ -144,7 +144,6 @@
 ["n8476795723",0.8713,10.50787,{"man_made":"mast","tower:type":"communication"}],
 ["n8502079491",-1.89598,11.90818,{"man_made":"mast","tower:type":"communication"}],
 ["n8503687539",-0.02159,13.67345,{"communication:mobile_phone":"yes","man_made":"mast","material":"steel","technology":"LTE","tower:construction":"lattice","tower:type":"communication"}],
-["n8722491115",0.64118,10.41257,{"man_made":"mast","tower:type":"communication"}],
 ["n8866129299",-2.57523,9.81238,{"communication:4g+":"yes","communication:mobile_phone":"yes","man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n8866129300",-2.44226,9.84514,{"man_made":"mast","tower:type":"communication"}],
 ["n8948955464",0.68452,14.19519,{"man_made":"tower","tower:type":"communication"}],
@@ -153,7 +152,7 @@
 ["n9027097512",1.08031,13.20275,{"man_made":"tower","tower:type":"communication"}],
 ["n9027097517",1.08054,13.20274,{"man_made":"tower","tower:type":"communication"}],
 ["n9050330780",0.32557,11.44676,{"man_made":"tower","tower:type":"communication"}],
-["n9054386481",0.64119,10.41256,{"man_made":"tower","tower:type":"communication"}],
+["n9054386481",0.64118,10.41255,{"communication:mobile_phone":"yes","man_made":"tower","material":"steel","name":"Relais hertzien","tower:construction":"lattice","tower:type":"communication"}],
 ["n9054387000",0.87125,10.50783,{"man_made":"tower","tower:type":"communication"}],
 ["n9058170969",-1.46206,10.53948,{"man_made":"mast","tower:type":"communication"}],
 ["n9064580661",0.58733,9.69065,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
