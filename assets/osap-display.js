@@ -201,6 +201,9 @@
   }
 
   /* ---------- the section in Map overlays ---------- */
+  /* the grid switch is kept by assets/osap-atak.js (also on Point > Show MGRS on points); this box mirrors it */
+  function gridOn() { return !!(W.OSAP_ATAK && W.OSAP_ATAK.ptGrid && W.OSAP_ATAK.ptGrid()); }
+  D.addEventListener("osap:ptgrid", function () { var i = D.querySelector("#ml-disp input[data-ptgrid]"); if (i) i.checked = gridOn(); });
   function row(k, name, note) {
     return '<label class="mlrow"><input type="checkbox" data-disp="' + k + '"' + (S[k] ? " checked" : "") + "><span><b>" + name + "</b><i>" + note + "</i></span></label>";
   }
@@ -210,7 +213,8 @@
     var d = D.createElement("div"); d.id = "ml-disp";
     d.innerHTML = '<div class="mlh">Map display</div>' +
       row("scale", "Map scale", "The scale bar in the corner of the map. Tap it to change between km, miles and nautical miles.") +
-      row("ptlab", "Names on my saved points", "Off: only the symbols show. Point at one to see its name.") +
+      row("ptlab", "Names on my saved points", "The title beside each point's symbol. Off: point at one to see its name.") +
+      '<label class="mlrow"><input type="checkbox" data-ptgrid' + (gridOn() ? " checked" : "") + "><span><b>Grid on my saved points</b><i>Each point's MGRS grid beside its symbol, under the name. Works with the names on or off.</i></span></label>" +
       row("group", "Group crowded saved points", "Zoomed out, points on top of each other show as one symbol with a count. Off: every point on its own.") +
       row("poi", "Points of interest", "Hospitals, police, fuel, embassies, banks, hotels and stations from OpenStreetMap, once zoomed in to street level on a satellite map.") +
       '<div class="mldisp-k" data-poikinds' + (S.poi ? "" : " hidden") + ">" + KINDS.map(function (k) {
@@ -218,7 +222,10 @@
       }).join("") + '<p class="mlkey" data-poimsg' + (msg ? "" : " hidden") + ">" + esc(msg) + "</p></div>" +
       '<p class="mlkey">Live traffic is not offered: no free source without an account was found. Road closures are under Infrastructure, Roads.</p>';
     ex.parentNode.insertBefore(d, ex);
-    d.addEventListener("change", function (e) { var k = e.target.getAttribute("data-disp"); if (k) set(k, e.target.checked); });
+    d.addEventListener("change", function (e) {
+      if (e.target.hasAttribute("data-ptgrid")) { if (W.OSAP_ATAK && W.OSAP_ATAK.ptGrid) W.OSAP_ATAK.ptGrid(e.target.checked); return; }
+      var k = e.target.getAttribute("data-disp"); if (k) set(k, e.target.checked);
+    });
     return true;
   }
   if (!section()) { var tries = 0, iv = setInterval(function () { if (section() || ++tries > 40) clearInterval(iv); }, 250); }
@@ -226,7 +233,9 @@
   var css = D.createElement("style");
   css.textContent =
     "html.osap-noscale .o3s{display:none!important}" +
-    "html.osap-noptlab .atk-pt>span{display:none!important}html.osap-noptlab .atk-pt:hover>span{display:block!important}" +
+    /* names off: the name goes; the label stays for the grid when that is on; pointing at a point shows it all */
+    "html.osap-noptlab .atk-pt>span .atk-pn{display:none}html.osap-noptlab:not(.osap-ptgrid) .atk-pt>span{display:none!important}" +
+    "html.osap-noptlab .atk-pt:hover>span{display:block!important}html.osap-noptlab .atk-pt:hover>span .atk-pn{display:inline}" +
     ".osap-poi .msym-l{font-size:10.5px}.osap-poi-far .osap-poi .msym-l{display:none}.osap-poi-far .osap-poi:hover .msym-l{display:block}" +
     ".osap-poi-dot i{display:block;width:10px;height:10px;border-radius:50%;background:#1c7ed6;border:2px solid #fff;box-sizing:border-box}" +
     ".mldisp-k{display:flex;flex-wrap:wrap;gap:4px 12px;margin:0 0 6px 24px;font-size:12px}.mldisp-k label{display:flex;gap:4px;align-items:center;cursor:pointer}" +
