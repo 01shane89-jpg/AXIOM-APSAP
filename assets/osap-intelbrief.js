@@ -751,11 +751,16 @@
   }
 
   /* back after switching country from the window: open it again with the same dates */
+  /* The note is kept until the window has opened: on a slow load the country's timeline records (OSAP_TLREPORT.data) or the new
+     country can still be missing 2.5 s in, and open() then returns false; it is tried again every half second until the note expires. */
   function resume() {
-    var p = null;
-    try { p = JSON.parse(sessionStorage.getItem(PEND) || "null"); sessionStorage.removeItem(PEND); } catch (e) {}
-    if (p && p.cc === W.TSAP.country && Date.now() - p.t < 120000) setTimeout(function () { open({ from: p.from, to: p.to, scope: "", region: "" }); }, 2500);
+    var p = null, drop = function () { try { sessionStorage.removeItem(PEND); } catch (e) {} };
+    try { p = JSON.parse(sessionStorage.getItem(PEND) || "null"); } catch (e) {}
+    if (!p) return;
+    if (!(Date.now() - p.t < 120000)) return drop();
+    if (W.TSAP.country === p.cc && open({ from: p.from, to: p.to, scope: "", region: "" })) return drop();
+    setTimeout(resume, 500);
   }
-  (function wait(i) { if (W.TSAP && W.OSAP_TLREPORT && W.OSAP_TIME) resume(); else if (i < 240) setTimeout(function () { wait(i + 1); }, 250); })(0);
+  (function wait(i) { if (W.TSAP && W.OSAP_TLREPORT && W.OSAP_TIME) setTimeout(resume, 2500); else if (i < 240) setTimeout(function () { wait(i + 1); }, 250); })(0);
   W.OSAP_INTELBRIEF = { open: open, close: close, _print: printPages, _state: function () { return S; }, _deck: function (d, a) { return deck(d, a); } };
 })();
