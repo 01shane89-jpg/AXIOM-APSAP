@@ -3,8 +3,11 @@
 // only changes when the app does.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = process.cwd(), OUT = path.join(ROOT, "_site");
+// the repository is the folder above this file; the output goes in the folder the build runs in (the repository for the app,
+// old-address/ for the stand-in copy on the old netlify.app address, whose netlify.toml lives there)
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."), OUT = path.join(process.cwd(), "_site");
 const KEEP = ["index.html", "reset.html", "sw.js", "manifest.webmanifest", "assets", "LICENSE", "NOTICE.md", "terms.html", "privacy.html", "refunds.html"];
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT);
@@ -42,6 +45,19 @@ else {
   }
 }
 console.log("netlify_build: copied " + n + " entries into _site");
+
+// OSAP_OLD_TO (only in old-address/netlify.toml, 2026-11-05): this build is the stand-in copy on the old address. Its
+// index.html names where assets/osap-carry.js hands the saved work on to; the app's own build never has it, so the app
+// never sends anyone anywhere. Only the addresses osap-carry.js accepts (TARGETS) are allowed.
+const OLD_TO = String(process.env.OSAP_OLD_TO || "").trim();
+if (OLD_TO) {
+  const ok = ["https://osap.axiom-inteligence-systems.com/", "https://axiom-osap.netlify.app/"];
+  if (!ok.includes(OLD_TO)) throw new Error("netlify_build: OSAP_OLD_TO must be one of " + ok.join(", "));
+  const f = path.join(OUT, "index.html"), t = fs.readFileSync(f, "utf8"), at = '<meta charset="utf-8">';
+  if (!t.includes(at)) throw new Error("netlify_build: index.html has no charset line");
+  fs.writeFileSync(f, t.replace(at, at + '<meta name="osap-carry-to" content="' + OLD_TO + '">'));
+  console.log("netlify_build: old-address copy, hands saved work on to " + OLD_TO);
+}
 
 // OSAP_SAT_TILES (with {z}, {x} and {y}), OSAP_OSRM_URL and OSAP_VALHALLA_URL (ending in /) and OSAP_ESRI_KEY from the site's environment
 function soldHosts(env) {

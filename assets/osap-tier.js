@@ -37,7 +37,7 @@
   if (!W.EXPOSURE) W.EXPOSURE = { features: [], totals: { gauge: { n: 0, house: 0, pop: 0 }, sat: { n: 0, house: 0, pop: 0 }, all: { n: 0, house: 0, pop: 0 } } };
   if (!W.LIVE) W.LIVE = { stations: [], over: [], rain: [], warnings: [], exposure: { byStation: {}, totals: { places: 0, care: 0, school: 0, util: 0 }, points: [] }, prov: {} };
   if (!W.PROVINCES) W.PROVINCES = { type: "FeatureCollection", features: [] };
-  var MOVED_MSG = "OSAP has a new address: axiom-osap.netlify.app. If you opened OSAP from a home-screen icon, remove that icon and add OSAP again from this page (Share, then Add to Home Screen), so it opens here and keeps you signed in.";
+  var MOVED_MSG = "OSAP has a new address: " + location.host + ". If you opened OSAP from a home-screen icon, remove that icon and add OSAP again from this page (Share, then Add to Home Screen), so it opens here and keeps you signed in.";
   var rank = function (t) { return Math.max(0, TIERS.indexOf(t)); };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function lGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
