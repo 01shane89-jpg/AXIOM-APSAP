@@ -17,6 +17,13 @@
      came from the old address (or the user says so), only the store families OSAP uses, sizes capped, and the features that
      show it escape it as they always do. Sign-in, lock, sync and team settings never travel.
    Loaded first in index.html's head, before anything reads the stores. On any other address it adds nothing.
+   - A chain of old addresses (2026-11-05, the move to the company's own address, osap.axiom-inteligence-systems.com):
+     github.io still hands on to axiom-osap.netlify.app, and once the app moves, axiom-osap.netlify.app is kept alive by a
+     stand-in copy of the app (old-address/netlify.toml) whose index.html names where it hands on to (<meta name="osap-carry-to">,
+     written by tools/netlify_build.mjs). That copy receives from github.io as before, then hands everything it holds on to the
+     new address. Each old address in SENDERS has a tag (~n after the set; none means github.io, as sets were sent before), so
+     the new address knows which address sent it, checks the page really came from there, and confirms back to it. The app
+     itself (no meta) never sends anything, so this file can go live before the move.
    window.OSAP_CARRY {state, undo} in the browser; the merge core is exported for node (tests/carry.test.mjs). */
 (function (G, factory) {
   var api = factory(G);
@@ -25,6 +32,10 @@
 })(typeof window !== "undefined" ? window : globalThis, function (W) {
   "use strict";
   var OLD_HOST = "01shane89-jpg.github.io", OLD = "https://01shane89-jpg.github.io/AXIOM-APSAP/", NEW = "https://axiom-osap.netlify.app/";
+  var HOME = "https://osap.axiom-inteligence-systems.com/";
+  /* the old addresses that hand saved work on (tag -> where they are); github.io hands on to NEW, the others to their page's
+     osap-carry-to, which must be one of TARGETS */
+  var SENDERS = { g: OLD, n: NEW }, TARGETS = [NEW, HOME];
   var PICK = /^(osap|asap|tsap|tfw|tw|tbw)[-.]/;
   /* never carried: this device's own state, sign-in, lock, sync and team settings, caches */
   var SKIP = ["osap-offline", "osap-offline-prev", "osap-loc", "osap-loc-go", "osap-boot", "osap-boot-t", "osap-tile-fail", "osap-ws-msg", "osap-ws-go", "osap-rt-link", "osap-ai",
@@ -133,6 +144,15 @@
     if (regChanged) { L.list = hereList; ls.set(REG, JSON.stringify(L)); }
     return changed;
   }
+  function originOf(u) { var m = /^(https:\/\/[a-z0-9.-]+)(\/|$)/i.exec(String(u || "")); return m ? m[1].toLowerCase() : ""; }
+  /* which old address this page is, and where it hands on to: {tag, at, to}, or null on the app itself. host: this page's
+     hostname, own: its origin + "/", metaTo: its <meta name="osap-carry-to"> (empty when none) */
+  function role(host, own, metaTo) {
+    if (host === OLD_HOST || /\.github\.io$/.test(host)) return { tag: "g", at: OLD, to: NEW };
+    if (!metaTo || TARGETS.indexOf(metaTo) < 0 || originOf(metaTo) === originOf(own)) return null;
+    for (var k in SENDERS) if (k !== "g" && SENDERS[k] === own) return { tag: k, at: SENDERS[k], to: metaTo };
+    return null;
+  }
   function arrLen(s) { var v = json(s); return Array.isArray(v) ? v.length : 0; }
   /* what the set holds, in plain words (the open workspace's items, plus workspaces and photos) */
   function describe(C, photos) {
@@ -144,13 +164,16 @@
     var r = json(C[REG]); if (plain(r) && Array.isArray(r.list) && r.list.length > 1) o.push(r.list.length + " workspaces");
     return o.length ? o.join(", ") : "your settings";
   }
-  var core = { picked: picked, scoped: scoped, mergeStore: mergeStore, mergeAll: mergeAll, describe: describe, canon: canon, PART: PART, MAX_PARTS: MAX_PARTS, OLD: OLD, NEW: NEW };
+  var core = { picked: picked, scoped: scoped, mergeStore: mergeStore, mergeAll: mergeAll, describe: describe, canon: canon, PART: PART, MAX_PARTS: MAX_PARTS, OLD: OLD, NEW: NEW, HOME: HOME, SENDERS: SENDERS, TARGETS: TARGETS, role: role, originOf: originOf };
 
   /* ================= browser ================= */
   function boot() {
-    var D = W.document, host = location.hostname, H = location.hash || "";
-    var isOld = host === OLD_HOST || /\.github\.io$/.test(host);
-    var m = /^#osap-carry=([0-9a-f]{64})\.(\d{1,2})\.(\d{1,2})\.([A-Za-z0-9_-]+)$/.exec(H);
+    var D = W.document, host = location.hostname, H = location.hash || "", own = location.origin + "/";
+    var mt = D.querySelector ? D.querySelector('meta[name="osap-carry-to"]') : null;
+    var R = role(host, own, mt ? mt.getAttribute("content") || "" : ""), isOld = !!R;
+    /* SELF: this old address; TO: where it hands on to */
+    var SELF = R ? R.at : own, TO = R ? R.to : own;
+    var m = /^#osap-carry=([0-9a-f]{64})\.(\d{1,2})\.(\d{1,2})\.([A-Za-z0-9_-]+)(?:~([a-z]))?$/.exec(H);
     var done = /^#osap-carried=([0-9a-f]{64})$/.exec(H);
     W.OSAP_CARRY = { state: "idle", undo: undo };
     if (!isOld && !m && !done) return;
@@ -206,8 +229,8 @@
     function go(u) { location.replace(u); }
     /* the old address's own move (as index.html does it), without this file's markers */
     function plainMove() {
-      var q = ""; try { var u = new URLSearchParams(location.search); u.delete("osap-stay"); u.delete("osap-unlock"); q = String(u); } catch (e) {}
-      go(NEW + (q ? "?" + q + "&" : "?") + "from=pages" + (/^#osap-/.test(H) ? "" : H));
+      var q = ""; try { var u = new URLSearchParams(location.search); u.delete("osap-stay"); u.delete("osap-unlock"); if (u.get("from") === "pages") u.delete("from"); /* added once below */ q = String(u); } catch (e) {}
+      go(TO + (q ? "?" + q + "&" : "?") + "from=pages" + (/^#osap-/.test(H) ? "" : H));
     }
 
     /* ---------- old address: send ---------- */
@@ -244,17 +267,24 @@
             if (!r) return;
             var id2 = r[0], s2 = r[1], n2 = Math.ceil(s2.length / PART), i = part && part.id === id2 ? part.i : 0;
             if (i >= n2) i = 0;
-            go(NEW + "#osap-carry=" + id2 + "." + i + "." + n2 + "." + s2.slice(i * PART, (i + 1) * PART));
+            /* github.io's sets carry no tag, as before, so an app not yet updated still takes them */
+            go(TO + "#osap-carry=" + id2 + "." + i + "." + n2 + "." + s2.slice(i * PART, (i + 1) * PART) + (R.tag === "g" ? "" : "~" + R.tag));
           });
         });
       }).then(null, function () {
         screen("OSAP could not bring your saved work across automatically. It is still safe here. Use Settings > Move to another device on this address to make a backup file, then open it on the new address.",
-          [["Stay on the old address", function () { go(OLD + "?osap-stay=1"); }, true], ["Go to the new address", plainMove]]);
+          [["Stay on the old address", function () { go(SELF + "?osap-stay=1"); }, true], ["Go to the new address", plainMove]]);
       });
     }
-    if (isOld) {
+    /* a set arriving on an old address that is itself a step in the chain (the stand-in netlify.app copy, from github.io):
+       taken in first, as on the app; once confirmed, github.io comes back here and this address hands everything on */
+    if (isOld && !(m && SENDERS[m[5] || "g"] && SENDERS[m[5] || "g"] !== SELF)) {
       W.OSAP_CARRY.state = "old";
-      if (!(W.crypto && W.crypto.subtle && W.CompressionStream && W.TextEncoder)) return; /* old browser: index.html's own move runs */
+      if (!(W.crypto && W.crypto.subtle && W.CompressionStream && W.TextEncoder)) {
+        /* old browser: on github.io index.html's own move runs; elsewhere the plain move, so the user still gets in */
+        if (R.tag !== "g") plainMove();
+        return;
+      }
       W.OSAP_CARRY.handled = true; /* index.html and assets/osap-tier.js leave the move to this file */
       /* ?osap-stay=1: open the app here after all (chosen on the screen below when the hand-off failed, to make a backup file) */
       if (/[?&]osap-stay=1(&|$)/.test(location.search)) { W.OSAP_CARRY.state = "stay"; return; }
@@ -265,12 +295,12 @@
         if (/[?&]osap-unlock=1(&|$)/.test(location.search)) { W.OSAP_CARRY.state = "stay"; return; }
         W.OSAP_CARRY.state = "locked";
         screen("Your saved work on this old address is locked. Unlock it here first; OSAP then brings it to the new address.",
-          [["Unlock here", function () { go(OLD + "?osap-unlock=1"); }, true], ["Go to the new address", plainMove]]);
+          [["Unlock here", function () { go(SELF + "?osap-unlock=1"); }, true], ["Go to the new address", plainMove]]);
         return;
       }
       if (ok) {
         var al = (lsGet("osap-carry-alias") || "").split(" ");
-        W.OSAP_CARRY.state = "confirmed"; lsSet("osap-carry-done", al[1] === ok[1] ? al[0] : ok[1]); screen("Done. Opening OSAP…"); go(NEW + "?from=pages#osap-carried=" + ok[1]); return; }
+        W.OSAP_CARRY.state = "confirmed"; lsSet("osap-carry-done", al[1] === ok[1] ? al[0] : ok[1]); screen("Done. Opening OSAP…"); go(TO + "?from=pages#osap-carried=" + ok[1]); return; }
       W.OSAP_CARRY.state = "sending";
       send(nx ? { id: nx[1], i: +nx[2] } : null);
       return;
@@ -284,17 +314,18 @@
       return;
     }
     W.OSAP_CARRY.state = "receiving";
-    var id = m[1], i = +m[2], n = +m[3], data = m[4];
-    if (!(n >= 1 && n <= MAX_PARTS && i < n && data.length <= PART)) { clean(); return; }
+    var id = m[1], i = +m[2], n = +m[3], data = m[4], FROM = SENDERS[m[5] || "g"];
+    if (!(FROM && FROM !== SELF && n >= 1 && n <= MAX_PARTS && i < n && data.length <= PART)) { clean(); return; }
     clean();
-    var fromOld = /^https:\/\/01shane89-jpg\.github\.io\//.test(D.referrer || "");
+    /* only the page that address sent counts as "from the old address" (the browser gives its origin as the referrer) */
+    var fromOld = !!originOf(D.referrer) && originOf(D.referrer) === originOf(FROM);
     var prev = json(lsGet("osap-carry-last"));
-    if (plain(prev) && prev.id === id) { screen("Already brought across. Opening OSAP…"); go(OLD + "#osap-carry-ok=" + id); return; }
-    if (vaultLocked()) { screen("OSAP is locked on this device. Unlock it, then open the old address again to bring your saved work across.", [["Open OSAP", function () { go(NEW); }, true]]); return; }
+    if (plain(prev) && prev.id === id) { screen("Already brought across. Opening OSAP…"); go(FROM + "#osap-carry-ok=" + id); return; }
+    if (vaultLocked()) { screen("OSAP is locked on this device. Unlock it, then open the old address again to bring your saved work across.", [["Open OSAP", function () { go(own); }, true]]); return; }
     var said = ""; try { said = sessionStorage.getItem("osap-carry-yes") || ""; } catch (e) {}
     if (fromOld || said === id) receive();
     else screen("Bring saved places and work from OSAP's old address into this device? Only do this if you just came from the old OSAP address.",
-      [["Bring them in", function () { try { sessionStorage.setItem("osap-carry-yes", id); } catch (e) {} receive(); }, true], ["No", function () { go(NEW); }]]);
+      [["Bring them in", function () { try { sessionStorage.setItem("osap-carry-yes", id); } catch (e) {} receive(); }, true], ["No", function () { go(own); }]]);
 
     function clean() { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
     function receive() {
@@ -303,7 +334,7 @@
         return tx(carryDb(), "kv", "readonly", function (s) { return s.getAllKeys(); });
       }).then(function (keys) {
         var have = {}; (keys || []).forEach(function (k) { var p = /^part\/([0-9a-f]{64})\/(\d+)$/.exec(k); if (p && p[1] === id) have[+p[2]] = 1; });
-        for (var j = 0; j < n; j++) if (!have[j]) { go(OLD + "#osap-carry-next=" + id + "." + j); return null; }
+        for (var j = 0; j < n; j++) if (!have[j]) { go(FROM + "#osap-carry-next=" + id + "." + j); return null; }
         return tx(carryDb(), "kv", "readonly", function (s) { var r = []; for (var j = 0; j < n; j++) r.push(s.get("part/" + id + "/" + j)); return { get result() { return r.map(function (q) { return q.result; }); } }; }).then(finish);
       }).then(null, failed);
     }
@@ -325,7 +356,7 @@
           }).then(function (np) {
             lsSet("osap-carry-last", JSON.stringify({ id: id, at: Date.now(), what: describe(C, photos.length) + (set.left ? " (photos were too big to bring and are still on the old address)" : ""), photos: np }));
             return tx(carryDb(), "kv", "readwrite", function (s) { for (var j = 0; j < n; j++) s.delete("part/" + id + "/" + j); }).then(null, function () {});
-          }).then(function () { W.OSAP_CARRY.state = "done"; go(OLD + "#osap-carry-ok=" + id); });
+          }).then(function () { W.OSAP_CARRY.state = "done"; go(FROM + "#osap-carry-ok=" + id); });
         });
       });
     }
@@ -345,7 +376,7 @@
     function failed(e) {
       W.OSAP_CARRY.state = "failed";
       screen((e && e.message === "full" ? "This device's storage is full, so " : "") + "OSAP could not bring your saved work across. Nothing was lost: it is still on the old address. Try again, or use Settings > Move to another device there.",
-        [["Try again", function () { go(OLD); }, true], ["Open OSAP", function () { go(NEW); }]]);
+        [["Try again", function () { go(FROM); }, true], ["Open OSAP", function () { go(own); }]]);
     }
   }
   /* a note at the top of the page once it has loaded */

@@ -1,0 +1,42 @@
+# The stand-in copy of OSAP on the OLD address, axiom-osap.netlify.app, once the app itself lives on the company's address
+# (osap.axiom-inteligence-systems.com, 2026-11-05). A browser keeps saved work per address, so this copy must keep running
+# on the old address: assets/osap-carry.js hands every user's saved work on to the new address, then moves them there.
+# It is a second Netlify project with base directory "old-address" (this file), and it only takes the name axiom-osap once
+# the app's own project has the company domain and a new name. See old-address/README.md for the switch, step by step.
+# It has no functions, no Identity and no paywall: the app copy only opens here when a user chooses to stay (to unlock a
+# locked vault or make a backup file), like the github.io copy.
+[build]
+  command = "node ../tools/netlify_build.mjs"
+  publish = "_site"
+  # production only, and only when the hand-off or this copy's build changed (each production deploy costs credits)
+  ignore = '[ "$CONTEXT" = "production" ] || exit 0; [ -n "$CACHED_COMMIT_REF" ] || exit 1; git diff --quiet "$CACHED_COMMIT_REF" "$COMMIT_REF" -- ../assets/osap-carry.js ../old-address ../tools/netlify_build.mjs'
+
+[build.environment]
+  OSAP_OLD_TO = "https://osap.axiom-inteligence-systems.com/"
+
+# Server callers that still use the old address (push alerts from the Actions jobs, Paddle's webhook):
+# sign-in): passed straight to the app on the new address, unchanged
+[[redirects]]
+  from = "/api/osap-push"
+  to = "https://osap.axiom-inteligence-systems.com/api/osap-push"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/paddle-webhook"
+  to = "https://osap.axiom-inteligence-systems.com/api/paddle-webhook"
+  status = 200
+  force = true
+
+# Free data for the app copy when a user stays here, as on the app's own site
+[[redirects]]
+  from = "/data/*"
+  to = "https://01shane89-jpg.github.io/AXIOM-APSAP/data/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/source/*"
+  to = "https://01shane89-jpg.github.io/AXIOM-APSAP/source/:splat"
+  status = 200
+  force = true

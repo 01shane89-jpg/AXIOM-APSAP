@@ -7,6 +7,10 @@
 // - A set too big for one address (about 2 MB) goes in parts and arrives whole.
 // - A link to the new address with a set in it, not coming from the old address: asks first, brings nothing on "No".
 // - A damaged set: refused, nothing changed. Nothing saved on the old address: the plain move, with ?from=pages.
+// - The chain after the move to the company address (2026-11-05): github.io hands on to the stand-in copy on
+//   axiom-osap.netlify.app (its page names the new address), which takes it in and hands all it holds on to
+//   osap.axiom-inteligence-systems.com: everything from both old addresses arrives, each confirmed, and a second visit is the
+//   plain move. A tagged set opened from elsewhere asks first.
 // - The real index.html: the hand-off is the first script, the old move steps aside only when the hand-off runs, and on the
 //   old address the hand-off carries saved work before anything else in the page runs.
 // Run from the repo root: node tests/carry_smoke.mjs   (needs the playwright package and Chromium; BROWSER=webkit runs it in
@@ -14,7 +18,7 @@
 import { readFile } from "node:fs/promises";
 import { chromium, webkit } from "playwright";
 import { randomBytes } from "node:crypto";
-const OLD = "https://01shane89-jpg.github.io/AXIOM-APSAP/", NEW = "https://axiom-osap.netlify.app/";
+const OLD = "https://01shane89-jpg.github.io/AXIOM-APSAP/", NEW = "https://axiom-osap.netlify.app/", HOME = "https://osap.axiom-inteligence-systems.com/";
 const html = await readFile("index.html", "utf8"), carry = await readFile("assets/osap-carry.js", "utf8");
 let fails = 0;
 function ok(c, m, x) { console.log((c ? "PASS " : "FAIL ") + m + (x === undefined ? "" : " " + JSON.stringify(x).slice(0, 300))); if (!c) fails++; }
@@ -24,19 +28,20 @@ const head = html.slice(0, html.indexOf('<script src="assets/osap-protect.js"></
 ok(/<script src="assets\/osap-carry\.js"><\/script><script>[^<]*if\(\/\\\.github\\\.io\$\/\.test\(location\.hostname\)&&!\(window\.OSAP_CARRY&&window\.OSAP_CARRY\.handled\)\)location\.replace\(/.test(head), "index.html: hand-off first, the old move only when it did not take over");
 ok(head.split("<script").length === 3, "nothing else runs before the hand-off in index.html's head");
 const inline = head.slice(head.indexOf("<script>"));
+const standIn = `<!doctype html><html><head><meta charset="utf-8"><meta name="osap-carry-to" content="${HOME}"><script src="assets/osap-carry.js"></script>${inline}<script>window.APP_RAN = true;</script></head><body><p id="app">app</p></body></html>`;
 const page = `<!doctype html><html><head><meta charset="utf-8"><script src="assets/osap-carry.js"></script>${inline}<script>window.APP_RAN = true;</script></head><body><p id="app">app</p></body></html>`;
 
 const browser = process.env.BROWSER === "webkit" ? await webkit.launch() : await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
-async function ctxNew(realOld) {
+async function ctxNew(realOld, chain) {
   const ctx = await browser.newContext({ viewport: { width: 400, height: 800 } });
   const hits = [];
   await ctx.route("**/*", (route) => {
     const u = new URL(route.request().url());
-    const site = u.origin + "/" === NEW ? "new" : u.origin === "https://01shane89-jpg.github.io" && u.pathname.startsWith("/AXIOM-APSAP/") ? "old" : null;
+    const site = u.origin + "/" === NEW ? "new" : chain && u.origin + "/" === HOME ? "home" : u.origin === "https://01shane89-jpg.github.io" && u.pathname.startsWith("/AXIOM-APSAP/") ? "old" : null;
     if (!site) return route.abort();
     const p = site === "old" ? u.pathname.slice("/AXIOM-APSAP".length) : u.pathname;
     if (route.request().isNavigationRequest()) hits.push(site + " " + u.search);
-    if (p === "/" || p === "/index.html") return route.fulfill({ status: 200, contentType: "text/html", body: realOld && site === "old" ? html : page });
+    if (p === "/" || p === "/index.html") return route.fulfill({ status: 200, contentType: "text/html", body: realOld && site === "old" ? html : chain && site === "new" ? standIn : page });
     if (realOld && site === "old" && /^\/assets\/[\w./-]+$/.test(p) && !p.includes("..")) return readFile(p.slice(1)).then((b) => route.fulfill({ status: 200, contentType: p.endsWith(".css") ? "text/css" : "text/javascript", body: b }), () => route.fulfill({ status: 404, body: "" }));
     if (p === "/assets/osap-carry.js") return route.fulfill({ status: 200, contentType: "text/javascript", body: carry });
     return route.fulfill({ status: 404, body: "" });
@@ -44,7 +49,7 @@ async function ctxNew(realOld) {
   return { ctx, hits };
 }
 async function settle(p, site, ms) {
-  const want = site === "new" ? NEW : OLD;
+  const want = site === "new" ? NEW : site === "home" ? HOME : OLD;
   await p.waitForFunction((w) => location.href.startsWith(w) && window.APP_RAN === true && document.readyState === "complete", want, { timeout: ms || 30000 });
   await p.waitForTimeout(300);
 }
@@ -178,6 +183,53 @@ const OLD_STORES = {
   const S = await ls(p);
   ok(P(S["osap-atak-pts"] || "[]")[0]?.name === "Real page point" && hits.join("|") === "old |new |old |new ?from=pages", "real index.html: saved point carried, one trip there and back", hits);
   ok(!errs.length, "real index.html: no page errors", errs);
+  await ctx.close();
+}
+
+// 8. the chain after the move: github.io -> the stand-in on netlify.app -> the company address
+{
+  const { ctx, hits } = await ctxNew(false, true); const p = await ctx.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));
+  await seed(p, HOME, { "osap-atak-pts": J([{ id: "h1", lat: 1, lon: 1, name: "Made on the new address" }]) });
+  await seed(p, NEW, { "osap-atak-pts": J([{ id: "n1", lat: 2, lon: 2, name: "Made on netlify.app" }]), "osap-auth": J({ access_token: "netlify-token" }) });
+  await seed(p, OLD, { "osap-atak-pts": J([{ id: "g1", lat: 3, lon: 3, name: "Made on github.io" }]), "osap-routes": J([{ id: "rt9", name: "Old route", wps: [] }]) });
+  hits.length = 0;
+  await p.goto(OLD + "?c=th"); await settle(p, "home", 60000);
+  const S = await ls(p), pts = P(S["osap-atak-pts"] || "[]").map((x) => x.id).sort().join();
+  ok(pts === "g1,h1,n1" && P(S["osap-routes"] || "[]").length === 1, "chain: points from github.io and netlify.app both arrive, the new address's own kept", pts);
+  ok(!S["osap-auth"], "chain: no sign-in travels");
+  ok(hits.join("|") === "old ?c=th|new |old |new ?from=pages|home |new |home ?from=pages", "chain: github.io -> stand-in -> github.io confirms -> stand-in -> new address -> stand-in confirms -> new address", hits);
+  const note = await p.evaluate(() => (document.getElementById("carry-note") || {}).textContent || "");
+  ok(/2 map points, 1 route/.test(note), "chain: note on the new address says what came across", note);
+  await p.goto(NEW + "?osap-stay=1"); const N = await ls(p);
+  ok(/^[0-9a-f]{64}$/.test(N["osap-carry-done"] || "") && P(N["osap-auth"]).access_token === "netlify-token", "stand-in: confirmation mark kept, its own stores untouched");
+  hits.length = 0;
+  await p.goto(OLD); await settle(p, "home");
+  ok(hits.join("|") === "old |new ?from=pages|home ?from=pages", "chain, second visit: the plain move through both old addresses", hits);
+  ok((await ls(p))["osap-atak-pts"] === S["osap-atak-pts"], "chain, second visit: nothing brought again");
+  // a bookmark of the old netlify.app address with nothing new: straight to the new address, the view kept
+  hits.length = 0;
+  await p.goto(NEW + "?c=mm#mm/map"); await settle(p, "home");
+  ok(await p.evaluate(() => location.href) === HOME + "?c=mm&from=pages#mm/map", "old netlify.app bookmark: on to the new address with the view kept", await p.evaluate(() => location.href));
+  ok(!errs.length, "chain: no page errors", errs);
+  await ctx.close();
+}
+
+// 9. a set tagged as from netlify.app, opened on the new address from somewhere else: asks first
+{
+  const { ctx } = await ctxNew(false, true); const p = await ctx.newPage();
+  await seed(p, NEW, { "osap-atak-pts": J([{ id: "x1", lat: 1, lon: 1 }]) });
+  let link = "";
+  await p.route(HOME + "**", (r) => r.fulfill({ status: 200, contentType: "text/html", body: "<p>caught</p>" }));
+  await p.goto(NEW); await p.waitForFunction(() => document.body && /caught/.test(document.body.textContent), null, { timeout: 30000 });
+  link = await p.evaluate(() => location.href);
+  await p.unroute(HOME + "**");
+  ok(/#osap-carry=[0-9a-f]{64}\.0\.1\.[A-Za-z0-9_-]+~n$/.test(link), "the stand-in tags its set ~n", link.slice(-20));
+  await p.close(); const p2 = await ctx.newPage();
+  await p2.goto("about:blank"); await p2.goto(link, { waitUntil: "commit" });
+  await p2.waitForFunction(() => document.getElementById("carry-msg"), null, { timeout: 15000 });
+  ok(/Only do this if you just came from the old OSAP address/.test(await p2.textContent("#carry-msg")), "tagged set from elsewhere: asks first");
+  await p2.click("text=No"); await settle(p2, "home");
+  ok(!(await ls(p2))["osap-atak-pts"], "No: nothing brought in");
   await ctx.close();
 }
 
