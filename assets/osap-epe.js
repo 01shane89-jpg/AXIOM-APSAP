@@ -70,7 +70,7 @@
   var MODES = [["car", "Drive"], ["truck", "Truck"], ["foot", "Walk"], ["bike", "Cycle"]];
   var SERIOUS = { conflict: 1, violent: 1, closure: 1, disaster: 1 };
   var NODE_T = [["assembly", "Assembly area"], ["pickup", "Pickup point"], ["transfer", "Transfer point"], ["vehchange", "Vehicle change point"],
-    ["airdep", "Air departure point"], ["seadep", "Sea departure point"], ["border", "Border crossing"], ["haven", "Safe haven"]];
+    ["airdep", "Air departure point"], ["seadep", "Sea departure point"], ["border", "Border crossing"], ["haven", "Safe haven"], ["check", "Checkpoint"]];
   /* plan points are drawn as NATO (2525D) symbols when assets/osap-symbols.js loaded; the old dots otherwise */
   function SY() { return !!(W.OSAP_SYM && W.OSAP_SYM.tag && W.OSAP_SYM.mark); }
   var NODE_N = {}; NODE_T.forEach(function (t) { NODE_N[t[0]] = t[1]; });
@@ -122,7 +122,7 @@
   }
 
   /* ---------- state ---------- */
-  var S = { plan: null, origin: null, sel: null, busy: false, tok: 0, msg: "", found: null, picking: false, mode: "car", days: 30, ltok: 0, lbusy: null, lmsg: "", pickNode: null, atok: 0, abusy: null, amsg: "", flyPick: null, dtok: 0, dbusy: null, dmsg: "", xbusy: false, showDet: null, ptok: 0, pbusy: null, pmsg: "" };
+  var S = { rtok: 0, rbusy: false, cmmsg: "", cmDraw: null, plan: null, origin: null, sel: null, busy: false, tok: 0, msg: "", found: null, picking: false, mode: "car", days: 30, ltok: 0, lbusy: null, lmsg: "", pickNode: null, atok: 0, abusy: null, amsg: "", flyPick: null, dtok: 0, dbusy: null, dmsg: "", xbusy: false, showDet: null, ptok: 0, pbusy: null, pmsg: "" };
   (function () { var c = lsGet(CUR, null), p = c && all().filter(function (x) { return x.id === c; })[0]; if (p) { S.plan = p; S.origin = p.origin; S.mode = p.mode || "car"; S.days = p.days || 30; S.sel = p.opts[0] && p.opts[0].id; } })();
   var layer = null;
 
@@ -132,7 +132,7 @@
       el = D.createElement("div"); el.id = "epe"; el.hidden = true; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Evacuation plan");
       D.body.appendChild(el);
       el.addEventListener("click", onClick); el.addEventListener("change", onChange);
-      el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.picking) pickEnd(); else close(); } });
+      el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.cmDraw) { cmEnd(); S.cmmsg = "Cancelled."; render(); draw(); } else if (S.picking) pickEnd(); else close(); } });
       el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); });
       if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
     }
@@ -151,7 +151,7 @@
   }
   function close() {
     var el = D.getElementById("epe"); if (el) el.hidden = true;
-    pickEnd(); S.tok++; S.busy = false;
+    pickEnd(); cmEnd(); S.tok++; S.busy = false; S.rtok++; S.rbusy = false;
     if (S.active) stopActive();
     if (layer) { layer.remove(); layer = null; }
     if (W.OSAP_SPLIT && W.OSAP_SPLIT.top) W.OSAP_SPLIT.top();
@@ -162,7 +162,7 @@
     if (S.origin && Math.abs(S.origin.lat - lat) < 1e-6 && Math.abs(S.origin.lon - lon) < 1e-6) return;
     S.tok++; S.busy = false;
     S.origin = { lat: Math.round(lat * 1e6) / 1e6, lon: Math.round(lon * 1e6) / 1e6, label: clean(label, 80), how: clean(how, 60) };
-    S.plan = null; S.sel = null; S.msg = ""; S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = "";
+    S.plan = null; S.sel = null; S.msg = ""; S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = ""; cmEnd(); S.rtok++; S.rbusy = false; S.cmmsg = "";
   }
 
   /* ---------- the engine: the Route tab's evacuation planner (assets/osap-route.js), loaded without opening the tab ---------- */
@@ -196,6 +196,7 @@
     var tok = ++S.tok, o = S.origin, start = { lat: o.lat, lon: o.lon, name: o.label || "Origin" }, mode = S.mode, days = S.days;
     var picks = [], notes = [], k = 0;
     S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = "";
+    var prev = S.plan && sameP(S.plan.origin, o) ? S.plan : null;
     S.busy = true; S.msg = "Loading the route planner…"; S.plan = null; S.sel = null; render(); draw();
     function alive() { return tok === S.tok; }
     function say(t) { if (alive()) { S.msg = t; var m = D.getElementById("epe-msg"); if (m) m.textContent = t; } }
@@ -230,10 +231,13 @@
       var tail = opts.slice(opts[1] && opts[1].alt ? 2 : 1).sort(function (a, b) { return a.src.exp.score - b.src.exp.score || a.src.r.s - b.src.r.s; });
       opts = opts.slice(0, opts.length - tail.length).concat(tail).slice(0, MAX_OPTS);
       var now = Date.now(), P = { id: rid("epe-"), v: 2, cc: cc(), ccName: ccName(), name: clean((o.label || grid(o.lat, o.lon)) + " evacuation", 90), origin: o, mode: mode, days: days,
-        created: now, calc: now, notes: notes.slice(0, 10), opts: opts.map(function (x, i) { return optRec(x, i); }) };
-      S.plan = P; S.sel = P.opts[0].id; S.busy = false; S.msg = "";
+        created: now, calc: now, notes: notes.slice(0, 10), opts: opts.map(function (x, i) { return optRec(x, i); }),
+        /* the analyst's control measures and blocked directions stay with a plan worked out again from the same origin */
+        cm: prev && Array.isArray(prev.cm) ? prev.cm : [], blk: prev && prev.blk ? prev.blk : {} };
+      S.plan = P; S.sel = P.opts[0].id; S.busy = false; S.msg = ""; cmRefresh();
       if (!keep(P)) S.msg = "This browser would not keep the plan (storage full or blocked). It shows until the page closes.";
       render(); draw(); fitPlan();
+      if (avoids().length) roundAll("");
     }).catch(function (e) { if (!alive()) return; S.busy = false; S.msg = "No evacuation options: " + e.message + "."; render(); });
   }
   /* the option as kept: the line thinned, the destination and the incidents near it */
@@ -255,6 +259,12 @@
   function propose(o) {
     var dead = (o.legs || []).filter(function (l) { return l.bad; })[0];
     if (dead) return { st: "Blocked", why: dead.id.replace("L", "Leg ") + " (" + dead.a.name + " to " + dead.b.name + ") is marked unusable by you and OSAP found no other line." };
+    if (S.plan && S.plan.opts.indexOf(o) >= 0) {
+      var th = thruAvoid(o.route.coords);
+      if (th.length) return { st: "Blocked", why: "The line runs through " + th.map(function (r) { return "area to avoid " + r.cm.name + " (km " + r.at.map(function (x) { return x.from + (x.to > x.from ? "–" + x.to : ""); }).join(", ") + ")"; }).join(" and ") + "." };
+      var hd = heading(o);
+      if (blk()[hd.s]) return { st: "Blocked", why: "It heads " + hd.c + " (" + hd.b + "°) and you marked " + DIR_N[hd.s].toLowerCase() + " blocked." };
+    }
     var h = o.exp.hits || [], shut = h.filter(function (x) { return x.k === "closure" && x.d <= 300; });
     if (shut.length) return { st: "Blocked", why: "Road closure reported on the line: " + shut[0].title + (shut[0].date ? " (" + String(shut[0].date).slice(0, 10) + ")" : "") + "." };
     var bad = h.filter(function (x) { return SERIOUS[x.k]; });
@@ -315,15 +325,17 @@
   function r5(c) { return thin(c, 1200).map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }); }
   /* one leg routed between two nodes; avoid: a failed line to keep off */
   function routeLeg(a, b, mode, failedLines) {
-    var avoid = [];
+    var avoid = [], polys = polysNow();
     (failedLines || []).forEach(function (fl) { avoid = avoid.concat(along(fl, 8, 0.15, 0.85)); });
     return engine().then(function (Rt) {
-      return Rt.alternates([a.lat, a.lon], [b.lat, b.lon], { mode: mode, n: 3, avoid: avoid.length ? avoid : undefined });
+      return Rt.alternates([a.lat, a.lon], [b.lat, b.lon], { mode: mode, n: 3, avoid: avoid.length ? avoid : undefined, polys: polys.length ? polys : undefined });
     }).then(function (lines) {
       var ok = lines.filter(function (x) { return !(failedLines || []).some(function (fl) { return alike(fl, x.coords) || alike(x.coords, fl); }); });
       if (!ok.length) { var e = new Error(failedLines && failedLines.length ? "the routers found no other line between these two nodes" : "no route"); e.none = true; throw e; }
-      var x = ok[0];
-      return { coords: r5(x.coords), m: x.m, s: x.s, src: x.src || "", how: x.how || "" };
+      /* areas to avoid: the fastest line that keeps out of them; when none does, the fastest, said as running through one */
+      var clear = polys.length ? ok.filter(function (x) { return !polys.some(function (r) { return insideKm(x.coords, r).length; }); }) : ok;
+      var x = (clear.length ? clear : ok)[0];
+      return { coords: r5(x.coords), m: x.m, s: x.s, src: x.src || "", how: x.how || "", thru: !clear.length };
     });
   }
   /* the option's legs brought in line with its chain: a leg whose two ends are unchanged is kept as it is; only new or
@@ -931,7 +943,7 @@
         ((o.along && o.along.sus && o.along.sus.fuel) || []).map(function (f) { return pm("Fuel: " + f.name, f.lat, f.lon, f, "km " + f.km); }).join("") +
         ((o.along && o.along.us && o.along.us.list) || []).map(function (u) { return pm(u.name, u.lat, u.lon, u, "Not verified as an evacuation destination."); }).join("") + "</Folder>";
     });
-    return h + "</Document></kml>";
+    return h + cmKml(pl) + "</Document></kml>";
   }
   function fname(t) { return String(t || "plan").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "plan"; }
   function saveFile(name, blob) { var u = URL.createObjectURL(blob), a = D.createElement("a"); a.href = u; a.download = name; D.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
@@ -953,12 +965,12 @@
   /* the package as a page to print or save as PDF */
   function printHtml(pk) {
     var pl = pk.plan;
-    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>" + E(pk.name) + "</title><style>body{font:12px/1.4 system-ui,sans-serif;margin:16px;color:#111}h1{font-size:17px}h2{font-size:14px;margin:14px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:8px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}td,th{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top}th{background:#eee}.m{font-family:monospace;font-size:10.5px;word-break:break-all}.n{color:#555}@media print{h2{break-after:avoid}}</style></head><body>" +
+    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>" + E(pk.name) + "</title><style>body{font:12px/1.4 system-ui,sans-serif;margin:16px;color:#111}h1{font-size:17px}h2{font-size:14px;margin:14px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:8px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}td,th{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top}th{background:#eee}.m{font-family:monospace;font-size:10.5px;word-break:break-all}.n{color:#555}.mapf{margin:6px 0;break-inside:avoid}.mapf svg{display:block;width:100%;height:auto;border:1px solid #999}tr.bad td{color:#b3261e;font-weight:600}@media print{h2{break-after:avoid}}</style></head><body>" +
       "<h1>" + E(pk.name) + "</h1><p class=\"n\">Evacuation route package, frozen " + E(dual(pk.made, true)) + ". Automatic draft from open data: roles and statuses are the analyst's; nothing here says a route, crossing or destination is open or safe. Plan SHA-256 <span class=\"m\">" + E(pk.fp) + "</span></p>" +
-      "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>";
+      "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>" + cmPrint(pl);
     pl.opts.slice().sort(function (a, b) { return (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9); }).forEach(function (o) {
       h += "<h2>" + E(o.role ? o.role + " " + ROLE_N[o.role] + ": " : "No role: ") + E(o.dest.i.name) + "</h2><p>" + E(o.label) + ". " + E(dist(o.route.m)) + ", " + E(dur(o.route.s)) + ". Status <b>" + E(o.st || o.prop.st) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal: " + o.prop.why + ")") + "</p>" +
-        "<h3>Legs</h3><table><tr><th>#</th><th>From</th><th>To</th><th>How</th><th>Distance</th><th>Time</th></tr>" + legsOf(o).map(function (l, i) { return "<tr><td>" + (i + 1) + "</td><td>" + E(l.a.name) + "</td><td>" + E(l.b.name) + "</td><td>" + E(flies(l.mode) ? LEG_M.filter(function (m) { return m[0] === l.mode; })[0][1] + " (straight line)" : "Road") + (l.bad ? " UNUSABLE" : "") + "</td><td>" + E(dist(l.m)) + "</td><td>" + E(dur(l.s)) + "</td></tr>"; }).join("") + "</table>";
+        cmPrintOpt(o, pl) + "<h3>Legs</h3><table><tr><th>#</th><th>From</th><th>To</th><th>How</th><th>Distance</th><th>Time</th></tr>" + legsOf(o).map(function (l, i) { return "<tr><td>" + (i + 1) + "</td><td>" + E(l.a.name) + "</td><td>" + E(l.b.name) + "</td><td>" + E(flies(l.mode) ? LEG_M.filter(function (m) { return m[0] === l.mode; })[0][1] + " (straight line)" : "Road") + (l.bad ? " UNUSABLE" : "") + "</td><td>" + E(dist(l.m)) + "</td><td>" + E(dur(l.s)) + "</td></tr>"; }).join("") + "</table>";
       var rows = [];
       ((o.deps && o.deps.list) || []).forEach(function (d) { rows.push([d.km, DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : ""), (d.status ? d.status.st : "") + (d.detour ? d.detour.none ? "; no way round found" : d.detour.dm != null ? "; detour if lost +" + dist(Math.max(0, d.detour.dm)) : "" : ""), d]); });
       ((o.along && o.along.haz && o.along.haz.ranges) || []).forEach(function (rg) { rg.items.forEach(function (x) { rows.push([x.at, x.kind, x.text, x]); }); });
@@ -976,7 +988,10 @@
     var w = W.open("", "_blank");
     if (!w) { S.msg = "The print page was blocked by the browser. Allow pop-ups for this site and try again."; render(); return; }
     w.document.open(); w.document.write(printHtml(pk)); w.document.close();
-    setTimeout(function () { W.OSAP_PDF.print({ title: "Evacuation route package: " + pk.name, root: w.document.body, win: w }); }, 300);
+    /* the map squares load first (up to 12 s), so the print engine never draws the map before them */
+    var hs = Array.prototype.map.call(w.document.querySelectorAll ? w.document.querySelectorAll("svg image") : [], function (i) { return i.getAttribute("href"); }).filter(function (h) { return /^https?:/.test(h || ""); });
+    Promise.race([Promise.all(hs.map(function (h) { return new Promise(function (r) { var im = new Image(); im.onload = im.onerror = function () { r(); }; im.src = h; }); })), new Promise(function (r) { setTimeout(r, 12000); })])
+      .then(function () { setTimeout(function () { W.OSAP_PDF.print({ title: "Evacuation route package: " + pk.name, root: w.document.body, win: w }); }, 300); });
   }
 
   /* active mode: the P route only and one card that counts down */
@@ -1114,6 +1129,7 @@
   /* ---------- origin picking ---------- */
   function pickStart(node) {
     var map = W.__asapMap; if (!map) return;
+    cmEnd();
     S.picking = true; S.pickNode = node || null; D.documentElement.classList.add("epe-picking"); map.getContainer().style.cursor = "crosshair";
     if (node && node.fly) { S.flyPick = node.fly; S.amsg = "Tap the map where the flight or voyage ends (safe haven or final destination). Esc cancels."; }
     else if (node) S.lmsg = "Tap the map where the " + NODE_N[node.type].toLowerCase() + " is. Esc cancels."; else S.msg = "Tap the map where the people are. Esc cancels.";
@@ -1175,6 +1191,452 @@
       .sort(function (x, y) { return x.m - y.m; }).slice(0, 30);
   }
 
+  /* ---------- the evacuation map: control measures, directions and areas to avoid (Shane 2026-11-05) ----------
+     The analyst's own graphics on the plan, drawn on the map, in the printed package (with a map) and in the KML:
+     checkpoints (CP), ground and air extraction points (GXP, AXP), phase lines (PL), the evacuation corridor and areas to
+     avoid. OSAP never places, names or moves one. Points are NATO 2525D control measure symbols where OSAP has one
+     (checkpoint 130300, air extraction on the pick-up point / landing zone 321100, ground extraction on the waypoint 131800,
+     each labelled); a phase line is a line labelled "PL name" at both ends; areas are outlined and labelled.
+     Areas to avoid are handed to the routers whenever OSAP routes a leg (Valhalla exclude_polygons, else the roads at points
+     inside them), a line that still runs through one is listed by km and proposed Blocked, and adding one routes the options
+     through it round it. Directions: each option's heading from the origin; the analyst can mark a direction blocked ("we
+     can't go south"): options heading that way are proposed Blocked, and "Find a way out in each open direction" routes to the
+     nearest destination OSAP holds, or the analyst's own extraction point, in every open direction that has no option yet.
+     Kept with the plan on this device only (plan.cm, plan.blk). */
+  var CM_T = [["cp", "Checkpoint", "CP", "pt"], ["gxp", "Ground extraction point", "GXP", "pt"], ["axp", "Air extraction point (HLZ)", "AXP", "pt"],
+    ["pl", "Phase line", "PL", "line"], ["corr", "Evacuation corridor", "CORRIDOR", "area"], ["avoid", "Area to avoid", "AVOID", "area"]];
+  var CM = {}; CM_T.forEach(function (t) { CM[t[0]] = { n: t[1], ab: t[2], g: t[3] }; });
+  var CM_COL = { cp: "#212529", gxp: "#2b8a3e", axp: "#1864ab", pl: "#111111", corr: "#1c7ed6", avoid: "#c92a2a" };
+  var CM_SYM = { cp: "g_check", gxp: "g_waypoint", axp: "g_medevac" };
+  var PL_NAMES = ["RED", "WHITE", "BLUE", "GOLD", "GREEN", "BLACK", "SILVER", "ORANGE", "BROWN", "GREY"];
+  var MAX_CM = 40, MAX_V = 60, MAX_POLY = 10;
+  var DIRS = [["N", "North"], ["E", "East"], ["S", "South"], ["W", "West"]], DIR_N = { N: "North", E: "East", S: "South", W: "West" };
+  var C8 = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  function r6(v) { return Math.round(v * 1e6) / 1e6; }
+  function cms(p) { p = p || S.plan; if (!p) return []; if (!Array.isArray(p.cm)) p.cm = []; return p.cm; }
+  function cmOf(id) { return cms().filter(function (x) { return x.id === id; })[0]; }
+  function okCm(x) { return x && CM[x.k] && Array.isArray(x.pts) && x.pts.length >= (CM[x.k].g === "pt" ? 1 : CM[x.k].g === "line" ? 2 : 3); }
+  function avoids(p) { return cms(p).filter(function (x) { return x.k === "avoid" && okCm(x); }); }
+  function blk(p) { p = p || S.plan; if (!p) return {}; if (!p.blk || typeof p.blk !== "object") p.blk = {}; return p.blk; }
+  function brg(a, b) {
+    var r = Math.PI / 180, y = Math.sin(wrap(b[1] - a[1]) * r) * Math.cos(b[0] * r), x = Math.cos(a[0] * r) * Math.sin(b[0] * r) - Math.sin(a[0] * r) * Math.cos(b[0] * r) * Math.cos(wrap(b[1] - a[1]) * r);
+    return (Math.atan2(y, x) / r + 360) % 360;
+  }
+  function sector(b) { return b >= 315 || b < 45 ? "N" : b < 135 ? "E" : b < 225 ? "S" : "W"; }
+  /* where an option heads: the bearing from the origin to its destination, and the way its line leaves (the point 5 km along,
+     or a quarter of the way on a shorter line) */
+  function heading(o, p) {
+    p = p || S.plan; var a = [p.origin.lat, p.origin.lon], b = brg(a, [o.dest.i.lat, o.dest.i.lon]), c = o.route.coords, lv = null;
+    if (c && c.length > 1) { var tot = lineM(c), fr = tot > 20000 ? 5000 / tot : 0.25, q = along(c, 1, fr, fr)[0]; if (q && hav(a, q) > 200) lv = brg(a, q); }
+    return { b: Math.round(b), s: sector(b), c: C8[Math.round(b / 45) % 8], lv: lv == null ? null : C8[Math.round(lv / 45) % 8] };
+  }
+  /* point in a ring ([lat, lon]), even-odd rule on the plane (fine for areas a few hundred km across) */
+  function inPoly(p, ring) {
+    var x = p[1], y = p[0], inside = false;
+    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      var yi = ring[i][0], yj = ring[j][0], xi = x + wrap(ring[i][1] - x), xj = x + wrap(ring[j][1] - x);
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  /* a line with no step longer than about 200 m (at most 6000 points), so a short cut across an area is not missed */
+  function dense(c) {
+    var out = [], step = Math.max(200, lineM(c) / 6000);
+    for (var i = 0; i < c.length; i++) {
+      if (i) { var d = hav(c[i - 1], c[i]), n = Math.floor(d / step); for (var k = 1; k < n; k++) { var f = k / n; out.push([c[i - 1][0] + (c[i][0] - c[i - 1][0]) * f, c[i - 1][1] + wrap(c[i][1] - c[i - 1][1]) * f]); } }
+      out.push(c[i]);
+    }
+    return out;
+  }
+  /* the km ranges where a line runs inside an area: [{ from, to }] in km to one decimal */
+  function insideKm(c, ring) {
+    var dc = dense(c), out = [], run = 0, cur = null;
+    for (var i = 0; i < dc.length; i++) {
+      if (i) run += hav(dc[i - 1], dc[i]);
+      if (inPoly(dc[i], ring)) { if (!cur) { cur = { from: run, to: run }; out.push(cur); } cur.to = run; } else cur = null;
+    }
+    return out.map(function (r) { return { from: Math.round(r.from / 100) / 10, to: Math.round(r.to / 100) / 10 }; });
+  }
+  function thruAvoid(c, p) { return avoids(p).map(function (x) { return { cm: x, at: insideKm(c, x.pts) }; }).filter(function (r) { return r.at.length; }); }
+  /* where two segments cross: the share along a-b, or -1 (the plane in degrees: crossing is unchanged by the scale) */
+  function segX(a, b, c, d) {
+    var r0 = b[0] - a[0], r1 = wrap(b[1] - a[1]), s0 = d[0] - c[0], s1 = wrap(d[1] - c[1]), q0 = c[0] - a[0], q1 = wrap(c[1] - a[1]), den = r0 * s1 - r1 * s0;
+    if (!den) return -1;
+    var t = (q0 * s1 - q1 * s0) / den, u = (q0 * r1 - q1 * r0) / den;
+    return t >= 0 && t <= 1 && u >= 0 && u <= 1 ? t : -1;
+  }
+  /* the route km where a line crosses a phase line */
+  function plCross(c, line) {
+    var out = [], run = 0;
+    for (var i = 0; i < c.length - 1; i++) {
+      var seg = hav(c[i], c[i + 1]);
+      for (var j = 0; j < line.length - 1; j++) { var t = segX(c[i], c[i + 1], line[j], line[j + 1]); if (t >= 0) out.push(Math.round((run + t * seg) / 100) / 10); }
+      run += seg;
+    }
+    return out;
+  }
+  /* each control measure against one option's line, in km order: points by route km and offset, phase lines by crossing,
+     areas by the km inside them */
+  function cmAlong(o, p) {
+    var c = o.route.coords, rows = [], w = corr(o).w * 1000;
+    if (!c || c.length < 2) return rows;
+    cms(p).filter(okCm).forEach(function (x) {
+      var g = CM[x.k].g;
+      if (g === "pt") { var ol = onLine(o, x.pts[0]); rows.push({ cm: x, km: Math.round(ol.at / 100) / 10, off: Math.round(ol.d), near: ol.d <= Math.max(w, 1000), txt: (ol.d <= 150 ? "on the line" : dist(ol.d) + " off the line") }); }
+      else if (g === "line") { var xs = plCross(c, x.pts); rows.push({ cm: x, km: xs.length ? xs[0] : Infinity, near: !!xs.length, txt: xs.length ? "crossed at km " + xs.join(", ") : "not crossed by this route" }); }
+      else { var ins = insideKm(c, x.pts); rows.push({ cm: x, km: ins.length ? ins[0].from : Infinity, near: !!ins.length, txt: x.k === "avoid" ? (ins.length ? "ROUTE RUNS THROUGH IT, km " + ins.map(function (r) { return r.from + (r.to > r.from ? "–" + r.to : ""); }).join(", ") : "route keeps out of it") : (function () { var dc = dense(c), n = dc.filter(function (q) { return inPoly(q, x.pts); }).length; return Math.round(100 * n / dc.length) + "% of the route inside it"; })() }); }
+    });
+    return rows.sort(function (a, b) { return a.km - b.km; });
+  }
+  /* the band of the corridor round a line: wKm each side, as one outline (OSAP's working; the analyst keeps or deletes it) */
+  function band(c, wKm) {
+    var pts = thin(c, 120), Lf = [], Rt0 = [], k = 111320, w = wKm * 1000;
+    for (var i = 0; i < pts.length; i++) {
+      var a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)], cl = Math.cos(pts[i][0] * Math.PI / 180) || 1e-6;
+      var dx = wrap(b[1] - a[1]) * cl * k, dy = (b[0] - a[0]) * k, len = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / len, ny = dx / len;
+      Lf.push([r6(pts[i][0] + ny * w / k), r6(wrap(pts[i][1] + nx * w / (k * cl)))]); Rt0.push([r6(pts[i][0] - ny * w / k), r6(wrap(pts[i][1] - nx * w / (k * cl)))]);
+    }
+    return Lf.concat(Rt0.reverse());
+  }
+  function cmLabel(k) {
+    var mine = cms().filter(function (x) { return x.k === k; });
+    if (k === "pl") { var used = mine.map(function (x) { return x.name; }), nm = PL_NAMES.filter(function (x) { return used.indexOf("PL " + x) < 0; })[0]; return "PL " + (nm || mine.length + 1); }
+    var n = 0; mine.forEach(function (x) { var m = /(\d+)$/.exec(x.name || ""); if (m) n = Math.max(n, +m[1]); });
+    return k === "corr" ? "Corridor " + (Math.max(n, mine.length) + 1) : k === "avoid" ? "Avoid " + (Math.max(n, mine.length) + 1) : CM[k].ab + " " + (Math.max(n, mine.length) + 1);
+  }
+  /* the proposal again for every option (a control measure or a blocked direction changed) */
+  function cmRefresh() { if (!S.plan) return; S.plan.opts.forEach(function (o) { o.prop = propose(o); }); }
+  function cmStart(k) {
+    var map = W.__asapMap; if (!map || !S.plan || !CM[k]) return;
+    if (S.picking) pickEnd();
+    cmEnd();
+    if (cms().length >= MAX_CM) { S.cmmsg = "At most " + MAX_CM + " control measures in one plan. Delete one first."; render(); return; }
+    if (k === "avoid" && avoids().length >= MAX_POLY) { S.cmmsg = "At most " + MAX_POLY + " areas to avoid in one plan."; render(); return; }
+    S.cmDraw = { k: k, pts: [] };
+    map.on("click", onCmTap); D.addEventListener("keydown", cmKey); map.getContainer().style.cursor = "crosshair"; D.documentElement.classList.add("epe-picking");
+    S.cmmsg = CM[k].g === "pt" ? "Tap the map where the " + CM[k].n.toLowerCase() + " is. Esc cancels." : "Tap the map for each corner of the " + CM[k].n.toLowerCase() + ", then press Finish. Esc cancels.";
+    render(); draw();
+  }
+  function onCmTap(e) {
+    var d = S.cmDraw; if (!d || !e || !e.latlng) return;
+    var q = [r6(e.latlng.lat), r6(wrap(e.latlng.lng))];
+    if (CM[d.k].g === "pt") { cmAdd(d.k, [q]); return; }
+    if (d.pts.length < MAX_V) d.pts.push(q);
+    var need = CM[d.k].g === "line" ? 2 : 3;
+    S.cmmsg = d.pts.length + " point" + (d.pts.length === 1 ? "" : "s") + (d.pts.length < need ? ": " + (need - d.pts.length) + " more before Finish." : ". Tap more or press Finish.");
+    render(); draw();
+  }
+  function cmFinish() {
+    var d = S.cmDraw; if (!d) return;
+    var need = CM[d.k].g === "line" ? 2 : 3;
+    if (d.pts.length < need) { S.cmmsg = "A " + CM[d.k].n.toLowerCase() + " needs at least " + need + " points."; render(); return; }
+    cmAdd(d.k, d.pts.slice());
+  }
+  /* Esc cancels a drawing wherever the focus is (the map has it after a tap) */
+  function cmKey(e) { if (e.key === "Escape" && S.cmDraw) { e.preventDefault(); e.stopPropagation(); cmEnd(); S.cmmsg = "Cancelled."; render(); draw(); } }
+  function cmEnd() {
+    var map = W.__asapMap;
+    D.removeEventListener("keydown", cmKey);
+    if (map) map.off("click", onCmTap);
+    if (S.cmDraw) { S.cmDraw = null; if (map) map.getContainer().style.cursor = ""; D.documentElement.classList.remove("epe-picking"); }
+  }
+  function cmAdd(k, pts, name, how) {
+    var p = S.plan; if (!p) return null;
+    cmEnd();
+    var x = { id: rid("cm"), k: k, name: clean(name, 40) || cmLabel(k), pts: pts.map(function (q) { return [r6(+q[0]), r6(wrap(+q[1]))]; }), by: Date.now(), how: clean(how, 60) || "Placed by you" };
+    cms().push(x); cmRefresh(); save();
+    S.cmmsg = CM[k].n + " " + x.name + " added.";
+    render(); draw();
+    if (k === "avoid") roundAll(x.name + " added. ");
+    return x;
+  }
+  function cmDel(id) {
+    var p = S.plan; if (!p) return;
+    var x = cmOf(id); p.cm = cms().filter(function (y) { return y.id !== id; }); cmRefresh(); save();
+    S.cmmsg = x ? CM[x.k].n + " " + x.name + " deleted." + (x.k === "avoid" ? " Routes already worked out round it stay as they are; mark a leg unusable or work out again to use the roads inside it." : "") : "";
+    render(); draw();
+  }
+  function setBlk(s, on) { var b = blk(); if (on) b[s] = Date.now(); else delete b[s]; cmRefresh(); save(); render(); draw(); }
+  /* the rings handed to the routers */
+  function polysNow() { return avoids().slice(0, MAX_POLY).map(function (x) { return x.pts; }); }
+  /* every option whose ground legs run through an area to avoid: those legs routed again (round the areas), the rest kept */
+  function roundAll(pre) {
+    var p = S.plan; if (!p) return;
+    var todo = p.opts.filter(function (o) { return legsOf(o).some(function (l) { return !flies(l.mode) && l.coords.length > 1 && thruAvoid(l.coords).length; }); });
+    if (!todo.length) { S.cmmsg = (pre || "") + "No option's line runs through an area to avoid."; render(); return; }
+    var tok = ++S.rtok, fixed = 0, still = [];
+    S.rbusy = true; S.cmmsg = (pre || "") + "Routing " + todo.length + " option" + (todo.length === 1 ? "" : "s") + " round the areas to avoid…"; render();
+    todo.reduce(function (pr, o) {
+      return pr.then(function () {
+        if (tok !== S.rtok || S.plan !== p) return;
+        return legsOf(o).reduce(function (pr2, l) {
+          return pr2.then(function () {
+            if (tok !== S.rtok || flies(l.mode) || l.coords.length < 2 || !thruAvoid(l.coords).length) return;
+            return routeLeg(l.a, l.b, l.mode === "ground" ? p.mode : l.mode || p.mode).then(function (r) {
+              if (tok !== S.rtok) return;
+              if (r.thru) { still.push(o.dest.i.name); return; }
+              l.coords = r.coords; l.m = r.m; l.s = r.s; l.src = r.src; l.how = "round the areas to avoid"; l.calc = Date.now(); l.err = ""; fixed++;
+            }, function (e) { still.push(o.dest.i.name + " (" + e.message + ")"); });
+          });
+        }, Promise.resolve()).then(function () { if (tok === S.rtok) { sumUp(o); cmRefresh(); } });
+      });
+    }, Promise.resolve()).then(function () {
+      if (tok !== S.rtok) return;
+      S.rbusy = false; p.calc2 = Date.now(); save();
+      S.cmmsg = (pre || "") + (fixed ? fixed + " leg" + (fixed === 1 ? "" : "s") + " routed round the areas to avoid. " : "") +
+        (still.length ? "No way round found for: " + Array.from(new Set(still)).join(", ") + ". Those options stay proposed Blocked." : "");
+      render(); draw();
+    });
+  }
+  /* an option to a destination the analyst gave or OSAP found in one direction: origin by road, then legs as usual */
+  function destOpt(c, label, tok) {
+    var p = S.plan; if (!p || p.opts.length >= MAX_ALL) return Promise.resolve(null);
+    var n = 1; while (optOf("o" + n)) n++;
+    var nu = { id: "o" + n, kind: c.k, kindName: c.kn, first: false, alt: false, role: "", st: "", stBy: 0, sug: "", made: Date.now(), dir: c.dir || "",
+      label: label, dest: { k: c.mine ? "analyst" : c.k, cc: c.cc || "", i: { id: c.i.id || null, name: clean(c.i.name, 90), lat: r6(+c.i.lat), lon: r6(wrap(+c.i.lon)), kind: c.i.kind || c.kn, address: c.i.address || null, phone: c.i.phone || null, src: safeUrl(c.i.src) || null } },
+      route: { coords: [[p.origin.lat, p.origin.lon], [c.i.lat, c.i.lon]], m: 0, s: 0, legs: [], src: "", note: "", xc: false, how: "", off: 0 }, exp: { score: 0, n: 0, hits: [] }, nCand: 1, corr: { w: 2, at: {} } };
+    nu.legs = [{ id: "L0", a: ref(chain(nu)[0]), b: ref(chain(nu)[0]), mode: "ground", coords: [], m: 0, s: 0, failed: [] }];
+    nu.prop = { st: "Unknown", why: "Not yet worked out." };
+    p.opts.push(nu);
+    var t = ++S.ltok; S.lbusy = nu.id;
+    return relegs(nu, t).then(function (res) {
+      if (t === S.ltok) S.lbusy = null;
+      if (!res) return null;
+      sumUp(nu); cmRefresh(); save(); return nu;
+    }, function (e) { if (t === S.ltok) S.lbusy = null; p.opts = p.opts.filter(function (x) { return x !== nu; }); throw e; });
+  }
+  /* "Route to it" on the analyst's extraction point or checkpoint */
+  function toCm(id) {
+    var x = cmOf(id), p = S.plan; if (!x || !p || S.rbusy) return;
+    if (p.opts.length >= MAX_ALL) { S.cmmsg = "At most " + MAX_ALL + " options in one plan. Delete one first."; render(); return; }
+    if (p.opts.some(function (o) { return o.dest.k === "analyst" && sameP({ lat: o.dest.i.lat, lon: o.dest.i.lon }, { lat: x.pts[0][0], lon: x.pts[0][1] }); })) { S.cmmsg = x.name + " is already an option's destination."; render(); return; }
+    var tok = ++S.rtok; S.rbusy = true; S.cmmsg = "Routing to " + x.name + "…"; render();
+    var hd = C8[Math.round(brg([p.origin.lat, p.origin.lon], x.pts[0]) / 45) % 8];
+    destOpt({ k: x.k, kn: CM[x.k].n, mine: true, i: { name: x.name, lat: x.pts[0][0], lon: x.pts[0][1], kind: CM[x.k].n + " (yours)" } },
+      (x.k === "axp" ? "Air extraction: by road to " : x.k === "gxp" ? "Ground extraction: by road to " : "By road to ") + x.name + " (" + hd + ")", tok).then(function (o) {
+      if (tok !== S.rtok) return;
+      S.rbusy = false;
+      if (o) { S.sel = o.id; S.cmmsg = "Option to " + x.name + " added: " + dist(o.route.m) + ", " + dur(o.route.s) + ". Give it a role if you want it in the plan."; }
+      render(); draw(); if (o) fitOpt(o);
+    }, function (e) { if (tok !== S.rtok) return; S.rbusy = false; S.cmmsg = "No route to " + x.name + ": " + e.message + "."; render(); });
+  }
+  /* the point put on the selected option as a node, so the option is routed through it */
+  function cmToNode(id) {
+    var x = cmOf(id), o = optOf(S.sel); if (!x || !o || S.lbusy) return;
+    addNode(o, x.k === "axp" ? "airdep" : x.k === "gxp" ? "pickup" : "check", x.pts[0][0], x.pts[0][1], x.name);
+  }
+  /* a way out in every open direction that has no option yet: the nearest destination OSAP holds that way, or the analyst's
+     own extraction point when it is nearer */
+  function findDirs() {
+    var p = S.plan; if (!p || S.rbusy) return;
+    var have = {}; p.opts.forEach(function (o) { have[heading(o).s] = 1; });
+    var want = DIRS.map(function (d) { return d[0]; }).filter(function (s) { return !blk()[s] && !have[s]; });
+    if (!want.length) { S.cmmsg = DIRS.every(function (d) { return blk()[d[0]]; }) ? "Every direction is marked blocked." : "Every open direction already has an option: " + DIRS.filter(function (d) { return !blk()[d[0]]; }).map(function (d) { return d[1]; }).join(", ") + "."; render(); return; }
+    if (p.opts.length >= MAX_ALL) { S.cmmsg = "At most " + MAX_ALL + " options in one plan. Delete one first."; render(); return; }
+    var EV = W.OSAP_EVAC, start = [p.origin.lat, p.origin.lon], tok = ++S.rtok, notes = [], added = [];
+    S.rbusy = true; S.cmmsg = "Looking for destinations to the " + want.map(function (s) { return DIR_N[s].toLowerCase(); }).join(", ") + "…"; render();
+    (EV && EV.nearest ? EV.nearest(start, 25) : Promise.resolve({})).then(function (nr) {
+      var cands = [];
+      [["posts", "U.S. embassy or consulate"], ["airports", "Major airport"], ["seaports", "Seaport"], ["crossings", "Border crossing"]].forEach(function (k) {
+        ((nr && nr[k[0]]) || []).forEach(function (r) { if (r && r.x && r.x.i && isFinite(r.x.i.lat)) cands.push({ k: k[0], kn: k[1], cc: r.x.cc, i: r.x.i, m: r.m }); });
+      });
+      cms().filter(function (x) { return (x.k === "gxp" || x.k === "axp") && okCm(x); }).forEach(function (x) { cands.push({ k: x.k, kn: CM[x.k].n, mine: true, i: { name: x.name, lat: x.pts[0][0], lon: x.pts[0][1], kind: CM[x.k].n + " (yours)" }, m: hav(start, x.pts[0]) }); });
+      cands = cands.filter(function (c) { return c.m > 300 && c.m < 1500000; }).sort(function (a, b) { return a.m - b.m; });
+      return want.reduce(function (pr, s) {
+        return pr.then(function () {
+          if (tok !== S.rtok || S.plan !== p) return;
+          if (p.opts.length >= MAX_ALL) { notes.push("No room for a " + DIR_N[s].toLowerCase() + "bound option (at most " + MAX_ALL + ")."); return; }
+          var c = cands.filter(function (x) { return sector(brg(start, [x.i.lat, x.i.lon])) === s && !p.opts.some(function (o) { return hav([o.dest.i.lat, o.dest.i.lon], [x.i.lat, x.i.lon]) < 1000; }); })[0];
+          if (!c) { notes.push("No destination OSAP holds lies to the " + DIR_N[s].toLowerCase() + ": place a ground or air extraction point that way and press Route to it."); return; }
+          c.dir = s; S.cmmsg = DIR_N[s] + "bound: routing to " + c.i.name + "…"; var m0 = D.getElementById("epe-cmmsg"); if (m0) m0.textContent = S.cmmsg;
+          return destOpt(c, DIR_N[s] + "bound: by road to " + (c.mine ? "your " + c.kn.toLowerCase() : "the nearest " + c.kn.toLowerCase() + " that way"), tok)
+            .then(function (o) { if (o) added.push(DIR_N[s] + ": " + o.dest.i.name + " (" + dist(o.route.m) + ")"); }, function (e) { notes.push(DIR_N[s] + "bound to " + c.i.name + ": " + e.message + "."); });
+        });
+      }, Promise.resolve());
+    }).then(function () {
+      if (tok !== S.rtok) return;
+      S.rbusy = false; save();
+      S.cmmsg = (added.length ? "Added " + added.join("; ") + ". " : "") + notes.join(" ");
+      render(); draw(); fitPlan();
+    }, function (e) { if (tok !== S.rtok) return; S.rbusy = false; S.cmmsg = "No way out found: " + e.message + "."; render(); });
+  }
+  function cmHtml(p) {
+    var list = cms(p).filter(okCm), d = S.cmDraw, busy = S.rbusy;
+    var dirs = DIRS.map(function (x) {
+      var n = p.opts.filter(function (o) { return heading(o, p).s === x[0]; });
+      return '<label class="epedir' + (blk(p)[x[0]] ? " off" : "") + '"><input type="checkbox" data-ep-blk="' + x[0] + '"' + (blk(p)[x[0]] ? " checked" : "") + "> " + E(x[1]) + " blocked <span class=\"obs\">(" + n.length + " option" + (n.length === 1 ? "" : "s") + ")</span></label>";
+    }).join("");
+    return '<section class="eposec epecms"><h3>Evacuation map <span class="obs">directions, control measures and areas to avoid, yours and kept with the plan</span></h3>' +
+      '<div class="eperow epedirs" role="group" aria-label="Blocked directions">' + dirs + "</div>" +
+      '<div class="epebtns"><button type="button" data-ep="dirs"' + (busy ? " disabled" : "") + ">Find a way out in each open direction</button>" + (busy ? '<button type="button" data-ep="rstop">Stop</button>' : "") + "</div>" +
+      '<div class="epebtns epecmadd"><span class="obs">Add on the map:</span>' + CM_T.map(function (t) { return '<button type="button" data-ep-cm="' + t[0] + '"' + (d && d.k === t[0] ? ' aria-pressed="true"' : "") + ">" + E(t[1]) + "</button>"; }).join("") + "</div>" +
+      (d && CM[d.k].g !== "pt" ? '<div class="epebtns"><button type="button" class="epego" data-ep="cmfin">Finish ' + E(CM[d.k].n.toLowerCase()) + '</button><button type="button" data-ep="cmundo"' + (d.pts.length ? "" : " disabled") + '>Undo point</button><button type="button" data-ep="cmcan">Cancel</button></div>' :
+        d ? '<div class="epebtns"><button type="button" data-ep="cmcan">Cancel</button></div>' : "") +
+      (optOf(S.sel) ? '<div class="epebtns"><button type="button" data-ep="cmband" title="An outline of the selected option\'s corridor width each side of its line, kept as your evacuation corridor">Corridor from the selected route (' + E(corr(optOf(S.sel)).w) + " km each side)</button></div>" : "") +
+      '<p id="epe-cmmsg" class="obs" role="status">' + E(S.cmmsg || "") + "</p>" +
+      (list.length ? '<ul class="epecmls">' + list.map(function (x) {
+        var g = CM[x.k].g, pt = g === "pt";
+        return '<li data-ep-cmi="' + E(x.id) + '"><span class="epecmk" style="--cmc:' + CM_COL[x.k] + '">' + E(CM[x.k].ab) + '</span><input data-ep-cmname="' + E(x.id) + '" value="' + E(x.name) + '" maxlength="40" aria-label="Name of ' + E(CM[x.k].n.toLowerCase()) + '">' +
+          '<i class="obs">' + E(CM[x.k].n) + " · " + (pt ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points" + (g === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</i>" +
+          (pt ? '<button type="button" data-ep-cmto="' + E(x.id) + '"' + (busy ? " disabled" : "") + ">Route to it</button>" + (optOf(S.sel) ? '<button type="button" data-ep-cmnode="' + E(x.id) + '" title="Put it on the selected option as a node, so the route runs through it">On selected route</button>' : "") : "") +
+          '<button type="button" data-ep-cmdel="' + E(x.id) + '" aria-label="Delete ' + E(x.name) + '">×</button></li>';
+      }).join("") + "</ul>" : '<p class="obs">None yet. Points can be dragged on the map to move them.</p>') +
+      '<p class="obs">Areas to avoid are handed to the routers each time OSAP routes a leg; a route that still runs through one is proposed Blocked. Directions are the bearing from the origin to each destination. Graphics follow NATO APP-6/MIL-STD-2525D where OSAP has the symbol.</p></section>';
+  }
+  function areaKm2(r) {
+    var k = 111.32, cl = Math.cos(r[0][0] * Math.PI / 180), a = 0;
+    for (var i = 0, j = r.length - 1; i < r.length; j = i++) a += (wrap(r[j][1] - r[0][1]) * cl * k) * (r[i][0] - r[0][0]) * k - (wrap(r[i][1] - r[0][1]) * cl * k) * (r[j][0] - r[0][0]) * k;
+    var v = Math.abs(a / 2); return v < 10 ? Math.round(v * 10) / 10 : Math.round(v);
+  }
+  /* one option's control measures, in the option's detail */
+  function cmOptHtml(o) {
+    var rows = cmAlong(o), hd = heading(o), th = thruAvoid(o.route.coords);
+    return '<div class="epecmopt"><h4>On the evacuation map <span class="obs">heads ' + E(hd.c) + " (" + E(hd.b) + "°)" + (hd.lv && hd.lv !== hd.c ? ", leaves " + E(hd.lv) : "") + (blk()[hd.s] ? ' · <b class="epebad">' + E(DIR_N[hd.s].toLowerCase()) + " marked blocked</b>" : "") + "</span></h4>" +
+      (rows.length ? '<ol class="epecmrow">' + rows.map(function (r) {
+        return '<li class="' + (r.near ? "" : "obs") + (r.cm.k === "avoid" && r.near ? " epebad" : "") + '"><b>' + (isFinite(r.km) ? "km " + E(r.km) : "–") + "</b> " + E(r.cm.name) + ' <span class="obs">' + E(CM[r.cm.k].n.toLowerCase()) + "</span>: " + E(r.txt) + "</li>";
+      }).join("") + "</ol>" : '<p class="obs">No control measures yet: add checkpoints, phase lines, extraction points and areas under Evacuation map.</p>') +
+      (th.length ? '<div class="epebtns"><button type="button" data-ep="round"' + (S.rbusy ? " disabled" : "") + ">Route round the areas to avoid</button></div>" : "") + "</div>";
+  }
+  /* the plan's graphics on the live map (and in active mode from the package) */
+  function drawCm(pl, lyr, map) {
+    var list = cms(pl).filter(okCm), d = S.cmDraw;
+    function lbl(at, t, col, cls) { L.marker(at, { keyboard: false, interactive: false, icon: L.divIcon({ className: "epecmlb" + (cls ? " " + cls : ""), html: '<span style="border-color:' + col + ";color:" + col + '">' + E(t) + "</span>", iconSize: null, iconAnchor: [0, 10] }) }).addTo(lyr); }
+    list.filter(function (x) { return CM[x.k].g === "area"; }).forEach(function (x) {
+      var col = CM_COL[x.k], av = x.k === "avoid";
+      L.polygon(x.pts, { color: col, weight: av ? 2.5 : 2, dashArray: av ? null : "10 6", fillColor: col, fillOpacity: av ? 0.18 : 0.06, className: av ? "epeavoid" : "epecorr2", interactive: true })
+        .bindTooltip(E((av ? "Area to avoid: " : "Evacuation corridor: ") + x.name), { sticky: true }).addTo(lyr);
+      var c0 = x.pts.reduce(function (a, q) { return [a[0] + q[0] / x.pts.length, a[1] + q[1] / x.pts.length]; }, [0, 0]);
+      lbl(c0, (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col);
+    });
+    list.filter(function (x) { return x.k === "pl"; }).forEach(function (x) {
+      L.polyline(x.pts, { color: "#fff", weight: 6, opacity: 0.85, interactive: false }).addTo(lyr);
+      L.polyline(x.pts, { color: CM_COL.pl, weight: 3, opacity: 1, className: "epepl" }).bindTooltip(E("Phase line " + x.name), { sticky: true }).addTo(lyr);
+      lbl(x.pts[0], x.name.toUpperCase(), CM_COL.pl); lbl(x.pts[x.pts.length - 1], x.name.toUpperCase(), CM_COL.pl);
+    });
+    list.filter(function (x) { return CM[x.k].g === "pt"; }).forEach(function (x) {
+      var col = CM_COL[x.k], live = !S.active && pl === S.plan;
+      var mk = L.marker(x.pts[0], { keyboard: false, draggable: live, icon: SY() ? W.OSAP_SYM.tag(CM_SYM[x.k], x.name, { cls: "epecmmk", badge: col, scale: 0.7 }) : L.divIcon({ className: "epecmmk", html: '<span style="background:' + col + '">' + E(x.name) + "</span>", iconSize: null, iconAnchor: [14, 10] }) })
+        .bindTooltip(E(CM[x.k].n + ": " + x.name + (live ? " (drag to move)" : "")));
+      if (live) mk.on("dragend", function () { var ll = mk.getLatLng(); x.pts = [[r6(ll.lat), r6(wrap(ll.lng))]]; x.moved = Date.now(); cmRefresh(); save(); render(); draw(); });
+      mk.addTo(lyr);
+    });
+    if (d && d.pts.length) {
+      var col2 = CM_COL[d.k];
+      (CM[d.k].g === "area" && d.pts.length > 2 ? L.polygon(d.pts, { color: col2, weight: 2, dashArray: "4 4", fillOpacity: 0.1, interactive: false }) : L.polyline(d.pts, { color: col2, weight: 3, dashArray: "4 4", interactive: false })).addTo(lyr);
+      d.pts.forEach(function (q) { L.circleMarker(q, { radius: 4, color: "#fff", weight: 1.5, fillColor: col2, fillOpacity: 1, interactive: false }).addTo(lyr); });
+    }
+    if (S.dr) S.dr.cm = list.length;
+  }
+
+  /* ---------- the printed map: a north-up picture of the plan, drawn as SVG over basemap squares ---------- */
+  function wpx(q, z) { var n = 256 * Math.pow(2, z), s = Math.sin(Math.max(-85, Math.min(85, q[0])) * Math.PI / 180); return [(q[1] + 180) / 360 * n, (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n]; }
+  function printTiles() {
+    var u = W.OSAP_ESRI ? W.OSAP_ESRI("World_Imagery") : "";
+    if (u) return { url: u, attr: "Imagery © Esri, Maxar, Earthstar Geographics and the GIS user community", dark: true };
+    return W.OSAP_SOLD ? { url: "", attr: "", dark: false } : { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: "Map © OpenStreetMap contributors", dark: false };
+  }
+  /* svgMap(plan, { only: option id, Wd, Ht }): the options' lines (or one), the origin, destinations, nodes and every control
+     measure; scale bar, north arrow and the basemap's attribution. With no connection the squares stay grey and the plan is
+     still drawn. */
+  function svgMap(pl, f) {
+    f = f || {}; var Wd = f.Wd || 720, Ht = f.Ht || 480, pad = 28, T = printTiles();
+    var opts = pl.opts.filter(function (o) { return !f.only || o.id === f.only; }), list = cms(pl).filter(okCm), pts = [[pl.origin.lat, pl.origin.lon]];
+    if (f.frame) pts = pts.concat(f.frame);
+    else {
+      opts.forEach(function (o) { pts = pts.concat(thin(o.route.coords, 60)); pts.push([o.dest.i.lat, o.dest.i.lon]); });
+      list.forEach(function (x) { if (!f.only || x.k !== "corr" && x.k !== "avoid" || opts.some(function (o) { return insideKm(o.route.coords, x.pts).length; })) pts = pts.concat(x.pts); });
+    }
+    var z = 16, a, b;
+    for (; z > 2; z--) {
+      var xs = pts.map(function (q) { return wpx(q, z); });
+      a = [Math.min.apply(null, xs.map(function (q) { return q[0]; })), Math.min.apply(null, xs.map(function (q) { return q[1]; }))];
+      b = [Math.max.apply(null, xs.map(function (q) { return q[0]; })), Math.max.apply(null, xs.map(function (q) { return q[1]; }))];
+      if (b[0] - a[0] <= Wd - 2 * pad && b[1] - a[1] <= Ht - 2 * pad) break;
+    }
+    var c0 = [(a[0] + b[0]) / 2 - Wd / 2, (a[1] + b[1]) / 2 - Ht / 2];
+    function xy(q) { var w = wpx(q, z); return [Math.round((w[0] - c0[0]) * 10) / 10, Math.round((w[1] - c0[1]) * 10) / 10]; }
+    function pl2(c) { return c.map(function (q) { var v = xy(q); return v[0] + "," + v[1]; }).join(" "); }
+    function tx(at, t, col, o) { o = o || {}; return '<text x="' + at[0] + '" y="' + at[1] + '" fill="' + col + '" font-size="' + (o.fs || 11) + '" font-weight="700" text-anchor="' + (o.anchor || "start") + '" stroke="#fff" stroke-width="3" paint-order="stroke">' + E(t) + "</text>"; }
+    var g = '<svg class="epemap" viewBox="0 0 ' + Wd + " " + Ht + '" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><rect width="' + Wd + '" height="' + Ht + '" fill="#e9ecef"/>';
+    if (T.url) {
+      var n = Math.pow(2, z);
+      for (var tX = Math.floor(c0[0] / 256); tX <= Math.floor((c0[0] + Wd) / 256); tX++) for (var tY = Math.floor(c0[1] / 256); tY <= Math.floor((c0[1] + Ht) / 256); tY++) {
+        if (tY < 0 || tY >= n) continue;
+        g += '<image href="' + E(T.url.replace("{z}", z).replace("{y}", tY).replace("{x}", ((tX % n) + n) % n)) + '" x="' + (tX * 256 - c0[0]).toFixed(1) + '" y="' + (tY * 256 - c0[1]).toFixed(1) + '" width="256.5" height="256.5" preserveAspectRatio="none"/>';
+      }
+    }
+    list.filter(function (x) { return CM[x.k].g === "area"; }).forEach(function (x) {
+      var col = CM_COL[x.k], av = x.k === "avoid", c1 = x.pts.reduce(function (s, q) { return [s[0] + q[0] / x.pts.length, s[1] + q[1] / x.pts.length]; }, [0, 0]);
+      g += (av ? '<defs><pattern id="h' + E(x.id) + '" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="' + col + '" stroke-width="2" opacity=".55"/></pattern></defs>' : "") +
+        '<polygon points="' + pl2(x.pts) + '" fill="' + (av ? "url(#h" + E(x.id) + ")" : col) + '" fill-opacity="' + (av ? 1 : 0.08) + '" stroke="' + col + '" stroke-width="' + (av ? 2.5 : 2) + '"' + (av ? "" : ' stroke-dasharray="10 6"') + "/>" +
+        tx(xy(c1), (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col, { anchor: "middle" });
+    });
+    opts.slice().sort(function (p1, p2) { return (p2.role ? ROLES.indexOf(p2.role) : 9) - (p1.role ? ROLES.indexOf(p1.role) : 9); }).forEach(function (o) {
+      var col = COL[o.role || ""];
+      (o.legs || [{ coords: o.route.coords }]).forEach(function (l) {
+        (l.failed || []).forEach(function (fl) { g += '<polyline points="' + pl2(thin(fl.coords, 300)) + '" fill="none" stroke="#c92a2a" stroke-width="2" stroke-dasharray="2 6"/>'; });
+        if (!l.coords || l.coords.length < 2) return;
+        var pp = pl2(thin(l.coords, 600)), fly = flies(l.mode);
+        g += '<polyline points="' + pp + '" fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round" opacity=".9"/><polyline points="' + pp + '" fill="none" stroke="' + col + '" stroke-width="4" stroke-linejoin="round"' + (fly || !o.role ? ' stroke-dasharray="9 6"' : "") + "/>";
+      });
+      (o.nodes || []).forEach(function (nd, i) { var v = xy([nd.lat, nd.lon]); g += '<rect x="' + (v[0] - 11) + '" y="' + (v[1] - 8) + '" width="22" height="16" fill="#343a40" stroke="#fff" stroke-width="1.5"/>' + '<text x="' + v[0] + '" y="' + (v[1] + 4) + '" fill="#fff" font-size="10" font-weight="700" text-anchor="middle">' + E((NODE_N[nd.type] || "N").charAt(0) + (i + 1)) + "</text>"; });
+      var dv = xy([o.dest.i.lat, o.dest.i.lon]);
+      g += '<circle cx="' + dv[0] + '" cy="' + dv[1] + '" r="10" fill="' + col + '" stroke="#fff" stroke-width="2"/><text x="' + dv[0] + '" y="' + (dv[1] + 4) + '" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">' + E(o.role || "?") + "</text>" +
+        tx([dv[0] + 13, dv[1] + 4], o.dest.i.name, col, { fs: 10.5 });
+    });
+    list.filter(function (x) { return x.k === "pl"; }).forEach(function (x) {
+      var pp = pl2(x.pts), e0 = xy(x.pts[0]), e1 = xy(x.pts[x.pts.length - 1]);
+      g += '<polyline points="' + pp + '" fill="none" stroke="#fff" stroke-width="6" opacity=".85"/><polyline points="' + pp + '" fill="none" stroke="#111" stroke-width="2.5"/>' + tx([e0[0] + 4, e0[1] - 5], x.name.toUpperCase(), "#111") + tx([e1[0] + 4, e1[1] - 5], x.name.toUpperCase(), "#111");
+    });
+    list.filter(function (x) { return CM[x.k].g === "pt"; }).forEach(function (x) {
+      var v = xy(x.pts[0]), col = CM_COL[x.k], sym = W.OSAP_SYM && W.OSAP_SYM.uri ? W.OSAP_SYM.uri(CM_SYM[x.k]) : "";
+      g += sym ? '<circle cx="' + v[0] + '" cy="' + v[1] + '" r="13" fill="#fff" stroke="' + col + '" stroke-width="2"/><image href="' + E(sym) + '" x="' + (v[0] - 11) + '" y="' + (v[1] - 11) + '" width="22" height="22"/>' : '<circle cx="' + v[0] + '" cy="' + v[1] + '" r="7" fill="' + col + '" stroke="#fff" stroke-width="2"/>';
+      g += tx([v[0] + 15, v[1] + 4], x.name, col);
+    });
+    var ov = xy([pl.origin.lat, pl.origin.lon]);
+    g += '<circle cx="' + ov[0] + '" cy="' + ov[1] + '" r="8" fill="#111" stroke="#fff" stroke-width="3"/>' + tx([ov[0] + 11, ov[1] - 8], "ORIGIN " + (pl.origin.label || ""), "#111");
+    /* north arrow, scale bar, attribution */
+    var mpp = 156543.03392 * Math.cos(pl.origin.lat * Math.PI / 180) / Math.pow(2, z), nice = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000], L1 = nice.filter(function (m) { return m / mpp <= Wd / 5; }).pop() || 50, px = L1 / mpp;
+    g += '<rect x="' + (Wd - 34) + '" y="6" width="28" height="44" rx="3" fill="#fff" fill-opacity=".88"/><path d="M' + (Wd - 26) + " 44 L" + (Wd - 20) + " 24 L" + (Wd - 14) + ' 44 Z" fill="#111"/><text x="' + (Wd - 24) + '" y="20" font-size="12" font-weight="700">N</text>' +
+      '<rect x="8" y="' + (Ht - 34) + '" width="' + (px + 72).toFixed(1) + '" height="24" rx="3" fill="#fff" fill-opacity=".88"/><path d="M14 ' + (Ht - 16) + " h" + px.toFixed(1) + " M14 " + (Ht - 21) + " v10 M" + (14 + px).toFixed(1) + " " + (Ht - 21) + ' v10" stroke="#111" stroke-width="2" fill="none"/><text x="' + (20 + px).toFixed(1) + '" y="' + (Ht - 13) + '" font-size="11">' + (L1 >= 1000 ? L1 / 1000 + " km" : L1 + " m") + "</text>" +
+      (T.attr ? '<text x="' + (Wd - 6) + '" y="' + (Ht - 6) + '" text-anchor="end" font-size="8.5" fill="#fff" stroke="#000" stroke-width="2" paint-order="stroke">' + E(T.attr) + "</text>" : "");
+    return g + "</svg>";
+  }
+  /* the printed key and table of the control measures */
+  function cmPrint(pl) {
+    var list = cms(pl).filter(okCm), b = blk(pl), bl = DIRS.filter(function (d) { return b[d[0]]; }).map(function (d) { return d[1]; });
+    var h = '<h2>Evacuation map</h2><figure class="mapf">' + svgMap(pl, {}) + '<figcaption class="n">All options, north up. Lines: green P, blue A, orange C, red E, grey dashed no role; dashed where flown or sailed; red dotted lines ruled out by the analyst. ' +
+      "Control measures placed by the analyst. Basemap squares need a connection; without one the plan is drawn on grey.</figcaption></figure>" +
+      /* a close-up framed on the analyst's measures, when the options run much further than they lie */
+      (function () {
+        var fr = []; list.forEach(function (x) { fr = fr.concat(x.k === "corr" ? [] : x.pts); }); if (!fr.length) return "";
+        var far = pl.opts.some(function (o) { return hav([pl.origin.lat, pl.origin.lon], [o.dest.i.lat, o.dest.i.lon]) > 3 * Math.max(2000, Math.max.apply(null, fr.map(function (q) { return hav([pl.origin.lat, pl.origin.lon], q); }))); });
+        return far ? '<figure class="mapf">' + svgMap(pl, { frame: fr, Ht: 420 }) + '<figcaption class="n">Close-up of the control measures near the origin, north up.</figcaption></figure>' : "";
+      })() +
+      "<p>Blocked directions (analyst): <b>" + E(bl.length ? bl.join(", ") : "none marked") + "</b>. Headings: " + pl.opts.map(function (o) { var hd = heading(o, pl); return E((o.role || "–") + " " + o.dest.i.name + " " + hd.c + " " + hd.b + "°"); }).join("; ") + ".</p>";
+    if (list.length) h += "<h3>Control measures</h3><table><tr><th>Name</th><th>Kind</th><th>Where</th><th>Placed</th></tr>" + list.map(function (x) {
+      var g2 = CM[x.k].g;
+      return "<tr><td><b>" + E(x.name) + "</b></td><td>" + E(CM[x.k].n) + "</td><td>" + (g2 === "pt" ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points from " + E(grid(x.pts[0][0], x.pts[0][1])) + (g2 === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</td><td>" + E(x.how || "Placed by the analyst") + ", " + E(new Date(x.by).toISOString().slice(0, 16)) + "Z</td></tr>";
+    }).join("") + "</table>";
+    return h;
+  }
+  function cmPrintOpt(o, pl) {
+    var rows = cmAlong(o, pl), h = "";
+    if (o.role) h += '<figure class="mapf">' + svgMap(pl, { only: o.id, Ht: 380 }) + "</figure>";
+    if (rows.length) h += "<h3>Control measures along this route</h3><table><tr><th>km</th><th>Measure</th><th>Kind</th><th>On this route</th></tr>" + rows.map(function (r) { return "<tr" + (r.cm.k === "avoid" && r.near ? ' class="bad"' : "") + "><td>" + (isFinite(r.km) ? E(r.km) : "–") + "</td><td>" + E(r.cm.name) + "</td><td>" + E(CM[r.cm.k].n) + "</td><td>" + E(r.txt) + "</td></tr>"; }).join("") + "</table>";
+    return h;
+  }
+  function cmKml(pl) {
+    var list = cms(pl).filter(okCm); if (!list.length) return "";
+    var KC = { cp: "ff292521", gxp: "ff3e8a2b", axp: "ffab6418", pl: "ff111111", corr: "ffd67e1c", avoid: "ff2a2ac9" };
+    function cs(pts, close) { var q = pts.concat(close ? [pts[0]] : []); return q.map(function (p) { return (+p[1]).toFixed(6) + "," + (+p[0]).toFixed(6) + ",0"; }).join(" "); }
+    return "<Folder><name>Control measures (analyst)</name>" + list.map(function (x) {
+      var g = CM[x.k].g, st = "<Style><LineStyle><color>" + KC[x.k] + "</color><width>3</width></LineStyle><PolyStyle><color>" + (x.k === "avoid" ? "402a2ac9" : "18d67e1c") + "</color></PolyStyle></Style>";
+      return "<Placemark><name>" + xml(x.name) + "</name><description>" + xml(CM[x.k].n + ". " + (x.how || "Placed by the analyst") + ".") + "</description>" + st +
+        (g === "pt" ? "<Point><coordinates>" + cs(x.pts) + "</coordinates></Point>" : g === "line" ? "<LineString><tessellate>1</tessellate><coordinates>" + cs(x.pts) + "</coordinates></LineString>" : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + cs(x.pts, true) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>") + "</Placemark>";
+    }).join("") + "</Folder>";
+  }
+
   /* ---------- the window ---------- */
   function render() {
     var el = box(), p = S.plan, o = S.origin;
@@ -1193,7 +1655,7 @@
       '<label>Incidents from the last <select data-ep-days>' + [7, 14, 30, 90].map(function (d) { return "<option" + (S.days === d ? " selected" : "") + ">" + d + "</option>"; }).join("") + "</select> days</label></div>" +
       '<div class="epebtns">' + (S.busy ? '<button type="button" data-ep="stop">Stop</button>' : '<button type="button" class="epego" data-ep="plan"' + (o ? "" : " disabled") + ">" + (p ? "Work out again" : "Work out the options") + "</button>") + "</div>" +
       '<p id="epe-msg" class="obs" role="status">' + E(S.msg) + "</p></section>";
-    el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) : "") + keptHtml() + pkgsHtml() +
+    el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) + cmHtml(p) : "") + keptHtml() + pkgsHtml() +
       '<p class="obs epefoot">Routes from the free OpenStreetMap routers (FOSSGIS OSRM and Valhalla); embassies and consulates from travel.state.gov, airports from OurAirports and OpenStreetMap, seaports from the UN/LOCODE reference list. ' +
       "The incident weighting counts what OSAP holds near each line; it is not a threat assessment. Confirm every route, destination and status with the post and on the ground. Kept on this device only.</p></div>";
   }
@@ -1219,7 +1681,7 @@
       '<div class="epec1"><select data-ep-role="' + E(o.id) + '" aria-label="Role of this option" class="eperole' + (o.role ? " on" : "") + '"><option value="">Role</option>' +
         ROLES.map(function (k) { return '<option value="' + k + '"' + (o.role === k ? " selected" : "") + ">" + k + " " + ROLE_N[k] + "</option>"; }).join("") + "</select>" +
         '<button type="button" class="epename" data-ep-sel="' + E(o.id) + '"><b>' + E(d.name) + '</b> <span class="obs">' + E(d.kind || o.kindName) + "</span></button></div>" +
-      '<p class="obs epelab">' + E(o.label) + (o.sug ? " · suggested " + E(o.sug) : "") + "</p>" +
+      '<p class="obs epelab">' + E(o.label) + (o.sug ? " · suggested " + E(o.sug) : "") + " · heads " + E(heading(o).c) + "</p>" +
       '<div class="epekpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.s)) + "</b><span>moving time</span></div><div><b>" + E(dual(arr)) + "</b><span>arrive if leaving now</span></div></div>" +
       '<div class="epest"><label>Status <select data-ep-st="' + E(o.id) + '" class="st-' + st.toLowerCase() + '">' + STATUS.map(function (s) { return "<option" + (s === st ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select></label>" +
         '<span class="obs">' + (o.st ? "Set by you " + E(dual(o.stBy)) + ". OSAP proposed " + E(o.prop.st) + "." : "OSAP proposes " + E(o.prop.st) + ": " + E(o.prop.why)) + "</span></div>" +
@@ -1233,7 +1695,7 @@
         (o.exp.hits.length ? '<ol class="epehits">' + o.exp.hits.slice(0, 8).map(function (h) {
           return "<li>" + E(dist(h.along)) + " along, " + E(dist(h.d)) + " off: " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener noreferrer">' + E(h.title || h.kind) + "</a>" : E(h.title || h.kind)) + ' <span class="obs">' + E(h.kind) + (h.date ? ", " + E(String(h.date).slice(0, 10)) : "") + (h.src ? ", " + E(h.src) : "") + "</span></li>";
         }).join("") + "</ol>" : "") +
-        legsHtml(o) + corrHtml(o) + depsHtml(o) + alongHtml(o) +
+        cmOptHtml(o) + legsHtml(o) + corrHtml(o) + depsHtml(o) + alongHtml(o) +
         '<div class="epebtns"><button type="button" data-ep="route">Open in Route (checkpoints, print)</button>' + toolsHtml(o) + "</div>" + toolNote(o) + "</div>" : "") +
       "</div>";
   }
@@ -1418,6 +1880,17 @@
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
+    else if (b.hasAttribute("data-ep-cm")) { var ck = b.getAttribute("data-ep-cm"); if (S.cmDraw && S.cmDraw.k === ck) { cmEnd(); S.cmmsg = ""; render(); draw(); } else cmStart(ck); }
+    else if (k === "cmfin") cmFinish();
+    else if (k === "cmundo") { if (S.cmDraw) { S.cmDraw.pts.pop(); render(); draw(); } }
+    else if (k === "cmcan") { cmEnd(); S.cmmsg = "Cancelled."; render(); draw(); }
+    else if (b.hasAttribute("data-ep-cmdel")) cmDel(b.getAttribute("data-ep-cmdel"));
+    else if (b.hasAttribute("data-ep-cmto")) toCm(b.getAttribute("data-ep-cmto"));
+    else if (b.hasAttribute("data-ep-cmnode")) cmToNode(b.getAttribute("data-ep-cmnode"));
+    else if (k === "cmband") { var obd = optOf(S.sel); if (obd && obd.route.coords.length > 1) cmAdd("corr", band(obd.route.coords, corr(obd).w), "Corridor " + (obd.role || obd.dest.i.name), "From the " + (obd.role ? obd.role + " " : "") + "route, " + corr(obd).w + " km each side"); }
+    else if (k === "dirs") findDirs();
+    else if (k === "round") { if (!S.rbusy) roundAll(""); }
+    else if (k === "rstop") { S.rtok++; S.rbusy = false; S.ltok++; S.lbusy = null; S.cmmsg = "Stopped."; render(); draw(); }
     else if (k === "pkg") makePkg();
     else if (k === "actstop") stopActive();
     else if (b.hasAttribute("data-ep-act")) startActive(b.getAttribute("data-ep-act"));
@@ -1462,6 +1935,8 @@
   function onChange(e) {
     var t = e.target;
     if (t.hasAttribute("data-ep-role")) setRole(t.getAttribute("data-ep-role"), t.value);
+    else if (t.hasAttribute("data-ep-blk")) setBlk(t.getAttribute("data-ep-blk"), t.checked);
+    else if (t.hasAttribute("data-ep-cmname")) { var cx = cmOf(t.getAttribute("data-ep-cmname")); if (cx) { cx.name = clean(t.value, 40) || cmLabel(cx.k); save(); render(); draw(); } }
     else if (t.hasAttribute("data-ep-st")) { var o = optOf(t.getAttribute("data-ep-st")); if (o) { o.st = t.value === o.prop.st && !o.st ? "" : t.value; o.stBy = Date.now(); save(); render(); } }
     else if (t.hasAttribute("data-ep-mode")) { S.mode = t.value; }
     else if (t.hasAttribute("data-ep-ntype")) { S.ntype = t.value; }
@@ -1507,6 +1982,7 @@
         L.polyline(ao.route.coords, { color: COL[ao.role || ""], weight: 7, opacity: 1, interactive: false }).addTo(layer);
         chainKm(ao).forEach(function (n, i) { (SY() ? W.OSAP_SYM.mark([n.lat, n.lon], "g_waypoint", { scale: 0.6, opacity: i <= S.active.passed ? 0.45 : 1 }) : L.circleMarker([n.lat, n.lon], { radius: 7, color: "#fff", weight: 2, fillColor: i <= S.active.passed ? "#868e96" : "#212529", fillOpacity: 1 })).bindTooltip(E(n.name + " (km " + n.km + ")")).addTo(layer); });
         if (S.active.pos) L.circleMarker(S.active.pos, { radius: 9, color: "#fff", weight: 3, fillColor: "#1c7ed6", fillOpacity: 1 }).bindTooltip("You (My location)").addTo(layer);
+        var apk = actPkg(); if (apk) drawCm(apk.plan, layer, map);
       }
       S.dr = { active: layer.getLayers().length };
       return;
@@ -1559,10 +2035,11 @@
       });
       (x.nodes || []).forEach(function (n, i) {
         var nt = (NODE_N[n.type] ? NODE_N[n.type].charAt(0) : "N") + (i + 1);
-        L.marker([n.lat, n.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.tag({ airdep: "i_air", seadep: "i_port", border: "crossing", haven: "g_poi" }[n.type] || "g_waypoint", nt, { cls: "epend", scale: 0.6 }) : L.divIcon({ className: "epend", html: "<span>" + E(nt) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
+        L.marker([n.lat, n.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.tag({ airdep: "i_air", seadep: "i_port", border: "crossing", haven: "g_poi", check: "g_check" }[n.type] || "g_waypoint", nt, { cls: "epend", scale: 0.6 }) : L.divIcon({ className: "epend", html: "<span>" + E(nt) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
           .bindTooltip(E(n.name + " (" + (NODE_N[n.type] || n.type) + ", placed by you)")).addTo(layer);
       });
     });
+    if (p) drawCm(p, layer, map);
     if (o) (SY() ? L.marker([o.lat, o.lon], { keyboard: false, icon: W.OSAP_SYM.tag("g_start", "", { scale: 0.75 }) }) : L.circleMarker([o.lat, o.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#212529", fillOpacity: 1 })).bindTooltip(E("Origin: " + (o.label || grid(o.lat, o.lon)))).addTo(layer);
   }
   function fitPlan() {
@@ -1624,6 +2101,12 @@
       "#epe .epeact{font-size:15px}#epe .epeact .chead h2{font-size:18px}#epe .eparow{display:grid;grid-template-columns:9em 1fr;gap:2px 10px;padding:8px 0;border-bottom:1px solid var(--line,#d5dbe1)}#epe .epak{color:var(--muted,#56626f);font-size:13px;grid-row:span 2}" +
       "#epe .epav{font-size:20px;font-weight:700;line-height:1.25}#epe .epas{font-size:13px;color:var(--muted,#56626f)}#epe .epagps{font-size:15px;display:flex;gap:6px;align-items:center}#epe .epagps input{width:22px;height:22px}" +
       "#epe ol.epeticks{list-style:none;padding:0;margin:6px 0}#epe ol.epeticks li{padding:4px 0}#epe ol.epeticks button{min-height:40px;min-width:110px;border:1px solid var(--line,#d5dbe1);border-radius:4px;background:var(--surface,#fff);color:var(--ink,#1d2329);font-weight:700;cursor:pointer}" +
+      "#epe .epedirs label{display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:3px 8px;min-height:32px}#epe .epedirs label.off{border-color:var(--bad,#c0392b);color:var(--bad,#c0392b);font-weight:600}" +
+      "#epe .epecmadd button{font-weight:600}#epe ul.epecmls{list-style:none;margin:6px 0;padding:0}#epe ul.epecmls li{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb))}#epe ul.epecmls input{flex:1;min-width:110px}#epe ul.epecmls i{flex-basis:100%;font-size:11.5px}" +
+      "#epe ul.epecmls button{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--ink,#1d2329);border-radius:4px;min-width:32px;min-height:32px;padding:3px 8px;cursor:pointer;font-size:12px}" +
+      "#epe .epecmk{font:700 11px system-ui;color:#fff;background:var(--cmc);border-radius:3px;padding:2px 6px;min-width:34px;text-align:center}#epe .epecmopt{margin-top:8px}#epe ol.epecmrow{margin:2px 0;padding-left:18px;font-size:12px}" +
+      ".epecmlb{background:none;border:0}.epecmlb span{display:inline-block;white-space:nowrap;background:rgba(255,255,255,.92);border:1.5px solid;border-radius:3px;font:700 11px/14px system-ui,sans-serif;padding:1px 4px;transform:translate(4px,-4px)}" +
+      ".epecmmk{background:none;border:0}.epecmmk span{display:inline-block;white-space:nowrap;color:#fff;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
     D.head.appendChild(s);
@@ -1633,5 +2116,9 @@
     /* tests and other modules: place a node on an option as a map tap would */
     addNode: function (optId, type, lat, lon) { var o = optOf(optId); if (o && NODE_N[type]) addNode(o, type, lat, lon); },
     abusy: function () { return S.abusy || S.pbusy || S.kbusy; }, active: function () { return S.active; }, pkgs: pkgs, kml: function (id) { var pk = pkgOf(id); return pk ? toKml(pk) : ""; }, printHtml: function (id) { var pk = pkgOf(id); return pk ? printHtml(pk) : ""; }, dbusy: function () { return S.dbusy || S.xbusy; }, amsg: function () { return S.amsg; },
-    flyOut: function (optId, airId, lat, lon) { var o = optOf(optId); if (o) flyOut(o, airId, [lat, lon]); } };
+    flyOut: function (optId, airId, lat, lon) { var o = optOf(optId); if (o) flyOut(o, airId, [lat, lon]); },
+    /* tests: add a control measure as the analyst's taps would (k: cp gxp axp pl corr avoid; pts [[lat, lon]]), read one
+       option's measures along it, and whether the direction or area work is running */
+    addCm: function (k, pts, name) { return CM[k] ? cmAdd(k, pts, name) : null; }, cmAlong: function (optId) { var o = optOf(optId); return o ? cmAlong(o).map(function (r) { return { name: r.cm.name, k: r.cm.k, km: r.km, near: r.near, txt: r.txt }; }) : []; },
+    rbusy: function () { return S.rbusy || !!S.lbusy; }, heading: function (optId) { var o = optOf(optId); return o ? heading(o) : null; } };
 })();

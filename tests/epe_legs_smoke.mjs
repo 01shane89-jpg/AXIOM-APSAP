@@ -92,7 +92,7 @@ let state, optId;
   let s = await st(p);
   const o = s.plan.opts[0]; optId = o.id;
   ok(await p.evaluate(() => /1 leg: place a node to split it/.test(document.querySelector("#epe .epelegs").textContent)), "a fresh option is one leg and says how to split it");
-  ok(await p.evaluate(() => !!document.querySelector('#epe [data-ep="node"]') && document.querySelectorAll("#epe [data-ep-ntype] option").length === 8), "node kinds offered: 8 (assembly to safe haven)");
+  ok(await p.evaluate(() => !!document.querySelector('#epe [data-ep="node"]') && document.querySelectorAll("#epe [data-ep-ntype] option").length === 9), "node kinds offered: 9 (assembly to safe haven, and checkpoint)");
   const D = [o.dest.i.lat, o.dest.i.lon], at = (f) => [START[0] + (D[0] - START[0]) * f, START[1] + (D[1] - START[1]) * f];
 
   /* a node placed by tapping the map */

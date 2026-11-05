@@ -961,7 +961,7 @@ function main() {
   }
 
   /* ---------- route API for other modules (agreed with the medical plan thread 2026-10-03) ----------
-     alternates(a, b, { mode, n, foot, avoid }) -> Promise of up to n (1-3) distinct lines from a to b ([lat, lon]), fastest first,
+     alternates(a, b, { mode, n, foot, avoid, polys }) -> Promise of up to n (1-3) distinct lines from a to b ([lat, lon]), fastest first,
        as [{ id: "P" | "A" | "C", coords: [[lat, lon], ...], m, s, road, xc, src, how }]. The routers' own alternatives come
        first; when they give fewer than n distinct lines, Valhalla is asked for a detour round the incidents reported nearest
        the fastest one (as the evacuation planner does). foot (mode "foot" only): "paths" (default), "xc" (only a cross-country
@@ -992,6 +992,19 @@ function main() {
       return close / pb.length >= 0.9;
     });
   }
+  function inRing(p, r) { var x = p[1], y = p[0], c = false; for (var i = 0, j = r.length - 1; i < r.length; j = i++) { var yi = +r[i][0], yj = +r[j][0], xi = +r[i][1], xj = +r[j][1]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; }
+  /* up to n points spread over the inside of the rings (a grid, each ring's share by its size) */
+  function polyPts(rings, n) {
+    var out = [], inside = inRing;
+    rings.forEach(function (r) {
+      var la = r.map(function (p) { return +p[0]; }), lo = r.map(function (p) { return +p[1]; }), y0 = Math.min.apply(null, la), y1 = Math.max.apply(null, la), x0 = Math.min.apply(null, lo), x1 = Math.max.apply(null, lo);
+      var k = Math.max(2, Math.ceil(Math.sqrt(n / rings.length) * 1.6)), got = [];
+      for (var i = 0; i <= k; i++) for (var j = 0; j <= k; j++) { var p = [y0 + (y1 - y0) * i / k, x0 + (x1 - x0) * j / k]; if (inside(p, r)) got.push(p); }
+      var step = Math.max(1, got.length / Math.max(1, Math.floor(n / rings.length)));
+      for (var q = 0; q < got.length; q += step) out.push(got[Math.floor(q)]);
+    });
+    return out.slice(0, n);
+  }
   function alternates(a, b, o) {
     o = o || {};
     var mode = { car: 1, truck: 1, foot: 1, bike: 1 }[o.mode] ? o.mode : "car", n = Math.max(1, Math.min(3, +o.n || 3));
@@ -1015,6 +1028,19 @@ function main() {
       return valhalla(evCost(mode), wps, { alternates: 0, exclude_locations: av.map(function (p) { return { lat: +p[0], lon: G.wrap(+p[1]) }; }) })
         .then(function (rs) { rs.forEach(function (r) { add(r, "avoiding"); }); }, function (e) { errs.push("detour: " + e.message); });
     }).then(function () {
+      /* o.polys: areas the analyst wants kept off ([[lat, lon], ...] rings, the evacuation plan's areas to avoid). Valhalla is
+         asked to keep out of them (exclude_polygons); a router that refuses them (a perimeter limit) is asked instead to keep
+         off the roads at up to 50 points spread inside them. The caller checks each line against the areas. */
+      var pg = (o.polys || []).filter(function (r) { return Array.isArray(r) && r.length >= 3; }).slice(0, 10);
+      if (foot === "xc" || !pg.length) return;
+      return valhalla(evCost(mode), wps, { alternates: 0, exclude_polygons: pg.map(function (r) { return r.map(function (p) { return [G.wrap(+p[1]), +p[0]]; }).concat([[G.wrap(+r[0][1]), +r[0][0]]]); }) })
+        .then(function (rs) { rs.forEach(function (r) { add(r, "round the areas to avoid"); }); }, function () {
+          var pts = polyPts(pg, 50);
+          if (!pts.length) return;
+          return valhalla(evCost(mode), wps, { alternates: 0, exclude_locations: pts.map(function (p) { return { lat: p[0], lon: G.wrap(p[1]) }; }) })
+            .then(function (rs) { rs.forEach(function (r) { add(r, "round the areas to avoid"); }); }, function (e) { errs.push("round the areas to avoid: " + e.message); });
+        });
+    }).then(function () {
       var fast = out.filter(function (x) { return x.road; })[0];
       if (foot === "xc" || out.length >= n || !fast) return;
       var hz = evHaz(30), exp = withWps(wps, function () { return evExposure(apiLine(fast.coords), hz); }), avoid = exp.hits.slice().sort(function (x, y) { return y.w - x.w; }).slice(0, 50);
@@ -1023,7 +1049,10 @@ function main() {
         .then(function (rs) { rs.forEach(function (r) { add(r, "detour"); }); }, function () { /* no detour: the routers' lines stand */ });
     }).then(function () {
       if (!out.length) throw new Error(errs.join("; ") || "no route");
-      return out.sort(function (x, y) { return x.s - y.s; }).slice(0, n).map(function (x, i) { x.id = API_IDS[i]; return x; });
+      /* with areas to avoid, the lines that keep out of them come first (a vertex inside a ring counts as running through it) */
+      var pg2 = (o.polys || []).filter(function (r) { return Array.isArray(r) && r.length >= 3; });
+      out.forEach(function (x) { x.thru = pg2.some(function (r) { return x.coords.some(function (p) { return inRing(p, r); }); }); });
+      return out.sort(function (x, y) { return (x.thru - y.thru) || x.s - y.s; }).slice(0, n).map(function (x, i) { x.id = API_IDS[i]; return x; });
     });
   }
   function apiHazards(coords, o) {
