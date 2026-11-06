@@ -9,7 +9,7 @@
 // - A damaged set: refused, nothing changed. Nothing saved on the old address: the plain move, with ?from=pages.
 // - The chain after the move to the company address (2026-11-05): github.io hands on to the stand-in copy on
 //   axiom-osap.netlify.app (its page names the new address), which takes it in and hands all it holds on to
-//   osap.axiom-inteligence-systems.com: everything from both old addresses arrives, each confirmed, and a second visit is the
+//   osap.axiom-intelligence-systems.com: everything from both old addresses arrives, each confirmed, and a second visit is the
 //   plain move. A tagged set opened from elsewhere asks first.
 // - The real index.html: the hand-off is the first script, the old move steps aside only when the hand-off runs, and on the
 //   old address the hand-off carries saved work before anything else in the page runs.
@@ -18,7 +18,7 @@
 import { readFile } from "node:fs/promises";
 import { chromium, webkit } from "playwright";
 import { randomBytes } from "node:crypto";
-const OLD = "https://01shane89-jpg.github.io/AXIOM-APSAP/", NEW = "https://axiom-osap.netlify.app/", HOME = "https://osap.axiom-inteligence-systems.com/";
+const OLD = "https://01shane89-jpg.github.io/AXIOM-APSAP/", NEW = "https://axiom-osap.netlify.app/", HOME = "https://osap.axiom-intelligence-systems.com/";
 const html = await readFile("index.html", "utf8"), carry = await readFile("assets/osap-carry.js", "utf8");
 let fails = 0;
 function ok(c, m, x) { console.log((c ? "PASS " : "FAIL ") + m + (x === undefined ? "" : " " + JSON.stringify(x).slice(0, 300))); if (!c) fails++; }

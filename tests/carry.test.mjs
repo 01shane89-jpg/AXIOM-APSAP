@@ -86,11 +86,11 @@ ok(reg.list.length === 2 && tp.join() === "y1,t1", "Trip merges into this device
 ok(C.describe(OLD, 1) === "2 map points, 1 photo, 1 route, 1 drawn area, 2 workspaces", "plain summary", C.describe(OLD, 1));
 
 // which page hands work on, and where (2026-11-05, the move to the company address)
-const HOME = "https://osap.axiom-inteligence-systems.com/";
+const HOME = "https://osap.axiom-intelligence-systems.com/";
 ok(J(C.role("01shane89-jpg.github.io", "https://01shane89-jpg.github.io/", "")) === J({ tag: "g", at: C.OLD, to: C.NEW }), "github.io hands on to netlify.app, as before");
 ok(J(C.role("axiom-osap.netlify.app", C.NEW, HOME)) === J({ tag: "n", at: C.NEW, to: HOME }), "the stand-in on netlify.app hands on to the company address");
 ok(C.role("axiom-osap.netlify.app", C.NEW, "") === null, "the app on netlify.app (no meta) never sends anyone anywhere");
-ok(C.role("osap.axiom-inteligence-systems.com", HOME, "") === null, "the app on the company address never sends");
+ok(C.role("osap.axiom-intelligence-systems.com", HOME, "") === null, "the app on the company address never sends");
 ok(C.role("axiom-osap.netlify.app", C.NEW, "https://evil.example/") === null, "a page naming an address that is not a target: nothing sent");
 ok(C.role("deploy-preview-9--axiom-osap.netlify.app", "https://deploy-preview-9--axiom-osap.netlify.app/", HOME) === null, "an address not in the list: nothing sent");
 ok(C.role("axiom-osap.netlify.app", C.NEW, C.NEW) === null, "never hands on to itself");
