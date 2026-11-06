@@ -1,4 +1,4 @@
-{"cc":"eg","at":"2026-10-04T10:08:18Z","base":"2026-10-04T10:06:06Z","m":[
+{"cc":"eg","at":"2026-11-06T11:35:27Z","base":"2026-11-06T11:31:13Z","m":[
 ["n10135896604",29.93857,31.65656,{"man_made":"tower","tower:type":"communication"}],
 ["n10255118348",29.91273,31.614,{"man_made":"tower","tower:type":"communication"}],
 ["n10599362595",29.75131,30.99631,{"man_made":"communications_tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
@@ -246,7 +246,13 @@
 ["n13878815670",25.55812,34.59843,{"man_made":"tower","tower:type":"communication"}],
 ["n14111298649",29.8627,31.34163,{"man_made":"tower","tower:construction":"dish","tower:type":"communication"}],
 ["n14237983417",30.0248,30.25214,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
+["n14249435247",25.60866,34.59773,{"man_made":"tower","tower:type":"communication"}],
+["n14262267040",31.12977,30.12401,{"communication:mobile_phone":"yes","man_made":"mast","operator":"Vodafone Egypt","tower:type":"communication"}],
+["n14266808774",30.07703,30.53479,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14273524412",22.00861,32.22691,{"man_made":"tower","tower:type":"communication"}],
+["n14273524599",22.01994,31.76395,{"man_made":"tower","tower:type":"communication"}],
 ["n1433501598",25.98733,34.33653,{"man_made":"tower","tower:type":"communication"}],
+["n14348378865",30.0468,30.36021,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
 ["n1435166799",29.09617,31.02182,{"man_made":"tower","tower:type":"communication"}],
 ["n1443205045",25.35576,34.7347,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1443205079",25.3626,34.72858,{"man_made":"tower","tower:type":"communication"}],
