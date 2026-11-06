@@ -1,6 +1,6 @@
 # The old netlify.app address after the move (2026-11-05)
 
-OSAP moves to **https://osap.axiom-inteligence-systems.com/**. A browser keeps saved work (map points, routes, workspaces,
+OSAP moves to **https://osap.axiom-intelligence-systems.com/**. A browser keeps saved work (map points, routes, workspaces,
 photos) separately for each address, so the old address has to keep running long enough to hand every user's saved work on.
 Once a custom domain is the app project's primary domain, Netlify answers `axiom-osap.netlify.app` with its own redirect
 before any page runs, so the old address is kept alive by a **second Netlify project**: this folder.
@@ -14,7 +14,7 @@ arrives. The app's own build has no meta, so nothing moves until this project ex
 
 1. Merge the PR that adds this folder (inert until step 4).
 2. DNS (Squarespace): `CNAME osap -> axiom-osap.netlify.app`.
-3. Netlify, project **axiom-osap** (the app): Domain management, add `osap.axiom-inteligence-systems.com` as the primary
+3. Netlify, project **axiom-osap** (the app): Domain management, add `osap.axiom-intelligence-systems.com` as the primary
    domain and wait for HTTPS. From here netlify.app redirects to the new address (the hand-off gap starts; nothing is lost,
    the saved work stays in each browser under the old address).
 4. Same project: Project configuration, change the project name to **axiom-osap-app** (frees the netlify.app name).
@@ -28,9 +28,9 @@ Steps 3 to 5 should run back to back (a few minutes).
 
 ## Outside the repository (Shane)
 
-- Paddle: approve the domain `osap.axiom-inteligence-systems.com`; change the webhook URL to
-  `https://osap.axiom-inteligence-systems.com/api/paddle-webhook` (the stand-in passes the old URL on meanwhile).
-- Esri (ArcGIS Location Platform): add `https://osap.axiom-inteligence-systems.com` to the key's allowed referrers, or the
+- Paddle: approve the domain `osap.axiom-intelligence-systems.com`; change the webhook URL to
+  `https://osap.axiom-intelligence-systems.com/api/paddle-webhook` (the stand-in passes the old URL on meanwhile).
+- Esri (ArcGIS Location Platform): add `https://osap.axiom-intelligence-systems.com` to the key's allowed referrers, or the
   Esri base maps stop on the new address.
 - Users sign in once more on the new address: the sign-in is per address and is never carried.
 

@@ -51,7 +51,7 @@ console.log("netlify_build: copied " + n + " entries into _site");
 // never sends anyone anywhere. Only the addresses osap-carry.js accepts (TARGETS) are allowed.
 const OLD_TO = String(process.env.OSAP_OLD_TO || "").trim();
 if (OLD_TO) {
-  const ok = ["https://osap.axiom-inteligence-systems.com/", "https://axiom-osap.netlify.app/"];
+  const ok = ["https://osap.axiom-intelligence-systems.com/", "https://axiom-osap.netlify.app/"];
   if (!ok.includes(OLD_TO)) throw new Error("netlify_build: OSAP_OLD_TO must be one of " + ok.join(", "));
   const f = path.join(OUT, "index.html"), t = fs.readFileSync(f, "utf8"), at = '<meta charset="utf-8">';
   if (!t.includes(at)) throw new Error("netlify_build: index.html has no charset line");

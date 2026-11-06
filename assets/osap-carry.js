@@ -17,7 +17,7 @@
      came from the old address (or the user says so), only the store families OSAP uses, sizes capped, and the features that
      show it escape it as they always do. Sign-in, lock, sync and team settings never travel.
    Loaded first in index.html's head, before anything reads the stores. On any other address it adds nothing.
-   - A chain of old addresses (2026-11-05, the move to the company's own address, osap.axiom-inteligence-systems.com):
+   - A chain of old addresses (2026-11-05, the move to the company's own address, osap.axiom-intelligence-systems.com):
      github.io still hands on to axiom-osap.netlify.app, and once the app moves, axiom-osap.netlify.app is kept alive by a
      stand-in copy of the app (old-address/netlify.toml) whose index.html names where it hands on to (<meta name="osap-carry-to">,
      written by tools/netlify_build.mjs). That copy receives from github.io as before, then hands everything it holds on to the
@@ -32,7 +32,7 @@
 })(typeof window !== "undefined" ? window : globalThis, function (W) {
   "use strict";
   var OLD_HOST = "01shane89-jpg.github.io", OLD = "https://01shane89-jpg.github.io/AXIOM-APSAP/", NEW = "https://axiom-osap.netlify.app/";
-  var HOME = "https://osap.axiom-inteligence-systems.com/";
+  var HOME = "https://osap.axiom-intelligence-systems.com/";
   /* the old addresses that hand saved work on (tag -> where they are); github.io hands on to NEW, the others to their page's
      osap-carry-to, which must be one of TARGETS */
   var SENDERS = { g: OLD, n: NEW }, TARGETS = [NEW, HOME];
