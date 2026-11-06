@@ -269,7 +269,7 @@
           (note ? '<div><b>Your note:</b> ' + esc(note) + "</div>" : "") +
           '<div class="anrow"><button type="button" data-an-go="time" data-an-e="' + esc(e.id) + '">Timeline</button><button type="button" data-an-go="links" data-an-e="' + esc(e.id) + '">Links</button>' +
           '<button type="button" data-an-note="' + esc(e.id) + '">' + (note ? "Edit note" : "Add note") + "</button>" +
-          '<label title="Your designation, drawn as the symbol frame on the link chart. Your judgement, this browser only.">Side <select data-an-side="' + esc(e.id) + '">' +
+          '<label title="Your designation, drawn as the symbol frame on the link chart. Your judgment, this browser only.">Side <select data-an-side="' + esc(e.id) + '">' +
           SIDES.map(function (o) { return '<option value="' + o[0] + '"' + (sideOf(e.id) === o[0] ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select></label>" +
           (e.own ? '<button type="button" data-an-del="' + esc(e.id) + '">Delete</button>' : "") + "</div>" + (e.own ? approval(K_ENT, e.id) : "") + "</div>";
       }).join("");
@@ -278,7 +278,7 @@
     h += '<details><summary>Add your own entity</summary><form id="an-addent" class="anrow">' +
       '<label>Name <input name="name" required maxlength="120"></label><label>Type <select name="type">' + TYPES.map(function (t) { return "<option>" + esc(t) + "</option>"; }).join("") + "</select></label>" +
       '<label>Other names (comma between) <input name="aliases" maxlength="400"></label><label>Note <input name="note" maxlength="1000"></label><button type="submit" class="go">Add</button></form>' +
-      '<p class="anal">Organisations, units, places and public officeholders. A private person only when sanctioned or charged. Kept in this browser only.</p></details>';
+      '<p class="anal">Organizations, units, places and public officeholders. A private person only when sanctioned or charged. Kept in this browser only.</p></details>';
     return h;
   }
 
@@ -486,7 +486,7 @@
       gapOf = function (e) { var a = at[e.a], b = at[e.b]; if (!a || !b) return ""; var r = [cols.role(a), cols.role(b)].sort().join("-"); return r; }, gapRel = {};
     if (cols) { var cnt = {}; G.E.forEach(function (e) { if (e.kind !== "own") return; var g = gapOf(e), c = cnt[g] || (cnt[g] = { n: 0 }); c.n++; c[e.rel] = (c[e.rel] || 0) + 1; });
       Object.keys(cnt).forEach(function (g) { Object.keys(cnt[g]).forEach(function (r) { if (r !== "n" && cnt[g][r] >= 0.6 * cnt[g].n && cnt[g].n > 2) gapRel[g] = r; }); }); }
-    var h = '<p class="anal">Link chart. Boxes: organisations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
+    var h = '<p class="anal">Link chart. Boxes: organizations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
     if (ownLinks().items.length || G.P.links.length) h += '<label class="anrow"><input type="checkbox" id="an-ownonly"' + (ownOnly() ? " checked" : "") + "> Your links" + (G.P.links.length && S.showAuto ? " and the auto-proposed ones" : "") + " only (leave out the machine co-mentions)</label>" +
       (ownOnly() ? '<label class="anrow">Layout <select id="an-lay"><option value="net"' + (S.lay !== "cols" ? " selected" : "") + '>Network</option><option value="cols"' + (S.lay === "cols" ? " selected" : "") + ">Columns (who / what happened / where)</option></select></label>" : "");
     if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + autoList(G) + linkForm(X);
@@ -544,7 +544,7 @@
     /* the key: the symbols and box colours in this chart, in plain words */
     var ks = G.N.map(function (n) { return n.sym; }).filter(function (k, i, a) { return k && a.indexOf(k) === i; }),
       gs = G.N.map(function (n) { return n.kind === "ent" && !n.person ? n.group : ""; }).filter(function (g, i, a) { return g && a.indexOf(g) === i; });
-    h += '<div class="ankey">' + (gs.length && !S.netMode ? '<div class="lgh">Box edge: list group (not a judgement)</div>' + gs.map(function (g) { return '<div class="lg"><span class="answ" style="border-color:' + (GROUP_C[g] || "#495057") + ";box-shadow:inset 4px 0 0 " + (GROUP_C[g] || "#495057") + '"></span><div>' + esc(g) + "</div></div>"; }).join("") : "") +
+    h += '<div class="ankey">' + (gs.length && !S.netMode ? '<div class="lgh">Box edge: list group (not a judgment)</div>' + gs.map(function (g) { return '<div class="lg"><span class="answ" style="border-color:' + (GROUP_C[g] || "#495057") + ";box-shadow:inset 4px 0 0 " + (GROUP_C[g] || "#495057") + '"></span><div>' + esc(g) + "</div></div>"; }).join("") : "") +
       '<div class="lgh">Lines</div><div class="lg"><span class="anln" style="border-top:2.5px dashed #8a96a3"></span><div>Named in the same report (unconfirmed)</div></div><div class="lg"><span class="anln" style="border-top:2.5px solid ' + OWN_C + '"></span><div>Your link, confirmed</div></div><div class="lg"><span class="anln" style="border-top:2.5px dashed ' + OWN_C + '"></span><div>Your link, probable or suspected</div></div>' +
       (G.E.some(function (e) { return e.kind === "auto"; }) ? '<div class="lg"><span class="anln" style="border-top:2.5px dotted ' + AUTO_C + '"></span><div>Auto-proposed link, and a dotted ring: auto-proposed incident (draft, not analyst-approved; accept or reject below)</div></div>' : "") +
       (ks.length && W.OSAP_SYM && W.OSAP_SYM.legend ? W.OSAP_SYM.legend(ks) + '<p class="msyfr">NATO-style symbols (APP-6 / MIL-STD-2525D). <b>Yellow, four-lobed frame</b>: armed or security body, side not marked. <b>Purple</b>: civilian body (government, monitor). The symbol shows what kind of body it is, not what it did.' +
@@ -568,7 +568,7 @@
   function autoList(G) {
     var P = G.P || { links: [], incidents: {} }, nm = function (id) { return /^d:/.test(id) ? "District: " + distName(id.slice(2)) : (G.nodes[id] || {}).label || (P.incidents[id] || {}).name || nameOf(id); }, nrej = rejected().length;
     var h = '<details class="anauto"' + (S.autoOpen ? " open" : "") + '><summary>' + AUTO + " Auto-proposed links (" + num(P.links.length) + ")</summary>" +
-      '<p class="anal">Proposed by machine rules from OSAP\'s own reporting, never a judgement: recent incidents from the incident candidates, the district each occurred in, and the units, agencies and armed groups their reports name with an attribution, arrest, casualty or response word beside them. ' +
+      '<p class="anal">Proposed by machine rules from OSAP\'s own reporting, never a judgment: recent incidents from the incident candidates, the district each occurred in, and the units, agencies and armed groups their reports name with an attribution, arrest, casualty or response word beside them. ' +
       "Each shows the sentence it came from and its sources. <b>Accept</b> copies it to your links with the confidence you pick; <b>Reject</b> hides it on this device. Your own links are never changed. The chart shows the 12 newest incidents; all are listed here.</p>" +
       '<div class="anrow"><label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="an-showauto"' + (S.showAuto ? " checked" : "") + "> Show auto-proposed links on the chart</label>" +
       (nrej ? '<button type="button" data-an-unreject>Bring back ' + num(nrej) + " rejected</button>" : "") + "</div>";
@@ -596,7 +596,7 @@
     }
     L.items.push({ id: rid("lnk:"), a: p.a, b: p.b, rel: RELS.indexOf(p.rel) >= 0 ? p.rel : "other", conf: CONFS.some(function (c) { return c[0] === conf; }) ? conf : "suspected",
       note: clean("Accepted auto-proposal. From the report: " + p.basis + " Source: " + (p.urls[0] || ""), 600), src: p.urls.slice(0, 6), auto: p.pid, created: now });
-    if (lsSet(K_LINK, L)) toast("Added to your links (your judgement, this browser only)."); render();
+    if (lsSet(K_LINK, L)) toast("Added to your links (your judgment, this browser only)."); render();
   }
   function reject(pid) { var r = rejected(); if (r.indexOf(pid) < 0) r.push(pid); lsSet(K_REJ, r.slice(-5000)); render(); }
   function linkForm(X) {
@@ -605,7 +605,7 @@
     return '<details><summary>Add your own link</summary><form id="an-addlink" class="anrow"><label>From <select name="a">' + opts + "</select></label>" +
       '<label>Relationship <select name="rel">' + RELS.map(function (r) { return "<option>" + esc(r) + "</option>"; }).join("") + "</select></label>" +
       '<label>To <select name="b">' + opts + '</select></label><label>Confidence <select name="conf">' + CONFS.map(function (c) { return '<option value="' + c[0] + '">' + c[1] + "</option>"; }).join("") + '</select></label><label>Why (your basis) <input name="note" maxlength="600"></label><button type="submit" class="go">Add link</button></form>' +
-      '<p class="anal">Your link is your judgement, shown in green and kept apart from the machine co-mentions: solid when confirmed, long dashes when probable, short dashes when suspected. The Structure tab arranges these links as a network chart. In this browser only.</p></details>';
+      '<p class="anal">Your link is your judgment, shown in green and kept apart from the machine co-mentions: solid when confirmed, long dashes when probable, short dashes when suspected. The Structure tab arranges these links as a network chart. In this browser only.</p></details>';
   }
   function repLine(i) {
     var u = safeUrl(i.link);
@@ -627,7 +627,7 @@
     function nm(id) { return /^d:/.test(id) ? "District: " + distName(id.slice(2)) : name[id] || id; }
     var cnt = {}; L.forEach(function (l) { cnt[l.a] = (cnt[l.a] || 0) + 1; cnt[l.b] = (cnt[l.b] || 0) + 1; });
     var roots = Object.keys(cnt).filter(function (id) { return !/^d:/.test(id); }).sort(function (a, b) { return cnt[b] - cnt[a]; });
-    var h = '<p class="anal">Network structure from <b>your own links only</b>: a chain of command from the top entity, then support nodes, finance, supply chain, bed-down sites, routes and areas of operation. It is your judgement, not a finding; machine co-mentions are not used. Add links in the Links tab (relationships such as member of, commands, support node for, supplies, funds, beds down at, uses route).</p>';
+    var h = '<p class="anal">Network structure from <b>your own links only</b>: a chain of command from the top entity, then support nodes, finance, supply chain, bed-down sites, routes and areas of operation. It is your judgment, not a finding; machine co-mentions are not used. Add links in the Links tab (relationships such as member of, commands, support node for, supplies, funds, beds down at, uses route).</p>';
     if (!roots.length) return h + '<p class="obs">No links of your own yet. Record links in the Links tab (with a confidence and your basis) and the structure appears here.</p>' + linkForm(X);
     var root = roots.indexOf(S.root) >= 0 ? S.root : roots.indexOf("ent:ds:brn") >= 0 ? "ent:ds:brn" : roots[0];
     h += '<div class="anrow"><label>Top of the chart <select id="an-root">' + roots.map(function (id) { return '<option value="' + esc(id) + '"' + (id === root ? " selected" : "") + ">" + esc(nm(id)) + " (" + cnt[id] + ")</option>"; }).join("") + "</select></label></div>";
@@ -875,7 +875,7 @@
       var a = f.a.value, b = f.b.value; if (!a || !b || a === b) { toast("Pick two different items."); return; }
       var L = ownLinks(); if (L.items.length >= 2000) { toast("2,000 links is the limit in this browser."); return; }
       L.items.push({ id: rid("lnk:"), a: a, b: b, rel: RELS.indexOf(f.rel.value) >= 0 ? f.rel.value : "other", conf: CONFS.some(function (c) { return c[0] === (f.conf && f.conf.value); }) ? f.conf.value : "suspected", note: clean(f.note.value, 600), created: now });
-      if (lsSet(K_LINK, L)) toast("Link added (your judgement, this browser only)."); S.sel = a; render();
+      if (lsSet(K_LINK, L)) toast("Link added (your judgment, this browser only)."); S.sel = a; render();
     }
   }
 

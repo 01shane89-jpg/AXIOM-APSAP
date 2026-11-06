@@ -47,7 +47,7 @@
 
   /* frequency band presets (planning reference, not an allocation table) */
   var BANDS = [
-    { id: "hf", label: "HF 2-30 MHz", f_mhz: 8, note: "Sky-wave (ionosphere) is not modelled; ground-wave and line of sight only." },
+    { id: "hf", label: "HF 2-30 MHz", f_mhz: 8, note: "Sky-wave (ionosphere) is not modeled; ground-wave and line of sight only." },
     { id: "vhfl", label: "VHF low 30-88 MHz", f_mhz: 60 },
     { id: "vhf", label: "VHF 136-174 MHz", f_mhz: 155 },
     { id: "uhfm", label: "UHF 225-400 MHz", f_mhz: 300 },
@@ -176,7 +176,7 @@
   /* ---------- RF connectors: adapter chain between two ports ---------- */
   var CONNECTORS = [
     { id: "bnc", name: "BNC", max_mhz: 4000 }, { id: "tnc", name: "TNC", max_mhz: 11000 }, { id: "n", name: "N", max_mhz: 11000 },
-    { id: "sma", name: "SMA", max_mhz: 18000 }, { id: "rpsma", name: "RP-SMA", max_mhz: 18000, note: "RP-SMA and SMA screw together but the centre pins do not mate." },
+    { id: "sma", name: "SMA", max_mhz: 18000 }, { id: "rpsma", name: "RP-SMA", max_mhz: 18000, note: "RP-SMA and SMA screw together but the center pins do not mate." },
     { id: "uhf", name: "UHF (PL-259 / SO-239)", max_mhz: 300, note: "UHF connectors are not constant impedance; losses rise above about 300 MHz." },
     { id: "miniuhf", name: "Mini-UHF", max_mhz: 2500 }, { id: "qma", name: "QMA", max_mhz: 6000 }, { id: "fme", name: "FME", max_mhz: 2000 }, { id: "mcx", name: "MCX", max_mhz: 6000 }
   ];
@@ -206,7 +206,7 @@
     { lo: 3, hi: 30, name: "HF: long-range voice and data, broadcast, amateur, aviation and maritime HF", kind: "band" },
     { lo: 30, hi: 88, name: "VHF low: land mobile; in many countries government and military", kind: "band" },
     { lo: 87.5, hi: 108, name: "FM broadcast", kind: "civil", r: { 2: [88, 108] } },
-    { lo: 108, hi: 117.975, name: "Aeronautical radionavigation (VOR, ILS localiser)", kind: "civil" },
+    { lo: 108, hi: 117.975, name: "Aeronautical radionavigation (VOR, ILS localizer)", kind: "civil" },
     { lo: 118, hi: 137, name: "Aeronautical VHF voice (air band)", kind: "civil" },
     { lo: 121.5, hi: 121.5, name: "121.5 MHz aeronautical emergency", kind: "distress" },
     { lo: 144, hi: 146, name: "Amateur 2 m", kind: "civil", r: { 2: [144, 148], 3: [144, 148] } },

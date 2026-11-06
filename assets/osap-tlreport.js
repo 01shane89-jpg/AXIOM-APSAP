@@ -666,7 +666,7 @@
     list.forEach(function (e, i) { e.n = i + 1; locate(e, recs); });
     return list;
   }
-  function kbHtml(e) { return '<span class="kb' + (e.how === "area" ? " ap" : e.how === "none" ? " no" : "") + '" title="' + (e.how === "area" ? "Placed at the province centre (approximate)" : e.how === "none" ? "Not tied to one place: listed in the box on the map" : "Placed where the source puts it") + '">' + e.n + "</span>"; }
+  function kbHtml(e) { return '<span class="kb' + (e.how === "area" ? " ap" : e.how === "none" ? " no" : "") + '" title="' + (e.how === "area" ? "Placed at the province center (approximate)" : e.how === "none" ? "Not tied to one place: listed in the box on the map" : "Placed where the source puts it") + '">' + e.n + "</span>"; }
   function whenCell(e) {
     var lead = e.c ? e.c.r : e.recs[0], w = lead && lead.__tlw;
     var ms = e.from, dateOnly = e.c ? !(w && w.timed) : ms % 864e5 === 432e5;
@@ -692,7 +692,7 @@
       if (many) extra = '<div class="ks">' + esc(e.c.recs.slice(0, 4).map(function (x) { return x.title; }).join("; ")) + (e.c.recs.length > 4 ? "; and " + (e.c.recs.length - 4) + " more" : "") + "</div>";
       why = e.c.why.join(", ");
     }
-    var where = e.how === "exact" ? (e.where || "") : e.how === "area" ? e.where + " (shown at the centre, approximate)" : "not tied to one place" + (e.where ? " (" + e.where + ")" : "");
+    var where = e.how === "exact" ? (e.where || "") : e.how === "area" ? e.where + " (shown at the center, approximate)" : "not tied to one place" + (e.where ? " (" + e.where + ")" : "");
     var fp = lead && !many ? '<div class="fpx">SHA-256 <span data-tlfp="' + esc(lead.id) + '">' + esc(window.TSAP.fingerprints[lead.id] || "computing…") + "</span></div>" : "";
     var obs = e.g ? e.g.reports.every(function (p) { return p.status === "Observed"; }) : lead && lead.type === "observation";
     return "<tr><td class=\"kn\">" + kbHtml(e) + '</td><td class="kd">' + whenCell(e) + "</td><td>" +
@@ -732,7 +732,7 @@
     var hows = {}; keyEv.forEach(function (e) { hows[e.how] = 1; });
     var rows = [];
     if (hows.exact) rows.push([ic(kb("exact")), "Key event (Table 1)"]);
-    if (hows.area) rows.push([ic(kb("area")), "Key event at province centre, approximate"]);
+    if (hows.area) rows.push([ic(kb("area")), "Key event at province center, approximate"]);
     if (hows.none) rows.push([ic(kb("none")), "Key event not tied to one place"]);
     rows.push([ic('<circle cx="9" cy="8" r="4" fill="#b3261e" fill-opacity=".55" stroke="#b3261e"/>'), "Sourced report"]);
     rows.push([ic('<circle cx="9" cy="8" r="4" fill="#8a5a00" fill-opacity=".55" stroke="#8a5a00" stroke-dasharray="2 1.5"/>'), "Official statement"]);
@@ -804,7 +804,7 @@
     var tp = topN(perProv, 3); if (tp.length) pts.push("Most often named province" + (tp.length > 1 ? "s" : "") + ": " + list3(tp) + ".");
     var tc = topN(perCat, 3); if (tc.length) pts.push("Commonest kind" + (tc.length > 1 ? "s" : "") + " of record: " + list3(tc) + ".");
     if (keyEv.length) pts.push(keyEv.length + " key event" + (keyEv.length === 1 ? " is" : "s are") + " set out in Table 1" + (evs.length ? ", " + evs.length + " of them reported by two or more sources" : ", each a single report picked by fixed rules (no two sources reported the same incident)") + "." +
-      (nArea || nNone ? " On the map, " + [nArea ? nArea + " " + (nArea === 1 ? "is" : "are") + " placed at a province centre" : "", nNone ? nNone + " " + (nNone === 1 ? "is" : "are") + " not tied to one place and listed in a box" : ""].filter(Boolean).join(" and ") + "." : ""));
+      (nArea || nNone ? " On the map, " + [nArea ? nArea + " " + (nArea === 1 ? "is" : "are") + " placed at a province center" : "", nNone ? nNone + " " + (nNone === 1 ? "is" : "are") + " not tied to one place and listed in a box" : ""].filter(Boolean).join(" and ") + "." : ""));
     var html = bar + '<article class="bpage tlr">' + head +
       '<h3 class="tls" style="margin-top:4px"><span class="no">1</span>Summary <span class="aitag" tabindex="0" title="Counts by fixed rules from the records below (no AI), not analyst-approved.">Automatic</span></h3>' +
       '<div class="tlrglance"><div><b>' + recs.length + "</b><span>records" + (all.length > recs.length ? " (latest " + MAX_ROWS + " of " + all.length + ")" : "") + "</span></div>" +

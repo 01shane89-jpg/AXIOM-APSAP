@@ -69,7 +69,7 @@
       "<h3>" + esc(s.n || ONE[k]) + "</h3>" + (rows ? "<dl>" + rows + "</dl>" : "") +
       '<p class="obs"><span class="mmtag" title="What the source publishes, not checked by OSAP or an analyst">Source claim</span> ' +
       "As Wikidata's editors record it; not verified, and the list is not complete.</p>" +
-      (side ? '<p class="obs">Frame: you marked this country ' + esc(sd.name(side).toLowerCase()) + " (Country sides). Your judgement on this device, not the source's.</p>" : "") +
+      (side ? '<p class="obs">Frame: you marked this country ' + esc(sd.name(side).toLowerCase()) + " (Country sides). Your judgment on this device, not the source's.</p>" : "") +
       '<p class="obs">' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">Wikidata record</a> · ' : "") + "Wikidata (CC0)" +
       "<br>" + esc((+s.la).toFixed(4) + ", " + (+s.lo).toFixed(4)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(+s.la, +s.lo)) : "") + ", as the source gives it" +
       (s.fp ? '<br>Fingerprint <code class="fp" title="SHA-256 fingerprint of this record: ' + esc(s.fp) + '">' + esc(String(s.fp).slice(0, 16)) + "…</code>" : "") +

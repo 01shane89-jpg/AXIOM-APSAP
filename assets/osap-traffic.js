@@ -200,7 +200,7 @@
     if (t >= 80 && t <= 89) return "tanker";
     return "other";
   }
-  var NAV = ["under way using engine", "at anchor", "not under command", "restricted manoeuvrability", "constrained by draught", "moored", "aground",
+  var NAV = ["under way using engine", "at anchor", "not under command", "restricted manoeuvrability", "constrained by draft", "moored", "aground",
     "engaged in fishing", "under way sailing", "", "", "towing astern", "pushing ahead or towing alongside", "", "AIS-SART, MOB or EPIRB active", ""];
   var TYPE = { 30: "Fishing", 31: "Towing", 32: "Towing (large)", 33: "Dredging or underwater operations", 34: "Diving operations", 35: "Military operations",
     36: "Sailing", 37: "Pleasure craft", 50: "Pilot vessel", 51: "Search and rescue", 52: "Tug", 53: "Port tender", 54: "Anti-pollution", 55: "Law enforcement",
@@ -221,7 +221,7 @@
       '<p class="obs" style="margin:4px 0">' +
         "MMSI " + esc(p.mmsi) + (!priv && p.imo ? " · IMO " + esc(p.imo) : "") + (!priv && p.callsign ? " · call sign " + esc(p.callsign) : "") + "<br>" +
         (p.flag ? "Flag " + esc(flagName(p.flag)) + " (from the MMSI)<br>" : "") +
-        (size ? "Size " + esc(size) + (p.draught ? " · draught " + esc(p.draught) + " m" : "") + "<br>" : "") +
+        (size ? "Size " + esc(size) + (p.draught ? " · draft " + esc(p.draught) + " m" : "") + "<br>" : "") +
         (nav ? "Status " + esc(nav) + "<br>" : "") +
         (p.sog != null ? "Speed " + esc(p.sog) + " kn" : "") + (p.cog != null ? " · course " + esc(Math.round(p.cog)) + "°" : "") + (p.heading != null && p.heading < 360 ? " · heading " + esc(p.heading) + "°" : "") + "<br>" +
         (!priv && p.destination ? "Destination (as entered by the crew) " + esc(p.destination) + (p.eta ? " · ETA " + esc(p.eta) : "") + "<br>" : "") +
@@ -315,7 +315,7 @@
     var lv = liveFresh();
     if (A.loff && !lv) return "";
     if (lv) return "<b>Live</b> for the area on screen: " + esc(lv.src.name) + ", asked " + esc(secAgo(Date.parse(lv.built))) + " (updates every 15 s).";
-    if (A.lnote === "zoom") return "Zoom in for live positions (the live feed answers for up to " + LIVE_NM + " nm around the centre).";
+    if (A.lnote === "zoom") return "Zoom in for live positions (the live feed answers for up to " + LIVE_NM + " nm around the center).";
     if (A.lerr) return "Live positions unavailable (" + esc(A.lerr) + ").";
     return A.lbusy ? "Asking for live positions…" : "";
   }

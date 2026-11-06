@@ -31,7 +31,7 @@
     P = P || {};
     var g = n(P.golden_min, DEF.golden_min) * 60, ho = n(P.handoff_min, DEF.handoff_min) * 60, dw = n(P.dwell_min, DEF.dwell_min) * 60, xa = n(P.xact_min, DEF.xact_min) * 60;
     var direct = [part("move", "to " + hi.name, hi.to_s), part("handoff", "handoff", ho)];
-    var via = [part("move", "to " + lo.name, lo.to_s), part("handoff", "handoff", ho), part("stabilise", "stabilise", dw), part("activation", "transfer activation", xa),
+    var via = [part("move", "to " + lo.name, lo.to_s), part("handoff", "handoff", ho), part("stabilise", "stabilize", dw), part("activation", "transfer activation", xa),
       part("transfer", "transfer to " + hi.name, transfer_s), part("handoff", "handoff", ho)];
     var out = { rule: RULE, direct: { parts: direct, total_s: sum(direct) }, via: { parts: via, total_s: sum(via) }, golden_s: g,
       access: access(hi.required, hi.now), basis: "estimate" };
@@ -49,7 +49,7 @@
     stop_adds_nothing_available_now: "a planner's check says what this stop adds is not available now",
     direct_inside_golden_hour: "going direct reaches the required care inside the golden hour",
     direct_no_slower: "going direct is no slower than stopping here",
-    direct_beyond_golden_hour: "going direct is beyond the golden hour, and this stop is reached first to stabilise"
+    direct_beyond_golden_hour: "going direct is beyond the golden hour, and this stop is reached first to stabilize"
   };
   function why(d) { return WHY[d.reason] || ""; }
   root.OSAP_MEDDECIDE = { RULE: RULE, DEF: DEF, compare: compare, access: access, why: why };

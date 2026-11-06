@@ -91,7 +91,7 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_COMMSPLAN.ra
   const ma = await p.evaluate(() => [window.OSAP_COMMSPLAN.radioAt(13.75, 100.528), window.OSAP_COMMSPLAN.radioAt(13.75, 100.472)]);
   ok(ma[0] && ma[1] && ma[0].terrain_db > ma[1].terrain_db + 5 && ma[0].margin_db < ma[1].margin_db - 5, "behind the ridge 3 km east loses more to terrain than 3 km west over flat ground (" + JSON.stringify(ma.map((x) => x && [Math.round(x.margin_db), Math.round(x.terrain_db || 0)])) + ")");
   const res = await p.textContent("#cp-rcout");
-  ok(/MODELLED COVERAGE/.test(res) && /terrain only/.test(res) && /Likely/.test(res) && /Marginal/.test(res), "the answer is labelled modelled, terrain only, with the classes");
+  ok(/MODELED COVERAGE/.test(res) && /terrain only/.test(res) && /Likely/.test(res) && /Marginal/.test(res), "the answer is labelled modelled, terrain only, with the classes");
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-comchk-pane canvas").length >= 1), "coverage drawn on the map");
   // a tap inside shows the margin there, and does not start a phone coverage check
   const before = await p.evaluate(() => JSON.stringify(window.OSAP_COMMSTAB.state().result || null));

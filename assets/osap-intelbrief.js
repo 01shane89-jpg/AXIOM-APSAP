@@ -626,7 +626,7 @@
       var m = d.map || {}, hows = {}; K.forEach(function (e) { hows[e.how] = 1; });
       var rows = [];
       if (hows.exact) rows.push(["key", "Key event, numbered as in the key events slides"]);
-      if (hows.area) rows.push(["keyArea", "Key event at a province centre (approximate)"]);
+      if (hows.area) rows.push(["keyArea", "Key event at a province center (approximate)"]);
       if (hows.none) rows.push(["keyNone", "Key event not tied to one place (box on the map)"]);
       rows.push(["rep", "Sourced report"], ["claim", "Official statement"]);
       if (m.obs) rows.push(["obs", "Instrument reading"]);
@@ -658,7 +658,7 @@
         showValue: true, dataLabelFontSize: 8, showLegend: false, showTitle: true, title: "Provinces named most often", titleFontSize: 10, titleColor: NAVY });
       caption(s, (m.mapped != null ? m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". " : "") +
         "Positions are as precise as each source allows. Borders and names: Natural Earth (public domain).", 0.45, 6.6, 12.4, 0.3);
-      s.addNotes("Map drawn by OSAP from the records' own coordinates; key events without coordinates are placed at the centre of the province their records name (ringed, approximate) or listed in a box. " + prov);
+      s.addNotes("Map drawn by OSAP from the records' own coordinates; key events without coordinates are placed at the center of the province their records name (ringed, approximate) or listed in a box. " + prov);
     })();
 
     /* 6. key events, five to a slide, numbered as on the map */
@@ -678,7 +678,7 @@
           else e.c.recs.forEach(function (x) { if (srcN.indexOf(x.src.name) < 0) srcN.push(x.src.name); });
           meta = (e.g ? e.g.reports.length + " reports from " + pl(srcN.length, "source") : e.c.many ? e.c.recs.length + " records from " + pl(srcN.length, "source") : "One report") + ": " + srcN.slice(0, 3).join(", ") + (srcN.length > 3 ? " +" + (srcN.length - 3) : "");
           var refs = e.recs.map(function (r) { return r.__ref; }).filter(Boolean);
-          var where = e.how === "exact" ? (e.where || "As the source places it") : e.how === "area" ? e.where + " (province centre, approximate)" : "Not tied to one place" + (e.where ? " (" + e.where + ")" : "");
+          var where = e.how === "exact" ? (e.where || "As the source places it") : e.how === "area" ? e.where + " (province center, approximate)" : "Not tied to one place" + (e.where ? " (" + e.where + ")" : "");
           var why = e.g ? "Reported by " + pl(srcN.length, "source") : e.c.why.join(", ");
           rows.push([cell(String(e.n), { bold: true, align: "center", fontSize: 11 }), cell(lead ? recWhen(lead) : dtg(e.from), { fontSize: 9 }),
             { text: [{ text: String(e.title).length > 140 ? String(e.title).slice(0, 137) + "…" : String(e.title), options: safeUrl(u) && !(e.c && e.c.many) ? { hyperlink: { url: safeUrl(u) }, color: "1E6FA8", bold: true, breakLine: true } : { bold: true, breakLine: true } },

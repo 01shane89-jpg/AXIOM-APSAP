@@ -248,7 +248,7 @@ const af = await p.evaluate(() => ({ sum: document.getElementById("os-sum").valu
 ok(af.sum === "My own bottom line", "the Summary is never filled from the AI draft");
 ok(af.alt === "My own alternatives", "a field the analyst typed in is not overwritten");
 ok(af.assess === "The records suggest a leadership change (Bernama, 16 Oct 2026) (The Star, 17 Oct 2026)." && af.conf === "MODERATE", "drafted text filled with citations naming the records: " + af.assess);
-ok(af.r === "" && af.c === "" && /AI proposes credibility 2/.test(af.note) && /Catalogue proposes reliability B/.test(af.note), "grades left for the analyst; proposals written in the note");
+ok(af.r === "" && af.c === "" && /AI proposes credibility 2/.test(af.note) && /Catalog proposes reliability B/.test(af.note), "grades left for the analyst; proposals written in the note");
 await p.fill("#os-an-gaps", af.gaps + "\nAnd one of mine");
 await p.click("#os-go");
 await p.waitForSelector("#brief .osir", { timeout: 30000 });

@@ -124,8 +124,8 @@
   }
   function spokenDist(m) {
     if (!metric()) { var mi = m / 1609.344; if (mi >= 0.9) return (mi >= 10 ? Math.round(mi) : Math.round(mi * 2) / 2) + " miles"; if (mi >= 0.4) return "half a mile"; if (mi >= 0.2) return "a quarter of a mile"; return Math.round(m * 3.28084 / 100) * 100 + " feet"; }
-    if (m >= 950) { var k = m >= 10000 ? Math.round(m / 1000) : Math.round(m / 500) / 2; return (k === 1 ? "1 kilometre" : k + " kilometres"); }
-    return Math.round(m / 50) * 50 + " metres";
+    if (m >= 950) { var k = m >= 10000 ? Math.round(m / 1000) : Math.round(m / 500) / 2; return (k === 1 ? "1 kilometer" : k + " kilometers"); }
+    return Math.round(m / 50) * 50 + " meters";
   }
   function dur(s) { if (!isFinite(s)) return "–"; s = Math.max(0, Math.round(s / 60)); var h = Math.floor(s / 60), m = s % 60; return h ? h + " h " + (m < 10 ? "0" : "") + m : m + " min"; }
   function clock(ms) { var T = W.OSAP_TIME; return T && T.dualT ? T.dualT(ms) : new Date(ms).toISOString().slice(11, 16).replace(":", "") + "Z"; }
@@ -290,7 +290,7 @@
       '<div class="nvsub"></div><div class="nvnotes"></div></div>' +
       '<div class="nvside"><button type="button" data-nv="mute"></button><button type="button" data-nv="up"></button><button type="button" data-nv="dim"></button><button type="button" data-nv="style"></button><button type="button" data-nv="night"></button><button type="button" data-nv="over" aria-label="Show the whole route ahead" title="Overview">' + IC.over + "</button>" +
       '<button type="button" class="nvmark" data-nv="mark" aria-label="Mark this spot: a point on the map with its grid and time" title="Mark this spot">Mark</button></div>' +
-      '<button type="button" class="nvrec" data-nv="rec" hidden>Re-centre</button>' +
+      '<button type="button" class="nvrec" data-nv="rec" hidden>Re-center</button>' +
       '<div class="nvspd" title="Speed from GPS"><b>–</b><span>' + (metric() ? "km/h" : "mph") + "</span></div>" +
       '<div class="nvwhere"><span></span></div><div class="nvattr"></div>' +
       '<div class="nvbar"><button type="button" class="nvend" data-nv="end" aria-label="End navigation" title="End navigation">&#x2715;</button><div class="nveta"><b>–</b><span></span></div>' +

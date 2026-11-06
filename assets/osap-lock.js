@@ -176,7 +176,7 @@
     if (/noprf/.test(m)) return "This device's passkeys cannot give the secret the lock needs (WebAuthn PRF). Use an iPhone on iOS 18 or later in Safari, or a recent Chrome.";
     if (/nosetup/.test(m)) return "Face ID has not been set up on this device yet.";
     if (/notowner/.test(m)) return "This device is not one of the owner's devices, so it cannot unlock hidden areas.";
-    if (/NotAllowed|AbortError|cancel/i.test(m)) return "Face ID was cancelled or timed out. Nothing changed.";
+    if (/NotAllowed|AbortError|cancel/i.test(m)) return "Face ID was canceled or timed out. Nothing changed.";
     if (/OperationError/.test(m)) return "Face ID worked, but this device's lock key could not be opened. Set up again.";
     if (/InvalidState/.test(m)) return "A passkey for this site already exists on this device. Try Unlock, or delete the old OSAP passkey in Settings > Passwords first.";
     if (/Security/.test(m)) return "This page's address cannot use passkeys. Open the live site (01shane89-jpg.github.io) instead.";

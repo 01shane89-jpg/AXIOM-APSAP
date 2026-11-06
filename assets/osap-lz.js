@@ -596,10 +596,10 @@
   function sel(id, list, cur, fmt) { return '<select id="' + id + '">' + list.map(function (v) { var k = Array.isArray(v) ? v[0] : v; return '<option value="' + k + '"' + (k === cur ? " selected" : "") + ">" + esc(fmt ? fmt(v) : v[1]) + "</option>"; }).join("") + "</select>"; }
   function render() {
     var c = ensure(), r = ST.res, o = ST.o;
-    var where = ST.poly ? "Inside the drawn area" : o ? '<span class="lzpt">' + esc(grid(o[0], o[1])) + "</span>" : "Map centre";
+    var where = ST.poly ? "Inside the drawn area" : o ? '<span class="lzpt">' + esc(grid(o[0], o[1])) + "</span>" : "Map center";
     var h = '<h3>' + IC + ' Landing zones <span class="lztag" tabindex="0" title="Worked out by fixed rules from open data in this browser. Not AI, not a survey and not analyst-approved.">Open data</span>' + (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-lz="close" aria-label="Close the landing zone finder">Close</button></h3>' +
       '<div class="lzrow"><span>Search at:</span> ' + where + "</div>" +
-      '<div class="lzrow"><button type="button" data-lz="centre">Map centre</button><button type="button" data-lz="tap" aria-pressed="' + ST.arm + '">Tap the map</button>' +
+      '<div class="lzrow"><button type="button" data-lz="centre">Map center</button><button type="button" data-lz="tap" aria-pressed="' + ST.arm + '">Tap the map</button>' +
       '<input type="text" id="lz-at" placeholder="MGRS or lat, lon" maxlength="60" autocomplete="off" aria-label="Search point as MGRS or lat, lon" style="width:9.5em"></div>' +
       '<div class="lzrow">' + (ST.poly ? "" : '<label>Radius ' + sel("lz-r", RADII, S.r, function (v) { return v + " km"; }) + "</label>") +
       '<label>LZ size ' + sel("lz-d", SIZES, S.d) + '</label><label>Max slope ' + sel("lz-s", SLOPES, S.s) + "</label></div>" +
@@ -927,7 +927,7 @@
     if (poly) {
       var a = 0, b = 0; poly.forEach(function (p) { a += p[0]; b += p[1]; }); o = [a / poly.length, b / poly.length];
       radius = 0; poly.forEach(function (p) { radius = Math.max(radius, hav(o, p)); });
-      if (radius > 5000) { ST.err = "The drawn area is too big for a landing zone search (more than 5 km from its centre). Draw a smaller area, or search round a point."; ST.msg = ""; render(); return; }
+      if (radius > 5000) { ST.err = "The drawn area is too big for a landing zone search (more than 5 km from its center). Draw a smaller area, or search round a point."; ST.msg = ""; render(); return; }
     } else radius = S.r * 1000;
     ST.o = poly ? null : o;
     ST.busy = 1; ST.err = ""; ST.res = null; ST.msg = "Loading elevation…"; render(); layer.clearLayers(); if (mask) { map.removeLayer(mask); mask = null; }

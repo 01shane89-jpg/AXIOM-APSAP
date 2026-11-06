@@ -229,7 +229,7 @@
       if (S.claims.length >= MAXROWS) return;
       var claim = cited(t, c.claim); if (!claim || have[srcKey(claim)]) return;
       var refs = (c.refs || []).map(function (n) { return refName(t, n); }).filter(Boolean);
-      var note = "AI draft cites " + (refs.join("; ") || "no record") + "." + (c.cred ? " AI proposes credibility " + c.cred + "." : "") + (c.rel ? " Catalogue proposes reliability " + c.rel + "." : "");
+      var note = "AI draft cites " + (refs.join("; ") || "no record") + "." + (c.cred ? " AI proposes credibility " + c.cred + "." : "") + (c.rel ? " Catalog proposes reliability " + c.rel + "." : "");
       var row = { claim: claim, src: c.source || "", r: "", c: "", note: note.slice(0, 400) };
       row.ai = JSON.stringify([row.claim, row.src, row.note]); S.claims.push(row); filled++;
     });
@@ -365,7 +365,7 @@
     var a = S.an, sel = function (list, cur, blank) { return '<option value="">' + blank + "</option>" + list.map(function (v) { return '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + v + "</option>"; }).join(""); };
     var ta = function (k, lab, hint) { return '<label class="osw">' + lab + (hint ? " <small>(" + hint + ")</small>" : "") + '<textarea id="os-an-' + k + '" data-an="' + k + '" maxlength="4000">' + esc(a[k]) + "</textarea></label>"; };
     return '<details class="osx" id="os-anx"' + (S.anOpen || anUsed() ? " open" : "") + '><summary>Analyst sections <small>(optional: graded claims, assessment, confidence, indicators, gaps, outside sources; each is shown as yours)</small></summary><div class="osg">' +
-      aiBox() + '<div class="osw"><b>Graded claims</b> <small>Source reliability A–F, information credibility 1–6 (Admiralty). A credible source can still be wrong. Pick one of the report\'s own sources and the catalogue\'s proposed letter shows in the list (for example "— (proposed B?)"); it is only a proposal until you choose a letter.</small></div>' +
+      aiBox() + '<div class="osw"><b>Graded claims</b> <small>Source reliability A–F, information credibility 1–6 (Admiralty). A credible source can still be wrong. Pick one of the report\'s own sources and the catalog\'s proposed letter shows in the list (for example "— (proposed B?)"); it is only a proposal until you choose a letter.</small></div>' +
       S.claims.map(function (c, i) {
         return '<div class="osrow" data-cl="' + i + '"><label class="osw2">Claim ' + (i + 1) + '<textarea id="os-cl-' + i + '-claim" data-clk="claim" maxlength="1000">' + esc(c.claim) + "</textarea></label>" +
           '<label>Source / originator<input type="text" id="os-cl-' + i + '-src" data-clk="src" maxlength="200" list="os-srcs" value="' + esc(c.src) + '"></label>' +

@@ -323,7 +323,7 @@
     '<div class="pt-add"><button type="button" class="pt-btn pri sn-take sn-osc" data-ps="osc">Open camera (data on screen)</button>' +
     '<label class="pt-btn sn-take sn-app"><input type="file" accept="image/*" capture="environment" data-ps="cam">Phone camera app</label>' +
     '<button type="button" class="pt-btn sn-allow" data-ps="allow" hidden>Allow compass</button>' +
-    '<button type="button" class="pt-btn sn-centre" data-ps="centre" hidden>Use the map centre</button></div>' +
+    '<button type="button" class="pt-btn sn-centre" data-ps="centre" hidden>Use the map center</button></div>' +
     '<p class="obs sn-why"></p>' +
     '<p class="obs">Open camera shows the grid, heading and time over the picture while you aim; the readings at the moment you press the shutter are saved with the photo. Phone camera app uses the readings from when you press it. ' +
     'The photo is kept unchanged on this device only, never uploaded; grid, heading, where each came from and how accurate it was are saved beside it. <span class="sn-room"></span></p></div>';
@@ -332,7 +332,7 @@
   function H() { return W.OSAP_HEADING || null; }
   function snPaint() {
     var f = S.fix, g = sn.querySelector(".sn-grid"), h = sn.querySelector(".sn-hd"), why = sn.querySelector(".sn-why"), take = sn.querySelector(".sn-app"), osc = sn.querySelector(".sn-osc");
-    if (S.centre) { var c = map.getCenter(); g.innerHTML = "<code>" + esc(A.fmt(c.lat, c.lng, "mgrs")) + '</code> <span class="obs">map centre, chosen by you (no GPS)</span>'; }
+    if (S.centre) { var c = map.getCenter(); g.innerHTML = "<code>" + esc(A.fmt(c.lat, c.lng, "mgrs")) + '</code> <span class="obs">map center, chosen by you (no GPS)</span>'; }
     else if (f) g.innerHTML = "<code>" + esc(A.fmt(f.lat, f.lon, "mgrs")) + '</code> <span class="obs">device GPS ±' + Math.round(f.acc) + " m, " + Math.max(0, Math.round((Date.now() - f.t) / 1000)) + " s ago</span>";
     else g.textContent = S.gerr || "Waiting for GPS…";
     var hd = S.hd;
@@ -345,7 +345,7 @@
     if (osc.hidden) take.classList.add("pri");
     camPaint();
     sn.querySelector(".sn-centre").hidden = !!f || S.centre || !S.gerr;
-    why.textContent = ready ? "" : S.gerr ? "Turn on location for this site, or place the photo at the map centre." : "The camera unlocks when the GPS has a fix.";
+    why.textContent = ready ? "" : S.gerr ? "Turn on location for this site, or place the photo at the map center." : "The camera unlocks when the GPS has a fix.";
   }
   function onHd(r) { var h = hdOf(r); if (h) { S.hd = h; if (!sn.hidden) snPaint(); else camPaint(); } }
   function hdStart() {
@@ -407,7 +407,7 @@
     if (!f && !c) { toast("No GPS fix: photo not saved."); return Promise.resolve(null); }
     var lat = f ? f.lat : c.lat, lon = f ? f.lon : c.lng, hd = shot.hd, d = new Date(shot.t);
     var geo = { lat: +lat.toFixed(6), lon: +lon.toFixed(6), grid: A.fmt(lat, lon, "mgrs"), at: iso(shot.t),
-      pos: f ? { src: "device GPS", acc: Math.round(f.acc), fixAt: iso(f.t), alt: f.alt != null ? Math.round(f.alt) : null } : { src: "map centre, chosen by the user (no GPS fix)", acc: null },
+      pos: f ? { src: "device GPS", acc: Math.round(f.acc), fixAt: iso(f.t), alt: f.alt != null ? Math.round(f.alt) : null } : { src: "map center, chosen by the user (no GPS fix)", acc: null },
       heading: hd ? { mag: hd.mag, tru: hd.tru, decl: hd.decl, acc: hd.acc, basis: hd.basis, src: hd.src, readAt: iso(hd.t) } : null };
     if (cap) geo.capture = cap;
     if (hd && after && after !== hd) {
@@ -442,7 +442,7 @@
     var hd = S.hd, f = S.fix, a = hd ? (hd.mag != null ? hd.mag : hd.tru) : null;
     cam.querySelector(".cm-hd").textContent = a != null ? deg3(a) + "\u00b0 " + (hd.mag != null ? "M" : "T") : "No heading";
     cam.querySelector(".cm-hd2").textContent = a != null ? Math.round((((a % 360) + 360) % 360) * MIL) + " mils" + (hd.tru != null && hd.mag != null ? " \u00b7 " + deg3(hd.tru) + "\u00b0 T" : "") + (hd.acc != null ? " \u00b7 \u00b1" + hd.acc + "\u00b0" : "") + (hd.basis === "top" ? " \u00b7 hold the phone upright" : "") : (S.hdeny ? "compass not allowed" : "no compass reading");
-    if (S.centre) { var c = map.getCenter(); cam.querySelector(".cm-grid").textContent = A.fmt(c.lat, c.lng, "mgrs") + "  map centre"; }
+    if (S.centre) { var c = map.getCenter(); cam.querySelector(".cm-grid").textContent = A.fmt(c.lat, c.lng, "mgrs") + "  map center"; }
     else cam.querySelector(".cm-grid").textContent = f ? A.fmt(f.lat, f.lon, "mgrs") + "  \u00b1" + Math.round(f.acc) + " m" : (S.gerr || "Waiting for GPS\u2026");
     var now = new Date();
     cam.querySelector(".cm-time").textContent = now.toISOString().slice(11, 19) + "Z \u00b7 " + ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2) + ":" + ("0" + now.getSeconds()).slice(-2) + " local" + (f && f.alt != null ? " \u00b7 alt " + Math.round(f.alt) + " m" : "");

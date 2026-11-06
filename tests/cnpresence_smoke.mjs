@@ -104,7 +104,7 @@ async function popupOf(p, name) {
   ok(pr && /Chinese-funded project \(AidData\)/.test(pr.text) && /ODC-By/.test(pr.text) && /Reported, not verified/.test(pr.text), "project pop-up names source, licence and claim status");
   ok(pr && !pr.ai, "generated record pop-up carries no AI generated tag");
   const gp = await popupOf(p, "Alpha Test Electronics");
-  ok(gp && /Alpha Test Electronics/.test(gp.text) && /Beta Test Trading/.test(gp.text) && /2 organisations/.test(gp.text), "shared city pin lists both organisations");
+  ok(gp && /Alpha Test Electronics/.test(gp.text) && /Beta Test Trading/.test(gp.text) && /2 organizations/.test(gp.text), "shared city pin lists both organisations");
   ok(!errors.length, "no page errors: " + errors.join(" / "));
   await ctx.close();
 }
@@ -125,7 +125,7 @@ async function popupOf(p, name) {
   const { ctx, p, errors, has } = await open("vn", "rupresence");
   ok(has, "Vietnam offers the Russian presence data set");
   const r = await rail(p);
-  ok(r.h2.some((h) => /Russian state-run and state-owned sites \(1\)/.test(h)) && r.h2.some((h) => /Russia-linked organisations on U\.S\. restricted lists \(1\)/.test(h)), "Russian sections: " + r.h2.join(" | "));
+  ok(r.h2.some((h) => /Russian state-run and state-owned sites \(1\)/.test(h)) && r.h2.some((h) => /Russia-linked organizations on U\.S\. restricted lists \(1\)/.test(h)), "Russian sections: " + r.h2.join(" | "));
   ok(!/Chinese/.test(r.text), "no Chinese records or wording in the Russian data set");
   const pr = await popupOf(p, "Test Embassy of Russia");
   ok(pr && /^Russian presence/.test(pr.text.trim()) && /CC0/.test(pr.text) && !pr.ai, "Russian site pop-up: actor, licence, no AI tag");

@@ -347,7 +347,7 @@
       if (best.rank === 0 && best.m > Math.max(g.len_m, 300) + K.appr) return;
       var id = (e.type || "way") + "/" + String(e.id).replace(/^\w+\//, "");
       if (seen[id]) return; seen[id] = 1;
-      items.push({ k: k, name: t["name:en"] || t.name || "", h: Math.round(hh.h), hAssumed: hh.a, where: best.where || fmtM(best.m) + " " + dir3(bearing(g.c, best.at)) + "° from the centre", rank: best.rank, bad: !!best.bad,
+      items.push({ k: k, name: t["name:en"] || t.name || "", h: Math.round(hh.h), hAssumed: hh.a, where: best.where || fmtM(best.m) + " " + dir3(bearing(g.c, best.at)) + "° from the center", rank: best.rank, bad: !!best.bad,
         at: [+best.at[0].toFixed(6), +best.at[1].toFixed(6)], line: P.length > 1 && k === "power" ? P.map(function (p) { return [+p[0].toFixed(6), +p[1].toFixed(6)]; }) : null, url: "https://www.openstreetmap.org/" + id });
     });
     items.sort(function (a, b) { return b.rank - a.rank || (b.h - a.h); });
@@ -423,11 +423,11 @@
   /* what OSAP found from sources for a field, shown under the surveyor's own value */
   function autoFor(k) {
     var r = ST.r, A = r.auto, E = A.elev, F = A.finder, rw = A.osm && A.osm.aero && A.osm.aero.filter(function (x) { return /runway|airstrip/.test(x.kind); })[0];
-    if (k === "elev_obs" && E && E.z.c != null) return Math.round(E.z.c) + " m (" + Math.round(E.z.c / FT) + " ft) MSL at the centre; " + E.src + (E.res ? ", about " + E.res + " m detail" : "");
+    if (k === "elev_obs" && E && E.z.c != null) return Math.round(E.z.c) + " m (" + Math.round(E.z.c / FT) + " ft) MSL at the center; " + E.src + (E.res ? ", about " + E.res + " m detail" : "");
     if (k === "grad_l" && E && E.gl != null) return E.gl.toFixed(1) + "% A to B (" + Math.round(E.z.a) + " to " + Math.round(E.z.b) + " m)";
     if (k === "grad_t" && E && E.gt != null) return E.gt.toFixed(1) + "% left to right";
     if (k === "surf") return [F && F.surface ? "HLZ finder: " + F.surface : "", F && F.cover ? "land cover: " + F.cover : "", rw && rw.surface ? "OpenStreetMap " + rw.kind + ": " + rw.surface : ""].filter(Boolean).join("; ");
-    if (k === "len_obs" && rw && rw.len) return "OpenStreetMap " + rw.kind + (rw.ref ? " " + rw.ref : "") + ": " + rw.len + " m" + (rw.m > 50 ? " (" + fmtM(rw.m) + " from the centre)" : "");
+    if (k === "len_obs" && rw && rw.len) return "OpenStreetMap " + rw.kind + (rw.ref ? " " + rw.ref : "") + ": " + rw.len + " m" + (rw.m > 50 ? " (" + fmtM(rw.m) + " from the center)" : "");
     if (k === "wid_obs" && rw && rw.wid) return "OpenStreetMap " + rw.kind + ": " + rw.wid + " m";
     if (k === "rwy" && rw && (rw.ref || rw.name || rw.icao)) return "OpenStreetMap: " + [rw.ref, rw.name, rw.icao].filter(Boolean).join(", ");
     if (k === "max_acft" && F && F.craft) return "HLZ finder: " + F.craft;
@@ -453,8 +453,8 @@
       "<span>Status</span><div class=\"r\"><select data-f=\"status\"><option value=\"draft\"" + (r.status === "draft" ? " selected" : "") + '>Draft</option><option value="complete"' + (r.status === "complete" ? " selected" : "") + ">Complete (surveyor's call)</option></select></div></div>";
     /* the shape */
     h += "<h3>" + youTag() + "Shape on the map</h3>" +
-      '<div class="r"><button type="button" data-sv="edit" aria-pressed="' + ST.edit + '">Edit on map</button><button type="button" data-sv="tapc" aria-pressed="' + (ST.arm === "c") + '">' + (ST.arm === "c" ? "Tap the map…" : "Move centre: tap the map") + '</button><button type="button" data-sv="show">Show on map</button>' +
-      '<input class="w" style="width:14em" data-f="grid" placeholder="Centre as MGRS or lat, lon" aria-label="Centre as MGRS or lat, lon"><button type="button" data-sv="grid">Set</button></div>' +
+      '<div class="r"><button type="button" data-sv="edit" aria-pressed="' + ST.edit + '">Edit on map</button><button type="button" data-sv="tapc" aria-pressed="' + (ST.arm === "c") + '">' + (ST.arm === "c" ? "Tap the map…" : "Move center: tap the map") + '</button><button type="button" data-sv="show">Show on map</button>' +
+      '<input class="w" style="width:14em" data-f="grid" placeholder="Center as MGRS or lat, lon" aria-label="Center as MGRS or lat, lon"><button type="button" data-sv="grid">Set</button></div>' +
       '<p class="obs">Drag A and B to set the ends (the axis turns with them), the square to change the width' + (g.shape === "circle" ? ", the edge square for the diameter, the turn handle for the approach direction" : "") + ', the dashed ring to move it. <span data-svtip class="tip"></span></p>' +
       '<div class="g"><span>Shape</span><div class="r"><select data-f="shape"><option value="rect"' + (g.shape === "rect" ? " selected" : "") + '>Rectangle</option><option value="circle"' + (g.shape === "circle" ? " selected" : "") + ">Circle</option></select>" +
       (g.shape === "circle" ? '<label>Diameter <input type="number" min="10" max="5000" data-f="len_m" value="' + g.len_m + '"> m</label>' : '<label>Length <input type="number" min="10" max="20000" data-f="len_m" value="' + g.len_m + '"> m</label><label>Width <input type="number" min="5" max="20000" data-f="wid_m" value="' + g.wid_m + '"> m</label>') +
@@ -466,7 +466,7 @@
     h += "<h3>Coordinates (worked out from your shape)</h3><div class=\"tw\"><table><thead><tr><th>Point</th><th>MGRS</th><th>Lat, lon</th><th>Elevation " + srcTag() + "</th></tr></thead><tbody>";
     var E = A.elev && A.elev.key === geoKey(g) ? A.elev : null;
     function row(n, p, z) { return "<tr><td>" + esc(n) + '</td><td class="pt">' + esc(grid(p)) + "</td><td>" + p[0].toFixed(5) + ", " + p[1].toFixed(5) + "</td><td>" + (z != null ? Math.round(z) + " m / " + Math.round(z / FT) + " ft" : "-") + "</td></tr>"; }
-    h += row("Centre", g.c, E && E.z.c) + row("A, approach end", e.a, E && E.z.a) + row("B, departure end", e.b, E && E.z.b) + e.corners.map(function (p, i) { return row("Corner " + (i + 1), p, null); }).join("") + "</tbody></table></div>";
+    h += row("Center", g.c, E && E.z.c) + row("A, approach end", e.a, E && E.z.a) + row("B, departure end", e.b, E && E.z.b) + e.corners.map(function (p, i) { return row("Corner " + (i + 1), p, null); }).join("") + "</tbody></table></div>";
     h += '<p class="obs">' + (ST.busy.el ? "Reading elevation…" : ST.err.el ? '<span class="bad">Elevation: ' + esc(ST.err.el) + "</span>" : E ? "Elevation: " + esc(E.src) + (E.res ? ", about " + E.res + " m detail" : "") + ", read " + esc(stamp(E.at)) + ". Gradient worked out end to end " + (E.gl != null ? E.gl.toFixed(1) + "%" : "-") + ", side to side " + (E.gt != null ? E.gt.toFixed(1) + "%" : "-") + " (model terrain, not a measured grade)." : A.elev ? "The shape changed: press Refresh from sources." : "") +
       (A.decl ? " Declination " + Math.abs(A.decl.v).toFixed(1) + "° " + (A.decl.v >= 0 ? "E" : "W") + " (WMM2025)." : "") + ' <button type="button" data-sv="refresh">Refresh from sources</button></p>';
     if (A.finder) { var F = A.finder; h += '<p class="obs">' + srcTag("HLZ finder (computer search, " + esc(stamp(F.at || r.created)) + "):") + " " + esc([F.clearD ? "clear about " + F.clearD + " m across" : "", F.slope != null ? "slope " + F.slope + "° avg" + (F.smax != null ? ", " + F.smax + "° max" : "") : "", F.elev != null ? "elevation " + F.elev + " m" : "", F.appr ? "approach " + F.appr : "", F.near ? "nearest obstacle " + F.near : ""].filter(Boolean).join(" · ")) + "</p>"; }
@@ -507,7 +507,7 @@
     var h = "<h3>" + youTag() + "Photos</h3>";
     h += at.length ? at.map(function (p) { return '<div class="phr"><b>' + esc(p.n || "Photo point") + '</b> <span class="pt">' + esc(grid([p.lat, p.lon])) + "</span>" + (isFinite(p.az) && p.az !== null ? " · facing " + dir3(p.az) + "°" + (p.azRef === "true" ? " true" : " mag") : "") + ' <button type="button" data-sv="phdel" data-id="' + esc(p.id) + '">Detach</button><div class="ph" data-thumb="' + esc(p.id) + '"></div></div>'; }).join("") : '<p class="obs">No photos attached.</p>';
     h += '<p class="r"><button type="button" data-sv="snap">Take a photo here</button><span class="obs">Photos are saved as map points with grid and heading (Point > Take a photo here), then attached here.</span></p>';
-    if (near.length) h += '<p class="obs">Photo points near the site:</p>' + near.slice(0, 20).map(function (p) { return '<div class="r"><button type="button" data-sv="phadd" data-id="' + esc(p.id) + '">Attach</button>' + esc(p.n || "Photo point") + " · " + fmtM(dist(r.g.c, [p.lat, p.lon])) + " from the centre</div>"; }).join("");
+    if (near.length) h += '<p class="obs">Photo points near the site:</p>' + near.slice(0, 20).map(function (p) { return '<div class="r"><button type="button" data-sv="phadd" data-id="' + esc(p.id) + '">Attach</button>' + esc(p.n || "Photo point") + " · " + fmtM(dist(r.g.c, [p.lat, p.lon])) + " from the center</div>"; }).join("");
     return h;
   }
 
@@ -586,7 +586,7 @@
     h += '<div class="svdg"><h2>Diagram (north up)</h2>' + diagram(img) + (img && img.svg && img.got ? (img.got < img.n ? "<p>Some imagery tiles did not load; they are shown only if the printer can fetch them.</p>" : "") : "<p>No satellite imagery could be loaded for the diagram (offline or the imagery service did not answer).</p>") + "</div>";
     h += "<h2>Coordinates</h2><table><thead><tr><th>Point</th><th>MGRS</th><th>Lat, lon</th><th>Elevation (From sources)</th></tr></thead><tbody>";
     function row(n, p, z) { return tr([esc(n), esc(grid(p)), p[0].toFixed(5) + ", " + p[1].toFixed(5), z != null ? Math.round(z) + " m / " + Math.round(z / FT) + " ft" : "-"]); }
-    h += row("Centre", g.c, E && E.z.c) + row("A, approach end", e.a, E && E.z.a) + row("B, departure end", e.b, E && E.z.b) + e.corners.map(function (p, i) { return row("Corner " + (i + 1), p, null); }).join("") + "</tbody></table>";
+    h += row("Center", g.c, E && E.z.c) + row("A, approach end", e.a, E && E.z.a) + row("B, departure end", e.b, E && E.z.b) + e.corners.map(function (p, i) { return row("Corner " + (i + 1), p, null); }).join("") + "</tbody></table>";
     if (E) h += "<p>Elevation " + esc(E.src) + (E.res ? ", about " + E.res + " m detail" : "") + ", read " + esc(stamp(E.at)) + ". Model gradient end to end " + (E.gl != null ? E.gl.toFixed(1) + "%" : "-") + ", side to side " + (E.gt != null ? E.gt.toFixed(1) + "%" : "-") + ".</p>";
     if (A.finder) { var F = A.finder; h += "<p>HLZ finder (From sources, computer search): " + esc([F.clearD ? "clear about " + F.clearD + " m" : "", F.slope != null ? "slope " + F.slope + "° avg" : "", F.appr ? "approach " + F.appr : "", F.surface ? "surface " + F.surface : ""].filter(Boolean).join("; ")) + ".</p>"; }
     secsFor(r.kind).forEach(function (s) {

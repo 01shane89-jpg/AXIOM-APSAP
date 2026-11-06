@@ -124,8 +124,8 @@
     var out = [], A = W.OSAP_ATAK, M = W.OSAP_MEASURE, LOC = W.OSAP_LOC, T = W.OSAP_TIER;
     function add(id, name, sub, run, on) { out.push({ k: "fn", grp: "Settings", id: id, name: name, sub: sub + (on ? " · on now" : ""), words: syn(id), run: run }); }
     /* the same choices, and the same calls, as the gear's Settings panel (assets/osap-tidy.js) */
-    if (q("#theme-seg")) [["light", "Light map"], ["grey", "Grey map"], ["dark", "Dark map"]].forEach(function (t) {
-      add(t[0], t[1], "Map colours", function () { var b = q('#theme-seg [data-theme-set="' + t[0] + '"]'); if (b) b.click(); toast(t[1] + " on"); }, D.documentElement.getAttribute("data-map") === t[0]);
+    if (q("#theme-seg")) [["light", "Light map"], ["grey", "Gray map"], ["dark", "Dark map"]].forEach(function (t) {
+      add(t[0], t[1], "Map colors", function () { var b = q('#theme-seg [data-theme-set="' + t[0] + '"]'); if (b) b.click(); toast(t[1] + " on"); }, D.documentElement.getAttribute("data-map") === t[0]);
     });
     if (A && A.posFmt) [["mgrs", "MGRS"], ["dd", "Lat-long"], ["dms", "DMS"]].forEach(function (f) {
       add(f[0], "Grid format: " + f[1], "Coordinates shown as " + f[1], function () {

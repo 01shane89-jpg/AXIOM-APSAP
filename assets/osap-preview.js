@@ -140,7 +140,7 @@
           });
         })).then(function (all) { return [].concat.apply([], all); });
       },
-      attribution: function (c) { return "Panoramax contributors, " + (c && c.lic ? c.lic : "open licence"); }
+      attribution: function (c) { return "Panoramax contributors, " + (c && c.lic ? c.lic : "open license"); }
     },
     google: {
       id: "google", name: "Google Street View", tier: 1, kind: "street-external", cachePolicy: "NONE", licence: "Google terms (opens in Google, nothing is shown or kept in OSAP)", home: "https://www.google.com/maps",
@@ -167,7 +167,7 @@
       },
       attribution: function () { return !SAT ? "" : "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016), CC BY 4.0"; }
     },
-    terrain: { id: "terrain", name: "Modelled terrain (Copernicus GLO-90 DEM, Open-Meteo)", tier: 4, kind: "terrain", cachePolicy: "TEMPORARY", simulated: true, licence: "Copernicus DEM, open", home: "https://open-meteo.com/en/docs/elevation-api", isAvailable: online },
+    terrain: { id: "terrain", name: "Modeled terrain (Copernicus GLO-90 DEM, Open-Meteo)", tier: 4, kind: "terrain", cachePolicy: "TEMPORARY", simulated: true, licence: "Copernicus DEM, open", home: "https://open-meteo.com/en/docs/elevation-api", isAvailable: online },
     map: { id: "map", name: "Analytical map (OpenStreetMap)", tier: 5, kind: "map", cachePolicy: "LOCAL", licence: "ODbL", home: "https://www.openstreetmap.org/copyright", isAvailable: function () { return true; } }
   };
   var STREET = ["kartaview", "panoramax"];
@@ -647,7 +647,7 @@
     var R = S.R, n = 21, ms = [];
     for (var i = 0; i < n; i++) ms.push(Math.min(R.cum[R.cum.length - 1], p.m + 2000 * i / (n - 1)));
     var pts = ms.map(function (m) { return at(R, m).p; }), key = "terrain:" + p.id;
-    box.innerHTML = '<div class="rtpv-age sim"><b>SIMULATED TERRAIN VIEW</b> · modelled from elevation data, not a real-world picture.</div><p class="obs">Loading elevation ahead…</p>';
+    box.innerHTML = '<div class="rtpv-age sim"><b>SIMULATED TERRAIN VIEW</b> · modeled from elevation data, not a real-world picture.</div><p class="obs">Loading elevation ahead…</p>';
     var pr = S.cache[key] || (S.cache[key] = getJSON("https://api.open-meteo.com/v1/elevation?latitude=" + pts.map(function (q) { return q[0].toFixed(5); }).join(",") + "&longitude=" + pts.map(function (q) { return G.wrap(q[1]).toFixed(5); }).join(","), 15000).catch(function (e) { delete S.cache[key]; throw e; }));
     pr.then(function (j) {
       if (S.pts[S.cur] !== p || S.tab && S.tab !== "terrain" && autoTab(p) !== "terrain") return;
@@ -656,7 +656,7 @@
       for (var k = 1; k < n; k++) { var run = ms[k] - ms[k - 1]; if (run > 20) mx = Math.max(mx, Math.abs(h[k] - h[k - 1]) / run * 100); }
       var lo = Math.min.apply(null, h), hi = Math.max.apply(null, h), span = Math.max(20, hi - lo), Wd = 440, Ht = 120;
       var path = h.map(function (v, k) { return (k / (n - 1) * Wd).toFixed(1) + "," + (Ht - 8 - (v - lo) / span * (Ht - 24)).toFixed(1); }).join(" ");
-      box.innerHTML = '<div class="rtpv-age sim"><b>SIMULATED TERRAIN VIEW</b> · modelled from elevation data, not a real-world picture.</div>' +
+      box.innerHTML = '<div class="rtpv-age sim"><b>SIMULATED TERRAIN VIEW</b> · modeled from elevation data, not a real-world picture.</div>' +
         '<svg class="rtpv-prof" viewBox="0 0 ' + Wd + " " + Ht + '" role="img" aria-label="Elevation over the next 2 km"><polygon points="0,' + Ht + " " + path + " " + Wd + "," + Ht + '" class="fill"/><polyline points="' + path + '" class="ln"/>' +
         '<text x="2" y="12" class="ax">' + Math.round(hi) + ' m</text><text x="2" y="' + (Ht - 2) + '" class="ax">' + Math.round(lo) + ' m</text><text x="' + (Wd - 2) + '" y="' + (Ht - 2) + '" class="ax" text-anchor="end">+2 km</text></svg>' +
         '<dl class="rtpv-dl"><div><dt>Position</dt><dd>' + E(kmTxt(p.m)) + "</dd></div><div><dt>Heading</dt><dd>" + E(("00" + p.hd).slice(-3)) + "°</dd></div><div><dt>Elevation</dt><dd>" + Math.round(h[0]) + " m</dd></div>" +
@@ -720,7 +720,7 @@
     S.snap.detour(p.lat, p.lon).then(function (r) {
       if (S.pts[S.cur] !== p) return;
       var extra = r.m - S.R.m;
-      out.innerHTML = r.through ? " The router found no way round: its best line still passes here." : " Way round avoiding this place: " + E(dist(r.m)) + " (" + (extra >= 0 ? "+" : "") + E(dist(Math.abs(extra))) + (extra < 0 ? " shorter" : " longer") + "). Drawn grey dashed on the map.";
+      out.innerHTML = r.through ? " The router found no way round: its best line still passes here." : " Way round avoiding this place: " + E(dist(r.m)) + " (" + (extra >= 0 ? "+" : "") + E(dist(Math.abs(extra))) + (extra < 0 ? " shorter" : " longer") + "). Drawn gray dashed on the map.";
       drawDetour(r.coords);
     }, function (e) { out.textContent = " The router did not answer (" + e.message + ")."; }).then(function () { b.disabled = false; });
   }

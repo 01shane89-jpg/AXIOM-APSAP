@@ -149,16 +149,16 @@
       a.forEach(function (p) { la += p[0]; lo += p[1]; });
       ref = { lat: la / a.length, lon: lo / a.length };
       if (!R.test(ref.lat, ref.lon)) ref = nearest(inside, ref.lat, ref.lon) || { lat: a[0][0], lon: a[0][1] };
-      ref = { lat: ref.lat, lon: ref.lon, name: "Centre of the drawn area" };
+      ref = { lat: ref.lat, lon: ref.lon, name: "Center of the drawn area" };
     } else if (R.kind === "spot") {
       ref = { lat: R.center.lat, lon: R.center.lon, name: R.center.name };
     } else {
       var cap = wx.filter(function (p) { return R.test(p.lat, p.lon) || !R.poly; })[0];
       if (cap) ref = { lat: cap.lat, lon: cap.lon, name: cap.name };
-      else if (R.label && R.test(R.label.lat, R.label.lon)) ref = { lat: R.label.lat, lon: R.label.lon, name: "Centre of " + R.pname };
+      else if (R.label && R.test(R.label.lat, R.label.lon)) ref = { lat: R.label.lat, lon: R.label.lon, name: "Center of " + R.pname };
       else {
         var cy = (b[0][0] + b[1][0]) / 2, cx = (b[0][1] + b[1][1]) / 2, n = nearest(inside, cy, cx) || { lat: cy, lon: cx };
-        ref = { lat: n.lat, lon: n.lon, name: "Centre of " + (R.pname || R.name) };
+        ref = { lat: n.lat, lon: n.lon, name: "Center of " + (R.pname || R.name) };
       }
     }
     ref.ref = true; pts.push(ref);
@@ -419,7 +419,7 @@
     ["amf", "Airborne", "Parachute, military free fall (ram-air)", "Free fall", { wind: 19, gust: 19, vis: 1600, prh: 4, ts: 1, frz: 1 }, { wind: 15, gust: 16, ceil: 3000, vis: 4800, prh: 1, ts: 1 }],
     ["gwl", "Ground", "Wheeled, light (4x4s, light trucks), off-road", "Wheeled light", { pr24: 40, sn: 15 }, { pr24: 20, sn: 5, vis: 200 }],
     ["gwh", "Ground", "Wheeled, heavy (MRAPs, heavy trucks), off-road", "Wheeled heavy", { pr24: 30, sn: 20 }, { pr24: 15, sn: 10, gust: 45, vis: 200 }],
-    ["trk", "Ground", "Tracked (tanks, armoured carriers), off-road", "Tracked", { pr24: 75, sn: 40 }, { pr24: 40, sn: 20, vis: 200 }],
+    ["trk", "Ground", "Tracked (tanks, armored carriers), off-road", "Tracked", { pr24: 75, sn: 40 }, { pr24: 40, sn: 20, vis: 200 }],
     ["per", "Ground", "Dismounted troops (heat, cold)", "Dismounted", { hi: 41, wc: -28 }, { hi: 32, wc: -10, ts: 1 }],
     ["obs", "Ground", "Ground observation", "Ground obs", { vis: 500 }, { vis: 2000, ts: 1 }],
     ["sb", "Maritime", "Small boats and RHIBs", "Small boats", { wave: 2, wind: 28 }, { wave: 1, wind: 20, ts: 1 }],
@@ -1191,7 +1191,7 @@
       ' <span class="obs">One page on A4 or Letter. Export PDF opens the print dialog: choose &ldquo;Save as PDF&rdquo;.</span></div>';
     o += '<article class="bpage wxbp" id="wxb-page"><header><div><b>AXIOM OSAP</b> · Weather brief · ' + esc(P.name) + "</div><h2>" + esc(R.name) + "</h2><div>Valid " + esc(zt(t0, tz, true)) + " to " + esc(zt(t1, tz, true)) +
       ". Compiled " + esc(zt(now, tz, true)) + ". Reference point " + esc(ref.name) + " " + esc(mgrs(ref.lat, ref.lon) || ll(ref.lat, ref.lon)) + ".</div></header>";
-    o += '<p class="bwarn">Model forecast (Open-Meteo), not an official forecast and not observed. Official warnings below take precedence. Impact colours use generic planning thresholds, not doctrine. Not analyst-approved.</p>';
+    o += '<p class="bwarn">Model forecast (Open-Meteo), not an official forecast and not observed. Official warnings below take precedence. Impact colors use generic planning thresholds, not doctrine. Not analyst-approved.</p>';
     var sum = "<h3>" + bl("https://open-meteo.com/", "Summary") + '</h3><p class="wxsum">' + esc(synopsis(A, D)) + "</p>";
     /* hazards */
     var hz = [];
@@ -1441,7 +1441,7 @@
     H.gdacs.forEach(function (e) { hz.push("<tr><td>GDACS " + esc(e.alert || "") + "</td><td class=\"w\">" + bl(e.url, esc(e.name)) + ' <span class="bm">' + esc([e.from ? e.from.slice(0, 10) : "", e.to ? "to " + e.to.slice(0, 10) : ""].join(" ")) + "</span></td></tr>"); });
     H.pdc.forEach(function (i) { hz.push("<tr><td>PDC hazard</td><td class=\"w\">" + bl(i.u, esc(i.t)) + ' <span class="bm">' + esc(i.d ? i.d.replace("T", " ") + " (as published)" : "") + "</span></td></tr>"); });
     H.warn.forEach(function (i) { hz.push("<tr><td>" + esc(i.agency) + "</td><td class=\"w\">" + bl(i.link || i.feed, esc(i.title_en || i.title)) + ' <span class="bm">' + esc(i.date && W.OSAP_TIME ? W.OSAP_TIME.asofT(i.date) : "") + (i.mt ? ", machine translated" : "") + "</span></td></tr>"); });
-    var p1 = '<p class="bwarn">Model forecast (Open-Meteo), not an official forecast and not observed. Official warnings take precedence. Summary and confidence words are made by fixed rules from the numbers, not by a forecaster or AI. Impact colours use generic planning thresholds, not doctrine. Not analyst-approved.</p>' +
+    var p1 = '<p class="bwarn">Model forecast (Open-Meteo), not an official forecast and not observed. Official warnings take precedence. Summary and confidence words are made by fixed rules from the numbers, not by a forecaster or AI. Impact colors use generic planning thresholds, not doctrine. Not analyst-approved.</p>' +
       "<h3>Next 72 hours</h3><p class=\"wxsum\">" + esc(synopsis(A72, D)) + "</p>" +
       "<h3>Next 7 days</h3><p class=\"wxsum\">" + esc(synopsis(A7, D).replace(/^At [^,]+, /, "")) + "</p>" +
       "<h3>Warnings, cyclones and floods (" + hz.length + ")</h3>" + (hz.length ? '<table class="btwo wxhz">' + hz.join("") + "</table>" : '<p class="bm">None in the app&rsquo;s feeds for this region' + (H.warnFeeds && !H.warnFeeds.length ? " (no machine-readable national warning feed is set up for this country; check its weather agency)" : "") + ".</p>") +
@@ -1582,7 +1582,7 @@
     ["sl", "Static line", "Static-line parachuting", { wind: 13, gust: 18, ceil: 1000, vis: 1600, ts: 1 }, { wind: 10, gust: 15, ceil: 1500, vis: 4800, ts: 1 }],
     ["rw", "Rotary wing", "Rotary wing, medium (Black Hawk class)", { ceil: 500, vis: 1600, gust: 35, ts: 1, frz: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, tmax: 35 }],
     ["fw", "Fixed wing", "Fixed wing, medium transport (IFR)", { ceil: 200, vis: 800, gust: 35, ts: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, frz: 1 }],
-    ["gnd", "Ground ops", "Ground manoeuvre and dismounted troops", { gust: 50, vis: 200, pr24: 40, hi: 41, wc: -28 }, { gust: 35, vis: 1000, pr24: 20, hi: 32, wc: -10, ts: 1 }],
+    ["gnd", "Ground ops", "Ground maneuver and dismounted troops", { gust: 50, vis: 200, pr24: 40, hi: 41, wc: -28 }, { gust: 35, vis: 1000, pr24: 20, hi: 32, wc: -10, ts: 1 }],
     ["isr", "ISR", "Drones (Group 3) and EO sensors", { wind: 25, gust: 30, prh: 4, ceil: 500, vis: 1000, ts: 1, frz: 1 }, { wind: 18, gust: 22, prh: 1, ceil: 1500, vis: 3000, ts: 1 }],
     ["nbc", "NBC ops", "Chemical or biological release: air stability and wind", null, null]
   ];
@@ -1888,7 +1888,7 @@
       return h + "</div>";
     }).join("") + (A.far ? '<p class="note">No reporting airfield within ' + AV_NEAR + " km; this is the nearest, so conditions at the place may differ.</p>" : "") +
       '<p class="note">OFFICIAL reports as issued by each weather service, relayed by NOAA&rsquo;s Aviation Weather Center (public domain) and filed by OSAP every 20 minutes' +
-      (A.built ? " (last filed " + esc(zt(Date.parse(A.built), tz, true)) + ")" : "") + ". Times Zulu and local. Colour: VFR green, MVFR blue, IFR red, LIFR magenta (ceiling and visibility). Not for flight planning; use the official briefing service.</p></div>";
+      (A.built ? " (last filed " + esc(zt(Date.parse(A.built), tz, true)) + ")" : "") + ". Times Zulu and local. Color: VFR green, MVFR blue, IFR red, LIFR magenta (ceiling and visibility). Not for flight planning; use the official briefing service.</p></div>";
   }
   /* loads once per reference point; redraws whichever of the section and the chart is open */
   function avRefKey(ref) { return ref.lat.toFixed(3) + "," + ref.lon.toFixed(3); }
@@ -1991,7 +1991,7 @@
       lic: "Open-Meteo, CC BY 4.0", legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,rgba(90,90,90,0),rgba(90,90,90,.85))"></span><span class="wxrl"><span>0%</span><span>100%</span></span>'; } },
     { k: "wind", name: "Wind barbs, 10 m", grp: "Wind", grid: true, note: "Open-Meteo model wind at the chosen time, knots. Barbs point into the wind: half barb 5 kt, full 10 kt, flag 50 kt.", op: 0.95,
       lic: "Open-Meteo, CC BY 4.0", legend: function () { return barb(0, 15, 26) + " 15 kt from the north " + barb(270, 55, 26) + " 55 kt from the west"; } },
-    { k: "flow", name: "Wind flow, animated", grp: "Wind", grid: true, note: "Moving streaks follow the chosen model's 10 m wind at the chosen time; colour is speed. Smoothed between grid points, so small valleys and coasts are not resolved.", op: 0.9,
+    { k: "flow", name: "Wind flow, animated", grp: "Wind", grid: true, note: "Moving streaks follow the chosen model's 10 m wind at the chosen time; color is speed. Smoothed between grid points, so small valleys and coasts are not resolved.", op: 0.9,
       lic: "Open-Meteo, CC BY 4.0 (model data from the publishing weather service)", legend: function () { return ramp(LEG.flow); } },
     { k: "temp", name: "Temperature, 2 m", grp: "Temperature", grid: true, note: "Open-Meteo model air temperature at the chosen time, °C and °F.", op: 0.55,
       lic: "Open-Meteo, CC BY 4.0", legend: function () { return ramp(LEG.temp); } },
@@ -2002,7 +2002,7 @@
     { k: "fhist", name: "Flood history", grp: "Flooding", mirror: "hist", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water).", lic: "EC JRC / Google, CC BY 4.0",
       legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,rgba(149,109,235,.2),rgba(115,80,235,.6),rgba(80,50,235,.75))"></span><span class="wxrl"><span>rarely wet</span><span>often wet</span></span>'; } },
     { k: "tc", name: "Tropical cyclones", grp: "Storms", note: "Tracks and forecast cones: JMA and JTWC (from the app's 15-minute snapshot), NOAA NHC, CPHC and JTWC (nowCOAST), and GDACS storm alerts worldwide.", op: 0.85,
-      lic: "JMA, JTWC, NOAA nowCOAST (public domain), GDACS", legend: function () { return (W.OSAP_SYM ? W.OSAP_SYM.sw("a_hydromet", "#c62828") + " storm now (NATO weather-event symbol; dot = agency colour) " : "") + cats([["#c62828", "track, forecast dashed"], ["rgba(198,40,40,.25)", "cone or wind area"]]); },
+      lic: "JMA, JTWC, NOAA nowCOAST (public domain), GDACS", legend: function () { return (W.OSAP_SYM ? W.OSAP_SYM.sw("a_hydromet", "#c62828") + " storm now (NATO weather-event symbol; dot = agency color) " : "") + cats([["#c62828", "track, forecast dashed"], ["rgba(198,40,40,.25)", "cone or wind area"]]); },
       make: function (op) { return stormLayer(op); } },
     { k: "warn", name: "Weather warnings", grp: "Warnings", note: "Mapped warnings and alerts: GDACS (worldwide), Pacific Disaster Center hazards for the open country, and U.S. National Weather Service warning areas. Warnings without a map position are listed in the Weather view.", op: 0.8,
       lic: "GDACS; PDC DisasterAWARE; NOAA NWS (public domain)", legend: function () { return (W.OSAP_SYM ? "NATO event symbols (flood, storm, quake, fire…); the dot is the level: " : "") + cats([["#c62828", "red or warning"], ["#ef6c00", "orange or watch"], ["#2e7d32", "green or advisory"]]); },

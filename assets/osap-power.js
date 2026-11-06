@@ -207,8 +207,8 @@
 
   /* ---------- the rows in Map overlays > Infrastructure, the legend ---------- */
   function switches() {
-    return [["plants", "Power plants", "Every fuel, coloured by fuel, with a fuel filter (WRI, Wikidata, OpenStreetMap)"],
-      ["lines", "Transmission lines", "Coloured by voltage: 200 kV and up from region zoom, every line close in, local lines at street level"],
+    return [["plants", "Power plants", "Every fuel, colored by fuel, with a fuel filter (WRI, Wikidata, OpenStreetMap)"],
+      ["lines", "Transmission lines", "Colored by voltage: 200 kV and up from region zoom, every line close in, local lines at street level"],
       ["subs", "Substations", "Switching and transformer stations"]].map(function (r) {
       return '<label class="mlrow"><input type="checkbox" data-pwr="' + r[0] + '"' + (S[r[0]] ? " checked" : "") + "><span><b>" + r[1] + "</b><i>" + esc(r[2]) + "</i></span></label>" +
         /* osap-infra.js fills this with the fuel filter and the plant count */
@@ -235,7 +235,7 @@
     if (!S.lines && !S.subs) { W.OSAP_LEGEND.set("pwr", ""); return; }
     W.OSAP_LEGEND.set("pwr", '<div class="lgh" style="font-weight:600;margin-bottom:2px">Power grid · voltage</div>' +
       BANDS.map(function (b) { return '<div class="lg"><span class="sw" style="background:' + b.col + ';height:' + Math.max(3, Math.round(b.w + 1)) + 'px;border-radius:2px"></span><div>' + b.l + "</div></div>"; }).join("") +
-      '<div class="lg"><div><span class="d">Dashed: underground or submarine cable. ' + (W.OSAP_SYM && W.OSAP_SYM.d.i_power ? "Substations: official electric power symbol, the dot coloured the same way." : "Squares: substations, coloured the same way.") + ' OpenStreetMap.</span></div></div>' +
+      '<div class="lg"><div><span class="d">Dashed: underground or submarine cable. ' + (W.OSAP_SYM && W.OSAP_SYM.d.i_power ? "Substations: official electric power symbol, the dot colored the same way." : "Squares: substations, colored the same way.") + ' OpenStreetMap.</span></div></div>' +
       (S.subs && W.OSAP_SYM && W.OSAP_SYM.d.i_power ? '<div class="lg msyml">' + W.OSAP_SYM.sw("i_power") + "<div>Substation</div></div>" : ""));
   }
   function set(k, on) {

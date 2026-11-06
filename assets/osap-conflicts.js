@@ -331,7 +331,7 @@
       row("sub_event_type", "Sub-event", '<select data-f="sub_event_type">' + opts(C.TYPES[et] || [], se, "Choose") + "</select>") +
       row("actor1", "Actor 1", '<input data-f="a1" list="cfactors-' + k + '" value="' + esc(a1.name || "") + '" placeholder="Side that acted"><select data-f="a1b">' + opts(bas, a1.basis || "named_by_source") + "</select>") +
       row("actor2", "Actor 2", '<input data-f="a2" list="cfactors-' + k + '" value="' + esc(a2.name || "") + '" placeholder="Side acted on (blank: none)"><select data-f="a2b">' + opts(bas, a2.basis || "named_by_source") + "</select>") +
-      row("place", "Place", '<select data-f="pin" aria-label="Place from">' + opts(pins.map(function (x) { return [x.fp, (x.geo.n || "pin") + (x.geo.p === "province" ? " (province centre)" : "") + " · " + oname(x)]; }).concat([["", "My own place or coordinates"]]), pinSel) + "</select>" +
+      row("place", "Place", '<select data-f="pin" aria-label="Place from">' + opts(pins.map(function (x) { return [x.fp, (x.geo.n || "pin") + (x.geo.p === "province" ? " (province center)" : "") + " · " + oname(x)]; }).concat([["", "My own place or coordinates"]]), pinSel) + "</select>" +
         '<input data-f="n" value="' + esc(pl.n || "") + '" placeholder="Place name"><input data-f="la" type="number" step="any" value="' + esc(pl.la == null ? "" : pl.la) + '" placeholder="Lat"><input data-f="lo" type="number" step="any" value="' + esc(pl.lo == null ? "" : pl.lo) + '" placeholder="Lon">' +
         '<select data-f="prec" aria-label="Geo precision">' + opts(C.PRECISION, pl.precision || 3) + "</select>") +
       row("fatalities", "Fatalities", '<input data-f="fn" type="number" min="0" step="1" value="' + esc(fa.n == null ? "" : fa.n) + '" placeholder="Not given"><select data-f="ffp" aria-label="As reported by">' +
@@ -725,11 +725,11 @@
     }
     if (ucdpHeat.on) h.push(W.OSAP_HEAT.legend("UCDP events", "Heat map of " + num(ucdpHeat.n) + " events, each where UCDP placed it; deadlier events weigh more." +
       (ucdpHeat.left ? " " + num(ucdpHeat.left) + " placed only to a province or wider are left out here." : "") + " Zoom in or tap a hot area for each event."));
-    else if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return sym() ? '<div class="lg msyml">' + W.OSAP_SYM.sw(t === 3 ? "a_killing" : "a_shooting", TYPEC[t]) + "<div>" + esc(TYPEN[t]) + "</div></div>" : row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">' + (sym() ? "NATO map symbols, the dot in the event type's colour. Larger: more deaths (UCDP best estimate)" : "Larger dot: more deaths (UCDP best estimate)") + "</span></div></div>");
+    else if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return sym() ? '<div class="lg msyml">' + W.OSAP_SYM.sw(t === 3 ? "a_killing" : "a_shooting", TYPEC[t]) + "<div>" + esc(TYPEN[t]) + "</div></div>" : row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">' + (sym() ? "NATO map symbols, the dot in the event type's color. Larger: more deaths (UCDP best estimate)" : "Larger dot: more deaths (UCDP best estimate)") + "</span></div></div>");
     var rk = sym() ? Object.keys(repSyms) : [];
     if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + (rk.length ? rk.map(function (k) { return '<div class="lg msyml">' + W.OSAP_SYM.sw(k) + "<div>" + esc(W.OSAP_SYM.m[k][0]) + "</div></div>"; }).join("") +
         '<div class="lg"><div><span class="d">News reports as NATO map symbols, placed at the place they name; unverified. Dashed ring: placed only to a province.</span></div></div>'
-      : row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the centre of the province it names", true)) +
+      : row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the center of the province it names", true)) +
       (repConf ? '<div class="lg"><span class="sw round" style="background:transparent;border:3px solid #1F8A4C"></span><div>Analyst confirmed<span class="d">An analyst confirmed the reports describe a real incident; figures stay as reported</span></div></div>' : "") +
       '<div class="lg"><span class="sw round cfrepn" style="position:static;display:inline-flex;width:18px;height:18px"><span style="font-size:10px">3</span></span><div>Reports close together<span class="d">Tap to zoom in or list them</span></div></div>');
     W.OSAP_LEGEND.set("cf", h.join(""), rail());
@@ -740,7 +740,7 @@
     var lg = (f && f.current && f.current.legend) || {}, k = String(ctl).replace(/^contested:/, "");
     if (lg[ctl]) return /^contested:/.test(ctl) ? "Contested: " + lg[ctl] : lg[ctl];
     if (/^contested:/.test(ctl)) return "Contested (" + k.split("+").map(function (x) { return lg[x] || x; }).join(" / ") + ")";
-    return lg[ctl] || (ctl === "other" ? "Other marker" : "Held by the side the source colours " + ctl);
+    return lg[ctl] || (ctl === "other" ? "Other marker" : "Held by the side the source colors " + ctl);
   }
 
   /* ---------- rail ---------- */
@@ -774,7 +774,7 @@
       (i.mt ? '<span class="tag" title="' + esc(i.mt) + '">Machine translated</span>' : "") +
       (i.killed ? '<span class="tag" title="As the headline states it; unverified">' + i.killed + " killed (reported)</span>" : "") +
       (i.injured ? '<span class="tag" title="As the headline states it; unverified">' + i.injured + " injured (reported)</span>" : "") +
-      esc(i.outlet || "") + (i.via === "search" ? "" : "") + " · " + when(i.date) + (i.geo ? " · " + esc(i.geo.n) + (i.geo.p === "province" ? " (place given only to region; pin at its centre)" : "") : "") +
+      esc(i.outlet || "") + (i.via === "search" ? "" : "") + " · " + when(i.date) + (i.geo ? " · " + esc(i.geo.n) + (i.geo.p === "province" ? " (place given only to region; pin at its center)" : "") : "") +
       (i.nc ? ' · <span title="Found through a service whose terms are non-commercial">nc</span>' : "") + "</div>" +
       (i.tab && i.summary ? '<div class="cfm">' + esc(i.summary.length > 280 ? i.summary.slice(0, 277) + "…" : i.summary) + "</div>" : "") +
       '<div class="fp" title="SHA-256 fingerprint of this record: ' + esc(i.fp || "") + '">SHA-256 ' + esc((i.fp || "").slice(0, 16)) + "…</div>";
@@ -834,7 +834,7 @@
     h.push('<div class="sec"><h2>' + esc(c.name) + "</h2>");
     if (d.auto) h.push('<p class="cfsub">Automatic tab: UCDP recorded deadly violence in ' + esc(cname(c.auto.cc)) + " over the past year that fits none of the conflicts AXIOM OSAP lists. Only UCDP’s events are shown; news for this country is under Local news.</p>");
     else h.push('<p class="cfsub">' + esc(d.kind || "") + (d.since ? " · current phase since " + day(d.since) : "") + " · " + esc((d.countries || []).map(cname).join(", ")) + "</p>" +
-      '<div class="cfm">Parties named in reporting (listing is not a judgement):</div><div class="cfpart">' + (d.parties || []).map(function (p) { return "<span>" + esc(p) + "</span>"; }).join("") + "</div>");
+      '<div class="cfm">Parties named in reporting (listing is not a judgment):</div><div class="cfpart">' + (d.parties || []).map(function (p) { return "<span>" + esc(p) + "</span>"; }).join("") + "</div>");
     // with a taken-over layer, the figures and the weekly chart count everything this tab lists (the layer's records too), and the
     // headline figures count incidents (reports of one incident counted once)
     var cnt = d._all ? tabCounts(d) : null;
@@ -859,7 +859,7 @@
       (f && f.previous ? '<label><input type="checkbox" data-cfshow="prev"' + (F.show.prev ? " checked" : "") + "> Previous version</label>" : "") +
       '<label><input type="checkbox" data-cfshow="ucdp"' + (F.show.ucdp ? " checked" : "") + "> UCDP events</label>" +
       '<label><input type="checkbox" data-cfshow="rep"' + (F.show.rep ? " checked" : "") + "> Placed reports</label></div>" +
-      '<div class="cfm">What each colour means is in the legend on the map.</div><div id="cf-layers-x"></div></div>');
+      '<div class="cfm">What each color means is in the legend on the map.</div><div id="cf-layers-x"></div></div>');
     h.push('<div class="sec" id="cf-reps"><h3 style="margin-top:0">' + (d.auto ? "UCDP events" : "Recent reports") + '</h3><div class="cfctl">' + periodSel() +
       (allItems(d).length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.kind === k ? " selected" : "") + ">" + esc(kindName(k)) + " (" + kinds[k] + ")</option>"; }).join("") + "</select>" : "") +
@@ -936,7 +936,7 @@
           "</b><span>change at the last version</span></div></div>");
       } else {
         var cnt = {}; cu.places.forEach(function (p) { cnt[p.ctl] = (cnt[p.ctl] || 0) + 1; });
-        h.push('<p class="cfnote">Towns as marked on the source’s map; the colour stands for the side that holds each town as the source shows it (legend on the map).</p>');
+        h.push('<p class="cfnote">Towns as marked on the source’s map; the color stands for the side that holds each town as the source shows it (legend on the map).</p>');
       }
       var changes = (f.versions || []).filter(function (x) { return x.changes && x.changes.length; }).slice(0, 5);
       if (changes.length) h.push("<details><summary>Towns that changed hands (as the source shows)</summary><table><tbody>" + changes.map(function (x) {

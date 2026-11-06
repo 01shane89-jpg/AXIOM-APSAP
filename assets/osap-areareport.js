@@ -59,7 +59,7 @@
   var SKIP = { tlpane: 1, xapane: 1, evlbl: 1, cfrep: 1, areapane: 1, lblpane: 1, measpane: 1, gridpane: 1, srchpane: 1, mylocpane: 1,
     rtpvpane: 1, rtpvtop: 1, wxlbl: 1, wxvec: 1, cbase: 1, stlines: 1, hybpane: 1, satpane: 1, roadpane: 1, tooltipPane: 1, popupPane: 1, rvpane: 1 };
   var PANE = { cfpane: "Conflict tab layers", dsbpane: "Conflict tab layers", terpane: "Terrain, flashpoints and presence", fpzone: "Terrain, flashpoints and presence",
-    infpt: "Infrastructure", milpt: "Military installations", pwrpt: "Power", pwrpane: "Power", airpane: "Live aircraft", campt: "Cameras", dcpt: "Data centres", svpt: "Surveillance",
+    infpt: "Infrastructure", milpt: "Military installations", pwrpt: "Power", pwrpane: "Power", airpane: "Live aircraft", campt: "Cameras", dcpt: "Data centers", svpt: "Surveillance",
     mobpane: "Movement and traffic", mobrx: "Movement and traffic", sidespane: "Military sites", lzpane: "Landing zones", dzpane: "Drop zones", evpane: "Incidents",
     wxpane: "Weather stations", atakpane: "My map points", anpane: "Analyst workspace", routewppane: "Route", vspane: "Terrain" };
   function objects(P) {
@@ -301,7 +301,7 @@
       '<label for="arp-base">Map</label> <select id="arp-base" class="mini">' + bopt + "</select>" +
       ' <span class="obs">Export PDF opens the print dialog: choose "Save as PDF" and A4 or Letter.</span></div>';
     var head = '<header class="tlrh"><img src="' + esc(logoSrc()) + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Area report</div><h2>Activity in the drawn area</h2>' +
-      '<div class="tlrsubt">' + esc(A0.ccName ? A0.ccName() : "") + " · about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km² · centre " + esc(grid(cen[0], cen[1])) + " · " + esc(c.g.period) + "</div></div>" +
+      '<div class="tlrsubt">' + esc(A0.ccName ? A0.ccName() : "") + " · about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km² · center " + esc(grid(cen[0], cen[1])) + " · " + esc(c.g.period) + "</div></div>" +
       '<div class="tlrg">Generated <br><b>' + esc(T().dualT(now, { date: true })) + "</b></div></header><div class=\"tlrrule\"></div>";
     var mapped = function (l) { return l.filter(function (it) { return it.lat != null && isFinite(it.lat); }); };
     var mk = function (it) { return { lat: it.lat, lon: it.lon, sym: it.obj ? it.sym : (INC_KEYS[it.ik] || it.ik === "diplomatic" ? it.ik : ""), no: it.no, kind: it.kind }; };
@@ -327,7 +327,7 @@
       return s + cap(list) + "</section>";
     }
     html += section("Reported incidents", c.inc, "Reports that describe shooting, explosions, mines, incidents at sea or harm to civilians, picked by fixed words (no AI), or rated high severity by OSAP's rules. Newest first.", function (l) { return table(l, repRow, "<b>Table 1.</b> Reported incidents, newest first", "When"); });
-    html += section("Other reports and records", c.rep, "Official records, news, social posts from official and news accounts, open data and neighbouring countries' reports inside the area, plus unmapped reports that name a place in it. Newest first.", function (l) { return table(l, repRow, "<b>Table 2.</b> Other reports and records, newest first", "When"); });
+    html += section("Other reports and records", c.rep, "Official records, news, social posts from official and news accounts, open data and neighboring countries' reports inside the area, plus unmapped reports that name a place in it. Newest first.", function (l) { return table(l, repRow, "<b>Table 2.</b> Other reports and records, newest first", "When"); });
     html += section("Map objects", c.obj, "Points on the map inside the area when the report was made: terrain, flashpoints, crossings, sites, infrastructure and live tracks, whatever overlays are switched on. These are reference layers, not reports. Switch on more in Map overlays to include them.", function (l) {
         var groups = {}, order = []; l.forEach(function (it) { if (!groups[it.group]) { groups[it.group] = []; order.push(it.group); } groups[it.group].push(it); });
         return order.map(function (gname, i) { return '<div class="arpgrp">' + esc(gname) + " (" + groups[gname].length + ")</div>" + table(groups[gname], objRow, "<b>Table " + (3 + i) + ".</b> " + esc(gname), "Symbol"); }).join("");

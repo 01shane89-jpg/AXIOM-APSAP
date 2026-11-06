@@ -52,7 +52,7 @@
   }
   function link(url, text) { var u = safeUrl(url); return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + text + "</a>" : text; }
   function tag() { return '<span class="rktag" title="' + esc(TAG_TIP) + '" tabindex="0">Derived equivalent</span>'; }
-  var NOTE = "Derived by OSAP from open data with a fixed formula, modelled on commercial five-level country and city ratings. " +
+  var NOTE = "Derived by OSAP from open data with a fixed formula, modeled on commercial five-level country and city ratings. " +
     "Not an official travel advisory and not an analyst assessment: official advisories are not an input and are shown apart.";
 
   /* ---------- the Today card ---------- */

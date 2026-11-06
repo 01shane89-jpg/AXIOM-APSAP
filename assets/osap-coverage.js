@@ -129,7 +129,7 @@
     else h += '<ul class="cvlist">' + L.slice(0, shown).map(storyHtml).join("") + "</ul>" + (L.length > shown ? '<button type="button" class="cvmore" data-cvmore>Show ' + Math.min(PAGE, L.length - shown) + " more of " + L.length + "</button>" : "");
     var sd = S.sides || {}, a = sd.active || {};
     h += '<div class="cvfoot"><p><span class="cvdot cvk-state"></span>State media <span class="cvdot cvk-public"></span>Public broadcaster <span class="cvdot cvk-other"></span>Private or independent. ' +
-      "Ownership is from OSAP's outlet list, not a judgement of the reporting; state media lines are that government's claims.</p>" +
+      "Ownership is from OSAP's outlet list, not a judgment of the reporting; state media lines are that government's claims.</p>" +
       "<p>" + (sd.stateRead && sd.stateRead.length ? "State media OSAP reads for " + esc(NAME) + ": " + esc(sd.stateRead.join(", ")) + (a.state ? "" : " (too few headlines in the window to call it silent)") + ". "
         : "OSAP reads no state media for " + esc(NAME) + ", so there is no state-media-silent check. ") +
       (sd.home ? plural(sd.home, esc(NAME) + " outlet") + " with " + plural(sd.homeReports || 0, "headline") + " in the window." : "") + "</p>" +

@@ -23,7 +23,7 @@
   var W = window, D = document;
   var MT = "https://tiles.mapterhorn.com/{z}/{x}/{y}.webp", COV = "https://download.mapterhorn.com/coverage.pmtiles",
     ATT = "https://download.mapterhorn.com/attribution.json", PMLIB = "assets/vendor/pmtiles-4.5.0.js", KEY = "osap-lidar";
-  var ATTR = 'Elevation: <a href="https://mapterhorn.com/attribution/" target="_blank" rel="noopener noreferrer">Mapterhorn</a> (national LiDAR and elevation models, each under its producer\'s licence; Copernicus GLO-30 &copy; DLR e.V., Airbus, ESA)';
+  var ATTR = 'Elevation: <a href="https://mapterhorn.com/attribution/" target="_blank" rel="noopener noreferrer">Mapterhorn</a> (national LiDAR and elevation models, each under its producer\'s license; Copernicus GLO-30 &copy; DLR e.V., Airbus, ESA)';
   /* resolution classes, finest first; "max" is the coarsest resolution (m) in the class */
   var CLASSES = [
     { id: "l1", max: 1, name: "LiDAR 1 m or finer", col: "#1b5e20" },
@@ -310,7 +310,7 @@
   function note() { var n = D.getElementById("ml-lidarnote"); if (n) n.textContent = "The coverage file did not load. Check the connection; the map tries again as you move."; }
   function legend() {
     return '<div class="mlkey" id="ml-lidarkey"' + (ST.cov ? "" : " hidden") + ">" + CLASSES.map(function (c) { return '<span style="background:' + c.col + ';border-radius:2px"></span>' + esc(c.name); }).join(" ") +
-      ' <span style="background:transparent;border:1px solid #999;border-radius:2px"></span>No colour: ' + esc(SAT) + "." +
+      ' <span style="background:transparent;border:1px solid #999;border-radius:2px"></span>No color: ' + esc(SAT) + "." +
       '<i id="ml-lidarnote" style="display:block"></i></div>';
   }
   function rows() {
@@ -319,7 +319,7 @@
     var at0 = box.querySelector("input[data-hs]"), ref = at0 ? at0.closest("label") : box.querySelector(".mlop");
     var w = D.createElement("div"); w.id = "ml-lidar";
     w.innerHTML = '<label class="mlrow"><input type="checkbox" data-lidar="hs"' + (ST.hs ? " checked" : "") + "><span><b>LiDAR hillshade</b><i>Shading from national LiDAR wherever it is published (US, Canada, most of Europe, Australia, New Zealand, Japan and more), about 30 m satellite elevation elsewhere. Drawn on this device from Mapterhorn tiles; sharpest zoomed in on a Satellite base map, which goes closest.</i></span></label>" +
-      '<label class="mlrow"><input type="checkbox" data-lidar="cov"' + (ST.cov ? " checked" : "") + "><span><b>LiDAR coverage</b><i>Colours the areas that have real LiDAR or a fine national elevation model, by resolution. Uncoloured land has satellite elevation only.</i></span></label>" + legend();
+      '<label class="mlrow"><input type="checkbox" data-lidar="cov"' + (ST.cov ? " checked" : "") + "><span><b>LiDAR coverage</b><i>Colors the areas that have real LiDAR or a fine national elevation model, by resolution. Uncolored land has satellite elevation only.</i></span></label>" + legend();
     if (ref) box.insertBefore(w, ref); else box.appendChild(w);
     w.addEventListener("change", function (e) { var t = e.target; if (t.dataset && t.dataset.lidar) set(t.dataset.lidar, t.checked); });
     return true;
@@ -337,8 +337,8 @@
     at(c.lat, Lf.Util.wrapNum(c.lng, [-180, 180], true)).then(function (r) {
       if (t !== cTok) return;
       var s = r.best, cl = s && classOf(s.res);
-      n.innerHTML = "<b>At the map centre:</b> " + (s ? esc(cl ? cl.name : "Elevation model") + ". " + esc(s.name) + ", " + esc(fmtRes(s.res)) + (s.producer ? ", " + esc(s.producer) : "") +
-        (s.licence ? ". Licence: " + esc(s.licence) : "") + (/^https?:\/\//.test(s.website) ? '. <a href="' + esc(s.website) + '" target="_blank" rel="noopener noreferrer">Source</a>' : "") +
+      n.innerHTML = "<b>At the map center:</b> " + (s ? esc(cl ? cl.name : "Elevation model") + ". " + esc(s.name) + ", " + esc(fmtRes(s.res)) + (s.producer ? ", " + esc(s.producer) : "") +
+        (s.licence ? ". License: " + esc(s.licence) : "") + (/^https?:\/\//.test(s.website) ? '. <a href="' + esc(s.website) + '" target="_blank" rel="noopener noreferrer">Source</a>' : "") +
         (r.sources.length > 1 ? " (" + (r.sources.length - 1) + " more model" + (r.sources.length > 2 ? "s" : "") + " here)" : "") : "no LiDAR. " + esc(SAT)) + ".";
     }, function () { if (t === cTok) note(); });
   }

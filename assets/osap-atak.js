@@ -110,15 +110,15 @@
     ["datasets", "Data sets", I.data, "Data sets: the reporting topics the map and the list show"],
     ["weather", "Weather", I.cloud, "Weather: radar, cloud, wind, warnings, cyclones and forecasts"],
     ["overlays", "Overlays", I.layers, "Map overlays: flooding, terrain, roads, aircraft, your marks"],
-    ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
+    ["basemap", "Base map", I.globe, "Choose the base map: gray, streets, topographic, satellite and more"],
     ["view", "View", I.view, "View: grid lines, crosshair, 3D, compass, map and list layout, full screen"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
-    ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
+    ["area", "Area", I.area, "Draw an area to filter the map, summarize it or save it as an NAI/TAI"],
     /* every planning tool in one drop-down (Shane 2026-11-01): medical, evacuation, flight, landing and drop zones, comms, terrain, weather */
     ["plans", "Plans", I.plans, "Plans: medical plan, hospital assessment, dive plan, evacuation, flight plan, landing zones, DZSO, site survey, comms, terrain analysis, weather brief"],
     /* its own button (Shane 2026-10-02): the plan for the drawn area, or from the map centre when nothing is drawn */
-    ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map centre"],
+    ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map center"],
     /* its own button next to Med plan (Shane 2026-10-03, EPE decision 1): ways out from one point, with the analyst's P/A/C/E roles */
     ["evac", "Evac", I.evac, "Evacuation plan: ground routes from one point to the embassy, airports, airfields and seaport, with your P/A/C/E roles"],
     /* its own button next to Evac (Shane 2026-10-09): opens the Comms planning view (PACE, coverage, links, networks,
@@ -234,7 +234,7 @@
     else if (k === "area") {
       var has = areaOn();
       /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).filter(function (x) { return x.id !== "med"; }).map(function (x) { return [x.id, x.label]; }),
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarize area"]].concat((W.OSAP_AREA_TOOLS || []).filter(function (x) { return x.id !== "med"; }).map(function (x) { return [x.id, x.label]; }),
         has ? [null, ["edit", "Edit shape"], ["save", "Save shape (or NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "medplan") {
@@ -256,7 +256,7 @@
     }
     else if (k === "point") {
       var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
-      popOpen(b, (W.OSAP_POINTS && W.OSAP_POINTS.snap ? [["snap", "Take a photo here (grid + heading)"]] : []).concat(W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? [["photo", "Check a photo or video"]] : [], [["centre", "At the map centre"], ["tap", "Tap the map to place it"]], hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
+      popOpen(b, (W.OSAP_POINTS && W.OSAP_POINTS.snap ? [["snap", "Take a photo here (grid + heading)"]] : []).concat(W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open ? [["photo", "Check a photo or video"]] : [], [["centre", "At the map center"], ["tap", "Tap the map to place it"]], hm ? [["me", "At my position"]] : [], [null, ["grid", "Show MGRS on points", ptGrid()]], W.OSAP_PLACES ? [["places", "My places (folders)"]] : []));
     }
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
@@ -346,7 +346,7 @@
       var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
       var run = at ? function () { if (typeof at.run === "function") at.run(); } : k === "sum" ? function () { areaPress("sum"); } : null;
       /* a tool marked point: true (the medical plan) runs without a shape, from the map centre */
-      if (run && !areaOn() && !(at && at.point)) { areaWait(run, at ? at.label : "Summarise area"); return; }
+      if (run && !areaOn() && !(at && at.point)) { areaWait(run, at ? at.label : "Summarize area"); return; }
       if (run) run();
       /* Save keeps the drawn shape as a plain Shape with its look; its form also offers NAI and TAI (assets/osap-aoi.js) */
       else if (k === "save") { if (W.OSAP_AOI && W.OSAP_AOI.saveDrawn) W.OSAP_AOI.saveDrawn(); else press("[data-aoi-save]"); } else areaPress(k);
@@ -389,7 +389,7 @@
 
   /* ---------- the readout strip ---------- */
   var strip = D.createElement("div"); strip.id = "atk-bar"; strip.className = "leaflet-control";
-  strip.innerHTML = '<button type="button" class="atk-pos" data-sb="fmt" title="Tap to switch between MGRS, decimal degrees and degrees-minutes-seconds"><b class="atk-k">Centre</b> <span class="atk-v"></span></button>' +
+  strip.innerHTML = '<button type="button" class="atk-pos" data-sb="fmt" title="Tap to switch between MGRS, decimal degrees and degrees-minutes-seconds"><b class="atk-k">Center</b> <span class="atk-v"></span></button>' +
     '<button type="button" class="atk-ic" data-sb="copy" title="Copy this grid" aria-label="Copy this grid">' + I.copy + "</button>" +
     '<span class="atk-me" hidden><b class="atk-k">Me</b> <span class="atk-mv"></span></span>' +
     '<button type="button" class="atk-ic atk-lock" data-sb="lock" aria-pressed="false" title="Lock the map on my position" aria-label="Lock the map on my position">' + I.lock + "</button>";
@@ -407,7 +407,7 @@
   function paintStrip() {
     if (!root.classList.contains("atak")) return;
     var p = readPt();
-    strip.querySelector(".atk-k").textContent = cursor ? "Cursor" : "Centre";
+    strip.querySelector(".atk-k").textContent = cursor ? "Cursor" : "Center";
     strip.querySelector(".atk-v").textContent = fmtPt(p[0], p[1]);
     var h = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here(), me = strip.querySelector(".atk-me");
     me.hidden = !h;

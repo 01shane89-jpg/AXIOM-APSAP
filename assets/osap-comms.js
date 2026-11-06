@@ -910,9 +910,9 @@ function main() {
   function legend() {
     var Lg = W.OSAP_LEGEND; if (!Lg || !S.ctx) return;
     var h = "<h3>Comms</h3>";
-    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div>' + (W.OSAP_SYM ? W.OSAP_SYM.sw("i_tower", KINDS[k].col) : '<span class="comsw" style="background:' + KINDS[k].col + '"></span>') + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + "</div>"; });
+    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div>' + (W.OSAP_SYM ? W.OSAP_SYM.sw("i_tower", KINDS[k].col) : '<span class="comsw" style="background:' + KINDS[k].col + '"></span>') + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colors)" : "") + "</div>"; });
     if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast; each test cell is about 2.4 km, blended for display</small></div>";
-    if (S.on.pcov) h += '<div class="comkey">Coverage by network, where phones picked up its cells (OpenCelliD): ' + Object.keys(S.pcol).filter(function (k) { return !S.off[k]; }).slice(0, 8).map(function (k) { return '<span class="comsq" style="background:' + S.pcol[k] + '" title="' + E(provName(k)) + '"></span>'; }).join("") + " <small>each network in its own colour</small></div>";
+    if (S.on.pcov) h += '<div class="comkey">Coverage by network, where phones picked up its cells (OpenCelliD): ' + Object.keys(S.pcol).filter(function (k) { return !S.off[k]; }).slice(0, 8).map(function (k) { return '<span class="comsq" style="background:' + S.pcol[k] + '" title="' + E(provName(k)) + '"></span>'; }).join("") + " <small>each network in its own color</small></div>";
     if (S.result) h += '<div class="comkey">' + [3, 2, 1].map(function (l) { return '<span class="comsw" style="background:' + LV[l].c + '"></span>' + E(LV[l].t); }).join("<br>") + "</div>";
     if (S.result && !S.result.line) h += '<div class="comkey"><span class="comln"></span>Mast in clear line of sight<br><span class="comln comln-x"></span>Terrain blocks the mast</div>';
     Lg.set("comms", h, S.ctx.rail);
@@ -971,7 +971,7 @@ function main() {
   function paintToggles() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-tg"); if (!el) return;
     el.innerHTML = Object.keys(KINDS).map(function (k) {
-      return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + ' <span class="comn" data-comn="' + k + '"></span></label>';
+      return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colors)" : "") + ' <span class="comn" data-comn="' + k + '"></span></label>';
     }).join("") + '<label class="comtg"><input type="checkbox" data-comtg="cov"' + (S.on.cov ? " checked" : "") + '><span class="comsq" style="background:' + BCOL[2] + '"></span>Measured phone coverage (all networks)</label>' +
       '<label class="comtg"><input type="checkbox" data-comtg="pcov"' + (S.on.pcov ? " checked" : "") + '><span class="comsq" style="background:' + PCOL[0] + '"></span>Coverage by network (cells phones have picked up)</label>';
     paintCounts();
@@ -1009,7 +1009,7 @@ function main() {
       return;
     }
     oe.innerHTML = "<h3>Service providers</h3>" +
-      '<p class="obs">Tick the networks to show. Each network has its own colour for its masts and for the places phones have picked up its cells; the masts, the coloured areas and the coverage check follow your choice.</p>' +
+      '<p class="obs">Tick the networks to show. Each network has its own color for its masts and for the places phones have picked up its cells; the masts, the colored areas and the coverage check follow your choice.</p>' +
       '<div class="comprov">' + list.map(function (k) {
         var why = k === "?" ? nm + " masts in view" : ops[k] ? ops[k] + " masts in view" : cnSet[k] ? "network in " + (S.ctx.name || "this country") : S.netSt[k] === 0 ? "cells on the map; listed as no longer operating" : "cells on the map";
         return '<label class="comtg"><input type="checkbox" data-comprov="' + E(k) + '"' + (S.off[k] ? "" : " checked") + '><span class="comsw" style="background:' + pcovCol(k) + '"></span>' + E(provName(k)) + ' <span class="comn">(' + E(why) + ")</span></label>";
@@ -1017,7 +1017,7 @@ function main() {
       '<p><button type="button" data-comprovall="1">All</button> <button type="button" data-comprovall="0">None</button></p>' +
       '<p class="obs">Mast names come from the "operator" tags mappers put on masts in OpenStreetMap' + (nm ? "; " + nm + " of " + all + " masts in view have none (tap one to see the networks heard round it)" : "") + ". " +
       "Some names are tower companies that rent space to several networks. The country's networks come from the list of mobile network codes (MCC-MNC). " +
-      "The coloured areas are where phones picked up each network's cells (OpenCelliD, " + OCID_AT + " copy), drawn about 1.5 km round each cell: proof a phone heard that network there, not a promise of signal, and empty where nobody collected. " +
+      "The colored areas are where phones picked up each network's cells (OpenCelliD, " + OCID_AT + " copy), drawn about 1.5 km round each cell: proof a phone heard that network there, not a promise of signal, and empty where nobody collected. " +
       "The measured-coverage shading (yellow to green squares) counts all networks together.</p>";
   }
   function paintStatus() {

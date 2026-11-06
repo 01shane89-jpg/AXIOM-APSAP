@@ -45,7 +45,7 @@
       "<li><b>Use a browser kept for OSAP</b> (or a separate profile), not the one signed in to your own email or social accounts, and lock the device with a PIN and a short screen-lock time.</li>" +
       "<li><b>Do not use Sync my devices or Push to phone</b> where being linked to OSAP is a risk: both talk to outside services (Protected mode turns them off).</li>" +
       "<li><b>Sign in with an email that does not name you.</b> OSAP's server keeps your account email and when you last used OSAP.</li></ol>" +
-      '<p class="sn">No setting makes anyone invisible: a VPN provider sees what its network carried, and a phone\'s carrier sees where the phone is. Use these steps alongside your organisation\'s own rules.</p>' +
+      '<p class="sn">No setting makes anyone invisible: a VPN provider sees what its network carried, and a phone\'s carrier sees where the phone is. Use these steps alongside your organization\'s own rules.</p>' +
       '<div class="sb"><button type="button" data-safe="close">Close</button></div>';
   }
   function check() {

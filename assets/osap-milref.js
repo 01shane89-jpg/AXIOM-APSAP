@@ -51,7 +51,7 @@
     seen = seen || {}; if (seen[q]) return 0; seen[q] = 1;
     return (kids[q] || []).reduce(function (n, k) { return n + 1 + size(k.q, kids, seen); }, 0);
   }
-  var CATS = [["air", "Aircraft types"], ["sea", "Ships, submarines and classes"], ["land", "Land systems and air defence"], ["msl", "Missiles, rockets and munitions"], ["sens", "Radar, sonar and communications"], ["arms", "Small arms"]];
+  var CATS = [["air", "Aircraft types"], ["sea", "Ships, submarines and classes"], ["land", "Land systems and air defense"], ["msl", "Missiles, rockets and munitions"], ["sens", "Radar, sonar and communications"], ["arms", "Small arms"]];
   function groups(equip) {
     var g = {}; (equip || []).forEach(function (e) { var k = e.out ? "out" : e.old ? "old" : e.c; (g[k] = g[k] || []).push(e); });
     return g;
@@ -91,7 +91,7 @@
 
   /* ---- UN Register of Conventional Arms: what the government itself reported to the UN (data/live/milref/unroca/<cc>.json) ---- */
   function unrocaFile(cc) { var f = fileOf(cc); return f ? f.replace("/milref/", "/milref/unroca/") : ""; }
-  var UNCAT = { bt: "Battle tanks", acv: "Armoured combat vehicles", lcas: "Large-calibre artillery", ca_gen: "Combat aircraft and UCAV", ah_gen: "Attack helicopters", ws: "Warships", mml_gen: "Missiles and launchers" };
+  var UNCAT = { bt: "Battle tanks", acv: "Armored combat vehicles", lcas: "Large-caliber artillery", ca_gen: "Combat aircraft and UCAV", ah_gen: "Attack helicopters", ws: "Warships", mml_gen: "Missiles and launchers" };
   var UNORD = ["bt", "acv", "lcas", "ca_gen", "ah_gen", "ws", "mml_gen"];
   /* a reported number; "+" when the report says part of it is classified, as the register itself shows it */
   function unN(n, cl) { return (n == null ? "" : Number(n).toLocaleString("en-US")) + (cl ? '<span title="The report says some items are classified, so the real number is higher">+</span>' : (n == null ? "n/a" : "")); }
@@ -274,7 +274,7 @@
         return "<tr><td>" + link(wdUrl(s.q), esc(s.n)) + fpTag(s.fp) + '</td><td class="bm">' + esc(KIND[s.k] || "Military base") + '</td><td class="mg">' + (s.la != null && W.MGRS_OF ? esc(W.MGRS_OF(s.la, s.lo, 3)) : '<span class="bm">no location</span>') +
           '</td><td class="bm">' + esc(s.op || "") + ((s.u || []).length ? (s.op ? "<br>" : "") + "Based here: " + s.u.map(function (uv) { var u = UN[uv[0]]; return u ? '<span title="' + esc(VIA[uv[1]] || "Wikidata") + '">' + link(wdUrl(u.q), esc(u.n)) + (uv[1] === "P137" ? " (operator)" : "") + "</span>" : ""; }).filter(Boolean).join(", ") + (s.un ? " and " + (s.un - s.u.length) + " more" : "") : "") + "</td></tr>";
       }).join("") + "</table>" + (inst.length > lim ? '<p class="bm">' + (inst.length - lim) + " more installations held.</p>" : "") +
-      '<p class="bm">Grid references are 100 m (MGRS on WGS84) from the point Wikidata gives; a base\'s point is often its centre or its gate, not its outline.</p>';
+      '<p class="bm">Grid references are 100 m (MGRS on WGS84) from the point Wikidata gives; a base\'s point is often its center or its gate, not its outline.</p>';
   }
 
   function briefHtml(M, name, lim) {

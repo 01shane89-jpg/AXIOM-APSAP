@@ -88,7 +88,7 @@
 
   function repliesHtml() {
     var cc = ctx.cc, R = (W.OSAP_REPLIES || {})[cc];
-    var h = '<div class="sec"><h2>Replies</h2><div class="banner" style="margin:0 0 8px"><b>Public replies, summarised.</b> What people replying to the Bluesky posts in this view say, counted with fixed word lists (not AI). ' +
+    var h = '<div class="sec"><h2>Replies</h2><div class="banner" style="margin:0 0 8px"><b>Public replies, summarized.</b> What people replying to the Bluesky posts in this view say, counted with fixed word lists (not AI). ' +
       "No names, handles or reply text are kept; a word is listed only when at least three different replies used it. Tone is a rough English word count and misreads sarcasm. Replies are opinions, not facts.</div>";
     if (loading[cc] === 1) return h + '<p class="obs">Loading…</p></div>';
     if (!R) return h + '<p class="obs"><span class="badge stale">NO DATA</span> No Bluesky posts with replies are kept for ' + E(ctx.name) + " yet. " + NO_COMMENTS.YouTube + " " + NO_COMMENTS.Telegram + "</p></div>";

@@ -30,10 +30,10 @@
   var D = document, W = window;
   var KINDS = [
     { k: "af", name: "Airfields and heliports", sub: "Every airport, airstrip and heliport (OurAirports, OpenStreetMap). Small fields from zoom 8", items: ["af"] },
-    { k: "port", name: "Ports and harbours", sub: "Seaports (NGA World Port Index, UN/LOCODE), ports and ferry terminals (OpenStreetMap)", items: ["port"] },
+    { k: "port", name: "Ports and harbors", sub: "Seaports (NGA World Port Index, UN/LOCODE), ports and ferry terminals (OpenStreetMap)", items: ["port"] },
     { k: "dam", name: "Dams", sub: "Named dams (OpenStreetMap, Wikidata)", items: ["dam"] },
     { k: "cable", name: "Submarine cables", sub: "Cables and landing points (TeleGeography, non-commercial)", items: ["lp"], lines: "cable" },
-    { k: "plant", name: "Power plants", sub: "Every fuel, coloured by fuel (WRI, Wikidata, OpenStreetMap). Small plants from zoom 8", items: ["plant"], pwr: true },
+    { k: "plant", name: "Power plants", sub: "Every fuel, colored by fuel (WRI, Wikidata, OpenStreetMap). Small plants from zoom 8", items: ["plant"], pwr: true },
     { k: "rail", name: "Railways and stations", sub: "Main and branch lines, railway stations (OpenStreetMap, Wikidata). Stations from zoom 8", items: ["stn"], lines: "rail" },
     { k: "bridge", name: "Bridges and tunnels", sub: "Major ones (150 m and longer) at any zoom; zoom in to street level for every bridge in view with its limits, width, structure and what it crosses (OpenStreetMap, live)", items: ["br", "tn"] },
     { k: "water", name: "Water and sewage works", sub: "Drinking water treatment, desalination and sewage plants (OpenStreetMap, Wikidata)", items: ["wat"] },
@@ -133,7 +133,7 @@
   /* ---------- map ---------- */
   var map = null, ptL = null, lnL = null, rend = null, lrend = null;
   var LBL = { icao: "ICAO", iata: "IATA", elev_ft: "Elevation", rw_m: "Longest runway", surface: "Runway surface", sched: "Scheduled flights", town: "Serves",
-    size: "Harbour size", type: "Harbour type", shelter: "Shelter", max_len_m: "Largest vessel", chan_m: "Channel depth", anch_m: "Anchorage depth", unlocode: "UN/LOCODE",
+    size: "Harbor size", type: "Harbor type", shelter: "Shelter", max_len_m: "Largest vessel", chan_m: "Channel depth", anch_m: "Anchorage depth", unlocode: "UN/LOCODE",
     wpi: "World Port Index no.", ferry: "Ferry terminal", op: "Operator", height_m: "Height", purpose: "Purpose", river: "River", reservoir: "Reservoir", built: "Built",
     cables: "Cables landing here", military: "Military", fuel: "Fuel", method: "Method", mw: "Capacity", data_year: "Capacity as of", facility: "Facility",
     product: "Product", substance: "Carries", location: "Laid", diameter: "Diameter", usage: "Use", carries: "Carries", road: "Road", len_m: "Length",
@@ -314,12 +314,12 @@
       h += haveSym(t) ? '<div class="lg msyml">' + W.OSAP_SYM.sw(symOf(t), badgeOf(t)) + "<div>" + esc(ty[0]) + "</div></div>"
         : '<div class="lg"><span class="sw" style="background:' + ty[1] + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span><div>' + esc(ty[0]) + "</div></div>";
     });
-    if (S.on.cable) h += '<div class="lg"><span class="sw" style="background:#0b7285;height:3px;width:16px"></span><div>Submarine cable (each in its own colour)</div></div>';
+    if (S.on.cable) h += '<div class="lg"><span class="sw" style="background:#0b7285;height:3px;width:16px"></span><div>Submarine cable (each in its own color)</div></div>';
     var lc = {}; (d.lines || []).forEach(function (l) { lc[l.k + ":" + l.t] = 1; });
     if (S.on.rail) Object.keys(RAIL).forEach(function (t) { if (!lc["rail:" + t]) return; h += '<div class="lg"><span class="sw" style="background:' + RAIL[t][1] + ';height:3px;width:16px"></span><div>' + RAIL[t][0] + "</div></div>"; });
     if (S.on.fuel) Object.keys(PIPE).forEach(function (t) { h += '<div class="lg"><span class="sw" style="background:repeating-linear-gradient(90deg,' + PIPE[t][1] + ' 0 6px,transparent 6px 9px);height:3px;width:16px"></span><div>' + PIPE[t][0] + "</div></div>"; });
     if (S.on.plant) h += '<div class="lg"><div><span class="d">Plants of 100 MW and up, and nuclear plants, show at every zoom.</span></div></div>';
-    if (W.OSAP_SYM && W.OSAP_SYM.mark) h += '<div class="lg"><div><span class="d">Official map symbols (MIL-STD-2525D / APP-6 installations, green square = civilian facility).' + (S.on.plant ? " The dot on a power plant is its fuel colour." : "") + "</span></div></div>";
+    if (W.OSAP_SYM && W.OSAP_SYM.mark) h += '<div class="lg"><div><span class="d">Official map symbols (MIL-STD-2525D / APP-6 installations, green square = civilian facility).' + (S.on.plant ? " The dot on a power plant is its fuel color." : "") + "</span></div></div>";
     W.OSAP_LEGEND.set("infra", h);
   }
   function set(k, on) {

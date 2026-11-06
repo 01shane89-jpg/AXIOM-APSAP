@@ -113,7 +113,7 @@
     if (S && S.d) h += keys.filter(function (k, i) { return keys.indexOf(k) === i; }).map(function (k) { return '<div class="lg msyml"><span class="msw">' + S.d[k][0] + "</span><div>" + esc(S.m[k][0]) + "</div></div>"; }).join("");
     if (on) h += '<div class="lg"><span class="sw round" style="background:transparent;border:2.5px solid #c62828"></span><div>Named in a report in this period</div></div>';
     if (strikesOn && S && S.d) h += '<div class="lg msyml"><span class="msw">' + S.d.strike[0] + "</span><div>Reported strike on a military target (" + num(nStrikes) + ")</div></div>";
-    h += '<div class="lg"><div><span class="d">Sites as Wikidata and OpenStreetMap record them; strikes as reports claim them. Reported, not verified. Yellow frame: side not known or not verified.' + (used.length ? " Other frames: the side you marked for the site's country (Country sides, in Layers), your own judgement." : "") + "</span></div></div>";
+    h += '<div class="lg"><div><span class="d">Sites as Wikidata and OpenStreetMap record them; strikes as reports claim them. Reported, not verified. Yellow frame: side not known or not verified.' + (used.length ? " Other frames: the side you marked for the site's country (Country sides, in Layers), your own judgment." : "") + "</span></div></div>";
     W.OSAP_LEGEND.set("cf-sites", h, rail());
   }
 
@@ -136,7 +136,7 @@
     if (!sd || !s.cc || sd.symKey(k, s.cc) === k) return "";
     var c = (W.OSAP_COUNTRIES || []).filter(function (x) { return x.id === s.cc; })[0];
     return '<div class="cfm">Frame: you marked ' + esc(c ? c.name : s.cc.toUpperCase()) + " " + esc(sd.name(sd.get(s.cc)).toLowerCase()) +
-      " (Country sides). Your judgement on this device, not the source's, and not a statement about who operates this site.</div>";
+      " (Country sides). Your judgment on this device, not the source's, and not a statement about who operates this site.</div>";
   }
   function sitePop(s, ix) {
     var nm = named(s), all = (s.m || []).length;

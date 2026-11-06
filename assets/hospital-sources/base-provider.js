@@ -43,16 +43,16 @@
   var CAPABILITIES = [
     ["ed.basic", "emergency_department", "Emergency department"], ["ed.24_7", "emergency_24h", "24-hour emergency"],
     ["trans.ambulance", "ambulance", "Ambulance"], ["cc.icu", "icu", "ICU"], ["surg.or_emergency", "operating_room", "Operating room"],
-    ["surg.anaesthesia", "anesthesia", "Anaesthesia"], ["lab.basic", "laboratory", "Laboratory"], ["blood.bank", "blood_bank", "Blood bank"],
+    ["surg.anaesthesia", "anesthesia", "Anesthesia"], ["lab.basic", "laboratory", "Laboratory"], ["blood.bank", "blood_bank", "Blood bank"],
     ["dx.xray", "xray", "X-ray"], ["dx.ultrasound", "ultrasound", "Ultrasound"], ["dx.ct", "ct", "CT"], ["dx.mri", "mri", "MRI"],
-    ["surg.general", "general_surgery", "General surgery"], ["surg.ortho", "orthopedics", "Orthopaedics"], ["surg.neuro", "neurosurgery", "Neurosurgery"],
+    ["surg.general", "general_surgery", "General surgery"], ["surg.ortho", "orthopedics", "Orthopedics"], ["surg.neuro", "neurosurgery", "Neurosurgery"],
     ["spec.cardiology", "cardiology", "Cardiology"], ["surg.thoracic", "cardiothoracic", "Cardiothoracic surgery"], ["surg.vascular", "vascular_surgery", "Vascular surgery"],
     ["spec.burn", "burn_care", "Burn care"], ["spec.dialysis", "dialysis", "Dialysis"], ["spec.obstetric", "obstetrics", "Obstetrics"],
-    ["spec.pediatrics", "pediatrics", "Paediatrics"], ["trans.helipad", "helipad", "Helipad"], ["trans.critical_care_transport", "air_ambulance_support", "Air ambulance support"],
-    ["trauma.team", "trauma_team", "Trauma team or centre"], ["surg.trauma", "trauma_surgery", "Trauma surgery"], ["cc.ventilator", "ventilator", "Mechanical ventilation"],
+    ["spec.pediatrics", "pediatrics", "Pediatrics"], ["trans.helipad", "helipad", "Helipad"], ["trans.critical_care_transport", "air_ambulance_support", "Air ambulance support"],
+    ["trauma.team", "trauma_team", "Trauma team or center"], ["surg.trauma", "trauma_surgery", "Trauma surgery"], ["cc.ventilator", "ventilator", "Mechanical ventilation"],
     ["surg.plastic", "plastic_surgery", "Plastic surgery"], ["dx.ir", "interventional_radiology", "Interventional radiology"], ["blood.mtp", "massive_transfusion", "Massive transfusion"],
-    ["spec.cath_lab", "cath_lab", "Cardiac catheterisation"], ["spec.stroke", "stroke", "Stroke unit"], ["spec.hyperbaric", "hyperbaric", "Hyperbaric chamber"],
-    ["spec.pediatric_trauma", "pediatric_trauma", "Paediatric trauma"], ["spec.rehabilitation", "rehabilitation", "Rehabilitation"], ["surg.ophthalmology", "ophthalmology", "Ophthalmology"],
+    ["spec.cath_lab", "cath_lab", "Cardiac catheterization"], ["spec.stroke", "stroke", "Stroke unit"], ["spec.hyperbaric", "hyperbaric", "Hyperbaric chamber"],
+    ["spec.pediatric_trauma", "pediatric_trauma", "Pediatric trauma"], ["spec.rehabilitation", "rehabilitation", "Rehabilitation"], ["surg.ophthalmology", "ophthalmology", "Ophthalmology"],
     ["surg.maxfac", "maxillofacial", "Maxillofacial surgery"]];
   /* OpenStreetMap healthcare:speciality values (one value, lower case) that state a capability */
   var SPECIALITY_RE = {

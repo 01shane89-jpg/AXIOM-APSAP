@@ -463,7 +463,7 @@
   function paintSun() {
     var el = S.el; if (!el) return;
     var o = el.querySelector(".phc-sun"), pl = el.querySelector(".phc-place");
-    pl.innerHTML = S.place ? "<code>" + esc(fmtLL(S.place.lat, S.place.lon)) + "</code> <code>" + esc(dd(S.place.lat, S.place.lon)) + "</code>" + (S.place.how ? ' <span class="obs">(' + esc(S.place.how) + ")</span>" : "") : '<span class="obs">No place yet: use the map centre, tap the map or the photo\'s GPS.</span>';
+    pl.innerHTML = S.place ? "<code>" + esc(fmtLL(S.place.lat, S.place.lon)) + "</code> <code>" + esc(dd(S.place.lat, S.place.lon)) + "</code>" + (S.place.how ? ' <span class="obs">(' + esc(S.place.how) + ")</span>" : "") : '<span class="obs">No place yet: use the map center, tap the map or the photo\'s GPS.</span>';
     var w = when();
     if (!S.place || !w) { o.innerHTML = '<p class="obs">Set a place, a date, a time (HH:MM, 24 hour) and a UTC offset (like +07:00) to see the sun and the shadows.</p>'; paintMap(); return; }
     var s = solar(w.ms, S.place.lat, S.place.lon), sh = shadow(s), h = "";
@@ -622,7 +622,7 @@
       '<section><h3>2. Metadata</h3><div class="phc-meta"><p class="obs">Pick a photo or a video above.</p></div></section>' +
       '<section><h3>3. Sun and shadow</h3>' +
       '<div class="phc-row"><b>Place</b> <span class="phc-place"></span></div>' +
-      '<div class="phc-btns"><button type="button" class="phc-b" data-phc="p-centre">Map centre</button><button type="button" class="phc-b" data-phc="p-tap">Tap the map</button><button type="button" class="phc-b" data-phc="gps-use" data-phc-gpsbtn hidden>Photo GPS</button></div>' +
+      '<div class="phc-btns"><button type="button" class="phc-b" data-phc="p-centre">Map center</button><button type="button" class="phc-b" data-phc="p-tap">Tap the map</button><button type="button" class="phc-b" data-phc="gps-use" data-phc-gpsbtn hidden>Photo GPS</button></div>' +
       '<div class="phc-grid"><label>Date<input id="phc-d" type="date"></label><label>Time (24 h)<input id="phc-t" placeholder="HH:MM" maxlength="5" inputmode="numeric" autocomplete="off"></label><label>UTC offset<input id="phc-o" placeholder="+07:00" maxlength="9" autocomplete="off"></label></div>' +
       '<p class="obs phc-tnote">Local clock time at the place, and its offset from UTC.</p>' +
       '<div class="phc-sun"></div>' +
@@ -659,7 +659,7 @@
     else if (k === "back") backToVideo();
     else if (k === "gps-go" && m && m.gps) { if (W.OSAP_SPLIT && W.OSAP_SPLIT.focus && docked()) W.OSAP_SPLIT.focus(m.gps.lat, m.gps.lon, Math.max(map.getZoom(), 15)); else { map.setView([m.gps.lat, m.gps.lon], Math.max(map.getZoom(), 15)); } }
     else if (k === "gps-use" && m && m.gps) { setPlace(m.gps.lat, m.gps.lon, "the photo's GPS"); paintSun(); }
-    else if (k === "p-centre") { var c = map.getCenter(); setPlace(c.lat, L.Util.wrapNum(c.lng, [-180, 180], true), "map centre"); paintSun(); }
+    else if (k === "p-centre") { var c = map.getCenter(); setPlace(c.lat, L.Util.wrapNum(c.lng, [-180, 180], true), "map center"); paintSun(); }
     else if (k === "p-tap") arm("place");
     else if (k === "draw") arm("shadow");
     else if (k === "clr") { S.measured = null; S.mline = null; S.el.querySelector("#phc-b").value = ""; paintSun(); }
@@ -674,7 +674,7 @@
     if (W.OSAP_TODAY && W.OSAP_TODAY.isOpen && W.OSAP_TODAY.isOpen()) W.OSAP_TODAY.hide();
     S.open = true; el.hidden = false;
     if (opts.lat != null && isFinite(opts.lat)) setPlace(opts.lat, opts.lon, opts.place ? "point " + opts.place : "chosen point");
-    else if (!S.place) { var c = map.getCenter(); setPlace(c.lat, L.Util.wrapNum(c.lng, [-180, 180], true), "map centre"); }
+    else if (!S.place) { var c = map.getCenter(); setPlace(c.lat, L.Util.wrapNum(c.lng, [-180, 180], true), "map center"); }
     if (!el.querySelector("#phc-d").value) {
       var now = Date.now(), off = zoneOff(now), l = new Date(now + off * 6e4);
       el.querySelector("#phc-d").value = l.toISOString().slice(0, 10); el.querySelector("#phc-t").value = l.toISOString().slice(11, 16); el.querySelector("#phc-o").value = offTxt(off);

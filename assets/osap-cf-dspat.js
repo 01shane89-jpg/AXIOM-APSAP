@@ -162,7 +162,7 @@
       h += "<details><summary>UCDP events within 2 km of the railway, this period (" + ev.length + ")</summary><table>" + ev.slice(0, 30).map(function (e) {
         return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || "") + '<div class="cfm">' + esc(String(e.headline || "").split(";")[0]) + "</div></td><td>" + num(e.best) + " dead</td></tr>"; }).join("") + "</table></details>";
     }
-    return h + '<p class="cfnote">Lines: Natural Earth 1:10m (public domain), drawn for small-scale maps and often a kilometre or more off the real track or road; they carry no names. ' +
+    return h + '<p class="cfnote">Lines: Natural Earth 1:10m (public domain), drawn for small-scale maps and often a kilometer or more off the real track or road; they carry no names. ' +
       "Report lists match words in the report text, so a report can name a road without the attack being on it. UCDP events are only counted when coded to an exact or near-exact place.</p>";
   }
   function ensure() { map = W.__asapMap; if (!map || !W.L) return false; if (!map.getPane("dscpane")) { map.createPane("dscpane"); map.getPane("dscpane").style.zIndex = 630; } return true; }

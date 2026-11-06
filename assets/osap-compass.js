@@ -145,7 +145,7 @@
     c.setAttribute("transform", "rotate(" + (live ? -live.tru : 0).toFixed(1) + " 60 60)");
     card.querySelector('[data-ocp-v="tru"]').textContent = live ? fmt(live.tru) : "---";
     card.querySelector('[data-ocp-v="mag"]').textContent = live ? fmt(live.mag) : "---";
-    card.querySelector(".ocp-dc").textContent = "Declination " + declTxt(dl) + " (WMM 2025" + (h ? ", at you" : ", map centre") + ")";
+    card.querySelector(".ocp-dc").textContent = "Declination " + declTxt(dl) + " (WMM 2025" + (h ? ", at you" : ", map center") + ")";
     card.classList.toggle("ocp-live", !!live);
     var sb = card.querySelector('[data-ocp="start"]'); sb.textContent = running ? "Stop compass" : "Start compass";
     var up = card.querySelector('[data-ocp="up"]'); up.hidden = !live || !W.OSAP_3D; up.setAttribute("aria-pressed", follow ? "true" : "false"); up.textContent = follow ? "North up" : "Heading up";
@@ -159,10 +159,10 @@
   function bearing() {
     if (!card) return;
     var el = card.querySelector(".ocp-brg"), h = here(), c = map.getCenter(), from, to, lf, lt;
-    if (h) { from = [h.lat, h.lon]; lf = "you"; } else { from = [c.lat, c.lng]; lf = "map centre"; }
-    if (ptr) { to = [ptr.lat, ptr.lng]; lt = "pointer"; } else if (h) { to = [c.lat, c.lng]; lt = "map centre"; }
-    if (!to) { el.innerHTML = '<span class="ocp-k">Bearing</span> ' + (W.matchMedia && W.matchMedia("(pointer: fine)").matches ? "move the pointer over the map" : "turn on your location (Show me) to get the bearing to the map centre"); return; }
-    var inv = G && G.inverse ? G.inverse(from, to) : null; if (!inv || !(inv.m > 1)) { el.innerHTML = '<span class="ocp-k">Bearing</span> the map centre is on you: move the map to get the bearing to a place'; return; }
+    if (h) { from = [h.lat, h.lon]; lf = "you"; } else { from = [c.lat, c.lng]; lf = "map center"; }
+    if (ptr) { to = [ptr.lat, ptr.lng]; lt = "pointer"; } else if (h) { to = [c.lat, c.lng]; lt = "map center"; }
+    if (!to) { el.innerHTML = '<span class="ocp-k">Bearing</span> ' + (W.matchMedia && W.matchMedia("(pointer: fine)").matches ? "move the pointer over the map" : "turn on your location (Show me) to get the bearing to the map center"); return; }
+    var inv = G && G.inverse ? G.inverse(from, to) : null; if (!inv || !(inv.m > 1)) { el.innerHTML = '<span class="ocp-k">Bearing</span> the map center is on you: move the map to get the bearing to a place'; return; }
     var b = norm(inv.b1), d = declAt(from[0], from[1]);
     el.innerHTML = '<span class="ocp-k">From ' + lf + " to " + lt + "</span> <b>" + fmt(b) + " T</b> · " + fmt(b - d) + " M · " + distTxt(inv.m);
   }

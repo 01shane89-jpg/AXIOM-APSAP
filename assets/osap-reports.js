@@ -59,7 +59,7 @@
     ["share", "On screen now", "Report to share (PDF)", "The open story or event with its map and links, for Signal and the like",
       function () { return !!shown(".pkghead .osh") || "Open a report or an event first"; }, function () { press(shown(".pkghead .osh")); }],
 
-    ["areasum", "Drawn area", "Area summary", "Everything inside the drawn area, summarised with sources",
+    ["areasum", "Drawn area", "Area summary", "Everything inside the drawn area, summarized with sources",
       function () { return (areaOn() && !!q('[data-area="sum"]')) || "Draw an area first"; }, function () { press('[data-area="sum"]'); }, drawArea],
     ["areareport", "Drawn area", "Area report with maps", "Printable report on the drawn area: overview map, incidents, other reports and map objects, each with a map, sources and fingerprints",
       function () { return (areaOn() && !!W.OSAP_AREAREPORT) || "Draw an area first"; }, function () { W.OSAP_AREAREPORT.open(); }, drawArea],
@@ -69,12 +69,12 @@
     /* one hospital on its own (no plan built): the hospitals round the map centre to pick from */
     ["hospital", "Point on the map", "Hospital assessment", "One hospital on its own: trauma level as sourced, capabilities with source and grade, helipad, contacts, gaps, data age and fingerprint",
       function () { return !!(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital) || "Not available"; }, function () { W.OSAP_MEDPLAN.hospital({ pick: true }); }],
-    ["seatransit", "Point on the map", "Sea transit medevac assessment", "A voyage corridor: distances to documented hospitals, ports and airfields, remote stretches, rescue centres, onboard triggers, a readiness sheet to print",
+    ["seatransit", "Point on the map", "Sea transit medevac assessment", "A voyage corridor: distances to documented hospitals, ports and airfields, remote stretches, rescue centers, onboard triggers, a readiness sheet to print",
       function () { return !!W.OSAP_SEATRANSIT || "Not available"; }, function () { W.OSAP_SEATRANSIT.open(); }],
 
     ["route", "Route", "Route plan (print)", "Legs, timings, light, weather and hazards along a planned route",
       function () { return !!shown('[data-rt="print"]') || "Plan a route first"; }, function () { press(shown('[data-rt="print"]')); }, openRoute],
-    ["routesearch", "Route", "Route search brief", "Reports and news along the route, summarised with sources",
+    ["routesearch", "Route", "Route search brief", "Reports and news along the route, summarized with sources",
       function () { return !!shown('[data-rt="search"]') || "Plan a route first"; }, function () { press(shown('[data-rt="search"]')); }, openRoute],
 
     ["sitrep", "My work", "Situation report", "The open tab or all reports in the period, to print or save as PDF",

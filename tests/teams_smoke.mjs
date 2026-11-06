@@ -101,7 +101,7 @@ const sign = async (raw) => {
 const A = await open("tok-adm");
 ok((await A.p.evaluate(() => window.OSAP_TIER.tier())) === "free", "the admin starts on Free");
 await A.p.evaluate(() => window.OSAP_TIER.open());
-ok(/Teams and organisations/.test(await dlg(A.p)) && /US\$39 a seat a month/.test(await dlg(A.p)) && /US\$12,000 a year for 25 seats/.test(await dlg(A.p)), "Plan and sign-in lists Team, Organisation and pilot prices");
+ok(/Teams and organizations/.test(await dlg(A.p)) && /US\$39 a seat a month/.test(await dlg(A.p)) && /US\$12,000 a year for 25 seats/.test(await dlg(A.p)), "Plan and sign-in lists Team, Organisation and pilot prices");
 await A.p.click('#tierdlg [data-tr="team"]'); await until(A.p, /Set up a team/);
 ok(/Test payments/.test(await dlg(A.p)), "the team page says checkout is Paddle's sandbox");
 await A.p.selectOption('#tierdlg select[name="plan"]', "org");

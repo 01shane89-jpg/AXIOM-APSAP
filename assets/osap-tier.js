@@ -196,7 +196,7 @@
     if (!BOX || BOX.hidden) return;
     var dis = UI.busy ? " disabled" : "", me = tier();
     var wall = isWall(), stay = wall || UI.recover;
-    var title = UI.mode === "newpw" ? (UI.recover ? "Choose a new password" : "Change password") : wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : UI.mode === "team" ? "Team and organisation" : "Plan and sign-in";
+    var title = UI.mode === "newpw" ? (UI.recover ? "Choose a new password" : "Change password") : wall ? "Sign in to OSAP" : UI.mode === "users" ? "Users" : UI.mode === "team" ? "Team and organization" : "Plan and sign-in";
     /* the sign-in screen is the first thing people see: the logo and name above the form, as on the loading screen */
     var h = '<div class="cbox">' + (wall ? '<div class="trbrand"><img src="assets/logo-cover.webp" alt=""><span>AXIOM OSAP</span></div>' : "") + '<div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
       '<p class="trmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
@@ -348,13 +348,13 @@
   }
   var TMWHAT = {
     team: "Full for every seat, a shared team with an admin, and team cases you invite seats into. 3 seats or more, monthly or yearly.",
-    org: "Full for 25 seats, more seats as you need them, yearly with one invoice for the organisation.",
-    pilot: "60 days of Full for up to 25 seats. The US$2,500 comes off your first Organisation year if you stay.",
+    org: "Full for 25 seats, more seats as you need them, yearly with one invoice for the organization.",
+    pilot: "60 days of Full for up to 25 seats. The US$2,500 comes off your first Organization year if you stay.",
   };
   function teamPlansHtml() {
     var B = CFG.rules.business;
     if (!B) return "";
-    return "<h3>Teams and organisations</h3><p>Team US$" + B.team.seat.month + " a seat a month or US$" + B.team.seat.year + " a seat a year (" + B.team.minSeats + " seats or more). Organisation US$" +
+    return "<h3>Teams and organizations</h3><p>Team US$" + B.team.seat.month + " a seat a month or US$" + B.team.seat.year + " a seat a year (" + B.team.minSeats + " seats or more). Organization US$" +
       B.org.base.toLocaleString("en-US") + " a year for " + B.org.included + " seats, US$" + B.org.extraSeat + " a year for each seat more. Paid pilot US$" + B.pilot.price.toLocaleString("en-US") + " for " + B.pilot.days + " days.</p>" +
       '<div class="trbtns"><button type="button" class="refresh" data-tr="team"' + (UI.busy ? " disabled" : "") + ">" + (CFG.signedIn ? "Team plans and my team" : "Team plans") + "</button></div>";
   }
@@ -388,13 +388,13 @@
     var state = { unpaid: "not paid yet", active: "paid", past_due: "payment late, seats open for now", ended: "ended" }[t.status] || t.status;
     h += "<p><b>" + esc(t.name) + "</b>: " + esc(B2.name) + (t.interval && t.interval !== "once" ? ", " + (t.interval === "month" ? "monthly" : "yearly") : "") + ", " + t.used + " of " + t.seats + " seats used, " + esc(state) +
       (t.until && t.status !== "unpaid" ? ", seats open until " + esc(String(t.until).slice(0, 10)) : "") + ". You are " + (admin ? "an admin" : "a member") + (t.seat ? " and have Full through this team" : "") + ".</p>";
-    if (t.pilot) h += '<p class="obs">Pilot ends ' + esc(String(t.pilot.ends).slice(0, 10)) + "." + (t.pilot.credit ? " Its US$" + CFG.rules.business.pilot.credit.toLocaleString("en-US") + " comes off your first Organisation year." : "") + "</p>";
+    if (t.pilot) h += '<p class="obs">Pilot ends ' + esc(String(t.pilot.ends).slice(0, 10)) + "." + (t.pilot.credit ? " Its US$" + CFG.rules.business.pilot.credit.toLocaleString("en-US") + " comes off your first Organization year." : "") + "</p>";
     if (admin) {
       if (t.quote && (t.status === "unpaid" || t.status === "ended" || (t.plan === "org" && t.pilot && t.pilot.credit))) {
         h += '<p class="trprice">To pay: ' + usd(t.quote.total) + (t.quote.discount ? " (" + usd(t.quote.subtotal) + " less " + usd(t.quote.discount.cents) + (t.quote.discount.recurIntervals > 1 ? " each month for 12 months" : "") + ")" : "") + "</p>" +
           '<div class="trbtns"><button type="button" class="refresh primary" data-tm="pay"' + dis + ">Pay for the team</button></div>";
       }
-      if (t.plan === "pilot" && t.pilot) h += '<form data-tr-form="tmorg"><label>Move to Organisation: seats<input type="number" name="seats" min="25" max="500" value="' + Math.max(25, t.used) + '" required></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Choose Organisation</button></div></form>";
+      if (t.plan === "pilot" && t.pilot) h += '<form data-tr-form="tmorg"><label>Move to Organization: seats<input type="number" name="seats" min="25" max="500" value="' + Math.max(25, t.used) + '" required></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Choose Organization</button></div></form>";
       if ((t.status === "active" || t.status === "past_due") && t.plan !== "pilot") h += '<form data-tr-form="tmseats"><label>Seats (Paddle charges or credits the difference now)<input type="number" name="seats" min="' + Math.max(t.used, (CFG.rules.business[t.plan] || {}).minSeats || 1) + '" max="500" value="' + t.seats + '" required></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Change seats</button></div></form>";
       var linked = (t.cases || []).map(function (id) { var c = (TM.cases || []).filter(function (x) { return x.id === id; })[0]; return { id: id, name: c ? c.name : "a case you no longer lead" }; });
       h += '<h3>Invite</h3><form data-tr-form="tminvite"><label>Email<input type="email" name="email" required autocapitalize="none" spellcheck="false"></label>' +
@@ -418,7 +418,7 @@
       h += "<p>People: " + t.members.map(function (m) { return esc(m.call || "member") + (m.admin ? " (admin)" : ""); }).join(", ") + ".</p>";
     }
     h += '<div class="trbtns"><button type="button" class="refresh" data-tm="leave"' + dis + '>Leave the team</button><button type="button" class="refresh" data-tr="plans">Back</button></div>';
-    if (admin && t.status !== "unpaid") h += '<p class="obs">Receipts, card changes and cancelling: use the link in the Paddle receipt email.</p>';
+    if (admin && t.status !== "unpaid") h += '<p class="obs">Receipts, card changes and canceling: use the link in the Paddle receipt email.</p>';
     return h;
   }
   /* the checkout the server built: Paddle opens it by transaction id, then the webhook marks the team paid */
@@ -567,7 +567,7 @@
       var cs = Array.prototype.filter.call(f.querySelectorAll('input[name="case"]'), function (x) { return x.checked; }).map(function (x) { return { "case": x.value, role: f.crole ? f.crole.value : "analyst" }; });
       teamCmd({ cmd: "invite", team: t.id, email: f.email.value.trim(), cases: cs }, "Inviting…", "Invited. They join from Settings > Plan and sign-in > Team plans, signed in with that email.");
     } else if (k === "tmlink") teamCmd({ cmd: "link", team: t.id, "case": f["case"].value }, "Linking the case…", "Case linked.");
-    else if (k === "tmorg") teamCmd({ cmd: "plan", team: t.id, plan: "org", seats: Number(f.seats.value) }, "Choosing Organisation…", "Organisation chosen. Pay for it below; the pilot's credit is taken off.");
+    else if (k === "tmorg") teamCmd({ cmd: "plan", team: t.id, plan: "org", seats: Number(f.seats.value) }, "Choosing Organization…", "Organization chosen. Pay for it below; the pilot's credit is taken off.");
     else if (k === "tmseats") {
       UI.busy = true; say("Changing seats with Paddle…");
       teamsApi({ cmd: "seats", team: t.id, seats: Number(f.seats.value) }).then(function () {
@@ -583,7 +583,7 @@
     if (k === "decline") { teamCmd({ cmd: "decline", team: id }, "Declining…", "Invite declined."); return; }
     if (k === "remove") { if (!W.confirm("Remove this person from the team? They lose the seat and are removed from the team's cases.")) return; teamCmd({ cmd: "remove", team: id, member: b.getAttribute("data-member") }, "Removing…", "Removed."); return; }
     if (k === "admin" || k === "unadmin") { teamCmd({ cmd: "admin", team: id, member: b.getAttribute("data-member"), on: k === "admin" }, "Saving…", "Saved."); return; }
-    if (k === "uninvite") { teamCmd({ cmd: "uninvite", team: id, email: b.getAttribute("data-email") }, "Cancelling the invite…", "Invite cancelled."); return; }
+    if (k === "uninvite") { teamCmd({ cmd: "uninvite", team: id, email: b.getAttribute("data-email") }, "Canceling the invite…", "Invite canceled."); return; }
     if (k === "unlink") { teamCmd({ cmd: "unlink", team: id, "case": b.getAttribute("data-case") }, "Unlinking…", "Case unlinked."); return; }
     if (k === "leave") { if (!W.confirm("Leave the team? You lose the seat and leave the team's cases.")) return; teamCmd({ cmd: "leave", team: id }, "Leaving…", "You left the team."); }
   }

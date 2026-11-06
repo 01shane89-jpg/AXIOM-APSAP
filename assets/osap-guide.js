@@ -41,10 +41,10 @@
         "Search the news from the box at the top. Use quotes to keep a phrase together and a minus sign to leave a word out.",
         "Tap " + b("Open map") + " to go to the map. To start on the map every time, pick " + b("Map") + " at the foot of Today.",
         b("Key dates") + " lists the next three dates that matter in the country: public holidays, elections and referendums, religious periods (Ramadan, Eid, Christmas, Easter, Diwali, Lunar New Year, Songkran and others) and anniversaries of its deadliest days of violence in UCDP's record. Each says why it matters, links its source and is marked " + b("Official") + " (a government holiday list), " + b("Claimed") + " (a reported election schedule) or " + b("Computed") + " (worked out from a calendar or a record). Dates are the local day, with the time that day starts in Zulu. " + b("Show all") + " opens the full list for the past 7 and next 60 days in the country brief.",
-        "When a country has no news in the last 24 hours, " + b("Top stories") + " says so and gives the time of the newest item. Tap " + b("Newest older items") + " to see them, or " + b("News from nearby countries") + " for the latest from its neighbours and the same region. A card showing old data gives its age in grey, for example (17 days old).",
+        "When a country has no news in the last 24 hours, " + b("Top stories") + " says so and gives the time of the newest item. Tap " + b("Newest older items") + " to see them, or " + b("News from nearby countries") + " for the latest from its neighbors and the same region. A card showing old data gives its age in gray, for example (17 days old).",
         "The OSAP logo at the top left brings you back to Today."]) +
       "<h3>My countries</h3>" +
-      ul(["The first time you open OSAP on a device it asks for up to 5 countries and how you use it: " + b("Analyst") + ", " + b("Team in country") + " (also offers " + b("Use my location") + ") or " + b("Traveller") + " (Today shows the U.S. travel advisory at the top). " + b("Skip") + " if you would rather not; it is not asked again.",
+      ul(["The first time you open OSAP on a device it asks for up to 5 countries and how you use it: " + b("Analyst") + ", " + b("Team in country") + " (also offers " + b("Use my location") + ") or " + b("Traveler") + " (Today shows the U.S. travel advisory at the top). " + b("Skip") + " if you would rather not; it is not asked again.",
         "Today then opens on your first country. Your countries show as chips on Today and beside the country picker on the map: one tap switches.",
         "Tap " + b("☆ Pin") + " beside the country picker to add the open country (up to 5), " + b("★ Pinned") + " to take it off. The " + b("My countries") + " card on Today shows the newest headline in each and how many are new.",
         "Today says how many headlines and warnings are new since you last looked at that country, and marks them " + b("New") + ". The count starts again once you have looked.",
@@ -58,7 +58,7 @@
     { id: "map", t: "The map screen", h:
       fig("map", "The map with the toolbar down the right") +
       ul(["The " + b("toolbar") + " runs down the right of the map. The arrow at its top folds it away; tap again to bring it back. On a phone, scroll the toolbar when a down arrow shows more tools below.",
-        "The strip along the bottom shows the grid of the map centre. Tap the grid to switch between MGRS, decimal degrees and DMS, or tap the copy icon to copy it.",
+        "The strip along the bottom shows the grid of the map center. Tap the grid to switch between MGRS, decimal degrees and DMS, or tap the copy icon to copy it.",
         "When " + b("Use my location") + " is on, the strip also shows your own position. The target button locks the map on you until you move the map.",
         "The reports list sits under the map on a phone. Tap or drag it up to read it. On a computer, " + b("View") + ", " + b("Layout") + " chooses Map only, Map and list, or List.",
         "On a computer you can size and move the side panels (Details, Reports and windows such as the medical plan). Drag the small grip on a panel's edge to make it wider or narrower; double-click it for the normal width. Click the grip to " + b("Dock on the left") + ", " + b("Dock on the right") + ", " + b("Float over the map") + " or " + b("Reset size and place") + ". A floating panel moves by the bar on its top and gets taller or shorter by its bottom edge. Your choice is kept on this device.",
@@ -72,14 +72,14 @@
         b("Search") + " finds more than places: a country by name or code (" + b("Estonia") + " or " + b("ee") + " opens it), a tool (" + b("Med plan") + ", " + b("Evac") + ", " + b("LZ finder") + ", " + b("Flight plan") + ", " + b("Terrain analysis") + "), a report (" + b("OSIR") + ", " + b("PowerPoint") + "), a data set (it goes on the map) or a setting (" + b("Dark map") + ", " + b("miles") + ", " + b("Offline maps") + "). Everyday words work too: " + b("hospital") + " finds Med plan, " + b("night") + " finds Dark map. The last row searches the news. On a computer press " + b("/") + " or " + b("Ctrl+K") + " (" + b("Cmd+K") + " on a Mac) to start typing, the arrow keys and Enter to pick, Esc to close.",
         b("Data sets") + ": the reporting topics, such as conflict, crime, natural disasters, public safety and news. Tick a set to show it on the map; tap its name to open its list. " + b("Clear map") + " takes everything off.",
         b("Weather") + ": radar, satellite rain, cloud, wind, temperature, air quality, cyclones and warnings. " + b("Model time") + " looks ahead up to 72 hours. " + b("Open forecasts and warnings") + " opens the full weather view, with the one-page brief, the detailed report and the " + b("5-day chart") + " (a military-style chart: night and day halves, winds, crosswind on a runway you pick, density and pressure altitude, sun, moon, illumination and mission impacts hour by hour).",
-        b("Overlays") + ": map layers that are not reports: infrastructure (communications, power plants of every fuel, the grid, data centres, airfields, ports, dams, submarine cables, railways, bridges and tunnels, water and sewage works, telephone exchanges, government sites, prisons, border crossings, police and fire stations, refineries and pipelines, roads), embassies and evacuation points, elevation and terrain analysis, key terrain, aircraft and ships, borders, and your own marks. Under " + b("Live aircraft") + ", " + b("GPS interference (last 24 h)") + " shades 1° cells where many aircraft reported poor GPS accuracy (yellow low, orange medium, red high; faint green normal); tap a cell for its counts and period. It is inferred from aircraft reports: an empty cell means too few aircraft to judge, not no jamming, and it does not detect spoofing.",
-        b("Airspace and sea warnings") + " (in Overlays, after Ships): " + b("Sea warnings") + " draws the navigational warnings in force worldwide (NGA broadcast warnings) as hatched areas, circles, tracks and points, coloured by what they warn of; " + b("Airspace") + " draws US temporary flight restrictions (FAA) and EASA conflict zone bulletins (as country outlines). Tap a shape for the warning's id, issuer, times (UTC and local), the original text and a link to the source. Airspace coverage is partial (no other country's NOTAMs), shapes are read from text and may be wrong, and none of it is for navigation.",
+        b("Overlays") + ": map layers that are not reports: infrastructure (communications, power plants of every fuel, the grid, data centers, airfields, ports, dams, submarine cables, railways, bridges and tunnels, water and sewage works, telephone exchanges, government sites, prisons, border crossings, police and fire stations, refineries and pipelines, roads), embassies and evacuation points, elevation and terrain analysis, key terrain, aircraft and ships, borders, and your own marks. Under " + b("Live aircraft") + ", " + b("GPS interference (last 24 h)") + " shades 1° cells where many aircraft reported poor GPS accuracy (yellow low, orange medium, red high; faint green normal); tap a cell for its counts and period. It is inferred from aircraft reports: an empty cell means too few aircraft to judge, not no jamming, and it does not detect spoofing.",
+        b("Airspace and sea warnings") + " (in Overlays, after Ships): " + b("Sea warnings") + " draws the navigational warnings in force worldwide (NGA broadcast warnings) as hatched areas, circles, tracks and points, colored by what they warn of; " + b("Airspace") + " draws US temporary flight restrictions (FAA) and EASA conflict zone bulletins (as country outlines). Tap a shape for the warning's id, issuer, times (UTC and local), the original text and a link to the source. Airspace coverage is partial (no other country's NOTAMs), shapes are read from text and may be wrong, and none of it is for navigation.",
         "At the top of Overlays, " + b("Find a layer") + " narrows the panel to what you type (ships, power, borders), and a chip for each section jumps straight to it, with how many of its switches are on. Tap a section's heading to fold it away; " + b("Fold all") + " and " + b("Open all") + " do every section. What you fold stays folded on this device.",
-        b("Base map") + ": Grey, Streets, Topographic, Satellite, Hybrid, Sentinel-2 cloudless, Daily satellite and Offline map. Streets are labelled in English.",
+        b("Base map") + ": Gray, Streets, Topographic, Satellite, Hybrid, Sentinel-2 cloudless, Daily satellite and Offline map. Streets are labeled in English.",
         b("View") + ": a drop-down for how the map looks: " + b("Grid") + " lines, " + b("Crosshair") + ", " + b("3D") + " terrain, the " + b("Compass") + ", " + b("Layout") + " (on a computer: Map only, Map and list, or List) and " + b("Full") + " screen.",
-        b("Grid") + " and " + b("Crosshair") + " (in View): MGRS grid lines that get finer as you zoom in, and a cross on the map centre with its grid.",
+        b("Grid") + " and " + b("Crosshair") + " (in View): MGRS grid lines that get finer as you zoom in, and a cross on the map center with its grid.",
         b("3D") + " (in View): tilt and turn the map over real ground. Tap the compass for north-up and flat, " + b("2D") + " to go back.",
-        b("Compass") + " (in View, or tap the north arrow (top left of the map). On a phone it shows the way you face, true and magnetic, and a cone on your location dot; " + b("Heading up") + " turns the map to the way you face and " + b("North up") + " turns it back. On any device it gives the bearing and distance from you (or the map centre) to the map centre or the mouse pointer, in degrees or mils.",
+        b("Compass") + " (in View, or tap the north arrow (top left of the map). On a phone it shows the way you face, true and magnetic, and a cone on your location dot; " + b("Heading up") + " turns the map to the way you face and " + b("North up") + " turns it back. On any device it gives the bearing and distance from you (or the map center) to the map center or the mouse pointer, in degrees or mils.",
         b("Plans") + ": every planning tool in one drop-down. Medical: " + b("Medical plan") + " (" + b("Med plan") + "), " + b("Hospital assessment") + ", " + b("Sea transit medevac") + ". Movement: " + b("Evacuation plan (Evac)") + ", " + b("Flight plan (airborne)") + ", " + b("Landing zones (HLZ finder)") + ". Airborne: " + b("Drop zone (DZSO)") + ", " + b("Site survey") + ". Comms and ground: " + b("Comms planning") + " (" + b("Comms") + "), " + b("Terrain analysis") + ". And the " + b("Weather brief") + ". The button lights while the medical plan, Evac or Comms planning is open.",
         b("Measure") + ", " + b("Route") + ", " + b("Area") + ", " + b("Point") + " and " + b("Watch") + ": each has its own section below. " + b("Point") + " also offers " + b("Check a photo or video") + ".",
         b("My work") + ": opens on the left of the map with My places (your saved map items in folders) and your saved reports and notes; What's new, Trends and Export are on its top row.",
@@ -125,8 +125,8 @@
       fig("area", "The Area menu") +
       ul(["Tap " + b("Area") + " and pick a shape: " + b("Lasso") + " (hold and draw round the area), " + b("Polygon") + " (tap each corner, then " + b("Finish") + "), " + b("Circle") + " or " + b("Square") + " (press and drag).",
         "A drawn area filters the map and the list to what is inside it.",
-        b("Edit shape") + " lets you drag corners, turn and move it, and change its colours.",
-        b("Summarise area") + " writes a summary of the reports inside, with numbered sources. It can also write an AI summary on this device.",
+        b("Edit shape") + " lets you drag corners, turn and move it, and change its colors.",
+        b("Summarize area") + " writes a summary of the reports inside, with numbered sources. It can also write an AI summary on this device.",
         b("Landing zones") + " searches inside the area (see LZ finder).",
         b("Satellite before/after") + " shows two Sentinel-2 pictures of the area (see Satellite before/after).",
         b("Save (NAI/TAI)") + " keeps the area with a type, a name and notes. Saved areas appear under Overlays, where you can use one as the map filter, watch it, zoom to it, edit or delete it."]) },
@@ -135,13 +135,13 @@
       ul(["Draw an area, then " + b("Area") + ", " + b("Satellite before/after") + ". Or open Overlays, " + b("Satellite imagery") + ", " + b("Open Satellite before/after") + " (the drawn area, or the map view when none is drawn).",
         "OSAP lists the Sentinel-2 passes over the area for the last 90 days with the time in Zulu and local time and the cloud %. It picks the newest clear pass as " + b("After") + " and one about 30 days earlier as " + b("Before") + ". Press " + b("Before") + " or " + b("After") + " on any pass to change them, filter by cloud, or " + b("Look 90 days further back") + ".",
         b("Side by side") + " shows the two pictures in the window. " + b("Swipe on map") + " lays them on the map: drag the round handle, before on the left, after on the right.",
-        "Each picture shows its scene id with a link to its catalogue entry, the time and the cloud %. Pictures are about 10 m, true colour, read straight from the open Copernicus archive on this device.",
-        b("NASA daily true colour") + " (here or in Overlays, Satellite imagery) lays one day's whole-world VIIRS or MODIS picture, about 250 m, on the map. " + b("Day of the after pass") + " sets its day to the after picture's."]) +
+        "Each picture shows its scene id with a link to its catalog entry, the time and the cloud %. Pictures are about 10 m, true color, read straight from the open Copernicus archive on this device.",
+        b("NASA daily true color") + " (here or in Overlays, Satellite imagery) lays one day's whole-world VIIRS or MODIS picture, about 250 m, on the map. " + b("Day of the after pass") + " sets its day to the after picture's."]) +
       tip("The cloud % is for the whole 110 km tile, so a pass can still be cloudy over a small area, or clear over it. Areas up to about 250 km across. Contains modified Copernicus Sentinel data.") },
 
     { id: "point", t: "Points and photos", h:
       fig("point", "A new point") +
-      ul(["Tap " + b("Point") + " and choose " + b("At the map centre") + ", " + b("Tap the map to place it") + " or " + b("At my position") + ".",
+      ul(["Tap " + b("Point") + " and choose " + b("At the map center") + ", " + b("Tap the map to place it") + " or " + b("At my position") + ".",
         "Give it a name, a note and an icon (military symbol, shape or pin). Edits save as you type.",
         b("Take photo") + " or " + b("Add from library") + " adds pictures. Each original is kept unchanged with its SHA-256 fingerprint, on this device only.",
         "Tap a point on the map for " + b("Measure from") + ", " + b("Route from") + ", " + b("Route to") + " (adds it to the end of the route you are planning), " + b("Medical plan here") + ", " + b("Check a photo here") + ", " + b("Copy") + " and " + b("Remove") + "."]) +
@@ -215,7 +215,7 @@
       ul(["Open it from " + b("Point") + " > " + b("Check a photo or video") + ", from " + b("My work") + " > " + b("Check a photo") + ", from a point on the map with " + b("Check a photo here") + ", or from a point's photo with " + b("Check this photo") + ". It sits beside the map.",
         b("Pick a photo or video") + ". The metadata shows the camera time (with its UTC offset when the file has one), the GPS position (a red pin on the map), the camera, the software that saved it and the size. JPEG, PNG, WebP, HEIC, MP4 and MOV are read.",
         "No metadata is normal: social media, chat apps and screenshots strip it. Any field can be faked, and camera clocks are often wrong, so treat it as a lead.",
-        "<b>Sun and shadow</b>: set the place (" + b("Map centre") + ", " + b("Tap the map") + " or " + b("Photo GPS") + ") and the date, time and UTC offset. You get the sun's direction and height, and the map shows the expected shadow (black) and the way to the sun (orange, dashed).",
+        "<b>Sun and shadow</b>: set the place (" + b("Map center") + ", " + b("Tap the map") + " or " + b("Photo GPS") + ") and the date, time and UTC offset. You get the sun's direction and height, and the map shows the expected shadow (black) and the way to the sun (orange, dashed).",
         "Type a shadow bearing you measured, or " + b("Draw the shadow on the map") + " (tap the foot of an object, then the tip of its shadow). The times that day when shadows point that way are listed; " + b("Use this time") + " puts one in the time box.",
         "<b>Video</b>: step with " + b("◀ Frame") + " and " + b("Frame ▶") + ", then " + b("Take this frame as a picture") + " to use it in the other checks.",
         "<b>Reverse image search</b>: " + b("Save the picture") + ", then open Google Lens, Bing Visual Search, Yandex Images or TinEye and upload it there yourself. Lens is best for places and landmarks, Yandex often for faces and Eastern Europe, TinEye for the oldest copy.",
@@ -223,8 +223,8 @@
       tip("The sun position uses the NOAA solar equations (about 0.01°). A shadow in a photo is foreshortened by the camera angle, so take its bearing from features you can place on the map.") },
 
     { id: "medplan", t: "Medical plan", h:
-      fig("medplan", "The medical plan for the map centre") +
-      ul(["Tap " + b("Plans") + ", " + b("Medical plan") + ". It plans for the drawn area, or the map centre when nothing is drawn. Or long-press, " + b("Plans") + ", " + b("Med plan from here") + ".",
+      fig("medplan", "The medical plan for the map center") +
+      ul(["Tap " + b("Plans") + ", " + b("Medical plan") + ". It plans for the drawn area, or the map center when nothing is drawn. Or long-press, " + b("Plans") + ", " + b("Med plan from here") + ".",
         "Set the point of injury: type a grid and press " + b("Set") + ", or press " + b("Pick on map") + ".",
         "The plan opens folded to a bar showing its status, so the whole map stays in view. Press " + b("Half") + " or " + b("Full") + " on the bar to pull it up, and " + b("Map") + " to fold it again. On a phone you can also drag the bar. Watch, NAI/TAI, Terrain and the evacuation plan have the same bar.",
         "The plan lists receiving hospitals, most capable first, with drive times against the golden hour, routes, emergency contacts, landing sites, ways out of the country, health threats, weather and ground.",
@@ -277,9 +277,9 @@
         b("Viewshed") + " shows the ground that can be seen from a point. " + b("Reverse viewshed") + " shows where a point can be seen from.",
         "Set the heights (standing person, vehicle, building or antenna), the range and the detail, then press " + b("CALCULATE") + ".",
         b("Line of sight") + " between two points says VISIBLE or BLOCKED, with a profile of the ground. With more points it is an elevation profile with climb and steepest grade.",
-        b("Slope") + " colours the steepness of the ground round a point.",
+        b("Slope") + " colors the steepness of the ground round a point.",
         "Name and save a viewshed to show it again later from Overlays."]) +
-      tip("Terrain only: buildings and trees are not modelled. Grey means no elevation data, never “not visible”. Everything is worked out on this device.") },
+      tip("Terrain only: buildings and trees are not modeled. Gray means no elevation data, never “not visible”. Everything is worked out on this device.") },
 
     { id: "comms", t: "Comms planning", h:
       fig("comms", "Comms planning on the Coverage tab") +
@@ -287,21 +287,21 @@
         b("Plan") + ": build a PACE plan by phase, with method, device, net, expected coverage, failure trigger and what to do next. Export it as a PDF or copy it as text.",
         b("Coverage") + ": " + b("Will I have phone signal?") + " at a place, along a line or along your planned route. Answers are Likely, Possible, No sign of coverage or Unknown.",
         b("Link") + ": a radio link budget with free-space loss, margin, radio horizon and Fresnel zone, the terrain between two points, and " + b("Radio coverage from a point") + ": where a radio there could be heard over the ground (green likely, orange marginal). Long-press the map, " + b("Terrain") + ", " + b("Radio coverage from here") + " does the same for that spot.",
-        b("Networks") + ": reported internet outages, the masts on the map and a switch for each phone network. Each network has its own colour, for its masts and for the places phones picked up its cells (OpenCelliD); tick or untick a network to show or hide it. Tap a mast to see the networks heard round it.",
+        b("Networks") + ": reported internet outages, the masts on the map and a switch for each phone network. Each network has its own color, for its masts and for the places phones picked up its cells (OpenCelliD); tick or untick a network to show or hide it. Tap a mast to see the networks heard round it.",
         b("Equipment") + ": power and batteries, loadout, cable, antenna lengths, connectors, channel plan and COMSEC records (status only, never key material).",
         b("Status") + ": a board for each PACE level, the check log, message traffic, interference reports and a troubleshooting walk-through."]) +
-      tip("Coverage is modelled from measured tests and mast line of sight. Unknown is never shown as no. OSAP does not test any network.") },
+      tip("Coverage is modeled from measured tests and mast line of sight. Unknown is never shown as no. OSAP does not test any network.") },
 
     { id: "reports", t: "Reports to print or share", h:
       fig("reports", "The Reports menu") +
       ul(["Tap " + b("Reports") + " for every report OSAP makes: country brief, country report, daily summary, weather brief, 5-day weather chart and detailed weather, night illumination, timeline report, area summary, medical plan, route plan and situation report.",
-        "A greyed entry says what to do first, for example " + b("Draw an area first") + " or " + b("Plan a route first") + ".",
+        "A grayed entry says what to do first, for example " + b("Draw an area first") + " or " + b("Plan a route first") + ".",
         "Each report opens as a page with one " + b("Export PDF") + " button. It opens the print dialog: choose " + b("Save as PDF") + " and A4 or Letter. Every page carries the report's title, when it was exported (Zulu and local time), " + b("Page X of Y") + " and, where any part is AI generated, a note saying so; source links stay clickable in the PDF.",
         "The country brief ends with the country's " + b("Key dates") + ": every holiday, election, religious date and anniversary of the past 7 and next 60 days, with its source."]) },
 
     { id: "settings", t: "Settings", h:
       fig("settings", "Settings, under the gear") +
-      ul(["The gear holds settings for this device, in four groups: Display, Location and privacy, Data and devices, and Setup, help and safety. " + b("Map colours") + " (Light, Grey, Dark), " + b("Grid format") + " (MGRS, Lat/long, DMS) and " + b("Distance units") + " (km, miles, nautical mi).",
+      ul(["The gear holds settings for this device, in four groups: Display, Location and privacy, Data and devices, and Setup, help and safety. " + b("Map colors") + " (Light, Gray, Dark), " + b("Grid format") + " (MGRS, Lat/long, DMS) and " + b("Distance units") + " (km, miles, nautical mi).",
         b("Use my location") + ": off until you turn it on. OSAP then starts on your country and shows where you are. Only the country is stored, never your position.",
         b("Language") + ": English, Thai, Vietnamese, Filipino, Indonesian, Malay, Chinese, Japanese or Korean for the app's menus and buttons. Reports stay in their original language. The translations are AI drafts, marked AI generated.",
         b("My countries and setup") + ": your pinned countries and how you use OSAP, the questions asked the first time.",

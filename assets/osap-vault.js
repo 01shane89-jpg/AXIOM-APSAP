@@ -364,7 +364,7 @@
     } else {
       h += "<p>On, with " + (c.kind === "pass" ? "a passphrase" : "Face ID / Windows Hello") + ". Saved work is encrypted whenever OSAP is locked.</p>" + autoSel(c.auto) +
         '<button type="button" class="vgo" data-v="lock">Lock now</button><button type="button" data-v="off">Turn the lock off</button>' +
-        '<p class="vn">Not covered: your sign-in, this device\'s own settings (map colours, units, Protected mode), maps saved for offline use, and files you exported or shared.</p>';
+        '<p class="vn">Not covered: your sign-in, this device\'s own settings (map colors, units, Protected mode), maps saved for offline use, and files you exported or shared.</p>';
     }
     h += '<p class="vm" role="status">' + esc(UI.msg) + '</p><button type="button" data-v="close">Close</button>';
     box.querySelector(".vp").innerHTML = h;
