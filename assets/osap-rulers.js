@@ -153,7 +153,7 @@
     var g = legs(r), u = unit(), P = r.pts, one = g.length === 1, away = r.cc && cc() && r.cc !== cc();
     el.innerHTML = '<div class="cbox"><div class="chead"><h2 id="rul-h">Ruler details</h2><button type="button" class="x" aria-label="Close" data-rx="close">&times;</button></div>' +
       '<div class="rulname"><label for="rul-name">Name</label><input id="rul-name" maxlength="60" value="' + esc(r.name) + '"><span class="rulcol" style="background:' + r.col + '"></span></div>' +
-      '<div class="rulsw" role="group" aria-label="Colour">' + SWATCH.map(function (c) { return '<button type="button" data-rsw="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" title="' + c[1] + '" aria-pressed="' + (r.col === c[0]) + '"></button>'; }).join("") + "</div>" +
+      '<div class="rulsw" role="group" aria-label="Color">' + SWATCH.map(function (c) { return '<button type="button" data-rsw="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" title="' + c[1] + '" aria-pressed="' + (r.col === c[0]) + '"></button>'; }).join("") + "</div>" +
       '<div class="rulgrid">' + row("Starting location", pos(P[0])) + row(r.closed ? "Perimeter" : "Distance", esc(G.fmtDist(total(r), u)), "rr") +
       row("Ending location", pos(P[P.length - 1])) +
       (one ? row("Bearing", esc(deg(g[0].t)) + " T<small>" + esc(deg(g[0].mag)) + " M · " + esc(mil(g[0].t)) + " · back " + esc(deg(g[0].back)) + " T</small>", "rr") : row("Legs", String(g.length), "rr")) + "</div>" +

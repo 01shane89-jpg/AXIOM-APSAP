@@ -63,10 +63,10 @@ add("inc", "Command and coordination", [
   ["acp", "Access Control Point", "b", "blue", T("ACP"), "entry checkpoint"],
   ["ecp", "Entry Control Point", "b", "blue", T("ECP"), "entry checkpoint gate"],
   ["tcp", "Traffic Control Point", "b", "blue", T("TCP"), "traffic checkpoint police"],
-  ["eoc", "Emergency Operations Centre", "b", "blue", T("EOC"), "emergency operations center"],
-  ["joc", "Joint Operations Centre", "b", "blue", T("JOC"), "operations center"],
-  ["macc", "Multi-Agency Coordination Centre", "b", "blue", T("MACC"), "coordination center"],
-  ["jic", "Joint Information Centre", "b", "blue", T("JIC"), "information media public"],
+  ["eoc", "Emergency Operations Center", "b", "blue", T("EOC"), "emergency operations center"],
+  ["joc", "Joint Operations Center", "b", "blue", T("JOC"), "operations center"],
+  ["macc", "Multi-Agency Coordination Center", "b", "blue", T("MACC"), "coordination center"],
+  ["jic", "Joint Information Center", "b", "blue", T("JIC"), "information media public"],
   ["pio", "Public Information Officer", "b", "blue", T("PIO"), "media press"],
   ["media", "Media Area", "b", "blue", T("MEDIA"), "press"],
   ["liaison", "Liaison Point", "b", "blue", T("LNO"), "liaison"],
@@ -187,7 +187,7 @@ add("air", "Landing and drop sites", [
   ["lz", "Landing Zone", "b", "teal", T("LZ"), "landing zone"],
   ["pz", "Pickup Zone", "b", "teal", T("PZ"), "pickup zone"],
   ["dz", "Drop Zone", "b", "teal", T("DZ"), "drop zone parachute"],
-  ["farp", "Forward Arming and Refuelling Point", "b", "teal", T("FARP"), "fuel refuel"],
+  ["farp", "Forward Arming and Refueling Point", "b", "teal", T("FARP"), "fuel refuel"],
   ["dip", "Water Dip Site", "b", "blue", T("DIP"), "water helicopter bucket"],
   ["heliport", "Heliport", "c", "teal", "mk:heliport", "helicopter"],
   ["airport", "Airport", "c", "teal", "mk:airport", "aeroplane"],
@@ -253,7 +253,7 @@ add("nav", "Ground and terrain", [
   ["vehicle", "Vehicle", "c", "grey", "mk:car", "car"],
   ["truck", "Truck", "c", "grey", "tk:truck", "lorry"],
   ["boat", "Boat", "c", "blue", "tk:boat", "boat"],
-  ["anchor", "Anchorage", "c", "blue", "mk:harbor", "harbour anchor"],
+  ["anchor", "Anchorage", "c", "blue", "mk:harbor", "harbor anchor"],
   ["slipway", "Boat Ramp", "c", "blue", "mk:slipway", "ramp"],
 ]);
 
@@ -274,7 +274,8 @@ const THEME_COL = { "Emergency, health and safety": "red", "Government and milit
   "Food, shops and services": "orange", "Nature and terrain": "green", "Buildings and places": "brown" };
 const used = new Set(I.map((x) => x[5]));
 const placeEntries = [];
-function nice(n) { return n.replace(/[-_]+/g, " ").replace(/\b(alt\d|\d)$/, "").replace(/\s+/g, " ").trim().replace(/^./, (c) => c.toUpperCase()); }
+// American spelling for the shown name only (Shane 2026-11-06); the icon key keeps the upstream spelling (mk:garden-centre).
+function nice(n) { return n.replace(/[-_]+/g, " ").replace(/\b(alt\d|\d)$/, "").replace(/\s+/g, " ").trim().replace(/\bcentre\b/g, "center").replace(/\btheatre\b/g, "theater").replace(/^./, (c) => c.toUpperCase()); }
 for (const [pre, all] of [["mk", makiAll], ["tk", temakiAll]]) {
   for (const n of all) {
     const ref = pre + ":" + n;

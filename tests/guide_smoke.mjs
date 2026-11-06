@@ -57,7 +57,7 @@ ok(ringMiss.length === 0, "every ring action is named", ringMiss);
 // the settings the gear shows are named too
 const setMiss = await p.evaluate(() => {
   const g = document.querySelector('#guidedlg [data-gsec="settings"]').textContent;
-  return ["Map colours", "Grid format", "Distance units", "Use my location", "Offline maps and data", "Move to another device", "On-device AI", "User guide"].filter((t) => g.indexOf(t) < 0);
+  return ["Map colors", "Grid format", "Distance units", "Use my location", "Offline maps and data", "Move to another device", "On-device AI", "User guide"].filter((t) => g.indexOf(t) < 0);
 });
 ok(setMiss.length === 0, "every Settings item is named", setMiss);
 

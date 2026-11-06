@@ -53,7 +53,7 @@ async function open(opts, ctxIn) {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   ok(await shown(p, '#atk-tools [data-atk="point"]'), "phone: Point button on the map toolbar");
   await p.click('#atk-tools [data-atk="point"]');
-  ok(/At the map centre/.test(await p.textContent("#atk-pop")) && /Tap the map/.test(await p.textContent("#atk-pop")), "phone: Point offers map centre and tap to place");
+  ok(/At the map center/.test(await p.textContent("#atk-pop")) && /Tap the map/.test(await p.textContent("#atk-pop")), "phone: Point offers map centre and tap to place");
   await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(200);
   let P = await pts(p);
   ok(P.length === 1 && P[0].n === "P1", "phone: a point is added at the map centre");

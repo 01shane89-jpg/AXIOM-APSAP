@@ -126,7 +126,7 @@ const fixAt = (p, q, o) => { t0 += (o && o.dt) || 2000; return p.evaluate(({ q, 
   await fixAt(p, [14.0195, 100.5], { hdg: 0, spd: 10, dt: 1000 });
   ok(await p.evaluate(() => document.querySelectorAll("#osnav .nvlanes svg").length === 3), "near the turn the three mapped lanes are drawn");
   s = await st(p);
-  ok(s.spoken.some((x) => /^In 100 metres, turn right onto route 3\.$/.test(x)), "voice: the turn ahead (" + s.spoken.join(" | ") + ")");
+  ok(s.spoken.some((x) => /^In 100 meters, turn right onto route 3\.$/.test(x)), "voice: the turn ahead (" + s.spoken.join(" | ") + ")");
   ok(s.spoken.some((x) => /^Turn right onto route 3\.$/.test(x)), "voice: the turn at the junction");
   ok(!s.spoken.some((x) => /[฀-๿]/.test(x)), "the voice never reads out Thai script");
   /* after the turn, heading east: the hazard ahead is called out */

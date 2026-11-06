@@ -369,7 +369,7 @@ function main() {
   function acRange() {
     var a = S.mode === "line" ? acType(S.acft) : null, nm = 0; if (!a || !a.range) return "";
     for (var i = 0; i < S.wps.length - 1; i++) nm += G.dist([S.wps[i].lat, S.wps[i].lon], [S.wps[i + 1].lat, S.wps[i + 1].lon]) / 1852;
-    return nm > a.range ? '<p class="bad" id="rt-acrange">This route is ' + Math.round(nm).toLocaleString("en-US") + " nm, longer than the " + E(a.name) + "'s typical range of " + a.range.toLocaleString("en-US") + " nm. Plan fuel stops or refuelling.</p>" : "";
+    return nm > a.range ? '<p class="bad" id="rt-acrange">This route is ' + Math.round(nm).toLocaleString("en-US") + " nm, longer than the " + E(a.name) + "'s typical range of " + a.range.toLocaleString("en-US") + " nm. Plan fuel stops or refueling.</p>" : "";
   }
   function wpsUi() {
     var box = el("rt-wps"); if (!box) return;

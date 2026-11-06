@@ -221,8 +221,8 @@
       var h = o.toggle ? '<label><input type="checkbox" data-cfh="on"' + (on ? " checked" : "") + '> <b>History of violence</b> <span class="cfm" style="display:inline">(battles, clashes, attacks on civilians; UCDP)</span></label>' : "";
       if (!on && !o.toggle) h += '<p class="cfm">Switch it on to see the history on the map and its totals here.</p><button type="button" data-cfhon>Show on the map</button>';
       if (on && !x) h += '<div class="cfm">' + (err ? esc(err) : "Loading the history…") + "</div>";
-      if (on && x && !x.n && o.root === "vh") h += '<p class="cfnote">UCDP recorded no deaths from organised violence (fighting involving a government, fighting between armed groups, or attacks on civilians) placed in ' + esc(x.name) + " from " + day(x.start) + " to " + day((x.release || {}).last || x.asof) + ", nor in its provisional monthly events since. " +
-        "That is not the same as no violence: UCDP counts only organised violence that killed at least one person in a conflict with 25 or more deaths in a year, so crime, riots and smaller clashes are left out. Updated weekly, " + esc(x.asof) + ".</p>";
+      if (on && x && !x.n && o.root === "vh") h += '<p class="cfnote">UCDP recorded no deaths from organized violence (fighting involving a government, fighting between armed groups, or attacks on civilians) placed in ' + esc(x.name) + " from " + day(x.start) + " to " + day((x.release || {}).last || x.asof) + ", nor in its provisional monthly events since. " +
+        "That is not the same as no violence: UCDP counts only organized violence that killed at least one person in a conflict with 25 or more deaths in a year, so crime, riots and smaller clashes are left out. Updated weekly, " + esc(x.asof) + ".</p>";
       else if (on && x) {
         var yr = yearsRange(), t = totals();
         var hs = headerSpan(), dmin = String(x.start).slice(0, 10), dmax = today();
@@ -242,7 +242,7 @@
           (o.more ? breakdown() : "") +
           '<p class="cfnote">' + o.intro(x) + " " +
           "UCDP GED " + esc((x.release || {}).version || "") + " to " + day((x.release || {}).last || "") + ", then UCDP’s provisional monthly events. " +
-          "UCDP records only violence by organised armed groups or governments that killed at least one person in a conflict with 25 or more deaths in a year; riots, crime without an organised group and non-fatal clashes are left out. " +
+          "UCDP records only violence by organized armed groups or governments that killed at least one person in a conflict with 25 or more deaths in a year; riots, crime without an organized group and non-fatal clashes are left out. " +
           "Deaths are UCDP’s reported estimates. Events are placed as precisely as UCDP could; some only at district or province level. Updated weekly, " + esc(x.asof) + ".</p></div>";
       }
       box.innerHTML = h;

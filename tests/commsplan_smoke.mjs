@@ -130,12 +130,12 @@ const pane = (p) => p.textContent("#cp-pane");
   // link
   await tab(p, "link");
   let lt = await pane(p);
-  ok(/MODELLED: free space/.test(lt) && /MARGIN MET/.test(lt) && /1st Fresnel zone/.test(lt), "link: modelled answer with margin and Fresnel zone");
+  ok(/MODELED: free space/.test(lt) && /MARGIN MET/.test(lt) && /1st Fresnel zone/.test(lt), "link: modelled answer with margin and Fresnel zone");
   await p.fill('[data-cpl="d_km"]', "100");
   lt = await pane(p);
   ok(/beyond it/.test(lt), "link: 100 km with 2 m antennas is past the radio horizon");
   await p.selectOption('[data-cpl="band"]', "hf");
-  ok(/Sky-wave .* not modelled/.test(await pane(p)) && (await p.inputValue('[data-cpl="f_mhz"]')) === "8", "HF band: frequency set and sky-wave limit stated");
+  ok(/Sky-wave .* not modeled/.test(await pane(p)) && (await p.inputValue('[data-cpl="f_mhz"]')) === "8", "HF band: frequency set and sky-wave limit stated");
 
   // power
   await tab(p, "equipment");
@@ -262,7 +262,7 @@ const pane = (p) => p.textContent("#cp-pane");
   await p.fill("#cpsat-n", "Far side"); await p.fill("#cpsat-l", "-170"); await p.click('[data-sat="add"]');
   const sat = await pane(p);
   ok(/149\.\d° true/.test(sat) && /26\.\d°/.test(sat) && /magnetic/.test(sat), "satellite: London to 25°E points about 149° true, 26.5° up, with magnetic");
-  ok(/Below the horizon/.test(sat) && /MODELLED/.test(sat) && /Low-orbit/.test(sat), "satellite: a slot on the far side is below the horizon; labelled modelled with its limits");
+  ok(/Below the horizon/.test(sat) && /MODELED/.test(sat) && /Low-orbit/.test(sat), "satellite: a slot on the far side is below the horizon; labelled modelled with its limits");
   await p.click('[data-cppsub="annex"]');
   ok(/Channel plan: 2/.test(await pane(p)) && /Contacts and windows: 1/.test(await pane(p)) && /COMSEC status: 3/.test(await pane(p)), "annex: lists the parts it will hold");
   await p.evaluate(() => { window.print = () => {}; });

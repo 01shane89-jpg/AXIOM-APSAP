@@ -33,7 +33,7 @@ ok(p.casualty_profiles[0].pathway.map((x) => x.stage).join() === "stabilization,
 ok(p.receiving_acceptance.length === 2 && p.receiving_acceptance.every((a) => a.status === "UNKNOWN"), "receiving acceptance is unknown until a planner records it");
 ok(p.evacuation_assets.length === 1 && p.evacuation_assets[0].status === "POTENTIAL" && !p.evacuation_assets.some((a) => a.status === "CONFIRMED"), "an air rescue base found in open data is POTENTIAL, never confirmed");
 const ux = p.unresolved_requirements.map((u) => u.code);
-ok(ux.includes("cap.blood.bank") && ux.includes("cap.surg.or_emergency") && !ux.includes("cap.dx.ct"), "critical gaps at the definitive facility: blood and emergency theatre not documented, CT documented " + ux);
+ok(ux.includes("cap.blood.bank") && ux.includes("cap.surg.or_emergency") && !ux.includes("cap.dx.ct"), "critical gaps at the definitive facility: blood and emergency theater not documented, CT documented " + ux);
 ok(p.ccp[0].status === "NOT_SET" && p.hlz.length === 2 && p.axp.length === 1, "CCP, AXP and HLZ are objects, not set until the planner fills them");
 
 // ---------- validation ----------
@@ -56,7 +56,7 @@ const pF = M.build(input({ fields: { recv1: "Thammasat", medevac1: "Unit MEDEVAC
   categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "tertiary", state: "filled", stop: true, way: "road", time_s: 600, facility: Object.assign({}, TU, { caps: yes }) }] }] }));
 const warn = pF.validation_status.items.filter((x) => x.level !== "ok").map((x) => x.code).sort().join();
 ok(warn === "acceptance,medevac.provider,route.alternate,stabilization,verification", "with everything filled, only what phase 0 cannot confirm stays amber: " + warn);
-ok(/not confirmed available now: no planner's check in date/.test(by(pF, "verification").detail) && /Blood availability, emergency operating theatre, 24-hour emergency department and CT scanner/.test(by(pF, "verification").detail),
+ok(/not confirmed available now: no planner's check in date/.test(by(pF, "verification").detail) && /Blood availability, emergency operating theater, 24-hour emergency department and CT scanner/.test(by(pF, "verification").detail),
   "phase 1: critical capabilities are not usable now until a planner's check says so (names keep their capitals)");
 const allNow = { "blood.bank": "AVAILABLE", "surg.or_emergency": "AVAILABLE", "ed.24_7": "AVAILABLE", "dx.ct": "AVAILABLE" };
 const chk = { id: "chk:1", facility_id: TU.id, cap: "dx.ct", exists: "yes", now: "available", at: "2026-10-03T14:00:00.000Z" };
@@ -163,7 +163,7 @@ ok(c1.casualty.label === "Major trauma" && c1.status === "WARNING" && c1.poi ===
   c1.stabilization.name === "King Narai Hospital" && c1.stabilization.time_s === 360 && c1.stabilization.distance_m === 4400 && c1.definitive.name === "Thammasat University Hospital" && c1.definitive.time_s === 5640 &&
   c1.primary_route === "AVAILABLE" && c1.alternate_route === "AVAILABLE" && c1.route_flags[0] === "PRIMARY ROUTE INTERSECTS FLOOD WARNING / ALTERNATE ROUTE A AVAILABLE +14 MINUTES",
   "phase 6: the CONOP reads status, POI, ground, air, stabilization, definitive, P and A lines and the route flag from the record");
-ok(c1.critical_gaps.join() === "Blood availability,Emergency operating theatre,Receiving hospital acceptance,Air MEDEVAC provider: none documented for this country in OSAP; ask the national emergency number and International SOS", "phase 6: critical gaps at the definitive care, acceptance and air: " + c1.critical_gaps.join(", "));
+ok(c1.critical_gaps.join() === "Blood availability,Emergency operating theater,Receiving hospital acceptance,Air MEDEVAC provider: none documented for this country in OSAP; ask the national emergency number and International SOS", "phase 6: critical gaps at the definitive care, acceptance and air: " + c1.critical_gaps.join(", "));
 ok(c1.air_asset === "No air medevac service documented for this country in OSAP" && c1.air_documented === null, "air: with no documented service the CONOP says so, never blank");
 /* Shane 2026-10-06 ("We NEED to know about air medevac"): a documented air medical service names who to call and how, stays
    NOT CONFIRMED, never competes with the road, and is named in the gaps, the provider check and the picture */

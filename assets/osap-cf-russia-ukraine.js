@@ -102,8 +102,8 @@
     }
     var lo = X.losses;
     if (lo && lo.stats) {
-      var K = [["personnel_units", "Personnel"], ["tanks", "Tanks"], ["armoured_fighting_vehicles", "Armoured vehicles"], ["artillery_systems", "Artillery"], ["mlrs", "Rocket launchers"],
-        ["aa_warfare_systems", "Air defence"], ["planes", "Aircraft"], ["helicopters", "Helicopters"], ["uav_systems", "Drones"], ["cruise_missiles", "Cruise missiles"], ["warships_cutters", "Ships and boats"],
+      var K = [["personnel_units", "Personnel"], ["tanks", "Tanks"], ["armoured_fighting_vehicles", "Armored vehicles"], ["artillery_systems", "Artillery"], ["mlrs", "Rocket launchers"],
+        ["aa_warfare_systems", "Air defense"], ["planes", "Aircraft"], ["helicopters", "Helicopters"], ["uav_systems", "Drones"], ["cruise_missiles", "Cruise missiles"], ["warships_cutters", "Ships and boats"],
         ["submarines", "Submarines"], ["vehicles_fuel_tanks", "Vehicles and fuel tanks"], ["special_military_equip", "Special equipment"]];
       h += '<h3><span class="claimt">Claim</span>Russian losses, as claimed by Ukraine</h3><table><tr><td></td><td class="n">Total</td><td class="n">Past day</td></tr>' +
         K.filter(function (k) { return lo.stats[k[0]] != null; }).map(function (k) { return "<tr><td>" + k[1] + '</td><td class="n">' + N(lo.stats[k[0]]) + '</td><td class="n">' + (lo.increase && lo.increase[k[0]] ? "+" + N(lo.increase[k[0]]) : "") + "</td></tr>"; }).join("") +

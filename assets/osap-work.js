@@ -299,7 +299,7 @@
           "<description>" + x(HEADER + " Scope: " + S.tab + ", " + S.period + (S.area ? ", inside the drawn area" : "") + ". " + (rows.length - pts.length) + " items without a map location are left out; use CSV or GeoJSON for them.") + "</description>" +
           pts.map(function (o) {
             return "<Placemark><name>" + x(o.title.slice(0, 120)) + "</name><description>" + x([o.detail, "Status: " + o.claim_status, "Source: " + o.source, o.source_link, "SHA-256: " + o.fingerprint_sha256,
-              o.analyst_grade ? "Analyst grade (user's own judgement): " + o.analyst_grade + " (" + o.analyst_grade_meaning + ")" : "",
+              o.analyst_grade ? "Analyst grade (user's own judgment): " + o.analyst_grade + " (" + o.analyst_grade_meaning + ")" : "",
               o.analyst_note ? "Analyst note (user's own, not source content): " + o.analyst_note : ""].filter(Boolean).join("\n")) + "</description>" +
               (o.date ? "<TimeStamp><when>" + x(o.date.slice(0, 10)) + "</when></TimeStamp>" : "") +
               "<ExtendedData>" + Object.keys(o).filter(function (k) { return k !== "lat" && k !== "lon"; }).map(function (k) { return '<Data name="' + k + '"><value>' + x(o[k]) + "</value></Data>"; }).join("") + "</ExtendedData>" +
@@ -513,7 +513,7 @@
     if (!G()) return "";
     var K = Object.keys(WORK.srcRel).sort();
     return '<details class="wksrc"' + (WK.srcOpen ? " open" : "") + '><summary>Grading and source defaults (' + K.length + ")</summary>" +
-      '<p class="obs">Grades are your own Admiralty / NATO judgement: source reliability A to F and information credibility 1 to 6, for example B2. OSAP never sets them. A default reliability for a source only pre-fills the picker on items you have not graded; nothing is stored until you confirm it. Set a default from a graded item with its "Default … for …" button.</p>' +
+      '<p class="obs">Grades are your own Admiralty / NATO judgment: source reliability A to F and information credibility 1 to 6, for example B2. OSAP never sets them. A default reliability for a source only pre-fills the picker on items you have not graded; nothing is stored until you confirm it. Set a default from a graded item with its "Default … for …" button.</p>' +
       (K.length ? '<div class="wklist">' + K.map(function (sk) {
         var d = WORK.srcRel[sk], lb = d.label || G().sourceLabel(sk);
         return '<div class="wkrow wkmine wksrcrow"><span class="wkh">' + esc(lb) + '</span><select data-wk-srcset="' + esc(sk) + '" aria-label="' + esc("Default reliability for " + lb) + '">' +

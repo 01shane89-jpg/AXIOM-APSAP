@@ -196,7 +196,7 @@
         return '<label class="mlrow"><input type="checkbox" data-evac="' + K.k + '"' + (S.on[K.k] ? " checked" : "") + '><span><b>' + esc(K.name) + "</b><i>" + esc(K.note) + "</i></span></label>";
       }).join("") +
       '<div class="evnear"><div class="evt">Nearest to a point</div>' +
-      '<div class="evrow"><button type="button" class="refresh" data-ev="me">My location</button><button type="button" class="refresh" data-ev="centre">Map centre</button>' +
+      '<div class="evrow"><button type="button" class="refresh" data-ev="me">My location</button><button type="button" class="refresh" data-ev="centre">Map center</button>' +
       '<button type="button" class="refresh" data-ev="tap" aria-pressed="false">Tap the map</button></div>' +
       '<form class="evrow" data-ev-form><input type="text" data-ev-grid placeholder="Grid (MGRS) or lat, lon" aria-label="Grid or lat, lon" autocomplete="off" spellcheck="false"><button type="submit" class="refresh">Go</button></form>' +
       '<p class="evm obs" data-ev-msg hidden></p><div data-ev-near></div>' +
@@ -223,7 +223,7 @@
       navigator.geolocation.getCurrentPosition(function (p) { setFrom([p.coords.latitude, p.coords.longitude], "your location"); },
         function (er) { S.msg = "No position: " + (er && er.code === 1 ? "permission refused." : "the device did not answer.") + " Type a grid instead."; paint(); },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
-    } else if (a === "centre") { var c = map.getCenter(); setFrom([c.lat, c.lng], "the map centre"); }
+    } else if (a === "centre") { var c = map.getCenter(); setFrom([c.lat, c.lng], "the map center"); }
     else if (a === "tap") { S.tap = !S.tap; map.getContainer().style.cursor = S.tap ? "crosshair" : ""; paint(); }
     else if (a === "clear") { S.from = null; S.near = null; S.msg = ""; drawNear(); paint(); }
     else if (sh) { var r = pick(sh); if (r) { map.setView([r.x.i.lat, r.x.i.lon], Math.max(map.getZoom(), 12)); L.popup({ maxWidth: 330 }).setLatLng([r.x.i.lat, r.x.i.lon]).setContent(pop(r.x)).openOn(map); } }

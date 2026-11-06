@@ -13,7 +13,7 @@
   var SCHEMA = "osap-medplan/5";
   var STAGE = { stabilization: "stabilization", primary: "stabilization", secondary: "stabilization", tertiary: "definitive" };
   /* the capabilities whose absence a planner must close before the plan is relied on (Build Plan v2, CONOP "critical gaps") */
-  var CRITICAL = [["blood.bank", "Blood availability"], ["surg.or_emergency", "Emergency operating theatre"], ["ed.24_7", "24-hour emergency department"], ["dx.ct", "CT scanner"]];
+  var CRITICAL = [["blood.bank", "Blood availability"], ["surg.or_emergency", "Emergency operating theater"], ["ed.24_7", "24-hour emergency department"], ["dx.ct", "CT scanner"]];
 
   function str(x) { return x == null ? "" : String(x); }
   function lower(L) { var n = L.map(function (c, i) { return i && !/^.[A-Z]/.test(c[1]) ? c[1].charAt(0).toLowerCase() + c[1].slice(1) : c[1]; }); return n.length < 2 ? n.join("") : n.slice(0, -1).join(", ") + " and " + n[n.length - 1]; }
@@ -297,7 +297,7 @@
     var hf = p.hospital_sources_failed || [];
     if (hf.length) add("hospital.sources", "blocking", "Hospital records read", "Not read on this device: " + hf.map(function (x) { return x.name + (x.error ? " (" + x.error + ")" : ""); }).join("; ") +
       ". Without them the plan cannot say which hospitals have the care needed" + (p.definitive ? ", so its choice may be wrong" : ", so it shows no destination") + ". Try again, or wait for a better connection.");
-    add("poi", p.poi && p.poi.set_by === "poi" ? "ok" : "warning", "Point of injury", p.poi && p.poi.set_by === "poi" ? p.poi.mgrs : "Not set: the plan is centred on " + (p.poi && p.poi.set_by === "c" ? "the map or area centre" : "a stand-in point") + ".");
+    add("poi", p.poi && p.poi.set_by === "poi" ? "ok" : "warning", "Point of injury", p.poi && p.poi.set_by === "poi" ? p.poi.mgrs : "Not set: the plan is centered on " + (p.poi && p.poi.set_by === "c" ? "the map or area center" : "a stand-in point") + ".");
     /* a point of injury at sea: no road starts there; the road legs start at the landing port after a boat leg */
     if (p.poi && p.poi.environment === "sea") {
       var sl = p.sea_leg;

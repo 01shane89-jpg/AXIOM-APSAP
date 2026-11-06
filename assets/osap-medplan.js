@@ -77,17 +77,17 @@
     { k: "KOR", name: "Brian D. Allgood Army Community Hospital", place: "Camp Humphreys, Korea", lat: 36.963, lon: 127.022, lvl: "", src: "https://briandallgood.tricare.mil/", srcname: "briandallgood.tricare.mil" },
     { k: "JPN", name: "U.S. Naval Hospital Okinawa", place: "Camp Foster, Okinawa, Japan", lat: 26.302, lon: 127.770, lvl: "", src: "https://okinawa.tricare.mil/Health-Services/Urgent-Emergency-Care", srcname: "okinawa.tricare.mil" }
   ];
-  var SE_HI = { k: "HAW", name: "Tripler Army Medical Center", place: "Honolulu, Hawaii", lat: 21.362, lon: -157.890, lvl: "Level II trauma centre (reported)", src: "https://d34w7g4gy10iej.cloudfront.net/pubs/pdf_47950.pdf", srcname: "DVIDS: Tripler achieves Level II Trauma Center status" };
+  var SE_HI = { k: "HAW", name: "Tripler Army Medical Center", place: "Honolulu, Hawaii", lat: 21.362, lon: -157.890, lvl: "Level II trauma center (reported)", src: "https://d34w7g4gy10iej.cloudfront.net/pubs/pdf_47950.pdf", srcname: "DVIDS: Tripler achieves Level II Trauma Center status" };
   var SE_WC = [
-    { k: "USA", name: "UC San Diego Health, Hillcrest", place: "San Diego, California", lat: 32.7546, lon: -117.1658, lvl: "Level I trauma centre", src: "https://health.ucsd.edu/care/emergency-trauma/trauma/", srcname: "UC San Diego Health trauma centre" },
-    { k: "USA", name: "Harborview Medical Center", place: "Seattle, Washington", lat: 47.604, lon: -122.324, lvl: "Level I trauma centre", src: "https://en.wikipedia.org/wiki/Harborview_Medical_Center", srcname: "Wikipedia" }
+    { k: "USA", name: "UC San Diego Health, Hillcrest", place: "San Diego, California", lat: 32.7546, lon: -117.1658, lvl: "Level I trauma center", src: "https://health.ucsd.edu/care/emergency-trauma/trauma/", srcname: "UC San Diego Health trauma center" },
+    { k: "USA", name: "Harborview Medical Center", place: "Seattle, Washington", lat: 47.604, lon: -122.324, lvl: "Level I trauma center", src: "https://en.wikipedia.org/wiki/Harborview_Medical_Center", srcname: "Wikipedia" }
   ];
-  var SE_DE = { k: "DEU", name: "Landstuhl Regional Medical Center", place: "Landstuhl, Germany", lat: 49.402, lon: 7.560, lvl: "Level II trauma centre, ACS verified", src: "https://landstuhl.tricare.mil/News-Gallery/Articles/Article/2740041/lrmc-verified-as-only-level-ii-trauma-center-overseas", srcname: "landstuhl.tricare.mil" };
+  var SE_DE = { k: "DEU", name: "Landstuhl Regional Medical Center", place: "Landstuhl, Germany", lat: 49.402, lon: 7.560, lvl: "Level II trauma center, ACS verified", src: "https://landstuhl.tricare.mil/News-Gallery/Articles/Article/2740041/lrmc-verified-as-only-level-ii-trauma-center-overseas", srcname: "landstuhl.tricare.mil" };
   var SRC = {
     medfac: { name: "OSAP stored copy of OpenStreetMap health facilities and landing sites", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Refreshed from OpenStreetMap every four weeks." },
     osm: { name: "OpenStreetMap via Overpass API", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Community data: capabilities, contacts and access can be out of date." },
     sof: { name: "OSAP sourced facility list", url: "", note: "Hospitals, airports and U.S. posts researched from named public sources, each linked in the plan." },
-    gov: { name: "Official hospital records (HA Thailand open data)", url: "https://data.ha.or.th/", note: "MOPH hospital codes, official type, MOPH service level, beds open, HA accreditation and the programmes HA has certified (tools/build_th_registry.mjs, monthly). A certificate confirms only what the certified programme cannot run without; no certificate does not mean no service." },
+    gov: { name: "Official hospital records (HA Thailand open data)", url: "https://data.ha.or.th/", note: "MOPH hospital codes, official type, MOPH service level, beds open, HA accreditation and the programs HA has certified (tools/build_th_registry.mjs, monthly). A certificate confirms only what the certified program cannot run without; no certificate does not mean no service." },
     web: { name: "Hospitals' own websites, read automatically", url: "", note: "Quoted sentences in which a hospital states a service (tools/read_hospital_sites.mjs on GitHub Actions). The hospital's own claim: reported, not confirmed. News, job and procurement pages are left out." },
     osrm: { name: "Road routing: FOSSGIS OSRM, OSRM demo server, FOSSGIS Valhalla (first that answers)", url: "https://routing.openstreetmap.de/", note: "Road drive time without traffic, checkpoints or damage." },
     pac: { name: "Alternate routes and hazards along them: OSAP's Route tab (assets/osap-route.js)", url: "", note: "Up to three distinct road lines per hospital from the same routers (their own alternatives, else a detour round the incidents reported nearest the fastest line). Hazards are what OSAP already holds within " + 2 + " km of each line from the last 30 days: reports for the open country in the chosen period, UCDP conflict events, GDACS alerts, USGS and national earthquakes, NASA EONET storms, road agency notices once loaded, and your saved NAI/TAI areas. An empty list is not a clearance." },
@@ -98,7 +98,7 @@
     state: { name: "U.S. Department of State: emergencies abroad", url: STATE_EMERG.url },
     tricare: { name: "TRICARE.mil Overseas Resources (Internet Archive copy)", url: "https://web.archive.org/web/20260423013428/https://www.tricare.mil/ContactUs/CallUs/OverseasResources", note: "The live page answers a bot check, so the archived copy of 23 Apr 2026 was read. OSAP holds no TRICARE network list: acceptance by a hospital is never shown as yes or no." },
     strat: { name: "Strategic evacuation stops: hospital and U.S. military treatment facility pages", url: "", note: "Each stop is linked to its own source. Trauma levels only as the source states them." },
-    isos: { name: "International SOS assistance centres", url: ISOS_URL, note: "Published 24-hour numbers, read " + ISOS_AT + ". ISOS assists its members and their clients; check your organisation's membership." },
+    isos: { name: "International SOS assistance centers", url: ISOS_URL, note: "Published 24-hour numbers, read " + ISOS_AT + ". ISOS assists its members and their clients; check your organization's membership." },
     meteo: { name: "Open-Meteo forecast", url: "https://open-meteo.com/", note: "Model forecast for one point, not an aviation forecast." },
     who: { name: "WHO Disease Outbreak News", url: "https://www.who.int/emergencies/disease-outbreak-news" },
     cdc: { name: "CDC travel health notices", url: "https://wwwnc.cdc.gov/travel/notices" },
@@ -125,7 +125,7 @@
   function isosNear(o) { return ISOS.map(function (c) { return { c: c, m: hav(o, [c[1], c[2]]) }; }).sort(function (a, b) { return a.m - b.m; }).slice(0, 2); }
   function isosHtml(o) {
     return isosNear(o).map(function (x) {
-      return '<li class="mpisos">International SOS assistance centre, ' + esc(x.c[0]) + " (" + esc(km(x.m)) + " away): " + x.c.slice(3).map(function (n) { return '<a href="tel:' + esc(n.replace(/\(.*\)/, "").replace(/[^0-9+]/g, "")) + '">' + esc(n) + "</a>"; }).join(", ") +
+      return '<li class="mpisos">International SOS assistance center, ' + esc(x.c[0]) + " (" + esc(km(x.m)) + " away): " + x.c.slice(3).map(function (n) { return '<a href="tel:' + esc(n.replace(/\(.*\)/, "").replace(/[^0-9+]/g, "")) + '">' + esc(n) + "</a>"; }).join(", ") +
         " " + link(ISOS_URL, "(internationalsos.com, read " + ISOS_AT + ")") + "</li>";
     }).join("");
   }
@@ -576,7 +576,7 @@
   var ROLE_RULE = "The official trauma designation is shown only as a source states it, never worked out from what a hospital has; without one a hospital reads \"No verified trauma designation\". " +
     "Primary, Secondary and Tertiary are chosen per casualty type from capabilities documented by a credible source (an official register or a planner's check), not from the designation alone; OpenStreetMap and Wikipedia are shown but never qualify. " +
     "OSAP also shows an observed class, T1 to T5, inferred from the capability flags (draft rule osap.tclass/0.1): " +
-    "T5 emergency department; T4 adds 24/7 emergency, blood bank and X-ray or ultrasound; T3 adds CT, ICU, general surgeon, emergency operating room, anaesthesia and orthopaedic surgery; " +
+    "T5 emergency department; T4 adds 24/7 emergency, blood bank and X-ray or ultrasound; T3 adds CT, ICU, general surgeon, emergency operating room, anesthesia and orthopedic surgery; " +
     "T2 adds neurosurgery 24/7, mechanical ventilation and a trauma surgeon or team; T1 adds massive transfusion, vascular, thoracic and plastic surgery. " +
     "Unknown flags never count as present or absent. The observed class is not an official level and is not used to pick";
   /* OSAP's sourced list names university teaching and referral hospitals: the country's tertiary centres */
@@ -590,7 +590,7 @@
   var ROMAN = ["", "I", "II", "III", "IV", "V"];
   /* the official designation only as a source states it (status REPORTED: OSAP's sources are not the designating authority) */
   function tierLabel(f) {
-    if (f.trauma) return f.lvl ? "Trauma Level " + ROMAN[f.lvl] + " (official designation, reported)" : f.trauma.official ? clip(f.trauma.text, 90) + " (official designation)" : "Trauma centre, level not stated (reported)";
+    if (f.trauma) return f.lvl ? "Trauma Level " + ROMAN[f.lvl] + " (official designation, reported)" : f.trauma.official ? clip(f.trauma.text, 90) + " (official designation)" : "Trauma center, level not stated (reported)";
     return eqText(f) || NK_LVL;
   }
   /* the small tag on an equivalent level: an assessment by OSAP's rule, its basis in the tooltip */
@@ -649,12 +649,12 @@
      planner or an authoritative register confirms it, and UNKNOWN never counts as present or absent. */
   var CAPS = [
     ["ed.basic", "Emergency department"], ["ed.24_7", "24/7 emergency department"], ["trauma.team", "Trauma team"], ["surg.trauma", "Trauma surgeon"],
-    ["surg.general", "General surgeon"], ["surg.or_emergency", "Emergency operating room"], ["surg.anaesthesia", "Anaesthesia"],
+    ["surg.general", "General surgeon"], ["surg.or_emergency", "Emergency operating room"], ["surg.anaesthesia", "Anesthesia"],
     ["blood.bank", "Blood bank"], ["blood.mtp", "Massive transfusion"], ["dx.xray", "X-ray"], ["dx.ultrasound", "Ultrasound"], ["dx.ct", "CT"], ["dx.mri", "MRI"],
     ["dx.ir", "Interventional radiology"], ["cc.icu", "ICU"], ["cc.ventilator", "Mechanical ventilation"], ["surg.neuro", "Neurosurgery"],
-    ["surg.ortho", "Orthopaedic surgery"], ["surg.vascular", "Vascular surgery"], ["surg.thoracic", "Thoracic surgery"], ["surg.plastic", "Plastic surgery"],
-    ["surg.ophthalmology", "Ophthalmology"], ["surg.maxfac", "Maxillofacial surgery"], ["spec.burn", "Burn care"], ["spec.pediatric_trauma", "Paediatric trauma"],
-    ["spec.obstetric", "Obstetrics"], ["spec.cath_lab", "Cardiac catheterisation"], ["spec.stroke", "Stroke"], ["spec.hyperbaric", "Hyperbaric medicine"],
+    ["surg.ortho", "Orthopedic surgery"], ["surg.vascular", "Vascular surgery"], ["surg.thoracic", "Thoracic surgery"], ["surg.plastic", "Plastic surgery"],
+    ["surg.ophthalmology", "Ophthalmology"], ["surg.maxfac", "Maxillofacial surgery"], ["spec.burn", "Burn care"], ["spec.pediatric_trauma", "Pediatric trauma"],
+    ["spec.obstetric", "Obstetrics"], ["spec.cath_lab", "Cardiac catheterization"], ["spec.stroke", "Stroke"], ["spec.hyperbaric", "Hyperbaric medicine"],
     ["spec.rehabilitation", "Rehabilitation"], ["trans.helipad", "Helipad"], ["trans.transfer", "Ambulance transfer"], ["trans.critical_care_transport", "Critical care transport"]];
   var CAP_NAME = {}; CAPS.forEach(function (c) { CAP_NAME[c[0]] = c[1]; });
   var MED_SCHOOL = /\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19\u0e41\u0e1e\u0e17\u0e22\u0e4c/,
@@ -682,10 +682,10 @@
     icu: { name: "Department of Health Service Support: hospital level criteria (ICU, OR from level M2 up)", url: "https://thaidj.org/index.php/jdhss/article/download/6559/6169/9140", at: "2026-10-06" },
     sp: { name: "MOPH Service Plan 2555 rooms and beds per hospital level (Department of Health Service Support building standard, 2560, pp. 35-43)", url: "https://dcd.hss.moph.go.th/web/attachments/article/248/151217_042853.pdf", at: "2026-10-08" } };
   var MOPH_WHY = {
-    def: { M2: "level M2: specialists in all six major branches, operating theatre, intensive care ward, diagnostic radiology", M1: "level M1: specialists in every major branch (surgery, orthopaedics and anaesthesia among them)",
+    def: { M2: "level M2: specialists in all six major branches, operating theater, intensive care ward, diagnostic radiology", M1: "level M1: specialists in every major branch (surgery, orthopedics and anesthesia among them)",
       S: "level S: specialists in every major and secondary branch", A: "level A: specialists in every branch" },
     kpi: "level A, S and M1 hospitals are measured on getting trauma patients who need surgery into the operating room within 60 minutes",
-    icu: "ICU and operating theatre are level criteria from M2 up",
+    icu: "ICU and operating theater are level criteria from M2 up",
     sp: { M2: "Service Plan rooms for level M2 (community hub hospital, 120-180 beds): emergency room with 4 beds, X-ray, ICU, 4 operating rooms",
       M1: "Service Plan rooms for level M1 (general hospital, 180-300 beds): emergency unit with its own X-ray room, 2 general X-ray rooms, ICU, central lab and blood bank; no CT room",
       S: "Service Plan rooms for level S (general hospital, 300-500 beds): emergency unit with X-ray, 4-6 general X-ray rooms, 2 ultrasound rooms, 1 CT room, ICU, 6-bed burn unit, central lab and blood bank",
@@ -783,9 +783,9 @@
     ["T3", [["dx.ct"], ["cc.icu"], ["surg.general"], ["surg.or_emergency"], ["surg.anaesthesia"], ["surg.ortho"]]],
     ["T2", [["surg.neuro_24_7"], ["cc.ventilator"], ["surg.trauma", "trauma.team"]]],
     ["T1", [["blood.mtp"], ["surg.vascular"], ["surg.thoracic"], ["surg.plastic"]]]];
-  var TC_TXT = { T1: "comprehensive definitive trauma", T2: "major definitive trauma", T3: "selective definitive trauma", T4: "stabilisation facility", T5: "basic emergency facility" };
+  var TC_TXT = { T1: "comprehensive definitive trauma", T2: "major definitive trauma", T3: "selective definitive trauma", T4: "stabilization facility", T5: "basic emergency facility" };
   var TC_WORD = { T1: "Observed capabilities are broadly consistent with a high-capability trauma facility.", T2: "Observed capabilities are broadly consistent with a major trauma facility.",
-    T3: "Observed capabilities suggest selective definitive trauma care; complex cases need transfer.", T4: "Observed capabilities suggest stabilisation and transfer.",
+    T3: "Observed capabilities suggest selective definitive trauma care; complex cases need transfer.", T4: "Observed capabilities suggest stabilization and transfer.",
     T5: "Observed capabilities suggest basic emergency care; rapid transfer expected for serious trauma." };
   function tClass(C) {
     function st(k) {
@@ -820,7 +820,7 @@
     [2, [["surg.neuro"], ["surg.trauma", "trauma.team"]]],
     [1, [["surg.vascular"], ["surg.thoracic"], ["surg.plastic"]]]];
   var EQ_RULE = "Equivalent level (rule " + EQ_RULE_ID + "): OSAP compares the capabilities a credible source documents with what the American College of Surgeons' trauma levels need. " +
-    "Level IV: 24-hour emergency department, blood bank, X-ray or ultrasound. Level III adds CT, ICU, general and orthopaedic surgery, anaesthesia and an emergency operating theatre. " +
+    "Level IV: 24-hour emergency department, blood bank, X-ray or ultrasound. Level III adds CT, ICU, general and orthopedic surgery, anesthesia and an emergency operating theater. " +
     "Level II adds neurosurgery and a trauma surgeon or team. Level I adds vascular, thoracic and plastic surgery. OpenStreetMap and Wikipedia never count. " +
     "An assessment by OSAP's rule, not an official designation; draft, not analyst-approved.";
   function equivLevel(C) {
@@ -1301,12 +1301,12 @@
           : '<input id="' + id + '" data-mpf="' + f[0] + '" maxlength="160" autocomplete="off" value="' + esc(v[f[0]] || "") + '">') + "</label>";
     }).join("");
   }
-  function fieldLabel(k) { if (k === "poi") return "the anticipated point of injury"; if (k === "c") return ST && !ST.P ? "the map centre" : "the centre of the area";
+  function fieldLabel(k) { if (k === "poi") return "the anticipated point of injury"; if (k === "c") return ST && !ST.P ? "the map center" : "the center of the area";
     var pt = /^pt:/.test(k) && ownPt(k.slice(3)); if (pt) return "your point " + pt.n; var d = FIELDS.filter(function (x) { return x[0] === k; })[0]; return d ? d[1].split(",")[0].replace(/ \(.*\)/, "") + (k.slice(-1) === "2" ? " (alternate)" : "") : "the start point"; }
   function startOpts() {
     var v = fieldVals(), o = [];
     if (parseGrid(v.poi)) o.push('<option value="poi"' + (ST && ST.from === "poi" ? " selected" : "") + ">Point of injury: " + esc(v.poi) + "</option>");
-    o.push('<option value="c"' + (ST && ST.from === "c" ? " selected" : "") + ">" + (ST && !ST.P ? "Map centre when opened" : "Centre of the area") + "</option>");
+    o.push('<option value="c"' + (ST && ST.from === "c" ? " selected" : "") + ">" + (ST && !ST.P ? "Map center when opened" : "Center of the area") + "</option>");
     ownPts().forEach(function (p) { o.push('<option value="pt:' + esc(p.id) + '"' + (ST && ST.from === "pt:" + p.id ? " selected" : "") + ">Your point " + esc(p.n) + ": " + esc(grid(p.lat, p.lon)) + "</option>"); });
     FIELDS.forEach(function (f) { if (f[2] && parseGrid(v[f[0]])) o.push('<option value="' + f[0] + '"' + (ST && ST.from === f[0] ? " selected" : "") + ">" + esc(fieldLabel(f[0])) + ": " + esc(v[f[0]]) + "</option>"); });
     return o.join("");
@@ -1358,12 +1358,12 @@
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
       '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' + (W.OSAP_MEDSLIDE ? '<button type="button" class="refresh noprint" data-mp="slide" title="One landscape briefing slide: receiving facilities, PACE plans, the routes on a satellite map, times and contacts. PDF or PowerPoint">Briefing slide</button>' : "") +
       '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + (W.OSAP_PLACES && W.OSAP_PLACES.saveTo ? '<button type="button" class="refresh noprint" data-mp="places" title="Save the injury point, chosen hospitals, your sites and the road routes as your own points and routes in a My places folder">Save to folder</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button><div id="mp-layers" class="mplayers noprint" role="group" aria-label="Medical plan objects on the map"></div></div>' +
-      '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
+      '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², center " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
-      '<label class="noprint" for="mp-from">Plan centred on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label>" + envSel() + "</div>" +
-      '<p><b>Centred on ' + esc(fieldLabel(s.from)) + ":</b> <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + "). Every distance, drive, flight and route below is from here." +
-      (s.from !== "poi" ? ' <span class="obs noprint">Set the anticipated point of injury above to centre the plan on it.</span>' : "") + "</p>" +
+      '<label class="noprint" for="mp-from">Plan centered on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label>" + envSel() + "</div>" +
+      '<p><b>Centered on ' + esc(fieldLabel(s.from)) + ":</b> <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + "). Every distance, drive, flight and route below is from here." +
+      (s.from !== "poi" ? ' <span class="obs noprint">Set the anticipated point of injury above to center the plan on it.</span>' : "") + "</p>" +
       '<div id="mp-sea"></div><div id="mp-conop"></div>' +
       '<h3>Operational picture</h3><div id="mp-pic"><p class="obs">Reading the routes, forecast and data dates…</p></div>' +
       '<h3>Plan status</h3><div id="mp-val"></div>' +
@@ -1526,8 +1526,8 @@
       "<li><b>By boat to a port</b>, then by road to the hospital. Every road time in this plan includes that boat leg and the port transfer (below).</li>" +
       "<li><b>Helicopter landing</b> on a deck the aircraft operator has accepted for that aircraft (size, load, obstacles, motion, deck crew).</li>" +
       "<li><b>Helicopter hoist</b>: a serviceable hoist, a qualified crew, an accepted hoist area and sea-state limits. A fixed-wing air ambulance cannot collect from a ship; it can only fly onward from an airport.</li></ul>" +
-      '<p class="obs">Air times in this plan assume the aircraft can collect at the POI; OSAP does not know whether any deck or hoist is available. Coordinate through the responsible rescue coordination centre (RCC): being nearest to a country does not make it the coordinating authority. The master controls the vessel, the aircraft commander accepts or rejects the aviation task, and the clinical lead decides what care the casualty needs.</p>';
-    if (W.OSAP_SEATRANSIT) h += '<p class="noprint"><button type="button" data-mp-seatr>Sea transit assessment</button> <span class="obs">For a voyage: every stretch of the corridor against hospitals, ports, airfields and rescue centres.</span></p>';
+      '<p class="obs">Air times in this plan assume the aircraft can collect at the POI; OSAP does not know whether any deck or hoist is available. Coordinate through the responsible rescue coordination center (RCC): being nearest to a country does not make it the coordinating authority. The master controls the vessel, the aircraft commander accepts or rejects the aviation task, and the clinical lead decides what care the casualty needs.</p>';
+    if (W.OSAP_SEATRANSIT) h += '<p class="noprint"><button type="button" data-mp-seatr>Sea transit assessment</button> <span class="obs">For a voyage: every stretch of the corridor against hospitals, ports, airfields and rescue centers.</span></p>';
     var P = w.ports || [];
     if (!P.length) h += '<p class="mpwarn">' + (w.ports ? "No port within " + SEA_PORT_KM + " km is in OSAP's ports layer" + (w.portsFailed && w.portsFailed.length ? " (not read: " + esc(w.portsFailed.join(", ")) + ")" : "") : "Reading the ports near the point…") + ". Plan prolonged onboard care, early diversion and RCC coordination.</p>";
     else {
@@ -1536,7 +1536,7 @@
         P.map(function (p) {
           var on = L && L.port.id === p.id, d = SEA().nm(s.o, [p.lat, p.lon]);
           return "<tr><td><label class=\"mpchk\"><input type=\"radio\" name=\"mp-port\" data-mp-port=\"" + esc(p.id) + '"' + (on ? " checked" : "") + '><span class="noprint">Land here</span>' + (on ? '<span class="sub">chosen</span>' : "") + "</label></td>" +
-            "<td><b>" + esc(p.name) + "</b> <span class=\"obs\">" + esc(String(p.cc).toUpperCase()) + (p.size ? " · " + esc(p.size) + " harbour" : "") + (p.approx ? " · position approximate" : "") + "</span><br><code>" + esc(grid(p.lat, p.lon)) + "</code></td>" +
+            "<td><b>" + esc(p.name) + "</b> <span class=\"obs\">" + esc(String(p.cc).toUpperCase()) + (p.size ? " · " + esc(p.size) + " harbor" : "") + (p.approx ? " · position approximate" : "") + "</span><br><code>" + esc(grid(p.lat, p.lon)) + "</code></td>" +
             '<td class="n">' + nmTxt(d) + '<span class="sub">' + esc(km(d * 1852)) + "</span></td>" +
             '<td class="n">' + esc(mins(d / kn * 3600)) + "</td>" +
             "<td>" + (link(p.url, { wpi: "World Port Index", osm: "OpenStreetMap", locode: "UN/LOCODE" }[p.src] || p.src) || esc(p.src)) + "</td></tr>";
@@ -1845,7 +1845,7 @@
       var f = r.choice.f, had = out.filter(function (p) { return p.f === f; })[0], nm = ROLE_NAME[r.role];
       if (r.role === "stabilization") { out.push({ f: f, role: nm, why: [nm], row: r, reason: "Stabilization stop for major trauma: " + stabWhy(r) }); return; }
       if (had) { had.why.push(nm); had.reason += "; also " + nm; return; }
-      var byp = r.bypass ? "; bypass: going direct reaches " + (r.role === "primary" ? "Secondary" : "Tertiary") + " care in " + mins(r.bypass.direct_time.s) + " (via here " + mins(r.bypass.via_time.s) + "), so this is the stabilisation option" : "";
+      var byp = r.bypass ? "; bypass: going direct reaches " + (r.role === "primary" ? "Secondary" : "Tertiary") + " care in " + mins(r.bypass.direct_time.s) + " (via here " + mins(r.bypass.via_time.s) + "), so this is the stabilization option" : "";
       if (r.analyst) { out.push({ f: f, role: nm, why: [nm], row: r, reason: nm + " for major trauma: " + selWhy(r) + byp }); return; }
       out.push({ f: f, role: nm, why: [nm], row: r, reason: nm + " for major trauma: " + (f.far ? "found by the wider search (nothing nearer has it documented), " : "") + tierLabel(f) + ", " + mins(r.choice.time_to_required_care.s) + " from injury by " + r.choice.way + " (" + golden(r.choice.time_to_required_care.s).t.toLowerCase() + ")" +
         "; documented: " + andList(capNames(r.choice.met.concat(r.choice.gain.filter(function (k) { return r.choice.met.indexOf(k) < 0; })))) + byp });
@@ -1870,7 +1870,7 @@
         (r.bypassed.length ? '<span class="sub obs">Nearest not eligible: ' + esc(r.bypassed.slice(0, 2).map(function (b) { return "H" + (s.fac.H.indexOf(b.f) + 1) + " " + b.f.name; }).join(", ")) + "</span>" : "") + "</td>";
       var c = r.choice, f = c.f, unk = capNames(c.unknown);
       var tag = r.same_as ? '<span class="mpbyp">Same hospital as ' + ROLE_NAME[r.same_as] + "</span>" : r.bypass ? '<span class="mpbyp">Bypass: go direct to ' + (r.role === "primary" ? "Secondary" : "Tertiary") + "</span>" +
-        '<span class="sub obs">Direct ' + esc(mins(r.bypass.direct_time.s)) + " against " + esc(mins(r.bypass.via_time.s)) + " via here to the required care: " + esc(W.OSAP_MEDDECIDE.why({ reason: r.bypass.reason })) + ". Stabilisation option if the casualty cannot tolerate the longer move.</span>" : "";
+        '<span class="sub obs">Direct ' + esc(mins(r.bypass.direct_time.s)) + " against " + esc(mins(r.bypass.via_time.s)) + " via here to the required care: " + esc(W.OSAP_MEDDECIDE.why({ reason: r.bypass.reason })) + ". Stabilization option if the casualty cannot tolerate the longer move.</span>" : "";
       var dc = r.decision, acc = dc ? ({ confirmed: "required care confirmed available now by a planner's check", unavailable: "a planner's check says " + andList(capNames(dc.access.down)) + " is not available now", not_confirmed: "required care not confirmed available now" })[dc.access.state] : "";
       var tt = dc ? '<span class="sub obs mpdec">Time to required care ' + (r.stop && byRoleOf(r, -1) && byRoleOf(r, -1).stop ? "via " + ROLE_NAME[r.via.from] + ": " + esc(dc.via.parts.map(function (p) { return p.label + " " + mins(p.s); }).join(" + ")) + " = " + esc(mins(dc.via.total_s)) : "direct: " + esc(dc.direct.parts.map(function (p) { return p.label + " " + mins(p.s); }).join(" + ")) + " = " + esc(mins(dc.direct.total_s))) + "; " + esc(acc) + ".</span>" : "";
       var hv = r.via && r.stop && byRoleOf(r, -1) && byRoleOf(r, -1).stop ? '<span class="sub obs">Reached via ' + ROLE_NAME[r.via.from] + " in about " + esc(mins(r.via.via_s)) + "; direct would be " + esc(mins(r.via.direct_s)) + ", beyond the golden hour.</span>" : "";
@@ -1889,7 +1889,7 @@
     return h + "</tbody></table></div>" +
       '<p class="obs">MTF roles per casualty type (draft templates, not clinically reviewed): Primary is the quickest hospital giving a meaningful increase in care; Secondary adds advanced resuscitation, surgery, blood, CT and ICU; Tertiary has the definitive specialty care for that type. ' +
       "A hospital qualifies only on capabilities documented by a credible source (an official register or a planner's check); OpenStreetMap and Wikipedia are shown but never qualify. " +
-      "Bypass is decided on time to the required care (rule " + W.OSAP_MEDDECIDE.RULE + "): a lower stop is skipped when going direct reaches it inside the golden hour, when going direct is no slower, or when a planner's check says what the stop adds is not available now; otherwise it is a planned stop to stabilise. " +
+      "Bypass is decided on time to the required care (rule " + W.OSAP_MEDDECIDE.RULE + "): a lower stop is skipped when going direct reaches it inside the golden hour, when going direct is no slower, or when a planner's check says what the stop adds is not available now; otherwise it is a planned stop to stabilize. " +
       "Direct counts the move from injury (treat and load included) plus handoff (" + num("handoff") + " min). Via a stop counts the move there, handoff, its time there (" + num("dwell") + " min), transfer activation (" + num("xact") + " min), a transfer drive (straight line x " + XFER_FACTOR + " at " + XFER_KMH + " km/h, an estimate) and handoff again. " + esc(DECISION_NOTE) + "</p>" +
       '<p class="mpspd noprint"><label>Time at a stop <input type="number" min="0" max="240" step="5" data-mpf="dwell" value="' + num("dwell") + '"> min</label><label>Transfer activation <input type="number" min="0" max="120" step="5" data-mpf="xact" value="' + num("xact") + '"> min</label><label>Handoff <input type="number" min="0" max="60" step="1" data-mpf="handoff" value="' + num("handoff") + '"> min</label> <span class="obs">Planner defaults, used only for the bypass comparison.</span></p>';
   }
@@ -2017,7 +2017,7 @@
     if (f.addr) bits.push("Address: " + esc(f.addr));
     if (f.phone) bits.push('Phone: <a href="tel:' + esc(f.phone.replace(/[^0-9+]/g, "")) + '">' + esc(f.phone) + "</a>" + (f.phs ? phNote(f.phs) : wdNote(f, "phone")));
     if (f.ephone) bits.push('Emergency: <a href="tel:' + esc(f.ephone.replace(/[^0-9+]/g, "")) + '">' + esc(f.ephone) + "</a>" + phNote(f.ephs));
-    if (f.hot) bits.push('Call centre: <a href="tel:' + esc(f.hot.n) + '">' + esc(f.hot.n) + "</a>" + phNote(f.hot));
+    if (f.hot) bits.push('Call center: <a href="tel:' + esc(f.hot.n) + '">' + esc(f.hot.n) + "</a>" + phNote(f.hot));
     if (f.web) bits.push(link(f.web, "Website") + wdNote(f, "website"));
     var from = src || (f.osm ? link(f.osm, "listed in OpenStreetMap") : f.src ? link(f.src, f.srcname || "source") : "");
     if (!f.phone && !f.ephone && !/withheld/.test(f.name || "")) bits.push('<span class="obs">No published phone in ' + (f.osm ? "OpenStreetMap, Wikidata or OSAP's stored list" : "the source") + (f.web ? "; see the website" : "") + "</span>");
@@ -2161,10 +2161,10 @@
     var rw = num("rwkn"), H = s.fac.H.filter(function (f) { return hasBlood(f) && !isOff(f); }).sort(function (a, b) { return a.m - b.m; });
     var h = "<h4>Nearest blood bank</h4>";
     if (s.x && s.x.B.length) h += '<div class="mpscroll"><table><thead><tr><th></th><th>Blood service and contacts</th><th>Straight line</th><th>Grid (MGRS)</th></tr></thead><tbody>' + s.x.B.map(function (b, i) {
-      return '<tr><td class="n"><span class="mpmark bl">B' + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(b.name) + "</b>" + '<span class="sub">' + (b.bank ? "Blood bank" : "Blood donation centre (collects blood; may not issue it)") + (b.op && b.op !== b.name ? " · " + esc(b.op) : "") + "</span>" + ctHtml(b) + "</td>" +
+      return '<tr><td class="n"><span class="mpmark bl">B' + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(b.name) + "</b>" + '<span class="sub">' + (b.bank ? "Blood bank" : "Blood donation center (collects blood; may not issue it)") + (b.op && b.op !== b.name ? " · " + esc(b.op) : "") + "</span>" + ctHtml(b) + "</td>" +
         '<td class="n">' + esc(km(b.m)) + '<span class="sub">' + Math.round(b.brg) + "° " + card(b.brg) + " · " + esc(mins(flightS(b.m, rw))) + " at " + rw + ' kn</span></td><td class="n"><code>' + esc(grid(b.lat, b.lon)) + "</code></td></tr>";
     }).join("") + "</tbody></table></div>";
-    else if (s.x) h += '<p class="obs">No blood bank or donation centre within 200 km in OpenStreetMap. This does not mean there is none: ask the receiving hospital.</p>';
+    else if (s.x) h += '<p class="obs">No blood bank or donation center within 200 km in OpenStreetMap. This does not mean there is none: ask the receiving hospital.</p>';
     else if (s.xErr) h += '<p class="obs mpwarn">Blood banks could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
     else h += '<p class="obs mpwait">Looking up blood banks…</p>';
     h += xNote(s);
@@ -2197,7 +2197,7 @@
           (r.roads.length ? '<p class="obs">Main roads: ' + esc(r.roads.map(function (q) { return q.n + " (" + km(q.m) + ")"; }).join(" → ")) + "</p>" : "") +
           '<p class="obs noprint">Drawn on the map as a ' + ["red", "dark", "dark dashed"][i] + " line." + (W.OSAP_ROUTE_SEED ? ' <button type="button" class="refresh" data-mp-route="' + esc(f.id) + '">Open in Route</button>' : "") + "</p>"
           : x.err ? '<p class="obs mpwarn">No road route (' + esc(clip(x.err, 120)) + ").</p>" : '<p class="obs">Working out the route…</p>') + pacHtml(s, f);
-    }).join("") + (s.pac ? '<p class="obs">Lines P, A and C are an order (fastest first), not a judgement: the planner decides which to drive. Alternates are drawn on the map in blue, A dashed and C dotted. Hazards are what OSAP already holds near each line; an empty list is not a clearance.</p>' : "") + '<p class="obs">Road routes on OpenStreetMap roads from the first router that answered (FOSSGIS OSRM, the OSRM demo server or FOSSGIS Valhalla): no traffic, checkpoints, closures or damage. Drive each route or check it against current reporting.</p>';
+    }).join("") + (s.pac ? '<p class="obs">Lines P, A and C are an order (fastest first), not a judgment: the planner decides which to drive. Alternates are drawn on the map in blue, A dashed and C dotted. Hazards are what OSAP already holds near each line; an empty list is not a clearance.</p>' : "") + '<p class="obs">Road routes on OpenStreetMap roads from the first router that answered (FOSSGIS OSRM, the OSRM demo server or FOSSGIS Valhalla): no traffic, checkpoints, closures or damage. Drive each route or check it against current reporting.</p>';
   }
   /* air golden-hour rings round the POI: the flight that still arrives inside 50 and 60 minutes after the launch time and
      the time on the ground */
@@ -2238,7 +2238,7 @@
     function chip(bg, t, d) { o.push('<span><b style="background:' + bg + ';color:#fff;padding:0 3px">' + esc(t) + "</b> " + esc(d) + "</span>"); }
     function ln(c, st, d) { o.push('<span><i style="color:' + c + (st ? ";border-top-style:" + st : "") + '"></i>' + esc(d) + "</span>"); }
     var c0 = items.filter(function (x) { return x[0] === "mk" && x[3] === "o"; })[0];
-    if (c0) chip("#111", c0[2], c0[2] === "POI" ? "Point of injury" : "Plan centre");
+    if (c0) chip("#111", c0[2], c0[2] === "POI" ? "Point of injury" : "Plan center");
     if (has("pk")) chip("#8b0010", "PRI SEC TER", "Planned hospitals");
     if (has("stb")) chip("#b34700", "STB", "Stabilization stop");
     if (has("alt")) chip("#8a4b00", "ALT", "Alternate MTF");
@@ -2308,7 +2308,7 @@
     h += mine.length ? "<ul>" + mine.map(function (k) { return "<li>" + esc(fieldLabel(k)) + ": <b>" + esc(v[k]) + "</b></li>"; }).join("") + "</ul>"
       : '<p class="obs">Add your medevac provider, phone and frequencies in section 9; they print here.</p>';
     h += airDocHtml(s);
-    h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + tricareHtml(s.cc, true) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organisation\'s membership and policy number before the mission.</p>';
+    h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + tricareHtml(s.cc, true) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organization\'s membership and policy number before the mission.</p>';
     h += '<p class="mpspd noprint"><label>Helicopter cruise <input type="number" min="60" max="300" step="5" data-mpf="rwkn" value="' + rw + '"> kn</label><label>Fixed-wing cruise <input type="number" min="100" max="600" step="10" data-mpf="fwkn" value="' + num("fwkn") + '"> kn</label><label>Launch time <input type="number" min="0" max="120" step="5" data-mpf="launch" value="' + launch + '"> min</label></p>';
     var mb = mbase(s), BL = baseList(s), cur = fieldVals().mbase || "";
     h += '<p class="mpbase"><b>Aircraft base used for every air time:</b> ' + (mb.b ? esc(mb.b.name) + ", " + esc(km(mb.b.m)) + " from the POI, " + esc(mins(inboundS(s))) + " flight to it at " + rw + " kn (" + esc(mb.how) + ")" : '<span class="mpwarn">' + esc(mb.how) + "</span>") + ".</p>" +
@@ -2330,7 +2330,7 @@
       if (LP.length) h += '<div class="mpscroll"><table>' + head + "<tbody>" + LP.map(function (b, i) { return row(b, i, b.kind === "airfield" ? "A" : "L", "air").replace(/>[AL]\d+</, ">" + (b.kind === "airfield" ? "A" + (s.fac.AF.indexOf(b) + 1) : "L" + (s.fac.L.indexOf(b) + 1)) + "<"); }).join("") + "</tbody></table></div>";
     } else h += '<p class="obs mpwait">Looking up air rescue bases…</p>';
     if (s.xPart) h += xNote(s);
-    h += '<p class="obs">Flight times are straight-line estimates at ' + rw + " kn cruise (a typical medical helicopter) with " + launch + " min to launch; they ignore weather, routing, crew duty and refuelling. Confirm availability, response time and the request procedure with the provider before the mission.</p>";
+    h += '<p class="obs">Flight times are straight-line estimates at ' + rw + " kn cruise (a typical medical helicopter) with " + launch + " min to launch; they ignore weather, routing, crew duty and refueling. Confirm availability, response time and the request procedure with the provider before the mission.</p>";
     el.innerHTML = h + aircraftHtml(s);
   }
   /* ---------- section 4: the aircraft for this plan (phase 4) ---------- */
@@ -2520,7 +2520,7 @@
         }).join("<br>") + '</td><td class="n">' + esc(km(c.m)) + '</td><td class="n"><b>' + esc(mins(c.t)) + '</b><span class="sub">' + (c.stops.length - 1) + " stop" + (c.stops.length === 2 ? "" : "s") + " × " + SE_STOP_MIN / 60 + " h</span></td></tr>";
       }).join("") + "</tbody></table></div>" +
       '<div class="mpscmap"></div>' +
-      '<p class="obs">Suggested is the shorter total estimate. Each chain uses the staging hospital in Singapore, Korea or Japan that keeps it shortest. Estimates are great-circle distance at ' + kn + " kn with " + SE_STOP_MIN / 60 + " h on the ground at each stop, without clearances, fuel stops or crew limits. The receiving hospitals, acceptance and the aircraft are set by the medevac provider or the theatre patient movement cell.</p>";
+      '<p class="obs">Suggested is the shorter total estimate. Each chain uses the staging hospital in Singapore, Korea or Japan that keeps it shortest. Estimates are great-circle distance at ' + kn + " kn with " + SE_STOP_MIN / 60 + " h on the ground at each stop, without clearances, fuel stops or crew limits. The receiving hospitals, acceptance and the aircraft are set by the medevac provider or the theater patient movement cell.</p>";
   }
   function stratFit() {
     var map = W.__asapMap, s = ST; if (!map || !s) return;
@@ -2547,7 +2547,7 @@
     else h += '<div class="mpscroll"><table><thead><tr><th></th><th>Hospital and source</th><th>Flight from ' + (dep ? "P1" : "the POI") + '</th><th>U.S. Embassy</th></tr></thead><tbody>' + O.dst.map(function (d, i) {
       var from = dep ? [dep.lat, dep.lon] : s.o, m = distM(from, [d.lat, d.lon]), t = launch * 60 + flightS(m, fw);
       return '<tr><td class="n"><span class="mpmark">D' + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(d.h.name) + "</b>, " + esc(d.h.city || "") + " (" + esc(d.country) + ")" +
-        '<span class="sub">' + (d.h.trauma_level ? '<span class="mptier t4">Trauma centre (sourced)</span>' + esc(clip(d.h.trauma_level, 100)) : "No trauma designation in the source" + (d.h.emergency_24h === true ? "; 24-hour emergency" : "")) + " " + link(d.h.src, "(" + (d.h.srcname || "source") + ")") + "</span>" + (d.h.address ? '<span class="sub">Address: ' + esc(clip(d.h.address, 140)) + "</span>" : "") + "</td>" +
+        '<span class="sub">' + (d.h.trauma_level ? '<span class="mptier t4">Trauma center (sourced)</span>' + esc(clip(d.h.trauma_level, 100)) : "No trauma designation in the source" + (d.h.emergency_24h === true ? "; 24-hour emergency" : "")) + " " + link(d.h.src, "(" + (d.h.srcname || "source") + ")") + "</span>" + (d.h.address ? '<span class="sub">Address: ' + esc(clip(d.h.address, 140)) + "</span>" : "") + "</td>" +
         '<td class="n">' + esc(mins(t)) + '<span class="sub">' + esc(km(m)) + " at " + fw + " kn + " + launch + " min launch</span></td>" +
         '<td class="mpfac">' + (d.post ? esc(d.post.name) + (d.post.address ? '<span class="sub">' + esc(clip(d.post.address, 120)) + "</span>" : "") + " " + link(d.post.src, "(" + (d.post.srcname || "source") + ")") : '<span class="obs">Not in OSAP\'s list</span>') + "</td></tr>";
     }).join("") + "</tbody></table></div>";
@@ -2695,7 +2695,7 @@
     if (s.oc) li.push([SRC.state, "published numbers"]);
     if (s.oc && stratChains(s).length) li.push([SRC.strat, "read " + SE_AT]);
     li.push([SRC.isos, "published numbers, read " + ISOS_AT]);
-    li.push([SRC.tricare, "regional call centres as published, page updated 23 May 2025; archived copy read 2026-10-01"]);
+    li.push([SRC.tricare, "regional call centers as published, page updated 23 May 2025; archived copy read 2026-10-01"]);
     li.push([SRC.meteo, s.wxErr ? "not reached: " + s.wxErr : s.wx ? "read" : "reading…"]);
     if (s.thr) {
       if (s.thr.who.length) li.push([SRC.who, "OSAP snapshot " + ((W.ASAP_WHO || {}).asof || "")]);
@@ -2744,7 +2744,7 @@
           (st && at ? '<span class="sub">' + esc(dual(Date.parse(at), true)) + "</span>" : "") + '</td><td data-l="Capacity"><input data-mpf="' + k + '_cap" maxlength="60" autocomplete="off" aria-label="' + esc(m[2]) + ' capacity" placeholder="e.g. 2 litters, 1 UH-60" value="' + esc(v[k + "_cap"] || "") + '"></td>' +
           '<td data-l="Notes"><input data-mpf="' + k + '_note" maxlength="200" autocomplete="off" aria-label="' + esc(m[2]) + ' notes" placeholder="Access, marking, hazards" value="' + esc(v[k + "_note"] || "") + '"></td></tr>';
       }).join("") + "</tbody></table></div>" +
-      '<p class="obs">Distance and direction are straight-line from the plan centre. Status is your check, kept with the time you set it; recheck before use.</p>';
+      '<p class="obs">Distance and direction are straight-line from the plan center. Status is your check, kept with the time you set it; recheck before use.</p>';
   }
   var SEA_STYLE = { color: "#0b4f8a", weight: 3, dashArray: "2 7" };
   var PK_TXT = { Primary: "PRI", Secondary: "SEC", Tertiary: "TER", Stabilization: "STB" }, RT_STYLE = [{ color: "#D7141A", weight: 4 }, { color: "#222", weight: 3 }, { color: "#222", weight: 3, dashArray: "7 5" }],
@@ -2824,7 +2824,7 @@
     SITE_MK.forEach(function (m) { var g = parseGrid(fv[m[0]]); if (g) add("cp", ["mk", g, m[1], "cp", m[2] + ": " + clip(fv[m[0]], 120), true]); });
     if (s.oc) stratItems(s).forEach(function (x) { add("ev", x); });
     if (s.leg) { add("ev", ["line", [s.o, [s.leg.port.lat, s.leg.port.lon]], SEA_STYLE]); add("ev", ["mk", [s.leg.port.lat, s.leg.port.lon], "PORT", "pt", "Landing port: " + s.leg.port.name + " · " + nmTxt(s.leg.nm) + " by boat (straight line, not a navigation route)", true]); }
-    add("poi", ["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
+    add("poi", ["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan center: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
     return out;
   }
   /* the plan's own map key (Shane 2026-10-04: "legend needs to reflect the med plan"): only what the map is showing now,
@@ -2834,7 +2834,7 @@
     /* the live key follows the map object chips (Shane 2026-10-29) */
     var lv = function (g) { return !live || groupOn(g); };
     var P = s.fac && lv("mtf") ? picks(s) : [], roles = P.map(function (p) { return PK_TXT[p.role]; }).filter(function (t) { return t !== "STB"; });
-    if (lv("poi")) o.push(["mk", "#111", s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", s.from === "poi" ? "Point of injury" : "Plan centre", ""]);
+    if (lv("poi")) o.push(["mk", "#111", s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", s.from === "poi" ? "Point of injury" : "Plan center", ""]);
     if (has("stb")) o.push(["mk", "#b34700", "STB", "Stabilization stop", "Quickest hospital inside the golden hour with a documented emergency department, when the Primary is beyond it"]);
     /* one entry per role, never one combined chip (Shane 2026-10-04: "you merged the three options into 1") */
     var RL = { PRI: ["Primary MTF", "Quickest hospital giving a real step up in care"], SEC: ["Secondary MTF", "Surgery, blood, CT and ICU documented"], TER: ["Tertiary MTF", "Definitive specialty care documented"] };
@@ -2845,7 +2845,7 @@
     if (has("e")) o.push(["mk", "#b35c00", "E", "Ambulance station", ""]);
     if (has("pt")) o.push(["mk", "#0b4f8a", "PORT", "Landing port", "Where the casualty is landed from the sea; the dotted line is the boat leg, straight, not a navigation route"]);
     if (has("air")) o.push(["mk", "#1d5fa8", "L A M P", "Helipad, airfield, air rescue base, airport", ""]);
-    if (has("bl")) o.push(["mk", "#a4005b", "B", "Blood bank or donation centre", ""]);
+    if (has("bl")) o.push(["mk", "#a4005b", "B", "Blood bank or donation center", ""]);
     if (has("dc")) o.push(["mk", "#00727a", "D", "Decompression chamber", ""]);
     if (has("cp")) o.push(["mk", "#1e7a3a", "CCP AXP HLZ", "Unit points: casualty collection, ambulance exchange, landing zone", ""]);
     if (ln("#e06c00")) o.push(["ln", "#e06c00", "", "Route to stabilization stop", ""]);
@@ -2967,7 +2967,7 @@
   /* what the caption says about the basemap: none at all, squares missing (left grey), or squares from the fallback map */
   function baseNote(m, none) {
     if (!m.base) return none;
-    return (m.miss ? m.miss + (m.miss === 1 ? " square" : " squares") + " of the basemap could not be loaded and are left grey. " : "") + (m.alt ? "Some squares are from Esri's street map (OpenStreetMap's were not reached). " : "");
+    return (m.miss ? m.miss + (m.miss === 1 ? " square" : " squares") + " of the basemap could not be loaded and are left gray. " : "") + (m.alt ? "Some squares are from Esri's street map (OpenStreetMap's were not reached). " : "");
   }
   /* the ground picture the printed plan map is framed on: the POI, the picks and their road routes */
   function groundPts(s) {
@@ -3329,7 +3329,7 @@
   var SAT_ATTR = "Imagery © Esri, Maxar, Earthstar Geographics";
   function originName(s) {
     if (/^pt:/.test(s.from || "")) { var p = ownPt(s.from.slice(3)); if (p && p.n) return clip(p.n, 40); }
-    return s.from === "poi" ? "POI" : s.from === "c" ? "Plan centre" : clip(fieldLabel(s.from), 40);
+    return s.from === "poi" ? "POI" : s.from === "c" ? "Plan center" : clip(fieldLabel(s.from), 40);
   }
   function abbr(n) {
     var w = String(n || "").replace(/\(.*?\)/g, " ").split(/[^A-Za-z\u00c0-\u024f]+/).filter(function (x) { return x && !/^(of|the|and|de|la|du|des|di|da)$/i.test(x); });
@@ -3415,7 +3415,7 @@
     if (!TC_NOTPAC.test(cc) && /Southeast Asia|East Asia|Oceania|South Asia/.test(r)) return "pac";
     return "";
   }
-  function tcLine(a) { return esc(a.name) + " regional call centre: " + '<a href="tel:' + esc(a.tel.replace(/[^0-9+]/g, "")) + '">' + esc(a.tel) + "</a> (overseas), " + esc(a.us) + " (toll-free from the U.S.), DSN " + esc(a.dsn); }
+  function tcLine(a) { return esc(a.name) + " regional call center: " + '<a href="tel:' + esc(a.tel.replace(/[^0-9+]/g, "")) + '">' + esc(a.tel) + "</a> (overseas), " + esc(a.us) + " (toll-free from the U.S.), DSN " + esc(a.dsn); }
   function tricareHtml(cc, li) {
     var k = tcArea(cc), L = k ? [TC_AREAS[k]] : [TC_AREAS.pac, TC_AREAS.ea, TC_AREAS.la];
     var src = " " + link(TC_SRC, "(TRICARE.mil Overseas Resources, updated 23 May 2025; archived copy read 2026-10-01)");
@@ -3528,7 +3528,7 @@
     var pr = (g.programs || []).map(function (p) {
       return esc(p.name_en || p.name_th) + (p.name_en ? ' <span class="obs">(' + esc(p.name_th) + ")</span>" : "") + (p.stage ? ", " + esc(p.stage) : "") + (dates(p.from, p.to) ? ", " + esc(dates(p.from, p.to)) : "") + (P.current(p.to) ? "" : ' <b>expired</b>');
     });
-    L.push(["Certified programmes", pr.length ? pr.join("<br>") : nk("None in HA's published certifications. This does not mean the hospital lacks the service.")]);
+    L.push(["Certified programs", pr.length ? pr.join("<br>") : nk("None in HA's published certifications. This does not mean the hospital lacks the service.")]);
     if (g.specialties_reported) L.push(["Specialties (as reported to HA)", esc(g.specialties_reported)]);
     L.push(["Location", esc(g.coord_basis || "")]);
     L.push(["Source", ["hospital", "accreditation", "level", "pdsc", "hnc"].map(function (k) { return S[k] ? link(S[k].page, S[k].name) + " (" + esc(S[k].licence || "") + (S[k].last_modified && !isNaN(Date.parse(S[k].last_modified)) ? ", file updated " + new Date(Date.parse(S[k].last_modified)).toISOString().slice(0, 10) : "") + ")" : ""; }).filter(function (x, i, A) { return x && A.indexOf(x) === i; }).join("; ") +
@@ -3801,7 +3801,7 @@
     if (s.ph) L.push([SRC.ph, "read " + String(s.ph.read_at || "").slice(0, 10)]);
     L.push([SRC.wdh, s.wdErr ? "not reached: " + s.wdErr : s.wdAt ? "read " + dual(s.wdAt, true) : "reading…"]);
     if (s.from) L.push([SRC.osrm, s.r && s.r.host ? "answered by " + String(s.r.host).split("/")[2] : s.r && s.r.err ? "not reached: " + s.r.err : "reading…"]);
-    L.push([SRC.tricare, "regional call centres as published"]);
+    L.push([SRC.tricare, "regional call centers as published"]);
     return "<h3>Sources and fingerprint</h3><ul>" + L.map(function (x) { return srcLi(x[0], x[1]); }).join("") + "</ul>" +
       '<p class="obs mpfp">Each line above says where it comes from; a source\'s statement is that source\'s claim. Assessment fingerprint (SHA-256 of the assessment record: the hospital, every stated capability with its status, confidence and source, the trauma designation and equivalent level, contacts, the chosen point and road time, and when it was built; rule ' + SOLO_RULE + '): <code id="mps-fp">computing…</code></p>';
   }

@@ -50,7 +50,7 @@ async function open(opts, hash = "", mode = "ok") {
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
   return { ctx, p, errors, asked };
 }
-const st = (p) => p.evaluate(() => ({ ...window.OSAP_DC.state(), legend: /Data centres/.test((document.querySelector(".leaflet-control-container") || {}).innerHTML || "") }));
+const st = (p) => p.evaluate(() => ({ ...window.OSAP_DC.state(), legend: /Data centers/.test((document.querySelector(".leaflet-control-container") || {}).innerHTML || "") }));
 const om = async (p, want) => {
   if (await shown(p, "#atk-om") === want) return;
   await p.evaluate((w) => { if (w) window.OSAP_ATAK.overlays("overlays"); else document.querySelector('#atk-om [data-om="x"]').click(); }, want); await p.waitForTimeout(300);
@@ -68,7 +68,7 @@ const om = async (p, want) => {
   await p.check('#dc-sec input[data-dc="ai"]'); await p.waitForFunction(() => !window.OSAP_DC.state().busy, null, { timeout: 10000 }); await p.waitForTimeout(400);
   let s = await st(p);
   ok(s.drawn.ai === 2 && s.drawn.all === 0, "AI on: the two Epoch AI sites, no others (" + JSON.stringify(s.drawn) + ")");
-  ok(/2 AI data centres/.test(s.msg) && /Epoch AI, GPU Clusters/.test(s.msg), "AI on: count and a failed source named: " + s.msg);
+  ok(/2 AI data centers/.test(s.msg) && /Epoch AI, GPU Clusters/.test(s.msg), "AI on: count and a failed source named: " + s.msg);
   ok(s.unplaced === 1 && /Spread cluster/.test(await p.evaluate(() => document.querySelector("#dc-sec [data-dcun]").textContent)), "AI on: the unplaced site is listed");
   ok(s.legend, "AI on: legend on the map");
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-dcpt-pane .dc-approx").length === 1), "AI on: the town-placed cluster is drawn as approximate");
@@ -83,9 +83,9 @@ const om = async (p, want) => {
     return p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content") || document.querySelector("#rv-pkg"); return x ? x.innerHTML : ""; });
   };
   let pop = await popOf("ai");
-  ok(/AI data centre<\/b> because Epoch AI, Frontier Data Centers lists it/.test(pop) && /TestCo cluster A/.test(pop) && /100,000 H100/.test(pop) && /Fingerprint/.test(pop), "popup: AI site says why it is AI, its clusters, compute and fingerprint");
+  ok(/AI data center<\/b> because Epoch AI, Frontier Data Centers lists it/.test(pop) && /TestCo cluster A/.test(pop) && /100,000 H100/.test(pop) && /Fingerprint/.test(pop), "popup: AI site says why it is AI, its clusters, compute and fingerprint");
   pop = await popOf("all");
-  ok(/Data centre · OpenStreetMap/.test(pop) && !/<b>x<\/b>/.test(pop) && !/because/.test(pop) && /Community-mapped/.test(pop), "popup: OSM site names its source, escapes tags, is not called AI");
+  ok(/Data center · OpenStreetMap/.test(pop) && !/<b>x<\/b>/.test(pop) && !/because/.test(pop) && /Community-mapped/.test(pop), "popup: OSM site names its source, escapes tags, is not called AI");
   if (OUT) await p.screenshot({ path: OUT + "/dc-desktop.png" });
   await om(p, true);
   await p.uncheck('#dc-sec input[data-dc="ai"]'); await p.uncheck('#dc-sec input[data-dc="all"]'); await p.waitForTimeout(300);
@@ -107,7 +107,7 @@ const om = async (p, want) => {
   const { ctx, p, errors, asked } = await open({ viewport: { width: 1360, height: 860 } }, "#ng/timeline");
   await p.evaluate(() => window.OSAP_DC.set("all", true)); await p.waitForTimeout(1200);
   const s = await st(p);
-  ok(s.drawn.all === 0 && /No data centres mapped for this country/.test(s.msg) && !asked.some((u) => /ng\.json/.test(u)), "Nigeria (not in the index): nothing drawn, says so, no file asked: " + s.msg);
+  ok(s.drawn.all === 0 && /No data centers mapped for this country/.test(s.msg) && !asked.some((u) => /ng\.json/.test(u)), "Nigeria (not in the index): nothing drawn, says so, no file asked: " + s.msg);
   ok(errors.length === 0, "Nigeria: no page errors " + errors.join(" | "));
   await ctx.close();
 }

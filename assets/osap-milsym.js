@@ -28,7 +28,7 @@
   var AFF = [["3", "Friend", "#80e0ff"], ["6", "Hostile", "#ff8080"], ["4", "Neutral", "#aaffaa"], ["1", "Unknown", "#ffff80"]];
   var DOM = [["land", "Land"], ["air", "Air"], ["sea", "Sea"], ["sub", "Subsurface"], ["space", "Space"], ["act", "Activities"], ["cm", "Map graphics"], ["cyber", "Cyber"]];
   var ECH = [["11", "Team, crew"], ["12", "Squad"], ["13", "Section"], ["14", "Platoon, detachment"], ["15", "Company, battery, troop"], ["16", "Battalion, squadron"],
-    ["17", "Regiment, group"], ["18", "Brigade"], ["21", "Division"], ["22", "Corps"], ["23", "Army"], ["24", "Army group, front"], ["25", "Region, theatre"], ["26", "Command"]];
+    ["17", "Regiment, group"], ["18", "Brigade"], ["21", "Division"], ["22", "Corps"], ["23", "Army"], ["24", "Army group, front"], ["25", "Region, theater"], ["26", "Command"]];
   var MOB = [["31", "Wheeled, limited cross-country"], ["32", "Wheeled, cross-country"], ["33", "Tracked"], ["34", "Wheeled and tracked"], ["35", "Towed"], ["36", "Rail"],
     ["37", "Pack animals"], ["41", "Over snow"], ["42", "Sled"], ["51", "Barge"], ["52", "Amphibious"]];
   var TOW = [["61", "Short towed array"], ["62", "Long towed array"]];
@@ -194,7 +194,7 @@
     ["p:inc", "Incident command", "Command posts, staging, bases and work areas (ICS terms)"], ["p:haz", "Hazards", "Explosive, CBRN, fire, weather and ground hazards, spill actions"],
     ["p:resp", "Responders and medical", "Medical, fire, police, rescue and people"], ["p:air", "Air operations", "Landing and drop zones, aircraft and airspace"],
     ["p:nav", "Field and navigation", "Waypoints, rendezvous, observation and terrain"], ["p:osm", "Places (OSM)", "Map icons for places and features, by theme (OpenStreetMap style)"],
-    ["shp", "Shapes and pins", "Plain shapes and pins in eight colours"]];
+    ["shp", "Shapes and pins", "Plain shapes and pins in eight colors"]];
   var pk = D.createElement("aside"); pk.id = "ms-pick"; pk.className = "leaflet-control"; pk.hidden = true;
   pk.setAttribute("role", "dialog"); pk.setAttribute("aria-label", "Select an icon");
   pk.innerHTML = '<div class="ms-h"><button type="button" class="ms-back" data-mk="back" aria-label="Back to the point">‹ <span class="ms-pn">Point</span></button><h2>Select an icon</h2></div>' +
@@ -258,7 +258,7 @@
   function paintNow() {
     var el = pk.querySelector(".ms-now"), use = pk.querySelector('[data-mk="use"]');
     use.hidden = st.tab !== "mil";
-    if (st.tab !== "mil") { el.innerHTML = '<span class="obs">' + (st.tab === "shp" ? "Tap a shape or pin to use it." : "Pick a colour if you want one, then tap an icon to use it.") + "</span>"; return; }
+    if (st.tab !== "mil") { el.innerHTML = '<span class="obs">' + (st.tab === "shp" ? "Tap a shape or pin to use it." : "Pick a color if you want one, then tap an icon to use it.") + "</span>"; return; }
     if (!ready()) { el.innerHTML = ""; use.disabled = true; return; }
     use.disabled = false;
     var s = "ms:" + sidc(), r = draw(s, 30);
@@ -301,7 +301,7 @@
     }
     var T = TABS.filter(function (t) { return t[0] === "p:" + st.pal; })[0];
     el.innerHTML = '<p class="obs ms-pblurb">' + esc(T ? T[2] : "") + "</p>" +
-      '<div class="ms-cols" role="radiogroup" aria-label="Colour"><button type="button" role="radio" data-col="" aria-checked="' + !st.col + '" title="Each icon\'s own colour">Own</button>' +
+      '<div class="ms-cols" role="radiogroup" aria-label="Color"><button type="button" role="radio" data-col="" aria-checked="' + !st.col + '" title="Each icon\'s own color">Own</button>' +
       COLOURS.map(function (c) { return '<button type="button" role="radio" data-col="' + c + '" aria-checked="' + (st.col === c) + '" title="' + CNAME[c] + '" aria-label="' + CNAME[c] + '"><i style="background:#' + c + '"></i></button>'; }).join("") + "</div>" +
       '<input type="search" class="ms-pq" placeholder="Search every palette: hospital, HLZ, checkpoint…" aria-label="Search the marker palettes" value="' + esc(st.pq) + '">' +
       '<div class="ms-pgrid"></div>';

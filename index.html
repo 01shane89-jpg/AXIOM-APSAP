@@ -872,7 +872,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
   <button type="button" class="refresh" id="report-btn" title="PMESII summary and threat assessment for this country (AI draft)">Country report</button>
   <div class="seg" id="theme-seg" role="group" aria-label="Map theme">
     <button type="button" data-theme-set="light" aria-pressed="true">Light</button>
-    <button type="button" data-theme-set="grey" aria-pressed="false">Grey</button>
+    <button type="button" data-theme-set="grey" aria-pressed="false">Gray</button>
     <button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>
   </div>
   <div class="srcline" id="hdr-src" style="margin-left:0">thaiwater.net &middot; NASA MODIS &middot; GISTDA &middot; OpenFreeMap</div>
@@ -989,7 +989,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
       <div class="note">
         <p><b>Households are who lives there, not whose floor is wet.</b> The counts are the registered households inside subdistricts where flood water is present. They are not a damage assessment, and no official per-house damage figure exists for this event yet.</p><p><b>The household figures never change; the footprint does.</b> GISTDA&#8217;s registry is a fixed 2014 edition &#8212; it only moves when houses get built, so there is nothing to refresh in it. What moves hourly is <i>which</i> subdistricts are in the water, and that is recomputed on every refresh from the gauges that are over their bank. Treat the counts as an order of magnitude.</p>
         <p><b>Two clocks, not one.</b> The gauge-driven subdistricts are live. The satellite-derived ones are fixed at build time, because the MODIS composite is itself daily and is packaged with the page.</p>
-        <p><b>Gauges are the live signal.</b> They update hourly and say exactly how far water is above or below the bank at a point. Satellite detection is daily, 250 m, and blind under cloud &mdash; absence of colour is not evidence of dry ground.</p>
+        <p><b>Gauges are the live signal.</b> They update hourly and say exactly how far water is above or below the bank at a point. Satellite detection is daily, 250 m, and blind under cloud &mdash; absence of color is not evidence of dry ground.</p>
         <p><b>Two kinds of evidence, drawn differently.</b> Rust subdistricts have an overflowing gauge within about 2 km. Blue ones had flood water seen from orbit. Where both apply the outline is heavier.</p>
       </div>
     </div>
@@ -1047,7 +1047,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
       <h2>Legend</h2>
       <div class="lg"><div>Incidents, crossings, disputed sites, schools, power and military sites use the map symbols listed below.<span class="d">Faded incident symbols are older than 45 days. Zoomed in, KH above a symbol means the Cambodian side.</span></div></div>
       <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital or clinic in Thailand<span class="d">Outlined cross: the same in Cambodia</span></div></div>
-      <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centred under 10 km from the line</div></div>
+      <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centered under 10 km from the line</div></div>
       <div class="lg"><span class="sw" style="background:var(--l2-fill);opacity:.45"></span><div>10&ndash;20 km</div></div>
       <div class="lg"><span class="sw" style="background:var(--l1-fill);opacity:.35"></span><div>20&ndash;50 km</div></div>
     </div>
@@ -1099,7 +1099,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
       <div class="note">
         <p><b>This is a curated record, not a live feed.</b> No open, keyless source publishes border incidents in real time. Each incident here was taken from a named outlet and links to it. Claims made by one army are attributed to that army.</p>
         <p><b>Where the line runs is itself the dispute.</b> The border drawn here is OpenStreetMap&rsquo;s. Thailand works from a 1:50,000 map, Cambodia from the French 1:200,000 Annex I map, and several flashpoints sit in the gap between them.</p>
-        <p><b>Distances are measured from that line.</b> A subdistrict counts by where its centre falls, and residents are GISTDA&rsquo;s 2014 register. Read them as orders of magnitude.</p>
+        <p><b>Distances are measured from that line.</b> A subdistrict counts by where its center falls, and residents are GISTDA&rsquo;s 2014 register. Read them as orders of magnitude.</p>
         <p><b>Heat detections are not strikes.</b> VIIRS picks up any fire hotter than its surroundings. In the dry season that is mostly field burning. A cluster near a flashpoint on the day of a reported clash is worth a look, but it is not confirmation.</p>
       </div>
     </div>
@@ -1436,10 +1436,10 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function esriTiles(svc, q) { var u = window.OSAP_ESRI ? window.OSAP_ESRI(svc) : ""; return u && q ? u + (u.indexOf("?") < 0 ? "?" : "&") + q : u; }
   var ESRI_IMG = esriTiles("World_Imagery", "blankTile=false");
   var BASES = {
-    grey: { name: "Grey", note: "Plain OpenStreetMap map with no labels, follows the light or dark theme" },
+    grey: { name: "Gray", note: "Plain OpenStreetMap map with no labels, follows the light or dark theme" },
     /* drawn on the device from OpenFreeMap's OpenStreetMap vector tiles so every name can be shown in English (see VectorBase);
        if the drawing engine cannot start, the plain OpenStreetMap tiles (names in local script) stand in */
-    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names, labelled in English, over light shading of the hills",
+    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names, labeled in English, over light shading of the hills",
       vector: "https://tiles.openfreemap.org/styles/liberty", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, hill: 0.25,
       attr: STREETS_ATTR + ', hill shading: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">Terrain Tiles on AWS</a>' },
     topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: window.OSAP_HOST("topo"), max: 17,
@@ -1460,10 +1460,10 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       labelSize: window.OSAP_SOLD ? 512 : 256,
       attr: 'Imagery and labels &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community' },
     /* Esri World Imagery (Clarity): the same providers with less colour processing, and often a different capture date */
-    clarity: { name: "Satellite, second look", note: "Esri World Imagery (Clarity): often a different or newer picture of the same place, less colour-processed. Can look hazier",
+    clarity: { name: "Satellite, second look", note: "Esri World Imagery (Clarity): often a different or newer picture of the same place, less color-processed. Can look hazier",
       url: window.OSAP_SOLD ? "" : "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
       attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community (World Imagery Clarity)' },
-    daily: { name: "Daily satellite", note: "NASA MODIS true colour from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
+    daily: { name: "Daily satellite", note: "NASA MODIS true color from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
       url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg", max: 9, lic: "public domain",
       attr: "NASA Worldview / GIBS, MODIS Terra corrected reflectance" },
     /* the one map OSAP saves to the device for offline use (assets/osap-offline.js): CC BY 4.0 allows saving its tiles.
@@ -1503,15 +1503,15 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   var ESRI_GROUPS = [
     ["Roads and places", [
       ["arcgis/navigation", "Navigation", "Esri's road map for driving: bold roads, road numbers, towns and points of interest"],
-      ["arcgis/navigation-night", "Navigation, night", "The navigation map in dark colours, easy on the eyes at night"],
+      ["arcgis/navigation-night", "Navigation, night", "The navigation map in dark colors, easy on the eyes at night"],
       ["arcgis/streets", "Esri Streets", "Esri's classic street map: roads, places and land use"],
-      ["arcgis/streets-night", "Esri Streets, night", "The street map in dark colours"],
+      ["arcgis/streets-night", "Esri Streets, night", "The street map in dark colors"],
       ["arcgis/streets-relief", "Esri Streets with relief", "The street map over shaded hills and mountains"],
       ["arcgis/community", "Community", "Esri's street map with detail added by local governments and the GIS community"],
       ["open/navigation", "OSM Navigation", "Esri's navigation look drawn from OpenStreetMap data"],
-      ["open/navigation-dark", "OSM Navigation, dark", "OpenStreetMap navigation map in dark colours"],
+      ["open/navigation-dark", "OSM Navigation, dark", "OpenStreetMap navigation map in dark colors"],
       ["open/streets", "OSM Streets", "Esri's street look drawn from OpenStreetMap data"],
-      ["open/streets-night", "OSM Streets, night", "OpenStreetMap street map in dark colours"],
+      ["open/streets-night", "OSM Streets, night", "OpenStreetMap street map in dark colors"],
       ["open/streets-relief", "OSM Streets with relief", "OpenStreetMap street map over shaded hills"],
       ["open/osm-style", "OpenStreetMap style", "The familiar OpenStreetMap look, served by Esri"],
       ["open/osm-style-relief", "OpenStreetMap style with relief", "The OpenStreetMap look over shaded hills"]]],
@@ -1522,21 +1522,21 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       ["arcgis/hillshade/light", "Hillshade", "Shaded relief of the ground alone, light"],
       ["arcgis/hillshade/dark", "Hillshade, dark", "Shaded relief of the ground alone, dark"],
       ["arcgis/oceans", "Oceans", "The sea floor in depth shades with undersea feature names, and plain land"]]],
-    ["Grey and dark", [
-      ["arcgis/light-gray", "Light grey canvas", "Quiet light grey map that lets reports and overlays stand out"],
-      ["arcgis/dark-gray", "Dark grey canvas", "Quiet dark grey map that lets reports and overlays stand out"],
-      ["open/light-gray", "OSM light grey", "Light grey canvas drawn from OpenStreetMap data"],
-      ["open/dark-gray", "OSM dark grey", "Dark grey canvas drawn from OpenStreetMap data"],
+    ["Gray and dark", [
+      ["arcgis/light-gray", "Light gray canvas", "Quiet light gray map that lets reports and overlays stand out"],
+      ["arcgis/dark-gray", "Dark gray canvas", "Quiet dark gray map that lets reports and overlays stand out"],
+      ["open/light-gray", "OSM light gray", "Light gray canvas drawn from OpenStreetMap data"],
+      ["open/dark-gray", "OSM dark gray", "Dark gray canvas drawn from OpenStreetMap data"],
       ["arcgis/human-geography", "Human geography", "Muted map that brings out where people live and how land is used"],
-      ["arcgis/human-geography-dark", "Human geography, dark", "The human geography map in dark colours"]]],
+      ["arcgis/human-geography-dark", "Human geography, dark", "The human geography map in dark colors"]]],
     ["Imagery", [
       ["open/hybrid", "Imagery with OSM labels", "Esri World Imagery with OpenStreetMap roads and names in English on top"]]],
     ["Other looks", [
       ["arcgis/charted-territory", "Charted territory", "Old atlas style"],
-      ["arcgis/colored-pencil", "Coloured pencil", "Hand-drawn look"],
+      ["arcgis/colored-pencil", "Colored pencil", "Hand-drawn look"],
       ["arcgis/nova", "Nova", "Glowing lines on black"],
       ["arcgis/modern-antique", "Modern antique", "Parchment tones"],
-      ["arcgis/midcentury", "Midcentury", "1950s print colours"],
+      ["arcgis/midcentury", "Midcentury", "1950s print colors"],
       ["arcgis/newspaper", "Newspaper", "Black and white print look"],
       ["open/blueprint", "Blueprint", "White lines on blue, drawn from OpenStreetMap data"]]]
   ];
@@ -1755,7 +1755,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     }
   });
   var FLOODX = {
-    now: { name: "Flooding now", short: "Satellite flood map, last 3 days", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Red = flood water, amber = seasonal flood. Satellite-derived and approximate (about 250 m); faint grey = cloud hid the ground all 3 days, so flooding there is not seen.",
+    now: { name: "Flooding now", short: "Satellite flood map, last 3 days", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Red = flood water, amber = seasonal flood. Satellite-derived and approximate (about 250 m); faint gray = cloud hid the ground all 3 days, so flooding there is not seen.",
       layer: function () { return new KeyedTiles("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + new Date(Date.now() - 864e5).toISOString().slice(0, 10) + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png",
         { pane: "fldpane", rekey: FLD_KEY.now, maxNativeZoom: 9, maxZoom: 13, opacity: fldOp("now"), attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
     hist: { name: "Flood history", short: "How often each place has flooded, 1984 to 2021", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Pale violet = rarely under water, deeper violet = often; rivers and lakes that are always wet are kept faint.",
@@ -1997,13 +1997,13 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
       var l = LV[f.level] || LV.latent;
       return '<div class="pop"><div class="tier" style="color:' + l[1] + '">Possible flashpoint · ' + l[0] + " · " + TE(f.zone) + "</div><h3>" + TE(f.name) + "</h3>" +
         '<div class="terdraft">Assessment <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(f.why) + "</div>" +
-        '<p class="obs">' + (f.last_reported ? "Latest dated report: " + TE(f.last_reported) + ". " : "") + "Zone about " + TE(f.radius_km) + " km across the centre; drawn for orientation only.</p>" +
+        '<p class="obs">' + (f.last_reported ? "Latest dated report: " + TE(f.last_reported) + ". " : "") + "Zone about " + TE(f.radius_km) + " km across the center; drawn for orientation only.</p>" +
         '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + f.evidence.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
         }).join("") + "</ul>" +
         '<p class="obs" style="font-size:10.5px">Levels: ' + TE((D.levels || {})[f.level] || "") + ". Record fingerprint " + TE(f.fp.slice(0, 16)) + "&hellip;</p></div>";
     }
-    var PST = { current: "Current", past: "Past", cancelled: "Cancelled", proposed: "Proposed, not built", unclear: "Unclear" };
+    var PST = { current: "Current", past: "Past", cancelled: "Canceled", proposed: "Proposed, not built", unclear: "Unclear" };
     /* records from data/cnpresence/<cc>.json (tools/refresh_cnpresence.mjs) carry src: each is its source's own claim, not an AI draft */
     var PRSRC = { aiddata: "Chinese-funded project (AidData)", ports: "Chinese-run port", uslists: "On a U.S. restricted list", dod1260h: "On a U.S. restricted list", wikidata: "State-run or state-owned site (Wikidata)" };
     /* the actor of a generated record (stamped when its file is read): Chinese unless it came from data/rupresence or data/irpresence */
@@ -2019,7 +2019,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         (p.actor && p.actor !== p.name ? '<p class="obs">Actor: ' + TE(p.actor) + "</p>" : "") +
         (p.place ? '<p class="obs">Listed address: ' + TE(p.place) + "</p>" : "") +
         '<div class="terdraft">' + TE(p.claim_status || "Reported, not verified") + '</div><div class="why">' + TE(p.why) + "</div>" + prEv(p) +
-        '<p class="obs" style="font-size:10.5px">Position: ' + TE(p.prec || "approximate") + ". Licence: " + TE(p.lic || "") + (p.nc ? " (non-commercial)" : "") +
+        '<p class="obs" style="font-size:10.5px">Position: ' + TE(p.prec || "approximate") + ". License: " + TE(p.lic || "") + (p.nc ? " (non-commercial)" : "") +
         ". Record fingerprint " + TE(String(p.fp || "").slice(0, 16)) + "&hellip;</p></div>";
       return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + (p.domain === "sea" ? "Sea" : "Land") + " · " + TE(p.kind.replace(/_/g, " ")) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
         '<p class="obs">Actor: ' + TE(p.actor) + "</p>" +
@@ -2028,11 +2028,11 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     }
     /* several listed organisations at one city share one pin; its pop-up lists them */
     function prGroupPop(list) {
-      return '<div class="pop"><div class="tier" style="color:#8e1b1b">' + prAct(list[0])[0] + " · On U.S. restricted lists · " + list.length + " organisations</div><h3>" + TE(String(list[0].prec || "").replace(/^city of the listed address \(|\)$/g, "")) + "</h3>" +
+      return '<div class="pop"><div class="tier" style="color:#8e1b1b">' + prAct(list[0])[0] + " · On U.S. restricted lists · " + list.length + " organizations</div><h3>" + TE(String(list[0].prec || "").replace(/^city of the listed address \(|\)$/g, "")) + "</h3>" +
         '<div class="terdraft">Listings by the U.S. government, placed at the listed city</div><ul class="terev">' + list.slice(0, 60).map(function (p) {
           return "<li><b>" + TE(p.name) + "</b> · " + TE(p.list || "") + (p.evidence && p.evidence[0] ? " · " + src(p.evidence[0].src, "source") : "") + "</li>";
         }).join("") + "</ul>" + (list.length > 60 ? '<p class="obs">and ' + (list.length - 60) + " more in the list beside the map.</p>" : "") +
-        '<p class="obs" style="font-size:10.5px">Licence: ' + TE(list[0].lic || "") + "</p></div>";
+        '<p class="obs" style="font-size:10.5px">License: ' + TE(list[0].lic || "") + "</p></div>";
     }
     /* the generated file for this country and actor (cn: data/cnpresence, ru: data/rupresence, ir: data/irpresence), read once */
     var PRDIR = { cn: "cnpresence", ru: "rupresence", ir: "irpresence" }, PRD = {}, PRW = {};
@@ -2076,7 +2076,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     function note(k) {
       if (!D) return failed ? "No terrain or flashpoint file for this country yet." : "Loads when switched on.";
       var n = { active: 0, elevated: 0, latent: 0 }; D.flashpoints.forEach(function (f) { n[f.level]++; });
-      if (k === "pr") { var P = D.presence || []; return P.length ? P.filter(function (p) { return p.domain === "sea"; }).length + " at sea, " + P.filter(function (p) { return p.domain === "land"; }).length + " on land. Faded pins are past, cancelled or proposed." : "None recorded for this country."; }
+      if (k === "pr") { var P = D.presence || []; return P.length ? P.filter(function (p) { return p.domain === "sea"; }).length + " at sea, " + P.filter(function (p) { return p.domain === "land"; }).length + " on land. Faded pins are past, canceled or proposed." : "None recorded for this country."; }
       return D.terrain.length + " terrain features, " + D.flashpoints.length + " flashpoints (" + n.active + " active, " + n.elevated + " elevated, " + n.latent + " latent), as of " + D.asof + ".";
     }
     function sync() {
@@ -2873,7 +2873,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     poly._tier = tier;
     poly.bindPopup('<div class="pop"><h3>' + esc(title(t.t)) + "</h3>" +
       '<div class="tier" style="color:' + tok(TAMB_STYLE[tier][0]) + '">' + esc(title(t.a)) + ", " + esc(title(t.p)) + "</div>" +
-      '<div class="why">Centre lies <b>' + t.km.toFixed(1) + " km</b> from the border line.</div><dl>" +
+      '<div class="why">Center lies <b>' + t.km.toFixed(1) + " km</b> from the border line.</div><dl>" +
       "<dt>Households</dt><dd>" + num(t.house) + "</dd><dt>People</dt><dd>" + num(t.pop) + "</dd></dl>" +
       '<div class="why" style="margin:7px 0 0;font-size:11px">Registered residents (GISTDA, 2014). Distance, not a threat assessment.</div></div>');
     tambLayer.addLayer(poly);
@@ -3122,7 +3122,7 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         tb2.appendChild(tr);
       });
     var p10 = BD.tambons.filter(function (t) { return t.km < 10; }).reduce(function (s, t) { return s + t.pop; }, 0);
-    document.getElementById("pop-sub").innerHTML = "<b>" + num(p10) + "</b> registered residents live in Thai subdistricts centred within 10 km of the line, and <b>" +
+    document.getElementById("pop-sub").innerHTML = "<b>" + num(p10) + "</b> registered residents live in Thai subdistricts centered within 10 km of the line, and <b>" +
       num(pop20) + "</b> within 20 km, roughly the reach of the BM-21 rockets used in both rounds of fighting.";
 
     // facilities
@@ -3659,9 +3659,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     in: { flood: "Monsoon floods", border: "LoC, LAC and border security", insurgency: "Militancy and Maoist conflict", crime: "Organized crime", scam: "Cyber fraud and scam compounds", aml: "Money laundering and betting", weather: "Monsoon, cyclones and heat", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Public health" },
     bd: { flood: "Floods and landslides", border: "Border and Rohingya frontier", insurgency: "Political and Hill Tracts violence", crime: "Narcotics and sea trafficking", scam: "Fraud and scam compounds", aml: "Money laundering", weather: "Cyclones and weather", infra: "Power and energy supply", transport: "Transportation", safety: "Public safety", health: "Dengue and measles" },
     bt: { flood: "Floods, glacial lakes and landslides", border: "India border and trade gates", insurgency: null, crime: "Drugs and smuggling", scam: "Fraud", aml: "Money laundering", weather: "Weather", infra: "Hydropower and lifelines", transport: "Transportation", safety: "Public safety", health: "Public health" },
-    np: { flood: "Floods, landslides and glacial lakes", border: "Open border and Himalayan passes", insurgency: "Conflict legacy and security", crime: "Trafficking, gold and narcotics", scam: "Scam-compound trafficking", aml: "Grey list and hundi", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Civil unrest and hazards", health: "Public health" },
-    lk: { flood: "Monsoon floods and landslides", border: "Palk Strait and maritime boundary", insurgency: "Terrorism and extremism", crime: "Narcotics and underworld violence", scam: "Scam-centre crackdown", aml: "Money laundering", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Dengue and public health" },
-    pg: { flood: "Floods and landslides", border: "Border and maritime security", insurgency: "Tribal conflict and Bougainville", crime: "Law and order", scam: "Scams and trafficking", aml: "Financial crime and grey list", weather: "Cyclones and drought", infra: "Power and water supply", transport: "Transport and sea safety", safety: "Public safety and disorder", health: "Public health" },
+    np: { flood: "Floods, landslides and glacial lakes", border: "Open border and Himalayan passes", insurgency: "Conflict legacy and security", crime: "Trafficking, gold and narcotics", scam: "Scam-compound trafficking", aml: "Gray list and hundi", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Civil unrest and hazards", health: "Public health" },
+    lk: { flood: "Monsoon floods and landslides", border: "Palk Strait and maritime boundary", insurgency: "Terrorism and extremism", crime: "Narcotics and underworld violence", scam: "Scam-center crackdown", aml: "Money laundering", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Dengue and public health" },
+    pg: { flood: "Floods and landslides", border: "Border and maritime security", insurgency: "Tribal conflict and Bougainville", crime: "Law and order", scam: "Scams and trafficking", aml: "Financial crime and gray list", weather: "Cyclones and drought", infra: "Power and water supply", transport: "Transport and sea safety", safety: "Public safety and disorder", health: "Public health" },
     nz: { flood: "Floods and landslips", border: "Maritime and Pacific security", insurgency: "Terrorism and extremism", crime: "Gangs and drugs", scam: "Scams and cyber fraud", aml: "Financial crime", weather: "Storms and weather warnings", infra: "Lifelines and utilities", transport: "Highways, rail and Cook Strait", safety: "Earthquakes and volcanoes", health: "Public health" },
     cn: { flood: "Floods and geohazards", border: "Frontier and maritime claims", insurgency: "Terrorism and extremism", crime: "Organized crime and narcotics", scam: "Telecom fraud and overseas compounds", aml: "Illicit finance and underground banking", weather: "Typhoons and extreme weather", infra: "Critical infrastructure", transport: "Transportation", safety: "Work safety and disasters", health: "Public health" },
     id: { flood: "Floods and landslides", border: "Maritime and border security", insurgency: "Papua conflict and counterterrorism", crime: "Narcotics and organized crime", scam: "Online scams and trafficked workers", aml: "Money laundering and gambling finance", weather: "Weather and drought", infra: "Power, water and telecoms", transport: "Transport and Mudik", safety: "Volcanoes, quakes and disasters", health: "Public health" },
@@ -3671,7 +3671,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     my: { flood: "Monsoon floods and landslides", border: "ESSZone and maritime security", insurgency: "Counter-terrorism", crime: "Border smuggling and narcotics", scam: "Scam syndicates and online fraud", aml: "Money mules and AMLA enforcement", weather: "Warnings, heat and drought", infra: "Water, dams and utilities", transport: "Road, rail, air and ferry", safety: "Fire, peat burns and hazards", health: "Haze, dengue and rabies" },
     vn: { flood: "Floods and landslides", border: "East Sea maritime security", insurgency: null, crime: "Drug trafficking and border crime", scam: "Scam compounds and online fraud", aml: "Money laundering, crypto and betting", weather: "Storms, heat and severe weather", infra: "Energy, fuel and utilities", transport: "Roads, rail and aviation", safety: "Fires, explosions and public safety", health: "Outbreaks, food safety and air quality" },
     la: { flood: "Mekong and tributary flooding", border: "Mekong frontier and border security", insurgency: null, crime: "Golden Triangle drugs and wildlife crime", scam: "Scam compound crackdown", aml: "Money laundering and sanctions", weather: "Monsoon and severe weather", infra: "Hydropower and grid", transport: "Roads and Laos-China Railway", safety: "UXO and public safety", health: "Dengue, haze and animal disease" },
-    pk: { flood: "Monsoon and glacial floods", border: "Western front and LoC", insurgency: "Counter-terrorism (TTP and BLA)", crime: "Organized crime", scam: "Foreign-run scam call centres", aml: "Hawala, hundi and financial crime", weather: "Weather", infra: "Energy and fuel security", transport: "Transportation", safety: "Public safety", health: "Public health" },
+    pk: { flood: "Monsoon and glacial floods", border: "Western front and LoC", insurgency: "Counter-terrorism (TTP and BLA)", crime: "Organized crime", scam: "Foreign-run scam call centers", aml: "Hawala, hundi and financial crime", weather: "Weather", infra: "Energy and fuel security", transport: "Transportation", safety: "Public safety", health: "Public health" },
     jp: { flood: "Heavy rain and landslides", border: "Air and maritime defense", insurgency: "Terrorism and extremism", crime: "Organized crime and smuggling", scam: "Special fraud (tokushu sagi)", aml: "Scam proceeds and mule accounts", weather: "Typhoons and extreme heat", infra: "Infrastructure", transport: "Transportation", safety: "Earthquakes and public safety", health: "Heatstroke and infectious disease" },
     mv: { flood: "Floods and storm surge", border: "Maritime security", insurgency: "Terrorism and extremism", crime: "Drugs and gangs", scam: "Scams", aml: "Money laundering", weather: "Monsoon and weather", infra: "Utilities", transport: "Sea and air transport", safety: "Public safety", health: "Public health" },
     tl: { flood: "Floods and landslides", border: "Border and maritime", insurgency: "Martial-arts group violence", crime: "Crime", scam: "Scam compounds", aml: "Money laundering", weather: "Weather", infra: "Power and water", transport: "Transportation", safety: "Public safety", health: "Public health" }
@@ -4251,9 +4251,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* every source in one list, grouped by where it came from: social posts first, then news, official and other records,
      open data and analysis, and the neighbouring countries' pages */
   function relatedHtml(list) {
-    var soc = list.social || [], G = [["news", "News reports", []], ["rec", "Official and other records", []], ["open", "Open data and analysis", []], ["xb", "Neighbouring countries", []]];
+    var soc = list.social || [], G = [["news", "News reports", []], ["rec", "Official and other records", []], ["open", "Open data and analysis", []], ["xb", "Neighboring countries", []]];
     list.forEach(function (m) { G[m.xhref ? 3 : !m.rec ? 2 : m.rec.news ? 0 : 1][2].push(m); });
-    return '<p class="note" style="margin:0 0 8px"><b>Matched automatically</b> by shared words, place and time, from every source OSAP reads for this country and its neighbours. A match is not a confirmed link between the reports; read each one.</p>' +
+    return '<p class="note" style="margin:0 0 8px"><b>Matched automatically</b> by shared words, place and time, from every source OSAP reads for this country and its neighbors. A match is not a confirmed link between the reports; read each one.</p>' +
       '<h4 class="relh">Social media posts (' + soc.length + ")</h4>" +
       (soc.length ? '<p class="note relsoc">Unverified. Posts from official agencies and news accounts only, never private people. A post is that account\'s claim and is often ahead of confirmed reporting.</p>' + relRows(soc)
         : '<p class="obs">No post from the official and news accounts OSAP reads matches this report yet.</p>') +
@@ -4589,7 +4589,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var list = document.getElementById("al-list");
     list.textContent = "";
     alertLayer.clearLayers();
-    if (window.OSAP_LEGEND) OSAP_LEGEND.set("alerts", '<div class="lg"><span class="sw round" style="background:var(--over);opacity:.6;border:2.5px solid var(--over)"></span><div>High-severity alert<span class="d">A rule you set was met by this record. Shown as the record&#39;s NATO symbol with a dot in this colour</span></div></div>' +
+    if (window.OSAP_LEGEND) OSAP_LEGEND.set("alerts", '<div class="lg"><span class="sw round" style="background:var(--over);opacity:.6;border:2.5px solid var(--over)"></span><div>High-severity alert<span class="d">A rule you set was met by this record. Shown as the record&#39;s NATO symbol with a dot in this color</span></div></div>' +
       '<div class="lg"><span class="sw round" style="background:var(--near);opacity:.6;border:2.5px solid var(--near)"></span><div>Other alert</div></div>', document.getElementById("rail-alerts"));
     ALERTS.forEach(function (a, i) {
       var r = a.rec;
@@ -4949,7 +4949,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         '<span class="tlm">' + chip(st === "completed" ? "" : "k", st) + (x.us_participation ? chip("rule", "U.S. taking part") : x.us_participation === false ? chip("", "no U.S. role stated") : "") +
         '<span class="tls">' + esc((x.participants || []).slice(0, 6).join(", ") + ((x.participants || []).length > 6 ? " +" + (x.participants.length - 6) : "")) + "</span></span></button>";
     }
-    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Announced plans, not confirmed events.</b> Dates and participants are as published by the organisers or reported, gathered ' + esc(fmtD(SOF.asof)) +
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Announced plans, not confirmed events.</b> Dates and participants are as published by the organizers or reported, gathered ' + esc(fmtD(SOF.asof)) +
       ". Status is worked out from those dates against today. Exercises held elsewhere that involve " + esc(C.name) + " are included.</div></div>" +
       '<div class="sec"><h2>Current and upcoming</h2>' + (up.length ? '<div class="tllist">' + up.map(row).join("") + "</div>" : '<p class="note">None announced in this data.</p>') + "</div>" +
       '<div class="sec"><h2>Completed in 2026</h2>' + (done.length ? '<div class="tllist">' + done.map(row).join("") + "</div>" : '<p class="note">None in this data.</p>') + "</div>" +
@@ -4976,7 +4976,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       });
       Object.keys(groups).forEach(function (k) {
         var ix = groups[k], ps = ix.map(function (i) { return list[i]; }), p = ps[0];
-        var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: ps.length > 1 ? ps.length + " listed organisations" : p.name,
+        var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: ps.length > 1 ? ps.length + " listed organizations" : p.name,
           icon: osapSym(p.sym || "pr_listed", { text: ps.length > 1 ? String(ps.length) : "CN" }) || P.icon(p) });
         m.bindPopup(ps.length > 1 ? P.groupPop(ps) : P.pop(p), { maxWidth: 360 }); sofLayer.addLayer(m);
         ix.forEach(function (i) { sofM["pr:" + i] = m; });
@@ -4996,11 +4996,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var sea = hand.filter(function (p) { return p.domain === "sea"; }), land = hand.filter(function (p) { return p.domain !== "sea"; });
       var aid = by("aiddata"), ports = by("ports"), us = by("uslists");
       railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reported, not verified.</b> Chinese state presence, finance and PRC-linked companies in ' + esc(C.name) +
-        ", each as its source records it. A listing or a loan is a source's claim, not an OSAP finding. Faded pins are past, cancelled or proposed.</div></div>" +
+        ", each as its source records it. A listing or a loan is a source's claim, not an OSAP finding. Faded pins are past, canceled or proposed.</div></div>" +
         (hand.length ? sec("At sea", sea, "None recorded.") + sec("On land", land, "None recorded.") : "") +
         sec("Chinese-funded projects", aid, CC === "cn" ? "Not applicable to China." : "None recorded. AidData covers 2000-2021 and low- and middle-income countries.") +
         sec("Chinese-run ports and terminals", ports, CC === "cn" ? "Not applicable to China." : "None recorded in Wikidata.") +
-        sec("China-linked organisations on U.S. restricted lists", us, "None listed at an address here.") +
+        sec("China-linked organizations on U.S. restricted lists", us, "None listed at an address here.") +
         '<div class="sec"><p class="obs">Sources: ' + (hand.length ? "public reporting (hand-researched list); " : "") + "AidData Global Chinese Development Finance Dataset v3.0 (ODC-By; locations from OpenStreetMap, ODbL); " +
         "Wikidata operator and owner records (CC0); U.S. Consolidated Screening List (public domain); DoD Section 1260H list via OpenSanctions (CC BY-NC); city positions from GeoNames (CC BY).</p></div>";
     });
@@ -5023,7 +5023,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       });
       Object.keys(groups).forEach(function (k) {
         var ix = groups[k], ps = ix.map(function (i) { return list[i]; }), p = ps[0];
-        var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: ps.length > 1 ? ps.length + " listed organisations" : p.name,
+        var m = L.marker([p.lat, p.lon], { pane: "tlpane", keyboard: false, title: ps.length > 1 ? ps.length + " listed organizations" : p.name,
           icon: osapSym(p.sym || "pr_listed", { text: ps.length > 1 ? String(ps.length) : P.act(p)[1] }) || P.icon(p) });
         m.bindPopup(ps.length > 1 ? P.groupPop(ps) : P.pop(p), { maxWidth: 360 }); sofLayer.addLayer(m);
         ix.forEach(function (i) { sofM["pr:" + i] = m; });
@@ -5039,10 +5039,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           (items.length > CAP ? '<p class="note">First ' + CAP + " shown here; the map shows every one with a position.</p>" : "") : '<p class="note">' + esc(empty) + "</p>") + "</div>";
       }
       var sites = list.filter(function (p) { return p.src === "wikidata"; }), us = list.filter(function (p) { return p.src === "uslists"; });
-      railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reported, not verified.</b> ' + esc(nm) + " state sites and " + esc(home) + "-linked organisations in " + esc(C.name) +
+      railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reported, not verified.</b> ' + esc(nm) + " state sites and " + esc(home) + "-linked organizations in " + esc(C.name) +
         ", each as its source records it. A listing is a U.S. legal designation, not an OSAP finding. Faded pins are past or closed.</div></div>" +
         sec(nm + " state-run and state-owned sites", sites, CC === ak ? "Not applicable to " + home + "." : "None recorded in Wikidata.") +
-        sec(home + "-linked organisations on U.S. restricted lists", us, "None listed at an address here.") +
+        sec(home + "-linked organizations on U.S. restricted lists", us, "None listed at an address here.") +
         '<div class="sec"><p class="obs">Sources: Wikidata operator and owner records (CC0); U.S. Consolidated Screening List (public domain); city positions from GeoNames (CC BY).</p></div>';
     });
   }
@@ -5149,7 +5149,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var tzName = condZulu ? "UTC (Z)" : tz.replace(/^.*\//, "").replace(/_/g, " ") + " time, UTC" + (off >= 0 ? "+" : "−") + Math.floor(Math.abs(off) / 60) + (Math.abs(off) % 60 ? ":" + ("0" + Math.abs(off) % 60).slice(-2) : "");
     var ll = pt.lat.toFixed(3) + ", " + pt.lon.toFixed(3);
     return '<div class="sec"><h2>Light and sea conditions</h2>' +
-      '<p class="obs">At the map centre, ' + ll + (window.MGRS_OF ? " (" + esc(window.MGRS_OF(pt.lat, pt.lon)) + ")" : "") + ". Pan the map to move it. Times are Zulu / local (" + esc(tzName) + ").</p>" +
+      '<p class="obs">At the map center, ' + ll + (window.MGRS_OF ? " (" + esc(window.MGRS_OF(pt.lat, pt.lon)) + ")" : "") + ". Pan the map to move it. Times are Zulu / local (" + esc(tzName) + ").</p>" +
       '<table class="reg cond"><tr><th>Sun</th><th>BMNT</th><th>Rise</th><th>Set</th><th>EENT</th></tr>' + sun + "</table>" +
       '<table class="reg cond" style="margin-top:8px"><tr><th>Moon</th><th>Rise</th><th>Set</th><th>Lit at 24:00</th></tr>' + moon + "</table>" +
       '<p class="note" style="margin-top:6px">Computed in the page from standard formulas, accurate to a minute or two at sea level. BMNT and EENT are nautical twilight (sun 12° below the horizon). "none" means the event does not happen that day.</p>' +
@@ -5166,7 +5166,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       clearTimeout(t);
       var dy = j.daily || {}, hr = j.hourly || {}, lv = hr.sea_level_height_msl || [], tm = hr.time || [];
       if (!dy.time || !dy.wave_height_max || dy.wave_height_max.every(function (v) { return v == null; })) {
-        box.innerHTML = '<p class="obs">No marine forecast at this point. It is probably inland: pan the map so its centre is over the sea, then try again.</p>'; return;
+        box.innerHTML = '<p class="obs">No marine forecast at this point. It is probably inland: pan the map so its center is over the sea, then try again.</p>'; return;
       }
       var tides = {};
       for (var i = 1; i < lv.length - 1; i++) {
@@ -5205,7 +5205,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var S0 = (window.ASAP_SOF || {})[CC] || null, a = (S0 && S0.advisory) || null;
     var an = advNow(); if (a && an.live) a = Object.assign({}, a, { level: an.level, level_text: an.level_text, updated: an.date || a.updated });
     var post = S0 && (S0.posts || []).filter(function (p) { return p.kind === "embassy" && p.lat != null; })[0];
-    var ref = post ? { lat: post.lat, lon: post.lon, what: post.name } : { lat: (C.bounds[0][0] + C.bounds[1][0]) / 2, lon: (C.bounds[0][1] + C.bounds[1][1]) / 2, what: "the centre of the area" };
+    var ref = post ? { lat: post.lat, lon: post.lon, what: post.name } : { lat: (C.bounds[0][0] + C.bounds[1][0]) / 2, lon: (C.bounds[0][1] + C.bounds[1][1]) / 2, what: "the center of the area" };
     var tz = tzAt(ref.lat, ref.lon), off = tzOffsetMin(tz, now.getTime()), loc = new Date(now.getTime() + off * 6e4);
     var y = loc.getUTCFullYear(), mo = loc.getUTCMonth(), dd = loc.getUTCDate(), light = "";
     var zSave = condZulu; condZulu = false;
@@ -5316,7 +5316,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var P = B.pmesii || {}, names = [["political", "Political"], ["military", "Military"], ["economic", "Economic"], ["social", "Social"], ["information", "Information"], ["infrastructure", "Infrastructure"]];
     var T = B.threat || {}, ov = T.overall || {};
     return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>As of " + esc(B.as_of || "") + "</div></header>" +
-      '<p class="rdraft"><span class="aitag" title="Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports." tabindex="0">AI generated</span></p>' +
+      '<p class="rdraft"><span class="aitag" title="Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgments, not official ratings; facts are what each source reports." tabindex="0">AI generated</span></p>' +
       "<h3>PMESII summary</h3><div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text ? "<div><h4>" + n[1] + "</h4><p>" + esc(p.text) + cite(p.src) + "</p></div>" : ""; }).join("") + "</div>" +
       advOfficialHtml() +
       "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
@@ -5351,13 +5351,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var CREDITS = [
     ["Map", [
       ['Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, available under the Open Database License (ODbL).'],
-      ['Grey background map: vector tiles and Positron / Dark styles by <a href="https://openfreemap.org/">OpenFreeMap</a> (free, no key, commercial use allowed) &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data from OpenStreetMap.'],
+      ['Gray background map: vector tiles and Positron / Dark styles by <a href="https://openfreemap.org/">OpenFreeMap</a> (free, no key, commercial use allowed) &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data from OpenStreetMap.'],
       ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
       ['Streets base map: vector tiles and style by <a href="https://openfreemap.org/">OpenFreeMap</a> (free, no key) &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data from OpenStreetMap; labels shown in English where OpenStreetMap records an English or Latin-letter name. Drawn with <a href="https://maplibre.org/">MapLibre GL JS</a> (BSD-3-Clause). If it cannot be drawn, tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation stand in, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
-      ['Offline map (and Satellite in the sold version): <a href="https://s2maps.eu">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016). Licence: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.'],
-      ['Satellite, Hybrid and Satellite, second look base maps and Esri hillshade: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> (and Clarity), Esri reference labels and World Hillshade, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin, USGS and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use); the sold version uses them only under its own ArcGIS Location Platform licence.'],
-      ['Esri maps (Navigation, Esri Streets, Esri Topographic, Outdoor, Terrain, Oceans, grey canvases, human geography, the OpenStreetMap-based Open Basemaps and the other Esri looks): <a href="https://developers.arcgis.com/rest/basemap-styles/">ArcGIS Basemap Styles service</a> and Static Basemap Tiles service, &copy; Esri and its data providers (Open Basemaps: &copy; OpenStreetMap contributors, ODbL). Licence: ArcGIS Location Platform, through the site\'s own API key (cleared for a paid product).'],
+      ['Offline map (and Satellite in the sold version): <a href="https://s2maps.eu">Sentinel-2 cloudless - https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016). License: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.'],
+      ['Satellite, Hybrid and Satellite, second look base maps and Esri hillshade: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> (and Clarity), Esri reference labels and World Hillshade, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin, USGS and the GIS user community. License: Esri terms of use, <b>restricted</b> (not cleared for commercial use); the sold version uses them only under its own ArcGIS Location Platform license.'],
+      ['Esri maps (Navigation, Esri Streets, Esri Topographic, Outdoor, Terrain, Oceans, gray canvases, human geography, the OpenStreetMap-based Open Basemaps and the other Esri looks): <a href="https://developers.arcgis.com/rest/basemap-styles/">ArcGIS Basemap Styles service</a> and Static Basemap Tiles service, &copy; Esri and its data providers (Open Basemaps: &copy; OpenStreetMap contributors, ODbL). License: ArcGIS Location Platform, through the site\'s own API key (cleared for a paid product).'],
       ['Streets hill shading: <a href="https://registry.opendata.aws/terrain-tiles/">Terrain Tiles on AWS</a> (Mapzen; SRTM, GMTED, ETOPO1 and national elevation data).'],
       ['Daily satellite base map: NASA MODIS Terra corrected reflectance via <a href="https://www.earthdata.nasa.gov/gibs">NASA GIBS</a> (public domain).'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
@@ -5445,7 +5445,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       add({ layer: "safety", type: "observation", cat: "Earthquake (USGS)", kind: "earthquake", quake: true, live: true,
         title: "M" + q.mag.toFixed(1) + " earthquake, " + q.place,
         detail: "Depth " + (q.depth != null ? Math.round(q.depth) + " km" : "not given") + ". USGS " + (q.status === "reviewed" ? "reviewed" : "automatic") +
-          " solution" + (q.alert ? ", PAGER " + q.alert + " alert" : "") + (q.tsunami ? ", tsunami flag set (check the regional tsunami centre)" : "") + ". Magnitude and location may be revised.",
+          " solution" + (q.alert ? ", PAGER " + q.alert + " alert" : "") + (q.tsunami ? ", tsunami flag set (check the regional tsunami center)" : "") + ". Magnitude and location may be revised.",
         ts: iso.slice(0, 16), tsLabel: d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) + " " + iso.slice(11, 16) + "Z",
         place: q.place, prov: "", lat: q.lat, lon: q.lon, prec: "exact", magnitude: q.mag,
         sev: q.mag >= 6.5 ? 3 : q.mag >= 5 ? 2 : 1, src: SOURCES.usgs, url: q.url, issued: iso.slice(0, 16), recorded: HZ.qFrom });
@@ -5455,7 +5455,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function aqPoints() {
     var S0 = (window.ASAP_SOF || {})[CC], pts = S0 ? (S0.posts || []).filter(function (p) { return p.lat != null; }).slice(0, 6).map(function (p) { return { name: p.city || p.name, lat: p.lat, lon: p.lon }; }) : [];
-    if (!pts.length) pts = [{ name: C.name + " (centre)", lat: (C.bounds[0][0] + C.bounds[1][0]) / 2, lon: (C.bounds[0][1] + C.bounds[1][1]) / 2 }];
+    if (!pts.length) pts = [{ name: C.name + " (center)", lat: (C.bounds[0][0] + C.bounds[1][0]) / 2, lon: (C.bounds[0][1] + C.bounds[1][1]) / 2 }];
     return pts;
   }
   function useSnapshotAQ() {
@@ -5495,7 +5495,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var GD_TYPE = { TC: ["Tropical cyclone", "weather", "storm"], FL: ["Flood", "flood", "flood_event"], DR: ["Drought", "weather", "drought"],
     VO: ["Volcano", "safety", "other"], WF: ["Wildfire", "safety", "other"] };
   src("gdacs", "GDACS (Global Disaster Alert and Coordination System, UN and European Commission)", "International alert system", "B",
-      "Automated alerts: the alert level is a modelled estimate of impact, not a damage report.", "https://www.gdacs.org/");
+      "Automated alerts: the alert level is a modeled estimate of impact, not a damage report.", "https://www.gdacs.org/");
   function gdacsEvents() {
     var g = window.ASAP_GDACS; if (!g || !g.events) return [];
     return g.events.filter(function (e) {
@@ -5521,7 +5521,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var fc = gdFuture(e), d = fc ? gdIssued(e) : gdDate(e.from);
       add({ layer: t[1], type: "claim", cat: t[0] + " alert (GDACS)", kind: t[2], gdacs: true, live: true, gdAlert: e.alert, forecast: fc,
         title: (fc ? "Forecast, " : "") + (e.alert ? e.alert + " alert: " : "") + t[0] + (e.name ? " " + e.name : ""),
-        detail: (e.desc ? e.desc + ". " : "") + (e.severity ? e.severity + ". " : "") + "GDACS alert levels are modelled impact estimates, not damage reports." +
+        detail: (e.desc ? e.desc + ". " : "") + (e.severity ? e.severity + ". " : "") + "GDACS alert levels are modeled impact estimates, not damage reports." +
           (fc ? " Forecast: GDACS expects this from " + gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : "") + "; it has not happened yet." : e.to ? " Active " + gdDate(e.from) + " to " + gdDate(e.to) + "." : ""),
         ts: d, place: e.name || "", prov: "", lat: e.lat, lon: e.lon, prec: "approx", ongoing: !!e.current,
         sev: /red/i.test(e.alert) ? 3 : /orange/i.test(e.alert) ? 2 : 1, src: SOURCES.gdacs, url: e.url, issued: d, recorded: g ? g.asof : "" });
@@ -5566,7 +5566,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         return '<button type="button" class="tlrow" data-sof="gd:' + i + '"><span class="tln"><b style="color:' + (col[e.alert] || "#888") + '">●</b> ' + esc((GD_TYPE[e.type] || [e.type])[0] + (e.name ? " " + e.name : "")) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc([e.alert ? e.alert + " alert" : "", e.severity, gdWhen(e), e.current && !gdFuture(e) ? "current" : ""].filter(Boolean).join(" · ")) + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">No GDACS alert for ' + esc(C.name) + " in this period.</p>") : "") +
-      '<p class="note" style="margin-top:6px">Cyclone tracks are drawn as dashed lines. Alert levels (green, orange, red) are GDACS\'s modelled impact estimates, shown as claims.</p></div>';
+      '<p class="note" style="margin-top:6px">Cyclone tracks are drawn as dashed lines. Alert levels (green, orange, red) are GDACS\'s modeled impact estimates, shown as claims.</p></div>';
   }
   function reliefHtml() {
     var w = window.ASAP_RW, list = w && w.reports ? (w.reports[CC] || []).filter(function (x) { return inPeriodDate(x.date); }) : [];
@@ -5574,16 +5574,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (w ? (list.length ? '<ul class="note">' + list.slice(0, 15).map(function (x) {
         return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title) + '</a> <span class="obs">' + esc([x.date, x.source, x.type].filter(Boolean).join(" · ")) + "</span></li>";
       }).join("") + "</ul>" : '<p class="obs">No ReliefWeb report for ' + esc(C.name) + " in this period.</p>") : "") +
-      '<p class="note">Reports are documents published by agencies and NGOs. Each is that organisation\'s account, not a confirmed finding.</p></div>';
+      '<p class="note">Reports are documents published by agencies and NGOs. Each is that organization\'s account, not a confirmed finding.</p></div>';
   }
 
   /* ---------- tropical cyclones and the 7-day forecast (15-minute snapshots from the GitHub job) ----------
      Positions, forecast tracks and probability circles are the issuing agency's products (JMA, JTWC, GDACS), each kept with its
      agency and issue time. The page only draws them and works out distances; it never merges or adjusts agencies' tracks. */
   var STC = { JMA: "#d84315", JTWC: "#7b1fa2", GDACS: "#607d8b" };
-  src("storm-jma", "Japan Meteorological Agency (RSMC Tokyo) typhoon information", "Official regional meteorological centre", "A",
-      "The WMO-designated centre for western North Pacific typhoons. Forecast circles are its 70% probability circles.", "https://www.jma.go.jp/bosai/map.html#contents=typhoon&lang=en");
-  src("storm-jtwc", "Joint Typhoon Warning Center (U.S. Navy and Air Force)", "U.S. military warning centre", "A",
+  src("storm-jma", "Japan Meteorological Agency (RSMC Tokyo) typhoon information", "Official regional meteorological center", "A",
+      "The WMO-designated center for western North Pacific typhoons. Forecast circles are its 70% probability circles.", "https://www.jma.go.jp/bosai/map.html#contents=typhoon&lang=en");
+  src("storm-jtwc", "Joint Typhoon Warning Center (U.S. Navy and Air Force)", "U.S. military warning center", "A",
       "Official U.S. warnings. Winds are one-minute averages, so they run higher than JMA's ten-minute winds.", "https://www.metoc.navy.mil/jtwc/jtwc.html");
   function stKm(a, b, c, d) {
     var R0 = 6371, p1 = a * Math.PI / 180, p2 = c * Math.PI / 180, dp = p2 - p1, dl = (d - b) * Math.PI / 180;
@@ -5597,7 +5597,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function stRefs() {
     var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
     if (pts.length) return pts;
-    var b = C.bounds; return [{ name: C.name + " (centre)", lat: (b[0][0] + b[1][0]) / 2, lon: (b[0][1] + b[1][1]) / 2 }];
+    var b = C.bounds; return [{ name: C.name + " (center)", lat: (b[0][0] + b[1][0]) / 2, lon: (b[0][1] + b[1][1]) / 2 }];
   }
   /* closest point of one agency's forecast track (current position and forecast points, sampled between them) to the reference places */
   function stClosest(p) {
@@ -5639,7 +5639,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         add({ layer: "weather", type: "claim", cat: "Tropical cyclone (" + p.agency + ")", kind: "storm", storm: true, live: true,
           title: (p.cat ? p.cat.toUpperCase() + " " : "") + (st.name || "Tropical cyclone") + " (" + p.agency + "): " + stWind(p.now) +
             (c ? ", forecast to pass about " + Math.round(c.km) + " km from " + c.place + (c.t ? " around " + stZ(c.t) : "") : ""),
-          detail: p.agencyName + " issued at " + stZ(p.issued) + ". Centre " + p.now.lat + ", " + p.now.lon + " at " + stZ(p.now.t) +
+          detail: p.agencyName + " issued at " + stZ(p.issued) + ". Center " + p.now.lat + ", " + p.now.lon + " at " + stZ(p.now.t) +
             (p.now.pressure ? ", " + p.now.pressure + " hPa" : "") + (p.now.course ? ", moving " + stDir(p.now.course) : "") + ". " +
             ((p.fc || []).length ? "Forecast track to " + stZ(last.t) + " (" + last.h + " h). " : "") + (p.note || "") +
             (c ? " The closest-approach figure is worked out by this page from the agency's track, not stated by the agency." : ""),
@@ -5677,11 +5677,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         /* JMA's cone: 70% probability circles joined by the tangent lines JMA publishes */
         (p.fc || []).forEach(function (x) {
           if (x.r_km) stormLayer.addLayer(L.circle([x.lat, x.lon], { pane: "tlpane", radius: x.r_km * 1000, color: col, weight: 1, opacity: 0.7, dashArray: "3 3", fillColor: col, fillOpacity: 0.06 })
-            .bindPopup(part("Forecast position for " + esc(stZ(x.t)) + " (+" + esc(x.h) + " h): the centre has a 70% chance of being inside this " + esc(x.r_km) + " km circle."), { maxWidth: 320 }));
+            .bindPopup(part("Forecast position for " + esc(stZ(x.t)) + " (+" + esc(x.h) + " h): the center has a 70% chance of being inside this " + esc(x.r_km) + " km circle."), { maxWidth: 320 }));
           (x.tangent || []).forEach(function (seg) { if (seg.length > 1) stormLayer.addLayer(L.polyline(seg, { pane: "tlpane", color: col, weight: 1, opacity: 0.7 }).bindPopup(part("Edge of the forecast cone, joining the 70% circles as the agency publishes it."), { maxWidth: 320 })); });
         });
         if (p.now.storm_km) stormLayer.addLayer(L.circle([p.now.lat, p.now.lon], { pane: "tlpane", radius: p.now.storm_km * 1000, color: col, weight: 1.5, fillColor: col, fillOpacity: 0.15 })
-          .bindPopup(part("Area of storm-force winds (50 kt or more), about " + esc(p.now.storm_km) + " km from the centre at " + esc(stZ(p.now.t)) + "."), { maxWidth: 320 }));
+          .bindPopup(part("Area of storm-force winds (50 kt or more), about " + esc(p.now.storm_km) + " km from the center at " + esc(stZ(p.now.t)) + "."), { maxWidth: 320 }));
         if (track.length > 1) stormLayer.addLayer(L.polyline(track.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2.5, opacity: 0.9, dashArray: "6 5" })
           .bindPopup(part("Forecast track to " + esc(stZ(track[track.length - 1].t)) + "."), { maxWidth: 320 }));
         track.forEach(function (x, i) {
@@ -5721,7 +5721,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           ' · <a href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer">source</a></p>' +
           '<p class="obs">Now (' + esc(stZ(p.now.t)) + "): " + esc([p.now.lat + ", " + p.now.lon, stWind(p.now), p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + stDir(p.now.course) : ""].filter(Boolean).join(" · ")) + "</p>" +
           (c ? '<p class="obs"><b>Closest forecast approach:</b> about ' + Math.round(c.km) + " km from " + esc(c.place) + (c.t ? " around " + esc(stZ(c.t)) : "") + " (worked out from this track, not an agency statement).</p>" : "") +
-          ((p.fc || []).length ? '<table class="reg cond"><tr><th>Valid (UTC)</th><th>Centre</th><th>Wind</th>' + (p.agency === "JMA" ? "<th>70% circle</th>" : "") + "</tr>" + [p.now].concat(p.fc).map(function (x, i) {
+          ((p.fc || []).length ? '<table class="reg cond"><tr><th>Valid (UTC)</th><th>Center</th><th>Wind</th>' + (p.agency === "JMA" ? "<th>70% circle</th>" : "") + "</tr>" + [p.now].concat(p.fc).map(function (x, i) {
             return '<tr data-sof="st:' + si + ":" + p.agency + ":" + i + '" style="cursor:pointer"><td>' + (i ? "+" + x.h + " h " : "now ") + esc(stZ(x.t, true)) + "</td><td>" + esc(x.lat + ", " + x.lon) + '</td><td class="n">' +
               (x.wind_kt != null ? x.wind_kt + " kt" : "–") + (x.pressure ? " · " + x.pressure + " hPa" : "") + "</td>" + (p.agency === "JMA" ? '<td class="n">' + (x.r_km ? x.r_km + " km" : "–") + "</td>" : "") + "</tr>";
           }).join("") + "</table>" : "") + (p.note ? '<p class="note">' + esc(p.note) + "</p>" : "");
@@ -5944,7 +5944,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var ep = enParts(i, layer === "news" ? "report" : "post", i.outlet || i.account);
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: ep.t, detail: ep.s, untr: ep.untr || undefined, orig: ep.orig, origLang: ep.lang,
-        derived: [ep.note, ep.untr ? "" : mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
+        derived: [ep.note, ep.untr ? "" : mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough center of that region)" : pl.gn ? " (the town center, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
         thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined,
@@ -6098,7 +6098,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (r.lat == null) return;
       var m = osapMark([r.lat, r.lon], null, L.extend({ pane: "tlpane", lgk: "rec:" + (r.type === "claim" || r.type === "observation" ? r.type : "event") }, markerStyle(r)), recWords(r));
       m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
-        (r.prec === "province" ? " by name, at the rough centre of that region." : " by name, approximately.") + ' <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Article</a></p></div>', { maxWidth: 320 });
+        (r.prec === "province" ? " by name, at the rough center of that region." : " by name, approximately.") + ' <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Article</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM[r.id] = m;
     });
     var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
@@ -6195,7 +6195,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return '<div class="sec"><h2>Tsunami bulletins (NOAA PTWC)</h2><p class="obs">' + snapBadge(T) + "</p>" + (T ? (list.length ? '<div class="tllist">' + list.map(function (t, i) {
       return '<button type="button" class="tlrow" data-sof="tsu:' + i + '"><span class="tln">' + esc(t.title) + '</span><span class="tlm"><span class="tls">' + esc(t.date.replace("T", " ") + "Z · " + t.summary.slice(0, 90)) + "</span></span></button>";
     }).join("") + "</div>" : '<p class="obs">No tsunami bulletin near ' + esc(C.name) + " in this period (kept 30 days).</p>") : "") +
-      '<p class="note">Bulletins are the warning centre\'s statements. National agencies issue the local warnings.</p></div>';
+      '<p class="note">Bulletins are the warning center\'s statements. National agencies issue the local warnings.</p></div>';
   }
   function volcHtml() {
     var V = window.ASAP_VOLC, list = V ? (V.items || []).filter(hasCC) : [];
@@ -6240,7 +6240,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function satHtml() {
     var opts = ""; for (var i = 1; i <= 10; i++) { var d = satDay(i); opts += '<option value="' + d + '"' + (d === satDate ? " selected" : "") + ">" + esc(fmtD(d)) + "</option>"; }
     return '<div class="sec"><h2>Satellite layers (NASA)</h2>' +
-      '<div class="ctl"><input type="checkbox" id="sat-tc"' + (satOn.tc ? " checked" : "") + '><label for="sat-tc">True-colour image (VIIRS, daily)</label></div>' +
+      '<div class="ctl"><input type="checkbox" id="sat-tc"' + (satOn.tc ? " checked" : "") + '><label for="sat-tc">True-color image (VIIRS, daily)</label></div>' +
       '<div class="ctl"><input type="checkbox" id="sat-fire"' + (satOn.fire ? " checked" : "") + '><label for="sat-fire">Fire and heat detections (VIIRS 375 m)</label></div>' +
       '<div class="ctl"><label for="sat-day" class="obs">Day</label> <select id="sat-day" class="mini">' + opts + "</select></div>" +
       '<p class="note">NASA daily imagery, no key. Heat detections cannot tell a wildfire from field burning or industry. Cloud hides the ground in the image. Some viewers block the images; the installed app loads them.</p></div>';
@@ -6330,7 +6330,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           i.tier ? "Source tier: " + TIERN[i.tier] + "." : "",
           i.alert === "official" ? "IED watch: an official source reports an explosive incident, device or warning (its own account, shown as a claim)." :
             i.alert === "corroborated" ? "IED watch: " + i.corrob + " different outlets report an explosive incident in " + ((g && g.prov) || "the same province") + " within 48 hours." : "",
-          g ? "Placed at " + g.n + (g.p === "province" ? " (the rough centre of the province)" : " (the district centre, approximate)") + " because the text names it." : "Not placed: the text names no Deep South district."].filter(Boolean).join(" "),
+          g ? "Placed at " + g.n + (g.p === "province" ? " (the rough center of the province)" : " (the district center, approximate)") + " because the text names it." : "Not placed: the text names no Deep South district."].filter(Boolean).join(" "),
         ts: i.date || W.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: g ? g.n : "", prov: g ? g.prov : "",
         lat: g ? g.la : null, lon: g ? g.lo : null, prec: g ? (g.p === "province" ? "province" : "approx") : "none", sev: kk.violent ? 2 : 1,
         src: s, url: i.link, issued: i.date, recorded: W.asof };
@@ -6370,7 +6370,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         title: unent(i.t), detail: "", orig: i.o ? unent(i.o) : "", origLang: "",
         derived: ["Sorted into this layer by machine from the headline's words; not reviewed by an analyst and not counted in the layer's totals.",
           /m/.test(fl) ? "Headline machine translated." : "",
-          g ? "Placed at " + g[0] + (g[3] === "province" ? " (the rough centre of the region)" : " (the town centre, approximate)") + " because the text names it." : "Not placed: the text names no place the news job could match."].filter(Boolean).join(" "),
+          g ? "Placed at " + g[0] + (g[3] === "province" ? " (the rough center of the region)" : " (the town center, approximate)") + " because the text names it." : "Not placed: the text names no place the news job could match."].filter(Boolean).join(" "),
         ts: i.d, tsLabel: i.d ? String(i.d).replace("T", " ") + "Z" : "", place: g ? g[0] : "", prov: "",
         lat: g ? g[1] : null, lon: g ? g[2] : null, prec: g ? (g[3] === "province" ? "province" : "approx") : "none", sev: 1,
         src: s, url: i.u, issued: i.d, recorded: F.asof });
@@ -6394,7 +6394,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (list.length ? '<div class="tllist">' + list.slice(0, 25).map(function (q, i) {
         return '<button type="button" class="tlrow" data-sof="nq:' + i + '"><span class="tln">M' + q.mag.toFixed(1) + " · " + esc(q.place) + '</span><span class="tlm"><span class="tls">' + esc(q.agency + " · " + q.time.replace("T", " ") + "Z") + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">None from JMA, BMKG or TMD for ' + esc(C.name) + " in this period.</p>") +
-      '<p class="note">JMA, BMKG and TMD catalogues catch small local quakes USGS misses. Magnitudes use each agency\'s scale, so the same quake can differ from USGS.</p></div>';
+      '<p class="note">JMA, BMKG and TMD catalogs catch small local quakes USGS misses. Magnitudes use each agency\'s scale, so the same quake can differ from USGS.</p></div>';
   }
   function eonetHtml() {
     var E = window.ASAP_EONET, list = E ? (E.items || []).filter(hasCC) : [];
@@ -6411,7 +6411,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return '<div class="sec"><h2>Open natural events (NASA EONET)</h2><p class="obs">' + snapBadge(E) + "</p>" + (list.length ? '<div class="tllist">' + list.map(function (e, i) {
       return '<button type="button" class="tlrow" data-sof="eo:' + i + '"><span class="tln">' + esc(e.title) + '</span><span class="tlm"><span class="tls">' + esc([e.cat, e.last.mag, e.last.date.slice(0, 10)].filter(Boolean).join(" · ")) + "</span></span></button>";
     }).join("") + "</div>" : '<p class="obs">No open event in or near ' + esc(C.name) + ".</p>") +
-      '<p class="note">Open storms, wildfires, volcanoes and floods catalogued by NASA from JTWC, fire and volcano sources. Storm tracks are solid teal lines. Observations, not warnings.</p></div>';
+      '<p class="note">Open storms, wildfires, volcanoes and floods cataloged by NASA from JTWC, fire and volcano sources. Storm tracks are solid teal lines. Observations, not warnings.</p></div>';
   }
   function ifrcHtml() {
     var I = window.ASAP_IFRC, list = I ? (I.items || []).filter(function (e) { return hasCC(e) && inPeriodDate(e.start); }) : [];
@@ -6481,7 +6481,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title) + "</a></li>"; }).join("") + "</ul>" : "") +
       ((M.recaap || []).length ? '<h3 style="margin:8px 0 2px;font-size:13px">ReCAAP ISC alerts and reports</h3><ul class="note">' + M.recaap.slice(0, 8).map(function (x) {
         return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title) + "</a></li>"; }).join("") + "</ul>" : "") : "") +
-      '<p class="note" style="margin-top:6px">Reports from ships, navies and reporting centres; positions are approximate and events unverified.</p></div>';
+      '<p class="note" style="margin-top:6px">Reports from ships, navies and reporting centers; positions are approximate and events unverified.</p></div>';
     var S1 = window.ASAP_SANC, se = sancFor(), hits = [];
     R.forEach(function (r) { var m = sancMatches(r); if (m.length) hits.push([r, m]); });
     var cnt = { person: 0, entity: 0, vessel: 0, aircraft: 0 }; se.forEach(function (e) { cnt[e.t] = (cnt[e.t] || 0) + 1; });
@@ -6606,7 +6606,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     ["wdi", "electricity_access_pct", "Electricity access %", 1], ["wdi", "urban_pct", "Urban population %", 1], ["wdi", "age_0_14_pct", "Aged 0 to 14 %", 1],
     ["wdi", "remittances_pct_gdp", "Remittances, % of GDP", 1], ["wdi", "forest_pct", "Forest, % of land", 1],
     ["who-gho", "life_expectancy_years", "Life expectancy (years)", 1], ["who-gho", "under5_mortality_per_1000", "Under-5 deaths per 1,000", 1], ["who-gho", "maternal_mortality_per_100k", "Maternal deaths per 100,000", 0],
-    ["who-gho", "uhc_service_coverage_index", "Health service coverage index", 0], ["who-gho", "dtp3_immunisation_pct", "DTP3 immunisation %", 0]];
+    ["who-gho", "uhc_service_coverage_index", "Health service coverage index", 0], ["who-gho", "dtp3_immunisation_pct", "DTP3 immunization %", 0]];
   function xNum(v, d) {
     if (v == null || isNaN(v)) return "–";
     var a = Math.abs(v); if (a >= 1e12) return (v / 1e12).toFixed(2) + " trillion"; if (a >= 1e9) return (v / 1e9).toFixed(1) + " billion"; if (a >= 1e7) return (v / 1e6).toFixed(1) + " million";
@@ -6633,7 +6633,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function xPop(i, f) {
     return '<div class="pop"><div class="tier">' + esc((i.k || f.name) + " · " + (i.d ? (i.d.length > 10 ? window.OSAP_TIME.asofT(i.d) : i.d) : "undated")) + "</div><h3>" + esc(i.t) + "</h3>" + (i.x ? '<p class="obs">' + esc(i.x) + "</p>" : "") +
-      '<p class="obs">' + esc(f.org || "") + (f.nc ? " · non-commercial licence" : "") + (i.la != null ? " · MGRS " + esc(window.MGRS_OF ? window.MGRS_OF(i.la, i.lo, 2) : "") : "") + "</p>" +
+      '<p class="obs">' + esc(f.org || "") + (f.nc ? " · non-commercial license" : "") + (i.la != null ? " · MGRS " + esc(window.MGRS_OF ? window.MGRS_OF(i.la, i.lo, 2) : "") : "") + "</p>" +
       (i.u ? '<p class="obs"><a href="' + esc(i.u) + '" target="_blank" rel="noopener noreferrer">Source</a></p>' : "") + "</div>";
   }
   function showOpenData() {
@@ -6661,7 +6661,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var lists = XCAT.filter(function (c) { return byCat[c]; }).map(function (c) {
       return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
         var f = FD[fid], arr = byCat[c][fid], open = xOpen[fid], show = open ? arr : arr.slice(0, 8);
-        return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(f.name) + ' <span class="obs" style="font-weight:400">· ' + arr.length + (f.nc ? ' · <span title="Non-commercial or restricted licence: ' + esc(f.lic) + '">NC</span>' : "") +
+        return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(f.name) + ' <span class="obs" style="font-weight:400">· ' + arr.length + (f.nc ? ' · <span title="Non-commercial or restricted license: ' + esc(f.lic) + '">NC</span>' : "") +
           (f.ok ? "" : ' · <span title="' + esc(f.error || "") + '">stale</span>') + '</span></h3><div class="tllist">' + show.map(function (p) {
           var i = p[0]; return '<button type="button" class="tlrow"' + (i.la != null ? ' data-sof="x:' + p[1] + '"' : ' data-xurl="' + esc(i.u || "") + '"') + '><span class="tln">' + esc(i.t) + '</span><span class="tlm"><span class="tls">' +
             esc([i.d ? i.d.replace("T", " ").slice(0, 16) : "", (i.x || "").slice(0, 110)].filter(Boolean).join(" · ")) + "</span></span></button>"; }).join("") + "</div>" +
@@ -6672,11 +6672,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(FD[k].name) + '</h3><ul class="note">' + G[k].slice(0, 10).map(function (i) {
         return "<li>" + (i.url ? '<a href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + esc(i.title) + "</a>" : esc(i.title)) + ' <span class="obs">' + esc(String(i.date || "").slice(0, 16).replace("T", " ")) + "</span></li>"; }).join("") + "</ul>"; }).join("");
     var ids = Object.keys(FD), okN = ids.filter(function (k) { return FD[k].ok; }).length;
-    var st = '<div class="sec"><details><summary><b>Feed status</b>: ' + okN + " of " + ids.length + " feeds current · updated " + esc(window.OSAP_TIME.asofT(XF.asof)) + '</summary><table class="reg cond"><tr><th>Feed</th><th>Items here</th><th>Licence</th></tr>' + ids.map(function (k) {
+    var st = '<div class="sec"><details><summary><b>Feed status</b>: ' + okN + " of " + ids.length + " feeds current · updated " + esc(window.OSAP_TIME.asofT(XF.asof)) + '</summary><table class="reg cond"><tr><th>Feed</th><th>Items here</th><th>License</th></tr>' + ids.map(function (k) {
       var f = FD[k], n = X.items.filter(function (i) { return i.f === k; }).length;
       return "<tr><td>" + (f.url ? '<a href="' + esc(f.url) + '" target="_blank" rel="noopener noreferrer">' + esc(f.name) + "</a>" : esc(f.name)) + '<br><span class="obs">' + esc(f.org) + " · " + (f.ok ? "read " + esc(window.OSAP_TIME.asofT(f.asof)) : "<b>not current</b>: " + esc(f.error || "")) +
         '</span></td><td class="n">' + n + '</td><td class="obs">' + esc(f.lic) + (f.nc ? " <b>(NC)</b>" : "") + "</td></tr>"; }).join("") +
-      '</table><p class="note">NC marks a non-commercial or restricted licence: fine for this free app, to be removed before any paid use.</p></details></div>';
+      '</table><p class="note">NC marks a non-commercial or restricted license: fine for this free app, to be removed before any paid use.</p></details></div>';
     railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>' + X.items.length + " items from " + okN + " public feeds, read automatically.</b> Claims, signals and published lists; nothing here is verified or a finding.</div></div>" +
       xFigures(X) + chips + (lists || '<div class="sec"><p class="obs">No item matches for ' + esc(C.name) + " in this period.</p></div>") +
       (gl ? '<div class="sec"><details><summary><b>Worldwide</b>: space weather, exploited vulnerabilities, launches, advisories</summary>' + gl + "</details></div>" : "") + st;
@@ -7045,7 +7045,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     h1.textContent = l.title || l.name;
     srcline.textContent = (l.sof && { presence: "Public reporting · AidData · U.S. Consolidated Screening List · Wikidata · DoD 1260H via OpenSanctions; reported, not verified",
-      rupresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", irpresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
+      rupresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", irpresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organizers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
@@ -7233,7 +7233,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (list.length > cap ? (cap < 200 ? '<p class="rvnote"><button type="button" class="refresh" data-rv-more>Show all ' + list.length + "</button></p>" :
         '<p class="obs rvnote">Showing the newest ' + cap + " of " + list.length + ". Zoom in or narrow the period to see the rest.</p>") : "") +
       (!list.length && !none ? '<p class="obs rvnote">' + (AREA ? "Nothing inside the drawn area." : "Nothing in this map area. Zoom out or move the map.") + "</p>" : "") +
-      (AREA ? '<p class="rvnote"><button type="button" class="refresh" data-rv-sum>Summarise this area</button> <button type="button" class="refresh" data-rv-clear>Clear the drawn area</button></p>' : "") +
+      (AREA ? '<p class="rvnote"><button type="button" class="refresh" data-rv-sum>Summarize this area</button> <button type="button" class="refresh" data-rv-clear>Clear the drawn area</button></p>' : "") +
       (more > 0 ? '<p class="obs rvnote">' + more + " more have no map location. " + '<button type="button" class="refresh" data-rv-list>Show them in the list view</button></p>' : "");
     rvHook(list);
     var af = document.getElementById("rv-asof"); if (af) af.textContent = rvAsofTxt();
@@ -7263,7 +7263,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* each feed, where it came from and when */
   var FEEDN = { ASAP_NEWS: "Local news", ASAP_SOCIAL: "Social media", ASAP_WARN: "Weather warnings", ASAP_STORMS: "Tropical cyclones", ASAP_WXF: "Weather forecast",
     ASAP_ADV: "U.S. travel advisory", ASAP_RW: "ReliefWeb reports", ASAP_TSU: "Tsunami bulletins", ASAP_VOLC: "Volcanoes", ASAP_IODA: "Internet outages",
-    ASAP_WHO: "WHO outbreak news", ASAP_MAR: "Maritime security", ASAP_ROADS: "Road closures", ASAP_NQ: "National quake catalogues", ASAP_EONET: "NASA EONET events",
+    ASAP_WHO: "WHO outbreak news", ASAP_MAR: "Maritime security", ASAP_ROADS: "Road closures", ASAP_NQ: "National quake catalogs", ASAP_EONET: "NASA EONET events",
     ASAP_IFRC: "IFRC emergencies", ASAP_CDC: "CDC health notices", ASAP_NAVW: "Navigational warnings", ASAP_UCDP: "UCDP conflict events", ASAP_DS: "Deep South reporting (Thailand)", ASAP_SANC: "Sanctions lists", ASAP_UNHCR: "Displacement" };
   function feedAgo(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 6e4)); return m < 60 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; }
   function feedsHtml() {
@@ -7774,7 +7774,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* the style block: colour swatches always; with full, the colour pickers, opacity (0 to 100%), line style and width too */
   function swHtml() {
     var cur = (AREA_ST.line || "").toLowerCase();
-    return '<div class="areasw" role="group" aria-label="Colour">' + AREA_SW.map(function (c) {
+    return '<div class="areasw" role="group" aria-label="Color">' + AREA_SW.map(function (c) {
       return '<button type="button" class="sw" data-asw="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" title="' + c[1] + '" aria-pressed="' + (cur === c[0]) + '"></button>'; }).join("") + "</div>";
   }
   var LS_SVG = { "": '<svg viewBox="0 0 30 8" aria-hidden="true"><path d="M2 4h26" stroke="currentColor" stroke-width="3"/></svg>',
@@ -7805,8 +7805,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (areaEdit) h = '<span class="areahint"><span class="areahtx">Drag a corner to resize, \u21bb to turn, \u2725 to move</span><b class="areahsz">' + esc((areaSize(AREA, AREA_ST.kind) || {}).long || "") + "</b></span>" +
       (areaEdit.look ? lookHtml() : "") +
       '<button type="button" data-area="save" title="Save it with a name (as a shape, an NAI or a TAI); saved shapes stay on the map and in My places">Save</button><button type="button" data-area="clear" title="Remove the drawn shape">Delete</button>' +
-      '<button type="button" data-area="look" aria-expanded="' + !!areaEdit.look + '" title="Colour, fill opacity, line style and width">Style</button><button type="button" data-area="done">Done</button>';
-    else if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the centre and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + '<b class="areahsz"></b></span>' +
+      '<button type="button" data-area="look" aria-expanded="' + !!areaEdit.look + '" title="Color, fill opacity, line style and width">Style</button><button type="button" data-area="done">Done</button>';
+    else if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the center and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + '<b class="areahsz"></b></span>' +
       (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>' +
       /* the look is picked while choosing and drawing the shape, as on a TAK draw sheet: colours here, the rest under Style */
       '<div class="areapre">' + (areaEl.__look ? lookHtml() : swHtml()) + '<button type="button" data-area="prelook" class="areawide" aria-expanded="' + !!areaEl.__look + '" title="Fill opacity, line style and width">' + (areaEl.__look ? "Fewer style settings" : "Style: opacity, line, width") + "</button></div>";
@@ -7814,7 +7814,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<button type="button" data-area="circle">Circle</button><button type="button" data-area="rect">Square</button>' +
       (AREA ? '<button type="button" data-area="edit">Edit shape</button><button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
     else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>" +
-      (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarise area</button>' +
+      (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarize area</button>' +
       (window.OSAP_AREAREPORT ? '<button type="button" data-area="report" title="Printable report on the drawn area with an overview map and a map per section">Area report</button>' : "") : "");
     areaEl.innerHTML = h;
   }
@@ -8520,7 +8520,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var xr = xbRelated(r, skip);
     if (xr.length) out += '<h4 class="pkgh">Across the border</h4><div class="pkgrel">' + xr.map(function (o) {
       return '<a class="tlrow" href="' + esc(xbHref(o)) + '"><span class="tlt">' + flagOf(o.xcc) + " " + esc(cName(o.xcc)) + " · " + esc(fmtTs(o)) + '</span><span class="tln">' + esc(o.title) + '</span><span class="tls">' + esc(o.src.name) + "</span></a>";
-    }).join("") + '</div><p class="obs" style="margin-top:6px">Reports from neighbouring countries close in place and time, or with the same wording. Not a claim that they are connected.</p>';
+    }).join("") + '</div><p class="obs" style="margin-top:6px">Reports from neighboring countries close in place and time, or with the same wording. Not a claim that they are connected.</p>';
     return out;
   }
   document.addEventListener("click", function (e) {
@@ -9609,7 +9609,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-borders.js"></script>
 <script src="assets/osap-pop.js"></script>
-<!-- Satellite before/after (Area menu and Map overlays > Satellite imagery): Sentinel-2 passes and NASA daily true colour -->
+<!-- Satellite before/after (Area menu and Map overlays > Satellite imagery): Sentinel-2 passes and NASA daily true color -->
 <script src="assets/osap-sat.js"></script>
 <!-- LiDAR hillshade and LiDAR coverage (Map overlays > Elevation and terrain analysis), LiDAR heights for Terrain analysis -->
 <script src="assets/osap-lidar.js"></script>

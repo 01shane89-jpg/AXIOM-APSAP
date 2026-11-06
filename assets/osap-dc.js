@@ -38,7 +38,7 @@
         if (!r.ok) throw new Error("HTTP " + r.status);
         return r.json();
       }).then(ok);
-    }).catch(function () { S.busy = false; S.err = "The data centre list could not be read just now. Switch it off and on to try again."; paint(); });
+    }).catch(function () { S.busy = false; S.err = "The data center list could not be read just now. Switch it off and on to try again."; paint(); });
   }
 
   /* ---------- map ---------- */
@@ -57,11 +57,11 @@
     var x = i.x || {}, rows = [["Operator / owner", i.op], ["Users", x.users], ["Status", i.st], ["Operational", x.operational], ["Opened", x.opened],
       ["Power", x.power_mw != null ? fmt(x.power_mw) + " MW" : null], ["Compute", x.h100e != null ? fmt(x.h100e) + " H100-equivalents" : null],
       ["Chips", x.chips], ["Epoch certainty", x.certainty], ["Place in source", x.where], ["Floors", x.levels], ["Reference", x.ref]];
-    var ai = i.ai ? '<p class="dc-why"><b>AI data centre</b> because ' + esc(SRC[i.s]) + " lists it as " + (i.s === "epochgpu" ? "an AI supercomputer (GPU cluster)" : "an AI data centre") + ".</p>" : "";
+    var ai = i.ai ? '<p class="dc-why"><b>AI data center</b> because ' + esc(SRC[i.s]) + " lists it as " + (i.s === "epochgpu" ? "an AI supercomputer (GPU cluster)" : "an AI data center") + ".</p>" : "";
     var cl = i.cl && i.cl.length ? "<p class=\"dc-why\">GPU clusters Epoch AI places at this site: " + i.cl.map(esc).join("; ") + "</p>" : "";
     var where = i.p === "exact" ? "Location from the source" : "Approximate: " + esc(i.pb || "town or region named in the source");
-    return '<div class="pop"><div class="tier" style="color:' + (i.ai ? AIC : ALLC) + '">' + (i.ai ? "AI data centre" : "Data centre") + " · " + esc(SRC[i.s] || i.s) + "</div>" +
-      "<h3>" + esc(i.nm || "Data centre (no name mapped)") + "</h3>" + ai + cl +
+    return '<div class="pop"><div class="tier" style="color:' + (i.ai ? AIC : ALLC) + '">' + (i.ai ? "AI data center" : "Data center") + " · " + esc(SRC[i.s] || i.s) + "</div>" +
+      "<h3>" + esc(i.nm || "Data center (no name mapped)") + "</h3>" + ai + cl +
       "<dl>" + rows.filter(function (r) { return r[1] != null && r[1] !== ""; }).map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(String(r[1])) + "</dd>"; }).join("") + "</dl>" +
       '<p class="obs">' + (safeUrl(i.u) ? '<a href="' + esc(i.u) + '" target="_blank" rel="noopener noreferrer">Source record</a> · ' : "") + LIC[i.s] +
       "<br>" + where + " · " + esc(i.la.toFixed(4) + ", " + i.lo.toFixed(4)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(i.la, i.lo)) : "") +
@@ -76,13 +76,13 @@
       if (i.la == null || i.lo == null) return;
       if (i.ai) {
         if (!S.ai) return;
-        L.marker([i.la, i.lo], { icon: aiIcon(i), pane: "dcpt", keyboard: false, title: i.nm || "", lgk: "dc:ai", lgl: "AI data centre (Epoch AI)" })
+        L.marker([i.la, i.lo], { icon: aiIcon(i), pane: "dcpt", keyboard: false, title: i.nm || "", lgk: "dc:ai", lgl: "AI data center (Epoch AI)" })
           .bindPopup(pop(i), { maxWidth: 320 }).addTo(aiL);
         n.ai++;
       } else {
         if (!S.all) return;
-        (sym() ? W.OSAP_SYM.mark([i.la, i.lo], "i_data", { renderer: rend, pane: "dcpt", scale: 0.65, lgk: "dc:all", lgl: "Data centre (OpenStreetMap, Wikidata)" })
-          : L.circleMarker([i.la, i.lo], { renderer: rend, pane: "dcpt", radius: 5, color: "#fff", weight: 1.5, fillColor: ALLC, fillOpacity: 0.95, lgk: "dc:all", lgl: "Data centre (OpenStreetMap, Wikidata)" }))
+        (sym() ? W.OSAP_SYM.mark([i.la, i.lo], "i_data", { renderer: rend, pane: "dcpt", scale: 0.65, lgk: "dc:all", lgl: "Data center (OpenStreetMap, Wikidata)" })
+          : L.circleMarker([i.la, i.lo], { renderer: rend, pane: "dcpt", radius: 5, color: "#fff", weight: 1.5, fillColor: ALLC, fillOpacity: 0.95, lgk: "dc:all", lgl: "Data center (OpenStreetMap, Wikidata)" }))
           .bindPopup(pop(i), { maxWidth: 320 }).addTo(allL);
         n.all++;
       }
@@ -96,12 +96,12 @@
   var sec = null;
   function msg() {
     if (!S.ai && !S.all) return "";
-    if (S.busy) return "Loading data centres…";
+    if (S.busy) return "Loading data centers…";
     if (S.err) return S.err;
     if (!S.data) return "";
     var n = S.n || { ai: 0, all: 0 }, bits = [];
-    if (S.ai) bits.push(n.ai ? fmt(n.ai) + " AI data centre" + (n.ai === 1 ? "" : "s") : "No AI data centres listed for this country");
-    if (S.all) bits.push(n.all ? fmt(n.all) + (S.ai ? " other" : "") + " data centre" + (n.all === 1 ? "" : "s") + " mapped" : (S.ai ? "no others mapped" : "No data centres mapped for this country"));
+    if (S.ai) bits.push(n.ai ? fmt(n.ai) + " AI data center" + (n.ai === 1 ? "" : "s") : "No AI data centers listed for this country");
+    if (S.all) bits.push(n.all ? fmt(n.all) + (S.ai ? " other" : "") + " data center" + (n.all === 1 ? "" : "s") + " mapped" : (S.ai ? "no others mapped" : "No data centers mapped for this country"));
     var ix = S.ix, stale = ix && ix.sources ? Object.keys(ix.sources).filter(function (k) { return ix.sources[k].ok === false; }).map(function (k) { return ix.sources[k].name; }) : [];
     return bits.join("; ") + "." + (ix && ix.at ? " List built " + String(ix.at).replace("T", " ") + "." : "") +
       (stale.length ? " Last refresh could not reach " + stale.join(", ") + "; their points are from the run before." : "");
@@ -117,9 +117,9 @@
       }).join("") + "</ul>" + (u.length > 40 ? '<p class="pwr-m">' + (u.length - 40) + " more in the Epoch AI GPU Clusters table.</p>" : "") + "</details>";
   }
   function secHtml() {
-    return '<div class="dc-t">Data centres</div>' +
-      '<label class="mlrow"><input type="checkbox" data-dc="ai"><span><b>AI data centres</b><i>AI campuses and GPU clusters listed by Epoch AI</i></span></label>' +
-      '<label class="mlrow"><input type="checkbox" data-dc="all"><span><b>All data centres</b><i>Mapped in OpenStreetMap and Wikidata; not marked AI</i></span></label>' +
+    return '<div class="dc-t">Data centers</div>' +
+      '<label class="mlrow"><input type="checkbox" data-dc="ai"><span><b>AI data centers</b><i>AI campuses and GPU clusters listed by Epoch AI</i></span></label>' +
+      '<label class="mlrow"><input type="checkbox" data-dc="all"><span><b>All data centers</b><i>Mapped in OpenStreetMap and Wikidata; not marked AI</i></span></label>' +
       '<p class="mlkey pwr-m" data-dcmsg aria-live="polite" hidden></p><div data-dcun></div>' +
       '<p class="mlkey pwr-m">Epoch AI (CC BY 4.0) · &copy; OpenStreetMap contributors (ODbL) · Wikidata (CC0). Only Epoch AI sites are called AI.</p>';
   }
@@ -134,9 +134,9 @@
   function legend() {
     if (!W.OSAP_LEGEND) return;
     if (!S.ai && !S.all) { W.OSAP_LEGEND.set("dc", ""); return; }
-    W.OSAP_LEGEND.set("dc", '<div class="lgh" style="font-weight:600;margin-bottom:2px">Data centres</div>' +
-      (S.ai ? '<div class="lg' + (sym() ? ' msyml">' + W.OSAP_SYM.sw("i_data", AIC) : '"><span class="dc-ai" style="display:inline-flex"><span style="width:16px;height:16px">' + RACK + "</span></span>") + '<div>AI data centre (Epoch AI). Faded: placed at the named town</div></div>' : "") +
-      (S.all ? '<div class="lg' + (sym() ? ' msyml">' + W.OSAP_SYM.sw("i_data") : '"><span class="sw" style="background:' + ALLC + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span>') + "<div>Data centre (OpenStreetMap, Wikidata)</div></div>" : "") +
+    W.OSAP_LEGEND.set("dc", '<div class="lgh" style="font-weight:600;margin-bottom:2px">Data centers</div>' +
+      (S.ai ? '<div class="lg' + (sym() ? ' msyml">' + W.OSAP_SYM.sw("i_data", AIC) : '"><span class="dc-ai" style="display:inline-flex"><span style="width:16px;height:16px">' + RACK + "</span></span>") + '<div>AI data center (Epoch AI). Faded: placed at the named town</div></div>' : "") +
+      (S.all ? '<div class="lg' + (sym() ? ' msyml">' + W.OSAP_SYM.sw("i_data") : '"><span class="sw" style="background:' + ALLC + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span>') + "<div>Data center (OpenStreetMap, Wikidata)</div></div>" : "") +
       (sym() ? '<div class="lg"><div><span class="d">Official map symbol (MIL-STD-2525D telecoms installation, cyberspace).</span></div></div>' : ""));
   }
   function set(k, on) {

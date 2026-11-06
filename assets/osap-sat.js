@@ -290,7 +290,7 @@
     var k = Object.keys(y); return k.length ? k.join(", ") : String(new Date().getUTCFullYear());
   }
   function attrHtml() {
-    return "Contains modified Copernicus Sentinel data " + esc(years()) + '. Passes from <a href="https://earth-search.aws.element84.com/v1" target="_blank" rel="noopener noreferrer">Element 84 Earth Search</a> (STAC), pictures from the Sentinel-2 L2A true-colour COGs on <a href="https://registry.opendata.aws/sentinel-2-l2a-cogs/" target="_blank" rel="noopener noreferrer">AWS Open Data</a>, read in this browser.' +
+    return "Contains modified Copernicus Sentinel data " + esc(years()) + '. Passes from <a href="https://earth-search.aws.element84.com/v1" target="_blank" rel="noopener noreferrer">Element 84 Earth Search</a> (STAC), pictures from the Sentinel-2 L2A true-color COGs on <a href="https://registry.opendata.aws/sentinel-2-l2a-cogs/" target="_blank" rel="noopener noreferrer">AWS Open Data</a>, read in this browser.' +
       (P.gon ? ' Daily picture: NASA <a href="https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api" target="_blank" rel="noopener noreferrer">GIBS</a> / LANCE, public domain.' : "");
   }
   function draw() {
@@ -327,7 +327,7 @@
     else if (!S.busy && !S.err) h += '<p class="mut">No passes' + (P.maxc < 100 ? " at this cloud level" : "") + " in this period.</p>";
     if (!S.busy && S.area && !tooBig(S.area)) h += '<div class="row"><button type="button" data-sat="older">Look 90 days further back</button></div>';
     /* NASA daily */
-    h += '<div class="row" style="border-top:1px solid var(--line,#ddd);padding-top:8px;margin-top:10px"><label><input type="checkbox" data-satg="on"' + (P.gon ? " checked" : "") + ' style="min-height:0"> <b>NASA daily true colour</b> on the map</label>' +
+    h += '<div class="row" style="border-top:1px solid var(--line,#ddd);padding-top:8px;margin-top:10px"><label><input type="checkbox" data-satg="on"' + (P.gon ? " checked" : "") + ' style="min-height:0"> <b>NASA daily true color</b> on the map</label>' +
       '<input type="date" data-satg="date" aria-label="Day of the NASA picture" value="' + esc(gDate()) + '" max="' + isoDay(Date.now()) + '" min="2012-01-19">' +
       '<select data-satg="layer" aria-label="NASA sensor">' + GLAYERS.map(function (g) { return '<option value="' + g[0] + '"' + (g[0] === P.gl ? " selected" : "") + ">" + esc(g[1]) + "</option>"; }).join("") + "</select>" +
       (a ? '<button type="button" data-sat="gafter">Day of the after pass</button>' : "") + "</div>" +
@@ -359,7 +359,7 @@
         render(x[1], S.area, pw, ph, sig).then(function (r) {
           if (sig && sig.aborted) return;
           var f2 = el.querySelector('[data-pic="' + x[0] + '"] .ph'); if (!f2) return;
-          f2.innerHTML = ""; r.canvas.setAttribute("role", "img"); r.canvas.setAttribute("aria-label", "Sentinel-2 true colour, " + x[0] + ", " + isoDay(x[1].t));
+          f2.innerHTML = ""; r.canvas.setAttribute("role", "img"); r.canvas.setAttribute("aria-label", "Sentinel-2 true color, " + x[0] + ", " + isoDay(x[1].t));
           f2.appendChild(r.canvas);
           if (r.filled < 0.02) { var s = D.createElement("span"); s.className = "err"; s.style.cssText = "position:absolute;padding:8px"; s.textContent = "This pass does not cover the area (outside the swath)."; f2.appendChild(s); }
         }).catch(function (e) {
@@ -446,7 +446,7 @@
   function gibsDraw() {
     if (gl) { map.removeLayer(gl); gl = null; }
     if (P.gon) gl = Lf.tileLayer(gibsUrl(), { pane: "gibspane", maxNativeZoom: 9, maxZoom: 20, className: "osap-gibs", crossOrigin: "anonymous",
-      attribution: 'Daily true colour ' + esc(gDate()) + ': NASA <a href="https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api" target="_blank" rel="noopener noreferrer">GIBS</a> (' + esc((GLAYERS.filter(function (g) { return g[0] === P.gl; })[0] || [, ""])[1]) + ")" }).addTo(map);
+      attribution: 'Daily true color ' + esc(gDate()) + ': NASA <a href="https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api" target="_blank" rel="noopener noreferrer">GIBS</a> (' + esc((GLAYERS.filter(function (g) { return g[0] === P.gl; })[0] || [, ""])[1]) + ")" }).addTo(map);
     gsync(); if (isOpen()) { var a = el.querySelector(".attr"); if (a) a.innerHTML = attrHtml(); }
   }
   function gibs(on) { P.gon = !!on; save(); gibsDraw(); }
@@ -494,9 +494,9 @@
     if (D.getElementById("ml-sat")) return true;
     var d = D.createElement("div"); d.id = "ml-sat";
     d.innerHTML = '<div class="mlh">Satellite imagery</div>' +
-      '<div class="mlrow" style="cursor:default"><span><b>Sentinel-2 before/after</b><i>Two 10 m true-colour passes of the drawn area (or the map view) side by side or with a swipe on the map; pick the dates from the passes with their cloud %. Copernicus Sentinel data via Element 84 Earth Search.</i>' +
+      '<div class="mlrow" style="cursor:default"><span><b>Sentinel-2 before/after</b><i>Two 10 m true-color passes of the drawn area (or the map view) side by side or with a swipe on the map; pick the dates from the passes with their cloud %. Copernicus Sentinel data via Element 84 Earth Search.</i>' +
       '<button type="button" data-sat-open="1" style="margin-top:4px;min-height:40px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:inherit;padding:4px 10px;cursor:pointer">Open Satellite before/after</button></span></div>' +
-      '<label class="mlrow"><input type="checkbox" data-satg="on"' + (P.gon ? " checked" : "") + '><span><b>NASA daily true colour</b><i>Whole-world picture for one day from VIIRS or MODIS, about 250 m (NASA GIBS, public domain). Good for big smoke, floods, burn scars and cloud.</i></span></label>' +
+      '<label class="mlrow"><input type="checkbox" data-satg="on"' + (P.gon ? " checked" : "") + '><span><b>NASA daily true color</b><i>Whole-world picture for one day from VIIRS or MODIS, about 250 m (NASA GIBS, public domain). Good for big smoke, floods, burn scars and cloud.</i></span></label>' +
       '<label class="mlop">Day <input type="date" data-satg="date" value="' + esc(gDate()) + '" max="' + isoDay(Date.now()) + '" min="2012-01-19" aria-label="Day of the NASA picture"></label>' +
       '<label class="mlop">Sensor <select data-satg="layer" aria-label="NASA sensor">' + GLAYERS.map(function (g) { return '<option value="' + g[0] + '"' + (g[0] === P.gl ? " selected" : "") + ">" + esc(g[1]) + "</option>"; }).join("") + "</select></label>";
     ex.parentNode.insertBefore(d, ex);

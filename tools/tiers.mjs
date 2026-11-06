@@ -60,7 +60,7 @@ export const PUSH_TOTAL = 3000;
 //   pilot  US$2,500 once for 60 days and up to 25 seats; the US$2,500 comes off the first Organisation year
 export const BUSINESS = {
   team: { name: "Team", intervals: ["month", "year"], seat: { month: 39, year: 390 }, minSeats: 3, maxSeats: 500 },
-  org: { name: "Organisation", intervals: ["year"], base: 12000, included: 25, extraSeat: 400, minSeats: 25, maxSeats: 500 },
+  org: { name: "Organization", intervals: ["year"], base: 12000, included: 25, extraSeat: 400, minSeats: 25, maxSeats: 500 },
   pilot: { name: "Paid pilot", intervals: ["once"], price: 2500, days: 60, seats: 25, credit: 2500, creditDays: 30 },
 };
 // the launch offer: the first 10 Team or Organisation customers get 30% off their first year in return for a short testimonial

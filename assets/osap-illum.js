@@ -162,13 +162,13 @@
     var a = lsGet("asap-area-" + c);
     if (Array.isArray(a) && a.length >= 3) {
       var la = 0, lo = 0; a.forEach(function (p) { la += p[0]; lo += p[1]; });
-      return { lat: la / a.length, lon: lo / a.length, name: "Centre of the drawn area", how: "Drawn area" };
+      return { lat: la / a.length, lon: lo / a.length, name: "Center of the drawn area", how: "Drawn area" };
     }
     return mapCentre();
   }
   function mapCentre() {
     var m = W.__asapMap, c = m ? m.getCenter() : { lat: 13.75, lng: 100.5 };
-    return { lat: +c.lat.toFixed(5), lon: +(((c.lng + 180) % 360 + 360) % 360 - 180).toFixed(5), name: "Map centre", how: "Map centre" };
+    return { lat: +c.lat.toFixed(5), lon: +(((c.lng + 180) % 360 + 360) % 360 - 180).toFixed(5), name: "Map center", how: "Map center" };
   }
   function todayLocal(tz) { var w = wall(Date.now(), tz); return isoDate(w.y, w.m, w.d); }
 
@@ -271,7 +271,7 @@
       '<form data-ilform><label>Point <input name="pt" type="text" value="' + esc(ST.ptText || "") + '" placeholder="MGRS or lat, lon" aria-label="Point as MGRS or latitude, longitude"></label>' +
       '<label>First night <input name="start" type="date" value="' + esc(start) + '"></label>' +
       '<label>Nights <input name="nights" type="number" min="1" max="62" value="' + nights + '"></label> <button type="submit" class="refresh primary">Show</button></form>' +
-      '<span class="ilpick"><button type="button" class="refresh" data-il="wx">Weather place</button> <button type="button" class="refresh" data-il="centre">Map centre</button> <button type="button" class="refresh" data-il="tap">Tap the map</button></span>' +
+      '<span class="ilpick"><button type="button" class="refresh" data-il="wx">Weather place</button> <button type="button" class="refresh" data-il="centre">Map center</button> <button type="button" class="refresh" data-il="tap">Tap the map</button></span>' +
       (ST.err ? '<p class="obs"><span class="badge stale">CHECK</span> ' + esc(ST.err) + "</p>" : "") + "</div>";
     var M = mgrs(pt.lat, pt.lon);
     var o = bar + '<article class="bpage ilpage" id="il-page"><header><div><b>AXIOM OSAP</b> · Night illumination</div><h2>' + esc(pt.name || ll(pt.lat, pt.lon)) + "</h2><div>" +
@@ -280,8 +280,8 @@
       '<p class="bwarn">Computed on this device from standard astronomical formulas, not observed. Times are for a flat sea-level horizon with standard refraction; hills, buildings and height change them. Not analyst-approved.</p>' +
       "<h3>Night by night</h3>" + chart(N, pt, tz) + "<h3>Sun, twilight and moon</h3>" + table(N, tz) +
       '<footer>EECT, EENT, EEAT: end of evening civil (sun 6° below the horizon), nautical (12°) and astronomical (18°) twilight; BMAT, BMNT, BMCT: the morning pairs. ' +
-      "Sunrise and sunset: upper limb on the horizon. Moonrise and moonset: upper limb, parallax included. &ldquo;Moon&rdquo; is the percent of the disc lit and the phase in the middle of the dark (EENT to BMNT), or at local midnight when there is no full dark. " +
-      "&ldquo;Moon up in the dark&rdquo; is the time between EENT and BMNT with the moon above the horizon, and its highest altitude then. The disc shows the lit side as seen from the northern hemisphere. " +
+      "Sunrise and sunset: upper limb on the horizon. Moonrise and moonset: upper limb, parallax included. &ldquo;Moon&rdquo; is the percent of the disk lit and the phase in the middle of the dark (EENT to BMNT), or at local midnight when there is no full dark. " +
+      "&ldquo;Moon up in the dark&rdquo; is the time between EENT and BMNT with the moon above the horizon, and its highest altitude then. The disk shows the lit side as seen from the northern hemisphere. " +
       "Sun: Astronomical Almanac low-precision series (about 0.01°). Moon: Astronomical Almanac low-precision lunar series (about 0.3°). Events are found by a 5-minute scan and refined to seconds; checked against the JPL-based Astronomy Engine: sun and twilight within half a minute, moonrise and moonset usually within a minute and up to about 3 minutes (more at high latitudes). " +
       "Local time is the zone set for " + esc(tz === "UTC" ? "this view" : tz) + "; in a country with several zones, check that it matches the point.</footer></article>";
     el.innerHTML = o; el.hidden = false; D.documentElement.classList.add("briefing");

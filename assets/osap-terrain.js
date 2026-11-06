@@ -269,7 +269,7 @@
   function drawObserver() {
     if (!ST.obs) { if (obsMark) { lay.removeLayer(obsMark); obsMark = null; } if (ring) { lay.removeLayer(ring); ring = null; } return; }
     var ll = [ST.obs[0], ST.obs[1]];
-    if (!obsMark) { obsMark = (window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark(ll, S.mode === "slope" ? "g_poi" : "g_op", { pane: "vslines", scale: 0.75, interactive: false }) : L.circleMarker(ll, { pane: "vslines", radius: 7, color: "#fff", weight: 2.5, fillColor: "#0b7285", fillOpacity: 1, interactive: false })).bindTooltip(S.mode === "slope" ? "Centre" : "Observer", { permanent: false, direction: "top" }); lay.addLayer(obsMark); }
+    if (!obsMark) { obsMark = (window.OSAP_SYM && window.OSAP_SYM.mark ? window.OSAP_SYM.mark(ll, S.mode === "slope" ? "g_poi" : "g_op", { pane: "vslines", scale: 0.75, interactive: false }) : L.circleMarker(ll, { pane: "vslines", radius: 7, color: "#fff", weight: 2.5, fillColor: "#0b7285", fillOpacity: 1, interactive: false })).bindTooltip(S.mode === "slope" ? "Center" : "Observer", { permanent: false, direction: "top" }); lay.addLayer(obsMark); }
     obsMark.setLatLng(ll);
     if (!ring) { ring = L.circle(ll, { pane: "vslines", radius: S.km * 1000, fill: false, color: "#37474f", weight: 1.2, dashArray: "2 6", interactive: false }); lay.addLayer(ring); }
     ring.setLatLng(ll).setRadius(S.km * 1000);
@@ -332,11 +332,11 @@
   function title() { return S.mode === "slope" ? "Terrain slope" : S.mode === "rev" ? "Reverse viewshed" : S.mode === "los" ? (lineN() > 2 ? "Elevation profile" : "Line of sight") : "Terrain viewshed"; }
   function ptRow(label, p, pick, centre) {
     return "<span>" + label + '</span><div class="tsr">' + (p ? '<span class="pt">' + esc(p[0].toFixed(5) + ", " + p[1].toFixed(5)) + "</span>" : "<i>not set</i>") +
-      '<button type="button" data-ts="' + pick + '" aria-pressed="' + (ST.arm === pick) + '">Pick on map</button>' + (centre ? '<button type="button" data-ts="' + centre + '">Map centre</button>' : "") + "</div>" +
+      '<button type="button" data-ts="' + pick + '" aria-pressed="' + (ST.arm === pick) + '">Pick on map</button>' + (centre ? '<button type="button" data-ts="' + centre + '">Map center</button>' : "") + "</div>" +
       (p ? '<span></span><div class="pt" style="color:var(--muted,#555)">' + esc(gridRef(p[0], p[1])) + "</div>" : "");
   }
   function hRow(label, id, v, pre, tip) {
-    return '<span title="' + esc(tip) + '">' + label + '</span><div class="tsr tsh"><input type="number" id="' + id + '" min="0" max="1000" step="0.1" value="' + v + '" aria-label="' + esc(label) + ' in metres above the ground"> m ' + presetSel(id === "ts-oh" ? "ts-op" : "ts-tp", pre) + "</div>";
+    return '<span title="' + esc(tip) + '">' + label + '</span><div class="tsr tsh"><input type="number" id="' + id + '" min="0" max="1000" step="0.1" value="' + v + '" aria-label="' + esc(label) + ' in meters above the ground"> m ' + presetSel(id === "ts-oh" ? "ts-op" : "ts-tp", pre) + "</div>";
   }
   function resRow() {
     return '<span>Resolution</span><div class="seg" role="group" aria-label="Resolution">' + Object.keys(RES).map(function (k) { return '<button type="button" data-res="' + k + '" aria-pressed="' + (S.res === k) + '" title="' + esc(RES[k][2]) + '">' + esc(RES[k][1]) + "</button>"; }).join("") + "</div>" +
@@ -416,8 +416,8 @@
   var SLOPE_KM = [1, 2, 5, 10, 15, 25];
   function slopeKm() { return SLOPE_KM.indexOf(S.km) >= 0 ? S.km : S.km > 25 ? 25 : SLOPE_KM.filter(function (k) { return k <= S.km; }).pop() || 1; }
   function renderSlope() {
-    var o = ST.obs, s = ST.slope, h = '<div class="tsg">' + ptRow("Centre", o, "pick", "centre") +
-      '<span>Area</span><div class="tsr"><select id="ts-km" aria-label="Area radius">' + SLOPE_KM.map(function (k) { return '<option value="' + k + '"' + (k === slopeKm() ? " selected" : "") + ">" + k + " km</option>"; }).join("") + "</select> around the centre</div>" +
+    var o = ST.obs, s = ST.slope, h = '<div class="tsg">' + ptRow("Center", o, "pick", "centre") +
+      '<span>Area</span><div class="tsr"><select id="ts-km" aria-label="Area radius">' + SLOPE_KM.map(function (k) { return '<option value="' + k + '"' + (k === slopeKm() ? " selected" : "") + ">" + k + " km</option>"; }).join("") + "</select> around the center</div>" +
       resRow() + "</div>";
     h += '<div class="tsr">' + (ST.busy ? '<button type="button" data-ts="cancel">Cancel</button>' : '<button type="button" class="pri" data-ts="calc"' + (o ? "" : " disabled") + ">CALCULATE</button>") +
       (s || o ? '<button type="button" data-ts="clear">Clear</button>' : "") + "</div>";
@@ -434,9 +434,9 @@
         "<p><b>Method:</b> the steepest fall of the ground across about ±" + Math.round(s.k * g.rowM[(g.n - 1) >> 1]) + " m (the elevation " + s.k + " cell" + (s.k > 1 ? "s" : "") + " either side, east-west and north-south), the same way the landing zone finder judges slope. Short steep banks, ditches and walls narrower than that do not show.</p>" +
         "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. Buildings, trees and walls are not in the terrain model; satellite elevation (where there is no LiDAR) partly carries forest canopy and big city blocks, which can make them look like slopes. Water reads as flat.</p>" +
         "<p><b>Elevation:</b> " + esc((g.sources || []).map(function (q) { return q.label; }).join("; ") || "none loaded") + ", tile zoom " + g.z + " · <b>Grid:</b> " + g.res + " m · <b>Coverage:</b> " + (g.coverage_pct >= 99.95 ? "complete" : g.coverage_pct.toFixed(1) + "%") + "</p>" +
-        lidarHtml(g.lidar, "the centre") +
+        lidarHtml(g.lidar, "the center") +
         "<p><b>Calculated locally</b> on this device " + esc(T().dualT(s.when, { date: true })) + "</p></div>";
-    } else if (!ST.busy && !ST.err) h += '<p class="msg">Pick the centre on the map and the size of the area, then Calculate. The result shades the ground by steepness: green is gentle, red is very steep.</p>';
+    } else if (!ST.busy && !ST.err) h += '<p class="msg">Pick the center on the map and the size of the area, then Calculate. The result shades the ground by steepness: green is gentle, red is very steep.</p>';
     return h;
   }
   function slopeCard(r, inPanel) {
@@ -448,7 +448,7 @@
   var CKM = [1, 2, 3, 5, 10];
   function corSection() {
     var c = ST.cor, h = '<div class="losc"><div class="h nm">ROUTE EXPOSURE</div><p style="margin:2px 0">Where could someone see this ' + (lineN() > 2 ? "route" : "line") + " from?</p>" +
-      '<div class="tsr">On the route <input type="number" id="ts-crh" min="0" max="1000" step="0.1" value="' + S.crH + '" aria-label="Height on the route in metres above the ground"> m · Onlookers <input type="number" id="ts-cwh" min="0" max="1000" step="0.1" value="' + S.cwH + '" aria-label="Onlookers height in metres above the ground"> m</div>' +
+      '<div class="tsr">On the route <input type="number" id="ts-crh" min="0" max="1000" step="0.1" value="' + S.crH + '" aria-label="Height on the route in meters above the ground"> m · Onlookers <input type="number" id="ts-cwh" min="0" max="1000" step="0.1" value="' + S.cwH + '" aria-label="Onlookers height in meters above the ground"> m</div>' +
       '<div class="tsr" style="margin-top:4px">Within <select id="ts-ckm" aria-label="How far from the route">' + CKM.map(function (k) { return '<option value="' + k + '"' + (k === S.ckm ? " selected" : "") + ">" + k + " km</option>"; }).join("") + "</select>" +
       (ST.busy ? "" : '<button type="button" data-ts="cor">Show where this route can be seen from</button>') + (c ? '<button type="button" data-ts="corclear">Hide</button>' : "") + "</div>";
     if (c) {
@@ -630,7 +630,7 @@
     if (measuring() && W.OSAP_MEASURE) W.OSAP_MEASURE.on(false);
     /* full window covers the map: step out of the way until the point is picked */
     if (!split() && el) el.hidden = true;
-    hint(ST.arm === "pickA" ? "Tap the map at point A (the observer)." : ST.arm === "pickB" ? "Tap the map at point B (the target)." : S.mode === "slope" ? "Tap the map at the centre of the area." : rev() ? "Tap the map at the point to be seen." : "Tap the map where the observer stands.");
+    hint(ST.arm === "pickA" ? "Tap the map at point A (the observer)." : ST.arm === "pickB" ? "Tap the map at point B (the target)." : S.mode === "slope" ? "Tap the map at the center of the area." : rev() ? "Tap the map at the point to be seen." : "Tap the map where the observer stands.");
     setTimeout(function () { map.once("click", onPick); }, 0);
     if (el && !el.hidden) render();
   }

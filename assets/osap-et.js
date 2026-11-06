@@ -63,7 +63,7 @@
       if (!x.geo) return;
       marker("n" + i, x.geo.lat, x.geo.lon, "news", '<div class="pop"><div class="tier">UFO/UAP report · ' + E(x.outlet) + " · " + E(when(x.date)) + "</div><h3>" + E(x.title) + "</h3>" +
         (x.orig ? '<p class="obs">Original: ' + E(x.orig) + "</p>" : "") +
-        '<p class="obs">A news headline, not a verified sighting. Placed at ' + E(x.geo.name) + (x.geo.prec === "province" ? ", the rough centre of that region" : ", approximately") +
+        '<p class="obs">A news headline, not a verified sighting. Placed at ' + E(x.geo.name) + (x.geo.prec === "province" ? ", the rough center of that region" : ", approximately") +
         ', because the headline names it. <a href="' + E(safeUrl(x.link)) + '" target="_blank" rel="noopener noreferrer">Article</a></p><p class="obs">Fingerprint ' + E(x.fp || "") + "</p></div>");
       pts.push([x.geo.lat, x.geo.lon]);
     });

@@ -165,7 +165,7 @@
   function lookHtml(a) {
     var L0 = lookState(a).st, cur = L0.line.toLowerCase();
     return '<fieldset class="aoilook"><legend>Look on the map</legend>' +
-      '<div class="aoisw" role="group" aria-label="Colour">' + SWATCH.map(function (c) { return '<button type="button" data-aoi-sw="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" title="' + c[1] + '" aria-pressed="' + (cur === c[0]) + '"></button>'; }).join("") + "</div>" +
+      '<div class="aoisw" role="group" aria-label="Color">' + SWATCH.map(function (c) { return '<button type="button" data-aoi-sw="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" title="' + c[1] + '" aria-pressed="' + (cur === c[0]) + '"></button>'; }).join("") + "</div>" +
       '<label class="aoirow">Fill opacity <input type="range" min="0" max="100" step="1" data-aoi-op value="' + Math.round(L0.op * 100) + '"><output>' + Math.round(L0.op * 100) + "%</output></label>" +
       '<div class="aoirow" role="group" aria-label="Line style">Line ' + [["solid", "Solid"], ["dash", "Dashed"], ["dot", "Dotted"]].map(function (x) {
         return '<button type="button" data-aoi-ls="' + x[0] + '" aria-pressed="' + ((L0.dash || "solid") === x[0]) + '">' + x[1] + "</button>"; }).join("") + "</div>" +

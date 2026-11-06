@@ -55,7 +55,7 @@
     school: ["edu", "School"], university: ["edu", "University"], college: ["edu", "College"], place_of_worship: ["edu", "Place of worship"]
   };
   var TOUR = { hotel: "Hotel", hostel: "Hostel", guest_house: "Guest house", motel: "Motel" };
-  var SHOP = { supermarket: "Supermarket", convenience: "Convenience store", mall: "Shopping centre" };
+  var SHOP = { supermarket: "Supermarket", convenience: "Convenience store", mall: "Shopping center" };
   function kindOf(t) {
     t = t || {};
     var a = AMEN[t.amenity];

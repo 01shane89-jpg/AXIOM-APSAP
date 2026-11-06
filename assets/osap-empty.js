@@ -115,7 +115,7 @@
         if (items.length) got.push(N.list[k]);
       });
       all.sort(function (a, b) { return b.ms - a.ms; });
-      var h = '<p class="oe-oldh">Latest from ' + esc(N.list.map(cname).join(", ")) + (N.region ? " (neighbours and the same region, " + esc(N.region) + ")" : "") + ".</p>";
+      var h = '<p class="oe-oldh">Latest from ' + esc(N.list.map(cname).join(", ")) + (N.region ? " (neighbors and the same region, " + esc(N.region) + ")" : "") + ".</p>";
       if (!all.length) h += '<p class="oe-oldh">' + (failed === res.length ? "Nearby news could not be read just now" + (navigator.onLine === false ? " (offline)." : ".") : "No headlines are held for these countries either.") + "</p>";
       h += all.slice(0, 10).map(function (x) {
         var m = esc(cname(x.cc)) + (x.outlet ? " · " + esc(x.outlet) : "") + " · " + esc(age(x.ms)) + " ago";

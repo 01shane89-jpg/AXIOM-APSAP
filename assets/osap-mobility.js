@@ -20,7 +20,7 @@
   /* slope limits in degrees: below go = go, below nogo = slow-go, above = no-go. wet multiplies both. */
   var MOVERS = {
     foot: { name: "On foot", go: 20, nogo: 40, wet: 0.85, hint: "Dismounted people with loads" },
-    wheel: { name: "Wheeled 4x4", go: 8.5, nogo: 17, wet: 0.75, hint: "Trucks, SUVs, wheeled armour (15% and 30% grades)" },
+    wheel: { name: "Wheeled 4x4", go: 8.5, nogo: 17, wet: 0.75, hint: "Trucks, SUVs, wheeled armor (15% and 30% grades)" },
     track: { name: "Tracked", go: 17, nogo: 31, wet: 0.75, hint: "Tanks, tracked carriers (30% and 60% grades)" }
   };
   var COL = { go: [46, 125, 50, 60], slow: [239, 108, 0, 125], steep: [198, 40, 40, 150], water: [40, 53, 147, 170] };
@@ -235,8 +235,8 @@
       if (map && map.getZoom() < MINZ) bits.push("Zoom in closer (a district or less) to see ground mobility.");
       if (S.wet === "auto") {
         var m = S.model;
-        bits.push(!m ? "Checking the ground at the map centre…" : m.err ? "Rain model did not answer; treating the ground as dry. Pick Wet to override." :
-          "Ground at map centre: " + (m.wet ? "wet" : "dry") + " (" + m.rain + " mm rain in 3 days" + (m.soil != null ? ", topsoil " + m.soil.toFixed(2) + " m³/m³" : "") + ", Open-Meteo model).");
+        bits.push(!m ? "Checking the ground at the map center…" : m.err ? "Rain model did not answer; treating the ground as dry. Pick Wet to override." :
+          "Ground at map center: " + (m.wet ? "wet" : "dry") + " (" + m.rain + " mm rain in 3 days" + (m.soil != null ? ", topsoil " + m.soil.toFixed(2) + " m³/m³" : "") + ", Open-Meteo model).");
       }
       if (failed) bits.push(failed + " elevation tile" + (failed === 1 ? "" : "s") + " did not load; those squares are blank.");
     }

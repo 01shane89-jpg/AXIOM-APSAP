@@ -26,7 +26,7 @@
     ["4", "Doubtful", "Not confirmed; possible but not logical; no other information on the subject."],
     ["5", "Improbable", "Not confirmed; not logical in itself; contradicted by other information on the subject."],
     ["6", "Truth cannot be judged", "No basis exists for evaluating the validity of the information."]];
-  var NOTE = "Admiralty / NATO grading: source reliability A (completely reliable) to E (unreliable), F cannot be judged; information credibility 1 (confirmed by other sources) to 5 (improbable), 6 cannot be judged. The analyst's own judgement, not set by OSAP or AI.";
+  var NOTE = "Admiralty / NATO grading: source reliability A (completely reliable) to E (unreliable), F cannot be judged; information credibility 1 (confirmed by other sources) to 5 (improbable), 6 cannot be judged. The analyst's own judgment, not set by OSAP or AI.";
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function find(L, v) { for (var i = 0; i < L.length; i++) if (L[i][0] === v) return L[i]; return null; }
@@ -77,13 +77,13 @@
   /* ---------- markup ---------- */
   function badge(g) {
     var c = code(g); if (!c) return "";
-    return '<span class="wkgb" title="' + esc("Your grade " + c + ". " + meaning(g) + ". Your own judgement, not the source's.") + '">' + esc(c) + "</span>";
+    return '<span class="wkgb" title="' + esc("Your grade " + c + ". " + meaning(g) + ". Your own judgment, not the source's.") + '">' + esc(c) + "</span>";
   }
   function legendHtml() {
     var row = function (x) { return "<tr><th>" + esc(x[0]) + "</th><td><b>" + esc(x[1]) + "</b> " + esc(x[2]) + "</td></tr>"; };
     return '<div class="wkglg"><p>Admiralty / NATO system. Grade the <b>source</b> and the <b>information</b> separately: a reliable source can pass on doubtful information. Use F or 6 when there is no basis to judge.</p>' +
       '<table><tr><th colspan="2">Source reliability</th></tr>' + REL.map(row).join("") + '<tr><th colspan="2">Information credibility</th></tr>' + CRED.map(row).join("") + "</table>" +
-      "<p>The grade is your own judgement. OSAP never sets it, and a default for a source only pre-fills the picker until you confirm it.</p></div>";
+      "<p>The grade is your own judgment. OSAP never sets it, and a default for a source only pre-fills the picker until you confirm it.</p></div>";
   }
   /* the picker: two selects and a legend. k is the item key; g the stored grade; def the source's default {r, label} or null */
   function picker(k, g, def, srcLabel) {

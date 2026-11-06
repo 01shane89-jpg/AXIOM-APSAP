@@ -128,7 +128,7 @@
     if (!on) return;
     if (v !== S.view) {
       S.view = v; S.shown = PAGE; S.q = "";
-      el.innerHTML = '<div class="vrhead"><h2>Reports: ' + esc(a.viewName(v)) + '</h2><button type="button" class="refresh" data-vr="sum" title="A short summary of this tab\'s records and reports, written on this device on request">Summarise</button></div>' +
+      el.innerHTML = '<div class="vrhead"><h2>Reports: ' + esc(a.viewName(v)) + '</h2><button type="button" class="refresh" data-vr="sum" title="A short summary of this tab\'s records and reports, written on this device on request">Summarize</button></div>' +
         '<p class="obs">News headlines on this tab\'s topic filed under ' + esc(a.ccName()) + ", newest first, in the period shown. What each outlet reports, not verified; each links to its source.</p>" +
         '<input type="search" class="vrq" placeholder="Filter these reports" aria-label="Filter these reports" maxlength="100">' +
         '<div class="vrres" aria-live="polite"></div><div class="sec rvpkg vrsum" id="vr-sum" hidden></div>';
@@ -192,7 +192,7 @@
     var r = D.getElementById("cf-rail"); if (!r || r.hidden) return;
     var lb = D.getElementById("cf-list"); if (!lb || D.getElementById("vr-cfbar")) return;
     var bar = D.createElement("div"); bar.className = "sec"; bar.id = "vr-cfbar";
-    bar.innerHTML = '<button type="button" class="refresh" data-vrcf="1" title="A short summary of the latest reports below, written on this device on request">Summarise these reports</button>' +
+    bar.innerHTML = '<button type="button" class="refresh" data-vrcf="1" title="A short summary of the latest reports below, written on this device on request">Summarize these reports</button>' +
       '<div class="rvpkg vrsum" id="vr-cfsum" hidden></div>';
     lb.parentNode.insertBefore(bar, lb);
     bar.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-vrcf]")) cfSummarise(); });

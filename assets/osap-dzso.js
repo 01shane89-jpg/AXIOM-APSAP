@@ -612,7 +612,7 @@
       '<button type="button" class="pri" data-dz="save">' + (ST.saved ? "Saved" : "Save drop zone") + "</button>" + (ST.saved ? '<button type="button" data-dz="del">Delete</button>' : "") + "</div>" +
       '<span>Name</span><div><input class="w" data-f="name" value="' + esc(dz.name) + '" maxlength="80"></div>' +
       '<span>Point of impact</span><div class="r"><b class="pt">' + esc(grid(dz.pi)) + "</b> <span class=\"obs pt\">" + dz.pi[0].toFixed(5) + ", " + dz.pi[1].toFixed(5) + "</span>" +
-      '<button type="button" data-dz="pick" aria-pressed="' + ST.arm + '">Pick on map</button><button type="button" data-dz="centre">Map centre</button><button type="button" data-dz="show">Show on map</button>' +
+      '<button type="button" data-dz="pick" aria-pressed="' + ST.arm + '">Pick on map</button><button type="button" data-dz="centre">Map center</button><button type="button" data-dz="show">Show on map</button>' +
       '<button type="button" data-dz="edit" aria-pressed="' + ST.edit + '">Edit on map</button></div>' +
       (ST.edit ? '<span></span><p class="obs">On the map: drag the dashed ring at the PI to move the DZ, ' + (dz.shape === "circle" ? "the square on the edge to change its size" : "a yellow corner to change its size") + ", and \u21bb on the run-in line to turn the approach." + (ST.saved ? " Each change is saved." : " Save the drop zone to keep the changes.") + "</p>" : "") +
       '<span>Type a grid</span><div class="r"><input class="w" data-f="grid" placeholder="MGRS or lat, lon" aria-label="Point of impact as MGRS or lat, lon"><button type="button" data-dz="grid">Set</button></div>' +

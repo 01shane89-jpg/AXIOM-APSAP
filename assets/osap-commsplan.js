@@ -24,7 +24,7 @@
   var TABS = [["plan", "Plan"], ["coverage", "Coverage"], ["link", "Link"], ["networks", "Networks"], ["equipment", "Equipment"], ["status", "Status"]];
   var PACE = [["P", "Primary"], ["A", "Alternate"], ["C", "Contingency"], ["E", "Emergency"]];
   var COV = [["", "Not assessed"], ["likely", "Likely"], ["marginal", "Marginal"], ["unlikely", "Unlikely"], ["unknown", "Unknown"]];
-  var BASIS = [["", "Basis?"], ["modelled", "Modelled"], ["observed", "Observed"], ["reported", "Reported"], ["judgement", "Operator judgement"]];
+  var BASIS = [["", "Basis?"], ["modelled", "Modeled"], ["observed", "Observed"], ["reported", "Reported"], ["judgement", "Operator judgment"]];
   var ST = { unknown: ["UNKNOWN", "#6c757d"], green: ["GREEN", "#2b8a3e"], amber: ["AMBER", "#e67700"], red: ["RED", "#c92a2a"] };
   var MAXP = 30, MAXPH = 12;
   var S = { ctx: null, tab: null };
@@ -78,14 +78,14 @@
         '<div class="cpbtns"><button type="button" class="cpgo" data-cpa="new">New PACE plan</button></div><p class="obs">Kept on this device in the active workspace. Nothing is sent anywhere.</p></div>';
       return;
     }
-    var a = p.area, ar = a ? "Centre <code>" + E(mgrs(a.lat, a.lon)) + "</code> (" + f(a.lat, 4) + ", " + f(a.lon, 4) + "), radius" : "No area set. Area lets other tools (medical plan, evacuation) find this plan.";
+    var a = p.area, ar = a ? "Center <code>" + E(mgrs(a.lat, a.lon)) + "</code> (" + f(a.lat, 4) + ", " + f(a.lon, 4) + "), radius" : "No area set. Area lets other tools (medical plan, evacuation) find this plan.";
     var h = '<div class="sec cpsec"><div class="cpbtns"><select data-cpa="pick" aria-label="PACE plan">' + d.plans.map(function (x) { return '<option value="' + E(x.id) + '"' + (x.id === p.id ? " selected" : "") + ">" + E(x.name) + "</option>"; }).join("") + "</select>" +
       '<button type="button" data-cpa="new">New</button><button type="button" data-cpa="copy">Copy</button><button type="button" data-cpa="print">Export PDF</button><button type="button" data-cpa="text">Copy as text</button><button type="button" class="cpdel" data-cpa="del">Delete</button></div>' +
       '<div class="cprow"><label class="cpw">Plan name<input data-cpf="name" value="' + E(p.name) + '" maxlength="80"></label>' +
       '<label class="cpw">Mission<input data-cpf="mission" value="' + E(p.mission) + '" maxlength="160"></label>' +
       '<label class="cpw">Team / stations<input data-cpf="team" value="' + E(p.team) + '" maxlength="160"></label></div>' +
       '<p class="cparea"><b>Area</b> ' + ar + (a ? ' <input type="number" min="1" max="2000" step="1" data-cpf="radius" value="' + E(a.radius_km) + '" aria-label="Radius in km"> km' : "") +
-      ' <button type="button" data-cpa="here">' + (a ? "Move to map centre" : "Use map centre") + "</button>" + (a ? ' <button type="button" data-cpa="noarea">Clear</button>' : "") + "</p>" +
+      ' <button type="button" data-cpa="here">' + (a ? "Move to map center" : "Use map center") + "</button>" + (a ? ' <button type="button" data-cpa="noarea">Clear</button>' : "") + "</p>" +
       '<label class="cpw cpnotes">Notes<textarea data-cpf="notes" rows="2" maxlength="1000">' + E(p.notes) + "</textarea></label>" +
       '<p class="obs" id="cp-msg">Last changed ' + E(when(p.updated)) + ". Kept on this device in the active workspace; nothing is sent anywhere.</p></div>";
     p.phases.forEach(function (ph, i) {
@@ -96,7 +96,7 @@
       h += "</details>";
     });
     h += '<div class="sec cpsec"><div class="cpbtns">' + (p.phases.length < MAXPH ? '<button type="button" data-cpa="addph">Add a phase</button>' : "") + "</div>" +
-      '<p class="obs">Coverage expected: say what it rests on. <b>Modelled</b> = worked out (Coverage or Link tab), <b>Observed</b> = measured (phone tests, a comms check), <b>Reported</b> = an outside source, <b>Operator judgement</b> = your own call. Not assessed and Unknown are never read as "no coverage".</p></div>';
+      '<p class="obs">Coverage expected: say what it rests on. <b>Modeled</b> = worked out (Coverage or Link tab), <b>Observed</b> = measured (phone tests, a comms check), <b>Reported</b> = an outside source, <b>Operator judgment</b> = your own call. Not assessed and Unknown are never read as "no coverage".</p></div>';
     el.innerHTML = h;
   }
   function planText(p) {
@@ -207,9 +207,9 @@
   var IMP = [["none", "No effect"], ["degraded", "Degraded"], ["lost", "Comms lost"]];
   var FIX = [
     ["power", "Power", ["Battery charged and seated; the right battery for the set", "Power switch on, indicator lit, voltage normal", "Cold: warm the battery or swap in a warm one", "Spare battery or other power source tried"]],
-    ["antenna", "Antenna", ["Right antenna for the band, fully connected", "Not damaged, bent or shorted against metal or ground", "Orientation and polarisation match the other station", "HF: counterpoise or ground laid out"]],
+    ["antenna", "Antenna", ["Right antenna for the band, fully connected", "Not damaged, bent or shorted against metal or ground", "Orientation and polarization match the other station", "HF: counterpoise or ground laid out"]],
     ["cable", "Cable and connectors", ["Connectors clean, dry and tight", "No crushed, kinked or cut cable", "Right adapters in the chain", "Spare cable tried"]],
-    ["prog", "Programming", ["Right frequency, channel or net loaded", "Right mode, bandwidth and power setting", "Fill or keying status current and matching the other station (status only, never key data)", "Time synchronised where the system needs it", "Volume and squelch set"]],
+    ["prog", "Programming", ["Right frequency, channel or net loaded", "Right mode, bandwidth and power setting", "Fill or keying status current and matching the other station (status only, never key data)", "Time synchronized where the system needs it", "Volume and squelch set"]],
     ["net", "Network and schedule", ["Other station is on and inside its comms window", "Right callsigns, net and schedule", "Net control or gateway reachable by another means", "Satellite or cellular service active on this device"]],
     ["path", "Line of sight and distance", ["Within the planned range (Link tab)", "No hill or ridge between the stations", "Moved to higher ground or raised the antenna", "Relay or retrans available"]],
     ["intf", "Interference", ["Noise or a carrier heard on the channel", "Generators, vehicles or electronics close to the antenna", "Alternate channel or frequency tried"]],
@@ -329,7 +329,7 @@
       '<label>Time (Z)<input id="cpif-t" placeholder="now, or 0630" maxlength="6"></label><label>Band<select id="cpif-b">' + opts(R().BANDS.map(function (b) { return [b.id, b.label]; }).concat([["other", "Other"]]), "vhf") + "</select></label>" +
       '<label>About (MHz)<input id="cpif-f" type="number" step="any" min="0" placeholder="optional"></label><label>Severity<select id="cpif-s">' + opts(SEV, "moderate") + "</select></label>" +
       '<label>Impact<select id="cpif-i">' + opts(IMP, "degraded") + '</select></label><label class="cpw">What was observed<input id="cpif-n" maxlength="160" placeholder="noise, tone, carrier, pulsing…"></label></div>' +
-      '<p class="cparea">Place: the map centre, <code>' + E(mgrs(c.lat, c.lng)) + '</code>. Move the map to where it was observed.</p>' +
+      '<p class="cparea">Place: the map center, <code>' + E(mgrs(c.lat, c.lng)) + '</code>. Move the map to where it was observed.</p>' +
       '<div class="cpbtns"><button type="button" class="cpgo" data-if="add">Record the report</button></div><p class="obs" id="cp-msg">' + L.length + " report" + (L.length === 1 ? "" : "s") + ". Kept on this device in the active workspace.</p>" +
       (L.length ? '<div class="cpscroll"><table class="rttab cplog"><thead><tr><th>Time</th><th>Report</th><th>Nearby</th><th></th></tr></thead><tbody>' +
         L.slice(0, 100).map(function (r) {
@@ -406,7 +406,7 @@
       fld("gtx_dbi", "Tx antenna gain", "any", "dBi") + fld("ltx_db", "Tx cable + connectors", "any", "dB") + fld("grx_dbi", "Rx antenna gain", "any", "dBi") + fld("lrx_db", "Rx cable + connectors", "any", "dB") +
       fld("sens_dbm", "Rx sensitivity", "any", "dBm") + fld("fade_db", "Fade margin wanted", "any", "dB") + fld("ha_m", "Antenna A height", "any", "m") + fld("hb_m", "Antenna B height", "any", "m") + fld("k", "k-factor", "0.01", "") + "</div>" +
       '<div id="cp-lout" aria-live="polite"></div>' +
-      '<p class="obs"><b>MODELLED: free space over a smooth Earth.</b> Hills, buildings, trees, weather, interference and the ionosphere are not included. The terrain link above adds the ground between two points.</p></div>';
+      '<p class="obs"><b>MODELED: free space over a smooth Earth.</b> Hills, buildings, trees, weather, interference and the ionosphere are not included. The terrain link above adds the ground between two points.</p></div>';
     linkOut(); tlOut(); tlDraw(); rcOut(); rcDraw();
   }
   function linkOut() {
@@ -417,7 +417,7 @@
     var band = Rd.BANDS.filter(function (x) { return x.id === L.band; })[0];
     var col = { likely: "#2b8a3e", marginal: "#e67700", unlikely: "#c92a2a", unknown: "#6c757d" }[cls];
     var word = { likely: "MARGIN MET", marginal: "BELOW WANTED FADE MARGIN", unlikely: "NO MARGIN", unknown: "UNKNOWN" }[cls];
-    el.innerHTML = '<p class="cpres" style="border-left:5px solid ' + col + '"><b>' + word + "</b> (modelled): " + (isFinite(b.margin_db) ? f(b.margin_db, 1) + " dB above the receiver's sensitivity, " + (cls === "likely" ? "at least" : "against") + " the " + f(L.fade_db, 0) + " dB you want in hand." : "enter the numbers above.") + "</p>" +
+    el.innerHTML = '<p class="cpres" style="border-left:5px solid ' + col + '"><b>' + word + "</b> (modeled): " + (isFinite(b.margin_db) ? f(b.margin_db, 1) + " dB above the receiver's sensitivity, " + (cls === "likely" ? "at least" : "against") + " the " + f(L.fade_db, 0) + " dB you want in hand." : "enter the numbers above.") + "</p>" +
       '<table class="rttab"><tbody>' +
       "<tr><th>EIRP</th><td>" + f(b.eirp_dbm, 1) + " dBm (" + f(Rd.dbmToW(b.eirp_dbm), 1) + " W)</td></tr>" +
       "<tr><th>Free-space loss</th><td>" + f(b.fspl_db, 1) + " dB over " + f(L.d_km, 2) + " km</td></tr>" +
@@ -458,7 +458,7 @@
       "<div><b>B</b> <span id=\"cptl-b\">" + tlPtTxt(P.b) + '</span><br><button type="button" data-tl="b" aria-pressed="' + (arm === "b") + '">' + (arm === "b" ? "Tap the map for B…" : "Set B on map") + "</button></div></div>" +
       '<p><button type="button" data-tl="go"' + (P.a && P.b && !TL.busy ? "" : " disabled") + '>Check terrain</button> <button type="button" data-tl="swap"' + (P.a || P.b ? "" : " disabled") + '>Swap A and B</button> <button type="button" data-tl="clear"' + (P.a || P.b ? "" : " disabled") + ">Clear</button></p>" +
       '<div id="cp-tlout" aria-live="polite"></div>' +
-      '<p class="obs">Uses the frequency, antenna heights and k-factor below. <b>MODELLED, terrain only:</b> the ground from elevation data, raised for the Earth\'s curve. Trees, buildings, weather and interference are not in it, so a clear answer is a best case.</p></div>';
+      '<p class="obs">Uses the frequency, antenna heights and k-factor below. <b>MODELED, terrain only:</b> the ground from elevation data, raised for the Earth\'s curve. Trees, buildings, weather and interference are not in it, so a clear answer is a best case.</p></div>';
   }
   function tlRepaint() { var box = S.ctx && S.ctx.rail.querySelector("#cp-tl"); if (!box) return; var d = D.createElement("div"); d.innerHTML = tlSection(); box.replaceWith(d.firstChild); tlOut(); }
   function tlRecalc() { if (!TL.prof) return; var L = linkIn(); TL.res = R().terrainLink(TL.prof, { f_mhz: L.f_mhz, hA_m: L.ha_m, hB_m: L.hb_m, k: L.k }); tlOut(); tlDraw(); }
@@ -513,7 +513,7 @@
       "<tr><th>Margin with terrain</th><td>" + (isFinite(b.margin_db) ? "<b>" + f(b.margin_db, 1) + " dB</b> above the receiver's sensitivity" + (b.margin_db < L.fade_db ? ' <b class="cpbad">(less than the ' + f(L.fade_db, 0) + " dB you want)</b>" : "") : "enter the link numbers below") + "</td></tr>";
     if (x.verdict !== "clear" && w) rows += "<tr><th>Antenna height to clear 60%</th><td>raise A by " + f(x.need_a_m, 1) + " m, or B by " + f(x.need_b_m, 1) + " m, or both by " + f(x.need_both_m, 1) + " m</td></tr>";
     rows += "<tr><th>Ground data</th><td>" + (x.nodata_pct > 0.5 ? f(x.nodata_pct, 0) + "% of the path has no elevation data (shown as gaps)" : "the whole path") + (TL.prof && TL.prof.res_m ? ", every " + f(TL.prof.res_m, 0) + " m" : "") + (TL.prof && TL.prof.sources && TL.prof.sources.length ? "; " + E(TL.prof.sources.map(function (s) { return s.name || s; }).join(", ")) : "") + "</td></tr>";
-    el.innerHTML = '<p class="cpres" style="border-left:5px solid ' + v[1] + '"><b>' + v[0] + "</b> (modelled): " + E(x.reason ? "ground unknown, " + x.reason + "." : v[2]) + "</p>" + tlChart(x) + '<table class="rttab"><tbody>' + rows + "</tbody></table>";
+    el.innerHTML = '<p class="cpres" style="border-left:5px solid ' + v[1] + '"><b>' + v[0] + "</b> (modeled): " + E(x.reason ? "ground unknown, " + x.reason + "." : v[2]) + "</p>" + tlChart(x) + '<table class="rttab"><tbody>' + rows + "</tbody></table>";
   }
   function tlDraw() {
     tlLayerOff(); if (!S.ctx || S.tab !== "link" || !W.L) return;
@@ -647,11 +647,11 @@
     var st = rcStats(), L = RC.L || linkIn();
     el.innerHTML = (RC.busy ? '<p class="obs" id="cprc-prog">Reading the ground: ' + RC.done + " of " + RC.n + " directions…</p>" : "") +
       (RC.stale ? '<p class="cpres" style="border-left:5px solid #e67700">You changed the link numbers: press <b>Recalculate</b> to use them.</p>' : "") +
-      '<p class="cpres" style="border-left:5px solid #1c7ed6"><b>MODELLED COVERAGE</b>: terrain only. Path loss is free space or open ground (two-ray), whichever is larger, plus a knife-edge loss where hills are in the way. Buildings, trees, interference and the ionosphere are not modelled, so this is a best case. ' +
+      '<p class="cpres" style="border-left:5px solid #1c7ed6"><b>MODELED COVERAGE</b>: terrain only. Path loss is free space or open ground (two-ray), whichever is larger, plus a knife-edge loss where hills are in the way. Buildings, trees, interference and the ionosphere are not modeled, so this is a best case. ' +
       (st.far_m ? "Heard furthest about <b>" + f(st.far_m / 1000, 1) + " km</b> out." : RC.busy ? "" : "No direction is heard.") + "</p>" +
       '<table class="rttab"><tbody>' + ["likely", "marginal", "unlikely", "unknown"].map(function (k) { return '<tr><th><span class="cpbadge" style="background:' + RCC[k][1] + '">' + E(RCC[k][0].split(" (")[0]) + "</span></th><td>" + f(st.pct[k], 0) + "% of the ground within " + f(RC.R_km, 0) + " km</td></tr>"; }).join("") +
       "<tr><th>Model</th><td>" + f(L.f_mhz, 3) + " MHz, " + f(L.ptx_w, 1) + " W, antennas " + f(L.ha_m, 1) + " m (transmitter) and " + f(L.hb_m, 1) + " m (receiver), sensitivity " + f(L.sens_dbm, 0) + " dBm, k " + f(L.k, 2) + "; " + RC.n + " directions every " + 360 / RC.n + "°, out to " + f(RC.R_km, 1) + " km</td></tr></tbody></table>" +
-      '<p class="obs">Green: likely, 10 dB or more above the receiver\'s sensitivity. Orange: marginal, 0 to 10 dB. Faint red: below sensitivity. Grey: no ground data. Tap the map to see a spot\'s margin.</p>';
+      '<p class="obs">Green: likely, 10 dB or more above the receiver\'s sensitivity. Orange: marginal, 0 to 10 dB. Faint red: below sensitivity. Gray: no ground data. Tap the map to see a spot\'s margin.</p>';
   }
   function rcWedge(P, b0, b1, d0, d1) {
     var pts = [], k;
@@ -695,7 +695,7 @@
     else if (a === "zoom") { if (RC.at) S.ctx.map.fitBounds(W.L.latLng(RC.at[0], RC.at[1]).toBounds(RC.R_km * 2000), { maxZoom: 14 }); return true; }
     else if (a === "text") {
       var st = rcStats();
-      copyText(["RADIO COVERAGE (MODELLED, terrain only) " + zT(RC.when), "Transmitter " + mgrs(RC.at[0], RC.at[1]), "Likely " + f(st.pct.likely, 0) + "% | Marginal " + f(st.pct.marginal, 0) + "% | Unlikely " + f(st.pct.unlikely, 0) + "% | Unknown " + f(st.pct.unknown, 0) + "% within " + f(RC.R_km, 1) + " km",
+      copyText(["RADIO COVERAGE (MODELED, terrain only) " + zT(RC.when), "Transmitter " + mgrs(RC.at[0], RC.at[1]), "Likely " + f(st.pct.likely, 0) + "% | Marginal " + f(st.pct.marginal, 0) + "% | Unlikely " + f(st.pct.unlikely, 0) + "% | Unknown " + f(st.pct.unknown, 0) + "% within " + f(RC.R_km, 1) + " km",
         "Heard to (km) by bearing: " + st.reach.filter(function (_, i) { return i % 3 === 0; }).map(function (x) { return Math.round(x.brg) + "° " + f(x.m / 1000, 1); }).join(", ")].join("\n"));
       return true;
     }
@@ -715,7 +715,7 @@
     var c = q.cell, s = RCC[c.cls];
     W.L.popup({ maxWidth: 260 }).setLatLng([ll.lat, lon]).setContent('<div data-keep-pop="1"><b style="color:' + s[1] + '">' + E(s[0]) + "</b><br>" + f(q.d_m / 1000, 2) + " km from the transmitter, bearing " + f(q.brg, 0) + "°" +
       (isFinite(c.margin) ? "<br>Margin about " + f(c.margin, 1) + " dB" + (c.knife > 0.05 ? ", with about " + f(c.knife, 1) + " dB lost to terrain in the way" : ", no terrain above the line of sight") : "") +
-      '<br><small>Modelled, terrain only. Worked out for this direction every ' + 360 / RC.n + "°.</small></div>").openOn(S.ctx.map);
+      '<br><small>Modeled, terrain only. Worked out for this direction every ' + 360 / RC.n + "°.</small></div>").openOn(S.ctx.map);
   }, true);
 
   /* ---------- Equipment: battery and power planner (localStorage osap-cp-power, part of the workspace) ---------- */
@@ -788,10 +788,10 @@
   var CSSTAT = ["On hand", "Issued", "Loaded", "Superseded", "Destroyed", "Turned in"];
   var ANT = [
     ["Whip / vertical (quarter wave)", "Vertical", "All round (omni) in the horizontal plane", "about 0 to 2 dBi", "Vehicle and manpack VHF/UHF. Needs a ground plane: the vehicle roof or the radio body and operator. Keep it upright and clear of metal; height helps more than anything else."],
-    ["Half-wave dipole", "Horizontal or vertical, as mounted", "Figure of eight broadside to the wire (horizontal)", "about 2.1 dBi", "Fixed VHF/UHF and HF stations. Feed in the centre; keep the two legs straight and the feedline at right angles to them."],
+    ["Half-wave dipole", "Horizontal or vertical, as mounted", "Figure of eight broadside to the wire (horizontal)", "about 2.1 dBi", "Fixed VHF/UHF and HF stations. Feed in the center; keep the two legs straight and the feedline at right angles to them."],
     ["Inverted-V / NVIS dipole (HF)", "Mostly horizontal", "Low and flat (NVIS): energy goes up and comes back down within about 0 to 400 km", "low gain, wide coverage", "Short-range HF over hills where line of sight fails. Low mast (2 to 6 m), legs sloping down; choose frequencies low enough for near-vertical reflection."],
-    ["Sloping wire / end-fed long wire (HF)", "Mixed", "Favours the direction the wire slopes down toward", "varies with length", "Quick HF setup from a tree or mast. Needs a tuner or matching unit and a counterpoise or ground."],
-    ["Yagi", "Linear, as mounted", "Directional: one main lobe", "about 6 to 12 dBi", "Point-to-point and relay links. Aim it (bearing on the Link tab); match polarisation with the far end."],
+    ["Sloping wire / end-fed long wire (HF)", "Mixed", "Favors the direction the wire slopes down toward", "varies with length", "Quick HF setup from a tree or mast. Needs a tuner or matching unit and a counterpoise or ground."],
+    ["Yagi", "Linear, as mounted", "Directional: one main lobe", "about 6 to 12 dBi", "Point-to-point and relay links. Aim it (bearing on the Link tab); match polarization with the far end."],
     ["Log-periodic", "Linear", "Directional over a wide frequency range", "about 5 to 8 dBi", "Wide-band directional use when frequencies change. Aim like a Yagi."],
     ["Patch / panel", "Linear or circular", "Directional, broad beam", "about 6 to 14 dBi", "Data links, sector coverage. Mount rigidly; small aiming errors matter at higher gain."],
     ["Helix / crossed dipole (SATCOM)", "Circular", "Upward and toward the satellite", "about 6 to 14 dBi", "Satellite terminals. Point to the azimuth and elevation of the satellite; keep the sky view clear of trees, walls and terrain."],
@@ -889,8 +889,8 @@
   function renderAntennas(box) {
     box.innerHTML = '<div class="sec cpsec"><h3>Antenna lengths</h3><div class="cprow"><label>Frequency<span class="cpu"><input type="number" step="any" min="0" id="cpant-f" value="' + E(linkIn().f_mhz) + '"> MHz</span></label></div><div id="cp-antout"></div>' +
       '<p class="obs">Wire lengths include a 5% shortening for end effect; trim while checking the match (SWR).</p></div>' +
-      ANT.map(function (a) { return '<div class="sec cpsec cpant"><h3>' + E(a[0]) + '</h3><table class="rttab"><tbody><tr><th>Polarisation</th><td>' + E(a[1]) + "</td></tr><tr><th>Pattern</th><td>" + E(a[2]) + "</td></tr><tr><th>Typical gain</th><td>" + E(a[3]) + "</td></tr></tbody></table><p>" + E(a[4]) + "</p></div>"; }).join("") +
-      '<div class="sec cpsec"><p class="obs">Generic reference cards. Use your equipment\'s own manuals and your unit\'s procedures; polarisation must match at both ends (a mismatch can cost 20 dB or more).</p></div>';
+      ANT.map(function (a) { return '<div class="sec cpsec cpant"><h3>' + E(a[0]) + '</h3><table class="rttab"><tbody><tr><th>Polarization</th><td>' + E(a[1]) + "</td></tr><tr><th>Pattern</th><td>" + E(a[2]) + "</td></tr><tr><th>Typical gain</th><td>" + E(a[3]) + "</td></tr></tbody></table><p>" + E(a[4]) + "</p></div>"; }).join("") +
+      '<div class="sec cpsec"><p class="obs">Generic reference cards. Use your equipment\'s own manuals and your unit\'s procedures; polarization must match at both ends (a mismatch can cost 20 dB or more).</p></div>';
     antOut();
   }
   function antOut() {
@@ -923,7 +923,7 @@
     box.innerHTML = '<div class="sec cpsec"><h3>Spectrum reference</h3><p>' + E(S.ctx.name || "") + " is in <b>ITU Region " + reg + "</b>.</p>" +
       '<div class="cprow"><label>Look up a frequency<span class="cpu"><input type="number" step="any" min="0" id="cpsp-f" placeholder="MHz"> MHz</span></label></div><div id="cp-spout" aria-live="polite"></div>' +
       '<table class="rttab"><thead><tr><th>MHz</th><th>Common use</th></tr></thead><tbody>' + R().SPECTRUM.map(function (s) { var r = s.r && s.r[reg], lo = r ? r[0] : s.lo, hi = r ? r[1] : s.hi; return "<tr" + (s.kind === "distress" ? ' class="cpdis"' : "") + "><td>" + f(lo, 3) + (hi !== lo ? "–" + f(hi, 3) : "") + "</td><td>" + E(s.name) + "</td></tr>"; }).join("") + "</tbody></table>" +
-      '<p class="obs">A reference summary of common civil uses, not an allocation table or a licence. Host-nation rules and your unit\'s frequency assignment decide what you may use.</p></div>' +
+      '<p class="obs">A reference summary of common civil uses, not an allocation table or a license. Host-nation rules and your unit\'s frequency assignment decide what you may use.</p></div>' +
       '<div class="sec cpsec"><h3>Channel plan</h3><p class="obs">Channels you have been assigned, entered by you.</p><div class="cprow"><label>Name<input id="cpch-n" maxlength="30"></label><label>Frequency<span class="cpu"><input type="number" step="any" min="0" id="cpch-f"> MHz</span></label>' +
       '<label>Mode<input id="cpch-m" maxlength="20" placeholder="FM, USB, data…"></label><label>Net<input id="cpch-net" maxlength="40"></label><label class="cpw">Note<input id="cpch-note" maxlength="120"></label></div>' +
       '<div class="cpbtns"><button type="button" class="cpgo" data-ch="add">Add the channel</button>' + (ch.length ? '<button type="button" data-ch="text">Copy as text</button>' : "") + '</div><p class="obs" id="cp-msg">Kept on this device in the active workspace.</p>' +
@@ -1205,8 +1205,8 @@
   function satStation(v) {
     if (v.at && isFinite(v.at.lat) && isFinite(v.at.lon)) return { lat: v.at.lat, lon: v.at.lon, from: "the point you set" };
     var p = curPlan(loadPace());
-    if (p && p.area) return { lat: p.area.lat, lon: p.area.lon, from: "the centre of PACE plan " + p.name };
-    var c = S.ctx.map.getCenter(); return { lat: c.lat, lon: W.OSAP_GEO && W.OSAP_GEO.wrap ? W.OSAP_GEO.wrap(c.lng) : c.lng, from: "the map centre" };
+    if (p && p.area) return { lat: p.area.lat, lon: p.area.lon, from: "the center of PACE plan " + p.name };
+    var c = S.ctx.map.getCenter(); return { lat: c.lat, lon: W.OSAP_GEO && W.OSAP_GEO.wrap ? W.OSAP_GEO.wrap(c.lng) : c.lng, from: "the map center" };
   }
   function magOf(az, st) {
     var G = W.OSAP_GEO; if (!G || !G.decl) return NaN;
@@ -1217,8 +1217,8 @@
   }
   function renderSat(box) {
     var v = loadSats(), st = satStation(v), rows = lookRows(v, st), T = W.OSAP_TERRAIN_ANALYSIS;
-    box.innerHTML = '<div class="sec cpsec"><h3>Satellite pointing <span class="cptag">MODELLED</span></h3>' +
-      '<p>From ' + E(st.from) + ', <code>' + E(mgrs(st.lat, st.lon)) + '</code>. <button type="button" class="linkish" data-sat="here">Use the map centre</button>' + (v.at ? ' <button type="button" class="linkish" data-sat="plan">Use the plan area</button>' : "") + "</p>" +
+    box.innerHTML = '<div class="sec cpsec"><h3>Satellite pointing <span class="cptag">MODELED</span></h3>' +
+      '<p>From ' + E(st.from) + ', <code>' + E(mgrs(st.lat, st.lon)) + '</code>. <button type="button" class="linkish" data-sat="here">Use the map center</button>' + (v.at ? ' <button type="button" class="linkish" data-sat="plan">Use the plan area</button>' : "") + "</p>" +
       '<div class="cprow"><label>Satellite name<input id="cpsat-n" maxlength="40" placeholder="as in your terminal guide"></label><label>Orbital slot (° longitude, east +)<input type="number" step="any" min="-180" max="180" id="cpsat-l" placeholder="e.g. 143.5 or -98"></label></div>' +
       '<div class="cpbtns"><button type="button" class="cpgo" data-sat="add">Add the satellite</button></div><p class="obs" id="cp-msg"></p>' +
       (rows.length ? '<table class="rttab cplog"><thead><tr><th>Satellite</th><th>Azimuth</th><th>Elevation</th><th></th></tr></thead><tbody>' + rows.map(function (r) {
@@ -1302,7 +1302,7 @@
     var n = 2;
     if (A.ch.length) h += "<h2>" + n++ + ". Channel plan</h2>" + tab(["Channel", "MHz", "Mode", "Net", "Note"], A.ch.map(function (c) { return [c.name, String(c.f), c.mode, c.net, c.note]; }));
     if (A.ct.length) h += "<h2>" + n++ + ". Contacts and windows</h2>" + tab(["Station", "Role", "Method", "Net", "MHz", "Number / ID", "Windows (Zulu)", "Notes"], A.ct.map(function (c) { return [c.cs, c.ro, c.me, c.net, String(c.f || ""), c.ad, c.win, c.no]; }));
-    if (A.sats.length) h += "<h2>" + n++ + ". Satellite pointing</h2><p>From " + E(mgrs(A.st.lat, A.st.lon)) + " (modelled, smooth Earth).</p>" + tab(["Satellite", "Slot", "Azimuth true", "Azimuth magnetic", "Elevation"], A.sats.map(function (r) { return [r.s.name, r.s.lon + "°", r.g && r.g.visible ? f(r.g.az, 1) + "°" : "–", r.g && r.g.visible && isFinite(r.mag) ? f(r.mag, 1) + "°" : "–", r.g ? (r.g.visible ? f(r.g.el, 1) + "°" : "below horizon") : "–"]; }));
+    if (A.sats.length) h += "<h2>" + n++ + ". Satellite pointing</h2><p>From " + E(mgrs(A.st.lat, A.st.lon)) + " (modeled, smooth Earth).</p>" + tab(["Satellite", "Slot", "Azimuth true", "Azimuth magnetic", "Elevation"], A.sats.map(function (r) { return [r.s.name, r.s.lon + "°", r.g && r.g.visible ? f(r.g.az, 1) + "°" : "–", r.g && r.g.visible && isFinite(r.mag) ? f(r.mag, 1) + "°" : "–", r.g ? (r.g.visible ? f(r.g.el, 1) + "°" : "below horizon") : "–"]; }));
     h += "<h2>" + n++ + ". Power and sustainment</h2><p>" + E(f(A.pr.wh_day, 0)) + " Wh a day for " + E(A.pw.days) + " days" + (isFinite(A.pr.batteries_mission) ? ": " + A.pr.batteries_mission + " batteries (" + E(f(A.pr.weight_kg, 1)) + " kg) with " + E(A.pw.spare_pct) + "% spares" : "") + (A.lw ? ". Loadout " + E(f(A.lw, 1)) + " kg." : ".") + " Planning estimate from typical figures.</p>";
     if (A.cs.length) h += "<h2>" + n++ + ". COMSEC status (administrative only)</h2>" + tab(["Short title", "Edition", "Equipment", "Status", "Expires"], A.cs.map(function (x) { return [x.st, x.ed, x.eq, x.status, x.expires]; }));
     pr.innerHTML = h + "<p>Planning document made in OSAP on this device. Coverage and pointing figures are estimates with their basis shown, not guarantees.</p>";

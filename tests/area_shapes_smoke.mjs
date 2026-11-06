@@ -61,11 +61,11 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   ok(/Circle/.test(await p.textContent("#area-ctl")) && /Square/.test(await p.textContent("#area-ctl")), "desktop: Draw area offers Circle and Square");
   if (OUT) await p.screenshot({ path: OUT + "/desk-menu.png" });
   await p.click('#area-ctl [data-area="circle"]');
-  ok(/centre/.test(await p.textContent("#area-ctl .areahint")), "desktop: circle hint shows");
+  ok(/center/.test(await p.textContent("#area-ctl .areahint")), "desktop: circle hint shows");
   const [cx, cy] = await mid(p);
   // a click alone draws nothing and stays in circle mode
   await p.mouse.click(cx, cy); await p.waitForTimeout(300);
-  ok(!(await area(p)) && /centre/.test(await p.textContent("#area-ctl .areahint")), "desktop: a click alone draws nothing, still drawing");
+  ok(!(await area(p)) && /center/.test(await p.textContent("#area-ctl .areahint")), "desktop: a click alone draws nothing, still drawing");
   const center = await ll(p, cx, cy), edge = await ll(p, cx + 150, cy);
   const hint = await mouseDrag(p, cx, cy, cx + 150, cy);
   ok(/Radius [\d.,]+ (?:km|m|mi|ft|nm) · diameter [\d.,]+ (?:km|m|mi|ft|nm) · area [\d.,]+ (?:km²|ha)/.test(hint), "desktop: radius, diameter and area show while dragging: " + hint);
@@ -77,7 +77,7 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   ok(await p.evaluate(() => !!document.querySelector('#area-ctl [data-area="save"]') && !!document.querySelector('#area-ctl [data-area="clear"]') && document.querySelectorAll(".areah").length === 6), "desktop: after drawing, Save, Delete and the edit handles are right there");
   ok(/Drag a corner[\s\S]*Radius .* · diameter .* · area/.test(await p.textContent("#area-ctl .areahint")), "size: the edit panel gives radius, diameter and area");
   await p.click('#area-ctl [data-area="done"]');
-  ok(/Summarise area/.test(await p.textContent("#area-ctl")), "desktop: Summarise area offered for the circle");
+  ok(/Summarize area/.test(await p.textContent("#area-ctl")), "desktop: Summarise area offered for the circle");
   // the size label on the map: radius and area, true to the drawn radius (pi r^2 within 1%)
   const szl = await p.evaluate(() => { const e = document.querySelector(".areasz span"); return e ? e.textContent : ""; });
   const rm = /Radius ([\d.,]+) (km|m) · ([\d.,]+) (km²|ha)/.exec(szl);

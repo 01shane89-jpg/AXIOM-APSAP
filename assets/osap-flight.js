@@ -171,8 +171,8 @@
     if (W.OSAP_DZSO && W.OSAP_DZSO.core) return Promise.resolve(W.OSAP_DZSO.core);
     if (!coreP) coreP = new Promise(function (res, rej) {
       var sc = D.createElement("script"); sc.src = "assets/osap-dzso.js";
-      sc.onload = function () { if (W.OSAP_DZSO && W.OSAP_DZSO.core) res(W.OSAP_DZSO.core); else rej(new Error("the drift maths did not load")); };
-      sc.onerror = function () { coreP = null; sc.remove(); rej(new Error("the drift maths did not load")); };
+      sc.onload = function () { if (W.OSAP_DZSO && W.OSAP_DZSO.core) res(W.OSAP_DZSO.core); else rej(new Error("the drift math did not load")); };
+      sc.onerror = function () { coreP = null; sc.remove(); rej(new Error("the drift math did not load")); };
       D.head.appendChild(sc);
     });
     return coreP;
@@ -272,7 +272,7 @@
       if (dzI < 0) warn.push("No drop zone is set: change a point's role to Drop zone (DZ).");
       P.forEach(function (p, k) { if (p.role === "dz" && !(k && P[k - 1].role === "ip")) warn.push("No IP before " + (p.name || "the DZ") + ": the run-in is timed at cruise speed, not the drop speed."); });
       if (plan.timeMode === "tot" && dzI < 0) warn.push("Times run from take-off: there is no DZ to time back from.");
-      if (plan.range > 0 && nm > plan.range) warn.push("The route (" + Math.round(nm) + " nm) is longer than this type's typical range of about " + plan.range + " nm: check refuelling with the aircrew.");
+      if (plan.range > 0 && nm > plan.range) warn.push("The route (" + Math.round(nm) + " nm) is longer than this type's typical range of about " + plan.range + " nm: check refueling with the aircrew.");
     }
     return { legs: out, nm: nm, s: cum, t: t, t0: t0, dzI: dzI, warn: warn };
   }

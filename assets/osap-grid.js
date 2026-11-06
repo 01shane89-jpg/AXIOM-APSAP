@@ -188,7 +188,7 @@
   /* two buttons on the tactical toolbar, after Base map: each one turns its drawing on or off */
   var TB = [
     ["lines", "Grid", "MGRS grid lines on or off", '<rect x="3" y="3" width="18" height="18" rx="1.5"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>'],
-    ["cross", "Crosshair", "Centre crosshair with its grid reference on or off", '<circle cx="12" cy="12" r="6.5"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="1" fill="currentColor"/>']
+    ["cross", "Crosshair", "Center crosshair with its grid reference on or off", '<circle cx="12" cy="12" r="6.5"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="1" fill="currentColor"/>']
   ];
   function addToolbarBtns() {
     var list = D.querySelector("#atk-tools .atk-list");
@@ -211,7 +211,7 @@
     var d = D.createElement("div"); d.id = "osap-gridrows";
     d.innerHTML = '<div class="mlh">Grid</div>' +
       '<label class="mlrow"><input type="checkbox" data-grid="lines"' + (st.grid ? " checked" : "") + '><span><b>MGRS grid lines</b><i>Grid zones, 100 km squares and 10 km, 1 km or 100 m lines as you zoom in, with their digits along the edges</i></span></label>' +
-      '<label class="mlrow"><input type="checkbox" data-grid="cross"' + (st.cross ? " checked" : "") + '><span><b>Centre crosshair</b><i>Marks the map centre with its grid reference</i></span></label>';
+      '<label class="mlrow"><input type="checkbox" data-grid="cross"' + (st.cross ? " checked" : "") + '><span><b>Center crosshair</b><i>Marks the map center with its grid reference</i></span></label>';
     ex.parentNode.insertBefore(d, ex);
     d.addEventListener("change", function (e) {
       var k = e.target.getAttribute("data-grid");

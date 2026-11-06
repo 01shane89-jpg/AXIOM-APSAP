@@ -85,7 +85,7 @@
   var LAYERS = [["deps", "Dependencies"], ["air", "Air nodes"], ["borders", "Borders"], ["us", "U.S. support"], ["med", "Medical"], ["sus", "Sustainment"], ["comms", "Comms"], ["haz", "Hazards"]];
   var LAY_DEF = { deps: 1, air: 1, borders: 1, us: 1, med: 0, sus: 0, comms: 1, haz: 1 }, LAY_KEY = "osap-epe-layers";
   var COMMS_C = { good: "#2b8a3e", degraded: "#e67700", none: "#c92a2a", unknown: "#868e96" };
-  var BASIS = { observed: "measured (coverage tiles)", mapped: "proximity (masts)", modelled: "modelled (line of sight)", reported: "reported (outage)" };
+  var BASIS = { observed: "measured (coverage tiles)", mapped: "proximity (masts)", modelled: "modeled (line of sight)", reported: "reported (outage)" };
   function flies(m) { return m === "helo" || m === "fw" || m === "sea"; }
 
   function G() { return W.OSAP_GEO; }
@@ -132,7 +132,7 @@
       el = D.createElement("div"); el.id = "epe"; el.hidden = true; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Evacuation plan");
       D.body.appendChild(el);
       el.addEventListener("click", onClick); el.addEventListener("change", onChange);
-      el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.cmDraw) { cmEnd(); S.cmmsg = "Cancelled."; render(); draw(); } else if (S.picking) pickEnd(); else close(); } });
+      el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.cmDraw) { cmEnd(); S.cmmsg = "Canceled."; render(); draw(); } else if (S.picking) pickEnd(); else close(); } });
       el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); });
       if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
     }
@@ -1111,7 +1111,7 @@
   /* a leg marked unusable: only that leg is worked out again, from the node before it; every other leg is kept */
   function failLeg(o, lid) {
     var l = legsOf(o).filter(function (x) { return x.id === lid; })[0]; if (!l) return;
-    if (flies(l.mode)) { l.bad = Date.now(); S.lmsg = l.id.replace("L", "Leg ") + " is flown or sailed in a straight line, so OSAP has no other line for it. It stays unusable; move a node or change how it is travelled."; sumUp(o); save(); render(); draw(); return; }
+    if (flies(l.mode)) { l.bad = Date.now(); S.lmsg = l.id.replace("L", "Leg ") + " is flown or sailed in a straight line, so OSAP has no other line for it. It stays unusable; move a node or change how it is traveled."; sumUp(o); save(); render(); draw(); return; }
     l.failed = (l.failed || []).concat([{ at: Date.now(), coords: thin(l.coords, 200), m: l.m, s: l.s, src: l.src }]).slice(-4);
     var tok = ++S.ltok; S.lbusy = o.id; S.lmsg = l.id.replace("L", "Leg ") + " marked unusable. Working out another line from " + (l.a.name || "the node before it") + "…"; render(); draw();
     routeLeg(l.a, l.b, l.mode || S.plan.mode, l.failed.map(function (f) { return f.coords; })).then(function (r) {
@@ -1208,7 +1208,7 @@
   var CM = {}; CM_T.forEach(function (t) { CM[t[0]] = { n: t[1], ab: t[2], g: t[3] }; });
   var CM_COL = { cp: "#212529", gxp: "#2b8a3e", axp: "#1864ab", pl: "#111111", corr: "#1c7ed6", avoid: "#c92a2a" };
   var CM_SYM = { cp: "g_check", gxp: "g_waypoint", axp: "g_medevac" };
-  var PL_NAMES = ["RED", "WHITE", "BLUE", "GOLD", "GREEN", "BLACK", "SILVER", "ORANGE", "BROWN", "GREY"];
+  var PL_NAMES = ["RED", "WHITE", "BLUE", "GOLD", "GREEN", "BLACK", "SILVER", "ORANGE", "BROWN", "GRAY"];
   var MAX_CM = 40, MAX_V = 60, MAX_POLY = 10;
   var DIRS = [["N", "North"], ["E", "East"], ["S", "South"], ["W", "West"]], DIR_N = { N: "North", E: "East", S: "South", W: "West" };
   var C8 = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
@@ -1333,7 +1333,7 @@
     cmAdd(d.k, d.pts.slice());
   }
   /* Esc cancels a drawing wherever the focus is (the map has it after a tap) */
-  function cmKey(e) { if (e.key === "Escape" && S.cmDraw) { e.preventDefault(); e.stopPropagation(); cmEnd(); S.cmmsg = "Cancelled."; render(); draw(); } }
+  function cmKey(e) { if (e.key === "Escape" && S.cmDraw) { e.preventDefault(); e.stopPropagation(); cmEnd(); S.cmmsg = "Canceled."; render(); draw(); } }
   function cmEnd() {
     var map = W.__asapMap;
     D.removeEventListener("keydown", cmKey);
@@ -1605,8 +1605,8 @@
   /* the printed key and table of the control measures */
   function cmPrint(pl) {
     var list = cms(pl).filter(okCm), b = blk(pl), bl = DIRS.filter(function (d) { return b[d[0]]; }).map(function (d) { return d[1]; });
-    var h = '<h2>Evacuation map</h2><figure class="mapf">' + svgMap(pl, {}) + '<figcaption class="n">All options, north up. Lines: green P, blue A, orange C, red E, grey dashed no role; dashed where flown or sailed; red dotted lines ruled out by the analyst. ' +
-      "Control measures placed by the analyst. Basemap squares need a connection; without one the plan is drawn on grey.</figcaption></figure>" +
+    var h = '<h2>Evacuation map</h2><figure class="mapf">' + svgMap(pl, {}) + '<figcaption class="n">All options, north up. Lines: green P, blue A, orange C, red E, gray dashed no role; dashed where flown or sailed; red dotted lines ruled out by the analyst. ' +
+      "Control measures placed by the analyst. Basemap squares need a connection; without one the plan is drawn on gray.</figcaption></figure>" +
       /* a close-up framed on the analyst's measures, when the options run much further than they lie */
       (function () {
         var fr = []; list.forEach(function (x) { fr = fr.concat(x.k === "corr" ? [] : x.pts); }); if (!fr.length) return "";
@@ -1648,7 +1648,7 @@
     var origin = '<section class="eposec"><h3>Origin</h3>' +
       (o ? '<p class="epeorg">' + (o.label ? "<b>" + E(o.label) + "</b> " : "") + '<code>' + E(grid(o.lat, o.lon)) + '</code> <span class="obs">' + E(o.how) + "</span></p>" : '<p class="obs">Where are the people? Set the origin with one of these.</p>') +
       '<div class="epebtns"><button type="button" data-ep="pick"' + (S.picking ? ' aria-pressed="true"' : "") + ">Pick on map</button><button type=\"button\" data-ep=\"me\">My location</button>" +
-      (pts.length ? '<select data-ep-pt aria-label="Use one of your map points"><option value="">Your map points…</option>' + pts.map(function (x) { return '<option value="' + E(x.id) + '">' + E(x.n) + " (" + E(dist(x.m)) + " from the map centre)</option>"; }).join("") + "</select>" : "") + "</div>" +
+      (pts.length ? '<select data-ep-pt aria-label="Use one of your map points"><option value="">Your map points…</option>' + pts.map(function (x) { return '<option value="' + E(x.id) + '">' + E(x.n) + " (" + E(dist(x.m)) + " from the map center)</option>"; }).join("") + "</select>" : "") + "</div>" +
       '<form id="epe-find" class="epefind" autocomplete="off"><input type="search" id="epe-q" maxlength="120" placeholder="Grid (MGRS, lat/lon) or a place: hotel, base, town" aria-label="Origin: a grid or a place"><button type="submit">Find</button></form>' +
       foundHtml() +
       '<div class="eperow"><label>Travel by <select data-ep-mode>' + MODES.map(function (m) { return '<option value="' + m[0] + '"' + (S.mode === m[0] ? " selected" : "") + ">" + m[1] + "</option>"; }).join("") + "</select></label>" +
@@ -1707,7 +1707,7 @@
       '<ol class="epeleg">' + legs.map(function (l, i) {
         var k = km[i], pr = legProp(l, k), st = pr.st.toLowerCase();
         return '<li data-ep-leg="' + E(l.id) + '"' + (l.bad ? ' class="bad"' : "") + '><div class="epel1"><b>' + E(l.a.name || "Origin") + " → " + E(l.b.name || "Destination") + "</b>" +
-          '<select data-ep-lmode="' + E(l.id) + '" aria-label="How this leg is travelled"' + (busy ? " disabled" : "") + ">" + LEG_M.map(function (m) { return '<option value="' + m[0] + '"' + ((flies(l.mode) ? l.mode : "ground") === m[0] ? " selected" : "") + ">" + E(m[1]) + "</option>"; }).join("") + "</select>" +
+          '<select data-ep-lmode="' + E(l.id) + '" aria-label="How this leg is traveled"' + (busy ? " disabled" : "") + ">" + LEG_M.map(function (m) { return '<option value="' + m[0] + '"' + ((flies(l.mode) ? l.mode : "ground") === m[0] ? " selected" : "") + ">" + E(m[1]) + "</option>"; }).join("") + "</select>" +
           '<span class="epelkm">' + E(dist(l.m)) + " · " + E(dur(l.s)) + " · km " + E(Math.round(k.from / 100) / 10) + "–" + E(Math.round(k.to / 100) / 10) + "</span></div>" +
           '<div class="obs"><span class="st-' + st + '">' + E(pr.st) + "</span> (OSAP proposes): " + E(pr.why) +
           (flies(l.mode) ? " " + E(l.src) + ". Straight line: no airspace, weather or sea state is checked." : "") +
@@ -1883,7 +1883,7 @@
     else if (b.hasAttribute("data-ep-cm")) { var ck = b.getAttribute("data-ep-cm"); if (S.cmDraw && S.cmDraw.k === ck) { cmEnd(); S.cmmsg = ""; render(); draw(); } else cmStart(ck); }
     else if (k === "cmfin") cmFinish();
     else if (k === "cmundo") { if (S.cmDraw) { S.cmDraw.pts.pop(); render(); draw(); } }
-    else if (k === "cmcan") { cmEnd(); S.cmmsg = "Cancelled."; render(); draw(); }
+    else if (k === "cmcan") { cmEnd(); S.cmmsg = "Canceled."; render(); draw(); }
     else if (b.hasAttribute("data-ep-cmdel")) cmDel(b.getAttribute("data-ep-cmdel"));
     else if (b.hasAttribute("data-ep-cmto")) toCm(b.getAttribute("data-ep-cmto"));
     else if (b.hasAttribute("data-ep-cmnode")) cmToNode(b.getAttribute("data-ep-cmnode"));

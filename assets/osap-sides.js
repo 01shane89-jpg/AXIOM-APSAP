@@ -102,7 +102,7 @@
       var n = by[s[0]].sort(), txt = n.slice(0, 4).join(", ") + (n.length > 4 ? " and " + (n.length - 4) + " more" : "");
       return '<div class="lg"><span class="sw" style="background:' + s[3] + ";opacity:1;box-shadow:inset 0 0 0 20px rgba(255,255,255," + (1 - s[5] - 0.15).toFixed(2) + ");border:2px " +
         (s[4] ? "dashed " : "solid ") + s[2] + '"></span><div>' + esc(s[1]) + '<span class="d">' + esc(txt) + "</span></div></div>";
-    }).join("") + '<div class="lg"><div><span class="d">Marked by you on this device. Your judgement, not a finding.</span></div></div>');
+    }).join("") + '<div class="lg"><div><span class="d">Marked by you on this device. Your judgment, not a finding.</span></div></div>');
   }
 
   /* ---------- the controls, in Layers ---------- */
@@ -134,7 +134,7 @@
     box = D.createElement("div"); box.id = "ml-sides";
     var cc0 = here();
     box.innerHTML = '<div class="mlh">Country sides <button type="button" id="sd-show" class="sd-on" aria-pressed="true" title="Show the sides you marked on the map">On</button></div>' +
-      '<p class="mlkey">Mark countries friend, neutral, hostile or another side; the map tints them like DeepState. Your own judgement, kept on this device only.</p>' +
+      '<p class="mlkey">Mark countries friend, neutral, hostile or another side; the map tints them like DeepState. Your own judgment, kept on this device only.</p>' +
       '<label class="sd-l" for="sd-cc">Country</label><select id="sd-cc">' + LIST.map(function (c) {
         return '<option value="' + c.id + '"' + (c.id === cc0 ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select>" +
       '<div id="sd-seg" role="group" aria-label="Side for this country">' + segHtml(st.m[cc0] || "") + "</div>" +

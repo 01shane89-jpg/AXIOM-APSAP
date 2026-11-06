@@ -543,7 +543,7 @@
       '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + '<span class="o3-deg" aria-hidden="true">000° N</span></button>' +
       '<button type="button" class="o3-b o3-zi" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="o3-b o3-zo" aria-label="Zoom out" title="Zoom out">−</button>' +
       '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button>' +
-      '<button type="button" class="o3-b o3-bld" title="3D buildings (Overture Maps). They appear when you zoom in close; grey ones have no recorded height and are drawn at an estimate" aria-label="3D buildings">' + BLD_ICON + "</button>" +
+      '<button type="button" class="o3-b o3-bld" title="3D buildings (Overture Maps). They appear when you zoom in close; gray ones have no recorded height and are drawn at an estimate" aria-label="3D buildings">' + BLD_ICON + "</button>" +
       '<button type="button" class="o3-crb" aria-expanded="false" aria-label="Map credits" title="Map credits">i</button></div>' +
       '<div class="o3-tilt"><label>Tilt <input type="range" min="0" max="85" step="1" aria-label="View angle (tilt)"></label><output></output></div>' +
       '<div class="o3-cr" hidden></div>' +
@@ -662,7 +662,7 @@
       }
       function drawSc() {
         var cc = gl.getCenter(), mpp = 40075016.686 * Math.cos(cc.lat * Math.PI / 180) / (512 * Math.pow(2, gl.getZoom()));
-        sc.innerHTML = scaleHtml(mpp, scaleMax()) + (gl.getPitch() > 10 ? '<small>at the centre</small>' : "");
+        sc.innerHTML = scaleHtml(mpp, scaleMax()) + (gl.getPitch() > 10 ? '<small>at the center</small>' : "");
       }
       view3.scale = drawSc;
       function exPaint() { ex.textContent = "×" + P.ex; ex.setAttribute("aria-label", "Relief ×" + P.ex + ". Tap to change"); }

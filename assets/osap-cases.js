@@ -252,7 +252,7 @@
     if (!L.ok) return L.msg;
     return "Synced " + ago(L.at) + "." + (L.keyless ? " Waiting for a lead to hand this device the case key." : "") + (L.unread ? " " + L.unread + " part" + (L.unread > 1 ? "s" : "") + " sealed under a key this device was never given." : "");
   }
-  var ACT = { approve: "approved an item", reject: "rejected an item", create: "made the case", rename: "renamed the case", invite: "invited someone", uninvite: "cancelled an invite", accept: "joined", decline: "declined an invite", call: "set a call sign", role: "changed a role", remove: "removed a member", leave: "left the case" };
+  var ACT = { approve: "approved an item", reject: "rejected an item", create: "made the case", rename: "renamed the case", invite: "invited someone", uninvite: "canceled an invite", accept: "joined", decline: "declined an invite", call: "set a call sign", role: "changed a role", remove: "removed a member", leave: "left the case" };
   function logLine(d, calls) {
     var who = calls[d.actor] || "a former member", what = ACT[d.action] || d.action, det = d.detail || {};
     if (d.action === "role") what += " (" + (calls[d.target.id] || "someone") + ": " + (ROLE[det.from] || det.from) + " to " + (ROLE[det.to] || det.to) + ")";
@@ -363,7 +363,7 @@
       cmd("invite", { case: id, email: em, role: val("[data-cs-irole]"), reason: reason() }).then(function (j) { afterChange(j, "Invited " + em + ". They see it when they sign in to OSAP."); }, fail);
       return;
     }
-    if ((b = t.closest("[data-cs-uninvite]"))) { cmd("uninvite", { case: id, email: b.getAttribute("data-cs-uninvite"), reason: reason() }).then(function (j) { afterChange(j, "Invite cancelled."); }, fail); return; }
+    if ((b = t.closest("[data-cs-uninvite]"))) { cmd("uninvite", { case: id, email: b.getAttribute("data-cs-uninvite"), reason: reason() }).then(function (j) { afterChange(j, "Invite canceled."); }, fail); return; }
     if ((b = t.closest("[data-cs-remove]"))) {
       if (!confirm("Remove this member from the case? They lose access at once, and new items are sealed under a new key they never get. What they already saw stays on their devices.")) return;
       cmd("remove", { case: id, member: b.getAttribute("data-cs-remove"), reason: reason() }).then(function (j) { afterChange(j, "Removed. This device makes the new case key on the next sync."); syncCase(id); }, fail);

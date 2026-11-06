@@ -47,12 +47,12 @@ const angDiff = (x, y) => Math.abs((((x - y) % 360) + 540) % 360 - 180);
   ok(await shown(p, "#ocp"), "desktop: tapping it opens the Compass card");
   ok(await p.evaluate(() => { const c = document.getElementById("ocp").getBoundingClientRect(), a = document.querySelector(".o3n-ctl").getBoundingClientRect(); return c.top >= a.bottom && Math.abs(c.left - a.left) < 4; }), "desktop: the card sits under the arrow");
   ok(!(await p.evaluate(() => window.OSAP_COMPASS.state().running)), "desktop: the compass sensor is not started on a computer until asked");
-  ok(/^Declination \d+\.\d° [EW] \(WMM 2025, map centre\)$/.test(await txt(p, "#ocp .ocp-dc")), "desktop: declination at the map centre shown (" + await txt(p, "#ocp .ocp-dc") + ")");
+  ok(/^Declination \d+\.\d° [EW] \(WMM 2025, map center\)$/.test(await txt(p, "#ocp .ocp-dc")), "desktop: declination at the map centre shown (" + await txt(p, "#ocp .ocp-dc") + ")");
   await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 9, { animate: false }));
   const box = await p.evaluate(() => { const r = document.getElementById("map").getBoundingClientRect(); return { x: r.left + r.width * 0.75, y: r.top + r.height / 2 }; });
   await p.mouse.move(box.x, box.y); await p.waitForTimeout(200);
   const brg = await txt(p, "#ocp .ocp-brg");
-  ok(/From map centre to pointer/.test(brg) && /\b0(8\d|9\d)° T\b/.test(brg) && /° M/.test(brg) && /km/.test(brg), "desktop: bearing and distance from the map centre to the pointer, true and magnetic (" + brg + ")");
+  ok(/From map center to pointer/.test(brg) && /\b0(8\d|9\d)° T\b/.test(brg) && /° M/.test(brg) && /km/.test(brg), "desktop: bearing and distance from the map centre to the pointer, true and magnetic (" + brg + ")");
   await p.click('#ocp [data-ocp="start"]');
   // a computer either has no orientation sensor (no reading comes) or its browser refuses or never answers the question:
   // every way ends in a plain message and the compass not running

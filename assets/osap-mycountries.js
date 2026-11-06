@@ -42,7 +42,7 @@
   var ROLES = [
     ["analyst", "Analyst", "The full Today screen for each of your countries."],
     ["team", "Team in country", "Also offers Use my location, so OSAP starts on the country you are in."],
-    ["traveller", "Traveller", "Today opens with the U.S. State Department travel advisory at the top."]
+    ["traveller", "Traveler", "Today opens with the U.S. State Department travel advisory at the top."]
   ];
   function my() {
     var m = lsGet(K_MY) || {}, p = Array.isArray(m.pins) ? m.pins.filter(function (c) { return typeof c === "string" && /^[a-z]{2,3}$/.test(c); }) : [];

@@ -243,7 +243,7 @@ async function openPlan(p) {
     localStorage.setItem("osap-medair-th", JSON.stringify([a])); }, { provider: "Test Air Rescue", base_name: "Test Air Rescue", base_lat: 13.9, base_lon: 100.6, status: "CONFIRMED", valid_h: 48, call_min: 0, approval_min: 0, handoff_min: 0, ground_min: 10, launch_min: 15, cruise_kn: 120, night_capable: "yes", day_capable: "yes" });
   await openPlan(p);
   ok(await p.evaluate(() => !!window.OSAP_MEDPLAN && !document.getElementById("medplan").hidden), "desktop: the Med plan button opens the plan for the drawn area");
-  ok(/Centred on the centre of the area/.test(await p.textContent("#medplan")), "desktop: with no point of injury set, the plan is centred on the area's centre");
+  ok(/Centered on the center of the area/.test(await p.textContent("#medplan")), "desktop: with no point of injury set, the plan is centred on the area's centre");
   await p.waitForFunction(() => document.querySelectorAll("#mp-rt h4").length === 3 && !/Working out the route/.test(document.getElementById("mp-rt").textContent), null, { timeout: 10000 });
   const fac = await p.textContent("#mp-fac");
   const order = (await p.$$eval("#mp-fac table", (t) => [...t[0].querySelectorAll("tbody tr td:nth-child(2) b")].map((x) => x.textContent)));
@@ -278,9 +278,9 @@ async function openPlan(p) {
   await p.waitForFunction(() => /Wikidata Q900001/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
   const wdRow = await p.evaluate(() => [...document.querySelectorAll("#mp-fac tbody tr")].map((r) => r.textContent).find((t) => /Trauma Test Hospital/.test(t)) || "");
   ok(/\+66 2 777 1000 \(Wikidata Q900001, matched by location, \d+ m\)/.test(wdRow) && /Website \(Wikidata Q900001/.test(wdRow) && !/listed in OpenStreetMap/.test(wdRow) && !/000 0000/.test(await p.textContent("#mp-fac")), "desktop: a hospital OSM lists without contacts gets Wikidata's phone and website, each labelled: " + wdRow.slice(0, 200));
-  await p.waitForFunction(() => /Call centre: 1719/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
+  await p.waitForFunction(() => /Call center: 1719/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
   const phRow = await p.evaluate(() => [...document.querySelectorAll("#mp-fac tbody tr")].map((r) => r.innerHTML).find((t) => /Trauma Test Hospital/.test(t)) || "");
-  ok(/Emergency: <a href="tel:027771669">02 777 1669<\/a> \(<a [^>]*href="https:\/\/trauma\.example\.org\/contact"[^>]*>the hospital's website<\/a>, read 2026-10-03\)/.test(phRow) && /Call centre: <a href="tel:1719">1719<\/a>/.test(phRow),
+  ok(/Emergency: <a href="tel:027771669">02 777 1669<\/a> \(<a [^>]*href="https:\/\/trauma\.example\.org\/contact"[^>]*>the hospital's website<\/a>, read 2026-10-03\)/.test(phRow) && /Call center: <a href="tel:1719">1719<\/a>/.test(phRow),
     "phones: a hospital's emergency line and call centre from its own website, each with its page and date");
   ok(!/02 000 0001/.test(await p.textContent("#mp-fac")) && /\+66 2 123 4567/.test(await p.textContent("#mp-fac")), "phones: a number OpenStreetMap lists is kept; the stored list only fills gaps");
   ok(/OSAP stored list of hospitals' published phone numbers.*read 2026-10-03, numbers for 2 hospitals in the country/.test(await p.textContent("#mp-src")), "phones: the sources list names the stored phone list and its date");
@@ -294,8 +294,8 @@ async function openPlan(p) {
   const roles = await p.evaluate(() => [...document.querySelectorAll("#mp-pst table.mproles tbody tr")].map((r) => [...r.children].map((c) => c.textContent)));
   ok(roles.length === 4 && /^Major trauma/.test(roles[0][0]) && /Far North Hospital/.test(roles[0][1]) && /Sourced Trauma Centre/.test(roles[0][2]) && /Trauma Test Hospital/.test(roles[0][3])
     && /Severe head injury/.test(roles[1][0]) && /Distant Burn Centre/.test(roles[1][3]) && /Wider search: nothing within \d+ km has this documented/.test(roles[1][3]) && /Distant Burn Centre/.test(roles[2][3])
-    && /Complex limb/.test(roles[3][0]) && /No hospital within \d+ km, nor any of the 1 documented hospitals farther out \(up to 1500 km\), has documented orthopaedic/i.test(roles[3][3])
-    && /Gap/.test(roles[3][3]) && /Reference only, not eligible: nearest with part documented, H\d+ Distant Burn Centre, [\d.]+ km \(plastic surgery and ICU documented; orthopaedic surgery and vascular surgery not\)/i.test(roles[3][3]),
+    && /Complex limb/.test(roles[3][0]) && /No hospital within \d+ km, nor any of the 1 documented hospitals farther out \(up to 1500 km\), has documented orthopedic/i.test(roles[3][3])
+    && /Gap/.test(roles[3][3]) && /Reference only, not eligible: nearest with part documented, H\d+ Distant Burn Centre, [\d.]+ km \(plastic surgery and ICU documented; orthopedic surgery and vascular surgery not\)/i.test(roles[3][3]),
     "desktop: a role table per casualty type; with nothing near documented, the wider search finds the nearest documented hospital; a type no documented hospital covers is a gap that says so " + JSON.stringify(roles[3]));
   ok(await p.evaluate(() => { const r = [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => /Distant Burn Centre/.test(x.textContent)); return !!r && /Beyond the \d+ km search: added as a hospital with documented capability/.test(r.textContent); }),
     "desktop: the hospital found by the wider search is listed and marked");
@@ -305,7 +305,7 @@ async function openPlan(p) {
      Primary and Secondary are both bypassed and kept as stabilisation options */
   const bt = await p.evaluate(() => { const R = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.major_trauma"), g = (k) => R.filter((x) => x.role === k)[0];
     return { p: [g("primary").stop, g("primary").stabilisation_option, (g("secondary").bypassed[0] || {}).reason, !!(g("secondary").bypassed[0] || {}).via_time], s: g("secondary").stop, t: [g("tertiary").stop, g("tertiary").via && g("tertiary").via.from] }; });
-  ok(JSON.stringify(bt) === JSON.stringify({ p: [false, true, "direct_inside_golden_hour", true], s: false, t: [true, "secondary"] }) && /POI → Tertiary/.test(roles[0][0]) && /Bypass: go direct to Secondary/.test(roles[0][1]) && /Stabilisation option/.test(roles[0][1]) && /Bypass: go direct to Tertiary/.test(roles[0][2]),
+  ok(JSON.stringify(bt) === JSON.stringify({ p: [false, true, "direct_inside_golden_hour", true], s: false, t: [true, "secondary"] }) && /POI → Tertiary/.test(roles[0][0]) && /Bypass: go direct to Secondary/.test(roles[0][1]) && /Stabilization option/.test(roles[0][1]) && /Bypass: go direct to Tertiary/.test(roles[0][2]),
     "desktop: bypass by time to required care: direct to Tertiary by air inside the golden hour, Primary and Secondary kept as stabilisation options " + JSON.stringify(bt) + " " + roles[0].join(" | ").slice(0, 300));
   await p.fill('#mp-pst [data-mpf="dwell"]', "0"); await p.waitForTimeout(1100);
   ok(/its time there \(0 min\), transfer activation/.test(await p.textContent("#mp-pst")), "desktop: the time at a stop can be set, and the comparison uses it");
@@ -332,7 +332,7 @@ async function openPlan(p) {
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
   /* Shane 2026-10-04: the legend follows the plan, alternates are marked, and a stabilization stop is named when nothing near is in the golden hour */
   const lgd = await p.evaluate(() => { const l = document.querySelector('[data-lg="medplan"]'); return { t: l ? l.textContent : "", shown: !!l && !l.hidden, alt: document.querySelectorAll(".mpicon.alt").length }; });
-  ok(lgd.shown && /Point of injury|Plan centre/.test(lgd.t) && /PRI\s*Primary MTF/.test(lgd.t) && /SEC\s*Secondary MTF/.test(lgd.t) && /TER\s*Tertiary MTF/.test(lgd.t) && !/PRI SEC/.test(lgd.t) && /Route to Primary/.test(lgd.t) && (!lgd.alt || /Alternate MTF/.test(lgd.t)) && !/Other hospital/.test(lgd.t), "legend: the map legend explains the medical plan's own marks and lines " + JSON.stringify(lgd));
+  ok(lgd.shown && /Point of injury|Plan center/.test(lgd.t) && /PRI\s*Primary MTF/.test(lgd.t) && /SEC\s*Secondary MTF/.test(lgd.t) && /TER\s*Tertiary MTF/.test(lgd.t) && !/PRI SEC/.test(lgd.t) && /Route to Primary/.test(lgd.t) && (!lgd.alt || /Alternate MTF/.test(lgd.t)) && !/Other hospital/.test(lgd.t), "legend: the map legend explains the medical plan's own marks and lines " + JSON.stringify(lgd));
   const stb = await p.evaluate(() => { const r = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.complex_limb" && x.role === "stabilization")[0]; return r ? [r.state, !!r.choice, r.ref && r.ref.f.name] : null; });
   ok(JSON.stringify(stb) === JSON.stringify(["gap", false, "Far North Hospital"]) && /^Complex limb traumaNo planned destination/.test(roles[3][0]) && /No documented stabilization stop\. No planned destination, and no hospital inside the golden hour has an emergency department documented by a credible source\. Nearest, for reference only and not eligible: Far North Hospital, 20 min by road\./.test(roles[3][0]),
     "stabilization: an emergency department OpenStreetMap lists is never a stabilization stop; the plan says none is documented and names the nearest for reference only " + JSON.stringify(stb) + " " + roles[3][0]);
@@ -366,8 +366,8 @@ async function openPlan(p) {
   ok(/City Ambulance Station/.test(ems) && /111 2222/.test(ems), "desktop: ambulance stations near the POI with their published phone");
   const mev = await p.textContent("#mp-mev");
   ok(/Test Air Rescue/.test(mev) && /555 0100/.test(mev) && /to the POI at 120 kn/.test(mev), "desktop: air rescue base with phone and flight time to the POI");
-  ok(/International SOS assistance centre, Bangkok/.test(mev) && /\+66 2 206 7777/.test(mev) && /read 2026-10-01/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => a.href === "https://www.internationalsos.com/assistance-centres")) && /International SOS assistance centres/.test(await p.textContent("#mp-src")), "desktop: the nearest International SOS assistance centres show with their published numbers and source");
-  ok(/TRICARE Overseas, Pacific Area regional call centre: \+65-6339-2676/.test(mev) && !/Eurasia-Africa/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => /web\.archive\.org\/web\/20260423013428\/https:\/\/www\.tricare\.mil/.test(a.href))), "desktop: the TRICARE Overseas Pacific call centre shows in medevac, with its source");
+  ok(/International SOS assistance center, Bangkok/.test(mev) && /\+66 2 206 7777/.test(mev) && /read 2026-10-01/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => a.href === "https://www.internationalsos.com/assistance-centres")) && /International SOS assistance centers/.test(await p.textContent("#mp-src")), "desktop: the nearest International SOS assistance centres show with their published numbers and source");
+  ok(/TRICARE Overseas, Pacific Area regional call center: \+65-6339-2676/.test(mev) && !/Eurasia-Africa/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => /web\.archive\.org\/web\/20260423013428\/https:\/\/www\.tricare\.mil/.test(a.href))), "desktop: the TRICARE Overseas Pacific call centre shows in medevac, with its source");
   ok(/launch, fly in, 10 min on the ground, fly to H1/.test(mev) && /(Inside|Beyond) golden hour|golden-hour limit/.test(mev), "desktop: medevac call-to-hospital time against the golden hour");
   const air = await p.textContent("#mp-air");
   ok(/Riverside Pad/.test(air) && /Test Airfield/.test(air) && /VTXX/.test(air), "desktop: helipads and airfields listed with ICAO code");
@@ -383,7 +383,7 @@ async function openPlan(p) {
   const pac = await p.evaluate(() => ({ t: document.getElementById("mp-rt").textContent, n: document.querySelectorAll("#mp-rt table.mppac").length,
     rows: [...document.querySelectorAll("#mp-rt table.mppac")].map((t) => [...t.querySelectorAll("tbody th")].map((x) => x.textContent).join()),
     val: document.getElementById("mp-val").textContent, src: document.getElementById("mp-src").textContent, blue: (() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polyline && !(l instanceof L.Polygon) && l.options.color === "#1d5fa8" && l.options.dashArray) n++; }); return n; })() }));
-  ok(pac.n === 3 && pac.rows.every((r) => r === "P primary,A alternate") && /\(\+\d+ min\)/.test(pac.t) && /an order \(fastest first\), not a judgement/.test(pac.t) && /not a clearance/.test(pac.t), "phase 3: each routed hospital gets P and A lines with how much longer A is " + JSON.stringify(pac.rows));
+  ok(pac.n === 3 && pac.rows.every((r) => r === "P primary,A alternate") && /\(\+\d+ min\)/.test(pac.t) && /an order \(fastest first\), not a judgment/.test(pac.t) && /not a clearance/.test(pac.t), "phase 3: each routed hospital gets P and A lines with how much longer A is " + JSON.stringify(pac.rows));
   ok(calls.alt === 3 && pac.blue >= 3, "phase 3: one Route-tab request per hospital, alternates drawn in blue " + JSON.stringify({ alt: calls.alt, blue: pac.blue }));
   ok(/Alternate ground route: A \+\d+ min on the primary/.test(pac.val) && /no contingency line/.test(pac.val) && /Hazards along the primary route/.test(pac.val), "phase 3: validation names the alternate and checks hazards on the primary");
   ok(/Alternate routes and hazards along them/.test(pac.src) && /3 of 3 hospitals routed/.test(pac.src), "phase 3: the sources list the Route tab's lines and what was read");
@@ -410,7 +410,7 @@ async function openPlan(p) {
   /* the nearest blood bank (Shane) */
   await p.waitForFunction(() => /Test National Blood Centre/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
   const bl = await p.evaluate(() => { const f = document.getElementById("mp-fac").textContent; return { f: f.slice(f.indexOf("Nearest blood bank"), f.indexOf("Nearest blood bank") + 400), mk: [...document.querySelectorAll(".mpicon.bl")].map((m) => m.textContent) }; });
-  ok(/Test National Blood Centre\s*Blood bank/.test(bl.f) && /\+66 2 256 4300/.test(bl.f) && /Test Donation Room\s*Blood donation centre/.test(bl.f) && /km/.test(bl.f) && bl.mk.includes("B1") && bl.mk.includes("B2"), "blood: the nearest blood banks are listed with contacts, distance and their own map marks " + JSON.stringify(bl).slice(0, 260));
+  ok(/Test National Blood Centre\s*Blood bank/.test(bl.f) && /\+66 2 256 4300/.test(bl.f) && /Test Donation Room\s*Blood donation center/.test(bl.f) && /km/.test(bl.f) && bl.mk.includes("B1") && bl.mk.includes("B2"), "blood: the nearest blood banks are listed with contacts, distance and their own map marks " + JSON.stringify(bl).slice(0, 260));
   /* the nearest dive decompression chamber (Shane) */
   const dc = await p.evaluate(() => { const f = document.getElementById("mp-fac").textContent, i = f.indexOf("Nearest dive decompression"); return { f: f.slice(i, i + 520), mk: [...document.querySelectorAll(".mpicon.dc")].map((m) => m.textContent) }; });
   ok(/Test Hyperbaric Centre/.test(dc.f) && /healthcare:speciality=hyperbaric_medicine/.test(dc.f) && /\+66 38 000 911/.test(dc.f) && /km/.test(dc.f) && /fly as low as safely possible/.test(dc.f) && dc.mk.includes("D1"), "chamber: the nearest decompression chamber is listed with its source, contacts, distance, a D mark and the low-altitude note " + JSON.stringify(dc).slice(0, 240));
@@ -542,15 +542,15 @@ async function openPlan(p) {
   await p.waitForFunction(() => /D1/.test(document.getElementById("mp-oc").textContent) && /Road route to P1/.test(document.getElementById("mp-oc").textContent), null, { timeout: 15000 });
   const oc = await p.textContent("#mp-oc");
   ok(/Test International/.test(oc) && /VTTT \/ TTT/.test(oc) && /30 min/.test(oc), "out of country: departure airport with drive time");
-  ok(/International SOS assistance centre, (Bangkok|Kuala Lumpur|Singapore)/.test(oc), "out of country: International SOS assistance centres listed with the emergency contacts");
+  ok(/International SOS assistance center, (Bangkok|Kuala Lumpur|Singapore)/.test(oc), "out of country: International SOS assistance centres listed with the emergency contacts");
   ok(/Receiving hospitals in nearby countries/.test(oc) && await p.evaluate(() => document.querySelectorAll("#mp-oc tbody tr").length >= 2), "out of country: sourced hospitals in nearby countries");
   ok(/at 250 kn \+ 15 min launch/.test(oc), "out of country: flight times state the speed and launch time");
   ok(/U\.S\. Embassy Bangkok/.test(oc) && /205 4000/.test(oc) && /1-888-407-4747/.test(oc) && /\+1 202-501-4444/.test(oc) && /travel\.state\.gov/.test(oc), "out of country: embassy address and phone, State Department emergency numbers with source");
   ok(await p.evaluate(() => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === "P1")), "out of country: the airport is marked on the map");
   /* strategic evacuation out of Asia-Pacific: east through Hawaii to a west-coast Level I, or west to Germany */
   const se = await p.evaluate(() => [...document.querySelectorAll("#mp-oc table.mpse tbody tr")].map((r) => r.textContent));
-  ok(se.length === 2 && /^West\s*Suggested/.test(se[0]) && /Singapore General Hospital.*Landstuhl Regional Medical Center.*Level II trauma centre, ACS verified/.test(se[0]) &&
-    /^East/.test(se[1]) && /U\.S\. Naval Hospital Okinawa.*Tripler Army Medical Center.*UC San Diego Health, Hillcrest.*Level I trauma centre/.test(se[1]), "out of country: two strategic chains, shorter first, each stop with its level and source: " + se.map((x) => x.slice(0, 90)).join(" | "));
+  ok(se.length === 2 && /^West\s*Suggested/.test(se[0]) && /Singapore General Hospital.*Landstuhl Regional Medical Center.*Level II trauma center, ACS verified/.test(se[0]) &&
+    /^East/.test(se[1]) && /U\.S\. Naval Hospital Okinawa.*Tripler Army Medical Center.*UC San Diego Health, Hillcrest.*Level I trauma center/.test(se[1]), "out of country: two strategic chains, shorter first, each stop with its level and source: " + se.map((x) => x.slice(0, 90)).join(" | "));
   ok(/at 450 kn with 2 h on the ground/.test(oc) && /\d+ h \d{2} min/.test(se[0]), "out of country: chain times are labelled estimates at the stated speed");
   ok(await p.evaluate(() => ["HAW", "DEU", "SGP", "JPN", "USA"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "out of country: every chain stop is marked on the map");
   await p.click('#medplan [data-mp="dock"]'); await p.click('#mp-oc [data-mp="strat"]'); await p.waitForTimeout(400);
@@ -568,7 +568,7 @@ async function openPlan(p) {
   ok(await p.evaluate(() => document.getElementById("medplan").hidden && !!document.getElementById("mp-pickbar")), "POI: Pick on map hides the plan and asks for a tap");
   const box = await p.evaluate(() => { const r = window.__asapMap.getContainer().getBoundingClientRect(); return { x: r.left + r.width / 2 + 40, y: r.top + r.height / 2 + 30 }; });
   await p.mouse.click(box.x, box.y);
-  await p.waitForFunction(() => !document.getElementById("medplan").hidden && /Centred on the anticipated point of injury/.test(document.getElementById("medplan").textContent), null, { timeout: 5000 });
+  await p.waitForFunction(() => !document.getElementById("medplan").hidden && /Centered on the anticipated point of injury/.test(document.getElementById("medplan").textContent), null, { timeout: 5000 });
   ok(/^\d{2}[A-Z] [A-Z]{2} \d{4} \d{4}$/.test(await p.inputValue("#mpf-poi")), "POI: the tapped point fills the POI grid: " + await p.inputValue("#mpf-poi"));
   await p.waitForFunction(() => document.querySelector("#mp-fac table"), null, { timeout: 10000 });
   ok(calls.overpass === 2 && calls.osrm >= 3 && await p.evaluate(() => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === "POI")), "POI: everything is looked up again from the POI and it is marked on the map");
@@ -628,7 +628,7 @@ async function openPlan(p) {
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
   await p.selectOption("#mp-from", "ccp1");
-  await p.waitForFunction(() => /Centred on Casualty collection point/.test(document.getElementById("medplan").textContent) && document.querySelector("#mp-fac table"), null, { timeout: 10000 });
+  await p.waitForFunction(() => /Centered on Casualty collection point/.test(document.getElementById("medplan").textContent) && document.querySelector("#mp-fac table"), null, { timeout: 10000 });
   ok(calls.osrm > before, "desktop: drive times recomputed from the CCP");
   ok(await p.inputValue("#mpf-unit") === "Test element", "desktop: fields survive a new centre");
   // Plan status (Build Plan v2 phase 0): one plan record, checked by fixed rules
@@ -683,7 +683,7 @@ async function openPlan(p) {
   await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || "") && !/Drawing the map/.test(document.getElementById("mpd-cap").textContent), null, { timeout: 60000 });
   const tc = await p.textContent("#mpd-cap");
-  ok(TILES.osm > 0 && TILES.max <= 6 && TILES.esri === 0 && /could not be loaded and are left grey/.test(tc), "print map: tiles load six at a time; a tile OpenStreetMap fails is left grey and the caption says so (no Esri stand-in since 2026-10-17) " + JSON.stringify(TILES) + " " + tc.slice(0, 120));
+  ok(TILES.osm > 0 && TILES.max <= 6 && TILES.esri === 0 && /could not be loaded and are left gray/.test(tc), "print map: tiles load six at a time; a tile OpenStreetMap fails is left grey and the caption says so (no Esri stand-in since 2026-10-17) " + JSON.stringify(TILES) + " " + tc.slice(0, 120));
   /* let the annex maps of the last view finish before counting again */
   for (let n = -1; n !== TILES.osm + TILES.esri; ) { n = TILES.osm + TILES.esri; await p.waitForTimeout(1500); }
   Object.assign(TILES, { mode: "osm", osm: 0, esri: 0 });
@@ -723,7 +723,7 @@ async function openPlan(p) {
   ok(/Main roads/.test(as.rt), "assessment: the road route with its main roads: " + as.rt);
   ok(as.pad && as.af && /\+66 2 123 4567/.test(as.ct2), "assessment: helipad, nearest airfield and contacts lines");
   ok(/TRICARE status not known/.test(as.tc) && !/accept/i.test(as.tc.replace(/acceptance/g, "")) && as.tclinks >= 2, "assessment: TRICARE status not known, never assumed, with where to confirm: " + as.tc);
-  ok(/Pacific Area regional call centre: \+65-6339-2676/.test(as.tc), "assessment: TRICARE line gives the Pacific call centre to confirm with");
+  ok(/Pacific Area regional call center: \+65-6339-2676/.test(as.tc), "assessment: TRICARE line gives the Pacific call centre to confirm with");
   ok(as.btn === 0, "assessment: no buttons inside the printed pages");
   // Phase 1: a planner's check, graded V1, with an expiring "available now"; it outranks the designation for the pick
   const chk = async (cap, ex, now, extra) => p.evaluate(([cap, ex, now, extra]) => {
@@ -793,14 +793,14 @@ async function openPlan(p) {
   await p.evaluate(() => window.OSAP_MEDPLAN.open({ at: [13.76, 100.51] }));
   await p.waitForFunction(() => document.querySelector("#mp-fac table") && /min/.test(document.getElementById("mp-fac").textContent), null, { timeout: 20000 }).catch(() => {});
   const pt = await p.evaluate(() => ({ t: document.getElementById("medplan").textContent, poi: document.getElementById("mpf-poi").value, opts: [...document.querySelectorAll("#mp-from option")].map((o) => o.textContent), pst: (document.getElementById("mp-pst") || {}).textContent || "", mk: [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === "POI") }));
-  ok(/Planned from a point, no drawn area needed/.test(pt.t) && /Centred on the anticipated point of injury/.test(pt.t) && /^\d{2}[A-Z] [A-Z]{2} \d{4} \d{4}$/.test(pt.poi) && /Primary/.test(pt.pst) && pt.mk, "point: the plan opens on a point with no drawn area, the point as the POI: " + pt.poi);
-  ok(pt.opts.some((x) => /^Your point Alpha: 47P/.test(x)) && pt.opts.some((x) => /Map centre when opened/.test(x)), "point: your dropped points are offered as other points of injury: " + pt.opts.join(" | "));
+  ok(/Planned from a point, no drawn area needed/.test(pt.t) && /Centered on the anticipated point of injury/.test(pt.t) && /^\d{2}[A-Z] [A-Z]{2} \d{4} \d{4}$/.test(pt.poi) && /Primary/.test(pt.pst) && pt.mk, "point: the plan opens on a point with no drawn area, the point as the POI: " + pt.poi);
+  ok(pt.opts.some((x) => /^Your point Alpha: 47P/.test(x)) && pt.opts.some((x) => /Map center when opened/.test(x)), "point: your dropped points are offered as other points of injury: " + pt.opts.join(" | "));
   await p.selectOption("#mp-from", "pt:pa");
-  await p.waitForFunction(() => /Centred on your point Alpha/.test(document.getElementById("medplan").textContent), null, { timeout: 5000 }).catch(() => {});
-  ok(/Centred on your point Alpha/.test(await p.textContent("#medplan")), "point: choosing your point re-centres the plan on it");
+  await p.waitForFunction(() => /Centered on your point Alpha/.test(document.getElementById("medplan").textContent), null, { timeout: 5000 }).catch(() => {});
+  ok(/Centered on your point Alpha/.test(await p.textContent("#medplan")), "point: choosing your point re-centres the plan on it");
   await p.click('#medplan [data-mp="close"]');
   await p.evaluate(() => window.OSAP_MEDPLAN.open({ centre: true })); await p.waitForTimeout(300);
-  ok(/Centred on the map centre|Centred on the anticipated point of injury/.test(await p.textContent("#medplan")) && !/Draw an area first/.test(await p.textContent("#medplan")), "point: from the Reports menu it opens on the map centre, never asking for an area");
+  ok(/Centered on the map center|Centered on the anticipated point of injury/.test(await p.textContent("#medplan")) && !/Draw an area first/.test(await p.textContent("#medplan")), "point: from the Reports menu it opens on the map centre, never asking for an area");
   ok(!errors.length, "point: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -1058,8 +1058,8 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   ok(/Official record/.test(b) && /99001/.test(b) && /Regional hospital/.test(b) && /A \(advanced: regional referral\)/.test(b) && /450 open, 500 registered/.test(b) && /Advanced HA accreditation \(x\), 2025-01-01 to 2028-12-31/.test(b), "official records: the assessment shows the H code, type, MOPH level, beds and HA accreditation");
   ok(/Stroke care/.test(b) && /Hip fracture surgery in older people[^<]*2021-01-01 to 2024-01-01 expired/.test(b), "official records: certified programmes are listed and a past end date reads expired");
   ok(/<th scope="row">Stroke<\/th><td><span class="mpgrade mpg-v2"[^>]*>V2 Official source<\/span> <b>VERIFIED<\/b>, confidence HIGH/.test(h) && /HA Thailand open data: certifications test/.test(b) && /cccccccccccc/.test(b), "official records: a current certificate makes its capability VERIFIED at HIGH confidence, with the source and SHA-256");
-  ok(/<th scope="row">Orthopaedic surgery<\/th><td><span class="mpgrade mpg-v2"[^>]*>V2 Official source<\/span> <b>REPORTED<\/b>, confidence LOW · available now: <b>UNKNOWN<\/b> \(no planner's check\) · <a[^>]*>[^<]*<\/a> <code>[^<]*expired/.test(h), "official records: an expired certificate leaves its capability REPORTED at LOW confidence, marked expired");
-  ok(!/<th scope="row">Cardiac catheterisation<\/th><td><b>(VERIFIED|NOT_AVAILABLE)/.test(h), "official records: no certificate is never read as no capability");
+  ok(/<th scope="row">Orthopedic surgery<\/th><td><span class="mpgrade mpg-v2"[^>]*>V2 Official source<\/span> <b>REPORTED<\/b>, confidence LOW · available now: <b>UNKNOWN<\/b> \(no planner's check\) · <a[^>]*>[^<]*<\/a> <code>[^<]*expired/.test(h), "official records: an expired certificate leaves its capability REPORTED at LOW confidence, marked expired");
+  ok(!/<th scope="row">Cardiac catheterization<\/th><td><b>(VERIFIED|NOT_AVAILABLE)/.test(h), "official records: no certificate is never read as no capability");
   /* Shane 2026-10-04: official status counts, as INFERRED and named, for what the status stands for */
   const rowOf = (n) => (h.match(new RegExp('<th scope="row">' + n + '</th>[\\s\\S]*?</tr>')) || [""])[0];
   ok(/INFERRED/.test(rowOf("CT")) && /inferred from the official record: MOPH service level A \(regional referral\), H code 99001/.test(rowOf("CT")) && /INFERRED/.test(rowOf("Emergency operating room")) && !/INFERRED/.test(rowOf("Stroke")) && !/INFERRED/.test(rowOf("Neurosurgery")),
@@ -1075,8 +1075,8 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   await p.click('#mp-fac tr:has-text("Sourced Trauma Centre") [data-mp-assess]');
   await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || "") && /Sourced Trauma Centre/.test(document.getElementById("brief").textContent), null, { timeout: 20000 });
   const hS = await p.innerHTML("#brief"), rowS = (n) => (hS.match(new RegExp('<th scope="row">' + n + '</th>[\\s\\S]*?</tr>')) || [""])[0];
-  ok(/INFERRED/.test(rowS("General surgeon")) && /MOPH service level S, H code 99002; level S: specialists in every major and secondary branch/.test(rowS("General surgeon")) && /INFERRED/.test(rowS("Orthopaedic surgery")) && /INFERRED/.test(rowS("Anaesthesia")) &&
-    /INFERRED/.test(rowS("Emergency operating room")) && /operating room within 60 minutes/.test(rowS("Emergency operating room")) && /INFERRED/.test(rowS("ICU")) && /ICU and operating theatre are level criteria from M2 up/.test(rowS("ICU")) &&
+  ok(/INFERRED/.test(rowS("General surgeon")) && /MOPH service level S, H code 99002; level S: specialists in every major and secondary branch/.test(rowS("General surgeon")) && /INFERRED/.test(rowS("Orthopedic surgery")) && /INFERRED/.test(rowS("Anesthesia")) &&
+    /INFERRED/.test(rowS("Emergency operating room")) && /operating room within 60 minutes/.test(rowS("Emergency operating room")) && /INFERRED/.test(rowS("ICU")) && /ICU and operating theater are level criteria from M2 up/.test(rowS("ICU")) &&
     /INFERRED/.test(rowS("Blood bank")) && /Service Plan rooms for level S \(general hospital, 300-500 beds\)/.test(rowS("Blood bank")) && /INFERRED/.test(rowS("CT")) && /1 CT room/.test(rowS("CT")) &&
     /INFERRED/.test(rowS("X-ray")) && /INFERRED/.test(rowS("Burn care")) && !/INFERRED/.test(rowS("Neurosurgery")) && !/INFERRED/.test(rowS("Mechanical ventilation")),
     "MOPH levels: a level S hospital gets surgery, orthopaedics, anaesthesia, emergency theatre, ICU, X-ray, blood bank, CT and burn unit as INFERRED with the reason; neurosurgery and ventilation stay unknown " + JSON.stringify(["General surgeon", "Emergency operating room", "ICU", "Blood bank", "CT"].map((n) => rowS(n).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 150))));
@@ -1176,7 +1176,7 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   ok(r.m === "+66 2 123 4567" && r.n === "" && r.o === "" && r.q === "https://www.x.org", "rules: only well-formed phones and web links are shown");
   ok(r.ref[0] === 3 && /teaching or referral hospital: Mahidol University/.test(r.ref[1]) && /English Wikipedia/.test(r.ref[1]) && r.ref[2] === "No verified trauma designation" && r.nref === 0, "rules: a university teaching or referral hospital in the sourced list ranks top of the not-known group, with its source; a private hospital note is not: " + JSON.stringify([r.ref, r.nref]));
   ok(r.r1 === 2 && r.r2 === 2 && r.r3 === 1 && r.r4 === 3, "rules: surgery is Role 2, ED + 100 beds Role 2, ED alone Role 1, surgery + intensive care Role 3 " + [r.r1, r.r2, r.r3, r.r4]);
-  ok(r.r5 === "Trauma Level II (official designation, reported)" && r.r6 === "Trauma centre, level not stated (reported)", "rules: a stated trauma level reads as stated: " + r.r5 + ", " + r.r6);
+  ok(r.r5 === "Trauma Level II (official designation, reported)" && r.r6 === "Trauma center, level not stated (reported)", "rules: a stated trauma level reads as stated: " + r.r5 + ", " + r.r6);
   ok(r.tc.u === "UNKNOWN" && r.tc.t5 === "T5" && r.tc.t3[0] === "T3" && /could be T2 if neurosurgery 24\/7, mechanical ventilation and trauma surgeon or trauma team are confirmed/.test(r.tc.t3[1]) && r.tc.none === "NONE"
     && !/Level/.test(r.tc.t3[1]) && r.tc.nolev === 3, "rules: T-class from flags (unknown stays unknown, a met class names what would raise it, no emergency department is NONE); never worded as a level; capabilities never give an official designation " + JSON.stringify(r.tc));
   ok(r.tk.includes("12_100") && r.tk2.includes("0_178") && r.tk2.includes("0_-180"), "rules: stored-copy tiles cover the reach, across the date line " + r.tk2.join(" "));
