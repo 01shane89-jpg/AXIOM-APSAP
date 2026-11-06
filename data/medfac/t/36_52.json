@@ -7,7 +7,7 @@
 ["n10606179418",36.55941,53.06389,"ir",{"name":"مرکز بهداشتی درمانی تامین اجتماعی ساری","amenity":"clinic","healthcare":"clinic"}],
 ["n10722035327",36.62786,52.23925,"ir",{"emergency":"ambulance_station"}],
 ["n10785174051",36.62877,52.91131,"ir",{"name":"اورژانس ۱۱۵","emergency":"ambulance_station"}],
-["n10819946748",36.46568,52.85109,"ir",{"name":"کلینیک دکتر پورنبی","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"dental_oral_maxillo_facial_surgery","operator":"dr alireza pournabi","operator:type":"public","addr:housenumber":"2","addr:street":"خیابان امام خمینی","addr:city":"قائمشهر","opening_hours":"Mo-Su 10:00-22:00"}],
+["n10819946748",36.46568,52.85109,"ir",{"name":"دکتر پورنبی جراح فک و ایمپلنت","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"dental_oral_maxillo_facial_surgery","operator":"dr alireza pournabi","operator:type":"public","addr:housenumber":"2","addr:street":"خیابان امام خمینی","addr:city":"قائمشهر","opening_hours":"Mo-Su 10:00-22:00"}],
 ["n10872822896",36.71951,53.80916,"ir",{"name":"بهداری شهر گلوگاه","amenity":"hospital","healthcare":"hospital"}],
 ["n10910811164",36.55394,53.03336,"ir",{"name":"کلینیک دندانپزشکی ایرانیان","amenity":"hospital","healthcare":"clinic","healthcare:speciality":"dentist;anaesthetics;implant;radiology","addr:street":"بلوار پاسداران","addr:city":"Sari"}],
 ["n11035727997",36.66674,53.2662,"ir",{"name":"خانه بهداشت آلوکنده","amenity":"clinic","healthcare":"clinic","addr:street":"صاحب الزمان","addr:city":"الوکنده"}],

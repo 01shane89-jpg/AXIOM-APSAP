@@ -125,7 +125,7 @@
 ["w1444461892",36.68175,47.13164,"ir",{"aeroway":"helipad"}],
 ["w1451908100",36.2431,46.26599,"ir",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1533048782",37.93952,46.16128,"ir",{"name":"مرکز سلامت شماره 3 سهند علامه امینی","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"paediatrics;vaccination;blood_check;general","operator":"شرکت تعاونی خدمات بهداشتی درمانی 1082"}],
-["w1533068739",37.99657,46.4231,"ir",{"name":"کلینیک و بیمارستان چشم پزشکی مهر","amenity":"clinic","healthcare":"clinic","phone":"984135532791"}],
+["w1533068739",37.99657,46.4231,"ir",{"name":"کلینیک جراحی محدود و سرپایی چشم پزشکی مهر خاوران","amenity":"hospital","healthcare":"hospital"}],
 ["w1558477819",37.58144,47.39194,"ir",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1558481548",37.58125,47.39231,"ir",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1559281314",36.06925,47.51599,"ir",{"aeroway":"helipad"}],

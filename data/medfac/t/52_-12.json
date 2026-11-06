@@ -1,5 +1,5 @@
 [["n13279709669",52.1427,-10.27015,"ie",{"name":"Ré Nua Natural Health Clinic","amenity":"clinic","healthcare":"clinic"}],
-["n3381418414",52.13902,-10.26994,"ie",{"name":"Dingle Medical Centre","amenity":"clinic","healthcare":"clinic"}],
+["n3381418414",52.13902,-10.26994,"ie",{"name":"Dingle Medical Centre","amenity":"clinic","healthcare":"clinic","opening_hours":"Mo-Fr 09:30-17:00"}],
 ["n3381418415",52.1402,-10.26728,"ie",{"name":"Clinic Cois Abhainn","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","phone":"+353669151465","addr:street":"The Mall","addr:city":"Dingle","addr:postcode":"V92PT99"}],
 ["n3381418416",52.14164,-10.26494,"ie",{"name":"Dingle Doc","amenity":"clinic","healthcare":"clinic"}],
 ["n6025853353",52.07527,-10.66106,"ie",{"operator":"Commissioners of Irish Lights","aeroway":"helipad"}],

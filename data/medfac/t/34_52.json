@@ -21,7 +21,7 @@
 ["n5519163658",35.87913,52.96185,"ir",{"name":"هلال احمر ایران","name:en":"Iranian Red Crescent","emergency":"ambulance_station"}],
 ["n5533731295",35.97791,53.02395,"ir",{"name":"پایگاه هلال احمر","amenity":"clinic","healthcare":"clinic"}],
 ["n5641980921",35.84398,52.04825,"ir",{"name":"هلال احمر","name:en":"Red crescent","amenity":"clinic"}],
-["n5660167423",35.71111,53.35292,"ir",{"name":"دارالشفا","name:en":"Darolshafa","amenity":"hospital","healthcare":"hospital","addr:street":"خیابان بازار"}],
+["n5660167423",35.71455,53.35717,"ir",{"name":"دارالشفا","name:en":"Darolshafa","amenity":"hospital","healthcare":"hospital","addr:street":"خیابان بازار"}],
 ["n6052618807",35.22594,52.36323,"ir",{"name":"مرکز تصویر برداری پزشکی گرمسار MRI","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"mri;ماموگرافی;سونوگرافی","operator":"پرتو گستر"}],
 ["n6076068741",35.5655,53.40409,"ir",{"name":"مرکز خدمات بهداشتی و درمانی ۱۷ شهریور","amenity":"clinic","healthcare":"clinic"}],
 ["n6076758628",35.56505,53.39417,"ir",{"name":"درمانگاه فرهنگیان","amenity":"clinic","healthcare":"clinic"}],

@@ -6,7 +6,7 @@
 ["n11680972765",37.10543,56.85565,"ir",{"name":"درمانگاه","amenity":"clinic","healthcare":"clinic"}],
 ["n11680975771",37.09728,56.8605,"ir",{"name":"پایگاه هلال احمر","emergency":"ambulance_station"}],
 ["n11680995626",37.33591,56.88212,"ir",{"name":"مرکز بهداشت","amenity":"clinic","healthcare":"clinic"}],
-["n11915756626",37.48181,57.32137,"ir",{"name":"درمانگاه شبانه روزی و داروخانه مهر","amenity":"hospital","healthcare":"hospital","phone":"05832229681","website":"https://www.instagram.com/mehr.clinic.bojnourd?igsh=aWJibTI5cXI3dzM1","addr:street":"صمدیه لباف","addr:city":"بجنورد","addr:postcode":"9415934333"}],
+["n11915756626",37.48181,57.32137,"ir",{"name":"درمانگاه شبانه روزی و داروخانه مهر","amenity":"hospital","healthcare":"hospital","phone":"05832229681","website":"https://www.instagram.com/mehr.clinic.bojnourd","addr:street":"صمدیه لباف","addr:city":"بجنورد","addr:postcode":"9415934333"}],
 ["n11925357146",36.21475,57.68203,"ir",{"name":"کلینیک زیبایی و لیزر تبسم","amenity":"clinic","healthcare":"clinic"}],
 ["n12404331290",37.13106,57.53176,"ir",{"name":"خانه بهداشت","amenity":"hospital","healthcare":"hospital"}],
 ["n12468281112",36.21657,57.68402,"ir",{"name":"مطب دکتر محدثه زارعی","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"مامایی","operator":"محدثه زارعی","addr:street":"خیابان انقلاب","addr:city":"سبزوار","opening_hours":"Mo-Su 17:00-21:00"}],

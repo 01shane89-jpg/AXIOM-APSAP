@@ -18,7 +18,7 @@
 ["n12566008282",31.36765,50.07778,"ir",{"name":"درمانگاه","amenity":"clinic","healthcare":"clinic"}],
 ["n12586160332",30.52433,50.4547,"ir",{"name":"مرکز فوریت های پزشکی","emergency":"ambulance_station"}],
 ["n12598143094",30.60003,50.23944,"ir",{"name":"مجتمع پزشکی دکتر معاشی","amenity":"clinic","healthcare":"clinic"}],
-["n12704084141",30.66839,51.59401,"ir",{"name":"سونوگرافی دکتر صداقت","amenity":"clinic","healthcare":"clinic","operator":"دکتر صداقت","phone":"+987433228541"}],
+["n12704084141",30.66837,51.59381,"ir",{"name":"سونوگرافی دکتر صداقت","amenity":"clinic","healthcare":"clinic","operator":"دکتر صداقت","phone":"07433228541","opening_hours":"08:00-21:00"}],
 ["n12722678442",30.33085,50.21327,"ir",{"name":"درمانگاه","amenity":"clinic","healthcare":"clinic"}],
 ["n12846532964",31.9721,51.2935,"ir",{"name":"موسسه تصویربرداری (رادیولوژی و سونوگرافی) دکتر معصومی","amenity":"clinic","healthcare":"clinic","operator":"دکتر معصومی","addr:street":"بروجن خیابان فردوسی چهارراه سینما مجتمع بابایی طبقه دوم واحد ۲۰۲","addr:city":"شهر بروجن","opening_hours":"Mo-Su 09:00-21:00"}],
 ["n13116944853",30.82726,50.19842,"ir",{"name":"درمانگاه","amenity":"hospital","healthcare":"hospital"}],

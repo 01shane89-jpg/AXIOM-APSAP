@@ -22,6 +22,7 @@
 ["n13432068610",29.26684,51.21498,"ir",{"name":"کلینیک تغذیه و رژیم درمانی ابوالقاسم فروزان","amenity":"clinic","healthcare":"clinic","operator":"کلینیک تغذیه و رژیم درمانی ابوالقاسم فروزان","phone":"+989356830022","opening_hours":"Mo-Su 09:00-21:00"}],
 ["n13579955370",29.61974,51.6528,"ir",{"name":"کلینیک پوست و لیزر دکتر ارشدی","amenity":"clinic","healthcare":"clinic","operator":"کلینیک پوست و لیزر دکتر ارشدی","phone":"+989013109923","opening_hours":"Mo-Su 09:00-21:00"}],
 ["n13856285474",28.95967,50.83821,"ir",{"name":"کلینیک مامایی دنیا","amenity":"clinic","healthcare":"clinic","operator":"کلینیک مامایی دنیا","phone":"+989179618626","addr:street":"خیابان بعثت","addr:city":"بوشهر","opening_hours":"Mo-Su 09:00-21:00"}],
+["n14331842304",28.97104,50.82722,"ir",{"name":"مطب دکتر زهرا بحرینی","amenity":"clinic","healthcare":"clinic","operator":"دکتر زهرا بحرینی","operator:type":"public","phone":"۰۹۱۷۳۸۰۸۲۰۲","website":"https://my.blacktap.ir/drzahrabahreini/","addr:street":"کوچه ساحل ۹","addr:city":"شهر بوشهر","opening_hours":"شنبه تا پنج شنبه ساعت 9 صبح الی 21"}],
 ["n291581575",28.9573,50.82294,"ir",{"name":"فرودگاه بین المللی بوشهر","name:en":"Bushehr Airport","aeroway":"aerodrome","icao":"OIBB","iata":"BUZ","aerodrome:type":"international","wikidata":"Q1187852"}],
 ["n3399312155",28.90256,51.46282,"ir",{"name":"بهداشت","name:en":"Clinic","amenity":"clinic"}],
 ["n3655373729",29.70222,51.78162,"ir",{"aeroway":"helipad"}],

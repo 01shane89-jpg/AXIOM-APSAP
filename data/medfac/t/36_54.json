@@ -26,6 +26,7 @@
 ["n13920347396",36.83199,54.42802,"ir",{"name":"کلینیک روانشناسی و مشاوره باران","amenity":"clinic","healthcare":"clinic","operator":"محمد مشکانی","addr:street":"یخ چشمه","addr:city":"گرگان"}],
 ["n14014412901",36.80762,54.45741,"ir",{"name":"پر هداسپا","name:en":"Par Headspa","amenity":"clinic","phone":"+98 937 169 5222","addr:housenumber":"1","addr:street":"بلوار ناهارخوران","opening_hours":"Mo-Su 09:00-22:00"}],
 ["n14114549373",37.25235,55.17401,"ir",{"name":"مرکز تصویربرداری آرزو نگهداری","amenity":"clinic","healthcare":"clinic","operator":"مرکز تصویربرداری آرزو نگهداری","phone":"+981733240052","addr:street":"دانش شمالی","addr:city":"گنبد کاووس"}],
+["n14277458549",36.83339,54.43849,"ir",{"name":"کلینیک آسم و آلرژی دکتر سیدعلی آقاپور","amenity":"clinic","healthcare":"clinic","addr:street":"عدالت یازدهم","addr:city":"گرگان","opening_hours":"شنبه تا چهارشنبه ۱۵-۲۱"}],
 ["n2352652700",36.88369,54.06557,"ir",{"amenity":"hospital","emergency":"no"}],
 ["n2563917098",37.23735,55.17349,"ir",{"name":"سازمان انتقال خون","name:en":"blood transfer","amenity":"hospital","healthcare":"blood_donation","addr:street":"17 Shahrivar","addr:city":"gonbad","addr:postcode":"49718"}],
 ["n2635106535",36.4247,54.96693,"ir",{"name":"ساختمان پزشکان بهار","amenity":"clinic","healthcare":"clinic"}],

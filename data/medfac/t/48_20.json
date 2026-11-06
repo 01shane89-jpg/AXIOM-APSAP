@@ -335,7 +335,7 @@
 ["w250858741",49.97625,20.27549,"pl",{"aeroway":"helipad"}],
 ["w252154507",48.94053,20.53458,"sk",{"name":"Spišská Nová Ves","name:en":"Spišská Nová Ves Airfield","aeroway":"aerodrome","icao":"LZSV","wikidata":"Q12695089"}],
 ["w257565799",49.70036,21.78397,"pl",{"name":"Krosno","aeroway":"helipad"}],
-["w272537772",48.20855,20.29155,"hu",{"name":"Almási Balogh Pál Kórház","amenity":"hospital","healthcare":"hospital","addr:city":"Ózd"}],
+["w272537772",48.20855,20.29155,"hu",{"name":"Almási Balogh Pál Kórház","amenity":"hospital","healthcare":"hospital","website":"https://ozdikorhaz.hu/","addr:housenumber":"1-3","addr:street":"Béke utca","addr:city":"Ózd","addr:postcode":"3600"}],
 ["w279630627",48.7805,21.68469,"sk",{"name":"Zdravotné stredisko","healthcare":"clinic","addr:housenumber":"700/71","addr:street":"Hlavná","addr:city":"Sečovská Polianka","addr:postcode":"09414"}],
 ["w288240482",49.46699,20.96051,"pl",{"aeroway":"helipad"}],
 ["w292085323",49.92438,21.93649,"pl",{"name":"Ośrodek zdrowia w Lubeni","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;community","addr:housenumber":"374","addr:postcode":"36-042"}],

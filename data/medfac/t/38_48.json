@@ -154,7 +154,7 @@
 ["w541305538",38.24799,48.29787,"ir",{"name":"بیمارستان آرتا","amenity":"hospital","healthcare":"hospital"}],
 ["w544318715",38.21323,48.29685,"ir",{"aeroway":"helipad"}],
 ["w557293128",38.41422,48.87309,"ir",{"name":"مرکز بهداشت","amenity":"clinic","healthcare":"clinic"}],
-["w603419165",38.22153,48.24529,"ir",{"name":"کلینیک امام علی (ع)","amenity":"clinic"}],
+["w603419165",38.22153,48.24529,"ir",{"name":"کلینیک امام علی (ع)","amenity":"clinic","healthcare":"clinic"}],
 ["w607298815",39.95082,48.93745,"az",{"name":"Şivan Mərkəzi Xəstəxanası","amenity":"hospital","healthcare":"hospital"}],
 ["w634105873",38.22041,48.29274,"ir",{"aeroway":"helipad"}],
 ["w639432103",38.23926,48.27917,"ir",{"name":"درمانگاه فرهنگیان اردبیل","amenity":"clinic","healthcare":"clinic","phone":"+98 45 3324 1306"}],

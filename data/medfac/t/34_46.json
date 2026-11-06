@@ -122,7 +122,7 @@
 ["n6848876087",35.03497,46.3657,"ir",{"name":"کلینیک تخصصی بیمارستان قدس","amenity":"clinic","healthcare":"clinic"}],
 ["n724215845",34.05236,46.61224,"ir",{"name":"Shahabad Highway Strip","aeroway":"aerodrome"}],
 ["n7321314385",34.34513,46.41187,"ir",{"name":"درمانگاه","amenity":"clinic","healthcare":"clinic"}],
-["n7328233740",35.22628,46.10076,"iq",{"name":"بیمارستان مستشفى هورامان العام Hawraman General Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n7328233740",35.22628,46.10076,"iq",{"name":"مستشفى هورامان العام","amenity":"hospital","healthcare":"hospital"}],
 ["n7564084243",35.02541,46.37236,"ir",{"name":"درمانگاه شبانه روزی پرند","amenity":"clinic","healthcare":"clinic","opening_hours":"24/7"}],
 ["n8342474817",34.33949,47.11025,"ir",{"name":"درمانگاه حافظیه","amenity":"clinic","healthcare":"clinic"}],
 ["n8670669479",35.27888,47.43031,"ir",{"name":"بیمارستان شهدا","amenity":"hospital","healthcare":"hospital","addr:street":"بلوار پیشمرگه"}],

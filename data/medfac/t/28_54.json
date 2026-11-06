@@ -7,6 +7,8 @@
 ["n13335659856",29.45399,55.66852,"ir",{"name":"کلينيک طب کار دکتر مرجان محمودآبادی","amenity":"hospital","healthcare":"hospital","emergency":"no","addr:housenumber":"۴۳۵","addr:street":"خیابان ولیعصر بعد از چهارراه خواجو نرسیده به خیابان فردوسی","addr:city":"سیرجان"}],
 ["n13389416722",28.09164,54.05411,"ir",{"name":"درمانگاه شبانه روزی امام خمینی","amenity":"clinic","healthcare":"clinic"}],
 ["n13814004236",29.45143,55.67414,"ir",{"name":"کلینیک زیبایی دکتر ساره ابراهیمی زاده","amenity":"clinic","healthcare":"clinic","operator":"ساره ابراهیمی زاده","addr:street":"خیابان شریعتی","addr:city":"سیرجان"}],
+["n14303950201",29.47088,55.66788,"ir",{"name":"Velayat","amenity":"hospital"}],
+["n14303956302",29.44057,55.70246,"ir",{"name":"Helicopter Emergency Medical services sirjan","amenity":"hospital"}],
 ["n3023073206",29.78576,54.31834,"ir",{"name":"شبکه بهداشت","amenity":"clinic","healthcare":"clinic"}],
 ["n3851856765",28.8784,54.96733,"ir",{"name":"درمانگاه","amenity":"hospital"}],
 ["n4380103701",29.128,54.03986,"ir",{"name":"درمانگاه شفا","amenity":"clinic","healthcare":"clinic"}],

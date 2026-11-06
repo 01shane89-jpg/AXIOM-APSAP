@@ -17,6 +17,7 @@
 ["n2482027031",65.39225,-20.94027,"is",{"emergency":"ambulance_station","addr:housenumber":"30","addr:street":"Höfðabraut","addr:city":"Hvammstangi","addr:postcode":"530"}],
 ["n325957323",64.12694,-21.89151,"is",{"name":"Heilsugæslan Efstaleiti","amenity":"clinic","healthcare":"clinic","phone":"+354 513 5350","website":"https://www.heilsugaeslan.is/heilsugaeslustodvar/efstaleiti/","addr:housenumber":"3","addr:street":"Efstaleiti","addr:city":"Reykjavík","addr:postcode":"103","opening_hours":"Mo-Fr 08:00-17:00"}],
 ["n326416069",64.10907,-21.84239,"is",{"name":"Heilsugæslan Mjódd","amenity":"clinic","healthcare":"clinic","emergency":"no","phone":"+354 513 6000","website":"https://island.is/s/hh/mjodd","addr:housenumber":"6","addr:street":"Þönglabakki","addr:city":"Reykjavík","addr:postcode":"109","opening_hours":"Mo-Fr 08:00-17:00"}],
+["n3658949572",64.13883,-21.88429,"is",{"amenity":"clinic","healthcare":"clinic"}],
 ["n452076209",65.65626,-20.2807,"is",{"amenity":"clinic"}],
 ["n4637209517",64.16357,-21.69128,"is",{"name":"Heilsugæslan Mosfellsumdæmi","amenity":"clinic","healthcare":"clinic","emergency":"no","phone":"+354 513 6050","website":"https://island.is/s/hh/mosfellsumdaemi","addr:housenumber":"3","addr:street":"Sunnukriki","addr:city":"Mosfellsbær","addr:postcode":"270","opening_hours":"Mo-Fr 08:00-17:00"}],
 ["n4888414006",64.12577,-21.86322,"is",{"name":"Læknastöðin","amenity":"clinic","healthcare":"clinic","addr:street":"Réttarholtsvegur","addr:postcode":"108"}],
@@ -51,6 +52,6 @@
 ["w699134414",64.11207,-21.7048,"is",{"name":"Hólmsheiði","operator":"http://fisflug.is/","aeroway":"aerodrome","aerodrome:type":"airfield"}],
 ["w701308642",64.20855,-20.34179,"is",{"name":"Sindrason Domestic","operator":"Sigurjón Sindrason","aeroway":"aerodrome","aerodrome:type":"airfield"}],
 ["w701317052",64.05958,-20.34427,"is",{"name":"Hólakot","aeroway":"aerodrome","icao":"BIHO","aerodrome:type":"airfield"}],
-["w746714617",64.63226,-21.49053,"is",{"name":"Stóri-Kroppur","name:en":"Stóri-Kroppur Airport","aeroway":"aerodrome","icao":"BISR","aerodrome:type":"airfield"}],
+["w746714617",64.63226,-21.49053,"is",{"name":"Stóri-Kroppur","name:en":"Stóri-Kroppur Airport","aeroway":"aerodrome","icao":"BISR","aerodrome:type":"airfield","wikidata":"Q130342733"}],
 ["w750714752",64.08213,-21.88802,"is",{"name":"Öldrunardeild Vífilsstöðum","amenity":"hospital","emergency":"no"}],
 ["w785717155",65.65647,-20.28029,"is",{"name":"HSN Blönduós","amenity":"hospital","healthcare":"hospital"}]]
