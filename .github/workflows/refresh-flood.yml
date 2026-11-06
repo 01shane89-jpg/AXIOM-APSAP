@@ -316,11 +316,8 @@ jobs:
           # every news-lane pull hit the 3-minute stop five times and no news was saved for 3.5 hours. So only main's newest
           # commit is fetched (seconds), and this run's one commit is replayed onto it. A fetch or push that hangs is still
           # stopped and tried again.
-          for i in 1 2 3 4 5; do
-            timeout 180 git fetch -q --depth=1 origin main && git rebase -q -X theirs --onto FETCH_HEAD HEAD~1 && timeout 120 git push origin HEAD:main && exit 0
-            git rebase --abort 2>/dev/null || true; sleep $((i * 5))
-          done
-          exit 1
+          # tools/push_rebase.sh also keeps a pruned file pruned when this run changed it (modify/delete).
+          bash tools/push_rebase.sh main theirs 5
       # Answer and close the analyst-decision issues this run read: accepted ones only once the commit that records them is pushed,
       # refused ones (with the reason) either way. Main only: a test run on a branch never touches the issues.
       - name: Answer and close analyst-decision issues
