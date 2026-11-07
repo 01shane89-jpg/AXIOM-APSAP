@@ -1,69 +1,35 @@
-// Test only (branch claude/sold-sources-probe, never merge): checks keyless, commercially usable replacements for the
-// sources the sold version drops. Prints to the log; writes nothing.
+// Test only (branch claude/sold-sources-probe, never merge): round 2, radar layer names and tiles. Prints to the log.
 const UA = "AXIOM-OSAP/1.0 (+https://axiom-osap.netlify.app; source probe)";
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function hit(label, url, opt = {}) {
   const t = Date.now();
   try {
-    const r = await fetch(url, { headers: { "User-Agent": UA, ...(opt.h || {}) }, signal: AbortSignal.timeout(opt.to || 30000) });
-    const b = Buffer.from(await r.arrayBuffer());
-    let info = "";
-    if (opt.json) { try { const j = JSON.parse(b.toString()); info = opt.json(j); } catch (e) { info = "not json: " + b.toString().slice(0, 120).replace(/\s+/g, " "); } }
-    else if (opt.grep) { const s = b.toString(); info = (s.match(opt.grep) || []).slice(0, 12).join(" | "); }
-    else info = b.toString().slice(0, 160).replace(/\s+/g, " ");
+    const r = await fetch(url, { headers: { "User-Agent": UA, ...(opt.h || {}) }, signal: AbortSignal.timeout(opt.to || 60000) });
+    const b = Buffer.from(await r.arrayBuffer()), s = b.toString("latin1");
+    let info = opt.grep ? [...new Set(s.match(opt.grep) || [])].slice(0, opt.max || 40).join(" | ") : s.slice(0, 160).replace(/[^\x20-\x7e]+/g, ".");
     console.log(`${label}: ${r.status} ${b.length}B ${Date.now() - t}ms ct=${r.headers.get("content-type")} cors=${r.headers.get("access-control-allow-origin")} ${info}`);
-    return r.status;
-  } catch (e) { console.log(`${label}: ERR ${e.message} ${Date.now() - t}ms`); return 0; }
+  } catch (e) { console.log(`${label}: ERR ${e.message}`); }
 }
-const ac = (j) => "ac=" + ((j.ac || j.aircraft || []).length) + " keys=" + Object.keys(j).join(",");
-console.log("== adsb.lol endpoints");
-await hit("lol mil", "https://api.adsb.lol/v2/mil", { json: ac });
-await hit("lol ladd", "https://api.adsb.lol/v2/ladd", { json: ac });
-await hit("lol pia", "https://api.adsb.lol/v2/pia", { json: ac });
-await hit("lol re-api box json", "https://re-api.adsb.lol/?json&box=30,60,-20,40", { json: ac });
-await hit("lol re-api all json", "https://re-api.adsb.lol/?all&json", { json: ac });
-await hit("lol site re-api", "https://adsb.lol/re-api/?json&box=30,60,-20,40", { json: ac });
-await hit("lol api 0 routeset", "https://api.adsb.lol/api/0/me", { json: (j) => JSON.stringify(j).slice(0, 200) });
-await hit("lol globe aircraft.json", "https://globe.adsb.lol/data/aircraft.json", { json: ac });
-await hit("lol point 250", "https://api.adsb.lol/v2/point/51/0/250", { json: ac, h: {} });
-console.log("== adsb.lol point rate: gap 1.5 s, 30 calls");
-let n429 = 0, ok = 0;
-for (let i = 0; i < 30; i++) { const s = await hit("pt" + i, `https://api.adsb.lol/v2/point/${40 + (i % 10)}/${-100 + i * 5}/250`, { json: (j) => "ac=" + (j.ac || []).length }); if (s === 429) n429++; else if (s === 200) ok++; await sleep(1500); }
-console.log("gap1.5 ok", ok, "429", n429);
-await sleep(20000);
-console.log("== gap 3 s, 30 calls"); n429 = 0; ok = 0;
-for (let i = 0; i < 30; i++) { const s = await hit("pt" + i, `https://api.adsb.lol/v2/point/${10 + (i % 10)}/${-100 + i * 5}/250`, { json: (j) => "ac=" + (j.ac || []).length }); if (s === 429) n429++; else if (s === 200) ok++; await sleep(3000); }
-console.log("gap3 ok", ok, "429", n429);
-console.log("== other ADS-B");
-await hit("airplanes.live mil", "https://api.airplanes.live/v2/mil", { json: ac });
-await hit("adsb.im?", "https://api.adsb.im/v2/mil", { json: ac });
-await hit("theairtraffic", "https://api.theairtraffic.com/v2/mil", { json: ac });
-await hit("hpradar", "https://api.hpradar.com/v2/mil", { json: ac });
-console.log("== radar");
-await hit("rainviewer", "https://api.rainviewer.com/public/weather-maps.json", { json: (j) => "past=" + ((j.radar || {}).past || []).length + " host=" + j.host });
-await hit("nowcoast caps", "https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms?service=WMS&version=1.3.0&request=GetCapabilities", { grep: /<Name>[^<]*<\/Name>/g, to: 60000 });
-await hit("nowcoast radar png", "https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms?service=WMS&version=1.3.0&request=GetMap&layers=base_reflectivity_mosaic&styles=&format=image/png&transparent=true&crs=EPSG:3857&bbox=-11000000,3500000,-9000000,5500000&width=256&height=256");
-await hit("geomet caps radar", "https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetCapabilities&layer=RADAR_1KM_RRAI", { grep: /<Name>[^<]*<\/Name>|<Dimension[^>]*>[^<]{0,80}/g });
-await hit("geomet radar png", "https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetMap&layers=RADAR_1KM_RRAI&styles=&format=image/png&transparent=true&crs=EPSG:3857&bbox=-9000000,5000000,-7000000,7000000&width=256&height=256");
-await hit("geomet radar global?", "https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetCapabilities&layer=RADAR_COVERAGE_RRAI.INV", { grep: /<Name>[^<]*<\/Name>/g });
-await hit("dwd caps", "https://maps.dwd.de/geoserver/dwd/wms?service=WMS&version=1.3.0&request=GetCapabilities", { grep: /<Name>dwd:[^<]*(Radar|radar|RV|WN|Nieder)[^<]*<\/Name>/g, to: 60000 });
-await hit("dwd radar png", "https://maps.dwd.de/geoserver/dwd/wms?service=WMS&version=1.3.0&request=GetMap&layers=dwd:Niederschlagsradar&styles=&format=image/png&transparent=true&crs=EPSG:3857&bbox=500000,6000000,1700000,7500000&width=256&height=256");
-await hit("fmi caps", "https://openwms.fmi.fi/geoserver/Radar/wms?service=WMS&version=1.3.0&request=GetCapabilities", { grep: /<Name>[^<]*<\/Name>/g, to: 60000 });
-await hit("jma times N1", "https://www.jma.go.jp/bosai/jmatile/data/nowc/targetTimes_N1.json", { json: (j) => JSON.stringify(j[0]) });
-await hit("knmi?", "https://geoservices.knmi.nl/adaguc-server?DATASET=RADAR&SERVICE=WMS&REQUEST=GetCapabilities", { grep: /<Name>[^<]*<\/Name>/g });
-await hit("opera eumetnet", "https://opera.meteo.be/", {});
-await hit("meteogate opera", "https://api.meteogate.eu/", {});
-await hit("smhi radar", "https://opendata-download-radar.smhi.se/api/version/latest/area/sweden/product/comp", { json: (j) => JSON.stringify(j).slice(0, 200) });
-await hit("metno radar", "https://api.met.no/weatherapi/radar/2.0/available.json?type=reflectivity&area=nordic", { json: (j) => JSON.stringify(j).slice(0, 200) });
-await hit("aemet?", "https://www.aemet.es/", {});
-await hit("ims israel?", "https://ims.gov.il/", {});
-await hit("tmd radar", "https://weather.tmd.go.th/", {});
-await hit("pagasa?", "https://www.pagasa.dost.gov.ph/", {});
-await hit("bmkg radar", "https://radar.bmkg.go.id/sidarma-new/api/radar/list?token=", {});
-await hit("hko radar", "https://www.hko.gov.hk/wxinfo/radars/radar.htm", {});
-await hit("cwa taiwan opendata radar", "https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/O-A0058-001?format=JSON", {});
-await hit("kma?", "https://www.weather.go.kr/", {});
-await hit("gibs imerg", "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/IMERG_Precipitation_Rate_30min/default/default/GoogleMapsCompatible_Level6/2/1/1.png");
-console.log("== GNSS / opensky alternatives");
-await hit("gpsjam manifest", "https://gpsjam.org/data/manifest.csv");
-await hit("flightradar gpsjam?", "https://www.flightradar24.com/data/gps-jamming", {});
+await hit("dwd names", "https://maps.dwd.de/geoserver/dwd/wms?service=WMS&version=1.3.0&request=GetCapabilities", { grep: /<Name>dwd:[^<]*<\/Name>/g, max: 400 });
+await hit("fmi names", "https://openwms.fmi.fi/geoserver/Radar/wms?service=WMS&version=1.3.0&request=GetCapabilities", { grep: /<Name>(suomi|finland|composite|euref)[^<]*<\/Name>/gi, max: 60 });
+await hit("fmi getmap", "https://openwms.fmi.fi/geoserver/Radar/wms?service=WMS&version=1.3.0&request=GetMap&layers=Radar:suomi_dbz_eureffin&styles=&format=image/png&transparent=true&crs=EPSG:3857&bbox=2000000,8000000,4000000,11000000&width=256&height=256");
+await hit("knmi getmap", "https://geoservices.knmi.nl/adaguc-server?DATASET=RADAR&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RAD_NL25_PCP_CM&STYLES=&FORMAT=image/png&TRANSPARENT=true&CRS=EPSG:3857&BBOX=300000,6500000,800000,7100000&WIDTH=256&HEIGHT=256");
+await hit("jma times", "https://www.jma.go.jp/bosai/jmatile/data/nowc/targetTimes_N1.json", { grep: /"basetime":"\d+","validtime":"\d+"/g, max: 3 });
+const tt = await (await fetch("https://www.jma.go.jp/bosai/jmatile/data/nowc/targetTimes_N1.json")).json().catch(() => []);
+if (tt[0]) await hit("jma tile z6", `https://www.jma.go.jp/bosai/jmatile/data/nowc/${tt[0].basetime}/none/${tt[0].validtime}/surf/hrpns/6/56/25.png`);
+await hit("geomet RRAI legend", "https://geo.weather.gc.ca/geomet?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=RADAR_1KM_RRAI&format=image/png");
+await hit("nowcoast caps time", "https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms?service=WMS&version=1.3.0&request=GetCapabilities", { grep: /<Dimension[^>]*>[^<]{0,60}/g, max: 6 });
+await hit("bom", "https://reg.bom.gov.au/products/IDR00004.loop.shtml", {});
+await hit("ims radar", "https://ims.gov.il/sites/default/files/ims_data/map_images/IMSRadar/IMSRadar.gif", {});
+await hit("meteofrance", "https://public-api.meteofrance.fr/", {});
+await hit("aemet radar wms", "https://www.aemet.es/es/eltiempo/observacion/radar", {});
+await hit("ipma", "https://www.ipma.pt/", {});
+await hit("chmi radar", "https://opendata.chmi.cz/meteorology/weather/radar/composite/maxz/png/", { grep: /href="[^"]+png"/g, max: 3 });
+await hit("imgw radar", "https://danepubliczne.imgw.pl/api/data/product", {});
+await hit("dmi radar", "https://dmigw.govcloud.dk/v1/radardata/collections", {});
+await hit("geosphere at", "https://dataset.api.hub.geosphere.at/v1/datasets", { grep: /"[^"]*(radar|inca|nowcast)[^"]*"/gi, max: 10 });
+await hit("opera odim open", "https://www.eumetnet.eu/activities/observations-programme/current-activities/opera/", {});
+await hit("meteoswiss", "https://data.geo.admin.ch/api/stac/v0.9/collections", { grep: /ch\.meteoschweiz\.[a-z0-9-]*radar[a-z0-9-]*/g, max: 10 });
+await hit("geoadmin radar wms", "https://wms.geo.admin.ch/?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities", { grep: /<Name>ch\.meteoschweiz[^<]*<\/Name>/g, max: 20, to: 60000 });
+await hit("cwa radar png", "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png", {});
+await hit("cwa radar json", "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-005.json", {});
+await hit("hko radar 64", "https://www.hko.gov.hk/wxinfo/radars/rad_064_png/", {});
