@@ -1,61 +1,22 @@
-// Test only (branch claude/sold-sources-probe, never merge): round 3, commercial-OK replacements for six nc feeds. Prints to the log.
+// Test only (branch claude/sold-sources-probe, never merge): round 4. Prints to the log.
 const UA = "AXIOM-OSAP/1.0 (+https://axiom-osap.netlify.app; source probe)";
-async function hit(label, url, opt = {}) {
-  const t = Date.now();
-  try {
-    const r = await fetch(url, { method: opt.body ? "POST" : "GET", body: opt.body, headers: { "User-Agent": UA, ...(opt.h || {}) }, signal: AbortSignal.timeout(opt.to || 60000) });
-    const b = Buffer.from(await r.arrayBuffer()), s = b.toString("utf8");
-    let info = opt.grep ? [...new Set(s.match(opt.grep) || [])].slice(0, opt.max || 30).join(" | ") : opt.json ? (() => { try { return opt.json(JSON.parse(s)); } catch (e) { return "not json " + s.slice(0, 120); } })() : s.slice(0, opt.n || 200).replace(/\s+/g, " ");
-    console.log(`${label}: ${r.status} ${b.length}B ${Date.now() - t}ms ct=${r.headers.get("content-type")} ${info}`);
-  } catch (e) { console.log(`${label}: ERR ${e.message}`); }
+async function get(url, opt = {}) { const r = await fetch(url, { method: opt.body ? "POST" : "GET", body: opt.body, headers: { "User-Agent": UA, ...(opt.h || {}) }, signal: AbortSignal.timeout(opt.to || 120000) }); return [r.status, await r.text()]; }
+try {
+  const [st, t] = await get("https://severeweather.wmo.int/v2/json/wmo_all.json"); const j = JSON.parse(t);
+  console.log("SWIC", st, j.itemCount, "keys:", Object.keys(j).join(","));
+  console.log("SWIC item0", JSON.stringify(j.items[0]).slice(0, 1500));
+  const by = {}; for (const i of j.items) { const k = (i.capURL || i.url || i.id || "").split("/")[2] + " " + (i.countryCode || i.cc || i.iso || ""); by[k] = (by[k] || 0) + 1; }
+  console.log("SWIC hosts", JSON.stringify(Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 80)));
+} catch (e) { console.log("SWIC ERR", e.message); }
+for (const u of ["https://severeweather.wmo.int/v2/json/", "https://severeweather.wmo.int/disclaimer.html", "https://severeweather.wmo.int/about.html", "https://severeweather.wmo.int/"]) {
+  try { const [st, t] = await get(u); console.log("PAGE", u, st, (t.match(/[^<>]{0,160}(copyright|licen[cs]e|terms|disclaimer|commercial|redistribut|reproduc)[^<>]{0,200}/gi) || []).slice(0, 8).join(" || ").replace(/\s+/g, " ")); } catch (e) { console.log("PAGE ERR", u, e.message); }
 }
-console.log("== warnings");
-await hit("swic feeds", "https://severeweather.wmo.int/feeds.html", { grep: /https?:\/\/[^"'<> ]+(?:xml|rss|atom|cap|json)[^"'<> ]*/gi, max: 200 });
-await hit("swic sources", "https://severeweather.wmo.int/sources.html", { n: 400 });
-await hit("swic json", "https://severeweather.wmo.int/v2/json/wmo_all.json", { n: 300 });
-await hit("met.ie", "https://www.met.ie/Open_Data/json/warning_IRELAND.json", { n: 300 });
-await hit("geosphere at", "https://warnungen.zamg.at/wsapp/api/getWarnstatus", { n: 300 });
-await hit("imgw pl", "https://danepubliczne.imgw.pl/api/data/warningsmeteo", { n: 300 });
-await hit("chmi cz cap", "https://www.chmi.cz/files/portal/docs/meteo/om/bulletiny/XOCZ50_OKPR.xml", { n: 300 });
-await hit("arso si cap", "https://meteo.arso.gov.si/uploads/probase/www/warning/text/en/warning_SLOVENIA_latest_CAP.xml", { n: 300 });
-await hit("ipma pt", "https://api.ipma.pt/open-data/forecast/warnings/warnings_www.json", { n: 300 });
-await hit("meteoswiss ogd", "https://data.geo.admin.ch/api/stac/v1/collections", { grep: /ch\.meteoschweiz\.ogd-[a-z0-9-]+/g, max: 40 });
-await hit("dmi", "https://opendataapi.dmi.dk/v2/", { n: 300 });
-await hit("kmi be cap", "https://www.meteo.be/en/weather/warnings/cap", { n: 200 });
-await hit("metoffice rss", "https://www.metoffice.gov.uk/public/data/PWSCache/WarningsRSS/Region/UK", { n: 300 });
-await hit("omsz hu", "https://www.met.hu/en/idojaras/veszelyjelzes/", { n: 200 });
-await hit("anm ro cap", "https://www.meteoromania.ro/wp-content/plugins/meteo/json/avertizari.json", { n: 300 });
-await hit("emy gr", "https://www.emy.gr/hnms-rss", { n: 200 });
-await hit("ukr hmc", "https://meteo.gov.ua/en/", { n: 150 });
-await hit("aemet cap", "https://www.aemet.es/es/eltiempo/prediccion/avisos/rss", { n: 200 });
-await hit("italy dpc", "https://raw.githubusercontent.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/master/files/all/latest.json", { n: 200 });
-await hit("knmi wwarn", "https://cdn.knmi.nl/knmi/xml/rss/rss_KNMIwaarschuwingen.xml", { n: 300 });
-await hit("meteofrance vigi", "https://vigilance.meteofrance.fr/data/NXFR33_LFPW_.xml", { n: 200 });
-await hit("estonia", "https://www.ilmateenistus.ee/ilma_andmed/xml/hoiatused.php", { n: 200 });
-await hit("latvia", "https://bridge.meteo.lv/cap/", { n: 200 });
-await hit("lithuania", "https://www.meteo.lt/", { n: 100 });
-await hit("iceland", "https://api.vedur.is/cap/v1/capbroker/active/category/Met", { n: 300 });
-await hit("croatia dhmz", "https://meteo.hr/upozorenja/cap_hr.xml", { n: 200 });
-await hit("serbia", "https://www.hidmet.gov.rs/data/meteoalarm/latin/rss.xml", { n: 200 });
-console.log("== cables (OSM via Postpass)");
-const q = `SELECT count(*) AS n FROM postpass_line WHERE tags->>'communication'='line' AND (tags->>'location' IN ('underwater','underground') OR tags->>'submarine'='yes') AND tags->>'location'='underwater'`;
-await hit("postpass cables", "https://postpass.geofabrik.de/api/0.2/interpreter", { body: new URLSearchParams({ data: q, options: '{"geojson":false}' }), h: { "Content-Type": "application/x-www-form-urlencoded" }, n: 400, to: 120000 });
-const q2 = `SELECT count(*) AS n FROM postpass_point WHERE tags->>'telecom'='landing_point' OR tags->>'man_made'='cable_landing' OR tags->>'communication'='cable_landing'`;
-await hit("postpass landings", "https://postpass.geofabrik.de/api/0.2/interpreter", { body: new URLSearchParams({ data: q2, options: '{"geojson":false}' }), h: { "Content-Type": "application/x-www-form-urlencoded" }, n: 400, to: 120000 });
-await hit("overpass cables count", "https://overpass-api.de/api/interpreter", { body: "data=" + encodeURIComponent('[out:json][timeout:120];way["communication"="line"]["location"="underwater"];out count;'), h: { "Content-Type": "application/x-www-form-urlencoded" }, n: 300, to: 150000 });
-console.log("== ransomware");
-await hit("ransomlook recent", "https://www.ransomlook.io/api/recent", { json: (j) => (Array.isArray(j) ? j.length + " " + JSON.stringify(j[0]).slice(0, 300) : JSON.stringify(j).slice(0, 300)) });
-await hit("ransomlook about", "https://www.ransomlook.io/about", { grep: /[^<>]{0,120}(licen[cs]e|CC[- ]BY|commercial|terms)[^<>]{0,160}/gi, max: 10 });
-await hit("ransomwatch posts", "https://raw.githubusercontent.com/joshhighet/ransomwatch/main/posts.json", { json: (j) => j.length + " last=" + JSON.stringify(j[j.length - 1]).slice(0, 200) });
-await hit("ransomfeed", "https://www.ransomfeed.it/rss-complete.php", { n: 200 });
-await hit("cisa kev", "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json", { json: (j) => j.count + " " + j.dateReleased });
-console.log("== health (World Bank WDI)");
-for (const i of ["SP.DYN.LE00.IN", "SH.DYN.MORT", "SH.STA.MMRT", "SH.IMM.IDPT", "SH.UHC.SRVS.CV.XD"]) await hit("wb " + i, "https://api.worldbank.org/v2/country/all/indicator/" + i + "?format=json&mrnev=1&per_page=400", { json: (j) => (j[1] || []).length + " rows; source=" + JSON.stringify((j[1] || [])[0]).slice(0, 160) });
-await hit("wb source licence", "https://api.worldbank.org/v2/indicator/SH.STA.MMRT?format=json", { json: (j) => JSON.stringify(j[1][0]).slice(0, 500) });
-console.log("== sanctions (official lists)");
-await hit("un consolidated", "https://scsanctions.un.org/resources/xml/en/consolidated.xml", { n: 150, to: 120000 });
-await hit("eu fsf", "https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw", { n: 150, to: 120000 });
-await hit("uk ofsi", "https://ofsistorage.blob.core.windows.net/publishlive/2022format/ConList.csv", { n: 150, to: 120000 });
-console.log("== hazards (PDC alternatives)");
-await hit("gdacs", "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP", { json: (j) => (j.features || []).length + " events" });
-await hit("eonet", "https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=5", { json: (j) => (j.events || []).length + " events" });
+const pp = async (label, sql) => { try { const [st, t] = await get("https://postpass.geofabrik.de/api/0.2/interpreter", { body: new URLSearchParams({ data: sql }), h: { "Content-Type": "application/x-www-form-urlencoded" }, to: 240000 }); console.log(label, st, t.length, t.slice(0, 600).replace(/\s+/g, " ")); } catch (e) { console.log(label, "ERR", e.message); } };
+await pp("PP cables", "SELECT ST_StartPoint(geom) AS geom, tags->>'name' AS name, tags->>'operator' AS op FROM postpass_line WHERE tags->>'communication'='line' AND tags->>'location'='underwater' LIMIT 3");
+await pp("PP cables count", "SELECT ST_Collect(ST_StartPoint(geom)) AS geom, count(*) AS n FROM postpass_line WHERE tags->>'communication'='line' AND tags->>'location'='underwater'");
+await pp("PP submarine", "SELECT ST_Collect(ST_StartPoint(geom)) AS geom, count(*) AS n FROM postpass_line WHERE tags->>'submarine'='yes' AND tags ? 'communication'");
+await pp("PP landing pts", "SELECT ST_Collect(geom) AS geom, count(*) AS n FROM postpass_point WHERE tags->>'telecom'='landing_point' OR tags->>'man_made'='cable_landing_point' OR tags->>'telecom'='cable_landing'");
+try { const [st, t] = await get("https://scsanctions.un.org/resources/xml/en/consolidated.xml"); const n = (t.match(/<INDIVIDUAL>/g) || []).length, e = (t.match(/<ENTITY>/g) || []).length; const nat = (t.match(/<NATIONALITY>\s*<VALUE>[^<]+/g) || []).length; console.log("UN", st, "individuals", n, "entities", e, "nationality values", nat, t.match(/<NATIONALITY>[\s\S]{0,120}/)?.[0].replace(/\s+/g, " "), t.match(/<ENTITY_ADDRESS>[\s\S]{0,200}/)?.[0].replace(/\s+/g, " ")); } catch (e) { console.log("UN ERR", e.message); }
+for (const u of ["https://www.ransomlook.io/api", "https://www.ransomlook.io/terms", "https://github.com/RansomLook/RansomLook/blob/main/README.md", "https://www.gdacs.org/About/termsofuse.aspx", "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=EQ;TC;FL;VO;DR;WF&alertlevel=green;orange;red&fromDate=2026-11-01"]) {
+  try { const [st, t] = await get(u); console.log("PAGE", u, st, t.length, (t.match(/[^<>"]{0,160}(licen[cs]e|CC[- ]BY|commercial|terms|attribution|reproduc)[^<>"]{0,200}/gi) || []).slice(0, 6).join(" || ").replace(/\s+/g, " ").slice(0, 1200)); } catch (e) { console.log("PAGE ERR", u, e.message); }
+}
