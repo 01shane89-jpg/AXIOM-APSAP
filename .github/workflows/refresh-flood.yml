@@ -110,6 +110,9 @@ jobs:
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'warnings' }}
         timeout-minutes: 10
         run: node tools/refresh_warnings.mjs
+        env:
+          # sold version: MeteoAlarm (nc) is not asked; the national services' own feeds stay
+          OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
         continue-on-error: true
       - name: Pull local news (GDELT and national outlets) and translate headlines
         if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' }}

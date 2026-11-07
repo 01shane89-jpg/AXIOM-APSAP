@@ -9,7 +9,9 @@ import { parseFeed } from "./feedparse.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 30;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
-const { feeds } = JSON.parse(fs.readFileSync("tools/warning_feeds.json", "utf8"));
+// sold version (OSAP_COMMERCIAL, tools/nc_strip.mjs): feeds tagged nc (MeteoAlarm) are not asked at all
+import { usable } from "./nc_strip.mjs";
+const feeds = usable(JSON.parse(fs.readFileSync("tools/warning_feeds.json", "utf8")).feeds);
 
 async function getText(url) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
@@ -49,6 +51,14 @@ const ADAPT = {
   ipma: (j) => (Array.isArray(j) ? j : []).filter((w) => w && w.awarenessLevelID && w.awarenessLevelID !== "green" && (!w.endTime || Date.parse(w.endTime) > Date.now())).map((w) => ({
     title: w.awarenessTypeName + " warning (" + w.awarenessLevelID + "), " + (IPMA_AREA[w.idAreaAviso] || w.idAreaAviso), summary: strip(w.text).slice(0, 400),
     date: w.startTime, link: "https://www.ipma.pt/en/otempo/prev-sam/", severity: w.awarenessLevelID })),
+  // Met Éireann (Ireland, CC BY 4.0): [ { type, severity, level, headline, description, regions: [codes], issued, onset, expiry } ]
+  metie: (j) => (Array.isArray(j) ? j : []).filter((w) => w && (!w.expiry || Date.parse(w.expiry) > Date.now())).map((w) => ({
+    title: (w.headline || ((w.level ? w.level[0].toUpperCase() + w.level.slice(1) + " " : "") + (w.type || "weather") + " warning")) + (Array.isArray(w.regions) && w.regions.length ? ", " + w.regions.length + " areas" : ""),
+    summary: strip(w.description || "").slice(0, 400), date: w.issued || w.onset || "", link: "https://www.met.ie/warnings", severity: w.level || w.severity || "" })),
+  // IMGW-PIB (Poland, public data with attribution): [ { nazwa_zdarzenia, stopien, obowiazuje_od, obowiazuje_do, opublikowano, tresc, teryt: [county codes] } ]
+  imgw: (j) => (Array.isArray(j) ? j : []).filter((w) => w && w.nazwa_zdarzenia && (!w.obowiazuje_do || Date.parse(String(w.obowiazuje_do).replace(" ", "T") + "+01:00") > Date.now())).map((w) => ({
+    title: w.nazwa_zdarzenia + " (stopień " + (w.stopien || "?") + ")" + (Array.isArray(w.teryt) ? ", " + w.teryt.length + " powiatów" : ""),
+    summary: strip(w.tresc || "").slice(0, 400), date: w.opublikowano || w.obowiazuje_od || "", link: "https://meteo.imgw.pl/", severity: "level " + (w.stopien || "") })),
   // SMHI (Sweden): [ { event: { en, sv }, warningAreas: [ { areaName: { en, sv }, warningLevel: { en, code }, published, approximateStart, descriptions: [ { text: { en } } ] } ] } ]
   smhi: (j) => (Array.isArray(j) ? j : []).flatMap((w) => ((w && w.warningAreas) || []).map((a) => {
     const name = (x) => (x && (x.en || x.sv)) || "";
