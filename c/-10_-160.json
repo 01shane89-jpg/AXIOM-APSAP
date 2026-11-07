@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-11-07T13:57:07.752Z","cell":"-10_-160","st":[{"id":"NCPY","n":"Cook Isl/Penrhyn Arpt","c":"CK","la":-9.01,"lo":-158.034,"el":2,"m":{"raw":"METAR NCPY 071330Z AUTO 14003KT 14KM NCD 28/24 Q1006","t":1794058200000,"cat":"VFR","wd":140,"ws":3,"wg":null,"vis":8.7,"visp":null,"cig":null,"sky":null,"tc":28,"dc":24,"alt":29.7,"wx":null},"f":null}]}
