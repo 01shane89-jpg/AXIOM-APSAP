@@ -62,7 +62,6 @@
     { "cc": "fr",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france", "lang": "en", "nc": true },
     { "cc": "it",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-italy", "lang": "en", "nc": true },
     { "cc": "nl",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-netherlands", "lang": "en", "nc": true },
-    { "cc": "nl",  "agency": "KNMI (weather warnings, CC BY 4.0)", "url": "https://cdn.knmi.nl/knmi/xml/rss/rss_KNMIwaarschuwingen.xml", "lang": "nl", "max_age_days": 3 },
     { "cc": "be",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-belgium", "lang": "en", "nc": true },
     { "cc": "lu",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-luxembourg", "lang": "en", "nc": true },
     { "cc": "dk",  "agency": "MeteoAlarm (national weather service via EUMETNET)", "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-denmark", "lang": "en", "nc": true },

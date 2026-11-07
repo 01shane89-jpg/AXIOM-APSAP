@@ -506,13 +506,13 @@ run("ports", async (g) => {
       lat: la, lon: lo, url: "https://msi.nga.mil/Publications/WPI", sev: 1, kind: "Port", value: size[p.harborSize] || 0, ccs: withOki(ccsAt(la, lo, 0.3)) }; }).sort((a, b) => b.value - a.value) };
 });
 
-// Undersea telecom cable landings from OpenStreetMap (ODbL, attribution): the ends of every cable line mapped as
-// communication=line + location=underwater, through Geofabrik's Postpass. Commercial-OK stand-in for TeleGeography's landing
+// Undersea telecom cable landings from OpenStreetMap (ODbL, attribution): the ends of every telecom cable line mapped as
+// underwater or submarine, through Geofabrik's Postpass. Commercial-OK stand-in for TeleGeography's landing
 // points (CC BY-NC-SA, "cables") and their backup in the free app. Lines under 20 km (river and lake crossings) are left out.
 // OSM maps fewer cables than TeleGeography, so it is a floor, not a full list.
 feed("osm-cables", { name: "Undersea cable landings (OpenStreetMap)", org: "OpenStreetMap contributors, via Geofabrik Postpass", cat: "Infrastructure", lic: "ODbL 1.0 (attribution)", url: "https://www.openstreetmap.org/", everyHours: 168 });
 run("osm-cables", async (g) => {
-  const sql = "SELECT ST_Collect(ARRAY[ST_StartPoint(geom), ST_EndPoint(geom)]) AS geom, tags->>'name' AS name, tags->>'operator' AS op, osm_id FROM postpass_line WHERE tags->>'communication'='line' AND tags->>'location'='underwater' AND ST_Length(geom::geography) > 20000";
+  const sql = "SELECT ST_Collect(ARRAY[ST_StartPoint(geom), ST_EndPoint(geom)]) AS geom, tags->>'name' AS name, tags->>'operator' AS op, osm_id FROM postpass_line WHERE (tags->>'communication'='line' OR tags->>'telecom'='line') AND (tags->>'location'='underwater' OR tags->>'submarine'='yes') AND ST_Length(geom::geography) > 20000";
   const j = await get("https://postpass.geofabrik.de/api/0.2/interpreter", "json", { timeout: 300000, method: "POST", body: new URLSearchParams({ data: sql }).toString(), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
   const near = new Map(), items = [];
   for (const f of j.features || []) {
