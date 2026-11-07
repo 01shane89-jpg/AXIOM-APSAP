@@ -142,6 +142,8 @@
     /* pinned countries, role and the first-run setup again (assets/osap-mycountries.js) */
     h += hd("Setup, help and safety");
     if (W.OSAP_MYCC) h += '<button type="button" role="menuitem" data-tp="@mycc">My countries and setup</button>';
+    /* installing OSAP as an app on this device, hidden once it is (assets/osap-install.js) */
+    if (W.OSAP_INSTALL && !W.OSAP_INSTALL.installed()) h += '<button type="button" role="menuitem" data-tp="@install">Install OSAP as an app</button>';
     /* the user guide, offline and printable (assets/osap-guide.js) */
     if (W.OSAP_GUIDE) h += '<button type="button" role="menuitem" data-tp="@guide">User guide</button>';
     /* areas hidden from everyone but the owner, unlocked with Face ID (assets/osap-lock.js) */
@@ -227,6 +229,7 @@
     else if (sel === "@sync") { if (W.OSAP_SYNC) W.OSAP_SYNC.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }
+    else if (sel === "@install") { if (W.OSAP_INSTALL) W.OSAP_INSTALL.open(); }
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
     else if (sel === "@plan") { if (W.OSAP_TIER) W.OSAP_TIER.open(); }
