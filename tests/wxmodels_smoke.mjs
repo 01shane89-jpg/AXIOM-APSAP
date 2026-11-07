@@ -1,10 +1,10 @@
 // Headless check of the weather model picker and the animated weather layers (assets/osap-weather.js, toolbar Weather button).
-// Open-Meteo and RainViewer are answered with made-up but well-formed data, so the check runs with no network. Checks: the Weather
+// Open-Meteo is answered with made-up but well-formed data, so the check runs with no network. Checks: the Weather
 // panel lists the global models with Best match first; the model layers ask Open-Meteo for the chosen model (none for Best match,
 // models=<id> otherwise) and say which model they show; a model that leaves a variable empty is named as a gap, not drawn as dry;
 // the rain forecast layer colours wet cells only; the wind flow canvas animates (frames advance) and stops when switched off;
-// the time slider and Play step the forecast hour; the radar loop loads all 13 frames and changes frame; "reduce motion" draws
-// the wind once and leaves it still and never starts the radar loop; a phone's panel does not overflow; and the page throws nothing.
+// the time slider and Play step the forecast hour; the rain radar layer shows the national networks; "reduce motion" draws
+// the wind once and leaves it still; a phone's panel does not overflow; and the page throws nothing.
 // Run from the repo root: node tests/wxmodels_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -40,17 +40,12 @@ function answer(url) {
   const list = lats.map(one);
   return list.length === 1 ? list[0] : list;
 }
-const RVJ = { version: "2.0", generated: Math.floor(Date.now() / 1000), host: "https://tilecache.rainviewer.com",
-  radar: { past: Array.from({ length: 13 }, (_, i) => ({ time: Math.floor(Date.now() / 600000) * 600 - (12 - i) * 600, path: "/v2/radar/f" + i })), nowcast: [] }, satellite: { infrared: [] } };
-
 async function open(viewport, extra) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport, ...(viewport.width < 600 ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}), ...(extra || {}) });
   const seen = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const url = r.request().url(), h = new URL(url).host;
     if (/^api\.open-meteo\.com$|^air-quality-api\.open-meteo\.com$/.test(h)) { seen.push(url); return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(answer(url)) }); }
-    if (h === "api.rainviewer.com") return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(RVJ) });
-    if (h === "tilecache.rainviewer.com") { seen.push(url); return r.fulfill({ status: 200, contentType: "image/png", body: PNG }); }
     return r.abort();
   });
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
@@ -111,15 +106,8 @@ const fsr = (p) => p.evaluate(() => window.OSAP_WX._test.flowState());
   ok(h3 === await p.evaluate(() => +document.getElementById("wx-hour").value), "Pause stops it");
 
   await tick(p, "radar");
-  await p.waitForFunction(() => /Radar frame/.test((document.getElementById("wxn-radar") || {}).textContent || ""), null, { timeout: 15000 });
-  await p.click("#wx-rloop");
-  await p.waitForFunction(() => /looping 13 frames/.test(document.getElementById("wxn-radar").textContent), null, { timeout: 15000 });
-  const fr = new Set(seen.filter((u) => /tilecache/.test(u)).map((u) => /radar\/(f\d+)/.exec(u)[1]));
-  ok(fr.size === 13, "radar loop loads all 13 frames (" + fr.size + ")");
-  const s1 = await p.evaluate(() => document.getElementById("wxn-radar").textContent); await p.waitForTimeout(2600);
-  const s2 = await p.evaluate(() => document.getElementById("wxn-radar").textContent);
-  ok(s1 !== s2 && /Loop, frame/.test(s2), "radar loop changes frame (" + s2 + ")");
-  await p.click("#wx-rloop");
+  await p.waitForFunction(() => /National radar networks/.test((document.getElementById("wxn-radar") || {}).textContent || ""), null, { timeout: 15000 });
+  ok(!(await p.$("#wx-rloop")), "rain radar: no RainViewer loop button (RainViewer removed 7 Nov 2026; more radar checks in tests/radar_backup_smoke.mjs)");
   await tick(p, "radar", false);
 
   await tick(p, "flow", false);
@@ -129,7 +117,7 @@ const fsr = (p) => p.evaluate(() => window.OSAP_WX._test.flowState());
   await ctx.close();
 }
 
-/* reduce motion: the wind is drawn once and left still; the radar loop never starts */
+/* reduce motion: the wind is drawn once and left still */
 {
   const { ctx, p, errors } = await open({ width: 1200, height: 800 }, { reducedMotion: "reduce" });
   await tick(p, "flow");
@@ -137,9 +125,6 @@ const fsr = (p) => p.evaluate(() => window.OSAP_WX._test.flowState());
   await p.waitForTimeout(300);
   const a = await fsr(p); await p.waitForTimeout(800); const b = await fsr(p);
   ok(a.still && a.frames > 0 && a.frames === b.frames, "reduce motion: wind streaks drawn once, not animated");
-  await tick(p, "radar"); await p.click("#wx-rloop");
-  await p.waitForFunction(() => /Radar frame/.test(document.getElementById("wxn-radar").textContent), null, { timeout: 15000 });
-  ok(!/looping/.test(await p.evaluate(() => document.getElementById("wxn-radar").textContent)), "reduce motion: the radar loop does not start");
   ok(!errors.length, "no page errors (reduce motion)" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }

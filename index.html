@@ -6618,8 +6618,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var fx = F.fx; if (fx) rows.push(["1 US$ in " + fx.currency, xNum(fx.per_usd, fx.per_usd < 10 ? 3 : 1), String(fx.at || "").slice(5, 16), "fx"]);
     var fi = F.firms; rows.push(["Fire and heat detections, last 24 h", fi ? xNum(fi.detections) + " (" + xNum(fi.frp_mw) + " MW)" : "0", "NASA FIRMS", "firms"]);
     var sc = F["sensor-community"]; if (sc) rows.push(["PM2.5 median of " + sc.sensors + " volunteer sensors", sc.pm25_median + " µg/m³ (90th pct " + sc.pm25_p90 + ")", "last hour", "sensor-community"]);
-    var os = F.opensky; if (os) rows.push(["Aircraft airborne over the country", xNum(os.airborne), "snapshot", "opensky"]);
-    var gj = F.gpsjam; if (gj) rows.push(["Cells with GPS interference", xNum(gj.cells), gj.date, "gpsjam"]);
+    /* air traffic and GPS interference: OSAP's own sweeps first (kept in the sold version), the outside services as second sources */
+    var ac = F["air-count"]; if (ac) rows.push(["Aircraft airborne over the country" + (ac.military ? " (" + xNum(ac.military) + " military)" : ""), xNum(ac.airborne), String(ac.asof || "").slice(11, 16) + "Z sweep", "air-count"]);
+    var os = F.opensky; if (os) rows.push(["Aircraft airborne over the country (OpenSky)", xNum(os.airborne), "snapshot", "opensky"]);
+    var go = F["gnss-own"]; if (go) rows.push(["1° cells with GPS interference, last 24 h", xNum(go.cells), String(go.to || "").slice(0, 10), "gnss-own"]);
+    var gj = F.gpsjam; if (gj) rows.push(["Cells with GPS interference (gpsjam.org)", xNum(gj.cells), gj.date, "gpsjam"]);
     var pw = F.power; if (pw) rows.push(["Power plants listed", xNum(pw.plants) + " (" + xNum(pw.total_mw) + " MW)", "WRI 2021", "power"]);
     var sa = F.opensanctions; if (sa) rows.push(["Sanctioned or watch-listed people and entities linked to it", xNum(sa.entities), "OpenSanctions", "opensanctions"]);
     var c2 = F.c2; if (c2) rows.push(["Botnet command servers hosted", xNum(c2.servers) + " (" + c2.online + " online)", "abuse.ch", "c2"]);
@@ -6656,7 +6659,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var chips = '<div class="sec"><div class="ctl" style="flex-wrap:wrap;gap:4px">' + XCAT.map(function (c) {
       return '<label style="display:inline-flex;align-items:center;gap:3px;margin:2px 8px 2px 0;font-size:12px"><input type="checkbox" data-xcat="' + esc(c) + '"' + (XOFF[c] ? "" : " checked") + '><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + XCOL[c] + '"></span>' +
         esc(c) + ' <span class="obs">' + (cnt[c] || 0) + "</span></label>"; }).join("") + '</div><input type="search" id="x-q" class="mini" placeholder="Search every feed for ' + esc(C.name) + '" value="' + esc(xQ) + '" style="width:100%;margin-top:6px">' +
-      '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (RainViewer, global mosaic)</label></div>' +
+      '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (national radar: North America, Germany, Finland, Netherlands, Japan)</label></div>' +
       '<p class="note">Dated items follow the period; advice levels, sanctions listings, elections and reference layers always show. Infrastructure and Sanctions start switched off because they are long lists.</p></div>';
     var lists = XCAT.filter(function (c) { return byCat[c]; }).map(function (c) {
       return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
@@ -6686,8 +6689,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var t = e.target; if (!t) return;
     if (t.getAttribute && t.getAttribute("data-xcat")) { XOFF[t.getAttribute("data-xcat")] = !t.checked; try { localStorage.setItem("osap-x-off", JSON.stringify(XOFF)); } catch (er) {} showOpenData(); }
     else if (t.id === "x-radar") {
-      var rv = ((window.OSAP_XF || {}).globals || {}).rainviewer || [];
-      if (!xRadar && rv[0]) xRadar = L.tileLayer(rv[0].url + "/256/{z}/{x}/{y}/2/1_1.png", { pane: "satpane", opacity: 0.7, maxNativeZoom: 7, maxZoom: 18, attribution: "RainViewer" });
+      var wx = window.OSAP_WX;
+      if (!xRadar && wx && wx.radarLayer) xRadar = wx.radarLayer(0.7, "satpane");
       if (xRadar) { if (t.checked) xRadar.addTo(map); else map.removeLayer(xRadar); }
     }
   });

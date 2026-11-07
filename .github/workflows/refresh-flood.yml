@@ -209,6 +209,9 @@ jobs:
         run: |
           npm install --no-save --no-audit --no-fund h3-js@4 >/dev/null 2>&1 || true
           SAMPLES=${{ inputs.only == 'dense' && '1' || '' }} node tools/refresh_dense.mjs
+        env:
+          # sold version: feeds tagged nc are not asked at all (tools/dense_lib.mjs), then nc_strip below sweeps the rest
+          OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
         timeout-minutes: 14
         continue-on-error: true
       - name: Report translation coverage
