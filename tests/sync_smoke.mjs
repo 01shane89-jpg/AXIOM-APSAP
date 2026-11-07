@@ -141,6 +141,25 @@ ok(JSON.stringify(await pts(B)) === JSON.stringify(["pt-a2:New on A", "pt-b1:PC 
 await synced(A); await reload(A);
 ok((await pts(A)).includes("pt-b2:New on B") && (await pts(A)).includes("pt-a2:New on A"), "and A has both", await pts(A));
 
+/* ---------- My places folders and what they hold (Shane 2026-11-07: "I added a lot of map points and organized them into
+   folders. It's not synced"): a folder made on A, a point filed in it, and a drop zone, flight plan and site survey (which
+   My places lists) reach B; a point B files in that folder reaches A ---------- */
+await A.p.evaluate(() => {
+  localStorage.setItem("osap-places", JSON.stringify({ v: 1, folders: [{ id: "frecce01", name: "Recce", parent: "" }], of: { "pt:pt-a2": "frecce01", "dz:dzalpha1": "frecce01" }, off: {}, hide: {}, open: { frecce01: 1 } }));
+  localStorage.setItem("osap-dz", JSON.stringify([{ id: "dzalpha1", name: "DZ Alpha", cc: "th", pi: [13.7, 100.5], axis: 90, len_m: 1000, wid_m: 400, shape: "rect" }]));
+  localStorage.setItem("osap-flights", JSON.stringify([{ id: "fmyplan1", name: "Flight to Alpha", pts: [] }]));
+  localStorage.setItem("osap-surveys", JSON.stringify([{ id: "svhlz001", kind: "hlz", name: "HLZ survey", cc: "th" }]));
+});
+await synced(A); await synced(B); await reload(B);
+const plB = await B.p.evaluate(() => ({ st: OSAP_PLACES.state(), f: OSAP_PLACES.folderOf("pt:pt-a2"), dz: JSON.parse(localStorage.getItem("osap-dz") || "[]").map((d) => d.id),
+  fl: JSON.parse(localStorage.getItem("osap-flights") || "[]").map((d) => d.id), sv: JSON.parse(localStorage.getItem("osap-surveys") || "[]").map((d) => d.id) }));
+ok(plB.st.folders.some((f) => f.id === "frecce01" && f.name === "Recce") && plB.f === "frecce01", "A's folder and the point filed in it reach B", plB.st.folders);
+ok(plB.dz.includes("dzalpha1") && plB.fl.includes("fmyplan1") && plB.sv.includes("svhlz001"), "A's drop zone, flight plan and site survey reach B", plB);
+await B.p.evaluate(() => OSAP_PLACES.move("pt:pt-b2", "frecce01"));
+await synced(B); await synced(A); await reload(A);
+const plA = await A.p.evaluate(() => [OSAP_PLACES.folderOf("pt:pt-b2"), OSAP_PLACES.folderOf("pt:pt-a2"), OSAP_PLACES.folderOf("dz:dzalpha1")]);
+ok(plA.every((f) => f === "frecce01"), "the point B filed in the folder is in it on A, and A's filing stays", plA);
+
 /* ---------- a new workspace on A reaches B, unopened ---------- */
 await A.p.evaluate(() => { const w = OSAP_WS.create("Ops North", { "osap-atak-pts": JSON.stringify([{ id: "pt-n1", n: "North OP" }]) }); return w && w.id; });
 await synced(A); await synced(B);
