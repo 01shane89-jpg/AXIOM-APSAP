@@ -109,6 +109,23 @@ run("cems", async (g) => {
   }).filter((x) => within(x.date, 120)) };
 });
 
+// WMO Severe Weather Information Centre: every national weather service's current CAP warnings in one file (about 2,400 at a
+// time, worldwide). A backup and gap-filler for the warnings layer in the free app. WMO classes warnings as "recommended" data,
+// whose terms are set by each issuing service, so it is tagged nc and the sold version does not ask it.
+feed("wmo-swic", { name: "National weather warnings worldwide (WMO Severe Weather Information Centre)", org: "WMO, from each national weather service", cat: "Hazards", lic: "WMO 'recommended' data; terms set by each issuing service", nc: true, url: "https://severeweather.wmo.int/" });
+run("wmo-swic", async (g) => {
+  const j = await g("https://severeweather.wmo.int/v2/json/wmo_all.json", "json", { timeout: 90000 }), items = [];
+  for (const w of j.items || []) {
+    const cc = ccFromA2(String(w.url || "").slice(0, 2)); if (!cc) continue;
+    if (w.expires && Date.parse(w.expires.replace(" ", "T") + "Z") < Date.now()) continue;
+    const sev = +w.s || 0; if (sev < 2) continue;   // severity 1 minor / unknown left out, as for MeteoAlarm
+    items.push({ title: (w.headline || w.event || "Weather warning").slice(0, 200) + (w.areaDesc ? " · " + String(w.areaDesc).slice(0, 120) : ""), detail: [w.event, "expires " + String(w.expires || "").slice(0, 16)].filter(Boolean).join(" · "),
+      date: String(w.sent || "").replace(" ", "T"), url: "https://severeweather.wmo.int/v2/cap-alerts/" + w.url, sev: sev >= 4 ? 3 : sev >= 3 ? 3 : 2, kind: "Weather warning", ccs: withOki([cc]) });
+  }
+  if (!items.length) throw new Error("no warnings read");
+  return { items, note: (j.items || []).length + " warnings, " + items.length + " moderate or worse" };
+});
+
 feed("meteoalarm", { name: "Meteoalarm European weather warnings", org: "EUMETNET (national weather services)", cat: "Hazards", lic: "Public feed; redistribution normally needs an EUMETNET agreement", nc: true, url: "https://meteoalarm.org/" });
 run("meteoalarm", async (g) => {
   const C = ["austria", "belgium", "bosnia-herzegovina", "bulgaria", "croatia", "cyprus", "czechia", "denmark", "estonia", "finland", "france", "germany", "greece", "hungary", "iceland", "ireland",
@@ -489,6 +506,31 @@ run("ports", async (g) => {
       lat: la, lon: lo, url: "https://msi.nga.mil/Publications/WPI", sev: 1, kind: "Port", value: size[p.harborSize] || 0, ccs: withOki(ccsAt(la, lo, 0.3)) }; }).sort((a, b) => b.value - a.value) };
 });
 
+// Undersea telecom cable landings from OpenStreetMap (ODbL, attribution): the ends of every cable line mapped as
+// communication=line + location=underwater, through Geofabrik's Postpass. Commercial-OK stand-in for TeleGeography's landing
+// points (CC BY-NC-SA, "cables") and their backup in the free app. OSM marks fewer cables than TeleGeography, so it is a floor.
+feed("osm-cables", { name: "Undersea cable landings (OpenStreetMap)", org: "OpenStreetMap contributors, via Geofabrik Postpass", cat: "Infrastructure", lic: "ODbL 1.0 (attribution)", url: "https://www.openstreetmap.org/", everyHours: 168 });
+run("osm-cables", async (g) => {
+  const sql = "SELECT ST_Collect(ARRAY[ST_StartPoint(geom), ST_EndPoint(geom)]) AS geom, tags->>'name' AS name, tags->>'operator' AS op, osm_id FROM postpass_line WHERE tags->>'communication'='line' AND tags->>'location'='underwater'";
+  const j = await get("https://postpass.geofabrik.de/api/0.2/interpreter", "json", { timeout: 300000, method: "POST", body: new URLSearchParams({ data: sql }).toString(), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+  const near = new Map(), items = [];
+  for (const f of j.features || []) {
+    const p = f.properties || {}, pts = (f.geometry && f.geometry.coordinates) || [];
+    for (const [lo, la] of pts) {
+      // a cable end at sea (a segment break) has no country within 2 km: left out
+      const ccs = ccsAt(la, lo, 0.02); if (!ccs.length) continue;
+      const k = Math.round(la * 50) + "_" + Math.round(lo * 50);   // about 2 km: one landing per site, naming every cable there
+      const e = near.get(k); if (e) { if (p.name && e.cables.indexOf(p.name) < 0) e.cables.push(p.name); continue; }
+      near.set(k, { la, lo, ccs, cables: p.name ? [p.name] : [], id: p.osm_id });
+    }
+  }
+  for (const e of near.values()) items.push({ title: "Cable landing" + (e.cables.length ? ": " + e.cables.slice(0, 3).join(", ") + (e.cables.length > 3 ? " and " + (e.cables.length - 3) + " more" : "") : ""),
+    detail: "End of an undersea telecom cable as mapped in OpenStreetMap" + (e.cables.length ? " (" + e.cables.length + " cable" + (e.cables.length > 1 ? "s" : "") + ")" : ""), lat: e.la, lon: e.lo,
+    url: "https://www.openstreetmap.org/#map=13/" + e.la.toFixed(4) + "/" + e.lo.toFixed(4), sev: 1, kind: "Cable landing", ccs: withOki(e.ccs) });
+  if (!items.length) throw new Error("no cable ends read");
+  return { items, note: (j.features || []).length + " cable lines, " + items.length + " landing sites" };
+});
+
 feed("cables", { name: "Submarine cable landing points", org: "TeleGeography Submarine Cable Map", cat: "Infrastructure", lic: "CC BY-NC-SA 3.0", nc: true, url: "https://www.submarinecablemap.com/", everyHours: 168 });
 run("cables", async (g) => {
   const j = await g("https://www.submarinecablemap.com/api/v3/landing-point/landing-point-geo.json");
@@ -527,6 +569,18 @@ for (const [id, name, org, url, lic, home] of [
     return { items, globals: items.slice(0, 30).map((x) => ({ ...x, ccs: undefined })) };
   });
 }
+
+// Known exploited vulnerabilities newly added by CISA (US Government work, public domain): a commercial-OK cyber feed next to
+// the ransomware claims (ransomware.live, non-commercial), which the sold version leaves out. Global, not per country.
+feed("cisa-kev", { name: "Known exploited vulnerabilities, newly added (CISA KEV)", org: "US Cybersecurity and Infrastructure Security Agency", cat: "Cyber", lic: "US Government work, public domain", url: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog", everyHours: 6 });
+run("cisa-kev", async (g) => {
+  const j = await g("https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json");
+  const v = (j.vulnerabilities || []).filter((x) => within(x.dateAdded, 30)).sort((a, b) => String(b.dateAdded).localeCompare(String(a.dateAdded)));
+  const globals = v.slice(0, 60).map((x) => ({ title: x.cveID + ": " + x.vendorProject + " " + x.product + (x.knownRansomwareCampaignUse === "Known" ? " (used in ransomware)" : ""),
+    detail: (x.vulnerabilityName || "") + ". Fix due for US federal agencies " + x.dueDate + ".", date: x.dateAdded, url: "https://nvd.nist.gov/vuln/detail/" + x.cveID,
+    sev: x.knownRansomwareCampaignUse === "Known" ? 3 : 2, kind: "Exploited vulnerability" }));
+  return { items: [], globals, note: v.length + " added in the last 30 days, catalogue " + j.count };
+});
 
 feed("ransomware", { name: "Ransomware leak-site claims (ransomware.live)", org: "ransomware.live (Julien Mousqueton)", cat: "Cyber", lic: "Free public API; terms: attribution, non-commercial", nc: true, url: "https://www.ransomware.live/" });
 run("ransomware", async (g) => {
@@ -604,6 +658,26 @@ run("ca-sanctions", async (g) => {
     const name = t("EntityOrShip") || [t("GivenName"), t("LastName")].filter(Boolean).join(" "), country = t("Country").split(" / ")[0].trim();
     return { title: "Canada-sanctioned " + (t("EntityOrShip") ? "entity/ship" : "person") + ": " + name, detail: [country, t("Schedule") && "schedule " + t("Schedule"), t("Item") && "item " + t("Item")].filter(Boolean).join(" · "),
       date: t("DateOfListing"), url: "https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx", sev: 1, kind: "Canada sanctions listing", ccs: withOki([ccFromName(country)].filter(Boolean)) }; }) };
+});
+
+// UN Security Council consolidated sanctions list (public UN document): listed individuals and entities per country of
+// nationality or address. Commercial-OK stand-in for the OpenSanctions totals (CC BY-NC); the US OFAC counts the page already
+// shows (data/live/sanctions.js, public domain) sit beside it.
+feed("un-sanctions", { name: "UN Security Council sanctions list, entries per country", org: "United Nations Security Council", cat: "Sanctions", lic: "Public UN document", url: "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list", everyHours: 24 });
+run("un-sanctions", async (g) => {
+  const x = await g("https://scsanctions.un.org/resources/xml/en/consolidated.xml", "text", { timeout: 120000 }), figures = {};
+  const add = (cc, k) => { if (!cc) return; const f = (figures[cc] = figures[cc] || { individuals: 0, entities: 0, entries: 0 }); f[k]++; f.entries++; };
+  for (const [tag, k] of [["INDIVIDUAL", "individuals"], ["ENTITY", "entities"]]) {
+    for (const b of x.split("<" + tag + ">").slice(1)) {
+      const body = b.split("</" + tag + ">")[0], ccs = new Set();
+      for (const m of body.matchAll(/<NATIONALITY>\s*(?:<VALUE>([^<]*)<\/VALUE>\s*)+/g)) for (const v of m[0].matchAll(/<VALUE>([^<]*)<\/VALUE>/g)) { const c = ccFromName(unhtml(v[1]).trim()); if (c) ccs.add(c); }
+      for (const m of body.matchAll(/<COUNTRY>([^<]*)<\/COUNTRY>/g)) { const c = ccFromName(unhtml(m[1]).trim()); if (c) ccs.add(c); }
+      for (const c of ccs) add(c, k);
+    }
+  }
+  if (!Object.keys(figures).length) throw new Error("no entries read");
+  if (figures.jp) figures.oki = figures.jp;
+  return { figures, note: Object.keys(figures).length + " countries" };
 });
 
 feed("opensanctions", { name: "Sanctioned and watch-listed entities per country (OpenSanctions totals)", org: "OpenSanctions", cat: "Sanctions", lic: "CC BY-NC 4.0 (non-commercial)", nc: true, url: "https://www.opensanctions.org/", everyHours: 24 });
@@ -699,6 +773,23 @@ run("wdi", async (g) => {
   if (!Object.keys(figures).length) throw new Error("no indicator read");
   if (figures.jp) figures.oki = figures.jp;
   return { figures };
+});
+
+// Health figures from the World Bank's copy of the WHO / UN IGME series (World Development Indicators, CC BY 4.0): the
+// commercial-OK stand-in for the WHO Global Health Observatory feed (CC BY-NC-SA, "who-gho"), and its backup in the free app.
+// Same keys as who-gho, so the Key figures table shows WHO where it has a value and this otherwise.
+feed("wdi-health", { name: "Health indicators (World Bank WDI, from WHO and UN IGME estimates)", org: "World Bank", cat: "Health", lic: "CC BY 4.0", url: "https://data.worldbank.org/topic/health", everyHours: 168 });
+run("wdi-health", async (g) => {
+  const IND = [["SP.DYN.LE00.IN", "life_expectancy_years", 1], ["SH.DYN.MORT", "under5_mortality_per_1000", 1], ["SH.STA.MMRT", "maternal_mortality_per_100k", 0], ["SH.IMM.IDPT", "dtp3_immunisation_pct", 0]];
+  const figures = {};
+  for (const [code, key, d] of IND) {
+    try { const j = await g("https://api.worldbank.org/v2/country/all/indicator/" + code + "?format=json&mrnev=1&per_page=400");
+      for (const r of j[1] || []) { const cc = ccFromA3(r.countryiso3code); if (!cc || r.value == null) continue; (figures[cc] = figures[cc] || {})[key] = { value: round(r.value, d), year: +r.date }; } } catch (e) {}
+    await sleep(300);
+  }
+  if (!Object.keys(figures).length) throw new Error("no indicator read");
+  if (figures.jp) figures.oki = figures.jp;
+  return { figures, note: Object.keys(figures).length + " countries" };
 });
 
 feed("imf", { name: "IMF World Economic Outlook figures (current year)", org: "International Monetary Fund (DataMapper)", cat: "Economy", lic: "IMF copyright; free reuse with attribution", url: "https://www.imf.org/external/datamapper/", everyHours: 168 });
