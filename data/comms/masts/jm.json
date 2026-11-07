@@ -1,4 +1,4 @@
-{"cc":"jm","at":"2026-10-05T11:23:26Z","base":"2026-10-05T11:21:21Z","m":[
+{"cc":"jm","at":"2026-11-07T10:54:20Z","base":"2026-11-07T10:53:02Z","m":[
 ["n11704984979",18.09251,-77.96991,{"man_made":"mast","tower:type":"communication"}],
 ["n11986057048",17.94634,-77.06948,{"man_made":"tower","tower:type":"communication"}],
 ["n12290882869",18.08857,-77.14965,{"man_made":"mast","tower:type":"communication"}],
@@ -29,6 +29,7 @@
 ["n13456490336",18.10277,-77.6284,{"man_made":"mast","tower:type":"communication"}],
 ["n13605081496",18.18214,-77.60807,{"man_made":"communications_tower"}],
 ["n13715318506",18.02949,-76.80665,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
+["n14351086273",17.94124,-76.90702,{"man_made":"tower","tower:type":"communication"}],
 ["n1879446223",18.07323,-76.85238,{"man_made":"tower","tower:type":"communication"}],
 ["n1879446227",18.38643,-78.09675,{"man_made":"mast","name":"Flower Hill","tower:type":"communication"}],
 ["n1879446231",18.25557,-78.32905,{"man_made":"tower","name":"Negril/Mount Airy","tower:type":"communication"}],

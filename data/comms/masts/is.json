@@ -1,4 +1,4 @@
-{"cc":"is","at":"2026-10-05T11:04:35Z","base":"2026-10-05T11:00:50Z","m":[
+{"cc":"is","at":"2026-11-07T10:46:16Z","base":"2026-11-07T10:43:51Z","m":[
 ["n10152865001",65.81717,-17.9897,{"man_made":"mast","tower:type":"communication"}],
 ["n10152865143",65.74894,-18.00136,{"man_made":"mast","tower:type":"communication"}],
 ["n10152865144",65.73822,-18.0439,{"man_made":"mast","tower:type":"communication"}],
@@ -35,7 +35,7 @@
 ["n2381286444",65.59477,-24.0029,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n2505934729",65.36187,-21.04031,{"man_made":"tower","tower:type":"communication"}],
 ["n2506662110",63.41459,-19.02776,{"man_made":"tower","tower:type":"communication"}],
-["n2521368428",63.85039,-22.46675,{"frequency":"37.6 kHz","height":"243.8","man_made":"tower","name":"TFK Grindavik","owner":"US Navy (Submarine Communication)","tower:type":"communication"}],
+["n2521368428",63.85039,-22.46675,{"frequency":"37.6 kHz","height":"304,8","man_made":"tower","name":"TFK Grindavik","owner":"US Navy (Submarine Communication)","tower:type":"communication"}],
 ["n2521398440",65.42301,-20.87276,{"man_made":"tower","tower:type":"communication"}],
 ["n2538715887",66.18632,-18.95206,{"man_made":"tower","tower:type":"communication"}],
 ["n2549784393",66.45045,-15.95346,{"man_made":"tower","tower:type":"communication"}],

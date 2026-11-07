@@ -1,4 +1,4 @@
-{"cc":"iq","at":"2026-10-05T11:17:47Z","base":"2026-10-05T11:16:12Z","m":[
+{"cc":"iq","at":"2026-11-07T10:51:47Z","base":"2026-11-07T10:47:51Z","m":[
 ["n10079467733",34.31178,45.43755,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
 ["n10081504452",34.35406,45.37578,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
 ["n10087128748",34.38138,45.38974,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
@@ -428,6 +428,11 @@
 ["n14219084999",36.22378,44.63346,{"man_made":"tower","tower:type":"communication"}],
 ["n14219937239",35.58144,44.20129,{"man_made":"tower","tower:type":"communication"}],
 ["n14233849342",36.23268,44.87478,{"man_made":"tower","tower:type":"communication"}],
+["n14293961902",31.8108,47.15531,{"communication:4g":"yes","communication:5g":"yes","communication:mobile_phone":"yes","man_made":"tower","name":"برج محمد مزهر","tower:construction":"dish","tower:type":"communication"}],
+["n14321438201",31.2375,45.39387,{"man_made":"communications_tower","name":"الحسوف البواهي","operator":".."}],
+["n14338913700",35.48375,44.15051,{"man_made":"tower","tower:type":"communication"}],
+["n14352276754",36.19701,44.08359,{"man_made":"tower","tower:type":"communication"}],
+["n14352276755",36.19685,44.08347,{"man_made":"tower","tower:type":"communication"}],
 ["n1437927467",37.05007,42.36631,{"man_made":"tower","tower:type":"communication"}],
 ["n1446828123",32.32875,44.96849,{"man_made":"tower","operator":"IMN","tower:type":"communication"}],
 ["n1446828125",32.51466,45.81717,{"man_made":"tower","tower:type":"communication"}],
@@ -830,7 +835,7 @@
 ["n9338686721",35.32357,43.7621,{"man_made":"communications_tower","name":"برج انترنيت مركز اللقاء / شارع الحلاقين","tower:type":"communication"}],
 ["n9338687517",35.34042,43.80213,{"man_made":"communications_tower","name":"برج انترنيت مركز اللقاء شارع الحلاقين"}],
 ["n9338687520",35.3196,43.79417,{"man_made":"communications_tower","name":"برج انترنيت مركز اللقاء / شارع الحلاقين"}],
-["n9338687618",35.37363,43.73754,{"man_made":"tower","name":"برج انترنيت مركز اللقاء / شارع الحلاقين","tower:type":"communication"}],
+["n9338687618",35.37363,43.73754,{"man_made":"tower","name":"مركز اللقاء","tower:type":"communication"}],
 ["n9338687619",35.31367,43.77321,{"man_made":"communications_tower","name":"برج انترنيت مركز اللقاء / شارع الحلاقين","tower:type":"communication"}],
 ["n9338687621",35.32871,43.76593,{"man_made":"communications_tower","name":"برج انترنيت مركز اللقاء / شارع الحلاقين"}],
 ["n9338687917",35.31985,43.76949,{"man_made":"communications_tower","name":"برج انترنيت مركز اللقاء / شارع الحلاقين","tower:type":"communication"}],

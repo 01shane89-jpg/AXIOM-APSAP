@@ -1,4 +1,4 @@
-{"cc":"ir","at":"2026-10-06T10:46:06Z","base":"2026-10-06T10:44:06Z","m":[
+{"cc":"ir","at":"2026-11-07T11:17:06Z","base":"2026-11-07T11:15:28Z","m":[
 ["n10015725188",27.61692,62.4773,{"man_made":"tower","tower:type":"communication"}],
 ["n10026768999",33.62554,57.40941,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10028681793",26.15087,61.42338,{"man_made":"tower","tower:type":"communication"}],
@@ -38,7 +38,7 @@
 ["n10272628611",27.90491,61.78911,{"man_made":"tower","tower:type":"communication"}],
 ["n10273023090",34.01684,58.16967,{"man_made":"mast","tower:type":"communication"}],
 ["n10273023091",34.01118,58.16655,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
-["n10273023092",34.00873,58.16396,{"man_made":"mast","tower:type":"communication"}],
+["n10273023092",34.00861,58.16386,{"man_made":"mast","tower:type":"communication"}],
 ["n10273023093",34.01661,58.16676,{"man_made":"mast","tower:type":"communication"}],
 ["n10274792580",27.88359,61.52784,{"man_made":"tower","tower:type":"communication"}],
 ["n10274800347",27.91181,61.6539,{"man_made":"tower","tower:type":"communication"}],
@@ -601,6 +601,8 @@
 ["n14184731176",29.61743,52.04349,{"man_made":"tower","tower:type":"communication"}],
 ["n14184731177",29.61745,52.04338,{"man_made":"tower","tower:type":"communication"}],
 ["n1419072839",35.17344,59.03245,{"man_made":"tower","tower:type":"communication"}],
+["n14302757284",36.57289,59.19184,{"man_made":"communications_tower","tower:type":"communication"}],
+["n14316878278",36.15385,52.52968,{"man_made":"mast","tower:type":"communication"}],
 ["n1471150174",38.24395,44.92183,{"man_made":"tower","tower:type":"communication"}],
 ["n1472205150",38.32968,44.8694,{"man_made":"tower","tower:type":"communication"}],
 ["n1476317312",30.26385,56.39256,{"man_made":"tower","tower:type":"communication"}],
@@ -2069,6 +2071,7 @@
 ["w1544559291",36.52335,52.14332,{"man_made":"tower","tower:type":"communication"}],
 ["w1544917729",31.98655,48.99956,{"man_made":"tower","tower:type":"communication"}],
 ["w1559162635",30.84599,52.35422,{"man_made":"tower","tower:type":"communication"}],
+["w1571468766",36.15387,52.52968,{"man_made":"tower","tower:type":"communication"}],
 ["w313816061",37.70545,46.9141,{"man_made":"tower","tower:type":"communication"}],
 ["w361790910",38.59609,47.18306,{"man_made":"tower","name":"فرستنده تلویزیونی و دکل مخابراتی اهر","tower:type":"communication"}],
 ["w392127190",34.07635,49.6603,{"man_made":"communications_tower","name":"فرستنده رادیویی"}],

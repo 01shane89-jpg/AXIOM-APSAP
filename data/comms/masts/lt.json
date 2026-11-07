@@ -1,4 +1,4 @@
-{"cc":"lt","at":"2026-10-06T11:05:19Z","base":"2026-10-06T11:03:35Z","m":[
+{"cc":"lt","at":"2026-11-07T11:24:47Z","base":"2026-11-07T11:23:36Z","m":[
 ["n10036599525",54.50319,24.81364,{"man_made":"mast","tower:type":"communication"}],
 ["n10056692698",54.40208,23.92233,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10084008103",55.76831,22.62861,{"man_made":"mast","tower:type":"communication"}],
@@ -165,6 +165,8 @@
 ["n14053282928",55.9387,21.78676,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
 ["n1415789641",55.76137,23.75754,{"ele":"93","height":"80","man_made":"tower","name":"Šeduvos RRS","operator":"Telecentras","tower:type":"communication"}],
 ["n1422482700",55.33857,26.1643,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
+["n14270489693",54.56298,25.26146,{"man_made":"tower","tower:type":"communication"}],
+["n14303260907",54.43064,25.61736,{"man_made":"tower","tower:type":"communication"}],
 ["n1623982376",54.80177,23.79464,{"communication:radio":"yes","communication:television":"yes","ele":"90","height":"245","man_made":"mast","operator":"Telecentras","tower:construction":"guyed_lattice","tower:type":"communication"}],
 ["n1679596480",54.37461,23.60969,{"man_made":"mast","tower:type":"communication"}],
 ["n1679596738",54.37704,23.59175,{"man_made":"mast","tower:type":"communication"}],

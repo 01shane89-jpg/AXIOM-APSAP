@@ -1,4 +1,4 @@
-{"cc":"lr","at":"2026-10-06T10:57:39Z","base":"2026-10-06T10:56:21Z","m":[
+{"cc":"lr","at":"2026-11-07T11:22:48Z","base":"2026-11-07T11:21:35Z","m":[
 ["n11242334943",7.61664,-9.49078,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n13446344676",6.3161,-10.80175,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
 ["n14234292148",6.65463,-9.37971,{"man_made":"tower","tower:type":"communication"}],
@@ -55,6 +55,7 @@
 ["w1015246240",6.24258,-10.45412,{"man_made":"tower","tower:type":"communication"}],
 ["w1186108182",6.3326,-10.7206,{"communication:gsm":"yes","man_made":"tower","name":"Lonestar T","tower:construction":"guyed_lattice","tower:type":"communication"}],
 ["w1418896075",4.67016,-8.42642,{"man_made":"tower","tower:type":"communication"}],
+["w1575794474",6.21191,-10.271,{"man_made":"tower","tower:type":"communication"}],
 ["w314234037",5.4547,-9.58221,{"man_made":"tower","tower:type":"communication"}],
 ["w710027014",5.82685,-9.76148,{"man_made":"tower","tower:type":"communication"}]
 ]}
