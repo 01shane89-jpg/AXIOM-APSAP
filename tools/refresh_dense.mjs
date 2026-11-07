@@ -508,10 +508,11 @@ run("ports", async (g) => {
 
 // Undersea telecom cable landings from OpenStreetMap (ODbL, attribution): the ends of every cable line mapped as
 // communication=line + location=underwater, through Geofabrik's Postpass. Commercial-OK stand-in for TeleGeography's landing
-// points (CC BY-NC-SA, "cables") and their backup in the free app. OSM marks fewer cables than TeleGeography, so it is a floor.
+// points (CC BY-NC-SA, "cables") and their backup in the free app. Lines under 20 km (river and lake crossings) are left out.
+// OSM maps fewer cables than TeleGeography, so it is a floor, not a full list.
 feed("osm-cables", { name: "Undersea cable landings (OpenStreetMap)", org: "OpenStreetMap contributors, via Geofabrik Postpass", cat: "Infrastructure", lic: "ODbL 1.0 (attribution)", url: "https://www.openstreetmap.org/", everyHours: 168 });
 run("osm-cables", async (g) => {
-  const sql = "SELECT ST_Collect(ARRAY[ST_StartPoint(geom), ST_EndPoint(geom)]) AS geom, tags->>'name' AS name, tags->>'operator' AS op, osm_id FROM postpass_line WHERE tags->>'communication'='line' AND tags->>'location'='underwater'";
+  const sql = "SELECT ST_Collect(ARRAY[ST_StartPoint(geom), ST_EndPoint(geom)]) AS geom, tags->>'name' AS name, tags->>'operator' AS op, osm_id FROM postpass_line WHERE tags->>'communication'='line' AND tags->>'location'='underwater' AND ST_Length(geom::geography) > 20000";
   const j = await get("https://postpass.geofabrik.de/api/0.2/interpreter", "json", { timeout: 300000, method: "POST", body: new URLSearchParams({ data: sql }).toString(), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
   const near = new Map(), items = [];
   for (const f of j.features || []) {
@@ -633,7 +634,10 @@ run("un-sanctions", async (g) => {
     const nice = kind === "person" ? name.toLowerCase().replace(/(^|[\s'-])\p{L}/gu, (c) => c.toUpperCase()) : name;
     items.push({ title: (kind === "person" ? "Sanctioned person: " : "Sanctioned entity: ") + nice, detail: [t("UN_LIST_TYPE") + " list", t("REFERENCE_NUMBER"), places.length ? "linked to " + [...new Set(places)].join(", ") : ""].filter(Boolean).join(" · "),
       date: t("LISTED_ON"), url: "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list", sev: 1, kind: "UN sanctions listing", ccs: withOki(ccs) }); }
-  return { items };
+  // counts per country for the Key figures table: the commercial-OK companion to the OpenSanctions totals (CC BY-NC)
+  const figures = {};
+  for (const it of items) for (const cc of it.ccs) { const f = (figures[cc] = figures[cc] || { entries: 0, individuals: 0, entities: 0 }); f.entries++; if (/person/.test(it.title)) f.individuals++; else f.entities++; }
+  return { items, figures };
 });
 
 feed("uk-sanctions", { name: "UK consolidated sanctions list (OFSI)", org: "HM Treasury, Office of Financial Sanctions Implementation", cat: "Sanctions", lic: "Open Government Licence v3", url: "https://www.gov.uk/government/publications/financial-sanctions-consolidated-list-of-targets", everyHours: 12 });
@@ -658,26 +662,6 @@ run("ca-sanctions", async (g) => {
     const name = t("EntityOrShip") || [t("GivenName"), t("LastName")].filter(Boolean).join(" "), country = t("Country").split(" / ")[0].trim();
     return { title: "Canada-sanctioned " + (t("EntityOrShip") ? "entity/ship" : "person") + ": " + name, detail: [country, t("Schedule") && "schedule " + t("Schedule"), t("Item") && "item " + t("Item")].filter(Boolean).join(" · "),
       date: t("DateOfListing"), url: "https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx", sev: 1, kind: "Canada sanctions listing", ccs: withOki([ccFromName(country)].filter(Boolean)) }; }) };
-});
-
-// UN Security Council consolidated sanctions list (public UN document): listed individuals and entities per country of
-// nationality or address. Commercial-OK stand-in for the OpenSanctions totals (CC BY-NC); the US OFAC counts the page already
-// shows (data/live/sanctions.js, public domain) sit beside it.
-feed("un-sanctions", { name: "UN Security Council sanctions list, entries per country", org: "United Nations Security Council", cat: "Sanctions", lic: "Public UN document", url: "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list", everyHours: 24 });
-run("un-sanctions", async (g) => {
-  const x = await g("https://scsanctions.un.org/resources/xml/en/consolidated.xml", "text", { timeout: 120000 }), figures = {};
-  const add = (cc, k) => { if (!cc) return; const f = (figures[cc] = figures[cc] || { individuals: 0, entities: 0, entries: 0 }); f[k]++; f.entries++; };
-  for (const [tag, k] of [["INDIVIDUAL", "individuals"], ["ENTITY", "entities"]]) {
-    for (const b of x.split("<" + tag + ">").slice(1)) {
-      const body = b.split("</" + tag + ">")[0], ccs = new Set();
-      for (const m of body.matchAll(/<NATIONALITY>\s*(?:<VALUE>([^<]*)<\/VALUE>\s*)+/g)) for (const v of m[0].matchAll(/<VALUE>([^<]*)<\/VALUE>/g)) { const c = ccFromName(unhtml(v[1]).trim()); if (c) ccs.add(c); }
-      for (const m of body.matchAll(/<COUNTRY>([^<]*)<\/COUNTRY>/g)) { const c = ccFromName(unhtml(m[1]).trim()); if (c) ccs.add(c); }
-      for (const c of ccs) add(c, k);
-    }
-  }
-  if (!Object.keys(figures).length) throw new Error("no entries read");
-  if (figures.jp) figures.oki = figures.jp;
-  return { figures, note: Object.keys(figures).length + " countries" };
 });
 
 feed("opensanctions", { name: "Sanctioned and watch-listed entities per country (OpenSanctions totals)", org: "OpenSanctions", cat: "Sanctions", lic: "CC BY-NC 4.0 (non-commercial)", nc: true, url: "https://www.opensanctions.org/", everyHours: 24 });
