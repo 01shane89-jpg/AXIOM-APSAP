@@ -398,6 +398,8 @@
   var strip = D.createElement("div"); strip.id = "atk-bar"; strip.className = "leaflet-control";
   strip.innerHTML = '<button type="button" class="atk-pos" data-sb="fmt" title="Tap to switch between MGRS, decimal degrees and degrees-minutes-seconds"><b class="atk-k">Center</b> <span class="atk-v"></span></button>' +
     '<button type="button" class="atk-ic" data-sb="copy" title="Copy this grid" aria-label="Copy this grid">' + I.copy + "</button>" +
+    /* the local time and military zone letter at that grid, beside Zulu (assets/osap-zonetime.js) */
+    '<span class="atk-tm" hidden><b class="atk-lt"></b><span class="atk-zt"></span></span>' +
     '<span class="atk-me" hidden><b class="atk-k">Me</b> <span class="atk-mv"></span></span>' +
     '<button type="button" class="atk-ic atk-lock" data-sb="lock" aria-pressed="false" title="Lock the map on my position" aria-label="Lock the map on my position">' + I.lock + "</button>";
   L.DomEvent.disableClickPropagation(strip); L.DomEvent.disableScrollPropagation(strip);
@@ -416,11 +418,27 @@
     var p = readPt();
     strip.querySelector(".atk-k").textContent = cursor ? "Cursor" : "Center";
     strip.querySelector(".atk-v").textContent = fmtPt(p[0], p[1]);
+    paintTime(p);
     var h = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here(), me = strip.querySelector(".atk-me");
     me.hidden = !h;
     if (h) strip.querySelector(".atk-mv").textContent = fmtPt(h.lat, h.lon) + (h.acc ? " ±" + (h.acc >= 1000 ? (h.acc / 1000).toFixed(1) + " km" : Math.round(h.acc) + " m") : "");
     var lk = strip.querySelector(".atk-lock"); lk.setAttribute("aria-pressed", String(locked)); lk.classList.toggle("on", locked);
   }
+  /* "22:04G 15:04Z": the local clock at the grid with its zone letter, then Zulu. At a point on UTC itself, Zulu alone.
+     The tooltip gives the offset and how the zone was found (time zone map, or nautical zone at sea). */
+  function paintTime(p) {
+    var T = W.OSAP_ZTIME, el = strip.querySelector(".atk-tm");
+    if (!T) { el.hidden = true; return; }
+    var c = T.clock(p[0], p[1]), lt = el.querySelector(".atk-lt");
+    el.hidden = false;
+    lt.hidden = c.utc === "UTC";
+    lt.textContent = c.local;
+    el.querySelector(".atk-zt").textContent = c.zulu;
+    el.title = c.why + ": " + (c.letter ? c.letter + " (" + c.utc + ")" : c.utc) + (c.day ? ", " + (c.day > 0 ? "the day after" : "the day before") + " the UTC date" : "") + ". Zulu = UTC.";
+  }
+  if (W.OSAP_ZTIME) W.OSAP_ZTIME.onReady(function () { paintStrip(); });
+  /* the clocks move on with no map move: once a minute, on the minute */
+  (function tick() { setTimeout(function () { if (!D.hidden) paintStrip(); tick(); }, 60500 - Date.now() % 60000); })();
   var rafP = 0; function soon() { if (!rafP) rafP = requestAnimationFrame(function () { rafP = 0; paintStrip(); }); }
   map.on("move", soon);
   var fine = W.matchMedia && W.matchMedia("(hover:hover) and (pointer:fine)").matches;
@@ -869,6 +887,7 @@
     "#atk-bar{position:absolute;left:0;right:0;bottom:0;z-index:1000;margin:0!important;height:30px;align-items:center;gap:2px;padding:0 4px 0 6px;background:rgba(20,24,28,.86);color:#e9eef2;font:12px/1 'IBM Plex Mono',ui-monospace,monospace;box-sizing:border-box;white-space:nowrap;overflow:hidden}" +
     "#atk-bar button{border:0;background:none;color:inherit;font:inherit;cursor:pointer;height:30px;padding:0 6px;border-radius:5px}#atk-bar button:hover{background:rgba(255,255,255,.1)}" +
     "#atk-bar .atk-pos{flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;text-align:left}#atk-bar .atk-k{font:700 10px system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#8fd3e0;margin-right:2px}" +
+    "#atk-bar .atk-tm{flex:0 0 auto;padding:0 8px 0 4px;border-left:1px solid rgba(255,255,255,.18)}#atk-bar .atk-tm[hidden]{display:none}#atk-bar .atk-lt{font-weight:700;color:#ffd43b;margin-right:6px}" +
     "#atk-bar .atk-me{flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;margin-left:auto;padding-left:8px;border-left:1px solid rgba(255,255,255,.18)}#atk-bar .atk-me .atk-k{color:#74c0fc}" +
     "#atk-bar .atk-ic{display:flex;align-items:center;justify-content:center;width:34px;padding:0}#atk-bar .atk-ic svg{width:17px;height:17px}#atk-bar .atk-lock{margin-left:auto}#atk-bar .atk-me:not([hidden])+.atk-lock{margin-left:0}" +
     "#atk-bar .atk-lock.on{background:#1a73e8;color:#fff}" +
