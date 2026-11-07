@@ -24,11 +24,11 @@
   "use strict";
   var W = window, D = document, L = W.L, map = W.__asapMap;
   if (!L || !map || W.OSAP_PLACES || /[?&]watchscan=1(&|$)/.test(location.search)) return;
-  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", UKEY = "osap-rulers", SVKEY = "osap-surveys", MAX_FOLDERS = 200, MAX_DEPTH = 6;
+  var KEY = "osap-places", RKEY = "osap-routes", FKEY = "osap-flights", AKEY = "osap-aoi", SKEY = "osap-shapes", VKEY = "osap-viewsheds", UKEY = "osap-rulers", DWKEY = "osap-draw", SVKEY = "osap-surveys", MAX_FOLDERS = 200, MAX_DEPTH = 6;
   var KCOL = ["#2b8a3e", "#ae3ec9", "#d6336c", "#0c8599", "#f08c00", "#5f3dc4", "#a61e4d", "#495057"];
-  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", ru: "Ruler", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan", sv: "Site survey" };
+  var KIND = { pt: "Point", rt: "Route", ai: "Area", sh: "Shape", ru: "Ruler", dw: "Drawing", vs: "Viewshed", dz: "Drop zone", fl: "Flight plan", sv: "Site survey" };
   /* kinds whose on/off box lives here (the hide list); routes and viewsheds keep their own switch; drop zones and flight plans none */
-  var HIDE_RE = /^(pt|ai|sh|ru):[\w-]{1,60}$/, ORDER = "ptaishrurtvsdzflsv";
+  var HIDE_RE = /^(pt|ai|sh|ru|dw):[\w-]{1,60}$/, ORDER = "ptaishrudwrtvsdzflsv";
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } }
   function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
@@ -73,6 +73,8 @@
     (Z && Z.list ? Z.list() : []).forEach(function (d) { out.push({ key: "dz:" + d.id, kind: "dz", id: d.id, name: d.name, cc: d.cc, at: d.pi }); });
     (W.OSAP_AOI && W.OSAP_AOI.all ? W.OSAP_AOI.all() : arrOf(AKEY)).forEach(function (a) { if (a && typeof a.id === "string" && okPts(a.pts)) out.push({ key: "ai:" + a.id, kind: "ai", id: a.id, name: (a.type ? a.type + " " : "") + (a.name || "Area"), cc: a.cc, pts: a.pts }); });
     (W.OSAP_RULERS ? W.OSAP_RULERS.all() : arrOf(UKEY)).forEach(function (r) { if (r && typeof r.id === "string" && okPts(r.pts)) out.push({ key: "ru:" + r.id, kind: "ru", id: r.id, name: r.name || "Ruler", cc: r.cc, pts: r.pts, color: r.col }); });
+    /* planning graphics (assets/osap-draw.js): each with its type, colour and on/off box; Go to fits the whole drawing */
+    (W.OSAP_DRAW ? W.OSAP_DRAW.all() : []).forEach(function (r) { var bb = W.OSAP_DRAW.bbox(r); if (bb) out.push({ key: "dw:" + r.id, kind: "dw", id: r.id, name: W.OSAP_DRAW.label(r), cc: r.cc, pts: bb, color: r.col, dwType: (W.OSAP_DRAW.TYPES[r.t] || {}).lab }); });
     arrOf(SKEY).forEach(function (x) { if (x && typeof x.id === "string" && okPts(x.pts)) out.push({ key: "sh:" + x.id, kind: "sh", id: x.id, name: x.name || (x.kind === "line" ? "Line" : "Area"), cc: x.cc, pts: x.pts, line: x.kind === "line" }); });
     viewsheds().forEach(function (v) { out.push({ key: "vs:" + v.id, kind: "vs", id: v.id, name: v.name || "Viewshed", on: v.on !== false, at: [v.observer.lat, v.observer.lon] }); });
     /* site surveys (assets/osap-survey.js, "osap-surveys"), read from storage since that file loads only when a survey is opened */
@@ -212,8 +214,8 @@
       var vis = HIDE_RE.test(x.key) ? !s.hide[x.key] : x.kind === "rt" ? x.show : x.kind === "vs" ? x.on : null, away = x.cc && here && x.cc !== here;
       var box2 = vis === null ? '<span style="width:18px;flex:none"></span>' : '<input type="checkbox" data-pli="' + esc(x.key) + '"' + (vis ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map">';
       return '<li class="pli"><div class="plr' + (on && vis !== false ? "" : " dim") + '">' + box2 +
-        (x.kind === "rt" || (x.kind === "ru" && /^#[0-9a-f]{6}$/i.test(x.color || "")) ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
-        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : x.kind === "sv" ? ({ dz: "DZ", hlz: "HLZ", lz: "LZ / airfield" }[x.svKind] || "Site") + " survey" : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
+        (x.kind === "rt" || ((x.kind === "ru" || x.kind === "dw") && /^#[0-9a-f]{6}$/i.test(x.color || "")) ? '<span class="plsw" style="background:' + x.color + '"></span>' : "") +
+        '<span class="pln">' + esc(x.name) + ' <span class="plk">' + (x.kind === "sh" && x.line ? "Line" : x.kind === "sv" ? ({ dz: "DZ", hlz: "HLZ", lz: "LZ / airfield" }[x.svKind] || "Site") + " survey" : x.kind === "dw" && x.dwType ? esc(x.dwType) : KIND[x.kind]) + (away ? " · " + esc(String(x.cc).toUpperCase()) : "") + "</span></span>" +
         '<button type="button" data-plgo="' + esc(x.key) + '">' + (x.kind === "dz" || x.kind === "fl" || x.kind === "sv" ? "Open" : "Go to") + "</button>" +
         '<select data-plmv="' + esc(x.key) + '" aria-label="Move ' + esc(x.name) + ' to a folder" title="Move to a folder">' + folderOpts(s, s.of[x.key] || "") + "</select></div></li>";
     }
@@ -290,7 +292,7 @@
     if (x.kind === "pt") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
       centreOn(x.at, Math.max(map.getZoom(), 14));
-    } else if (x.kind === "ai" || x.kind === "sh" || x.kind === "ru") {
+    } else if (x.kind === "ai" || x.kind === "sh" || x.kind === "ru" || x.kind === "dw") {
       if (s.hide[key] || !folderOn(s, s.of[key] || "")) { delete s.hide[key]; showChain(s, s.of[key] || ""); write(s); }
       try { var o1 = pad(); o1.maxZoom = 15; map.fitBounds(L.latLngBounds(x.pts), o1); } catch (e) {}
     } else if (x.kind === "vs") {
@@ -377,9 +379,9 @@
   /* how many things are saved here (this country and others), for the My work panel's section title */
   function count() { try { return items().length; } catch (e) { return null; } }
   /* the other tools changed what is saved: list it again */
-  ["osap:points", "osap:routes", "osap:rulers"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
+  ["osap:points", "osap:routes", "osap:rulers", "osap:draw"].forEach(function (ev) { D.addEventListener(ev, function () { if (ev === "osap:routes") drawRoutes(); if (isOpen() && !ui.edit) paintTree(); }); });
   if (W.OSAP_DZ && W.OSAP_DZ.on) W.OSAP_DZ.on(function () { if (isOpen() && !ui.edit) paintTree(); });
-  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY || e.key === UKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
+  W.addEventListener("storage", function (e) { if (e.key === KEY || e.key === RKEY || e.key === AKEY || e.key === SKEY || e.key === VKEY || e.key === UKEY || e.key === DWKEY) { changed(); if (isOpen() && !ui.edit) paintTree(); } });
 
   /* ---------- Save to folder: map items OSAP made (a medical plan's hospitals and routes, landing zone candidates) ----------
      (Shane 2026-10-31: "if I made a folder called med plan, can I save all the routes and places in that folder for quick
