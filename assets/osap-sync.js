@@ -11,8 +11,8 @@
      Content is AES-256-GCM with the event's name as associated data, so a relay or anyone else cannot read or change it;
      anything that does not open with the key is ignored.
    - What syncs: every workspace (its name) and its stores, the same stores a workspace holds (assets/osap-ws.js KEYS and the
-     drawn areas): map points, drawn areas, NAI/TAI, routes, imported shapes, viewsheds, keyword watches, My work, medical,
-     evacuation and comms plans, analyst entities and links. Not synced: photos (they stay on the device they were taken on),
+     drawn areas): map points, My places folders, drawn areas and shapes, NAI/TAI, routes, rulers, imported shapes, viewsheds,
+     drop zones, flight plans, site surveys, keyword watches, My work, medical, evacuation and comms plans, analyst entities and links. Not synced: photos (they stay on the device they were taken on),
      device settings, caches, the current selection of a route or evacuation plan, watch hits, the hidden areas (the United
      States drawn area and any item marked cc "us") and the hidden-areas lock.
    - Merge: each store is cut into units (each item with an id in a list, each entry of a keyed map, or the whole value),
@@ -429,7 +429,8 @@
 
     /* ---------- the workspaces on this device ---------- */
     var WSKEYS = ["osap-atak-pts", "osap-aoi", "osap-routes", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-pkgs", "asap-watches", "osap-work", "osap-shapes", "osap-viewsheds",
-      "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej"];
+      "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej",
+      "osap-places", "osap-rulers", "osap-draw", "osap-dz", "osap-flights", "osap-surveys"];   /* the same as assets/osap-ws.js KEYS */
     var AREA = /^asap-area-[a-z]{2,3}(-st)?$/;
     function synced(k) { return (W.OSAP_WS && W.OSAP_WS.scoped ? W.OSAP_WS.scoped(k) : WSKEYS.indexOf(k) >= 0 || AREA.test(k)) && NOSYNC.indexOf(k) < 0; }
     function reg() { var r = json(raw("osap-ws"), null); return r && Array.isArray(r.list) && r.list.length ? r : null; }
@@ -668,7 +669,7 @@
         /* Team workspace (assets/osap-team.js) lists this device's teams here */
         (W.OSAP_TEAM && W.OSAP_TEAM.syncHtml ? W.OSAP_TEAM.syncHtml() : "") +
         '<details class="mvnote"><summary>What syncs, and how it is protected</summary>' +
-        "<p>Syncs: every workspace with its map points, drawn areas, NAI/TAI, routes, imported shapes, viewsheds, keyword watches, saved reports and notes, and medical, evacuation and comms plans. Each item is merged on its own, and the newest change wins. Deleted items stay deleted.</p>" +
+        "<p>Syncs: every workspace with its map points, My places folders, drawn areas and shapes, NAI/TAI, routes, rulers, imported shapes, viewsheds, drop zones, flight plans, site surveys, keyword watches, saved reports and notes, and medical, evacuation and comms plans. Each item is merged on its own, and the newest change wins. Deleted items stay deleted.</p>" +
         "<p>Stays on each device: photos, map and device settings, offline maps, and the hidden areas.</p>" +
         "<p>Your data is locked with AES-256-GCM before it leaves the device, using a key made from the sync code, and passed through free public Nostr relays. The relays see scrambled data, its size, when it changes and the device's internet address, but cannot read or change it. The relays promise nothing, so keep a backup with Move to another device.</p></details></div>";
     }
