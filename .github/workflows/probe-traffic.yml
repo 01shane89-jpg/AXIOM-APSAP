@@ -18,7 +18,6 @@ jobs:
         with: { node-version: 22 }
       - name: dense feeds
         run: |
+          node -e 'const fs=require("fs");const f="data/live/x/feeds.js";let t=fs.readFileSync(f,"utf8");const w={};new Function("window",t)(w);delete w.OSAP_XF.feeds["un-sanctions"];fs.writeFileSync(f,"window.OSAP_XF="+JSON.stringify(w.OSAP_XF)+";\n")'
           ONLY=un-sanctions,osm-cables node tools/refresh_dense.mjs 2>&1 | grep -E "un-sanctions|osm-cables" || true
           node -e 'const fs=require("fs");for(const cc of ["ie","gb","de","us","jp","ph","sg","eg","ir","kp"]){const c={};new Function("window",fs.readFileSync("data/live/x/"+cc+".js","utf8"))(c);const X=c.OSAP_XC[cc];const by={};for(const i of X.items)by[i.f]=(by[i.f]||0)+1;console.log("CC",cc,JSON.stringify({un:X.figures["un-sanctions"],cab:by["osm-cables"],tg:by.cables}));const o=X.items.filter(i=>i.f=="osm-cables").slice(0,2);for(const x of o)console.log("CAB",cc,x.t,x.la,x.lo)}'
-      - name: knmi rss
-        run: curl -s https://cdn.knmi.nl/knmi/xml/rss/rss_KNMIwaarschuwingen.xml | head -c 4000
