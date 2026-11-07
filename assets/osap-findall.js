@@ -57,7 +57,7 @@
     dms: "coordinates,degrees minutes seconds,grid format",
     km: "kilometres,kilometers,metric,units", mi: "miles,imperial,units", nm: "nautical miles,knots,units",
     loc: "gps,my location,position,where am i", off: "offline,download,no signal,save maps,cache", move: "transfer,export,import,another device,new phone",
-    sync: "sync,devices,backup", ai: "ai model,on device ai", guide: "help,manual,how to,instructions,guide,docs",
+    sync: "sync,devices,backup", ai: "ai model,on device ai", guide: "help,manual,how to,instructions,guide,docs", install: "install,download,app,program,application,home screen,desktop,add to home screen",
     lock: "hidden areas,face id", plan: "plan,sign in,sign out,login,log in,log out,account,subscription,upgrade,pay,billing,password",
     users: "users,accounts", reviews: "reviews,review,rate,rating,feedback,stars", credits: "credits,sources,attribution", lang: "language,translate,translation"
   };
@@ -140,6 +140,8 @@
     if (W.OSAP_MOVE) add("move", "Move to another device", "A passphrase-locked file, no account", function () { W.OSAP_MOVE.open(); });
     if (W.OSAP_SYNC) add("sync", "Sync my devices", "Keep saved work the same on your devices", function () { W.OSAP_SYNC.open(); });
     if (W.OSAP_AI) add("ai", "On-device AI", "The model AI summaries use", function () { W.OSAP_AI.open(); });
+    /* installing OSAP as an app on this device (assets/osap-install.js) */
+    if (W.OSAP_INSTALL && !W.OSAP_INSTALL.installed()) add("install", "Install OSAP as an app", "Its own icon and window, works offline", function () { W.OSAP_INSTALL.open(); });
     if (W.OSAP_GUIDE) add("guide", "User guide", "How to use OSAP, offline and printable", function () { W.OSAP_GUIDE.open(); });
     if (W.OSAP_LOCK) add("lock", "Hidden areas", "Settings", function () { W.OSAP_LOCK.open(); });
     if (T && T.on && T.on()) add("plan", "Plan and sign-in", "Your plan, sign in or out", function () { T.open(); });
