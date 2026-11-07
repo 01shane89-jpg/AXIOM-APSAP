@@ -37,6 +37,11 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": "text/javascript" });
     return res.end(`window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST["${m[1]}"]={"news":[],"social":[]};`);
   }
+  // the real headline layers for these countries (data/live/layerfeed) would mix the day's real headlines into the fixture
+  if ((m = /^data[/\\]live[/\\]layerfeed[/\\](ee|ki|th)\.js$/.exec(path))) {
+    res.writeHead(200, { "Content-Type": "text/javascript" });
+    return res.end("window.OSAP_LAYERFEED=" + JSON.stringify({ cc: m[1], asof: stamp(10).replace("T", " ") + "Z", days: 30, items: [] }) + ";");
+  }
   if (/^data[/\\]live[/\\]health\.json$/.test(path) && HEALTH) { res.writeHead(200, { "Content-Type": "application/json" }); return res.end(JSON.stringify(HEALTH)); }
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
