@@ -1,18 +1,34 @@
-# Test only: checks keyless replacements for sources the sold version drops (tools/probe_sold.mjs). Prints to the log; writes nothing.
+# Test only: runs the new feeds of claude/sold-replacements-2 once from a runner and prints what they read. Writes nothing back.
 name: Probe traffic hosts
 on:
   push:
     branches: [claude/sold-sources-probe]
-    paths: [tools/probe_sold.mjs, .github/workflows/probe-traffic.yml]
+    paths: [.github/workflows/probe-traffic.yml]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with: { ref: claude/sold-replacements-2 }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: node tools/probe_sold.mjs
+      - name: dense feeds
+        run: |
+          ONLY=wdi-health,un-sanctions,osm-cables,cisa-kev,wmo-swic,who-gho,opensanctions,cables node tools/refresh_dense.mjs 2>&1 | grep -E "wdi-health|un-sanctions|osm-cables|cisa-kev|wmo-swic|who-gho|opensanctions|cables" || true
+          node -e 'const fs=require("fs");const w={};new Function("window",fs.readFileSync("data/live/x/feeds.js","utf8"))(w);for(const k of ["wdi-health","un-sanctions","osm-cables","cisa-kev","wmo-swic"]){const f=w.OSAP_XF.feeds[k];console.log("FEED",k,f.ok,f.n,f.note||f.error,JSON.stringify((w.OSAP_XF.globals[k]||[])[0]||"").slice(0,200))}
+          for(const cc of ["ie","pl","nl","gb","de","ru","ir","jp","br","us","ph"]){const c={};new Function("window",fs.readFileSync("data/live/x/"+cc+".js","utf8"))(c);const X=c.OSAP_XC[cc];const by={};for(const i of X.items)by[i.f]=(by[i.f]||0)+1;console.log("CC",cc,JSON.stringify({h:X.figures["wdi-health"],who:X.figures["who-gho"],un:X.figures["un-sanctions"],os:X.figures.opensanctions,cab:by["osm-cables"],tg:by.cables,swic:by["wmo-swic"]}));const s=X.items.find(i=>i.f=="wmo-swic");if(s)console.log("SWIC",cc,JSON.stringify(s).slice(0,300));const o=X.items.find(i=>i.f=="osm-cables");if(o)console.log("CAB",cc,JSON.stringify(o).slice(0,300))}'
+      - name: warnings
+        run: |
+          timeout 600 node tools/refresh_warnings.mjs > w.log 2>&1 || true
+          grep -iE "imgw|met .ireann|knmi|meteoalarm-legacy-atom-(ireland|poland|netherlands)" w.log | head -20 || true
+          tail -5 w.log
+          node -e 'const fs=require("fs");const w={};try{new Function("window",fs.readFileSync("data/live/warnings.js","utf8"))(w)}catch(e){console.log("no warnings.js",e.message)};const W=Object.values(w)[0]||{};const st=W.status||W.feeds||[];for(const s of [].concat(st))if(/met.ie|imgw|knmi/.test(JSON.stringify(s)))console.log("WST",JSON.stringify(s).slice(0,300));for(const cc of ["ie","pl","nl"]){const it=(W.items||W)[cc];console.log("WIT",cc,JSON.stringify(it||"").slice(0,500))}'
+      - name: warnings sold mode
+        run: |
+          git checkout -- data || true
+          OSAP_COMMERCIAL=1 timeout 600 node tools/refresh_warnings.mjs > ws.log 2>&1 || true
+          echo "meteoalarm requests in sold mode:"; grep -c meteoalarm ws.log || true
