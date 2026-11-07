@@ -453,9 +453,9 @@
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
       "Times are Zulu, then local.</p>" +
-      '<p class="tdlegal"><a href="https://axiom-inteligence-systems.com/#pricing" target="_blank" rel="noopener noreferrer">Pricing</a> · <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a> · ' +
+      '<p class="tdlegal"><a href="https://axiom-intelligence-systems.com/#pricing" target="_blank" rel="noopener noreferrer">Pricing</a> · <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a> · ' +
       '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a> · <a href="refunds.html" target="_blank" rel="noopener noreferrer">Refunds</a> · ' +
-      '<a href="mailto:support@axiom-inteligence-systems.com">support@axiom-inteligence-systems.com</a></p></footer>';
+      '<a href="mailto:support@axiom-intelligence-systems.com">support@axiom-intelligence-systems.com</a></p></footer>';
     box.scrollTop = y;
   }
   var rs = 0;

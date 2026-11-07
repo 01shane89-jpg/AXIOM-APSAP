@@ -27,6 +27,8 @@ jobs:
       # hidden areas (tools/hidden-areas.json): their files must be sealed, never plain, in the repository
       - run: node tools/seal_hidden.mjs --check --skip-live
       - run: node tests/seal.test.mjs
+      # local time and military zone letter at the map readout's grid (assets/osap-zonetime.js, data/basemap/tz-zones.json)
+      - run: node tests/zonetime.test.mjs
       # the paywall (tools/tiers.mjs, netlify/): what each plan opens, the edge gate, Paddle webhooks
       - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier.test.mjs
