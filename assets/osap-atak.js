@@ -115,6 +115,9 @@
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarize it or save it as an NAI/TAI"],
+    /* its own button (Shane 2026-11-07: "I need to be able to draw on the map ie add shapes and items for planning purposes"):
+       planning graphics kept on the map (assets/osap-draw.js) */
+    ["draw", "Draw", I.pen, "Draw on the map for planning: lines, phase lines, boundaries, arrows, objectives, areas, range rings, sectors of fire, labels and control measure points"],
     /* every planning tool in one drop-down (Shane 2026-11-01): medical, evacuation, flight, landing and drop zones, comms, terrain, weather */
     ["plans", "Plans", I.plans, "Plans: medical plan, hospital assessment, dive plan, evacuation, flight plan, landing zones, DZSO, site survey, comms, terrain analysis, weather brief"],
     /* its own button (Shane 2026-10-02): the plan for the drawn area, or from the map centre when nothing is drawn */
@@ -220,6 +223,7 @@
     else if (k === "view") popOpen(b, viewItems());
     else if (k === "plans") popOpen(b, planItems());
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
+    else if (k === "draw") { if (W.OSAP_DRAW) W.OSAP_DRAW.palette(); else toast("Draw is still loading. Try again in a moment."); }
     else if (k === "route" || k === "comms") {
       /* Route and Comms open their view in the list; pressed again they go back to the view that was open before */
       if (!onView(k)) {
@@ -304,7 +308,9 @@
       ["comms", "Comms planning", !!(cb && !cb.hidden), onView("comms")],
       ["terrain", "Terrain analysis (viewshed, line of sight)", !!W.OSAP_TERRAIN_ANALYSIS],
       [null, "Weather"],
-      ["wxbrief", "Weather brief", !!(W.OSAP_WX && W.OSAP_WX.brief)]
+      ["wxbrief", "Weather brief", !!(W.OSAP_WX && W.OSAP_WX.brief)],
+      [null, "Map drawing"],
+      ["draw", "Draw planning graphics (lines, areas, range rings, labels)", !!W.OSAP_DRAW, !!(W.OSAP_DRAW && W.OSAP_DRAW.isOpen())]
     ].filter(function (x) { return x[0] === null || x[2]; });
   }
   function planItems() {
@@ -330,6 +336,7 @@
     else if (k === "dive") diveGo({});
     else if (k === "terrain") W.OSAP_TERRAIN_ANALYSIS.open();
     else if (k === "wxbrief") W.OSAP_WX.brief();
+    else if (k === "draw") W.OSAP_DRAW.palette(true);
     setTimeout(paintTools, 60);
   }
   pop.addEventListener("click", function (e) {
@@ -625,7 +632,7 @@
      loads after this file) and Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
   function radNow() { return RAD; }
   function plansOpen(r, ll) {
-    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"], ["survey", "Site survey here"], ["dive", "Dive plan here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital ? [["hosp", "Hospital assessment here"]] : [], [["evac", "Evacuate from here"], ["dzso", "DZSO sheet here"], ["survey", "Site survey here"], ["dive", "Dive plan here"], ["dwrings", "Range rings here"]], W.OSAP_WX && W.OSAP_WX.briefAt ? [["wxbrief", "Weather brief here"]] : []);
     pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
     pop.hidden = false; pop._for = "plans"; pop._ll = ll;
     /* under the Plans button, kept inside the map */
@@ -669,6 +676,8 @@
     if (k === "measure") { if (W.OSAP_MEASURE) { W.OSAP_MEASURE.on(true); W.OSAP_MEASURE.set([P], false); toast("Measuring from here: tap the next point"); setTimeout(paintTools, 30); } }
     else if (k === "route") { if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED([P]); }
     else if (k === "pin") ptAdd(ll);
+    /* Draw (assets/osap-draw.js): range rings centered on the long-pressed spot, sized to the view, opened to set the distances */
+    else if (k === "dwrings") { if (W.OSAP_DRAW) { var dw = W.OSAP_DRAW.add("rings", [P]); if (dw) W.OSAP_DRAW.open(dw); } }
     else if (k === "lz") lzLoad(function (Z) { Z.at(P); });
     /* Terrain analysis (assets/osap-terrain.js): a short list at the point, Viewshed from here, Elevation here, and tools other modules add */
     else if (k === "terrain") { if (W.OSAP_TERRAIN_ANALYSIS) W.OSAP_TERRAIN_ANALYSIS.menu(P); else toast("Terrain analysis is still loading. Try again in a moment."); }

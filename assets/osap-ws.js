@@ -21,7 +21,7 @@
   var W = window, D = document;
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var REG = "osap-ws", DATA = "osap-ws-data-", GO = "osap-ws-go", MSG = "osap-ws-msg", SHAPES = "osap-shapes", PTS = "osap-atak-pts";
-  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "osap-epe-pkgs", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds", "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej", "osap-places", "osap-rulers"];
+  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "osap-epe-pkgs", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds", "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec", "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej", "osap-places", "osap-rulers", "osap-draw"];
   var AREA_RE = /^asap-area-([a-z]{2,3})$/, AREA_ANY = /^asap-area-[a-z]{2,3}(-st)?$/;
   var MAX_FILE = 25 * 1048576, MAX_UNZIP = 60 * 1048576, MAX_PTS = 500, MAX_SHAPES = 300, MAX_VERT = 2000, MAX_WS = 30, SHOW = 40;
 
@@ -400,6 +400,8 @@
     arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) F.push({ g: "Polygon", kind: a.type, name: a.type + " " + a.name, note: a.notes, cc: a.cc, P: a.pts, col: a.st && /^#[0-9a-f]{6}$/i.test(a.st.line) ? a.st.line : a.type === "TAI" ? "#c92a2a" : "#1971c2", fill: a.st && /^#[0-9a-f]{6}$/i.test(a.st.fill) ? a.st.fill : undefined }); });
     /* saved rulers (assets/osap-rulers.js): the measured line with its distance and bearing in the note */
     arr(json(get("osap-rulers") || "[]", [])).forEach(function (r) { if (r && Array.isArray(r.pts) && r.pts.length > 1 && W.OSAP_RULERS) F.push({ g: "LineString", kind: "ruler", name: r.name, note: W.OSAP_RULERS.note(r), cc: r.cc, P: r.pts, col: /^#[0-9a-f]{6}$/i.test(r.col || "") ? r.col : "#e03131" }); });
+    /* planning graphics (assets/osap-draw.js): each drawing as its lines or areas, its grids and note in the description */
+    arr(json(get("osap-draw") || "[]", [])).forEach(function (r) { if (W.OSAP_DRAW) W.OSAP_DRAW.features(r).forEach(function (f) { F.push(f); }); });
     arr(json(get("osap-routes") || "[]", [])).forEach(function (x) { var w = arr(x && x.wps).filter(function (p) { return p && isFinite(p.lat); }); if (w.length > 1) F.push({ g: "LineString", kind: "route", name: x.name, note: "Waypoints of a planned route (" + (x.mode || "") + ")", cc: x.cc, P: w.map(function (p) { return [+p.lat, +p.lon]; }), col: "#7048e8" }); });
     /* saved viewsheds (assets/osap-terrain.js): the observer with its settings, the visible ground, the horizon */
     vsOf(get).forEach(function (v) {
@@ -416,7 +418,7 @@
   }
   function liveAreas(get, keys) { var o = {}; keys.forEach(function (k) { var m = AREA_RE.exec(k), P = m && arr(json(get(k), [])); if (P && P.length > 2) o[m[1]] = P; }); return o; }
   function toKml(name, F) {
-    var groups = {}, order = [["point", "Map points"], ["drawn-area", "Drawn areas"], ["NAI", "NAI"], ["TAI", "TAI"], ["route", "Routes"], ["imported-line", "Imported lines"], ["imported-poly", "Imported areas"], ["viewshed", "Viewsheds"], ["viewshed-visible", "Viewshed visible terrain"], ["viewshed-horizon", "Viewshed horizons"]];
+    var groups = {}, order = [["point", "Map points"], ["drawn-area", "Drawn areas"], ["NAI", "NAI"], ["TAI", "TAI"], ["route", "Routes"], ["imported-line", "Imported lines"], ["imported-poly", "Imported areas"], ["viewshed", "Viewsheds"], ["viewshed-visible", "Viewshed visible terrain"], ["viewshed-horizon", "Viewshed horizons"], ["ruler", "Rulers"], ["drawing", "Planning graphics (Draw)"]];
     F.forEach(function (f) { (groups[f.kind] = groups[f.kind] || []).push(f); });
     return '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xesc(name) + "</name>" +
       "<description>AXIOM OSAP workspace, exported " + xesc(new Date().toISOString().slice(0, 16)) + "Z. The analyst's own marks and areas, not reports.</description>" +

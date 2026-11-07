@@ -44,7 +44,7 @@
   var SKIP_PRE = /^(asap-xrecs-|osap-today-wx-|osap-carry)/;
   var SCOPED = ["osap-atak-pts", "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "osap-epe-pkgs", "asap-watches",
     "asap-watch-hits", "asap-watch-seen", "osap-work", "osap-shapes", "osap-viewsheds", "osap-cp-checks", "osap-cp-traffic", "osap-cp-intf", "osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec",
-    "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej", "osap-places", "osap-rulers"]; /* assets/osap-ws.js KEYS */
+    "osap-cp-contacts", "osap-cp-sats", "osap-an-ent", "osap-an-links", "osap-an-auto-rej", "osap-places", "osap-rulers", "osap-draw"]; /* assets/osap-ws.js KEYS */
   var AREA_ANY = /^asap-area-[a-z]{2,3}(-st)?$/;
   var REG = "osap-ws", DATA = "osap-ws-data-", MAX_WS = 30;
   var PART = 1000000, MAX_PARTS = 40, MAX_KEY = 120, MAX_STORE = 8 * 1048576, MAX_PHOTOS = 2000;
