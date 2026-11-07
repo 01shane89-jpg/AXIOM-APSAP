@@ -9,7 +9,7 @@ export const PX_HOSTS = [
   "tile.openstreetmap.org", "tiles.openfreemap.org", "server.arcgisonline.com", "services.arcgisonline.com",
   "clarity.maptiles.arcgis.com", "ibasemaps-api.arcgis.com", "basemaps-api.arcgis.com", "ic.imagery1.arcgis.com", ".tile.opentopomap.org", "tiles.maps.eox.at",
   "gibs.earthdata.nasa.gov", "cyberjapandata.gsi.go.jp", "s3.amazonaws.com", "storage.googleapis.com",
-  "tiles.mapterhorn.com", "download.mapterhorn.com", "api.rainviewer.com", "tilecache.rainviewer.com", "nowcoast.noaa.gov",
+  "tiles.mapterhorn.com", "download.mapterhorn.com", "geo.weather.gc.ca", "maps.dwd.de", "nowcoast.noaa.gov",
   // weather, search, routing, places
   "api.open-meteo.com", "marine-api.open-meteo.com", "air-quality-api.open-meteo.com", "geocoding-api.open-meteo.com",
   "photon.komoot.io", "routing.openstreetmap.de", "valhalla1.openstreetmap.de", "router.project-osrm.org",

@@ -1906,42 +1906,25 @@
   function lsave() { lsSet(LSK, LS); }
   function opOf(k, d) { return LS["op_" + k] > 0 ? LS["op_" + k] : d; }
   var NOWCOAST = "https://nowcoast.noaa.gov/geoserver/", GIBS = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/";
-  var RV = { host: null, path: null, time: null, at: 0, frames: [] };
-  function rainviewer() {
-    if (RV.path && Date.now() - RV.at < 5 * 60 * 1000) return Promise.resolve(RV);
-    return getJSON("https://api.rainviewer.com/public/weather-maps.json").then(function (j) {
-      var p = (j.radar && j.radar.past) || [], last = p[p.length - 1];
-      if (!last) throw new Error("no radar frame");
-      RV = { host: j.host, path: last.path, time: last.time * 1000, at: Date.now(), frames: p.map(function (f) { return { path: f.path, time: f.time * 1000 }; }) };
-      return RV;
+  /* rain radar: national weather services' own open radar mosaics, drawn as WMS images. Each is keyless, open to browsers and licensed for
+     any use with attribution: NOAA nowCOAST (US, Alaska, Hawaii, Puerto Rico and the Caribbean, Guam; public domain), Environment and
+     Climate Change Canada MSC GeoMet (North America 1 km composite; Open Government Licence - Canada) and Germany's DWD (CC BY 4.0).
+     Elsewhere the worldwide NASA IMERG satellite rain estimate and the model rain forecast fill in. (RainViewer was removed 7 Nov 2026:
+     it no longer allows use in apps.) The "ts" parameter changes every 10 minutes so a refresh fetches new images. */
+  var RADAR_SRC = [
+    { url: NOWCOAST + "weather_radar/wms", layers: "base_reflectivity_mosaic", attr: '<a href="https://nowcoast.noaa.gov/" target="_blank" rel="noopener noreferrer">NOAA nowCOAST</a>' },
+    { url: "https://geo.weather.gc.ca/geomet", layers: "RADAR_1KM_RRAI", attr: '<a href="https://eccc-msc.github.io/open-data/licence/readme_en/" target="_blank" rel="noopener noreferrer">ECCC MSC GeoMet</a>' },
+    { url: "https://maps.dwd.de/geoserver/dwd/wms", layers: "Niederschlagsradar", attr: '<a href="https://www.dwd.de/" target="_blank" rel="noopener noreferrer">DWD</a> (CC BY 4.0)' }
+  ];
+  function radarLayer(op, pane) {
+    var g = L.layerGroup(), ts = Math.floor(Date.now() / 600000);
+    RADAR_SRC.forEach(function (s) {
+      g.addLayer(L.tileLayer.wms(s.url, { layers: s.layers, format: "image/png", transparent: true, version: "1.3.0", ts: ts, pane: pane || "wxpane", opacity: op, attribution: s.attr }));
     });
-  }
-  /* the radar loop: one tile layer per 10-minute frame of the last two hours (RainViewer publishes 13), all loaded, one shown at a time.
-     The last frame is held longer so "now" is easy to read. Off unless the analyst presses Loop; with "reduce motion" it never starts. */
-  var RLOOP = { on: !!LS.radarLoop, t: 0, i: 0, layers: [] };
-  function radarTile(rv, f, op) {
-    return L.tileLayer(rv.host + f.path + "/256/{z}/{x}/{y}/2/1_1.png", { pane: "wxpane", opacity: op, maxNativeZoom: 7, maxZoom: 13, attribution: '<a href="https://www.rainviewer.com/" target="_blank" rel="noopener noreferrer">RainViewer</a>' });
-  }
-  function radarShow(i) {
-    var op = opOf("radar", 0.75);
-    RLOOP.i = i;
-    RLOOP.layers.forEach(function (l, k) { l.setOpacity(k === i ? op : 0); });
-    var f = RV.frames[i]; if (f) { LBYK.radar.stamp = (RLOOP.t ? "Loop, frame " : "Radar frame ") + zt(f.time, null, true); note("radar", LBYK.radar.stamp); }
-  }
-  function radarLoopStop() { clearTimeout(RLOOP.t); RLOOP.t = 0; }
-  function radarLoopTick() {
-    var n = RLOOP.layers.length; if (!n) return;
-    var i = (RLOOP.i + 1) % n;
-    RLOOP.t = setTimeout(radarLoopTick, i === n - 1 ? 1800 : 550);
-    radarShow(i);
-  }
-  function radarLoopBtn() {
-    var b = document.getElementById("wx-rloop"); if (!b) return;
-    b.setAttribute("aria-pressed", String(RLOOP.on)); b.textContent = RLOOP.on ? "❚❚ Stop the loop" : "▶ Loop the last 2 hours";
+    return g;
   }
   /* legend swatches: [colour, label] */
   var LEG = {
-    radar: { ramp: ["#88ddee", "#0099cc", "#0077aa", "#005588", "#ffee00", "#ffaa00", "#ff4400", "#c10000", "#ffaaff"], lo: "light", hi: "heavy, hail" },
     temp: { ramp: ["#6e40aa", "#3b5bd6", "#1ea6d6", "#2fcf9a", "#9bd44b", "#f2c230", "#f6862b", "#d93a2b", "#8e1a2a"], lo: "−20°C / −4°F", hi: "40°C / 104°F" },
     rain: { ramp: ["#88ddee", "#0099cc", "#0077aa", "#005588", "#ffee00", "#ffaa00", "#ff4400", "#c10000", "#ffaaff"], lo: "0.1 mm/h", hi: "50 mm/h or more" },
     flow: { ramp: ["#1d4f91", "#1a7fa0", "#1f9e6e", "#7aa51f", "#d1a10f", "#e8701a", "#d33a1f", "#9b1c5a"], lo: "calm", hi: "64 kt or more" },
@@ -1962,22 +1945,13 @@
   function flowCol(kt) { for (var i = FLOW_STEPS.length - 1; i >= 0; i--) if (kt >= FLOW_STEPS[i]) return i; return 0; }
   function aqCol(v) { return v <= 50 ? "#00e400" : v <= 100 ? "#ffff00" : v <= 150 ? "#ff7e00" : v <= 200 ? "#ff0000" : v <= 300 ? "#8f3f97" : "#7e0023"; }
   var LAY = [
-    { k: "radar", name: "Rain radar", grp: "Rain", note: "Ground radar where networks share it (RainViewer); gaps over most seas and some countries. Latest 10-minute frame.", op: 0.75,
-      lic: "RainViewer, free API with attribution", legend: function () { return ramp(LEG.radar); },
-      extra: function () { return '<button type="button" class="wxbtn" id="wx-rloop" aria-pressed="' + RLOOP.on + '">' + (RLOOP.on ? "❚❚ Stop the loop" : "▶ Loop the last 2 hours") + "</button>"; },
+    { k: "radar", name: "Rain radar", grp: "Rain", note: "National weather services' latest ground radar: United States (with Alaska, Hawaii, the Caribbean and Guam), Canada and Germany. Elsewhere use Satellite rain estimate or Rain, model forecast.", op: 0.75,
+      lic: "NOAA nowCOAST (public domain), ECCC MSC GeoMet (Open Government Licence - Canada), DWD (CC BY 4.0)",
+      legend: function () { return '<span class="wxrl"><span>Colors follow each national service: blue and green light rain, yellow and red heavy rain or hail.</span></span>'; },
       make: function (op) {
-        var g = L.layerGroup(), me = this;
-        radarLoopStop(); RLOOP.layers = [];
-        rainviewer().then(function (rv) {
-          if (!ON.radar || LYR.radar !== g) return;
-          var loop = RLOOP.on && !reduceMotion() && rv.frames.length > 1, fr = loop ? rv.frames : [{ path: rv.path, time: rv.time }];
-          RLOOP.layers = fr.map(function (f, k) { var t = radarTile(rv, f, k === fr.length - 1 ? op : 0); g.addLayer(t); return t; });
-          if (loop) { RLOOP.i = fr.length - 1; RLOOP.t = setTimeout(radarLoopTick, 1500); }
-          me.stamp = "Radar frame " + zt(fr[fr.length - 1].time, null, true) + (loop ? ", looping " + fr.length + " frames" : "");
-          note("radar", me.stamp);
-        }, function (e) { note("radar", "Radar did not load (" + e.message + ")."); });
-        g.on("remove", radarLoopStop);
-        return g;
+        this.stamp = "Latest radar images, " + zt(Date.now(), null, true) + "; refreshes every 10 minutes";
+        note("radar", this.stamp);
+        return radarLayer(op);
       } },
     { k: "sprecip", name: "Satellite rain estimate", grp: "Rain", note: "NASA IMERG, 30-minute rain rate over land and sea, worldwide. Runs about 4 to 6 hours behind.", op: 0.8,
       lic: "NASA GIBS, public domain", legend: function () { return '<img alt="IMERG rain rate scale, mm/h" src="https://gibs.earthdata.nasa.gov/legends/IMERG_Precipitation_Rate_H.svg" onerror="this.replaceWith(document.createTextNode(\'Light blue light rain, through green and yellow, to red heavy rain (mm/h).\'))">'; },
@@ -2401,11 +2375,6 @@
     });
     box.addEventListener("click", function (e) {
       if (e.target.id === "wx-play") { playSet(!PLAY.t); if (!gridOn()) note("grid", "Tick a model layer (rain, cloud, wind or temperature) to play the forecast."); return; }
-      if (e.target.id === "wx-rloop") {
-        RLOOP.on = !RLOOP.on; LS.radarLoop = RLOOP.on; lsave(); radarLoopBtn();
-        if (ON.radar) { if (LYR.radar) map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); }
-        return;
-      }
       var b = e.target.closest && e.target.closest("[data-wxopen]"), v = document.querySelector('#view-seg button[data-view="weather"]'); if (!b || !v) return;
       v.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "weather" }));
     });
@@ -2449,7 +2418,7 @@
   var CRED = ['Operational weather brief and model map layers: <a href="https://open-meteo.com/">Open-Meteo.com</a> forecast, marine and air-quality APIs (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information).',
     'Weather models on the map, through Open-Meteo: ECMWF IFS and AIFS (CC BY 4.0), NOAA GFS (public domain), DWD ICON, UK Met Office, Météo-France ARPEGE/AROME, JMA, ECCC GEM and CMA GRAPES, each the publishing service&rsquo;s open data.',
     'Weather region list (provinces and states): <a href="https://www.naturalearthdata.com/">Natural Earth</a> admin-1 boundaries (public domain). Town search: <a href="https://open-meteo.com/en/docs/geocoding-api">Open-Meteo geocoding</a> with <a href="https://www.geonames.org/">GeoNames</a> places (CC BY 4.0).',
-    'Rain radar: <a href="https://www.rainviewer.com/api.html">RainViewer</a> free public API, with attribution (terms may restrict commercial use; tagged for review before any sale).',
+    'Rain radar: NOAA <a href="https://nowcoast.noaa.gov/">nowCOAST</a> radar mosaic (U.S. Government work, public domain); Environment and Climate Change Canada <a href="https://eccc-msc.github.io/open-data/msc-geomet/readme_en/">MSC GeoMet</a> radar composite (Open Government Licence &ndash; Canada); <a href="https://www.dwd.de/EN/ourservices/opendata/opendata.html">Deutscher Wetterdienst</a> precipitation radar (CC BY 4.0).',
     'Satellite rain estimate: NASA GPM IMERG via <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">NASA GIBS</a> (public domain).',
     'Satellite infrared mosaic, tropical cyclone cones and tracks: NOAA <a href="https://nowcoast.noaa.gov/">nowCOAST</a> (U.S. Government work, public domain).',
     'Warning areas in the United States: NOAA <a href="https://www.weather.gov/documentation/services-web-api">National Weather Service API</a> (public domain). Hazards: Pacific Disaster Center DisasterAWARE; GDACS.'];
@@ -2556,9 +2525,9 @@
     /* weather layers start off, like every other map extra (the page switches them off on start and on each tab change);
        the analyst ticks the ones wanted in the Layers menu */
     map.on("moveend", function () { if (gridOn()) gridSoon(); if (ON.warn && LYR.warn) { map.removeLayer(LYR.warn); LYR.warn = warnLayer(opOf("warn", 0.8)).addTo(map); } });
-    setInterval(function () { if (ON.radar && LYR.radar) { RV.at = 0; map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
+    setInterval(function () { if (ON.radar && LYR.radar) { map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
     legendDraw();
-    W.OSAP_WX = { region: region, brief: openBrief, briefAt: briefAt, easy: openEasy, report: openReport, chart: openChart,
+    W.OSAP_WX = { radarLayer: radarLayer, region: region, brief: openBrief, briefAt: briefAt, easy: openEasy, report: openReport, chart: openChart,
       /* for the Today card: the chosen province or spot (null for the whole country or a drawn area), the province list, and choosing one */
       placePoint: function (c) { var pl = place(c, lsGet("asap-area-" + c)); return pl.k === "reg" ? { name: pl.n, lat: pl.la, lon: pl.lo } : pl.k === "spot" ? { name: pl.name, lat: pl.lat, lon: pl.lon } : null; },
       regions: function (c, cb) { var l = regsFor(c); if (!l) loadRegs(c, cb); return l ? l.map(function (r) { return r[0]; }) : null; },

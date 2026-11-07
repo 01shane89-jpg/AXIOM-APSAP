@@ -6656,7 +6656,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var chips = '<div class="sec"><div class="ctl" style="flex-wrap:wrap;gap:4px">' + XCAT.map(function (c) {
       return '<label style="display:inline-flex;align-items:center;gap:3px;margin:2px 8px 2px 0;font-size:12px"><input type="checkbox" data-xcat="' + esc(c) + '"' + (XOFF[c] ? "" : " checked") + '><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + XCOL[c] + '"></span>' +
         esc(c) + ' <span class="obs">' + (cnt[c] || 0) + "</span></label>"; }).join("") + '</div><input type="search" id="x-q" class="mini" placeholder="Search every feed for ' + esc(C.name) + '" value="' + esc(xQ) + '" style="width:100%;margin-top:6px">' +
-      '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (RainViewer, global mosaic)</label></div>' +
+      '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (national radar: US, Canada, Germany)</label></div>' +
       '<p class="note">Dated items follow the period; advice levels, sanctions listings, elections and reference layers always show. Infrastructure and Sanctions start switched off because they are long lists.</p></div>';
     var lists = XCAT.filter(function (c) { return byCat[c]; }).map(function (c) {
       return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
@@ -6686,8 +6686,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var t = e.target; if (!t) return;
     if (t.getAttribute && t.getAttribute("data-xcat")) { XOFF[t.getAttribute("data-xcat")] = !t.checked; try { localStorage.setItem("osap-x-off", JSON.stringify(XOFF)); } catch (er) {} showOpenData(); }
     else if (t.id === "x-radar") {
-      var rv = ((window.OSAP_XF || {}).globals || {}).rainviewer || [];
-      if (!xRadar && rv[0]) xRadar = L.tileLayer(rv[0].url + "/256/{z}/{x}/{y}/2/1_1.png", { pane: "satpane", opacity: 0.7, maxNativeZoom: 7, maxZoom: 18, attribution: "RainViewer" });
+      var wx = window.OSAP_WX;
+      if (!xRadar && wx && wx.radarLayer) xRadar = wx.radarLayer(0.7, "satpane");
       if (xRadar) { if (t.checked) xRadar.addTo(map); else map.removeLayer(xRadar); }
     }
   });
