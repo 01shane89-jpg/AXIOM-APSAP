@@ -216,6 +216,7 @@ jobs:
       - run: node tests/flood_overlay_smoke.mjs
       - run: node tests/wxmodels_smoke.mjs
       - run: node tests/radar_backup_smoke.mjs
+      - run: node tests/opendata_figures_smoke.mjs
       - run: node tests/pop_smoke.mjs
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs

@@ -6614,7 +6614,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function xFigures(X) {
     var F = X.figures || {}, rows = [];
-    XFIG.forEach(function (f) { var v = (F[f[0]] || {})[f[1]]; if (v && v.value != null) rows.push([f[2], xNum(v.value, f[3]), String(v.year).replace(/ \(IMF estimate\/projection\)/, " est."), f[0]]); });
+    /* WHO figures fall back to the World Bank's copy of the same series (wdi-health, CC BY 4.0), which the sold version keeps */
+    XFIG.forEach(function (f) { var src = f[0], v = (F[src] || {})[f[1]]; if ((!v || v.value == null) && src === "who-gho") { src = "wdi-health"; v = (F[src] || {})[f[1]]; }
+      if (v && v.value != null) rows.push([f[2], xNum(v.value, f[3]), String(v.year).replace(/ \(IMF estimate\/projection\)/, " est."), src]); });
     var fx = F.fx; if (fx) rows.push(["1 US$ in " + fx.currency, xNum(fx.per_usd, fx.per_usd < 10 ? 3 : 1), String(fx.at || "").slice(5, 16), "fx"]);
     var fi = F.firms; rows.push(["Fire and heat detections, last 24 h", fi ? xNum(fi.detections) + " (" + xNum(fi.frp_mw) + " MW)" : "0", "NASA FIRMS", "firms"]);
     var sc = F["sensor-community"]; if (sc) rows.push(["PM2.5 median of " + sc.sensors + " volunteer sensors", sc.pm25_median + " µg/m³ (90th pct " + sc.pm25_p90 + ")", "last hour", "sensor-community"]);
@@ -6625,6 +6627,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var gj = F.gpsjam; if (gj) rows.push(["Cells with GPS interference (gpsjam.org)", xNum(gj.cells), gj.date, "gpsjam"]);
     var pw = F.power; if (pw) rows.push(["Power plants listed", xNum(pw.plants) + " (" + xNum(pw.total_mw) + " MW)", "WRI 2021", "power"]);
     var sa = F.opensanctions; if (sa) rows.push(["Sanctioned or watch-listed people and entities linked to it", xNum(sa.entities), "OpenSanctions", "opensanctions"]);
+    var un = F["un-sanctions"]; if (un) rows.push(["UN Security Council sanctions list entries linked to it", xNum(un.entries) + " (" + xNum(un.individuals) + (un.individuals === 1 ? " person, " : " people, ") + xNum(un.entities) + (un.entities === 1 ? " entity)" : " entities)"), "UN list", "un-sanctions"]);
+    var of = window.ASAP_SANC && window.ASAP_SANC.counts && window.ASAP_SANC.counts[CC]; if (of) rows.push(["US OFAC sanctions list entries linked to it", xNum(of), "OFAC", "ofac"]);
     var c2 = F.c2; if (c2) rows.push(["Botnet command servers hosted", xNum(c2.servers) + " (" + c2.online + " online)", "abuse.ch", "c2"]);
     var dm = F.usdm; if (dm) rows.push(["Area in drought (D1 or worse)", dm.drought_pct + "%", String(dm.week), "usdm"]);
     var sg = F["sg-now"]; if (sg) rows.push(["PSI (24 h) / PM2.5 (1 h)", xNum(sg.psi_24h) + " / " + xNum(sg.pm25_1h), String(sg.at || "").slice(11, 16), "sg-now"]);
