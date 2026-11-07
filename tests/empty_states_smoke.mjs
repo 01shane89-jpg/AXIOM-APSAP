@@ -37,6 +37,11 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": "text/javascript" });
     return res.end(`window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST["${m[1]}"]={"news":[],"social":[]};`);
   }
+  // the real headline layers for these countries (data/live/layerfeed) would mix the day's real headlines into the fixture
+  if ((m = /^data[/\\]live[/\\]layerfeed[/\\](ee|ki|th)\.js$/.exec(path))) {
+    res.writeHead(200, { "Content-Type": "text/javascript" });
+    return res.end("window.OSAP_LAYERFEED=" + JSON.stringify({ cc: m[1], asof: stamp(10).replace("T", " ") + "Z", days: 30, items: [] }) + ";");
+  }
   if (/^data[/\\]live[/\\]health\.json$/.test(path) && HEALTH) { res.writeHead(200, { "Content-Type": "application/json" }); return res.end(JSON.stringify(HEALTH)); }
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
@@ -73,7 +78,9 @@ async function open(hash, opts) {
   ok(await p.evaluate(() => document.querySelector("#today .tdnews .oe-old").hidden), "older items are folded away at first");
   await p.click('#today .tdnews [data-oe="old"]');
   const older = await p.evaluate(() => [...document.querySelectorAll("#today .tdnews .oe-old .tdst")].map((a) => a.textContent));
-  ok(older.length >= 1 && older.some((t) => /border incident/.test(t)), `"Newest older items" shows the country's older headlines (${older.length})`);
+  // the fixture's headlines (the newest may sit in the "open now" card above instead); the stored story feeds the test does not
+  // stub (data/live/layerfeed, news-index) can add real older Estonia items, which push no fixture item out of the list
+  ok(older.length >= 1 && older.some((t) => /border incident|flood warning lifted/.test(t)), `"Newest older items" shows the country's older headlines (${older.length})`);
   await p.click('#today .tdnews [data-oe="near"]');
   await p.waitForFunction(() => document.querySelectorAll("#today .tdnews .oe-near .oe-row").length > 0, null, { timeout: 15000 }).catch(() => {});
   const near = await p.evaluate(() => ({ rows: [...document.querySelectorAll("#today .tdnews .oe-near .oe-row")].map((a) => a.textContent + " " + (a.getAttribute("href") || "")),

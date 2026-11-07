@@ -50,7 +50,8 @@
         "Today says how many headlines and warnings are new since you last looked at that country, and marks them " + b("New") + ". The count starts again once you have looked.",
         "Change your countries or role any time: Settings, " + b("My countries and setup") + ". All of this stays on this device."]) +
       "<h3>Install it like an app</h3>" +
-      ul(["iPhone or iPad: in Safari tap Share, then " + b("Add to Home Screen") + ".",
+      ul(["Settings, " + b("Install OSAP as an app") + " installs it in one tap where the browser allows (Edge and Chrome on a computer, Android), or shows the steps for this device.",
+        "iPhone or iPad: in Safari tap Share, then " + b("Add to Home Screen") + ".",
         "Android or a computer: use the browser's Install or Add to Home screen option.",
         "Installed, OSAP opens full screen, can send watch alerts, and the browser is less likely to clear your saved maps.",
         "To open quickly on a phone, OSAP downloads only what your plan includes and what the open country needs: Thailand's flood and border maps load only for Thailand, and the border map only when you open it."]) },
@@ -305,6 +306,7 @@
         b("Use my location") + ": off until you turn it on. OSAP then starts on your country and shows where you are. Only the country is stored, never your position.",
         b("Language") + ": English, Thai, Vietnamese, Filipino, Indonesian, Malay, Chinese, Japanese or Korean for the app's menus and buttons. Reports stay in their original language. The translations are AI drafts, marked AI generated.",
         b("My countries and setup") + ": your pinned countries and how you use OSAP, the questions asked the first time.",
+        b("Install OSAP as an app") + ": its own icon and window, working offline; one tap in Edge, Chrome and on Android, the steps on iPhone. Gone from the list once OSAP is installed.",
         b("User guide") + ": this guide."]) +
       "<h3>Offline maps and data</h3>" +
       ul(["Save a country so OSAP opens and works with no signal: the Offline map, the country's layers, brief, news, history and the medical plan's hospitals.",
