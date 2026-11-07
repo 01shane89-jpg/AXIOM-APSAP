@@ -790,12 +790,6 @@ run("elections", async (g) => {
   return { items: j.results.bindings.map((b) => ({ title: b.l.value, detail: Date.parse(b.d.value) > Date.now() ? "Scheduled" : "Held", date: b.d.value, url: b.e.value, sev: 1, kind: "Election", ccs: one(ccFromA2(b.iso.value)) })) };
 });
 
-feed("rainviewer", { name: "RainViewer global radar mosaic (map overlay)", org: "RainViewer", cat: "Hazards", lic: "Free public API, attribution; personal/non-commercial use", nc: true, url: "https://www.rainviewer.com/" });
-run("rainviewer", async (g) => {
-  const j = await g("https://api.rainviewer.com/public/weather-maps.json"), last = (j.radar.past || []).slice(-1)[0];
-  return { items: [], globals: [{ title: "Radar frame " + new Date(last.time * 1000).toISOString().slice(11, 16) + "Z", date: new Date(last.time * 1000).toISOString(), url: j.host + last.path, kind: "tiles" }] };
-});
-
 await runAll(6);
 writeAll(IDS);
 process.exit(0);   // abandoned feeds may still hold open requests

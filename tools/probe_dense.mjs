@@ -53,7 +53,6 @@ const C = [
   ["sensor-community", "https://data.sensor.community/static/v2/data.1h.json"],
   ["blitzortung", "https://map.blitzortung.org/GEOjson/getjson.php?f=s&n=00"],
   ["lightningmaps", "https://www.lightningmaps.org/live/"],
-  ["rainviewer", "https://api.rainviewer.com/public/weather-maps.json"],
   ["ndbc-latest", "https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt"],
   ["coralreefwatch", "https://coralreefwatch.noaa.gov/product/vs/vs_polygons.json"],
   ["usdm", "https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=total&startdate=9/1/2026&enddate=9/27/2026&statisticsType=1"],
