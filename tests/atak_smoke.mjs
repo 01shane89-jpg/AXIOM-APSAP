@@ -53,6 +53,13 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(tb.h <= tb.mh - 30, "phone: toolbar fits inside the map above the readout");
   const rd = await p.textContent("#atk-bar .atk-v");
   ok(/^\d{1,2}[C-X] [A-Z]{2} \d{5} \d{5}$/.test(rd), "phone: readout shows an MGRS grid: " + rd);
+  // the local time and military zone letter at the grid, beside Zulu (assets/osap-zonetime.js): Thailand is G (UTC+7)
+  await p.waitForFunction(() => window.OSAP_ZTIME && window.OSAP_ZTIME.ready(), null, { timeout: 15000 }).catch(() => {});
+  await p.evaluate(() => window.__asapMap && window.__asapMap.setView([13.75, 100.5], 9, { animate: false })); await p.waitForTimeout(300);
+  const tm = await p.evaluate(() => { const e = document.querySelector("#atk-bar .atk-tm"), b = document.getElementById("atk-bar").getBoundingClientRect(), r = e && e.getBoundingClientRect(); return e ? { lt: e.querySelector(".atk-lt").textContent, zt: e.querySelector(".atk-zt").textContent, title: e.title, inBar: r.width > 0 && r.right <= b.right + 1 } : null; });
+  const zt = new Date().toISOString().slice(11, 16), lt = new Date(Date.now() + 7 * 3600e3).toISOString().slice(11, 16);
+  ok(tm && /^\d\d:\d\dG$/.test(tm.lt) && /^\d\d:\d\dZ$/.test(tm.zt) && tm.inBar, "phone: readout shows local G time and Zulu beside the grid: " + JSON.stringify(tm));
+  ok(tm && (tm.zt === zt + "Z" || tm.lt.slice(0, 5) === lt) && /Local time zone at this point: G \(UTC\+7\)/.test(tm.title), "phone: the times are right and the tooltip names the zone (" + lt + "G / " + zt + "Z)");
   await p.click('#atk-bar [data-sb="fmt"]'); ok(/°[NS] /.test(await p.textContent("#atk-bar .atk-v")), "phone: tap readout switches to degrees");
   await p.click('#atk-bar [data-sb="fmt"]'); await p.click('#atk-bar [data-sb="fmt"]');
   if (OUT) await p.screenshot({ path: OUT + "/phone-toolbar.png" });
