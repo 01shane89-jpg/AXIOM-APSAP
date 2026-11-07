@@ -1,0 +1,15 @@
+# Test only (remove before merge): what Esri publishes about imagery capture dates. Prints to the log; writes nothing.
+name: Probe imagery dates
+on:
+  push:
+    branches: [claude/imagery-date]
+    paths: [tools/probe_imgdate.sh, .github/workflows/probe-imgdate.yml]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_imgdate.sh
