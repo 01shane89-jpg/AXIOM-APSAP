@@ -3,6 +3,7 @@
 //   data/live/x/<cc>.js    window.OSAP_XC[cc]  items and figures for one country, loaded by the page only when that country is open
 // A feed that fails keeps its previous items (read back from the old files) and is marked stale, so one outage never empties a country.
 import fs from "node:fs";
+import { COMMERCIAL } from "./nc_strip.mjs";
 
 export const TIMEOUT = 45000, UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
 export const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -67,6 +68,9 @@ const T_START = Date.now(), BUDGET = +(process.env.DENSE_BUDGET_MS || 12 * 60e3)
 async function runOne(id, fn) {
   if (Date.now() - T_START > BUDGET) { RESULTS[id] = { ok: false, error: "skipped: run out of time" }; return; }
   if (ONLY.length && !ONLY.includes(id)) return;
+  // sold version (OSAP_COMMERCIAL, tools/nc_strip.mjs): a feed whose terms are non-commercial is not even asked
+  // (ncDyn: the feed sets nc itself from what it read, e.g. OSAP's own sweeps, which hold only commercial-OK sources when sold)
+  if (COMMERCIAL && FEEDS[id] && FEEDS[id].nc && !FEEDS[id].ncDyn) { RESULTS[id] = { ok: false, error: "not used in the sold version (non-commercial terms)" }; return; }
   const every = FEEDS[id] && FEEDS[id].everyHours, o = OLD && OLD.feeds[id];
   if (every && o && o.ok && o.asof && (Date.now() - Date.parse(o.asof.replace(" ", "T"))) / 36e5 < every) { RESULTS[id] = { reuse: true }; console.log("keep", id.padEnd(20), "fetched", o.asof); return; }
   const t0 = Date.now();

@@ -6,6 +6,8 @@
    here is an analyst judgement. The impact colours use generic planning thresholds, shown on the brief, not any service's doctrine. */
 (function () {
   "use strict";
+  /* the sold version (assets/osap-sold.js): only services licensed for a paid product (rain radar: national networks, not RainViewer) */
+  var SOLD = window.OSAP_SOLD === true;
   var W = window, map, L;
 
   /* ---------- small helpers ---------- */
@@ -1916,6 +1918,57 @@
       return RV;
     });
   }
+  /* National radar networks: the commercial-OK stand-in for RainViewer. The sold version (assets/osap-sold.js) always uses it,
+     because RainViewer's free API is not licensed for paid products; the free app falls back to it when RainViewer does not
+     answer, so one service failing never blanks the radar. Each network is the national weather service's own open service,
+     keyless, drawn only inside its own area (bounds), latest frame, in that service's own colour scale:
+       North America (Canada and the 48 states): MSC GeoMet RADAR_1KM_RRAI, Environment and Climate Change Canada (ECCC Data
+         Server End-use Licence: any use, attribution);
+       Alaska, Hawaii, Puerto Rico and the Caribbean, Guam: NOAA nowCOAST regional base reflectivity mosaics (public domain);
+       Germany: DWD Niederschlagsradar (DWD GeoNutzV: any use, attribution);
+       Finland: FMI suomi_dbz_eureffin (CC BY 4.0); Netherlands: KNMI RAD_NL25_PCP_CM (CC BY 4.0);
+       Japan: JMA high-resolution precipitation nowcast tiles (Government of Japan Standard Terms of Use 2.0, CC BY 4.0
+         compatible: any use, attribution).
+     Checked from GitHub Actions 2026-11-07 (branch claude/sold-sources-probe): every one answered, keyless. Elsewhere use the
+     satellite rain estimate (NASA IMERG, worldwide). */
+  var NAT_RADAR = [
+    { id: "ca", name: "ECCC", wms: "https://geo.weather.gc.ca/geomet", layers: "RADAR_1KM_RRAI", b: [[24, -170], [84, -50]], attr: 'Radar: <a href="https://eccc-msc.github.io/open-data/licence/readme_en/" target="_blank" rel="noopener noreferrer">ECCC MSC GeoMet</a>' },
+    { id: "ak", name: "NOAA", wms: NOWCOAST + "observations/weather_radar/wms", layers: "alaska_base_reflectivity_mosaic", b: [[50, -180], [72, -128]], attr: "Radar: NOAA nowCOAST" },
+    { id: "hi", name: "NOAA", wms: NOWCOAST + "observations/weather_radar/wms", layers: "hawaii_base_reflectivity_mosaic", b: [[17, -162], [24, -153]], attr: "Radar: NOAA nowCOAST" },
+    { id: "pr", name: "NOAA", wms: NOWCOAST + "observations/weather_radar/wms", layers: "caribbean_base_reflectivity_mosaic", b: [[15, -70], [21, -63]], attr: "Radar: NOAA nowCOAST" },
+    { id: "gu", name: "NOAA", wms: NOWCOAST + "observations/weather_radar/wms", layers: "guam_base_reflectivity_mosaic", b: [[10, 141], [18, 149]], attr: "Radar: NOAA nowCOAST" },
+    { id: "de", name: "DWD", wms: "https://maps.dwd.de/geoserver/dwd/wms", layers: "dwd:Niederschlagsradar", b: [[46.5, 2.5], [56, 16.5]], attr: 'Radar: <a href="https://www.dwd.de/" target="_blank" rel="noopener noreferrer">Deutscher Wetterdienst</a>' },
+    { id: "fi", name: "FMI", wms: "https://openwms.fmi.fi/geoserver/Radar/wms", layers: "Radar:suomi_dbz_eureffin", b: [[58, 18], [71, 33]], attr: "Radar: Finnish Meteorological Institute (CC BY 4.0)" },
+    { id: "nl", name: "KNMI", wms: "https://geoservices.knmi.nl/adaguc-server?DATASET=RADAR&", layers: "RAD_NL25_PCP_CM", b: [[49, 0], [56, 10]], attr: "Radar: KNMI (CC BY 4.0)" },
+    { id: "jp", name: "JMA", jma: true, b: [[20, 118], [48, 150]], attr: 'Radar: <a href="https://www.jma.go.jp/" target="_blank" rel="noopener noreferrer">Japan Meteorological Agency</a>' }
+  ];
+  var NATR = { jma: null, at: 0 };
+  /* JMA publishes its tiles under a base time; the newest is the first entry of targetTimes_N1.json */
+  function jmaTime() {
+    if (NATR.jma && Date.now() - NATR.at < 5 * 60 * 1000) return Promise.resolve(NATR.jma);
+    return getJSON("https://www.jma.go.jp/bosai/jmatile/data/nowc/targetTimes_N1.json").then(function (j) {
+      var t = j && j[0]; if (!t || !/^\d{14}$/.test(t.basetime)) throw new Error("no JMA frame");
+      NATR = { jma: t, at: Date.now() }; return t;
+    });
+  }
+  function natRadar(g, op) {
+    var names = [];
+    NAT_RADAR.forEach(function (r) {
+      var bounds = L.latLngBounds(r.b);
+      if (r.jma) {
+        jmaTime().then(function (t) {
+          if (!ON.radar || LYR.radar !== g) return;
+          g.addLayer(L.tileLayer("https://www.jma.go.jp/bosai/jmatile/data/nowc/" + t.basetime + "/none/" + t.validtime + "/surf/hrpns/{z}/{x}/{y}.png",
+            { pane: "wxpane", opacity: op, minZoom: 2, maxNativeZoom: 10, maxZoom: 13, bounds: bounds, attribution: r.attr }));
+        }, function () { /* Japan only: the other networks still show */ });
+      } else {
+        g.addLayer(L.tileLayer.wms(r.wms, { layers: r.layers, format: "image/png", transparent: true, version: "1.3.0", pane: "wxpane", opacity: op, bounds: bounds, attribution: r.attr }));
+      }
+      if (names.indexOf(r.name) < 0) names.push(r.name);
+    });
+    return "National radar networks (" + names.join(", ") + "), latest frame; elsewhere use the satellite rain estimate";
+  }
+
   /* the radar loop: one tile layer per 10-minute frame of the last two hours (RainViewer publishes 13), all loaded, one shown at a time.
      The last frame is held longer so "now" is easy to read. Off unless the analyst presses Loop; with "reduce motion" it never starts. */
   var RLOOP = { on: !!LS.radarLoop, t: 0, i: 0, layers: [] };
@@ -1962,12 +2015,13 @@
   function flowCol(kt) { for (var i = FLOW_STEPS.length - 1; i >= 0; i--) if (kt >= FLOW_STEPS[i]) return i; return 0; }
   function aqCol(v) { return v <= 50 ? "#00e400" : v <= 100 ? "#ffff00" : v <= 150 ? "#ff7e00" : v <= 200 ? "#ff0000" : v <= 300 ? "#8f3f97" : "#7e0023"; }
   var LAY = [
-    { k: "radar", name: "Rain radar", grp: "Rain", note: "Ground radar where networks share it (RainViewer); gaps over most seas and some countries. Latest 10-minute frame.", op: 0.75,
-      lic: "RainViewer, free API with attribution", legend: function () { return ramp(LEG.radar); },
-      extra: function () { return '<button type="button" class="wxbtn" id="wx-rloop" aria-pressed="' + RLOOP.on + '">' + (RLOOP.on ? "❚❚ Stop the loop" : "▶ Loop the last 2 hours") + "</button>"; },
+    { k: "radar", name: "Rain radar", grp: "Rain", note: SOLD ? "National weather-service radar networks (North America, Germany, Finland, Netherlands, Japan); elsewhere use the satellite rain estimate. Latest frame." : "Ground radar where networks share it (RainViewer); gaps over most seas and some countries. Latest 10-minute frame. If RainViewer does not answer, national radar networks stand in.", op: 0.75,
+      lic: SOLD ? "ECCC, NOAA, DWD, FMI, KNMI, JMA open data, with attribution" : "RainViewer, free API with attribution (national networks as backup)", legend: function () { return SOLD || RLOOP.nat ? '<span class="obs">Each national service&rsquo;s own colour scale: light blue to green light rain, yellow to red heavy rain.</span>' : ramp(LEG.radar); },
+      extra: function () { return SOLD ? "" : '<button type="button" class="wxbtn" id="wx-rloop" aria-pressed="' + RLOOP.on + '">' + (RLOOP.on ? "❚❚ Stop the loop" : "▶ Loop the last 2 hours") + "</button>"; },
       make: function (op) {
         var g = L.layerGroup(), me = this;
-        radarLoopStop(); RLOOP.layers = [];
+        radarLoopStop(); RLOOP.layers = []; RLOOP.nat = false;
+        if (SOLD) { me.stamp = natRadar(g, op); RLOOP.nat = true; setTimeout(function () { note("radar", me.stamp); }, 0); return g; }
         rainviewer().then(function (rv) {
           if (!ON.radar || LYR.radar !== g) return;
           var loop = RLOOP.on && !reduceMotion() && rv.frames.length > 1, fr = loop ? rv.frames : [{ path: rv.path, time: rv.time }];
@@ -1975,7 +2029,12 @@
           if (loop) { RLOOP.i = fr.length - 1; RLOOP.t = setTimeout(radarLoopTick, 1500); }
           me.stamp = "Radar frame " + zt(fr[fr.length - 1].time, null, true) + (loop ? ", looping " + fr.length + " frames" : "");
           note("radar", me.stamp);
-        }, function (e) { note("radar", "Radar did not load (" + e.message + ")."); });
+        }, function (e) {
+          // RainViewer did not answer: the national networks stand in, so the layer is not left blank
+          if (!ON.radar || LYR.radar !== g) return;
+          RLOOP.nat = true; me.stamp = natRadar(g, op) + " (RainViewer did not answer: " + e.message + ")";
+          note("radar", me.stamp);
+        });
         g.on("remove", radarLoopStop);
         return g;
       } },
@@ -2449,7 +2508,8 @@
   var CRED = ['Operational weather brief and model map layers: <a href="https://open-meteo.com/">Open-Meteo.com</a> forecast, marine and air-quality APIs (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information).',
     'Weather models on the map, through Open-Meteo: ECMWF IFS and AIFS (CC BY 4.0), NOAA GFS (public domain), DWD ICON, UK Met Office, Météo-France ARPEGE/AROME, JMA, ECCC GEM and CMA GRAPES, each the publishing service&rsquo;s open data.',
     'Weather region list (provinces and states): <a href="https://www.naturalearthdata.com/">Natural Earth</a> admin-1 boundaries (public domain). Town search: <a href="https://open-meteo.com/en/docs/geocoding-api">Open-Meteo geocoding</a> with <a href="https://www.geonames.org/">GeoNames</a> places (CC BY 4.0).',
-    'Rain radar: <a href="https://www.rainviewer.com/api.html">RainViewer</a> free public API, with attribution (terms may restrict commercial use; tagged for review before any sale).',
+    (SOLD ? "" : 'Rain radar: <a href="https://www.rainviewer.com/api.html">RainViewer</a> free public API, with attribution (not licensed for the sold version). ') +
+    'National rain radar networks (the sold version&rsquo;s radar, and the backup when RainViewer does not answer): <a href="https://eccc-msc.github.io/open-data/licence/readme_en/">ECCC MSC GeoMet</a> (Environment and Climate Change Canada Data Server End-use Licence), NOAA nowCOAST (public domain), <a href="https://www.dwd.de/">Deutscher Wetterdienst</a> (GeoNutzV), Finnish Meteorological Institute and KNMI (CC BY 4.0), <a href="https://www.jma.go.jp/jma/en/copyright.html">Japan Meteorological Agency</a> (Government of Japan Standard Terms of Use).',
     'Satellite rain estimate: NASA GPM IMERG via <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">NASA GIBS</a> (public domain).',
     'Satellite infrared mosaic, tropical cyclone cones and tracks: NOAA <a href="https://nowcoast.noaa.gov/">nowCOAST</a> (U.S. Government work, public domain).',
     'Warning areas in the United States: NOAA <a href="https://www.weather.gov/documentation/services-web-api">National Weather Service API</a> (public domain). Hazards: Pacific Disaster Center DisasterAWARE; GDACS.'];

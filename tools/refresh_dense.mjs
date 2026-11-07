@@ -4,7 +4,9 @@
 // non-commercial or otherwise restricted, so they can be stripped in one pass if the app is ever sold.
 // Rules kept: no accounts or keys; no private individuals' names (sanctions lists name only sanctioned people and bodies);
 // sequential requests to any one host; slow-changing sources fetched at most every few hours or once a day.
-import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, runAll, writeAll, sleep } from "./dense_lib.mjs";
+import fs from "node:fs";
+import { COMMERCIAL } from "./nc_strip.mjs";
+import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, runAll, writeAll, sleep, FEEDS } from "./dense_lib.mjs";
 import "./thinktanks.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
@@ -337,19 +339,75 @@ run("swpc", async (g) => {
   return { items: [], globals };
 });
 
-feed("mil-air", { name: "Military aircraft broadcasting ADS-B (adsb.lol, adsb.fi)", org: "adsb.lol; adsb.fi (volunteer receivers)", cat: "Aviation", lic: "adsb.lol ODbL 1.0; adsb.fi open data, non-commercial", nc: true, url: "https://adsb.lol/" });
+// Military aircraft. Commercial-OK core (sold version too): adsb.lol's military list (ODbL 1.0). When adsb.lol does not answer,
+// OSAP's own live-drones snapshot (tools/refresh_drones.mjs, built from the same adsb.lol lists a few minutes earlier) stands in,
+// so one outage does not blank the feed. adsb.fi (non-commercial terms) adds the aircraft adsb.lol's receivers missed, as its
+// own feed "mil-air-fi" tagged nc, which the sold version never asks (tools/dense_lib.mjs) and tools/nc_strip.mjs can remove.
+const MIL_NOTE = ". Only aircraft that broadcast ADS-B and fly within range of volunteer receivers; most military flights do not appear.";
+function milItem(a, link) {
+  return { title: (a.desc || a.t || "Aircraft") + (a.flight ? " · " + String(a.flight).trim() : "") + (a.r ? " · " + a.r : ""),
+    detail: [a.alt_baro === "ground" ? "on the ground" : a.alt_baro != null ? "altitude " + a.alt_baro + " ft" : "", a.gs != null ? Math.round(a.gs) + " kt" : "", a.track != null ? "heading " + Math.round(a.track) + "°" : "", a.squawk ? "squawk " + a.squawk : ""].filter(Boolean).join(", ") + MIL_NOTE,
+    date: new Date(Date.now() - (a.seen || 0) * 1000).toISOString(), lat: a.lat, lon: a.lon, url: link + a.hex, sev: /7[567]00/.test(a.squawk || "") ? 3 : 1, kind: "Military aircraft", ccs: withOki(ccsAt(a.lat, a.lon, 1.5)) };
+}
+let milFiDone; const milFi = new Promise((r) => (milFiDone = r));
+feed("mil-air", { name: "Military aircraft broadcasting ADS-B (adsb.lol)", org: "adsb.lol (volunteer receivers); OSAP live-drones snapshot as backup", cat: "Aviation", lic: "ODbL 1.0 (adsb.lol), attribution", url: "https://adsb.lol/" });
 run("mil-air", async (g) => {
-  const seen = new Map(), fails = [];
-  for (const u of ["https://api.adsb.lol/v2/mil", "https://opendata.adsb.fi/api/v2/mil"]) {
-    try { const j = await g(u); for (const a of j.ac || []) if (a.lat != null && !seen.has(a.hex)) seen.set(a.hex, a); } catch (e) { fails.push(u.split("/")[2]); }
-    await sleep(1100);
+  const seen = new Map(); let via = "adsb.lol", lolErr = null;
+  try {
+    try {
+      const j = await g("https://api.adsb.lol/v2/mil");
+      for (const a of j.ac || []) if (a.lat != null && a.hex && !seen.has(a.hex)) seen.set(a.hex, a);
+    } catch (e) {
+      // backup: OSAP's own snapshot of the same adsb.lol lists (positions up to a few minutes older)
+      const d = await g("https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-drones/drones.json");
+      if (!(d && Array.isArray(d.ac)) || Date.now() - Date.parse(d.built) > 60 * 60e3) throw new Error("adsb.lol failed (" + err1(e) + ") and the live-drones backup is missing or over an hour old");
+      for (const x of d.ac) if (x.src === "lol" && x.lat != null) seen.set(x.hex, { hex: x.hex, flight: x.cs, r: x.reg, t: x.t, desc: x.desc, lat: x.lat, lon: x.lon, alt_baro: x.alt, gs: x.gs, track: x.trk, squawk: x.sqk, seen: (Date.now() - x.pos_ms) / 1000 });
+      via = "OSAP live-drones snapshot (adsb.lol did not answer)";
+    }
+  } catch (e) { lolErr = e; }
+  if (!COMMERCIAL) {   // adsb.fi extras (everything, when adsb.lol and the backup both failed) go to their own nc feed
+    const extra = [];
+    try { await sleep(1100); const j = await g("https://opendata.adsb.fi/api/v2/mil"); for (const a of j.ac || []) if (a.lat != null && a.hex && !seen.has(a.hex)) extra.push(a); milFiDone({ ok: true, extra }); }
+    catch (e) { milFiDone({ ok: false, error: err1(e) }); }
   }
-  if (fails.length === 2) throw new Error("both failed");
-  const items = [...seen.values()].map((a) => ({ title: (a.desc || a.t || "Aircraft") + (a.flight ? " · " + a.flight.trim() : "") + (a.r ? " · " + a.r : ""),
-    detail: [a.alt_baro === "ground" ? "on the ground" : a.alt_baro != null ? "altitude " + a.alt_baro + " ft" : "", a.gs != null ? Math.round(a.gs) + " kt" : "", a.track != null ? "heading " + Math.round(a.track) + "°" : "", a.squawk ? "squawk " + a.squawk : ""].filter(Boolean).join(", ") +
-      ". Only aircraft that broadcast ADS-B and fly within range of volunteer receivers; most military flights do not appear.", date: new Date(Date.now() - (a.seen || 0) * 1000).toISOString(),
-    lat: a.lat, lon: a.lon, url: "https://globe.adsb.lol/?icao=" + a.hex, sev: /7[567]00/.test(a.squawk || "") ? 3 : 1, kind: "Military aircraft", ccs: withOki(ccsAt(a.lat, a.lon, 1.5)) }));
-  return { items, note: seen.size + " aircraft" + (fails.length ? "; failed: " + fails.join(", ") : "") };
+  if (lolErr) throw lolErr;
+  return { items: [...seen.values()].map((a) => milItem(a, "https://globe.adsb.lol/?icao=")), note: seen.size + " aircraft via " + via };
+});
+feed("mil-air-fi", { name: "Military aircraft broadcasting ADS-B, extra from adsb.fi", org: "adsb.fi (volunteer receivers)", cat: "Aviation", lic: "adsb.fi open data, non-commercial", nc: true, url: "https://adsb.fi/" });
+run("mil-air-fi", async () => {
+  const r = await Promise.race([milFi, sleep(180000).then(() => ({ ok: false, error: "mil-air did not run" }))]);
+  if (!r.ok) throw new Error(r.error);
+  return { items: r.extra.map((a) => milItem(a, "https://globe.adsb.fi/?icao=")), note: r.extra.length + " aircraft adsb.lol did not have" };
+});
+const err1 = (e) => String((e && e.message) || e).slice(0, 60);
+
+// Aircraft in the air over each country, counted from OSAP's own air-traffic sweep (tools/refresh_air.mjs, live-air branch),
+// so it does not depend on OpenSky. Counts only aircraft from the sources the sweep used; in the sold version that is adsb.lol
+// alone (ODbL), so the feed is tagged nc only when a non-commercial source (adsb.fi, OpenSky) took part in this sweep.
+feed("air-count", { name: "Aircraft in the air over each country (OSAP air-traffic sweep)", org: "OSAP, from adsb.lol / adsb.fi volunteer receivers", cat: "Aviation", lic: "ODbL 1.0 (adsb.lol); tagged nc while adsb.fi or OpenSky data are in the sweep", nc: true, ncDyn: true, url: "https://adsb.lol/" });
+run("air-count", async (g) => {
+  const RAW = "https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/";
+  const ix = await g(RAW + "index.json");
+  if (!ix || ix.schema !== "osap-air-traffic/1" || Date.now() - Date.parse(ix.built) > 2 * 3600e3) throw new Error("air-traffic sweep missing or over 2 hours old");
+  const srcs = ix.sources || [], F = ix.f || [], iLa = F.indexOf("lat"), iLo = F.indexOf("lon"), iS = F.indexOf("src"), iFl = F.indexOf("fl");
+  FEEDS["air-count"].nc = srcs.some((x) => x && x.nc);
+  FEEDS["air-count"].lic = srcs.map((x) => x.name + " (" + x.licence + ")").join("; ");
+  const figures = {}; let n = 0, cells = 0;
+  for (const [k, c] of Object.entries(ix.cells || {})) {
+    if (!(c > 0)) continue;
+    let j; try { j = await g(RAW + "a/" + k + ".json"); } catch (e) { continue; }
+    cells++;
+    for (const x of j.ac || []) {
+      if (!Array.isArray(x) || (x[iFl] & 4)) continue;   // on the ground
+      const [cc] = ccsAt(x[iLa], x[iLo], 0); if (!cc) continue;
+      const f = (figures[cc] = figures[cc] || { airborne: 0, military: 0, by_source: {} });
+      f.airborne++; n++; if (x[iFl] & 1) f.military++;
+      const sn = (srcs[x[iS]] || {}).name || "?"; f.by_source[sn] = (f.by_source[sn] || 0) + 1;
+    }
+  }
+  if (figures.jp) figures.oki = figures.jp;
+  for (const f of Object.values(figures)) f.asof = ix.built;
+  return { figures, note: n + " airborne aircraft over land from " + cells + " cells, sweep " + ix.built.slice(11, 16) + "Z (" + srcs.map((x) => x.name).join(", ") + ")" };
 });
 
 feed("opensky", { name: "Air traffic over each country (OpenSky Network)", org: "OpenSky Network", cat: "Aviation", lic: "OpenSky terms: non-commercial research use, anonymous access", nc: true, url: "https://opensky-network.org/" });
@@ -396,6 +454,29 @@ run("gpsjam", async (g) => {
     items.push({ title: Math.round(r * 100) + "% of aircraft reported degraded GPS", detail: B + " of " + (G1 + B) + " aircraft in this ~40 km cell on " + day + " reported low navigation accuracy (jamming or spoofing likely).",
       date: day + "T12:00", lat: la, lon: lo, url: "https://gpsjam.org/?lat=" + la.toFixed(2) + "&lon=" + lo.toFixed(2) + "&z=6&date=" + day, sev: r >= 0.5 ? 3 : 2, kind: "GNSS interference", value: Math.round(r * 100), ccs }); }
   return { items: items.sort((a, b) => b.value - a.value), figures };
+});
+
+// GPS interference from OSAP's own map (tools/gnss.mjs, data/live/gnss/latest.json, rolling 24 hours, written by the air-traffic
+// sweep): the same idea as gpsjam.org, but from the sources OSAP itself reads, so the sold version keeps it (adsb.lol, ODbL) and
+// it is a second, more recent source next to gpsjam.org's "yesterday". Tagged nc only while adsb.fi data are in the map.
+feed("gnss-own", { name: "GNSS interference seen by aircraft (OSAP's own map, last 24 hours)", org: "OSAP, from adsb.lol / adsb.fi aircraft reports", cat: "Aviation", lic: "ODbL 1.0 (adsb.lol); tagged nc while adsb.fi data are in the map", nc: true, ncDyn: true, url: "https://axiom-osap.netlify.app/" });
+run("gnss-own", async () => {
+  const j = JSON.parse(fs.readFileSync("data/live/gnss/latest.json", "utf8"));
+  if (j.schema !== "osap-gnss/1" || !Array.isArray(j.cells)) throw new Error("not an OSAP GNSS map");
+  if (Date.now() - Date.parse(j.built) > 6 * 3600e3) throw new Error("GNSS map over 6 hours old (built " + j.built + ")");
+  const srcs = j.sources || [];
+  FEEDS["gnss-own"].nc = srcs.some((x) => x && x.nc);
+  FEEDS["gnss-own"].lic = srcs.map((x) => x.name + " (" + x.licence + ")").join("; ");
+  const F = j.f, iLa = F.indexOf("lat"), iLo = F.indexOf("lon"), iN = F.indexOf("n"), iB = F.indexOf("bad"), iL = F.indexOf("lost");
+  const items = [], figures = {}, from = (j.from || "").slice(0, 13).replace("T", " "), to = (j.to || "").slice(0, 13).replace("T", " ");
+  for (const c of j.cells) {
+    const n = c[iN], b = c[iB], r = n ? b / n : 0; if (n < (j.min || 10) || r <= (j.bad_share || 0.1)) continue;
+    const la = c[iLa] + j.deg / 2, lo = c[iLo] + j.deg / 2, ccs = withOki(ccsAt(la, lo, 1));
+    for (const cc of ccs) figures[cc] = { cells: ((figures[cc] || {}).cells || 0) + 1, from: j.from, to: j.to };
+    items.push({ title: Math.round(r * 100) + "% of aircraft reported degraded GPS", detail: b + " of " + n + " aircraft-hours in this 1° cell (" + from + "Z to " + to + "Z) reported low navigation accuracy" + (c[iL] ? ", " + c[iL] + " lost GPS" : "") + ". Inferred from the aircraft's own reports; does not tell jamming from spoofing.",
+      date: j.to, lat: la, lon: lo, url: "https://axiom-osap.netlify.app/", sev: r >= 0.5 ? 3 : 2, kind: "GNSS interference", value: Math.round(r * 100), ccs });
+  }
+  return { items: items.sort((a, b) => b.value - a.value), figures, note: items.length + " cells with interference, " + j.hours + " hours" };
 });
 
 // ---------------------------------------------------------------- maritime and infrastructure (slow-changing reference layers)
