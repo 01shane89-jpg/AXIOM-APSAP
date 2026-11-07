@@ -9,6 +9,7 @@
 ["r6856259",45.48115,64.07142,"kz",{"name":"Центральная больница","amenity":"clinic","addr:housenumber":"105","addr:street":"улица Абая","addr:city":"Жосалы"}],
 ["r7903301",44.77306,65.53911,"kz",{"name":"Областная детская больница","amenity":"hospital","addr:housenumber":"25/1","addr:street":"Амангельды"}],
 ["w1102559895",45.08502,64.66309,"kz",{"amenity":"hospital","healthcare":"hospital","addr:city":"Жалағаш"}],
+["w1158397950",44.89406,65.46806,"kz",{"name":"Врачебная амбулатория","amenity":"clinic","addr:housenumber":"32/1","addr:street":"Абенова"}],
 ["w1174727233",45.07125,64.66729,"kz",{"name":"Ескі туберкулез ауруханасы","amenity":"clinic","addr:street":"Конституция көшесі"}],
 ["w1451344329",44.8789,64.24127,"kz",{"amenity":"clinic","healthcare":"clinic"}],
 ["w216737743",44.85349,65.47082,"kz",{"name":"Клиника Сеным","name:en":"Senim","amenity":"hospital","addr:housenumber":"9","addr:street":"Акмечит микрорайон"}],

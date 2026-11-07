@@ -41,7 +41,7 @@
 ["n12309796347",31.96727,34.75216,"il",{"aeroway":"helipad"}],
 ["n12393444326",31.79535,34.70463,"il",{"name":"מכבי","amenity":"clinic","operator":"מכבי"}],
 ["n12393444327",31.79554,34.70438,"il",{"name":"כללית","amenity":"clinic","operator":"כללית"}],
-["n12407137260",31.72379,35.79536,"jo",{"name":"المدينة مركز صحي","amenity":"hospital","healthcare":"hospital"}],
+["n12407137260",31.72379,35.79536,"jo",{"name":"المدينة مركز صحي","name:en":"City Health Centre","amenity":"hospital","healthcare":"hospital"}],
 ["n12538653760",31.79072,34.70625,"il",{"name":"לאומית גן יבנה","amenity":"clinic","operator":"לאומית"}],
 ["n12557322211",31.99909,34.9469,"il",{"name":"מרפאת מומחים מכבי","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"מכבי","operator:type":"private"}],
 ["n12615254756",31.75471,35.22196,"il",{"name":"מכבי","amenity":"clinic","healthcare":"clinic","operator":"מכבי","operator:type":"private"}],
@@ -86,7 +86,7 @@
 ["n13793038857",31.79528,35.21828,"il",{"name":"כללית","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"כללית","operator:type":"private","addr:housenumber":"14","addr:street":"הרב שמעון חכם","addr:city":"ירושלים","addr:postcode":"9534811"}],
 ["n13793038859",31.79496,35.21873,"il",{"name":"לאומית","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"לאומית","operator:type":"private","addr:housenumber":"25","addr:street":"אבינדב","addr:city":"ירושלים"}],
 ["n1387607581",31.89255,35.03412,"il",{"name":"מכבי שירותי בריאות","name:en":"Maccabi clinic","amenity":"clinic","emergency":"no"}],
-["n13903417501",31.90715,35.84788,"jo",{"name":"غرين كلينيك","name:en":"Green Clinic","amenity":"clinic","phone":"0796800087","opening_hours":"24/7"}],
+["n13903417501",31.90717,35.84776,"jo",{"name":"غرين كلينيك","name:en":"Green Clinic","amenity":"clinic","healthcare":"clinic","phone":"0796800087","opening_hours":"24/7"}],
 ["n13940220945",31.79148,35.19971,"il",{"name":"מגן דוד אדום","name:en":"Magen David Adom","emergency":"ambulance_station","operator":"MDA","addr:housenumber":"5","addr:street":"המ\"ג","addr:city":"ירושלים"}],
 ["n14053173939",31.89977,35.00712,"il",{"amenity":"clinic","healthcare":"clinic","operator":"כללית","operator:type":"private"}],
 ["n14066795190",31.89679,34.80856,"il",{"name":"מרפאת אחיות","amenity":"clinic","healthcare":"clinic","operator":"מכבי","operator:type":"private","addr:housenumber":"27","addr:street":"משה סמילנסקי","addr:city":"רחובות","opening_hours":"Su-Th 08:00-12:00; Su,Mo,We 16:00-18:00"}],
@@ -620,4 +620,4 @@
 ["w97592352",31.79974,34.64234,"il",{"name":"קופת חולים מאוחדת","name:en":"Kupat Holim Meuhedet","amenity":"clinic","addr:housenumber":"6","addr:street":"קרן היסוד","addr:city":"אשדוד"}],
 ["w97725464",31.80096,34.64736,"il",{"name":"לאומית רסקו","name:en":"Leumit Rasko","amenity":"clinic","healthcare":"clinic"}],
 ["w99162871",31.66282,34.55688,"il",{"name":"מנחת ברזילי","name:en":"Barzilay helipad","aeroway":"helipad"}],
-["w995199462",31.90177,35.87815,"jo",{"aeroway":"helipad"}]]
+["w995199462",31.90177,35.87813,"jo",{"aeroway":"helipad"}]]

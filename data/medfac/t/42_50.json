@@ -4,7 +4,7 @@
 ["n4323132490",43.65193,51.14596,"kz",{"name":"Нейрон","amenity":"clinic"}],
 ["n4359232290",43.65653,51.16449,"kz",{"name":"Денсаулык","amenity":"hospital","healthcare":"hospital"}],
 ["n4511615939",43.66099,51.16416,"kz",{"name":"SOS International Aktau","amenity":"clinic","phone":"+7-7292 418-661, +7-701 733-1054","website":"https://www.internationalsos.com/"}],
-["n4511615940",43.65892,51.16012,"kz",{"name":"Касиет","name:en":"Kasiyet Hospital (private)","amenity":"clinic"}],
+["n4511615940",43.65892,51.16012,"kz",{"name":"Касиет","name:en":"Kasiyet Hospital","amenity":"clinic","healthcare":"clinic"}],
 ["n4511673390",43.67424,51.18434,"kz",{"name":"Медицинский центр","amenity":"clinic","phone":"400449","addr:housenumber":"71","opening_hours":"Mo-Fr 09:00-13:00, 14:00-18:00"}],
 ["n4531760599",43.6592,51.16064,"kz",{"name":"Ясин","amenity":"clinic"}],
 ["n4756110023",43.63801,51.1792,"kz",{"name":"СПИД центр","amenity":"hospital"}],

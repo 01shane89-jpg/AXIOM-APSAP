@@ -444,7 +444,7 @@
 ["w223532220",32.02341,36.40385,"jo",{"aeroway":"helipad"}],
 ["w227121414",33.57415,36.37045,"sy",{"name":"مستشفى البيروني الجامعي","name:en":"Al-Biruni University Hospital","amenity":"hospital"}],
 ["w227121416",33.58008,36.38067,"sy",{"name":"Harasta military hospital","amenity":"hospital","healthcare":"hospital","military":"yes"}],
-["w243771939",32.34371,36.19769,"jo",{"name":"مستشفى المفرق الحكومي","name:en":"Al-Mafraq Hospital","amenity":"hospital","emergency":"yes"}],
+["w243771939",32.34371,36.19769,"jo",{"name":"مستشفى المفرق الحكومي","name:en":"Al-Mafraq Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w261427306",32.30252,36.32254,"jo",{"name":"Moroccan Hospital","amenity":"hospital","operator":"Marocco"}],
 ["w261427310",32.29258,36.32917,"jo",{"name":"MSF Hospital","amenity":"hospital","operator":"MSF Holland","operator:type":"ngo"}],
 ["w261427315",32.29361,36.32665,"jo",{"name":"Cbm","amenity":"hospital","operator":"Cbm"}],
