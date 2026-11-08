@@ -34,7 +34,7 @@
     var R = "#" + o.root;
     var on = false; try { on = localStorage.getItem(o.key) === "1"; } catch (e) {}
     // sel: the dates shown (a and b, YYYY-MM-DD, both inside), how they were picked (m: all, 12, period, custom) and the types shown
-    var S = null, id = null, lyr = null, rend = null, map = null, bound = false, sel = { a: "", b: "", m: "all", t: { 1: true, 2: true, 3: true } }, pending = {};
+    var S = null, id = null, lyr = null, rend = null, map = null, bound = false, sel = { a: "", b: "", m: "all", t: { 1: true, 2: true, 3: true }, p: true }, pending = {};
     var DAY = 864e5;
     function iso(ms) { return new Date(ms).toISOString().slice(0, 10); }
     function today() { return iso(Date.now()); }
@@ -147,22 +147,55 @@
           dashArray: r[15] ? "2 2" : null, fillColor: "#D32F2F", fillOpacity: 0.8 })
           .bindPopup(function () { return pop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { fp(r, e[1]); }, 0); }));
       });
+      /* protests and riots (Mass Mobilization), each where the dataset's town is: blue a protest, orange a riot. Only those placed
+         on a town are drawn; the rest stay in Coded events. They follow the same span, and the panel's tick hides them. */
+      var np = 0;
+      if (sel.p) {
+        mmLoad(); codeLib();
+        mmEvents().forEach(function (e) {
+          var r = e[0]; if (r[3] == null || !b.contains([r[3], r[4]])) return;
+          np++;
+          g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: o.pane, radius: small ? 2.4 : 3.6, color: "#fff", weight: 0.8, fillColor: +r[6] === 1 ? PRC.riot : PRC.protest, fillOpacity: 0.9 })
+            .bindPopup(function () { return mmPop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { mmFp(r); }, 0); }));
+        });
+      }
       lyr = L.layerGroup(g).addTo(map);
+      drawnP = np;
       drawn = { mode: m, b: b, n: all };
       legend(m);
-      var nb = D.getElementById(o.root + "-note"); if (nb) nb.textContent = note || (all ? "" : "No events in " + period() + ".");
+      var nb = D.getElementById(o.root + "-note"); if (nb) nb.textContent = note || (all || np ? "" : "No events in " + period() + ".");
     }
     function period() {
       if (sel.m === "12") return "the past 12 months";
       if (wholeYears()) return y0() === y1() ? String(y0()) : y0() + " to " + y1();
       return sel.a === sel.b ? day(sel.a) : day(sel.a) + " to " + day(sel.b);
     }
+    var PRC = { protest: "#1565C0", riot: "#E65100" }, drawnP = 0;
+    function mmPop(r) {
+      var C = W.OSAP_CF_CODE, t = C ? C.mmCode(r[6], r[12]) : [+r[6] === 1 ? "Riots" : "Protests", ""];
+      return "<b>" + esc(t[0] === "Riots" ? "Riot" : "Protest") + (t[1] ? " · " + esc(t[1]) : "") + "</b><div class=\"cfm\">" + esc(r[8] || r[7] || "Place not named") + " · " + day(r[1]) + (r[2] ? " to " + day(r[2]) : "") + "</div>" +
+        (r[10] ? "<div>Who: " + esc(r[10]) + (r[9] ? " (" + esc(r[9]) + " people)" : "") + "</div>" : "") +
+        (r[11] ? "<div>Demands: " + esc(r[11]) + "</div>" : "") + (r[12] ? "<div>State response: " + esc(r[12]) + "</div>" : "") +
+        '<div class="cfm">Placed at the centre of the town the dataset names, not an exact spot. Mass Mobilization Protest Data, event ' + esc(r[0]) +
+        ' (<a href="https://doi.org/10.7910/DVN/HTTWYL" target="_blank" rel="noopener noreferrer">dataset</a>, CC0). The dataset’s coding of news reports, not analyst-confirmed; it gives no death figures.</div>' +
+        '<div class="fp" data-cfhfp="mm' + esc(r[0]) + '">SHA-256 …</div>';
+    }
+    // the protest's fingerprint, from its Mass Mobilization record (the same input as the Coded events CSV)
+    function mmFp(r) {
+      if (!W.crypto || !W.crypto.subtle) return;
+      var s = ["mm", r[0], r[1], r[2] || "", r[7] || "", r[6], r[12] || ""].join("|");
+      sha(s).then(function (h) {
+        Array.prototype.forEach.call(D.querySelectorAll('[data-cfhfp="mm' + String(r[0]).replace(/["\\]/g, "") + '"]'), function (f) { f.textContent = "SHA-256 " + h.slice(0, 16) + "…"; f.title = "SHA-256 fingerprint of this Mass Mobilization record (" + s + "): " + h; });
+      }, function () {});
+    }
     function legend(m) {
       if (!W.OSAP_LEGEND) return;
       var h = "<h3>History of violence (UCDP), " + esc(period()) + "</h3>" +
         '<div class="lg"><span class="sw round" style="background:#D32F2F"></span><div>Event (battle, clash, attack on civilians). ' + num(drawn.n) + " in " + esc(period()) + "</div></div>" +
         '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate). White dashed ring: provisional event, not yet in a yearly release.' +
-        (m === "both" ? " The heat map underneath shows where events cluster; deadlier events weigh more, and events UCDP placed only to a province or wider are left out of it." : "") + "</span></div></div>";
+        (m === "both" ? " The heat map underneath shows where events cluster; deadlier events weigh more, and events UCDP placed only to a province or wider are left out of it." : "") + "</span></div></div>" +
+        (drawnP ? '<div class="lg"><span class="sw round" style="background:' + PRC.protest + '"></span><div>Protest (Mass Mobilization, 1990 to 2020)</div></div>' +
+          '<div class="lg"><span class="sw round" style="background:' + PRC.riot + '"></span><div>Riot (protesters used violence). ' + num(drawnP) + " protests and riots in view, each at the town the dataset names</div></div>" : "");
       W.OSAP_LEGEND.set(o.lg, h, o.home());
     }
     var SIDES = function (r, k) { var s = k.sides[r[10]] + " vs " + k.sides[r[11]]; return W.OSAP_ACTORS ? W.OSAP_ACTORS(s) : s; };
@@ -310,7 +343,8 @@
           '<label>To year <b>' + y1() + '</b><input type="range" data-cfhy="to" min="' + yr[0] + '" max="' + yr[1] + '" step="1" value="' + Math.min(yr[1], y1()) + '" aria-label="To year"></label></div>' +
           '<div class="cfhr"><label>From date <input type="date" data-cfhd="a" min="' + dmin + '" max="' + dmax + '" value="' + esc(sel.a) + '"></label>' +
           '<label>To date <input type="date" data-cfhd="b" min="' + dmin + '" max="' + dmax + '" value="' + esc(sel.b) + '"></label></div>' +
-          '<div class="cfctl">' + [1, 2, 3].map(function (k) { return '<label title="' + esc(TYPES[k]) + '"><input type="checkbox" data-cfht="' + k + '"' + (sel.t[k] ? " checked" : "") + '><span class="lg" style="background:' + TYPEC[k] + '"></span>' + esc(TYPEN[k]) + " (" + (t.nt[k] == null ? "…" : num(t.nt[k])) + ")</label>"; }).join("") + "</div>" +
+          '<div class="cfctl">' + [1, 2, 3].map(function (k) { return '<label title="' + esc(TYPES[k]) + '"><input type="checkbox" data-cfht="' + k + '"' + (sel.t[k] ? " checked" : "") + '><span class="lg" style="background:' + TYPEC[k] + '"></span>' + esc(TYPEN[k]) + " (" + (t.nt[k] == null ? "…" : num(t.nt[k])) + ")</label>"; }).join("") +
+            (coded0()["mm/_index"] && mmCcs().some(function (cc) { return coded0()["mm/_index"].countries[cc]; }) ? '<label title="Protests against governments and riots, 1990 to 2020 (Mass Mobilization Protest Data). Only those placed on a town are drawn."><input type="checkbox" data-cfhpr' + (sel.p ? " checked" : "") + '><span class="lg" style="background:' + PRC.protest + '"></span>Protests and riots (' + num(mmEvents().length) + ")</label>" : "") + "</div>" +
           '<div class="cfk"><div><b>' + (t.n == null ? "…" : num(t.n)) + "</b><span>events, " + esc(period()) + '</span></div><div><b>' + (t.b == null ? "…" : num(t.b)) + "</b><span>deaths, UCDP best estimates added up</span></div></div>" +
           chart() +
           '<div class="cfm" id="' + o.root + '-note"></div>' +
@@ -363,6 +397,7 @@
       var t = e.target; if (!t.closest || !t.closest(R)) return;
       if (t.getAttribute("data-cfh") === "on") { setOn(t.checked); return; }
       if (t.hasAttribute("data-cfht")) { sel.t[t.getAttribute("data-cfht")] = t.checked; panel(); draw(); }
+      if (t.hasAttribute("data-cfhpr")) { sel.p = t.checked; panel(); draw(); }
     });
     // the year sliders: the label follows as you drag; the map redraws when you let go
     D.addEventListener("input", function (e) {
