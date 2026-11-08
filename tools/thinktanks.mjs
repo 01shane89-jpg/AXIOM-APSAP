@@ -194,6 +194,10 @@ const TT = [
   ["conv-id", "The Conversation Indonesia (politik)", "https://theconversation.com/id", ["https://theconversation.com/id/politik/articles.atom"]],
   ["conv-fr", "The Conversation France (international)", "https://theconversation.com/fr", ["https://theconversation.com/fr/international/articles.atom"]],
   ["globalvoices", "Global Voices", "https://globalvoices.org/", ["https://globalvoices.org/feed/"]],
+  // US federal research and analysis, public domain as US government work (17 U.S.C. 105); items naming no country are not kept
+  ["apcss", "Daniel K. Inouye Asia-Pacific Center for Security Studies", "https://dkiapcss.edu/", ["https://dkiapcss.edu/feed/"]],
+  ["gao", "US Government Accountability Office (reports)", "https://www.gao.gov/", ["https://www.gao.gov/rss/reports.xml"]],
+  ["crs", "Congressional Research Service (via EveryCRSReport)", "https://www.everycrsreport.com/", ["https://www.everycrsreport.com/rss.xml"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
@@ -317,10 +321,12 @@ const HOME_CC = { "38north": ["kp"], "conv-us": ["us"], "conv-uk": ["gb"], "conv
   ffa: ["ck", "fj", "fm", "ki", "mh", "nr", "nu", "pg", "pw", "sb", "to", "tv", "vu", "ws"] };
 // Institutes whose published terms clearly allow commercial reuse (checked 2026-11-08 from GitHub's runners). Only these are kept in the
 // sold version; every other institute stays nc (non-commercial terms, all rights reserved, or terms that could not be read).
+const USGOV = "US government work, public domain (17 U.S.C. 105); headline and link only";
 const CONV = "CC BY-ND 4.0 (theconversation.com/global/republishing-guidelines); headline and link only";
 const OPEN_LIC = { issafrica: "CC BY 4.0 (issafrica.org/terms-of-use); headline and link only", prif: "CC BY-ND 4.0 (blog.prif.org footer); headline and link only",
   "conv-global": CONV, "conv-us": CONV, "conv-usworld": CONV, "conv-uk": CONV, "conv-ukworld": CONV, "conv-africa": CONV, "conv-ca": CONV, "conv-au": CONV, "conv-nz": CONV,
-  "conv-id": CONV, "conv-fr": CONV, globalvoices: "CC BY 3.0 (globalvoices.org footer and attribution policy); headline and link only" };
+  "conv-id": CONV, "conv-fr": CONV, globalvoices: "CC BY 3.0 (globalvoices.org footer and attribution policy); headline and link only",
+  apcss: USGOV, gao: USGOV, crs: USGOV };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
