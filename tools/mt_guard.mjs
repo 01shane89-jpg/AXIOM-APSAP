@@ -14,8 +14,12 @@
 // English titles, a broadcaster's YouTube channel): it is shown as written and never given to the model, which on 2026-11-08
 // had "translated" 2,039 such English headlines, moving dates ("28-10-2026" to "28-10-2027") and cutting them short.
 // lowConfidence() reads the model's own score (tools/mt/madlad.py MT_SCORES=1): below MT_MIN_SCORE a line is treated as invented.
+//   - names a month the original does not give ("5 พ.ย. 69", 5 November 2026, as "5th of July, 69"; "２７日", the 27th, as
+//     "27 July"): the original must carry that month's name (tools/mt_months.mjs) or its number.
 // Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
+
+import { MONTHS } from "./mt_months.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -77,6 +81,8 @@ export function mtSuspect(orig, en, now = Date.now()) {
   for (const m of en.matchAll(CENTURY)) if (!nums.includes(m[1])) return "century not in the original";
   const n = extraNumber(orig, en);
   if (n) return "number " + n + " not in the original";
+  const mo = extraMonth(orig, en);
+  if (mo) return "month " + mo + " not in the original";
   return "";
 }
 
@@ -146,6 +152,35 @@ export function extraNumber(orig, en) {
     if (okVal(v * sc) || okVal(v) || parts.every(okTok)) continue;
     if (!tokens.size && !vals.length && v <= 12 && parts.length === 1) continue;  // a number word in the original
     return raw + (m[2] ? " " + m[2] : "");
+  }
+  return "";
+}
+
+// Months. "May" and "March" (also verbs) and the short forms ("Jan.", "Sep") count only next to a number.
+const EN_MONTHS = ["jan(?:uary)?", "feb(?:ruary)?", "mar(?:ch)?", "apr(?:il)?", "may", "june?", "july?", "aug(?:ust)?", "sep(?:t(?:ember)?)?",
+  "oct(?:ober)?", "nov(?:ember)?", "dec(?:ember)?"];
+const EN_MONTH_RE = new RegExp("(?<!\\p{L})(" + EN_MONTHS.join("|") + ")(?!\\p{L})\\.?", "giu");
+const EN_MONTH_ONE = EN_MONTHS.map((e) => new RegExp("^(?:" + e + ")$", "i"));
+const LGC = /[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]/u;
+const MONTH_STEMS = MONTHS.map((l) => l.map((st) => st.replace(/ı/g, "i")));
+export function extraMonth(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  if (!orig.trim() || orig.trim() === en.trim()) return "";
+  // lowercase, Turkish dotted and dotless i folded, a zero typed for an O ("0CTOBRE") read as the letter
+  const o = orig.normalize("NFKC").toLowerCase().replace(/\u0307/g, "").replace(/ı/g, "i").replace(/(?<!\d)0(?=[a-z]{3})/g, "o");
+  const { tokens } = originalNumbers(orig);
+  for (const m of en.matchAll(EN_MONTH_RE)) {
+    const w = m[1], k = EN_MONTH_ONE.findIndex((r) => r.test(w)) + 1;
+    if (!k) continue;
+    const full = w.length > 4 && !/^(?:march|may)$/i.test(w);
+    if (!full && !/\d/.test(en.slice(Math.max(0, m.index - 4), m.index + m[0].length + 4))) continue;
+    if (tokens.has(k)) continue;                                  // "06.11.2026", "11月", "tháng 11"
+    const named = MONTH_STEMS[k - 1].some((st) => {
+      const word = LGC.test(st[0]);
+      for (let i = o.indexOf(st); i >= 0; i = o.indexOf(st, i + 1)) if (!word || !LGC.test(o[i - 1] || "")) return true;
+      return false;
+    });
+    if (!named) return w;
   }
   return "";
 }
