@@ -378,6 +378,115 @@ async function round13() {
   console.log("   page text " + t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 1200));
   console.log("   terms " + ((t.match(/[^.]{0,200}(uvjeti|copyright|©|zabranjeno|prenošenje)[^.]{0,200}/i) || [""])[0]));
 }
+/* ---------- round 18 (2026-11-08): retry every earlier dead end, then new official keyless lists and open-data catalogues ---------- */
+async function twice(u, ms = 40000, headers = {}) {
+  // Shane's rule: more than one attempt per source; a second try after a pause, a third after a longer one
+  let r;
+  for (const wait of [0, 8000, 20000]) { if (wait) await new Promise((ok) => setTimeout(ok, wait)); r = await get(u, ms, headers); if (r.s === 200) return r; }
+  return r;
+}
+async function round18() {
+  const show = (k, r, n = 700) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  const firstImg = async (r, k) => { const t = r.b.toString("utf8"); const m = [...new Set(t.match(/https?:\\?\/\\?\/[^"'<>\s,]+?\.(?:jpg|jpeg|png)(?:\?[^"'<>\s,]*)?/gi) || [])].map((x) => x.replace(/\\\//g, "/")).slice(0, 2); for (const u of m) await img(u, "   " + k + " img"); if (!m.length) console.log("   (no image url in body)"); };
+  const L = [
+    // retries of earlier dead ends
+    ["TW freeway CCTV xml", "https://tisvcloud.freeway.gov.tw/history/motc20/CCTV.xml"],
+    ["TW freeway CCTV gz", "https://tisvcloud.freeway.gov.tw/cctv_info.xml.gz"],
+    ["TW civil IoT", "https://sta.ci.taiwan.gov.tw/STA_CCTV/v1.0/Things?$top=2&$expand=Locations"],
+    ["KY goky", "https://services2.arcgis.com/CcI36Pduqd0OR4W9/ArcGIS/rest/services/trafficCamerasCur_Prd/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=3"],
+    ["IL idot", "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=2&outSR=4326"],
+    ["IL idot count", "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json"],
+    ["MO arcgis", "https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/MODOT_Traffic_Cameras/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=2&outSR=4326"],
+    ["MO traveler", "https://traveler.modot.org/timconfig/feed/desktop/StreamingCams2.json"],
+    ["MI midrive", "https://mdotjboss.state.mi.us/MiDrive/camera/AllForMap/"],
+    ["MI midrive 2", "https://mdotjboss.state.mi.us/MiDrive/camera/list"],
+    ["TN opendata", "https://www.tdot.tn.gov/opendata/api/public/RoadwayCameras"],
+    ["QC wfs", "https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:infos_cameras&outputformat=geojson&count=3"],
+    ["NSW maritime", "https://portal.data.nsw.gov.au/arcgis/rest/services/Hosted/TfNSW_Maritime_Camera_Public/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=3"],
+    ["MeteoSwiss", "https://s3-eu-central-1.amazonaws.com/app-prod-static-fra.meteoswiss-app.ch/v1/webcam_overview.json"],
+    ["Puertos", "https://portus.puertos.es/portussvr/api/stations"],
+    ["QLD", "https://api.qldtraffic.qld.gov.au/v1/webcams?apikey=3e83add325cbb69ac4d8e5bf433d770b"],
+    ["NDBC west", "https://www.ndbc.noaa.gov/buoycams.php"],
+    // new: city and state open data
+    ["Toronto gis", "https://gis.toronto.ca/arcgis/rest/services/cot_geospatial2/FeatureServer/3/query?where=1%3D1&outFields=*&f=json&resultRecordCount=2&outSR=4326"],
+    ["Toronto gis count", "https://gis.toronto.ca/arcgis/rest/services/cot_geospatial2/FeatureServer/3/query?where=1%3D1&returnCountOnly=true&f=json"],
+    ["Toronto info", "https://gis.toronto.ca/arcgis/rest/services/cot_geospatial2/FeatureServer/3/iteminfo?f=pjson"],
+    ["Ottawa list", "https://traffic.ottawa.ca/service/camera"],
+    ["Ottawa list 2", "https://traffic.ottawa.ca/map/service/camera"],
+    ["Ottawa opendata", "https://traffic.ottawa.ca/en/opendata"],
+    ["Ontario pkg", "https://data.ontario.ca/api/3/action/package_show?id=traffic-cameras"],
+    ["Montreal search", "https://donnees.montreal.ca/api/3/action/package_search?q=cam%C3%A9ra%20circulation&rows=5"],
+    ["Quebec pkg", "https://www.donneesquebec.ca/recherche/api/3/action/package_show?id=camera-de-circulation"],
+    ["Calgary catalog", "https://data.calgary.ca/api/catalog/v1?q=traffic%20camera&limit=5"],
+    ["Edmonton catalog", "https://data.edmonton.ca/api/catalog/v1?q=traffic%20camera&limit=5"],
+    ["Austin arcgis", "https://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/TRANSPORTATION_traffic_cameras/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=2&outSR=4326"],
+    ["Austin socrata", "https://data.austintexas.gov/resource/b4k4-adkb.json?$limit=2"],
+    ["Seattle sdot", "https://web.seattle.gov/Travelers/api/Map/Data?zoomId=13&type=2"],
+    ["Alabama algo", "https://api.algotraffic.com/v3.0/Cameras"],
+    ["Alabama algo v4", "https://api.algotraffic.com/v4.0/Cameras"],
+    ["Oklahoma", "https://oktraffic.org/api/CameraPoles"],
+    ["Virginia", "https://511.vdot.virginia.gov/services/map/layers/map/cams"],
+    ["West Virginia", "https://wv511.org/wsvc/gmap.asmx/buildCamerasJSONjs"],
+    ["New Mexico", "https://servicev5.nmroads.com/RealMapWAR/GetCameraInfo"],
+    ["Montana", "https://app.mdt.mt.gov/atms/public/cameras"],
+    ["Hawaii", "https://hawaii511.org/api/cameras"],
+    ["NI trafficwatch", "https://www.trafficwatchni.com/twni/cameras/static"],
+    ["Traffic England", "https://www.trafficengland.com/api/cctv/getToBounds?bbox=-6,49.8,2,55.9&zoom=7"],
+    ["Traffic Scotland", "https://trafficscotland.org/data/cameras.json"],
+    ["Traffic Wales", "https://traffic.wales/api/cameras"],
+    ["Slovenia", "https://www.promet.si/dc/b2b.kamere.geojson.sl_SI"],
+    ["Estonia", "https://tarktee.ee/api/cameras"],
+    ["Ireland", "https://traffic.tii.ie/api/cameras"],
+    ["HKO station csv", "https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_1min_temperature.csv"],
+    // discovery: national open-data catalogues
+    ["data.gov", "https://catalog.data.gov/api/3/action/package_search?q=%22traffic%20cameras%22&rows=40"],
+    ["open.canada", "https://open.canada.ca/data/api/3/action/package_search?q=traffic%20camera&rows=25"],
+    ["data.europa", "https://data.europa.eu/api/hub/search/search?q=webcam%20traffic&filter=dataset&limit=40"],
+    ["data.gov.au", "https://data.gov.au/data/api/3/action/package_search?q=traffic%20camera&rows=25"],
+    ["data.gov.uk", "https://data.gov.uk/api/action/package_search?q=traffic%20cameras&rows=25"],
+  ];
+  for (const [k, u] of L) {
+    const r = await twice(u, 40000);
+    show(k, r, /catalog|search|pkg|data\.|open\./.test(k) ? 200 : 700);
+    if (r.s !== 200) continue;
+    try {
+      const j = JSON.parse(r.b);
+      if (j.result && (j.result.results || j.result.resources)) {
+        for (const x of (j.result.results || [j.result])) { console.log(`   * ${x.title || x.name} | ${(x.organization || {}).title || ""} | ${x.license_title || x.license_id || ""}`); for (const z of (x.resources || []).slice(0, 6)) console.log(`       ${z.format} ${String(z.url).slice(0, 160)}`); }
+      } else if (j.results && k.includes("catalog")) { for (const x of j.results) console.log(`   * ${x.resource.name} | ${x.resource.id} | ${x.metadata.domain} | ${(x.resource.columns_name || []).join(",").slice(0, 200)}`); }
+      else if (j.result && j.result.results === undefined && k === "data.europa") {}
+      else if (k === "data.europa") { for (const x of (j.result || {}).results || []) console.log(`   * ${JSON.stringify(x.title).slice(0, 120)} | ${(x.catalog || {}).id} | ${(x.distributions || []).map((d) => d.access_url).slice(0, 2).join(" ")}`); }
+      else if (j.count !== undefined && !j.features) console.log("   count " + j.count);
+      else sample(r, 900);
+    } catch { /* xml or text */ }
+    if (!/count|info|catalog|search|pkg|data\.|open\./.test(k)) await firstImg(r, k);
+  }
+  console.log("\n##### r18b. ArcGIS Online: public feature services named like traffic/road cameras");
+  for (const q of ['title:"traffic cameras" type:"Feature Service"', 'title:"traffic camera" type:"Feature Service"', 'title:cctv type:"Feature Service"', 'title:webcam type:"Feature Service"', 'title:"road cameras" type:"Feature Service"', 'title:"camera locations" type:"Feature Service"']) {
+    const r = await twice(`https://www.arcgis.com/sharing/rest/search?q=${encodeURIComponent(q)}&num=100&f=json&sortField=numViews&sortOrder=desc`);
+    line("search " + q, r);
+    try { for (const x of JSON.parse(r.b).results || []) console.log(`   ${x.title} | ${x.owner} | ${x.access} | ${x.licenseInfo ? String(x.licenseInfo).replace(/<[^>]+>/g, "").slice(0, 60) : ""} | ${x.url}`); } catch {}
+  }
+  console.log("\n##### r18c. Agency camera maps in a browser: the camera data each one asks for");
+  const { chromium } = await import("playwright"); const br = await chromium.launch();
+  const sites = [["TX", "https://drivetexas.org/"], ["TN", "https://smartway.tn.gov/traffic"], ["SC", "https://www.511sc.org/"], ["AR", "https://www.idrivearkansas.com/"], ["OK", "https://oktraffic.org/"], ["AL", "https://algotraffic.com/"],
+    ["WY", "https://map.wyoroad.info/"], ["MS", "https://www.mdottraffic.com/"], ["NM", "https://nmroads.com/"], ["VA", "https://511.vdot.virginia.gov/"], ["MI", "https://mdotjboss.state.mi.us/MiDrive/map"], ["OH", "https://www.ohgo.com/"], ["KY", "https://goky.ky.gov/"], ["HI", "https://hidot.hawaii.gov/highways/"], ["SEA", "https://web.seattle.gov/travelers/"],
+    ["OTT", "https://traffic.ottawa.ca/en/traffic-map"], ["NI", "https://www.trafficwatchni.com/twni/cameras"], ["SCO", "https://trafficscotland.org/currentincidents/"], ["WAL", "https://traffic.wales/cameras"], ["ENG", "https://www.trafficengland.com/traffic-report"],
+    ["NO", "https://www.vegvesen.no/trafikk/kart/?layers=webkamera"], ["SI", "https://www.promet.si/sl/kamere"], ["EE", "https://tarktee.ee/"], ["LV", "https://lvceli.lv/kameras/"], ["IE", "https://traffic.tii.ie/"], ["DK", "https://trafikkort.vejdirektoratet.dk/"],
+    ["SA", "https://traffic.sa.gov.au/"], ["WA", "https://travelmap.mainroads.wa.gov.au/"], ["TAS", "https://www.transport.tas.gov.au/roadside-cameras"], ["HKO", "https://www.hko.gov.hk/en/wxinfo/ts/webcam.htm"], ["TW", "https://1968.freeway.gov.tw/"], ["MY", "https://www.llm.gov.my/"], ["MO", "https://www.dsat.gov.mo/dsat/realtime.aspx"]];
+  for (const [k, u] of sites) {
+    const ctx = await br.newContext(); const pg = await ctx.newPage(); const seen = [];
+    pg.on("response", async (r) => { const ct = r.headers()["content-type"] || "", url = r.url();
+      if (/json|xml|geo|javascript/.test(ct) && /cam|kamer|kaam|cctv|webcam|video|camara/i.test(url)) { let n = 0; try { n = (await r.body()).length; } catch {} seen.push(r.status() + " " + ct.split(";")[0] + " " + n + "B " + url.slice(0, 220)); }
+      else if (/image\/(jpe?g|png)/.test(ct) && /cam|kamer|kaam|cctv|webcam|snapshot/i.test(url) && seen.filter((x) => / image\//.test(x)).length < 3) seen.push(r.status() + " " + ct + " " + url.slice(0, 220)); });
+    try { await pg.goto(u, { waitUntil: "networkidle", timeout: 40000 }); } catch (e) { seen.push("goto " + e.message.slice(0, 80)); }
+    await pg.waitForTimeout(4000);
+    console.log(k + " " + u + " title=" + (await pg.title().catch(() => "")).slice(0, 60) + "\n   " + (seen.slice(0, 14).join("\n   ") || "(no camera data seen)"));
+    await ctx.close();
+  }
+  await br.close();
+}
+if (only === "r18") await round18();
 if (only === "r13") await round13();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
