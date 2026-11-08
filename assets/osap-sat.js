@@ -17,7 +17,7 @@
    - Every scene shows its scene id(s), the pass time in Zulu and local time, the cloud % and a link to its STAC item.
    - Choices (view mode, cloud filter, NASA layer and date) are kept in this browser only (localStorage "osap-sat"); they are
      settings, not work, so they are not in workspaces.
-   API: window.OSAP_SAT { open(), close(), isOpen(), state(), gibs(bool), setGibsDate(iso), setGibsLayer(id), pick(which, key),
+   API: window.OSAP_SAT { open(), close(), isOpen(), render(pass, bb, w, h, signal) (also used by assets/osap-newimg.js), state(), gibs(bool), setGibsDate(iso), setGibsLayer(id), pick(which, key),
         mode("side"|"swipe"), _t: pure helpers for tests }  */
 (function () {
   "use strict";
@@ -510,6 +510,6 @@
 
   /* in the Area menu (assets/osap-atak.js asks for a shape first when none is drawn) */
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "satba", label: "Satellite before/after", run: function () { open(); } });
-  W.OSAP_SAT = { open: open, close: close, isOpen: isOpen, gibs: gibs, setGibsDate: setGibsDate, setGibsLayer: setGibsLayer, pick: pick, mode: mode,
+  W.OSAP_SAT = { open: open, close: close, isOpen: isOpen, render: render, gibs: gibs, setGibsDate: setGibsDate, setGibsLayer: setGibsLayer, pick: pick, mode: mode,
     state: function () { return { area: S.area, src: S.src, passes: S.passes.length, before: S.before, after: S.after, mode: P.mode, gibs: P.gon, gdate: gDate(), glayer: P.gl, err: S.err, busy: S.busy }; }, _t: T };
 })();

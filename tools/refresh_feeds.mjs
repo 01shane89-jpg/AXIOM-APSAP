@@ -6,8 +6,11 @@
 // Also writes data/live/gdacs.js (GDACS disaster alerts and cyclone tracks) and data/live/reliefweb.js (ReliefWeb reports).
 // Exit codes: 0 = at least one feed refreshed, 1 = every feed failed (old files are left untouched).
 import fs from "node:fs";
+import { USGS_WEEK, quakeRow } from "./quake_rows.mjs";
 
-const USGS = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
+const USGS = USGS_WEEK;
+// FEEDS=gdacs (or a comma list of quakes, aq, gdacs, reliefweb) runs only those feeds; tools/flash_loop.mjs asks GDACS every 2 minutes
+const ONLY = new Set(String(process.env.FEEDS || "").split(",").map((x) => x.trim()).filter(Boolean)), want = (k) => !ONLY.size || ONLY.has(k);
 const AQAPI = "https://air-quality-api.open-meteo.com/v1/air-quality";
 const TIMEOUT = 30000;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -40,18 +43,14 @@ const AREAS = [...page.matchAll(/\{ id: "([a-z]+)", name: "[^"]+", region: "[^"]
 if (AREAS.length < 20) { console.error("could not read the area list from index.html"); process.exit(1); }
 
 let ok = 0;
-try {
+if (want("quakes")) try {
   const g = await getJSON(USGS);
-  const features = (g.features || []).map((f) => {
-    const p = f.properties || {}, c = (f.geometry || {}).coordinates || [];
-    return { id: f.id, mag: p.mag, place: p.place || "", time: p.time, depth: c[2], lat: c[1], lon: c[0], url: p.url || "",
-      tsunami: p.tsunami, alert: p.alert || null, status: p.status || "", type: p.type || "earthquake" };
-  }).filter((q) => q.type === "earthquake" && q.mag != null); // worldwide: every country in the picker filters by its own area
+  const features = (g.features || []).map(quakeRow).filter(Boolean); // worldwide: every country in the picker filters by its own area
   write("data/live/quakes.js", "ASAP_QUAKES", { asof: stamp, src: USGS, features });
   console.log("quakes", features.length); ok++;
 } catch (e) { console.error("USGS failed:", e.message); }
 
-try {
+if (want("aq")) try {
   const pts = [];
   for (const a of AREAS) {
     let posts = [];
@@ -106,7 +105,7 @@ async function gdacsFromRss() {
   }
   return { features: features.filter((f) => /^(TC|FL|DR|VO|WF)$/.test(f.properties.eventtype)) };
 }
-try {
+if (want("gdacs")) try {
   let g, via = GDACS;
   try { g = await getJSON(GDACS); } catch (e) { console.error("GDACS API failed (" + e.message + "), using RSS"); g = await gdacsFromRss(); via = "https://www.gdacs.org/xml/rss.xml"; }
   const events = [];
@@ -133,7 +132,7 @@ try {
 // RELIEFWEB_APPNAME is set. Otherwise the public RSS is read (no account). On 2026-09-26 the RSS answered GitHub's servers with an
 // empty 202 challenge; an answer that is not a feed counts as a failure, and the RSS is given up after the first few.
 const RW = "https://api.reliefweb.int/v2/reports?appname=" + encodeURIComponent(process.env.RELIEFWEB_APPNAME || "");
-try {
+if (want("reliefweb")) try {
   const iso = [...new Set(Object.values(ISO3))];
   const body = { limit: 1000, sort: ["date.created:desc"], preset: "latest",
     filter: { operator: "AND", conditions: [{ field: "primary_country.iso3", value: iso.map((i) => i.toLowerCase()), operator: "OR" },
