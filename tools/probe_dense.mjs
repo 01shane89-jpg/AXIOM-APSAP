@@ -1,29 +1,16 @@
-// PROBE BRANCH ONLY: dig into national warning endpoints (CZ, HR, CH, BE, IT, IS, AT) + licence pages.
-const UA = { "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0", accept: "*/*" };
-const g = async (u) => { const r = await fetch(u, { headers: UA, redirect: "follow", signal: AbortSignal.timeout(25000) }); return { s: r.status, ct: r.headers.get("content-type"), cors: r.headers.get("access-control-allow-origin"), t: await r.text() }; };
-const txt = (h) => h.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+// PROBE BRANCH ONLY: HR CAP files + IT DPC latest bulletin shape.
+const UA = { "user-agent": "AXIOM-OSAP probe", accept: "*/*" };
+const g = async (u) => { const r = await fetch(u, { headers: UA, signal: AbortSignal.timeout(25000) }); return { s: r.status, cors: r.headers.get("access-control-allow-origin"), t: await r.text() }; };
 const out = {};
-const P = async (k, u, f) => { try { const r = await g(u); out[k] = { u, s: r.s, ct: r.ct, cors: r.cors, n: r.t.length, v: f ? f(r.t) : r.t.slice(0, 1500) }; } catch (e) { out[k] = { u, err: e.message }; } };
-await P("cz_cap", "https://opendata.chmi.cz/meteorology/weather/alerts/cap/", (t) => t.slice(-1500));
-await P("cz_meta", "https://opendata.chmi.cz/meteorology/weather/alerts/metadata/", (t) => t.slice(0, 1200));
-await P("cz_root", "https://opendata.chmi.cz/", (t) => txt(t).slice(0, 1500));
-await P("hr_links", "https://meteo.hr/proizvodi.php?section=podaci&param=xml_korisnici", (t) => [...t.matchAll(/href="([^"]+\.xml[^"]*)"[^>]*>([^<]{0,80})/g)].map((m) => m[1] + " | " + m[2]).slice(0, 80).join("\n"));
-await P("ch_versions", "https://www.meteoschweiz.admin.ch/product/output/versions.json", (t) => t);
-await P("be_wfs", "https://opendata.meteo.be/geoserver/ows?service=WFS&request=GetCapabilities", (t) => [...t.matchAll(/<Name>([^<]+)<\/Name>/g)].map((m) => m[1]).join(" "));
-await P("it_vig_list", "https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Vigilanza-Meteorologica/contents/files", (t) => { const a = JSON.parse(t); return a.slice(-3).map((x) => x.name + " " + x.download_url).join("\n"); });
-await P("it_crit_list", "https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/contents/files", (t) => { const a = JSON.parse(t); return a.slice(-3).map((x) => x.name + " " + x.download_url).join("\n"); });
-await P("it_vig_readme", "https://raw.githubusercontent.com/pcm-dpc/DPC-Bollettini-Vigilanza-Meteorologica/master/README.md", (t) => t.slice(0, 2500));
-await P("it_crit_readme", "https://raw.githubusercontent.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/master/README.md", (t) => t.slice(0, 2500));
-await P("is_all", "https://api.vedur.is/cap/v1/capbroker/active/", (t) => t.slice(0, 800));
-await P("is_doc", "https://api.vedur.is/cap/v1/", (t) => txt(t).slice(0, 1200));
-await P("is_lic", "https://en.vedur.is/about-imo/terms-of-use/", (t) => (txt(t).match(/.{0,300}(licen|creative|CC BY|commercial).{0,300}/gi) || []).slice(0, 4).join("\n"));
-await P("at_lic", "https://data.hub.geosphere.at/dataset/", (t) => (txt(t).match(/.{0,200}(licen|creative|CC BY).{0,200}/gi) || []).slice(0, 3).join("\n"));
-await P("at_warn_doc", "https://warnungen.zamg.at/wsapp/api/getWarnstatus?lang=en", (t) => t.slice(0, 300));
-await P("at_imprint", "https://www.geosphere.at/de/impressum", (t) => (txt(t).match(/.{0,300}(licen|creative|CC BY|Nutzung).{0,300}/gi) || []).slice(0, 4).join("\n"));
-await P("ch_lic", "https://opendatadocs.meteoswiss.ch/general/terms-of-use", (t) => (txt(t).match(/.{0,300}(licen|creative|CC BY|commercial).{0,300}/gi) || []).slice(0, 4).join("\n"));
-await P("ch_ogd_warn", "https://opendatadocs.meteoswiss.ch/", (t) => (txt(t).match(/.{0,200}(warn).{0,200}/gi) || []).slice(0, 5).join("\n"));
-await P("cz_lic", "https://opendata.chmi.cz/podminky_uziti.html", (t) => txt(t).slice(0, 1200));
-await P("lv_lic", "https://videscentrs.lvgmc.lv/", (t) => (txt(t).match(/.{0,200}(licen|creative|CC BY|atvērt).{0,200}/gi) || []).slice(0, 3).join("\n"));
-await P("ro_terms", "https://www.meteoromania.ro/termeni-si-conditii/", (t) => (txt(t).match(/.{0,300}(comercial|licen|reproduc).{0,300}/gi) || []).slice(0, 4).join("\n"));
-await P("il_terms", "https://ims.gov.il/en/terms", (t) => (txt(t).match(/.{0,300}(commercial|licen|reproduc|creative).{0,300}/gi) || []).slice(0, 4).join("\n"));
-console.log("DIGJSON" + JSON.stringify(out));
+for (const u of ["https://meteo.hr/upozorenja/cap_hr_today.xml", "https://meteo.hr/upozorenja/cap_hr_tomorrow.xml"]) { try { const r = await g(u); out[u] = { s: r.s, cors: r.cors, n: r.t.length, head: r.t.slice(0, 2500) }; } catch (e) { out[u] = { err: e.message }; } }
+try {
+  const c = JSON.parse((await g("https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/commits?per_page=2")).t);
+  out.it_commits = c.map((x) => [x.sha, x.commit.message, x.commit.committer.date]);
+  const d = JSON.parse((await g("https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/commits/" + c[0].sha)).t);
+  out.it_files = (d.files || []).map((f) => f.filename).slice(0, 20);
+  const j = (d.files || []).find((f) => /\.json$/.test(f.filename));
+  if (j) { const r = await g("https://raw.githubusercontent.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/master/" + j.filename); out.it_sample = r.t.slice(0, 3000); out.it_n = r.t.length; }
+  const tree = JSON.parse((await g("https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/git/trees/master")).t);
+  out.it_tree = (tree.tree || []).map((x) => x.path + ":" + x.type);
+} catch (e) { out.it_err = e.message; }
+console.log("HRIT" + JSON.stringify(out));
