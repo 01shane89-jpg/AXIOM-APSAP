@@ -19,7 +19,7 @@ export function normCites(s, n) {
   const list = (body) => {
     const out = [];
     for (const part of String(body).split(/\s*(?:,|;|&|\band\b)\s*/i)) {
-      const m = part.match(/^(?:reports?\s*|#|no\.?\s*)?(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?$/i);
+      const m = part.match(/^(?:reports?\s*|records?\s*|#|no\.?\s*)?(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?$/i);
       if (!m) return null;
       const a = +m[1], b = m[2] ? +m[2] : a;
       if (a < 1 || b > n || b < a || b - a > 9) return null;
@@ -32,9 +32,9 @@ export function normCites(s, n) {
     // brackets: [6, 7] [6-8] [Report 6] [reports 6 and 7]
     .replace(/\[([^\[\]]{1,40})\]/g, cite)
     // parentheses only when they read as a citation: (6) (6, 7) (report 6) (reports 6 and 7) — not (24) or (2026)
-    .replace(/\(((?:reports?\s*)?\d{1,2}(?:\s*(?:,|;|&|-|–|\band\b)\s*(?:reports?\s*)?\d{1,2})*)\)/gi, cite)
+    .replace(/\(((?:(?:reports?|records?)\s*)?\d{1,2}(?:\s*(?:,|;|&|-|–|\band\b)\s*(?:(?:reports?|records?)\s*)?\d{1,2})*)\)/gi, cite)
     // in running text: "report 6", "reports 6 and 7"
-    .replace(/\b[Rr]eports?\s+((?:#|no\.?\s*)?\d{1,2}(?:\s*(?:,|&|-|–|\band\b)\s*\d{1,2})*)\b(?!\s*(?:[:.]\d|%|people|dead|killed|injured))/g, (w, b) => { const l = list(b); return l ? (l.length > 1 ? "the reports " : "a report ") + l.map((x) => "[" + x + "]").join("") : w; });
+    .replace(/\b([Rr]eport|[Rr]ecord)s?\s+((?:#|no\.?\s*)?\d{1,2}(?:\s*(?:,|&|-|–|\band\b)\s*\d{1,2})*)\b(?!\s*(?:[:.]\d|%|people|dead|killed|injured))/g, (w, k, b) => { const l = list(b), word = k.toLowerCase(); return l ? (l.length > 1 ? "the " + word + "s " : "a " + word + " ") + l.map((x) => "[" + x + "]").join("") : w; });
 }
 
 // a small model also invents names (a prime minister, a "Lieutenant General Wang") and deaths. Every capitalised word inside a
