@@ -111,6 +111,32 @@ ok(r.from === "2012-01-01" && r.to === "2012-12-31" && +s.n === yearN(2012, 2012
 const leg = await p.evaluate(() => document.body.textContent.includes("History of violence (UCDP), 2012"));
 ok(leg, "Map legend names the span");
 
+// coded events (ACLED-style categories, assets/osap-cf-code.js fromUcdp): every event of the span, as a dataset coding with its licence
+await p.waitForFunction(() => document.querySelector("#cfh details.cfhcode [data-cfhcsv]"), null, { timeout: 60000 });
+const cd = await p.evaluate(() => { const rows = window.OSAP_CF_HISTORY.coded() || [];
+  return { n: rows.length, basis: [...new Set(rows.map((r) => r.record_basis))], lic: [...new Set(rows.map((r) => r.licence))], types: [...new Set(rows.map((r) => r.event_type))],
+    nc: rows.filter((r) => r.non_commercial).length, sub: rows.filter((r) => r.sub_event_type).length, txt: document.querySelector("#cfh details.cfhcode").textContent }; });
+ok(cd.n === yearN(2012, 2012), `Coded events: one row per event of the span (${cd.n})`);
+ok(cd.basis.join() === "dataset_coded", "Every coded row is a dataset coding, not an analyst record: " + cd.basis.join());
+ok(cd.lic.join() === "CC BY 4.0" && cd.nc === 0, "Every coded row carries its licence (" + cd.lic.join() + "), none non-commercial");
+ok(cd.types.every((t) => ["Battles", "Violence against civilians"].includes(t)) && cd.sub === 0, "Event types from UCDP's type of violence, no guessed sub-event types: " + cd.types.join(", "));
+ok(/not analyst-confirmed/.test(cd.txt) && /CC BY 4\.0/.test(cd.txt), "The panel says these are dataset codings and names the licence");
+await p.evaluate(() => { document.querySelector("#cfh details.cfhcode").open = true; });
+await p.waitForFunction(() => document.querySelector("#cfh details.cfhcode table"), null, { timeout: 20000 });
+const tabs = await p.evaluate(() => Array.from(document.querySelectorAll("#cfh details.cfhcode th:first-child")).map((t) => t.textContent));
+ok(tabs.includes("Event type") && tabs.some((t) => /who against whom/.test(t)), "Opened, the section shows event types and who against whom: " + tabs.join(" | "));
+const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 60000 }), p.click("#cfh [data-cfhcsv]")]);
+const csvTxt = await readFile(await dl.path(), "utf8"), lines = csvTxt.trim().split("\r\n");
+ok(lines.length === cd.n + 1 && /^record_basis,dataset,/.test(lines[0]), `Coded events CSV: header + ${lines.length - 1} rows (${dl.suggestedFilename()})`);
+const hcol = lines[0].split(",").indexOf("sha256");
+ok(lines.slice(1).every((l) => /^[0-9a-f]{64}$/.test(l.split(",").slice(-1)[0])) && hcol === lines[0].split(",").length - 1, "Every CSV row carries its SHA-256 fingerprint");
+const firstR = ROWS.filter((r) => r[1] >= "2012-01-01" && r[1] <= "2012-12-31").sort((a, b) => (a[1] < b[1] ? -1 : 1))[0];
+ok(csvTxt.includes("," + firstR[0] + ","), "CSV holds the UCDP event ids (" + firstR[0] + ")");
+await p.evaluate(() => { const d = document.querySelector("#cfh details.cfhcode"); d.open = true; d.dispatchEvent(new Event("toggle")); });
+await p.evaluate(() => window.OSAP_CF_HISTORY.show("2011-01-01", "2011-12-31"));
+await settle(); await p.waitForTimeout(400);
+ok(await p.evaluate(() => { const d = document.querySelector("#cfh details.cfhcode"); return !!(d && d.open); }), "Coded events stays open when the span changes");
+
 ok(!errors.length, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed"); process.exit(fails ? 1 : 0);

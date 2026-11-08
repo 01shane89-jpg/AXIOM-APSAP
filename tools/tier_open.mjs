@@ -21,10 +21,17 @@ export const isSealed = (text) => String(text).startsWith(PREFIX);
 export async function fingerprintOf(spkiB64u) { return b64u(await subtle.digest("SHA-256", unb64u(spkiB64u))).slice(0, 16); }
 
 /** The server key from OSAP_TIER_KEY: { priv, fp } or null when it is not set. */
+// The public half (OSAP_TIER_PUB) may be left out: it is worked out from the private key, so only OSAP_TIER_KEY needs setting.
 export async function loadTierKey(pkcs8B64u, spkiB64u) {
-  if (!pkcs8B64u || !spkiB64u) return null;
-  const priv = await subtle.importKey("pkcs8", unb64u(pkcs8B64u), { name: "ECDH", namedCurve: "P-256" }, false, ["deriveBits"]);
-  return { priv, fp: await fingerprintOf(spkiB64u) };
+  if (!pkcs8B64u) return null;
+  const alg = { name: "ECDH", namedCurve: "P-256" };
+  const priv = await subtle.importKey("pkcs8", unb64u(pkcs8B64u), alg, !spkiB64u, ["deriveBits"]);
+  if (!spkiB64u) {
+    const j = await subtle.exportKey("jwk", priv);
+    const pub = await subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: j.x, y: j.y, ext: true }, alg, true, []);
+    spkiB64u = b64u(await subtle.exportKey("spki", pub));
+  }
+  return { priv, fp: await fingerprintOf(spkiB64u), pub: spkiB64u };
 }
 
 async function gunzip(bytes) {

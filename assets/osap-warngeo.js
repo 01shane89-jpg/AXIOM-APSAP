@@ -34,6 +34,9 @@
   var AIR = { faa: ["#d81b60", "US temporary flight restriction (FAA)"], easa: ["#e65100", "EASA conflict zone bulletin (country outline)"] };
   var SRC = {
     nga: { name: "NGA Maritime Safety Information", licence: "public domain", url: "https://msi.nga.mil/NavWarnings" },
+    amsa: { name: "Australian Maritime Safety Authority (NAVAREA X)", licence: "CC BY 4.0", url: "https://www.operations.amsa.gov.au/AMSA.Web.MSIPublication/Home" },
+    jcg: { name: "Japan Coast Guard (NAVAREA XI)", licence: "Japan Coast Guard site terms, credit the source", url: "https://www1.kaiho.mlit.go.jp/TUHO/keiho/navarea11.html" },
+    ukho: { name: "UK Hydrographic Office (NAVAREA I)", licence: "Crown copyright", url: "https://msi.admiralty.co.uk/RadioNavigationalWarnings" },
     faa: { name: "FAA temporary flight restrictions", licence: "public domain", url: "https://tfr.faa.gov/tfr3/" },
     easa: { name: "EASA Conflict Zone Information Bulletins", licence: "© EASA, reproduced with acknowledgement", url: "https://www.easa.europa.eu/en/domains/air-operations/czibs" }
   };
@@ -98,7 +101,7 @@
     h += '<p class="obs" style="margin:4px 0">Source: ' + (link ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(src.name || w.src) + "</a>" : esc(src.name || w.src)) +
       (api && w.src !== "easa" ? ' · <a href="' + esc(api) + '" target="_blank" rel="noopener noreferrer">' + (w.src === "faa" ? "detail XML" : "record") + "</a>" : "") +
       " (" + esc(src.licence || "") + ")</p>" +
-      '<p class="obs" style="font-size:10.5px">' + (w.src === "nga" ? "The shape was read from the warning text by OSAP and may be wrong; the text above is what was broadcast. Not for navigation." :
+      '<p class="obs" style="font-size:10.5px">' + (w.cat === "sea" ? "The shape was read from the warning text by OSAP and may be wrong; the text above is what was broadcast. Not for navigation." :
         "A copy of the published restriction; check the source before you rely on it. Not for flight planning.") + "</p></div>";
     return h;
   }
@@ -144,7 +147,7 @@
     if (ON.sea) h += '<p class="mlkey" style="margin:2px 0">Dashed line: track · thick line: corridor · dot: position</p>';
     if (ON.air) { h += sw(AIR.faa[0], AIR.faa[1]); h += sw(AIR.easa[0], AIR.easa[1], true); }
     h += '<p class="mlkey" style="margin:2px 0">' + (DATA ? "Updated " + esc(zt(Date.parse(DATA.built))) : "Loading") + ". " +
-      (ON.air ? "Airspace: US and EASA bulletins only. " : "") + "NGA MSI (public domain)" + (ON.air ? ", FAA (public domain), © EASA" : "") + ".</p>";
+      (ON.air ? "Airspace: US and EASA bulletins only. " : "") + "NGA MSI (public domain), AMSA (CC BY 4.0), Japan Coast Guard, UKHO (Crown copyright)" + (ON.air ? ", FAA (public domain), © EASA" : "") + ".</p>";
     W.OSAP_LEGEND.set("warn", h);
   }
 
@@ -159,7 +162,7 @@
     var b = Date.parse(DATA.built), old = Date.now() - b > STALE;
     return (old ? '<b style="color:#c62828">Stale:</b> ' : "") + "Updated " + esc(zt(b)) + " (" + esc(ago(b)) + "). " +
       (ON.sea ? SHOWN.sea + " sea warning" + (SHOWN.sea === 1 ? "" : "s") + " drawn. " : "") + (ON.air ? SHOWN.air + " airspace warning" + (SHOWN.air === 1 ? "" : "s") + " drawn. " : "") +
-      (ON.sea ? srcLine("nga") : "") + (ON.air ? srcLine("faa") + srcLine("easa") : "") + (ERR ? " Last update failed (" + esc(ERR) + ")." : "");
+      (ON.sea ? ["nga", "amsa", "jcg", "ukho"].map(srcLine).join("") : "") + (ON.air ? srcLine("faa") + srcLine("easa") : "") + (ERR ? " Last update failed (" + esc(ERR) + ")." : "");
   }
   function lists() {
     if (!DATA) return "";

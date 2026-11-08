@@ -7,7 +7,9 @@
    mapped), with the official MIL-STD-2525D bridge symbol at its middle. The popup is a crossing summary: what it carries, length
    (measured from the mapped line), width, lanes, weight, axle, height and width limits, structure, material, and what it crosses
    (asked when the popup opens). Anything the map does not hold says "not mapped"; nothing is estimated. A posted weight limit is not a
-   military load class, and the popup says so. Read-only: nothing here changes a record. window.OSAP_BRIDGES {state, refresh, covers}. */
+   military load class, and the popup says so. In the United States the official FHWA National Bridge Inventory joins at street level (public domain, keyless): each inspected highway
+   bridge as its own symbol badged by condition, with its inspection ratings, load ratings, scour, clearances and traffic, as the state
+   reported them. Read-only: nothing here changes a record. window.OSAP_BRIDGES {state, refresh, covers}. */
 (function () {
   "use strict";
   var D = document, W = window;
@@ -16,7 +18,7 @@
   var MINZ = 13, FOOTZ = 14, CAP = 2500;
   var FOOT = ["footway", "path", "steps", "cycleway", "pedestrian", "bridleway"];
   var S = { on: false, busy: false, err: "", box: null, foot: false, list: [], at: "", via: "", cut: false, ctl: null, seq: 0 };
-  var map = null, lnL = null, ptL = null, rend = null, lrend = null, note = null, tmr = 0;
+  var map = null, lnL = null, ptL = null, nbL = null, rend = null, lrend = null, note = null, tmr = 0;
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
@@ -185,11 +187,214 @@
     setTimeout(function () { fill(e); }, 0);
   }
 
+  /* ---------- US federal inspection records (FHWA National Bridge Inventory) ----------
+     In the United States and its territories every public road bridge over 20 ft is inspected by the state, usually every 24 months,
+     and reported to the Federal Highway Administration. USDOT publishes that inventory (NTAD) as a keyless public ArcGIS service, a US
+     government work in the public domain, so it stays in the paid version. From street level this reads every record in view and
+     shows it as its own bridge symbol, badged by the inspected condition. These are the state's reported ratings at the inspection
+     date: claims from the record, not a verified current condition. Rail bridges are not in this inventory. */
+  var NBI = { url: "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_National_Bridge_Inventory/FeatureServer/0/query",
+    name: "FHWA National Bridge Inventory (USDOT NTAD)", lic: "Public domain (US government work, 17 U.S.C. § 105)", nc: false, cap: 2000, tries: 3 };
+  var NBI_F = ["OBJECTID", "STATE_CODE_001", "STRUCTURE_NUMBER_008", "FACILITY_CARRIED_007", "FEATURES_DESC_006A", "LOCATION_009", "OWNER_022",
+    "YEAR_BUILT_027", "YEAR_RECONSTRUCTED_106", "TRAFFIC_LANES_ON_028A", "ADT_029", "YEAR_ADT_030", "PERCENT_ADT_TRUCK_109", "DESIGN_LOAD_031",
+    "DETOUR_KILOS_019", "OPEN_CLOSED_POSTED_041", "STRUCTURE_KIND_043A", "STRUCTURE_TYPE_043B", "MAIN_UNIT_SPANS_045", "APPR_SPANS_046",
+    "MAX_SPAN_LEN_MT_048", "STRUCTURE_LEN_MT_049", "ROADWAY_WIDTH_MT_051", "DECK_WIDTH_MT_052", "VERT_CLR_OVER_MT_053", "VERT_CLR_UND_REF_054A",
+    "VERT_CLR_UND_054B", "DECK_COND_058", "SUPERSTRUCTURE_COND_059", "SUBSTRUCTURE_COND_060", "CHANNEL_COND_061", "CULVERT_COND_062",
+    "OPR_RATING_METH_063", "OPERATING_RATING_064", "INV_RATING_METH_065", "INVENTORY_RATING_066", "STRUCTURAL_EVAL_067", "POSTING_EVAL_070",
+    "DATE_OF_INSPECT_090", "INSPECT_FREQ_MONTHS_091", "FRACTURE_092A", "STRAHNET_HIGHWAY_100", "TEMP_STRUCTURE_103", "SCOUR_CRITICAL_113",
+    "BRIDGE_CONDITION", "LOWEST_RATING"];
+  /* the US and its territories, roughly (a box that also takes in a strip of Canada or Mexico only costs an empty answer) */
+  var US_BOX = [[24, -125, 49.5, -66.5], [51, -180, 71.6, -129], [18.8, -160.5, 22.4, -154.6], [17.6, -67.4, 18.6, -64.5], [13.2, 144.5, 20.6, 146.1], [-14.6, -171, -14, -168.1]];
+  function inUS(b) { return US_BOX.some(function (x) { return b.getSouth() <= x[2] && b.getNorth() >= x[0] && b.getWest() <= x[3] && b.getEast() >= x[1]; }); }
+  var COND = { 9: "Excellent", 8: "Very good", 7: "Good", 6: "Satisfactory", 5: "Fair", 4: "Poor", 3: "Serious", 2: "Critical", 1: "Imminent failure", 0: "Failed" };
+  var POSTED = { A: "Open, no restriction", B: "Open; load posting recommended but not in force", D: "Open only because of temporary shoring", E: "Open; temporary structure",
+    G: "New structure, not yet open", K: "Closed", P: "Posted for load", R: "Posted for another load-capacity restriction" };
+  var SCOUR = { N: "Not over water", U: "Foundations unknown (not evaluated)", T: "Tidal, not evaluated", 6: "Not yet evaluated", 9: "Foundations on dry land well above flood water",
+    8: "Stable for assessed scour (above footings)", 7: "Countermeasures installed", 5: "Stable for assessed scour (within footings)", 4: "Stable, but action needed to protect footings",
+    3: "SCOUR CRITICAL: foundations unstable for assessed scour", 2: "SCOUR CRITICAL: extensive scour found", 1: "SCOUR CRITICAL: failure imminent, bridge closed", 0: "Closed: scour failure" };
+  var KIND = { 1: "Concrete", 2: "Concrete, continuous", 3: "Steel", 4: "Steel, continuous", 5: "Prestressed concrete", 6: "Prestressed concrete, continuous", 7: "Timber",
+    8: "Masonry", 9: "Aluminum, wrought or cast iron", 0: "Other material" };
+  var TYPE = { "01": "slab", "02": "multi-beam or girder", "03": "girder and floorbeam", "04": "tee beam", "05": "box beams (multiple)", "06": "box beam (single or spread)",
+    "07": "frame", "08": "orthotropic deck", "09": "deck truss", "10": "through truss", "11": "deck arch", "12": "through arch", "13": "suspension", "14": "cable-stayed",
+    "15": "movable lift", "16": "movable bascule", "17": "movable swing", "18": "tunnel", "19": "culvert", "20": "mixed types", "21": "segmental box girder", "22": "channel beam", "00": "other" };
+  var DLOAD = { 1: "H 10", 2: "H 15", 3: "HS 15", 4: "H 20", 5: "HS 20", 6: "HS 20 + mod", 7: "Pedestrian", 8: "Railroad", 9: "HS 25", A: "HL-93", B: "Greater than HL-93", C: "Other", 0: "Other or unknown" };
+  var RMETH = { 0: "field evaluation and engineering judgment", 1: "load factor", 2: "allowable stress", 3: "load and resistance factor (LRFR)", 4: "load testing",
+    5: "no rating analysis performed", 6: "load factor, as a rating factor", 7: "allowable stress, as a rating factor", 8: "LRFR, as a rating factor",
+    A: "assigned from the design (load factor)", B: "assigned from the design (allowable stress)", C: "assigned from the design (LRFD)", D: "assigned from the design" };
+  var OWNER = { "01": "State highway agency", "02": "County highway agency", "03": "Town or township", "04": "City or municipal", "11": "State park, forest or reservation",
+    "12": "Local park, forest or reservation", "21": "Other state agency", "25": "Other local agency", "26": "Private (not railroad)", "27": "Railroad", "31": "State toll authority",
+    "32": "Local toll authority", "60": "Other federal agency", "61": "Indian tribal government", "62": "Bureau of Indian Affairs", "63": "Bureau of Fish and Wildlife",
+    "64": "US Forest Service", "66": "National Park Service", "68": "Bureau of Land Management", "69": "Bureau of Reclamation", "70": "Corps of Engineers (civil)",
+    "71": "Corps of Engineers (military)", "72": "Air Force", "73": "Navy or Marines", "74": "Army", "75": "NASA", "76": "Metropolitan Washington Airports Service", "80": "Unknown" };
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  /* record text arrives with HTML entities in it ("PE&#165;A", "&amp;"): decoded as plain text (a textarea runs nothing), then escaped */
+  var TA = null;
+  function code(v) {
+    var s = v == null ? "" : String(v).trim(); if (s.indexOf("&") < 0) return s;
+    TA = TA || D.createElement("textarea"); TA.innerHTML = s; return TA.value.trim();
+  }
+  function num(v) { var n = parseFloat(v); return isFinite(n) ? n : null; }
+  /* "423" or "0423" (month and two-digit year) -> "Apr 2023"; "" when it cannot be read */
+  function inspDate(v) {
+    var s = code(v); if (!/^\d{3,4}$/.test(s)) return ""; s = ("0" + s).slice(-4);
+    var m = +s.slice(0, 2), y = +s.slice(2); if (m < 1 || m > 12) return "";
+    return MON[m - 1] + " " + (y < 70 ? 2000 + y : 1900 + y);
+  }
+  /* a 0-9 condition rating in words, or null for N (not applicable) and blanks */
+  function cond(v) { var s = code(v); return /^\d$/.test(s) ? s + " (" + COND[s] + ")" : null; }
+  /* what the record says about the bridge, in one class for the badge: closed or poor or scour critical (red), restricted or fair
+     (amber), good (green), not rated (grey). Read only from the coded values; FHWA's own Good/Fair/Poor first. */
+  function nbiRead(a) {
+    var st = code(a.OPEN_CLOSED_POSTED_041), sc = code(a.SCOUR_CRITICAL_113), gfp = code(a.BRIDGE_CONDITION).toUpperCase().charAt(0);
+    var rs = [a.DECK_COND_058, a.SUPERSTRUCTURE_COND_059, a.SUBSTRUCTURE_COND_060, a.CULVERT_COND_062].map(code).filter(function (s) { return /^\d$/.test(s); }).map(Number);
+    var low = rs.length ? Math.min.apply(null, rs) : (/^\d$/.test(code(a.LOWEST_RATING)) ? +code(a.LOWEST_RATING) : null);
+    var overall = gfp === "G" ? "Good" : gfp === "F" ? "Fair" : gfp === "P" ? "Poor" : low == null ? "" : low >= 7 ? "Good" : low >= 5 ? "Fair" : "Poor";
+    var closed = st === "K" || sc === "0" || sc === "1", scour = /^[0-3]$/.test(sc), restr = /^[BDEPR]$/.test(st), frac = /^Y/i.test(code(a.FRACTURE_092A));
+    var cls = closed || overall === "Poor" || scour ? "bad" : restr || overall === "Fair" ? "fair" : overall === "Good" ? "good" : "unk";
+    return { cls: cls, overall: overall, low: low, closed: closed, scour: scour, restr: restr, frac: frac, st: st };
+  }
+  var NCLS = { bad: ["Poor, closed or scour critical", "#c92a2a"], fair: ["Fair, or restricted", "#f08c00"], good: ["Good", "#2b8a3e"], unk: ["Not rated", "#868e96"] };
+  /* operating or inventory rating: metric tonnes of the rating truck for the tonne methods; a rating-factor method is shown as coded */
+  function rating(v, m) {
+    var n = num(v), mm = code(m); if (n == null) return null;
+    var how = RMETH[mm] ? " (" + RMETH[mm] + ")" : mm ? " (method " + clip(mm, 4) + ")" : "";
+    if (/^[678]$/.test(mm)) return n + " as coded" + how + "; not converted to tonnes";
+    return (Math.round(n * 10) / 10) + " t gross" + how;
+  }
+  function nbiPop(f) {
+    var a = f.attributes || {}, r = f._r, ty = NCLS[r.cls];
+    var on = clip(code(a.FACILITY_CARRIED_007), 60), un = clip(code(a.FEATURES_DESC_006A), 60);
+    var title = (on || "Bridge") + (un ? " over " + un : "");
+    var u = NBI.url + "?where=" + encodeURIComponent("OBJECTID=" + (+a.OBJECTID || 0)) + "&outFields=*&f=html";
+    var built = num(a.YEAR_BUILT_027), rebuilt = num(a.YEAR_RECONSTRUCTED_106);
+    var kind = [KIND[code(a.STRUCTURE_KIND_043A)] || "", TYPE[code(a.STRUCTURE_TYPE_043B)] || ""].filter(Boolean).join(" ");
+    var spans = (num(a.MAIN_UNIT_SPANS_045) || 0) + (num(a.APPR_SPANS_046) || 0);
+    var ovr = num(a.VERT_CLR_OVER_MT_053), und = num(a.VERT_CLR_UND_054B), undRef = code(a.VERT_CLR_UND_REF_054A);
+    var insp = inspDate(a.DATE_OF_INSPECT_090), freq = num(a.INSPECT_FREQ_MONTHS_091), adt = num(a.ADT_029), tr = num(a.PERCENT_ADT_TRUCK_109), det = num(a.DETOUR_KILOS_019);
+    var sum = row("Overall (FHWA)", r.overall ? r.overall + (r.low != null ? ", lowest rating " + r.low + " (" + COND[r.low] + ")" : "") : null, "not rated") +
+      row("Status", POSTED[r.st] || (r.st ? "code " + clip(r.st, 3) : null)) +
+      row("Deck", cond(a.DECK_COND_058), "not applicable") + row("Superstructure", cond(a.SUPERSTRUCTURE_COND_059), "not applicable") +
+      row("Substructure", cond(a.SUBSTRUCTURE_COND_060), "not applicable") +
+      (cond(a.CULVERT_COND_062) ? row("Culvert", cond(a.CULVERT_COND_062)) : "") + (cond(a.CHANNEL_COND_061) ? row("Channel and banks", cond(a.CHANNEL_COND_061)) : "") +
+      row("Scour", SCOUR[code(a.SCOUR_CRITICAL_113)] || (code(a.SCOUR_CRITICAL_113) ? "code " + clip(code(a.SCOUR_CRITICAL_113), 3) : null)) +
+      (r.frac ? row("Fracture critical", "Yes: a single member failing could drop a span") : "") +
+      row("Last inspected", insp ? insp + (freq ? " (every " + freq + " months)" : "") : null, "date not in the record");
+    var cap = row("Operating rating", rating(a.OPERATING_RATING_064, a.OPR_RATING_METH_063)) +
+      row("Inventory rating", rating(a.INVENTORY_RATING_066, a.INV_RATING_METH_065)) +
+      row("Designed for", DLOAD[code(a.DESIGN_LOAD_031)] ? DLOAD[code(a.DESIGN_LOAD_031)] + " loading" : null);
+    var str = row("Built", built ? built + (rebuilt ? ", rebuilt " + rebuilt : "") : null) + row("Type", kind) +
+      row("Spans", spans ? String(spans) + (num(a.MAX_SPAN_LEN_MT_048) ? ", longest " + num(a.MAX_SPAN_LEN_MT_048) + " m" : "") : null) +
+      row("Length", num(a.STRUCTURE_LEN_MT_049) != null ? num(a.STRUCTURE_LEN_MT_049) + " m (as inventoried)" : null) +
+      row("Roadway width", num(a.ROADWAY_WIDTH_MT_051) ? num(a.ROADWAY_WIDTH_MT_051) + " m curb to curb" + (num(a.DECK_WIDTH_MT_052) ? ", deck " + num(a.DECK_WIDTH_MT_052) + " m" : "") : null) +
+      row("Lanes on it", num(a.TRAFFIC_LANES_ON_028A) != null ? String(num(a.TRAFFIC_LANES_ON_028A)) : null) +
+      row("Clearance over the deck", ovr == null ? null : ovr >= 99 ? "nothing overhead" : ovr + " m") +
+      row("Clearance underneath", und == null || undRef === "N" || und === 0 ? null : und >= 99 ? "no limit" : und + " m" + (undRef === "R" ? " (over a railway)" : undRef === "H" ? " (over a road)" : ""), "not over a road or railway");
+    var use = row("Daily traffic", adt != null ? fmt(adt) + " vehicles" + (num(a.YEAR_ADT_030) ? " (" + num(a.YEAR_ADT_030) + " count)" : "") + (tr ? ", " + tr + "% trucks" : "") : null) +
+      row("Detour if closed", det != null && det < 199 ? det + " km" : det != null ? "199 km or more" : null) +
+      (/^[12]$/.test(code(a.STRAHNET_HIGHWAY_100)) ? row("Defense highway", "On the Strategic Highway Network (STRAHNET)") : "") +
+      row("Owner", OWNER[code(a.OWNER_022)] || null) + row("Structure number", clip(code(a.STRUCTURE_NUMBER_008), 20) + (code(a.STATE_CODE_001) ? " (state code " + clip(code(a.STATE_CODE_001), 3) + ")" : ""));
+    return '<div class="pop br-pop"><div class="tier" style="color:' + ty[1] + '">' + esc(ty[0]) + " · US federal inspection record</div>" +
+      "<h3>" + esc(clip(title, 110)) + "</h3>" + (code(a.LOCATION_009) ? '<div class="br-loc">' + esc(clip(code(a.LOCATION_009), 80)) + "</div>" : "") +
+      '<div class="br-h">Inspection</div><dl>' + sum + "</dl>" +
+      '<div class="br-h">Load capacity as rated</div><dl>' + cap + "</dl>" +
+      '<div class="br-h">Structure</div><dl>' + str + "</dl>" +
+      '<div class="br-h">Use</div><dl>' + use + "</dl>" +
+      '<p class="obs">As reported by the state to FHWA at the inspection date: the inspector’s ratings, not a verified current condition. ' +
+      "Operating and inventory ratings are gross tonnes of the rating truck, not a military load class. Confirm a crossing by reconnaissance before relying on it.<br>" +
+      '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">Source record</a> · ' + esc(NBI.name) + ", " + esc(NBI.lic) +
+      ", read " + esc(U.at.replace("T", " ").slice(0, 16)) + "Z" +
+      "<br>" + esc(f._ll[0].toFixed(5) + ", " + f._ll[1].toFixed(5)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(f._ll[0], f._ll[1])) : "") +
+      '<span data-nbifp="' + f._n + '">' + (f._fp ? '<br>Fingerprint <code class="fp">' + esc(f._fp.slice(0, 16)) + "…</code>" : "") + "</span></p></div>";
+  }
+  function nbiFinger(f) {
+    if (!W.crypto || !W.crypto.subtle || !W.TextEncoder) return Promise.resolve("");
+    var a = f.attributes || {}, o = {}; Object.keys(a).sort().forEach(function (k) { o[k] = a[k]; });
+    return W.crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify({ src: "fhwa-nbi", a: o, g: [+f._ll[0].toFixed(6), +f._ll[1].toFixed(6)] })))
+      .then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }).catch(function () { return ""; });
+  }
+  function nbiOpened(f) {
+    if (f._fp) return;
+    nbiFinger(f).then(function (h) {
+      f._fp = h;
+      Array.prototype.forEach.call(D.querySelectorAll('[data-nbifp="' + f._n + '"]'), function (x) { x.innerHTML = h ? '<br>Fingerprint <code class="fp">' + esc(h.slice(0, 16)) + "…</code>" : ""; });
+    });
+  }
+  function nbiQuery(b) {
+    var p = { where: "RECORD_TYPE_005A='1'", geometry: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map(function (v) { return v.toFixed(5); }).join(","),
+      geometryType: "esriGeometryEnvelope", inSR: "4326", spatialRel: "esriSpatialRelIntersects", outFields: NBI_F.join(","), returnGeometry: "true", outSR: "4326",
+      orderByFields: "STRUCTURE_LEN_MT_049 DESC", resultRecordCount: String(NBI.cap), f: "json" };
+    return NBI.url + "?" + Object.keys(p).map(function (k) { return k + "=" + encodeURIComponent(p[k]); }).join("&");
+  }
+  /* one read, tried up to three times (the service sometimes drops a request), each cut off after 25 s */
+  function nbiFetch(url, signal) {
+    var n = 0;
+    function once() {
+      n++;
+      var ac = new AbortController(), t = setTimeout(function () { ac.abort(); }, 25000);
+      var stop = function () { ac.abort(); }; if (signal) signal.addEventListener("abort", stop);
+      return fetch(url, { signal: ac.signal, credentials: "omit" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (j) { if (j && j.error) throw new Error("service error " + (j.error.code || "")); return j; })
+        .finally(function () { clearTimeout(t); if (signal) signal.removeEventListener("abort", stop); })
+        .catch(function (e) {
+          if (signal && signal.aborted) { var ab = new Error("aborted"); ab.name = "AbortError"; throw ab; }
+          if (n >= NBI.tries) throw e;
+          return new Promise(function (res) { setTimeout(res, 1500 * n); }).then(once);
+        });
+    }
+    return once();
+  }
+  var U = { list: [], box: null, busy: false, err: "", cut: false, at: "", ctl: null, seq: 0, n: 0 };
+  function nbiRefresh(v) {
+    if (!inUS(v)) { if (U.ctl) U.ctl.abort(); U.busy = false; U.err = ""; U.list = []; U.box = null; return; }
+    if (U.box && inside(U.box, v) && !U.cut) return;
+    if (U.ctl) U.ctl.abort();
+    var b = v.pad(0.3), seq = ++U.seq, ctl = new AbortController(); U.ctl = ctl; U.busy = true; U.err = "";
+    nbiFetch(nbiQuery(b), ctl.signal).then(function (j) {
+      if (seq !== U.seq) return;
+      var list = [];
+      (j.features || []).forEach(function (f) {
+        var g = f.geometry || {}, la = num(g.y), lo = num(g.x); if (la == null || lo == null) return;
+        f._ll = [la, lo]; f._r = nbiRead(f.attributes || {}); f._n = ++U.n; list.push(f);
+      });
+      U.list = list; U.box = b; U.cut = !!j.exceededTransferLimit || (j.features || []).length >= NBI.cap; U.at = new Date().toISOString().slice(0, 19); U.busy = false;
+      nbiDraw(); paint();
+    }, function (err) {
+      if (seq !== U.seq || (err && err.name === "AbortError")) return;
+      U.busy = false; U.err = "US inspection records could not be read just now (" + clip(err && err.message || "no answer", 40) + "); pan or zoom to try again.";
+      paint();
+    });
+  }
+  var nbiHave = {};
+  function nbiClear() { if (nbL) nbL.clearLayers(); nbiHave = {}; }
+  function nbiDraw() {
+    if (!nbL) return;
+    if (!S.on || !map || map.getZoom() < MINZ || !inUS(map.getBounds())) { nbiClear(); return; }
+    var b = map.getBounds().pad(0.1), want = {};
+    U.list.forEach(function (f) { if (b.contains(f._ll)) want[f._n] = f; });
+    Object.keys(nbiHave).forEach(function (k) { if (!want[k]) { nbL.removeLayer(nbiHave[k]); delete nbiHave[k]; } });
+    Object.keys(want).forEach(function (k) {
+      if (nbiHave[k]) return;
+      var f = want[k], ty = NCLS[f._r.cls], o = { renderer: rend, pane: "infpt", lgk: "nbi:" + f._r.cls, lgl: "US inspection: " + ty[0] };
+      var m = W.OSAP_SYM && W.OSAP_SYM.mark && W.OSAP_SYM.d && W.OSAP_SYM.d.i_bridge ? W.OSAP_SYM.mark(f._ll, "i_bridge", L.extend({ scale: 0.6, badge: ty[1] }, o))
+        : L.circleMarker(f._ll, L.extend({ radius: 5, color: "#fff", weight: 1.3, fillColor: ty[1], fillOpacity: 0.95 }, o));
+      m.bindPopup(function () { return nbiPop(f); }, { maxWidth: 360 }).addTo(nbL); m.on("popupopen", function () { nbiOpened(f); });
+      nbiHave[k] = m;
+    });
+  }
+  function nbiMsg() {
+    if (!map || !inUS(map.getBounds())) return "";
+    if (U.busy) return " Reading US federal inspection records…";
+    if (U.err) return " " + U.err;
+    if (!U.box) return "";
+    var n = U.list.filter(function (f) { return map.getBounds().pad(0.1).contains(f._ll); }).length;
+    return " " + fmt(n) + " US inspection record" + (n === 1 ? "" : "s") + " (FHWA National Bridge Inventory)" + (U.cut ? ", the " + fmt(NBI.cap) + " longest; zoom in for the rest" : "") + ".";
+  }
+
   /* ---------- drawing ---------- */
   /* what is drawn, by bridge: [casing, line, symbol]. A redraw keeps what is still wanted, so an open popup stays open when the
      map pans to show it */
   var have = {}, NUM = 0;
-  function clear() { if (lnL) lnL.clearLayers(); if (ptL) ptL.clearLayers(); have = {}; }
+  function clear() { if (lnL) lnL.clearLayers(); if (ptL) ptL.clearLayers(); have = {}; nbiClear(); }
   function add(e) {
     var r = e._r, z = map.getZoom(), ty = CLS[r.cls], ll = e.geometry.map(function (p) { return [p.lat, p.lon]; }), out = [];
     var sym = W.OSAP_SYM && W.OSAP_SYM.mark && W.OSAP_SYM.d && W.OSAP_SYM.d.i_bridge;
@@ -211,17 +416,18 @@
     S.list.forEach(function (e) { if ((e._r.foot && z < FOOTZ) || !b.intersects(e._b)) return; want[e._k + (z >= FOOTZ ? "+" : "")] = e; });
     Object.keys(have).forEach(function (k) { if (!want[k]) { have[k].forEach(function (l) { ptL.removeLayer(l); lnL.removeLayer(l); }); delete have[k]; } });
     Object.keys(want).forEach(function (k) { if (!have[k]) have[k] = add(want[k]); });
+    nbiDraw();
     map.fire("layeradd", { layer: ptL });
   }
   function msg() {
     if (!S.on) return "";
     if (map && map.getZoom() < MINZ) return "Zoom in to street level (zoom " + MINZ + ") to see every bridge in view with its limits and structure.";
-    if (S.busy) return "Reading every bridge in view from OpenStreetMap…";
-    if (S.err) return S.err;
-    if (!S.box) return "";
+    if (S.busy) return "Reading every bridge in view from OpenStreetMap…" + nbiMsg();
+    if (S.err) return S.err + nbiMsg();
+    if (!S.box) return nbiMsg().trim();
     var n = S.list.filter(function (e) { return !e._r.foot || map.getZoom() >= FOOTZ; }).length;
     return fmt(n) + " bridge" + (n === 1 ? "" : "s") + " in view (OpenStreetMap, live via " + S.via + ")." +
-      (S.cut ? " Showing the " + fmt(CAP) + " longest; zoom in for the rest." : "") + (map.getZoom() < FOOTZ ? " Footbridges show closer in (zoom " + FOOTZ + ", on the imagery base maps)." : "") + " Tap one for details.";
+      (S.cut ? " Showing the " + fmt(CAP) + " longest; zoom in for the rest." : "") + (map.getZoom() < FOOTZ ? " Footbridges show closer in (zoom " + FOOTZ + ", on the imagery base maps)." : "") + nbiMsg() + " Tap one for details.";
   }
   function paint() {
     var sec = D.getElementById("inf-sec");
@@ -234,13 +440,17 @@
   }
   function legend() {
     if (!W.OSAP_LEGEND) return;
-    if (!S.on || !map || map.getZoom() < MINZ || !S.list.length) { W.OSAP_LEGEND.set("bridges", ""); return; }
+    if (!S.on || !map || map.getZoom() < MINZ || (!S.list.length && !U.list.length)) { W.OSAP_LEGEND.set("bridges", ""); return; }
     var h = '<div class="lgh" style="font-weight:600;margin-bottom:2px">Bridges in view</div>';
     ["tight", "lim", "none", "foot"].forEach(function (k) {
       if (k === "foot" && map.getZoom() < FOOTZ) return;
       h += '<div class="lg"><span class="sw" style="background:' + CLS[k][1] + ';height:4px;width:16px;border:1px solid #fff"></span><div>' + CLS[k][0] + "</div></div>";
     });
     h += '<div class="lg"><div><span class="d">Restrictive = mapped limit under 20 t, axle under 8 t, height under 4.2 m or width under 3.5 m. Dashed = railway.</span></div></div>';
+    if (U.list.length && inUS(map.getBounds())) {
+      h += '<div class="lgh" style="font-weight:600;margin:4px 0 2px">US inspection records (badge)</div>';
+      ["bad", "fair", "good", "unk"].forEach(function (k) { h += '<div class="lg"><span class="sw" style="background:' + NCLS[k][1] + ';border-radius:50%;width:10px;height:10px;border:1px solid #fff"></span><div>' + NCLS[k][0] + "</div></div>"; });
+    }
     W.OSAP_LEGEND.set("bridges", h);
   }
 
@@ -250,6 +460,7 @@
     if (!map) return;
     if (!S.on || map.getZoom() < MINZ) { if (S.ctl) S.ctl.abort(); S.busy = false; draw(); paint(); redrawInfra(); return; }
     var v = map.getBounds(), foot = map.getZoom() >= FOOTZ;
+    nbiRefresh(v);
     /* the last read still covers this view (and its footbridges if wanted, and was not cut short): just draw */
     if (S.box && inside(S.box, v) && (S.foot || !foot) && (!S.cut || S.boxZ >= map.getZoom())) { draw(); paint(); redrawInfra(); return; }
     if (!W.OSAP_OSM) { S.err = "The OpenStreetMap reader is not loaded; reload the page to see every bridge."; paint(); return; }
@@ -282,7 +493,7 @@
   function redrawInfra() { if (W.OSAP_INFRA && W.OSAP_INFRA.redraw) W.OSAP_INFRA.redraw(); }
   function set(on) {
     S.on = !!on;
-    if (!S.on) { if (S.ctl) S.ctl.abort(); S.busy = false; S.err = ""; clear(); }
+    if (!S.on) { if (S.ctl) S.ctl.abort(); if (U.ctl) U.ctl.abort(); S.busy = false; S.err = ""; U.busy = false; U.err = ""; clear(); }
     refresh();
   }
 
@@ -292,11 +503,11 @@
     if (!map.getPane("infpt")) { map.createPane("infpt"); map.getPane("infpt").style.zIndex = 657; }
     if (!map.getPane("infln")) { map.createPane("infln"); map.getPane("infln").style.zIndex = 432; }
     rend = L.canvas({ pane: "infpt", padding: 0.3 }); lrend = L.canvas({ pane: "infln", padding: 0.3 });
-    lnL = L.layerGroup().addTo(map); ptL = L.layerGroup().addTo(map);
+    lnL = L.layerGroup().addTo(map); ptL = L.layerGroup().addTo(map); nbL = L.layerGroup().addTo(map);
     map.on("moveend", function () { if (!S.on) return; clearTimeout(tmr); tmr = setTimeout(refresh, 350); });
     D.addEventListener("osap:infra", function (ev) { var d = ev.detail || {}; if (d.k === "bridge") set(d.on); });
     var css = D.createElement("style");
-    css.textContent = ".br-pop .br-h{font-weight:600;font-size:12px;margin:6px 0 2px;text-transform:uppercase;letter-spacing:.03em;opacity:.8}.br-pop .br-nt{opacity:.6;font-style:italic}" +
+    css.textContent = ".br-pop .br-h{font-weight:600;font-size:12px;margin:6px 0 2px;text-transform:uppercase;letter-spacing:.03em;opacity:.8}.br-pop .br-nt{opacity:.6;font-style:italic}.br-pop .br-loc{font-size:12px;opacity:.75;margin-top:-2px}" +
       ".br-msg[hidden]{display:none}.br-msg{margin-left:26px}";
     D.head.appendChild(css);
     var st = W.OSAP_INFRA && W.OSAP_INFRA.state && W.OSAP_INFRA.state();
@@ -304,7 +515,8 @@
     return true;
   }
   W.OSAP_BRIDGES = { refresh: refresh, covers: covers, set: set, state: function () {
-    return { on: S.on, busy: S.busy, err: S.err, msg: msg(), n: S.list.length, cut: S.cut, via: S.via, drawn: { lines: lnL ? lnL.getLayers().length : 0, points: ptL ? ptL.getLayers().length : 0 } };
-  }, _t: { tonnes: tonnes, metres: metres, lineLen: lineLen, read: read, sqlFor: sqlFor, overText: overText } };
+    return { on: S.on, busy: S.busy, err: S.err, msg: msg(), n: S.list.length, cut: S.cut, via: S.via, drawn: { lines: lnL ? lnL.getLayers().length : 0, points: ptL ? ptL.getLayers().length : 0, us: nbL ? nbL.getLayers().length : 0 },
+      us: { n: U.list.length, busy: U.busy, err: U.err, cut: U.cut, src: { name: NBI.name, url: NBI.url, lic: NBI.lic, nc: NBI.nc } } };
+  }, _t: { tonnes: tonnes, metres: metres, lineLen: lineLen, read: read, sqlFor: sqlFor, overText: overText, nbiRead: nbiRead, inspDate: inspDate, rating: rating, inUS: inUS, nbiQuery: nbiQuery } };
   (function wait(n) { if (!init() && n < 120) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();
