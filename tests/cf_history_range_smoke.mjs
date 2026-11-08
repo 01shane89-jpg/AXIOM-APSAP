@@ -29,6 +29,13 @@ const yearN = (a, b) => Object.entries(IDX.years).filter(([y]) => +y >= a && +y 
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+// protests and riots (Mass Mobilization, tools/refresh_coded_protests.mjs): a fixture, so the counts do not depend on the weekly build.
+// One protest placed in Pattani (inside the Deep South tab's area) and one in Bangkok (outside it), both in 2012.
+const MMI = { schema: "osap-cf-coded-index/1", countries: { th: { n: 2 } } };
+const MMTH = { id: "mm/th", cc: "th", rows: [["900001", "2012-05-01", "", 6.87, 101.25, 2, 0, "Pattani", "Pattani", "100-999", "villagers", "police brutality", "arrests"],
+  ["900002", "2012-06-01", "", 13.75, 100.5, 2, 1, "Bangkok", "Bangkok", ">10000", "students", "political behavior, process", "crowd dispersal; shootings"]] };
+await ctx.route(/\/data\/live\/conflicts\/history\/mm\/(_index|th)\.js$/, (r) => r.fulfill({ contentType: "text/javascript",
+  body: '(window.OSAP_CF_CODED=window.OSAP_CF_CODED||{})["mm/' + (/_index/.test(r.request().url()) ? "_index" : "th") + '"]=' + JSON.stringify(/_index/.test(r.request().url()) ? MMI : MMTH) + ";" }));
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-cf-hist", "1");
   localStorage.setItem("asap-period", JSON.stringify({ p: "custom", from: "2026-04-16", to: "2026-10-16" })); } catch (e) {} });
 const p = await ctx.newPage(), errors = [];
@@ -113,14 +120,17 @@ ok(leg, "Map legend names the span");
 
 // coded events (ACLED-style categories, assets/osap-cf-code.js fromUcdp): every event of the span, as a dataset coding with its licence
 await p.waitForFunction(() => document.querySelector("#cfh details.cfhcode [data-cfhcsv]"), null, { timeout: 60000 });
+await p.waitForFunction(() => window.OSAP_CF_HISTORY.coded(), null, { timeout: 30000 });
 const cd = await p.evaluate(() => { const rows = window.OSAP_CF_HISTORY.coded() || [];
-  return { n: rows.length, basis: [...new Set(rows.map((r) => r.record_basis))], lic: [...new Set(rows.map((r) => r.licence))], types: [...new Set(rows.map((r) => r.event_type))],
+  return { n: rows.length, mm: rows.filter((r) => r.dataset === "mm_protest"), basis: [...new Set(rows.map((r) => r.record_basis))], lic: [...new Set(rows.map((r) => r.licence))], types: [...new Set(rows.map((r) => r.event_type))],
     nc: rows.filter((r) => r.non_commercial).length, sub: rows.filter((r) => r.sub_event_type).length, txt: document.querySelector("#cfh details.cfhcode").textContent }; });
-ok(cd.n === yearN(2012, 2012), `Coded events: one row per event of the span (${cd.n})`);
+ok(cd.n === yearN(2012, 2012) + 1, `Coded events: one row per UCDP event of the span plus the protest inside the tab's area (${cd.n})`);
+ok(cd.mm.length === 1 && cd.mm[0].source_event_id === "900001" && cd.mm[0].event_type === "Protests" && cd.mm[0].sub_event_type === "Protest with intervention" && cd.mm[0].licence === "CC0 1.0",
+  "Protests: only the one placed inside the tab's area, coded Protest with intervention, CC0 (" + JSON.stringify(cd.mm.map((r) => r.source_event_id)) + ")");
 ok(cd.basis.join() === "dataset_coded", "Every coded row is a dataset coding, not an analyst record: " + cd.basis.join());
-ok(cd.lic.join() === "CC BY 4.0" && cd.nc === 0, "Every coded row carries its licence (" + cd.lic.join() + "), none non-commercial");
-ok(cd.types.every((t) => ["Battles", "Violence against civilians"].includes(t)) && cd.sub === 0, "Event types from UCDP's type of violence, no guessed sub-event types: " + cd.types.join(", "));
-ok(/not analyst-confirmed/.test(cd.txt) && /CC BY 4\.0/.test(cd.txt), "The panel says these are dataset codings and names the licence");
+ok(cd.lic.sort().join() === "CC BY 4.0,CC0 1.0" && cd.nc === 0, "Every coded row carries its licence (" + cd.lic.join() + "), none non-commercial");
+ok(cd.types.every((t) => ["Battles", "Violence against civilians", "Protests"].includes(t)) && cd.sub === 1, "UCDP rows: event types from UCDP's type of violence, no guessed sub-event types: " + cd.types.join(", "));
+ok(/not analyst-confirmed/.test(cd.txt) && /CC BY 4\.0/.test(cd.txt) && /CC0 1\.0/.test(cd.txt) && /1 of them protests and riots/.test(cd.txt), "The panel says these are dataset codings, counts the protests and names both licences");
 await p.evaluate(() => { document.querySelector("#cfh details.cfhcode").open = true; });
 await p.waitForFunction(() => document.querySelector("#cfh details.cfhcode table"), null, { timeout: 20000 });
 const tabs = await p.evaluate(() => Array.from(document.querySelectorAll("#cfh details.cfhcode th:first-child")).map((t) => t.textContent));
@@ -130,6 +140,7 @@ const csvTxt = await readFile(await dl.path(), "utf8"), lines = csvTxt.trim().sp
 ok(lines.length === cd.n + 1 && /^record_basis,dataset,/.test(lines[0]), `Coded events CSV: header + ${lines.length - 1} rows (${dl.suggestedFilename()})`);
 const hcol = lines[0].split(",").indexOf("sha256");
 ok(lines.slice(1).every((l) => /^[0-9a-f]{64}$/.test(l.split(",").slice(-1)[0])) && hcol === lines[0].split(",").length - 1, "Every CSV row carries its SHA-256 fingerprint");
+ok(csvTxt.includes(",900001,") && !csvTxt.includes(",900002,"), "CSV holds the protest inside the area, not the one outside");
 const firstR = ROWS.filter((r) => r[1] >= "2012-01-01" && r[1] <= "2012-12-31").sort((a, b) => (a[1] < b[1] ? -1 : 1))[0];
 ok(csvTxt.includes("," + firstR[0] + ","), "CSV holds the UCDP event ids (" + firstR[0] + ")");
 await p.evaluate(() => { const d = document.querySelector("#cfh details.cfhcode"); d.open = true; d.dispatchEvent(new Event("toggle")); });

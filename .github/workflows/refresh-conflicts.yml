@@ -115,6 +115,27 @@ jobs:
           path: .cache/ucdp
           key: ucdp-ged-${{ steps.hist.outputs.release }}
         continue-on-error: true
+      # Coded event history, protests and riots (tools/refresh_coded_protests.mjs): the Mass Mobilization Protest Data (CC0, 1990-2020,
+      # Harvard Dataverse, no key) coded into the incident record's categories, data/live/conflicts/history/mm/. The dataset is final, so
+      # the job does nothing unless the file or the coding rules change; the download is kept in the Actions cache.
+      - name: Restore the Mass Mobilization file
+        if: ${{ steps.histdue.outputs.due == '1' }}
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .cache/mm
+          key: mm-protest-v1
+      - name: Refresh the coded protest history
+        if: ${{ steps.histdue.outputs.due == '1' }}
+        run: node tools/refresh_coded_protests.mjs
+        timeout-minutes: 10
+        continue-on-error: true
+      - name: Keep the Mass Mobilization file
+        if: ${{ steps.histdue.outputs.due == '1' && hashFiles('.cache/mm/mm.csv') != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .cache/mm
+          key: mm-protest-v1
+        continue-on-error: true
       - name: Probe the conflict sources (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-conflicts' }}
         run: PROBE=1 node tools/refresh_conflicts.mjs; node tools/probe_wikimaps.mjs
