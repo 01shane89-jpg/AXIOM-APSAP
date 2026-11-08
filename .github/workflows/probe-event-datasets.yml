@@ -1,0 +1,33 @@
+name: probe-event-datasets
+# Temporary probe (branch only, never merged): can GitHub's runners reach open event datasets, and what licence does each declare?
+on: { push: { branches: [claude/probe-event-datasets] }, workflow_dispatch: {} }
+permissions: { contents: read }
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: GDELT 2.0 raw event files
+        run: |
+          set +e
+          curl -sS -m 30 -w "\nHTTP %{http_code}\n" http://data.gdeltproject.org/gdeltv2/lastupdate.txt
+          U=$(curl -sS -m 30 http://data.gdeltproject.org/gdeltv2/lastupdate.txt | head -1 | awk '{print $3}')
+          echo "export: $U"; curl -sS -m 60 -o ev.zip -w "HTTP %{http_code} %{size_download} bytes\n" "$U"; unzip -p ev.zip | head -c 1500; echo
+          curl -sS -m 60 -r 0-600 -w "\nHTTP %{http_code}\n" http://data.gdeltproject.org/gdeltv2/masterfilelist.txt
+          curl -sS -m 60 -I http://data.gdeltproject.org/events/20240101.export.CSV.zip | head -5
+          curl -sS -m 30 https://www.gdeltproject.org/about.html | tr '<>' '\n\n' | grep -i -m3 "unrestricted\|commercial"
+      - name: Dataverse licences (Mass Mobilization, POLECAT, ICEWS, NAVCO)
+        run: |
+          set +e
+          for d in doi:10.7910/DVN/HTTWYL doi:10.7910/DVN/AJGVIT doi:10.7910/DVN/28075 doi:10.7910/DVN/28117 doi:10.7910/DVN/ON9XND; do
+            echo "== $d"; curl -sS -m 30 "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=$d" | python3 -c "
+          import json,sys
+          try:
+            j=json.load(sys.stdin)['data']; v=j['latestVersion']
+            t=[f['value'] for f in v['metadataBlocks']['citation']['fields'] if f['typeName']=='title']
+            print('title:',t); print('license:',json.dumps(v.get('license'))); print('terms:',(v.get('termsOfUse') or '')[:400]); print('restricted files:',sum(1 for f in v.get('files',[]) if f.get('restricted')),'of',len(v.get('files',[])))
+            for f in v.get('files',[])[:12]: print('  ',f['dataFile'].get('filename'),f['dataFile'].get('filesize'),f['dataFile'].get('id'))
+          except Exception as e: print('err',e)"
+          done
+      - name: UCDP candidate (control)
+        run: curl -sS -m 30 -o /dev/null -w "HTTP %{http_code}\n" https://ucdp.uu.se/downloads/ || true
