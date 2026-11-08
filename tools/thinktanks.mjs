@@ -1,6 +1,6 @@
 // Think tank and research-institute analysis (category "Analysis"), registered into the dense open-data run (tools/refresh_dense.mjs).
 // Every item is that institute's published assessment, a sourced opinion and not fact, so its kind reads "<institute> assessment".
-// Only the headline, a short summary (at most 280 characters) and the link are kept, never the article text, which belongs to the publisher.
+// Only the headline, date and link are kept. The summary is read for country tagging and then dropped, never stored: it belongs to the publisher.
 // Items are tagged to the countries named in the headline or summary; a map pin is added only when a city in one of those countries is named.
 // Each institute is its own feed. Candidate addresses are tried in order, then the feed link advertised on the home page.
 // Licence: publisher copyright; headline and link only. Marked nc so these can be stripped in one pass before any paid use.
@@ -302,7 +302,7 @@ const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], el
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
-  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: "Publisher copyright; headline, short summary and link only", nc: true, url: home, everyHours: 1 });
+  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: "Publisher copyright; headline and link only", nc: true, url: home, everyHours: 1 });
   run(fid, async (g) => {
     let entries = null, used = "", why = [];
     // A feed counts only if it holds something from the last 60 days (several institutes left a dead feed behind).
@@ -337,12 +337,13 @@ for (const [id, org, home, urls] of TT) {
     const items = [], globals = [];
     let used_n = 0;
     for (const x of entries.slice(0, 60)) {
-      const summary = x.summary.replace(/The post .* appeared first on .*$/i, "").trim();
-      const short = summary.length > 280 ? summary.slice(0, 277).replace(/\s+\S*$/, "") + "..." : summary;
+      // The summary is read here only to find the countries and places it names; it is never stored (outlet text rule,
+      // tools/outlet_text.mjs), so each item keeps the headline, date and link, as national news outlets do.
+      const summary = String(x.summary || "").replace(/The post .* appeared first on .*$/i, "").trim();
       const text = x.title + " " + summary.slice(0, 800);
       let ccs = countriesIn(text);
       if (!ccs.length && HOME_CC[id]) ccs = HOME_CC[id];
-      const it = { title: x.title, detail: short, date: x.date, url: x.link, sev: 1, kind };
+      const it = { title: x.title, date: x.date, url: x.link, sev: 1, kind };
       if (!ccs.length) { globals.push(it); continue; }
       // One copy per country, so each country's map pins only a city inside that country.
       for (const cc of ccs) {

@@ -130,7 +130,8 @@ export function writeAll(countryIds, perFeedCap = 80) {
         mine.slice(0, FEEDS[id].cap || perFeedCap).forEach((x) => items.push(slim(id, x)));
         if (r.figures[cc]) figures[id] = r.figures[cc];
       } else {
-        old.items.filter((x) => x.f === id).forEach((x) => items.push(x));
+        // think-tank items kept from an earlier run lose any stored publisher summary (outlet text rule, 8 Nov 2026)
+        old.items.filter((x) => x.f === id).forEach((x) => { if (/^tt-/.test(id) && x.x) { x = { ...x }; delete x.x; } items.push(x); });
         if (old.figures && old.figures[id]) figures[id] = old.figures[id];
       }
     }
