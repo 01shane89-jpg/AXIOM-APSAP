@@ -321,6 +321,7 @@ const HOME_CC = { "38north": ["kp"], "conv-us": ["us"], "conv-uk": ["gb"], "conv
   ffa: ["ck", "fj", "fm", "ki", "mh", "nr", "nu", "pg", "pw", "sb", "to", "tv", "vu", "ws"] };
 // Institutes whose published terms clearly allow commercial reuse (checked 2026-11-08 from GitHub's runners). Only these are kept in the
 // sold version; every other institute stays nc (non-commercial terms, all rights reserved, or terms that could not be read).
+const FOREIGN_ONLY = new Set(["apcss", "gao", "crs"]);
 const USGOV = "US government work, public domain (17 U.S.C. 105); headline and link only";
 const CONV = "CC BY-ND 4.0 (theconversation.com/global/republishing-guidelines); headline and link only";
 const OPEN_LIC = { issafrica: "CC BY 4.0 (issafrica.org/terms-of-use); headline and link only", prif: "CC BY-ND 4.0 (blog.prif.org footer); headline and link only",
@@ -370,8 +371,12 @@ for (const [id, org, home, urls] of TT) {
       // tools/outlet_text.mjs), so each item keeps the headline, date and link, as national news outlets do.
       const summary = String(x.summary || "").replace(/The post .* appeared first on .*$/i, "").trim();
       const text = x.title + " " + summary.slice(0, 800);
+      // US federal sources: drop staff profile pages (title is only a name) and keep only items about other countries
+      if (FOREIGN_ONLY.has(id) && /^(?:(?:Lt|Maj|Col|Gen|Capt|Cmdr|Cdr|Adm|Prof|Dr|Mr|Ms|Mrs|Sgt)\.?\s+)*(?:(?:Lt|Brig)\.?\s+)?[A-Z][\w’'.-]*(?:\s+(?:“[^”]+”|"[^"]+"|[A-Z][\w’'.-]*)){0,4}$/.test(String(x.title).trim()) && !/\b(?:of|and|the|in|for|on|to)\b/i.test(x.title) && !countriesIn(x.title).length) continue;
       let ccs = countriesIn(text);
+      if (FOREIGN_ONLY.has(id)) ccs = ccs.filter((c) => c !== "us");
       if (!ccs.length && HOME_CC[id]) ccs = HOME_CC[id];
+      if (!ccs.length && FOREIGN_ONLY.has(id)) continue;
       const it = { title: x.title, date: x.date, url: x.link, sev: 1, kind };
       if (!ccs.length) { globals.push(it); continue; }
       // One copy per country, so each country's map pins only a city inside that country.
