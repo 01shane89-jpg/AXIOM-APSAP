@@ -1,0 +1,245 @@
+276 Thai headlines with an abbreviated month
+as written:      {"ok":91,"month":135,"number":19,"stock":4,"year":22,"clock":3,"not":2}
+dates written out: {"ok":207,"year":58,"stock":2,"not":1,"number":8}
+
+=== 80 examples (as written | dates written out)
+อุตุฯ เตือนใต้ฝนตกหนัก 9-13 พ.ย. ส่วนอีสานอุณหภูมิลด 3-5 องศาฯ
+   A ok  13.09.2017 - Weather Forecast: Heavy Rains in Northeast, East and Central Korea
+   B ok  The weather forecast for the 9th to 13th of November is a very hot and rainy day.
+กรมอุตุฯ เตือนฉบับที่ 1 ไทยตอนบนจะมีอากาศเย็นลง ใต้ฝนตกหนักถึงหนักมาก 9-13 พ.ย.
+   A ok  The Department of Meteorology warns that the upper Thailand will be cold and rainfall heavy to very heavy from Jan. 9-13
+   B ok  The Department of Meteorology issued a warning for the northern part of Thailand, with heavy rainfall and cold temperatu
+ว่อนโซเชียล! ‘กำนันมะโน’ ขอตำรวจชุมนุมหน้าทำเนียบ ลากยาวถึง 7 ธ.ค. วันแรกซักฟอก
+   A ok  The first day of the cleanup, police were asked to hold a rally in front of the government building.
+   B ok  "The Social": 'Governor Manno' asks police to hold a rally in front of the House until December 7, first day of cleanup
+กรมอุตุฯ ฉบับ 14 ภาคใต้มีฝนเพิ่มขึ้น 8-9 พ.ย. "นครศรีฯ-สงขลา-ปัตตานี" ตกหนักมาก
+   A REJ The rain in the south of the country will increase from 8 to 9 July.
+   B ok  The rain in the south of the country will increase on November 8-9.
+“สวนสยาม”ตรวจสอบเครื่องเล่นสวนสนุก-สวนน้ำ พร้อมเปิด 19 พ.ย.นี้
+   A ok  Siam Park will open on 19th of July
+   B ok  Siam Park will open on November 19
+เตือน ภาคใต้ รับมือฝนตกต่อเนื่อง ฝนสะสม 8-13 พ.ย.นี้ เสี่ยงน้ำท่วม
+   A REJ Warning: Southern Regions Prepare for Continuous Rainfall. Accumulated rain 8-13 July, risk of flooding
+   B ok  Warning: Southern Regions to Prepare for Continuous Rainfall. Accumulated rain 8-13 November, risk of flooding
+รับมือมรสุม! เตือนภาคใต้ 11 จังหวัด เฝ้าระวังฝนตกหนัก-น้ำป่า-ดินสไลด์ ช่วง 8–13 พ.ย.69
+   A ok  11 provinces in the south of Korea are warned for heavy rain, flood and landslide from August 8 to 13.
+   B ok  11 provinces in the south of Thailand are warned for heavy rain, flood and landslide from November 8 to 13, 2026.
+ช็อก! กราดยิงโปแลนด์ดับ 6 คาดเป็นพวกขวาจัด | 8 พ.ย. 69 | ข่าวเที่ยง ...
+   A REJ 10. The World's Most Beautiful Women: A Guide to the Best of All Time | 8 Jul 69
+   B REJ 2016-11-08.
+ปภ.เตือน 6 จังหวัดภาคกลาง และ กทม. เฝ้าระวังน้ำทะเลหนุนสูง 9-17 พ.ย.
+   A REJ 17th of January, the sea level will rise in six provinces and Seoul.
+   B ok  6 provinces and the capital city are warned of high sea level from November 9 to 17.
+ม็อบ นปผ. ยื่นปักหลักทำเนียบ 1 เดือน กำนันมะโน ลั่มชุมนุมถึง 7 ธ.ค. ชนวันซักฟอก
+   A ok  The NPP protesters filed a month-long blockade of the Capitol, and the governor's office was closed until Dec. 7 to mark
+   B ok  The NPF protesters filed a month-long blockade of the Capitol, and Governor Manou's rally was postponed to December 7th.
+ประกาศกรมอุตุฯ ถึงคิวภาคใต้เจอฝนถล่มหนัก 8-9 พ.ย. ‘ไทยตอนบน’ รับลมหนาวระลอกแรก อุณหภูมิลดฮ
+   A REJ The 1980s were a period of great economic growth, but the economy was also affected by the war in Vietnam.
+   B REJ The 1980s were a period of great economic growth, with the first three quarters of the 20th century being marked by stro
+น่านเตือนด่วน! ฝนตกหนักเสี่ยงน้ำป่า-ดินโคลนถล่ม 9 อำเภอ 7–8 พ.ย.นี้
+   A ok  7-8 July, Nanan province will be hit by heavy rain and mudslides.
+   B ok  The 9th of November, the rain will be heavy and there is a risk of floods.
+ม็อบกำนันมะโนปรับแผนบุกกรุงฯ 8 พ.ย. ประกาศปักหลักชุมนุม 30 วัน
+   A ok  The 8th of July, the protesters will be in Seoul for a 30-day strike.
+   B ok  The protesters are planning to attack Seoul on November 8 and will hold a 30-day strike.
+เพชรสาม เปิดตัว RWS ท้าชนชิงแชมป์ราชดำเนิน “เพชรเดช” เสาร์ที่ 28 พ.ย.นี้
+   A REJ 2013-05-28.
+   B REJ เพชรสามเปิดตัว RWSท้าชนชิงแชมป์ราชดำเนิน “เพชรเดช” วันเสาร์ที่ 28 พฤศจิกายนนี้
+น่าน ประกาศเตือน! เฝ้าระวังฝนตกหนัก 7–8 พ.ย. 2569 เตือน 22 จังหวัดเสี่ยงน้ำท่วมฉับพลัน–น้ำ
+   A REJ Nakhon Ratchasima, 2014.
+   B ok  Nakhon Phanom, announces warning! Heavy rainfall 7-8 November 2026. Warning 22 provinces at risk of sudden flood – heavy
+สภาพอากาศวันนี้ เหนือ ตะวันออกฝนถล่ม, กทม. 60% ใต้ฝนตกหนักหลายพื้นที่ 8-13 พ.ย.
+   A REJ Weather Today: North East Rainfall, KTO 60% Heavy Rain in Many Areas Jul. 8-13
+   B ok  Weather Today North East Rainfall, KTO 60% Heavy rain in many areas November 8-13
+เข้มสกัดขบวนการ “พ่อทิพย์” บังคับ รพ.เอกชนส่งใบรับรองเกิดออนไลน์ เริ่ม 1 ธ.ค. นี้
+   A ok  The 1st of December, private hospitals will be required to send birth certificates online.
+   B ok  "There's a new way to get birth certificates online," he said.
+สรุปเปิดคำเบิกความ ‘อานนท์’ เล่าชีวิต-เจตนา ข้อเสนอปฏิรูปสถาบัน คดีใหญ่ชุมนุมสนามหลวง ตัดส
+   A ok  The 16th December, the Supreme Court of Thailand ruled that the decision to suspend the arrest warrant against former Pr
+   B ok  The 16th of December, the Supreme Court will decide on the case.
+ดีเดย์ 1 ธ.ค.นี้ รพ.เอกชน ต้องส่งหนังสือรับรองเกิดออนไลน์ สกัดขบวนการพ่อทิพย์
+   A ok  On December 1, private hospitals will be required to send birth certificates online.
+   B ok  On December 1st, private hospitals will be required to send birth certificates online.
+รัฐบาลคุมเข้มเอกสารเกิด ป้องกันสวมสิทธิสัญชาติไทย สั่ง รพ.เอกชนกว่า 400 แห่ง ใช้ระบบออนไลน
+   A ok  Government tightens controls on birth certificates to prevent Thai citizenship fraud, ordering 400 private hospitals to 
+   B ok  Government tightens documentation control to prevent Thai citizenship fraud, orders 400 private hospitals to use online 
+บช.น. ประกาศปิดถนนพิษณุโลกตั้งแต่ 00.01 น. วันที่ 8 พ.ย. รับมือการชุมนุมกลุ่ม นปผ. หน้าทำเ
+   A ok  The police have closed Pisanulook road from 01:00 on Jan. 8 to prepare for a protest by the National People's Party in f
+   B ok  The police have closed Pisanulook Road from 01:00 on November 8 to prepare for a protest by the National People's Party 
+เปิด 28 จังหวัด กรมอุตุ เตือนฝนตกหนักมาก เลี่ยงอยู่ที่โล่ง 8-13 พ.ย.ใต้ตกหนักหลายพื้นที่
+   A REJ 28 provinces opened. Meteorological department warns of heavy rainfall, avoiding the open from July 8-13. Severe rain in
+   B ok  28 provinces opened. Meteorological department warns of heavy rainfall, avoiding the open space from November 8-13. Seve
+สกัดขบวนการ ‘พ่อทิพย์’ สวมสิทธิเด็กต่างชาติ! กำชับ รพ.เอกชนแจ้งเกิดออนไลน์ 1 ธ.ค.
+   A REJ 10.30am: The first day of the new year, we will celebrate with a special dinner for our friends and family.
+   B ok  1st December, private hospitals to register birth online
+เจรจา‘ART’คืบหน้า จ่อประกาศผลกลางพ.ย.69
+   A ok  ART negotiations progress, results to be announced in mid-June
+   B ok  ART negotiations progress, results to be announced in mid-November 2026
+กรมอุตุฯ ประกาศ ฉ.11 ไทยตอนบนอากาศแปรปรวน - ภาคใต้ฝนตกหนัก 6-9 พ.ย.
+   A REJ 10. The Great War of the Worlds: Part I - A History of the First World War
+   B ok  The Department of Meteorology announces the 11th edition of the Northern Thailand weather forecast.
+เมียนมาประกาศเลือกตั้งซ่อม 4 เม.ย.70 ท่ามกลางสถานการณ์สู้รบที่ยังไม่สงบ
+   A REJ Burma has announced a May 4, 1970 re-election in the midst of unrelenting fighting.
+   B ok  Myanmar has announced a re-election on April 4, 2027.
+บช.น.ห้ามชุมนุมรอบทำเนียบฯ รัศมี 50 ม. ช่วงวันที่ 5 - 20 พ.ย.69
+   A ok  The police have banned any gathering within 50 meters of the White House from May 5 to 20, 1969.
+   B ok  The U.S. Department of Homeland Security has banned any gatherings within 50 meters of the White House from November 5 t
+ห้องขังว่าง ล้างรอรับ"บุ๋ม-ก๊อต" คาดสอบเครียดทั้งคืนก่อนส่งฝากขัง7พ.ย.
+   A ok  The cell is empty, waiting for "Boom-Got." He's expected to be stressed out all night before being sent back on July 7.
+   B ok  The cell is empty, waiting for "Boom-Got" to be examined all night before being sent to custody on November 7.
+ประกาศกรมอุตุฯ พรุ่งนี้ไทยตอนบนเจอฝนถล่ม ก่อนส่งไม้ต่อภาคใต้รับมือฝนตกหนัก 8-9 พ.ย.
+   A REJ The 1980s were a time of great success for the band, and they continued to perform live in concert until their demise on
+   B ok  The rain will continue to fall in the northern part of Thailand until 9 November.
+ดัชนีความเชื่อมั่นผู้บริโภค ต.ค.69 หดตัว เหตุหนี้ครัวเรือนสูง- น้ำท่วมกระทบรายได้
+   A REJ Consumer confidence index for September 69 contracts due to high household debt and flood impact on income.
+   B REJ Consumer confidence index, October 2016 contracts due to high household debt and flood impact on income.
+แบงก์ชาติ ยันเงินเฟ้อ ต.ค.พุ่งเป็นไปตามคาดการณ์ พร้อมจับตา ‘ทรัมป์’ หลังพ่ายเลือกตั้งสหรัฐ
+   A REJ The Bank of Japan confirms that inflation in September is up to expectations, and keeps an eye on Trump after his defeat
+   B ok  The Bank of Japan confirms that inflation in October is up to expectations, and keep an eye on Trump after his defeat in
+เตรียมเคาะเกณฑ์จัดระเบียบ Data Center 10 พ.ย.นี้ เพิ่มมูลค่าเศรษฐกิจ
+   A REJ Data Centers will be regulated on July 10, and the economy will grow.
+   B ok  Data Centers will be regulated on November 10, and the economy will grow.
+เปิดปฏิทินจ่ายเงินอุดหนุนเด็กแรกเกิด ต.ค.69 - ก.ย.70
+   A REJ Opening the calendar for payment of newborn allowances from Oct. 69 to Jun. 70
+   B REJ Opening of the newborn allowance payment calendar October 2026 - September 2017
+บช.น.ห้ามชุมนุม รัศมีไม่เกิน 50 เมตร รอบทำเนียบรัฐบาล 5 - 20 พ.ย.
+   A REJ Police bans any gathering within 50 meters of the government building from July 5 to 20.
+   B ok  The police have banned any gathering within 50 meters of the government building from November 5 to 20.
+เปิดสเปกรถหุ้มเกราะสุดแกร่ง 'THE BEAST แม่มเหยียบมิด'ก่อนระเบิดความมัน 12 พ.ย.นี้ ในโรงภาพ
+   A REJ Unveils the specs of 'The Beast', a powerful armored car that will hit theaters on July 12.
+   B ok  Unveils the specs of its new armored car, "The Beast", before it hits theaters on November 12.
+ศาลฎีกา ลุยตรวจหลักฐานคดี สว.สำรอง ฟ้อง ‘แดง-สมพาน’ สมัครผิดกลุ่ม คาดตัดสิน ธ.ค.นี้
+   A ok  The Supreme Court of the Republic of Korea has decided to investigate evidence in the case of S.V. Suppaen, who was char
+   B ok  The Supreme Court of India has decided to hold the case against Sang-Sampan for 10 years.
+ศาลฎีกาฯ นัดไต่สวน 24 พ.ย. คดี สว.สำรอง ร้อง 2 สว.สมัครผิดกลุ่ม ดึง สมชัย-ยิ่งชีพ เบิกความ
+   A ok  The Supreme Court will hear the case on 24th of June.
+   B REJ Supreme Court to hear 2017 reserve deputy police officers case on November 24, deferring Samchai-Yingseop charges
+สกัดม็อบภาคใต้! บช.น. สั่งห้ามชุมนุม รอบทำเนียบฯ ถึง 20 พ.ย.
+   A REJ Police bans rally around the White House until Jan. 20
+   B ok  Police bans rally around the White House until November 20.
+ผบช.น. ประกาศห้ามชุมนุมรอบทำเนียบรัฐบาล รัศมีไม่เกิน50เมตร ตั้งแต่ 5-20 พ.ย.
+   A REJ C.P.N. announces ban on gatherings around the government building within a radius of 50 meters from Jan. 5-20
+   B ok  C.P.N. has banned any gathering within 50 meters of the government building from November 5 to 20.
+ศาลคดีเลือกตั้ง ตรวจหลักฐานคดียื่นร้อง ‘สว.แดง-สมพาน’สมัครผิดกลุ่ม คาดธ.ค.รู้ผล
+   A ok  Election Court to examine evidence of ‘Red-Sampaean’s’ complaint against group who applied wrongly
+   B ok  The election court examines evidence of the case and filed a complaint against ‘Sgt. Sang-Sampae’ for failing to apply i
+ศาลฎีกาฯ นัดไต่สวน 24 พ.ย คดีสว.สมัครผิดกลุ่ม สมชัย-เป๋า ยิ่งชีพ เบิกความ คาดพิพากษาธ.ค.69
+   A ok  Supreme Court to hear Samchai-Penga Yikseop group's plea deferred for Dec. 69
+   B ok  Supreme Court to hear Samchai-Penga Yikseop group's case on 24th of June, deferring the trial until December 2026
+ประกาศฉบับ 10 อุตุฯ แนะวางแผนเดินทาง 6-9 พ.ย. รับมือฝนฟ้าคะนองทั่วประเทศ
+   A ok  10th Amendment: Meteorological Department advises travel plans for June 6-9, to prepare for thunderstorms across the cou
+   B ok  10th Amendment: Meteorological Department advises travelers to plan for November 6-9, due to heavy rainfall across the c
+เอกนิติ จ่อชง ครม. เคาะเกณฑ์จัดระเบียบ Data Center 10 พ.ย. นี้
+   A ok  Ek Niti to lead cabinet's data center regulation on 10th of July
+   B ok  Ek Niti to lead cabinet on data center regulations November 10
+บช.น.สั่งห้ามชุมนุมรัศมี 50 เมตรรอบทำเนียบ ถึง 20 พ.ย. หลัง นปผ. เคลื่อนคาราวานมุ่งหน้า กท
+   A REJ Police bans 50-metre radius of the building until May 20 after NPP caravan headed for capital.
+   B ok  Police bans 50-meter radius of the building until November 20 after NCP caravan headed for Delhi.
+หิ้ว 'บุ๋ม-ก๊อต' ฝากขังพรุ่งนี้ 7 พ.ย. พร้อมคัดค้านการประกันตัว
+   A REJ "Boom-Got" case to be detained tomorrow, Feb. 7, with bail appeals
+   B ok  "Boom-Got" case to be detained tomorrow, November 7th. Bail appeals filed.
+ปลัดมหาดไทย สั่งสังคายนามูลนิธิคนดัง ทำผิดต้องหนาวๆ ร้อนๆ ขีดเส้น ‘มูลนิธิองค์กรทำดี’ ส่งบ
+   A ok  The Secretary of State for Home Affairs ordered the arrest of famous foundations, whose activities were cold and hot.
+   B ok  The Secretary of State for Home Affairs orders the famous foundation to submit its account by November 10.
+มูลนิธิคนดัง มีหนาว! ปลัดมท.สั่งสังคายนาทั่วปท. จี้‘มูลนิธิองค์กรทำดี’ส่งบัญชี10พ.ย.
+   A ok  10/10/2013 - The famous foundation has a cold! Secretary of the city orders to spread the land throughout the province.
+   B REJ The 10th anniversary of the foundation was celebrated on November 10, 2013.
+เพื่อไทย ประชุมใหญ่ เคาะส่ง สรวงศ์ เลือกตั้งซ่อมสระแก้ว ชื่นมื่น ยินดี สุดาวรรณ-นิกร วิวาห
+   A REJ For Thai Party, Major Meeting, Keek-Suk Sang-sung, Elections, Repairing Sra Kaew, Surprise, Happy, Taksavaran - Nigar Ma
+   B ok  For Thai, big meeting, send Sarungsong, election repairs Sra Kaew, happy, Taswarawan-Nigar marriage November 19
+แนวโน้มราคาทองวันนี้ (6 พ.ย. 69) บทวิเคราะห์โดย YLG Bullion
+   A ok  Gold Price Trends Today (6/69) Analysis by YLG Bullion
+   B ok  Gold Price Trends Today (November 6, 2026) Analysis by YLG Bullion
+ปลัด สปน. พร้อมรับข้อเรียกร้องม็อบ ‘กำนันมะโน’ ชุมนุมหน้าทำเนียบฯ 7 พ.ย. เชื่อพูดคุยกันได้
+   A ok  The 7th of July, the protesters held a demonstration in front of the Korean National Congress.
+   B ok  The 7th of November, the protesters held a demonstration in front of the US Capitol.
+‘ปลัดสปน.’ ส่ง จนท.สแตนด์บายรับ ‘ม็อบกำนันมะโน​’ บุกประชิดทำเนียบ​ฯ 7 พ.ย.​ นี้​
+   A ok  “Secretary of State sends officers on standby to meet the ‘Mob’ in front of the White House”
+   B ok  “Secretary of State sends officers on standby to meet ‘Mob’ protesters near the White House”
+ภัทรพงษ์ ฉะเฮ้ง นิยามเรื่องด่วนสวนความจริง ชงแก้สารพิษปราจีนปลายเดือนพ.ย. จี้นายกฯใช้ ม.9-
+   A ok  "Pathepeng Chaheng, defines urgent matter of truth-checking and resolve the poison in late July. Urges Prime Minister to
+   B ok  Pattapong Chaheng defines the urgent issue of investigating the truth, and resolved the poison in late November.
+เช็กเลย! ประกาศอุตุฯ ฉบับ 10 เปิดพื้นที่ฝนตกหนักถึงหนักมาก 6-9 พ.ย.
+   A ok  10th Meteorological Assessment Report: Heavy Rainfall to Severe Storms in the Region from June 6-9
+   B ok  The weather department issued a warning for heavy rainfall from November 6 to 9.
+แจ้งฝนถล่มใต้ รับมือถึง9พ.ย. นราฯโดนหนัก น้ำท่วม4อำเภอ
+   A REJ "Rain alert in the south, expected to last until Jan. 9."
+   B ok  "Rain alert in the south, expected to last until November 9."
+พายุถล่มมืดฟ้ามัวดิน! ตู้น้ำมันล้มครืน เด็กปั๊มแทบปลิว | 6 พ.ย. 69 ...
+   A REJ 6/10/2013 - 9:58am
+   B REJ 2016-11-06.
+เปิด 4 พิกัด ปูพรมค้นเป้าหมาย คดีมูลนิธิองค์กรทำดี ก่อนบุกรวบ บุ๋ม-ก๊อต เช้า 6 พ.ย. หิ้วตั
+   A ok  Four locations opened, carpet search targets set for Charity Foundation case before the raid on Bump-Gott.
+   B ok  Four locations opened, carpet search targets set for Charity Foundation case before the raid on Bump-Gott.
+สภาสังคมสงเคราะห์ฯ ชวนเที่ยวงานวันคนพิการ 14 พ.ย.นี้
+   A REJ The Council of Social Welfare invites you to visit the event on Disabled People's Day, 14th June.
+   B ok  The Council of Social Welfare invites you to visit the Disabled Day on November 14.
+ดรีมเวิลด์ จัดโปร พ.ย. 680 บาท เล่นไม่อั้น 25 รายการ พร้อมเครื่องเล่นใหม่ ‘อันเดอร์เดอะซี’
+   A ok  Dream World offers 25 unlimited games and a new underwater amusement park for just $680.
+   B ok  Dream World November Sale 680 Baht Play Unlimited 25 Items With New 'Under the Sea' Toy
+ประกาศกรมอุตุฯ ฉบับที่ 9 อัปเดตรายชื่อจังหวัดเสี่ยงฝนตกหนักถึงหนักมาก 5-9 พ.ย.
+   A REJ The 9th Meteorological Department announcement updates the list of provinces at risk of heavy to very heavy rainfall fro
+   B ok  The 9th Meteorological Department announcement updates the list of provinces at risk of heavy to very heavy rainfall fro
+ด่วน! กกต.รับรองผลเลือกตั้งบอร์ดประกันสังคม 14 คน เปิดคัดค้าน 7 วัน ก่อนชง รมว.แรงงาน แต่ง
+   A REJ URGENT! CEC APPROVES RESULTS OF SOCIAL SERVICE BOARD ELECTION, 14 PEOPLE OPEN FOR CONTESTS IN THE FIRST SEVEN DAYS BEFOR
+   B ok  Election Commission confirms results of 14 Social Security Board elections, opens seven days' appeal before appointing L
+"พระบุญสิน" เตรียมลาสิกขา คัมแบ็กคืนสนาม 1 ธ.ค. 2569 กลับมาปฏิบัติหน้าที่ในบทบาท "ที่ปรึกษ
+   A ok  "The Lord of the Rings" is preparing to retire from combat on December 1, 2569 and return as a "Counsel to the Army Comm
+   B ok  "The Lord of the Rings" is preparing to retire and make a comeback on December 1, 2026. He will return as an adviser to 
+ศาลฎีกา ยกคำร้อง กกต. ขอเลื่อนไต่สวนคดีคุณสมบัติ สว. ยันเดินหน้าไต่สวนพยาน 21 ธ.ค.นี้
+   A ok  The Supreme Court withdraws the CEC's request to postpone the hearing of your qualifications.
+   B ok  Supreme Court withdraws CEC's request to postpone hearing of eligibility case. Sgt. confirms going ahead with witness he
+"พระบุญสิน" เตรียมสึกปลาย พ.ย. นี้ คัมแบ็กนั่งที่ปรึกษา ผบ.ทบ.
+   A ok  "The Lord of the Rings" is preparing to make a comeback as Army Chief of Staff in late June.
+   B ok  "The Lord of the Rings" is set to make a comeback as Chief of Staff in late November.
+เช็กอุณหภูมิรายภาค 8-11 พ.ย. กรมอุตุฯ เผยลมหนาวระลอกแรก ‘เหนือ-อีสาน’ ต่ำสุด 17 องศา กทม. 
+   A ok  17-23 degrees in Seoul, the lowest temperatures recorded since early winter
+   B REJ 2014-11-17.  "The first day of the winter in Seoul, temperatures drop to -3 degrees".
+ระเบิดศึกวอลเลย์บอลไทยแลนด์ ลีก ครั้งที่ 22 รวม 16 ทีมยิงสด 13 พ.ย.นี้
+   A REJ 22nd Thailand Volleyball League, 16 teams shooting live on July 13th.
+   B ok  The 22nd Thailand Volleyball League will be launched on November 13th.
+อุตุฯ เตือนฉบับ 8 ทั่วไทยรับมือฝนฟ้าคะนอง ลมแรง ลูกเห็บตก 5–9 พ.ย.นี้
+   A REJ The 8th edition of the Meteorological Department's warning for heavy rain, strong wind and snowfall in Thailand from Jan
+   B ok  The 8th edition of the Meteorological Department’s warning for stormy rain, strong wind and snowfall in Thailand from No
+เตือนสภาพอากาศแปรปรวนภาคใต้ รับมือฝนตกหนักมาก 5–9 พ.ย. 69
+   A REJ 5-9 July, 69
+   B ok  Variable weather warning for the southern region due to heavy rainfall 5–9 November 2026
+สถานทูตฯเตือนคนไทยเลี่ยงพื้นที่ชุมนุม-ฝรั่งเศสนัดประท้วงใหญ่ 5-7พ.ย.
+   A REJ The Embassy warns Thai people to avoid the area of assembly - France appointed large protest 5-7 Jan.
+   B ok  The Embassy warns Thai people to avoid the area of assembly - France appointed a large protest November 5-7.
+เตือนภัยพิบัติ! ภูเก็ต-ชายฝั่งภาคใต้ เตรียมรับมือฝนตกหนัก น้ำท่วม ดินถล่ม 7-9 พ.ย.
+   A REJ Disaster Warning! Phuket-South Coast Prepare for Heavy Rainfall, Floods and Landslides 7-9 Jan.
+   B ok  Disaster alert! Phuket-South Coast prepare for heavy rain, floods and landslides November 7-9
+รัฐบาลแจ้งปิดทางออก M6 เชื่อม M9 ฝั่งตะวันตก 6 พ.ย. 69-31 มี.ค. 70 รองรับการก่อสร้าง M9 แน
+   A REJ Government announces closure of M6 exit connecting to the west side of M9 from 06/07/1969 until 31/03/1970 for construct
+   B REJ Government announces closure of M6 exit connecting to M9 west shore from November 6, 2026 - March 31, 27 for constructio
+อุตุ เตือน ฉ.8 อากาศแปรปรวนฝนตกหนักภาคใต้ 5-9 พ.ย.
+   A REJ 8. Heavy rain in southern regions from Jan. 5-9
+   B ok  Storm Warning, Chapter 8. Heavy rainfall in the south from November 5-9
+เช็กชื่อจังหวัด! กรมอุตุฯ ประกาศฉบับที่ 8 เตือนฝนตกหนักถึงหนักมาก 5-9 พ.ย.
+   A REJ The Department of Meteorology issued the 8th edition of its rain warning for June 5-9.
+   B ok  The Department of Meteorology issued the 8th edition of its rain warning for November 5-9.
+พยากรณ์อากาศ (5 พ.ย.) มีฝนตกหนักบางแห่ง ภาคกลางตอนล่าง ภาคตะวันออก ภาคใต้ กทม.และปริมณฑล
+   A ok  The weather forecast (5th of June) says that there will be some heavy rainfall in the lower central, eastern and souther
+   B ok  The weather forecast (November 5) says that there will be some heavy rainfall in the lower central, eastern and southern
+เพื่อไทย ประชุมใหญ่ 6 พ.ย. ขอมติส่ง สรวงศ์ เทียนทอง ชิงเลือกตั้งซ่อม ส.ส.สระแก้ว เขต 3
+   A REJ For Thai People's Party General Meeting 6th of January, requesting a resolution to send Sakrong Tean Tong as candidate f
+   B ok  For Thai, November 6 General Meeting Resolution to Send Sae-Rung Tin Tong To The Election As Member Of Parliament for Sr
+“พิพัฒน์” แจ้งข่าวดี 25 ธ.ค. M6 วิ่งฟรีตลอดสาย เร่งเปิดด่วนพระราม 3 บางช่วง แก้คอขวด M82
+   A ok  25 December, M6 free all the way. Ramkhamhaeng Expressway opens some sections of Rama III and eliminates bottleneck on M
+   B ok  25 December, M6 free all the way. Ramkhamhaeng Expressway opens in part.
+ประกาศกรมอุตุฯ ฉบับที่ 7 ฝนถล่มไทยตอนบน 5-6 พ.ย. ก่อนส่งไม้ต่อภาคใต้รับมือฝนตกหนักมากถึง 9
+   A ok  The 7th edition of the Meteorological Department’s announcement on rainfall in upper Thailand from July 5-6 before sendi
+   B ok  The 7th Meteorological Department announcement says that rain will hit the upper Thailand on November 5-6, before sendin
+อุตุฯ เตือนฉบับ 6 ไทยตอนบนอากาศแปรปรวน ภาคใต้ฝนตกหนักถึงหนักมาก 5-9 พ.ย.69
+   A REJ The weather forecast for the next 10 days is:
+   B ok  The weather forecast for the 5th to 9th of November, 2026.
+เอกนิติ ชี้ต้องเปลี่ยน K-Shape เป็น V-Shape จ่อประกาศรีฟอร์มคลังด้วย ‘STI DEE’ 11 พ.ย.นี้
+   A REJ “There is no reason to believe that the 1980s were a time of political change.”
+   B REJ “There is no reason why the 10th Amendment should be amended to allow for a new term of office.”
+เส้นตาย 6 พ.ย."ช่างเอ๋" ไม่มาพบตำรวจกะทู้ เจอหมายจับรุกป่าภูเก็ตแน่
+   A ok  Dead line is 6th of July. If you don't meet the police, I'll send a warrant to Phuket Forest.
+   B ok  Dead line November 6. If you don't meet the police, I will send a warrant to Phuket Forest.
+ตำรวจทางหลวง จัดทำแผนระบายรถ M6–มิตรภาพ เข้ากรุงเทพ เริ่มใช้ 8 พ.ย.นี้
+   A ok  Highway Police prepares road clearance plan for M6-Amitiate to Bangkok, starting on 8th of July.
+   B ok  Highway Police prepares road clearance plan for M6-Amity to Bangkok, starting November 8.
