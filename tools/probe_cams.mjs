@@ -577,6 +577,41 @@ async function round19() {
   }
 }
 if (only === "r19") await round19();
+/* ---------- round 20 (2026-11-08): the last field and image questions before building the new sources ---------- */
+async function round20() {
+  const show = (k, r, n = 1200) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  const attrs = async (k, base, n = 2) => { const r = await twice(`${base}/query?where=1%3D1&outFields=*&f=json&resultRecordCount=${n}&outSR=4326`, 40000); line(k, r); try { const j = JSON.parse(r.b); for (const f of (j.features || []).slice(0, n)) console.log("   attrs " + JSON.stringify(f.attributes).slice(0, 1400) + " geom " + JSON.stringify(f.geometry)); } catch {} const c = await twice(`${base}/query?where=1%3D1&returnCountOnly=true&f=json`); console.log("   count " + c.b.toString().slice(0, 40)); };
+  const item = async (k, id) => { const r = await twice(`https://www.arcgis.com/sharing/rest/content/items/${id}?f=json`); try { const j = JSON.parse(r.b); console.log(`item ${k}: ${j.title} | owner ${j.owner} | access ${j.access} | licence: ${String(j.licenseInfo || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 600)} | credits ${j.accessInformation}`); } catch { line("item " + k, r); } };
+  await attrs("CalOES", "https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CalOES_California_Webcams/FeatureServer/0", 4);
+  const ci = await twice("https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CalOES_California_Webcams/FeatureServer?f=json"); try { const j = JSON.parse(ci.b); console.log("   CalOES service item " + j.serviceItemId + " | " + String(j.serviceDescription || "").slice(0, 300)); if (j.serviceItemId) await item("CalOES", j.serviceItemId); } catch {}
+  const grp = await twice("https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CalOES_California_Webcams/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&f=json&resultRecordCount=2000");
+  try { const j = JSON.parse(grp.b); const by = {}; for (const f of j.features || []) { const a = f.attributes; const k = Object.entries(a).filter(([, v]) => typeof v === "string" && /^https?:/.test(v)).map(([n, v]) => n + "=" + new URL(v).host).join(" ") || "no-url"; by[k] = (by[k] || 0) + 1; } console.log("   CalOES url hosts in first 2000: " + JSON.stringify(by).slice(0, 1500)); } catch (e) { console.log("   " + e); }
+  await attrs("IL", "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0");
+  await item("IL", "8a885da23dfb46caaa1827ad920fb5b1");
+  await attrs("AUS", "https://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/TRANSPORTATION_traffic_cameras/FeatureServer/0", 1);
+  await attrs("TOR", "https://gis.toronto.ca/arcgis/rest/services/cot_geospatial2/FeatureServer/3", 1);
+  await attrs("Lexington", "https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/ArcGIS/rest/services/Traffic_Camera_Locations_Public_view/FeatureServer/0");
+  await attrs("King County", "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/TRAFFICCAMERA_POINT_2029/FeatureServer/0");
+  const lx = "https://6855e4345af72.streamlock.net:1935/thumbnail?application=lexington-live&streamname=lex-cam-014.stream&size=600x400"; await img(lx, "  Lexington thumb");
+  for (const u of ["https://traffic.ottawa.ca/beta/camera?id=49", "https://traffic.ottawa.ca/map/camera?id=49", "https://traffic.ottawa.ca/opendata/camera?c=49", "https://traffic.ottawa.ca/camera?id=49", "https://traffic.ottawa.ca/service/camera/49/image"]) await img(u, "  Ottawa try");
+  for (const u of ["https://www.seattle.gov/trafficcams/images/Fauntleroy_SW_Cloverdale_NS.jpg", "https://web.seattle.gov/trafficcams/images/Fauntleroy_SW_Cloverdale_NS.jpg", "https://web6.seattle.gov/travelers/images/Fauntleroy_SW_Cloverdale_NS.jpg"]) await img(u, "  Seattle try");
+  show("Seattle camera js", await twice("https://web.seattle.gov/Travelers/js/camera.video.js"), 3000);
+  for (const u of ["https://ss.nmroads.com/snapshots/i25_lowerlabajada.jpg", "https://nmroads.com/snapshots/i25_lowerlabajada.jpg"]) await img(u, "  NM https");
+  const ms = await twice("https://s3-eu-central-1.amazonaws.com/app-prod-static-fra.meteoswiss-app.ch/v1/webcam_overview.json"); try { const j = JSON.parse(ms.b); const st = j.stations || []; console.log("   MeteoSwiss keys " + JSON.stringify(Object.fromEntries(Object.entries(st[0]).map(([k, v]) => [k, typeof v === "string" && v.length > 200 ? "(" + v.length + " chars)" : v]))).slice(0, 1500)); console.log("   other top keys " + Object.keys(j).join(",")); } catch (e) { console.log("   " + e); }
+  for (const u of ["https://s3-eu-central-1.amazonaws.com/app-prod-static-fra.meteoswiss-app.ch/v1/webcams/ZER.jpg", "https://www.meteoswiss.admin.ch/product/output/webcams/"]) show("MeteoSwiss try " + u, await get(u, 20000), 200);
+  const mt = await twice("https://app.mdt.mt.gov/atms/public/cameras"); const t = mt.b.toString("utf8"); console.log("   MT lat mentions " + (t.match(/lat(itude)?["':=\s]+[-\d.]{4,}/gi) || []).slice(0, 3).join(" | ") + " | data- attrs " + [...new Set(t.match(/data-[a-z-]+=/g) || [])].slice(0, 20).join(" ") + " | sample " + t.slice(t.indexOf("RWIS") - 600, t.indexOf("RWIS") + 400).replace(/\s+/g, " "));
+  // Quebec: the camera window page in a browser; which image does it show?
+  const { chromium } = await import("playwright"); const br = await chromium.launch();
+  for (const [k, u] of [["QC", "https://www.quebec511.info/Carte/Fenetres/FenetreVideo.html?id=3998"], ["OTT", "https://traffic.ottawa.ca/en/traffic-map"], ["SEA", "https://web.seattle.gov/travelers/"]]) {
+    const pg = await (await br.newContext()).newPage(); const seen = [];
+    pg.on("response", (r) => { const ct = r.headers()["content-type"] || ""; if (/image\/(jpe?g|png)|mpegurl|json/.test(ct) && !/google|gstatic|tile|icon|logo/i.test(r.url())) seen.push(r.status() + " " + ct.split(";")[0] + " " + r.url().slice(0, 200)); });
+    try { await pg.goto(u, { waitUntil: "networkidle", timeout: 45000 }); } catch (e) { seen.push("goto " + e.message.slice(0, 60)); }
+    if (k !== "QC") { try { await pg.click("text=/camera/i", { timeout: 5000 }); } catch {} }
+    await pg.waitForTimeout(5000); console.log(k + " title " + (await pg.title().catch(() => "")) + "\n   " + seen.slice(0, 25).join("\n   "));
+  }
+  await br.close();
+}
+if (only === "r20") await round20();
 if (only === "r13") await round13();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
