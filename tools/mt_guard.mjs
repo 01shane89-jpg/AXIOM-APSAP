@@ -20,6 +20,7 @@
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
 
 import { MONTHS } from "./mt_months.mjs";
+import { WEEKDAYS } from "./mt_weekdays.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -83,6 +84,8 @@ export function mtSuspect(orig, en, now = Date.now()) {
   if (n) return "number " + n + " not in the original";
   const mo = extraMonth(orig, en);
   if (mo) return "month " + mo + " not in the original";
+  const wd = extraWeekday(orig, en);
+  if (wd) return "weekday " + wd + " not in the original";
   return "";
 }
 
@@ -183,6 +186,27 @@ export function extraMonth(orig, en) {
     if (!named) return w;
   }
   return "";
+}
+
+// A weekday the original does not give. 2026-11-08, 88,095 stored translations: about 100 named a weekday the original did
+// not, nearly all dated broadcast titles ("LE JOURNAL DE 19H00 22 OCTOBRE 2026" -> "2026 October 22, Sunday", "Jedi 05 Novanm"
+// -> "Sunday 05 November", "ከቅዳሜ እስከ ቅዳሜ" -> "From Sunday to Saturday"). If the original names any weekday, the English may
+// name only those; if it names none, an English weekday counts as invented only when the original has a number in it (a date),
+// so plain sentences in languages missing from WEEKDAYS are left alone. Text with broken characters (U+FFFD) is not judged.
+const EN_DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+const EN_DAY_RE = /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)s?\b/gi;
+const DAY_STEMS = WEEKDAYS.map((l) => l.map((st) => st.normalize("NFKC")));
+export function extraWeekday(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  if (!orig.trim() || orig.trim() === en.trim()) return "";
+  const said = [...en.matchAll(EN_DAY_RE)].map((m) => m[1]);
+  if (!said.length) return "";
+  const o = orig.normalize("NFKC").toLowerCase();
+  if (o.includes("\ufffd")) return "";
+  const given = new Set();
+  DAY_STEMS.forEach((l, d) => { if (l.some((st) => o.includes(st))) given.add(d); });
+  if (given.size) return said.find((w) => !given.has(EN_DAYS.indexOf(w.toLowerCase()))) || "";
+  return /\d/.test(asciiDigits(o)) ? said[0] : "";
 }
 
 // A headline already in English under another language's label. Latin letters only (no accented letters, which English
