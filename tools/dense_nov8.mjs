@@ -8,7 +8,8 @@
 //   usgs-blast       Explosion-type seismic events (explosions, nuclear/chemical/mining blasts, sonic booms) in the USGS catalog
 //   bfs-odl          Official gamma dose rate network of Germany (BfS ODL, about 1,700 stations, hourly)
 //   ripe-routing     Routed address space per country (RIPE RIS): drops against three days earlier
-//   un-pko           UN peacekeeping missions with deployed strength (UN DPO via HDX, CC BY-IGO)
+//   un-pko           UN peacekeeping missions with deployed strength and fatalities of the last 12 months (UN DPO via HDX, CC BY-IGO)
+//   eu-regimes       EU sanctions regimes by target country, with last amendment (EU Sanctions Map; the EU's own list file errors)
 //   sat-pass         Reconnaissance, radar and Earth-imaging satellites passing over each country in the next 12 hours
 //                    (CelesTrak public orbital elements, propagated here: approximate)
 // Licences are in each feed's "lic". IMF terms and UN press copyright are not clearly open for commercial reuse, so those
@@ -283,18 +284,38 @@ export function pkoMissions(missions, posts) {
     return { acr: m.mission_acronym, name: m.mission_name, place: m.mission_location, lat, lon, total, cats: s ? s.cats : {}, period: s ? s.end : "" };
   });
 }
+/** Fatality rows into {mission: {n, malicious, causes, last}} for the 12 months before now (ms). No names are in the file. */
+export function pkoFatalities(rows, now) {
+  const from = new Date(now - 365 * 864e5).toISOString().slice(0, 10), out = {};
+  for (const r of rows) {
+    if (!(r.incident_date >= from) || r.type_of_casualty !== "Fatality") continue;
+    const o = out[r.mission_acronym] || (out[r.mission_acronym] = { n: 0, malicious: 0, causes: {}, last: "" });
+    o.n++; if (/malicious/i.test(r.type_of_incident)) o.malicious++;
+    o.causes[r.type_of_incident || "Unknown"] = (o.causes[r.type_of_incident || "Unknown"] || 0) + 1;
+    if (r.incident_date > o.last) o.last = r.incident_date;
+  }
+  return out;
+}
 run("un-pko", async (g) => {
   const [mt, pt] = await Promise.all([g(HDX + "819dce10-ac8a-4960-8756-856a9f72d820/resource/7f738eb4-6f77-4b5c-905a-ed6d45cc5515/download/dppadposs-pko.csv", "text"),
     g(HDX + "f6b91534-494c-45b1-97a4-cd01bafb4e72/resource/b1efbe57-2bbe-4f3b-9b05-6c2c2e891822/download/dpo-postsactual.csv", "text")]);
   const ms = pkoMissions(csvObjects(mt), csvObjects(pt));
-  const items = ms.map((m) => {
+  let deaths = {};
+  try { deaths = pkoFatalities(csvObjects(await g(HDX + "4ce16b45-5526-471d-8918-2ed76082f1c8/resource/4cfc43b6-cc9c-403b-966f-fc37b8dd7d4b/download/dppadposs-fatalities.csv", "text")), Date.now()); }
+  catch (e) { console.error("un-pko: fatalities " + e.message); }
+  const items = ms.flatMap((m) => {
     const ccs = withOki(uniq([...(m.lat != null ? ccsAt(m.lat, m.lon, 0.5) : []), ...ccsInText(m.name + " " + m.place)]));
     const cats = Object.entries(m.cats).filter(([, n]) => n > 0).map(([k, n]) => Math.round(n) + " " + k.toLowerCase()).join(", ");
-    return { title: "UN peacekeeping: " + m.acr + " (" + m.name + ")" + (m.total ? ", about " + Math.round(m.total).toLocaleString("en-US") + " personnel" : ""),
+    const base = { title: "UN peacekeeping: " + m.acr + " (" + m.name + ")" + (m.total ? ", about " + Math.round(m.total).toLocaleString("en-US") + " personnel" : ""),
       detail: "Headquarters: " + (m.place || "not given") + "." + (cats ? " Average strength for the budget period to " + m.period + ": " + cats + "." : ""),
       date: m.period ? m.period + "T00:00:00Z" : "", lat: m.lat, lon: m.lon, url: "https://peacekeeping.un.org/en/where-we-operate", sev: 1, kind: "UN peacekeeping mission", value: m.total ? Math.round(m.total) : null, ccs };
+    const d = deaths[m.acr], out = [base];
+    if (d && d.n) out.push({ title: "UN peacekeeping fatalities, " + m.acr + ": " + d.n + " in the last 12 months" + (d.malicious ? " (" + d.malicious + " by malicious act)" : ""),
+      detail: "By cause: " + Object.entries(d.causes).map(([k, n]) => n + " " + k.toLowerCase()).join(", ") + ". Latest on " + d.last + ". UN DPO fatality records (no names).",
+      date: d.last + "T00:00:00Z", lat: m.lat, lon: m.lon, url: "https://peacekeeping.un.org/en/peacekeeping-fatalities", sev: d.malicious ? 2 : 1, kind: "UN peacekeeping fatalities", value: d.n, ccs });
+    return out;
   }).filter((x) => x.ccs.length);
-  return { items, globals: items, note: ms.length + " active missions" };
+  return { items, globals: items.filter((x) => x.kind === "UN peacekeeping mission"), note: ms.length + " active missions, " + Object.values(deaths).reduce((a, d) => a + d.n, 0) + " fatalities in 12 months" };
 });
 
 // ---------------------------------------------------------------- satellite overflights (CelesTrak)
@@ -348,4 +369,31 @@ run("sat-pass", async (g) => {
       date: new Date(t0).toISOString(), lat: first.la, lon: first.lo, url: "https://celestrak.org/NORAD/elements/", sev: mil.length >= 5 ? 2 : 1, kind: "Satellite overflights", value: list.length, ccs: withOki([cc]) };
   });
   return { items, note: sats.length + " satellites propagated over 12 hours; " + items.length + " countries overflown" };
+});
+
+// ---------------------------------------------------------------- EU sanctions regimes (EU Sanctions Map)
+// The EU's consolidated list file (webgate.ec.europa.eu/fsd/fsf) answered HTTP 500 to every token on 8 Nov 2026, from the
+// runners. The EU Sanctions Map's public API lists every regime with its target country (ISO alpha-3 "programme"), last
+// amendment and expiry: one item per regime and country. Thematic regimes (terrorism, cyber, human rights) name no country
+// and are left out. Retry the list file later for the named persons and entities.
+feed("eu-regimes", { name: "EU sanctions regimes by country (EU Sanctions Map)", org: "Council of the European Union / European Commission, EU Sanctions Map", cat: "Sanctions",
+  lic: "EU institutions' reuse policy (reuse allowed with credit)", url: "https://www.sanctionsmap.eu/", everyHours: 24 });
+/** One regime record into items (one per target country). */
+export function euRegimeItems(r, now) {
+  const progs = Array.isArray(r.programme) ? r.programme : [], amend = +r.amendment ? new Date(+r.amendment * 1000) : null, exp = +r.expiration ? new Date(+r.expiration * 1000) : null;
+  const measures = (((r.measures || {}).data) || []).map((m) => (m && (m.type && m.type.data && m.type.data.title)) || (m && (m.title || m.name)) || "").filter(Boolean);
+  const ccs = withOki(uniq(progs.map((a) => ccFromA3(a))));
+  if (!ccs.length) return [];
+  const recent = amend && now - amend.getTime() < 30 * 864e5;
+  return [{ title: "EU sanctions: " + String(r.specification || "").trim() + (recent ? " (amended " + day(amend) + ")" : ""),
+    detail: [amend ? "Last amended " + day(amend) + "." : "", exp ? "In force until " + day(exp) + "." : "", measures.length ? "Measures: " + uniq(measures).join(", ") + "." : "",
+      (((r.legal_acts || {}).data) || []).length + " legal acts."].filter(Boolean).join(" "),
+    date: amend ? amend.toISOString() : "", url: "https://www.sanctionsmap.eu/#/main/details/" + r.id + "/", sev: recent ? 2 : 1, kind: "EU sanctions regime", ccs }];
+}
+run("eu-regimes", async (g) => {
+  const j = await g("https://www.sanctionsmap.eu/api/v1/regime");
+  const list = j.data || [];
+  if (!list.length) throw new Error("no regimes in the reply");
+  const items = list.flatMap((r) => euRegimeItems(r, Date.now()));
+  return { items, note: list.length + " regimes, " + items.length + " naming a country" };
 });

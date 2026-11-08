@@ -1,5 +1,5 @@
 // New dense feeds of 8 Nov 2026 (tools/dense_nov8.mjs): chokepoint summary, RFJ tags, VAAC advisory parsing.
-import { chokeSummary, rfjTags, vaaParse, blastItem, odlSummary, routeChange, pkoMissions, subPoint } from "../tools/dense_nov8.mjs";
+import { chokeSummary, rfjTags, vaaParse, blastItem, odlSummary, routeChange, pkoMissions, subPoint, pkoFatalities, euRegimeItems } from "../tools/dense_nov8.mjs";
 let bad = 0;
 const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) bad++; };
 const rows = [];
@@ -38,6 +38,14 @@ const pk = pkoMissions([{ mission_acronym: "UNMISS", mission_name: "UN Mission i
   [{ mission_acronym: "UNMISS", end_date: "2023-06-30", category: "Military contingents", actual_average: "100" }, { mission_acronym: "UNMISS", end_date: "2024-06-30", category: "Military contingents", actual_average: "13000" },
    { mission_acronym: "UNMISS", end_date: "2024-06-30", category: "Individual police", actual_average: "500" }]);
 ok(pk.length === 1 && Math.abs(pk[0].lat - 4.8517) < 1e-6 && pk[0].lon > 31.5 && pk[0].total === 13500, "active mission, comma decimals and latest period strength");
+const fz = pkoFatalities([{ incident_date: "2026-09-17", mission_acronym: "UNMISS", type_of_casualty: "Fatality", type_of_incident: "Malicious Act" },
+  { incident_date: "2026-03-01", mission_acronym: "UNMISS", type_of_casualty: "Fatality", type_of_incident: "Illness" },
+  { incident_date: "2020-01-01", mission_acronym: "UNMISS", type_of_casualty: "Fatality", type_of_incident: "Accident" }], Date.parse("2026-11-08"));
+ok(fz.UNMISS && fz.UNMISS.n === 2 && fz.UNMISS.malicious === 1 && fz.UNMISS.last === "2026-09-17", "fatalities: 12 months only, malicious acts counted");
+const eu = euRegimeItems({ id: "32", specification: "Restrictive measures against Syria", programme: ["SYR"], amendment: String(Date.parse("2026-11-01") / 1000), expiration: "1811800800",
+  measures: { data: [{ type: { data: { title: "Asset freeze" } } }, { title: "Arms embargo" }] }, legal_acts: { data: [{}, {}] } }, Date.parse("2026-11-08"));
+ok(eu.length === 1 && eu[0].ccs[0] === "sy" && eu[0].sev === 2 && /Asset freeze, Arms embargo/.test(eu[0].detail), "EU regime: country, recent amendment, measures");
+ok(euRegimeItems({ id: "1", specification: "Terrorism", programme: ["TERR"] }, Date.now()).length === 0, "thematic regime without a country is left out");
 // Satellite propagation: SAR-LUPE 2 elements of 8 Nov 2026 against SGP4 (satellite.js 5.0.0), 12 hours after epoch -60.50, 104.50
 const gp = { EPOCH: "2026-11-08T07:58:15.212928", MEAN_MOTION: 15.66848761, ECCENTRICITY: 7.013e-5, INCLINATION: 98.1132, RA_OF_ASC_NODE: 76.9967, ARG_OF_PERICENTER: 331.3142, MEAN_ANOMALY: 28.8078, MEAN_MOTION_DOT: 0.00092738 };
 const sp = subPoint(gp, Date.parse("2026-11-08T19:58:15.213Z"));
