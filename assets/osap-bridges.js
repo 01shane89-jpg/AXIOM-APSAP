@@ -202,7 +202,7 @@
     "VERT_CLR_UND_054B", "DECK_COND_058", "SUPERSTRUCTURE_COND_059", "SUBSTRUCTURE_COND_060", "CHANNEL_COND_061", "CULVERT_COND_062",
     "OPR_RATING_METH_063", "OPERATING_RATING_064", "INV_RATING_METH_065", "INVENTORY_RATING_066", "STRUCTURAL_EVAL_067", "POSTING_EVAL_070",
     "DATE_OF_INSPECT_090", "INSPECT_FREQ_MONTHS_091", "FRACTURE_092A", "STRAHNET_HIGHWAY_100", "TEMP_STRUCTURE_103", "SCOUR_CRITICAL_113",
-    "BRIDGE_CONDITION", "LOWEST_RATING", "DATE"];
+    "BRIDGE_CONDITION", "LOWEST_RATING"];
   /* the US and its territories, roughly (a box that also takes in a strip of Canada or Mexico only costs an empty answer) */
   var US_BOX = [[24, -125, 49.5, -66.5], [51, -180, 71.6, -129], [18.8, -160.5, 22.4, -154.6], [17.6, -67.4, 18.6, -64.5], [13.2, 144.5, 20.6, 146.1], [-14.6, -171, -14, -168.1]];
   function inUS(b) { return US_BOX.some(function (x) { return b.getSouth() <= x[2] && b.getNorth() >= x[0] && b.getWest() <= x[3] && b.getEast() >= x[1]; }); }
@@ -219,14 +219,20 @@
     "15": "movable lift", "16": "movable bascule", "17": "movable swing", "18": "tunnel", "19": "culvert", "20": "mixed types", "21": "segmental box girder", "22": "channel beam", "00": "other" };
   var DLOAD = { 1: "H 10", 2: "H 15", 3: "HS 15", 4: "H 20", 5: "HS 20", 6: "HS 20 + mod", 7: "Pedestrian", 8: "Railroad", 9: "HS 25", A: "HL-93", B: "Greater than HL-93", C: "Other", 0: "Other or unknown" };
   var RMETH = { 0: "field evaluation and engineering judgment", 1: "load factor", 2: "allowable stress", 3: "load and resistance factor (LRFR)", 4: "load testing",
-    5: "no rating analysis performed", 6: "load factor, as a rating factor", 7: "allowable stress, as a rating factor", 8: "LRFR, as a rating factor" };
+    5: "no rating analysis performed", 6: "load factor, as a rating factor", 7: "allowable stress, as a rating factor", 8: "LRFR, as a rating factor",
+    A: "assigned from the design (load factor)", B: "assigned from the design (allowable stress)", C: "assigned from the design (LRFD)", D: "assigned from the design" };
   var OWNER = { "01": "State highway agency", "02": "County highway agency", "03": "Town or township", "04": "City or municipal", "11": "State park, forest or reservation",
     "12": "Local park, forest or reservation", "21": "Other state agency", "25": "Other local agency", "26": "Private (not railroad)", "27": "Railroad", "31": "State toll authority",
     "32": "Local toll authority", "60": "Other federal agency", "61": "Indian tribal government", "62": "Bureau of Indian Affairs", "63": "Bureau of Fish and Wildlife",
     "64": "US Forest Service", "66": "National Park Service", "68": "Bureau of Land Management", "69": "Bureau of Reclamation", "70": "Corps of Engineers (civil)",
     "71": "Corps of Engineers (military)", "72": "Air Force", "73": "Navy or Marines", "74": "Army", "75": "NASA", "76": "Metropolitan Washington Airports Service", "80": "Unknown" };
   var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  function code(v) { return v == null ? "" : String(v).trim(); }
+  /* record text arrives with HTML entities in it ("PE&#165;A", "&amp;"): decoded as plain text (a textarea runs nothing), then escaped */
+  var TA = null;
+  function code(v) {
+    var s = v == null ? "" : String(v).trim(); if (s.indexOf("&") < 0) return s;
+    TA = TA || D.createElement("textarea"); TA.innerHTML = s; return TA.value.trim();
+  }
   function num(v) { var n = parseFloat(v); return isFinite(n) ? n : null; }
   /* "423" or "0423" (month and two-digit year) -> "Apr 2023"; "" when it cannot be read */
   function inspDate(v) {
@@ -253,7 +259,6 @@
     var n = num(v), mm = code(m); if (n == null) return null;
     var how = RMETH[mm] ? " (" + RMETH[mm] + ")" : mm ? " (method " + clip(mm, 4) + ")" : "";
     if (/^[678]$/.test(mm)) return n + " as coded" + how + "; not converted to tonnes";
-    if (mm === "5") return "not rated" + how;
     return (Math.round(n * 10) / 10) + " t gross" + how;
   }
   function nbiPop(f) {
@@ -297,7 +302,7 @@
       '<p class="obs">As reported by the state to FHWA at the inspection date: the inspector’s ratings, not a verified current condition. ' +
       "Operating and inventory ratings are gross tonnes of the rating truck, not a military load class. Confirm a crossing by reconnaissance before relying on it.<br>" +
       '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">Source record</a> · ' + esc(NBI.name) + ", " + esc(NBI.lic) +
-      (a.DATE ? ", data dated " + esc(clip(String(a.DATE), 24)) : "") + ", read " + esc(U.at.replace("T", " ").slice(0, 16)) + "Z" +
+      ", read " + esc(U.at.replace("T", " ").slice(0, 16)) + "Z" +
       "<br>" + esc(f._ll[0].toFixed(5) + ", " + f._ll[1].toFixed(5)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(f._ll[0], f._ll[1])) : "") +
       '<span data-nbifp="' + f._n + '">' + (f._fp ? '<br>Fingerprint <code class="fp">' + esc(f._fp.slice(0, 16)) + "…</code>" : "") + "</span></p></div>";
   }

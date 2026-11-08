@@ -47,7 +47,7 @@ const nbiF = (id, x, y, a) => ({ attributes: Object.assign({ OBJECTID: id, STATE
   OPR_RATING_METH_063: "1", OPERATING_RATING_064: 89.8, INV_RATING_METH_065: "1", INVENTORY_RATING_066: 41.7, DATE_OF_INSPECT_090: "423", INSPECT_FREQ_MONTHS_091: 24,
   FRACTURE_092A: "N", STRAHNET_HIGHWAY_100: "1", SCOUR_CRITICAL_113: "N", BRIDGE_CONDITION: "G", LOWEST_RATING: 7 }, a), geometry: { x, y } });
 const NBIJ = { features: [
-  nbiF(11, -122.330, 47.600, { FACILITY_CARRIED_007: "I-90 E-S RAMP", FEATURES_DESC_006A: "I-5/AIRPORT WAY RAMP", LOCATION_009: "JCT I-5" }),
+  nbiF(11, -122.330, 47.600, { FACILITY_CARRIED_007: "I-90 E-S RAMP", FEATURES_DESC_006A: "I-5/AIRPORT WAY RAMP", LOCATION_009: "JCT I-5 &amp; MARTIN PE&#165;A" }),
   nbiF(12, -122.335, 47.602, { FACILITY_CARRIED_007: "OLIVE <img src=x onerror=alert(1)> WAY", FEATURES_DESC_006A: "DUWAMISH RIVER", SUBSTRUCTURE_COND_060: "4", CHANNEL_COND_061: "5",
     SCOUR_CRITICAL_113: "3", OPEN_CLOSED_POSTED_041: "P", BRIDGE_CONDITION: "P", LOWEST_RATING: 4, OPR_RATING_METH_063: "8", OPERATING_RATING_064: 1.12, FRACTURE_092A: "Y12" }),
   nbiF(13, -122.325, 47.598, { FACILITY_CARRIED_007: "SPOKANE ST", FEATURES_DESC_006A: "W WATERWAY", OPEN_CLOSED_POSTED_041: "K", BRIDGE_CONDITION: "F", DECK_COND_058: "5" })] };
@@ -116,7 +116,7 @@ const turnOn = async (p) => {
     us1: T.inUS(L.latLngBounds([47.59, -122.34], [47.61, -122.32])), us2: T.inUS(L.latLngBounds([13.7, 100.4], [13.8, 100.6])), us3: T.inUS(L.latLngBounds([18.4, -66.1], [18.5, -66.0])) }; });
   ok(u.d1 === "Apr 2023" && u.d2 === "Dec 1999" && u.d3 === "" && u.d4 === "", "inspection dates read from month and two-digit year " + JSON.stringify([u.d1, u.d2, u.d3, u.d4]));
   ok(u.c1 === "good" && u.c2 === "bad" && u.c3 === "fair" && u.c4 === "Poor" && u.c5 === "unk" && u.c6 === "bad", "US condition classes from the coded values only " + JSON.stringify(u));
-  ok(/^89\.8 t gross \(load factor\)$/.test(u.r1) && /as coded/.test(u.r2) && /not converted/.test(u.r2) && /^not rated/.test(u.r3) && u.r4 === null, "load ratings: tonnes only for tonne methods, rating factors left as coded");
+  ok(/^89\.8 t gross \(load factor\)$/.test(u.r1) && /as coded/.test(u.r2) && /not converted/.test(u.r2) && /^0 t gross \(no rating analysis performed\)$/.test(u.r3) && u.r4 === null, "load ratings: tonnes only for tonne methods, rating factors left as coded");
   ok(u.us1 && !u.us2 && u.us3, "US and territories found by view (Seattle yes, Bangkok no, San Juan yes)");
   // ---------- below street level: no live read ----------
   let s = await bst(p);
@@ -182,6 +182,7 @@ const turnOn = async (p) => {
   ok(await p.evaluate(() => /US inspection records/.test(document.querySelector(".leaflet-control-container").innerHTML) && /Poor, closed or scour critical/.test(document.querySelector(".leaflet-control-container").innerHTML)), "legend explains the badges");
   let pop = await popWith(p, "I-90 E-S RAMP");
   ok(/US federal inspection record/.test(pop) && /I-90 E-S RAMP over I-5\/AIRPORT WAY RAMP/.test(pop) && /Overall \(FHWA\)<\/dt><dd>Good, lowest rating 7 \(Good\)/.test(pop), "US popup: title and FHWA overall condition");
+  ok(/JCT I-5 &amp; MARTIN PE¥A</.test(pop), "US popup: entities in the record text decoded once, then escaped");
   ok(/Deck<\/dt><dd>7 \(Good\)/.test(pop) && /Last inspected<\/dt><dd>Apr 2023 \(every 24 months\)/.test(pop) && /Status<\/dt><dd>Open, no restriction/.test(pop) && /Scour<\/dt><dd>Not over water/.test(pop), "US popup: component ratings, inspection date, status, scour");
   ok(/Operating rating<\/dt><dd>89\.8 t gross/.test(pop) && /Inventory rating<\/dt><dd>41\.7 t gross/.test(pop) && /Designed for<\/dt><dd>HS 20 loading/.test(pop) && /not a military load class/.test(pop), "US popup: load ratings in tonnes, design load, MLC caution");
   ok(/Built<\/dt><dd>1965/.test(pop) && /Prestressed concrete, continuous box beam/.test(pop) && /Clearance over the deck<\/dt><dd>nothing overhead/.test(pop) && /Clearance underneath<\/dt><dd>8\.23 m \(over a road\)/.test(pop) && /9,815 vehicles \(2022 count\), 8% trucks/.test(pop) && /STRAHNET/.test(pop), "US popup: structure, clearances, traffic, defense highway");
