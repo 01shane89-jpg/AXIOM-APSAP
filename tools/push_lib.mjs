@@ -2,6 +2,7 @@
 // (checks the watches after each refresh and sends new matches through ntfy.sh).
 // A push watch is the same watch the app keeps in the browser (area, categories, severity, words) plus the ntfy channel ("topic")
 // the phone subscribes to. The list is data/push/watches.json in this public repository, so nothing secret may go in it.
+import { subOk } from "./webpush.mjs";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import { tzOk } from "./push_brief.mjs";
@@ -16,6 +17,18 @@ export const MAX_WATCHES = 25, MAX_AREA_POINTS = 150, MAX_WORDS = 20, MAX_LAYERS
 // which the server checks came from this repository's main branch: no shared secret. Each watch is checked with validate()
 // before use. Outside Actions (tests, a run by hand) the local file FILE is read, if there is one.
 export const PUSH_API = process.env.PUSH_API || "https://axiom-osap.netlify.app/api/osap-push";
+// this job's GitHub Actions OIDC token for OSAP's server (audience osap-push), kept 4 minutes (GitHub's last about 5)
+let tokCache = null, tokAt = 0;
+export async function actionsToken() {
+  if (tokCache && Date.now() - tokAt < 240e3) return tokCache;
+  const url = process.env.ACTIONS_ID_TOKEN_REQUEST_URL, rt = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+  if (!url || !rt) throw new Error("no Actions token");
+  const t = await fetch(url + (url.includes("?") ? "&" : "?") + "audience=osap-push", { headers: { authorization: "Bearer " + rt }, signal: AbortSignal.timeout(15000) }).then((r) => r.json());
+  if (!t || !t.value) throw new Error("no Actions token");
+  tokCache = t.value; tokAt = Date.now();
+  return tokCache;
+}
+export const WEBPUSH_API = process.env.WEBPUSH_API || "https://axiom-osap.netlify.app/api/osap-webpush";
 export async function fetchList() {
   // PUSH_LIST: a local test list (the flash loop's test run on a feature branch), checked like the server's; never set on main
   if (process.env.PUSH_LIST) {
@@ -23,11 +36,8 @@ export async function fetchList() {
     for (const w of (o && Array.isArray(o.watches) ? o.watches : [])) { const v = validate(w); if (v.watch) watches.push(v.watch); else console.log("push: skipped a test watch that does not check:", v.error); }
     return { v: 1, watches };
   }
-  const url = process.env.ACTIONS_ID_TOKEN_REQUEST_URL, rt = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
-  if (!url || !rt) return readList();
-  const t = await fetch(url + (url.includes("?") ? "&" : "?") + "audience=osap-push", { headers: { authorization: "Bearer " + rt } }).then((r) => r.json());
-  if (!t || !t.value) throw new Error("no Actions token");
-  const r = await fetch(PUSH_API, { headers: { authorization: "Bearer " + t.value, "x-osap-caller": "actions" }, signal: AbortSignal.timeout(20000) });
+  if (!process.env.ACTIONS_ID_TOKEN_REQUEST_URL || !process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN) return readList();
+  const r = await fetch(PUSH_API, { headers: { authorization: "Bearer " + (await actionsToken()), "x-osap-caller": "actions" }, signal: AbortSignal.timeout(20000) });
   if (!r.ok) throw new Error("push list " + r.status);
   const o = await r.json();
   const watches = [];
@@ -84,5 +94,9 @@ export function validate(w) {
   const tz = tzOk(w.tz) ? w.tz : undefined, brief = w.brief === false ? false : undefined;
   // flash only: send only serious events carried by an official source or two or more sources (tools/flash_lib.mjs)
   const flash = w.flash === true || w.flash === 1;
-  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic, plan, ...(tz ? { tz } : {}), ...(brief === false ? { brief } : {}), ...(flash ? { flash: true } : {}) } };
+  // OSAP's own notifications (tools/webpush.mjs): this device's push subscription; ntfy: false when the ntfy app is not wanted
+  const wp = w.wp != null ? subOk(w.wp) : null;
+  if (w.wp != null && !wp) return { error: "the device's notification subscription does not check" };
+  const ntfy = wp && w.ntfy === false ? false : undefined;
+  return { watch: { id, name, cc: w.cc, area, layers, kw, ...(q ? { q } : {}), minSev, ...(conf ? { conf } : {}), topic, plan, ...(tz ? { tz } : {}), ...(brief === false ? { brief } : {}), ...(flash ? { flash: true } : {}), ...(wp ? { wp } : {}), ...(ntfy === false ? { ntfy } : {}) } };
 }

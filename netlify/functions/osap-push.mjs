@@ -16,6 +16,7 @@ import { admin } from "@netlify/identity";
 import { isOwner, planOf } from "../../tools/owner.mjs";
 import { tierOfRoles, PUSH, PUSH_TOTAL } from "../../tools/tiers.mjs";
 import { verifyActionsToken } from "../../tools/gh_oidc.mjs";
+import { subOk } from "../../tools/webpush.mjs";
 
 const REPO = "01shane89-jpg/AXIOM-APSAP", AUD = "osap-push", OWNER_KEY = "watches", MAX_BYTES = 20000;
 let storeFor = () => getStore({ name: "osap-push", consistency: "strong" });
@@ -98,6 +99,9 @@ export default async (req) => {
     if (text.length > MAX_BYTES) return out({ error: "too large" }, 413);
     let w; try { w = JSON.parse(text); } catch { return out({ error: "not a watch" }, 400); }
     if (!shapeOk(w)) return out({ error: "not a watch the app makes" }, 400);
+    // OSAP's own notifications (2026-11-08): the device's push subscription, only at a browser maker's push service
+    if (w.wp != null) { const s = subOk(w.wp); if (!s) return out({ error: "this device's notification subscription does not check" }, 400); w.wp = s; }
+    if (w.ntfy !== false) delete w.ntfy;
     delete w.plan;   // the plan is the server's to say, never the page's
     const i = o.watches.findIndex((x) => x.id === w.id);
     if (i < 0 && o.watches.length >= max) return out({ error: `Your plan keeps up to ${max} push watch${max === 1 ? "" : "es"}; stop one first.`, plan, max }, 409);

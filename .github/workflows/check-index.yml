@@ -161,6 +161,7 @@ jobs:
       - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier_smoke.mjs
       - run: node tests/push_server_smoke.mjs
+      - run: node tests/webpush.test.mjs
       # the plan's locked data files are not asked for (Free and Mid get no 402); Thailand's files load only for Thailand
       - run: node tests/locked_requests_smoke.mjs
       # opening the app never shows Today and then loads again over a tap on Open map (run-out sign-in, new release)
