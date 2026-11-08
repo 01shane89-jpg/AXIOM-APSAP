@@ -180,7 +180,10 @@ jobs:
       - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'more' }}
         timeout-minutes: 7
-        run: node tools/refresh_more.mjs
+        # pdfjs-dist reads the ReCAAP ISC incident list PDF (tools/recaap_incidents.mjs); without it that one source is skipped
+        run: |
+          npm install --no-save --no-audit --no-fund pdfjs-dist@4.10.38 >/dev/null 2>&1 || echo "pdfjs-dist not installed"
+          node tools/refresh_more.mjs
         continue-on-error: true
       # Shapes of the sea and airspace warnings for Map overlays > Airspace and sea warnings (tools/refresh_warngeo.mjs):
       # NGA broadcast warnings, FAA temporary flight restrictions and EASA conflict zone bulletins, into data/live/warnings-geo.json.
