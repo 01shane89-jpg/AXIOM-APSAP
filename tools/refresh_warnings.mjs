@@ -66,6 +66,45 @@ const ADAPT = {
       date: a.published || a.approximateStart || w.published || "", link: "https://www.smhi.se/en/weather/warnings-and-advisories", severity: (a.warningLevel || {}).code || "" };
   })).filter((w) => w.title && w.severity !== "MESSAGE")
 };
+// One CAP <alert> holding many <info> blocks (DHMZ Croatia): one item per event and onset, with every area it names. Minor (green,
+// "no warning") blocks are left out.
+function capInfo(xml, f) {
+  const t = (b, k) => { const m = b.match(new RegExp("<(?:cap:)?" + k + "\\b[^>]*>([\\s\\S]*?)</(?:cap:)?" + k + ">", "i")); return m ? strip(m[1]) : ""; };
+  const sent = t(xml, "sent"), g = {};
+  for (const b of String(xml).match(/<(?:cap:)?info\b[\s\S]*?<\/(?:cap:)?info>/gi) || []) {
+    const sev = t(b, "severity"); if (/minor|unknown/i.test(sev) || !sev) continue;
+    const k = t(b, "event") + "|" + t(b, "onset");
+    const areas = [...b.matchAll(/<(?:cap:)?areaDesc>([\s\S]*?)<\/(?:cap:)?areaDesc>/gi)].map((m) => strip(m[1]));
+    const e = g[k] = g[k] || { b, sev, areas: new Set() }; areas.forEach((a) => e.areas.add(a));
+  }
+  const iso = (d) => String(d || "").trim().replace(" ", "T");
+  return Object.values(g).map(({ b, sev, areas }) => ({ title: t(b, "event") + ", " + [...areas].slice(0, 8).join(", ") + (areas.size > 8 ? " and " + (areas.size - 8) + " more" : ""),
+    summary: t(b, "description").slice(0, 400), date: iso(t(b, "onset") || sent), expires: iso(t(b, "expires")), link: t(b, "web") || f.home || f.url, severity: sev }));
+}
+// Italy, Civil Protection Department national criticality/alert bulletin (CC BY 4.0, published daily on GitHub by DPC). The newest
+// files/<yyyymmdd_hhmm>.json is found through the git tree (the contents API stops at 1,000 files); its today/tomorrow html_descrition
+// lists each alert level with the regions and zones under it. "NESSUNA ALLERTA" (no alert) is left out.
+async function dpcIt(f) {
+  const api = "https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica", raw = "https://raw.githubusercontent.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/master/files/";
+  const top = JSON.parse(await getText(api + "/git/trees/master")), dir = (top.tree || []).find((x) => x.path === "files");
+  if (!dir) throw new Error("no files folder");
+  const names = (JSON.parse(await getText(api + "/git/trees/" + dir.sha)).tree || []).map((x) => x.path).filter((p) => /^\d{8}_\d{4}\.json$/.test(p)).sort();
+  if (!names.length) throw new Error("no bulletin");
+  const b = JSON.parse(await getText(raw + names[names.length - 1])), issued = Date.parse(b.date) || Date.now(), out = [];
+  [["today", 0, "Today"], ["tomorrow", 1, "Tomorrow"]].forEach(([k, add, label]) => {
+    const html = String(((b[k] || {}).html_descrition) || ""), end = new Date(issued); end.setUTCHours(23, 0, 0, 0); end.setUTCDate(end.getUTCDate() + add);
+    // "<b>LEVEL / ALLERTA GIALLA:</b><br /><b>Region</b>: zones<br />..." up to the next level heading
+    const parts = html.split(/<b>([^<]*ALLERTA[^<]*):?<\/b>/i);
+    for (let i = 1; i < parts.length; i += 2) {
+      const head = strip(parts[i]).replace(/:$/, ""); if (/NESSUNA ALLERTA/i.test(head)) continue;
+      const regions = [...parts[i + 1].matchAll(/<b>([^<]+)<\/b>\s*:/g)].map((m) => strip(m[1]));
+      const sev = /ROSSA/i.test(head) ? "extreme" : /ARANCIONE/i.test(head) ? "severe" : "moderate";
+      out.push({ title: label + ": " + head + (regions.length ? " (" + regions.join(", ") + ")" : ""), summary: strip(parts[i + 1]).slice(0, 400),
+        date: new Date(issued).toISOString(), expires: end.toISOString(), link: f.home || "https://mappe.protezionecivile.gov.it/", severity: sev });
+    }
+  });
+  return out;
+}
 // IPMA warning area codes (districts, Madeira and Azores groups)
 const IPMA_AREA = { AVR: "Aveiro", BJA: "Beja", BRG: "Braga", BGC: "Bragança", CBO: "Castelo Branco", CBR: "Coimbra", EVR: "Évora", FAR: "Faro", GDA: "Guarda", LRA: "Leiria", LSB: "Lisboa",
   PTG: "Portalegre", PTO: "Porto", STM: "Santarém", STB: "Setúbal", VCT: "Viana do Castelo", VRL: "Vila Real", VIS: "Viseu", MCN: "Madeira north coast", MCS: "Madeira south coast",
@@ -77,8 +116,9 @@ function iso(d) { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().
 const status = [], items = {};
 for (const f of feeds) {
   try {
-    const body = await getText(f.url);
-    let list = f.type ? ADAPT[f.type](json(body)) : parseFeed(body);
+    let list;
+    if (f.type === "dpcit") list = await dpcIt(f);
+    else { const body = await getText(f.url); list = f.type === "capinfo" ? capInfo(body, f) : f.type ? ADAPT[f.type](json(body)) : parseFeed(body); }
     // tz: an agency that prints local time with no zone ("2026-09-29 14:27:00"), e.g. "+08:00"
     if (f.tz) list = list.map((i) => (/^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(i.date).trim()) ? { ...i, date: String(i.date).trim().replace(" ", "T") + f.tz } : i));
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }
