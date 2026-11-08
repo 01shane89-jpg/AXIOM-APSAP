@@ -59,6 +59,8 @@ ok(env1.r.length === 1 && env1.r[0].f === (await fingerprint(TPUB)), "sealed for
 // the gate opens it with the private half
 const key = await loadTierKey(TPRIV, TPUB);
 ok(new TextDecoder().decode(await openForTier(get("data/cnpresence/th.json"), key)) === PAID, "the edge gate's opener reads it back, byte for byte");
+const key2 = await loadTierKey(TPRIV);
+ok(key2 && key2.pub === TPUB && new TextDecoder().decode(await openForTier(get("data/cnpresence/th.json"), key2)) === PAID, "with only OSAP_TIER_KEY set (no public half), the gate works out the public key and opens it");
 
 // a job: open earlier output, rebuild the same content, seal again: the committed sealed copy is kept (no churn)
 git("add", "-A"); git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "-m", "1");
