@@ -8,6 +8,7 @@
 //   - grades are proposals only: credibility is the model's proposal, reliability comes from OSAP's source catalogue, and the
 //     window never sets either for the analyst;
 //   - text is cleaned of links, e-mail addresses and phone numbers, and cut to fixed lengths.
+import { normCites } from "./evsum_lib.mjs";
 export const PROMPT_V = "osirdraft/1";
 export const LABEL = "Draft, AI-generated, not analyst-approved";
 export const MAX_RECS = 40, MAX_CLAIMS = 8, MAX_LIST = 6;
@@ -40,7 +41,9 @@ export function refsOk(a, n) { return [...new Set((Array.isArray(a) ? a : []).ma
 // citations in running text: numbers that do not exist are removed; the refs are the numbers left
 export function cites(s, n) {
   const refs = [];
-  const text = String(s || "").replace(/\[(\d+)\]/g, (m, d) => (+d >= 1 && +d <= n ? (refs.includes(+d) || refs.push(+d), m) : "")).replace(/ {2,}/g, " ").replace(/\s+([.,;])/g, "$1").trim();
+  // [1, 2], [1-3], (2) and "record 2" style citations count as [1][2] (tools/evsum_lib.mjs normCites): a small model writes them that
+  // way and the assessment was dropped as uncited (8 Nov 2026: 11 of 14 drafts had none)
+  const text = normCites(String(s || ""), n).replace(/\[(\d+)\]/g, (m, d) => (+d >= 1 && +d <= n ? (refs.includes(+d) || refs.push(+d), m) : "")).replace(/ {2,}/g, " ").replace(/\s+([.,;])/g, "$1").trim();
   return { text, refs };
 }
 
