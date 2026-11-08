@@ -347,7 +347,7 @@
 ["w293052822",7.87521,-11.18478,"sl",{"name":"Kenema Government Hospital","name:en":"District Health Management Team (DHMT)","amenity":"hospital","healthcare":"hospital"}],
 ["w293347527",7.86844,-11.19952,"sl",{"name":"Mali & Sierra Leone Friendship Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"Nyandeyama"}],
 ["w296770801",6.42973,-10.54372,"lr",{"aeroway":"helipad"}],
-["w297401059",6.23119,-10.36424,"lr",{"name":"Roberts International Airport","aeroway":"aerodrome","icao":"GLRB","iata":"ROB","aerodrome:type":"international;civil","wikidata":"Q721497"}],
+["w297401059",6.23119,-10.36424,"lr",{"name":"Roberts International Airport","aeroway":"aerodrome","icao":"GLRB","iata":"ROB","aerodrome:type":"international","wikidata":"Q721497"}],
 ["w297431413",7.14875,-10.80975,"lr",{"aeroway":"helipad"}],
 ["w297502539",6.39582,-10.56891,"lr",{"aeroway":"helipad"}],
 ["w297754142",6.51442,-10.75225,"lr",{"name":"Tenegar Community Clinic","amenity":"clinic","addr:subdistrict":"St. Paul River","addr:district":"District #17","addr:city":"Tenegar"}],

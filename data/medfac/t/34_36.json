@@ -229,7 +229,7 @@
 ["w170508874",35.89012,36.09262,"tr",{"aeroway":"helipad"}],
 ["w171364179",35.99081,36.33246,"tr",{"aeroway":"helipad"}],
 ["w171560360",35.95076,36.27968,"tr",{"aeroway":"helipad","military":"yes"}],
-["w197386683",34.59079,36.01239,"lb",{"name":"مطار رينيه معوض الدولي","name:en":"René Moawad International Airport","aeroway":"aerodrome","icao":"OLKA","iata":"KYE","aerodrome:type":"civil","wikidata":"Q1421837"}],
+["w197386683",34.59079,36.01239,"lb",{"name":"مطار رينيه معوض الدولي","name:en":"René Moawad International Airport","aeroway":"aerodrome","icao":"OLKA","iata":"KYE","aerodrome:type":"international","wikidata":"Q1421837"}],
 ["w205826685",35.93285,36.62589,"sy",{"name":"مستشفى الجراحي التخصصي","name:en":"Surgical Specialist Mustashfa","amenity":"hospital","healthcare":"hospital","addr:city":"إدلب"}],
 ["w221015625",35.93504,36.17896,"tr",{"name":"Arslanyazı Garnizon Helipad","aeroway":"helipad","surface":"concrete"}],
 ["w221015629",35.88665,36.06572,"tr",{"name":"Çamaltı 1 Sınırüssü Helipad","aeroway":"helipad","surface":"concrete","military":"yes"}],

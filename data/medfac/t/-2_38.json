@@ -41,7 +41,7 @@
 ["w797884139",-1.33164,39.99785,"ke",{"name":"Makere Dispensary","amenity":"hospital","healthcare":"hospital","operator":"public","operator:type":"public"}],
 ["w797887144",-1.21004,39.92622,"ke",{"name":"Meti Dispensary","amenity":"hospital","healthcare":"hospital"}],
 ["w798307185",-1.02519,38.18032,"ke",{"name":"Lundi Dispensary","amenity":"hospital","healthcare":"counselling","addr:postcode":"yes"}],
-["w798307186",-0.92997,38.26589,"ke",{"name":"Yumbu Dispensary","amenity":"hospital","healthcare":"hospital"}],
+["w798307186",-0.92997,38.26589,"ke",{"name":"Yumbu Dispensary","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w798307187",-1.088,38.21911,"ke",{"name":"Muyuni Dispensary","amenity":"hospital","healthcare":"counselling","operator":"Ministry of health","operator:type":"public"}],
 ["w798318295",-1.12218,38.21273,"ke",{"name":"Mui Dispensary","amenity":"hospital","healthcare":"counselling","operator":"Ministry of health","operator:type":"public"}],
 ["w798318299",-1.07945,38.15649,"ke",{"amenity":"hospital","healthcare":"counselling","operator":"not operational","operator:type":"public"}],

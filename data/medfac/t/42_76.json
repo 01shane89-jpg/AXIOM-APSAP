@@ -22,7 +22,7 @@
 ["n11985789850",43.20387,76.8932,"kz",{"name":"ЛОР Практика","healthcare":"hospital","phone":"+77750070285, +77750070280","website":"https://taplink.cc/lorpraktika.kz","addr:housenumber":"247/4","addr:street":"Розыбакиев көшесі","addr:city":"Алматы","addr:postcode":"050060","opening_hours":"Mo-Fr 08:00-22:00, Fr 09:00-18:00, Su 10:00-14:00"}],
 ["n12080579766",43.26678,76.94219,"kz",{"name":"HomeMed Clinic","amenity":"clinic","healthcare":"clinic","opening_hours":"Mo-Sa 08:00-18:00"}],
 ["n12178420697",43.56822,77.05474,"kz",{"aeroway":"helipad"}],
-["n1224420752",42.45676,76.1765,"kg",{"name":"Городская поликлиника","amenity":"clinic"}],
+["n1224420752",42.45676,76.1765,"kg",{"name":"Городская поликлиника","amenity":"clinic","healthcare":"clinic"}],
 ["n12518757059",43.21033,76.94965,"kz",{"name":"Angio service","amenity":"clinic","website":"https://angioservice.kz"}],
 ["n12518757060",43.21078,76.94995,"kz",{"name":"Erensau","amenity":"hospital","website":"https://erensau.kz"}],
 ["n12762204949",43.31303,76.992,"kz",{"name":"Дәрігерлік Амбулатория","amenity":"clinic","healthcare":"clinic","operator":"ДСМ ҚР","operator:type":"public"}],

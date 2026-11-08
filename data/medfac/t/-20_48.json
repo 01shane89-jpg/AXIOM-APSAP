@@ -21,7 +21,7 @@
 ["w424878900",-19.89459,48.80611,"mg",{"amenity":"hospital"}],
 ["w497105553",-19.33124,48.97973,"mg",{"name":"Dispensaire Vatomandry","amenity":"hospital"}],
 ["w531936220",-18.82371,49.07596,"mg",{"name":"Centre de Protection Civile","amenity":"hospital","healthcare":"hospital","operator":"Communauté urbaine de Brickaville"}],
-["w53578987",-18.14245,49.41716,"mg",{"name":"Centre Hospitalier Universitaire de Toamasina","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w53578987",-18.14245,49.41716,"mg",{"name":"Centre Hospitalier Universitaire Analankinina Toamasina","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w567916083",-19.55173,48.85763,"mg",{"amenity":"hospital","operator":"FJKM"}],
 ["w570703415",-19.89416,48.80753,"mg",{"name":"Centre Hospitalier de District Niveau II Mahanoro","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
 ["w573595403",-19.60253,48.77724,"mg",{"name":"Case de santé","amenity":"hospital"}],

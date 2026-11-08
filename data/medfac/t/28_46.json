@@ -240,6 +240,7 @@
 ["w1408492733",29.55308,47.81428,"kw",{"aeroway":"helipad"}],
 ["w154721776",29.38792,47.9877,"kw",{"name":"المستشفى الأميري","name:en":"Amiri Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"وزارة الصحة","addr:street":"Bin Misbah St","addr:city":"مدينة الكويت","wikidata":"Q4746760"}],
 ["w154721786",29.38976,47.99354,"kw",{"name":"Dasman Diabetes Institute","name:en":"Dasman Diabetes Institute","amenity":"hospital","emergency":"no","phone":"+965 2224 2999","website":"https://www.dasmaninstitute.org/"}],
+["w1568143252",28.99007,47.604,"kw",{"aeroway":"helipad"}],
 ["w201025726",29.23056,47.42244,"kw",{"aeroway":"helipad"}],
 ["w201025855",29.2236,47.43031,"kw",{"aeroway":"helipad"}],
 ["w261762715",29.35773,47.51878,"kw",{"aeroway":"helipad"}],
