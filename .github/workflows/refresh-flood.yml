@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-opus); empty runs all"
         required: false
         default: ""
       lane:
@@ -107,6 +107,23 @@ jobs:
             git config user.name "github-actions[bot]"; git config user.email "41898729+github-actions[bot]@users.noreply.github.com"
             git checkout -q --orphan mt-conf-out && git rm -rq --cached . && git add -f probe-out/mt-confidence.txt probe-out/mt-confidence.json
             git commit -qm "Translation confidence probe $(date -u +'%Y-%m-%d %H:%MZ')" && git push -qf origin HEAD:refs/heads/claude/mt-conf-probe-out
+          fi
+      # diagnostic, writes nothing to the app: OPUS-MT against MADLAD-400 for the busiest languages (tools/mt/probe_opus.py)
+      - name: Compare OPUS-MT with MADLAD-400
+        if: ${{ inputs.only == 'probe-mt-opus' }}
+        timeout-minutes: 80
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc || true
+          sudo mkdir -p /mnt/opus /mnt/hf && sudo chown "$USER" /mnt/opus /mnt/hf && export HF_HOME=/mnt/hf
+          python -m pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --quiet "transformers>=4.40,<5" sentencepiece sacremoses sacrebleu protobuf
+          mkdir -p probe-out
+          python tools/mt/probe_opus.py 2>&1 | tee probe-out/mt-opus-log.txt || true
+          [ -f probe-out/mt-opus.json ] && node tools/mt/probe_opus_report.mjs > probe-out/mt-opus.txt; head -20 probe-out/mt-opus.txt || true
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            git config user.name "github-actions[bot]"; git config user.email "41898729+github-actions[bot]@users.noreply.github.com"
+            git checkout -q --orphan mt-opus-out && git rm -rq --cached . && git add -f probe-out/mt-opus*
+            git commit -qm "OPUS-MT probe $(date -u +'%Y-%m-%d %H:%MZ')" && git push -qf origin HEAD:refs/heads/claude/mt-opus-probe-out
           fi
       - name: Pull ThaiWater feeds
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'flood' }}
