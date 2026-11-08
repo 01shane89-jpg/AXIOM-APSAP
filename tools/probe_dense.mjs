@@ -1,16 +1,13 @@
-// PROBE BRANCH ONLY: licence pages for cz/is/lv/ro/il warning feeds.
+// PROBE BRANCH ONLY: lv/cz dataset licences, vedur CAP shapes.
 const UA = { "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0", accept: "*/*" };
-const txt = (h) => h.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-const RX = /.{0,220}(creative commons|CC[ -]BY[^ ]*|CC0|licen[cs]|commercial|komerční|licenc|atribu|leyf|notkun|ייחוס|מסחרי|comercial|komerci|Podmínk).{0,260}/gi;
-const U = [
- "https://opendata.chmi.cz/", "https://opendata.chmi.cz/meteorology/", "https://opendata.chmi.cz/LICENSE", "https://opendata.chmi.cz/README.md",
- "https://www.chmi.cz/files/portal/docs/hydro/denni_data/Podminky_uziti.pdf", "https://www.chmi.cz/historicka-data/pocasi/denni-data/Denni-data-dle-z.-123-1998-Sb", "https://www.chmi.cz/o-nas/podminky-uziti",
- "https://en.vedur.is/about-imo/the-web/conditions", "https://www.vedur.is/um-vi/vefurinn/skilmalar", "https://api.vedur.is/cap/v1/",
- "https://videscentrs.lvgmc.lv/", "https://www.lvgmc.lv/lapas/datu-izmantosanas-noteikumi", "https://videscentrs.lvgmc.lv/lapas/autortiesibas", "https://data.gov.lv/dati/lv/organization/lvgmc",
- "https://www.meteoromania.ro/termeni-si-conditii/", "https://www.meteoromania.ro/despre-noi/", "https://www.meteoromania.ro/avertizari-xml.php",
- "https://ims.gov.il/en/termsOfUse", "https://ims.gov.il/he/termsOfUse", "https://ims.gov.il/en/ObservationDataAPI",
-];
-for (const u of U) {
-  try { const r = await fetch(u, { headers: UA, signal: AbortSignal.timeout(25000) }); const b = Buffer.from(await r.arrayBuffer()); const t = txt(b.toString("utf8"));
-    console.log("LIC " + r.status + " " + b.length + " " + r.url + " | " + ((t.match(RX) || []).slice(0, 5).join(" || ") || t.slice(0, 300)).slice(0, 1800)); } catch (er) { console.log("LIC ERR " + u + " " + er.message); }
+const show = async (u, n = 1500) => { try { const r = await fetch(u, { headers: UA, signal: AbortSignal.timeout(25000) }); const t = await r.text(); console.log("PR " + r.status + " " + t.length + " " + u + " | " + t.replace(/\s+/g, " ").slice(0, n)); return t; } catch (er) { console.log("PR ERR " + u + " " + er.message); return ""; } };
+await show("https://data.gov.lv/dati/api/3/action/package_search?q=organization:lvgmc&rows=40&fl=name,title,license_id", 200);
+try { const j = JSON.parse(await (await fetch("https://data.gov.lv/dati/api/3/action/package_search?fq=organization:lvgmc&rows=40", { headers: UA })).json().then(JSON.stringify)); for (const p of j.result.results) console.log("LV " + p.license_id + " | " + p.title + " | " + (p.resources || []).map((r) => r.url).slice(0, 3).join(" ")); } catch (e) { console.log("LV ERR " + e.message); }
+for (const q of ["výstrahy ČHMÚ", "meteorologické výstrahy", "CAP výstrahy"]) {
+  try { const r = await fetch("https://data.gov.cz/api/v2/dataset?query=" + encodeURIComponent(q), { headers: { ...UA, accept: "application/json" } }); console.log("CZ " + r.status + " " + (await r.text()).replace(/\s+/g, " ").slice(0, 1200)); } catch (e) { console.log("CZ ERR " + e.message); }
 }
+await show("https://data.gov.cz/datové-sady?dotaz=výstrahy", 1500);
+const dir = await show("https://opendata.chmi.cz/meteorology/weather/alerts/cap/", 300);
+const f = [...dir.matchAll(/href="([^"]+\.xml)"/g)].map((m) => m[1]).pop(); if (f) await show("https://opendata.chmi.cz/meteorology/weather/alerts/cap/" + f, 2500);
+await show("https://opendata.chmi.cz/meteorology/weather/alerts/", 600);
+for (const u of ["https://api.vedur.is/cap/v1/capbroker/active/category/Met/", "https://api.vedur.is/cap/v1/capbroker/active/", "https://api.vedur.is/cap/v1/capbroker/active/category/Geo/", "https://api.vedur.is/cap/v1/capbroker/", "https://api.vedur.is/cap/v1/", "https://api.vedur.is/cap/v1/docs", "https://api.vedur.is/cap/v1/openapi.json", "https://api.vedur.is/cap/v1/capbroker/all/category/Met/"]) await show(u, 900);
