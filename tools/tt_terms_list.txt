@@ -1,0 +1,160 @@
+rand|RAND|https://www.rand.org/
+csis|CSIS|https://www.csis.org/
+crisisgroup|International Crisis Group|https://www.crisisgroup.org/
+lowy|Lowy Institute|https://www.lowyinstitute.org/the-interpreter
+aspi|ASPI|https://www.aspistrategist.org.au/
+carnegie|Carnegie Endowment|https://carnegieendowment.org/
+iiss|IISS|https://www.iiss.org/
+isw|Institute for the Study of War|https://understandingwar.org/
+criticalthreats|Critical Threats (AEI)|https://www.criticalthreats.org/
+brookings|Brookings|https://www.brookings.edu/
+stimson|Stimson Center|https://www.stimson.org/
+38north|38 North (Stimson)|https://www.38north.org/
+chatham|Chatham House|https://www.chathamhouse.org/
+cfr|Council on Foreign Relations|https://www.cfr.org/
+atlantic|Atlantic Council|https://www.atlanticcouncil.org/
+wotr|War on the Rocks|https://warontherocks.com/
+ecfr|ECFR|https://ecfr.eu/
+sipri|SIPRI|https://www.sipri.org/
+wilson|Wilson Center|https://www.wilsoncenter.org/
+usip|US Institute of Peace|https://www.usip.org/
+rusi|RUSI|https://www.rusi.org/
+hudson|Hudson Institute|https://www.hudson.org/
+jamestown|Jamestown Foundation|https://jamestown.org/
+orf|Observer Research Foundation|https://www.orfonline.org/
+africacenter|Africa Center for Strategic Studies|https://africacenter.org/
+issafrica|ISS Africa|https://issafrica.org/
+mei|Middle East Institute|https://www.mei.edu/
+washinstitute|Washington Institute|https://www.washingtoninstitute.org/
+pacforum|Pacific Forum|https://pacforum.org/
+amti|AMTI (CSIS)|https://amti.csis.org/
+chinapower|ChinaPower (CSIS)|https://chinapower.csis.org/
+belfer|Belfer Center|https://www.belfercenter.org/
+gitoc|Global Initiative against Transnational Organized Crime|https://globalinitiative.net/
+fulcrum|ISEAS Fulcrum|https://fulcrum.sg/
+eaf|East Asia Forum|https://eastasiaforum.org/
+swp|SWP Berlin|https://www.swp-berlin.org/en/
+ifri|Ifri|https://www.ifri.org/en
+clingendael|Clingendael|https://www.clingendael.org/
+gmf|German Marshall Fund|https://www.gmfus.org/
+fpri|Foreign Policy Research Institute|https://www.fpri.org/
+quincy|Quincy Institute|https://quincyinst.org/
+ecowas|ECOWAS Commission|https://www.ecowas.int/
+igad|IGAD|https://igad.int/
+coi|Indian Ocean Commission|https://www.commissionoceanindien.org/
+ffa|Pacific Islands Forum Fisheries Agency|https://www.ffa.int/
+dialogo|Diálogo Americas|https://dialogo-americas.com/
+martens|Wilfried Martens Centre|https://www.martenscentre.eu/
+rstatecraft|Responsible Statecraft (Quincy)|https://responsiblestatecraft.org/
+iris|IRIS France|https://www.iris-france.org/
+prif|PRIF Blog (Peace Research Institute Frankfurt)|https://blog.prif.org/
+merip|MERIP|https://merip.org/
+visegrad|Visegrad Insight|https://visegradinsight.eu/
+montaigne|Institut Montaigne|https://www.institutmontaigne.org/en
+eurasianet|Eurasianet|https://eurasianet.org/
+merics|MERICS|https://merics.org/en
+nbr|National Bureau of Asian Research|https://www.nbr.org/
+cnas|CNAS|https://www.cnas.org/
+fdd|FDD|https://www.fdd.org/
+euiss|EU Institute for Security Studies|https://www.iss.europa.eu/
+acled|ACLED analysis|https://acleddata.com/
+swj|Small Wars Journal|https://smallwarsjournal.com/
+armscontrol|Arms Control Association|https://www.armscontrol.org/
+idsa|MP-IDSA|https://www.idsa.in/
+bellingcat|Bellingcat|https://www.bellingcat.com/
+insightcrime|InSight Crime|https://insightcrime.org/
+dialogue|Inter-American Dialogue|https://www.thedialogue.org/
+saiia|SAIIA|https://saiia.org.za/
+gga|Good Governance Africa|https://gga.org/
+pcns|Policy Center for the New South|https://www.policycenter.ma/
+africanarguments|African Arguments|https://africanarguments.org/
+devpolicy|Devpolicy Blog (ANU)|https://devpolicy.org/
+caci|CACI Analyst|https://www.cacianalyst.org/
+caspian|Caspian Policy Center|https://www.caspianpolicy.org/
+cabar|CABAR.asia|https://cabar.asia/en
+ewb|European Western Balkans|https://europeanwesternbalkans.com/
+cepa|CEPA|https://cepa.org/
+icds|ICDS Estonia|https://icds.ee/en/
+fiia|Finnish Institute of International Affairs|https://www.fiia.fi/en
+sanaa|Sana'a Center for Strategic Studies|https://sanaacenter.org/
+timep|TIMEP|https://timep.org/
+gulfif|Gulf International Forum|https://gulfif.org/
+ajstudies|Al Jazeera Centre for Studies|https://studies.aljazeera.net/en
+sav|South Asian Voices (Stimson)|https://southasianvoices.org/
+issi|ISSI Pakistan|https://issi.org.pk/
+lwj|FDD's Long War Journal|https://www.longwarjournal.org/
+smallarms|Small Arms Survey|https://www.smallarmssurvey.org/
+geopolmonitor|Geopolitical Monitor|https://www.geopoliticalmonitor.com/
+globalobs|IPI Global Observatory|https://theglobalobservatory.org/
+ipi|International Peace Institute|https://www.ipinst.org/
+oiip|oiip (Austrian Institute for International Affairs)|https://www.oiip.ac.at/
+gcsp|Geneva Centre for Security Policy|https://www.gcsp.ch/
+hcss|Hague Centre for Strategic Studies|https://hcss.nl/
+nsc|New Strategy Center|https://newstrategycenter.ro/
+eliamep|ELIAMEP|https://www.eliamep.gr/en/
+cpd|Centre for Policy Dialogue|https://cpd.org.bd/
+bipss|BIPSS|https://bipss.org.bd/
+imani|IMANI Africa|https://imaniafrica.org/
+bidpa|BIDPA|https://bidpa.bw/
+derasat|Derasat|https://www.derasat.org.bh/en/
+cepchile|Centro de Estudios Públicos|https://www.cepchile.cl/
+milenio|Fundación Milenio|https://fundacion-milenio.org/
+cieps|CIEPS Panamá|https://cieps.org.pa/
+asies|ASIES|https://asies.org.gt/
+idea|Fondation IDEA|https://www.fondation-idea.lu/
+cddmoz|CDD Moçambique|https://cddmoz.org/
+europeum|EUROPEUM|https://www.europeum.org/en/
+cippec|CIPPEC|https://www.cippec.org/
+wathi|WATHI|https://www.wathi.org/
+irmo|IRMO|https://irmo.hr/en/
+nkafu|Nkafu Policy Institute|https://nkafu.org/
+lki|LKI|https://lki.lk/
+verite|Verité Research|https://www.veriteresearch.org/
+kisi|KazISS|https://kisi.kz/en/
+newbelarus|Center for New Ideas|https://newideas.center/
+ipre|IPRE|https://ipre.md/
+apri|APRI Armenia|https://apri.institute/
+idscs|IDSCS|https://idscs.org.mk/en/
+bcsp|Belgrade Centre for Security Policy|https://bezbednost.org/en/
+bayan|Al-Bayan Center|https://www.bayancenter.org/en/
+ecss|ECSS|https://ecss.com.eg/
+hips|Heritage Institute|https://heritageinstitute.org/
+iids|Institute for Integrated Development Studies|https://iids.org.np/
+niice|NIICE Nepal|https://niice.org.np/
+samriddhi|Samriddhi Foundation|https://samriddhi.org/
+biceps|BICEPS Riga|https://biceps.org/
+cepsi|Centre for European Perspective|https://www.cep.si/
+adapt|Adapt Institute|https://www.adaptinstitute.org/
+funglode|FUNGLODE|https://funglode.org/
+crees|CREES|https://crees.org.do/
+eprc|Economic Policy Research Centre|https://eprcug.org/
+lyd|Libertad y Desarrollo|https://lyd.org/
+espaciopublico|Espacio Público|https://espaciopublico.cl/
+policyforumtz|Policy Forum Tanzania|https://www.policyforum-tz.org/
+kaiptc|KAIPTC|https://www.kaiptc.org/
+lasdel|LASDEL|https://lasdel.net/
+cpalanka|Centre for Policy Alternatives|https://www.cpalanka.org/
+bipd|Bahrain Institute for Political Development|https://www.bipd.org/
+asj|ASJ Honduras|https://asjhonduras.com/
+idesa|IDESA|https://idesa.org/
+poderciudadano|Poder Ciudadano|https://poderciudadano.org/
+acep|Africa Centre for Energy Policy|https://acep.africa/
+penplusbytes|Penplusbytes|https://www.penplusbytes.org/
+rebaltica|Re:Baltica|https://en.rebaltica.lv/
+pciudadana|Participación Ciudadana|https://pciudadana.org/
+cespad|CESPAD|https://cespad.org.hn/
+cedla|CEDLA|https://cedla.org/
+solon|Fundación Solón|https://fundacionsolon.org/
+cristosal|Cristosal|https://cristosal.org/
+varberg|Varðberg|https://vardberg.is/
+ciaaf|Civic Academy for Africa's Future|https://www.ciaaf.org/
+cadep|CADEP|https://www.cadep.org.py/
+baseis|BASE-IS|https://www.baseis.org.py/
+mahein|Fundasaun Mahein|https://www.fundasaunmahein.org/
+glps|Group for Legal and Political Studies|https://legalpoliticalstudies.org/
+moibrahim|Mo Ibrahim Foundation|https://mo.ibrahim.foundation/
+forumsec|Pacific Islands Forum Secretariat|https://forumsec.org/
+griffith|Griffith Asia Institute (Asia Insights)|https://blogs.griffith.edu.au/asiainsights/
+cdb|Caribbean Development Bank|https://www.caribank.org/
+aulablog|AULA Blog (American University)|https://aulablog.net/
+osw|OSW Centre for Eastern Studies|https://www.osw.waw.pl/en
