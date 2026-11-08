@@ -54,4 +54,8 @@ assert.ok(["k5", "k6", "k299"].every((k) => pk.some((r) => r.key === k)), "key-e
 assert.ok(pk[0].ts < "2026-10-05" && pk[pk.length - 1].ts >= "2026-10-28", "records spread over the whole period, oldest first");
 assert.equal(input(pk).length, MAX_RECS); assert.equal(input(pk)[0].n, 1);
 assert.ok(!("url" in input(pk)[0]), "links are not sent to the model");
+// citations written as [1, 2], (2) or "records 1 and 2" count (8 Nov 2026: most assessments were dropped as uncited)
+assert.deepEqual(cites("The records suggest a rise [1, 2].", 3).refs, [1, 2], "[1, 2] counts as two citations");
+assert.deepEqual(cites("Per records 2 and 3, the trend held.", 3), { text: "Per the records [2][3], the trend held.", refs: [2, 3] }, "running-text records 2 and 3");
+assert.deepEqual(cites("Aged (24) per (2).", 3).refs, [2], "(2) counts, (24) does not");
 console.log("osirdraft.test.mjs: all passed");

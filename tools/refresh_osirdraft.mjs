@@ -41,15 +41,26 @@ const ev = readWin(EVSUM), evDay = ev && ev.day && ev.day.date === today ? +ev.d
 // topics: the watched list, plus one on demand
 const cfg = JSON.parse(fs.readFileSync(TOPICS, "utf8"));
 const topicId = (t) => t.cc + "|" + (t.scope || "all") + "|" + t.days;
+// the listed topics, then all reporting for every country in "countries" and, with "conflicts": true, for the first country of every
+// conflict tab (data/live/conflicts/index.js). A conflict tab is a Topic of its own in the OSIR window only once it has taken over
+// layers (Deep South), so those are listed by hand. Duplicates keep the first.
+const PER_RUN = +(process.env.OSIRDRAFT_PER_RUN || 12);
 let topics = cfg.topics.map((t) => ({ ...t, days: +t.days || 30 }));
+(cfg.countries || []).forEach((cc) => topics.push({ cc, scope: "", days: 30, name: cc.toUpperCase() }));
+if (cfg.conflicts) {
+  const C = readWin("data/live/conflicts/index.js");
+  ((C && C.conflicts) || []).forEach((c) => { const cc = c && Array.isArray(c.countries) && /^[a-z]{2,3}$/.test(c.countries[0]) && c.countries[0]; if (cc) topics.push({ cc, scope: "", days: 30, name: cc.toUpperCase() }); });
+}
+{ const seen = new Set(); topics = topics.filter((t) => { const k = topicId(t); return seen.has(k) ? false : seen.add(k); }); }
 const OD = process.env.OSIRDRAFT_CC ? { cc: process.env.OSIRDRAFT_CC.toLowerCase().replace(/[^a-z]/g, "").slice(0, 3), scope: String(process.env.OSIRDRAFT_SCOPE || "").replace(/[^\w:@-]/g, "").slice(0, 80),
   days: Math.max(1, Math.min(365, +process.env.OSIRDRAFT_DAYS || 30)), name: "On demand", demand: true } : null;
 if (OD) topics = [OD];
+// never-drafted topics first, then the oldest drafts; a run takes no more than PER_RUN (each page load and draft takes minutes)
 const due = topics.filter((t) => {
   const o = old.topics[topicId(t)];
   return t.demand || !o || (now - madeMs(o)) / 36e5 >= EVERY_H;
-});
-console.log(`osirdraft: ${due.length} of ${topics.length} topics due; today ${day.n}/${PER_DAY} drafts, event summaries ${evDay}`);
+}).map((t, i) => ({ t, i, m: madeMs(old.topics[topicId(t)]) })).sort((a, b) => a.m - b.m || a.i - b.i).slice(0, PER_RUN).map((x) => x.t);
+console.log(`osirdraft: ${due.length} of ${topics.length} topics due this run (at most ${PER_RUN}); today ${day.n}/${PER_DAY} drafts, event summaries ${evDay}`);
 
 // ---------- 1. the page's own records for each topic ----------
 function loadPlaywright() {

@@ -1,0 +1,17 @@
+# Test only: checks the US federal bridge inventory (FHWA NBI via USDOT NTAD) answers, its fields and its CORS (tools/probe_nbi.sh).
+# Prints to the log; writes nothing to the repo.
+name: Probe US bridge inventory
+on:
+  push:
+    branches: [claude/bridge-nbi]
+    paths: [tools/probe_nbi.sh, .github/workflows/probe-nbi.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_nbi.sh

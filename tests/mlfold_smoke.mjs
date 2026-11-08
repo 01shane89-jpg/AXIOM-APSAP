@@ -92,6 +92,30 @@ const height = (p) => p.evaluate(() => document.querySelector("#atk-om .atk-omb"
   ok(errs.length === 0, "desktop: no page errors", errs);
   await ctx.close();
 }
+// ---------- every theme: the find bar is readable (it once sat white with near-white words on dark themes) ----------
+{
+  const { ctx, p, errs } = await open({ viewport: { width: 1280, height: 860 } });
+  await overlays(p);
+  for (const th of ["light", "grey", "dark"]) {
+    const r = await p.evaluate((th) => {
+      if (th === "light") document.documentElement.removeAttribute("data-map"); else document.documentElement.setAttribute("data-map", th);
+      const rgb = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+      const lum = (c) => { const [r, g, b] = rgb(c).slice(0, 3).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+      const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+      const solid = (el) => { for (; el; el = el.parentElement) { const c = getComputedStyle(el).backgroundColor; const a = rgb(c); if (a.length === 3 || a[3] > 0) return c; } return "rgb(255,255,255)"; };
+      const out = {};
+      for (const [k, sel] of [["chip", "#atk-om .mlchips button"], ["fold", "#atk-om .mlfoldall"], ["find", "#atk-om .mlfind"]]) { const el = document.querySelector(sel); out[k] = +ratio(getComputedStyle(el).color, solid(el)).toFixed(2); }
+      out.bar = solid(document.querySelector("#atk-om .mlnav")); out.panel = solid(document.querySelector("#atk-om"));
+      return out;
+    }, th);
+    ok(r.chip >= 4.5 && r.fold >= 4.5 && r.find >= 4.5, th + " theme: find box and chips are readable (contrast 4.5+)", r);
+    ok(r.bar === r.panel, th + " theme: the find bar matches the panel background", r);
+    if (process.env.SHOTS) await p.locator("#atk-om").screenshot({ path: process.env.SHOTS + "/overlays-" + th + ".png" });
+  }
+  await p.evaluate(() => document.documentElement.removeAttribute("data-map"));
+  ok(errs.length === 0, "themes: no page errors", errs);
+  await ctx.close();
+}
 // ---------- phone ----------
 {
   const { ctx, p, errs } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });

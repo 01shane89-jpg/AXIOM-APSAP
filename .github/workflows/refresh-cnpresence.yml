@@ -37,6 +37,12 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
+      # the earlier output is sealed for the paid plans' key (tools/seal_tier.mjs): open it, so a source that fails this run
+      # keeps its last records. Without the secret the files read as missing and the job starts afresh.
+      - name: Open the earlier sealed output
+        env:
+          OSAP_TIER_KEY: ${{ secrets.OSAP_TIER_KEY }}
+        run: node tools/seal_tier.mjs --open data/cnpresence
       # AidData's geospatial GeoPackage is a release asset of aiddata/gcdf-geospatial-data (public, read with the job's own token)
       - name: Download AidData's geospatial GeoPackage
         if: ${{ github.event.inputs.only == '' || contains(github.event.inputs.only, 'aiddata') }}
@@ -61,6 +67,7 @@ jobs:
         if: ${{ github.ref != 'refs/heads/main' }}
         run: |
           node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          node tools/seal_tier.mjs  # paid-plan data (TIER_SEALED in tools/tiers.mjs) is sealed for the tier key, never plain
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan cnpresence-preview-data
@@ -77,6 +84,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          node tools/seal_tier.mjs  # paid-plan data (TIER_SEALED in tools/tiers.mjs) is sealed for the tier key, never plain
           git add -N data/cnpresence 2>/dev/null || true
           if git diff --quiet -- data/cnpresence; then echo "no change"; exit 0; fi
           git config user.name "asap-cnpresence-refresh[bot]"

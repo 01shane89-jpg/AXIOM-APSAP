@@ -1,9 +1,60 @@
 {
-  "_about": "Topics tools/refresh_osirdraft.mjs drafts OSIR analyst sections for once a day (.github/workflows/osir-draft.yml). Each: cc (country), scope (a data set or conflict tab id as the OSIR window's Topic list uses it; empty = all reporting), days (the period, ending today), name. Keep the list short: drafts share GitHub Models' free daily limit with the event summaries. Any other topic can be drafted on demand from the workflow's Run button.",
+  "_about": "Topics tools/refresh_osirdraft.mjs drafts OSIR analyst sections for, each at most every 20 hours, never-drafted and oldest first (.github/workflows/refresh-ai.yml, 3-hourly, on the runner's own open model). topics: cc (country), scope (a data set or conflict tab id as the OSIR window's Topic list uses it; empty = all reporting), days (the period, ending today), name. countries: all reporting for each of these (the original 28 countries). conflicts: true adds all reporting for the first country of every conflict tab in data/live/conflicts/index.js (a conflict tab is its own Topic only once it has taken over layers, like Deep South: list those under topics). Any other topic can be drafted on demand from osir-draft.yml's Run button.",
   "topics": [
-    { "cc": "th", "scope": "cf-thailand-deep-south", "days": 30, "name": "Thailand Deep South" },
-    { "cc": "mm", "scope": "", "days": 30, "name": "Myanmar" },
-    { "cc": "ph", "scope": "", "days": 30, "name": "Philippines" },
-    { "cc": "kh", "scope": "", "days": 30, "name": "Cambodia" }
+    {
+      "cc": "th",
+      "scope": "cf-thailand-deep-south",
+      "days": 30,
+      "name": "Thailand Deep South"
+    },
+    {
+      "cc": "mm",
+      "scope": "",
+      "days": 30,
+      "name": "Myanmar"
+    },
+    {
+      "cc": "ph",
+      "scope": "",
+      "days": 30,
+      "name": "Philippines"
+    },
+    {
+      "cc": "kh",
+      "scope": "",
+      "days": 30,
+      "name": "Cambodia"
+    }
+  ],
+  "conflicts": true,
+  "countries": [
+    "th",
+    "kh",
+    "la",
+    "mm",
+    "vn",
+    "my",
+    "sg",
+    "id",
+    "bn",
+    "ph",
+    "tl",
+    "cn",
+    "tw",
+    "jp",
+    "oki",
+    "kr",
+    "kp",
+    "mn",
+    "in",
+    "pk",
+    "bd",
+    "np",
+    "bt",
+    "lk",
+    "mv",
+    "au",
+    "nz",
+    "pg"
   ]
 }

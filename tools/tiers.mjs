@@ -34,6 +34,11 @@ export const DATA = [
   [/^source\/countries\//, "free"],
 ];
 
+// Paid files sealed in the public repository for the server's tier key (tools/seal_tier.mjs, tools/tier-key.json; Shane
+// 2026-11-08 "Lock the paid files"): only the edge gate opens them, for a plan that allows them. Every path here must be Mid or
+// Full above (tests/tier.test.mjs checks). Done folder by folder, each with its jobs: the presence data sets first.
+export const TIER_SEALED = [/^data\/(cnpresence|rupresence|irpresence)\//];
+
 // Toolbar tools (data-atk in assets/osap-atak.js). A tool not listed is free.
 export const TOOLS = {
   overlays: "mid", route: "mid", area: "mid", medplan: "mid", evac: "mid", comms: "mid", point: "mid", watch: "mid", "3d": "mid",
