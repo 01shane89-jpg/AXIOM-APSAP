@@ -5,6 +5,7 @@
 // Each institute is its own feed. Candidate addresses are tried in order, then the feed link advertised on the home page.
 // Licence: publisher copyright; headline and link only. Marked nc so these can be stripped in one pass before any paid use, except the
 // few institutes in OPEN_LIC whose terms clearly allow commercial reuse.
+import { COMMERCIAL } from "./nc_strip.mjs";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -350,7 +351,8 @@ for (const [id, org, home, urls] of TT) {
         } catch (e) { why.push(pg + ": " + e.message); }
       }
     }
-    if (!entries) { try { entries = await fromSearch(g, home); used = "Bing News search of the institute's site"; } catch (e) { why.push("search: " + e.message); } }
+    // Bing News results are non-commercial (nc), so the sold version never falls back to them, even for an open-licence institute
+    if (!entries && !COMMERCIAL) { try { entries = await fromSearch(g, home); used = "Bing News search of the institute's site"; } catch (e) { why.push("search: " + e.message); } }
     if (!entries) { try { entries = await fromSitemap(g, home); used = "sitemap (headline from page address)"; } catch (e) { why.push("sitemap: " + e.message); } }
     if (!entries || !entries.length) throw new Error("no feed: " + why.join("; ").slice(0, 300));
     let gz = null; try { gz = await gazetteer(g); } catch (e) {}
