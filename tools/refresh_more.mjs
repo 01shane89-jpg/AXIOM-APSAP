@@ -13,8 +13,9 @@
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs";
-import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones } from "./warngeo_lib.mjs";
+import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones, coordsIn } from "./warngeo_lib.mjs";
 import { COMMERCIAL } from "./nc_strip.mjs";
+import { NAVW_SRC } from "./navw_sources.mjs";
 import { imbIncidents, notInAsam, IMB_MAP, IMB_LIC } from "./imb_piracy.mjs";
 import { recaapIncidents, RECAAP_HOME, RECAAP_LIC } from "./recaap_incidents.mjs";
 import { ukmtoIncidents, UKMTO_PAGE, UKMTO_LIC } from "./ukmto_incidents.mjs";
@@ -489,14 +490,24 @@ await job("cdc", "cdc.js", "ASAP_CDC", async () => {
   return { src: "https://wwwnc.cdc.gov/travel/notices", items, note: items.length + " notices" };
 });
 
-// 13. NGA broadcast navigational warnings in force (Daily Memoranda of all five NGA areas). Positions parsed from the text.
+// 13. Broadcast navigational warnings in force. NGA (Daily Memoranda of all five NGA areas, US government work, public domain)
+// first, then the other NAVAREA coordinators' own pages, so a source that is down (msi.nga.mil has answered HTTP 503 to the
+// runners since 3 Nov 2026) leaves the rest: AMSA NAVAREA X and Auscoast (CC BY 4.0), Japan Coast Guard NAVAREA XI (JCG site
+// terms: free reuse, commercial use included, with credit), UKHO NAVAREA I and UK coastal (Crown copyright, no open licence
+// found, so its items carry nc: true and the sold version does not ask it). Positions are read with the map overlay's own
+// coordinate reader (tools/warngeo_lib.mjs coordsIn: DD-MM.MMN, DD-MMN and DD-MM-SSN forms).
 function navPos(text) {
-  const out = [];
-  for (const m of String(text).matchAll(/(\d{1,2})-(\d{2}(?:\.\d+)?)\s*([NS])\s+(\d{1,3})-(\d{2}(?:\.\d+)?)\s*([EW])/g)) {
-    let lat = +m[1] + +m[2] / 60, lon = +m[4] + +m[5] / 60; if (m[3] === "S") lat = -lat; if (m[6] === "W") lon = -lon; out.push([+lat.toFixed(3), +lon.toFixed(3)]);
-    if (out.length >= 12) break;
-  }
-  return out;
+  return coordsIn(text).slice(0, 12).map((c) => [+c.lat.toFixed(3), +c.lon.toFixed(3)]);
+}
+const navKind = (text) => (/missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation");
+// one warning into the navwarnings.js item shape; null when it names no country (by position within 1.5 degrees, else by name)
+function navItem(id, issued, text, extra = {}) {
+  text = String(text || "").replace(/\s+/g, " ").trim();
+  const pos = navPos(text);
+  let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
+  if (!ccs.length) return null;
+  return { id, issued: issued || "", subregion: extra.subregion || "", authority: extra.authority || "", text: redactPhones(text).slice(0, 700), pos, kind: navKind(text), ccs,
+    ...(extra.link ? { link: extra.link } : {}), ...(extra.lic ? { lic: extra.lic } : {}), ...(extra.nc ? { nc: true } : {}) };
 }
 await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
   // The old query API (api/publications/broadcast-warn?navArea=..&status=A) stopped at 10 May 2024 (its own /latest-warning
@@ -512,15 +523,21 @@ await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
       let n = 0;
       for (const w of mem.warnings) {
         if (skipNga(w.text)) continue;
-        const text = String(w.text || "").replace(/\s+/g, " ").trim(), pos = navPos(text);
-        let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
-        if (!ccs.length) continue;
-        items.push({ id: (w.area || mf.area) + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
-          text: redactPhones(text).slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
-        n++;
+        const it = navItem((w.area || mf.area) + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2), w.issueDate || "", w.text, { subregion: w.subregion || "", authority: w.authority || "" });
+        if (it) { items.push(it); n++; }
       }
       status.push({ area: mf.area, ok: true, n, file: mf.modified || null });
     } catch (e) { status.push({ area: mf.area, ok: false, error: err(e) }); }
+  }
+  const seen = new Set();
+  for (const s of NAVW_SRC) {
+    if (s.nc && COMMERCIAL) continue;
+    try {
+      const list = await s.read(s, get); let n = 0;
+      // a coastal warning listed under two coastal areas (AMSA Auscoast) is kept once
+      for (const w of list) { if (seen.has(w.id)) continue; seen.add(w.id); const it = navItem(w.id, w.issued, w.text, { subregion: w.subregion, authority: s.authority, link: s.link, lic: s.lic, nc: s.nc }); if (it) { items.push(it); n++; } }
+      status.push({ area: s.area, ok: true, n, of: list.length, src: s.link, lic: s.lic, ...(s.nc ? { nc: true } : {}) });
+    } catch (e) { status.push({ area: s.area, ok: false, error: err(e), src: s.link, ...(s.nc ? { nc: true } : {}) }); }
   }
   if (!status.some((x) => x.ok)) throw new Error(status.map((x) => x.area + ": " + x.error).join("; "));
   return { src: "https://msi.nga.mil/NavWarnings", status, items, note: items.length + " warnings (" + status.map((x) => x.area + (x.ok ? " " + x.n : " failed")).join(", ") + ")" };
