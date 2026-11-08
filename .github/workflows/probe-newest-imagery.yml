@@ -1,9 +1,6 @@
-# Test only: checks the keyless imagery hosts for the Newest imagery picker (tools/probe_newest_imagery.mjs). Writes nothing.
+# Test only (run by hand): checks the keyless imagery hosts for the Newest imagery picker (tools/probe_newest_imagery.mjs). Writes nothing.
 name: Probe newest imagery
 on:
-  push:
-    branches: [claude/newest-imagery]
-    paths: [tools/probe_newest_imagery.mjs, .github/workflows/probe-newest-imagery.yml]
   workflow_dispatch:
 permissions:
   contents: read
