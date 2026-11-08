@@ -9,6 +9,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { mtSuspect } from "../mt_guard.mjs";
 
+fs.mkdirSync("probe-out", { recursive: true });
 const S = JSON.parse(fs.readFileSync("tools/mt/probe_confidence_samples.json", "utf8")).items;
 const MT_DIR = process.env.MT_DIR || path.join(os.homedir(), ".cache/osap-mt/madlad400-3b-mt-ct2-int8");
 if (!fs.existsSync(path.join(MT_DIR, "model.bin"))) { console.log("model not installed"); process.exit(1); }
@@ -16,7 +17,10 @@ const t0 = Date.now();
 const r = spawnSync(process.env.PYTHON || "python", ["tools/mt/madlad.py"], { input: JSON.stringify({ items: S.map(({ text, lang }) => ({ text, lang })) }),
   encoding: "utf8", maxBuffer: 64 << 20, timeout: 40 * 60 * 1000, env: { ...process.env, MT_DIR, MT_BUDGET: "2100", MT_SCORES: "1" } });
 if (r.status !== 0) { console.log("failed:", String(r.stderr).slice(-600)); process.exit(1); }
-const { out, scores } = JSON.parse(r.stdout);
+const res = JSON.parse(r.stdout), out = res.out;
+// METRIC=raw compares the score divided by the output length instead of CTranslate2's own score
+const scores = process.env.METRIC === "raw" ? res.raw : res.scores;
+console.log("metric: " + (process.env.METRIC === "raw" ? "score / output tokens" : "CTranslate2 score"));
 console.log("translated " + out.filter(Boolean).length + " of " + S.length + " in " + Math.round((Date.now() - t0) / 1000) + " s");
 const rows = S.map((it, k) => ({ ...it, en: out[k] || "", score: scores[k], why: out[k] ? mtSuspect(it.text, out[k]) : "empty" }));
 const q = (a, p) => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.min(s.length - 1, Math.floor(p * s.length))].toFixed(3) : "-"; };
@@ -43,4 +47,4 @@ console.log("\n=== 40 most confident 'target' lines (read these too)");
 for (const x of rows.filter((x) => x.set === "target" && x.score != null).sort((a, b) => b.score - a.score).slice(0, 40))
   console.log(`${x.score.toFixed(3)} [${x.lang}] ${x.text.slice(0, 110)}\n        -> ${x.en.slice(0, 160)}`);
 fs.mkdirSync("probe-out", { recursive: true });
-fs.writeFileSync("probe-out/mt-confidence.json", JSON.stringify(rows));
+fs.writeFileSync("probe-out/mt-confidence.json", JSON.stringify(rows.map((x, k) => ({ ...x, raw: res.raw[k] }))));

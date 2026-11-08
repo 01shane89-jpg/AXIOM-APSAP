@@ -1,8 +1,9 @@
 """Machine translation to English with Google's MADLAD-400 (3B MT model, Apache-2.0), run on the job's own CPU.
 
 Reads {"items": [{"text": ..., "lang": ...}]} as JSON on stdin and writes {"out": [english or null, ...]} on stdout, and with
-MT_SCORES=1 also "scores": [the model's confidence, or null, ...]: the average log-probability per output token of the item's
-least confident chunk (0 is certain; lower is less sure).
+MT_SCORES=1 also "scores": [the model's confidence, or null, ...]: CTranslate2's score (log-probability, length-normalized by its
+default length penalty) of the item's least confident chunk, 0 being certain, and "raw": the same divided by the chunk's
+output token count, for comparison.
 The model is converted once to CTranslate2 int8 by tools/mt/setup_madlad.py and kept in the Actions cache (MT_DIR).
 No network use at translation time. MADLAD-400 needs no source language: each text is prefixed with "<2en>".
 This file is the only place that knows the model, so another one can replace it behind the same stdin/stdout contract.
@@ -45,17 +46,20 @@ def main():
         if res and time.time() - t0 > budget: break
         res += tr.translate_batch([j[1] for j in jobs[k:k + 32]], beam_size=beam, max_batch_size=16, max_decoding_length=256,
                                 repetition_penalty=pen, no_repeat_ngram_size=norep,
-                                **({"return_scores": True, "normalize_scores": True} if scores_on else {}))
+                                **({"return_scores": True} if scores_on else {}))
     done = set(i for (i, _), _r in zip(jobs, res))
-    out, sc = [None] * len(items), [None] * len(items)
+    out, sc, pt = [None] * len(items), [None] * len(items), [None] * len(items)
     for (i, _), r in zip(jobs, res):
         en = sp.decode(r.hypotheses[0]).strip()
         if en: out[i] = (out[i] + " " + en).strip() if out[i] else en
-        if scores_on and r.scores: sc[i] = r.scores[0] if sc[i] is None else min(sc[i], r.scores[0])
+        if scores_on and r.scores:
+            v, w = r.scores[0], r.scores[0] / max(1, len(r.hypotheses[0]))
+            sc[i] = v if sc[i] is None else min(sc[i], v)
+            pt[i] = w if pt[i] is None else min(pt[i], w)
     # an item whose chunks were only partly translated is left for the next run
     for i in done:
-        if any(j[0] == i for j in jobs[len(res):]): out[i] = sc[i] = None
-    json.dump({"out": out, **({"scores": sc} if scores_on else {})}, sys.stdout, ensure_ascii=False)
+        if any(j[0] == i for j in jobs[len(res):]): out[i] = sc[i] = pt[i] = None
+    json.dump({"out": out, **({"scores": sc, "raw": pt} if scores_on else {})}, sys.stdout, ensure_ascii=False)
 
 if __name__ == "__main__":
     main()
