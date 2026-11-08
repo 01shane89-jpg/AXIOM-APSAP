@@ -6156,6 +6156,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   src("gvp", "Smithsonian Global Volcanism Program weekly report", "Research institution", "B", "Weekly summary of volcano observatories' reports; not real-time.", "https://volcano.si.edu/reports_weekly.cfm");
   src("who-don", "WHO Disease Outbreak News", "UN agency", "B", "WHO statements, usually based on member-state notifications.", "https://www.who.int/emergencies/disease-outbreak-news");
   src("nga-asam", "NGA Anti-Shipping Activity Messages", "U.S. government agency", "B", "Reports of attacks and boardings compiled from ships, navies and ReCAAP/IMB; positions approximate.", "https://msi.nga.mil/Piracy");
+  src("imb-prc", "IMB Piracy Reporting Centre live piracy map", "International Chamber of Commerce (ICC) unit", "B", "Attacks and boardings reported to the IMB PRC by ships' masters; OSAP keeps the incident facts and links to the map.", "https://icc-ccs.org/map/");
   function addMoreRecords() {
     R = R.filter(function (r) { if (r.more) { delete byId[r.id]; r.src.n--; return false; } return true; });
     var T = window.ASAP_TSU, V = window.ASAP_VOLC, W = window.ASAP_WHO, M = window.ASAP_MAR;
@@ -6174,9 +6175,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         lat: null, lon: null, prec: "none", sev: 2, src: SOURCES["who-don"], url: w.link, issued: w.date, recorded: W.asof });
     });
     if (LBY.safety && M) (M.asam || []).filter(hasCC).forEach(function (a) {
-      add({ layer: "safety", type: "report", cat: "Maritime incident (NGA ASAM)", kind: "other", more: true, live: true, title: (a.hostility ? a.hostility + " · " : "") + (a.victim || "vessel") + ": " + a.text.slice(0, 110),
-        detail: a.text + (a.ref ? " (ASAM " + a.ref + ")" : ""), ts: a.date, place: "", prov: "", lat: a.lat, lon: a.lon, prec: "approx", sev: /fired|hijack|kidnap|injur|kill/i.test(a.text) ? 3 : 2,
-        src: SOURCES["nga-asam"], url: "https://msi.nga.mil/Piracy", issued: a.date, recorded: M.asof });
+      var imb = a.src === "imb";
+      add({ layer: "safety", type: "report", cat: imb ? "Maritime incident (IMB PRC)" : "Maritime incident (NGA ASAM)", kind: "other", more: true, live: true, title: (a.hostility ? a.hostility + " · " : "") + (a.victim || "vessel") + ": " + a.text.slice(0, 110),
+        detail: a.text + (a.ref ? (imb ? " (" + a.ref + ")" : " (ASAM " + a.ref + ")") : ""), ts: a.date, place: "", prov: "", lat: a.lat, lon: a.lon, prec: "approx", sev: /fired|hijack|kidnap|injur|kill/i.test(a.text + " " + (a.hostility || "")) ? 3 : 2,
+        src: SOURCES[imb ? "imb-prc" : "nga-asam"], url: imb ? "https://icc-ccs.org/map/" : "https://msi.nga.mil/Piracy", issued: a.date, recorded: M.asof });
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
     if (window.TSAP) window.TSAP.records = R;
@@ -6467,14 +6469,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var M = window.ASAP_MAR, asam = M ? (M.asam || []).filter(function (a) { return hasCC(a) && inPeriodDate(a.date); }) : [];
     asam.forEach(function (a, i) {
       var m = osapMark([a.lat, a.lon], "a_robbery", { pane: "tlpane", radius: 7, color: "#222", weight: 1, fillColor: "#6a1b9a", fillOpacity: 0.85, lgk: "asam" });
-      m.bindPopup('<div class="pop"><div class="tier">Maritime incident · NGA ASAM ' + esc(a.ref) + " · " + esc(a.date) + "</div><h3>" + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + "</h3><p>" + esc(a.text) +
-        '</p><p class="obs">MGRS ' + esc(window.MGRS_OF(a.lat, a.lon, 2)) + " (approximate)</p></div>", { maxWidth: 340 });
+      var imb = a.src === "imb";
+      m.bindPopup('<div class="pop"><div class="tier">Maritime incident · ' + (imb ? "" : "NGA ASAM ") + esc(a.ref) + " · " + esc(a.date) + (a.time ? " " + esc(a.time) : "") + "</div><h3>" + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + "</h3><p>" + esc(a.text) +
+        '</p><p class="obs">MGRS ' + esc(window.MGRS_OF(a.lat, a.lon, 2)) + " (approximate)" + (imb ? ' · <a href="https://icc-ccs.org/map/" target="_blank" rel="noopener noreferrer">IMB PRC report</a>' : "") + "</p></div>", { maxWidth: 340 });
       sofLayer.addLayer(m); sofM["as:" + i] = m;
     });
     var marad = M ? (M.marad || []).filter(function (x) { return !x.ccs.length || hasCC(x); }) : [];
     var ms = M && M.status ? M.status.filter(function (s) { return !s.ok; }) : [];
     var mh = '<div class="sec"><h2>Maritime security</h2><p class="obs">' + snapBadge(M) + (ms.length ? ' · <span class="obs">failed: ' + esc(ms.map(function (s) { return s.source; }).join(", ")) + "</span>" : "") + "</p>" +
-      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
+      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM, IMB PRC), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
         return '<button type="button" class="tlrow" data-sof="as:' + i + '"><span class="tln">' + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + '</span><span class="tlm"><span class="tls">' + esc(a.date + " · " + a.text.slice(0, 90)) + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">None near ' + esc(C.name) + ".</p>") +
       (marad.length ? '<h3 style="margin:8px 0 2px;font-size:13px">U.S. maritime advisories (MARAD)</h3><ul class="note">' + marad.slice(0, 8).map(function (x) {
