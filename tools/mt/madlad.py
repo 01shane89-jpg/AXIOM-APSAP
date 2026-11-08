@@ -1,6 +1,8 @@
 """Machine translation to English with Google's MADLAD-400 (3B MT model, Apache-2.0), run on the job's own CPU.
 
-Reads {"items": [{"text": ..., "lang": ...}]} as JSON on stdin and writes {"out": [english or null, ...]} on stdout.
+Reads {"items": [{"text": ..., "lang": ...}]} as JSON on stdin and writes {"out": [english or null, ...]} on stdout, and with
+MT_SCORES=1 also "scores": [the model's confidence, or null, ...]: the average log-probability per output token of the item's
+least confident chunk (0 is certain; lower is less sure).
 The model is converted once to CTranslate2 int8 by tools/mt/setup_madlad.py and kept in the Actions cache (MT_DIR).
 No network use at translation time. MADLAD-400 needs no source language: each text is prefixed with "<2en>".
 This file is the only place that knows the model, so another one can replace it behind the same stdin/stdout contract.
@@ -34,6 +36,7 @@ def main():
     # Translate in slices and stop at the time budget (MT_BUDGET seconds), so a long queue returns what is done
     # instead of being killed with nothing; the caller orders the queue by priority and the rest waits for the next run.
     budget, t0, res = float(os.environ.get("MT_BUDGET", "300")), time.time(), []
+    scores_on = os.environ.get("MT_SCORES") == "1"
     # The penalty and the no-repeat rule stop the greedy decoder looping ("single-track, single-track, ..."), which it did on
     # short Thai headlines.
     # MT_BEAM, MT_REP_PENALTY and MT_NO_REPEAT override them (tools/mt/probe_settings.mjs compares settings).
@@ -41,16 +44,18 @@ def main():
     for k in range(0, len(jobs), 32):
         if res and time.time() - t0 > budget: break
         res += tr.translate_batch([j[1] for j in jobs[k:k + 32]], beam_size=beam, max_batch_size=16, max_decoding_length=256,
-                                repetition_penalty=pen, no_repeat_ngram_size=norep)
+                                repetition_penalty=pen, no_repeat_ngram_size=norep,
+                                **({"return_scores": True, "normalize_scores": True} if scores_on else {}))
     done = set(i for (i, _), _r in zip(jobs, res))
-    out = [None] * len(items)
+    out, sc = [None] * len(items), [None] * len(items)
     for (i, _), r in zip(jobs, res):
         en = sp.decode(r.hypotheses[0]).strip()
         if en: out[i] = (out[i] + " " + en).strip() if out[i] else en
+        if scores_on and r.scores: sc[i] = r.scores[0] if sc[i] is None else min(sc[i], r.scores[0])
     # an item whose chunks were only partly translated is left for the next run
     for i in done:
-        if any(j[0] == i for j in jobs[len(res):]): out[i] = None
-    json.dump({"out": out}, sys.stdout, ensure_ascii=False)
+        if any(j[0] == i for j in jobs[len(res):]): out[i] = sc[i] = None
+    json.dump({"out": out, **({"scores": sc} if scores_on else {})}, sys.stdout, ensure_ascii=False)
 
 if __name__ == "__main__":
     main()
