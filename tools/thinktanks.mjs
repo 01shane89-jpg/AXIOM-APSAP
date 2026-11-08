@@ -3,7 +3,8 @@
 // Only the headline, date and link are kept. The summary is read for country tagging and then dropped, never stored: it belongs to the publisher.
 // Items are tagged to the countries named in the headline or summary; a map pin is added only when a city in one of those countries is named.
 // Each institute is its own feed. Candidate addresses are tried in order, then the feed link advertised on the home page.
-// Licence: publisher copyright; headline and link only. Marked nc so these can be stripped in one pass before any paid use.
+// Licence: publisher copyright; headline and link only. Marked nc so these can be stripped in one pass before any paid use, except the
+// few institutes in OPEN_LIC whose terms clearly allow commercial reuse.
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -299,10 +300,13 @@ const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], el
   // regional bodies whose whole remit is their members: an item naming no country is filed under every member
   coi: ["km", "mg", "mu", "sc"], igad: ["dj", "er", "et", "ke", "so", "sd", "ss", "ug"],
   ffa: ["ck", "fj", "fm", "ki", "mh", "nr", "nu", "pg", "pw", "sb", "to", "tv", "vu", "ws"] };
+// Institutes whose published terms clearly allow commercial reuse (checked 2026-11-08 from GitHub's runners). Only these are kept in the
+// sold version; every other institute stays nc (non-commercial terms, all rights reserved, or terms that could not be read).
+const OPEN_LIC = { issafrica: "CC BY 4.0 (issafrica.org/terms-of-use); headline and link only", prif: "CC BY-ND 4.0 (blog.prif.org footer); headline and link only" };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
-  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: "Publisher copyright; headline and link only", nc: true, url: home, everyHours: 1 });
+  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: OPEN_LIC[id] || "Publisher copyright; headline and link only", nc: !OPEN_LIC[id], url: home, everyHours: 1 });
   run(fid, async (g) => {
     let entries = null, used = "", why = [];
     // A feed counts only if it holds something from the last 60 days (several institutes left a dead feed behind).
