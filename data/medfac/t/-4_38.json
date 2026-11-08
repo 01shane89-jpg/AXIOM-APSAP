@@ -62,7 +62,7 @@
 ["w1460066526",-3.3415,38.81435,"ke",{"aeroway":"aerodrome"}],
 ["w162975789",-3.63142,39.85741,"ke",{"name":"Kilifi County Hospital","amenity":"hospital","healthcare":"hospital","operator":"Kilifi county","operator:type":"government"}],
 ["w162982309",-3.54258,39.69207,"ke",{"name":"Ganze Health Centre","amenity":"hospital","healthcare":"counselling","operator":"Government( Ministry of Health)","operator:type":"public"}],
-["w255713955",-2.71363,38.19503,"ke",{"name":"Mtito Andei Airport","aeroway":"aerodrome","icao":"HKMT"}],
+["w255713955",-2.71363,38.19503,"ke",{"name":"Mtito Andei Airport","aeroway":"aerodrome","icao":"HKMT","wikidata":"Q3885371"}],
 ["w265461138",-3.33752,38.3807,"ke",{"name":"Nyache Health Center","amenity":"hospital","healthcare":"counselling","operator":"government","operator:type":"public"}],
 ["w482525685",-3.60955,39.84761,"ke",{"name":"EARC Testing Center","amenity":"clinic"}],
 ["w482604211",-3.40336,38.36309,"ke",{"name":"Wundanyi Health Centre","amenity":"hospital","healthcare":"hospital","addr:city":"Wundanyi"}],

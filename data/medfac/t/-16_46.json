@@ -27,6 +27,7 @@
 ["w1189788659",-15.38067,47.70783,"mg",{"name":"Maternité","amenity":"clinic","healthcare":"clinic"}],
 ["w1189788780",-15.38048,47.70777,"mg",{"name":"Dispensaire","amenity":"clinic","healthcare":"clinic"}],
 ["w1189788816",-15.38074,47.7078,"mg",{"amenity":"clinic","healthcare":"clinic"}],
+["w1571780016",-15.13522,47.10688,"mg",{"name":"Mifoka","operator":"Aqualma","aeroway":"aerodrome","icao":"FMAN"}],
 ["w169526134",-15.67236,47.05612,"mg",{"amenity":"hospital"}],
 ["w230681036",-15.71516,46.31798,"mg",{"name":"Hôpital Mahabibo","amenity":"hospital","healthcare":"hospital"}],
 ["w230685209",-15.71691,46.30444,"mg",{"name":"Centre Hospitalier Universitaire Zafisaona Gabriel","amenity":"hospital","healthcare":"hospital"}],

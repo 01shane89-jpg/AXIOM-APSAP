@@ -43,7 +43,7 @@
 ["n974606188",0.01394,36.88417,"ke",{"name":"Oleleren Airport","aeroway":"aerodrome"}],
 ["n974606261",1.78026,36.80125,"ke",{"name":"Baragoi Airport","aeroway":"aerodrome"}],
 ["n974606270",1.51722,36.28528,"ke",{"name":"Ngelesha Airport","aeroway":"aerodrome"}],
-["n974606271",0.18695,36.90861,"ke",{"name":"Segera Ranch Airport","aeroway":"aerodrome"}],
+["n974606271",0.18695,36.90861,"ke",{"name":"El Karama Wildlife Conservancy","aeroway":"aerodrome","icao":"HKEK"}],
 ["n974606306",0.38636,36.9344,"ke",{"name":"Chololo Airstrip","operator":"Private","operator:type":"private","aeroway":"aerodrome"}],
 ["n974606310",1.91674,36.00572,"ke",{"name":"Lokori Airport","aeroway":"aerodrome"}],
 ["n974606333",0.64249,36.42819,"ke",{"name":"Laikipia Ranch Airport","aeroway":"aerodrome"}],

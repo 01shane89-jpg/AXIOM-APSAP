@@ -1,4 +1,4 @@
-{"cc":"lu","at":"2026-10-07T10:34:04Z","base":"2026-10-07T10:31:36Z","m":[
+{"cc":"lu","at":"2026-11-08T11:26:07Z","base":"2026-11-08T11:23:36Z","m":[
 ["n10159387683",49.54285,5.83912,{"man_made":"mast","tower:type":"communication"}],
 ["n10618574847",49.52735,6.15485,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n1067016364",49.75997,5.8964,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
@@ -16,8 +16,6 @@
 ["n1223046788",49.55406,5.88871,{"man_made":"mast","tower:type":"communication"}],
 ["n1233353525",49.69496,6.32783,{"man_made":"mast","tower:type":"communication"}],
 ["n1234749341",49.62512,6.12607,{"man_made":"tower","tower:type":"communication"}],
-["n1240561450",49.73217,6.32378,{"frequency":"234 kHz","height":"290","man_made":"mast","operator":"RTL","start_date":"1972","tower:construction":"lattice","tower:type":"communication"}],
-["n1240561476",49.73034,6.32083,{"frequency":"234 kHz","height":"290","man_made":"mast","operator":"RTL","start_date":"1972","tower:construction":"lattice","tower:type":"communication"}],
 ["n12421418301",49.89697,6.03674,{"man_made":"tower","tower:type":"communication"}],
 ["n1242371634",49.75988,6.44818,{"man_made":"mast","tower:type":"communication"}],
 ["n1245554811",49.56211,5.87432,{"communication:4g":"yes","communication:5g":"yes","man_made":"mast","tower:type":"communication"}],
@@ -25,7 +23,6 @@
 ["n1267519036",49.81189,6.40788,{"man_made":"mast","tower:type":"communication"}],
 ["n1274606631",49.55776,6.0573,{"man_made":"mast","tower:type":"communication"}],
 ["n1280193078",49.56013,5.90091,{"man_made":"mast","tower:type":"communication"}],
-["n1283262372",49.7285,6.31785,{"frequency":"234 kHz","height":"290","man_made":"mast","operator":"RTL","start_date":"1972","tower:construction":"lattice","tower:type":"communication"}],
 ["n1295052055",49.60268,6.08008,{"man_made":"mast","tower:type":"communication"}],
 ["n1298713437",49.62984,6.06531,{"man_made":"mast","tower:type":"communication"}],
 ["n13197992657",49.61491,6.17675,{"communication:microwave":"no","communication:mobile_phone":"yes","man_made":"mast"}],

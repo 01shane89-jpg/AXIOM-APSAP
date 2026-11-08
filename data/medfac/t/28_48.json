@@ -117,7 +117,7 @@
 ["w336826450",29.34059,48.07784,"kw",{"name":"International Clinic","name:en":"International Clinic","amenity":"clinic"}],
 ["w342447254",29.10244,48.12355,"kw",{"name":"Government Hospital","name:en":"Government Hospital","amenity":"hospital"}],
 ["w350096396",29.14565,48.12076,"kw",{"name":"Alia International Hospital","name:en":"Alia International Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+965 2227 2000","website":"https://www.aliaih.com/"}],
-["w363850929",29.31343,48.06576,"kw",{"name":"مستوصف الرميثية","name:en":"Rumaithiya Polyclinic","amenity":"clinic","healthcare:speciality":"general;stomatology","operator":"وزارة الصحة الكويتية","phone":"+965 25633061","addr:street":"شارع المدارس","addr:city":"الرميثية - قطعة 2","opening_hours":"24/7"}],
+["w363850929",29.31343,48.06576,"kw",{"name":"مستوصف الرميثية","name:en":"Rumaithiya Polyclinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;stomatology","operator":"وزارة الصحة الكويتية","phone":"+965 25633061","addr:street":"شارع المدارس","addr:city":"الرميثية - قطعة 2","opening_hours":"24/7"}],
 ["w406887235",29.34276,48.0756,"kw",{"name":"مستوصف السالمية","name:en":"Salmiya Polyclinic","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["w435072749",29.32637,48.02653,"kw",{"name":"مستشفى رويال حياة","name:en":"Royale Hayat Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"شارع 5","addr:city":"الجابرية - قطعة 3أ"}],
 ["w452813991",29.36752,48.00897,"kw",{"name":"Mallorca Medical Center","name:en":"Mallorca Medical Center","amenity":"clinic","healthcare":"clinic","addr:city":"بنيد القار - قطعة 1"}],

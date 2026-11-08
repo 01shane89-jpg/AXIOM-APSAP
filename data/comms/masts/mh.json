@@ -1,4 +1,4 @@
-{"cc":"mh","at":"2026-10-06T11:27:05Z","base":"2026-10-06T11:24:56Z","m":[
+{"cc":"mh","at":"2026-11-08T11:17:11Z","base":"2026-11-08T11:16:18Z","m":[
 ["n13529210456",9.36639,167.49589,{"man_made":"communications_tower"}],
 ["n13533109220",9.39536,167.47378,{"man_made":"communications_tower"}],
 ["n13534369825",9.40141,167.46821,{"man_made":"communications_tower"}],
@@ -16,6 +16,7 @@
 ["n13625851946",8.8002,167.6143,{"man_made":"tower","tower:type":"communication"}],
 ["n14121285457",9.31201,166.87477,{"man_made":"communications_tower"}],
 ["n14132025950",9.32595,166.82941,{"man_made":"communications_tower"}],
+["n14355105438",11.22393,169.8448,{"man_made":"communications_tower"}],
 ["n3298601918",7.12407,171.35286,{"height":"76.2","man_made":"tower","name":"MW Mast","tower:type":"communication"}],
 ["n3302429599",7.13417,171.04394,{"man_made":"tower","tower:type":"communication"}],
 ["n3401302703",8.72345,167.71914,{"man_made":"tower","tower:type":"communication"}],
