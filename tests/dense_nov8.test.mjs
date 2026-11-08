@@ -1,0 +1,22 @@
+// New dense feeds of 8 Nov 2026 (tools/dense_nov8.mjs): chokepoint summary, RFJ tags, VAAC advisory parsing.
+import { chokeSummary, rfjTags, vaaParse } from "../tools/dense_nov8.mjs";
+let bad = 0;
+const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) bad++; };
+const rows = [];
+for (let d = 1; d <= 35; d++) rows.push({ portid: "c1", date: "2026-10-" + String(d).padStart(2, "0").replace(/^3[2-5]$/, (x) => x), n_total: d > 24 ? 10 : 20, n_tanker: 5, n_container: 3, n_dry_bulk: 2 });
+const s = chokeSummary(rows.filter((r) => Date.parse(r.date)), { c1: { name: "Test Strait", lat: 1, lon: 2 } })[0];
+ok(s && s.name === "Test Strait" && s.date === "2026-10-31", "latest day found");
+ok(s && s.avg7 === 10 && s.chg === -50, "7-day average and drop against the 4 weeks before (" + (s && s.avg7) + ", " + (s && s.chg) + "%)");
+const t = rfjTags(["rewards", "crime-category-acts-of-terrorism", "location-country-iran", "location-country-saudi-arabia", "organization-islamic-revolutionary-guard-corps", "cyber-critical-infrastructure-individual"]);
+ok(t.countries.join("|") === "iran|saudi arabia", "RFJ countries from class list");
+ok(t.cats.includes("acts of terrorism") && t.orgs[0] === "islamic revolutionary guard corps", "RFJ category and organization");
+const tokyo = "FVFE01 RJTD 060250 VA ADVISORY DTG: 20261106/0250Z VAAC: TOKYO VOLCANO: SHEVELUCH 300270 PSN: N5639 E16122 AREA: RUSSIA SOURCE ELEV: 3283M AMSL ADVISORY NR: 2026/372 INFO SOURCE: HIMAWARI-9 ERUPTION DETAILS: VA DISSIPATED ON SATELLITE IMAGERY OBS VA DTG: 06/0220Z OBS VA CLD: VA NOT IDENTIFIABLE FM SATELLITE DATA WIND FL180 290/39KT FCST VA CLD +6 HR: NO VA EXP RMK: NIL NXT ADVISORY: NO FURTHER ADVISORIES=";
+const a = vaaParse(tokyo);
+ok(a.issued === "2026-11-06T02:50Z" && a.volcano === "SHEVELUCH" && a.area === "RUSSIA", "Tokyo advisory: time, volcano, area");
+ok(a.pos && Math.abs(a.pos[0] - 56.65) < 0.01 && Math.abs(a.pos[1] - 161.367) < 0.01, "Tokyo advisory: position");
+ok(/NOT IDENTIFIABLE/.test(a.obs) && !/FCST/.test(a.obs), "Tokyo advisory: observed cloud stops before the forecast");
+const wash = "VA ADVISORY DTG: 20261108/1425Z VAAC: WASHINGTON VOLCANO: POPOCATEPETL 341090 PSN: N1901 W09837 AREA: MEXICO SOURCE ELEV: 17693 FT AMSL ADVISORY NR: 2026/389 INFO SOURCE: GOES-19. ERUPTION DETAILS: NEW LGT VA EMS OBS VA DTG: 08/1411Z OBS VA CLD: SFC/FL190 N1913 W09839 - N1900 W09835 MOV NW 10KT FCST VA CLD +6HR: 08/2000Z SFC/FL190 RMK: LGT VA EMS. NXT ADVISORY: WILL BE ISSUED BY 20261108/2030Z";
+const b = vaaParse(wash);
+ok(b.pos && b.pos[1] < -98 && /FL190/.test(b.obs) && /MOV NW/.test(b.obs) && /2030Z/.test(b.next), "Washington advisory: west longitude, ash cloud and next advisory");
+console.log(bad ? bad + " FAILED" : "all passed");
+process.exit(bad ? 1 : 0);
