@@ -1,32 +1,20 @@
-// PROBE BRANCH ONLY: piracy sources round 2 (ICC IMB map markers, UKMTO incidents JSON, ReCAAP incident list PDF, terms pages).
-import { execSync } from "node:child_process";
-import fs from "node:fs";
+// PROBE BRANCH ONLY: piracy sources round 3 (UKMTO incidents API from its Next.js bundle; ICC map ids, years and terms).
 const UA = "AXIOM-OSAP/1.0 (situational awareness; hourly; +https://github.com/01shane89-jpg/AXIOM-APSAP)";
-const show = async (u, n = 1500, opt = {}) => {
-  try {
-    const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(30000), ...opt });
-    const t = await r.text();
-    console.log("PR " + u + " | " + r.status + " | " + r.headers.get("content-type") + " | " + t.length + " | " + t.slice(0, n).replace(/\s+/g, " "));
-    return t;
-  } catch (e) { console.log("PR " + u + " | ERR " + e.message); return ""; }
-};
-await show("https://icc-ccs.org/wp-json/wpgmza/v1/markers", 2500);
-await show("https://icc-ccs.org/wp-json/wpgmza/v1/features", 1500);
-await show("https://icc-ccs.org/wp-json/wpgmza/v1/maps", 800);
-const m = await show("https://icc-ccs.org/map/", 0);
-for (const x of m.matchAll(/(wpgmza[^"'\s<>]{0,40}(map_id|mapid|id)[^"'\s<>]{0,40})/gi)) console.log("PM " + x[0]);
-for (const x of m.matchAll(/data-map-id="(\d+)"|"map_id":"?(\d+)/g)) console.log("PMID " + x[0]);
-const t = await show("https://icc-ccs.org/terms-and-conditions/", 0); console.log("PT " + t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").match(/.{0,300}(copyright|reproduc|commercial|permission).{0,400}/gi)?.slice(0, 4).join(" || "));
-const u = await show("https://www.ukmto.org/recent-incidents", 0);
-for (const x of u.matchAll(/<script[^>]+src="([^"]+)"/g)) console.log("PUS " + x[1]);
-for (const x of u.matchAll(/(fetch|url|ajax|api)[^;]{0,200}/gi)) if (/incident|json|api/i.test(x[0])) console.log("PUA " + x[0].slice(0, 220));
-console.log("PUB " + u.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 1500));
-const tt = await show("https://www.ukmto.org/terms-and-conditions", 0); console.log("PUT " + tt.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").match(/.{0,300}(copyright|reproduc|commercial|licence|license).{0,400}/gi)?.slice(0, 4).join(" || "));
-try {
-  const r = await fetch("https://www.recaap.org/resources/ck/files/Number%20of%20Incidents/2026/List%20of%20Incidents%20for%202026.pdf", { headers: { "user-agent": UA } });
-  fs.writeFileSync("/tmp/r.pdf", Buffer.from(await r.arrayBuffer()));
-  console.log("PDF " + r.status + " " + fs.statSync("/tmp/r.pdf").size + " " + execSync("which pdftotext || echo none", { encoding: "utf8" }));
-  const txt = execSync("pdftotext -layout /tmp/r.pdf - | head -60", { encoding: "utf8" }); txt.split("\n").forEach((l) => console.log("PDT " + l));
-} catch (e) { console.log("PDF ERR " + e.message.slice(0, 300)); }
-const rt = await show("https://www.recaap.org/terms_of_use", 0) || await show("https://www.recaap.org/disclaimer", 0);
-console.log("PRT " + rt.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").match(/.{0,300}(copyright|reproduc|commercial).{0,400}/gi)?.slice(0, 4).join(" || "));
+const get = async (u, opt = {}) => { const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(40000), ...opt }); return [r.status, await r.text(), r.headers.get("content-type")]; };
+const strip = (t) => t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+const [, page] = await get("https://www.ukmto.org/recent-incidents");
+const nd = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(page); console.log("PND " + (nd ? nd[1].slice(0, 1500) : "none"));
+for (const s of [...page.matchAll(/<script[^>]+src="([^"]+_next[^"]+)"/g)].map((m) => m[1])) {
+  try { const [, js] = await get(s); for (const m of js.matchAll(/["'`]([^"'`\s]{0,80}(incident|Incident|api\/|\.json|graphql)[^"'`\s]{0,80})["'`]/g)) console.log("PJ " + s.split("/").pop() + " | " + m[1]); } catch (e) {}
+}
+for (const u of ["https://www.ukmto.org/api/incidents", "https://www.ukmto.org/api/recent-incidents", "https://www.ukmto.org/recent-incidents.json"]) { try { const [st, t, ct] = await get(u); console.log("PU " + u + " | " + st + " | " + ct + " | " + t.slice(0, 600).replace(/\s+/g, " ")); } catch (e) { console.log("PU " + u + " ERR " + e.message); } }
+const [, map] = await get("https://icc-ccs.org/map/");
+for (const m of map.matchAll(/href="([^"]*(terms|privacy|copyright)[^"]*)"/gi)) console.log("PIL " + m[1]);
+const [, mk] = await get("https://icc-ccs.org/wp-json/wpgmza/v1/markers");
+const all = JSON.parse(mk); const by = {};
+for (const x of all) { const d = (x.custom_field_data || []).find((f) => /Date/.test(f.name)); const k = x.map_id + ":" + (d ? d.value.slice(0, 4) : "?"); by[k] = (by[k] || 0) + 1; }
+console.log("PIC " + all.length + " " + JSON.stringify(by));
+const latest = all.filter((x) => /2026/.test(JSON.stringify(x.custom_field_data || []))).slice(-3);
+for (const x of latest) console.log("PIX " + JSON.stringify({ map: x.map_id, title: x.title, lat: x.lat, lng: x.lng, cats: x.categories, f: x.custom_field_data }).slice(0, 900));
+const [, maps] = await get("https://icc-ccs.org/wp-json/wpgmza/v1/maps"); console.log("PIM " + JSON.parse(maps).map((m) => m.id + "=" + m.map_title).join(", "));
+for (const u of ["https://icc-ccs.org/terms-conditions/", "https://icc-ccs.org/terms/", "https://icc-ccs.org/privacy-policy/"]) { try { const [st, t] = await get(u); console.log("PIT " + u + " " + st + " " + (strip(t).match(/.{0,250}(copyright|reproduc|commercial|permission).{0,350}/gi) || []).slice(0, 3).join(" || ")); } catch (e) {} }
