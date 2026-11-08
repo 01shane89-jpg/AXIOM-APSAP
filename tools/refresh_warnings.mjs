@@ -71,7 +71,10 @@ const ADAPT = {
 function capInfo(xml, f) {
   const t = (b, k) => { const m = b.match(new RegExp("<(?:cap:)?" + k + "\\b[^>]*>([\\s\\S]*?)</(?:cap:)?" + k + ">", "i")); return m ? strip(m[1]) : ""; };
   const sent = t(xml, "sent"), g = {};
-  for (const b of String(xml).match(/<(?:cap:)?info\b[\s\S]*?<\/(?:cap:)?info>/gi) || []) {
+  let blocks = String(xml).match(/<(?:cap:)?info\b[\s\S]*?<\/(?:cap:)?info>/gi) || [];
+  // pick_lang: an alert that repeats every block in several languages (CHMI Czechia: cs and en-GB) keeps only that language's blocks
+  if (f.pick_lang) { const re = new RegExp("<(?:cap:)?language>\\s*" + f.pick_lang, "i"), some = blocks.filter((b) => re.test(b)); if (some.length) blocks = some; }
+  for (const b of blocks) {
     const sev = t(b, "severity"); if (/minor|unknown/i.test(sev) || !sev) continue;
     const k = t(b, "event") + "|" + t(b, "onset");
     const areas = [...b.matchAll(/<(?:cap:)?areaDesc>([\s\S]*?)<\/(?:cap:)?areaDesc>/gi)].map((m) => strip(m[1]));
@@ -105,6 +108,45 @@ async function dpcIt(f) {
   });
   return out;
 }
+// CHMI Czechia publishes each warning set as a new CAP file in one open-data folder (alert_cap_50_<ddhhmm>.xml, 50 = weather and
+// flood warnings; 70 = drought outlook). The folder listing's own timestamps pick the newest, because the file names wrap each month.
+async function chmiCap(f) {
+  const dir = await getText(f.url), want = new RegExp('href="(' + (f.file_prefix || "alert_cap_50_") + '\\d+\\.xml)">[^<]*</a>\\s+(\\d\\d-\\w{3}-\\d{4} \\d\\d:\\d\\d)', "g");
+  const files = [...dir.matchAll(want)].map((m) => ({ name: m[1], t: Date.parse(m[2].replace(/-/g, " ") + " UTC") || 0 })).sort((a, b) => a.t - b.t);
+  if (!files.length) throw new Error("no CAP file in folder");
+  return capInfo(await getText(f.url + files[files.length - 1].name), f);
+}
+// Small CSV reader (quoted fields, doubled quotes, newlines inside quotes); first row = header names.
+function csvRows(text) {
+  const rows = []; let row = [], cell = "", q = false; const s = String(text).replace(/^\uFEFF/, "");
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (q) { if (c === '"') { if (s[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true; else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && s[i + 1] === "\n") i++; row.push(cell); cell = ""; if (row.some((x) => x !== "")) rows.push(row); row = []; }
+    else cell += c;
+  }
+  row.push(cell); if (row.some((x) => x !== "")) rows.push(row);
+  const head = (rows.shift() || []).map((h) => h.trim());
+  return rows.map((r) => Object.fromEntries(head.map((h, i) => [h, (r[i] || "").trim()])));
+}
+// A local wall-clock time with no zone ("2026-11-08 14:00:00" or "08.11.2026 14:00") read in an IANA zone, returned as UTC ISO.
+function zoned(d, zone) {
+  let m = String(d || "").trim().match(/^(\d{4})-(\d\d)-(\d\d)[ T](\d\d):(\d\d)/) || null, y, mo, da, h, mi;
+  if (m) [, y, mo, da, h, mi] = m; else { m = String(d || "").trim().match(/^(\d\d)\.(\d\d)\.(\d{4})\.?\s+(\d\d):(\d\d)/); if (!m) return String(d || ""); [, da, mo, y, h, mi] = m; }
+  if (/[zZ]|[+-]\d\d:?\d\d$/.test(String(d).trim())) return new Date(d).toISOString();
+  const guess = Date.UTC(+y, +mo - 1, +da, +h, +mi), parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: zone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).formatToParts(new Date(guess)).map((p) => [p.type, p.value]));
+  const off = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute) - guess;
+  return new Date(guess - off).toISOString();
+}
+// LVGMC Latvia hydrometeorological warnings (data.gov.lv, CC0 1.0): bridinajumu_metadata.csv, one row per warning, Latvian local time.
+function lvgmc(text, f) {
+  return csvRows(text).filter((r) => r.PARADIBA_EN || r.PARADIBA).map((r) => {
+    const lvl = r.INTENSITY_EN || r.INTENSITY_LV || "";
+    return { title: [r.PARADIBA_EN || r.PARADIBA, lvl, r.REGIONS_EN || r.REGIONS].filter(Boolean).join(", "), summary: strip([r.TEKSTS_EN || r.TEKSTS_LV, r.RISKS_EN || r.RISKS_LV].filter(Boolean).join(" ")).slice(0, 400),
+      date: zoned(r.TIME_FROM, "Europe/Riga"), expires: r.TIME_TILL ? zoned(r.TIME_TILL, "Europe/Riga") : "", link: f.home || "https://videscentrs.lvgmc.lv/", severity: lvl };
+  }).filter((w) => !/green|za[lļ]/i.test(w.severity));
+}
 // IPMA warning area codes (districts, Madeira and Azores groups)
 const IPMA_AREA = { AVR: "Aveiro", BJA: "Beja", BRG: "Braga", BGC: "Bragança", CBO: "Castelo Branco", CBR: "Coimbra", EVR: "Évora", FAR: "Faro", GDA: "Guarda", LRA: "Leiria", LSB: "Lisboa",
   PTG: "Portalegre", PTO: "Porto", STM: "Santarém", STB: "Setúbal", VCT: "Viana do Castelo", VRL: "Vila Real", VIS: "Viseu", MCN: "Madeira north coast", MCS: "Madeira south coast",
@@ -118,7 +160,8 @@ for (const f of feeds) {
   try {
     let list;
     if (f.type === "dpcit") list = await dpcIt(f);
-    else { const body = await getText(f.url); list = f.type === "capinfo" ? capInfo(body, f) : f.type ? ADAPT[f.type](json(body)) : parseFeed(body); }
+    else if (f.type === "chmicap") list = await chmiCap(f);
+    else { const body = await getText(f.url); list = f.type === "capinfo" ? capInfo(body, f) : f.type === "lvgmc" ? lvgmc(body, f) : f.type ? ADAPT[f.type](json(body)) : parseFeed(body); }
     // tz: an agency that prints local time with no zone ("2026-09-29 14:27:00"), e.g. "+08:00"
     if (f.tz) list = list.map((i) => (/^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(i.date).trim()) ? { ...i, date: String(i.date).trim().replace(" ", "T") + f.tz } : i));
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }
