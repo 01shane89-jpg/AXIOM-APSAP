@@ -118,6 +118,22 @@ async function ashcam(keep) {
 const ashcamSrc = (id, cc, country, tz, keep) => ({ id, type: "volcano", tz, cc, country, agency: "USGS Volcano Hazards Program (AshCam)", every: 10,
   licence: "U.S. Geological Survey, public domain", page: "https://volcview.wr.usgs.gov/ashcam-gui/", list: () => ashcam(keep) });
 
+// ArcGIS feature layers that agencies publish openly (Illinois, Austin, Toronto, King County, ...): every feature, page by page
+async function arcgisAll(base, where = "1=1", size = 1000, order = "OBJECTID") {
+  const out = [];
+  for (let off = 0; off < 50000; off += size) {
+    const j = await get(`${base}/query?where=${encodeURIComponent(where)}&outFields=*&outSR=4326&f=json&resultOffset=${off}&resultRecordCount=${size}&orderByFields=${order}`);
+    if (j.error) throw new Error("ArcGIS: " + (j.error.message || "error"));
+    const f = j.features || [];
+    out.push(...f.map((x) => ({ a: x.attributes || {}, lat: x.geometry && x.geometry.y, lon: x.geometry && x.geometry.x })));
+    if (!j.exceededTransferLimit && f.length < size) break;
+    await pause(300);
+  }
+  return out;
+}
+// the 511 platform South Carolina and Virginia share (Iteris): each camera's still picture, a thumbnail of its live stream
+const iterisCam = (p, lon, lat) => (p && p.active !== false && https(p.image_url) ? [String(p.name || p.id), r5(lat), r5(lon), tidy(p.description || p.route || p.name), p.image_url] : null);
+
 export const SOURCES = [
   { id: "sg-lta", tz: "Asia/Singapore", cc: "sg", country: "Singapore", agency: "Land Transport Authority (LTA), via data.gov.sg", every: 1,
     licence: "Singapore Open Data Licence", page: "https://data.gov.sg/datasets/d_6cdb6b405b25aaaacbaf7689bcc6fae0/view",
@@ -271,6 +287,81 @@ export const SOURCES = [
   atisSrc("ca-mb", "manitoba511.ca", "America/Winnipeg", "ca", "Canada (Manitoba)", "Manitoba Transportation and Infrastructure (Manitoba 511)"),
   atisSrc("ca-pe", "511.gov.pe.ca", "America/Halifax", "ca", "Canada (Prince Edward Island)", "PEI Transportation and Infrastructure (511 PEI)"),
   atisSrc("ca-yt", "511yukon.ca", "America/Whitehorse", "ca", "Canada (Yukon)", "Yukon Highways and Public Works (511 Yukon)"),
+  /* ---- more states, provinces and cities (added 2026-11-08 after probe rounds 18-20 from GitHub) ---- */
+  { id: "us-sc", tz: "America/New_York", cc: "us", country: "United States (South Carolina)", agency: "South Carolina DOT (511SC)", every: 2,
+    licence: ATIS_LIC, page: "https://www.511sc.org/",
+    async list() {
+      // the camera list the 511SC map itself loads
+      const j = await get("https://sc.cdn.iteris-atis.com/geojson/icons/metadata/icons.cameras.geojson");
+      return (j.features || []).map((f) => iterisCam(f.properties, f.geometry.coordinates[0], f.geometry.coordinates[1])).filter(Boolean);
+    } },
+  { id: "us-va", tz: "America/New_York", cc: "us", country: "United States (Virginia)", agency: "Virginia DOT (511 Virginia)", every: 2,
+    licence: ATIS_LIC, page: "https://511.vdot.virginia.gov/",
+    async list() {
+      const j = await get("https://511.vdot.virginia.gov/services/511/map/array/cameras");
+      return (j.data || []).map((f) => f && f.geometry && iterisCam(f.properties, f.geometry.coordinates[0], f.geometry.coordinates[1])).filter(Boolean);
+    } },
+  { id: "us-mi", tz: "America/Detroit", cc: "us", country: "United States (Michigan)", agency: "Michigan DOT (Mi Drive)", every: 2,
+    licence: ATIS_LIC, page: "https://mdotjboss.state.mi.us/MiDrive/map",
+    async list() {
+      // Mi Drive's own camera list: position in the "Go to" link, picture in the image tag
+      const j = await get("https://mdotjboss.state.mi.us/MiDrive/camera/list");
+      return j.map((c) => {
+        const ll = /lat=([-\d.]+)&lon=([-\d.]+)[^"]*?id=(\d+)/.exec(c.county || ""), im = /src="(https:\/\/[^"]+)"/.exec(c.image || "");
+        return ll && im ? [ll[3], r5(ll[1]), r5(ll[2]), tidy((c.route || "") + " " + (c.location || "")), im[1].replace(/&amp;/g, "&")] : null;
+      }).filter(Boolean);
+    } },
+  { id: "us-al", tz: "America/Chicago", cc: "us", country: "United States (Alabama)", agency: "Alabama DOT (ALGO Traffic)", every: 2,
+    licence: ATIS_LIC, page: "https://algotraffic.com/",
+    async list() {
+      const j = await get("https://api.algotraffic.com/v4.0/Cameras");
+      return j.filter((c) => c.accessLevel === "Public" && c.location && https(c.snapshotImageUrl))
+        .map((c) => [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy([c.location.displayRouteDesignator, c.location.displayCrossStreet && "at " + c.location.displayCrossStreet, c.location.city].filter(Boolean).join(" ")), c.snapshotImageUrl]);
+    } },
+  { id: "ca-toronto", tz: "America/Toronto", cc: "ca", country: "Canada (Toronto)", agency: "City of Toronto Transportation Services (traffic cameras)", every: 2,
+    licence: "Open Government Licence – Toronto", page: "https://open.toronto.ca/dataset/traffic-cameras/",
+    async list() {
+      const f = await arcgisAll("https://gis.toronto.ca/arcgis/rest/services/cot_geospatial2/FeatureServer/3");
+      return f.map(({ a, lat, lon }) => https(a.IMAGEURL) ? [String(a.REC_ID || a.OBJECTID), r5(lat), r5(lon), tidy([a.MAINROAD, a.CROSSROAD].filter(Boolean).join(" at ") || a.NAME || "Camera " + a.OBJECTID), a.IMAGEURL] : null).filter(Boolean);
+    } },
+  { id: "ca-calgary", tz: "America/Edmonton", cc: "ca", country: "Canada (Calgary)", agency: "City of Calgary (traffic cameras)", every: 2,
+    licence: "Open Government Licence – City of Calgary", page: "https://data.calgary.ca/Transportation-Transit/Traffic-Cameras/k7p9-kppz",
+    async list() {
+      const j = await get("https://data.calgary.ca/resource/k7p9-kppz.json?$limit=5000");
+      return j.map((c) => { const u = c.camera_url && https(c.camera_url.url), p = c.point && c.point.coordinates; return u && p ? [u.replace(/^.*\/(loc\d+)\.jpg$/, "$1"), r5(p[1]), r5(p[0]), tidy(c.camera_location), u] : null; }).filter(Boolean);
+    } },
+  { id: "us-il", tz: "America/Chicago", cc: "us", country: "United States (Illinois)", agency: "Illinois DOT (Getting Around Illinois / Travel Midwest)", every: 2,
+    licence: "Creative Commons Attribution-ShareAlike 2.0 (Illinois DOT)", page: "https://www.gettingaroundillinois.com/",
+    async list() {
+      const f = await arcgisAll("https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0");
+      return f.map(({ a, lat, lon }) => https(a.SnapShot) ? ["il" + a.OBJECTID, r5(lat), r5(lon), tidy(a.CameraLocation + (a.CameraDirection && a.CameraDirection !== "NONE" ? " (" + a.CameraDirection + ")" : "")), a.SnapShot] : null).filter(Boolean);
+    } },
+  { id: "us-austin", tz: "America/Chicago", cc: "us", country: "United States (Austin, Texas)", agency: "City of Austin Transportation and Public Works (traffic cameras)", every: 2,
+    licence: "City of Austin open data (public)", page: "https://data.austintexas.gov/Transportation-and-Mobility/Traffic-Cameras/b4k4-adkb",
+    async list() {
+      const f = await arcgisAll("https://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/TRANSPORTATION_traffic_cameras/FeatureServer/0", "CAMERA_STATUS='TURNED_ON'");
+      return f.map(({ a, lat, lon }) => https(a.SCREENSHOT_ADDRESS) ? [String(a.CAMERA_ID), r5(lat), r5(lon), tidy(a.LOCATION_NAME), a.SCREENSHOT_ADDRESS] : null).filter(Boolean);
+    } },
+  { id: "us-kingco", tz: "America/Los_Angeles", cc: "us", country: "United States (King County, Washington)", agency: "King County Road Services (traffic cameras)", every: 2,
+    licence: "King County open data (public)", page: "https://kingcounty.gov/en/dept/local-services/transportation/roads-bridges/traffic-cameras",
+    async list() {
+      const f = await arcgisAll("https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/TRAFFICCAMERA_POINT_2029/FeatureServer/0", "CurrentStatus='Active'");
+      // the list gives http addresses; the same pictures come over https
+      return f.map(({ a, lat, lon }) => { const u = https(String(a.ImageURL || "").replace(/^http:/, "https:")); return u ? [String(a.TrafficCameraID || a.OBJECTID), r5(lat), r5(lon), tidy(a.Location), u] : null; }).filter(Boolean);
+    } },
+  { id: "us-lex", tz: "America/New_York", cc: "us", country: "United States (Lexington, Kentucky)", agency: "Lexington-Fayette Urban County Government (traffic cameras)", every: 2,
+    licence: "LFUCG public traffic camera images (no open-data licence stated)", page: "https://www.lexingtonky.gov/traffic-cameras",
+    async list() {
+      const f = await arcgisAll("https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/ArcGIS/rest/services/Traffic_Camera_Locations_Public_view/FeatureServer/0", "1=1", 1000, "objectid");
+      return f.map(({ a, lat, lon }) => https(a.still_url) ? [String(a.objectid), r5(lat), r5(lon), tidy(a.location), a.still_url] : null).filter(Boolean);
+    } },
+  { id: "ca-ottawa", tz: "America/Toronto", cc: "ca", country: "Canada (Ottawa)", agency: "City of Ottawa Traffic Operations (traffic cameras)", every: 1,
+    licence: "City of Ottawa open data (Open Government Licence – City of Ottawa)", page: "https://traffic.ottawa.ca/en/opendata",
+    async list() {
+      // the city's own cameras; the Ministry's ones on Ottawa highways are already in Ontario 511
+      const j = await get("https://traffic.ottawa.ca/service/camera?type=city&format=geojson");
+      return (j.features || []).map((f) => { const p = f.properties || {}; return p.camera_number != null ? [String(p.camera_number), r5(f.geometry.coordinates[1]), r5(f.geometry.coordinates[0]), tidy(p.name), "https://traffic.ottawa.ca/camera?id=" + encodeURIComponent(p.camera_number)] : null; }).filter(Boolean);
+    } },
   /* ---- Asia-Pacific and Europe ---- */
   { id: "th-dwr", type: "river", tz: "Asia/Bangkok", cc: "th", country: "Thailand (rivers)", agency: "Department of Water Resources, Thailand (telemetry river cameras)", every: 15,
     licence: "Public telemetry API of the Department of Water Resources (no terms of use stated)", page: "https://telemetry.dwr.go.th/",
@@ -294,8 +385,8 @@ export const SOURCES = [
       }
       return out;
     } },
-  { id: "th-itic", tz: "Asia/Bangkok", cc: "th", country: "Thailand (live video)", agency: "iTIC Foundation road cameras (list published by Longdo)", every: 0,
-    licence: "Public live streams of the iTIC Foundation (no licence stated)", page: "https://www.iticfoundation.org/",
+  { id: "th-itic", tz: "Asia/Bangkok", cc: "th", country: "Thailand (live video)", agency: "iTIC Foundation road cameras (list published by Longdo)", every: 0, nc: true,
+    licence: "Public live streams of the iTIC Foundation (no licence stated; list from a private company, so treated as non-commercial)", page: "https://www.iticfoundation.org/",
     // live video (HLS), not stills: the pop-up plays it (kind "hls")
     kind: "hls",
     async list() {
@@ -400,6 +491,15 @@ export const SOURCES = [
         const v = Object.entries(x.cams || {}).filter(([, c]) => c.imager === "color" && c.active === "y" && c.experimental !== "y").sort((a, b) => (a[1].azimuth || 0) - (b[1].azimuth || 0)).map(([id]) => `https://hpwren.ucsd.edu/cameras/L/${id}.jpg`);
         return v.length && isFinite(x.lat) ? [k, r5(x.lat), r5(x.long), tidy(x.name), one(v)] : null;
       }).filter(Boolean);
+    } },
+  /* California's wildfire camera network (ALERTCalifornia, UC San Diego), from the state's Office of Emergency Services' public layer
+     of California webcams; the layer's own note says ALERTCalifornia data is CC BY-NC-ND 4.0, so this source is nc (left out of
+     the sold version). The layer's Caltrans cameras are already in us-caltrans and are left out here. */
+  { id: "us-alertca", type: "weather", tz: "America/Los_Angeles", cc: "us", country: "United States (California wildfire cameras)", agency: "ALERTCalifornia, UC San Diego (via the California Office of Emergency Services webcam layer)", every: 1, nc: true,
+    licence: "CC BY-NC-ND 4.0 (ALERTCalifornia, UC San Diego; non-commercial)", page: "https://cameras.alertcalifornia.org/",
+    async list() {
+      const f = await arcgisAll("https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CalOES_California_Webcams/FeatureServer/0", "Source='Alert California'");
+      return f.map(({ a, lat, lon }) => /^https:\/\/cameras\.alertcalifornia\.org\/public-camera-data\//.test(a.Thumbnail_Url || "") ? [String(a.Thumbnail_Url.split("/")[4]), r5(lat), r5(lon), tidy(a.Location + (a.County ? ", " + a.County.replace(/^\w/, (c) => c.toUpperCase()) + " County" : "")), a.Thumbnail_Url] : null).filter(Boolean);
     } },
   /* the ocean buoys' cameras (NOAA National Data Buoy Center): a strip of views round the horizon, about once an hour */
   ndbcSrc("us-ndbc", "United States (ocean buoys)", (lon) => lon < 0),

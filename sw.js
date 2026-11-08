@@ -610,6 +610,10 @@ const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw
   /\/map\/Cctv\/\d+/, /carsprogram\.org\//, /websvc\.coloradosprings\.gov\//, /atmsqf\.iowadot\.gov\//, /dot511\.nebraska\.gov\/images\//, /kcscout\.net\//,
   /images\.wsdot\.wa\.gov\//, /tripcheck\.com\/RoadCams\//, /cameras\.qldtraffic\.qld\.gov\.au\//, /vegagerdin\.is\/vgdata\/vefmyndavelar\//, /eismoinfo\.lt\/eismoinfo-backend\/image-provider\//, /data\.livetraffic\.com\/cameras\/[^/]+\.jpe?g/,
   /camerai1\.iticfoundation\.org\//, /telemetry\.dwr\.go\.th\/api\//,
+  // added 2026-11-08: SC, VA, MI, AL, IL, Austin, King County, Lexington, Toronto, Calgary, Ottawa, ALERTCalifornia
+  /scdotsnap\.[\w.-]*skyvdn\.com\/thumbs\//, /snapshot\.vdotcameras\.com\/thumbs\//, /micamerasimages\.net\/thumbs\//, /api\.algotraffic\.com\/v4\/Cameras\//, /cctv\.travelmidwest\.com\/snapshots\//,
+  /cctv\.austinmobility\.io\/image\//, /info\.kingcounty\.gov\/transportation\/kcdot\/Roads\/TrafficCameras\//, /streamlock\.net(:\d+)?\/thumbnail/, /opendata\.toronto\.ca\/transportation\/tmc\/rescucameraimages\//,
+  /trafficcam\.calgary\.ca\//, /traffic\.ottawa\.ca\/camera\?/, /cameras\.alertcalifornia\.org\/public-camera-data\//,
   // volcano, river and weather camera stills (and JMA's camera page, read for the newest picture)
   /volcview\.wr\.usgs\.gov\/ashcam-api\/images\//, /images\.geonet\.org\.nz\/volcano\/cameras\//, /data\.jma\.go\.jp\/.*(volcam\.php|\/camera\/)/, /cam\.river\.go\.jp\/cam\//,
   /usgs-nims-images\.s3\.amazonaws\.com\//, /hpwren\.ucsd\.edu\/cameras\//, /egatwater\.egat\.co\.th\/assets\/CCTV\//, /etraffic\.dgt\.es\/camarasEtraffic\//, /ndbc\.noaa\.gov\/buoycam\.php/,
