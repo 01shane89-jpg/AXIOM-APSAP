@@ -4,6 +4,7 @@
 // interface (tools/mt/madlad.py's JSON stdin/stdout contract). MyMemory's free service was a fallback until 2026-10-17; its terms
 // bar resale without Translated's consent, so it was removed for the paid product (translations it already made are kept).
 // Texts the model could not translate stay untranslated and are marked so; they are retried on later runs.
+// A new translation the model itself is unsure of (mt_guard.mjs lowConfidence) is treated the same way.
 // Every translation, new or cached, passes tools/mt_guard.mjs: a line the model invented ("The 1980s were a time of great
 // success for the band." for a Thai flood story) is never used. The model is not asked again for that text (the cache keeps
 // the rejection).
@@ -15,7 +16,7 @@ import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
-import { mtSuspect, looksEnglish } from "./mt_guard.mjs";
+import { mtSuspect, looksEnglish, lowConfidence } from "./mt_guard.mjs";
 
 const CACHE_FILE = "data/live/translation-cache.json";
 const MAX_CACHE = 6000;
@@ -85,17 +86,18 @@ function localModel(items, todo, out, beam) {
   if (process.env.MT === "0" || !fs.existsSync(path.join(MT_DIR, "model.bin"))) { console.log("MADLAD-400: model not installed, skipping"); return []; }
   const pick = todo.slice(0, MT_LIMIT), t0 = Date.now();
   const r = spawnSync(process.env.PYTHON || "python", ["tools/mt/madlad.py"], { input: JSON.stringify({ items: pick.map((k) => items[k]) }),
-    encoding: "utf8", maxBuffer: 64 * 1024 * 1024, timeout: 12 * 60 * 1000, env: { MT_BUDGET: beam ? "120" : "300", ...process.env, MT_DIR, ...(beam || {}) } });
+    encoding: "utf8", maxBuffer: 64 * 1024 * 1024, timeout: 12 * 60 * 1000, env: { MT_BUDGET: beam ? "120" : "300", ...process.env, MT_DIR, MT_SCORES: "1", ...(beam || {}) } });
   if (r.status !== 0) { console.error("MADLAD-400 failed:", (r.stderr || r.error || "").toString().slice(-600)); return []; }
-  let res; try { res = JSON.parse(r.stdout).out; } catch (e) { console.error("MADLAD-400 returned unreadable output"); return []; }
-  let n = 0, bad = [];
+  let res, scores; try { ({ out: res, scores = [] } = JSON.parse(r.stdout)); } catch (e) { console.error("MADLAD-400 returned unreadable output"); return []; }
+  let n = 0, bad = [], unsure = 0;
   pick.forEach((k, j) => {
     const en = tidy(res[j]); if (!en) return;
-    if (mtSuspect(items[k].text, en)) { cache[key(items[k].text, items[k].lang)] = { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }; bad.push(k); return; }
+    const low = lowConfidence(scores[j]); if (low) unsure++;
+    if (low || mtSuspect(items[k].text, en)) { cache[key(items[k].text, items[k].lang)] = { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }; bad.push(k); return; }
     out[k] = { en, tool: MT_TOOL }; cache[key(items[k].text, items[k].lang)] = { en, tool: MT_TOOL, at: Date.now() }; n++;
   });
   console.log("MADLAD-400" + (beam ? " (beam search, texts the quick pass got wrong)" : "") + ": translated " + n + " of " + pick.length + " texts in " +
-    Math.round((Date.now() - t0) / 1000) + " s" + (bad.length ? ", " + bad.length + " invented lines rejected" : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
+    Math.round((Date.now() - t0) / 1000) + " s" + (bad.length ? ", " + bad.length + " invented lines rejected" + (unsure ? " (" + unsure + " the model was unsure of)" : "") : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
   return bad;
 }
 // The model writes a cut-off headline's "..." as ". . ." ("Ca. . ."): put it back as one ellipsis.
