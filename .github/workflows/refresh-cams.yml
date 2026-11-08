@@ -1,4 +1,4 @@
-# Traffic camera lists for Map overlays > Infrastructure > Traffic cameras (tools/build_cams.mjs): only cameras that a
+# Official camera lists for Map overlays > Infrastructure > Public cameras (tools/build_cams.mjs): only cameras that a
 # government or transport agency publishes as open data with no key or login. Camera sites change slowly, so the lists are
 # rebuilt once a week; the still images themselves are fetched by the page straight from each agency.
 # It commits on main. A run on another branch builds and reports without committing, unless dispatched with commit=true.
@@ -8,7 +8,7 @@ on:
   schedule:
     - cron: "41 4 * * 1"
   push:
-    branches: [claude/cams-more]
+    branches: [claude/cams-robust]
     paths: [tools/build_cams.mjs, .github/workflows/refresh-cams.yml]
   workflow_dispatch:
     inputs:
@@ -31,7 +31,7 @@ concurrency:
 jobs:
   cams:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -41,6 +41,11 @@ jobs:
         env:
           ONLY: ${{ inputs.only }}
       - run: du -sh data/cams && ls -la data/cams
+      # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, camera sources tagged
+      # nc (terms that do not allow commercial use) are taken out of data/cams before it is committed
+      - name: Strip non-commercial sources (sold version only)
+        if: ${{ vars.OSAP_COMMERCIAL == 'true' }}
+        run: node tools/nc_strip.mjs data/cams
       - name: Commit
         if: ${{ github.ref == 'refs/heads/main' || inputs.commit == 'true' }}
         run: |
