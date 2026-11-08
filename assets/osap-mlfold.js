@@ -139,11 +139,11 @@
 
   var css = D.createElement("style");
   css.textContent =
-    ".mlnav{display:none}#atk-om[data-mode=overlays] .mlnav{display:flex;flex-wrap:wrap;gap:4px;position:sticky;top:0;z-index:2;background:var(--panel,#fff);padding:6px 0 8px;margin:0 0 4px;border-bottom:1px solid var(--line,#dde3e8)}" +
-    ".mlnav .mlfind{flex:1 1 100%;box-sizing:border-box;font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line,#c9d1d8);border-radius:6px;background:var(--bg,#fff);color:inherit}" +
+    ".mlnav{display:none}#atk-om[data-mode=overlays] .mlnav{display:flex;flex-wrap:wrap;gap:4px;position:sticky;top:0;z-index:2;background:var(--surface,#fff);padding:6px 0 8px;margin:0 0 4px;border-bottom:1px solid var(--line,#dde3e8)}" +
+    ".mlnav .mlfind{flex:1 1 100%;box-sizing:border-box;font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line,#c9d1d8);border-radius:6px;background:var(--paper,#fff);color:var(--ink,#222)}.mlnav .mlfind::placeholder{color:var(--muted,#6b7780);opacity:1}" +
     ".mlnav .mlchips{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 100%}" +
-    ".mlnav .mlchips button,.mlnav .mlfoldall{font:500 12px/1.2 system-ui,-apple-system,sans-serif;padding:4px 8px;border:1px solid var(--line,#c9d1d8);border-radius:12px;background:none;color:inherit;cursor:pointer}" +
-    ".mlnav .mlchips button.on{border-color:#0b7285;color:#0b7285}.mlnav .mlchips b{display:inline-block;min-width:14px;margin-left:2px;padding:0 4px;border-radius:7px;background:#0b7285;color:#fff;font-size:10.5px}" +
+    ".mlnav .mlchips button,.mlnav .mlfoldall{font:500 12px/1.2 system-ui,-apple-system,sans-serif;padding:4px 8px;border:1px solid var(--line,#c9d1d8);border-radius:12px;background:var(--surface2,transparent);color:var(--ink,#222);cursor:pointer}" +
+    ".mlnav .mlchips button.on{border-color:var(--accent,#0b7285);color:var(--accent,#0b7285)}.mlnav .mlchips b{display:inline-block;min-width:14px;margin-left:2px;padding:0 4px;border-radius:7px;background:#0b7285;color:#fff;font-size:10.5px}" +
     ".mlnav .mlfoldall{border-radius:6px;font-size:11.5px}.mlnav.mlfx-empty::after{content:'No layer matches';flex:1 1 100%;font-size:13px;color:var(--muted,#6b7780)}" +
     "#atk-om .mlsec>.mlh{cursor:pointer;user-select:none;position:relative;padding-left:16px}" +
     "#atk-om .mlsec>.mlh::before{content:'';position:absolute;left:2px;top:50%;width:6px;height:6px;margin-top:-5px;border:solid currentColor;border-width:0 2px 2px 0;transform:rotate(45deg);transition:transform .12s}" +
