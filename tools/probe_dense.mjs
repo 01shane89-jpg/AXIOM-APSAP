@@ -1,20 +1,27 @@
-// PROBE BRANCH ONLY: new feeds round 2: field shapes for PortWatch, RFJ, EU FSF, VAAC text, HDX peacekeeping.
+// PROBE BRANCH ONLY: batch 2 (signals/measurement) candidates + UN peacekeeping CSV columns + EU FSF retry.
 const UA = "AXIOM-OSAP/1.0 (situational awareness; hourly; +https://github.com/01shane89-jpg/AXIOM-APSAP)";
-const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(40000) }); return [r.status, await r.text(), r.headers.get("content-type")]; };
-const P = (tag, s) => console.log("PX " + tag + " | " + String(s).replace(/\s+/g, " ").slice(0, 2500));
-const PW = "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/ArcGIS/rest/services/";
-try { const [, t] = await get(PW + "Daily_Chokepoints_Data/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=date%20DESC&resultRecordCount=3&f=json"); const j = JSON.parse(t); P("pw-fields", j.fields.map((f) => f.name).join(",")); P("pw-rows", JSON.stringify(j.features.map((f) => f.attributes))); } catch (e) { P("pw ERR", e.message); }
-try { const [, t] = await get(PW + "PortWatch_chokepoints_database/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=true&outSR=4326&f=json"); const j = JSON.parse(t); P("pwc-n", j.features.length + " " + j.fields.map((f) => f.name).join(",")); P("pwc-rows", JSON.stringify(j.features.slice(0, 3).map((f) => ({ a: f.attributes, g: f.geometry })))); } catch (e) { P("pwc ERR", e.message); }
-try { const [, t] = await get(PW + "portwatch_disruptions_database/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&orderByFields=fromdate%20DESC&resultRecordCount=3&f=json"); const j = JSON.parse(t); P("pwd-fields", (j.fields || []).map((f) => f.name).join(",")); P("pwd-rows", JSON.stringify((j.features || []).map((f) => f.attributes)) + (j.error ? JSON.stringify(j.error) : "")); } catch (e) { P("pwd ERR", e.message); }
-try { const [, t] = await get(PW + "Daily_Chokepoints_Data/FeatureServer/info/itemInfo?f=pjson"); const j = JSON.parse(t); P("pw-lic", (j.licenseInfo || "") + " || access: " + (j.accessInformation || "") + " || tags " + (j.tags || []).join(",")); } catch (e) { P("pw-lic ERR", e.message); }
-try { const [, t] = await get("https://rewardsforjustice.net/wp-json/wp/v2/types"); P("rfj-types", Object.keys(JSON.parse(t)).join(",")); } catch (e) { P("rfj ERR", e.message); }
-for (const ty of ["rewards", "reward"]) { try { const [s, t] = await get("https://rewardsforjustice.net/wp-json/wp/v2/" + ty + "?per_page=3&_fields=id,date,modified,link,title,crime-category,class_list"); P("rfj-" + ty, s + " " + t.slice(0, 1500)); } catch (e) { P("rfj-" + ty + " ERR", e.message); } }
-try { const [s, t] = await get("https://rewardsforjustice.net/wp-json/wp/v2/taxonomies"); P("rfj-tax", s + " " + Object.keys(JSON.parse(t)).join(",")); } catch (e) { P("rfj-tax ERR", e.message); }
-for (const u of ["https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw", "https://webgate.ec.europa.eu/fsd/fsf/public/files/csvFullSanctionsList/content?token=dG9rZW4tMjAxNw", "https://webgate.ec.europa.eu/europeaid/fsd/fsf/public/files/csvFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw", "https://data.europa.eu/api/hub/search/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions"]) {
-  try { const [s, t, ct] = await get(u); P("eu " + u.slice(0, 90), s + " " + ct + " " + t.length + " " + t.slice(0, 600)); } catch (e) { P("eu ERR " + u, e.message); }
+const P = (tag, s) => console.log("PX " + tag + " | " + String(s).replace(/\s+/g, " ").slice(0, 1800));
+async function show(tag, u, n = 1200) {
+  try { const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(40000) }); const t = await r.text(); P(tag, r.status + " " + r.headers.get("content-type") + " " + t.length + " " + t.slice(0, n)); return t; }
+  catch (e) { P(tag, "ERR " + (e.cause ? e.cause.code || e.cause.message : e.message)); return ""; }
 }
-try { const [, t] = await get("https://www.data.jma.go.jp/svd/vaac/data/TextData/2026/20261106_30027000_0372_Text.html"); P("vaac-tokyo-text", t.replace(/<[^>]+>/g, " ").slice(0, 1500)); } catch (e) { P("vt ERR", e.message); }
-try { const [, t] = await get("https://www.ospo.noaa.gov/VAAC/ARCH26/POPO/2026K081425.html"); P("vaac-wash-text", t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").slice(0, 1800)); } catch (e) { P("vw ERR", e.message); }
-try { const [, t] = await get("https://data.humdata.org/api/3/action/package_search?q=peacekeeping&rows=10"); const j = JSON.parse(t); for (const d of j.result.results) P("hdx-pk", d.name + " | " + d.title + " | " + d.license_title + " | " + d.organization?.title + " | " + (d.resources || []).map((r) => r.format + ":" + r.url).slice(0, 3).join(" ")); } catch (e) { P("hdx ERR", e.message); }
-try { const [, t] = await get("https://press.un.org/en/rss.xml"); P("unpress-items", [...t.matchAll(/<title>([^<]+)<\/title>\s*<link>([^<]+)/g)].map((m) => m[2]).slice(0, 15).join(" ")); } catch (e) {}
-for (const u of ["https://press.un.org/en/content/security-council/rss.xml", "https://press.un.org/en/rss/security-council.xml", "https://press.un.org/en/taxonomy/term/12/feed"]) { try { const [s, t] = await get(u); P("unsc-rss " + u, s + " " + t.slice(0, 300)); } catch (e) {} }
+await show("celestrak-recon", "https://celestrak.org/NORAD/elements/gp.php?GROUP=military&FORMAT=json", 900);
+await show("celestrak-resource", "https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=json", 400);
+await show("celestrak-radar", "https://celestrak.org/NORAD/elements/gp.php?GROUP=radar&FORMAT=json", 400);
+await show("usgs-explosion", "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=explosion,quarry%20blast,nuclear%20explosion,chemical%20explosion,mine%20collapse,sonic%20boom,experimental%20explosion,industrial%20explosion,mining%20explosion,other%20event&starttime=" + new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10) + "&limit=20", 1500);
+await show("usgs-types", "https://earthquake.usgs.gov/fdsnws/event/1/application.json", 1500);
+await show("eurdep-wfs", "https://remap.jrc.ec.europa.eu/api/maps/api/v1/stations?f=json", 600);
+await show("eurdep-gm", "https://remap.jrc.ec.europa.eu/GammaDoseRates.aspx", 400);
+await show("eurdep-geo", "https://remon.jrc.ec.europa.eu/api/public/stations", 400);
+await show("radnet", "https://www.epa.gov/radnet/radnet-csv-file-downloads", 400);
+await show("radnet-data", "https://radnet.epa.gov/cdx-radnet-rest/api/rest/csv/2026/fixed/AK/ANCHORAGE", 400);
+await show("ripe-ris", "https://stat.ripe.net/data/bgp-updates/data.json?resource=AS12880&starttime=" + new Date(Date.now() - 3600e3).toISOString().slice(0, 19), 600);
+await show("ripe-country-routing", "https://stat.ripe.net/data/country-routing-stats/data.json?resource=IR", 600);
+await show("ripe-visibility", "https://stat.ripe.net/data/country-resource-stats/data.json?resource=IR&resolution=1d&starttime=" + new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10), 900);
+await show("grip-bgp", "https://api.grip.inetintel.cc.gatech.edu/json/events?length=5&start=0&ts_start=" + new Date(Date.now() - 864e5).toISOString().slice(0, 19), 1200);
+await show("adsblol-mil", "https://api.adsb.lol/v2/mil", 500);
+try { const r = await fetch("https://data.humdata.org/dataset/819dce10-ac8a-4960-8756-856a9f72d820/resource/7f738eb4-6f77-4b5c-905a-ed6d45cc5515/download/dppadposs-pko.csv", { headers: { "user-agent": UA } }); const t = await r.text(); P("pk-csv", r.status + " " + t.length + " " + t.split("\n").slice(0, 4).join(" // ")); } catch (e) { P("pk-csv", "ERR " + e.message); }
+try { const r = await fetch("https://data.humdata.org/dataset/f6b91534-494c-45b1-97a4-cd01bafb4e72/resource/b1efbe57-2bbe-4f3b-9b05-6c2c2e891822/download/dpo-postsactual.csv", { headers: { "user-agent": UA } }); const t = await r.text(); P("pk-posts", r.status + " " + t.length + " " + t.split("\n").slice(0, 3).join(" // ")); } catch (e) { P("pk-posts", "ERR " + e.message); }
+await show("hdx-pk-fatal", "https://data.humdata.org/api/3/action/package_search?q=peacekeeping%20fatalities%20dpo&rows=5", 300);
+try { const r = await fetch("https://data.humdata.org/api/3/action/package_search?q=fatalities+peacekeeping&rows=8", { headers: { "user-agent": UA } }); const j = await r.json(); for (const d of j.result.results) P("hdx-f", d.name + " | " + d.license_title + " | " + (d.resources || []).map((x) => x.url).slice(0, 2).join(" ")); } catch (e) {}
+for (const u of ["https://webgate.ec.europa.eu/fsd/fsf/public/files/csvFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw", "https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList/content?token=dG9rZW4tMjAxNw", "https://webgate.ec.europa.eu/fsd/fsf/public/rss"]) await show("eu " + u.slice(40, 100), u, 300);
