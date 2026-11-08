@@ -15,6 +15,7 @@ import { parseFeed } from "./feedparse.mjs";
 import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs";
 import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones, coordsIn } from "./warngeo_lib.mjs";
 import { COMMERCIAL } from "./nc_strip.mjs";
+import { NAVW_SRC } from "./navw_sources.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -485,72 +486,6 @@ function navItem(id, issued, text, extra = {}) {
   return { id, issued: issued || "", subregion: extra.subregion || "", authority: extra.authority || "", text: redactPhones(text).slice(0, 700), pos, kind: navKind(text), ccs,
     ...(extra.link ? { link: extra.link } : {}), ...(extra.lic ? { lic: extra.lic } : {}), ...(extra.nc ? { nc: true } : {}) };
 }
-// the "warnings in force" roll-call messages list numbers only
-const isRollCall = (t) => /WARNINGS IN FORCE|有効一覧/i.test(t);
-const unent = (s) => String(s || "").replace(/&#xA;|&#10;/gi, "\n").replace(/&#x([0-9a-f]+);/gi, (m, h) => String.fromCharCode(parseInt(h, 16))).replace(/&#(\d+);/g, (m, d) => String.fromCharCode(+d))
-  .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ");
-// AMSA (RCC Australia) MSI page: SECURITE ... NNNN blocks, "FM JRCC AUSTRALIA 060110Z NOV 26", then "NAVAREA X 118/26" or "AUSCOAST WARNING 327/26"
-function amsaWarnings(html) {
-  const out = [], body = unent(String(html).replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "\n"));
-  for (const blk of body.split(/\bSECURITE\b/).slice(1)) {
-    const t = blk.split(/\bNNNN\b/)[0].trim(), lines = t.split("\n").map((l) => l.trim()).filter(Boolean);
-    const fm = (lines[0] || "").match(/^FM .*?(\d{6}Z \w{3} \d{2})/), idl = (lines[1] || "").match(/^(NAVAREA X|AUSCOAST WARNING)\s+(\d+\/\d{2})/);
-    if (!idl) continue;
-    const text = lines.slice(2).join("\n");
-    if (isRollCall(text)) continue;
-    out.push({ id: (idl[1] === "NAVAREA X" ? "NAVAREA X " : "AUSCOAST ") + idl[2], issued: fm ? fm[1] : "", text });
-  }
-  return out;
-}
-// UKHO Radio Navigational Warnings page: one table row per warning, the full text in <pre id="Details_Description_N">
-function ukhoWarnings(html) {
-  const h = String(html), out = [];
-  for (const m of h.matchAll(/id="Details_Reference_(\d+)"[^>]*>\s*([^<]+?)\s*<\/h2>[\s\S]*?id="Details_DateTimeGroupRnwFormat_\1"[^>]*>\s*([^<]+?)\s*<\/h3>[\s\S]*?<pre id="Details_Description_\1"[^>]*>([\s\S]*?)<\/pre>/g)) {
-    const type = (h.match(new RegExp('id="Details_WarningType_' + m[1] + '"[^>]*>\\s*([^<]+?)\\s*<')) || [])[1] || "";
-    const text = unent(m[4]).trim();
-    if (isRollCall(text)) continue;
-    out.push({ id: unent(m[2]).trim(), issued: unent(m[3]).trim(), subregion: type.trim(), text });
-  }
-  return out;
-}
-// Japan Coast Guard NAVAREA XI: warnings.cgi lists each year's warnings still in force (XML <Member>), disp_warnings.cgi gives the
-// broadcast English text ("NO.26-0498 発表日時：2026年11月06日 21時" then the message).
-const JCG = "https://www1.kaiho.mlit.go.jp/TUHO/keiho/cgi/";
-function jcgText(html) {
-  const b = String(html).slice(String(html).search(/<body/i));
-  const head = (b.match(/<STRONG>\s*NO\.([\d-]+)\s*発表日時：(\d{4})年(\d\d)月(\d\d)日\s*(\d\d)時/i) || []);
-  const text = unent(b.replace(/<STRONG>[\s\S]*?<\/STRONG>/i, "").replace(/<H1>[\s\S]*?<\/H1>/i, "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, " ")).replace(/[ \t]+/g, " ").trim();
-  // issue time is Japan time (UTC+9)
-  const issued = head[2] ? new Date(Date.UTC(+head[2], +head[3] - 1, +head[4], +head[5] - 9)).toISOString().slice(0, 16).replace("T", " ") + "Z" : "";
-  return { no: head[1] || "", issued, text };
-}
-async function jcgWarnings() {
-  const y = new Date().getUTCFullYear(), out = [];
-  for (const yr of [y, y - 1, y - 2]) {
-    const xml = await get(JCG + "warnings.cgi", "text", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: "YEAR=" + yr + "&TYPE=NAVAREA11&LANG=JP" });
-    for (const m of xml.matchAll(/<Member>([\s\S]*?)<\/Member>/g)) {
-      const tana = (m[1].match(/<tana>\s*(\d+)\s*</) || [])[1], title = (m[1].match(/<title>([^<]*)</) || [])[1] || "";
-      if (!tana || isRollCall(title)) continue;
-      out.push(tana);
-    }
-  }
-  const items = [];
-  for (const tana of out.slice(0, 60)) {
-    try { const w = jcgText(await get(JCG + "disp_warnings.cgi?TYPE=NAVAREA11&TANA=" + tana + "&LANG=JP", "text")); if (w.text && !isRollCall(w.text)) items.push({ id: "NAVAREA XI " + (w.no || tana).replace(/^(\d\d)-0*(\d+)$/, "$2/$1"), issued: w.issued, text: w.text }); }
-    catch (e) {}
-    await sleep(200);
-  }
-  if (out.length && !items.length) throw new Error("no warning text read (" + out.length + " listed)");
-  return items;
-}
-const NAVW_SRC = [
-  { area: "NAVAREA X (AMSA)", url: "https://www.operations.amsa.gov.au/AMSA.Web.MSIPublication/Home", link: "https://www.amsa.gov.au/safety-navigation/navigation-systems/maritime-safety-information-database",
-    authority: "JRCC Australia (AMSA)", lic: "CC BY 4.0, Australian Maritime Safety Authority", read: async (s) => amsaWarnings(await get(s.url, "text")) },
-  { area: "NAVAREA XI (JCG)", url: "https://www1.kaiho.mlit.go.jp/TUHO/keiho/navarea11.html", link: "https://www1.kaiho.mlit.go.jp/TUHO/keiho/navarea11.html",
-    authority: "Japan Coast Guard", lic: "Japan Coast Guard site terms (free reuse, commercial use allowed, credit the source)", read: () => jcgWarnings() },
-  { area: "NAVAREA I and UK coastal (UKHO)", url: "https://msi.admiralty.co.uk/RadioNavigationalWarnings", link: "https://msi.admiralty.co.uk/RadioNavigationalWarnings",
-    authority: "UK Hydrographic Office", lic: "Crown copyright, UK Hydrographic Office (no open licence found)", nc: true, read: async (s) => ukhoWarnings(await get(s.url, "text")) },
-];
 await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
   // The old query API (api/publications/broadcast-warn?navArea=..&status=A) stopped at 10 May 2024 (its own /latest-warning
   // says so); the warnings in force now are in each area's Daily Memorandum (tools/warngeo_lib.mjs, MEM_FILES / parseDailyMem).
@@ -575,7 +510,7 @@ await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
   for (const s of NAVW_SRC) {
     if (s.nc && COMMERCIAL) continue;
     try {
-      const list = await s.read(s); let n = 0;
+      const list = await s.read(s, get); let n = 0;
       // a coastal warning listed under two coastal areas (AMSA Auscoast) is kept once
       for (const w of list) { if (seen.has(w.id)) continue; seen.add(w.id); const it = navItem(w.id, w.issued, w.text, { subregion: w.subregion, authority: s.authority, link: s.link, lic: s.lic, nc: s.nc }); if (it) { items.push(it); n++; } }
       status.push({ area: s.area, ok: true, n, of: list.length, src: s.link, lic: s.lic, ...(s.nc ? { nc: true } : {}) });
