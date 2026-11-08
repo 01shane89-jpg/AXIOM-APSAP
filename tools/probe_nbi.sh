@@ -28,3 +28,24 @@ PY
   grep -i -E '^(HTTP|access-control-allow-origin|content-type)' /tmp/h.txt
   python3 -c "import json;j=json.load(open('/tmp/q.json'));fs=j.get('features',[]);print('features',len(fs),'err',j.get('error'));[print(json.dumps(f)[:2500]) for f in fs[:2]]"
 done
+# the app's own read (assets/osap-bridges.js nbiQuery): its field list, record filter, longest first, 2000 cap; a dense view (Houston)
+F=$(node -e 'const s=require("fs").readFileSync("assets/osap-bridges.js","utf8");const m=/var NBI_F = (\[[\s\S]*?\]);/.exec(s);console.log(eval(m[1]).join(","))')
+for box in "-95.40,29.74,-95.33,29.78" "-122.36,47.58,-122.30,47.62" "-66.12,18.42,-66.04,18.47"; do
+  for try in 1 2 3; do
+    echo "===== app query $box (try $try)"
+    curl -sS -m 40 -A "$UA" -G "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_National_Bridge_Inventory/FeatureServer/0/query" \
+      --data-urlencode "where=RECORD_TYPE_005A='1'" --data-urlencode "geometry=$box" --data-urlencode "geometryType=esriGeometryEnvelope" --data-urlencode "inSR=4326" \
+      --data-urlencode "spatialRel=esriSpatialRelIntersects" --data-urlencode "outFields=$F" --data-urlencode "returnGeometry=true" --data-urlencode "outSR=4326" \
+      --data-urlencode "orderByFields=STRUCTURE_LEN_MT_049 DESC" --data-urlencode "resultRecordCount=2000" --data-urlencode "f=json" -o /tmp/a.json -w 'HTTP %{http_code} %{size_download} bytes %{time_total}s\n' && break
+    sleep 5
+  done
+  python3 - <<'PY'
+import json,collections
+j=json.load(open('/tmp/a.json'))
+fs=j.get('features',[]); print('features',len(fs),'exceeded',j.get('exceededTransferLimit'),'err',j.get('error'))
+c=collections.Counter((f['attributes'].get('BRIDGE_CONDITION'),f['attributes'].get('OPEN_CLOSED_POSTED_041')) for f in fs); print('cond/status',c.most_common(8))
+print('methods',collections.Counter((f['attributes'].get('OPR_RATING_METH_063'),) for f in fs).most_common(6))
+print('dates',collections.Counter(str(f['attributes'].get('DATE')) for f in fs).most_common(3))
+for f in fs[:1]: print(json.dumps(f)[:1800])
+PY
+done
