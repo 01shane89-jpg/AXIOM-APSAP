@@ -5,10 +5,16 @@
 //   rfj              U.S. State Department Rewards for Justice offers, by the country each offer names
 //   vaac             Volcanic ash advisories of the Tokyo and Washington VAACs (latest per volcano, last 48 hours)
 //   unsc-press       UN Security Council meetings coverage and press statements (headline and link only)
+//   usgs-blast       Explosion-type seismic events (explosions, nuclear/chemical/mining blasts, sonic booms) in the USGS catalog
+//   bfs-odl          Official gamma dose rate network of Germany (BfS ODL, about 1,700 stations, hourly)
+//   ripe-routing     Routed address space per country (RIPE RIS): drops against three days earlier
+//   un-pko           UN peacekeeping missions with deployed strength (UN DPO via HDX, CC BY-IGO)
+//   sat-pass         Reconnaissance, radar and Earth-imaging satellites passing over each country in the next 12 hours
+//                    (CelesTrak public orbital elements, propagated here: approximate)
 // Licences are in each feed's "lic". IMF terms and UN press copyright are not clearly open for commercial reuse, so those
 // feeds are nc:true (dropped in the sold version, tools/nc_strip.mjs) until checked.
-import { feed, run, unhtml, rssItems, sleep } from "./dense_lib.mjs";
-import { ccsAt, ccFromName, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
+import { feed, run, unhtml, rssItems, sleep, csvObjects } from "./dense_lib.mjs";
+import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
 const uniq = (a) => [...new Set(a.filter(Boolean))];
 const day = (t) => new Date(t).toISOString().slice(0, 10);
@@ -139,7 +145,9 @@ run("vaac", async (g) => {
   if (!links.length) throw new Error("no advisory links on either VAAC list");
   const latest = {};
   let read = 0;
-  for (const [who, u] of uniq(links.map((l) => l.join("|"))).map((s) => s.split("|")).slice(0, 50)) {
+  // Each list is newest first: read the newest 30 of each VAAC so one busy centre cannot crowd out the other.
+  const pick = ["Tokyo", "Washington"].flatMap((w) => uniq(links.filter((l) => l[0] === w).map((l) => l.join("|"))).slice(0, 30).map((s) => s.split("|")));
+  for (const [who, u] of pick) {
     try {
       const a = vaaParse(unhtml(await g(u, "text"))); read++;
       if (!a.volcano || !a.pos || !a.issued || Date.now() - Date.parse(a.issued) > 48 * 36e5) continue;
@@ -175,4 +183,169 @@ run("unsc-press", async (g) => {
   // the listing has no dates: the press release number orders them, and the date is read from the newest few pages' <time> tags
   for (const it of items.slice(0, 12)) if (!it.date) { try { const p = await g(it.url, "text"); const m = /<time[^>]+datetime="([^"]+)"/.exec(p) || /(\d{1,2} [A-Z][a-z]+ \d{4})/.exec(p); if (m) it.date = new Date(m[1]).toISOString(); } catch (e) {} await sleep(150); }
   return { items: items.filter((x) => x.date), note: items.length + " statements naming a country" };
+});
+
+// ---------------------------------------------------------------- USGS explosion-type seismic events
+// The USGS catalog labels events its analysts judge man-made: explosions, nuclear, chemical, mining and industrial blasts,
+// sonic booms, mine collapses. Ordinary US quarry blasts are many and small, so quarry blasts below M2 are left out.
+const BLAST_TYPES = ["explosion", "nuclear explosion", "chemical explosion", "industrial explosion", "mining explosion", "experimental explosion", "quarry blast", "sonic boom", "mine collapse", "rock burst", "collapse", "acoustic noise", "other event"];
+feed("usgs-blast", { name: "Explosion-type seismic events (USGS catalog)", org: "U.S. Geological Survey, Earthquake Hazards Program", cat: "Security",
+  lic: "U.S. Government work, public domain", url: "https://earthquake.usgs.gov/earthquakes/search/", everyHours: 2 });
+/** One USGS GeoJSON feature into an item, or null when it is a small quarry blast or has no position. */
+export function blastItem(f) {
+  const p = f && f.properties || {}, c = f && f.geometry && f.geometry.coordinates || [];
+  const type = String(p.type || "").toLowerCase(), mag = typeof p.mag === "number" ? p.mag : null;
+  if (!BLAST_TYPES.includes(type) || typeof c[0] !== "number" || typeof c[1] !== "number") return null;
+  if (type === "quarry blast" && !(mag >= 2)) return null;
+  const sev = /nuclear/.test(type) ? 3 : /explosion|sonic boom|collapse|rock burst/.test(type) && mag >= 2.5 ? 2 : 1;
+  return { title: type.charAt(0).toUpperCase() + type.slice(1) + (mag != null ? " M" + mag.toFixed(1) : "") + (p.place ? ", " + p.place : ""),
+    detail: "USGS reviewed event type: " + type + (p.status ? " (" + p.status + ")" : "") + ". Depth " + (typeof c[2] === "number" ? c[2].toFixed(1) + " km" : "unknown") + ".",
+    date: new Date(p.time).toISOString(), lat: c[1], lon: c[0], url: p.url || "", sev, kind: "Explosion-type seismic event", value: mag, ccs: withOki(ccsAt(c[1], c[0], 0.5)) };
+}
+run("usgs-blast", async (g) => {
+  const from = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+  const j = await g("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=2000&starttime=" + from + "&eventtype=" + BLAST_TYPES.map(encodeURIComponent).join(","));
+  const items = (j.features || []).map(blastItem).filter((x) => x && x.ccs.length);
+  return { items, note: items.length + " events in 30 days (" + (j.features || []).length + " in the catalog before the quarry-blast filter)" };
+});
+
+// ---------------------------------------------------------------- Germany's official gamma dose rate network (BfS ODL)
+feed("bfs-odl", { name: "Gamma dose rate, Germany's official monitoring network (BfS ODL)", org: "Bundesamt für Strahlenschutz (BfS)", cat: "Environment",
+  lic: "Datenlizenz Deutschland, Namensnennung 2.0 (commercial reuse allowed with credit)", url: "https://odlinfo.bfs.de/", everyHours: 1 });
+/** Station features into a summary (figures) and items for the stations above the alert level. */
+export function odlSummary(features, high = 0.3) {
+  const ok = features.map((f) => ({ ...f.properties, lon: f.geometry && f.geometry.coordinates[0], lat: f.geometry && f.geometry.coordinates[1] }))
+    .filter((p) => typeof p.value === "number" && p.site_status === 1);
+  const vals = ok.map((p) => p.value).sort((a, b) => a - b), med = vals.length ? vals[Math.floor(vals.length / 2)] : null;
+  const top = ok.slice().sort((a, b) => b.value - a.value)[0];
+  return { n: ok.length, median: med, max: top ? top.value : null, maxAt: top ? top.name : "", asof: top ? top.end_measure : "", high: ok.filter((p) => p.value >= high) };
+}
+run("bfs-odl", async (g) => {
+  const j = await g("https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json");
+  const s = odlSummary(j.features || []);
+  if (!s.n) throw new Error("no station in operation in the reply");
+  const items = [{ title: "Germany gamma dose rate: median " + s.median.toFixed(3) + " µSv/h across " + s.n + " stations, highest " + s.max.toFixed(3) + " at " + s.maxAt,
+    detail: "Hourly ambient gamma dose rate of the federal monitoring network. Normal background in Germany is about 0.05 to 0.18 µSv/h; rain briefly raises it.",
+    date: s.asof, url: "https://odlinfo.bfs.de/", sev: s.max >= 0.5 ? 3 : s.max >= 0.3 ? 2 : 1, kind: "Radiation network", value: s.median, ccs: ["de"] },
+    ...s.high.map((p) => ({ title: "High gamma dose rate: " + p.value.toFixed(3) + " µSv/h at " + p.name, detail: "BfS station " + p.kenn + ", hour ending " + p.end_measure + ".",
+      date: p.end_measure, lat: p.lat, lon: p.lon, url: "https://odlinfo.bfs.de/", sev: p.value >= 0.5 ? 3 : 2, kind: "Radiation reading", value: p.value, ccs: ["de"] }))];
+  return { items, figures: { de: { stations: s.n, medianUSvH: s.median, maxUSvH: s.max } }, note: s.n + " stations, " + s.high.length + " at or above 0.3 µSv/h" };
+});
+
+// ---------------------------------------------------------------- RIPE RIS routing per country
+// RIPEstat country-resource-stats: how many IPv4/IPv6 prefixes and networks (ASNs) from each country the RIPE route
+// collectors see. A sharp fall against three days earlier is a sign of a shutdown or a large outage (IODA reports outages
+// too; RIPE's terms allow commercial use, so this one stays in the sold version).
+feed("ripe-routing", { name: "Routed internet address space per country (RIPE RIS)", org: "RIPE NCC, RIPEstat", cat: "Cyber",
+  lic: "RIPEstat terms of use (free, commercial use allowed with attribution)", url: "https://stat.ripe.net/", everyHours: 6 });
+/** Timeline rows into {now, before, chg}: the newest row against the oldest, by visible IPv4 prefixes. */
+export function routeChange(stats) {
+  const rows = (stats || []).filter((r) => typeof r.v4_prefixes_ris === "number" && r.v4_prefixes_ris >= 0);
+  if (rows.length < 2) return null;
+  const a = rows[0], b = rows[rows.length - 1];
+  return { before: a.v4_prefixes_ris, now: b.v4_prefixes_ris, asnsBefore: a.asns_ris, asnsNow: b.asns_ris, when: (b.timeline && b.timeline[0] && b.timeline[0].starttime) || "",
+    chg: a.v4_prefixes_ris ? Math.round(((b.v4_prefixes_ris - a.v4_prefixes_ris) / a.v4_prefixes_ris) * 1000) / 10 : 0 };
+}
+run("ripe-routing", async (g) => {
+  const from = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 13) + ":00";
+  const items = [], figures = {}; let read = 0, fails = 0;
+  const ccs = COUNTRIES.filter((c) => c.id !== "oki" && /^[A-Z]{2}$/.test(c.a2));
+  for (const c of ccs) {
+    try {
+      const j = await g("https://stat.ripe.net/data/country-resource-stats/data.json?sourceapp=axiom-osap&resource=" + c.a2 + "&starttime=" + from + "&resolution=1d");
+      const r = routeChange(j.data && j.data.stats); read++;
+      if (!r) continue;
+      figures[c.id] = { v4Prefixes: r.now, asns: r.asnsNow, chg3d: r.chg };
+      if (r.chg <= -5 && r.before >= 20) items.push({ title: "Routed address space in " + c.name + " down " + Math.abs(r.chg) + "% in 3 days", detail: "IPv4 prefixes seen by RIPE route collectors: " + r.before + " then " + r.now + "; networks (ASNs) " + r.asnsBefore + " then " + r.asnsNow + ". Can mean a shutdown, an outage or routine re-routing.",
+        date: r.when ? new Date(r.when + "Z").toISOString() : new Date().toISOString(), url: "https://stat.ripe.net/app/" + c.a2, sev: r.chg <= -25 ? 3 : r.chg <= -10 ? 2 : 1, kind: "Internet routing", value: r.chg, ccs: withOki([c.id]) });
+    } catch (e) { if (++fails > 25) throw new Error("RIPEstat stopped answering after " + read + " countries"); }
+    await sleep(120);
+  }
+  return { items, figures, note: read + " countries read, " + items.length + " with a fall of 5% or more" };
+});
+
+// ---------------------------------------------------------------- UN peacekeeping missions
+const HDX = "https://data.humdata.org/dataset/";
+feed("un-pko", { name: "UN peacekeeping missions and deployed personnel", org: "UN Department of Peace Operations (via HDX)", cat: "Security",
+  lic: "CC BY-IGO (commercial reuse allowed with credit)", url: "https://peacekeeping.un.org/en/where-we-operate", everyHours: 24 });
+const commaNum = (v) => { const n = parseFloat(String(v || "").replace(",", ".")); return isNaN(n) ? null : n; };
+/** Active missions with their latest reported strength. */
+export function pkoMissions(missions, posts) {
+  const strength = {};
+  for (const r of posts) {
+    const k = r.mission_acronym, s = strength[k] || (strength[k] = { end: "", cats: {} });
+    if (r.end_date > s.end) { s.end = r.end_date; s.cats = {}; }
+    if (r.end_date === s.end) s.cats[r.category] = (s.cats[r.category] || 0) + (+r.actual_average || 0);
+  }
+  return missions.filter((m) => m.mission_isactive === "Yes").map((m) => {
+    const lat = commaNum(m.mission_latitude), lon = commaNum(m.mission_longitude), s = strength[m.mission_acronym];
+    const total = s ? Object.values(s.cats).reduce((a, b) => a + b, 0) : null;
+    return { acr: m.mission_acronym, name: m.mission_name, place: m.mission_location, lat, lon, total, cats: s ? s.cats : {}, period: s ? s.end : "" };
+  });
+}
+run("un-pko", async (g) => {
+  const [mt, pt] = await Promise.all([g(HDX + "819dce10-ac8a-4960-8756-856a9f72d820/resource/7f738eb4-6f77-4b5c-905a-ed6d45cc5515/download/dppadposs-pko.csv", "text"),
+    g(HDX + "f6b91534-494c-45b1-97a4-cd01bafb4e72/resource/b1efbe57-2bbe-4f3b-9b05-6c2c2e891822/download/dpo-postsactual.csv", "text")]);
+  const ms = pkoMissions(csvObjects(mt), csvObjects(pt));
+  const items = ms.map((m) => {
+    const ccs = withOki(uniq([...(m.lat != null ? ccsAt(m.lat, m.lon, 0.5) : []), ...ccsInText(m.name + " " + m.place)]));
+    const cats = Object.entries(m.cats).filter(([, n]) => n > 0).map(([k, n]) => Math.round(n) + " " + k.toLowerCase()).join(", ");
+    return { title: "UN peacekeeping: " + m.acr + " (" + m.name + ")" + (m.total ? ", about " + Math.round(m.total).toLocaleString("en-US") + " personnel" : ""),
+      detail: "Headquarters: " + (m.place || "not given") + "." + (cats ? " Average strength for the budget period to " + m.period + ": " + cats + "." : ""),
+      date: m.period ? m.period + "T00:00:00Z" : "", lat: m.lat, lon: m.lon, url: "https://peacekeeping.un.org/en/where-we-operate", sev: 1, kind: "UN peacekeeping mission", value: m.total ? Math.round(m.total) : null, ccs };
+  }).filter((x) => x.ccs.length);
+  return { items, globals: items, note: ms.length + " active missions" };
+});
+
+// ---------------------------------------------------------------- satellite overflights (CelesTrak)
+// Public orbital elements (GP, CelesTrak) for military, radar-calibration and Earth-resources satellites, propagated here with
+// a two-body orbit plus the J2 drift of node and perigee and the published decay rate. Checked against SGP4 (satellite.js): about 1 minute along
+// the track a day after the element epoch: enough to say which satellites pass over a country and when, not where exactly. Sub-satellite point only;
+// imaging swaths are wider than that.
+feed("sat-pass", { name: "Reconnaissance and imaging satellites passing over (next 12 hours, approximate)", org: "CelesTrak orbital elements; OSAP propagation", cat: "Security",
+  lic: "CelesTrak data: free use with credit (orbital data from U.S. Space Force via space-track.org)", url: "https://celestrak.org/NORAD/elements/", everyHours: 3 });
+const MU = 398600.4418, RE = 6378.137, J2 = 1.08262668e-3, D2R = Math.PI / 180;
+/** Sub-satellite latitude/longitude (degrees) of one GP record at time t (ms). */
+export function subPoint(gp, t) {
+  const ep = Date.parse(gp.EPOCH + (/[zZ]$/.test(gp.EPOCH) ? "" : "Z")), dt = (t - ep) / 1000;
+  const n0 = (gp.MEAN_MOTION * 2 * Math.PI) / 86400, a = Math.cbrt(MU / (n0 * n0)), e = gp.ECCENTRICITY, i = gp.INCLINATION * D2R;
+  const p = a * (1 - e * e), k = 1.5 * J2 * (RE / p) ** 2 * n0;
+  const raan = gp.RA_OF_ASC_NODE * D2R - k * Math.cos(i) * dt, argp = gp.ARG_OF_PERICENTER * D2R + k * (2 - 2.5 * Math.sin(i) ** 2) * dt;
+  const M = gp.MEAN_ANOMALY * D2R + (n0 + k * Math.sqrt(1 - e * e) * (1 - 1.5 * Math.sin(i) ** 2)) * dt;
+  const Md = M + 2 * Math.PI * (gp.MEAN_MOTION_DOT || 0) * (dt / 86400) ** 2;   // drag: MEAN_MOTION_DOT is half the rate of change, rev/day²
+  let E = Md; for (let j = 0; j < 8; j++) E = E - (E - e * Math.sin(E) - Md) / (1 - e * Math.cos(E));
+  const nu = 2 * Math.atan2(Math.sqrt(1 + e) * Math.sin(E / 2), Math.sqrt(1 - e) * Math.cos(E / 2)), u = argp + nu;
+  const x = Math.cos(raan) * Math.cos(u) - Math.sin(raan) * Math.sin(u) * Math.cos(i), y = Math.sin(raan) * Math.cos(u) + Math.cos(raan) * Math.sin(u) * Math.cos(i), z = Math.sin(u) * Math.sin(i);
+  const jd = t / 86400000 + 2440587.5, T = (jd - 2451545) / 36525;
+  const gmst = ((280.46061837 + 360.98564736629 * (jd - 2451545) + 0.000387933 * T * T) % 360) * D2R;
+  let lon = (Math.atan2(y, x) - gmst) / D2R; lon = ((lon + 540) % 360) - 180;
+  return [Math.asin(z) / D2R, lon];
+}
+const SAT_GROUPS = [["military", "Military"], ["radar", "Radar calibration"], ["resource", "Earth resources / imaging"]];
+run("sat-pass", async (g) => {
+  const sats = [];
+  for (const [grp, label] of SAT_GROUPS) {
+    try { for (const s of await g("https://celestrak.org/NORAD/elements/gp.php?GROUP=" + grp + "&FORMAT=json")) if (s.MEAN_MOTION > 11 && s.MEAN_MOTION < 17 && Date.now() - Date.parse(s.EPOCH + "Z") < 3 * 864e5) sats.push({ ...s, label }); }
+    catch (e) { console.error("sat-pass: " + grp + " " + e.message); }
+    await sleep(300);
+  }
+  if (!sats.length) throw new Error("no orbital elements from CelesTrak");
+  const t0 = Date.now(), STEP = 60e3, N = 12 * 60, passes = {};   // country -> name -> first time over it
+  for (const s of sats) {
+    let last = null;
+    for (let k = 0; k < N; k++) {
+      const t = t0 + k * STEP, [la, lo] = subPoint(s, t), cc = ccsAt(la, lo, 0)[0] || null;
+      if (cc && cc !== last) { const pc = passes[cc] || (passes[cc] = {}); (pc[s.OBJECT_NAME] = pc[s.OBJECT_NAME] || { t, la, lo, label: s.label, n: 0 }).n++; }
+      last = cc;
+    }
+  }
+  const hhmm = (t) => new Date(t).toISOString().slice(11, 16) + "Z";
+  const items = Object.entries(passes).map(([cc, by]) => {
+    const list = Object.entries(by).sort((a, b) => a[1].t - b[1].t), mil = list.filter(([, v]) => v.label === "Military");
+    const first = list[0][1];
+    return { title: list.length + " reconnaissance or imaging satellites over the country in the next 12 hours" + (mil.length ? " (" + mil.length + " military)" : ""),
+      detail: "First passes (sub-satellite point, approximate): " + list.slice(0, 12).map(([n, v]) => n + " " + hhmm(v.t)).join("; ") + (list.length > 12 ? "; and " + (list.length - 12) + " more" : "") + ". From public CelesTrak orbital elements; timings within a few minutes.",
+      date: new Date(t0).toISOString(), lat: first.la, lon: first.lo, url: "https://celestrak.org/NORAD/elements/", sev: mil.length >= 5 ? 2 : 1, kind: "Satellite overflights", value: list.length, ccs: withOki([cc]) };
+  });
+  return { items, note: sats.length + " satellites propagated over 12 hours; " + items.length + " countries overflown" };
 });

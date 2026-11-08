@@ -1,5 +1,5 @@
 // New dense feeds of 8 Nov 2026 (tools/dense_nov8.mjs): chokepoint summary, RFJ tags, VAAC advisory parsing.
-import { chokeSummary, rfjTags, vaaParse } from "../tools/dense_nov8.mjs";
+import { chokeSummary, rfjTags, vaaParse, blastItem, odlSummary, routeChange, pkoMissions, subPoint } from "../tools/dense_nov8.mjs";
 let bad = 0;
 const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) bad++; };
 const rows = [];
@@ -18,5 +18,30 @@ ok(/NOT IDENTIFIABLE/.test(a.obs) && !/FCST/.test(a.obs), "Tokyo advisory: obser
 const wash = "VA ADVISORY DTG: 20261108/1425Z VAAC: WASHINGTON VOLCANO: POPOCATEPETL 341090 PSN: N1901 W09837 AREA: MEXICO SOURCE ELEV: 17693 FT AMSL ADVISORY NR: 2026/389 INFO SOURCE: GOES-19. ERUPTION DETAILS: NEW LGT VA EMS OBS VA DTG: 08/1411Z OBS VA CLD: SFC/FL190 N1913 W09839 - N1900 W09835 MOV NW 10KT FCST VA CLD +6HR: 08/2000Z SFC/FL190 RMK: LGT VA EMS. NXT ADVISORY: WILL BE ISSUED BY 20261108/2030Z";
 const b = vaaParse(wash);
 ok(b.pos && b.pos[1] < -98 && /FL190/.test(b.obs) && /MOV NW/.test(b.obs) && /2030Z/.test(b.next), "Washington advisory: west longitude, ash cloud and next advisory");
+// USGS explosion-type events
+const ft = (type, mag, lon, lat) => ({ properties: { type, mag, place: "x", time: 1794000000000, url: "u" }, geometry: { coordinates: [lon, lat, 0] } });
+ok(blastItem(ft("quarry blast", 1.6, -117.3, 34.0)) === null, "small quarry blast left out");
+const nb = blastItem(ft("nuclear explosion", 4.5, 129.08, 41.3));
+ok(nb && nb.sev === 3 && nb.ccs.includes("kp"), "nuclear explosion is severity 3 and placed in North Korea (" + (nb && nb.ccs) + ")");
+ok(blastItem(ft("earthquake", 5, 0, 0)) === null, "earthquakes are not this feed");
+// BfS gamma dose rate
+const st = (v, s = 1) => ({ geometry: { coordinates: [8, 50] }, properties: { value: v, site_status: s, name: "S" + v, kenn: "k", end_measure: "2026-11-08T14:00:00Z" } });
+const od = odlSummary([st(0.08), st(0.09), st(0.1), st(0.35), st(9, 0)]);
+ok(od.n === 4 && od.max === 0.35 && od.high.length === 1 && od.median === 0.1, "ODL summary skips stations out of operation and flags 0.3 µSv/h");
+// RIPE routing
+const rc = routeChange([{ v4_prefixes_ris: 800, asns_ris: 130, timeline: [{ starttime: "2026-11-05T00:00:00" }] }, { v4_prefixes_ris: -1 }, { v4_prefixes_ris: 600, asns_ris: 120, timeline: [{ starttime: "2026-11-08T00:00:00" }] }]);
+ok(rc && rc.chg === -25 && rc.now === 600, "routing change uses first and last valid rows (" + (rc && rc.chg) + "%)");
+ok(routeChange([{ v4_prefixes_ris: 5 }]) === null, "one row gives no change");
+// UN peacekeeping
+const pk = pkoMissions([{ mission_acronym: "UNMISS", mission_name: "UN Mission in South Sudan", mission_isactive: "Yes", mission_location: "Juba", mission_longitude: "31,5825", mission_latitude: "4,8517" },
+  { mission_acronym: "OLD", mission_isactive: "No" }],
+  [{ mission_acronym: "UNMISS", end_date: "2023-06-30", category: "Military contingents", actual_average: "100" }, { mission_acronym: "UNMISS", end_date: "2024-06-30", category: "Military contingents", actual_average: "13000" },
+   { mission_acronym: "UNMISS", end_date: "2024-06-30", category: "Individual police", actual_average: "500" }]);
+ok(pk.length === 1 && Math.abs(pk[0].lat - 4.8517) < 1e-6 && pk[0].lon > 31.5 && pk[0].total === 13500, "active mission, comma decimals and latest period strength");
+// Satellite propagation: SAR-LUPE 2 elements of 8 Nov 2026 against SGP4 (satellite.js 5.0.0), 12 hours after epoch -60.50, 104.50
+const gp = { EPOCH: "2026-11-08T07:58:15.212928", MEAN_MOTION: 15.66848761, ECCENTRICITY: 7.013e-5, INCLINATION: 98.1132, RA_OF_ASC_NODE: 76.9967, ARG_OF_PERICENTER: 331.3142, MEAN_ANOMALY: 28.8078, MEAN_MOTION_DOT: 0.00092738 };
+const sp = subPoint(gp, Date.parse("2026-11-08T19:58:15.213Z"));
+const km = Math.hypot((sp[0] + 60.5) * 111, (sp[1] - 104.5) * 111 * Math.cos(60.5 * Math.PI / 180));
+ok(km < 300, "12-hour sub-satellite point within 300 km of SGP4 (" + Math.round(km) + " km)");
 console.log(bad ? bad + " FAILED" : "all passed");
 process.exit(bad ? 1 : 0);
