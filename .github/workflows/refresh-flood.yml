@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
         required: false
         default: ""
       lane:
@@ -107,6 +107,17 @@ jobs:
             git config user.name "github-actions[bot]"; git config user.email "41898729+github-actions[bot]@users.noreply.github.com"
             git checkout -q --orphan mt-conf-out && git rm -rq --cached . && git add -f probe-out/mt-confidence.txt probe-out/mt-confidence.json
             git commit -qm "Translation confidence probe $(date -u +'%Y-%m-%d %H:%MZ')" && git push -qf origin HEAD:refs/heads/claude/mt-conf-probe-out
+          fi
+      # diagnostic, writes nothing to the app: Thai dates written out before translation (tools/mt/probe_thai_dates.mjs)
+      - name: Compare Thai dates written out
+        if: ${{ inputs.only == 'probe-mt-th' }}
+        timeout-minutes: 50
+        run: |
+          mkdir -p probe-out && node tools/mt/probe_thai_dates.mjs | tee probe-out/mt-thai-dates.txt
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            git config user.name "github-actions[bot]"; git config user.email "41898729+github-actions[bot]@users.noreply.github.com"
+            git checkout -q --orphan mt-th-out && git rm -rq --cached . && git add -f probe-out/mt-thai-dates.txt
+            git commit -qm "Thai dates probe $(date -u +'%Y-%m-%d %H:%MZ')" && git push -qf origin HEAD:refs/heads/claude/mt-thai-probe-out
           fi
       - name: Pull ThaiWater feeds
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'flood' }}

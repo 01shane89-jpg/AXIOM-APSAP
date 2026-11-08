@@ -85,7 +85,7 @@ const MT_LIMIT = Number(process.env.MT_LIMIT || 400), MT_BEAM_LIMIT = Number(pro
 function localModel(items, todo, out, beam) {
   if (process.env.MT === "0" || !fs.existsSync(path.join(MT_DIR, "model.bin"))) { console.log("MADLAD-400: model not installed, skipping"); return []; }
   const pick = todo.slice(0, MT_LIMIT), t0 = Date.now();
-  const r = spawnSync(process.env.PYTHON || "python", ["tools/mt/madlad.py"], { input: JSON.stringify({ items: pick.map((k) => items[k]) }),
+  const r = spawnSync(process.env.PYTHON || "python", ["tools/mt/madlad.py"], { input: JSON.stringify({ items: pick.map((k) => ({ ...items[k], text: prepareForModel(items[k].text, items[k].lang) })) }),
     encoding: "utf8", maxBuffer: 64 * 1024 * 1024, timeout: 12 * 60 * 1000, env: { MT_BUDGET: beam ? "120" : "300", ...process.env, MT_DIR, MT_SCORES: "1", ...(beam || {}) } });
   if (r.status !== 0) { console.error("MADLAD-400 failed:", (r.stderr || r.error || "").toString().slice(-600)); return []; }
   let res, scores; try { ({ out: res, scores = [] } = JSON.parse(r.stdout)); } catch (e) { console.error("MADLAD-400 returned unreadable output"); return []; }
@@ -99,6 +99,17 @@ function localModel(items, todo, out, beam) {
   console.log("MADLAD-400" + (beam ? " (beam search, texts the quick pass got wrong)" : "") + ": translated " + n + " of " + pick.length + " texts in " +
     Math.round((Date.now() - t0) / 1000) + " s" + (bad.length ? ", " + bad.length + " invented lines rejected" + (unsure ? " (" + unsure + " the model was unsure of)" : "") : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
   return bad;
+}
+// What the model is given, a derivative of the original (which stays the cache key and is what the guard checks against).
+// Thai dates: the model reads the abbreviated months ("พ.ย.", November) as July, June or January almost every time and the short
+// Buddhist Era year ("69", 2569 = 2026) as 1969, so they are written out in full first: "5 พ.ย. 69" -> "5 พฤศจิกายน 2569".
+const TH_MONTHS = { "ม.ค.": "มกราคม", "ก.พ.": "กุมภาพันธ์", "มี.ค.": "มีนาคม", "เม.ย.": "เมษายน", "พ.ค.": "พฤษภาคม", "มิ.ย.": "มิถุนายน",
+  "ก.ค.": "กรกฎาคม", "ส.ค.": "สิงหาคม", "ก.ย.": "กันยายน", "ต.ค.": "ตุลาคม", "พ.ย.": "พฤศจิกายน", "ธ.ค.": "ธันวาคม" };
+const TH_ABBR = new RegExp("(" + Object.keys(TH_MONTHS).map((k) => k.replace(/\./g, "\\.")).join("|") + ")(?:\\s*(\\d{2}|\\d{4})(?!\\d))?", "g");
+export function prepareForModel(text, lang) {
+  if (!/^th\b/i.test(lang || "") && !/[\u0E00-\u0E7F]/.test(text || "")) return text;
+  return String(text).replace(TH_ABBR, (m, mo, y, at, all) => TH_MONTHS[mo] + (y ? " " + (y.length === 2 ? "25" + y : y) : "") +
+    (/[\u0E00-\u0E7F]/.test(all[at + m.length] || "") ? " " : ""));
 }
 // The model writes a cut-off headline's "..." as ". . ." ("Ca. . ."): put it back as one ellipsis.
 const tidy = (en) => en ? String(en).replace(/\s*(?:\.\s){2,}\.(?=\s|$|["”’)])/g, "...") : en;
