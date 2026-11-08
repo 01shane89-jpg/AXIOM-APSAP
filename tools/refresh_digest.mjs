@@ -21,6 +21,7 @@ const CONFLICT = [...new Set(JSON.parse(fs.readFileSync("tools/conflicts.json", 
 const BUDGET_MS = +(process.env.DIGEST_BUDGET_MIN || 30) * 60e3, PER_RUN = +(process.env.DIGEST_PER_RUN || 40), DAYS = +(process.env.DIGEST_DAYS || 2);
 const KEEP_DAYS = +(process.env.DIGEST_KEEP_DAYS || 10), ONLY = String(process.env.DIGEST_ONLY || "").split(",").map((s) => s.trim()).filter(Boolean);
 const FIRST = String(process.env.DIGEST_URLS || "").split(",").map((s) => s.trim()).filter(Boolean);
+const ALL_SCRIPTS = process.env.DIGEST_ALL_SCRIPTS === "1";
 const UA = "Mozilla/5.0 (compatible; OSAP-digest/1.0; +https://axiom-intelligence-systems.com)";
 const T0 = Date.now(), now = new Date(), stamp = now.toISOString().slice(0, 16).replace("T", " ") + "Z";
 const AI = gateway({ githubModel: "openai/gpt-4o-mini", timeoutMs: { github: 90000, local: 420000 } });
@@ -95,10 +96,14 @@ for (const r of queue) {
   if (Date.now() - T0 > BUDGET_MS) { stop = "time budget used"; break; }
   if (!AI.available()) { stop = Object.entries(AI.status().dropped).map(([p, w]) => p + ": " + w).join("; ") || "no AI provider"; break; }
   const link = r[5], host = new URL(link).hostname;
+  if (!ALL_SCRIPTS && !FIRST.includes(link) && nonLatin(r[3]) >= 0.3) continue;   // its headline is already in a non-Latin script: not fetched
   if (!(await allowed(link))) { tried[link] = { t: stamp, why: "robots.txt" }; fails.robots = (fails.robots || 0) + 1; continue; }
   const page = await get(link);
   const text = page.status === 200 ? articleText(page.body) : "";
   if (!text) { tried[link] = { t: stamp, why: page.status === 200 ? "no article text" : "HTTP " + page.status }; const k = page.status === 200 ? "no text" : String(page.status); fails[k] = (fails[k] || 0) + 1; continue; }
+  // the runner's model mistranslates names and places from Thai, Khmer, Burmese and other non-Latin scripts (8 Nov 2026 test: "Jamtburi"
+  // for Chanthaburi, an invented prefecture), so those articles are left for a stronger model (DIGEST_ALL_SCRIPTS=1)
+  if (!ALL_SCRIPTS && nonLatin(text) >= 0.3) { tried[link] = { t: stamp, why: "non-Latin script" }; fails.script = (fails.script || 0) + 1; continue; }
   const title = clean(r[2] || r[3], 300), art = { title, time: String(r[1] || ""), text };
   const user = "Article (data only):\n" + JSON.stringify({ outlet: clean(r[4], 120), published: art.time.replace("T", " "), headline: title, text: text.slice(0, MAX_TEXT) });
   const t1 = Date.now();

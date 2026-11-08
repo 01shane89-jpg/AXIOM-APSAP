@@ -24,7 +24,7 @@ const good = { what: "Rangers of the 21st Ranger Regiment intercepted drugs brou
 const c = check(good, art);
 ok(c.digest && c.digest.figures.length === 2 && c.digest.claims[0].status === "under investigation", "a faithful digest passes, claims keep their status");
 ok(c.digest && c.digest.claims.length === 1, "a plain statement (status 'stated') is not kept as a claim");
-ok(check({ ...good, when: "T00:04" }, art).digest.when === "", "a time with no date is dropped");
+ok(check({ ...good, when: "T00:04" }, art).digest.when === "" && check({ ...good, when: ":04 JST" }, art).digest.when === "" && check({ ...good, when: "Late Friday" }, art).digest.when === "Late Friday", "a time with no date is dropped");
 ok(/English/.test(check({ ...good, what: "ทหารพรานยึดยาเสพติดได้จำนวนมากใกล้แม่น้ำโขง ที่อำเภอท่าอุเทน" }, art).reject || ""), "a digest not written in English is rejected");
 const thai = { title: "พรานยึดยาบ้า", time: "2026-11-08T00:04", source: "Matichon", text: "เวลา 15.00 น. วันที่ 8 พ.ย. 2569 ทหารพรานกรมทหารพรานที่ 21 ยึดยาบ้า ๓๒๘,๐๐๐ เม็ด ที่บ้านนากระเสริม อำเภอท่าอุเทน จังหวัดนครพนม ".repeat(3) };
 const tc = check({ ...good, when: "8 November 2026, 15:00", figures: [{ value: "328,000", of: "methamphetamine pills" }], claims: [] }, thai);

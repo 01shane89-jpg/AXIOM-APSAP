@@ -84,8 +84,8 @@ export function check(o, art) {
       .filter((c) => c && c.text && STATUSES.includes(c.status)),
     next: clean(o.next, 300),
   };
-  // a time with no date ("T12:59") says nothing a reader can use
-  if (!/\p{L}|\d{4}|\d{1,2}[/.-]\d{1,2}/u.test(d.when.replace(/^T/, ""))) d.when = "";
+  // a time with no date ("T12:59", ":04 JST") says nothing a reader can use
+  if (!/\d{4}|\d{1,2}[/.-]\d{1,2}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|yesterday/i.test(d.when)) d.when = "";
   if (!d.what || d.what.length < 20) return { reject: "no what line" };
   const all = [d.what, d.where, d.when, d.next, ...d.who, ...d.figures.map((f) => f.of), ...d.claims.map((c) => c.text + " " + c.by)].join(" ");
   if (nonLatin(all) > 0.1) return { reject: "not written in English" };
