@@ -6156,8 +6156,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   src("gvp", "Smithsonian Global Volcanism Program weekly report", "Research institution", "B", "Weekly summary of volcano observatories' reports; not real-time.", "https://volcano.si.edu/reports_weekly.cfm");
   src("who-don", "WHO Disease Outbreak News", "UN agency", "B", "WHO statements, usually based on member-state notifications.", "https://www.who.int/emergencies/disease-outbreak-news");
   src("nga-asam", "NGA Anti-Shipping Activity Messages", "U.S. government agency", "B", "Reports of attacks and boardings compiled from ships, navies and ReCAAP/IMB; positions approximate.", "https://msi.nga.mil/Piracy");
+  src("ukmto", "UK Maritime Trade Operations (UKMTO) recent incidents", "UK government (Royal Navy)", "B", "Attacks, boardings, suspicious approaches and advisories reported to UKMTO in its voluntary reporting area. Open Government Licence v3.0.", "https://www.ukmto.org/recent-incidents");
   src("recaap-isc", "ReCAAP ISC list of incidents", "Intergovernmental centre (ReCAAP Agreement, Singapore)", "B", "Piracy and armed robbery against ships in Asia, from the yearly incident list; OSAP keeps the incident facts and links to the list.", "https://www.recaap.org/");
-  window.ASAM_BACKUP = { imb: { name: "IMB PRC", sid: "imb-prc", url: "https://icc-ccs.org/map/", link: "IMB PRC report" },
+  window.ASAM_BACKUP = { ukmto: { name: "UKMTO", sid: "ukmto", url: "https://www.ukmto.org/recent-incidents", link: "UKMTO recent incidents" }, imb: { name: "IMB PRC", sid: "imb-prc", url: "https://icc-ccs.org/map/", link: "IMB PRC report" },
     recaap: { name: "ReCAAP ISC", sid: "recaap-isc", url: "https://www.recaap.org/", link: "ReCAAP ISC incident list" } };
   src("imb-prc", "IMB Piracy Reporting Centre live piracy map", "International Chamber of Commerce (ICC) unit", "B", "Attacks and boardings reported to the IMB PRC by ships' masters; OSAP keeps the incident facts and links to the map.", "https://icc-ccs.org/map/");
   function addMoreRecords() {
@@ -6480,7 +6481,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var marad = M ? (M.marad || []).filter(function (x) { return !x.ccs.length || hasCC(x); }) : [];
     var ms = M && M.status ? M.status.filter(function (s) { return !s.ok; }) : [];
     var mh = '<div class="sec"><h2>Maritime security</h2><p class="obs">' + snapBadge(M) + (ms.length ? ' · <span class="obs">failed: ' + esc(ms.map(function (s) { return s.source; }).join(", ")) + "</span>" : "") + "</p>" +
-      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM, IMB PRC, ReCAAP ISC), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
+      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM, UKMTO, IMB PRC, ReCAAP ISC), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
         return '<button type="button" class="tlrow" data-sof="as:' + i + '"><span class="tln">' + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + '</span><span class="tlm"><span class="tls">' + esc(a.date + " · " + a.text.slice(0, 90)) + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">None near ' + esc(C.name) + ".</p>") +
       (marad.length ? '<h3 style="margin:8px 0 2px;font-size:13px">U.S. maritime advisories (MARAD)</h3><ul class="note">' + marad.slice(0, 8).map(function (x) {

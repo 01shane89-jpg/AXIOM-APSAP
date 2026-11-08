@@ -17,6 +17,7 @@ import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones } from "./warn
 import { COMMERCIAL } from "./nc_strip.mjs";
 import { imbIncidents, notInAsam, IMB_MAP, IMB_LIC } from "./imb_piracy.mjs";
 import { recaapIncidents, RECAAP_HOME, RECAAP_LIC } from "./recaap_incidents.mjs";
+import { ukmtoIncidents, UKMTO_PAGE, UKMTO_LIC } from "./ukmto_incidents.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -309,6 +310,13 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
     if (!raw.length) console.error("ASAM: no records; top-level keys: " + Object.keys(j).join(","));
     status.push({ source: "NGA ASAM", ok: true, n: asam.length });
   } catch (e) { status.push({ source: "NGA ASAM", ok: false, error: err(e) }); }
+  // UKMTO incident list (Open Government Licence, commercial use allowed): Red Sea to the Persian Gulf, read before IMB and
+  // ReCAAP so that an incident all of them list is kept with UKMTO's open text
+  try {
+    const uk = notInAsam(await ukmtoIncidents(get), asam);
+    for (const a of uk) asam.push({ ...a, ccs: ccsAt(a.lat, a.lon, 1.5) });
+    status.push({ source: "UKMTO", ok: true, n: uk.length, src: UKMTO_PAGE, lic: UKMTO_LIC });
+  } catch (e) { status.push({ source: "UKMTO", ok: false, error: err(e), src: UKMTO_PAGE }); }
   // IMB PRC live piracy map: a backup while NGA ASAM is down, and the incidents ASAM has not listed yet (facts only, nc)
   if (!COMMERCIAL) try {
     const imb = notInAsam(await imbIncidents(get), asam);
@@ -339,7 +347,7 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
     } catch (e) { status.push({ source: "ReCAAP ISC incident list", ok: false, error: err(e), src: RECAAP_HOME, nc: true }); }
   } catch (e) { status.push({ source: "ReCAAP ISC", ok: false, error: err(e) }); }
   if (!status.some((s) => s.ok)) throw new Error(status.map((s) => s.source + ": " + s.error).join("; "));
-  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM/IMB/ReCAAP incidents, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
+  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM/UKMTO/IMB/ReCAAP incidents, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
 });
 
 // 7. OFAC Specially Designated Nationals: entries with an address in a covered area. Only name, type, programs and area are kept.
