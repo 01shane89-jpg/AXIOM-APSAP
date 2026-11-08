@@ -1,0 +1,14 @@
+{
+ "key": "5906226e24c98924|mm-acled-v1|0c01bfe6|place-v2|geo",
+ "built": "2026-11-08 12:17Z",
+ "n": 15175,
+ "placed": 11689,
+ "skipped": {
+  "not_protest": 1906,
+  "no_date": 0,
+  "no_country": {
+   "Czechoslovakia": 4,
+   "USSR": 60
+  }
+ }
+}
