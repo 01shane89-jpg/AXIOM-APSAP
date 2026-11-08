@@ -31,6 +31,13 @@ const count = (a, b) => ROWS.filter((r) => r[1] >= a && r[1] <= b).length;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+// protests and riots (Mass Mobilization): a fixture for the country UCDP recorded nothing for, so its window still lists them
+const MMI = { schema: "osap-cf-coded-index/1", countries: { [NONE]: { n: 2 } } };
+const MMNONE = { id: "mm/" + NONE, cc: NONE, rows: [["800001", "2009-01-21", "", 64.15, -21.94, 2, 1, "Reykjavik", "Reykjavik", ">10000", "citizens", "price increases, tax policy", "crowd dispersal"],
+  ["800002", "1995-03-01", "", null, null, 3, 0, "national", "", "1000-1999", "farmers", "land farm issue", "ignore"]] };
+await ctx.route(/\/data\/live\/conflicts\/history\/mm\/[a-z_]+\.js$/, (r) => { const k = r.request().url().match(/mm\/([a-z_]+)\.js$/)[1];
+  if (k !== "_index" && k !== NONE) return r.fulfill({ status: 404, body: "" });
+  r.fulfill({ contentType: "text/javascript", body: '(window.OSAP_CF_CODED=window.OSAP_CF_CODED||{})["mm/' + k + '"]=' + JSON.stringify(k === "_index" ? MMI : MMNONE) + ";" }); });
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-period", JSON.stringify({ p: "all" })); } catch (e) {} });
 const p = await ctx.newPage(), errors = [];
 p.on("pageerror", (e) => errors.push(e.message));
@@ -88,6 +95,10 @@ await p.waitForFunction(() => window.TSAP && document.querySelector('[data-dsxop
 await p.evaluate(() => document.querySelector('[data-dsxopen="vh"]').click());
 await p.waitForFunction(() => /UCDP recorded no deaths/.test((document.getElementById("vh") || {}).textContent || ""), null, { timeout: 30000 }).then(() => ok(true, "Empty country: the window says UCDP recorded no deaths, and what that does not mean"), () => ok(false, "Empty country message"));
 
+await p.waitForFunction(() => document.querySelector("#vh details.cfhcode"), null, { timeout: 30000 }).catch(() => {});
+const vc = await p.evaluate(() => ({ rows: window.OSAP_VIOLENCE_HISTORY.coded() || [], txt: (document.querySelector("#vh details.cfhcode") || {}).textContent || "" }));
+ok(vc.rows.length === 2 && vc.rows.map((r) => r.sub_event_type).sort().join() === "Peaceful protest,Violent demonstration" && /2 events, 2 of them protests and riots/.test(vc.txt),
+  "Empty country: its protests and riots are still listed as coded events, placed or not (" + vc.rows.map((r) => r.event_type + " · " + r.sub_event_type).join(", ") + ")");
 ok(!errors.length, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed"); process.exit(fails ? 1 : 0);

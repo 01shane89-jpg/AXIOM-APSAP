@@ -46,7 +46,9 @@ jobs:
       - run: node tests/netlify_ignore.test.mjs
       # IMB PRC piracy map reader, the NGA ASAM backup (tools/imb_piracy.mjs)
       - run: node tests/imb_piracy.test.mjs
-      # new dense feeds of 8 Nov (tools/dense_nov8.mjs): PortWatch, Rewards for Justice, VAAC, UN Security Council
+      - run: node tests/recaap_incidents.test.mjs
+      - run: node tests/ukmto_incidents.test.mjs
+      # new dense feeds of 8 Nov (tools/dense_nov8.mjs): PortWatch, RFJ, VAAC, UNSC, USGS blasts, BfS, RIPE, UN PKO, EU regimes, satellite passes
       - run: node tests/dense_nov8.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
@@ -62,6 +64,7 @@ jobs:
       - run: node tests/decisions.test.mjs
       - run: node tests/cf_decisions.test.mjs
       - run: node tests/cf_code.test.mjs
+      - run: node tests/coded_protests.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
