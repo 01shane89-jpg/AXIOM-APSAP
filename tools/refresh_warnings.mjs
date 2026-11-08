@@ -64,7 +64,16 @@ const ADAPT = {
     const name = (x) => (x && (x.en || x.sv)) || "";
     return { title: [name(w.event), name(a.warningLevel), name(a.areaName)].filter(Boolean).join(", "), summary: strip(((a.descriptions || [])[0] || {}).text ? name(a.descriptions[0].text) : "").slice(0, 400),
       date: a.published || a.approximateStart || w.published || "", link: "https://www.smhi.se/en/weather/warnings-and-advisories", severity: (a.warningLevel || {}).code || "" };
-  })).filter((w) => w.title && w.severity !== "MESSAGE")
+  })).filter((w) => w.title && w.severity !== "MESSAGE"),
+  // WMO Severe Weather Information Centre (wmo_all.json: every national service's current CAP warnings in one file). f.prefix names
+  // the issuing service as it starts each capURL ("kz-kazhydromet-ru/..."). s = severity 1 minor .. 4 extreme; minor and unknown are
+  // left out, as for MeteoAlarm. Times are UTC with no zone. WMO classes these as "recommended" data, so the rows carry nc: true.
+  swic: (j, f) => ((j || {}).items || []).filter((w) => w && String(w.capURL || w.url || "").startsWith(f.prefix + "/") && (+w.s || 0) >= 2).map((w) => {
+    const utc = (d) => (d ? String(d).replace(" ", "T") + "Z" : "");
+    return { title: (w.headline || w.event || "Weather warning") + (w.areaDesc && !String(w.headline || "").includes(w.areaDesc) ? ", " + String(w.areaDesc).slice(0, 160) : ""),
+      summary: w.event || "", date: utc(w.sent || w.effective), expires: utc(w.expires), link: "https://severeweather.wmo.int/v2/cap-alerts/" + (w.capURL || w.url),
+      severity: ["", "minor", "moderate", "severe", "extreme"][+w.s] || "" };
+  })
 };
 // IPMA warning area codes (districts, Madeira and Azores groups)
 const IPMA_AREA = { AVR: "Aveiro", BJA: "Beja", BRG: "Braga", BGC: "Bragança", CBO: "Castelo Branco", CBR: "Coimbra", EVR: "Évora", FAR: "Faro", GDA: "Guarda", LRA: "Leiria", LSB: "Lisboa",
@@ -75,10 +84,12 @@ const json = (b) => JSON.parse(String(b).trim().replace(/^[\w.$]+\(/, "").replac
 function iso(d) { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); }
 
 const status = [], items = {};
+const bodies = new Map();   // one fetch per URL: the WMO file serves many countries
 for (const f of feeds) {
   try {
-    const body = await getText(f.url);
-    let list = f.type ? ADAPT[f.type](json(body)) : parseFeed(body);
+    if (!bodies.has(f.url)) bodies.set(f.url, getText(f.url));
+    const body = await bodies.get(f.url);
+    let list = f.type ? ADAPT[f.type](json(body), f) : parseFeed(body);
     // tz: an agency that prints local time with no zone ("2026-09-29 14:27:00"), e.g. "+08:00"
     if (f.tz) list = list.map((i) => (/^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(i.date).trim()) ? { ...i, date: String(i.date).trim().replace(" ", "T") + f.tz } : i));
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }
