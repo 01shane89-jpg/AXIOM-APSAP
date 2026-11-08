@@ -25,7 +25,7 @@ on:
   workflow_dispatch:
     inputs:
       model:
-        description: "qwen2.5-1.5b (Apache-2.0, fastest) or phi-3.5-mini (MIT, stronger, slower)"
+        description: "qwen2.5-1.5b (Apache-2.0, fastest), phi-3.5-mini (MIT) or qwen2.5-7b (Apache-2.0, strongest, slowest)"
         required: false
         default: "phi-3.5-mini"
       only:
@@ -36,8 +36,12 @@ on:
         description: "Most drafts this run"
         required: false
         default: "45"
+      urls:
+        description: "Report links to digest first, comma-separated (task digest; for tests)"
+        required: false
+        default: ""
       task:
-        description: "daily, evsum (incident summaries), osir (OSIR analyst sections), code (incident record suggestions), both (evsum, osir and code) or cycle (the 3-hourly round, started by refresh-keeper.yml when the schedule is skipped)"
+        description: "daily, evsum (incident summaries), osir (OSIR analyst sections), code (incident record suggestions), digest (report digests), both (evsum, osir and code) or cycle (the 3-hourly round, started by refresh-keeper.yml when the schedule is skipped)"
         required: false
         default: "both"
 
@@ -86,6 +90,7 @@ jobs:
           case "$MODEL_KEY" in
             qwen2.5-1.5b) f=qwen2.5-1.5b-instruct-q4_k_m.gguf; u=https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/$f; lic=Apache-2.0 ;;
             phi-3.5-mini) f=Phi-3.5-mini-instruct-Q4_K_M.gguf; u=https://huggingface.co/bartowski/Phi-3.5-mini-instruct-GGUF/resolve/main/$f; lic=MIT ;;
+            qwen2.5-7b) f=Qwen2.5-7B-Instruct-Q4_K_M.gguf; u=https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/$f; lic=Apache-2.0 ;;
             *) echo "unknown model $MODEL_KEY"; exit 1 ;;
           esac
           echo "file=$f" >> "$GITHUB_OUTPUT"; echo "url=$u" >> "$GITHUB_OUTPUT"; echo "licence=$lic" >> "$GITHUB_OUTPUT"
@@ -132,7 +137,7 @@ jobs:
           DAILY_AI_BUDGET_MIN: "80"
         run: node tools/refresh_daily.mjs
       - name: Draft incident summaries
-        if: ${{ github.event_name == 'schedule' || (inputs.task != 'daily' && inputs.task != 'osir') }}
+        if: ${{ github.event_name == 'schedule' || (inputs.task != 'daily' && inputs.task != 'osir' && inputs.task != 'digest') }}
         timeout-minutes: 60
         continue-on-error: true
         env:
@@ -142,7 +147,7 @@ jobs:
           EVSUM_AI_ONLY: "1"
           EVSUM_ONLY: ${{ inputs.only }}
           EVSUM_AI_PER_RUN: ${{ inputs.per_run || '40' }}
-          EVSUM_AI_BUDGET_MIN: "45"
+          EVSUM_AI_BUDGET_MIN: "40"
         run: |
           npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
           node tools/refresh_evsum.mjs
@@ -177,6 +182,21 @@ jobs:
           CFCODE_AI_BUDGET_MIN: "20"
           CFCODE_PER_RUN: ${{ inputs.per_run || '120' }}
         run: node tools/refresh_cfcode.mjs
+      # most news items carry only a headline (the outlet's text is never stored): the article is read here and a short factual digest
+      # kept, never the article (tools/refresh_digest.mjs, data/live/digest.js, shown in the Report card)
+      - name: Write report digests
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'digest' || inputs.task == 'cycle')) }}
+        timeout-minutes: 35
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OSAP_LOCAL_LLM: http://127.0.0.1:8080
+          OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
+          DIGEST_BUDGET_MIN: "25"
+          DIGEST_PER_RUN: ${{ inputs.per_run || '40' }}
+          DIGEST_ONLY: ${{ inputs.only }}
+          DIGEST_URLS: ${{ inputs.urls }}
+        run: node tools/refresh_digest.mjs
       - name: Model server log (tail)
         if: ${{ always() }}
         run: tail -15 llm.log || true
@@ -188,21 +208,22 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan ai-preview-data
           git rm -rqf --cached .
-          for p in data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js data/live/digest.js; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (AI drafts on the runner) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/ai-preview-data-$MODEL_KEY
       - name: Commit the summaries if they changed
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
-          git add -N data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js 2>/dev/null || true
-          if git diff --quiet -- data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js; then echo "no change"; exit 0; fi
+          git add -N data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js data/live/digest.js 2>/dev/null || true
+          if git diff --quiet -- data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js data/live/digest.js; then echo "no change"; exit 0; fi
           git config user.name "asap-ai-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/live/daily.js data/live/daily
           [ -f data/live/evsum_ai.js ] && git add data/live/evsum_ai.js
           git add data/live/osirdraft.js
           [ -f data/live/conflicts/suggest.js ] && git add data/live/conflicts/suggest.js
+          [ -f data/live/digest.js ] && git add data/live/digest.js
           git commit -m "AI drafts of the daily and incident summaries $(date -u +'%Y-%m-%d %H:%MZ')"
           bash tools/push_rebase.sh main theirs 3 && exit 0
           exit 1
