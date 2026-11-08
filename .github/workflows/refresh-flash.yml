@@ -11,6 +11,9 @@ name: Flash alerts loop
 # On a feature branch (a test): FLASH_NO_MAIN, a short loop, and with test=1 a throwaway list of test watches on a random ntfy
 # channel, read back at the end, so a change can be timed without touching any account's watches.
 on:
+  push:   # TEMP: branch test trigger, removed before merge
+    branches: [claude/flash-seconds]
+    paths: [.github/workflows/refresh-flash.yml]
   schedule:
     - cron: "41 * * * *"
   workflow_dispatch:
@@ -55,7 +58,7 @@ jobs:
           key: push-state-${{ github.ref_name }}-${{ github.run_id }}
           restore-keys: push-state-${{ github.ref_name }}-
       - name: Test watches (feature branch only)
-        if: ${{ github.ref != 'refs/heads/main' && inputs.test == '1' }}
+        if: ${{ github.ref != 'refs/heads/main' && (inputs.test == '1' || github.event_name == 'push') }}
         run: |
           topic="osap-$(head -c 12 /dev/urandom | od -An -tx1 | tr -d ' \n')"
           echo "FLASH_TEST_TOPIC=$topic" >> "$GITHUB_ENV"
@@ -73,7 +76,7 @@ jobs:
           FLASH_NO_MAIN: ${{ github.ref != 'refs/heads/main' && '1' || '' }}
           PUSH_STATE: .push-state/state.json
           # a branch run without test watches never sends to a real account's channel: it only prints what it would send
-          PUSH_DRY: ${{ github.ref != 'refs/heads/main' && inputs.test != '1' && '1' || '' }}
+          PUSH_DRY: ${{ github.ref != 'refs/heads/main' && !(inputs.test == '1' || github.event_name == 'push') && '1' || '' }}
         timeout-minutes: 335
       - name: Read the test channel back (feature branch only)
         if: ${{ always() && env.FLASH_TEST_TOPIC != '' }}
