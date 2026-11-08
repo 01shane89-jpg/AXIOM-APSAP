@@ -46,6 +46,10 @@ fs=j.get('features',[]); print('features',len(fs),'exceeded',j.get('exceededTran
 c=collections.Counter((f['attributes'].get('BRIDGE_CONDITION'),f['attributes'].get('OPEN_CLOSED_POSTED_041')) for f in fs); print('cond/status',c.most_common(8))
 print('methods',collections.Counter((f['attributes'].get('OPR_RATING_METH_063'),) for f in fs).most_common(6))
 print('dates',collections.Counter(str(f['attributes'].get('DATE')) for f in fs).most_common(3))
+sn=collections.Counter((f['attributes'].get('STATE_CODE_001'),f['attributes'].get('STRUCTURE_NUMBER_008')) for f in fs); print('unique structures',len(sn),'of',len(fs),'dups',[k for k,v in sn.items() if v>1][:5])
+by={}
+[by.setdefault(f['attributes'].get('DATE'),[]).append(f['attributes'].get('DATE_OF_INSPECT_090')) for f in fs]
+print('DATE vs inspection dates',{k:sorted(set(v))[:6] for k,v in by.items()})
 for f in fs[:1]: print(json.dumps(f)[:1800])
 PY
 done
