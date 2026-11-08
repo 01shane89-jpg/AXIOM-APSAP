@@ -63,6 +63,7 @@ jobs:
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
+      - run: node tests/newimg.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs
@@ -117,6 +118,7 @@ jobs:
       # machine translation: invented lines rejected, and a translation stays with its item
       - run: node tests/mt_guard.test.mjs
       - run: node tests/translate_keep.test.mjs
+      - run: node tests/mt_confidence.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
@@ -227,6 +229,7 @@ jobs:
       - run: node tests/pop_smoke.mjs
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs
+      - run: node tests/newimg_smoke.mjs
       - run: node tests/keydates_smoke.mjs
       - run: node tests/coverage_smoke.mjs
       - run: node tests/maploading_smoke.mjs
