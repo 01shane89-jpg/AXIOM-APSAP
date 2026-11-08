@@ -2523,7 +2523,7 @@
       "b.wxr{background:#c62828;color:#fff;padding:0 3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}b.wxa{background:#f9a825;color:#111;padding:0 3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}",
       "table.wxf td{vertical-align:top}.wxbp table.wxbt{table-layout:auto}.wxbp table.wxbt th,.wxbp table.wxbt td{padding:1px 3px;white-space:nowrap}.wxbp table.wxbt td:first-child{white-space:normal}",
       ".wxbp table.wxm{font-size:inherit}.wxbp details.wxthr summary{cursor:pointer}.wxbp details.wxthr table td{padding:1px 3px}",
-      ".wxbp p.wxthr{font-size:.86em;line-height:1.25;margin:3px 0}.wxbp .wxsum{margin:2px 0}.wxbp table.wxbf td{white-space:normal}.wxbp table.wxhz td:first-child{width:80px}",
+      ".wxbp p.wxthr{font-size:.86em;line-height:1.25;margin:3px 0}.wxbp .wxsum{margin:2px 0}.wxbp table.wxbf td{white-space:normal}.wxbp table.wxhz td:first-child{width:80px}table.wxhz td:first-child{white-space:normal;overflow-wrap:break-word}",
       ".wxbp table.wxbt td,.wxbp table.wxbt th{line-height:1.15}.wxbp table.wxbm td,.wxbp table.wxbm th{padding:0 2px;line-height:1.2}.wxbp table.wxbm th .wxl{font-size:.85em}.wxbp p.wxthr,.wxbp footer{font-size:7.6px;line-height:1.2}",
       ".bmeasure .wxbp,html.briefing .wxbp{font-size:8.6px;line-height:1.25}.bmeasure .wxbp h3,html.briefing .wxbp h3{margin:4px 0 1px}.bmeasure .wxbp td,.bmeasure .wxbp th{padding:0 3px}",
       "@media print{.wxscroll{overflow:visible}html.briefing .wxbp{font-size:8.6px;line-height:1.25}html.briefing .wxbp td,html.briefing .wxbp th{padding:0 3px}html.briefing .wxbp .bcols{gap:10px}}",
