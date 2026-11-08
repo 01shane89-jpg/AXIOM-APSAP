@@ -48,5 +48,17 @@ await t("a stored invented line is not reused", async () => {
   const [r] = await translateAll([{ text: "ฝนตกหนักที่เชียงใหม่", lang: "th" }]);
   assert.equal(r.en, null);
 });
+// 2026-11-08: English headlines under an Arabic or French label were given to the model, which moved their dates
+await t("a headline already in English is passed through, never rewritten", async () => {
+  const title = "Bahrain News Center: His Majesty the King issues Decree No. 55 of 2026, 28-10-2026";
+  seed([{ text: title, lang: "ar", en: "Bahrain News Center: His Majesty the King issues Decree No. 55 of 2026, 28-10-2027", tool: "MADLAD-400 (Google open model, run in the refresh job)" }]);
+  const [r] = await translateAll([{ text: title, lang: "ar" }]);
+  assert.equal(r.en, title); assert.equal(r.tool, null);
+});
+await t("a stored translation with a number the original lacks is not reused", async () => {
+  seed([{ text: "Journal en Arabe de 18h du 30/10/2026", lang: "fr", en: "Journal en Arabe de 18h du 09/10/2026", tool: "MADLAD-400 (Google open model, run in the refresh job)" }]);
+  const [r] = await translateAll([{ text: "Journal en Arabe de 18h du 30/10/2026", lang: "fr" }]);
+  assert.equal(r.en, null);
+});
 process.chdir(repo); fs.rmSync(dir, { recursive: true, force: true });
 console.log(ok + " passed");
