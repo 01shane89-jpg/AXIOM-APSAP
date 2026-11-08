@@ -1,0 +1,22 @@
+name: probe-mm
+# Temporary (branch only, never merged): runs the coded protest history job on the real Mass Mobilization file and keeps its output.
+on: { push: { branches: [claude/probe-mm] } }
+permissions: { contents: read }
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node tools/refresh_coded_protests.mjs
+      - run: node tests/coded_protests.test.mjs
+      - run: |
+          cat data/live/conflicts/history/mm/_state.json; du -sh data/live/conflicts/history/mm; ls data/live/conflicts/history/mm | wc -l
+          node -e 'const t=require("fs").readFileSync("data/live/conflicts/history/mm/_index.js","utf8");const o=JSON.parse(t.slice(t.indexOf("={")+1).trim().replace(/;\s*$/,""));const C=require("./assets/osap-cf-code.js");console.log("n",o.n,"placed",o.placed);const top=Object.entries(o.countries).sort((a,b)=>b[1].n-a[1].n).slice(0,15);console.log(JSON.stringify(top.map(([k,v])=>[k,v.n,v.placed])));
+          const cnt={};for(const cc of Object.keys(o.countries)){const u=require("fs").readFileSync("data/live/conflicts/history/mm/"+cc+".js","utf8");const f=JSON.parse(u.slice(u.indexOf("={")+1).trim().replace(/;\s*$/,""));for(const r of f.rows){const c=C.fromMm(r,f,"cc/"+cc);const k=c.event_type+" · "+c.sub_event_type;cnt[k]=(cnt[k]||0)+1}}console.log(JSON.stringify(cnt));'
+          head -c 1500 data/live/conflicts/history/mm/th.js
+      - uses: actions/upload-artifact@v4
+        with: { name: mm-out, path: data/live/conflicts/history/mm, retention-days: 3 }
