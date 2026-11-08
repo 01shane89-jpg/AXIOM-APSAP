@@ -7,13 +7,15 @@
 // Every translation, new or cached, passes tools/mt_guard.mjs: a line the model invented ("The 1980s were a time of great
 // success for the band." for a Thai flood story) is never used. The model is not asked again for that text (the cache keeps
 // the rejection).
+// A headline already in English under another language's label (mt_guard.mjs looksEnglish) is passed through as written: the
+// model rewrote such headlines, moving their dates and cutting them short.
 // Results are cached in data/live/translation-cache.json so the same text is never translated twice.
 import fs from "node:fs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
-import { mtSuspect } from "./mt_guard.mjs";
+import { mtSuspect, looksEnglish } from "./mt_guard.mjs";
 
 const CACHE_FILE = "data/live/translation-cache.json";
 const MAX_CACHE = 6000;
@@ -55,7 +57,7 @@ export async function translateAll(items, opts = {}) {
   const orig = items;   // English passes through exactly as given
   items = items.map((it) => ({ ...it, text: it.text ? decodeEntities(it.text) : it.text }));
   const out = items.map((it, i) => {
-    if (!it.text || /^en\b/i.test(it.lang || "")) return { en: orig[i].text || "", tool: null };
+    if (!it.text || /^en\b/i.test(it.lang || "") || looksEnglish(it.text)) return { en: orig[i].text || "", tool: null };
     // no language given and nothing outside Latin script: taken as English (Telegram channels carry no language tag)
     if (!it.lang && !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE00-\uFE0F\u{1F000}-\u{1FAFF}]/u.test(it.text)) return { en: orig[i].text, tool: null };
     const k = key(it.text, it.lang), c = cache[k];
@@ -88,7 +90,7 @@ function localModel(items, todo, out, beam) {
   let res; try { res = JSON.parse(r.stdout).out; } catch (e) { console.error("MADLAD-400 returned unreadable output"); return []; }
   let n = 0, bad = [];
   pick.forEach((k, j) => {
-    const en = res[j]; if (!en) return;
+    const en = tidy(res[j]); if (!en) return;
     if (mtSuspect(items[k].text, en)) { cache[key(items[k].text, items[k].lang)] = { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }; bad.push(k); return; }
     out[k] = { en, tool: MT_TOOL }; cache[key(items[k].text, items[k].lang)] = { en, tool: MT_TOOL, at: Date.now() }; n++;
   });
@@ -96,6 +98,8 @@ function localModel(items, todo, out, beam) {
     Math.round((Date.now() - t0) / 1000) + " s" + (bad.length ? ", " + bad.length + " invented lines rejected" : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
   return bad;
 }
+// The model writes a cut-off headline's "..." as ". . ." ("Ca. . ."): put it back as one ellipsis.
+const tidy = (en) => en ? String(en).replace(/\s*(?:\.\s){2,}\.(?=\s|$|["”’)])/g, "...") : en;
 export function saveCache() {
   const ents = Object.entries(cache).filter((e) => !e[1].seeded).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);
   fs.mkdirSync("data/live", { recursive: true });

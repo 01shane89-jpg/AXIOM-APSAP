@@ -262,6 +262,7 @@ console.log("timing: translation", took(t2));
 ord.forEach((i, n) => { i.title_en = tr[n].en; i._t = tr[n].tool; });
 all.forEach((i) => {
   i.mt = /^en\b/i.test(i.lang || "") ? null : (i._t || "untranslated");
+  if (i.mt && i.title_en && i.title_en === i.title) i.mt = null;   // already English under another label: shown as written
   i.summary_en = /^en\b/i.test(i.lang || "") ? i.summary : null;
   delete i._t;
 });

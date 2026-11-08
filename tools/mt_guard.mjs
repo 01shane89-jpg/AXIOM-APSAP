@@ -7,7 +7,12 @@
 //   - is one of the model's stock inventions ("... were a time of great success", "(in Japanese)", a web error page);
 //   - gives a clock time the original does not have ("10.35am: The rain continues ..." for a Thai headline with no time in it);
 //   - repeats a word run (the model looping);
-//   - is still mostly in another script (the model gave Chinese back as Chinese).
+//   - is still mostly in another script (the model gave Chinese back as Chinese);
+//   - gives a number the original does not have (a date moved from "05 Novembre" to "28 Novembre", "Gulf 28" turned into
+//     "Gulf Games 26", "The 100 Most Powerful People in the World" for an Armenian headline with no number in it).
+// looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
+// English titles, a broadcaster's YouTube channel): it is shown as written and never given to the model, which on 2026-11-08
+// had "translated" 2,039 such English headlines, moving dates ("28-10-2026" to "28-10-2027") and cutting them short.
 // Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
 
@@ -69,13 +74,102 @@ export function mtSuspect(orig, en, now = Date.now()) {
     if (!hourIn || (mi && mi !== "00" && !nums.some((x) => x === mi || +x === +mi))) return "clock time not in the original";
   }
   for (const m of en.matchAll(CENTURY)) if (!nums.includes(m[1])) return "century not in the original";
+  const n = extraNumber(orig, en);
+  if (n) return "number " + n + " not in the original";
   return "";
+}
+
+// Numbers. The original's numbers are read in any digits, with Chinese, Japanese and Korean numerals and the counting units
+// Asian languages write after a number (16万5000, 2억4000만, 9.4 แสน, ৫ লাখ); each may come back in English times a power of ten
+// ("1499億" = "149.9 billion") or with an hour on the other clock ("19H" = "7 PM"). A number in the English that none of
+// these explains is invented. Years are left to the year rule above. A small number (up to 12) may stand for a word ("cinco",
+// "douze", "a dozen") only when the original has no number at all.
+const CJK_D = { "〇": 0, "零": 0, "一": 1, "二": 2, "两": 2, "兩": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9 };
+const CJK_U = { "十": 10, "百": 100, "千": 1000 };
+const cjkNumerals = (s) => s.replace(/[〇零一二三四五六七八九十百千两兩]+/g, (m) => {
+  if (m.length === 1 && !(m in CJK_D)) return m;      // a lone 十/百/千 is a word as often as a number
+  let tot = 0, cur = 0;
+  for (const c of m) { if (c in CJK_D) cur = cur * 10 + CJK_D[c]; else { tot += (cur || 1) * CJK_U[c]; cur = 0; } }
+  return " " + (tot + cur) + " ";
+});
+// counting units written after a number, and their value
+const UNITS = [[/^(?:万|萬|만|หมื่น)/, 1e4], [/^(?:億|亿|억)/, 1e8], [/^(?:兆|조)/, 1e12], [/^(?:千|천|พัน)/, 1e3], [/^(?:百|백|ร้อย)/, 100],
+  [/^(?:แสน|লাখ|লক্ষ|लाख)/, 1e5], [/^(?:ล้าน)/, 1e6], [/^(?:কোটি|करोड़)/, 1e7]];
+const SCALES = [1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e12];
+const EN_SCALE = { thousand: 1e3, million: 1e6, billion: 1e9, trillion: 1e12, lakh: 1e5, crore: 1e7, k: 1e3, m: 1e6, bn: 1e9 };
+const same = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a));
+function originalNumbers(orig) {
+  let s = cjkNumerals(asciiDigits(orig.normalize("NFKC")));
+  const tokens = new Set((s.match(/\d+/g) || []).map(Number));
+  // Roman numerals ("XXX Cumbre", "León XIV", "Parte II")
+  for (const m of orig.matchAll(/\b[IVXLC]{2,7}\b/g)) { const r = roman(m[0]); if (r) tokens.add(r); }
+  const vals = [];
+  // a number with thousands separators or a decimal point or comma, then any counting units after it
+  const re = /\d+(?:[,.\s'’]\d{3}(?!\d))*(?:[.,]\d+)?/g;
+  for (const m of s.matchAll(re)) {
+    const raw = m[0], grouped = raw.replace(/[,.\s'’](?=\d{3}(?!\d))/g, "");
+    const forms = new Set([+grouped.replace(",", "."), +raw.replace(/[,\s'’]/g, ""), +raw.replace(/[.\s'’]/g, "").replace(",", ".")]);
+    // a counting unit after it ("16万", "2억"), and a second number with its own unit ("16万5000", "2억4000만")
+    let rest = s.slice(m.index + raw.length).trimStart();
+    const u = UNITS.find(([r]) => r.test(rest));
+    if (u) {
+      const v = +grouped.replace(",", ".") * u[1]; forms.add(v);
+      rest = rest.replace(u[0], "").trimStart();
+      const nx = rest.match(/^\d+/);
+      if (nx) { const u2 = UNITS.find(([r]) => r.test(rest.slice(nx[0].length).trimStart())); forms.add(v + +nx[0] * (u2 && u2[1] < u[1] ? u2[1] : 1)); }
+    }
+    for (const f of forms) if (Number.isFinite(f)) vals.push(f);
+  }
+  return { tokens, vals };
+}
+function roman(r) {
+  const V = { I: 1, V: 5, X: 10, L: 50, C: 100 }; let n = 0;
+  for (let k = 0; k < r.length; k++) { const a = V[r[k]], b = V[r[k + 1]] || 0; n += a < b ? -a : a; }
+  return n > 0 && n < 400 ? n : 0;
+}
+// names that carry a number of their own, which the model may add ("COVID-19", "the Nikkei 225", "the G20")
+const NAMED_NUMBERS = /\b(?:COVID-19|Nikkei 225|G-?(?:7|8|20)|P-?5|Brent)\b/gi;
+export function extraNumber(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  const { tokens, vals } = originalNumbers(orig);
+  const okVal = (x) => vals.some((v) => SCALES.some((k) => same(v * k, x) || same(v / k, x)));
+  const okTok = (x) => tokens.has(x) || (x <= 12 && tokens.has(x + 12)) || (x >= 12 && x <= 24 && tokens.has(x - 12)) || (x === 12 && tokens.has(0));
+  // a school or budget year written short ("2026-27" for ២០២៦-២០២៧): the short year is the year rule's job
+  const enS = asciiDigits(en.normalize("NFKC")).replace(NAMED_NUMBERS, " ").replace(/\b((?:19|20)\d\d)\s*[-–/]\s*\d\d\b/g, "$1");
+  const re = /(?<![\w.])(\d+(?:,\d{3}(?!\d))*(?:\.\d+)?)(?:\s*(thousand|million|billion|trillion|lakh|crore|k|m|bn)\b)?/gi;
+  for (const m of enS.matchAll(re)) {
+    const raw = m[1], v = +raw.replace(/,/g, ""), sc = m[2] ? EN_SCALE[m[2].toLowerCase()] : 1;
+    const parts = raw.split(/[.,]/).map(Number);
+    if (v >= 1900 && v <= 2100 && !raw.includes(".") && !m[2]) continue;        // a year: the year rule's job
+    if (v <= 1 && parts.length === 1) continue;
+    if (okVal(v * sc) || okVal(v) || parts.every(okTok)) continue;
+    if (!tokens.size && !vals.length && v <= 12 && parts.length === 1) continue;  // a number word in the original
+    return raw + (m[2] ? " " + m[2] : "");
+  }
+  return "";
+}
+
+// A headline already in English under another language's label. Latin letters only (no accented letters, which English
+// headlines rarely carry and French, Spanish, Vietnamese or Turkish always do), at least four words, and at least two different
+// English function words making up 15% of them. "Le 13h au Bénin du Samedi" or "Kapuso Housemate Lans, wagi ng Tiktok" do
+// not pass.
+const EN_WORDS = new Set(("the of and to for with from after says said will has have are were by this that over into amid its " +
+  "their than about who what how why which been being would could should").split(" "));
+export function looksEnglish(s) {
+  s = String(s || "");
+  if (/[^\u0000-\u007F\u00A0-\u00BF\u00D7\u00F7\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE0F\u{1F000}-\u{1FAFF}]/u.test(s)) return false;
+  const w = s.toLowerCase().match(/[a-z]+(?:'[a-z]+)?/g) || [];
+  if (w.length < 4) return false;
+  const hits = w.filter((x) => EN_WORDS.has(x));
+  return new Set(hits).size >= 2 && hits.length / w.length >= 0.15;
 }
 
 // A stored news item whose English headline or summary is suspect loses it, so the page shows the original and the item is
 // checked in its own words; returns true when anything was removed.
 export function dropSuspectMt(i, now) {
   if (!i || !i.mt || /^en\b/i.test(i.lang || "")) return false;
+  // already English: shown as written, not as the model's rewrite of it
+  if (i.title && looksEnglish(i.title)) { i.title_en = i.title; delete i.mt; return true; }
   let hit = false;
   if (i.title_en && i.title && mtSuspect(i.title, i.title_en, now)) { delete i.title_en; hit = true; }
   if (i.summary_en && i.summary && mtSuspect(i.summary, i.summary_en, now)) { delete i.summary_en; hit = true; }
