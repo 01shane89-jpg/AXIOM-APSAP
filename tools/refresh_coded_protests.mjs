@@ -93,7 +93,7 @@ if (process.argv[1] && process.argv[1].endsWith("refresh_coded_protests.mjs")) {
   const fileSha = sha(text);
   const STATE = OUT + "/_state.json"; let state = {}; try { state = JSON.parse(fs.readFileSync(STATE, "utf8")); } catch (e) {}
   // rebuilt when the file, the coding rules or the country names change
-  const key = fileSha.slice(0, 16) + "|" + CODE.MM_RULES + "|" + sha(JSON.stringify(MM_NAMES)).slice(0, 8) + "|" + (process.env.MM_NOGEO === "1" ? "nogeo" : "geo");
+  const key = fileSha.slice(0, 16) + "|" + CODE.MM_RULES + "|" + sha(JSON.stringify(MM_NAMES)).slice(0, 8) + "|place-v2" + "|" + (process.env.MM_NOGEO === "1" ? "nogeo" : "geo");
   if (!FORCE && state.key === key && fs.existsSync(OUT + "/_index.js")) { console.log("protest history: unchanged (" + key + ")"); process.exit(0); }
   const { recs, skipped } = readMm(text);
   console.log("Mass Mobilization:", recs.length, "protests;", "skipped", JSON.stringify(skipped));
@@ -101,7 +101,9 @@ if (process.argv[1] && process.argv[1].endsWith("refresh_coded_protests.mjs")) {
   const by = {}, stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
   let placed = 0;
   for (const e of recs) {
-    const p = gz && e.location && !/^national/i.test(e.location) ? placeIn(gz, e.location, [e.cc]) : null;
+    // the gazetteer reads only capitalised names; the dataset's coders sometimes wrote a town in lower case ("bangkok")
+    const loc = e.location.replace(/(^|[\s,(/-])(\p{Ll})/gu, (m, a, b) => a + b.toUpperCase());
+    const p = gz && loc && !/^national|^nationwide/i.test(loc) ? placeIn(gz, loc, [e.cc]) : null;
     if (p && p.prec !== "province") { e.lat = p.lat; e.lon = p.lon; e.place = p.name; e.prec = 2; placed++; }
     else if (p) { e.lat = p.lat; e.lon = p.lon; e.place = p.name; e.prec = 3; placed++; }
     else { e.lat = null; e.lon = null; e.place = ""; e.prec = 3; }
