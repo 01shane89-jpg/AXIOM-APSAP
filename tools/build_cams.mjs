@@ -22,9 +22,9 @@ async function get(u, as = "json", headers = {}) {
   for (let i = 0; i < 3; i++) {
     try {
       const r = await fetch(u, { headers: { ...UA, ...headers }, signal: AbortSignal.timeout(60000) });
-      if (!r.ok) throw new Error(`HTTP ${r.status} from ${u.slice(0, 80)}`);
+      if (!r.ok) throw Object.assign(new Error(`HTTP ${r.status} from ${u.slice(0, 80)}`), { wait: r.status === 429 ? Math.min(90, +r.headers.get("retry-after") || 30) * 1000 : 0 });
       return as === "json" ? await r.json() : await r.text();
-    } catch (e) { last = e; await pause(3000 * (i + 1)); }
+    } catch (e) { last = e; await pause(e.wait || 3000 * (i + 1)); }
   }
   throw new Error(String(last.message || last) + (last.cause ? " (" + (last.cause.code || last.cause.message) + ")" : ""));
 }
@@ -446,34 +446,49 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   mkdirSync(OUT, { recursive: true });
   const ixPath = join(OUT, "index.json");
   const old = existsSync(ixPath) ? JSON.parse(readFileSync(ixPath, "utf8")) : { sources: [] };
-  const sources = [];
-  let bad = 0;
+  const done = new Map(), failed = [];
   // ONLY=id,id rebuilds just those sources and keeps every other list as it is (a quick run while adding a source)
   const only = (process.env.ONLY || "").split(",").filter(Boolean);
-  for (const s of SOURCES) {
-    const prev = old.sources.find((o) => o.id === s.id);
-    if (only.length && !only.includes(s.id)) { if (prev) sources.push(prev); continue; }
+  const todo = SOURCES.filter((s) => !only.length || only.includes(s.id));
+  async function build(s, prev) {
     const meta = { id: s.id, cc: s.cc, tz: s.tz, country: s.country, agency: s.agency, licence: s.licence, page: s.page, every: s.every };
+    // nc: the source's terms do not allow commercial use (or no terms could be found for a list a private body publishes);
+    // it stays live for now, and tools/nc_strip.mjs takes it out of the sold version in one step (see refresh-cams.yml)
+    if (s.nc) meta.nc = true;
     if (s.live) meta.live = s.live;
     if (s.kind) meta.kind = s.kind;
     if (s.type) meta.type = s.type;
-    try {
-      const t = Date.now();
-      const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live || s.kind === "dwr" || s.kind === "jma"));
-      if (!cams.length || (prev && cams.length < prev.n * 0.5)) throw new Error(`only ${cams.length} cameras (had ${prev ? prev.n : 0})`);
-      const lat = cams.map((c) => c[1]), lon = cams.map((c) => c[2]);
-      meta.n = cams.length; meta.box = [Math.min(...lat), Math.min(...lon), Math.max(...lat), Math.max(...lon)].map(r5);
-      meta.checked = new Date().toISOString().slice(0, 16) + "Z";
-      writeFileSync(join(OUT, s.id + ".json"), JSON.stringify({ id: s.id, cams }).replace(/\],\[/g, "],\n["));
-      const img = process.env.CHECK_IMAGES ? " images: " + (s.live || s.kind ? (s.kind || "live") + " (fetched by the page)" : await checkImages(cams)) : "";
-      console.log(`${s.id}: ${cams.length} cameras in ${Date.now() - t} ms${img}`);
-      sources.push(meta);
-    } catch (e) {
+    const t = Date.now();
+    const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live || s.kind === "dwr" || s.kind === "jma"));
+    if (!cams.length || (prev && cams.length < prev.n * 0.5)) throw Object.assign(new Error(`only ${cams.length} cameras (had ${prev ? prev.n : 0})`), { meta });
+    const lat = cams.map((c) => c[1]), lon = cams.map((c) => c[2]);
+    meta.n = cams.length; meta.box = [Math.min(...lat), Math.min(...lon), Math.max(...lat), Math.max(...lon)].map(r5);
+    meta.checked = new Date().toISOString().slice(0, 16) + "Z";
+    // an nc source's own list says so too, so the sold-version sweep deletes the file and not only its index entry
+    writeFileSync(join(OUT, s.id + ".json"), JSON.stringify(s.nc ? { id: s.id, nc: true, cams } : { id: s.id, cams }).replace(/\],\[/g, "],\n["));
+    const img = process.env.CHECK_IMAGES ? " images: " + (s.live || s.kind ? (s.kind || "live") + " (fetched by the page)" : await checkImages(cams)) : "";
+    console.log(`${s.id}: ${cams.length} cameras in ${Date.now() - t} ms${img}`);
+    return meta;
+  }
+  for (const s of todo) {
+    try { done.set(s.id, await build(s, old.sources.find((o) => o.id === s.id))); }
+    catch (e) { failed.push(s); console.log(`${s.id}: first try failed (${e.message}); asking again at the end`); }
+  }
+  // more than one attempt per source: a busy server (QLDTraffic's 429s) or a dropped connection often answers a few minutes on
+  const RETRY_WAIT = +(process.env.RETRY_WAIT ?? 120000);
+  let bad = 0;
+  for (const [i, s] of failed.entries()) {
+    if (i === 0) await pause(RETRY_WAIT);
+    const prev = old.sources.find((o) => o.id === s.id);
+    try { done.set(s.id, await build(s, prev)); console.log(`${s.id}: answered on the second round`); }
+    catch (e) {
       bad++;
       console.log(`::warning::${s.id}: ${e.message}${prev ? " (kept the previous list)" : " (left out)"}`);
-      if (prev) sources.push({ ...meta, n: prev.n, box: prev.box, checked: prev.checked, stale: true });
+      if (prev) done.set(s.id, { ...(e.meta || prev), ...(s.nc ? { nc: true } : {}), n: prev.n, box: prev.box, checked: prev.checked, stale: true });
     }
   }
+  // the index keeps the order of SOURCES; sources not rebuilt this run (ONLY) keep their entries, with the nc tag brought up to date
+  const sources = SOURCES.map((s) => done.get(s.id) || (() => { const p = old.sources.find((o) => o.id === s.id); if (!p) return null; const q = { ...p }; if (s.nc) q.nc = true; else delete q.nc; return q; })()).filter(Boolean);
   writeFileSync(ixPath, JSON.stringify({ built: new Date().toISOString().slice(0, 16) + "Z", sources }, null, 1) + "\n");
   console.log(`${sources.length} sources, ${sources.reduce((a, s) => a + s.n, 0)} cameras, ${bad} failed`);
 }

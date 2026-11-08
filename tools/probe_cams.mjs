@@ -487,6 +487,96 @@ async function round18() {
   await br.close();
 }
 if (only === "r18") await round18();
+/* ---------- round 19 (2026-11-08): field details for the lists round 18 found, image checks, and each source's terms ---------- */
+async function round19() {
+  const show = (k, r, n = 1500) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  const arc = (base, n = 2) => `${base}/query?where=1%3D1&outFields=*&f=json&resultRecordCount=${n}&outSR=4326`;
+  const cnt = (base) => `${base}/query?where=1%3D1&returnCountOnly=true&f=json`;
+  const imgsIn = async (r, k, max = 3) => { const t = r.b.toString("utf8"); const m = [...new Set(t.match(/https?:\\?\/\\?\/[^"'<>\s,\\]+?\.(?:jpg|jpeg|png)(?:\?[^"'<>\s,\\]*)?/gi) || [])].slice(0, max); for (const u of m) { await img(u, "   " + k); if (u.startsWith("http:")) await img(u.replace("http:", "https:"), "   " + k + " as https"); } };
+  const L = [
+    ["IL", arc("https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0")],
+    ["IL info", "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer?f=json"],
+    ["MI", "https://mdotjboss.state.mi.us/MiDrive/camera/list"],
+    ["MO", "https://traveler.modot.org/timconfig/feed/desktop/StreamingCams2.json"],
+    ["QC", "https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:infos_cameras&srsname=EPSG:4326&outputformat=geojson&count=2"],
+    ["TOR", arc("https://gis.toronto.ca/arcgis/rest/services/cot_geospatial2/FeatureServer/3", 1)],
+    ["OTT city", "https://traffic.ottawa.ca/service/camera?type=city&format=geojson"],
+    ["OTT mto", "https://traffic.ottawa.ca/service/camera?type=mto&format=geojson"],
+    ["AUS count", cnt("https://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/TRANSPORTATION_traffic_cameras/FeatureServer/0")],
+    ["AUS", arc("https://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/TRANSPORTATION_traffic_cameras/FeatureServer/0", 1)],
+    ["SEA", "https://web.seattle.gov/Travelers/api/Map/Data?zoomId=13&type=2"],
+    ["AL", "https://api.algotraffic.com/v4.0/Cameras"],
+    ["NM", "https://servicev5.nmroads.com/RealMapWAR/GetCameraInfo"],
+    ["SC", "https://sc.cdn.iteris-atis.com/geojson/icons/metadata/icons.cameras.geojson"],
+    ["VA array", "https://511.vdot.virginia.gov/services/511/map/array/cameras"],
+    ["VA layers", "https://511.vdot.virginia.gov/services/511/map/layers/cameras"],
+    ["KY louisville", "https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/ArcGIS/rest/services/Traffic_Camera_Locations_Public_view/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=2"],
+    ["KY state", arc("https://services2.arcgis.com/CcI36Pduqd0OR4W9/ArcGIS/rest/services/trafficCamerasCur_Prd/FeatureServer/0", 40)],
+    ["OK", "https://oktraffic.org/api/CameraPoles"],
+    ["OK 2", "https://oktraffic.org/api/Cameras"],
+    ["CAL", "https://data.calgary.ca/resource/k7p9-kppz.json?$limit=2"],
+    ["BR", "https://data.brla.gov/resource/6z6u-ts44.json?$limit=2"],
+    ["MeteoSwiss", "https://s3-eu-central-1.amazonaws.com/app-prod-static-fra.meteoswiss-app.ch/v1/webcam_overview.json"],
+    ["NI js", "https://www.trafficwatchni.com/twni/javascript/twni/cctv-e532ba40852e14ec510664ef8bb3a0c6.js"],
+    ["NI page", "https://www.trafficwatchni.com/twni/cameras"],
+    ["MT", "https://app.mdt.mt.gov/atms/public/cameras"],
+    ["Yosemite", arc("https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/YOSE_Webcams/FeatureServer/0")],
+    ["NPS air", "https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/Air_Quality_Monitoring_Map_WFL1/FeatureServer?f=json"],
+    ["Hydro Tas", arc("https://services.arcgis.com/bzFxSiUBPalI1RGS/arcgis/rest/services/PublicSites_Featurelayer_webcams/FeatureServer/0")],
+    ["Horizons NZ", arc("https://services1.arcgis.com/VuN78wcRdq1Oj69W/arcgis/rest/services/Webcams_Feed/FeatureServer/0")],
+    ["Idaho state", arc("https://services1.arcgis.com/CNPdEkvnGl65jCX8/arcgis/rest/services/Webcams/FeatureServer/0")],
+    ["Rotterdam port", arc("https://services-eu1.arcgis.com/ihRA6Ia7xOeMbqC0/arcgis/rest/services/Webcams_v2/FeatureServer/0")],
+    ["La Palma", arc("https://services.arcgis.com/hkQNLKNeDVYBjvFE/arcgis/rest/services/webcam/FeatureServer/0")],
+    ["Donegal", arc("https://services2.arcgis.com/WRtfelnPg3R7bCEW/arcgis/rest/services/TrafficCameras/FeatureServer/0")],
+    ["Bellevue", arc("https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/TrafficCameras_Public_View/FeatureServer/0")],
+    ["Kamloops", arc("https://services1.arcgis.com/9adZBnEF9zjV0l5X/arcgis/rest/services/WebCameras/FeatureServer/0")],
+    ["Moncton", arc("https://services1.arcgis.com/E26PuSoie2Y7bbyI/arcgis/rest/services/Webcams/FeatureServer/0")],
+    ["Coastal GA", arc("https://services1.arcgis.com/2iUE8l8JKrP2tygQ/arcgis/rest/services/Coastal_GA_WebCams/FeatureServer/0")],
+    ["GDOT gema", arc("https://services1.arcgis.com/2iUE8l8JKrP2tygQ/arcgis/rest/services/GDOT_Live_Traffic_Cameras/FeatureServer/0")],
+    ["CalOES webcams", arc("https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CalOES_California_Webcams/FeatureServer/0")],
+    ["CalOES count", cnt("https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CalOES_California_Webcams/FeatureServer/0")],
+    ["Lawrence KS", arc("https://services.arcgis.com/8O9UlSTnqjKptoda/arcgis/rest/services/Traffic_Cameras/FeatureServer/0")],
+    ["Raleigh", arc("https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Traffic_Signals_Cameras_1/FeatureServer/0")],
+    ["Portland PBOT", arc("https://services.arcgis.com/quVN97tn06YNGj9s/arcgis/rest/services/pbot_traffic_cameras/FeatureServer/0")],
+    ["Montgomery TX", arc("https://services1.arcgis.com/PRoAPGnMSUqvTrzq/arcgis/rest/services/MCTX_Live_Cameras/FeatureServer/0")],
+    ["King County", arc("https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/TRAFFICCAMERA_POINT_2029/FeatureServer/0")],
+    ["Weather_WebCam_Public", arc("https://services.arcgis.com/EeYBJFxLdUojipYa/arcgis/rest/services/Weather_WebCam_Public/FeatureServer/0")],
+    ["DC", arc("https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/93")],
+    ["Sioux Falls", arc("https://gis.siouxfalls.gov/arcgis/rest/services/Data/Traffic/MapServer/8")],
+    ["QLD", "https://api.qldtraffic.qld.gov.au/v1/webcams?apikey=3e83add325cbb69ac4d8e5bf433d770b"],
+  ];
+  for (const [k, u] of L) {
+    const r = await twice(u, 60000);
+    show(k, r, 1600);
+    if (r.s === 200) {
+      try { const j = JSON.parse(r.b); const a = Array.isArray(j) ? j : j.features || j.cameras || j.Features || j.stations || j.data || j.cameraInfo || Object.values(j).find(Array.isArray); if (Array.isArray(a)) console.log("   items " + a.length); } catch {}
+      if (!/count|info/.test(k)) await imgsIn(r, k);
+    }
+  }
+  // MoDOT streams: will a browser on the site be allowed to play them (CORS on the playlist)?
+  for (const u of ["https://sfs02-traveler.modot.mo.gov/rtplive/MODOT_CAM_209/playlist.m3u8"]) { const r = await get(u, 20000); show("MO hls", r, 300); }
+  console.log("\n##### r19b. Terms of use: sentences about commercial use, reuse, copyright");
+  const T = [
+    ["IL gettingaroundillinois", "https://www.gettingaroundillinois.com/Disclaimer.html"], ["IL travelmidwest", "https://www.travelmidwest.com/lmiga/disclaimer.jsp"],
+    ["MI disclaimer", "https://www.michigan.gov/mdot/about/mi-drive-disclaimer"], ["MO traveler", "https://traveler.modot.org/map/"], ["MO disclaimer", "https://www.modot.org/disclaimer"],
+    ["Toronto OGL", "https://open.toronto.ca/open-data-licence/"], ["Ottawa", "https://traffic.ottawa.ca/en/opendata"], ["Ottawa licence", "https://open.ottawa.ca/pages/open-data-licence-version-2-0"],
+    ["Austin", "https://data.austintexas.gov/Transportation-and-Mobility/Traffic-Cameras/b4k4-adkb/about_data"], ["Seattle", "https://www.seattle.gov/tech/reports-and-data/open-data/open-data-policy"], ["Seattle cams", "https://web.seattle.gov/travelers/"],
+    ["ALGO terms", "https://algotraffic.com/terms"], ["ALGO about", "https://algotraffic.com/about"], ["NM", "https://nmroads.com/"], ["SC", "https://www.511sc.org/#help"], ["VA", "https://511.vdot.virginia.gov/terms"], ["VA 2", "https://www.virginiadot.org/travel/511.asp"],
+    ["Calgary", "https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa"], ["OK", "https://oktraffic.org/"], ["KY", "https://goky.ky.gov/"], ["MeteoSwiss", "https://opendatadocs.meteoswiss.ch/general/terms-of-use"],
+    ["HPWREN", "https://www.hpwren.ucsd.edu/news/20210318/"], ["HPWREN 2", "https://www.hpwren.ucsd.edu/info/"], ["TripCheck", "https://tripcheck.com/Pages/Terms"], ["TripCheck 2", "https://www.tripcheck.com/Pages/About-TripCheck"],
+    ["CHART", "https://chart.maryland.gov/AboutUs/GetAboutUs"], ["DelDOT", "https://deldot.gov/About/disclaimer.shtml"], ["NYC DOT", "https://webcams.nyctmc.org/"], ["FL511", "https://fl511.com/help/terms"], ["511 ATIS terms", "https://511pa.com/help/terms"],
+    ["iTIC", "https://www.iticfoundation.org/"], ["Longdo", "https://camera.longdo.com/"], ["ThaiWater", "https://www.thaiwater.net/"], ["DWR", "https://telemetry.dwr.go.th/"], ["river.go.jp", "https://www.river.go.jp/kawabou/reference/index05.html"],
+    ["Arkansas", "https://site.idrivearkansas.com/index.php/policies/camera-terms-of-use/"], ["National Highways", "https://nationalhighways.co.uk/roads-and-travel/live-travel-updates/traffic-cameracctv-services/standard-terms-and-conditions/"],
+    ["Quebec 511", "https://www.quebec511.info/fr/a-propos/conditions.aspx"], ["eismoinfo", "https://eismoinfo.lt/"], ["Vegagerdin", "https://www.vegagerdin.is/upplysingar-og-utgafa/opin-gogn"],
+  ];
+  for (const [k, u] of T) {
+    const r = await twice(u, 40000); line("terms " + k + " " + u, r);
+    const t = r.b.toString("utf8").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ");
+    const hits = [...new Set(t.match(/[^.]{0,220}(commercial|redistribut|copyright|licen[cs]e|reproduc|permission|営利|商用|เชิงพาณิชย์|ลิขสิทธิ์)[^.]{0,220}/gi) || [])].slice(0, 6);
+    for (const h of hits) console.log("   > " + h.trim());
+  }
+}
+if (only === "r19") await round19();
 if (only === "r13") await round13();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
