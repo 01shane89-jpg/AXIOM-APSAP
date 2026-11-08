@@ -1,9 +1,6 @@
 const H={"user-agent":"OSAP-refresh (github.com/01shane89-jpg/AXIOM-APSAP)"};
-const t=async(n,u,o={})=>{try{const r=await fetch(u,{...o,headers:{...H,...(o.headers||{})}});const x=await r.text();console.log("P",n,r.status,r.headers.get("content-type"),x.length,x.replace(/\s+/g," ").slice(0,600));return x}catch(e){console.log("P",n,"ERR",e.message)}};
-await t("smap-regimes","https://www.sanctionsmap.eu/api/v1/regime");
-await t("smap-country","https://www.sanctionsmap.eu/api/v1/country");
-const d=await t("dataeu","https://data.europa.eu/api/hub/search/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions");
-if(d){const u=[...d.matchAll(/"(https:\/\/webgate[^"]+)"/g)].map(m=>m[1]);console.log("P dataeu-urls",[...new Set(u)].join(" "));for(const x of [...new Set(u)].slice(0,4)) await t("eu-file "+x.slice(-60),x,{method:"GET"});}
-for (const v of ["xmlFullSanctionsList_1_1/content?token=n002hqt8","csvFullSanctionsList_1_1/content?token=n002hqt8","xmlFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw"]) await t("eu "+v,"https://webgate.ec.europa.eu/fsd/fsf/public/files/"+v);
-const f=await t("pk-fatal","https://data.humdata.org/dataset/4ce16b45-5526-471d-8918-2ed76082f1c8/resource/4cfc43b6-cc9c-403b-966f-fc37b8dd7d4b/download/dppadposs-fatalities.csv");
-if(f){const L=f.split("\n");console.log("P pk-fatal-tail",L.length,L.slice(-4).join(" // "))}
+const j=await (await fetch("https://www.sanctionsmap.eu/api/v1/regime",{headers:H})).json();
+const d=j.data; console.log("P n",d.length,"top keys",Object.keys(j).join(","));
+const sh=(o,dep=0)=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,Array.isArray(v)?(v.length?["ARR"+v.length,typeof v[0]==="object"&&dep<1?sh(v[0],dep+1):String(v[0]).slice(0,60)]:"[]"):v&&typeof v==="object"?(dep<1?sh(v,dep+1):"OBJ"):String(v).slice(0,80)]));
+for (const i of [0,10,40]) if(d[i]) console.log("P r"+i,JSON.stringify(sh(d[i])).slice(0,2500));
+for (const u of ["https://www.sanctionsmap.eu/api/v1/regime/10","https://www.sanctionsmap.eu/api/v1/regime/10?lang=en"]) { const r=await fetch(u,{headers:H}); const x=await r.text(); console.log("P one",u,r.status,x.length,x.slice(0,1500).replace(/\s+/g," ")); }
