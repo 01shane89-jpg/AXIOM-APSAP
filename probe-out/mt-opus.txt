@@ -1,0 +1,962 @@
+lang  opus model                          n   chrF++ MADLAD / OPUS   s per line MADLAD / OPUS   headlines rejected MADLAD / OPUS
+ko    Helsinki-NLP/opus-mt-tc-big-ko-en   100   55.5 / 5.5   0.61 / 0.03   17 / 2 of 43
+zh    Helsinki-NLP/opus-mt-zh-en          100   51.8 / 48.5   0.6 / 0.02   16 / 3 of 37
+ja    Helsinki-NLP/opus-mt-ja-en          100   45 / 37.3   0.6 / 0.02   3 / 0 of 25
+ar    Helsinki-NLP/opus-mt-tc-big-ar-en   100   57.2 / 58   0.61 / 0.04   7 / 4 of 22
+fr    Helsinki-NLP/opus-mt-tc-big-fr-en   100   49.7 / 49   0.6 / 0.04   18 / 6 of 33
+es    Helsinki-NLP/opus-mt-es-en          100   63.7 / 60.5   0.57 / 0.02   11 / 2 of 26
+ru    Helsinki-NLP/opus-mt-ru-en          100   47.4 / 43.9   0.64 / 0.03   3 / 0 of 17
+
+=== side by side
+
+[ko target] “오라클, 텐센트와 맺은 9조원대 AI 칩 임대 계약 취소”… 美 정부 압박 영향
+  MADLAD: "Oracle, cancels 9 trillion yuan AI chip lease agreement with Tencent"... US government pressure impact
+  OPUS  : ,, Program by
+
+[ko target] “트럼프주의 골격 유지할 듯”…정부, ‘미, 두 개의 권력’ 대응 부담 커져
+  MADLAD: "Trumpism's skeleton seems to be maintained"... the government, 'the US, two powers' response burden increase
+  OPUS  : . ,  ?
+
+[ko target] 초선부터 3선까지 기소…오태완 의령군수 '사법리스크' 반복
+  MADLAD: The first to the third...Otaewan Yorigun 'legal risk' repeats
+  OPUS  : And the people of the land, they will be brought to justice.
+
+[ko target] 日증시, 반도체 투자 우려에 개장 직후 6만선 무너져
+  MADLAD: Nikkei 225 collapses to 60,000 points after opening on concern over semiconductor investment
+  OPUS  : The Lord of the Rings, the King of Kings
+
+[ko target] “퇴직 사유 AI” 이세돌이 새로 배우는 ‘노동’…짠한데, 찡하다 [이진송의 아니 근데]
+  MADLAD: "Retirement reason AI" Isedo learns new 'work'... sad, but it is damn [Ijinsong not but]
+  OPUS  : program with   s  half  . and  half
+
+[ko target] 이란 안보수장, 푸틴에 최고지도자 친서 전달…전쟁 종식 논의
+  MADLAD: Iran's Security Council Chairman Presents Supreme Leader's Letter to Putin...Discussion on End of War
+  OPUS  : And the reward is a great harvest.
+
+[ko target] "집콕하면 돈 아낄 줄 알았는데"…'소파 경제'의 역설
+  MADLAD: "I thought I'd save money by staying at home"...
+  OPUS  : And the beauty of that school.
+
+[ko target] 은평 스토킹살인 60대 남성 혐의 인정…"대화중 화가 나 살해"
+  MADLAD: "There's a lot of people who are angry with me.
+  OPUS  : Say, “You are going to be in the right place.
+
+[ko target] "초광역특구법 철회" 전남광주 시민사회 10일 상경투쟁
+  MADLAD: "Recall the Super-Group Special Area Act" 10 days of civil society struggle in Chungcheongnam
+  OPUS  : We will be the ones to be the ones who are hurting.
+
+[ko target] AI기본법 중심 입법체계 정비…초지능 대응 등 7개 TF 구성
+  MADLAD: AI-based basic law legislative system updating... superintelligence response and 7 task force formation
+  OPUS  : The Lord is not the master of the program.
+
+[ko target] 日의료기업, 홋카이도 내 드론 수송 상용화 추진
+  MADLAD: Japanese medical company to promote commercialization of drone transport in Hokkaido
+  OPUS  : at school,
+
+[ko target] 이 대통령 "청년 기술인재가 韓 미래…실력 걸맞게 인정받는 사회 노력" [뉴시스Pic]
+  MADLAD: President Lee: "Young technological talents are the future of Korea... social efforts that receive recognition for their skills" [NewsisPic]
+  OPUS  : Say, “This is a new and exciting place.
+
+[ko target] 김민석 “신천지 전면 공개했으면 반발 더 컸을 것…책임의 문제는 별론”
+  MADLAD: Kim Min-sik: "If the Sinclair had been fully disclosed, the opposition would have been bigger...
+  OPUS  : ?  .  !
+
+[ko target] 청소년 SNS 규제, 가입만 막을까…추천·무한 스크롤도 검토
+  MADLAD: Teen SNS regulation, to prevent only subscription... recommendations and infinite scroll review
+  OPUS  : ,,
+
+[ko target] 미 사업체, 10월에 16.5만개 새 일자리…실업률도 4.1%로 낮아져(종합)
+  MADLAD: U.S. businesses, in October 165,000 new jobs... unemployment rate also decreased to 4.1% (complete)
+  OPUS  : We have been given a lot of guidance and training.
+
+[ko target] [미 중간선거]트럼프 패배에 돌아선 보수 언론···머독은 벌써 ‘포스트 트럼프’
+  MADLAD: [US midterm election] Trump's defeat turned conservative media... Murdoch is already 'post-Trump'
+  OPUS  : the New  Prize
+
+[ko target] 정부, 친환경 버스 부가세 면제 올해 말 종료 추진…서울 등 16곳 반발
+  MADLAD: Government, environmentally friendly buses exemption of VAT end this year...
+  OPUS  : ,
+
+[ko target] 트럼프, 백악관 비서실장 교체... 후임에 ‘反이민 강경파’ 밀러
+  MADLAD: Trump, White House Secretary of State Replaces. . .
+  OPUS  : ,   and  s
+
+[ko target] 일자리재단 이전부지 오염 방치 의혹…동두천시장·국방부 관계자 등 고발
+  MADLAD: The former site of the Job Foundation contamination neglect suspicion... Dongduchen Mayor, Ministry of Defence officials and others charged
+  OPUS  : ?
+
+[ko target] [포토] “대통령도 잘못하면 감옥 가야”…국힘, 조작기소 특검법 규탄
+  MADLAD: [Photo] "The President is wrong to go to jail"... Nationalist Party, denounced the manipulation of prosecutions Special Prosecutor's Law
+  OPUS  : The new, the old, the new, the new.
+
+[ko target] 불법하도급 묵인 전자기기 받은 공무원 해임, 法 “적법”
+  MADLAD: The law of the unlawful subcontracting, dismissal of public servants who received tacit electronic devices, "legal"
+  OPUS  : Say, “I am the light of the world.”
+
+[ko target] 트럼프 “나를 탄핵하려 하면 민주당 파멸”…이란전 옹호 주장도
+  MADLAD: If you want to know more about the history of the American Revolution, please visit:
+  OPUS  : ?
+
+[ko numbers] 조작기소 의혹 특검법 본회의 상정에…필리버스터 돌입
+  MADLAD: The 19th Congress of the Communist Party of China   <number 19 not in the original>
+  OPUS  : elegant   prize something
+
+[ko numbers] 엄마 잠든새 2층 창틀에 걸터앉은 네살배기…주민 신고로 구조
+  MADLAD: 10:34 AM - The second floor of the building is now under construction.   <clock time not in the original>
+  OPUS  : 5th prize for the elegant and noble class   <number 5 not in the original>
+
+[ko numbers] 조작기소 특검법 본회의 상정…국힘 필리버스터
+  MADLAD: The 19th Congress of the Communist Party of China   <number 19 not in the original>
+  OPUS  : Elegant
+
+[ko numbers] 인천 구월동 건물서 나오던 차량 돌진…1명 사망·1명 중상
+  MADLAD: 1 person died and one was seriously injured in a car accident near Incheon's Guwon-dong district.
+  OPUS  : and  .
+
+[ko numbers] "내년 323억 쓰는데…'신안보 기업 육성법' 아직"
+  MADLAD: "New 32-year contract for the new 'Spider'".   <number 32 not in the original>
+  OPUS  : And the shackles and the slickness of it.
+
+[ko numbers] 충남도내 토마토갈색주름바이러스 감염 확산…43.1㏊ 확진
+  MADLAD: Tomato brown wrinkle virus infection spreads in Chungnam province... 43.
+  OPUS  : The first of the V-Creation.
+
+[ko numbers] ‘내란 우두머리’ 윤석열, 오늘 항소심 최후진술…선고만 남아
+  MADLAD: The 19th of July, the Supreme Court will hear an appeal from the decision.   <number 19 not in the original>
+  OPUS  : ,, ,
+
+[ko numbers] 금산군 적벽강 캠핑카서 불…3700만원 재산피해
+  MADLAD: 10.5% of the property is in a state that has no fire protection   <number 10.5 not in the original>
+  OPUS  : ?  .
+
+[ko numbers] 뉴욕증시 폭락 여파에 비트코인도 하락 반전…1억300만원대로
+  MADLAD: Bitcoin falls after New York Stock Exchange collapse... to around $1.3 billion   <number 1.3 billion not in the original>
+  OPUS  : I was surprised by the award.
+
+[ko invented-oct] 충주 자동차부품 공장서 끼임 사고…40대 노동자 사망
+  MADLAD: 2016-04-30 - Accident in the automotive parts factory of Chongju...   <year 2016 not in the original>
+  OPUS  : ?
+
+[ko invented-oct] 충주 자동차부품 공장서 끼임 사고…40대 근로자 사망
+  MADLAD: 2016-09-30 - Accident in the automotive parts factory of Chongju...   <year 2016 not in the original>
+  OPUS  : ?
+
+[ko invented-oct] 평택 주택가 공원서 한밤중 외국인 패싸움…각목 들고 발길질(종합)
+  MADLAD: 10:35 PM - The night of the dead (2014)   <year 2014 not in the original>
+  OPUS  : And it is a lot of shackles.
+
+[ko invented-oct] ‘페덱 담 증세→선발 교체’ 삼성, 제대로 꼬였다…'20안타 폭발' 두산에 0-12 충격패, 6연승 허무하게 끝 [대구 리뷰]
+  MADLAD: 2016-09-30 - The Sun: "There's a lot of work to be done," says former U.S. Secretary of State Mike Pompeo [Photo by Reuters]   <year 2016 not in the original>
+  OPUS  : Festival, and its general prizes just 63, de   <number 63 not in the original>
+
+[ko invented-oct] 국힘, 조희대 국감 증인 불출석에 "與, 검증 아닌 겁박 정치"
+  MADLAD: "There is no evidence that the 1980s were a time of violence, racism or discrimination."   <year 1980 not in the original>
+  OPUS  : It will be a reward, a victory.
+
+[ko invented-oct] 민주당 "조희대 대법원장, 국감 출석 불응 의사…국회법 위반"
+  MADLAD: "The Supreme Court of the United States," The New York Times.
+  OPUS  : It will be a great day for you.
+
+[ko invented-oct] 목포대 "의대 후보 선정 집행정지 각하에 즉시 항고 검토"
+  MADLAD: "The 2016-17 School Year is the first year of a new school year."   <year 2016 not in the original>
+  OPUS  : The school will be closed for a while.
+
+[ko invented-oct] 방망이 휘두르고 발길질…외국인들 한밤중 노상서 패싸움 벌여
+  MADLAD: The 10th of July, the night before Christmas, a man was shot dead in the middle of the street.
+  OPUS  : ?  .
+
+[ko invented-oct] 경북 영양서 오르막길 경운기 5m 아래 추락…중상 2명 헬기 이송
+  MADLAD: 2015-09-30 - A helicopter crashed into a forest in the north of Kenya.   <year 2015 not in the original>
+  OPUS  : I am the one who has been blessed with five.
+
+[ko invented-oct] 주차장서 ‘2m’ 만취 운전 적발되자 경찰관 폭행한 20대, 벌금 1000만원
+  MADLAD: 2016-09-30 - Policeman arrested for driving under the influence in parking lot   <year 2016 not in the original>
+  OPUS  : I am the one who is in charge of all things,
+
+[ko invented-oct] 휴일 전북 밤부터 '5㎜ 미만 비'…낮 22~26도'가끔 구름'
+  MADLAD: 2016-05-23 - Rain in the Northeast of China, with rainfall less than 5mm   <year 2016 not in the original>
+  OPUS  : Thank you for not being that sweet.
+
+[ko invented-oct] 김지용 인선에 말 아끼는 與…강경파 비판 계속되자 "엄정 검증" 원론 입장
+  MADLAD: "There is no doubt that the 2015 election will be a very difficult one for the Democratic Party.   <year 2015 not in the original>
+  OPUS  : The reward for the loss of a loved one is great.
+
+[ko ntrex] 웨일스 상원 의원들은 ‘멍청이처럼 보이는 것’을 걱정했다
+  human : Welsh AMs worried about 'looking like muppets'
+  MADLAD: Welsh Senators Worried About 'Looking Like Fools'
+  OPUS  : s  half
+
+[ko ntrex] 몇몇 상원 의원들은 그들의 직함을 MWPs(웨일스 국회 구성원)으로 바꾸어야 한다는 제안에 실망하고 있다..
+  human : There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+  MADLAD: Some senators are disappointed with the proposal to change their titles to MWPs (Member of Parliament for Wales).
+  OPUS  : The son of the righteous, who was born in the ninth grade.
+
+[ko ntrex] 그것은 의회의 이름을 웨일스 국회로 바꾸기 위한 계획 때문에 일어났다.
+  human : It has arisen because of plans to change the name of the assembly to the Welsh Parliament.
+  MADLAD: It was due to plans to change the name of Parliament into the Welsh Assembly.
+  OPUS  : The school is a .
+
+[ko ntrex] 정치적 스펙트럼을 막론하고 상원 의원들은 그것이 조롱을 일으킬 것을 걱정하고 있다.
+  human : AMs across the political spectrum are worried it could invite ridicule.
+  MADLAD: Senators across the political spectrum are concerned that it will be ridiculed.
+  OPUS  : ?  .
+
+[zh target] 陳亭妃：上任捐30％選舉補助款助偏鄉
+  MADLAD: Chen Tianfei: 30% of her election grants to the remote villages
+  OPUS  : Mrs. Chan: 30% of the election grant contribution to help outlanders
+
+[zh target] 進博會開幕 台企聯籲兩岸在AI領域強強合作
+  MADLAD: The Expo opens, and Taiwanese companies call for strong cooperation between the two sides in the AI field
+  OPUS  : The opening of the rally calls for strong cooperation between the two sides in the A.I.
+
+[zh target] 佛州私人機墜毀9死！機師生前曾通報「結冰」 機師揭防冰機制
+  MADLAD: Florida private jet crashes, nine dead! Pilot reported "ice" before he died.
+  OPUS  : The Florida private plane crashed nine days ago.
+
+[zh target] 分析：習近平為中共21大掌舵人不言而喻
+  MADLAD: Analysis: Xi Jinping is the 21st Chief of Staff
+  OPUS  : Analysis: The 21-year-old leader of the Chinese government speaks for itself.
+
+[zh target] 美智庫示警：解放軍動員三大戰區模擬孤立台灣
+  MADLAD: 1950s Taiwan war   <year 1950 not in the original>
+  OPUS  : The US think tank warns: the three war zones of the Liberation Army are simulating Taiwan's isolation.
+
+[zh target] 台南凌晨街頭鬥毆！泰籍男持美工刀傷2人 涉殺人未遂遭逮
+  MADLAD: Thai man stabs and injures two beauty professionals in Tainan, arrested for attempted murder
+  OPUS  : A street fight in the morning!
+
+[zh target] MC HotDog熱狗抄襲案遭起訴！本色音樂怒發6點聲明反擊朱德庸
+  MADLAD: MC HotDog hot dog copying case is prosecuted!
+  OPUS  : MC HotDog was charged with a copy of the raid!
+
+[zh target] 竹縣芎林鄉代參選人涉賄 與樁腳遭羈押禁見
+  MADLAD: A candidate for the seat of Shilin Township, Taeke District was arrested and detained in connection with a bribery case.
+  OPUS  : The country candidate from Takegi Lam is detained for being a prisoner.
+
+[zh target] 支持度、辯論表現狂勝蔣萬安！沈伯洋：戒慎恐懼
+  MADLAD: Support and debate performances outperformed Jiang Wan'an!
+  OPUS  : Proponents, debate over the victory! Shen Buryan: Fear of Warning
+
+[zh target] 屏科大女老師校園車禍 撞男大生多處擦挫傷送醫
+  MADLAD: A schoolgirl in Pinko High School is injured after being hit by a car.
+  OPUS  : The screen teacher's bus accident at school, and the boy's injuries were all bruised.
+
+[zh target] 葉門血腥24小時！無情空襲奪逾50命 市場村莊接連遇襲
+  MADLAD: 24 Hours of Blood in Yemen: Relentless airstrikes kill more than 50 people, market villages attacked
+  OPUS  : Yemen's bloody 24 hours! The air strike killed more than 50 people.
+
+[zh target] 史上最狂大亂鬥！主審發「53張紅牌」創世界紀錄還遭死亡威脅
+  MADLAD: The World's Most Dangerous Match Ever!
+  OPUS  : The biggest battle ever!
+
+[zh target] 重陽敬老餐會涉賄選！基隆市議員蔡旺璉、里長詹仁豪移送
+  MADLAD: The Cheongyang Seniors' Dinner Party, Bribery Election! Kilong City Councillor Tsai Wangren and Li-Chiang Jan Jinhao transferred
+  OPUS  : The Old Party is involved in the election!
+
+[zh target] 部長闖禍、整個五角大廈陪葬？川普恐清算「這3大」軍方高層
+  MADLAD: "Trump threatens to kill these three top military officials".
+  OPUS  : The Minister's trouble, the whole Pentagon?
+
+[zh target] 張俊傑涉共諜案逃亡 高金素梅辦公室主任同列被告 檢聲請延押2月
+  MADLAD: Chang Jun-jeong, the head of Goo Jin-soo's office who escaped from police custody in a Communist spying case
+  OPUS  : The Chief of the Goldingssumer office is also a co-defendant.
+
+[zh target] 美國期中選舉敗北 學者：川普對中政策恐更強硬
+  MADLAD: The US is losing its midterm election, and scholars say Trump's policy towards China may be tougher.
+  OPUS  : The mid-election in the United States has lost its way.
+
+[zh target] 快訊／機捷高鐵桃園站「站內炸雞店起火」！緊急疏散民眾
+  MADLAD: Emergency evacuation of residents after fire broke out in a chicken restaurant at the Geyser High Speed Rail station in Taoyuan City.
+  OPUS  : Quick/Tear High Peach Park, "Fire on the chicken shop in the station"!
+
+[zh target] 蔣萬安贏了辯論、沈伯洋拿了選票？各取所需的台北市長辯論局
+  MADLAD: If Jiang Wanan wins the debate, and Shen Boyang gets the votes, then each of them will take their share of Taipei Mayor's Debate Bureau.
+  OPUS  : Xianan won the debate, Shen's got the vote?
+
+[zh target] 與賴總統到淡水清水巖參香 蘇巧慧：加速淡水發展、文史被更多人看見
+  MADLAD: President Choi visited the Taitung Lake and Chiayi Dam to visit the shrine.
+  OPUS  : The President's journey to fresh water is clear.
+
+[zh target] 國台辦否認大陸介選 陸委會：是眾所皆知事實
+  MADLAD: The National Taiwan Bureau of Elections denies the mainland primary election.
+  OPUS  : The National Council for the Defense of America denies that election:
+
+[zh target] 巴紐再逼撤館！外交部主動關閉駐處 全面終止援助合作
+  MADLAD: The Foreign Ministry has closed the embassy and stopped all aid to Banyu.
+  OPUS  : The Foreign Office has shut down the premises and stopped all aid cooperation.
+
+[zh target] 不滿巴紐施壓我主動關閉駐處 陸委會批中共打壓台灣外交
+  MADLAD: I was not satisfied with the pressure of Ban Ki-moon to close my embassy.
+  OPUS  : I'm not satisfied with Barnus pressuring me to close down my premises.
+
+[zh numbers] 行政院提6千億追加預算、今年度總預算規模達3兆6千億元
+  MADLAD: The Executive Council proposes an additional budget of 600 billion yuan, and the total budget for this year reaches 3 trillion 601 billion yuan.   <number 601 billion not in the original>
+  OPUS  : The Executive has a budget of $600 billion, and this year it's $360 billion.   <number 360 billion not in the original>
+
+[zh numbers] 藍白推老農年金加碼到1萬5 綠黨團揭拒投原因
+  MADLAD: The Green Party of Canada has a 15-year term.   <number 15 not in the original>
+  OPUS  : Blue White to raise the old farm's annuity to 15,000.   <number 15,000 not in the original>
+
+[zh numbers] 桃園警選前淨化治安雷霆除暴 逾百警力跨機關聯合稽查
+  MADLAD: More than 100 police forces conduct joint inspection of various agencies to clear out the riots and ensure security before Taoyuan's election   <number 100 not in the original>
+  OPUS  : Pre-election cleanup of security thunder.
+
+[zh numbers] 蘇花安隧道新建工程動土 投入千億經費盼2032全線通車
+  MADLAD: Suhuan Tunnel Construction Project Starts, 100 Billion Dollar Investment Expects Full Line Opened in 2032   <number 100 Billion not in the original>
+  OPUS  : The new construction of Sohuaan tunnel is worth hundreds of billions of dollars in total traffic.
+
+[zh numbers] (影) 佛羅里達墜機9死! 網：私人包機安全風險高 該機可能缺乏「這零件」
+  MADLAD: Florida 937: Private Aircraft May Lack This Part   <number 937 not in the original>
+  OPUS  : The Florida 9th crash! Net: Private charters are at high risk.
+
+[zh numbers] 湖口松下廠房爆炸波及逾百戶 鄉長擬協助災損彙整並求償
+  MADLAD: The explosion of a factory building in Hokuto-shi affected more than 100 households.   <number 100 not in the original>
+  OPUS  : The explosion in the lake's lower plant affected more than 100 families.   <number 100 not in the original>
+
+[zh numbers] 捲共諜案遭列被告限制出境 高金素梅發毛：「無法阻擋百花放」
+  MADLAD: Go Kin-soo: "I can't stop the 100 Flowers"   <number 100 not in the original>
+  OPUS  : The case of the Communists was restricted to the border by the accused.
+
+[zh numbers] 大爆冷！火箭客場出擊踢鐵板 太陽奪命書生布克轟24分領勝
+  MADLAD: Rockets 24-10 Suns   <number 10 not in the original>
+  OPUS  : The rocket docks are kicking and kicking the iron plate.
+
+[zh numbers] 澳門民主派人士區錦新違國安法 遭判刑12年半
+  MADLAD: 1987–2003: King Xin, a member of the Macau Democratic Party, sentenced to twelve and a half years in prison for violating national security laws.   <year 1987 not in the original>
+  OPUS  : The Australian Democratic Party is sentenced to 12 and a half years for new violations of national security law.
+
+[zh invented-oct] 蔡康永現身沈伯洋競總引爆震撼 網驚「知識藍倒戈」憂遭出征清算
+  MADLAD: "The 2016 World Cup: China's Kim Jong-un to be the first Chinese president to face a worldwide ban on his visit".   <year 2016 not in the original>
+  OPUS  : The Chinese government has been in a state of shock, and the Internet is alarmed that the Blue Dream of Knowledge was being liquidated.
+
+[zh invented-oct] 助講不捨李四川被抹黑 蔣萬安：自己也被丟滿身泥巴
+  MADLAD: The 2014-15 season, he was a regular in the team's starting lineup.   <year 2014 not in the original>
+  OPUS  : The assistant was blackened and he was thrown out of his body.
+
+[zh invented-oct] 高大成為鄭功進助選授戰旗 看好何欣純台中選情翻盤
+  MADLAD: The 1980 election was a turning point for the party.   <year 1980 not in the original>
+  OPUS  : Gao Da became the Jingjin campaign leader and watched Ho Hein's election turn
+
+[zh invented-oct] 影》蔡英文驚喜現身引發騷動！賴清德見歷史級洋流人潮：我非常感動
+  MADLAD: "蔡英文驚訝現身引起騷動！賴清德見歷史級洋流人潮：我非常感動" (in Chinese).   <stock text>
+  OPUS  : The story of the Queens in English is a shock to the crowd.
+
+[zh invented-oct] 北市選舉激辯反毒 藍疑蔣萬安臉書遭機器人洗版
+  MADLAD: The 2016 Beijing Olympics were held in the Chinese city of Beijing.   <year 2016 not in the original>
+  OPUS  : The North City election is a big anti-drug debate.
+
+[zh invented-oct] (影)73歲獨裁者健康亮紅燈？矢板明夫：彭麗媛或許已成習近平拐杖
+  MADLAD: (2013) 73-year-old dictator's health is on the red light?   <year 2013 not in the original>
+  OPUS  : A 73-year-old dictator's health lights red?
+
+[zh ntrex] 威尔士国民议会议员(AM)担心“看起来像笨蛋”
+  human : Welsh AMs worried about 'looking like muppets'
+  MADLAD: Members of the National Assembly for Wales (AM) worried that "look like fools"
+  OPUS  : The Welsh National Assembly member (AM) is worried about "Looking like a fool."
+
+[zh ntrex] 有人提议应将 AM 的头衔改为MWP（威尔士议会议员)，这让有些 AM 惊愕不已。
+  human : There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+  MADLAD: Some AMs were surprised by the proposal that their title should be changed to MWP (Member of Parliament for Wales).
+  OPUS  : It was proposed that the title of AM should be changed to MWP (Member of Welsh Parliament), which had caused some AM to be dismayed.
+
+[zh ntrex] 之所以会这样，是因为有计划将国民议会的名称更改为“威尔士议会”。
+  human : It has arisen because of plans to change the name of the assembly to the Welsh Parliament.
+  MADLAD: This is due to plans to change the name of the National Assembly into "The Parliament for Wales".
+  OPUS  : This is due to plans to change the name of the National Assembly to “The Welsh Assembly”.
+
+[zh ntrex] 整个政坛的 AM 担心这会惹来嘲笑。
+  human : AMs across the political spectrum are worried it could invite ridicule.
+  MADLAD: The entire political arena AM feared that this would be ridiculed.
+  OPUS  : The whole political am worried it'll get scorned.
+
+[ja target] 「青い大波」「赤い引き潮」 共和大敗の米中間選挙―中林美恵子・早稲田大教授
+  MADLAD: "Blue Wave" and "Red Tide": The U.S. Interim Elections of the Republic's Great Loss - Mieko NAKATAIMAI, Professor at Waseda University
+  OPUS  : "The Blue Wave" "Red Pull," mid-election of the Republic's defeat in America, Professor Miyako and Akita.
+
+[ja target] 米半導体大手トップと「恋愛関係」 女性スパイ、中国当局が雇用―英紙
+  MADLAD: "The Chinese government has hired a female spy to investigate the relationship between US semiconductor giant and its top executives".
+  OPUS  : "Love with the top of the U.S. and the top half-conductor."
+
+[ja target] 外務省は不正アクセスにより約３６００件の個人情報が漏えいした可能性があると発表した
+  MADLAD: The Ministry of Foreign Affairs announced that about 3600 personal information may have been leaked by the unauthorized access.
+  OPUS  : The Foreign Ministry has announced that about 3600 identity leaks may have been caused by illegal access.
+
+[ja target] 米大統領は、民主党と協力できると語った
+  MADLAD: The president said he could work with the Democrats.
+  OPUS  : The President of the United States said he could work with the Democratic Party.
+
+[ja target] 身に余る光栄 旭日大綬章の本荘大阪ガス会長―秋の叙勲
+  MADLAD: A great honour for the person: Honsho Osaka Gas Company President of Asahi Dai-cho (Autumn Order)
+  OPUS  : The honor of being honored by the President of Osaka Gas in the main hall of the Tokyo Hotel.
+
+[ja target] 大阪市港区の8階建て倉庫火災、火の勢い弱まる 延焼の恐れほぼなし
+  MADLAD: The fire in an eight-storey warehouse building in the Harbor District of Osaka City has weakened, and there is almost no risk that it will spread.
+  OPUS  : The eight-story building storerooms in Osaka City harbor are under threat of a fire or fire.
+
+[ja target] 「国難級災害」へ備え急務 防災庁、司令塔役果たせるか
+  MADLAD: Emergency preparation for "national disaster": Disaster Prevention Agency to play its role as command tower
+  OPUS  : I'm going to be waiting for the "Space Disaster" mission.
+
+[ja target] 【空き家1億円事件】2千万円詐取で実刑判決 被告側の控訴棄却 高裁那覇支部 - 沖縄タイムス＋プラス プレミアム
+  MADLAD: 【100 million yen vacant house case】20 million yen fraud sentenced to death, the defendant's appeal dismissed by the Naha Branch of the High Court - Okinawa Times + Plus Premium
+  OPUS  : The accused's prosecution has been dismissed for theft of 100 million yen.
+
+[ja target] モンゴル当局が賠償請求検討 ＫＤＤＩ「法令違反ない」―草原火災
+  MADLAD: Mongolian authorities consider compensation claims, KDI "no violation of law" - grassland fire
+  OPUS  : The Mongol authorities have filed a ransom bill for the KDDI fire.
+
+[ja target] 消費減税法案が衆院通過 高市首相、給付対象「３割以上」
+  MADLAD: Consumer tax reduction bill passed in the House of Representatives, Takaichi Prime Minister says "more than 30%" will receive benefits
+  OPUS  : The Consumption Act passed by the High City Prime Minister and received a reward of over 30 percent.
+
+[ja target] 地検トップが部下に性的暴行した疑い 事件を理解する六つの要点
+  MADLAD: Six points to understand the case of a local prosecutor who allegedly sexually assaulted his subordinates.
+  OPUS  : The suspect that the ground lab sexually assaulted his men is a six-point point to understanding the case.
+
+[ja target] 安保土地取引に「許可制」 ドローン攻撃へ備え、外国協力者排除―改正案を閣議決定
+  MADLAD: The Cabinet approved amendments to the "permission system" for security land transactions and exclusion of foreign collaborators in preparation for drone attacks
+  OPUS  : We're preparing for a drone strike, we're getting a new plan.
+
+[ja target] 辺野古、オスプレイ容認に抗議 反対派「古謝県政で軍事化促進」
+  MADLAD: Ko BENONO protested the approval of OSPREY, and his opponents said that "Gosei Prefectural Government promoted militarization"
+  OPUS  : I'm here to protest the approval of the old-fashioned, osprey.
+
+[ja target] 「遺体なき」傷害致死事件 公判で黙秘した被告に懲役12年6カ月
+  MADLAD: The accused who remained silent in the trial of a "no-body" injury to death case was sentenced to 12 years and six months imprisonment.
+  OPUS  : The murder of a man without a body, the defendant who has been silent in court for 12 years, 6 months.
+
+[ja target] 海ぶどう ビールに変身 日本バイオテックなど3社開発 低温発酵 味わい爽やか - 沖縄タイムス紙面掲載記事
+  MADLAD: Sea grapes transformed into beer developed by three companies including Nippon Biotech, low-temperature fermentation, fresh taste - Okinawa Times paper article
+  OPUS  : Seavines, beer, Japanese biotech, three companies, low-heat flavors, freshness, Okinawan time paper articles.
+
+[ja target] 地中から100年前の「与儀橋」出現 大正時代の石造アーチ橋 道路整備で発掘、11日ごろから取り壊しへ - 沖縄タイムス＋プラス ニュース
+  MADLAD: A stone arched bridge from the Daisho period was excavated for road improvement and will be demolished around October 11th - Okinawa Times+Plus News   <month October not in the original>
+  OPUS  : The "The Bridge of the Arts" 100 years ago from the ground, the Stone Bridge of the Great Age, to the road construction, to take down from about 11 days to the destruction of the ocean time plus news.
+
+[ja target] ガソリン基準価、毎月５円引き上げ 高市首相
+  MADLAD: Prime Minister Takaichi
+  OPUS  : I'm going to raise the price of gasoline, five yen a month, and the Prime Minister of High City.
+
+[ja target] 歌舞伎町や中洲で窃盗の罪 米海兵隊2人、初公判で起訴内容認め結審
+  MADLAD: Two U.S. Marines, convicted of theft in Kabukicho and Nakatsu, admitted to charges at first trial
+  OPUS  : The charge of theft in Kabuki and Nakanji.
+
+[ja target] 焼失した国王・王妃の衣装も復元 平和と豊作願った「古式行列」で披露 首里城復興祭 - 沖縄タイムス＋プラス ニュース
+  MADLAD: The costumes of the burned King and Queen were also restored, and they performed in a 'old-style procession' that wished for peace and prosperity.
+  OPUS  : The royal costume that was destroyed was restored in the Peace and the Essays of Hiriji's Rehabilitation Festival - Okinawa Times+ News
+
+[ja target] 那覇市の高齢者福祉施設運営会社が倒産 負債2億3200万円 10月の沖縄県内倒産は4件 - 沖縄タイムス＋プラス プレミアム
+  MADLAD: The company operating the welfare facilities for elderly people in Naha City went bankrupt, and its debt amounted to ¥232 million.
+  OPUS  : The senior welfare firm in Manchuria has gone bankrupt, $232 million in debt, 4 of Okinawa's internal bankruptcy in October.
+
+[ja target] 「6人の命が7年は軽すぎる」新名神事故の遺族、判決に複雑な思い
+  MADLAD: "Seven years for six people's lives is too light," the survivors of Shin-Najin accident have complex feelings about the verdict.
+  OPUS  : "The six lives of the dead are too light."
+
+[ja target] 児童ポルノ製造、生徒ら49人被害 茨城県の元教員に実刑判決
+  MADLAD: Former teacher in Ichihara Prefecture sentenced to death for child pornography production and killing 49 students
+  OPUS  : Child pornography, 49 students, convicted of criminal crimes by former teachers in the Sung prefecture.
+
+[ja invented-oct] AI時代のSDGs学ぶ 8日那覇 国連大学長講演 - 沖縄タイムス紙面掲載記事
+  MADLAD: The Okinawa Times published an article on the cover page of a lecture given by the President of UN University in Naha, Japan, on 8th June.   <month June not in the original>
+  OPUS  : I'm the eighth day of SDGs learning from the AI era.
+
+[ja invented-oct] 「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長濱も飛躍誓う - 沖縄タイムス＋プラス プレミアム
+  MADLAD: "「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長浜も飛躍誓う" (in Japanese).   <stock text>
+  OPUS  : "The last fight, the victory of Koosuke Koshiro, will be held in honor of former Japanese representative Tohoku Onoshima."
+
+[ja invented-oct] 【速報】那覇市がインフル警報を発令 7年ぶりに基準2倍を突破、1定点60人超え - 沖縄タイムス＋プラス ニュース
+  MADLAD: Okinawa Times+Plus News
+  OPUS  : The Japanese government has issued an in full warning alert that will double its standard level for seven years, over 60 points, and the news.
+
+[ja ntrex] 恥さらしを危惧するウェールズ議会議員 (AM)
+  human : Welsh AMs worried about 'looking like muppets'
+  MADLAD: Member of the Welsh Assembly fearing shame
+  OPUS  : Senator Werres is concerned about shame.
+
+[ja ntrex] ウェールズ議会議員の呼称をAM (Assembly Member) からMWP (Member of the Welsh Parliament) に変えるべきだという提案によって、一部の議員の間には困惑が広がっている。
+  human : There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+  MADLAD: The proposal to change the title of members of the Welsh Parliament from AM (Assembly Member) to MWP (Member of the Welsh parliament) has caused confusion among some MPs.
+  OPUS  : With the proposal that we should change the name of Congressmen from AM to MWP of the Welsh Parrance, there is widespread confusion among some members.
+
+[ja ntrex] ウェールズ議会の名称を変更するという計画がその発端となっている。
+  human : It has arisen because of plans to change the name of the assembly to the Welsh Parliament.
+  MADLAD: The plan to change the name of the Welsh Parliament was the starting point.
+  OPUS  : The plan to change the name of the Wales Congress is the beginning of the project.
+
+[ja ntrex] あらゆる所属政党の議員は、これは馬鹿げた事態を招きうると懸念している。
+  human : AMs across the political spectrum are worried it could invite ridicule.
+  MADLAD: Members of parliament from all political parties are concerned that this could lead to absurdities.
+  OPUS  : The members of the party are concerned that this can lead to a ridiculous situation.
+
+[ar control] حصيلة أولية.. 8 جرحى في تصادم تسلسلي بين شاحنة وسيارات بعين تموشنت
+  MADLAD: Preliminary results. Eight injured in a collision between truck and cars at Ain Tammouchenet
+  OPUS  : Preliminary toll: 8 injured in a serial collision between a truck and cars in Ain Tamoshant
+
+[ar control] استهداف مبنى أمني في ريف إدلب بقذيفة صاروخية وتصاعد الهجمات المسلحة
+  MADLAD: A security building in Rif Idlib targeted by a rocket and armed attacks escalate
+  OPUS  : Targeting of a security building in Idlib countryside with a rocket and the escalation of armed attacks
+
+[ar control] الرئيس غزواني يستقبل بالقصر الرئاسي وزير الداخلية الاسباني
+  MADLAD: President Ghazouani receives Spanish Minister of the Interior at Presidential Palace
+  OPUS  : President Ghazwani receives Spanish Interior Minister at the presidential palace
+
+[ar control] قسم التجارة الإلكترونية بكلية الاقتصاد والعلوم السياسية بجامعة طرابلس يحتفل بالذكرى العشرين لتأسيسه .
+  MADLAD: The Department of Electronic Commerce at the Faculty of Economics and Political Science, University of Tripoli celebrates its twentieth anniversary.
+  OPUS  : The Department of E-Commerce at the Faculty of Economics and Political Science, University of Tripoli celebrates its 20th anniversary.   <number 20 not in the original>
+
+[ar control] استقالة مدعٍ أميركي يشرف على تحقيقات في قضايا سابقة لترمب
+  MADLAD: US Prosecutor Overseeing Pre-Trump Cases Resigns
+  OPUS  : Resignation of US prosecutor overseeing investigations into Trump's past cases
+
+[ar control] روسيا تشن هجوما صاروخيا على العاصمة الأوكرانية
+  MADLAD: Russia launches missile attack on Ukrainian capital
+  OPUS  : Russia launches missile attack on Ukrainian capital
+
+[ar control] خالد بن محمد بن زايد يزور معرض ومؤتمر «أديبك 2026»
+  MADLAD: Khalid bin Mohammed Bin Zayed visits the ADEB 2026 exhibition and conference
+  OPUS  : Khalid bin Mohammed visits ADIPEC 2026
+
+[ar control] دواء جديد لسرطان البروستات يحقق نتائج واعدة في تجربة سريرية
+  MADLAD: New prostate cancer drug shows promising results in clinical trial
+  OPUS  : New Prostate Cancer Drug Delivers Promising Results in Clinical Trial
+
+[ar control] انتخابات للمحاسبة وانتخابات للتمثيل... أين نحن؟!
+  MADLAD: Elections for accountability and elections for representation... where are we?
+  OPUS  : Elections and elections for representation... where are we?!
+
+[ar control] مولودية الجزائر.. فتح تحقيق في حادثة رشق أرضية ميدان “علي لابوانت”
+  MADLAD: Algerian youth. Opening of an investigation into the incident involving a throw at Ali Lapointe Square
+  OPUS  : ALGERIA MC.. Open an investigation into the ground bombing of “Ali Labuant” Square
+
+[ar control] ترامب يعترف بالهزيمة في الانتخابات
+  MADLAD: Trump Admits Election Defeat
+  OPUS  : Trump admits defeat in election
+
+[ar control] ترمب يعرض على رئيس مسابقة فنون قتالية منصب المتحدث باسم البيت الأبيض
+  MADLAD: Trump Offers Martial Arts Contest President White House Spokesman Post
+  OPUS  : Trump offers head of martial arts competition position as White House spokesman
+
+[ar control] بحضور وكيل الوزارة.. اختتام ورشة تدريب كبار المدربين لرياض الأطفال في عدن
+  MADLAD: In the presence of the Deputy Minister, closing of a workshop for training senior kindergarten teachers in Aden
+  OPUS  : In the presence of the Undersecretary, the workshop for senior trainers for kindergartens in Aden concluded
+
+[ar control] رئيس جمعية أدلاء السياح يثمّن استجابة الحكومة لمطالب الجمعية
+  MADLAD: President of the Association of Tourist Guides appreciates Government response to demands
+  OPUS  : President of Tourist Guides Association appreciates the government's response to the Society's demands
+
+[ar control] ملتقى ليبي تركي في بنغازي يبحث فرص الشراكة في قطاع الكهرباء والكوابل
+  MADLAD: Libyan-Turkish forum in Benghazi examines partnership opportunities in the electricity and cable sector
+  OPUS  : Libyan-Turkish forum in Benghazi discusses partnership opportunities in electricity and cable sector
+
+[ar numbers] المجلس الرئاسي: تحييد 20 ألفا من قيادات وعناصر المليشيا وتدمير أكثر من 5 آلاف آلية خلال شهر
+  MADLAD: Presidential Council: 20,000 militia leaders and members neutralized and more than 5,001 vehicles destroyed in a month   <number 5,001 not in the original>
+  OPUS  : Presidential Council: Neutralizing 20,000 militia leaders and elements and destroying more than 5,000 mechanisms in one month
+
+[ar numbers] وزير الخارجية يلتقي أعضاء فريق وزارة الخارجية المساند لمؤتمر حوار المنامة في دورته الثانية والعشرين
+  MADLAD: Minister for Foreign Affairs meets with members of the Ministry of Foreign Affairs Support Group for the 22nd session of the Manama Dialogue Conference   <number 22 not in the original>
+  OPUS  : Foreign Minister meets members of the Ministry of Foreign Affairs team supporting Manama Dialogue Conference in its 22nd session   <number 22 not in the original>
+
+[ar numbers] فرنسا: قتيلان و16 مصاباً في حادث اصطدام حافلة تقلّ طلاب مدارس
+  MADLAD: France: 2 killed and 16 injured in collision of school bus   <number 2 not in the original>
+  OPUS  : France: 2 dead, 16 injured in bus crash involving school students   <number 2 not in the original>
+
+[ar numbers] المومني: سيتم اختيار 450 مكلّفا لكل محافظة باستثناء عمّان 3 آلاف والزرقاء 1350 وإربد 1350
+  MADLAD: Mu &apos; min: 450 commissioners to be selected per governorate except Amman (3,000), Zarka (1,350) and Irbid (1,250).   <number 1,250 not in the original>
+  OPUS  : Momani: 450 will be selected for each governorate except Amman 3 thousand, Zarqa 1350 and Irbid 1350
+
+[ar numbers] France: Entre 40 000 et 60 000 manifestants attendus à Paris pour la mobilisation du 7 novembre
+  MADLAD: France: Between 40,000 and 60,010 protesters expected in Paris for the November 7 mobilisation   <number 60,010 not in the original>
+  OPUS  : France: Entre 40 000 et 60 000 Manifestants attendus  Paris pour la mobilisation du 7 novembre
+
+[ar numbers] جامعة طرابلس تحتضن احتفالية الذكرى العشرين لتأسيس قسم التجارة الإلكترونية وتحليل البيانات بكلية الاقتصاد والعلوم السياسية.
+  MADLAD: The University of Tripoli hosts the 20th anniversary celebration of the establishment of the Department of Electronic Trade and Data Analysis at the Faculty of Economics and Political Sciences.   <number 20 not in the original>
+  OPUS  : Tripoli University hosts the 20th anniversary of the establishment of the Department of E-Commerce and Data Analysis at the Faculty of Economics and Political Science.   <number 20 not in the original>
+
+[ar numbers] «الرئاسي اليمني»: «فجر اليمن» نفذت 40 ألف استهداف وحيَّدت 20 ألف حوثي
+  MADLAD: "Yemen President: Dawn of Yemen carried out 40,000 targets and neutralized 20,018 Houthis"   <number 20,018 not in the original>
+  OPUS  : Yemen's Dawn: 40,000 Targets Carried Out, 20,000 Houthis
+
+[ar ntrex] أعرب أعضاء جمعية ويلز الوطنية عن قلقهم من "أنهم يبدون كالدمى"
+  human : Welsh AMs worried about 'looking like muppets'
+  MADLAD: Members of the National Assembly for Wales have expressed concern that they "look like puppets."
+  OPUS  : Members of the National Assembly of Wales expressed concern that "they look like puppets".
+
+[ar ntrex] هناك استياء بين بعض أعضاء جمعية ويلز الوطنية من الاقتراح بتغيير مسماهم الوظيفي إلى MWPs (أعضاء في برلمان ويلز).
+  human : There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+  MADLAD: There is discontent among some members of the National Assembly for Wales at the proposal to change their functional title to MWPs (Members of Parliament for Wales).
+  OPUS  : There is displeasure among some members of the National Assembly of Wales over the proposal to change their job title to MWPs (Members of Parliament for Wales).
+
+[ar ntrex] وقد نشأ ذلك بسبب وجود خطط لتغيير اسم الجمعية إلى برلمان ويلز.
+  human : It has arisen because of plans to change the name of the assembly to the Welsh Parliament.
+  MADLAD: This was due to plans to change the name of the Assembly into Parliament for Wales.
+  OPUS  : This arose because there were plans to change the name of the association to Parliament of Wales.
+
+[ar ntrex] وأعرب أعضاء الجمعية عبر الطيف السياسي عن قلقهم من أن الأمر يجعلهم عرضة للسخرية.
+  human : AMs across the political spectrum are worried it could invite ridicule.
+  MADLAD: Members of the Assembly across the political spectrum expressed concern that this made them vulnerable to ridicule.
+  OPUS  : Members of the Assembly across the political spectrum expressed concern that it made them vulnerable to ridicule.
+
+[fr control] Décryptage : Joseph Kabila est-il un danger pour la stabilité de la République démocratique du Congo ?
+  MADLAD: Decription: Is Joseph Kabila a danger to the stability of the Democratic Republic of Congo?
+  OPUS  : Is Joseph Kabila a danger to the stability of the Democratic Republic of Congo?
+
+[fr control] Cameroun : institutions universitaires privées irrégulières, incompétence ou tolérance de trop ?
+  MADLAD: Cameroon: Irregular private university institutions, incompetence or too much tolerance?
+  OPUS  : Cameroon: Irregular private academic institutions, incompetence or tolerance too much?
+
+[fr control] Le verdict du tirage de 18 H
+  MADLAD: The verdict of the draw at 18 H
+  OPUS  : The verdict of the 18 H draw
+
+[fr control] Pic de chaleur : 38° C dans l’Ouest du pays
+  MADLAD: Peak heat: 38° C in the West of the country
+  OPUS  : Heat peak: 38°C in the west of the country
+
+[fr control] Saisie spectaculaire de médicaments contrefaits et de pirogues illégales à Limbe
+  MADLAD: Spectacular seizure of counterfeit drugs and illegal canoes in Limbe
+  OPUS  : Spectacular seizure of counterfeit medicines and illegal canoes in Limbe
+
+[fr control] REFONDATION – Le Colonel Michaël Randrianirina appelle les Raiamandreny à défendre les richesses nationales face aux exploitants clandestins d’or
+  MADLAD: REFONDATION – Colonel Michaël Randrianirina calls on Raiamandreny to defend national riches against clandestine gold miners
+  OPUS  : REFUND – Colonel Michaël Randrianirina calls on Raiamandreny to defend national wealth against illegal gold miners
+
+[fr control] L’ambassadeur d’Arabie Saoudite au Cameroun reçu par Paul Atanga Nji
+  MADLAD: The Ambassador of Saudi Arabia to Cameroon received by Paul Atanga Nji
+  OPUS  : Saudi Arabia’s Ambassador to Cameroon Received by Paul Atanga Nji
+
+[fr control] Le dessin de Chaunu : le rejet à l’unanimité de l’Assemblée nationale du projet de loi de finances
+  MADLAD: Chaunu’s cartoon: the unanimous rejection of the National Assembly’s budget bill
+  OPUS  : Chaunu’s drawing: the unanimous rejection of the finance bill by the National Assembly
+
+[fr control] UN-CHK : 1 109 étudiants privés de leurs dotations, la FNE appelle au boycott des évaluations
+  MADLAD: UN-CHK: 1,109 students deprived of their endowments, the FNE calls for a boycott of evaluations
+  OPUS  : UN-CHK: 1,109 students deprived of their endowments, the FNE calls for a boycott of assessments
+
+[fr control] Coyah : l’état de santé de l’ancien patron de l’OGP inquiète
+  MADLAD: Coyah: the state of health of former OGP boss is worrying
+  OPUS  : Coyah: The health of the former boss of OGP worries
+
+[fr control] SIAO 2026 : Saif Radouane met le cuir marocain à l'honneur avec des chaussures alliant élégance, qualité et petits prix
+  MADLAD: SIAO 2026: Saif Radouane puts Moroccan leather in the spotlight with shoes that combine elegance, quality and low prices
+  OPUS  : SIAO 2026: Saif Radouane puts Moroccan leather in the spotlight with shoes combining elegance, quality and low prices
+
+[fr control] Budget fédéral : de nouveaux visages pourraient s'inviter aux bilatérales avec Bart De Wever
+  MADLAD: Federal budget: new faces could be invited to the bilateral talks with Bart De Wever
+  OPUS  : Federal budget: new faces could be invited to bilateral with Bart De Wever
+
+[fr control] Urgent / Sénatoriales en Guinée : la DGE repousse la date limite de dépôt des candidatures
+  MADLAD: Urgent / Senate elections in Guinea: the DGE extends the deadline for filing applications
+  OPUS  : Urgent / Senate in Guinea: the CEO extends the deadline for submission of candidatures
+
+[fr control] Voici l’intégralité de la plainte de Bibou Nissack contre Henry Djoko pour trahison
+  MADLAD: Here is the full complaint of Bibou Nissack against Henry Djoko for treason
+  OPUS  : Here is the complete complaint of Bibou Nissack against Henry Djoko for treason
+
+[fr control] Le président burundais élevé au rang de Docteur Honoris Causa par l’Université RUDN
+  MADLAD: Burundian President Raised to the Rank of Doctor Honoris Causa by RUDN University
+  OPUS  : Burundian President elevated to Doctor Honoris Causa by RUDN University
+
+[fr numbers] October 2016 – October 2026 : Cameroon’s Strong security resilience
+  MADLAD: October 2016 – October 25, 2026: Cameroon’s Strong security resilience   <number 25 not in the original>
+  OPUS  : October 2016 – October 2026: Cameroon’s Strong security resilience
+
+[fr numbers] France : entre 40 000 et 60 000 manifestants attendus à Paris pour la mobilisation du 7 novembre
+  MADLAD: France: between 40,000 and 60,010 protesters expected in Paris for the mobilization of November 7   <number 60,010 not in the original>
+  OPUS  : France: between 40,000 and 60,000 demonstrators expected in Paris for the mobilization of November 7
+
+[fr numbers] Au Kenya, le gourou qui encourageait ses disciples à mourir de faim pour « rencontrer Jésus » condamné à deux cents ans de prison
+  MADLAD: Kenya: Guru who urged his followers to starve to death in order to “meet Jesus” sentenced to 200 years in prison   <number 200 not in the original>
+  OPUS  : Kenya guru who encouraged his followers to starve to “meet Jesus” sentenced to 200 years in prison   <number 200 not in the original>
+
+[fr numbers] André Onana infranchissable, 21 tirs cadrés, 21 arrêts !
+  MADLAD: André Onana unbreakable, 21 shots in the box, 20 stops!   <number 20 not in the original>
+  OPUS  : André Onana impassable, 21 shots set, 21 stops!
+
+[fr numbers] Une sexagénaire poignardée à mort dans la rue à Montargis, la suspecte arrêtée et hospitalisée en psychiatrie
+  MADLAD: A 60-year-old woman is stabbed to death in the street of Montargis, suspect arrested and hospitalized in psychiatry   <number 60 not in the original>
+  OPUS  : A 60-year-old woman stabbed to death in the street at Montargis, the suspect arrested and hospitalized in psychiatry   <number 60 not in the original>
+
+[fr numbers] Haut-Ogooué : un sexagénaire meurt lors d’un abattage
+  MADLAD: Haut-Ogooué: a 60 year old man dies during slaughter   <number 60 not in the original>
+  OPUS  : Haut-Ogooué: a 60-year-old dies during a slaughter   <number 60 not in the original>
+
+[fr numbers] Nécrologie du 22 octobre 2026
+  MADLAD: Wednesday, 22 October 2019   <year 2019 not in the original>
+  OPUS  : Obituary of 22 October 2026
+
+[fr numbers] Togo Nears UNAIDS 95-95-95 HIV Targets, Agency Says
+  MADLAD: Togo Nears UNAIDS 95-95-80 HIV Targets, Agency Says   <number 80 not in the original>
+  OPUS  : Togo Nears UNAIDS 95-95-95 HIV Targets, Agency Says
+
+[fr numbers] Nécrologie du 5 novembre 2026
+  MADLAD: Thursday, 05 November 2019   <year 2019 not in the original>
+  OPUS  : Obituary of 5 November 2026
+
+[fr numbers] Nécrologie du 31 octobre 2026
+  MADLAD: Wednesday, 29 October 2026   <number 29 not in the original>
+  OPUS  : Obituary of 31 October 2026
+
+[fr numbers] Nécrologie du 30 octobre 2026
+  MADLAD: Wednesday, 29 October 2026   <number 29 not in the original>
+  OPUS  : Obituary of 30 October 2026
+
+[fr numbers] Mobilisation du 7 novembre : 146 000 personnes ont défilé en France samedi selon le ministère de l'Intérieur, 250 000 selon l'intersyndicale de la jeunesse
+  MADLAD: Mobilisation of November 7: 146,000 people marched in France on Saturday according to the Ministry of Interior, 250,001 according to the Intersyndicale de la jeunesse   <number 250,001 not in the original>
+  OPUS  : November 7 mobilization: 146,000 people marched in France Saturday according to the Ministry of Interior, 250,000 according to the Intersyndicale de la Jeunesse
+
+[fr numbers] Il tire au pistolet alors que des hommes cagoulés tentaient de l’enlever : 2 ans et demi de prison
+  MADLAD: He shot at masked men who were trying to kidnap him: 2.5 years in prison   <number 2.5 not in the original>
+  OPUS  : He shoots with a pistol as hooded men try to take him away: 2 and a half years in prison
+
+[fr numbers] مستشفى الحرير العالمي يرمم مدرسة شهداء الابتدائية ويدعم ثلاثة معلمين ومئة طالب
+  MADLAD: Silk World Hospital reconstructs Shahida Primary School and supports three teachers and 100 students   <number 100 not in the original>
+  OPUS  : .  ,  ;
+
+[fr numbers] Mpivady mpisoloky : Romotra ny polisy, karohina 24/24 ora
+  MADLAD: Fraud Couple: Police Chase, 24/7 Search · Global Voices   <number 7 not in the original>
+  OPUS  : Mpivady mpisoloky: Romotra ny polisy, karohina 24/24 ora
+
+[fr numbers] Soudan : plus de vingt morts après une attaque de drone contre un marché à Nyala
+  MADLAD: Sudan: Over 20 killed after drone attack on market in Nyala   <number 20 not in the original>
+  OPUS  : Sudan: More than 20 dead after drone attack on Nyala market   <number 20 not in the original>
+
+[fr numbers] Rolex Paris Masters. Arthur Fils sorti dès les huitièmes de finale par un excellent Taylor Fritz
+  MADLAD: Rolex Paris Masters: Arthur Fils out of the round of 16 by an excellent Taylor Fritz   <number 16 not in the original>
+  OPUS  : Rolex Paris Masters. Arthur Fils released in the round of 16 by an excellent Taylor Fritz   <number 16 not in the original>
+
+[fr numbers] Fada N’Gourma : soupçonné d’avoir abusé de sa fille, un quinquagénaire arrêté
+  MADLAD: Fada N’Gourma: a 50-year-old arrested on suspicion of abusing his daughter   <number 50 not in the original>
+  OPUS  : Fada N’Gourma: suspected of abusing his daughter, a 50-year-old man arrested   <number 50 not in the original>
+
+[fr ntrex] Des membres de l’Assemblée du pays de Galles inquiets de « passer pour des marionnettes »
+  human : Welsh AMs worried about 'looking like muppets'
+  MADLAD: Members of the Welsh Assembly worried about being “perceived as puppets”
+  OPUS  : Wales Assembly members concerned about ‘passing for puppets’
+
+[fr ntrex] Des élus gallois sont consternés par une proposition visant à remplacer leur titre par le sigle MWP (Member of the Welsh Parliament, Membre du Parlement gallois
+  human : There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+  MADLAD: Welsh elected representatives are dismayed by a proposal to replace their title with the acronym MWP (Member of the Welsh Parliament).
+  OPUS  : Welsh MPs are dismayed by a proposal to replace their title with the acronym MWP (Member of the Welsh Parliament).
+
+[fr ntrex] Cette proposition découle du projet de modification du nom de l’assemblée, qui deviendrait le Parlement gallois.
+  human : It has arisen because of plans to change the name of the assembly to the Welsh Parliament.
+  MADLAD: This proposal stems from the proposed change of name to Welsh Parliament.
+  OPUS  : This proposal stems from the proposed name change to Welsh Parliament.
+
+[fr ntrex] Dans la sphère politique, des membres de l’Assemblée pensent que cela pourrait faire l’objet de railleries.
+  human : AMs across the political spectrum are worried it could invite ridicule.
+  MADLAD: In the political sphere, some members of this House think that it could be ridiculed.
+  OPUS  : In the political sphere, members of the Assembly believe that this could be the subject of ridicule.
+
+[es control] Trump radicaliza su gobierno al nombrar a nuevo jefe de gabinete de la Casa Blanca
+  MADLAD: Trump radicalizes his administration by appointing new White House chief of staff
+  OPUS  : Trump radicalizes his government by appointing new White House chief of staff
+
+[es control] Sismo de magnitud 3.7 se sintió esta tarde en la provincia de Caylloma, Arequipa
+  MADLAD: Earthquake of magnitude 3.7 was felt this afternoon in the province of Caylloma, Arequipa
+  OPUS  : Seism of magnitude 3.7 felt this afternoon in the province of Caylloma, Arequipa
+
+[es control] Francisco Javier advierte al Gobierno que no imponga más cargas económicas a la clase pobre
+  MADLAD: Francisco Javier warns the Government not to impose more economic burdens on the poor class
+  OPUS  : Francisco Javier warns the government not to impose more economic burdens on poor class
+
+[es control] Quién es quién y cuáles son las claves del escándalo del Ueno Bank que terminó con la detención de Peña en Paraguay
+  MADLAD: Who is who and what are the keys to the Ueno Bank scandal that ended with Peña’s arrest in Paraguay
+  OPUS  : Who is who and what are the keys to Ueno Bank scandal that ended with Peña's arrest in Paraguay?
+
+[es control] Las exportaciones de Guinea Ecuatorial caen un 8,7 % en 2025, mientras que las importaciones aumentan un 34,6 %
+  MADLAD: Equatorial Guinea’s exports fall by 8.7% in 2025, while imports increase by 34.6%
+  OPUS  : Equatorial Guinea's exports fall by 8.7% in 2025, while imports increase by 34.6%
+
+[es control] Condenan a médicos por mala praxis en cirugía de nariz
+  MADLAD: Doctors Convicted of Malpractice in Nose Surgery
+  OPUS  : Doctors are sentenced for malpractice in nose surgery
+
+[es control] Trump y el emir de Catar abordan negociaciones ante tensiones en Oriente Medio
+  MADLAD: Trump and Qatari emir address talks amid tension in the Middle East
+  OPUS  : Trump and Qatar's Emir Addresses Negotiations in the Face of Tensions in the Middle East
+
+[es control] Santiago Peña promete acudir al juicio político en su contra
+  MADLAD: Santiago Peña promises to go to impeachment against him
+  OPUS  : Santiago Peña promises to turn to the political trial against him
+
+[es control] Desapariciones forzadas y encarcelamientos: así opera una “dictadura absoluta” en Nicaragua, según informe de la ONU
+  MADLAD: Enforced disappearances and imprisonments: how an “absolute dictatorship” operates in Nicaragua, according to a UN report
+  OPUS  : Enforced disappearances and imprisonment: This is how an “absolute dictatorship” operates in Nicaragua, according to UN report
+
+[es control] OMS advierte sobre los bajos niveles de actividad f�sica entre adolescentes
+  MADLAD: WHO warns of low levels of physical activity among adolescents
+  OPUS  : WHO warns about low levels of physical activity among adolescents
+
+[es control] ¡Por fin cayó! Después de dos años y medio de operaciones en Jamundí': presidente De La Espriella y gobernadora del Valle sobre muerte de 'Pincher'
+  MADLAD: 'After two and a half years of operations in Jamundí': President De La Espriella and Governor del Valle on the death of 'Pincher'
+  OPUS  : After two and a half years of operations in Jamundí, President De La Espriella and governor of the Valley over the death of 'Pincher'
+
+[es control] El papa visita un hogar para los sacerdotes ancianos en Montevideo
+  MADLAD: Pope visits home for elderly priests in Montevideo
+  OPUS  : Pope visits a home for elderly priests in Montevideo
+
+[es control] Parlamento Centroamericano eligió nueva junta directiva sin representantes de Nicaragua tras el anuncio de retiro de Managua
+  MADLAD: Central American Parliament elects new board of directors without Nicaragua’s representatives after Managua announcement of withdrawal
+  OPUS  : Central American Parliament elected new board of directors without representatives from Nicaragua after Managua’s announcement of withdrawal
+
+[es control] Gobierno anuncia acuerdo con camioneros de San Antonio tras siete días de movilización
+  MADLAD: Government announces agreement with truckers of San Antonio after seven days of mobilization
+  OPUS  : Government announces agreement with truck drivers from San Antonio after seven days of mobilization
+
+[es control] Periodista francés expone en libro confesiones de Macron
+  MADLAD: French journalist exposes Macron's confessions in book
+  OPUS  : French journalist exposes Macron confessions in book
+
+[es numbers] Unión venció a Vélez y precisa una ayuda mendocina para jugar los octavos, mientras Gariano recibió la doble ayuda del VAR
+  MADLAD: Union beat Vélez and needs a Mendoza assist to play the round of 16, while Gariano received double assistance from the VAR   <number 16 not in the original>
+  OPUS  : Union beat Vélez and needs Mendoza aid to play the eighth, while Gariano received double support from the VAR
+
+[es numbers] Al menos tres muertos y 16 heridos por ataque con drones en base militar de Colombia
+  MADLAD: At least 3 killed and 16 injured in drone attack on Colombian military base   <number 3 not in the original>
+  OPUS  : At least three dead and 16 wounded by drone attack at Colombia military base
+
+[es numbers] Muere Sebastián Lelio, cineasta chileno ganador del Óscar por 'Una mujer fantástica'
+  MADLAD: Oscar-winning Chilean filmmaker Sebastián Lelio dies at 89   <number 89 not in the original>
+  OPUS  : Sebastian Lelio, Chilean Filmmaker Who Won the Oscar for 'A Fantastic Woman' Dies
+
+[es numbers] Proforma: Gobierno de Ecuador espera reducir los subsidios a los combustibles en 2027, luego de que el rubro se disparó en 2026
+  MADLAD: Proforma: Ecuador’s Government Expects to Cut Fuel Subsidies in 2027, After the Item Shot Up in 21st Century   <century not in the original>
+  OPUS  : Proforma: Government of Ecuador expects to reduce fuel subsidies by 2027, after the item was fired in 2026
+
+[es numbers] Población de pandas gigantes en cautiverio en China alcanza los 830 ejemplares
+  MADLAD: Giant pandas in captivity are now 10 times more common than they were before   <number 10 not in the original>
+  OPUS  : Population of giant pandas in captivity in China reaches 830 specimens
+
+[es numbers] Freen Sarocha en Lima: el encuentro entre una estrella tailandesa y casi mil fans que hicieron realidad su sueño
+  MADLAD: Freen Sarocha in Lima: the encounter between a Thai star and almost 1,000 fans who made her dream come true   <number 1,000 not in the original>
+  OPUS  : Freen Sarocha in Lima: the encounter between a Thai star and almost a thousand fans who made their dream come true
+
+[es numbers] ¡Tragedia en Francia! Niña y joven mueren en accidente de bus
+  MADLAD: 10 dead in bus accident, 25 injured in France   <number 25 not in the original>
+  OPUS  : Tragedy in France! Girl and young woman die in bus accident
+
+[es numbers] Muere el cineasta chileno Sebastián Lelio, ganador de un Óscar por “Una mujer fantástica”
+  MADLAD: Oscar-winning Chilean filmmaker Sebastián Lelio dies at 89 - The Daily Beast   <number 89 not in the original>
+  OPUS  : Chilean filmmaker Sebastián Lelio, winner of an Oscar for “A Fantastic Woman” Dies
+
+[es numbers] RDC: un millón seiscientas mil personas salieron a las calles en Francia y crece la tensión con los estudiantes
+  MADLAD: DRC: 1.6 million people take to the streets in France and tension with students grows   <number 1.6 million not in the original>
+  OPUS  : DRC: 1 million 600,000 people took to the streets in France and tension with students grows   <number 600,000 not in the original>
+
+[es numbers] Panamá contabiliza más de mil 400 réplicas tras fuerte terremoto
+  MADLAD: Panama reports more than 1,400 aftershocks following strong earthquake   <number 1,400 not in the original>
+  OPUS  : Panama counts more than 1 400 after heavy earthquake
+
+[es numbers] EEUU aprueba venta de 11 helicópteros Black Hawk y equipo militar a México por mil 75 millones de dólares
+  MADLAD: U.S. approves sale of 11 Black Hawk helicopters and military equipment to Mexico for $1.75 billion   <number 1.75 billion not in the original>
+  OPUS  : US approves sale of 11 Black Hawk helicopters and military equipment to Mexico for $175 million   <number 175 million not in the original>
+
+[es ntrex] A los Miembros de la Asamblea (AM, por sus siglas en inglés) de Gales les preocupa “parecer muppets”
+  human : Welsh AMs worried about 'looking like muppets'
+  MADLAD: Wales’ Members of the Assembly (AM) worried about “looking like muppets”
+  OPUS  : Members of the Welsh Assembly (AM) are concerned about “appearing to be muppets”
+
+[es ntrex] Algunos Miembros de la Asamblea están desconcertados por la sugerencia de que su título debería cambiarse a Miembros del Parlamento de Gales (MWP, por sus sigla
+  human : There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+  MADLAD: Some Members of the Assembly are puzzled by the suggestion that their title should be changed to Members of Parliament for Wales (MWP).
+  OPUS  : Some Members of the Assembly are puzzled by the suggestion that their title should be changed to members of the Welsh Parliament (MWP).
+
+[es ntrex] Este desconcierto surge de los planes de cambiar el nombre de la Asamblea a Parlamento de Gales.
+  human : It has arisen because of plans to change the name of the assembly to the Welsh Parliament.
+  MADLAD: This confusion stems from plans to change the name of the Assembly into Parliament for Wales.
+  OPUS  : This confusion arises from plans to change the name of the Assembly to Welsh Parliament.
+
+[es ntrex] A Miembros de la Asamblea de todo el espectro político les preocupa que esto pueda ser ridiculizado.
+  human : AMs across the political spectrum are worried it could invite ridicule.
+  MADLAD: Members of the Assembly from across the political spectrum are concerned that this could be ridiculed.
+  OPUS  : Members of the Assembly from across the political spectrum are concerned that this may be ridiculed.
+
+[ru control] Самарканд примет первый диалог "ШОС плюс" о безопасности в цифровую эпоху
+  MADLAD: Samarkand to host first SCO Plus dialogue on security in the digital age
+  OPUS  : Samarkand will be hosting the first SCO Plus Dialogue on security in the digital age.
+
+[ru control] Открыл огонь по трамваю: детали теракта в Кракове
+  MADLAD: Opened fire on tram: details of the attack in Krakow
+  OPUS  : Fire on the tram: details of the attack in Krakow.
+
+[ru control] ҚУРБИ АСЪОР: 1 доллари ИМА аз 9.1500 то 9.2174 сомонӣ муқаррар шудааст
+  MADLAD: Currency: US$1 fixed at 9.1500 to 9.2174
+  OPUS  : ♪ URBY ASON: 1 IMA Az 9.1500 to 9.2174 somon ♪ mu Áarrar shudaaste
+
+[ru control] Снос дач и мост через Капчагай - как будут развивать Конаев по новому Генплану
+  MADLAD: Demolition of dachas and bridge over Kapchagay - how Konayev will develop under the new General Plan
+  OPUS  : Deleting the Dach and Bridge over Capchagai - how Konaev will develop on a new Genplan
+
+[ru control] Во Франции задержали 448 человек на протестах за повышение минимальной зарплаты
+  MADLAD: In France, 448 people were arrested on protests for the increase in minimum wage
+  OPUS  : In France, 448 people were detained in protest for raising the minimum wage.
+
+[ru control] Украинские «Нептуны» поразили важное предприятие российского ВПК в Орле
+  MADLAD: Ukrainian Neptunes hit important Russian military plant in Orel
+  OPUS  : Ukrainian Neptuns struck a major Russian PPC enterprise in Orle
+
+[ru control] Гурбангулы Бердымухамедов встретился с помощником госсекретаря США
+  MADLAD: President of Turkmenistan meets with US Assistant Secretary of State
+  OPUS  : The Berdymukhamedov Gurbanguly met with the Assistant Secretary of State of the United States
+
+[ru control] Демократы после победы намерены объявить Трампу импичмент
+  MADLAD: Democrats after victory intend to announce Trump’s impeachment
+  OPUS  : The Democrats intend to declare Trump impeachment after victory.
+
+[ru control] «Попиццот». Рассказываем историю знаменитого мема нулевых и десятых годов
+  MADLAD: “Pozzitto”. We tell the story of a famous meme from the 1900s and 1910s   <year 1900 not in the original>
+  OPUS  : "Pizzot." Telling the story of a famous meme in the 0th and 10s.
+
+[ru control] Свет и тепло в Европе дорожают из-за Америки и России. Кризис грозит затянуться не на одну зиму
+  MADLAD: Light and heat in Europe are more expensive because of America and Russia. The crisis threatens to drag on for a winter
+  OPUS  : Europe's light and heat are precious because of America and Russia.
+
+[ru control] Крупные заводы Узбекистана подключат к цифровому реестру выбросов парниковых газов при поддержке Всемирного банка
+  MADLAD: Large factories of Uzbekistan will be connected to the digital register of greenhouse gas emissions with support from World Bank
+  OPUS  : Uzbekistan &apos; s large plants will be connected to the digital greenhouse gas emission register with support from the World Bank
+
+[ru control] Токаев проводил Рахмона в аэропорту Астаны
+  MADLAD: Tokayev accompanied Rachmon at Astana Airport
+  OPUS  : Tokaev was conducting Rakhmon at Astana Airport
+
+[ru control] Четверо детей остались без матери после убийства во Дворце бракосочетания в Актобе
+  MADLAD: Four children left without mother after murder in the Marriage Palace in Aktobe
+  OPUS  : Four children left without a mother after the murder at the Palais de la Marrying in Aktoba
+
+[ru control] Таджикистан и Казахстан расширят сотрудничество в нефтегазовой сфере
+  MADLAD: Tajikistan and Kazakhstan to expand cooperation in oil-gas sector
+  OPUS  : Tajikistan and Kazakhstan will increase cooperation in the oil and gas field
+
+[ru control] В управлении образования Алматы не прогнозируют дефицита мест из-за закрытия детсада «Болашак»
+  MADLAD: Almaty education department does not forecast a shortage of places due to the closure of kindergarten "Bolashak"
+  OPUS  : Almaty's education department does not anticipate a shortage of space due to the closure of Bolashak kindergarten
+
+[ru numbers] ҚУРБИ АСЪОР: 1 рубли русӣ аз 0.1040 то 0.1144 сомонӣ муқаррар шудааст
+  MADLAD: Currency: 1 Russian ruble is set at between 0.1040 and 0.25   <number 0.25 not in the original>
+  OPUS  : ♪ URBY ASSOCIOR: 1 ruble of Rus. ♪ ♪ 0.104 ♪ Somon ♪ ~ mu ~ aarrar shudaaste ♪
+
+[ru numbers] Ҷараёни иҷрои Стратегияи Ҷумҳурии Тоҷикистон дар соҳаҳои илм, технология ва инноватсия барои давраи то соли 2030 баррасӣ шуд
+  MADLAD: The 2016-17 season saw the team play in the Division One North East, and they were able to advance through the regular season.   <year 2016 not in the original>
+  OPUS  : ♪ The baro and the bastards' intuition technology ♪
+
+[ru ntrex] Члены Ассамблеи Уэльса не хотят «походить на маппетов»
+  human : Welsh AMs worried about 'looking like muppets'
+  MADLAD: Welsh Assembly Members Don’t Want to “Look Like Muppets”
+  OPUS  : Members of the Welsh Assembly do not want "like muppets"
+
+[ru ntrex] Среди некоторых членов Национальной ассамблеи зреет недовольство предложением принять для их наименования аббревиатуру MWP (от англ. Member of the Welsh Parliam
+  human : There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+  MADLAD: There is growing discontent among some members of the National Assembly with the proposal to adopt the abbreviation MWP (Member of the Welsh Parliament) for their names.
+  OPUS  : Among some members of the National Assembly, there is a strong dissatisfaction with the proposal to accept an acronym MWP for their name.
+
+[ru ntrex] Проблематичное решение связано с планами изменить название Ассамблеи на Парламент Уэльса.
+  human : It has arisen because of plans to change the name of the assembly to the Welsh Parliament.
+  MADLAD: The problematic solution is related to plans to change the name of the Assembly into Parliament for Wales.
+  OPUS  : The problem is that plans to change the name of the Assembly to the Welsh Parliament are in place.
+
+[ru ntrex] Членов Ассамблеи из разных политических партий беспокоят возможные шутки с этой аббревиатурой.
+  human : AMs across the political spectrum are worried it could invite ridicule.
+  MADLAD: Members of the Assembly from different political parties are concerned about possible jokes with this abbreviation.
+  OPUS  : Members of the Assembly from various political parties are concerned about possible jokes with this acronym.

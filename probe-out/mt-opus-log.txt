@@ -1,0 +1,18 @@
+== ko
+  {"lang": "ko", "opus_model": "Helsinki-NLP/opus-mt-tc-big-ko-en", "n": 100, "headlines": 43, "madlad_chrf": 55.5, "madlad_s_per_line": 0.61, "opus_chrf": 5.5, "opus_s_per_line": 0.03}
+== zh
+  could not convert Helsinki-NLP/opus-mt-tc-big-zh-en: ['If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`']
+  {"lang": "zh", "opus_model": "Helsinki-NLP/opus-mt-zh-en", "n": 100, "headlines": 37, "madlad_chrf": 51.8, "madlad_s_per_line": 0.6, "opus_chrf": 48.5, "opus_s_per_line": 0.02}
+== ja
+  could not convert Helsinki-NLP/opus-mt-tc-big-ja-en: ['If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`']
+  {"lang": "ja", "opus_model": "Helsinki-NLP/opus-mt-ja-en", "n": 100, "headlines": 25, "madlad_chrf": 45.0, "madlad_s_per_line": 0.6, "opus_chrf": 37.3, "opus_s_per_line": 0.02}
+== ar
+  {"lang": "ar", "opus_model": "Helsinki-NLP/opus-mt-tc-big-ar-en", "n": 100, "headlines": 22, "madlad_chrf": 57.2, "madlad_s_per_line": 0.61, "opus_chrf": 58.0, "opus_s_per_line": 0.04}
+== fr
+  {"lang": "fr", "opus_model": "Helsinki-NLP/opus-mt-tc-big-fr-en", "n": 100, "headlines": 33, "madlad_chrf": 49.7, "madlad_s_per_line": 0.6, "opus_chrf": 49.0, "opus_s_per_line": 0.04}
+== es
+  could not convert Helsinki-NLP/opus-mt-tc-big-es-en: ['If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`']
+  {"lang": "es", "opus_model": "Helsinki-NLP/opus-mt-es-en", "n": 100, "headlines": 26, "madlad_chrf": 63.7, "madlad_s_per_line": 0.57, "opus_chrf": 60.5, "opus_s_per_line": 0.02}
+== ru
+  could not convert Helsinki-NLP/opus-mt-tc-big-ru-en: ['If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`']
+  {"lang": "ru", "opus_model": "Helsinki-NLP/opus-mt-ru-en", "n": 100, "headlines": 17, "madlad_chrf": 47.4, "madlad_s_per_line": 0.64, "opus_chrf": 43.9, "opus_s_per_line": 0.03}
