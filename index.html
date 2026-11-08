@@ -6438,13 +6438,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (!w.pos.length) return;
       var c = col[w.kind] || "#1565c0";
       var shape = w.pos.length >= 3 ? L.polygon(w.pos, { pane: "tlpane", color: c, weight: 1.5, fillOpacity: 0.15, lgk: "nw:" + (col[w.kind] ? w.kind : "navigation") }) : osapMark(w.pos[0], { "missile or rocket": "a_rocket", "military exercise": "a_operation" }[w.kind] || "a_marine", { pane: "tlpane", radius: 7, color: c, weight: 2, fillOpacity: 0.3, badge: c, lgk: "nw:" + (col[w.kind] ? w.kind : "navigation") });
-      shape.bindPopup('<div class="pop"><div class="tier">Navigational warning · ' + esc(w.id) + " · " + esc(w.kind) + "</div><p>" + esc(w.text) + '</p><p class="obs">Issued ' + esc(w.issued) + (w.authority ? " by " + esc(w.authority) : "") + "</p></div>", { maxWidth: 360 });
+      shape.bindPopup('<div class="pop"><div class="tier">Navigational warning · ' + esc(w.id) + " · " + esc(w.kind) + "</div><p>" + esc(w.text) + '</p><p class="obs">Issued ' + esc(w.issued) + (w.authority ? " by " + esc(w.authority) : "") + (w.link ? ' · <a href="' + esc(w.link) + '" target="_blank" rel="noopener noreferrer">source</a>' : "") + "</p></div>", { maxWidth: 360 });
       sofLayer.addLayer(shape); sofM["nw:" + i] = shape;
     });
-    return '<div class="sec"><h2>Navigational warnings in force (NGA HYDROPAC)</h2><p class="obs">' + snapBadge(W) + "</p>" + (list.length ? '<div class="tllist">' + list.slice(0, 25).map(function (w, i) {
+    return '<div class="sec"><h2>Navigational warnings in force</h2><p class="obs">' + snapBadge(W) + "</p>" + (list.length ? '<div class="tllist">' + list.slice(0, 25).map(function (w, i) {
       return '<button type="button" class="tlrow" data-sof="nw:' + i + '"><span class="tln"><b style="color:' + (col[w.kind] || "#1565c0") + '">●</b> ' + esc(w.id + " · " + w.kind) + '</span><span class="tlm"><span class="tls">' + esc(w.text.slice(0, 100)) + "</span></span></button>";
-    }).join("") + "</div>" : '<p class="obs">No HYDROPAC warning in force near ' + esc(C.name) + ".</p>") +
-      '<p class="note">Warnings as broadcast, including rocket-launch, missile and live-firing areas. Areas are drawn from the coordinates in the text; always read the text.</p></div>';
+    }).join("") + "</div>" : '<p class="obs">No navigational warning in force near ' + esc(C.name) + ".</p>") +
+      '<p class="note">Warnings as broadcast by NGA and the NAVAREA coordinators (AMSA, Japan Coast Guard, UKHO), including rocket-launch, missile and live-firing areas. Areas are drawn from the coordinates in the text; always read the text.</p></div>';
   }
   function ucdpHtml() {
     var U = window.ASAP_UCDP, list = U ? ucdpFull().filter(function (e) { return hasCC(e) && inPeriodDate(e.date); }) : [];
