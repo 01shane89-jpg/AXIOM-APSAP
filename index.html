@@ -6156,6 +6156,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   src("gvp", "Smithsonian Global Volcanism Program weekly report", "Research institution", "B", "Weekly summary of volcano observatories' reports; not real-time.", "https://volcano.si.edu/reports_weekly.cfm");
   src("who-don", "WHO Disease Outbreak News", "UN agency", "B", "WHO statements, usually based on member-state notifications.", "https://www.who.int/emergencies/disease-outbreak-news");
   src("nga-asam", "NGA Anti-Shipping Activity Messages", "U.S. government agency", "B", "Reports of attacks and boardings compiled from ships, navies and ReCAAP/IMB; positions approximate.", "https://msi.nga.mil/Piracy");
+  src("ukmto", "UK Maritime Trade Operations (UKMTO) recent incidents", "UK government (Royal Navy)", "B", "Attacks, boardings, suspicious approaches and advisories reported to UKMTO in its voluntary reporting area. Open Government Licence v3.0.", "https://www.ukmto.org/recent-incidents");
+  src("recaap-isc", "ReCAAP ISC list of incidents", "Intergovernmental centre (ReCAAP Agreement, Singapore)", "B", "Piracy and armed robbery against ships in Asia, from the yearly incident list; OSAP keeps the incident facts and links to the list.", "https://www.recaap.org/");
+  window.ASAM_BACKUP = { ukmto: { name: "UKMTO", sid: "ukmto", url: "https://www.ukmto.org/recent-incidents", link: "UKMTO recent incidents" }, imb: { name: "IMB PRC", sid: "imb-prc", url: "https://icc-ccs.org/map/", link: "IMB PRC report" },
+    recaap: { name: "ReCAAP ISC", sid: "recaap-isc", url: "https://www.recaap.org/", link: "ReCAAP ISC incident list" } };
   src("imb-prc", "IMB Piracy Reporting Centre live piracy map", "International Chamber of Commerce (ICC) unit", "B", "Attacks and boardings reported to the IMB PRC by ships' masters; OSAP keeps the incident facts and links to the map.", "https://icc-ccs.org/map/");
   function addMoreRecords() {
     R = R.filter(function (r) { if (r.more) { delete byId[r.id]; r.src.n--; return false; } return true; });
@@ -6175,10 +6179,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         lat: null, lon: null, prec: "none", sev: 2, src: SOURCES["who-don"], url: w.link, issued: w.date, recorded: W.asof });
     });
     if (LBY.safety && M) (M.asam || []).filter(hasCC).forEach(function (a) {
-      var imb = a.src === "imb";
-      add({ layer: "safety", type: "report", cat: imb ? "Maritime incident (IMB PRC)" : "Maritime incident (NGA ASAM)", kind: "other", more: true, live: true, title: (a.hostility ? a.hostility + " · " : "") + (a.victim || "vessel") + ": " + a.text.slice(0, 110),
-        detail: a.text + (a.ref ? (imb ? " (" + a.ref + ")" : " (ASAM " + a.ref + ")") : ""), ts: a.date, place: "", prov: "", lat: a.lat, lon: a.lon, prec: "approx", sev: /fired|hijack|kidnap|injur|kill/i.test(a.text + " " + (a.hostility || "")) ? 3 : 2,
-        src: SOURCES[imb ? "imb-prc" : "nga-asam"], url: imb ? "https://icc-ccs.org/map/" : "https://msi.nga.mil/Piracy", issued: a.date, recorded: M.asof });
+      var bk = (window.ASAM_BACKUP || {})[a.src];
+      add({ layer: "safety", type: "report", cat: "Maritime incident (" + (bk ? bk.name : "NGA ASAM") + ")", kind: "other", more: true, live: true, title: (a.hostility ? a.hostility + " · " : "") + (a.victim || "vessel") + ": " + a.text.slice(0, 110),
+        detail: a.text + (a.ref ? (bk ? " (" + a.ref + ")" : " (ASAM " + a.ref + ")") : ""), ts: a.date, place: "", prov: "", lat: a.lat, lon: a.lon, prec: "approx", sev: /fired|hijack|kidnap|injur|kill/i.test(a.text + " " + (a.hostility || "")) ? 3 : 2,
+        src: SOURCES[bk ? bk.sid : "nga-asam"], url: bk ? (a.link || bk.url) : "https://msi.nga.mil/Piracy", issued: a.date, recorded: M.asof });
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
     if (window.TSAP) window.TSAP.records = R;
@@ -6469,15 +6473,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var M = window.ASAP_MAR, asam = M ? (M.asam || []).filter(function (a) { return hasCC(a) && inPeriodDate(a.date); }) : [];
     asam.forEach(function (a, i) {
       var m = osapMark([a.lat, a.lon], "a_robbery", { pane: "tlpane", radius: 7, color: "#222", weight: 1, fillColor: "#6a1b9a", fillOpacity: 0.85, lgk: "asam" });
-      var imb = a.src === "imb";
-      m.bindPopup('<div class="pop"><div class="tier">Maritime incident · ' + (imb ? "" : "NGA ASAM ") + esc(a.ref) + " · " + esc(a.date) + (a.time ? " " + esc(a.time) : "") + "</div><h3>" + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + "</h3><p>" + esc(a.text) +
-        '</p><p class="obs">MGRS ' + esc(window.MGRS_OF(a.lat, a.lon, 2)) + " (approximate)" + (imb ? ' · <a href="https://icc-ccs.org/map/" target="_blank" rel="noopener noreferrer">IMB PRC report</a>' : "") + "</p></div>", { maxWidth: 340 });
+      var bk = (window.ASAM_BACKUP || {})[a.src];
+      m.bindPopup('<div class="pop"><div class="tier">Maritime incident · ' + (bk ? "" : "NGA ASAM ") + esc(a.ref) + " · " + esc(a.date) + (a.time ? " " + esc(a.time) : "") + "</div><h3>" + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + "</h3><p>" + esc(a.text) +
+        '</p><p class="obs">MGRS ' + esc(window.MGRS_OF(a.lat, a.lon, 2)) + " (approximate)" + (bk ? ' · <a href="' + esc(/^https:\/\//.test(a.link || "") ? a.link : bk.url) + '" target="_blank" rel="noopener noreferrer">' + esc(bk.link) + "</a>" : "") + "</p></div>", { maxWidth: 340 });
       sofLayer.addLayer(m); sofM["as:" + i] = m;
     });
     var marad = M ? (M.marad || []).filter(function (x) { return !x.ccs.length || hasCC(x); }) : [];
     var ms = M && M.status ? M.status.filter(function (s) { return !s.ok; }) : [];
     var mh = '<div class="sec"><h2>Maritime security</h2><p class="obs">' + snapBadge(M) + (ms.length ? ' · <span class="obs">failed: ' + esc(ms.map(function (s) { return s.source; }).join(", ")) + "</span>" : "") + "</p>" +
-      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM, IMB PRC), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
+      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM, UKMTO, IMB PRC, ReCAAP ISC), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
         return '<button type="button" class="tlrow" data-sof="as:' + i + '"><span class="tln">' + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + '</span><span class="tlm"><span class="tls">' + esc(a.date + " · " + a.text.slice(0, 90)) + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">None near ' + esc(C.name) + ".</p>") +
       (marad.length ? '<h3 style="margin:8px 0 2px;font-size:13px">U.S. maritime advisories (MARAD)</h3><ul class="note">' + marad.slice(0, 8).map(function (x) {
