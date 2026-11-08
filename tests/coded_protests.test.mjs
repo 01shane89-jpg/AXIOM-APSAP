@@ -21,7 +21,7 @@ assert.deepEqual(recs[0].responses, ["arrests", "crowd dispersal"]);
 assert.ok(recs[0].demands.includes("price increases, tax policy"), "quoted cells with commas read whole");
 assert.ok(!("notes" in recs[0]) && !("sources" in recs[0]), "the dataset's source and note text is not kept");
 assert.throws(() => readMm("id,country\n1,x\n"), /columns missing/);
-for (const [n, c] of [["Congo Brazzaville", "cg"], ["Bosnia", "ba"], ["Ivory Coast", "ci"], ["Kosovo", "xk"], ["Germany West", "de"], ["Thailand", "th"]]) assert.equal(ccOf(n), c, n);
+for (const [n, c] of [["Congo Brazzaville", "cg"], ["Bosnia", "ba"], ["Ivory Coast", "ci"], ["Kosovo", "xk"], ["Germany West", "de"], ["United Arab Emirate", "ae"], ["Thailand", "th"]]) assert.equal(ccOf(n), c, n);
 
 // coding rules
 assert.deepEqual(CODE.mmCode(1, "ignore"), ["Riots", "Violent demonstration"]);

@@ -25,7 +25,7 @@ const UA = "Mozilla/5.0 (AXIOM-OSAP coded event history; +https://axiom-osap.net
 // only where the place is unambiguous today; the others are left out and counted)
 export const MM_NAMES = { "Congo Kinshasa": "cd", "Congo Brazzaville": "cg", "Bosnia": "ba", "Ivory Coast": "ci", "Serbia and Montenegro": "rs", "Yugoslavia": "rs",
   "Germany East": "de", "Germany West": "de", "Kyrgyzstan": "kg", "Taiwan": "tw", "Timor Leste": "tl", "Macedonia": "mk", "Swaziland": "sz", "Cape Verde": "cv",
-  "Kosovo": "xk", "Slovak Republic": "sk", "Czech Republic": "cz", "Burma": "mm", "Myanmar": "mm", "South Sudan": "ss", "Gambia": "gm", "Laos": "la" };
+  "Kosovo": "xk", "Slovak Republic": "sk", "Czech Republic": "cz", "Burma": "mm", "Myanmar": "mm", "South Sudan": "ss", "Gambia": "gm", "Laos": "la", "United Arab Emirate": "ae" };
 const CCS = new Set(COUNTRIES.map((c) => c.id));
 export function ccOf(name) {
   const n = String(name || "").trim();
@@ -92,7 +92,8 @@ if (process.argv[1] && process.argv[1].endsWith("refresh_coded_protests.mjs")) {
   }
   const fileSha = sha(text);
   const STATE = OUT + "/_state.json"; let state = {}; try { state = JSON.parse(fs.readFileSync(STATE, "utf8")); } catch (e) {}
-  const key = fileSha.slice(0, 16) + "|" + CODE.MM_RULES + "|" + (process.env.MM_NOGEO === "1" ? "nogeo" : "geo");
+  // rebuilt when the file, the coding rules or the country names change
+  const key = fileSha.slice(0, 16) + "|" + CODE.MM_RULES + "|" + sha(JSON.stringify(MM_NAMES)).slice(0, 8) + "|" + (process.env.MM_NOGEO === "1" ? "nogeo" : "geo");
   if (!FORCE && state.key === key && fs.existsSync(OUT + "/_index.js")) { console.log("protest history: unchanged (" + key + ")"); process.exit(0); }
   const { recs, skipped } = readMm(text);
   console.log("Mass Mobilization:", recs.length, "protests;", "skipped", JSON.stringify(skipped));
