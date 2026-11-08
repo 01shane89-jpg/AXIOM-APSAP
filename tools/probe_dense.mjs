@@ -1,11 +1,28 @@
-// PROBE BRANCH ONLY: run the navw job from claude/navwarn-backups and print what it wrote, then the warngeo test on it.
-import { execSync } from "node:child_process";
-import fs from "node:fs";
-const raw = "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/claude/navwarn-backups/";
-for (const f of ["tools/refresh_more.mjs", "tools/warngeo_lib.mjs", "tools/nc_strip.mjs", "tools/geo_cc.mjs", "tests/warngeo.test.mjs"]) fs.writeFileSync(f, await (await fetch(raw + f)).text());
-try { console.log("RUN " + execSync("ONLY=navw node tools/refresh_more.mjs", { encoding: "utf8" }).replace(/\n/g, " | ")); } catch (e) { console.log("RUN ERR " + e.message.slice(0, 500)); }
-const ctx = {}; new Function("window", fs.readFileSync("data/live/navwarnings.js", "utf8"))(ctx); const N = ctx.ASAP_NAVW;
-console.log("NW status " + JSON.stringify(N.status).slice(0, 1500));
-for (const w of N.items) console.log("NI " + [w.id, w.issued, w.kind, w.ccs.join(","), w.pos.length, w.nc ? "nc" : "", w.text.slice(0, 110)].join(" | "));
-try { console.log("WG " + execSync("node tests/warngeo.test.mjs", { encoding: "utf8" }).split("\n").filter((l) => /FAIL|snapshot|all passed|FAILED/.test(l)).join(" | ")); } catch (e) { console.log("WG ERR " + (e.stdout || "").split("\n").filter((l) => /FAIL/.test(l)).join(" | ")); }
-try { console.log("NC " + execSync("node -e \"import('./tools/nc_strip.mjs').then(m=>{const fs=require('fs');const r=m.stripText(fs.readFileSync('data/live/navwarnings.js','utf8'));const c={};new Function('window',r.text)(c);console.log('after strip',c.ASAP_NAVW.items.length,'items',c.ASAP_NAVW.status.length,'status rows')})\"", { encoding: "utf8" })); } catch (e) { console.log("NC ERR " + e.message.slice(0, 300)); }
+// PROBE BRANCH ONLY: piracy/maritime-security pages that could back up NGA ASAM (msi.nga.mil 503 to runners).
+const UA = "AXIOM-OSAP/1.0 (situational awareness; hourly; +https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const urls = [
+  "https://msi.nga.mil/api/publications/asam?sort=date&output=json",
+  "https://www.ukmto.org/Indian-Ocean/Recent-Incidents",
+  "https://www.ukmto.org/ukmto-products/warnings",
+  "https://www.icc-ccs.org/index.php/piracy-reporting-centre/live-piracy-report",
+  "https://www.icc-ccs.org/map/",
+  "https://www.recaap.org/",
+  "https://portal.recaap.org/OpenMap",
+  "https://www.mdat-gog.org/",
+  "https://gogmi.org/",
+  "https://www.ifc.org.sg/",
+  "https://www.maritime.dot.gov/msci-advisories",
+  "https://www.maritime.dot.gov/msci/2026-009-red-sea-gulf-aden-arabian-sea-and-somali-basin-threats-commercial-vessels",
+  "https://www.operations.amsa.gov.au/AMSA.Web.MSIPublication/Home",
+];
+for (const u of urls) {
+  try {
+    const r = await fetch(u, { headers: { "user-agent": UA }, redirect: "follow", signal: AbortSignal.timeout(30000) });
+    const t = await r.text();
+    const links = [...t.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((h) => /incident|warning|report|piracy|attack|map|json|api|advis/i.test(h)).slice(0, 40);
+    console.log("PR " + u + " | " + r.status + " | " + r.headers.get("content-type") + " | " + t.length + " | " + t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 900));
+    console.log("PL " + u + " | " + [...new Set(links)].join(" "));
+    const lat = t.match(/-?\d{1,2}[°º:]\s?\d{1,2}(\.\d+)?['′]?\s?[NS]/g); if (lat) console.log("PP " + u + " | " + lat.slice(0, 10).join(" ; "));
+    for (const m of t.matchAll(/(api|ajax|json)[^"'\s]{0,120}/gi)) { console.log("PA " + u + " | " + m[0]); }
+  } catch (e) { console.log("PR " + u + " | ERR " + (e.message || e)); }
+}
