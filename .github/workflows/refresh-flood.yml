@@ -468,15 +468,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     permissions:
+      actions: read
       contents: read
       id-token: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
+      # The flash loop (refresh-flash.yml, since 2026-11-08) checks the watches within a minute of every commit and keeps the
+      # same seen-list, so while one runs or waits this job stands aside: two checkers would each send the same alert.
+      # When no loop is running (the chain broke, or GitHub is holding it), this job sends as before.
       - name: Any push watches?
         id: any
-        run: echo "n=$(node tools/push_count.mjs)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ] && [ -z "${{ inputs.only }}" ]; then
+            # only runs created in the last 6 hours count (a ghost run GitHub leaves "queued" for good must not silence this job)
+            fl=0; since=$(date -u -d '6 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+            for st in in_progress queued pending; do
+              c=$(gh run list --workflow refresh-flash.yml --branch main --status $st --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" 2>/dev/null || echo 0)
+              fl=$(( fl + ${c:-0} ))
+            done
+            if [ "$fl" != "0" ]; then echo "the flash loop is checking the watches; this job stands aside"; echo "n=0" >> "$GITHUB_OUTPUT"; exit 0; fi
+          fi
+          echo "n=$(node tools/push_count.mjs)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         if: ${{ steps.any.outputs.n != '0' }}
         with:

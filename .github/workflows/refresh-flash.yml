@@ -1,0 +1,95 @@
+name: Flash alerts loop
+
+# Push alerts within about a minute of a source publishing, instead of after a whole refresh lane (tools/flash_loop.mjs).
+# One runner stays awake for about 5 h 20 min (under GitHub's 6-hour job limit), asking USGS every 30 seconds and GDACS every
+# 2 minutes, taking main's newest data every minute, and running the push check (tools/push_watches.mjs) whenever something
+# changed. Then it starts a fresh copy of itself, as the refresh keeper does. The hourly schedule restarts the chain if it ever
+# breaks; only one loop runs at a time and GitHub keeps at most one waiting, so hand-overs never double up.
+# It commits nothing, so it starts no Netlify or GitHub Pages builds (tools/netlify_ignore.mjs is not involved).
+# While a loop runs or waits, the push job in refresh-flood.yml stands aside; both keep the same seen-list in the Actions cache.
+# Free while the repository is public (standard GitHub-hosted runners cost nothing for public repositories).
+# On a feature branch (a test): FLASH_NO_MAIN, a short loop, and with test=1 a throwaway list of test watches on a random ntfy
+# channel, read back at the end, so a change can be timed without touching any account's watches.
+on:
+  schedule:
+    - cron: "41 * * * *"
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "How long this loop runs (minutes; main default 320)"
+        required: false
+        default: ""
+      test:
+        description: "Feature branch only: 1 = use test watches on a random ntfy channel instead of the real list"
+        required: false
+        default: ""
+
+permissions:
+  actions: write
+  contents: read
+  id-token: write
+
+concurrency:
+  group: flash-loop-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Restore what the push check has already seen
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .push-state
+          key: push-state-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: push-state-${{ github.ref_name }}-
+      - name: Test watches (feature branch only)
+        if: ${{ github.ref != 'refs/heads/main' && inputs.test == '1' }}
+        run: |
+          topic="osap-$(head -c 12 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+          echo "FLASH_TEST_TOPIC=$topic" >> "$GITHUB_ENV"
+          node -e '
+            const t = process.argv[1], cc = ["jp", "id", "ph", "pg", "tw", "nz", "cl", "mx", "pe", "to", "vu", "sb"];
+            require("fs").writeFileSync("flash-test-watches.json", JSON.stringify({ v: 1, watches: cc.map((c) => ({ id: "wflashtest-" + c, name: "Flash test " + c.toUpperCase(), cc: c, layers: [], kw: [], minSev: 1, topic: t })) }));
+          ' "$topic"
+          echo "PUSH_LIST=$PWD/flash-test-watches.json" >> "$GITHUB_ENV"
+      - name: Run the flash loop
+        run: |
+          npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
+          node tools/flash_loop.mjs
+        env:
+          FLASH_LOOP_MIN: ${{ inputs.minutes || (github.ref == 'refs/heads/main' && '320' || '25') }}
+          FLASH_NO_MAIN: ${{ github.ref != 'refs/heads/main' && '1' || '' }}
+          PUSH_STATE: .push-state/state.json
+          # a branch run without test watches never sends to a real account's channel: it only prints what it would send
+          PUSH_DRY: ${{ github.ref != 'refs/heads/main' && inputs.test != '1' && '1' || '' }}
+        timeout-minutes: 335
+      - name: Read the test channel back (feature branch only)
+        if: ${{ always() && env.FLASH_TEST_TOPIC != '' }}
+        run: |
+          curl -s --max-time 20 "https://ntfy.sh/$FLASH_TEST_TOPIC/json?poll=1&since=all" | node -e '
+            let s = ""; process.stdin.on("data", (d) => s += d).on("end", () => {
+              const m = s.split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l); } catch (e) { return {}; } }).filter((x) => x.event === "message");
+              console.log(m.length + " test alert(s) held on the channel");
+              for (const x of m) console.log(new Date(x.time * 1000).toISOString().slice(11, 19) + "Z priority " + (x.priority || 3) + " " + String(x.title || "").slice(0, 60));
+            });'
+      - name: Keep what was seen for the next check
+        if: ${{ always() && github.ref == 'refs/heads/main' && hashFiles('.push-state/state.json') != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .push-state
+          key: push-state-${{ github.ref_name }}-${{ github.run_id }}
+      - name: Hand over to a fresh loop
+        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        run: gh workflow run refresh-flash.yml --ref main

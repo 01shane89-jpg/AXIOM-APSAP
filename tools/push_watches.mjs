@@ -169,7 +169,7 @@ const { out: matches, meta } = await scan();
 const state = TEST ? { watches: {} } : loadState();
 const next = { watches: {}, at: new Date(now).toISOString() };
 let sentTotal = 0, noted = 0, failedSends = 0, held = 0, flashSent = 0, upSent = 0;
-const lags = [];
+const lags = [], lagS = [];   // minutes (old log line) and seconds, first report to the moment ntfy took the alert
 // 1. what is new for each watch
 const jobs = [];
 for (const w of list) {
@@ -208,6 +208,9 @@ for (let round = 0; round < PER_WATCH; round++) {
       sentTotal++; j.done++; j.sent[m.gk + ""] = now; j.sm[m.gk + ""] = { ns: +m.ns || 1, off: m.off ? 1 : 0 };
       if (isFlash(m)) flashSent++;
       lags.push(lagMin(m, now));
+      const t0 = +m.t0, ts = msOf(m.ts);
+      if (isFinite(t0) && t0 > 0) lagS.push(Math.round((Date.now() - t0) / 1000));
+      else if (isFinite(ts)) lagS.push(Math.round((Date.now() - ts) / 1000));
     } else failedSends++;
   }
 }
@@ -257,6 +260,7 @@ if (!TEST) saveState(next);
 console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent (${flashSent} flash, ${upSent} follow-up), ${failedSends} failed, ${held} held for the next run, ${noted} new watch(es) noted`);
 // how long after the first report an alert went out (minutes, counts only): the number to beat
 { const md = median(lags), ln = lags.filter((x) => x != null); if (ln.length) console.log(`push: first report to alert: median ${md} min, fastest ${Math.min(...ln)} min, over ${ln.length} alert(s)`); }
+if (lagS.length) console.log(`push: first report to alert in seconds: median ${median(lagS)} s, fastest ${Math.min(...lagS)} s, slowest ${Math.max(...lagS)} s`);
 // a test run reads its channels back from ntfy.sh, to prove the alerts arrived (counts only)
 if (TEST && !DRY) {
   for (const t of [...new Set(list.map((w) => w.topic))]) {
