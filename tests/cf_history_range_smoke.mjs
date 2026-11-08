@@ -148,6 +148,23 @@ await p.evaluate(() => window.OSAP_CF_HISTORY.show("2011-01-01", "2011-12-31"));
 await settle(); await p.waitForTimeout(400);
 ok(await p.evaluate(() => { const d = document.querySelector("#cfh details.cfhcode"); return !!(d && d.open); }), "Coded events stays open when the span changes");
 
+// protest and riot dots on the map: the 2012 protest inside the tab's area, blue; the one outside (Bangkok) not drawn; the tick hides them
+await p.evaluate(() => window.OSAP_CF_HISTORY.show("2012-01-01", "2012-12-31"));
+await settle(); await p.waitForTimeout(500);
+const pdots = () => p.evaluate(() => { const out = []; window.__asapMap.eachLayer((l) => { if (l instanceof L.CircleMarker && l.options.pane === "cfpane" && /^#(1565C0|E65100)$/.test(l.options.fillColor)) out.push([+l.getLatLng().lat.toFixed(2), +l.getLatLng().lng.toFixed(2), l.options.fillColor]); }); return out; });
+await p.evaluate(() => { window.__asapMap.fitBounds([[5.6, 100.4], [7.1, 102.2]]); });
+await p.waitForTimeout(800);
+let pd = await pdots();
+ok(pd.length === 1 && pd[0][0] === 6.87 && pd[0][2] === "#1565C0", "Protest dot drawn in Pattani, blue; none for the protest outside the area: " + JSON.stringify(pd));
+const ppop = await p.evaluate(() => new Promise((res) => { window.__asapMap.eachLayer((l) => { if (l instanceof L.CircleMarker && l.options.fillColor === "#1565C0") { l.openPopup(); } });
+  setTimeout(() => res((document.querySelector(".leaflet-popup-content") || {}).textContent || ""), 600); }));
+ok(/Protest · Protest with intervention/.test(ppop) && /CC0/.test(ppop) && /not analyst-confirmed/.test(ppop) && /SHA-256 [0-9a-f]{16}/.test(ppop), "Protest pop-up: coding, licence, not analyst-confirmed, fingerprint");
+await p.evaluate(() => { window.__asapMap.closePopup(); });
+await p.evaluate(() => { const i = document.querySelector("#cfh [data-cfhpr]"); i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); });
+await p.waitForTimeout(400);
+ok((await pdots()).length === 0, "Unticking Protests and riots takes the dots off the map");
+await p.evaluate(() => { const i = document.querySelector("#cfh [data-cfhpr]"); i.checked = true; i.dispatchEvent(new Event("change", { bubbles: true })); });
+
 ok(!errors.length, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed"); process.exit(fails ? 1 : 0);
