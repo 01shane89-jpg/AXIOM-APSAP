@@ -14,6 +14,8 @@ import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs";
 import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones } from "./warngeo_lib.mjs";
+import { COMMERCIAL } from "./nc_strip.mjs";
+import { imbIncidents, notInAsam, IMB_MAP, IMB_LIC } from "./imb_piracy.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -305,6 +307,12 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
     if (!raw.length) console.error("ASAM: no records; top-level keys: " + Object.keys(j).join(","));
     status.push({ source: "NGA ASAM", ok: true, n: asam.length });
   } catch (e) { status.push({ source: "NGA ASAM", ok: false, error: err(e) }); }
+  // IMB PRC live piracy map: a backup while NGA ASAM is down, and the incidents ASAM has not listed yet (facts only, nc)
+  if (!COMMERCIAL) try {
+    const imb = notInAsam(await imbIncidents(get), asam);
+    for (const a of imb) asam.push({ ...a, ccs: ccsAt(a.lat, a.lon, 1.5) });
+    status.push({ source: "IMB PRC", ok: true, n: imb.length, src: IMB_MAP, lic: IMB_LIC, nc: true });
+  } catch (e) { status.push({ source: "IMB PRC", ok: false, error: err(e), src: IMB_MAP, nc: true }); }
   try {
     const h = await get("https://www.maritime.dot.gov/msci-advisories", "text");
     for (const m of h.matchAll(/<a[^>]+href="(\/msci\/[^"#?]+)"[^>]*>([\s\S]*?)<\/a>/g)) {
@@ -323,7 +331,7 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
     status.push({ source: "ReCAAP ISC", ok: true, n: recaap.length });
   } catch (e) { status.push({ source: "ReCAAP ISC", ok: false, error: err(e) }); }
   if (!status.some((s) => s.ok)) throw new Error(status.map((s) => s.source + ": " + s.error).join("; "));
-  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
+  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM/IMB, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
 });
 
 // 7. OFAC Specially Designated Nationals: entries with an address in a covered area. Only name, type, programs and area are kept.
