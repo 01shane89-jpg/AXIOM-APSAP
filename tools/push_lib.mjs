@@ -17,6 +17,12 @@ export const MAX_WATCHES = 25, MAX_AREA_POINTS = 150, MAX_WORDS = 20, MAX_LAYERS
 // before use. Outside Actions (tests, a run by hand) the local file FILE is read, if there is one.
 export const PUSH_API = process.env.PUSH_API || "https://axiom-osap.netlify.app/api/osap-push";
 export async function fetchList() {
+  // PUSH_LIST: a local test list (the flash loop's test run on a feature branch), checked like the server's; never set on main
+  if (process.env.PUSH_LIST) {
+    const o = JSON.parse(fs.readFileSync(process.env.PUSH_LIST, "utf8")), watches = [];
+    for (const w of (o && Array.isArray(o.watches) ? o.watches : [])) { const v = validate(w); if (v.watch) watches.push(v.watch); else console.log("push: skipped a test watch that does not check:", v.error); }
+    return { v: 1, watches };
+  }
   const url = process.env.ACTIONS_ID_TOKEN_REQUEST_URL, rt = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
   if (!url || !rt) return readList();
   const t = await fetch(url + (url.includes("?") ? "&" : "?") + "audience=osap-push", { headers: { authorization: "Bearer " + rt } }).then((r) => r.json());
