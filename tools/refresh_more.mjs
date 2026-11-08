@@ -571,11 +571,13 @@ await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
       status.push({ area: mf.area, ok: true, n, file: mf.modified || null });
     } catch (e) { status.push({ area: mf.area, ok: false, error: err(e) }); }
   }
+  const seen = new Set();
   for (const s of NAVW_SRC) {
     if (s.nc && COMMERCIAL) continue;
     try {
       const list = await s.read(s); let n = 0;
-      for (const w of list) { const it = navItem(w.id, w.issued, w.text, { subregion: w.subregion, authority: s.authority, link: s.link, lic: s.lic, nc: s.nc }); if (it) { items.push(it); n++; } }
+      // a coastal warning listed under two coastal areas (AMSA Auscoast) is kept once
+      for (const w of list) { if (seen.has(w.id)) continue; seen.add(w.id); const it = navItem(w.id, w.issued, w.text, { subregion: w.subregion, authority: s.authority, link: s.link, lic: s.lic, nc: s.nc }); if (it) { items.push(it); n++; } }
       status.push({ area: s.area, ok: true, n, of: list.length, src: s.link, lic: s.lic, ...(s.nc ? { nc: true } : {}) });
     } catch (e) { status.push({ area: s.area, ok: false, error: err(e), src: s.link, ...(s.nc ? { nc: true } : {}) }); }
   }
