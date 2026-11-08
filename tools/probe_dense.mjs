@@ -1,12 +1,65 @@
-// PROBE BRANCH ONLY: think-tank reuse terms, round 2: retry failed homepages with a plain UA, then fetch named terms pages.
-import fs from "node:fs";
-const L = JSON.parse(fs.readFileSync("tools/tt_terms_list2.json", "utf8"));
-const UAS = [{ "user-agent": "curl/8.5.0", accept: "*/*" }, { "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0", accept: "text/html,*/*", "accept-language": "en" }];
-const text = (h) => h.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/&amp;/g, "&").replace(/&#8217;|&rsquo;/g, "'").replace(/\s+/g, " ");
-const KEY = /creative commons|CC[ -]BY[^ ]*|public domain|commercial|reproduc|republish|all rights reserved|may be (?:freely )?(?:used|reprinted|quoted|shared)|without (?:prior |the |express )?(?:written )?(?:consent|permission)|licen[cs]ed under|copyright/i;
-async function get(u) { let last; for (const h of UAS) { try { const r = await fetch(u, { headers: h, redirect: "follow", signal: AbortSignal.timeout(20000) }); if (r.ok) return await r.text(); last = "HTTP " + r.status; } catch (e) { last = e.message; } } throw new Error(last); }
+// PROBE BRANCH ONLY: national weather warning feeds (own servers) for the 30 MeteoAlarm countries.
+const C = [
+ ["is","https://api.vedur.is/cap/v1/capbroker/active/category/Met/"],
+ ["at","https://warnungen.zamg.at/wsapp/api/getWarnstatus"],
+ ["at","https://warnungen.zamg.at/wsapp/api/getWarningsForCoords?lon=16.37&lat=48.21&lang=en"],
+ ["at","https://dataset.api.hub.geosphere.at/v1/datasets"],
+ ["cz","https://www.chmi.cz/files/portal/docs/meteo/om/bulletiny/XOCZ50_OKPR.xml"],
+ ["cz","https://opendata.chmi.cz/meteorology/weather/alerts/"],
+ ["ee","https://www.ilmateenistus.ee/ilma_andmed/xml/hoiatused.php"],
+ ["ee","https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784"],
+ ["si","https://meteo.arso.gov.si/uploads/probase/www/warning/text/sl/warning_SLOVENIA_latest_CAP.xml"],
+ ["si","https://meteo.arso.gov.si/uploads/probase/www/fproduct/text/en/warning_si_latest.xml"],
+ ["si","https://meteo.arso.gov.si/uploads/meteo/cap/"],
+ ["hr","https://meteo.hr/upozorenja/cap_hr.xml"],
+ ["hr","https://prognoza.hr/upozorenja/hr.xml"],
+ ["hr","https://meteo.hr/proizvodi.php?section=podaci&param=xml_korisnici"],
+ ["ch","https://www.meteoswiss.admin.ch/product/output/warnings/warnings_overview.json"],
+ ["ch","https://data.geo.admin.ch/api/stac/v1/collections"],
+ ["ch","https://www.meteoschweiz.admin.ch/product/output/versions.json"],
+ ["it","https://raw.githubusercontent.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/master/files/all/latest.json"],
+ ["it","https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/contents/files"],
+ ["it","https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Vigilanza-Meteorologica/contents/files"],
+ ["fr","https://vigilance.meteofrance.fr/fr/flux-rss"],
+ ["fr","https://vigilance2019.meteofrance.com/data/vigilance.json"],
+ ["fr","https://public-api.meteofrance.fr/public/DPVigilance/v1/cartevigilance/encours"],
+ ["nl","https://www.knmi.nl/nederland-nu/weer/waarschuwingen"],
+ ["nl","https://cdn.knmi.nl/knmi/map/page/weer/actueel-weer/waarschuwingen.xml"],
+ ["be","https://www.meteo.be/en/weather/warnings"],
+ ["be","https://opendata.meteo.be/geoserver/ows?service=WFS&request=GetCapabilities"],
+ ["dk","https://www.dmi.dk/dmidk_byvejrWS/rest/json/warnings"],
+ ["dk","https://opendataapi.dmi.dk/v2/"],
+ ["lu","https://www.meteolux.lu/fr/vigilance/"],
+ ["lu","https://metapi.ana.lu/api/v1/metapp/weather"],
+ ["lv","https://videscentrs.lvgmc.lv/data/warnings"],
+ ["lt","https://api.meteo.lt/v1/"],
+ ["hu","https://www.met.hu/idojaras/veszelyjelzes/"],
+ ["hu","https://odp.met.hu/"],
+ ["ro","https://www.meteoromania.ro/avertizari-xml.php"],
+ ["ro","https://www.meteoromania.ro/wp-json/meteoapi/v2/avertizari-generale"],
+ ["bg","https://weather.bg/obshtini/index.php?lng=1"],
+ ["gr","https://www.emy.gr/en/hellas/warnings"],
+ ["gr","https://emy.gr/cap/cap.xml"],
+ ["cy","https://www.dom.org.cy/AWS/OpenData/CyDoM.xml"],
+ ["cy","https://www.moa.gov.cy/moa/ms/ms.nsf/All/warnings"],
+ ["mt","https://www.maltairport.com/weather/"],
+ ["rs","https://www.hidmet.gov.rs/latin/upozorenja/index.php"],
+ ["rs","https://www.hidmet.gov.rs/data/meteoalarm/cap.xml"],
+ ["me","https://www.meteo.co.me/"],
+ ["mk","https://uhmr.gov.mk/"],
+ ["ba","https://www.fhmzbih.gov.ba/latinica/"],
+ ["md","https://www.meteo.md/"],
+ ["ua","https://meteo.gov.ua/en/33345"],
+ ["il","https://ims.gov.il/en/warnings"],
+ ["il","https://ims.gov.il/sites/default/files/ims_data/rss/alert/rssAlert_general_country_en.xml"],
+ ["ad","https://www.meteo.ad/"],
+ ["sk","https://www.shmu.sk/en/?page=987"],
+ ["sk","https://www.shmu.sk/data/datanwp/cap/cap.xml"],
+];
 const out = [];
-for (const [id, u] of [...L.errs, ...L.extra.map((u) => ["page", u])]) {
-  try { const t = text(await get(u)); out.push({ id, u, hits: t.split(/(?<=[.!?©])\s+/).filter((x) => KEY.test(x) && x.length < 600).slice(0, 10) }); } catch (e) { out.push({ id, u, err: e.message }); }
+for (const [cc, u] of C) {
+  try { const r = await fetch(u, { headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0", accept: "*/*" }, redirect: "follow", signal: AbortSignal.timeout(25000) });
+    const t = await r.text(); out.push({ cc, u, s: r.status, ct: r.headers.get("content-type"), cors: r.headers.get("access-control-allow-origin"), n: t.length, cap: (t.match(/<(cap:)?alert\b|<info>|<entry>|<item>/g) || []).length, lic: (t.match(/.{0,80}(creative commons|CC BY|licen[cs]e|open data|copyright).{0,100}/i) || [""])[0], head: t.slice(0, 500).replace(/\s+/g, " ") });
+  } catch (e) { out.push({ cc, u, err: e.message }); }
 }
-for (const o of out) console.log("TTJSON" + JSON.stringify(o));
+for (const o of out) console.log("WJSON" + JSON.stringify(o));
