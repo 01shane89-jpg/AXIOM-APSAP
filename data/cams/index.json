@@ -1,5 +1,5 @@
 {
- "built": "2026-11-02T13:00Z",
+ "built": "2026-11-08T15:46Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -18,7 +18,7 @@
     1.44702,
     103.82389
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "hk-td",
@@ -36,7 +36,7 @@
     22.54589,
     114.26637
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "nz-nzta",
@@ -47,14 +47,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://www.nzta.govt.nz/traffic-and-travel-information/infoconnect-section-page/",
    "every": 2,
-   "n": 250,
+   "n": 249,
    "box": [
     -45.89658,
     168.66154,
     -36.38935,
     176.87727
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "gb-tfl",
@@ -65,14 +65,14 @@
    "licence": "Powered by TfL Open Data (Open Government Licence)",
    "page": "https://tfl.gov.uk/info-for/open-data-users/",
    "every": 5,
-   "n": 802,
+   "n": 831,
    "box": [
     51.3169,
     -0.49324,
     51.6799,
     0.23161
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "fi-digitraffic",
@@ -83,14 +83,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://www.digitraffic.fi/en/road-traffic/",
    "every": 10,
-   "n": 814,
+   "n": 813,
    "box": [
     59.85645,
     19.61872,
     70.08851,
     31.27705
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "ca-drivebc",
@@ -101,14 +101,14 @@
    "licence": "Open Government Licence - British Columbia",
    "page": "https://catalogue.data.gov.bc.ca/dataset/drivebc-highwaycams",
    "every": 15,
-   "n": 1043,
+   "n": 1052,
    "box": [
     48.38774,
     -132.00963,
     59.99805,
     -114.71282
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "au-nsw",
@@ -126,7 +126,7 @@
     -28.22595,
     153.55694
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "us-caltrans",
@@ -137,14 +137,14 @@
    "licence": "Caltrans public data",
    "page": "https://cwwp2.dot.ca.gov/documentation/cctv/cctv.htm",
    "every": 5,
-   "n": 3432,
+   "n": 3437,
    "box": [
     32.55138,
     -124.20157,
     41.99656,
     -114.55031
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "us-nycdot",
@@ -155,14 +155,14 @@
    "licence": "NYC DOT public traffic cameras",
    "page": "https://webcams.nyctmc.org/",
    "every": 1,
-   "n": 974,
+   "n": 955,
    "box": [
     40.50773,
     -74.23036,
     40.9063,
     -73.71378
    ],
-   "checked": "2026-11-02T12:51Z"
+   "checked": "2026-11-08T15:31Z"
   },
   {
    "id": "us-fl",
@@ -173,14 +173,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://fl511.com/cctv",
    "every": 2,
-   "n": 4991,
+   "n": 4979,
    "box": [
     24.55034,
     -87.40289,
     30.99419,
     -80.06648
    ],
-   "checked": "2026-11-02T12:52Z"
+   "checked": "2026-11-08T15:32Z"
   },
   {
    "id": "us-pa",
@@ -191,14 +191,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511pa.com/cctv",
    "every": 2,
-   "n": 1438,
+   "n": 1444,
    "box": [
     39.72343,
     -80.5799,
     42.25058,
-    -74.7137
+    -74.77425
    ],
-   "checked": "2026-11-02T12:52Z"
+   "checked": "2026-11-08T15:32Z"
   },
   {
    "id": "us-ne511",
@@ -216,7 +216,7 @@
     47.14303,
     -67.6487
    ],
-   "checked": "2026-11-02T12:52Z"
+   "checked": "2026-11-08T15:32Z"
   },
   {
    "id": "us-ct",
@@ -234,7 +234,7 @@
     41.89839,
     -72.07225
    ],
-   "checked": "2026-11-02T12:52Z"
+   "checked": "2026-11-08T15:32Z"
   },
   {
    "id": "us-wi",
@@ -252,7 +252,7 @@
     45.89991,
     -87.76084
    ],
-   "checked": "2026-11-02T12:52Z"
+   "checked": "2026-11-08T15:32Z"
   },
   {
    "id": "us-la",
@@ -270,7 +270,7 @@
     32.56823,
     -89.71119
    ],
-   "checked": "2026-11-02T12:52Z"
+   "checked": "2026-11-08T15:32Z"
   },
   {
    "id": "us-az",
@@ -288,7 +288,7 @@
     36.987,
     -109.05118
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:32Z"
   },
   {
    "id": "us-ut",
@@ -306,7 +306,7 @@
     41.99907,
     -109.06794
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-id",
@@ -324,7 +324,7 @@
     49.11869,
     -110.907
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-nv",
@@ -342,7 +342,7 @@
     41.98833,
     -114.06374
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-ak",
@@ -353,14 +353,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511.alaska.gov/cctv",
    "every": 2,
-   "n": 128,
+   "n": 129,
    "box": [
     55.45805,
     -152.45972,
     68.12538,
     -132.54265
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-de",
@@ -379,7 +379,7 @@
     39.82862,
     -75.05194
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-md",
@@ -398,7 +398,7 @@
     39.71775,
     -75.06814
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-co",
@@ -409,14 +409,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://cotrip.org/",
    "every": 5,
-   "n": 1035,
+   "n": 994,
    "box": [
     36.99926,
-    -109.04076,
-    69.63329,
+    -109.01709,
+    40.99697,
     -102.24673
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-mn",
@@ -434,7 +434,7 @@
     48.97072,
     -89.68326
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-ia",
@@ -445,14 +445,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511ia.org/",
    "every": 5,
-   "n": 867,
+   "n": 862,
    "box": [
     40.39297,
     -96.47591,
     43.44541,
     -90.16799
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-in",
@@ -463,14 +463,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511in.org/",
    "every": 5,
-   "n": 748,
+   "n": 759,
    "box": [
     37.89013,
     -87.86042,
     41.75352,
     87.30259
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-ne",
@@ -488,7 +488,7 @@
     43.00086,
     -95.82282
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-ks",
@@ -506,7 +506,7 @@
     39.99394,
     -94.22559
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-nc",
@@ -517,14 +517,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://drivenc.gov/cctv",
    "every": 2,
-   "n": 1010,
+   "n": 1012,
    "box": [
     34.12588,
     -83.15371,
     36.55035,
     -75.46962
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-wa",
@@ -535,14 +535,14 @@
    "licence": "WSDOT traveler information (public)",
    "page": "https://wsdot.com/travel/real-time/cameras",
    "every": 2,
-   "n": 1623,
+   "n": 1625,
    "box": [
     45.56863,
     -124.33312,
     49.00225,
     -117.05037
    ],
-   "checked": "2026-11-02T12:53Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "us-or",
@@ -553,14 +553,14 @@
    "licence": "TripCheck public camera images",
    "page": "https://tripcheck.com/",
    "every": 5,
-   "n": 1178,
+   "n": 1181,
    "box": [
     41.38202,
     -124.49011,
     46.90436,
     -116.77713
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "ca-on",
@@ -571,14 +571,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511on.ca/cctv",
    "every": 2,
-   "n": 935,
+   "n": 936,
    "box": [
     42.06727,
     -95.13638,
     51.48012,
     -74.38254
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "ca-nb",
@@ -596,7 +596,7 @@
     47.95752,
     -63.93869
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "ca-ns",
@@ -614,7 +614,7 @@
     46.8772,
     -60.2754
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:33Z"
   },
   {
    "id": "ca-nl",
@@ -632,7 +632,7 @@
     53.56083,
     -52.87225
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:34Z"
   },
   {
    "id": "ca-ab",
@@ -650,7 +650,7 @@
     59.868,
     -110.021
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:34Z"
   },
   {
    "id": "ca-mb",
@@ -668,7 +668,7 @@
     54.66911,
     -95.15482
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:34Z"
   },
   {
    "id": "ca-pe",
@@ -686,7 +686,7 @@
     46.81474,
     -62.61556
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:34Z"
   },
   {
    "id": "ca-yt",
@@ -697,14 +697,212 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511yukon.ca/cctv",
    "every": 2,
-   "n": 21,
+   "n": 19,
    "box": [
-    59.58996,
+    59.7592,
     -140.9756,
     66.44319,
     -128.26911
    ],
-   "checked": "2026-11-02T12:54Z"
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "us-sc",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (South Carolina)",
+   "agency": "South Carolina DOT (511SC)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://www.511sc.org/",
+   "every": 2,
+   "n": 799,
+   "box": [
+    32.23022,
+    -83.00517,
+    35.17382,
+    -78.62335
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "us-va",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (Virginia)",
+   "agency": "Virginia DOT (511 Virginia)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.vdot.virginia.gov/",
+   "every": 2,
+   "n": 1703,
+   "box": [
+    36.54263,
+    -83.11101,
+    39.44067,
+    77.26673
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "us-mi",
+   "cc": "us",
+   "tz": "America/Detroit",
+   "country": "United States (Michigan)",
+   "agency": "Michigan DOT (Mi Drive)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://mdotjboss.state.mi.us/MiDrive/map",
+   "every": 2,
+   "n": 804,
+   "box": [
+    41.76437,
+    -89.95193,
+    47.38878,
+    -82.45123
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "us-al",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Alabama)",
+   "agency": "Alabama DOT (ALGO Traffic)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://algotraffic.com/",
+   "every": 2,
+   "n": 595,
+   "box": [
+    30.26989,
+    -88.29847,
+    34.22773,
+    -85.02179
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "ca-toronto",
+   "cc": "ca",
+   "tz": "America/Toronto",
+   "country": "Canada (Toronto)",
+   "agency": "City of Toronto Transportation Services (traffic cameras)",
+   "licence": "Open Government Licence – Toronto",
+   "page": "https://open.toronto.ca/dataset/traffic-cameras/",
+   "every": 2,
+   "n": 336,
+   "box": [
+    43.60911,
+    -79.60325,
+    43.82395,
+    -79.15279
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "ca-calgary",
+   "cc": "ca",
+   "tz": "America/Edmonton",
+   "country": "Canada (Calgary)",
+   "agency": "City of Calgary (traffic cameras)",
+   "licence": "Open Government Licence – City of Calgary",
+   "page": "https://data.calgary.ca/Transportation-Transit/Traffic-Cameras/k7p9-kppz",
+   "every": 2,
+   "n": 216,
+   "box": [
+    50.86616,
+    -114.23178,
+    51.17521,
+    -113.90728
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "us-il",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Illinois)",
+   "agency": "Illinois DOT (Getting Around Illinois / Travel Midwest)",
+   "licence": "Creative Commons Attribution-ShareAlike 2.0 (Illinois DOT)",
+   "page": "https://www.gettingaroundillinois.com/",
+   "every": 2,
+   "n": 3782,
+   "box": [
+    37.78247,
+    -91.41867,
+    42.49382,
+    -87.52111
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "us-austin",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Austin, Texas)",
+   "agency": "City of Austin Transportation and Public Works (traffic cameras)",
+   "licence": "City of Austin open data (public)",
+   "page": "https://data.austintexas.gov/Transportation-and-Mobility/Traffic-Cameras/b4k4-adkb",
+   "every": 2,
+   "n": 823,
+   "box": [
+    30.11243,
+    -97.89987,
+    30.50339,
+    -97.59146
+   ],
+   "checked": "2026-11-08T15:34Z"
+  },
+  {
+   "id": "us-kingco",
+   "cc": "us",
+   "tz": "America/Los_Angeles",
+   "country": "United States (King County, Washington)",
+   "agency": "King County Road Services (traffic cameras)",
+   "licence": "King County open data (public)",
+   "page": "https://kingcounty.gov/en/dept/local-services/transportation/roads-bridges/traffic-cameras",
+   "every": 2,
+   "n": 71,
+   "box": [
+    47.24275,
+    -122.35663,
+    47.76092,
+    -121.81229
+   ],
+   "checked": "2026-11-08T15:35Z"
+  },
+  {
+   "id": "us-lex",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (Lexington, Kentucky)",
+   "agency": "Lexington-Fayette Urban County Government (traffic cameras)",
+   "licence": "LFUCG public traffic camera images (no open-data licence stated)",
+   "page": "https://www.lexingtonky.gov/traffic-cameras",
+   "every": 2,
+   "n": 107,
+   "box": [
+    37.95764,
+    -84.57588,
+    38.10132,
+    -84.41272
+   ],
+   "checked": "2026-11-08T15:35Z"
+  },
+  {
+   "id": "ca-ottawa",
+   "cc": "ca",
+   "tz": "America/Toronto",
+   "country": "Canada (Ottawa)",
+   "agency": "City of Ottawa Traffic Operations (traffic cameras)",
+   "licence": "City of Ottawa open data (Open Government Licence – City of Ottawa)",
+   "page": "https://traffic.ottawa.ca/en/opendata",
+   "every": 1,
+   "n": 403,
+   "box": [
+    45.21803,
+    -75.95848,
+    45.52471,
+    -75.33543
+   ],
+   "checked": "2026-11-08T15:35Z"
   },
   {
    "id": "th-dwr",
@@ -717,14 +915,14 @@
    "every": 15,
    "kind": "dwr",
    "type": "river",
-   "n": 137,
+   "n": 144,
    "box": [
     6.22808,
     97.9093,
     20.44465,
     105.4932
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:36Z"
   },
   {
    "id": "th-itic",
@@ -732,18 +930,19 @@
    "tz": "Asia/Bangkok",
    "country": "Thailand (live video)",
    "agency": "iTIC Foundation road cameras (list published by Longdo)",
-   "licence": "Public live streams of the iTIC Foundation (no licence stated)",
+   "licence": "Public live streams of the iTIC Foundation (no licence stated; list from a private company, so treated as non-commercial)",
    "page": "https://www.iticfoundation.org/",
    "every": 0,
+   "nc": true,
    "kind": "hls",
-   "n": 41,
+   "n": 43,
    "box": [
     13.66608,
     100.53805,
     13.83103,
     101.07099
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:36Z"
   },
   {
    "id": "au-qld",
@@ -780,7 +979,7 @@
     66.32717,
     -13.85469
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:37Z"
   },
   {
    "id": "lt-eismoinfo",
@@ -791,14 +990,14 @@
    "licence": "Lithuanian Road Administration open data",
    "page": "https://eismoinfo.lt/",
    "every": 5,
-   "n": 312,
+   "n": 311,
    "box": [
     54.03408,
     20.97875,
     56.37486,
     26.53135
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:37Z"
   },
   {
    "id": "es-dgt",
@@ -809,14 +1008,14 @@
    "licence": "DGT National Access Point open data (credit the DGT)",
    "page": "https://infocar.dgt.es/etraffic/",
    "every": 5,
-   "n": 1973,
+   "n": 1975,
    "box": [
     35.87692,
     -8.99783,
     43.5638,
     3.21198
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:38Z"
   },
   {
    "id": "us-ashcam",
@@ -835,7 +1034,7 @@
     61.2002,
     -110.39988
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:38Z"
   },
   {
    "id": "us-ashcam-w",
@@ -854,7 +1053,7 @@
     51.96491,
     179.6474
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:38Z"
   },
   {
    "id": "nz-geonet",
@@ -873,7 +1072,7 @@
     -29.26733,
     177.69217
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:38Z"
   },
   {
    "id": "jp-jma-volcano",
@@ -893,7 +1092,7 @@
     43.662,
     144.465
    ],
-   "checked": "2026-11-02T12:56Z"
+   "checked": "2026-11-08T15:38Z"
   },
   {
    "id": "jp-mlit-river",
@@ -905,14 +1104,14 @@
    "page": "https://www.river.go.jp/",
    "every": 10,
    "type": "river",
-   "n": 10267,
+   "n": 10263,
    "box": [
     31.30879,
     128.83459,
     45.01463,
     144.60958
    ],
-   "checked": "2026-11-02T13:00Z"
+   "checked": "2026-11-08T15:42Z"
   },
   {
    "id": "us-nims",
@@ -924,14 +1123,14 @@
    "page": "https://apps.usgs.gov/hivis/",
    "every": 15,
    "type": "river",
-   "n": 943,
+   "n": 941,
    "box": [
     18.44382,
     -166.36748,
     69.3605,
     -66.01224
    ],
-   "checked": "2026-11-02T13:00Z"
+   "checked": "2026-11-08T15:42Z"
   },
   {
    "id": "us-hpwren",
@@ -950,7 +1149,27 @@
     34.70864,
     -116.31798
    ],
-   "checked": "2026-11-02T13:00Z"
+   "checked": "2026-11-08T15:42Z"
+  },
+  {
+   "id": "us-alertca",
+   "cc": "us",
+   "tz": "America/Los_Angeles",
+   "country": "United States (California wildfire cameras)",
+   "agency": "ALERTCalifornia, UC San Diego (via the California Office of Emergency Services webcam layer)",
+   "licence": "CC BY-NC-ND 4.0 (ALERTCalifornia, UC San Diego; non-commercial)",
+   "page": "https://cameras.alertcalifornia.org/",
+   "every": 1,
+   "nc": true,
+   "type": "weather",
+   "n": 1289,
+   "box": [
+    32.5948,
+    -124.26603,
+    41.92988,
+    -116.31801
+   ],
+   "checked": "2026-11-08T15:42Z"
   },
   {
    "id": "us-ndbc",
@@ -969,7 +1188,7 @@
     60.802,
     -46.052
    ],
-   "checked": "2026-11-02T13:00Z"
+   "checked": "2026-11-08T15:42Z"
   },
   {
    "id": "us-ndbc-w",
@@ -1008,7 +1227,7 @@
     17.76507,
     105.43222
    ],
-   "checked": "2026-11-02T13:00Z"
+   "checked": "2026-11-08T15:42Z"
   }
  ]
 }
