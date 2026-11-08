@@ -21,6 +21,11 @@ const ROOT = process.cwd();
 const args = process.argv.slice(2);
 const CHECK = args.includes("--check"), OPEN = args.includes("--open");
 const PUB = JSON.parse(fs.readFileSync(path.join(ROOT, "tools/tier-key.json"), "utf8")).pub;
+// no key yet: nothing may be sealed (a file sealed for no key, or a key the gate lacks, shows as an empty data set)
+if (!PUB) {
+  if (TIER_SEALED.length) { console.error("seal_tier: TIER_SEALED lists paths but tools/tier-key.json has no public key"); process.exit(1); }
+  console.log("seal_tier: no tier key yet, nothing to seal or open"); process.exit(0);
+}
 const isTierPath = (rel) => TIER_SEALED.some((r) => r.test(rel));
 
 function walk(dir, acc) {

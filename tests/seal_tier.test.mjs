@@ -19,13 +19,16 @@ const free = ["data/live/news.js", "data/basemap/x.json", "data/places/th.json",
 ok(free.every((p) => !TIER_SEALED.some((r) => r.test(p))), "no free file is in TIER_SEALED");
 const real = execFileSync("git", ["ls-files", "data", "source"], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 30 }).split("\n").filter(Boolean);
 const sealedReal = real.filter((p) => TIER_SEALED.some((r) => r.test(p)));
-ok(sealedReal.length > 0 && sealedReal.every((p) => ["mid", "full"].includes(tierOfPath(p))), `every TIER_SEALED file in the repository (${sealedReal.length}) is Mid or Full`);
-ok(["data/cnpresence/th.json", "data/rupresence/vn.json", "data/irpresence/index.json"].every((p) => TIER_SEALED.some((r) => r.test(p))), "the presence data sets are sealed");
+ok(sealedReal.every((p) => ["mid", "full"].includes(tierOfPath(p))), `every TIER_SEALED file in the repository (${sealedReal.length}) is Mid or Full`);
+// files sealed for a key the gate does not hold show as empty data sets, so nothing is sealed until the key is set
+ok(TIER_SEALED.length === 0 || !!JSON.parse(fs.readFileSync(path.join(ROOT, "tools/tier-key.json"), "utf8")).pub, "paths are sealed only once tools/tier-key.json holds the key");
+const presence = real.filter((p) => /^data\/(cnpresence|rupresence|irpresence)\//.test(p));
+ok(TIER_SEALED.length > 0 || presence.every((p) => !fs.readFileSync(path.join(ROOT, p), "latin1").startsWith("/*osap-sealed:v1 ")), `while TIER_SEALED is empty, no presence file is sealed (${presence.length} checked)`);
 
 // 2. the public key in the repository is a real P-256 key, and the matching private half is nowhere in the repository
 const PUB = JSON.parse(fs.readFileSync(path.join(ROOT, "tools/tier-key.json"), "utf8")).pub;
-let pubOk = false; try { await subtle.importKey("spki", Buffer.from(PUB, "base64url"), { name: "ECDH", namedCurve: "P-256" }, false, []); pubOk = true; } catch (e) {}
-ok(pubOk, "tools/tier-key.json holds a P-256 public key");
+let pubOk = !PUB; try { if (PUB) { await subtle.importKey("spki", Buffer.from(PUB, "base64url"), { name: "ECDH", namedCurve: "P-256" }, false, []); pubOk = true; } } catch (e) {}
+ok(pubOk, "tools/tier-key.json holds a P-256 public key, or none yet");
 // every P-256 PKCS#8 key in base64url starts with this header
 const g = spawnSync("git", ["grep", "-l", "-F", "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg", "--", "tools", "netlify", "assets", ".github", "data", "source"], { cwd: ROOT, encoding: "utf8" });
 const tracked = String(g.stdout || "").trim();
@@ -37,6 +40,8 @@ const TPUB = b64u(await subtle.exportKey("spki", k.publicKey)), TPRIV = b64u(awa
 const D = fs.mkdtempSync(path.join(os.tmpdir(), "seal-tier-"));
 fs.mkdirSync(path.join(D, "tools"));
 for (const f of ["seal_tier.mjs", "seal_lib.mjs", "tiers.mjs"]) fs.copyFileSync(path.join(ROOT, "tools", f), path.join(D, "tools", f));
+// the scratch copy seals the presence folders, whatever the repository's own list holds today
+fs.writeFileSync(path.join(D, "tools/tiers.mjs"), fs.readFileSync(path.join(ROOT, "tools/tiers.mjs"), "utf8").replace(/export const TIER_SEALED = \[[^\]]*\];/, "export const TIER_SEALED = [/^data\\/(cnpresence|rupresence|irpresence)\\//];"));
 fs.writeFileSync(path.join(D, "tools/tier-key.json"), JSON.stringify({ pub: TPUB }));
 const put = (rel, t) => { fs.mkdirSync(path.dirname(path.join(D, rel)), { recursive: true }); fs.writeFileSync(path.join(D, rel), t); };
 const get = (rel) => fs.readFileSync(path.join(D, rel), "utf8");

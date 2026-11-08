@@ -1,4 +1,4 @@
 {
  "about": "Public half of the paid plans key (tools/seal_tier.mjs). The private half is OSAP_TIER_KEY in Netlify and in GitHub Actions secrets, never in the repository.",
- "pub": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE_8rXr54Z0jbwWymyXFgwTuNOiNdShoycGBkChSvAY-WlRFFQviGnClU0wvFgqUZG-YrHRFDnYIGpkg-IcEfCPw"
+ "pub": ""
 }
