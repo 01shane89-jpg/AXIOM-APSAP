@@ -8,6 +8,7 @@ import fs from "node:fs";
 import { COMMERCIAL } from "./nc_strip.mjs";
 import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, runAll, writeAll, sleep, FEEDS } from "./dense_lib.mjs";
 import "./thinktanks.mjs";
+import "./dense_nov8.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
 const IDS = COUNTRIES.map((c) => c.id);
