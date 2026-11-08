@@ -58,4 +58,13 @@ assert.ok(!("url" in input(pk)[0]), "links are not sent to the model");
 assert.deepEqual(cites("The records suggest a rise [1, 2].", 3).refs, [1, 2], "[1, 2] counts as two citations");
 assert.deepEqual(cites("Per records 2 and 3, the trend held.", 3), { text: "Per the records [2][3], the trend held.", refs: [2, 3] }, "running-text records 2 and 3");
 assert.deepEqual(cites("Aged (24) per (2).", 3).refs, [2], "(2) counts, (24) does not");
+// an assessment as {text, refs}: kept, its refs shown at the end; one with no refs anywhere is dropped (osirdraft/2)
+{
+  const recs3 = [{ source: "A", title: "x" }, { source: "B", title: "y" }, { source: "C", title: "z" }];
+  const d2 = check({ claims: [{ claim: "A said x", source: "A", refs: [1] }], assessment: { text: "The records suggest a rise.", refs: [1, 2] }, alternatives: { text: "It may be seasonal.", refs: [] } }, recs3);
+  assert.deepEqual(d2.assess, { text: "The records suggest a rise [1][2].", refs: [1, 2] }, "assessment with a refs list kept, refs shown");
+  assert.equal(d2.alt, null, "a paragraph with no refs anywhere is dropped");
+  const d3 = check({ claims: [{ claim: "A said x", source: "A", refs: [1] }], assessment: "The records suggest a rise [1, 3]." }, recs3);
+  assert.deepEqual(d3.assess.refs, [1, 3], "a plain-string assessment still works");
+}
 console.log("osirdraft.test.mjs: all passed");

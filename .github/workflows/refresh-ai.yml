@@ -184,19 +184,37 @@ jobs:
         run: node tools/refresh_cfcode.mjs
       # most news items carry only a headline (the outlet's text is never stored): the article is read here and a short factual digest
       # kept, never the article (tools/refresh_digest.mjs, data/live/digest.js, shown in the Report card)
+      # digests run on Qwen2.5-7B (Apache-2.0) whatever the round's model: in the 8 Nov 2026 tests it gave 9 of 9 usable English digests
+      # where Phi-3.5-mini gave 3 of 8 (replies not JSON). Its file is cached apart from the round's model.
+      - name: Restore the digest model
+        id: dgcache
+        if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'digest' || inputs.task == 'cycle')) }}
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/osap-llm-digest
+          key: osap-llm-digest-Qwen2.5-7B-Instruct-Q4_K_M-v1
       - name: Write report digests
         if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'digest' || inputs.task == 'cycle')) }}
-        timeout-minutes: 35
+        timeout-minutes: 45
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          OSAP_LOCAL_LLM: http://127.0.0.1:8080
-          OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
-          DIGEST_BUDGET_MIN: "25"
+          OSAP_LOCAL_LLM: http://127.0.0.1:8081
+          OSAP_LOCAL_MODEL: Qwen2.5-7B-Instruct-Q4_K_M.gguf (Apache-2.0, on-runner)
+          DIGEST_BUDGET_MIN: "30"
           DIGEST_PER_RUN: ${{ inputs.per_run || '40' }}
           DIGEST_ONLY: ${{ inputs.only }}
           DIGEST_URLS: ${{ inputs.urls }}
-        run: node tools/refresh_digest.mjs
+        run: |
+          f=Qwen2.5-7B-Instruct-Q4_K_M.gguf; d=~/.cache/osap-llm-digest; mkdir -p $d
+          if [ "$MODEL_KEY" = "qwen2.5-7b" ] && [ -s ~/.cache/osap-llm/$f ]; then ln -sf ~/.cache/osap-llm/$f $d/$f; fi
+          [ -s $d/$f ] || curl -sSfL --retry 3 -o $d/$f https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/$f
+          # the round's model server is stopped first: two models side by side would share the runner's 4 CPUs
+          pkill -f "llama_cpp.server --model" || true; sleep 2
+          nohup python -m llama_cpp.server --model $d/$f --model_alias local --host 127.0.0.1 --port 8081 --n_ctx 8192 --n_threads 4 > llm-digest.log 2>&1 &
+          for i in $(seq 1 90); do curl -sf http://127.0.0.1:8081/v1/models >/dev/null && break; sleep 2; done
+          node tools/refresh_digest.mjs
+          tail -5 llm-digest.log
       - name: Model server log (tail)
         if: ${{ always() }}
         run: tail -15 llm.log || true
