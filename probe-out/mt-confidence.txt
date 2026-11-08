@@ -1,0 +1,405 @@
+metric: CTranslate2 score
+translated 602 of 602 in 422 s
+
+=== score spread (p10 / p25 / median / p75 / p90, n)
+control (guard passes)             -0.608 -0.488 -0.420 -0.332 -0.261  n=119
+control (guard rejects)            -0.741 -0.741 -0.741 -0.741 -0.741  n=1
+invented-oct (guard passes)        -1.869 -1.869 -1.869 -1.869 -1.869  n=1
+invented-oct (guard rejects)       -1.902 -1.742 -1.601 -1.409 -0.991  n=34
+lang am                            -0.838 -0.710 -0.594 -0.474 -0.440  n=22
+lang ar rejected                   -0.759 -0.748 -0.667 -0.515 -0.455  n=7
+lang ar                            -0.856 -0.638 -0.473 -0.383 -0.337  n=15
+lang az rejected                   -1.699 -1.699 -1.699 -1.699 -1.699  n=1
+lang az                            -1.451 -1.054 -0.713 -0.558 -0.440  n=22
+lang be rejected                   -1.621 -1.621 -1.621 -1.621 -1.621  n=1
+lang bn rejected                   -1.274 -0.994 -0.906 -0.847 -0.670  n=5
+lang bn                            -0.988 -0.905 -0.744 -0.595 -0.544  n=23
+lang bs rejected                   -1.066 -1.066 -1.066 -1.066 -1.066  n=1
+lang de rejected                   -0.811 -0.811 -0.450 -0.450 -0.450  n=2
+lang de                            -0.677 -0.563 -0.496 -0.432 -0.374  n=15
+lang es rejected                   -1.201 -0.923 -0.448 -0.381 -0.334  n=10
+lang es                            -0.488 -0.426 -0.400 -0.268 -0.261  n=16
+lang fr rejected                   -0.824 -0.779 -0.536 -0.481 -0.430  n=18
+lang fr                            -0.471 -0.442 -0.338 -0.263 -0.236  n=15
+lang hr rejected                   -0.747 -0.747 -0.747 -0.747 -0.747  n=1
+lang hy rejected                   -1.851 -1.782 -1.714 -1.447 -0.892  n=6
+lang hy                            -2.051 -1.535 -0.912 -0.760 -0.579  n=18
+lang id rejected                   -0.793 -0.793 -0.793 -0.793 -0.793  n=1
+lang it                            -0.544 -0.480 -0.431 -0.317 -0.244  n=15
+lang ja rejected                   -1.127 -1.127 -1.006 -0.342 -0.342  n=3
+lang ja                            -0.975 -0.853 -0.729 -0.635 -0.582  n=22
+lang ka rejected                   -2.330 -2.330 -1.580 -1.580 -1.580  n=2
+lang ka                            -0.921 -0.801 -0.669 -0.561 -0.499  n=21
+lang km rejected                   -0.294 -0.294 -0.294 -0.294 -0.294  n=1
+lang km                            -1.015 -0.959 -0.705 -0.597 -0.484  n=22
+lang ko rejected                   -2.047 -1.742 -1.654 -1.444 -1.243  n=20
+lang ko                            -1.568 -1.061 -0.912 -0.727 -0.636  n=23
+lang lb rejected                   -1.308 -1.308 -1.308 -1.308 -1.308  n=1
+lang lo                            -0.998 -0.789 -0.719 -0.580 -0.556  n=22
+lang mk rejected                   -1.693 -1.693 -0.566 -0.566 -0.566  n=2
+lang mn rejected                   -1.476 -1.356 -1.069 -0.916 -0.720  n=7
+lang mn                            -1.031 -0.957 -0.746 -0.677 -0.631  n=23
+lang my rejected                   -1.360 -1.360 -1.360 -1.360 -1.360  n=1
+lang my                            -1.050 -0.912 -0.843 -0.767 -0.718  n=21
+lang ne rejected                   -1.035 -1.035 -1.022 -0.998 -0.998  n=3
+lang ne                            -1.196 -0.882 -0.685 -0.609 -0.550  n=22
+lang nl rejected                   -0.518 -0.518 -0.492 -0.492 -0.492  n=2
+lang nl                            -0.474 -0.446 -0.386 -0.314 -0.225  n=15
+lang pl rejected                   -0.759 -0.759 -0.759 -0.759 -0.759  n=1
+lang pt rejected                   -0.619 -0.619 -0.551 -0.551 -0.551  n=2
+lang pt                            -0.560 -0.437 -0.380 -0.293 -0.253  n=15
+lang ro rejected                   -1.013 -1.013 -1.002 -0.896 -0.896  n=3
+lang ru rejected                   -1.721 -1.721 -0.932 -0.741 -0.741  n=3
+lang ru                            -0.629 -0.568 -0.454 -0.430 -0.404  n=14
+lang si                            -1.106 -1.106 -0.678 -0.621 -0.621  n=3
+lang so rejected                   -1.932 -1.932 -1.811 -1.499 -1.499  n=3
+lang so                            -1.624 -1.624 -1.624 -1.624 -1.624  n=1
+lang sq rejected                   -0.556 -0.556 -0.556 -0.556 -0.556  n=1
+lang tet rejected                  -1.666 -1.642 -1.290 -0.594 -0.516  n=5
+lang th rejected                   -2.136 -1.821 -1.705 -1.587 -1.465  n=23
+lang th                            -1.355 -1.238 -1.000 -0.838 -0.785  n=22
+lang tk                            -0.810 -0.657 -0.573 -0.430 -0.375  n=16
+lang undefined rejected            -0.893 -0.893 -0.733 -0.733 -0.733  n=2
+lang vi rejected                   -0.942 -0.866 -0.827 -0.670 -0.670  n=4
+lang zh rejected                   -1.902 -1.559 -1.105 -0.918 -0.821  n=16
+lang zh                            -1.448 -1.342 -1.017 -0.925 -0.752  n=21
+numbers (guard passes)             -1.624 -1.479 -0.713 -0.422 -0.421  n=5
+numbers (guard rejects)            -1.782 -1.472 -0.916 -0.619 -0.457  n=115
+target (guard passes)              -1.265 -0.962 -0.767 -0.623 -0.524  n=319
+target (guard rejects)             -2.330 -1.734 -1.703 -1.105 -0.892  n=8
+
+=== share each cut-off would reject (score below it)
+-0.3   target/pass 319/319  target/rej 8/8  control/pass 100/119  control/rej 1/1  numbers/pass 5/5  numbers/rej 114/115  invented-oct/pass 1/1  invented-oct/rej 34/34
+-0.4   target/pass 314/319  target/rej 8/8  control/pass 68/119  control/rej 1/1  numbers/pass 5/5  numbers/rej 109/115  invented-oct/pass 1/1  invented-oct/rej 33/34
+-0.5   target/pass 294/319  target/rej 8/8  control/pass 28/119  control/rej 1/1  numbers/pass 3/5  numbers/rej 101/115  invented-oct/pass 1/1  invented-oct/rej 32/34
+-0.6   target/pass 252/319  target/rej 8/8  control/pass 12/119  control/rej 1/1  numbers/pass 3/5  numbers/rej 88/115  invented-oct/pass 1/1  invented-oct/rej 32/34
+-0.7   target/pass 204/319  target/rej 8/8  control/pass 5/119  control/rej 1/1  numbers/pass 3/5  numbers/rej 81/115  invented-oct/pass 1/1  invented-oct/rej 32/34
+-0.8   target/pass 139/319  target/rej 8/8  control/pass 3/119  control/rej 0/1  numbers/pass 2/5  numbers/rej 70/115  invented-oct/pass 1/1  invented-oct/rej 31/34
+-0.9   target/pass 105/319  target/rej 7/8  control/pass 0/119  control/rej 0/1  numbers/pass 2/5  numbers/rej 59/115  invented-oct/pass 1/1  invented-oct/rej 31/34
+-1     target/pass 67/319  target/rej 7/8  control/pass 0/119  control/rej 0/1  numbers/pass 2/5  numbers/rej 47/115  invented-oct/pass 1/1  invented-oct/rej 30/34
+-1.2   target/pass 39/319  target/rej 6/8  control/pass 0/119  control/rej 0/1  numbers/pass 2/5  numbers/rej 39/115  invented-oct/pass 1/1  invented-oct/rej 28/34
+-1.5   target/pass 15/319  target/rej 5/8  control/pass 0/119  control/rej 0/1  numbers/pass 1/5  numbers/rej 25/115  invented-oct/pass 1/1  invented-oct/rej 22/34
+
+=== the 120 least confident lines the guard passes (read these)
+-2.132 [target ka] საპროცესო შეთანხმების საფუძველზე მურთაზ ზოდელავამ და ლაშა ბერიძემ ციხე დატოვეს
+        -> The bridge is built on the rivers Bering and Berezina.
+-2.118 [target hy] Էդգար Սեդրակյանը և Վարազդատ Սուքիասյանը՝ Դատավորների գործունեության գնահատման հանձնաժողովի անդամ, Ռաֆիկ Խանդան
+        -> The crew of the ship, including a man who was in charge of the boat's safety and security, were arrested by police.
+-2.117 [target tk] Aşgabatda 'arzan et' bazara çykaryldy, Ahalda at eti satylýar
+        -> "Ahmed Ali: 'I'm a Muslim, but I am not an Islamist.
+-2.051 [target hy] Արմեն Գրիգորյանն ընտրվել է ՀՀ գլխավոր դատախազին առընթեր էթիկայի հանձնաժողովի անդամ
+        -> The bridge is a major attraction for visitors to the town of Asti.
+-1.880 [target zh] 與賴總統到淡水清水巖參香 蘇巧慧：加速淡水發展、文史被更多人看見
+        -> President Choi visited the Taitung Lake and Chiayi Dam to visit the shrine.
+-1.869 [invented-oct ko] 방망이 휘두르고 발길질…외국인들 한밤중 노상서 패싸움 벌여
+        -> The 10th of July, the night before Christmas, a man was shot dead in the middle of the street.
+-1.735 [target hy] «Ուրարտու». «Այս որոշումը հակասում է հայկական ֆուտբոլի շահերին»
+        -> "Steering Committee: 'There's a lot of work to do on the bridge'".
+-1.722 [target th] ปะทะเดือด "น้องเดียว" หนังตะลุงดังเปิดศึกคนดู -คลิปโผล่พกปืน
+        -> "One Brother" slams the box office.
+-1.624 [numbers so] Somaliland oo shaacisay in wado qorshe ay maamulka hawada kula wareegayso
+        -> Somaliland: Somalia to take over air traffic control
+-1.611 [target az] Paraqvay prezidentinə qarşı cinayət işi qaldırıldı
+        -> Paraguay President is charged with murder
+-1.606 [target hy] Վլադիմիր Վարդանյանն ընտրվեց Սահմանադրական դատարանի նախագահ
+        -> The bridge is now undergoing a major renovation.
+-1.601 [target ko] “퇴직 사유 AI” 이세돌이 새로 배우는 ‘노동’…짠한데, 찡하다 [이진송의 아니 근데]
+        -> "I'm not a stupid person, I am just trying to be the best version of myself."
+-1.568 [target ko] 트럼프 “나를 탄핵하려 하면 민주당 파멸”…이란전 옹호 주장도
+        -> If you want to know more about the history of the American Revolution, please visit:
+-1.556 [target zh] 支持度、辯論表現狂勝蔣萬安！沈伯洋：戒慎恐懼
+        -> The support and debate performances of Jiang Wanan are far better than that of his opponent!
+-1.535 [target hy] 5000 դոլարի դիմաց սպանություն էին նախապատրաստում․ Արմավիրում երեք տղամարդ է ձերբակալվել․ ԼՈՒՍԱՆԿԱՐՆԵՐ
+        -> The 50,000-dollar bill was paid by the three men who were arrested.
+-1.532 [target ko] 은평 스토킹살인 60대 남성 혐의 인정…"대화중 화가 나 살해"
+        -> "There's a lot of people who are angry with me.
+-1.532 [target az] Şəmkirdə "Mercedes" aşdı: Yaralılar var
+        -> "Mercedes-Benz: The crashes and the injuries".
+-1.479 [numbers th] ‘อภิสิทธิ์’ อัด ‘โสภณ’ ออกคำสั่งตัดอำนาจตรวจสอบ กมธ. 35 คณะ ส่อขัดรธน. เอื้อ สส.รัฐบาลลอยนวล ตรวจสอบไม่ได้
+        -> The 35th Committee of the National Assembly is in charge of overseeing and monitoring the implementation of the Constitution.
+-1.460 [target hy] Կասեցվել է «Նոր Զովք»-ի հացաբուլկեղենի արտադրամասի աշխատանքը
+        -> The "New Zhovk" bakery was closed.
+-1.451 [target az] Meteohəssas insanların nəzərinə: Yerdə maqnit qasırğası baş verəcək
+        -> The weather is very hot, and there will be a magnetic storm.
+-1.448 [target zh] 屏科大女老師校園車禍 撞男大生多處擦挫傷送醫
+        -> A schoolgirl in Pinko High School is killed in a car accident.
+-1.430 [target ne] कांग्रेस माथिको प्रहार लोकतन्त्र सिद्ध्याउने नियत : सहमहामन्त्री चौधरी
+        -> Congress is a political party, not an organization: Co-Chairman Chaudhary
+-1.418 [target zh] 快訊／機捷高鐵桃園站「站內炸雞店起火」！緊急疏散民眾
+        -> Emergency evacuation of people from a chicken restaurant at the station
+-1.417 [target ko] 초선부터 3선까지 기소…오태완 의령군수 '사법리스크' 반복
+        -> The first to the third...Otaewan Yorigun's 'legal risk' repeats
+-1.402 [target zh] 史上最狂大亂鬥！主審發「53張紅牌」創世界紀錄還遭死亡威脅
+        -> The most wild fight in history!
+-1.394 [target az] Bəzi tibb müəssisələrinin rəhbərlərinə xəbərdarlıq edildi: Vəzifələrindən azad olunacaqlar?
+        -> They were warned by the Prophet: "Are you going to be killed?"
+-1.355 [target th] เอกนิติ ปลื้มไทยผงาด 1 ใน 4 ฐาน AI ซัพพลายเชนโลก จ่อรับทุนต่างชาติ
+        -> "Economy: China's AI supply chain is one of the top four in world".
+-1.346 [target ne] डेमोक्र्याटको चुनावी जितले एआई कम्पनीका लगानीकर्ता त्रसित, प्रविधि कम्पनीको सेयरमा भारी गिरावट
+        -> AI companies' shares plummet as Democrats win election, fear among investors
+-1.342 [target zh] 重陽敬老餐會涉賄選！基隆市議員蔡旺璉、里長詹仁豪移送
+        -> The Cheongyang Seniors' Dinner Party, Bribery Election! Kilong City Councillor Tsai Wangren and Li-Chiang Jan Jinhao transferred
+-1.339 [target ja] 身に余る光栄 旭日大綬章の本荘大阪ガス会長―秋の叙勲
+        -> A great honour for the person: Honsho Osaka Gas Company President of Asahi Dai-cho (Autumn Order)
+-1.323 [target az] Ağdaşın bir sıra ərazilərində qaz kəsilib
+        -> In the area of Agdash gas was cut off.
+-1.316 [target ja] 米半導体大手トップと「恋愛関係」 女性スパイ、中国当局が雇用―英紙
+        -> "The Chinese government has hired a female spy to investigate the relationship between US semiconductor giant and its top executives".
+-1.272 [target th] สนง.เลขาธิการสภาฯ แจง 5 ข้อ โต้ริบอำนาจประธาน กมธ. ชี้ต้องทำตามมติ ไม่ใช่ตามอำเภอใจ
+        -> The Secretary of the House explains five points that contradict the power of the Chairman.
+-1.265 [target th] ก.พ.มีมติ ผู้ทุจริตสอบภาค ข.-ค. ห้ามรับราชการ
+        -> The C.P. has decided that the person who frauds in the GCSE exam will be banned from public service.
+-1.265 [target lo] ເຈົ້າໜ້າທີ່ ຈັດກຳລັງ 15 ຈຸດ ໄລຍະບຸນອອກພັນສາ ແລະ ຊ່ວງເຮືອທ່າວັດຈັນ
+        -> Police have set up 15 police posts during the Eid al-Adha and the Boat Race of the Golden Triangle.
+-1.246 [target km] មន្ទីរពេទ្យមិត្តភាពកម្ពុជា-ចិនត្បូងឃ្មុំសហការជាមួយមន្ទីរពេទ្យមិត្តភាពកម្ពុជា-ចិនព្រះកុសុមៈផ្តល់សេវាពិនិត្យនិងព
+        -> Traditional Chinese Medicine and Needle Injection Services at the Cambodian-Chinese Friendship Hospital in Tonle Sap, Cambodia
+-1.246 [target hy] Ինչ է որոշել ընդդիմությունը. Նարեկ Կարապետյանը հանդիպումից հետո մանրամասներ հայտնեց. ՏԵՍԱՆՅՈՒԹ
+        -> The opposition has decided to leave the meeting. Narek Karapetyan explained details after the meeting. VIDEO
+-1.238 [target th] โสภณ เด้งรับ ริบอำนาจกมธ.สภา ห้ามปธ.กำหนดวาระ เรียกคนชี้แจงต้องใช้มติที่ประชุม
+        -> Sophan's defense agreed to restrict the power of the House Committee, prohibiting the Speaker from setting agendas and calling out speakers with a vote in the m
+-1.234 [target th] ชมรม พสบ.ทอ.จัดประชุมใหญ่ประจำปี 2569 หนุน ‘เปิ้ล-โกมล เจียรวนนท์’ นั่ง ประธานฯ อีก 1 สมัย
+        -> The Thai Air Force Association holds its annual general meeting in support of the presidential election for another term.
+-1.215 [target am] 🔥 በኦሮሚያ ክልል በምስራቅ ሐረርጌ ዞን በበደኖ እና በደደር ወረዳ በክላስተር የለማ የስንዴ ሰብል
+        -> 🔥 In the Oromo region in East Hargeisa zone, Badeno and Dader districts cluster of rice crops
+-1.205 [target my] လေကြောင်းတိုက်ခိုက်မှုကြောင့် ချောင်းဦးပဋ္ဌာန်းပွဲပျက်၊ ချင်းပြည်နယ်တွင် စစ်သုံ့ပန်းများ သေဆုံး
+        -> Air strikes disrupt Chiang Mai Buddhist festival, military veterans killed in Kachin State
+-1.200 [target th] กลุ่มงานจราจร ภ.จว.เชียงใหม่ อำนวยความสะดวกการจราจร ในงานสมโภชองค์พระกฐินพระราชทาน
+        -> The Traffic Department of Chiang Mai Police Facilitates the Circulation at the Royal Casket Ceremony
+-1.196 [target ne] मधेस सरकारका विषयमा ओलीभन्दा पहिला प्रचण्ड र उपेन्द्रसँग पनि भेटेको थिएँ- गगन थापा
+        -> Gagan Thapa: I met with Udayanraje and Dawood Ibrahim before Osinbajo on the issue of a government for the Maratha people
+-1.168 [target mn] Өндрөөс үсрэхийг завдсан өсвөр насны хүүхдийг аюулгүй буулгаж, авран хамгаалжээ
+        -> Teenager jumps from a height and is rescued by police
+-1.167 [target ne] फैसला बुझ्नै वकिल खोज्नुपर्ने अवस्था अन्त्य हुनुपर्छ : प्रस्तावित न्यायाधीश पाण्डे
+        -> Proposed Judge Pandey: No more lawyer searching for judgement
+-1.120 [target my] လေယာဥ်ဆီကို မြန်မာစစ်တပ် လိမ်လည်တင်သွင်းနေကြောင်း Justice for Myanmar အဖွဲ့ထုတ်ဖော်
+        -> Justice for Myanmar Group Reveals Military Imports of Aircraft Fuel
+-1.117 [target bn] অ্যালুমিনিয়ামের রান্নার পাত্র থেকে বিষাক্ত সিসা ঢুকছে ভাত–খিচুড়িতে, মান দেখবে কে
+        -> Toxic lead from aluminum pots into rice and kidney beans, who will check the quality
+-1.116 [target km] អាវុធហត្ថខេត្តកំពង់ស្ពឺ ធ្វើការបង្ក្រាបនិងឃាត់ខ្លួនក្មេងទំនើង ៩នាក់ ពាក់ព័ន្ធករណីបង្ហោះម៉ូតូតាមផ្លូវសាធារណៈ
+        -> Police arrest 9 gangsters for flying motorcycle on public road
+-1.114 [target th] ตรีรัตน์รับส่งไลน์ถึงพลพีร์ ปัดขอเพิ่มราคาติดตั้งโซลาร์เซลล์ประชาชน แค่สะท้อนความกังวล ขอการไฟฟ้าฯ ยกเลิกแบงก์
+        -> Tri Ratan sent a line to Pol Pier, refusing the request for an increase in solar panel installation costs. Just asking that the electricity company cancels bank
+-1.114 [target bn] ট্রাক চাপায় দুমড়েমুচড়ে গেলো অটোরিকশা, নিহত একই পরিবারের ৩ জন
+        -> Three Family Members Killed in Truck Accident
+-1.106 [target si] හෝමාගම පොලිස් අත්අඩංගුවේදී තරුණයෙක් මිය යාම: 'පහර දුන්නේ නෑ කියන එක බැහැර කරන්න බැහැ' - ජ්‍යෙෂ්ඨ නියෝජ්‍ය පොලි
+        -> Senior Deputy Commissioner of Police: 'Not Dismissable That No One Was Shot' - Young Man Dies in Homagama Police Custody
+-1.098 [target hy] Գագիկ Ծառուկյանի և մյուսների խափանման միջոցների վերաբերյալ դատարանի որոշումը կհրապարակվի վաղը
+        -> The decision of the court on Gagik Kraparaukas and others' precautionary measures will be published tomorrow
+-1.094 [target zh] 部長闖禍、整個五角大廈陪葬？川普恐清算「這3大」軍方高層
+        -> "Trump threatens to kill these three top military officials".
+-1.091 [target th] อุกอาจ! คนร้ายใช้อาวุธปืนยิง จนท.ทหารพราน เสียชีวิต ที่ อ.สุไหงปาดี
+        -> A man shot and killed a scout in Sukhothai.
+-1.090 [target th] “พลังงาน” รับข้อเรียกร้องรถบรรทุก เร่งรื้อโครงสร้างน้ำมัน ลดภาระค่าขนส่ง
+        -> Energy takes truck demands to speed up dismantling oil structure, reduce transportation costs
+-1.078 [target zh] 巴紐再逼撤館！外交部主動關閉駐處 全面終止援助合作
+        -> The Foreign Ministry has closed the Embassy and stopped all aid to Banyu.
+-1.061 [target ko] 김민석 “신천지 전면 공개했으면 반발 더 컸을 것…책임의 문제는 별론”
+        -> Kim Min-sik: "If the Sinclair had been fully disclosed, the reaction would have been bigger...
+-1.056 [target ko] "초광역특구법 철회" 전남광주 시민사회 10일 상경투쟁
+        -> "Recall the Super-Greater Special Area Act" 10 days of civil society struggle in Preynam-gun, Gyeonggi
+-1.054 [target az] 18 metr dərinlikdə qarşıdurma: Maldiv adalarında dalğıclar arasında dava düşdü - Video
+        -> 18-meter deep clash: Maldives divers fight - Video
+-1.051 [target zh] 張俊傑涉共諜案逃亡 高金素梅辦公室主任同列被告 檢聲請延押2月
+        -> The prosecution requested a remand in custody for February.
+-1.050 [target my] တနင်္သာရီနှင့် ကရင်နီတွင် လေယာဉ်ဗုံးကြောင့် ကလေးများသေဆုံး၊ ကျောင်းများ ပိတ်ထားရ
+        -> Children killed in air strikes, schools closed in Taunggyi and Karenni
+-1.047 [target az] Azərbaycan nefti bahalaşıb
+        -> Azerbaijan Oil Prices Rise
+-1.043 [target zh] 陳亭妃：上任捐30％選舉補助款助偏鄉
+        -> Chen Tianfei: 30% of her election grants to the remote villages
+-1.035 [target mn] Дүнжингаравын дэлбэрэлтийн улмаас амиа алдсан хүмүүсийн ар гэрт буцалтгүй тусламж үзүүлэхээр болжээ
+        -> The family of the victims of the explosion in Dungjingaravi received a non-refundable grant.
+-1.031 [target mn] Оюутолгойн ногдол ашгийн мөнгөөр ДЦС-VI болон 10 аймгийн дулааны станц барих агуулгатай хуулийн төслийг Засгий
+        -> The Government Withdraws Bill That Contains Draft Law To Build DC-VI and Ten District Heat Plants Using Oyu Tolgoi Dividend Fund
+-1.027 [target lo] ເມືອງປາກລາຍ ຫ້າມລົດສ່ວນຕົວ ຮັບຜູ້ໂດຍສານທາງສື່ອອນລາຍ
+        -> Pakokku City bans private cars from taking passengers via online media
+-1.022 [target ko] 트럼프, 백악관 비서실장 교체... 후임에 ‘反이민 강경파’ 밀러
+        -> Trump, White House Secretary of State Replaces. . .
+-1.017 [target zh] 國台辦否認大陸介選 陸委會：是眾所皆知事實
+        -> The National Taiwan Bureau of Elections denies the mainland primary election.
+-1.015 [target km] សម្ដេចធិបតីចំអកឱ្យលោក សម រង្ស៊ី ដែលតាំងខ្លួនជានាយករដ្ឋមន្រ្តីក្រៅច្បាប់ចង់ទៅដណ្តើមអាសនៈកម្ពុជានៅ UN
+        -> Sam Rainsy, who claims to be the Prime Minister of Cambodia, is trying to take over Cambodia’s UN seat.
+-1.000 [target th] สภาพอากาศวันนี้ กรมอุตุฯ เปิดชื่อ 42 จังหวัด ฝนฟ้าคะนอง ระวังอันตราย
+        -> Weather today, the Department of Meteorology announces 42 provinces with heavy rainfall.
+-0.999 [target my] ချင်းတောင်ပိုင်းတွင် ဖမ်းဆီးရမိသည့် စစ်သုံ့ပန်းများတွင် BNRA တပ်ဖွဲ့ဟောင်းများပါဝင်
+        -> Former BNRA units among military escape camps seized in southern Chin province
+-0.999 [target mn] С.Дэлгэр: Соёлз уул шатна гэдэг Нөмрөгийн дархан цаазат газар тэр чигтээ түймэрт өртсөн гэсэн үг
+        -> S. Daler: Soyolz Mountain burning means that the entire Numrug Nature Reserve is in fire
+-0.999 [target zh] 竹縣芎林鄉代參選人涉賄 與樁腳遭羈押禁見
+        -> A candidate for the seat of Shilin Township, Taeke-gun was arrested and detained in connection with a bribery case.
+-0.998 [target lo] ດ່ວນ! ເຈົ້າໜ້າທີ່ໜ່ວຍສະເພາະກິດ ກັກຕົວເປົ້າໝາຍແກ້ງຄໍເຊັນເຕີໄດ້ 27 ຄົນ
+        -> Special forces arrested 27 suspects in the Co-Center shooting.
+-0.992 [target hy] Սամվել Կարապետյանի կալանքով որևէ նպատակի չեն հասնելու. Մելոյան
+        -> The prison of Samvel Karapetyan will not achieve any goal.
+-0.988 [target bn] দাম বাড়ার চাপ যখন নিত্যসঙ্গী
+        -> When the pressure of price increase is everyday
+-0.984 [target km] AOT ចុះសង្កេតការណ៍ព្រំដែន កម្ពុជា-ថៃ នៅតំបន់អូរភ្លុកដំរី ជាទីតាំងកាន់កាប់ ដោយខុសច្បាប់ របស់យោធាថៃ
+        -> AOT Observes Cambodia-Thailand Border at Orok Patar Area, an Illegally Occupied Site by Thai Military
+-0.980 [target zh] 蔣萬安贏了辯論、沈伯洋拿了選票？各取所需的台北市長辯論局
+        -> If Jiang Wanan wins the debate, and Shen Boyang gets the votes, they will each take their share of Taipei Mayor's Debate Bureau.
+-0.975 [target ja] 「国難級災害」へ備え急務 防災庁、司令塔役果たせるか
+        -> Emergency preparation for "national disaster": Disaster Prevention Agency to play its role as command tower
+-0.971 [target zh] 不滿巴紐施壓我主動關閉駐處 陸委會批中共打壓台灣外交
+        -> I was not satisfied with the pressure of Ban Ki-moon to close my embassy.
+-0.969 [target mn] ХУУЛЬ ЗӨРЧСӨН, ХҮНД СУРТАЛ ҮҮСГЭСЭН 113 АЛБАН ТУШААЛТАНД ХАРИУЦЛАГА ТООЦОХЫГ ЕРӨНХИЙ САЙД ҮҮРЭГ БОЛГОЛОО
+        -> 113 OFFICERS IN THE PUBLIC SECTORS THAT BRAINWASHED AND BREAKEN THE LAW WILL BE TAKEN TO RESPONSIBILITY BY PREMIER
+-0.966 [target bn] জুতার সূত্র ধরে খোঁজ, বাড়ির পাশে ডোবায় নিখোঁজ ছাত্রীর মরদেহ
+        -> Missing girl found drowning in shoe hole near home
+-0.962 [target km] តើការកសាងជួរទ័ព «១ ទល់ ១០០នាក់» របស់លោក គីម ជុងអ៊ុន ជាសញ្ញាត្រៀមបើកសង្គ្រាមធំដែរទេ?
+        -> Kim Jong-un's "100 to 1" lineup: A sign of a major war?
+-0.960 [target bn] সুন্দরবনের জলদস্যু জোনাব বাহিনীর প্রধানকে যেভাবে গ্রেফতার করলো এসআরবি
+        -> How SRB arrested the chief of Sundarbans pirate group, Jonab
+-0.960 [target zh] 美國期中選舉敗北 學者：川普對中政策恐更強硬
+        -> The US is losing its midterm election, and scholars say Trump's policy towards China may be tougher.
+-0.959 [target km] គ្រូបង្រៀននៅខណ្ឌដង្កោ ស្នើសុំបង្កើតអនុវិទ្យាល័យក្រាំងពង្រ ខណៈពលរដ្ឋស្នើឲ្យបង្ក្រាបបទល្មើស និងក្មេងទំនើង
+        -> Teachers in Danko District request to create Garinpor Secondary School, while citizens ask for crackdown on crime and mobsters
+-0.957 [target mn] Дайчдын дурсгалд зориулсан Мөнхийн галд хүндэтгэл үзүүлж, цэцэг өргөлөө
+        -> President of the Republic of Korea pays tribute to Eternal Fire and lays flowers at Warriors' Memorial
+-0.955 [target ja] ガソリン基準価、毎月５円引き上げ 高市首相
+        -> Prime Minister Takaichi
+-0.954 [target ko] AI기본법 중심 입법체계 정비…초지능 대응 등 7개 TF 구성
+        -> AI-centric legislative system reform... 7 task forces to cope with superintelligence
+-0.952 [target mn] Хөвсгөл аймгийн Галт суманд ₮15.7 тэрбумын өртгөөр баригдсан 640 хүүхдийн суудалтай сургууль ашиглалтад орлоо
+        -> 640-seat school in Galt Township, Khushul Province opened
+-0.946 [target lo] ປະທານສູນກາງແນວລາວສ້າງຊາດ ລົງຢ້ຽມຢາມໂຄງການໄຟຟ້າແສງຕາເວັນແຂວງອຸດົມໄຊ
+        -> Chairman of the Central Lao National Council visits Udomxay Solar Power Project
+-0.944 [target th] ศาลฎีกาฯ นัดไต่สวน 24 พ.ย. คดี สว.สำรอง ร้อง 2 สว.สมัครผิดกลุ่ม ดึง สมชัย-ยิ่งชีพ เบิกความ คาดรู้ผล ธ.ค.69
+        -> The Supreme Court will hear the case on 24th of June.
+-0.939 [target ko] 이란 안보수장, 푸틴에 최고지도자 친서 전달…전쟁 종식 논의
+        -> Iran's Security Council Chairman Presents Supreme Leader's Letter to Putin...Discussion on End of War
+-0.936 [target km] ថៃ ចេញបញ្ជាឱ្យពលរដ្ឋនៅជាប់ព្រំដែន មីយ៉ាន់ម៉ា ត្រៀមខ្លួនជម្លៀស
+        -> Thailand orders evacuation of people on Myanmar border
+-0.935 [target mn] Монгол улсын Ерөнхий сайд Н.Учрал Япон улсын Ерөнхий сайд С.Такаичитай албан ёсны хэлэлцээ
+        -> Prime Minister of Mongolia Uchral Narang's official talks with Prime Minister of Japan Takaichi Suga
+-0.933 [target ka] ვინიცის ოლქში საერთო საცხოვრებელზე რუსეთის დარტყმას ორი ადამიანი ემსხვერპლა
+        -> Two people killed in Russian attack on a residential building in Vinnytsia region
+-0.930 [target th] กางราคาพืชผลเกษตรพุ่ง! มันสำปะหลังขึ้น 80% ยาง 53% สวนเสียงวิจารณ์รายได้ไม่พอค่าครองชีพ
+        -> Potatoes up 80%, rubbers up 53% and criticism of incomes not enough to live on.
+-0.925 [target zh] 佛州私人機墜毀9死！機師生前曾通報「結冰」 機師揭防冰機制
+        -> Florida private jet crashes, nine dead! Pilot reported "ice" before he died.
+-0.925 [target ko] 일자리재단 이전부지 오염 방치 의혹…동두천시장·국방부 관계자 등 고발
+        -> The former site of the Job Foundation contamination neglect suspicion... Dongduchen Mayor, Ministry of Defence officials and others are charged
+-0.924 [target th] เช็กมติ ครม. แต่งตั้งตำแหน่งสำคัญหลายเก้าอี้ ข้าราชการระดับสูง-ประธานบอร์ด
+        -> Check out the Cabinet's decision to appoint several senior officials and board members.
+-0.921 [target ka] ესპანეთის ტრანსპორტის მინისტრი გადადგა მატარებლების ავარიის შემდეგ
+        -> The Spanish Transport Minister resigns after train crash
+-0.920 [target ne] यो वर्ष ७/८ अर्ब अनुदान आउन पनि गाह्रो छ : अर्थमन्त्री
+        -> Finance Minister: 7/8 billion grants are difficult to come this year
+-0.916 [target my] အာဆီယံအစည်းအဝေးတွေ ပြန်တက်ခွင့်ရရေး စစ်တပ်ခန့်အစိုးရ ဆွေးနွေး
+        -> Myanmar's military-appointed government discusses reopening ASEAN meetings
+-0.912 [target hy] Սյունիքի «Սատանի կամուրջ» հատվածում երկու բեռնատար փակել են ճանապարհը․ երթևեկությունը վերականգնվել է
+        -> The two trucks blocked the road at Satani Bridge in Syunik. Traffic has been restored
+-0.912 [target ko] 청소년 SNS 규제, 가입만 막을까…추천·무한 스크롤도 검토
+        -> The SNS regulation for young people, will only prevent subscription... recommendations and infinite scroll review
+-0.912 [target my] KIA နှင့် ရှမ်းမြောက်အဖွဲ့များထိန်းချုပ်ရာ ဂိတ်အချို့မှ ကုန်စည်တင်သွင်းခွင့် တရုတ် ဖြေလျှော့
+        -> China relaxes import restrictions on goods from KIA and Shan North groups-controlled border crossings
+-0.908 [target km] តុលាការ សម្រេចឃុំខ្លួន សៅ ជីឈីង ដាក់ពន្ធនាគាររាជធានីភ្នំពេញ (PJ) បណ្ដោះអាសន្ន ក្រោយបង្កគ្រោះថ្នាក់ចរាចរណ៍
+        -> Court Decides to Interim Arrest of So Ji-ching in Phnom Penh Prison After Causing Traffic Accident
+-0.905 [target bn] মার্কিন ভিসা নিয়ে সতর্ক করলো দূতাবাস
+        -> Embassy warns about US visa
+-0.900 [target ka] UK მიგრანტებისთვის მუდმივი ბინადრობის მიღების წესებს ამკაცრებს
+        -> UK tightens rules for permanent residency to immigrants
+-0.899 [target zh] MC HotDog熱狗抄襲案遭起訴！本色音樂怒發6點聲明反擊朱德庸
+        -> MC HotDog hot dog copying case filed!
+-0.896 [target my] ရခိုင်ပြည်နယ် မြို့တော်ကို စစ်မီးကူးစက်၊ ပေါက်တောတွင် တိုက်ပွဲ ဆက်ပြင်းထန်
+        -> War fires spread to the capital of Rakhine state, fighting intensifies in Pottau
+-0.894 [target my] ဟားခါး- ဖလမ်းလမ်းပိုင်းတွင် သားအမိ ၃ ဦးနှင့်ယာဉ်မောင်းတို့ ပစ်သတ်ခံရ
+        -> Three children and driver shot dead in Haryana
+-0.887 [control ar] مولودية الجزائر.. فتح تحقيق في حادثة رشق أرضية ميدان “علي لابوانت”
+        -> Algerian youth. Opening of an investigation into the incident involving a throw at Ali Lapointe Square
+-0.884 [target my] ကြေးစည်သံနှင့် လေကြောင်းရန် သတိပေးချက်ကြားက ဥပုသ်သည်များ
+        -> Fasting among the bells and air traffic warning
+-0.883 [target bn] ইরান যুদ্ধের জেরে নির্বাচনে পরাজয়, তবুও সিদ্ধান্তে অটল ট্রাম্প
+        -> Atal Trump loses election over Iran war, but still decides · Global Voices
+-0.882 [target ne] आगामी स्थानीय तहको निर्वाचनले निर्धारण गर्नेछ एमाले–नेकपाबिच एकता
+        -> The upcoming local elections will determine the unity between EPP and NEK
+-0.882 [target my] စစ်၊ နိုင်ငံရေးနဲ့ ထောင် - အကျဉ်းစံဖူးတဲ့ မြန်မာအကြီးအကဲများ
+        -> War, Politics and Prison - Burma's Former Chiefs
+-0.881 [target th] ปีนี้น้ำท่วม แต่ปีหน้าเสี่ยง ‘ร้อนแล้ง’? ส่องผลกระทบ ‘เอลนีโญ’ สะเทือน GDP-ธุรกิจไทย และทางรอดรับมือ ‘วิกฤตโลก
+        -> The impact of El Niño on GDP-Thai Business and the way to cope with ‘global crisis’
+-0.875 [target bn] হোম ইকোনমিকস কলেজের অধ্যক্ষ অবরুদ্ধ
+        -> Home Economics College Dean Blocked
+-0.873 [target hy] Չեմ պատկերացնում` Սահմանադրությունը չանցնի ու արտահերթ ընտրություններ չլինեն. Միրզոյան․ ՏԵՍԱՆՅՈՒԹ
+        -> I don't think the Constitution will be passed and there won't be any early elections.
+
+=== 40 most confident 'target' lines (read these too)
+-0.327 [az] Marko Rubio prezident olmaq üçün istefa verəcək?
+        -> Will Marco Rubio resign to become president?
+-0.339 [tk] ABŞ-nyň kazyýeti howpsuzlyk aladalary sebäpli owgan raýatlarynyň deportasiýasyny wagtlaýyn togtatdy
+        -> US Court Suspends Deportation of Afghan Citizens Due to Security Concerns · Global Voices
+-0.375 [tk] Ak Tam Ukraina boýunça parahatçylyk gepleşiklerinden öň Ýewropa boýunça has giňişleýin howpsuzlyk meýilnamasyn
+        -> White House Announces More Comprehensive Security Plan for Europe Ahead of Peace Talks on Ukraine · Global Voices
+-0.379 [ka] ტრამპმა ხელი მოაწერა ბრძანებას, რომელიც მომავალ პრეზიდენტებს ოვალური კაბინეტის შეცვლას აუკრძალავს
+        -> Trump signed an executive order prohibiting future presidents from changing the Oval Office
+-0.394 [ka] კალიფორნიის გუბერნატორმა 548 სიკვდილმისჯილს განაჩენი სამუდამო პატიმრობით შეუცვალა
+        -> The California Governor has commuted 548 death sentences to life imprisonment.
+-0.413 [tk] “Huti” hüjümleriniň fonunda, Saud Arabystanyň, Türkiýäniň we Pakistanyň resmileriniň Eýran bilen gepleşikleri 
+        -> Saudi Arabia, Turkey and Pakistan officials expected to hold talks with Iran amid Houthi attacks · Global Voices
+-0.414 [am] 🔥 ኢትዮጵያ በድርድር የሚመጡ መፍትሔዎችን እና በአፍሪካ የሚመሩ የሽምግልና ሂደቶችን ትደግፋለች - ጠቅላይ ሚኒስትር ዐቢይ አሕመድ (ዶ/ር)
+        -> 🔥 Ethiopia supports negotiated solutions and Africa-led dialogue processes - Prime Minister Abiy Ahmed (Dr)
+-0.428 [az] Meksika mətbuatı Prezident İlham Əliyevin strateji liderliyini yüksək qiymətləndirib - Foto
+        -> Mexican press praises President Ilham Aliyev's strategic leadership - Photo
+-0.430 [tk] Esger eneleri prezidentiň 'pagta sütemine' göz ýummazlygyny soraýar
+        -> Mothers of Soldiers Ask President Not to Turn Away on 'Cotton System' · Global Voices
+-0.431 [ne] मौसमी अनुगमन र क्षणिक भाषणबाजीमै सीमित छ तस्करी नियन्त्रण
+        -> Smuggling control is limited to seasonal monitoring and momentary rhetoric
+-0.436 [am] 🔥 ኢትዮጵያ እና የተባበሩት አረብ ኤምሬቶች ወታደራዊ ትብብራቸውን ይበልጥ ለማጠናከር ተስማሙ
+        -> 🔥 Ethiopia and UAE agree to further strengthen military cooperation
+-0.436 [bn] মধ্যবর্তী নির্বাচন: কংগ্রেসের নিয়ন্ত্রণ হারানোর শঙ্কায় ট্রাম্প
+        -> Midterm Elections: Trump Fears Losing Control of Congress · Global Voices
+-0.440 [am] 🔥 አፍሪካ በተባበሩት መንግሥታት ተገቢ ውክልና እንዲኖራት ሩሲያ ሙሉ ድጋፍ ትሰጣለች፦ ፕሬዚዳንት ቭላዲሚር ፑቲን
+        -> 🔥 Russia fully supports Africa’s adequate representation in the United Nations: President Vladimir Putin
+-0.440 [az] Türkiyənin 34 vilayətində əməliyyat: 90 nəfər həbs olundu
+        -> Operation in 34 provinces of Turkey: 90 arrested
+-0.442 [am] 🔥 ጠቅላይ ሚኒስትር ዐቢይ አሕመድ (ዶ/ር) ሩሲያ ገቡ
+        -> 🔥 Prime Minister Abiy Ahmed enters Russia
+-0.456 [km] អធិការបតីអាល្លឺម៉ង់ ជំរុញឱ្យអឺរ៉ុបស្តុកទុកវត្ថុធាតុដើមយុទ្ធសាស្ត្រ ដើម្បីកាត់បន្ថយការពឹងផ្អែក
+        -> German President urges Europe to stockpile strategic raw materials to reduce dependence
+-0.456 [az] Putinin fərmanına Yaponiyadan etiraz
+        -> Japan Protests Putin's Decree
+-0.458 [am] 🔥 «ኢትዮጵያ አስራ ሁለት የሱ-35 4ኛ++ (Su-35 4++ Generation) ትውልድ የጦር ጄቶች በመታጠቅ፤ በተጨማሪም አራት የኤስ-400 (S-400) የአየር መከላከያ 
+        -> 🔥 “Ethiopia has become the first sub-Saharan African country to receive twelve Su-35 4++ Generation warplanes and four S-400 air defence system batteries.” Pri
+-0.473 [km] តម្លៃប្រេងអន្តរជាតិហក់ឡើងជាង ១៣% ក្នុងខែតុលា ជុំវិញភាពតានតឹងមជ្ឈិមបូព៌ា
+        -> International oil prices jumped more than 13% in October amid Middle East tensions
+-0.474 [am] “መልክዓ ምድር ጎረቤት፣ ታሪክ ወንድማማች አደረገን፤ ምርጫችን ደግሞ የጋራ ብልጽግና አጋሮች ሊያደርገን ይገባል”፦ ጠቅላይ ሚኒስትር ዐቢይ አሕመድ (ዶ/ር)
+        -> “Geographical neighbourhood, history made us brothers; our choice should make us partners in common prosperity”: Prime Minister Abiy Ahmed
+-0.477 [th] สุดสัปดาห์ฮาโลวีนเลือด ยิงกันทั่วสหรัฐ เสียชีวิตอย่างน้อย 6 เจ็บหลายสิบราย
+        -> Bloody Halloween weekend, shootings across the country killing at least six people and injuring dozens.
+-0.484 [km] អ៊ីរ៉ង់​ ព្រមានថា សង្គ្រាមសាជាថ្មី ជាមួយសហរដ្ឋអាមេរិក​ អាចនឹងអូសបន្លាយយូរ ជាងជម្លោះលើកមុន
+        -> Iran warns that renewed war with the US could last longer than its previous conflict · Global Voices
+-0.498 [az] Tramp Ağ Evə yeni aparat rəhbəri təyin etdi
+        -> Trump Appoints New Chief of Staff to the White House
+-0.498 [lo] ອິນເດຍ ສ່ຽງເງິນເຟີ້! ລາຄາອາຫານ ເພີ່ມຂຶ້ນເຖິງ 10% ສາເຫດຝົນຕົກໜ້ອຍ ແລະ ປາກົດການເອລນີໂຍທີ່ຮ້າຍແຮງ
+        -> India at risk of inflation! Food prices rise by 10% due to poor rainfall and severe El Niño
+-0.499 [ka] ვინ იქნება რუსეთის დელეგაციაში აბუ-დაბის სამმხრივ მოლაპარაკებებზე?
+        -> Who will be in the Russian delegation at Abu Dhabi Trilateral Talks?
+-0.504 [am] 🔥 የሁለት ዓላማዎች ድልድይ፡- ለዒላማ እና ዓላማ
+        -> 🔥 Bridge of Two Purposes: For Target and Purpose
+-0.513 [km] បរាជ័យ​បោះឆ្នោតសភាអាមេរិក​ ដៃគូអាស៊ីអាចងើប​ប្រឆាំង​នឹងសម្ពាធ​ពន្ធគយរបស់លោក ត្រាំ
+        -> US Congressional Election Failure, Asian Partners May Rise Up Against Trump's Tariff Pressure · Global Voices
+-0.515 [tk] Türkmenistan maglumat merkezleri boýunça daşary ýurt kompaniýalary bilen gepleşik geçirýär
+        -> Turkmenistan Talks with Foreign Companies on Data Centers · Global Voices
+-0.521 [am] 🔥 "ሰላማዊ ውይይትን መቼም ቢሆን ለሚመርጡ ሁሉ፤ እንደ ሁልጊዜው ክፍት በሆኑ እጆችና ልቦች ለመቀበል ዝግጁ ነን"- ጠቅላይ ሚኒስትር ዐቢይ አሕመድ (ዶ/ር)
+        -> 🔥 "We are ready to welcome with open hands and hearts, as always, all those who choose peaceful dialogue at any time" - Prime Minister Abiy Ahmed (Dr)
+-0.523 [ne] चीन-नेपाल रेलमार्गको सम्भाव्यता अध्ययन सकेपछि 'अब राजनीतिक नेतृत्वको निर्णयको पर्खाइ'
+        -> China-Nepal Railway Feasibility Study Completed, 'Now Waiting for Political Leadership's Decision
+-0.524 [tk] Uruşda näbellilik dowam edýärkä, Eýranyň täsirli resmileri ýadro bombasyny döretmäge açyk çagyrýarlar
+        -> With War Uncertainty Continues, Influential Iranian Officials Openly Call for Nuclear Bomb Development · Global Voices
+-0.524 [ja] 米大統領は、民主党と協力できると語った
+        -> The president said he could work with the Democrats.
+-0.527 [am] 🔥 ሩስያ ከአፍሪካ ጋር ያላትን የንግድ ልውውጥ እንደምታሳድግ ፕሬዚዳንት ፑቲን አረጋገጡ
+        -> 🔥 President Putin confirms Russia is increasing trade with Africa
+-0.528 [lo] ຕຳຫຼວດສະຫະລັດ ເປີດຕົວຍານພາຫະນະບິນໄຟຟ້າ ລາຄາ 148,000 ໂດລາ ໃຊ້ພາລະກິດກູ້ໄພ
+        -> U.S. Police launches $148,000 electric flying vehicle for rescue operations
+-0.529 [ja] 児童ポルノ製造、生徒ら49人被害 茨城県の元教員に実刑判決
+        -> Former teacher in Ichihara Prefecture sentenced to death for child pornography production and killing 49 students
+-0.542 [ka] ბათუმში ახალგაზრდა კაცი დაჭრეს
+        -> A young man was shot in Batumi
+-0.544 [bn] সামিট এলএনজি টার্মিনাল বন্ধ, গ্যাস সরবরাহ কমেছে ৪৯১ মিলিয়ন ঘনফুট
+        -> Summit LNG Terminal shutdown, gas supply cut by 491 million cubic feet
+-0.545 [hy] ԱՄՆ Հայ Դատի հանձնախումբը շնորհավորում է Քրիս Փափասին՝ Նյու Հեմփշիրում հանրապետական Ջոն Սունունուի նկատմամբ հա
+        -> The U.S. Jewish Justice Committee congratulates Chris Phasas on his victory over Republican John Sununu in New Hampshire
+-0.549 [tk] ABŞ mineral üpjünçiliginde Hytaýa garaşlylygyny azaltmaga synanyşýar we Merkezi Aziýa tarap göz aýlaýar
+        -> US Seeks to Reduce Dependence on China for Mineral Supply and Looks towards Central Asia · Global Voices
+-0.550 [ne] युरोपका हवाई उडानलाई लक्षित गरी आइरहेको धम्कीका पछाडि कसको छ हात ?
+        -> Who is behind the threats targeting European air travel?
