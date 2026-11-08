@@ -110,4 +110,32 @@ assert.ok(check({ osap_decision: 1, action: "confirm_incident", conflict: "myanm
 // --- CSV: formula cells neutralised
 const csv = CODE.csv([{ incident_id: "inc-1", actor1: "=HYPERLINK(\"x\")", analyst_reason: 'a, "b"' }]);
 assert.match(csv, /'=HYPERLINK/); assert.match(csv, /"a, ""b"""/);
+// --- coded event history (UCDP rows in the record's categories): dataset codings with their licence, never analyst records
+const K = { release: "26.1", sides: ["Government of Myanmar (Burma)", "AA", "Civilians", "PDF", "KIO"], adm: ["Rakhine state"] };
+const row = (type, a, b, o = []) => ["123", "2024-03-01", "", 20.1, 92.9, type, 12, 10, 15, 3, a, b, "Kyauktaw town", 0, 2, 0, ...o];
+let ev = CODE.fromUcdp(row(1, 0, 1), K, "myanmar");
+assert.equal(ev.record_basis, "dataset_coded", "a dataset coding, not an analyst record");
+assert.equal(ev.event_type, "Battles"); assert.equal(ev.sub_event_type, "", "UCDP does not say how: no sub-event guessed");
+assert.equal(ev.inter1, "State forces"); assert.equal(ev.inter2, "Rebel group"); assert.equal(ev.interaction, "State forces vs Rebel group");
+assert.equal(ev.licence, "CC BY 4.0"); assert.equal(ev.non_commercial, 0); assert.equal(ev.dataset, "ucdp_ged"); assert.equal(ev.dataset_release, "26.1");
+assert.equal(ev.geo_precision, 2, "UCDP precision 2 (within 25 km) is record precision 2");
+assert.equal(ev.fatalities_best, 12); assert.equal(ev.fatalities_low, 10); assert.equal(ev.fatalities_high, 15);
+assert.equal(ev.sha256_input, "ucdp|26.1|123|2024-03-01|20.1|92.9|1|12|10|15", "same fingerprint input as the History of violence pop-up");
+ev = CODE.fromUcdp(row(2, 3, 4), K, "myanmar");
+assert.equal(ev.event_type, "Battles"); assert.equal(ev.interaction, "Non-state armed group vs Non-state armed group");
+ev = CODE.fromUcdp(row(3, 1, 2), K, "myanmar");
+assert.equal(ev.event_type, "Violence against civilians"); assert.equal(ev.inter2, "Civilians"); assert.equal(ev.inter1, "Non-state armed group");
+ev = CODE.fromUcdp(row(3, 0, 2), K, "myanmar");
+assert.equal(ev.inter1, "State forces", "a government killing civilians is State forces");
+const cr = ["9", "2026-02-01", "", 20, 92, 1, 1, 1, 1, 0, 0, 1, "", 0, 4, 1];
+ev = CODE.fromUcdp(cr, K, "myanmar");
+assert.equal(ev.dataset, "ucdp_candidate"); assert.equal(ev.provisional, 1); assert.equal(ev.dataset_release, "candidate"); assert.equal(ev.geo_precision, 3);
+assert.match(ev.sha256_input, /^ucdp\|candidate\|9\|/);
+for (const p of [1, 2, 3, 4, 5, 6, 7]) assert.ok([1, 2, 3].includes(CODE.ucdpPrecision(p)));
+for (const d of Object.values(CODE.DATASETS)) { assert.ok(d.licence && d.licence_url && d.url && typeof d.nc === "boolean", d.id + " carries its licence"); }
+const ec = CODE.evCsv([CODE.fromUcdp(["1", "2024-01-01", "", 1, 2, 1, 0, 0, 0, 0, 0, 1, "=cmd()", 0, 1, 0], { release: "26.1", sides: ["@SUM(1)", "x"], adm: [""] }, "t")]);
+assert.equal(ec.split("\r\n")[0], CODE.EVCSV.join(","));
+assert.match(ec, /'@SUM\(1\)/); assert.match(ec, /'=cmd\(\)/, "formula cells neutralised in the coded history CSV too");
+assert.ok(CODE.EVCSV.includes("licence") && CODE.EVCSV.includes("non_commercial") && CODE.EVCSV.includes("record_basis"));
+
 console.log("cf_code: all checks passed");

@@ -149,15 +149,18 @@ jobs:
       # the daily run has no time left for it (daily 90 + incidents 60 minutes); the 3-hourly runs draft whatever topics are due
       - name: Draft OSIR analyst sections
         if: ${{ (github.event_name == 'schedule' && github.event.schedule != '23 1 * * *') || (github.event_name != 'schedule' && (inputs.task == 'osir' || inputs.task == 'both' || inputs.task == 'cycle')) }}
-        timeout-minutes: 40
+        timeout-minutes: 55
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           OSAP_LOCAL_LLM: http://127.0.0.1:8080
           OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
-          OSIRDRAFT_AI_BUDGET_MIN: "30"
+          # about 50 topics (tools/osirdraft_topics.json) at about 5 minutes a draft: 9 drafts in 45 minutes, 8 rounds a day
+          OSIRDRAFT_AI_BUDGET_MIN: "45"
+          OSIRDRAFT_PER_RUN: "10"
           OSIRDRAFT_MAX_RECS: "20"
-          # the shared cap guards GitHub Models' free daily limit; the runner's own model has none
+          # the daily and shared caps guard GitHub Models' free daily limit; the runner's own model has none
+          OSIRDRAFT_PER_DAY: "100"
           OSIRDRAFT_SHARED_CAP: "100000"
           OSIRDRAFT_CC: ${{ inputs.only }}
         run: |
