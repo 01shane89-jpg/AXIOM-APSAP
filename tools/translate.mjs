@@ -102,13 +102,15 @@ function localModel(items, todo, out, beam) {
 }
 // What the model is given, a derivative of the original (which stays the cache key and is what the guard checks against).
 // Thai dates: the model reads the abbreviated months ("พ.ย.", November) as July, June or January almost every time and the short
-// Buddhist Era year ("69", 2569 = 2026) as 1969, so they are written out in full first: "5 พ.ย. 69" -> "5 พฤศจิกายน 2569".
+// Buddhist Era year ("69", 2569 = 2026) as 1969, so they are written out first, the year after the month as the Common Era year
+// the English will carry: "5 พ.ย. 69" -> "5 พฤศจิกายน 2026" (BE 2569 - 543). Left as 2569 the model either kept 2569 or made up
+// another year (probe 2026-11-08). The original, with its own year, is what is kept and shown.
 const TH_MONTHS = { "ม.ค.": "มกราคม", "ก.พ.": "กุมภาพันธ์", "มี.ค.": "มีนาคม", "เม.ย.": "เมษายน", "พ.ค.": "พฤษภาคม", "มิ.ย.": "มิถุนายน",
   "ก.ค.": "กรกฎาคม", "ส.ค.": "สิงหาคม", "ก.ย.": "กันยายน", "ต.ค.": "ตุลาคม", "พ.ย.": "พฤศจิกายน", "ธ.ค.": "ธันวาคม" };
 const TH_ABBR = new RegExp("(" + Object.keys(TH_MONTHS).map((k) => k.replace(/\./g, "\\.")).join("|") + ")(?:\\s*(\\d{2}|\\d{4})(?!\\d))?", "g");
 export function prepareForModel(text, lang) {
   if (!/^th\b/i.test(lang || "") && !/[\u0E00-\u0E7F]/.test(text || "")) return text;
-  return String(text).replace(TH_ABBR, (m, mo, y, at, all) => TH_MONTHS[mo] + (y ? " " + (y.length === 2 ? "25" + y : y) : "") +
+  return String(text).replace(TH_ABBR, (m, mo, y, at, all) => TH_MONTHS[mo] + (y ? " " + (+(y.length === 2 ? "25" + y : y) - (y.length === 2 || /^2[45]/.test(y) ? 543 : 0)) : "") +
     (/[\u0E00-\u0E7F]/.test(all[at + m.length] || "") ? " " : ""));
 }
 // The model writes a cut-off headline's "..." as ". . ." ("Ca. . ."): put it back as one ellipsis.
