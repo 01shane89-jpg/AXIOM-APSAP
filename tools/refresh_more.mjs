@@ -16,6 +16,7 @@ import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs"
 import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones } from "./warngeo_lib.mjs";
 import { COMMERCIAL } from "./nc_strip.mjs";
 import { imbIncidents, notInAsam, IMB_MAP, IMB_LIC } from "./imb_piracy.mjs";
+import { recaapIncidents, RECAAP_HOME, RECAAP_LIC } from "./recaap_incidents.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -29,6 +30,7 @@ async function get(url, as = "json", opt = {}) {
   try {
     const r = await fetch(url, { ...opt, signal: ctl.signal, headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "*/*", ...(opt.headers || {}) } });
     if (!r.ok) throw new Error("HTTP " + r.status);
+    if (as === "buf") { const b = Buffer.from(await r.arrayBuffer()); if (b.length > 40e6) throw new Error("file too large"); return b; }
     return as === "json" ? await r.json() : (await r.text()).slice(0, 40e6);
   } finally { clearTimeout(t); }
 }
@@ -329,9 +331,15 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
       if (!recaap.some((x) => x.link === link)) recaap.push({ title: t.slice(0, 200), link });
     }
     status.push({ source: "ReCAAP ISC", ok: true, n: recaap.length });
+    // the incident list PDF: positions of the Asian incidents ASAM and IMB have not listed (facts only, nc)
+    if (!COMMERCIAL) try {
+      const list = notInAsam(await recaapIncidents(h, (u) => get(u, "buf")), asam);
+      for (const a of list) asam.push({ ...a, ccs: ccsAt(a.lat, a.lon, 1.5) });
+      status.push({ source: "ReCAAP ISC incident list", ok: true, n: list.length, src: RECAAP_HOME, lic: RECAAP_LIC, nc: true });
+    } catch (e) { status.push({ source: "ReCAAP ISC incident list", ok: false, error: err(e), src: RECAAP_HOME, nc: true }); }
   } catch (e) { status.push({ source: "ReCAAP ISC", ok: false, error: err(e) }); }
   if (!status.some((s) => s.ok)) throw new Error(status.map((s) => s.source + ": " + s.error).join("; "));
-  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM/IMB, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
+  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM/IMB/ReCAAP incidents, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
 });
 
 // 7. OFAC Specially Designated Nationals: entries with an address in a covered area. Only name, type, programs and area are kept.
