@@ -2,7 +2,7 @@
 // The rejected lines are real MADLAD-400 output from the news pool (2026-09-29 to 2026-10-04).
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { mtSuspect, dropSuspectMt, asciiDigits } from "../tools/mt_guard.mjs";
+import { mtSuspect, dropSuspectMt, asciiDigits, extraNumber, looksEnglish } from "../tools/mt_guard.mjs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
 import { buildRules, fromRow } from "../tools/daily_lib.mjs";
 
@@ -73,5 +73,44 @@ t("a clock time the original does not give is rejected; times it does give pass"
   assert.equal(mtSuspect("แผ่นดินไหว ขนาด 6.5", "A magnitude 6.5 earthquake", now), "");
   assert.equal(mtSuspect("ราคา 1,234.50 บาท", "Price 1,234.50 baht", now), "");
   assert.equal(mtSuspect("ฝนตก 3 วัน", "Rain for 3 days", now), "");
+});
+// 2026-11-08: of 88,095 stored translations, 1,231 gave a number the original does not have. Real MADLAD-400 output below.
+const n8 = Date.parse("2026-11-08T06:00:00Z");
+t("a number the original does not have is rejected", () => {
+  assert.match(mtSuspect("CANAL3-BENIN : Journal Télévisé 19h30 du Jeudi 05 Novembre  2026", "CANAL3-BENIN: Journal Télévisé 19h30 du Jeudi 28 Novembre 2026", n8), /number 28/);
+  assert.match(mtSuspect("مشاريع رياضية متعثرة ورهانات استثمارية تلاحق استعدادات بغداد لخليجي 28", "Sports projects and investment risks haunt Baghdad’s preparations for the Gulf Games 26", n8), /number 26/);
+  assert.match(mtSuspect("Կրակոցներ Կրակովի կենտրոնում․ զոհերի թիվը հասել է 6-ի, կա 15 վիրավոր", "The 15th Infantry Division was shot down by the 6th, 7th and 9th.", n8), /number 7/);
+  assert.match(mtSuspect("Սարգսյանը՝ հանրային ճնշումների մասին", "The 100 Most Powerful People in the World", n8), /number 100/);
+  assert.match(mtSuspect("Bijna iedereen kan volgend jaar hogere hypotheek krijgen: ‘Verschil van 10.000 tot 35.000 euro’", "Almost everyone can get a higher mortgage next year: ‘Differences of 10,000 to 35,002 euros’", n8), /35,002/);
+  assert.match(mtSuspect("Đắk Lắk đề nghị xác minh thông tin 845 triệu đồng tiền thưởng ở trường học", "The school is expected to receive an additional $850 million in grants from the government.", n8), /850/);
+  assert.match(mtSuspect("Journal en Arabe de 18h du 30/10/2026", "Journal en Arabe de 18h du 09/10/2026", n8), /number 09/);
+});
+t("numbers written another way pass", () => {
+  const same = (o, e) => assert.equal(extraNumber(o, e), "", o + " -> " + e);
+  same("１０月の米雇用、１６万５０００人増 予想大幅超過、失業率４．１％", "U.S. employment increases by 165,000 in October, far exceeding expectations, unemployment rate at 4.1%.");
+  same("ソウル交通公社、是正命令後も鉄道準事故報告漏れ…課徴金2億4000万ウォン", "Seoul Transportation Corporation fined 240 million won");
+  same("外資砍台股1499億元 買賣超前十檔一次看", "Foreign investors sell 149.9 billion yuan of Taiwan stocks");
+  same("文化部1.38億預算只有17字", "The Ministry of Culture's 138 million budget is only 17 words");
+  same("ยอดผู้หนีภัยลดลงจาก 1.1 ล้านเหลือ 9.4 แสน", "Refugees down from 1.1 million to 940,000");
+  same("Tri muškarca uhapšena zbog 1,2 kg kokaina", "Three men arrested for 1.2 kg of cocaine");
+  same("France : Entre 40 000 et 60 000 manifestants attendus", "France: Between 40,000 and 60,000 protesters expected");
+  same("XAAGU 19H DU 11/10/2026", "XAAGU 7PM 10/11/2026");
+  same("Clausura de la XXX Cumbre Iberoamericana en Madrid", "Closing of the 30th Ibero-American Summit in Madrid");
+  same("Lajmet në orën 21:00", "News at 9:00 pm");
+  same("Sommet: cinq morts et douze blessés", "Summit: 5 dead and 12 injured");                 // number words, no digits in the original
+  same("ឆ្នាំសិក្សា២០២៦-២០២៧", "the 2026-27 school year");
+  same("日증시, 반도체 투자 우려에 6만선 무너져", "Nikkei 225 falls below 60,000");
+  same("公費流感新冠疫苗2階開打", "Second phase of COVID-19 and flu shots begins");
+});
+t("a headline already in English under another label is shown as written", () => {
+  for (const s of ["Bahrain News Center: His Majesty the King issues Decree No. 55 of 2026, 28-10-2026",
+    "Did Qatar interfere in the elections? Shin Bet investigates suspicion of foreign funding",
+    "9 dead after business jet crashes into residential area in Florida"]) assert.ok(looksEnglish(s), s);
+  for (const s of ["CANAL3-BENIN : Le 13h au Bénin du Samedi 31 Octobre 2026", "Kapuso Housemate Lans, wagi ng parangal",
+    "President Simons: regering werkt aan aanpak corruptie", "Hallan tres cuerpos en la vivienda del presunto autor del tiroteo",
+    "Prisvinner innrømmer AI-bruk i roman", "Zürcher Spitzen-Imam tritt nach homophoben Aussagen zurück", "한병도 대통령"]) assert.ok(!looksEnglish(s), s);
+  const i = { title: "Bahrain News Center: His Majesty the King issues Decree No. 55 of 2026, 28-10-2026", title_en: "Bahrain News Center: His Majesty the King issues Decree No. 55 of 2026, 28-10-2027", mt: "MADLAD-400", lang: "ar" };
+  assert.equal(dropSuspectMt(i, n8), true);
+  assert.equal(i.title_en, i.title); assert.equal(i.mt, undefined);
 });
 console.log(ok + " passed");

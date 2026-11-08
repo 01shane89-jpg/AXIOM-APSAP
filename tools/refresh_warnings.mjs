@@ -100,6 +100,7 @@ const tr = await translateAll(all.flatMap((i) => [{ text: i.title, lang: i.lang 
 all.forEach((i, n) => {
   const a = tr[2 * n], b = tr[2 * n + 1];
   i.title_en = a.en; i.summary_en = b.en; i.mt = /^en\b/i.test(i.lang) ? null : (a.tool || b.tool || "untranslated");
+  if (i.mt && a.en === i.title && (!i.summary || b.en === i.summary)) i.mt = null;   // already English under another label
 });
 saveCache();
 if (!status.some((s) => s.ok)) { console.error("every warning feed failed"); status.forEach((s) => console.error(" ", s.agency, s.error)); process.exit(1); }
