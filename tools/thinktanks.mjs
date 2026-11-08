@@ -1,9 +1,11 @@
 // Think tank and research-institute analysis (category "Analysis"), registered into the dense open-data run (tools/refresh_dense.mjs).
 // Every item is that institute's published assessment, a sourced opinion and not fact, so its kind reads "<institute> assessment".
-// Only the headline, a short summary (at most 280 characters) and the link are kept, never the article text, which belongs to the publisher.
+// Only the headline, date and link are kept. The summary is read for country tagging and then dropped, never stored: it belongs to the publisher.
 // Items are tagged to the countries named in the headline or summary; a map pin is added only when a city in one of those countries is named.
 // Each institute is its own feed. Candidate addresses are tried in order, then the feed link advertised on the home page.
-// Licence: publisher copyright; headline and link only. Marked nc so these can be stripped in one pass before any paid use.
+// Licence: publisher copyright; headline and link only. Marked nc so these can be stripped in one pass before any paid use, except the
+// few institutes in OPEN_LIC whose terms clearly allow commercial reuse.
+import { COMMERCIAL } from "./nc_strip.mjs";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -178,6 +180,24 @@ const TT = [
   ["cdb", "Caribbean Development Bank", "https://www.caribank.org/", ["https://www.caribank.org/rss.xml"]],
   ["aulablog", "AULA Blog (American University)", "https://aulablog.net/", ["https://aulablog.net/feed/"]],
   ["osw", "OSW Centre for Eastern Studies", "https://www.osw.waw.pl/en", ["https://www.osw.waw.pl/en/rss.xml"]],
+  // open-licence analysis added 2026-11-08 for the sold version (Shane: the paid version must not be light on sources): The Conversation
+  // (CC BY-ND 4.0, republishing guidelines allow pages with ads or behind a paywall), politics and world sections only; Global Voices (CC BY 3.0)
+  ["conv-global", "The Conversation (global politics)", "https://theconversation.com/global", ["https://theconversation.com/global/politics/articles.atom"]],
+  ["conv-us", "The Conversation US (politics)", "https://theconversation.com/us", ["https://theconversation.com/us/politics/articles.atom"]],
+  ["conv-usworld", "The Conversation US (world)", "https://theconversation.com/us", ["https://theconversation.com/us/world/articles.atom"]],
+  ["conv-uk", "The Conversation UK (politics)", "https://theconversation.com/uk", ["https://theconversation.com/uk/politics/articles.atom"]],
+  ["conv-ukworld", "The Conversation UK (world)", "https://theconversation.com/uk", ["https://theconversation.com/uk/world/articles.atom"]],
+  ["conv-africa", "The Conversation Africa (politics)", "https://theconversation.com/africa", ["https://theconversation.com/africa/politics/articles.atom"]],
+  ["conv-ca", "The Conversation Canada (politics)", "https://theconversation.com/ca", ["https://theconversation.com/ca/politics/articles.atom"]],
+  ["conv-au", "The Conversation Australia (politics)", "https://theconversation.com/au", ["https://theconversation.com/au/politics/articles.atom"]],
+  ["conv-nz", "The Conversation New Zealand (politics)", "https://theconversation.com/nz", ["https://theconversation.com/nz/politics/articles.atom"]],
+  ["conv-id", "The Conversation Indonesia (politik)", "https://theconversation.com/id", ["https://theconversation.com/id/politik/articles.atom"]],
+  ["conv-fr", "The Conversation France (international)", "https://theconversation.com/fr", ["https://theconversation.com/fr/international/articles.atom"]],
+  ["globalvoices", "Global Voices", "https://globalvoices.org/", ["https://globalvoices.org/feed/"]],
+  // US federal research and analysis, public domain as US government work (17 U.S.C. 105); items naming no country are not kept
+  ["apcss", "Daniel K. Inouye Asia-Pacific Center for Security Studies", "https://dkiapcss.edu/", ["https://dkiapcss.edu/feed/"]],
+  ["gao", "US Government Accountability Office (reports)", "https://www.gao.gov/", ["https://www.gao.gov/rss/reports.xml"]],
+  ["crs", "Congressional Research Service (via EveryCRSReport)", "https://www.everycrsreport.com/", ["https://www.everycrsreport.com/rss.xml"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
@@ -295,14 +315,23 @@ function fixDate(d) {
 }
 
 // Institutes that cover one country (or one regional body's members) only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
-const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"], idesa: ["ar"], poderciudadano: ["ar"], acep: ["gh"], penplusbytes: ["gh"], rebaltica: ["lv"], pciudadana: ["do"], cespad: ["hn"], cedla: ["bo"], solon: ["bo"], cristosal: ["sv"], varberg: ["is"], ciaaf: ["bj"], cadep: ["py"], baseis: ["py"], mahein: ["tl"], glps: ["xk"],
+const HOME_CC = { "38north": ["kp"], "conv-us": ["us"], "conv-uk": ["gb"], "conv-ca": ["ca"], "conv-au": ["au"], "conv-nz": ["nz"], "conv-id": ["id"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"], idesa: ["ar"], poderciudadano: ["ar"], acep: ["gh"], penplusbytes: ["gh"], rebaltica: ["lv"], pciudadana: ["do"], cespad: ["hn"], cedla: ["bo"], solon: ["bo"], cristosal: ["sv"], varberg: ["is"], ciaaf: ["bj"], cadep: ["py"], baseis: ["py"], mahein: ["tl"], glps: ["xk"],
   // regional bodies whose whole remit is their members: an item naming no country is filed under every member
   coi: ["km", "mg", "mu", "sc"], igad: ["dj", "er", "et", "ke", "so", "sd", "ss", "ug"],
   ffa: ["ck", "fj", "fm", "ki", "mh", "nr", "nu", "pg", "pw", "sb", "to", "tv", "vu", "ws"] };
+// Institutes whose published terms clearly allow commercial reuse (checked 2026-11-08 from GitHub's runners). Only these are kept in the
+// sold version; every other institute stays nc (non-commercial terms, all rights reserved, or terms that could not be read).
+const FOREIGN_ONLY = new Set(["apcss", "gao", "crs"]);
+const USGOV = "US government work, public domain (17 U.S.C. 105); headline and link only";
+const CONV = "CC BY-ND 4.0 (theconversation.com/global/republishing-guidelines); headline and link only";
+const OPEN_LIC = { issafrica: "CC BY 4.0 (issafrica.org/terms-of-use); headline and link only", prif: "CC BY-ND 4.0 (blog.prif.org footer); headline and link only",
+  "conv-global": CONV, "conv-us": CONV, "conv-usworld": CONV, "conv-uk": CONV, "conv-ukworld": CONV, "conv-africa": CONV, "conv-ca": CONV, "conv-au": CONV, "conv-nz": CONV,
+  "conv-id": CONV, "conv-fr": CONV, globalvoices: "CC BY 3.0 (globalvoices.org footer and attribution policy); headline and link only",
+  apcss: USGOV, gao: USGOV, crs: USGOV };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
-  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: "Publisher copyright; headline, short summary and link only", nc: true, url: home, everyHours: 1 });
+  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: OPEN_LIC[id] || "Publisher copyright; headline and link only", nc: !OPEN_LIC[id], url: home, everyHours: 1 });
   run(fid, async (g) => {
     let entries = null, used = "", why = [];
     // A feed counts only if it holds something from the last 60 days (several institutes left a dead feed behind).
@@ -329,7 +358,8 @@ for (const [id, org, home, urls] of TT) {
         } catch (e) { why.push(pg + ": " + e.message); }
       }
     }
-    if (!entries) { try { entries = await fromSearch(g, home); used = "Bing News search of the institute's site"; } catch (e) { why.push("search: " + e.message); } }
+    // Bing News results are non-commercial (nc), so the sold version never falls back to them, even for an open-licence institute
+    if (!entries && !COMMERCIAL) { try { entries = await fromSearch(g, home); used = "Bing News search of the institute's site"; } catch (e) { why.push("search: " + e.message); } }
     if (!entries) { try { entries = await fromSitemap(g, home); used = "sitemap (headline from page address)"; } catch (e) { why.push("sitemap: " + e.message); } }
     if (!entries || !entries.length) throw new Error("no feed: " + why.join("; ").slice(0, 300));
     let gz = null; try { gz = await gazetteer(g); } catch (e) {}
@@ -337,12 +367,17 @@ for (const [id, org, home, urls] of TT) {
     const items = [], globals = [];
     let used_n = 0;
     for (const x of entries.slice(0, 60)) {
-      const summary = x.summary.replace(/The post .* appeared first on .*$/i, "").trim();
-      const short = summary.length > 280 ? summary.slice(0, 277).replace(/\s+\S*$/, "") + "..." : summary;
+      // The summary is read here only to find the countries and places it names; it is never stored (outlet text rule,
+      // tools/outlet_text.mjs), so each item keeps the headline, date and link, as national news outlets do.
+      const summary = String(x.summary || "").replace(/The post .* appeared first on .*$/i, "").trim();
       const text = x.title + " " + summary.slice(0, 800);
+      // US federal sources: drop staff profile pages (title is only a name) and keep only items about other countries
+      if (FOREIGN_ONLY.has(id) && /^(?:(?:Lt|Maj|Col|Gen|Capt|Cmdr|Cdr|Adm|Prof|Dr|Mr|Ms|Mrs|Sgt)\.?\s+)*(?:(?:Lt|Brig)\.?\s+)?[A-Z][\w’'.-]*(?:\s+(?:“[^”]+”|"[^"]+"|[A-Z][\w’'.-]*)){0,4}$/.test(String(x.title).trim()) && !/\b(?:of|and|the|in|for|on|to)\b/i.test(x.title) && !countriesIn(x.title).length) continue;
       let ccs = countriesIn(text);
+      if (FOREIGN_ONLY.has(id)) ccs = ccs.filter((c) => c !== "us");
       if (!ccs.length && HOME_CC[id]) ccs = HOME_CC[id];
-      const it = { title: x.title, detail: short, date: x.date, url: x.link, sev: 1, kind };
+      if (!ccs.length && FOREIGN_ONLY.has(id)) continue;
+      const it = { title: x.title, date: x.date, url: x.link, sev: 1, kind };
       if (!ccs.length) { globals.push(it); continue; }
       // One copy per country, so each country's map pins only a city inside that country.
       for (const cc of ccs) {
