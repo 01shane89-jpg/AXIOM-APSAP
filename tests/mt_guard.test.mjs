@@ -2,7 +2,7 @@
 // The rejected lines are real MADLAD-400 output from the news pool (2026-09-29 to 2026-10-04).
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { mtSuspect, dropSuspectMt, asciiDigits, extraNumber, looksEnglish } from "../tools/mt_guard.mjs";
+import { mtSuspect, dropSuspectMt, asciiDigits, extraNumber, looksEnglish, extraMonth } from "../tools/mt_guard.mjs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
 import { buildRules, fromRow } from "../tools/daily_lib.mjs";
 
@@ -112,5 +112,29 @@ t("a headline already in English under another label is shown as written", () =>
   const i = { title: "Bahrain News Center: His Majesty the King issues Decree No. 55 of 2026, 28-10-2026", title_en: "Bahrain News Center: His Majesty the King issues Decree No. 55 of 2026, 28-10-2027", mt: "MADLAD-400", lang: "ar" };
   assert.equal(dropSuspectMt(i, n8), true);
   assert.equal(i.title_en, i.title); assert.equal(i.mt, undefined);
+});
+// 2026-11-08: 211 stored translations named a month the original does not give, 136 of them Thai ("พ.ย." is November).
+t("a month the original does not give is rejected", () => {
+  assert.match(mtSuspect("ข่าวดึก | 5 พ.ย. 69", "Late News | 5th of July, 69", n8), /month July/);
+  assert.match(mtSuspect("ปภ. เตือน 61 จังหวัด เตรียมรับมือฝนตกหนักมาก ช่วง 5-9 พ.ย.นี้", "61 provinces are warned of heavy rainfall from July 5 to 9.", n8), /month July/);
+  assert.match(mtSuspect("２３～２４日に先島諸島接近か 大型台風３０号", "Typhoon 30 approaches Senkaku Islands on June 23-24", n8), /month June/);
+  assert.match(mtSuspect("ອຸຕຸເຕືອນ! ວັນທີ 5-6 ພະຈິກ 2026 ຈະມີຝົນຕົກ", "Weather Alert! October 5-6, 2026 Rainfall", n8), /month October/);
+  assert.match(mtSuspect("Kantipur Samachar | कान्तिपुर समाचार, १९ कार्तिक २०८३", "Kantipur Samachar | Kantip News, 19th of March 2083", n8), /month March/);
+});
+t("months the original gives, in any language or as a number, pass", () => {
+  const same = (o, e) => assert.equal(extraMonth(o, e), "", o + " -> " + e);
+  same("«الفاو»: انخفاض أسعار الغذاء العالمية بأكتوبر", "FAO: World Food Prices Fall in October");
+  same("المسائية : الجمعة  06 نونبر 2026", "P.M.: Friday, 6 November 2026");
+  same("Sjever Brača od 1. studenoga brzobrodskom linijom", "From November 1, the north of Brač is connected");
+  same("İSRAİL'İN 7 EKİM İSTİHBARAT FİYASKOSU", "ISRAEL'S OCTOBER 7 INTELLIGENCE FIASCO");
+  same("Андреевски: поскап за 211 проценти од јануари", "211 percent more expensive since January");
+  same("PANI archivó en setiembre expediente", "PANI filed in September the case");
+  same("LE DEBAT 09 0CTOBRE 2026", "THE DEBATE 09 OCTOBER 2026");
+  same("FONOTAGA A LE PALEMENE O SAMOA - 28 OKETOPA 2026", "SAMOA PARLIAMENT - 28 OCTOBER 2026");
+  same("Kunjungan pada 06.11.2026", "Visit on November 6, 2026");
+  same("11月3日の米大統領選", "The US presidential election on November 3");
+  same("ጥቅምት 27 ቀን", "October 27");                      // Ethiopian Tikimt straddles October and November
+  same("Prime Minister may visit", "Prime Minister may visit");
+  same("Protesters march on parliament", "Manifestants march on parliament");   // "march" is not a month here
 });
 console.log(ok + " passed");
