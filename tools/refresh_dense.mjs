@@ -116,11 +116,12 @@ feed("wmo-swic", { name: "National weather warnings worldwide (WMO Severe Weathe
 run("wmo-swic", async (g) => {
   const j = await g("https://severeweather.wmo.int/v2/json/wmo_all.json", "json", { timeout: 90000 }), items = [];
   for (const w of j.items || []) {
-    const cc = ccFromA2(String(w.url || "").slice(0, 2)); if (!cc) continue;
+    const cap = String(w.capURL || w.url || ""), pre = cap.slice(0, 2);   // the file names each alert by capURL ("kz-kazhydromet-ru/..."); url only on some
+    const cc = ccFromA2(pre === "uk" ? "gb" : pre); if (!cc) continue;
     if (w.expires && Date.parse(w.expires.replace(" ", "T") + "Z") < Date.now()) continue;
     const sev = +w.s || 0; if (sev < 2) continue;   // severity 1 minor / unknown left out, as for MeteoAlarm
     items.push({ title: (w.headline || w.event || "Weather warning").slice(0, 200) + (w.areaDesc ? " · " + String(w.areaDesc).slice(0, 120) : ""), detail: [w.event, "expires " + String(w.expires || "").slice(0, 16)].filter(Boolean).join(" · "),
-      date: String(w.sent || "").replace(" ", "T"), url: "https://severeweather.wmo.int/v2/cap-alerts/" + w.url, sev: sev >= 4 ? 3 : sev >= 3 ? 3 : 2, kind: "Weather warning", ccs: withOki([cc]) });
+      date: String(w.sent || "").replace(" ", "T"), url: "https://severeweather.wmo.int/v2/cap-alerts/" + cap, sev: sev >= 4 ? 3 : sev >= 3 ? 3 : 2, kind: "Weather warning", ccs: withOki([cc]) });
   }
   if (!items.length) throw new Error("no warnings read");
   return { items, note: (j.items || []).length + " warnings, " + items.length + " moderate or worse" };
