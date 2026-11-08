@@ -2,7 +2,7 @@
 // The rejected lines are real MADLAD-400 output from the news pool (2026-09-29 to 2026-10-04).
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { mtSuspect, dropSuspectMt, asciiDigits, extraNumber, looksEnglish, extraMonth } from "../tools/mt_guard.mjs";
+import { mtSuspect, dropSuspectMt, asciiDigits, extraNumber, looksEnglish, extraMonth, extraWeekday } from "../tools/mt_guard.mjs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
 import { buildRules, fromRow } from "../tools/daily_lib.mjs";
 
@@ -136,5 +136,30 @@ t("months the original gives, in any language or as a number, pass", () => {
   same("ጥቅምት 27 ቀን", "October 27");                      // Ethiopian Tikimt straddles October and November
   same("Prime Minister may visit", "Prime Minister may visit");
   same("Protesters march on parliament", "Manifestants march on parliament");   // "march" is not a month here
+});
+// 2026-11-08: about 100 stored translations named a weekday the original does not give, nearly all dated broadcast titles.
+t("a weekday the original does not give is rejected", () => {
+  assert.match(mtSuspect("LE JOURNAL DE 19H00 22 OCTOBRE 2026", "2026 October 22, Sunday", n8), /weekday Sunday/);
+  assert.match(mtSuspect("Jounal Dènye Okazyon || Jedi 05 Novanm 2026", "Journal Last Event || Sunday 05 November 2026", n8), /weekday Sunday/);
+  assert.match(mtSuspect("ከቅዳሜ እስከ ቅዳሜ - የፋና አዲስ ይዘት", "From Sunday to Saturday - Fana News", n8), /weekday Sunday/);
+  assert.match(mtSuspect("Noticiero Estelar Fin de Semana - Sábado 31 de Octubre de 2026 | EN DIRECTO", "Sunday, October 31, 2026 | Daily Horoscope", n8), /weekday Sunday/);
+  assert.match(mtSuspect("Израилын парламент буюу Кнессетийн сонгуулийн санал хураалт мягмар гарагт болж дууслаа", "The Israeli Knesset elections ended on Monday.", n8), /weekday Monday/);
+  assert.equal(extraWeekday("Sebastián Lelio, regizorul premiat cu Oscar, a murit la vârsta de 52 de ani. Cineastul a fost găsit decedat de soția sa", "Oscar-winning director Sebastián Lelio has died at the age of 52, his wife found dead on Thursday."), "Thursday");
+});
+t("weekdays the original gives, in any case ending or short form, pass", () => {
+  const same = (o, e) => assert.equal(extraWeekday(o, e), "", o);
+  same("Sahrana Sivca u subotu na Gradskom groblju Vrbanja u Banjaluci", "Sivac's funeral on Saturday at the Vrbanja Municipal Cemetery");
+  same("Σαρωτικοί έλεγχοι αστυνομίας με 7 συλλήψεις το βράδυ του Σαββάτου", "Sweeping police raids with 7 arrests on Saturday night");
+  same("[속보] 미사일/2026년 11월 7일(토)/KBS", "[Breaking] Missile / Saturday, November 7, 2026 / KBS");
+  same("خبرهای ۶ عصر، جمعه ۱۵ عقرب ۱۴۰۵", "6 p.m. news, Friday");
+  same("تكريم الفائزين بجائزة محمد بن راشد غداً الخميس", "Winners of the Mohammed Bin Rashid Award honored tomorrow, Thursday");
+  same("Il-Mixja tal-President tirritorna l-Ħadd 22 ta' Novembru", "The President's Walk returns on Sunday 22 November");
+  same("ชั่วโมงข่าว เสาร์-อาทิตย์ | 8 พ.ย. 69", "News Hour Saturday-Sunday | 8 Nov. 69");
+  same("តម្លៃប្រេងធ្លាក់ចុះជាង ៨ ដុល្លារ កាលពីថ្ងៃចន្ទ", "Oil prices fell more than 8 dollars on Monday");
+  same("Sâmbăta Morților 2026", "Saturday of the Dead 2026");
+  same("Franja de Opinión Dominical - 01 de noviembre del 2026", "Sunday Opinion Strip - November 01, 2026");
+  same("Herzog v neděli oznámí, komu svěří sestavení vlády", "Herzog to announce on Sunday who will form the government");
+  same("Fran\ufffda registra 4\ufffd s\ufffdbado consecutivo de protestos", "France registers 4th consecutive Saturday of protests");
+  same("Policia gjobit protestues gjatë tubimit", "Police fine protesters during Thursday's rally");   // no date in the original: not judged
 });
 console.log(ok + " passed");
