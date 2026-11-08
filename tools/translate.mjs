@@ -10,7 +10,7 @@
 // the rejection).
 // A headline already in English under another language's label (mt_guard.mjs looksEnglish) is passed through as written: the
 // model rewrote such headlines, moving their dates and cutting them short.
-// Results are cached in data/live/translation-cache.json so the same text is never translated twice.
+// Results are cached in data/live/translation-cache*.json (one file per refresh lane) so the same text is never translated twice.
 import fs from "node:fs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -18,10 +18,28 @@ import os from "node:os";
 import path from "node:path";
 import { mtSuspect, looksEnglish, lowConfidence } from "./mt_guard.mjs";
 
-const CACHE_FILE = "data/live/translation-cache.json";
+// One cache file per refresh lane. The fast lane (warnings) and the news lane (news, Deep South, social) run at the same time and
+// both committed data/live/translation-cache.json, and the later push kept only its own copy (tools/push_rebase.sh "theirs" on a
+// one-line file): on 2026-11-08 every push dropped 170 to 790 of the other lane's new translations, so the fast lane translated the
+// same ~210 warnings again on every run (about 4 of its 6 minutes of model time) and the news backlog stayed near 1,700.
+// Each lane now writes only its own file (MT_CACHE_LANE, set by the workflow) and reads every lane's file; a run without a lane
+// (both lanes in one job) writes the shared file. Where two files hold the same text, the newer entry wins.
+const LANE = /^[a-z]+$/.test(process.env.MT_CACHE_LANE || "") ? process.env.MT_CACHE_LANE : "";
+const CACHE_FILE = LANE ? "data/live/translation-cache-" + LANE + ".json" : "data/live/translation-cache.json";
+const CACHE_FILES = ["data/live/translation-cache.json", "data/live/translation-cache-fast.json", "data/live/translation-cache-news.json"];
 const MAX_CACHE = 6000;
 let cache = {};
-try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8")); } catch (e) {}
+const foreign = new Set();   // keys read from another lane's file and not changed by this run: never written to this lane's file
+for (const f of CACHE_FILES) {
+  let c = {}; try { c = JSON.parse(fs.readFileSync(f, "utf8")); } catch (e) {}
+  for (const [k, v] of Object.entries(c)) {
+    if (!v || typeof v !== "object") continue;
+    if (cache[k] && (cache[k].at || 0) >= (v.at || 0)) continue;
+    cache[k] = v;
+    if (f === CACHE_FILE) foreign.delete(k); else foreign.add(k);
+  }
+}
+const put = (k, v) => { cache[k] = v; foreign.delete(k); };
 const key = (s, lang) => crypto.createHash("sha1").update((lang || "") + "|" + s).digest("hex").slice(0, 20);
 // Feeds often carry HTML character codes ("&#8216;", "&amp;"). The model reads them as text and invents around them, so they are
 // turned back into the characters they stand for before anything is translated or cached.
@@ -62,7 +80,7 @@ export async function translateAll(items, opts = {}) {
     // no language given and nothing outside Latin script: taken as English (Telegram channels carry no language tag)
     if (!it.lang && !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE00-\uFE0F\u{1F000}-\u{1FAFF}]/u.test(it.text)) return { en: orig[i].text, tool: null };
     const k = key(it.text, it.lang), c = cache[k];
-    if (c && c.en && mtSuspect(it.text, c.en)) { if (c.tool === MT_TOOL) cache[k] = { en: null, rejected: MT_TOOL, at: c.at }; else delete cache[k]; return null; }
+    if (c && c.en && mtSuspect(it.text, c.en)) { if (c.tool === MT_TOOL) put(k, { en: null, rejected: MT_TOOL, at: c.at }); else delete cache[k]; return null; }
     return c && c.en ? { en: c.en, tool: c.tool } : null;
   });
   const todo = items.map((it, i) => (out[i] ? -1 : i)).filter((i) => i >= 0);
@@ -93,8 +111,8 @@ function localModel(items, todo, out, beam) {
   pick.forEach((k, j) => {
     const en = tidy(res[j]); if (!en) return;
     const low = lowConfidence(scores[j]); if (low) unsure++;
-    if (low || mtSuspect(items[k].text, en)) { cache[key(items[k].text, items[k].lang)] = { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }; bad.push(k); return; }
-    out[k] = { en, tool: MT_TOOL }; cache[key(items[k].text, items[k].lang)] = { en, tool: MT_TOOL, at: Date.now() }; n++;
+    if (low || mtSuspect(items[k].text, en)) { put(key(items[k].text, items[k].lang), { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }); bad.push(k); return; }
+    out[k] = { en, tool: MT_TOOL }; put(key(items[k].text, items[k].lang), { en, tool: MT_TOOL, at: Date.now() }); n++;
   });
   console.log("MADLAD-400" + (beam ? " (beam search, texts the quick pass got wrong)" : "") + ": translated " + n + " of " + pick.length + " texts in " +
     Math.round((Date.now() - t0) / 1000) + " s" + (bad.length ? ", " + bad.length + " invented lines rejected" + (unsure ? " (" + unsure + " the model was unsure of)" : "") : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
@@ -116,7 +134,7 @@ export function prepareForModel(text, lang) {
 // The model writes a cut-off headline's "..." as ". . ." ("Ca. . ."): put it back as one ellipsis.
 const tidy = (en) => en ? String(en).replace(/\s*(?:\.\s){2,}\.(?=\s|$|["”’)])/g, "...") : en;
 export function saveCache() {
-  const ents = Object.entries(cache).filter((e) => !e[1].seeded).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);
+  const ents = Object.entries(cache).filter((e) => !e[1].seeded && !foreign.has(e[0])).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);
   fs.mkdirSync("data/live", { recursive: true });
   fs.writeFileSync(CACHE_FILE, JSON.stringify(Object.fromEntries(ents)));
 }

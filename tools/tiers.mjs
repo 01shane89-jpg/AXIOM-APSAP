@@ -30,7 +30,7 @@ export const DATA = [
   [/^data\/thailand\/(flood-live-snapshot|flood-exposure|province-alerts)\.js$/, "free"],
   [/^data\/live\/(news|news-index|wx-forecast|warnings|advisories|quakes|national-quakes|tsunami|storms|gdacs|volcano|eonet)\.js$/, "free"],
   [/^data\/live\/(news|news-index)\//, "free"],
-  [/^data\/live\/(health|social-relevance|translation-cache)\.json$/, "free"],
+  [/^data\/live\/(health|social-relevance|translation-cache(?:-fast|-news)?)\.json$/, "free"],
   [/^source\/countries\//, "free"],
 ];
 

@@ -43,6 +43,9 @@ jobs:
     # changed", so nothing was saved. Each pull step has its own time limit (about 1.5x its slowest run on 2026-10-03), so one stuck
     # feed is cut off and the run still commits everything else: on 2026-10-03 the news step hung for 50 minutes and nothing was saved.
     timeout-minutes: 55
+    # each lane keeps its own translation cache file, so the two lanes' pushes no longer drop each other's translations
+    env:
+      MT_CACHE_LANE: ${{ inputs.lane }}
     steps:
       # The branch as it is when the job starts, not the commit it was dispatched at: a run queued behind another one in the same
       # lane otherwise starts from data older than the previous run's commit. On 2026-10-10 the 06:17Z news run waited until 06:43Z,
@@ -309,7 +312,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true
