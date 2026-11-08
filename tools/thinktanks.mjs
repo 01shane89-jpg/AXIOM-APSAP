@@ -179,6 +179,20 @@ const TT = [
   ["cdb", "Caribbean Development Bank", "https://www.caribank.org/", ["https://www.caribank.org/rss.xml"]],
   ["aulablog", "AULA Blog (American University)", "https://aulablog.net/", ["https://aulablog.net/feed/"]],
   ["osw", "OSW Centre for Eastern Studies", "https://www.osw.waw.pl/en", ["https://www.osw.waw.pl/en/rss.xml"]],
+  // open-licence analysis added 2026-11-08 for the sold version (Shane: the paid version must not be light on sources): The Conversation
+  // (CC BY-ND 4.0, republishing guidelines allow pages with ads or behind a paywall), politics and world sections only; Global Voices (CC BY 3.0)
+  ["conv-global", "The Conversation (global politics)", "https://theconversation.com/global", ["https://theconversation.com/global/politics/articles.atom"]],
+  ["conv-us", "The Conversation US (politics)", "https://theconversation.com/us", ["https://theconversation.com/us/politics/articles.atom"]],
+  ["conv-usworld", "The Conversation US (world)", "https://theconversation.com/us", ["https://theconversation.com/us/world/articles.atom"]],
+  ["conv-uk", "The Conversation UK (politics)", "https://theconversation.com/uk", ["https://theconversation.com/uk/politics/articles.atom"]],
+  ["conv-ukworld", "The Conversation UK (world)", "https://theconversation.com/uk", ["https://theconversation.com/uk/world/articles.atom"]],
+  ["conv-africa", "The Conversation Africa (politics)", "https://theconversation.com/africa", ["https://theconversation.com/africa/politics/articles.atom"]],
+  ["conv-ca", "The Conversation Canada (politics)", "https://theconversation.com/ca", ["https://theconversation.com/ca/politics/articles.atom"]],
+  ["conv-au", "The Conversation Australia (politics)", "https://theconversation.com/au", ["https://theconversation.com/au/politics/articles.atom"]],
+  ["conv-nz", "The Conversation New Zealand (politics)", "https://theconversation.com/nz", ["https://theconversation.com/nz/politics/articles.atom"]],
+  ["conv-id", "The Conversation Indonesia (politik)", "https://theconversation.com/id", ["https://theconversation.com/id/politik/articles.atom"]],
+  ["conv-fr", "The Conversation France (international)", "https://theconversation.com/fr", ["https://theconversation.com/fr/international/articles.atom"]],
+  ["globalvoices", "Global Voices", "https://globalvoices.org/", ["https://globalvoices.org/feed/"]],
 ];
 
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
@@ -296,13 +310,16 @@ function fixDate(d) {
 }
 
 // Institutes that cover one country (or one regional body's members) only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
-const HOME_CC = { "38north": ["kp"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"], idesa: ["ar"], poderciudadano: ["ar"], acep: ["gh"], penplusbytes: ["gh"], rebaltica: ["lv"], pciudadana: ["do"], cespad: ["hn"], cedla: ["bo"], solon: ["bo"], cristosal: ["sv"], varberg: ["is"], ciaaf: ["bj"], cadep: ["py"], baseis: ["py"], mahein: ["tl"], glps: ["xk"],
+const HOME_CC = { "38north": ["kp"], "conv-us": ["us"], "conv-uk": ["gb"], "conv-ca": ["ca"], "conv-au": ["au"], "conv-nz": ["nz"], "conv-id": ["id"], oiip: ["at"], hcss: ["nl"], nsc: ["ro"], eliamep: ["gr"], cpd: ["bd"], bipss: ["bd"], imani: ["gh"], bidpa: ["bw"], derasat: ["bh"], cepchile: ["cl"], milenio: ["bo"], cieps: ["pa"], asies: ["gt"], idea: ["lu"], cddmoz: ["mz"], europeum: ["cz"], cippec: ["ar"], wathi: ["sn"], irmo: ["hr"], nkafu: ["cm"], lki: ["lk"], verite: ["lk"], kisi: ["kz"], newbelarus: ["by"], ipre: ["md"], apri: ["am"], idscs: ["mk"], bcsp: ["rs"], bayan: ["iq"], ecss: ["eg"], hips: ["so"], iids: ["np"], niice: ["np"], samriddhi: ["np"], biceps: ["lv"], cepsi: ["si"], adapt: ["sk"], funglode: ["do"], crees: ["do"], eprc: ["ug"], lyd: ["cl"], espaciopublico: ["cl"], policyforumtz: ["tz"], kaiptc: ["gh"], lasdel: ["ne"], cpalanka: ["lk"], bipd: ["bh"], asj: ["hn"], idesa: ["ar"], poderciudadano: ["ar"], acep: ["gh"], penplusbytes: ["gh"], rebaltica: ["lv"], pciudadana: ["do"], cespad: ["hn"], cedla: ["bo"], solon: ["bo"], cristosal: ["sv"], varberg: ["is"], ciaaf: ["bj"], cadep: ["py"], baseis: ["py"], mahein: ["tl"], glps: ["xk"],
   // regional bodies whose whole remit is their members: an item naming no country is filed under every member
   coi: ["km", "mg", "mu", "sc"], igad: ["dj", "er", "et", "ke", "so", "sd", "ss", "ug"],
   ffa: ["ck", "fj", "fm", "ki", "mh", "nr", "nu", "pg", "pw", "sb", "to", "tv", "vu", "ws"] };
 // Institutes whose published terms clearly allow commercial reuse (checked 2026-11-08 from GitHub's runners). Only these are kept in the
 // sold version; every other institute stays nc (non-commercial terms, all rights reserved, or terms that could not be read).
-const OPEN_LIC = { issafrica: "CC BY 4.0 (issafrica.org/terms-of-use); headline and link only", prif: "CC BY-ND 4.0 (blog.prif.org footer); headline and link only" };
+const CONV = "CC BY-ND 4.0 (theconversation.com/global/republishing-guidelines); headline and link only";
+const OPEN_LIC = { issafrica: "CC BY 4.0 (issafrica.org/terms-of-use); headline and link only", prif: "CC BY-ND 4.0 (blog.prif.org footer); headline and link only",
+  "conv-global": CONV, "conv-us": CONV, "conv-usworld": CONV, "conv-uk": CONV, "conv-ukworld": CONV, "conv-africa": CONV, "conv-ca": CONV, "conv-au": CONV, "conv-nz": CONV,
+  "conv-id": CONV, "conv-fr": CONV, globalvoices: "CC BY 3.0 (globalvoices.org footer and attribution policy); headline and link only" };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
