@@ -123,6 +123,7 @@ jobs:
       - run: node tests/mt_guard.test.mjs
       - run: node tests/translate_keep.test.mjs
       - run: node tests/mt_confidence.test.mjs
+      - run: node tests/mt_prepare.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
