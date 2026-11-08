@@ -209,6 +209,10 @@ await ctx2.addInitScript(() => { try {
   let have = null; window.__subKey = null;
   const reg = { showNotification: () => Promise.resolve(), pushManager: { getSubscription: () => Promise.resolve(have),
     subscribe: (o) => { window.__subKey = o.applicationServerKey; have = { toJSON: () => sub, endpoint: sub.endpoint }; return Promise.resolve(have); } } };
+  /* a browser build without the push parts (CI's headless shell) gets stand-ins, so the page's own flow is what is tested */
+  if (!window.PushManager) window.PushManager = function () {};
+  if (!("Notification" in window) || window.Notification.permission !== "granted") window.Notification = { permission: "granted", requestPermission: () => Promise.resolve("granted") };
+  if (!navigator.serviceWorker) Object.defineProperty(navigator, "serviceWorker", { value: { register: () => Promise.resolve({}), addEventListener() {}, controller: null } });
   Object.defineProperty(navigator.serviceWorker, "ready", { get: () => Promise.resolve(reg) });
 } catch (e) {} });
 const p2 = await ctx2.newPage(); const errors2 = []; p2.on("pageerror", (x) => errors2.push(x.message));
