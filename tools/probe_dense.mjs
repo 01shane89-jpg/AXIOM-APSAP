@@ -1,32 +1,20 @@
-// PROBE BRANCH ONLY: candidate new feeds (8 Nov): IMF PortWatch, EU FSF sanctions, Rewards for Justice, VAACs, IDMC IDU, UN press, UN peacekeeping.
+// PROBE BRANCH ONLY: new feeds round 2: field shapes for PortWatch, RFJ, EU FSF, VAAC text, HDX peacekeeping.
 const UA = "AXIOM-OSAP/1.0 (situational awareness; hourly; +https://github.com/01shane89-jpg/AXIOM-APSAP)";
-const strip = (t) => t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-async function show(tag, u, n = 900, links) {
-  try {
-    const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(40000) });
-    const t = await r.text();
-    console.log("PR " + tag + " | " + u + " | " + r.status + " | " + r.headers.get("content-type") + " | " + t.length + " | " + (/html/.test(r.headers.get("content-type") || "") ? strip(t) : t).slice(0, n).replace(/\s+/g, " "));
-    if (links) for (const m of [...new Set([...t.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((h) => links.test(h)))].slice(0, 30)) console.log("PL " + tag + " | " + m);
-    return t;
-  } catch (e) { console.log("PR " + tag + " | " + u + " | ERR " + (e.cause ? e.cause.code || e.cause.message : e.message)); return ""; }
-}
+const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(40000) }); return [r.status, await r.text(), r.headers.get("content-type")]; };
+const P = (tag, s) => console.log("PX " + tag + " | " + String(s).replace(/\s+/g, " ").slice(0, 2500));
 const PW = "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/ArcGIS/rest/services/";
-await show("pw-list", PW + "?f=json", 2500);
-await show("pw-choke-meta", PW + "Daily_Chokepoints_Data/FeatureServer/0?f=json", 1500);
-await show("pw-choke-q", PW + "Daily_Chokepoints_Data/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=date%20DESC&resultRecordCount=3&f=json", 1500);
-await show("pw-choke-info", PW + "Daily_Chokepoints_Data/FeatureServer/info/itemInfo?f=pjson", 2500);
-await show("pw-disrupt", PW + "portwatch_disruptions_database/FeatureServer/0/query?where=1%3D1&outFields=*&resultRecordCount=2&f=json", 1500);
-await show("pw-faq", "https://portwatch.imf.org/pages/faqs", 300, /term|licen|cond/i);
-await show("eu-fsf", "https://webgate.ec.europa.eu/fsd/fsf/public/files/csvFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw", 1200);
-await show("rfj", "https://rewardsforjustice.net/index/?jsf=jet-engine:rewards-grid&tax=crime-category:1070%2C1071%2C1073%2C1072%2C1074", 600, /rewards\//);
-await show("rfj-wp", "https://rewardsforjustice.net/wp-json/wp/v2/types", 1500);
-await show("rfj-sm", "https://rewardsforjustice.net/sitemap_index.xml", 1500);
-await show("vaac-tokyo", "https://www.data.jma.go.jp/svd/vaac/data/vaac_list.html", 800, /\.(txt|html)$/i);
-await show("vaac-darwin", "http://www.bom.gov.au/aviation/volcanic-ash/", 600, /ash|vaa/i);
-await show("vaac-wash", "https://www.ospo.noaa.gov/products/atmosphere/vaac/messages.html", 600, /messages|\.html$/i);
-await show("idmc-idu", "https://helix-tools-api.idmcdb.org/external-api/idus/last-180-days/", 800);
-await show("idmc-page", "https://www.internal-displacement.org/database/api-documentation", 300, /client_id|api/i);
-await show("un-press-rss", "https://press.un.org/en/rss.xml", 1200);
-await show("un-press-sc", "https://press.un.org/en/content/security-council", 400, /\/en\/20\d\d\//);
-await show("pk-fatal", "https://peacekeeping.un.org/en/peacekeeping-fatalities", 400, /\.(xlsx|csv|pdf)|data/i);
-await show("pk-hdx", "https://data.humdata.org/api/3/action/package_search?q=peacekeeping%20fatalities&rows=5", 1500);
+try { const [, t] = await get(PW + "Daily_Chokepoints_Data/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=date%20DESC&resultRecordCount=3&f=json"); const j = JSON.parse(t); P("pw-fields", j.fields.map((f) => f.name).join(",")); P("pw-rows", JSON.stringify(j.features.map((f) => f.attributes))); } catch (e) { P("pw ERR", e.message); }
+try { const [, t] = await get(PW + "PortWatch_chokepoints_database/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=true&outSR=4326&f=json"); const j = JSON.parse(t); P("pwc-n", j.features.length + " " + j.fields.map((f) => f.name).join(",")); P("pwc-rows", JSON.stringify(j.features.slice(0, 3).map((f) => ({ a: f.attributes, g: f.geometry })))); } catch (e) { P("pwc ERR", e.message); }
+try { const [, t] = await get(PW + "portwatch_disruptions_database/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&orderByFields=fromdate%20DESC&resultRecordCount=3&f=json"); const j = JSON.parse(t); P("pwd-fields", (j.fields || []).map((f) => f.name).join(",")); P("pwd-rows", JSON.stringify((j.features || []).map((f) => f.attributes)) + (j.error ? JSON.stringify(j.error) : "")); } catch (e) { P("pwd ERR", e.message); }
+try { const [, t] = await get(PW + "Daily_Chokepoints_Data/FeatureServer/info/itemInfo?f=pjson"); const j = JSON.parse(t); P("pw-lic", (j.licenseInfo || "") + " || access: " + (j.accessInformation || "") + " || tags " + (j.tags || []).join(",")); } catch (e) { P("pw-lic ERR", e.message); }
+try { const [, t] = await get("https://rewardsforjustice.net/wp-json/wp/v2/types"); P("rfj-types", Object.keys(JSON.parse(t)).join(",")); } catch (e) { P("rfj ERR", e.message); }
+for (const ty of ["rewards", "reward"]) { try { const [s, t] = await get("https://rewardsforjustice.net/wp-json/wp/v2/" + ty + "?per_page=3&_fields=id,date,modified,link,title,crime-category,class_list"); P("rfj-" + ty, s + " " + t.slice(0, 1500)); } catch (e) { P("rfj-" + ty + " ERR", e.message); } }
+try { const [s, t] = await get("https://rewardsforjustice.net/wp-json/wp/v2/taxonomies"); P("rfj-tax", s + " " + Object.keys(JSON.parse(t)).join(",")); } catch (e) { P("rfj-tax ERR", e.message); }
+for (const u of ["https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw", "https://webgate.ec.europa.eu/fsd/fsf/public/files/csvFullSanctionsList/content?token=dG9rZW4tMjAxNw", "https://webgate.ec.europa.eu/europeaid/fsd/fsf/public/files/csvFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw", "https://data.europa.eu/api/hub/search/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions"]) {
+  try { const [s, t, ct] = await get(u); P("eu " + u.slice(0, 90), s + " " + ct + " " + t.length + " " + t.slice(0, 600)); } catch (e) { P("eu ERR " + u, e.message); }
+}
+try { const [, t] = await get("https://www.data.jma.go.jp/svd/vaac/data/TextData/2026/20261106_30027000_0372_Text.html"); P("vaac-tokyo-text", t.replace(/<[^>]+>/g, " ").slice(0, 1500)); } catch (e) { P("vt ERR", e.message); }
+try { const [, t] = await get("https://www.ospo.noaa.gov/VAAC/ARCH26/POPO/2026K081425.html"); P("vaac-wash-text", t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").slice(0, 1800)); } catch (e) { P("vw ERR", e.message); }
+try { const [, t] = await get("https://data.humdata.org/api/3/action/package_search?q=peacekeeping&rows=10"); const j = JSON.parse(t); for (const d of j.result.results) P("hdx-pk", d.name + " | " + d.title + " | " + d.license_title + " | " + d.organization?.title + " | " + (d.resources || []).map((r) => r.format + ":" + r.url).slice(0, 3).join(" ")); } catch (e) { P("hdx ERR", e.message); }
+try { const [, t] = await get("https://press.un.org/en/rss.xml"); P("unpress-items", [...t.matchAll(/<title>([^<]+)<\/title>\s*<link>([^<]+)/g)].map((m) => m[2]).slice(0, 15).join(" ")); } catch (e) {}
+for (const u of ["https://press.un.org/en/content/security-council/rss.xml", "https://press.un.org/en/rss/security-council.xml", "https://press.un.org/en/taxonomy/term/12/feed"]) { try { const [s, t] = await get(u); P("unsc-rss " + u, s + " " + t.slice(0, 300)); } catch (e) {} }
