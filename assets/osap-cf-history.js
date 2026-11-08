@@ -218,38 +218,69 @@
     /* ---------- coded events: every UCDP event of the span in the incident record's ACLED-style categories ----------
        (assets/osap-cf-code.js fromUcdp: fixed, versioned rules). Dataset codings, never analyst-confirmed incidents: the analyst's own
        record (Confirm and code) stays separate. Each row carries its dataset's licence, so a non-commercial one can be stripped. */
-    var codedOpen = false, codeP = null;
+    var codedOpen = false, codeP = null, meta = null;
+    /* protests and riots (Mass Mobilization, 1990 to 2020; tools/refresh_coded_protests.mjs): data/live/conflicts/history/mm/<cc>.js,
+       loaded with the coding rules. A country's copy shows every protest in the country; a conflict tab's copy shows those the dataset
+       placed on a town inside the conflict's area, from the conflict's start. */
+    var MMB = BASE + "mm/";
+    function coded0() { return W.OSAP_CF_CODED || {}; }
+    function mmCcs() { return /^cc\//.test(String(id)) ? [String(id).slice(3)] : meta && meta.countries ? meta.countries : []; }
+    function mmLoad() {
+      var I = coded0()["mm/_index"];
+      if (!I) { if (!pending.mmi) pending.mmi = load(MMB + "_index.js").then(function () { soon(); }, function () { pending.mmi = "bad"; }); return false; }
+      var ok = true;
+      mmCcs().forEach(function (cc) {
+        if (!I.countries[cc] || coded0()["mm/" + cc]) return;
+        ok = false; if (!pending["mm/" + cc]) pending["mm/" + cc] = load(MMB + cc + ".js").then(function () { soon(); }, function () { bad["mm/" + cc] = 1; soon(); });
+      });
+      return ok;
+    }
+    function mmReady() { if (pending.mmi === "bad") return true; var ok = mmLoad(); return ok || mmCcs().every(function (cc) { return !!bad["mm/" + cc]; }) && !!coded0()["mm/_index"]; }
+    function mmEvents() {
+      var out = [], b = meta && meta.bounds, since = meta && meta.since || "";
+      mmCcs().forEach(function (cc) {
+        var f = coded0()["mm/" + cc]; if (!f) return;
+        f.rows.forEach(function (r) {
+          var d = String(r[1]); if (d < sel.a || d > sel.b) return;
+          if (meta) { if (r[3] == null || !b || r[3] < b[0][0] || r[3] > b[1][0] || r[4] < b[0][1] || r[4] > b[1][1] || d < since) return; }
+          out.push([r, f]);
+        });
+      });
+      return out;
+    }
     function codeLib() {
       if (W.OSAP_CF_CODE) return W.OSAP_CF_CODE;
       if (!codeP) codeP = load("assets/osap-cf-code.js").then(function () { soon(); }, function () { codeP = null; });
       return null;
     }
-    function codedRows() { var C = codeLib(); return C ? events().map(function (e) { return C.fromUcdp(e[0], e[1], id); }) : []; }
+    function codedRows() { var C = codeLib(); return C ? events().map(function (e) { return C.fromUcdp(e[0], e[1], id); }).concat(mmEvents().map(function (e) { return C.fromMm(e[0], e[1], id); })) : []; }
     function coded() {
-      if (!loaded()) return "";
-      var C = codeLib(), ev = events(); if (!ev.length) return "";
-      var h = '<details class="cfhcode"' + (codedOpen ? " open" : "") + '><summary><b>Coded events</b> <span class="cfm" style="display:inline">(ACLED-style categories, ' + num(ev.length) + " events, dataset coding)</span></summary>";
+      if (!loaded() && idx() && idx().n) return "";
+      var C = codeLib(), ready = mmReady(), ev = idx() && idx().n ? events() : [], mm = mmEvents(), n = ev.length + mm.length;
+      if (!n) return ready ? "" : '<p class="cfm">Loading the coded events…</p>';
+      var h = '<details class="cfhcode"' + (codedOpen ? " open" : "") + '><summary><b>Coded events</b> <span class="cfm" style="display:inline">(ACLED-style categories, ' + num(n) + " events" + (mm.length ? ", " + num(mm.length) + " of them protests and riots" : "") + ", dataset coding)</span></summary>";
       if (!C) return h + '<p class="cfm">Loading the coding rules…</p></details>';
       /* the tables and the CSV are worked out only while the section is open: a conflict like Russia-Ukraine holds 40,000 events */
       var rows = codedOpen ? codedRows() : [];
-      var ds = { ucdp_ged: ev.some(function (e) { return !e[0][15]; }), ucdp_candidate: ev.some(function (e) { return !!e[0][15]; }) };
+      var ds = { ucdp_ged: ev.some(function (e) { return !e[0][15]; }), ucdp_candidate: ev.some(function (e) { return !!e[0][15]; }), mm_protest: mm.length > 0 };
       var by = function (f) { var m = {}; rows.forEach(function (r) { var k = f(r); var v = m[k] || (m[k] = [0, 0]); v[0]++; v[1] += +r.fatalities_best || 0; });
         return Object.keys(m).map(function (k) { return [k, m[k][0], m[k][1]]; }).sort(function (a, b) { return b[1] - a[1] || b[2] - a[2]; }).slice(0, 8); };
       var tab = function (head, rs) { return '<table class="cfhtab"><thead><tr><th>' + esc(head) + "</th><th>Events</th><th>Deaths (best)</th></tr></thead><tbody>" + rs.map(function (r) {
         return "<tr><td>" + esc(r[0]) + "</td><td>" + num(r[1]) + "</td><td>" + num(r[2]) + "</td></tr>"; }).join("") + "</tbody></table>"; };
       var lic = Object.keys(ds).filter(function (k) { return ds[k]; }).map(function (k) { var d = C.DATASETS[k]; return d ? esc(d.name) + ", " + '<a href="' + esc(d.licence_url) + '" target="_blank" rel="noopener noreferrer">' + esc(d.licence) + "</a>" + (d.nc ? " (non-commercial)" : "") : esc(k); }).join("; ");
       return h + (codedOpen ? tab("Event type", by(function (r) { return r.event_type; })) + tab("Actor types (who against whom)", by(function (r) { return r.interaction; })) : "") +
-        '<p><button type="button" data-cfhcsv>Download coded events (CSV, ' + num(ev.length) + " rows)</button></p>" +
+        '<p><button type="button" data-cfhcsv>Download coded events (CSV, ' + num(n) + " rows)</button></p>" +
         '<p class="cfm">Each row is UCDP’s own coding of media and NGO reports, mapped to the incident record’s categories by fixed rules (' + esc(C.UCDP_RULES) + "): " +
         "fighting with a government on one side is coded Battles (state-based), fighting between armed groups Battles (non-state), killing of civilians Violence against civilians. " +
         "UCDP does not record how violence was carried out (air strike, shelling, ground clash), so the sub-event type is left blank. Actor types come from how UCDP names the sides. " +
+        (mm.length ? "Protests and riots come from the Mass Mobilization Protest Data (" + esc(C.MM_RULES) + "): protesters using violence is coded Riots, the state shooting, killing or beating protesters Excessive force against protesters, arrests or crowd dispersal Protest with intervention, else Peaceful protest. It covers protests against governments of 50 or more people from 1990 to 2020 and gives no death figures" + (meta ? "; on a conflict tab only those it placed on a town inside the conflict’s area are listed" : "") + ". " : "") +
         "These are dataset codings of source claims, not analyst-confirmed incidents. Source and licence: " + lic + ". Each row keeps its dataset, release, event id and SHA-256 fingerprint.</p></details>";
     }
     function sha(s) {
       return W.crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)).then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (v) { return ("0" + v.toString(16)).slice(-2); }).join(""); });
     }
     function downloadCoded(btn) {
-      var C = W.OSAP_CF_CODE; if (!C || !loaded()) return;
+      var C = W.OSAP_CF_CODE; if (!C || (!loaded() && idx() && idx().n)) return;
       var rows = codedRows(); if (!rows.length) return;
       if (btn) { btn.disabled = true; btn.textContent = "Preparing " + num(rows.length) + " rows…"; }
       var hashed = W.crypto && W.crypto.subtle ? Promise.all(rows.map(function (r) { return sha(r.sha256_input).then(function (h) { r.sha256 = h; }); })) : Promise.resolve();
@@ -267,7 +298,7 @@
       if (!on && !o.toggle) h += '<p class="cfm">Switch it on to see the history on the map and its totals here.</p><button type="button" data-cfhon>Show on the map</button>';
       if (on && !x) h += '<div class="cfm">' + (err ? esc(err) : "Loading the history…") + "</div>";
       if (on && x && !x.n && o.root === "vh") h += '<p class="cfnote">UCDP recorded no deaths from organized violence (fighting involving a government, fighting between armed groups, or attacks on civilians) placed in ' + esc(x.name) + " from " + day(x.start) + " to " + day((x.release || {}).last || x.asof) + ", nor in its provisional monthly events since. " +
-        "That is not the same as no violence: UCDP counts only organized violence that killed at least one person in a conflict with 25 or more deaths in a year, so crime, riots and smaller clashes are left out. Updated weekly, " + esc(x.asof) + ".</p>";
+        "That is not the same as no violence: UCDP counts only organized violence that killed at least one person in a conflict with 25 or more deaths in a year, so crime, riots and smaller clashes are left out. Updated weekly, " + esc(x.asof) + ".</p>" + coded();
       else if (on && x) {
         var yr = yearsRange(), t = totals();
         var hs = headerSpan(), dmin = String(x.start).slice(0, 10), dmax = today();
@@ -362,7 +393,8 @@
       open: open, clear: function () { clear(); }, forget: function () { clear(); id = null; }, redraw: function () { if (on && id && idx()) draw(); else clear(); },
       isOn: function () { return on; }, setOn: setOn, id: function () { return id; }, panel: function () { panel(); },
       span: function () { return { from: sel.a, to: sel.b, mode: sel.m, label: sel.a ? period() : "" }; },
-      coded: function () { return loaded() ? codedRows() : null; },
+      coded: function () { return (loaded() || !(idx() && idx().n)) && mmReady() ? codedRows() : null; },
+      meta: function (m) { meta = m ? { countries: m.countries || [], bounds: m.bounds || null, since: m.since || "" } : null; },
       show: function (a, b) {
         on = true; try { localStorage.setItem(o.key, "1"); } catch (x) {}
         if (!id) return Promise.resolve(false);
@@ -399,7 +431,7 @@
       if (!c || c.auto || !r) { CF.forget(); return; }
       var sec = r.querySelector('[data-cfshow="front"]'); sec = sec && sec.closest(".sec"); if (!sec) return;
       var box = D.createElement("div"); box.id = "cfh"; box.className = "cfhist"; sec.appendChild(box);
-      CF.open(c.id);
+      CF.meta(c); CF.open(c.id);
     },
     clear: function () { CF.forget(); }
   });
