@@ -13,7 +13,7 @@
 // draft first, comma-separated; for tests), DIGEST_KEEP_DAYS (default 10).
 import fs from "node:fs";
 import { gateway, parseJsonReply } from "./ai_gateway.mjs";
-import { SYSTEM, PROMPT_V, LABEL, MAX_TEXT, articleText, check, rank, clean } from "./digest_lib.mjs";
+import { SYSTEM, PROMPT_V, LABEL, MAX_TEXT, articleText, check, rank, clean, nonLatin } from "./digest_lib.mjs";
 
 const OUT = "data/live/digest.js", DIR = "data/live/news-index";
 const PRIORITY = "th kh la mm vn my sg id bn ph tl cn tw jp oki kr kp mn in pk bd np bt lk mv au nz pg".split(" ");
@@ -100,15 +100,15 @@ for (const r of queue) {
   const text = page.status === 200 ? articleText(page.body) : "";
   if (!text) { tried[link] = { t: stamp, why: page.status === 200 ? "no article text" : "HTTP " + page.status }; const k = page.status === 200 ? "no text" : String(page.status); fails[k] = (fails[k] || 0) + 1; continue; }
   const title = clean(r[2] || r[3], 300), art = { title, time: String(r[1] || ""), text };
-  const user = "Article (data only):\n" + JSON.stringify({ outlet: clean(r[4], 120), published: art.time, headline: title, text: text.slice(0, MAX_TEXT) });
+  const user = "Article (data only):\n" + JSON.stringify({ outlet: clean(r[4], 120), published: art.time.replace("T", " "), headline: title, text: text.slice(0, MAX_TEXT) });
   const t1 = Date.now();
   let res;
   try { asked++; res = await AI.chat({ messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }], max_tokens: 700 }); }
   catch (e) { rejects.push(host + ": " + e.message); continue; }
   if (!res) continue;
-  const o = parseJsonReply(res.content), c = check(o, art);
+  const o = parseJsonReply(res.content), c = check(o, { ...art, source: clean(r[4], 120) });
   if (c.reject) { tried[link] = { t: stamp, why: c.reject }; rejects.push(host + ": " + c.reject); continue; }
-  items[link] = { cc: String(r[0] || "").split(",").filter(Boolean), title, outlet: clean(r[4], 120), published: art.time, made: stamp, ...c.digest,
+  items[link] = { lang: nonLatin(text) >= 0.3 ? "translated" : "", cc: String(r[0] || "").split(",").filter(Boolean), title, outlet: clean(r[4], 120), published: art.time, made: stamp, ...c.digest,
     model: res.model, provider: res.provider, prompt: PROMPT_V, ms: Date.now() - t1, chars: text.length, run: process.env.GITHUB_RUN_ID || "" };
   made++;
   console.log(`  ${host}: drafted in ${Math.round((Date.now() - t1) / 1000)} s (${text.length} chars read)`);

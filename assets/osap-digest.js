@@ -33,7 +33,7 @@
       return "<li>" + esc(c.text) + (c.by ? ' <span class="dgby">(' + esc(c.by) + ")</span>" : "") + (c.status ? ' <span class="dgst">' + esc(cap(c.status)) + "</span>" : "") + "</li>";
     }).join("");
     return '<h4 class="pkgh">Digest <span class="aitag" title="' + esc(label || "Draft, AI-generated, not analyst-approved") + ". Written by " + esc(d.model || "an open model") +
-      " from the article; the article itself is not stored.\">AI generated</span></h4>" +
+      " from the article" + (d.lang === "translated" ? ", translated to English" : "") + "; the article itself is not stored.\">AI generated</span></h4>" +
       '<p class="dgwhat">' + esc(d.what) + "</p>" +
       (rows.length ? '<dl class="pkgdl dgdl">' + rows.join("") + "</dl>" : "") +
       (claims ? '<p class="dgh">Claims, not confirmed</p><ul class="dgclaims">' + claims + "</ul>" : "") +

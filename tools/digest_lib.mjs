@@ -7,6 +7,10 @@
 //     figures must be ones the article gives, names must occur in the article, and deaths only where the article speaks of them.
 import { unsupportedFigures, unsupportedNames, unsupportedDeaths } from "./evsum_lib.mjs";
 
+export const STATUSES = ["alleged", "suspected", "under investigation", "denied", "disputed", "unconfirmed"];
+// share of letters outside the Latin script (Thai, Khmer, Arabic, Cyrillic, CJK ...)
+export function nonLatin(s) { const L = String(s || "").match(/\p{L}/gu) || []; return L.length ? L.filter((c) => !/\p{Script=Latin}/u.test(c)).length / L.length : 0; }
+
 export const PROMPT_V = "digest/1", LABEL = "Draft, AI-generated, not analyst-approved", MAX_TEXT = 5000;
 
 export const SYSTEM = [
@@ -17,15 +21,16 @@ export const SYSTEM = [
   "- Write in plain, neutral English, whatever the article's language.",
   "- what: one sentence giving who did what, where and when, as precisely as the article allows.",
   "- Copy every figure (dead, injured, arrested, seized, amounts, times) exactly as the article gives it. Never add, total, convert or round.",
-  "- Keep claims as claims: anything the article says is alleged, suspected, believed, under investigation, denied or said by one side",
-  "  goes in claims with who says it and its status. Never state such a claim as a fact.",
+  "- Keep claims as claims: anything the article says is alleged, suspected, believed, under investigation, denied, disputed or only one",
+  "  side's account goes in claims, with who says it and its status. Never state such a claim as a fact. Plain official announcements,",
+  "  warnings and instructions are not claims: put them in what or next.",
   "- Officials, units, agencies and organisations may be named with their role. Never name a private individual: describe them by role",
   "  (a suspect, a victim, a villager). Never include phone numbers, emails or home addresses.",
   "- Leave a field empty when the article does not say it.",
   "Reply with JSON only: {\"what\": string, \"where\": string (place, district, province), \"when\": string (date and time with the time zone",
   "the article gives), \"who\": [string] (actors by role, unit or office, at most 5), \"figures\": [{\"value\": string, \"of\": string}] (at most 6),",
-  "\"claims\": [{\"text\": string, \"by\": string, \"status\": string}] (at most 4; status such as alleged, suspected, under investigation,",
-  "denied, unconfirmed), \"next\": string (the official response or next step the article reports, or empty)}.",
+  "\"claims\": [{\"text\": string, \"by\": string, \"status\": one of alleged, suspected, under investigation, denied, disputed, unconfirmed}]",
+  "(at most 4; may be empty), \"next\": string (the official response or next step the article reports, or empty)}. Every string in English.",
 ].join("\n");
 
 // ---------- article text out of a page ----------
@@ -58,7 +63,8 @@ function tidy(t) {
   const lines = t.split("\n").map((l) => l.trim()).filter((l) => l && !JUNK.test(l));
   let out = "";
   for (const l of lines) { if (out.length + l.length + 1 > MAX_TEXT) break; out += (out ? "\n" : "") + l; }
-  return out.length >= 120 ? out : "";
+  // a teaser of a line or two is not an article (8 Nov 2026: 165 characters gave a digest of nothing)
+  return out.length >= 300 ? out : "";
 }
 
 // ---------- the model's reply, checked ----------
@@ -73,18 +79,25 @@ export function check(o, art) {
     what: clean(o.what, 400), where: clean(o.where, 160), when: clean(o.when, 120),
     who: arr(o.who, 5).map((x) => clean(typeof x === "string" ? x : x && (x.name || x.text), 120)).filter(Boolean),
     figures: arr(o.figures, 6).map((f) => f && typeof f === "object" ? { value: clean(f.value, 40), of: clean(f.of, 120) } : null).filter((f) => f && f.value && f.of),
-    claims: arr(o.claims, 4).map((c) => c && typeof c === "object" ? { text: clean(c.text, 300), by: clean(c.by, 120), status: clean(c.status, 40).toLowerCase() } : null).filter((c) => c && c.text),
+    // only contested or unverified statements are claims; a status outside the list (stated, announced) is not a claim
+    claims: arr(o.claims, 4).map((c) => c && typeof c === "object" ? { text: clean(c.text, 300), by: clean(c.by, 120), status: clean(c.status, 40).toLowerCase() } : null)
+      .filter((c) => c && c.text && STATUSES.includes(c.status)),
     next: clean(o.next, 300),
   };
+  // a time with no date ("T12:59") says nothing a reader can use
+  if (!/\p{L}|\d{4}|\d{1,2}[/.-]\d{1,2}/u.test(d.when.replace(/^T/, ""))) d.when = "";
   if (!d.what || d.what.length < 20) return { reject: "no what line" };
+  const all = [d.what, d.where, d.when, d.next, ...d.who, ...d.figures.map((f) => f.of), ...d.claims.map((c) => c.text + " " + c.by)].join(" ");
+  if (nonLatin(all) > 0.1) return { reject: "not written in English" };
   // the checks read the digest as one text against the article (the evsum checks take a draft's summary, points and differ)
   const asDraft = { summary: [d.what, d.where, d.when, d.next].join(". "), unclear: "",
     points: d.figures.map((f) => ({ text: f.value + " " + f.of })).concat(d.who.map((w) => ({ text: "By " + w }))),
     differ: d.claims.map((c) => ({ text: c.text + ". Said by " + c.by })) };
-  const input = [{ time: art.time || "", headline: art.title || "", place: "", text: art.text || "" }];
+  const input = [{ time: art.time || "", source: art.source || "", headline: art.title || "", place: "", text: art.text || "" }];
   const figs = unsupportedFigures(asDraft, input);
   if (figs.length) return { reject: "figures not in the article: " + figs.slice(0, 5).join(", ") };
-  const names = unsupportedNames(asDraft, input);
+  // names are checked only against an article in Latin script: a Thai or Khmer article's names come back transliterated
+  const names = nonLatin(art.text) < 0.3 ? unsupportedNames(asDraft, input) : [];
   if (names.length) return { reject: "names not in the article: " + names.slice(0, 5).join(", ") };
   if (unsupportedDeaths(asDraft, input)) return { reject: "deaths the article does not mention" };
   return { digest: d };
