@@ -23,6 +23,9 @@ import readline from "node:readline";
 import { createHash } from "node:crypto";
 import { sha256 } from "./conflict_lib.mjs";
 import { COUNTRIES as CCLIST, ccsAt, ccsInText, outlineOf } from "./geo_cc.mjs";
+import CODE from "../assets/osap-cf-code.js";
+// the datasets' licence tags (assets/osap-cf-code.js DATASETS), written into every index so a non-commercial one can be stripped
+const LIC = (k) => { const d = CODE.DATASETS[k]; return { id: d.id, name: d.name, licence: d.licence, licence_url: d.licence_url, nc: d.nc, url: d.url, cite: d.cite }; };
 
 const OUT = "data/live/conflicts", HOUT = OUT + "/history", CACHE = process.env.UCDP_CACHE || ".cache/ucdp";
 const FORCE = process.env.FORCE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
@@ -276,6 +279,7 @@ function writeHist(o) {
   const idx = Object.assign({ schema: "osap-cf-history/1", id: o.id, name: o.name, asof: stamp, since: o.since || "", start: o.start, ucdp_start: FIRST_UCDP,
     release: { name: rel.name, version: rel.version, url: rel.url, sha256: zipSha, last: gedLast }, candidate_after: gedLast,
     n: ev.length, best: ev.reduce((s, e) => s + e.best, 0), first: ev.length ? ev[0].date : "", last: ev.length ? ev[ev.length - 1].date : "",
+    datasets: [LIC("ucdp_ged"), LIC("ucdp_candidate")], coding_rules: CODE.UCDP_RULES,
     years, grid: gridOut, grid_deg: GRID, chunks }, o.extra,
     { cols: ["id", "date", "end", "lat", "lon", "type", "best", "low", "high", "civ", "sideA", "sideB", "where", "adm1", "prec", "candidate"],
       fp: "SHA-256 of each event: ucdp|<release or 'candidate'>|<id>|<date>|<lat>|<lon>|<type>|<best>|<low>|<high>" });

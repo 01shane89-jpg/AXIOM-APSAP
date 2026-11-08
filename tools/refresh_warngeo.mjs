@@ -13,14 +13,16 @@
 import fs from "node:fs";
 import { ngaFeatures, memFiles, parseDailyMem, MEM_BASE, redactPhones, dtg, kindOf, tfrDetail, tfrFeature, czibRows, czibPartial, czibCountries, pack, unpack, skipNga } from "./warngeo_lib.mjs";
 import { ccsAt, ccsInText, ccFromName, outlineOf } from "./geo_cc.mjs";
+import { NAVW_SRC } from "./navw_sources.mjs";
+import { COMMERCIAL } from "./nc_strip.mjs";
 
 const OUT = process.env.OUT || "data/live/warnings-geo.json";
 const TIMEOUT = 45000, UA = "AXIOM-OSAP/1.0 (situational awareness; hourly; +https://github.com/01shane89-jpg/AXIOM-APSAP)";
 const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || e).slice(0, 160));
-async function get(url, as = "json") {
+async function get(url, as = "json", opt = {}) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
-    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "*/*" } });
+    const r = await fetch(url, { ...opt, signal: ctl.signal, headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "*/*", ...(opt.headers || {}) } });
     if (!r.ok) throw new Error("HTTP " + r.status);
     return as === "json" ? await r.json() : await r.text();
   } finally { clearTimeout(t); }
@@ -73,6 +75,40 @@ let czib = [];
   st.ok = anyOk; st.n = got.length;
   st.note = st.areas.map((a) => a.area + (a.ok ? " " + a.warnings + " warnings" + (a.modified ? " (file of " + a.modified.slice(0, 16) + "Z)" : "") : " failed (" + a.error + ")")).join(", ");
   sources.push(st);
+}
+
+// ---------- NAVAREA coordinators besides NGA (AMSA X, JCG XI, UKHO I) ----------
+// The same readers as job navw in tools/refresh_more.mjs (tools/navw_sources.mjs); shapes are read from the warning text
+// the same way as NGA's. UKHO is Crown copyright with no open licence, so it is nc and not asked once OSAP is sold.
+{
+  const seen = new Set();
+  for (const s of NAVW_SRC) {
+    if (s.nc && COMMERCIAL) continue;
+    const st = { id: s.id, name: s.authority + ", " + s.area + " navigational warnings", licence: s.lic, url: s.link, ...(s.nc ? { nc: true } : {}) };
+    try {
+      const list = await s.read(s, get);
+      let nw = 0, nf = 0;
+      for (const w of list) {
+        if (seen.has(w.id)) continue; seen.add(w.id);
+        const text = String(w.text || "");
+        if (skipNga(text)) continue;
+        nw++;
+        const m = /^(.*?)\s+(\d+)\/(\d\d)$/.exec(w.id) || [null, s.area, "", ""];
+        const fs_ = ngaFeatures({ area: m[1], msgNumber: m[2], msgYear: m[3], issueDate: w.dtg || "", text, subregion: w.subregion || "", authority: s.authority, source: s.url }, "");
+        if (fs_.length) {
+          fs_.forEach((f) => { const p = firstPt(f.geometry); Object.assign(f.properties, { src: s.id, id: w.id, link: s.link, api: "", ccs: ccsAt(p[1], p[0], 1.5), ...(s.nc ? { nc: true } : {}) }); features.push(f); });
+          nf += fs_.length;
+        } else unplaced.push({ src: s.id, id: w.id, area: m[1], authority: s.authority, issued: dtg(w.dtg || ""), kind: kindOf(text.replace(/\s+/g, " ")),
+          text: redactPhones(text.trim()).slice(0, 2000), link: s.link, ccs: ccsInText(text), ...(s.nc ? { nc: true } : {}) });
+      }
+      if (!list.length) throw new Error("no warnings read (layout changed?)");
+      st.ok = true; st.n = nf; st.note = nw + " warnings, " + nf + " shapes";
+    } catch (e) {
+      const k = keepOld(s.id); features.push(...k);
+      st.ok = false; st.error = err(e); st.n = k.length; st.note = "failed (" + err(e) + "), kept " + k.length + " shapes from the last good run";
+    }
+    sources.push(st);
+  }
 }
 
 // ---------- FAA temporary flight restrictions ----------

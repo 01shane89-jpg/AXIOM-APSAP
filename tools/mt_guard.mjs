@@ -13,6 +13,7 @@
 // looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
 // English titles, a broadcaster's YouTube channel): it is shown as written and never given to the model, which on 2026-11-08
 // had "translated" 2,039 such English headlines, moving dates ("28-10-2026" to "28-10-2027") and cutting them short.
+// lowConfidence() reads the model's own score (tools/mt/madlad.py MT_SCORES=1): below MT_MIN_SCORE a line is treated as invented.
 // Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
 
@@ -176,3 +177,12 @@ export function dropSuspectMt(i, now) {
   if (hit && !i.title_en && !i.summary_en) i.mt = "untranslated";
   return hit;
 }
+
+// The model's own confidence (CTranslate2's length-normalized log-probability of its least sure chunk, tools/mt/madlad.py).
+// Set from tools/mt/probe_confidence.mjs on 2026-11-08 (602 stored headlines): faithful French, Spanish, German, Portuguese,
+// Russian, Arabic, Italian and Dutch lines all scored above -0.9 (median -0.42), October's invented lines had a median of -1.6, and
+// of the Korean, Armenian, Azerbaijani, Georgian, Thai, Chinese and other lines the other checks let through, 15 of 319 fell below
+// -1.5, nearly all of them unrelated to the original ("The bridge is now undergoing a major renovation." for an Armenian court
+// story). Between -1.5 and -1.0 good and bad lines mix, so they are kept.
+export const MT_MIN_SCORE = -1.5;
+export const lowConfidence = (score) => typeof score === "number" && Number.isFinite(score) && score < MT_MIN_SCORE;
