@@ -1,4 +1,4 @@
-{"cc":"ni","at":"2026-10-07T10:56:28Z","base":"2026-10-07T10:54:59Z","m":[
+{"cc":"ni","at":"2026-11-09T12:38:00Z","base":"2026-06-01T08:52:28Z","m":[
 ["n10011232838",12.29972,-86.77062,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10011897631",11.9744,-86.09834,{"man_made":"tower","tower:type":"communication"}],
 ["n10011897632",11.97387,-86.09746,{"man_made":"tower","tower:type":"communication"}],
@@ -31,9 +31,6 @@
 ["n1335848948",13.36875,-86.40087,{"man_made":"tower","tower:type":"communication"}],
 ["n1336012169",13.36635,-86.40003,{"man_made":"tower","tower:type":"communication"}],
 ["n13702314734",12.24381,-86.71587,{"communication:mobile_phone":"yes","height":"30","man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
-["n13908531349",13.09694,-86.00714,{"man_made":"tower","name":"Antena de Comunicacion","tower:type":"communication"}],
-["n14131410162",12.53218,-85.7117,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
-["n14137493961",11.99125,-86.31085,{"man_made":"mast","tower:type":"communication"}],
 ["n1458038550",12.14597,-86.30623,{"man_made":"tower","name":"Antena de Radio Mundial","tower:type":"radio"}],
 ["n1723211977",12.14881,-86.26465,{"man_made":"mast","tower:type":"communication"}],
 ["n1736266446",13.64715,-86.61334,{"man_made":"mast","tower:type":"communication"}],
@@ -138,7 +135,7 @@
 ["n3108835721",11.77262,-85.98941,{"man_made":"tower","tower:type":"communication"}],
 ["n3109372697",13.09098,-86.00285,{"man_made":"tower","name":"Pequeña torre de comunicación","tower:type":"communication"}],
 ["n3114147402",11.99401,-86.30714,{"man_made":"tower","tower:type":"communication"}],
-["n3114147403",11.99551,-86.30555,{"man_made":"tower","tower:type":"communication"}],
+["n3114147403",11.99555,-86.30555,{"man_made":"tower","tower:type":"communication"}],
 ["n3114147404",11.998,-86.30103,{"man_made":"tower","tower:type":"communication"}],
 ["n3114147405",11.998,-86.30291,{"man_made":"tower","tower:type":"communication"}],
 ["n3114147406",11.99829,-86.30282,{"man_made":"tower","tower:type":"communication"}],
@@ -205,7 +202,7 @@
 ["n4489295097",11.66206,-84.3917,{"man_made":"mast","tower:type":"communication"}],
 ["n4538717438",13.09095,-86.00287,{"man_made":"tower","tower:type":"communication"}],
 ["n4582099964",12.4432,-86.87016,{"height":"30","man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
-["n4582104278",12.44376,-86.86366,{"height":"20","man_made":"mast","name":"Radio Darío","tower:construction":"lattice","tower:type":"communication"}],
+["n4582104278",12.44376,-86.86366,{"height":"20","man_made":"mast","name":"Radio Dario","tower:construction":"lattice","tower:type":"communication"}],
 ["n4583516055",12.4348,-86.87967,{"height":"50","man_made":"mast","tower:construction":"mast","tower:type":"communication"}],
 ["n4600190217",12.42031,-86.877,{"man_made":"mast","tower:construction":"tower","tower:type":"communication"}],
 ["n4600200532",12.43982,-86.87961,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
@@ -266,7 +263,6 @@
 ["w1308380177",12.11241,-86.2146,{"man_made":"tower","tower:type":"communication"}],
 ["w1383606928",13.47895,-85.59129,{"communication:gsm-r":"yes","communication:mobile_phone":"yes","ele":"15","man_made":"communications_tower","material":"steel","tower:construction":"freestanding","tower:type":"communication"}],
 ["w1437130219",13.51624,-85.25145,{"height":"20","man_made":"tower","material":"steel","tower:construction":"freestanding","tower:type":"communication"}],
-["w1525957251",11.75028,-84.99533,{"man_made":"communications_tower"}],
 ["w444654078",11.89961,-86.51272,{"man_made":"tower","tower:type":"communication"}],
 ["w519821021",12.81672,-84.1999,{"height":"30","man_made":"tower","name":"Claro","operator":"claro","tower:type":"communication"}],
 ["w801306745",12.4814,-86.05034,{"man_made":"tower","tower:type":"communication"}]
