@@ -2,7 +2,8 @@
 // Before this, a push alert waited for a whole refresh lane: the keeper starts a lane every 15 minutes, the fast lane takes
 // about 10 minutes to commit and the news lane 15 to 25 (and often waits behind the run before it), then the push job opens
 // the pages. A quake USGS had published was on phones 12 to 30 minutes later. This loop keeps one runner awake and:
-//   - every 30 s asks USGS for the last hour's M2.5+ quakes and lays them over data/live/quakes.js (tools/quake_rows.mjs);
+//   - every 30 s asks USGS's live event search for the last hour's M2.5+ quakes (the hour feed if it fails) and lays them over
+//     data/live/quakes.js (tools/quake_rows.mjs);
 //   - every 2 min asks GDACS for its current alerts (tools/refresh_feeds.mjs with FEEDS=gdacs);
 //   - every 60 s fetches main's newest commit and takes its data/ (so the fast and news lanes' commits are checked within a
 //     minute of landing, not after the push job's own start-up);
@@ -37,14 +38,31 @@ function writeJs(file, global, body) { fs.writeFileSync(file, "window." + global
 let hourRows = [], etag = "", seenQ = new Set(), firstQ = true;
 { const q = readJs(QFILE); for (const r of (q && q.features) || []) seenQ.add(r.id); }
 const qLag = [], pubLag = [];
-async function quakes() {
+// USGS's live event search (FDSN), not the summary feed: on main, 8-9 Nov 2026, the hour feed (cached about a minute at USGS's
+// edge) showed new quakes a median 52 s (30-96 s) after USGS published them. The search answers from the catalogue itself.
+// One small question every 30 s: M2.5+ quakes from the last 65 minutes. When it fails, the hour feed is asked instead.
+const FDSN = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time&limit=400&starttime=";
+let via = "";
+async function getQuakes() {
   const h = { "user-agent": "AXIOM-OSAP flash loop" };
-  if (etag) h["if-none-match"] = etag;
-  const r = await fetch(USGS_HOUR, { headers: h, signal: AbortSignal.timeout(15000) });
-  if (r.status === 304) return false;
-  if (!r.ok) throw new Error("USGS hour feed HTTP " + r.status);
-  etag = r.headers.get("etag") || "";
-  const g = await r.json(), now = Date.now();
+  try {
+    const r = await fetch(FDSN + new Date(Date.now() - 65 * 60e3).toISOString().slice(0, 19), { headers: h, signal: AbortSignal.timeout(15000) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    if (via !== "search") { via = "search"; log("quakes from USGS's live event search"); }
+    return await r.json();
+  } catch (e) {
+    if (via !== "feed") { via = "feed"; log(`USGS event search failed (${String(e.message || e).slice(0, 60)}); using the hour feed`); }
+    if (etag) h["if-none-match"] = etag;
+    const r = await fetch(USGS_HOUR, { headers: h, signal: AbortSignal.timeout(15000) });
+    if (r.status === 304) return null;
+    if (!r.ok) throw new Error("USGS hour feed HTTP " + r.status);
+    etag = r.headers.get("etag") || "";
+    return await r.json();
+  }
+}
+async function quakes() {
+  const g = await getQuakes(), now = Date.now();
+  if (!g) return false;
   hourRows = (g.features || []).map(quakeRow).filter(Boolean);
   const upd = new Map((g.features || []).map((f) => [f.id, +((f.properties || {}).updated) || 0]));
   const changed = layQuakes();
