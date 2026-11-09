@@ -1,0 +1,45 @@
+name: probe-polecat
+# Temporary (branch only, never merged): POLECAT file layout and protest volume, output pushed to claude/probe-polecat-out.
+on: { push: { branches: [claude/probe-polecat] } }
+permissions: { contents: write }
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - run: |
+          set +e; mkdir -p probe-out
+          curl -sS "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/AJGVIT" | python3 -c "
+          import json,sys; v=json.load(sys.stdin)['data']['latestVersion']
+          print('version',v.get('versionNumber'),v.get('versionMinorNumber'),v.get('releaseTime'))
+          for f in v['files']: print(f['dataFile']['filename'],f['dataFile']['filesize'],f['dataFile']['id'],f.get('description',''))" > probe-out/files.txt
+          cat probe-out/files.txt
+          curl -L -sS -o y2021.txt "https://dataverse.harvard.edu/api/access/datafile/10399130"; ls -la y2021.txt; file y2021.txt
+          head -c 4000 y2021.txt > probe-out/head2021.txt
+          python3 - <<'PY' > probe-out/stats2021.txt
+          import csv,collections,sys
+          csv.field_size_limit(1<<24)
+          f=open('y2021.txt',encoding='utf-8',errors='replace'); first=f.readline(); d='\t' if first.count('\t')>first.count(',') else ','
+          f.seek(0); r=csv.reader(f,delimiter=d); h=next(r); print('delim',repr(d)); print('cols',h)
+          ix={k:i for i,k in enumerate(h)}
+          c=collections.Counter(); m=collections.Counter(); geo=collections.Counter(); n=0; ex=[]
+          et=[k for k in h if k.lower().replace(' ','_') in ('event_type','eventtype')]; em=[k for k in h if 'mode' in k.lower()]; ft=[k for k in h if 'feature' in k.lower()]
+          print('typecol',et,'modecol',em,'featcol',ft)
+          for row in r:
+            n+=1
+            if len(row)!=len(h): continue
+            t=row[ix[et[0]]] if et else ''
+            c[t]+=1
+            if t.upper()=='PROTEST':
+              m[row[ix[em[0]]] if em else '']+=1
+              geo[row[ix[ft[0]]] if ft else '']+=1
+              if len(ex)<5: ex.append(dict(zip(h,row)))
+          print('rows',n); print('types',c.most_common(30)); print('protest modes',m.most_common(20)); print('protest feature types',geo.most_common(15))
+          import json
+          for e in ex: print(json.dumps(e)[:2500])
+          PY
+          cat probe-out/stats2021.txt | head -c 20000
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add probe-out && git commit -qm "probe output [skip ci]" && git push -q origin HEAD:claude/probe-polecat-out --force
