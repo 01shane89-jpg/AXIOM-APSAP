@@ -40,7 +40,7 @@ const INC = { schema: "osap-incident-candidates/1", asof: "2026-10-14 04:00Z", c
     reports: [{ url: "https://example.org/8", title: "Two rangers were wounded in a shooting in Bannang Sata", title_en: "Two rangers were wounded in a shooting in Bannang Sata" }] }] };
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 
-async function page(unlocked) {
+async function page(unlocked, hash = "#th/timeline", cc = "th") {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1500, height: 950 } });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.route(/data\/live\/ds-incidents\.json$/, (r) => r.fulfill({ contentType: "application/json", body: JSON.stringify(INC) }));
@@ -53,8 +53,8 @@ async function page(unlocked) {
   if (unlocked) await ctx.addInitScript(UNLOCK);
   const p = await ctx.newPage(), errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
-  await p.goto(base + "#th/timeline", { waitUntil: "domcontentloaded" });
-  await p.waitForFunction(() => window.TSAP && window.TSAP.country === "th" && document.querySelector("#atk-tools .atk-list"), null, { timeout: 60000 });
+  await p.goto(base + hash, { waitUntil: "domcontentloaded" });
+  await p.waitForFunction(() => (cc) => window.TSAP && window.TSAP.country === cc && document.querySelector("#atk-tools .atk-list"), cc, { timeout: 60000 });
   await p.waitForTimeout(2500);
   return { p, ctx, errors };
 }
@@ -196,6 +196,37 @@ const gone = await p.evaluate(() => Object.values(window.__asapMap._layers).filt
 ok(gone === 0, "closing the workspace removes its map layer");
 ok(await p.evaluate(() => { const w = JSON.parse(localStorage.getItem("osap-an-ui")); return w && w.tab === "bed"; }), "the open tab is remembered");
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+await ctx.close();
+// another country: the workspace follows the selected country's own reports (window.TSAP.records), not the Deep South feed
+{
+  const { p, ctx, errors } = await page(true, "#ph/timeline", "ph");
+  await p.evaluate(() => { const t = Date.now(), R = window.TSAP.records;
+    R.push({ title: "Troops raid Zebra Ridge Cell hideout in Testplace, seize rifles", url: "https://example.org/ph1", layer: "security", ts: new Date(t - 2 * 864e5).toISOString(), place: "Testplace", prov: "Sulu", lat: 6.07, lon: 121.1, src: { name: "Outlet PH" } },
+      { title: "Zebra Ridge Cell remnants blamed for Jolo shooting", url: "https://example.org/ph2", layer: "security", ts: new Date(t - 3 * 864e5).toISOString(), place: "Jolo", prov: "Sulu", lat: 6.05, lon: 121.0, src: { name: "Outlet PH" } }); });
+  await p.evaluate(() => window.OSAP_ANALYST.open("ents"));
+  await p.waitForTimeout(600);
+  const h0 = await p.evaluate(() => ({ t: document.querySelector("#anws").textContent, cards: document.querySelectorAll("#anws .ancard").length, ds: !!window.OSAP_DS_ENT }));
+  ok(/Reporting: Philippines/.test(h0.t) && !/Barisan/.test(h0.t) && h0.cards === 0 && !h0.ds, "outside Thailand the workspace reads the selected country's reports, without the Deep South entity list (" + JSON.stringify({ cards: h0.cards, ds: h0.ds }) + ")");
+  await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="ent"]').click());
+  await p.waitForTimeout(200);
+  await p.evaluate(() => { const f = document.getElementById("an-addent"); f.name.value = "Zebra Ridge Cell Group"; f.aliases.value = "Zebra Ridge Cell"; f.type.value = "armed group"; f.requestSubmit(); });
+  await p.waitForTimeout(300);
+  const m = await p.evaluate(() => { const X = window.OSAP_ANALYST._index(), e = X.E.find((x) => x.name === "Zebra Ridge Cell Group"); return { n: e ? X.by[e.id].length : -1, rows: X.rows.length }; });
+  ok(m.n === 2 && m.rows > 2, "an own entity is counted in the Philippines reports (" + JSON.stringify(m) + ")");
+  await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="link"]').click());
+  await p.waitForTimeout(200);
+  ok(await p.evaluate(() => [...document.querySelectorAll("#an-addlink select[name=a] optgroup")].some((g) => g.label === "Places in the reporting" && g.querySelectorAll("option").length > 0)), "the link form offers the places in the reporting");
+  await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').click());
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => /\d{4}Z \(\d{4} Philippines\)/.test(document.querySelector("#anws").textContent) && /Zebra Ridge Cell/.test(document.querySelector("#anws").textContent)), "Timeline lists the reports that name the entity, in Zulu and Philippines time");
+  await p.evaluate(() => document.querySelector('#anws [data-an-tab="bed"]').click());
+  await p.waitForTimeout(300);
+  const b = await p.evaluate(() => ({ rows: window.OSAP_ANALYST._bed().rows.map((r) => r.name + ":" + r.n), map: !!document.getElementById("an-bedmap"), fly: !!document.querySelector("#anws [data-an-fly]") }));
+  ok(b.rows.includes("Testplace:1") && !b.rows.some((r) => /^Jolo/.test(r)) && !b.map && b.fly, "Bed-down counts the raid by place, with a Map button and no district outlines (" + JSON.stringify(b) + ")");
+  if (OUT) await p.screenshot({ path: OUT + "/analyst-ph.png" });
+  ok(!errors.length, "no page errors (Philippines)" + (errors.length ? ": " + errors.join(" | ") : ""));
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

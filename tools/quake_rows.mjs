@@ -1,5 +1,5 @@
 // USGS earthquake rows as data/live/quakes.js keeps them (tools/refresh_feeds.mjs writes the 7-day file; tools/flash_loop.mjs
-// adds the newest hour's quakes to it every 30 seconds between refreshes).
+// adds the newest hour's quakes to it every 15 seconds between refreshes).
 export const USGS_WEEK = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
 export const USGS_HOUR = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_hour.geojson";
 const WEEK_MS = 7 * 864e5;

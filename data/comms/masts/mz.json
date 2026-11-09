@@ -1,4 +1,4 @@
-{"cc":"mz","at":"2026-10-07T10:38:52Z","base":"2026-10-07T10:37:33Z","m":[
+{"cc":"mz","at":"2026-11-09T12:30:32Z","base":"2026-11-09T12:29:03Z","m":[
 ["n10176195984",-25.84081,31.93069,{"height":"48","man_made":"communications_tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
 ["n10754453528",-25.92559,32.48051,{"communication:mobile_phone":"yes","man_made":"communications_tower","material":"steel","operator":"vodacom","tower:type":"communication"}],
 ["n11070224973",-13.34966,39.63887,{"communication:mobile":"yes","man_made":"tower","operator":"Movitel","tower:construction":"lattice","tower:type":"communication"}],
@@ -214,6 +214,7 @@
 ["n13643548918",-22.8477,31.96512,{"man_made":"tower","tower:type":"communication"}],
 ["n13660160280",-23.29352,35.13345,{"man_made":"mast","tower:type":"communication"}],
 ["n14244301830",-13.35355,39.75951,{"man_made":"tower","tower:type":"communication"}],
+["n14275362795",-25.9293,32.48336,{"communication:3g":"yes","communication:4g":"yes","communication:gsm":"yes","communication:lte":"yes","communication:mobile_phone":"yes","communication:umts":"yes","man_made":"tower","name":"Antenna","tower:construction":"lattice","tower:type":"communication"}],
 ["n2390577840",-25.91649,32.56008,{"man_made":"tower","tower:type":"communication"}],
 ["n2472690124",-22.49067,31.90591,{"man_made":"mast","tower:type":"communication"}],
 ["n2474276218",-25.51958,31.99842,{"man_made":"mast","tower:type":"communication"}],

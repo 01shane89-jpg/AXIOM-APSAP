@@ -1,4 +1,4 @@
-{"cc":"me","at":"2026-10-07T10:37:58Z","base":"2026-10-07T10:35:36Z","m":[
+{"cc":"me","at":"2026-11-09T12:29:19Z","base":"2026-05-31T22:37:44Z","m":[
 ["n10187791678",42.17519,18.99782,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10288285646",42.4388,18.83624,{"communication:4g":"yes","communication:lte":"yes","communication:mobile_phone":"yes","man_made":"mast","tower:construction":"lattice_steel","tower:type":"communication"}],
 ["n10557749834",42.74667,18.98014,{"man_made":"mast","tower:type":"communication"}],
@@ -40,8 +40,6 @@
 ["n13361760917",42.26607,18.89215,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n13840983730",41.86471,19.34478,{"man_made":"mast","tower:type":"communication"}],
 ["n13895383661",42.76268,19.32072,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
-["n14154355362",42.22428,18.90967,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
-["n14154355587",42.22065,18.9087,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n1881353350",42.53494,18.72727,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n2176844382",42.43626,18.7454,{"communication:mobile_phone":"yes","man_made":"tower","name":"Vrmac","tower:type":"communication"}],
 ["n2199619240",42.46339,19.32378,{"man_made":"tower","tower:type":"communication"}],
