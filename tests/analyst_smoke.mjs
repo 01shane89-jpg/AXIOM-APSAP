@@ -82,10 +82,17 @@ ok(ents.isoc >= 1, "ISOC Region 4 is matched (" + ents.isoc + ")");
 ok(ents.cards >= 15 && ents.ai, "the entity cards draw with the AI generated tag on draft roles (" + ents.cards + ")");
 ok(ents.periodRows === 6, "the 90-day period leaves out the old report (" + ents.periodRows + ")");
 // add an own entity
-await p.evaluate(() => { const f = document.getElementById("an-addent"); f.closest("details").open = true; f.name.value = "Test Cell Rueso"; f.aliases.value = "Rangers"; f.note.value = "watch"; f.requestSubmit(); });
+// the Add bar: on the tab the workspace opens on, with all four kinds; no form until one is picked
+const bar = await p.evaluate(() => ({ kinds: [...document.querySelectorAll("#anws .anaddbar [data-an-add]")].map((b) => b.getAttribute("data-an-add")).join(","), form: !!document.getElementById("an-addent"), first: !!document.querySelector("#anws .ancard") && document.querySelector("#anws .anaddbar").compareDocumentPosition(document.querySelector("#anws .ancard")) & 4 }));
+ok(bar.kinds === "ent,link,note,loc" && !bar.form && bar.first, "the Add bar sits above the entity list with Entity, Link, Note and Location (" + JSON.stringify(bar) + ")");
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="ent"]').click());
+await p.waitForTimeout(200);
+ok(await p.evaluate(() => !!document.querySelector('#anws .anaddbox[data-an-addbox="ent"] #an-addent')), "+ Entity opens the entity form at the top");
+await p.evaluate(() => { const f = document.getElementById("an-addent"); f.name.value = "Test Cell Rueso"; f.aliases.value = "Rangers"; f.note.value = "watch"; f.requestSubmit(); });
 await p.waitForTimeout(300);
 const own = await p.evaluate(() => { const v = JSON.parse(localStorage.getItem("osap-an-ent")); const X = window.OSAP_ANALYST._index(); const e = v.items[0]; return { n: v.items.length, hits: (X.by[e.id] || []).length, shown: document.querySelector("#anws").textContent.includes("Test Cell Rueso") }; });
 ok(own.n === 1 && own.hits === 1 && own.shown, "an own entity is stored in this browser and matched by its other names (" + JSON.stringify(own) + ")");
+ok(await p.evaluate(() => { const h = [...document.querySelectorAll("#anws h3")].map((x) => x.textContent); return h.indexOf("Your entities") === h.findIndex((t) => t !== "Add an entity" && !/^Add /.test(t)); }), "the analyst's own entities are listed first");
 // links
 await p.evaluate(() => document.querySelector('#anws [data-an-tab="links"]').click());
 await p.waitForTimeout(300);
@@ -94,6 +101,9 @@ await p.evaluate(() => { const c = document.getElementById("an-ownonly"); c.chec
 await p.waitForTimeout(300);
 const g1 = await p.evaluate(() => ({ dashed: document.querySelectorAll("#anws .angraph line[stroke-dasharray]").length, nodes: document.querySelectorAll("#anws .angraph [data-an-node]").length, dist: document.querySelectorAll("#anws .angraph rect").length }));
 ok(g1.dashed >= 2 && g1.nodes >= 3 && g1.dist >= 1, "Links draws entities, districts and dashed co-mention lines (" + JSON.stringify(g1) + ")");
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="link"]').click());
+await p.waitForTimeout(200);
+ok(await p.evaluate(() => { const f = document.getElementById("an-addlink"); return !!f && !!f.closest(".anaddbox") && [...f.a.querySelectorAll("optgroup")][0].label === "Your entities"; }), "+ Link opens the link form at the top, your own entities first");
 await p.evaluate(() => { const f = document.getElementById("an-addlink"); f.a.value = "ent:ds:brn"; f.b.value = "ent:ds:pulo"; f.rel.value = "opposes"; f.conf.value = "confirmed"; f.note.value = "test basis"; f.requestSubmit(); });
 await p.waitForTimeout(300);
 const g2 = await p.evaluate(() => ({ solid: [...document.querySelectorAll("#anws .angraph line")].filter((l) => !l.hasAttribute("stroke-dasharray")).length, table: document.querySelector("#anws table") ? document.querySelector("#anws table").textContent : "" }));
@@ -145,13 +155,31 @@ await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').clic
 await p.waitForTimeout(300);
 const tl = await p.evaluate(() => ({ items: document.querySelectorAll("#anws .anit").length, mine: document.querySelectorAll("#anws .anit.mine").length, z: /\d{4}Z \(\d{4} Thailand\)/.test(document.querySelector("#anws").textContent) }));
 ok(tl.items >= 4 && tl.mine === 1 && tl.z, "Timeline lists the reports and the saved point, in Zulu and Thailand time (" + JSON.stringify(tl) + ")");
+// + Note: the analyst's own note, saved to My work, shown in Saved and on the Timeline
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="note"]').click());
+await p.waitForTimeout(200);
+await p.evaluate(() => { const f = document.getElementById("an-addnote"); f.title.value = "Market rumor in Rueso"; f.about.value = "ent:ds:brn"; f.note.value = "Vendors say checkpoints moved."; f.requestSubmit(); });
+await p.waitForTimeout(300);
+const nt = await p.evaluate(() => { const its = Object.values(window.OSAP_WORK.items()).filter((i) => i.snap && i.snap.title === "Market rumor in Rueso"), t = document.querySelector("#anws").textContent;
+  return { n: its.length, about: its[0] && /^About: Barisan Revolusi Nasional/.test(its[0].note), type: its[0] && its[0].snap.type, tab: JSON.parse(localStorage.getItem("osap-an-ui")).tab, shown: t.includes("Market rumor in Rueso"), form: !!document.getElementById("an-addnote") }; });
+ok(nt.n === 1 && nt.about && nt.type === "note" && nt.tab === "saved" && nt.shown && !nt.form, "+ Note saves the analyst's own note to My work and shows it in Saved (" + JSON.stringify(nt) + ")");
+await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').click());
+await p.waitForTimeout(200);
+ok(await p.evaluate(() => [...document.querySelectorAll("#anws .anit.mine")].some((x) => /Your note:.*Market rumor in Rueso/.test(x.textContent))), "the note is on the Timeline as your note");
 // saved
 await p.evaluate(() => document.querySelector('#anws [data-an-tab="saved"]').click());
 await p.waitForTimeout(300);
 const sv = await p.evaluate(() => document.querySelector("#anws").textContent.includes("Test OP Rueso"));
 ok(sv, "Saved lists the analyst's point as a saved location");
+// + Location: hands over to the toolbar's Point menu
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="loc"]').click());
+await p.waitForTimeout(300);
+const loc = await p.evaluate(() => ({ menu: /At the map center/.test(document.body.innerText), ws: !!document.querySelector("#anws:not([hidden])") }));
+ok(loc.menu, "+ Location opens the Point menu (" + JSON.stringify(loc) + ")");
+await p.keyboard.press("Escape");
+if (!loc.ws) await p.evaluate(() => window.OSAP_ANALYST.open("bed")); else await p.evaluate(() => document.querySelector('#anws [data-an-tab="bed"]').click());
+await p.waitForTimeout(300);
 // bed-down
-await p.evaluate(() => document.querySelector('#anws [data-an-tab="bed"]').click());
 await p.waitForTimeout(600);
 const bd = await p.evaluate(() => { const B = window.OSAP_ANALYST._bed(); return { rows: B.rows.map((r) => r.d + ":" + r.n), warn: /not a finding/.test(document.querySelector("#anws .anwarn").textContent), ter: B.rows.some((r) => r.ter.length) }; });
 ok(JSON.stringify(bd.rows) === JSON.stringify(["TH-9606:2", "TH-9503:1"]), "Bed-down counts search and find reports by district, not the drug seizure (" + bd.rows + ")");

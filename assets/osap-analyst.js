@@ -27,6 +27,7 @@
    - Bed-down: a possible bed-down INDICATOR per district: how many reports in the period describe security-force searches,
      cordons, hideouts, camps or weapons and bomb-making finds there, with the terrain items that fall inside the district. Where
      the security forces searched is not proof of where insurgents stay; the tab says so and never calls a district a bed-down.
+   - Add: a bar under the tabs, on every tab (+ Entity, + Link, + Note, + Location), opens the form at the top of the workspace.
    The analyst's entities and links are kept in this browser only (localStorage "osap-an-ent", "osap-an-links", both carried by
    workspaces in assets/osap-ws.js). Nothing is sent anywhere. */
 /* Who gets it: a device unlocked with the owner's Face ID, or, on the Netlify site, the owner's signed-in account (Shane
@@ -82,7 +83,7 @@
   /* ---------- state ---------- */
   var UI = lsGet(K_UI, {}); if (typeof UI !== "object" || !UI) UI = {};
   var S = { tab: TABS.some(function (t) { return t[0] === UI.tab; }) ? UI.tab : "ents", days: [30, 90, 365, 0].indexOf(UI.days) >= 0 ? UI.days : 90,
-    sel: null, q: "", tf: "", ownOnly: null, lay: "net", bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "", cands: null, candErr: "", showAuto: true, auto: null };
+    sel: null, q: "", tf: "", ownOnly: null, lay: "net", bedMap: false, el: null, layer: null, areas: null, areasErr: "", entsErr: "", cands: null, candErr: "", showAuto: true, auto: null, add: "" };
   function saveUi() { lsSet(K_UI, { tab: S.tab, days: S.days }); }
   function ownEnts() { var v = lsGet(K_ENT, null); if (!v || typeof v !== "object" || !Array.isArray(v.items)) v = { schema: "osap-an-ent/1", items: [], notes: {} }; if (!v.notes || typeof v.notes !== "object") v.notes = {}; if (!v.sides || typeof v.sides !== "object") v.sides = {}; return v; }
   /* the analyst's own designation of an entity (friend, hostile...), drawn as the APP-6 frame on the link chart. OSAP never sets one. */
@@ -184,6 +185,8 @@
       "#anws .anday{font-weight:700;margin:10px 0 2px}#anws .anit{margin:3px 0 3px 8px;padding-left:8px;border-left:3px solid var(--line,#d5dbe1)}#anws .anit.mine{border-left-color:#2b8a3e}" +
       "#anws .anbar{display:inline-block;height:8px;background:#e67700;border-radius:2px;vertical-align:middle;margin-right:4px}#anws .anwarn{background:rgba(230,119,0,.1);border-left:3px solid #e67700;padding:6px 10px;margin:6px 0}#anws .anappr{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}#anws .anchip{font-size:12px;padding:2px 8px;border-radius:10px;border:1px solid var(--line);background:var(--surface2)}#anws .anchip.approved{border-color:#2f9e44;color:#2b8a3e}#anws .anchip.rejected{border-color:#e03131;color:#c92a2a}#anws .anchip.changed{border-color:#e67700}#anws .anok{background:rgba(47,158,68,.1);border-left:3px solid #2f9e44;padding:6px 10px;margin:6px 0}" +
       "#anws .atk-pph{display:flex;flex-wrap:wrap;gap:4px}#anws .atk-pph img{width:84px;height:84px;object-fit:cover;border-radius:4px}#anws .atk-pph button{padding:0;border:none;min-height:0}" +
+      "#anws .anaddbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 8px;padding:6px 8px;border:1px dashed var(--accent,#1c5d99);border-radius:6px}#anws .anaddbar b{font-size:12.5px;margin-right:2px}" +
+      "#anws .anaddbox{border:1px solid var(--accent,#1c5d99);border-radius:6px;padding:4px 10px 8px;margin:0 0 10px;background:var(--surface2,#f5f7f9)}#anws .anaddbox h3{display:flex;align-items:center;gap:8px;margin:6px 0 2px}#anws .anaddbox h3 span{flex:1}#anws .anaddbox textarea{min-width:min(420px,100%);min-height:64px}#anws .anaddbox .anrow label{max-width:100%;min-width:0}#anws .anaddbox select{max-width:min(300px,100%)}" +
       "#atk-tools [data-an-btn] svg{width:20px;height:20px}" +
       ".leaflet-pane.leaflet-anpane-pane{visibility:visible!important}";
     D.head.appendChild(s);
@@ -241,9 +244,10 @@
     var X = index(), h = '<div class="anbox"><div class="chead"><h2>Analyst workspace</h2>' +
       '<label class="anal">Period <select id="an-days">' + PERIODS.map(function (p) { return '<option value="' + p[0] + '"' + (p[0] === S.days ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select></label>" +
       '<button type="button" class="x" data-an="close" aria-label="Close">\u00d7</button></div>' +
-      caseNote() + '<p class="anal">' + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "" : "Only on this device, while it is unlocked with your Face ID. ") + "Thailand Deep South reporting: " + num(X.rows.length) + " reports in the period" +
-      ((W.ASAP_DS || {}).asof ? ", read " + esc(W.ASAP_DS.asof) : "") + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "." : ". Your entities, links and notes stay in this browser.") + "</p>" +
+      caseNote() + '<p class="anal">' + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "" : "Only on this device, while it is unlocked with your Face ID. ") + "Reporting and the reference entity list: Thailand Deep South (" + num(X.rows.length) + " reports in the period" +
+      ((W.ASAP_DS || {}).asof ? ", read " + esc(W.ASAP_DS.asof) : "") + "). What you add can be about anywhere" + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "." : " and stays in this browser.") + "</p>" +
       '<div class="antabs" role="tablist">' + TABS.map(function (t) { return '<button type="button" role="tab" data-an-tab="' + t[0] + '" aria-pressed="' + (S.tab === t[0]) + '">' + t[1] + "</button>"; }).join("") + "</div>";
+    h += addBar(X);
     if (S.entsErr) h += '<p class="anwarn">' + esc(S.entsErr) + "</p>";
     h += S.tab === "links" ? tabLinks(X) : S.tab === "struct" ? tabStruct(X) : S.tab === "time" ? tabTime(X) : S.tab === "saved" ? tabSaved() : S.tab === "bed" ? tabBed() : tabEnts(X);
     el.innerHTML = h + "</div>";
@@ -251,13 +255,63 @@
     drawBed();
   }
 
+  /* ---------- Add (Shane 2026-11-08: "in the analyst workspace, I dont see an option to add things") ----------
+     One Add bar under the tabs, on every tab: Entity and Link open their forms at the top of the workspace (they used to be
+     folded away at the bottom of Entities and Links); Note saves the analyst's own note to My work (assets/osap-work.js
+     addNote), so it shows in Saved and on the Timeline; Location hands over to the toolbar's Point menu (assets/osap-atak.js),
+     which saves to the same "osap-atak-pts" store the Saved tab lists. Everything added is the analyst's own item, never a
+     finding, and nothing here changes the reference list or the machine's proposals. */
+  var ADDS = [["ent", "Entity", "An organization, unit, place, site, route, vehicle, incident or other item"], ["link", "Link", "A relationship between two items, with your confidence and basis"],
+    ["note", "Note", "Your own note or report, kept in My work and shown on the Timeline"], ["loc", "Location", "A point on the map, with a name, note and photos (the toolbar's Point tool)"]];
+  function inCaseW() { return !!(W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase()); }
+  function addBar(X) {
+    var h = '<div class="anaddbar" role="group" aria-label="Add to the workspace"><b>Add</b>' + ADDS.map(function (a) {
+      return '<button type="button" data-an-add="' + a[0] + '" title="' + esc(a[2]) + '"' + (a[0] === "loc" ? "" : ' aria-pressed="' + (S.add === a[0]) + '"') + ">+ " + a[1] + "</button>";
+    }).join("") + "</div>";
+    if (!S.add) return h;
+    var A = ADDS.filter(function (a) { return a[0] === S.add; })[0]; if (!A) return h;
+    h += '<div class="anaddbox" data-an-addbox="' + A[0] + '"><h3><span>Add ' + (A[0] === "ent" ? "an entity" : A[0] === "link" ? "a link" : "a note") + '</span><button type="button" class="x" data-an-add="" aria-label="Close the form">\u00d7</button></h3>';
+    if (A[0] === "ent") h += entForm();
+    else if (A[0] === "link") h += linkForm(X);
+    else h += noteForm(X);
+    return h + "</div>";
+  }
+  /* the prompt at the bottom of a tab that opens the same form at the top */
+  function addMore(kind, label) { return '<p class="anrow"><button type="button" data-an-add="' + kind + '">+ ' + esc(label) + "</button></p>"; }
+  function entForm() {
+    return '<form id="an-addent" class="anrow">' +
+      '<label>Name <input name="name" required maxlength="120"></label><label>Type <select name="type">' + TYPES.map(function (t) { return "<option>" + esc(t) + "</option>"; }).join("") + "</select></label>" +
+      '<label>Other names (comma between) <input name="aliases" maxlength="400"></label><label>Note <input name="note" maxlength="1000"></label><button type="submit" class="go">Add</button></form>' +
+      '<p class="anal">Organizations, units, places, sites, routes, vehicles, incidents and public officeholders, anywhere. A private person only when sanctioned or charged. OSAP counts the reports that name it by its names.' + (inCaseW() ? "" : " Kept in this browser only.") + "</p>";
+  }
+  function noteForm(X) {
+    var opts = X.E.filter(function (e) { return e.own; }).concat(X.E.filter(function (e) { return !e.own; })).map(function (e) { return '<option value="' + esc(e.id) + '">' + esc(e.name) + "</option>"; }).join("");
+    return '<form id="an-addnote" class="anrow"><label>Title <input name="title" required maxlength="200"></label>' +
+      '<label>About (optional) <select name="about"><option value="">Nothing in particular</option>' + opts + "</select></label>" +
+      '<label>Source (optional) <input name="source" maxlength="200" placeholder="Who or what it came from"></label>' +
+      '<label>Note <textarea name="note" maxlength="4000" required></textarea></label>' +
+      '<label><span><input type="checkbox" name="here"> At the map center</span></label><button type="submit" class="go">Save note</button></form>' +
+      '<p class="anal">Your own note or report, kept in My work beside your saved reports and shown on the Timeline. It is your observation, not a finding.' + (W.OSAP_WORK && W.OSAP_WORK.addNote ? "" : " (My work has not loaded yet, so the note cannot be saved right now.)") + "</p>";
+  }
+  /* Location: the toolbar's Point menu (map center, tap the map, my position, photo) does the placing */
+  function addLocation() {
+    var b = D.querySelector('#atk-tools [data-atk="point"]');
+    if (!b) { toast("The Point tool is not on this toolbar."); return; }
+    if (!(W.OSAP_SPLIT && W.OSAP_SPLIT.on())) close();
+    b.click();
+  }
+
   /* ---------- Entities ---------- */
   function tabEnts(X) {
     var q = S.q.trim().toLowerCase(), notes = ownEnts().notes;
     var E = X.E.filter(function (e) { return !q || [e.name, e.type, e.group, e.role, e.note].concat(e.aliases).join(" ").toLowerCase().indexOf(q) >= 0; });
-    var groups = []; E.forEach(function (e) { if (groups.indexOf(e.group) < 0) groups.push(e.group); });
+    var h0 = "", groups = []; E.forEach(function (e) { if (groups.indexOf(e.group) < 0) groups.push(e.group); });
+    /* the analyst's own entities first, so what they add is in view */
+    groups.sort(function (a, b) { return (b === "Your entities") - (a === "Your entities"); });
+    if (!q && groups.indexOf("Your entities") < 0) h0 = '<p class="obs">You have no entities of your own yet. Use <b>+ Entity</b> above to add an organization, unit, place, site, route, vehicle, incident or other item.</p>';
     var h = '<div class="anrow"><label>Find <input id="an-q" type="search" value="' + esc(S.q) + '" placeholder="Name, alias, type"></label></div>' +
       '<p class="anal">Mentions = reports in the period whose text names the entity (a machine match on its names, in English, Thai and Malay). Being named is not a finding about what it did.</p>';
+    h += h0;
     groups.forEach(function (g) {
       var L = E.filter(function (e) { return e.group === g; }).sort(function (a, b) { return X.by[b.id].length - X.by[a.id].length; });
       h += "<h3>" + esc(g) + "</h3>" + L.map(function (e) {
@@ -275,10 +329,7 @@
       }).join("");
     });
     if (!E.length) h += '<p class="obs">' + (W.OSAP_DS_ENT ? "No entity matches." : "Loading the entity list\u2026") + "</p>";
-    h += '<details><summary>Add your own entity</summary><form id="an-addent" class="anrow">' +
-      '<label>Name <input name="name" required maxlength="120"></label><label>Type <select name="type">' + TYPES.map(function (t) { return "<option>" + esc(t) + "</option>"; }).join("") + "</select></label>" +
-      '<label>Other names (comma between) <input name="aliases" maxlength="400"></label><label>Note <input name="note" maxlength="1000"></label><button type="submit" class="go">Add</button></form>' +
-      '<p class="anal">Organizations, units, places and public officeholders. A private person only when sanctioned or charged. Kept in this browser only.</p></details>';
+    h += addMore("ent", "Add your own entity");
     return h;
   }
 
@@ -489,7 +540,7 @@
     var h = '<p class="anal">Link chart. Boxes: organizations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
     if (ownLinks().items.length || G.P.links.length) h += '<label class="anrow"><input type="checkbox" id="an-ownonly"' + (ownOnly() ? " checked" : "") + "> Your links" + (G.P.links.length && S.showAuto ? " and the auto-proposed ones" : "") + " only (leave out the machine co-mentions)</label>" +
       (ownOnly() ? '<label class="anrow">Layout <select id="an-lay"><option value="net"' + (S.lay !== "cols" ? " selected" : "") + '>Network</option><option value="cols"' + (S.lay === "cols" ? " selected" : "") + ">Columns (who / what happened / where)</option></select></label>" : "");
-    if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + autoList(G) + linkForm(X);
+    if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + autoList(G) + addMore("link", "Add your own link");
     h += '<svg class="angraph" viewBox="0 0 ' + w + " " + hh + '" role="img" aria-label="Link chart">' +
       (cols ? ROLE_COLS.map(function (c) { return '<text class="anlane" x="' + cols.X0[c[0]] + '" y="22" text-anchor="middle">' + esc(c[1]) + "</text>"; }).join("") +
         [["act-inc", (cols.X0.act + cols.X0.inc) / 2], ["inc-plc", (cols.X0.inc + cols.X0.plc) / 2]].map(function (g) { return gapRel[g[0]] ? '<text class="anrel" x="' + g[1] + '" y="44" text-anchor="middle">' + esc(gapRel[g[0]]) + " (unless marked)</text>" : ""; }).join("") : "") +
@@ -558,7 +609,7 @@
           (e.kind === "own" ? '<button type="button" data-an-unlink="' + esc(e.id) + '">Remove</button>' + approval(K_LINK, e.id) : "<details><summary>Reports</summary>" + e.rep.slice(0, 12).map(repLine).join("") + "</details>") + "</td></tr>";
       }).join("") + "</table>";
     }
-    return h + autoList(G) + linkForm(X);
+    return h + autoList(G) + addMore("link", "Add your own link");
   }
   /* ---------- auto-proposed links: the review list ---------- */
   function propActs(p) {
@@ -600,12 +651,16 @@
   }
   function reject(pid) { var r = rejected(); if (r.indexOf(pid) < 0) r.push(pid); lsSet(K_REJ, r.slice(-5000)); render(); }
   function linkForm(X) {
-    var opts = X.E.map(function (e) { return '<option value="' + esc(e.id) + '">' + esc(e.name) + "</option>"; }).join("") +
-      (S.areas || []).map(function (a) { return '<option value="d:' + esc(a.id) + '">District: ' + esc(a.name) + "</option>"; }).join("");
-    return '<details><summary>Add your own link</summary><form id="an-addlink" class="anrow"><label>From <select name="a">' + opts + "</select></label>" +
+    /* every item a link can join, grouped: your own entities first, then the reference groups, then the districts */
+    var gs = [], by = {};
+    X.E.forEach(function (e) { if (!by[e.group]) { by[e.group] = []; gs.push(e.group); } by[e.group].push(e); });
+    gs.sort(function (a, b) { return (b === "Your entities") - (a === "Your entities"); });
+    var opts = gs.map(function (g) { return '<optgroup label="' + esc(g) + '">' + by[g].map(function (e) { return '<option value="' + esc(e.id) + '">' + esc(e.name) + "</option>"; }).join("") + "</optgroup>"; }).join("") +
+      ((S.areas || []).length ? '<optgroup label="Districts">' + S.areas.map(function (a) { return '<option value="d:' + esc(a.id) + '">District: ' + esc(a.name) + "</option>"; }).join("") + "</optgroup>" : "");
+    return '<form id="an-addlink" class="anrow"><label>From <select name="a">' + opts + "</select></label>" +
       '<label>Relationship <select name="rel">' + RELS.map(function (r) { return "<option>" + esc(r) + "</option>"; }).join("") + "</select></label>" +
       '<label>To <select name="b">' + opts + '</select></label><label>Confidence <select name="conf">' + CONFS.map(function (c) { return '<option value="' + c[0] + '">' + c[1] + "</option>"; }).join("") + '</select></label><label>Why (your basis) <input name="note" maxlength="600"></label><button type="submit" class="go">Add link</button></form>' +
-      '<p class="anal">Your link is your judgment, shown in green and kept apart from the machine co-mentions: solid when confirmed, long dashes when probable, short dashes when suspected. The Structure tab arranges these links as a network chart. In this browser only.</p></details>';
+      '<p class="anal">Your link is your judgment, shown in green and kept apart from the machine co-mentions: solid when confirmed, long dashes when probable, short dashes when suspected. The Structure tab arranges these links as a network chart. Missing something to link? Add it first with <b>+ Entity</b>.' + (inCaseW() ? "" : " In this browser only.") + "</p>";
   }
   function repLine(i) {
     var u = safeUrl(i.link);
@@ -628,7 +683,7 @@
     var cnt = {}; L.forEach(function (l) { cnt[l.a] = (cnt[l.a] || 0) + 1; cnt[l.b] = (cnt[l.b] || 0) + 1; });
     var roots = Object.keys(cnt).filter(function (id) { return !/^d:/.test(id); }).sort(function (a, b) { return cnt[b] - cnt[a]; });
     var h = '<p class="anal">Network structure from <b>your own links only</b>: a chain of command from the top entity, then support nodes, finance, supply chain, bed-down sites, routes and areas of operation. It is your judgment, not a finding; machine co-mentions are not used. Add links in the Links tab (relationships such as member of, commands, support node for, supplies, funds, beds down at, uses route).</p>';
-    if (!roots.length) return h + '<p class="obs">No links of your own yet. Record links in the Links tab (with a confidence and your basis) and the structure appears here.</p>' + linkForm(X);
+    if (!roots.length) return h + '<p class="obs">No links of your own yet. Record links in the Links tab (with a confidence and your basis) and the structure appears here.</p>' + addMore("link", "Add your own link");
     var root = roots.indexOf(S.root) >= 0 ? S.root : roots.indexOf("ent:ds:brn") >= 0 ? "ent:ds:brn" : roots[0];
     h += '<div class="anrow"><label>Top of the chart <select id="an-root">' + roots.map(function (id) { return '<option value="' + esc(id) + '"' + (id === root ? " selected" : "") + ">" + esc(nm(id)) + " (" + cnt[id] + ")</option>"; }).join("") + "</select></label></div>";
     /* command tiers: "A commands B" puts B under A; "A member of B" puts A under B */
@@ -711,7 +766,7 @@
     h += '<div class="anscroll">' + svg + "</div>" +
       '<div class="ankey"><div class="lgh">Your links</div><div class="lg"><span class="anln" style="border-top:2.5px solid #2b8a3e"></span><div>Confirmed</div></div><div class="lg"><span class="anln" style="border-top:2.5px dashed #2b8a3e"></span><div>Probable (long dashes) or suspected (short dashes)</div></div><div class="lg"><span class="answ" style="border-color:#e67700"></span><div>Top of the chart</div></div></div>' +
       '<p class="anal">' + nodes.length + " items, " + L.filter(function (l) { return at[l.a] && at[l.b]; }).length + " of your links. Items more than two links from the chain of command are left out.</p>";
-    return h + linkForm(X);
+    return h + addMore("link", "Add your own link");
   }
 
   /* ---------- Timeline ---------- */
@@ -740,7 +795,7 @@
           (x.r.ents.length ? " \u00b7 names: " + esc(x.r.ents.map(function (id) { var e = X.E.filter(function (y) { return y.id === id; })[0]; return e ? e.name : id; }).join(", ")) : "") + "</div></div>";
       } else if (x.mine === "report") {
         var sn = x.it.snap || {};
-        h += '<div class="anit mine"><b>You saved:</b> ' + (safeUrl(sn.url) ? '<a href="' + esc(sn.url) + '" target="_blank" rel="noopener noreferrer">' + esc(sn.title || "report") + "</a>" : esc(sn.title || "report")) +
+        h += '<div class="anit mine"><b>' + (sn.type === "note" ? "Your note:" : "You saved:") + "</b> " + (safeUrl(sn.url) ? '<a href="' + esc(sn.url) + '" target="_blank" rel="noopener noreferrer">' + esc(sn.title || "report") + "</a>" : esc(sn.title || "report")) +
           '<div class="anal">' + esc(zl(x.t)) + (x.it.note ? " \u00b7 note: " + esc(x.it.note) : "") + "</div></div>";
       } else {
         h += '<div class="anit mine"><b>Your point:</b> ' + esc(x.it.n || "Point") + '<div class="anal">' + esc(zl(x.t)) + " \u00b7 " + (+x.it.lat).toFixed(5) + ", " + (+x.it.lon).toFixed(5) + "</div></div>";
@@ -754,16 +809,16 @@
   function points() { var p = lsGet("osap-atak-pts", []); return Array.isArray(p) ? p.filter(function (x) { return x && isFinite(x.lat) && isFinite(x.lon); }) : []; }
   function tabSaved() {
     var R = savedReports().sort(function (a, b) { return String(b.at || "").localeCompare(String(a.at || "")); }), P = points(), Ph = P.filter(function (p) { return p.ph > 0; });
-    var h = "<h3>Saved reports (" + R.length + ")</h3>" + (R.length ? "<table><tr><th>Report</th><th>Source</th><th>Your note</th><th></th></tr>" + R.map(function (it) {
+    var h = "<h3>Saved reports and notes (" + R.length + ")</h3>" + (R.length ? "<table><tr><th>Report</th><th>Source</th><th>Your note</th><th></th></tr>" + R.map(function (it) {
       var s = it.snap || {}, has = s.lat != null && s.lon != null;
       return "<tr><td>" + (safeUrl(s.url) ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : esc(s.title)) + '<div class="anal">' + esc([s.place, s.ts, (it.cc || "").toUpperCase()].filter(Boolean).join(" \u00b7 ")) +
         (s.fp ? " \u00b7 SHA-256 " + esc(String(s.fp).slice(0, 12)) + "\u2026" : "") + "</div></td><td>" + esc(s.source || "") + (it.grade && W.OSAP_GRADE ? " " + W.OSAP_GRADE.badge(it.grade) : "") + (s.status ? '<div class="anal">' + esc(s.status) + "</div>" : "") + "</td><td>" + esc(it.note || "") + "</td><td>" +
         (has ? '<button type="button" data-an-fly="' + (+s.lat) + "," + (+s.lon) + '">Map</button>' : "") + "</td></tr>";
-    }).join("") + "</table>" : '<p class="obs">None yet. Save a report from its card (My work).</p>');
+    }).join("") + "</table>" : '<p class="obs">None yet. Save a report from its card (My work), or write your own with <b>+ Note</b>.</p>');
     h += "<h3>Saved locations (" + P.length + ")</h3>" + (P.length ? "<table><tr><th>Point</th><th>Where</th><th>Photos</th><th></th></tr>" + P.map(function (p) {
       return "<tr><td>" + esc(p.n || "Point") + (p.note ? '<div class="anal">' + esc(p.note) + "</div>" : "") + "</td><td>" + (+p.lat).toFixed(5) + ", " + (+p.lon).toFixed(5) + (p.cc ? " \u00b7 " + esc(String(p.cc).toUpperCase()) : "") + '</td><td class="n">' + num(p.ph || 0) + "</td><td>" +
         '<button type="button" data-an-fly="' + (+p.lat) + "," + (+p.lon) + '">Map</button>' + (W.OSAP_POINTS ? '<button type="button" data-an-edit="' + esc(p.id) + '">Edit</button>' : "") + "</td></tr>";
-    }).join("") + "</table>" : '<p class="obs">None yet. Use Point on the toolbar, or long-press the map.</p>');
+    }).join("") + "</table>" : '<p class="obs">None yet. Use <b>+ Location</b> (the toolbar\'s Point tool), or long-press the map.</p>');
     h += "<h3>Saved images</h3>" + (Ph.length ? Ph.map(function (p) { return '<div class="ancard"><b>' + esc(p.n || "Point") + '</b><div class="atk-pph" data-an-ph="' + esc(p.id) + '"></div></div>'; }).join("") :
       '<p class="obs">None yet. Add photos to a point (Edit, photos). They stay on this device, unchanged, with their SHA-256.</p>');
     return h;
@@ -822,6 +877,14 @@
     var t = e.target, b;
     if (t === S.el) { close(); return; }
     if (t.closest('[data-an="close"]')) { close(); return; }
+    if ((b = t.closest("[data-an-add]"))) {
+      var k = b.getAttribute("data-an-add");
+      if (k === "loc") { addLocation(); return; }
+      S.add = S.add === k ? "" : k; render();
+      var f = S.add && D.querySelector("#anws .anaddbox input, #anws .anaddbox select");
+      if (f) { try { f.focus(); S.el.querySelector(".anaddbox").scrollIntoView({ block: "nearest" }); } catch (x) {} }
+      return;
+    }
     if ((b = t.closest("[data-an-tab]"))) { S.tab = b.getAttribute("data-an-tab"); saveUi(); render(); return; }
     if ((b = t.closest("[data-an-go]"))) { S.sel = b.getAttribute("data-an-e"); S.tab = b.getAttribute("data-an-go"); S.tf = S.tab === "time" ? S.sel : S.tf; saveUi(); render(); return; }
     if ((b = t.closest("[data-an-node]"))) { var id = b.getAttribute("data-an-node"); S.sel = S.sel === id ? null : id; render(); return; }
@@ -870,7 +933,16 @@
       var O = ownEnts(); if (O.items.length >= 500) { toast("500 entities is the limit in this browser."); return; }
       O.items.push({ id: rid("ent:me:"), name: name, type: TYPES.indexOf(f.type.value) >= 0 ? f.type.value : "other",
         aliases: clean(f.aliases.value, 400).split(",").map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 20), note: clean(f.note.value, 1000), created: now, updated: now });
-      if (lsSet(K_ENT, O)) toast("Entity added (this browser only)."); render();
+      if (lsSet(K_ENT, O)) { toast("Entity added." + (inCaseW() ? "" : " This browser only.")); S.sel = O.items[O.items.length - 1].id; } render();
+    } else if (f.id === "an-addnote") {
+      var Wk = W.OSAP_WORK, title = clean(f.title.value, 200), body = String(f.note.value || "").replace(/[\u0000-\u0008\u000b-\u001f]/g, " ").trim().slice(0, 4000);
+      if (!title || !body) return;
+      if (!Wk || !Wk.addNote) { toast("My work has not loaded yet. Try again in a moment."); return; }
+      var ab = entities().filter(function (x) { return x.id === f.about.value; })[0], c = f.here.checked && W.__asapMap ? W.__asapMap.getCenter() : null;
+      if (Wk.addNote({ title: title, note: (ab ? "About: " + ab.name + ". " : "") + body, source: clean(f.source.value, 200) || "Analyst workspace", layer: "analyst", status: "Analyst's own note",
+        lat: c ? c.lat : null, lon: c ? c.lng : null })) { toast("Note saved to My work (Saved tab, Timeline)."); S.add = ""; S.tab = "saved"; saveUi(); }
+      else toast("This browser would not store that (storage full or blocked).");
+      render();
     } else if (f.id === "an-addlink") {
       var a = f.a.value, b = f.b.value; if (!a || !b || a === b) { toast("Pick two different items."); return; }
       var L = ownLinks(); if (L.items.length >= 2000) { toast("2,000 links is the limit in this browser."); return; }
