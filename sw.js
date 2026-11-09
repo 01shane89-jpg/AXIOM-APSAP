@@ -425,6 +425,7 @@ const PRECACHE = [
 "data/thailand/deepsouth-corridors.js",
 "data/thailand/deepsouth-peace.js",
 "assets/osap-evsum.js",
+"assets/osap-digest.js",
 "assets/osap-share.js",
 "assets/osap-push.js",
 "assets/osap-boolq.js",

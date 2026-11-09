@@ -9,7 +9,7 @@
 //     window never sets either for the analyst;
 //   - text is cleaned of links, e-mail addresses and phone numbers, and cut to fixed lengths.
 import { normCites } from "./evsum_lib.mjs";
-export const PROMPT_V = "osirdraft/1";
+export const PROMPT_V = "osirdraft/2";
 export const LABEL = "Draft, AI-generated, not analyst-approved";
 export const MAX_RECS = 40, MAX_CLAIMS = 8, MAX_LIST = 6;
 const REL = ["A", "B", "C", "D", "E", "F"], CRED = ["1", "2", "3", "4", "5", "6"], CONF = ["HIGH", "MODERATE", "LOW"];
@@ -29,8 +29,8 @@ export const SYSTEM = [
   "Reply with JSON only:",
   "{\"claims\": [{\"claim\": string (what the source said), \"source\": string (who said it), \"refs\": [numbers], \"credibility\": \"1\" to \"6\" (your proposal: 1 confirmed by other",
   "records, 2 probably true, 3 possibly true, 4 doubtful, 5 improbable, 6 cannot be judged)}] (at most 8, most important first),",
-  "\"assessment\": string (2 to 4 sentences with citations), \"alternatives\": string (1 to 3 sentences with citations: other explanations",
-  "the records allow), \"confidence\": \"HIGH\" or \"MODERATE\" or \"LOW\", \"confidence_note\": string (one sentence: why, with citations),",
+  "\"assessment\": {\"text\": string (2 to 4 sentences with citations), \"refs\": [numbers]}, \"alternatives\": {\"text\": string (1 to 3",
+  "sentences with citations: other explanations the records allow), \"refs\": [numbers]}, \"confidence\": \"HIGH\" or \"MODERATE\" or \"LOW\", \"confidence_note\": string (one sentence: why, with citations),",
   "\"indicators\": [{\"text\": string, \"refs\": [numbers]}] (2 to 6 things to watch that would show change), \"gaps\": [string] (2 to 5 things the",
   "records do not establish)}",
 ].join("\n");
@@ -66,7 +66,15 @@ export function input(recs) {
 export function check(o, recs) {
   if (!o || typeof o !== "object") return null;
   const n = Math.min(recs.length, MAX_RECS), base = recs.slice(0, MAX_RECS);
-  const para = (s, max) => { const c = cites(clean(s, max), n); return c.refs.length ? c : null; };
+  // a paragraph comes as a string or as {text, refs} (8 Nov 2026: a small model left citations out of a plain-string assessment, so it
+  // was dropped in most drafts; with a refs list beside it, as the claims have, it keeps them). Refs must exist either way.
+  const para = (x, max) => {
+    const isObj = x && typeof x === "object" && !Array.isArray(x), c = cites(clean(isObj ? x.text : Array.isArray(x) ? x.join(" ") : x, max), n);
+    const refs = [...new Set(c.refs.concat(isObj ? refsOk(x.refs, n) : []))].slice(0, 8);
+    if (!c.text || !refs.length) return null;
+    // refs given only in the list are shown at the end of the paragraph, so the window names its sources
+    return { text: c.refs.length ? c.text : c.text.replace(/[.\s]*$/, "") + " " + refs.map((r) => "[" + r + "]").join("") + ".", refs };
+  };
   const claims = (Array.isArray(o.claims) ? o.claims : []).map((c) => {
     if (!c || typeof c !== "object") return null;
     const refs = refsOk(c.refs, n), claim = cites(clean(c.claim, 600), n).text;

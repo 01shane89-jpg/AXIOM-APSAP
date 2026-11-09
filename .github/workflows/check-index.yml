@@ -101,6 +101,8 @@ jobs:
       - run: node tests/push_brief.test.mjs
       # event-summary drafts give only figures their reports give (tools/evsum_lib.mjs)
       - run: node tests/evsum_lib.test.mjs
+      # report digests: article text out of a page, and the checks on the model's reply (tools/digest_lib.mjs)
+      - run: node tests/digest.test.mjs
       # AI gateway: a slow reply from the runner's model skips one request; two in a row drop it for the run (tools/ai_gateway.mjs)
       - run: node tests/ai_gateway.test.mjs
       - run: node tests/hosp.test.mjs
@@ -202,6 +204,8 @@ jobs:
       - run: node tests/story_dedup_smoke.mjs
       # incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
       - run: node tests/evsum_ai_smoke.mjs
+      # report digests reach the Report card, tagged AI generated, shown as text
+      - run: node tests/digest_smoke.mjs
       - run: node tests/points_smoke.mjs
       - run: node tests/points_declutter_smoke.mjs
       - run: node tests/photo_map_smoke.mjs

@@ -2,13 +2,27 @@
 // every figure a draft gives must be one the reports give (a small model can add or total numbers): digits in the reports'
 // time, headline, place and text, and 1 to 10 where a report spells the number out
 const NUMW = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+// digits of other scripts (Thai, Lao, Khmer, Myanmar, Arabic-Indic, Devanagari, Bengali) are read as 0-9
+const DIGITS = [0x0e50, 0x0ed0, 0x17e0, 0x1040, 0x0660, 0x06f0, 0x0966, 0x09e6];
+export function asciiDigits(s) {
+  return String(s || "").replace(/[\u0e50-\u0e59\u0ed0-\u0ed9\u17e0-\u17e9\u1040-\u1049\u0660-\u0669\u06f0-\u06f9\u0966-\u096f\u09e6-\u09ef]/g, (c) => {
+    const k = c.codePointAt(0), b = DIGITS.find((z) => k >= z && k <= z + 9); return String(k - b);
+  });
+}
 export function unsupportedFigures(out, input) {
   // leading zeros are dropped on both sides: a report's time 2026-11-08T07:30 gives the 8 of "November 8" and the 7 of "7:30"
   // (8 Nov 2026: most rejections were dates and times written that way)
   const num = (x) => x.replace(/,/g, "").replace(/^0+(?=\d)/, "");
-  const src = input.map((r) => [r.time, r.headline, r.place, r.text].join(" ")).join(" \n "), have = new Set((src.match(/\d+(?:[.,]\d+)*/g) || []).map(num));
+  // the source's own name counts too (Emirates 24/7, BF1)
+  const src = asciiDigits(input.map((r) => [r.time, r.source, r.headline, r.place, r.text].join(" ")).join(" \n ")), have = new Set();
+  for (const t of src.match(/\d+(?:[.,]\d+)*/g) || []) {
+    const v = num(t); have.add(v);
+    // a time or decimal written 15.00 also gives its parts (a draft writes 15:00), and a Thai Buddhist-era year its common-era year
+    if (/^\d{1,2}\.\d{2}$/.test(t)) t.split(".").forEach((x) => have.add(num(x)));
+    if (/^25\d\d$/.test(v)) have.add(String(+v - 543));
+  }
   NUMW.forEach((w, i) => { if (new RegExp("\\b" + w + "\\b", "i").test(src)) have.add(String(i)); });
-  const txt = [out.summary, out.unclear, ...out.points.map((p) => p.text), ...out.differ.map((p) => p.text)].join(" ").replace(/\[\d+\]/g, "");
+  const txt = asciiDigits([out.summary, out.unclear, ...out.points.map((p) => p.text), ...out.differ.map((p) => p.text)].join(" ").replace(/\[\d+\]/g, ""));
   return (txt.match(/\d+(?:[.,]\d+)*/g) || []).map(num).filter((x) => !have.has(x));
 }
 
@@ -39,7 +53,16 @@ export function normCites(s, n) {
 
 // a small model also invents names (a prime minister, a "Lieutenant General Wang") and deaths. Every capitalised word inside a
 // sentence must occur somewhere in the reports or their source names, and a draft may speak of deaths only if a report does.
-const NAMEOK = new Set("january february march april may june july august september october november december monday tuesday wednesday thursday friday saturday sunday ai utc gmt ict myt mst wib wit pht sgt jst kst ist zulu english".split(" "));
+const NAMEOK = new Set(("january february march april may june july august september october november december monday tuesday wednesday thursday friday saturday sunday ai utc gmt ict myt mst wib wit pht sgt jst kst ist zulu english" +
+  // titles and institutions are not names (8 Nov 2026: "Prime Minister" was rejected); the person's name after them still has to be in the reports
+  " prime minister ministry president vice deputy king queen prince princess governor general lieutenant colonel major captain sergeant commander" +
+  " chief officer police army navy air force forces military court supreme constitutional parliament senate senator government department" +
+  " province provincial district region regional state city national international security defence defense foreign interior affairs" +
+  " spokesperson spokesman office agency council committee commission authority ministers united nations").split(" "));
+// country and territory names in English (Intl), word by word: a draft may name the country a report is about
+try { const dn = new Intl.DisplayNames(["en"], { type: "region" });
+  for (let a = 65; a <= 90; a++) for (let b = 65; b <= 90; b++) { const c = String.fromCharCode(a, b), n = dn.of(c); if (n && n !== c) n.toLowerCase().split(/[^\p{L}]+/u).forEach((w) => w.length > 2 && NAMEOK.add(w)); }
+} catch (e) {}
 const srcText = (input) => input.map((r) => [r.source, r.headline, r.place, r.text].join(" ")).join(" \n ");
 const draftText = (out) => [out.summary, out.unclear, ...out.points.map((p) => p.text), ...out.differ.map((p) => p.text)].join(" \n ").replace(/\[\d+\]/g, "");
 export function unsupportedNames(out, input) {
