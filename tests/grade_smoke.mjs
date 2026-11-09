@@ -123,7 +123,7 @@ async function dl(p, click) { const [d] = await Promise.all([p.waitForEvent("dow
     ok(gj.features.every((f) => typeof f.properties.analyst_grade === "string"), "ungraded features have an empty analyst_grade");
     const kml = await dl(p, () => p.click('#wk [data-wk-exp="kml"]'));
     const located = gj.features.filter((f) => f.properties.analyst_grade && f.geometry).length;
-    ok(located === 0 || /Analyst grade \(user&apos;s own judgement\): B[23]/.test(kml), "KML says the analyst grade (" + located + " located)");
+    ok(located === 0 || /Analyst grade \(user&apos;s own judge?ment\): B[23]/.test(kml), "KML says the analyst grade (" + located + " located)");
     await p.click('#wk [data-wk-tab="mine"]'); await p.waitForTimeout(200);   // the country window's My work tab hands over to the side panel
     ok(await p.evaluate(() => { const d = document.getElementById("mywk"), w = document.getElementById("wk"); return d && !d.hidden && w.hidden; }), "My work tab opens the side panel and closes the window");
     const nj = JSON.parse(await dl(p, () => p.click('#mywk [data-wk-act="notes-out"]')));
