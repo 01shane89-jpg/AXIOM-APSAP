@@ -13,9 +13,12 @@
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs";
-import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones } from "./warngeo_lib.mjs";
+import { memFiles, parseDailyMem, MEM_BASE, skipNga, redactPhones, coordsIn } from "./warngeo_lib.mjs";
 import { COMMERCIAL } from "./nc_strip.mjs";
+import { NAVW_SRC } from "./navw_sources.mjs";
 import { imbIncidents, notInAsam, IMB_MAP, IMB_LIC } from "./imb_piracy.mjs";
+import { recaapIncidents, RECAAP_HOME, RECAAP_LIC } from "./recaap_incidents.mjs";
+import { ukmtoIncidents, UKMTO_PAGE, UKMTO_LIC } from "./ukmto_incidents.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -29,6 +32,7 @@ async function get(url, as = "json", opt = {}) {
   try {
     const r = await fetch(url, { ...opt, signal: ctl.signal, headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "*/*", ...(opt.headers || {}) } });
     if (!r.ok) throw new Error("HTTP " + r.status);
+    if (as === "buf") { const b = Buffer.from(await r.arrayBuffer()); if (b.length > 40e6) throw new Error("file too large"); return b; }
     return as === "json" ? await r.json() : (await r.text()).slice(0, 40e6);
   } finally { clearTimeout(t); }
 }
@@ -307,6 +311,13 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
     if (!raw.length) console.error("ASAM: no records; top-level keys: " + Object.keys(j).join(","));
     status.push({ source: "NGA ASAM", ok: true, n: asam.length });
   } catch (e) { status.push({ source: "NGA ASAM", ok: false, error: err(e) }); }
+  // UKMTO incident list (Open Government Licence, commercial use allowed): Red Sea to the Persian Gulf, read before IMB and
+  // ReCAAP so that an incident all of them list is kept with UKMTO's open text
+  try {
+    const uk = notInAsam(await ukmtoIncidents(get), asam);
+    for (const a of uk) asam.push({ ...a, ccs: ccsAt(a.lat, a.lon, 1.5) });
+    status.push({ source: "UKMTO", ok: true, n: uk.length, src: UKMTO_PAGE, lic: UKMTO_LIC });
+  } catch (e) { status.push({ source: "UKMTO", ok: false, error: err(e), src: UKMTO_PAGE }); }
   // IMB PRC live piracy map: a backup while NGA ASAM is down, and the incidents ASAM has not listed yet (facts only, nc)
   if (!COMMERCIAL) try {
     const imb = notInAsam(await imbIncidents(get), asam);
@@ -329,9 +340,15 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
       if (!recaap.some((x) => x.link === link)) recaap.push({ title: t.slice(0, 200), link });
     }
     status.push({ source: "ReCAAP ISC", ok: true, n: recaap.length });
+    // the incident list PDF: positions of the Asian incidents ASAM and IMB have not listed (facts only, nc)
+    if (!COMMERCIAL) try {
+      const list = notInAsam(await recaapIncidents(h, (u) => get(u, "buf")), asam);
+      for (const a of list) asam.push({ ...a, ccs: ccsAt(a.lat, a.lon, 1.5) });
+      status.push({ source: "ReCAAP ISC incident list", ok: true, n: list.length, src: RECAAP_HOME, lic: RECAAP_LIC, nc: true });
+    } catch (e) { status.push({ source: "ReCAAP ISC incident list", ok: false, error: err(e), src: RECAAP_HOME, nc: true }); }
   } catch (e) { status.push({ source: "ReCAAP ISC", ok: false, error: err(e) }); }
   if (!status.some((s) => s.ok)) throw new Error(status.map((s) => s.source + ": " + s.error).join("; "));
-  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM/IMB, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
+  return { status, asam, marad, recaap: recaap.slice(0, 25), note: asam.length + " ASAM/UKMTO/IMB/ReCAAP incidents, " + marad.length + " MARAD, " + recaap.length + " ReCAAP" };
 });
 
 // 7. OFAC Specially Designated Nationals: entries with an address in a covered area. Only name, type, programs and area are kept.
@@ -473,14 +490,24 @@ await job("cdc", "cdc.js", "ASAP_CDC", async () => {
   return { src: "https://wwwnc.cdc.gov/travel/notices", items, note: items.length + " notices" };
 });
 
-// 13. NGA broadcast navigational warnings in force (Daily Memoranda of all five NGA areas). Positions parsed from the text.
+// 13. Broadcast navigational warnings in force. NGA (Daily Memoranda of all five NGA areas, US government work, public domain)
+// first, then the other NAVAREA coordinators' own pages, so a source that is down (msi.nga.mil has answered HTTP 503 to the
+// runners since 3 Nov 2026) leaves the rest: AMSA NAVAREA X and Auscoast (CC BY 4.0), Japan Coast Guard NAVAREA XI (JCG site
+// terms: free reuse, commercial use included, with credit), UKHO NAVAREA I and UK coastal (Crown copyright, no open licence
+// found, so its items carry nc: true and the sold version does not ask it). Positions are read with the map overlay's own
+// coordinate reader (tools/warngeo_lib.mjs coordsIn: DD-MM.MMN, DD-MMN and DD-MM-SSN forms).
 function navPos(text) {
-  const out = [];
-  for (const m of String(text).matchAll(/(\d{1,2})-(\d{2}(?:\.\d+)?)\s*([NS])\s+(\d{1,3})-(\d{2}(?:\.\d+)?)\s*([EW])/g)) {
-    let lat = +m[1] + +m[2] / 60, lon = +m[4] + +m[5] / 60; if (m[3] === "S") lat = -lat; if (m[6] === "W") lon = -lon; out.push([+lat.toFixed(3), +lon.toFixed(3)]);
-    if (out.length >= 12) break;
-  }
-  return out;
+  return coordsIn(text).slice(0, 12).map((c) => [+c.lat.toFixed(3), +c.lon.toFixed(3)]);
+}
+const navKind = (text) => (/missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation");
+// one warning into the navwarnings.js item shape; null when it names no country (by position within 1.5 degrees, else by name)
+function navItem(id, issued, text, extra = {}) {
+  text = String(text || "").replace(/\s+/g, " ").trim();
+  const pos = navPos(text);
+  let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
+  if (!ccs.length) return null;
+  return { id, issued: issued || "", subregion: extra.subregion || "", authority: extra.authority || "", text: redactPhones(text).slice(0, 700), pos, kind: navKind(text), ccs,
+    ...(extra.link ? { link: extra.link } : {}), ...(extra.lic ? { lic: extra.lic } : {}), ...(extra.nc ? { nc: true } : {}) };
 }
 await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
   // The old query API (api/publications/broadcast-warn?navArea=..&status=A) stopped at 10 May 2024 (its own /latest-warning
@@ -496,15 +523,21 @@ await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
       let n = 0;
       for (const w of mem.warnings) {
         if (skipNga(w.text)) continue;
-        const text = String(w.text || "").replace(/\s+/g, " ").trim(), pos = navPos(text);
-        let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
-        if (!ccs.length) continue;
-        items.push({ id: (w.area || mf.area) + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
-          text: redactPhones(text).slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
-        n++;
+        const it = navItem((w.area || mf.area) + " " + w.msgNumber + "/" + String(w.msgYear).slice(-2), w.issueDate || "", w.text, { subregion: w.subregion || "", authority: w.authority || "" });
+        if (it) { items.push(it); n++; }
       }
       status.push({ area: mf.area, ok: true, n, file: mf.modified || null });
     } catch (e) { status.push({ area: mf.area, ok: false, error: err(e) }); }
+  }
+  const seen = new Set();
+  for (const s of NAVW_SRC) {
+    if (s.nc && COMMERCIAL) continue;
+    try {
+      const list = await s.read(s, get); let n = 0;
+      // a coastal warning listed under two coastal areas (AMSA Auscoast) is kept once
+      for (const w of list) { if (seen.has(w.id)) continue; seen.add(w.id); const it = navItem(w.id, w.issued, w.text, { subregion: w.subregion, authority: s.authority, link: s.link, lic: s.lic, nc: s.nc }); if (it) { items.push(it); n++; } }
+      status.push({ area: s.area, ok: true, n, of: list.length, src: s.link, lic: s.lic, ...(s.nc ? { nc: true } : {}) });
+    } catch (e) { status.push({ area: s.area, ok: false, error: err(e), src: s.link, ...(s.nc ? { nc: true } : {}) }); }
   }
   if (!status.some((x) => x.ok)) throw new Error(status.map((x) => x.area + ": " + x.error).join("; "));
   return { src: "https://msi.nga.mil/NavWarnings", status, items, note: items.length + " warnings (" + status.map((x) => x.area + (x.ok ? " " + x.n : " failed")).join(", ") + ")" };

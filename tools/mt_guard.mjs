@@ -13,8 +13,14 @@
 // looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
 // English titles, a broadcaster's YouTube channel): it is shown as written and never given to the model, which on 2026-11-08
 // had "translated" 2,039 such English headlines, moving dates ("28-10-2026" to "28-10-2027") and cutting them short.
+// lowConfidence() reads the model's own score (tools/mt/madlad.py MT_SCORES=1): below MT_MIN_SCORE a line is treated as invented.
+//   - names a month the original does not give ("5 พ.ย. 69", 5 November 2026, as "5th of July, 69"; "２７日", the 27th, as
+//     "27 July"): the original must carry that month's name (tools/mt_months.mjs) or its number.
 // Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
+
+import { MONTHS } from "./mt_months.mjs";
+import { WEEKDAYS } from "./mt_weekdays.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -76,6 +82,10 @@ export function mtSuspect(orig, en, now = Date.now()) {
   for (const m of en.matchAll(CENTURY)) if (!nums.includes(m[1])) return "century not in the original";
   const n = extraNumber(orig, en);
   if (n) return "number " + n + " not in the original";
+  const mo = extraMonth(orig, en);
+  if (mo) return "month " + mo + " not in the original";
+  const wd = extraWeekday(orig, en);
+  if (wd) return "weekday " + wd + " not in the original";
   return "";
 }
 
@@ -149,6 +159,56 @@ export function extraNumber(orig, en) {
   return "";
 }
 
+// Months. "May" and "March" (also verbs) and the short forms ("Jan.", "Sep") count only next to a number.
+const EN_MONTHS = ["jan(?:uary)?", "feb(?:ruary)?", "mar(?:ch)?", "apr(?:il)?", "may", "june?", "july?", "aug(?:ust)?", "sep(?:t(?:ember)?)?",
+  "oct(?:ober)?", "nov(?:ember)?", "dec(?:ember)?"];
+const EN_MONTH_RE = new RegExp("(?<!\\p{L})(" + EN_MONTHS.join("|") + ")(?!\\p{L})\\.?", "giu");
+const EN_MONTH_ONE = EN_MONTHS.map((e) => new RegExp("^(?:" + e + ")$", "i"));
+const LGC = /[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]/u;
+const MONTH_STEMS = MONTHS.map((l) => l.map((st) => st.replace(/ı/g, "i")));
+export function extraMonth(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  if (!orig.trim() || orig.trim() === en.trim()) return "";
+  // lowercase, Turkish dotted and dotless i folded, a zero typed for an O ("0CTOBRE") read as the letter
+  const o = orig.normalize("NFKC").toLowerCase().replace(/\u0307/g, "").replace(/ı/g, "i").replace(/(?<!\d)0(?=[a-z]{3})/g, "o");
+  const { tokens } = originalNumbers(orig);
+  for (const m of en.matchAll(EN_MONTH_RE)) {
+    const w = m[1], k = EN_MONTH_ONE.findIndex((r) => r.test(w)) + 1;
+    if (!k) continue;
+    const full = w.length > 4 && !/^(?:march|may)$/i.test(w);
+    if (!full && !/\d/.test(en.slice(Math.max(0, m.index - 4), m.index + m[0].length + 4))) continue;
+    if (tokens.has(k)) continue;                                  // "06.11.2026", "11月", "tháng 11"
+    const named = MONTH_STEMS[k - 1].some((st) => {
+      const word = LGC.test(st[0]);
+      for (let i = o.indexOf(st); i >= 0; i = o.indexOf(st, i + 1)) if (!word || !LGC.test(o[i - 1] || "")) return true;
+      return false;
+    });
+    if (!named) return w;
+  }
+  return "";
+}
+
+// A weekday the original does not give. 2026-11-08, 88,095 stored translations: about 100 named a weekday the original did
+// not, nearly all dated broadcast titles ("LE JOURNAL DE 19H00 22 OCTOBRE 2026" -> "2026 October 22, Sunday", "Jedi 05 Novanm"
+// -> "Sunday 05 November", "ከቅዳሜ እስከ ቅዳሜ" -> "From Sunday to Saturday"). If the original names any weekday, the English may
+// name only those; if it names none, an English weekday counts as invented only when the original has a number in it (a date),
+// so plain sentences in languages missing from WEEKDAYS are left alone. Text with broken characters (U+FFFD) is not judged.
+const EN_DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+const EN_DAY_RE = /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)s?\b/gi;
+const DAY_STEMS = WEEKDAYS.map((l) => l.map((st) => st.normalize("NFKC")));
+export function extraWeekday(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  if (!orig.trim() || orig.trim() === en.trim()) return "";
+  const said = [...en.matchAll(EN_DAY_RE)].map((m) => m[1]);
+  if (!said.length) return "";
+  const o = orig.normalize("NFKC").toLowerCase();
+  if (o.includes("\ufffd")) return "";
+  const given = new Set();
+  DAY_STEMS.forEach((l, d) => { if (l.some((st) => o.includes(st))) given.add(d); });
+  if (given.size) return said.find((w) => !given.has(EN_DAYS.indexOf(w.toLowerCase()))) || "";
+  return /\d/.test(asciiDigits(o)) ? said[0] : "";
+}
+
 // A headline already in English under another language's label. Latin letters only (no accented letters, which English
 // headlines rarely carry and French, Spanish, Vietnamese or Turkish always do), at least four words, and at least two different
 // English function words making up 15% of them. "Le 13h au Bénin du Samedi" or "Kapuso Housemate Lans, wagi ng Tiktok" do
@@ -176,3 +236,12 @@ export function dropSuspectMt(i, now) {
   if (hit && !i.title_en && !i.summary_en) i.mt = "untranslated";
   return hit;
 }
+
+// The model's own confidence (CTranslate2's length-normalized log-probability of its least sure chunk, tools/mt/madlad.py).
+// Set from tools/mt/probe_confidence.mjs on 2026-11-08 (602 stored headlines): faithful French, Spanish, German, Portuguese,
+// Russian, Arabic, Italian and Dutch lines all scored above -0.9 (median -0.42), October's invented lines had a median of -1.6, and
+// of the Korean, Armenian, Azerbaijani, Georgian, Thai, Chinese and other lines the other checks let through, 15 of 319 fell below
+// -1.5, nearly all of them unrelated to the original ("The bridge is now undergoing a major renovation." for an Armenian court
+// story). Between -1.5 and -1.0 good and bad lines mix, so they are kept.
+export const MT_MIN_SCORE = -1.5;
+export const lowConfidence = (score) => typeof score === "number" && Number.isFinite(score) && score < MT_MIN_SCORE;

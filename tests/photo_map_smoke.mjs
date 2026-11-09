@@ -1,7 +1,8 @@
 // Headless check of Photo to map (assets/osap-points.js + the Point menu in assets/osap-atak.js):
 // Point > Take a photo here opens a sheet with the live GPS grid and compass heading; Take photo saves a new point at the
 // fix with the photo kept byte for byte, its grid, heading, sources and accuracy beside it; a heading wedge on the map;
-// the heading can be corrected; OSAP camera shows grid, heading and time over the live picture and saves a clean still;
+// the heading can be corrected; OSAP camera shows azimuth (M/T/G, declination), grid, lat/long, time and tilt over the live
+// picture, keeps the clean still with its SHA-256 and stores a separate copy with the same data drawn on it;
 // no GPS = Take photo locked, map centre offered; no compass = saved without a heading.
 // The compass is a stand-in for assets/osap-heading.js (window.OSAP_HEADING), the shared helper from the compass work.
 // Run from the repo root: node tests/photo_map_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -25,7 +26,9 @@ let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s); return !!e && !e.hidden && getComputedStyle(e).display !== "none" && e.getClientRects().length > 0; }, s);
 const pts = (p) => p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]"));
-const photos = (p, pid) => p.evaluate((pid) => window.OSAP_POINTS.photos(pid).then((a) => a.map((r) => ({ size: r.size, sha256: r.sha256, geo: r.geo, exifGps: r.exifGps || null }))), pid);
+const photos = (p, pid) => p.evaluate((pid) => window.OSAP_POINTS.photos(pid).then((a) => a.map((r) => ({ size: r.size, sha256: r.sha256, geo: r.geo, exifGps: r.exifGps || null, marked: r.marked ? { type: r.marked.type, size: r.marked.size, sha256: r.marked.sha256, parent: r.marked.parent } : null }))), pid);
+/* the SHA-256 of what is stored now, worked out again in the page: proves the original was not touched */
+const rehash = (p, pid) => p.evaluate((pid) => window.OSAP_POINTS.photos(pid).then((a) => Promise.all(a.map((r) => crypto.subtle.digest("SHA-256", r.buf).then((h) => Array.from(new Uint8Array(h)).map((x) => x.toString(16).padStart(2, "0")).join(""))))), pid);
 
 /* a stand-in for OSAP_HEADING: request() resolves to the given answer, emit() sends a reading to the subscribers */
 const stub = (answer) => `(() => {
@@ -89,6 +92,7 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   ok(!(await shown(p, "#pt-snap")) && await shown(p, "#pt-ed"), "phone: the sheet closes and the point opens for a name and note");
   const ph = await photos(p, pt.id);
   ok(ph.length === 1 && ph[0].size === j.length && ph[0].sha256 === sha, "phone: the original photo is kept byte for byte with its SHA-256");
+  ok(ph[0] && ph[0].marked && ph[0].marked.type === "image/jpeg" && ph[0].marked.parent === sha && ph[0].marked.sha256.length === 64 && ph[0].marked.sha256 !== sha, "phone: a separate copy with the data drawn on it, linked to the original's SHA-256");
   const g = ph[0] && ph[0].geo;
   ok(g && /^47P/.test(g.grid) && g.pos.src === "device GPS" && g.pos.acc === 6 && g.heading.mag === 47.4 && g.heading.tru === 46.4 && g.heading.basis === "camera" && g.heading.src === "iOS compass", "phone: grid, heading, sources and accuracy saved beside the photo");
   ok(g && g.heading.turned === 33 && g.heading.after === 80, "phone: how far the phone turned while the camera was open is kept: " + (g && g.heading.turned));
@@ -106,6 +110,9 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   ok(/Facing 052° magnetic/.test(pop) && /924 mils/.test(pop) && /\(corrected\)/.test(pop), "phone: the popup says which way the photo faces: " + pop);
   await p.evaluate(() => { const b = document.querySelector(".atk-ptpop .atk-pph [data-ph]"); if (b) b.click(); }); await p.waitForTimeout(500);
   const meta = await p.evaluate(() => document.querySelector("#pt-view .pt-vmeta").textContent);
+  ok(/SHA-256 \(original\)/.test(meta) && /SHA-256 \(copy with data\)/.test(meta) && await p.evaluate(() => /with data/.test(document.querySelector("#pt-view img").alt) && !document.querySelector('#pt-view [data-pv="savem"]').hidden), "phone: the viewer opens on the copy with data and lists both fingerprints");
+  await p.evaluate(() => document.querySelector('#pt-view [data-pv="flip"]').click());
+  ok(await p.evaluate(() => / original$/.test(document.querySelector("#pt-view img").alt)), "phone: Show original switches to the clean photo");
   ok(/Taken at: 47P/.test(meta) && /device GPS ±6 m/.test(meta) && /Facing: 047° magnetic/.test(meta) && /33° different/.test(meta) && /GPS written in the photo/.test(meta), "phone: the photo viewer shows where and which way it was taken");
   if (OUT) await p.screenshot({ path: OUT + "/photo-map-viewer.png" });
   await p.evaluate(() => document.querySelector('#pt-view [data-pv="x"]').click());
@@ -124,8 +131,13 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   await p.waitForFunction(() => { const v = document.querySelector("#pt-cam video"); return v && v.videoWidth > 0; }, null, { timeout: 15000 }).catch(() => {});
   ok(await shown(p, "#pt-cam") && !(await shown(p, "#pt-snap")), "camera: the OSAP camera fills the screen");
   ok(await p.evaluate(() => document.querySelector("#pt-cam video").videoWidth > 0), "camera: the live picture is running");
-  const hud = await p.evaluate(() => ({ hd: document.querySelector("#pt-cam .cm-hd").textContent, hd2: document.querySelector("#pt-cam .cm-hd2").textContent, grid: document.querySelector("#pt-cam .cm-grid").textContent, time: document.querySelector("#pt-cam .cm-time").textContent }));
-  ok(hud.hd === "271° M" && /4821 mils/.test(hud.hd2) && /270° T/.test(hud.hd2) && /±8°/.test(hud.hd2), "camera: heading on screen: " + hud.hd + " " + hud.hd2);
+  const hud = await p.evaluate(() => ({ hd: document.querySelector("#pt-cam .cm-hd").textContent, hd2: document.querySelector("#pt-cam .cm-hd2").textContent, grid: document.querySelector("#pt-cam .cm-grid").textContent, time: document.querySelector("#pt-cam .cm-time").textContent, ll: document.querySelector("#pt-cam .cm-ll").textContent }));
+  ok(hud.hd === "271° M" && /4821 mils/.test(hud.hd2) && /270° T/.test(hud.hd2) && /\d{3}° G/.test(hud.hd2) && /decl 0\.8° W/.test(hud.hd2) && /±8°/.test(hud.hd2), "camera: azimuth magnetic, true, grid, declination on screen: " + hud.hd + " " + hud.hd2);
+  ok(/^13\.75\d+° N {2}100\.5\d+° E/.test(hud.ll) && /UTC[+−]\d\d:\d\d/.test(hud.time), "camera: lat/long and time zone on screen: " + hud.ll + " | " + hud.time);
+  ok(await p.evaluate(() => { const c = document.querySelector("#pt-cam .cm-tape"); return c.width > 0 && c.getContext("2d").getImageData(0, 0, c.width, c.height).data.some((v, i) => i % 4 === 3 && v > 0); }), "camera: heading strip drawn across the top");
+  await p.evaluate(() => window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 0, beta: 80, gamma: 0 }))); await p.waitForTimeout(1200);
+  const tl = await p.textContent("#pt-cam .cm-tilt");
+  ok(/Tilt −10° down/.test(tl) && /roll ±0°/.test(tl) && await shown(p, "#pt-cam .cm-lvl"), "camera: tilt and a level line on screen: " + tl);
   ok(/^47P PR 62366 21280/.test(hud.grid) && /±6 m/.test(hud.grid) && /\d\d:\d\d:\d\dZ/.test(hud.time) && /local/.test(hud.time), "camera: grid and Zulu + local time on screen: " + hud.grid + " | " + hud.time);
   await p.evaluate(() => window.OSAP_HEADING.emit({ mag: 20, tru: 19, decl: -1, cam: 95, camTru: 94, basis: "camera", acc: 8, src: "device compass", t: Date.now() }));
   ok(await p.textContent("#pt-cam .cm-hd") === "095° M", "camera: the heading on screen follows the phone");
@@ -139,7 +151,11 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   /* a phone's takePhoto gives a JPEG; Chromium's fake camera gives a PNG: the bytes must match the type and the name */
   const magic = ph[0] && (ph[0].type === "image/jpeg" ? ph[0].head.join() === "255,216,255" && /\.jpg$/.test(ph[0].name) : ph[0].type === "image/png" ? ph[0].head.join() === "137,80,78" && /\.png$/.test(ph[0].name) : false);
   ok(ph.length === 1 && magic && ph[0].size > 1000 && /^OSAP-\d{8}T\d{6}Z\./.test(ph[0].name) && ph[0].sha.length === 64, "camera: the camera still is stored as it came, with its SHA-256 with its SHA-256: " + (ph[0] && ph[0].name + " " + ph[0].size + " B"));
-  ok(ph[0] && /OSAP camera/.test(ph[0].geo.capture.how) && /not drawn into the photo/.test(ph[0].geo.capture.overlay) && ph[0].geo.heading.mag === 95 && /^47P/.test(ph[0].geo.grid), "camera: how it was taken is recorded, data kept beside the photo: " + (ph[0] && ph[0].geo.capture.how));
+  const ph2 = await photos(p, P[0] && P[0].id), again = await rehash(p, P[0] && P[0].id);
+  ok(ph2[0] && ph2[0].marked && ph2[0].marked.parent === ph[0].sha && ph2[0].marked.size > 1000 && again[0] === ph[0].sha, "camera: copy with data stored beside the original; the original still hashes to its SHA-256");
+  ok(ph2[0] && ph2[0].geo.tilt && ph2[0].geo.tilt.elev === -10 && typeof ph2[0].geo.heading.grid === "number" && typeof ph2[0].geo.heading.conv === "number", "camera: tilt and grid azimuth saved with the photo: " + JSON.stringify(ph2[0] && [ph2[0].geo.tilt, ph2[0].geo.heading.grid]));
+  if (OUT) { const b64 = await p.evaluate((pid) => window.OSAP_POINTS.photos(pid).then((a) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result.split(",")[1]); fr.readAsDataURL(new Blob([a[0].marked.buf])); })), P[0].id); const { writeFile } = await import("node:fs/promises"); await writeFile(OUT + "/photo-with-data.jpg", Buffer.from(b64, "base64")); }
+  ok(ph[0] && /OSAP camera/.test(ph[0].geo.capture.how) && /drawn on a separate copy; the original is unchanged/.test(ph[0].geo.capture.overlay) && ph[0].geo.heading.mag === 95 && /^47P/.test(ph[0].geo.grid), "camera: how it was taken is recorded, data kept beside the photo: " + (ph[0] && ph[0].geo.capture.how));
   await p.click('#pt-cam [data-cm="shut"]');
   await p.waitForFunction(() => /2 saved/.test(document.querySelector("#pt-cam .cm-n").textContent), null, { timeout: 15000 }).catch(() => {});
   ok((await pts(p)).length === 2, "camera: a second shot is a second point");

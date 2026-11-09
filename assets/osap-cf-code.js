@@ -185,6 +185,90 @@
   function csvCell(v) { var s = v == null ? "" : String(v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
   function csv(rows) { return [CSV.join(",")].concat(rows.map(function (r) { return CSV.map(function (k) { return csvCell(r[k]); }).join(","); })).join("\r\n") + "\r\n"; }
 
+  /* ---------- coded event history: open datasets coded into the same categories ----------
+     The events a published, open dataset already coded (UCDP GED, from 1989), shown in the incident record's ACLED-style columns.
+     These are DATASET CODINGS: the dataset's own reading of media and NGO reports, mapped here by fixed, versioned rules. They are
+     not analyst-confirmed incidents and never become one by being listed; the analyst's record above stays separate.
+     Every dataset carries its licence, and nc:true marks one whose terms forbid commercial use, so the sold version can drop it
+     (tools/nc_strip.mjs). Only keyless, openly downloadable datasets belong here. */
+  var DATASETS = {
+    ucdp_ged: { id: "ucdp_ged", name: "UCDP Georeferenced Event Dataset (GED)", by: "Uppsala Conflict Data Program, Uppsala University", licence: "CC BY 4.0",
+      licence_url: "https://creativecommons.org/licenses/by/4.0/", nc: false, url: "https://ucdp.uu.se/downloads/",
+      cite: "Sundberg, R. and Melander, E. (2013) Introducing the UCDP Georeferenced Event Dataset. Journal of Peace Research 50(4)",
+      covers: "Organized violence that killed at least one person, in a conflict with 25 or more deaths in a year (state-based, non-state, one-sided)" },
+    ucdp_candidate: { id: "ucdp_candidate", name: "UCDP Candidate Events Dataset (monthly, provisional)", by: "Uppsala Conflict Data Program, Uppsala University", licence: "CC BY 4.0",
+      licence_url: "https://creativecommons.org/licenses/by/4.0/", nc: false, url: "https://ucdp.uu.se/downloads/",
+      cite: "Hegre, H. et al. (2020) Introducing the UCDP Candidate Events Dataset. Research & Politics 7(3)",
+      covers: "Provisional monthly events after the last yearly GED release; UCDP revises them in its next release" },
+    mm_protest: { id: "mm_protest", name: "Mass Mobilization Protest Data", by: "David Clark and Patrick Regan (Mass Mobilization Project)", licence: "CC0 1.0",
+      licence_url: "https://creativecommons.org/publicdomain/zero/1.0/", nc: false, url: "https://doi.org/10.7910/DVN/HTTWYL",
+      cite: "Clark, D. and Regan, P. (2016) Mass Mobilization Protest Data. Harvard Dataverse, doi:10.7910/DVN/HTTWYL",
+      covers: "Protests against governments with 50 or more people, 162 countries, 1990 to 2020, with demands and the state's response; no death figures" }
+  };
+  // rule version: changes whenever the mapping below changes, so a downloaded row says which rules coded it
+  var UCDP_RULES = "ucdp-acled-v1";
+  // UCDP's type of violence -> the nearest ACLED event type. UCDP does not record how violence was carried out (air strike, shelling,
+  // ground fighting, bomb), so the sub-event type is left blank rather than guessed.
+  var UCDP_TYPE = { 1: ["Battles", "State-based"], 2: ["Battles", "Non-state"], 3: ["Violence against civilians", "One-sided"] };
+  var ACTOR_TYPES = ["State forces", "Rebel group", "Non-state armed group", "Civilians"];
+  // an actor's type from how UCDP names it and the type of violence: "Government of X" is a state; UCDP's state-based conflicts set a
+  // government against an organized opposition (a rebel group, in ACLED's terms) or another government; in non-state and one-sided
+  // violence a side that is not a government is an armed group UCDP does not sort further
+  function ucdpActorType(name, type) {
+    var n = String(name || "").trim();
+    if (/^Government of\b/i.test(n)) return "State forces";
+    if (/^Civilians$/i.test(n)) return "Civilians";
+    if (+type === 1) return "Rebel group";
+    return "Non-state armed group";
+  }
+  // UCDP where_prec (1 exact place, 2 within about 25 km, 3 district, 4 province, 5 a stretch of land or part of a country,
+  // 6 the country, 7 sea or air) -> the record's geo precision 1-3
+  function ucdpPrecision(p) { p = +p || 0; return p <= 1 ? 1 : p <= 3 ? 2 : 3; }
+  /* one UCDP event (a history row: id, date, end, lat, lon, type, best, low, high, civ, sideA, sideB, place, province, where_prec,
+     candidate; with its year file k = {sides, adm, release}) as a coded history row. scope: the history it was read from (a conflict
+     id or cc/<cc>). The SHA-256 input is the same string the History of violence pop-up hashes. */
+  function fromUcdp(r, k, scope) {
+    var t = UCDP_TYPE[r[5]] || UCDP_TYPE[1], cand = !!r[15], ds = DATASETS[cand ? "ucdp_candidate" : "ucdp_ged"];
+    var a1 = k.sides[r[10]] || "", a2 = k.sides[r[11]] || "", i1 = ucdpActorType(a1, r[5]), i2 = ucdpActorType(a2, r[5]);
+    if (+r[5] === 3 && !a2) { a2 = "Civilians"; i2 = "Civilians"; }
+    return { record_basis: "dataset_coded", dataset: ds.id, dataset_release: cand ? "candidate" : String(k.release || ""), source_event_id: String(r[0]),
+      provisional: cand ? 1 : 0, licence: ds.licence, non_commercial: ds.nc ? 1 : 0, coding_rules: UCDP_RULES, scope: scope || "",
+      event_date: r[1], end_date: r[2] || "", event_type: t[0], sub_event_type: "", source_violence_type: t[1],
+      actor1: a1, inter1: i1, actor2: a2, inter2: i2, interaction: i1 + " vs " + i2,
+      admin1: k.adm[r[13]] || "", location: r[12] || "", latitude: r[3], longitude: r[4], geo_precision: ucdpPrecision(r[14]), source_geo_precision: r[14],
+      fatalities_best: r[6], fatalities_low: r[7], fatalities_high: r[8], fatalities_civilians: r[9], fatalities_basis: "UCDP estimate from reports",
+      source_url: ds.url, sha256_input: ["ucdp", cand ? "candidate" : k.release, r[0], r[1], r[3], r[4], r[5], r[6], r[7], r[8]].join("|"), sha256: "" };
+  }
+  /* Mass Mobilization protests (tools/refresh_coded_protests.mjs rows: id, date, end, lat, lon, prec, violence, location, place,
+     participants, identity, demands, responses). The dataset codes whether protesters used violence and how the state responded;
+     that is all the rules read. */
+  var MM_RULES = "mm-acled-v1";
+  function mmCode(violence, responses) {
+    var r = String(responses || "").toLowerCase();
+    if (+violence === 1) return ["Riots", "Violent demonstration"];
+    if (/\b(killings|shootings|beatings)\b/.test(r)) return ["Protests", "Excessive force against protesters"];
+    if (/\b(arrests|crowd dispersal)\b/.test(r)) return ["Protests", "Protest with intervention"];
+    return ["Protests", "Peaceful protest"];
+  }
+  function fromMm(r, f, scope) {
+    var ds = DATASETS.mm_protest, t = mmCode(r[6], r[12]), riot = t[0] === "Riots", force = /\b(killings|shootings|beatings|arrests|crowd dispersal)\b/i.test(String(r[12] || ""));
+    return { record_basis: "dataset_coded", dataset: ds.id, dataset_release: "2020 (final)", source_event_id: String(r[0]), provisional: 0, licence: ds.licence, non_commercial: ds.nc ? 1 : 0,
+      coding_rules: MM_RULES, scope: scope || "", event_date: r[1], end_date: r[2] || "", event_type: t[0], sub_event_type: t[1], source_violence_type: "Protest" + (+r[6] === 1 ? " (protester violence)" : ""),
+      actor1: (riot ? "Rioters" : "Protesters") + (r[10] ? " (" + r[10] + ")" : ""), inter1: riot ? "Rioters" : "Protesters",
+      actor2: force ? "State forces" : "", inter2: force ? "State forces" : "", interaction: (riot ? "Rioters" : "Protesters") + (force ? " vs State forces" : " only"),
+      admin1: "", location: r[8] || r[7] || "", latitude: r[3] == null ? "" : r[3], longitude: r[4] == null ? "" : r[4], geo_precision: r[5], source_geo_precision: r[7] || "",
+      fatalities_best: "", fatalities_low: "", fatalities_high: "", fatalities_civilians: "", fatalities_basis: "not recorded by the dataset",
+      demands: r[11] || "", state_response: r[12] || "", participants: r[9] || "",
+      source_url: ds.url, sha256_input: ["mm", r[0], r[1], r[2] || "", r[7] || "", r[6], r[12] || ""].join("|"), sha256: "" };
+  }
+  var EVCSV = ["record_basis", "dataset", "dataset_release", "source_event_id", "provisional", "licence", "non_commercial", "coding_rules", "scope",
+    "event_date", "end_date", "event_type", "sub_event_type", "source_violence_type", "actor1", "inter1", "actor2", "inter2", "interaction",
+    "admin1", "location", "latitude", "longitude", "geo_precision", "source_geo_precision",
+    "fatalities_best", "fatalities_low", "fatalities_high", "fatalities_civilians", "fatalities_basis", "demands", "state_response", "participants", "source_url", "sha256"];
+  function evCsv(rows) { return [EVCSV.join(",")].concat(rows.map(function (r) { return EVCSV.map(function (k) { return csvCell(r[k]); }).join(","); })).join("\r\n") + "\r\n"; }
+
   return { TYPES: TYPES, GENERIC: GENERIC, BASIS: BASIS, PRECISION: PRECISION, FIELDS: FIELDS, CSV: CSV, rules: rules, checkAi: checkAi, checkCoding: checkCoding,
-    key: key, csv: csv, isType: isType, isSub: isSub };
+    key: key, csv: csv, isType: isType, isSub: isSub,
+    DATASETS: DATASETS, UCDP_RULES: UCDP_RULES, ACTOR_TYPES: ACTOR_TYPES, EVCSV: EVCSV, fromUcdp: fromUcdp, ucdpActorType: ucdpActorType, ucdpPrecision: ucdpPrecision, evCsv: evCsv,
+    MM_RULES: MM_RULES, mmCode: mmCode, fromMm: fromMm };
 });

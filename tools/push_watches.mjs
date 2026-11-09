@@ -22,7 +22,7 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { fetchList } from "./push_lib.mjs";
+import { fetchList, actionsToken, WEBPUSH_API } from "./push_lib.mjs";
 import { rulesForPage } from "./tiers.mjs";
 import * as BRIEF from "./push_brief.mjs";
 import { isFlash, upgradeOf, wanted, lagMin, median } from "./flash_lib.mjs";
@@ -33,6 +33,7 @@ const LIVE = "https://01shane89-jpg.github.io/AXIOM-APSAP/";
 const TEST = !!process.env.PUSH_TEST, DRY = !!process.env.PUSH_DRY;
 const MAX_AGE_H = +(process.env.PUSH_MAX_AGE_H || 48), PER_WATCH = 3, PER_RUN = +(process.env.PUSH_PER_RUN || 60), KEEP_KEYS = 4000;
 const now = Date.now();
+const SETTLE = Math.max(2, +(process.env.PUSH_SETTLE || 4)), SETTLE_MS = Math.max(100, +(process.env.PUSH_SETTLE_MS || 400));
 
 let list;
 try { list = (await fetchList()).watches; } catch (e) { console.log("push: could not read the push list:", e.message); process.exit(0); }
@@ -83,17 +84,20 @@ async function scan() {
   }
   const byCc = {};
   list.forEach((w) => { const k = w.cc + (w.plan === "mid" ? "|mid" : ""); (byCc[k] = byCc[k] || []).push(w); });
-  const out = {}, failed = [], queue = Object.keys(byCc), meta = { tz: {}, names: {} };
-  await Promise.all([0, 1, 2].map(async () => {
+  const out = {}, failed = [], timing = [], queue = Object.keys(byCc), meta = { tz: {}, names: {} };
+  // pages side by side (PUSH_PAGES, default 6: a runner has 4 cores and a page spends most of its time waiting for files)
+  await Promise.all(Array.from({ length: Math.max(1, Math.min(8, +(process.env.PUSH_PAGES || 6))) }, async () => {
     while (queue.length) {
-      const key = queue.shift(), cc = key.split("|")[0], p = await (key.endsWith("|mid") ? midCtx : ctx).newPage();
+      const key = queue.shift(), cc = key.split("|")[0], p = await (key.endsWith("|mid") ? midCtx : ctx).newPage(), t0 = Date.now();
       try {
         await p.goto(base + (cc === "th" ? "" : cc + "/") + "timeline", { timeout: 30000 });
         await p.waitForFunction(() => window.OSAP_WATCH && window.TSAP, null, { timeout: 30000 });
-        // the live layers load after the page: wait until the report count has held still for 3 s (at most 30 s)
-        for (let last = -1, same = 0, t0 = Date.now(); same < 3 && Date.now() - t0 < 30000; ) {
+        const tReady = Date.now();
+        // the live layers load after the page: wait until the report count has held still for SETTLE checks SETTLE_MS apart
+        // (default 4 x 400 ms; it was 3 x 1 s, which cost 3 to 4 s a page for the same matches), at most 30 s
+        for (let last = -1, same = 0, t0 = Date.now(); same < SETTLE && Date.now() - t0 < 30000; ) {
           const n = await p.evaluate(() => (window.TSAP.records || []).length);
-          same = n === last ? same + 1 : 0; last = n; await p.waitForTimeout(1000);
+          same = n === last ? same + 1 : 0; last = n; await p.waitForTimeout(SETTLE_MS);
         }
         if (key.endsWith("|mid") && !(await p.evaluate(() => !!(window.OSAP_DATA && window.OSAP_DATA.plan() && window.OSAP_DATA.plan().tier === "mid")))) throw new Error("Mid's data rules did not take");
         // each country's main time zone and name, from the page (the morning brief's clock for watches sent without one)
@@ -104,12 +108,14 @@ async function scan() {
             return window.OSAP_WATCH.matches(w);
           }, { area: w.area, layers: w.layers, kw: w.kw, q: w.q, minSev: w.minSev, conf: w.conf });
         }
+        timing.push(`${key} ${((tReady - t0) / 1000).toFixed(1)}+${((Date.now() - tReady) / 1000).toFixed(1)} s`);
       } catch (e) { failed.push(key + ": " + String(e.message || e).split("\n")[0]); }
       finally { await p.close(); }
     }
   }));
   await browser.close(); srv.close();
   if (failed.length) console.log("push: failed countries: " + failed.join("; "));
+  if (process.env.PUSH_TIMING) console.log("push: page load + settle per country: " + timing.join(", "));
   return { out, meta };
 }
 
@@ -124,8 +130,31 @@ function zulu(ts) { const t = msOf(ts); return isFinite(t) ? new Date(t).toISOSt
 function link(k, cc) { return LIVE + "?wopen=" + encodeURIComponent(k) + "#" + (cc === "th" ? "" : cc + "/") + "timeline"; }
 // ntfy headers and JSON fields are plain text; keep them short and single-line where ntfy wants that
 function one(s, n) { return String(s || "").replace(/\s+/g, " ").trim().slice(0, n); }
+// OSAP's own notifications (2026-11-08): a watch sent from a device that allowed OSAP's notifications carries that device's
+// push subscription (w.wp); OSAP's server signs and sends it (netlify/functions/osap-webpush.mjs). ntfy is sent too unless the
+// watch says ntfy: false. A subscription the browser withdrew (gone) is not tried again until the watch is sent again.
+const goneNow = new Set();
+const subKey = (w) => (w.wp ? w.id + "|" + String(w.wp.endpoint).slice(-24) : "");
+async function sendWeb(w, msg) {
+  if (!w.wp || goneNow.has(subKey(w)) || (state.gone && state.gone[subKey(w)])) return false;
+  try {
+    const r = await fetch(WEBPUSH_API, { method: "POST", signal: AbortSignal.timeout(20000),
+      headers: { authorization: "Bearer " + (await actionsToken()), "x-osap-caller": "actions", "content-type": "application/json" },
+      body: JSON.stringify({ sends: [{ sub: w.wp, msg: { title: msg.title, body: msg.message, url: msg.click, tag: msg.tag || "", flash: msg.priority >= 5 } }] }) });
+    if (!r.ok) { console.log(`push: ${w.id}: OSAP notification HTTP ${r.status}`); return false; }
+    const res = ((await r.json()).results || [])[0] || {};
+    if (res.gone) { goneNow.add(subKey(w)); console.log(`push: ${w.id}: the device withdrew OSAP's notifications`); }
+    else if (!res.ok) console.log(`push: ${w.id}: OSAP notification not taken (${res.status || "no answer"})`);
+    return !!res.ok;
+  } catch (e) { console.log(`push: ${w.id}: OSAP notification ${e.name || "error"}`); return false; }
+}
 async function send(w, msg) {
-  if (DRY) { console.log(`push: [dry] ${w.id}: ${msg.title} / ${msg.message.split("\n").join(" / ")} / ${msg.click}`); return true; }
+  if (DRY) { console.log(`push: [dry] ${w.id}${w.wp ? " (OSAP notification" + (w.ntfy === false ? ")" : " + ntfy)") : ""}: ${msg.title} / ${msg.message.split("\n").join(" / ")} / ${msg.click}`); return true; }
+  const web = await sendWeb(w, msg);
+  if (w.wp && w.ntfy === false) return web;
+  return (await sendNtfy(w, msg)) || web;
+}
+async function sendNtfy(w, msg) {
   const body = { topic: w.topic, title: msg.title, message: msg.message, click: msg.click, tags: msg.tags, priority: msg.priority };
   if (msg.actions) body.actions = msg.actions;
   for (let a = 0; a < 3; a++) {
@@ -256,6 +285,8 @@ if (process.env.PUSH_BRIEF !== "0") {
   const live = new Set(list.map((w) => w.topic)); Object.keys(next.briefs).forEach((t) => { if (!live.has(t)) delete next.briefs[t]; });
 }
 console.log(`push: ${briefs} morning brief(s) sent, ${briefsHeld} held for the next check`);
+next.gone = { ...(state.gone || {}) }; for (const k of goneNow) next.gone[k] = now;
+{ const live = new Set(list.map(subKey).filter(Boolean)); Object.keys(next.gone).forEach((k) => { if (!live.has(k)) delete next.gone[k]; }); }
 if (!TEST) saveState(next);
 console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent (${flashSent} flash, ${upSent} follow-up), ${failedSends} failed, ${held} held for the next run, ${noted} new watch(es) noted`);
 // how long after the first report an alert went out (minutes, counts only): the number to beat

@@ -7,6 +7,8 @@
 //    account's plan now, ids made unique, a deleted or downgraded account's left out; bad or oversized watches are refused.
 // 3. fetchList (the refresh job) asks GitHub for its token, reads the list with it, and drops a watch that does not check.
 // 4. The page: Send to OSAP keeps the watch on the server (no GitHub issue), the status turns On, Stop removes it.
+// 5. OSAP's own notifications: Allow notifications subscribes this device with OSAP's public key, and the watch goes to the
+//    server with the subscription and without ntfy; the panel names the Home Screen step on an iPhone browser.
 // Run from the repo root: node tests/push_server_smoke.mjs   (needs the playwright package and Chromium for part 4)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -135,12 +137,14 @@ globalThis.fetch = realFetch;
 delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL; delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
 
 // ---------- 4. the page ----------
+const WP_KEY = "BLp5RysdqCvkJXl7M0C5AhPkPUSG-AG12FAFi4lxrd3UzxBw-oSK2Y6Cq32I3YVen2wk1s35dDSxk3bz7SidwDk";
 const pageStore = memoryStore(); fn._test(pageStore, jwks, listUsers);
 globalThis.fetch = async (u, o = {}) => /\/\.netlify\/identity\/user$/.test(String(u)) ? Response.json(USERS.OWNER) : realFetch(u, o);
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".css": "text/css", ".woff2": "font/woff2" };
 const root = process.cwd();
 const server = createServer(async (rq, rs) => {
   const u = new URL(rq.url, "http://x");
+  if (u.pathname === "/api/osap-webpush") { rs.writeHead(200, { "content-type": "application/json" }); rs.end(JSON.stringify({ key: WP_KEY })); return; }
   if (u.pathname === "/api/osap-push") {
     const chunks = []; for await (const c of rq) chunks.push(c);
     const res = await PUSH(new Request("https://osap.test" + rq.url, { method: rq.method, headers: rq.headers, body: chunks.length ? Buffer.concat(chunks) : undefined }));
@@ -193,6 +197,58 @@ await p.evaluate((s) => document.querySelector(s).click(), "#watchdlg [data-push
 ok((await pageStore.get("watches")).watches.length === 0, "Stop push alerts removes it from the server");
 ok(/Status:\s*Off\./.test(await p.evaluate(() => document.querySelector("#watchdlg .wnotif").textContent)), "and the status turns Off");
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+
+// ---------- 5. OSAP's own notifications ----------
+const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 860 }, timezoneId: "Asia/Bangkok", permissions: ["notifications"] });
+await ctx2.route(/^https?:\/\/(?!127\.0\.0\.1)/, (x) => x.abort());
+await ctx2.addInitScript(() => { try {
+  localStorage.setItem("osap-home", "map");
+  localStorage.setItem("asap-watches", JSON.stringify([{ id: "wpage456", name: "Quake watch", cc: "th", area: null, layers: [], kw: [], minSev: 1, on: true, created: Date.now() }]));
+  /* a stand-in push service: the page's subscribe() call is recorded with the key it used */
+  const sub = { endpoint: "https://fcm.googleapis.com/fcm/send/page-test-1", keys: { p256dh: "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM", auth: "tBHItJI5svbpez7KI4CCXg" } };
+  let have = null; window.__subKey = null;
+  const reg = { showNotification: () => Promise.resolve(), pushManager: { getSubscription: () => Promise.resolve(have),
+    subscribe: (o) => { window.__subKey = o.applicationServerKey; have = { toJSON: () => sub, endpoint: sub.endpoint }; return Promise.resolve(have); } } };
+  /* a browser build without the push parts (CI's headless shell) gets stand-ins, so the page's own flow is what is tested */
+  if (!window.PushManager) window.PushManager = function () {};
+  if (!("Notification" in window) || window.Notification.permission !== "granted") window.Notification = { permission: "granted", requestPermission: () => Promise.resolve("granted") };
+  if (!navigator.serviceWorker) Object.defineProperty(navigator, "serviceWorker", { value: { register: () => Promise.resolve({}), addEventListener() {}, controller: null } });
+  Object.defineProperty(navigator.serviceWorker, "ready", { get: () => Promise.resolve(reg) });
+} catch (e) {} });
+const p2 = await ctx2.newPage(); const errors2 = []; p2.on("pageerror", (x) => errors2.push(x.message));
+await p2.goto(base + "#th", { waitUntil: "domcontentloaded" });
+await p2.waitForFunction(() => window.OSAP_WATCH && window.TSAP, null, { timeout: 60000 }); await p2.waitForTimeout(1500);
+await p2.evaluate(() => { window.OSAP_TIER = Object.assign({}, window.OSAP_TIER || {}, { token: () => Promise.resolve("OWNER") }); window.OSAP_WATCH.open(); });
+await p2.waitForSelector('#watchdlg [data-push-open="wpage456"]', { timeout: 15000 });
+await p2.evaluate((s) => document.querySelector(s).click(), '#watchdlg [data-push-open="wpage456"]');
+await p2.waitForSelector("#watchdlg [data-push-web]", { timeout: 10000 }).catch(() => {});
+ok(await p2.evaluate(() => !!document.querySelector("#watchdlg [data-push-web]")), "the panel leads with Allow notifications (no other app)");
+ok(await p2.evaluate(() => { const d = document.querySelector("#watchdlg .pushbox details.wlimits"); return !!d && !d.open && /ntfy/.test(d.textContent); }), "the ntfy app is offered folded away as an option");
+await p2.evaluate(() => document.querySelector("#watchdlg [data-push-web]").click());
+await p2.waitForFunction(() => /Notifications on/.test((document.querySelector("#watchdlg .pushbox") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
+ok(await p2.evaluate((k) => { const a = window.__subKey; if (!a) return false; const s = btoa(String.fromCharCode(...new Uint8Array(a))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); return s === k; }, WP_KEY), "the device subscribed with OSAP's public key");
+await p2.evaluate((s) => document.querySelector(s).click(), "#watchdlg [data-push-send]");
+await p2.waitForFunction(() => /Status:\s*On\./.test((document.querySelector("#watchdlg .wnotif") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
+const kept2 = ((await pageStore.get("watches")) || { watches: [] }).watches.find((w) => w.id === "wpage456");
+ok(kept2 && kept2.wp && kept2.wp.endpoint === "https://fcm.googleapis.com/fcm/send/page-test-1" && kept2.ntfy === false, "the watch is kept with this device's subscription and without ntfy");
+await p2.evaluate(() => { const d = document.querySelector("#watchdlg .pushbox details.wlimits"); d.open = true; document.querySelector("#watchdlg [data-push-ntfy]").click(); });
+await p2.waitForFunction(() => /Saved\./.test((document.querySelector("#push-send-out") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
+ok(((await pageStore.get("watches")).watches.find((w) => w.id === "wpage456") || {}).ntfy === undefined, "ticking Also send to ntfy saves the watch with ntfy too");
+ok(!errors2.length, "no page errors with notifications" + (errors2.length ? ": " + errors2.join(" | ") : ""));
+await ctx2.close();
+/* an iPhone browser (not the Home Screen app) is told how to add OSAP to the Home Screen */
+const ctx3 = await browser.newContext({ serviceWorkers: "block", viewport: { width: 390, height: 844 }, userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1" });
+await ctx3.route(/^https?:\/\/(?!127\.0\.0\.1)/, (x) => x.abort());
+await ctx3.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-watches", JSON.stringify([{ id: "wpage789", name: "W", cc: "th", area: null, layers: [], kw: [], minSev: 1, on: true, created: Date.now() }])); delete window.PushManager; } catch (e) {} });
+const p3 = await ctx3.newPage();
+await p3.goto(base + "#th", { waitUntil: "domcontentloaded" });
+await p3.waitForFunction(() => window.OSAP_WATCH && window.TSAP, null, { timeout: 60000 }); await p3.waitForTimeout(1500);
+await p3.evaluate(() => { window.OSAP_TIER = Object.assign({}, window.OSAP_TIER || {}, { token: () => Promise.resolve("OWNER") }); window.OSAP_WATCH.open(); });
+await p3.waitForSelector('#watchdlg [data-push-open="wpage789"]', { timeout: 15000 });
+await p3.evaluate((s) => document.querySelector(s).click(), '#watchdlg [data-push-open="wpage789"]');
+await p3.waitForSelector("#watchdlg [data-push-send]", { timeout: 10000 });
+ok(/Add to Home Screen/.test(await p3.evaluate(() => document.querySelector("#watchdlg .pushbox").textContent)), "an iPhone browser is told to add OSAP to the Home Screen first");
+await ctx3.close();
 await browser.close(); server.close();
 
 console.log(fails ? fails + " FAILED" : "all passed");

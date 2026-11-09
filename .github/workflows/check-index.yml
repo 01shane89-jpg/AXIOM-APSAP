@@ -27,6 +27,9 @@ jobs:
       # hidden areas (tools/hidden-areas.json): their files must be sealed, never plain, in the repository
       - run: node tools/seal_hidden.mjs --check --skip-live
       - run: node tests/seal.test.mjs
+      # paid plans (TIER_SEALED in tools/tiers.mjs): their files must be sealed for the tier key, never plain, in the public repository
+      - run: node tools/seal_tier.mjs --check
+      - run: node tests/seal_tier.test.mjs
       # local time and military zone letter at the map readout's grid (assets/osap-zonetime.js, data/basemap/tz-zones.json)
       - run: node tests/zonetime.test.mjs
       # the paywall (tools/tiers.mjs, netlify/): what each plan opens, the edge gate, Paddle webhooks
@@ -43,6 +46,10 @@ jobs:
       - run: node tests/netlify_ignore.test.mjs
       # IMB PRC piracy map reader, the NGA ASAM backup (tools/imb_piracy.mjs)
       - run: node tests/imb_piracy.test.mjs
+      - run: node tests/recaap_incidents.test.mjs
+      - run: node tests/ukmto_incidents.test.mjs
+      # new dense feeds of 8 Nov (tools/dense_nov8.mjs): PortWatch, RFJ, VAAC, UNSC, USGS blasts, BfS, RIPE, UN PKO, EU regimes, satellite passes
+      - run: node tests/dense_nov8.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -57,12 +64,14 @@ jobs:
       - run: node tests/decisions.test.mjs
       - run: node tests/cf_decisions.test.mjs
       - run: node tests/cf_code.test.mjs
+      - run: node tests/coded_protests.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
+      - run: node tests/newimg.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs
@@ -92,6 +101,8 @@ jobs:
       - run: node tests/push_brief.test.mjs
       # event-summary drafts give only figures their reports give (tools/evsum_lib.mjs)
       - run: node tests/evsum_lib.test.mjs
+      # report digests: article text out of a page, and the checks on the model's reply (tools/digest_lib.mjs)
+      - run: node tests/digest.test.mjs
       # AI gateway: a slow reply from the runner's model skips one request; two in a row drop it for the run (tools/ai_gateway.mjs)
       - run: node tests/ai_gateway.test.mjs
       - run: node tests/hosp.test.mjs
@@ -115,6 +126,9 @@ jobs:
       # machine translation: invented lines rejected, and a translation stays with its item
       - run: node tests/mt_guard.test.mjs
       - run: node tests/translate_keep.test.mjs
+      - run: node tests/mt_confidence.test.mjs
+      - run: node tests/mt_cache_lanes.test.mjs
+      - run: node tests/mt_prepare.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
@@ -161,6 +175,7 @@ jobs:
       - run: npm ci --prefix netlify --no-audit --no-fund
       - run: node tests/tier_smoke.mjs
       - run: node tests/push_server_smoke.mjs
+      - run: node tests/webpush.test.mjs
       # the plan's locked data files are not asked for (Free and Mid get no 402); Thailand's files load only for Thailand
       - run: node tests/locked_requests_smoke.mjs
       # opening the app never shows Today and then loads again over a tap on Open map (run-out sign-in, new release)
@@ -189,6 +204,8 @@ jobs:
       - run: node tests/story_dedup_smoke.mjs
       # incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
       - run: node tests/evsum_ai_smoke.mjs
+      # report digests reach the Report card, tagged AI generated, shown as text
+      - run: node tests/digest_smoke.mjs
       - run: node tests/points_smoke.mjs
       - run: node tests/points_declutter_smoke.mjs
       - run: node tests/photo_map_smoke.mjs
@@ -223,6 +240,7 @@ jobs:
       - run: node tests/pop_smoke.mjs
       - run: node tests/warngeo_smoke.mjs
       - run: node tests/sat_smoke.mjs
+      - run: node tests/newimg_smoke.mjs
       - run: node tests/keydates_smoke.mjs
       - run: node tests/coverage_smoke.mjs
       - run: node tests/maploading_smoke.mjs

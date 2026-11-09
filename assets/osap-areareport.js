@@ -57,7 +57,7 @@
   /* ---------- map objects: points drawn on the map right now inside the area (overlays, sites, live tracks) ---------- */
   /* panes that are not objects: this page's report dots (listed from the records instead), counts, labels, the drawing itself */
   var SKIP = { tlpane: 1, xapane: 1, evlbl: 1, cfrep: 1, areapane: 1, lblpane: 1, measpane: 1, gridpane: 1, srchpane: 1, mylocpane: 1,
-    rtpvpane: 1, rtpvtop: 1, dwpane: 1, wxlbl: 1, wxvec: 1, cbase: 1, stlines: 1, hybpane: 1, satpane: 1, roadpane: 1, tooltipPane: 1, popupPane: 1, rvpane: 1 };
+    rtpvpane: 1, rtpvtop: 1, dwpane: 1, wxlbl: 1, wxvec: 1, cbase: 1, stlines: 1, hybpane: 1, satpane: 1, nimgpane: 1, roadpane: 1, tooltipPane: 1, popupPane: 1, rvpane: 1 };
   var PANE = { cfpane: "Conflict tab layers", dsbpane: "Conflict tab layers", terpane: "Terrain, flashpoints and presence", fpzone: "Terrain, flashpoints and presence",
     infpt: "Infrastructure", milpt: "Military installations", pwrpt: "Power", pwrpane: "Power", airpane: "Live aircraft", campt: "Cameras", dcpt: "Data centers", svpt: "Surveillance",
     mobpane: "Movement and traffic", mobrx: "Movement and traffic", sidespane: "Military sites", lzpane: "Landing zones", dzpane: "Drop zones", evpane: "Incidents",

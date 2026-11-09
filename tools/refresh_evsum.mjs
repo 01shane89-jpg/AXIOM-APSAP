@@ -22,7 +22,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { createRequire } from "node:module";
 import { gateway, parseJsonReply } from "./ai_gateway.mjs";
-import { unsupportedFigures, unsupportedNames, unsupportedDeaths } from "./evsum_lib.mjs";
+import { unsupportedFigures, unsupportedNames, unsupportedDeaths, normCites, figureContext } from "./evsum_lib.mjs";
 
 const OUT = "data/live/evsum.js", OUT_AI = "data/live/evsum_ai.js", PROMPT_V = "evsum/2";
 const AI_ONLY = !!process.env.EVSUM_AI_ONLY, AI_PER_RUN = +(process.env.EVSUM_AI_PER_RUN || 40), AI_BUDGET_MS = +(process.env.EVSUM_AI_BUDGET_MIN || 45) * 60e3,
@@ -191,11 +191,12 @@ async function draft(e, reps, aig) {
     o = res1.o; j = { model: res1.model, usage: res1.usage, provider: "github" };
   }
   const n = reps.length;
-  const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: citeClean(clean(p && p.text, 400), n), refs: refsOk(p && p.refs, n) })).filter((p) => p.text && p.refs.length).slice(0, max);
-  const out = { summary: citeClean(clean(o.summary, 1400), n), points: list(o.points, 8), differ: list(o.differ, 4), unclear: clean(o.unclear, 300) };
+  const tidy = (s, max) => citeClean(normCites(clean(s, max), n), n);
+  const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: tidy(p && p.text, 400), refs: refsOk(p && p.refs, n) })).filter((p) => p.text && p.refs.length).slice(0, max);
+  const out = { summary: tidy(o.summary, 1400), points: list(o.points, 8), differ: list(o.differ, 4), unclear: tidy(o.unclear, 300) };
   if (!out.summary || !/\[\d+\]/.test(out.summary)) throw rejected("summary without citations");
   const bad = unsupportedFigures(out, input);
-  if (bad.length) throw rejected("figures not in the reports: " + bad.slice(0, 5).join(", "));
+  if (bad.length) throw rejected("figures not in the reports: " + bad.slice(0, 5).join(", ") + figureContext(out, bad[0]));
   const names = unsupportedNames(out, input);
   if (names.length) throw rejected("names not in the reports: " + names.slice(0, 5).join(", "));
   if (unsupportedDeaths(out, input)) throw rejected("deaths no report mentions");

@@ -1,6 +1,6 @@
 // Unit test of the figure, name and death checks on event-summary drafts (tools/evsum_lib.mjs): a draft may only give figures its reports give.
 // Run: node tests/evsum_lib.test.mjs
-import { unsupportedFigures, unsupportedNames, unsupportedDeaths } from "../tools/evsum_lib.mjs";
+import { unsupportedFigures, unsupportedNames, unsupportedDeaths, normCites, figureContext } from "../tools/evsum_lib.mjs";
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const input = [
@@ -23,5 +23,18 @@ const calm = [{ n: 1, source: "The Star", headline: "Student attacks teacher wit
 ok(unsupportedDeaths(draft("A student attacked a teacher in Kuching; at least one person died [1]."), calm), "a death no report mentions is caught");
 ok(!unsupportedDeaths(draft("The Star reported a teacher was injured in Kuching [1]."), calm), "no death, no flag");
 ok(!unsupportedDeaths(draft("Police said four were killed [2]."), input), "a death the reports give passes");
+// citation forms a small model writes instead of [6][7] are not figures (8 Nov 2026: every draft of a run was rejected for them)
+ok(normCites("Police said [1, 2] that", 2) === "Police said [1][2] that", "[1, 2] becomes [1][2]");
+ok(normCites("as [1-2] said", 2) === "as [1][2] said", "a range [1-2] becomes [1][2]");
+ok(normCites("[Report 2] and (1) said", 2) === "[2] and [1] said", "[Report 2] and (1) become citations");
+ok(normCites("reports 1 and 2 said", 2) === "the reports [1][2] said", "running-text 'reports 1 and 2' becomes a citation");
+ok(normCites("Report 2 said 4 were killed", 2) === "a report [2] said 4 were killed", "'Report 2 said' keeps its figure");
+ok(normCites("aged (24) in (2026) per [9]", 2) === "aged (24) in (2026) per [9]", "numbers above the report count are left alone");
+ok(!unsupportedFigures(draft(normCites("Police said four were killed [1, 2]. Reports 1 and 2 agree.", 2)), input).length, "a draft citing as [1, 2] passes once normalised");
+ok(unsupportedFigures(draft(normCites("Police said 7 were killed [1, 2].", 2)), input).join() === "7", "an invented figure is still caught after normalising");
+ok(/7 were killed/.test(figureContext(draft("Police said 7 were killed [1]."), "7")), "the log shows where a rejected figure sits");
+ok(!unsupportedFigures(draft("At 4:53 on 17 October police said four were killed [2]. Outlets reported at 17:00 [1]."), [{ n: 1, time: "2026-10-09T07:00", headline: "x" }, ...input]).length, "dates and times read from a report's ISO time pass without their leading zeros");
+ok(!unsupportedFigures(draft("Outlets reported on October 9 at 7:00 [1]."), [{ n: 1, time: "2026-10-09T07:00", headline: "x" }]).length, "October 9 and 7:00 from 2026-10-09T07:00 pass");
+ok(unsupportedFigures(draft("Outlets reported on October 8 [1]."), [{ n: 1, time: "2026-10-09T07:00", headline: "x" }]).join() === "8", "a day no report gives is still caught");
 if (fails) { console.log(fails + " failed"); process.exit(1); }
 console.log("all passed");

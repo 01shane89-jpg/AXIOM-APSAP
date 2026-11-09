@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "2759cec0feda";
+const VERSION = "f7c617b1ed3a";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -425,6 +425,7 @@ const PRECACHE = [
 "data/thailand/deepsouth-corridors.js",
 "data/thailand/deepsouth-peace.js",
 "assets/osap-evsum.js",
+"assets/osap-digest.js",
 "assets/osap-share.js",
 "assets/osap-push.js",
 "assets/osap-boolq.js",
@@ -481,6 +482,7 @@ const PRECACHE = [
 "assets/osap-borders.js",
 "assets/osap-pop.js",
 "assets/osap-sat.js",
+"assets/osap-newimg.js",
 "assets/osap-lidar.js",
 "assets/osap-evac.js",
 "assets/osap-dc.js",
@@ -610,6 +612,10 @@ const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw
   /\/map\/Cctv\/\d+/, /carsprogram\.org\//, /websvc\.coloradosprings\.gov\//, /atmsqf\.iowadot\.gov\//, /dot511\.nebraska\.gov\/images\//, /kcscout\.net\//,
   /images\.wsdot\.wa\.gov\//, /tripcheck\.com\/RoadCams\//, /cameras\.qldtraffic\.qld\.gov\.au\//, /vegagerdin\.is\/vgdata\/vefmyndavelar\//, /eismoinfo\.lt\/eismoinfo-backend\/image-provider\//, /data\.livetraffic\.com\/cameras\/[^/]+\.jpe?g/,
   /camerai1\.iticfoundation\.org\//, /telemetry\.dwr\.go\.th\/api\//,
+  // added 2026-11-08: SC, VA, MI, AL, IL, Austin, King County, Lexington, Toronto, Calgary, Ottawa, ALERTCalifornia
+  /scdotsnap\.[\w.-]*skyvdn\.com\/thumbs\//, /snapshot\.vdotcameras\.com\/thumbs\//, /micamerasimages\.net\//, /api\.algotraffic\.com\/v4\/Cameras\//, /cctv\.travelmidwest\.com\/snapshots\//,
+  /cctv\.austinmobility\.io\/image\//, /info\.kingcounty\.gov\/transportation\/kcdot\/Roads\/TrafficCameras\//, /streamlock\.net(:\d+)?\/thumbnail/, /opendata\.toronto\.ca\/transportation\/tmc\/rescucameraimages\//,
+  /trafficcam\.calgary\.ca\//, /traffic\.ottawa\.ca\/camera\?/, /cameras\.alertcalifornia\.org\/public-camera-data\//, /lakecountypassage\.com\//, /gis\.redmond\.gov\//, /mdotjboss\.state\.mi\.us\/docs\/drive\/camfiles\//,
   // volcano, river and weather camera stills (and JMA's camera page, read for the newest picture)
   /volcview\.wr\.usgs\.gov\/ashcam-api\/images\//, /images\.geonet\.org\.nz\/volcano\/cameras\//, /data\.jma\.go\.jp\/.*(volcam\.php|\/camera\/)/, /cam\.river\.go\.jp\/cam\//,
   /usgs-nims-images\.s3\.amazonaws\.com\//, /hpwren\.ucsd\.edu\/cameras\//, /egatwater\.egat\.co\.th\/assets\/CCTV\//, /etraffic\.dgt\.es\/camarasEtraffic\//, /ndbc\.noaa\.gov\/buoycam\.php/,
@@ -799,7 +805,21 @@ self.addEventListener("fetch", (e) => {
     return res;
   })));
 });
-// Watch notifications (shown by the page): a tap focuses an open OSAP window on the hit, or opens one.
+// OSAP's own push alerts (2026-11-08, tools/webpush.mjs, netlify/functions/osap-webpush.mjs): the push check sends
+// { t: title, b: text, u: link, g: tag, f: 1 for a flash alert }, encrypted for this device only. A link into the app is opened
+// in this app (the old github.io address included), anything else is not followed. The text is a notice about a report, shown as sent.
+const PUSH_BASES = ["https://01shane89-jpg.github.io/AXIOM-APSAP/", "https://axiom-osap.netlify.app/"];
+self.addEventListener("push", (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (x) { d = { b: e.data ? e.data.text() : "" }; }
+  let u = String(d.u || "./");
+  const base = PUSH_BASES.find((b) => u.startsWith(b));
+  u = base ? "./" + u.slice(base.length) : /^\.?\/?[?#]/.test(u) ? u : "./";
+  const title = String(d.t || "OSAP alert").slice(0, 120);
+  e.waitUntil(self.registration.showNotification(title, { body: String(d.b || "").slice(0, 700), tag: d.g ? "osap-" + String(d.g).slice(0, 60) : undefined,
+    renotify: !!d.g, requireInteraction: !!d.f, icon: "assets/icons/icon-192.png", badge: "assets/icons/icon-192.png", data: { url: u } }));
+});
+// Watch notifications (shown by the page, or pushed above): a tap focuses an open OSAP window on the hit, or opens one.
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
   const url = new URL((e.notification.data && e.notification.data.url) || "./", self.registration.scope).href;

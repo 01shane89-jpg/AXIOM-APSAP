@@ -30,9 +30,16 @@ export const DATA = [
   [/^data\/thailand\/(flood-live-snapshot|flood-exposure|province-alerts)\.js$/, "free"],
   [/^data\/live\/(news|news-index|wx-forecast|warnings|advisories|quakes|national-quakes|tsunami|storms|gdacs|volcano|eonet)\.js$/, "free"],
   [/^data\/live\/(news|news-index)\//, "free"],
-  [/^data\/live\/(health|social-relevance|translation-cache)\.json$/, "free"],
+  [/^data\/live\/(health|social-relevance|translation-cache(?:-fast|-news)?)\.json$/, "free"],
   [/^source\/countries\//, "free"],
 ];
+
+// Paid files sealed in the public repository for the server's tier key (tools/seal_tier.mjs, tools/tier-key.json; Shane
+// 2026-11-08 "Lock the paid files"): only the edge gate opens them, for a plan that allows them. Every path here must be Mid or
+// Full above (tests/tier.test.mjs checks). Done folder by folder, each with its jobs: the presence data sets first.
+// Empty until Shane's key is in Netlify and GitHub and its public half is in tools/tier-key.json: files sealed for a key the
+// gate does not hold show as empty data sets. Then the presence data sets go first: /^data\/(cnpresence|rupresence|irpresence)\//
+export const TIER_SEALED = [];
 
 // Toolbar tools (data-atk in assets/osap-atak.js). A tool not listed is free.
 export const TOOLS = {

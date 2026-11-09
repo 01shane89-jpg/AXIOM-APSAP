@@ -5,6 +5,8 @@
      nothing is uploaded anywhere;
    - each photo is kept byte for byte as it came from the camera or library (the original), with its SHA-256 fingerprint,
      its size and type, the camera clock time read from the photo when it has one, the file time, and when it was added;
+   - a photo from the OSAP camera also gets a second, marked copy with grid, azimuth, position, time and tilt drawn on it
+     (r.marked: a derivative made from the original, with its own SHA-256 and the original's SHA-256 as its parent);
    - a point's name and note live with the point (localStorage "osap-atak-pts"); its photo count is kept there too so the
      map label can show it without opening the photo store.
    Points and photos are the analyst's own notes, not reports and not evidence. */
@@ -50,6 +52,7 @@
   function hex(b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? "0" : "") + x.toString(16); }).join(""); }
   function sha256(buf) { try { return W.crypto.subtle.digest("SHA-256", buf).then(hex, function () { return ""; }); } catch (e) { return Promise.resolve(""); } }
   function blobOf(r) { return new Blob([r.buf], { type: r.type }); }
+  function markedOf(r) { return new Blob([r.marked.buf], { type: r.marked.type }); }
 
   /* the camera's own clock, read from the photo's EXIF block (JPEG only); left blank when the photo has none */
   function exifTime(buf) {
@@ -110,7 +113,7 @@
     return out;
   }
 
-  function addFiles(pid, files, geo) {
+  function addFiles(pid, files, geo, mark) {
     var list = Array.prototype.slice.call(files || []), pt = find(pid);
     if (!pt || !list.length) return Promise.resolve(0);
     var room = MAX_PHOTOS - (pt.ph || 0), done = 0, skipped = [];
@@ -127,7 +130,16 @@
             /* where and which way the photo was taken (Photo to map): kept beside the original, never written into it */
             if (geo) r.geo = geo;
             var xg = exifGps(buf); if (xg) r.exifGps = xg;
-            return tx("readwrite", function (s) { s.add(r); }).then(function () { done++; });
+            /* the marked copy (data drawn on it) is made from the original's bytes; the original record is not touched */
+            var mk = typeof mark === "function" ? Promise.resolve().then(function () { return mark(new Blob([buf], { type: f.type }), h); }).then(function (m) {
+              if (!m || !m.blob) return;
+              return m.blob.arrayBuffer().then(function (mb) {
+                return sha256(mb).then(function (mh) {
+                  r.marked = { buf: mb, type: m.blob.type || "image/jpeg", size: mb.byteLength, sha256: mh, parent: h, made: iso(Date.now()), tool: m.tool || "OSAP data overlay", what: m.what || "" };
+                });
+              });
+            }).catch(function (e) { r.markErr = String(e && e.message || "marked copy not made").slice(0, 120); }) : Promise.resolve();
+            return mk.then(function () { return tx("readwrite", function (s) { s.add(r); }); }).then(function () { done++; });
           });
         });
       });
@@ -161,8 +173,8 @@
     return photosOf(pid).then(function (a) {
       revoke(el); el._urls = [];
       el.innerHTML = a.map(function (r) {
-        var u = URL.createObjectURL(blobOf(r)); el._urls.push(u);
-        return '<span class="pt-th"><button type="button" data-ph="' + esc(r.id) + '" title="' + esc(r.name) + '"><img alt="Photo ' + esc(r.name) + '" src="' + u + '"></button>' +
+        var u = URL.createObjectURL(r.marked ? markedOf(r) : blobOf(r)); el._urls.push(u);
+        return '<span class="pt-th"><button type="button" data-ph="' + esc(r.id) + '" title="' + esc(r.name) + (r.marked ? " (with data)" : "") + '"><img alt="Photo ' + esc(r.name) + '" src="' + u + '"></button>' +
           (withDel ? '<button type="button" class="pt-thx" data-phx="' + esc(r.id) + '" aria-label="Delete this photo">\u00d7</button>' : "") + "</span>";
       }).join("");
       el.setAttribute("data-pid", pid);
@@ -257,20 +269,23 @@
 
   /* ---------- the photo viewer: the original, full size, with its fingerprint and times ---------- */
   var vw = D.createElement("div"); vw.id = "pt-view"; vw.hidden = true; vw.setAttribute("role", "dialog"); vw.setAttribute("aria-label", "Photo");
-  vw.innerHTML = '<div class="pt-vimg"></div><div class="pt-vmeta"></div><div class="pt-vbar"><a class="pt-btn" data-pv="save" download>Save original</a><button type="button" class="pt-btn" data-pv="check">Check this photo</button><button type="button" class="pt-btn dng" data-pv="del">Delete</button><button type="button" class="pt-btn pri" data-pv="x">Close</button></div>';
+  vw.innerHTML = '<div class="pt-vimg"></div><div class="pt-vmeta"></div><div class="pt-vbar"><button type="button" class="pt-btn" data-pv="flip" hidden>Show original</button><a class="pt-btn" data-pv="savem" download hidden>Save with data</a><a class="pt-btn" data-pv="save" download>Save original</a><button type="button" class="pt-btn" data-pv="check">Check this photo</button><button type="button" class="pt-btn dng" data-pv="del">Delete</button><button type="button" class="pt-btn pri" data-pv="x">Close</button></div>';
   var vwCur = null;
   function view(id) {
     photo(id).then(function (r) {
       if (!r) return;
       viewClose(); vwCur = r;
-      var u = URL.createObjectURL(blobOf(r)); vw._urls = [u];
-      vw.querySelector(".pt-vimg").innerHTML = '<img alt="' + esc(r.name) + '" src="' + u + '">';
+      var u = URL.createObjectURL(blobOf(r)), um = r.marked ? URL.createObjectURL(markedOf(r)) : ""; vw._urls = um ? [u, um] : [u]; vw._u = { o: u, m: um };
+      vwShow(!!um);
       var p = find(r.pid) || {};
       vw.querySelector(".pt-vmeta").innerHTML = "<b>" + esc(p.n || "Point") + "</b> \u00b7 " + esc(r.name) + " \u00b7 " + esc(kb(r.size)) + " \u00b7 " + esc(r.type) +
         "<br>Taken: " + esc(r.camera || "not in the photo") + (r.file ? " \u00b7 File time: " + esc(r.file) : "") + " \u00b7 Added: " + esc(iso(r.added)) +
-        '<br>SHA-256: <code>' + esc(r.sha256 || "not available in this browser") + "</code>" + geoHtml(r) +
-        '<br><span class="obs">Original, unchanged, on this device only. Your own photo, not a report.</span>';
+        '<br>SHA-256 (original): <code>' + esc(r.sha256 || "not available in this browser") + "</code>" +
+        (r.marked ? '<br>SHA-256 (copy with data): <code>' + esc(r.marked.sha256 || "not available") + '</code> <span class="obs">made ' + esc(r.marked.made) + " from the original above</span>" : "") + geoHtml(r) +
+        '<br><span class="obs">' + (r.marked ? "The copy with data is drawn from the original; the original is kept unchanged beside it. " : "Original, unchanged. ") + "On this device only. Your own photo, not a report.</span>";
       var a = vw.querySelector('[data-pv="save"]'); a.href = u; a.setAttribute("download", r.name || "photo");
+      var am = vw.querySelector('[data-pv="savem"]'); am.hidden = !um; vw.querySelector('[data-pv="flip"]').hidden = !um;
+      if (um) { am.href = um; am.setAttribute("download", String(r.name || "photo").replace(/\.[a-z0-9]+$/i, "") + "-data.jpg"); }
       vw.hidden = false;
       var x = vw.querySelector('[data-pv="x"]'); if (x) x.focus({ preventScroll: true });
     });
@@ -287,12 +302,19 @@
     if (x) o += "<br>GPS written in the photo by the camera: <code>" + esc(A.fmt(x.lat, x.lon, "mgrs")) + "</code>" + (x.dir != null ? ", direction " + deg3(x.dir) + "\u00b0 " + esc(x.dirRef) : "");
     return o;
   }
-  function viewClose() { vw.hidden = true; revoke(vw); vw.querySelector(".pt-vimg").innerHTML = ""; vwCur = null; }
+  /* which picture the viewer shows: the copy with data (default when there is one) or the original */
+  function vwShow(m) {
+    var r = vwCur; if (!r || !vw._u) return; vw._m = m;
+    vw.querySelector(".pt-vimg").innerHTML = '<img alt="' + esc(r.name) + (m ? " with data" : " original") + '" src="' + (m ? vw._u.m : vw._u.o) + '">';
+    vw.querySelector('[data-pv="flip"]').textContent = m ? "Show original" : "Show with data";
+  }
+  function viewClose() { vw.hidden = true; vw._u = null; revoke(vw); vw.querySelector(".pt-vimg").innerHTML = ""; vwCur = null; }
   vw.addEventListener("click", function (e) {
     var b = e.target.closest("[data-pv]");
     if (!b) { if (e.target === vw) viewClose(); return; }
     var k = b.getAttribute("data-pv");
     if (k === "x") viewClose();
+    else if (k === "flip") vwShow(!vw._m);
     else if (k === "check" && vwCur && W.OSAP_PHOTOCHECK) { var c = vwCur, cp = find(c.pid) || {}; viewClose(); edClose(); W.OSAP_PHOTOCHECK.open({ blob: blobOf(c), name: c.name, lat: cp.lat, lon: cp.lon, place: cp.n }); }
     else if (k === "del" && vwCur && W.confirm("Delete this photo from this device?")) {
       var r = vwCur; viewClose(); dropPhoto(r.pid, r.id).then(function () { if (cur === r.pid) edPaint(); });
@@ -325,8 +347,8 @@
     '<button type="button" class="pt-btn sn-allow" data-ps="allow" hidden>Allow compass</button>' +
     '<button type="button" class="pt-btn sn-centre" data-ps="centre" hidden>Use the map center</button></div>' +
     '<p class="obs sn-why"></p>' +
-    '<p class="obs">Open camera shows the grid, heading and time over the picture while you aim; the readings at the moment you press the shutter are saved with the photo. Phone camera app uses the readings from when you press it. ' +
-    'The photo is kept unchanged on this device only, never uploaded; grid, heading, where each came from and how accurate it was are saved beside it. <span class="sn-room"></span></p></div>';
+    '<p class="obs">Open camera shows the azimuth, grid, position, time and tilt over the picture while you aim; the readings at the moment you press the shutter are saved with the photo and drawn on a copy of it. Phone camera app uses the readings from when you press it. ' +
+    'The original photo is kept unchanged with its SHA-256 fingerprint, on this device only, never uploaded; the copy with data, and where each reading came from and how accurate it was, are saved beside it. <span class="sn-room"></span></p></div>';
   L.DomEvent.disableClickPropagation(sn); L.DomEvent.disableScrollPropagation(sn);
   var S = { fix: null, gerr: "", wid: null, hd: null, hsub: null, centre: false, shot: null };
   function H() { return W.OSAP_HEADING || null; }
@@ -362,7 +384,7 @@
     var g = W.navigator.geolocation;
     if (!g) { S.gerr = "This browser cannot read the GPS."; snPaint(); return; }
     S.gerr = "";
-    S.wid = g.watchPosition(function (p) { var c = p.coords; S.fix = { lat: c.latitude, lon: c.longitude, acc: c.accuracy || 0, alt: c.altitude, t: p.timestamp || Date.now() }; S.gerr = ""; if (!sn.hidden) snPaint(); else camPaint(); },
+    S.wid = g.watchPosition(function (p) { var c = p.coords; S.fix = { lat: c.latitude, lon: c.longitude, acc: c.accuracy || 0, alt: c.altitude, altAcc: c.altitudeAccuracy, t: p.timestamp || Date.now() }; S.gerr = ""; if (!sn.hidden) snPaint(); else camPaint(); },
       function (e) { S.gerr = e && e.code === 1 ? "Location is not allowed for this site." : "No GPS fix yet (" + (e && e.message || "error") + ")."; if (!sn.hidden) snPaint(); },
       { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 });
   }
@@ -392,24 +414,26 @@
     else if (k === "allow") hdStart();
     else if (k === "centre") { S.centre = true; snPaint(); }
   });
-  function shotNow() { return { fix: S.centre ? null : S.fix, centre: S.centre ? map.getCenter() : null, hd: S.hd, t: Date.now() }; }
+  function shotNow() { return { fix: S.centre ? null : S.fix, centre: S.centre ? map.getCenter() : null, hd: S.hd, tilt: C.open && T.v ? { elev: T.v.elev, roll: T.v.roll } : null, t: Date.now() }; }
   sn.addEventListener("change", function (e) {
     if (e.target.getAttribute("data-ps") !== "cam") return;
     /* copied out first: clearing the input empties its live file list */
     var files = Array.prototype.slice.call(e.target.files || []); e.target.value = ""; if (!files.length) return;
     var shot = S.shot || shotNow();
     snClose();
-    savePhoto(files, shot, S.hd, { how: "phone camera app (photo file as the camera made it)" });
+    savePhoto(files, shot, S.hd, { how: "phone camera app (photo file as the camera made it)", overlay: "readings from when the camera app was opened, drawn on a separate copy; the original is unchanged" }, function (b, geo, h) { return burn(b, geo, h, "readings when the camera app opened"); });
   });
   /* save one photo as a new point at the shot's fix, with grid and heading beside it; after = the heading when the photo came back */
-  function savePhoto(files, shot, after, cap) {
+  function savePhoto(files, shot, after, cap, mark) {
     var f = shot.fix, c = shot.centre;
     if (!f && !c) { toast("No GPS fix: photo not saved."); return Promise.resolve(null); }
     var lat = f ? f.lat : c.lat, lon = f ? f.lon : c.lng, hd = shot.hd, d = new Date(shot.t);
     var geo = { lat: +lat.toFixed(6), lon: +lon.toFixed(6), grid: A.fmt(lat, lon, "mgrs"), at: iso(shot.t),
-      pos: f ? { src: "device GPS", acc: Math.round(f.acc), fixAt: iso(f.t), alt: f.alt != null ? Math.round(f.alt) : null } : { src: "map center, chosen by the user (no GPS fix)", acc: null },
+      pos: f ? { src: "device GPS", acc: Math.round(f.acc), fixAt: iso(f.t), alt: f.alt != null ? Math.round(f.alt) : null, altAcc: f.altAcc != null ? Math.round(f.altAcc) : null, altRef: f.alt != null ? "WGS84 ellipsoid (device GPS)" : null } : { src: "map center, chosen by the user (no GPS fix)", acc: null },
       heading: hd ? { mag: hd.mag, tru: hd.tru, decl: hd.decl, acc: hd.acc, basis: hd.basis, src: hd.src, readAt: iso(hd.t) } : null };
     if (cap) geo.capture = cap;
+    if (shot.tilt) geo.tilt = { elev: shot.tilt.elev, roll: shot.tilt.roll, src: "device motion sensor" };
+    var gz = gridAz(lat, lon, geo.grid, hd); if (gz) geo.heading.grid = gz.az, geo.heading.conv = gz.conv;
     if (hd && after && after !== hd) {
       var a1 = hd.mag != null ? hd.mag : hd.tru, a2 = after.mag != null ? after.mag : after.tru;
       if (a1 != null && a2 != null) geo.heading.after = +a2.toFixed(1), geo.heading.turned = Math.round(angDiff(a1, a2));
@@ -419,7 +443,7 @@
     if (!pt) return Promise.resolve(null);
     var az = hd ? (hd.mag != null ? hd.mag : hd.tru) : null;
     setPt(pt.id, { src: "photo", az: az != null ? az : "", azRef: az != null ? (hd.mag != null ? "magnetic" : "true") : "", azTru: hd && hd.tru != null && hd.mag != null ? hd.tru : "", acc: f ? Math.round(f.acc) : "" });
-    return addFiles(pt.id, files, geo).then(function (n) {
+    return addFiles(pt.id, files, geo, mark ? function (b, h) { return mark(b, geo, h); } : null).then(function (n) {
       if (cur === pt.id) edPaint();
       if (n) toast("Photo saved to the map at " + geo.grid + (az != null ? ", facing " + deg3(az) + "\u00b0" : ", no heading") + (geo.heading && geo.heading.turned > 20 ? ". The phone turned " + geo.heading.turned + "\u00b0 while the camera was open: check the heading." : ""));
       return n ? pt : null;
@@ -427,32 +451,83 @@
   }
 
   /* ---------- OSAP camera: the camera picture inside OSAP with grid, heading and time on screen while aiming ----------
-     The data is drawn over the picture on screen only. The saved photo is the camera's own still when the browser can take
-     one (ImageCapture.takePhoto), otherwise the full-size video frame; nothing is drawn into it. Grid and heading are the
-     readings at the moment the shutter is pressed. */
+     The data is drawn over the live picture while aiming (heading strip, azimuth magnetic/true/grid with declination, MGRS,
+     lat/long, altitude, accuracy, Zulu and local time, tilt and a level line). The original is the camera's own still when
+     the browser can take one (ImageCapture.takePhoto), otherwise the full-size video frame, and is kept byte for byte; the
+     same readings are then drawn on a separate copy (burn) stored beside it. Readings are those at the shutter press. */
   var cam = D.createElement("div"); cam.id = "pt-cam"; cam.hidden = true; cam.setAttribute("role", "dialog"); cam.setAttribute("aria-label", "OSAP camera");
   cam.innerHTML = '<video playsinline muted autoplay></video>' +
-    '<div class="cm-top"><div class="cm-hd">---\u00b0</div><div class="cm-hd2"></div></div>' +
-    '<div class="cm-ret" aria-hidden="true"></div>' +
-    '<div class="cm-bot"><div class="cm-grid"></div><div class="cm-time"></div><div class="cm-msg" aria-live="polite"></div></div>' +
+    '<div class="cm-top"><canvas class="cm-tape" width="320" height="34" aria-hidden="true"></canvas><div class="cm-hd">---\u00b0</div><div class="cm-hd2"></div></div>' +
+    '<div class="cm-ret" aria-hidden="true"></div><div class="cm-lvl" aria-hidden="true" hidden></div>' +
+    '<div class="cm-bot"><div class="cm-grid"></div><div class="cm-ll"></div><div class="cm-time"></div><div class="cm-tilt"></div><div class="cm-msg" aria-live="polite"></div></div>' +
     '<div class="cm-bar"><button type="button" class="cm-x" data-cm="x">Done</button><button type="button" class="cm-shut" data-cm="shut" aria-label="Take photo"></button><span class="cm-n"></span></div>';
   var C = { stream: null, open: false, n: 0, busy: false };
+  /* tilt: how far the camera points up or down (elev) and how far the picture leans (roll), from the motion sensor.
+     The back camera looks along the phone's -z axis; its up component in the earth frame is -cos(beta)cos(gamma). */
+  var T = { v: null, on: false };
+  function onTilt(e) {
+    if (e.beta == null || e.gamma == null || !isFinite(e.beta) || !isFinite(e.gamma)) return;
+    var r = Math.PI / 180, b = e.beta * r, g = e.gamma * r;
+    var elev = Math.asin(Math.max(-1, Math.min(1, -Math.cos(b) * Math.cos(g)))) / r;
+    var so = W.screen && W.screen.orientation && typeof W.screen.orientation.angle === "number" ? W.screen.orientation.angle : (typeof W.orientation === "number" ? W.orientation : 0);
+    var roll = Math.atan2(-Math.cos(b) * Math.sin(g), Math.sin(b)) / r - so;
+    roll = ((roll + 540) % 360) - 180;
+    T.v = { elev: +elev.toFixed(1), roll: +roll.toFixed(1), t: Date.now() };
+  }
+  function tiltOn() { if (!T.on) { T.on = true; T.v = null; W.addEventListener("deviceorientation", onTilt); } }
+  function tiltOff() { if (T.on) { T.on = false; W.removeEventListener("deviceorientation", onTilt); } }
+  function sgn(n) { return (n > 0 ? "+" : n < 0 ? "\u2212" : "\u00b1") + Math.abs(Math.round(n)); }
+  function tiltText(t) { return t ? "Tilt " + sgn(t.elev) + "\u00b0 " + (Math.round(t.elev) > 0 ? "up" : Math.round(t.elev) < 0 ? "down" : "level") + " \u00b7 roll " + sgn(t.roll) + "\u00b0" : ""; }
+  function llText(lat, lon) { return Math.abs(lat).toFixed(6) + "\u00b0 " + (lat < 0 ? "S" : "N") + "  " + Math.abs(lon).toFixed(6) + "\u00b0 " + (lon < 0 ? "W" : "E"); }
+  function declText(d) { return d == null ? "" : "decl " + Math.abs(d).toFixed(1) + "\u00b0 " + (d < 0 ? "W" : "E"); }
+  function tzText(d) { var o = -d.getTimezoneOffset(), a = Math.abs(o); return "UTC" + (o < 0 ? "\u2212" : "+") + ("0" + Math.floor(a / 60)).slice(-2) + ":" + ("0" + a % 60).slice(-2); }
+  function hms(d, utc) { var p = function (n) { return ("0" + n).slice(-2); }; return utc ? p(d.getUTCHours()) + ":" + p(d.getUTCMinutes()) + ":" + p(d.getUTCSeconds()) : p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds()); }
+  function ymd(d, utc) { var p = function (n) { return ("0" + n).slice(-2); }; return utc ? d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate()) : d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()); }
+  /* grid azimuth: true azimuth minus UTM grid convergence for the zone in the MGRS grid (not in the polar UPS areas) */
+  function gridAz(lat, lon, grid, hd) {
+    var z = /^(\d{1,2})[C-X]/.exec(String(grid || "")); if (!z || !hd || hd.tru == null || Math.abs(lat) > 84) return null;
+    var r = Math.PI / 180, lon0 = +z[1] * 6 - 183, conv = Math.atan(Math.tan((lon - lon0) * r) * Math.sin(lat * r)) / r;
+    return { az: +((((hd.tru - conv) % 360) + 360) % 360).toFixed(1), conv: +conv.toFixed(2) };
+  }
+  /* a heading strip across the top of the picture: ticks every 5 degrees, numbers every 15, the reading under the center mark */
+  function tape(cv, a) {
+    var w = cv.clientWidth || 320, h = 34, dpr = W.devicePixelRatio || 1;
+    if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    var x = cv.getContext("2d"); if (!x) return;
+    x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, w, h);
+    if (a == null) return;
+    var span = 90, ppd = w / span, lo = Math.floor((a - span / 2) / 5) * 5;
+    x.font = "600 11px 'IBM Plex Mono',monospace"; x.textAlign = "center"; x.lineWidth = 1.5; x.shadowColor = "#000"; x.shadowBlur = 2;
+    for (var d = lo; d <= a + span / 2; d += 5) {
+      var px = w / 2 + (d - a) * ppd, n = ((d % 360) + 360) % 360, big = n % 15 === 0;
+      x.strokeStyle = x.fillStyle = "#fff";
+      x.beginPath(); x.moveTo(px, h - 1); x.lineTo(px, h - (big ? 12 : 6)); x.stroke();
+      if (big) { var lab = { 0: "N", 90: "E", 180: "S", 270: "W" }[n]; if (lab) x.fillStyle = "#ffd43b"; x.fillText(lab || deg3(n), px, h - 15); }
+    }
+    x.fillStyle = "#ffd43b"; x.beginPath(); x.moveTo(w / 2 - 6, 0); x.lineTo(w / 2 + 6, 0); x.lineTo(w / 2, 8); x.closePath(); x.fill();
+  }
   function camPaint() {
     if (!C.open) return;
     var hd = S.hd, f = S.fix, a = hd ? (hd.mag != null ? hd.mag : hd.tru) : null;
     cam.querySelector(".cm-hd").textContent = a != null ? deg3(a) + "\u00b0 " + (hd.mag != null ? "M" : "T") : "No heading";
-    cam.querySelector(".cm-hd2").textContent = a != null ? Math.round((((a % 360) + 360) % 360) * MIL) + " mils" + (hd.tru != null && hd.mag != null ? " \u00b7 " + deg3(hd.tru) + "\u00b0 T" : "") + (hd.acc != null ? " \u00b7 \u00b1" + hd.acc + "\u00b0" : "") + (hd.basis === "top" ? " \u00b7 hold the phone upright" : "") : (S.hdeny ? "compass not allowed" : "no compass reading");
-    if (S.centre) { var c = map.getCenter(); cam.querySelector(".cm-grid").textContent = A.fmt(c.lat, c.lng, "mgrs") + "  map center"; }
-    else cam.querySelector(".cm-grid").textContent = f ? A.fmt(f.lat, f.lon, "mgrs") + "  \u00b1" + Math.round(f.acc) + " m" : (S.gerr || "Waiting for GPS\u2026");
+    var pl = S.centre ? map.getCenter() : null, la = pl ? pl.lat : f ? f.lat : null, lo = pl ? pl.lng : f ? f.lon : null, gr = la != null ? A.fmt(la, lo, "mgrs") : "";
+    var gz = la != null ? gridAz(la, lo, gr, hd) : null;
+    cam.querySelector(".cm-hd2").textContent = a != null ? Math.round((((a % 360) + 360) % 360) * MIL) + " mils" + (hd.tru != null && hd.mag != null ? " \u00b7 " + deg3(hd.tru) + "\u00b0 T" : "") + (gz ? " \u00b7 " + deg3(gz.az) + "\u00b0 G" : "") + (hd.decl != null && hd.mag != null ? " \u00b7 " + declText(hd.decl) : "") + (hd.acc != null ? " \u00b7 \u00b1" + hd.acc + "\u00b0" : "") + (hd.basis === "top" ? " \u00b7 hold the phone upright" : "") : (S.hdeny ? "compass not allowed" : "no compass reading");
+    tape(cam.querySelector(".cm-tape"), a);
+    cam.querySelector(".cm-grid").textContent = la == null ? (S.gerr || "Waiting for GPS\u2026") : gr + (pl ? "  map center" : "  \u00b1" + Math.round(f.acc) + " m");
+    cam.querySelector(".cm-ll").textContent = la == null ? "" : llText(la, lo) + (f && !pl && f.alt != null ? " \u00b7 alt " + Math.round(f.alt) + " m" + (f.altAcc != null ? " \u00b1" + Math.round(f.altAcc) : "") : "");
     var now = new Date();
-    cam.querySelector(".cm-time").textContent = now.toISOString().slice(11, 19) + "Z \u00b7 " + ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2) + ":" + ("0" + now.getSeconds()).slice(-2) + " local" + (f && f.alt != null ? " \u00b7 alt " + Math.round(f.alt) + " m" : "");
+    cam.querySelector(".cm-time").textContent = hms(now, true) + "Z \u00b7 " + hms(now, false) + " local (" + tzText(now) + ") \u00b7 " + ymd(now, true);
+    var tv = T.v && Date.now() - T.v.t < 3000 ? T.v : null, lv = cam.querySelector(".cm-lvl");
+    cam.querySelector(".cm-tilt").textContent = tv ? tiltText(tv) : "";
+    lv.hidden = !tv; if (tv) { lv.style.transform = "rotate(" + (-tv.roll) + "deg)"; lv.classList.toggle("ok", Math.abs(tv.roll) < 2); }
     cam.querySelector(".cm-shut").disabled = !(f || S.centre) || C.busy;
     cam.querySelector(".cm-n").textContent = C.n ? C.n + " saved" : "";
   }
   function camOpen() {
     var md = W.navigator.mediaDevices;
     if (!md || !md.getUserMedia) { toast("This browser cannot show the camera inside OSAP. Use Phone camera app."); return; }
-    C.n = 0; C.busy = false; C.open = true; sn.hidden = true; cam.hidden = false;
+    C.n = 0; C.busy = false; C.open = true; sn.hidden = true; cam.hidden = false; tiltOn();
     cam.querySelector(".cm-msg").textContent = "Starting camera\u2026"; camPaint();
     md.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 3840 }, height: { ideal: 2160 } }, audio: false }).then(function (st) {
       if (!C.open) { st.getTracks().forEach(function (t) { t.stop(); }); return; }
@@ -463,7 +538,7 @@
       cam.querySelector(".cm-msg").textContent = (e && e.name === "NotAllowedError" ? "Camera not allowed for this site." : "Camera would not start (" + (e && (e.name || e.message) || "error") + ").") + " Press Done and use Phone camera app.";
     });
   }
-  function camStop() { if (C.stream) C.stream.getTracks().forEach(function (t) { t.stop(); }); C.stream = null; var v = cam.querySelector("video"); if (v) v.srcObject = null; }
+  function camStop() { tiltOff(); if (C.stream) C.stream.getTracks().forEach(function (t) { t.stop(); }); C.stream = null; var v = cam.querySelector("video"); if (v) v.srcObject = null; }
   function camClose() {
     if (!C.open) return;
     C.open = false; cam.hidden = true; camStop();
@@ -485,6 +560,49 @@
     }
     return frame();
   }
+  /* the copy with data: the original drawn on a canvas with the readings saved beside it (geo), as a new JPEG.
+     The text is made only from geo, so the picture and the saved record say the same thing. */
+  function picOf(blob) {
+    if (W.createImageBitmap) return W.createImageBitmap(blob).catch(function () { return imgOf(blob); });
+    return imgOf(blob);
+  }
+  function imgOf(blob) {
+    return new Promise(function (res, rej) { var u = URL.createObjectURL(blob), im = new Image(); im.onload = function () { URL.revokeObjectURL(u); res(im); }; im.onerror = function () { URL.revokeObjectURL(u); rej(new Error("photo would not open")); }; im.src = u; });
+  }
+  function burnLines(geo, h, when) {
+    var hd = geo.heading, pos = geo.pos, d = new Date(Date.parse(geo.at.replace(" ", "T"))), L1 = [];
+    if (hd) { var a = hd.mag != null ? hd.mag : hd.tru;
+      L1.push(deg3(a) + "\u00b0 " + (hd.mag != null ? "M" : "T") + "  " + Math.round((((a % 360) + 360) % 360) * MIL) + " mils" + (hd.tru != null && hd.mag != null ? "  |  " + deg3(hd.tru) + "\u00b0 T" : "") + (hd.grid != null ? "  |  " + deg3(hd.grid) + "\u00b0 G" : "") + (hd.decl != null && hd.mag != null ? "  |  " + declText(hd.decl) : "") + (hd.acc != null ? "  \u00b1" + hd.acc + "\u00b0" : "") + (hd.basis === "top" ? "  (phone flat: top edge)" : "")); }
+    else L1.push("No compass reading");
+    L1.push(geo.grid + (pos.acc != null ? "  \u00b1" + pos.acc + " m" : "  map center, no GPS fix"));
+    L1.push(llText(geo.lat, geo.lon) + (pos.alt != null ? "  |  alt " + pos.alt + " m" + (pos.altAcc != null ? " \u00b1" + pos.altAcc : "") + " (ellipsoid)" : ""));
+    L1.push(ymd(d, true) + " " + hms(d, true) + "Z  |  " + ymd(d, false) + " " + hms(d, false) + " local (" + tzText(d) + ")");
+    L1.push((geo.tilt ? tiltText(geo.tilt) + "  |  " : "") + "OSAP " + when + (h ? "  |  original SHA-256 " + h.slice(0, 16) + "\u2026" : ""));
+    return L1;
+  }
+  function burn(blob, geo, h, when) {
+    return picOf(blob).then(function (im) {
+      var w = im.width || im.naturalWidth, ht = im.height || im.naturalHeight;
+      if (!w || !ht) throw new Error("photo has no size");
+      var k = Math.min(1, Math.sqrt(16000000 / (w * ht))), cw = Math.round(w * k), ch = Math.round(ht * k);
+      var cv = D.createElement("canvas"); cv.width = cw; cv.height = ch;
+      var x = cv.getContext("2d"); if (!x) throw new Error("no canvas");
+      x.drawImage(im, 0, 0, cw, ch); if (im.close) im.close();
+      var lines = burnLines(geo, h, when), u = Math.max(12, Math.round(Math.min(cw, ch) * 0.032)), pad = Math.round(u * 0.6), lh = Math.round(u * 1.3);
+      var fam = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+      /* shrink the text until the longest line fits the width */
+      for (var i = 0; i < 8; i++) { x.font = "600 " + u + "px " + fam; var mx = 0; lines.forEach(function (s) { mx = Math.max(mx, x.measureText(s).width); }); if (mx + pad * 2 <= cw || u <= 10) break; u = Math.max(10, Math.floor(u * (cw - pad * 2) / mx)); lh = Math.round(u * 1.3); }
+      var bh = pad * 2 + lh * lines.length;
+      x.fillStyle = "rgba(0,0,0,.55)"; x.fillRect(0, ch - bh, cw, bh);
+      x.textBaseline = "top"; x.shadowColor = "#000"; x.shadowBlur = Math.max(2, u / 6);
+      lines.forEach(function (s, j) { x.font = (j < 2 ? "700 " : "600 ") + u + "px " + fam; x.fillStyle = j === 0 ? "#ffd43b" : "#fff"; x.fillText(s, pad, ch - bh + pad + j * lh); });
+      /* the aim mark where the screen reticle was */
+      var cx = cw / 2, cy = ch / 2, rr = Math.round(Math.min(cw, ch) * 0.035);
+      x.strokeStyle = "rgba(255,255,255,.85)"; x.lineWidth = Math.max(2, rr / 12);
+      x.beginPath(); x.arc(cx, cy, rr, 0, Math.PI * 2); x.moveTo(cx - rr * 1.5, cy); x.lineTo(cx + rr * 1.5, cy); x.moveTo(cx, cy - rr * 1.5); x.lineTo(cx, cy + rr * 1.5); x.stroke();
+      return new Promise(function (res, rej) { cv.toBlob(function (b) { if (b) res({ blob: b, tool: "OSAP data overlay v1 (canvas, JPEG 0.92)", what: "grid, azimuth, position, time" + (geo.tilt ? ", tilt" : "") + " drawn on a copy of the original" }); else rej(new Error("copy not saved")); }, "image/jpeg", 0.92); });
+    });
+  }
   cam.addEventListener("click", function (e) {
     var b = e.target.closest("[data-cm]"); if (!b) return;
     var k = b.getAttribute("data-cm");
@@ -496,7 +614,7 @@
         var tz = new Date(shot.t).toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
         var ty = g.blob.type || "image/jpeg", ext = /png/.test(ty) ? ".png" : /webp/.test(ty) ? ".webp" : ".jpg";
         var file = new File([g.blob], "OSAP-" + tz + ext, { type: ty, lastModified: shot.t });
-        return savePhoto([file], shot, S.hd, { how: g.how, overlay: "grid, heading and time shown on screen only, not drawn into the photo" });
+        return savePhoto([file], shot, S.hd, { how: g.how, overlay: "grid, azimuth, position, time and tilt shown on screen while aiming and drawn on a separate copy; the original is unchanged" }, function (b, geo, h) { return burn(b, geo, h, "readings at the shutter"); });
       }).then(function (pt) { C.busy = false; if (pt) C.n++; camPaint(); }, function (er) { C.busy = false; cam.querySelector(".cm-msg").textContent = "Photo not taken: " + (er && er.message || "error"); camPaint(); });
     }
   });
@@ -514,7 +632,10 @@
     ".sn-take{min-height:52px;font-size:15px;flex:1 1 100%}.sn-app{flex:1 1 auto;min-height:44px;font-size:13px}.sn-take.off{opacity:.45;cursor:not-allowed}.pt-btn[hidden]{display:none}" +
     "#pt-cam{position:fixed;inset:0;z-index:5100;background:#000;color:#fff;font:600 15px/1.3 system-ui,-apple-system,sans-serif;text-shadow:0 1px 3px #000,0 0 2px #000}#pt-cam[hidden]{display:none!important}" +
     "#pt-cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#pt-cam.flash video{opacity:.3}" +
-    "#pt-cam .cm-top{position:absolute;top:calc(10px + env(safe-area-inset-top));left:0;right:0;text-align:center}#pt-cam .cm-hd{font:700 30px/1.1 'IBM Plex Mono',monospace}#pt-cam .cm-hd2{font-size:13px}" +
+    "#pt-cam .cm-top{position:absolute;top:calc(10px + env(safe-area-inset-top));left:0;right:0;text-align:center}#pt-cam .cm-hd{font:700 30px/1.1 'IBM Plex Mono',monospace}#pt-cam .cm-hd2{font-size:13px;padding:0 8px}" +
+    "#pt-cam .cm-tape{display:block;width:min(360px,calc(100% - 32px));height:34px;margin:0 auto 2px}" +
+    "#pt-cam .cm-lvl{position:absolute;left:30%;right:30%;top:50%;height:0;border-top:2px dashed rgba(255,255,255,.7);pointer-events:none}#pt-cam .cm-lvl.ok{border-top:2px solid #69db7c}#pt-cam .cm-lvl[hidden]{display:none}" +
+    "#pt-cam .cm-ll,#pt-cam .cm-tilt{font:600 13px/1.3 'IBM Plex Mono',monospace}" +
     "#pt-cam .cm-ret{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border:2px solid rgba(255,255,255,.85);border-radius:50%;box-shadow:0 0 3px #000}" +
     "#pt-cam .cm-ret:before,#pt-cam .cm-ret:after{content:'';position:absolute;background:rgba(255,255,255,.85)}#pt-cam .cm-ret:before{left:50%;top:-14px;bottom:-14px;width:2px;margin-left:-1px}#pt-cam .cm-ret:after{top:50%;left:-14px;right:-14px;height:2px;margin-top:-1px}" +
     "#pt-cam .cm-bot{position:absolute;left:12px;right:12px;bottom:calc(104px + env(safe-area-inset-bottom))}#pt-cam .cm-grid{font:700 20px/1.2 'IBM Plex Mono',monospace}#pt-cam .cm-time{font-size:13px}#pt-cam .cm-msg{font-size:13px;color:#ffd43b}" +
