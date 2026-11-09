@@ -2,7 +2,7 @@
 // Before this, a push alert waited for a whole refresh lane: the keeper starts a lane every 15 minutes, the fast lane takes
 // about 10 minutes to commit and the news lane 15 to 25 (and often waits behind the run before it), then the push job opens
 // the pages. A quake USGS had published was on phones 12 to 30 minutes later. This loop keeps one runner awake and:
-//   - every 30 s asks USGS's live event search for the last hour's M2.5+ quakes (the hour feed if it fails) and lays them over
+//   - every 15 s asks USGS's live event search for the last hour's M2.5+ quakes (the hour feed if it fails) and lays them over
 //     data/live/quakes.js (tools/quake_rows.mjs);
 //   - every 2 min asks GDACS for its current alerts (tools/refresh_feeds.mjs with FEEDS=gdacs);
 //   - every 60 s fetches main's newest commit and takes its data/ (so the fast and news lanes' commits are checked within a
@@ -12,7 +12,7 @@
 // Nothing is committed: the lanes still own the published files. The push job in refresh-flood.yml stands aside while a loop
 // runs or waits, so one seen-list (PUSH_STATE, kept in the Actions cache) decides what was sent and nothing goes out twice.
 // Logs name quake ids, magnitudes and counts only, never report text.
-// Env: FLASH_LOOP_MIN (default 320), FLASH_QUAKE_S (30), FLASH_GDACS_S (120), FLASH_MAIN_S (60), FLASH_LIST_S (300),
+// Env: FLASH_LOOP_MIN (default 320), FLASH_QUAKE_S (15), FLASH_GDACS_S (120), FLASH_MAIN_S (60), FLASH_LIST_S (300),
 //      FLASH_NO_MAIN=1 (do not take main's data: a branch test of this file), plus tools/push_watches.mjs's own env.
 import fs from "node:fs";
 import { execFileSync, spawn } from "node:child_process";
@@ -22,7 +22,7 @@ import { median } from "./flash_lib.mjs";
 
 const env = process.env, S = (k, d) => Math.max(5, +(env[k] || d)) * 1000;
 const END = Date.now() + Math.max(1, +(env.FLASH_LOOP_MIN || 320)) * 60e3;
-const EVERY = { quake: S("FLASH_QUAKE_S", 30), gdacs: S("FLASH_GDACS_S", 120), main: S("FLASH_MAIN_S", 60), list: S("FLASH_LIST_S", 300) };
+const EVERY = { quake: S("FLASH_QUAKE_S", 15), gdacs: S("FLASH_GDACS_S", 120), main: S("FLASH_MAIN_S", 60), list: S("FLASH_LIST_S", 300) };
 const QFILE = "data/live/quakes.js", GFILE = "data/live/gdacs.js";
 const due = { quake: 0, gdacs: 0, main: 0, list: 0 };
 const zt = () => new Date().toISOString().slice(11, 19) + "Z";
@@ -40,7 +40,7 @@ let hourRows = [], etag = "", seenQ = new Set(), firstQ = true;
 const qLag = [], pubLag = [];
 // USGS's live event search (FDSN), not the summary feed: on main, 8-9 Nov 2026, the hour feed (cached about a minute at USGS's
 // edge) showed new quakes a median 52 s (30-96 s) after USGS published them. The search answers from the catalogue itself.
-// One small question every 30 s: M2.5+ quakes from the last 65 minutes. When it fails, the hour feed is asked instead.
+// One small question every 15 s (30 s until 9 Nov 2026: 6 quakes seen a median 22 s, 13-34 s, after USGS published them): M2.5+ quakes from the last 65 minutes. When it fails, the hour feed is asked instead.
 const FDSN = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time&limit=400&starttime=";
 let via = "";
 async function getQuakes() {

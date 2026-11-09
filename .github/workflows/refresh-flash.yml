@@ -1,7 +1,7 @@
 name: Flash alerts loop
 
 # Push alerts within about a minute of a source publishing, instead of after a whole refresh lane (tools/flash_loop.mjs).
-# One runner stays awake for about 5 h 20 min (under GitHub's 6-hour job limit), asking USGS every 30 seconds and GDACS every
+# One runner stays awake for about 5 h 20 min (under GitHub's 6-hour job limit), asking USGS every 15 seconds and GDACS every
 # 2 minutes, taking main's newest data every minute, and running the push check (tools/push_watches.mjs) whenever something
 # changed. Then it starts a fresh copy of itself, as the refresh keeper does. The hourly schedule restarts the chain if it ever
 # breaks; only one loop runs at a time and GitHub keeps at most one waiting, so hand-overs never double up.
