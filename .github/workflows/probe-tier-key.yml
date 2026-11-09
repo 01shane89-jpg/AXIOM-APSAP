@@ -1,0 +1,32 @@
+name: Probe tier key (public half only)
+# Prints ONLY the public half of the OSAP_TIER_KEY secret (safe to share) and whether the secret is set. Never the secret.
+on:
+  push:
+    branches: [claude/tier-key-probe]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Public half of OSAP_TIER_KEY
+        env:
+          OSAP_TIER_KEY: ${{ secrets.OSAP_TIER_KEY }}
+        run: |
+          node -e '
+          const k = process.env.OSAP_TIER_KEY || "";
+          if (!k) { console.log("TIER_KEY_SET=no"); process.exit(0); }
+          (async () => {
+            const { subtle } = globalThis.crypto, alg = { name: "ECDH", namedCurve: "P-256" };
+            try {
+              const priv = await subtle.importKey("pkcs8", Buffer.from(k.trim(), "base64url"), alg, true, ["deriveBits"]);
+              const j = await subtle.exportKey("jwk", priv);
+              const pub = await subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: j.x, y: j.y, ext: true }, alg, true, []);
+              console.log("TIER_KEY_SET=yes trimmed=" + (k !== k.trim()));
+              console.log("TIER_PUB=" + Buffer.from(await subtle.exportKey("spki", pub)).toString("base64url"));
+            } catch (e) { console.log("TIER_KEY_SET=yes but not a valid P-256 PKCS#8 key (" + e.name + ")"); }
+          })();'
