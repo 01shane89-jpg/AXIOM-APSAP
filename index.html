@@ -5480,7 +5480,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       HZ.busy = false; addQuakeRecords(); addGdacsRecords(); render(); renderAlerts();
       /* after Refresh now, show which feeds came live and which from the snapshot */
       var fb = document.getElementById("rv-feeds"), rf = 0; try { rf = +sessionStorage.getItem("osap-refreshed") || 0; sessionStorage.removeItem("osap-refreshed"); } catch (e) {}
-      if (fb && (!fb.hidden || Date.now() - rf < 120000) && typeof feedsToggle === "function") feedsToggle(true);
+      /* only where its "Data … ago" toggle is on screen: the tidy layout hides that toggle and lists the feeds in the Data
+         health panel instead, and a list with no way to close it would sit over the reports */
+      var fa = document.getElementById("rv-asof"), faOn = fa && fa.getClientRects().length > 0;
+      if (fb && faOn && (!fb.hidden || Date.now() - rf < 120000) && typeof feedsToggle === "function") feedsToggle(true);
+      else if (fb && !faOn && !fb.hidden) feedsToggle(false);
       if (current === "hazards") showHazards();
       if (done) done();
     });
@@ -7295,6 +7299,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     return '<p class="obs">LIVE: read by this browser straight from the publisher just now. SNAPSHOT: the newest copy saved by the refresh job, for publishers that do not let a browser read them; the time is when the job read it.</p><table class="rvft">' + rows.join("") + "</table>";
   }
+  /* the same list, read by the Data health panel (assets/osap-tidy.js) */
+  window.OSAP_FEEDS = { html: feedsHtml };
   function feedsToggle(open) {
     var box = document.getElementById("rv-feeds"), a = document.getElementById("rv-asof"); if (!box) return;
     box.hidden = !open; if (a) a.setAttribute("aria-expanded", open ? "true" : "false");
