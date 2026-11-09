@@ -22,7 +22,7 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { fetchList } from "./push_lib.mjs";
+import { fetchList, actionsToken, WEBPUSH_API } from "./push_lib.mjs";
 import { rulesForPage } from "./tiers.mjs";
 import * as BRIEF from "./push_brief.mjs";
 import { isFlash, upgradeOf, wanted, lagMin, median } from "./flash_lib.mjs";
@@ -130,8 +130,31 @@ function zulu(ts) { const t = msOf(ts); return isFinite(t) ? new Date(t).toISOSt
 function link(k, cc) { return LIVE + "?wopen=" + encodeURIComponent(k) + "#" + (cc === "th" ? "" : cc + "/") + "timeline"; }
 // ntfy headers and JSON fields are plain text; keep them short and single-line where ntfy wants that
 function one(s, n) { return String(s || "").replace(/\s+/g, " ").trim().slice(0, n); }
+// OSAP's own notifications (2026-11-08): a watch sent from a device that allowed OSAP's notifications carries that device's
+// push subscription (w.wp); OSAP's server signs and sends it (netlify/functions/osap-webpush.mjs). ntfy is sent too unless the
+// watch says ntfy: false. A subscription the browser withdrew (gone) is not tried again until the watch is sent again.
+const goneNow = new Set();
+const subKey = (w) => (w.wp ? w.id + "|" + String(w.wp.endpoint).slice(-24) : "");
+async function sendWeb(w, msg) {
+  if (!w.wp || goneNow.has(subKey(w)) || (state.gone && state.gone[subKey(w)])) return false;
+  try {
+    const r = await fetch(WEBPUSH_API, { method: "POST", signal: AbortSignal.timeout(20000),
+      headers: { authorization: "Bearer " + (await actionsToken()), "x-osap-caller": "actions", "content-type": "application/json" },
+      body: JSON.stringify({ sends: [{ sub: w.wp, msg: { title: msg.title, body: msg.message, url: msg.click, tag: msg.tag || "", flash: msg.priority >= 5 } }] }) });
+    if (!r.ok) { console.log(`push: ${w.id}: OSAP notification HTTP ${r.status}`); return false; }
+    const res = ((await r.json()).results || [])[0] || {};
+    if (res.gone) { goneNow.add(subKey(w)); console.log(`push: ${w.id}: the device withdrew OSAP's notifications`); }
+    else if (!res.ok) console.log(`push: ${w.id}: OSAP notification not taken (${res.status || "no answer"})`);
+    return !!res.ok;
+  } catch (e) { console.log(`push: ${w.id}: OSAP notification ${e.name || "error"}`); return false; }
+}
 async function send(w, msg) {
-  if (DRY) { console.log(`push: [dry] ${w.id}: ${msg.title} / ${msg.message.split("\n").join(" / ")} / ${msg.click}`); return true; }
+  if (DRY) { console.log(`push: [dry] ${w.id}${w.wp ? " (OSAP notification" + (w.ntfy === false ? ")" : " + ntfy)") : ""}: ${msg.title} / ${msg.message.split("\n").join(" / ")} / ${msg.click}`); return true; }
+  const web = await sendWeb(w, msg);
+  if (w.wp && w.ntfy === false) return web;
+  return (await sendNtfy(w, msg)) || web;
+}
+async function sendNtfy(w, msg) {
   const body = { topic: w.topic, title: msg.title, message: msg.message, click: msg.click, tags: msg.tags, priority: msg.priority };
   if (msg.actions) body.actions = msg.actions;
   for (let a = 0; a < 3; a++) {
@@ -262,6 +285,8 @@ if (process.env.PUSH_BRIEF !== "0") {
   const live = new Set(list.map((w) => w.topic)); Object.keys(next.briefs).forEach((t) => { if (!live.has(t)) delete next.briefs[t]; });
 }
 console.log(`push: ${briefs} morning brief(s) sent, ${briefsHeld} held for the next check`);
+next.gone = { ...(state.gone || {}) }; for (const k of goneNow) next.gone[k] = now;
+{ const live = new Set(list.map(subKey).filter(Boolean)); Object.keys(next.gone).forEach((k) => { if (!live.has(k)) delete next.gone[k]; }); }
 if (!TEST) saveState(next);
 console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent (${flashSent} flash, ${upSent} follow-up), ${failedSends} failed, ${held} held for the next run, ${noted} new watch(es) noted`);
 // how long after the first report an alert went out (minutes, counts only): the number to beat

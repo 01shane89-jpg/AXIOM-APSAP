@@ -155,10 +155,10 @@
         "OSAP checks when it opens and every 15 minutes while it is open. Press " + b("Turn on") + " for system notifications.",
         "On iPhone and iPad, notifications only work from the Home Screen app."]) +
       "<h3>Alerts when OSAP is closed</h3>" +
-      ul(["On a saved watch, tap " + b("Push to phone") + ".",
-        "Get the free ntfy app, subscribe to the channel name OSAP gives you, and press " + b("Send a test alert") + " to check.",
-        "Press " + b("Send to OSAP") + ". It opens a pre-filled GitHub issue; submit it, and the watch switches on after the next check, usually a minute or two.",
-        "The watch's words and the channel name are public. An alert is a notice about a report, not a finding."]) },
+      ul(["On a saved watch, tap " + b("Push to phone") + ", then " + b("Allow notifications") + ". Alerts then come from OSAP itself, with no other app. On iPhone and iPad, add OSAP to the Home Screen first (Safari, Share, Add to Home Screen) and open it from that icon.",
+        "Tick " + b("Flash alerts only") + " for serious events only, then press " + b("Send to OSAP") + ". OSAP checks it within about a minute of new data arriving.",
+        "Prefer the free ntfy app, or want both? Open " + b("Or use the free ntfy app") + " in the same panel.",
+        "The watch is kept in your account on OSAP's server, not in public. An alert is a notice about a report, not a finding."]) },
 
     { id: "mywork", t: "My work, workspaces and KML", h:
       fig("mywork", "My work") +

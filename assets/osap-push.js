@@ -13,11 +13,15 @@
    Morning brief (2026-10-24, tools/push_brief.mjs): once a day, from 0600 on this phone's clock (the time zone sent with the
    watch), the channel also gets one brief for the countries its push watches are on. "In my morning brief" leaves a watch out.
    Flash alerts (2026-10-24, tools/flash_lib.mjs): a serious event carried by an official source or by two or more different
-   sources is sent first, marked FLASH, at ntfy's top priority; "Flash alerts only" makes a watch send nothing else. */
+   sources is sent first, marked FLASH, at ntfy's top priority; "Flash alerts only" makes a watch send nothing else.
+   OSAP's own notifications (2026-11-08): "Allow notifications" subscribes this device with standard Web Push (OSAP's public
+   key from /api/osap-webpush); the subscription goes with the watch, and the push check sends through OSAP's server, so no
+   other app is needed. ntfy stays as an option (and is used alone where a browser cannot take notifications). The flash loop
+   (tools/flash_loop.mjs) checks watches within about a minute of new data, no longer every 15 minutes. */
 (function () {
   "use strict";
   var API = "/api/osap-push";
-  var NTFY = "https://ntfy.sh";
+  var NTFY = "https://ntfy.sh", WP_API = "/api/osap-webpush", NT_KEY = "osap-push-ntfy";
   var T_KEY = "asap-push-topic", NB_KEY = "osap-push-nobrief", F_KEY = "osap-push-flash", MAX_PTS = 150;
   var LIST = null, LIST_AT = 0, LIST_ERR = "", LIM = null;
 
@@ -76,6 +80,32 @@
   }
   var LABEL = { on: "Push: on", other: "Push: on (other device)", off: "Push to phone" };
 
+  /* OSAP's own notifications (2026-11-08, Shane: fewer other apps): this device's Web Push subscription, made with OSAP's
+     public key (netlify/functions/osap-webpush.mjs). On iPhone and iPad it needs OSAP added to the Home Screen first. */
+  var WEB = null;   /* this device's subscription as JSON, once made */
+  function webCan() { return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window; }
+  function iosBrowser() { return /iP(hone|ad|od)/.test(navigator.userAgent) && !(window.navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches)); }
+  function webState() { return !webCan() ? (iosBrowser() ? "ios" : "none") : Notification.permission === "denied" ? "denied" : WEB ? "on" : "off"; }
+  function u8(s) { var b = atob(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4)), o = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) o[i] = b.charCodeAt(i); return o; }
+  /* the existing subscription, or (ask: true, from a tap) permission and a new one; resolves to the subscription JSON or null */
+  function webSub(ask) {
+    if (!webCan()) return Promise.resolve(null);
+    var perm = ask && Notification.permission === "default" ? Notification.requestPermission() : Promise.resolve(Notification.permission);
+    return Promise.resolve(perm).then(function (p) {
+      if (p !== "granted") return null;
+      /* a service worker that never gets ready must not hold the panel: give up after 5 s */
+      return Promise.race([navigator.serviceWorker.ready, new Promise(function (_, no) { setTimeout(function () { no(new Error("no service worker")); }, 5000); })]).then(function (reg) {
+        return reg.pushManager.getSubscription().then(function (sub) {
+          if (sub || !ask) return sub;
+          return fetch(WP_API, { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (o) {
+            return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: u8(o.key) });
+          });
+        });
+      });
+    }).then(function (sub) { var j = sub ? JSON.parse(JSON.stringify(sub)) : null; WEB = j && j.endpoint && j.keys ? { endpoint: j.endpoint, keys: { p256dh: j.keys.p256dh, auth: j.keys.auth } } : null; return WEB; })
+      .catch(function () { return null; });
+  }
+  function ntfyToo() { return !WEB || !!lsGet(NT_KEY, false); }
   /* whether a watch is in the morning brief (on unless turned off here) */
   function inBrief(id) { return !lsGet(NB_KEY, {})[id]; }
   function setBrief(id, on) { var o = lsGet(NB_KEY, {}); if (on) delete o[id]; else o[id] = 1; lsSet(NB_KEY, o); }
@@ -89,7 +119,7 @@
     if (a && a.length > MAX_PTS) { var step = a.length / MAX_PTS, o = []; for (var i = 0; i < MAX_PTS; i++) o.push(a[Math.floor(i * step)]); a = o; }
     return { v: 1, id: w.id, name: w.name, cc: w.cc, area: a ? a.map(function (p) { return [Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]; }) : null,
       layers: w.layers || [], kw: w.kw || [], q: w.q || undefined, minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic(),
-      tz: myTz(), brief: inBrief(w.id) ? undefined : false, flash: flashOf(w.id) || undefined };
+      tz: myTz(), brief: inBrief(w.id) ? undefined : false, flash: flashOf(w.id) || undefined, wp: WEB || undefined, ntfy: WEB && !ntfyToo() ? false : undefined };
   }
   function subLinks(t) {
     return '<a href="' + NTFY + "/" + esc(t) + '" target="_blank" rel="noopener noreferrer">Open ' + esc(t) + " in ntfy</a>";
@@ -104,24 +134,30 @@
     el.innerHTML = '<div class="cbox pushbox" data-id="' + esc(id) + '"><div class="chead"><button type="button" class="refresh" data-push-back>Back</button><h2 id="watch-h">Push to phone</h2>' +
       '<button type="button" class="x" aria-label="Close" data-push-close>&times;</button></div>' +
       "<p><b>" + esc(w.name) + '</b><br><span class="obs">' + esc(what) + "</span></p>" +
-      '<div class="wnotif"><b>Status:</b> ' + esc({ on: "On. New matches are sent to this device's channel after every refresh.",
+      '<div class="wnotif"><b>Status:</b> ' + esc({ on: "On. New matches are sent to this device within about a minute of new data arriving.",
         other: "On, but sending to another device's channel. Send it again from here to move it to this one.",
         off: "Off. This watch only checks while OSAP is open." }[st]) + (LIST_ERR ? ' <span class="obs">(' + esc(LIST_ERR) + ")</span>" : "") +
         (used() ? '<br><span class="obs" data-push-used>' + esc(used()) + "</span>" : "") + "</div>" +
       (note ? '<p class="note">' + esc(note) + "</p>" : "") +
-      "<h3>1. Get the free ntfy app</h3>" +
+      "<h3>1. Allow OSAP's notifications on this device</h3>" +
+      ({ on: '<p><b>On.</b> Alerts come straight from OSAP to this device, even with OSAP closed. <button type="button" class="refresh" data-push-test>Send a test notification</button> <span class="obs" id="push-test-out"></span></p>',
+        off: '<p><button type="button" class="refresh primary" data-push-web>Allow notifications</button> <span class="obs" id="push-web-out">No other app and no account: your phone shows alerts from OSAP itself.</span></p>',
+        denied: "<p>Notifications for OSAP are blocked in this browser's settings. Allow them for this site, then come back here. Or use the ntfy app below.</p>",
+        ios: "<p>On iPhone and iPad, OSAP can notify you once it is on your Home Screen: in Safari tap <b>Share</b>, then <b>Add to Home Screen</b>, open OSAP from that icon, sign in and come back here.</p>",
+        none: "<p>This browser cannot take notifications from websites. Use the ntfy app below instead.</p>" })[webState()] +
+      '<details class="wlimits"' + (webState() === "on" || webState() === "off" ? "" : " open") + "><summary>" + (WEB ? "Also send to the ntfy app (optional)" : "Or use the free ntfy app") + "</summary>" +
+      (WEB ? "<p><label><input type=\"checkbox\" data-push-ntfy" + (lsGet(NT_KEY, false) ? " checked" : "") + "> Also send this device's alerts to ntfy</label></p>" : "") +
       '<p>No account and no key. <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer">Android</a> · ' +
       '<a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener noreferrer">iPhone and iPad</a> · <a href="' + NTFY + '/app" target="_blank" rel="noopener noreferrer">Web app</a> ' +
       '<span class="obs">(the web app alerts while its tab is open)</span></p>' +
-      "<h3>2. Subscribe to this device's OSAP channel</h3>" +
       '<p>In ntfy tap <b>+</b> and enter <code class="pushtopic">' + esc(t) + '</code> <button type="button" class="refresh" data-push-copy>Copy</button><br>' + subLinks(t) +
-      ' · <button type="button" class="refresh" data-push-test>Send a test alert</button> <span class="obs" id="push-test-out"></span></p>' +
-      "<h3>3. Send this watch to OSAP</h3>" +
+      (WEB ? "" : ' · <button type="button" class="refresh" data-push-test>Send a test alert</button> <span class="obs" id="push-test-out"></span>') + "</p></details>" +
+      "<h3>2. Send this watch to OSAP</h3>" +
       '<p><label><input type="checkbox" data-push-brief' + (inBrief(id) ? " checked" : "") + "> In my morning brief</label> " +
       '<span class="obs">Once a day, from 0600 your time, one alert sums up the countries your push watches are on: what matched in the last 24 hours' +
       (LIM && LIM.plan === "full" ? ", with the top line of OSAP's daily summary" : "") + ".</span></p>" +
-      "<p>Keeps the watch on OSAP's server. OSAP's refresh job then checks it after every refresh, " +
-      "about every 15 minutes, and sends new matching reports from the last 48 hours: one alert per event, up to 3 per check, then a count.</p>" +
+      "<p>Keeps the watch on OSAP's server. OSAP then checks it within about a minute of new data arriving " +
+      "and sends new matching reports from the last 48 hours: one alert per event, up to 3 per check, then a count.</p>" +
       '<p class="pushflash"><label><input type="checkbox" id="push-flash" data-push-flash' + (flashOf(id) ? " checked" : "") + "> <b>Flash alerts only</b></label><br>" +
       '<span class="obs">Flash alerts are serious events (attacks, deaths, explosions, curfews, evacuations and the like) reported by an official source or by two or more different sources. ' +
       "They come first, marked FLASH, at ntfy's loudest setting, whether or not this is ticked. Ticked, the watch sends nothing else. A serious event first sent on one source gets one update when more sources report it.</span></p>" +
@@ -129,12 +165,13 @@
       (st === "on" || st === "other" ? ' <button type="button" class="refresh" data-push-stop>Stop push alerts</button>' : "") + ' <span class="obs" id="push-send-out" role="status"></span></p>' +
       '<details class="wlimits"><summary>Who can see it, and the limits</summary><ul>' +
         "<li>The watch is kept on OSAP's server in your account's own list, readable only by your account and OSAP's own refresh job. It is not in OSAP's public project files, and no other account can see it.</li>" +
-        "<li>ntfy.sh carries the alerts, so it sees them, and anyone who knows the channel name can read them: keep the name to yourself, and keep private details out of a watch. Protected mode turns push off.</li>" +
+        "<li>OSAP's own notifications are encrypted for this device and pass through your browser maker's push service (Google, Apple, Mozilla or Microsoft), which cannot read them. " +
+        "If you also use ntfy, ntfy.sh carries those alerts, so it sees them, and anyone who knows the channel name can read them: keep the name to yourself, and keep private details out of a watch. Protected mode turns push off.</li>" +
         "<li>Push watches come with the Mid plan (up to 5) and the Full plan (up to 25). Each is checked with the data your plan opens, so an alert never carries what your plan cannot see in OSAP.</li>" +
         "<li>The morning brief is sent once a day on the first check after 0600 in the time zone of the device that sent the watch, and is skipped if OSAP cannot check by 1100.</li>" +
         "<li>The first check only notes what is already there; only later arrivals are sent. Editing the watch here does not change the pushed copy: send it again.</li>" +
         "<li>Alerts are as new as the last refresh plus the sources' own delay. A push is a notice about a report, never a finding: reported, not verified.</li>" +
-        "<li>Email or text messages would need an account or a stored address, so they are not offered. ntfy can forward to other apps from your phone.</li></ul></details></div>";
+        "<li>Email or text messages would need an account or a stored address, so they are not offered.</li></ul></details></div>";
     var x = el.querySelector("[data-push-close]"); if (x) x.focus();
   }
 
@@ -154,7 +191,7 @@
     if (!el) { setTimeout(hook, 1000); return; }
     new MutationObserver(function () { if (el.querySelector(".wrow") && !el.querySelector(".pushbox")) { decorate(); loadList(decorate); } }).observe(el, { childList: true });
     el.addEventListener("click", function (e) {
-      var t = e.target.closest && e.target.closest("[data-push-flash],[data-push-brief],[data-push-open],[data-push-back],[data-push-close],[data-push-copy],[data-push-test],[data-push-send],[data-push-stop]");
+      var t = e.target.closest && e.target.closest("[data-push-web],[data-push-ntfy],[data-push-flash],[data-push-brief],[data-push-open],[data-push-back],[data-push-close],[data-push-copy],[data-push-test],[data-push-send],[data-push-stop]");
       if (!t) return;
       var box = el.querySelector(".pushbox"), id = box ? box.getAttribute("data-id") : null;
       if (t.hasAttribute("data-push-flash")) {
@@ -177,10 +214,32 @@
         }
         return;
       }
-      if (t.hasAttribute("data-push-open")) { id = t.getAttribute("data-push-open"); loadList(function () { panel(id); }); return; }
+      if (t.hasAttribute("data-push-open")) { id = t.getAttribute("data-push-open"); webSub(false).then(function () { loadList(function () { panel(id); }); }); return; }
+      if (t.hasAttribute("data-push-web")) {
+        var wo = el.querySelector("#push-web-out"); if (wo) wo.textContent = "Asking…";
+        webSub(true).then(function (sub) {
+          var ww = byId(id);
+          if (!sub) { panel(id, Notification.permission === "denied" ? "Notifications were not allowed." : "This device could not sign up for notifications just now."); return; }
+          if (ww && onServer(id)) return call("POST", payload(ww)).then(function (o) { took(o); panel(id, "Notifications on. This watch now sends to this device."); }, function (er) { panel(id, er.message); });
+          panel(id, "Notifications on. Now send the watch to OSAP.");
+        });
+        return;
+      }
+      if (t.hasAttribute("data-push-ntfy")) {
+        lsSet(NT_KEY, !!t.checked);
+        var nw = byId(id), no = el.querySelector("#push-send-out");
+        if (nw && onServer(id)) { if (no) no.textContent = "Saving…"; call("POST", payload(nw)).then(function (o) { took(o); if (no) no.textContent = "Saved."; }, function (er) { LIST_AT = 0; if (no) no.textContent = er.message; }); }
+        return;
+      }
       if (t.hasAttribute("data-push-back")) { window.OSAP_WATCH.open(); return; }
       if (t.hasAttribute("data-push-close")) { el.hidden = true; el.innerHTML = ""; return; }
       if (t.hasAttribute("data-push-copy")) { var tp = topic(); if (navigator.clipboard) navigator.clipboard.writeText(tp).then(function () { t.textContent = "Copied"; }, function () {}); return; }
+      if (t.hasAttribute("data-push-test") && WEB) {
+        var wout = el.querySelector("#push-test-out");
+        navigator.serviceWorker.ready.then(function (reg) { return reg.showNotification("OSAP test notification", { body: "Alerts from OSAP will appear like this on this device.", icon: "assets/icons/icon-192.png", data: { url: "./" } }); })
+          .then(function () { if (wout) wout.textContent = "Shown. Alerts will look like that."; }, function () { if (wout) wout.textContent = "This device would not show it."; });
+        return;
+      }
       if (t.hasAttribute("data-push-test")) {
         var out = el.querySelector("#push-test-out"); if (out) out.textContent = "Sending…";
         fetch(NTFY + "/", { method: "POST", body: JSON.stringify({ topic: topic(), title: "OSAP test alert", message: "Push alerts from OSAP reach this device.", tags: ["osap"] }) })
@@ -194,7 +253,7 @@
         if (so) so.textContent = stop ? "Stopping…" : "Sending…";
         Array.prototype.forEach.call(el.querySelectorAll("[data-push-send],[data-push-stop]"), function (b) { b.disabled = true; });
         (stop ? call("DELETE", null, id) : call("POST", payload(w))).then(function (o) {
-          took(o); panel(id, stop ? "Push alerts stopped for this watch." : "Sent. OSAP checks it after the next refresh; the first check only notes what is already there.");
+          took(o); panel(id, stop ? "Push alerts stopped for this watch." : "Sent. OSAP checks it within about a minute; the first check only notes what is already there.");
         }, function (e) { LIST_AT = 0; panel(id, e.message); });
       }
     });

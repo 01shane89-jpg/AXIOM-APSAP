@@ -804,7 +804,21 @@ self.addEventListener("fetch", (e) => {
     return res;
   })));
 });
-// Watch notifications (shown by the page): a tap focuses an open OSAP window on the hit, or opens one.
+// OSAP's own push alerts (2026-11-08, tools/webpush.mjs, netlify/functions/osap-webpush.mjs): the push check sends
+// { t: title, b: text, u: link, g: tag, f: 1 for a flash alert }, encrypted for this device only. A link into the app is opened
+// in this app (the old github.io address included), anything else is not followed. The text is a notice about a report, shown as sent.
+const PUSH_BASES = ["https://01shane89-jpg.github.io/AXIOM-APSAP/", "https://axiom-osap.netlify.app/"];
+self.addEventListener("push", (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (x) { d = { b: e.data ? e.data.text() : "" }; }
+  let u = String(d.u || "./");
+  const base = PUSH_BASES.find((b) => u.startsWith(b));
+  u = base ? "./" + u.slice(base.length) : /^\.?\/?[?#]/.test(u) ? u : "./";
+  const title = String(d.t || "OSAP alert").slice(0, 120);
+  e.waitUntil(self.registration.showNotification(title, { body: String(d.b || "").slice(0, 700), tag: d.g ? "osap-" + String(d.g).slice(0, 60) : undefined,
+    renotify: !!d.g, requireInteraction: !!d.f, icon: "assets/icons/icon-192.png", badge: "assets/icons/icon-192.png", data: { url: u } }));
+});
+// Watch notifications (shown by the page, or pushed above): a tap focuses an open OSAP window on the hit, or opens one.
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
   const url = new URL((e.notification.data && e.notification.data.url) || "./", self.registration.scope).href;

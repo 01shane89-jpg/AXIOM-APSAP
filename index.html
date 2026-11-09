@@ -8704,7 +8704,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         "<li>Android and computers: notifications appear while OSAP is open, even in the background. Once it is closed, nothing checks until you open it again.</li>" +
         "<li>iPhone and iPad: only from the Home Screen app, and only while it is open on screen. iOS stops web apps in the background, so a locked phone gets nothing.</li>" +
         "<li>The data itself refreshes about every 3 hours now, so a hit can only be as new as the last refresh.</li>" +
-        "<li>For alerts to a closed app or a locked phone, use Push to phone on a saved watch: OSAP's own refresh job then checks it after every refresh and sends new matches through the free ntfy app.</li></ul></details>" +
+        "<li>For alerts to a closed app or a locked phone, use Push to phone on a saved watch: OSAP then checks it within about a minute of new data arriving and sends new matches to this device as OSAP notifications (or through the free ntfy app).</li></ul></details>" +
       '<h3>New watch in ' + esc(C.name) + "</h3>" +
       (ADDED.length ? '<p class="note">Also watches ' + ADDED.map(function (cc) { return flagOf(cc) + " " + esc(cName(cc)); }).join(", ") + ", the countries added to this map, each as its own watch.</p>" : "") +
       (CC === "th" && LBY.insurgency ? '<p class="wpreset"><b>Ready-made:</b> <button type="button" class="refresh" data-w-preset="ds-ied">Deep South IED watch</button> <span class="obs">Bombs, found devices, EOD work and bomb warnings in the Deep South, only when an official source reports them or two outlets agree. Lone local posts are not sent.</span></p>' : "") +
