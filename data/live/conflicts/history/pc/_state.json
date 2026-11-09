@@ -1,0 +1,51 @@
+{
+ "key": "a9d4f1e3d73ecc96|polecat-acled-v1|",
+ "built": "2026-11-09 12:56Z",
+ "n": 15566,
+ "merged_from": 20538,
+ "skipped": {
+  "actor_state_forces": 6211,
+  "no_country": 18010,
+  "before_2021": 94
+ },
+ "no_country": {
+  "(none)": 17881,
+  "GLP": 5,
+  "MTQ": 4,
+  "REU": 2,
+  "GUF": 2,
+  "VIR": 12,
+  "VAT": 8,
+  "PCN": 3,
+  "JEY": 7,
+  "NA": 43,
+  "GIB": 1,
+  "SHN": 4,
+  "FLK": 3,
+  "GGY": 1,
+  "GRL": 1,
+  "IMN": 1,
+  "VGB": 6,
+  "PRI": 5,
+  "NCL": 20,
+  "TCA": 1
+ },
+ "files": {
+  "ngecEvents.DV.2021.txt": {
+   "rows": 347439,
+   "protests_kept": 6246
+  },
+  "ngecEvents.DV.2022.txt": {
+   "rows": 351993,
+   "protests_kept": 5374
+  },
+  "ngecEvents.DV.2023.txt": {
+   "rows": 367627,
+   "protests_kept": 6055
+  },
+  "ngecEvents.DV.2024.txt": {
+   "rows": 190507,
+   "protests_kept": 2863
+  }
+ }
+}
