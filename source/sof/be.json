@@ -38,13 +38,13 @@
    "src": "https://www.wikidata.org/entity/Q23541051",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/601306905",
-   "fp": "408b07e70161a639e1e568a4fd6d40556d844cb519cf282c52ea6a2792d0b4c1",
+   "fp": "ad0fa3bdd7f0a7ebaab1b25d949971415ca14013076f82b8d5b9adf7c7d7f418",
    "web": "https://be.usembassy.gov/",
    "phone": "(32-2) 811-4000",
    "phone_after_hours": "(+32)(0)2-811-4000",
    "phone_src": "https://be.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:be:post:embassy-of-the-united-states-brussels",
@@ -59,12 +59,12 @@
    "src": "https://www.wikidata.org/entity/Q18071136",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "0bdee39683416a2aa6f1dad10be4ef226ad07f8223878e3f0e11c06e83d8f3fb",
+   "fp": "ab2ec6917c06f6364d966d7780dd7bfcfdb7afede60e508de906e07571711f22",
    "phone": "(32-2) 811-4000",
    "phone_after_hours": "(+32)(0)2-811-4000",
    "phone_src": "https://be.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:be:post:united-states-mission-to-nato",
@@ -73,18 +73,18 @@
    "city": "Brussels",
    "address": null,
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 50.8794,
-   "lon": 4.426,
-   "prec": "approx",
+   "lat": 50.828078,
+   "lon": 4.545551,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q118868620",
    "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "2d6752f6f01142155563d90e21c6524d213474c57300316b52e9a416dc2d3b4b",
+   "coord_basis": "OpenStreetMap way/240702015",
+   "fp": "ffe7258afba2213fa7481a7b8b942d191d5ebc1766d7485a2103538d76ae4b36",
    "phone": "(32-2) 811-4000",
    "phone_after_hours": "(+32)(0)2-811-4000",
    "phone_src": "https://be.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   }
  ],
  "airports": [
@@ -709,8 +709,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11347095838",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "45eb7f1404545411634bf8141b5f532bc1af132a4290466cf38ea37290410301"
+   "asof": "2026-11-09",
+   "fp": "57c3b93f1ebe7cde160d3f582f32c32fabf9a2a500ff175e3c9a05b2d158254d"
   },
   {
    "id": "sof:be:xing:node-3070897591",
@@ -726,8 +726,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3070897591",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "a772e4a04593e49a6aa3053cbe4302cb34c3e4539d9d6c2026b57d8e725f2a5d"
+   "asof": "2026-11-09",
+   "fp": "e10f69a1a166807042f95c4437147d0716ac7ae85f9430e1bbdcdacd35539ca1"
   },
   {
    "id": "sof:be:xing:way-200951095",
@@ -743,8 +743,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/200951095",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "03182e53c03c5dbf889b57c56fad45e4a34ba0279652db7d99fb87e0662f97c1"
+   "asof": "2026-11-09",
+   "fp": "d7df3f7bade7a82a876f09421cce704a575d2de8b7b76550b40f6d6ff8670410"
   },
   {
    "id": "sof:be:xing:way-693707041",
@@ -760,13 +760,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/693707041",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "a9b47171e4e031d05ebacd91d3545fd721089da3544a09d733909d4db8852e3d"
+   "asof": "2026-11-09",
+   "fp": "29b21882baad0c18a3cf78d9d61e03827f0ac178240b2c582c4b356d6e357b63"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09"
+ "evac_asof": "2026-11-09"
 }

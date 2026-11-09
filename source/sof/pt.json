@@ -30,13 +30,13 @@
    "src": "https://www.wikidata.org/entity/Q55610802",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/191731471",
-   "fp": "de441db92f77e2f1fbc866d5ea9e95bc1fcadc919cf5885bf937a0ed152ba18a",
+   "fp": "add72fdf5c8515cc33d7cf402a405704ad450f7ab8daea7a18be9b1137b43ff6",
    "web": "https://pt.usembassy.gov",
    "phone": "351-21-727-3300",
    "phone_after_hours": "(+351) 21-727-3300",
    "phone_src": "https://pt.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:pt:post:consulate-of-the-united-states-ponta-delgada",
@@ -772,8 +772,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4522429960",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "0d170c7fedcf23904ff0c68dfd2ad110a35bc68fddc9d4becfbb62b428f4c25f"
+   "asof": "2026-11-09",
+   "fp": "37713a000170a287d850dd4edc2095cca40b71cf0839e1d5267689e42e861623"
   },
   {
    "id": "sof:pt:xing:node-600456565",
@@ -794,8 +794,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/600456565",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "5839d8c9202c11fa4bb94043d17999d53bf04b9a606b5e037062c6b0a49529ba"
+   "asof": "2026-11-09",
+   "fp": "69f6d7a552fecc7ea8bfa82ca908113eeadd9228b27a5482321319ca64de5682"
   },
   {
    "id": "sof:pt:xing:node-7996999795",
@@ -811,13 +811,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/7996999795",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "973e692add1c9e53043dc1c1529687bb1da7b18a381532fef47dcc7c70e77901"
+   "asof": "2026-11-09",
+   "fp": "23a7c16555a9d2159b9f09ee23220ecf99aa02e0d3d63849e14e431c8851ff9c"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09"
+ "evac_asof": "2026-11-09"
 }

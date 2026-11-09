@@ -39,8 +39,8 @@
    "phone_after_hours": "(+253) 21-453-000",
    "phone_src": "https://dj.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09",
-   "fp": "5a75282a7dd50662371d394997a32f57e395fcf56a1b1465469e997c3d620e94"
+   "phone_asof": "2026-11-09",
+   "fp": "6643037eee073786524f86209bc769c9b129fa210458a4baf1064a1aab4e0508"
   }
  ],
  "airports": [
@@ -142,13 +142,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/8405526244",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "cbdf33f0672ea1c9da49422db96c6940beb50d965e7010e1b1264cc2d4dad485"
+   "asof": "2026-11-09",
+   "fp": "e68e40381cc35c43f27aab91416b4da83bbcb500b3896d43fb8705a47ffc61b6"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09"
+ "evac_asof": "2026-11-09"
 }

@@ -30,12 +30,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Australia.html",
    "srcname": "travel.state.gov Australia country information",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Canberra",
-   "fp": "d8ba3dbc9b4f1b4cfa7b4d6f698c0a2dd6ab70055cafcd52d4390443d8a211d3",
+   "fp": "051318a36ff238f5dd8a6e5af08b9921bcbb13e2a8d1b64b4db42b4d96d20e86",
    "web": "https://au.usembassy.gov/",
    "phone": "(02) 6214-5600",
    "phone_src": "https://au.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:au:post:u-s-consulate-general-sydney",
@@ -66,12 +66,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Australia.html",
    "srcname": "travel.state.gov Australia country information",
    "coord_basis": "OpenStreetMap node/2105067353",
-   "fp": "46eff0893b8da1ebf82b6e13f1e8d5a746bb776b109db7827c2438f0f5a246e4",
+   "fp": "7ffa9e5811476ac33a0d544f61e11ba64afe755d25707b283d2e99f610c76f1b",
    "web": "https://au.usembassy.gov/melbourne/",
    "phone": "1300 139 399",
    "phone_src": "https://au.usembassy.gov/melbourne/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:au:post:u-s-consulate-general-perth",
@@ -86,12 +86,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Australia.html",
    "srcname": "travel.state.gov Australia country information",
    "coord_basis": "OpenStreetMap node/6617609190",
-   "fp": "4efabb2bd679494a5199fecd0c3a3e150d1aa394a8a13cc84595412db5049ef1",
+   "fp": "34ddce1b707dfea364963b222689a24f92da51448092dfbe9eebee518da989af",
    "web": "https://au.usembassy.gov/perth/",
    "phone": "02 7908 7456",
    "phone_src": "https://au.usembassy.gov/perth/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   }
  ],
  "airports": [
@@ -930,8 +930,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3353511732",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "5eada5bd95029ad22301b09b825e1c38e339f8b9229e6aeafa0faceeb180e0a5"
+   "asof": "2026-11-09",
+   "fp": "ddf64df04ae334aed44e10f8c4e8320a34d89720bab87d1a11ac65600ca385a8"
   },
   {
    "id": "sof:au:xing:node-7331487645",
@@ -947,8 +947,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/7331487645",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "065ac6f8b1b9fe13f01f8f7d9c235cb6ac9a630e470944c7fec9e8cfa255346d"
+   "asof": "2026-11-09",
+   "fp": "00417a81e3dfe13498c55c5ca7532eed87ea05b88b870d635a5abf57462ccf17"
   },
   {
    "id": "sof:au:xing:node-9946389785",
@@ -964,8 +964,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/9946389785",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "9ccde443638d558b54d450cc45a93ed39efc8526553d8cf4a75dad4cfa820e2c"
+   "asof": "2026-11-09",
+   "fp": "08622a20d97f7df42478923d9a04c58806ae5df6d12a826d890050e6644ee45e"
   },
   {
    "id": "sof:au:xing:way-388344182",
@@ -981,8 +981,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/388344182",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "4e8dbc7e007736c35630538cfd830e6e252958833a4f73be0803f883fb4c85ab"
+   "asof": "2026-11-09",
+   "fp": "074cb503c7ed7c8f2d146296e2321572c5d7157d262ee1c07f3a66d60fb1fcc6"
   },
   {
    "id": "sof:au:xing:way-967996021",
@@ -998,13 +998,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/967996021",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "a66595fbfd2775b7ea3f974a5f6e80b6d25e5aae78cc53c601719d5faab5fb2b"
+   "asof": "2026-11-09",
+   "fp": "61444ab07431e9926de7c9d87bf73e75f71521cd7525afd6205b5ccc2e5a4eb1"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09"
+ "evac_asof": "2026-11-09"
 }

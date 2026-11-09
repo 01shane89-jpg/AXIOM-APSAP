@@ -30,13 +30,13 @@
    "src": "https://www.wikidata.org/entity/Q105550740",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/480461576",
-   "fp": "4358b94386f4edf21fc6121653f32b4b1078aa9aa50f90fd13db6a4fa631dc81",
+   "fp": "776ff348930f8e53b4a65a5c48e76f614c5b4e9211b1e3153d1bd8052b8fddcb",
    "web": "https://bb.usembassy.gov",
    "phone": "(246) 227-4000",
    "phone_after_hours": "1-246-227-4000",
    "phone_src": "https://bb.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   }
  ],
  "airports": [
@@ -131,5 +131,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09"
+ "evac_asof": "2026-11-09"
 }
