@@ -38,6 +38,12 @@ const MMNONE = { id: "mm/" + NONE, cc: NONE, rows: [["800001", "2009-01-21", "",
 await ctx.route(/\/data\/live\/conflicts\/history\/mm\/[a-z_]+\.js$/, (r) => { const k = r.request().url().match(/mm\/([a-z_]+)\.js$/)[1];
   if (k !== "_index" && k !== NONE) return r.fulfill({ status: 404, body: "" });
   r.fulfill({ contentType: "text/javascript", body: '(window.OSAP_CF_CODED=window.OSAP_CF_CODED||{})["mm/' + k + '"]=' + JSON.stringify(k === "_index" ? MMI : MMNONE) + ";" }); });
+// and a machine-coded protest after 2020 (POLECAT), known only to the province: the country window lists it too, marked machine-coded
+const PCI = { schema: "osap-cf-coded-index/1", countries: { [NONE]: { n: 1 } } };
+const PCNONE = { id: "pc/" + NONE, cc: NONE, rows: [["pc-9", "2022-02-02", "", null, null, 3, 0, "Capital Region", "strike", 1, "worker", "BUS"]] };
+await ctx.route(/\/data\/live\/conflicts\/history\/pc\/[a-z_]+\.js$/, (r) => { const k = r.request().url().match(/pc\/([a-z_]+)\.js$/)[1];
+  if (k !== "_index" && k !== NONE) return r.fulfill({ status: 404, body: "" });
+  r.fulfill({ contentType: "text/javascript", body: '(window.OSAP_CF_CODED=window.OSAP_CF_CODED||{})["pc/' + k + '"]=' + JSON.stringify(k === "_index" ? PCI : PCNONE) + ";" }); });
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-period", JSON.stringify({ p: "all" })); } catch (e) {} });
 const p = await ctx.newPage(), errors = [];
 p.on("pageerror", (e) => errors.push(e.message));
@@ -97,7 +103,8 @@ await p.waitForFunction(() => /UCDP recorded no deaths/.test((document.getElemen
 
 await p.waitForFunction(() => document.querySelector("#vh details.cfhcode"), null, { timeout: 30000 }).catch(() => {});
 const vc = await p.evaluate(() => ({ rows: window.OSAP_VIOLENCE_HISTORY.coded() || [], txt: (document.querySelector("#vh details.cfhcode") || {}).textContent || "" }));
-ok(vc.rows.length === 2 && vc.rows.map((r) => r.sub_event_type).sort().join() === "Peaceful protest,Violent demonstration" && /2 events, 2 of them protests and riots/.test(vc.txt),
+ok(vc.rows.length === 3 && vc.rows.map((r) => r.sub_event_type).sort().join() === ",Peaceful protest,Violent demonstration" && /3 events, 3 of them protests and riots \(1 machine-coded\)/.test(vc.txt)
+  && vc.rows.filter((r) => r.coding_method === "machine").map((r) => r.source_event_id).join() === "pc-9",
   "Empty country: its protests and riots are still listed as coded events, placed or not (" + vc.rows.map((r) => r.event_type + " · " + r.sub_event_type).join(", ") + ")");
 ok(!errors.length, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await browser.close(); server.close();
