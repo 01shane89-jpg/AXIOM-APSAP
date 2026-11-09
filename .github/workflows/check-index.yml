@@ -340,6 +340,7 @@ jobs:
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
+      - run: node tests/feeds_status_smoke.mjs
       # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
       - run: sudo apt-get install -y --no-install-recommends poppler-utils
       - run: node tests/pdf_export_smoke.mjs
