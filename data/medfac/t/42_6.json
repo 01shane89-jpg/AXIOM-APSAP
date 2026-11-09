@@ -61,6 +61,7 @@
 ["n14087367592",43.44283,6.62749,"fr",{"aeroway":"helipad"}],
 ["n14292872230",43.70441,7.26952,"fr",{"name":"Cabinet De Soins Infirmiers Notre-Dame","amenity":"clinic","healthcare":"clinic","addr:housenumber":"9","addr:street":"Avenue Notre-Dame"}],
 ["n14310638991",43.77322,7.42027,"fr",{"aeroway":"helipad"}],
+["n14315530901",43.99012,7.77422,"it",{"name":"Ambulatorio Medico","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"ASL1 Liguria","operator:type":"government"}],
 ["n1830192223",43.40606,6.06485,"fr",{"name":"Ambulance Centre Var","emergency":"ambulance_station"}],
 ["n2208064911",43.30258,6.18895,"fr",{"name":"Assistance Carnoulaise","amenity":"taxi","emergency":"ambulance_station","operator":"Assistance Carnoulaise","phone":"+33 4 94 28 30 07","addr:housenumber":"5","addr:street":"Cours Victor Hugo","addr:city":"Carnoules","addr:postcode":"83660"}],
 ["n2604509928",43.86661,6.46397,"fr",{"name":"Aérodrome du col de Lècques","aeroway":"aerodrome","aerodrome:type":"airfield"}],

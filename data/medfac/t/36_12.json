@@ -44,6 +44,8 @@
 ["w1541141543",37.59684,13.90531,"it",{"aeroway":"helipad"}],
 ["w1550197570",37.80194,12.44457,"it",{"name":"Croce Rossa Italiana","emergency":"ambulance_station"}],
 ["w1558524952",37.43084,13.55578,"it",{"name":"Guardia Medica","amenity":"clinic","healthcare":"clinic","phone":"+39 0922 479672","website":"https://www.aspag.it/index.php/continuita-assistenziale-guardia-medica","addr:housenumber":"2","addr:street":"Via Santa Lucia","addr:city":"Santa Elisabetta","addr:postcode":"92020"}],
+["w1568821821",37.9851,12.55972,"it",{"name":"Guardia Medica","amenity":"clinic","healthcare":"clinic"}],
+["w1575537961",37.47866,13.98363,"it",{"name":"Ospedale Maddalena Raimondi","amenity":"hospital","healthcare":"hospital","emergency":"no","operator":"Azienda Sanitaria Provinciale di Caltanissetta"}],
 ["w242584982",37.67394,12.7748,"it",{"name":"Campo di Volo Valbelice","addr:city":"Castelvetrano","aeroway":"aerodrome"}],
 ["w249163396",37.35175,13.60782,"it",{"name":"Ospedale San Giovanni di Dio","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w318867233",37.97143,13.76469,"it",{"aeroway":"helipad"}],

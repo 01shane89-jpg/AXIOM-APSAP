@@ -107,7 +107,7 @@
 ["w1341858591",41.06689,9.43168,"it",{"name":"Campo di Volo La Smeraldina","aeroway":"aerodrome"}],
 ["w1341858593",41.06642,9.43178,"it",{"name":"Elisuperficie Smeraldina 1","aeroway":"helipad","surface":"grass"}],
 ["w1341858594",41.06662,9.43283,"it",{"name":"Elisuperficie Smeraldina 2","aeroway":"helipad","surface":"grass"}],
-["w134658422",40.71859,8.55413,"it",{"name":"Ospedale Civile Santissima Annunziata","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Azienda Ospedaliera Universitaria Sassari"}],
+["w134658422",40.71859,8.55415,"it",{"name":"Ospedale Civile Santissima Annunziata","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Azienda Ospedaliera Universitaria Sassari"}],
 ["w1364505785",41.99141,9.40138,"fr",{"name":"Centre d'Imagerie De La Plaine Orientale","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"diagnostic_radiology","phone":"+33 4 95 56 53 50","website":"https://cim-albizzias.com/contact/","addr:street":"Marfisola","addr:city":"Prunelli-di-Fiumorbu","addr:postcode":"20243"}],
 ["w1367999640",41.94234,8.7446,"fr",{"name":"HOPITAL PRIVE SUD CORSE","amenity":"clinic","healthcare":"clinic","operator":"clinisud","operator:type":"private"}],
 ["w1387012691",40.02144,9.09991,"it",{"amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
