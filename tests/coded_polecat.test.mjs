@@ -5,7 +5,7 @@
 // Usage: node tests/coded_polecat.test.mjs
 import assert from "node:assert/strict";
 import CODE from "../assets/osap-cf-code.js";
-import { readRow, merge, precOf } from "../tools/refresh_coded_polecat.mjs";
+import { readRow, merge, precOf, ccOfPc } from "../tools/refresh_coded_polecat.mjs";
 
 const COLS = ["Event ID", "Event Date", "Event Type", "Event Mode", "Country", "Latitude", "Longitude", "Feature Type", "City", "Province", "Placename",
   "Primary Actor Sector", "Actor Title", "Actor Name", "Primary Recipient Sector", "Recipient Country", "Story Text"];
@@ -34,6 +34,10 @@ const ctry = readRow(line({ "Feature Type": "PCLI", City: "None", Province: "Non
 assert.equal(readRow(line({ Latitude: "0", Longitude: "0" }), h).lat, null, "0,0 is no position");
 assert.equal(readRow(line({ "Actor Title": "<script>" }), h).role, "", "a role must be plain words");
 
+// POLECAT gives ISO alpha-3 codes
+for (const [a, c] of [["THA", "th"], ["AFG", "af"], ["PSE", "ps"], ["HKG", "cn"], ["KOS", "xk"], ["XKX", "xk"], ["Thailand", "th"]]) assert.equal(ccOfPc(a), c, a);
+assert.equal(ccOfPc("ZZZ"), null, "an unknown code is counted, not guessed");
+assert.equal(readRow(line({ Country: "MMR" }), h).cc, "mm");
 // merging: same day, place and mode is one row
 const m = merge([a, { ...a, id: "e2", role: "" }, { ...a, id: "e3", mode: "strike" }, { ...a, id: "e4", date: "2021-03-02" }, { ...ctry, id: "e5" }, { ...ctry, id: "e6" }]);
 assert.equal(m.length, 4); assert.equal(m[0].id, "e1"); assert.equal(m[0].n, 2); assert.equal(m.find((x) => x.id === "e5").n, 2, "unplaced rows merge by place name");

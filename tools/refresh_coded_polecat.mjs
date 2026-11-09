@@ -18,6 +18,7 @@ import { Readable } from "node:stream";
 import { createHash } from "node:crypto";
 import CODE from "../assets/osap-cf-code.js";
 import { ccOf } from "./refresh_coded_protests.mjs";
+import { ccFromA3 } from "./geo_cc.mjs";
 
 const OUT = "data/live/conflicts/history/pc", FORCE = process.env.FORCE === "1", FIRST = "2021-01-01";
 const DOI = "doi:10.7910/DVN/AJGVIT", API = "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=" + DOI;
@@ -34,6 +35,10 @@ export function precOf(ft) {
   if (/^ADM1/.test(ft || "")) return 3;
   return 0;
 }
+// POLECAT names countries by ISO 3166 alpha-3 code ("THA"); Hong Kong and Macau are filed under China (the page has no separate
+// area for them), POLECAT's "KOS" is Kosovo. A full name (older files) goes through the Mass Mobilization name list.
+const A3_EXTRA = { HKG: "cn", MAC: "cn", KOS: "xk" };
+export function ccOfPc(v) { return /^[A-Z]{3}$/.test(v) ? A3_EXTRA[v] || ccFromA3(v) : ccOf(v); }
 const SKIP_SECTORS = new Set(["COP", "MIL", "GOV"]);
 const ROLE_OK = /^[\p{L} '\-]{2,40}$/u;
 
@@ -44,7 +49,7 @@ export function readRow(r, h) {
   const date = g("Event Date").slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(date)) return { skip: "no_date" };
   if (date < FIRST) return { skip: "before_2021" };
   if (SKIP_SECTORS.has(g("Primary Actor Sector"))) return { skip: "actor_state_forces" };
-  const country = g("Country"), cc = NONE(country) ? null : ccOf(country);
+  const country = g("Country"), cc = NONE(country) ? null : ccOfPc(country);
   if (!cc) return { skip: "no_country", country: NONE(country) ? "(none)" : country };
   const mode = NONE(g("Event Mode")) ? "" : g("Event Mode").toLowerCase();
   let prec = precOf(g("Feature Type")), lat = +g("Latitude"), lon = +g("Longitude");
