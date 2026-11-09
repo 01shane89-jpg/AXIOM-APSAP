@@ -27,6 +27,8 @@
    - Bed-down: a possible bed-down INDICATOR per district: how many reports in the period describe security-force searches,
      cordons, hideouts, camps or weapons and bomb-making finds there, with the terrain items that fall inside the district. Where
      the security forces searched is not proof of where insurgents stay; the tab says so and never calls a district a bed-down.
+   - Country: Thailand reads the Deep South feed above; every other country reads the reports OSAP holds for the selected
+     country (window.TSAP.records), with report places standing in for districts and the country's own local time.
    - Add: a bar under the tabs, on every tab (+ Entity, + Link, + Note, + Location), opens the form at the top of the workspace.
    The analyst's entities and links are kept in this browser only (localStorage "osap-an-ent", "osap-an-links", both carried by
    workspaces in assets/osap-ws.js). Nothing is sent anywhere. */
@@ -46,7 +48,24 @@
   var W = window, D = document;
   var K_ENT = "osap-an-ent", K_LINK = "osap-an-links", K_UI = "osap-an-ui", K_REJ = "osap-an-auto-rej";
   var ENT_SRC = "data/thailand/deepsouth-entities.js", AREAS_SRC = "data/places/deepsouth-areas.json", INC_SRC = "data/live/ds-incidents.json";
-  var LOCAL_H = 7, LOCAL_N = "Thailand";
+  /* which reporting the workspace reads (Shane 2026-11-09, "do what you can"): Thailand keeps the Deep South feed, its
+     reference entity list, incident candidates, district outlines and terrain; every other country uses the reports OSAP
+     holds for the selected country (window.TSAP.records, the same records the map and the Master timeline show), with
+     places from those reports standing in for districts. The page reloads on a country change, so this is fixed at load. */
+  var CC = String((W.TSAP && W.TSAP.country) || (/^#([a-z]{2,3})(?:\/|$)/.exec(location.hash || "") || [])[1] || "th").toLowerCase(), DS = CC === "th";
+  var TZ = DS ? "Asia/Bangkok" : (W.OSAP_TIME && W.OSAP_TIME.zone ? W.OSAP_TIME.zone() : "UTC");
+  var LOCAL_N = DS ? "Thailand" : (function () { try { return new Intl.DisplayNames(["en"], { type: "region" }).of(CC.toUpperCase()) || CC.toUpperCase(); } catch (e) { return CC.toUpperCase(); } })();
+  var AREA = DS ? "District" : "Place";
+  /* minutes the selected country's clock is ahead of UTC at ms (summer time included), by the browser's own zone rules */
+  var TZF = null;
+  function offMin(ms) {
+    if (DS) return 420;
+    try {
+      TZF = TZF || new Intl.DateTimeFormat("en-US", { timeZone: TZ, hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" });
+      var p = {}; TZF.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = +x.value; });
+      return Math.round((Date.UTC(p.year, p.month - 1, p.day, p.hour % 24, p.minute) - Math.floor(ms / 6e4) * 6e4) / 6e4);
+    } catch (e) { return 0; }
+  }
   var TABS = [["ents", "Entities"], ["links", "Links"], ["struct", "Structure"], ["time", "Timeline"], ["saved", "Saved"], ["bed", "Bed-down"]];
   var PERIODS = [[30, "30 days"], [90, "90 days"], [365, "1 year"], [0, "All kept"]];
   var TYPES = ["organisation", "armed group", "unit", "police or security force", "agency", "official (public officeholder)", "person (sanctioned or charged only)", "incident: bombing or IED", "incident: shooting or armed attack", "incident: seizure, arrest or raid", "place", "site (bed-down, cache, safe house)", "route", "vehicle", "other"];
@@ -72,13 +91,13 @@
   /* a time both ways: Zulu and Thailand local, 24-hour */
   function zl(ms) {
     if (!isFinite(ms)) return "";
-    var z = new Date(ms), l = new Date(ms + LOCAL_H * 36e5);
+    var z = new Date(ms), l = new Date(ms + offMin(ms) * 6e4);
     return z.getUTCFullYear() + "-" + pad(z.getUTCMonth() + 1) + "-" + pad(z.getUTCDate()) + " " + pad(z.getUTCHours()) + pad(z.getUTCMinutes()) + "Z (" +
       pad(l.getUTCHours()) + pad(l.getUTCMinutes()) + " " + LOCAL_N + ")";
   }
   function seenMs(i) { var s = String(i.first_seen || ""), m = s.match(/^(\d{4}-\d\d-\d\d) (\d\d:\d\d)Z$/); return m ? Date.parse(m[1] + "T" + m[2] + ":00Z") : NaN; }
   /* the outlet's own date is used for the period and the order (it has no zone; read as Thailand time) */
-  function dateMs(i) { var t = Date.parse(String(i.date || "").slice(0, 16) + ":00+07:00"); return isFinite(t) ? t : seenMs(i); }
+  function dateMs(i) { if (isFinite(i._ms)) return i._ms; var t = Date.parse(String(i.date || "").slice(0, 16) + ":00+07:00"); return isFinite(t) ? t : seenMs(i); }
 
   /* ---------- state ---------- */
   var UI = lsGet(K_UI, {}); if (typeof UI !== "object" || !UI) UI = {};
@@ -96,13 +115,13 @@
     return new Promise(function (ok, no) { var s = D.createElement("script"); s.src = src; s.onload = ok; s.onerror = function () { s.remove(); no(new Error("could not load " + src)); }; D.head.appendChild(s); });
   }
   function needEnts() {
-    if (W.OSAP_DS_ENT) return Promise.resolve();
+    if (W.OSAP_DS_ENT || !DS) return Promise.resolve();
     return script(ENT_SRC).then(function () { S.entsErr = ""; }, function () { S.entsErr = "The entity list could not load. Check the connection."; });
   }
   /* Thailand's terrain and flashpoints (the same per-country file Map overlays loads), for the Bed-down tab's context column */
   /* the machine's incident candidates, for the auto-proposed links (the same file the Deep South incident review reads) */
   function needIncidents() {
-    if (S.cands) return Promise.resolve();
+    if (S.cands || !DS) return Promise.resolve();
     return fetch(INC_SRC).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (j) { S.cands = (j && Array.isArray(j.candidates)) ? j.candidates : []; S.candAsof = (j && j.asof) || ""; S.candErr = ""; },
         function () { S.cands = null; S.candErr = "The incident list for the auto-proposed links could not load. Check the connection."; });
@@ -110,7 +129,7 @@
   function rejected() { var v = lsGet(K_REJ, []); return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }) : []; }
   /* the auto-proposed incidents and links for the period, leaving out what the analyst already linked or rejected */
   function autoProps(X) {
-    if (!W.OSAP_AN_AUTO || !S.cands) return { incidents: {}, links: [] };
+    if (!DS || !W.OSAP_AN_AUTO || !S.cands) return { incidents: {}, links: [] };
     return (S.auto = W.OSAP_AN_AUTO.propose({ cands: S.cands, items: reports(), ents: X.E, days: S.days, own: ownLinks().items, rejected: rejected() }));
   }
   /* the chart shows the 12 newest proposed incidents, those tied to an entity first; the list under it has them all */
@@ -120,24 +139,40 @@
     ids.forEach(function (id) { on[id] = 1; });
     return P.links.filter(function (l) { return on[l.inc] || (S.sel && (l.a === S.sel || l.b === S.sel)); });
   }
-  function needTerrain() { return W.OSAP_TERRAIN && W.OSAP_TERRAIN.th ? Promise.resolve() : script("data/terrain/th.js").catch(function () {}); }
+  function needTerrain() { return !DS ? Promise.resolve() : W.OSAP_TERRAIN && W.OSAP_TERRAIN.th ? Promise.resolve() : script("data/terrain/th.js").catch(function () {}); }
   function needAreas() {
-    if (S.areas) return Promise.resolve(S.areas);
+    if (S.areas || !DS) return Promise.resolve(S.areas);
     return fetch(AREAS_SRC).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (j) { S.areas = (j && j.areas) || []; S.areasErr = ""; return S.areas; }, function () { S.areasErr = "The district outlines could not load."; S.areas = null; return null; });
   }
-  function reports() { return ((W.ASAP_DS || {}).items || []).filter(function (i) { return i && safeUrl(i.link); }); }
+  function reports() { return DS ? ((W.ASAP_DS || {}).items || []).filter(function (i) { return i && safeUrl(i.link); }) : countryReports(); }
+  /* the selected country's records in the shape the tabs read (title, summary, link, outlet, kind, geo), mapped once per change */
+  var CR = { src: null, n: -1, out: [] };
+  function countryReports() {
+    var R = (W.TSAP && W.TSAP.records) || [];
+    if (CR.src === R && CR.n === R.length) return CR.out;
+    var ms = W.OSAP_TODAY && W.OSAP_TODAY.recMs, out = [];
+    R.forEach(function (r) {
+      if (!r || !r.title || !safeUrl(r.url)) return;
+      var t = ms ? ms(r) : Date.parse(r.ts || ""), pl = String(r.place || r.prov || "").trim();
+      out.push({ title: String(r.title), summary: String(r.detail || ""), link: r.url, outlet: r.src && r.src.name ? String(r.src.name) : "", state: r.type === "claim",
+        kind: String(r.cat || r.layer || ""), _ms: isFinite(t) ? t : NaN,
+        geo: { n: pl, la: r.lat, lo: r.lon, id: pl ? "P:" + pl.toLowerCase().slice(0, 80) : "" } });
+    });
+    CR = { src: R, n: R.length, out: out };
+    return out;
+  }
   function inPeriod(i) { return !S.days || dateMs(i) >= Date.now() - S.days * 864e5; }
   function textOf(i) { return [i.title, i.title_en, i.summary, i.summary_en].filter(Boolean).join(" \n "); }
   function titleOf(i) { return String(i.title_en || i.title || "Untitled report"); }
-  function distOf(i) { var g = i.geo || {}; return /^TH-\d{4}$/.test(g.id || "") ? g.id : ""; }
+  function distOf(i) { var g = i.geo || {}; return DS ? (/^TH-\d{4}$/.test(g.id || "") ? g.id : "") : (/^P:/.test(g.id || "") ? g.id : ""); }
   function distName(id) {
     var a = (S.areas || []).filter(function (x) { return x.id === id; })[0]; if (a) return a.name;
     var r = reports().filter(function (i) { return distOf(i) === id; })[0]; return r ? String(r.geo.n || id).replace(/ district,.*$/, "") : id;
   }
   /* every entity, reference and own, with a matcher built from its names */
   function entities() {
-    var ref = ((W.OSAP_DS_ENT || {}).entities || []).map(function (e) { return { id: e.id, name: e.name, type: e.entity_type, group: e.group, aliases: e.aliases || [], role: e.role, src: e.src, srcname: e.srcname, fp: e.fp, ref: true }; });
+    var ref = (DS ? (W.OSAP_DS_ENT || {}).entities || [] : []).map(function (e) { return { id: e.id, name: e.name, type: e.entity_type, group: e.group, aliases: e.aliases || [], role: e.role, src: e.src, srcname: e.srcname, fp: e.fp, ref: true }; });
     var own = ownEnts().items.map(function (e) { return { id: e.id, name: e.name, type: e.type, group: "Your entities", aliases: [e.name].concat(e.aliases || []), note: e.note, created: e.created, own: true }; });
     return ref.concat(own).map(function (e) {
       var pats = (e.aliases.length ? e.aliases : [e.name]).filter(function (a) { return String(a).trim().length >= 2; }).map(function (a) {
@@ -244,8 +279,9 @@
     var X = index(), h = '<div class="anbox"><div class="chead"><h2>Analyst workspace</h2>' +
       '<label class="anal">Period <select id="an-days">' + PERIODS.map(function (p) { return '<option value="' + p[0] + '"' + (p[0] === S.days ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select></label>" +
       '<button type="button" class="x" data-an="close" aria-label="Close">\u00d7</button></div>' +
-      caseNote() + '<p class="anal">' + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "" : "Only on this device, while it is unlocked with your Face ID. ") + "Reporting and the reference entity list: Thailand Deep South (" + num(X.rows.length) + " reports in the period" +
-      ((W.ASAP_DS || {}).asof ? ", read " + esc(W.ASAP_DS.asof) : "") + "). What you add can be about anywhere" + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "." : " and stays in this browser.") + "</p>" +
+      caseNote() + '<p class="anal">' + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "" : "Only on this device, while it is unlocked with your Face ID. ") + (DS ? "Reporting and the reference entity list: Thailand Deep South (" + num(X.rows.length) + " reports in the period" +
+      ((W.ASAP_DS || {}).asof ? ", read " + esc(W.ASAP_DS.asof) : "") + "). What you add can be about anywhere" :
+      "Reporting: " + esc(LOCAL_N) + ", the reports OSAP holds for it (" + num(X.rows.length) + " in the period). The reference entity list, auto-proposed links and district outlines are built for the Thailand Deep South only; here the workspace works from your own entities, and report places stand in for districts. What you add can be about anywhere") + (W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase() ? "." : " and stays in this browser.") + "</p>" +
       '<div class="antabs" role="tablist">' + TABS.map(function (t) { return '<button type="button" role="tab" data-an-tab="' + t[0] + '" aria-pressed="' + (S.tab === t[0]) + '">' + t[1] + "</button>"; }).join("") + "</div>";
     h += addBar(X);
     if (S.entsErr) h += '<p class="anwarn">' + esc(S.entsErr) + "</p>";
@@ -328,7 +364,7 @@
           (e.own ? '<button type="button" data-an-del="' + esc(e.id) + '">Delete</button>' : "") + "</div>" + (e.own ? approval(K_ENT, e.id) : "") + "</div>";
       }).join("");
     });
-    if (!E.length) h += '<p class="obs">' + (W.OSAP_DS_ENT ? "No entity matches." : "Loading the entity list\u2026") + "</p>";
+    if (!E.length) h += '<p class="obs">' + (W.OSAP_DS_ENT || !DS ? (q ? "No entity matches." : "") : "Loading the entity list\u2026") + "</p>";
     h += addMore("ent", "Add your own entity");
     return h;
   }
@@ -540,7 +576,7 @@
     var h = '<p class="anal">Link chart. Boxes: organizations and units, with their NATO map symbol (APP-6) and how many reports name them. Circles: people. Brown markers: districts. Dashed line: named in the same report (unconfirmed, not a relationship; the number on hover). Solid green line: a link you recorded. Tap one to see its connections.</p>';
     if (ownLinks().items.length || G.P.links.length) h += '<label class="anrow"><input type="checkbox" id="an-ownonly"' + (ownOnly() ? " checked" : "") + "> Your links" + (G.P.links.length && S.showAuto ? " and the auto-proposed ones" : "") + " only (leave out the machine co-mentions)</label>" +
       (ownOnly() ? '<label class="anrow">Layout <select id="an-lay"><option value="net"' + (S.lay !== "cols" ? " selected" : "") + '>Network</option><option value="cols"' + (S.lay === "cols" ? " selected" : "") + ">Columns (who / what happened / where)</option></select></label>" : "");
-    if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT ? "" : " (the entity list is still loading)") + ".</p>" + autoList(G) + addMore("link", "Add your own link");
+    if (!G.N.length) return h + '<p class="obs">No entity is named in the reports of this period yet' + (W.OSAP_DS_ENT || !DS ? "" : " (the entity list is still loading)") + (DS ? "" : ". Add your own entities with + Entity: OSAP then counts the " + esc(LOCAL_N) + " reports that name them") + ".</p>" + autoList(G) + addMore("link", "Add your own link");
     h += '<svg class="angraph" viewBox="0 0 ' + w + " " + hh + '" role="img" aria-label="Link chart">' +
       (cols ? ROLE_COLS.map(function (c) { return '<text class="anlane" x="' + cols.X0[c[0]] + '" y="22" text-anchor="middle">' + esc(c[1]) + "</text>"; }).join("") +
         [["act-inc", (cols.X0.act + cols.X0.inc) / 2], ["inc-plc", (cols.X0.inc + cols.X0.plc) / 2]].map(function (g) { return gapRel[g[0]] ? '<text class="anrel" x="' + g[1] + '" y="44" text-anchor="middle">' + esc(gapRel[g[0]]) + " (unless marked)</text>" : ""; }).join("") : "") +
@@ -617,7 +653,7 @@
       '<button type="button" class="go" data-an-accept="' + esc(p.pid) + '">Accept</button><button type="button" data-an-reject="' + esc(p.pid) + '">Reject</button></span>';
   }
   function autoList(G) {
-    var P = G.P || { links: [], incidents: {} }, nm = function (id) { return /^d:/.test(id) ? "District: " + distName(id.slice(2)) : (G.nodes[id] || {}).label || (P.incidents[id] || {}).name || nameOf(id); }, nrej = rejected().length;
+    var P = G.P || { links: [], incidents: {} }, nm = function (id) { return /^d:/.test(id) ? AREA + ": " + distName(id.slice(2)) : (G.nodes[id] || {}).label || (P.incidents[id] || {}).name || nameOf(id); }, nrej = rejected().length;
     var h = '<details class="anauto"' + (S.autoOpen ? " open" : "") + '><summary>' + AUTO + " Auto-proposed links (" + num(P.links.length) + ")</summary>" +
       '<p class="anal">Proposed by machine rules from OSAP\'s own reporting, never a judgment: recent incidents from the incident candidates, the district each occurred in, and the units, agencies and armed groups their reports name with an attribution, arrest, casualty or response word beside them. ' +
       "Each shows the sentence it came from and its sources. <b>Accept</b> copies it to your links with the confidence you pick; <b>Reject</b> hides it on this device. Your own links are never changed. The chart shows the 12 newest incidents; all are listed here.</p>" +
@@ -650,13 +686,19 @@
     if (lsSet(K_LINK, L)) toast("Added to your links (your judgment, this browser only)."); render();
   }
   function reject(pid) { var r = rejected(); if (r.indexOf(pid) < 0) r.push(pid); lsSet(K_REJ, r.slice(-5000)); render(); }
+  /* outside the Deep South, the places named by the period's reports, most reported first (up to 200), as link ends */
+  function placeOpts(X) {
+    var n = {}; X.rows.forEach(function (r) { if (r.d) n[r.d] = (n[r.d] || 0) + 1; });
+    var P = Object.keys(n).sort(function (a, b) { return n[b] - n[a]; }).slice(0, 200);
+    return P.length ? '<optgroup label="Places in the reporting">' + P.map(function (d) { return '<option value="d:' + esc(d) + '">Place: ' + esc(distName(d)) + "</option>"; }).join("") + "</optgroup>" : "";
+  }
   function linkForm(X) {
     /* every item a link can join, grouped: your own entities first, then the reference groups, then the districts */
     var gs = [], by = {};
     X.E.forEach(function (e) { if (!by[e.group]) { by[e.group] = []; gs.push(e.group); } by[e.group].push(e); });
     gs.sort(function (a, b) { return (b === "Your entities") - (a === "Your entities"); });
     var opts = gs.map(function (g) { return '<optgroup label="' + esc(g) + '">' + by[g].map(function (e) { return '<option value="' + esc(e.id) + '">' + esc(e.name) + "</option>"; }).join("") + "</optgroup>"; }).join("") +
-      ((S.areas || []).length ? '<optgroup label="Districts">' + S.areas.map(function (a) { return '<option value="d:' + esc(a.id) + '">District: ' + esc(a.name) + "</option>"; }).join("") + "</optgroup>" : "");
+      (!DS ? placeOpts(X) : "") + ((S.areas || []).length ? '<optgroup label="Districts">' + S.areas.map(function (a) { return '<option value="d:' + esc(a.id) + '">District: ' + esc(a.name) + "</option>"; }).join("") + "</optgroup>" : "");
     return '<form id="an-addlink" class="anrow"><label>From <select name="a">' + opts + "</select></label>" +
       '<label>Relationship <select name="rel">' + RELS.map(function (r) { return "<option>" + esc(r) + "</option>"; }).join("") + "</select></label>" +
       '<label>To <select name="b">' + opts + '</select></label><label>Confidence <select name="conf">' + CONFS.map(function (c) { return '<option value="' + c[0] + '">' + c[1] + "</option>"; }).join("") + '</select></label><label>Why (your basis) <input name="note" maxlength="600"></label><button type="submit" class="go">Add link</button></form>' +
@@ -664,7 +706,7 @@
   }
   function repLine(i) {
     var u = safeUrl(i.link);
-    return '<div class="anit"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(titleOf(i)) + '</a> <span class="anal">' + esc(i.outlet || "") + " \u00b7 " + esc(String(i.date || "").replace("T", " ")) +
+    return '<div class="anit"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(titleOf(i)) + '</a> <span class="anal">' + esc(i.outlet || "") + " \u00b7 " + esc(isFinite(i._ms) ? zl(i._ms) : String(i.date || "").replace("T", " ")) +
       (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (i.mt ? " \u00b7 machine-translated" : "") + "</span></div>";
   }
 
@@ -679,7 +721,7 @@
   function tabStruct(X) {
     var L = ownLinks().items.filter(function (l) { return l.a && l.b; }), name = {}, sym = {}, grp = {};
     X.E.forEach(function (e) { name[e.id] = e.name; sym[e.id] = symOf(e); grp[e.id] = e.group; });
-    function nm(id) { return /^d:/.test(id) ? "District: " + distName(id.slice(2)) : name[id] || id; }
+    function nm(id) { return /^d:/.test(id) ? AREA + ": " + distName(id.slice(2)) : name[id] || id; }
     var cnt = {}; L.forEach(function (l) { cnt[l.a] = (cnt[l.a] || 0) + 1; cnt[l.b] = (cnt[l.b] || 0) + 1; });
     var roots = Object.keys(cnt).filter(function (id) { return !/^d:/.test(id); }).sort(function (a, b) { return cnt[b] - cnt[a]; });
     var h = '<p class="anal">Network structure from <b>your own links only</b>: a chain of command from the top entity, then support nodes, finance, supply chain, bed-down sites, routes and areas of operation. It is your judgment, not a finding; machine co-mentions are not used. Add links in the Links tab (relationships such as member of, commands, support node for, supplies, funds, beds down at, uses route).</p>';
@@ -775,7 +817,7 @@
     var dists = {}; X.rows.forEach(function (r) { if (r.d) dists[r.d] = 1; });
     var h = '<div class="anrow"><label>Show <select id="an-tf"><option value="">Every report that names an entity</option><option value="*"' + (f === "*" ? " selected" : "") + ">Every report</option>" +
       X.E.filter(function (e) { return X.by[e.id].length; }).map(function (e) { return '<option value="' + esc(e.id) + '"' + (f === e.id ? " selected" : "") + ">" + esc(e.name) + " (" + X.by[e.id].length + ")</option>"; }).join("") +
-      Object.keys(dists).sort().map(function (d) { return '<option value="d:' + esc(d) + '"' + (f === "d:" + d ? " selected" : "") + ">District: " + esc(distName(d)) + "</option>"; }).join("") + "</select></label></div>";
+      Object.keys(dists).sort().map(function (d) { return '<option value="d:' + esc(d) + '"' + (f === "d:" + d ? " selected" : "") + ">" + AREA + ": " + esc(distName(d)) + "</option>"; }).join("") + "</select></label></div>";
     var R = X.rows.filter(function (r) { return f === "*" ? true : !f ? r.ents.length : /^d:/.test(f) ? r.d === f.slice(2) : r.ents.indexOf(f) >= 0; })
       .map(function (r) { return { t: dateMs(r.i), r: r }; });
     /* the analyst's own items in the period: saved reports and points */
@@ -783,15 +825,15 @@
     savedReports().forEach(function (it) { var t = Date.parse(it.at || (it.snap || {}).ts || ""); if (isFinite(t) && t >= since) mine.push({ t: t, mine: "report", it: it }); });
     points().forEach(function (p) { var t = +p.t || Date.parse(p.t || ""); if (isFinite(t) && t >= since) mine.push({ t: t, mine: "point", it: p }); });
     var all = R.concat(mine).sort(function (a, b) { return b.t - a.t; }).slice(0, 400), day = "";
-    h += '<p class="anal">Report times: the outlet\'s date (Thailand time) and when OSAP first saw it, in Zulu and ' + LOCAL_N + " time. Green: your own saved items.</p>";
+    h += '<p class="anal">' + (DS ? "Report times: the outlet\'s date (Thailand time) and when OSAP first saw it, in Zulu and " + LOCAL_N + " time." : "Report times in Zulu and " + esc(LOCAL_N) + " time (" + esc(TZ) + ").") + " Green: your own saved items.</p>";
     if (!all.length) return h + '<p class="obs">Nothing in this period.</p>';
     all.forEach(function (x) {
-      var d = new Date(x.t + LOCAL_H * 36e5).toISOString().slice(0, 10);
+      var d = new Date(x.t + offMin(x.t) * 6e4).toISOString().slice(0, 10);
       if (d !== day) { day = d; h += '<div class="anday">' + esc(d) + "</div>"; }
       if (x.r) {
         var i = x.r.i, s = seenMs(i);
         h += '<div class="anit"><a href="' + esc(safeUrl(i.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(titleOf(i)) + '</a><div class="anal">' + esc(i.outlet || "") + (i.state ? " (government statement, a claim)" : "") +
-          " \u00b7 " + esc(i.kind || "") + (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (isFinite(s) ? " \u00b7 seen " + esc(zl(s)) : "") +
+          " \u00b7 " + esc(i.kind || "") + (i.geo && i.geo.n ? " \u00b7 " + esc(i.geo.n) : "") + (isFinite(s) ? " \u00b7 seen " + esc(zl(s)) : isFinite(i._ms) ? " \u00b7 " + esc(zl(i._ms)) : "") +
           (x.r.ents.length ? " \u00b7 names: " + esc(x.r.ents.map(function (id) { var e = X.E.filter(function (y) { return y.id === id; })[0]; return e ? e.name : id; }).join(", ")) : "") + "</div></div>";
       } else if (x.mine === "report") {
         var sn = x.it.snap || {};
@@ -840,22 +882,23 @@
     var T = W.OSAP_TERRAIN && W.OSAP_TERRAIN.th ? [].concat(W.OSAP_TERRAIN.th.terrain || [], W.OSAP_TERRAIN.th.flashpoints || []).filter(function (x) { return /Deep South/.test(x.zone || "") && isFinite(x.lat) && isFinite(x.lon); }) : [];
     var rows = Object.keys(by).map(function (d) {
       var a = (S.areas || []).filter(function (x) { return x.id === d; })[0];
-      return { d: d, name: distName(d), n: by[d].length, rep: by[d], a: a, ter: a ? T.filter(function (x) { return inArea(a, x.lat, x.lon); }) : [] };
+      var g = (by[d].filter(function (i) { return i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) && i.geo.la !== null; })[0] || {}).geo;
+      return { d: d, name: distName(d), n: by[d].length, rep: by[d], a: a, ll: g ? [+g.la, +g.lo] : null, ter: a ? T.filter(function (x) { return inArea(a, x.lat, x.lon); }) : [] };
     }).sort(function (a, b) { return b.n - a.n || a.name.localeCompare(b.name); });
     return { F: F, rows: rows, prov: prov };
   }
   function tabBed() {
     var B = bed(), max = B.rows.length ? B.rows[0].n : 1;
-    var h = '<div class="anwarn"><b>An indicator, not a finding.</b> Districts where reports in the period describe security-force searches, cordons, hideouts, camps, or weapons and bomb-making finds. ' +
-      "Where the security forces searched is not proof of where insurgents stay, and a quiet district may simply be unsearched. Sorted by machine from the report text; drug seizures and training are left out. Yours to assess.</div>" +
-      '<div class="anrow"><label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="an-bedmap"' + (S.bedMap ? " checked" : "") + (S.areas ? "" : " disabled") + "> Show on the map</label>" +
-      '<span class="anal">' + num(B.F.length) + " matching reports" + (B.prov ? ", " + num(B.prov) + " placed only to a province (not counted below)" : "") + (S.areasErr ? " \u00b7 " + esc(S.areasErr) : "") + "</span></div>";
-    if (!B.rows.length) return h + '<p class="obs">No search or find reports placed to a district in this period. Try a longer period.</p>';
-    h += "<table><tr><th>District</th><th>Reports</th><th>Terrain and flashpoints inside</th></tr>" + B.rows.map(function (r) {
+    var h = '<div class="anwarn"><b>An indicator, not a finding.</b> ' + (DS ? "Districts" : "Places") + " where reports in the period describe security-force searches, cordons, hideouts, camps, or weapons and bomb-making finds. " +
+      "Where the security forces searched is not proof of where insurgents stay, and a quiet " + AREA.toLowerCase() + " may simply be unsearched. Sorted by machine from the report text; drug seizures and training are left out. Yours to assess.</div>" +
+      '<div class="anrow">' + (DS ? '<label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="an-bedmap"' + (S.bedMap ? " checked" : "") + (S.areas ? "" : " disabled") + "> Show on the map</label>" : "") +
+      '<span class="anal">' + num(B.F.length) + " matching reports" + (B.prov ? ", " + num(B.prov) + (DS ? " placed only to a province" : " with no place") + " (not counted below)" : "") + (S.areasErr ? " \u00b7 " + esc(S.areasErr) : "") + "</span></div>";
+    if (!B.rows.length) return h + '<p class="obs">No search or find reports placed to a ' + AREA.toLowerCase() + " in this period. Try a longer period.</p>";
+    h += "<table><tr><th>" + AREA + "</th><th>Reports</th>" + (DS ? "<th>Terrain and flashpoints inside</th>" : "<th></th>") + "</tr>" + B.rows.map(function (r) {
       return "<tr><td><b>" + esc(r.name) + '</b><details><summary class="anal">The reports</summary>' + r.rep.slice(0, 15).map(repLine).join("") + "</details></td>" +
         '<td class="n"><span class="anbar" style="width:' + Math.round(4 + 60 * r.n / max) + 'px"></span>' + num(r.n) + "</td><td>" +
-        (r.ter.length ? r.ter.map(function (x) { return esc(x.name) + ' <span class="anal">(' + esc(x.type === "flashpoint" ? "flashpoint" : x.kind || "terrain") + ")</span>"; }).join("<br>") : '<span class="anal">none listed</span>') +
-        (r.a ? '<div><button type="button" data-an-zoom="' + esc(r.d) + '">Map</button></div>' : "") + "</td></tr>";
+        (!DS ? "" : r.ter.length ? r.ter.map(function (x) { return esc(x.name) + ' <span class="anal">(' + esc(x.type === "flashpoint" ? "flashpoint" : x.kind || "terrain") + ")</span>"; }).join("<br>") : '<span class="anal">none listed</span>') +
+        (r.a ? '<div><button type="button" data-an-zoom="' + esc(r.d) + '">Map</button></div>' : r.ll ? '<div><button type="button" data-an-fly="' + r.ll[0] + "," + r.ll[1] + '">Map</button></div>' : "") + "</td></tr>";
     }).join("") + "</table>";
     return h;
   }
