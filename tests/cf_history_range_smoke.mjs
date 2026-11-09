@@ -36,6 +36,13 @@ const MMTH = { id: "mm/th", cc: "th", rows: [["900001", "2012-05-01", "", 6.87, 
   ["900002", "2012-06-01", "", 13.75, 100.5, 2, 1, "Bangkok", "Bangkok", ">10000", "students", "political behavior, process", "crowd dispersal; shootings"]] };
 await ctx.route(/\/data\/live\/conflicts\/history\/mm\/(_index|th)\.js$/, (r) => r.fulfill({ contentType: "text/javascript",
   body: '(window.OSAP_CF_CODED=window.OSAP_CF_CODED||{})["mm/' + (/_index/.test(r.request().url()) ? "_index" : "th") + '"]=' + JSON.stringify(/_index/.test(r.request().url()) ? MMI : MMTH) + ";" }));
+// machine-coded protests after 2020 (POLECAT, tools/refresh_coded_polecat.mjs): one riot placed in Narathiwat (inside), one placed in
+// Bangkok (outside), one in the area but only known to the province (kept out of the conflict tab, which needs a placed town)
+const PCI = { schema: "osap-cf-coded-index/1", countries: { th: { n: 3 } } };
+const PCTH = { id: "pc/th", cc: "th", rows: [["pc-1", "2021-07-01", "", 6.43, 101.82, 2, 1, "Narathiwat", "riot", 3, "resident", "GOV · Thailand"],
+  ["pc-2", "2021-08-01", "", 13.75, 100.5, 2, 0, "Bangkok", "demo", 1, "student", ""], ["pc-3", "2021-09-01", "", 6.54, 101.28, 3, 0, "Yala", "demo", 1, "", ""]] };
+await ctx.route(/\/data\/live\/conflicts\/history\/pc\/(_index|th)\.js$/, (r) => r.fulfill({ contentType: "text/javascript",
+  body: '(window.OSAP_CF_CODED=window.OSAP_CF_CODED||{})["pc/' + (/_index/.test(r.request().url()) ? "_index" : "th") + '"]=' + JSON.stringify(/_index/.test(r.request().url()) ? PCI : PCTH) + ";" }));
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-cf-hist", "1");
   localStorage.setItem("asap-period", JSON.stringify({ p: "custom", from: "2026-04-16", to: "2026-10-16" })); } catch (e) {} });
 const p = await ctx.newPage(), errors = [];
@@ -137,7 +144,7 @@ const tabs = await p.evaluate(() => Array.from(document.querySelectorAll("#cfh d
 ok(tabs.includes("Event type") && tabs.some((t) => /who against whom/.test(t)), "Opened, the section shows event types and who against whom: " + tabs.join(" | "));
 const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 60000 }), p.click("#cfh [data-cfhcsv]")]);
 const csvTxt = await readFile(await dl.path(), "utf8"), lines = csvTxt.trim().split("\r\n");
-ok(lines.length === cd.n + 1 && /^record_basis,dataset,/.test(lines[0]), `Coded events CSV: header + ${lines.length - 1} rows (${dl.suggestedFilename()})`);
+ok(lines.length === cd.n + 1 && /^record_basis,coding_method,dataset,/.test(lines[0]), `Coded events CSV: header + ${lines.length - 1} rows (${dl.suggestedFilename()})`);
 const hcol = lines[0].split(",").indexOf("sha256");
 ok(lines.slice(1).every((l) => /^[0-9a-f]{64}$/.test(l.split(",").slice(-1)[0])) && hcol === lines[0].split(",").length - 1, "Every CSV row carries its SHA-256 fingerprint");
 ok(csvTxt.includes(",900001,") && !csvTxt.includes(",900002,"), "CSV holds the protest inside the area, not the one outside");
@@ -164,6 +171,23 @@ await p.evaluate(() => { const i = document.querySelector("#cfh [data-cfhpr]"); 
 await p.waitForTimeout(400);
 ok((await pdots()).length === 0, "Unticking Protests and riots takes the dots off the map");
 await p.evaluate(() => { const i = document.querySelector("#cfh [data-cfhpr]"); i.checked = true; i.dispatchEvent(new Event("change", { bubbles: true })); });
+
+// 2021: the machine-coded riot inside the area is listed and drawn, paler with a dashed ring; Bangkok and the province-only one are not
+await p.evaluate(() => window.OSAP_CF_HISTORY.show("2021-01-01", "2021-12-31"));
+await settle(); await p.waitForTimeout(500);
+const pc = await p.evaluate(() => { const rows = (window.OSAP_CF_HISTORY.coded() || []).filter((r) => r.dataset === "polecat");
+  return { ids: rows.map((r) => r.source_event_id), m: rows.map((r) => r.coding_method), t: rows.map((r) => r.event_type + "/" + r.sub_event_type), txt: document.querySelector("#cfh details.cfhcode summary").textContent }; });
+ok(pc.ids.join() === "pc-1" && pc.m.join() === "machine" && pc.t.join() === "Riots/Violent demonstration" && /1 machine-coded/.test(pc.txt),
+  "2021: one machine-coded riot inside the area, coded Riots · Violent demonstration, counted as machine-coded: " + JSON.stringify(pc));
+await p.evaluate(() => { window.__asapMap.fitBounds([[5.6, 100.4], [7.1, 102.2]]); });
+await p.waitForTimeout(800);
+const pcd = await p.evaluate(() => { const out = []; window.__asapMap.eachLayer((l) => { if (l instanceof L.CircleMarker && l.options.pane === "cfpane" && /^#(1565C0|E65100)$/.test(l.options.fillColor)) out.push([+l.getLatLng().lat.toFixed(2), l.options.fillColor, l.options.dashArray || "", l.options.fillOpacity]); }); return out; });
+ok(pcd.length === 1 && pcd[0][0] === 6.43 && pcd[0][1] === "#E65100" && pcd[0][2] && pcd[0][3] < 0.6, "Machine-coded riot dot in Narathiwat: orange, paler, dashed ring: " + JSON.stringify(pcd));
+const pcpop = await p.evaluate(() => new Promise((res) => { window.__asapMap.eachLayer((l) => { if (l instanceof L.CircleMarker && l.options.fillColor === "#E65100") { l.openPopup(); } });
+  setTimeout(() => res((document.querySelector(".leaflet-popup-content") || {}).textContent || ""), 600); }));
+ok(/machine-coded/.test(pcpop) && /3 machine-coded events/.test(pcpop) && /CC0/.test(pcpop) && /SHA-256 [0-9a-f]{16}/.test(pcpop), "Machine-coded pop-up: says so, merged count, licence, fingerprint: " + pcpop.slice(0, 160));
+await p.evaluate(() => { window.__asapMap.closePopup(); });
+await p.screenshot({ path: process.env.SHOT || "/tmp/cfh-pc.png" });
 
 ok(!errors.length, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await browser.close(); server.close();

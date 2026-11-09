@@ -203,7 +203,11 @@
     mm_protest: { id: "mm_protest", name: "Mass Mobilization Protest Data", by: "David Clark and Patrick Regan (Mass Mobilization Project)", licence: "CC0 1.0",
       licence_url: "https://creativecommons.org/publicdomain/zero/1.0/", nc: false, url: "https://doi.org/10.7910/DVN/HTTWYL",
       cite: "Clark, D. and Regan, P. (2016) Mass Mobilization Protest Data. Harvard Dataverse, doi:10.7910/DVN/HTTWYL",
-      covers: "Protests against governments with 50 or more people, 162 countries, 1990 to 2020, with demands and the state's response; no death figures" }
+      covers: "Protests against governments with 50 or more people, 162 countries, 1990 to 2020, with demands and the state's response; no death figures" },
+    polecat: { id: "polecat", name: "POLECAT (Political Event Classification, Attributes and Types)", by: "POLECAT project (PLOVER ontology), Harvard Dataverse", licence: "CC0 1.0",
+      licence_url: "https://creativecommons.org/publicdomain/zero/1.0/", nc: false, url: "https://doi.org/10.7910/DVN/AJGVIT", machine_coded: true,
+      cite: "Halterman, A. et al. (2023) PLOVER and POLECAT: A New Political Event Ontology and Dataset. Harvard Dataverse, doi:10.7910/DVN/AJGVIT",
+      covers: "Events coded by software from news stories; here its protests and riots from 2021 on, after Mass Mobilization ends. Machine coding misreads some stories" }
   };
   // rule version: changes whenever the mapping below changes, so a downloaded row says which rules coded it
   var UCDP_RULES = "ucdp-acled-v1";
@@ -231,7 +235,7 @@
     var t = UCDP_TYPE[r[5]] || UCDP_TYPE[1], cand = !!r[15], ds = DATASETS[cand ? "ucdp_candidate" : "ucdp_ged"];
     var a1 = k.sides[r[10]] || "", a2 = k.sides[r[11]] || "", i1 = ucdpActorType(a1, r[5]), i2 = ucdpActorType(a2, r[5]);
     if (+r[5] === 3 && !a2) { a2 = "Civilians"; i2 = "Civilians"; }
-    return { record_basis: "dataset_coded", dataset: ds.id, dataset_release: cand ? "candidate" : String(k.release || ""), source_event_id: String(r[0]),
+    return { record_basis: "dataset_coded", coding_method: "human", dataset: ds.id, dataset_release: cand ? "candidate" : String(k.release || ""), source_event_id: String(r[0]),
       provisional: cand ? 1 : 0, licence: ds.licence, non_commercial: ds.nc ? 1 : 0, coding_rules: UCDP_RULES, scope: scope || "",
       event_date: r[1], end_date: r[2] || "", event_type: t[0], sub_event_type: "", source_violence_type: t[1],
       actor1: a1, inter1: i1, actor2: a2, inter2: i2, interaction: i1 + " vs " + i2,
@@ -252,7 +256,7 @@
   }
   function fromMm(r, f, scope) {
     var ds = DATASETS.mm_protest, t = mmCode(r[6], r[12]), riot = t[0] === "Riots", force = /\b(killings|shootings|beatings|arrests|crowd dispersal)\b/i.test(String(r[12] || ""));
-    return { record_basis: "dataset_coded", dataset: ds.id, dataset_release: "2020 (final)", source_event_id: String(r[0]), provisional: 0, licence: ds.licence, non_commercial: ds.nc ? 1 : 0,
+    return { record_basis: "dataset_coded", coding_method: "human", dataset: ds.id, dataset_release: "2020 (final)", source_event_id: String(r[0]), provisional: 0, licence: ds.licence, non_commercial: ds.nc ? 1 : 0,
       coding_rules: MM_RULES, scope: scope || "", event_date: r[1], end_date: r[2] || "", event_type: t[0], sub_event_type: t[1], source_violence_type: "Protest" + (+r[6] === 1 ? " (protester violence)" : ""),
       actor1: (riot ? "Rioters" : "Protesters") + (r[10] ? " (" + r[10] + ")" : ""), inter1: riot ? "Rioters" : "Protesters",
       actor2: force ? "State forces" : "", inter2: force ? "State forces" : "", interaction: (riot ? "Rioters" : "Protesters") + (force ? " vs State forces" : " only"),
@@ -261,14 +265,29 @@
       demands: r[11] || "", state_response: r[12] || "", participants: r[9] || "",
       source_url: ds.url, sha256_input: ["mm", r[0], r[1], r[2] || "", r[7] || "", r[6], r[12] || ""].join("|"), sha256: "" };
   }
-  var EVCSV = ["record_basis", "dataset", "dataset_release", "source_event_id", "provisional", "licence", "non_commercial", "coding_rules", "scope",
+  /* POLECAT protests (tools/refresh_coded_polecat.mjs rows: id, date, end, lat, lon, prec, riot, place, mode, merged, role, target).
+     Machine-coded: software read the stories, so the record says so in coding_method and the sub-event type stays blank (the
+     software does not say whether the state intervened). */
+  var PC_RULES = "polecat-acled-v1";
+  function fromPolecat(r, f, scope) {
+    var ds = DATASETS.polecat, riot = +r[6] === 1, mode = r[8] || "";
+    return { record_basis: "dataset_coded", coding_method: "machine", dataset: ds.id, dataset_release: "Dataverse", source_event_id: String(r[0]), provisional: 0, licence: ds.licence, non_commercial: ds.nc ? 1 : 0,
+      coding_rules: PC_RULES, scope: scope || "", event_date: r[1], end_date: "", event_type: riot ? "Riots" : "Protests", sub_event_type: riot ? "Violent demonstration" : "",
+      source_violence_type: "PROTEST" + (mode ? " (" + mode + ")" : "") + (+r[9] > 1 ? ", " + r[9] + " machine-coded events merged" : ""),
+      actor1: (riot ? "Rioters" : "Protesters") + (r[10] ? " (" + r[10] + ")" : ""), inter1: riot ? "Rioters" : "Protesters", actor2: "", inter2: "", interaction: (riot ? "Rioters" : "Protesters") + " only",
+      admin1: "", location: r[7] || "", latitude: r[3] == null ? "" : r[3], longitude: r[4] == null ? "" : r[4], geo_precision: r[5], source_geo_precision: "",
+      fatalities_best: "", fatalities_low: "", fatalities_high: "", fatalities_civilians: "", fatalities_basis: "not recorded by the dataset",
+      demands: "", state_response: "", participants: "", target: r[11] || "",
+      source_url: ds.url, sha256_input: ["polecat", r[0], r[1], r[7] || "", mode, r[9]].join("|"), sha256: "" };
+  }
+  var EVCSV = ["record_basis", "coding_method", "dataset", "dataset_release", "source_event_id", "provisional", "licence", "non_commercial", "coding_rules", "scope",
     "event_date", "end_date", "event_type", "sub_event_type", "source_violence_type", "actor1", "inter1", "actor2", "inter2", "interaction",
     "admin1", "location", "latitude", "longitude", "geo_precision", "source_geo_precision",
-    "fatalities_best", "fatalities_low", "fatalities_high", "fatalities_civilians", "fatalities_basis", "demands", "state_response", "participants", "source_url", "sha256"];
+    "fatalities_best", "fatalities_low", "fatalities_high", "fatalities_civilians", "fatalities_basis", "demands", "state_response", "participants", "target", "source_url", "sha256"];
   function evCsv(rows) { return [EVCSV.join(",")].concat(rows.map(function (r) { return EVCSV.map(function (k) { return csvCell(r[k]); }).join(","); })).join("\r\n") + "\r\n"; }
 
   return { TYPES: TYPES, GENERIC: GENERIC, BASIS: BASIS, PRECISION: PRECISION, FIELDS: FIELDS, CSV: CSV, rules: rules, checkAi: checkAi, checkCoding: checkCoding,
     key: key, csv: csv, isType: isType, isSub: isSub,
     DATASETS: DATASETS, UCDP_RULES: UCDP_RULES, ACTOR_TYPES: ACTOR_TYPES, EVCSV: EVCSV, fromUcdp: fromUcdp, ucdpActorType: ucdpActorType, ucdpPrecision: ucdpPrecision, evCsv: evCsv,
-    MM_RULES: MM_RULES, mmCode: mmCode, fromMm: fromMm };
+    MM_RULES: MM_RULES, mmCode: mmCode, fromMm: fromMm, PC_RULES: PC_RULES, fromPolecat: fromPolecat };
 });
