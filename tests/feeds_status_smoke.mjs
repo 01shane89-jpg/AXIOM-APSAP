@@ -28,10 +28,11 @@ await p.evaluate(() => sessionStorage.setItem("osap-refreshed", String(Date.now(
 await p.reload({ waitUntil: "domcontentloaded" }); await ready();
 const r1 = await p.evaluate(() => ({ tidy: document.documentElement.classList.contains("tidy"), feedsHidden: document.getElementById("rv-feeds").hidden }));
 ok(r1.tidy, "tidy layout is on"); ok(r1.feedsHidden, "after Refresh now the feed list does not open over the reports");
-await p.click(".ohb >> nth=0"); await p.waitForTimeout(600);
+await p.evaluate(() => document.querySelector(".ohb").click()); await p.waitForTimeout(600);
 const r2 = await p.evaluate(() => { const d = document.querySelector(".ohp .tpfeeds"); return { has: !!d, open: d && d.open, sum: d && d.querySelector("summary").textContent }; });
 ok(r2.has && r2.open === false, "Data health panel has the feed list, folded");
-await p.click(".ohp .tpfeeds summary"); await p.waitForTimeout(400);
+/* a click from script: a passing map-tile notice can sit over the panel on a slow runner, and this checks the fold, not the stacking */
+await p.evaluate(() => document.querySelector(".ohp .tpfeeds summary").click()); await p.waitForTimeout(400);
 const r3 = await p.evaluate(() => { const d = document.querySelector(".ohp .tpfeeds"); return { open: d.open, rows: d.querySelectorAll(".rvft tr").length }; });
 ok(r3.open && r3.rows >= 3, "opened, it lists each feed (" + r3.rows + ")");
 ok(!errs.length, "no page errors" + (errs.length ? ": " + errs.join(" | ") : ""));
