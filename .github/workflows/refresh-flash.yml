@@ -11,9 +11,6 @@ name: Flash alerts loop
 # On a feature branch (a test): FLASH_NO_MAIN, a short loop, and with test=1 a throwaway list of test watches on a random ntfy
 # channel, read back at the end, so a change can be timed without touching any account's watches.
 on:
-  push:   # TEMP: branch probe trigger, removed before merge
-    branches: [claude/flash-usgs-live]
-    paths: [tools/_probe_usgs.mjs]
   schedule:
     - cron: "41 * * * *"
   workflow_dispatch:
@@ -67,11 +64,7 @@ jobs:
             require("fs").writeFileSync("flash-test-watches.json", JSON.stringify({ v: 1, watches: cc.map((c) => ({ id: "wflashtest-" + c, name: "Flash test " + c.toUpperCase(), cc: c, layers: [], kw: [], minSev: 1, topic: t })) }));
           ' "$topic"
           echo "PUSH_LIST=$PWD/flash-test-watches.json" >> "$GITHUB_ENV"
-      - name: TEMP probe USGS search vs feed (branch only)
-        if: ${{ github.event_name == 'push' }}
-        run: MIN=45 node tools/_probe_usgs.mjs
       - name: Run the flash loop
-        if: ${{ github.event_name != 'push' }}
         run: |
           npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
           node tools/flash_loop.mjs
