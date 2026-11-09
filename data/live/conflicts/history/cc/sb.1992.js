@@ -1,0 +1,1 @@
+(window.OSAP_CF_HIST=window.OSAP_CF_HIST||{})["cc/sb.1992"]={"id":"cc/sb","from":"1992","to":"1992","release":"26.1","sha256":"8a2ba37f03765d94eec152be00b1ed72a8d3f6543dca7617ca240c3819193ae5","sides":["Government of Papua New Guinea","BRA"],"adm":["Western province"],"rows":[["62301","1992-09-12","",-7.05,155.75,1,2,2,2,2,0,1,"Shortland Island, Komaliae village",0,3,0]]};
