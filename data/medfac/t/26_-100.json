@@ -32,7 +32,7 @@
 ["w1181893225",26.40215,-99.03503,"mx",{"name":"Cruz Roja","amenity":"hospital","healthcare":"hospital","operator":"Cruz Roja"}],
 ["w1182129420",26.39931,-99.03353,"mx",{"name":"ISSSTE \"Miguel Aleman\"","amenity":"hospital","healthcare":"hospital","operator":"Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado"}],
 ["w1185097250",27.49683,-99.50493,"mx",{"name":"Hospital General Nuevo Laredo Zona 11","amenity":"hospital","healthcare":"hospital"}],
-["w1422294711",26.08236,-98.30268,"mx",{"name":"HOSPITAL GENERAL IMSS","amenity":"hospital","healthcare":"hospital","operator":"IMSS","operator:type":"government"}],
+["w1422294711",26.08301,-98.30268,"mx",{"name":"HOSPITAL GENERAL IMSS","amenity":"hospital","healthcare":"hospital","operator":"IMSS","operator:type":"government"}],
 ["w1532869247",26.24055,-98.59788,"mx",{"name":"ISSSTE UMF San Miguel","amenity":"hospital","healthcare":"hospital","operator":"Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado","operator:type":"public","addr:street":"Calle Río Tamesí","addr:city":"Gustavo Díaz Ordaz","addr:postcode":"88402"}],
 ["w414886309",26.08846,-98.27244,"mx",{"amenity":"clinic","healthcare":"clinic","addr:city":"Reynosa","osap:withheld":"1"}],
 ["w414887852",26.08738,-98.27087,"mx",{"name":"Comprehensive Neurology","amenity":"clinic","healthcare":"clinic","addr:city":"Reynosa"}],
@@ -51,5 +51,5 @@
 ["w807385574",27.70299,-99.76213,"mx",{"amenity":"clinic","healthcare":"clinic"}],
 ["w870655783",26.00603,-98.22388,"mx",{"name":"Aeropuerto Internacional General Lucio Blanco","name:en":"General Lucio Blanco International Airport","operator":"Grupo Aeroportuario Centro Norte (OMA)","aeroway":"aerodrome","icao":"MMRX","iata":"REX","aerodrome:type":"public","wikidata":"Q2232580"}],
 ["w882204512",27.48442,-99.50524,"mx",{"name":"Hospital ISSSTE","amenity":"hospital","healthcare":"hospital","contact:website":"https://www.gob.mx/issste"}],
-["w882315281",26.08089,-98.27992,"mx",{"name":"Cruz Roja","amenity":"hospital","healthcare":"hospital"}],
+["w882315281",26.08089,-98.27992,"mx",{"name":"Cruz Roja","amenity":"hospital","healthcare":"hospital","operator":"Cruz Roja","operator:type":"ngo"}],
 ["w938345991",26.33406,-99.54224,"mx",{"name":"Estación Aérea Militar No. 10 Agualeguas","aeroway":"aerodrome","icao":"MMAL","military":"airfield","wikidata":"Q17516122"}]]

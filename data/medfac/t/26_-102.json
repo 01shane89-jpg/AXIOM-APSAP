@@ -25,7 +25,7 @@
 ["n7861640936",26.95483,-100.71614,"mx",{"name":"Aeródromo RMC Rancho Mesa de Cartujanos","operator":"Alberto Daniel Milmo Garza","operator:type":"private","aeroway":"aerodrome"}],
 ["w1250969941",27.88861,-101.40026,"mx",{"aeroway":"helipad"}],
 ["w1532871697",27.04815,-101.53724,"mx",{"name":"ISSSTE UMF San Buenaventura","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"orthodontics","operator":"Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado","operator:type":"public","addr:street":"Boulevard Magisterio","addr:city":"San Buenaventura","addr:postcode":"25505"}],
-["w154821232",26.95747,-101.47313,"mx",{"name":"Venustiano Carranza International Airport","name:en":"Venustiano Carranza International Airport","operator":"Civil Aviation Authority","aeroway":"aerodrome","icao":"MMMV","iata":"LOV","aerodrome:type":"public"}],
+["w154821232",26.95747,-101.47313,"mx",{"name":"Aeropuerto Internacional Venustiano Carranza","name:en":"Venustiano Carranza International Airport","operator":"Civil Aviation Authority","aeroway":"aerodrome","icao":"MMMV","iata":"LOV","aerodrome:type":"public"}],
 ["w193233598",27.97478,-101.20828,"mx",{"name":"Aeropuerto Local Nueva Rosita","aeroway":"aerodrome"}],
 ["w193233599",27.85625,-101.52595,"mx",{"name":"Muzquiz New Airport","aeroway":"aerodrome","icao":"MM42"}],
 ["w443504828",26.91512,-101.43107,"mx",{"name":"Cruz Roja","amenity":"clinic"}],

@@ -9,6 +9,8 @@
 ["n11401401207",16.90287,-99.83635,"mx",{"name":"Centro de Salud U-04 Col.e.zapata I","amenity":"hospital","healthcare":"hospital","addr:street":"Calle 18","addr:city":"Acapulco de Juárez","addr:postcode":"39700"}],
 ["n11401432859",16.8614,-99.901,"mx",{"name":"Centro de Salud U-05 Vallarta","amenity":"hospital","healthcare":"hospital","addr:street":"Calle Nuevo León","addr:city":"Acapulco de Juarez","addr:postcode":"39358"}],
 ["n11416317517",16.89962,-99.82764,"mx",{"name":"UNEME de Enfermedades Crónicas","amenity":"hospital","healthcare":"hospital","addr:city":"Acapulco de Juárez","addr:postcode":"39715"}],
+["n14356123744",16.64069,-98.03152,"mx",{"name":"Ba'a na kondubi nasi \"Centro de salud\"","amenity":"clinic","healthcare":"clinic"}],
+["n14356123745",16.64071,-98.03152,"mx",{"amenity":"clinic","healthcare":"clinic"}],
 ["n1837957700",16.4458,-98.64473,"mx",{"name":"centro de salud","amenity":"hospital"}],
 ["n1942354106",16.86293,-99.91851,"mx",{"name":"Sanatorio Sagrado Corazón","amenity":"hospital","emergency":"yes"}],
 ["n1942383678",16.87298,-99.88745,"mx",{"name":"ISSSTE","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado"}],

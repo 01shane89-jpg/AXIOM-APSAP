@@ -24,6 +24,8 @@
 ["w1152329223",18.78125,-88.30288,"mx",{"name":"Bacalar Military","operator":"SEDENA","aeroway":"helipad","surface":"asphalt"}],
 ["w1472437482",18.50682,-88.31018,"mx",{"amenity":"hospital","healthcare":"hospital","operator":"Instituto Mexicano del Seguro Social","operator:type":"government"}],
 ["w1563578263",18.51799,-88.32398,"mx",{"name":"ISSTE","healthcare":"hospital"}],
+["w1571491501",18.50208,-88.29831,"mx",{"name":"Hospital Morelos","healthcare":"hospital"}],
+["w1576718693",18.49912,-88.29884,"mx",{"name":"Independencia","healthcare":"clinic"}],
 ["w205547100",18.07395,-88.56547,"bz",{"name":"Dialisis de Belice","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"dialysis"}],
 ["w238810252",18.356,-88.13105,"bz",{"name":"Sarteneja Airstrip","addr:city":"Sarteneja","aeroway":"aerodrome","icao":"MZSJ","iata":"SJX","wikidata":"Q7424653"}],
 ["w239015695",18.3824,-88.40984,"bz",{"name":"Corozal Airport","aeroway":"aerodrome","icao":"MZCZ","iata":"CZH","wikidata":"Q1657762"}],

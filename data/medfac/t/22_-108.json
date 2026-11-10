@@ -9,6 +9,7 @@
 ["r19221431",23.94473,-106.42322,"mx",{"name":"HOSPITAL INTEGRAL SAN IGNACIO","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"emergency;surgery;paediatrics;radiology;vaccination;gynaecology;internal;anaesthetics","emergency":"yes","operator":"Instituto Mexicano del Seguro Social","operator:type":"government","phone":"+52 696 962 5826","addr:housenumber":"SN","addr:street":"Calle Francisco Villa","addr:city":"San Ignacio","addr:postcode":"82910","opening_hours":"24/7"}],
 ["w139322051",23.16473,-106.26773,"mx",{"name":"Aeropuerto Internacional General Rafael Buelna","name:en":"General Rafael Buelna International Airport","operator":"Grupo Aeroportuario Centro Norte OMA","website":"https://www.oma.aero/es/aeropuertos/mazatlan/","aeroway":"aerodrome","icao":"MMMZ","aerodrome:type":"public"}],
 ["w1471771526",23.23705,-106.36964,"mx",{"aeroway":"helipad"}],
+["w1568692626",23.94351,-106.43507,"mx",{"aeroway":"helipad"}],
 ["w186176218",23.16505,-106.26526,"mx",{"aeroway":"helipad"}],
 ["w244853365",23.24289,-106.44056,"mx",{"name":"Hospital Sharp","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w244979131",23.21225,-106.42097,"mx",{"name":"Seguro Viejo","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],

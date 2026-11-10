@@ -41,6 +41,7 @@
 ["w1552596176",22.09899,-103.27092,"mx",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1553277695",22.63929,-102.99654,"mx",{"name":"Hospital General Jerez","amenity":"hospital","healthcare":"hospital","operator":"Instituto Mexicano del Seguro Social","operator:type":"government"}],
 ["w1553277696",22.63917,-102.99645,"mx",{"amenity":"clinic","healthcare":"clinic","operator":"Instituto Mexicano del Seguro Social","operator:type":"government"}],
+["w1568592625",22.02884,-102.27631,"mx",{"amenity":"clinic","healthcare":"clinic"}],
 ["w183739175",22.74987,-102.50487,"mx",{"aeroway":"helipad"}],
 ["w183910943",22.76505,-102.51872,"mx",{"aeroway":"helipad"}],
 ["w190772012",22.75574,-102.50513,"mx",{"name":"UMF ISSSTE","amenity":"hospital","emergency":"no"}],
