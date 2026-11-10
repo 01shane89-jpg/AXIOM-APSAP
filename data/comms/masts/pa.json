@@ -1,4 +1,4 @@
-{"cc":"pa","at":"2026-10-07T11:07:39Z","base":"2026-10-07T11:06:05Z","m":[
+{"cc":"pa","at":"2026-11-10T12:02:34Z","base":"2026-11-10T12:01:13Z","m":[
 ["n10204520114",8.93982,-79.57246,{"man_made":"tower","tower:type":"communication"}],
 ["n10243757171",8.97912,-79.56535,{"communication:radar":"yes","man_made":"tower","tower:type":"communication"}],
 ["n10243757172",8.95468,-79.56136,{"man_made":"tower","tower:type":"communication"}],
@@ -90,6 +90,8 @@
 ["n13709288579",8.95477,-79.5828,{"man_made":"tower","tower:type":"communication"}],
 ["n14087807448",8.92273,-79.73686,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n14090337545",8.9226,-79.7367,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14313506731",8.96235,-79.5373,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
+["n14317570567",7.75356,-80.16872,{"man_made":"tower","tower:type":"communication"}],
 ["n1895031265",9.0495,-79.51931,{"man_made":"tower","tower:type":"communication"}],
 ["n1895031266",9.04957,-79.51896,{"man_made":"tower","tower:type":"communication"}],
 ["n1895031267",9.0496,-79.51863,{"man_made":"tower","tower:type":"communication"}],

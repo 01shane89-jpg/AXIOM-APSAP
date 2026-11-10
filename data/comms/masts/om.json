@@ -1,4 +1,4 @@
-{"cc":"om","at":"2026-10-07T11:06:11Z","base":"2026-10-07T11:04:06Z","m":[
+{"cc":"om","at":"2026-11-10T11:59:11Z","base":"2026-11-10T11:58:13Z","m":[
 ["n10058577448",23.32108,57.56203,{"man_made":"mast","tower:type":"communication"}],
 ["n10248061774",21.92176,59.61482,{"communication:radio":"sw","man_made":"tower","operator":"BBC","tower:construction":"alliss_module","tower:type":"communication"}],
 ["n1029934361",22.57487,59.50555,{"man_made":"tower","tower:type":"communication"}],
@@ -200,6 +200,7 @@
 ["n14159406460",22.97742,57.69892,{"man_made":"mast","tower:type":"communication"}],
 ["n14159406546",23.02469,57.69664,{"man_made":"mast","tower:type":"communication"}],
 ["n14159406551",23.02474,57.69722,{"man_made":"mast","tower:type":"communication"}],
+["n14266162766",23.57159,58.20607,{"man_made":"communications_tower"}],
 ["n1458460073",23.16962,57.40182,{"man_made":"tower","tower:type":"communication"}],
 ["n1580549558",26.23927,56.19652,{"man_made":"tower","tower:type":"communication"}],
 ["n1625833238",17.57661,53.24696,{"man_made":"tower","tower:type":"communication"}],
