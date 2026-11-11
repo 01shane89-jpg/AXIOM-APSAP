@@ -167,7 +167,15 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
-      - run: npx playwright install --with-deps chromium
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test):
+      # refresh the package lists first and try up to 4 times, 30 s apart
+      - run: |
+          for i in 1 2 3 4; do
+            sudo apt-get update -q || true
+            npx playwright install --with-deps chromium && exit 0
+            echo "install attempt $i failed; retrying in 30 s"; sleep 30
+          done
+          exit 1
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
       # a US state view shows its outlets' earlier items (data/history/us-states, tools/history.mjs)
@@ -343,7 +351,15 @@ jobs:
       - run: node tests/reports_smoke.mjs
       - run: node tests/feeds_status_smoke.mjs
       # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
-      - run: sudo apt-get install -y --no-install-recommends poppler-utils
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test):
+      # refresh the package lists first and try up to 4 times, 30 s apart
+      - run: |
+          for i in 1 2 3 4; do
+            sudo apt-get update -q || true
+            sudo apt-get install -y --no-install-recommends poppler-utils && exit 0
+            echo "install attempt $i failed; retrying in 30 s"; sleep 30
+          done
+          exit 1
       - run: node tests/pdf_export_smoke.mjs
       # the medical plan as one landscape briefing slide: facilities, PACE, satellite maps, table, contacts; PDF and PowerPoint (assets/osap-medslide.js)
       - run: node tests/medslide_smoke.mjs
@@ -391,5 +407,13 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
-      - run: npx playwright install --with-deps webkit
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test):
+      # refresh the package lists first and try up to 4 times, 30 s apart
+      - run: |
+          for i in 1 2 3 4; do
+            sudo apt-get update -q || true
+            npx playwright install --with-deps webkit && exit 0
+            echo "install attempt $i failed; retrying in 30 s"; sleep 30
+          done
+          exit 1
       - run: BROWSER=webkit node tests/carry_smoke.mjs
