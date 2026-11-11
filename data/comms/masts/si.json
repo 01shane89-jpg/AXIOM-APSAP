@@ -1,4 +1,4 @@
-{"cc":"si","at":"2026-10-08T11:34:07Z","base":"2026-10-08T11:29:36Z","m":[
+{"cc":"si","at":"2026-11-11T12:06:19Z","base":"2026-11-11T12:03:58Z","m":[
 ["n10005110075",46.01264,14.01298,{"communication:radio":"yes","communication:television":"yes","man_made":"mast","operator":"RTV Slovenija","tower:type":"communication"}],
 ["n10013428384",45.65425,15.31752,{"communication:radio":"fm","communication:television":"dvb-t","height":"35","man_made":"mast","name":"Metlika","tower:construction":"lattice","tower:type":"communication"}],
 ["n10015670885",45.46834,15.25185,{"communication:television":"dvb-t","man_made":"mast","name":"Vinica","tower:type":"communication"}],
@@ -299,6 +299,11 @@
 ["n14206681191",46.11725,14.76521,{"communication:television":"yes","man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
 ["n14228200925",46.25058,14.32266,{"man_made":"communications_tower","tower:type":"communication"}],
 ["n14240478351",45.94423,13.8913,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
+["n14274389148",46.59364,15.60548,{"man_made":"tower","tower:type":"communication"}],
+["n14317200268",46.16634,14.48536,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14323821602",46.20663,14.60439,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
+["n14335788052",45.92613,13.63137,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14335795840",45.93092,13.63696,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n1493028399",46.60836,15.22744,{"man_made":"tower","name":"Oddajnik Radlje","operator":"RTV Slovenija","tower:type":"communication"}],
 ["n1642277985",46.52245,13.71446,{"man_made":"mast","operator":"RTV Slovenija","tower:type":"communication"}],
 ["n1648403183",46.53373,15.67264,{"ele":"388","height":"118","man_made":"tower","name":"RTVSLO Antena Tezno","operator":"RTV Slovenija","tower:type":"communication"}],
