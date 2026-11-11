@@ -167,12 +167,16 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
-      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test):
-      # refresh the package lists first and try up to 4 times, 30 s apart
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
+      # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
+      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
       - run: |
+          npx playwright install chromium
+          if node -e "require('playwright').chromium.launch().then(b => b.close())"; then echo "chromium runs without extra packages"; exit 0; fi
+          APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
           for i in 1 2 3 4; do
-            sudo apt-get update -q || true
-            npx playwright install --with-deps chromium && exit 0
+            sudo timeout 300 apt-get $APT update -q || true
+            timeout 600 npx playwright install --with-deps chromium && exit 0
             echo "install attempt $i failed; retrying in 30 s"; sleep 30
           done
           exit 1
@@ -351,12 +355,15 @@ jobs:
       - run: node tests/reports_smoke.mjs
       - run: node tests/feeds_status_smoke.mjs
       # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
-      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test):
-      # refresh the package lists first and try up to 4 times, 30 s apart
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
+      # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
+      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
       - run: |
+          if command -v pdftotext; then exit 0; fi
+          APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
           for i in 1 2 3 4; do
-            sudo apt-get update -q || true
-            sudo apt-get install -y --no-install-recommends poppler-utils && exit 0
+            sudo timeout 300 apt-get $APT update -q || true
+            sudo timeout 300 apt-get $APT install -y --no-install-recommends poppler-utils && exit 0
             echo "install attempt $i failed; retrying in 30 s"; sleep 30
           done
           exit 1
@@ -407,12 +414,16 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
-      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test):
-      # refresh the package lists first and try up to 4 times, 30 s apart
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
+      # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
+      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
       - run: |
+          npx playwright install webkit
+          if node -e "require('playwright').webkit.launch().then(b => b.close())"; then echo "webkit runs without extra packages"; exit 0; fi
+          APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
           for i in 1 2 3 4; do
-            sudo apt-get update -q || true
-            npx playwright install --with-deps webkit && exit 0
+            sudo timeout 300 apt-get $APT update -q || true
+            timeout 600 npx playwright install --with-deps webkit && exit 0
             echo "install attempt $i failed; retrying in 30 s"; sleep 30
           done
           exit 1
