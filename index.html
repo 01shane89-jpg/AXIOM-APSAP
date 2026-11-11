@@ -9305,7 +9305,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 #phone-nav{display:none}
 #rail-handle{display:none}
 @media (max-width:700px){
-  html.phone,html.phone body{height:100%;overflow:hidden}
+  /* --app-h is the height the browser really gives the page (window.innerHeight, set by the phone script below), the same
+     box the bottom sheet is pinned to. 100svh was used before, but some iPhone browsers (Safari opened from another app,
+     and Safari with its floating toolbar) report 100svh taller than that box, so the map and its right-hand buttons ran on
+     under the sheet and the last buttons could not be reached */
+  html.phone,html.phone body{height:var(--app-h,100%);overflow:hidden}
   html.phone header{gap:6px;row-gap:6px;padding:8px 10px}
   html.phone header .ctabs,html.phone header .viewtabs,html.phone #hdr-src{display:none!important}
   html.phone #phone-nav{display:flex;order:9;flex:1 1 100%;gap:6px;min-width:0;max-width:100%;box-sizing:border-box}
@@ -9316,7 +9320,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone:not(.hdr-open) #period-seg,html.phone:not(.hdr-open) #brief-btn,html.phone:not(.hdr-open) #report-btn,html.phone:not(.hdr-open) #credits-btn,html.phone:not(.hdr-open) #theme-seg{display:none!important}
   html.phone #ph-more{flex:0 0 auto;min-height:40px;min-width:44px;font:inherit;font-size:14px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
   html.phone.hdr-open #ph-more{background:var(--ink);color:var(--surface)}
-  html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
+  html.phone #map{height:calc(var(--app-h,100svh) - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
+  html.phone.mapfull #map{height:var(--app-h,100svh)!important}
   html.phone{--sab:env(safe-area-inset-bottom,0px);--bar-h:calc(64px + var(--sab))}
   html.phone .shell{display:block}
   /* the sheet scrolls up and down only: nothing in it scrolls it sideways (a long unbroken line such as the timeline's
@@ -9331,8 +9336,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone .rail .obs,html.phone .rail .note,html.phone .rail .tls{font-size:12.5px}
   html.phone .rail button.refresh,html.phone .rail select{min-height:36px}
   html.phone[data-sheet="bar"]{--sheet-h:var(--bar-h)}
-  html.phone[data-sheet="half"]{--sheet-h:50svh}
-  html.phone[data-sheet="full"]{--sheet-h:calc(100svh - var(--hdr-h,120px))}
+  html.phone[data-sheet="half"]{--sheet-h:calc(var(--app-h,100svh) * .5)}
+  html.phone[data-sheet="full"]{--sheet-h:calc(var(--app-h,100svh) - var(--hdr-h,120px))}
   #rail-handle{display:none}
   html.phone #rail-handle{display:flex;position:sticky;top:0;z-index:5;align-items:center;margin:0 -14px;padding:0 14px;height:var(--bar-h);box-sizing:border-box;background:var(--surface);border-bottom:1px solid var(--line-soft);touch-action:none;padding-bottom:var(--sab)}
   html.phone #rail-handle .grab{flex:1;display:flex;flex-direction:column;align-items:stretch;gap:3px;background:none;border:none;font:inherit;color:var(--ink);padding:6px 0 4px;cursor:pointer;height:100%;text-align:left;min-width:0}
@@ -9343,7 +9348,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone[data-sheet="full"] #rail-handle .chev{transform:rotate(180deg)}
   html.phone .leaflet-popup-content{max-width:calc(100vw - 90px)!important;font-size:14px}
   html.phone .leaflet-container a.leaflet-popup-close-button{width:36px;height:36px;font-size:22px;line-height:36px}
-  html.phone .pkgsheet{position:fixed!important;left:0;right:0;bottom:0;max-height:82svh;overflow-y:auto;overscroll-behavior:contain;z-index:3001;background:var(--surface);
+  html.phone .pkgsheet{position:fixed!important;left:0;right:0;bottom:0;max-height:calc(var(--app-h,100svh) * .82);overflow-y:auto;overscroll-behavior:contain;z-index:3001;background:var(--surface);
     border-radius:14px 14px 0 0;padding:0 16px calc(28px + var(--sab));box-shadow:0 -6px 24px rgba(0,0,0,.35);font-size:14px}
   html.phone .pkgsheet .pkghead{position:sticky;top:0;background:var(--surface);padding-top:10px;z-index:2}
   html.phone .pkgsheet .pkghead .x{font-size:28px;min-width:44px;min-height:44px}
@@ -9370,8 +9375,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var map = window.__asapMap, rail = document.querySelector(".rail");
   if (!map || !rail) return;
   function on() { return mq.matches; }
+  /* the page's real height: the box fixed things (the bottom sheet) are pinned to. Kept up to date as the browser's bars
+     slide in and out and the phone turns; the on-screen keyboard leaves it alone (it changes the visual viewport only) */
+  var appH = 0;
+  function sizeApp() {
+    var hgt = Math.round(window.innerHeight || document.documentElement.clientHeight || 0);
+    if (!hgt || hgt === appH) return false;
+    appH = hgt; root.style.setProperty("--app-h", hgt + "px"); return true;
+  }
+  sizeApp();
+  window.addEventListener("orientationchange", function () { setTimeout(function () { if (sizeApp() && on()) map.invalidateSize(); }, 300); });
+  window.addEventListener("resize", function () { if (sizeApp() && on()) map.invalidateSize(); });
   var first = true;
   function apply() {
+    sizeApp();
     root.classList.toggle("phone", on());
     if (on() && !root.getAttribute("data-sheet")) root.setAttribute("data-sheet", "bar");
     /* on the first call the page is still being built: the resize waits for the first frame, which has laid the page out once

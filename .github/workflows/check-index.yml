@@ -189,6 +189,8 @@ jobs:
       - run: node tests/cnpresence_smoke.mjs
       - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs
+      # phones: the map and its toolbar end where the bottom sheet begins, even where 100svh is taller than the page (iPhone)
+      - run: node tests/phone_fit_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/draw_style_rulers_smoke.mjs
       - run: node tests/draw_planning_smoke.mjs
