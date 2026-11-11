@@ -1,4 +1,4 @@
-{"cc":"rs","at":"2026-10-09T10:58:37Z","base":"2026-10-09T10:57:21Z","m":[
+{"cc":"rs","at":"2026-11-11T12:08:34Z","base":"2026-11-11T12:07:02Z","m":[
 ["n10007234979",43.13109,21.27458,{"communication:mobile_phone":"yes","communication:radio":"yes","communication:television":"yes","man_made":"tower","tower:type":"communication"}],
 ["n10023593183",45.85472,20.48494,{"communication:radio":"fm","communication:television":"dvb-t2","height":"110","man_made":"tower","name":"ЕТВ Кикинда","name:en":"ETV Kikinda","operator":"ЈП Емисиона техника и везе","tower:construction":"mast","tower:type":"communication"}],
 ["n10061960813",43.83896,21.67562,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
@@ -1220,7 +1220,14 @@
 ["n14156869047",45.45954,19.67403,{"communication:gsm-r":"yes","man_made":"tower","name":"GSM-R Zmajevo","tower:construction":"lattice","tower:type":"communication"}],
 ["n14174245055",45.26384,19.81209,{"man_made":"mast","tower:type":"communication"}],
 ["n14208250173",43.33917,20.27627,{"man_made":"tower","tower:type":"communication"}],
+["n14287826262",45.40638,19.98011,{"man_made":"tower","tower:type":"communication"}],
+["n14314232701",45.22821,19.85458,{"man_made":"tower","material":"metal","tower:construction":"lattice","tower:type":"communication"}],
+["n14314232702",45.22825,19.85493,{"man_made":"tower","material":"metal","tower:construction":"lattice","tower:type":"communication"}],
+["n14336459477",44.64463,21.62359,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n14336650096",44.63211,21.63423,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n1435273306",45.93401,20.08578,{"man_made":"mast","name":"Radio Fox","tower:type":"communication"}],
+["n14354025311",45.4164,19.90079,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"a1","tower:type":"communication"}],
+["n14356356287",45.42369,19.89652,{"man_made":"tower","tower:type":"communication"}],
 ["n1595279327",45.60874,19.53102,{"man_made":"tower","tower:type":"communication"}],
 ["n1597705130",45.04824,21.15481,{"man_made":"communications_tower","name":"ВИП мобил"}],
 ["n1597705360",45.04198,21.15683,{"man_made":"communications_tower","name":"Телеком Србија"}],
