@@ -196,7 +196,7 @@
     '<div class="pt-f pt-az" hidden><span>Heading (degrees)</span><div class="pt-azrow"><input id="pt-az" type="number" inputmode="decimal" min="0" max="359.9" step="1"><span class="obs pt-azl"></span></div></div>' +
     '<label class="pt-f"><span>Note</span><textarea id="pt-note" rows="3" maxlength="2000" placeholder="What is here, what you saw"></textarea></label>' +
     '<h3>Photos <span class="obs pt-cnt"></span></h3><div class="pt-phs"></div>' +
-    '<div class="pt-add"><label class="pt-btn pri"><input type="file" accept="image/*" capture="environment" data-pf="cam">Take photo</label>' +
+    '<div class="pt-add"><button type="button" class="pt-btn pri pt-osc" data-pe="cam">Take photo (data on screen)</button><label class="pt-btn pt-app"><input type="file" accept="image/*" capture="environment" data-pf="cam">Phone camera app</label>' +
     '<label class="pt-btn"><input type="file" accept="image/*" multiple data-pf="lib">Add from library</label></div>' +
     '<p class="obs">Photos stay on this device only and are never uploaded. Each original is kept unchanged with its SHA-256 fingerprint. Clearing this site\'s data in the browser removes them.</p></div>' +
     '<div class="pt-foot"><button type="button" class="pt-btn dng" data-pe="del">Delete point</button><button type="button" class="pt-btn pri" data-pe="x">Done</button></div>';
@@ -214,6 +214,9 @@
       ed.querySelector(".pt-azl").textContent = typeof p.az === "number" ? hdText(p.az, p.azRef) + (p.azEd ? ", corrected by you (the compass reading stays with the photo)" : ", from the device compass") : "No heading was read. Type one to add it.";
     }
     icPaint(p);
+    /* no camera inside OSAP (no getUserMedia): the phone camera app is the only way, so it becomes the main button */
+    var hasCam = !!(W.navigator.mediaDevices && W.navigator.mediaDevices.getUserMedia);
+    ed.querySelector(".pt-osc").hidden = !hasCam; ed.querySelector(".pt-app").classList.toggle("pri", !hasCam);
     thumbs(ed.querySelector(".pt-phs"), p.id, true);
   }
   function edit(id) {
@@ -261,6 +264,7 @@
     if ((b = t.closest("[data-pe]"))) {
       var k = b.getAttribute("data-pe");
       if (k === "x") edClose();
+      else if (k === "cam" && cur) camFor(cur);
       else if (k === "icon" && W.OSAP_MSYM) { flush(); var ip = find(cur), id = cur; if (ip) W.OSAP_MSYM.pick(ip.sym, ip.n, function (sym) { setPt(id, { sym: sym || "" }); if (cur === id) edPaint(); }); }
       else if (k === "del") { var p = find(cur); if (p && W.confirm("Delete " + p.n + (p.ph ? " and its " + p.ph + " photo" + (p.ph > 1 ? "s" : "") : "") + " from this device?")) { var pid = cur; saveT = 0; edClose(); P.del(pid); } }
     }
@@ -363,7 +367,7 @@
     else h.textContent = !H() ? "No compass helper on this page: the photo is saved without a heading." : (H().supported && !H().supported()) || (H().status && H().status() === "none") ? "This device has no compass: the photo is saved without a heading." : S.hdeny ? "Compass not allowed: the photo is saved without a heading." : "Starting compass… (turn the phone in a figure of eight if it stays empty)";
     var ready = !!f || S.centre;
     take.classList.toggle("off", !ready); take.querySelector("input").disabled = !ready;
-    osc.hidden = !(W.navigator.mediaDevices && W.navigator.mediaDevices.getUserMedia); osc.disabled = !ready; osc.classList.toggle("off", !ready);
+    osc.hidden = !(W.navigator.mediaDevices && W.navigator.mediaDevices.getUserMedia); osc.disabled = false; osc.classList.remove("off");
     if (osc.hidden) take.classList.add("pri");
     camPaint();
     sn.querySelector(".sn-centre").hidden = !!f || S.centre || !S.gerr;
@@ -378,7 +382,7 @@
     try { var p = h.request ? h.request() : null; if (p && p.then) p.then(go, function () { go("denied"); }); else go("granted"); } catch (e) { go("denied"); }
     /* a browser that never answers (a computer without sensors can leave the question pending): listen anyway, so the
        helper can report that no reading came (status "none") instead of "Starting compass…" for ever */
-    setTimeout(function () { if (!answered && !S.hsub && !sn.hidden) { S.hsub = onHd; h.start(onHd); } }, 3000);
+    setTimeout(function () { if (!answered && !S.hsub && (!sn.hidden || C.open)) { S.hsub = onHd; h.start(onHd); } }, 3000);
   }
   function gpsStart() {
     var g = W.navigator.geolocation;
@@ -389,11 +393,18 @@
       { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 });
   }
   var tick = 0;
-  function snap() {
-    flush(); if (!ed.hidden) edClose(); map.closePopup();
+  /* GPS and compass on while the sheet or the camera is open */
+  function sensorsOn() {
     S.fix = null; S.hd = null; S.centre = false; S.shot = null; S.hdeny = false;
-    sn.hidden = false; gpsStart(); hdStart(); snPaint();
+    gpsStart(); hdStart();
     clearInterval(tick); tick = setInterval(function () { if (!sn.hidden) snPaint(); else camPaint(); }, 1000);
+  }
+  /* Point > Take a photo here: straight into the OSAP camera with the data on screen when the browser can show it;
+     the sheet (with Phone camera app) is behind it, and is what opens when it cannot. opts.sheet = sheet only. */
+  function snap(opts) {
+    flush(); if (!ed.hidden) edClose(); map.closePopup();
+    C.pid = null; sn.hidden = false; sensorsOn(); snPaint();
+    if (!(opts && opts.sheet) && W.navigator.mediaDevices && W.navigator.mediaDevices.getUserMedia) camOpen();
     if (W.navigator.storage && W.navigator.storage.estimate) W.navigator.storage.estimate().then(function (e) {
       var free = (e.quota || 0) - (e.usage || 0); sn.querySelector(".sn-room").textContent = e.quota ? "Room left for OSAP on this device: about " + (free >= 1073741824 ? (free / 1073741824).toFixed(1) + " GB" : kb(Math.max(0, free))) + (free < 60 * 1048576 ? " (low: a phone photo is often 2 to 6 MB)." : ".") : "";
     }, function () {});
@@ -431,7 +442,8 @@
     var geo = { lat: +lat.toFixed(6), lon: +lon.toFixed(6), grid: A.fmt(lat, lon, "mgrs"), at: iso(shot.t),
       pos: f ? { src: "device GPS", acc: Math.round(f.acc), fixAt: iso(f.t), alt: f.alt != null ? Math.round(f.alt) : null, altAcc: f.altAcc != null ? Math.round(f.altAcc) : null, altRef: f.alt != null ? "WGS84 ellipsoid (device GPS)" : null } : { src: "map center, chosen by the user (no GPS fix)", acc: null },
       heading: hd ? { mag: hd.mag, tru: hd.tru, decl: hd.decl, acc: hd.acc, basis: hd.basis, src: hd.src, readAt: iso(hd.t) } : null };
-    if (cap) geo.capture = cap;
+    var into = cap && cap.pid ? find(cap.pid) : null;
+    if (cap) { geo.capture = { how: cap.how, overlay: cap.overlay }; if (into) geo.capture.addedTo = "existing point"; }
     if (shot.tilt) geo.tilt = { elev: shot.tilt.elev, roll: shot.tilt.roll, src: "device motion sensor" };
     var gz = gridAz(lat, lon, geo.grid, hd); if (gz) geo.heading.grid = gz.az, geo.heading.conv = gz.conv;
     if (hd && after && after !== hd) {
@@ -439,9 +451,10 @@
       if (a1 != null && a2 != null) geo.heading.after = +a2.toFixed(1), geo.heading.turned = Math.round(angDiff(a1, a2));
     }
     var name = "Photo " + ("0" + d.getUTCHours()).slice(-2) + ("0" + d.getUTCMinutes()).slice(-2) + "Z";
+    var az = hd ? (hd.mag != null ? hd.mag : hd.tru) : null;
+    if (into) return addFiles(into.id, files, geo, mark ? function (b, h) { return mark(b, geo, h); } : null).then(function (n) { if (cur === into.id) edPaint(); return n ? into : null; });
     var pt = P.add(L.latLng(lat, lon), name);
     if (!pt) return Promise.resolve(null);
-    var az = hd ? (hd.mag != null ? hd.mag : hd.tru) : null;
     setPt(pt.id, { src: "photo", az: az != null ? az : "", azRef: az != null ? (hd.mag != null ? "magnetic" : "true") : "", azTru: hd && hd.tru != null && hd.mag != null ? hd.tru : "", acc: f ? Math.round(f.acc) : "" });
     return addFiles(pt.id, files, geo, mark ? function (b, h) { return mark(b, geo, h); } : null).then(function (n) {
       if (cur === pt.id) edPaint();
@@ -461,7 +474,7 @@
     '<div class="cm-ret" aria-hidden="true"></div><div class="cm-lvl" aria-hidden="true" hidden></div>' +
     '<div class="cm-bot"><div class="cm-grid"></div><div class="cm-ll"></div><div class="cm-time"></div><div class="cm-tilt"></div><div class="cm-msg" aria-live="polite"></div></div>' +
     '<div class="cm-bar"><button type="button" class="cm-x" data-cm="x">Done</button><button type="button" class="cm-shut" data-cm="shut" aria-label="Take photo"></button><span class="cm-n"></span></div>';
-  var C = { stream: null, open: false, n: 0, busy: false };
+  var C = { stream: null, open: false, n: 0, busy: false, pid: null };
   /* tilt: how far the camera points up or down (elev) and how far the picture leans (roll), from the motion sensor.
      The back camera looks along the phone's -z axis; its up component in the earth frame is -cos(beta)cos(gamma). */
   var T = { v: null, on: false };
@@ -538,11 +551,17 @@
       cam.querySelector(".cm-msg").textContent = (e && e.name === "NotAllowedError" ? "Camera not allowed for this site." : "Camera would not start (" + (e && (e.name || e.message) || "error") + ").") + " Press Done and use Phone camera app.";
     });
   }
+  /* the point editor's Take photo: the OSAP camera, each shot added to that point (not a new point) */
+  function camFor(pid) {
+    if (!find(pid)) return;
+    flush(); C.pid = pid; sn.hidden = true; sensorsOn(); camOpen();
+  }
   function camStop() { tiltOff(); if (C.stream) C.stream.getTracks().forEach(function (t) { t.stop(); }); C.stream = null; var v = cam.querySelector("video"); if (v) v.srcObject = null; }
   function camClose() {
     if (!C.open) return;
     C.open = false; cam.hidden = true; camStop();
-    if (C.n) snClose(); else { sn.hidden = false; snPaint(); }
+    if (C.pid) { var pid = C.pid; C.pid = null; snClose(); if (cur === pid) edPaint(); }
+    else if (C.n) snClose(); else { sn.hidden = false; snPaint(); }
   }
   /* the still: the camera's own photo when the browser offers it, otherwise the video frame at full size */
   function grab() {
@@ -614,7 +633,7 @@
         var tz = new Date(shot.t).toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
         var ty = g.blob.type || "image/jpeg", ext = /png/.test(ty) ? ".png" : /webp/.test(ty) ? ".webp" : ".jpg";
         var file = new File([g.blob], "OSAP-" + tz + ext, { type: ty, lastModified: shot.t });
-        return savePhoto([file], shot, S.hd, { how: g.how, overlay: "grid, azimuth, position, time and tilt shown on screen while aiming and drawn on a separate copy; the original is unchanged" }, function (b, geo, h) { return burn(b, geo, h, "readings at the shutter"); });
+        return savePhoto([file], shot, S.hd, { pid: C.pid, how: g.how, overlay: "grid, azimuth, position, time and tilt shown on screen while aiming and drawn on a separate copy; the original is unchanged" }, function (b, geo, h) { return burn(b, geo, h, "readings at the shutter"); });
       }).then(function (pt) { C.busy = false; if (pt) C.n++; camPaint(); }, function (er) { C.busy = false; cam.querySelector(".cm-msg").textContent = "Photo not taken: " + (er && er.message || "error"); camPaint(); });
     }
   });
@@ -654,7 +673,7 @@
     ".pt-th{position:relative;display:inline-block}.pt-th [data-ph]{display:block;padding:0;border:1px solid var(--line);border-radius:5px;background:#000;cursor:zoom-in;overflow:hidden}" +
     ".pt-th img{display:block;width:76px;height:76px;object-fit:cover}.atk-pph .pt-th img{width:56px;height:56px}" +
     ".pt-thx{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;background:#c92a2a;color:#fff;font:700 15px/1 system-ui,sans-serif;cursor:pointer;padding:0}" +
-    ".pt-add{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}" +
+    ".pt-add{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}.pt-osc[hidden]{display:none}" +
     ".pt-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:6px;background:var(--surface,#fff);color:var(--ink,#222);font:600 13px system-ui,-apple-system,sans-serif;cursor:pointer;text-decoration:none;overflow:hidden}" +
     ".pt-btn.pri{background:#0b7285;border-color:#0b7285;color:#fff}.pt-btn.dng{color:#c92a2a;border-color:#c92a2a}" +
     ".pt-btn input[type=file]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;font-size:0}" +
@@ -672,7 +691,7 @@
   mapEl.appendChild(ed); mapEl.appendChild(sn); D.body.appendChild(vw); D.body.appendChild(cam);
   W.addEventListener("hashchange", function () { if (!ed.hidden) edClose(); if (!sn.hidden) snClose(); });
 
-  W.OSAP_POINTS = { edit: edit, close: edClose, thumbs: function (el, pid) { return thumbs(el, pid, false); }, forget: forget, add: addFiles, photos: photosOf, view: view, snap: snap, snapClose: snClose, camera: camOpen, cameraClose: camClose };
+  W.OSAP_POINTS = { edit: edit, close: edClose, thumbs: function (el, pid) { return thumbs(el, pid, false); }, forget: forget, add: addFiles, photos: photosOf, view: view, snap: snap, snapClose: snClose, camera: camOpen, cameraFor: camFor, cameraClose: camClose };
   /* osap-atak.js drew the points before this file loaded: draw again so their popups get the photo strip and Edit */
   P.draw(); P.paint();
 })();
