@@ -46,7 +46,7 @@
 ["r20579772",12.49576,-85.63916,"ni",{"name":"Hospital José Nieborowski","amenity":"hospital","healthcare":"hospital","wikidata":"Q139547959"}],
 ["w1044291634",13.08539,-85.99968,"ni",{"name":"Hospital Blanca Aráuz Pineda","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","addr:street":"4ta. Av. Sureste","addr:city":"Jinotega"}],
 ["w1044291635",13.08624,-85.99967,"ni",{"name":"Hospital Victoria Motta","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","addr:street":"4ta. Av. Sureste","addr:city":"Jinotega"}],
-["w1098425816",13.35705,-85.66709,"ni",{"name":"Hospital El Cua","amenity":"hospital"}],
+["w1098425816",13.3574,-85.66727,"ni",{"name":"Hospital El Cua","amenity":"hospital"}],
 ["w1172482606",12.27303,-85.38619,"ni",{"amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud"}],
 ["w1194850996",12.2068,-85.16931,"ni",{"name":"Centro de Salud la Libertad","amenity":"clinic","healthcare":"clinic","operator":"MINSA","addr:city":"La Libertad","opening_hours":"24/7"}],
 ["w1214590955",12.07374,-85.40164,"ni",{"name":"Aeropuerto de Juigalpa","operator":"Instituto Nicaragüense de Aeronáutica Civil - INAC","website":"https://www.inac.gob.ni/","aeroway":"aerodrome","icao":"MNJU","wikidata":"Q11824450"}],

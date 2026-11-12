@@ -23,6 +23,7 @@
 ["r2142858",11.86015,-86.24244,"ni",{"name":"Hospital El Maestro","amenity":"hospital","emergency":"yes"}],
 ["w1194889842",11.70115,-86.03216,"ni",{"aeroway":"helipad","surface":"asphalt"}],
 ["w1355511386",11.97475,-86.09712,"ni",{"amenity":"clinic","healthcare":"clinic"}],
+["w1575506758",11.97613,-86.0966,"ni",{"name":"Clínica Cobán - Sánchez","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"diagnostic_radiology;general;surgery","addr:street":"Avenida San Jerónimo","addr:city":"Masaya"}],
 ["w236466710",11.97201,-86.0952,"ni",{"name":"Cruz Blanca - Masaya","emergency":"ambulance_station","operator":"MINSA","phone":"50525222131","addr:street":"Calle Vega Matus","addr:city":"Masaya"}],
 ["w277484767",11.97258,-86.10279,"ni",{"name":"Centro de Salud","amenity":"clinic"}],
 ["w306066379",11.84236,-86.20104,"ni",{"name":"Hospital Santiago","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud","operator:type":"government"}],
