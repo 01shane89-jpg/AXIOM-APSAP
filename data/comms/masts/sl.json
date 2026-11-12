@@ -1,4 +1,4 @@
-{"cc":"sl","at":"2026-10-09T11:03:33Z","base":"2026-10-09T11:02:21Z","m":[
+{"cc":"sl","at":"2026-11-12T11:55:18Z","base":"2026-11-12T11:53:18Z","m":[
 ["n10592565096",8.46401,-12.83734,{"man_made":"tower","tower:type":"communication"}],
 ["n10592621354",8.46359,-12.83708,{"man_made":"tower","tower:type":"communication"}],
 ["n11544210242",8.88732,-12.06216,{"man_made":"mast","tower:construction":"guyed_lattice","tower:type":"radio"}],
@@ -18,6 +18,7 @@
 ["n14201928377",8.58009,-12.94242,{"man_made":"tower","tower:type":"communication"}],
 ["n14237702259",9.57698,-11.54794,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
 ["n14237702260",9.5768,-11.54803,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
+["n14364335614",7.96688,-11.74737,{"man_made":"mast","tower:type":"communication"}],
 ["n1563375933",9.0111,-11.714,{"man_made":"tower","operator":"Airtel","tower:type":"communication"}],
 ["n1563375934",9.02669,-11.66972,{"man_made":"tower","operator":"AML","tower:type":"communication"}],
 ["n1563397503",8.46567,-12.48614,{"man_made":"tower","name":"Magbosi","tower:type":"communication"}],

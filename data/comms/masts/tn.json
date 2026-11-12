@@ -1,4 +1,4 @@
-{"cc":"tn","at":"2026-10-09T11:38:23Z","base":"2026-10-09T11:35:06Z","m":[
+{"cc":"tn","at":"2026-11-12T12:31:41Z","base":"2026-11-12T12:23:48Z","m":[
 ["n10002393422",36.01413,9.22153,{"man_made":"tower","tower:type":"communication"}],
 ["n10002393423",36.01433,9.22117,{"man_made":"tower","tower:type":"communication"}],
 ["n10002393428",35.95675,9.24984,{"man_made":"tower","tower:type":"communication"}],
@@ -57,6 +57,7 @@
 ["n1394269184",37.22031,9.74476,{"man_made":"tower","tower:type":"communication"}],
 ["n14077204679",35.8003,10.65025,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n1417589450",36.90181,10.12412,{"man_made":"tower","tower:type":"communication"}],
+["n14315468429",35.25269,9.02631,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n1974120243",33.45566,9.70149,{"man_made":"tower","tower:type":"communication"}],
 ["n1974120406",33.52788,9.6872,{"man_made":"tower","tower:type":"communication"}],
 ["n1974212174",32.99574,9.67277,{"man_made":"tower","tower:type":"communication"}],
