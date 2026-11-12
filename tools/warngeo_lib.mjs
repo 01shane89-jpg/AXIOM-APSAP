@@ -119,7 +119,12 @@ export function shapesOf(text) {
   if (num && coordsIn(num.head).length) parts.unshift({ label: "", text: num.head });
   for (const p of parts) {
     const let_ = splitLet(p.text);
-    if (let_ && let_.parts.some((q) => coordsIn(q.text).length)) {
+    // "WITHIN AREA BOUND BY: A. 31-59.46S 132-50.86E B. 33-10.31S 133-12.29E C. … D. …" (AMSA AUSCOAST): the letters label the
+    // corners of one shape, not separate parts. When every lettered part holds at most one position, read the part whole.
+    const corners = let_ && let_.parts.length >= 2 && let_.parts.every((q) => coordsIn(q.text).length <= 1) && !coordsIn(let_.head).length
+      && (shapeWord(let_.head + " ") || {}).shape && ["area", "track", "corridor"].includes(shapeWord(let_.head + " ").shape);
+    if (corners) shapesOfPart(p.text, null).forEach((g) => out.push({ part: p.label, ...g }));
+    else if (let_ && let_.parts.some((q) => coordsIn(q.text).length)) {
       const inherit = shapeWord(let_.head + " ") || null;
       if (coordsIn(let_.head).length) shapesOfPart(let_.head, null).forEach((g) => out.push({ part: p.label, ...g }));
       for (const q of let_.parts) shapesOfPart(q.text, inherit).forEach((g) => out.push({ part: p.label + q.label, ...g }));

@@ -47,6 +47,10 @@ f = feats("A", 564);
 ok(f.length === 5 && f.every((x) => x.properties.shape === "area"), "five mining areas off Ukraine (lettered A to E)");
 f = feats("4", 12);
 ok(f.length === 3 && f.every((x) => x.properties.shape === "area") && f[2].properties.part === "C", "NAVAREA IV 12/24: three lettered areas inherit 'IN AREAS BOUND BY'");
+{ // AMSA AUSCOAST 361/26 (Nov 2026): lettered corners of one area, not lettered parts
+  const g = shapesOf("AUSCOAST WARNING 361/26\nSEISMIC SURVEY IN PROGRESS WITHIN AREA BOUND BY:\nA. 31-59.46S 132-50.86E\nB. 33-10.31S 133-12.29E\nC. 33-30.00S 132-40.00E\nD. 32-10.00S 132-20.00E\nCANCEL THIS MSG 222359 UTC NOV 26");
+  ok(g.length === 1 && g[0].shape === "area" && g[0].geometry.coordinates[0].length === 5, "'WITHIN AREA BOUND BY: A. B. C. D.' single corners: one closed polygon (" + g.map((x) => x.shape).join() + ")");
+}
 f = feats("4", 127);
 ok(f.length === 2 && f.every((x) => x.properties.shape === "track"), "'ALONG TRACKLINES JOINING: A. … B. …': two tracks");
 f = feats("A", 682);
