@@ -65,6 +65,7 @@ jobs:
       - run: node tests/cf_decisions.test.mjs
       - run: node tests/cf_code.test.mjs
       - run: node tests/coded_protests.test.mjs
+      - run: node tests/coded_polecat.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
@@ -166,7 +167,19 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
-      - run: npx playwright install --with-deps chromium
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
+      # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
+      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
+      - run: |
+          npx playwright install chromium
+          if node -e "require('playwright').chromium.launch().then(b => b.close())"; then echo "chromium runs without extra packages"; exit 0; fi
+          APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
+          for i in 1 2 3 4; do
+            sudo timeout 300 apt-get $APT update -q || true
+            timeout 600 npx playwright install --with-deps chromium && exit 0
+            echo "install attempt $i failed; retrying in 30 s"; sleep 30
+          done
+          exit 1
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
       # a US state view shows its outlets' earlier items (data/history/us-states, tools/history.mjs)
@@ -188,6 +201,8 @@ jobs:
       - run: node tests/cnpresence_smoke.mjs
       - run: node tests/milmap_smoke.mjs
       - run: node tests/atak_smoke.mjs
+      # phones: the map and its toolbar end where the bottom sheet begins, even where 100svh is taller than the page (iPhone)
+      - run: node tests/phone_fit_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/draw_style_rulers_smoke.mjs
       - run: node tests/draw_planning_smoke.mjs
@@ -340,8 +355,20 @@ jobs:
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
+      - run: node tests/feeds_status_smoke.mjs
       # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
-      - run: sudo apt-get install -y --no-install-recommends poppler-utils
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
+      # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
+      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
+      - run: |
+          if command -v pdftotext; then exit 0; fi
+          APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
+          for i in 1 2 3 4; do
+            sudo timeout 300 apt-get $APT update -q || true
+            sudo timeout 300 apt-get $APT install -y --no-install-recommends poppler-utils && exit 0
+            echo "install attempt $i failed; retrying in 30 s"; sleep 30
+          done
+          exit 1
       - run: node tests/pdf_export_smoke.mjs
       # the medical plan as one landscape briefing slide: facilities, PACE, satellite maps, table, contacts; PDF and PowerPoint (assets/osap-medslide.js)
       - run: node tests/medslide_smoke.mjs
@@ -389,5 +416,17 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
-      - run: npx playwright install --with-deps webkit
+      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
+      # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
+      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
+      - run: |
+          npx playwright install webkit
+          if node -e "require('playwright').webkit.launch().then(b => b.close())"; then echo "webkit runs without extra packages"; exit 0; fi
+          APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
+          for i in 1 2 3 4; do
+            sudo timeout 300 apt-get $APT update -q || true
+            timeout 600 npx playwright install --with-deps webkit && exit 0
+            echo "install attempt $i failed; retrying in 30 s"; sleep 30
+          done
+          exit 1
       - run: BROWSER=webkit node tests/carry_smoke.mjs

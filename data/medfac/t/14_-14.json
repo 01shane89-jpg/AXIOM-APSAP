@@ -94,6 +94,7 @@
 ["n7059950686",15.36408,-12.08792,"mr",{"amenity":"clinic"}],
 ["n7059950985",15.46956,-12.06542,"mr",{"amenity":"clinic"}],
 ["r13447963",14.84778,-12.46794,"sn",{"name":"Aéroport de Bakel","name:en":"Bakel Airport","aeroway":"aerodrome","icao":"GOTB","iata":"BXE","aerodrome:type":"public","wikidata":"Q2875420"}],
+["w1570012230",15.27521,-12.43862,"mr",{"name":"Tachtaya Health Post.","amenity":"clinic"}],
 ["w188451876",15.59332,-13.32244,"sn",{"name":"Aéroport d'Ourossogui","name:en":"Ouro Sogui Airport","aeroway":"aerodrome","icao":"GOSM","iata":"MAX","wikidata":"Q7111305"}],
 ["w300049148",15.18229,-12.20343,"mr",{"name":"Aéroport de Sélibabi مطار سيليبابي","name:en":"Selibaby Airport","aeroway":"aerodrome","icao":"GQNS","iata":"SEY","wikidata":"Q7666021"}],
 ["w351445723",14.45692,-12.2149,"sn",{"amenity":"hospital","healthcare":"hospital"}],

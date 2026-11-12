@@ -40,7 +40,7 @@ const INC = { schema: "osap-incident-candidates/1", asof: "2026-10-14 04:00Z", c
     reports: [{ url: "https://example.org/8", title: "Two rangers were wounded in a shooting in Bannang Sata", title_en: "Two rangers were wounded in a shooting in Bannang Sata" }] }] };
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 
-async function page(unlocked) {
+async function page(unlocked, hash = "#th/timeline", cc = "th") {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1500, height: 950 } });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.route(/data\/live\/ds-incidents\.json$/, (r) => r.fulfill({ contentType: "application/json", body: JSON.stringify(INC) }));
@@ -53,8 +53,8 @@ async function page(unlocked) {
   if (unlocked) await ctx.addInitScript(UNLOCK);
   const p = await ctx.newPage(), errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
-  await p.goto(base + "#th/timeline", { waitUntil: "domcontentloaded" });
-  await p.waitForFunction(() => window.TSAP && window.TSAP.country === "th" && document.querySelector("#atk-tools .atk-list"), null, { timeout: 60000 });
+  await p.goto(base + hash, { waitUntil: "domcontentloaded" });
+  await p.waitForFunction(() => (cc) => window.TSAP && window.TSAP.country === cc && document.querySelector("#atk-tools .atk-list"), cc, { timeout: 60000 });
   await p.waitForTimeout(2500);
   return { p, ctx, errors };
 }
@@ -82,10 +82,17 @@ ok(ents.isoc >= 1, "ISOC Region 4 is matched (" + ents.isoc + ")");
 ok(ents.cards >= 15 && ents.ai, "the entity cards draw with the AI generated tag on draft roles (" + ents.cards + ")");
 ok(ents.periodRows === 6, "the 90-day period leaves out the old report (" + ents.periodRows + ")");
 // add an own entity
-await p.evaluate(() => { const f = document.getElementById("an-addent"); f.closest("details").open = true; f.name.value = "Test Cell Rueso"; f.aliases.value = "Rangers"; f.note.value = "watch"; f.requestSubmit(); });
+// the Add bar: on the tab the workspace opens on, with all four kinds; no form until one is picked
+const bar = await p.evaluate(() => ({ kinds: [...document.querySelectorAll("#anws .anaddbar [data-an-add]")].map((b) => b.getAttribute("data-an-add")).join(","), form: !!document.getElementById("an-addent"), first: !!document.querySelector("#anws .ancard") && document.querySelector("#anws .anaddbar").compareDocumentPosition(document.querySelector("#anws .ancard")) & 4 }));
+ok(bar.kinds === "ent,link,note,loc" && !bar.form && bar.first, "the Add bar sits above the entity list with Entity, Link, Note and Location (" + JSON.stringify(bar) + ")");
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="ent"]').click());
+await p.waitForTimeout(200);
+ok(await p.evaluate(() => !!document.querySelector('#anws .anaddbox[data-an-addbox="ent"] #an-addent')), "+ Entity opens the entity form at the top");
+await p.evaluate(() => { const f = document.getElementById("an-addent"); f.name.value = "Test Cell Rueso"; f.aliases.value = "Rangers"; f.note.value = "watch"; f.requestSubmit(); });
 await p.waitForTimeout(300);
 const own = await p.evaluate(() => { const v = JSON.parse(localStorage.getItem("osap-an-ent")); const X = window.OSAP_ANALYST._index(); const e = v.items[0]; return { n: v.items.length, hits: (X.by[e.id] || []).length, shown: document.querySelector("#anws").textContent.includes("Test Cell Rueso") }; });
 ok(own.n === 1 && own.hits === 1 && own.shown, "an own entity is stored in this browser and matched by its other names (" + JSON.stringify(own) + ")");
+ok(await p.evaluate(() => { const h = [...document.querySelectorAll("#anws h3")].map((x) => x.textContent); return h.indexOf("Your entities") === h.findIndex((t) => t !== "Add an entity" && !/^Add /.test(t)); }), "the analyst's own entities are listed first");
 // links
 await p.evaluate(() => document.querySelector('#anws [data-an-tab="links"]').click());
 await p.waitForTimeout(300);
@@ -94,6 +101,9 @@ await p.evaluate(() => { const c = document.getElementById("an-ownonly"); c.chec
 await p.waitForTimeout(300);
 const g1 = await p.evaluate(() => ({ dashed: document.querySelectorAll("#anws .angraph line[stroke-dasharray]").length, nodes: document.querySelectorAll("#anws .angraph [data-an-node]").length, dist: document.querySelectorAll("#anws .angraph rect").length }));
 ok(g1.dashed >= 2 && g1.nodes >= 3 && g1.dist >= 1, "Links draws entities, districts and dashed co-mention lines (" + JSON.stringify(g1) + ")");
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="link"]').click());
+await p.waitForTimeout(200);
+ok(await p.evaluate(() => { const f = document.getElementById("an-addlink"); return !!f && !!f.closest(".anaddbox") && [...f.a.querySelectorAll("optgroup")][0].label === "Your entities"; }), "+ Link opens the link form at the top, your own entities first");
 await p.evaluate(() => { const f = document.getElementById("an-addlink"); f.a.value = "ent:ds:brn"; f.b.value = "ent:ds:pulo"; f.rel.value = "opposes"; f.conf.value = "confirmed"; f.note.value = "test basis"; f.requestSubmit(); });
 await p.waitForTimeout(300);
 const g2 = await p.evaluate(() => ({ solid: [...document.querySelectorAll("#anws .angraph line")].filter((l) => !l.hasAttribute("stroke-dasharray")).length, table: document.querySelector("#anws table") ? document.querySelector("#anws table").textContent : "" }));
@@ -145,13 +155,31 @@ await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').clic
 await p.waitForTimeout(300);
 const tl = await p.evaluate(() => ({ items: document.querySelectorAll("#anws .anit").length, mine: document.querySelectorAll("#anws .anit.mine").length, z: /\d{4}Z \(\d{4} Thailand\)/.test(document.querySelector("#anws").textContent) }));
 ok(tl.items >= 4 && tl.mine === 1 && tl.z, "Timeline lists the reports and the saved point, in Zulu and Thailand time (" + JSON.stringify(tl) + ")");
+// + Note: the analyst's own note, saved to My work, shown in Saved and on the Timeline
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="note"]').click());
+await p.waitForTimeout(200);
+await p.evaluate(() => { const f = document.getElementById("an-addnote"); f.title.value = "Market rumor in Rueso"; f.about.value = "ent:ds:brn"; f.note.value = "Vendors say checkpoints moved."; f.requestSubmit(); });
+await p.waitForTimeout(300);
+const nt = await p.evaluate(() => { const its = Object.values(window.OSAP_WORK.items()).filter((i) => i.snap && i.snap.title === "Market rumor in Rueso"), t = document.querySelector("#anws").textContent;
+  return { n: its.length, about: its[0] && /^About: Barisan Revolusi Nasional/.test(its[0].note), type: its[0] && its[0].snap.type, tab: JSON.parse(localStorage.getItem("osap-an-ui")).tab, shown: t.includes("Market rumor in Rueso"), form: !!document.getElementById("an-addnote") }; });
+ok(nt.n === 1 && nt.about && nt.type === "note" && nt.tab === "saved" && nt.shown && !nt.form, "+ Note saves the analyst's own note to My work and shows it in Saved (" + JSON.stringify(nt) + ")");
+await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').click());
+await p.waitForTimeout(200);
+ok(await p.evaluate(() => [...document.querySelectorAll("#anws .anit.mine")].some((x) => /Your note:.*Market rumor in Rueso/.test(x.textContent))), "the note is on the Timeline as your note");
 // saved
 await p.evaluate(() => document.querySelector('#anws [data-an-tab="saved"]').click());
 await p.waitForTimeout(300);
 const sv = await p.evaluate(() => document.querySelector("#anws").textContent.includes("Test OP Rueso"));
 ok(sv, "Saved lists the analyst's point as a saved location");
+// + Location: hands over to the toolbar's Point menu
+await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="loc"]').click());
+await p.waitForTimeout(300);
+const loc = await p.evaluate(() => ({ menu: /At the map center/.test(document.body.innerText), ws: !!document.querySelector("#anws:not([hidden])") }));
+ok(loc.menu, "+ Location opens the Point menu (" + JSON.stringify(loc) + ")");
+await p.keyboard.press("Escape");
+if (!loc.ws) await p.evaluate(() => window.OSAP_ANALYST.open("bed")); else await p.evaluate(() => document.querySelector('#anws [data-an-tab="bed"]').click());
+await p.waitForTimeout(300);
 // bed-down
-await p.evaluate(() => document.querySelector('#anws [data-an-tab="bed"]').click());
 await p.waitForTimeout(600);
 const bd = await p.evaluate(() => { const B = window.OSAP_ANALYST._bed(); return { rows: B.rows.map((r) => r.d + ":" + r.n), warn: /not a finding/.test(document.querySelector("#anws .anwarn").textContent), ter: B.rows.some((r) => r.ter.length) }; });
 ok(JSON.stringify(bd.rows) === JSON.stringify(["TH-9606:2", "TH-9503:1"]), "Bed-down counts search and find reports by district, not the drug seizure (" + bd.rows + ")");
@@ -168,6 +196,37 @@ const gone = await p.evaluate(() => Object.values(window.__asapMap._layers).filt
 ok(gone === 0, "closing the workspace removes its map layer");
 ok(await p.evaluate(() => { const w = JSON.parse(localStorage.getItem("osap-an-ui")); return w && w.tab === "bed"; }), "the open tab is remembered");
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+await ctx.close();
+// another country: the workspace follows the selected country's own reports (window.TSAP.records), not the Deep South feed
+{
+  const { p, ctx, errors } = await page(true, "#ph/timeline", "ph");
+  await p.evaluate(() => { const t = Date.now(), R = window.TSAP.records;
+    R.push({ title: "Troops raid Zebra Ridge Cell hideout in Testplace, seize rifles", url: "https://example.org/ph1", layer: "security", ts: new Date(t - 2 * 864e5).toISOString(), place: "Testplace", prov: "Sulu", lat: 6.07, lon: 121.1, src: { name: "Outlet PH" } },
+      { title: "Zebra Ridge Cell remnants blamed for Jolo shooting", url: "https://example.org/ph2", layer: "security", ts: new Date(t - 3 * 864e5).toISOString(), place: "Jolo", prov: "Sulu", lat: 6.05, lon: 121.0, src: { name: "Outlet PH" } }); });
+  await p.evaluate(() => window.OSAP_ANALYST.open("ents"));
+  await p.waitForTimeout(600);
+  const h0 = await p.evaluate(() => ({ t: document.querySelector("#anws").textContent, cards: document.querySelectorAll("#anws .ancard").length, ds: !!window.OSAP_DS_ENT }));
+  ok(/Reporting: Philippines/.test(h0.t) && !/Barisan/.test(h0.t) && h0.cards === 0 && !h0.ds, "outside Thailand the workspace reads the selected country's reports, without the Deep South entity list (" + JSON.stringify({ cards: h0.cards, ds: h0.ds }) + ")");
+  await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="ent"]').click());
+  await p.waitForTimeout(200);
+  await p.evaluate(() => { const f = document.getElementById("an-addent"); f.name.value = "Zebra Ridge Cell Group"; f.aliases.value = "Zebra Ridge Cell"; f.type.value = "armed group"; f.requestSubmit(); });
+  await p.waitForTimeout(300);
+  const m = await p.evaluate(() => { const X = window.OSAP_ANALYST._index(), e = X.E.find((x) => x.name === "Zebra Ridge Cell Group"); return { n: e ? X.by[e.id].length : -1, rows: X.rows.length }; });
+  ok(m.n === 2 && m.rows > 2, "an own entity is counted in the Philippines reports (" + JSON.stringify(m) + ")");
+  await p.evaluate(() => document.querySelector('#anws .anaddbar [data-an-add="link"]').click());
+  await p.waitForTimeout(200);
+  ok(await p.evaluate(() => [...document.querySelectorAll("#an-addlink select[name=a] optgroup")].some((g) => g.label === "Places in the reporting" && g.querySelectorAll("option").length > 0)), "the link form offers the places in the reporting");
+  await p.evaluate(() => document.querySelector('#anws [data-an-tab="time"]').click());
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => /\d{4}Z \(\d{4} Philippines\)/.test(document.querySelector("#anws").textContent) && /Zebra Ridge Cell/.test(document.querySelector("#anws").textContent)), "Timeline lists the reports that name the entity, in Zulu and Philippines time");
+  await p.evaluate(() => document.querySelector('#anws [data-an-tab="bed"]').click());
+  await p.waitForTimeout(300);
+  const b = await p.evaluate(() => ({ rows: window.OSAP_ANALYST._bed().rows.map((r) => r.name + ":" + r.n), map: !!document.getElementById("an-bedmap"), fly: !!document.querySelector("#anws [data-an-fly]") }));
+  ok(b.rows.includes("Testplace:1") && !b.rows.some((r) => /^Jolo/.test(r)) && !b.map && b.fly, "Bed-down counts the raid by place, with a Map button and no district outlines (" + JSON.stringify(b) + ")");
+  if (OUT) await p.screenshot({ path: OUT + "/analyst-ph.png" });
+  ok(!errors.length, "no page errors (Philippines)" + (errors.length ? ": " + errors.join(" | ") : ""));
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

@@ -20,6 +20,7 @@
 ["w1244596147",17.5338,-90.78501,"gt",{"aeroway":"helipad"}],
 ["w1256085245",16.52161,-90.19555,"gt",{"name":"Aeropuerto de Sayaxché","aeroway":"aerodrome"}],
 ["w1309077751",16.08344,-90.65969,"mx",{"aeroway":"helipad"}],
+["w1574282057",17.6355,-91.21208,"mx",{"name":"Casa de salud Carlos A Madrazo.","amenity":"hospital","healthcare":"hospital","addr:street":"Las Bugambilias","addr:city":"Carlos A. Madrazo Becerra","addr:postcode":"86960"}],
 ["w264449815",17.53372,-90.77655,"gt",{"name":"Pozo Xan","aeroway":"aerodrome"}],
 ["w305624328",16.32149,-91.54376,"mx",{"amenity":"hospital"}],
 ["w482728255",17.74098,-91.78267,"mx",{"name":"Hospital General de Emiliano Zapata","amenity":"hospital","emergency":"yes","addr:city":"Emiliano Zapata","addr:postcode":"86981"}],

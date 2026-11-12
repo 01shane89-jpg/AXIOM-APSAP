@@ -237,13 +237,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1169397949",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "c7211b7fcbd9f018f43657550e2037e21bf3f28a870050dbb65664f7a60251dc"
+   "asof": "2026-11-09",
+   "fp": "80ef9d340c955546eca3a2376b577bd2bc510cc2a37ebeea4262ddab52ed35f3"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09"
+ "evac_asof": "2026-11-09"
 }

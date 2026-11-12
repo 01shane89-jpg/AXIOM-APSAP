@@ -30,13 +30,13 @@
    "src": "https://www.wikidata.org/entity/Q5369965",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap node/303443166",
-   "fp": "612c33ca48c26075a57bd5a839bf66ccdd21bf2e2f09d31cf6f47f93b487fde5",
+   "fp": "bc5161e7439974bc8ecacc0ec063066edeac3af805024429311aea6f5763e105",
    "web": "https://cz.usembassy.gov/",
    "phone": "(+420) 257 022 000",
    "phone_after_hours": "+420-257-022-000",
    "phone_src": "https://cz.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   }
  ],
  "airports": [
@@ -703,8 +703,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11030644723",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "409d8d9e4929b1acf441ed57a1727d156aa890f9da4eda4aec4f28fd7297dae9"
+   "asof": "2026-11-09",
+   "fp": "811fc00891b7c0942bd125ba96c3b8134c96ac6bff75e21f1dd33e5a1e20eef8"
   },
   {
    "id": "sof:cz:xing:node-11236638395",
@@ -720,8 +720,27 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11236638395",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "af7e984e8b793bb890822f0f07be927ff3c672523e8292285a214d7c41c2e80a"
+   "asof": "2026-11-09",
+   "fp": "2c2b207ac69c8cd20484184e1b14463940a0e26172ca8ac5894ab1245d5e2efb"
+  },
+  {
+   "id": "sof:cz:xing:node-11396202449",
+   "name": "Border crossing České Žleby - Bischofsreut (Marchhäuser)",
+   "local_name": "Hraniční přechod České Žleby - Bischofsreut (Marchhäuser)",
+   "hours": null,
+   "modes": [
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 48.859469,
+   "lon": 13.749563,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/11396202449",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-11-09",
+   "fp": "715439afba9609728a38fff93f1667b15962b5f7f836525d65574f90ba5b9249"
   },
   {
    "id": "sof:cz:xing:node-11964880040",
@@ -737,30 +756,30 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11964880040",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "ac33cf555eb0003e94dd13d306457fef77cf7c42acb37aeb8c70c19e3746f20a"
+   "asof": "2026-11-09",
+   "fp": "4b81ec8902290a506c2077b5ec769568ded48a1b2b75ae1090fe2fb3e2d06ff3"
   },
   {
    "id": "sof:cz:xing:node-11964880326",
-   "name": "Hraniční přechod Všeruby - Eschlkam",
+   "name": "Border control (unnamed in OpenStreetMap)",
    "local_name": null,
    "hours": null,
    "modes": null,
    "access_note": null,
    "operator": null,
-   "lat": 49.333776,
-   "lon": 12.972711,
+   "lat": 49.333784,
+   "lon": 12.972719,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11964880326",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "77a42e4b5356cb8bdd51375e57b629aa87aad7b23a2684872cbf87ef181c4c6f"
+   "asof": "2026-11-09",
+   "fp": "a3872ad590e11600a0b8f042f369d61f46a935d175192bf199b08ac85d26eee8"
   },
   {
    "id": "sof:cz:xing:node-11964915967",
-   "name": "Border crossing  Na Spálenici  - Haidmühle (Hammerstraße)",
-   "local_name": "Hraniční přechod Na Spálenici  - Haidmühle (Hammerstraße)",
+   "name": "Border crossing Na Spálenici - Haidmühle (Hammerstraße)",
+   "local_name": "Hraniční přechod Na Spálenici - Haidmühle (Hammerstraße)",
    "hours": null,
    "modes": null,
    "access_note": null,
@@ -771,8 +790,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11964915967",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "62dfb3f0ad067fd85ea59116d9653ebd7222dbba64d6b93705a87e7926904c30"
+   "asof": "2026-11-09",
+   "fp": "8963cc59439618a0c2bf2512f97cba63dc82a7e4494f61853b6c963ad6b53dbd"
   },
   {
    "id": "sof:cz:xing:node-11964963153",
@@ -788,8 +807,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11964963153",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "06bfdb2528ed2ffe0faebf966941aa024d562a7199df766395647be0277b49a7"
+   "asof": "2026-11-09",
+   "fp": "23bddfd2aa67a089b6a8f0ce75d6584f1f4520d8f89fe8d5daafca144d908a7a"
   },
   {
    "id": "sof:cz:xing:node-12052971492",
@@ -805,8 +824,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12052971492",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "7cce576fab02d7d5e4f0040be759f25435a3dd8bbc614fdf8ff541c7af3368c4"
+   "asof": "2026-11-09",
+   "fp": "2fb7eac3007fb6fb97a2e3c40cfd3b89e42f87f215e8302abbd0935cfd0e09a7"
   },
   {
    "id": "sof:cz:xing:node-12052971496",
@@ -825,8 +844,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12052971496",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "9a8b34707ccba060ea09f1f92041b7fd0748f763941a3182daa2510e713207c4"
+   "asof": "2026-11-09",
+   "fp": "f94200188895a5d9dcaa78f5b3c08f70ee703500be07108959ae19f3b75f8102"
   },
   {
    "id": "sof:cz:xing:node-12055173304",
@@ -842,8 +861,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12055173304",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "86d1ef7168fe1ceca47eb9c40b1802d83a531a1ed4ded189d44defdaf766120e"
+   "asof": "2026-11-09",
+   "fp": "d63e15f6cdbd42c608342d878e8e487fdac6a1131396426260fff88fda02a7a2"
   },
   {
    "id": "sof:cz:xing:node-12085683746",
@@ -859,8 +878,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12085683746",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "c9d4ed180f93f05db0e19c2df8c5f1dac6c5cb1d1ea505799d50191e8ec8c23c"
+   "asof": "2026-11-09",
+   "fp": "e224ae587832840622d411b2c28d4b4935767d6485c92b6aeb9000d337f353e4"
   },
   {
    "id": "sof:cz:xing:node-12087755025",
@@ -871,13 +890,13 @@
    "access_note": null,
    "operator": null,
    "lat": 49.340801,
-   "lon": 12.850135,
+   "lon": 12.850134,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12087755025",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "bbda4c657f4101ef72ccac10505b624c7a894a19c228b63b2776fa8b9fa4c74a"
+   "asof": "2026-11-09",
+   "fp": "172b3e4ddd962cbb81d2fd27edafabb214774ea48ff56b0a1cedb8d100ad03d6"
   },
   {
    "id": "sof:cz:xing:node-12172100599",
@@ -893,8 +912,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12172100599",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "5f9015c269959692b51c68a60e0069e3cc26a14ec0f7841cf7a24fd8464a7a15"
+   "asof": "2026-11-09",
+   "fp": "d84dbce699fe2e7a8b3c3ed82b29ce33a2b3f33dc0e367b70974a69642f6b49d"
   },
   {
    "id": "sof:cz:xing:node-12175660923",
@@ -904,14 +923,14 @@
    "modes": null,
    "access_note": null,
    "operator": null,
-   "lat": 49.990307,
-   "lon": 12.447807,
+   "lat": 49.990315,
+   "lon": 12.447808,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12175660923",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "6318da6384887b7e15a19648a5a433bb5edfec6938737109a701c0bbc6473791"
+   "asof": "2026-11-09",
+   "fp": "ba89a78a694f2479dd995c907999ec22b0436da6861378d09de98017ac392069"
   },
   {
    "id": "sof:cz:xing:node-12180767850",
@@ -927,8 +946,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12180767850",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "953164276bdf2a3c1dadc333976b8b0707fa514c696ab058075faa26e89084f1"
+   "asof": "2026-11-09",
+   "fp": "286f882a939d2480796ed3de6fe7ded985c71b084700414e74b38ea4e25619db"
   },
   {
    "id": "sof:cz:xing:node-12231790857",
@@ -944,8 +963,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12231790857",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "3f005eafabd090b9a4e9b74b3463a5812c03d1ce801bc5bf4d2e3859aa31e47a"
+   "asof": "2026-11-09",
+   "fp": "ca3c52d5f17e1f86029a38d693d1c4b12d195246a03dd39f3d7d7d003ad0fdca"
   },
   {
    "id": "sof:cz:xing:node-12354210414",
@@ -961,8 +980,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12354210414",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "9c4551fab416fb2ea491ea2d25dc68ca9a9552ede46757788b4bec07d4d3764e"
+   "asof": "2026-11-09",
+   "fp": "40455d3a5352a603c8aa0487746293f233d4af59c635785d85e5762b192a6f36"
   },
   {
    "id": "sof:cz:xing:node-13947606886",
@@ -980,64 +999,42 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/13947606886",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "77edbd41e2a5ad24a960a27d211f1a377b6447dc2e5f52cf6dc893cc84b6278f"
+   "asof": "2026-11-09",
+   "fp": "1a7b5bc39d3a3f8b1f76bce6d4399e8b00ae41f68ace00293a059d7148a0172e"
   },
   {
    "id": "sof:cz:xing:node-14145277271",
    "name": "Border crossing Lísková - Waldmünchen",
-   "local_name": "Hraniční přechod Lísková - Waldmünchen",
-   "hours": null,
-   "modes": [
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 49.417947,
-   "lon": 12.714023,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/14145277271",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "79eb84b8ee6c99d2ec910fc987f020c727707ec9360b8e0617942e490c7a1e2c"
-  },
-  {
-   "id": "sof:cz:xing:node-14159140183",
-   "name": "Hraniční přechod Pod Třemi znaky - Brombeerriegel",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 49.343847,
-   "lon": 12.792371,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/14159140183",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "c96a0da973404e54ea34964e04b6e101d8252ff1141bd91ad5f7719aa92ff737"
-  },
-  {
-   "id": "sof:cz:xing:node-14167190183",
-   "name": "Hraniční přechod Všeruby - Gaishof",
    "local_name": null,
    "hours": null,
    "modes": null,
    "access_note": null,
    "operator": null,
-   "lat": 49.344504,
-   "lon": 12.931331,
+   "lat": 49.417949,
+   "lon": 12.714018,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/14145277271",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-11-09",
+   "fp": "6571e5d5af00b12381b76975054ac032b5ce09da315661139b0243efba496c95"
+  },
+  {
+   "id": "sof:cz:xing:node-14167190183",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 49.344508,
+   "lon": 12.931335,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14167190183",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "648e1412c8eb1faaaafa7f07784ccf73317babee7288eeb4da6c6321dfad450c"
+   "asof": "2026-11-09",
+   "fp": "c4644abe27db2d2e81334450a84891368522c89ec09c4d7ee2b66e6f061c78c0"
   },
   {
    "id": "sof:cz:xing:node-14220824363",
@@ -1055,8 +1052,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14220824363",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "5f3f3c4bf7a721cd56665a03cf10c5f2339cb6b281485c6437f3530a6235caa5"
+   "asof": "2026-11-09",
+   "fp": "978b2ff6379c608d3d343b833f3a7cc41370a6bc75cee54b934760ac7cc39323"
   },
   {
    "id": "sof:cz:xing:node-14243187394",
@@ -1074,8 +1071,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14243187394",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "8611dc532bd26ebcf155327b109e5972c4f02f368ff868e5b29ef6892113ab6e"
+   "asof": "2026-11-09",
+   "fp": "237c37a50cbdc289973db1ec773090eed7a7406481770e564100fe243201fece"
   },
   {
    "id": "sof:cz:xing:node-14247407550",
@@ -1093,8 +1090,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14247407550",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "8eb468e5cf9d40782c160d8da86503475278904451029294e0746f61e7a1ecfd"
+   "asof": "2026-11-09",
+   "fp": "50995c147b7801a93c5cfc6a4bbc98c2e41b20dc600b274016de8c26d31ab6c2"
   },
   {
    "id": "sof:cz:xing:node-14253472642",
@@ -1110,12 +1107,12 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14253472642",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "e3e53bb476aed628ae151f1f9f4cb2c83ec5ab4e8b28477364f8bfae55587f9b"
+   "asof": "2026-11-09",
+   "fp": "facff0666fd89f31ad3feeb333762f72a06d0200c94c1aa8df0c6ea471247f94"
   },
   {
    "id": "sof:cz:xing:node-14254908280",
-   "name": "Border crossing  Prášily - Scheuereck",
+   "name": "Border crossing Prášily - Scheuereck",
    "local_name": "Hraniční přechod Prášily - Scheuereck",
    "hours": null,
    "modes": [
@@ -1129,8 +1126,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14254908280",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "9dbc0a6169f8f6cf8997554a0e1c4bffbc29a5334f474beb40f061cbf18d872a"
+   "asof": "2026-11-09",
+   "fp": "a3abab28b39b0dd697c1aa53069ab646ee66299ada9dba2e8c641d55b671c529"
   },
   {
    "id": "sof:cz:xing:node-14261995805",
@@ -1146,13 +1143,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14261995805",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "04f24bbd140ebac612fb4c2a2fae1f9045680119cbb23fdccb0e70a19833dfe8"
+   "asof": "2026-11-09",
+   "fp": "de7e7f42efa40ed5f93fee1762bdf2a7b7c244a96ea8e6790001368955c69344"
   },
   {
    "id": "sof:cz:xing:node-14265402209",
-   "name": "Border crossing  Stožec - Haidmühle",
-   "local_name": "Hraniční přechod Stožec - Haidmühle",
+   "name": "Border crossing Stožec - Haidmühle",
+   "local_name": null,
    "hours": null,
    "modes": [
     "bicycle",
@@ -1160,14 +1157,14 @@
    ],
    "access_note": null,
    "operator": null,
-   "lat": 48.828707,
-   "lon": 13.79248,
+   "lat": 48.828705,
+   "lon": 13.792473,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/14265402209",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "e204aab96942135527abe41f57ee130abe40f6894d85c6b7d85174457dd24270"
+   "asof": "2026-11-09",
+   "fp": "4f5fa4566f57f1a95dfa266c346656999b5e58f89dbdb352a4eebdbfa2d70e93"
   },
   {
    "id": "sof:cz:xing:node-1776892765",
@@ -1186,8 +1183,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/1776892765",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "43c4dcaa9229e7466cd2eb08fb57ee26d2af0969828bb853ee85358e53ee8179"
+   "asof": "2026-11-09",
+   "fp": "c74219c89a66c94490a061ca962b33ff577a7ad325b2f16f3f75f8cef3872cde"
   },
   {
    "id": "sof:cz:xing:node-2304352027",
@@ -1203,8 +1200,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2304352027",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "58b93069dbed828a70f1faa85295bd00a5fae400f40315b52b409dea0d4e441a"
+   "asof": "2026-11-09",
+   "fp": "db638475ec40d33bd9bb469c8555f80ec8eb3ef2e3e9f809dbc025381ead1fb6"
   },
   {
    "id": "sof:cz:xing:node-268200967",
@@ -1223,8 +1220,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/268200967",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "e37db93663a3085b857be34be5db8a93fd7ec3a05f1f01b3546bb4cd4da9f2a3"
+   "asof": "2026-11-09",
+   "fp": "82bd1203fdf1c5bf4a47205d53a520b1e7e5ed6033d932c49dfa94cafc28413c"
   },
   {
    "id": "sof:cz:xing:node-285555910",
@@ -1237,13 +1234,13 @@
    "access_note": null,
    "operator": null,
    "lat": 48.96528,
-   "lon": 13.588423,
+   "lon": 13.588421,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/285555910",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "8ec65266e90de349640aa4fb8eca49272b795bdecba322079938bd40be205f44"
+   "asof": "2026-11-09",
+   "fp": "881065744ec61e9ff1f534b3c74644bb305dd3d4e9a578bedb37421843245c1e"
   },
   {
    "id": "sof:cz:xing:node-373091661",
@@ -1259,8 +1256,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/373091661",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "4634390f1b6ff40a92c40eac35370403a29184ec55b959b094de7169b8fd52ec"
+   "asof": "2026-11-09",
+   "fp": "812a20373a9ab3014f15d84913ea684659c8133b7b886574cf18e0b6a502f73d"
   },
   {
    "id": "sof:cz:xing:node-4367472778",
@@ -1276,8 +1273,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4367472778",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "2a763a248861334d79e29258aa0bc482897c21e1bc78a424afaa4a842d6c0b46"
+   "asof": "2026-11-09",
+   "fp": "76ced834e2d5a5b4867387c107857c755a88b2e24665415957615f7cc17682a0"
   },
   {
    "id": "sof:cz:xing:node-4877191057",
@@ -1290,14 +1287,14 @@
    ],
    "access_note": null,
    "operator": null,
-   "lat": 49.245193,
-   "lon": 13.083326,
+   "lat": 49.245191,
+   "lon": 13.083319,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4877191057",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "7c02d7744058b2c1f89cf2ba9795c9d07609d3946c5e020781c4b9ef4f0576de"
+   "asof": "2026-11-09",
+   "fp": "762f53ddfba68b02b05f783ef0b66b99baee318af184afd72d00c3d3bdf76219"
   },
   {
    "id": "sof:cz:xing:node-656623170",
@@ -1318,8 +1315,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/656623170",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "14a9faa86ea81859db5d0e0bd59c3553f616a0051d768151af600011f48c8dba"
+   "asof": "2026-11-09",
+   "fp": "93a6f15567e84e85a4cd92401fa55a5fc3aebe98255455293f73e44d5ffe8ab4"
   },
   {
    "id": "sof:cz:xing:node-7934601084",
@@ -1335,30 +1332,30 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/7934601084",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "78c62518a169e64b02f7e2d26e04aed93b06813fe3bfd97bcb99b687c6b7e20c"
+   "asof": "2026-11-09",
+   "fp": "3f267cf90313c62466c525465f4aa2b3ed513e9adb118fac7e408a3a727a565b"
   },
   {
    "id": "sof:cz:xing:node-9742059843",
-   "name": "Border crossing  Cetviny - Hammern",
-   "local_name": "Hraniční přechod Cetviny - Hammern",
+   "name": "Border crossing Cetviny - Hammern",
+   "local_name": null,
    "hours": null,
    "modes": null,
    "access_note": null,
    "operator": null,
-   "lat": 48.614008,
-   "lon": 14.544969,
+   "lat": 48.614012,
+   "lon": 14.544973,
    "prec": "exact",
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/9742059843",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "f48c12e03302479afd0e48b29113930186f8902b5883c802721a172517ffc1dd"
+   "asof": "2026-11-09",
+   "fp": "616213cad0f6b741df1964200c9fe2310e6e563c111fd4669f4bb56eb0dac3c9"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09"
+ "evac_asof": "2026-11-09"
 }

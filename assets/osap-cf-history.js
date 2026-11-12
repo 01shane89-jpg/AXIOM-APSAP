@@ -149,14 +149,16 @@
       });
       /* protests and riots (Mass Mobilization), each where the dataset's town is: blue a protest, orange a riot. Only those placed
          on a town are drawn; the rest stay in Coded events. They follow the same span, and the panel's tick hides them. */
-      var np = 0;
+      var np = 0; npcDrawn = 0;
       if (sel.p) {
         mmLoad(); codeLib();
         mmEvents().forEach(function (e) {
-          var r = e[0]; if (r[3] == null || !b.contains([r[3], r[4]])) return;
-          np++;
-          g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: o.pane, radius: small ? 2.4 : 3.6, color: "#fff", weight: 0.8, fillColor: +r[6] === 1 ? PRC.riot : PRC.protest, fillOpacity: 0.9 })
-            .bindPopup(function () { return mmPop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { mmFp(r); }, 0); }));
+          var r = e[0], pc = e[2] === "pc"; if (r[3] == null || (pc && r[5] !== 2) || !b.contains([r[3], r[4]])) return;
+          np++; if (pc) npcDrawn++;
+          /* machine-coded (POLECAT): the same colors, paler, with a dashed dark ring */
+          g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: o.pane, radius: small ? 2.4 : 3.6, color: pc ? "#333" : "#fff", weight: pc ? 1 : 0.8, dashArray: pc ? "2 2" : null,
+            fillColor: +r[6] === 1 ? PRC.riot : PRC.protest, fillOpacity: pc ? 0.45 : 0.9 })
+            .bindPopup(function () { return pc ? pcPop(r) : mmPop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { (pc ? pcFp : mmFp)(r); }, 0); }));
         });
       }
       lyr = L.layerGroup(g).addTo(map);
@@ -170,7 +172,22 @@
       if (wholeYears()) return y0() === y1() ? String(y0()) : y0() + " to " + y1();
       return sel.a === sel.b ? day(sel.a) : day(sel.a) + " to " + day(sel.b);
     }
-    var PRC = { protest: "#1565C0", riot: "#E65100" }, drawnP = 0;
+    var PRC = { protest: "#1565C0", riot: "#E65100" }, drawnP = 0, npcDrawn = 0;
+    function pcPop(r) {
+      var riot = +r[6] === 1;
+      return "<b>" + (riot ? "Riot · Violent demonstration" : "Protest") + '</b> <span class="cfm" style="display:inline">· machine-coded</span><div class="cfm">' + esc(r[7] || "Place not named") + " · " + day(r[1]) + "</div>" +
+        (r[8] ? "<div>Kind: " + esc(r[8]) + "</div>" : "") + (r[10] ? "<div>" + (riot ? "Rioters" : "Protesters") + ": " + esc(r[10]) + "</div>" : "") + (r[11] ? "<div>Aimed at: " + esc(r[11]) + "</div>" : "") +
+        (+r[9] > 1 ? "<div>" + num(r[9]) + " machine-coded events of the same day, place and kind, merged.</div>" : "") +
+        '<div class="cfm"><b>Coded by software</b> from news stories (POLECAT, event ' + esc(r[0]) + ', <a href="https://doi.org/10.7910/DVN/AJGVIT" target="_blank" rel="noopener noreferrer">dataset</a>, CC0), not by people and not analyst-confirmed; it misreads some stories, so treat it as a lead to check. Placed at the center of the town it names. No death figures.</div>' +
+        '<div class="fp" data-cfhfp="pc' + esc(r[0]) + '">SHA-256 …</div>';
+    }
+    function pcFp(r) {
+      if (!W.crypto || !W.crypto.subtle) return;
+      var s = ["polecat", r[0], r[1], r[7] || "", r[8] || "", r[9]].join("|");
+      sha(s).then(function (h) {
+        Array.prototype.forEach.call(D.querySelectorAll('[data-cfhfp="pc' + String(r[0]).replace(/["\\]/g, "") + '"]'), function (f) { f.textContent = "SHA-256 " + h.slice(0, 16) + "…"; f.title = "SHA-256 fingerprint of this POLECAT record (" + s + "): " + h; });
+      }, function () {});
+    }
     function mmPop(r) {
       var C = W.OSAP_CF_CODE, t = C ? C.mmCode(r[6], r[12]) : [+r[6] === 1 ? "Riots" : "Protests", ""];
       return "<b>" + esc(t[0] === "Riots" ? "Riot" : "Protest") + (t[1] ? " · " + esc(t[1]) : "") + "</b><div class=\"cfm\">" + esc(r[8] || r[7] || "Place not named") + " · " + day(r[1]) + (r[2] ? " to " + day(r[2]) : "") + "</div>" +
@@ -194,8 +211,9 @@
         '<div class="lg"><span class="sw round" style="background:#D32F2F"></span><div>Event (battle, clash, attack on civilians). ' + num(drawn.n) + " in " + esc(period()) + "</div></div>" +
         '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate). White dashed ring: provisional event, not yet in a yearly release.' +
         (m === "both" ? " The heat map underneath shows where events cluster; deadlier events weigh more, and events UCDP placed only to a province or wider are left out of it." : "") + "</span></div></div>" +
-        (drawnP ? '<div class="lg"><span class="sw round" style="background:' + PRC.protest + '"></span><div>Protest (Mass Mobilization, 1990 to 2020)</div></div>' +
-          '<div class="lg"><span class="sw round" style="background:' + PRC.riot + '"></span><div>Riot (protesters used violence). ' + num(drawnP) + " protests and riots in view, each at the town the dataset names</div></div>" : "");
+        (drawnP ? '<div class="lg"><span class="sw round" style="background:' + PRC.protest + '"></span><div>Protest (Mass Mobilization 1990 to 2020; POLECAT from 2021)</div></div>' +
+          '<div class="lg"><span class="sw round" style="background:' + PRC.riot + '"></span><div>Riot (protesters used violence). ' + num(drawnP) + " protests and riots in view, each at the town the dataset names</div></div>" +
+          (npcDrawn ? '<div class="lg"><span class="sw round" style="background:' + PRC.protest + ';opacity:.5;border:1px dashed #333"></span><div>Paler with a dashed ring: machine-coded (POLECAT, 2021 on; software read the news, not people). ' + num(npcDrawn) + " in view</div></div>" : "") : "");
       W.OSAP_LEGEND.set(o.lg, h, o.home());
     }
     var SIDES = function (r, k) { var s = k.sides[r[10]] + " vs " + k.sides[r[11]]; return W.OSAP_ACTORS ? W.OSAP_ACTORS(s) : s; };
@@ -255,28 +273,36 @@
     /* protests and riots (Mass Mobilization, 1990 to 2020; tools/refresh_coded_protests.mjs): data/live/conflicts/history/mm/<cc>.js,
        loaded with the coding rules. A country's copy shows every protest in the country; a conflict tab's copy shows those the dataset
        placed on a town inside the conflict's area, from the conflict's start. */
-    var MMB = BASE + "mm/";
+    /* and from 2021, after Mass Mobilization ends, POLECAT's machine-coded protests and riots (tools/refresh_coded_polecat.mjs):
+       data/live/conflicts/history/pc/<cc>.js, marked machine-coded wherever they show */
+    var SRCS = ["mm", "pc"];
     function coded0() { return W.OSAP_CF_CODED || {}; }
     function mmCcs() { return /^cc\//.test(String(id)) ? [String(id).slice(3)] : meta && meta.countries ? meta.countries : []; }
-    function mmLoad() {
-      var I = coded0()["mm/_index"];
-      if (!I) { if (!pending.mmi) pending.mmi = load(MMB + "_index.js").then(function () { soon(); }, function () { pending.mmi = "bad"; }); return false; }
+    function srcLoad(k) {
+      var I = coded0()[k + "/_index"];
+      if (!I) { if (!pending[k + "i"]) pending[k + "i"] = load(BASE + k + "/_index.js").then(function () { soon(); }, function () { pending[k + "i"] = "bad"; }); return false; }
       var ok = true;
       mmCcs().forEach(function (cc) {
-        if (!I.countries[cc] || coded0()["mm/" + cc]) return;
-        ok = false; if (!pending["mm/" + cc]) pending["mm/" + cc] = load(MMB + cc + ".js").then(function () { soon(); }, function () { bad["mm/" + cc] = 1; soon(); });
+        if (!I.countries[cc] || coded0()[k + "/" + cc]) return;
+        ok = false; if (!pending[k + "/" + cc]) pending[k + "/" + cc] = load(BASE + k + "/" + cc + ".js").then(function () { soon(); }, function () { bad[k + "/" + cc] = 1; soon(); });
       });
       return ok;
     }
-    function mmReady() { if (pending.mmi === "bad") return true; var ok = mmLoad(); return ok || mmCcs().every(function (cc) { return !!bad["mm/" + cc]; }) && !!coded0()["mm/_index"]; }
+    function srcReady(k) { if (pending[k + "i"] === "bad") return true; var ok = srcLoad(k); return ok || mmCcs().every(function (cc) { return !!bad[k + "/" + cc]; }) && !!coded0()[k + "/_index"]; }
+    function mmLoad() { SRCS.forEach(srcLoad); }
+    function mmReady() { var ok = true; SRCS.forEach(function (k) { if (!srcReady(k)) ok = false; }); return ok; }
+    function hasSrc() { return SRCS.some(function (k) { var I = coded0()[k + "/_index"]; return I && mmCcs().some(function (cc) { return I.countries[cc]; }); }); }
+    // [row, file, source]: a conflict tab keeps only events placed on a town (or district) inside its area, from its start
     function mmEvents() {
       var out = [], b = meta && meta.bounds, since = meta && meta.since || "";
-      mmCcs().forEach(function (cc) {
-        var f = coded0()["mm/" + cc]; if (!f) return;
-        f.rows.forEach(function (r) {
-          var d = String(r[1]); if (d < sel.a || d > sel.b) return;
-          if (meta) { if (r[3] == null || !b || r[3] < b[0][0] || r[3] > b[1][0] || r[4] < b[0][1] || r[4] > b[1][1] || d < since) return; }
-          out.push([r, f]);
+      SRCS.forEach(function (k) {
+        mmCcs().forEach(function (cc) {
+          var f = coded0()[k + "/" + cc]; if (!f) return;
+          f.rows.forEach(function (r) {
+            var d = String(r[1]); if (d < sel.a || d > sel.b) return;
+            if (meta) { if (r[3] == null || (k === "pc" && r[5] !== 2) || !b || r[3] < b[0][0] || r[3] > b[1][0] || r[4] < b[0][1] || r[4] > b[1][1] || d < since) return; }
+            out.push([r, f, k]);
+          });
         });
       });
       return out;
@@ -286,16 +312,17 @@
       if (!codeP) codeP = load("assets/osap-cf-code.js").then(function () { soon(); }, function () { codeP = null; });
       return null;
     }
-    function codedRows() { var C = codeLib(); return C ? events().map(function (e) { return C.fromUcdp(e[0], e[1], id); }).concat(mmEvents().map(function (e) { return C.fromMm(e[0], e[1], id); })) : []; }
+    function codedRows() { var C = codeLib(); return C ? events().map(function (e) { return C.fromUcdp(e[0], e[1], id); }).concat(mmEvents().map(function (e) { return e[2] === "pc" ? C.fromPolecat(e[0], e[1], id) : C.fromMm(e[0], e[1], id); })) : []; }
     function coded() {
       if (!loaded() && idx() && idx().n) return "";
       var C = codeLib(), ready = mmReady(), ev = idx() && idx().n ? events() : [], mm = mmEvents(), n = ev.length + mm.length;
+      var npc = mm.filter(function (e) { return e[2] === "pc"; }).length;
       if (!n) return ready ? "" : '<p class="cfm">Loading the coded events…</p>';
-      var h = '<details class="cfhcode"' + (codedOpen ? " open" : "") + '><summary><b>Coded events</b> <span class="cfm" style="display:inline">(ACLED-style categories, ' + num(n) + " events" + (mm.length ? ", " + num(mm.length) + " of them protests and riots" : "") + ", dataset coding)</span></summary>";
+      var h = '<details class="cfhcode"' + (codedOpen ? " open" : "") + '><summary><b>Coded events</b> <span class="cfm" style="display:inline">(ACLED-style categories, ' + num(n) + " events" + (mm.length ? ", " + num(mm.length) + " of them protests and riots" + (npc ? " (" + num(npc) + " machine-coded)" : "") : "") + ", dataset coding)</span></summary>";
       if (!C) return h + '<p class="cfm">Loading the coding rules…</p></details>';
       /* the tables and the CSV are worked out only while the section is open: a conflict like Russia-Ukraine holds 40,000 events */
       var rows = codedOpen ? codedRows() : [];
-      var ds = { ucdp_ged: ev.some(function (e) { return !e[0][15]; }), ucdp_candidate: ev.some(function (e) { return !!e[0][15]; }), mm_protest: mm.length > 0 };
+      var ds = { ucdp_ged: ev.some(function (e) { return !e[0][15]; }), ucdp_candidate: ev.some(function (e) { return !!e[0][15]; }), mm_protest: mm.length > npc, polecat: npc > 0 };
       var by = function (f) { var m = {}; rows.forEach(function (r) { var k = f(r); var v = m[k] || (m[k] = [0, 0]); v[0]++; v[1] += +r.fatalities_best || 0; });
         return Object.keys(m).map(function (k) { return [k, m[k][0], m[k][1]]; }).sort(function (a, b) { return b[1] - a[1] || b[2] - a[2]; }).slice(0, 8); };
       var tab = function (head, rs) { return '<table class="cfhtab"><thead><tr><th>' + esc(head) + "</th><th>Events</th><th>Deaths (best)</th></tr></thead><tbody>" + rs.map(function (r) {
@@ -306,7 +333,8 @@
         '<p class="cfm">Each row is UCDP’s own coding of media and NGO reports, mapped to the incident record’s categories by fixed rules (' + esc(C.UCDP_RULES) + "): " +
         "fighting with a government on one side is coded Battles (state-based), fighting between armed groups Battles (non-state), killing of civilians Violence against civilians. " +
         "UCDP does not record how violence was carried out (air strike, shelling, ground clash), so the sub-event type is left blank. Actor types come from how UCDP names the sides. " +
-        (mm.length ? "Protests and riots come from the Mass Mobilization Protest Data (" + esc(C.MM_RULES) + "): protesters using violence is coded Riots, the state shooting, killing or beating protesters Excessive force against protesters, arrests or crowd dispersal Protest with intervention, else Peaceful protest. It covers protests against governments of 50 or more people from 1990 to 2020 and gives no death figures" + (meta ? "; on a conflict tab only those it placed on a town inside the conflict’s area are listed" : "") + ". " : "") +
+        (mm.length > npc ? "Protests and riots come from the Mass Mobilization Protest Data (" + esc(C.MM_RULES) + "): protesters using violence is coded Riots, the state shooting, killing or beating protesters Excessive force against protesters, arrests or crowd dispersal Protest with intervention, else Peaceful protest. It covers protests against governments of 50 or more people from 1990 to 2020 and gives no death figures" + (meta ? "; on a conflict tab only those it placed on a town inside the conflict’s area are listed" : "") + ". " : "") +
+        (npc ? "From 2021, after Mass Mobilization ends, protests and riots come from POLECAT (" + esc(C.PC_RULES) + "), which is <b>coded by software</b> from news stories, not by people: it misreads some stories, so treat each as a lead to check. Its riots are coded Riots; its other protests Protests with the sub-event type left blank (it does not say whether the state intervened). Events of the same day, place and kind are merged into one row. " : "") +
         "These are dataset codings of source claims, not analyst-confirmed incidents. Source and licence: " + lic + ". Each row keeps its dataset, release, event id and SHA-256 fingerprint.</p></details>";
     }
     function sha(s) {
@@ -344,7 +372,7 @@
           '<div class="cfhr"><label>From date <input type="date" data-cfhd="a" min="' + dmin + '" max="' + dmax + '" value="' + esc(sel.a) + '"></label>' +
           '<label>To date <input type="date" data-cfhd="b" min="' + dmin + '" max="' + dmax + '" value="' + esc(sel.b) + '"></label></div>' +
           '<div class="cfctl">' + [1, 2, 3].map(function (k) { return '<label title="' + esc(TYPES[k]) + '"><input type="checkbox" data-cfht="' + k + '"' + (sel.t[k] ? " checked" : "") + '><span class="lg" style="background:' + TYPEC[k] + '"></span>' + esc(TYPEN[k]) + " (" + (t.nt[k] == null ? "…" : num(t.nt[k])) + ")</label>"; }).join("") +
-            (coded0()["mm/_index"] && mmCcs().some(function (cc) { return coded0()["mm/_index"].countries[cc]; }) ? '<label title="Protests against governments and riots, 1990 to 2020 (Mass Mobilization Protest Data). Only those placed on a town are drawn."><input type="checkbox" data-cfhpr' + (sel.p ? " checked" : "") + '><span class="lg" style="background:' + PRC.protest + '"></span>Protests and riots (' + num(mmEvents().length) + ")</label>" : "") + "</div>" +
+            (hasSrc() ? '<label title="Protests and riots: 1990 to 2020 coded by people (Mass Mobilization Protest Data), from 2021 coded by software (POLECAT). Only those placed on a town are drawn."><input type="checkbox" data-cfhpr' + (sel.p ? " checked" : "") + '><span class="lg" style="background:' + PRC.protest + '"></span>Protests and riots (' + num(mmEvents().length) + ")</label>" : "") + "</div>" +
           '<div class="cfk"><div><b>' + (t.n == null ? "…" : num(t.n)) + "</b><span>events, " + esc(period()) + '</span></div><div><b>' + (t.b == null ? "…" : num(t.b)) + "</b><span>deaths, UCDP best estimates added up</span></div></div>" +
           chart() +
           '<div class="cfm" id="' + o.root + '-note"></div>' +

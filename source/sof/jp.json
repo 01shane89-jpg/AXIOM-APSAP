@@ -30,12 +30,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Japan.html",
    "srcname": "travel.state.gov Japan country information",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Tokyo",
-   "fp": "e7127cad1b2985336fb7cd4c022c37573c641238e1314a97d8441a2e7a7cd4db",
+   "fp": "f1490b485b4cff571f4ac06a2806242579498abed132fc1989ceb67f5525b455",
    "web": "https://jp.usembassy.gov/",
    "phone": "03-3224-5000",
    "phone_src": "https://jp.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:jp:post:u-s-consulate-general-osaka-kobe",
@@ -81,13 +81,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Japan.html",
    "srcname": "travel.state.gov Japan country information",
    "coord_basis": "OpenStreetMap way/1302847209",
-   "fp": "8aa8681e81c43fdc49294c23f8890916eecf1b4cc7adf3430bb564c10a1cc8c0",
+   "fp": "b90630e2caa36b1452b0dd1b8065e1de3cc40de66b888c78720fd017846d4bc0",
    "web": "https://jp.usembassy.gov/contact/#fukuoka",
    "phone": "(03) 3224-5000",
    "phone_after_hours": "098-876-4211",
    "phone_src": "https://jp.usembassy.gov/contact/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:jp:post:u-s-consulate-nagoya",
@@ -102,12 +102,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Japan.html",
    "srcname": "travel.state.gov Japan country information",
    "coord_basis": "OpenStreetMap node/6620263806",
-   "fp": "4ad529fd827e1a4cc0f2917311bf66004f0d885c367a4f6f38e0af09043599a7",
+   "fp": "b7878899125ce659cd049c699b3e4273bf034b30e1af628648307e611cfe50af",
    "web": "https://jp.usembassy.gov/embassy-consulates/nagoya/",
    "phone": "+81 52-581-4501",
    "phone_src": "https://www.openstreetmap.org/node/6620263806",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-10-09"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:jp:post:u-s-consulate-general-naha",
@@ -13922,8 +13922,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/10272833610",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "d0a52c88170785c88503acd78b1048a9138d9b7964b1a46e4770b804058f7cc1"
+   "asof": "2026-11-09",
+   "fp": "29b0fb35ce3a8b21f09e3e1d485c4065748fccee5030122f6cbac7b4c338ff94"
   },
   {
    "id": "sof:jp:xing:node-12710291320",
@@ -13939,8 +13939,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12710291320",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "4e352efc28fbe505c01fe0cbf2003f910d46ba0ea142d1b783f524db9e3eec32"
+   "asof": "2026-11-09",
+   "fp": "5036fe6b7f1c8bb37319f9b15256cd4b29afd05787608bf76b60b69c66841caf"
   },
   {
    "id": "sof:jp:xing:node-13744414502",
@@ -13956,8 +13956,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/13744414502",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "c56c2d236d1dacac06cc24b3b8de8ac17354caa5921fe1c9a68e67baac1455ad"
+   "asof": "2026-11-09",
+   "fp": "88d6ad73947a7c2fd5a0897504362793cf11b351148cee915672967cb947fc32"
   },
   {
    "id": "sof:jp:xing:node-1815742676",
@@ -13978,8 +13978,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/1815742676",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "a630c299925e3085c1fb6a45e8c62669d0f3d441b61e0aa3d6a9f563032a1b62"
+   "asof": "2026-11-09",
+   "fp": "cfd871635d37c36fb51b32d6c1bd5e8e0f0a058df8da41a49bfab699d1388d34"
   },
   {
    "id": "sof:jp:xing:node-2180880666",
@@ -14000,8 +14000,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2180880666",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "10a81566cd50b242bea8017c8bb8a7d3b8ca7c4b436e4e91432c7a8ce0629e68"
+   "asof": "2026-11-09",
+   "fp": "4690765a2d9e3cfa58aaa87d4cbb45c2c9a97a1bfaa970b15a9b5b976c50596b"
   },
   {
    "id": "sof:jp:xing:node-2180881033",
@@ -14021,8 +14021,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2180881033",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "2354db87477ab3399dae6838d4a9a34040577709731da0cf8c69a8571d1404c6"
+   "asof": "2026-11-09",
+   "fp": "de2c5c78c6218b50bd8b507abf6923fc2021b063fdf7404992f2af835a2b32f5"
   },
   {
    "id": "sof:jp:xing:node-2666316917",
@@ -14038,8 +14038,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2666316917",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "bca2955d0ff5a9f2bd97c4f93e95e7ed8a367a74d71a78671e956a8acb7d9d78"
+   "asof": "2026-11-09",
+   "fp": "54790c18d00542ab6df752b4c39bcda0205410043a5e16fe3422b8a4cc170663"
   },
   {
    "id": "sof:jp:xing:node-2666316926",
@@ -14055,8 +14055,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2666316926",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "50056b5ba532895eb593408058cdf52bedb3b192aa0e84575ece8b839230180d"
+   "asof": "2026-11-09",
+   "fp": "505c849005ab998d8ac8eef84b2dcd6de7894ed208d5e6f6eef7209f1050e32b"
   },
   {
    "id": "sof:jp:xing:node-4041134997",
@@ -14077,8 +14077,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4041134997",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "bde94917cfcaa7b9e75ddee58399707b8c50b965d9ec24775eee3f089aec6426"
+   "asof": "2026-11-09",
+   "fp": "e34041a9660ea3125e38e33654c004771d3882b0947e5883256ca50985d0812b"
   },
   {
    "id": "sof:jp:xing:node-6347983097",
@@ -14094,8 +14094,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6347983097",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "2b16587f62b02948ce497dbcdd93eb39ae9d55a951b73d764808b5df76982a77"
+   "asof": "2026-11-09",
+   "fp": "cb9aca3dff0b579c2424b2044a3d79905e9ce6e30b216e9da440886c3791e023"
   },
   {
    "id": "sof:jp:xing:node-6495203746",
@@ -14111,8 +14111,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6495203746",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "b04d78b8aa0f220fafa2a20490135f017baaf6959a01cd894aaf977cf9c5be8b"
+   "asof": "2026-11-09",
+   "fp": "801a0052f07f6b9f1c76413383e6de18d7f9aa7b3dd2869566bf99f56478f739"
   },
   {
    "id": "sof:jp:xing:node-9266971050",
@@ -14133,8 +14133,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/9266971050",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "1728eeb9da3a42a8f7e199856e74a7ad80f47cc09f2957f844a924ec73c4d9e0"
+   "asof": "2026-11-09",
+   "fp": "fc63b0b32ea7cc3e8afcbf2978afdd00da4cf4743d22258049b59aecbfb89811"
   },
   {
    "id": "sof:jp:xing:node-9518489159",
@@ -14150,8 +14150,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/9518489159",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "b7415f37d6b6ab1bf0e62900716f084662796f034e13eb9a5a02a672cbf78320"
+   "asof": "2026-11-09",
+   "fp": "6e06f2874de83c87528333aa592b4b2d8bb3f37d108f5b825ee75cf118ca8960"
   },
   {
    "id": "sof:jp:xing:way-674056588",
@@ -14167,8 +14167,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/674056588",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "cdde84d1803772bbd71a7e231a8e426967b13a834d48827d4902ca3e1c0acc4b"
+   "asof": "2026-11-09",
+   "fp": "d6861acc088ca7748872e26d7751f653693aa36ba281a3af792ba8b503beeb50"
   },
   {
    "id": "sof:jp:xing:way-937781649",
@@ -14184,8 +14184,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/937781649",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "d4025b288e439a6bb21bae89648f81add722739c6488d9b9269e5c8e71a3b676"
+   "asof": "2026-11-09",
+   "fp": "d285b09a122b0c81b138b1538b0fea1ed76678999f54df3be004cf2049557ae7"
   },
   {
    "id": "sof:jp:xing:way-952975059",
@@ -14201,8 +14201,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/952975059",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "cf84158bd175653e0e801a685db5a8f785dfe52f14cfbdc3fe29cf12893d46fe"
+   "asof": "2026-11-09",
+   "fp": "f191b72f046f7014206512535ca9316e8d843f47bafee7f1eb510b2a74f4c96e"
   },
   {
    "id": "sof:jp:xing:way-987856142",
@@ -14218,15 +14218,15 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/987856142",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-09",
-   "fp": "d713c7b73a29695cd1bfd29b3881a672134160cc862025393f97b8d9d9a3a0df"
+   "asof": "2026-11-09",
+   "fp": "0be8420f215e7f70b2350002d211563601aa4b8dda7f0887c09fc854c4e3a7e7"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-09",
+ "evac_asof": "2026-11-09",
  "ccc_asof": "2026-10-09",
  "cap_refs": {
   "i21_2": {

@@ -1,4 +1,5 @@
-[["r14230344",16.58745,-11.41003,"mr",{"name":"Aéroport de Kiffa مطار كيفه","name:en":"Kiffa Airport","aeroway":"aerodrome","icao":"GQNF","iata":"KFA","aerodrome:type":"public","wikidata":"Q6405877"}],
+[["n14353214001",16.61511,-11.38735,"mr",{"name":"مستوصف توميرت","amenity":"hospital"}],
+["r14230344",16.58745,-11.41003,"mr",{"name":"Aéroport de Kiffa مطار كيفه","name:en":"Kiffa Airport","aeroway":"aerodrome","icao":"GQNF","iata":"KFA","aerodrome:type":"public","wikidata":"Q6405877"}],
 ["w1000791883",16.63411,-11.37623,"mr",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1533639239",16.55762,-10.95084,"mr",{"name":"مستشفى أغورط","amenity":"hospital","healthcare":"hospital"}],
 ["w428036267",16.62192,-11.41167,"mr",{"name":"Centre Hôpitalier de Kiffa مستشفى كيفة","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"Kiffa كيفة"}],

@@ -72,6 +72,7 @@
 ["w1331315165",-20.24256,57.47188,"mu",{"amenity":"clinic","healthcare":"clinic"}],
 ["w1356391390",-20.34784,57.36475,"mu",{"name":"C-Care","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general"}],
 ["w1360829132",-20.09657,57.56203,"mu",{"name":"ssrn hospital","amenity":"hospital","healthcare":"hospital"}],
+["w1571617626",-20.24536,57.60115,"mu",{"name":"Quartier Militaire Medi Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w158575997",-20.16586,57.49868,"mu",{"aeroway":"helipad"}],
 ["w200815480",-20.4403,57.32091,"mu",{"aeroway":"helipad"}],
 ["w224268361",-20.40512,57.59282,"mu",{"name":"Jawaharnal Nehru Hospital","amenity":"hospital","healthcare":"hospital","phone":"+2306037000","addr:housenumber":"M2","addr:street":"Rose Belle"}],

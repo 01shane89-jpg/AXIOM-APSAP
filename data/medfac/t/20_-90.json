@@ -12,6 +12,7 @@
 ["n13680430817",20.68527,-88.20081,"mx",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
 ["n13836714155",20.82373,-88.31933,"mx",{"name":"Centro de salud de Santa María Aznar","amenity":"clinic"}],
 ["n14244126901",20.98475,-89.62979,"mx",{"name":"Unidad Médica García Gineres","amenity":"clinic","healthcare":"clinic","addr:housenumber":"190-A","addr:street":"Calle 27","addr:postcode":"97000"}],
+["n14307752572",21.23335,-89.12022,"mx",{"name":"Servicios de Salud de Yucatán (Clínica Yobain)","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"allergology;community","operator":"Servicios de Salud de Yucatán (SSY)","operator:type":"government","addr:street":"Calle 21 x Calle 26","addr:city":"Yobaín","addr:postcode":"97425"}],
 ["n1581861009",21.09724,-89.30088,"mx",{"name":"Centro de Salud IMSS","amenity":"hospital","healthcare":"hospital"}],
 ["n1704148930",20.95954,-89.58025,"mx",{"name":"Cruz Roja (Oriente)","amenity":"hospital"}],
 ["n1778656594",20.96949,-89.58828,"mx",{"name":"Unidad Médica Familiar #59 (IMSS)","amenity":"hospital"}],

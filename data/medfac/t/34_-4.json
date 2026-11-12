@@ -24,6 +24,7 @@
 ["w101161337",35.18139,-2.43017,"es",{"aeroway":"helipad"}],
 ["w1073848963",35.27047,-2.91954,"ma",{"aeroway":"helipad"}],
 ["w1093259574",35.15136,-2.92683,"ma",{"name":"Clinique Al Matar","amenity":"hospital","healthcare":"hospital"}],
+["w1206485292",35.17384,-3.87114,"ma",{"name":"Centre Sante Ait Youssef Ou Ali","amenity":"hospital","healthcare":"hospital"}],
 ["w1374553359",34.91608,-2.31579,"ma",{"name":"Dispensaire Lamhal","healthcare":"hospital"}],
 ["w1472671153",35.2808,-2.9431,"es",{"name":"Urgencias","amenity":"hospital"}],
 ["w1472671154",35.28153,-2.94255,"es",{"name":"Acceso Hospital","amenity":"hospital","operator":"INGESA"}],

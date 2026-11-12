@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"mu","asof":"2026-11-09 02:53Z","items":[{"id":"54041","n":"BAGSAK SHIPPING INC","t":"entity","p":"SDGT","ccs":["mu"]},{"id":"58644","n":"MERITWISE GROUP PUBLIC LTD","t":"entity","p":"TCO","ccs":["mu"]}]};
+window.ASAP_SANC_CC={"cc":"mu","asof":"2026-11-12 05:50Z","items":[{"id":"54041","n":"BAGSAK SHIPPING INC","t":"entity","p":"SDGT","ccs":["mu"]},{"id":"58644","n":"MERITWISE GROUP PUBLIC LTD","t":"entity","p":"TCO","ccs":["mu"]}]};

@@ -408,10 +408,28 @@
   "No publicly announced 2026 exercise in Vanuatu was found in searches.",
   "Embassy street address not retrieved."
  ],
- "crossings": [],
+ "crossings": [
+  {
+   "id": "sof:vu:xing:node-1512146456",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -17.757118,
+   "lon": 168.300285,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1512146456",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-11-09",
+   "fp": "23505cdb4d54b2ebff6f387b83e626584b5d8fbc857dce3ea4339ece937b2712"
+  }
+ ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-11-09"
 }

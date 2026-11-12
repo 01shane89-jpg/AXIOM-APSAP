@@ -40,6 +40,7 @@
 ["n13918193340",40.04149,16.53574,"it",{"name":"Guardia Medica","amenity":"clinic"}],
 ["n14023872231",40.88222,17.16575,"it",{"name":"Croce Rossa Italiana","amenity":"community_centre","emergency":"ambulance_station","operator":"Croce Rossa Italiana","addr:housenumber":"8","addr:street":"Via Pitagora","addr:city":"Castellana Grotte","addr:postcode":"70013"}],
 ["n1433747566",41.13623,16.84099,"it",{"name":"Punto di Primo Soccorso","emergency":"ambulance_station","addr:city":"Bari"}],
+["n14359142252",40.56568,17.81645,"it",{"name":"Centro Studi Medici S.r.l.","healthcare":"clinic","operator":"Dott.C. Mardighian","phone":"+390831771763","website":"http://www.centrostudimedici.it/","addr:housenumber":"148","addr:street":"Via Brindisi","addr:city":"Mesagne","addr:postcode":"72023"}],
 ["n2097713322",40.54993,17.71384,"it",{"name":"guardia medica","amenity":"hospital","healthcare":"hospital","addr:housenumber":"1","addr:street":"Viale Cotrino","addr:city":"Latiano","addr:postcode":"72022"}],
 ["n2124054724",41.12007,16.86874,"it",{"name":"First Aid - university","amenity":"hospital","healthcare":"hospital"}],
 ["n2137514980",40.74234,16.82174,"it",{"name":"Centro Nazionale Riabilitativo per Hanseniani","amenity":"hospital"}],

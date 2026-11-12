@@ -1,4 +1,4 @@
-{"cc":"ne","at":"2026-10-07T11:02:44Z","base":"2026-10-07T11:00:05Z","m":[
+{"cc":"ne","at":"2026-11-10T11:57:14Z","base":"2026-11-10T11:52:05Z","m":[
 ["n10017005557",13.24995,2.73848,{"communication:gsm-r":"yes","communication:mobile_phone":"yes","ele":"20","man_made":"tower","material":"metal","name":"Réseau","tower:construction":"lattice","tower:type":"communication"}],
 ["n10051086077",13.52271,2.10069,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n10064548677",17.28808,7.84079,{"man_made":"tower","tower:type":"communication"}],
@@ -185,6 +185,8 @@
 ["n8081277587",13.64078,1.23016,{"man_made":"tower","tower:type":"communication"}],
 ["n8081370487",13.59375,1.34474,{"man_made":"tower","tower:type":"communication"}],
 ["n8082701393",13.8502,1.48163,{"man_made":"tower","tower:type":"communication"}],
+["n8423057441",18.45046,7.80567,{"man_made":"mast","tower:type":"communication"}],
+["n8423057461",18.45249,7.8059,{"man_made":"mast","tower:type":"communication"}],
 ["n8438825534",12.60352,2.25342,{"man_made":"tower","tower:type":"communication"}],
 ["n8438859568",12.75071,2.17549,{"man_made":"tower","tower:type":"communication"}],
 ["n8438859569",12.75035,2.17579,{"man_made":"tower","tower:type":"communication"}],
@@ -242,6 +244,7 @@
 ["w1258437542",18.13133,8.77005,{"man_made":"tower","tower:type":"communication"}],
 ["w1325633832",13.73868,6.48164,{"man_made":"tower","tower:type":"communication"}],
 ["w1476688205",15.32494,7.25095,{"man_made":"tower","tower:type":"communication"}],
+["w1575119952",16.72635,7.45362,{"man_made":"tower","tower:type":"communication"}],
 ["w570738880",13.90094,4.07025,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["w659725444",14.20804,0.92797,{"man_made":"tower","tower:type":"communication"}],
 ["w868460409",13.7949,1.63868,{"man_made":"tower","tower:type":"communication"}],

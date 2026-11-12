@@ -1,4 +1,4 @@
-{"cc":"md","at":"2026-10-07T10:37:24Z","base":"2026-10-07T10:35:36Z","m":[
+{"cc":"md","at":"2026-11-09T12:27:05Z","base":"2026-11-09T12:23:02Z","m":[
 ["n1000676846",46.51105,28.77163,{"communication:radio":"fm","height":"79","man_made":"mast","operator":"SRTV Cimișlia","start_date":"1970","tower:construction":"mast","tower:type":"communication"}],
 ["n1000752120",46.67348,28.73115,{"communication:mobile_phone":"yes","man_made":"tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
 ["n10152424935",47.82922,28.87714,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
@@ -65,7 +65,7 @@
 ["n11731024052",47.02797,28.82115,{"communication:television":"yes","man_made":"mast","tower:type":"communication"}],
 ["n11731024053",47.02786,28.82097,{"communication:television":"yes","man_made":"mast","tower:type":"communication"}],
 ["n11731034817",47.02784,28.82111,{"communication:radio":"yes","man_made":"mast","tower:type":"communication"}],
-["n11739352049",47.02809,28.82074,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n11739352049",47.02808,28.82077,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n11740697052",47.02926,28.81941,{"man_made":"mast","tower:type":"communication"}],
 ["n11740736768",47.03041,28.81763,{"man_made":"mast","tower:type":"communication"}],
 ["n11741710864",47.02948,28.81767,{"man_made":"mast","tower:type":"communication"}],
@@ -184,6 +184,8 @@
 ["n14100441111",47.07548,28.73111,{"man_made":"tower","tower:type":"communication"}],
 ["n14109966999",47.17553,28.99712,{"man_made":"tower","tower:type":"communication"}],
 ["n14148658333",47.04363,28.57621,{"man_made":"tower","tower:type":"communication"}],
+["n14267474818",46.96215,28.7129,{"man_made":"tower","tower:type":"communication"}],
+["n14354206245",47.11805,28.56779,{"man_made":"tower","tower:type":"communication"}],
 ["n1436354536",47.75883,27.90838,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1438597004",47.05425,28.74478,{"man_made":"tower","tower:type":"communication"}],
 ["n1453541294",47.0187,28.86363,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],

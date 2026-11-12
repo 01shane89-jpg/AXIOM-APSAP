@@ -136,6 +136,14 @@ jobs:
           path: .cache/mm
           key: mm-protest-v1
         continue-on-error: true
+      # Machine-coded protests after 2020 (tools/refresh_coded_polecat.mjs): POLECAT (CC0, Harvard Dataverse, no key) read from 2021 on,
+      # so it never overlaps Mass Mobilization; every row is tagged machine-coded. Only the file list is fetched unless it or the rules
+      # changed, so most runs take seconds.
+      - name: Refresh the machine-coded protest history
+        if: ${{ steps.histdue.outputs.due == '1' }}
+        run: node tools/refresh_coded_polecat.mjs
+        timeout-minutes: 30
+        continue-on-error: true
       - name: Probe the conflict sources (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-conflicts' }}
         run: PROBE=1 node tools/refresh_conflicts.mjs; node tools/probe_wikimaps.mjs

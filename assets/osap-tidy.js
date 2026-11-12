@@ -265,7 +265,18 @@
       setTimeout(function () { b.disabled = false; b.textContent = "Refresh now"; d.lastChild.textContent = asof() ? "Reports: " + asof() : ""; if (W.OSAP_HEALTH_UI) W.OSAP_HEALTH_UI.reload(); }, 6000);
     });
     panel.insertBefore(d, panel.firstChild.nextSibling);
+    /* each feed and when it was read: a status list, folded by default, kept here beside Refresh now (the Reports panel's own
+       copy has its toggle hidden in this layout, so it never opens there) */
+    if (W.OSAP_FEEDS && W.OSAP_FEEDS.html) {
+      var f = D.createElement("details"); f.className = "tpfeeds"; f.open = feedsOpen;
+      f.innerHTML = "<summary>Each feed and when it was read</summary><div></div>";
+      var fill = function () { if (f.open) { try { f.lastChild.innerHTML = W.OSAP_FEEDS.html(); } catch (e) { f.lastChild.textContent = "Feed list not available."; } } };
+      f.addEventListener("toggle", function () { feedsOpen = f.open; fill(); });
+      fill();
+      d.parentNode.insertBefore(f, d.nextSibling);
+    }
   }
+  var feedsOpen = false;
   /* the health panel opens from either badge and redraws itself: put the row back each time */
   D.addEventListener("click", function (e) {
     if (!(e.target.closest && e.target.closest(".ohb"))) return;
@@ -332,6 +343,7 @@
     "#tidy-pop .tphd{font:700 12px/1.2 system-ui,-apple-system,sans-serif;color:var(--ink);padding:10px 10px 2px;margin-top:4px;border-top:1px solid var(--line)}#tidy-pop .tphd:first-child{border-top:0;margin-top:0;padding-top:4px}" +
     "#tidy-pop .tpnone{margin:6px 10px;font-size:13px;color:var(--muted)}" +
     ".ohp .tpref{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:4px 0 8px}.ohp .tpref .obs{font-size:12px}" +
+    ".ohp .tpfeeds{margin:0 0 8px}.ohp .tpfeeds[open]{padding-bottom:6px;border-bottom:1px solid var(--line)}.ohp .tpfeeds summary{cursor:pointer;font-size:12.5px;color:var(--muted)}.ohp .tpfeeds>div{font-size:12px;max-height:40vh;overflow-y:auto;margin-top:4px}" +
     /* phone: map credits as an "i" until tapped */
     "html.phone.tidy #map .leaflet-control-attribution:not(.open){font-size:0!important;width:22px;height:22px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 0 4px 4px;opacity:.85}" +
     "html.phone.tidy #map .leaflet-control-attribution:not(.open)::before{content:'i';font:italic 700 13px/1 Georgia,serif;color:var(--ink)}" +

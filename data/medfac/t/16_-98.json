@@ -916,6 +916,7 @@
 ["w1419728215",17.23916,-97.68042,"mx",{"name":"IMMS Tlaxiaco","amenity":"clinic","healthcare":"clinic","operator":"Instituto Mexicano del Seguro Social","operator:type":"government"}],
 ["w1547276085",17.07158,-96.6993,"mx",{"name":"Hospital Miltar de Zona de Ixcotel Oaxaca","amenity":"hospital","healthcare":"hospital","operator":"SEDENA","operator:type":"government"}],
 ["w1551050777",16.87219,-96.27951,"mx",{"amenity":"clinic","healthcare":"clinic"}],
+["w1576750691",16.79188,-96.30664,"mx",{"name":"Clínica","amenity":"clinic","healthcare":"clinic"}],
 ["w307099773",16.94874,-96.71365,"mx",{"name":"Helipuerto","aeroway":"helipad"}],
 ["w307099774",16.94785,-96.71307,"mx",{"name":"Hospital Regional de Alta Especialidad de Oaxaca","amenity":"hospital"}],
 ["w307099775",16.94654,-96.71105,"mx",{"name":"Hospital de la Niñez Oaxaqueña","amenity":"hospital","website":"www.salud.oaxaca.gob.mx","addr:postcode":"71256"}],

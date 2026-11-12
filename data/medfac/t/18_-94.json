@@ -13,6 +13,7 @@
 ["w1476923129",18.29708,-93.85636,"mx",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1476923130",18.29695,-93.85635,"mx",{"name":"Centro de Salud Villa Puerto Sánchez Magallanes","amenity":"clinic","healthcare":"clinic"}],
 ["w1559808459",18.62185,-92.52591,"mx",{"name":"Centro de Salud Nuevo Centla","amenity":"clinic","healthcare":"clinic"}],
+["w1567763576",18.30962,-92.45361,"mx",{"name":"Centro de Salud Chichicastle 1a Sección","amenity":"clinic","healthcare":"clinic"}],
 ["w313029833",18.01388,-92.95851,"mx",{"name":"Centro de Salud Bosques de Saloya","amenity":"hospital","healthcare":"hospital","operator":"Secretaría de Salud","addr:street":"Calle del Cañaveral","addr:city":"Bosque de Saloya","addr:postcode":"86246"}],
 ["w469330907",18.38785,-93.21254,"mx",{"amenity":"hospital"}],
 ["w550777644",18.01365,-92.91572,"mx",{"name":"Hospital IMSS","amenity":"hospital","healthcare":"hospital"}],
