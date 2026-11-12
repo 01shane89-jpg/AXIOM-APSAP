@@ -68,7 +68,9 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   await p.click('#atk-tools [data-atk="point"]');
   ok(await p.evaluate(() => { const b = document.querySelector('#atk-pop [data-pk]'); return b && b.getAttribute("data-pk") === "snap" && /Take a photo here/.test(b.textContent); }), "phone: Take a photo here is the first item in the Point menu");
   await p.click('#atk-pop [data-pk="snap"]'); await p.waitForTimeout(800);
-  ok(await shown(p, "#pt-snap"), "phone: the Photo to map sheet opens");
+  ok(await shown(p, "#pt-cam"), "phone: Take a photo here goes straight into the OSAP camera");
+  await p.click('#pt-cam [data-cm="x"]'); await p.waitForTimeout(300);
+  ok(await shown(p, "#pt-snap"), "phone: Done on the camera shows the Photo to map sheet (Phone camera app is there)");
   ok(await p.evaluate(() => window.OSAP_HEADING._asked() === 1), "phone: compass access asked for inside the tap (iOS needs that)");
   const sheet = await p.evaluate(() => { const r = document.getElementById("pt-snap").getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect(); return { w: r.width, mw: m.width, bot: m.bottom - r.bottom }; });
   ok(Math.abs(sheet.w - sheet.mw) <= 2, "phone: sheet is a full-width bottom sheet " + JSON.stringify(sheet));
@@ -125,9 +127,8 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, geolocation: GEO, permissions: ["geolocation", "camera"] }, "granted");
   await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="snap"]'); await p.waitForTimeout(800);
-  ok(await shown(p, '#pt-snap [data-ps="osc"]') && await shown(p, '#pt-snap .sn-app'), "camera: sheet offers Open camera (data on screen) and Phone camera app");
+  ok(await shown(p, "#pt-cam") && !(await shown(p, "#pt-snap")), "camera: Take a photo here opens the OSAP camera at once");
   await p.evaluate(() => window.OSAP_HEADING.emit({ mag: 300, tru: 299.2, decl: -0.8, cam: 271.2, camTru: 270.4, basis: "camera", acc: 8, src: "device compass", t: Date.now() }));
-  await p.click('#pt-snap [data-ps="osc"]');
   await p.waitForFunction(() => { const v = document.querySelector("#pt-cam video"); return v && v.videoWidth > 0; }, null, { timeout: 15000 }).catch(() => {});
   ok(await shown(p, "#pt-cam") && !(await shown(p, "#pt-snap")), "camera: the OSAP camera fills the screen");
   ok(await p.evaluate(() => document.querySelector("#pt-cam video").videoWidth > 0), "camera: the live picture is running");
@@ -165,10 +166,31 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   await ctx.close();
 }
 
+// ---------- phone, the point editor's Take photo: OSAP camera, photo added to that point with a copy with data ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, geolocation: GEO, permissions: ["geolocation", "camera"] }, "granted");
+  const pid = await p.evaluate(() => { const pt = window.OSAP_ATAK.pts.add(window.__asapMap.getCenter(), "Bridge"); window.OSAP_POINTS.edit(pt.id); return pt.id; }); await p.waitForTimeout(400);
+  ok(await shown(p, '#pt-ed [data-pe="cam"]') && await shown(p, "#pt-ed .pt-app"), "editor: Take photo (data on screen) and Phone camera app both offered");
+  await p.click('#pt-ed [data-pe="cam"]');
+  await p.waitForFunction(() => { const v = document.querySelector("#pt-cam video"); return v && v.videoWidth > 0; }, null, { timeout: 15000 }).catch(() => {});
+  await p.evaluate(() => window.OSAP_HEADING.emit({ mag: 10, tru: 9, decl: -1, cam: 120, camTru: 119, basis: "camera", acc: 9, src: "device compass", t: Date.now() })); await p.waitForTimeout(1200);
+  ok(await shown(p, "#pt-cam") && await p.textContent("#pt-cam .cm-hd") === "120° M" && /^47P/.test(await p.textContent("#pt-cam .cm-grid")), "editor: the OSAP camera shows azimuth and grid while aiming");
+  await p.click('#pt-cam [data-cm="shut"]');
+  await p.waitForFunction(() => /1 saved/.test(document.querySelector("#pt-cam .cm-n").textContent), null, { timeout: 15000 }).catch(() => {});
+  const P = await pts(p), ph = await photos(p, pid);
+  ok(P.length === 1 && ph.length === 1 && ph[0].marked && ph[0].marked.parent === ph[0].sha256 && ph[0].geo.heading.mag === 120 && /existing point/.test(ph[0].geo.capture.addedTo), "editor: the photo is added to that point (no new point), with heading, grid and a copy with data");
+  await p.click('#pt-cam [data-cm="x"]'); await p.waitForTimeout(400);
+  ok(!(await shown(p, "#pt-cam")) && await shown(p, "#pt-ed") && !(await shown(p, "#pt-snap")) && await p.evaluate(() => window.OSAP_HEADING._subs.length === 0 && document.querySelectorAll("#pt-ed .pt-phs img").length === 1), "editor: Done returns to the point with its photo and lets go of the compass");
+  ok(errors.length === 0, "editor: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+
 // ---------- desktop, location refused, a computer with no compass (the real helper, which gets no reading) ----------
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1280, height: 860 } }, null);
   await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="snap"]'); await p.waitForTimeout(1500);
+  ok(await shown(p, "#pt-cam") && await p.evaluate(() => document.querySelector('#pt-cam [data-cm="shut"]').disabled && /not allowed|Waiting/.test(document.querySelector("#pt-cam .cm-grid").textContent)), "no GPS: the camera opens with the data on screen, says why, and the shutter waits for a fix");
+  await p.click('#pt-cam [data-cm="x"]'); await p.waitForTimeout(300);
   ok(await p.evaluate(() => document.querySelector('#pt-snap input[data-ps="cam"]').disabled), "no GPS: Take photo stays locked");
   ok(/not allowed/.test(await p.textContent("#pt-snap .sn-grid")) && await shown(p, '#pt-snap [data-ps="centre"]'), "no GPS: says why and offers the map centre");
   await p.waitForFunction(() => /without a heading/.test(document.querySelector("#pt-snap .sn-hd").textContent), null, { timeout: 10000 }).catch(() => {});
@@ -189,6 +211,8 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, geolocation: GEO, permissions: ["geolocation"] }, "denied");
   await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="snap"]'); await p.waitForTimeout(800);
+  ok(await shown(p, "#pt-cam"), "compass refused: Take a photo here goes straight into the OSAP camera");
+  await p.click('#pt-cam [data-cm="x"]'); await p.waitForTimeout(300);
   ok(/Compass not allowed/.test(await p.textContent("#pt-snap .sn-hd")) && await shown(p, '#pt-snap [data-ps="allow"]'), "compass refused: says so and offers Allow compass");
   await p.click('#pt-snap [data-ps="x"]');
   ok(!(await shown(p, "#pt-snap")) && await p.evaluate(() => window.OSAP_HEADING._subs.length === 0), "close: the sheet closes and lets go of the compass");
