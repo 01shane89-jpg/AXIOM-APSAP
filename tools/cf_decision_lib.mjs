@@ -15,6 +15,13 @@
 //   reject_incident   { conflict, reports: [fp, ...], why }   not an incident of this conflict; why: not_incident, not_this_conflict,
 //                                                             wrong_place_or_time, duplicate or other
 //   reset_incident    { conflict, reports: [fp, ...] }        back to unverified (undoes an earlier decision on these reports)
+//   link_coded        { conflict, reports, coded: { dataset: "ucdp", id, fp } }   these reports describe the same event as this
+//                                                             UCDP-coded event (proposed by assets/osap-cf-match.js, decided by the analyst)
+//   reject_link       { conflict, reports, coded }            not the same event: the proposal is not shown again
+//   unlink_coded      { conflict, reports, coded }            takes back an earlier link or rejection (the proposal shows again)
+// A link says two records describe one event. It does not make the figures, sides or claims in either true. The coded event must be
+// one the job holds for that conflict (its file's UCDP list, with the same fingerprint); the record keeps a copy of it and the
+// distance and days between it and the closest report, as the job measures them, and whether that pair met the proposal rules.
 // A confirmation says the reports describe a real incident. It does not make any figure, party or claim in them true: casualty figures
 // stay "as reported", and statements by any party stay claims.
 // A confirmation may carry the incident's coded record ("coding", checked by checkCoding() in assets/osap-cf-code.js): event type and
@@ -31,20 +38,24 @@
 import crypto from "node:crypto";
 import { readBody } from "./decision_lib.mjs";
 import CODE from "../assets/osap-cf-code.js";
+import MATCH from "../assets/osap-cf-match.js";
 
 export const SCHEMA = "osap-incident-decision/1";
 export const TITLE = "OSAP incident decision:";
 export const WHY = ["not_incident", "not_this_conflict", "wrong_place_or_time", "duplicate", "other"];
 export const STATUS = { confirm_incident: "confirmed", reject_incident: "rejected", reset_incident: "unverified" };
+export const LINK_SCHEMA = "osap-coded-link/1";
+export const LINKS = { link_coded: "same_event", reject_link: "not_same", unlink_coded: "none" };
 const sha = (s) => crypto.createHash("sha256").update(s).digest("hex");
 const FP = /^[0-9a-f]{64}$/, CF = /^[a-z0-9][a-z0-9-]{0,60}$/;
 export { readBody };
 
 // known: Map conflict id -> Map fp -> report (the job's own records). parties: { conflict id: [party names] }.
 // Returns { action, conflict, reports, why?, coding? } or { why }.
-export function check(data, known, parties = {}) {
+// ucdp: { conflict id: Map UCDP event id -> event } (the conflict files' UCDP lists), needed for the link actions.
+export function check(data, known, parties = {}, ucdp = {}) {
   if (!data || data.osap_decision !== 1) return { why: "not an OSAP decision (osap_decision must be 1)" };
-  if (!STATUS[data.action]) return { why: "unknown action (confirm_incident, reject_incident or reset_incident)" };
+  if (!STATUS[data.action] && !LINKS[data.action]) return { why: "unknown action (confirm_incident, reject_incident, reset_incident, link_coded, reject_link or unlink_coded)" };
   if (typeof data.conflict !== "string" || !CF.test(data.conflict)) return { why: "conflict must be a conflict id" };
   const reps = known.get(data.conflict);
   if (!reps) return { why: "no conflict tab with the id " + data.conflict };
@@ -54,6 +65,17 @@ export function check(data, known, parties = {}) {
   const miss = r.filter((x) => !reps.has(x));
   if (miss.length) return { why: "reports not on file for " + data.conflict + ": " + miss.map((x) => x.slice(0, 16)).join(", ") };
   const out = { action: data.action, conflict: data.conflict, reports: r.sort() };
+  if (LINKS[data.action]) {
+    const c = data.coded;
+    if (!c || typeof c !== "object" || c.dataset !== "ucdp") return { why: "coded must name a UCDP event: { dataset: \"ucdp\", id, fp }" };
+    if (!/^[0-9]{1,12}$/.test(String(c.id || "")) || !FP.test(String(c.fp || ""))) return { why: "coded needs the UCDP event id and its fingerprint" };
+    const ev = ucdp[data.conflict] && ucdp[data.conflict].get(String(c.id));
+    if (!ev) return { why: "UCDP event " + c.id + " is not on file for " + data.conflict };
+    if (ev.fp !== c.fp) return { why: "UCDP event " + c.id + " has changed since it was shown (fingerprint differs); open the tab again" };
+    if (data.coding != null || data.why != null) return { why: "a link carries no coded record and no reject reason" };
+    out.coded = { dataset: "ucdp", id: String(c.id), fp: ev.fp };
+    return out;
+  }
   if (data.action === "reject_incident") {
     if (data.why != null && !WHY.includes(data.why)) return { why: "why must be one of " + WHY.join(", ") };
     out.why = data.why || "other";
@@ -90,9 +112,26 @@ export function plan(issues, owner, known, index, recorded, ctx = {}) {
     if (!i.user || String(i.user.login).toLowerCase() !== String(owner).toLowerCase()) continue;
     if (next[id]) { replies.push({ number: i.number, recorded: true, text: "Recorded earlier as " + id + "." }); continue; }
     const b = readBody(i.body);
-    const c = b.why ? b : check(b.data, known, ctx.parties || {});
+    const c = b.why ? b : check(b.data, known, ctx.parties || {}, ctx.ucdp || {});
     if (!c.action) { replies.push({ number: i.number, recorded: false, text: "Not recorded: " + c.why + ". Nothing changed. Open a new decision from the app to try again." }); continue; }
     const reps = known.get(c.conflict);
+    if (LINKS[c.action]) {
+      const ev = ctx.ucdp[c.conflict].get(c.coded.id), copies = c.reports.map((fp) => snap(reps.get(fp)));
+      // the job's own measure of the closest report to the event, and whether that pair meets the proposal rules
+      const pairs = c.reports.map((fp) => { const r = reps.get(fp), g = r.geo && r.geo.la != null ? MATCH.km(+r.geo.la, +r.geo.lo, +ev.lat, +ev.lon) : null;
+        return { fp, km: g == null ? null : Math.round(g * 10) / 10, days: MATCH.gap(r, ev), rules: !!MATCH.pair(r, ev) }; })
+        .sort((a, b) => (a.rules !== b.rules ? (a.rules ? -1 : 1) : (a.km == null ? 1e9 : a.km) - (b.km == null ? 1e9 : b.km)));
+      records.push({ schema: LINK_SCHEMA, type: "link", decision_id: id, action: c.action, status: LINKS[c.action], conflict: c.conflict, reports: c.reports,
+        coded: c.coded, reason: b.reason, link_id: "lnk-" + sha(c.conflict + "|" + c.reports.join(",") + "|ucdp|" + c.coded.id).slice(0, 20),
+        measure: { rules: MATCH.RULES, closest: pairs[0] || null, within_rules: !!(pairs[0] && pairs[0].rules) },
+        coded_copy: ucdpSnap(ev), report_copies: copies,
+        actor: { login: i.user.login, authority: "repository owner (opened the decision issue)" },
+        source: { issue: i.number, url: i.html_url, created_at: i.created_at, body_sha: sha(String(i.body || "")) },
+        decided_at: i.created_at, recorded });
+      next[id] = 1;
+      replies.push({ number: i.number, recorded: true, text: "Recorded as " + id + " (" + (c.action === "link_coded" ? "linked to UCDP event " + c.coded.id : c.action === "reject_link" ? "not the same event as UCDP event " + c.coded.id : "link to UCDP event " + c.coded.id + " taken back") + "). It shows in the app within a few minutes." });
+      continue;
+    }
     records.push({ schema: SCHEMA, type: "decision", decision_id: id, action: c.action, status: STATUS[c.action], conflict: c.conflict, reports: c.reports,
       ...(c.why ? { why: c.why } : {}), reason: b.reason,
       ...(c.coding ? { record: c.coding, ai_suggestions: aiOnFile(ctx.suggest, c.conflict, c.reports) } : {}),
@@ -106,6 +145,32 @@ export function plan(issues, owner, known, index, recorded, ctx = {}) {
     replies.push({ number: i.number, recorded: true, text: "Recorded as " + id + " (" + STATUS[c.action] + "). It shows in the app within a few minutes." });
   }
   return { records, index: next, replies };
+}
+
+// what a link record keeps of the UCDP event, copied from the job's file (UCDP's own coding; sides and deaths as UCDP gives them)
+function ucdpSnap(e) {
+  const o = { id: String(e.id), fp: e.fp, date: String(e.date || "").slice(0, 10), end: String(e.end || "").slice(0, 10), type: e.type, best: e.best, low: e.low, high: e.high,
+    sideA: String(e.sideA || "").slice(0, 120), sideB: String(e.sideB || "").slice(0, 120), where: String(e.where || "").slice(0, 200), prec: e.prec, file: String(e.file || "").slice(0, 80) };
+  if (e.lat != null) { o.lat = +e.lat; o.lon = +e.lon; }
+  return o;
+}
+
+// The links in force: a later decision on the same reports and event replaces an earlier one; unlink_coded removes it. Returns
+// { conflict: { fp: [{ id, s, l, d, at, r }] } } for the page (s: same_event or not_same; l: link_id).
+export function linksInForce(decisions) {
+  const ds = decisions.filter((d) => d && d.type === "link" && d.schema === LINK_SCHEMA && d.coded)
+    .sort((a, b) => (a.decided_at < b.decided_at ? -1 : a.decided_at > b.decided_at ? 1 : a.decision_id < b.decision_id ? -1 : 1));
+  const by = {};
+  for (const d of ds) {
+    const m = by[d.conflict] || (by[d.conflict] = {});
+    for (const fp of d.reports) {
+      const l = (m[fp] || []).filter((x) => x.id !== d.coded.id);
+      if (d.status !== "none") l.push({ id: d.coded.id, s: d.status, l: d.link_id, d: d.decision_id, at: d.decided_at, r: String(d.reason || "").slice(0, 300) });
+      if (l.length) m[fp] = l; else delete m[fp];
+    }
+    if (!Object.keys(m).length) delete by[d.conflict];
+  }
+  return by;
 }
 
 // the AI suggestions the job holds for these reports, as they stood when the decision was recorded (proposals, never the record)
