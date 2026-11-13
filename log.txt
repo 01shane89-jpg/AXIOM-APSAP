@@ -1,0 +1,45 @@
+PASS 01 today
+  missing button "7 d"
+PASS 02 map-screen
+PASS 03 search
+PASS 04 data-sets
+PASS 05 weather
+  missing tool Grid
+  missing tool Crosshair
+  missing tool 3D
+PASS 06 overlays
+PASS 07 long-press
+PASS 08 measure
+PASS 09 route
+PASS 10 area
+PASS 11 satellite
+  missing button "At the map centre"
+PASS 12 points
+PASS 13 watch
+  missing button "Saved work"
+PASS 14 my-work
+  missing button "Saved work"
+PASS 15 teams
+PASS 16 photo-check
+  missing tool medplan
+  missing button "Half"
+  missing button "Full"
+PASS 17 medical-plan
+  missing tool evac
+  missing [data-ep="plan"]
+  evacuation options not ready
+PASS 18 evacuation
+PASS 19 landing-zones
+  missing button "CALCULATE"
+PASS 20 terrain
+  missing tool comms
+  missing button "Coverage"
+  missing button "Link"
+  missing button "Networks"
+PASS 21 comms
+  missing #tidy-rep
+PASS 22 osir
+PASS 23 conflict-tabs
+PASS 24 settings
+PASS 25 reading
+all scenes shot 88 shots
