@@ -1,0 +1,65 @@
+https://theconversation.com/nz/politics/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/nz/politics/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/nz/politics/articles.atom"/>
+  <title>Politics + Society – The Conversation</title>
+  <updated>2026-11-13T01:26:45Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296588</id>
+    <published>2026-11-13T01:26:45Z</published>
+    <updated>2026-11-13T01:26:45Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/microsoft-has-suffered-a-global-outage-a-tech-expert-explains-what-went-wrong-296588"/>
+    <title>Microsoft has suffered a global outage. A tech expert explains what went wrong</title>
+    <content type="html">&lt;figure&gt;&lt;img src="https://images.theconversation.com/files/771748/original/file-20261112-64-ncz5fz.jpg?ixlib=rb-4.1.1&amp;amp;rect=0%2C1%2C6720%2C4480&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=1050&amp;amp;h=700&amp;amp;fit=crop" /&gt;&lt;figcaption&gt;&lt;span class="caption"&gt;&lt;/span&gt; &lt;span class="attribution"&gt;&lt;a class="source" href="https://www.pexels.com/photo/a-company-logo-on-a-wall-10142683/"&gt;Angel Bena/Pexels&lt;/a&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;Microsoft has suffered a major global outage, bringing many of its widely used tools, including email and cloud storage, to a standstill. &lt;/p&gt;
+
+&lt;p&gt;According to outage tracking site DownDetector, some 130,000 people reported issues accessing Microsoft Outlook as of early Thursday afternoon US Eastern time (early Friday morning in Sydney). In a &lt;a href="https://x.com/MSFT365Status/status/2120974801388904932"&gt;statement on X&lt;/a&gt;, the tech giant said it was “aggressively pursuing all pathways to reduce impact” and “restarting affected servers to return them to service”.&lt;/p&gt;
+
+&lt;p&gt;In an &lt;a href="https://theconversation.com/what-would-happen-if-the-internet-went-down-295249"&gt;article for The Conversation&lt;/a&gt; last month, I explained how the whole internet is unlikely to go down but several services can become unavailable together when they rely on shared systems. &lt;/p&gt;
+
+&lt;p&gt;This outage shows precisely what happens when that shared infrastructure fails – and why we must prepare for digital outages in a similar way we do for natural disasters.&lt;/p&gt;
+
+&lt;p&gt;&lt;iframe id="9Uygb" class="tc-infographic-datawrapper" src="https://datawrapper.dwcdn.net/9Uygb/" height="400px" width="100%" style="border: 0;" scrolling="no" frameborder="0" title="Major outage reports for Microsoft services"&gt;&lt;/iframe&gt;&lt;/p&gt;
+
+&lt;h2&gt;Beyond missed emails or workplace meetings&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href="https://www.abc.net.au/news/2026-11-13/microsoft-outage-affects-users-worldwide/107381050"&gt;list of services&lt;/a&gt; Microsoft says are “potentially impacted” by the outage is long. It includes services used for email, document sharing, meetings and managing tasks, such as Outlook, Microsoft Teams, SharePoint Online, Microsoft Copilot 365, Microsoft Planner and Microsoft Exchange Online. It also includes Microsoft Defender, a cloud-based cybersecurity service. &lt;/p&gt;
+
+&lt;p&gt;With so many digital services affected, the real-world impacts of the outage have been widespread, and go far beyond missed emails or workplace meetings. &lt;/p&gt;
+
+&lt;p&gt;For example, family violence workers &lt;a href="https://www.abc.net.au/news/2026-11-13/microsoft-outage-affects-users-worldwide/107381050"&gt;reportedly&lt;/a&gt; can’t access databases which contain client details. Schools can’t provide online lessons for remote students. Psychologists can’t provide telehealth consultations. Businesses are unable to process orders. Job hunters are unable to make it to planned interviews. Some government service centres have been forced to closed. &lt;/p&gt;
+
+&lt;p&gt;The disruption also reached services &lt;a href="https://www.reuters.com/technology/microsoft-365-outlook-down-thousands-us-users-downdetector-shows-2026-11-12/"&gt;outside Microsoft&lt;/a&gt;. OpenAI and Anthropic reported problems with the tools that connect their artificial intelligence (AI) services to Microsoft 365.&lt;/p&gt;
+
+&lt;p&gt;This shows how a problem in one part of the digital world can affect tools that appear separate, and even services provided by other companies.&lt;/p&gt;
+
+&lt;p&gt;The outage comes &lt;a href="https://www.forbes.com.au/news/world-news/microsoft-servers-crash-in-global-outage/"&gt;after other disruptions&lt;/a&gt; to Microsoft services earlier this year. For example, in January, Outlook, Teams and other Microsoft 365 services were down for hours. Then in August, Microsoft Outlook and Exchange Online were disrupted by a code update which took several days to fix. &lt;/p&gt;
+
+&lt;h2&gt;A shifting account of what went wrong&lt;/h2&gt;
+
+&lt;p&gt;As of early Friday afternoon Sydney time, Microsoft has not yet named a root cause of the outage, and its account of the failure has &lt;a href="https://x.com/MSFT365Status/status/2120974801388904932"&gt;shifted since it was first reported&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;Initially the company said elevated load across multiple regions was reported first. It then clarified the load was not driven by an increase in traffic, but a large number of servers becoming unexpectedly unavailable. &lt;/p&gt;
+
+&lt;p&gt;Attention then moved to the automated “health checks” Microsoft uses to judge whether a server is fit to carry traffic, and to the component that processes them. &lt;/p&gt;
+
+&lt;p&gt;The company described a core process on the affected servers as becoming “overwhelmed”. Software deployments and configuration changes were paused while recent changes were reviewed, although none was found to correlate with the start of the disruption.&lt;/p&gt;
+
+&lt;p&gt;The evidence does not suggest a cyberattack.&lt;/p&gt;
+
+&lt;p&gt;A distributed denial-of-service attack works by flooding a service with requests from outside until legitimate ones can no longer be answered. Microsoft’s own statement that overall traffic had not increased is difficult to reconcile with that pattern. No evidence of malicious activity has been disclosed, and no group has claimed responsibility.&lt;/p&gt;
+
+&lt;p&gt;Indeed, &lt;a href="https://www.abc.net.au/news/2026-11-13/microsoft-outage-affects-users-worldwide/107381050"&gt;Microsoft said&lt;/a&gt;: “There’s no indication this is a cyber attack.” &lt;/p&gt;
+
+&lt;p&gt;The more mundane explanation fits better. Health checks exist to protect a service by withdrawing servers that appear unwell. When the machinery making that judgement is itself at fault, healthy capacity can be removed, and the servers that remain are left to absorb work they were never sized for. &lt;/p&gt;
+
+&lt;p&gt;Outages of this scale are more often self-inflicted in this way than they are the work of attackers, as the August disruption to Microsoft email by a code update illustrates. &lt;/p&gt;
+
+&lt;p&gt;Until a post-incident review is published, however, that remains an inference drawn from Microsoft’s own updates rather than a settled account.&lt;/p&gt;
+
+&lt;p&gt;Microsoft has not yet been able to fix the outage entirely. It says that some of the &lt;a href="https://x.com/MSFT365Status/status/2120974801388904932"&gt;affected servers are working again&lt;/a&gt;, but they “can become unresponsive again once they begin receiving traffic”.&lt;/p&gt;
+
+&lt;h2&gt;Planning for outages like we do for bushfires&lt;/h2&gt;
+
+&lt;p&gt;This outage reinforces the need for all of us to better prepare for digital outages. For individuals, this can involve storing essential information

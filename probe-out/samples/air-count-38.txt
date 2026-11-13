@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/50_-100.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"50_-100","ac":[["c05edd","ACA1127","C-GJYA","BCS3","AIRBUS A220-300",50.0393,-95.8803,34000,396,283,1794545874,0,"0516","A3",0]]}

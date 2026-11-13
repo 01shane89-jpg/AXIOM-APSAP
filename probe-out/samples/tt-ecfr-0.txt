@@ -1,0 +1,78 @@
+https://ecfr.eu/
+	<!doctype html>
+<!--[if lt IE 9]><html class="no-js no-svg ie lt-ie9 lt-ie8 lt-ie7" lang="en-GB"> <![endif]-->
+<!--[if IE 9]><html class="no-js no-svg ie ie9 lt-ie9 lt-ie8" lang="en-GB"> <![endif]-->
+<!--[if gt IE 9]><!--><html class="no-js no-svg " lang="en-GB"> <!--<![endif]-->
+<head>
+    <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="pingback" href="https://ecfr.eu/xmlrpc.php" />
+    <link rel="profile" href="https://gmpg.org/xfn/11" />
+
+    <meta property="og:site_name" content="ECFR" >
+    <meta name="twitter:site" content="@ecfr">
+	<meta name="twitter:dnt" content="on">
+	<meta property="fb:pages" content="463535000332" />
+	<meta property="fb:app_id" content="1824675704422225" />
+
+    
+    
+        
+    
+    
+    
+                                    
+    
+                        <link rel="preload" as="image" href="https://ecfr.eu/wp-content/uploads/2026/11/632236708-scaled-864x486-c-center.jpg">
+                        
+            <meta name="author" content="Nevada Joan Lee">
+    
+	<link rel="preload" as="font" href="https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD-Lig.woff2" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" as="font" href="https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD.woff2" type="font/woff2" crossorigin="anonymous">
+    <link rel="preconnect" href="https://consent.cookiebot.eu" />
+
+    
+        <!-- Matomo Tag Manager -->
+    <script defer src="data:text/javascript,var%20_mtm%20%3D%20window._mtm%20%3D%20window._mtm%20%7C%7C%20%5B%5D%3B%0A%20%20%20%20_mtm.push%28%7B%27mtm.startTime%27%3A%20%28new%20Date%28%29.getTime%28%29%29%2C%20%27event%27%3A%20%27mtm.Start%27%7D%29%3B%0A%20%20%20%20var%20d%3Ddocument%2C%20g%3Dd.createElement%28%27script%27%29%2C%20s%3Dd.getElementsByTagName%28%27script%27%29%5B0%5D%3B%0A%20%20%20%20g.async%3Dtrue%3B%20g.src%3D%27https%3A%2F%2Fcdn.matomo.cloud%2Fecfr.matomo.cloud%2Fcontainer_n9bipYfc.js%27%3B%20s.parentNode.insertBefore%28g%2Cs%29%3B"></script>
+    <!-- End Matomo Tag Manager -->
+    
+    
+    <title>New ideas for Europe’s relations with China, Russia, and beyond</title>
+<style>.flying-press-lazy-bg{background-image:none!important;}</style>
+<link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/img/ecfr-logo-small.svg' as='image' imagesrcset='' imagesizes='' fetchpriority='high'/>
+<link rel='preload' href='https&#x3A;&#x2F;&#x2F;ecfr.eu&#x2F;wp-content&#x2F;themes&#x2F;ecfr&#x2F;specials&#x2F;assets&#x2F;iran-nuclear-monitor&#x2F;favicon&#x2F;favicon.svg' as='image' imagesrcset='' imagesizes='' fetchpriority='high'/>
+<link rel='preload' href='https://ecfr.eu/wp-content/uploads/2026/11/632236708-scaled-864x486-c-center.jpg' as='image' imagesrcset='' imagesizes='(min-width: 1344px) 416px, (min-width: 1000px) 33vw, 96vw' fetchpriority='high'/>
+<link rel='preload' href='https://ecfr.eu/wp-content/uploads/2026/11/627139030-scaled-864x486-c-center.jpg' as='image' imagesrcset='' imagesizes='(min-width: 1344px) 416px, (min-width: 1000px) 33vw, 96vw' fetchpriority='high'/>
+<link rel='preload' href='https://ecfr.eu/wp-content/uploads/2026/11/IDM-stories-scaled-1728x972-c-center.jpg' as='image' imagesrcset='' imagesizes='(min-width: 1344px) 864px, (min-width: 1000px) 50vw, 96vw' fetchpriority='high'/>
+<link rel='preload' href='https://ecfr.eu/wp-content/uploads/2026/11/Germany-first_Cover-art-v2-scaled-864x486-c-center.png' as='image' imagesrcset='' imagesizes='(min-width: 1344px) 416px, (min-width: 1000px) 33vw, 96vw' fetchpriority='high'/>
+<link rel='preload' href='https://ecfr.eu/wp-content/uploads/2026/11/318056519-scaled-864x486-c-center.jpg' as='image' imagesrcset='' imagesizes='(min-width: 1344px) 416px, (min-width: 1000px) 33vw, 96vw' fetchpriority='high'/>
+<link rel='preload' href='https://ecfr.eu/wp-content/uploads/2026/11/630759670-scaled-864x486-c-center.jpg' as='image' imagesrcset='' imagesizes='(min-width: 1344px) 416px, (min-width: 1000px) 33vw, 96vw' fetchpriority='high'/>
+<link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD-Lig.woff2' as='font' type='font/woff2' fetchpriority='high' crossorigin='anonymous'><link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD.woff2' as='font' type='font/woff2' fetchpriority='high' crossorigin='anonymous'><link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD-Lig.woff' as='font' type='font/woff' fetchpriority='high' crossorigin='anonymous'><link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD.woff' as='font' type='font/woff' fetchpriority='high' crossorigin='anonymous'><link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD-LigIta.woff2' as='font' type='font/woff2' fetchpriority='high' crossorigin='anonymous'><link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD-Ita.woff2' as='font' type='font/woff2' fetchpriority='high' crossorigin='anonymous'><link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD-LigIta.woff' as='font' type='font/woff' fetchpriority='high' crossorigin='anonymous'><link rel='preload' href='https://ecfr.eu/wp-content/themes/ecfr/assets/fonts/vag-rundschrift-d/VAGRundschriftD-Ita.woff' as='font' type='font/woff' fetchpriority='high' crossorigin='anonymous'>
+<meta name='robots' content='max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<link rel="canonical" href="https://ecfr.eu/">
+<meta name="description" content="ECFR has a mission: to build a stronger Europe in a world of growing challenges – from China and Russia to climate change, geo-economics, security, and more.">
+<link rel="next" href="https://ecfr.eu/page/2/">
+<meta property="og:title" content="New ideas for Europe’s relations with China, Russia, and beyond">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://ecfr.eu/wp-content/uploads/2023/04/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:image:alt" content="social-card">
+<meta property="og:description" content="ECFR has a mission: to build a stronger Europe in a world of growing challenges – from China and Russia to climate change, geo-economics, security, and more.">
+<meta property="og:url" content="https://ecfr.eu/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:site_name" content="European Council on Foreign Relations">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ecfr.eu/wp-content/uploads/2023/04/social-card.png">
+<meta name="twitter:site" content="@ecfr">
+<link rel='dns-prefetch' href='//cdn.datatables.net' />
+<link rel='dns-prefetch' href='//kit.fontawesome.com' />
+<link rel="alternate" type="application/rss+xml" title="European Council on Foreign Relations &raquo; Feed" href="https://ecfr.eu/feed/" />
+<style id="wp-img-auto-sizes-contain-inline-css">img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */</style>
+<style id="classic-theme-styles-inline-css">/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */</style>
+
+<style id="safe-svg-svg-icon-style-inline-css">.wp-block-safe-svg-svg-icon a{align-self:center}.sa

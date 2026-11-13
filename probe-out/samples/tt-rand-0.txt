@@ -1,0 +1,108 @@
+https://www.rand.org/pubs/commentary.xml
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RAND Commentary</title>
+  <link rel="self" href="https://www.rand.org/pubs/commentary.xml"/>
+  <updated>2026-11-12T12:06:07Z</updated>
+  <link rel="alternate" type="text/html" hreflang="en" href="https://www.rand.org/pubs/commentary.html" />
+  <rights>Copyright (c) 2026, The RAND Corporation</rights>
+  <author>
+    <name>RAND Corporation</name>
+  </author>
+  <id>https://www.rand.org/pubs/commentary.html</id>
+ 
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/11/veterans-families-and-life-after-military-service-qa.html</id>
+            <title type="html">Veterans, Families, and Life After Military Service: Q&amp;A with RAND Experts</title>
+            
+            <published>2026-11-09T16:45:00Z</published>
+            <updated>2026-11-09T16:45:00Z</updated>
+            <summary type="html">For veterans, leaving the U.S. military can open new doors and raise new questions. In this Q&amp;amp;A, Carrie Farmer and Rajeev Ramchand share what RAND&apos;s research reveals about life after military service and the questions they hope to answer next to help improve veterans&apos; lives.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/11/veterans-families-and-life-after-military-service-qa.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/11/preparedness-for-the-ai-era-requires-a-reserve-of-critical.html</id>
+            <title type="html">Preparedness for the AI Era Requires a Reserve of Critical Workers</title>
+            
+            <published>2026-11-04T15:15:00Z</published>
+            <updated>2026-11-04T15:15:00Z</updated>
+            <summary type="html">If governments or employers assume that permanent AI automation is right around the corner, vital training and career pipelines could collapse. We could find ourselves without enough people to perform work essential for our society to function.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/11/preparedness-for-the-ai-era-requires-a-reserve-of-critical.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/11/lessons-from-la-on-transfer-taxes.html</id>
+            <title type="html">Lessons from L.A. on Transfer Taxes</title>
+            
+            <published>2026-11-02T22:45:00Z</published>
+            <updated>2026-11-02T22:45:00Z</updated>
+            <summary type="html">San Francisco voters have a new proposition on real estate transfer taxes to consider. Aspects of and arguments for the new Prop 1 closely mirror the debate over Los Angeles&apos; Measure ULA, a 2022 ballot initiative that established a similar transfer tax and funding program.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/11/lessons-from-la-on-transfer-taxes.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/11/why-employers-cant-tame-health-costs.html</id>
+            <title type="html">Why Employers Can&apos;t Tame Health Costs</title>
+            
+            <published>2026-11-02T12:00:00Z</published>
+            <updated>2026-11-02T12:00:00Z</updated>
+            <summary type="html">Price transparency alone isn&#8217;t helping employers rein in health care costs. What will it take to give them real leverage&#8212;and overcome the barriers of today&#8217;s system?</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/11/why-employers-cant-tame-health-costs.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/10/americas-least-bad-option-in-iran.html</id>
+            <title type="html">America&apos;s Least Bad Option in Iran</title>
+            
+            <published>2026-10-29T11:00:00Z</published>
+            <updated>2026-10-29T11:00:00Z</updated>
+            <summary type="html">In Iran, the United States could return to a full-scale bombing campaign, walk away from the conflict, or stick with the current approach. Staying the course almost certainly will not bring quick results but it is strategically prudent.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/10/americas-least-bad-option-in-iran.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/10/why-quick-compensation-hasnt-replaced-eaton-fire-lawsuits.html</id>
+            <title type="html">Why Quick Compensation Hasn&apos;t Replaced Eaton Fire Lawsuits&#8212;So Far</title>
+            
+            <published>2026-10-21T21:00:00Z</published>
+            <updated>2026-10-21T21:00:00Z</updated>
+            <summary type="html">A review of Southern California Edison&apos;s direct-payment program finds that it has paid claimants much faster, but it hasn&apos;t become a broad substitute for lawsuits.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/10/why-quick-compensation-hasnt-replaced-eaton-fire-lawsuits.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/10/the-missing-link-in-drug-policy-why-whole-system-reform.html</id>
+            <title type="html">The Missing Link in Drug Policy: Why Whole-System Reform Is Stalling</title>
+            
+            <published>2026-10-19T12:00:00Z</published>
+            <updated>2026-10-19T12:00:00Z</updated>
+            <summary type="html">The UK has made progress toward a whole-system approach to drug policy, but unclear accountability and persistent stigma are stalling reform.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/10/the-missing-link-in-drug-policy-why-whole-system-reform.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/10/a-better-way-to-use-criminal-records-in-hiring.html</id>
+            <title type="html">A Better Way to Use Criminal Records in Hiring</title>
+            
+            <published>2026-10-15T15:30:00Z</published>
+            <updated>2026-10-15T15:30:00Z</updated>
+            <summary type="html">Employers want to know whether an applicant is likely to commit another crime, possibly on the job. But the screening rules many of them use are often about as accurate as a coin toss, in part because they&apos;re based on data that don&apos;t represent the population of job seekers with criminal records.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/commentary/2026/10/a-better-way-to-use-criminal-records-in-hiring.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/commentary/2026/10/this-is-how-to-end-israels-isolation.html</id>
+            <title type="html">This Is How to End Israel&apos;s Isolation</title>
+            
+            <published>2026-10-09T07:00:00Z</published>
+            <updated>2026-10-09T07:00:00Z</updated>
+            <summary type="html">The hope of many Israelis and Israel&apos;s supporters around the world is that elections on Oct. 27 will usher in a new government and slow the slide into greater isolation. New leadership could ease Israel&apos;s isolation temporar

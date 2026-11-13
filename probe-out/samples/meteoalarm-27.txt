@@ -1,0 +1,158 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:PT</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:14.479951Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT010</value>
+    </cap:geocode>
+    <link title="Aveiro" href="https://meteoalarm.org?geocode=EMMA_ID:PT010" hreflang="en"/>
+    <cap:areaDesc>Aveiro</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-11-13T01:32:18+00:00</cap:sent>
+    <cap:expires>2026-11-13T15:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:32:18+00:00</cap:effective>
+    <cap:onset>2026-11-13T01:33:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261113013218.PO-10-6355</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/cadf39f3-18e2-406d-9b83-3924904d92cd"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T01:32:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/cadf39f3-18e2-406d-9b83-3924904d92cd?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Aveiro</title>
+    <updated>2026-11-13T01:32:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT013</value>
+    </cap:geocode>
+    <link title="Coimbra" href="https://meteoalarm.org?geocode=EMMA_ID:PT013" hreflang="en"/>
+    <cap:areaDesc>Coimbra</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-11-13T01:32:18+00:00</cap:sent>
+    <cap:expires>2026-11-13T15:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:32:18+00:00</cap:effective>
+    <cap:onset>2026-11-13T06:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261113013218.PO-10-6356</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/d4e79ecc-9949-4bbe-b189-61fb155c64b2"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T01:32:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/d4e79ecc-9949-4bbe-b189-61fb155c64b2?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Coimbra</title>
+    <updated>2026-11-13T01:32:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT011</value>
+    </cap:geocode>
+    <link title="Viseu" href="https://meteoalarm.org?geocode=EMMA_ID:PT011" hreflang="en"/>
+    <cap:areaDesc>Viseu</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-11-13T01:32:18+00:00</cap:sent>
+    <cap:expires>2026-11-13T15:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:32:18+00:00</cap:effective>
+    <cap:onset>2026-11-13T01:33:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261113013218.PO-10-6354</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/f3d2f068-d57f-45a7-9734-ec4d6a13991c"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T01:32:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/f3d2f068-d57f-45a7-9734-ec4d6a13991c?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Viseu</title>
+    <updated>2026-11-13T01:32:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT007</value>
+    </cap:geocode>
+    <link title="Vila Real" href="https://meteoalarm.org?geocode=EMMA_ID:PT007" hreflang="en"/>
+    <cap:areaDesc>Vila Real</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-11-13T01:32:18+00:00</cap:sent>
+    <cap:expires>2026-11-13T12:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:32:18+00:00</cap:effective>
+    <cap:onset>2026-11-13T01:33:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261113013218.PO-10-6353</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/f7906c0a-db10-4bee-9b81-c7ddfee84a00"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T01:32:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/f7906c0a-db10-4bee-9b81-c7ddfee84a00?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Vila Real</title>
+    <updated>2026-11-13T01:32:18Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT009</value>
+    </cap:geocode>
+    <link title="Porto" href="https://meteoalarm.org?geocode=EMMA_ID:PT009" hreflang="en"/>
+    <cap:areaDesc>Porto</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-11-13T01:32:18+00:00</cap:sent>
+    <cap:expires>2026-11-13T12:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:32:18+00:00</cap:effective>
+    <cap:onset>2026-11-13T01:33:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.261113013218.PO-10-6352</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/40b42bce-dc35-47d6-8a3b-7918683e2c71"/>
+    <link titl

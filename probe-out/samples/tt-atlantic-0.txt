@@ -1,0 +1,129 @@
+https://www.atlanticcouncil.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Atlantic Council</title>
+	<atom:link href="https://www.atlanticcouncil.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.atlanticcouncil.org/</link>
+	<description>Shaping the global future together</description>
+	<lastBuildDate>Thu, 12 Nov 2026 22:43:05 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.1</generator>
+
+<image>
+	<url>https://www.atlanticcouncil.org/wp-content/uploads/2019/09/favicon-150x150.png</url>
+	<title>Atlantic Council</title>
+	<link>https://www.atlanticcouncil.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Putin’s chief negotiator vows to return ‘every inch of Russian land’ in Ukraine</title>
+		<link>https://www.atlanticcouncil.org/blogs/ukrainealert/putins-chief-negotiator-vows-to-return-every-inch-of-russian-land-in-ukraine/</link>
+		
+		<dc:creator><![CDATA[Peter Dickinson]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 21:58:15 +0000</pubDate>
+				<category><![CDATA[Conflict]]></category>
+		<category><![CDATA[Disinformation]]></category>
+		<category><![CDATA[Eurasia Center]]></category>
+		<category><![CDATA[Nationalism]]></category>
+		<category><![CDATA[Peacekeeping and Peacebuilding]]></category>
+		<category><![CDATA[Politics & Diplomacy]]></category>
+		<category><![CDATA[Russia]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<category><![CDATA[UkraineAlert]]></category>
+		<category><![CDATA[United States and Canada]]></category>
+		<category><![CDATA[Peter Dickinson]]></category>
+		<guid isPermaLink="false">https://www.atlanticcouncil.org/?p=960326</guid>
+
+					<description><![CDATA[<p>The Kremlin’s uncompromising approach to negotiations with Ukraine was summed up by Russian delegation head Vladimir Medinsky's comment that “every inch of Russian land will be returned to Russia, one way or another,” writes Peter Dickinson. </p>
+<p>The post <a href="https://www.atlanticcouncil.org/blogs/ukrainealert/putins-chief-negotiator-vows-to-return-every-inch-of-russian-land-in-ukraine/">Putin’s chief negotiator vows to return ‘every inch of Russian land’ in Ukraine</a> appeared first on <a href="https://www.atlanticcouncil.org">Atlantic Council</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.atlanticcouncil.org/blogs/ukrainealert/putins-chief-negotiator-vows-to-return-every-inch-of-russian-land-in-ukraine/">Putin’s chief negotiator vows to return ‘every inch of Russian land’ in Ukraine</a> appeared first on <a href="https://www.atlanticcouncil.org">Atlantic Council</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Moldova cuts energy dependency on Russia with landmark new power line</title>
+		<link>https://www.atlanticcouncil.org/blogs/ukrainealert/moldova-cuts-energy-dependency-on-russia-with-landmark-new-power-line/</link>
+		
+		<dc:creator><![CDATA[Aura Sabadus]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 21:37:17 +0000</pubDate>
+				<category><![CDATA[Conflict]]></category>
+		<category><![CDATA[Critical Infrastructure Policy]]></category>
+		<category><![CDATA[Eurasia Center]]></category>
+		<category><![CDATA[European Union]]></category>
+		<category><![CDATA[Geopolitics & Energy Security]]></category>
+		<category><![CDATA[Infrastructure]]></category>
+		<category><![CDATA[Moldova]]></category>
+		<category><![CDATA[Oil and Gas]]></category>
+		<category><![CDATA[Russia]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<category><![CDATA[UkraineAlert]]></category>
+		<guid isPermaLink="false">https://www.atlanticcouncil.org/?p=960290</guid>
+
+					<description><![CDATA[<p>Five years after Russia tried to bring Moldova to its knees through energy pressure, a landmark new power line has removed one of Moscow’s last remaining levers over the country, writes Aura Sabadus.</p>
+<p>The post <a href="https://www.atlanticcouncil.org/blogs/ukrainealert/moldova-cuts-energy-dependency-on-russia-with-landmark-new-power-line/">Moldova cuts energy dependency on Russia with landmark new power line</a> appeared first on <a href="https://www.atlanticcouncil.org">Atlantic Council</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.atlanticcouncil.org/blogs/ukrainealert/moldova-cuts-energy-dependency-on-russia-with-landmark-new-power-line/">Moldova cuts energy dependency on Russia with landmark new power line</a> appeared first on <a href="https://www.atlanticcouncil.org">Atlantic Council</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>The digital yuan is only part of China’s expanding global payments network</title>
+		<link>https://www.atlanticcouncil.org/blogs/econographics/the-digital-yuan-is-only-part-of-chinas-expanding-global-payments-network/</link>
+		
+		<dc:creator><![CDATA[Alisha Chhangani]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 21:37:11 +0000</pubDate>
+				<category><![CDATA[China]]></category>
+		<category><![CDATA[Digital Currencies]]></category>
+		<category><![CDATA[Digital Policy]]></category>
+		<category><![CDATA[EconoGraphics]]></category>
+		<category><![CDATA[Economy & Business]]></category>
+		<category><![CDATA[GeoEconomics Center]]></category>
+		<category><![CDATA[Alisha Chhangani]]></category>
+		<guid isPermaLink="false">https://www.atlanticcouncil.org/?p=960006</guid>
+
+					<description><![CDATA[<p>Beijing is building multiple layers of financial infrastructure to engage more partners and expand the reach of its renminbi.</p>
+<p>The post <a href="https://www.atlanticcouncil.org/blogs/econographics/the-digital-yuan-is-only-part-of-chinas-expanding-global-payments-network/">The digital yuan is only part of China’s expanding global payments network</a> appeared first on <a href="https://www.atlanticcouncil.org">Atlantic Council</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.atlanticcouncil.org/blogs/econographics/the-digital-yuan-is-only-part-of-chinas-expanding-global-payments-network/">The digital yuan is only part of China’s expanding global payments network</a> appeared first on <a href="https://www.atlanticcouncil.org">Atlantic Council</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>What Jensen Huang’s Nvidia exit means for Washington, Wall Street, and Beijing </title>
+		<link>https://www.atlanticcouncil.org/content-series/fastthinking/what-jensen-huangs-nvidia-exit-means-for-washington-wall-street-and-beijing/</link>
+		
+		<dc:creator><![CDATA[Atlantic Council ]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 21:34:21 +0000</pubDate>
+				<category><![CDATA[East Asia]]></category>
+		<category><![CDATA[Fast Thinking]]></category>
+		<category><![CDATA[GeoTech Center]]></category>
+		<category><![CDATA[Global China Hub]]></category>
+		<category><![CDATA[Technology & Innovation]]></category>
+		<category><![CDATA[United States and Canada]]></category>
+		<category><![CDATA[Kenton Thibaut]]></category>
+		<category><![CDATA[Trisha Ray]]></category>
+		<category><![CDATA[Jessie Yin]]></category>
+		<guid isPermaLink="false">https://www.atlanticcouncil.org/?p=960169</guid>
+
+					<description><![CDATA[<p>Our experts unpack what the alleged Nvidia espionage incident means for national security, markets, and relations with Beijing.</p>
+<p>The post <a href="https://www.atlanticcouncil.org/content-series/fastthinking/what-jensen-huangs-nvidia-exit-means-for-washington-wall-street-and-beijing/">What Jensen Huang’s Nvidia exit means for Washington, Wall Street, and Beijing </

@@ -1,0 +1,155 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:PL</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:20.973419Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL805</value>
+    </cap:geocode>
+    <link title="Eastern coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL805" hreflang="en"/>
+    <cap:areaDesc>Eastern coastal zone</cap:areaDesc>
+    <cap:event>Yellow Wind warning</cap:event>
+    <cap:sent>2026-11-12T22:40:23+00:00</cap:sent>
+    <cap:expires>2026-11-13T09:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T22:38:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261112224023.PL805_01201</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/7da74585-654d-4e50-ac7e-2ed45c13e03d"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T22:40:23Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/7da74585-654d-4e50-ac7e-2ed45c13e03d?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Poland - Eastern coastal zone</title>
+    <updated>2026-11-12T22:40:23Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL804</value>
+    </cap:geocode>
+    <link title="Central coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL804" hreflang="en"/>
+    <cap:areaDesc>Central coastal zone</cap:areaDesc>
+    <cap:event>Orange Wind warning</cap:event>
+    <cap:sent>2026-11-12T18:12:17+00:00</cap:sent>
+    <cap:expires>2026-11-14T00:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T18:11:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T19:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261112181217.PL804_01451</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/75b20aa5-8809-4959-80c9-9f90fef2f4c6"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T18:12:17Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/75b20aa5-8809-4959-80c9-9f90fef2f4c6?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Poland - Central coastal zone</title>
+    <updated>2026-11-12T18:12:17Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL803</value>
+    </cap:geocode>
+    <link title="Western coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL803" hreflang="en"/>
+    <cap:areaDesc>Western coastal zone</cap:areaDesc>
+    <cap:event>Orange Wind warning</cap:event>
+    <cap:sent>2026-11-12T17:54:15+00:00</cap:sent>
+    <cap:expires>2026-11-13T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T17:54:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261112175415.PL803_01561</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/e3e299b7-dd47-481c-98d0-b5c83edf018b"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T17:54:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/e3e299b7-dd47-481c-98d0-b5c83edf018b?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Poland - Western coastal zone</title>
+    <updated>2026-11-12T17:54:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL1805</value>
+    </cap:geocode>
+    <link title="Podkarpackie Province Jasielski County" href="https://meteoalarm.org?geocode=EMMA_ID:PL1805" hreflang="en"/>
+    <cap:areaDesc>Podkarpackie Province Jasielski County</cap:areaDesc>
+    <cap:event>Yellow snow-ice warning</cap:event>
+    <cap:sent>2026-11-12T11:53:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T12:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T11:53:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T06:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.Sk20261112115331361.PL1805</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/eae66bfc-a490-44ca-a7b8-b60bd66f67e3"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T11:53:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/eae66bfc-a490-44ca-a7b8-b60bd66f67e3?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Poland - Podkarpackie Province Jasielski County</title>
+    <updated>2026-11-12T11:53:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL1821</value>
+    </cap:geocode>
+    <link title="Podkarpackie Province Leski County" href="https://meteoalarm.org?geocode=EMMA_ID:PL1821" hreflang="en"/>
+    <cap:areaDesc>Podkarpackie Province Leski County</cap:areaDesc>
+    <cap:event>Yellow snow-ice warning</cap:event>
+    <cap:sent>2026-11-12T11:53:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T12:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T11:53:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T06:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actua

@@ -1,0 +1,77 @@
+https://poderciudadano.org/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Poder Ciudadano</title>
+	<atom:link href="https://poderciudadano.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://poderciudadano.org</link>
+	<description>Poder Ciudadano es una fundación sin fines de lucro, apartidaria e independiente que se dedica a promover el fortalecimiento de la democracia, la transparencia y el buen gobierno, la participación ciudadana y el acceso a la información pública. Es el Capítulo Argentino de Transparencia Internacional.</description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:03:20 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<!--Theme by MyThemeShop.com-->
+
+<image>
+	<url>https://poderciudadano.org/wp-content/uploads/2026/10/cropped-logoFPC2026-512x512-1-32x32.png</url>
+	<title>Poder Ciudadano</title>
+	<link>https://poderciudadano.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Alerta: la propuesta de reforma electoral rompe el control del financiamiento político</title>
+		<link>https://poderciudadano.org/reforma-electoral-permite-financiar-campanas-sin-control/</link>
+		
+		<dc:creator><![CDATA[Comunicacion]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 18:40:07 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<guid isPermaLink="false">https://poderciudadano.org/?p=22332</guid>
+
+					<description><![CDATA[<p>¿Qué dice el proyecto? El proyecto enviado al Congreso modifica la Ley 26.215 de Financiamiento de los Partidos Políticos. Entre sus cambios, incorpora la figura de los llamados “gastos independientes”: la publicidad electoral que pagan terceros sin coordinación con un partido o candidato. El texto establece que “no constituyen contribuciones en especie los gastos independientes [&#8230;]</p>
+<p>The post <a href="https://poderciudadano.org/reforma-electoral-permite-financiar-campanas-sin-control/">Alerta: la propuesta de reforma electoral rompe el control del financiamiento político</a> first appeared on <a href="https://poderciudadano.org">Poder Ciudadano</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p><strong>¿Qué dice el proyecto?</strong></p>
+<p>El proyecto enviado al Congreso modifica la Ley 26.215 de Financiamiento de los Partidos Políticos. Entre sus cambios, incorpora la figura de los llamados “gastos independientes”: la publicidad electoral que pagan terceros sin coordinación con un partido o candidato.</p>
+<p>El texto establece que “no constituyen contribuciones en especie los gastos independientes realizados por cualquier persona humana o jurídica” orientados a promover o desincentivar el apoyo a una agrupación política, siempre que no exista “concertación o coordinación previa” con el partido o el candidato.</p>
+<p>En la práctica, ese dinero:</p>
+<p>&#8211; No cuenta como aporte, por lo que no tiene tope.<br />
+&#8211; No figura en la rendición de cuentas del partido ante la Justicia electoral.<br />
+&#8211; No requiere identificar quién lo puso ni cuánto.</p>
+<p>El proyecto no define qué significa “coordinación”, ni explica en sus fundamentos cómo se controlaría. La única limitación es que no lo realicen quienes ya tienen prohibido aportar. Pero, ¿cómo se verifica eso si nadie está obligado a informar?</p>
+<p><strong>Una campaña paralela sin control</strong></p>
+<p>Si se aprueba, cualquier persona o empresa podría financiar una campaña paralela a favor (o en contra) de un candidato, por fuera de cualquier control de la Justicia. Es la puerta de entrada a un modelo similar al de los discutidos “Super PACs” de Estados Unidos, donde el dinero de terceros domina las campañas y la frontera de la “coordinación” resultó imposible de controlar.</p>
+<p>El proyecto además elimina el aporte público para campañas, los espacios gratuitos en radio y televisión y los límites de gasto de campaña. Además, multiplica el tope de aportes por donante. Una cancha totalmente inclinada a favor de los que más recursos consiguen y con fuerte influencia del sector privado, generando inequidad en la competencia electoral.</p>
+<p><strong>¿Qué prácticas favorece?</strong></p>
+<p>&#8211; <em>Aportes encubiertos:</em> fondos de fundaciones, empresas o allegados a partidos que dicen “no coordinarse” con la campaña para no figurar como aportantes.<br />
+&#8211; <em>Fondos ilegales:</em> dinero proveniente de actividades ilícitas y del crimen organizado, que encontraría una vía para entrar en la política sin dejar rastro.<br />
+&#8211; <em>Lavado de activos:</em> campañas usadas como canal para blanquear recursos de origen ilícito.</p>
+<p>Esta práctica rompe todo el sistema de control del financiamiento político que Argentina construyó en las últimas décadas. De nada sirven los topes, los informes previos o las prohibiciones si el dinero puede ir por afuera.</p>
+<p><strong>¿Qué dice la Constitución Nacional?</strong></p>
+<p>El artículo 38 de la Constitución Nacional, en su último párrafo, es claro: “Los partidos políticos deberán dar publicidad del origen y destino de sus fondos y patrimonio.”</p>
+<p>La Constitución no trata la transparencia del financiamiento como un trámite, sino como una garantía del sistema democrático. Habilitar que las campañas se financien desde afuera, sin que se conozca el origen del dinero, vacía de contenido esa obligación. A esto se suma el compromiso asumido por Argentina en la Convención de las Naciones Unidas contra la Corrupción, que pide aumentar la transparencia en el financiamiento de candidaturas y partidos.</p>
+<p>Si el proyecto se aprueba con esta cláusula, vamos a discutir su constitucionalidad.</p><p>The post <a href="https://poderciudadano.org/reforma-electoral-permite-financiar-campanas-sin-control/">Alerta: la propuesta de reforma electoral rompe el control del financiamiento político</a> first appeared on <a href="https://poderciudadano.org">Poder Ciudadano</a>.</p>]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Reforma política y soberanía: Poder Ciudadano alertó en Diputados sobre los riesgos para la democracia y la libertad de expresión</title>
+		<link>https://poderciudadano.org/reforma-politica-y-soberania-poder-ciudadano-alerto-en-diputados-sobre-los-riesgos-para-la-democracia-y-la-libertad-de-expresion/</link>
+		
+		<dc:creator><![CDATA[Comunicacion]]></dc:creator>
+		<pubDate>Thu, 29 Oct 2026 19:55:58 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<guid isPermaLink="false">https://poderciudadano.org/?p=22300</guid>
+
+					<description><![CDATA[<p>En el marco del debate parlamentario sobre el Proyecto de Ley de Defensa de la Soberanía Nacional impulsada por el Poder Ejecutivo, Poder Ciudadano advirtió sobre la inclusión de figuras penales ambiguas que amenazan el debate público, los procesos electorales y la labor de la sociedad civil. Este 27 de octubre de 2026, Poder Ciudadano [&#8230;]</p>
+<p>The post <a href="https://poderciudadano.org/reforma-politica-y-soberania-poder-ciudadano-alerto-en-diputados-sobre-los-riesgos-para-la-democracia-y-la-libertad-de-expresion/">Reforma política y soberanía: Poder Ciudadano alertó en Diputados sobre los riesgos para la democracia y la libertad de expresión</a> first appeared on <a href="https://poderciudadano.org">Poder Ciudadano</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p><em>En el marco del debate parlamentario sobre el Proyecto de Ley de Defensa de la Soberanía Nacional impulsada por el Poder Ejecutivo, Poder Ciudadano advirtió sobre la inclusión de figuras penales ambiguas que amenazan el debate público, los procesos electorales y la labor de la socied

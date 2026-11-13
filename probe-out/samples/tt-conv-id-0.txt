@@ -1,0 +1,81 @@
+https://theconversation.com/id/politik/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/id/politik/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/id/politik/articles.atom"/>
+  <title>Politik + Masyarakat – The Conversation</title>
+  <updated>2026-11-13T02:16:50Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/294906</id>
+    <published>2026-11-13T02:16:50Z</published>
+    <updated>2026-11-13T02:16:50Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/mengapa-pemimpin-otoriter-dan-antikritik-kerap-banyak-pemujanya-294906"/>
+    <title>Mengapa pemimpin otoriter dan antikritik kerap banyak pemujanya?</title>
+    <content type="html">&lt;blockquote&gt;
+&lt;p&gt;• Pemimpin dominan kerap dianggap kompeten, tapi bisa membungkam kritik dan perbedaan pendapat.&lt;/p&gt;
+
+&lt;p&gt;• Budaya organisasi dan masyarakat ikut melanggengkan kepemimpinan heroik dan antikritik.&lt;/p&gt;
+
+&lt;p&gt;• Kepemimpinan perlu mengutamakan kolaborasi dan memberi ruang bagi semua orang untuk bersuara.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;Pemimpin yang membentak bawahan di depan umum kerap dipandang tegas oleh sebagian kalangan. Begitu pula pejabat yang mengambil keputusan sepihak masih sering dianggap berani. Sementara itu, pemimpin yang mengakui kesalahan atau meminta masukan justru berisiko dicap lemah.&lt;/p&gt;
+
+&lt;p&gt;Pandangan ini menunjukkan betapa kuatnya anggapan bahwa &lt;a href="https://www.sciencedirect.com/science/article/abs/pii/1048984394900051"&gt;pemimpin ideal&lt;/a&gt; harus dominan, berkarisma, dan selalu memiliki jawaban atas setiap persoalan.&lt;/p&gt;
+
+&lt;p&gt;Masalahnya, ketegasan sering disamakan dengan kemampuan memimpin, sementara kepatuhan dianggap sebagai bukti keberhasilan kepemimpinan. Akibatnya, perilaku otoriter bisa memperoleh dukungan, sekalipun itu bisa merugikan organisasi dan masyarakat.&lt;/p&gt;
+
+&lt;p&gt;Mengapa pola ini terus bertahan? Duduk permasalahan ini bukan semata berasal dari karakter pemimpin, tetapi juga pengaruh budaya yang membentuk, memuja, dan mempertahankan tradisi ini.&lt;/p&gt;
+
+&lt;h2&gt;Dominasi dianggap kompetensi&lt;/h2&gt;
+
+&lt;p&gt;Dalam kajian kepemimpinan, kecenderungan menempatkan pemimpin sebagai sosok luar biasa yang menentukan keberhasilan organisasi dikenal sebagai &lt;a href="https://www.tandfonline.com/doi/abs/10.1080/00220620.2010.492959"&gt;&lt;em&gt;heroic leadership&lt;/em&gt; (kepemimpinan heroik)&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Perspektif ini menganggap keberhasilan terutama berasal dari keberanian, kecerdasan, dan keputusan seorang pemimpin. Kontribusi pekerja, kondisi organisasi, serta faktor sosial dan politik kerap terabaikan.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://www.facebook.com/reel/1557882292118422"&gt;https://www.facebook.com/reel/1557882292118422&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://www.sciencedirect.com/science/article/abs/pii/0030507384900436?"&gt;Penelitian tentang kategorisasi kepemimpinan&lt;/a&gt; menunjukkan bahwa manusia memiliki gambaran tertentu tentang karakter pemimpin ideal. Gambaran tersebut memengaruhi siapa yang dianggap layak memimpin.&lt;/p&gt;
+
+&lt;p&gt;Ketika dominasi diagungkan, orang yang berbicara paling keras atau tampil paling percaya diri lebih mudah dianggap kompeten. Padahal belum tentu.&lt;/p&gt;
+
+&lt;p&gt;Dalam masyarakat dengan hierarki kekuasaan yang kuat, kecenderungan ini berpotensi semakin mengakar.&lt;/p&gt;
+
+&lt;p&gt;Kita bisa melihatnya dalam keseharian. Di kantor, atasan yang mendominasi rapat dianggap berwibawa. Sementara bawahan yang mempertanyakan keputusan dicap tidak loyal. &lt;/p&gt;
+
+&lt;p&gt;Di ruang publik, video pejabat memarahi staf bisa memperoleh pujian karena dianggap menunjukkan ketegasan.&lt;/p&gt;
+
+&lt;p&gt;Padahal, kemampuan mempermalukan bawahan bukan ukuran kompetensi, apalagi keberhasilan kebijakan.&lt;/p&gt;
+
+&lt;p&gt;Masalah semakin serius ketika organisasi ikut mempertahankan pola tersebut. Bawahan memilih diam demi menjaga karier atau menjilat pemimpin karena yakin posisinya tak tergoyahkan.&lt;/p&gt;
+
+&lt;p&gt;Fenomena ini berkaitan dengan &lt;em&gt;employee silence&lt;/em&gt;, yakni kecenderungan pekerja menahan informasi, kekhawatiran, atau kritik terhadap organisasi. &lt;a href="https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-031413-091328"&gt;Riset tentang psikologi organisasi&lt;/a&gt; menjelaskan bahwa ketakutan terhadap konsekuensi negatif menjadi salah satu alasan pekerja enggan bersuara.&lt;/p&gt;
+
+&lt;p&gt;Nyatanya pemimpin antikritik tidak selalu bertahan karena dianggap berhasil. Mereka juga bisa terus memperoleh legitimasi karena lingkungan membuat kritik terasa berisiko.&lt;/p&gt;
+
+&lt;h2&gt;Kepemimpinan bukan pertunjukan satu orang&lt;/h2&gt;
+
+&lt;p&gt;Dominasi pemimpin semakin mudah dipasarkan melalui media sosial.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://theconversation.com/viral-dulu-substansi-belakangan-3-risiko-punya-pemimpin-politik-kreator-konten-259378"&gt;Konten pejabat&lt;/a&gt; yang melakukan inspeksi mendadak, memarahi bawahan, atau menunjukkan aksi simbolis dapat membangun citra sebagai penyelamat. Namun, popularitas tindakan tersebut tidak otomatis membuktikan efektivitas kebijakan.&lt;/p&gt;
+
+
+
+&lt;p&gt;Ketika perhatian hanya tertuju pada figur, pangkal persoalan utama sering luput dari perhatian: apakah persoalan terselesaikan? kebijakannya berdampak? dan siapa yang menanggung akibat keputusan tersebut?&lt;/p&gt;
+
+&lt;p&gt;Di sinilah pentingnya perspektif &lt;a href="https://www.amazon.com/Shared-Leadership-Reframing-Hows-Whys/dp/0761926240/ref=mt_paperback?_encoding=UTF8&amp;amp;me="&gt;&lt;em&gt;post-heroic leadership&lt;/em&gt;&lt;/a&gt;. Berbeda dengan kepemimpinan heroik, pendekatan ini melihat kepemimpinan sebagai &lt;a href="https://www.amazon.com/Shared-Leadership-Reframing-Hows-Whys/dp/0761926240/ref=mt_paperback?_encoding=UTF8&amp;amp;me="&gt;proses kolektif&lt;/a&gt; yang melibatkan hubungan, kerja sama, dan pembagian pengaruh, bukan kehebatan satu individu.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://www.sciencedirect.com/science/article/pii/S1048984304000827"&gt;Kajian Fletcher&lt;/a&gt; menekankan pentingnya praktik kepemimpinan yang lebih relasional dan tidak bergantung pada figur tunggal. Artinya, pemimpin tetap memiliki tanggung jawab mengambil keputusan, tetapi tidak memonopoli pengetahuan dan kewenangan.&lt;/p&gt;
+
+&lt;p&gt;Dalam penanganan krisis, misalnya, pemimpin yang efektif bukan yang paling lantang menyalahkan bawahan atau &lt;a href="https://theconversation.com/pejabat-bukan-gen-alpha-asbun-mereka-saat-asap-karhutla-bukan-salah-ucap-tapi-krisis-empati-294869"&gt;“asbun” (asal bunyi)&lt;/a&gt;, tetapi yang mendengarkan ahli, menerima laporan lapangan, mengakui kesalahan, dan memperbaiki kebijakan berdasarkan bukti.&lt;/p&gt;
+
+&lt;p&gt;Pendekatan ini juga penting bagi organisasi. &lt;a href="https://journals.sagepub.com/doi/10.2307/2666999"&gt;Penelitian Edmondson (1999)&lt;/a&gt; menunjukkan bahwa &lt;em&gt;psychological safety&lt;/em&gt;, yakni rasa aman untuk mengambil risiko interpersonal, berkaitan dengan perilaku belajar dalam tim.&lt;/p&gt;
+
+&lt;p&gt;Dengan kata lain, ruang untuk bertanya, berbeda pendapat, dan mengakui kesalahan bukan ancaman bagi kepemimpinan, melainkan bagian penting dari organisasi yang mampu belajar.&lt;/p&gt;
+
+&lt;h2&gt;Berhenti memuja jabatan, mulai memperkuat kritik&lt;/h2&gt;
+
+&lt;p&gt;Mengubah budaya kepemimpinan tidak cukup dengan meminta pejabat lebih rendah hati. Kita pun perlu &lt;a href="https://books.google.com.bh/books?hl=en&amp;amp;lr=&amp;amp;id=ZXX3CgAAQBAJ&amp;amp;oi=fnd&amp;amp;pg=PT7&amp;amp;dq=The+Stupidit

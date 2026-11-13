@@ -1,0 +1,68 @@
+https://irmo.hr/en/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Institut za razvoj i međunarodne odnose</title>
+	<atom:link href="https://irmo.hr/en/feed/" rel="self" type="application/rss+xml" />
+	<link>https://irmo.hr/home-2/</link>
+	<description>Institut za razvoj i međunarodne odnose</description>
+	<lastBuildDate>Wed, 30 Sep 2026 12:02:18 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.8.3</generator>
+	<item>
+		<title>Scientific advisor, Dr. Sandro Knezović attended the 51st Workshop of the PfP Consortium Study Group &#8221;Regional Stability in South East Europe“</title>
+		<link>https://irmo.hr/scientific-advisor-dr-sandro-knezovic-attended-the-51st-workshop-of-the-pfp-consortium-study-group-regional-stability-in-south-east-europe/</link>
+					<comments>https://irmo.hr/scientific-advisor-dr-sandro-knezovic-attended-the-51st-workshop-of-the-pfp-consortium-study-group-regional-stability-in-south-east-europe/#respond</comments>
+		
+		<dc:creator><![CDATA[Dragana Markanović]]></dc:creator>
+		<pubDate>Fri, 25 Sep 2026 11:55:44 +0000</pubDate>
+				<category><![CDATA[Nekategorizirano]]></category>
+		<guid isPermaLink="false">https://irmo.hr/?p=42289</guid>
+
+					<description><![CDATA[<p>Scientific Advisor Dr. Sandro Knezović attended the 51st Workshop of the PfP Consortium Study Group “Regional Stability in South East Europe,” held in Sarajevo from 21 to 24 September 2026. This year’s workshop, titled “Transatlantic Relations Under Scrutiny – Implications for the Western Balkans,” brought together experts to discuss the evolving transatlantic relationship and its [&#8230;]</p>
+<p>Objava <a href="https://irmo.hr/scientific-advisor-dr-sandro-knezovic-attended-the-51st-workshop-of-the-pfp-consortium-study-group-regional-stability-in-south-east-europe/">Scientific advisor, Dr. Sandro Knezović attended the 51st Workshop of the PfP Consortium Study Group &#8221;Regional Stability in South East Europe“</a> pojavila se prvi puta na <a href="https://irmo.hr/home-2">Institut za razvoj i međunarodne odnose</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>Scientific Advisor Dr. Sandro Knezović attended the 51st Workshop of the PfP Consortium Study Group “Regional Stability in South East Europe,” held in Sarajevo from 21 to 24 September 2026. This year’s workshop, titled “Transatlantic Relations Under Scrutiny – Implications for the Western Balkans,” brought together experts to discuss the evolving transatlantic relationship and its implications for regional stability and security.</p>
+<p>The traditionally close relationship between Europe and the United States has come under increasing political strain, particularly since the beginning of US President Donald Trump’s second term. Against this backdrop, the workshop examined EU-US relations and their regional perceptions, with particular attention to their impact on security cooperation, defence, and stability in the Western Balkans. Discussions highlighted the importance of a stable and coordinated partnership between the EU and the US for a region that continues to face unresolved political and security challenges, democratic pressures, and complex regional relations.</p>
+<p>Dr. Knezović chaired the panel “Regional Perceptions of EU-US Relations and Impact on the Ground,” which examined how developments in transatlantic relations are perceived across the Western Balkans and how shifts in EU-US cooperation may affect political, security, and strategic dynamics on the ground.</p>
+<p>The workshop provided an important platform for exchanging perspectives on the future of transatlantic relations and their significance for the stability, security, and European integration of the Western Balkans.</p>
+<p>Picture: <a href="https://www.pfp-consortium.org/study-groups/regional-stability-south-east-europe">https://www.pfp-consortium.org/study-groups/regional-stability-south-east-europe</a></p>
+<p>Objava <a href="https://irmo.hr/scientific-advisor-dr-sandro-knezovic-attended-the-51st-workshop-of-the-pfp-consortium-study-group-regional-stability-in-south-east-europe/">Scientific advisor, Dr. Sandro Knezović attended the 51st Workshop of the PfP Consortium Study Group &#8221;Regional Stability in South East Europe“</a> pojavila se prvi puta na <a href="https://irmo.hr/home-2">Institut za razvoj i međunarodne odnose</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://irmo.hr/scientific-advisor-dr-sandro-knezovic-attended-the-51st-workshop-of-the-pfp-consortium-study-group-regional-stability-in-south-east-europe/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>In memoriam: prof. Dr. Zoran Roca</title>
+		<link>https://irmo.hr/in-memoriam-prof-dr-zoran-roca/</link>
+					<comments>https://irmo.hr/in-memoriam-prof-dr-zoran-roca/#respond</comments>
+		
+		<dc:creator><![CDATA[Dragana Markanović]]></dc:creator>
+		<pubDate>Mon, 06 Jul 2026 09:19:49 +0000</pubDate>
+				<category><![CDATA[Nekategorizirano]]></category>
+		<guid isPermaLink="false">https://irmo.hr/?p=41849</guid>
+
+					<description><![CDATA[<p>It is with great sadness and deep regret that we received the news of the passing of our dear colleague Prof. Dr.Zoran Roca, who passed away on July 3, 2026 after a long and serious illness. Zoran was a respected Croatian geographer, demographer, development planner, university professor and international consultant. Born in Zagreb on August [&#8230;]</p>
+<p>Objava <a href="https://irmo.hr/in-memoriam-prof-dr-zoran-roca/">In memoriam: prof. Dr. Zoran Roca</a> pojavila se prvi puta na <a href="https://irmo.hr/home-2">Institut za razvoj i međunarodne odnose</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div>
+<div class="zXU7Rb">
+<div class="akczyd">
+<div class="X4DQ0 zWsGpc">
+<div class="VfPpkd-AznF2e-ZMv3u" role="tablist" data-use-automatic-activation="false">
+<div class="VfPpkd-AznF2e-vzJc7b">
+<p>It is with great sadness and deep regret that we received the news of the passing of our dear colleague Prof. Dr.Zoran Roca, who passed away on July 3, 2026 after a long and serious illness. Zoran was a respected Croatian geographer, demographer, development planner, university professor and international consultant. Born in Zagreb on August 25, 1948, he was educated at the University of Zagreb, Université de Strasbourg and Ohio State University in Columbus, and received his PhD in geography from the University of Zagreb. He began his professional career in Zagreb, at the Institute for Development and International Relations – IRMO. During this period, he worked on demographic research, environmental and development research, and edited the journal Development International and other scientific publications in the field of social and economic development. After the Institute, he continued his work at FAO in Rome, where he worked in the fields of demography, gender studies, environment and rural development. Since 1995, he has been a full professor of geography and development studies at the Universidade Lusófona de Humanidades e Tecnologias in Lisbon, director of TERCUD – Territory, Culture and Development Research Centre. He was also an external associate of the Department of Sociology, Faculty of Philosophy, University of Zagreb, where he taught Introduction to Sociodemography. His main areas of work were socio-demographic dimensions of development, spatial and territorial identity, local and regional development, participatory planning, rural development, international development cooperation, second 

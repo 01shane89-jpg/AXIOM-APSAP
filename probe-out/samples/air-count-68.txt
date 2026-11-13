@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-50_160.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"-50_160","ac":[["c82810","ANZ503M","ZK-MVZ","AT76","ATR-72-600",-45.9652,169.2284,13950,240,224,1794545854,0,"5550","A2",0],["c87ed7",null,"TWR","TWR",null,-46.1685,167.8332,null,null,null,1794545851,0,null,null,4],["c87ed8",null,null,null,null,-46.0759,169.7702,null,null,null,1794545852,0,null,null,4]]}

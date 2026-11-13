@@ -1,0 +1,67 @@
+https://www.baseis.org.py/feed/
+
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>baseis.org.py</title>
+	<atom:link href="https://www.baseis.org.py/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.baseis.org.py/</link>
+	<description></description>
+	<lastBuildDate>Mon, 02 Nov 2026 09:51:50 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.0.8</generator>
+	<item>
+		<title>Con la Soja al Cuello 2026: un análisis del avance del extractivismo y sus impactos en Paraguay</title>
+		<link>https://www.baseis.org.py/con-la-soja-al-cuello-2026-un-analisis-del-avance-del-extractivismo-y-sus-impactos-en-paraguay/</link>
+					<comments>https://www.baseis.org.py/con-la-soja-al-cuello-2026-un-analisis-del-avance-del-extractivismo-y-sus-impactos-en-paraguay/#respond</comments>
+		
+		<dc:creator><![CDATA[Comunicacion Baseis]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 09:51:35 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<guid isPermaLink="false">https://www.baseis.org.py/?p=563222</guid>
+
+					<description><![CDATA[<p>Asunción, 1 de noviembre 2026 (BASE-IS) La presentación de la duodécima edición del informe Con la Soja al Cuello, el principal informe sobre el extractivismo en Paraguay, se realizará el jueves 5 de noviembre, a partir de las 19:00 horas, en laUniversidad de los Jesuitas del Paraguay (Colón 1159). El material estará disponible para las [&#8230;]</p>
+<p>La entrada <a href="https://www.baseis.org.py/con-la-soja-al-cuello-2026-un-analisis-del-avance-del-extractivismo-y-sus-impactos-en-paraguay/">Con la Soja al Cuello 2026: un análisis del avance del extractivismo y sus impactos en Paraguay</a> se publicó primero en <a href="https://www.baseis.org.py">baseis.org.py</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>Asunción, 1 de noviembre 2026 (BASE-IS) La presentación de la duodécima edición del informe Con la Soja al Cuello, el principal informe sobre el extractivismo en Paraguay, se realizará el jueves 5 de noviembre, a partir de las 19:00 horas, en laUniversidad de los Jesuitas del Paraguay (Colón 1159). El material estará disponible para las personas interesadas tanto en formato impreso como digital.</p>
+<p>Esta nueva edición analiza la expansión y diversificación del modelo extractivista en Paraguay, sus impactos ambientales, sociales y sanitarios, y las políticas gubernamentales que favorecen su profundización.</p>
+<p>La publicación aborda el crecimiento de los monocultivos de soja, arroz y plantaciones forestales, el avance de la minería, el aumento del uso de agrotóxicos y la expansión de la ganadería. También examina los efectos de este modelo sobre la salud de la población, el cambio climático, la producción de alimentos y los territorios campesinos e indígenas.</p>
+<p>El informe advierte sobre la responsabilidad del Estado en la promoción de estas actividades y denuncia la violencia, la criminalización y la judicialización que enfrentan las comunidades que defienden sus territorios. Asimismo, recoge experiencias de resistencia y alternativas impulsadas por organizaciones campesinas, mujeres y colectivos que promueven la agroecología, el cuidado de las semillas nativas y criollas y la defensa de los territorios.</p>
+<p>A doce años de su primera edición, Con la Soja al Cuello se consolida como una herramienta de información y análisis para comprender las transformaciones del modelo productivo paraguayo, visibilizar sus consecuencias y fortalecer los debates sobre alternativas de producción y formas de vida más justas y sostenibles.</p>
+<p>La entrada <a href="https://www.baseis.org.py/con-la-soja-al-cuello-2026-un-analisis-del-avance-del-extractivismo-y-sus-impactos-en-paraguay/">Con la Soja al Cuello 2026: un análisis del avance del extractivismo y sus impactos en Paraguay</a> se publicó primero en <a href="https://www.baseis.org.py">baseis.org.py</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.baseis.org.py/con-la-soja-al-cuello-2026-un-analisis-del-avance-del-extractivismo-y-sus-impactos-en-paraguay/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Juliana Fleitas resiste al avance de la soja y las fumigaciones</title>
+		<link>https://www.baseis.org.py/juliana-fleitas-resiste-al-avance-de-la-soja-y-las-fumigaciones/</link>
+					<comments>https://www.baseis.org.py/juliana-fleitas-resiste-al-avance-de-la-soja-y-las-fumigaciones/#respond</comments>
+		
+		<dc:creator><![CDATA[Comunicacion Baseis]]></dc:creator>
+		<pubDate>Wed, 28 Oct 2026 20:31:16 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<guid isPermaLink="false">https://www.baseis.org.py/?p=563216</guid>
+
+					<description><![CDATA[<p>Asunción, 28 de octubre 2026 (BASE-IS) La comunidad del Asentamiento Juliana Fleitas, ubicado en Repatriación, Caaguazú, exige el cumplimiento de la Ordenanza Municipal N.º 001/2017, que establece medidas de protección ambiental para el asentamiento. Las fumigaciones con agrotóxicos amenazan la salud de las familias y los cultivos que sostienen su economía. «Defendemos nuestro asentamiento porque [&#8230;]</p>
+<p>La entrada <a href="https://www.baseis.org.py/juliana-fleitas-resiste-al-avance-de-la-soja-y-las-fumigaciones/">Juliana Fleitas resiste al avance de la soja y las fumigaciones</a> se publicó primero en <a href="https://www.baseis.org.py">baseis.org.py</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>Asunción, 28 de octubre 2026 (BASE-IS) La comunidad del Asentamiento Juliana Fleitas, ubicado en Repatriación, Caaguazú, exige el cumplimiento de la Ordenanza Municipal N.º 001/2017, que establece medidas de protección ambiental para el asentamiento. Las fumigaciones con agrotóxicos amenazan la salud de las familias y los cultivos que sostienen su economía.</p>
+<p>«Defendemos nuestro asentamiento porque sabemos que el avance del monocultivo y las fumigaciones no son para los pequeños productores. Lo que trae ese modelo es desarraigo, enfermedades y graves consecuencias», expresan las pobladoras de Juliana Fleitas, que resisten la expansión de las plantaciones mecanizadas de soja que rodean la comunidad.</p>
+<p>Las familias cultivan maíz, poroto, mandioca y otros productos de la agricultura campesina, fundamentales para su alimentación y sustento económico. Sin embargo, estos cultivos están expuestos a la deriva de los agrotóxicos utilizados en las parcelas sojeras, poniendo en riesgo la producción de alimentos saludables y los medios de vida de la comunidad.</p>
+<p>Pese a las gestiones realizadas ante instituciones como el Servicio Nacional de Calidad y Sanidad Vegetal y de Semillas (SENAVE), las pobladoras denuncian la falta de respuestas efectivas. «Permanentemente estamos realizando movilizaciones para frenar las fumigaciones dentro del asentamiento, pero necesitamos el apoyo de las instituciones», señalan.</p>
+<p>La comunidad cuenta con una herramienta legal conquistada mediante años de organización y lucha. El artículo 1.º de la Ordenanza Municipal N.º 001/2017 incluye expresamente a Juliana Fleitas entre las zonas reguladas por la normativa. A su vez, el artículo 5.º establece que, para la producción agrícola de cualquier producto en extensiones superiores a diez hectáreas, «será necesario contar con la autorización de la Municipalidad antes de su cultivo». El artículo 6.º dispone: «Prohíbase la utilización de productos químicos de alta toxicidad, no autorizado por la autoridad de aplicación, en los cultivos cuyas dimensiones superan el límite permitido en el Artículo 5º de l

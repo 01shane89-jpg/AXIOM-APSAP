@@ -1,0 +1,66 @@
+https://timep.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>The Tahrir Institute for Middle East Policy</title>
+	<atom:link href="https://timep.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://timep.org</link>
+	<description></description>
+	<lastBuildDate>Fri, 06 Nov 2026 13:38:51 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://timep.org/wp-content/uploads/2020/04/cropped-timep-logo-32x32.png</url>
+	<title>The Tahrir Institute for Middle East Policy</title>
+	<link>https://timep.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Building Back Without the State: Syria&#8217;s Social Protection Gap</title>
+		<link>https://timep.org/2026/11/06/building-back-without-the-state-syrias-social-protection-gap/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=building-back-without-the-state-syrias-social-protection-gap</link>
+		
+		<dc:creator><![CDATA[Cynthia Saghir]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 13:38:47 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://timep.org/?p=44458</guid>
+
+					<description><![CDATA[<p>As foreign investment and reconstruction financing flow into Syria, the government has rolled back subsidies and protections its poorest citizens relied on.</p>
+<p>The post <a href="https://timep.org/2026/11/06/building-back-without-the-state-syrias-social-protection-gap/">Building Back Without the State: Syria’s Social Protection Gap</a> first appeared on <a href="https://timep.org">The Tahrir Institute for Middle East Policy</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p class="wp-block-paragraph">In May 2026, the United Nations World Food Program in Syria suspended its bread subsidy program and reduced its emergency food assistance by 50 percent due to <a href="https://reliefweb.int/report/syrian-arab-republic/wfp-scales-back-food-assistance-syria-amid-funding-shortfalls" target="_blank" rel="noopener">critical funding shortfalls</a>. The program supported 300 bakeries and served as a vital lifeline for up to 4 million people each day in the most vulnerable areas.</p>
+
+
+
+<p class="wp-block-paragraph">The collapse of the bread program is one example of the fragility of social support structures in today’s Syria. Much of what would ordinarily count as social protection, such as <a href="https://reliefweb.int/report/syrian-arab-republic/wfp-scales-back-food-assistance-syria-amid-funding-shortfalls" target="_blank" rel="noopener">subsidized food</a>, <a href="https://www.thenewhumanitarian.org/news-feature/2025/02/17/us-aid-freezes-escalate-syria-crisis" target="_blank" rel="noopener">water provision</a>, and <a href="https://www.unocha.org/publications/report/syrian-arab-republic/syrian-arab-republic-humanitarian-response-priorities-january-december-2025" target="_blank" rel="noopener">cash assistance</a> and <a href="https://www.unocha.org/publications/report/syrian-arab-republic/syrian-arab-republic-humanitarian-response-priorities-january-december-2025" target="_blank" rel="noopener">support to farmers</a>, is delivered not by the state but by <a href="https://www.unocha.org/publications/report/syrian-arab-republic/syrian-arab-republic-2026-humanitarian-needs-and-response-plan-april-2026" target="_blank" rel="noopener">UN agencies</a>, international NGOs, and Syrian national organizations, financed by donors whose commitments are <a href="https://alnap.org/help-library/resources/sohs-2026/" target="_blank" rel="noopener">shrinking</a> globally and in Syria. </p>
+
+
+
+<p class="wp-block-paragraph">The state has not filled the gaps, rather, it has moved to relinquishing its role as provider of support for its population by actively <a href="https://syrianobserver.com/society/syrias-market-economy-dismantling-subsidies-and-protecting-vulnerable-groups.html" target="_blank" rel="noopener">dismantling subsidies</a> that the majority of Syrians rely on. It has not pursued a state led and financed shock responsive social protection system, but prioritized the signaling of fiscal prudence to seek <a href="https://www.aa.com.tr/en/economy/syrian-finance-minister-says-reforms-focused-on-private-sector-investment/3718721" target="_blank" rel="noopener">credibility with investors</a>. If such policies continue, millions of Syrians will remain one donor shortfall away from losing the support they rely on.</p>
+
+
+
+<p class="wp-block-paragraph">Social protection refers to a system of policies through which a state protects people from poverty and life-cycle risks through the provision of social security, assistance and services. Unlike needs-based humanitarian aid, social protection establishes the state as the duty bearer and coverage as an entitlement for all, rather than discretionary or temporary assistance.</p>
+
+
+
+<h3 class="wp-block-heading"><strong>The government’s economic strategy</strong></h3>
+
+
+
+<p class="wp-block-paragraph">Syria’s transitional authority has centered <a href="https://www.dailysabah.com/world/mid-east/al-sharaa-charts-syrias-course-on-key-political-economic-issues" target="_blank" rel="noopener">its approach</a> to the country’s post-war recovery on restoring stability and reviving the economy, treating social protection as a byproduct of growth rather than a priority in its own right. Minister of Finance Yisr Barnieh has <a href="https://www.imfconnect.org/content/imf/en/annual-meetings/calendar/open/2025/10/15/200621.html" target="_blank" rel="noopener">framed subsidy cuts</a> as part of the effort to reduce debt and build fiscal credibility. This sits within a <a href="https://www.imf.org/en/news/articles/2026/02/25/pr26062-syria-imf-staff-concludes-staff-visit-to-syria" target="_blank" rel="noopener">wider reform package</a> which also includes <a href="https://www.aa.com.tr/en/middle-east/syria-launches-new-banknotes-after-redenomination-drops-portraits/3784270" target="_blank" rel="noopener">currency redenomination</a> and <a href="https://sana.sy/en/economic/2334724/" target="_blank" rel="noopener">budget restructuring</a>. Officials have credited these measures, along with the <a href="https://karamshaar.com/our-work/sanctions-program/caesar-act-sanctions-current-status/" target="_blank" rel="noopener">repeal</a> of the Caesar Act, with <a href="https://sana.sy/en/economic/2334724/" target="_blank" rel="noopener">removing barriers for investors</a> and <a href="https://www.anews.com.tr/middle-east/2026/08/04/imf-expects-syrias-economy-to-grow-at-double-digit-pace-in-2026">rising investor confidence</a>. That credibility is meant to generate resources for the government that will eventually make <a href="https://sana.sy/en/economic/2335584/" target="_blank" rel="noopener">social protection fiscally viable</a>.</p>
+
+
+
+<p class="wp-block-paragraph">This approach aligns with the government’s stated <a href="https://archive.sana.sy/en/?p=362750" target="_blank" rel="noopener">aversion</a> to external borrowing and to <a href="https://mei.edu/publication/syrias-new-investment-law-and-the-return-of-state-mediated-market-access/" target="_blank" rel="noopener">IMF-style debt reliance</a>, where the state accepts conditions of spending and repayment in return for financing. These conditions have traditionally included subsidy cuts, not so different from what the Syrian authorities are currently undertaking. Instead, authorities are cutting government spending while covering the deficit by <a href="https://english.enabbaladi

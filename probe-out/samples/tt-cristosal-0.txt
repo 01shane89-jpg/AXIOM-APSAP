@@ -1,0 +1,135 @@
+https://cristosal.org/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Cristosal</title>
+	<atom:link href="https://cristosal.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://cristosal.org</link>
+	<description>Defending rights, documenting truth, and demanding accountability. Cristosal stands with people resisting injustice across El Salvador, Guatemala, and Honduras.</description>
+	<lastBuildDate>Wed, 11 Nov 2026 14:02:17 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://cristosal.org/wp-content/uploads/2025/09/Cristosal_Favicon.svg</url>
+	<title>Cristosal</title>
+	<link>https://cristosal.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Cristosal denuncia condena política contra Fidel Zavala, voz valiente contra la tortura y corrupción en las cárceles</title>
+		<link>https://cristosal.org/cristosal-denuncia-condena-politica-contra-fidel-zavala-voz-valiente-contra-la-tortura-y-corrupcion-en-las-carceles/</link>
+		
+		<dc:creator><![CDATA[Cristosal Soporte]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 01:57:00 +0000</pubDate>
+				<category><![CDATA[Comunicados]]></category>
+		<guid isPermaLink="false">https://cristosal.org/?p=19869</guid>
+
+					<description><![CDATA[Ciudad de Guatemala, 10 de noviembre de 2026. Fidel Zavala, una de las voces más valientes de El Salvador en la denuncia de torturas, tratos crueles y corrupción en los centros penales, fue condenado este jueves a 15 años de prisión. Su caso confirma la persecución y criminalización de las personas defensoras de derechos humanos, [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>El Salvador ante CIDH: Organizaciones alertan sobre la inacción de la Procuraduría para la Defensa de Derechos Humanos (PDDH)</title>
+		<link>https://cristosal.org/el-salvador-ante-cidh-organizaciones-alertan-sobre-la-inaccion-de-la-procuraduria-para-la-defensa-de-derechos-humanos-pddh/</link>
+		
+		<dc:creator><![CDATA[Cristosal Soporte]]></dc:creator>
+		<pubDate>Mon, 26 Oct 2026 11:22:00 +0000</pubDate>
+				<category><![CDATA[Comunicados]]></category>
+		<category><![CDATA[Régimen de excepción]]></category>
+		<guid isPermaLink="false">https://cristosal.org/?p=19857</guid>
+
+					<description><![CDATA[Ciudad de Panamá, 26 de octubre de 2026 — Durante la audiencia sobre la situación de la Procuraduría para la Defensa de los Derechos Humanos (PDDH) de El Salvador, celebrada ante la CIDH este lunes, las organizaciones participantes cuestionaron el cumplimiento del mandato constitucional de la institución y advirtieron sobre la desprotección de personas y [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Organizaciones Denuncian ante la CIDH Muertes, Torturas y Negación de Atención Médica a Personas Privadas de Libertad en El Salvador</title>
+		<link>https://cristosal.org/organizaciones-denuncian-ante-la-cidh-muertes-torturas-y-negacion-de-atencion-medica-a-personas-privadas-de-libertad-en-el-salvador/</link>
+		
+		<dc:creator><![CDATA[Cristosal Soporte]]></dc:creator>
+		<pubDate>Mon, 26 Oct 2026 11:12:00 +0000</pubDate>
+				<category><![CDATA[Comunicados]]></category>
+		<category><![CDATA[Régimen de excepción]]></category>
+		<guid isPermaLink="false">https://cristosal.org/?p=19852</guid>
+
+					<description><![CDATA[Ciudad de Panamá, 26 de octubre de 2026 — Las organizaciones de derechos humanos Robert &#38; Ethel Kennedy Human Rights Center, Socorro Jurídico Humanitario y Cristosal denunciaron ante la Comisión Interamericana de Derechos Humanos (CIDH) muertes bajo custodia, torturas, negación de atención médica, desnutrición y hacinamiento de personas privadas de libertad en los más de [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Justicia para Milton Santamaría y Eldin Choc: condenas a policías abren camino contra la impunidad y los crímenes de odio y prejuicio</title>
+		<link>https://cristosal.org/justicia-para-milton-santamaria-y-eldin-choc-condenas-a-policias-abren-camino-contra-la-impunidad-y-los-crimenes-de-odio-y-prejuicio/</link>
+		
+		<dc:creator><![CDATA[Cristosal Soporte]]></dc:creator>
+		<pubDate>Thu, 22 Oct 2026 19:06:43 +0000</pubDate>
+				<category><![CDATA[Comunicados]]></category>
+		<category><![CDATA[Estado de derecho]]></category>
+		<category><![CDATA[Análisis jurídico]]></category>
+		<category><![CDATA[El Salvador]]></category>
+		<guid isPermaLink="false">https://cristosal.org/?p=19847</guid>
+
+					<description><![CDATA[Tras dos años de lucha, las familias de Milton Nelson Santamaría y Eldin Leonel Choc Xi obtuvieron justicia por sus ejecuciones extrajudiciales. Todos los agentes de la Policía Nacional Civil (PNC) procesados en el caso fueron condenados. Esta sentencia abre una ventana para que Guatemala avance en el reconocimiento de los crímenes de odio y [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Bitcoin Accumulation in El Salvador and Transparency Failures Under the IMF Agreement</title>
+		<link>https://cristosal.org/bitcoin-accumulation-in-el-salvador-and-transparency-failures-under-the-imf-agreement/</link>
+		
+		<dc:creator><![CDATA[Brenda]]></dc:creator>
+		<pubDate>Wed, 07 Oct 2026 21:59:37 +0000</pubDate>
+				<category><![CDATA[Estado de derecho]]></category>
+		<category><![CDATA[Análisis jurídico]]></category>
+		<category><![CDATA[El Salvador]]></category>
+		<guid isPermaLink="false">https://cristosal.org/?p=19839</guid>
+
+					<description><![CDATA[Cristosal presents its analysis of the accumulation of bitcoins in El Salvador through private donations, transactions carried out without meeting international fiscal transparency standards, with no evidence that authorities fulfilled their anti-money laundering obligations, and despite the commitment made to the IMF to &#8220;keep unchanged the total bitcoins held by the public sector.&#8221; The document [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Family and Cristosal Demand Verification of Ruth López’s Health Condition</title>
+		<link>https://cristosal.org/family-and-cristosal-demand-verification-of-ruth-lopezs-health-condition/</link>
+		
+		<dc:creator><![CDATA[Brenda]]></dc:creator>
+		<pubDate>Tue, 19 May 2026 22:33:09 +0000</pubDate>
+				<category><![CDATA[Press Release]]></category>
+		<category><![CDATA[El Salvador]]></category>
+		<category><![CDATA[Ruth Lopez]]></category>
+		<guid isPermaLink="false">https://cristosal.org/?p=19393</guid>
+
+					<description><![CDATA[Ruth López, Salvadoran human rights lawyer, was arrested at her home on May 18, 2025, and has been held in prison in El Salvador for a year without trial. López has been recognized internationally for her work as the head of Cristosal&#8217;s anti-corruption unit in defense of democracy and legal advocacy in the fight against [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Ruth López: One Year as a Political Prisoner for exposing corruption in El Salvador</title>
+		<link>https://cristosal.org/ruth-lopez-one-year-as-a-political-prisoner-for-exposing-corruption-in-el-salvador/</link>
+		
+		<dc:creator><![CDATA[Brenda]]></dc:creator>
+		<pubDate>Mon, 18 May 2026 21:24:13 +0000</pubDate>
+				<category><![CDATA[Press Release]]></category>
+		<category><![CDATA[El Salvador]]></category>
+		<category><![CDATA[Ruth Lopez]]></category>
+		<guid isPermaLink="false">https://cristosal.org/?p=19387</guid>
+
+					<description><![CDATA[Ruth López, head of Cristosal’s Anti-Corruption Unit and a human rights defender, marks one year as a political prisoner of the Salvadoran re

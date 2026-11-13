@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-10_-60.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"-10_-60","ac":[["e4999e","TAM4690","PR-XBK","A20N","AIRBUS A-320neo",-3.8516,-50.7913,38975,450,89,1794546032,0,"6650","A3",0],["e4a37f","PRWST","PR-WST","C55B","CESSNA 550B Citation Bravo",-6.5999,-50.1089,25900,304,77,1794545933,0,"6366","A1",0]]}

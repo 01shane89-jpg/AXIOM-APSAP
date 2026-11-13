@@ -1,0 +1,141 @@
+https://idesa.org/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>IDESA</title>
+	<atom:link href="https://idesa.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://idesa.org/</link>
+	<description>20 Años</description>
+	<lastBuildDate>Mon, 09 Nov 2026 13:01:11 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.9.11</generator>
+
+<image>
+	<url>https://idesa.org/wp-content/uploads/2025/11/cropped-IDESA-32x32.png</url>
+	<title>IDESA</title>
+	<link>https://idesa.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>El contexto externo no es el responsable del estancamiento</title>
+		<link>https://idesa.org/el-contexto-externo-no-es-el-responsable-del-estancamiento/</link>
+		
+		<dc:creator><![CDATA[IDESA]]></dc:creator>
+		<pubDate>Sun, 08 Nov 2026 20:35:04 +0000</pubDate>
+				<category><![CDATA[Informe nacional (IN)]]></category>
+		<category><![CDATA[Competitividad]]></category>
+		<category><![CDATA[Finanzas públicas]]></category>
+		<category><![CDATA[Turismo]]></category>
+		<guid isPermaLink="false">https://idesa.org/?p=26618</guid>
+
+					<description><![CDATA[<p>Los precios de las exportaciones y las importaciones son muy favorables para la Argentina. Esto prueba que el origen de los problemas está principalmente en las políticas internas. Para revertir la situación hay que ajustar las políticas monetaria y cambiaria y retomar la iniciativa en materia de reformas estructurales.</p>
+<p>La entrada <a href="https://idesa.org/el-contexto-externo-no-es-el-responsable-del-estancamiento/">El contexto externo no es el responsable del estancamiento</a> se publicó primero en <a href="https://idesa.org">IDESA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Prepagas y obras sociales de dirección reciben la mitad de la recaudación</title>
+		<link>https://idesa.org/prepagas-y-obras-sociales-de-direccion-reciben-la-mitad-de-la-recaudacion/</link>
+		
+		<dc:creator><![CDATA[IDESA]]></dc:creator>
+		<pubDate>Sun, 01 Nov 2026 21:02:38 +0000</pubDate>
+				<category><![CDATA[Informe nacional (IN)]]></category>
+		<category><![CDATA[Competitividad]]></category>
+		<category><![CDATA[Finanzas públicas]]></category>
+		<category><![CDATA[Turismo]]></category>
+		<guid isPermaLink="false">https://idesa.org/?p=26595</guid>
+
+					<description><![CDATA[<p>Para que la libre elección de obra social induzca una buena administración de los recursos es imprescindible un entorno apropiado. Dentro de las reglas que hay que mejorar es fundamental un diseño más cuidadoso del PMO y usar el FSR para atenuar el desfinanciamiento de los afiliados de más bajos aportes.</p>
+<p>La entrada <a href="https://idesa.org/prepagas-y-obras-sociales-de-direccion-reciben-la-mitad-de-la-recaudacion/">Prepagas y obras sociales de dirección reciben la mitad de la recaudación</a> se publicó primero en <a href="https://idesa.org">IDESA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>¿La escuela privada enseña mejor o tiene alumnos con más ventajas?</title>
+		<link>https://idesa.org/la-escuela-privada-ensena-mejor-o-tiene-alumnos-con-mas-ventajas/</link>
+		
+		<dc:creator><![CDATA[IDESA]]></dc:creator>
+		<pubDate>Wed, 28 Oct 2026 17:38:17 +0000</pubDate>
+				<category><![CDATA[Informe – EduLab]]></category>
+		<guid isPermaLink="false">https://idesa.org/?p=26577</guid>
+
+					<description><![CDATA[<p>Los alumnos de escuelas privadas obtienen mejores resultados que los de escuelas estatales. Según Aprender 2025, en Matemática, más de 5 de cada 10 alumnos de sexto grado de escuelas estatales no superan el nivel básico, frente a menos de 3 de cada 10 en las privadas. En Lengua, la diferencia es de casi 3 frente a 1 de cada 10. Pero ¿las escuelas privadas enseñan mejor o tienen alumnos con más ventajas?</p>
+<p>La entrada <a href="https://idesa.org/la-escuela-privada-ensena-mejor-o-tiene-alumnos-con-mas-ventajas/">¿La escuela privada enseña mejor o tiene alumnos con más ventajas?</a> se publicó primero en <a href="https://idesa.org">IDESA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>La baja productividad impide la recuperación de los salarios</title>
+		<link>https://idesa.org/la-baja-productividad-impide-la-recuperacion-de-los-salarios/</link>
+		
+		<dc:creator><![CDATA[IDESA]]></dc:creator>
+		<pubDate>Sun, 25 Oct 2026 18:02:47 +0000</pubDate>
+				<category><![CDATA[Informe nacional (IN)]]></category>
+		<category><![CDATA[Competitividad]]></category>
+		<category><![CDATA[Finanzas públicas]]></category>
+		<category><![CDATA[Turismo]]></category>
+		<guid isPermaLink="false">https://idesa.org/?p=26573</guid>
+
+					<description><![CDATA[<p>Un entorno muy adverso para producir explica la baja productividad. Es decir, es necesario asignar más trabajo e inversión para generar la misma cantidad de bienes y servicios. Bajo estas condiciones no hay posibilidades de que los salarios reales crezcan. Para revertir este proceso es imperioso modernizar el Estado.</p>
+<p>La entrada <a href="https://idesa.org/la-baja-productividad-impide-la-recuperacion-de-los-salarios/">La baja productividad impide la recuperación de los salarios</a> se publicó primero en <a href="https://idesa.org">IDESA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>El envejecimiento desbarajusta las finanzas públicas</title>
+		<link>https://idesa.org/el-envejecimiento-desbarajusta-las-finanzas-publicas/</link>
+		
+		<dc:creator><![CDATA[IDESA]]></dc:creator>
+		<pubDate>Sun, 18 Oct 2026 16:08:44 +0000</pubDate>
+				<category><![CDATA[Informe nacional (IN)]]></category>
+		<category><![CDATA[Competitividad]]></category>
+		<category><![CDATA[Finanzas públicas]]></category>
+		<category><![CDATA[Turismo]]></category>
+		<guid isPermaLink="false">https://idesa.org/?p=26568</guid>
+
+					<description><![CDATA[<p>Un fenómeno inmanente del envejecimiento de la población es que aumenta la demanda de gasto público asignado a los adultos mayores. Las evidencias muestran que postergar la adaptación de las coberturas para la vejez a la dinámica demográfica lleva a descuidar otras funciones esenciales del Estado.</p>
+<p>La entrada <a href="https://idesa.org/el-envejecimiento-desbarajusta-las-finanzas-publicas/">El envejecimiento desbarajusta las finanzas públicas</a> se publicó primero en <a href="https://idesa.org">IDESA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Un nuevo índice identifica oportunidades para facilitar la apertura de negocios en Argentina</title>
+		<link>https://idesa.org/un-nuevo-indice-identifica-oportunidades-para-facilitar-la-apertura-de-negocios-en-argentina/</link>
+		
+		<dc:creator><![CDATA[IDESA]]></dc:creator>
+		<pubDate>Wed, 14 Oct 2026 13:09:55 +0000</pubDate>
+				<category><![CDATA[Informe - Índice Fácil]]></category>
+		<guid isPermaLink="false">https://idesa.org/?p=26559</guid>
+
+					<description><![CDATA[<p>El Índice FÁCIL Productivo, elaborado por IDESA, analiza los procesos de habilitación de negocios en 30 municipios argentinos, identifica buenas prácticas y propone recomendaciones para avanzar hacia trámites más simples, ágiles y digitales.</p>
+<p>La entrada <a href="https://idesa.org/un-nuevo-indice-identifica-oportunidades-para-facilitar-la-apertura-de-negocios-en-argentina/">Un nuevo índice identifica oportunidades para facilitar la apertura de negocios en Argentina</a> se publicó primero en <a href="https://idesa.org">IDESA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>El control de AySA tiene que pasar a CABA y PBA</title>
+		<link>https://idesa.org/el-control-d

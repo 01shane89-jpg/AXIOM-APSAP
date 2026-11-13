@@ -1,0 +1,172 @@
+https://chinapower.csis.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+	xmlns:georss="http://www.georss.org/georss"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	>
+
+<channel>
+	<title>ChinaPower Project</title>
+	<atom:link href="https://chinapower.csis.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://chinapower.csis.org/</link>
+	<description>Unpacking the complexity of China&#039;s rise</description>
+	<lastBuildDate>Fri, 06 Nov 2026 14:54:59 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+<site xmlns="com-wordpress:feed-additions:1">131150412</site>	<item>
+		<title>China’s Power: Up for Debate 2026</title>
+		<link>https://chinapower.csis.org/china-power-debate-2026/</link>
+		
+		<dc:creator><![CDATA[Linda Yang]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 14:21:58 +0000</pubDate>
+				<category><![CDATA[Conferences]]></category>
+		<category><![CDATA[International Image]]></category>
+		<category><![CDATA[BRICS]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[China-Japan Relations]]></category>
+		<category><![CDATA[Global South]]></category>
+		<category><![CDATA[international security]]></category>
+		<category><![CDATA[military modernization]]></category>
+		<category><![CDATA[US-China relations]]></category>
+		<guid isPermaLink="false">https://chinapower.csis.org/?p=11655</guid>
+
+					<description><![CDATA[<p>On Wednesday, October 28, and Thursday, October 29, 2026, the China Power Project held its tenth annual conference featuring two panels and leading experts debating core issues underpinning China's power.</p>
+<p>The post <a href="https://chinapower.csis.org/china-power-debate-2026/">China’s Power: Up for Debate 2026</a> appeared first on <a href="https://chinapower.csis.org">ChinaPower Project</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">On Wednesday, October 28, and Thursday, October 29, 2026, the China Power Project held its tenth annual conference. The two-day event featured two panels and three debates as well as remarks by Senator Steve Daines (R-MT), member of the Senate Foreign Relations Committee. Below, you can navigate to videos of the conference and find transcripts of each session. You can also see the results of audience polls from before and after each debate.</p>
+
+
+
+<ul class="wp-block-list">
+<li><strong>Day 1, October 28, 2026: <a href="#day-1" data-type="internal" data-id="#day-1">Panels on China&#8217;s Power and U.S.-China Relations</a></strong></li>
+
+
+
+<li><strong>Day 2, October 29, 2026: <a href="#day-2" data-type="internal" data-id="#day-2">Debates on China&#8217;s Power, China-Japan Relations, and BRICS&#8217; Prominence</a></strong></li>
+</ul>
+
+
+
+<h2 id="day-1" class="wp-block-heading"><strong>Wednesday, October 28</strong></h2>
+
+
+
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+<div class="jetpack-video-wrapper"><iframe class="youtube-player" width="700" height="394" src="https://www.youtube.com/embed/vWcskmCxeOU?version=3&#038;rel=1&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;fs=1&#038;hl=en-US&#038;autohide=2&#038;start=9&#038;wmode=transparent" allowfullscreen="true" style="border:0;" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-popups-to-escape-sandbox"></iframe></div>
+</div></figure>
+
+
+
+<h3 class="wp-block-heading"><strong>Opening Remarks</strong></h3>
+
+
+
+<p class="wp-block-paragraph"><strong>Alex Kisling</strong><br><em>Chief Communications Officer, CSIS</em></p>
+
+
+
+<h3 class="wp-block-heading"><strong>Panel: A Decade of Changes: Taking Stock of China’s Evolving Power</strong>&nbsp;</h3>
+
+
+
+<p class="wp-block-paragraph"><strong>Bonnie Glaser</strong><br><em>Managing Director, Indo-Pacific Program, German Marshall Fund</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Scott Kennedy</strong><br><em>Senior Adviser and Trustee Chair in Chinese Business and Economics, CSIS</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>I-Chung Lai</strong><br><em>President, Prospect Foundation</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Yasuhiro Matsuda</strong><br><em>Professor, University of Tokyo</em></p>
+
+
+
+<p class="wp-block-paragraph">Read a <a href="https://csis-website-prod.s3.amazonaws.com/s3fs-public/2026-11/261028_Glaser_Decade_Change.pdf?VersionId=0SsQZIXYauLcuPyNHZ7s8Qlmw5c8FlCD" data-type="link" data-id="https://csis-website-prod.s3.amazonaws.com/s3fs-public/2026-11/261028_Glaser_Decade_Change.pdf?VersionId=0SsQZIXYauLcuPyNHZ7s8Qlmw5c8FlCD">transcript</a> of the panel.</p>
+
+
+
+<h3 class="wp-block-heading"><strong>Panel: The Current State of US-China Relations</strong></h3>
+
+
+
+<p class="wp-block-paragraph"><strong>Edgard Kagan</strong><br><em>Senior Adviser and Freeman Chair in China Studies</em>, <em>CSIS</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Evan Medeiros</strong><br><em>Penner Family Chair in Asian Studies and the Cling Family Senior Fellow in US-China Relations, Georgetown University</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Randall Schriver</strong><br><em>Chairman, The Institute for Indo-Pacific Security</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Xiangwei Wang</strong><br><em>Senior Visiting Scholar, Harvard</em></p>
+
+
+
+<p class="wp-block-paragraph">Read a <a href="https://csis-website-prod.s3.amazonaws.com/s3fs-public/2026-11/261028_Medeiros_Current_State.pdf?VersionId=RNFBziPovufl5Of9AuHA1Y6EX3V9U.7G">transcript</a> of the panel.</p>
+
+
+
+<h2 id="day-2" class="wp-block-heading"><strong>Thursday, October 29</strong></h2>
+
+
+
+<h3 class="wp-block-heading">Morning Session</h3>
+
+
+
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+<div class="jetpack-video-wrapper"><iframe class="youtube-player" width="700" height="394" src="https://www.youtube.com/embed/KhCbXYt3s1w?version=3&#038;rel=1&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;fs=1&#038;hl=en-US&#038;autohide=2&#038;start=5869&#038;wmode=transparent" allowfullscreen="true" style="border:0;" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-popups-to-escape-sandbox"></iframe></div>
+</div></figure>
+
+
+
+<h3 class="wp-block-heading"><strong>Public Debate Kickoff</strong></h3>
+
+
+
+<p class="wp-block-paragraph"><strong>Senator Steve Daines (R-MT) (Virtual Remarks)</strong><br><em>Member, Senate Foreign Relations Committee</em></p>
+
+
+
+<p class="wp-block-paragraph">Read a <a href="https://csis-website-prod.s3.amazonaws.com/s3fs-public/2026-11/261029_Daines_Public_Debate.pdf?VersionId=AO0Q2mXnKeXv0t2uY8ksPY.tlZ9Bw8Sd">transcript</a> of the remarks.</p>
+
+
+
+<h3 class="wp-block-heading"><strong>Debate I</strong></h3>
+
+
+
+<p class="wp-block-paragraph"><strong><em>Proposition: As China’s power grows it will be more willing to militarily support and defend its closest international friends</em></strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>FOR: Brian Hart</strong><br><em>Deputy Director and Fellow, China Power Project, CSIS</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>AGAINST:</strong> <strong>Michael Swaine&nbsp;</strong><br><em>Senior Research Fellow, East Asia Program, Quincy Institute</em></p>
+
+
+<div class="flourish-embed flourish-hierarchy" data-src="visualisation/30819327?39773"><script src="https://public.flourish.studio/resources/embed.js"></script></div>
+
+
+
+<p class="wp-block

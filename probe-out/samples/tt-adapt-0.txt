@@ -1,0 +1,134 @@
+https://www.adaptinstitute.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Adapt Institute</title>
+	<atom:link href="https://www.adaptinstitute.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.adaptinstitute.org</link>
+	<description>Designing a secure future</description>
+	<lastBuildDate>Fri, 16 Oct 2026 17:35:14 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.adaptinstitute.org/wp-content/uploads/2022/04/adapt-favicon-100x100.png</url>
+	<title>Adapt Institute</title>
+	<link>https://www.adaptinstitute.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Did Arena-M fail in Ukraine? Yes. And no.</title>
+		<link>https://www.adaptinstitute.org/did-arena-m-fail-in-ukraine-yes-and-no/07/10/2026/</link>
+		
+		<dc:creator><![CDATA[Matej Bazovský]]></dc:creator>
+		<pubDate>Wed, 07 Oct 2026 17:47:47 +0000</pubDate>
+				<category><![CDATA[Military Affairs]]></category>
+		<guid isPermaLink="false">https://www.adaptinstitute.org/?p=14398</guid>
+
+					<description><![CDATA[<p>In the summer, the Russian army, for the first time, documented the use of the Arena-M active protection system (APS) in the combat zone in Ukraine. It was originally designed to protect tanks by shooting down incoming anti-tank rockets, serving as a first line of defence for tanks and their crews.</p>
+<p>The post <a href="https://www.adaptinstitute.org/did-arena-m-fail-in-ukraine-yes-and-no/07/10/2026/">Did Arena-M fail in Ukraine? Yes. And no.</a> first appeared on <a href="https://www.adaptinstitute.org">Adapt Institute</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Ukraine&#8217;s long-range UAV campaign against Russia: will Kyiv change the course of war by attacks on Russian infrastructure?</title>
+		<link>https://www.adaptinstitute.org/ukraines-long-range-uav-campaign-against-russia-will-kyiv-change-the-course-of-war-by-attacks-on-russian-infrastructure/07/09/2026/</link>
+		
+		<dc:creator><![CDATA[Tomáš Iliev]]></dc:creator>
+		<pubDate>Mon, 07 Sep 2026 10:02:01 +0000</pubDate>
+				<category><![CDATA[Military Affairs]]></category>
+		<category><![CDATA[drones]]></category>
+		<category><![CDATA[UGV]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<guid isPermaLink="false">https://www.adaptinstitute.org/?p=14286</guid>
+
+					<description><![CDATA[<p>In August 2026, Ukraine conducted the most massive Unmanned Aerial Vehicle (UAV) attack since the beginning of the full-scale Russian invasion in 2022. During the raid, 822 drones were involved....</p>
+<p>The post <a href="https://www.adaptinstitute.org/ukraines-long-range-uav-campaign-against-russia-will-kyiv-change-the-course-of-war-by-attacks-on-russian-infrastructure/07/09/2026/">Ukraine’s long-range UAV campaign against Russia: will Kyiv change the course of war by attacks on Russian infrastructure?</a> first appeared on <a href="https://www.adaptinstitute.org">Adapt Institute</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Jet drone enablers: is European NATO at someone’s mercy?</title>
+		<link>https://www.adaptinstitute.org/jet-drone-enablers-is-european-nato-at-someones-mercy/07/09/2026/</link>
+		
+		<dc:creator><![CDATA[Viliam Ostatník]]></dc:creator>
+		<pubDate>Mon, 07 Sep 2026 09:59:48 +0000</pubDate>
+				<category><![CDATA[Military Affairs]]></category>
+		<category><![CDATA[drones]]></category>
+		<category><![CDATA[EU]]></category>
+		<category><![CDATA[NATO]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<guid isPermaLink="false">https://www.adaptinstitute.org/?p=14281</guid>
+
+					<description><![CDATA[<p>And is it China, United States, or someone else? Drones came to dominate modern warfare, as seen in Ukraine and the Middle East. They thus become indispensable to modern militaries...</p>
+<p>The post <a href="https://www.adaptinstitute.org/jet-drone-enablers-is-european-nato-at-someones-mercy/07/09/2026/">Jet drone enablers: is European NATO at someone’s mercy?</a> first appeared on <a href="https://www.adaptinstitute.org">Adapt Institute</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Billion-dollar question: how to get enough drones that we need today – and tomorrow?</title>
+		<link>https://www.adaptinstitute.org/billion-dollar-question-how-to-get-enough-drones-that-we-need-today-and-tomorrow/24/06/2026/</link>
+		
+		<dc:creator><![CDATA[Viliam Ostatník]]></dc:creator>
+		<pubDate>Wed, 24 Jun 2026 09:02:19 +0000</pubDate>
+				<category><![CDATA[Military Affairs]]></category>
+		<category><![CDATA[Strategic Thinking]]></category>
+		<category><![CDATA[drones]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<guid isPermaLink="false">https://www.adaptinstitute.org/?p=14221</guid>
+
+					<description><![CDATA[<p>Drone technology introduced multiple new challenges in regard to security, warfare as well as industry. Policy-makers, military strategists and industrialists in NATO countries are trying to figure out how to...</p>
+<p>The post <a href="https://www.adaptinstitute.org/billion-dollar-question-how-to-get-enough-drones-that-we-need-today-and-tomorrow/24/06/2026/">Billion-dollar question: how to get enough drones that we need today – and tomorrow?</a> first appeared on <a href="https://www.adaptinstitute.org">Adapt Institute</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Ground Drones in the conflict in Ukraine and the EU: another revolution in warfare?</title>
+		<link>https://www.adaptinstitute.org/ground-drones-in-the-conflict-in-ukraine-and-the-eu-another-revolution-in-warfare/16/06/2026/</link>
+		
+		<dc:creator><![CDATA[Tomáš Iliev]]></dc:creator>
+		<pubDate>Tue, 16 Jun 2026 06:12:33 +0000</pubDate>
+				<category><![CDATA[Military Affairs]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<guid isPermaLink="false">https://www.adaptinstitute.org/?p=14218</guid>
+
+					<description><![CDATA[<p>The skies over Ukraine have, for years, been characterised by the buzzing of drones. However, lately, increased use of a new silent protagonist has occurred on the battlefield. Officially known...</p>
+<p>The post <a href="https://www.adaptinstitute.org/ground-drones-in-the-conflict-in-ukraine-and-the-eu-another-revolution-in-warfare/16/06/2026/">Ground Drones in the conflict in Ukraine and the EU: another revolution in warfare?</a> first appeared on <a href="https://www.adaptinstitute.org">Adapt Institute</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Dragoons of Ukraine – Motorcycle units in the war in Ukraine</title>
+		<link>https://www.adaptinstitute.org/dragoons-of-ukraine-motorcycle-units-in-the-war-in-ukraine/24/04/2026/</link>
+		
+		<dc:creator><![CDATA[Matej Bazovský]]></dc:creator>
+		<pubDate>Fri, 24 Apr 2026 12:58:33 +0000</pubDate>
+				<category><![CDATA[Military Affairs]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<guid isPermaLink="false">https://www.adaptinstitute.org/?p=14107</guid>
+
+					<description><![CDATA[<p>In 2024, a new trend emerged on the battlefield involving the use of motorcycles for various purposes, including offensive operations. These assault motorcycle units (known in Russian as мотоштурмовики) are...</p>
+<p>The post <a href="https://www.adaptinstitute.org/dragoons-of-ukraine-motorcycle-units-in-the-war-in-ukraine/24/04/2026/">Dragoons of Ukraine – Motorcycle units in the war in Ukraine</a> first appeared on <a href="https://www.adaptinstitute.org">Adapt Institute</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Ukraine striking Russian oil 

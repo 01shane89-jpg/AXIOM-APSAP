@@ -1,0 +1,131 @@
+https://globalinitiative.net/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Global Initiative</title>
+	<atom:link href="https://globalinitiative.net/feed/" rel="self" type="application/rss+xml" />
+	<link>https://globalinitiative.net/</link>
+	<description>A Network to Counter Networks</description>
+	<lastBuildDate>Thu, 12 Nov 2026 03:54:30 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.2</generator>
+
+<image>
+	<url>https://globalinitiative.net/wp-content/uploads/2019/05/cropped-GI_RESFund_RGB-17-32x32.png</url>
+	<title>Global Initiative</title>
+	<link>https://globalinitiative.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Human smuggling and trafficking in North Africa and the Sahel &#8211; 2026</title>
+		<link>https://globalinitiative.net/analysis/human-smuggling-and-trafficking-in-north-africa-and-the-sahel-2026/</link>
+		
+		<dc:creator><![CDATA[Claudio Landi]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 02:12:55 +0000</pubDate>
+				<guid isPermaLink="false">https://globalinitiative.net/?post_type=article&#038;p=43897</guid>
+
+					<description><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/human-smuggling-and-trafficking-in-north-africa-and-the-sahel-2026/">Human smuggling and trafficking in North Africa and the Sahel &#8211; 2026</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/human-smuggling-and-trafficking-in-north-africa-and-the-sahel-2026/">Human smuggling and trafficking in North Africa and the Sahel &#8211; 2026</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Illicit gold and financial flows in Guyana and Suriname</title>
+		<link>https://globalinitiative.net/analysis/illicit-gold-guyana-suriname/</link>
+		
+		<dc:creator><![CDATA[Adrian Ancira]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 15:32:30 +0000</pubDate>
+				<guid isPermaLink="false">https://globalinitiative.net/?post_type=article&#038;p=44140</guid>
+
+					<description><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/illicit-gold-guyana-suriname/">Illicit gold and financial flows in Guyana and Suriname</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/illicit-gold-guyana-suriname/">Illicit gold and financial flows in Guyana and Suriname</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>A window for reform? Rethinking the UNTOC review mechanism after COP13</title>
+		<link>https://globalinitiative.net/analysis/a-window-for-reform-rethinking-the-untoc-review-mechanism-after-cop13/</link>
+		
+		<dc:creator><![CDATA[Claudio Landi]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 13:45:16 +0000</pubDate>
+				<guid isPermaLink="false">https://globalinitiative.net/?post_type=article&#038;p=44138</guid>
+
+					<description><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/a-window-for-reform-rethinking-the-untoc-review-mechanism-after-cop13/">A window for reform? Rethinking the UNTOC review mechanism after COP13</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/a-window-for-reform-rethinking-the-untoc-review-mechanism-after-cop13/">A window for reform? Rethinking the UNTOC review mechanism after COP13</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Who will protect the upcoming elections from criminal networks?</title>
+		<link>https://globalinitiative.net/analysis/who-will-protect-the-upcoming-elections-from-criminal-networks/</link>
+		
+		<dc:creator><![CDATA[Adrian Ancira]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 23:29:31 +0000</pubDate>
+				<guid isPermaLink="false">https://globalinitiative.net/?post_type=article&#038;p=44134</guid>
+
+					<description><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/who-will-protect-the-upcoming-elections-from-criminal-networks/">Who will protect the upcoming elections from criminal networks?</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/who-will-protect-the-upcoming-elections-from-criminal-networks/">Who will protect the upcoming elections from criminal networks?</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Calling for collaborative proposals to counter organized crime in the Mekong</title>
+		<link>https://globalinitiative.net/announcements/calling-innovative-proposals-to-combat-organized-crime-in-the-mekong/</link>
+		
+		<dc:creator><![CDATA[Claudio Landi]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 23:10:09 +0000</pubDate>
+				<guid isPermaLink="false">https://globalinitiative.net/?post_type=announcement&#038;p=42493</guid>
+
+					<description><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/announcements/calling-innovative-proposals-to-combat-organized-crime-in-the-mekong/">Calling for collaborative proposals to counter organized crime in the Mekong</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/announcements/calling-innovative-proposals-to-combat-organized-crime-in-the-mekong/">Calling for collaborative proposals to counter organized crime in the Mekong</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Gold at a crossroads</title>
+		<link>https://globalinitiative.net/analysis/illicit-gold-global-markets/</link>
+		
+		<dc:creator><![CDATA[Adrian Ancira]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 15:19:55 +0000</pubDate>
+				<guid isPermaLink="false">https://globalinitiative.net/?post_type=article&#038;p=44082</guid>
+
+					<description><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/illicit-gold-global-markets/">Gold at a crossroads</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a rel="nofollow" href="https://globalinitiative.net/analysis/illicit-gold-global-markets/">Gold at a crossroads</a> appeared first on <a rel="nofollow" href="https://globalinitiative.net">Global Initiative</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>24-Hour Global Organized Crime Conference &#124; 2026</title>
+		<link>https://globalinitiative.net/analysis/24-hour-global-organized-crime-conference-2026/</link>
+		
+		<dc:

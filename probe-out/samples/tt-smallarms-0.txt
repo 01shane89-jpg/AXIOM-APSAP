@@ -1,0 +1,123 @@
+https://www.smallarmssurvey.org/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.smallarmssurvey.org/">
+  <channel>
+    <title>Small Arms Survey - Reduce illicit small arms impact around the world </title>
+    <link>https://www.smallarmssurvey.org/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>New update to the Unplanned Explosions at Munitions Sites database</title>
+  <link>https://www.smallarmssurvey.org/highlight/new-update-unplanned-explosions-munitions-sites-database-0</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;New update to the Unplanned Explosions at Munitions Sites database&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Katie Lazaro&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-11T05:42:27-05:00" title="Wednesday, 11 November, 2026 - 05:42" class="datetime"&gt;11 November, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Wed, 11 Nov 2026 10:42:27 +0000</pubDate>
+    <dc:creator>Katie Lazaro</dc:creator>
+    <guid isPermaLink="false">6717 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <title>New Paper on Counter-improvised Explosive Device Responses for Contemporary Threat Environments </title>
+  <link>https://www.smallarmssurvey.org/highlight/new-paper-counter-improvised-explosive-device-responses-contemporary-threat-environments</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;New Paper on Counter-improvised Explosive Device Responses for Contemporary Threat Environments &lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Katie Lazaro&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-10-20T03:21:41-04:00" title="Tuesday, 20 October, 2026 - 03:21" class="datetime"&gt;20 October, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Tue, 20 Oct 2026 07:21:41 +0000</pubDate>
+    <dc:creator>Katie Lazaro</dc:creator>
+    <guid isPermaLink="false">6713 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <title>New HSBA Briefing Paper on Sudan, multipolarity, and the limits of US influence</title>
+  <link>https://www.smallarmssurvey.org/highlight/new-hsba-briefing-paper-sudan-multipolarity-and-limits-us-influence</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;New HSBA Briefing Paper on Sudan, multipolarity, and the limits of US influence&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Katie Lazaro&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-09-28T08:47:51-04:00" title="Monday, 28 September, 2026 - 08:47" class="datetime"&gt;28 September, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Mon, 28 Sep 2026 12:47:51 +0000</pubDate>
+    <dc:creator>Katie Lazaro</dc:creator>
+    <guid isPermaLink="false">6703 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <title>Small Arms Survey statements at CSP12</title>
+  <link>https://www.smallarmssurvey.org/highlight/small-arms-survey-statements-csp12</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Small Arms Survey statements at CSP12&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Katie Lazaro&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-08-24T08:37:53-04:00" title="Monday, 24 August, 2026 - 08:37" class="datetime"&gt;24 August, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Mon, 24 Aug 2026 12:37:53 +0000</pubDate>
+    <dc:creator>Katie Lazaro</dc:creator>
+    <guid isPermaLink="false">6699 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <title>New HSBA Briefing Paper on MANPADS and the RSF in Sudan</title>
+  <link>https://www.smallarmssurvey.org/highlight/new-hsba-briefing-paper-manpads-and-rsf-sudan</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;New HSBA Briefing Paper on MANPADS and the RSF in Sudan&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Katie Lazaro&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-06-22T03:01:18-04:00" title="Monday, 22 June, 2026 - 03:01" class="datetime"&gt;22 June, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Mon, 22 Jun 2026 07:01:18 +0000</pubDate>
+    <dc:creator>Katie Lazaro</dc:creator>
+    <guid isPermaLink="false">6696 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <title>New Small Arms Survey Annual Report 2025</title>
+  <link>https://www.smallarmssurvey.org/highlight/new-small-arms-survey-annual-report-2025</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;New Small Arms Survey Annual Report 2025&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Katie Lazaro&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-06-12T03:58:45-04:00" title="Friday, 12 June, 2026 - 03:58" class="datetime"&gt;12 June, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Fri, 12 Jun 2026 07:58:45 +0000</pubDate>
+    <dc:creator>Katie Lazaro</dc:creator>
+    <guid isPermaLink="false">6694 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <title>New methodology for tracking civilian firearms dynamics</title>
+  <link>https://www.smallarmssurvey.org/highlight/new-methodology-tracking-civilian-firearms-dynamics</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;New methodology for tracking civilian firearms dynamics&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Olivia Denonville&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-05-29T08:53:40-04:00" title="Friday, 29 May, 2026 - 08:53" class="datetime"&gt;29 May, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Fri, 29 May 2026 12:53:40 +0000</pubDate>
+    <dc:creator>Olivia Denonville</dc:creator>
+    <guid isPermaLink="false">6692 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <title>New blog post on C-IED and the Humanitarian-Development-Peace Nexus</title>
+  <link>https://www.smallarmssurvey.org/highlight/new-blog-post-c-ied-and-humanitarian-development-peace-nexus</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;New blog post on C-IED and the Humanitarian-Development-Peace Nexus&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;Olivia Denonville&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-05-28T04:55:42-04:00" title="Thursday, 28 May, 2026 - 04:55" class="datetime"&gt;28 May, 2026&lt;/time&gt;
+&lt;/span&gt;
+
+
+</description>
+  <pubDate>Thu, 28 May 2026 08:55:42 +0000</pubDate>
+    <dc:creator>Olivia Denonville</dc:creator>
+    <guid isPermaLink="false">6690 at https://www.smallarmssurvey.org</guid>
+    </item>
+<item>
+  <

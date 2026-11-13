@@ -1,0 +1,6 @@
+https://carnegieendowment.org/robots.txt
+User-Agent: *
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://carnegieendowment.org/sitemap.xml

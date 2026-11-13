@@ -1,0 +1,67 @@
+https://www.cpalanka.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Centre for Policy Alternatives</title>
+	<atom:link href="https://www.cpalanka.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.cpalanka.org</link>
+	<description>Advocacy and Research</description>
+	<lastBuildDate>Tue, 03 Nov 2026 03:19:05 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.8.1</generator>
+
+<image>
+	<url>https://www.cpalanka.org/wp-content/uploads/2025/05/cropped-CPA-25th-Anniversary-logo-32x32.png</url>
+	<title>Centre for Policy Alternatives</title>
+	<link>https://www.cpalanka.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>The Centre for Policy Alternatives vs. The Attorney General SC SD 178/2026 (Challenging the Bill titled the Prevention of Organised Crimes)</title>
+		<link>https://www.cpalanka.org/the-centre-for-policy-alternatives-vs-the-attorney-general-sc-sd-178-2026-challenging-the-bill-titled-the-prevention-of-organised-crimes/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=the-centre-for-policy-alternatives-vs-the-attorney-general-sc-sd-178-2026-challenging-the-bill-titled-the-prevention-of-organised-crimes</link>
+		
+		<dc:creator><![CDATA[CPA Comms Officer]]></dc:creator>
+		<pubDate>Tue, 03 Nov 2026 03:19:05 +0000</pubDate>
+				<category><![CDATA[Research and Advocacy]]></category>
+		<category><![CDATA[Statement]]></category>
+		<guid isPermaLink="false">https://www.cpalanka.org/?p=9543</guid>
+
+					<description><![CDATA[<p>The Centre for Policy Alternatives (CPA) has filed a petition before the Supreme Court challenging the constitutionality of the Bill titled “Prevention of Organised Crimes”, which was published in the Gazette of 2 October 2026 (issued on 6 October 2026) and subsequently placed on the Order Paper of Parliament on 20 October 2026. The petition [&#8230;]</p>
+<p>The post <a href="https://www.cpalanka.org/the-centre-for-policy-alternatives-vs-the-attorney-general-sc-sd-178-2026-challenging-the-bill-titled-the-prevention-of-organised-crimes/">The Centre for Policy Alternatives vs. The Attorney General SC SD 178/2026 (Challenging the Bill titled the Prevention of Organised Crimes)</a> first appeared on <a href="https://www.cpalanka.org">Centre for Policy Alternatives</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p>The Centre for Policy Alternatives (CPA) has filed a petition before the Supreme Court challenging the constitutionality of the Bill titled “Prevention of Organised Crimes”, which was published in the Gazette of 2 October 2026 (issued on 6 October 2026) and subsequently placed on the Order Paper of Parliament on 20 October 2026. The petition was filed in terms of Articles 120 and 121 of the Constitution seeking a determination on whether the Bill, or any of its provisions, is inconsistent with the Constitution, requiring both a special majority in Parliament and approval by the People at a referendum.</p>
+<p>The Bill was drafted without any public consultation, and was gazetted on the same day the Protection of the State from Terrorism Bill was tabled in Parliament. Following its publication, CPA issued a statement raising serious concerns that the Bill, presented as giving effect to the UN Convention against Transnational Organised Crime, would reintroduce many of the most criticised features of the Prevention of Terrorism Act under a different name.</p>
+<p>In its petition, CPA contends that multiple provisions of the Bill, including those relating to the definitions of “serious crime” and “organised criminal group”, the offence of membership of an organised criminal group, restrictions on publication, powers of arrest, executive Detention Orders, bail, the admissibility of confessions and statements, and the obligation to provide information are inconsistent with the Constitution.<span class="Apple-converted-space"> </span></p>
+<p>As such, the Petitioners submit that these provisions are inconsistent with Articles 10, 11, 12, 13 and 14 of the Constitution, and that they also impermissibly undermine the sovereignty of the People protected by Articles 3 and 4 of the Constitution. Accordingly, the Petitioners seek a determination that the impugned provisions cannot become law unless approved by the People at a referendum in addition to securing a two-thirds majority in Parliament pursuant to Article 83 of the Constitution.</p>
+<p>The matter is yet to be taken up for hearing before the Supreme Court.</p><p>The post <a href="https://www.cpalanka.org/the-centre-for-policy-alternatives-vs-the-attorney-general-sc-sd-178-2026-challenging-the-bill-titled-the-prevention-of-organised-crimes/">The Centre for Policy Alternatives vs. The Attorney General SC SD 178/2026 (Challenging the Bill titled the Prevention of Organised Crimes)</a> first appeared on <a href="https://www.cpalanka.org">Centre for Policy Alternatives</a>.</p>]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>CPA Statement on the death of Lal Wijenayake</title>
+		<link>https://www.cpalanka.org/cpa-statement-on-the-death-of-lal-wijenayake/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=cpa-statement-on-the-death-of-lal-wijenayake</link>
+		
+		<dc:creator><![CDATA[CPA Comms Officer]]></dc:creator>
+		<pubDate>Sun, 01 Nov 2026 10:10:40 +0000</pubDate>
+				<category><![CDATA[Statement]]></category>
+		<guid isPermaLink="false">https://www.cpalanka.org/?p=9541</guid>
+
+					<description><![CDATA[<p>Colombo, 1 November 2026 The Centre for Policy Alternatives (CPA) mourns the passing of Lal Wijenayake, senior attorney-at-law and one of the foremost figures of Sri Lanka’s Left. Educated at Dharmaraja College, the University of Ceylon, and Ceylon Law College, Mr Wijenayake  devoted more than half a century to political and civil society activism, as [&#8230;]</p>
+<p>The post <a href="https://www.cpalanka.org/cpa-statement-on-the-death-of-lal-wijenayake/">CPA Statement on the death of Lal Wijenayake</a> first appeared on <a href="https://www.cpalanka.org">Centre for Policy Alternatives</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p style="font-weight: 400;"><strong>Colombo, 1 November 2026</strong></p>
+<p style="font-weight: 400;">The Centre for Policy Alternatives (CPA) mourns the passing of Lal Wijenayake, senior attorney-at-law and one of the foremost figures of Sri Lanka’s Left.</p>
+<p style="font-weight: 400;">Educated at Dharmaraja College, the University of Ceylon, and Ceylon Law College, Mr Wijenayake  devoted more than half a century to political and civil society activism, as well as serving in elected office for a time as the Leader of the Opposition in the Central Provincial Council. Throughout that time, he earned a reputation for fearless integrity and steadfast commitment to principle, particularly in the defence of human rights, the rule of law, and Sri Lanka’s ethnic and religious pluralism.</p>
+<p style="font-weight: 400;">He chaired the Public Representation Committee (PRC) during the early years of the Yahapalanaya government and, more recently, served as a member of the Executive Committee of the National People’s Power (NPP). Whatever the role, and whatever the political moment, Mr Wijenayake remained resolutely independent in judgement and unwavering in his convictions.</p>
+<p style="font-weight: 400;">Most recently, he spoke out courageously against the NPP government’s Twenty-Second Amendment to the Constitution and the Protection of the State from Terrorism Bill, citing the serious concerns they raised for judicial ind

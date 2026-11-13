@@ -1,0 +1,77 @@
+https://www.gao.gov/rss/reports.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/scripts/rss.xsl" ?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+      <atom:link href="https://www.gao.gov/rss/reports.xml" rel="self" type="application/rss+xml"/>
+      <title>Reports News from the GAO</title>
+      <description>Reports News from the GAO.</description>
+      <link>https://www.gao.gov/rss/reports.xml</link>
+      <lastBuildDate>Thu, 12 Nov 2026 16:23:54 -0500</lastBuildDate>
+      <generator>GAO</generator>
+      <image>
+          <url>https://www.gao.gov/themes/custom/gao_uswds/img/gao-logo-rss.gif</url>
+          <title>Reports News from the GAO</title>
+          <link>https://www.gao.gov/rss/reports.xml</link>
+          <description>Feed provided by GAO.</description> 
+      </image>
+
+            <item>
+                <title>Coal Mine Reclamation: Additional Actions Needed to Return Mined Lands to Beneficial Uses</title>
+                <link>https://www.gao.gov/products/gao-27-107499</link>
+                <description>
+What GAO Found
+
+The Department of the Interior’s Office of Surface Mining Reclamation and Enforcement (OSMRE) was created under the Surface Mining Control and Reclamation Act of 1977 (SMCRA) to, among other things, administer programs for controlling the impacts of surface coal mining operations in the U.S. As of spring 2025, available data show there were over 5,000 permitted coal operations across 25 states and four Tribes. The majority of permits had no associated coal production since 2000, and about 35 percent of all permits were associated with sites in the process of being reclaimed.
+
+Example of a Reclaimed Mine Site and Active Coal Mine Site in Appalachia
+
+
+
+In interviews and survey responses, stakeholders cited several challenges to ensuring timely reclamation of coal mine operations, including the capacity for overseeing and administering programs. From 2024 to May 2026, OSMRE’s staff decreased from 408 to 265, a reduction of 35 percent, primarily as a result of deferred resignations, a hiring freeze for the executive branch, and restructuring within the Department of the Interior. OSMRE officials indicated that staffing reductions have affected several aspects of its program oversight. However, Interior officials told GAO they did not conduct strategic workforce planning prior to these staffing reductions, and as of August 2026, had not assessed OSMRE’s future operational capacity. Without conducting strategic workforce planning to identify critical staff skills and competencies, OSMRE may face challenges fulfilling its oversight and regulatory program responsibilities.
+
+OSMRE uses four performance measures to evaluate progress toward the SMCRA goals of protecting people and the environment and reclaiming mined lands. However, OSMRE does not have measures to identify the length of time it takes operators of non-producing mines to complete reclamation and return sites to beneficial post-mining uses—key information for determining which mines may risk financial exposure for the federal government or pose an environmental risk. In addition, since 2020, OSMRE has not issued a statutorily required annual report with information about activities conducted pursuant to SMCRA. OSMRE officials stated this is because they have had other priorities since that time. However, by not issuing annual reports, OSMRE is forgoing an opportunity to provide Congress with information about program performance nationwide that it could use to take actions to help OSMRE fulfill the goals of SMCRA and hold the agency accountable for results.
+
+Why GAO Did This Study
+
+As the nation relies less on coal, and coal consumption and production decline, concerns have been raised that operators of non-producing coal mines may delay or forgo reclaiming lands disturbed by mining operations. Unreclaimed mining sites create risks of environmental, health, and safety hazards, and delay returning lands to other productive uses, which can negatively affect local economies. OSMRE administers its Title V program to address the impacts of surface coal mining operations and ensure ongoing efforts to reclaim mined lands.
+
+GAO was asked to examine OSMRE’s Title V program. This report discusses (1) information on the number of coal permits and selected characteristics of those permits; (2) regulatory authority officials’, Tribes’, and stakeholders’ views on challenges to ensuring timely reclamation of lands disturbed by mining operations; and (3) the extent to which OSMRE assesses and communicates progress toward meeting its reclamation goals.
+
+GAO analyzed documents and data from OSMRE and state regulatory agencies responsible for implementing their own oversight programs. GAO surveyed and interviewed OSMRE officials, state regulatory and tribal officials, and environmental and industry stakeholders. GAO conducted site visits to Kentucky and Tennessee.
+
+
+</description>
+                <pubDate>Thu, 12 Nov 2026 14:41:12 -0500</pubDate>
+                <guid isPermaLink="false">/products/gao-27-107499</guid>
+            </item>
+            <item>
+                <title>Fall 2026 Semiannual Report to Congress</title>
+                <link>https://www.gao.gov/products/oig-27-1sp</link>
+                <description>
+This report was submitted to the acting Comptroller General in accordance with Section 5 of the Government Accountability Office (GAO) Act of 2008. The report summarizes the activities of GAO's Office of Inspector General (OIG) for the 6-month reporting period ending September 30, 2026.
+
+During this reporting period, the OIG closed nine GAO-related investigations, opened seven&amp;nbsp;new GAO-related investigations, and processed 76&amp;nbsp;substantive hotline complaints. The OIG also published three engagement reports, continued work on six engagements, and initiated two engagements. The OIG is taking steps to strengthen its independence and seeks a budget floor similar to that of other OIGs to ensure impactful oversight over GAO.
+
+For more information, contact the OIG at&amp;nbsp;oig@gao.gov.
+</description>
+                <pubDate>Thu, 12 Nov 2026 12:41:44 -0500</pubDate>
+                <guid isPermaLink="false">/products/oig-27-1sp</guid>
+            </item>
+            <item>
+                <title>Financial Audit: IRS’s FY 2026 and FY 2025 Financial Statements</title>
+                <link>https://www.gao.gov/products/gao-27-108909</link>
+                <description>
+What GAO Found
+
+In fiscal year 2026, the Internal Revenue Service (IRS) collected more than $5.5 trillion in taxes and paid out about $670 billion in tax refunds, credits, and other payments.
+
+Fiscal Year 2026 IRS Collections of Federal Taxes, by Type
+
+
+
+In GAO’s opinion, IRS’s fiscal years 2026 and 2025 financial statements are fairly presented in all material respects. In addition, in GAO’s opinion, although internal controls could be improved, IRS maintained, in all material respects, effective internal control over financial reporting as of September 30, 2026. GAO’s tests of IRS’s compliance with selected provisions of applicable laws, regulations, contracts, and grant agreements disclosed no instances of reportable noncompliance for fiscal year 2026.
+
+System limitations and other deficiencies in IRS’s accounting for federal taxes receivable and other unpaid assessment balances continued to exist during fiscal year 2026. These control deficiencies affect IRS’s ability to produce reliable financial statements without using significant compensating procedures. These control deficiencies are significant enough to merit the attention of those charged with governance of IRS and therefore collectively represent a continuing significant deficiency in internal control over financial reporting. Continued management attention is essential to fully addressing this significant deficiency.
+
+In commenting on a draft of this report, IRS stated that it was pleased to receive 

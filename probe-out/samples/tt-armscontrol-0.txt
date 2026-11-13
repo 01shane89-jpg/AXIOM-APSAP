@@ -1,0 +1,67 @@
+https://www.armscontrol.org/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://www.armscontrol.org/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Arms Control Association - The authoritative source on arms control since 1971.</title>
+    <link>https://www.armscontrol.org/</link>
+    <description></description>
+    <language>en</language>
+    
+    <item>
+  <title>What a US Nuclear Strike on Iran’s Pickaxe Mountain Could Look Like</title>
+  <link>https://www.armscontrol.org/media-citations/newsweek/2026-11-09</link>
+  <description>
+&lt;span&gt;What a US Nuclear Strike on Iran’s Pickaxe Mountain Could Look Like&lt;/span&gt;
+
+&lt;span&gt;&lt;span&gt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d7a5aeb6b997b6a5baa4b4b8b9a3a5b8bbf9b8a5b0">[email&#160;protected]</a>&lt;/span&gt;&lt;/span&gt;
+
+&lt;span&gt;Mon, 11/09/2026 - 16:10&lt;/span&gt;
+
+  &lt;div class=&quot;field field--name-field-news-link field--type-link field--label-above&quot;&gt;
+    &lt;div class=&quot;field--label&quot;&gt;News Link&lt;/div&gt;
+              &lt;div class=&quot;field--item&quot;&gt;&lt;a href=&quot;https://www.newsweek.com/what-a-us-nuclear-strike-on-irans-pickaxe-mountain-could-look-like-12656972&quot;&gt;https://www.newsweek.com/what-a-us-nuclear-strike-on-irans-pickaxe-mountain-cou…&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div class=&quot;field field--name-field-news-source-autocomplete- field--type-entity-reference field--label-above&quot;&gt;
+    &lt;div class=&quot;field--label&quot;&gt;News Source&lt;/div&gt;
+              &lt;div class=&quot;field--item&quot;&gt;&lt;div&gt;
+  
+      &lt;h2&gt;&lt;a href=&quot;/news-source/newsweek&quot;&gt;
+            &lt;div class=&quot;field field--name-name field--type-string field--label-hidden field--item&quot;&gt;Newsweek&lt;/div&gt;
+      &lt;/a&gt;&lt;/h2&gt;
+    
+  
+&lt;/div&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div class=&quot;field field--name-taxonomy-vocabulary-9 field--type-entity-reference field--label-above&quot;&gt;
+    &lt;div class=&quot;field--label&quot;&gt;Cited&lt;/div&gt;
+          &lt;div class=&quot;field--items&quot;&gt;
+              &lt;div class=&quot;field--item&quot;&gt;&lt;a href=&quot;/about/Daryl-Kimball&quot; hreflang=&quot;en&quot;&gt;Daryl Kimball&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div class=&quot;field field--name-field-news-date field--type-datetime field--label-above&quot;&gt;
+    &lt;div class=&quot;field--label&quot;&gt;News Date&lt;/div&gt;
+              &lt;div class=&quot;field--item&quot;&gt;&lt;time datetime=&quot;2026-11-04T12:00:00Z&quot;&gt;Wednesday, November 4, 2026 - 12:00&lt;/time&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <pubDate>Mon, 09 Nov 2026 21:10:08 +0000</pubDate>
+    <dc:creator><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c5e554d426c4d5e415f4f4342585e434002435e4b">[email&#160;protected]</a></dc:creator>
+    <guid isPermaLink="false">15557 at https://www.armscontrol.org</guid>
+    </item>
+<item>
+  <title>From Rulemaker to Rulebreaker? The 2011 NSG Revision to the U.S.-Saudi Nuclear Deal</title>
+  <link>https://www.armscontrol.org/blog/2026-11-09/rulemaker-rulebreaker-2011-nsg-revision-us-saudi-nuclear-deal</link>
+  <description>
+&lt;span&gt;From Rulemaker to Rulebreaker? The 2011 NSG Revision to the U.S.-Saudi Nuclear Deal&lt;/span&gt;
+
+            &lt;div class=&quot;field field--name-taxonomy-vocabulary-1 field--type-entity-reference field--label-hidden field--item&quot;&gt;&lt;a href=&quot;/taxonomy/term/1039&quot; hreflang=&quot;en&quot;&gt;Arms Control Now Blog&lt;/a&gt;&lt;/div&gt;
+      
+&lt;span&gt;&lt;span&gt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f2808b939cb293809f81919d9c86809d9edc9d8095">[email&#160;protected]</a>&lt;/span&gt;&lt;/span&gt;
+
+&lt;span&gt;Mon, 11/09/2026 - 15:40&lt;/span&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;p dir=&quot;ltr&quot;&gt;For several decades, the United States and other advanced nuclear states have worked cooperatively to prevent the spread of nuclear weapons and the technologies and materials that can be used to produce them. In the years since, every U.S. president on both sides of the aisle have tried to advance those efforts. In alignment with these efforts, in 2011, the United States spearheaded an international effort to tighten restrictions on the transfer of sensitive nuclear technology that can be used to build nuclear weapons, helping strengthen a nonproliferation norm.&lt;/p&gt;&lt;p dir=&quot;ltr&quot;&gt;Fifteen years later, however, the Trump administration is reversing course. In July 2026, the United States signed a nuclear cooperation agreement with Saudi Arabia that could allow them to enrich their own uranium, despite the Crown Prince Mohammed bin Salman’s threat to &lt;a href=&quot;https://www.bbc.com/news/world-middle-east-43419673&quot;&gt;acquire nuclear weapons if Iran does&lt;/a&gt;. The agreement was a longtime coming to the Saudis who have &lt;a href=&quot;https://gnssn.iaea.org/NSNI/SMRP/Shared%20Documents/Workshop%2012-15%20December%202017/Saudi%20National%20Atomic%20Energy%20Project.pdf&quot;&gt;sought&lt;/a&gt; the technology for years, and an alarming nonproliferation move by the U.S. who potentially just opened the &lt;a href=&quot;https://www.armscontrol.org/blog/2026-09-01/us-saudi-agreement-civil-nuclear-cooperation-answers-frequently-asked-questions&quot;&gt;door to Saudi Arabia developing the capability&lt;/a&gt; to produce weapons-usable nuclear material.&lt;/p&gt;&lt;p dir=&quot;ltr&quot;&gt;Domestic nuclear fuel capabilities, particularly uranium enrichment and reprocessing (ENR), pose a proliferation risk because they can provide states with the technology and materials needed to produce weapons-usable material. These capabilities can lower the technical barrier to developing nuclear weapons and complicate international monitoring and oversight.&lt;/p&gt;&lt;p dir=&quot;ltr&quot;&gt;Yet regardless of these concerns, President Trump went ahead and signed the nuclear cooperation deal. The proposed agreement could enable Saudi Arabia to develop domestic uranium enrichment capabilities &lt;a href=&quot;https://www.armscontrol.org/blog/2026-09-01/us-saudi-agreement-civil-nuclear-cooperation-answers-frequently-asked-questions&quot;&gt;up to 20 percent&lt;/a&gt;, a level that can quickly be enriched to weapons-grade. More concerningly, the agreement &lt;a href=&quot;https://www.armscontrol.org/blog/2026-09-01/us-saudi-agreement-civil-nuclear-cooperation-answers-frequently-asked-questions&quot;&gt;does not require Saudi Arabia to adopt the IAEA’s Additional Protocol (AP).&lt;/a&gt; Instead, it includes a &lt;a href=&quot;https://www.armscontrol.org/blog/2026-09-01/us-saudi-agreement-civil-nuclear-cooperation-answers-frequently-asked-questions&quot;&gt;Bilateral Safeguards Agreement&lt;/a&gt; that limits additional safeguards to declared facilities where cooperative nuclear activities take place. In short, the proposed deal allows the kingdom to develop sensitive fuel-cycle capabilities without the comprehensive safeguards the United States sought to promote in 2011.&lt;/p&gt;&lt;p dir=&quot;ltr&quot;&gt;The risk associated with civilian nuclear technology being diverted to military purposes is not new. In 1974, India demonstrated this threat when it used plutonium produced in a &lt;a href=&quot;https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2022-12-09/us-canada-and-indian-nuclear-program-1968-1974&quot;&gt;Canadian-supplied research reactor,&lt;/a&gt; operated with &lt;a href=&quot;https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2022-12-09/us-canada-and-indian-nuclear-program-1968-1974&quot;&gt;U.S.-supplied heavy water,&lt;/a&gt; to conduct its first nuclear explosive test. The test exposed a critical gap in 

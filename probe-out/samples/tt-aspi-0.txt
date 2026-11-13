@@ -1,0 +1,164 @@
+https://www.aspistrategist.org.au/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>The Strategist</title>
+	<atom:link href="https://www.aspistrategist.org.au/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.aspistrategist.org.au/</link>
+	<description>ASPI&#039;s analysis and commentary site</description>
+	<lastBuildDate>Fri, 13 Nov 2026 04:31:14 +0000</lastBuildDate>
+	<language>en-AU</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Democracy corrects itself; Xi’s China can’t</title>
+		<link>https://www.aspistrategist.org.au/democracy-corrects-itself-xis-china-cant/</link>
+		
+		<dc:creator><![CDATA[Mike Hughes]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 04:31:14 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[United States]]></category>
+		<category><![CDATA[Xi Jinping]]></category>
+		<category><![CDATA[democracy]]></category>
+		<category><![CDATA[international order]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102506</guid>
+
+					<description><![CDATA[Last week’s US midterm election furnished us with yet another example of the redemptive power of democracy. It’s a reminder that democracy’s greatest strength is not that it prevents political mistakes but that it gives ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>China’s ambassador tells Australia what to do, again</title>
+		<link>https://www.aspistrategist.org.au/chinas-ambassador-tells-australia-what-to-do-again/</link>
+		
+		<dc:creator><![CDATA[Geoff Wade]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 04:02:34 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[APEC]]></category>
+		<category><![CDATA[AUKUS]]></category>
+		<category><![CDATA[Australia–China relations]]></category>
+		<category><![CDATA[US alliances]]></category>
+		<category><![CDATA[influence operations]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102502</guid>
+
+					<description><![CDATA[China is continuing its long-term efforts to dominate Australia and divide it from its ally, the United States. Yesterday’s op-ed by Chinese Ambassador Liu Jinsong, carried in The Australian, was a prime example of this ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>AUKUS Public Inquiry: important, but not for the reasons they think</title>
+		<link>https://www.aspistrategist.org.au/aukus-public-inquiry-important-but-not-for-the-reasons-they-think/</link>
+		
+		<dc:creator><![CDATA[Nick Crouch]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 00:00:21 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[AUKUS]]></category>
+		<category><![CDATA[defence policy]]></category>
+		<category><![CDATA[nuclear submarines]]></category>
+		<category><![CDATA[public opinion]]></category>
+		<category><![CDATA[strategic communications]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102498</guid>
+
+					<description><![CDATA[The AUKUS Public Inquiry matters more for the debate it provokes than for its dubious conclusions, because AUKUS needs ongoing popular support that can only be built and maintained through open discussion. The debates that ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>As the AUKUS inquiry reveals, Pillar One isn’t the only route to SSNs</title>
+		<link>https://www.aspistrategist.org.au/as-the-aukus-inquiry-reveals-pillar-one-isnt-the-only-route-to-ssns/</link>
+		
+		<dc:creator><![CDATA[Peter Briggs]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:00:30 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[AUKUS]]></category>
+		<category><![CDATA[SSN AUKUS]]></category>
+		<category><![CDATA[nuclear submarines]]></category>
+		<category><![CDATA[submarines]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102485</guid>
+
+					<description><![CDATA[The independent AUKUS Public Inquiry has drawn a critical conclusion for Australia’s defence debate: though AUKUS Pillar One should be cancelled, the nation still requires a credible, sovereign fleet of 12 submarines to defend its ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>What the Beetaloo could do for the Northern Territory</title>
+		<link>https://www.aspistrategist.org.au/what-the-beetaloo-could-do-for-the-northern-territory/</link>
+		
+		<dc:creator><![CDATA[Sam Jeffries]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 04:00:04 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[Northern Territory]]></category>
+		<category><![CDATA[economic policy]]></category>
+		<category><![CDATA[energy security]]></category>
+		<category><![CDATA[gas]]></category>
+		<category><![CDATA[northern Australia]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102482</guid>
+
+					<description><![CDATA[The Northern Territory has an opportunity that could shape its economy for decades. The Beetaloo Basin is about more than producing gas. Developed successfully, it could attract investment, create jobs and new industries, and strengthen ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Fault Lines – China’s navy, Marines in Manila, PNG’s LNG</title>
+		<link>https://www.aspistrategist.org.au/fault-lines-chinas-navy-mobilises-marines-in-manila-pngs-lng/</link>
+		
+		<dc:creator><![CDATA[ASPI Defence Strategy Staff]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 00:00:02 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[Northeast Asia]]></category>
+		<category><![CDATA[Oceania]]></category>
+		<category><![CDATA[Philippines]]></category>
+		<category><![CDATA[Southeast Asia]]></category>
+		<category><![CDATA[Taiwan]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102463</guid>
+
+					<description><![CDATA[Welcome to the latest edition of ASPI’s Fault Lines. Every fortnight, ASPI’s Defence Strategy Program monitors the actions and developments shaping the regional order and Australia’s security. This edition covers the period 30 October 2026 ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Xi’s solution to PLA’s intangible faults: more political indoctrination</title>
+		<link>https://www.aspistrategist.org.au/xis-solution-to-plas-intangible-faults-more-political-indoctrination/</link>
+		
+		<dc:creator><![CDATA[Colin Karotam]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 19:00:01 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[PLA]]></category>
+		<category><![CDATA[Xi Jinping]]></category>
+		<category><![CDATA[corruption]]></category>
+		<category><![CDATA[deterrence]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102461</guid>
+
+					<description><![CDATA[President Xi Jinping and the Chinese Communist Party understand the professional shortcomings of the People’s Liberation Army, but they don’t have the right solution for them. They’re openly critical of corruption, poor leadership, stove-piped training ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Institutions: the tools for keeping vital relations stable amid domestic upheaval</title>
+		<link>https://www.aspistrategist.org.au/fitriani-bassi-institutions/</link>
+		
+		<dc:creator><![CDATA[Fitriani and Justin Bassi]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 04:30:33 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[ASEAN]]></category>
+		<category><![CDATA[Indo-Pacific]]></category>
+		<category><![CDATA[P

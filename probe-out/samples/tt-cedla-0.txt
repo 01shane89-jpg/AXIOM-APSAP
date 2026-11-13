@@ -1,0 +1,74 @@
+https://cedla.org/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CEDLA</title>
+	<atom:link href="https://cedla.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://cedla.org</link>
+	<description></description>
+	<lastBuildDate>Wed, 07 Oct 2026 16:57:59 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://cedla.org/wp-content/uploads/2020/10/cropped-logo_cedla_favicon-32x32.png</url>
+	<title>CEDLA</title>
+	<link>https://cedla.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>La ciudad de Santa Cruz lidera el crecimiento del trabajo asalariado urbano en el país</title>
+		<link>https://cedla.org/cedla/la-ciudad-de-santa-cruz-lidera-el-crecimiento-del-trabajo-asalariado-urbano-en-el-pais/</link>
+		
+		<dc:creator><![CDATA[webmaster]]></dc:creator>
+		<pubDate>Fri, 25 Sep 2026 16:03:08 +0000</pubDate>
+				<category><![CDATA[CEDLA]]></category>
+		<category><![CDATA[Noticias]]></category>
+		<category><![CDATA[Noticias CEDLA]]></category>
+		<guid isPermaLink="false">https://cedla.org/?p=87804</guid>
+
+					<description><![CDATA[NOTA DE PRENSA Entre 2008 y 2023, el trabajo asalariado urbano no ha decrecido y su crecimiento en los últimos 15 años se debe principalmente al aporte de la ciudad de Santa Cruz de la Sierra, según los datos de dos encuestas aplicadas en esos años por el Centro de Estudios para el Desarrollo Laboral [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>NOTA DE PRENSA</p>
+<p style="text-align: justify;"><em>Entre 2008 y 2023, el trabajo asalariado urbano no ha decrecido y su crecimiento en los últimos 15 años se debe principalmente al aporte de la ciudad de Santa Cruz de la Sierra, según los datos de dos encuestas aplicadas en esos años por el Centro de Estudios para el Desarrollo Laboral y Agrario (CEDLA) en las cuatro principales ciudades del país. Sin embargo, este crecimiento viene acompañado por la expansión de empleos asalariados extremadamente precarios.</em></p>
+<p style="text-align: justify;">El empleo asalariado en las ciudades de La Paz, El Alto, Cochabamba y Santa Cruz pasó de 903.001 ocupados en 2008 a 1.119.923 en 2023, lo que implica la generación de 216.922 empleos asalariados en ese período. Aunque la cifra no es significativa muestra que el empleo asalariado en términos absolutos no presenta un decrecimiento como varios analistas suponen, señala un estudio del CEDLA sobre empleo asalariado en Bolivia de próxima publicación.</p>
+<p style="text-align: justify;">Según esta investigación, el uso arbitrario que se hace del concepto de “empleo informal” de la Organización Internacional del Trabajo (OIT) como sinónimo de empleo no asalariado por parte de analistas y autoridades gubernamentales está llevando a una tergiversación de las características de la fuerza de trabajo en el país y a negar la importancia del trabajo asalariado y sus características.</p>
+<p style="text-align: justify;">El análisis del CEDLA se sustenta en información estadística generada por dos encuestas por muestreo aplicadas en las cuatro principales ciudades del país en 2008 y 2023. A partir de esa información, el documento presenta datos desagregados por ciudad que demuestran que en los últimos 15 años las cuatro ciudades presentan incrementos en el número de trabajadores asalariados.</p>
+<p style="text-align: justify;">El caso de la ciudad de Santa Cruz de la Sierra resalta de las otras. En 2008 contaba con 379.268 trabajadores asalariados (42,0% del total de las cuatro ciudades) que, para 2023, se habían incrementado a 471.190 manteniendo su peso relativo (42,1% del total). En este período, la capital cruceña generó 91.032 nuevos empleos asalariados concentrado el 42,4% del total del empleo asalariado generado por las cuatro ciudades estudiadas.</p>
+<p style="text-align: justify;">El mayor desarrollo relativo del capitalismo y de las actividades productivas en Santa Cruz de la Sierra explican que esta ciudad concentre el 43,2% del total de obreros y el 40,2% del total de empleados de las principales ciudades del país en 2023.</p>
+<p style="text-align: justify;">El estudio del CEDLA señala que, en contraposición a las afirmaciones desde ámbitos gubernamentales y de varios analistas en sentido que el trabajo asalariado en el país corresponde a un grupo minoritario que además sería “privilegiado” pues tendría buenos ingresos y derechos laborales y sociales que otros trabajadores no tienen, los datos presentados muestran que entre 2008 y 2023 los trabajadores asalariados sufren un proceso de precarización de la calidad del empleo muy marcada.</p>
+<p style="text-align: justify;">En 2008 el trabajo precario extremo entre los trabajadores asalariados era del 40,3% para el total de las cuatro ciudades y del 58,7% en 2023, es decir, son asalariados con trabajos temporales, estacionales o por horas, sin cobertura para la seguridad social de largo plazo y con niveles salariales menores a una canasta básica familiar.</p>
+<p style="text-align: justify;">El empleo asalariado en la ciudad de Santa Cruz no escapa de esta tendencia. Mientras en 2008 el 34,5% del total de trabajadores asalariados presentaban precariedad laboral extrema, en 2023 este porcentaje había incrementado al 55,8%. Según el estudio, se trata de una economía que, si bien genera empleo asalariado, tiende a no ser de calidad.</p>
+<p><em>La investigación que sustenta esta nota estará disponible en nuestra página web a finales del mes de octubre.</em></p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Santa Cruz crece, pero una buena parte de sus habitantes son pobres de tiempo</title>
+		<link>https://cedla.org/cedla/santa-cruz-crece-pero-una-buena-parte-de-sus-habitantes-son-pobres-de-tiempo/</link>
+		
+		<dc:creator><![CDATA[webmaster]]></dc:creator>
+		<pubDate>Thu, 24 Sep 2026 16:03:12 +0000</pubDate>
+				<category><![CDATA[CEDLA]]></category>
+		<category><![CDATA[Noticias]]></category>
+		<category><![CDATA[Noticias CEDLA]]></category>
+		<guid isPermaLink="false">https://cedla.org/?p=87805</guid>
+
+					<description><![CDATA[NOTA DE PRENSA Un análisis sobre pobreza de tiempo muestra que la sobrecarga de trabajo (remunerado y no remunerado) alcanza a más de cuatro de cada diez mujeres con personas dependientes en la ciudad de Santa Cruz. Los datos no son menores con relación a los de La Paz, Cochabamba y El Alto, pese al [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p style="text-align: justify;">NOTA DE PRENSA</p>
+<p style="text-align: justify;"><em>Un análisis sobre pobreza de tiempo muestra que la sobrecarga de trabajo (remunerado y no remunerado) alcanza a más de cuatro de cada diez mujeres con personas dependientes en la ciudad de Santa Cruz. Los datos no son menores con relación a los de La Paz, Cochabamba y El Alto, pese al dinamismo económico de la ciudad.</em></p>
+<p style="text-align: justify;">Santa Cruz de la Sierra es reconocida como uno de los principales motores económicos y urbanos de Bolivia, sin embargo, el crecimiento de la ciudad no parece traducirse necesariamente en más tiempo disponible para sus habitantes. Un análisis sobre pobreza de tiempo y desigualdades de género muestra que la sobrecarga de trabajo remunerado y no remunerado alcanza a una proporción importante de la población cruceña y que las diferencias con otras ciudades del país no son estadísticamente significativas.</p>
+<p style="text-align: justify;">En el artículo “Pobreza de tiempo y desigualdades de género en el crecimiento urbano: el caso de Sant

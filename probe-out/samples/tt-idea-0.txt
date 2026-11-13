@@ -1,0 +1,87 @@
+https://www.fondation-idea.lu/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>IDEA</title>
+	<atom:link href="https://www.fondation-idea.lu/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.fondation-idea.lu/</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 15:57:26 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.fondation-idea.lu/wp-content/uploads/sites/2/2020/06/cropped-E-logo-32x32.png</url>
+	<title>IDEA</title>
+	<link>https://www.fondation-idea.lu/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Quelles modalités financières pour la coopération transfrontalière ? – Retour sur conférence</title>
+		<link>https://www.fondation-idea.lu/2026/11/12/quelles-modalites-financieres-cooperation-transfrontaliere/</link>
+					<comments>https://www.fondation-idea.lu/2026/11/12/quelles-modalites-financieres-cooperation-transfrontaliere/#respond</comments>
+		
+		<dc:creator><![CDATA[IDEA]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 13:35:58 +0000</pubDate>
+				<category><![CDATA[Article vedette]]></category>
+		<category><![CDATA[Economie luxembourgeoise]]></category>
+		<category><![CDATA[Événements]]></category>
+		<category><![CDATA[Société]]></category>
+		<category><![CDATA[économie]]></category>
+		<category><![CDATA[France]]></category>
+		<category><![CDATA[frontalier]]></category>
+		<category><![CDATA[idea]]></category>
+		<category><![CDATA[Luxembourg]]></category>
+		<category><![CDATA[transfrontalier]]></category>
+		<guid isPermaLink="false">https://www.fondation-idea.lu/?p=10822</guid>
+
+					<description><![CDATA[<p><img width="150" height="150" src="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-150x150.jpg" class="attachment-thumbnail size-thumbnail wp-post-image" alt="" decoding="async" srcset="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-150x150.jpg 150w, https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-500x500.jpg 500w, https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-1000x1000.jpg 1000w" sizes="(max-width: 150px) 100vw, 150px" />Quelles modalités financières pour la coopération transfrontalière en particulier entre la France et le Luxembourg ?</p>
+<p>The post <a href="https://www.fondation-idea.lu/2026/11/12/quelles-modalites-financieres-cooperation-transfrontaliere/">Quelles modalités financières pour la coopération transfrontalière ? – Retour sur conférence</a> appeared first on <a href="https://www.fondation-idea.lu">IDEA</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<img width="150" height="150" src="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-150x150.jpg" class="attachment-thumbnail size-thumbnail wp-post-image" alt="" decoding="async" srcset="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-150x150.jpg 150w, https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-500x500.jpg 500w, https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-_A7_0763_reduit-1000x1000.jpg 1000w" sizes="(max-width: 150px) 100vw, 150px" /><div class="vc_row wpb_row vc_row-fluid"></div><div class="vc_row wpb_row vc_row-fluid"><div class="wpb_column vc_column_container vc_col-sm-3"><div class="vc_column-inner "><div class="wpb_wrapper">
+	<div class="wpb_text_column wpb_content_element ">
+		<div class="wpb_wrapper">
+			<p>© Ministère des Finances et IDEA</p>
+
+		</div>
+	</div>
+
+	<div class="wpb_text_column wpb_content_element ">
+		<div class="wpb_wrapper">
+			
+		</div>
+	</div>
+</div></div></div><div class="wpb_column vc_column_container vc_col-sm-6"><div class="vc_column-inner "><div class="wpb_wrapper">
+	<div class="wpb_text_column wpb_content_element ">
+		<div class="wpb_wrapper">
+			<p><strong>Quelles modalités financières pour la coopération transfrontalière dans le Grand Luxembourg transfrontalier, en particulier entre la France et le Luxembourg ?<br />
+?</strong></p>
+<p>C’est autour de cette question que se sont réunis, ce mardi 10 novembre, plusieurs acteurs institutionnels et experts dans le cadre du cycle de conférences organisé par la Fondation Bassin Minier dont IDEA était partenaire.</p>
+<p>À cette occasion, Vincent Hein, directeur d’IDEA, a apporté un éclairage sur plusieurs dimensions du phénomène frontalier :</p>
+<ul>
+<li>Le phénomène frontalier du point de vue des finances publiques aujourd’hui et les perspectives d’évolution.</li>
+<li>Un tour d’Europe des régions transfrontalières pour comprendre quelles sont les modalités de traitement fiscal des frontaliers, et comment les recettes sont réparties entre pays.</li>
+<li>Une analyse des mécanismes de codéveloppement.</li>
+</ul>
+<p><code><div class="df-element df-lite"  data-slug="ppt-vincent-hein-fbd" data-_slug="ppt-vincent-hein-fbd" data-title="ppt-vincent-hein-fbd" id="df_10832" data-option="df_option_10832" ></div><script class="df-shortcode-script" type="application/javascript">window.df_option_10832 = {"source":"https:\/\/www.fondation-idea.lu\/wp-content\/uploads\/sites\/2\/2026\/11\/20261110-Presentation-IDEA-conference-transfrontalier.pdf","slug":"ppt-vincent-hein-fbd","id":10832}; if(window.DEARPDF && window.DEARPDF.parseElements){window.DEARPDF.parseElements();}</script></code></p>
+<p style="text-align: center;"><a href="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/20261110-Presentation-IDEA-conference-transfrontalier.pdf">Téléchargez la présentation de Vincent Hein.</a></p>
+<p>Les échanges avec les intervenants et les participants à la table ronde (<strong>Gilles Roth</strong>, Ministre des Finances, <strong>Christophe Bouchard</strong>, Ambassadeur de France, <strong>Jean Peyrony</strong>, Directeur général de la Mission Opérationnelle Transfrontalière et <strong>Franz Fayot</strong>, Membre de la Chambre des Députés) ont démontré les enjeux qui restent à approfondir, notamment à l’approche de la prochaine Conférence intergouvernementale franco-luxembourgeoise.</p>
+<p>Une thématique qu’IDEA analyse depuis plusieurs années et qui fera prochainement l’objet d’une nouvelle publication, dans le prolongement des réflexions menées.</p>
+<p>Merci à la <a href="https://fondationbassinminier.lu/">Fondation Bassin Minier</a> pour la coorganisation de cet événement, aux intervenants pour la qualité des échanges et à l’ensemble des participants pour leur contribution au débat.</p>
+<p>Retrouvez les replays des conférences sur <a href="https://www.youtube.com/@forumLux/videos">la chaîne Youtube de la Fondation Bassin Minier.</a></p>
+
+		</div>
+	</div>
+<div class="wpb_gallery wpb_content_element vc_clearfix"><div class="wpb_wrapper"><div class="wpb_gallery_slides wpb_flexslider flexslider_slide flexslider" data-interval="3" data-flex_fx="slide"><ul class="slides"><li><a class="prettyphoto" href="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/IMG_1830-1024x768.jpeg" data-rel="prettyPhoto[rel-10822-1523711970]"><img fetchpriority="high" decoding="async" width="640" height="480" src="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/IMG_1830-1024x768.jpeg" class="attachment-large" alt="" srcset="https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/IMG_1830-1024x768.jpeg 1024w, https://www.fondation-idea.lu/wp-content/uploads/sites/2/2026/11/IMG_1830-300x225.jpeg 300w, https://www.fondation-idea.lu

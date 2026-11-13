@@ -1,0 +1,91 @@
+https://cepa.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CEPA</title>
+	<atom:link href="https://cepa.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://cepa.org/</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:34:21 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+<site xmlns="com-wordpress:feed-additions:1">210854253</site>	<item>
+		<title>Nordics Show the Way on Arctic Defense</title>
+		<link>https://cepa.org/article/nordics-show-the-way-on-arctic-defense/</link>
+		
+		<dc:creator><![CDATA[Kinsey Burr]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:34:16 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://cepa.org/?p=59977</guid>
+
+					<description><![CDATA[<p>While some allies are dubious about a separate Nordic ‘club’ within NATO, the region’s know-how is building defensive resilience and deterrence in the far north.</p>
+<p>This article forms part of a CEPA series on the new strategic landscape in the Arctic.</p>
+<p>The post <a href="https://cepa.org/article/nordics-show-the-way-on-arctic-defense/">Nordics Show the Way on Arctic Defense</a> appeared first on <a href="https://cepa.org">CEPA</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Since Finland and <a href="https://www.bbc.co.uk/news/world-europe-68506223" target="_blank" rel="noopener">Sweden</a> joined NATO in the wake of Russia’s all-out attack on Ukraine, the region’s defenses have been enormously strengthened on the alliance’s northern flank, not least because their accession unlocked new levels of regional cooperation.&nbsp;&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Until Helsinki and Stockholm took the plunge, the original Nordic NATO members of Denmark, Iceland and Norway, had been wary of creating duplicate structures through separate Nordic cooperation.&nbsp;&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">But Finland and Sweden hit the ground running when they joined the alliance and are already hosting new NATO arrangements such as the Multi Corps Land Component Command in Eastern Finland, the Forward Land Force (FLF) in Northern Finland, and logistics headquarters in Sweden.&nbsp;&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Building on longstanding bilateral defense cooperation between Finland and Sweden, <a href="https://lc.nato.int/media-center/news/2026/forward-land-forces-finland-established-to-contribute-to-natos-deterrence-and-defence-posture" target="_blank" rel="noopener">FLF Finland</a> is led by Sweden, with contributions from the other three Nordic countries and the European nuclear weapons powers, France and the UK. Italy and potentially Spain may also join.  </p>
+
+
+
+<p class="wp-block-paragraph">The FLF <a href="https://fiia.fi/en/publication/natos-forward-land-forces-in-finland" target="_blank" rel="noopener">differs</a> from other multinational NATO contingents in frontline states as its focus is mainly on exercises and training, not a permanent or even rotational deployment to Finland. Even the Swedish battlegroup that leads the FLF is permanently based in Boden, Northern Sweden.&nbsp;&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">The idea is to integrate and acclimatize allied forces into the challenging Arctic conditions, where survival training is needed to ensure troops make it to combat without perishing from the cold. The FLF aims to become scalable if tensions with Russia grow as a result of Moscow’s stated intent to <a href="https://sotilastiedustelukatsaus.fi/en/" target="_blank" rel="noopener">increase military capacity</a> close to Finland.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">The Nordic division of labor has resulted in Finland hosting land elements, playing to its natural strengths; Sweden is building NATO’s logistics for the northern flank, given its central geographical location linking the High North and the Baltic Sea; and Norway is leading in the air domain.&nbsp;&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">NATO has established a new Combined Air Operations Center in Bodø, Northern Norway. This also hosts the Norwegian Joint Air Operations Centre, where the Nordic countries have set up their own division to work on implementation of the <a href="https://www.forsvaret.no/en/news/articles/nordic-division" target="_blank" rel="noopener">Nordic Air Power Concept (NAPC)</a>.&nbsp;&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">This builds on four pillars of deepened integration between Denmark, Finland, Norway and Sweden: joint planning and command of air operations; coordinated development and use of Nordic air bases; enhanced joint situational awareness, and joint education, training and exercises.&nbsp;&nbsp;</p>
+
+
+
+<div
+	id=""
+	class="not-prose"
+	data-block="newsletter">
+		<div class="container flex flex-col gap-[16px] items-center text-center">
+				<div class="text-h3 text-blue">
+			Get the Latest		</div>
+		
+				<div class="text-lede max-w-[500px] text-blue">
+			Sign up to receive regular emails and stay informed about CEPA&#039;s work.		</div>
+		
+		
+				<div class="max-w-[500px] w-full">
+			<script>
+var gform;gform||(document.addEventListener("gform_main_scripts_loaded",function(){gform.scriptsLoaded=!0}),document.addEventListener("gform/theme/scripts_loaded",function(){gform.themeScriptsLoaded=!0}),window.addEventListener("DOMContentLoaded",function(){gform.domLoaded=!0}),gform={domLoaded:!1,scriptsLoaded:!1,themeScriptsLoaded:!1,isFormEditor:()=>"function"==typeof InitializeEditor,callIfLoaded:function(o){return!(!gform.domLoaded||!gform.scriptsLoaded||!gform.themeScriptsLoaded&&!gform.isFormEditor()||(gform.isFormEditor()&&console.warn("The use of gform.initializeOnLoaded() is deprecated in the form editor context and will be removed in Gravity Forms 3.1."),o(),0))},initializeOnLoaded:function(o){gform.callIfLoaded(o)||(document.addEventListener("gform_main_scripts_loaded",()=>{gform.scriptsLoaded=!0,gform.callIfLoaded(o)}),document.addEventListener("gform/theme/scripts_loaded",()=>{gform.themeScriptsLoaded=!0,gform.callIfLoaded(o)}),window.addEventListener("DOMContentLoaded",()=>{gform.domLoaded=!0,gform.callIfLoaded(o)}))},hooks:{action:{},filter:{}},addAction:function(o,r,e,t){gform.addHook("action",o,r,e,t)},addFilter:function(o,r,e,t){gform.addHook("filter",o,r,e,t)},doAction:function(o){gform.doHook("action",o,arguments)},applyFilters:function(o){return gform.doHook("filter",o,arguments)},removeAction:function(o,r){gform.removeHook("action",o,r)},removeFilter:function(o,r,e){gform.removeHook("filter",o,r,e)},addHook:function(o,r,e,t,n){null==gform.hooks[o][r]&&(gform.hooks[o][r]=[]);var d=gform.hooks[o][r];null==n&&(n=r+"_"+d.length),gform.hooks[o][r].push({tag:n,callable:e,priority:t=null==t?10:t})},doHook:function(r,o,e){var t;if(e=Array.prototype.slice.call(e,1),null!=gform.hooks[r][o]&&((o=gform.hooks[r][o]).sort(function(o,r){return o.priority-r.priority}),o.forEach(function(o){"function"!=typeof(t=o.callable)&&(t=window[t]),"action"==r?t.apply(null,e):e[0]=t.apply(null,e)})),"filter"==r)return e[0]},removeHook:function(o,r,t,n){var e;null!=gform.hooks[o][r]&&(e=(e=gform.hooks[o][r]).filter(function(o,r,e){return!!(null!=n&&n!=o.tag||null!=t&&t!=o.priority)}),gform.hooks[o][r]=e)}});
+</script>
+
+                <div class='gf_browser_unknown gform_wrapper gravity-theme gform-theme--no-framework newsletter-form-style-overrides_wrapper' data-form-theme='gravity-theme' data-form-index='0' id='gform_wrapper_1' ><div id='gf_1' class='gform_anchor' tabindex='-1'></div>
+                        

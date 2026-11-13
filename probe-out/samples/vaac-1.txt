@@ -1,0 +1,301 @@
+https://www.ospo.noaa.gov/products/atmosphere/vaac/messages.html
+
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+        <meta charset="utf-8">
+        <title>Current Volcanic Ash Advisories | OSPO</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index" />
+    <meta http-equiv="last-modified" content="Friday, 13-Nov-2026 04:50:14 UTC" />
+    <meta http-equiv="expires" content="0" />
+
+    <meta content="https://ospo.noaa.gov/assets/img/ospo_default_og.jpg" property="og:image"/>
+    <meta content="1920" property="og:image:width"/>
+    <meta content="1080" property="og:image:height"/>
+    <meta content="website" property="og:type"/>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="NOAA Office of Satellite and Product Operations (OSPO)">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.ospo.noaa.gov/">
+    <meta property="og:image" content="https://ospo.noaa.gov/assets/img/ospo_default_og.jpg">
+    <meta property="og:site_name" content="NOAA OSPO">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="NOAA Office of Satellite and Product Operations (OSPO)">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="https://ospo.noaa.gov/assets/img/ospo_default_og.jpg">
+    <meta name="twitter:site" content="@NOAASatellites">
+
+	<link rel="preload" href="/assets/fonts/source-sans-pro/sourcesanspro-regular-webfont.woff2" as="font" type="font/woff2"  crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/source-sans-pro/sourcesanspro-bold-webfont.woff" as="font" type="font/woff2"  crossorigin="anonymous">
+    <link rel="shortcut icon" href="/graphics/favicon.ico" />
+    <link href="/assets/css/main.css?v=164439989197111" rel="stylesheet" type="text/css" />
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css"></noscript>
+
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"></noscript>
+    <style>#loader{display: none !important;}</style>
+    <style>
+    .menu-item {text-indent: 10px;}
+    button, input, optgroup, select, textarea {font-size: revert;}
+    .usa-label{margin-top: 0;color: #fff !important; font-size: .9rem;}
+    </style>
+
+<style type="text/css">
+.style3 {
+        color: #333333;
+        font-size: 14pt;
+        font-weight: bold;
+}
+.style4 {
+	color: #000000;
+        font-size: 14pt;
+}
+        dt {
+            font-weight: bold;
+            color: #3F3F3F;
+        }
+
+        dt::after {
+            content: ":";
+        }
+	th, td {
+   	    font-size: 12px;
+	}
+
+
+.clear {
+  clear: both;
+}
+
+.container {
+  background-color: white;
+  width:100%;
+}
+
+.sectionClass {
+  width:50%;
+  height:100%;
+  background-color: white;
+}
+
+#viewDiv2012 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2013 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2014 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2015 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2016 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2017 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2018 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2019 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2020 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2021 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2022 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2023 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2024 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2025 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#viewDiv2026 {
+  width:50%;
+  height: 550px;
+  float: right;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>
+
+
+<style>
+/* scroll-to-top button  */
+html {
+    scroll-behavior: smooth;
+}
+
+
+#vaac_div a:visited {
+      color: #8B0077;
+}
+
+#to-top-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    background-color: #1d5898;
+    color: #fff;
+    cursor: pointer;
+    padding: 15px;
+    font-size: 18px;
+}
+#to-top-btn:hover {
+    background-color: #555;
+}
+</style>
+
+<style type="text/css">
+* {
+  box-sizing: border-box;
+}
+</style>
+
+<script type="text/javascript" src="/scripts/jquery-3.2.1.min.js"></script> 
+</head>
+<body>
+<a name="top" id="top"></a>
+
+<div class="left-0 nav-wrap position-relative right-0 z-500 " id="nav-top">
+	<a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
+	<section class="usa-banner" aria-label="Official website of the United States government">
+		<div class="usa-accordion">
+			<header class="usa-banner__header">
+				<div class="usa-banner__inner">
+					<div class="grid-col-auto">
+						<img aria-hidden="true" class="usa-banner__header-flag" src="/assets/img/us_flag_small.png"
+							alt="" width="16" height="11" />
+					</div>
+					<div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
+						<p class="usa-banner__header-text">
+							An official website of the United States government
+						</p>
+						<p class="usa-banner__header-action">Here’s how you know</p>
+					</div>
+					<button type="button" class="usa-accordion__button usa-banner__button" aria-expanded="false"
+						aria-controls="gov-banner-default">
+						<span class="usa-banner__button-text">Here’s how you know</span>
+					</button>
+				</div>
+			</header>
+			<div class="usa-banner__content usa-accordion__content" id="gov-banner-default" hidden>
+				<div class="grid-row grid-gap-lg">
+					<div class="usa-banner__guidance tablet:grid-col-6">
+						<img class="usa-banner__icon usa-media-block__img" src="/assets/img/icon-dot-gov.svg" role="img"
+							alt="" aria-hidden="true" />
+						<div class="usa-media-block__body">
+				

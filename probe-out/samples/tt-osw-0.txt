@@ -1,0 +1,85 @@
+https://www.osw.waw.pl/en/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:schema="http://schema.org/" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" version="2.0" xml:base="https://www.osw.waw.pl/en">
+  <channel>
+    <title>osw.waw.pl</title>
+    <link>https://www.osw.waw.pl/en</link>
+    <description>OSW - the latest publications</description>
+    <language>en</language>
+    
+    <item>
+  <title>An Asian Plan B: Merz in the Indo-Pacific</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-11-04/asian-plan-b-merz-indo-pacific</link>
+  <description>From 26 to 30 October, Chancellor Friedrich Merz visited Singapore, Japan, and South Korea, accompanied by a business delegation that included the heads of Airbus, Siemens, Lufthansa and Deutsche Bank. In Singapore, Merz and Prime Minister Lawrence Wong adopted a joint work plan for 2027–2028, which encompasses security, economic cooperation, and other areas. During his Singapore Lecture, the chancellor advocated for enhanced cooperation among ‘middle powers’.</description>
+  <pubDate>Wed, 04 Nov 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Aleksandra Kozaczyńska, Lidia Gibadło , Paulina Uznańska</dc:creator>
+    <guid isPermaLink="false">34448</guid>
+    </item>
+<item>
+  <title>Smoke and mirrors: the third Russia–Africa summit</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-11-04/smoke-and-mirrors-third-russia-africa-summit</link>
+  <description>The third Russia–Africa Summit took place in Moscow on 28–29 October. Following previous editions in 2019 and 2023, the event brought together delegations from 48 of Africa’s 54 countries, including 21 heads of state, as well as representatives of the African Union and other regional organisations. Participants signed around 150 bilateral and multilateral documents, while Vladimir Putin held a series of bilateral meetings with African leaders.</description>
+  <pubDate>Wed, 04 Nov 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Miłosz Bartosiewicz</dc:creator>
+    <guid isPermaLink="false">34447</guid>
+    </item>
+<item>
+  <title>Canada–EU summit: an alliance with constrained ambitions</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-11-04/canada-eu-summit-alliance-constrained-ambitions</link>
+  <description>Montreal hosted the 21st Canada–EU summit on 29–30 October. The summit was attended by European Commission President Ursula von der Leyen, European Council President António Costa, EU High Representative for Foreign Affairs and Security Policy Kaja Kallas and Canadian Prime Minister Mark Carney. The two sides announced the establishment of an ‘Alliance for the Future’ and agreed to begin work on a framework for building a deeper and more integrated relationship between Canada and the EU.</description>
+  <pubDate>Wed, 04 Nov 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Łukasz Maślanka</dc:creator>
+    <guid isPermaLink="false">34446</guid>
+    </item>
+<item>
+  <title>Russia’s devastating strike on Ukrainian power stations. Day 1714 of the war</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-11-03/russias-devastating-strike-ukrainian-power-stations-day-1714-war</link>
+  <description/>
+  <pubDate>Tue, 03 Nov 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Andrzej Wilk, Mateusz Goliszewski</dc:creator>
+    <guid isPermaLink="false">34437</guid>
+    </item>
+<item>
+  <title>Bulgaria’s presidential election: ruling camp consolidates power</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-11-02/bulgarias-presidential-election-ruling-camp-consolidates-power</link>
+  <description>Incumbent President Iliyana Yotova won Bulgaria’s presidential run-off on 1 November with 57.6% of the vote, alongside vice-presidential candidate Kiril Valchev. The pair was backed by Prime Minister Rumen Radev’s governing sovereigntist party, Progressive Bulgaria (PB). Their opponents, Andrey Gyurov and Georgi Kandev, supported by the pro-European opposition parties We Continue the Change (PP) and Democratic Bulgaria (DB), secured 39.5%. A further 2.9% voted for ‘I support no one’.</description>
+  <pubDate>Mon, 02 Nov 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Jan Nowinowski</dc:creator>
+    <guid isPermaLink="false">34435</guid>
+    </item>
+<item>
+  <title>Russian gold exports: Asia replaces Europe</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-30/russian-gold-exports-asia-replaces-europe</link>
+  <description>Despite the ban on Russian gold imports imposed by the G7 countries, the European Union and Switzerland in mid-2022, Russia has continued to secure buyers for its gold. This is evident from incomplete mirror trade statistics reported by Russia’s trading partners, as Moscow stopped publishing data on gold exports and production following its invasion of Ukraine. Western sanctions were designed to reduce Russia’s export revenues by cutting it off from its main market, as almost all Russian gold had previously been sold to Western countries.</description>
+  <pubDate>Fri, 30 Oct 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Iwona Wiśniewska, Maciej Kalwasiński</dc:creator>
+    <guid isPermaLink="false">34431</guid>
+    </item>
+<item>
+  <title>Israel’s election: Netanyahu set to remain prime minister</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-29/israels-election-netanyahu-set-to-remain-prime-minister</link>
+  <description>On 27 October, Israel held elections to the Knesset. According to preliminary results, with 96% of the votes counted, Prime Minister Benjamin Netanyahu’s Likud party came first, winning 26 of the 120 seats, ahead of Yashar (Hebrew for ‘Straight’), led by retired general Gadi Eisenkot, which secured 21 seats. Eleven party lists crossed the electoral threshold, while turnout reached 77.7%, the second-highest in Israel’s history.</description>
+  <pubDate>Thu, 29 Oct 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Marek Matusiak</dc:creator>
+    <guid isPermaLink="false">34428</guid>
+    </item>
+<item>
+  <title>The truce at Oleshky. Day 1707 of the war</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-27/truce-oleshky-day-1707-war</link>
+  <description/>
+  <pubDate>Tue, 27 Oct 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Andrzej Wilk, Mateusz Goliszewski, Jacek Tarociński</dc:creator>
+    <guid isPermaLink="false">34414</guid>
+    </item>
+<item>
+  <title>Local elections in Slovakia: opposition retains its lead</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-27/local-elections-slovakia-opposition-retains-its-lead</link>
+  <description>On 24 October, Slovakia held local and regional elections, with both taking place simultaneously for only the second time in the country’s history.</description>
+  <pubDate>Tue, 27 Oct 2026 13:00:00 +0100</pubDate>
+    <dc:creator>Krzysztof Dębiec</dc:creator>
+    <guid isPermaLink="false">34413</guid>
+    </item>
+<item>
+  <title>Marco Rubio’s visit to Uzbekistan highlights Central Asia’s growing importance to the US</title>
+  <link>https://www.osw.waw.pl/en/publikacje/analyses/2026-10-27/marco-rubios-visit-to-uzbekistan-highlights-central-asias-growing</link>
+  <description>On 19 October, US Secretary of State Marco Rubio visited Uzbekistan, accompanied by a delegation that included nearly 300 American business representatives. He attended a foreign ministers’ meeting in the C5+1 format, which brings together the five Central Asian states and an external partner. He also took part in a meeting of the US–Uzbekistan Business and Investment Council, during which he met President Shavkat Mirziyoyev. The two countries signed agreements worth a combined $12 

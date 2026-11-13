@@ -1,0 +1,153 @@
+https://www.geopoliticalmonitor.com/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Geopolitical Monitor</title>
+	<atom:link href="https://www.geopoliticalmonitor.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.geopoliticalmonitor.com/</link>
+	<description>Independent, objective analysis of global geopolitics and current events.</description>
+	<lastBuildDate>Thu, 12 Nov 2026 16:16:14 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.0.6</generator>
+	<item>
+		<title>Caspian Bridge and Kazakhstan’s Route Around Russia</title>
+		<link>https://www.geopoliticalmonitor.com/caspian-bridge-and-kazakhstans-route-around-russia/</link>
+		
+		<dc:creator><![CDATA[Robert M Cutler]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 16:16:14 +0000</pubDate>
+				<category><![CDATA[All]]></category>
+		<category><![CDATA[Middle Corridor]]></category>
+		<category><![CDATA[South Caucasus]]></category>
+		<category><![CDATA[Supply Chains]]></category>
+		<guid isPermaLink="false">https://www.geopoliticalmonitor.com/?p=56996</guid>
+
+					<description><![CDATA[<p>Kazakhstan and Azerbaijan signed the Caspian Bridge ferry agreement on November 2, but its financing is still to be settled.</p>
+<p>The post <a href="https://www.geopoliticalmonitor.com/caspian-bridge-and-kazakhstans-route-around-russia/">Caspian Bridge and Kazakhstan’s Route Around Russia</a> appeared first on <a href="https://www.geopoliticalmonitor.com">Geopolitical Monitor</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>The Black Sea Drone War: Why No Navy Can Protect Shipping</title>
+		<link>https://www.geopoliticalmonitor.com/the-black-sea-drone-war-why-no-navy-can-protect-shipping/</link>
+		
+		<dc:creator><![CDATA[Simone Chiusa]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 15:54:20 +0000</pubDate>
+				<category><![CDATA[All]]></category>
+		<category><![CDATA[Featured Slider]]></category>
+		<category><![CDATA[Drone Warfare]]></category>
+		<category><![CDATA[Food Security]]></category>
+		<category><![CDATA[Russia-NATO Relations]]></category>
+		<category><![CDATA[Ukraine War]]></category>
+		<guid isPermaLink="false">https://www.geopoliticalmonitor.com/?p=57000</guid>
+
+					<description><![CDATA[<p>Russia and Ukraine struck 317 vessels in the Black Sea and Sea of Azov from May to October, and neither navy can protect merchant ships.</p>
+<p>The post <a href="https://www.geopoliticalmonitor.com/the-black-sea-drone-war-why-no-navy-can-protect-shipping/">The Black Sea Drone War: Why No Navy Can Protect Shipping</a> appeared first on <a href="https://www.geopoliticalmonitor.com">Geopolitical Monitor</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>The Acid Test: How Sulphur Became Copper&#8217;s Chokepoint</title>
+		<link>https://www.geopoliticalmonitor.com/the-acid-test-how-sulphur-became-coppers-chokepoint/</link>
+		
+		<dc:creator><![CDATA[Arman Sidhu]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 14:27:04 +0000</pubDate>
+				<category><![CDATA[All]]></category>
+		<category><![CDATA[Featured Slider]]></category>
+		<category><![CDATA[Copper]]></category>
+		<category><![CDATA[Critical Minerals]]></category>
+		<category><![CDATA[Mining]]></category>
+		<category><![CDATA[Supply Chains]]></category>
+		<guid isPermaLink="false">https://www.geopoliticalmonitor.com/?p=56978</guid>
+
+					<description><![CDATA[<p>More than 15 percent of mined copper depends on sulphuric acid, and the supply shocks of 2026 showed how little stands behind it.</p>
+<p>The post <a href="https://www.geopoliticalmonitor.com/the-acid-test-how-sulphur-became-coppers-chokepoint/">The Acid Test: How Sulphur Became Copper&#8217;s Chokepoint</a> appeared first on <a href="https://www.geopoliticalmonitor.com">Geopolitical Monitor</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Reagan’s 1987 Lesson for a Trump-Kim Legacy Summit</title>
+		<link>https://www.geopoliticalmonitor.com/reagans-1987-lesson-for-a-trump-kim-legacy-summit/</link>
+		
+		<dc:creator><![CDATA[Dr. Ju Hyung Kim]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 13:51:41 +0000</pubDate>
+				<category><![CDATA[All]]></category>
+		<category><![CDATA[Featured Slider]]></category>
+		<category><![CDATA[Indo-Pacific Security]]></category>
+		<category><![CDATA[North Korea Conflict]]></category>
+		<guid isPermaLink="false">https://www.geopoliticalmonitor.com/?p=56975</guid>
+
+					<description><![CDATA[<p>Reagan signed the INF Treaty while weakened by Iran-Contra, but only after years of talks, the test a Trump–Kim summit now faces.</p>
+<p>The post <a href="https://www.geopoliticalmonitor.com/reagans-1987-lesson-for-a-trump-kim-legacy-summit/">Reagan’s 1987 Lesson for a Trump-Kim Legacy Summit</a> appeared first on <a href="https://www.geopoliticalmonitor.com">Geopolitical Monitor</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>The Seventeenth-Century Crisis and the New Age of Systemic Fragility</title>
+		<link>https://www.geopoliticalmonitor.com/seventeenth-century-crisis-and-the-new-age-of-systemic-fragility/</link>
+		
+		<dc:creator><![CDATA[Fabbro Ennio]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 14:10:21 +0000</pubDate>
+				<category><![CDATA[All]]></category>
+		<category><![CDATA[Great Power Competition]]></category>
+		<category><![CDATA[International Relations Theory]]></category>
+		<guid isPermaLink="false">https://www.geopoliticalmonitor.com/?p=56926</guid>
+
+					<description><![CDATA[<p>War, debt, climate shocks, and epidemics broke some seventeenth-century states and remade others, and a new index maps who is exposed today.</p>
+<p>The post <a href="https://www.geopoliticalmonitor.com/seventeenth-century-crisis-and-the-new-age-of-systemic-fragility/">The Seventeenth-Century Crisis and the New Age of Systemic Fragility</a> appeared first on <a href="https://www.geopoliticalmonitor.com">Geopolitical Monitor</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>A Shrinking Caspian Has Warmed Twice as Fast as the Oceans</title>
+		<link>https://www.geopoliticalmonitor.com/shrinking-caspian-has-warmed-twice-as-fast-as-the-oceans/</link>
+		
+		<dc:creator><![CDATA[Mark Demin]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 13:48:44 +0000</pubDate>
+				<category><![CDATA[All]]></category>
+		<category><![CDATA[Climate Change]]></category>
+		<category><![CDATA[Drought]]></category>
+		<category><![CDATA[Economics of Climate Change]]></category>
+		<guid isPermaLink="false">https://www.geopoliticalmonitor.com/?p=56931</guid>
+
+					<description><![CDATA[<p>The Caspian is shrinking as it warms and as less Volga water reaches it, and its five shore states cannot wait for the north to dry out.</p>
+<p>The post <a href="https://www.geopoliticalmonitor.com/shrinking-caspian-has-warmed-twice-as-fast-as-the-oceans/">A Shrinking Caspian Has Warmed Twice as Fast as the Oceans</a> appeared first on <a href="https://www.geopoliticalmonitor.com">Geopolitical Monitor</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Made in Mexico, Still Dependent on China</title>
+		<link>https://www.geopoliticalmonitor.com/made-in-mexico-still-dependent-on-china/</link>
+		
+		<dc:creator><![CDATA[Yunus Emre Tumen]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 13:16:24 +0000</pubDate>
+				<category><![CDATA[All]]></category>
+		<category><![CDATA[Featured Slider]]></category>
+		<category><![CDATA[NAFTA / USMCA]]></category>
+		<category><![CDATA[Supply Chains]]></category>
+		<category><![CDATA[Trade War]]></category>
+		<category><![CDATA[Trump Tariffs]]></category>
+		<category><![CDATA[US-China Rivalry]]></category>
+		<guid isP

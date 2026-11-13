@@ -1,0 +1,113 @@
+https://www.swp-berlin.org/en/rss.xml
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<title>Stiftung Wissenschaft und Politik</title>
+<link>https://www.swp-berlin.org/en/</link>
+<description><![CDATA[Stiftung Wissenschaft und Politik]]></description>
+<language>en</language>
+<lastBuildDate>Thu, 12 Nov 2026 10:07:14 +0100</lastBuildDate>
+<atom:link href="https://www.swp-berlin.org/en/rss.xml" rel="self" type="application/rss+xml"></atom:link>
+<item>
+<title>CDR im Overshoot – Wie CO₂-Entnahme das Klima nach Überschreiten von 1,5 Grad stabilisieren kann</title>
+<link>https://zenodo.org/records/23365361</link>
+<description><![CDATA[]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<dc:creator>Hannes Böttcher</dc:creator>
+<dc:creator>Sabine Fuss</dc:creator>
+<dc:creator>Oliver Geden</dc:creator>
+<dc:creator>Felix Havermann</dc:creator>
+<dc:creator>Julia Pongratz</dc:creator>
+<dc:creator>Christopher Reyer</dc:creator>
+<dc:creator>Jessica Strefler</dc:creator>
+<category>Externe Fachpublikation</category>
+<pubDate>Wed, 11 Nov 2026 13:08:51 +0100</pubDate>
+</item>
+<item>
+<title>Truppenübung in Polen: Die «Koalition der Willigen» zeigt Stärke gegenüber Putin</title>
+<link>https://www.srf.ch/news/international/ukraine/truppenuebung-in-polen-die-koalition-der-willigen-zeigt-staerke-gegenueber-putin</link>
+<description><![CDATA[]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<dc:creator>Ronja Kempin</dc:creator>
+<category>Medienbeitrag</category>
+<pubDate>Tue, 10 Nov 2026 16:22:00 +0100</pubDate>
+</item>
+<item>
+<title>Demokratieabbau ohne Grenzen?</title>
+<link>https://www.swp-berlin.org/en/publication/demokratieabbau-ohne-grenzen</link>
+<description><![CDATA[Die transnationale Kooperation]]></description>
+<content:encoded><![CDATA[<p>Seit Mitte der 1990er Jahre erodieren demokratische Normen, Verfahren und Institutionen schrittweise – und zwar auf nationaler, regionaler und internationaler Ebene. Neu an dieser »dritten Welle der Autokratisierung« ist, dass der Demokratieabbau maßgeblich von demokratisch gewählten Akteur:innen vorangetrieben wird.   Die digitale Revolution, die weltweite Zunahme an nicht-demokratischen Regimen und ihrem wirtschaftlichen Gewicht sowie der Rollenwandel der USA unter Donald Trump weg vom Hauptgaranten der liberalen Ordnung setzen Demokratien und die regelbasierte internationale Ordnung erheblich unter Druck.   Die in dieser SWP-Studie gebündelten Untersuchungen nehmen die inter- und transnationale Zusammenarbeit derjenigen in den Blick, die Demokratie in ihren Ländern abbauen. Diese sogenannten Erosions­akteur:in­nen kooperieren untereinander, mit (konsolidierten) Autokratien und mit Akteur:innen, die zum politischen Mainstream gehören. Es zeigt sich: Die Unterminierung der Demokratie wird transnational organisiert, koordiniert und koproduziert.  Demokratieabbau im Inneren und die Schwächung liberaler Normen, Verfahren und Institutionen auf internationaler Ebene verstärken sich gegenseitig. Die Kooperation mit Erosionsakteur:innen ist für Autokraten das Einfallstor, um Demokratien zu untergraben und illiberale Ordnungs­vorstellungen zu verbreiten.   Deutschland und seine Partner:innen in der EU sollten die potenzierten Effekte dieser Erosionsdynamik ernst nehmen und die Festigung liberaler Demokratie und Resilienz priorisieren statt beides geopolitischen und wirtschaftlichen Interessen unterzuordnen. Dafür braucht es Ansätze, die der transnationalen Dimension des Demokratieabbaus gerecht werden. </p>]]></content:encoded>
+<dc:publisher>Sinem Adar</dc:publisher>
+<dc:publisher>Muriel Asseburg</dc:publisher>
+<category>SWP-Studie</category>
+<dc:subject>Human rights</dc:subject>
+<dc:subject>Populism</dc:subject>
+<dc:subject>International law</dc:subject>
+<dc:subject>Regional cooperation and alliances</dc:subject>
+<dc:subject>Foreign policy of a country / a region</dc:subject>
+<dc:subject>State and society of a country / a region</dc:subject>
+<dc:subject>Sahel</dc:subject>
+<dc:subject>Brazil</dc:subject>
+<dc:subject>South America</dc:subject>
+<dc:subject>United States</dc:subject>
+<dc:subject>China</dc:subject>
+<dc:subject>Italy</dc:subject>
+<dc:subject>Turkey</dc:subject>
+<dc:subject>Hungary</dc:subject>
+<dc:subject>Russian Federation</dc:subject>
+<dc:subject>Arabian Peninsula</dc:subject>
+<dc:subject>Gulf states</dc:subject>
+<dc:subject>Israel</dc:subject>
+<dc:subject>Saudi Arabia</dc:subject>
+<pubDate>Tue, 10 Nov 2026 14:41:14 +0100</pubDate>
+<dc:identifier>2026S16</dc:identifier>
+</item>
+<item>
+<title>Moskaus Haltung: »Gespräche mit Trump verlieren an Wert«</title>
+<link>https://www.fr.de/politik/russland-expertin-sabine-fischer-im-interview-ueber-moskaus-haltung-in-den-ukraine-gespraechen-94581018.html</link>
+<description><![CDATA[]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<category>Medienbeitrag</category>
+<pubDate>Mon, 09 Nov 2026 16:54:00 +0100</pubDate>
+</item>
+<item>
+<title>Ukraine’s relationship with China: A tale of fits and starts</title>
+<link>https://epik.eu/publication/ukraine-china/</link>
+<description><![CDATA[]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<dc:creator>Susan Stewart</dc:creator>
+<category>Externe Fachpublikation</category>
+<pubDate>Mon, 09 Nov 2026 14:54:00 +0100</pubDate>
+</item>
+<item>
+<title>Israel seit dem 7. Oktober</title>
+<link>https://open.spotify.com/episode/6d12Nj6QDpgj1tZQBf3QX3?utm_source=copy-link</link>
+<description><![CDATA[Netanjahu gone? Israel hat gewählt, aber eine neue Regierung ist noch lange nicht in Sicht. Ich habe mit  über ihr Buch , die Auswirkungen auf die Wahl, die Beziehungen zu den USA/MAGA/Trump, Europa, rechtsextremen Parteien und der arabischen Welt oder auch die Verfahren vor dem Internationalen Strafgerichtshof und dem Internationalen Gerichtshof gesprochen.]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<dc:creator>Muriel Asseburg</dc:creator>
+<category>Medienbeitrag</category>
+<pubDate>Mon, 09 Nov 2026 09:59:00 +0100</pubDate>
+</item>
+<item>
+<title>Attentat in Krakau: »Es gibt in Polen starke rechtsradikale und nationalistische Milieus«</title>
+<link>https://www.tagesspiegel.de/internationales/attentat-in-krakau-es-gibt-in-polen-starke-rechtsradikale-und-nationalistische-milieus-16258009.html</link>
+<description><![CDATA[]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<dc:creator>Kai-Olaf Lang</dc:creator>
+<category>Medienbeitrag</category>
+<pubDate>Sun, 08 Nov 2026 15:15:00 +0100</pubDate>
+</item>
+<item>
+<title>Hat bei den US-Midterms auch Europa gewonnen?</title>
+<link>https://www.sueddeutsche.de/politik/midterms-2026-donald-trump-europa-podcast-li.3575385</link>
+<description><![CDATA[Nach den Midterm-Ergebnissen kann Donald Trump nicht so durchregieren wie bisher. Aber werden wir das auch hier in Deutschland merken?]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<dc:creator>Laura von Daniels</dc:creator>
+<category>Medienbeitrag</category>
+<pubDate>Sat, 07 Nov 2026 13:24:00 +0100</pubDate>
+</item>
+<item>
+<title>Die Integration der CO2-Entnahme in den Emissionshandel der EU</title>
+<link>https://www.swp-berlin.org/en/publication/die-integration-der-co2-entnahme-in-den-emissionshandel-der-eu</link>
+<description><![CDATA[Für den technologischen Hochlauf bietet der Kommissionsvorschlag zu wenig Anreize]]></description>
+<content:encoded><![CDATA[<p>Im Juli 2026 hat die Europäische Kommission vorgeschlagen, von 2031 bis 2040 zusätz­lich zum bisherigen Volumen des Emissionshandels (ETS) 250 Millionen Zertifikate zu versteigern. Mit den Erlösen soll eine entsprechende Menge dauerhafter CO2-Entnah­men innerhalb der EU angekauft werden, die aus der Abscheidung biogener Emissio­nen oder aus Direct Air Capture mit anschließender geologischer Speicherung stam­men. Damit entsteht erstmals eine durch EU-Politik ausgelöste Nachfra

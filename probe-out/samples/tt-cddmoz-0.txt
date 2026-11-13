@@ -1,0 +1,87 @@
+https://cddmoz.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Centro Para Democracia e Direitos Humanos</title>
+	<atom:link href="https://cddmoz.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://cddmoz.org</link>
+	<description></description>
+	<lastBuildDate>Sun, 01 Nov 2026 07:47:39 +0000</lastBuildDate>
+	<language>pt-PT</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://cddmoz.org/wp-content/uploads/2020/07/CDD-Verical-v1-100x100.jpg</url>
+	<title>Centro Para Democracia e Direitos Humanos</title>
+	<link>https://cddmoz.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Reestruturação da LAM: despedimentos para uns, novas admissões para outros?</title>
+		<link>https://cddmoz.org/reestruturacao-da-lam-despedimentos-para-uns-novas-admissoes-para-outros/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Sun, 01 Nov 2026 07:46:05 +0000</pubDate>
+				<category><![CDATA[POLÍTICA MOÇAMBICANA]]></category>
+		<guid isPermaLink="false">https://cddmoz.org/?p=34236</guid>
+
+					<description><![CDATA[Em Junho de 2026, as Linhas Aéreas de Moçambique (LAM) anunciaram, através de um comunicado, que dispensaram 130 trabalhadores em 2025, no âmbito do processo de reestruturação e redimensionamento da mão-de-obra, enquadrado no plano geral de reestruturação da companhia aprovado pelo Governo. A justificação apresentada foi a necessidade de racionalizar a estrutura organizacional e reduzir [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="34236" class="elementor elementor-34236" data-elementor-post-type="post">
+						<section class="elementor-section elementor-top-section elementor-element elementor-element-68cd1db elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="68cd1db" data-element_type="section" data-e-type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-f549272" data-id="f549272" data-element_type="column" data-e-type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+						<div class="elementor-element elementor-element-0c39cc4 elementor-widget elementor-widget-text-editor" data-id="0c39cc4" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p>Em Junho de 2026, as Linhas Aéreas de Moçambique (LAM) anunciaram, através de um comunicado, que dispensaram 130 trabalhadores em 2025, no âmbito do processo de reestruturação e redimensionamento da mão-de-obra, enquadrado no plano geral de reestruturação da companhia aprovado pelo Governo. A justificação apresentada foi a necessidade de racionalizar a estrutura organizacional e reduzir os custos operacionais.</p><p>Entretanto, informações recolhidas pelo Centro para Democracia e Direitos Humanos (CDD) indicam que, enquanto decorre o processo de reestruturação, a companhia recorreu à contratação de profissionais externos para ocupar posições em áreas estratégicas, incluindo as direcções Financeira e de Compliance, bem como os departamentos de Contabilidade, Tesouraria e Aprovisionamento.</p><p>Entre os nomes identificados nas informações disponibilizadas ao CDD estão Huruda Malungane, indicada como directora Financeira; Sulymane Nazario, director de Compliance; Edson Uamusse e Malaquias Mandane, associados à chefia do Departamento de Tesouraria; Arlindo João, indicado para a área de Aprovisionamento; e Valério Matsinhe, chefe do Departamento de Contabilidade.</p>								</div>
+				</div>
+				<div class="elementor-element elementor-element-91098af elementor-align-left elementor-widget elementor-widget-elementskit-button" data-id="91098af" data-element_type="widget" data-e-type="widget" data-widget_type="elementskit-button.default">
+				<div class="elementor-widget-container">
+					<div class="ekit-wid-con" >		<div class="ekit-btn-wraper">
+							<a href="https://cddmoz.org/wp-content/uploads/2026/11/Reestruturacao-da-LAM-despedimentos-para-uns-novas-admissoes-para-outros.pdf" class="elementskit-btn  whitespace--normal" id="">
+					Leia Mais				</a>
+					</div>
+        </div>				</div>
+				</div>
+					</div>
+		</div>
+					</div>
+		</section>
+				</div>
+		]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Quase dois anos depois: Ainda não há nomes das vítimas do massacre perpetrado pelas forças de segurança na Cadeia Central de Maputo</title>
+		<link>https://cddmoz.org/quase-dois-anos-depois-ainda-nao-ha-nomes-das-vitimas-do-massacre-perpetrado-pelas-forcas-de-seguranca-na-cadeia-central-de-maputo/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Wed, 28 Oct 2026 05:58:03 +0000</pubDate>
+				<category><![CDATA[BOLETIM SOBRE DIREITOS HUMANOS]]></category>
+		<guid isPermaLink="false">https://cddmoz.org/?p=34211</guid>
+
+					<description><![CDATA[Quase dois anos depois do massacre que se seguiu à suposta evasão, no dia 25 de Dezembro de 2024, de reclusos da Cadeia Central de Maputo e da Cadeia de Máxima Segurança, vulgo BO, há famílias que ainda não sabem se os seus parentes estão vivos. No dia a seguir à alegada evasão, quando as [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="34211" class="elementor elementor-34211" data-elementor-post-type="post">
+						<section class="elementor-section elementor-top-section elementor-element elementor-element-68cd1db elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="68cd1db" data-element_type="section" data-e-type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-f549272" data-id="f549272" data-element_type="column" data-e-type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+						<div class="elementor-element elementor-element-0c39cc4 elementor-widget elementor-widget-text-editor" data-id="0c39cc4" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p>Quase dois anos depois do massacre que se seguiu à suposta evasão, no dia 25 de Dezembro de 2024, de reclusos da <span class="il">Cadeia Central de Maputo</span> e da Cadeia de Máxima Segurança, vulgo BO, há famílias que ainda não sabem se os seus parentes estão vivos. No dia a seguir à alegada evasão, quando as famílias chegaram à penitenciária levando comida aos seus parentes, foram instruídas a ir ao Hospital Central de Maputo. Lá, algumas encontraram os seus familiares feridos, enquanto outras foram direccionadas à morgue, onde muitos corpos permaneciam sem identicação.</p><p>Fontes oficiais indicam que 34 pessoas foram mortas. No entanto, fontes internas distanciam-se dessa informação divulgada pelo antigo Comandante-Geral da Polícia da República de Moçambique (PRM), Bernardino Rafael. </p><p>Para além das 34 pessoas mortas, 70 reclusos foram executados depois da recaptura. Parte dessas pessoas foi enterrada em valas comuns. Isto faz com que, até hoje, 28 de Outubro, os reclusos assassinados pelas forças de segurança não passem de números.</p>								</div>
+				</div>
+				<div class="elementor-element elementor-element-91098af elementor-align-left elementor-widget elementor-widget-elementskit-button" data-id="91098

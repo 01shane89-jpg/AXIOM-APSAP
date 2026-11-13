@@ -1,0 +1,161 @@
+https://eprcug.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Economic Policy Research Centre</title>
+	<atom:link href="https://eprcug.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://eprcug.org/</link>
+	<description>Towards Sustainable Development</description>
+	<lastBuildDate>Fri, 06 Nov 2026 05:10:07 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://eprcug.org/wp-content/uploads/2020/08/favicon.png</url>
+	<title>Economic Policy Research Centre</title>
+	<link>https://eprcug.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>How Expensive Fuel Could Shape Uganda’s Economy</title>
+		<link>https://eprcug.org/eprc-in-the-news/how-expensive-fuel-could-shape-ugandas-economy/</link>
+		
+		<dc:creator><![CDATA[Hildah Namuleme]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 05:10:03 +0000</pubDate>
+				<category><![CDATA[EPRC In The News]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20334</guid>
+
+					<description><![CDATA[<p>At UGX 7,000 per litre of diesel, and even higher in some parts of Uganda by November 2026, and with...</p>
+<p>The post <a href="https://eprcug.org/eprc-in-the-news/how-expensive-fuel-could-shape-ugandas-economy/">How Expensive Fuel Could Shape Uganda’s Economy</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Is Uganda Ready for the Gen Z Labour Force?</title>
+		<link>https://eprcug.org/eprc-in-the-news/is-uganda-ready-for-the-gen-z-labour-force/</link>
+		
+		<dc:creator><![CDATA[Blessing Atwine]]></dc:creator>
+		<pubDate>Wed, 28 Oct 2026 13:41:23 +0000</pubDate>
+				<category><![CDATA[EPRC In The News]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20331</guid>
+
+					<description><![CDATA[<p>Imagine a young employee completing a report electronically, only to be told to print it, sign it, scan it and...</p>
+<p>The post <a href="https://eprcug.org/eprc-in-the-news/is-uganda-ready-for-the-gen-z-labour-force/">Is Uganda Ready for the Gen Z Labour Force?</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>What Dangote’s East Africa refinery implies for Uganda’s Hoima refinery?</title>
+		<link>https://eprcug.org/blog/what-dangotes-east-africa-refinery-implies-for-ugandas-hoima-refinery/</link>
+		
+		<dc:creator><![CDATA[Rehema Kahunde]]></dc:creator>
+		<pubDate>Tue, 27 Oct 2026 05:36:18 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20328</guid>
+
+					<description><![CDATA[<p>For decades, Uganda and other East African countries have relied heavily on imported refined petroleum products. Regional demand is estimated...</p>
+<p>The post <a href="https://eprcug.org/blog/what-dangotes-east-africa-refinery-implies-for-ugandas-hoima-refinery/">What Dangote’s East Africa refinery implies for Uganda’s Hoima refinery?</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>On the Uganda Shilling Depreciation</title>
+		<link>https://eprcug.org/blog/on-the-uganda-shilling-depreciation/</link>
+		
+		<dc:creator><![CDATA[Eric Mudoko]]></dc:creator>
+		<pubDate>Thu, 22 Oct 2026 16:11:54 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20318</guid>
+
+					<description><![CDATA[<p>Since July 2026, the Uganda shilling has weakened sharply against the US dollar. Bank of Uganda&#8217;s official mid-rates show the...</p>
+<p>The post <a href="https://eprcug.org/blog/on-the-uganda-shilling-depreciation/">On the Uganda Shilling Depreciation</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Operation Against Old Taxis Commendable but There Is More to Road Safety</title>
+		<link>https://eprcug.org/eprc-in-the-news/operation-against-old-taxis-commendable-but-there-is-more-to-road-safety/</link>
+		
+		<dc:creator><![CDATA[Rehema Kahunde]]></dc:creator>
+		<pubDate>Fri, 16 Oct 2026 04:50:42 +0000</pubDate>
+				<category><![CDATA[EPRC In The News]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20312</guid>
+
+					<description><![CDATA[<p>For decades, Greater Kampala Metropolitan Area (GKMA) has grappled with poor public transport which is mainly dominated by the 14-seater...</p>
+<p>The post <a href="https://eprcug.org/eprc-in-the-news/operation-against-old-taxis-commendable-but-there-is-more-to-road-safety/">Operation Against Old Taxis Commendable but There Is More to Road Safety</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>How the Uganda Shilling Depreciation Impacts You</title>
+		<link>https://eprcug.org/blog/how-the-uganda-shilling-depreciation-impacts-you/</link>
+		
+		<dc:creator><![CDATA[Harriet Kabanyoro]]></dc:creator>
+		<pubDate>Wed, 14 Oct 2026 18:30:12 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20306</guid>
+
+					<description><![CDATA[<p>The Uganda shilling has recently faced intense downward pressure against the US dollar, forcing the central bank to tighten monetary...</p>
+<p>The post <a href="https://eprcug.org/blog/how-the-uganda-shilling-depreciation-impacts-you/">How the Uganda Shilling Depreciation Impacts You</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Balancing Revenue Mobilization and the Cost of Living for Uganda’s Formal Sector</title>
+		<link>https://eprcug.org/blog/balancing-revenue-mobilization-and-the-cost-of-living-for-ugandas-formal-sector/</link>
+		
+		<dc:creator><![CDATA[Evonne Akello]]></dc:creator>
+		<pubDate>Sun, 11 Oct 2026 17:51:44 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20299</guid>
+
+					<description><![CDATA[<p>Every month, Ugandan employees receive their salaries after PAYE, NSSF and other deductions have been made. While taxation is essential...</p>
+<p>The post <a href="https://eprcug.org/blog/balancing-revenue-mobilization-and-the-cost-of-living-for-ugandas-formal-sector/">Balancing Revenue Mobilization and the Cost of Living for Uganda’s Formal Sector</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>For Uganda, AI Brings Opportunities &#038; Fears</title>
+		<link>https://eprcug.org/blog/for-uganda-ai-brings-opportunities-fears/</link>
+		
+		<dc:creator><![CDATA[Andrew Peters Okello]]></dc:creator>
+		<pubDate>Sat, 10 Oct 2026 02:38:43 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://eprcug.org/?p=20294</guid>
+
+					<description><![CDATA[<p>The calculator’s advent for mass adoption in the 1970s and 80s brought fears of eroding learners’ math abilities. Artificial Intelligence...</p>
+<p>The post <a href="https://eprcug.org/blog/for-uganda-ai-brings-opportunities-fears/">For Uganda, AI Brings Opportunities &amp; Fears</a> appeared first on <a href="https://eprcug.org">Economic Policy Research Centre</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Uganda Ready to Export Health Services to Regional Markets &#038; Beyond</title>
+		<l

@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/40_130.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"40_130","ac":[["71c567","KAL2194","HL8567","B38M","BOEING 737 MAX 8",40.2458,139.9553,19575,386,229,1794545868,0,"3210","A3",0]]}

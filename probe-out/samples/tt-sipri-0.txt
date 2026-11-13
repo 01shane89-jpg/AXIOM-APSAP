@@ -1,0 +1,101 @@
+https://www.sipri.org/rss/combined.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.sipri.org/">
+  <channel>
+    <title>RSS</title>
+    <link>https://www.sipri.org/</link>
+    <description>Combined RSS feed from SIPRI</description>
+    <language>en</language>
+    
+    <item>
+  <title>SIPRI hosts discussion on human security and AI</title>
+  <link>https://www.sipri.org/news/2026/sipri-hosts-discussion-human-security-and-ai</link>
+  <description>On 20 October 2026, SIPRI convened an online event exploring how artificial intelligence (AI) can advance peacebuilding. The event was part of the Community of Practice on Human Security, a joint initiative by SIPRI and the United Nations Trust Fund for Human Security (UNTFHS).
+</description>
+  <pubDate>10 Nov 2026 16:38:39 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/sipri-hosts-discussion-human-security-and-ai</guid>
+    </item>
+<item>
+  <title>Visit our 60th anniversary collection</title>
+  <link>https://www.sipri.org/news/2026/visit-our-60th-anniversary-collection</link>
+  <description>A new collection of video interviews and written messages from alumni and friends reflecting on 60 years of SIPRI.
+</description>
+  <pubDate>10 Nov 2026 11:12:28 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/visit-our-60th-anniversary-collection</guid>
+    </item>
+<item>
+  <title>SIPRI co-hosts side events at UN First Committee</title>
+  <link>https://www.sipri.org/news/2026/sipri-co-hosts-side-events-un-first-committee</link>
+  <description>SIPRI experts co-organized three side events during the 81st session of the United Nations General Assembly First Committee in New York in October.
+</description>
+  <pubDate>10 Nov 2026 10:53:30 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/sipri-co-hosts-side-events-un-first-committee</guid>
+    </item>
+<item>
+  <title>SIPRI and translation partner mark two anniversaries</title>
+  <link>https://www.sipri.org/news/2026/sipri-and-translation-partner-mark-two-anniversaries</link>
+  <description>SIPRI Director Karim Haggag&amp;nbsp;joined two events in Barcelona as part of SIPRI’s 60th anniversary celebrations.
+</description>
+  <pubDate>10 Nov 2026 10:38:56 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/sipri-and-translation-partner-mark-two-anniversaries</guid>
+    </item>
+<item>
+  <title>Building on progress in China–USA talks on AI</title>
+  <link>https://www.sipri.org/commentary/essay/2026/building-progress-china-usa-talks-ai</link>
+  <description>This SIPRI Essay examines the progress made at the September 2026 China–USA presidential summit on AI and makes recommendations for the follow-on dialogue and beyond.
+</description>
+  <pubDate>04 Nov 2026 17:16:39 CET</pubDate>
+    <dc:creator>Dr Lora Saalman;Fei Su</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/commentary/essay/2026/building-progress-china-usa-talks-ai</guid>
+    </item>
+<item>
+  <title>Climate, Peace and Security Fact Sheet: Somalia (2026)</title>
+  <link>https://www.sipri.org/publications/2026/partner-publications/climate-peace-and-security-fact-sheet-somalia-2026</link>
+  <description/>
+  <pubDate>04 Nov 2026 11:00:00 CET</pubDate>
+    <dc:creator>Katongo Seyuba;Dr Thor Olav Iversen;Jules Duhamel</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/publications/2026/partner-publications/climate-peace-and-security-fact-sheet-somalia-2026</guid>
+    </item>
+<item>
+  <title>2026 Stockholm Forum opens—with a focus on rethinking peace and security in today’s world</title>
+  <link>https://www.sipri.org/media/press-release/2026/2026-stockholm-forum-opens-focus-rethinking-peace-and-security-todays-world</link>
+  <description>(Stockholm, 3 November 2026) This week, more than 450 people from over 100 countries are gathering in Sweden’s capital for the 2026 edition of the Stockholm Forum on Peace and Development. 
+</description>
+  <pubDate>02 Nov 2026 16:30:33 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/media/press-release/2026/2026-stockholm-forum-opens-focus-rethinking-peace-and-security-todays-world</guid>
+    </item>
+<item>
+  <title>Global aid gap widens as major donors prioritize higher military spending, new SIPRI research shows</title>
+  <link>https://www.sipri.org/media/press-release/2026/global-aid-gap-widens-major-donors-prioritize-higher-military-spending-new-sipri-research-shows</link>
+  <description>There is a widening gap between the ODA provided by major donor countries and actual development and humanitarian needs, which could have potentially serious consequences for human security and political stability, according to a new report released today by SIPRI.
+</description>
+  <pubDate>26 Oct 2026 11:21:05 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/media/press-release/2026/global-aid-gap-widens-major-donors-prioritize-higher-military-spending-new-sipri-research-shows</guid>
+    </item>
+<item>
+  <title>The military AI industry’s involvement in armed conflict: Implications under international humanitarian law</title>
+  <link>https://www.sipri.org/commentary/topical-backgrounder/2026/military-ai-industrys-involvement-armed-conflict-implications-under-international-humanitarian-law</link>
+  <description>This backgrounder aims to shed some light on three of the most commonly asked questions about how IHL applies to industry.
+</description>
+  <pubDate>26 Oct 2026 10:45:00 CET</pubDate>
+    <dc:creator>Laura Bruun;Dr Marta Bo</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/commentary/topical-backgrounder/2026/military-ai-industrys-involvement-armed-conflict-implications-under-international-humanitarian-law</guid>
+    </item>
+<item>
+  <title>SIPRI convenes Berlin Climate Security Conference events</title>
+  <link>https://www.sipri.org/news/2026/sipri-convenes-berlin-climate-security-conference-events</link>
+  <description>In October, SIPRI convened and co-hosted three events in Berlin on the relationship between development, climate change and security. 
+</description>
+  <pubDate>23 Oct 2026 11:49:04 CEST</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/sipri-convenes-berlin-climate-security-conference-events</guid>
+    </item>
+
+  </channel>
+</rss>

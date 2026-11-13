@@ -1,0 +1,102 @@
+https://www.ecdc.europa.eu/en/taxonomy/term/1307/feed
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.ecdc.europa.eu/en">
+  <channel>
+    <title>News content</title>
+    <link>https://www.ecdc.europa.eu/en</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Preparations continue for rollout of new public health surveillance platform in nine pilot countries</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/preparations-continue-rollout-new-public-health-surveillance-platform-nine-pilot</link>
+  <description>&lt;p&gt;Next year’s rollout of Epi+, a multilingual event-based surveillance platform designed to help countries detect and assess emerging public health threats, is coming closer as ECDC and Italy’s Istituto Superiore di Sanità (ISS) hold training this week for 40 national epidemiologists and technical experts in Rome.&lt;/p&gt;
+</description>
+  <pubDate>Wed, 11 Nov 2026 13:47:27 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/preparations-continue-rollout-new-public-health-surveillance-platform-nine-pilot</guid>
+    </item>
+<item>
+  <title>From preparedness to response: EU Reference Laboratories for Public Health in action</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/preparedness-response-eu-reference-laboratories-public-health-action</link>
+  <description>&lt;p&gt;Strong laboratory capacity is the backbone of Europe’s preparedness in the face of increasing communicable disease threats, said ECDC on the occasion of today’s European Laboratory Day, celebrated every year on 5 November to recognise the essential contribution of laboratory professionals across Europe.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 05 Nov 2026 08:51:55 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/preparedness-response-eu-reference-laboratories-public-health-action</guid>
+    </item>
+<item>
+  <title>First public health emergency preparedness assessments across Europe show both commitment and recurring challenges</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/first-public-health-emergency-preparedness-assessments-across-europe-show-both</link>
+  <description>&lt;p&gt;The first cycle of Public Health Emergency Preparedness Assessments (PHEPAs) coordinated by the European Centre for Disease Prevention and Control (ECDC) has shown a strong commitment to emergency preparedness across Europe, with a number of common challenges remaining.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 29 Oct 2026 09:57:39 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/first-public-health-emergency-preparedness-assessments-across-europe-show-both</guid>
+    </item>
+<item>
+  <title>As the cold season nears, universal immunisation of newborns against RSV could significantly reduce infant hospitalisations across Europe</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/cold-season-nears-universal-immunisation-newborns-against-rsv-could-significantly</link>
+  <description>&lt;p&gt;As the season for respiratory syncytial virus (RSV) and other respiratory diseases approaches, a new report from the European Centre for Disease Prevention and Control (ECDC) indicates that universal immunisation of newborns against RSV could substantially reduce hospitalisations among infants linked to the disease during the winter season.&lt;/p&gt;
+</description>
+  <pubDate>Wed, 28 Oct 2026 10:02:07 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/cold-season-nears-universal-immunisation-newborns-against-rsv-could-significantly</guid>
+    </item>
+<item>
+  <title>ECDC to deploy experts as Ebola cases emerge in Kenya and Nigeria</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/ecdc-deploy-experts-ebola-cases-emerge-kenya-and-nigeria</link>
+  <description>&lt;p&gt;Following the emergence of Ebola disease in Kenya and Nigeria, and with the situation in the DRC remaining serious, ECDC is increasing its efforts to support investigations and local response by sending a team of ECDC experts to Nigeria.&lt;/p&gt;
+</description>
+  <pubDate>Tue, 27 Oct 2026 15:46:56 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/ecdc-deploy-experts-ebola-cases-emerge-kenya-and-nigeria</guid>
+    </item>
+<item>
+  <title>Importation of Ebola cases to Kenya and Nigeria: ECDC assesses the threat</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/importation-ebola-cases-kenya-and-nigeria-ecdc-assesses-threat</link>
+  <description>&lt;p&gt;With cases of Ebola disease caused by Bundibugyo virus recently detected in Kenya and Nigeria, ECDC reiterates the low risk for Europe while highlighting the need for preparedness.&lt;/p&gt;
+</description>
+  <pubDate>Fri, 23 Oct 2026 16:42:20 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/importation-ebola-cases-kenya-and-nigeria-ecdc-assesses-threat</guid>
+    </item>
+<item>
+  <title>Respiratory infections season</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/respiratory-infections-season</link>
+  <description>&lt;p&gt;As the colder months approach in Europe, respiratory infections including influenza, respiratory syncytial virus (RSV) infections, COVID-19, pneumococcal disease and others can lead to serious illness and increase the burden on healthcare services throughout Europe.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 22 Oct 2026 11:59:31 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/respiratory-infections-season</guid>
+    </item>
+<item>
+  <title>Protect yourself and others during the cold season</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/protect-yourself-and-others-during-cold-season</link>
+  <description>&lt;p&gt;As the colder months approach in Europe, respiratory infections including influenza, respiratory syncytial virus (RSV) infections, COVID-19, pneumococcal disease and others can lead to serious illness and increase the burden on healthcare services throughout Europe.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 22 Oct 2026 11:59:28 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/protect-yourself-and-others-during-cold-season</guid>
+    </item>
+<item>
+  <title>Severely ill patient in France becomes first ever human infected with Shamonda virus</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/severely-ill-patient-france-becomes-first-ever-human-infected-shamonda-virus</link>
+  <description>&lt;p&gt;The European Centre for Disease Prevention and Control (ECDC) is carefully monitoring the situation after the French authorities announced the first ever reported human infection with Shamonda virus (SHAV), a disease that has until now only affected animals.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 22 Oct 2026 11:13:22 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/severely-ill-patient-france-becomes-first-ever-human-infected-shamonda-virus</guid>
+    </item>
+<item>
+  <title>Ebola disease: Multi-country outbreak 2026</title>
+  <link>https://www.ecdc.europa.eu/en/ebola-disease-multi-country-outbreak-2026</link>
+  <description>&lt;p&gt;Since May 2026, an Ebola virus disease outbreak caused by Bundibugyo virus has been ongoing in the Democratic Republic of the Congo (DRC).&lt;/p&gt;
+</description>
+  <pubDate>Mon, 19 Oct 2026 17:36:21 +0200</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/ebola-disease-multi-country-outbreak-2026</guid>
+    </item>
+
+  </channel>
+</rss>

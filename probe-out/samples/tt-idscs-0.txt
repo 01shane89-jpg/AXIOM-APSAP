@@ -1,0 +1,161 @@
+https://idscs.org.mk/en/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>IDSCS</title>
+	<atom:link href="https://idscs.org.mk/en/feed/" rel="self" type="application/rss+xml" />
+	<link>https://idscs.org.mk/mk/</link>
+	<description></description>
+	<lastBuildDate>Fri, 06 Nov 2026 13:19:43 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Future Makers: From Ideas to Local Impact</title>
+		<link>https://idscs.org.mk/en/2026/11/06/future-makers/</link>
+		
+		<dc:creator><![CDATA[Milena]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 13:17:00 +0000</pubDate>
+				<category><![CDATA[Future Makers]]></category>
+		<category><![CDATA[homepage project]]></category>
+		<category><![CDATA[тековен]]></category>
+		<guid isPermaLink="false">https://idscs.org.mk/?p=33931</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idscs.org.mk/en/2026/11/06/future-makers/">Future Makers: From Ideas to Local Impact</a> appeared first on <a href="https://idscs.org.mk/en/">IDSCS</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>The Twin Transition: Twinned in Name, Measured Apart</title>
+		<link>https://idscs.org.mk/en/2026/11/03/the-twin-transition-twinned-in-name-measured-apart/</link>
+		
+		<dc:creator><![CDATA[Milena]]></dc:creator>
+		<pubDate>Tue, 03 Nov 2026 06:01:39 +0000</pubDate>
+				<category><![CDATA[All Publications]]></category>
+		<category><![CDATA[EU integrations]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Reports]]></category>
+		<category><![CDATA[Research papers]]></category>
+		<category><![CDATA[digital transition]]></category>
+		<category><![CDATA[EU integration]]></category>
+		<category><![CDATA[green transition]]></category>
+		<category><![CDATA[homepage]]></category>
+		<category><![CDATA[homepage publication]]></category>
+		<category><![CDATA[publication]]></category>
+		<category><![CDATA[ЕУ интеграции]]></category>
+		<category><![CDATA[почетна]]></category>
+		<guid isPermaLink="false">https://idscs.org.mk/?p=33735</guid>
+
+					<description><![CDATA[<p>Green and Digital Reforms in North Macedonia: Asymmetries, Gaps, Constraints and Financial Risk &#160; The green and digital transitions are two interconnected transformations shaping the development of the European Union and candidate countries. For the Western Balkans, meeting the obligations associated with the twin transition is a prerequisite not only for alignment with EU legislation, [&#8230;]</p>
+<p>The post <a href="https://idscs.org.mk/en/2026/11/03/the-twin-transition-twinned-in-name-measured-apart/">The Twin Transition: Twinned in Name, Measured Apart</a> appeared first on <a href="https://idscs.org.mk/en/">IDSCS</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Analysis of the Legal Framework for Local Inspection Oversight</title>
+		<link>https://idscs.org.mk/en/2026/09/22/analysis-local-inspection-oversight/</link>
+		
+		<dc:creator><![CDATA[Milena]]></dc:creator>
+		<pubDate>Tue, 22 Sep 2026 13:02:03 +0000</pubDate>
+				<category><![CDATA[Anti-corruption]]></category>
+		<category><![CDATA[Good governance]]></category>
+		<category><![CDATA[Local Inspectors Under the Lens]]></category>
+		<category><![CDATA[Policy analysis]]></category>
+		<category><![CDATA[Policy briefs]]></category>
+		<category><![CDATA[Policy memos]]></category>
+		<category><![CDATA[Reports]]></category>
+		<category><![CDATA[Research papers]]></category>
+		<category><![CDATA[anti-corruption]]></category>
+		<category><![CDATA[homepage]]></category>
+		<category><![CDATA[publication]]></category>
+		<category><![CDATA[антикорупција]]></category>
+		<category><![CDATA[почетна]]></category>
+		<guid isPermaLink="false">https://idscs.org.mk/?p=33666</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idscs.org.mk/en/2026/09/22/analysis-local-inspection-oversight/">Analysis of the Legal Framework for Local Inspection Oversight</a> appeared first on <a href="https://idscs.org.mk/en/">IDSCS</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>New digital platform Pratenici.mk brings Parliament’s open data closer to citizens</title>
+		<link>https://idscs.org.mk/en/2026/08/10/parliamentary-open-data-pratenicimk-eng/</link>
+		
+		<dc:creator><![CDATA[Milena]]></dc:creator>
+		<pubDate>Mon, 10 Aug 2026 10:30:21 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<category><![CDATA[Parliament]]></category>
+		<category><![CDATA[Parliamentary Open Data]]></category>
+		<category><![CDATA[homepage]]></category>
+		<category><![CDATA[MPs]]></category>
+		<category><![CDATA[open data]]></category>
+		<category><![CDATA[почетна]]></category>
+		<guid isPermaLink="false">https://idscs.org.mk/?p=33593</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idscs.org.mk/en/2026/08/10/parliamentary-open-data-pratenicimk-eng/">New digital platform Pratenici.mk brings Parliament’s open data closer to citizens</a> appeared first on <a href="https://idscs.org.mk/en/">IDSCS</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Commentary on the Law on Public Enterprises and State-Owned or Partly State-Owned Companies of the Republic of North Macedonia</title>
+		<link>https://idscs.org.mk/en/2026/08/07/law-on-public-enterprises/</link>
+		
+		<dc:creator><![CDATA[Milena]]></dc:creator>
+		<pubDate>Fri, 07 Aug 2026 09:28:10 +0000</pubDate>
+				<category><![CDATA[Anti-corruption]]></category>
+		<category><![CDATA[Fostering Debate on Accountability and Anti-Corruption (NED5)]]></category>
+		<category><![CDATA[Good governance]]></category>
+		<category><![CDATA[Policy analysis]]></category>
+		<category><![CDATA[Policy briefs]]></category>
+		<category><![CDATA[Policy memos]]></category>
+		<category><![CDATA[Reports]]></category>
+		<category><![CDATA[Research papers]]></category>
+		<category><![CDATA[anti-corruption]]></category>
+		<category><![CDATA[homepage]]></category>
+		<category><![CDATA[publication]]></category>
+		<category><![CDATA[антикорупција]]></category>
+		<category><![CDATA[почетна]]></category>
+		<guid isPermaLink="false">https://idscs.org.mk/?p=33622</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idscs.org.mk/en/2026/08/07/law-on-public-enterprises/">Commentary on the Law on Public Enterprises and State-Owned or Partly State-Owned Companies of the Republic of North Macedonia</a> appeared first on <a href="https://idscs.org.mk/en/">IDSCS</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Paving over Procedure: Corrosive Capital in Transport Infrastructure</title>
+		<link>https://idscs.org.mk/en/2026/08/04/geo_power_report_corrosive_capital_transport_infrastructure/</link>
+		
+		<dc:creator><![CDATA[Milena]]></dc:creator>
+		<pubDate>Tue, 04 Aug 2026 10:59:30 +0000</pubDate>
+				<category><![CDATA[All Publications]]></category>
+		<category><![CDATA[Empowering the Geopolitical EU in the Eastern Neighbourhood and the Western Balkans]]></category>
+		<category><![CDATA[EU]]></category>
+		<category><![CDATA[EU integrations]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[EU integration]]></category>
+		<category><![CDATA[GeoPower]]></category>
+		<category><![CDATA[homepage]]></category>
+		<category><![CDATA[publication]]></category>
+		<guid isPermaLink="false">https://idscs.org.mk/?p=33675</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idscs.org.mk/en/2026/08/04/geo_power_report_corrosive_capital_transport_infrastructure/">Paving over Procedure: Corrosive Capital in Transport Infrastructure</a> appeared first on <a href="https://idscs.org.mk/en/">IDSCS</a>.</p>
+]]></de

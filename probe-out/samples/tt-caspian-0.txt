@@ -1,0 +1,90 @@
+https://www.caspianpolicy.org/rss.xml
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title><![CDATA[Caspian Policy Center]]></title>
+        <description><![CDATA[Caspian Policy Center is an independent think tank in Washington, D.C. researching energy, security and economics in Central Asia and the South Caucasus.]]></description>
+        <link>https://caspianpolicy.org</link>
+        <generator>RSS for Node</generator>
+        <lastBuildDate>Fri, 13 Nov 2026 05:04:05 GMT</lastBuildDate>
+        <atom:link href="https://caspianpolicy.org/rss.xml" rel="self" type="application/rss+xml"/>
+        <language><![CDATA[en]]></language>
+        <item>
+            <title><![CDATA[Wired Across the Caspian: The Trans-Caspian Fiber-Optic Cable and the Future of Digital Connectivity]]></title>
+            <description><![CDATA[Washington, DC, November 6, 2026 – The Caspian Policy Center (CPC) held a panel discussion on the Trans-Caspian Fiber-Optic ...]]></description>
+            <link>https://caspianpolicy.org/research/press-releases/wired-across-the-caspian-the-trans-caspian-fiber-optic-cable-and-the-future-of-digital-connectivity</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/press-releases/wired-across-the-caspian-the-trans-caspian-fiber-optic-cable-and-the-future-of-digital-connectivity</guid>
+            <pubDate>Wed, 11 Nov 2026 14:38:08 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[Country Spotlight: Malaysia’s Energy Footprint in Turkmenistan and the Greater Caspian Region]]></title>
+            <description><![CDATA[During the 31st International Conference and Exhibition Oil and Gas of Turkmenistan ...]]></description>
+            <link>https://caspianpolicy.org/research/turkmenistan/country-spotlight-malaysias-energy-footprint-in-turkmenistan-and-the-greater-caspian-region</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/turkmenistan/country-spotlight-malaysias-energy-footprint-in-turkmenistan-and-the-greater-caspian-region</guid>
+            <pubDate>Tue, 10 Nov 2026 16:02:16 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[Headlines from the Caspian: November 9, 2026]]></title>
+            <description><![CDATA[Your quick primer on the latest developments in the Caspian this week...]]></description>
+            <link>https://caspianpolicy.org/research/weekly-media-highlights/headlines-caspian-november-9-2026</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/weekly-media-highlights/headlines-caspian-november-9-2026</guid>
+            <pubDate>Mon, 09 Nov 2026 08:35:51 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[From Multivectorism to Connectivity: What Drives Kazakhstan's “Connector” Foreign Policy Approach]]></title>
+            <description><![CDATA[For more than three decades, Kazakhstan has pursued a multi-vector foreign policy, maintaining relations ...]]></description>
+            <link>https://caspianpolicy.org/research/kazakhstan/from-multivectorism-to-connectivity-what-drives-kazakhstans-connector-foreign-policy-approach</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/kazakhstan/from-multivectorism-to-connectivity-what-drives-kazakhstans-connector-foreign-policy-approach</guid>
+            <pubDate>Thu, 05 Nov 2026 20:20:19 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[Recruited for Work, Pressed into War:  Central Asian Migrants in Russia]]></title>
+            <description><![CDATA[Some Central Asian labor migrants are finding themselves in Russian military uniforms, forced into ...]]></description>
+            <link>https://caspianpolicy.org/research/central-asia/recruited-work-pressed-war-central-asian-migrants-russia</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/central-asia/recruited-work-pressed-war-central-asian-migrants-russia</guid>
+            <pubDate>Wed, 04 Nov 2026 14:55:24 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[Sealing Cracks: Turkmenistan’s History of Leaks Exposes the Importance of Halting Unfettered Methane Emissions]]></title>
+            <description><![CDATA[Methane emissions might be expected from one of the largest natural gas producers in the world]]></description>
+            <link>https://caspianpolicy.org/research/turkmenistan/sealing-cracks-turkmenistans-history-of-leaks-exposes-the-importance-of-halting-unfettered-methane-emissions</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/turkmenistan/sealing-cracks-turkmenistans-history-of-leaks-exposes-the-importance-of-halting-unfettered-methane-emissions</guid>
+            <pubDate>Tue, 03 Nov 2026 14:38:11 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[Europe - Caspian Briefing, November 3 , 2026]]></title>
+            <description><![CDATA[Your quick primer on the latest developments in the Caspian this week...]]></description>
+            <link>https://caspianpolicy.org/research/europe-caspian-briefing/europe-caspian-briefing-november-3-2026</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/europe-caspian-briefing/europe-caspian-briefing-november-3-2026</guid>
+            <pubDate>Tue, 03 Nov 2026 14:26:05 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[Headlines from the Caspian: November 2, 2026]]></title>
+            <description><![CDATA[Your quick primer on the latest developments in the Caspian this week...]]></description>
+            <link>https://caspianpolicy.org/research/weekly-media-highlights/headlines-caspian-november-2-2026</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/weekly-media-highlights/headlines-caspian-november-2-2026</guid>
+            <pubDate>Mon, 02 Nov 2026 19:12:13 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[TRIPP and the Return of Choice to the Caspian Region]]></title>
+            <description><![CDATA[Something fundamental is changing across the South Caucasus and Central Asia ...]]></description>
+            <link>https://caspianpolicy.org/research/middle-corridor/tripp-and-return-choice-caspian-region</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/middle-corridor/tripp-and-return-choice-caspian-region</guid>
+            <pubDate>Mon, 02 Nov 2026 15:13:59 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[It's Time for Washington to Embrace the C6+1]]></title>
+            <description><![CDATA[Earlier this month, U.S. Secretary of State Marco Rubio met with his counterparts from the five Central Asian]]></description>
+            <link>https://caspianpolicy.org/research/uzbekistan/its-time-washington-embrace-c61</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/uzbekistan/its-time-washington-embrace-c61</guid>
+            <pubDate>Fri, 30 Oct 2026 14:45:09 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[CPC Energy Roundup: October 30, 2026]]></title>
+            <description><![CDATA[In this edition of the Caspian Policy Center’s Energy Roundup, we review outcomes from Turkmenistan’s ...]]></description>
+            <link>https://caspianpolicy.org/research/energy-roundups/cpc-energy-roundup-october-30-2026</link>
+            <guid isPermaLink="true">https://caspianpolicy.org/research/energy-roundups/cpc-energy-roundup-october-30-2026</guid>
+            <pubDate>Fri, 30 Oct 2026 09:48:41 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[Caspian Policy Center Welcomes Four New Members to Board of Advisers]]></title>
+            <description><![CDATA[The Caspian Policy Center (CPC) is pleased to announce the 

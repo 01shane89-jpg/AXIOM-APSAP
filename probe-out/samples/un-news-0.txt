@@ -1,0 +1,75 @@
+https://news.un.org/feed/subscribe/en/news/all/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://news.un.org/en/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:yandex="http://news.yandex.ru" xmlns:media="http://search.yahoo.com/mrss/" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>UN News - Global perspective Human stories</title>
+    <link>https://news.un.org/en/</link>
+    <description><![CDATA[Global perspective Human stories]]></description>
+    <language>en</language>
+        <atom:link rel="self" href="https://news.un.org/feed/subscribe/en/news/all/rss.xml"></atom:link>
+<image><url>https://news.un.org/en/themes/custom/un_base_theme/images/un-emblem-for-rss.png</url>
+<title>UN News</title>
+<link>https://news.un.org/en/</link>
+<description>Global perspective Human stories</description>
+</image>
+<generator>United Nations</generator>
+<lastBuildDate>Thu, 12 Nov 2026 22:14:28 -0500</lastBuildDate>
+<pubDate>Thu, 12 Nov 2026 07:00:00 -0500</pubDate>
+<item>
+  <title>Six killed in Israeli airstrike on Gaza’s Nasser Hospital</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168796</link>
+  <description>An Israeli airstrike on Gaza’s Nasser Hospital on Wednesday night killed six people, injured 27 others and caused extensive damage.&amp;nbsp;</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/11/07-11-2026-UNNews-Gaza-Winer-Building.jpg/image560x340cropped.jpg" length="38620" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168796</guid>
+                                              <pubDate>Thu, 12 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Aid is the ‘only hope’ for millions in Sudan, WFP chief warns, as funding cuts deepen hunger crisis</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168793</link>
+  <description>The World Food Programme’s (WFP) new Executive Director has warned that funding cuts are worsening Sudan’s hunger crisis following his first field mission to the country, where he met families displaced by conflict and struggling to feed their children.&amp;nbsp;</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/11/12-11-2026_WFP_Sudan-01.jpg/image560x340cropped.jpg" length="29270" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168793</guid>
+                                              <pubDate>Thu, 12 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>New platform aims to get money moving before disaster strikes</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168794</link>
+  <description>UN agencies on Thursday launched a joint platform at COP31 in Antalya, Türkiye, that aims to secure access to more than $3 billion in risk financing to protect 75 million people and their livelihoods from climate shocks and natural hazards by 2030.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/19-02-2026-WFP_MOZ_Martim-Pereira_DSC01926.jpg/image560x340cropped.jpg" length="46483" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168794</guid>
+                                              <pubDate>Thu, 12 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>COP31: Cities rise up the climate agenda as leaders face demands for action</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168792</link>
+  <description>From flooded homes to melting Himalayan glaciers, the human cost of climate change took centre stage at COP31 on Thursday, as world leaders turned their attention to protecting cities and vulnerable communities, while activists challenged governments to do more.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Embargoed/2026/11/02-11-2026-UNEP-Italy-ecosystem.jpg/image560x340cropped.jpg" length="56351" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168792</guid>
+                                              <pubDate>Thu, 12 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Kenya begins countdown towards end of Ebola after last patient discharged</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168790</link>
+  <description>Kenya began a 42-day countdown to the end of its Ebola outbreak on Thursday, a day after the last patient being treated for the disease went home and 11 people were released from quarantine.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/10/06-10-2026-WHO-Kenya-Bundibugyo-02.jpg/image560x340cropped.jpg" length="46740" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168790</guid>
+                                              <pubDate>Thu, 12 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Haiti: More than 1,000 killed between July and September, UN report reveals</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168789</link>
+  <description>More than 1,000 people were killed in Haiti during the third quarter of this year, as armed gangs continue to terrorize the population in the capital Port-au-Prince and beyond, the UN team in the island nation, said in its latest human rights report.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Embargoed/2026/11/03-11-2026-UNOCHA-Haiti-03.jpg/image560x340cropped.jpg" length="28806" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168789</guid>
+                                              <pubDate>Thu, 12 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Gaza winter aid: ‘No more delay’, Fletcher tells governments stalling on support</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168788</link>
+  <description>The UN’s Emergency Relief Coordinator, Tom Fletcher,&amp;nbsp;expressed deep concern about the deteriorating humanitarian situation in Gaza, as UN member states and partners have been repeatedly del

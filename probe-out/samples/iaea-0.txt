@@ -1,0 +1,122 @@
+https://www.iaea.org/feeds/topnews
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="http://www.iaea.org/">
+  <channel>
+    <title>IAEA Top News</title>
+    <link>http://www.iaea.org/</link>
+    <description><![CDATA[Top stories from the International Atomic Energy Agency]]></description>
+    <language>en</language>
+        <pubDate>Thu, 12 Nov 26 13:44:00 +0100</pubDate>
+<item>
+  <title>IAEA Sees Commitment to Operational Safety at Unit 2 of Kori Nuclear Power Plant in Republic of Korea</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-sees-commitment-to-operational-safety-at-unit-2-of-kori-nuclear-power-plant-in-republic-of-korea</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/flag-of-korea.jpeg?itok=zMUYd1m1" type="image/jpeg" length="17222"/><guid isPermaLink="false">290518</guid>
+          <pubDate>
+26-11-12  13:44
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>World Fusion Outlook 2026:  AI, the US $80 Billion Financing Challenge and Future Deployment Scenarios</title>
+  <link>http://www.iaea.org/newscenter/news/world-fusion-outlook-2026-ai-the-us-80-billion-financing-challenge-and-future-deployment-scenarios</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Matteo Barbarino|Department of Nuclear Sciences and Applications</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/banner-world-fusion-outlook-2026-square-1140-x-640-px.png?itok=XFMPmiqk" type="image/png" length="190773"/><guid isPermaLink="false">290517</guid>
+          <pubDate>
+26-11-12  09:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA at COP31: Nuclear for Energy Security</title>
+  <link>http://www.iaea.org/newscenter/news/iaea-at-cop31-nuclear-for-energy-security</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/cop31-web-article.png?itok=aSC_Ly4W" type="image/png" length="133670"/><guid isPermaLink="false">290476</guid>
+          <pubDate>
+26-11-10  09:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Mission says Jordan is Committed to Strengthening Radiation and Nuclear Safety Oversight</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-mission-says-jordan-is-committed-to-strengthening-radiation-and-nuclear-safety-oversight</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/irrs-jordan-november-2026.jpg?itok=vaFBYDF5" type="image/jpeg" length="27885"/><guid isPermaLink="false">290487</guid>
+          <pubDate>
+26-11-10  06:48
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Nuclear Safeguards in a Changing World – 15th Symposium on International Safeguards Opens in Vienna</title>
+  <link>http://www.iaea.org/newscenter/news/nuclear-safeguards-in-a-changing-world-15th-symposium-on-international-safeguards-opens-in-vienna</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Wolfgang Picot|IAEA Department of Safeguards</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/55642847704_95c9021cd7_h.jpg?itok=oQGRRW6H" type="image/jpeg" length="19481"/><guid isPermaLink="false">290496</guid>
+          <pubDate>
+26-11-09  16:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Seven Ways Nuclear Science and Technology Help Protect the Environment</title>
+  <link>http://www.iaea.org/newscenter/news/seven-ways-nuclear-science-and-technology-help-protect-the-environment</link>
+  <description>This week, global leaders, international organizations, scientists, business representatives and civil society are gathering in Antalya, Türkiye, for the 31st United Nations Climate Change Conference (COP31).</description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/banner2-cop31-listicle.png?itok=UNmsbPpo" type="image/png" length="333839"/><guid isPermaLink="false">290495</guid>
+          <pubDate>
+26-11-09  15:45
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Safeguards: Our Shared Responsibility</title>
+  <link>http://www.iaea.org/newscenter/multimedia/videos/safeguards-our-shared-responsibility</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/safeguardssymposium2026_16by9-copy.jpg?itok=ndAHVVbK" type="image/jpeg" length="33253"/><guid isPermaLink="false">290480</guid>
+          <pubDate>
+26-11-09  13:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Mission says Slovakia is Committed to Strengthening Nuclear and Radiation Safety Regulatory Framework</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-mission-says-slovakia-is-committed-to-strengthening-nuclear-and-radiation-safety-regulatory-framework</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/slovakia-flag.jpg?itok=k8IsB7c9" type="image/jpeg" length="15828"/><guid isPermaLink="false">290494</guid>
+          <pubDate>
+26-11-09  12:40
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Update 374 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-374-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/situation_in_ukraine_banner.jpg?itok=z6Fwwzx6" type="image/jpeg" length="21888"/><guid isPermaLink="false">290478</guid>
+          <pubDate>
+26-11-06  14:46
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Mission Reviews the Russian Federation’s Regulatory Framework for Nuclear and Radiation Safety</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-mission-reviews-the-russian-federations-regulatory-framework-for-nuclear-and-radiation-safety</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/kalinin-npp-visit.jpg?itok=eLSvqj5M" type="image/jpeg" length="31052"/><guid isPermaLink="false">290432</guid>
+          <pubDate>
+26-11-06  07:30
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Impact of Heatwaves on Nuclear Power Plants</title>
+  <link>http://www.iaea.org/newscenter/news/impact-of-heatwaves-on-nuclear-power-plants</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Anna Chtorkh|IAEA Office of Public Information and Communication</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/heatwave-banner-2-1.png?itok=ba488eJX" type="image/png" length="232642"/><guid isPermaLink="false">290428</guid>
+          <pubDate>
+26-11-05  13:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+    

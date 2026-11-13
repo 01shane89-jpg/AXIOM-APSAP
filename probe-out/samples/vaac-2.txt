@@ -1,0 +1,18 @@
+https://www.data.jma.go.jp/svd/vaac/data/TextData/2026/20261112_27303000_0823_Text.html
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Tokyo VAAC | Volcanic Ash Advisory Text</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../../common/english.css">
+</head>
+<body>
+	<div id="VAA_TEXT">Volcanic Ash Advisory Text</div>
+	<hr id="VAA_TEXTline">
+	<div class="mtx">
+		<!-- VAA Text Start -->FVFE01 RJTD 120626<BR>VA ADVISORY<BR>DTG: 20261112/0626Z<BR>VAAC: TOKYO<BR>VOLCANO: MAYON 273030<BR>PSN: N1315 E12341<BR>AREA: PHILIPPINES<BR>SOURCE ELEV: 2462M AMSL<BR>ADVISORY NR: 2026/823<BR>INFO SOURCE: HIMAWARI-9 PHIVOLCS<BR>ERUPTION DETAILS: ERUPTION AT 20261112/0605Z FL090 EXTD SW REPORTED<BR>OBS VA DTG: 12/0610Z<BR>OBS VA CLD: VA NOT IDENTIFIABLE FM SATELLITE DATA WIND FL090 090/15KT<BR>FCST VA CLD +6 HR: NOT AVBL<BR>FCST VA CLD +12 HR: NOT AVBL<BR>FCST VA CLD +18 HR: NOT AVBL<BR>RMK: WE WILL ISSUE FURTHER ADVISORY IF VA IS DETECTED IN SATELLITE <BR>IMAGERY.<BR>NXT ADVISORY: NO FURTHER ADVISORIES=<BR><!-- VAA Text End -->
+	</div>
+	<hr id="VAA_TEXTline">
+	<a href="javascript:history.back()">Back to Prev Page</a>
+</body>
+</html>

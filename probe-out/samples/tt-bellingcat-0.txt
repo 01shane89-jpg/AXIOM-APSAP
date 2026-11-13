@@ -1,0 +1,91 @@
+https://www.bellingcat.com/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>bellingcat</title>
+	<atom:link href="https://www.bellingcat.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.bellingcat.com/</link>
+	<description>the home of online investigations</description>
+	<lastBuildDate>Thu, 05 Nov 2026 09:52:51 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>How Online Maps Lay Bare the US Military Bases Targeted by Iran</title>
+		<link>https://www.bellingcat.com/news/2026/11/05/how-online-maps-lay-bare-the-us-military-bases-targeted-by-iran/</link>
+		
+		<dc:creator><![CDATA[Sebastian Vandermeersch]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 09:46:18 +0000</pubDate>
+				<category><![CDATA[Investigations]]></category>
+		<category><![CDATA[Middle East]]></category>
+		<category><![CDATA[US & Canada]]></category>
+		<category><![CDATA[US Military]]></category>
+		<guid isPermaLink="false">https://www.bellingcat.com/?p=54152</guid>
+
+					<description><![CDATA[<p>Sign up here to receive Bellingcat’s biggest investigations by email as soon as they are published. Become a member and support our work here. In September, CBS News obtained new images of the aftermath of attacks on US bases in the Middle East from active service members. One told the news channel: “This is major [&#8230;]</p>
+<p>The post <a href="https://www.bellingcat.com/news/2026/11/05/how-online-maps-lay-bare-the-us-military-bases-targeted-by-iran/">How Online Maps Lay Bare the US Military Bases Targeted by Iran</a> appeared first on <a href="https://www.bellingcat.com">bellingcat</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><em>Sign up <a href="https://bellingcat-investigations.beehiiv.com/" target="_blank" rel="noreferrer noopener">here</a> to receive Bellingcat’s biggest investigations by email as soon as they are published</em>. <em>Become a member and support our work <a href="https://www.bellingcat.com/donate/">here</a>.</em></p>
+
+
+
+<p class="wp-block-paragraph">In September, CBS News obtained new images of the aftermath of attacks on US bases in the Middle East from active service members. One <a href="https://www.cbsnews.com/news/new-photos-damage-u-s-kuwait-saudi-arabia-iran-drone-missile-attacks/">told the news channel</a>: “This is major damage to our bases that hasn&#8217;t been communicated to the American public. &#8220;We&#8217;re standing there with our eyes closed getting punched in the face,&#8221; they added.</p>
+
+
+
+<p class="wp-block-paragraph">While reports have detailed how Iran used <a href="https://edition.cnn.com/2026/03/06/politics/russia-aiding-iran-targeting">Russian intelligence</a>, including <a href="https://edition.cnn.com/2026/09/16/world/video/russia-spy-satellites-iran-intelligence-strikes-us-assets-digvid-invs">satellite imagery</a>, to identify US troops, ships and aircraft, Bellingcat found that publicly available mapping platforms also reveal detailed and potentially sensitive information about US military bases in the Middle East.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Google Maps and other online mapping services contain dozens of labels identifying facilities including headquarters, accommodation, gyms and fuel points. Publicly available photographs and videos, including material published by the US military, provide further details about how these facilities are used.</p>
+
+
+
+<p class="wp-block-paragraph">Experts told Bellingcat that such information could have helped inform Iranian targeting decisions by revealing where personnel gather and how bases operate. However, they cautioned that Iran would also have had access to other sources of intelligence. Reporting from <a href="https://www.reuters.com/business/media-telecom/pentagon-says-us-military-personnel-are-reportedly-being-targeted-using-location-2026-05-28/">Reuters</a> earlier this year also highlighted how US officials believed commercially available location data was being used to target US troops in war zones.</p>
+
+
+
+<p class="wp-block-paragraph">The bases examined by Bellingcat are not secret and have operated for years in a region where US forces maintained a strong sense of security. Joseph Jarnecki, a research fellow at the <a href="https://www.rusi.org/">Royal United Services Institute</a>, said the US had been able to maintain aerial superiority and was understood to have significant air defence capabilities, but that Iran&#8217;s missile and drone campaign has undermined both assumptions.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Iranian strikes have damaged at least <a href="https://www.bbc.co.uk/news/articles/c2l2yl7r8r2o">20 US military sites</a> across Qatar, Bahrain, the United Arab Emirates (UAE), Jordan, Kuwait, Iraq and Saudi Arabia since the conflict began in February this year.</p>
+
+
+
+<p class="wp-block-paragraph">Governments <a href="https://transparencyreport.google.com/government-removals/overview?hl=en_GB">can request</a> that Google blur or remove sensitive information from its services and Google publishes data on government requests for content removal.</p>
+
+
+
+<p class="wp-block-paragraph">Bellingcat contacted the US Department of Defense who asked us to reach out to CENTCOM about the details in this story. We also contacted Google. However, we did not receive responses to questions from these respondents before publication.</p>
+
+
+
+<p class="wp-block-paragraph">We examined four of the largest and most heavily affected US military installations by Iran&#8217;s missile and drone campaign: Camp Buehring and Camp Arifjan in Kuwait, Muwaffaq Salti Air Base in Jordan and Al Udeid Air Base in Qatar. At each one, we found publicly available Google Maps information providing details about facilities inside the bases and how they are used.</p>
+
+
+
+<figure class="wp-block-image size-large"><div class="media"><img fetchpriority="high" decoding="async" width="1200" height="675" src="https://www.bellingcat.com/app/uploads/2026/11/Middle-EAst-Base-Map-1200x675.jpg" alt="" class="wp-image-54241" srcset="https://www.bellingcat.com/app/uploads/2026/11/Middle-EAst-Base-Map-1200x675.jpg 1200w, https://www.bellingcat.com/app/uploads/2026/11/Middle-EAst-Base-Map-300x169.jpg 300w, https://www.bellingcat.com/app/uploads/2026/11/Middle-EAst-Base-Map-768x432.jpg 768w, https://www.bellingcat.com/app/uploads/2026/11/Middle-EAst-Base-Map-1536x864.jpg 1536w, https://www.bellingcat.com/app/uploads/2026/11/Middle-EAst-Base-Map.jpg 1920w" sizes="(max-width: 1200px) 100vw, 1200px" /></div><figcaption class="wp-element-caption">A map detailing four US bases that were attacked by Iran during 2026 conflict.</figcaption></figure>
+
+
+
+<h2 class="wp-block-heading">Camp Buehring</h2>
+
+
+
+<p class="wp-block-paragraph">At Camp Buehring in Kuwait, Google Maps identifies what is labelled as the main headquarters building, as well as a gym and a self-help facility, all of which were among locations destroyed by recent Iranian strikes. In addition to Google Maps place markers there are dozens of reviews and user-uploaded photographs.</p>
+
+
+
+<figure class="wp-block-image size-full"><div class="media"><img decoding="async" width="1046" height="368" src="https://www.bellingcat.com/app/uploads/2026/11/Screenshot-2026-11-01-at-20.54.53.jpg" alt="Left: Screengrab showing “Camp Beuhring Main HQ, Bldg. 100” Google Maps label. Right: Same building seen destroyed on satellite image published by Iran’s Tasnim news agency." class="wp-image-54160" srcset="https://www.bellingcat.com/app/uploads/2026/11/Screenshot-2026-11-01-at-20.54.53.jpg 

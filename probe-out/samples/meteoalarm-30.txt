@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:SK</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:20.651324Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK608</value>
+    </cap:geocode>
+    <link title="Revúca" href="https://meteoalarm.org?geocode=EMMA_ID:SK608" hreflang="en"/>
+    <cap:areaDesc>Revúca</cap:areaDesc>
+    <cap:event>Moderate fog warning</cap:event>
+    <cap:sent>2026-11-12T18:07:20+00:00</cap:sent>
+    <cap:expires>2026-11-13T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T18:06:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T18:10:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261112180600.6af60020_RA</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/50b94f26-6651-40bd-8173-e7db851ac04d"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T18:07:20Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/50b94f26-6651-40bd-8173-e7db851ac04d?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Slovakia - Revúca</title>
+    <updated>2026-11-12T18:07:20Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK124</value>
+    </cap:geocode>
+    <link title="Rožňava" href="https://meteoalarm.org?geocode=EMMA_ID:SK124" hreflang="en"/>
+    <cap:areaDesc>Rožňava</cap:areaDesc>
+    <cap:event>Moderate fog warning</cap:event>
+    <cap:sent>2026-11-12T18:07:20+00:00</cap:sent>
+    <cap:expires>2026-11-13T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T18:06:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T18:10:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261112180600.6af6001f_RV</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/4f59de86-e99e-4783-916b-0f4a39a3374c"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T18:07:20Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/4f59de86-e99e-4783-916b-0f4a39a3374c?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Slovakia - Rožňava</title>
+    <updated>2026-11-12T18:07:20Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK610</value>
+    </cap:geocode>
+    <link title="Veľký Krtíš" href="https://meteoalarm.org?geocode=EMMA_ID:SK610" hreflang="en"/>
+    <cap:areaDesc>Veľký Krtíš</cap:areaDesc>
+    <cap:event>Moderate fog warning</cap:event>
+    <cap:sent>2026-11-12T18:07:20+00:00</cap:sent>
+    <cap:expires>2026-11-13T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T18:06:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T18:10:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261112180600.6af6001f_VK</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/c846ebe4-a34e-447e-92a8-59d44e99548b"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T18:07:20Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/c846ebe4-a34e-447e-92a8-59d44e99548b?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Slovakia - Veľký Krtíš</title>
+    <updated>2026-11-12T18:07:20Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK609</value>
+    </cap:geocode>
+    <link title="Rimavská Sobota" href="https://meteoalarm.org?geocode=EMMA_ID:SK609" hreflang="en"/>
+    <cap:areaDesc>Rimavská Sobota</cap:areaDesc>
+    <cap:event>Moderate fog warning</cap:event>
+    <cap:sent>2026-11-12T18:07:20+00:00</cap:sent>
+    <cap:expires>2026-11-13T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T18:06:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T18:10:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261112180600.6af60020_RS</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/02fd8d0e-dca9-4db0-8db8-6fd4670417c9"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T18:07:20Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/02fd8d0e-dca9-4db0-8db8-6fd4670417c9?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Slovakia - Rimavská Sobota</title>
+    <updated>2026-11-12T18:07:20Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK706</value>
+    </cap:geocode>
+    <link title="Poprad" href="https://meteoalarm.org?geocode=EMMA_ID:SK706" hreflang="en"/>
+    <cap:areaDesc>Poprad</cap:areaDesc>
+    <cap:event>Moderate fog warning</cap:event>
+    <cap:sent>2026-11-12T18:07:20+00:00</cap:sent>
+    <cap:expires>2026-11-13T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T18:06:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T18:10:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.261112180600.6af60020_PP</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/50a3fc04-ddee-4032-a97d-

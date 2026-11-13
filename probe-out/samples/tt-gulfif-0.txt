@@ -1,0 +1,59 @@
+https://gulfif.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Gulf International Forum</title>
+	<atom:link href="https://gulfif.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://gulfif.org/</link>
+	<description>Gulf International Forum (GIF), is an independent Washington-based institute that aspires to enhance peace, progress, security, and stability in the Gulf and greater Middle East region through the open proliferation of ideas.</description>
+	<lastBuildDate>Thu, 05 Nov 2026 20:31:38 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://gulfif.org/app/wp-content/uploads/2019/05/cropped-web-32x32.png</url>
+	<title>Gulf International Forum</title>
+	<link>https://gulfif.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Saudi Arabia&#8217;s E-Commerce Boom: Why Traditional Small Businesses Risk Falling Behind</title>
+		<link>https://gulfif.org/saudi-arabias-e-commerce-boom-why-traditional-small-businesses-risk-falling-behind/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=saudi-arabias-e-commerce-boom-why-traditional-small-businesses-risk-falling-behind</link>
+					<comments>https://gulfif.org/saudi-arabias-e-commerce-boom-why-traditional-small-businesses-risk-falling-behind/#respond</comments>
+		
+		<dc:creator><![CDATA[Madeline Stahle]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 19:57:08 +0000</pubDate>
+				<category><![CDATA[Saleh Alquayti]]></category>
+		<category><![CDATA[Future Posts]]></category>
+		<category><![CDATA[KSA]]></category>
+		<category><![CDATA[Economy & Innovation]]></category>
+		<category><![CDATA[Commentary]]></category>
+		<guid isPermaLink="false">https://gulfif.org/?p=41896</guid>
+
+					<description><![CDATA[<p>Saudi Arabia&#8217;s digital marketplace is expanding rapidly. By the third quarter of 2026, the kingdom had 52,259 active e-commerce commercial registrations, up 25 percent from...</p>
+<p>The post <a href="https://gulfif.org/saudi-arabias-e-commerce-boom-why-traditional-small-businesses-risk-falling-behind/">Saudi Arabia&#8217;s E-Commerce Boom: Why Traditional Small Businesses Risk Falling Behind</a> appeared first on <a href="https://gulfif.org">Gulf International Forum</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>Saudi Arabia&#8217;s digital marketplace is expanding rapidly. By the third quarter of 2026, the kingdom had <a href="https://saudigazette.com.sa/article/665412/saudi-arabia/saudi-e-commerce-registrations-rise-25-to-52259-in-q3-2026">52,259 active e-commerce commercial registrations</a>, up 25 percent from a year earlier. Yet a registered business and an online storefront reveal little about whether a merchant can attract customers, fulfill orders efficiently, or earn a sustainable return.</p>
+<p>The distinction matters for traditional small and medium-sized enterprises (SMEs). Many have spent years developing supplier networks, local reputations, and customer relationships, but online competition rewards additional capabilities: discoverability, transparent pricing, delivery efficiency, and the ability to interpret data. The question is no longer simply whether Saudi businesses can go online, but whether established smaller firms can compete effectively once they do.</p>
+<p><strong>From Market Access to Competitive Advantage</strong></p>
+<p>Saudi Arabia has removed important obstacles to digital commerce. The <a href="https://www.sama.gov.sa/en-US/MediaCenter/News/pages/news-1139.aspx">Saudi Central Bank</a> reports that electronic payments accounted for 85 percent of retail payments in 2025, compared with 79 percent in 2024. The country&#8217;s SME authority, <a href="https://www.vision2030.gov.sa/en/explore/explore-more/monshaat">Monsha&#8217;at</a>, already supports the transition from traditional commerce through e-commerce services covering digital payments, marketing tools, and online platforms. These measures make online transactions more practical for customers and merchants alike.</p>
+<p>But access should not be confused with participation. The <a href="https://www.stats.gov.sa/documents/20117/2435267/Establishments%2BICT%2BAccess%2Band%2BUsage%2BStatistics%2B2024-EN.pdf/2b4e45e8-ccbe-9767-1615-2f7d21236a9c?t=1766638872322">General Authority for Statistics&#8217; 2024 survey</a> found that 98 percent of Saudi establishments had internet access, while 29 percent used the internet to sell or display goods and services. These figures cover establishments across sectors, including those for which online selling may be inappropriate; they do not prove that the remaining businesses are technologically unprepared. They do show why connectivity alone is a poor measure of commercial digitalization.</p>
+<p>Additionally, online selling does not suit every firm equally. A supplier handling hundreds of highly customized office products faces a different challenge from a retailer selling standardized goods. Digitizing product information, quotations, inventories, and fulfillment can demand skills and resources that smaller operators lack. Some businesses may benefit more from digitizing procurement or customer management before establishing a full online shop.</p>
+<p>Furthermore, traditional firms often have established relationships with customers who trust their products and services. Longstanding buyers often prefer familiar suppliers because of reliable service and established payment terms. The danger arises when those relationships become the only competitive advantage while potential customers increasingly compare alternatives online.</p>
+<p><strong>The Hidden Economics of an Online Sale</strong></p>
+<p>Digital marketing can extend a firm&#8217;s reach far beyond its historical network, but that reach has a price. Search optimization requires ongoing work, while advertising requires upfront spending with no guarantee of a return. A business that counts orders but ignores acquisition costs, payment fees, and delivery expenses may mistake sales growth for financial progress.</p>
+<p>The experience of <a href="https://samarwater.sa/en">Samar Al-Zaman Establishment</a>, a Jeddah-based distributor where the author serves as operations director, illustrates some of these challenges. The firm still supplies office stationery but has shifted most of its activity toward bottled water after years of relying on brochures, phone inquiries, and corporate procurement contacts. The business launched an online water storefront in July 2026, began focused SEO work in August, and introduced paid search advertising later that month. Its analytics recorded roughly 1,000 visitors in the first month, including access to smaller household customers it had struggled to reach offline. Yet delivering five or ten cartons to distant neighborhoods sometimes made individual orders commercially unattractive.</p>
+<p>The lesson is not that e-commerce failed; it is that digital demand and profitable demand are different. Delivery charges, fuel, driver compensation, product costs, and order size determine contribution margins. A low-priced product may sell frequently while providing too little margin to finance expensive last-mile fulfillment. Pricing rules and delivery zones must therefore evolve alongside customer acquisition.</p>
+<p>Online price transparency adds another complication. In a preliminary <a href="https://samarwater.sa/ar/blog/saudi-bottled-water-price-index-2026/a-851456723">October 2026 comparison</a> published by that same business, Samar Water examined 39 listed bottle

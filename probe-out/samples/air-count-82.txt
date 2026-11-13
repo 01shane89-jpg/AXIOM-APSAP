@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/40_-20.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"40_-20","ac":[["04c159","KQA002","5Y-KZG","B788","BOEING 787-8 Dreamliner",40.3274,-10.5307,37975,440,311,1794545872,0,"4410","A5",0],["50052a","LTX1","T7-272","GLF6","GULFSTREAM G650",41.3404,-10.3487,43000,568,103,1794545872,0,"2343","A3",0]]}

@@ -1,0 +1,53 @@
+https://www.ospo.noaa.gov/VAAC/ARCH26/POPO/2026K121320.html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Volcanic Ash Advisory</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<pre>
+FVXX20 KNES 121320
+VA ADVISORY
+DTG: 20261112/1320Z
+
+VAAC: WASHINGTON
+
+VOLCANO: POPOCATEPETL 341090
+PSN: N1901 W09837
+
+AREA: MEXICO
+
+SOURCE ELEV: 17693 FT AMSL
+
+ADVISORY NR: 2026/403
+
+INFO SOURCE: GOES-19. WEBCAM. 
+
+ERUPTION DETAILS: VA NOT OBS 
+
+EST VA DTG: 12/1306Z
+
+EST VA CLD: VA NOT IDENTIFIABLE FROM SATELLITE
+DATA.
+
+FCST VA CLD +6HR: 12/1900Z NO VA EXP
+
+FCST VA CLD +12HR: 13/0100Z NO VA EXP
+
+FCST VA CLD +18HR: 13/0700Z NO VA EXP
+
+RMK: VA EMS NOT OBS IN STLT OR WEBCAM WITH CLD
+CVR OBSC SUMMIT. NO RCNT RPRTS OF VA RCVD. 
+...EVANS
+
+NXT ADVISORY:  NO FURTHER ADVISORIES
+<A HREF="../GFX/POPO0403.jpg">Full Size Graphic</A>
+<P>
+<A HREF="../GFX/POPO0403.jpg">
+-<IMG ALT="Graphic Map Depicting Ash" SRC="../GFX/POPO0403.jpg" HEIGHT=468 WIDTH=640>
+</A>
+</pre>
+</body>
+</html>

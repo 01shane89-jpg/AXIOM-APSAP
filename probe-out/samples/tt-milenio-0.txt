@@ -1,0 +1,161 @@
+https://fundacion-milenio.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:media="http://search.yahoo.com/mrss/" >
+
+<channel>
+	<title>Fundación Milenio</title>
+	<atom:link href="https://fundacion-milenio.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://fundacion-milenio.org</link>
+	<description>Economía, política, desarrollo sostenible</description>
+	<lastBuildDate>Thu, 05 Nov 2026 03:35:53 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://fundacion-milenio.org/wp-content/uploads/2023/03/cropped-favicon-1-32x32.png</url>
+	<title>Fundación Milenio</title>
+	<link>https://fundacion-milenio.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>EL DIARIO: Tigo encabeza Índice de Capital Constructivo 2026 en Bolivia</title>
+		<link>https://fundacion-milenio.org/el-diario-tigo-encabeza-indice-de-capital-constructivo-2026-en-bolivia/</link>
+		
+		<dc:creator><![CDATA[Milenio]]></dc:creator>
+		<pubDate>Wed, 21 Oct 2026 15:40:00 +0000</pubDate>
+				<category><![CDATA[Fundación Milenio en la Prensa]]></category>
+		<category><![CDATA[capital constructivo]]></category>
+		<category><![CDATA[Desarrollo Económico]]></category>
+		<category><![CDATA[economia de Bolivia]]></category>
+		<category><![CDATA[ICC Bolivia 2026]]></category>
+		<guid isPermaLink="false">https://fundacion-milenio.org/?p=22690</guid>
+
+					<description><![CDATA[Tigo encabeza Índice de Capital Constructivo 2026 en Bolivia &#8211;...]]></description>
+										<content:encoded><![CDATA[<p><strong>Tigo encabeza Índice de Capital Constructivo 2026 en Bolivia</strong></p>
+<p>&#8211; La empresa alcanza el primer lugar en el Índice de Capital Constructivo (ICC) 2026, con una <strong>calificación AAA+ y un puntaje global de 97,2 sobre 100</strong>. Además, obtuvo la máxima calificación de 100/100 en los pilares de Inversión e Integridad, entre más de 30 compañías evaluadas</p>
+<p>Tigo Bolivia ocupa el primer lugar en la edición 2026 del Índice de Capital Constructivo (ICC), una evaluación que analiza cómo las empresas privadas contribuyen al desarrollo económico y ético del país. La compañía obtuvo una calificación AAA+ y alcanzó la máxima puntuación en los pilares de Inversión e Integridad, dos aspectos vinculados con su presencia y compromiso en Bolivia, así como con sus políticas de transparencia y gestión empresarial.</p>
+<p>El ICC es un indicador empresarial de referencia, desarrollado por la <strong>Fundación Milenio</strong> con el respaldo del Centro Internacional para la Empresa Privada (CIPE). Su objetivo principal es medir en qué condiciones el capital de una empresa privada contribuye al crecimiento ético e integral del país. En esta edición de octubre de 2026, el estudio analizó rigurosamente el desempeño de 45 de las compañías más importantes de Bolivia.</p>
+<p>Rodrigo Rojo, gerente de Asuntos Corporativos de Tigo, destaca la importancia de estos resultados y el trabajo que realiza la compañía para consolidar sus estrategias de inversión y fortalecer sus políticas internas, particularmente aquellas orientadas al bienestar de sus colaboradores.</p>
+<p>“Obtener el primer lugar en el Índice de Capital Constructivo y alcanzar la máxima calificación en Inversión e Integridad es un reconocimiento al trabajo que venimos realizando en Bolivia. Para Tigo, invertir significa apostar por el desarrollo de nuestras operaciones y del país, pero también generar condiciones que contribuyan al bienestar de nuestros colaboradores. Por eso, contar con políticas claras, respaldadas por acciones concretas, es fundamental para construir organizaciones sólidas y responsables. Estos resultados nos motivan a seguir fortaleciendo nuestras prácticas y demuestran la importancia de que las empresas gestionen sus inversiones con integridad y una visión de largo plazo”, señala Rojo.</p>
+<p>La evaluación del índice implica analizar simultáneamente tres pilares fundamentales que operan en conjunto: Inversión, que mide la permanencia y la sostenibilidad económica del negocio en el país; Integridad, enfocado en la transparencia, códigos de ética, canales de denuncias y solidez del gobierno corporativo; e Impacto, que revisa los resultados tangibles en los entornos social, laboral y ambiental. El modelo destaca el valor de pasar de la simple formalización de políticas a demostrar con evidencias claras que estos sistemas realmente funcionan de forma habitual.</p>
+<p><em>21 de octubre de 2026<br />
+</em><em>Fuente: <a href="https://www.deorigen.us/" target="_blank" rel="noopener">El Diario</a></p>
+<p>
+<style>
+.dlm-personalizada-wrapper {
+	margin: 12px 0;
+	font-family: inherit;
+}
+.dlm-personalizada-wrapper a {
+	display: block;
+	text-decoration: none;
+	color: #ffffff;
+	background: linear-gradient(180deg, #aa0000 0%, #880000 100%);
+	border: none;
+	border-radius: 10px;
+	padding: 18px 24px;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 8px rgba(136, 0, 0, 0.2);
+	position: relative;
+	overflow: hidden;
+}
+.dlm-personalizada-wrapper a::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+.dlm-personalizada-wrapper a:hover {
+	background: linear-gradient(180deg, #880000 0%, #660000 100%);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 16px rgba(136, 0, 0, 0.3);
+}
+.dlm-personalizada-wrapper a:hover::before {
+	opacity: 1;
+}
+.dlm-personalizada-content {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	position: relative;
+	z-index: 1;
+}
+.dlm-personalizada-titulo {
+	font-size: 16px;
+	font-weight: 600;
+	color: #ffffff;
+	line-height: 1.4;
+	letter-spacing: 0.3px;
+	text-align: center;
+}
+.dlm-personalizada-titulo::before {
+	content: 'DESCARGAR PDF: ';
+	font-weight: 700;
+	text-transform: uppercase;
+	font-size: 13px;
+	letter-spacing: 0.5px;
+	opacity: 0.95;
+}
+.dlm-personalizada-meta {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+.dlm-personalizada-size,
+.dlm-personalizada-downloads {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: rgba(255, 255, 255, 0.9);
+	font-weight: 500;
+}
+.dlm-personalizada-icon {
+	flex-shrink: 0;
+	opacity: 0.85;
+}
+@media (max-width: 640px) {
+	.dlm-personalizada-wrapper a {
+		padding: 16px 20px;
+	}
+	.dlm-personalizada-titulo {
+		font-size: 15px;
+	}
+	.dlm-personalizada-titulo::before {
+		font-size: 12px;
+	}
+	.dlm-personalizada-size,
+	.dlm-personalizada-downloads {
+		font-size: 12px;
+	}
+}
+</style>
+
+<div class="dlm-personalizada-wrapper">
+	<a data-e-Disable-Page-Transition="true" class="dlm-download-link dlm-download-default wp-block-button__link wp-element-button" title="" href="https://fundacion-milenio.org/download/22547/?tmstv=1794531027" rel="nofollow" id="download-link-22547" data-redirect="false">
+		<div class="dlm-personalizada-content">
+			<span class="dlm-personalizada-titulo">Índice del Capital Constructivo Bolivia 2026, una mirada ejecutiva</span>
+			<div class="dlm-personalizada-meta">
+				<span class="dlm-personalizada-size">
+					<svg class="dlm-personalizada-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+						<polyline points="14 2 14 8 20 8"></polyline>
+						<path d="M9 15h3"></path>
+					

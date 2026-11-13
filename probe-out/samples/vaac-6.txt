@@ -1,0 +1,18 @@
+https://www.data.jma.go.jp/svd/vaac/data/TextData/2026/20261110_30027000_0373_Text.html
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Tokyo VAAC | Volcanic Ash Advisory Text</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../../common/english.css">
+</head>
+<body>
+	<div id="VAA_TEXT">Volcanic Ash Advisory Text</div>
+	<hr id="VAA_TEXTline">
+	<div class="mtx">
+		<!-- VAA Text Start -->FVFE01 RJTD 100920<BR>VA ADVISORY<BR>DTG: 20261110/0920Z<BR>VAAC: TOKYO<BR>VOLCANO: SHEVELUCH 300270<BR>PSN: N5639 E16122<BR>AREA: RUSSIA<BR>SOURCE ELEV: 3283M AMSL<BR>ADVISORY NR: 2026/373<BR>INFO SOURCE: HIMAWARI-9<BR>ERUPTION DETAILS: POSS ERUPTION OBS AT 20261110/0810Z FL230 EXTD NE<BR>OBS VA DTG: 10/0900Z<BR>OBS VA CLD: SFC/FL230 N5641 E16116 - N5705 E16140 - N5651 E16154 - <BR>N5637 E16122 MOV NE 15KT<BR>FCST VA CLD +6 HR: 10/1500Z SFC/FL240 N5821 E16419 - N5722 E16408 - <BR>N5647 E16305 - N5722 E16236<BR>FCST VA CLD +12 HR: 10/2100Z SFC/FL230 N5902 E16733 - N5838 E16802 - <BR>N5659 E16436 - N5805 E16404<BR>FCST VA CLD +18 HR: NO VA EXP<BR>RMK: NIL<BR>NXT ADVISORY: 20261110/1200Z=<BR><!-- VAA Text End -->
+	</div>
+	<hr id="VAA_TEXTline">
+	<a href="javascript:history.back()">Back to Prev Page</a>
+</body>
+</html>

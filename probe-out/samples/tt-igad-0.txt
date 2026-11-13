@@ -1,0 +1,60 @@
+https://igad.int/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>IGAD</title>
+	<atom:link href="https://igad.int/feed/" rel="self" type="application/rss+xml" />
+	<link>https://igad.int/</link>
+	<description>Peace, Prosperity and Regional Integration</description>
+	<lastBuildDate>Thu, 12 Nov 2026 12:27:15 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://igad.int/wp-content/uploads/2021/07/cropped-favicon-32x32.png</url>
+	<title>IGAD</title>
+	<link>https://igad.int/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>IGAD PREPARE Project Conclude Member State National Consultations in Uganda towards the Strengthening of Preparedness for Pandemic Response in the IGAD Region</title>
+		<link>https://igad.int/igad-prepare-project-conclude-member-state-national-consultations-in-uganda-towards-the-strengthening-of-preparedness-for-pandemic-response-in-the-igad-region/</link>
+		
+		<dc:creator><![CDATA[Lucas Tusiiime]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 10:05:16 +0000</pubDate>
+				<category><![CDATA[Health]]></category>
+		<category><![CDATA[Health & Social Development]]></category>
+		<guid isPermaLink="false">https://igad.int/?p=26441</guid>
+
+					<description><![CDATA[<p>November 12, 2026 (Entebbe, Uganda): The Intergovernmental Authority on Development (IGAD) through its Regional Preparedness for Pandemic Response (PREPARE) Project,...</p>
+<p>The post <a href="https://igad.int/igad-prepare-project-conclude-member-state-national-consultations-in-uganda-towards-the-strengthening-of-preparedness-for-pandemic-response-in-the-igad-region/">IGAD PREPARE Project Conclude Member State National Consultations in Uganda towards the Strengthening of Preparedness for Pandemic Response in the IGAD Region</a> appeared first on <a href="https://igad.int">IGAD</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p style="text-align: justify;"><span style="color: #000000;"><strong>November 12, 2026</strong> (Entebbe, Uganda): The Intergovernmental Authority on Development (IGAD) through its Regional Preparedness for Pandemic Response (PREPARE) Project, has concluded Member State National Consultations in Uganda.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">The regional consultations were against the Extraordinary IGAD Health Ministerial Communiqué of May 26, 2026, where Ministers of Health and the Pandemic Fund reprogramed and  allocated USD 7 million  funding for Ebola preparedness and response across the seven IGAD Member States with the different national consultation processes seeking to translate regional commitments into practical, costed national interventions that address cross border country-specific priorities to strengthen  regional health security and to enhance community-based surveillance .</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">The Member State consultations also aimed at aligning investments with Member Country priority needs, address preparedness gaps contributing to stronger national health systems marking an important step towards efficient and effective detection, pandemic preparation and response to public health emergencies while contributing to greater health security across the IGAD region.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">Since September 2026, IGAD has convened similar consultations in Djibouti, Ethiopia, Somalia, Kenya, South Sudan and Sudan, working with the respective One-Health line Ministries and partners to identify and prioritize national preparedness gaps, develop costed interventions and ensure that pandemic regional investments complement existing government and partner programmes to avoid duplication of interventions and to support the implementation of the reprogrammed PREPARE activities as endorsed through the Emergency Ministerial Communiqué by the Pandemic Fund.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">The Uganda national consultation focused on Ebola Virus Disease (EVD) workplan to strengthen pandemic preparedness and response with identified key interventions to improve cross-border surveillance, laboratory readiness, rapid response capacity and community engagement.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">Representing the IGAD Executive Secretary, Amb. Dr. Fatuma Adan, the PREPARE Project Lead commended the Government of Uganda for its leadership and decisive response, which contributed to the successful containment of the Ebola outbreak and the country’s subsequent declaration as Ebola-free. She emphasised the need for sustained preparedness to address cross-border disease threats.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">Representing the WHO Uganda Country Representative, Dr. Patrick Okumu Abok, Head of the Health Emergency Ai team reaffirmed WHO’s commitment to strengthening collaboration with IGAD, Member States and partners, highlighting the importance of community engagement and timely information sharing. Meanwhile, IFRC underscored the value of partnerships among the Ministry of Health, IGAD, the Uganda Red Cross Society and other stakeholders in improving outbreak preparedness, alert management and cross-border One Health initiatives.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">Representing IFRC, Ms. Louise Daintrey, Head of Country Office in Uganda highlighted the importance of collaboration among the Ministry of Health, IGAD, the Uganda Red Cross Society and partners in strengthening preparedness for Mpox, Ebola and other public health emergencies. She noted progress in alert management and cross-border One Health initiatives, emphasising the need to translate available resources into practical action to strengthen national preparedness.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">The Uganda meeting was officially opened by Dr. Charles Olaro, Uganda’s Director General of Health Services, who expressed appreciation to IGAD, the Pandemic Fund and WHO for their flexibility in responding to the evolving nature of the Ebola outbreak and strengthening regional health security.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">Dr. Olaro highlighted the additional USD 1 million allocated to Uganda and all the other IGAD Member Governments which builds on previous support for laboratory supplies, specimen referral, patient care, workforce training and emergency coordination.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">The Member countries have successfully developed prioritized national workplans that are now aligned with the reprogrammed regional framework for strengthening pandemic preparedness and response across the IGAD region.</span></p>
+<p style="text-align: justify;"><span style="color: #000000;">Key Outputs from National Consultations in Uganda, Djibouti, Ethiopia, Kenya, Sudan, South Sudan and Somalia were;</span></p>
+<ul style="text-align: justify;">
+<li><span style="color: #000000;">Countries reviewed, aligned and developed prioritized national workplans that are now aligned with the PREPARE Reprogrammed Regional Framework.</span></li>
+<li><span style="color: #000000;">Developed detailed and costed workplans with activities and their budgets and timelines.</span></li>
+<li><span style="color: #000000;">Agreed on Implementation and operational arrangements</span></li>
+<li><span style="color: #000000;">Agreed on the next steps for implementation</

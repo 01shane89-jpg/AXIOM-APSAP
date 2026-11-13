@@ -1,0 +1,117 @@
+https://www.cadep.org.py/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CADEP | Centro de Análisis y Difusión de la Economía Paraguaya</title>
+	<atom:link href="https://www.cadep.org.py/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.cadep.org.py</link>
+	<description>ONG sin fines de lucro</description>
+	<lastBuildDate>Thu, 05 Nov 2026 00:34:58 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Políticas de cuidado requerirán más de USD 1.500 millones en el 2035</title>
+		<link>https://www.cadep.org.py/2026/11/politica-cuidado/</link>
+					<comments>https://www.cadep.org.py/2026/11/politica-cuidado/#respond</comments>
+		
+		<dc:creator><![CDATA[Cadep]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 00:34:58 +0000</pubDate>
+				<category><![CDATA[Publicaciones]]></category>
+		<category><![CDATA[Artículo de Prensa]]></category>
+		<guid isPermaLink="false">https://www.cadep.org.py/?p=45652</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[]]></content:encoded>
+					
+					<wfw:commentRss>https://www.cadep.org.py/2026/11/politica-cuidado/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Cuatro de cada diez hogares tiene jefatura femenina</title>
+		<link>https://www.cadep.org.py/2026/11/jefas-hogar/</link>
+					<comments>https://www.cadep.org.py/2026/11/jefas-hogar/#respond</comments>
+		
+		<dc:creator><![CDATA[Cadep]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 12:10:34 +0000</pubDate>
+				<category><![CDATA[Publicaciones]]></category>
+		<category><![CDATA[Artículo de Prensa]]></category>
+		<guid isPermaLink="false">https://www.cadep.org.py/?p=45649</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[]]></content:encoded>
+					
+					<wfw:commentRss>https://www.cadep.org.py/2026/11/jefas-hogar/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Paraguay envejecerá en la mitad del tiempo que Europa: ¿estamos preparados?</title>
+		<link>https://www.cadep.org.py/2026/11/paraguay-vejez/</link>
+					<comments>https://www.cadep.org.py/2026/11/paraguay-vejez/#respond</comments>
+		
+		<dc:creator><![CDATA[Cadep]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 00:04:47 +0000</pubDate>
+				<category><![CDATA[Publicaciones]]></category>
+		<category><![CDATA[Artículo de Prensa]]></category>
+		<guid isPermaLink="false">https://www.cadep.org.py/?p=45645</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[]]></content:encoded>
+					
+					<wfw:commentRss>https://www.cadep.org.py/2026/11/paraguay-vejez/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Población envejecerá rápido y no hay políticas de cuidado, alertan</title>
+		<link>https://www.cadep.org.py/2026/11/ultima-hora/</link>
+					<comments>https://www.cadep.org.py/2026/11/ultima-hora/#respond</comments>
+		
+		<dc:creator><![CDATA[Cadep]]></dc:creator>
+		<pubDate>Tue, 03 Nov 2026 23:25:26 +0000</pubDate>
+				<category><![CDATA[Publicaciones]]></category>
+		<category><![CDATA[Artículo de Prensa]]></category>
+		<guid isPermaLink="false">https://www.cadep.org.py/?p=45638</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[]]></content:encoded>
+					
+					<wfw:commentRss>https://www.cadep.org.py/2026/11/ultima-hora/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>CADEP presentó estudios sobre los desafíos del cuidado y el envejecimiento en Paraguay</title>
+		<link>https://www.cadep.org.py/2026/11/cadep-investigaciones-2/</link>
+					<comments>https://www.cadep.org.py/2026/11/cadep-investigaciones-2/#respond</comments>
+		
+		<dc:creator><![CDATA[Cadep]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 23:42:16 +0000</pubDate>
+				<category><![CDATA[Actualidad]]></category>
+		<guid isPermaLink="false">https://www.cadep.org.py/?p=45632</guid>
+
+					<description><![CDATA[El Centro de Análisis y Difusión de la Economía Paraguaya (CADEP) presentó los resultados finales de dos investigaciones que abordan algunos de los principales desafíos estructurales del Paraguay: las políticas de cuidado y el envejecimiento de la población. La actividad &#8230; <a href="https://www.cadep.org.py/2026/11/cadep-investigaciones-2/"></a>]]></description>
+										<content:encoded><![CDATA[<p>El Centro de Análisis y Difusión de la Economía Paraguaya (CADEP) presentó los resultados finales de dos investigaciones que abordan algunos de los principales desafíos estructurales del Paraguay: las políticas de cuidado y el envejecimiento de la población. La actividad reunió a especialistas, funcionarios públicos, representantes de organismos internacionales e interesados en analizar las implicancias económicas y sociales de estos fenómenos, así como las oportunidades que representan para el desarrollo del país.</p>
+<p>Uno de los estudios, denominado “Triple dividendo del cuidado”, analiza el impacto de las políticas de cuidado más allá de su dimensión social, destacando su potencial para impulsar el crecimiento económico, fortalecer la recaudación fiscal y contribuir al desarrollo del capital humano. La investigación plantea la importancia de reconocer el cuidado como un componente estratégico para el desarrollo y la productividad.</p>
+<p>Por otra parte, el estudio “Retos y oportunidades del envejecimiento en Paraguay” examina los desafíos que supone la transición demográfica y su relación con el bono demográfico, el bono de género y la productividad. En ese sentido, propone una mirada de mediano y largo plazo sobre la necesidad de anticipar los cambios poblacionales y diseñar políticas públicas que permitan aprovechar las oportunidades y responder a las nuevas demandas sociales.</p>
+<p>La presentación estuvo marcada por un intercambio técnico y una activa participación del público. Las preguntas de los asistentes y los aportes de los especialistas invitados enriquecieron el debate sobre la necesidad de avanzar hacia políticas integrales que permitan transformar los desafíos vinculados al cuidado y al envejecimiento en oportunidades para el desarrollo sostenible.</p>
+<p>Ambas investigaciones fueron financiadas por el Consejo Nacional de Ciencia y Tecnología (CONACYT). Los responsables de estas investigaciones fueron Verónica Serafini, Ana Rojas Viñales, Lucas Boh, Víctor Imas y Claudina Zavattiero.</p>
+<p>El video de la presentación detallada se puede ver a través del canal de YouTube del CADEP, haciendo <a href="https://www.youtube.com/live/FoPP1AJLDfs?si=mQQqJa8pEOu9R0_i">clic aquí.</a></p>
+<p><img fetchpriority="high" decoding="async" class="size-full wp-image-45629 alignnone" src="https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245.jpg" alt="" width="1600" height="838" srcset="https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245.jpg 1600w, https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245-200x105.jpg 200w, https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245-570x299.jpg 570w, https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245-768x402.jpg 768w, https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245-1536x804.jpg 1536w, https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245-672x352.jpg 672w, https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662013245-126x66.jpg 126w" sizes="(max-width: 1600px) 100vw, 1600px" /></p>
+<p><img decoding="async" class="alignnone size-full wp-image-45628" src="https://www.cadep.org.py/uploads/2026/11/FB_IMG_1793662015765

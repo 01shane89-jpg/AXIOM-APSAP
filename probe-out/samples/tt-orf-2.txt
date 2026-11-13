@@ -1,0 +1,32 @@
+https://www.orfonline.org/robots.txt
+User-agent: *
+
+# Block unnecessary/internal paths
+Disallow: /wp-content/
+Disallow: /cdn-cgi/
+Disallow: /search
+Disallow: /search/
+Disallow: /ajaxRequest*
+
+# Allow everything else
+Allow: /
+
+# Exception: Twitter bot allowed full access
+User-agent: Twitterbot
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.orfonline.org/sitemap.xml
+Sitemap: https://www.orfonline.org/other-sitemap.xml
+Sitemap: https://www.orfonline.org/events-sitemap.xml
+Sitemap: https://www.orfonline.org/expert-speak-sitemap.xml
+Sitemap: https://www.orfonline.org/hindi-expert-speak-sitemap.xml
+Sitemap: https://www.orfonline.org/bangla-expert-speak-sitemap.xml
+Sitemap: https://www.orfonline.org/marathi-expert-speak-sitemap.xml
+Sitemap: https://www.orfonline.org/research-sitemap.xml
+Sitemap: https://www.orfonline.org/hindi-research-sitemap.xml
+Sitemap: https://www.orfonline.org/bangla-research-sitemap.xml
+Sitemap: https://www.orfonline.org/marathi-research-sitemap.xml
+Sitemap: https://www.orfonline.org/video-sitemap.xml
+Sitemap: https://www.orfonline.org/post-tags-sitemap.xml
+Sitemap: https://www.orfonline.org/post-tags-sitemap1.xml

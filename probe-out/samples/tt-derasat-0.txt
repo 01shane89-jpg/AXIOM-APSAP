@@ -1,0 +1,79 @@
+https://www.derasat.org.bh/en/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Derasat</title>
+	<atom:link href="https://www.derasat.org.bh/en/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.derasat.org.bh</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 15:17:42 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.derasat.org.bh/wp-content/uploads/2024/11/cropped-icon-d-32x32.png</url>
+	<title>Derasat</title>
+	<link>https://www.derasat.org.bh</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Derasat CEO meets with research centers in France</title>
+		<link>https://www.derasat.org.bh/en/derasat-ceo-meets-with-research-centers-in-france/</link>
+		
+		<dc:creator><![CDATA[Derasat Center]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:00:00 +0000</pubDate>
+				<category><![CDATA[Press Releases]]></category>
+		<category><![CDATA[Media Center]]></category>
+		<guid isPermaLink="false">https://www.derasat.org.bh/?p=164188</guid>
+
+					<description><![CDATA[<p>  Mr. Abdulla Mohamed Alahmed, CEO of the Bahrain Center for Strategic, International and Energy Studies (Derasat), held two meetings with the French Institute of International Relations (IFRI) and the French Institute for International and Strategic Affairs (IRIS), as part of Derasat’s efforts to expand its research network and strengthen cooperation with international research institutions. [&#8230;]</p>
+<p>&lt;p&gt;The post <a rel="nofollow" href="https://www.derasat.org.bh/en/derasat-ceo-meets-with-research-centers-in-france/">Derasat CEO meets with research centers in France</a> first appeared on <a rel="nofollow" href="https://www.derasat.org.bh/en/home_en">Derasat</a>.&lt;/p&gt;</p>
+]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="164188" class="elementor elementor-164188">
+				<div class="elementor-element elementor-element-ac418cf e-con e-atomic-element e-flexbox-base e-default-div e-2737e3d " data-id="ac418cf" data-element_type="e-flexbox" data-e-type="e-flexbox" data-interaction-id="ac418cf">
+    		<div class="elementor-element elementor-element-795ce5a elementor-widget elementor-widget-text-editor" data-id="795ce5a" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p> </p><p>Mr. Abdulla Mohamed Alahmed, CEO of the Bahrain Center for Strategic, International and Energy Studies (Derasat), held two meetings with the French Institute of International Relations (IFRI) and the French Institute for International and Strategic Affairs (IRIS), as part of Derasat’s efforts to expand its research network and strengthen cooperation with international research institutions.<br /><br />The meetings explored opportunities for cooperation across several research areas of mutual interest; the exchange of expertise and experiences in preparing studies and research papers; and the possibility of undertaking joint research projects. Both sides also reviewed their respective areas of work and key research priorities, while discussing ways to leverage their available capabilities and expertise to advance institutional cooperation and knowledge exchange</p><p> </p>								</div>
+				</div>
+		
+</div>
+		</div>
+		<p>&lt;p&gt;The post <a rel="nofollow" href="https://www.derasat.org.bh/en/derasat-ceo-meets-with-research-centers-in-france/">Derasat CEO meets with research centers in France</a> first appeared on <a rel="nofollow" href="https://www.derasat.org.bh/en/home_en">Derasat</a>.&lt;/p&gt;</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>His Majesty the King’s Visit to the Kingdom of Saudi Arabia: Strengthening the Bonds of Strategic Partnership</title>
+		<link>https://www.derasat.org.bh/en/his-majesty-the-kings-visit-to-the-kingdom-of-saudi-arabia-strengthening-the-bonds-of-strategic-partnership/</link>
+		
+		<dc:creator><![CDATA[Derasat Center]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 10:05:00 +0000</pubDate>
+				<category><![CDATA[Strategic & International]]></category>
+		<category><![CDATA[Research & Analysis]]></category>
+		<guid isPermaLink="false">https://www.derasat.org.bh/?p=164214</guid>
+
+					<description><![CDATA[<p>&#8220;Bahraini-Saudi relations serve as an exemplary model for ties between brotherly nations,&#8221; &#8220;these stances embody a relationship between the two kingdoms that is deeply rooted in history,&#8221; and &#8220;the security and stability of the Kingdom of Saudi Arabia are an integral part of the national security of the Kingdom of Bahrain.&#8221; These are excerpts from [&#8230;]</p>
+<p>&lt;p&gt;The post <a rel="nofollow" href="https://www.derasat.org.bh/en/his-majesty-the-kings-visit-to-the-kingdom-of-saudi-arabia-strengthening-the-bonds-of-strategic-partnership/">His Majesty the King’s Visit to the Kingdom of Saudi Arabia: Strengthening the Bonds of Strategic Partnership</a> first appeared on <a rel="nofollow" href="https://www.derasat.org.bh/en/home_en">Derasat</a>.&lt;/p&gt;</p>
+]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="164214" class="elementor elementor-164214">
+				<div class="elementor-element elementor-element-b16b244 e-con e-atomic-element e-flexbox-base e-default-div e-484481f " data-id="b16b244" data-element_type="e-flexbox" data-e-type="e-flexbox" data-interaction-id="b16b244">
+    		<div class="elementor-element elementor-element-6a0f785 elementor-widget elementor-widget-text-editor" data-id="6a0f785" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p>&#8220;Bahraini-Saudi relations serve as an exemplary model for ties between brotherly nations,&#8221; &#8220;these stances embody a relationship between the two kingdoms that is deeply rooted in history,&#8221; and &#8220;the security and stability of the Kingdom of Saudi Arabia are an integral part of the national security of the Kingdom of Bahrain.&#8221;</p>
+<p>These are excerpts from statements made by His Majesty King Hamad bin Isa Al Khalifa—may God protect and preserve him—during his visit to the Kingdom of Saudi Arabia on November 10, 2026. During this visit, His Majesty met with His Royal Highness Prince Mohammed bin Salman bin Abdulaziz Al Saud, Crown Prince and Prime Minister of the brotherly Kingdom of Saudi Arabia.</p>
+<p>The significance of this visit lies in both its substance and its timing. In terms of substance, it should be viewed through three interconnected dimensions: the lessons of history, the realities of the present, and the prospects for the future.</p>
+<p>Historically, the two nations are bound by deep-rooted ties spanning various eras—ties consistently defined by mutual support. This evolved into a framework for regional security, most notably through the establishment of the Gulf Cooperation Council (GCC) on May 25, 1981—an organization that has proven its resilience in the face of regional upheavals that undermined other cooperative ventures. Through the collective will of its member states—including the Kingdom of Bahrain and the brotherly Kingdom of Saudi Arabia—the GCC has successfully upheld the principle that the security of the Arab Gulf states is indivisible. This has been clearly demonstrated by the positions taken by the Gulf states, and Saudi Arabia in particular, whenever the GCC nations have faced security challenge

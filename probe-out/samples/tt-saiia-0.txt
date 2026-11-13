@@ -1,0 +1,94 @@
+https://saiia.org.za/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>SAIIA</title>
+	<atom:link href="https://saiia.org.za/feed/" rel="self" type="application/rss+xml" />
+	<link>https://saiia.org.za/</link>
+	<description>The South African Institute of International Affairs is an independent public policy think tank advancing a well governed, peaceful, economically sustainable and globally engaged Africa</description>
+	<lastBuildDate>Thu, 12 Nov 2026 14:24:59 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://saiia.org.za/wp-content/uploads/2020/02/SAIIA-favicon-150x150.png</url>
+	<title>SAIIA</title>
+	<link>https://saiia.org.za/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>South Africa In Southern Africa: Strategies for Responding to the Challenges of Anti-Foreigner Violence</title>
+		<link>https://saiia.org.za/event/south-africa-southern-africa-strategies-responding-challenges-anti-foreigner-violence/</link>
+		
+		<dc:creator><![CDATA[Melissa du Preez]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 14:38:54 +0000</pubDate>
+				<category><![CDATA[Immigration]]></category>
+		<category><![CDATA[Southern African Development Community (SADC)]]></category>
+		<guid isPermaLink="false">https://saiia.org.za/?post_type=event&#038;p=78308</guid>
+
+					<description><![CDATA[<a href="https://saiia.org.za/event/south-africa-southern-africa-strategies-responding-challenges-anti-foreigner-violence/" title="South Africa In Southern Africa: Strategies for Responding to the Challenges of Anti-Foreigner Violence" rel="nofollow"><img width="1920" height="1279" src="https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be.jpg" class="webfeedsFeaturedVisual wp-post-image" alt="" link_thumbnail="1" decoding="async" srcset="https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be.jpg 1920w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-300x200.jpg 300w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-1024x682.jpg 1024w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-768x512.jpg 768w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-1536x1023.jpg 1536w" sizes="(max-width: 1920px) 100vw, 1920px"></a>Join SAIIA’s Western Cape branch on 19 November for a speakers’ meeting exploring regional responses to migration and anti-foreigner mobilisation.]]></description>
+										<content:encoded><![CDATA[<a href="https://saiia.org.za/event/south-africa-southern-africa-strategies-responding-challenges-anti-foreigner-violence/" title="South Africa In Southern Africa: Strategies for Responding to the Challenges of Anti-Foreigner Violence" rel="nofollow"><img width="1920" height="1279" src="https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be.jpg" class="webfeedsFeaturedVisual wp-post-image" alt="" link_thumbnail="1" decoding="async" srcset="https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be.jpg 1920w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-300x200.jpg 300w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-1024x682.jpg 1024w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-768x512.jpg 768w, https://saiia.org.za/wp-content/uploads/2026/11/3d4eb06a-80c3-32d5-c620-85b14abf37be-1536x1023.jpg 1536w" sizes="(max-width: 1920px) 100vw, 1920px"></a>
+<p class="wp-block-paragraph">In his five-point plan to combat illegal migration and anti-foreigner mobilisation, announced in June this year, President Cyril Ramaphosa included the proposal to work with other African countries, increasing ‘cooperation and engagement with regional partners and continental neighbours to address the broader structural drivers and regional realities of migration’. What could this mean in practice, and how does it relate to the other four points of the plan?</p>
+
+
+
+<h2 id="h-speaker" class="wp-block-heading">Speaker</h2>
+
+
+
+<ul class="wp-block-list">
+<li>Prof. Alan Hirsch, Senior Research Fellow at the New South Institute and Emeritus Professor at the University of Cape Town</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">Prof. Hirsch has been a member of President Cyril Ramaphosa’s Economic Advisory Council since 2019 and is a member of Finance Minister Enoch Godongwana’s G20 Africa Expert Panel. He managed economic policy in the South African Presidency from 2002 to 2012, has represented South African presidents in G20 negotiations and co-chaired the G20 Development Working Group. After an early career in academia and a longer career in the South African government, ending as Deputy Director-General of the Presidency, Hirsch established and directed the Nelson Mandela School of Public Governance at the University of Cape Town between 2012 and 2020.</p>
+
+
+
+<p class="wp-block-paragraph">He was also Research Director for Zambia at the International Growth Centre from 2010 to 2015. Since 2019, he has conducted and led research, mostly on migration governance reform in Africa.</p>
+
+
+
+<p class="wp-block-paragraph">We look forward to your participation.</p>
+
+
+
+<p class="wp-block-paragraph">Join SAIIA’s Western Cape branch for this speakers’ meeting on 19 November where …</p>
+
+
+
+<p class="wp-block-paragraph">In his five-point plan to combat illegal migration and anti-foreigner mobilisation, announced in June this year, President Cyril Ramaphosa included the proposal to work with other African countries, increasing ‘cooperation and engagement with regional partners and continental neighbours to address the broader structural drivers and regional realities of migration’. What could this mean in practice, and how does it relate to the other four points of the plan?</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>High Stakes, Higher Expectations: Africa and the Future of UN Leadership</title>
+		<link>https://saiia.org.za/research/high-stakes-higher-expectations-africa-future-un-leadership/</link>
+		
+		<dc:creator><![CDATA[Melissa du Preez]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 09:56:26 +0000</pubDate>
+				<category><![CDATA[Bilateral relations]]></category>
+		<category><![CDATA[Multilateralism]]></category>
+		<category><![CDATA[United Nations (UN)]]></category>
+		<guid isPermaLink="false">https://saiia.org.za/?post_type=publication&#038;p=78283</guid>
+
+					<description><![CDATA[<a href="https://saiia.org.za/research/high-stakes-higher-expectations-africa-future-un-leadership/" title="High Stakes, Higher Expectations: Africa and the Future of UN Leadership" rel="nofollow"><img width="1920" height="1280" src="https://saiia.org.za/wp-content/uploads/2026/11/AGDP_PB325_edited.jpg" class="webfeedsFeaturedVisual wp-post-image" alt="" link_thumbnail="1" decoding="async" srcset="https://saiia.org.za/wp-content/uploads/2026/11/AGDP_PB325_edited.jpg 1920w, https://saiia.org.za/wp-content/uploads/2026/11/AGDP_PB325_edited-300x200.jpg 300w, https://saiia.org.za/wp-content/uploads/2026/11/AGDP_PB325_edited-1024x683.jpg 1024w, https://saiia.org.za/wp-content/uploads/2026/11/AGDP_PB325_edited-768x512.jpg 768w, https://saiia.org.za/wp-content/uploads/2026/11/AGDP_PB325_edited-1536x1024.jpg 1536w" sizes="(max-width: 1920px) 100vw, 1920px"></a>As the UN faces mounting constraints, Africa must articulate a cl

@@ -1,0 +1,41 @@
+https://theconversation.com/uk/politics/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/uk/politics/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/uk/politics/articles.atom"/>
+  <title>Politics + Society – The Conversation</title>
+  <updated>2026-11-12T18:36:27Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296520</id>
+    <published>2026-11-12T18:36:27Z</published>
+    <updated>2026-11-12T18:36:27Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/slapps-ndas-and-gendered-lawfare-how-the-rich-and-powerful-silence-victims-of-sexual-offences-296520"/>
+    <title>Slapps, NDAs and gendered ‘lawfare’: how the rich and powerful silence victims of sexual offences</title>
+    <content type="html">&lt;figure&gt;&lt;img src="https://images.theconversation.com/files/771579/original/file-20261112-64-nag5wx.jpg?ixlib=rb-4.1.1&amp;amp;rect=1541%2C884%2C4034%2C2689&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=1050&amp;amp;h=700&amp;amp;fit=crop" /&gt;&lt;figcaption&gt;&lt;span class="caption"&gt;&lt;/span&gt; &lt;span class="attribution"&gt;&lt;a class="source" href="https://www.shutterstock.com/image-photo/january-20-2018-san-francisco-ca-1005751645"&gt;Sundry Photography/Shutterstock&lt;/a&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;The conviction of Russell Brand came nearly two decades after “Me Too” was coined. Yet the years the former comedian avoided accountability serve as a stark reminder of the dangers victims still face when speaking out. The truth is that women who name predators are increasingly at risk of legal proceedings.&lt;/p&gt;
+
+&lt;p&gt;While the &lt;a href="https://theconversation.com/topics/metoo-45316"&gt;#MeToo&lt;/a&gt; movement emboldened victims to speak truth to power, it also exposed the tactics offenders use to silence them. UN special rapporteur &lt;a href="https://docs.un.org/en/A/76/258"&gt;Irene Khan&lt;/a&gt;, described this as a “perverse twist” in the age of #MeToo.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6958538"&gt;Research&lt;/a&gt; has shed light on what’s really happening here – mechanisms designed to provide justice can be used to suppress victims and provide impunity for those with money and power. So how can this happen in countries that are supposed to be committed to fundamental rights and the rule of law?&lt;/p&gt;
+
+&lt;p&gt;Across the world, powerful people are evading scrutiny by threatening legal action that could leave their accusers ruined financially. When powerful people use the law, or even just the threat of it, to suppress criticism, it is known as strategic lawsuits against public participation (Slapp).&lt;/p&gt;
+
+&lt;p&gt;You might wonder why courts don’t simply dismiss these cases. In practice, it is rare that they even &lt;a href="https://antislapp.uk/2025/10/16/nina-cresswell-response-report/"&gt;make it before a judge&lt;/a&gt;, because the threat is often enough to push a settlement. For many, as &lt;a href="https://antislapp.uk/2025/10/16/nina-cresswell-response-report/"&gt;one victim said&lt;/a&gt;, “silence is the only way to survive”. The aim is not to win the case, but to turn the process of defending the action into a punishment.&lt;/p&gt;
+
+&lt;h2&gt;Gendered lawfare&lt;/h2&gt;
+
+&lt;p&gt;Slapps take many forms. &lt;a href="https://youth.europa.eu/young-journalists/articles/daphnes-law-honouring-legacy-of-fearless-journalist-fight-press-freedom_en"&gt;Many people&lt;/a&gt; might picture a corporation or politician suing a public watchdog. Less well known are Slapps targeting victims of sexual and gender-based violence (SGBV). Often referred to as a kind of gendered censorship or gendered lawfare, these lawsuits &lt;a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6958538"&gt;are prevalent&lt;/a&gt; and equally chilling. Rather than seeking justice, these legal tactics are used to create fear, financial pressure and a culture of self-censorship.&lt;/p&gt;
+
+&lt;figure class="align-center "&gt;
+            &lt;img alt="Russell Brand at the Republican National Convention in 2024" src="https://images.theconversation.com/files/771560/original/file-20261112-64-8eni2b.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=754&amp;amp;fit=clip" srcset="https://images.theconversation.com/files/771560/original/file-20261112-64-8eni2b.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=400&amp;amp;fit=crop&amp;amp;dpr=1 600w, https://images.theconversation.com/files/771560/original/file-20261112-64-8eni2b.jpg?ixlib=rb-4.1.1&amp;amp;q=30&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=400&amp;amp;fit=crop&amp;amp;dpr=2 1200w, https://images.theconversation.com/files/771560/original/file-20261112-64-8eni2b.jpg?ixlib=rb-4.1.1&amp;amp;q=15&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=400&amp;amp;fit=crop&amp;amp;dpr=3 1800w, https://images.theconversation.com/files/771560/original/file-20261112-64-8eni2b.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=503&amp;amp;fit=crop&amp;amp;dpr=1 754w, https://images.theconversation.com/files/771560/original/file-20261112-64-8eni2b.jpg?ixlib=rb-4.1.1&amp;amp;q=30&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=503&amp;amp;fit=crop&amp;amp;dpr=2 1508w, https://images.theconversation.com/files/771560/original/file-20261112-64-8eni2b.jpg?ixlib=rb-4.1.1&amp;amp;q=15&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=503&amp;amp;fit=crop&amp;amp;dpr=3 2262w" sizes="(min-width: 1466px) 754px, (max-width: 599px) 100vw, (min-width: 600px) 600px, 237px"&gt;
+            &lt;figcaption&gt;
+              &lt;span class="caption"&gt;Brand was convicted of rape and three counts of sexual assault against four women.&lt;/span&gt;
+              &lt;span class="attribution"&gt;&lt;a class="source" href="https://www.shutterstock.com/image-photo/milwaukee-wisconsin-july-18-2024-russell-2525069147?trackingId=ed684388-061b-4657-96f2-dbc637fcf28b&amp;amp;listId=searchResults"&gt;Maxim Elramsisy/Shutterstock&lt;/a&gt;&lt;/span&gt;
+            &lt;/figcaption&gt;
+          &lt;/figure&gt;
+
+&lt;p&gt;When reporting on SGBV, the &lt;a href="https://www.theguardian.com/culture/2023/sep/24/russell-brand-and-why-the-allegations-took-so-long-to-surface"&gt;stakes are high enough&lt;/a&gt; for large media organisations. So imagine how high they are for victims. In 2023, a woman called &lt;a href="https://antislapp.uk/project/nina-cresswell/"&gt;Nina Cresswell&lt;/a&gt; shared her story of sexual abuse on social media. It related to an incident in 2010, and Cresswell said she was motivated to speak out by guilt at the thought of another woman suffering what she had gone through.&lt;/p&gt;
+
+&lt;p&gt;But just days later, her alleged abuser sued her for defamation. The lawsuit did three things. By suing Cresswell, the perpetrator denied the abuse, attacked his accuser, and recast himself as the victim. This tactic is known as Darvo – Deny, Attack, Reverse Victim and Offender. It has become an &lt;a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6958538"&gt;integral part&lt;/a&gt; of gendered-Slapp suits. Cresswell won her case, but she lost almost &lt;a href="https://antislapp.uk/2025/10/16/nina-cresswell-response-report/"&gt;three years of her life&lt;/a&gt; to litigation. No police action was taken against the man.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://www.latimes.com/entertainment-arts/story/2023-09-16/russell-brand-rape-sexual-assault-allegations-denial-video-times-channel-4?googsrc=ai-uk"&gt;Brand has been accused&lt;/a&gt; of similar tactics. He reportedly obtained &lt;a href="https://taxpolicy.org.uk/2026/11

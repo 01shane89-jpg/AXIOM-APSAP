@@ -1,0 +1,107 @@
+https://dkiapcss.edu/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Daniel K. Inouye Asia-Pacific Center for Security Studies</title>
+    <link>https://dkiapcss.edu/</link>
+    <description>DKI APCSS educates, connects, and empowers security practitioners to build partner capacity, shared understanding, and networks to enhance stability in the Indo-Asia-Pacific region.</description>
+    <language>en-US</language>
+    <pubDate>Wed, 11 Nov 2026 03:20:30 +0000</pubDate>
+    <lastBuildDate>Wed, 11 Nov 2026 03:20:30 +0000</lastBuildDate>
+    <generator>https://dkiapcss.edu</generator>
+
+    <!-- Test test Atom:link for feed autodiscovery with correct feed URL -->
+    <atom:link href="https://dkiapcss.edu/feed/" rel="self" type="application/rss+xml" />
+
+        <item>
+      <title>From Strategic Understanding to Collective Action: DKI APCSS Refocuses Indo-Pacific Orientation Course</title>
+      <link>https://dkiapcss.edu/from-strategic-understanding-to-collective-action-dki-apcss-refocuses-indo-pacific-orientation-course/</link>
+      <pubDate>Wed, 11 Nov 2026 02:47:53 +0000</pubDate>
+      <guid isPermaLink="false">https://dkiapcss.edu/?p=3248859</guid>
+      <description><![CDATA[DKI APCSS welcomed 117 Fellows from 28 countries for Comprehensive Security Course 26-3, a five-week program focused on regional security cooperation.]]></description>
+
+
+      <!-- Add the featured image inside the <image> tag -->
+      <media:content url="https://dkiapcss.edu/wp-content/uploads/2026/11/IPOC-26-3-Commencement_261030-14.jpg?w=1024" medium="image" />
+  <image>https://dkiapcss.edu/wp-content/uploads/2026/11/IPOC-26-3-Commencement_261030-14.jpg?w=1024</image>
+
+      <!-- Optional enclosure for other media files (e.g., podcasts, videos) -->
+      
+      <!-- Add custom fields: area_of_expertise, Persons_Title, leadership_role, and short_text -->
+            
+                                    
+    </item>
+        <item>
+      <title>New Security Nexus Perspective: Keeping the Bay Open: Deterrence in the Bay of Bengal</title>
+      <link>https://dkiapcss.edu/new-security-nexus-perspective-keeping-the-bay-open-deterrence-in-the-bay-of-bengal/</link>
+      <pubDate>Wed, 11 Nov 2026 01:05:40 +0000</pubDate>
+      <guid isPermaLink="false">https://dkiapcss.edu/?p=3248854</guid>
+      <description><![CDATA[A new Security Nexus paper by DKI APCSS Professor Shyam Tekwani examines how Bangladesh’s maritime infrastructure, trade routes and regional coordination shape resilience and deterrence in the Bay of Bengal. The article argues that keeping ports, shipping links and support arrangements functioning under pressure can reduce vulnerability to coercion and strengthen long-term regional stability.]]></description>
+
+
+      <!-- Add the featured image inside the <image> tag -->
+      <media:content url="https://dkiapcss.edu/wp-content/uploads/2026/11/Bay-of-Bengal-illustration-map.jpg?w=1280" medium="image" />
+  <image>https://dkiapcss.edu/wp-content/uploads/2026/11/Bay-of-Bengal-illustration-map.jpg?w=1280</image>
+
+      <!-- Optional enclosure for other media files (e.g., podcasts, videos) -->
+      
+      <!-- Add custom fields: area_of_expertise, Persons_Title, leadership_role, and short_text -->
+            
+                                    
+    </item>
+        <item>
+      <title>Strategic Voices &#8211; Keeping the Bay Open: Maritime Cooperation and Regional Deterrence</title>
+      <link>https://dkiapcss.edu/strategic-voices-keeping-the-bay-open-maritime-cooperation-and-regional-deterrence/</link>
+      <pubDate>Sat, 07 Nov 2026 02:57:06 +0000</pubDate>
+      <guid isPermaLink="false">https://dkiapcss.edu/?p=3248835</guid>
+      <description><![CDATA[Join Strategic Voices on Nov. 12, 2026, at 3 p.m. Hawaii time for a discussion on instability and strategic change in the Indo-Pacific.]]></description>
+
+
+      <!-- Add the featured image inside the <image> tag -->
+      <media:content url="https://dkiapcss.edu/wp-content/uploads/2026/11/Strategic-Voices-Keeping-the-bay-open-Maritime-cooperation-and-Regional-Deterrence.jpg?w=1280" medium="image" />
+  <image>https://dkiapcss.edu/wp-content/uploads/2026/11/Strategic-Voices-Keeping-the-bay-open-Maritime-cooperation-and-Regional-Deterrence.jpg?w=1280</image>
+
+      <!-- Optional enclosure for other media files (e.g., podcasts, videos) -->
+      
+      <!-- Add custom fields: area_of_expertise, Persons_Title, leadership_role, and short_text -->
+            
+                                    
+    </item>
+        <item>
+      <title>Prof. John “Grant” Rafter</title>
+      <link>https://dkiapcss.edu/john-grant-rafter/</link>
+      <pubDate>Sat, 24 Oct 2026 02:02:02 +0000</pubDate>
+      <guid isPermaLink="false">https://dkiapcss.edu/?p=3248782</guid>
+      <description><![CDATA[John “Grant” Rafter most recently served as Deputy Director for Force Design, Integration, and Wargaming and as branch chief for futures and foresight in Air Force Futures. His background also includes service with the U.S. Secret Service, the Office of the Secretary of Defense for Policy as regional director for the Maghreb, and the U.N. Development Programme in Myanmar. His research focuses on disruptive technologies, change management, leadership, and deterrence.]]></description>
+
+
+      <!-- Add the featured image inside the <image> tag -->
+      <media:content url="https://dkiapcss.edu/wp-content/uploads/2023/08/Picture-placement.jpg?w=600" medium="image" />
+  <image>https://dkiapcss.edu/wp-content/uploads/2023/08/Picture-placement.jpg?w=600</image>
+
+      <!-- Optional enclosure for other media files (e.g., podcasts, videos) -->
+      
+      <!-- Add custom fields: area_of_expertise, Persons_Title, leadership_role, and short_text -->
+            
+              <areaOfExpertise><![CDATA[Disruptive Technologies, Change Management and Leadership, and Deterrence]]></areaOfExpertise>
+                    <personsTitle><![CDATA[Professor]]></personsTitle>
+                          <shortText><![CDATA[John “Grant” Rafter most recently served as Deputy Director for Force Design, Integration, and Wargaming and as branch chief for futures and foresight in Air Force Futures. His background also includes service with the U.S. Secret Service, the Office of the Secretary of Defense for Policy as regional director for the Maghreb, and the U.N. Development Programme in Myanmar. His research focuses on disruptive technologies, change management, leadership, and deterrence.]]></shortText>
+                   <lastName><![CDATA[Rafter]]></lastName>
+           
+    </item>
+        <item>
+      <title>Lt. Col. Chris Goodrich</title>
+      <link>https://dkiapcss.edu/chris-goodrich/</link>
+      <pubDate>Fri, 23 Oct 2026 23:33:10 +0000</pubDate>
+      <guid isPermaLink="false">https://dkiapcss.edu/?p=3248775</guid>
+      <description><![CDATA[Lt. Col. Chris Goodrich is a U.S. Army Indo-Pacific foreign area officer and currently serves as Associate Chair for Allies and Partners at the Daniel K. Inouye Asia-Pacific Center for Security Studies. His previous assignments include serving as the U.S. Defense and Army Attaché to Burma, Military Advisor and Security Cooperation Office Chief for the U.S. Mission to ASEAN, and deputy foreign policy advisor to the Chief of Staff of the Army and later the Chairman of the Joint Chiefs of Staff.]]></description>
+
+
+      <!-- Add the featured image inside the <image> tag -->
+      <media:content url="https://dkiapcss.edu/wp-content/uploads/2026/11/goodrich.jpg?w=571" medium="image" />
+  <image>https://dkiapcss.edu/wp-content/uploads/2026/11/goodrich.jpg?w=571</image>
+
+      <!-- Optional enclosure for other media files (e.g., podcasts, videos) -->
+      
+      <!-- Add custom fields: area_of_expertise, Persons_Title, leadership_role, and short_text -->
+            
+              <areaOfExpertise><![CDATA[Southeast Asia, Strategic Plannin

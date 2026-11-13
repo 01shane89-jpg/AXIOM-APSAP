@@ -1,0 +1,109 @@
+https://www.cfr.org/feed
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Council on Foreign Relations</title>
+    <link>https://www.cfr.org</link>
+    <description>The latest content from the Council on Foreign Relations including articles, backgrounders, reports, books, and podcast episodes.</description>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Nov 2026 05:03:14 GMT</lastBuildDate>
+    <atom:link href="https://www.cfr.org/feed" rel="self" type="application/rss+xml" />
+    <item>
+      <title>New Zealand’s Inconclusive Election Is the Last Thing the Country Needs</title>
+      <link>https://www.cfr.org/articles/new-zealands-inconclusive-election-is-the-last-thing-the-country-needs</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/new-zealands-inconclusive-election-is-the-last-thing-the-country-needs</guid>
+      <description>&amp;nbsp;
+New Zealand’s politics appear unstable after national elections failed to produce a clear winner. At a time when the country faces severe economic challenges, policy paralysis is a recipe for disaster.</description>
+      <pubDate>Thu, 12 Nov 2026 22:29:08 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>Hegseth’s Unmaking of the U.S. Military</title>
+      <link>https://www.cfr.org/articles/hegseths-unmaking-of-the-u-s-military</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/hegseths-unmaking-of-the-u-s-military</guid>
+      <description>Firing admirals and generals, blocking promotions, and gutting DEI programs will hurt recruitment and retention while politicizing the armed services.</description>
+      <pubDate>Thu, 12 Nov 2026 22:09:22 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>What the Abu Dhabi Talks Did—and Didn’t—Achieve</title>
+      <link>https://www.cfr.org/articles/what-the-abu-dhabi-talks-did-and-didnt-achieve</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/what-the-abu-dhabi-talks-did-and-didnt-achieve</guid>
+      <description>Trilateral talks on the war in Ukraine ended without a breakthrough. CFR experts weigh in on the results and where negotiations might go next.</description>
+      <pubDate>Thu, 12 Nov 2026 19:54:28 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>The Looming Defense Budget Battle and the Scramble to Rebuild the U.S. Military</title>
+      <link>https://www.cfr.org/podcasts/spillover/the-looming-defense-budget-battle-and-the-scramble-to-rebuild-the-u-s-military</link>
+      <guid isPermaLink="true">https://www.cfr.org/podcasts/spillover/the-looming-defense-budget-battle-and-the-scramble-to-rebuild-the-u-s-military</guid>
+      <description>This week on The Spillover, host Rebecca Patterson and guest Doug Beck, senior fellow at Yale and former director of the Pentagon’s Defense Innovation Unit, discuss what the midterm results mean for national security as the Iran war continues and the Trump administration seeks a record $1.5 trillion in defense spending.&amp;nbsp; The recent midterm results [&amp;hellip;]</description>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 GMT</pubDate>
+      <category>Podcast</category>
+    </item>
+    <item>
+      <title>Huang Resigns From Nvidia. Here Are the Stakes for U.S. Foreign Policy.</title>
+      <link>https://www.cfr.org/articles/nvidia-chinese-espionage-and-the-ai-race-four-foreign-policy-issues-to-watch</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/nvidia-chinese-espionage-and-the-ai-race-four-foreign-policy-issues-to-watch</guid>
+      <description>Jensen Huang’s ouster from Nvidia raises questions about critical policy issues, including AI chip export enforcement, spying on U.S. companies, the U.S. relationship with China, and the stability of the AI boom.</description>
+      <pubDate>Thu, 12 Nov 2026 18:15:00 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>Three Questions About China’s Hidden Foreign Exchange Assets</title>
+      <link>https://www.cfr.org/articles/three-questions-about-chinas-hidden-foreign-exchange-assets</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/three-questions-about-chinas-hidden-foreign-exchange-assets</guid>
+      <description>A trillion-dollar gap in foreign exchange purchases raises questions about where China’s foreign currency assets are held.</description>
+      <pubDate>Thu, 12 Nov 2026 01:32:13 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>A General and an Admiral Discuss the Pentagon Purge</title>
+      <link>https://www.cfr.org/podcasts/presidents-inbox/a-general-and-an-admiral-discuss-the-pentagon-purge</link>
+      <guid isPermaLink="true">https://www.cfr.org/podcasts/presidents-inbox/a-general-and-an-admiral-discuss-the-pentagon-purge</guid>
+      <description>We Discuss:</description>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 GMT</pubDate>
+      <category>Podcast</category>
+    </item>
+    <item>
+      <title>China in South Asia: October 2026 </title>
+      <link>https://www.cfr.org/articles/china-in-south-asia-october-2026</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/china-in-south-asia-october-2026</guid>
+      <description>China’s engagements across South Asia this October were defined less by new diplomatic initiatives and more by the implementation and testing of relationships already in motion.</description>
+      <pubDate>Wed, 11 Nov 2026 17:23:10 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>Thanking America’s Veterans </title>
+      <link>https://www.cfr.org/articles/thanking-americas-veterans-7</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/thanking-americas-veterans-7</guid>
+      <description>Veterans Day recognizes those who have served in the U.S. armed forces.</description>
+      <pubDate>Wed, 11 Nov 2026 11:30:00 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>How the Next Congress Can Repair the Military’s Personnel Crisis</title>
+      <link>https://www.cfr.org/articles/how-the-next-congress-can-repair-the-militarys-personnel-crisis</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/how-the-next-congress-can-repair-the-militarys-personnel-crisis</guid>
+      <description>A change in Pentagon leadership won’t undo the purge of senior officers since early 2025, but the incoming Congress can begin repairing the damage by protecting promotions, guaranteeing women’s access to combat roles, and restoring oversight.</description>
+      <pubDate>Wed, 11 Nov 2026 02:27:09 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>The 2026 Election by the Numbers </title>
+      <link>https://www.cfr.org/articles/2026-election-by-the-numbers</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/2026-election-by-the-numbers</guid>
+      <description>A dive into the data shows just how historic the 2026 midterms were.</description>
+      <pubDate>Wed, 11 Nov 2026 00:33:21 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>Why the G20 Should Listen to Faith Leaders in Utah</title>
+      <link>https://www.cfr.org/articles/why-the-g20-should-listen-to-faith-leaders-in-utah</link>
+      <guid isPermaLink="true">https://www.cfr.org/articles/why-the-g20-should-listen-to-faith-leaders-in-utah</guid>
+      <description>Technological innovation and economic growth are expected to dominate the G20 agenda in Miami. But a recent gathering of religious and civil society leaders made clear that humanity’s progress also includes cooperation to reduce suffering and advance peace.</description>
+      <pubDate>Tue, 10 Nov 2026 17:35:55 GMT</pubDate>
+      <category>Article</category>
+    </item>
+    <item>
+      <title>New CFR Book by David Sacks Details the Life and

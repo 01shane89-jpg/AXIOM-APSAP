@@ -1,0 +1,72 @@
+https://www.ecowas.int/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Economic Community of West African States (ECOWAS)</title>
+	<atom:link href="https://www.ecowas.int/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.ecowas.int</link>
+	<description>---D&#039;une CEDEAO des Etats à une CEDEAO des peuples</description>
+	<lastBuildDate>Thu, 12 Nov 2026 09:40:20 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.ecowas.int/wp-content/uploads/2022/08/cropped-eicon2-1-32x32.png</url>
+	<title>Economic Community of West African States (ECOWAS)</title>
+	<link>https://www.ecowas.int</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>HEAD OF ECOWAS ELECTION OBSERVATION MISSION ARRIVES IN CABO VERDE AHEAD OF PRESIDENTIAL ELECTION</title>
+		<link>https://www.ecowas.int/head-of-ecowas-election-observation-mission-arrives-in-cabo-verde-ahead-of-presidential-election/</link>
+		
+		<dc:creator><![CDATA[Harouna Mayaki]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 09:40:20 +0000</pubDate>
+				<category><![CDATA[Featured News]]></category>
+		<category><![CDATA[Info CEDEAO]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Press Releases]]></category>
+		<guid isPermaLink="false">https://www.ecowas.int/?p=135724</guid>
+
+					<description><![CDATA[The Head of the ECOWAS Election Observation Mission to the Presidential Election in Cabo Verde, H.E. Fatoumatta JALLOW-TAMBAJANG, former Vice-President of the Republic of The Gambia, arrived in Praia ahead of the polls scheduled for 15 November 2026. Her arrival marks an important phase in ECOWAS’ electoral assistance, reinforcing the Commission’s commitment to supporting peaceful, [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><strong>The Head of the ECOWAS Election Observation Mission to the Presidential Election in Cabo Verde, H.E. Fatoumatta JALLOW-TAMBAJANG, former Vice-President of the Republic of The Gambia, arrived in Praia ahead of the polls scheduled for 15 November 2026. Her arrival marks an important phase in ECOWAS’ electoral assistance, reinforcing the Commission’s commitment to supporting peaceful, credible and transparent elections in Cabo Verde, in line with its mandate to promote democracy, constitutional order and stability across the region.</strong></p>
+<p>Speaking to the media upon her arrival at Nelson Mandela International Airport on Tuesday, 10 November 2026, <strong>H.E. Fatoumatta JALLOW-TAMBAJANG</strong>, who in 2024 became the second woman to lead an ECOWAS Election Observation Mission in Togo, stated that ECOWAS is in Cabo Verde to accompany the country in holding an election that lives up to the expectations of its citizens. <em>“We are here to help them conduct the election and to live up to the expectations, which are peaceful, inclusive and transparent elections,”</em> she said.</p>
+<p>Asked whether she had any particular concerns, the Head of Mission replied that she had none, based on the documentation reviewed and the professional research undertaken on how the country is governed, how its people live and, above all, how peaceful they are. Describing Cabo Verde as <em>“a serene country”</em>, she outlined the Mission’s approach: <em>“We come here as international observers, open-minded, to see for ourselves what is on the ground and to report professionally.”</em></p>
+<p>Highlighting the archipelagic nature of the country, she confirmed that the Mission’s observers will be deployed well beyond the capital. <em>“We have to see everywhere. We want to hear every voice from every part of the country,”</em> she stressed.</p>
+<p>The arrival of the Head of Mission follows coordination meetings held on 9 and 10 November 2026 by the ECOWAS Commissioner for Political Affairs, Peace and Security, <strong>Madam Francess Piagie ALGHALI</strong>, who is heading the Technical Team of the Mission, with the ECOWAS Resident Representative in Cabo Verde, <strong>H.E. Ambassador João Ribeiro BUTIAM CO</strong>. The meetings finalised arrangements for the deployment of the Mission and its engagement with national authorities and electoral stakeholders.</p>
+<p>The Head of Mission joins the ECOWAS Long-Term Election Observation Mission (LTEOM), whose deployment was authorised by the President of the ECOWAS Commission, <strong>H.E. General Birame DIOP</strong>. Since 3 November 2026, its twenty (20) experts from ECOWAS Member States have been deployed to all islands of Cabo Verde, monitoring the key stages of the pre-electoral process and holding consultations with, among others, the ECOWAS Resident Representation, the Platform of NGOs of Cabo Verde, the Social Communication Regulatory Authority (ARC) and the National Electoral Commission (CNE). An ECOWAS situation room is monitoring developments at the national level ahead of the deployment of the Short-Term Election Observation Mission, which will comprise around 60 observers.</p>
+<p>The Mission is deployed in accordance with ECOWAS instruments, including the Revised Treaty of 1993, the 1999 Mechanism for Conflict Prevention, Management, Resolution, Peacekeeping and Security, and the 2001 Additional Protocol on Democracy and Good Governance. It will observe the electoral process before, during and after the vote, and will issue a preliminary statement following election day.</p>
+<p>Through this Mission, ECOWAS reaffirms its commitment to supporting Cabo Verde in organising a credible, transparent and peaceful presidential election, as well as its ongoing determination to promote democracy, good governance, peace and stability in the region.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>ECOWAS OPENS ITS PAVILION AT COP31 IN TÜRKIYE, JOINING FORCES WITH THE AFRICAN UNION AND IGAD TO ADDRESS CLIMATE-INDUCED HUMAN MOBILITY</title>
+		<link>https://www.ecowas.int/ecowas-opens-its-pavilion-at-cop31-in-turkiye-joining-forces-with-the-african-union-and-igad-to-address-climate-induced-human-mobility/</link>
+		
+		<dc:creator><![CDATA[Harouna Mayaki]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 15:01:11 +0000</pubDate>
+				<category><![CDATA[Featured News]]></category>
+		<category><![CDATA[Info CEDEAO]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Press Releases]]></category>
+		<guid isPermaLink="false">https://www.ecowas.int/?p=135714</guid>
+
+					<description><![CDATA[On 10 November 2026, ECOWAS opened its Pavilion at COP31 in Antalya, Türkiye, with a side event co-convened with the African Union Commission (AUC) and the Intergovernmental Authority on Development (IGAD). The event focused on how African institutions and Member States can better support people who move or are displaced because of climate impacts.   [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><em>On 10 November 2026, ECOWAS opened its Pavilion at COP31 in Antalya, Türkiye, with a side event co-convened with the African Union Commission (AUC) and the Intergovernmental Authority on Development (IGAD). The event focused on how African institutions and Member States can better support people who move or are displaced because of climate impacts.</em></p>
+<p><em> </em></p>
+<p>The panel brought together Dr. Sabelo Mbokazi of the African Union Commission, Mr. Christophe Deguenon, ECOWAS Director of Environment and Natural Resources, Dr. Ahmed Amdihun of the IGAD Climate Prediction and Applications Centre (ICPAC), Dr. Priscilla Achakpa of the Women Environmental Programme (WEP), and Ms. 

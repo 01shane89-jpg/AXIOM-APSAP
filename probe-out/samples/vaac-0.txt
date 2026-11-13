@@ -1,0 +1,161 @@
+https://www.data.jma.go.jp/svd/vaac/data/vaac_list.html
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="Author" content="気象庁 Japan Meteorological Agency">
+	<meta name="keywords" content="気象庁 Japan Meteorological Agency">
+	<title>Tokyo VAAC | Volcanic Ash Advisories</title>
+	<link rel="stylesheet" href="//www.jma.go.jp/jma/en/default.css">
+	<link rel="stylesheet" href="common/english.css">
+	<link rel="stylesheet" href="common/vaac.css">
+	<script src="js/list.js"></script>
+</head>
+<body onLoad="TableSort();downward=false;stringSort(0)">
+	<!-- Header Menu -->
+<script src="js/mm_menu.js"></script>
+<script src="js/archive.js"></script>
+<script src="js/list.js"></script>
+
+<!--header start -->
+<div id="logo">
+	<a href="//www.jma.go.jp/jma/indexe.html" name="top">
+		<img src="//www.jma.go.jp/jma/en/common/logo.gif" alt="Japan Meteorological Agency" width="120" height="47">
+	</a>
+</div>
+<div id="head_lang">
+	<a href="//www.jma.go.jp/jma/index.html">Japanese</a>
+</div>
+<div id="head_link">
+	<a href="#contents">Skip Navigation</a>
+	<a href="//www.jma.go.jp/jma/en/AboutUs/indexe_aboutus.html">About Us</a>
+	<a href="//www.jma.go.jp/jma/en/Access/indexe_acs.html">Access</a>
+	<a href="//www.jma.go.jp/jma/en/Links/indexe_lnk.html">Links</a>
+	<a href="//www.jma.go.jp/jma/en/SiteMap/indexe_smp.html">Site Map</a>
+</div>
+
+<div id="menu">
+	<a href="//www.jma.go.jp/jma/indexe.html">Home</a>
+	<a href="//www.jma.go.jp/jma/en/menu.html" class="here">Weather/Earthquakes</a>
+	<a href="//www.jma.go.jp/jma/en/Services/indexe_services.html">Services</a>
+	<a href="//www.jma.go.jp/jma/en/Publications/publications.html">Publications/Periodicals</a>
+	<a href="//www.jma.go.jp/jma/en/News/indexe_news.html">News Releases</a>
+	<a href="//www.jma.go.jp/jma/en/NMHS/indexe_nmhs.html">For NMHSs</a>
+</div>
+<!--header end -->
+
+
+	<div id="vaac_contents_area">
+		<ul class="breadcrumb">
+			<li><a href="//www.jma.go.jp/jma/indexe.html">HOME</a>&nbsp;&gt;&nbsp;</li>
+			<li><a href="//www.jma.go.jp/jma/en/menu.html">Weather, Climate & Earthquakes Information</a>&nbsp;&gt;&nbsp;</li>
+			<li><a href="index.html">Tokyo Volcanic Ash Advisories Center</a>&nbsp;&gt;&nbsp;</li>
+			<li>Volcanic Ash Advisories</li>
+		</ul>
+		<div id="vaac_head">
+
+			<div id="vaac_logo"><a href="index.html"><img src="common/logo-e.png" alt="Link to VAAC TOKYO TOP PAGE"></a></div>
+			<div id="head1" lang="ja"><a href="vaac_listj.html"><img src="common/arrows.gif" width="8" height="8" alt="">日本語</a></div>
+			<div id="head2">
+				<div class="update-time">Updated at 06:26 UTC, 12 November 2026</div>
+			</div>
+
+		</div>
+		<div id="vaac_contents">
+			<div id="submenu">
+				<ul id="submenulist">
+					<li><a href="index.html">Tokyo VAAC Top</a>
+						<ul>
+						</ul>
+					</li>
+					<li>VAA
+						<ul>
+							<li>Issued
+								<div>Recently Advisories</div>
+								<div id="archive_menu"></div>
+							</li>
+							<li><a href="vaac_darwin_list.html">Darwin VAAC Backuup</a></li>
+						</ul>
+					</li>
+					<li>Product Relation
+						<ul>
+							<li><a href="Inquiry/vaac_operation.html">VAAC Operation</a></li>
+							<li><a href="Inquiry/graphic_and_dispersion.htm">Product Explanation</a></li>
+						</ul>
+					</li>
+					<li>References
+						<ul>
+							<li><a href="Inquiry/links.htm">Links</a></li>
+						</ul>
+					</li>
+				</ul>
+				<script>
+				addTopContArchMenuLink("EN");
+				</script>
+			</div>
+			<div id="contents"></div>
+			<!-- contents -->
+			<h1>Volcanic Ash Advisories</h1>
+			<table class="textArea"><tbody><tr><td class="legend-explain">
+				&nbsp;As of 24 July, 2014, information of volcanoes in VAAs such as names, locations, volcano numbers and others are those in the database maintained by Smithsonian Institution's Global Volcanism Program for VAA.<br>
+				&nbsp;The database is provided as a service to the ICAO and does not represent any formal position by ICAO.<br>
+			</td></tr></tbody></table><br>
+			<table class="data2">
+				<thead>
+					<tr class="mtx">
+						<th id="COL1" scope="col">
+							<img src="common/arrow01.gif" onclick="downward=true;stringSort(0)" alt="">
+							Date Time
+							<img src="common/arrow02.gif" onclick="downward=false;stringSort(0)" alt="">
+						</th>
+						<th id="COL2" scope="col" class="width120">
+							<img src="common/arrow01.gif" onclick="downward=true;stringSort(2)" alt="">
+							Volcano
+							<img src="common/arrow02.gif" onclick="downward=false;stringSort(2)" alt="">
+						</th>
+						<th id="COL3" scope="col" class="width80">
+							<img src="common/arrow01.gif" onclick="downward=true;stringSort(3)" alt="">
+							Area
+							<img src="common/arrow02.gif" onclick="downward=false;stringSort(3)" alt="">
+						</th>
+						<th id="COL4" scope="col" class="width80">Advisory Number</th>
+						<th id="COL5" scope="col" class="width80">VAA Text</th>
+						<th id="COL6" scope="col" class="width80">VA Graphic</th>
+						<th id="COL7" scope="col" class="width80">VA Initial</th>
+						<th id="COL8" scope="col" class="width80">VA Forecast</th>
+						<th id="COL9" scope="col" class="width80">Satellite Images</th>
+					</tr>
+				</thead>
+				<tbody id="tbd1">
+				<!--TABLE START-->
+<tr class="mtx" id=tr0 style=" background-color: rgb(255,255,205);"><td style="DISPLAY: none">2026/11/12 06:26:00</td><td>06:26 UTC, 12 Nov. 2026</td><td>MAYON</td><td>PHILIPPINES</td><td><font size=2 color="black">2026/823</font></td>
+<td id="bluelink" align="center"><a href="TextData/2026/20261112_27303000_0823_Text.html">Text</a></td>
+<td align="center">-</td>
+<td id="vagi_bluelink" align="center">-</td>
+<td id="vagfn_bluelink" align="center"><a href="javascript:void(0)" onClick="opennarro('VAGFN/2026/html/20261112_27303000_0823_QH21.html')">VAGFN</a></td>
+<td align="center">-</td>
+</tr>
+<tr class="mtx" id=tr1 style=" background-color: rgb(255,255,205);"><td style="DISPLAY: none">2026/11/12 01:54:00</td><td>01:54 UTC, 12 Nov. 2026</td><td>SAKURAJIMA (AIRA CALDERA)</td><td>JAPAN</td><td><font size=2 color="black">2026/348</font></td>
+<td id="bluelink" align="center"><a href="TextData/2026/20261112_28208001_0348_Text.html">Text</a></td>
+<td align="center">-</td>
+<td id="vagi_bluelink" align="center">-</td>
+<td id="vagfn_bluelink" align="center"><a href="javascript:void(0)" onClick="opennarro('VAGFN/2026/html/20261112_28208001_0348_QH21.html')">VAGFN</a></td>
+<td align="center">-</td>
+</tr>
+<tr class="mtx" id=tr2 style=" background-color: rgb(255,255,205);"><td style="DISPLAY: none">2026/11/11 04:21:00</td><td>04:21 UTC, 11 Nov. 2026</td><td>MAYON</td><td>PHILIPPINES</td><td><font size=2 color="black">2026/822</font></td>
+<td id="bluelink" align="center"><a href="TextData/2026/20261111_27303000_0822_Text.html">Text</a></td>
+<td align="center">-</td>
+<td id="vagi_bluelink" align="center">-</td>
+<td id="vagfn_bluelink" align="center"><a href="javascript:void(0)" onClick="opennarro('VAGFN/2026/html/20261111_27303000_0822_QH21.html')">VAGFN</a></td>
+<td align="center">-</td>
+</tr>
+<tr class="mtx" id=tr3 style=" background-color: rgb(255,255,205);"><td style="DISPLAY: none">2026/11/10 11:50:00</td><td>11:50 UTC, 10 Nov. 2026</td><td>SHEVELUCH</td><td>RUSSIA</td><td><font size=2 color="black">2026/374</font></td>
+<td id="bluelink" align="center"><a href="TextData/2026/20261110_30027000_0374_Text.html">Text</a></td>
+<td align="center">-</td>
+<td id="vagi_bluelink" align="center">-</td>
+<td id="vagfn_bluelink" align="center">-</td>
+<td id="bluelink" align="center"><a href="javascript:void(0)" onClick="openplant('Sat/2026/html/20261110_30027000_0374_Sat.html')">SAT</a></td>
+</tr>
+<tr class="mtx" id=tr4 style=" background-color: rgb(255,255,205);"><td style="DISPLAY: none">2026/11/10 09:20:00</td><td>09:20 UTC, 10 Nov. 2026</td><td>SHEVELUCH</td><td>RUSSIA</td><td><font size=2 color="black">2026/373</font></td>
+<td id="bluelink" align="center"><a href="TextData/2026/20261110_30027000_0373_Text.html">Text</a></td>
+<td id="bluelink" align="center"><a href="javascript:void(0)" onClick="opennewwide('VAG/2026/html/20261110_30027000_0373_PF15.html')">VAG<

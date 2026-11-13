@@ -1,0 +1,62 @@
+https://iids.org.np/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Institute for Integrated Development Studies</title>
+	<atom:link href="https://iids.org.np/feed/" rel="self" type="application/rss+xml" />
+	<link>https://iids.org.np</link>
+	<description>IIDS</description>
+	<lastBuildDate>Thu, 08 Oct 2026 10:41:20 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://iids.org.np/wp-content/uploads/2025/02/cropped-IIDS-logo-favicon-32x32.png</url>
+	<title>Institute for Integrated Development Studies</title>
+	<link>https://iids.org.np</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Nepal’s Digital Ambitions Meet a Changing Climate</title>
+		<link>https://iids.org.np/nepals-digital-ambitions-meet-a-changing-climate/</link>
+		
+		<dc:creator><![CDATA[bpea5]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 10:37:04 +0000</pubDate>
+				<category><![CDATA[Articles]]></category>
+		<guid isPermaLink="false">https://iids.org.np/?p=23773</guid>
+
+					<description><![CDATA[The devastating 2026 Central Nepal flash floods have once again exposed the extent to which the country’s economic infrastructure remains vulnerable to extreme weather and climate. The Government of Nepal’s Rapid Damage and Needs Assessment – conducted only weeks after the flood hit Rasuwa, Nuwakot, Dhading, Gorkha and Chitwan districts &#8230; ]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">The devastating 2026 Central Nepal flash floods have once again exposed the extent to which the country’s economic infrastructure remains vulnerable to extreme weather and climate. The Government of Nepal’s Rapid Damage and Needs Assessment – conducted only weeks after the flood hit Rasuwa, Nuwakot, Dhading, Gorkha and Chitwan districts on August 26 – estimates NPR 408 billion in direct and indirect damage and losses. <a href="https://kathmandupost.com/national/2026/09/10/rs723-billion-needed-to-rebuild-flood-hit-areas-government-assessment-finds" target="_blank" rel="noopener">The estimated requirement for recovery and reconstruction</a> is significantly higher, at NPR 723 billion. <a href="https://nepalitimes.com/nepal-tallies-the-cost-of-its-disaster" target="_blank" rel="noopener">More than 65 percent of these requirements relate to infrastructure</a> and are particularly concentrated in the energy and transport sectors. The damage to the energy sector alone includes an estimated loss of 759 MW of hydropower capacity, nearly 20 percent of Nepal&#8217;s current installed 4200 MW capacity.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">These figures are as significant for Nepal’s digital development as much as they are for the development of physical infrastructure. The expansion of digital services depends on electricity, telecommunications networks, buildings, transport links, and physical facilities. The distinction between physical and digital infrastructure becomes less meaningful as more economic and government functions depend on the latter.&nbsp;&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">This is particularly relevant to Nepal’s growing interest in data centers. The country is generating more digital data, government services are increasingly being delivered electronically, and the widespread adoption of artificial intelligence will surely increase demand for computing and storage capacity. Consider the following examples. Evidence from the United States shows that the <a href="https://www.rbcwealthmanagement.com/en-us/insights/data-center-power-struggle" target="_blank" rel="noopener">share of electricity used by data centers</a> grew exponentially from 1.9% in 2018 to 4.4% in 2023. Similarly, in the case of Europe, in 2024 only, <a href="https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary" target="_blank" rel="noopener">data centers accounted for 15% of global electricity consumption</a>. The International Energy Agency (IEA) projects this demand to double by 2030.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">The rapid expansion of Digital Public Infrastructure (DPI) in Nepal adds another layer to this demand. Around <a href="https://kathmandupost.com/national/2026/06/22/government-cancels-national-id-tender-plans-in-house-management" target="_blank" rel="noopener">20 million citizens have had their biometric information collected</a> successfully for the National ID (NID), and the government is developing a national data exchange and digital locker for the wider use of these digital credentials. A huge step in this process was the integration of NID with the data from the Election Commission that enabled over <a href="https://english.onlinekhabar.com/new-voters-added-national-id-data.html" target="_blank" rel="noopener">30,000 citizens to enlist as new voters in a single day</a>. As these systems become even more interconnected, the demand for reliable domestic infrastructure to store, process and exchange data will grow.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">All while the case for expanding data-center capacity is therefore becoming stronger, the recent floods, alongside the <a href="https://kathmandupost.com/national/2025/09/16/nepal-s-digital-infrastructure-withstands-unrest-as-backup-systems-avert-major-collapse" target="_blank" rel="noopener">nation-wide arson Nepal saw during the September 2025 protests</a>, suggest that the location and physical resilience of such infrastructure deserve an even greater consideration. Data centers require continuous electricity and telecommunications connectivity. Further, their operations rely largely on cooling systems, which could, in theory, be functioned through Nepal&#8217;s abundant rivers, as well as physical access and supply chains for maintenance and backup equipment. Even though a data center facility can be protected against a localized failure – theft, fires, and other physical damage – <a href="https://www.datacenterknowledge.com/outages/fault-in-data-center-alley-triggered-3-gw-load-drop-on-pjm" target="_blank" rel="noopener">it may still be affected by the loss of a nearby transmission line or fiber route elsewhere in the network</a>. The destruction of hydropower infrastructure, therefore, becomes a particularly relevant concern in the case of Nepal, where the availability of renewable electricity is itself one of the principal arguments for developing data-center capacity.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">The same question applies to digital public infrastructure. Disruption to an individual digital service can be attributed to a service-delivery problem. A disruption to shared systems for identity, payments, government records or social protection, however, can have wider consequences. Nepal’s experience with the NID already illustrates some of these challenges. Despite an exemplary rollout and fast adoption, the system has recently faced difficulties keeping up with verification requirements – an issue that has aggravated due to repeated <a href="https://www.biometricupdate.com/202608/nepals-national-id-outage-disrupts-passports-banking-and-government-services" target="_blank" rel="noopener">power and service outages at passport offices, banks, and tax desks</a>. A major natural – or human-induced – disaster could add another source of disruption to system<a href="https://www.myrepublica.nagariknetwork.com/news/govt-unveils-sweeping-digital-governance-reforms-to-transform-public-servic-22-20.html" target="_blank" rel="noopener">s that now hold a central place in Nepal’

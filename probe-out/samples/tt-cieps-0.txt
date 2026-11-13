@@ -1,0 +1,60 @@
+https://cieps.org.pa/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CIEPS</title>
+	<atom:link href="https://cieps.org.pa/feed/" rel="self" type="application/rss+xml" />
+	<link>https://cieps.org.pa</link>
+	<description>Centro Internacional de Estudios Políticos y Sociales AIP – Panamá</description>
+	<lastBuildDate>Tue, 10 Nov 2026 13:41:51 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://cieps.org.pa/wp-content/uploads/2026/07/cropped-IDENTIDAD-2-32x32.png</url>
+	<title>CIEPS</title>
+	<link>https://cieps.org.pa</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Virtud y política</title>
+		<link>https://cieps.org.pa/virtud-y-politica/</link>
+					<comments>https://cieps.org.pa/virtud-y-politica/#respond</comments>
+		
+		<dc:creator><![CDATA[Ina Kokinova]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 20:36:14 +0000</pubDate>
+				<category><![CDATA[Columna]]></category>
+		<guid isPermaLink="false">https://cieps.org.pa/?p=29441</guid>
+
+					<description><![CDATA[<p>Durante las últimas tres décadas, mi hábito de conducir automóviles ha estado guiado por la costumbre. Al aprender a manejar vehículos con transmisión manual, se desarrolla una memoria corporal tan firme que la mano derecha busca la palanca de cambios de forma instintiva. En mi experiencia, incluso tras cambiar a una trasmisión automática, diseñada para [&#8230;]</p>
+<p>The post <a href="https://cieps.org.pa/virtud-y-politica/">Virtud y política</a> first appeared on <a href="https://cieps.org.pa">CIEPS</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p class="p_1">Durante las últimas tres décadas, mi hábito de conducir automóviles ha estado guiado por la costumbre. Al aprender a manejar vehículos con transmisión manual, se desarrolla una memoria corporal tan firme que la mano derecha busca la palanca de cambios de forma instintiva. En mi experiencia, incluso tras cambiar a una trasmisión automática, diseñada para prescindir constantemente de la acción manual, la mano derecha intenta volver a su antigua función, lo que pasa por alto la orden racional de descansar mientras se conduce.</p>
+<div class="ads">
+<div id="box1_ad" data-google-query-id="CLi2xIze-5cDFc7KjgkdVBQiHg">
+<div id="google_ads_iframe_/21626604573/estrella/box1_0__container__"></div>
+</div>
+</div>
+<p class="p_2">Esta automatización muestra cómo las costumbres están arraigadas al comportamiento hasta el punto de actuar al margen de la voluntad. Este fenómeno moral invita a reflexionar sobre aquellos hábitos desarrollados y su influencia en los gestos cotidianos. Entonces, en el ámbito político cabe preguntarse en qué medida las costumbres relacionadas con la vieja política se han transformado en comportamientos sociales que limitan y desmotivan el compromiso político de los miembros de la sociedad en la actualidad.</p>
+<p class="p_3">Frente a la resignación basada en las costumbres, la relación entre la ética y el poder político ha constituido, desde la Antigüedad, un terreno de discusión fundamental. ¿Hay lugar para la virtud en la política? En la cuna de la cultura grecorromana, la filosofía de los estoicos abordaba la política a partir de la tensión entre la naturaleza y la condición humana. Lejos de la supuesta indiferencia a la vida política, que a menudo se les atribuye en un contexto imperial romano, el modo de vida de los estoicos ofrece una guía de sabiduría para la vida pública. La convicción de que alcanzar la virtud preparaba al ciudadano para el compromiso político con la justicia y la libertad, porque se antepone a la conveniencia personal o al temor a las consecuencias del poder.</p>
+<p class="p_4">Frente a la mirada moderna particular que reduce al estoicismo a una vida de contemplación pasiva, se destaca la trayectoria del estoico Cayo Helvidio Prisco (nacido a principios del siglo I y muerto aproximadamente en el año 73 d. C.) porque sus experiencias muestran un estilo de vida político y activo. En <i>Cómo ser un estoico</i> (2018) de Massimo Pigliucci, se rescata la experiencia del senador romano como un claro ejemplo de resistencia ética ante el absolutismo de Vespasiano. Amenazado de muerte si acudía al Senado a expresar su regularizada postura crítica, Prisco asumió la dicotomía del control mediante la <i>parrhesía</i> o libertad de expresión. Pigliucci subraya que la praxis política del senador encarnaba la virtud a partir de la idea de que “es parte de la naturaleza humana defender lo que es justo, independientemente del resultado personal”. Su entereza quedó plasmada en la célebre réplica en un dialogo entre el emperador Vespasiano y el senador Prisco, recogida en las <i>Disertaciones de </i>Epicteto: “Tú harás tu parte y yo la mía. A ti te toca mandar a matarme y a mí morir sin temblar”.</p>
+<p class="p_5">En el mundo contemporáneo, marcado el debilitamiento de la virtud como consecuencia de la polarización, la sobreinformación y el desinterés cívico, el estilo de vida de los estoicos se muestra como un manual de sabiduría tanto para la vida contemplativa como la vida activa. Sin embargo, la lectura popular y superficial del estoicismo corre el riesgo de mercantilizarse como una mera técnica de autoayuda o gestión del estrés individual. Recuperar su dimensión ético-política original reside en la virtud, porque permite contextualizar el comportamiento racional como una ética de la responsabilidad. Un marco que impulsa al individuo a participar activamente en la vida pública y a superar las costumbres desarrolladas desde la apatía hasta el comportamiento antidemocrático.</p>
+<div class="ads">
+<div id="intext1_ad" data-google-query-id="CKiX6qze-5cDFeTJjgkdYOgd_Q">
+<div id="google_ads_iframe_/21626604573/estrella/intext1_0__container__"></div>
+</div>
+</div>
+<p class="p_6">En el marco de la satisfacción de deseos basados en el bien individual y las estructuras opresivas de poder como costumbres de la vieja política, la decisión de actuar basado en principios confronta los conflictos en la vida política. En un entorno social enajenado por la producción, el automatismo y la digitalización, lo que desmotiva y reduce cualquier comportamiento heroico y que premia la conformidad, el ejercicio de la sabiduría política como un manual racional que exige sopesar constantemente lo moral frente a los condicionamientos que poco a poco han desplazado el espacio público.</p>
+<p class="p_7">Así como el testimonio de Prisco demostró que la integridad (ética) puede desafiar la arbitrariedad del poder, esa misma determinación basada en principios trasciende épocas y contextos geográficos. La defensa de la justicia frente a la opresión no se limita a la Antigüedad clásica, sino que encuentra continuidad en muchas historias recientes a través de figuras que asumen el compromiso ético y político con idéntica valentía y sabiduría.</p>
+<p class="p_8">En tiempos contemporáneos, la trayectoria de Malala Yousafzai refleja esa misma coherencia entre convicción moral y acción pública. Nacida en 1997 en el valle de Swat, Pakistán, desafió desde muy joven la prohibición del Talibán al acceso de las niñas a la educación. Malala se enfrenta a tradiciones y costumbres. Ni la persecución ni el grave atentado sufrido en 2012 frenaron su voz pública. Tras su recuperación a consecuencia de sus decisiones, recibe el Premio Nobel de la Paz en 2014 y, eventualmente, se crea la labor del Fondo Malala, lo que consolida el impacto mundial de su causa social y política. Su compromiso político evidencia que la defensa del bien común trasciende 

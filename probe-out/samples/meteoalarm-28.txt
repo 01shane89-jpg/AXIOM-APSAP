@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-romania
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-romania"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:RO</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:10.624229Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>RO415</value>
+    </cap:geocode>
+    <link title="Vâlcea" href="https://meteoalarm.org?geocode=EMMA_ID:RO037" hreflang="en"/>
+    <cap:areaDesc>Vâlcea</cap:areaDesc>
+    <cap:event>awareness_type=10, awareness_level=2</cap:event>
+    <cap:sent>2026-11-12T08:50:51+00:00</cap:sent>
+    <cap:expires>2026-11-13T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T08:22:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.642.0.RO.2611121022.256401376491129a</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5"/>
+    <link title="Romania" rel="related" href="https://meteoalarm.org?region=RO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T08:50:51Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5?index_info=1&amp;index_area=8&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Romania - Vâlcea</title>
+    <updated>2026-11-12T08:50:51Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>RO125</value>
+    </cap:geocode>
+    <link title="Mureș" href="https://meteoalarm.org?geocode=EMMA_ID:RO041" hreflang="en"/>
+    <cap:areaDesc>Mureș</cap:areaDesc>
+    <cap:event>awareness_type=10, awareness_level=2</cap:event>
+    <cap:sent>2026-11-12T08:50:51+00:00</cap:sent>
+    <cap:expires>2026-11-13T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T08:22:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.642.0.RO.2611121022.256401376491129a</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5"/>
+    <link title="Romania" rel="related" href="https://meteoalarm.org?region=RO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T08:50:51Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5?index_info=1&amp;index_area=7&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Romania - Mureș</title>
+    <updated>2026-11-12T08:50:51Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>RO114</value>
+    </cap:geocode>
+    <link title="Maramureș" href="https://meteoalarm.org?geocode=EMMA_ID:RO003" hreflang="en"/>
+    <cap:areaDesc>Maramureș</cap:areaDesc>
+    <cap:event>awareness_type=10, awareness_level=2</cap:event>
+    <cap:sent>2026-11-12T08:50:51+00:00</cap:sent>
+    <cap:expires>2026-11-13T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T08:22:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.642.0.RO.2611121022.256401376491129a</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5"/>
+    <link title="Romania" rel="related" href="https://meteoalarm.org?region=RO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T08:50:51Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5?index_info=1&amp;index_area=6&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Romania - Maramureș</title>
+    <updated>2026-11-12T08:50:51Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>RO423</value>
+    </cap:geocode>
+    <link title="Hunedoara" href="https://meteoalarm.org?geocode=EMMA_ID:RO039" hreflang="en"/>
+    <cap:areaDesc>Hunedoara</cap:areaDesc>
+    <cap:event>awareness_type=10, awareness_level=2</cap:event>
+    <cap:sent>2026-11-12T08:50:51+00:00</cap:sent>
+    <cap:expires>2026-11-13T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T08:22:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.642.0.RO.2611121022.256401376491129a</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5"/>
+    <link title="Romania" rel="related" href="https://meteoalarm.org?region=RO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T08:50:51Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-romania/29c7dace-705d-4dd5-9bce-2cb89c061ee5?index_info=1&amp;index_area=5&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Romania - Hunedoara</title>
+    <updated>2026-11-12T08:50:51Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>RO412</value>
+    </cap:geocode>
+    <link title="Gorj" href="https://meteoalarm.org?geocode=EMMA_ID:RO038" hreflang="en"/>
+    <cap:areaDesc>Gorj</cap:areaDesc>
+    <cap:event>awareness_type=10, awareness_level=2</cap:event>
+    <cap:sent>2026-11-12T08:50:51+00:00</cap:sent>
+    <cap:expires>2026-11-13T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T08:22:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.642.0.RO.2611121022.256401376491129a</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/f

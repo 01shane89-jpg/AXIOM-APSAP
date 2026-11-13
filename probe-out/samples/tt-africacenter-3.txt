@@ -1,0 +1,62 @@
+https://africacenter.org/robots.txt
+User-agent: *
+Disallow: /
+
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+# Search engines
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: DuckDuckBot
+User-agent: Baiduspider
+User-agent: YandexBot
+Allow: /
+
+# OpenAI
+User-agent: GPTBot
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
+Allow: /
+
+# Google AI / extended
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: GoogleOther-Image
+User-agent: GoogleOther-Video
+User-agent: Google-CloudVertexBot
+Allow: /
+
+# Apple
+User-agent: Applebot
+User-agent: Applebot-Extended
+Allow: /
+
+# Amazon
+User-agent: Amazonbot
+Allow: /
+
+# Meta
+User-agent: Meta-ExternalAgent
+User-agent: FacebookBot
+User-agent: facebookexternalhit
+Allow: /
+
+# Microsoft / Perplexity
+User-agent: msnbot
+User-agent: MicrosoftPreview
+User-agent: PerplexityBot
+Allow: /
+
+# Research
+User-agent: CCBot
+Allow: /
+
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Sitemap: https://africacenter.org/sitemap_index.xml

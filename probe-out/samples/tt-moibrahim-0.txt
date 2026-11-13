@@ -1,0 +1,77 @@
+https://mo.ibrahim.foundation/feed
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://mo.ibrahim.foundation/">
+  <channel>
+    <title>Mo Ibrahim Foundation - Strengthening the African voice on global challenges.</title>
+    <link>https://mo.ibrahim.foundation/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>COP31: Africa’s road to implementation</title>
+  <link>https://mo.ibrahim.foundation/news/2026/cop31-africas-road-implementation</link>
+  <description>COP31: Africa’s road to implementation&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;badri.l&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-09T16:25:43+00:00" title="Monday, November 9, 2026 - 16:25" class="datetime"&gt;Mon, 11/09/2026 - 16:25&lt;/time&gt;
+&lt;/span&gt;
+
+
+
+
+  &lt;div class="content-block bg- paragraph paragraph--type--content-block paragraph--view-mode--default"&gt;
+          
+              &lt;h3 class&gt;The Mo Ibrahim Foundation’s four climate priorities for Africa&lt;/h3&gt;
+      
+      &lt;div class&gt;
+        &lt;p&gt;When it comes to the global climate debate, Africa cannot just be seen as a vulnerable continent requesting help.&lt;/p&gt;&lt;p&gt;Its critical minerals, renewable energy sources, carbon-sinking potential and role in the green economic transition mean it must be considered as a key stakeholder. In recent years, this has led the continent to articulate a common African position at the first African Climate Summit, held in Nairobi in 2023 and again in Addis Ababa in 2025. Going forward into COP31, the Mo Ibrahim Foundation reiterates its four climate priorities for Africa:&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;/div&gt;
+  
+  &lt;div class="container-fluid bg-colour-5 paragraph paragraph--type--container paragraph--view-mode--default"&gt;
+
+    
+      &lt;div class="container-fluid inner boxed-row "&gt;
+
+                  
+
+
+
+
+  &lt;div class="row columns paragraph paragraph--type--_-column paragraph--view-mode--default"&gt;
+
+    
+      &lt;div class="col-12 box"&gt;
+        &lt;div class="boxed bg-colour-3"&gt;
+          
+
+
+
+  &lt;div class="content-block bg- paragraph paragraph--type--content-block paragraph--view-mode--default"&gt;
+          
+      
+      &lt;div class&gt;
+        &lt;ol&gt;&lt;li&gt;Ensuring a just energy transition&amp;nbsp;&lt;/li&gt;&lt;li&gt;Championing adaptation over mitigation&amp;nbsp;&lt;/li&gt;&lt;li&gt;Leveraging Africa's green potential&amp;nbsp;&lt;/li&gt;&lt;li&gt;Scaling-up climate finance&lt;/li&gt;&lt;/ol&gt;
+      &lt;/div&gt;
+      &lt;/div&gt;
+
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+
+           
+  &lt;/div&gt;
+
+        
+      &lt;/div&gt;
+
+          
+    
+  &lt;/div&gt;
+
+
+
+
+  &lt;div class="content-block bg- paragraph paragraph--type--content-block paragraph--view-mode--default"&gt;
+          
+      
+      &lt;div class&gt;
+        &lt;p&gt;Read our previous publications:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://mo.ibrahim.foundation/sites/default/files/2025-09/from-nairobi-to-addis-ababa.pdf" target="_blank"&gt;From Nairobi to Addis Ababa: Taking stock of the 2023 Nairobi Declaration ahead of the second Africa Climate Summit&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://mo.ibrahim.foundation/sites/default/files/2025-11/africa-on-the-road-to-cop30.pdf" target="_blank"&gt;Africa on the Road to COP30: From Addis Ababa to Belém&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;Arriving in Antalya: where Africa stands ahead of COP31&amp;nbsp;&lt;/h3&gt;&lt;p&gt;In 2025, extreme weather and climate events affected at least 13 million people across Africa and led to more than 3,000 reported deaths, with drought alone affecting more than 8.5 million people in East Africa, according to the &lt;a href="https://wmo.int/resources/publication-series/state-of-climate-africa/state-of-climate-africa-2025" target="_blank"&gt;World Meteorological Organization&lt;/a&gt;. The economic toll is equally heavy.&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;African countries are estimated to lose between 2% and 5% of their gross domestic product every year to climate extremes, and many are diverting up to 9% of national budgets to respond to them.&amp;nbsp;&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;Without adequate action, up to &lt;a href="https://allafrica.com/stories/202504160093.html" target="_blank"&gt;118 million people living in extreme poverty&lt;/a&gt; on the continent could be exposed to drought, floods, and extreme heat by 2030.&amp;nbsp;&lt;/p&gt;&lt;p&gt;These realities form the backdrop to COP31, which takes place in Antalya, Türkiye this November. The annual Conference of the Parties brings together the 197 states and the European Union bound by the UNFCCC treaty through which countries committed to stabilise greenhouse gas concentrations at a level that would prevent dangerous interference with the climate system.&lt;/p&gt;&lt;p&gt;There is undoubtedly much to address this COP, as the inter-sessional talks in Bonn (the formal technical negotiation sessions which precede each COP) closed this June with &lt;a href="https://www.carbonbrief.org/bonn-climate-talks-key-outcomes-from-the-june-2026-un-climate-conference" target="_blank"&gt;little agreed text on key issues&lt;/a&gt; such as the Global Goal on Adaptation and the finance owed by developed countries. Türkiye’s Presidency has framed this as both an 'Implementation COP' and 'COP of the Future', which has set the stage for countries to be bold, forward-looking, and effective in their approaches.&amp;nbsp;&lt;/p&gt;&lt;p&gt;For Africa, COP31 is also a bridge: COP32 will be held in Addis Ababa in 2027, the first COP to be hosted by a designated least developed country. African institutions are treating the two summits as a continuum running from Belem in 2024, through Antalya, and to Addis.&amp;nbsp;&lt;/p&gt;&lt;p&gt;As countries assess progress on climate action, Africa occupies a distinctive position: it is among the regions most affected by climate change, yet also among those best placed to lead the response. This blog examines the continent’s pre-conference preparations, Nationally Determined Contributions (NDCs), and adaptation plans to assess how Africa is approaching this year’s highly anticipated COP.&amp;nbsp;&lt;/p&gt;&lt;h3&gt;How are Africa’s coalitions preparing?&amp;nbsp;&lt;/h3&gt;&lt;h4&gt;Addis Ababa: setting the continental agenda&amp;nbsp;&lt;/h4&gt;&lt;p&gt;The 14th Conference on Climate Change and Development in Africa (CCDA-14) met in Addis Ababa in September under the theme 'From Pledges to Implementation: The Belém-Antalya-Addis Roadmap'. Convened through the ClimDev-Africa programme of the UN Economic Commission for Africa, the African Union Commission, the African Development Bank, and Afreximbank, in partnership with the Pan-African Climate Justice Alliance, the conference &lt;a href="https://capitalethiopia.com/2026/09/13/ccda-14-calls-for-african-climate-agency-ahead-of-cop31-and-cop32/" target="_blank"&gt;brought together governments, civil society, and the private sector&lt;/a&gt; to strengthen the continent’s collective messaging ahead of COP31. Finance sat at the centre of the discussions.&amp;nbsp;&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;Africa requires an estimated $277 billion per year through 2030 to implement its Nationally Determined Contributions (NDCs), and current flows cover only around 11% of that need.&amp;nbsp;&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;The conference’s recommendations called for finance that is predictable, adequate, accessible, and non-debt-creating, and urged developed countries to meet the obligations they hold under the Convention and the Paris Agreement. Delegates closed with a call for Africa to move “&lt;a href="https://www.uneca.org/stories/stakeholders-close-ccda-14-with-strong-calls-for-climate-finance,-stronger-age

@@ -1,0 +1,69 @@
+https://globalvoices.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:media="http://search.yahoo.com/mrss/"
+xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:podcast="https://podcastindex.org/namespace/1.0"
+xmlns:rawvoice="https://blubrry.com/developer/rawvoice-rss/"
+xmlns:georss="http://www.georss.org/georss" >
+
+<channel>
+	<title>Global Voices</title>
+	<atom:link href="https://globalvoices.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://globalvoices.org</link>
+	<description>Citizen media stories from around the world</description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:49:16 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.0.2</generator>
+	<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+	<itunes:author>Global Voices</itunes:author>
+	<itunes:explicit>false</itunes:explicit>
+	<itunes:image href="https://globalvoices.org/wp-content/uploads/2023/02/gv-podcast-logo-2022-icon-square-2400-GREEN.png" />
+	<itunes:owner>
+		<itunes:name>Global Voices</itunes:name>
+		<itunes:email>webmaster@globalvoices.org</itunes:email>
+	</itunes:owner>
+	<copyright>Creative Commons Attribution, see our Attribution Policy for details.</copyright>
+	<podcast:license>Creative Commons Attribution, see our Attribution Policy for details.</podcast:license>
+	<podcast:medium>podcast</podcast:medium>
+	<image>
+		<title>Global Voices</title>
+		<url>https://globalvoices.org/wp-content/uploads/2023/02/gv-podcast-logo-2022-icon-square-2400-GREEN.png</url>
+		<link>https://globalvoices.org</link>
+	</image>
+	<itunes:category text="Society &amp; Culture" />
+	<podcast:podping usesPodping="true" />
+	<rawvoice:subscribe feed="https://globalvoices.org/feed/" itunes="https://itunes.apple.com/ca/podcast/global-voices-podcast-global/id74941523?mt=2" spotify="https://open.spotify.com/show/4oufL3s0zJxdF3H3clojym"></rawvoice:subscribe>
+	<item>
+		<title>How medical neglect killed Alfredo Díaz in a Venezuelan cell</title>
+		<link>https://globalvoices.org/2026/11/13/how-medical-neglect-killed-alfredo-diaz-in-a-venezuelan-cell/</link>
+		
+		<dc:creator><![CDATA[Luis Carlos Diaz]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 03:00:41 +0000</pubDate>
+				<category><![CDATA[English]]></category>
+		<category><![CDATA[Feature]]></category>
+		<category><![CDATA[Human Rights]]></category>
+		<category><![CDATA[Latin America]]></category>
+		<category><![CDATA[Venezuela]]></category>
+		<category><![CDATA[Weblog]]></category>
+		<guid isPermaLink="false">https://globalvoices.org/?p=859567</guid>
+
+					<description><![CDATA[Despite government shifts, a UN report confirms Venezuela's repressive system remains active, documenting how medical neglect in state custody led to the death of regional leader and politician Alfredo Díaz.]]></description>
+										<content:encoded><![CDATA[<p><big class='tagline'><em>The state deprived a former governor of medical care despite clear warning signs</em></big></p><p class='originally-published'><small>Originally published on <a href='https://globalvoices.org/2026/11/13/how-medical-neglect-killed-alfredo-diaz-in-a-venezuelan-cell/'>Global Voices</a></small></p><div id="attachment_859568" style="width: 1024px" class="wp-caption alignnone"><img fetchpriority="high" decoding="async" aria-describedby="caption-attachment-859568" class="wp-image-859568 size-full" src="https://globalvoices.org/wp-content/uploads/2026/10/Alfreditopiece-1024x768-1.webp" alt="An illustration of a protest in support of Alfredo Diaz" width="1024" height="768" srcset="https://globalvoices.org/wp-content/uploads/2026/10/Alfreditopiece-1024x768-1.webp 1024w, https://globalvoices.org/wp-content/uploads/2026/10/Alfreditopiece-1024x768-1-400x300.webp 400w, https://globalvoices.org/wp-content/uploads/2026/10/Alfreditopiece-1024x768-1-800x600.webp 800w, https://globalvoices.org/wp-content/uploads/2026/10/Alfreditopiece-1024x768-1-768x576.webp 768w" sizes="(max-width: 1024px) 100vw, 1024px" /><p id="caption-attachment-859568" class="wp-caption-text">Illustration made with AI by <a href="https://runrun.es/">Runrunes</a>. Used with permission.</p></div>
+<p><em>Read our special coverage on <a href="https://globalvoices.org/special/venezuelas-fight-for-democracy/">Venezuela’s fight for democracy</a> and the political crisis that has unfolded since the 2024 presidential elections, after the documented allegations of electoral fraud.</em></p>
+<p class="wp-block-paragraph"><em>This is the first installment of a series by Luis Carlos Díaz covering cases of torture, neglect, and cruel treatment against political prisoners, based on the latest report by the UN Fact-Finding Mission.</em> <a href="https://runrun.es/opinion/621596/alfredo-diaz/"><em>Originally published in Runrunes</em></a><em> and translated by Caracas Chronicles. </em></p>
+<p>To kick off this series, it is worth examining how <a href="https://www.ohchr.org/sites/default/files/documents/hrbodies/hrcouncil/sessions-regular/session63/a-hrc-63-57-auv.pdf">the latest report by the UN Fact-Finding Mission</a> (FFM) on Venezuela was constructed. Based on 213 confidential interviews with 121 victims, relatives, and witnesses, as well as forensic data and judicial documents, the report matches the rigorous evidentiary threshold of “reasonable grounds to believe.”</p>
+<p>Despite the Venezuelan state’s complete refusal to cooperate, the FFM’s technical findings expose a crucial reality. Following <a href="https://globalvoices.org/2026/01/05/a-new-terrifying-sound/">the United States’ military intervention</a> on January 3 and the capture of Nicolás Maduro, interim president Delcy Rodríguez <a href="https://www.theguardian.com/world/2026/jan/14/venezuelan-political-prisoners-released">announced</a> cabinet reshuffles, released hundreds of prisoners, and oversaw a decline in long-term detentions.</p>
+<p>However, the United Nations (UN) found that at least 18 high-ranking officials previously implicated in human rights violations and crimes against humanity remain in key positions of power or military command, including <a href="https://en.wikipedia.org/wiki/Diosdado_Cabello">Diosdado Cabello</a>, <a href="https://en.wikipedia.org/wiki/Gustavo_González_López">Gustavo González López</a>, <a href="https://es.wikipedia.org/wiki/Alexander_Granko">Alexander Granko Arteaga</a>, and <a href="https://en.wikipedia.org/wiki/Vladimir_Padrino_López">Vladimir Padrino López</a>. The core architecture of state repression remains fully intact, providing the structural context for the individual cases documented in this series.</p>
+<p>Before delving into the case of Alfredo Díaz, I want to address a question that often lingers when we discuss the UN reports: What is all this work actually for? What happens to a report like this once it is published?</p>
+<p>The <a href="https://www.ohchr.org/en/hr-bodies/hrc/ffmv/index">Independent International Fact-Finding Mission</a> was not created on a whim, nor was it meant to issue a general diagnosis and stop there. It was established by the Human Rights Council under <a href="https://docs.un.org/es/A/HRC/RES/42/25">Resolution 42/25</a> in 2019, with a specific <a href="https://www.ohchr.org/es/hr-bodies/hrc/ffmv/index">mandate</a>: to document the most serious crimes committed in the country to combat impunity, ensure accountability for those responsible, and secure justice for victims. This carries practical consequences, even if they are not immediate.</p>
+<p>The FFM is an investigative body, one of only seven active mechanisms of its kind worldwide. That alone underscores how extraor

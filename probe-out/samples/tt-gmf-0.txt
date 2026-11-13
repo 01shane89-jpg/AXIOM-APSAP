@@ -1,0 +1,129 @@
+https://www.gmfus.org/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.gmfus.org/">
+  <channel>
+    <title>German Marshall Fund of the United States</title>
+    <link>https://www.gmfus.org/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Toward a Marshall Plan for Ukraine</title>
+  <link>https://www.gmfus.org/news/toward-marshall-plan-ukraine-0</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Toward a Marshall Plan for Ukraine&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;AAugustin@gmfus.org&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2023-05-16T14:47:02-04:00" title="Tuesday, May 16, 2023 - 14:47" class="datetime"&gt;Tue, 05/16/2023 - 14:47&lt;/time&gt;
+&lt;/span&gt;
+3 min read
+</description>
+  <copyright>GMFUS.org</copyright>
+  <category><![CDATA[]]></category>
+  <pubDate>Tue, 16 May 2023 18:47:02 +0000</pubDate>
+    <dc:creator>AAugustin@gmfus.org</dc:creator>
+    <guid isPermaLink="false">22242 at https://www.gmfus.org</guid>
+    </item>
+<item>
+  <title>From Chokepoints to Choices: Europe and IMEC</title>
+  <link>https://www.gmfus.org/news/chokepoints-choices-europe-and-imec</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;From Chokepoints to Choices: Europe and IMEC&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;sdolin&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-12T13:56:50-05:00" title="Thursday, November 12, 2026 - 13:56" class="datetime"&gt;Thu, 11/12/2026 - 13:56&lt;/time&gt;
+&lt;/span&gt;
+10 min read
+</description>
+  <copyright>GMFUS.org</copyright>
+  <category><![CDATA[South and Wider Europe]]></category>
+  <pubDate>Thu, 12 Nov 2026 18:56:50 +0000</pubDate>
+    <dc:creator>sdolin</dc:creator>
+    <guid isPermaLink="false">26570 at https://www.gmfus.org</guid>
+    <categories>South and Wider Europe</categories>
+    </item>
+<item>
+  <title>Withdrawal or Recalibration in the Middle East?</title>
+  <link>https://www.gmfus.org/news/withdrawal-or-recalibration-middle-east</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Withdrawal or Recalibration in the Middle East?&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;sdolin&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-12T09:11:05-05:00" title="Thursday, November 12, 2026 - 09:11" class="datetime"&gt;Thu, 11/12/2026 - 09:11&lt;/time&gt;
+&lt;/span&gt;
+5 min read
+</description>
+  <copyright>GMFUS.org</copyright>
+  <category><![CDATA[South and Wider Europe]]></category>
+  <pubDate>Thu, 12 Nov 2026 14:11:05 +0000</pubDate>
+    <dc:creator>sdolin</dc:creator>
+    <guid isPermaLink="false">26569 at https://www.gmfus.org</guid>
+    <categories>South and Wider Europe</categories>
+    </item>
+<item>
+  <title>Standing firmly by Ukraine's side—and yet on the sidelines?</title>
+  <link>https://www.gmfus.org/node/26568</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Standing firmly by Ukraine's side—and yet on the sidelines?&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;sdolin&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-10T14:37:47-05:00" title="Tuesday, November 10, 2026 - 14:37" class="datetime"&gt;Tue, 11/10/2026 - 14:37&lt;/time&gt;
+&lt;/span&gt;
+
+  &lt;div class="field field--name-field-date field--type-datetime field--label-above"&gt;
+    &lt;div class="field__label"&gt;Date&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;time datetime="2026-11-10T12:00:00Z" class="datetime"&gt;Tue, 11/10/2026 - 12:00&lt;/time&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div class="field field--name-field-external-media-outlet field--type-link field--label-above"&gt;
+    &lt;div class="field__label"&gt;External Media Outlet&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.tagesschau.de/inland/innenpolitik/deutschland-rolle-ukraine-gespraeche-100.html"&gt;ARD Tagesschau&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div class="field field--name-field-author field--type-entity-reference field--label-above"&gt;
+    &lt;div class="field__label"&gt;Authors&lt;/div&gt;
+          &lt;div class="field__items"&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.gmfus.org/find-experts/dr-claudia-major" hreflang="en"&gt;Dr. Claudia Major&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div class="field field--name-field-news-type field--type-entity-reference field--label-above"&gt;
+    &lt;div class="field__label"&gt;News Type&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.gmfus.org/taxonomy/term/18" hreflang="en"&gt;In The News&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <copyright>GMFUS.org</copyright>
+  <category><![CDATA[]]></category>
+  <pubDate>Tue, 10 Nov 2026 19:37:47 +0000</pubDate>
+    <dc:creator>sdolin</dc:creator>
+    <guid isPermaLink="false">26568 at https://www.gmfus.org</guid>
+    </item>
+<item>
+  <title>Trump's midterm disaster: Are Republicans turning against him?</title>
+  <link>https://www.gmfus.org/node/26567</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Trump's midterm disaster: Are Republicans turning against him?&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;sdolin&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-10T14:37:47-05:00" title="Tuesday, November 10, 2026 - 14:37" class="datetime"&gt;Tue, 11/10/2026 - 14:37&lt;/time&gt;
+&lt;/span&gt;
+
+  &lt;div class="field field--name-field-date field--type-datetime field--label-above"&gt;
+    &lt;div class="field__label"&gt;Date&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;time datetime="2026-11-09T12:00:00Z" class="datetime"&gt;Mon, 11/09/2026 - 12:00&lt;/time&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div class="field field--name-field-external-media-outlet field--type-link field--label-above"&gt;
+    &lt;div class="field__label"&gt;External Media Outlet&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.youtube.com/watch?v=G4ov8Lp1L5I"&gt;DW News&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div class="field field--name-field-author field--type-entity-reference field--label-above"&gt;
+    &lt;div class="field__label"&gt;Authors&lt;/div&gt;
+          &lt;div class="field__items"&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.gmfus.org/find-experts/bruce-stokes" hreflang="en"&gt;Bruce Stokes&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div class="field field--name-field-news-type field--type-entity-reference field--label-above"&gt;
+    &lt;div class="field__label"&gt;News Type&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.gmfus.org/taxonomy/term/18" hreflang="en"&gt;In The News&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <copyright>GMFUS.org</copyright>
+  <category><![CDATA[]]></category>
+  <pubDate>Tue, 10 Nov 2026 19:37:47 +0000</pubDate>
+    <dc:creator>sdolin</dc:creator>
+    <guid isPermaLink=

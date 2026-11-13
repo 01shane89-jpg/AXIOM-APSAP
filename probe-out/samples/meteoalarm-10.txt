@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:FR</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:19.323768Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR718</value>
+    </cap:geocode>
+    <link title="Haute-Savoie" href="https://meteoalarm.org?geocode=EMMA_ID:FR035" hreflang="en"/>
+    <cap:areaDesc>Haute-Savoie</cap:areaDesc>
+    <cap:event>Moderate avalanches warning</cap:event>
+    <cap:sent>2026-11-12T21:00:49+00:00</cap:sent>
+    <cap:expires>2026-11-13T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.0.FR.20261112220049.109028</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/966933ab-319f-48da-aee4-806b720b4bd0"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T21:00:49Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/966933ab-319f-48da-aee4-806b720b4bd0?index_info=1&amp;index_area=2&amp;index_geocode=0</id>
+    <title>Yellow Avalanches Warning issued for France - Haute-Savoie</title>
+    <updated>2026-11-12T21:00:49Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR714</value>
+    </cap:geocode>
+    <link title="Isère" href="https://meteoalarm.org?geocode=EMMA_ID:FR034" hreflang="en"/>
+    <cap:areaDesc>Isère</cap:areaDesc>
+    <cap:event>Moderate avalanches warning</cap:event>
+    <cap:sent>2026-11-12T21:00:49+00:00</cap:sent>
+    <cap:expires>2026-11-13T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.0.FR.20261112220049.109028</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/966933ab-319f-48da-aee4-806b720b4bd0"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T21:00:49Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/966933ab-319f-48da-aee4-806b720b4bd0?index_info=1&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Yellow Avalanches Warning issued for France - Isère</title>
+    <updated>2026-11-12T21:00:49Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR822</value>
+    </cap:geocode>
+    <link title="Hautes Alpes" href="https://meteoalarm.org?geocode=EMMA_ID:FR033" hreflang="en"/>
+    <cap:areaDesc>Hautes Alpes</cap:areaDesc>
+    <cap:event>Moderate avalanches warning</cap:event>
+    <cap:sent>2026-11-12T21:00:49+00:00</cap:sent>
+    <cap:expires>2026-11-13T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.0.FR.20261112220049.109028</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/966933ab-319f-48da-aee4-806b720b4bd0"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T21:00:49Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/966933ab-319f-48da-aee4-806b720b4bd0?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Avalanches Warning issued for France - Hautes Alpes</title>
+    <updated>2026-11-12T21:00:49Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR832</value>
+    </cap:geocode>
+    <link title="Haute-Corse" href="https://meteoalarm.org?geocode=EMMA_ID:FR089" hreflang="en"/>
+    <cap:areaDesc>Haute-Corse</cap:areaDesc>
+    <cap:event>Moderate flooding warning</cap:event>
+    <cap:sent>2026-11-12T21:00:47+00:00</cap:sent>
+    <cap:expires>2026-11-13T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20261112220047.603024</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/78489914-e4b5-4dea-bda9-fd24fdaab762"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T21:00:47Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/78489914-e4b5-4dea-bda9-fd24fdaab762?index_info=1&amp;index_area=6&amp;index_geocode=0</id>
+    <title>Yellow Flooding Warning issued for France - Haute-Corse</title>
+    <updated>2026-11-12T21:00:47Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR812</value>
+    </cap:geocode>
+    <link title="Gard" href="https://meteoalarm.org?geocode=EMMA_ID:FR022" hreflang="en"/>
+    <cap:areaDesc>Gard</cap:areaDesc>
+    <cap:event>Moderate flooding warning</cap:event>
+    <cap:sent>2026-11-12T21:00:47+00:00</cap:sent>
+    <cap:expires>2026-11-13T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20261112220047.603024</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/78489914-e4b5-4dea-bda9-fd24f

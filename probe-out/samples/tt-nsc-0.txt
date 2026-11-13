@@ -1,0 +1,88 @@
+https://newstrategycenter.ro/ro/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>New Strategy Center</title>
+	<atom:link href="https://newstrategycenter.ro/ro/feed/" rel="self" type="application/rss+xml" />
+	<link>https://newstrategycenter.ro</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 10:12:14 +0000</lastBuildDate>
+	<language>ro-RO</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://newstrategycenter.ro/wp-content/uploads/2019/01/cropped-fav-32x32.png</url>
+	<title>New Strategy Center</title>
+	<link>https://newstrategycenter.ro</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>NSC la Bruxelles: masă rotundă dedicată rezilienței democratice în Europa</title>
+		<link>https://newstrategycenter.ro/ro/nsc-la-bruxelles-masa-rotunda-dedicata-rezilientei-democratice-in-europa/</link>
+		
+		<dc:creator><![CDATA[New Strategy Center]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 10:12:14 +0000</pubDate>
+				<category><![CDATA[Evenimente]]></category>
+		<guid isPermaLink="false">https://newstrategycenter.ro/?p=24166</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[<div id="cmsmasters_row_" class="cmsmasters_row cmsmasters_color_scheme_default cmsmasters_row_top_default cmsmasters_row_bot_default cmsmasters_row_boxed">
+<div class="cmsmasters_row_outer_parent">
+<div class="cmsmasters_row_outer">
+<div class="cmsmasters_row_inner">
+<div class="cmsmasters_row_margin">
+<div id="cmsmasters_column_" class="cmsmasters_column one_first">
+<div class="cmsmasters_column_inner"><div class="cmsmasters_text">
+<p>Ana Revenco, expert senior asociat New Strategy Center, a participat, în data de 10 decembrie, la masa rotundă „Building Europe’s Cognitive Defence: Why Business, Regions and Candidate Countries Must Converge in the EU Democracy Shield”, organizată de GLOBSEC la Bruxelles.<br />
+În cadrul intervenției sale, Ana Revenco a prezentat experiența Republicii Moldova în combaterea amenințărilor hibride, a dezinformării și a operațiunilor de manipulare și interferență informațională străină (FIMI), subliniind că acestea nu reprezintă simple provocări de comunicare publică, ci amenințări directe la adresa securității naționale, a valorilor democratice și a încrederii cetățenilor în instituții.</p>
+<p><img fetchpriority="high" decoding="async" class=" wp-image-24169 alignnone" src="https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19.jpg" alt="" width="397" height="264" srcset="https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19.jpg 2000w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-300x200.jpg 300w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-1024x683.jpg 1024w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-768x512.jpg 768w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-1536x1025.jpg 1536w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-580x387.jpg 580w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-860x574.jpg 860w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-1160x774.jpg 1160w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-19-1200x800.jpg 1200w" sizes="(max-width: 397px) 100vw, 397px" /><br />
+Un punct central al discuțiilor l-a constituit necesitatea unei abordări coordonate la nivel european, având în vedere caracterul transfrontalier al acestor amenințări și utilizarea tot mai frecventă a inteligenței artificiale în operațiunile de manipulare informațională. În acest context, Ana Revenco a evidențiat importanța dezvoltării unor mecanisme comune de avertizare timpurie, a schimbului de informații în timp real și a consolidării cooperării dintre instituțiile publice, mediul de afaceri, mass-media și societatea civilă.<br />
+De asemenea, a subliniat că experiența Republicii Moldova în contracararea atacurilor hibride poate contribui la dezvoltarea inițiativei European Democracy Shield și la consolidarea rezilienței democratice europene. Integrarea statelor candidate în aceste mecanisme este esențială pentru construirea unui răspuns european coerent și eficient în fața amenințărilor care vizează procesele democratice și securitatea întregului continent.</p>
+<p><img decoding="async" class=" wp-image-24168 alignnone" src="https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22.jpg" alt="" width="383" height="255" srcset="https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22.jpg 2000w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-300x200.jpg 300w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-1024x683.jpg 1024w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-768x512.jpg 768w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-1536x1025.jpg 1536w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-580x387.jpg 580w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-860x574.jpg 860w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-1160x774.jpg 1160w, https://newstrategycenter.ro/wp-content/uploads/2026/11/26-11-10_Cognitive_Defence-22-1200x800.jpg 1200w" sizes="(max-width: 383px) 100vw, 383px" /></p>
+</div>
+<div class="cmsmasters_text">
+<p></p>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Neptun Action 26</title>
+		<link>https://newstrategycenter.ro/ro/neptun-action-26/</link>
+		
+		<dc:creator><![CDATA[New Strategy Center]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 07:35:23 +0000</pubDate>
+				<category><![CDATA[Evenimente]]></category>
+		<guid isPermaLink="false">https://newstrategycenter.ro/?p=24132</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[<div id="cmsmasters_row_" class="cmsmasters_row cmsmasters_color_scheme_default cmsmasters_row_top_default cmsmasters_row_bot_default cmsmasters_row_boxed">
+<div class="cmsmasters_row_outer_parent">
+<div class="cmsmasters_row_outer">
+<div class="cmsmasters_row_inner">
+<div class="cmsmasters_row_margin">
+<div id="cmsmasters_column_" class="cmsmasters_column one_first">
+<div class="cmsmasters_column_inner"><div class="cmsmasters_text">
+<div dir="auto">În data de 09 noiembrie, Departamentul pentru Situații de Urgență și Direcția Generală de Protecție Internă din cadrul Ministerului Afacerilor Interne au organizat în parteneriat cu  New Strategy Center, un exercițiu având drept obiectiv testarea  în teren a cooperării interinstituționale în misiuni pentru contracararea unor amenințări la adresa  proiectelor offshore de interes național.</div>
+<div dir="auto"><img decoding="async" class=" wp-image-24136 alignnone" src="https://newstrategycenter.ro/wp-content/uploads/2026/11/31dffc15-0740-4823-8425-304249c0be68.jpg" alt="" width="332" height="249" srcset="https://newstrategycenter.ro/wp-content/uploads/2026/11/31dffc15-0740-4823-8425-304249c0be68.jpg 2016w, https://newstrategycenter.ro/wp-content/uploads/2026/11/31dffc15-0740-4823-8425-304249c0be68-300x225.jpg 300w, https://newstrategycenter.ro/wp-content/uploads/2026/11

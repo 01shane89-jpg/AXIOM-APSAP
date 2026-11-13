@@ -1,0 +1,59 @@
+https://www.thedialogue.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Inter-American Dialogue</title>
+	<atom:link href="https://thedialogue.org/feed" rel="self" type="application/rss+xml" />
+	<link>https://thedialogue.org</link>
+	<description></description>
+	<lastBuildDate>Thu, 01 Oct 2026 21:09:36 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://thedialogue.org/wp-content/uploads/2024/02/dialogue.fav_.iocn_-e1730135772521-150x150.png</url>
+	<title>Inter-American Dialogue</title>
+	<link>https://thedialogue.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>This Sunday, Brazil Is Choosing More Than Its Next President</title>
+		<link>https://thedialogue.org/blogs/2026/10/this-sunday-brazil-is-choosing-more-than-its-next-president</link>
+					<comments>https://thedialogue.org/blogs/2026/10/this-sunday-brazil-is-choosing-more-than-its-next-president#respond</comments>
+		
+		<dc:creator><![CDATA[Giulia Branco Spiess]]></dc:creator>
+		<pubDate>Thu, 01 Oct 2026 21:09:36 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Brazil]]></category>
+		<category><![CDATA[Brazil congress]]></category>
+		<category><![CDATA[Brazil elections]]></category>
+		<category><![CDATA[brazil stf]]></category>
+		<category><![CDATA[Flávio Bolsonaro]]></category>
+		<category><![CDATA[Lula]]></category>
+		<guid isPermaLink="false">https://thedialogue.org/?p=578366</guid>
+
+					<description><![CDATA[Brazil's 2026 election has been largely framed around the presidential race, and understandably so: this month, Brazilians choose between candidates whose platforms differ sharply.]]></description>
+										<content:encoded><![CDATA[<p>Brazil&#8217;s 2026 election has been largely framed around the presidential race, and understandably so: this month, Brazilians choose between candidates whose platforms differ sharply.</p>
+<p>The race also marks the end of a political era. This will almost certainly be incumbent Luiz Inácio Lula da Silva&#8217;s last presidential campaign, forcing a question the Brazilian left has postponed for years: who comes after Lula? The right&#8217;s future is hardly clearer. Bolsonarismo remains a powerful political force, but whether Jair Bolsonaro&#8217;s son Flávio can consolidate his position as its next leader is far from settled, as is the unity of the Bolsonaro family itself.</p>
+<p>Yet an important part of this election is getting much less international attention: what happens to Congress.</p>
+<p>Presidents still matter enormously in Brazil, and recent years have shown how a single leader can affect the country&#8217;s institutions. The next president, for example, will nominate three new Supreme Court justices during the term. But whoever takes office in January 2027 will also face a Congress that has become considerably more powerful over the past two decades.</p>
+<p>A recent <a href="https://fundacaofhc.org.br/publicacao/o-fortalecimento-do-legislativo-no-brasil-contribuicao-para-o-aperfeicoamento-institucional-do-congresso/" target="_blank" rel="noopener">study</a> coordinated by Beatriz Rey and Sergio Fausto for the Fernando Henrique Cardoso Foundation documents how Congress has expanded its influence over both policymaking and the federal budget, and how a growing share of that power has concentrated in its leadership. The trend accelerated in the mid-2010s and continued regardless of who held the presidency: Dilma Rousseff until her impeachment, then Michel Temer, Jair Bolsonaro, and Lula in his third term.</p>
+<p>A more powerful Congress is not in itself bad news. Healthy democracies need strong legislatures. The more difficult question is how Brazil got there. As Rey and Fausto argue, some of these changes have relied on informal arrangements that reduced transparency and confined decision-making to a small group of congressional leaders.</p>
+<p>The shift is hard to understand without the <em>Centrão</em>, a broad and fluid group of mostly centrist and center-right parties held together more by pragmatism than by ideology. The group’s support for governments has long hinged on bargaining over appointments and resources, and its influence has grown with Congress&#8217;s control over the federal budget. Recent elections illustrate this strength. In the 2024 municipal elections, for example, the <em>Centrão</em> parties elected mayors in more than 70 percent of Brazilian municipalities.</p>
+<p>Little suggests that the 2026 election will substantially alter this structure. About <a href="https://www.diap.org.br/index.php/noticias/agencia-diap/93168-camara-pode-ter-renovacao-abaixo-da-media-historica" target="_blank" rel="noopener">85 percent</a> of the 513 members of the House of Representatives are running for reelection. Historically, according to the Inter-Union Department of Parliamentary Advisory (<a href="https://www.diap.org.br/index.php/noticias/agencia-diap/93152-diap-projeta-nova-composicao-da-camara-para-2027" target="_blank" rel="noopener">DIAP</a>), about 65 percent of incumbents who seek another term are reelected, a rate DIAP estimates could reach 68 to 72 percent this year. Incumbents benefit from name recognition, established electoral bases, and access to resources, including congressional budget amendments directed to their constituencies.</p>
+<p>High incumbent reelection alone does not explain Congress&#8217;s growing power, but it can reinforce what does. The <em>Centrão</em> is the clearest case. In some of its largest parties, about nine out of ten House members are seeking another term. If many return, the forces behind Congress&#8217;s rise are likely to remain central to the next administration. Whoever wins the presidency will again have to negotiate with these parties to build a majority.</p>
+<p>The Senate matters for a different reason. Its new composition could reshape the relationship between Congress and the Supreme Court. Two-thirds of its seats, 54 out of 81, are up for election this year, and recent polling points to a shift to the right, although many races remain uncertain. The Senate has the authority to remove Supreme Court justices, and impeachment has become more plausible amid an unprecedented crisis inside the Court linked to the <em>Banco Master</em> case, a multibillion-dollar financial fraud scandal. The investigations have raised questions about alleged ties between Supreme Court justices and the scandal, which has also reached authorities across the political spectrum. Calls for impeachment, once associated largely with the Bolsonaro-aligned right, are now appearing among candidates from other parts of the political spectrum as well.</p>
+<p>Brazil is therefore entering a transition much larger than the choice between Lula and Flávio Bolsonaro. The balance of power among its institutions has shifted more dramatically than at almost any point since the 1988 Constitution. The open question is how the presidency, Congress, and the Supreme Court will divide power from now on.</p>
+<p>A politically skilled president matters but cannot alone address the concentration of power and lack of transparency within Congress. Some changes will have to come from the legislature itself. Rey and Fausto point, for example, to stronger permanent committees, more predictable legislative procedures, and a more institutionalized role for congressional leadership. Political parties, too, shape how power and resources are distributed internally. Within legal requirements, party leaders re

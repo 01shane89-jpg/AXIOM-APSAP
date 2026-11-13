@@ -1,0 +1,101 @@
+https://issi.org.pk/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Institute of Strategic Studies Islamabad</title>
+	<atom:link href="https://issi.org.pk/feed/" rel="self" type="application/rss+xml" />
+	<link>https://issi.org.pk</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 10:28:44 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.8.12</generator>
+
+<image>
+	<url>https://issi.org.pk/wp-content/uploads/2026/08/cropped-ISSI-logo-Black-small-32x32.png</url>
+	<title>Institute of Strategic Studies Islamabad</title>
+	<link>https://issi.org.pk</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Seminar titled “Lethal Autonomous Weapon Systems (LAWS): From International Deliberations to a Legal Response”</title>
+		<link>https://issi.org.pk/seminar-titled-lethal-autonomous-weapon-systems-laws-from-international-deliberations-to-a-legal-response/</link>
+		
+		<dc:creator><![CDATA[ISSI Web Administrator]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 10:28:44 +0000</pubDate>
+				<category><![CDATA[ACDC Events]]></category>
+		<category><![CDATA[Upcoming Events]]></category>
+		<guid isPermaLink="false">https://issi.org.pk/?p=65168</guid>
+
+					<description><![CDATA[Arms Control and Disarmament Centre (ACDC) at the Institute of Strategic Studies Islamabad (ISSI), in collaboration with the Sustainable Peace and Development Organization (SPADO), is organizing a Seminar titled “Lethal Autonomous Weapon Systems (LAWS): From International Deliberations to a Legal Response” on 17 November 2026 at 11:00 AM]]></description>
+										<content:encoded><![CDATA[<p style="text-align: center;">Arms Control and Disarmament Centre (ACDC)<br />
+at the Institute of Strategic Studies Islamabad (ISSI),<br />
+in collaboration with the<br />
+Sustainable Peace and Development Organization (SPADO),<br />
+is organizing a<br />
+<strong>Seminar titled “Lethal Autonomous Weapon Systems (LAWS):<br />
+From International Deliberations to a Legal Response”</strong><br />
+on<br />
+17 November 2026 at 11:00 AM</p>
+<p><img fetchpriority="high" decoding="async" class="aligncenter size-full wp-image-65169" src="http://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026.jpeg" alt="" width="800" height="446" srcset="https://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026.jpeg 800w, https://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026-300x167.jpeg 300w, https://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026-768x428.jpeg 768w, https://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026-150x84.jpeg 150w, https://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026-600x335.jpeg 600w, https://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026-696x388.jpeg 696w, https://issi.org.pk/wp-content/uploads/2026/11/Prog_Nov_17_2026-753x420.jpeg 753w" sizes="(max-width: 800px) 100vw, 800px" /></p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Issue Brief on &#8220;Between Waiting and Erasure: The Half Widows of Indian Illegally Occupied Jammu &#038; Kashmir&#8221;</title>
+		<link>https://issi.org.pk/issue-brief-on-between-waiting-and-erasure-the-half-widows-of-indian-illegally-occupied-jammu-kashmir/</link>
+		
+		<dc:creator><![CDATA[Zainab Noor]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 10:20:55 +0000</pubDate>
+				<category><![CDATA[Young ISSI Professionals Corner]]></category>
+		<guid isPermaLink="false">https://issi.org.pk/?p=65162</guid>
+
+					<description><![CDATA[Introduction The phenomenon of forced disappearances in Indian Illegally Occupied Jammu and Kashmir (IIOJK) since 1989 has resulted in a new social category – the half widow – a woman whose husband has disappeared without any legal declaration of death. The number of these women is estimated at about 1,500[1] but they live in a [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><strong>Introduction </strong></p>
+<p><strong>The phenomenon of forced disappearances in Indian Illegally Occupied Jammu and Kashmir (IIOJK) since 1989 has resulted in a new social category – the half widow – a woman whose husband has disappeared without any legal declaration of death.</strong> <strong>The number of these women is estimated at about 1,500<a href="#_ftn1" name="_ftnref1">[1]</a> but they live in a condition of legal and existential vacuum, with no widow status, inability to inherit or remarry without legal prosecution and being deprived of state benefits.</strong> <strong>This is the most lasting gender-based consequence of the conflict in IIOJK.</strong> <strong>This issue brief analyses the impacts of this crisis in a legal, economic, psychological and political domain; outlines the shortcomings of various policies and structures of impunity contributing to this crisis; and presents specific recommendations for international players, regional actors and civil society.</strong></p>
+<p><a href="http://issi.org.pk/wp-content/uploads/2026/11/IB_Zainab_Noor_Nov_12__2026.pdf"><strong>Read More</strong></a></p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>ACDC News and Views November 5 – November 11</title>
+		<link>https://issi.org.pk/acdc-news-and-views-november-5-november-11/</link>
+		
+		<dc:creator><![CDATA[ISSI Web Administrator]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 05:04:47 +0000</pubDate>
+				<category><![CDATA[ACDC News & Views]]></category>
+		<guid isPermaLink="false">https://issi.org.pk/?p=65160</guid>
+
+					<description><![CDATA[&#160; 1. Russia and United States Oppose a Binding International Framework on Autonomous Weapons https://www.theguardian.com/world/2026/nov/06/autonomous-weapons-ai-russia-us-binding-rules 2. First ever autonomous Royal Navy squadron launches as part of investment in hybrid operations https://www.royalnavy.mod.uk/news/2026/november/09/20261109-autonomous-squadron 3. Pentagon can’t track millions of F-35 spare parts, watchdog finds https://www.defensenews.com/pentagon/2026/11/10/pentagon-cant-track-millions-of-f-35-spare-parts-watchdog-finds/ 4. Strike drones launched from British aircraft carrier for the first time [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>&nbsp;</p>
+<table border="1" width="660" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top" width="48">1.</td>
+<td valign="top" width="612">Russia and United States Oppose a Binding International Framework on Autonomous Weapons</p>
+<p><a href="https://www.theguardian.com/world/2026/nov/06/autonomous-weapons-ai-russia-us-binding-rules" target="_blank" rel="noopener" data-saferedirecturl="redir.hsp?url=https%3A%2F%2Fwww.theguardian.com%2Fworld%2F2026%2Fnov%2F06%2Fautonomous-weapons-ai-russia-us-binding-rules">https://www.theguardian.com/world/2026/nov/06/autonomous-weapons-ai-russia-us-binding-rules</a></td>
+</tr>
+<tr>
+<td valign="top" width="48">2.</td>
+<td valign="top" width="612">First ever autonomous Royal Navy squadron launches as part of investment in hybrid operations</p>
+<p><a href="https://www.royalnavy.mod.uk/news/2026/november/09/20261109-autonomous-squadron" target="_blank" rel="noopener" data-saferedirecturl="redir.hsp?url=https%3A%2F%2Fwww.royalnavy.mod.uk%2Fnews%2F2026%2Fnovember%2F09%2F20261109-autonomous-squadron">https://www.royalnavy.mod.uk/news/2026/november/09/20261109-autonomous-squadron</a></td>
+</tr>
+<tr>
+<td valign="top" width="48">3.</td>
+<td valign="top" width="612">Pentagon can’t track millions of F-35 spare parts, watchdog finds</p>
+<p><a href="https://www.defensenews.com/pentagon/2026/11/10/pentagon-cant-track-millions-of-f-35-spare-

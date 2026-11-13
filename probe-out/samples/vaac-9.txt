@@ -1,0 +1,18 @@
+https://www.data.jma.go.jp/svd/vaac/data/TextData/2026/20261105_30027000_0370_Text.html
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Tokyo VAAC | Volcanic Ash Advisory Text</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../../common/english.css">
+</head>
+<body>
+	<div id="VAA_TEXT">Volcanic Ash Advisory Text</div>
+	<hr id="VAA_TEXTline">
+	<div class="mtx">
+		<!-- VAA Text Start -->FVFE01 RJTD 051800<BR>VA ADVISORY<BR>DTG: 20261105/1800Z<BR>VAAC: TOKYO<BR>VOLCANO: SHEVELUCH 300270<BR>PSN: N5639 E16122<BR>AREA: RUSSIA<BR>SOURCE ELEV: 3283M AMSL<BR>ADVISORY NR: 2026/370<BR>INFO SOURCE: HIMAWARI-9<BR>ERUPTION DETAILS: NO ERUPTION. RE-SUSPENDED VA<BR>OBS VA DTG: 05/1720Z<BR>OBS VA CLD: SFC/FL120 N5649 E16125 - N5557 E16350 - N5541 E16344 - <BR>N5633 E16120 MOV SE 35KT<BR>FCST VA CLD +6 HR: 05/2320Z SFC/FL120 N5426 E16926 - N5328 E16936 - <BR>N5430 E16454 - N5639 E16122<BR>FCST VA CLD +12 HR: 06/0520Z SFC/FL120 N5147 E17511 - N5058 E17507 - <BR>N5342 E16617 - N5639 E16122 - N5548 E16539<BR>FCST VA CLD +18 HR: NO VA EXP<BR>RMK: RE-SUSPENDED VA.  SOME PART OF VA OBSCURED BY MET CLOUD.<BR>NXT ADVISORY: 20261106/0000Z=<BR><!-- VAA Text End -->
+	</div>
+	<hr id="VAA_TEXTline">
+	<a href="javascript:history.back()">Back to Prev Page</a>
+</body>
+</html>

@@ -1,0 +1,84 @@
+https://www.brookings.edu/feed/
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<link rel="alternate" href="https://www.brookings.edu/" hreflang="en-US" />
+<link rel="alternate" href="https://www.brookings.edu/es/" hreflang="es" />
+<link rel="alternate" href="https://www.brookings.edu/ar/" hreflang="ar" />
+<link rel="alternate" href="https://www.brookings.edu/zh/" hreflang="zh-CN" />
+<link rel="alternate" href="https://www.brookings.edu/fr/" hreflang="fr" />
+<link rel="alternate" href="https://www.brookings.edu/ko/" hreflang="ko" />
+<link rel="alternate" href="https://www.brookings.edu/ru/" hreflang="ru" />
+<link rel="alternate" href="https://www.brookings.edu/pt/" hreflang="pt" />
+<link rel="alternate" href="https://www.brookings.edu/ja/" hreflang="ja" />
+<link rel="alternate" href="https://www.brookings.edu/ne/" hreflang="ne" />
+<link rel="alternate" href="https://www.brookings.edu/ny/" hreflang="en-MW" />
+<link rel="alternate" href="https://www.brookings.edu/zh_tw/" hreflang="zh-TW" />
+
+	<!-- This site is optimized with the Yoast SEO Premium plugin v26.0 (Yoast SEO v28.8) - https://yoast.com/product/yoast-seo-premium-wordpress/ -->
+	<title>Brookings - Quality. Independence. Impact.</title>
+	<meta name="description" content="The Brookings Institution is a nonprofit public policy organization based in Washington, DC. Our mission is to conduct in-depth research that leads to new ideas for solving problems facing society at the local, national and global level." />
+	<link rel="canonical" href="https://www.brookings.edu/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:locale:alternate" content="es_MX" />
+	<meta property="og:locale:alternate" content="ar_AR" />
+	<meta property="og:locale:alternate" content="zh_CN" />
+	<meta property="og:locale:alternate" content="fr_FR" />
+	<meta property="og:locale:alternate" content="ko_KR" />
+	<meta property="og:locale:alternate" content="ru_RU" />
+	<meta property="og:locale:alternate" content="pt_BR" />
+	<meta property="og:locale:alternate" content="ja_JP" />
+	<meta property="og:locale:alternate" content="ne_NP" />
+	<meta property="og:locale:alternate" content="" />
+	<meta property="og:locale:alternate" content="zh_TW" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Brookings - Quality. Independence. Impact." />
+	<meta property="og:description" content="The Brookings Institution is a nonprofit public policy organization based in Washington, DC. Our mission is to conduct in-depth research that leads to new ideas for solving problems facing society at the local, national and global level." />
+	<meta property="og:url" content="https://www.brookings.edu/" />
+	<meta property="og:site_name" content="Brookings" />
+	<meta property="article:modified_time" content="2026-11-09T16:13:00+00:00" />
+	<meta property="og:image" content="https://www.brookings.edu/wp-content/uploads/2023/06/brookings-share-default.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:image" content="https://www.brookings.edu/wp-content/uploads/2023/06/brookings-share-default.jpg?quality=50" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"WebPage","@id":"https:\/\/www.brookings.edu\/","url":"https:\/\/www.brookings.edu\/","name":"Brookings - Quality. Independence. Impact.","isPartOf":{"@id":"https:\/\/www.brookings.edu\/#website"},"datePublished":"2023-05-07T17:44:55+00:00","dateModified":"2026-11-09T16:13:00+00:00","description":"The Brookings Institution is a nonprofit public policy organization based in Washington, DC. Our mission is to conduct in-depth research that leads to new ideas for solving problems facing society at the local, national and global level.","breadcrumb":{"@id":"https:\/\/www.brookings.edu\/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/www.brookings.edu\/"]}]},{"@type":"BreadcrumbList","@id":"https:\/\/www.brookings.edu\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home"}]},{"@type":"WebSite","@id":"https:\/\/www.brookings.edu\/#website","url":"https:\/\/www.brookings.edu\/","name":"Brookings","description":"","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/www.brookings.edu\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link rel='dns-prefetch' href='//js.hs-scripts.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//cdn.jsdelivr.net' />
+<link rel='dns-prefetch' href='//v0.wordpress.com' />
+<link rel="alternate" type="application/rss+xml" title="Brookings &raquo; Feed" href="https://www.brookings.edu/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Brookings &raquo; Comments Feed" href="https://www.brookings.edu/comments/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://www.brookings.edu/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.brookings.edu%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://www.brookings.edu/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.brookings.edu%2F&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<link rel='stylesheet' id='all-css-6' href='https://www.brookings.edu/wp-content/plugins/wp-smartcrop/css/image-renderer.css?m=1794417243g' type='text/css' media='all' />
+<style id="jetpack-stats-inline-css">
+img#wpstats{display:none}
+/*# sourceURL=jetpack-stats-inline-css */
+</style>
+<link rel='stylesheet' id='brookings-fonts-css' href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&#038;family=Newsreader:ital,opsz@0,6..72;1,6..72&#038;display=swap' media='all' />
+<link rel='stylesheet' id='swiper-css' href='https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='all-css-12' href='https://www.brookings.edu/wp-content/themes/brookings/assets/styles/photoswipe.css?m=1794417243g' type='text/css' media='all' />
+<link rel='stylesheet' id='brookings-public-css' href='https://www.brookings.edu/wp-content/themes/brookings/assets/styles/public.css?ver=1794508151' media='all' />
+<link rel='stylesheet' id='brookings-app-css' href='https://www.brookings.edu/wp-content/themes/brookings/assets/styles/app.css?ver=1794417243' media='all' />
+<link rel='stylesheet' id='all-css-16' href='https://www.brookings.edu/wp-content/plugins/wp-search-with-algolia/css/algolia-autocomplete.css?m=1794417243g' type='text/css' media='all' />
+<script type="text/javascript" src="https://www.brookings.edu/_static/??-eJzTLy/QzcxLzilNSS3WzwKiwtLUokoopZebmaeXVayjj0+Rbm5melFiSSpUsX2uraG5pbGRgamBmVEWAK9wIhs=" ></script><script id="brookings-uikit-js" src="//cdn.jsdelivr.net/npm/uikit@3.15.1/dist/js/uikit.min.js?ver=3.15.19"></script>
+<script id="brookings-uikit-icons-js

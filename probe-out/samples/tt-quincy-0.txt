@@ -1,0 +1,169 @@
+https://quincyinst.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Quincy Institute for Responsible Statecraft</title>
+	<atom:link href="https://quincyinst.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://quincyinst.org/</link>
+	<description>A world where peace is the norm and war the exception</description>
+	<lastBuildDate>Thu, 12 Nov 2026 20:31:56 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://quincyinst-2.s3.amazonaws.com/wp-content/uploads/2019/12/17222028/cropped-Qi_FinalLogo_Blue-1-32x32.png</url>
+	<title>Quincy Institute for Responsible Statecraft</title>
+	<link>https://quincyinst.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Did Iran Win the US Midterms? What Comes Next?</title>
+		<link>https://www.youtube.com/watch?v=nn77E0pczXI</link>
+		
+		<dc:creator><![CDATA[Trita Parsi]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 20:31:50 +0000</pubDate>
+				<category><![CDATA[International Conflict]]></category>
+		<category><![CDATA[U.S. Politics]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37441</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.youtube.com/watch?v=nn77E0pczXI">Did Iran Win the US Midterms? What Comes Next?</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Trump Says No Iran Deal: 5 Scenarios for What Happens Next</title>
+		<link>https://www.newsweek.com/trump-says-no-iran-deal-5-scenarios-for-what-happens-next-12705313</link>
+		
+		<dc:creator><![CDATA[Trita Parsi]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 18:47:33 +0000</pubDate>
+				<category><![CDATA[International Conflict]]></category>
+		<category><![CDATA[International Relations]]></category>
+		<category><![CDATA[U.S. Military]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37437</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.newsweek.com/trump-says-no-iran-deal-5-scenarios-for-what-happens-next-12705313">Trump Says No Iran Deal: 5 Scenarios for What Happens Next</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>How Trump Lost The Iran War</title>
+		<link>https://www.youtube.com/watch?v=2eHQo2z6Ljg</link>
+		
+		<dc:creator><![CDATA[Trita Parsi]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 21:38:39 +0000</pubDate>
+				<category><![CDATA[International Conflict]]></category>
+		<category><![CDATA[U.S. Military]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37412</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.youtube.com/watch?v=2eHQo2z6Ljg">How Trump Lost The Iran War</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>How Trump Lost The Iran War</title>
+		<link>https://www.youtube.com/watch?v=psDiaTPHo00</link>
+		
+		<dc:creator><![CDATA[Trita Parsi]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 21:30:41 +0000</pubDate>
+				<category><![CDATA[International Conflict]]></category>
+		<category><![CDATA[International Relations]]></category>
+		<category><![CDATA[U.S. Military]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37405</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.youtube.com/watch?v=psDiaTPHo00">How Trump Lost The Iran War</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Netanyahu’s Security Cabinet Orders Military to Prepare for Iran Attack</title>
+		<link>https://www.youtube.com/watch?v=K9pElspJdo8</link>
+		
+		<dc:creator><![CDATA[Amir Handjani]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 21:10:00 +0000</pubDate>
+				<category><![CDATA[International Conflict]]></category>
+		<category><![CDATA[U.S. Military]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37432</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.youtube.com/watch?v=K9pElspJdo8">Netanyahu’s Security Cabinet Orders Military to Prepare for Iran Attack</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Rubio backs blockade, Vance wants deal: Is Trump’s team split on Iran war?</title>
+		<link>https://www.aljazeera.com/news/2026/11/11/is-trump-team-split-on-iran</link>
+		
+		<dc:creator><![CDATA[Trita Parsi]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 18:32:00 +0000</pubDate>
+				<category><![CDATA[Conflict Resolution]]></category>
+		<category><![CDATA[International Conflict]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37408</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.aljazeera.com/news/2026/11/11/is-trump-team-split-on-iran">Rubio backs blockade, Vance wants deal: Is Trump’s team split on Iran war?</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Israel Targets U.S. Conservatives in Influence Operation</title>
+		<link>https://www.dropsitenews.com/p/israel-influence-united-states-conservatives-parler</link>
+		
+		<dc:creator><![CDATA[Eli Clifton]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 18:23:00 +0000</pubDate>
+				<category><![CDATA[Foreign Influence]]></category>
+		<category><![CDATA[International Conflict]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37402</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.dropsitenews.com/p/israel-influence-united-states-conservatives-parler">Israel Targets U.S. Conservatives in Influence Operation</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>What Democrats Should Do Now &#8212; From Anti-War Wave to Pro-America Future</title>
+		<link>https://quincyinst.org/2026/11/11/what-democrats-should-do-now-from-anti-war-wave-to-pro-america-future/</link>
+		
+		<dc:creator><![CDATA[Ben Freeman]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 14:17:00 +0000</pubDate>
+				<category><![CDATA[International Conflict]]></category>
+		<category><![CDATA[U.S. Militarism]]></category>
+		<category><![CDATA[U.S. Politics]]></category>
+		<guid isPermaLink="false">https://quincyinst.org/?p=37375</guid>
+
+					<description><![CDATA[<p>“The reason we lost is the war,” declared Vice President JD Vance in a lengthy post on X. And, he’s <a class="more-link" href="https://quincyinst.org/2026/11/11/what-democrats-should-do-now-from-anti-war-wave-to-pro-america-future/" data-wpel-link="internal">...</a></p>
+<p>The post <a href="https://quincyinst.org/2026/11/11/what-democrats-should-do-now-from-anti-war-wave-to-pro-america-future/">What Democrats Should Do Now &#8212; From Anti-War Wave to Pro-America Future</a> appeared first on <a href="https://quincyinst.org">Quincy Institute for Responsible Statecraft</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>What Trump meant when he said the U.S. is cutting aid to Israel</title>
+		<link>https://www.npr.org/2026/11/09/nx-s1-6029320/us-trump-israel-military-aid</link>
+		
+		<dc:creator><![CDATA[Annelle Sheline]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 21:22:07 +0000</pubDate>
+				<category><![CDATA[Foreign Influence]]

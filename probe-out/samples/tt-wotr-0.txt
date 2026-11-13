@@ -1,0 +1,113 @@
+https://warontherocks.com/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:podcast="https://podcastindex.org/namespace/1.0"
+xmlns:rawvoice="https://blubrry.com/developer/rawvoice-rss/"
+>
+
+<channel>
+	<title>War on the Rocks</title>
+	<atom:link href="https://warontherocks.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://warontherocks.com/</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 16:22:27 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.9.5</generator>
+	<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+	<itunes:author>War on the Rocks</itunes:author>
+	<itunes:explicit>false</itunes:explicit>
+	<itunes:image href="https://warontherocks.com/wp-content/uploads/powerpress/WOTR-Tumbler-1400px.jpg" />
+	<itunes:owner>
+		<itunes:name>War on the Rocks</itunes:name>
+		<itunes:email>editor@warontherocks.com</itunes:email>
+	</itunes:owner>
+	<podcast:medium>podcast</podcast:medium>
+	<image>
+		<title>War on the Rocks</title>
+		<url>https://warontherocks.com/wp-content/uploads/powerpress/WOTR-Tumbler-1400px.jpg</url>
+		<link>https://warontherocks.com</link>
+	</image>
+	<podcast:podping usesPodping="true" />
+	<rawvoice:subscribe feed="https://warontherocks.com/feed/" itunes="https://itunes.apple.com/us/podcast/war-on-the-rocks/id682478916?mt=2#"></rawvoice:subscribe>
+	<item>
+		<title>How Purges Are Affecting Chinese Military Readiness and Taiwan Contingencies</title>
+		<link>https://warontherocks.com/how-purges-are-affecting-chinese-military-readiness-and-taiwan-contingencies/</link>
+		
+		<dc:creator><![CDATA[Yun Sun]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 18:30:19 +0000</pubDate>
+				<category><![CDATA[In Brief]]></category>
+		<category><![CDATA[Members]]></category>
+		<guid isPermaLink="false">https://warontherocks.com/?p=48579</guid>
+
+					<description><![CDATA[<p>Since 2022, Chinese General Secretary Xi Jinping has purged at least 100 senior military officials, according to a February report from the Center for Strategic and International Studies, with more cases occurring since then. The rate of dismissals and disappearances has increased substantially in the last two years. Recent examples include Gen. Zhang Youxia, Gen. Liu Zhenli, and Zhong Shaojun, formerly the head of the General Office of the Central Military Commission. Many of these officials have been accused of corruption, with some facing trial.These widespread purges have fundamentally changed the high command of China&#8217;s military at a time when</p>
+<p>The post <a href="https://warontherocks.com/how-purges-are-affecting-chinese-military-readiness-and-taiwan-contingencies/">How Purges Are Affecting Chinese Military Readiness and Taiwan Contingencies</a> appeared first on <a href="https://warontherocks.com">War on the Rocks</a>.</p>
+]]></description>
+		
+		
+		
+		<dc:creator><![CDATA[Jaehwan Lim]]></dc:creator>
+<dc:creator><![CDATA[Ben Lewis]]></dc:creator>
+<dc:creator><![CDATA[Bonny Lin]]></dc:creator>
+<dc:creator><![CDATA[Shanshan Mei]]></dc:creator>
+	</item>
+		<item>
+		<title>The Promise of Biomanufacturing at the Edge</title>
+		<link>https://warontherocks.com/cogs-of-war/the-promise-of-biomanufacturing-at-the-edge/</link>
+		
+		<dc:creator><![CDATA[Arye Lipman]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 09:00:53 +0000</pubDate>
+				<category><![CDATA[Cogs of War]]></category>
+		<category><![CDATA[Biotechnology]]></category>
+		<category><![CDATA[Defense Policy]]></category>
+		<category><![CDATA[Defense Tech]]></category>
+		<guid isPermaLink="false">https://warontherocks.com/?p=48447</guid>
+
+					<description><![CDATA[<p>As the old adage goes, &#8220;Amateurs talk strategy. Professionals talk logistics.&#8221; Military operations are utterly dependent on complex supply chains to move food, fuel, and other essential products across long distances and through contested environments to reach the warfighter. These vital supply lines are fragile at every stage: production concentrated in a single facility can be disrupted, key inputs may come from unreliable &#8212; or adversarial &#8212; foreign suppliers, and the ports, airfields, and roads that deliver goods the final mile are often the most vulnerable.The threat of this fragility eroding a modern force&#8217;s capabilities is very real. As the</p>
+<p>The post <a href="https://warontherocks.com/cogs-of-war/the-promise-of-biomanufacturing-at-the-edge/">The Promise of Biomanufacturing at the Edge</a> appeared first on <a href="https://warontherocks.com">War on the Rocks</a>.</p>
+]]></description>
+		
+		
+		
+		<dc:creator><![CDATA[Lucas Fluegel]]></dc:creator>
+	</item>
+		<item>
+		<title>Japan’s Most Dangerous Military Constraint Is Time</title>
+		<link>https://warontherocks.com/japans-most-dangerous-military-constraint-is-time/</link>
+		
+		<dc:creator><![CDATA[Christopher Denzel]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 08:30:24 +0000</pubDate>
+				<category><![CDATA[Commentary]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[Japan]]></category>
+		<category><![CDATA[Wargaming]]></category>
+		<guid isPermaLink="false">https://warontherocks.com/?p=48546</guid>
+
+					<description><![CDATA[<p>During a 2022 wargame I ran, bilateral planners reached a familiar barrier. U.S. forces needed to disperse from concentrated bases before the adversary&#8217;s first missile salvo. Participants believed Japan could grant emergency access to private land only after an attack, which would be too late &#8212; the authority&#8217;s trigger was also its deadline.This appeared to be a hard political constraint: the kind alliance planners record in after-action reports, script into next year&#8217;s exercise, and then carry, untested, into contingency plans, where assumptions harden into fact. But in 2022 one participant read the law differently, identifying an earlier cabinet option every</p>
+<p>The post <a href="https://warontherocks.com/japans-most-dangerous-military-constraint-is-time/">Japan’s Most Dangerous Military Constraint Is Time</a> appeared first on <a href="https://warontherocks.com">War on the Rocks</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Analyzing the Ethiopian-Somaliland Deal, Two Years On</title>
+		<link>https://warontherocks.com/analyzing-the-ethiopian-somaliland-deal-two-years-on/</link>
+		
+		<dc:creator><![CDATA[James Barnett]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 19:00:58 +0000</pubDate>
+				<category><![CDATA[Members]]></category>
+		<category><![CDATA[Rewind and Reconnoiter]]></category>
+		<guid isPermaLink="false">https://warontherocks.com/?p=48565</guid>
+
+					<description><![CDATA[<p>In 2024, James Barnett wrote, &#8220;A Port Deal Puts the Horn of Africa on the Brink,&#8221; where he argued that tensions in countries like Ethiopia and Somalia threaten to escalate into a broader regional conflict if not contained. Two years later, with U.S. attention largely diverted to other areas of concern, we asked James to revisit his arguments.Image: Joseph Rullo via DVIDSIn your January 2024 piece, you warned that a memorandum of understanding signed between Ethiopia and Somaliland could actually accelerate al-Shabaab&#8217;s expansion into the two countries, pointing to its 2022 incursion into Ethiopia and its sleeper cells in cities</p>
+<p>The post <a href="https://warontherocks.com/analyzing-the-ethiopian-somaliland-deal-two-years-on/">Analyzing the Ethiopian-Somaliland Deal, Two Years On</a> appeared first on <a href="https://warontherocks.com">War on the Rocks<

@@ -1,0 +1,104 @@
+https://ecss.com.eg/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>المركز المصري للفكر والدراسات الاستراتيجية</title>
+	<atom:link href="https://ecss.com.eg/feed/" rel="self" type="application/rss+xml" />
+	<link>https://ecss.com.eg/</link>
+	<description>مركز “تفكير” مستقل</description>
+	<lastBuildDate>Thu, 12 Nov 2026 12:21:14 +0000</lastBuildDate>
+	<language>ar</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://ecss.com.eg/wp-content/uploads/2022/09/fave.png</url>
+	<title>المركز المصري للفكر والدراسات الاستراتيجية</title>
+	<link>https://ecss.com.eg/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>روسيا والغرب: الجذور التاريخية والحضارية للصراع المعاصر</title>
+		<link>https://ecss.com.eg/57837/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=%25d8%25b1%25d9%2588%25d8%25b3%25d9%258a%25d8%25a7-%25d9%2588%25d8%25a7%25d9%2584%25d8%25ba%25d8%25b1%25d8%25a8-%25d8%25a7%25d9%2584%25d8%25ac%25d8%25b0%25d9%2588%25d8%25b1-%25d8%25a7%25d9%2584%25d8%25aa%25d8%25a7%25d8%25b1%25d9%258a%25d8%25ae%25d9%258a%25d8%25a9-%25d9%2588%25d8%25a7%25d9%2584%25d8%25ad%25d8%25b6%25d8%25a7</link>
+		
+		<dc:creator><![CDATA[أحمد دهشان]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 12:19:42 +0000</pubDate>
+				<category><![CDATA[العلاقات الدولية]]></category>
+		<guid isPermaLink="false">https://ecss.com.eg/?p=57837</guid>
+
+					<description><![CDATA[<p>إلى أي مدى يمكن فهم الصراع بين روسيا والغرب من دون العودة إلى جذوره التاريخية والحضارية؟يقدم المركز المصري للفكر والدراسات الاستراتيجية ورقة بحثية جديدة بعنوان «روسيا والغرب: الجذور التاريخية والحضارية للصراع المعاصر»، للباحث أحمد دهشان، خبير مشارك ببرنامج الدراسات الدولية.تبحث الورقة في تداخل العقيدة والدولة والهوية في تشكيل العلاقة الروسية الغربية، عبر تتبع نشأة كييف [&#8230;]</p>
+<p>The post <a href="https://ecss.com.eg/57837/">روسيا والغرب: الجذور التاريخية والحضارية للصراع المعاصر</a> appeared first on <a href="https://ecss.com.eg">المركز المصري للفكر والدراسات الاستراتيجية</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="has-medium-font-size wp-block-paragraph"><strong>إلى أي مدى يمكن فهم الصراع بين روسيا والغرب من دون العودة إلى جذوره التاريخية والحضارية؟<br>يقدم المركز المصري للفكر والدراسات الاستراتيجية ورقة بحثية جديدة بعنوان «روسيا والغرب: الجذور التاريخية والحضارية للصراع المعاصر»، للباحث أحمد دهشان، <strong>خبير مشارك ببرنامج الدراسات الدولية.</strong><br>تبحث الورقة في تداخل العقيدة والدولة والهوية في تشكيل العلاقة الروسية الغربية، عبر تتبع نشأة كييف روس، واعتناق المسيحية الشرقية، والانشقاق العظيم، والحملات الصليبية الشمالية، وانتقال عناصر الإرث البيزنطي إلى الدولة الروسية.<br>وتقدم قراءة في أثر هذه التحولات على الذاكرة التاريخية والتصورات المتبادلة، بما يضيف بُعدًا تفسيريًا إلى المقاربات السياسية والأمنية للصراع المعاصر.</strong></p>
+
+
+<div class="pdfjs-fullscreen"><a href="https://ecss.com.eg/wp-content/plugins/pdfjs-viewer-shortcode-old/pdfjs/web/viewer.php?file=https://ecss.com.eg/wp-content/uploads/2026/11/روسيا-والغرب.pdf&#038;attachment_id=57838&#038;dButton=false&#038;pButton=false&#038;oButton=false&#038;sButton=true&#038;editButtons=false&#038;v=3.1.1&#038;_wpnonce=dcfe324617#zoom=auto&#038;pagemode=none" target="_blank" aria-label="Open PDF in fullscreen mode">View Fullscreen</a></div><a href="#pdfjs-viewer-skip" class="screen-reader-text">Skip to PDF content</a><div role="region" aria-label="PDF Viewer" id="pdfjs-viewer-skip"><iframe width="100%" height="800px" src="https://ecss.com.eg/wp-content/plugins/pdfjs-viewer-shortcode-old/pdfjs/web/viewer.php?file=https://ecss.com.eg/wp-content/uploads/2026/11/روسيا-والغرب.pdf&#038;attachment_id=57838&#038;dButton=false&#038;pButton=false&#038;oButton=false&#038;sButton=true&#038;editButtons=false&#038;v=3.1.1&#038;_wpnonce=dcfe324617#zoom=auto&#038;pagemode=none" title="PDF document: روسيا-والغرب.pdf" aria-label="PDF document: روسيا-والغرب.pdf" class="pdfjs-iframe" tabindex="0" loading="lazy" style="max-width: 100%;"></iframe></div><p>The post <a href="https://ecss.com.eg/57837/">روسيا والغرب: الجذور التاريخية والحضارية للصراع المعاصر</a> appeared first on <a href="https://ecss.com.eg">المركز المصري للفكر والدراسات الاستراتيجية</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>معركة السيطرة على السماء في المحيط الهادي</title>
+		<link>https://ecss.com.eg/57828/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=%25d9%2585%25d8%25b9%25d8%25b1%25d9%2583%25d8%25a9-%25d8%25a7%25d9%2584%25d8%25b3%25d9%258a%25d8%25b7%25d8%25b1%25d8%25a9-%25d8%25b9%25d9%2584%25d9%2589-%25d8%25a7%25d9%2584%25d8%25b3%25d9%2585%25d8%25a7%25d8%25a1-%25d9%2581%25d9%258a-%25d8%25a7%25d9%2584%25d9%2585%25d8%25ad%25d9%258a%25d8%25b7-%25d8%25a7%25d9%2584%25d9%2587</link>
+		
+		<dc:creator><![CDATA[مينا عادل]]></dc:creator>
+		<pubDate>Sun, 08 Nov 2026 12:59:41 +0000</pubDate>
+				<category><![CDATA[قضايا الأمن الدفاع]]></category>
+		<category><![CDATA[CJADC2]]></category>
+		<category><![CDATA[Combined Joint All-Domain Command and Control]]></category>
+		<category><![CDATA[JADC2]]></category>
+		<category><![CDATA[Joint All-Domain Command and Control]]></category>
+		<category><![CDATA[Joint All-Domain Operations]]></category>
+		<category><![CDATA[Multi-Domain Operations]]></category>
+		<category><![CDATA[PACAF]]></category>
+		<category><![CDATA[Pacific Air Forces]]></category>
+		<category><![CDATA[الإندوباسيفيك]]></category>
+		<category><![CDATA[الاستراتيجية العسكرية الأمريكية]]></category>
+		<category><![CDATA[الاستراتيجية العسكرية الصينية]]></category>
+		<category><![CDATA[التحديث العسكري الصيني]]></category>
+		<category><![CDATA[التحولات الاستراتيجية في المحيط الهادئ]]></category>
+		<category><![CDATA[التحولات العسكرية في منطقة المحيط الهادئ]]></category>
+		<category><![CDATA[التفوق الجوي الأمريكي]]></category>
+		<category><![CDATA[التفوق الجوي الصيني]]></category>
+		<category><![CDATA[التنافس الجوي بين الصين وأمريكا]]></category>
+		<category><![CDATA[التنافس العسكري بين الولايات المتحدة والصين]]></category>
+		<category><![CDATA[التنافس على التفوق العسكري]]></category>
+		<category><![CDATA[التنافس على الهيمنة الإقليمية]]></category>
+		<category><![CDATA[التوازن الجوي الأمريكي الصيني]]></category>
+		<category><![CDATA[التوازن العسكري الأمريكي الصيني]]></category>
+		<category><![CDATA[الحرب الجوية عام 2030]]></category>
+		<category><![CDATA[الحروب التقليدية الحديثة]]></category>
+		<category><![CDATA[الحروب الجوية الحديثة]]></category>
+		<category><![CDATA[الحروب الجوية المستقبلية]]></category>
+		<category><![CDATA[الحروب الهجينة]]></category>
+		<category><![CDATA[الحروب بين الجيوش النظامية]]></category>
+		<category><![CDATA[الحروب بين القوى الكبرى]]></category>
+		<category><![CDATA[الحروب غير المتماثلة]]></category>
+		<category><![CDATA[الحروب متعددة المجالات]]></category>
+		<category><![CDATA[السيطرة الجوية بعد عام 2030]]></category>
+		<category><![CDATA[السيطرة الجوية في المحيط الهادئ]]></category>
+		<category><![CDATA[السيطرة على الأجواء]]></category>
+		<category><![CDATA[السيطرة على المجال الجوي]]></category>
+		<category><![CDATA[السيطرة على مسرح العمليات الجوية]]></category>
+		<category><![CDATA[الصراع الاستراتيجي بين الصين والولايات المتحدة]]></category>
+		<category><![CDATA[الصراع الجوي الأمريكي الصيني]]></category>
+		<category><![CDATA[الصين وأمريكا]]></category>
+		<category><![CDATA[الصين والمحيط الهادئ]]></category>
+		<category><![CDATA[العقيدة الجوية الأمريكية]]></category>
+		<category><![CDATA[العقيدة الجوية الصينية]]></category>
+		<category><![CDATA[العقيدة العسكرية الأمريكية]]></category>
+		<category><![CDATA[العقيدة العسكرية الصينية]]></category>
+		<category><![CDATA[الع

@@ -1,0 +1,146 @@
+https://www.martenscentre.eu/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Martens Centre</title>
+	<atom:link href="https://www.martenscentre.eu/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.martenscentre.eu</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 16:00:43 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.martenscentre.eu/wp-content/uploads/2020/02/favicon-60x60.png</url>
+	<title>Martens Centre</title>
+	<link>https://www.martenscentre.eu</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>European Political Community Summit &#124; Today with David McCullagh</title>
+		<link>https://www.martenscentre.eu/media-mentions/european-political-community-summit-today-with-david-mccullagh/</link>
+		
+		<dc:creator><![CDATA[Eleftheria Katsi]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 16:00:41 +0000</pubDate>
+				<category><![CDATA[In the Media]]></category>
+		<category><![CDATA[Interviews and Expert Quotes]]></category>
+		<guid isPermaLink="false">https://www.martenscentre.eu/?p=24246</guid>
+
+					<description><![CDATA[An interview by our Senior Research Officer, Eoin Drea.]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">An interview by our Senior Research Officer, Eoin Drea.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>The Next EU-UK Deal &#8211; Bridge The Channel Ep.29</title>
+		<link>https://www.martenscentre.eu/multimedia/the-next-eu-uk-deal-bridge-the-channel-ep-29/</link>
+		
+		<dc:creator><![CDATA[Dimitri Argento]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 09:30:01 +0000</pubDate>
+				<category><![CDATA[Bridge the Channel]]></category>
+		<category><![CDATA[Multimedia]]></category>
+		<category><![CDATA[Brexit]]></category>
+		<category><![CDATA[Elections]]></category>
+		<category><![CDATA[EU Institutions]]></category>
+		<category><![CDATA[Integration]]></category>
+		<category><![CDATA[Migration]]></category>
+		<category><![CDATA[United Kingdom]]></category>
+		<guid isPermaLink="false">https://www.martenscentre.eu/?p=24242</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+<iframe title="The Next EU-UK Deal I Bridge The Channel" width="500" height="281" src="https://www.youtube.com/embed/DjfNQ61RPuQ?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div></figure>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Europe&#8217;s Battery Moment &#124; European View Podcast Ep.26</title>
+		<link>https://www.martenscentre.eu/news/europes-battery-moment-european-view-podcast-ep-26/</link>
+		
+		<dc:creator><![CDATA[Dimitri Argento]]></dc:creator>
+		<pubDate>Tue, 03 Nov 2026 01:36:00 +0000</pubDate>
+				<category><![CDATA[Other News]]></category>
+		<category><![CDATA[Podcasts]]></category>
+		<category><![CDATA[The European View Podcast]]></category>
+		<category><![CDATA[Climate Change]]></category>
+		<category><![CDATA[Energy]]></category>
+		<category><![CDATA[Environment]]></category>
+		<category><![CDATA[Green Deal]]></category>
+		<category><![CDATA[Renewable Energy]]></category>
+		<category><![CDATA[Trade]]></category>
+		<category><![CDATA[Transatlantic relations]]></category>
+		<guid isPermaLink="false">https://www.martenscentre.eu/?p=24218</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+<iframe title="Can Batteries Solve Europe&amp;apos;s Energy Security Challenge? - European View Podcast" width="500" height="281" src="https://www.youtube.com/embed/MWAidXSjmr8?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div></figure>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>October 2026</title>
+		<link>https://www.martenscentre.eu/newsletter/october-2026/</link>
+		
+		<dc:creator><![CDATA[Eleftheria Katsi]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 09:27:22 +0000</pubDate>
+				<category><![CDATA[Newsletter]]></category>
+		<guid isPermaLink="false">https://www.martenscentre.eu/?p=24233</guid>
+
+					<description><![CDATA[Another month comes to end and in this edition of our monthly newsletter we made sure to cover once again a variety of topics shaping the EU agenda. From questions concerning European security and defence to EU-China trade relations and spiralling housing costs across Europe, be sure to check the latest commentary of our experts in the media.]]></description>
+										<content:encoded><![CDATA[
+<h2 class="wp-block-heading"></h2>
+
+
+
+<p class="wp-block-paragraph">Another month comes to end and in this edition of our monthly newsletter we made sure to cover once again a variety of topics shaping the EU agenda. From questions concerning European security and defence to EU-China trade relations and spiralling housing costs across Europe, be sure to check the latest commentary of our experts in the <a href="https://www.martenscentre.eu/news/" target="_blank" rel="noopener">media</a>.   </p>
+
+
+
+<p class="wp-block-paragraph">In October, we also organised two in-house events: one in Rome focusing on the <a href="https://www.martenscentre.eu/event/the-future-of-european-centre-right/" target="_blank" rel="noopener">future of the European centre-right</a>, and another in Brussels to present our latest book <a href="https://www.martenscentre.eu/event/paper-launch-the-european-peace-keeping-peace-in-the-age-of-war/" target="_blank" rel="noopener">The European Peace</a>.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>P.S</strong>. Head to our website to read all our latest&nbsp;<a href="https://www.martenscentre.eu/publication/" target="_blank" rel="noopener">publications</a>&nbsp;and&nbsp;<a href="https://www.martenscentre.eu/blog/" target="_blank" rel="noopener">blogs</a>!</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Georgia&#8217;s Party Bans and Europe&#8217;s Strategic Responsibility</title>
+		<link>https://www.martenscentre.eu/blog/georgias-party-bans-and-europes-strategic-responsibility/</link>
+		
+		<dc:creator><![CDATA[Theo Larue]]></dc:creator>
+		<pubDate>Fri, 30 Oct 2026 06:11:34 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<category><![CDATA[Eastern Partnership]]></category>
+		<category><![CDATA[EU-Russia]]></category>
+		<category><![CDATA[Political Parties]]></category>
+		<guid isPermaLink="false">https://www.martenscentre.eu/?p=22524</guid>
+
+					<description><![CDATA[Since receiving EU candidate status in 2023, Georgia has moved in a direction few Europeans anticipated. Rather than undertaking the reforms necessary for accession, the country&#8217;s leadership has accelerated measures that undermine democratic institutions, weaken checks and balances, and shrink political space. Finally, it has announced a ‘postponement’ of any EU accession-related talks until after [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-par

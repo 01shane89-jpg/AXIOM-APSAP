@@ -1,0 +1,105 @@
+https://apri.institute/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>APRI Armenia | Applied Policy Research Institute of Armenia</title>
+	<atom:link href="https://apri.institute/feed/" rel="self" type="application/rss+xml" />
+	<link>https://apri.institute</link>
+	<description></description>
+	<lastBuildDate>Tue, 10 Nov 2026 10:54:18 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://apri.institute/wp-content/uploads/2023/09/cropped-Apri-Logo-PNG-02-32x32.png</url>
+	<title>APRI Armenia | Applied Policy Research Institute of Armenia</title>
+	<link>https://apri.institute</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Protected: APRI Virtual Town Hall – Perspectives on US Involvement in the South Caucasus</title>
+		<link>https://apri.institute/apri-virtual-town-hall-perspectives-on-us-involvement-in-the-south-caucasus/</link>
+		
+		<dc:creator><![CDATA[APRI Armenia]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 10:37:29 +0000</pubDate>
+				<category><![CDATA[Private Virtual Events]]></category>
+		<guid isPermaLink="false">https://apri.institute/?p=32863</guid>
+
+					<description><![CDATA[There is no excerpt because this is a protected post.]]></description>
+										<content:encoded><![CDATA[<form action="https://apri.institute/wp-login.php?action=postpass" class="post-password-form" method="post"><input type="hidden" name="redirect_to" value="https://apri.institute/apri-virtual-town-hall-perspectives-on-us-involvement-in-the-south-caucasus/" /></p>
+<p>This content is password-protected. To view it, please enter the password below.</p>
+<p><label for="pwbox-32863">Password: <input name="post_password" id="pwbox-32863" type="password" spellcheck="false" required size="20" /></label> <input type="submit" name="Submit" value="Enter" /></p>
+</form>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Public Administration Reforms: From Conceptual Formulations to Implementation</title>
+		<link>https://apri.institute/public-administration-reforms-from-conceptual-formulations-to-implementation/</link>
+		
+		<dc:creator><![CDATA[APRI Armenia]]></dc:creator>
+		<pubDate>Fri, 09 Oct 2026 11:11:40 +0000</pubDate>
+				<category><![CDATA[Media]]></category>
+		<guid isPermaLink="false">https://apri.institute/?p=32642</guid>
+
+					<description><![CDATA[In an article published in Armenpress, Armenak Minasyants, APRI Armenia Senior Fellow on Public Administration Reforms (PAR), analyzes the direction of the forthcoming PAR strategy as outlined in the government’s five-year plan.]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">In an article published in Armenpress, Armenak Minasyants, APRI Armenia Senior Fellow on Public Administration Reforms (PAR), analyzes the direction of the forthcoming PAR strategy as outlined in the government’s five-year plan.</p>
+
+
+
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-3e41869c wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://armenpress.am/en/article/1259951" target="_blank" rel="noopener">Read the article here</a></div>
+</div>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Thursday Interview: Benyamin Poghosyan</title>
+		<link>https://apri.institute/thursday-interview-benyamin-poghosyan/</link>
+		
+		<dc:creator><![CDATA[APRI Armenia]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 10:24:18 +0000</pubDate>
+				<category><![CDATA[Media]]></category>
+		<guid isPermaLink="false">https://apri.institute/?p=32640</guid>
+
+					<description><![CDATA[In an interview with Commonspace.eu, APRI Armenia Senior Research Fellow Benyamin Poghosyan talked about Armenia–Azerbaijan and Armenia–Türkiye relations, as well as the agency of the South Caucasus.]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">In an interview with Commonspace.eu, APRI Armenia Senior Research Fellow Benyamin Poghosyan talked about Armenia–Azerbaijan and Armenia–Türkiye relations, as well as the agency of the South Caucasus.</p>
+
+
+
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-3e41869c wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.commonspace.eu/interview/thursday-interview-benyamin-poghosyan" target="_blank" rel="noopener">Read the interview here</a></div>
+</div>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Iran&#8217;s Policy in the South Caucasus: Three Objectives, Mixed Results</title>
+		<link>https://apri.institute/irans-policy-in-the-south-caucasus-three-objectives-mixed-results/</link>
+		
+		<dc:creator><![CDATA[APRI Armenia]]></dc:creator>
+		<pubDate>Wed, 23 Sep 2026 05:00:12 +0000</pubDate>
+				<category><![CDATA[Geopolitics and Foreign Policy]]></category>
+		<guid isPermaLink="false">https://apri.institute/?p=30968</guid>
+
+					<description><![CDATA[This report examines how Iran’s policy toward the South Caucasus has evolved since the Second Nagorno-Karabakh War in 2020, which overturned the regional status quo that had prevailed since the 1990s and altered the regional balance of power. It analyzes the security and geoeconomic challenges and opportunities these changes created for Iran, the interests Tehran has sought to protect and advance, and the policy instruments it has employed. It also assesses the extent to which Iran has achieved its objectives. The study underwent internal editing and peer review, as well as external review by three Iran experts. Executive summary Iran has pursued a set of policies in response to three connected threats that emerged after the 2020 Nagorno-Karabakh War began to unsettle a decades-old regional order dominated by Russia. Iran had long absented itself from the region’s main diplomatic and security engagements. Tehran was comfortable with Russia’s dominance, which kept US influence at bay, and focused instead on priorities elsewhere, notably in the Middle East. With limited access to formats that addressed South Caucasus affairs, especially the Armenia–Azerbaijan conflict, Tehran had few channels through which to shape regional outcomes and few tools to influence the policies of individual South Caucasus states. The 2020 war marked the beginning of an effort to build influence largely from scratch, mainly through bilateral relations. The first perceived threat has been Azerbaijan’s aspirations to territorial expansionism. The shift in the regional balance in 2020 in Baku’s favor encouraged military incursions by Azerbaijan into Armenia in 2021 and 2022, and pressure for an extraterritorial “Zangezur Corridor” near Iran’s border. Tehran viewed these actions with concern, especially the threat of having its physical link to Armenia severed. Tehran responded by seeking to deepen ties with Yerevan, expanding its consular presence in southern Armenia and using military signaling against Azerbaijan, including drills near its northern borders. It also sought to mitigate the postwar imbalance between Armenia and Azerbaijan, notably by helping Yerevan rebuild part of its deterrent capacity. The second threat has been foreign presence in Armenia and Azerbaijan perceived as directly hostile to Iran. The weakening of Russia’s dominance after 2022 opened the door to greater nonregional involvement in the South Caucasus, which Tehran viewed as unwelcome and, in the case of the United States and Israel

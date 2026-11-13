@@ -1,0 +1,18 @@
+https://www.data.jma.go.jp/svd/vaac/data/TextData/2026/20261102_28208001_0343_Text.html
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Tokyo VAAC | Volcanic Ash Advisory Text</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../../common/english.css">
+</head>
+<body>
+	<div id="VAA_TEXT">Volcanic Ash Advisory Text</div>
+	<hr id="VAA_TEXTline">
+	<div class="mtx">
+		<!-- VAA Text Start -->FVFE01 RJTD 022344<BR>VA ADVISORY<BR>DTG: 20261102/2344Z<BR>VAAC: TOKYO<BR>VOLCANO: SAKURAJIMA (AIRA CALDERA) 282080<BR>PSN: N3136 E13039<BR>AREA: JAPAN<BR>SOURCE ELEV: 1117M AMSL<BR>ADVISORY NR: 2026/343<BR>INFO SOURCE: AIREP HIMAWARI-9<BR>ERUPTION DETAILS: VA AT 20261102/2313Z 10NM SE OF RJFK FL040 REPORTED<BR>OBS VA DTG: 02/2330Z<BR>OBS VA CLD: VA NOT IDENTIFIABLE FM SATELLITE DATA WIND FL040 360/9KT<BR>FCST VA CLD +6 HR: NOT AVBL<BR>FCST VA CLD +12 HR: NOT AVBL<BR>FCST VA CLD +18 HR: NOT AVBL<BR>RMK: WE WILL ISSUE FURTHER ADVISORY IF VA IS DETECTED IN SATELLITE <BR>IMAGERY.<BR>NXT ADVISORY: NO FURTHER ADVISORIES=<BR><!-- VAA Text End -->
+	</div>
+	<hr id="VAA_TEXTline">
+	<a href="javascript:history.back()">Back to Prev Page</a>
+</body>
+</html>

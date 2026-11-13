@@ -1,0 +1,79 @@
+https://acep.africa/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title></title>
+	<atom:link href="https://acep.africa/feed/" rel="self" type="application/rss+xml" />
+	<link>https://acep.africa/</link>
+	<description>Oil &#38; Gas, Power, Mining, Fiscal Governance, Climate Change &#38; Energy Transition</description>
+	<lastBuildDate>Mon, 09 Nov 2026 08:45:32 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://acep.africa/wp-content/uploads/2023/08/cropped-favic-32x32.png</url>
+	<title></title>
+	<link>https://acep.africa/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Why Africa’s Long-Standing Bargain at COP May Not Deliver the Economic Transformation We Need from the Energy Transition</title>
+		<link>https://acep.africa/why-africas-long-standing-bargain-at-cop-may-not-deliver-the-economic-transformation-we-need-from-the-energy-transition/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=why-africas-long-standing-bargain-at-cop-may-not-deliver-the-economic-transformation-we-need-from-the-energy-transition</link>
+					<comments>https://acep.africa/why-africas-long-standing-bargain-at-cop-may-not-deliver-the-economic-transformation-we-need-from-the-energy-transition/#respond</comments>
+		
+		<dc:creator><![CDATA[ACEP]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 17:10:31 +0000</pubDate>
+				<category><![CDATA[Policy Brief]]></category>
+		<category><![CDATA[Policy Paper]]></category>
+		<category><![CDATA[Research & Policy Papers]]></category>
+		<category><![CDATA[ACEP]]></category>
+		<category><![CDATA[Africa Union]]></category>
+		<category><![CDATA[COP31]]></category>
+		<category><![CDATA[Energy Transition]]></category>
+		<category><![CDATA[Ghana]]></category>
+		<guid isPermaLink="false">https://acep.africa/?p=18209</guid>
+
+					<description><![CDATA[<p>Why Africa’s Long-Standing Bargain at COP May Not Deliver the Economic Transformation We Need from the Energy Transition Africa’s climate diplomacy has historically focused on climate justice, with priorities including adaptation finance, disaster risk reduction and compensation for loss and damage. While these remain essential, they may not be enough to secure the economic opportunities emerging from the global energy transition. In this new policy brief, Why Africa’s Long-Standing Bargain at COP May Not Deliver the Economic Transformation We Need from the Energy Transition, Mohammed Saani Osman and Kodzo Yaotse examine Africa’s limited participation in global clean energy manufacturing despite its rich critical mineral resources and growing investments in renewable energy. The brief argues that Africa must broaden its priorities in global climate negotiations to place greater emphasis on industrial development, domestic value addition and participation in clean energy value chains. It identifies three key priorities for Africa’s engagement at COP: climate finance for industrial development, policy space for value addition and industrialisation, and technology transfer to build productive capacity. Download the policy brief to explore the findings and recommendations for repositioning Africa in the global energy transition. Read Conference Report Here</p>
+<p>The post <a href="https://acep.africa/why-africas-long-standing-bargain-at-cop-may-not-deliver-the-economic-transformation-we-need-from-the-energy-transition/">Why Africa’s Long-Standing Bargain at COP May Not Deliver the Economic Transformation We Need from the Energy Transition</a> appeared first on <a href="https://acep.africa"></a>.</p>
+]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="18209" class="elementor elementor-18209" data-elementor-post-type="post">
+						<section class="elementor-section elementor-top-section elementor-element elementor-element-6edd72cd elementor-section-boxed elementor-section-height-default elementor-section-height-default wpr-particle-no wpr-sticky-section-no" data-id="6edd72cd" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-4f10ffce" data-id="4f10ffce" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+						<div class="elementor-element elementor-element-6a346b76 elementor-widget elementor-widget-heading" data-id="6a346b76" data-element_type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h2 class="elementor-heading-title elementor-size-default">Why Africa’s Long-Standing Bargain at COP May Not Deliver the Economic Transformation We Need from the Energy Transition</h2>				</div>
+				</div>
+					</div>
+		</div>
+					</div>
+		</section>
+				<section class="elementor-section elementor-top-section elementor-element elementor-element-3456e19e elementor-section-boxed elementor-section-height-default elementor-section-height-default wpr-particle-no wpr-sticky-section-no" data-id="3456e19e" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-16a7676a" data-id="16a7676a" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+						<div class="elementor-element elementor-element-3c7c33bb elementor-widget elementor-widget-text-editor" data-id="3c7c33bb" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p data-pm-slice="1 1 []">Africa’s climate diplomacy has historically focused on climate justice, with priorities including adaptation finance, disaster risk reduction and compensation for loss and damage. While these remain essential, they may not be enough to secure the economic opportunities emerging from the global energy transition. In this new policy brief, <em>Why Africa’s Long-Standing Bargain at COP May Not Deliver the Economic Transformation We Need from the Energy Transition</em>, Mohammed Saani Osman and Kodzo Yaotse examine Africa’s limited participation in global clean energy manufacturing despite its rich critical mineral resources and growing investments in renewable energy.</p><p>The brief argues that Africa must broaden its priorities in global climate negotiations to place greater emphasis on industrial development, domestic value addition and participation in clean energy value chains. It identifies three key priorities for Africa’s engagement at COP: climate finance for industrial development, policy space for value addition and industrialisation, and technology transfer to build productive capacity.</p><p><strong>Download the policy brief to explore the findings and recommendations for repositioning Africa in the global energy transition.</strong></p>								</div>
+				</div>
+					</div>
+		</div>
+					</div>
+		</section>
+				<section class="elementor-section elementor-top-section elementor-element elementor-element-763987eb elementor-section-boxed elementor-section-height-default elementor-section-height-default wpr-particle-no wpr-sticky-section-no" data-id="763987eb" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-1ac6823" data-id="1ac6823" data-element_type="column">
+			<div cla

@@ -1,0 +1,176 @@
+https://www.ciaaf.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CiAAF</title>
+	<atom:link href="https://www.ciaaf.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.ciaaf.org</link>
+	<description>Faire advenir l’Afrique par la pensée</description>
+	<lastBuildDate>Tue, 03 Nov 2026 13:44:15 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.ciaaf.org/wp-content/uploads/2019/02/cropped-ciaaf_faviconn-32x32.png</url>
+	<title>CiAAF</title>
+	<link>https://www.ciaaf.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+        <wp_options>
+            <wp_option>
+                <name>
+                    shopengine_activated_templates                </name>
+                <val>
+                    a:0:{}                </val>
+            </wp_option>
+        </wp_options>
+        	<item>
+		<title>Redev3S : le CiAAF lance un projet de recherche sur la redevabilité des services sociaux et sécuritaires au Nord-Bénin</title>
+		<link>https://www.ciaaf.org/nos-actualites/redevabilite-3s-le-ciaaf-lance-un-projet-de-recherche-redevabilite-services-sociaux-et-securitaires-au-nord-benin/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 13:09:09 +0000</pubDate>
+				<category><![CDATA[Nos actualités]]></category>
+		<category><![CDATA[Hero1]]></category>
+		<category><![CDATA[CiAAF]]></category>
+		<category><![CDATA[nord benin]]></category>
+		<category><![CDATA[redevabilité]]></category>
+		<guid isPermaLink="false">https://www.ciaaf.org/?p=9366</guid>
+
+					<description><![CDATA[Le 31 octobre 2026, à Djougou, le CiAAF a organisé un atelier exploratoire servant de lancement officiel du projet de recherche sur la « Redevabilité des services sociaux et sécuritaires en [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>La citoyenneté contreterroriste au Nord-Bénin</title>
+		<link>https://www.ciaaf.org/nos-dernieres-publications/la-citoyennete-contreterroriste-au-nord-benin/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Thu, 15 Oct 2026 16:58:33 +0000</pubDate>
+				<category><![CDATA[Nos dernières publications]]></category>
+		<category><![CDATA[Hero1]]></category>
+		<category><![CDATA[benin]]></category>
+		<category><![CDATA[CiAAF]]></category>
+		<category><![CDATA[citoyenneté]]></category>
+		<category><![CDATA[nord-benin]]></category>
+		<category><![CDATA[parcinord]]></category>
+		<guid isPermaLink="false">https://www.ciaaf.org/?p=9004</guid>
+
+					<description><![CDATA[]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>VIENT DE PARAÎTRE &#8211; La citoyenneté contreterroriste au Nord-Bénin</title>
+		<link>https://www.ciaaf.org/nos-actualites/vient-de-paraitre-la-citoyennete-contreterroriste-au-nord-benin/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Thu, 15 Oct 2026 00:36:28 +0000</pubDate>
+				<category><![CDATA[Nos actualités]]></category>
+		<category><![CDATA[Hero2]]></category>
+		<category><![CDATA[benin]]></category>
+		<category><![CDATA[citoyenneté]]></category>
+		<category><![CDATA[nord benin]]></category>
+		<guid isPermaLink="false">https://www.ciaaf.org/?p=8956</guid>
+
+					<description><![CDATA[Depuis décembre 2021, le Nord du Bénin fait face à une menace terroriste qui affecte la sécurité, les conditions de vie des populations et le vivre-ensemble. Dans ce contexte, les [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Clinique « Médiactiviste » : le CiAAF lance son projet d&#8217;assistance juridique aux acteurs de l&#8217;espace civique au Bénin</title>
+		<link>https://www.ciaaf.org/nos-actualites/le-ciaaf-lance-la-clinique-mediactiviste-au-benin/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Wed, 30 Sep 2026 21:42:00 +0000</pubDate>
+				<category><![CDATA[Nos actualités]]></category>
+		<category><![CDATA[Hero3]]></category>
+		<category><![CDATA[asf canada]]></category>
+		<category><![CDATA[assistance juridique]]></category>
+		<category><![CDATA[benin]]></category>
+		<category><![CDATA[clinique juridique]]></category>
+		<category><![CDATA[médias]]></category>
+		<guid isPermaLink="false">https://www.ciaaf.org/?p=8883</guid>
+
+					<description><![CDATA[Le CiAAF a organisé, mardi 29 septembre 2026 à son siège, l’atelier de lancement de la Clinique Médiactiviste au Bénin. La rencontre a réuni des représentants d’organisations de défense des [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Jeunesse et institutions au Bénin : le CiAAF ouvre le dialogue sur les passerelles de la participation numérique</title>
+		<link>https://www.ciaaf.org/nos-actualites/jeunesse-et-institutions-au-benin-le-ciaaf-ouvre-le-dialogue-sur-les-passerelles-de-la-participation-numerique/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Wed, 12 Aug 2026 23:35:00 +0000</pubDate>
+				<category><![CDATA[Nos actualités]]></category>
+		<category><![CDATA[Hero4]]></category>
+		<category><![CDATA[benin]]></category>
+		<category><![CDATA[digitalise Youth]]></category>
+		<guid isPermaLink="false">https://www.ciaaf.org/?p=8900</guid>
+
+					<description><![CDATA[Comment mieux associer les jeunes aux institutions publiques à l’ère du numérique ? C’est autour de cette question que le Civic Academy for Africa’s Future (CiAAF) a réuni, samedi 8 [&#8230;]]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Projet PARCINORD : le CiAAF vulgarise son Guide de gestion concertée des affaires publiques locales en contexte de crise</title>
+		<link>https://www.ciaaf.org/nos-actualites/projet-parcinord-le-ciaaf-vulgarise-son-guide-de-gestion-concertee-des-affaires-publiques-locales-en-contexte-de-crise/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Mon, 15 Jun 2026 00:07:00 +0000</pubDate>
+				<category><![CDATA[Nos actualités]]></category>
+		<category><![CDATA[Hero5]]></category>
+		<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[benin]]></category>
+		<category><![CDATA[CiAAF]]></category>
+		<category><![CDATA[guide]]></category>
+		<guid isPermaLink="false">https://www.ciaaf.org/?p=8904</guid>
+
+					<description><![CDATA[Projet PARCINORD : le CiAAF vulgarise son Guide de gestion concertée des affaires publiques locales en contexte de crise]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Guide de gestion concertée des affaires publiques locales en contexte de crise</title>
+		<link>https://www.ciaaf.org/nos-dernieres-publications/guide-de-gestion-concertee-des-affaires-publiques-locales-en-contexte-de-crise/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Sat, 30 May 2026 06:10:00 +0000</pubDate>
+				<category><![CDATA[Nos dernières publications]]></category>
+		<category><![CDATA[Hero6]]></category>
+		<category><![CDATA[Nos dernières études]]></category>
+		<guid isPermaLink="false">https://www.ciaaf.org/?p=8908</guid>
+
+					<description><![CDATA[]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Urban Space in Benin : Contributing to an Ongoing Conversation on Urbanization Through Indigenous Linguistic Frameworks</title>
+		<link>https://www.ciaaf.org/nos-dernieres-publications/urban-space-in-benin-contributing-to-an-ongoing-conversation-on-urbanization-through-indigenous-linguistic-frameworks/</link>
+		
+		<dc:creator><![CDATA[Ciaaf]]></dc:creator>
+		<pubDate>Wed, 29 Apr 2026 14:48:00 +0000</pubDate>
+				<category><![CDATA[Nos dernières publications]]></category>
+		<category><![CDATA[benin]]></category>
+		<category><![CDATA[urban]]></category>
+		<guid isPermaLink="false">ht

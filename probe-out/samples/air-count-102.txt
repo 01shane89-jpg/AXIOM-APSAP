@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-10_30.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"-10_30","ac":[["04008c",null,"ET-ARJ","B77L","BOEING 777-200LR",-1.3208,36.9256,null,23,233,1794545894,0,null,"A5",4],["4bb0e4","THY21Y","TC-LGD","A359","AIRBUS A-350-900",-1.6658,36.3844,38000,505,190,1794545898,0,"1605","A5",0],["896429","ETD770","A6-EJA","A320","AIRBUS A-320",-1.2236,37.8417,22800,392,38,1794545893,0,"0506","A3",0]]}

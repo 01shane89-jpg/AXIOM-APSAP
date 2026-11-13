@@ -1,0 +1,144 @@
+https://sanaacenter.org/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Sana’a Center</title>
+	<atom:link href="https://sanaacenter.org/feed" rel="self" type="application/rss+xml" />
+	<link>https://sanaacenter.org/</link>
+	<description>An Independent Think Tank</description>
+	<lastBuildDate>Fri, 06 Nov 2026 16:13:17 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+    <item>
+  <title>How the Houthis’ Image Took Shape and What It Obscured</title>
+  <link>https://sanaacenter.org/publications/perspectives-and-analyses/28680</link>
+  
+            <dc:creator><![CDATA[Maged Al-Madhaji]]></dc:creator>
+        <pubDate>Thu, 05 Nov 2026 17:18:29 +0000</pubDate>
+  		<category><![CDATA[Perspectives and Analyses]]></category>
+  <guid isPermaLink="false">https://sanaacenter.org/?p=28680</guid>
+  
+      <description><![CDATA[<img src="https://sanaacenter.org/wp-content/uploads/2020/10/119-Houthi-Day-of-Wilayah-event-august-8-2020-Asem-Alposi-1-1024x448.jpg" width="1024" height="448" /><p>The post <a href="https://sanaacenter.org/publications/perspectives-and-analyses/28680">How the Houthis’ Image Took Shape and What It Obscured</a> appeared first on <a href="https://sanaacenter.org">Sana’a Center</a>.</p>
+]]></description>
+      </item>
+<item>
+  <title>Customary Law and Transitional Justice Pathways in Yemen</title>
+  <link>https://sanaacenter.org/publications/policy-research/28664</link>
+  
+            <dc:creator><![CDATA[Ibrahim Jalal]]></dc:creator>
+          <dc:creator><![CDATA[Mohammed Al-Shuwaiter]]></dc:creator>
+        <pubDate>Tue, 03 Nov 2026 13:47:03 +0000</pubDate>
+  		<category><![CDATA[Policy Research]]></category>
+		<category><![CDATA[Aden]]></category>
+		<category><![CDATA[Al-Bayda]]></category>
+		<category><![CDATA[Al-Jawf]]></category>
+		<category><![CDATA[Al-Qaeda]]></category>
+		<category><![CDATA[Economic]]></category>
+		<category><![CDATA[Hadramawt]]></category>
+		<category><![CDATA[Houthi]]></category>
+		<category><![CDATA[Houthis]]></category>
+		<category><![CDATA[Hudaydah]]></category>
+		<category><![CDATA[Marib]]></category>
+		<category><![CDATA[Minorities]]></category>
+		<category><![CDATA[Muhammasheen]]></category>
+		<category><![CDATA[Mukalla]]></category>
+		<category><![CDATA[Peace]]></category>
+		<category><![CDATA[Sana'a]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[Shabwa]]></category>
+		<category><![CDATA[STC]]></category>
+		<category><![CDATA[Taiz]]></category>
+		<category><![CDATA[Tribes]]></category>
+		<category><![CDATA[UN]]></category>
+		<category><![CDATA[United Nations]]></category>
+		<category><![CDATA[Women]]></category>
+		<category><![CDATA[Yemen]]></category>
+  <guid isPermaLink="false">https://sanaacenter.org/?p=28664</guid>
+  
+      <description><![CDATA[<img src="https://sanaacenter.org/wp-content/uploads/2026/07/Vendors-and-buyers-gather-at-the-Sunday-livestock-market-for-Eid-al-Adha-in-the-Wadi-Al-Dabab-area-of-Taiz-City.jpg" width="1024" height="683" /><p>The post <a href="https://sanaacenter.org/publications/policy-research/28664">Customary Law and Transitional Justice Pathways in Yemen</a> appeared first on <a href="https://sanaacenter.org">Sana’a Center</a>.</p>
+]]></description>
+      </item>
+<item>
+  <title>How Have the Houthis Become So Dangerous?</title>
+  <link>https://sanaacenter.org/publications/perspectives-and-analyses/28567</link>
+  
+            <dc:creator><![CDATA[Maged Al-Madhaji]]></dc:creator>
+        <pubDate>Wed, 14 Oct 2026 15:06:21 +0000</pubDate>
+  		<category><![CDATA[Perspectives and Analyses]]></category>
+		<category><![CDATA[Publications]]></category>
+  <guid isPermaLink="false">https://sanaacenter.org/?p=28567</guid>
+  
+      <description><![CDATA[<img src="https://sanaacenter.org/wp-content/uploads/2025/07/An-Iranian-flag-waves-behind-Yemenis-taking-part-in-a-Houthi-organized-demonstration-in-support-of-Iran-and-against-Israel-and-the-US-cover-1024x683.jpg" width="1024" height="683" /><p>The post <a href="https://sanaacenter.org/publications/perspectives-and-analyses/28567">How Have the Houthis Become So Dangerous?</a> appeared first on <a href="https://sanaacenter.org">Sana’a Center</a>.</p>
+]]></description>
+      </item>
+<item>
+  <title>Yemen’s Return to War: Implications for Gulf Security</title>
+  <link>https://sanaacenter.org/publications/28522</link>
+  
+            <dc:creator><![CDATA[Yasar Qartaneh]]></dc:creator>
+          <dc:creator><![CDATA[Khaldoon Abdulla]]></dc:creator>
+          <dc:creator><![CDATA[Ahmed Dahshan]]></dc:creator>
+        <pubDate>Wed, 14 Oct 2026 08:37:59 +0000</pubDate>
+  		<category><![CDATA[Perspectives and Analyses]]></category>
+		<category><![CDATA[Publications]]></category>
+		<category><![CDATA[Diplomacy]]></category>
+		<category><![CDATA[Economic]]></category>
+		<category><![CDATA[Houthis]]></category>
+		<category><![CDATA[Peace]]></category>
+		<category><![CDATA[Saudi Arabia]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[War]]></category>
+		<category><![CDATA[Yemen]]></category>
+  <guid isPermaLink="false">https://sanaacenter.org/?p=28522</guid>
+  
+      <description><![CDATA[<img src="https://sanaacenter.org/wp-content/uploads/2026/02/A-Yemeni-flag-on-the-rubble-of-the-Sheikh-Ibrahim-Aqil-school-in-Taizs-Al-Mudhaffar-district-1024x683.jpg" width="1024" height="683" /><p>The post <a href="https://sanaacenter.org/publications/28522">Yemen’s Return to War: Implications for Gulf Security</a> appeared first on <a href="https://sanaacenter.org">Sana’a Center</a>.</p>
+]]></description>
+      </item>
+<item>
+  <title>Yemen’s War Resumes, But the Endgame Remains Uncertain</title>
+  <link>https://sanaacenter.org/publications/perspectives-and-analyses/28470</link>
+  
+            <dc:creator><![CDATA[Osamah Al-Rawhani]]></dc:creator>
+        <pubDate>Tue, 06 Oct 2026 11:15:20 +0000</pubDate>
+  		<category><![CDATA[Perspectives and Analyses]]></category>
+		<category><![CDATA[Economic]]></category>
+		<category><![CDATA[Economy]]></category>
+		<category><![CDATA[Energy]]></category>
+		<category><![CDATA[Houthis]]></category>
+		<category><![CDATA[Hudaydah]]></category>
+		<category><![CDATA[Humanitarian Aid]]></category>
+		<category><![CDATA[Iran]]></category>
+		<category><![CDATA[Peace]]></category>
+		<category><![CDATA[Sana'a]]></category>
+		<category><![CDATA[Saudi Arabia]]></category>
+		<category><![CDATA[Taiz]]></category>
+		<category><![CDATA[UAE]]></category>
+		<category><![CDATA[US]]></category>
+		<category><![CDATA[War]]></category>
+		<category><![CDATA[Yemen]]></category>
+  <guid isPermaLink="false">https://sanaacenter.org/?p=28470</guid>
+  
+      <description><![CDATA[<img src="https://sanaacenter.org/wp-content/uploads/2022/03/Shabwa-1024x576.png" width="1024" height="576" /><p>The post <a href="https://sanaacenter.org/publications/perspectives-and-analyses/28470">Yemen’s War Resumes, But the Endgame Remains Uncertain</a> appeared first on <a href="https://sanaacenter.org">Sana’a Center</a>.</p>
+]]></description>
+      </item>
+<item>
+  <title>The Battle for Taiz and the Struggle for Yemen</title>
+  <link>https://sanaacenter.org/publications/perspectives-and-analyses/28435</link>
+  
+            <dc:creator><![CDATA[Essa Abduljaleel]]></dc:creator>
+          <dc:creator><![CDATA[Tawfeek Al-Ganad]]></dc:creator>
+          <dc:creator><![CDATA[Maged Al-Madhaji]]></dc:creator>
+          <dc:creator><![CDATA[Maher Abu al-Majd]]></dc:creator>
+        <pubDate>Fri, 02 Oct 2026 10:56:01 +0000</pubDate>
+  		<category><![CDATA[Perspectives

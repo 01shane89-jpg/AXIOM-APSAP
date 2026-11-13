@@ -1,0 +1,110 @@
+https://idsa.in/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>MP-IDSA</title>
+	<atom:link href="https://idsa.in/feed" rel="self" type="application/rss+xml" />
+	<link>https://idsa.in/</link>
+	<description></description>
+	<lastBuildDate>Wed, 14 May 2025 05:16:11 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://idsa.in/wp-content/uploads/2023/05/cropped-logo-idsa-32x32.png</url>
+	<title>MP-IDSA</title>
+	<link>https://idsa.in/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Keynote Address at the 9th South Asia Conference on &#8220;Culture as a Factor in Regional Cooperation in South Asia&#8221;</title>
+		<link>https://idsa.in/keynote-address-at-the-9th-south-asia-conference-on-culture-as-a-factor-in-regional-cooperation-in-south-asia</link>
+		
+		<dc:creator><![CDATA[idsa]]></dc:creator>
+		<pubDate>Wed, 28 Feb 2024 08:02:02 +0000</pubDate>
+				<category><![CDATA[KEY SPEECH AT THE SOUTH ASIA CONFERENCE]]></category>
+		<guid isPermaLink="false">https://demo.idsa.in/?p=79582</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idsa.in/keynote-address-at-the-9th-south-asia-conference-on-culture-as-a-factor-in-regional-cooperation-in-south-asia">Keynote Address at the 9th South Asia Conference on &#8220;Culture as a Factor in Regional Cooperation in South Asia&#8221;</a> appeared first on <a href="https://idsa.in">MP-IDSA</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><iframe width="550" height="309" src="https://www.youtube.com/embed/tQUnL5pLCBs?rel=0" frameborder="0" allowfullscreen=""></iframe></p>
+<p>The post <a href="https://idsa.in/keynote-address-at-the-9th-south-asia-conference-on-culture-as-a-factor-in-regional-cooperation-in-south-asia">Keynote Address at the 9th South Asia Conference on &#8220;Culture as a Factor in Regional Cooperation in South Asia&#8221;</a> appeared first on <a href="https://idsa.in">MP-IDSA</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Keynote Address H.E. Mhd. Hanif Atmar, National Security Advisor, Afghanistan at the 19th Asian Security Conference on &#8220;Combating Terrorism: Evolving an Asian Response&#8221;</title>
+		<link>https://idsa.in/keynote-address-h-e-mhd-hanif-atmar-national-security-advisor-afghanistan-at-the-19th-asian-security-conference-on-combating-terrorism-evolving-an-asian-response</link>
+		
+		<dc:creator><![CDATA[idsa]]></dc:creator>
+		<pubDate>Wed, 28 Feb 2024 07:05:30 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://demo.idsa.in/?p=79550</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idsa.in/keynote-address-h-e-mhd-hanif-atmar-national-security-advisor-afghanistan-at-the-19th-asian-security-conference-on-combating-terrorism-evolving-an-asian-response">Keynote Address H.E. Mhd. Hanif Atmar, National Security Advisor, Afghanistan at the 19th Asian Security Conference on &#8220;Combating Terrorism: Evolving an Asian Response&#8221;</a> appeared first on <a href="https://idsa.in">MP-IDSA</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://idsa.in/keynote-address-h-e-mhd-hanif-atmar-national-security-advisor-afghanistan-at-the-19th-asian-security-conference-on-combating-terrorism-evolving-an-asian-response">Keynote Address H.E. Mhd. Hanif Atmar, National Security Advisor, Afghanistan at the 19th Asian Security Conference on &#8220;Combating Terrorism: Evolving an Asian Response&#8221;</a> appeared first on <a href="https://idsa.in">MP-IDSA</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Welcome Remarks by Amb. Sujan R. Chinoy &#124; 4th West Asia Conference</title>
+		<link>https://idsa.in/welcome-remarks-by-amb-sujan-r-chinoy-4th-west-asia-conference</link>
+		
+		<dc:creator><![CDATA[idsa]]></dc:creator>
+		<pubDate>Wed, 26 Feb 2020 08:04:19 +0000</pubDate>
+				<category><![CDATA[WEST ASIA CONFERENCE SPEECH]]></category>
+		<guid isPermaLink="false">https://demo.idsa.in/?p=79586</guid>
+
+					<description><![CDATA[<p>4th West Asia Conference Ten Years of Political &#38; Economic Transformation in West Asia: Challenges, Lessons &#38; Future Trends February 26-27, 2020 Welcome Remarks by Amb. Sujan R. Chinoy, Director&#8230; <a class="more-link" href="https://idsa.in/welcome-remarks-by-amb-sujan-r-chinoy-4th-west-asia-conference">Continue reading <span class="screen-reader-text">Welcome Remarks by Amb. Sujan R. Chinoy &#124; 4th West Asia Conference</span></a></p>
+<p>The post <a href="https://idsa.in/welcome-remarks-by-amb-sujan-r-chinoy-4th-west-asia-conference">Welcome Remarks by Amb. Sujan R. Chinoy | 4th West Asia Conference</a> appeared first on <a href="https://idsa.in">MP-IDSA</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div class="field field-name-body field-type-text-with-summary field-label-hidden">
+<div class="field-items">
+<div class="field-item even">
+<p>4th West Asia Conference<br />
+Ten Years of Political &amp; Economic Transformation in West Asia: Challenges, Lessons &amp; Future Trends<br />
+February 26-27, 2020</p>
+<p>Welcome Remarks<br />
+by </p>
+<p>Amb. Sujan R. Chinoy, Director General,<br />
+Manohar Parrikar Institute for Defence Studies and Analyses</p>
+<p><iframe width="560" height="315" src="https://www.youtube.com/embed/xPnihUhfWX0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+</div>
+<p>The post <a href="https://idsa.in/welcome-remarks-by-amb-sujan-r-chinoy-4th-west-asia-conference">Welcome Remarks by Amb. Sujan R. Chinoy | 4th West Asia Conference</a> appeared first on <a href="https://idsa.in">MP-IDSA</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Inaugural Address by Hon&#8217;ble Raksha Mantri Shri Manohar Parrikar at the 19th Asian Security Conference on ‘Combating Terrorism: Evolving an Asian Response’</title>
+		<link>https://idsa.in/inaugural-address-by-honble-raksha-mantri-shri-manohar-parrikar-at-the-19th-asian-security-conference-on-combating-terrorism-evolving-an-asian-response</link>
+					<comments>https://idsa.in/inaugural-address-by-honble-raksha-mantri-shri-manohar-parrikar-at-the-19th-asian-security-conference-on-combating-terrorism-evolving-an-asian-response#comments</comments>
+		
+		<dc:creator><![CDATA[idsa]]></dc:creator>
+		<pubDate>Mon, 06 Mar 2017 07:59:04 +0000</pubDate>
+				<category><![CDATA[ASIAN SECURITY CONFERENCE SPEECH]]></category>
+		<guid isPermaLink="false">https://demo.idsa.in/?p=79579</guid>
+
+					<description><![CDATA[<p>The post <a href="https://idsa.in/inaugural-address-by-honble-raksha-mantri-shri-manohar-parrikar-at-the-19th-asian-security-conference-on-combating-terrorism-evolving-an-asian-response">Inaugural Address by Hon&#8217;ble Raksha Mantri Shri Manohar Parrikar at the 19th Asian Security Conference on ‘Combating Terrorism: Evolving an Asian Response’</a> appeared first on <a href="https://idsa.in">MP-IDSA</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><iframe width="550" height="309" src="https://www.youtube.com/embed/m3FbpiWjQQ8?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen=""></iframe></p>
+<p>The post <a href="https://idsa.in/inaugural-address-by-honble-raksha-mantri-shri-manohar-parrikar-at-the-19th-asian-security-conference-on-combating-terrorism-evolving-an-asian-response">Inaugural Address by Hon&#8217;ble Raksha Mantri Shri Manohar Parrikar at the 19th Asian Security Conference o

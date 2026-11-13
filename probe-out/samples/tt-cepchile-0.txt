@@ -1,0 +1,161 @@
+https://www.cepchile.cl/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CEP Chile</title>
+	<atom:link href="https://www.cepchile.cl/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.cepchile.cl/</link>
+	<description>Centro de Estudios Públicos</description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:48:05 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://static.cepchile.cl/uploads/cepchile/2022/05/favicon.png</url>
+	<title>CEP Chile</title>
+	<link>https://www.cepchile.cl/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Macondo o la tentación de la página en blanco</title>
+		<link>https://www.cepchile.cl/macondo-o-la-tentacion-de-la-pagina-en-blanco/</link>
+		
+		<dc:creator><![CDATA[Alexandra Tabilo]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:48:05 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<guid isPermaLink="false">https://www.cepchile.cl/?p=41720</guid>
+
+					<description><![CDATA[<p>El País</p>
+<p>The post <a href="https://www.cepchile.cl/macondo-o-la-tentacion-de-la-pagina-en-blanco/">Macondo o la tentación de la página en blanco</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.cepchile.cl/macondo-o-la-tentacion-de-la-pagina-en-blanco/">Macondo o la tentación de la página en blanco</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>El ajuste fiscal pendiente para 2028</title>
+		<link>https://www.cepchile.cl/el-ajuste-fiscal-pendiente-para-2028/</link>
+		
+		<dc:creator><![CDATA[Alexandra Tabilo]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:18:37 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<guid isPermaLink="false">https://www.cepchile.cl/?p=41664</guid>
+
+					<description><![CDATA[<p>Ex-Ante</p>
+<p>The post <a href="https://www.cepchile.cl/el-ajuste-fiscal-pendiente-para-2028/">El ajuste fiscal pendiente para 2028</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.cepchile.cl/el-ajuste-fiscal-pendiente-para-2028/">El ajuste fiscal pendiente para 2028</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Lanzamiento de libro: Hacia una biblioteca de libertad.</title>
+		<link>https://www.cepchile.cl/lanzamiento-del-libro-hacia-una-biblioteca-de-la-libertad/</link>
+		
+		<dc:creator><![CDATA[Ignacio Mahave]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 20:31:24 +0000</pubDate>
+				<category><![CDATA[Eventos]]></category>
+		<guid isPermaLink="false">https://www.cepchile.cl/?p=41683</guid>
+
+					<description><![CDATA[<p>Nota de prensa</p>
+<p>The post <a href="https://www.cepchile.cl/lanzamiento-del-libro-hacia-una-biblioteca-de-la-libertad/">Lanzamiento de libro: Hacia una biblioteca de libertad.</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.cepchile.cl/lanzamiento-del-libro-hacia-una-biblioteca-de-la-libertad/">Lanzamiento de libro: Hacia una biblioteca de libertad.</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>El único representante en Chile: El CEP fue reconocido a nivel global en la edición 2026 de OTT Think Tanks to Watch</title>
+		<link>https://www.cepchile.cl/el-unico-representante-en-chile-el-cep-fue-reconocido-a-nivel-global-en-la-edicion-2026-de-ott-think-tanks-to-watch/</link>
+		
+		<dc:creator><![CDATA[Alexandra Tabilo]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 12:45:51 +0000</pubDate>
+				<category><![CDATA[Noticias CEP]]></category>
+		<guid isPermaLink="false">https://www.cepchile.cl/?p=41645</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.cepchile.cl/el-unico-representante-en-chile-el-cep-fue-reconocido-a-nivel-global-en-la-edicion-2026-de-ott-think-tanks-to-watch/">El único representante en Chile: El CEP fue reconocido a nivel global en la edición 2026 de OTT Think Tanks to Watch</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.cepchile.cl/el-unico-representante-en-chile-el-cep-fue-reconocido-a-nivel-global-en-la-edicion-2026-de-ott-think-tanks-to-watch/">El único representante en Chile: El CEP fue reconocido a nivel global en la edición 2026 de OTT Think Tanks to Watch</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>El aficionado</title>
+		<link>https://www.cepchile.cl/el-aficionado/</link>
+		
+		<dc:creator><![CDATA[Alexandra Tabilo]]></dc:creator>
+		<pubDate>Sun, 08 Nov 2026 12:46:25 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<guid isPermaLink="false">https://www.cepchile.cl/?p=41660</guid>
+
+					<description><![CDATA[<p>Medios Regionales</p>
+<p>The post <a href="https://www.cepchile.cl/el-aficionado/">El aficionado</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.cepchile.cl/el-aficionado/">El aficionado</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>El segundo piso: el arte de no ser noticia</title>
+		<link>https://www.cepchile.cl/el-segundo-piso-el-arte-de-no-ser-noticia/</link>
+		
+		<dc:creator><![CDATA[Alexandra Tabilo]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 18:22:18 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<guid isPermaLink="false">https://www.cepchile.cl/?p=41625</guid>
+
+					<description><![CDATA[<p>La Tercera</p>
+<p>The post <a href="https://www.cepchile.cl/el-segundo-piso-el-arte-de-no-ser-noticia/">El segundo piso: el arte de no ser noticia</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.cepchile.cl/el-segundo-piso-el-arte-de-no-ser-noticia/">El segundo piso: el arte de no ser noticia</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Sobrecautela</title>
+		<link>https://www.cepchile.cl/sobrecautela/</link>
+		
+		<dc:creator><![CDATA[Alexandra Tabilo]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 14:37:33 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<guid isPermaLink="false">https://www.cepchile.cl/?p=41619</guid>
+
+					<description><![CDATA[<p>La Tercera</p>
+<p>The post <a href="https://www.cepchile.cl/sobrecautela/">Sobrecautela</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.cepchile.cl/sobrecautela/">Sobrecautela</a> appeared first on <a href="https://www.cepchile.cl">CEP Chile</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Naturaleza protegida, futuro compartido: el aporte privado a la conservación en Chile</title>
+		<link>https://www.cepchile.cl/naturaleza-protegida-futuro-compartido-el-aporte-privado-a-la-conservacion-en-chile/</link>
+		
+		<dc:creator><![CDATA[Ignacio Mahave]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 13

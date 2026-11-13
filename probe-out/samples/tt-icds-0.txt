@@ -1,0 +1,85 @@
+https://icds.ee/en/
+
+<!DOCTYPE html>
+<html lang="en-GB" prefix="og: https://ogp.me/ns#">
+<head>
+    <script>
+    // Cloudflare prevention
+    if (typeof window !== 'undefined') {
+        window._cfuvid = undefined;
+        Object.defineProperty(window, '_cfuvid', {
+            get: function() { return undefined; },
+            set: function() { return undefined; },
+            configurable: false
+        });
+
+        window.CloudflareWebAnalytics = { disabled: true };
+        if (window.CF) { window.CF.disabled = true; }
+    }
+    </script>
+
+    <script>
+    // Set up dataLayer and GTM ID for the cookie consent component to use
+    window.dataLayer = window.dataLayer || [];
+    window.GTM_ID = 'GTM-PXGCW3G';
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-57x57.png" />
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-144x144.png" />
+<link rel="apple-touch-icon-precomposed" sizes="60x60" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-60x60.png" />
+<link rel="apple-touch-icon-precomposed" sizes="120x120" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon-precomposed" sizes="76x76" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://icds.ee/wp-content/themes/icds/assets/favicons/apple-touch-icon-152x152.png" />
+<link rel="icon" type="image/png" href="https://icds.ee/wp-content/themes/icds/assets/favicons/favicon-196x196.png" sizes="196x196" />
+<link rel="icon" type="image/png" href="https://icds.ee/wp-content/themes/icds/assets/favicons/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/png" href="https://icds.ee/wp-content/themes/icds/assets/favicons/favicon-32x32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="https://icds.ee/wp-content/themes/icds/assets/favicons/favicon-16x16.png" sizes="16x16" />
+<link rel="icon" type="image/png" href="https://icds.ee/wp-content/themes/icds/assets/favicons/favicon-128.png" sizes="128x128" />
+<meta name="application-name" content="International Centre for Defence and Security"/>
+<meta name="msapplication-TileColor" content="#FFFFFF" />
+<meta name="msapplication-TileImage" content="https://icds.ee/wp-content/themes/icds/assets/favicons/mstile-144x144.png" />
+<meta name="msapplication-square70x70logo" content="https://icds.ee/wp-content/themes/icds/assets/favicons/mstile-70x70.png" />
+<meta name="msapplication-square150x150logo" content="https://icds.ee/wp-content/themes/icds/assets/favicons/mstile-150x150.png" />
+<meta name="msapplication-wide310x150logo" content="https://icds.ee/wp-content/themes/icds/assets/favicons/mstile-310x150.png" />
+<meta name="msapplication-square310x310logo" content="https://icds.ee/wp-content/themes/icds/assets/favicons/mstile-310x310.png" />
+
+    <link rel="alternate" href="https://icds.ee/en/" hreflang="en" />
+<link rel="alternate" href="https://icds.ee/et/" hreflang="et" />
+<link rel="alternate" href="https://icds.ee/" hreflang="x-default" />
+
+<!-- Search Engine Optimisation by Rank Math - https://rankmath.com/ -->
+<title>Homepage - International Centre for Defence and Security</title>
+<meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
+<link rel="canonical" href="https://icds.ee/en/" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:type" content="website" />
+<meta property="og:locale:alternate" content="et_EE" />
+<meta property="og:title" content="Homepage - International Centre for Defence and Security" />
+<meta property="og:url" content="https://icds.ee/en/" />
+<meta property="og:site_name" content="International Centre for Defence and Security" />
+<meta property="og:updated_time" content="2026-11-12T16:47:17+03:00" />
+<meta property="article:published_time" content="2025-07-05T15:19:08+03:00" />
+<meta property="article:modified_time" content="2026-11-12T16:47:17+03:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Homepage - International Centre for Defence and Security" />
+<script type="application/ld+json" class="rank-math-schema">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://icds.ee/#organization","name":"International Centre for Defence and Security","url":"https://icds.ee"},{"@type":"WebSite","@id":"https://icds.ee/#website","url":"https://icds.ee/en","name":"International Centre for Defence and Security","publisher":{"@id":"https://icds.ee/#organization"},"inLanguage":"en-GB","potentialAction":{"@type":"SearchAction","target":"https://icds.ee/?s={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"WebPage","@id":"https://icds.ee/en/#webpage","url":"https://icds.ee/en/","name":"Homepage - International Centre for Defence and Security","datePublished":"2025-07-05T15:19:08+03:00","dateModified":"2026-11-12T16:47:17+03:00","about":{"@id":"https://icds.ee/#organization"},"isPartOf":{"@id":"https://icds.ee/#website"},"inLanguage":"en-GB"},{"@type":"Article","headline":"Homepage - International Centre for Defence and Security","datePublished":"2025-07-05T15:19:08+03:00","dateModified":"2026-11-12T16:47:17+03:00","publisher":{"@id":"https://icds.ee/#organization"},"name":"Homepage - International Centre for Defence and Security","@id":"https://icds.ee/en/#richSnippet","isPartOf":{"@id":"https://icds.ee/en/#webpage"},"inLanguage":"en-GB","mainEntityOfPage":{"@id":"https://icds.ee/en/#webpage"}}]}</script>
+<!-- /Rank Math WordPress SEO plugin -->
+
+
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='sbr_styles-css' href='https://icds.ee/wp-content/plugins/reviews-feed/assets/css/sbr-styles.min.css?ver=2.16.1' media='all' />
+<link data-minify="1" rel='stylesheet' id='sbi-tokens-local-css' href='https://icds.ee/wp-content/cache/min/1/wp-content/plugins/instagram-feed/assets/tokens/sb-tokens-local.css?ver=1793782262' media='all' />
+<link rel='stylesheet' id='sbi_styles-css' href='https://icds.ee/wp-content/plugins/instagram-feed/css/sbi-styles.min.css?ver=6.15.1' media='all' />
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cya

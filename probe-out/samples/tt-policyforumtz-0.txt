@@ -1,0 +1,55 @@
+https://www.policyforum-tz.org/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:schema="http://schema.org/" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" version="2.0" xml:base="https://www.policyforum-tz.org/">
+  <channel>
+    <title>Policy Forum - Making policies work for people in Tanzania</title>
+    <link>https://www.policyforum-tz.org/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Communities Push for Better Services and Accountability in Newala, Mtama</title>
+  <link>https://www.policyforum-tz.org/news/2026-11-09/communities-push-better-services-and-accountability-newala-mtama</link>
+  <description>
+&lt;span&gt;Communities Push for Better Services and Accountability in Newala, Mtama&lt;/span&gt;
+
+      &lt;div class="field field--name-field-newscategory field--type-entity-reference field--label-hidden field__items"&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policyforum-tz.org/taxonomy/term/81" hreflang="und"&gt;Good Governance&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+  
+&lt;span&gt;&lt;span lang="" about="https://www.policyforum-tz.org/users/web-master" typeof="schema:Person" property="schema:name" datatype="" xml:lang=""&gt;Web Master&lt;/span&gt;&lt;/span&gt;
+
+&lt;span&gt;Mon, 11/09/2026 - 11:36&lt;/span&gt;
+
+            &lt;div class="field field--name-field-newsimage field--type-image field--label-hidden field__item"&gt;
+&lt;div class="item-image"&gt;
+  &lt;img loading="lazy" src="https://www.policyforum-tz.org/sites/default/files/IMG_1266.jpg" alt="" typeof="foaf:Image" /&gt;&lt;/div&gt;
+&lt;/div&gt;
+      
+            &lt;div class="field field--name-body field--type-text-with-summary field--label-hidden field__item"&gt;&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;Meaningful citizen participation in local governance goes beyond attending meetings or being invited to express opinions. It requires citizens to have access to relevant information, opportunities to raise issues affecting their communities, and mechanisms through which their concerns are considered, addressed and followed up by those responsible for public service delivery.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;Recognising this, Policy Forum Tanzania, in partnership with LANGO and MTWANGONET, facilitated a series of ward- and district-level dialogues in Newala and Mtama District Councils from 20 to 24 October 2026 under the Jamii Jumuishi project, funded by the Embassy of Finland in Tanzania. The dialogues sought to strengthen constructive engagement between citizens and duty bearers in local planning, budgeting, decision-making and public resource accountability.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;Although local government structures provide opportunities for citizens to participate in development planning and decision-making, meaningful participation remains a challenge in many communities. Citizens often lack adequate information to engage effectively, while existing mechanisms do not always systematically capture community priorities, provide feedback or ensure that commitments made by authorities are followed through.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;The dialogues therefore provided a structured platform for citizens, represented by Community Accountability Champions (CACs), also known as Vinara wa Demokrasia na Maendeleo, to present evidence-based concerns and priorities directly to local government leaders and technical officers. They also offered an opportunity for citizens and government representatives to clarify their respective roles and responsibilities in addressing community needs.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;&lt;strong&gt;Taking Community Priorities to Decision-Makers&lt;/strong&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;The engagement brought together 248 participants, comprising 121 women and 127 men, across four dialogues. Participants included CACs, community representatives, village and ward leaders, councillors, council technical officers, representatives of village committees, project partners and local media.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;In Newala, the ward-level dialogue was held on 20 October 2026 at Kitangali Teachers’ College, followed by a district-level engagement on 21 October at Newala District Council Hall. In Mtama, ward- and district-level dialogues took place on 23 and 24 October, respectively. Radio Newala also participated in the Newala engagements to help communicate key messages and discussions beyond the meeting venues.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;At ward level, CACs presented village action plans, shared implementation progress and highlighted service-delivery challenges requiring attention. The discussions created an opportunity for community members to move beyond general expressions of concern and present specific experiences and evidence that could inform local government decisions.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;In Newala, representatives from Mitema, Idamnole, Mandala and Chihangu villages raised concerns relating to access to healthcare, water tariffs and reliability, electricity connections, road infrastructure, availability of medicines, staffing in health facilities, teacher shortages and inadequate school infrastructure.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;For residents of Mitema, access to healthcare remains a significant challenge, with community members reporting that they travel more than 10 kilometres to reach health services in Kitangali (town). In Idamnole, participants highlighted the high cost of water, limited electricity connections and inadequate staffing at the local dispensary.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;Education infrastructure and staffing also featured prominently. In Mandala, residents reported having approximately 350 pupils served by only four teachers, alongside limited teachers' housing, with only one teacher's house available. In Chihangu, participants raised concerns about water and electricity access, school infrastructure, parental involvement in education and delays in convening Village Assemblies.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;These discussions demonstrated how community-level engagement can bring specific service-delivery gaps to the attention of authorities and help identify priorities requiring intervention.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;In Mtama, the ward dialogue focused on reviewing progress in implementing village action plans in Kilimahewa A, Kilimahewa B, Nyengedi B and Nyengedi. Participants shared examples of community initiatives, including a school farm and teachers' house in Nyengedi B, a village market in Nyengedi, a village office in Kilimahewa B and the construction of 17 toilet holes at Mtua Secondary School.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;span&gt;&lt;span&gt;The discussions also emphasised the importance of ensuring that citizens participate in identifying development priorities before village and ward plans and

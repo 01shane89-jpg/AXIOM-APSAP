@@ -1,0 +1,165 @@
+https://www.cep.si/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CEP</title>
+	<atom:link href="https://www.cep.si/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.cep.si</link>
+	<description>Center for European Perspective</description>
+	<lastBuildDate>Tue, 10 Nov 2026 12:54:09 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Vabilo na dogodek »Upravljanje z okoljem in zgodbe o uspehu slovensko–ukrajinskih partnerstev«</title>
+		<link>https://www.cep.si/vabilo-na-dogodek-upravljanje-z-okoljem-in-zgodbe-o-uspehu-slovensko-ukrajinskih-partnerstev/</link>
+		
+		<dc:creator><![CDATA[Nika Lesjak]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 13:51:00 +0000</pubDate>
+				<category><![CDATA[PR]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<category><![CDATA[environment]]></category>
+		<category><![CDATA[invitation]]></category>
+		<category><![CDATA[Slovenian Aid and Partnerships]]></category>
+		<category><![CDATA[Waste management]]></category>
+		<guid isPermaLink="false">https://www.cep.si/?p=35581</guid>
+
+					<description><![CDATA[]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Uspešno zaključeno tridnevno usposabljanje o strateških komunikacijah</title>
+		<link>https://www.cep.si/uspesno-zakljuceno-tridnevno-usposabljanje-o-strateskih-komunikacijah/</link>
+		
+		<dc:creator><![CDATA[Ana Novak]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 08:41:48 +0000</pubDate>
+				<category><![CDATA[POTC]]></category>
+		<category><![CDATA[PR]]></category>
+		<category><![CDATA[peace and security training]]></category>
+		<category><![CDATA[STRATCOM]]></category>
+		<category><![CDATA[strategic communication]]></category>
+		<category><![CDATA[strateške komunikacije]]></category>
+		<category><![CDATA[strateško komuniciranje]]></category>
+		<category><![CDATA[training]]></category>
+		<category><![CDATA[training opportunity slovenia]]></category>
+		<category><![CDATA[UKOM]]></category>
+		<category><![CDATA[urad vlade za komuniciranje]]></category>
+		<category><![CDATA[usposabljanje]]></category>
+		<guid isPermaLink="false">https://www.cep.si/?p=35564</guid>
+
+					<description><![CDATA[<p>Med 3. in 5. novembrom 2026 je na gradu Jable potekalo tridnevno usposabljanje “Strateške komunikacije: od strategije do strateškega učinka”, ki ga je organiziral Center za izobraževanje v mirovnih operacijah (POTC). Usposabljanja se je udeležilo 30 predstavnikov različnih institucij, ki so skozi kombinacijo strokovnih predavanj in praktičnih vaj poglabljali znanje s področja strateškega komuniciranja, odzivanja [&#8230;]</p>
+The post <a href="https://www.cep.si/uspesno-zakljuceno-tridnevno-usposabljanje-o-strateskih-komunikacijah/">Uspešno zaključeno tridnevno usposabljanje o strateških komunikacijah</a> appeared first on <a href="https://www.cep.si">CEP</a>.]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Upcoming Cluster Visit – Sustainable Waste Management, Circular Economy and Green Municipal Development</title>
+		<link>https://www.cep.si/upcoming-cluster-visit-sustainable-waste-management-circular-economy-and-green-municipal-development/</link>
+		
+		<dc:creator><![CDATA[Nika Lesjak]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 12:40:20 +0000</pubDate>
+				<category><![CDATA[PR]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<category><![CDATA[Development cooperation]]></category>
+		<category><![CDATA[Slovenian Aid and Partnerships]]></category>
+		<category><![CDATA[Study visit]]></category>
+		<category><![CDATA[Waste management]]></category>
+		<guid isPermaLink="false">https://www.cep.si/?p=35551</guid>
+
+					<description><![CDATA[]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>EUTI Training: Artificial Intelligence in CSDP Training and Education</title>
+		<link>https://www.cep.si/euti-ai-in-csdp-training-and-education/</link>
+		
+		<dc:creator><![CDATA[Iza Kotnik]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 09:28:02 +0000</pubDate>
+				<category><![CDATA[EUTI]]></category>
+		<category><![CDATA[Peace and security]]></category>
+		<category><![CDATA[PR]]></category>
+		<category><![CDATA[AI]]></category>
+		<category><![CDATA[peace and security]]></category>
+		<guid isPermaLink="false">https://www.cep.si/?p=35537</guid>
+
+					<description><![CDATA[]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Začelo se je usposabljanje Strateške komunikacije: od strategije do strateškega učinka</title>
+		<link>https://www.cep.si/zacelo-se-je-usposabljanje-strateske-komunikacije/</link>
+		
+		<dc:creator><![CDATA[Ana Novak]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 08:01:48 +0000</pubDate>
+				<category><![CDATA[POTC]]></category>
+		<category><![CDATA[PR]]></category>
+		<category><![CDATA[STRATCOM]]></category>
+		<category><![CDATA[strategic communication]]></category>
+		<category><![CDATA[strateško komuniciranje]]></category>
+		<category><![CDATA[training]]></category>
+		<category><![CDATA[trening]]></category>
+		<guid isPermaLink="false">https://www.cep.si/?p=35524</guid>
+
+					<description><![CDATA[]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>POTC in Kenya: Delivering the Climate Security Training with the IPSTC</title>
+		<link>https://www.cep.si/climate-security-training-in-kenya/</link>
+		
+		<dc:creator><![CDATA[POTC]]></dc:creator>
+		<pubDate>Fri, 30 Oct 2026 03:50:12 +0000</pubDate>
+				<category><![CDATA[POTC]]></category>
+		<category><![CDATA[PR]]></category>
+		<category><![CDATA[african peacekeeping]]></category>
+		<category><![CDATA[african union]]></category>
+		<category><![CDATA[climate security]]></category>
+		<category><![CDATA[climate security kenya training]]></category>
+		<category><![CDATA[climate security training]]></category>
+		<category><![CDATA[environmental peacebuilding]]></category>
+		<category><![CDATA[peacebuilding slovenia]]></category>
+		<category><![CDATA[slovenia african union cooperation]]></category>
+		<category><![CDATA[slovenia horn of africa]]></category>
+		<category><![CDATA[slovenia in africa]]></category>
+		<category><![CDATA[slovenia ipstc]]></category>
+		<category><![CDATA[slovenia kenya cooperatiom]]></category>
+		<category><![CDATA[slovenia partnership]]></category>
+		<category><![CDATA[slovenia UN]]></category>
+		<category><![CDATA[training opportunity]]></category>
+		<guid isPermaLink="false">https://www.cep.si/?p=35482</guid>
+
+					<description><![CDATA[<p>On October 29, the Peace Operations Training Centre (POTC) and Kenya’s International Peace Support Training Centre (IPSTC) wrapped up their first joint climate security training in Nairobi, Kenya. Kliknite tukaj za branje članka v slovenskem jeziku. Highlighting strong Slovenia-Kenya cooperation, the intensive 4-day programme drew significant interest, with over 650 initial applicants, a new record [&#8230;]</p>
+The post <a href="https://www.cep.si/climate-security-training-in-kenya/">POTC in Kenya: Delivering the Climate Security Training with the IPSTC</a> appeared first on <a href="https://www.cep.si">CEP</a>.]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>📢 You&#8217;re Invited! Join Our Next EDDE Virtual Lecture: Exploring the Psychology Behind Public Communication with Dr Michał Chmiel</title>
+		<link>https://www.cep.si/%f0%9f%93%a2-youre-invited-join-our-next-edde-virtual-lecture-exploring-the-psychology-behind-public-communication-with-dr-michal-chmiel/</link>
+		
+		<dc:creator><![CDATA[Jernej Grahor]]></dc:creator>
+		<pubDate>Mon, 26 Oct 2026 14:42:01 +0000</pubDate>
+				<category><![CDATA[PR]]></category>
+		<guid isPermaLink="false">https://www.cep.si/?p=35459</guid>
+
+					<description><![CD

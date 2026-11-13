@@ -1,0 +1,64 @@
+https://visegradinsight.eu/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Visegrad Insight</title>
+	<atom:link href="https://visegradinsight.eu/feed/" rel="self" type="application/rss+xml" />
+	<link>https://visegradinsight.eu/</link>
+	<description>Your Central European Intelligence</description>
+	<lastBuildDate>Wed, 11 Nov 2026 19:12:17 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://visegradinsight.eu/app/uploads/2021/07/cropped-2021-Visegrad-Insight-Favicon-32x32.png</url>
+	<title>Visegrad Insight</title>
+	<link>https://visegradinsight.eu/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>The EU Cannot Afford Another Hungary</title>
+		<link>https://visegradinsight.eu/the-eu-cannot-afford-another-hungary/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=the-eu-cannot-afford-another-hungary</link>
+		
+		<dc:creator><![CDATA[Wojciech Przybylski]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 07:00:55 +0000</pubDate>
+				<category><![CDATA[Commentary]]></category>
+		<category><![CDATA[Economic Security]]></category>
+		<category><![CDATA[Albania]]></category>
+		<category><![CDATA[EU enlargement]]></category>
+		<category><![CDATA[Hungary]]></category>
+		<category><![CDATA[Moldova]]></category>
+		<category><![CDATA[Montenegro]]></category>
+		<category><![CDATA[Serbia]]></category>
+		<category><![CDATA[Ukraine]]></category>
+		<category><![CDATA[Western Balkans]]></category>
+		<guid isPermaLink="false">https://visegradinsight.eu/?p=38987</guid>
+
+					<description><![CDATA[<p>The European Union is deciding not only whether to enlarge but on what terms. In its new Communication on preparing for a wider Union, published on 6 October 2026, the European Commission outlined proposals to strengthen gradual integration and introduce new safeguards for future members. The proposals are part of<a class="more-link" href="https://visegradinsight.eu/the-eu-cannot-afford-another-hungary/">Read more</a></p>
+<p>The post <a href="https://visegradinsight.eu/the-eu-cannot-afford-another-hungary/">The EU Cannot Afford Another Hungary</a> appeared first on <a href="https://visegradinsight.eu">Visegrad Insight</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><a href="https://visegradinsight.eu/serbia-cee-relations-online-event/"><img fetchpriority="high" decoding="async" class="aligncenter wp-image-38974 size-full" src="http://visegradinsight.eu/app/uploads/2026/11/Banners-9-scaled.png" alt="" width="2560" height="640" srcset="https://visegradinsight.eu/app/uploads/2026/11/Banners-9-scaled.png 2560w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-300x75.png 300w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-1024x256.png 1024w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-768x192.png 768w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-1536x384.png 1536w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-2048x512.png 2048w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-640x160.png 640w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-1200x300.png 1200w, https://visegradinsight.eu/app/uploads/2026/11/Banners-9-1920x480.png 1920w" sizes="(max-width: 639px) 98vw, (max-width: 1199px) 64vw, 770px" /></a></p>
+<p>The European Union is deciding not only whether to enlarge but on what terms. In its new Communication on preparing for a wider Union, <a href="https://commission.europa.eu/news-and-media/news/preparing-wider-european-union-2026-10-06_en">published</a> on 6 October 2026, the European Commission outlined proposals to strengthen gradual integration and introduce new safeguards for future members. The proposals are part of a broader debate over whether partial integration can bring candidate countries closer to the EU while full accession remains slow and politically contingent.</p>
+<p>Some proposals go further in rethinking the boundary between integration and membership. In May 2026, German Chancellor Friedrich Merz <a href="https://visegradinsight.eu/is-ukraine-ready-to-join-the-eu-survey/">proposed </a>‘<i>associate membership</i>’ for Ukraine, combining participation in EU institutions without voting rights, phased access to EU programmes and an extension of the mutual assistance clause.</p>
+<p>There are good reasons behind these proposals.</p>
+<p>Accession is slow, ratification is politically exposed and prolonged delays erode the credibility of the process – so pushing through actual integration where it is feasible is a way forward.</p>
+<p>At the same time, the EU’s recent pursuit of its own economic security strategy exposes a fundamental weakness in separating deeper economic integration from full membership.</p>
+<p>Gradual integration into the single market, and even more so associate membership, could give candidates many of the benefits of economic integration without necessarily generating the deeper alignment needed to protect it.</p>
+<p>Sanctions implementation, investment screening and export controls increasingly form part of the Union’s economic security. Extending market access – without addressing the candidate countries’ strategic dependencies on the EU’s adversaries such as Russia or China – could widen the space the Union needs to protect without making it safer. Moreover, the very process of evaluating a country’s accession through the prism of economic security, its risks as well as its potential benefits, would make the candidate a co-creator of the common EU agenda from the outset.</p>
+<p>Full accession is therefore a practical option. A credible membership perspective provides the leverage for deeper transformation, including through front-loaded economic-security requirements for membership. Economic statecraft should be built into the terms of entry, so that each new member makes Europe more secure as a whole.</p>
+<h3><b>The temptation of the shortcut</b></h3>
+<p>Let us look back at the idea of ‘<i>associate membership</i>’, which sits within a wider family of ideas. The Commission has promoted gradual integration since its 2020 enlargement methodology, envisaging the phasing of candidates into individual EU policies, the single market and EU programmes ahead of accession. Its October 2026 Communication on preparing for a wider Union takes this approach further, proposing reinforced gradual integration based on conditional and reversible access to EU policies and programmes. Around it sit member-state proposals and think-tank models of staged accession.</p>
+<p>These approaches, including associate membership, respond to the genuine problem of how to keep enlargement moving when progress through the formal accession process is politically blocked. The risk, however, is that the proliferation of intermediate stages and benefits creates ambiguity about the final destination. The Commission insists that gradual integration should ‘<i>complement and reinforce</i>’ accession rather than replace it. Yet this distinction may become harder to sustain as candidates gain access to an expanding range of EU policies and benefits before membership.</p>
+<p>This ambiguity has already generated political resistance. Ukrainian President Volodymyr Zelenskyy <a href="https://kyivindependent.com/zelensky-pushes-back-on-voiceless-associate-eu-membership-proposal-from-germany/">called associate membership unfair</a>, warning that Ukraine would remain voiceless within it. Ireland’s Foreign Minister Helen McEntee – whose country holds the rotating Presidency of the Council of the European Union – <a href="https://www.euronews.com/my-europe/2

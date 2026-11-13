@@ -1,0 +1,78 @@
+https://southasianvoices.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>South Asian Voices</title>
+	<atom:link href="https://southasianvoices.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://southasianvoices.org/</link>
+	<description>New voices on security in South Asia--a project of the Stimson Center</description>
+	<lastBuildDate>Fri, 06 Nov 2026 20:57:50 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://southasianvoices.org/wp-content/uploads/2021/05/cropped-favicon-32x32.png</url>
+	<title>South Asian Voices</title>
+	<link>https://southasianvoices.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">70913552</site>	<item>
+		<title>Nepal’s Loss and Damage Claim After the Bhotekoshi-Trishuli Disaster: A Timely Decision, Yet Structural Gaps Remain</title>
+		<link>https://southasianvoices.org/ec-m-co-n-nepal-loss-and-damage-claim-11-06-2026/</link>
+					<comments>https://southasianvoices.org/ec-m-co-n-nepal-loss-and-damage-claim-11-06-2026/#respond</comments>
+		
+		<dc:creator><![CDATA[Abiral Khatri]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 20:57:46 +0000</pubDate>
+				<category><![CDATA[Climate Change]]></category>
+		<category><![CDATA[Economy]]></category>
+		<category><![CDATA[Environment]]></category>
+		<category><![CDATA[Global Warming]]></category>
+		<category><![CDATA[Nepal]]></category>
+		<category><![CDATA[UN]]></category>
+		<guid isPermaLink="false">https://southasianvoices.org/?p=25315</guid>
+
+					<description><![CDATA[<p>On August 26, 2026, a massive rock-ice avalanche in Nepal’s Rasuwagadhi border region, large enough to register a seismic signal equivalent to a magnitude 5.2 earthquake, triggered an extreme debris torrent that cascaded more than 150 kilometers down the Bhotekoshi-Trishuli corridor. The disaster decimated critical infrastructure along the river, indefinitely closed a vital trade corridor [&#8230;]</p>
+<p>The post <a href="https://southasianvoices.org/ec-m-co-n-nepal-loss-and-damage-claim-11-06-2026/">Nepal’s Loss and Damage Claim After the Bhotekoshi-Trishuli Disaster: A Timely Decision, Yet Structural Gaps Remain</a> appeared first on <a href="https://southasianvoices.org">South Asian Voices</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">On August 26, 2026, a massive <a href="https://www.stimson.org/2026/a-cascading-disaster-on-the-china-nepal-border-what-to-know-about-the-august-2026-rasuwa-flood/" target="_blank" rel="noreferrer noopener">rock-ice avalanche</a> in Nepal’s Rasuwagadhi border region, large enough to register a seismic signal equivalent to a magnitude 5.2 earthquake, triggered an extreme debris torrent that cascaded more than 150 kilometers down the Bhotekoshi-Trishuli corridor. The disaster decimated critical infrastructure along the river, indefinitely closed a vital trade corridor highway, wiped out over 10 percent of Nepal’s generation capacity, and left about 1,451 dead and more than 5,000 missing as of September 21, according to Nepal’s National Disaster Risk Reduction and Management Authority (<a href="https://ndrrma.gov.np/mediafiles/rasuwa/SitRep_ENG_20_21092026.pdf" target="_blank" rel="noreferrer noopener">NDRRMA</a>). A <a href="https://www.worldweatherattribution.org/rapid-warming-in-the-himalaya-exacerbates-geohazard-cascades-beyond-adaptation-limits/"></a><a href="https://www.worldweatherattribution.org/rapid-warming-in-the-himalaya-exacerbates-geohazard-cascades-beyond-adaptation-limits/" target="_blank" rel="noreferrer noopener">World Weather Attribution</a> analysis found that human-caused warming of about 1.5°C in July and August near the site, together with permafrost degradation and glacier thinning, may have weakened a slope already geologically primed to fail.</p>
+
+
+
+<p class="wp-block-paragraph">Five days after the avalanche, Nepal’s Finance and Environment Ministers <a href="https://kathmandupost.com/national/2026/09/01/nepal-steps-up-diplomatic-push-for-support-after-floods" target="_blank" rel="noreferrer noopener">formally invoked</a> the Governing Instrument of the Fund for Responding to Loss and Damage (FRLD). An operating entity of the financial mechanism of the United Nations Framework Convention on Climate Change (UNFCCC) established in 2023, the FRLD finances responses to loss and damage from climate impacts in developing countries, funded by donor pledges and run by a Board that decides on funding requests. In response to Nepal’s request, <a href="https://www.climatechangenews.com/2026/09/02/loss-and-damage-fund-urged-to-hold-crisis-meeting-on-nepal/"></a><a href="https://www.climatechangenews.com/2026/09/02/loss-and-damage-fund-urged-to-hold-crisis-meeting-on-nepal/" target="_blank" rel="noreferrer noopener">eight board members</a> demanded an extraordinary meeting outside of its usual schedule. On October 22, the FRLD held its <a href="https://www.frld.org/sites/default/files/FRLD_Press_Release_Nepal_22Oct2026-2.pdf" target="_blank" rel="noreferrer noopener">first-ever extraordinary meeting</a>, which resulted in a provisional set-aside of USD $21.6 million, making Nepal the <a href="https://risingnepaldaily.com/news/87991" target="_blank" rel="noreferrer noopener">first country</a> to receive such an earmark.</p>
+
+
+
+<p class="wp-block-paragraph">By climate finance standards, this turnaround represents an unprecedented velocity—one that was made possible by an ad hoc Board decision, not the system. Yet measured against Nepal’s assessed needs in this ongoing humanitarian emergency, it is a sobering reminder of the structural limitations of the Fund itself: a cap of USD $20 million per request, no standing rapid-response window, and thin capital.</p>
+
+
+
+<p class="wp-block-paragraph">Nepal will not be the last country to require such loss and damage funds after a disaster. In that light, the question of whether this recent chain of extraordinary procedural events can be reified in the FRLD’s permanent fund-disbursement architecture is all the more urgent. Three decisions before the 31st Conference of the Parties (COP31) in Türkiye and the next Board meeting can settle this debate in the short-to-medium term and help shore up the Fund’s ability to support countries undergoing severe environmental disasters in the years to come: quickly approving Nepal’s proposal, establishing a permanent rapid-response window, and offering real capital behind the pledges.</p>
+
+
+
+<figure class="wp-block-pullquote"><blockquote><p>&#8220;Nepal will not be the last country to require such loss and damage funds after a disaster. In that light, the question of whether this recent chain of extraordinary procedural events can be reified in the FRLD’s permanent fund-disbursement architecture is all the more urgent.&#8221;</p></blockquote></figure>
+
+
+
+<p class="wp-block-paragraph"><strong>A Historic Decision, an Inadequate Response</strong></p>
+
+
+
+<p class="wp-block-paragraph">The FRLD pays for losses already suffered, whereas climate funds mostly finance projects that cut emissions or build resilience in advance. Each follows its own approval path. Understanding the discrepancy between the funding mechanisms at the Fund’s disposal—both the established pathway and the ad hoc one that arose around the Nepal floods—is crucial for contextualizing the positions in which Nepal and the FRLD each now find themselves.</p>
+
+
+
+<p class="wp-block-paragraph">The Barbados Implementation Modalities (BIM) are the Fund’s

@@ -1,0 +1,8 @@
+https://carnegieendowment.org/sitemaps/research-index.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://carnegieendowment.org/sitemaps/research-0.xml</loc>
+    <lastmod>2026-11-13</lastmod>
+  </sitemap>
+</sitemapindex>

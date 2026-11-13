@@ -1,0 +1,61 @@
+https://www.fundasaunmahein.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Fundasaun Mahein</title>
+	<atom:link href="https://www.fundasaunmahein.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.fundasaunmahein.org</link>
+	<description>Monitoriza Seitor Siguransa nian iha Timor Leste</description>
+	<lastBuildDate>Fri, 09 Oct 2026 10:52:57 +0000</lastBuildDate>
+	<language>en-AU</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.9.20</generator>
+
+<image>
+	<url>https://www.fundasaunmahein.org/wp-content/uploads/2024/07/cropped-logo-fotor-20240711161241-1-32x32.png</url>
+	<title>Fundasaun Mahein</title>
+	<link>https://www.fundasaunmahein.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Fasilidade Formasaun PNTL ne&#8217;ebé La Adekuadu Presiza Polítika Rekrutamentu no Formasaun ne&#8217;ebé Sustentável</title>
+		<link>https://www.fundasaunmahein.org/2026/10/09/fasilidade-formasaun-pntl-neebe-la-adekuadu-presiza-politika-rekrutamentu-no-formasaun-neebe-sustentavel/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=fasilidade-formasaun-pntl-neebe-la-adekuadu-presiza-politika-rekrutamentu-no-formasaun-neebe-sustentavel</link>
+					<comments>https://www.fundasaunmahein.org/2026/10/09/fasilidade-formasaun-pntl-neebe-la-adekuadu-presiza-politika-rekrutamentu-no-formasaun-neebe-sustentavel/#respond</comments>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Fri, 09 Oct 2026 04:32:24 +0000</pubDate>
+				<category><![CDATA[Destake]]></category>
+		<category><![CDATA[Foun]]></category>
+		<category><![CDATA[Komunikadu Imprensa]]></category>
+		<guid isPermaLink="false">https://www.fundasaunmahein.org/?p=13680</guid>
+
+					<description><![CDATA[<p>Foto: FM (2026) Díli, 09/10/2026 Fundasaun Mahein (FM) manifesta preokupasaun sériu kona-ba fasilidade ne&#8217;ebé la adekuadu atu halo formasaun ba kandidatu Polísia Nasionál Timor-Leste (PNTL). Fasilidade ne&#8217;ebé provizoriamente, saneamentu ne&#8217;ebé la sufisiente no infraestrutura ne&#8217;ebé limitadu hamosu preokupasaun kona-ba saúde fízika, bem-estar psikolojia no kapasidade kandidatu sira atu tuir formasaun ho efetivu. FM preokupa liu-liu [&#8230;]</p>
+<p>The post <a href="https://www.fundasaunmahein.org/2026/10/09/fasilidade-formasaun-pntl-neebe-la-adekuadu-presiza-politika-rekrutamentu-no-formasaun-neebe-sustentavel/">Fasilidade Formasaun PNTL ne’ebé La Adekuadu Presiza Polítika Rekrutamentu no Formasaun ne’ebé Sustentável</a> first appeared on <a href="https://www.fundasaunmahein.org">Fundasaun Mahein</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p><em>Foto: FM (2026)</em></p>
+<p><strong>Díli, </strong><strong>09/10/2026 </strong></p>
+<p>Fundasaun Mahein (FM) manifesta preokupasaun sériu kona-ba fasilidade ne&#8217;ebé la adekuadu atu halo formasaun ba kandidatu Polísia Nasionál Timor-Leste (PNTL). Fasilidade ne&#8217;ebé provizoriamente, saneamentu ne&#8217;ebé la sufisiente no infraestrutura ne&#8217;ebé limitadu hamosu preokupasaun kona-ba saúde fízika, bem-estar psikolojia no kapasidade kandidatu sira atu tuir formasaun ho efetivu.</p>
+<p>FM preokupa liu-liu ho kapasidade fasilidade formasaun ne&#8217;ebé eziste. Centro de Formação da PNTL iha Komoro, tuir informasaun ne&#8217;ebé disponivel, la adekuadu atu simu kandidatu na&#8217;in 500, enkuantu fasilidade formasaun iha Rai Robo ne’ebe bele simu deit kadetis nain 100, no fasilidade seluk bele iha kapasidade ne&#8217;ebé menus liu tan<strong>.</strong> Númeru hirak ne&#8217;e no kapasidade seguru  husi kada fasilidade presiza verifika liuhusi avaliasaun ofisiál sira.</p>
+<p>Treina kandidatu atus ba atus sem fasilidade ne’ebe diak sei hamosu kuidadu saúde no espasu aprendizajen ne&#8217;ebé bele kria kondisaun ladiak no la hatudu sai hanesan  instituisaun formasaun polísia nian ne&#8217;ebe profisionál. Kondisaun hanesan ne&#8217;e bele aumenta risku moras, estrese, kole no falta higiene. Kandidatu sira ne&#8217;ebé moras ka hetan difikuldade psikolojika bele hasoru problema atu konsentra, partisipa ho efetivu iha aula no dezenvolve koñesimentu ba abilidade prátika nian ne&#8217;ebé presiza atu hala&#8217;o kna’ar nudar polísia.</p>
+<p>FM enfaze katak kualidade membru polísia la depende de&#8217;it ba kuríkulu formasaun no instrutór sira, maibé mós depende ba kondisaun no ambiente ne&#8217;ebé hala&#8217;o formasaun. Formasaun durante fulan neen iha ambiente ne&#8217;ebé la saudabel ka la adekuadu sei prejudika aprendizajen, preparasaun fízika, reziliénsia psikolojika no dezenvolvimentu profisionál ba kandidatu sira. Situasaun ne&#8217;e bele produz  kualidade polísia ne&#8217;ebé kiak iha koinesementu nudar polisia.</p>
+<p><strong>FM Rekomenda Re</strong><strong>k</strong><strong>rutamentu PNTL Anual Ho Kandidatu Na&#8217;in 250</strong></p>
+<p>Atu rezolve dezafiu hirak-ne&#8217;e, FM rekomenda ba Governu atu adopta polítika rekrutamentu regular kada tinan ho kandidatu PNTL ba deit nain 250 ba peirodu tinan tolu nia laran, bazeia ba avaliasaun kona-ba nesesidade nasaun nian, orsamentu disponivel, kapasidade instrutór sira no infraestrutura formasaun nian.</p>
+<p>Em vez de rekere kandidatu barak iha tempu ida sem fasilidade ne&#8217;ebé adekuadu, Governu tenke ajusta númeru rekrutamentu tuir kapasidade atu fornese formasaun ho kualidade. Rekrutamentu anual ho kandidatu na&#8217;in 250 sei permite Governu no PNTL atu planeia formasaun ho sistemátiku, aloka rekursu ne&#8217;ebé sufisiente, hadia supervizaun no asegura kandidatu sira hetan preparasaun fízika, akadémika, prátika no étika ne&#8217;ebé apropriadu.</p>
+<p>FM konsidera katak polítika rekrutamentu ne&#8217;ebé sustentável bele ajuda Governu atu investe ho efetivu liu ba kada kandidatu, hametin padraun formasaun no hadia kualidade profisionál membru polísia foun. Objetivu laós deit atu aumenta númeru membru polísia, maibé atu produz membru polísia ne&#8217;ebe iha kompeténsia, disiplina, responsabilidade no orientasaun ba komunidade, hodi bele proteje populasaun no haforsa lei no ordem.</p>
+<p><strong>FM nia </strong><strong>Rekomendasaun Operasionál no Polítika</strong><strong> : </strong></p>
+<ol>
+<li><strong>Halo avaliasaun ba fasilidade formasaun ne&#8217;ebé eziste</strong><strong>: </strong> Halo avaliasaun ofisiál ba fasilidade formasaun iha Komoro, Rai Robo no fatin seluk ne&#8217;ebé PNTL uza, atu determina kapasidade real, kondisaun alojamentu,  saneamentu, kuidadu saúde no espasu aprendizajen.</li>
+<li><strong>Implementa re</strong><strong>k</strong><strong>rutamentu regular kada tinan.</strong> Planeia rekrutamentu ba kandidatu na&#8217;in 250 kada tinan, ho ajustamentu tuir nesesidade polísia nasionál, disponibilidade orsamentu, kapasidade instrutór sira no númeru kandidatu ne&#8217;ebé fasilidade bele treina ho seguru no efetivu.</li>
+<li><strong>Prevene fasilidade atu la nakonu liu</strong><strong>: </strong> Asegura katak númeru kandidatu la liu kapasidade seguru ne&#8217;ebé determina ona. Bainhira presiza, organiza formasaun iha grupu ki&#8217;ik liu ka hala&#8217;o formasaun iha turma oioin.</li>
+<li><strong>Hadi</strong><strong>a</strong><strong>a bem-estar kandidatu sira</strong><strong> nian: </strong>Fornese alojamentu ne&#8217;ebé adekuadu, bee mos, saneamentu, apoiu médiku, apoiu psikolojiku no espasu apropriadu ba aprendizajen no treinamentu fíziku.</li>
+<li><strong>Hari&#8217;i sentru formasaun PNTL permanente</strong><strong>: </strong> Dezenvolve instituisaun espesífika ho alojamentu, sala aula, fasilidade médika, kampu treinamentu fíziku no fatin ba ezersísiu prátiku polísia. Fasilidade fo

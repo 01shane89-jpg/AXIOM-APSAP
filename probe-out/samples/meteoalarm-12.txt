@@ -1,0 +1,138 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-greece
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-greece"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:GR</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:18.638736Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR010</value>
+    </cap:geocode>
+    <link title="Ionion Islands" href="https://meteoalarm.org?geocode=EMMA_ID:GR010" hreflang="en"/>
+    <cap:areaDesc>Ionion Islands</cap:areaDesc>
+    <cap:event>Yellow Warning</cap:event>
+    <cap:sent>2026-11-12T12:12:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T15:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T12:12:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.261112121200.001000010</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/1f0e555f-a049-4722-ab10-910f46f5aa55"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:12:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/1f0e555f-a049-4722-ab10-910f46f5aa55?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Greece - Ionion Islands</title>
+    <updated>2026-11-12T12:12:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR002</value>
+    </cap:geocode>
+    <link title="West Sterea" href="https://meteoalarm.org?geocode=EMMA_ID:GR002" hreflang="en"/>
+    <cap:areaDesc>West Sterea</cap:areaDesc>
+    <cap:event>Yellow Warning</cap:event>
+    <cap:sent>2026-11-12T12:12:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T12:12:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T03:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.261112121200.001000002</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/fb92ed43-678d-4845-af9f-c59a944a8dc7"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:12:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/fb92ed43-678d-4845-af9f-c59a944a8dc7?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Greece - West Sterea</title>
+    <updated>2026-11-12T12:12:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR008</value>
+    </cap:geocode>
+    <link title="Epirus" href="https://meteoalarm.org?geocode=EMMA_ID:GR008" hreflang="en"/>
+    <cap:areaDesc>Epirus</cap:areaDesc>
+    <cap:event>Moderate Rain warning</cap:event>
+    <cap:sent>2026-11-12T12:12:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T12:12:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.261112121200.001000008</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/774b79d5-812b-4119-94c5-2f1f35107799"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:12:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/774b79d5-812b-4119-94c5-2f1f35107799?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Greece - Epirus</title>
+    <updated>2026-11-12T12:12:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR014</value>
+    </cap:geocode>
+    <link title="North East Aegean Islands" href="https://meteoalarm.org?geocode=EMMA_ID:GR014" hreflang="en"/>
+    <cap:areaDesc>North East Aegean Islands</cap:areaDesc>
+    <cap:event>Moderate Wind warning</cap:event>
+    <cap:sent>2026-11-12T12:10:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T12:10:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.261112121000.100000014</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/a973c31d-78ef-4ced-ab14-f62caf85d15c"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:10:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/a973c31d-78ef-4ced-ab14-f62caf85d15c?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Greece - North East Aegean Islands</title>
+    <updated>2026-11-12T12:10:00Z</updated>
+  </entry>
+</feed>

@@ -1,0 +1,154 @@
+https://bezbednost.org/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Beogradski centar za bezbednosnu politiku</title>
+	<atom:link href="https://bezbednost.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://bezbednost.org</link>
+	<description>Nezavisni istraživački centar koji radi na unapređenju bezbednosti građana i društva zasnovanoj na demokratskim principima i poštovanju ljudskih prava</description>
+	<lastBuildDate>Sat, 07 Nov 2026 14:58:50 +0000</lastBuildDate>
+	<language>sr-RS</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+	<item>
+		<title>Policija mora da služi građanima, a ne političkim centrima moći</title>
+		<link>https://bezbednost.org/policija-mora-da-sluzi-gradjanima-a-ne-politickim-centrima-moci/</link>
+		
+		<dc:creator><![CDATA[BCBP]]></dc:creator>
+		<pubDate>Sat, 07 Nov 2026 14:58:06 +0000</pubDate>
+				<category><![CDATA[Mreža integriteta]]></category>
+		<category><![CDATA[U fokusu]]></category>
+		<category><![CDATA[Policija u službi građana]]></category>
+		<category><![CDATA[postupanje policije]]></category>
+		<category><![CDATA[tribina]]></category>
+		<category><![CDATA[Valjevo]]></category>
+		<guid isPermaLink="false">https://bezbednost.org/?p=36524</guid>
+
+					<description><![CDATA[Mreža integriteta Beogradskog centra za bezbednosnu politiku (BCBP) održala je u Valjevu tribinu o stanju u policiji i sektoru bezbednosti, kao i o odgovornosti za policijsko nasilje nad građanima 14. avgusta 2025. godine. Učesnici su se složili da sama smena rukovodilaca nije dovoljna i da su potrebni sistemska reforma, nezavisan nadzor nad radom policije i krivična odgovornost svih koji su prekršili zakon.]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Mreža integriteta: Pretnje smrću nisu deo novinarskog posla</title>
+		<link>https://bezbednost.org/mreza-integriteta-pretnje-smrcu-nisu-deo-novinarskog-posla/</link>
+		
+		<dc:creator><![CDATA[bcbpm]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 13:14:44 +0000</pubDate>
+				<category><![CDATA[BCBP]]></category>
+		<category><![CDATA[Mreža integriteta]]></category>
+		<category><![CDATA[Odgovornost]]></category>
+		<category><![CDATA[Privatna bezbednost]]></category>
+		<category><![CDATA[U fokusu]]></category>
+		<category><![CDATA[021.rs]]></category>
+		<category><![CDATA[Bezbednost novinara]]></category>
+		<category><![CDATA[Dragana Prica Kovačević]]></category>
+		<category><![CDATA[nezavisno novinarstvo]]></category>
+		<category><![CDATA[novinarka]]></category>
+		<category><![CDATA[pretnje]]></category>
+		<guid isPermaLink="false">https://bezbednost.org/?p=36520</guid>
+
+					<description><![CDATA[Mreža integriteta Beogradskog centra za bezbednosnu politiku smatra nedopustivim pretnje smrću upućene novinarki portala 021.rs Dragani Prici Kovačević, članici ove Mreže. Pozivamo nadležne institucije da bez odlaganja identifikuju i procesuiraju odgovornu osobu i preduzmu potrebne mere za zaštitu njene bezbednosti.]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Zaustaviti zastrašivanje Lazara Dinića</title>
+		<link>https://bezbednost.org/zaustaviti-zastrasivanje-lazara-dinica/</link>
+		
+		<dc:creator><![CDATA[bcbpm]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 16:06:33 +0000</pubDate>
+				<category><![CDATA[Aktivizam]]></category>
+		<category><![CDATA[BCBP]]></category>
+		<category><![CDATA[Civilni odbor]]></category>
+		<category><![CDATA[Lokalna bezbednost]]></category>
+		<category><![CDATA[Odgovornost]]></category>
+		<category><![CDATA[Privatna bezbednost]]></category>
+		<category><![CDATA[U fokusu]]></category>
+		<category><![CDATA[Zarobljavanje države]]></category>
+		<category><![CDATA[Bezbednost novinara]]></category>
+		<category><![CDATA[Hitna reakcija]]></category>
+		<category><![CDATA[Lazar Dinić]]></category>
+		<category><![CDATA[tužilaštvo]]></category>
+		<category><![CDATA[zastrašivanje]]></category>
+		<guid isPermaLink="false">https://bezbednost.org/?p=36512</guid>
+
+					<description><![CDATA[Civilni odbor za zaštitu branitelja ljudskih prava i uzbunjivača izražava ozbiljnu zabrinutost za bezbednost novinara i aktiviste Lazara Dinića, povodom njegovih navoda da ga je prilikom povratka kući pratilo crno terensko vozilo, a da je potom nepoznata osoba, prema njegovoj proceni, fotografisala terasu njegovog stana. Zahtevamo da policija i nadležno tužilaštvo bez odlaganja ispitaju prijavljeni događaj i preduzmu mere kako bi zaštitili njegovu bezbednost.]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Mreža integriteta poziva čelne ljude u policiji, vojsci i službama bezbednosti da odmah podnesu ostavke</title>
+		<link>https://bezbednost.org/mreza-integriteta-poziva-celne-ljude-u-policiji-vojsci-i-sluzbama-bezbednosti-da-odmah-podnesu-ostavke/</link>
+		
+		<dc:creator><![CDATA[bcbpm]]></dc:creator>
+		<pubDate>Tue, 27 Oct 2026 13:41:45 +0000</pubDate>
+				<category><![CDATA[BCBP]]></category>
+		<category><![CDATA[Mreža integriteta]]></category>
+		<category><![CDATA[Odgovornost]]></category>
+		<category><![CDATA[Policija]]></category>
+		<category><![CDATA[Privatna bezbednost]]></category>
+		<category><![CDATA[Službe bezbednosti]]></category>
+		<category><![CDATA[U fokusu]]></category>
+		<category><![CDATA[ostavke]]></category>
+		<category><![CDATA[policija]]></category>
+		<category><![CDATA[službe bezbednosti]]></category>
+		<category><![CDATA[tužilaštvo]]></category>
+		<category><![CDATA[vojska]]></category>
+		<guid isPermaLink="false">https://bezbednost.org/?p=36488</guid>
+
+					<description><![CDATA[Mreža integriteta Beogradskog centra za bezbednosnu politiku poziva sve rukovodioce policije, vojske i službi bezbednosti koji su svojim odlukama, postupanjem ili nepostupanjem doprineli kršenju ljudskih prava, političkoj zloupotrebi bezbednosnih institucija i urušavanju poverenja građana u njihov rad da podnesu ostavke. Posebno ističemo da bi ostavke trebalo da podnesu:]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Hvala čuvarima integriteta</title>
+		<link>https://bezbednost.org/hvala-cuvarima-integriteta/</link>
+		
+		<dc:creator><![CDATA[BCBP]]></dc:creator>
+		<pubDate>Mon, 26 Oct 2026 11:49:15 +0000</pubDate>
+				<category><![CDATA[BCBP]]></category>
+		<category><![CDATA[Mreža integriteta]]></category>
+		<category><![CDATA[Odgovornost]]></category>
+		<category><![CDATA[Policija]]></category>
+		<category><![CDATA[Službe bezbednosti]]></category>
+		<category><![CDATA[U fokusu]]></category>
+		<category><![CDATA[Uzbunjivači]]></category>
+		<category><![CDATA[Vladavina prava]]></category>
+		<category><![CDATA[Vojska]]></category>
+		<category><![CDATA[Zarobljavanje države]]></category>
+		<category><![CDATA[apel]]></category>
+		<category><![CDATA[odgovornost]]></category>
+		<category><![CDATA[policija]]></category>
+		<category><![CDATA[službe bezbednosti]]></category>
+		<category><![CDATA[vojska]]></category>
+		<guid isPermaLink="false">https://bezbednost.org/?p=36481</guid>
+
+					<description><![CDATA[Hvala svima koji su imali hrabrosti da se suprotstave pritiscima i pokažu da integritet znači odgovornost prema građanima, društvu i profesiji.]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Pretnje novinarima Vuku Cvijiću i Milanu Radonjiću zahtevaju hitnu reakciju nadležnih</title>
+		<link>https://bezbednost.org/pretnje-novinarima-vuku-cvijicu-i-milanu-radonjicu-zahtevaju-hitnu-reakciju-nadleznih/</link>
+		
+		<dc:creator><![CDATA[bcbpm]]></dc:creator>
+		<pubDate>Fri, 23 Oct 2026 10:54:16 +0000</pubDate>
+				<category><![CDATA[Aktivizam]]></category>
+		<category><![CDATA[BCBP]]></category>
+		<category><![CDATA[Civilni odbor]]></category>
+		<c

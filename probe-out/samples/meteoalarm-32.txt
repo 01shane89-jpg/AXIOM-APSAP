@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:ES</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:21.928589Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES233</value>
+    </cap:geocode>
+    <link title="Gipuzkoa litoral" href="https://meteoalarm.org?geocode=EMMA_ID:ES233" hreflang="en"/>
+    <cap:areaDesc>Gipuzkoa litoral</cap:areaDesc>
+    <cap:event>Moderate rain warning</cap:event>
+    <cap:sent>2026-11-12T22:04:08+00:00</cap:sent>
+    <cap:expires>2026-11-13T01:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T22:01:26+00:00</cap:effective>
+    <cap:onset>2026-11-12T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261112220408.752001PRP2130221048</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/8f1b0e16-fc12-4e03-bf66-aa41b44e1e42"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T22:04:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/8f1b0e16-fc12-4e03-bf66-aa41b44e1e42?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Spain - Gipuzkoa litoral</title>
+    <updated>2026-11-12T22:04:08Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES235</value>
+    </cap:geocode>
+    <link title="Bizkaia litoral" href="https://meteoalarm.org?geocode=EMMA_ID:ES235" hreflang="en"/>
+    <cap:areaDesc>Bizkaia litoral</cap:areaDesc>
+    <cap:event>Moderate rain warning</cap:event>
+    <cap:sent>2026-11-12T22:04:08+00:00</cap:sent>
+    <cap:expires>2026-11-13T01:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T22:01:26+00:00</cap:effective>
+    <cap:onset>2026-11-12T22:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261112220408.754801PRP2130221048</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/4d25af82-a234-4466-9991-b0404c15b61a"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T22:04:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/4d25af82-a234-4466-9991-b0404c15b61a?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Spain - Bizkaia litoral</title>
+    <updated>2026-11-12T22:04:08Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES133</value>
+    </cap:geocode>
+    <link title="Litoral cántabro" href="https://meteoalarm.org?geocode=EMMA_ID:ES133" hreflang="en"/>
+    <cap:areaDesc>Litoral cántabro</cap:areaDesc>
+    <cap:event>Moderate rain warning</cap:event>
+    <cap:sent>2026-11-12T17:28:08+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T17:24:48+00:00</cap:effective>
+    <cap:onset>2026-11-12T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261112172808.663901PRP2122304488</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/3c4ad958-b9c7-4815-aa9b-600630c04d39"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T17:28:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/3c4ad958-b9c7-4815-aa9b-600630c04d39?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Spain - Litoral cántabro</title>
+    <updated>2026-11-12T17:28:08Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES159</value>
+    </cap:geocode>
+    <link title="Sanabria" href="https://meteoalarm.org?geocode=EMMA_ID:ES159" hreflang="en"/>
+    <cap:areaDesc>Sanabria</cap:areaDesc>
+    <cap:event>Moderate rain warning</cap:event>
+    <cap:sent>2026-11-12T17:18:09+00:00</cap:sent>
+    <cap:expires>2026-11-13T10:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T17:16:11+00:00</cap:effective>
+    <cap:onset>2026-11-12T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261112171809.674901PRP2131103889</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/b2033cb5-847b-40ed-8c61-5bfb9d0d93f3"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T17:18:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/b2033cb5-847b-40ed-8c61-5bfb9d0d93f3?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Spain - Sanabria</title>
+    <updated>2026-11-12T17:18:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES215</value>
+    </cap:geocode>
+    <link title="Rias Baixas" href="https://meteoalarm.org?geocode=EMMA_ID:ES215" hreflang="en"/>
+    <cap:areaDesc>Rias Baixas</cap:areaDesc>
+    <cap:event>Moderate rain warning</cap:event>
+    <cap:sent>2026-11-12T17:10:09+00:00</cap:sent>
+    <cap:expires>2026-11-13T06:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T17:07:09+00:00</cap:effective>
+    <cap:onset>2026-11-12T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261112171009.713601PRP2130703409</cap:identifier>
+    <link type="application/cap+xml" href="https://fee

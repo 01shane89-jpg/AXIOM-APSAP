@@ -1,0 +1,80 @@
+https://funglode.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Fundación Global Democracia y Desarrollo</title>
+	<atom:link href="https://funglode.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://funglode.org/</link>
+	<description>Just another WordPress site</description>
+	<lastBuildDate>Thu, 12 Nov 2026 17:34:34 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://funglode.org/wp-content/uploads/2020/12/cropped-FunglodeIco-32x32.png</url>
+	<title>Fundación Global Democracia y Desarrollo</title>
+	<link>https://funglode.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Funglode reconoce la trayectoria y los aportes de Ligia Amada Melo a la educación dominicana.</title>
+		<link>https://funglode.org/funglode-reconoce-ligia-amada-melo-aportes-educacion/</link>
+		
+		<dc:creator><![CDATA[Carlos Jiménez]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 12:27:48 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<guid isPermaLink="false">https://funglode.org/?p=28026</guid>
+
+					<description><![CDATA[<p>El reconocimiento fue entregado por el expresidente de la República y presidente de Funglode, doctor Leonel Fernández, junto al ministro de Educación, Luis Miguel De Camps, durante el VI Foro Global Casa de Campo.</p>
+<p>The post <a href="https://funglode.org/funglode-reconoce-ligia-amada-melo-aportes-educacion/">Funglode reconoce la trayectoria y los aportes de Ligia Amada Melo a la educación dominicana.</a> appeared first on <a href="https://funglode.org">Fundación Global Democracia y Desarrollo</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><strong>La Romana. —</strong> La Fundación Global Democracia y Desarrollo (Funglode) reconoció a la exministra de Educación Ligia Amada Melo, en homenaje a su trayectoria y sus aportes al desarrollo de la educación dominicana, durante la jornada inaugural del VI Foro Global Casa de Campo, celebrada ayer en el Riverside Center de la Marina de Casa de Campo Resort &amp; Villas.</p>
+<p>La distinción fue entregada por el expresidente de la República y presidente de Funglode, doctor Leonel Fernández, junto al ministro de Educación, Luis Miguel De Camps, en el marco de un encuentro dedicado a reflexionar sobre los desafíos y las transformaciones del sistema educativo.</p>
+<p>El reconocimiento a Melo constituyó uno de los momentos destacados de esta primera jornada, en la que se desarrolló el foro bajo el lema «El futuro de la educación: entre la inteligencia artificial y las nuevas tendencias pedagógicas», con la participación de representantes de los sectores educativo, empresarial, gubernamental, académico y diplomático.</p>
+<p>La convocatoria reunió a cientos de participantes, entre autoridades públicas, legisladores, representantes de organismos internacionales, rectores universitarios, docentes, investigadores, empresarios y profesionales vinculados con la innovación tecnológica.</p>
+<p>Con este reconocimiento, Funglode puso en valor la trayectoria de una figura vinculada a la gestión educativa nacional y destacó la importancia de reconocer a quienes han contribuido al fortalecimiento de la educación dominicana, en un momento en que la innovación tecnológica y las nuevas tendencias pedagógicas plantean importantes desafíos para su futuro.</p>
+<p>The post <a href="https://funglode.org/funglode-reconoce-ligia-amada-melo-aportes-educacion/">Funglode reconoce la trayectoria y los aportes de Ligia Amada Melo a la educación dominicana.</a> appeared first on <a href="https://funglode.org">Fundación Global Democracia y Desarrollo</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Funglode inaugura foro internacional sobre el futuro de la educación y las nuevas tendencias pedagógicas</title>
+		<link>https://funglode.org/funglode-vi-foro-global-casa-de-campo-futuro-educacion/</link>
+		
+		<dc:creator><![CDATA[Carlos Jiménez]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 08:30:21 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<category><![CDATA[Educación]]></category>
+		<category><![CDATA[Inteligencia Artificial]]></category>
+		<guid isPermaLink="false">https://funglode.org/?p=28014</guid>
+
+					<description><![CDATA[<p>Leonel Fernández y el ministro de Educación, Luis Miguel De Camps, encabezaron la apertura del VI Foro Global @ Casa de Campo, que reúne a expertos internacionales, autoridades, empresarios y académicos para reflexionar sobre los desafíos de la educación en la era de la inteligencia artificial.</p>
+<p>The post <a href="https://funglode.org/funglode-vi-foro-global-casa-de-campo-futuro-educacion/">Funglode inaugura foro internacional sobre el futuro de la educación y las nuevas tendencias pedagógicas</a> appeared first on <a href="https://funglode.org">Fundación Global Democracia y Desarrollo</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div data-olk-copy-source="MessageBody"><strong>LA ROMANA, República Dominicana.–</strong> Con una amplia representación de los sectores educativo, empresarial, gubernamental, académico y diplomático, la Fundación Global Democracia y Desarrollo (Funglode) inauguró este martes el VI Foro Global @ Casa de Campo, bajo el lema «El futuro de la educación: entre la inteligencia artificial y las nuevas tendencias pedagógicas».</div>
+<div></div>
+<div>La apertura estuvo encabezada por el expresidente de la República y presidente de Funglode, Leonel Fernández, y el ministro de Educación, Luis Miguel De Camps, junto a destacados especialistas nacionales e internacionales.</div>
+<div></div>
+<div>El encuentro, que tiene como escenario el Marina Riverside Center de Casa de Campo Resort &amp; Villas, congrega a cientos de participantes, entre autoridades públicas, legisladores, representantes de organismos internacionales, rectores universitarios, docentes, investigadores, empresarios y profesionales vinculados a la innovación tecnológica. Esta amplia convocatoria pone de manifiesto el interés de diversos sectores en examinar las profundas transformaciones que experimenta la educación y los retos que supone preparar a las nuevas generaciones para un entorno marcado por el acelerado desarrollo tecnológico.</div>
+<div></div>
+<div>Las palabras de bienvenida estuvieron a cargo de Marco Herrera, director ejecutivo de Funglode, quien resaltó el valor de generar espacios de encuentro entre los distintos actores de la sociedad para intercambiar experiencias y formular propuestas orientadas al fortalecimiento de las políticas educativas.</div>
+<div></div>
+<div>En su intervención, Herrera planteó una interrogante que resume uno de los principales desafíos de nuestro tiempo: «¿Estamos educando a nuestros niños y jóvenes para el mundo en el que vivirán, o continuamos preparándolos para un mundo que está dejando de existir?». Asimismo, sostuvo que la inteligencia artificial debe asumirse como una herramienta para potenciar las capacidades humanas, sin sustituir el esfuerzo intelectual indispensable para desarrollarlas.</div>
+<div></div>
+<div>Al pronunciar el discurso central de apertura, Leonel Fernández examinó los desafíos que enfrenta la educación a escala global, a la luz de los resultados de las evaluaciones internacionales, y abogó por una profunda transformación de los modelos pedagógicos. Enfatizó la necesidad de fortalecer el pensamiento crítico, estimular la creatividad y desarrollar en los estudiantes la capacidad de analizar y resolver problemas.</div>
+<div></div>
+<div>El presidente de Funglode adv

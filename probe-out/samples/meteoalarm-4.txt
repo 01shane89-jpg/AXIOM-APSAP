@@ -1,0 +1,154 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-croatia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-croatia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:HR</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:07.614408Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>HR037</value>
+    </cap:geocode>
+    <link title="Dubrovačko-neretvanska" href="https://meteoalarm.org?geocode=EMMA_ID:HR029" hreflang="en"/>
+    <cap:areaDesc>Dubrovačko-neretvanska</cap:areaDesc>
+    <cap:event>Yellow thunderstorm warning</cap:event>
+    <cap:sent>2026-11-12T15:31:10+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T15:31:10+00:00</cap:effective>
+    <cap:onset>2026-11-12T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.261112163110_3_006_yellow_HR029</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/40f118e9-e481-47c7-8862-717b97619105"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T15:31:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/40f118e9-e481-47c7-8862-717b97619105?index_info=1&amp;index_area=0&amp;index_geocode=1</id>
+    <title>Yellow Thunderstorm Warning issued for Croatia - Dubrovačko-neretvanska</title>
+    <updated>2026-11-12T15:31:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>HR029</value>
+    </cap:geocode>
+    <link title="Dubrovačko-neretvanska" href="https://meteoalarm.org?geocode=EMMA_ID:HR029" hreflang="en"/>
+    <cap:areaDesc>Dubrovačko-neretvanska</cap:areaDesc>
+    <cap:event>Yellow thunderstorm warning</cap:event>
+    <cap:sent>2026-11-12T15:31:10+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T15:31:10+00:00</cap:effective>
+    <cap:onset>2026-11-12T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.261112163110_3_006_yellow_HR029</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/40f118e9-e481-47c7-8862-717b97619105"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T15:31:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/40f118e9-e481-47c7-8862-717b97619105?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Croatia - Dubrovačko-neretvanska</title>
+    <updated>2026-11-12T15:31:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>HR035</value>
+    </cap:geocode>
+    <link title="Splitsko-dalmatinska" href="https://meteoalarm.org?geocode=EMMA_ID:HR027" hreflang="en"/>
+    <cap:areaDesc>Splitsko-dalmatinska</cap:areaDesc>
+    <cap:event>Yellow thunderstorm warning</cap:event>
+    <cap:sent>2026-11-12T15:31:10+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T15:31:10+00:00</cap:effective>
+    <cap:onset>2026-11-12T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.261112163110_3_005_yellow_HR027</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/626700bb-bd51-42aa-82b5-8fb4f98f2c54"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T15:31:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/626700bb-bd51-42aa-82b5-8fb4f98f2c54?index_info=1&amp;index_area=0&amp;index_geocode=1</id>
+    <title>Yellow Thunderstorm Warning issued for Croatia - Splitsko-dalmatinska</title>
+    <updated>2026-11-12T15:31:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>HR027</value>
+    </cap:geocode>
+    <link title="Splitsko-dalmatinska" href="https://meteoalarm.org?geocode=EMMA_ID:HR027" hreflang="en"/>
+    <cap:areaDesc>Splitsko-dalmatinska</cap:areaDesc>
+    <cap:event>Yellow thunderstorm warning</cap:event>
+    <cap:sent>2026-11-12T15:31:10+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T15:31:10+00:00</cap:effective>
+    <cap:onset>2026-11-12T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.261112163110_3_005_yellow_HR027</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/626700bb-bd51-42aa-82b5-8fb4f98f2c54"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T15:31:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/626700bb-bd51-42aa-82b5-8fb4f98f2c54?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Croatia - Splitsko-dalmatinska</title>
+    <updated>2026-11-12T15:31:10Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>HR037</value>
+    </cap:geocode>
+    <link title="Dubrovačko-neretvanska" href="https://meteoalarm.org?geocode=EMMA_ID:HR029" hreflang="en"/>
+    <cap:areaDesc>Dubrovačko-neretvanska</cap:areaDesc>
+    <cap:event>Yellow thunderstorm warning</cap:event>
+    <cap:sent>2026-11-12T15:31:10+00:00</cap:sent>
+    <cap:expires>2026-11-13T20:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T15:31:10+00:00</cap:effective>
+    <cap:onset>2026-11-13T13:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>

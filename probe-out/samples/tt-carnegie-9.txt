@@ -1,0 +1,105 @@
+https://carnegieendowment.org/sitemaps/research-0.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://carnegieendowment.org/india/research/2026/11/will-a-un-treaty-on-autonomous-weapons-arrive-too-late</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/india/research/2026/11/will-a-un-treaty-on-autonomous-weapons-arrive-too-late" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/india/research/2026/11/will-a-un-treaty-on-autonomous-weapons-arrive-too-late" />
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/research/2026/11/the-regulatory-wild-west-of-starlinks-global-expansion</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/research/2026/11/the-regulatory-wild-west-of-starlinks-global-expansion" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/research/2026/11/the-regulatory-wild-west-of-starlinks-global-expansion" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/research/2026/11/cosmic-disorder-the-rise-of-geopolitical-disorder-and-the-challenge-to-global-space-governance</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/research/2026/11/cosmic-disorder-the-rise-of-geopolitical-disorder-and-the-challenge-to-global-space-governance" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/research/2026/11/cosmic-disorder-the-rise-of-geopolitical-disorder-and-the-challenge-to-global-space-governance" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/research/2026/11/trust-but-verify-implementing-frontier-ai-policy-in-california-and-beyond</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/research/2026/11/trust-but-verify-implementing-frontier-ai-policy-in-california-and-beyond" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/research/2026/11/trust-but-verify-implementing-frontier-ai-policy-in-california-and-beyond" />
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/russia-eurasia/research/2026/11/escaping-an-escalatory-spiral-can-europe-avoid-a-war-with-russia</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/russia-eurasia/research/2026/11/escaping-an-escalatory-spiral-can-europe-avoid-a-war-with-russia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/russia-eurasia/research/2026/11/escaping-an-escalatory-spiral-can-europe-avoid-a-war-with-russia" />
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/research/2026/11/serbia-still-has-a-steep-hill-to-climb</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/research/2026/11/serbia-still-has-a-steep-hill-to-climb" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/research/2026/11/serbia-still-has-a-steep-hill-to-climb" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/middle-east/research/2026/09/the-twilight-of-oil-in-an-age-of-uncertainty-from-a-vicious-to-a-virtuous-cycle</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/middle-east/research/2026/09/the-twilight-of-oil-in-an-age-of-uncertainty-from-a-vicious-to-a-virtuous-cycle" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://carnegieendowment.org/ar/middle-east/research/2026/09/the-twilight-of-oil-in-an-age-of-uncertainty-from-a-vicious-to-a-virtuous-cycle" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/middle-east/research/2026/09/the-twilight-of-oil-in-an-age-of-uncertainty-from-a-vicious-to-a-virtuous-cycle" />
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/middle-east/research/2026/10/jordans-border-economy-even-amid-transformation-the-drug-trade-endures</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/middle-east/research/2026/10/jordans-border-economy-even-amid-transformation-the-drug-trade-endures" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://carnegieendowment.org/ar/middle-east/research/2026/10/jordans-border-economy-even-amid-transformation-the-drug-trade-endures" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/middle-east/research/2026/10/jordans-border-economy-even-amid-transformation-the-drug-trade-endures" />
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/research/2026/11/energy-turmoil-puts-the-gulf-of-guinea-back-on-the-map</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/research/2026/11/energy-turmoil-puts-the-gulf-of-guinea-back-on-the-map" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/research/2026/11/energy-turmoil-puts-the-gulf-of-guinea-back-on-the-map" />
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/research/2026/11/bridging-the-gap-between-climate-mobility-modeling-and-policy-action</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/research/2026/11/bridging-the-gap-between-climate-mobility-modeling-and-policy-action" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/research/2026/11/bridging-the-gap-between-climate-mobility-modeling-and-policy-action" />
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/research/2025/09/the-european-radical-right-in-the-age-of-trump-20</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/research/2025/09/the-european-radical-right-in-the-age-of-trump-20" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/research/2025/09/the-european-radical-right-in-the-age-of-trump-20" />
+    <lastmod>2025-09-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/research/2026/11/turkeys-four-headaches-are-also-europes</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/research/2026/11/turkeys-four-headaches-are-also-europes" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/research/2026/11/turkeys-four-headaches-are-also-europes" />
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/research/2026/11/nuclear-policy-domestic-politics-deterrence</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/research/2026/11/nuclear-policy-domestic-politics-deterrence" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowme

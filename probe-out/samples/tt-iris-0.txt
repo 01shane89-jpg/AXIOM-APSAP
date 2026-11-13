@@ -1,0 +1,67 @@
+https://www.iris-france.org/rss/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>IRIS</title>
+	<atom:link href="https://www.iris-france.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.iris-france.org/</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 16:56:45 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+	<item>
+		<title>L’agriculture, ciment de l’Europe ?</title>
+		<link>https://www.iris-france.org/lagriculture-ciment-de-leurope/</link>
+		
+		<dc:creator><![CDATA[Coline Laroche              ]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 15:25:59 +0000</pubDate>
+				<guid isPermaLink="false">https://www.iris-france.org/?p=135752</guid>
+
+					<description><![CDATA[<p>L&#8217;agriculture a été l’un des piliers de la construction européenne, si ce n’est son principal ciment. Contrairement au charbon et à l’acier, elle concernait l’ensemble des pays fondateurs. Elle a toujours occupé une place centrale dans la perception des populations, puisque personne n’échappe aux enjeux alimentaires. C’était déjà vrai il y a 70 ans. Lorsque l’on évoque l’agriculture et la construction européenne, on parle d’une aventure de longue durée, qui s’étend sur plusieurs décennies. Depuis 70 ans, l’Europe a renforcé ses productions agricoles. Au lendemain de la Seconde Guerre mondiale, la situation alimentaire était catastrophique et les tickets de rationnement ont perduré longtemps dans de nombreux pays, y compris en France. Au-delà de la sécurité alimentaire, le développement agricole a également facilité l’aménagement du territoire, l’inclusion des espaces ruraux et, progressivement, la préservation des paysages. Il a aussi contribué à garantir la sécurité sanitaire des aliments consommés en Europe. La puissance normative européenne demeure très importante dans ce domaine. Ces normes ont inspiré une partie du monde, en particulier ces dernières années, avec l’intégration de considérations environnementales plus ambitieuses. La politique agricole commune (PAC) a accompagné beaucoup plus de jeunes Européens que le programme Erasmus. En sept décennies, elle a largement contribué à sécuriser le quotidien des populations européennes. Dans le même temps, la PAC a régulièrement constitué un sujet de friction lors des élargissements. Le Royaume-Uni a beaucoup négocié sur cette question, ainsi que sur la pêche. Lorsque l’Espagne et le Portugal ont rejoint la Communauté dans les années 1980, les sujets agricoles étaient déjà une source de tensions aux frontières pyrénéennes. De nombreux débats ont également eu lieu lors du passage de l’Europe à 27, puis à 28 États membres : il fallait répartir un budget européen plus important, dont un tiers est aujourd’hui encore consacré à la [&#8230;]</p>
+<p>L’article <a href="https://www.iris-france.org/lagriculture-ciment-de-leurope/">L’agriculture, ciment de l’Europe ?</a> est apparu en premier sur <a href="https://www.iris-france.org">IRIS</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">L&rsquo;agriculture a été l’un des piliers de la construction européenne, si ce n’est son principal ciment. Contrairement au charbon et à l’acier, elle concernait l’ensemble des pays fondateurs. Elle a toujours occupé une place centrale dans la perception des populations, puisque personne n’échappe aux enjeux alimentaires. C’était déjà vrai il y a 70 ans.</p>
+
+
+
+<p class="wp-block-paragraph">Lorsque l’on évoque l’agriculture et la construction européenne, on parle d’une aventure de longue durée, qui s’étend sur plusieurs décennies. Depuis 70 ans, l’Europe a renforcé ses productions agricoles. Au lendemain de la Seconde Guerre mondiale, la situation alimentaire était catastrophique et les tickets de rationnement ont perduré longtemps dans de nombreux pays, y compris en France.</p>
+
+
+
+<p class="wp-block-paragraph">Au-delà de la sécurité alimentaire, le développement agricole a également facilité l’aménagement du territoire, l’inclusion des espaces ruraux et, progressivement, la préservation des paysages. Il a aussi contribué à garantir la sécurité sanitaire des aliments consommés en Europe. La puissance normative européenne demeure très importante dans ce domaine. Ces normes ont inspiré une partie du monde, en particulier ces dernières années, avec l’intégration de considérations environnementales plus ambitieuses.</p>
+
+
+
+<p class="wp-block-paragraph">La politique agricole commune (PAC) a accompagné beaucoup plus de jeunes Européens que le programme Erasmus. En sept décennies, elle a largement contribué à sécuriser le quotidien des populations européennes. Dans le même temps, la PAC a régulièrement constitué un sujet de friction lors des élargissements.</p>
+
+
+
+<p class="wp-block-paragraph">Le Royaume-Uni a beaucoup négocié sur cette question, ainsi que sur la pêche. Lorsque l’Espagne et le Portugal ont rejoint la Communauté dans les années 1980, les sujets agricoles étaient déjà une source de tensions aux frontières pyrénéennes. De nombreux débats ont également eu lieu lors du passage de l’Europe à 27, puis à 28 États membres : il fallait répartir un budget européen plus important, dont un tiers est aujourd’hui encore consacré à la PAC, après avoir longtemps représenté les deux tiers. En définitive, sur les 70 années de construction européenne, la majeure partie du budget de l’Union a servi à garantir aux Européens un approvisionnement alimentaire suffisant, de qualité et diversifié, même si ce choix a parfois suscité des controverses.</p>
+
+
+
+<h2 class="wp-block-heading is-style-default has-primary-color has-text-color has-link-color wp-elements-5"><strong>L’Europe agricole : les paradoxes d’une politique commune</strong></h2>
+
+
+
+<p class="wp-block-paragraph">L’histoire de l’Europe agricole a été marquée par plusieurs épisodes emblématiques : les excédents de production dans les années 1980, puis les changements de politique économique, avec l’abandon progressif des quotas dans les années 1990 et 2000. L’agriculture européenne s’est alors ouverte à la mondialisation et aux échanges internationaux, à l’instar de l’économie européenne dans son ensemble.</p>
+
+
+
+<p class="wp-block-paragraph">Avec le temps, cette évolution a fait apparaître plusieurs paradoxes. Dès le début des années 1990, la PAC a engagé des réformes structurelles visant à mieux prendre en compte l’environnement, notamment sous l’impulsion de Jacques Chirac et d’une France alors influente dans le concert européen. La politique agricole s’est progressivement et davantage tournée vers les enjeux environnementaux et moins vers la production. Parallèlement, elle est devenue moins commune et plus concurrentielle entre les États membres.</p>
+
+
+
+<p class="wp-block-paragraph">Enfin, l’Europe dispose d’une politique agricole commune en matière d’organisation des marchés et de normes, mais ne mène pas de politique agricole extérieure véritablement commune. En dehors des frontières de l’Union, chaque État membre agit largement à sa manière. Il participe aux accords commerciaux européens, mais promeut ses productions, mène sa diplomatie économique et valorise ses produits à l’échelle mondiale à travers un discours souvent marqué par une identité nationale. Les réflexions sur l’Europe comme puissance n’ont donc jamais intégré les questions agricoles et alimentaires à la hauteur de leur importance. L’Europe a beaucoup mobilisé l’agriculture pour unir ses États membres et ses sociétés, mais elle a peiné à s’exprimer de manière unifiée à l’extérieur, comme c’est souvent le cas dan

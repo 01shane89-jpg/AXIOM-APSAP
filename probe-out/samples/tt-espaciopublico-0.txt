@@ -1,0 +1,49 @@
+https://espaciopublico.cl/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Espacio Público</title>
+	<atom:link href="https://espaciopublico.cl/feed/" rel="self" type="application/rss+xml" />
+	<link>https://espaciopublico.cl</link>
+	<description>Centro de Estudios Independiente</description>
+	<lastBuildDate>Wed, 28 Oct 2026 19:43:24 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.9.11</generator>
+	<item>
+		<title>Nueva propuesta de reforma constitucional en seguridad: menos de lo mismo</title>
+		<link>https://espaciopublico.cl/nueva-propuesta-de-reforma-constitucional-en-seguridad-menos-de-lo-mismo/</link>
+					<comments>https://espaciopublico.cl/nueva-propuesta-de-reforma-constitucional-en-seguridad-menos-de-lo-mismo/#respond</comments>
+		
+		<dc:creator><![CDATA[Espacio Público]]></dc:creator>
+		<pubDate>Mon, 26 Oct 2026 13:55:46 +0000</pubDate>
+				<category><![CDATA[Columna]]></category>
+		<category><![CDATA[EP en la Prensa]]></category>
+		<category><![CDATA[Prensa]]></category>
+		<guid isPermaLink="false">https://espaciopublico.cl/?p=17176</guid>
+
+					<description><![CDATA[Luego de varias semanas de intensas polémicas, críticas y debates, el Gobierno retiró el proyecto de reforma constitucional en materia de seguridad que había presentado<span class="excerpt-hellip"> […]</span>]]></description>
+										<content:encoded><![CDATA[<p>Luego de varias semanas de intensas polémicas, críticas y debates, el Gobierno retiró el proyecto de reforma constitucional en materia de seguridad que había presentado en agosto pasado. En su reemplazo, un grupo ¨transversal¨ de senadores (<strong>Squella, Araya, Longton, Bianchi y Flores) </strong>ha presentado una propuesta de reforma mucho más acotada (Boletín 18.732-07 de 8 de octubre de 2026), que contaría con el apoyo del Ejecutivo.</p>
+<p>El proyecto aborda tres temas. En primer lugar, se propone reformar el estado de emergencia y con ello se abandona la idea de crear un nuevo Estado de Excepción Constitucional de seguridad pública. Se incluyen también modificaciones para extender al crimen organizado el estatuto constitucional actual del terrorismo y otra permitiendo la aplicación de un régimen penitenciario de seguridad de los condenados y sujetos en prisión preventiva en ciertas hipótesis.</p>
+<p>Tanto en la justificación de la moción como en sus contenidos se observa un avance respecto al proyecto retirado. Como se recordará, varios de sus contenidos generaron serias dudas de compatibilidad con un régimen democrático y un Estado de Derecho en forma. No se observa problema de ese calibre en la propuesta actual, lo que no quita que sus contenidos sigan siendo problemáticos por razones similares a las del proyecto retirado.</p>
+<p>En su base, la propuesta de los senadores mantiene como lógica central que el enfrentamiento eficaz del crimen organizado en nuestro país es, al menos en parte, un problema de falta de regulación constitucional. Es decir, se comparte una filosofía parecida a la del proyecto retirado.</p>
+<p>Este punto de partida me parece incorrecto. La ilusión de que la constitucionalización de los problemas los resuelve no resulta adecuada ni en esta ni en muchas otras materias. Esto uno pensaba que era una lección aprendida en el país. Tampoco parece que la herramienta constitucional sea necesaria para regular temas que son propios de la ley, como lo es, por ejemplo, el régimen penitenciario especial de seguridad (materia sobre la cual ya existen proyectos en discusión).</p>
+<p>Los principales desafíos en Chile parecieran ser la adecuada implementación y mejora de la capacidad de gestión de la institucionalidad que hemos ido adoptando en los últimos años para lidiar con el crimen organizado (Ministerio de Seguridad, Fiscalía Supraterritorial, etc.), más que en nuevas regulaciones constitucionales. En el ámbito normativo, el foco debiera estar en concluir el proceso de regulación complementaria en algunas materias en donde dicha tarea está pendiente (por ejemplo, el nuevo estatuto de Gendarmería de Chile y del Servicio de Reinserción Social).</p>
+<p>No se aprecia que la falta de normas constitucionales constituya un problema u obstáculo real.</p>
+<p>Por otra parte, al observar las propuestas del proyecto, no es evidente que ellas contribuyan a resolver problemas que supuestamente las justifican. Por el contrario, es posible que generen otros. La reforma del artículo 42 de la Constitución es un buen ejemplo. En ella se plantean modificaciones al actual Estado de Excepción de Emergencia según la cual el Presidente lo puede decretar por 30 días (sin perjuicio de posteriores prórrogas que apruebe el Congreso). En su componente central se agregan nuevas hipótesis de procedencia basadas en la existencia de “peligro grave e inminente” para el orden público o de un grave daño “inminente” a la seguridad de la Nación.</p>
+<p>Así, se amplían las hipótesis actuales basadas en la existencia de una grave alteración del orden público o en el grave daño para la seguridad de la Nación. Es decir, se propone ir desde un Estado de Excepción que procede cuando ya se ha producido una situación concreta que afecta al orden público o la seguridad de la Nación, como ocurre en todos los otros Estados de Excepción existentes en nuestro texto constitucional, a una que opera sobre la base de actuar en forma preventiva. Una idea muy similar estaba contenida en el proyecto retirado a propósito del nuevo Estado de Excepción que se proponía y ya había sido objeto de crítica.</p>
+<p>El problema de esta propuesta es evidente. A las ya amplísimas y ambiguas hipótesis vigentes, se agregan unas nuevas que generan un espacio importante de discrecionalidad al Presidente para decretarlo y que luego dificultarán la labor del Congreso para controlar su prórroga. Por su naturaleza, una hipótesis de tipo preventiva se basa en una proyección.</p>
+<p>En este caso, se trata de una proyección de un riesgo tan amplio como la alteración del orden público o el daño a la seguridad de la Nación. Esto, además, en el contexto de que la idea de los autores del proyecto es anticipar riesgos que provienen de la acción del crimen organizado. Estos incluyen acciones tales como, según señala la justificación del texto, la corrupción de funcionarios estatales, la infiltración de actividades económicas o la disputa de espacios de autoridad con el Estado.</p>
+<p>Me atrevería a decir que si en nuestro país hay presencia de crimen organizado estaremos en presencia de un riesgo permanente de acciones de este tipo y, por lo mismo, siempre invocable para justificar excepciones constitucionales. Esto, además, sin considerar que esos riesgos suelen presentarse sin una lógica de “territorialidad” estricta allí en donde este Estado de Excepción opera en la dinámica de intervenir en “zonas afectadas”, es decir, que no parece adecuada a este tipo de problemas.</p>
+<p>Los autores del proyecto se dan cuenta de los problemas que generan hipótesis preventivas tan amplias, por lo que intentan cualificarlas al exigir que se trate de riesgos “inminentes”, no simplemente amenazas hipotéticas, futuras e indeterminadas. Con todo, dicha restricción no parece suficiente como para evitar el natural juicio proyectivo que supone una hipótesis de naturaleza preventiva y en el contexto de acciones de crimen organizado, como se mencionó.</p>
+<p>Agreguemos a esto las dificultades que puede suponer acreditar la hipótesis. Los autores del proyecto, nuevamente en un esfuerzo de delimitar el mecanismo, hablan de que ello debe hacerse con antecedentes suficient

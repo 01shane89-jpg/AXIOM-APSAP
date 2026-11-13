@@ -1,0 +1,77 @@
+https://www.iss.europa.eu/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.iss.europa.eu/">
+  <channel>
+    <title>European Union Institute for Security Studies</title>
+    <link>https://www.iss.europa.eu/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Sijbren de Jong on how the recent bomb hoaxes test Europe's security preparedness</title>
+  <link>https://www.iss.europa.eu/press/sijbren-de-jong-how-recent-bomb-hoaxes-test-europes-security-preparedness</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Sijbren de Jong on how the recent bomb hoaxes test Europe's security preparedness&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;marianna.liana…&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-12T16:55:23+01:00" title="Thursday, November 12, 2026 - 16:55" class="datetime"&gt;Thu, 11/12/2026 - 16:55&lt;/time&gt;
+&lt;/span&gt;
+
+            &lt;div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"&gt;&lt;p&gt;Regardless of the actual threat they pose, hoaxes like the recent bomb threats that affected dozens of European flights serve as a test of security procedures, stated Sijbren de Jong in &lt;a href="https://euobserver.com/248019/eu-commission-to-host-security-talks-after-week-of-bomb-hoaxes-that-hit-20-airports-and-dozens-of-european-flights/"&gt;EUobserver&lt;/a&gt;, as they give adversaries an idea of our capacity to respond to emergencies. "If you get overwhelmed by this, then how do you think you are going to respond if you get kinetically attacked?"&lt;/p&gt;
+&lt;p data-pm-slice="1 1 []"&gt;&lt;span&gt;While some experts have pointed to Russia as a likely source, Sijbren stressed that we do not know for sure. However, he noted that, given Russia's history of hybrid attacks, it is unsurprising that suspicions have fallen on Moscow.&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+      
+  &lt;div class="field field--name-field-press-media field--type-entity-reference field--label-above"&gt;
+    &lt;div class="field__label"&gt;Press media&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.iss.europa.eu/taxonomy/term/1501" hreflang="en"&gt;EUobserver&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <pubDate>Thu, 12 Nov 2026 15:55:23 +0000</pubDate>
+    <dc:creator>marianna.lianantonaki@iss.europa.eu</dc:creator>
+    <guid isPermaLink="false">4034 at https://www.iss.europa.eu</guid>
+    </item>
+<item>
+  <title>"Europe isn’t officially at war, but it's a fine line."</title>
+  <link>https://www.iss.europa.eu/press/europe-isnt-officially-war-its-fine-line</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;"Europe isn’t officially at war, but it's a fine line."&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;marianna.liana…&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-12T16:07:01+01:00" title="Thursday, November 12, 2026 - 16:07" class="datetime"&gt;Thu, 11/12/2026 - 16:07&lt;/time&gt;
+&lt;/span&gt;
+
+            &lt;div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"&gt;&lt;p&gt;Discussing the recent wave of hybrid attacks against Europe, Sijbren de Jong told &lt;a href="https://www.lavozdegalicia.es/noticia/internacional/2026/11/08/europa-guerra-oficialmente-linea-fina/0003_202611G8P26993.htm"&gt;La Voz de Galicia&lt;/a&gt; that although Europe is not officially at war, it is a fine line. "You can launch low-intensity threats against your adversary, preparing the ground with small actions that aren't attacks to wear them down. I think we are in that phase," he said.&lt;/p&gt;
+&lt;p data-pm-slice="1 1 []"&gt;&lt;span&gt;According to Sijbren, it is important to understand that one reason certain actors carry out hybrid attacks is to learn how we respond, how long it takes us, what we prioritise, where our resources go, which actors and agencies are working to resolve the situation, and how much time, assets, personnel and money the response consumes. &lt;/span&gt;&lt;em&gt;&lt;span&gt;(in Spanish)&lt;/span&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+      
+  &lt;div class="field field--name-field-press-media field--type-entity-reference field--label-above"&gt;
+    &lt;div class="field__label"&gt;Press media&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.iss.europa.eu/taxonomy/term/1500" hreflang="en"&gt;La Voz de Galicia&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <pubDate>Thu, 12 Nov 2026 15:07:01 +0000</pubDate>
+    <dc:creator>marianna.lianantonaki@iss.europa.eu</dc:creator>
+    <guid isPermaLink="false">4033 at https://www.iss.europa.eu</guid>
+    </item>
+<item>
+  <title>"America's ability to supply Ukraine will continue to be constrained by limited supply."</title>
+  <link>https://www.iss.europa.eu/press/americas-ability-supply-ukraine-will-continue-be-constrained-limited-supply</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;"America's ability to supply Ukraine will continue to be constrained by limited supply."&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;marianna.liana…&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-12T15:58:51+01:00" title="Thursday, November 12, 2026 - 15:58" class="datetime"&gt;Thu, 11/12/2026 - 15:58&lt;/time&gt;
+&lt;/span&gt;
+
+            &lt;div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"&gt;&lt;p&gt;"I don't expect a big impact," told Luigi Scazzieri to &lt;a href="https://www.rapporteur.com/news/democrats-midterm-victory-unlikely-to-sway-trump-on-ukraine/"&gt;Rapporteur&lt;/a&gt;, discussing whether Trump's approach to negotiations with Moscow could change following the US midterms. "Even if Congress pushes for deliveries, Trump will be able to veto bills he does not like." He added that "America's ability to supply Ukraine will continue to be constrained by limited supply," noting that additional funding would do little to ease immediate shortages.&lt;/p&gt;
+&lt;/div&gt;
+      
+  &lt;div class="field field--name-field-press-media field--type-entity-reference field--label-above"&gt;
+    &lt;div class="field__label"&gt;Press media&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.iss.europa.eu/taxonomy/term/1452" hreflang="en"&gt;Rapporteur&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <pubDate>Thu, 12 Nov 2026 14:58:51 +0000</pubDate>
+    <dc:creator>marianna.lianantonaki@iss.europa.eu</dc:creator>
+    <guid isPermaLink="false">4032 at https://www.iss.europa.eu</guid>
+    </item>
+<item>
+  <title>Ondřej Ditrych on the possibility of the US withdrawing troops from the Eastern Flank</title>
+  <link>https://www.iss.europa.eu/press/ondrej-ditrych-possibility-us-withdrawing-troops-eastern-flank</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Ondřej Ditrych on the possibility of the US withdrawing troops from the Eastern Flank&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span&gt;marianna.liana…&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;&lt;time datetime="2026-11-12T15:46:54+01:00" title="Thursday, N

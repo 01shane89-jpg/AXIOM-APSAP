@@ -1,0 +1,142 @@
+https://gga.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Good Governance Africa</title>
+	<atom:link href="https://gga.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://gga.org</link>
+	<description>Promoting better governance in Africa to improve the lives of all citizens</description>
+	<lastBuildDate>Wed, 11 Nov 2026 07:37:50 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://digitalmallblobstorage.blob.core.windows.net/wp-content//2020/06/cropped-gga-logo-social-2-32x32.png</url>
+	<title>Good Governance Africa</title>
+	<link>https://gga.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Beyond Dreams: GGA Survey Reveals Key Barriers to Nigerian Girls’ Career Aspirations</title>
+		<link>https://gga.org/beyond-dreams-gga-survey-nigerian-girls-career-aspirations/</link>
+					<comments>https://gga.org/beyond-dreams-gga-survey-nigerian-girls-career-aspirations/#respond</comments>
+		
+		<dc:creator><![CDATA[Kabir Hassan]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 07:37:50 +0000</pubDate>
+				<category><![CDATA[Youth Empowerment and Development]]></category>
+		<guid isPermaLink="false">https://gga.org/?p=305666</guid>
+
+					<description><![CDATA[A young girl’s career aspirations often begin with a dream of what she hopes to become. But turning that dream into a clear and achievable path requires more than ambition. It involves understanding her interests, identifying available opportunities, accessing the right information and guidance, and navigating the barriers that may stand in her way.]]></description>
+		
+					<wfw:commentRss>https://gga.org/beyond-dreams-gga-survey-nigerian-girls-career-aspirations/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Africa’s Girl Child Dialogues 2026: Close-Out Report</title>
+		<link>https://gga.org/africas-girl-child-dialogues-2026-close-out-report/</link>
+					<comments>https://gga.org/africas-girl-child-dialogues-2026-close-out-report/#respond</comments>
+		
+		<dc:creator><![CDATA[Good Governance Africa]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 11:38:42 +0000</pubDate>
+				<category><![CDATA[African Cities Report]]></category>
+		<guid isPermaLink="false">https://gga.org/?p=305660</guid>
+
+					<description><![CDATA[Read GGA’s 2026 close-out report on Africa’s Girl Child Dialogues, covering career pathways, mentorship, workshops and opportunities for young women.]]></description>
+		
+					<wfw:commentRss>https://gga.org/africas-girl-child-dialogues-2026-close-out-report/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>South African businesses cannot keep adapting to governance failure</title>
+		<link>https://gga.org/south-african-businesses-cannot-keep-adapting-to-governance-failure/</link>
+					<comments>https://gga.org/south-african-businesses-cannot-keep-adapting-to-governance-failure/#respond</comments>
+		
+		<dc:creator><![CDATA[Dr Ruth Kolevsohn]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 05:13:53 +0000</pubDate>
+				<category><![CDATA[Anti Corruption]]></category>
+		<category><![CDATA[TRENDING ARTICLES]]></category>
+		<category><![CDATA[accountability]]></category>
+		<category><![CDATA[anti-corruption]]></category>
+		<category><![CDATA[business ethics]]></category>
+		<category><![CDATA[corporate governance]]></category>
+		<category><![CDATA[corruption in South Africa]]></category>
+		<category><![CDATA[economic competitiveness]]></category>
+		<category><![CDATA[economic resilience]]></category>
+		<category><![CDATA[ethical leadership]]></category>
+		<category><![CDATA[good governance]]></category>
+		<category><![CDATA[governance reform]]></category>
+		<category><![CDATA[institutional failure]]></category>
+		<category><![CDATA[investment confidence]]></category>
+		<category><![CDATA[public procurement]]></category>
+		<category><![CDATA[South African business]]></category>
+		<category><![CDATA[state capture]]></category>
+		<guid isPermaLink="false">https://gga.org/?p=305628</guid>
+
+					<description><![CDATA[Resilience has helped companies survive institutional dysfunction. But lasting competitiveness requires businesses to help change the conditions that make resilience necessary South African businesses are routinely praised for their resilience. They have survived electricity disruptions, logistics failures, regulatory uncertainty and the costs of corruption. However, there is something troubling about an economy in which businesses [&#8230;]]]></description>
+		
+					<wfw:commentRss>https://gga.org/south-african-businesses-cannot-keep-adapting-to-governance-failure/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Nigeria’s 2027 Elections: The Gathering Threat of Political Violence and the Cost of Democratic Silence</title>
+		<link>https://gga.org/nigerias-2027-elections-the-gathering-threat-of-political-violence-and-the-cost-of-democratic-silence/</link>
+					<comments>https://gga.org/nigerias-2027-elections-the-gathering-threat-of-political-violence-and-the-cost-of-democratic-silence/#respond</comments>
+		
+		<dc:creator><![CDATA[Adejumo Kabir Adeniyi and Dr Ola Bello]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 09:53:57 +0000</pubDate>
+				<category><![CDATA[ANALYSIS]]></category>
+		<category><![CDATA[Nigeria]]></category>
+		<category><![CDATA[TRENDING ARTICLES]]></category>
+		<category><![CDATA[2027 General Elections]]></category>
+		<category><![CDATA[Democratic Participation]]></category>
+		<category><![CDATA[Election Monitoring]]></category>
+		<category><![CDATA[Election-Related Violence]]></category>
+		<category><![CDATA[Electoral Security]]></category>
+		<category><![CDATA[Electoral Violence in Nigeria]]></category>
+		<category><![CDATA[free and fair elections]]></category>
+		<category><![CDATA[INEC]]></category>
+		<category><![CDATA[National Peace Accord]]></category>
+		<category><![CDATA[Nigeria Election Security]]></category>
+		<category><![CDATA[Nigeria Politics]]></category>
+		<category><![CDATA[political accountability]]></category>
+		<category><![CDATA[Political Intimidation]]></category>
+		<category><![CDATA[Political violence]]></category>
+		<guid isPermaLink="false">https://gga.org/?p=305618</guid>
+
+					<description><![CDATA[Nigeria is approaching another general election, but troubling developments across the political landscape are raising questions about whether the country is adequately prepared to guarantee a safe and credible electoral process. From attacks by supporters of various political parties against their rivals and disruptions of campaign activities to allegations of intimidation, threats and the use [&#8230;]]]></description>
+		
+					<wfw:commentRss>https://gga.org/nigerias-2027-elections-the-gathering-threat-of-political-violence-and-the-cost-of-democratic-silence/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>From insurgents to security assets: Nigeria’s unconventional response to insecurity</title>
+		<link>https://gga.org/from-insurgents-to-security-assets-nigerias-unconventional-response-to-insecurity/</link>
+		
+		<dc:creator><![CDATA[Malik Samuel]]></dc:creator>
+		<pubDate>Mon, 21 Sep 2026 12:05:16 +0000</pubDate>
+				<category><![CDATA[ANALYSIS]]></category>
+		<category><![CDATA[Nigeria]]></category>
+		<category><![CDATA[TRENDING ARTICLES]]></category>
+		<category><![CDATA[banditry in Nigeria]]></category>
+		<category><![CDATA[Boko Haram]]></category>
+		<ca

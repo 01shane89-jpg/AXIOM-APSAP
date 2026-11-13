@@ -1,0 +1,153 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:DE</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T05:02:47.046221Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE416</value>
+    </cap:geocode>
+    <link title="Kreis Meißen" href="https://meteoalarm.org?geocode=EMMA_ID:DE416" hreflang="en"/>
+    <cap:areaDesc>Kreis Meißen</cap:areaDesc>
+    <cap:event>icy surfaces</cap:event>
+    <cap:sent>2026-11-13T04:32:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T07:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:32:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1794544320000.8ea5523e-9155-4e5e-8f96-de28c4839aec.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T04:32:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac?index_info=1&amp;index_area=8&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Germany - Kreis Meißen</title>
+    <updated>2026-11-13T04:32:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE145</value>
+    </cap:geocode>
+    <link title="Burgenlandkreis" href="https://meteoalarm.org?geocode=EMMA_ID:DE145" hreflang="en"/>
+    <cap:areaDesc>Burgenlandkreis</cap:areaDesc>
+    <cap:event>icy surfaces</cap:event>
+    <cap:sent>2026-11-13T04:32:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T07:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:32:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1794544320000.8ea5523e-9155-4e5e-8f96-de28c4839aec.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T04:32:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac?index_info=1&amp;index_area=7&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Germany - Burgenlandkreis</title>
+    <updated>2026-11-13T04:32:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE386</value>
+    </cap:geocode>
+    <link title="Saale-Holzland-Kreis" href="https://meteoalarm.org?geocode=EMMA_ID:DE386" hreflang="en"/>
+    <cap:areaDesc>Saale-Holzland-Kreis</cap:areaDesc>
+    <cap:event>icy surfaces</cap:event>
+    <cap:sent>2026-11-13T04:32:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T07:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:32:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1794544320000.8ea5523e-9155-4e5e-8f96-de28c4839aec.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T04:32:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac?index_info=1&amp;index_area=6&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Germany - Saale-Holzland-Kreis</title>
+    <updated>2026-11-13T04:32:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE254</value>
+    </cap:geocode>
+    <link title="Ilm-Kreis" href="https://meteoalarm.org?geocode=EMMA_ID:DE254" hreflang="en"/>
+    <cap:areaDesc>Ilm-Kreis</cap:areaDesc>
+    <cap:event>icy surfaces</cap:event>
+    <cap:sent>2026-11-13T04:32:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T07:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:32:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1794544320000.8ea5523e-9155-4e5e-8f96-de28c4839aec.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T04:32:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac?index_info=1&amp;index_area=5&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Germany - Ilm-Kreis</title>
+    <updated>2026-11-13T04:32:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE208</value>
+    </cap:geocode>
+    <link title="Stadt Suhl" href="https://meteoalarm.org?geocode=EMMA_ID:DE208" hreflang="en"/>
+    <cap:areaDesc>Stadt Suhl</cap:areaDesc>
+    <cap:event>icy surfaces</cap:event>
+    <cap:sent>2026-11-13T04:32:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T07:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:32:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1794544320000.8ea5523e-9155-4e5e-8f96-de28c4839aec.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/49a43fd2-2012-4e28-a45a-39f4344fc6ac"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"

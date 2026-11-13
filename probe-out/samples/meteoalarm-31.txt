@@ -1,0 +1,101 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovenia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovenia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:SI</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:10.214231Z</updated>
+  <entry>
+    <cap:polygon>45.459,13.627 45.463,13.647 45.477,13.648 45.498,13.622 45.524,13.63 45.523,13.647 45.537,13.707 45.515,13.732 45.513,13.752 45.526,13.768 45.546,13.773 45.576,13.767 45.588,13.737 45.597,13.74 45.593,13.712 45.585,13.711 45.57,13.746 45.564,13.735 45.542,13.719 45.548,13.691 45.532,13.644 45.54,13.617 45.538,13.603 45.498,13.584 45.489,13.592 45.474,13.587 45.459,13.627</cap:polygon>
+    <link title="Morje" href="https://meteoalarm.org?polygon=950b2fb3-7cbd-49ee-90b3-4be5d8333e5c,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Morje</cap:areaDesc>
+    <cap:event>Moderate flood</cap:event>
+    <cap:sent>2026-11-13T01:01:19+00:00</cap:sent>
+    <cap:expires>2026-11-13T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:01:19+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.705.2.SI.20261113020119.flood_25_20261113000001</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/950b2fb3-7cbd-49ee-90b3-4be5d8333e5c"/>
+    <link title="Slovenia" rel="related" href="https://meteoalarm.org?region=SI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T01:01:19Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/950b2fb3-7cbd-49ee-90b3-4be5d8333e5c?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Flooding Warning issued for Slovenia - Morje</title>
+    <updated>2026-11-13T01:01:19Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>45.459,13.627 45.463,13.647 45.477,13.648 45.498,13.622 45.524,13.63 45.523,13.647 45.537,13.707 45.515,13.732 45.513,13.752 45.526,13.768 45.546,13.773 45.576,13.767 45.588,13.737 45.597,13.74 45.593,13.712 45.585,13.711 45.57,13.746 45.564,13.735 45.542,13.719 45.548,13.691 45.532,13.644 45.54,13.617 45.538,13.603 45.498,13.584 45.489,13.592 45.474,13.587 45.459,13.627</cap:polygon>
+    <link title="Morje" href="https://meteoalarm.org?polygon=ae65df52-3544-47af-ba1b-b3a96a668221,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Morje</cap:areaDesc>
+    <cap:event>Moderate rain flood</cap:event>
+    <cap:sent>2026-11-13T01:01:19+00:00</cap:sent>
+    <cap:expires>2026-11-13T14:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:01:19+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.705.2.SI.20261113020119.flash_flood_25_20261113000001</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/ae65df52-3544-47af-ba1b-b3a96a668221"/>
+    <link title="Slovenia" rel="related" href="https://meteoalarm.org?region=SI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T01:01:19Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/ae65df52-3544-47af-ba1b-b3a96a668221?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Rain-flood Warning issued for Slovenia - Morje</title>
+    <updated>2026-11-13T01:01:19Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>45.636,13.946 45.64,13.927 45.631,13.918 45.611,13.878 45.586,13.851 45.581,13.81 45.584,13.781 45.597,13.74 45.588,13.737 45.576,13.767 45.546,13.773 45.526,13.768 45.513,13.752 45.515,13.732 45.537,13.707 45.523,13.647 45.524,13.63 45.498,13.622 45.477,13.648 45.463,13.647 45.459,13.627 45.457,13.643 45.442,13.675 45.466,13.764 45.463,13.798 45.444,13.803 45.434,13.815 45.433,13.851 45.427,13.858 45.426,13.887 45.442,13.897 45.453,13.915 45.456,13.957 45.448,13.971 45.456,13.985 45.483,13.992 45.506,13.962 45.51,13.987 45.52,14.011 45.498,14.043 45.484,14.073 45.481,14.118 45.475,14.144 45.479,14.173 45.469,14.208 45.482,14.206 45.505,14.231 45.517,14.211 45.516,14.197 45.531,14.193 45.536,14.181 45.526,14.157 45.547,14.136 45.578,14.133 45.595,14.088 45.589,14.082 45.584,14.046 45.613,14.027 45.624,14.002 45.636,13.946</cap:polygon>
+    <link title="Rižana in Dragonja" href="https://meteoalarm.org?polygon=4ff445d0-1866-4aa6-b665-5a5724f825ae,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Rižana in Dragonja</cap:areaDesc>
+    <cap:event>Moderate rain flood</cap:event>
+    <cap:sent>2026-11-13T01:01:19+00:00</cap:sent>
+    <cap:expires>2026-11-13T14:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T01:01:19+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.705.2.SI.20261113020119.flash_flood_24_20261113000001</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/4ff445d0-1866-4aa6-b665-5a5724f825ae"/>
+    <link title="Slovenia" rel="related" href="https://meteoalarm.org?region=SI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T01:01:19Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/4ff445d0-1866-4aa6-b665-5a5724f825ae?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Rain-flood Warning issued for Slovenia - Rižana in Dragonja</title>
+    <updated>2026-11-13T01:01:19Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>45.636,13.946 45.64,13.927 45.631,13.918 45.611,13.878 45.586,13.851 45.581,13.81 45.584,13.781 45.597,13.74 45.588,13.737 45.576,13.767 45.546,13.773 45.526,13.768 45.513,13.752 45.515,13.732 45.537,13.707 45.523,13.647 45.524,13.63 45.498,13.622 45.477,13.648 45.463,13.647 45.459,13.627 45.457,13.643 45.442,13.675 45.466,13.764 45.463,13.798 45.444,13.803 45.434,13.815 45.433,13.851 45.427,13.858 45.426,13.887 45.442,13.897 45.453,13.915 45.456,13.957 45.448,13.971 45.456,13.985 45.483,13.992 45.506,13.962 45.51,13.987 45.52,14.011 45.498,14.043 45.484,14.073 45.481,14.118 45.475,14.144 45.479,14.173 45.469,14.208 45.482,14.206 45.505,14.231 45.517,14.211 45.516,14.197 45.531,14.193 45.536,14.181 45.526,14.157 45.547,14.136 45.578,14.133 45.595,14.088 45.589,14.082 45.584,14.046 45.613,14.027 45.624,14.002 45.636,13.946</cap:polygon>
+    <link title="Rižana in Dragonja" href="https://meteoalarm.org?polyg

@@ -1,0 +1,66 @@
+https://devpolicy.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Devpolicy Blog from the Development Policy Centre</title>
+	<atom:link href="https://devpolicy.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://devpolicy.org/</link>
+	<description>Australian aid &#124; PNG and the Pacific &#124; Global development policy</description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:10:54 +0000</lastBuildDate>
+	<language>en-AU</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://devpolicy.org/wp-content/uploads/2016/08/cropped-Devpolicy-logo-site-icon-48x48.jpg</url>
+	<title>Devpolicy Blog from the Development Policy Centre</title>
+	<link>https://devpolicy.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>One battle after another: US foreign aid after the mid-terms</title>
+		<link>https://devpolicy.org/one-battle-after-another-us-foreign-aid-after-the-mid-terms-20261113/</link>
+					<comments>https://devpolicy.org/one-battle-after-another-us-foreign-aid-after-the-mid-terms-20261113/#respond</comments>
+		
+		<dc:creator><![CDATA[Terence Wood and Cameron Hill]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:00:14 +0000</pubDate>
+				<category><![CDATA[Aid and development]]></category>
+		<category><![CDATA[Aid effectiveness]]></category>
+		<category><![CDATA[Australian aid]]></category>
+		<category><![CDATA[Global aid issues]]></category>
+		<category><![CDATA[Aid architecture]]></category>
+		<category><![CDATA[AusAID (historical)]]></category>
+		<category><![CDATA[Australia]]></category>
+		<category><![CDATA[Canada]]></category>
+		<category><![CDATA[Comparative analysis]]></category>
+		<category><![CDATA[Development finance]]></category>
+		<category><![CDATA[DFAT]]></category>
+		<category><![CDATA[DFID / FCDO (UK)]]></category>
+		<category><![CDATA[Diplomacy and foreign policy]]></category>
+		<category><![CDATA[Geostrategic competition]]></category>
+		<category><![CDATA[Institutional and policy reform]]></category>
+		<category><![CDATA[New Zealand]]></category>
+		<category><![CDATA[Policy brief]]></category>
+		<category><![CDATA[Political economy analysis]]></category>
+		<category><![CDATA[United Kingdom]]></category>
+		<category><![CDATA[United States]]></category>
+		<category><![CDATA[USAID]]></category>
+		<guid isPermaLink="false">https://devpolicy.org/?p=100758</guid>
+
+					<description><![CDATA[Democrats may control Congress again, but history from Australia, Canada, New Zealand and the UK suggests that won't be enough to rebuild US foreign aid — unless advocates fight for it.<h4><b>Disclosure</b></h4><p><em>This research was undertaken with the support of the <a href="https://gatesfoundation.org" target="_blank" rel="noopener noreferrer">Gates Foundation</a>. Any views expressed are those of the authors only.</em></p>
+<h4><b>About the author/s</b></h4><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;margin:0 0 1em;"><tr><td width="96" valign="top" style="width:96px;padding:0 16px 0 0;vertical-align:top;"><img src="https://devpolicy.org/wp-content/uploads/2026/11/devpolicy_square07-192x192.jpg" alt="Terence Wood" width="80" height="80" style="display:block;width:80px;height:80px;border:0;border-radius:50%;" /></td><td valign="top" style="vertical-align:top;"><p style="margin:0;"><strong>Terence Wood</strong><br>Terence Wood is a Fellow at the Development Policy Centre. His research focuses on political governance in Western Melanesia, and Australian and New Zealand aid.</p></td></tr></table><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;margin:0 0 1em;"><tr><td width="96" valign="top" style="width:96px;padding:0 16px 0 0;vertical-align:top;"><img src="https://devpolicy.org/wp-content/uploads/2026/11/Cameron-Hill_web-192x192.jpg" alt="Cameron Hill" width="80" height="80" style="display:block;width:80px;height:80px;border:0;border-radius:50%;" /></td><td valign="top" style="vertical-align:top;"><p style="margin:0;"><strong>Cameron Hill</strong><br>Cameron Hill is a Research Fellow at the Development Policy Centre. He has previously worked with DFAT, the Parliamentary Library and ACFID.</p></td></tr></table>]]></description>
+										<content:encoded><![CDATA[<p style="margin:0 0 4px;"><a href="https://devpolicy.org/one-battle-after-another-us-foreign-aid-after-the-mid-terms-20261113/"><img src="https://devpolicy.org/wp-content/uploads/2026/11/kaden-taylor-1U3DLk5TZE0-unsplash-768x509.jpg" alt="GAnti-Trump protest at the National Archives Museum, Washington DC, October 2025" width="600" height="398" style="display:block;max-width:100%;height:auto;border:0;" /></a></p><p style="font-size:0.85em;line-height:1.5;color:#555;margin:0 0 1.5em;font-style:italic;">Anti-Trump protest outside the National Archives, Washington DC, October 2025 (<a href="https://unsplash.com/photos/crowd-gathered-at-the-national-archives-building-1U3DLk5TZE0">Unsplash/Kaden Taylor</a>)</p><p>Less than two years after the United States Agency for International Development (USAID) <a href="https://x.com/elonmusk/status/1886307316804263979">was &#8220;fed to the wood chipper&#8221;</a> by <a href="https://en.wikipedia.org/wiki/Elon_Musk">Elon Musk</a> and tens of billions of dollars were cut from the United States&#8217; foreign aid budget, the mid-term elections have again dramatically changed the country&#8217;s political landscape. From January, the Democrats will command large majorities in the Senate and House. Two years is a long time in politics — waves come and go — but, for now, the Democrats also appear to have <a href="https://www.reuters.com/commentary/reuters-open-interest/surge-2028-us-presidential-bets-reframes-markets-after-midterms-mike-dolan-2026-11-05/">a better than even chance</a> of winning the next presidential election.</p>
+<p>What will this mean for US aid? In the short term, the Democrats can now hold inquiries and hearings into <a href="https://devpolicy.org/manufactured-chaos-trump-2-0-puts-his-stamp-on-us-foreign-aid-20240129/">the chaotic demolition of USAID</a>, as well as into how a much-denuded State Department has gone about managing what is left of the US foreign aid program. In theory, given their authority over the federal budget and the fact that USAID <a href="https://www.congress.gov/crs-product/IF10261">remains a statutorily authorised agency</a>, they could also use their legislative power to start the process of reversing some of the Trump administration&#8217;s changes. This would, however, require cooperation from the White House, which is very unlikely while Trump is its occupant.</p>
+<p>If a Democrat is elected president in 2028, and the Democrats still hold the House and Senate, the odds of recovery are higher. But our advice to supporters of aid in the US is stark and simple — don&#8217;t count on it!</p>
+<p>Long before the recent ransacking of US aid, one after another, conservative governments in <a href="https://www.rnz.co.nz/international/pacific-news/183441/new-zealand-rearranges-aid-delivery-in-policy-shift">New Zealand</a>, <a href="https://www.cbc.ca/news/politics/federal-budget-folds-cida-into-foreign-affairs-1.1412948">Canada</a>, <a href="https://devpolicy.org/ausaid-no-more-abbott-announces-aid-agency-to-be-integrated-into-dfat-201308918-1/">Australia</a> and the <a href="https://www.theguardian.com/politics/2020/jun/16/foreign-office-and-department-for-international-development-to-merge">United Kingdom</a> dismantled their countries&#8217; aid agencies. In <a href="https://dev

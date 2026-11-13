@@ -1,0 +1,140 @@
+https://www.cisa.gov/cybersecurity-advisories/all.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://www.cisa.gov/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>All CISA Advisories</title>
+    <link>https://www.cisa.gov/</link>
+    <description></description>
+    <language>en</language>
+    
+    <item>
+  <title>Siemens Desigo, Gridscale</title>
+  <link>https://www.cisa.gov/news-events/ics-advisories/icsa-26-316-02</link>
+  <description>&lt;p&gt;&lt;a href=&quot;https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-316-02.json&quot;&gt;&lt;strong&gt;View CSAF&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;Summary&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;On October 21, 2026, the Node.js project released security updates addressing a critical vulnerability in the Brotli decoder bundled with Node.js, commonly referred to as &quot;Node2Shell&quot; (tracked as CVE-2026-111497). The vulnerability is an out-of-bounds write that could allow a remote attacker to cause memory corruption and potentially execute arbitrary code. This advisory covers the status of impact of various Siemens software products. Siemens has released new versions for the affected products and recommends to update to the latest versions.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The following versions of Siemens Desigo, Gridscale are affected:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Desigo CC family V8 vers:all/* (CVE-2026-111497)&lt;/li&gt;
+&lt;li&gt;Desigo CC family V9 vers:all/* (CVE-2026-111497)&lt;/li&gt;
+&lt;li&gt;Gridscale X DSA vers:intdot/&amp;gt;=5.3|&amp;lt;5.4 (CVE-2026-111497)&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Gridscale X PSS®E vers:intdot/&amp;lt;36.8.0 (CVE-2026-111497)&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;csaf-table&quot;&gt;
+&lt;table class=&quot;tablesaw tablesaw-stack&quot; data-tablesaw-mode=&quot;stack&quot; data-tablesaw-minimap&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th role=&quot;columnheader&quot; data-tablesaw-priority=&quot;persist&quot;&gt;CVSS&lt;/th&gt;
+&lt;th role=&quot;columnheader&quot;&gt;Vendor&lt;/th&gt;
+&lt;th role=&quot;columnheader&quot;&gt;Equipment&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;v3 9.8&lt;/td&gt;
+&lt;td&gt;Siemens&lt;/td&gt;
+&lt;td&gt;Desigo CC family V8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class=&quot;tablesaw tablesaw-stack&quot; data-tablesaw-mode=&quot;stack&quot; data-tablesaw-minimap&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th role=&quot;columnheader&quot; data-tablesaw-priority=&quot;persist&quot;&gt;1 Vulnerability&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Out-of-bounds Write&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;h3&gt;Background&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Critical Infrastructure Sectors: &lt;/strong&gt;Critical Manufacturing, Energy, Information Technology&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Countries/Areas Deployed: &lt;/strong&gt;Worldwide&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Company Headquarters Location: &lt;/strong&gt;Germany&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Vulnerabilities&lt;/h2&gt;
+&lt;div class=&quot;c-expandable-textbox icsa-etb&quot;&gt;
+&lt;div class=&quot;c-expandable-textbox__title&quot;&gt;CVE-2026-111497&lt;/div&gt;
+&lt;div class=&quot;c-expandable-textbox__body&quot;&gt;A buffer overflow vulnerability in the Brotli decoder (c/dec/decode.c) in Google Brotli versions 1.0.3 through 1.2.0 on all platforms allows a remote unauthenticated attacker to corrupt adjacent decoder state memory, disclose sensitive memory contents, cause a denial of service, or potentially execute arbitrary code using a crafted Brotli-compressed stream. Users need to update any Brotli libraries or binaries between 1.0.3 through 1.2.0 to the latest available version: 1.0.10 or 1.1.1 or 1.2.1.&lt;/div&gt;
+&lt;div class=&quot;c-expandable-textbox-morebutton-wrapper&quot;&gt;&lt;a class=&quot;c-expandable-textbox-morebutton&quot; href=&quot;#&quot;&gt;Read More&lt;/a&gt;&lt;/div&gt;
+&lt;div class=&quot;c-expandable-textbox__body2&quot;&gt;
+&lt;h4&gt;4 Affected Products&lt;/h4&gt;
+&lt;hr&gt;
+&lt;h5&gt;Desigo CC family V8&lt;/h5&gt;
+&lt;div&gt;
+&lt;p&gt;Product Status: known_affected, known_not_affected&lt;/p&gt;
+&lt;/div&gt;
+&lt;h6&gt;Remediations&lt;/h6&gt;
+&lt;div&gt;
+&lt;p&gt;&lt;strong&gt;Vendor fix&lt;/strong&gt;&lt;br&gt;Install the latest .NET security updates via Windows Update.&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h5&gt;Desigo CC family V9&lt;/h5&gt;
+&lt;div&gt;
+&lt;p&gt;Product Status: known_affected, known_not_affected&lt;/p&gt;
+&lt;/div&gt;
+&lt;h6&gt;Remediations&lt;/h6&gt;
+&lt;div&gt;
+&lt;p&gt;&lt;strong&gt;Vendor fix&lt;/strong&gt;&lt;br&gt;Install the latest .NET security updates via Windows Update.&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h5&gt;Gridscale X DSA &amp;gt;= V5.3 &amp;lt; V5.4&lt;/h5&gt;
+&lt;div&gt;
+&lt;p&gt;Product Status: known_affected, known_not_affected&lt;/p&gt;
+&lt;/div&gt;
+&lt;h6&gt;Remediations&lt;/h6&gt;
+&lt;div&gt;
+&lt;p&gt;&lt;strong&gt;Vendor fix&lt;/strong&gt;&lt;br&gt;Update to V5.4 or later version&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h5&gt;Gridscale X PSS®E &amp;lt; V36.8.0&lt;/h5&gt;
+&lt;div&gt;
+&lt;p&gt;Product Status: known_affected, known_not_affected&lt;/p&gt;
+&lt;/div&gt;
+&lt;h6&gt;Remediations&lt;/h6&gt;
+&lt;div&gt;
+&lt;p&gt;&lt;strong&gt;Vendor fix&lt;/strong&gt;&lt;br&gt;Update to V36.8.0 or later version&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h6&gt;Additional Metrics&lt;/h6&gt;
+&lt;p&gt;&lt;strong&gt;Relevant CWE:&lt;/strong&gt; &lt;a href=&quot;https://cwe.mitre.org/data/definitions/787.html&quot;&gt;CWE-787 Out-of-bounds Write&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;csaf-table csaf-metrics-table&quot;&gt;
+&lt;table class=&quot;tablesaw tablesaw-stack&quot; data-tablesaw-mode=&quot;stack&quot; data-tablesaw-minimap&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th role=&quot;columnheader&quot; data-tablesaw-priority=&quot;persist&quot;&gt;CVSS Version&lt;/th&gt;
+&lt;th role=&quot;columnheader&quot;&gt;Base Score&lt;/th&gt;
+&lt;th role=&quot;columnheader&quot;&gt;Base Severity&lt;/th&gt;
+&lt;th role=&quot;columnheader&quot;&gt;Vector String&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;3.1&lt;/td&gt;
+&lt;td&gt;9.8&lt;/td&gt;
+&lt;td&gt;CRITICAL&lt;/td&gt;
+&lt;td&gt;&lt;a href=&quot;https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H&quot;&gt;CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.cve.org/CVERecord?id=CVE-2026-111497&quot;&gt;View CVE Details&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h2&gt;Acknowledgments&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Siemens ProductCERT reported this vulnerability to CISA.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;General Recommendations&lt;/h2&gt;
+&lt;p&gt;Operators of critical power systems (e.g. TSOs or DSOs) worldwide are usually required by regulations to build resilience into the power grids by applying multi-level redundant secondary protection schemes. It is therefore recommended that the operators check whether appropriate resilient protection measures are in place. The risk of cyber incidents impacting the grid&#039;s reliability can thus be minimized by virtue of the grid design. Siemens strongly recommends applying the provided security updates using the corresponding tooling and documented procedures made available with the product. If supported by the product, an automated means to apply the security updates across multiple product instances may be used. Siemens strongly recommends prior validation of any security update before being applied, and supervision by trained staff of the update process in the target environment. As a general security measure Siemens strongly recommends to protect network access with appropriate mechanisms (e.g. firewalls, segmentation, VPN). It is advised to configure 

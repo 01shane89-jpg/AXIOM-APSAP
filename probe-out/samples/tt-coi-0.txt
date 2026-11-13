@@ -1,0 +1,64 @@
+https://www.commissionoceanindien.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Commission de l&#039;océan Indien</title>
+	<atom:link href="https://commissionoceanindien.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://commissionoceanindien.org/</link>
+	<description>Assurer la sécurité de l’Indianocéanie sur tous les fronts</description>
+	<lastBuildDate>Wed, 11 Nov 2026 07:33:57 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+	<item>
+		<title>Communiqué &#124; HYDROMET : 18 millions USD d’équipements qui renforceront l’alerte climatique aux Comores, à Madagascar, à Maurice et aux Seychelles</title>
+		<link>https://commissionoceanindien.org/communique-hydromet-18-millions-usd-equipements/</link>
+		
+		<dc:creator><![CDATA[catherine]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 05:40:06 +0000</pubDate>
+				<category><![CDATA[Communiqués]]></category>
+		<category><![CDATA[Environnement et Climat]]></category>
+		<guid isPermaLink="false">https://commissionoceanindien.org/?p=81087</guid>
+
+					<description><![CDATA[<p>Ébène (Maurice), le 10 novembre 2026 – Alors que s’ouvre la COP31 sur le climat à Antalya (Turquie), la Commission de l’océan Indien (COI) démarre la mise en œuvre des contrats suite à la passation des marchés d’équipements du projet HYDROMET au bénéfice des administrations nationales chargées de la météorologie,  de l’hydrologie, de la  [... lire plus]</p>
+<p>L’article <a href="https://commissionoceanindien.org/communique-hydromet-18-millions-usd-equipements/">Communiqué | HYDROMET : 18 millions USD d’équipements qui renforceront l’alerte climatique aux Comores, à Madagascar, à Maurice et aux Seychelles</a> est apparu en premier sur <a href="https://commissionoceanindien.org">Commission de l&#039;océan Indien</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div class="fusion-fullwidth fullwidth-box fusion-builder-row-1 fusion-flex-container has-pattern-background has-mask-background nonhundred-percent-fullwidth non-hundred-percent-height-scrolling" style="--awb-border-radius-top-left:0px;--awb-border-radius-top-right:0px;--awb-border-radius-bottom-right:0px;--awb-border-radius-bottom-left:0px;--awb-flex-wrap:wrap;" ><div class="fusion-builder-row fusion-row fusion-flex-align-items-flex-start fusion-flex-content-wrap" style="max-width:1144px;margin-left: calc(-4% / 2 );margin-right: calc(-4% / 2 );"><div class="fusion-layout-column fusion_builder_column fusion-builder-column-0 fusion_builder_column_1_1 1_1 fusion-flex-column" style="--awb-bg-size:cover;--awb-width-large:100%;--awb-margin-top-large:0px;--awb-spacing-right-large:1.92%;--awb-margin-bottom-large:20px;--awb-spacing-left-large:1.92%;--awb-width-medium:100%;--awb-order-medium:0;--awb-spacing-right-medium:1.92%;--awb-spacing-left-medium:1.92%;--awb-width-small:100%;--awb-order-small:0;--awb-spacing-right-small:1.92%;--awb-spacing-left-small:1.92%;"><div class="fusion-column-wrapper fusion-column-has-shadow fusion-flex-justify-content-flex-start fusion-content-layout-column"><div class="fusion-text fusion-text-1"><p><strong>Ébène (Maurice), le 10 novembre 2026 –</strong><em> Alors que s’ouvre la COP31 sur le climat à Antalya (Turquie), la Commission de l’océan Indien (COI) démarre la mise en œuvre des contrats suite à la passation des marchés d’équipements du projet HYDROMET au bénéfice des administrations nationales chargées de la météorologie,  de l’hydrologie, de la marine et de l’océanographie des Comores, de Madagascar, de Maurice et des Seychelles.</em></p>
+<p><em>Stations météorologiques, hydrologiques, bouées, détecteurs de foudre, centres de données et studios météo média d’une valeur de 18,26 millions de dollars seront déployés. Cette étape donne lieu à un atelier régional de démarrage, au siège de l’organisation à Ébène, dédié aux équipements déployés par le programme HYDROMET de la COI qui réunit jusqu’au 13 novembre 2026 les ministères de six secteurs clés (gestion des catastrophes, agriculture, pêche, eau, tourisme, santé) ainsi que les partenaires financiers du programme (Fonds vert pour le climat, Agence française de développement et Union européenne) et les groupements techniques.</em></p>
+</div><div style="text-align:center;"><a class="fusion-button button-flat fusion-button-default-size button-default fusion-button-default button-1 fusion-button-default-span fusion-button-default-type" style="--awb-margin-bottom:10px;" target="_blank" rel="noopener noreferrer" href="https://commissionoceanindien.org/wp-content/uploads/2026/11/261110_Communique-Hydromet_Equipements.pdf"><span class="fusion-button-text awb-button__text awb-button__text--default">Lire le communiqué</span></a></div><div class="fusion-flip-boxes flip-boxes row fusion-columns-4 flip-effect-classic equal-heights"><div class="fusion-flip-box-wrapper fusion-column col-lg-3 col-md-3 col-sm-3"><div class="fusion-flip-box flip-right" tabindex="0"><div class="flip-box-inner-wrapper"><div class="flip-box-front"><div class="flip-box-front-inner"><h2 class="flip-box-heading without-text">Pour les Comores...</h2></div></div><div class="flip-box-back" style="--awb-background-color-back:#4eb9ce;"><div class="flip-box-back-inner">
+<p><strong>2 stations automatiques de surface</strong><br />
+<strong>42 pluviomètres</strong><br />
+<strong>55 stations hydrologiques</strong><br />
+<strong>3 bouées</strong><br />
+<strong>1 système de détection de la foudre</strong><br />
+<strong>1 centre de données</strong><br />
+<strong>1 studio TV</strong></p>
+<p>Le montant total engagé par la COI s’élève à 5,02 millions de dollars soit <strong>22 milliards de francs comoriens.</strong></p>
+</div></div></div></div></div><div class="fusion-flip-box-wrapper fusion-column col-lg-3 col-md-3 col-sm-3"><div class="fusion-flip-box flip-right" tabindex="0"><div class="flip-box-inner-wrapper"><div class="flip-box-front"><div class="flip-box-front-inner"><h2 class="flip-box-heading without-text">Pour Madagascar...</h2></div></div><div class="flip-box-back" style="--awb-background-color-back:#4eb9ce;"><div class="flip-box-back-inner"><strong>6 stations synoptiques</strong><br />
+<strong>5 stations automatiques de surface</strong><br />
+<strong>11 pluviomètres</strong><br />
+<strong>136 stations hydrologiques</strong><br />
+<strong>10 bouées</strong><br />
+<strong>1 système de détection de la foudre</strong><br />
+<strong>1 centre de données</strong><br />
+<strong>1 studio TV</strong></p>
+<p>Le montant total engagé par la COI s’élève à 5,9 millions de dollars soit <strong>26,6 milliards d’Ariary.</strong></div></div></div></div></div><div class="fusion-flip-box-wrapper fusion-column col-lg-3 col-md-3 col-sm-3"><div class="fusion-flip-box flip-right" tabindex="0"><div class="flip-box-inner-wrapper"><div class="flip-box-front"><div class="flip-box-front-inner"><h2 class="flip-box-heading without-text">Pour Maurice...</h2></div></div><div class="flip-box-back" style="--awb-background-color-back:#4eb9ce;"><div class="flip-box-back-inner">
+<p><strong>8 stations synoptiques</strong><br />
+<strong>3 stations avec marégraphe</strong><br />
+<strong>14 pluviomètres</strong><br />
+<strong>90 stations hydrologiques</strong><br />
+<strong>2 bouées</strong><br />
+<strong>1 système de détection de la foudre</strong><br />
+<strong>1 centre de données</strong></p>
+<p>Le montant total engagé par la COI s’élève à 3,4 millions de dollars soit <strong>163 millions de roupies.</strong></p>
+</div></div></div></div></div><div class="fusion-flip-box-wrapper fusion-column col-lg-3 col-md-3 col-sm-

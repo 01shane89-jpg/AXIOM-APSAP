@@ -1,0 +1,154 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:IS</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:14.180952Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS004</value>
+    </cap:geocode>
+    <link title="Breidafjordur - Westnorthwest Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS004" hreflang="en"/>
+    <cap:areaDesc>Breidafjordur - Westnorthwest Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Snow Storm</cap:event>
+    <cap:sent>2026-11-13T00:00:24+00:00</cap:sent>
+    <cap:expires>2026-11-14T01:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T00:00:24+00:00</cap:effective>
+    <cap:onset>2026-11-13T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261113000024.11112</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/c75dab20-9b7d-4ce2-98c6-920b8dd65906"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T00:00:24Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/c75dab20-9b7d-4ce2-98c6-920b8dd65906?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Iceland - Breidafjordur - Westnorthwest Iceland</title>
+    <updated>2026-11-13T00:00:24Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS003</value>
+    </cap:geocode>
+    <link title="Faxafloi - Southwest Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS003" hreflang="en"/>
+    <cap:areaDesc>Faxafloi - Southwest Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Snow Storm</cap:event>
+    <cap:sent>2026-11-12T23:59:42+00:00</cap:sent>
+    <cap:expires>2026-11-13T23:30:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:59:42+00:00</cap:effective>
+    <cap:onset>2026-11-13T20:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261112235942.11111</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/8b2d311a-beea-498e-84a0-4c3d64666061"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T23:59:42Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/8b2d311a-beea-498e-84a0-4c3d64666061?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Iceland - Faxafloi - Southwest Iceland</title>
+    <updated>2026-11-12T23:59:42Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS007</value>
+    </cap:geocode>
+    <link title="Northeast Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS007" hreflang="en"/>
+    <cap:areaDesc>Northeast Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Snow Storm</cap:event>
+    <cap:sent>2026-11-12T21:40:05+00:00</cap:sent>
+    <cap:expires>2026-11-14T05:30:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T21:40:05+00:00</cap:effective>
+    <cap:onset>2026-11-14T02:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261112214005.11110</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/68f1fc31-580c-4580-8095-3b69da7d11ae"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T21:40:05Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/68f1fc31-580c-4580-8095-3b69da7d11ae?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Iceland - Northeast Iceland</title>
+    <updated>2026-11-12T21:40:05Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS007</value>
+    </cap:geocode>
+    <link title="Northeast Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS007" hreflang="en"/>
+    <cap:areaDesc>Northeast Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Snow Storm</cap:event>
+    <cap:sent>2026-11-12T21:34:57+00:00</cap:sent>
+    <cap:expires>2026-11-13T12:01:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T21:34:57+00:00</cap:effective>
+    <cap:onset>2026-11-13T12:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261112213457.11109</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/5bc09723-1665-45e7-b9b5-2a2b8a42b116"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T21:34:57Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/5bc09723-1665-45e7-b9b5-2a2b8a42b116?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Iceland - Northeast Iceland</title>
+    <updated>2026-11-12T21:34:57Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS011</value>
+    </cap:geocode>
+    <link title="Central highlands - Uninhabited part of Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS011" hreflang="en"/>
+    <cap:areaDesc>Central highlands - Uninhabited part of Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Snow Storm</cap:event>
+    <cap:sent>2026-11-12T21:32:45+00:00</cap:sent>
+    <cap:expires>2026-11-14T08:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-12T21:32:45+00:00</cap:effective>
+    <cap:onset>2026-11-13T19:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:me

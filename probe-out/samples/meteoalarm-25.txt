@@ -1,0 +1,123 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:NO</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:23.551055Z</updated>
+  <entry>
+    <cap:polygon>58.2,6.3023 58.1917,6.3215 58.0717,6.5742 58.0715,6.5747 58.057,6.6063 58.0563,6.6078 58.0553,6.6107 58.0443,6.6455 58.044,6.6465 58.0432,6.6495 58.0412,6.6585 58.0412,6.6587 58.0367,6.6792 57.9685,6.9922 57.968,6.9943 57.9675,6.9977 57.964,7.0307 58.0677,7.1592 58.3057,6.4087 58.2,6.3023 58.2,6.3023</cap:polygon>
+    <link title="Lindesnes - Aana-Sira" href="https://meteoalarm.org?polygon=de123750-3f69-48a6-8a8e-e01c0a08c394,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Lindesnes - Aana-Sira</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-11-12T14:52:08+00:00</cap:sent>
+    <cap:expires>2026-11-13T15:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-12T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261112145013.058</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/de123750-3f69-48a6-8a8e-e01c0a08c394"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T14:52:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/de123750-3f69-48a6-8a8e-e01c0a08c394?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Lindesnes - Aana-Sira</title>
+    <updated>2026-11-12T14:52:08Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>62.2732,8.92727 62.5,9.25477 62.7002,9.68333 62.8517,9.41683 62.9025,9.12083 62.8773,8.843 62.7835,8.78417 62.435,8.21867 62.3047,7.84567 62.1987,7.52683 62.0018,7.359 61.7405,7.3905 61.4603,7.72133 61.3478,7.70633 61.1995,7.8075 61.0527,7.64067 61.039,6.4586 60.717,6.36622 60.7132,7.20133 60.494,7.096 60.3165,6.76717 60.1092,6.66933 59.9635,6.6915 59.8203,7.00133 59.7052,7.04483 59.7486,7.56421 60.0629,7.66721 60.8374,7.94663 61.4145,8.56387 61.6891,8.57409 61.9038,8.50099 62.0149,8.78239 62.1924,8.80416 62.2732,8.92727 62.2732,8.92727</cap:polygon>
+    <link title="Parts of the mountins in Southern Norway" href="https://meteoalarm.org?polygon=ca32de42-3fee-4a65-99fa-2c42392f4599,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Parts of the mountins in Southern Norway</cap:areaDesc>
+    <cap:event>Blowing snow</cap:event>
+    <cap:sent>2026-11-12T12:03:50+00:00</cap:sent>
+    <cap:expires>2026-11-15T08:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-14T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261112114558.026</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/ca32de42-3fee-4a65-99fa-2c42392f4599"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:03:50Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/ca32de42-3fee-4a65-99fa-2c42392f4599?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Snow-ice Warning issued for Norway - Parts of the mountins in Southern Norway</title>
+    <updated>2026-11-12T12:03:50Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>59.921,4.9727 59.9242,5.0788 60.0142,5.0677 60.1237,5.0572 60.2232,5.0228 60.3472,4.9843 60.4473,4.9607 60.5707,4.8495 60.6612,4.7957 60.7867,4.6945 60.7738,4.605 60.6568,4.6688 60.4833,4.7623 60.3097,4.8548 60.153,4.9027 59.9755,4.9562 59.921,4.9727 59.921,4.9727</cap:polygon>
+    <link title="Karmoey - Fedje" href="https://meteoalarm.org?polygon=e7470b4e-ea02-468e-8412-c5ea3479cdf7,1,0,1" hreflang="en"/>
+    <cap:areaDesc>Karmoey - Fedje</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-11-12T11:35:28+00:00</cap:sent>
+    <cap:expires>2026-11-13T13:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-12T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261112111401.055</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/e7470b4e-ea02-468e-8412-c5ea3479cdf7"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T11:35:28Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/e7470b4e-ea02-468e-8412-c5ea3479cdf7?index_info=1&amp;index_area=0&amp;index_polygon=1</id>
+    <title>Yellow Wind Warning issued for Norway - Karmoey - Fedje</title>
+    <updated>2026-11-12T11:35:28Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>59.3467,5.1937 59.581,5.1982 59.6838,5.1683 59.7672,5.1293 59.9242,5.0788 59.921,4.9727 59.7978,5.009 59.6448,5.0393 59.4828,4.9338 59.3123,4.8238 59.311,4.8232 59.298,4.8173 59.3467,5.1937 59.3467,5.1937</cap:polygon>
+    <link title="Karmoey - Fedje" href="https://meteoalarm.org?polygon=e7470b4e-ea02-468e-8412-c5ea3479cdf7,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Karmoey - Fedje</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-11-12T11:35:28+00:00</cap:sent>
+    <cap:expires>2026-11-13T13:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-12T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20261112111401.055</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/e7470b4e-ea02-468e-8412-c5ea3479cdf7"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T11:35:28Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/e7470b4e-ea02-468e-8412-c5ea3479cdf7?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Karmoey - Fedje</title>
+    <updated>2026-11-12T11:35:28Z</updated>
+  </entry>
+  <entry>
+  

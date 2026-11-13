@@ -1,0 +1,66 @@
+https://www.ipinst.org/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>International Peace Institute</title>
+	<atom:link href="https://www.ipinst.org/feed" rel="self" type="application/rss+xml" />
+	<link>https://www.ipinst.org/</link>
+	<description>The International Peace Institute is an independent, non-profit organization working to advance solutions for a peaceful planet.</description>
+	<lastBuildDate>Thu, 12 Nov 2026 15:14:10 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Synergies and Challenges in Financing Adaptation, Sustainable Development, and Loss and Damage</title>
+		<link>https://www.ipinst.org/2026/08/synergies-and-challenges-in-financing-adaptation-sustainable-development-and-loss-and-damage</link>
+		
+		<dc:creator><![CDATA[Olivia Fielding]]></dc:creator>
+		<pubDate>Tue, 04 Aug 2026 21:05:32 +0000</pubDate>
+				<category><![CDATA[Issue Briefs]]></category>
+		<category><![CDATA[Publications]]></category>
+		<guid isPermaLink="false">https://www.ipinst.org/?p=43423</guid>
+
+					<description><![CDATA[<p>Adapting to climate impacts is more critical than ever. Average global temperatures surpassed the 1.5°C threshold in 2024, and the ten worst climate-related disasters of 2025 caused over $120 billion in insured losses alone. Yet just as adaptation becomes more urgent, climate has slipped down the global agenda, leaving the developing countries most exposed to climate impacts—and least responsible [&#8230;]</p>
+<p>The post <a href="https://www.ipinst.org/2026/08/synergies-and-challenges-in-financing-adaptation-sustainable-development-and-loss-and-damage">Synergies and Challenges in Financing Adaptation, Sustainable Development, and Loss and Damage</a> appeared first on <a href="https://www.ipinst.org">International Peace Institute</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div id="fb-root"></div><p><span data-contrast="none">Adapting to climate impacts is more critical than ever. Average global temperatures surpassed the 1.5°C threshold in 2024, and the ten worst climate-related disasters of 2025 caused over $120 billion in insured losses alone. Yet just as adaptation becomes more urgent, climate has slipped down the global agenda, leaving the developing countries most exposed to climate impacts—and least responsible for them—to adapt with shrinking international support.</span><span data-ccp-props="{&quot;335559739&quot;:0}"> </span></p><p><span data-contrast="none">This issue brief gives an overview of the history and current state of adaptation finance and examines how it overlaps with development finance and with loss and damage. It sets the goals agreed at COP29 and COP30 against estimated adaptation needs of $310 to $365 billion per year by 2035 and explains why, for many small island developing states and least developed countries, the form finance takes—grant-based and directly accessible—matters as much as the amount.</span><span data-ccp-props="{&quot;335559739&quot;:0}"> </span></p><p><span data-contrast="none">The brief argues that adaptation, sustainable development, and loss and damage should complement one another rather than compete for scarce, siloed funding. It makes the case for strict criteria on what counts as climate finance rather than the automatic separation of climate and development projects, and for multilateral climate finance to grow, grant-based funding to expand, and climate resilience to be mainstreamed across all development efforts. This will ensure the international system is ready to deliver when political will to tackle climate change returns.</span><span data-ccp-props="{&quot;335559739&quot;:0}"> </span></p><p><a href="https://www.ipinst.org/wp-content/uploads/2026/08/IPI-E-RPT-IB-Synergies-and-Challenges.pdf">Download</a></p>
+<p>The post <a href="https://www.ipinst.org/2026/08/synergies-and-challenges-in-financing-adaptation-sustainable-development-and-loss-and-damage">Synergies and Challenges in Financing Adaptation, Sustainable Development, and Loss and Damage</a> appeared first on <a href="https://www.ipinst.org">International Peace Institute</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Diversification without Coordination: The Scope for a Collective African Voice in BRICS</title>
+		<link>https://www.ipinst.org/2026/07/diversification-without-coordination-the-scope-for-a-collective-african-voice-in-brics</link>
+		
+		<dc:creator><![CDATA[Gustavo de Carvalho]]></dc:creator>
+		<pubDate>Tue, 21 Jul 2026 19:41:44 +0000</pubDate>
+				<category><![CDATA[Issue Briefs]]></category>
+		<category><![CDATA[Publications]]></category>
+		<category><![CDATA[Multilateral System]]></category>
+		<guid isPermaLink="false">https://www.ipinst.org/?p=43396</guid>
+
+					<description><![CDATA[<p>Africa&#8217;s presence within BRICS has expanded significantly. South Africa, Egypt, and Ethiopia are now full members, while Nigeria and Uganda participate as partner countries. Yet despite this growing representation, there is no mechanism for African states to coordinate their positions within the grouping, raising questions about whether a larger footprint has translated into greater collective [&#8230;]</p>
+<p>The post <a href="https://www.ipinst.org/2026/07/diversification-without-coordination-the-scope-for-a-collective-african-voice-in-brics">Diversification without Coordination: The Scope for a Collective African Voice in BRICS</a> appeared first on <a href="https://www.ipinst.org">International Peace Institute</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div id="fb-root"></div><p>Africa&#8217;s presence within BRICS has expanded significantly. South Africa, Egypt, and Ethiopia are now full members, while Nigeria and Uganda participate as partner countries. Yet despite this growing representation, there is no mechanism for African states to coordinate their positions within the grouping, raising questions about whether a larger footprint has translated into greater collective influence.</p><p>This issue brief examines how African states are engaging BRICS as part of broader strategies of diversification rather than alignment. It explores the distinct priorities driving South Africa, Egypt, and Ethiopia&#8217;s participation, the relationship between BRICS and other multilateral forums such as the African Union and G20, and the opportunities and constraints for developing a more coordinated African voice within the bloc.</p><p>The brief argues that while African states share an interest in advancing reforms to global governance and international finance, coordination within BRICS remains limited by differing national priorities and the absence of institutional mechanisms. Rather than viewing BRICS as a standalone platform, it suggests that African governments may derive greater value by integrating BRICS into a broader multilateral strategy while strengthening cooperation where interests converge.</p><p><a href="https://www.ipinst.org/wp-content/uploads/2026/07/IPI-E_RPT_IB-Diversification-wo-Coordination.pdf">Download</a></p>
+<p>The post <a href="https://www.ipinst.org/2026/07/diversification-without-coordination-the-scope-for-a-collective-african-voice-in-brics">Diversification without Coordination: The Scope for a Collective African Voice in BRICS</a> appeared first on <a href="https://www.ipinst.org">International Peace Institute</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>What MINUSMA Teaches Us about the Future of UN Peacekeeping</title>
+		<link>https://www.ipinst.org/2026/07/what-minusma-teaches-us-abo

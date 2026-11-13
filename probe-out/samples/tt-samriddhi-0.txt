@@ -1,0 +1,72 @@
+https://samriddhi.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Samriddhi Foundation</title>
+	<atom:link href="https://samriddhi.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://samriddhi.org</link>
+	<description></description>
+	<lastBuildDate>Mon, 02 Nov 2026 05:01:01 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>The Changing Nature of Wildlife Crime </title>
+		<link>https://samriddhi.org/blog/the-changing-nature-of-wildlife-crime/</link>
+		
+		<dc:creator><![CDATA[Swosti Bastola]]></dc:creator>
+		<pubDate>Thu, 29 Oct 2026 11:09:54 +0000</pubDate>
+				<category><![CDATA[Econ-ity Blog]]></category>
+		<category><![CDATA[Biodiversity]]></category>
+		<category><![CDATA[Conservation Enforcement]]></category>
+		<category><![CDATA[Cybercrime]]></category>
+		<category><![CDATA[Digital Wildlife Trade]]></category>
+		<category><![CDATA[Endangered Species]]></category>
+		<category><![CDATA[Environmental Policy]]></category>
+		<category><![CDATA[Featured Post]]></category>
+		<category><![CDATA[Illegal Wildlife Trade]]></category>
+		<category><![CDATA[Learn]]></category>
+		<category><![CDATA[Nepal]]></category>
+		<category><![CDATA[Nepal Wildlife]]></category>
+		<category><![CDATA[Online Wildlife Crime]]></category>
+		<category><![CDATA[Social Media]]></category>
+		<category><![CDATA[Wildlife Conservation]]></category>
+		<category><![CDATA[Wildlife Crime]]></category>
+		<category><![CDATA[Wildlife Protection]]></category>
+		<category><![CDATA[Wildlife Trafficking]]></category>
+		<guid isPermaLink="false">https://samriddhi.org/?p=10774</guid>
+
+					<description><![CDATA[Nepal has done a commendable job protecting its endangered species, but illegal wildlife trade is changing. It is no longer [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Nepal has done a commendable job protecting its endangered species, but illegal wildlife trade is changing. It is no longer confined to iconic animals such as tigers and snow leopards, or to physical markets and traditional smuggling routes. Birds, turtles, fish and reptiles are also being traded illegally, with digital platforms increasingly connecting sellers and buyers. This shift presents a new challenge for Nepal.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://news.mongabay.com/2025/07/illegal-pet-trade-in-nepal-now-shifting-online-research-suggests/" target="_blank" rel="noopener">Nepal serves as both a source and transit hub</a> for illicit wildlife trade. While the recorded cases of wildlife trade involve the hunting and smuggling of megafauna such as tigers and snow leopards, the reality is very different. Today, <a href="https://theannapurnaexpress.com/story/66865/" target="_blank" rel="noopener">various species of birds, turtles, fish, and reptiles are also often traded illegally</a>. Trafficked wildlife is increasingly being found in major cities like <a href="https://wcn.org.np/uploads/userfiles/files/WCN_REPORT%20ON%20WILDLIFE%20CRIME%20OF%20KTM.pdf" target="_blank" rel="noopener">Pokhara, Chitwan, Hetauda, Kathmandu, and across districts that border India and China</a>. These districts are both the final destination and also part of a <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13572203/" target="_blank" rel="noopener">separate transit hub</a>.  &nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Like any other industry, wildlife crime and trade are being boosted by digital space, and a growing share of it is happening online. <a href="https://globalinitiative.net/wp-content/uploads/2026/06/Combating-the-illegal-wildlife-trade-online-A-guide-for-cyber-units-NGOs-and-researchers-GI-TOC-June-2026.pdf" target="_blank" rel="noopener">Traffickers are using social media, e-commerce platforms, messaging apps and other digital channels to advertise and sell live animals and wildlife products</a>. <a href="https://english.nepalnews.com/s/crime-news/from-whatsapp-to-the-wild-the-new-face-of-wildlife-crime/" target="_blank" rel="noopener">Online media make contact and coordination easier amongst poachers, collectors, middlemen, smugglers and buyers</a>. In addition, they facilitate the buying and selling of large numbers of animals and birds at once, unlike traditional markets. Moreover, the use of AI in advertisements has increased the trend of creating attractive photos and videos that resemble wild animals and their parts. South Asia is already a primary hub for illegal trade, and estimates suggest that 46 percent in Pakistan being the top in the list followed by Bangladesh, India and Nepal occurs through digital platforms such as Facebook, TikTok, Instagram and YouTube. While the Nepali digital space for illegal wildlife trade is limited to 8 percent, there are already signs that it is increasing.  </p>
+
+
+
+<p class="wp-block-paragraph">In Nepal, the exchange of photos and videos is extremely common; in addition to finding new customers, exchanging information via social media and conducting digital transactions is becoming extremely common. With the government paying less attention, small species, including birds and turtles, have become targets of open advertising and bargaining on Facebook and TikTok. Researchers and forest officers claim that even species listed as endangered are openly posted for sale by people on their individual pages. <a href="https://www.researchgate.net/publication/411900565_From_Forest_to_Cage_The_Troubled_Fate_of_Common_Hill_Myna_in_Nepal" target="_blank" rel="noopener">Surveys conducted between 2024 and 2025 in Kathmandu, Birgunj and Hetauda have revealed that pet shops and online vendors use Facebook Marketplace and TikTok to sell native species such as parakeets and mynas. Several subspecies of myna are listed in Tier 1 of the Priority Taxon List by the IUCN SSC ASTSG</a>.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">While Nepal continues to fight illicit trade, enforcement capacity is weak. Nepal still struggles to mobilize resources to fight illegal trade conducted traditionally. The remoteness of trading routes, limited coordination and sensitivity amongst law enforcement agencies, the presence of international criminal networks, and inadequate human resources create hurdles to effective law enforcement. Forest officers report inadequate staff at forest offices and a higher reliance on security personnel for safety reasons. In addition, the means and natures of crimes and criminal networks have already undergone a major shift. Any criminal activity involving digital spaces automatically makes investigation and prosecution complex, demanding technical manpower to conduct digital forensics. These are things that Nepali authorities lack. &nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">By every metric, Nepal has been successful in protecting its endangered species. But as new tools and methods of trafficking emerge, its enforcement institutions must adapt to keep pace with the changing nature of wildlife crime. <a href="https://news.mongabay.com/2026/05/facebook-is-a-hub-for-illegal-wildlife-trade-and-thats-by-design-report-says/" target="_blank" rel="noopener">Between April 2024 and March 2026, wild animals and their parts valued at $65 million are estimated to be sold through Facebook</a>. This shift is also underway in Nepal, but enforcement has yet to catch up. Whether Nepal can sustain its conservation gains will depend, in part, on its ability to equip enforcement authorities with the tools and expertise needed to investigate wildlife crime in the digital age.&nbsp;</p>
+]]></content:encod

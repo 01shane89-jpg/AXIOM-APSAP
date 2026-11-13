@@ -1,0 +1,78 @@
+https://lasdel.net/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>LASDEL</title>
+	<atom:link href="https://lasdel.net/feed/" rel="self" type="application/rss+xml" />
+	<link>https://lasdel.net</link>
+	<description>(Laboratoire d’Études et de Recherches sur les Dynamiques Sociales)</description>
+	<lastBuildDate>Fri, 06 Nov 2026 11:05:10 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://lasdel.net/docs/2022/05/lasdel-logo1-100x100.jpg</url>
+	<title>LASDEL</title>
+	<link>https://lasdel.net</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Avis de recrutement d’un consultant ou cabinet chargé de la conception, du développement et du déploiement d’un dispositif de téléconsultation/télé-expertise et élaboration d’une application conseil nutritionnel.</title>
+		<link>https://lasdel.net/avis-de-recrutement-dun-consultant-ou-cabinet-charge-de-la-conception-du-developpement-et-du-deploiement-dun-dispositif-de-teleconsultation-tele-expertise-et-elaboration-du/</link>
+		
+		<dc:creator><![CDATA[lasdel]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 10:07:14 +0000</pubDate>
+				<category><![CDATA[Programme STOP-NCD]]></category>
+		<guid isPermaLink="false">https://lasdel.net/?p=9372</guid>
+
+					<description><![CDATA[TERMES DE RÉFÉRENCE POUR LE RECRUTEMENT D’UN CONSULTANT OU D’UN CABINET CHARGÉ DE LA CONCEPTION, DU DÉVELOPPEMENT ET DU DÉPLOIEMENT D’UN DISPOSITIF DE TÉLÉCONSULTATION/TÉLÉXPERTISE ET L’ELABORATION D’UNE APPLICATION (CONSEIL NUTRITIONNEL). 1. Contexte et justification Dans le cadre de la mise en œuvre des interventions du programme de lutte contre les maladies non transmissibles (STOP-NCD), le [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="9372" class="elementor elementor-9372">
+									<section class="elementor-section elementor-top-section elementor-element elementor-element-33484347 ot-traditional elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="33484347" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-2c788c2a ot-flex-column-vertical" data-id="2c788c2a" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-28e308d4 elementor-widget elementor-widget-text-editor" data-id="28e308d4" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+			<style>/*! elementor - v3.6.5 - 27-04-2022 */
+.elementor-widget-text-editor.elementor-drop-cap-view-stacked .elementor-drop-cap{background-color:#818a91;color:#fff}.elementor-widget-text-editor.elementor-drop-cap-view-framed .elementor-drop-cap{color:#818a91;border:3px solid;background-color:transparent}.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap{margin-top:8px}.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap-letter{width:1em;height:1em}.elementor-widget-text-editor .elementor-drop-cap{float:left;text-align:center;line-height:1;font-size:50px}.elementor-widget-text-editor .elementor-drop-cap-letter{display:inline-block}</style>				<p><strong><em>TERMES DE RÉFÉRENCE POUR LE RECRUTEMENT D’UN CONSULTANT OU D’UN CABINET CHARGÉ DE LA CONCEPTION, DU DÉVELOPPEMENT ET DU DÉPLOIEMENT D’UN DISPOSITIF DE TÉLÉCONSULTATION/TÉLÉXPERTISE ET L’ELABORATION D’UNE APPLICATION (CONSEIL NUTRITIONNEL).</em></strong></p>
+<p>1. Contexte et justification</p>
+<p>Dans le cadre de la mise en œuvre des interventions du programme de lutte contre les maladies non transmissibles (STOP-NCD), le LASDEL souhaite renforcer l’accès aux soins spécialisés et améliorer la prise en charge des patients dans les régions de Niamey, de Maradi et de Tahoua. A cet effet, il est prévu de recruter un consultant ou un cabinet qualifié pour concevoir, développer, tester, déployer et maintenir deux applications à savoir : une solution numérique mobile de conseil nutritionnel de type <em>Nutribot </em>et une application de téléconsultation reliant les Centres de Santé à un réseau d’experts en MNT et en Santé Mentale.</p>
+<p>2. Cadre normatif et références de conformité</p>
+<p>Le consultant doit se conformer et s’aligner aux standards et dispositions suivants :</p>
+<ul>
+<li>Schéma Directeur national de la santé numérique 2025-2029, normes de sécurité, interopérabilité et alignement sur la stratégie de la santé numérique du Niger.</li>
+<li>Loi n° 2017-28 du 3 mai 2017 relative à la protection des données à caractère personnel, modifiée par la loi n° 2019-71 du 24 décembre 2019 ;déclaration/autorisation auprès de la Haute Autorité de Protection des Données à caractère Personnel (HAPDP).</li>
+<li>Références de l’OMS sur les interventions numériques pour le renforcement des systèmes de santé (2019), notamment la télémédecine, les échanges d’information sur la nutrition entre des utilisateurs.</li>
+<li>Plan de Développement Sanitaire et (PDSS 2022-2026).</li>
+</ul>
+<p>3. But de la mission</p>
+<p>La mission consiste à concevoir, développer, tester, piloter, déployer et maintenir deux</p>
+<p>(02) solutions numériques complémentaires, dûment documentées et conçues selon une approche répondant aux exigences du Ministère de la Santé et de l’hygiène publique et garantissant leur réutilisabilité par celui-ci.</p>
+<ul>
+<li>Solution A : Plateforme de téléconsultation/télé-expertise entre professionnels de santé (CDHI 4.4, 2.4.3, 2.3.1) reliant les agents des CSI aux médecins des HD et, le cas échéant, aux spécialistes de niveau régional ou national pour l’avis spécialisé, l’orientation, le suivi et la contre-référence des patients.</li>
+<li>Solution B : Agent conversationnel de conseil nutritionnel « Nutribot Niger » (CDHI 1.1.2, 1.2.1, 1.4.2) destiné aux patients et à la population, fournissant des conseils nutritionnels validés, adaptés au contexte alimentaire, culturel et linguistique nigérien avec orientation vers les services de santé en cas de signe d’alerte.</li>
+</ul>
+<p>4. Objectifs spécifiques</p>
+<ul>
+<li>Analyser les besoins fonctionnels et techniques des utilisateurs concernés.</li>
+<li>Développer une application de téléconsultation reliant les agents de santé des CSI au réseau d’experts MNT et SM.</li>
+<li>Évaluer l’expérience du Nutribot au Ghana (forces, limites, transférabilité) et concevoir une version adaptée au Niger, sûre et conforme aux principes éthiques de l’OMS sur l’IA en santé.</li>
+<li>Concevoir une architecture applicative sécurisée, interopérable (FHIR, DHIS2) et adaptée au contexte d’utilisation et aux capacités des structures sanitaires ciblées.</li>
+<li>Développer et tester les applications avant leur déploiement opérationnel.</li>
+<li>Former les utilisateurs finaux et transférer les compétences (code source, documentation, administration) aux équipes désignées par le LASDEL et la Direction de la e-Santé.</li>
+<li>Assurer l’assistance technique et la maintenance pendant la période définie par le</li>
+</ul>
+<p>5. Portée de la mission</p>
+<p>La mission couvrira l’ensemble du cycle de développement de l’application, depuis l’analyse des besoins jusqu’au déploiement et à la maintenance. Elle inclura la conception fonctionnelle et technique, le développement, les tests, l’hébergement ou l’assistance à l’hébergement, la sécurisation des données, la documentation, la formation des utilisateurs et 

@@ -1,0 +1,58 @@
+https://theconversation.com/africa/politics/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/africa/politics/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/africa/politics/articles.atom"/>
+  <title>Politics – The Conversation</title>
+  <updated>2026-11-11T13:19:43Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/294918</id>
+    <published>2026-11-11T13:19:43Z</published>
+    <updated>2026-11-11T13:19:43Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/east-africas-migration-story-is-not-just-about-europe-what-policymakers-get-wrong-294918"/>
+    <title>East Africa’s migration story is not just about Europe – what policymakers get wrong</title>
+    <content type="html">&lt;p&gt;Migration from east Africa and the Horn of Africa is often &lt;a href="https://publications.iom.int/books/africa-migration-report-challenging-narrative"&gt;portrayed&lt;/a&gt; 
+as a journey towards Europe. International news reporting typifies it as the mass movement of people from Ethiopia, Eritrea or Somalia, transiting through Sudan, Libya and the Mediterranean to reach Europe. &lt;/p&gt;
+
+&lt;p&gt;But the truth is that people would rather move closer to home: within the region,  Gulf states and southern Africa. Around &lt;a href="https://www.iom.int/sites/g/files/tmzbdl486/files/global-appeal/globalappeal2025.pdf#page=63"&gt;87%&lt;/a&gt; of the 8.5 million international migrants in east Africa and the Horn of Africa come from within the region. They move for work, family, education, trade, security and other reasons. &lt;/p&gt;
+
+&lt;p&gt;The perception that traffic mostly heads north comes from &lt;a href="https://www.iss.nl/en/media/2024-06-pacesimi-181-wp-n3dehaasfinal"&gt;popular misconceptions&lt;/a&gt; – &lt;a href="https://www.thenewhumanitarian.org/news/2013/11/21/migration-myths-debunked"&gt;migration myths&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;Narratives matter because they shape people’s understanding of the world, and even government policies.&lt;/p&gt;
+
+&lt;p&gt;My research focuses on migration, return and reintegration as well as transnational migrant networks. In a  recently published &lt;a href="https://www.tandfonline.com/doi/full/10.1080/1369183X.2025.2544081"&gt;paper&lt;/a&gt; I explored contrasting and overlapping narratives shaping migration governance in the east and Horn of Africa. &lt;/p&gt;
+
+&lt;p&gt;To understand the narratives and their policy implications, I interviewed government officials, migration scholars, diplomats, international organisations, refugee-led organisations and migrant associations. I also examined previous research, policy documents and media content. &lt;/p&gt;
+
+&lt;p&gt;My findings highlight the differences between official narratives and actual experiences. European actors, UN agencies, international organisations and national governments have a role in shaping migration governance narratives. This has led to policies increasingly focused on border control, preventing irregular migration, combating trafficking and smuggling, and returning migrants.&lt;/p&gt;
+
+&lt;p&gt;Often overlooked in dominant migration narratives are the voices and lived experiences of migrants and their communities, whose complex realities are frequently reduced to statistics. This means their perspectives, agency and everyday experiences are largely unheard.&lt;/p&gt;
+
+&lt;p&gt;The stories about migration influence which problems governments prioritise, where money is spent and which forms of mobility are treated as legitimate.&lt;/p&gt;
+
+&lt;h2&gt;The narratives driving policies&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;1. Direction of travel:&lt;/strong&gt; One of the most persistent assumptions in migration policy is that east African countries are primarily places from which people leave. Yet the region is also a major destination for &lt;a href="https://www.ilo.org/resource/article/enhancing-social-protection-migrant-workers-challenges-and-strategies-east"&gt;migrants&lt;/a&gt; and &lt;a href="https://reliefweb.int/report/sudan/unhcr-operational-update-east-and-horn-africa-and-great-lakes-region-january-march-2025"&gt;refugees&lt;/a&gt;. The UN Refugee Agency’s 2026 data shows Uganda hosts about 2.05 million refugees and asylum-seekers, followed by Ethiopia with 1.02 million, Sudan with 910,000 and Kenya with 879,000. &lt;/p&gt;
+
+&lt;p&gt;This means migration is a regional system of mobility, in which people move in multiple directions and for multiple reasons. Policies built around a simple origin-transit-destination model can fail to capture what is often a process rather than a single journey.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2. Poverty as the root cause of migration:&lt;/strong&gt; Another common narrative is that poverty and climate change are the &lt;a href="https://ehsa.iom.int/state-migration-east-and-horn-africa-report"&gt;main reasons&lt;/a&gt; people leave east Africa. They certainly matter. But the reality is more complicated. &lt;/p&gt;
+
+&lt;p&gt;People also migrate because of family and social networks, labour demand elsewhere, insecurity and political instability. They also go in hope of a better future or are driven by established cultures of migration. Somali, Eritrean and Ethiopian diaspora communities, for example, can provide information and financial support to relatives and friends seeking to migrate.&lt;/p&gt;
+
+&lt;p&gt;The relationship between poverty and migration is not straightforward. Migration to Europe is more expensive than routes towards the Gulf or South Africa. The cost of travelling from Ethiopia to Europe through the northern route is &lt;a href="https://migrantprotection.iom.int/en/resources/report/southern-dream-exploring-migration-dynamics-horn-africa-south-africa-along"&gt;estimated&lt;/a&gt; at around US$10,000. The southern route costs about US$4,800 and eastern routes to the Gulf cost about US$700.&lt;/p&gt;
+
+&lt;p&gt;People need resources and networks to migrate, particularly along expensive routes.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3. Smugglers drive illegal migration:&lt;/strong&gt; Human smugglers and traffickers feature prominently in migration policy. East African and European governments all point to this as the main reason people migrate irregularly. &lt;/p&gt;
+
+&lt;p&gt;They talk of preventing exploitation, disrupting smuggling networks and managing irregular migration. This view has helped channel a disproportionate share of migration programming and interventions at the expense of other forms and destinations.&lt;/p&gt;
+
+&lt;p&gt;But this can obscure other factors. Interviews for my research indicate that limited livelihood opportunities and the absence of accessible legal migration pathways can encourage people to use irregular routes. In some communities, migration brokers are not perceived only as criminals. In parts of southern Ethiopia, for example, brokers have been described as “door openers” because they facilitate access to opportunities elsewhere. &lt;/p&gt;
+
+&lt;p&gt;This local perception should not be confused with an endorsement of smuggling. Migrants using these networks can face serious &lt;a href="https://www.state.gov/reports/2025-trafficking-in-persons-report/ethiopia/"&gt;exploitation, abuse and deception&lt;/a&gt;. But it does help explain the persistence of smuggling. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;4. Research reproduces the same imbalance:&lt;/strong&gt; My review of the existing literature suggests that migration research in the region has paid relatively little attention to intra-African migration. &lt;/p&gt;
+
+&lt;p&gt;This can create a feedback loop. The issues that receive funding are researched. Those findin

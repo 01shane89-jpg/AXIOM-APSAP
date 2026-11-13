@@ -1,0 +1,88 @@
+https://en.rebaltica.lv/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Re:Baltica</title>
+	<atom:link href="https://en.rebaltica.lv/feed/" rel="self" type="application/rss+xml" />
+	<link>https://en.rebaltica.lv</link>
+	<description>The Baltic Center for Investigative Journalism</description>
+	<lastBuildDate>Mon, 12 Oct 2026 12:26:50 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://en.rebaltica.lv/wp-content/uploads/sites/2/2016/12/cropped-miniiconrebaltica-32x32.png</url>
+	<title>Re:Baltica</title>
+	<link>https://en.rebaltica.lv</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">249096909</site>	<item>
+		<title>More populism, pro-Russian votes and TikTok politics. What Latvia’s election results reveal</title>
+		<link>https://en.rebaltica.lv/2026/10/more-populism-pro-russian-votes-and-tiktok-politics-what-do-the-election-results-in-latvia-show/</link>
+		
+		<dc:creator><![CDATA[Evita Puriņa, Re:Baltica]]></dc:creator>
+		<pubDate>Mon, 12 Oct 2026 09:06:48 +0000</pubDate>
+				<category><![CDATA[Important]]></category>
+		<category><![CDATA[BecidEng]]></category>
+		<category><![CDATA[FACT]]></category>
+		<guid isPermaLink="false">https://en.rebaltica.lv/?p=3602</guid>
+
+					<description><![CDATA[This time, Latvia’s parliamentary elections were fairly calm, delivering a pro-European result without any unexpected Russian influence operations or major scandals. Still, there is a lot to worry about.]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><strong><em>This time, Latvia’s parliamentary elections were fairly calm, delivering a pro-European result without any unexpected Russian influence operations or major scandals. Still, there is a lot to worry about. Parties that do their politics on social media platforms will be far more strongly represented in parliament: there will be many more MPs who don’t shy away from misinformation or even outright disinformation, and more with pro-Russian views. We can also predict that the new parliament will care less about human rights, the NGO sector and media freedom.</em></strong></p>
+
+
+
+<h5 class="wp-block-heading"><strong>Most votes, most false claims</strong></h5>
+
+
+
+<p class="wp-block-paragraph">As predicted, Latvia’s parliamentary elections were won by the current prime minister, Andris Kulbergs. The 41% of seats in the Saeima secured by the United List is a record level of support for a single political force, and even Kulbergs himself did not expect it. In just four months as prime minister, Kulbergs built up his popularity with blunt language and self-filmed daily vlogs. In these videos, he railed against those who had governed before him, repeatedly expressed astonishment at the bureaucracy supposedly rampant in the country, and pledged a fresh start in politics – cutting the state administration, refusing to take on more debt and stopping public funds from being squandered on non-governmental organisations.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">The heavy dose of populism in his rhetoric is also reflected in the fact that, during the pre-election period, Re:Baltica’s fact-checkers <a href="https://rebaltica.lv/tag/faktu-parbaudes/">rated</a> Kulbergs’ statements as misleading or false more often than those of any other politician. He twisted facts when it suited him, greatly exaggerated his own achievements and “failed to notice” what other politicians had done.</p>
+
+
+
+<p class="wp-block-paragraph">With Kulbergs’ victory, Latvia’s foreign policy stays firmly on course, and so does its support for Ukraine. In domestic politics, however, some new tendencies may emerge. United List is an alliance of three different parties (and Kulbergs himself is not a member of any of them), which will have a record-sized group in parliament – 41 MPs (out of 100). This means a large number of people with no political experience whatsoever, as well as a wide range of views that will be hard to reconcile when decisions need to be made. Kulbergs&#8217; list also includes people who have previously <a href="https://rebaltica.lv/2021/09/eksperiments-ar-masku-un-gaisa-kvalitates-meritaju-bezjedzigs-un-maldinoss/">misled</a> <a href="https://rebaltica.lv/2022/02/vai-janim-jenzim-taisniba/">the public</a> about the Covid pandemic, expressed <a href="https://www.lsm.lv/raksts/zinas/latvija/priede-atsauc-sevi-no-vienotibas-valdes-vinas-nakotne-partija-ir-neskaidra.a108505/">homophobic</a> and racist views, and promoted &#8220;natural family&#8221; ideas.</p>
+
+
+
+<p class="wp-block-paragraph">The governing coalition is still being formed. Until now, Kulbergs’s closest ally has been the National Alliance – a party whose election campaign was built on <a href="https://en.rebaltica.lv/2026/04/criminals-who-will-overtake-the-country-who-in-latvian-politics-is-stoking-fear-of-immigrants/">stoking fear</a> of immigrants. Its rhetoric regularly relies on distorted facts, other forms of misinformation and, at times, open racism. Immigration, however, is one issue on which the two parties disagree: Kulbergs represents business owners who constantly complain about labour shortages and would like even more flexible rules for recruiting workers from third countries.</p>
+
+
+
+<p class="wp-block-paragraph">New Unity, which led Latvia for many years, could also join the government, although this time it only narrowly cleared the 5% threshold. It is also possible, however, that Kulbergs could lead a minority government, with the United List taking sole responsibility for the government’s decisions.</p>
+
+
+
+<h5 class="wp-block-heading"><strong>The opposition: populism with a daily dose of disinformation</strong></h5>
+
+
+
+<p class="wp-block-paragraph">Whatever government Kulbergs forms, the vast majority of the parliamentary opposition will be made up of parties for which twisting facts and outright disinformation are part of everyday business. Latvia First, a clone of Donald Trump&#8217;s style of politics with a constant presence on social media, has nearly doubled its representation in the Saeima, winning 17 of the 100 seats. Former oligarch Ainārs Šlesers founded Latvia First – his eighth political project – during the Covid pandemic, drawing in people who opposed vaccines and restrictions. Since then, he has continually played on people’s fears about vaccination, the European green policy, &#8220;117 genders&#8221;, a supposedly imminent national bankruptcy and similar topics. In the new parliament, Latvia First will also have more MPs who don&#8217;t hesitate to use distorted facts to mislead people about Latvia&#8217;s support for Ukraine and spread Kremlin disinformation.</p>
+
+
+
+<h5 class="wp-block-heading"><strong>Pro-Kremlin narratives meet conspiracy theories</strong></h5>
+
+
+
+<p class="wp-block-paragraph">The new parliament will also have more openly pro-Russian voices. In ethnically divided Latvia, this is a traditional political niche in which the parties change, but their ideology does not. This time it is filled by the alliance Sovereign Power/Young Latvians Alliance, with 15 of the 100 seats.</p>
+
+
+
+<p class="wp-block-paragraph">Sovereign Power&#8217;s leader, Jūlija Stepaņenko, is an experienced politician who has won voters&#8217; hearts by defending so-called family values and campaigning against vaccination and wind energy. However, she also opposes strengthening Latvia&#8217;s security and supporting Ukraine. During the campaign, she had to explain nearly half a million eu

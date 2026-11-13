@@ -1,0 +1,133 @@
+https://hcss.nl/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>HCSS</title>
+	<atom:link href="https://hcss.nl/feed/" rel="self" type="application/rss+xml" />
+	<link>https://hcss.nl/</link>
+	<description>The Hague Centre for Strategic Studies</description>
+	<lastBuildDate>Thu, 12 Nov 2026 09:36:41 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.0.8</generator>
+
+<image>
+	<url>https://hcss.nl/wp-content/uploads/2021/04/cropped-HCSS_Beeldmerk_Blauw_RGB1200-ppi-e1619025866259-32x32.png</url>
+	<title>HCSS</title>
+	<link>https://hcss.nl/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>HCSS Event &#124; Protecting Critical Undersea Infrastructure in the Indo-Pacific: Opportunities for EU Cooperation with South and Southeast Asia</title>
+		<link>https://hcss.nl/news/hcss-event-protecting-critical-undersea-infrastructure-in-the-indo-pacific-opportunities-for-eu-cooperation-with-south-and-southeast-asia/</link>
+		
+		<dc:creator><![CDATA[Britt de Cuijper]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 09:36:39 +0000</pubDate>
+				<category><![CDATA[Events]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[ASEAN]]></category>
+		<category><![CDATA[critical undersea infrastructure]]></category>
+		<category><![CDATA[CUI]]></category>
+		<category><![CDATA[development]]></category>
+		<category><![CDATA[digital economy]]></category>
+		<category><![CDATA[economy]]></category>
+		<category><![CDATA[energy]]></category>
+		<category><![CDATA[eu]]></category>
+		<category><![CDATA[european countries]]></category>
+		<category><![CDATA[hybrid threats]]></category>
+		<category><![CDATA[indian ocean]]></category>
+		<category><![CDATA[indo-pacific]]></category>
+		<category><![CDATA[infrastructure]]></category>
+		<category><![CDATA[north sea]]></category>
+		<category><![CDATA[pacific]]></category>
+		<category><![CDATA[pipelines]]></category>
+		<category><![CDATA[sabotage]]></category>
+		<category><![CDATA[Southeast Asia]]></category>
+		<category><![CDATA[undersea]]></category>
+		<guid isPermaLink="false">https://hcss.nl/?p=88137</guid>
+
+					<description><![CDATA[<p>Upcoming HCSS Webinar &#124; How can countries strengthen the resilience and protection of critical undersea infrastructure (CUI) in the Indo-Pacific? What lessons can be drawn vis-à-vis CUI protection for Europe from the Indo-pacific and vice-versa, and how can these be adapted to regional priorities in South and Southeast Asia? Join now and explore the protection of CUI, including submarine cables, pipelines and offshore energy connections.</p>
+<p>The post <a href="https://hcss.nl/news/hcss-event-protecting-critical-undersea-infrastructure-in-the-indo-pacific-opportunities-for-eu-cooperation-with-south-and-southeast-asia/">HCSS Event | Protecting Critical Undersea Infrastructure in the Indo-Pacific: Opportunities for EU Cooperation with South and Southeast Asia</a> appeared first on <a href="https://hcss.nl">HCSS</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><strong>How can countries strengthen the resilience and protection of critical undersea infrastructure (CUI) in the Indo-Pacific? What lessons can be drawn vis-à-vis CUI protection for Europe from the Indo-pacific and vice-versa, and how can these be adapted to regional priorities in South and Southeast Asia?</strong></p>
+
+
+
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-fe48e5de wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link has-white-color has-midnight-gradient-background has-text-color has-background has-link-color wp-element-button" href="https://www.eventbrite.com/e/protecting-critical-undersea-infrastructure-in-the-indo-pacific-tickets-2004358097024?aff=oddtdtcreator" target="_blank" rel="noreferrer noopener">Registration Link (Eventbrite)</a></div>
+</div>
+
+
+
+<div style="height:22px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="wp-block-paragraph">Join the Hague Centre for Strategic Studies (HCSS) for a one-hour webinar exploring the protection of CUI, including submarine cables, pipelines and offshore energy connections.</p>
+
+
+
+<p class="wp-block-paragraph">Undersea infrastructure is essential to the global digital economy and energy system. Yet recent incidents in the North Sea and Baltic Sea have demonstrated its vulnerability to accidental damage, sabotage and other hybrid threats. Disruptions can have significant economic, security and societal consequences.</p>
+
+
+
+<p class="wp-block-paragraph">While European countries are developing cooperative approaches to CUI protection through information-sharing, public-private partnerships and coordinated monitoring, comparable arrangements remain underdeveloped in much of the Indo-Pacific. At the same time, demand for undersea connectivity is growing rapidly across South and Southeast Asia. Southeast Asian and Indian Ocean states are expanding submarine-cable networks and exploring greater energy interconnection, including a potential regional electricity grid.</p>
+
+
+
+<p class="wp-block-paragraph">This webinar brings together European and Indo-Pacific experts to discuss regional perspectives on these developments and examine opportunities for mutually beneficial cooperation with the Netherlands and the European Union. In particular, HCSS will be joined by the Centre for Strategic and International Studies (CSIS) Indonesia and the Observer Research Foundation (ORF) to discuss how Europe can share relevant expertise while supporting regional resilience, political partnerships and stability in the Indo-Pacific.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>The panel will address:</strong></p>
+
+
+
+<ul class="wp-block-list">
+<li>The growing strategic importance of submarine cables, pipelines and offshore energy connections in the Indo-Pacific; </li>
+
+
+
+<li>Key risks to critical undersea infrastructure, including accidental damage, sabotage and hybrid operations; </li>
+
+
+
+<li>Regional priorities and approaches in India and Indonesia; </li>
+
+
+
+<li>Lessons learned for Europe vis-à-vis CUI protection and vice versa; and </li>
+
+
+
+<li>Practical opportunities for cooperation between the Netherlands, the EU, ASEAN and Indian Ocean partners. </li>
+</ul>
+
+
+
+<h5 class="wp-block-heading">Practical Information</h5>
+
+
+
+<p class="wp-block-paragraph"><img src="https://s.w.org/images/core/emoji/17.0.2/72x72/1f4c5.png" alt="📅" class="wp-smiley" style="height: 1em; max-height: 1em;" /> <strong>Thursday, 9 December 2026</strong><br><img src="https://s.w.org/images/core/emoji/17.0.2/72x72/1f552.png" alt="🕒" class="wp-smiley" style="height: 1em; max-height: 1em;" /> <strong>10:00 &#8211; 11:00 CET</strong><br><img src="https://s.w.org/images/core/emoji/17.0.2/72x72/1f4cd.png" alt="📍" class="wp-smiley" style="height: 1em; max-height: 1em;" /><strong>Microsoft Teams</strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Join now and explore the protection of CUI, including submarine cables, pipelines and offshore energy connections.</strong></p>
+
+
+
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-fe48e5de wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link has-white-color has-midnight-gradient-background has-text-color has-background has-link-color wp-element-button" href="https://www.eventbrite.com/e/protecting-critical-undersea-infrastructure-in-the-indo-pacific-ti

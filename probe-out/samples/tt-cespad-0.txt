@@ -1,0 +1,103 @@
+https://cespad.org.hn/rss.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Este mapa del sitio lo generó All in One SEO vv4.9.10 dinámicamente el noviembre 12, 2026 a las 11:04 pm - el plugin SEO original para WordPress. -->
+
+<?xml-stylesheet type="text/xsl" href="https://cespad.org.hn/default-sitemap.xsl"?>
+
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Cespad</title>
+		<link><![CDATA[https://cespad.org.hn]]></link>
+		<description><![CDATA[Cespad]]></description>
+		<lastBuildDate><![CDATA[Wed, 11 Nov 2026 17:24:08 +0000]]></lastBuildDate>
+		<docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+		<atom:link href="https://cespad.org.hn/sitemap.rss" rel="self" type="application/rss+xml" />
+		<ttl><![CDATA[60]]></ttl>
+
+		<item>
+			<guid><![CDATA[https://cespad.org.hn/cespad-presenta-informe-clave-sobre-las-elecciones-de-2025-en-honduras-y-la-reconfiguracion-de-sus-fuerzas-politicas/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/cespad-presenta-informe-clave-sobre-las-elecciones-de-2025-en-honduras-y-la-reconfiguracion-de-sus-fuerzas-politicas/]]></link>
+			<title>CESPAD presenta informe clave sobre las elecciones de 2025 en Honduras y la reconfiguración de sus fuerzas políticas</title>
+			<pubDate><![CDATA[Wed, 11 Nov 2026 17:24:08 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-quien-define-la-amenaza-y-quien-controla-el-poder-el-choque-institucional-por-el-nuevo-paquete-de-seguridad-en-honduras/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-quien-define-la-amenaza-y-quien-controla-el-poder-el-choque-institucional-por-el-nuevo-paquete-de-seguridad-en-honduras/]]></link>
+			<title>Análisis semanal | ¿Quién define la amenaza y quién controla el poder? El choque institucional por el nuevo paquete de seguridad en Honduras</title>
+			<pubDate><![CDATA[Mon, 26 Oct 2026 16:51:22 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/boletin-del-observatorio-de-la-conflictividad-socioterritorial-revela-patron-de-despojo-y-creciente-conflictividad-en-honduras/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/boletin-del-observatorio-de-la-conflictividad-socioterritorial-revela-patron-de-despojo-y-creciente-conflictividad-en-honduras/]]></link>
+			<title>Boletín del Observatorio de la Conflictividad Socioterritorial revela patrón de despojo y creciente conflictividad en Honduras</title>
+			<pubDate><![CDATA[Wed, 30 Sep 2026 20:42:28 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-seguridad-sin-contrapesos-los-riesgos-de-importar-el-modelo-bukele-a-honduras/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-seguridad-sin-contrapesos-los-riesgos-de-importar-el-modelo-bukele-a-honduras/]]></link>
+			<title>Análisis Semanal | Seguridad sin contrapesos: los riesgos de importar el modelo Bukele a Honduras</title>
+			<pubDate><![CDATA[Mon, 19 Oct 2026 17:20:44 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/soberania-fragmentada-el-modelo-libertario-de-prospera-y-sus-dinamicas-en-honduras/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/soberania-fragmentada-el-modelo-libertario-de-prospera-y-sus-dinamicas-en-honduras/]]></link>
+			<title>Soberanía fragmentada: el modelo libertario de Próspera y sus dinámicas en Honduras</title>
+			<pubDate><![CDATA[Mon, 12 Oct 2026 17:30:20 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-el-costo-politico-de-gobernar-a-ciegas-y-sin-un-titular-en-la-secretaria-de-salud/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-el-costo-politico-de-gobernar-a-ciegas-y-sin-un-titular-en-la-secretaria-de-salud/]]></link>
+			<title>Análisis Semanal | El costo político de gobernar a ciegas y sin un titular en la Secretaría de Salud</title>
+			<pubDate><![CDATA[Mon, 12 Oct 2026 16:50:37 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-el-decreto-258-2026-y-un-sistema-penitenciario-permeado-por-el-crimen-organizado/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-el-decreto-258-2026-y-un-sistema-penitenciario-permeado-por-el-crimen-organizado/]]></link>
+			<title>Análisis Semanal | El Decreto 258-2026 y un sistema penitenciario permeado por el crimen organizado</title>
+			<pubDate><![CDATA[Mon, 09 Nov 2026 22:27:01 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-el-triunfo-de-lula-punto-de-inflexion-en-america-latina/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-el-triunfo-de-lula-punto-de-inflexion-en-america-latina/]]></link>
+			<title>Análisis Semanal | El triunfo de Lula: ¿punto de inflexión en América Latina?</title>
+			<pubDate><![CDATA[Mon, 02 Nov 2026 16:29:24 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/elementor-hf/header_01/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/elementor-hf/header_01/]]></link>
+			<title>Header_01</title>
+			<pubDate><![CDATA[Wed, 26 Aug 2026 00:02:42 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-las-reformas-electorales-que-dejo-la-crisis-2025-la-prueba-de-fuego-para-el-congreso-nacional-y-los-organos-electorales/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-las-reformas-electorales-que-dejo-la-crisis-2025-la-prueba-de-fuego-para-el-congreso-nacional-y-los-organos-electorales/]]></link>
+			<title>Análisis semanal | Las reformas electorales que dejó la crisis 2025: la prueba de fuego para el Congreso Nacional y los órganos electorales</title>
+			<pubDate><![CDATA[Tue, 29 Sep 2026 20:11:34 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-quien-decide-sobre-los-territorios-estado-empresas-y-conflicto-social/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-quien-decide-sobre-los-territorios-estado-empresas-y-conflicto-social/]]></link>
+			<title>Análisis Semanal | ¿Quién decide sobre los territorios? Estado, empresas y conflicto social.</title>
+			<pubDate><![CDATA[Mon, 21 Sep 2026 23:23:06 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/analisis-semanal-campamento-garifuna-hacia-la-articulacion-del-movimiento-socioterritorial-y-construccion-de-una-agenda-comun-en-honduras/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/analisis-semanal-campamento-garifuna-hacia-la-articulacion-del-movimiento-socioterritorial-y-construccion-de-una-agenda-comun-en-honduras/]]></link>
+			<title>Análisis semanal | Campamento garífuna: hacia la articulación del movimiento socioterritorial y construcción de una agenda común en Honduras</title>
+			<pubDate><![CDATA[Tue, 15 Sep 2026 17:08:15 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/evaluacion-de-la-gestion-asfura-al-primer-semestre-de-2026/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/evaluacion-de-la-gestion-asfura-al-primer-semestre-de-2026/]]></link>
+			<title>Bajo la lupa sectorial: Evaluación de la gestión Asfura desde la sociedad civil, la academia, el sector privado, la cooperación y el oficialismo</title>
+			<pubDate><![CDATA[Tue, 01 Sep 2026 20:05:23 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/un-juicio-con-vacios-analicemos-las-irregularidades-en-el-caso-de-lisby-allen/]]></guid>
+			<link><![CDATA[https://cespad.org.hn/un-juicio-con-vacios-analicemos-las-irregularidades-en-el-caso-de-lisby-allen/]]></link>
+			<title>Un juicio con vacíos: analicemos las irregularidades en el caso de Lisby Allen</title>
+			<pubDate><![CDATA[Tue, 01 Sep 2026 17:41:40 +0000]]></pubDate>
+		</item>
+					<item>
+			<guid><![CDATA[https://cespad.org.hn/el-veredicto-ausente-que-habria-pasado-si-honduras-hubiese-juzgado-a-lisby-allen-con-perspectiva-de-genero/]]></guid>
+			<link><![CDATA[https://c

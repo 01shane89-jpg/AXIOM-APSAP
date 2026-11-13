@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bulgaria
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bulgaria"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:BG</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:05.936029Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>BG332</value>
+    </cap:geocode>
+    <link title="Dobrich" href="https://meteoalarm.org?geocode=EMMA_ID:BG003" hreflang="en"/>
+    <cap:areaDesc>Dobrich</cap:areaDesc>
+    <cap:event>Strong wind!</cap:event>
+    <cap:sent>2026-11-11T10:00:00+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-11T22:00:01+00:00</cap:effective>
+    <cap:onset>2026-11-11T22:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.100.0.BG.261111120000.111126114511Z1021</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8"/>
+    <link title="Bulgaria" rel="related" href="https://meteoalarm.org?region=BG" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-11T10:00:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8?index_info=1&amp;index_area=21&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Bulgaria - Dobrich</title>
+    <updated>2026-11-11T10:00:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>BG344</value>
+    </cap:geocode>
+    <link title="Stara Zagora" href="https://meteoalarm.org?geocode=EMMA_ID:BG022" hreflang="en"/>
+    <cap:areaDesc>Stara Zagora</cap:areaDesc>
+    <cap:event>Strong wind!</cap:event>
+    <cap:sent>2026-11-11T10:00:00+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-11T22:00:01+00:00</cap:effective>
+    <cap:onset>2026-11-11T22:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.100.0.BG.261111120000.111126114511Z1021</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8"/>
+    <link title="Bulgaria" rel="related" href="https://meteoalarm.org?region=BG" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-11T10:00:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8?index_info=1&amp;index_area=20&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Bulgaria - Stara Zagora</title>
+    <updated>2026-11-11T10:00:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>BG412</value>
+    </cap:geocode>
+    <link title="Sofia-region" href="https://meteoalarm.org?geocode=EMMA_ID:BG018" hreflang="en"/>
+    <cap:areaDesc>Sofia-region</cap:areaDesc>
+    <cap:event>Strong wind!</cap:event>
+    <cap:sent>2026-11-11T10:00:00+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-11T22:00:01+00:00</cap:effective>
+    <cap:onset>2026-11-11T22:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.100.0.BG.261111120000.111126114511Z1021</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8"/>
+    <link title="Bulgaria" rel="related" href="https://meteoalarm.org?region=BG" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-11T10:00:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8?index_info=1&amp;index_area=19&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Bulgaria - Sofia-region</title>
+    <updated>2026-11-11T10:00:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>BG413</value>
+    </cap:geocode>
+    <link title="Blagoevgrad" href="https://meteoalarm.org?geocode=EMMA_ID:BG001" hreflang="en"/>
+    <cap:areaDesc>Blagoevgrad</cap:areaDesc>
+    <cap:event>Strong wind!</cap:event>
+    <cap:sent>2026-11-11T10:00:00+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-11T22:00:01+00:00</cap:effective>
+    <cap:onset>2026-11-11T22:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.100.0.BG.261111120000.111126114511Z1021</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8"/>
+    <link title="Bulgaria" rel="related" href="https://meteoalarm.org?region=BG" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-11T10:00:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-026c-4455-a2ce-b91e4fa793d8?index_info=1&amp;index_area=18&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Bulgaria - Blagoevgrad</title>
+    <updated>2026-11-11T10:00:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>BG424</value>
+    </cap:geocode>
+    <link title="Smolyan" href="https://meteoalarm.org?geocode=EMMA_ID:BG010" hreflang="en"/>
+    <cap:areaDesc>Smolyan</cap:areaDesc>
+    <cap:event>Strong wind!</cap:event>
+    <cap:sent>2026-11-11T10:00:00+00:00</cap:sent>
+    <cap:expires>2026-11-12T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-11T22:00:01+00:00</cap:effective>
+    <cap:onset>2026-11-11T22:00:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.100.0.BG.261111120000.111126114511Z1021</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-bulgaria/5fa93d89-0

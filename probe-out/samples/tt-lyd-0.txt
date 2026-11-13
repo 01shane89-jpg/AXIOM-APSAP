@@ -1,0 +1,168 @@
+https://lyd.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Libertad y Desarrollo</title>
+	<atom:link href="https://lyd.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://lyd.org</link>
+	<description>CENTRO DE ESTUDIOS E INVESTIGACION QUE PROMUEVE LOS VALORES Y PRINCIPIOS DE UNA SOCIEDAD LIBRE.</description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:29:03 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://lyd.org/wp-content/uploads/2021/01/cropped-logo-lyd-2021-32x32.png</url>
+	<title>Libertad y Desarrollo</title>
+	<link>https://lyd.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>CONGRESO DESPACHA PROYECTO QUE FLEXIBILIZA EL CALENDARIO DE LOS SLEP Y PRIORIZA LA CALIDAD EDUCATIVA EN LOS TERRITORIOS</title>
+		<link>https://lyd.org/centro-de-prensa/noticias/noticias-portada/2026/11/congreso-despacha-proyecto-que-flexibiliza-el-calendario-de-los-slep-y-prioriza-la-calidad-educativa-en-los-territorios/</link>
+		
+		<dc:creator><![CDATA[Augusta Silva]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:29:00 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<category><![CDATA[Noticias portada]]></category>
+		<category><![CDATA[SLEEP]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96241</guid>
+
+					<description><![CDATA[El Congreso Nacional despachó a ley el proyecto de ley que introduce flexibilidad al calendario de instalación de los Servicios [...]
+<p><a href="https://lyd.org/centro-de-prensa/noticias/noticias-portada/2026/11/congreso-despacha-proyecto-que-flexibiliza-el-calendario-de-los-slep-y-prioriza-la-calidad-educativa-en-los-territorios/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>INDICACIONES A SALA CUNA UNIVERSAL: UNA BUENA PROPUESTA PARA AVANZAR</title>
+		<link>https://lyd.org/estudios/temas-publicos/2026/11/indicaciones-a-sala-cuna-universal-una-buena-propuesta-para-avanzar/</link>
+		
+		<dc:creator><![CDATA[ralvarez]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 13:41:47 +0000</pubDate>
+				<category><![CDATA[Temas Públicos]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96237</guid>
+
+					<description><![CDATA[ [...]
+<p><a href="https://lyd.org/estudios/temas-publicos/2026/11/indicaciones-a-sala-cuna-universal-una-buena-propuesta-para-avanzar/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>PRESUPUESTO 2027: MÁS RECURSOS Y NUEVOS DESAFÍOS PARA LA INFANCIA</title>
+		<link>https://lyd.org/estudios/temas-publicos/2026/11/presupuesto-2027-mas-recursos-y-nuevos-desafios-para-la-infancia/</link>
+		
+		<dc:creator><![CDATA[ralvarez]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 13:38:34 +0000</pubDate>
+				<category><![CDATA[Temas Públicos]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96233</guid>
+
+					<description><![CDATA[ [...]
+<p><a href="https://lyd.org/estudios/temas-publicos/2026/11/presupuesto-2027-mas-recursos-y-nuevos-desafios-para-la-infancia/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Inmigración, estado de bienestar y violencia</title>
+		<link>https://lyd.org/opinion/2026/11/inmigracion-estado-de-bienestar-y-violencia/</link>
+		
+		<dc:creator><![CDATA[Augusta Silva]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 11:21:00 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<category><![CDATA[Luis Larraín]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96198</guid>
+
+					<description><![CDATA[Violentos incidentes protagonizados en París y otras ciudades francesas por jóvenes, que se han extendido a otros lugares en Europa [...]
+<p><a href="https://lyd.org/opinion/2026/11/inmigracion-estado-de-bienestar-y-violencia/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>SEMINARIO «SCREENING DE INVERSIONES EN CHILE: ¿UNA NECESIDAD ESTRATÉGICA?»</title>
+		<link>https://lyd.org/centro-de-prensa/noticias/2026/11/seminario-screening-de-inversiones-en-chile-una-necesidad-estrategica-2/</link>
+		
+		<dc:creator><![CDATA[Augusta Silva]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 12:38:54 +0000</pubDate>
+				<category><![CDATA[Noticias]]></category>
+		<category><![CDATA[Noticias portada]]></category>
+		<category><![CDATA[Seminarios]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96188</guid>
+
+					<description><![CDATA[Para analizar los desafíos y oportunidades que plantea la implementación del screening de inversiones en Chile, considerando sus implicancias para [...]
+<p><a href="https://lyd.org/centro-de-prensa/noticias/2026/11/seminario-screening-de-inversiones-en-chile-una-necesidad-estrategica-2/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Presupuesto 2027: los desafíos de la protección infantil</title>
+		<link>https://lyd.org/opinion/2026/11/presupuesto-2027-los-desafios-de-la-proteccion-infantil/</link>
+		
+		<dc:creator><![CDATA[Augusta Silva]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 11:30:00 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<category><![CDATA[Paulina Henoch]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96183</guid>
+
+					<description><![CDATA[Lo que se está discutiendo en el Presupuesto 2027 aborda los principales desafíos que enfrenta el sistema de protección especializada, [...]
+<p><a href="https://lyd.org/opinion/2026/11/presupuesto-2027-los-desafios-de-la-proteccion-infantil/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>LIBERTAD ECONÓMICA: EN 2024 CHILE AVANZÓ 9 PUESTOS, PERO NO RECUPERÓ SU NIVEL PREPANDEMIA</title>
+		<link>https://lyd.org/estudios/temas-publicos/2026/11/libertad-economica-en-2024-chile-avanzo-9-puestos-pero-no-recupero-su-nivel-prepandemia/</link>
+		
+		<dc:creator><![CDATA[Augusta Silva]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 19:32:56 +0000</pubDate>
+				<category><![CDATA[Temas Públicos]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96171</guid>
+
+					<description><![CDATA[ [...]
+<p><a href="https://lyd.org/estudios/temas-publicos/2026/11/libertad-economica-en-2024-chile-avanzo-9-puestos-pero-no-recupero-su-nivel-prepandemia/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>SEGURIDAD: LAS CIFRAS MEJORAN, PERO LA TAREA LEGISLATIVA RECIÉN COMIENZA</title>
+		<link>https://lyd.org/estudios/temas-publicos/2026/11/seguridad-las-cifras-mejoran-pero-la-tarea-legislativa-recien-comienza/</link>
+		
+		<dc:creator><![CDATA[Augusta Silva]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 19:26:15 +0000</pubDate>
+				<category><![CDATA[Temas Públicos]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96170</guid>
+
+					<description><![CDATA[ [...]
+<p><a href="https://lyd.org/estudios/temas-publicos/2026/11/seguridad-las-cifras-mejoran-pero-la-tarea-legislativa-recien-comienza/" rel="nofollow">Origen</a></p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Cruzar el puente completo</title>
+		<link>https://lyd.org/opinion/2026/11/cruzar-el-puente-completo/</link>
+		
+		<dc:creator><![CDATA[Augusta Silva]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 16:25:42 +0000</pubDate>
+				<category><![CDATA[Opinión]]></category>
+		<category><![CDATA[Macarena García]]></category>
+		<guid isPermaLink="false">https://lyd.org/?p=96200</guid>
+
+					<description><![CDATA[Desde 2012 la economía chilena experimenta una desaceleración persistente y sincronizada. El PIB per cápita, que creció 3,7% anual entre [...]
+<p><a

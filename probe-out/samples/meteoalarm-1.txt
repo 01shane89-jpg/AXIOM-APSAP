@@ -1,0 +1,158 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-belgium
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-belgium"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:BE</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:45:57.745852Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>BE34</value>
+    </cap:geocode>
+    <link title="Luxembourg" href="https://meteoalarm.org?geocode=EMMA_ID:BE001" hreflang="en"/>
+    <cap:areaDesc>Luxembourg</cap:areaDesc>
+    <cap:event>Yellow warning for ice snow</cap:event>
+    <cap:sent>2026-11-13T04:40:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T10:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.56.0.BE.20261113043940.1619146</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/a3672263-251c-42e3-8e41-eb74561eb79b"/>
+    <link title="Belgium" rel="related" href="https://meteoalarm.org?region=BE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T04:40:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/a3672263-251c-42e3-8e41-eb74561eb79b?index_info=2&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Belgium - Luxembourg</title>
+    <updated>2026-11-13T04:40:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>BE33</value>
+    </cap:geocode>
+    <link title="Liège" href="https://meteoalarm.org?geocode=EMMA_ID:BE008" hreflang="en"/>
+    <cap:areaDesc>Liège</cap:areaDesc>
+    <cap:event>Yellow warning for ice snow</cap:event>
+    <cap:sent>2026-11-13T04:40:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T10:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.56.0.BE.20261113043940.1619145</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/da98decb-6551-4c9c-afa1-b5419caa29e7"/>
+    <link title="Belgium" rel="related" href="https://meteoalarm.org?region=BE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T04:40:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/da98decb-6551-4c9c-afa1-b5419caa29e7?index_info=2&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Belgium - Liège</title>
+    <updated>2026-11-13T04:40:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>BE22</value>
+    </cap:geocode>
+    <link title="Limburg" href="https://meteoalarm.org?geocode=EMMA_ID:BE007" hreflang="en"/>
+    <cap:areaDesc>Limburg</cap:areaDesc>
+    <cap:event>Yellow warning for ice snow</cap:event>
+    <cap:sent>2026-11-13T04:40:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T10:00:00+00:00</cap:expires>
+    <cap:onset>2026-11-13T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.56.0.BE.20261113043940.1619144</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/1b423fa2-e081-4ed9-8db9-e80e75cf045f"/>
+    <link title="Belgium" rel="related" href="https://meteoalarm.org?region=BE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-13T04:40:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/1b423fa2-e081-4ed9-8db9-e80e75cf045f?index_info=2&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Belgium - Limburg</title>
+    <updated>2026-11-13T04:40:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>BE34</value>
+    </cap:geocode>
+    <link title="Luxembourg" href="https://meteoalarm.org?geocode=EMMA_ID:BE001" hreflang="en"/>
+    <cap:areaDesc>Luxembourg</cap:areaDesc>
+    <cap:event>Green warning for ice snow</cap:event>
+    <cap:sent>2026-11-12T14:55:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T10:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T04:40:01+00:00</cap:effective>
+    <cap:onset>2026-11-13T04:40:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.56.0.BE.20261113054001.1619149</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/7759baef-3f8a-43f3-8f27-d578aae8b869"/>
+    <link title="Belgium" rel="related" href="https://meteoalarm.org?region=BE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T14:55:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/7759baef-3f8a-43f3-8f27-d578aae8b869?index_info=2&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Green Snow-ice Warning issued for Belgium - Luxembourg</title>
+    <updated>2026-11-12T14:55:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>BE33</value>
+    </cap:geocode>
+    <link title="Liège" href="https://meteoalarm.org?geocode=EMMA_ID:BE008" hreflang="en"/>
+    <cap:areaDesc>Liège</cap:areaDesc>
+    <cap:event>Green warning for ice snow</cap:event>
+    <cap:sent>2026-11-12T14:55:00+00:00</cap:sent>
+    <cap:expires>2026-11-13T10:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-13T04:40:01+00:00</cap:effective>
+    <cap:onset>2026-11-13T04:40:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.56.0.BE.20261113054001.1619148</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-belgium/8d59f7ae-3bba-41be-ade0-1a8fd47d5423"/>
+    <link title="Belgium" rel="related" href="https://meteoalarm.org?region=BE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.or

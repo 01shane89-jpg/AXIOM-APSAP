@@ -1,0 +1,86 @@
+https://smallwarsjournal.com/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Small Wars Journal by Arizona State University</title>
+	<atom:link href="https://smallwarsjournal.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://smallwarsjournal.com/</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 23:02:17 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Who Speaks for UW?</title>
+		<link>https://smallwarsjournal.com/2026/11/12/who-speaks-for-uw/</link>
+					<comments>https://smallwarsjournal.com/2026/11/12/who-speaks-for-uw/#respond</comments>
+		
+		<dc:creator><![CDATA[SWJED]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 23:02:17 +0000</pubDate>
+				<category><![CDATA[The Discourse]]></category>
+		<category><![CDATA[The Latest]]></category>
+		<category><![CDATA[Special Forces; Unconventional warfare; irregular warfare]]></category>
+		<guid isPermaLink="false">https://smallwarsjournal.com/?p=155983</guid>
+
+					<description><![CDATA[<p>​Who Speaks for UW?: Unconventional Warfare Isn’t Rejected. It Seldom Arrives. Substack&#124; November 8, 2026 In the third and final installment of his Why Unconventional Warfare? series, retired U.S. Army Special Forces Chief Warrant Officer 5 and Small Wars Journal contributor Maurice &#8220;Duc&#8221; Duclos tackles a crucial problem: even when unconventional warfare is that right answer to a problem, it seldom &#8230;<br /> <a class="postReadMore" href="https://smallwarsjournal.com/2026/11/12/who-speaks-for-uw/">Read more<i class="fa fa-angle-double-right"></i></a></p>
+<p>The post <a href="https://smallwarsjournal.com/2026/11/12/who-speaks-for-uw/">Who Speaks for UW?</a> appeared first on <a href="https://smallwarsjournal.com">Small Wars Journal by Arizona State University</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div>
+<div class="gmail_default">
+<p><b><b>​</b></b><a href="https://unconventionalwarfarereview.substack.com/p/who-speaks-for-uw">Who Speaks for UW?: Unconventional Warfare Isn’t Rejected. It Seldom Arrives. Substack</a>| November 8, 2026</p>
+<p>In the third and final installment of his <a href="https://unconventionalwarfarereview.substack.com/"><em>Why Unconventional Warfare?</em></a> series, retired U.S. Army Special Forces Chief Warrant Officer 5 and Small Wars Journal contributor <a href="https://smallwarsjournal.com/author/duc-duclos/">Maurice &#8220;Duc&#8221; Duclos</a> tackles a crucial problem: even when unconventional warfare is that right answer to a problem, it seldom reaches the decision-making process for policymakers.</p>
+<h3>UW&#8217;s Influence on Policy</h3>
+<p>Duclos lays out the importance of this third condition:</p>
+<blockquote><p>The research called it the presence of positive UW feedback loops, and its framework called it influence on policy. It had three parts: people with UW experience who had direct access to or influence over the decision maker; a decision maker who inherited a course of action leading to UW; and past UW successes that increased that influence. Together, they constitute UW advocacy: someone at or near the decision table who speaks for UW.</p></blockquote>
+<h3>Overthrow in Iran</h3>
+<p>He considers the advocacy process for unconventional warfare in the 1953 overthrow of Iranian Prime Minister Mohammed Mossadegh.</p>
+<blockquote><p>That changed in 1953. Eisenhower took office in January with John Foster Dulles as Secretary of State, and a month later his brother, Allen Dulles, took over the CIA. Walter Bedell Smith, Eisenhower’s wartime chief of staff, moved from the CIA to become Under Secretary of State. Allen Dulles, Kermit Roosevelt, and Frank Wisner were all veterans of the wartime OSS, sharing an institutional background that inclined them toward unconventional options.</p></blockquote>
+<h3>The Advocacy Process</h3>
+<p>Duclos emphasizes certain key aspects of the policy advocacy process for UW.</p>
+<blockquote><p>Two other qualities matter in any advocate: the skill to translate an option into the decision maker’s problem, and the trust that lets the decision maker rely on the advocate’s judgment. Like the advocate’s other qualities, they apply to every option. What is specific to UW is what the advocate must understand: how an indigenous resistance and external support, working together as a composite organism, can accomplish the specified task.</p></blockquote>
+<h3>Who Speaks for UW?</h3>
+<p>The author concludes the series by considering the true value of unconventional warfare, its strengths, weaknesses, and its not-uncommon failures to launch.</p>
+<blockquote><p>The first article in the series, <em><a href="https://unconventionalwarfarereview.substack.com/p/why-not-uw">Why Not UW?</a></em>, examined the biases that reject unconventional warfare before its potential is assessed. The second, <em><a href="https://unconventionalwarfarereview.substack.com/p/the-question-is-why-uw">The Question Is… Why UW?</a></em>, explained why UW belongs among the options when conventional options cannot solve the problem. This article adds the conditions that put the option in front of the people who decide.</p></blockquote>
+<p><strong><em>Previous article in the series:<br />
+</em></strong></p>
+<ul>
+<li><a href="https://unconventionalwarfarereview.substack.com/p/why-not-uw">Why not UW?</a> | <a href="https://smallwarsjournal.com/2026/10/26/why-not-uw-the-three-half-truths-killing-unconventional-warfare/">The Discourse post</a></li>
+<li><a href="https://unconventionalwarfarereview.substack.com/p/the-question-is-why-uw">The Question is&#8230; Why UW?</a></li>
+</ul>
+<p><strong><em> Interested in reading more of the author&#8217;s contribution to the discourse? Here are just some of his previous articles for Small Wars Journal:</em></strong></p>
+<ul>
+<li><a href="https://smallwarsjournal.com/2026/06/01/restructuring-u-s-special-forces-wont-fix-a-failure-of-perception/"><strong>Visible vs. Valuable: Why Restructuring U.S. Special Forces Won’t Fix a Failure of Perception</strong> </a></li>
+<li><a href="https://smallwarsjournal.com/2024/12/03/defining-the-indefinable/"><strong>Defining the Indefinable: A Critical Analysis of Current Irregular Warfare Doctrine </strong></a></li>
+</ul>
+<p>&nbsp;</p>
+</div>
+</div>
+<p>The post <a href="https://smallwarsjournal.com/2026/11/12/who-speaks-for-uw/">Who Speaks for UW?</a> appeared first on <a href="https://smallwarsjournal.com">Small Wars Journal by Arizona State University</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://smallwarsjournal.com/2026/11/12/who-speaks-for-uw/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Secretary of War Pete Hegseth Elevates Special Operations Leadership to Revitalize the Legacy of the Office of Strategic Services</title>
+		<link>https://smallwarsjournal.com/2026/11/12/secretary-of-war-pete-hegseth-elevates-special-operations-leadership-to-revitalize-the-legacy-of-the-office-of-strategic-services/</link>
+					<comments>https://smallwarsjournal.com/2026/11/12/secretary-of-war-pete-hegseth-elevates-special-operations-leadership-to-revitalize-the-legacy-of-the-office-of-strategic-services/#respond</comments>
+		
+		<dc:creator><![CDATA[SWJED]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 20:35:46 +0000</pubDate>
+				<category><![CDATA[The Discourse]]></category>
+		<guid isPermaLink="false">https://smallwarsjournal.com/?p=155979</guid>
+
+					<description><![CDATA[<p>Access the memo HERE. Release Immediate Release Secretary of War Pete Hegseth Elevates Special Operations Leadership t

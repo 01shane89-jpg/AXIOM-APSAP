@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-20_130.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"-20_130","ac":[["7c571a","RHO","VH-RHO","PC12","PILATUS PC-12",-12.6052,130.6821,10625,178,223,1794545928,0,"6010","A1",0],["7c8223","BDF112","VH-ZZP","DH8B","DE HAVILLAND DHC-8-200 Dash 8",-12.4418,130.6438,6300,213,258,1794545925,0,"4414","A2",0]]}

@@ -1,0 +1,84 @@
+https://amti.csis.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Asia Maritime Transparency Initiative</title>
+	<atom:link href="https://amti.csis.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://amti.csis.org/</link>
+	<description>Promoting Transparency and Cooperation in East Asia</description>
+	<lastBuildDate>Thu, 08 Oct 2026 15:40:23 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://i0.wp.com/amti.csis.org/wp-content/uploads/2014/10/cropped-AMTI_favicon1.jpg?fit=32%2C32&#038;ssl=1</url>
+	<title>Asia Maritime Transparency Initiative</title>
+	<link>https://amti.csis.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">117425517</site>	<item>
+		<title>Risk and strategy for Indonesia – China Marine Scientific Research cooperation</title>
+		<link>https://amti.csis.org/risk-and-strategy-for-indonesia-china-marine-scientific-research-cooperation/</link>
+		
+		<dc:creator><![CDATA[Aristyo Rizka Darmawan]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 15:38:12 +0000</pubDate>
+				<category><![CDATA[AMTI Update]]></category>
+		<guid isPermaLink="false">https://amti.csis.org/?p=34761</guid>
+
+					<description><![CDATA[<p>During the Indonesia-China foreign ministers&#8217; meeting in Jakarta in August this year, both countries agreed to make maritime cooperation one of the main pillars of Indonesia-China strategic dialogue. One of the maritime cooperation priority agendas discussed was marine scientific research. But with China often using marine scientific research as part of its assertive maritime strategy, [&#8230;]</p>
+<p>The post <a href="https://amti.csis.org/risk-and-strategy-for-indonesia-china-marine-scientific-research-cooperation/">Risk and strategy for Indonesia – China Marine Scientific Research cooperation</a> appeared first on <a href="https://amti.csis.org">Asia Maritime Transparency Initiative</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">During the Indonesia-China <a href="https://kemlu.go.id/id/berita/indonesia-dan-tiongkok-luncurkan-dialog-strategis-komprehensif-perdana-di-jakarta?type=publication">foreign ministers&#8217; meeting</a> in Jakarta in August this year, both countries agreed to make maritime cooperation one of the main pillars of Indonesia-China strategic dialogue. One of the maritime cooperation priority agendas discussed was <a href="https://www.brin.go.id/en/news/130010/indonesia-and-china-strengthen-marine-research-collaboration-to-address-climate-change">marine scientific research</a>. But with China often using <a href="https://features.csis.org/hiddenreach/china-indian-ocean-research-vessels/">marine scientific research</a> as part of its <a href="https://digital-commons.usnwc.edu/cmsi-notes/19/">assertive maritime strategy</a>, Indonesia should develop a plan to ensure that cooperation in this area will not threaten Indonesia’s security.</p>
+
+
+
+<p class="wp-block-paragraph">In the past few years, China has intensified marine scientific research. <a href="https://amti.csis.org/a-survey-of-marine-research-vessels-in-the-indo-pacific/">According to CSIS</a>, China has more marine scientific research vessels operating in the Indo-Pacific than any other country, including the United States. Chinese research vessels operate in various locations from the <a href="https://www.globaltimes.cn/page/202609/1371115.shtml">South China Sea</a> to the <a href="https://features.csis.org/hiddenreach/china-indian-ocean-research-vessels/">Indian Ocean</a>. So how can Indonesia and China advance marine scientific research that benefits both countries while keeping national security interests in mind?</p>
+
+
+
+<p class="wp-block-paragraph">Indeed, the United Nations Convention on the Law of the Sea (UNCLOS) encourages cooperation on marine scientific research to advance human knowledge of the ocean. Given the vastness and depth of the world&#8217;s oceans, scientists often consider them largely unexplored. But it is important to note that under UNCLOS, marine scientific research should be conducted for peaceful purposes and should not become the basis for asserting maritime claims.</p>
+
+
+
+<p class="wp-block-paragraph">For Indonesia, the world&#8217;s largest archipelagic state with a vast maritime area within its exclusive economic zone and continental shelf, knowledge of what lies beneath its waters is critical. However, with limited technology and resource capacity, international cooperation on marine scientific research is becoming very important.</p>
+
+
+
+<p class="wp-block-paragraph">But despite the benefits that Indonesia may get by conducting marine scientific research cooperation with China, it also carry significant risks. In recent years, China’s research activities have operated illegally in Indonesian waters. For instance, the research vessel <a href="https://www.rfa.org/english/news/china/indonesia-survey-09172021171226.html">Haiyang Dizhi 10</a> has often conducted illegal surveys in Indonesia&#8217;s Exclusive Economic Zone. Moreover, Chinese-owned uncrewed <a href="https://www.abc.net.au/news/2026-05-16/undersea-monitoring-device-indonesia-china-maritime-strategy/106670896">underwater vehicles (UUVs)</a> have also been found operating in Indonesian archipelagic waters.</p>
+
+
+
+<p class="wp-block-paragraph">With these growing concerns, Indonesia should consider three things when developing marine scientific research that can benefit both Indonesia and China.</p>
+
+
+
+<p class="wp-block-paragraph">First, marine scientific research cooperation needs a clear definition and scope. Under UNCLOS, there are no clear definitions of marine scientific research. As a result, different parties interpret for themselves what counts as marine scientific research. A wide range of generally recognized activities include seabed topography, geology, fisheries ecosystems, marine ecosystems, genetic resources, and environmental protection.</p>
+
+
+
+<p class="wp-block-paragraph">Some other activities, despite using some of the same capabilities and data collection methods, are usually not regarded as marine scientific research. For instance, surveillance for military purposes or survey activities for oil and gas exploration are often considered not part of academic marine scientific research.</p>
+
+
+
+<p class="wp-block-paragraph">When it comes to cooperation with China, however, this scope of research can be difficult to distinguish, particularly because of the strong link between Chinese research institutions and the People&#8217;s Liberation Army. Some reports suggest that <a href="https://features.csis.org/hiddenreach/china-indian-ocean-research-vessels/">Chinese university-based research institutions supply research to the PLA</a>. Such a close relationship may expose Indonesia’s marine data and spatial information to Chinese military institutions.</p>
+
+
+
+<p class="wp-block-paragraph">Therefore, the cooperation agreement between Indonesia and China should clearly define what activities qualify as marine scientific research and how the data may be used.</p>
+
+
+
+<p class="wp-block-paragraph">Secondly, all cooperation projects should comply with UNCLOS jurisdictional regulations. For instance, marine scientific research in the EEZ, archipelagic waters, and territorial waters should be based on the consent of coastal states. Under UNCLOS, this consent has to be specific to each research project. Indonesia therefore should maintain the requirement to secure its 

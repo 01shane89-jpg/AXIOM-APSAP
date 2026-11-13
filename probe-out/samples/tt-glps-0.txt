@@ -1,0 +1,129 @@
+https://legalpoliticalstudies.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Group for Legal and Political Studies</title>
+	<atom:link href="https://legalpoliticalstudies.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://legalpoliticalstudies.org</link>
+	<description></description>
+	<lastBuildDate>Fri, 30 Oct 2026 14:41:30 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>GLPS Calls for Legal Safeguards Before Vote on Asset Confiscation Law</title>
+		<link>https://legalpoliticalstudies.org/glps-calls-for-legal-safeguards-before-vote-on-asset-confiscation-law/</link>
+		
+		<dc:creator><![CDATA[Webupdates]]></dc:creator>
+		<pubDate>Tue, 27 Oct 2026 13:31:55 +0000</pubDate>
+				<category><![CDATA[Events]]></category>
+		<category><![CDATA[Slider]]></category>
+		<guid isPermaLink="false">https://legalpoliticalstudies.org/?p=8322</guid>
+
+					<description><![CDATA[Prishtina, 27 October 2026 – Group for Legal and Political Studies (GLPS) held a press conference today to present its [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><strong>Prishtina, 27 October 2026</strong> – Group for Legal and Political Studies (GLPS) held a press conference today to present its position on the parliamentary procedure and the content of the Draft Law on the State Bureau for the Verification and Confiscation of Unjustified Assets, which is expected to be put to a second-reading vote in the Assembly of Kosovo on Thursday.</p>
+
+
+
+<p class="wp-block-paragraph">GLPS representatives stressed that the current Draft Law has failed to address the findings of the Constitutional Court and the concerns raised by civil society, leaving the possibility that the Bureau could be used as a political instrument and undermine citizens’ legal certainty.</p>
+
+
+
+<h3 class="wp-block-heading">Concerns regarding the parliamentary procedure</h3>
+
+
+
+<p class="wp-block-paragraph">GLPS expressed concern that the Working Group established to review the Draft Law did not have sufficient opportunity to examine its provisions, proposed amendments, recommendations and legal analyses submitted by civil society organisations in detail.</p>
+
+
+
+<p class="wp-block-paragraph">Furthermore, Working Group meetings were scheduled within a limited timeframe and at the same time as other working groups dealing with judicial reform legislation. This significantly restricted members’ ability to contribute meaningfully to the review of the Draft Law, reducing the process to a procedural formality rather than a substantive examination of the proposed legislation.</p>
+
+
+
+<h3 class="wp-block-heading">Substantive shortcomings remain unaddressed</h3>
+
+
+
+<p class="wp-block-paragraph">Regarding the content of the Draft Law, GLPS considers that it retains provisions similar to those that led the Constitutional Court, through Judgment KO46/23 in 2023, to repeal the initial version of the Draft Law in its entirety. The main concerns include:</p>
+
+
+
+<p class="wp-block-paragraph"><strong>1. Retroactive application beyond the ten-year period</strong></p>
+
+
+
+<p class="wp-block-paragraph">Despite the Constitutional Court’s finding that the verification and confiscation of officials’ assets cannot extend beyond a ten-year period, given the objective difficulties of securing evidence over longer periods, the current Draft Law continues to provide for the verification and confiscation of assets belonging to officials for the period beginning on 17 February 2008, without an adequate ten-year limitation.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>2. Insufficient guarantees of the Bureau’s functional independence</strong></p>
+
+
+
+<p class="wp-block-paragraph">The Draft Law fails to adequately safeguard the Bureau’s functional independence, creating a risk that it could serve as a political instrument rather than as an effective mechanism for civil confiscation of unjustified assets. Of particular concern are provisions allowing the Director and three members of the Bureau to be appointed by a simple majority, alongside a minimum professional experience requirement of only five years for candidates seeking these positions.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>3. Insufficient legal certainty for individuals subject to proceedings</strong></p>
+
+
+
+<p class="wp-block-paragraph">The current Draft Law does not adequately guarantee legal certainty for individuals whose assets may be subject to verification and confiscation. It leaves open the possibility for the Bureau to withdraw its confiscation proposal at any stage of the proceedings and fails to clearly specify whether criminal proceedings may be initiated when evidence gathered during civil confiscation proceedings indicates that the assets may have been acquired through criminal activity.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>4. Inadequate equality of parties in civil confiscation proceedings</strong></p>
+
+
+
+<p class="wp-block-paragraph">The current provisions do not sufficiently ensure equality between the parties in civil confiscation proceedings. They provide for the individual concerned to be questioned during a hearing by the court, a Bureau official and a third party regarding the assets under examination. Although civil confiscation proceedings are adversarial in nature, these provisions raise concerns about the impartiality of the procedure and the effective protection of the rights of the parties involved.</p>
+
+
+
+<h3 class="wp-block-heading">GLPS calls for corrective action before the vote</h3>
+
+
+
+<p class="wp-block-paragraph">Given the importance of establishing the State Bureau as an effective and independent mechanism for the confiscation of unjustified assets, GLPS calls on the Assembly of Kosovo <strong>not to proceed with the second-reading vote until the outstanding legal concerns have been adequately addressed</strong>.</p>
+
+
+
+<p class="wp-block-paragraph">The legal framework must ensure effective implementation, legal certainty for individuals subject to proceedings, procedural fairness and the full functional independence of the Bureau. Addressing these shortcomings is essential to ensuring that the mechanism fulfils its purpose while respecting constitutional standards and fundamental rights.</p>
+
+
+
+<p class="wp-block-paragraph">GLPS reiterates that the fight against unjustified wealth must be pursued through a sound constitutional and legal framework that safeguards the rule of law and prevents the misuse of public institutions for political purposes.\</p>
+
+
+
+<p class="wp-block-paragraph">Venue: GLPS Offices, Str. Rexhep Luci, 16/1, 10000 Prishtina, Republic of Kosova</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>GLPS Discusses Kosovo’s EU Reform Agenda Following Political Deadlock: Turning Momentum into Reform</title>
+		<link>https://legalpoliticalstudies.org/glps-discusses-kosovos-eu-reform-agenda-following-political-deadlock-turning-momentum-into-reform/</link>
+		
+		<dc:creator><![CDATA[Webupdates]]></dc:creator>
+		<pubDate>Mon, 26 Oct 2026 13:01:56 +0000</pubDate>
+				<category><![CDATA[Events]]></category>
+		<category><![CDATA[Slider]]></category>
+		<guid isPermaLink="false">https://legalpoliticalstudies.org/?p=8306</guid>
+
+					<description><![CDATA[Prishtina, 26 October 2026 – Group for Legal and Political Studies (GLPS) organised the roundtable discussion: “Kosovo’s EU Path After [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><strong>Prishtina, 26 October 2026</strong> – Group for Legal and Political Studies

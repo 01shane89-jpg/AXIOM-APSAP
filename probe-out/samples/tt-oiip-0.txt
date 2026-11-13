@@ -1,0 +1,105 @@
+https://www.oiip.ac.at/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>oiip</title>
+	<atom:link href="https://www.oiip.ac.at/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.oiip.ac.at</link>
+	<description>Österreichisches Institut für internationale Politik</description>
+	<lastBuildDate>Tue, 10 Nov 2026 09:25:02 +0000</lastBuildDate>
+	<language>de</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.7.7</generator>
+	<item>
+		<title>Walzer mit dem Drachen: Europas schwieriger Tanz mit Chinas Wirtschaftsmacht</title>
+		<link>https://www.oiip.ac.at/news/walzer-mit-dem-drachen-europas-schwieriger-tanz-mit-chinas-wirtschaftsmacht/</link>
+		
+		<dc:creator><![CDATA[Petra Podesser]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 09:11:11 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://www.oiip.ac.at/?p=11519</guid>
+
+					<description><![CDATA[Walzer mit dem Drachen: Europas schwieriger Tanz mit Chinas Wirtschaftsmacht Europas schwieriger Tanz mit der Wirtschaftsmacht China. Thomas Eder zu Gast in der ORF Sendung Eco am 05.11.2026 Für China wird Europa wegen der angespannten Situation zu den USA immer wichtiger. Mehr dazu im Beitrag.]]></description>
+										<content:encoded><![CDATA[<p><strong>Walzer mit dem Drachen: Europas schwieriger Tanz mit Chinas Wirtschaftsmacht</strong><br />
+<strong>Europas schwieriger Tanz mit der Wirtschaftsmacht China.</strong></p>
+<p class="title">Thomas Eder zu Gast in der ORF Sendung Eco am 05.11.2026</p>
+<p>Für China wird Europa wegen der angespannten Situation zu den USA immer wichtiger.</p>
+<p>Mehr dazu im Beitrag.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>oiip featured in Think Tanks to Watch 2026</title>
+		<link>https://www.oiip.ac.at/news/oiip-featured-in-think-tanks-to-watch-2026/</link>
+		
+		<dc:creator><![CDATA[Petra Podesser]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 10:15:32 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://www.oiip.ac.at/?p=11492</guid>
+
+					<description><![CDATA[The Austrian Institute for International Affairs (oiip) has been selected for Think Tanks to Watch 2026, an initiative by On Think Tanks (OTT) recognising 55 think tanks from around the world for their noteworthy practices, innovative approaches and contributions to the think tank community. The initiative highlights the diverse ways in which think tanks generate [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><strong>The Austrian Institute for International Affairs (oiip) has been selected for Think Tanks to Watch 2026, an initiative by On Think Tanks (OTT) recognising 55 think tanks from around the world for their noteworthy practices, innovative approaches and contributions to the think tank community.</strong></p>
+<p>The initiative highlights the diverse ways in which think tanks generate knowledge, engage with policymakers and contribute to meaningful change. Rather than a ranking or competition, Think Tanks to Watch provides a platform for peer recognition, exchange and learning across the global think tank community.</p>
+<p>For the oiip, being featured is an opportunity to share its work at the intersection of research and policy, its regional and thematic expertise, and its commitment to bringing independent analysis and perspectives into public and political debate.</p>
+<p>We are proud to be part of this international community and look forward to exchanging experiences and learning from the other organisations featured.</p>
+<p>Explore Think Tanks to Watch 2026:</p>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<p><a href="https://onthinktanks.org/thinktankstowatch/?utm_source=chatgpt.com">On Think Tanks – Think Tanks to Watch 2026</a></p>
+</div>
+</div>
+<div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div></div>
+</div>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>China hatte eine Strategie, Europa war blauäugig: Kann Österreich in Peking noch etwas ausrichten</title>
+		<link>https://www.oiip.ac.at/news/china-hatte-eine-strategie-europa-war-blauaeugig-kann-oesterreich-in-peking-noch-etwas-ausrichten/</link>
+		
+		<dc:creator><![CDATA[Petra Podesser]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 08:36:18 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://www.oiip.ac.at/?p=11486</guid>
+
+					<description><![CDATA[Der Standard 1. November 2026 Thomas Eder im Interview China hatte eine Strategie, Europa war blauäugig: Kann Österreich in Peking noch etwas ausrichten? Wenn Kanzler Stocker am Montag in China ankommt, hat er viel zu tun: Der alte Kontinent und das Reich der Mitte sind auf Konfrontationskurs. Österreich ist zwar klein, aber für Peking keineswegs [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><strong>Der Standard</strong><br />
+<strong>1. November 2026</strong><br />
+<strong>Thomas Eder im Interview</strong></p>
+<p class="article-title"><strong>China hatte eine Strategie, Europa war blauäugig: Kann Österreich in Peking noch etwas ausrichten?</strong></p>
+<p class="article-subtitle">Wenn Kanzler Stocker am Montag in China ankommt, hat er viel zu tun: Der alte Kontinent und das Reich der Mitte sind auf Konfrontationskurs. Österreich ist zwar klein, aber für Peking keineswegs unbedeutend</p>
+<p>Die Nachricht schlug ein wie eine Bombe: Europas letztes Penicillin-Werk könnte schließen. Der Sandoz-Standort in Kundl in Tirol kann mit der Konkurrenz aus China kaum mithalten. 50 Millionen Euro an öffentlichen Förderungen könnten versanden, das letzte Werk Europas, das Penicillin vom Rohstoff bis zum Endprodukt herstellt, Geschichte sein. Dann wäre Europa bei einem lebenswichtigen Antibiotikum vollständig von China abhängig, warnte Standortleiterin Stephanie Jedner zu Beginn der Woche.</p>
+<p>China als Sündenbock, das hört man dieser Tage oft. Der Ton wird rauer. Berlin und Paris ließen mit einem Brief aufhorchen, in dem sie für eine härtere Gangart gegen Peking eintreten. China, wenngleich nicht explizit genannt, bedrohe die industrielle Basis Europas. Der deutschen Industrie geht es an den Kragen. Die größte EU-Volkswirtschaft importiert mittlerweile zweieinhalbmal so viele Güter aus China, wie sie dorthin verkauft.</p>
+<p>Auch in Österreich wächst die Sorge. Die private Westbahn brachte im Vorjahr die ersten Züge des chinesischen Staatskonzerns CRRC auf die Schiene. Verkehrsminister Peter Hanke (SPÖ) sah sich daraufhin zu dem Versprechen veranlasst, dass die ÖBB jedenfalls keine staatlich subventionierten Züge aus China kaufen werde. Wirtschaftsminister Wolfgang Hattmannsdorfer (ÖVP) propagiert derweil offensiv Schlagworte wie &#34;Wirtschaftspatriotismus&#34;, &#34;Made in Austria&#34; oder zumindest &#34;Made in Europe&#34;.</p>
+<p>Während der Ton gegenüber China rauer wird, suchen Österreichs Spitzenpolitiker verstärkt den direkten Dialog mit Peking. Den Anfang machte Außenministerin Beate Meinl-Reisinger (Neos) im Juni. Im September folgte Nationalratspräsident Walter Rosenkranz (FPÖ), kommende Woche ist schließlich Kanzler Christian Stocker (ÖVP) an der Reihe, begleitet von Wirtschaftsminister Wolfgang Hattmannsdorfer (ÖVP) und rund 50 Wirtschaftsvertretern.</p>
+<p>Höhepunkt der sechstägigen Reise wird ein Treffen mit Staatspräsident Xi Jinping am Freitag, auch Ministerpräsident Li Qiang wird Stocker empfangen.</p>
+<h3 id="bewaehrungsprobe">Bewährungsprobe</h3>
+<p>Offiziell steht der Besuch im Zeichen eines Jubiläums: Vor 55 Jahren nahmen Österreich und die Volksrepublik diplomatische Beziehu

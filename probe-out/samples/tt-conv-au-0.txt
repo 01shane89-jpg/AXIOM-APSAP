@@ -1,0 +1,59 @@
+https://theconversation.com/au/politics/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/au/politics/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/au/politics/articles.atom"/>
+  <title>Politics + Society – The Conversation</title>
+  <updated>2026-11-13T04:15:11Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/294358</id>
+    <published>2026-11-13T04:15:11Z</published>
+    <updated>2026-11-13T04:15:11Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/whats-missing-from-election-promises-in-victorias-rural-health-debate-a-long-term-vision-294358"/>
+    <title>What’s missing from election promises in Victoria’s rural health debate? A long-term vision</title>
+    <content type="html">&lt;figure&gt;&lt;img src="https://images.theconversation.com/files/771755/original/file-20261112-78-oscwrl.jpg?ixlib=rb-4.1.1&amp;amp;rect=0%2C0%2C5000%2C3333&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=1050&amp;amp;h=700&amp;amp;fit=crop" /&gt;&lt;figcaption&gt;&lt;span class="caption"&gt;&lt;/span&gt; &lt;span class="attribution"&gt;&lt;a class="source" href="https://www.gettyimages.com.au/detail/photo/blue-hospital-entrance-and-emergency-directional-royalty-free-image/2296188124"&gt;BJP7images/Getty&lt;/a&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;Some of Victoria’s &lt;a href="https://www.infrastructurevictoria.com.au/topics/regional-victoria"&gt;fastest-growing communities&lt;/a&gt; are in regional areas. About &lt;a href="https://www.abs.gov.au/statistics/people/population/regional-population"&gt;1.6 million people&lt;/a&gt; already call regional Victoria home. With &lt;a href="https://www.abc.net.au/news/2026-01-22/keppel-data-centre-latrobe-valley/106123748"&gt;data centres&lt;/a&gt; and &lt;a href="https://www.abc.net.au/news/2026-10-15/warracknabeal-wind-farm-clears-victorian-approvals/107263312"&gt;major renewable energy projects&lt;/a&gt; slated for development across the state, this number is set to grow further. &lt;/p&gt;
+
+&lt;p&gt;A growing population will place increasing demands on already strained rural health-care services. People in these communities have a breadth of health needs, and we need preventative, primary health care and hospital care that works for all of them. &lt;/p&gt;
+
+&lt;p&gt;Unfortunately, that isn’t the reality on the ground, something which has become a key issue ahead of Victoria’s state election.&lt;/p&gt;
+
+&lt;p&gt;In February, the Rural Doctor’s Association of Victoria &lt;a href="https://rdav.com.au/VIC/_Vic/News/Vic-Articles/Fair%20deal%20urged%20for%20rural%20patients%20in%20state%20election.aspx"&gt;called on&lt;/a&gt; Victoria’s major parties to commit to ending the state’s “inequitable health system”. &lt;/p&gt;
+
+&lt;p&gt;And late last month, Victorian doctors &lt;a href="https://www.heraldsun.com.au/news/victoria/state-election/dont-get-sick-in-vic-doctors-launch-election-campaign-targeting-broken-health-system/news-story/641c145c6b0fb3635a98d068367d054c"&gt;demanded&lt;/a&gt; all parties fix the state’s broken health system, launching their “Don’t get sick in Vic” campaign. &lt;/p&gt;
+
+&lt;p&gt;Yet, just over two weeks out from polling day, major parties are offering only short-term and simplistic solutions, without any real overarching strategy to improve health care for rural communities. Here’s why – and what practical, lasting solutions could look like. &lt;/p&gt;
+
+&lt;h2&gt;The postcode problem&lt;/h2&gt;
+
+&lt;p&gt;The challenges facing rural Victoria reflect a nationwide problem. Despite paying the same taxes, where Australians live can make a significant difference to the quality of health care they receive. &lt;/p&gt;
+
+&lt;p&gt;According to an October &lt;a href="https://www.ruralhealth.org.au/publication/the-forgotten-health-spend-a-report-on-the-expenditure-deficit-in-rural-australia-2026/"&gt;report&lt;/a&gt; by the National Rural Health Alliance, Australians living outside major cities receive about A$1,200 less per person per year across health, disability and aged-care spending. &lt;/p&gt;
+
+&lt;p&gt;The health system in rural Victoria has yet to recover from the COVID pandemic. The loss of migratory health workers led to significant pressures on general practices and allied health businesses.&lt;/p&gt;
+
+&lt;p&gt;The funding and training of general practitioners (GPs) is primarily the responsibility of the federal government. But GPs play a major role in the health of rural Victorians, crossing over into disability, aged care and rural hospitals.&lt;/p&gt;
+
+&lt;p&gt;Many GPs are choosing to &lt;a href="https://www.racgp.org.au/getmedia/80c8bdc9-8886-4055-8a8d-ea793b088e5a/Health-of-the-Nation.pdf"&gt;retire&lt;/a&gt; early. Those who have remained are more selective about their workloads. A &lt;a href="https://www1.racgp.org.au/ajgp/2024/supplement-december/burnout-and-retention-of-general-practice-supervis"&gt;2024 study&lt;/a&gt; of Australian GP supervisors suggested almost 80% have high exhaustion rates. &lt;/p&gt;
+
+&lt;p&gt;A separate &lt;a href="https://gpsa.org.au/research-and-policy/2025-national-survey-report/"&gt;2025 Australian survey&lt;/a&gt; found less than half (44%) said they were willing to supervise trainee doctors in the next &lt;a href="https://gpsa.org.au/research-and-policy/2025-national-survey-report/"&gt;five&lt;/a&gt; years. This may limit how many new doctors can be trained in rural Victoria.&lt;/p&gt;
+
+&lt;p&gt;Election promises purporting to boost rural doctor numbers – such as health worker &lt;a href="https://vic.nationals.org.au/media-releases/jade-benham-mp-nationals-and-liberals-set-to-boost-regional-health-workforce/"&gt;incentive schemes&lt;/a&gt; – do not address how we keep them once training is over.&lt;/p&gt;
+
+
+
+&lt;h2&gt;Why promising more hospital beds alone isn’t enough&lt;/h2&gt;
+
+&lt;p&gt;Ahead of the Victorian state election, both &lt;a href="https://www.abc.net.au/news/2026-10-25/vic-labor-campaign-launch-health-hospital-investment/107304732"&gt;Labor&lt;/a&gt; and the &lt;a href="https://www.vicliberal.org.au/article/strengthen-our-health-system"&gt;Coalition&lt;/a&gt; have pledged a mix of more timely emergency services, surgery, beds and health workers.&lt;/p&gt;
+
+&lt;p&gt;Such promises centre on acute care, but do little to shift the dial for rural health unless they are paired with investment in grassroots general health care. &lt;/p&gt;
+
+&lt;p&gt;In many smaller communities – particularly where access to specialist doctors is limited or requires lengthy travel – rural generalists play a vital role. These are GPs with extra training to provide complementary care across emergency, obstetrics, anaesthetics, paediatrics and palliative care. &lt;/p&gt;
+
+&lt;p&gt;Interestingly, despite declining interest in specialising in general practice, there has been &lt;a href="https://www.racgp.org.au/health-of-the-nation-2026/future-workforce/gps-in-training#:%7E:text=In%202025%2C%20only%208.8%25%20of%20medical%20students,for%20future%20practice%20ranks%20fourth%20(Figure%2041)"&gt;growing interest&lt;/a&gt; among medical students to specialise as a rural generalist since 2021. &lt;/p&gt;
+
+&lt;p&gt;This presents a significant opportunity. Victoria already co-invests in the federal government’s &lt;a href="https://www.vicruralgeneralist.com.au/"&gt;rural generalist training program&lt;/a&gt;. The state could capitalise further by exploring how to create attractive and sustainable employment options for rural generalists in rural hospitals. &lt;/p&gt;
+
+&lt;h2&gt;Breaking down barriers&lt;/h2&gt;
+
+&lt;p&gt;Drawing on interviews with people involved in training and employing rural generalist 

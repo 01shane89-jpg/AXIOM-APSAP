@@ -1,0 +1,132 @@
+https://europeanwesternbalkans.com/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>European Western Balkans</title>
+	<atom:link href="https://europeanwesternbalkans.com/feed/" rel="self" type="application/rss+xml" />
+	<link>http://europeanwesternbalkans.com/</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 14:22:48 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://europeanwesternbalkans.com/wp-content/uploads/2018/06/cropped-PNG_logo-2-32x32.png</url>
+	<title>European Western Balkans</title>
+	<link>http://europeanwesternbalkans.com/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Government fiercely criticized for greenlighting Alta Bank into the market</title>
+		<link>https://europeanwesternbalkans.com/2026/11/12/government-fiercely-criticized-for-greenlighting-alta-bank-into-the-market/</link>
+		
+		<dc:creator><![CDATA[EWB]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 14:20:39 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<category><![CDATA[Politics]]></category>
+		<category><![CDATA[Alta Bank]]></category>
+		<category><![CDATA[National Bank of North Macedonia]]></category>
+		<category><![CDATA[National Bank of Serbia]]></category>
+		<category><![CDATA[Social Democratic Union]]></category>
+		<guid isPermaLink="false">https://europeanwesternbalkans.com/?p=59903</guid>
+
+					<description><![CDATA[<div style="margin: 5px 5% 10px 5%;"><img src="https://europeanwesternbalkans.com/wp-content/uploads/2026/08/Stone_Bridge_Skopje_4.jpg" width="1920" height="1271" title="Skopje; Photo: kallerna /Wikipedia Commons" alt="" /></div>
+<div>SKOPJE – The decision of the National Bank of Serbia (NBS) to officially revoke the operating license of Belgrade-based Alta Bank created widespread public concern and political turmoil in North Macedonia, as the Serbian bank holds a near-total ownership stake in its local subsidiary, Alta Bank AD Bitola.&#160; NBS revoked Alta Bank’s operating licence on [&#8230;]</div>
+<p>The post <a href="https://europeanwesternbalkans.com/2026/11/12/government-fiercely-criticized-for-greenlighting-alta-bank-into-the-market/">Government fiercely criticized for greenlighting Alta Bank into the market</a> appeared first on <a href="https://europeanwesternbalkans.com">European Western Balkans</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div style="margin: 5px 5% 10px 5%;"><img src="https://europeanwesternbalkans.com/wp-content/uploads/2026/08/Stone_Bridge_Skopje_4.jpg" width="1920" height="1271" title="Skopje; Photo: kallerna /Wikipedia Commons" alt="" /></div><div>
+<p>SKOPJE – The decision of the National Bank of Serbia (NBS) to officially revoke the operating license of Belgrade-based Alta Bank created widespread public concern and political turmoil in North Macedonia, as the Serbian bank holds a near-total ownership stake in its local subsidiary, Alta Bank AD Bitola.&nbsp;</p>
+
+
+
+<p>NBS revoked Alta Bank’s operating licence on 31 October 2026. This action occurred amidst a rapidly shifting political landscape after a student-led movement won the snap parliamentary elections, ending 14 years of SNS governance.</p>
+
+
+
+<p>The bank&#8217;s owner, businessman Davor Macura, widely described in Serbian media as having close political ties to the ousted government, was detained, alongside other individuals.</p>
+
+
+
+<p>Prosecutors accused Macura of illegally siphoning massive sums from the bank, including an alleged withdrawal of approximately 385 million to 428 million euros from the bank&#8217;s vaults.</p>
+
+
+
+<p>The National Bank of North Macedonia implemented temporary administration on 1 November, placing the commercial bank under direct supervisory management by appointed administrators rather than allowing it to descend into liquidation or immediate bankruptcy.</p>
+
+
+
+<p>Governor Trajko Slaveski stressed that the local bank remained highly capitalized and liquid with a solid credit portfolio, and the administrative intervention was designed solely to shield balance sheets and the interests of depositors from the Serbian parent company&#8217;s collapse. </p>
+
+
+
+<figure class="wp-block-embed is-type-wp-embed is-provider-european-western-balkans wp-block-embed-european-western-balkans"><div class="wp-block-embed__wrapper">
+<blockquote class="wp-embedded-content" data-secret="8ggy6UWqhO"><a href="https://europeanwesternbalkans.com/2026/11/03/how-did-an-sns-linked-bank-collapse-after-the-partys-fall-from-power/">How did an SNS-linked bank collapse after the party&#8217;s fall from power?</a></blockquote><iframe class="wp-embedded-content" sandbox="allow-scripts" security="restricted"  title="&#8220;How did an SNS-linked bank collapse after the party&#8217;s fall from power?&#8221; &#8212; European Western Balkans" src="https://europeanwesternbalkans.com/2026/11/03/how-did-an-sns-linked-bank-collapse-after-the-partys-fall-from-power/embed/#?secret=ORp0Q480yO#?secret=8ggy6UWqhO" data-secret="8ggy6UWqhO" width="500" height="282" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+</div></figure>
+
+
+
+<p>To prevent a destabilizing run on the bank and preserve its liquidity while ownership solutions were being sought, the central bank enacted strict temporary withdrawal and payment caps.</p>
+
+
+
+<p>These measures were coupled with official assurances from the central bank that customer deposits remained safely accounted for within the bank, backed by the national Deposit Insurance Fund.</p>
+
+
+
+<p></p>
+
+
+
+<p>The opposition has fiercely criticized Prime Minister Hristijan Mickoski and the National Bank Governor for greenlighting the entry of Alta Bank into North Macedonia&#8217;s market in 2025.</p>
+
+
+
+<p>According to Venko Filipče, leader of the opposition Social Democratic Union (SDSM), the bank is tied to “criminally acquired money&#8221;.</p>
+
+
+
+<p>In addition, the opposition called upon the Basic Public Prosecutor&#8217;s Office to launch comprehensive investigations into how the bank obtained its operating permit and whether proper risk assessments were intentionally bypassed.</p>
+
+
+
+<p>The National Bank of North Macedonia responded by filing criminal complaints against four senior SDMS officials, including Filipče, alleging that their public statements spread &#8220;unfounded accusations&#8221; and caused unjustified panic, fear, and sabotage among citizens.</p>
+
+
+
+<p>In turn, Filipče fired back on social media, declaring that his party would file its own counter-complaints against the authorities for their handling of Alta Bank&#8217;s entry and the subsequent freezing of public and private funds.</p>
+
+
+
+<p>On 11 November 2026, the Parliament of North Macedonia held a supervisory oversight hearing regarding the crisis at Alta Banka AD Bitola. The session examined the introduction of temporary administration at the bank and the institutional responsibility of state regulators following the collapse of its parent company.</p>
+
+
+
+<p>Appearing as a witness, Hristijan Mickoski  argued that initial discussions regarding Alta Bank&#8217;s entry into Stopanska Banka Bitola occurred during the previous SDSM and DUI government led by Dimitar Kovačevski.</p>
+
+
+
+<p>Prime Minister claimed  that Alta Bank AD Bitola will not go bankrupt and assured depositors that their funds are safe.</p>
+
+
+
+<p>Vice Governor Ana Mitreska explained that although Alta Bank Serbia is in bankruptcy, it still owns roughly 95 percent of the Bitola branch. </p>
+
+
+
+<p>She confirmed that the Law on Banks allows the National Bank to sell those shares to find a new owner.</p>
+
+
+
+<p

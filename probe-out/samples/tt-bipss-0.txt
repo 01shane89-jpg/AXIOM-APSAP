@@ -1,0 +1,95 @@
+https://bipss.org.bd/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>BIPSS</title>
+	<atom:link href="https://bipss.org.bd/feed/" rel="self" type="application/rss+xml" />
+	<link>https://bipss.org.bd</link>
+	<description>Bangladesh Institute of Peace and Security Studies</description>
+	<lastBuildDate>Wed, 11 Nov 2026 11:09:15 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://bipss.org.bd/wp-content/uploads/2019/08/fav.png</url>
+	<title>BIPSS</title>
+	<link>https://bipss.org.bd</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>The Securitization of Dissent: How States Turn Political Grievances into Security Threats</title>
+		<link>https://bipss.org.bd/the-securitization-of-dissent-how-states-turn-political-grievances-into-security-threats/</link>
+					<comments>https://bipss.org.bd/the-securitization-of-dissent-how-states-turn-political-grievances-into-security-threats/#respond</comments>
+		
+		<dc:creator><![CDATA[BIPSS]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:09:14 +0000</pubDate>
+				<category><![CDATA[BIPSS COMMENTARY]]></category>
+		<guid isPermaLink="false">https://bipss.org.bd/?p=11536</guid>
+
+					<description><![CDATA[Political dissent is an essential component of democratic society, yet governments increasingly frame protests, opposition movements and public grievances as threats to national security. In this commentary, BIPSS Research Assistant Farhana Rashid discusses how states use securitization as a tool of political control to delegitimise dissent, justify repression and consolidate power. Drawing on recent unrest &#8230;]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Political dissent is an essential component of democratic society, yet governments increasingly frame protests, opposition movements and public grievances as threats to national security. In this commentary, BIPSS Research Assistant Farhana Rashid discusses how states use securitization as a tool of political control to delegitimise dissent, justify repression and consolidate power. Drawing on recent unrest across Europe and the July 2024 uprising in Bangladesh, she examines how legitimate political grievances can be transformed into security concerns. The commentary highlights the consequences of such practices for democratic freedoms, civil liberties and state-society relations. It also explores the importance of desecuritizing dissent through dialogue, institutional accountability and democratic engagement.</p>
+
+
+
+<div class="wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link has-white-color has-midnight-gradient-background has-text-color has-background has-link-color has-medium-font-size has-custom-font-size wp-element-button" href="https://bipss.org.bd/pdf/The%20Securitization%20of%20Dissent_Farhana%20Rashid.pdf">Click here to read the full commentary&#8230;</a></div>
+</div>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://bipss.org.bd/the-securitization-of-dissent-how-states-turn-political-grievances-into-security-threats/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>When Not to Compete: Rethinking the Global AI Race</title>
+		<link>https://bipss.org.bd/when-not-to-compete-rethinking-the-global-ai-race/</link>
+					<comments>https://bipss.org.bd/when-not-to-compete-rethinking-the-global-ai-race/#respond</comments>
+		
+		<dc:creator><![CDATA[BIPSS]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:05:40 +0000</pubDate>
+				<category><![CDATA[BIPSS COMMENTARY]]></category>
+		<guid isPermaLink="false">https://bipss.org.bd/?p=11529</guid>
+
+					<description><![CDATA[BIPSS Research Associate Mohosina Mostofa Mity examines why countries should reconsider the assumption that they must compete in every aspect of the global AI race. The commentary argues that technological competition without strategic judgement can generate enormous financial costs, deepen inequalities, intensify security risks and divert resources from more pressing national priorities. Drawing on international &#8230;]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">BIPSS Research Associate Mohosina Mostofa Mity examines why countries should reconsider the assumption that they must compete in every aspect of the global AI race. The commentary argues that technological competition without strategic judgement can generate enormous financial costs, deepen inequalities, intensify security risks and divert resources from more pressing national priorities. Drawing on international experiences, it explores how strategic restraint, selective investment and cooperation can produce greater long-term value than competition alone. It also assesses Bangladesh’s AI ambitions in light of its socio-economic and institutional realities, arguing for a development approach that prioritises practical applications, human welfare and national interests over technological prestige.</p>
+
+
+
+<div class="wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link has-white-color has-midnight-gradient-background has-text-color has-background has-link-color has-medium-font-size has-custom-font-size wp-element-button" href="https://bipss.org.bd/pdf/When%20Not%20to%20Compete_Rethinking%20Global%20AI%20Race_Mohosina%20Mity.pdf">Click here to read the full commentary&#8230;</a></div>
+</div>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://bipss.org.bd/when-not-to-compete-rethinking-the-global-ai-race/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Weaponizing Survival: Water, Land and Livelihoods in Conflict</title>
+		<link>https://bipss.org.bd/weaponizing-survival-water-land-and-livelihoods-in-conflict/</link>
+					<comments>https://bipss.org.bd/weaponizing-survival-water-land-and-livelihoods-in-conflict/#respond</comments>
+		
+		<dc:creator><![CDATA[BIPSS]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:04:30 +0000</pubDate>
+				<category><![CDATA[BIPSS COMMENTARY]]></category>
+		<guid isPermaLink="false">https://bipss.org.bd/?p=11528</guid>
+
+					<description><![CDATA[BIPSS Research Assistant Jannatul Toba Jhumu examines how access to water, food, land, energy and basic services is increasingly weaponized as a means of political and military coercion in modern conflicts. Drawing on examples from Gaza, Sudan, Myanmar and Ukraine, she explores how the denial of essential resources undermines civilian survival, destroys livelihoods and deepens &#8230;]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><em>BIPSS Research Assistant Jannatul Toba Jhumu examines how access to water, food, land, energy and basic services is increasingly weaponized as a means of political and military coercion in modern conflicts. Drawing on examples from Gaza, Sudan, Myanmar and Ukraine, she explores how the denial of essential resources undermines civilian survival, destroys livelihoods and deepens human insecurity. Toba also highlights the gap between international humanitarian law and its enforcement, questioning why deliberate deprivation of civilian populations so rarely leads to meaningful accountability. She argues that the weaponization of survival is not merely a consequence of conflict but can itself be a strategy of warfare. The central question is whether the international community can move be

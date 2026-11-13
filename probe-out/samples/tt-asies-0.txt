@@ -1,0 +1,109 @@
+https://asies.org.gt/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Asies</title>
+	<atom:link href="https://asies.org.gt/feed/" rel="self" type="application/rss+xml" />
+	<link>https://asies.org.gt/</link>
+	<description>Asociación de Investigación y Estudios Sociales</description>
+	<lastBuildDate>Thu, 29 Oct 2026 15:18:45 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://asies.org.gt/wp-content/uploads/2024/12/cropped-icono_blanco_255-150x150.png</url>
+	<title>Asies</title>
+	<link>https://asies.org.gt/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Cuando participar no es solo cuestión de motivación</title>
+		<link>https://asies.org.gt/cuando-participar-no-es-solo-cuestion-de-motivacion/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=cuando-participar-no-es-solo-cuestion-de-motivacion</link>
+		
+		<dc:creator><![CDATA[Comunicación]]></dc:creator>
+		<pubDate>Thu, 29 Oct 2026 15:17:39 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<category><![CDATA[Noticias]]></category>
+		<guid isPermaLink="false">https://asies.org.gt/?p=40556</guid>
+
+					<description><![CDATA[<p>Karen López* Impartir una clase en una comunidad rural es desafiante cuando los estudiantes parecen más cómodos escuchando que participando; en algún momento, la desconexión se hace evidente. Algunos bajan la mirada para pasar desapercibidos, mientras otros prefieren sentarse en las últimas filas. A simple vista, estas conductas podrían interpretarse como falta de respeto, de [&#8230;]</p>
+<p>The post <a href="https://asies.org.gt/cuando-participar-no-es-solo-cuestion-de-motivacion/">Cuando participar no es solo cuestión de motivación</a> appeared first on <a href="https://asies.org.gt">Asies</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="has-text-align-right has-cyan-bluish-gray-color has-text-color has-link-color wp-elements-3 wp-block-paragraph"><em>Karen López</em>*</p>
+
+
+
+<p class="wp-block-paragraph">Impartir una clase en una comunidad rural es desafiante cuando los estudiantes parecen más cómodos escuchando que participando; en algún momento, la desconexión se hace evidente. Algunos bajan la mirada para pasar desapercibidos, mientras otros prefieren sentarse en las últimas filas. A simple vista, estas conductas podrían interpretarse como falta de respeto, de valores o de interés en el desarrollo personal y social.</p>
+
+
+
+<p class="wp-block-paragraph">Existe una clara diferencia entre los jóvenes de comunidades rurales y urbanas en sus formas de participación y en sus experiencias educativas, sociales y culturales. Algunas personas podrían atribuir estas diferencias exclusivamente a factores culturales: considerarían que los jóvenes del área urbana son más extrovertidos, mientras que los de comunidades rurales son más tímidos o tienen menos disposición para involucrarse en asuntos sociales y educativos.</p>
+
+
+
+<p class="wp-block-paragraph">Sin embargo, la participación de los jóvenes de áreas rurales va más allá de la voluntad, el interés y la motivación individual. Se trata de un fenómeno multifactorial, condicionado por factores como el racismo, la discriminación y las consecuencias de los conflictos armados, que pueden generar barreras que limiten las oportunidades de los jóvenes para involucrarse activamente en la sociedad.</p>
+
+
+
+<p class="wp-block-paragraph">En el contexto guatemalteco, el conflicto armado interno tuvo consecuencias significativas para la integración social de la población rural. Según la Comisión para el Esclarecimiento Histórico (CEH, 1999), 83 % de las víctimas plenamente identificadas durante el conflicto pertenecía al pueblo maya, lo que evidencia el impacto desproporcionado de la violencia sobre la población indígena.</p>
+
+
+
+<p class="wp-block-paragraph">Estas experiencias de violencia y exclusión contribuyeron al debilitamiento de los vínculos comunitarios y de las redes de confianza, cuyas consecuencias pueden ser relevantes para comprender las dificultades que persisten en la participación social y política de las comunidades rurales.</p>
+
+
+
+<p class="wp-block-paragraph">Considerar este tipo de hechos va más allá de un simple análisis. Fiedler (2023), en su estudio &#8220;<em>What do we know about how armed conflict affects social cohesion</em>?&#8221;, señala que los conflictos armados pueden no solo debilitar la confianza social sino también afectar negativamente la relación entre Estado y ciudadanía.</p>
+
+
+
+<p class="wp-block-paragraph">En Guatemala, las dinámicas de violencia del conflicto armado interno dejaron secuelas profundas, aunque no siempre visibles, que se manifiestan en formas de exclusión y discriminación que persisten en las relaciones sociales y afectan de manera particular a los pueblos indígenas.</p>
+
+
+
+<p class="wp-block-paragraph">En este contexto, la discriminación no afecta únicamente a las personas de manera individual sino también a su vínculo con el entorno social, particularmente a su sentido de pertenencia. Según Pineda (s.f.), la discriminación afecta este sentido, relacionado con la percepción de ser igual al resto de las personas que forman parte de la sociedad.</p>
+
+
+
+<p class="wp-block-paragraph">El sentido de pertenencia está vinculado a la participación social, ya que puede motivar al individuo a involucrarse en asuntos que afectan tanto su vida como la de su comunidad. No obstante, este sentido no se desarrolla de forma aislada, sino que está influido por las experiencias del entorno social y las relaciones que establece con otras personas, las cuales pueden favorecerlo o debilitarlo (Allen et al., 2021).</p>
+
+
+
+<p class="wp-block-paragraph">¿Es entonces la participación de los jóvenes de áreas rurales una cuestión de voluntad y motivación? La discriminación y el conflicto armado son solo dos de los múltiples factores que influyen en cómo los jóvenes de comunidades rurales se relacionan con su entorno social y participan en él.</p>
+
+
+
+<p class="wp-block-paragraph">En este sentido, resulta fundamental comprender las causas de la escasa participación de la juventud rural, tomando en consideración los factores históricos y culturales que influyen en su involucramiento en los distintos espacios de participación.</p>
+
+
+
+<p class="wp-block-paragraph">Para ello, es necesario promover la creación de espacios multiculturales que respondan a la diversidad étnica y cultural del país, comenzando por los centros educativos y los espacios laborales y públicos. Asimismo, es importante impulsar políticas públicas que fomenten el conocimiento, el reconocimiento y el respeto por la diversidad cultural, contribuyendo así a construir entornos más inclusivos y equitativos que favorezcan la participación de las juventudes rurales.</p>
+
+
+
+<p class="has-medium-font-size wp-block-paragraph"><strong>Referencias</strong></p>
+
+
+
+<p class="wp-block-paragraph">Allen, K.-A., Kern, M. L., Rozek, C. S., McInerney, D., &amp; Slavich, G. M. (2021). <em>Belonging: A review of conceptual issues, an integrative framework, and directions for future research.</em> Australian Journal of Psychology, <em>73</em>(1), 87–102. https://n9.cl/k7mll</p>
+
+
+
+<p class="wp-block-paragraph">Comisión para el Esclarecimiento Histórico. (1999). Guatemala: Memoria del silencio. Oficina de Servicios para Proyectos de las Naciones Unidas. https://n9.cl/zie4vz</p>
+
+
+
+<p class="wp-block-paragraph">Fiedler, C. (2023). What do we know about how armed conflict affects social cohesion? A review of the empirical literature. Internation

@@ -1,0 +1,146 @@
+https://bidpa.bw/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>BIDPA</title>
+	<atom:link href="https://bidpa.bw/feed/" rel="self" type="application/rss+xml" />
+	<link>https://bidpa.bw</link>
+	<description></description>
+	<lastBuildDate>Mon, 09 Nov 2026 07:53:56 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://bidpa.bw/wp-content/uploads/2023/10/cropped-favicon-32x32.png</url>
+	<title>BIDPA</title>
+	<link>https://bidpa.bw</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>AfriPal Botswana 2027: Call for Papers Now Open</title>
+		<link>https://bidpa.bw/afripal-botswana-2027-call-for-papers-now-open/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 07:53:42 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<category><![CDATA[Updates]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=2364</guid>
+
+					<description><![CDATA[<p>The African Regional Convening on Parliament and Legislation (AfriPal) Botswana 2027, in association with the Botswana Institute for Development Policy Analysis (BIDPA), invites researchers, academics and professionals to contribute to the conversation. Under the message “Your Research Belongs on the [&#8230;]</p>
+<p>The post <a href="https://bidpa.bw/afripal-botswana-2027-call-for-papers-now-open/">AfriPal Botswana 2027: Call for Papers Now Open</a> first appeared on <a href="https://bidpa.bw">BIDPA</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>BIDPA  and WUC SIGN MoU</title>
+		<link>https://bidpa.bw/bidpa-and-wuc-sign-mou/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Tue, 15 Sep 2026 15:31:00 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=2350</guid>
+
+					<description><![CDATA[<p>Strengthening Collaboration, Advancing Water Sector Innovation Water Utilities Corporation (WUC) and the Botswana Institute for Development Policy Analysis (BIDPA) have signed a Memorandum of Understanding to provide a framework for collaboration in areas of mutual interest. The partnership brings together [&#8230;]</p>
+<p>The post <a href="https://bidpa.bw/bidpa-and-wuc-sign-mou/">BIDPA  and WUC SIGN MoU</a> first appeared on <a href="https://bidpa.bw">BIDPA</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>2nd Africa Regional Conference on Parliament and Legislation (AFRIPAL 2027)</title>
+		<link>https://bidpa.bw/2nd-africa-regional-conference-on-parliament-and-legislation-afripal-2027/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Tue, 02 Jun 2026 19:52:44 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=2093</guid>
+
+					<description><![CDATA[<p>2nd Africa Regional Conference on Parliament and Legislation (AFRIPAL 2027), organized in partnership with the Botswana Institute for Development Policy Analysis (BIDPA). Key details shown: Event: 2nd Africa Regional Conference on Parliament and Legislation (AFRIPAL 2027) Theme: African Parliaments in [&#8230;]</p>
+<p>The post <a href="https://bidpa.bw/2nd-africa-regional-conference-on-parliament-and-legislation-afripal-2027/">2nd Africa Regional Conference on Parliament and Legislation (AFRIPAL 2027)</a> first appeared on <a href="https://bidpa.bw">BIDPA</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>BIDPA and Econsult Botswana host Development Policy Seminar</title>
+		<link>https://bidpa.bw/bidpa-and-econsult-botswana-host-development-policy-seminar/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Thu, 09 Apr 2026 01:50:35 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=2011</guid>
+
+					<description><![CDATA[<p>The Botswana Institute for Development Policy Analysis (BIDPA), in partnership with EConsult Botswana, will host a Development Policy Seminar under the theme: “Natural Resources and the Middle-Income Trap: Lessons for Botswana’s Second Transformation.” The seminar will provide a platform for [&#8230;]</p>
+<p>The post <a href="https://bidpa.bw/bidpa-and-econsult-botswana-host-development-policy-seminar/">BIDPA and Econsult Botswana host Development Policy Seminar</a> first appeared on <a href="https://bidpa.bw">BIDPA</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>BIDPA reviews the 2026-2027 Budget</title>
+		<link>https://bidpa.bw/bidpa-reviews-the-2026-2027-budget/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Wed, 18 Feb 2026 10:46:19 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=2004</guid>
+
+					<description><![CDATA[<p>The Botswana Institute for Development Policy Analysis (BIDPA) recently convened a high-level dialogue which brought together policymakers, economists, private sector leaders and civil society to examine the implications of the 2026/27 National Budget for the country’s economic future. The forum [&#8230;]</p>
+<p>The post <a href="https://bidpa.bw/bidpa-reviews-the-2026-2027-budget/">BIDPA reviews the 2026-2027 Budget</a> first appeared on <a href="https://bidpa.bw">BIDPA</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>BIDPA Celebrates 30-years of impact</title>
+		<link>https://bidpa.bw/bidpa-celebrates-30-years-of-impact/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Fri, 07 Nov 2025 09:36:13 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=1950</guid>
+
+					<description><![CDATA[<p>BIDPA marked its 30th anniversary with symposium and a gala dinner under the theme “Celebrating 30 Years of Providing Evidence-based Policy Advice: The Role and Future of Think Tanks in a Rapidly Changing World. Delivering a keynote address at a [&#8230;]</p>
+<p>The post <a href="https://bidpa.bw/bidpa-celebrates-30-years-of-impact/">BIDPA Celebrates 30-years of impact</a> first appeared on <a href="https://bidpa.bw">BIDPA</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>BIDPA host a policy dialogue</title>
+		<link>https://bidpa.bw/bidpa-host-a-policy-dialogue/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Fri, 25 Jul 2025 07:43:37 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=1851</guid>
+
+					<description><![CDATA[<p>The Botswana Institute for Development Policy Analysis (BIDPA) is hosting a Policy Dialogue on 28th, July 2025, in Gaborone. The theme of the dialogue is “Rethinking Botswana’s Vegetable Import Ban and Implications for Food Security”. This event will bring together [&#8230;]</p>
+<p>The post <a href="https://bidpa.bw/bidpa-host-a-policy-dialogue/">BIDPA host a policy dialogue</a> first appeared on <a href="https://bidpa.bw">BIDPA</a>.</p>]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>BIDPA study reveals individuals from rural areas more likely to be multidimensionally poor</title>
+		<link>https://bidpa.bw/bidpa-study-reveals-individuals-from-rural-areas-more-likely-to-be-multidimensionally-poor/</link>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Wed, 20 Nov 2024 06:50:29 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://bidpa.bw/?p=1746</guid>
+
+					<description><![CDATA[<p>The Botswana Institute for Development Policy Analysis, (BIDPA) has published a working paper titled; Factors Influencing the Probability of Being Left Behind: A multidimensional Povert

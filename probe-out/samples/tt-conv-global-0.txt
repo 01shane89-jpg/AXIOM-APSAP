@@ -1,0 +1,71 @@
+https://theconversation.com/global/politics/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/topics/diplomacy-79/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/topics/diplomacy-79/articles.atom"/>
+  <title>Diplomacy – The Conversation</title>
+  <updated>2026-11-13T04:21:18Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296418</id>
+    <published>2026-11-13T04:21:18Z</published>
+    <updated>2026-11-13T04:21:18Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/avoiding-the-f-word-australia-and-turkey-dance-around-fossil-fuels-at-cop31-summit-296418"/>
+    <title>Avoiding the ‘F word’: Australia and Turkey dance around fossil fuels at COP31 summit</title>
+    <content type="html">&lt;p&gt;One phrase has been glaringly absent from this year’s &lt;a href="https://theconversation.com/plenty-of-reasons-for-hope-what-30-years-of-climate-talks-have-achieved-296398"&gt;COP31 climate summit&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Fossil fuels are not mentioned in the COP31 &lt;a href="https://www.genevaenvironmentnetwork.org/resources/updates/climate-action-from-geneva-to-antalya-un-climate-change-conference-cop31/"&gt;priority areas&lt;/a&gt;. Key speeches from the leaders of Australia and Turkey (Türkiye), co-hosts of the conference, have largely &lt;a href="https://unfccc.int/news/transcript-of-press-conference-opening-remarks-today-of-cop31-president-president-of-negotiations-un"&gt;failed to address&lt;/a&gt; the emissions-shaped elephant in the room.&lt;/p&gt;
+
+&lt;p&gt;That’s despite mounting pressure from &lt;a href="https://www.greenpeace.org/international/story/86619/cop31-antalya/"&gt;environmental groups&lt;/a&gt;, &lt;a href="https://theconversation.com/australias-climate-minister-is-about-to-walk-a-diplomatic-tightrope-at-cop31-294565"&gt;Pacific nations&lt;/a&gt; and COP30 host nation &lt;a href="https://ipam.org.br/cop31-ipam-highlights-lulas-call-for-action-against-the-climate-crisis/"&gt;Brazil&lt;/a&gt; to abandon coal, oil and gas and slash global emissions.&lt;/p&gt;
+
+&lt;p&gt;So why does this matter? And what does it mean for climate action worldwide?&lt;/p&gt;
+
+&lt;hr&gt;
+&lt;p&gt;
+  &lt;em&gt;
+    &lt;strong&gt;
+      Read more:
+      &lt;a href="https://theconversation.com/plenty-of-reasons-for-hope-what-30-years-of-climate-talks-have-achieved-296398"&gt;‘Plenty of reasons for hope’: what 30 years of climate talks have achieved&lt;/a&gt;
+    &lt;/strong&gt;
+  &lt;/em&gt;
+&lt;/p&gt;
+&lt;hr&gt;
+
+
+
+
+&lt;h2&gt;A strange absence&lt;/h2&gt;
+
+&lt;p&gt;In their opening speeches, neither Turkish President &lt;a href="https://www.akparti.org.tr/en/main-slider-news/president-recep-tayyip-erdogan-delivered-a-speech-at-the-cop31-leaders-summit-opening-event-in-antalya-11-11-2026-15-00-00/"&gt;Recep Tayyip Erdoğan&lt;/a&gt; nor Australian Prime Minister &lt;a href="https://www.pm.gov.au/media/cop31-leaders-summit-opening-ceremony"&gt;Anthony Albanese&lt;/a&gt; mentioned fossil fuels.&lt;/p&gt;
+
+&lt;p&gt;At the official commencement of COP31, the Australian president of negotiations and environment minister, &lt;a href="https://unfccc.int/news/transcript-of-press-conference-opening-remarks-today-of-cop31-president-president-of-negotiations-un"&gt;Chris Bowen&lt;/a&gt;, twice uttered the words fossil fuels. Neither reference was tied to specific goals for a global fossil fuel phase out or weaning Australia, one of the world’s &lt;a href="https://theconversation.com/dug-up-in-australia-burned-around-the-world-exporting-fossil-fuels-undermines-climate-targets-236248"&gt;largest exporters&lt;/a&gt; of coal and gas, off them. In his opening remarks, Turkey’s environment minister &lt;a href="https://unfccc.int/news/transcript-of-press-conference-opening-remarks-today-of-cop31-president-president-of-negotiations-un"&gt;Murat Kurum&lt;/a&gt; didn’t mention them at all.&lt;/p&gt;
+
+&lt;p&gt;This reluctance to spotlight fossil fuels is also reflected in the priority areas, or main aims, of COP31 that were agreed by the co-host nations.&lt;/p&gt;
+
+&lt;p&gt;The headline goal is the “&lt;a href="https://www.abc.net.au/news/2026-11-10/cop31-tingle-global-temperature-1-5c/107366402?utm_source=abc_news_app&amp;amp;utm_medium=content_shared&amp;amp;utm_campaign=abc_news_app&amp;amp;utm_content=link"&gt;35-by-35&lt;/a&gt;” target to produce 35% of the world’s energy from electricity, increasingly using renewables, by 2035. Other priorities include halving the growth of &lt;a href="https://unfccc.int/news/un-secretary-general-s-remarks-to-the-leaders-roundtable-zero-waste-circularity-and-methane"&gt;global waste&lt;/a&gt; and cutting energy consumption in the &lt;a href="https://unfccc.int/news/cop31-presidency-announces-new-targets-on-global-electrification-cutting-waste-resilient-cities"&gt;building sector&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Yet, nowhere in sight is a plan or timeline to eliminate fossil fuels.&lt;/p&gt;
+
+
+
+&lt;hr&gt;
+&lt;p&gt;
+  &lt;em&gt;
+    &lt;strong&gt;
+      Read more:
+      &lt;a href="https://theconversation.com/global-carbon-emissions-may-have-peaked-in-2026-but-only-time-will-tell-296152"&gt;Global carbon emissions may have peaked in 2026 – but only time will tell&lt;/a&gt;
+    &lt;/strong&gt;
+  &lt;/em&gt;
+&lt;/p&gt;
+&lt;hr&gt;
+
+
+&lt;h2&gt;Why the reluctance?&lt;/h2&gt;
+
+&lt;p&gt;Negotiators may point to previous COPs, where the very mention of fossil fuels has sparked contention. At COP30 in Brazil, major oil producers Russia and Saudi Arabia &lt;a href="https://theconversation.com/cop30-petrostates-block-climate-deal-once-again-but-some-countries-are-taking-their-own-decisive-steps-to-phase-out-fossil-fuels-270580"&gt;fought hard&lt;/a&gt; to ensure fossil fuels did not feature in the final agreed text. In comparison, the 2035 electrification goal may be more likely to &lt;a href="https://www.theage.com.au/environment/climate-change/harry-kewell-was-his-neighbour-paul-keating-was-his-hero-the-making-of-climate-change-minister-chris-bowen-20261030-p616rm.html?collection=p619gp&amp;amp;gb=1"&gt;achieve consensus&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;But there’s a simpler explanation for this fossil fuel avoidance: any discussion of these fuels would undermine the credibility of the co-host nations as climate leaders, given their common reliance on coal, oil and gas.&lt;/p&gt;
+
+&lt;p&gt;Australia is the world’s &lt;a href="https://www.climatecouncil.org.au/momentum-monitor-kpi/fossil-fuel-exports/"&gt;third-largest exporter&lt;/a&gt; of fossil fuels, behind only Russia and the United States. These offshore emissions bring Australia’s total emissions &lt;a href="https://climateanalytics.org/publications/evaluating-the-significance-of-australias-global-fossil-fuel-carbon-footprint"&gt;close to 5%&lt;/a&gt; of the global footprint. What’s more, Australia &lt;a href="https://www.abc.net.au/news/2026-11-09/global-emissions-footprint-overshadows-australias-image/107329288?utm_source=abc_news_app&amp;amp;utm_medium=content_shared&amp;amp;utm_campaign=abc_news_app&amp;amp;utm_content=link"&gt;continued approving&lt;/a&gt; new fossil fuel mining projects, even after its role at COP31 was confirmed.&lt;/p&gt;
+
+&lt;p&gt;Turkey is not a fossil fuel exporter but remains a &lt;a href="https://www.theenergymix.com/cop31-host-turkiye-co-president-australia-falling-short-on-clean-energy-electrification-pledge/"&gt;major consumer&lt;/a&gt; of them, &lt;a href="https://www.worldometers.info/coal/coal-consumption-by-country/"&gt;particularly coal&lt;/a&gt;. On the eve of COP31 talks, Turkish President Erdogan &lt;a href="https://www.arabnews.com/middle-east/erdogan-hails-new-oil-find-ahead-of-cop31-speech-3010886"

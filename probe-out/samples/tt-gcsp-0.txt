@@ -1,0 +1,116 @@
+https://www.gcsp.ch/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xml:base="https://www.gcsp.ch/">
+  <channel>
+    <title>GCSP</title>
+    <link>https://www.gcsp.ch/</link>
+    <description/>
+    <language>en</language>
+    <atom:link href="https://www.gcsp.ch/rss.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+  <title>GCSP: 2019 Course Videos Promo Video</title>
+  <link>https://www.gcsp.ch/multimedia/gcsp-2019-course-videos-promo-video</link>
+  <description>
+&lt;span&gt;GCSP: 2019 Course Videos Promo Video&lt;/span&gt;
+
+&lt;span&gt;&lt;span&gt;admin&lt;/span&gt;&lt;/span&gt;
+
+&lt;span&gt;&lt;time datetime="2019-01-22T17:18:49+01:00" title="Tuesday, January 22, 2019 - 17:18"&gt;Tue, 01/22/2019 - 17:18&lt;/time&gt;
+&lt;/span&gt;
+
+            &lt;div&gt;&lt;p&gt;At the GCSP, we believe that effective and forward-looking leaders and institutions need to build a broad picture of what is happening, discover the intricacies of geopolitics, develop new skills and foster the learning agility to lead in times of tumultuous change&lt;/p&gt;&lt;/div&gt;
+      
+  &lt;div&gt;
+    &lt;div&gt;Location&lt;/div&gt;
+              &lt;div&gt;&lt;a href="https://www.gcsp.ch/taxonomy/term/73" hreflang="en"&gt;Europe&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+            &lt;div&gt;The GCSP&lt;/div&gt;
+      
+            &lt;div&gt;&lt;a href="https://www.gcsp.ch/taxonomy/term/57" hreflang="en"&gt;Videos&lt;/a&gt;&lt;/div&gt;
+      
+            &lt;div&gt;    &lt;picture&gt;
+                  &lt;source srcset="https://www.gcsp.ch/sites/default/files/styles/banner_lg_w1920/public/2020-02/Thumbnails_GCSP%20Course.jpg.webp?itok=Xod6frWO 1x, https://www.gcsp.ch/sites/default/files/styles/banner_2x_lg_w3840/public/2020-02/Thumbnails_GCSP%20Course.jpg.webp?itok=QNT5ytqA 2x" media="(min-width: 1024px)" type="image/webp" width="1920" height="1080"&gt;
+              &lt;source srcset="https://www.gcsp.ch/sites/default/files/styles/banner_md_w800/public/2020-02/Thumbnails_GCSP%20Course.jpg.webp?itok=osb8WGB9 1x, https://www.gcsp.ch/sites/default/files/styles/banner_2x_md_w1600/public/2020-02/Thumbnails_GCSP%20Course.jpg.webp?itok=-8_xp8Lf 2x" media="(min-width: 640px)" type="image/webp" width="800" height="450"&gt;
+              &lt;source srcset="https://www.gcsp.ch/sites/default/files/styles/banner_sm_w640/public/2020-02/Thumbnails_GCSP%20Course.jpg.webp?itok=wCVR7Oso 1x, https://www.gcsp.ch/sites/default/files/styles/banner_2x_sm_w1280/public/2020-02/Thumbnails_GCSP%20Course.jpg.webp?itok=82hsbRsZ 2x" media="(min-width: 320px)" type="image/webp" width="640" height="360"&gt;
+                  &lt;img loading="eager" width="640" height="360" src="https://www.gcsp.ch/sites/default/files/styles/banner_sm_w640/public/2020-02/Thumbnails_GCSP%20Course.jpg.webp?itok=wCVR7Oso" alt="GCSP Course promotion 2019"&gt;
+
+  &lt;/picture&gt;
+
+&lt;/div&gt;
+      
+            &lt;div&gt;&lt;div class="video-embed-field-provider-youtube video-embed-field-responsive-video"&gt;&lt;iframe width="854" height="480" frameborder="0" allowfullscreen="allowfullscreen" referrerpolicy="strict-origin-when-cross-origin" loading="lazy" title="YouTube | GCSP: 2019 Course Videos Promo Video" data-src="https://www.youtube.com/embed/--MROfHno4k" data-name="youtube"&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+      
+  &lt;div&gt;
+    &lt;div&gt;Tags&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;a href="https://www.gcsp.ch/tags/gcsp" hreflang="en"&gt;The GCSP&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+</description>
+  <pubDate>Tue, 22 Jan 2019 16:18:49 +0000</pubDate>
+    <dc:creator>admin</dc:creator>
+    <guid isPermaLink="false">116 at https://www.gcsp.ch</guid>
+    </item>
+<item>
+  <title>Governing technological change: Manuel Muniz</title>
+  <link>https://www.gcsp.ch/multimedia/governing-technological-change-manuel-muniz</link>
+  <description>
+&lt;span&gt;Governing technological change: Manuel Muniz&lt;/span&gt;
+
+&lt;span&gt;&lt;span&gt;admin&lt;/span&gt;&lt;/span&gt;
+
+&lt;span&gt;&lt;time datetime="2019-01-22T16:57:37+01:00" title="Tuesday, January 22, 2019 - 16:57"&gt;Tue, 01/22/2019 - 16:57&lt;/time&gt;
+&lt;/span&gt;
+
+            &lt;div&gt;&lt;p&gt;Dr Manuel Muniz, Dean of the School of International Relations, IE University in Madrid, visited the GCSP as a guest expert for the course on 'Emerging Issues in International Security' from 12-14 March 2018. To find out more about GCSP courses visit www.gcsp.ch/courses&lt;/p&gt;&lt;/div&gt;
+      
+  &lt;div&gt;
+    &lt;div&gt;Location&lt;/div&gt;
+              &lt;div&gt;&lt;a href="https://www.gcsp.ch/taxonomy/term/73" hreflang="en"&gt;Europe&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+            &lt;div&gt;Strategic Anticipation&lt;/div&gt;
+      
+            &lt;div&gt;&lt;a href="https://www.gcsp.ch/taxonomy/term/57" hreflang="en"&gt;Videos&lt;/a&gt;&lt;/div&gt;
+      
+            &lt;div&gt;    &lt;picture&gt;
+                  &lt;source srcset="https://www.gcsp.ch/sites/default/files/styles/banner_lg_w1920/public/2020-02/Thumbnail_%20Muniz.jpg.webp?itok=t4k7Sn52 1x, https://www.gcsp.ch/sites/default/files/styles/banner_2x_lg_w3840/public/2020-02/Thumbnail_%20Muniz.jpg.webp?itok=lFiNKdVa 2x" media="(min-width: 1024px)" type="image/webp" width="1920" height="1080"&gt;
+              &lt;source srcset="https://www.gcsp.ch/sites/default/files/styles/banner_md_w800/public/2020-02/Thumbnail_%20Muniz.jpg.webp?itok=1ot7eDBV 1x, https://www.gcsp.ch/sites/default/files/styles/banner_2x_md_w1600/public/2020-02/Thumbnail_%20Muniz.jpg.webp?itok=NQhNRWIV 2x" media="(min-width: 640px)" type="image/webp" width="800" height="450"&gt;
+              &lt;source srcset="https://www.gcsp.ch/sites/default/files/styles/banner_sm_w640/public/2020-02/Thumbnail_%20Muniz.jpg.webp?itok=1jSBT84L 1x, https://www.gcsp.ch/sites/default/files/styles/banner_2x_sm_w1280/public/2020-02/Thumbnail_%20Muniz.jpg.webp?itok=MFgDwFx_ 2x" media="(min-width: 320px)" type="image/webp" width="640" height="360"&gt;
+                  &lt;img loading="eager" width="640" height="360" src="https://www.gcsp.ch/sites/default/files/styles/banner_sm_w640/public/2020-02/Thumbnail_%20Muniz.jpg.webp?itok=1jSBT84L" alt="Manuel Muniz Photo Interview GCSP"&gt;
+
+  &lt;/picture&gt;
+
+&lt;/div&gt;
+      
+            &lt;div&gt;&lt;div class="video-embed-field-provider-youtube video-embed-field-responsive-video"&gt;&lt;iframe width="854" height="480" frameborder="0" allowfullscreen="allowfullscreen" referrerpolicy="strict-origin-when-cross-origin" loading="lazy" title="YouTube | Governing technological change: Manuel Muniz" data-src="https://www.youtube.com/embed/J3ozbjifIA4" data-name="youtube"&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+      
+  &lt;div&gt;
+    &lt;div&gt;Tags&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;a href="https://www.gcsp.ch/tags/strategic-anticipation" hreflang="en"&gt;Strategic Anticipation&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+</description>
+  <pubDate>Tue, 22 Jan 2019 15:57:37 +0000</pubDate>
+    <dc:creator>admin</dc:creator>
+    <guid isPermaLink="false">115 at https://www.gcsp.ch</guid>
+    </item>
+<item>
+  <title>Global Terrorism Index 2018: Serge Stroobants</title>
+  <link>https://www.gcsp.ch/multimedia/global-terrorism-index-2018-serge-stroobants</link>
+  <description>
+&lt;span&gt;Global Terrorism Index 2018: Serge Stroobants&lt;/span&gt;
+
+&lt;span&gt;&lt;span&gt;admin&lt;/span&gt;&lt;/span&gt;
+
+&lt;span&gt;&lt;time datetime="2019-01-22T16:52:32+01:00" title="Tuesday, January 22, 2019 - 16:52"&gt;Tue, 01/22/2019 - 16:52&lt;/time&gt;
+&lt;/span&gt;
+
+            &lt;div&gt;&lt;p&gt;Comprehensive data-driven analysis on trends in terrorism, measuring and understanding the real impact of terrorism ISIS may be waning, but terrorism remains a critical global threat. Terrorist attacks will remain high and could wo

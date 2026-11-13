@@ -1,0 +1,47 @@
+https://theconversation.com/uk/world/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/uk/world/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/uk/world/articles.atom"/>
+  <title>World – The Conversation</title>
+  <updated>2026-11-12T13:38:57Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296207</id>
+    <published>2026-11-12T13:38:57Z</published>
+    <updated>2026-11-12T13:38:57Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/ukraine-peace-talks-end-with-no-breakthrough-but-europe-may-be-set-to-return-from-the-cold-296207"/>
+    <title>Ukraine peace talks end with no breakthrough – but Europe may be set to return from the cold</title>
+    <content type="html">&lt;p&gt;The first talks between Russia and Ukraine in nine months have concluded. The most positive thing that can be said about the US-mediated meeting in Abu Dhabi was that the dialogue did not break down and the parties seemed to agree to further meetings. &lt;/p&gt;
+
+&lt;p&gt;There was also at least one tangible result. &lt;a href="https://theconversation.com/topics/russia-1376"&gt;Russia&lt;/a&gt; and Ukraine &lt;a href="https://www.reuters.com/world/europe/us-russia-ukraine-start-second-day-abu-dhabi-peace-talks-2026-11-11/"&gt;agreed&lt;/a&gt; on a large-scale exchange of prisoners of war, the magnitude of which will be clarified over the coming days. Beyond this, however, there were few signs of progress towards a peace agreement. &lt;/p&gt;
+
+&lt;p&gt;Despite Ukrainian president Volodymyr Zelensky’s &lt;a href="https://www.thetimes.com/world/russia-ukraine-war/article/ukraine-russia-peace-talks-abu-dhabi-progress-zelensky-putin-5mx52v65s"&gt;claim&lt;/a&gt; that all participants in the negotiation process “genuinely want to achieve a result before 2027”, the most important issues remain unresolved. These include ceasefire terms, the future status of occupied regions and long-term security guarantees for Ukraine. &lt;/p&gt;
+
+&lt;p&gt;The talks took place against the backdrop of continued fighting on the frontline. Russia’s military currently controls about a fifth of Ukraine, but progress on the battlefield has slowed in 2026 – and has even been reversed – due to &lt;a href="https://theconversation.com/operation-vivaldi-success-of-ukraines-counteroffensive-shows-it-has-learned-to-manoeuvre-on-a-drone-filled-battlefield-294197"&gt;Ukrainian successes&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;With the frontline largely static, Moscow keeps &lt;a href="https://theconversation.com/sodcit-after-battlefield-setbacks-russia-returns-to-destroying-ukraines-morale-294292"&gt;striking Ukrainian cities&lt;/a&gt; and energy sites with missiles and drones. In turn, &lt;a href="https://theconversation.com/ukraines-drone-strikes-are-having-an-impact-on-russia-but-russian-leaders-remain-committed-to-war-287812"&gt;Ukraine has attacked&lt;/a&gt; Russian oil refineries and other energy infrastructure.&lt;/p&gt;
+
+&lt;figure class="align-center zoomable"&gt;
+            &lt;a aria-label="Zoomable image" href="https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=1000&amp;amp;fit=clip"&gt;&lt;img alt="A map showing the control of territory in Ukraine." src="https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=754&amp;amp;fit=clip" srcset="https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=750&amp;amp;fit=crop&amp;amp;dpr=1 600w, https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=30&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=750&amp;amp;fit=crop&amp;amp;dpr=2 1200w, https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=15&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=750&amp;amp;fit=crop&amp;amp;dpr=3 1800w, https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=943&amp;amp;fit=crop&amp;amp;dpr=1 754w, https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=30&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=943&amp;amp;fit=crop&amp;amp;dpr=2 1508w, https://images.theconversation.com/files/771568/original/file-20261112-64-bdkau9.jpg?ixlib=rb-4.1.1&amp;amp;q=15&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=943&amp;amp;fit=crop&amp;amp;dpr=3 2262w" sizes="(min-width: 1466px) 754px, (max-width: 599px) 100vw, (min-width: 600px) 600px, 237px"&gt;&lt;/a&gt;
+            &lt;figcaption&gt;
+              &lt;span class="caption"&gt;The Russian military currently controls a fifth of Ukrainian territory.&lt;/span&gt;
+              &lt;span class="attribution"&gt;&lt;a class="source" href="https://understandingwar.org/research/russia-ukraine/russian-offensive-campaign-assessment-november-11-2026/"&gt;Institute for the Study War&lt;/a&gt;&lt;/span&gt;
+            &lt;/figcaption&gt;
+          &lt;/figure&gt;
+
+&lt;p&gt;According to reports from Abu Dhabi, Ukraine firmly &lt;a href="https://www.kyivpost.com/post/89765"&gt;rejected a proposal&lt;/a&gt; for it to surrender the entire Donbas region in the east of the country in return for peace. Whether the Russian demand for the Donbas indicates a softening of its claim to the Kherson and Zaporizhzhia regions remains too early to determine.&lt;/p&gt;
+
+&lt;p&gt;The deadlock remains on other key issues, too. Russia continues to insist that a restructuring of Europe’s security architecture must be put in place before any ceasefire can take effect, to address what it regards as its legitimate security concerns. &lt;/p&gt;
+
+&lt;p&gt;On the eve of its full-scale invasion in 2022, Russia &lt;a href="https://www.brookings.edu/articles/russias-draft-agreements-with-nato-and-the-united-states-intended-for-rejection/"&gt;demanded the withdrawal&lt;/a&gt; of Nato forces from countries that joined the alliance after 1997. These include the Czech Republic, Hungary, Poland and other eastern European states. If this demand still stands, it is difficult to envisage an end to the war anytime soon. &lt;/p&gt;
+
+&lt;p&gt;Ukraine, for its part, is bracing itself for &lt;a href="https://www.bbc.co.uk/news/articles/cr1ewpd95d21o"&gt;another harsh winter&lt;/a&gt;. It therefore seeks a ceasefire as the starting point for any serious negotiations on peace. This demand, backed by its European supporters, has so far fallen on deaf ears in the Kremlin.&lt;/p&gt;
+
+&lt;p&gt;This was evidenced by missile strikes that continued even during the peace talks themselves. The coercive nature of Russia’s strategy was further underlined by the fact that six major electricity substations in central Ukraine &lt;a href="https://kyivindependent.com/russia-strikes-6-major-power-substations-causing-outages-across-ukraine/"&gt;were reportedly struck&lt;/a&gt; during the night between the two days of negotiations.&lt;/p&gt;
+
+
+
+&lt;p&gt;Perhaps the most important new point of departure for the Abu Dhabi talks was a new initiative by the Trump administration to tie a peace deal to a broader European security framework. US envoy Jared Kushner, the son-in-law of President Donald Trump, has &lt;a href="https://x.com/jaredkushner/status/2118535340898025679"&gt;said this framework&lt;/a&gt; would provide security guarantees to Ukraine while also meeting Russian security demands. &lt;/p&gt;
+
+&lt;p&gt;The details of what such a co

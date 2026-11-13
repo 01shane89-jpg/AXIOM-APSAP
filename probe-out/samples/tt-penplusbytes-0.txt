@@ -1,0 +1,68 @@
+https://www.penplusbytes.org/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Penplusbytes</title>
+	<atom:link href="https://www.penplusbytes.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.penplusbytes.org</link>
+	<description></description>
+	<lastBuildDate>Wed, 11 Nov 2026 13:54:09 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.penplusbytes.org/wp-content/uploads/2026/04/cropped-ppblogo-1-1-32x32.png</url>
+	<title>Penplusbytes</title>
+	<link>https://www.penplusbytes.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>No One Is Off the Hook: What “We All Play a Part” Asks of Ghana</title>
+		<link>https://www.penplusbytes.org/no-one-is-off-the-hook-what-we-all-play-a-part-asks-of-ghana/</link>
+					<comments>https://www.penplusbytes.org/no-one-is-off-the-hook-what-we-all-play-a-part-asks-of-ghana/#respond</comments>
+		
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 13:40:23 +0000</pubDate>
+				<category><![CDATA[Featured Story]]></category>
+		<category><![CDATA[PPB News]]></category>
+		<category><![CDATA[Accountability]]></category>
+		<category><![CDATA[Africa]]></category>
+		<category><![CDATA[AI]]></category>
+		<category><![CDATA[artificial intelligence]]></category>
+		<category><![CDATA[citizens]]></category>
+		<category><![CDATA[Digital tools]]></category>
+		<category><![CDATA[Disinformation]]></category>
+		<category><![CDATA[ghana]]></category>
+		<category><![CDATA[Governance]]></category>
+		<category><![CDATA[media and information literacy]]></category>
+		<category><![CDATA[Social Media]]></category>
+		<guid isPermaLink="false">https://www.penplusbytes.org/?p=10559</guid>
+
+					<description><![CDATA[By Rebecca Avusu, Penplusbytes Every piece of false information has a supply chain. Someone creates it. An algorithm pushes it. A popular page shares it. A radio presenter reads it on air without checking. A worried parent forwards it to the family WhatsApp group. By the time a fact-checker publishes a correction, the lie has [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><em>By Rebecca Avusu, Penplusbytes </em></p>
+<p>Every piece of false information has a supply chain. Someone creates it. An algorithm pushes it. A popular page shares it. A radio presenter reads it on air without checking. A worried parent forwards it to the family WhatsApp group. By the time a fact-checker publishes a correction, the lie has already done its damage.</p>
+<p>This is why UNESCO’s theme for Global Media and Information Literacy (MIL) Week 2026, “We All Play a Part: Media and Information Literacy for the People,” matters so much. It treats MIL as a shared commitment that depends on every sector of society. No single actor can break the supply chain of falsehood alone. Each of us sits somewhere along it, and each of us can choose to stop it or keep it moving.</p>
+<p>In <a href="https://www.penplusbytes.org/minds-over-ai-why-media-and-information-literacy-must-lead-ghanas-digital-future/">his article for last year’s Global MIL Week</a>, themed “Minds over AI,” our Executive Director, Jerry Sam, argued for putting human judgement ahead of machines. This year’s theme asks the next question: whose judgement, and whose responsibility? The answer is all of us.</p>
+<h4>The problem has outgrown any one institution</h4>
+<p>Generative AI has made fabrication cheap and fast. A convincing fake voice note, a doctored video of a public official or a fake bank alert no longer requires technical skill. In Ghana, these fakes travel through the same channels we use for family news, church announcements and business: WhatsApp groups, Facebook pages, TikTok and local radio phone-in programmes.</p>
+<p>For years, the response has rested on a few shoulders: fact-checkers, a handful of civil society organizations and occasional government campaigns. That model no longer matches the scale of the problem. Fact-checkers cannot check every message. Regulators cannot police every app. Teachers cannot follow students home. Arrests and takedowns have their place, but they deal with offenders after the harm has spread. In <a href="https://www.penplusbytes.org/penplusbytes-statement-on-police-action-against-deepfake-and-misinformation-activities-in-ghana/">our statement</a> on police action against deepfake and misinformation activities, Penplusbytes argued that government, development partners, and private-sector actors need to work with civil society organizations to scale up MIL interventions nationwide. That call is more urgent today.</p>
+<h4>What we have learned by taking MIL to the people</h4>
+<p>The second half of the theme, “for the People,” describes where Penplusbytes has put much of its energy. Our experience shows that MIL works best when it goes to where people already are.</p>
+<p>In February and March 2026, our <a href="https://www.penplusbytes.org/penplusbytes-launches-caravan-of-hope-to-strengthen-media-and-information-literacy-in-rural-ghana/">Caravan of Hope roadshow</a>, run with DW Akademie and with support from BMZ, stopped in five districts, visited thirteen communities and reached more than 3,000 direct beneficiaries. We set up in market squares and community centres and used radio drama, skits, animated videos and flipbooks, with stories in Twi and Dagbani. We found out that rural audiences already have their own ways of questioning rumours. Good MIL builds on those habits instead of talking down to people.</p>
+<p>In October, our <a href="https://www.penplusbytes.org/beyond-the-game-how-truthquest-can-help-build-a-generation-of-critical-thinkers-in-ghana/">TruthQuest game and its offline comic book</a> reached 700 learners in three schools in the Ashanti Region. Children can learn to verify information through play, with or without a smartphone. On 31 October, the final day of Global MIL Week, 200 young people joined <a href="https://www.penplusbytes.org/global-mil-week-2026-penplusbytes-takes-the-youth-against-disinformation-conference-to-western-north/">our third Youth Against Disinformation Conference</a> in Sefwi Wiawso, Western North Region. They sat with a journalist, a civic educator, and a human rights official to discuss what part each of them can play.</p>
+<p>Our work with Schools for the Deaf in Ghana exposed a gap few people had noticed. During a <a href="https://www.penplusbytes.org/penplusbytes-to-train-deaf-school-facilitators-and-sign-language-interpreters-to-lead-mil-education-17th-november-2025/">training</a> for 14 facilitators, teachers and sign language interpreters from eight schools, we found that Ghanaian Sign Language lacks established signs for many fact-checking terms. If a deaf learner has no sign for “verify a source,” we have not yet built MIL for all the people.</p>
+<h4>Three shifts Ghana must make</h4>
+<p>In Ghana, playing our part calls for three concrete shifts.</p>
+<p><strong>First, MIL must become everyone’s job and not a project.</strong> Too often, MIL lives inside short donor-funded projects: a workshop here, a radio series there. When the funding ends, the work stops. MIL should sit inside the institutions that already reach Ghanaians every day. The Ghana Education Service should build verification, algorithm awareness, and AI literacy into the curriculum from basic school, and train teachers to teach them. The National Commission for Civic Education (NCCE) should treat MIL as part of civic education. Media houses should train presenters and producers, especially on loc

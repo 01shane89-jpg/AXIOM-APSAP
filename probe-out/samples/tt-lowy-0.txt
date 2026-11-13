@@ -1,0 +1,77 @@
+https://www.lowyinstitute.org/the-interpreter/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+  <channel>
+    <title>The Interpreter</title>
+    <link>https://www.lowyinstitute.org/the-interpreter</link>
+    <atom:link href="https://www.lowyinstitute.org/the-interpreter/rss.xml" rel="self" type="application/rss+xml"/>
+    <description>Analysis and commentary on international affairs from the Lowy Institute.</description>
+    <language>en-AU</language>
+    <image>
+      <url>https://www.lowyinstitute.org/logo.png</url>
+      <title>The Interpreter</title>
+      <link>https://www.lowyinstitute.org/the-interpreter</link>
+    </image>
+  <item>
+    <title>Southeast Asia must breed smarter rice to outlast El Niño – and the next one</title>
+    <link>https://www.lowyinstitute.org/the-interpreter/southeast-asia-must-breed-smarter-rice-to-outlast-el-nino-and-the-next-one</link>
+    <guid isPermaLink="true">https://www.lowyinstitute.org/the-interpreter/southeast-asia-must-breed-smarter-rice-to-outlast-el-nino-and-the-next-one</guid>
+    <description>Gene-edited rice offers Southeast Asia a defence against climate shocks, but only if smallholders can access it too.</description>
+    <pubDate>Fri, 13 Nov 2026 14:00:00 +1100</pubDate>
+    <dc:creator>Margaret E. Kosal , Ysa Marie Cayabyab</dc:creator>
+    <media:content url="https://cdn.sanity.io/images/5dcouzig/production/459ea7846a309e874cc11b9e3c73552191c60201-4664x2960.jpg?rect=0,256,4664,2449&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" medium="image" type="image/webp" width="1200" height="630"/>
+    <media:thumbnail url="https://cdn.sanity.io/images/5dcouzig/production/459ea7846a309e874cc11b9e3c73552191c60201-4664x2960.jpg?rect=0,256,4664,2449&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop"/>
+    <enclosure url="https://cdn.sanity.io/images/5dcouzig/production/459ea7846a309e874cc11b9e3c73552191c60201-4664x2960.jpg?rect=0,256,4664,2449&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" type="image/webp" length="0"/>
+  </item>
+  <item>
+    <title>Why the Arctic cannot replace the Middle East’s shipping lanes</title>
+    <link>https://www.lowyinstitute.org/the-interpreter/why-the-arctic-cannot-replace-the-middle-east-s-shipping-lanes</link>
+    <guid isPermaLink="true">https://www.lowyinstitute.org/the-interpreter/why-the-arctic-cannot-replace-the-middle-east-s-shipping-lanes</guid>
+    <description>Russian Arctic energy, not Arctic shipping, is the real beneficiary of the current crisis – and Western sanctions complicate even that.</description>
+    <pubDate>Fri, 13 Nov 2026 12:00:00 +1100</pubDate>
+    <dc:creator>Paul Weisko </dc:creator>
+    <media:content url="https://cdn.sanity.io/images/5dcouzig/production/848385d84fb235d556963953fca307402ba1e302-5000x3333.jpg?rect=0,355,5000,2625&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" medium="image" type="image/webp" width="1200" height="630"/>
+    <media:thumbnail url="https://cdn.sanity.io/images/5dcouzig/production/848385d84fb235d556963953fca307402ba1e302-5000x3333.jpg?rect=0,355,5000,2625&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop"/>
+    <enclosure url="https://cdn.sanity.io/images/5dcouzig/production/848385d84fb235d556963953fca307402ba1e302-5000x3333.jpg?rect=0,355,5000,2625&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" type="image/webp" length="0"/>
+  </item>
+  <item>
+    <title>US–China strategic stability doesn’t reach the water </title>
+    <link>https://www.lowyinstitute.org/the-interpreter/us-china-strategic-stability-doesn-t-reach-the-water</link>
+    <guid isPermaLink="true">https://www.lowyinstitute.org/the-interpreter/us-china-strategic-stability-doesn-t-reach-the-water</guid>
+    <description>Renewed military dialogue is a step forward, but the channels do not yet reach the coast guards and allies where maritime incidents are most likely.</description>
+    <pubDate>Fri, 13 Nov 2026 10:00:00 +1100</pubDate>
+    <dc:creator>Sophie Wushuang Yi</dc:creator>
+    <media:content url="https://cdn.sanity.io/images/5dcouzig/production/dd19856c280b29f269162b04a0309684936165c6-4000x2667.jpg?rect=0,284,4000,2100&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" medium="image" type="image/webp" width="1200" height="630"/>
+    <media:thumbnail url="https://cdn.sanity.io/images/5dcouzig/production/dd19856c280b29f269162b04a0309684936165c6-4000x2667.jpg?rect=0,284,4000,2100&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop"/>
+    <enclosure url="https://cdn.sanity.io/images/5dcouzig/production/dd19856c280b29f269162b04a0309684936165c6-4000x2667.jpg?rect=0,284,4000,2100&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" type="image/webp" length="0"/>
+  </item>
+  <item>
+    <title>Kuril Islands: Moscow and Beijing close ranks against Tokyo</title>
+    <link>https://www.lowyinstitute.org/the-interpreter/kuril-islands-moscow-and-beijing-close-ranks-against-tokyo</link>
+    <guid isPermaLink="true">https://www.lowyinstitute.org/the-interpreter/kuril-islands-moscow-and-beijing-close-ranks-against-tokyo</guid>
+    <description>As Washington courts Moscow and Beijing, Tokyo is left to manage a worsening Kuril dispute largely on its own.</description>
+    <pubDate>Fri, 13 Nov 2026 03:00:00 +1100</pubDate>
+    <dc:creator>Gabriela Bernal</dc:creator>
+    <media:content url="https://cdn.sanity.io/images/5dcouzig/production/920865a4d04a12bceb9af1bde3d79c0ccb3948f3-3280x2238.jpg?rect=0,258,3280,1722&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" medium="image" type="image/webp" width="1200" height="630"/>
+    <media:thumbnail url="https://cdn.sanity.io/images/5dcouzig/production/920865a4d04a12bceb9af1bde3d79c0ccb3948f3-3280x2238.jpg?rect=0,258,3280,1722&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop"/>
+    <enclosure url="https://cdn.sanity.io/images/5dcouzig/production/920865a4d04a12bceb9af1bde3d79c0ccb3948f3-3280x2238.jpg?rect=0,258,3280,1722&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" type="image/webp" length="0"/>
+  </item>
+  <item>
+    <title>Watch what Trump does in Asia, not what he says</title>
+    <link>https://www.lowyinstitute.org/the-interpreter/watch-what-trump-does-in-asia-not-what-he-says</link>
+    <guid isPermaLink="true">https://www.lowyinstitute.org/the-interpreter/watch-what-trump-does-in-asia-not-what-he-says</guid>
+    <description>A defiant US President enters summit season looking friendly toward Xi, but a grand bargain would reshape the region regardless.</description>
+    <pubDate>Thu, 12 Nov 2026 14:00:00 +1100</pubDate>
+    <dc:creator>Nick Bisley</dc:creator>
+    <media:content url="https://cdn.sanity.io/images/5dcouzig/production/d688a75f976e71c13a37c5ec4efafd4de5a8cf75-2048x1365.jpg?rect=0,146,2048,1075&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" medium="image" type="image/webp" width="1200" height="630"/>
+    <media:thumbnail url="https://cdn.sanity.io/images/5dcouzig/production/d688a75f976e71c13a37c5ec4efafd4de5a8cf75-2048x1365.jpg?rect=0,146,2048,1075&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop"/>
+    <enclosure url="https://cdn.sanity.io/images/5dcouzig/production/d688a75f976e71c13a37c5ec4efafd4de5a8cf75-2048x1365.jpg?rect=0,146,2048,1075&amp;w=1200&amp;h=630&amp;fm=webp&amp;q=85&amp;fit=crop" type="image/webp" length="0"/>
+  </item>
+  <item>
+    <title>The climate card China has yet to play</title>
+    <link>https://www.lowyinstitute.org/the-interpreter/the-climate-card-china-has-yet-to-play</link>
+    <guid isPermaLink="true">https://www.lowyinstitute.org/the-interpreter/the-climate-card-china-has-yet-to-play</guid>
+    <description>As Washington closes visa pathways for Pacific islanders, Beijing has money, technology and experience to offer new ones.</description>
+    <pubDate>Thu, 12 Nov 2026 12:00:00 +1100</pubDate>
+    <dc:creator>Kayly Ober, Debbra Goh</dc:creator>
+    <media:content url="https://cdn.sanity.io/images/5d

@@ -1,0 +1,99 @@
+https://www.bmkg.go.id/alerts/nowcast/en/rss.xml
+<?xml version="1.0" encoding="UTF-8"?>
+    <?xml-stylesheet type="text/xsl" href="/cap/nowcast-rss-style.xsl"?>
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+        <channel>
+            <title>BMKG Weather Alerts</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/rss.xml</link>
+            <description>Weather Alerts from BMKG (Indonesia Agency for Meteorology, Climatology, and Geophysics)</description>
+            <atom:link href="https://www.bmkg.go.id/alerts/nowcast/en/rss.xml" rel="self" type="application/rss+xml"/>
+            <language>en</language>
+            <copyright>public domain</copyright>
+            <pubDate>Fri, 13 Nov 2026 05:01:26 +0000</pubDate>
+            <lastBuildDate>Fri, 13 Nov 2026 05:01:26 +0000</lastBuildDate>
+            <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+            
+        <item>
+            <title>Thunderstorm This Afternoon in Gorontalo</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CGT20261113002_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 13 November 2026, 13:10 WITA in parts of Gorontalo especially in: ATINGGOLA, BULANGO TIMUR, BULANGO UTARA, SUWAWA, TELAGA BIRU, TILONGKABILA.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 13 November 2026, 15:10 WITA.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.11.13.05.75.002</guid>
+            <pubDate>Fri, 13 Nov 2026 12:55:00 +0800</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Sulawesi Tengah</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CSG20261113001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 13 November 2026, 13:00 WITA in parts of Sulawesi Tengah especially in: AMPIBABO, BALAESANG, BALAESANG TANJUNG, BANAWA, BANAWA SELATAN, BANAWA TENGAH, BASIDONDO, BATUDAKA, BOLANO, BOLANO LAMBUNU, BUNGKU UTARA, DAMPELAS, DOLO, DOLO BARAT, DONDO, KASIMBAR, KINOVARO, MAMOSALATO, MANTIKULORE, MARAWOLA, MARAWOLA BARAT, MEPANGA, ONGKA MALINO, PALOLO, PALU BARAT, PALU SELATAN, PALU TIMUR, PINEMBANI, SIGI BIROMARU, SIRENJA, SOYO JAYA, TATANGA, TINOMBO SELATAN, TOILI BARAT, TOMINI, TORIBULU, ULUJADI, UNA UNA.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 13 November 2026, 15:30 WITA.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.11.13.05.72.001</guid>
+            <pubDate>Fri, 13 Nov 2026 12:54:00 +0800</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Papua</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CPU20261113002_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 13 November 2026, 14:00 WIT in parts of Papua especially in: KOSIWO, POOM, TELUK AMPIMOI, WINDESI, WONAWA, YAPEN BARAT, YAPEN UTARA, YAWAKUKAT.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 13 November 2026, 16:46 WIT.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.11.13.05.91.002</guid>
+            <pubDate>Fri, 13 Nov 2026 13:46:00 +0900</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Banten</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CBT20261113001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 13 November 2026, 11:55 WIB in parts of Banten especially in: BANDUNG, CARITA, CIKANDE, CIPOCOK JAYA, CURUG, JIPUT, KOPO, PABUARAN, PANGGARANGAN.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 13 November 2026, 14:15 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.11.13.05.36.001</guid>
+            <pubDate>Fri, 13 Nov 2026 11:40:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Kalimantan Tengah</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CKG20261113003_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 13 November 2026, 11:40 WIB in parts of Kalimantan Tengah especially in: DELANG, PAHANDUT.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 13 November 2026, 13:30 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.11.13.05.62.003</guid>
+            <pubDate>Fri, 13 Nov 2026 11:33:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Lampung</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CLG20261113003_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 13 November 2026, 11:40 WIB in parts of Lampung especially in: ABUNG TIMUR, BANDAR SRIBHAWONO, CANDIPURO, KALIANDA, KATIBUNG, KEDAMAIAN, KEMILING, KOTABUMI UTARA, LABUHAN RATU, LANGKAPURA, MARGA SEKAMPUNG, MELINTING, MERBAU MATARAM, NATAR, NEGARA BATIN, NEGERI BESAR, NEGERI KATON, PAKUAN RATU, SEKAMPUNG UDIK, TANJUNG BINTANG, TANJUNG SARI, TANJUNGKARANG BARAT, TANJUNGKARANG PUSAT, TANJUNGKARANG TIMUR, WAWAY KARYA, WAY HALIM, WAY PANJI.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 13 November 2026, 14:00 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.11.13.05.18.003</guid>
+            <pubDate>Fri, 13 Nov 2026 11:30:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Afternoon in Nusa Tenggara Barat</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CNB20261113001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 13 November 2026, 12:30 WITA in parts of Nusa Tenggara Barat especially in: GANGGA.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant durin

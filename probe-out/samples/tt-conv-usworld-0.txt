@@ -1,0 +1,44 @@
+https://theconversation.com/us/world/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/us/world/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/us/world/articles.atom"/>
+  <title>World – The Conversation</title>
+  <updated>2026-11-12T20:25:32Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296393</id>
+    <published>2026-11-12T20:25:32Z</published>
+    <updated>2026-11-12T20:25:32Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/from-ancient-asia-to-the-ai-age-has-chinas-beauty-stratagem-found-a-new-victim-in-nvidias-jensen-huang-296393"/>
+    <title>From ancient Asia to the AI age: Has China’s ‘beauty stratagem’ found a new victim in Nvidia’s Jensen Huang?</title>
+    <content type="html">&lt;figure&gt;&lt;img src="https://images.theconversation.com/files/771677/original/file-20261112-94-xxvbrd.jpg?ixlib=rb-4.1.1&amp;amp;rect=0%2C1%2C8073%2C5382&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=1050&amp;amp;h=700&amp;amp;fit=crop" /&gt;&lt;figcaption&gt;&lt;span class="caption"&gt;Jensen Huang: in the spotlight and out of a job.&lt;/span&gt; &lt;span class="attribution"&gt;&lt;a class="source" href="https://www.gettyimages.com/detail/news-photo/jensen-huang-speaks-on-stage-at-the-invest-in-germany-news-photo/2301028013?phrase=Jensen%20Huang&amp;amp;adppopup=true"&gt;Nadja Wohlleben/Getty Images&lt;/a&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;Extramarital activities have &lt;a href="https://www.nytimes.com/2026/11/11/technology/jensen-huang-nvidia-affair.html"&gt;led to the resignation of&lt;/a&gt; one of America’s most influential tech bosses, Nvidia CEO Jensen Huang. The saga has also raised the specter of an age-old spying tactic: the “honey trap.”&lt;/p&gt;
+
+&lt;p&gt;Huang stepped down following &lt;a href="https://www.nytimes.com/2026/11/08/technology/nvidia-investigation-jensen-huang-china.html"&gt;media reports&lt;/a&gt; of an extramarital relationship with Alice Huang, a Singapore-based executive &lt;a href="https://thehill.com/policy/international/6212857-alice-huang-spy-allegations-nvidia-ceo-relationship/"&gt;suspected of having ties to Chinese intelligence agencies&lt;/a&gt;. She previously worked for Megaspeed, a cloud computing company &lt;a href="https://www.cnbc.com/2026/11/12/nvidia-megaspeed-alice-huang-jensen-.html"&gt;under U.S. scrutiny&lt;/a&gt; for allegedly helping China obtain restricted AI chips.&lt;/p&gt;
+
+&lt;p&gt;Jensen Huang &lt;a href="https://nvidianews.nvidia.com/news/a-message-to-our-company"&gt;acknowledged an affair&lt;/a&gt;. And amid reports of a second &lt;a href="https://www.nytimes.com/2026/11/11/technology/jensen-huang-nvidia-affair.html"&gt;with a company executive who reports to him&lt;/a&gt;, he tendered his resignation to the Nvidia board on Nov. 12, 2026.&lt;/p&gt;
+
+&lt;p&gt;The sensitivity of Huang’s work – AI is increasingly seen as &lt;a href="https://www.belfercenter.org/publication/artificial-intelligence-and-national-security"&gt;central to national security&lt;/a&gt; – has turned a company matter into an international issue. China’s Foreign Ministry has &lt;a href="https://x.com/CGTNEurope/status/2119783595040702490"&gt;denied the espionage allegations&lt;/a&gt; and &lt;a href="https://www.aljazeera.com/news/2026/11/12/china-says-us-fabricating-nvidia-spy-claims-to-justify-tech-blockade"&gt;accused the U.S.&lt;/a&gt; of “fabricating so-called spy narratives and ⁠⁠⁠⁠using them as a pretext for imposing ⁠⁠⁠⁠a technological blockade.” Nvidia says &lt;a href="https://nvidianews.nvidia.com/news/statement-from-nvidia-board-of-directors"&gt;it has no reason to believe&lt;/a&gt; company secrets have been leaked.&lt;/p&gt;
+
+&lt;p&gt;Yet part of what makes the accusations so believable is &lt;a href="https://engelsbergideas.com/notebook/a-short-history-of-the-honey-trap/"&gt;history is dotted&lt;/a&gt; with examples of men being distracted, compromised or spied on by attractive men and women deployed for that purpose.&lt;/p&gt;
+
+&lt;p&gt;Indeed, in China it recalls an ancient political tactic known as “meiren ji” or the “&lt;a href="https://doi.org/10.17265/2159-5542/2025.05.001"&gt;beauty stratagem&lt;/a&gt;.”&lt;/p&gt;
+
+&lt;p&gt;As a &lt;a href="https://scholar.google.com/citations?hl=zh-CN&amp;amp;user=SfkpAykAAAAJ"&gt;scholar specializing in U.S.-China relations&lt;/a&gt;, I believe that regardless of the particulars of the Huang case, the political logic behind the beauty stratagem – using personal relationships to obtain information, influence decisions and weaken opponents – remains relevant today. As such, it would be no surprise if the tactic was being used amid the growing U.S.-China competition over AI and advanced semiconductors.&lt;/p&gt;
+
+&lt;h2&gt;The beauty stratagem of Ancient China&lt;/h2&gt;
+
+&lt;p&gt;“Meiren ji” is one of “&lt;a href="https://www.amazon.com/dp/1533638780?lv=shuf&amp;amp;channelId=500&amp;amp;plpRedirect=mhFallback"&gt;Thirty-Six Stratagems&lt;/a&gt;,” a Chinese military text of uncertain origin but generally believed to have derived from oral and written histories from the Warring States period — 475–221 BCE. Its 31st stratagem states that personal relationships can be used to influence political opponents and recommends exploiting an adversary’s personal desires and emotional vulnerabilities to weaken their judgment and undermine their leadership.  &lt;/p&gt;
+
+&lt;p&gt;The “Thirty-Six Stratagems” is both a playbook for warfare and a reflection on past experience.&lt;/p&gt;
+
+&lt;p&gt;Indeed, one of China’s most famous beauty stratagem stories dates back more than 2,000 years to the &lt;a href="https://www.britannica.com/event/Spring-and-Autumn-Period"&gt;Spring and Autumn period&lt;/a&gt; of Chinese history.&lt;/p&gt;
+
+&lt;p&gt;In the fifth century BCE, King Goujian of Yue, in modern-day southern China, was defeated by King Fuchai of Wu, its northern neighbor, and forced to submit. But Goujian secretly rebuilt his strength and prepared for revenge.  &lt;/p&gt;
+
+&lt;p&gt;According to the ancient historical text “&lt;a href="https://cornellpress.cornell.edu/book/9781501754340/spring-and-autumn-annals-of-wu-and-yue/#bookTabs=1"&gt;Wu Yue Chun Qiu&lt;/a&gt;,” Yue sent two beautiful women – Xi Shi and Zheng Dan – to Fuchai, hoping he would become distracted by pleasure and neglect state affairs.&lt;/p&gt;
+
+&lt;p&gt;The plan reportedly worked. Fuchai, seemingly enchanted by the beautiful women, gradually ignored Yue’s threat. Meanwhile, Goujian prepared for war and in 473 BCE Yue conquered Wu.&lt;/p&gt;
+
+&lt;figure class="align-center zoomable"&gt;
+            &lt;a aria-label="Zoomable image" href="https://images.theconversation.com/files/771685/original/file-20261112-64-3g114.png?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=1000&amp;amp;fit=clip"&gt;&lt;img alt="An etching shows two women under Chinese writing." src="https://images.theconversation.com/files/771685/original/file-20261112-64-3g114.png?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=754&amp;amp;fit=clip" srcset="https://images.theconversation.com/files/771685/original/file-20261112-64-3g114.png?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=464&amp;amp;fit=crop&amp;amp;dpr=1 600w, https://images.theconversation.com/files/771685/original/file-20261112-64-3g114.png?ixlib=rb-4.1.1&amp;amp;q=30&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=464&amp;amp;fit=crop&amp;amp;dpr=2 1200w, https://images.theconversation.com/files/771685/original/file-20261112-64-3g114.png?ixlib=rb-4.1.1&amp;amp;q=15&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=464&amp;amp;fit=crop&amp;amp;dpr=3 1800w, https://image

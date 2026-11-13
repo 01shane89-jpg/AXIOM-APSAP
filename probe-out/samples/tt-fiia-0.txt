@@ -1,0 +1,93 @@
+https://www.fiia.fi/en/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>FIIA &#8211; Finnish Institute of International Affairs</title>
+	<atom:link href="https://fiia.fi/en/feed" rel="self" type="application/rss+xml" />
+	<link>https://fiia.fi</link>
+	<description></description>
+	<lastBuildDate>Fri, 23 Oct 2026 08:34:16 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+	<item>
+		<title>The Nordic-Baltic Eight policy brief: China’s green statecraft and NB8 Arctic security</title>
+		<link>https://fiia.fi/en/news/the-nordic-baltic-eight-policy-brief-chinas-green-statecraft-and-nb8-arctic-security</link>
+		
+		<dc:creator><![CDATA[Meeri Väätäinen]]></dc:creator>
+		<pubDate>Fri, 23 Oct 2026 08:33:08 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<category><![CDATA[The Nordic-Baltic Eight: Policy brief series]]></category>
+		<guid isPermaLink="false">https://fiia.fi/ajankohtaista/</guid>
+
+					<description><![CDATA[New publication in the NB8 policy brief series by Dana Dūda (LIIA), Konstantinas Andrijauskas (IIRPS VU) and Björn Cappelin (UI). Energy dependence has become a geopolitical liability. Russia’s war against Ukraine, the US-Iran war and tensions with the Kingdom of Denmark over Greenland have all exposed the strategic weight of energy independence, critical minerals, and [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><strong>New publication in the NB8 policy brief series by</strong> <strong>Dana Dūda (LIIA), Konstantinas Andrijauskas (IIRPS VU) and Björn Cappelin (UI)</strong>.</p>
+
+
+
+<p class="wp-block-paragraph">Energy dependence has become a geopolitical liability. Russia’s war against Ukraine, the US-Iran war and tensions with the Kingdom of Denmark over Greenland have all exposed the strategic weight of energy independence, critical minerals, and Arctic access. For the eight Nordic-Baltic states (NB8), the next vulnerability may emerge from the green transition itself, where China’s dominance in clean technologies and critical mineral processing can be converted into strategic leverage. Some dependence is unavoidable in the short term; the task is to manage it deliberately rather than let it accumulate by default. This policy brief argues for integrating green energy security and Arctic security within a one strategic framework, because the Arctic’s critical mineral resources, renewable energy infrastructure and emerging transport and digital connectivity projects are relevant to Europe’s efforts to strengthen its energy dependence. This brief proposes collective measures to limit strategic dependence on China in the long term.</p>
+
+
+
+<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-8f761849 wp-block-columns-is-layout-flex">
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:66.66%">
+<figure class="wp-block-image size-large"><a href="https://fiia.fi/wp-content/uploads/2026/10/NB8brief_6_October.pdf" target="_blank" rel=" noreferrer noopener"><img fetchpriority="high" decoding="async" width="726" height="1024" src="https://fiia.fi/wp-content/uploads/2026/10/Nayttokuva-2026-10-23-105212-726x1024.png" alt="" class="wp-image-142247" srcset="https://fiia.fi/wp-content/uploads/2026/10/Nayttokuva-2026-10-23-105212-726x1024.png 726w, https://fiia.fi/wp-content/uploads/2026/10/Nayttokuva-2026-10-23-105212-213x300.png 213w, https://fiia.fi/wp-content/uploads/2026/10/Nayttokuva-2026-10-23-105212-88x124.png 88w, https://fiia.fi/wp-content/uploads/2026/10/Nayttokuva-2026-10-23-105212-117x165.png 117w, https://fiia.fi/wp-content/uploads/2026/10/Nayttokuva-2026-10-23-105212-300x423.png 300w, https://fiia.fi/wp-content/uploads/2026/10/Nayttokuva-2026-10-23-105212.png 752w" sizes="(max-width: 726px) 100vw, 726px" /></a></figure>
+</div>
+
+
+
+<div class="wp-block-column is-vertically-aligned-center is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:33.33%">
+<div class="wp-block-buttons is-layout-flex wp-container-core-buttons-is-layout-84532261 wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://fiia.fi/wp-content/uploads/2026/10/NB8brief_6_October.pdf" target="_blank" rel="noreferrer noopener">Read the publication</a></div>
+</div>
+</div>
+</div>
+
+
+<section id="block_e20689f9b4521d4d844ff79c62281b3d_2134"  
+    class="block-container mb-5 theme-normal" 
+    style="background-color: #E7D1DC;">
+            <div class="acf-innerblocks-container">
+
+<h2 class="wp-block-heading">The Nordic-Baltic Eight: Policy brief series</h2>
+
+
+
+<p class="wp-block-paragraph">This policy brief series aims to deepen understanding of the evolving security, political, and societal dynamics that shape the Nordic-Baltic region amid renewed great-power competition.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">The series is jointly published by the Finnish Institute of International Affairs (FIIA), the Danish Institute for International Studies (DIIS), the Icelandic Institute of International Affairs (IIA), the International Centre for Defence and Security (ICDS), the Institute of International Relations and Political Science at Vilnius University (VU IIRPS), the Latvian Institute of International Affairs (LIIA), the Norwegian Institute of International Affairs (NUPI), and the Swedish Institute of International Affairs (UI).</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="97" src="https://fiia.fi/wp-content/uploads/2026/03/Samlade-loggor-alt-1-1024x97.png" alt="" class="wp-image-139774" srcset="https://fiia.fi/wp-content/uploads/2026/03/Samlade-loggor-alt-1-1024x97.png 1024w, https://fiia.fi/wp-content/uploads/2026/03/Samlade-loggor-alt-1-300x29.png 300w, https://fiia.fi/wp-content/uploads/2026/03/Samlade-loggor-alt-1-768x73.png 768w, https://fiia.fi/wp-content/uploads/2026/03/Samlade-loggor-alt-1-124x12.png 124w, https://fiia.fi/wp-content/uploads/2026/03/Samlade-loggor-alt-1-165x16.png 165w, https://fiia.fi/wp-content/uploads/2026/03/Samlade-loggor-alt-1.png 1051w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+</div></section>]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Report: Climate risks could multiply disruptions to Finland’s security of supply</title>
+		<link>https://fiia.fi/en/news/report-climate-risks-could-multiply-disruptions-to-finlands-security-of-supply</link>
+		
+		<dc:creator><![CDATA[Meeri Väätäinen]]></dc:creator>
+		<pubDate>Wed, 30 Sep 2026 06:11:53 +0000</pubDate>
+				<category><![CDATA[News]]></category>
+		<guid isPermaLink="false">https://fiia.fi/ajankohtaista/</guid>
+
+					<description><![CDATA[Climate change threatens Finland’s security of supply by increasing the likelihood of simultaneous crises and disruptions. Finland must prepare for climate risks as part of geopolitical crises and security policy, states a new report by the Finnish Institute of International Affairs (FIIA) and the National Emergency Supply Agency (NESA). “Climate risks cannot be treated as [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Climate change threatens Finland’s security of supply by increasing the likelihood of simultaneous crises and disruptions. Finland must prepare for climate risks as part of geopolitical crises and security policy, states <a href="https://fiia.fi/en/publication/ilmastonmuutos-ja-suomen-huoltovarmuus" data-type="link" data-id="https://fiia.fi/en/publication/ilmastonmuutos-ja-suomen-

@@ -1,0 +1,71 @@
+https://www.cippec.org/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CIPPEC</title>
+	<atom:link href="https://www.cippec.org/feed" rel="self" type="application/rss+xml" />
+	<link>https://www.cippec.org/</link>
+	<description>Think tank independiente. Investigamos. Debatimos. Proponemos. Comunicamos. Nos apasionan las políticas públicas y trabajamos por un Estado democrático, justo y eficiente que mejore la vida de las personas.</description>
+	<lastBuildDate>Thu, 12 Nov 2026 21:42:30 +0000</lastBuildDate>
+	<language>es-AR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.8.12</generator>
+
+<image>
+	<url>https://www.cippec.org/wp-content/uploads/2026/09/cropped-logo-cippec-PP-azul_512-32x32.png</url>
+	<title>CIPPEC</title>
+	<link>https://www.cippec.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Reunión de alto nivel: Prepararnos frente al calor. Evidencia y acción para ciudades argentinas antes del verano</title>
+		<link>https://www.cippec.org/prepararnos-frente-al-calor-evidencia-y-accion-para-ciudades-argentinas-antes-del-verano/</link>
+		
+		<dc:creator><![CDATA[Cecilia Conde]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 16:18:38 +0000</pubDate>
+				<category><![CDATA[Estado y gobierno]]></category>
+		<category><![CDATA[calor extremo]]></category>
+		<category><![CDATA[olas de calor]]></category>
+		<guid isPermaLink="false">https://www.cippec.org/?p=19504</guid>
+
+					<description><![CDATA[<p>CIPPEC, junto con la Residencia Británica y con el apoyo de Wellcome Trust, invita a una jornada presencial de trabajo para compartir evidencia sobre los efectos de las olas de calor en la salud de las personas mayores e identificar qué medidas pueden tomar las ciudades argentinas para proteger a la población antes del verano. [&#8230;]</p>
+<p>La entrada <a href="https://www.cippec.org/prepararnos-frente-al-calor-evidencia-y-accion-para-ciudades-argentinas-antes-del-verano/">Reunión de alto nivel: Prepararnos frente al calor. Evidencia y acción para ciudades argentinas antes del verano</a> se publicó primero en <a href="https://www.cippec.org">CIPPEC</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><span style="font-weight: 400;">CIPPEC, junto con la Residencia Británica y con el apoyo de Wellcome Trust, invita a una jornada presencial de trabajo para compartir evidencia sobre los efectos de las olas de calor en la salud de las personas mayores e identificar qué medidas pueden tomar las ciudades argentinas para proteger a la población antes del verano.</span></p>
+<p><span style="font-weight: 400;">Es un encuentro dirigido a intendentes, autoridades provinciales y municipales, en especial a quienes trabajan en salud, ambiente y cambio climático. Participarán también especialistas que aportarán evidencia y experiencias de preparación frente al calor extremo.</span></p>
+<h2><b>Cuándo y dónde</b></h2>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Jueves 26 de noviembre de 2026, de 8:30 a 12:30 h. Acreditación desde las 8:30 h y apertura a las 9:00 h.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Residencia Británica en Buenos Aires, </span><a href="https://www.google.com/maps/search/Buenos+Aires+%0D%0A%09%09%09Av.+Gral.+Gelly+y+Obes+2333,+CABA?entry=gmail&amp;source=g"><span style="font-weight: 400;">Av. Gral. Gelly y Obes 2333, CABA</span></a><span style="font-weight: 400;">.</span></li>
+</ul>
+<p><span style="font-weight: 400;">La participación es por invitación. Se requiere confirmación. </span></p>
+<p><span style="font-weight: 400;">La Residencia Británica enviará por correo electrónico un código QR personal e intransferible para el ingreso.</span></p>
+<h2><b>Programa preliminar</b></h2>
+<p><b>8:30–9:00 h | </b><span style="font-weight: 400;">Acreditación y desayuno.</span></p>
+<p><b>9:00–9:15 h |</b><span style="font-weight: 400;"> Apertura institucional. </span></p>
+<p><b>9:15–9:45 h |</b><span style="font-weight: 400;"> Qué sabemos del calor en las ciudades argentinas. Presentación de los resultados del proyecto sobre olas de calor y salud de las personas mayores.</span></p>
+<p><b>9:45–10:30 h | </b><span style="font-weight: 400;">Ciudades que se adelantan al calor. Intendentes comparten medidas que sus ciudades ya pusieron en marcha y los desafíos para ampliarlas.</span></p>
+<p><b>10:30–10:45 h | </b><span style="font-weight: 400;">Pausa para café.</span></p>
+<p><b>10:45–11:30 h | </b><span style="font-weight: 400;">Cuidar la salud cuando sube la temperatura. Intercambio con autoridades de salud, con un aporte sobre la experiencia de Londres.</span></p>
+<p><b>11:30–12:15 h | </b><span style="font-weight: 400;">Ciudades más frescas. Intercambio con autoridades de ambiente y especialistas de cambio climático sobre intervenciones en el espacio público, el arbolado y la planificación urbana.</span></p>
+<p><b>12:15–12:30 h | </b><span style="font-weight: 400;">Cierre a cargo de CIPPEC.</span></p>
+<p><span style="font-weight: 400;">La jornada se enmarca en el proyecto sobre el impacto de las olas de calor en la salud de las personas mayores en ciudades argentinas, que CIPPEC desarrolla con el apoyo de LIECS y el financiamiento de Wellcome Trust.</span></p>
+<p><b>Para más información: <a href="mailto:ciudades@cippec.org">ciudades@cippec.org</a></b></p>
+<h2><b>Acerca del proyecto </b></h2>
+<p><span style="font-weight: 400;">Las ciudades argentinas enfrentan olas de calor cada vez más frecuentes, prolongadas e intensas. Ese cambio impacta en la salud y afecta especialmente a las personas mayores y a quienes viven en condiciones de mayor vulnerabilidad, con menos posibilidades de protegerse del calor o acceder a servicios y cuidados. Frente a este escenario, es clave que los gobiernos locales se preparen para anticipar, mitigar y responder a los efectos del calor extremo. </span></p>
+<p><span style="font-weight: 400;">En este contexto, el proyecto “Impacto de las olas de calor en la salud de adultos mayores”, realizado por el Centro de Implementación de Políticas Públicas para la Equidad y el Crecimiento (CIPPEC) y el Laboratorio Interdisciplinario para el Estudio del Clima y la Salud (LIECS) con el apoyo de Wellcome Trust, busca generar evidencia sobre los efectos del calor extremo en ciudades argentinas y contribuir al fortalecimiento de capacidades de los gobiernos locales para enfrentar este riesgo. </span></p>
+<p><span style="font-weight: 400;">Como parte del componente de fortalecimiento institucional, CIPPEC y LIECS brindarán un ciclo de formación orientado a equipos técnicos provinciales y municipales involucrados en la planificación climática, la gestión del riesgo, la salud pública y las políticas de cuidado en ciudades argentinas.  </span></p>
+<p><span style="font-weight: 400;">El ciclo busca fortalecer las capacidades de las gestiones públicas locales para elaborar planes de preparación y respuesta frente al calor, integrando evidencia climática, análisis territorial, evaluación del impacto en salud, organización institucional y fortalecimiento de redes de cuidado. La propuesta traduce conocimiento científico en herramientas operativas para la gestión pública, promueve el intercambio horizontal entre ciudades argentinas y fortalece la articulación entre áreas de ambiente, salud, desarrollo social, cuidados y planificación urbana. </span></p>
+<p>&nbsp;</p>
+<p>La entrada <a href="https://www.cippec.org/prepararnos-frente-al-calor-evidencia-y-accion-para-ciudades-argentinas-antes-del-verano/">Reunión de alto nivel: Prepararnos frente al

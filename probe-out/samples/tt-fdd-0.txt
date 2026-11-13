@@ -1,0 +1,147 @@
+https://www.fdd.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>FDD</title>
+	<atom:link href="https://www.fdd.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.fdd.org/</link>
+	<description>National security and foreign policy research and analysis.</description>
+	<lastBuildDate>Fri, 13 Nov 2026 00:35:28 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://media.fdd.org/wp-content/uploads/2026/03/cropped-fdd-favicon-32x32.png</url>
+	<title>FDD</title>
+	<link>https://www.fdd.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Economic warfare and Iran’s retaliation: When sanctions become a national security threat</title>
+		<link>https://www.fdd.org/in_the_news/economic-warfare-and-irans-retaliation-when-sanctions-become-a-national-security-threat/</link>
+		
+		<dc:creator><![CDATA[David May]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 00:35:23 +0000</pubDate>
+				<category><![CDATA[Broadcast Appearances]]></category>
+		<category><![CDATA[In The News]]></category>
+		<guid isPermaLink="false">https://www.fdd.org/?p=312793</guid>
+
+					<description><![CDATA[<p>Listen</p>
+<p>...</p>
+<p>The post <a href="https://www.fdd.org/in_the_news/economic-warfare-and-irans-retaliation-when-sanctions-become-a-national-security-threat/">Economic warfare and Iran’s retaliation: When sanctions become a national security threat</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<h2 id="h-listen" class="wp-block-heading">Listen</h2>
+
+
+
+<figure class="wp-block-audio"><audio controls src="https://media.fdd.org/wp-content/uploads/2026/11/12193513/2026.11.12-David-May.mp3"></audio></figure>
+<p>The post <a href="https://www.fdd.org/in_the_news/economic-warfare-and-irans-retaliation-when-sanctions-become-a-national-security-threat/">Economic warfare and Iran’s retaliation: When sanctions become a national security threat</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Maximum pressure on the Islamic regime and maximum support for the Iranian people</title>
+		<link>https://www.fdd.org/in_the_news/maximum-pressure-on-the-islamic-regime-and-maximum-support-for-the-iranian-people/</link>
+		
+		<dc:creator><![CDATA[Janatan Sayeh]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 21:55:23 +0000</pubDate>
+				<category><![CDATA[Broadcast Appearances]]></category>
+		<category><![CDATA[In The News]]></category>
+		<guid isPermaLink="false">https://www.fdd.org/?p=312788</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.fdd.org/in_the_news/maximum-pressure-on-the-islamic-regime-and-maximum-support-for-the-iranian-people/">Maximum pressure on the Islamic regime and maximum support for the Iranian people</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.fdd.org/in_the_news/maximum-pressure-on-the-islamic-regime-and-maximum-support-for-the-iranian-people/">Maximum pressure on the Islamic regime and maximum support for the Iranian people</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Trump removes Vance from Iran talks as U.S. launches strikes on IRGC bases</title>
+		<link>https://www.fdd.org/in_the_news/trump-removes-vance-from-iran-talks-as-u-s-launches-strikes-on-irgc-bases/</link>
+		
+		<dc:creator><![CDATA[Janatan Sayeh]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 20:12:33 +0000</pubDate>
+				<category><![CDATA[Broadcast Appearances]]></category>
+		<category><![CDATA[In The News]]></category>
+		<guid isPermaLink="false">https://www.fdd.org/?p=312785</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.fdd.org/in_the_news/trump-removes-vance-from-iran-talks-as-u-s-launches-strikes-on-irgc-bases/">Trump removes Vance from Iran talks as U.S. launches strikes on IRGC bases</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.fdd.org/in_the_news/trump-removes-vance-from-iran-talks-as-u-s-launches-strikes-on-irgc-bases/">Trump removes Vance from Iran talks as U.S. launches strikes on IRGC bases</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Trump says no Iran deal needed</title>
+		<link>https://www.fdd.org/in_the_news/trump-says-no-iran-deal-needed/</link>
+		
+		<dc:creator><![CDATA[Janatan Sayeh]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:17:10 +0000</pubDate>
+				<category><![CDATA[Broadcast Appearances]]></category>
+		<category><![CDATA[In The News]]></category>
+		<guid isPermaLink="false">https://www.fdd.org/?p=312767</guid>
+
+					<description><![CDATA[<p>The post <a href="https://www.fdd.org/in_the_news/trump-says-no-iran-deal-needed/">Trump says no Iran deal needed</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The post <a href="https://www.fdd.org/in_the_news/trump-says-no-iran-deal-needed/">Trump says no Iran deal needed</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Trump and Netanyahu&#8217;s Iran gamble: one more strike?</title>
+		<link>https://www.fdd.org/in_the_news/trump-and-netanyahus-iran-gamble-one-more-strike/</link>
+		
+		<dc:creator><![CDATA[Jonathan Schanzer]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 18:39:05 +0000</pubDate>
+				<category><![CDATA[Broadcast Appearances]]></category>
+		<category><![CDATA[In The News]]></category>
+		<guid isPermaLink="false">https://www.fdd.org/?p=312733</guid>
+
+					<description><![CDATA[<p>...</p>
+<p>The post <a href="https://www.fdd.org/in_the_news/trump-and-netanyahus-iran-gamble-one-more-strike/">Trump and Netanyahu&#8217;s Iran gamble: one more strike?</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><a href="https://www.youtube.com/@tv7israelnews"></a></p>
+<p>The post <a href="https://www.fdd.org/in_the_news/trump-and-netanyahus-iran-gamble-one-more-strike/">Trump and Netanyahu&#8217;s Iran gamble: one more strike?</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Bolton reacts to Iran threats as Bessent is forced to live in military base</title>
+		<link>https://www.fdd.org/in_the_news/bolton-reacts-to-iran-threats-as-bessent-is-forced-to-live-in-military-base/</link>
+		
+		<dc:creator><![CDATA[Joseph Zacks]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 18:37:20 +0000</pubDate>
+				<category><![CDATA[Broadcast Appearances]]></category>
+		<category><![CDATA[In The News]]></category>
+		<guid isPermaLink="false">https://www.fdd.org/?p=312730</guid>
+
+					<description><![CDATA[<p>...</p>
+<p>The post <a href="https://www.fdd.org/in_the_news/bolton-reacts-to-iran-threats-as-bessent-is-forced-to-live-in-military-base/">Bolton reacts to Iran threats as Bessent is forced to live in military base</a> appeared first on <a href="https://www.fdd.org">FDD</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><a href="https://www.youtube.com/@facethenation"></a></p>
+<p>The post <a href="https://www.fdd.org/in_the_news/bolton-reacts-t

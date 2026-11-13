@@ -1,0 +1,58 @@
+https://theconversation.com/fr/international/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/fr/international/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/fr/international/articles.atom"/>
+  <title>International – The Conversation</title>
+  <updated>2026-11-12T16:10:41Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296020</id>
+    <published>2026-11-12T16:10:41Z</published>
+    <updated>2026-11-12T16:10:41Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/bresil-les-reseaux-sociaux-nouveaux-arbitres-de-la-democratie-296020"/>
+    <title>Brésil : les réseaux sociaux, nouveaux arbitres de la démocratie ?</title>
+    <content type="html">&lt;hr&gt;
+
+&lt;p&gt;&lt;strong&gt;L’ESSENTIEL&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Lula a fini par battre Flavio Bolsonaro au second tour de la présidentielle brésilienne, mais il avait été devancé par son adversaire au premier.&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Les soutiens du président réélu estiment que la campagne de candidat de droite avait été mieux mise en avant par les réseaux du groupe Meta (Facebook, Instagram, WhatsApp).&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Ces accusations mettent en lumière le rôle de plus en plus central des réseaux sociaux, qui sont des entreprises privées, dans les démocraties modernes.&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;Le 19 octobre 2026, une semaine avant le second tour de la présidentielle brésilienne, des manifestants réunis devant les bureaux de Meta à São Paulo ont &lt;a href="https://fr.euronews.com/2026/10/22/election-presidentielle-au-bresil-meta-soupconne-dingerence-dans-la-campagne"&gt;scandé&lt;/a&gt; « &lt;em&gt;Meta, não se meta&lt;/em&gt; », soit « Meta, ne vous en mêlez pas ». Ils dénonçaient des suppressions de publications, des restrictions de comptes et une baisse de la visibilité des contenus favorables au président sortant Luiz Inácio Lula da Silva, candidat du Parti des travailleurs (PT) face au sénateur Flavio Bolsonaro, du Parti libéral (PL). Selon les organisateurs, plus de 1 100 cas auraient été documentés. Ce chiffre reste une estimation des collectifs, et non une évaluation indépendante.&lt;/p&gt;
+
+&lt;p&gt;La mobilisation faisait suite à plusieurs signalements de dysfonctionnements sur Instagram et dans les outils d’intelligence artificielle de Meta. Le 14 octobre, la campagne de Lula a saisi le Tribunal supérieur électoral (TSE), accusant Meta d’avoir limité la visibilité de ses contenus et signalé des différences entre les réponses de Meta AI à des demandes concernant les deux candidats. Meta a &lt;a href="https://transparency.meta.com/recent-updates/meta-platforms-during-brazil-election/"&gt;rejeté ces accusations&lt;/a&gt;, attribuant les incidents à des erreurs techniques et affirmant appliquer les mêmes règles à tous. L’entreprise a notamment &lt;a href="https://about.fb.com/br/news/2026/10/a-meta-nao-esta-interferindo-nas-eleicoes-brasileiras-estes-sao-os-fatos/"&gt;affirmé&lt;/a&gt; que la désactivation temporaire d’un compte publicitaire de Lula résultait d’une erreur de classification lors d’un contrôle antifraude. Le &lt;a href="https://www.lemonde.fr/international/article/2026/10/19/election-presidentielle-au-bresil-meta-a-24-heures-pour-prouver-que-la-plate-forme-reserve-le-meme-traitement-a-lula-et-flavio-bolsonaro_6797534_3210.html"&gt;TSE a néanmoins demandé à l’entreprise&lt;/a&gt; des explications et des garanties de traitement équitable, et le débat public s’est élargi à la question de l’influence des grandes plateformes sur la compétition électorale.&lt;/p&gt;
+
+&lt;p&gt;Ces signalements ne prouvent pas une volonté délibérée de favoriser un candidat. Ils posent toutefois une question plus large : une part croissante de la communication électorale dépend de systèmes privés dont les règles restent difficiles à examiner de l’extérieur.&lt;/p&gt;
+
+&lt;h2&gt;Quand une décision technique devient politique&lt;/h2&gt;
+
+&lt;p&gt;Les plateformes ne sont plus de simples supports : elles organisent la diffusion des messages, recommandent des contenus et décident lesquels peuvent être mis en avant ou retirés. Elles influencent donc les publics susceptibles de rencontrer un message politique.&lt;/p&gt;
+
+&lt;p&gt;Une erreur de classement peut être involontaire tout en ayant des effets importants, surtout à quelques jours d’un scrutin. Il faudrait pouvoir établir quels contenus ont été touchés, pendant combien de temps et quels recours ont été proposés. De même, une différence entre les réponses d’une intelligence artificielle ne prouve pas un biais intentionnel, mais peut justifier des tests indépendants. L’enjeu est de rendre vérifiables les décisions qui affectent le débat électoral.&lt;/p&gt;
+
+&lt;figure&gt;
+            &lt;iframe width="440" height="260" src="https://www.youtube.com/embed/CBVUEVQ29ro?wmode=transparent&amp;amp;start=1" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;
+            
+          &lt;/figure&gt;
+
+&lt;p&gt;&lt;a href="https://www.meta.com/fr-fr/actions/preparing-for-elections-with-meta/?srsltid=AYCX9vI7bcH-6X_EAQfb9qK74K-cfiyXQSEicAuP3ktix-8IGVh7MEE-"&gt;Meta affirme avoir renforcé ses dispositifs de sécurité électorale&lt;/a&gt; et supprimé plus de 200 réseaux de comportements inauthentiques coordonnés depuis 2017. La lutte contre de telles campagnes est nécessaire, car les &lt;a href="https://theconversation.com/desinformation-democraties-en-peril-un-appel-a-la-vigilance-collective-214434"&gt;réseaux sociaux peuvent servir à diffuser de fausses informations&lt;/a&gt; ou à amplifier artificiellement une opinion.&lt;/p&gt;
+
+&lt;p&gt;Mais ce bilan, communiqué par l’entreprise, ne garantit pas que ses décisions de modération soient toujours cohérentes. Combattre les manipulations et garantir la transparence des restrictions visant des contenus politiques légitimes sont deux responsabilités distinctes. Les organisations brésiliennes réclament des recours avec examen humain et des informations vérifiables. Le TSE doit pouvoir enquêter sur des systèmes susceptibles d’influencer la compétition électorale.&lt;/p&gt;
+
+&lt;h2&gt;L’armée numérique de Lula&lt;/h2&gt;
+
+&lt;p&gt;Lula a également renforcé ses réseaux de mobilisation. Il a notamment bénéficié de l’« Exército do Lula », ou &lt;a href="https://www.lemonde.fr/international/article/2026/10/30/au-bresil-andre-janones-le-general-a-l-origine-de-l-armee-numerique-de-lula_6802922_3210.html"&gt;« armée de Lula »&lt;/a&gt;, un réseau WhatsApp animé par le député André Janones, qui comptait 10,5 millions d’abonnés le 23 octobre. Ses membres recevaient des consignes pour partager des publications, commenter des vidéos et diffuser des hashtags.&lt;/p&gt;
+
+&lt;p&gt;Les sympathisants devenaient ainsi des relais de campagne, permettant de diffuser les messages sans dépendre uniquement des recommandations d’Instagram.&lt;/p&gt;
+
+&lt;p&gt;La stratégie comporte un paradoxe : WhatsApp appartient à Meta, l’entreprise même que la campagne mettait en cause. Cette situation montre combien il est difficile pour les candidats de se soustraire aux infrastructures des grandes entreprises numériques.&lt;/p&gt;
+
+&lt;h2&gt;La publicité politique, une dépendance coûteuse&lt;/h2&gt;
+
+&lt;p&gt;Les dépenses électorales illustrent cette dépendance. Selon les comptes de campagne du TSE, rapportés par &lt;a href="https://www1.folha.uol.com.br/poder/2026/10/alvo-de-polemica-meta-e-a-empresa-que-mais-arrecadou-na-eleicao-do-brasil.shtml"&gt;Folha de S.Paulo&lt;/a&gt;, les candidats avaient déclaré environ 28

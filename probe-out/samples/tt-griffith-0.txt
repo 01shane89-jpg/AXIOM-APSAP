@@ -1,0 +1,86 @@
+https://blogs.griffith.edu.au/asiainsights/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Griffith Asia Insights</title>
+	<atom:link href="https://blogs.griffith.edu.au/asiainsights/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blogs.griffith.edu.au/asiainsights/</link>
+	<description>Asia Insights is published by the Griffith Asia Institute. It offers latest commentary on Asia-Pacific affairs and aims to inform and foster academic scholarship, public awareness and considered and responsive policy making.</description>
+	<lastBuildDate>Sun, 08 Nov 2026 21:36:52 +0000</lastBuildDate>
+	<language>en-AU</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://blogs.griffith.edu.au/asiainsights/wp-content/uploads/sites/2/2020/05/cropped-site-icon-20-32x32.jpg</url>
+	<title>Griffith Asia Insights</title>
+	<link>https://blogs.griffith.edu.au/asiainsights/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Life expectancy matters: An erstwhile ‘basket case’ catches up with the USA</title>
+		<link>https://blogs.griffith.edu.au/asiainsights/life-expectancy-matters-an-erstwhile-basket-case-catches-up-with-the-usa/</link>
+		
+		<dc:creator><![CDATA[Griffith Asia Institute]]></dc:creator>
+		<pubDate>Sun, 08 Nov 2026 22:30:00 +0000</pubDate>
+				<category><![CDATA[Region | India and South Asia]]></category>
+		<category><![CDATA[SDG 16 Peace, justice and strong institutions]]></category>
+		<category><![CDATA[SDG 17 Partnerships for the Goals]]></category>
+		<category><![CDATA[SDG 8 Decent work and economic growth]]></category>
+		<category><![CDATA[Bangladesh]]></category>
+		<category><![CDATA[Economic development]]></category>
+		<category><![CDATA[Life expectancy]]></category>
+		<category><![CDATA[United States]]></category>
+		<category><![CDATA[USA]]></category>
+		<category><![CDATA[Yan Islam]]></category>
+		<guid isPermaLink="false">https://blogs.griffith.edu.au/asiainsights/?p=12746</guid>
+
+					<description><![CDATA[<p><a href="https://blogs.griffith.edu.au/asiainsights">Griffith Asia Insights</a><br />
+<a href="https://blogs.griffith.edu.au/asiainsights/life-expectancy-matters-an-erstwhile-basket-case-catches-up-with-the-usa/">Life expectancy matters: An erstwhile ‘basket case’ catches up with the USA</a></p>
+<p>IYANATUL ISLAM&#160; &#124;&#160; In the so-called ‘growth convergence’ literature, poorer countries grow faster than their richer counterparts, provided they pursue good policies and have inclusive institutions. Over time, this differential growth performance translates into a process of ‘catch-up’ in which poor countries converge to the living standards of the rich nations. The growth convergence literature, [&#8230;]</p>
+<p>The post <a href="https://blogs.griffith.edu.au/asiainsights/life-expectancy-matters-an-erstwhile-basket-case-catches-up-with-the-usa/">Life expectancy matters: An erstwhile ‘basket case’ catches up with the USA</a> appeared first on <a href="https://blogs.griffith.edu.au/asiainsights">Griffith Asia Insights</a>.<br />
+<a href="https://blogs.griffith.edu.au/asiainsights/author/gaigriffith-edu-au/">Griffith Asia Institute</a></p>
+]]></description>
+										<content:encoded><![CDATA[<p><a href="https://blogs.griffith.edu.au/asiainsights">Griffith Asia Insights</a><br />
+<a href="https://blogs.griffith.edu.au/asiainsights/life-expectancy-matters-an-erstwhile-basket-case-catches-up-with-the-usa/">Life expectancy matters: An erstwhile ‘basket case’ catches up with the USA</a></p>
+
+<p class="wp-block-paragraph"><a href="https://blogs.griffith.edu.au/asiainsights/tag/yan-islam">IYANATUL ISLAM</a>&nbsp; |&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">In the so-called <a href="https://academic.oup.com/ej/article-abstract/125/585/911/5077358">‘growth convergence’ literature</a>, poorer countries grow faster than their richer counterparts, provided they pursue good policies and have inclusive institutions. Over time, this differential growth performance translates into a process of ‘catch-up’ in which poor countries converge to the living standards of the rich nations. The growth convergence literature, which is rather influential, with <a href="https://www.jstor.org/stable/2138606">one study</a> attracting more than 10,000 citations, focuses on per capita income. Yet, non-income dimensions of societal well-being, such as the ability to lead a long life, are critical. The expectation that a child born in Australia today will lead a long life is taken for granted. This expectation was not fulfilled for centuries. <a href="https://www.campop.geog.cam.ac.uk/blog/2024/08/15/three-score-and-ten/">In England, for example, between 1600 and 1800 life expectancy ranged between 35 and 40 years.</a></p>
+
+
+
+<p class="wp-block-paragraph">What happens if the notion of convergence is revisited through the prism of changes in life expectancy in the case of Bangladesh, a lower middle-income country, using the United States as a rich country benchmark? The revelations are both remarkable and surprising. Based on the heroic assumption that Bangladesh will grow at 7 percent per annum for decades, it will take at least 68 years for the country to attain the per capita real GDP of USA as it prevailed in 2025. Based on more recent growth rates, Bangladesh will take over a century to attain the income threshold of the United States. Yet, the gap in life expectancy between USA and Bangladesh has narrowed sharply in a few decades.</p>
+
+
+
+<p class="wp-block-paragraph">Prior to December 1971, Bangladesh was an impoverished Eastern province of Pakistan. Its per capita income in 1970 was 25 percent below the national average, while life expectancy, at 43 years, was ten years less than Pakistan. The average Bangladeshi in 1970 could expect to live no more than an average English person at the turn of the 19<sup>th</sup> century.</p>
+
+
+
+<p class="wp-block-paragraph">Bangladesh emerged as a new nation after waging a war of liberation (26 March 1971-16 December 1971) against the Pakistan army that was sent by the central government in the western wing of the country to suppress an incipient independence movement. Such a movement was the culmination of a decades-long campaign by resolute Bangladeshi nationalists to free themselves from decades of economic and political domination by the central government.</p>
+
+
+
+<p class="wp-block-paragraph">The Pakistan army engaged in <a href="https://sites.uab.edu/humanrights/2017/04/21/bangladesh-forgotten-genocide/">genocidal acts</a> that led to the death of hundreds of thousands, entailed the large-scale destruction of private and public property and displaced millions who sought sanctuary in neighbouring India. <a href="https://www.britannica.com/event/1971-India-Pakistan-War">The war of liberation ended when the Indian army intervened militarily,</a> resulting in the surrender of 90,000 Pakistani army personnel. Yet, this turned out to be a pyrrhic victory. In 1972, Bangladesh’s per capita real income fell by 21 percent, while in 1971 life expectancy plummeted to 27 years before staging a modest recovery.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://thediplomat.com/2021/03/how-the-cold-war-shaped-bangladeshs-liberation-war/">The USA, as one of two superpowers in the Cold War era, opposed the war of liberation, while the other superpower at the time, the former Soviet Union, supported it.</a> China joined the anti-Bangladesh movement.</p>
+
+
+
+<p class="wp-block-paragraph">The United States grudgingly accepted Bangladesh as a new nation but denigrated it as a <a href="htt

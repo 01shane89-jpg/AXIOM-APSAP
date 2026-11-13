@@ -1,0 +1,42 @@
+https://theconversation.com/us/politics/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/us/politics/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/us/politics/articles.atom"/>
+  <title>Politics + Society – The Conversation</title>
+  <updated>2026-11-12T13:41:41Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296103</id>
+    <published>2026-11-12T13:41:41Z</published>
+    <updated>2026-11-12T13:41:41Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/while-californias-wealth-tax-failed-states-are-taking-other-steps-to-collect-more-revenue-from-the-rich-296103"/>
+    <title>While California’s wealth tax failed, states are taking other steps to collect more revenue from the rich</title>
+    <content type="html">&lt;p&gt;State &lt;a href="https://itep.org/voters-pass-ballot-measures-to-raise-and-protect-revenue-tax-the-rich/"&gt;efforts to tax the rich&lt;/a&gt; did relatively well in the 2026 midterm elections, following a series of state legislative moves in that direction in recent years.&lt;/p&gt;
+
+&lt;p&gt;That might come as a surprise because a &lt;a href="https://www.cbsnews.com/sanfrancisco/news/california-proposition-40-billionaire-wealth-tax-rejected-cbs-projects/"&gt;majority of voters rejected&lt;/a&gt; California’s &lt;a href="https://calmatters.org/health/2026/11/california-election-2026-prop-40-41-42/"&gt;Proposition 40&lt;/a&gt;. The much-publicized ballot initiative would have imposed a one-time 5% tax on the net worth of the state’s roughly 200 billionaires. Google co-founder Sergey Brin and several other billionaires &lt;a href="https://calmatters.org/politics/elections/2026/11/prop-40-billionaire-tax-defeated/"&gt;spent nearly $400 million&lt;/a&gt; trying to persuade voters to reject it.&lt;/p&gt;
+
+&lt;p&gt;Emmanuel Saez, a University of California, Berkeley economist who studies inequality and helped design Proposition 40, lamented the loss, saying: “&lt;a href="https://ls.berkeley.edu/news/after-billionaire-tax-fails-economists-are-asking-%E2%80%98what%E2%80%99s-next%E2%80%99"&gt;Today oligarchy has won&lt;/a&gt;.” &lt;/p&gt;
+
+&lt;p&gt;As a &lt;a href="https://law.richmond.edu/faculty/atait/"&gt;law professor&lt;/a&gt; who recently &lt;a href="https://www.ucpress.edu/books/the-house-that-family-money-built/paper"&gt;wrote a book about wealth inequality&lt;/a&gt;, I have been monitoring the results of these efforts aimed at taxing the rich. Despite Proposition 40’s failure, I think it’s important to observe that many Americans expressed support during the midterms for hiking income taxes on the rich, and to a lesser extent, taxes on the second – &lt;a href="https://www.tiffanyhousefortlauderdale.com/blog/why-do-billionaires-buy-so-many-houses/"&gt;or third or fourth&lt;/a&gt; – homes the very wealthy possess.&lt;/p&gt;
+
+
+
+&lt;h2&gt;Taxing the rich at the ballot box&lt;/h2&gt;
+
+&lt;p&gt;Taxing income is proving a more successful strategy than taxing wealth.&lt;/p&gt;
+
+&lt;p&gt;Major changes to income taxes were &lt;a href="https://www.newsweek.com/5-states-vote-for-major-changes-to-income-tax-12683305"&gt;up for a vote in five states&lt;/a&gt; during the midterms. Three of those ballot initiatives were proposals that sought to boost income tax rates on the rich or maintain those rates. All three prevailed.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://mynorthwest.com/mynorthwest-politics/millionaires-tax-i-645-2/4286467"&gt;In Washington state&lt;/a&gt;, for example, voters backed a measure that will preserve &lt;a href="https://washingtonstatestandard.com/2026/11/03/washington-voters-embracing-income-tax-on-high-earners/"&gt;its new 9.9% income tax&lt;/a&gt; on household income above $1 million. This “millionaire’s tax,” signed into law earlier in 2026, is the state’s first personal income tax. &lt;/p&gt;
+
+&lt;p&gt;Meanwhile, &lt;a href="https://coloradosun.com/2026/11/06/proposition-136-results-amendment-87-income-tax-limit/"&gt;Colorado voters rejected Proposition 136&lt;/a&gt;, which would have capped the state’s income tax rate at 4.4%. They also &lt;a href="https://coloradosun.com/2026/11/06/amendment-87-results-passes-graduated-income-tax/"&gt;approved Amendment 87&lt;/a&gt;, a new graduated income tax that raises rates on households and businesses with incomes over $500,000.&lt;/p&gt;
+
+&lt;p&gt;And even though California’s voters rejected Proposition 40, they did &lt;a href="https://calmatters.org/california-voter-guide-2026/proposition-3-high-income-tax/"&gt;approve Proposition 3&lt;/a&gt;. That measure makes permanent the income tax rates enacted in 2012 for the state’s highest earners, which were set to expire in 2031. The surcharges, adjusted annually for inflation, start at 10.3% for incomes of $360,000 and go up to a 12.3% surcharge for taxpayers earning over $721,000. &lt;/p&gt;
+
+&lt;p&gt;And in August 2026, &lt;a href="https://mobudget.org/voters-resoundingly-reject-amendment-5/"&gt;Missouri voters overwhelmingly rejected a measure&lt;/a&gt; that would have required the state’s lawmakers to eliminate its income tax. This would have meant losing &lt;a href="https://www.stlpr.org/government-politics-issues/2026-08-04/amendment-5-missouri-income-sales-tax"&gt;$8.5 billion in revenue&lt;/a&gt; annually. The change would have let rich income taxpayers off the hook and replaced lost revenue through an increased sales tax that would have hit low-income taxpayers hardest.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href="https://www.desmoinesregister.com/story/news/politics/elections/2026/11/04/iowa-amendment-1-results-midterm-election-income-tax/92382820007/"&gt;two losses were in North Carolina and Iowa&lt;/a&gt;. Neither state voted directly on a tax to be levied on the rich. But both approved constitutional amendments that will make it harder for the state legislatures to enact these kinds of taxes in the future. North Carolina’s governor, Josh Stein, called the amendment in his state a “&lt;a href="https://www.carolinajournal.com/stein-warns-against-lowering-nc-constitutional-tax-cap/"&gt;millionaire protection cap&lt;/a&gt;.”&lt;/p&gt;
+
+&lt;figure class="align-center zoomable"&gt;
+            &lt;a aria-label="Zoomable image" href="https://images.theconversation.com/files/771227/original/file-20261110-64-8j75yp.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=1000&amp;amp;fit=clip"&gt;&lt;img alt="People encourage voters to support a 'billionaire tax.'" src="https://images.theconversation.com/files/771227/original/file-20261110-64-8j75yp.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=754&amp;amp;fit=clip" srcset="https://images.theconversation.com/files/771227/original/file-20261110-64-8j75yp.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=400&amp;amp;fit=crop&amp;amp;dpr=1 600w, https://images.theconversation.com/files/771227/original/file-20261110-64-8j75yp.jpg?ixlib=rb-4.1.1&amp;amp;q=30&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=400&amp;amp;fit=crop&amp;amp;dpr=2 1200w, https://images.theconversation.com/files/771227/original/file-20261110-64-8j75yp.jpg?ixlib=rb-4.1.1&amp;amp;q=15&amp;amp;auto=format&amp;amp;w=600&amp;amp;h=400&amp;amp;fit=crop&amp;amp;dpr=3 1800w, https://images.theconversation.com/files/771227/original/file-20261110-64-8j75yp.jpg?ixlib=rb-4.1.1&amp;amp;q=45&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=503&amp;amp;fit=crop&amp;amp;dpr=1 754w, https://images.theconversation.com/files/771227/original/file-20261110-64-8j75yp.jpg?ixlib=rb-4.1.1&amp;amp;q=30&amp;amp;auto=format&amp;amp;w=754&amp;amp;h=503&amp;amp;fit=crop&amp;amp;dpr=2 1508w, https://images.theconversation.com/files/771227/original

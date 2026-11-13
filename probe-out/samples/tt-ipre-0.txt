@@ -1,0 +1,59 @@
+https://ipre.md/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>IPRE</title>
+	<atom:link href="https://ipre.md/feed/" rel="self" type="application/rss+xml" />
+	<link>https://ipre.md</link>
+	<description>Institutul pentru Politici și Reforme Europene</description>
+	<lastBuildDate>Thu, 12 Nov 2026 12:25:08 +0000</lastBuildDate>
+	<language>ro-RO</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.7.21</generator>
+
+<image>
+	<url>https://ipre.md/wp-content/uploads/2020/09/cropped-ipre1-32x32.jpg</url>
+	<title>IPRE</title>
+	<link>https://ipre.md</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Conferința anuală privind extinderea UE 2026: 12 repere pentru avansarea negocierilor de aderare ale Republicii Moldova</title>
+		<link>https://ipre.md/2026/11/12/conferinta-anuala-privind-extinderea-ue-2026-12-repere-pentru-avansarea-negocierilor-de-aderare-ale-republicii-moldova/</link>
+					<comments>https://ipre.md/2026/11/12/conferinta-anuala-privind-extinderea-ue-2026-12-repere-pentru-avansarea-negocierilor-de-aderare-ale-republicii-moldova/#respond</comments>
+		
+		<dc:creator><![CDATA[Autor Ipre]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 12:23:02 +0000</pubDate>
+				<category><![CDATA[Comunicate]]></category>
+		<guid isPermaLink="false">https://ipre.md/?p=33394</guid>
+
+					<description><![CDATA[<p>Conferința anuală privind extinderea UE a reunit, pe 9 și 10 noiembrie 2026, la Palatul Republicii din Chișinău, peste 760 de participanți, inclusiv reprezentanți din peste 27 de țări. Programul a inclus peste 60 de vorbitori, iar la eveniment au participat 39 de jurnaliști. Discuțiile s-au concentrat pe progresele Republicii Moldova în negocierile de aderare [&#8230;]</p>
+<p>Articolul <a rel="nofollow" href="https://ipre.md/2026/11/12/conferinta-anuala-privind-extinderea-ue-2026-12-repere-pentru-avansarea-negocierilor-de-aderare-ale-republicii-moldova/">Conferința anuală privind extinderea UE 2026: 12 repere pentru avansarea negocierilor de aderare ale Republicii Moldova</a> apare prima dată în <a rel="nofollow" href="https://ipre.md">IPRE</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p style="font-weight: 400;"><strong>Conferința anuală privind extinderea UE a reunit, pe 9 și 10 noiembrie 2026, la Palatul Republicii din Chișinău, peste 760 de participanți, inclusiv reprezentanți din peste 27 de țări. Programul a inclus peste 60 de vorbitori, iar la eveniment au participat 39 de jurnaliști. Discuțiile s-au concentrat pe progresele Republicii Moldova în negocierile de aderare și pe aplicarea reformelor.</strong></p>
+<p style="font-weight: 400;">Desfășurat sub genericul „Pachetul de extindere 2026: Avansarea negocierilor de aderare la UE prin reforme, dialog, transparență și incluziune socială”, evenimentul a cuprins cea de-a doua ediție a conferinței anuale a Biroului pentru Integrare Europeană și ediția a XII-a a Forumului de Integrare Europeană, coorganizat de Fundația „Friedrich Ebert” și IPRE.</p>
+<p style="font-weight: 400;">Oficiali moldoveni și europeni, parlamentari, diplomați, experți și reprezentanți ai societății civile, ai mediului de afaceri și ai sindicatelor au discutat despre felul în care reformele pot îmbunătăți funcționarea justiției și calitatea serviciilor publice și pot ajuta companiile să devină mai competitive. Douăsprezece repere sintetizează dezbaterile celor două zile.</p>
+<p><img loading="lazy" class="alignnone wp-image-33395 size-full" src="https://ipre.md/wp-content/uploads/2026/11/01-Reforme-si-negocieri.jpg" alt="" width="1360" height="604" srcset="https://ipre.md/wp-content/uploads/2026/11/01-Reforme-si-negocieri.jpg 1360w, https://ipre.md/wp-content/uploads/2026/11/01-Reforme-si-negocieri-300x133.jpg 300w, https://ipre.md/wp-content/uploads/2026/11/01-Reforme-si-negocieri-1024x455.jpg 1024w, https://ipre.md/wp-content/uploads/2026/11/01-Reforme-si-negocieri-768x341.jpg 768w" sizes="(max-width: 1360px) 100vw, 1360px" /></p>
+<p><strong>1. Rezultatele din 2027 și obiectivul încheierii negocierilor până în 2028</strong></p>
+<p style="font-weight: 400;">Deschiderea conferinței a pus în prim-plan obiectivul pregătirii Republicii Moldova pentru încheierea negocierilor de aderare până în 2028. <a href="https://www.facebook.com/share/p/1PsUVBBtWu/">Președinta Maia Sandu</a> a subliniat că următoarea etapă trebuie să demonstreze aplicarea reformelor și capacitatea instituțiilor de a menține schimbările pe termen lung.</p>
+<p style="font-weight: 400;">„Pentru asta, anul 2027 trebuie să fie un an al rezultatelor concrete, în special pe partea de implementare”, a declarat șefa statului.</p>
+<p style="font-weight: 400;">Comisara europeană pentru extindere, Marta Kos, a apreciat accelerarea reformelor dificile, inclusiv evaluarea externă a judecătorilor, în pofida presiunilor din exterior. Ea a arătat că menținerea acestui ritm ar permite închiderea provizorie a 25 de capitole de negociere până la sfârșitul anului 2027 și a reafirmat sprijinul Comisiei Europene pentru parcursul Republicii Moldova.</p>
+<p style="font-weight: 400;">„Dacă procesul de reforme va continua în același ritm, acest lucru vă va plasa pe un parcurs foarte credibil pentru a închide negocierile până în 2028”, a declarat Marta Kos.</p>
+<p style="font-weight: 400;">Viceprim-ministra pentru integrare europeană,<a href="https://www.facebook.com/share/p/1MpLLidHnP/"> Cristina Gherasimov</a>, a subliniat că Raportul de extindere 2026 confirmă progrese la toate cele 33 de capitole de negociere și îmbunătățirea nivelului de pregătire în 25 dintre acestea, niciun capitol nemaifiind la un stadiu incipient. Aceste rezultate confirmă existența unui mecanism de monitorizare bine pus la punct.</p>
+<p style="font-weight: 400;">Cu patru clustere deschise, Republica Moldova are perspectiva închiderii provizorii a 25 de capitole în 2027: nouă în primul semestru și 16 în al doilea.</p>
+<p style="font-weight: 400;">Realizarea foii de parcurs va depinde de menținerea ritmului reformelor, îndeosebi în justiție, combaterea corupției, drepturile fundamentale și securitate. Prioritatea este aplicarea consecventă a legislației, consolidarea instituțiilor și demonstrarea unor rezultate durabile, resimțite de cetățeni. Actualizarea Programului național de aderare va integra prioritățile și resursele necesare, cu implicarea societății civile și a mediului de afaceri. Obiectivul rămâne pregătirea țării pentru încheierea negocierilor la începutul anului 2028, o țintă ambițioasă, dar realizabilă.</p>
+<p style="font-weight: 400;">„Sper ca anul viitor, la această conferință, să vorbim despre capitole provizoriu închise și despre reforme ale căror rezultate se simt tot mai mult în viața oamenilor. Pentru asta trebuie să continuăm să muncim cu aceeași viteză și dedicație”, a declarat Cristina Gherasimov.</p>
+<p><img loading="lazy" class="alignnone wp-image-33396 size-full" src="https://ipre.md/wp-content/uploads/2026/11/02-Dialog-cu-statele-membre.jpg" alt="" width="1360" height="604" srcset="https://ipre.md/wp-content/uploads/2026/11/02-Dialog-cu-statele-membre.jpg 1360w, https://ipre.md/wp-content/uploads/2026/11/02-Dialog-cu-statele-membre-300x133.jpg 300w, https://ipre.md/wp-content/uploads/2026/11/02-Dialog-cu-statele-membre-1024x455.jpg 1024w, https://ipre.md/wp-content/uploads/2026/11/02-Dialog-cu-statele-membre-768x341.jpg 768w" sizes="(max-width: 1360px) 100vw, 1360px" /></p>
+<p><strong>2. Un dialog cu statele membre despre accelerarea aderării și durabilitatea reformelor</strong></p>
+<p style="font-weight: 400;">Plenara „Viitorul extinderii Uniunii Euro

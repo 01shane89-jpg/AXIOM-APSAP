@@ -1,0 +1,86 @@
+https://www.kaiptc.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>KAIPTC</title>
+	<atom:link href="https://www.kaiptc.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.kaiptc.org</link>
+	<description>Kofi Annan International Peacekeeping Training Centre, Accra - Ghana</description>
+	<lastBuildDate>Tue, 10 Nov 2026 19:44:08 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.7.11</generator>
+<site xmlns="com-wordpress:feed-additions:1">130801066</site>	<item>
+		<title>Preventing Violent Extremism: KAIPTC and Spain Conclude Regional Engagements with Call for Stronger Civilian–Security Trust</title>
+		<link>https://www.kaiptc.org/preventing-violent-extremism-kaiptc-and-spain-conclude-regional-engagements-with-call-for-stronger-civilian-security-trust/</link>
+					<comments>https://www.kaiptc.org/preventing-violent-extremism-kaiptc-and-spain-conclude-regional-engagements-with-call-for-stronger-civilian-security-trust/#respond</comments>
+		
+		<dc:creator><![CDATA[DigitalOf]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 19:44:06 +0000</pubDate>
+				<guid isPermaLink="false">https://www.kaiptc.org/?p=18587</guid>
+
+					<description><![CDATA[In communities where concerns go unreported and relationships between citizens and security institutions remain fragile, the absence of trust can become a security vulnerability. Across four regions of Ghana, the<span class="excerpt-hellip"> […]</span>]]></description>
+										<content:encoded><![CDATA[
+<p>In communities where concerns go unreported and relationships between citizens and security institutions remain fragile, the absence of trust can become a security vulnerability. Across four regions of Ghana, the Kofi Annan International Peacekeeping Training Centre (KAIPTC), with support from the Government of Spain through the Embassy of Spain in Ghana, has been working to address that challenge — bringing communities and security actors together to build the foundations for more effective prevention of violent extremism.</p>
+
+
+
+<p>The latest engagement in Nalerigu, North East Region, marks the final workshop in a series of regional engagements held under the theme Strengthening Civilian–Security Trust and Community Resilience for the Prevention of Violent Extremism.</p>
+
+
+
+<p>The initiative, implemented in collaboration with the National Peace Council (NPC), has taken the conversation beyond conventional security responses to examine a fundamental question: how can communities and security institutions work together to identify concerns, address vulnerabilities and prevent emerging threats before they escalate?</p>
+
+
+
+<p>From Wa in the Upper West Region to Damongo in the Savannah Region, Bolgatanga in the Upper East Region and now Nalerigu in the North East Region, the engagements have provided a platform for communities to articulate their experiences, confront barriers to cooperation and identify practical ways of strengthening local resilience.</p>
+
+
+
+<p>Moving beyond security to the question of trust</p>
+
+
+
+<p>At the heart of the engagements is a recognition that security is not sustained by institutions alone. It also depends on the confidence citizens have in those institutions, their willingness to share information and the assurance that their concerns will be heard and treated responsibly.</p>
+
+
+
+<p>Across the regional discussions, several interconnected issues emerged. These included safe and trusted channels for reporting security concerns, the meaningful inclusion of women and young&nbsp;</p>
+
+
+
+<p>people in community safety initiatives, and the fears, experiences and perceptions that discourage individuals from reporting suspicious activities or sharing sensitive information.</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" fetchpriority="high" decoding="async" width="1024" height="576" data-attachment-id="18590" data-permalink="https://www.kaiptc.org/preventing-violent-extremism-kaiptc-and-spain-conclude-regional-engagements-with-call-for-stronger-civilian-security-trust/whatsapp-image-2026-11-10-at-11-37-32-am/" data-orig-file="https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?fit=1280%2C720&amp;ssl=1" data-orig-size="1280,720" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="WhatsApp Image 2026-11-10 at 11.37.32 AM" data-image-description="" data-image-caption="" data-medium-file="https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?fit=300%2C169&amp;ssl=1" data-large-file="https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?fit=1024%2C576&amp;ssl=1" src="https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM-1024x576.jpeg?resize=1024%2C576&#038;ssl=1" alt="" class="wp-image-18590" srcset="https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=1024%2C576&amp;ssl=1 1024w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=300%2C169&amp;ssl=1 300w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=768%2C432&amp;ssl=1 768w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=400%2C225&amp;ssl=1 400w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=800%2C450&amp;ssl=1 800w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=260%2C146&amp;ssl=1 260w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=50%2C28&amp;ssl=1 50w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?resize=133%2C75&amp;ssl=1 133w, https://i0.wp.com/www.kaiptc.org/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-10-at-11.37.32-AM.jpeg?w=1280&amp;ssl=1 1280w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p>For many communities, the question is not simply whether people recognise potential threats, but whether they feel sufficiently safe and confident to report them.</p>
+
+
+
+<p>That distinction is critical. When fear, mistrust or uncertainty prevents information from reaching the appropriate authorities, opportunities for early intervention may be lost. Strengthening civilian–security relationships is therefore not merely a matter of improving communication; it is an essential part of building effective community-based early warning and prevention systems.</p>
+
+
+
+<p>Bringing every voice into the prevention conversation</p>
+
+
+
+<p>The workshops have deliberately brought together stakeholders whose roles and experiences are central to community security.</p>
+
+
+
+<p>Participants have included security and law enforcement institutions, regional and district authorities, traditional and religious leaders, women and youth representatives, civil society organisation

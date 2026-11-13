@@ -1,0 +1,81 @@
+https://vardberg.is/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Varðberg, samtök um vestræna samvinnu og alþjóðamál</title>
+	<atom:link href="https://vardberg.is/feed/" rel="self" type="application/rss+xml" />
+	<link>https://vardberg.is</link>
+	<description></description>
+	<lastBuildDate>Wed, 11 Nov 2026 12:15:46 +0000</lastBuildDate>
+	<language>is</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://vardberg.is/wp-content/uploads/2024/10/cropped-Merki-Vardbergs-1024x1024-1-32x32.png</url>
+	<title>Varðberg, samtök um vestræna samvinnu og alþjóðamál</title>
+	<link>https://vardberg.is</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Zelenskíj hvetur Evrópuríki til að styðja Freyju-eldflaugavarnir</title>
+		<link>https://vardberg.is/frettir/zelenskij-hvetur-evropuriki-til-ad-stydja-freyju-eldflaugavarnir/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=zelenskij-hvetur-evropuriki-til-ad-stydja-freyju-eldflaugavarnir</link>
+					<comments>https://vardberg.is/frettir/zelenskij-hvetur-evropuriki-til-ad-stydja-freyju-eldflaugavarnir/#respond</comments>
+		
+		<dc:creator><![CDATA[Björn Bjarnason]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 12:15:46 +0000</pubDate>
+				<category><![CDATA[Fréttir]]></category>
+		<guid isPermaLink="false">https://vardberg.is/?p=30823</guid>
+
+					<description><![CDATA[Volodymyr Zelenskíj, forseti Úkraínu, hvatti Evrópuríki eindregið til að styðja þróun samevrópsks eldflaugavarnakerfis, Freyju, þegar hann ávarpaði danska þingið miðvikudaginn [&#8230;]]]></description>
+										<content:encoded><![CDATA[<figure id="attachment_30824" aria-describedby="caption-attachment-30824" style="width: 300px" class="wp-caption alignnone"><img fetchpriority="high" decoding="async" class="size-medium wp-image-30824" src="https://vardberg.is/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-12.13.02-300x200.jpg" alt="" width="300" height="200" srcset="https://vardberg.is/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-12.13.02-300x200.jpg 300w, https://vardberg.is/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-12.13.02-391x260.jpg 391w, https://vardberg.is/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-12.13.02.jpg 560w" sizes="(max-width: 300px) 100vw, 300px" /><figcaption id="caption-attachment-30824" class="wp-caption-text">Volodymyr Zelenskíj ávarpar danska þingið 11. nóvember 2026.</figcaption></figure>
+<p data-id="7308c3cf-ebd9-4979-8bad-cc0b7f4e4006">Volodymyr Zelenskíj, forseti Úkraínu, hvatti Evrópuríki eindregið til að styðja þróun samevrópsks eldflaugavarnakerfis, Freyju, þegar hann ávarpaði danska þingið miðvikudaginn 11. nóvember. Samkvæmt frásögn <em>Jyllandsposten</em> sagði hann ellefu ríki þegar hafa lýst sig reiðubúin til þátttöku í verkefninu.</p>
+<p data-id="6a91d33e-427b-44e2-b60f-90406033e719">Hann þakkaði fyrir að fá að ávarpa þingmenn í sal þeirra og sagðist stoltur af því að vera fyrstur erlendra leiðtoga til að fá að gera það.</p>
+<p data-id="e16b8a9c-5c90-4ef6-8aad-78fc42fdf0f6">Zelenskíj sagði Evrópu þurfa eigin gagneldflaug sem unnt væri að framleiða í stórum stíl með litlum tilkostnaði. Markmiðið væri að draga úr því hve háð Evrópuríki væru aðstoð Bandaríkjanna og þeirra fáu ríkja sem framleiddu eldflaugar til að granda skotflaugum (e. ballistic missiles).</p>
+<p data-id="cec9a1d6-9526-455f-8ae3-4a72bd916ea3">Hann lýsti rússneskum skotflaugum sem hættulegustu vopnum Rússa og sagði Freyju-verkefnið geta gert þær áhrifalausar. Vinna við verkefnið væri þegar hafin. Hann sneri ítrekað aftur að mikilvægi þess í ræðunni og lauk henni með hvatningu um að gleyma ekki Freyju.</p>
+<p data-id="600e091f-f00b-4765-bfe3-c8ad4903aabb"><strong>Skortur á eldflaugum fyrir Patriot-kerfin</strong></p>
+<p data-id="57f7215f-c694-4bd0-bc5e-e6c01eccdcd4">Forseti Úkraínu sagði áherslu Bandaríkjanna á stríðið í Mið-Austurlöndum hafa alvarlegar afleiðingar fyrir varnir Úkraínu. Hann lýsti stöðu þar sem Patriot-loftvarnakerfi stæðu án eldflauga á meðan Rússar beittu skotflaugum sem Úkraínumenn hefðu í flestum tilvikum engin ráð til að skjóta niður.</p>
+<p data-id="631ea9a4-0a48-41d5-bc4a-d4f3ecaca6a2">Af þessu þyrftu önnur ríki að draga lærdóm. Þau yrðu að efla getu sína til eigin varna án þess að treysta á bandaríska aðstoð og bandarísk vopn, sagði hann.</p>
+<p data-id="6814924d-b79c-4e52-8768-98a1c4851095"><strong>Rétturinn til eigin framtíðar ekki til umræðu</strong></p>
+<p data-id="7bc956f6-3fe9-4d9f-b64f-7d7ada84b6dd">Zelenskíj vék einnig að friðarviðræðum við Rússa í Abu Dhabi. Hann taldi þær sýna að Rússum hefði mistekist að brjóta Úkraínu á bak aftur með stríði sínu. Nú yrðu þeir að ræða við Úkraínumenn.</p>
+<p data-id="d0f7c724-3eb7-40f1-9dc0-c9e5f81b7abb">Hann lagði áherslu á að réttur Úkraínu til að velja eigin framtíð væri ekki til samninga. Jafnframt sagði hann baráttu og viðnám landsins ekki hafa verið möguleg án stuðnings bandamanna, þar á meðal Danmerkur.</p>
+<p data-id="c51ccf4a-df05-4714-9864-b886823db000">Í upphafi ræðunnar lýsti Zelenskíj Danmörku sem vini sem ávallt mætti treysta. Hann sagði stríð Rússa hafa orðið mun langvinnara, blóðugra og erfiðara viðureignar en þeir sem hófu það hefðu gert ráð fyrir. Sú hugmynd að Rússar gætu lagt undir sig meira land hefði reynst skelfileg mistök.</p>
+<p data-id="9fe96003-54cc-4210-9fe2-a2b60b356891"><strong>Um Trump og Grænland</strong></p>
+<p data-id="aaaa10ca-dfb6-4c18-9f2c-076d64a974ba">Zelenskíj skaut einnig mildilega á Bandaríkin og Donald Trump í ræðu sinni. Hann sagði miður að Danmörk og Úkraína ættu ekki sameiginleg landamæri.</p>
+<p data-id="9ae91f88-f035-4bd7-b4d8-e08e64176551">„Þið eigið miklu betri nágranna en við,“ sagði hann og vakti hlátur í þingsalnum.</p>
+<p data-id="4e012eb0-a8cd-4160-bc6c-e97a9365b7c9">Allir ættu að láta sig dreyma um að eiga nágranna eins og Dani, bætti hann við. Kannski væri þar komin skýringin á áhuga Trumps á Grænlandi.</p>
+<p data-id="1e04e727-82da-465b-8a4d-1ff380494e13">„Þegar einhver í Ameríku vildi eignast Grænland áttaði hann sig kannski ekki einu sinni á því að það var ekki landið sem hann vildi, heldur að verða svolítið danskari. Kannski var það einmitt það sem hann þurfti á að halda,“ sagði Zelenskíj.</p>
+<p data-id="152b8bea-70d2-4b70-be10-b0c0f90bf763"><em>Heimild: Jyllandsposten, DR</em></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://vardberg.is/frettir/zelenskij-hvetur-evropuriki-til-ad-stydja-freyju-eldflaugavarnir/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Netöryggi á Íslandi – tímabært að breyta um takt</title>
+		<link>https://vardberg.is/frettir/netoryggi-a-islandi-timabaert-ad-breyta-um-takt/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=netoryggi-a-islandi-timabaert-ad-breyta-um-takt</link>
+					<comments>https://vardberg.is/frettir/netoryggi-a-islandi-timabaert-ad-breyta-um-takt/#respond</comments>
+		
+		<dc:creator><![CDATA[Davíð Stefánsson]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 08:00:06 +0000</pubDate>
+				<category><![CDATA[Fréttir]]></category>
+		<category><![CDATA[Pistlar]]></category>
+		<guid isPermaLink="false">https://vardberg.is/?p=30810</guid>
+
+					<description><![CDATA[Netöryggi á Íslandi – tímabært að breyta um takt Eftir Unni Kristínu Sveinbjarnardóttur, sviðsstjóra netöryggissviðs Fjarskiptastofu Netöryggi hefur á undanförnum [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h1><strong>Netöryggi á Íslandi – tímabært að breyta um takt</strong></h1>
+<p><strong>Eftir Unni Kristínu Sveinbjarnardóttur, sviðsstjóra netöryggissviðs Fjarskiptastofu</strong></p>
+<p>Netöryggi hefur á undanförn

@@ -1,0 +1,72 @@
+https://www.institutmontaigne.org/en/rss_en.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://www.institutmontaigne.org/en" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Institut Montaigne</title>
+    <link>https://www.institutmontaigne.org/en</link>
+    <description><![CDATA[]]></description>
+    <language>en</language>
+        <atom:link rel="self" href="https://www.institutmontaigne.org/en/rss_en.xml"></atom:link>
+<lastBuildDate>Fri, 13 Nov 2026 06:04:00 +0100</lastBuildDate>
+<pubDate>Mon, 09 Nov 26 11:28:23 +0100</pubDate>
+<item>
+  <title>Beneath the Azerbaijan-Turkey Spat May Lie a Greater Crisis of Regional Consequences</title>
+  <link>https://www.institutmontaigne.org/en/expressions/beneath-azerbaijan-turkey-spat-may-lie-greater-crisis-regional-consequences</link>
+  <description><p>For the past six weeks, Baku and Ankara have been embroiled in a deep crisis, triggered by a ‘hijab’ ban in Azerbaijani schools. This dispute highlights deep-rooted tensions over Baku’s close ties with Israel and potentially risks further destabilizing the whole region.</p></description>
+  <guid isPermaLink="false">05d79084-744f-4b7f-ad20-4b4bbcfeb9d5</guid>
+          <pubDate>2026-11-09T11:28:23+0100
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>Beneath the Azerbaijan-Turkey Spat May Lie a Greater Crisis of Regional Consequences</dc:title>
+          <dc:description>&lt;p&gt;For the past six weeks, Baku and Ankara have been embroiled in a deep crisis, triggered by a ‘hijab’ ban in Azerbaijani schools. This dispute highlights deep-rooted tensions over Baku’s close ties with Israel and potentially risks further destabilizing the whole region.&lt;/p&gt;</dc:description>
+          <dc:date>2026-11-09T11:28:23+01:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title>How AI Is Pushing the Boundaries of the Concept of Intelligence</title>
+  <link>https://www.institutmontaigne.org/en/expressions/how-ai-pushing-boundaries-concept-intelligence</link>
+  <description><p>As artificial intelligence technologies transform our daily lives, our societies are expressing a deep need to define the scope of their capabilities. This question - which is as much a philosophical debate as it is a political one - touches on the very power of AI and, ultimately, on the need to regulate the actions of these new tools. Sébastien Guinard, an engineer at the CEA and a professor at GEM Alpine Business School, advocates for an original approach that challenges our understanding…</description>
+  <guid isPermaLink="false">0f86a273-62d5-4e8f-8f67-2b087123ee3f</guid>
+          <pubDate>2026-11-05T17:22:06+0100
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>How AI Is Pushing the Boundaries of the Concept of Intelligence</dc:title>
+          <dc:description>&lt;p&gt;As artificial intelligence technologies transform our daily lives, our societies are expressing a deep need to define the scope of their capabilities. This question - which is as much a philosophical debate as it is a political one - touches on the very power of AI and, ultimately, on the need to regulate the actions of these new tools. Sébastien Guinard, an engineer at the CEA and a professor at GEM Alpine Business School, advocates for an original approach that challenges our understanding…</dc:description>
+          <dc:date>2026-11-05T17:22:06+01:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title></title>
+  <link>https://www.institutmontaigne.org/en/meetings/europe-asia-policy-workshop-demand-side-measures-secure-clean-transition</link>
+  <description><p>On October 27th 2026, Institut Montaigne held a policy workshop bringing together over 50 participants including industry leaders, policymakers, and experts from Europe, Japan, and Korea to explore opportunities for collaboration in establishing a strong framework for clean industrial policies and diversified supply chains in clean technologies.</p><p>This workshop was held as part of the Cleantech Competitiveness Support Initiative, a project launched by Institut Montaigne to identify the…</description>
+  <guid isPermaLink="false">eb8f6f29-9fb2-4c96-bc06-f4fdf07487a0</guid>
+          <pubDate>2026-11-04T17:03:34+0100
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:description>&lt;p&gt;On October 27th 2026, Institut Montaigne held a policy workshop bringing together over 50 participants including industry leaders, policymakers, and experts from Europe, Japan, and Korea to explore opportunities for collaboration in establishing a strong framework for clean industrial policies and diversified supply chains in clean technologies.&lt;/p&gt;&lt;p&gt;This workshop was held as part of the Cleantech Competitiveness Support Initiative, a project launched by Institut Montaigne to identify the…</dc:description>
+          <dc:date>2026-11-04T17:03:34+01:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title>Public Opinion and Europe : Between High Expectations and Incapacity Syndrome</title>
+  <link>https://www.institutmontaigne.org/en/expressions/public-opinion-and-europe-between-high-expectations-and-incapacity-syndrome</link>
+  <description><p>As the EU is facing numerous crises (geopolitical, energy, and social), a majority of its citizens now believe that their country’s membership in the EU is a good thing; yet beneath this apparent consensus, the realities are mixed. How does France position itself relative to other member states, and what are the consequences of its "specificity" - which consists of a double disconnect between a unitary political culture often clashing with the European culture of compromise and a…</description>
+  <guid isPermaLink="false">f9208543-c3ee-4658-9645-46e1a2dec19b</guid>
+          <pubDate>2026-10-29T17:02:25+0100
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>Public Opinion and Europe : Between High Expectations and Incapacity Syndrome</dc:title>
+          <dc:description>&lt;p&gt;As the EU is facing numerous crises (geopolitical, energy, and social), a majority of its citizens now believe that their country’s membership in the EU is a good thing; yet beneath this apparent consensus, the realities are mixed. How does France position itself relative to other member states, and what are the consequences of its &quot;specificity&quot; - which consists of a double disconnect between a unitary political culture often clashing with the European culture of compromise and a…</dc:description>
+          <dc:date>2026-10-29T17:02:25+01:00</dc:date>
+          <dc:language>EN</dc:language>
+          </item>
+<item>
+  <title>China’s Trade Surge: October turns Red</title>
+  <link>https://www.institutmontaigne.org/en/expressions/chinas-trade-surge-october-turns-red</link>
+  <description><p>Facing a worsening bilateral trade deficit set to top €400 billion in 2026, Europeans have given Beijing an ultimatum: find a solution by mid-October or face unprecedented tariff barriers. The uncertainty is no longer about whether new protective measures are coming, but how far-reaching the shift will be and how intense the resulting tensions will prove.</p></description>
+  <guid isPermaLink="false">4f70ca20-828c-4e99-b446-80eb8d99bdcc</guid>
+          <pubDate>2026-10-26T18:47:56+0100
+</pubDate>
+          <source url="https://www.institutmontaigne.org/en/rss_en.xml">Institut Montaigne</source>
+          <dc:title>China’s Trade Surge: October turns Red</dc:title>
+          <dc:description>&lt;p&gt;Facing a worsening bilateral trade deficit set to top €400 billion in 20

@@ -1,0 +1,25 @@
+https://www.orfonline.org/sitemap.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemap>
+<loc>https://www.orfonline.org/other-sitemap.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://www.orfonline.org/events-sitemap.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://www.orfonline.org/expert-speak-sitemap.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://www.orfonline.org/research-sitemap.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://www.orfonline.org/video-sitemap.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://www.orfonline.org/post-tags-sitemap.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://www.orfonline.org/post-tags-sitemap1.xml</loc>
+</sitemap>
+</sitemapindex>

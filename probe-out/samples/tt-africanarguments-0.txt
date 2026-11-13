@@ -1,0 +1,76 @@
+https://africanarguments.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>African Arguments</title>
+	<atom:link href="https://africanarguments.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://africanarguments.org/</link>
+	<description>African Arguments</description>
+	<lastBuildDate>Thu, 12 Nov 2026 21:58:41 +0000</lastBuildDate>
+	<language>en-GB</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://africanarguments.org/wp-content/uploads/2017/05/cropped-aa-logo-icon-a-1-32x32.png</url>
+	<title>African Arguments</title>
+	<link>https://africanarguments.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>FILM AFRICA Press Release</title>
+		<link>https://africanarguments.org/2026/11/film-africa-press-release/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=film-africa-press-release</link>
+		
+		<dc:creator><![CDATA[Francesco Rota]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 21:56:44 +0000</pubDate>
+				<category><![CDATA[Debating Ideas]]></category>
+		<guid isPermaLink="false">https://africanarguments.org/?p=48684</guid>
+
+					<description><![CDATA[<p>The Royal African Society Announces the Successful Conclusion of the 2026 Film Africa Festival London, United Kingdom,  9th November 2026 The Royal African Society is delighted to announce the successful conclusion of its 125th Anniversary edition of Film Africa Festival which took place from 23 October to 1 November. Now in its 13th year, Film Africa celebrated the richness, diversity, and creativity of African cinema and brought together audiences, filmmakers, industry professionals, and supporters for an inspiring celebration of African storytelling. The festival screened 38 films from 30 African countries, and hosted two symposia, across 11 venues in London, Sheffield, [&#8230;]</p>
+<p>The post <a href="https://africanarguments.org/2026/11/film-africa-press-release/">FILM AFRICA Press Release</a> appeared first on <a href="https://africanarguments.org">African Arguments</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p style="font-weight: 400;"><strong>The Royal African Society Announces the Successful Conclusion of the 2026 Film Africa Festival</strong></p>
+<p style="font-weight: 400;"><strong><em>London, United Kingdom,  9th November 2026</em></strong></p>
+<p style="font-weight: 400;">The Royal African Society is delighted to announce the successful conclusion of its 125<strong><sup>th</sup> Anniversary edition of Film Africa Festival which took place from 23 October to 1 November.</strong> Now in its 13<sup>th</sup> year, Film Africa celebrated the richness, diversity, and creativity of African cinema and brought together audiences, filmmakers, industry professionals, and supporters for an inspiring celebration of African storytelling. The festival screened 38 films from 30 African countries, and hosted two symposia, across 11 venues in London, Sheffield, Bristol, and Plymouth.</p>
+<p style="font-weight: 400;">The festival provided a vibrant platform for African filmmakers to share compelling stories, highlighted diverse perspectives, and engaged audiences through the power of film. This year’s Film Africa Festival provided a special focus on<strong> The Role of African Women in Cinema, and the Importance of Sustainable Finance, Intellectual Property and Digital Technology </strong>for the future of African Cinema.</p>
+<p style="font-weight: 400;">We are deeply grateful to everyone who contributed to making this year&#8217;s festival a memorable success. We extend our heartfelt appreciation to all our members, guests, and members of the public who attended screenings, participated in discussions, engaged with filmmakers, and supported the festival throughout its programme. Your enthusiasm, curiosity, and commitment to African cinema were central to the festival&#8217;s success.</p>
+<p style="font-weight: 400;">We are particularly appreciative of our 125<sup>th</sup> Anniversary sponsors:</p>
+<p style="font-weight: 400;"><strong>Platinum category:</strong> Afreximbank / CANEX and Nuvion</p>
+<p style="font-weight: 400;"><strong>Gold category:</strong> Africa Finance Corporation and Oando</p>
+<p style="font-weight: 400;"><strong>Bronze category:</strong> DLA Piper, Omenaa Foundation, Nigerian Exchange Group, Oakwood Green Africa, and Air Peace.</p>
+<p style="font-weight: 400;">We also thank the filmmakers, directors, producers, our industry partners, venues, volunteers, and the wider creative community for their invaluable contributions and continued support.</p>
+<p style="font-weight: 400;">Film Africa remains committed to celebrating African cinema, amplifying African voices, and creating opportunities for cultural exchange and meaningful dialogue through film. The 2026 festival has once again demonstrated the power of cinema to connect communities, inspire conversations, and deepen understanding of the many stories shaping the African continent and its diaspora.</p>
+<p style="font-weight: 400;">We look forward to welcoming audiences back for future editions, and continuing to celebrate the extraordinary talent and creativity of African filmmakers. To join us and to partake in our future events, please see: <a href="https://royalafricansociety.org/events/">https://royalafricansociety.org/events/</a></p>
+<p style="font-weight: 400;">For further partnership opportunities, kindly send us an email to: <a href="mailto:ras_director@soas.ac.uk">ras_director@soas.ac.uk</a>.</p>
+<p>The post <a href="https://africanarguments.org/2026/11/film-africa-press-release/">FILM AFRICA Press Release</a> appeared first on <a href="https://africanarguments.org">African Arguments</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>African Arguments Interview with Dr Antwi-Boasiako Amoah Ahead of COP31</title>
+		<link>https://africanarguments.org/2026/11/interview-with-dr-antwi-boasiako-amoah-ahead-of-cop31/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=interview-with-dr-antwi-boasiako-amoah-ahead-of-cop31</link>
+		
+		<dc:creator><![CDATA[Rishika Pardikar]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 17:43:34 +0000</pubDate>
+				<category><![CDATA[Climate]]></category>
+		<category><![CDATA[Debating Ideas]]></category>
+		<category><![CDATA[Economy]]></category>
+		<guid isPermaLink="false">https://africanarguments.org/?p=48680</guid>
+
+					<description><![CDATA[<p>The 31st climate talks (COP31) began in Antalya, Türkiye on 9 November. The African Group of Negotiators (AGN), an alliance of all of the 54 countries from the continent, had submitted three agenda proposals to the UNFCCC for the conference. One concerned a demand to triple adaptation finance, the other related to trade-related climate measures like carbon border taxes and the last one was about financing arrangements under the Green Climate Fund (GCF), a climate fund established under the UNFCCC to assist developing countries in mitigation and adaptation. None of the three proposals made it into the final agenda adopted [&#8230;]</p>
+<p>The post <a href="https://africanarguments.org/2026/11/interview-with-dr-antwi-boasiako-amoah-ahead-of-cop31/">African Arguments Interview with Dr Antwi-Boasiako Amoah Ahead of COP31</a> appeared first on <a href="https://africanarguments.org">African Arguments</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><span style="font-weight: 400;">The 31st climate talks (COP31) began in Antalya, </span><span style="font-weight: 400;">Türkiye </span><span style="font-weight: 400;">on 9 November</span><span style="font-weight: 400;">. </span><span style="fon

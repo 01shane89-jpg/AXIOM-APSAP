@@ -1,0 +1,121 @@
+https://pciudadana.org/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Participación Ciudadana</title>
+	<atom:link href="https://pciudadana.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://pciudadana.org/</link>
+	<description>Participación Ciudadana</description>
+	<lastBuildDate>Wed, 11 Nov 2026 13:46:55 +0000</lastBuildDate>
+	<language>es-DO</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>IACC 2026: República Dominicana será el centro del debate mundial contra la corrupción</title>
+		<link>https://pciudadana.org/2026/11/iacc-2026-republica-dominicana-sera-el-centro-del-debate-mundial-contra-la-corrupcion/</link>
+		
+		<dc:creator><![CDATA[Alaiska Cuevas]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 13:42:24 +0000</pubDate>
+				<category><![CDATA[Nota de prensa]]></category>
+		<category><![CDATA[anticorruption]]></category>
+		<category><![CDATA[conferencia internacional anticorrupci[on]]></category>
+		<category><![CDATA[iacc series 2026]]></category>
+		<category><![CDATA[lucha anticorrupcion]]></category>
+		<category><![CDATA[punta cana]]></category>
+		<guid isPermaLink="false">https://pciudadana.org/?p=17036</guid>
+
+					<description><![CDATA[<p>Del 1 al 4 de diciembre, Punta Cana acogerá la 22.ª Conferencia Internacional Anticorrupción. Líderes internacionales, representantes de gobiernos, organizaciones de la sociedad civil, periodistas, especialistas y activistas se reunirán [&#8230;]</p>
+<p>The post <a href="https://pciudadana.org/2026/11/iacc-2026-republica-dominicana-sera-el-centro-del-debate-mundial-contra-la-corrupcion/">IACC 2026: República Dominicana será el centro del debate mundial contra la corrupción</a> appeared first on <a href="https://pciudadana.org">Participación Ciudadana</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<h1 id="h-" class="wp-block-heading"></h1>
+
+
+
+<p class="wp-block-paragraph"><strong><em>Del 1 al 4 de diciembre, Punta Cana acogerá la 22.ª Conferencia Internacional Anticorrupción. Líderes internacionales, representantes de gobiernos, organizaciones de la sociedad civil, periodistas, especialistas y activistas se reunirán para discutir los desafíos actuales de la lucha contra la corrupción y las respuestas necesarias para enfrentarla.</em></strong></p>
+
+
+
+<p class="wp-block-paragraph">República Dominicana se prepara para recibir la Conferencia Internacional Anticorrupción (IACC 2026), uno de los principales encuentros mundiales dedicados a promover la transparencia, la integridad y la rendición de cuentas.</p>
+
+
+
+<p class="wp-block-paragraph">La conferencia se celebrará del <strong>1 al 4 de diciembre de 2026 en el Centro de Convenciones Barceló Bávaro, en Punta Cana</strong>, y reunirá a representantes de distintos países y sectores para debatir cómo enfrentar la corrupción en un contexto internacional marcado por desafíos para las instituciones democráticas, la seguridad, los derechos humanos y la confianza ciudadana.</p>
+
+
+
+<p class="wp-block-paragraph">La IACC es un espacio de intercambio internacional que, durante más de cuatro décadas, ha reunido a personas y organizaciones comprometidas con la lucha contra la corrupción. Sus encuentros suelen convocar a unas 2,000 personas procedentes de aproximadamente 140 países.</p>
+
+
+
+<p class="wp-block-paragraph">Para República Dominicana, ser sede de esta edición representa una oportunidad para compartir sus desafíos, conocer experiencias internacionales y participar en la construcción de propuestas frente a problemas que trascienden las fronteras nacionales.</p>
+
+
+
+<h2 id="h-encendiendo-el-poder-de-la-integridad-el-lema-de-2026" class="wp-block-heading">«Encendiendo el poder de la integridad»: el lema de 2026</h2>
+
+
+
+<p class="wp-block-paragraph">La 22.ª edición se desarrollará bajo el lema <strong>«Encendiendo el poder de la integridad»</strong> (<em>Igniting the Power of Integrity</em>).</p>
+
+
+
+<p class="wp-block-paragraph">La propuesta parte de una preocupación central: el debilitamiento de los valores democráticos, las amenazas a las libertades, el avance de las redes criminales y los flujos financieros ilícitos, así como sus consecuencias sobre las personas, las instituciones y el medioambiente.</p>
+
+
+
+<p class="wp-block-paragraph">Frente a ese escenario, la conferencia busca reunir a quienes trabajan desde distintos espacios por la integridad: organizaciones ciudadanas, periodistas de investigación, denunciantes, personas defensoras de derechos humanos, líderes juveniles, representantes del sector público y actores empresariales.</p>
+
+
+
+<p class="wp-block-paragraph">El objetivo es intercambiar experiencias, fortalecer alianzas y discutir estrategias que permitan prevenir la corrupción, exigir responsabilidades y promover instituciones que respondan al interés público.</p>
+
+
+
+<figure class="wp-block-image size-large"><img fetchpriority="high" decoding="async" width="1024" height="683" src="https://pciudadana.org/wp-content/uploads/2026/11/pciudadana_DfiN_OnCR-J_01-1024x683.jpg" alt="" class="wp-image-17038" srcset="https://pciudadana.org/wp-content/uploads/2026/11/pciudadana_DfiN_OnCR-J_01-1024x683.jpg 1024w, https://pciudadana.org/wp-content/uploads/2026/11/pciudadana_DfiN_OnCR-J_01-300x200.jpg 300w, https://pciudadana.org/wp-content/uploads/2026/11/pciudadana_DfiN_OnCR-J_01-768x512.jpg 768w, https://pciudadana.org/wp-content/uploads/2026/11/pciudadana_DfiN_OnCR-J_01-1536x1024.jpg 1536w, https://pciudadana.org/wp-content/uploads/2026/11/pciudadana_DfiN_OnCR-J_01.jpg 1999w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<h2 id="h-ocho-grandes-temas-para-discutir-los-desafios-actuales" class="wp-block-heading">Ocho grandes temas para discutir los desafíos actuales</h2>
+
+
+
+<p class="wp-block-paragraph">La agenda de la IACC 2026 está organizada alrededor de ocho ejes temáticos que conectan la corrupción con algunos de los principales problemas contemporáneos.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>1. Defensa de la democracia y las libertades.</strong> Se examinarán las amenazas a las instituciones democráticas, la captura del Estado, la reducción del espacio cívico y las estrategias para fortalecer la participación ciudadana y los mecanismos de control.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>2. Protección de quienes defienden la integridad.</strong> Este eje abordará los riesgos que enfrentan denunciantes, periodistas de investigación, activistas y personas defensoras de derechos humanos, así como las medidas necesarias para garantizar su protección.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>3. Corrupción, conflictos y seguridad.</strong> Las discusiones explorarán las relaciones entre corrupción, crimen organizado, violencia, impunidad y debilitamiento institucional.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>4. Integridad para las personas y el planeta.</strong> Se analizará cómo la corrupción afecta la protección ambiental, la acción climática, los recursos naturales y los derechos de las comunidades.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>5. Integridad empresarial.</strong> El encuentro incluirá debates sobre la responsabilidad del sector privado, la transparencia corporativa, los sistemas de cumplimiento y la prevención de prácticas corruptas.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>6. Participación de la juventud.</strong> Se destacará el papel de las nuevas generaciones en la exigencia de rendición de cuentas, la innovación cívica y la construcción de sociedades más transparentes.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>7. Tecnología e innovación.</strong> La inteligencia artificial, los datos abiertos

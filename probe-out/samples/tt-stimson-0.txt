@@ -1,0 +1,76 @@
+https://www.stimson.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Stimson Center</title>
+	<atom:link href="https://www.stimson.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.stimson.org/</link>
+	<description></description>
+	<lastBuildDate>Mon, 09 Nov 2026 19:45:57 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://www.stimson.org/wp-content/uploads/2026/04/favicon_stimson_org.png</url>
+	<title>Stimson Center</title>
+	<link>https://www.stimson.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Assessing the Trump Administration’s Commitment to Taiwan</title>
+		<link>https://www.stimson.org/2026/assessing-the-trump-administrations-commitment-to-taiwan/</link>
+		
+		<dc:creator><![CDATA[Kaitlyn Hashem]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 15:10:29 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://www.stimson.org/?p=130626</guid>
+
+					<description><![CDATA[<p>What the administration’s policy behavior reveals about the strength of Washington’s commitment to Taipei</p>
+<p>The post <a href="https://www.stimson.org/2026/assessing-the-trump-administrations-commitment-to-taiwan/">Assessing the Trump Administration’s Commitment to Taiwan</a> appeared first on <a href="https://www.stimson.org">Stimson Center</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Since Donald Trump returned to the White House in 2025, there has been considerable concern over whether Washington’s longstanding support for Taiwan will survive his presidency. Many fear Trump views Taiwan largely as an irritant complicating US-China relations, and some of his rhetoric seems to justify this view. However, the president’s speech is famously inconsistent, making it impossible to obtain a clear picture of his administration’s policy based on his public comments alone.<sup class="modern-footnotes-footnote ">1</sup></p>
+
+
+
+<p class="wp-block-paragraph">Nor is the president the lone decisionmaker on Taiwan policy. While Trump has taken a more hands-on approach to hot-button foreign policy issues than his recent predecessors and has the authority to enact significant changes if he chooses to do so, day-to-day policy continues to be driven by administration officials and career bureaucrats who do not appear to share the skepticism that some of Trump’s words imply. The president’s ability to change course on Taiwan is also constrained by Congress, which continues to show overwhelming bipartisan support for the island.</p>
+
+
+
+<p class="wp-block-paragraph">This report will look beyond the narratives and speculation caused by Trump’s rhetoric and examine what his administration’s approach to Taiwan reveals about its commitment to the island. The report is not aimed at comprehensively dissecting the various elements of the Trump administration’s Taiwan policy, but rather at answering one fundamental question: What does the Trump administration’s track record so far say about its commitment to Taiwan? The answer is far more optimistic for Taipei than many popular narratives suggest.</p>
+
+
+
+<h3 class="wp-block-heading">Background</h3>
+
+
+
+<p class="wp-block-paragraph">It is not hard to understand why many observers believe the Trump administration is less committed to Taiwan than its predecessors. Trump frequently accuses Taiwan of stealing America’s semiconductor industry and demands that the manufacturing of increasingly sophisticated chips relocate to the United States. He also has openly questioned Taiwan’s strategic importance to the U.S. and stated in unprecedentedly stark terms that he does not want to fight a war over the island.<sup class="modern-footnotes-footnote ">2</sup> Additionally, though the Trump administration insists that Taiwan policy has not changed under its watch, parts of its approach to the island have been noticeably less assertive and more conciliatory toward Beijing than what was experienced under the last two administrations.<sup class="modern-footnotes-footnote ">3</sup></p>
+
+
+
+<p class="wp-block-paragraph">U.S. support for Taiwan became more overt under Trump’s first administration (2017-2021), which significantly expanded unofficial diplomacy with the island. This included, among other developments, President-elect Trump accepting a congratulatory phone call from then-Taiwan president Tsai Ing-wen in December 2016 and the president’s dispatch of Health and Human Services Secretary Alex Azar to Taiwan in 2020, making him the first Cabinet official to visit the island since 1979.<sup class="modern-footnotes-footnote ">4</sup> Trump also approved $18.3 billion in arms sales to Taiwan, far surpassing in four years the previous record of $15.6 billion approved during the eight years of the George W. Bush administration (2001-2009).<sup class="modern-footnotes-footnote ">5</sup></p>
+
+
+
+<p class="wp-block-paragraph">The administration of Joe Biden (2021-2025) largely continued this approach. While Biden approved a much smaller volume of arms sales to Taiwan ($8.4 billion), his administration was, by many counts, even more overt in its support for the island.<sup class="modern-footnotes-footnote ">6</sup> The Biden administration routinely criticized Beijing’s military activities near Taiwan. It also continued the well-established practice of naval transits through the Taiwan Strait and actively called on allies to do more to support the island. Furthermore, Biden became the second president, after George W. Bush, to state unequivocally that he would use military force to defend Taiwan if the island were attacked.<sup class="modern-footnotes-footnote ">7</sup> Biden repeated this pledge four times, making it unlikely that he simply misspoke. While his administration clarified that these statements did not constitute a change of policy, they helped bolster confidence in Washington’s support for Taipei.</p>
+
+
+
+<p class="wp-block-paragraph">The beginning months of the second Trump administration appeared to indicate that this general trend would continue. Less than a month after the inauguration, the State Department removed the phrase “we do not support Taiwan independence” from its online factsheet on Taiwan.<sup class="modern-footnotes-footnote ">8</sup> It also added new content highlighting Taiwan’s technology cooperation with the Pentagon and U.S. support for Taiwan’s membership in some international organizations. While the factsheet’s continued opposition to “any unilateral changes to the status quo from either side” showed the official policy had not changed, these edits appeared to indicate the administration planned to retain Biden’s assertiveness on the Taiwan issue.<sup class="modern-footnotes-footnote ">9</sup></p>
+
+
+
+<p class="wp-block-paragraph">The Pentagon conveyed even stronger messages about Taiwan. Whereas the Biden administration’s Defense Department identified China as its sole “pacing challenge,”<sup class="modern-footnotes-footnote ">10</sup> a classified document leaked from the Pentagon during Defense Secretary Pete Hegseth’s second month on the job specifically identified “denial of a Chinese fait accompli seizure of Taiwan” as “the department’s sole pacing scenario.”<sup class="modern-footnotes-footnote ">11</sup> In other words, the Pentagon under Hegseth was not just worried about competing with China; it explicitly worried about the threat of Chinese military action against Taiwan. Hegseth’s speech at the annual Shangri-la Dialogue in Singapore in May 2025 described the t

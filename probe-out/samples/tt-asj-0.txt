@@ -1,0 +1,119 @@
+https://asjhonduras.com/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>ASJ Honduras</title>
+	<atom:link href="https://asjhonduras.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://asjhonduras.com/</link>
+	<description>Asociación para una Sociedad más Justa</description>
+	<lastBuildDate>Tue, 10 Nov 2026 17:17:50 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.9.11</generator>
+
+<image>
+	<url>https://asjhonduras.com/wp-content/uploads/2021/02/cropped-videoasjlogo-32x32.jpg</url>
+	<title>ASJ Honduras</title>
+	<link>https://asjhonduras.com/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>APENAS EL 4 % DE LA TASA DE SEGURIDAD SE DESTINA A LA INVESTIGACIÓN CRIMINAL, REVELA ANÁLISIS DE ASJ</title>
+		<link>https://asjhonduras.com/apenas-el-4-de-la-tasa-de-seguridad-se-destina-a-la-investigacion-criminal-revela-analisis-de-asj/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=apenas-el-4-de-la-tasa-de-seguridad-se-destina-a-la-investigacion-criminal-revela-analisis-de-asj</link>
+					<comments>https://asjhonduras.com/apenas-el-4-de-la-tasa-de-seguridad-se-destina-a-la-investigacion-criminal-revela-analisis-de-asj/#respond</comments>
+		
+		<dc:creator><![CDATA[Jorge Coello]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 17:17:49 +0000</pubDate>
+				<category><![CDATA[Noticias ASJ]]></category>
+		<guid isPermaLink="false">https://asjhonduras.com/?p=22909</guid>
+
+					<description><![CDATA[<p>Tegucigalpa, 10 de noviembre de 2026. Más de la mitad de los 5.882 millones de lempiras aprobados para la Tasa de Seguridad Poblacional en 2026 se destina a alimentos y [&#8230;]</p>
+<p>La entrada <a href="https://asjhonduras.com/apenas-el-4-de-la-tasa-de-seguridad-se-destina-a-la-investigacion-criminal-revela-analisis-de-asj/">APENAS EL 4 % DE LA TASA DE SEGURIDAD SE DESTINA A LA INVESTIGACIÓN CRIMINAL, REVELA ANÁLISIS DE ASJ</a> se publicó primero en <a href="https://asjhonduras.com">ASJ Honduras</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://asjhonduras.com/apenas-el-4-de-la-tasa-de-seguridad-se-destina-a-la-investigacion-criminal-revela-analisis-de-asj/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Condecoraciones de temporada</title>
+		<link>https://asjhonduras.com/condecoraciones-de-temporada/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=condecoraciones-de-temporada</link>
+					<comments>https://asjhonduras.com/condecoraciones-de-temporada/#respond</comments>
+		
+		<dc:creator><![CDATA[Carlos Hernández]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 20:11:28 +0000</pubDate>
+				<category><![CDATA[Pensar Honduras]]></category>
+		<guid isPermaLink="false">https://asjhonduras.com/?p=22904</guid>
+
+					<description><![CDATA[<p>Esta semana me costó decidir sobre qué escribir. No por falta de temas, sino por exceso. Dos noticias me rondaron la cabeza durante días y, aunque parecen lejanas entre sí, [&#8230;]</p>
+<p>La entrada <a href="https://asjhonduras.com/condecoraciones-de-temporada/">Condecoraciones de temporada</a> se publicó primero en <a href="https://asjhonduras.com">ASJ Honduras</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://asjhonduras.com/condecoraciones-de-temporada/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>ASJ PROPONE ACELERAR LA ESTRATEGIA NACIONAL ANTICORRUPCIÓN ANTE LA OPORTUNIDAD DE ACCEDER A FONDOS DE LA CUENTA DEL MILENIO</title>
+		<link>https://asjhonduras.com/asj-propone-acelerar-la-estrategia-nacional-anticorrupcion-ante-la-oportunidad-de-acceder-a-fondos-de-la-cuenta-del-milenio/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=asj-propone-acelerar-la-estrategia-nacional-anticorrupcion-ante-la-oportunidad-de-acceder-a-fondos-de-la-cuenta-del-milenio</link>
+					<comments>https://asjhonduras.com/asj-propone-acelerar-la-estrategia-nacional-anticorrupcion-ante-la-oportunidad-de-acceder-a-fondos-de-la-cuenta-del-milenio/#respond</comments>
+		
+		<dc:creator><![CDATA[Jorge Coello]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 17:16:03 +0000</pubDate>
+				<category><![CDATA[Noticias ASJ]]></category>
+		<guid isPermaLink="false">https://asjhonduras.com/?p=22900</guid>
+
+					<description><![CDATA[<p>Tegucigalpa, 6 de noviembre de 2026. Honduras es elegible para la Cuenta del Milenio tras aprobar 14 de los 22 indicadores de la tarjeta de calificaciones (scorecard) de la Corporación [&#8230;]</p>
+<p>La entrada <a href="https://asjhonduras.com/asj-propone-acelerar-la-estrategia-nacional-anticorrupcion-ante-la-oportunidad-de-acceder-a-fondos-de-la-cuenta-del-milenio/">ASJ PROPONE ACELERAR LA ESTRATEGIA NACIONAL ANTICORRUPCIÓN ANTE LA OPORTUNIDAD DE ACCEDER A FONDOS DE LA CUENTA DEL MILENIO</a> se publicó primero en <a href="https://asjhonduras.com">ASJ Honduras</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://asjhonduras.com/asj-propone-acelerar-la-estrategia-nacional-anticorrupcion-ante-la-oportunidad-de-acceder-a-fondos-de-la-cuenta-del-milenio/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>ASJ EXPLORA EL USO DE LA INTELIGENCIA ARTIFICIAL PARA FORTALECER LA TRANSPARENCIA Y LOS SERVICIOS PÚBLICOS EN HONDURAS</title>
+		<link>https://asjhonduras.com/asj-explora-el-uso-de-la-inteligencia-artificial-para-fortalecer-la-transparencia-y-los-servicios-publicos-en-honduras/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=asj-explora-el-uso-de-la-inteligencia-artificial-para-fortalecer-la-transparencia-y-los-servicios-publicos-en-honduras</link>
+					<comments>https://asjhonduras.com/asj-explora-el-uso-de-la-inteligencia-artificial-para-fortalecer-la-transparencia-y-los-servicios-publicos-en-honduras/#respond</comments>
+		
+		<dc:creator><![CDATA[Jorge Coello]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 22:21:39 +0000</pubDate>
+				<category><![CDATA[Noticias ASJ]]></category>
+		<category><![CDATA[IA]]></category>
+		<category><![CDATA[Inteligencia Artificial]]></category>
+		<guid isPermaLink="false">https://asjhonduras.com/?p=22890</guid>
+
+					<description><![CDATA[<p>La Asociación para una Sociedad más Justa (ASJ) exploró herramientas de inteligencia artificial con potencial para fortalecer la transparencia y mejorar los servicios públicos en Honduras, durante una capacitación internacional [&#8230;]</p>
+<p>La entrada <a href="https://asjhonduras.com/asj-explora-el-uso-de-la-inteligencia-artificial-para-fortalecer-la-transparencia-y-los-servicios-publicos-en-honduras/">ASJ EXPLORA EL USO DE LA INTELIGENCIA ARTIFICIAL PARA FORTALECER LA TRANSPARENCIA Y LOS SERVICIOS PÚBLICOS EN HONDURAS</a> se publicó primero en <a href="https://asjhonduras.com">ASJ Honduras</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://asjhonduras.com/asj-explora-el-uso-de-la-inteligencia-artificial-para-fortalecer-la-transparencia-y-los-servicios-publicos-en-honduras/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>La paciencia tambien se agota</title>
+		<link>https://asjhonduras.com/la-paciencia-tambien-se-agota/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=la-paciencia-tambien-se-agota</link>
+					<comments>https://asjhonduras.com/la-paciencia-tambien-se-agota/#respond</comments>
+		
+		<dc:creator><![CDATA[Carlos Hernández]]></dc:creator>
+		<pubDate>Tue, 03 Nov 2026 16:01:14 +0000</pubDate>
+				<category><![CDATA[Pensar Honduras]]></category>
+		<guid isPermaLink="false">https://asjhonduras.com/?p=22886</guid>
+
+					<description><![CDATA[<p>Las protestas no nacen de l

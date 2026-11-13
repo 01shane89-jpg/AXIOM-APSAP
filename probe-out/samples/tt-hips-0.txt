@@ -1,0 +1,53 @@
+https://heritageinstitute.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Heritage Institute</title>
+	<atom:link href="https://heritageinstitute.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://heritageinstitute.org/</link>
+	<description>Harnessing the power  of ideas for a better Somalia</description>
+	<lastBuildDate>Tue, 13 Oct 2026 09:00:37 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://heritageinstitute.org/wp-content/uploads/2020/12/cropped-vafIcon-32x32.png</url>
+	<title>Heritage Institute</title>
+	<link>https://heritageinstitute.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>استحواذ النخب على الأراضي في مقديشو يقوض شرعية الدولة</title>
+		<link>https://heritageinstitute.org/%d8%a7%d8%b3%d8%aa%d8%ad%d9%88%d8%a7%d8%b0-%d8%a7%d9%84%d8%aa%d8%ae%d8%a8-%d8%a8%d8%a7%d9%84%d8%a3%d8%b1%d8%a7%d8%b6%d9%8a-%d9%81%d9%8a-%d9%85%d9%82%d8%af%d9%8a%d8%b4%d9%88-%d9%8a%d9%82%d9%88%d8%b6/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=%25d8%25a7%25d8%25b3%25d8%25aa%25d8%25ad%25d9%2588%25d8%25a7%25d8%25b0-%25d8%25a7%25d9%2584%25d8%25aa%25d8%25ae%25d8%25a8-%25d8%25a8%25d8%25a7%25d9%2584%25d8%25a3%25d8%25b1%25d8%25a7%25d8%25b6%25d9%258a-%25d9%2581%25d9%258a-%25d9%2585%25d9%2582%25d8%25af%25d9%258a%25d8%25b4%25d9%2588-%25d9%258a%25d9%2582%25d9%2588%25d8%25b6</link>
+		
+		<dc:creator><![CDATA[]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 20:45:02 +0000</pubDate>
+				<category><![CDATA[Arabic]]></category>
+		<guid isPermaLink="false">https://heritageinstitute.org/?p=4999</guid>
+
+					<description><![CDATA[<p>لم تعد أزمة الأراضي المتفاقمة في مقديشو مجرد نزاع محلي بشأن حدود الملكيات، أو تعارض سندات الملكية، أو عمليات الهدم التي تنفذها السلطات البلدية. فقد تحولت سريعاً إلى اختبار حاسم لما إذا كانت الدولة الصومالية تدير عاصمتها وفق سيادة القانون، أم تتركها خاضعة للنفوذ السياسي والثروة الخاصة واستخدام القوة. تكمن في صميم المشكلة الصيغة الفيدرالية &#8230;</p>
+<p>The post <a href="https://heritageinstitute.org/%d8%a7%d8%b3%d8%aa%d8%ad%d9%88%d8%a7%d8%b0-%d8%a7%d9%84%d8%aa%d8%ae%d8%a8-%d8%a8%d8%a7%d9%84%d8%a3%d8%b1%d8%a7%d8%b6%d9%8a-%d9%81%d9%8a-%d9%85%d9%82%d8%af%d9%8a%d8%b4%d9%88-%d9%8a%d9%82%d9%88%d8%b6/">استحواذ النخب على الأراضي في مقديشو يقوض شرعية الدولة</a> appeared first on <a href="https://heritageinstitute.org">Heritage Institute</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p dir="rtl">لم تعد أزمة الأراضي المتفاقمة في مقديشو مجرد نزاع محلي بشأن حدود الملكيات، أو تعارض سندات الملكية، أو عمليات الهدم التي تنفذها السلطات البلدية. فقد تحولت سريعاً إلى اختبار حاسم لما إذا كانت الدولة الصومالية تدير عاصمتها وفق سيادة القانون، أم تتركها خاضعة للنفوذ السياسي والثروة الخاصة واستخدام القوة.</p>
+<p dir="rtl">تكمن في صميم المشكلة الصيغة الفيدرالية غير المحسومة في الصومال، التي أبقت العاصمة من دون وضع محدد بوضوح أو نموذج واضح للحكم والإدارة. وفي ظل نزاع الصلاحيات بين إدارة إقليم بنادر ووزارة الأشغال العامة حول إدارة الأراضي الحضرية، استغلت نخب سياسية وتجارية متنفذة هذا الفراغ لتحقيق مكاسب شخصية على حساب المواطنين والمصلحة العامة.</p>
+<p dir="rtl"><a href="https://heritageinstitute.org/wp-content/uploads/2026/10/استحواذ-النخب-على-الأراضي-في-مقديشو-يقوض-شرعية-الدولة.pdf">اضغط هنا لتحميل التقرير</a></p>
+<p>The post <a href="https://heritageinstitute.org/%d8%a7%d8%b3%d8%aa%d8%ad%d9%88%d8%a7%d8%b0-%d8%a7%d9%84%d8%aa%d8%ae%d8%a8-%d8%a8%d8%a7%d9%84%d8%a3%d8%b1%d8%a7%d8%b6%d9%8a-%d9%81%d9%8a-%d9%85%d9%82%d8%af%d9%8a%d8%b4%d9%88-%d9%8a%d9%82%d9%88%d8%b6/">استحواذ النخب على الأراضي في مقديشو يقوض شرعية الدولة</a> appeared first on <a href="https://heritageinstitute.org">Heritage Institute</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+	</channel>
+</rss>

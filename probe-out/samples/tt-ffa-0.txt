@@ -1,0 +1,137 @@
+https://www.ffa.int/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Pacific Islands Forum Fisheries Agency FFA</title>
+	<atom:link href="https://www.ffa.int/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.ffa.int/</link>
+	<description>Strengthening national capacity and regional solidarity for sustainable tuna fisheries</description>
+	<lastBuildDate>Thu, 12 Nov 2026 20:55:02 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.ffa.int/wp-content/uploads/2022/04/cropped-ffa_logo_circle_512x512-32x32.png</url>
+	<title>Pacific Islands Forum Fisheries Agency FFA</title>
+	<link>https://www.ffa.int/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Learning the Why Behind the Work: A Young Officer&#8217;s Journey in Fisheries Compliance</title>
+		<link>https://www.ffa.int/2026/11/learning-the-why-behind-the-work-a-young-officers-journey-in-fisheries-compliance/</link>
+		
+		<dc:creator><![CDATA[FFA Comms]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 20:55:02 +0000</pubDate>
+				<category><![CDATA[Fisheries Development]]></category>
+		<category><![CDATA[Media Releases]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Fiji]]></category>
+		<category><![CDATA[PEUMP II]]></category>
+		<guid isPermaLink="false">https://www.ffa.int/?p=23227806</guid>
+
+					<description><![CDATA[<p>At just 28, Jotivini Matanakilagi is one of the younger Competent Authority officers working to ensure Fiji's fish and fisheries products meet the standards required for export.<br />
+It is work that carries a lot of responsibility.</p>
+<p>The post <a href="https://www.ffa.int/2026/11/learning-the-why-behind-the-work-a-young-officers-journey-in-fisheries-compliance/">Learning the Why Behind the Work: A Young Officer&#8217;s Journey in Fisheries Compliance</a> appeared first on <a href="https://www.ffa.int">Pacific Islands Forum Fisheries Agency FFA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Building Confidence and Connections: Pacific Officers Strengthen Skills for Fisheries Trade</title>
+		<link>https://www.ffa.int/2026/11/building-confidence-and-connections-pacific-officers-strengthen-skills-for-fisheries-trade/</link>
+		
+		<dc:creator><![CDATA[FFA Comms]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 23:31:56 +0000</pubDate>
+				<category><![CDATA[Fisheries Development]]></category>
+		<category><![CDATA[Media Releases]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Marshall Islands]]></category>
+		<category><![CDATA[NCA Officer Training]]></category>
+		<category><![CDATA[PEUMP II]]></category>
+		<guid isPermaLink="false">https://www.ffa.int/?p=23227773</guid>
+
+					<description><![CDATA[<p>For Donny Andrike, a Competent Authority Officer with the Marshall Islands Marine Resources Authority, the recent two-week training in Fiji was more than a refresher. It was a reminder of why the work he and his small team do matters and that they are not alone in the challenges they face.</p>
+<p>The post <a href="https://www.ffa.int/2026/11/building-confidence-and-connections-pacific-officers-strengthen-skills-for-fisheries-trade/">Building Confidence and Connections: Pacific Officers Strengthen Skills for Fisheries Trade</a> appeared first on <a href="https://www.ffa.int">Pacific Islands Forum Fisheries Agency FFA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Monitoring, Control and Surveillance (MCS) and the Blue Economy</title>
+		<link>https://www.ffa.int/download/monitoring-control-and-surveillance-mcs-and-the-blue-economy/</link>
+		
+		<dc:creator><![CDATA[FFA Comms]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 04:40:46 +0000</pubDate>
+				<guid isPermaLink="false">https://www.ffa.int/?post_type=wpdmpro&#038;p=23227619</guid>
+
+					<description><![CDATA[<p>Effective Monitoring, Control and Surveillance (MCS) is essential to strengthening ocean governance and supporting the transition towards a sustainable Blue Economy across the Asia-Pacific region. The Pacific Islands Forum Fisheries [&#8230;]</p>
+<p>The post <a href="https://www.ffa.int/download/monitoring-control-and-surveillance-mcs-and-the-blue-economy/">Monitoring, Control and Surveillance (MCS) and the Blue Economy</a> appeared first on <a href="https://www.ffa.int">Pacific Islands Forum Fisheries Agency FFA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Remembering Dr Chris Reid: A lasting contribution to Pacific fisheries development</title>
+		<link>https://www.ffa.int/2026/11/remembering-dr-chris-reid-a-lasting-contribution-to-pacific-fisheries-development/</link>
+		
+		<dc:creator><![CDATA[FFA Comms]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 00:03:15 +0000</pubDate>
+				<category><![CDATA[Fisheries Development]]></category>
+		<category><![CDATA[Media Releases]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Stories]]></category>
+		<guid isPermaLink="false">https://www.ffa.int/?p=23227569</guid>
+
+					<description><![CDATA[<p>The Pacific fisheries sector has lost a respected professional whose work helped shape the economic thinking, planning and development of fisheries across the region.</p>
+<p>The post <a href="https://www.ffa.int/2026/11/remembering-dr-chris-reid-a-lasting-contribution-to-pacific-fisheries-development/">Remembering Dr Chris Reid: A lasting contribution to Pacific fisheries development</a> appeared first on <a href="https://www.ffa.int">Pacific Islands Forum Fisheries Agency FFA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>FFA joins Pacific call for resilient food systems</title>
+		<link>https://www.ffa.int/2026/11/ffa-joins-pacific-call-for-resilient-food-systems/</link>
+		
+		<dc:creator><![CDATA[FFA Media]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 04:36:27 +0000</pubDate>
+				<category><![CDATA[High Level Engagement]]></category>
+		<category><![CDATA[Media Releases]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[East New Britain Initiative]]></category>
+		<category><![CDATA[Food and Agriculture Organization of the United Nations]]></category>
+		<category><![CDATA[Pacific-European Union Marine Partnership Programme]]></category>
+		<category><![CDATA[Small Island Developing States (SIDS)]]></category>
+		<guid isPermaLink="false">https://www.ffa.int/?p=23227561</guid>
+
+					<description><![CDATA[<p>Fisheries are central to food security, livelihoods and economic resilience across the Pacific. Ensuring Pacific Islands countries gain greater benefits from these strategic resources is a shared regional priority.</p>
+<p>The post <a href="https://www.ffa.int/2026/11/ffa-joins-pacific-call-for-resilient-food-systems/">FFA joins Pacific call for resilient food systems</a> appeared first on <a href="https://www.ffa.int">Pacific Islands Forum Fisheries Agency FFA</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>FFA Quarterly Newsletter: July &#8211; September 2026</title>
+		<link>https://www.ffa.int/download/ffa-quarterly-newsletter-july-september-2026/</link>
+		
+		<dc:creator><![CDATA[FFA Comms]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 05:40:36 +0000</pubDate>
+				<guid isPermaLink="false">https://www.ffa.int/?post_type=wpdmpro&#038;p=23227524</guid>
+
+					<description><![CDATA[<p>The Pacific Islands Forum Fisheries Agency (FFA) Quarterly Newsletter for July–September 2026 highlights key regional developments, achievements and initiatives supporting sustainable fisheries management and economic resilience acr

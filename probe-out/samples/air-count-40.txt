@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-50_140.json
+{"schema":"osap-air-cell/1","built":"2026-11-13T05:01:34.109Z","cell":"-50_140","ac":[["7c5e4d","SH896","VH-SWV","SW4","SWEARINGEN Metro",-40.1179,144.4321,8650,265,304,1794545826,0,"4256","A2",0],["7c6198","TKA","VH-TKA","C208","CESSNA 208 Caravan",-40.9937,145.7271,null,0,186,1794545518,0,"7066","A1",4],["7c6b41","JST680","VH-VGZ","A320","AIRBUS A-320",-41.9933,146.8495,29500,389,318,1794545960,0,"7211","A0",0]]}

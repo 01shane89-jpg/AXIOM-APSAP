@@ -1,0 +1,55 @@
+https://blog.prif.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>PRIF BLOG</title>
+	<atom:link href="https://blog.prif.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.prif.org/</link>
+	<description>Peace Research Institute Frankfurt / Leibniz Institut Hessische Stiftung Friedens- und Konfliktforschung</description>
+	<lastBuildDate>Wed, 11 Nov 2026 06:58:35 +0000</lastBuildDate>
+	<language>de</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://blog.prif.org/wp-content/uploads/2023/09/cropped-blog_rgb_Favicon-32x32.jpg</url>
+	<title>PRIF BLOG</title>
+	<link>https://blog.prif.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Green, Clean – and Violent? The Renewable Energy Transition, Mining, and Conflict</title>
+		<link>https://blog.prif.org/2026/11/11/green-clean-and-violent-the-renewable-energy-transition-mining-and-conflict/</link>
+		
+		<dc:creator><![CDATA[PRIF Blog]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 07:00:55 +0000</pubDate>
+				<category><![CDATA[English]]></category>
+		<category><![CDATA[Klimawandel]]></category>
+		<category><![CDATA[Ökologie]]></category>
+		<category><![CDATA[Protest]]></category>
+		<category><![CDATA[Ressourcenkonflikte]]></category>
+		<category><![CDATA[soziale Gerechtigkeit]]></category>
+		<category><![CDATA[Umwelt]]></category>
+		<guid isPermaLink="false">https://blog.prif.org/?p=16238</guid>
+
+					<description><![CDATA[<p>The renewable energy transition is crucial to mitigate climate change and enhance energy security. However, it also has a large material footprint because it depends on the mining of critical minerals. Local communities frequently resist such mining due to their impact on resource access, pollution, and livelihoods, leading to tensions with mining companies and governments. Based on XCEPT-funded research, this blog explores why such tensions turn violent and what can be done to manage them peacefully.<img src="https://piwik.hsfk.de/piwik.php?idsite=8&amp;rec=1&amp;url=https%3A%2F%2Fblog.prif.org%2F2026%2F11%2F11%2Fgreen-clean-and-violent-the-renewable-energy-transition-mining-and-conflict%2F&amp;action_name=Green%2C%20Clean%20%E2%80%93%20and%20Violent%3F%20The%20Renewable%20Energy%20Transition%2C%20Mining%2C%20and%20Conflict&amp;urlref=https%3A%2F%2Fblog.prif.org%2Ffeed%2F" style="border:0;width:0;height:0" width="0" height="0" alt="" /></p>
+<p>Der Beitrag <a href="https://blog.prif.org/2026/11/11/green-clean-and-violent-the-renewable-energy-transition-mining-and-conflict/">Green, Clean – and Violent? The Renewable Energy Transition, Mining, and Conflict</a> erschien zuerst auf <a href="https://blog.prif.org">PRIF BLOG</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><strong>The renewable energy transition is crucial to mitigate climate change and enhance energy security. However, it also has a large material footprint because it depends on the mining of critical minerals. Local communities frequently resist such mining due to their impact on resource access, pollution, and livelihoods, leading to tensions with mining companies and governments. Based on </strong><a href="https://www.xcept-research.org/" target="_blank" rel="noopener"><strong>XCEPT</strong></a><strong>-funded research, this blog explores why such tensions turn violent and what can be done to manage them peacefully.</strong></p>
+<p>When we think about the renewable energy transition, we think of solar panels, wind turbines, and batteries that help us to mitigate climate change and achieve energy security at the same time. By contrast, most of us are unlikely to associate the renewable energy transition with violent events, such as the police throwing white phosphorus bombs at local activists in <a href="https://www.amnesty.org/en/documents/asa16/0003/2015/en/" target="_blank" rel="noopener">Myanmar</a> or with large-scale community protests in <a href="https://doi.org/10.1007/s10708-020-10303-3" target="_blank" rel="noopener">Ghana</a>. But such events are closely tied to the renewable energy transition as well.</p>
+<h2>Mining for Green Energy: The Material Footprint of the Renewable Energy Transition</h2>
+<p>Renewable energy technologies have a large material footprint because they are highly reliant on so-called <a href="https://www.wri.org/insights/critical-minerals-explained" target="_blank" rel="noopener">transition minerals</a> (sometimes also termed <a href="https://blog.prif.org/2026/07/15/minerals-at-the-negotiating-table-resource-politics-and-peace-in-eastern-drc/" target="_blank" rel="noopener">critical minerals</a>) like lithium, cobalt, nickel, rare earths, and copper. The rise of solar, wind, and battery technologies resulted in a rapid growth in demand for these transition minerals. Most of this demand is met by the expansion of existing or the establishment of new mining sites, particularly in the <a href="https://www.iisd.org/publications/report/green-conflict-minerals-fuels-conflict-transition-low-carbon-economy" target="_blank" rel="noopener">Global South</a>. Communities in the mining areas concerned about land-grabs, water scarcity, environmental pollution, and a range of other mining impacts often mobilize against the mine, resulting in (usually non-violent) conflicts. Some <a href="https://iopscience.iop.org/article/10.1088/1748-9326/adc74f" target="_blank" rel="noopener">studies</a> estimate that such resistance results in over 4,500 mining conflicts globally every year.</p>
+<p>Transition mineral conflicts can take vastly different <a href="blog.prif.org/en/2024/04/02/socio-ecological-transformation-conflicts-a-central-field-of-conflict-and-research-in-the-21st-century/" target="_blank" rel="noopener">forms</a>. In Myanmar, for instance, local communities protested against land grabbing, air pollution, and livelihood losses associated with the expansion of the Monywa Letpadaung Copper Mine between 2010 and 2014. The conflict escalated quickly into verbal abuse and physical altercations. <a href="https://www.mdpi.com/2073-445X/11/6/885" target="_blank" rel="noopener">Protestors</a> blocked the road to the mine and allegedly engaged in vandalism and verbal threats. In 2012 and again in 2014, state security forces conducted <a href="https://www.amnesty.org/en/documents/asa16/0003/2015/en/" target="_blank" rel="noopener">violent crackdowns</a> of protests camps, resulting in one death and over one hundred injuries.</p>
+<p>By contrast, conflicts around the proposed extraction of bauxite in the <a href="https://doi.org/10.1177/27538931241245669" target="_blank" rel="noopener">Atewa Forest</a> in Ghana remained less intense. Local communities, the mining company (SinoHydro), and the government strongly disagreed on the mining projects, but carried out their struggle through lawsuits, electoral campaigns, and lobbying. No (threats of) physical violence were involved.</p>
+<figure id="attachment_16243" aria-describedby="caption-attachment-16243" style="width: 1024px" class="wp-caption aligncenter"><img fetchpriority="high" decoding="async" class="wp-image-16243 size-large" src="https://blog.prif.org/wp-content/uploads/2026/11/InText_web_20251110_104948-1024x682.png" alt="Excavator next to a deep mud hole in the Atewa Forest" width="1024" height="682" srcset="https://blog.prif.org/wp-content/uploads/2026/11/InText_web_20251110_104948-1024x682.png 1024w, https://blog.prif.org/wp-content/uploads/2026/11/InText_web_20251110_104948-300x200.png 300w, https://blog.prif.org/wp-content/uploads/2026/11/InText_web_20251110_104948-768x512.png 768w, https://blog.prif.org/

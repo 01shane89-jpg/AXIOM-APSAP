@@ -1,0 +1,54 @@
+https://crees.org.do/?feed=rss2
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CREES</title>
+	<atom:link href="https://crees.org.do/?feed=rss2" rel="self" type="application/rss+xml" />
+	<link>https://crees.org.do/</link>
+	<description>Centro Regional de Estrategias Económicas Sostenibles</description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:22:05 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.8.12</generator>
+	<item>
+		<title>La primera lección de la política es ignorar la primera lección de la economía</title>
+		<link>https://crees.org.do/?p=30595</link>
+		
+		<dc:creator><![CDATA[Crees]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:22:05 +0000</pubDate>
+				<category><![CDATA[Artículos]]></category>
+		<guid isPermaLink="false">https://crees.org.do/?p=30595</guid>
+
+					<description><![CDATA[<p>Autor: Miguel Collado Di Franco La primera lección de la política es ignorar la primera lección de la economía A la economía se le ha bautizado con el sobre nombre de &#8220;ciencia lúgubre&#8221; porque demuestra que hay realidades que son más poderosas que cualquier mundo soñado. La realidad se impone sobre los mejores deseos. Así...</p>
+<p>La entrada <a href="https://crees.org.do/?p=30595">La primera lección de la política es ignorar la primera lección de la economía</a> se publicó primero en <a href="https://crees.org.do">CREES</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p style="text-align: justify;">Autor: Miguel Collado Di Franco</p>
+<p><img fetchpriority="high" decoding="async" class="aligncenter wp-image-30596" src="https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-scaled.png" alt="" width="896" height="896" srcset="https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-scaled.png 1200w, https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-450x450.png 450w, https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-2000x2000.png 2000w, https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-150x150.png 150w, https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-768x768.png 768w, https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-500x500.png 500w, https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-1536x1536.png 1536w, https://crees.org.do/wp-content/uploads/2026/11/Slide-1-copy-98-6-2048x2048.png 2048w" sizes="(max-width: 896px) 100vw, 896px" /></p>
+<h2><strong>La primera lección de la política es ignorar la primera lección de la economía</strong></h2>
+<p style="text-align: justify;">A la economía se le ha bautizado con el sobre nombre de &#8220;ciencia lúgubre&#8221; porque demuestra que hay realidades que son más poderosas que cualquier mundo soñado. La realidad se impone sobre los mejores deseos. Así como los médicos, por medio del vínculo ético del juramento hipocrático, ponen como primera preocupación la salud y la vida de sus pacientes, los economistas deben tener presente la educación como su labor principal. La educación en base a los principios de la ciencia económica contribuiría a la creación de un mundo basado en lo posible, con mayor desarrollo económico.</p>
+<p style="text-align: justify;">Algunos de los principios que nos enseña la economía, y que son realidades incontestables, son:</p>
+<p style="text-align: justify;">1. Las necesidades son ilimitadas, pero los recursos que tenemos son escasos;<br />
+2. Las personas se comportan de una u otra forma de acuerdo con los incentivos que enfrentan;<br />
+3. Todas las decisiones tienen un costo de oportunidad;<br />
+4. La valoración de las cosas es subjetiva, por lo que cada persona asigna un valor particular a las mismas;<br />
+5. El conocimiento está disperso entre los miembros de la sociedad, cuyas acciones se coordinan en base al sistema de precios, por lo que nadie posee conocimiento perfecto;<br />
+6. No existen políticas públicas sin costos y todas tienen consecuencias no previstas; y<br />
+7. Las buenas intenciones no garantizan buenos resultados.</p>
+<p style="text-align: justify;">Las anteriores son algunas ideas clave que todos deberíamos tener presente. Cuando se toma en cuenta el principio de escasez, muchas de esas ideas se empiezan a explicar por sí mismas.</p>
+<p style="text-align: justify;">Los incentivos importan, empecemos por este principio. El comportamiento varía entre individuos, pero todos los seres humanos actuamos de acuerdo con lo que deseamos lograr u obtener. Como individuos comunes, deseamos el mayor bienestar posible. Los políticos, funcionarios y miembros de partidos desean popularidad y poder. El accionar humano está motivado por nuestras intenciones; al fin y al cabo, la economía parte de muestras mentes.</p>
+<p style="text-align: justify;">Los políticos son quienes aplican las políticas públicas. Estas políticas tienen costos y operan bajo el principio de escasez. Pero ambos fundamentos son ignorados, ya que el incentivo a ser populares y a ganar elecciones es muy poderoso. También es ignorado por personas comunes, por analistas, por intelectuales y por profesionales de diferentes áreas. Muchos no tienen la culpa. Tienen el incentivo para demandar acciones imposibles, y carecen de aquel que los motive a estudiar economía.</p>
+<p style="text-align: justify;">El primer fundamento de la economía es la escasez, el que todo el mundo debería conocer y comprender, así como cuando se habla de la gravedad como un principio de la física. La realidad, sin embargo, es la que describió Thomas Sowell en Is Reality Optional?: &#8220;La primera lección de la economía es la escasez: nunca hay suficiente de nada para satisfacer por completo a todos los que lo desean. La primera lección de la política es ignorar la primera lección de la economía&#8221;. A lo cual agregamos que todas las decisiones públicas son políticas.</p>
+<p style="text-align: justify;">A propósito de que recién se conmemoró el Día de la Constitución en la República Dominicana, es preciso recordar los llamados derechos de segunda y tercera generación. Para Josu de Miguel Bárcena, catedrático constitucionalista español, estos derechos podrían tener como consecuencia &#8220;un potencial efecto deslegitimador: cuando la crisis económica impida satisfacer dichas garantías, aparecerán estados de excepción financiera que conducen, siempre, a situaciones de fatiga democrática.&#8221;</p>
+<p style="text-align: justify;">Es bueno que existan expertos en derecho con comprensión del principio de escasez, y sus implicaciones sobre las finanzas públicas. Si esos derechos constitucionales fueran gratuitos, no habría ningún problema. Pero ya sabemos que nada es gratis y, en consecuencia, los ciudadanos deben financiar los costos de esa lista de derechos; con recursos que también son escasos. En la medida en que aumenta la demanda por servicios públicos, con el amparo constitucional, lo menos que se crea es una separación entre lo deseado y lo posible.</p>
+<p style="text-align: justify;">Empezamos diciendo que la enseñanza de la economía debería ser la labor principal de los economistas. La economía debería ser estudiada desde temprana edad; de buenas manos, de buenos maestros. Per Bylund observa que la mayoría de las personas rechazan la economía por considerarla fundamentada en &#8220;ideología&#8221; y que lo peor es que ese rechazo se hace desde una misma base ideológica. Pero los férreos principios de la economía permiten desarrollar una forma de razonamiento económico sustentado en la realidad.</p>
+<p style="text-align: justify;">Cuando se entienden los principios de la econ

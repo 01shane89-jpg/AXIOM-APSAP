@@ -1,0 +1,111 @@
+https://nkafu.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Nkafu Policy Institute</title>
+	<atom:link href="https://nkafu.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://nkafu.org/</link>
+	<description>Catalyzing Africa’s Economic Transformation</description>
+	<lastBuildDate>Thu, 12 Nov 2026 13:39:27 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.0.8</generator>
+	<item>
+		<title>Do international partnerships truly enhance the effectiveness of African think tanks?</title>
+		<link>https://nkafu.org/do-international-partnerships-truly-enhance-the-effectiveness-of-african-think-tanks/</link>
+					<comments>https://nkafu.org/do-international-partnerships-truly-enhance-the-effectiveness-of-african-think-tanks/#respond</comments>
+		
+		<dc:creator><![CDATA[Prof. Theophile Nguimfack Voufo]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 09:44:34 +0000</pubDate>
+				<category><![CDATA[Governance & Democracy Initiative]]></category>
+		<category><![CDATA[Publications]]></category>
+		<category><![CDATA[Partnership with Africa]]></category>
+		<category><![CDATA[Think Tanks]]></category>
+		<guid isPermaLink="false">https://nkafu.org/?p=116711</guid>
+
+					<description><![CDATA[<p>By Prof. Théophile Nguimfack Voufo Download PDF Executive Summary Long rooted in Western democratic culture, the concept of think tanks has spread, particularly across the African continent. While the very first African think tank was established in 1934 in South Africa under the name South African Institute of International Affairs (SAIIA), it was not  [...]</p>
+<p>The post <a href="https://nkafu.org/do-international-partnerships-truly-enhance-the-effectiveness-of-african-think-tanks/">Do international partnerships truly enhance the effectiveness of African think tanks?</a> appeared first on <a href="https://nkafu.org">Nkafu Policy Institute</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://nkafu.org/do-international-partnerships-truly-enhance-the-effectiveness-of-african-think-tanks/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Resilient Democracy Infrastructure in Africa: Strengthening Governance Think Tanks amidst Rising Authoritarianism</title>
+		<link>https://nkafu.org/resilient-democracy-infrastructure-in-africa-strengthening-governance-think-tanks-amidst-rising-authoritarianism/</link>
+					<comments>https://nkafu.org/resilient-democracy-infrastructure-in-africa-strengthening-governance-think-tanks-amidst-rising-authoritarianism/#respond</comments>
+		
+		<dc:creator><![CDATA[Enowbachem Agbortanyi]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 15:28:45 +0000</pubDate>
+				<category><![CDATA[Governance & Democracy Initiative]]></category>
+		<category><![CDATA[Peace & Security]]></category>
+		<category><![CDATA[Publications]]></category>
+		<guid isPermaLink="false">https://nkafu.org/?p=116691</guid>
+
+					<description><![CDATA[<p>By Enowbachem Agbortanyi Download Publication Executive Summary Democratic space in Africa is shrinking: 44 of 50 Sub-Saharan countries have obstructed, repressed, or closed civic space. Governance think tanks matter in this setting because they supply evidence for policy, link citizens to government, and uphold accountability. They face political pressure, polarisation, donor dependence, and internal  [...]</p>
+<p>The post <a href="https://nkafu.org/resilient-democracy-infrastructure-in-africa-strengthening-governance-think-tanks-amidst-rising-authoritarianism/">Resilient Democracy Infrastructure in Africa: Strengthening Governance Think Tanks amidst Rising Authoritarianism</a> appeared first on <a href="https://nkafu.org">Nkafu Policy Institute</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://nkafu.org/resilient-democracy-infrastructure-in-africa-strengthening-governance-think-tanks-amidst-rising-authoritarianism/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Event Report: Africa @ World Bank/IMF Spring Meetings 2026</title>
+		<link>https://nkafu.org/event-report-africa-world-bank-imf-spring-meetings/</link>
+					<comments>https://nkafu.org/event-report-africa-world-bank-imf-spring-meetings/#respond</comments>
+		
+		<dc:creator><![CDATA[Nkafu Policy Institute]]></dc:creator>
+		<pubDate>Wed, 28 Oct 2026 10:03:38 +0000</pubDate>
+				<category><![CDATA[actions]]></category>
+		<category><![CDATA[Publications]]></category>
+		<category><![CDATA[Reports]]></category>
+		<guid isPermaLink="false">https://nkafu.org/?p=116681</guid>
+
+					<description><![CDATA[<p>By Nkafu Policy Institute Download report EXECUTIVE SUMMARY The 2026 World Bank and IMF Spring Meetings took place at a time of heightened uncertainty in the global development landscape. Fiscal pressures are increasing, development financing is becoming more constrained, and debt vulnerabilities remain a concern across many low- and middle-income countries. At the same  [...]</p>
+<p>The post <a href="https://nkafu.org/event-report-africa-world-bank-imf-spring-meetings/">Event Report: Africa @ World Bank/IMF Spring Meetings 2026</a> appeared first on <a href="https://nkafu.org">Nkafu Policy Institute</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://nkafu.org/event-report-africa-world-bank-imf-spring-meetings/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>“Preventing Femicide in Cameroon: Moving from Response to Early Intervention” &#8211; Plenary Reflections from the 2026 Central Africa Think Tank Forum</title>
+		<link>https://nkafu.org/preventing-femicide-in-cameroon-moving-from-response-to-early-intervention-plenary-reflections-from-the-2026-central-africa-think-tank-forum/</link>
+					<comments>https://nkafu.org/preventing-femicide-in-cameroon-moving-from-response-to-early-intervention-plenary-reflections-from-the-2026-central-africa-think-tank-forum/#respond</comments>
+		
+		<dc:creator><![CDATA[Antem Anthony]]></dc:creator>
+		<pubDate>Fri, 09 Oct 2026 13:59:11 +0000</pubDate>
+				<category><![CDATA[Peace & Security]]></category>
+		<category><![CDATA[Publications]]></category>
+		<category><![CDATA[Central Africa Think Tank Forum]]></category>
+		<category><![CDATA[Preventing Femicide]]></category>
+		<guid isPermaLink="false">https://nkafu.org/?p=116645</guid>
+
+					<description><![CDATA[<p>By Anthony Antem, Policy Analyst, Peace and Security Division. Download the PDF version Executive Summary Femicide in Cameroon is increasingly demanding attention as a critical gender-based violence and public policy concern. Behind the reported cases are often patterns of domestic violence, threats, coercion, stalking and escalating abuse that may provide opportunities for intervention before  [...]</p>
+<p>The post <a href="https://nkafu.org/preventing-femicide-in-cameroon-moving-from-response-to-early-intervention-plenary-reflections-from-the-2026-central-africa-think-tank-forum/">“Preventing Femicide in Cameroon: Moving from Response to Early Intervention” &#8211; Plenary Reflections from the 2026 Central Africa Think Tank Forum</a> appeared first on <a href="https://nkafu.org">Nkafu Policy Institute</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://nkafu.org/preventing-femicide-in-cameroon-moving-from-response-to-early-intervention-plenary-reflections-from-the-2026-central-africa-think-tank-forum/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Enhancing the Policy Impact of Think Tanks in Central Africa</title>
+		<link>https:

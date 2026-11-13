@@ -1,0 +1,54 @@
+https://niice.org.np/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>NIICE NEPAL</title>
+	<atom:link href="https://niice.org.np/feed" rel="self" type="application/rss+xml" />
+	<link>https://niice.org.np/</link>
+	<description>A Top-Notch Think Tank to Serve the Nation</description>
+	<lastBuildDate>Thu, 05 Nov 2026 06:26:04 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://niice.org.np/wp-content/uploads/2019/12/niice-logo1-1-45x45.png</url>
+	<title>NIICE NEPAL</title>
+	<link>https://niice.org.np/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Nepal Cannot Change Its Geography. Can It Change How It Prepares?</title>
+		<link>https://niice.org.np/archives/12863?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=nepal-cannot-change-its-geography-can-it-change-how-it-prepares</link>
+		
+		<dc:creator><![CDATA[Chunauti Tripathi]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 06:26:04 +0000</pubDate>
+				<category><![CDATA[Climate Change and Energy]]></category>
+		<category><![CDATA[COMMENTRIES]]></category>
+		<guid isPermaLink="false">https://niice.org.np/?p=12863</guid>
+
+					<description><![CDATA[<p>Nepal cannot prevent every earthquake, flood, landslide or mountain collapse. It can, however, change how it prepares for them by enforcing safer construction, financing preparedness before emergencies, building roads that respect fragile terrain and ensuring that warnings lead to timely action.</p>
+<p>The post <a href="https://niice.org.np/archives/12863">Nepal Cannot Change Its Geography. Can It Change How It Prepares?</a> appeared first on <a href="https://niice.org.np">NIICE NEPAL</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p style="text-align: justify;">5 November 2026, NIICE Commentary 12862<br />
+<em><strong>Chunauti Tripathi</strong></em></p>
+<p style="text-align: justify;"><span style="font-weight: 400;">Resilience is not measured by how urgently we respond after a disaster, but by what we change before the next one arrives. </span><span style="font-weight: 400;">Every time a major disaster strikes Nepal, public attention returns to a familiar set of words: resilience, adaptation and preparedness. Images of destruction circulate, demands for accountability grow louder, and promises of reform follow. Yet, as public attention fades, the urgency to act often fades with it. Until the next disaster. </span><span style="font-weight: 400;">The uncomfortable question is not whether Nepal understands its risks. It is whether that understanding translates into lasting changes in policy, infrastructure and spending.</span></p>
+<p style="text-align: justify;"><b>A Country Living with Risk</b></p>
+<p style="text-align: justify;"><span style="font-weight: 400;">Nepal cannot change its geography. It is a steep, seismically active mountain country, ranked the</span><a href="https://www.undp.org/sites/g/files/zskgke326/files/migration/np/0955962caef6f2655934d4489b305569a5942637fd8d5f06f43a6ad3ccb6afcc.pdf"> <span style="font-weight: 400;">11th most earthquake-prone country in the world by UNDP</span></a><span style="font-weight: 400;">. The 1934 earthquake killed more than 8,000 people in Nepal, according to a</span><a href="https://doi.org/10.1186/s40623-016-0416-2"> <span style="font-weight: 400;">study of its fatality rates</span></a><span style="font-weight: 400;">. In 2015, the Gorkha earthquake caused around </span><a href="https://www.worldbank.org/content/dam/Worldbank/document/SAR/nepal-pdna-executive-summary.pdf"><span style="font-weight: 400;">8,790 deaths and 22,300 injurie</span></a><span style="font-weight: 400;">s and estimated damage and losses exceeding US$7 billion. </span><span style="font-weight: 400;">An earthquake cannot be prevented. But building safety, land-use decisions and the protection of schools are matters of policy. The extent of destruction is not determined by geography alone.</span></p>
+<p style="text-align: justify;"><span style="font-weight: 400;">Floods and landslides present a similar challenge. On 26 August 2026, a rock-and-ice collapse from Langtang Lirung sent a debris surge through the Lhende Khola valley and across the Nepal–China border. In its</span><a href="https://www.icimod.org/press-releases/second-major-himalayan-flood-in-seven-weeks-raises-new-questions-about-mountain-risk/"> <span style="font-weight: 400;">October 2026 assessment</span></a><span style="font-weight: 400;">, the ICIMOD cited NDRRMA figures of at least 1,451 deaths and 5,745 people missing in Nepal. A World Weather Attribution analysis found that climate change as an important contributing factor in what it called a “compound crisis” that also involved glacier retreat, permafrost thaw and geological instability,</span><a href="https://www.aljazeera.com/news/2026/9/17/climate-change-had-major-role-in-triggering-nepal-floods-scientists-say"> <span style="font-weight: 400;">as Al Jazeera reported</span></a><span style="font-weight: 400;">. ICIMOD lists several possible factors, including geological weaknesses, damage from the 2015 earthquake, thawing permafrost and glacier change, and says the precise mechanisms remain under investigation.</span></p>
+<p style="text-align: justify;"><span style="font-weight: 400;">The issue is not limited to a single occurrence. From 2015 to 2024, Nepal recorded 8,418 monsoon-related disaster incidents that killed 2,317 people, according to</span><a href="https://en.himalpress.com/monsoon-disasters-claimed-2317-lives-in-past-decade/"> <span style="font-weight: 400;">Himal Press</span></a><span style="font-weight: 400;">. The floods and landslides in September 2024 led to estimated losses of NPR 46.68 billion, according to the government&#8217;s</span><a href="https://recovery.preventionweb.net/quick/92974"> <span style="font-weight: 400;">preliminary assessment</span></a><span style="font-weight: 400;">. </span><span style="font-weight: 400;">Disasters may be unavoidable, but the consequences are shaped by decisions made long before they occur.</span></p>
+<p style="text-align: justify;"><b>The Bill Nobody Budgets For</b></p>
+<p style="text-align: justify;"><span style="font-weight: 400;">Disasters are also fiscal events. They destroy assets, interrupt economic activity and divert public money from planned investments towards emergency response and reconstruction.</span></p>
+<p style="text-align: justify;"><span style="font-weight: 400;">A preliminary</span><a href="https://kathmandupost.com/national/2026/09/10/rs723-billion-needed-to-rebuild-flood-hit-areas-government-assessment-finds"> <span style="font-weight: 400;">Rapid Damage and Needs Assessment</span></a><span style="font-weight: 400;">, prepared by a joint technical team led by the National Planning Commission and NDRRMA, estimated that NPR 723.31 billion would be required to recover from the August 2026 flood. That is about US$4.78 billion. The estimate is preliminary, and NDRRMA&#8217;s chief executive said it could rise, though not substantially.</span></p>
+<p style="text-align: justify;"><span style="font-weight: 400;">A senior official of the Coalition for Disaster Resilient Infrastructure told</span><a href="https://thehimalayantimes.com/kathmandu/nepal-faces-mounting-fiscal-exposure-from-climate-disasters-cdri-official"> <span style="font-weight: 400;">The Himalayan Times</span></a><span style="font-weight: 400;"> that Nepal&#8217;s National Disaster Management Fund held about US$35 million in reserves as of 2024, and argued that financing should combine reserves with pre-arranged credit

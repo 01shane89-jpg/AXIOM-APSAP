@@ -1,0 +1,120 @@
+https://www.cnas.org/
+
+
+
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MF4NFW');</script>
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WKSKNQJ');</script>
+  <!-- End Google Tag Manager -->
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#48acdb">
+<meta name="theme-color" content="#ffffff">
+
+  <link rel="home" href="https://www.cnas.org/" />
+  <link rel="stylesheet" href="//cloud.typography.com/6895734/7858552/css/fonts.css">
+
+    <script type="module">!function(){const e=document.createElement("link").relList;if(!(e&&e.supports&&e.supports("modulepreload"))){for(const e of document.querySelectorAll('link[rel="modulepreload"]'))r(e);new MutationObserver((e=>{for(const o of e)if("childList"===o.type)for(const e of o.addedNodes)if("LINK"===e.tagName&&"modulepreload"===e.rel)r(e);else if(e.querySelectorAll)for(const o of e.querySelectorAll("link[rel=modulepreload]"))r(o)})).observe(document,{childList:!0,subtree:!0})}function r(e){if(e.ep)return;e.ep=!0;const r=function(e){const r={};return e.integrity&&(r.integrity=e.integrity),e.referrerpolicy&&(r.referrerPolicy=e.referrerpolicy),"use-credentials"===e.crossorigin?r.credentials="include":"anonymous"===e.crossorigin?r.credentials="omit":r.credentials="same-origin",r}(e);fetch(e.href,r)}}();</script>
+<script type="module" src="/dist/main-uwoDuio0.js" crossorigin onload="e=new CustomEvent(&#039;vite-script-loaded&#039;, {detail:{path: &#039;src/javascripts/app.js&#039;}});document.dispatchEvent(e);"></script>
+<link href="/dist/main-Ca8cVSKn.css" rel="stylesheet">
+
+  <script>
+    function isTouchDevice() {
+      return (('ontouchstart' in window)
+        || (navigator.MaxTouchPoints > 0)
+        || (navigator.msMaxTouchPoints > 0));
+    }
+
+    function supportsObjectFit() {
+      return ('objectFit' in document.documentElement.style === true);
+    }
+
+    var html = document.documentElement;
+    html.className = html.className.replace('no-js', 'js');
+    html.classList.add((isTouchDevice() ? '' : 'no-') + 'touch');
+    html.classList.add((supportsObjectFit() ? '' : 'no-') + 'object-fit');
+  </script>
+
+  <link rel="stylesheet" href="https://use.typekit.net/skl0tcm.css">
+
+  <script src="https://www.google.com/recaptcha/api.js?render=6LdYExsqAAAAAIQrguiy7V0Mzf19k4izriCKzUBJ"></script>
+  
+  
+  <script src="https://www.cnas.org/picturefill.min.js" async></script>
+
+  
+  <title>Center for a New American Security | CNAS</title><meta name="generator" content="SEOmatic">
+<meta name="description" content="Developing strong, pragmatic and principled national security and defense policies.">
+<meta name="referrer" content="no-referrer-when-downgrade">
+<meta name="robots" content="all">
+<meta content="en_US" property="og:locale">
+<meta content="CNAS" property="og:site_name">
+<meta content="website" property="og:type">
+<meta content="https://www.cnas.org/" property="og:url">
+<meta content="Center for a New American Security" property="og:title">
+<meta content="Developing strong, pragmatic and principled national security and defense policies." property="og:description">
+<meta content="https://s3.us-east-1.amazonaws.com/files.cnas.org/hero/_1200x630_crop_center-center_82_none/default-listing-image.jpg?mtime=1671536969" property="og:image">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@">
+<meta name="twitter:title" content="Center for a New American Security">
+<meta name="twitter:description" content="Developing strong, pragmatic and principled national security and defense policies.">
+<meta name="twitter:image" content="https://s3.us-east-1.amazonaws.com/files.cnas.org/hero/_1200x630_crop_center-center_82_none/default-listing-image.jpg?mtime=1671536969">
+<link href="https://www.cnas.org/" rel="canonical">
+<link href="https://www.cnas.org/" rel="home">
+<link type="text/plain" href="https://www.cnas.org/humans.txt" rel="author">
+<style>    /* Progress bar */
+    .progress-header {
+      z-index: 1;
+    }
+
+    /* The progress container (transparent background) */
+    .progress-container {
+      width: 100%;
+      height: 2px;
+      background:rgba(0,0,0,0);
+    }
+
+    /* The progress bar (scroll indicator) */
+    .progress-bar {
+      height: 2px;
+      background: #43c1eb;
+      width: 0%;
+    }
+  </style></head>
+
+<body style="font-family: freight-text-pro,sans-serif;color:#687279" class=" -with-flag-logo " data-spy="scroll" data-offset="60" data-target="#toc">
+  <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-MF4NFW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager -->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WKSKNQJ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->  <header class="header ">
+  
+    <div class="header__inner  ">
+      <div class="header__flag">
+                  <h1 class="logo">            <span class="screenreader-only">Center for a New American Security</span>
+            <span class="logo__small"><img src="/assets/images/CNAS-Logo-Web-NEW.png" alt="CNAS small logo"></span>
+            <span class="logo__large"><svg xmlns="http://www.w3.org/2000/svg" width="487" height="234" viewBox="0 0 487 234"><g id="Shield"><path fill="#19398A" d="M180.487 37.646C137.001 37.906 126.648 0 126.648 0h-27.75c3.057 9.938 8.199 30.648 7.059 54.749-.847 17.937-5.536 34.63-10.07 50.774-3.847 13.695-7.825 27.858-9.268 42.394-3.742 37.694 3.477 72.947 6.672 86.083 15.556-9.401 96.703-72.02 87.196-196.354"/><path fill="#ED1C28" d="M80.556 147.313c1.496-15.064 5.547-29.489 9.465-43.437 4.442-15.816 9.036-32.172 9.85-49.416C101.033 29.886 95.243 8.572 92.492 0H54.603S44.249 37.906.764 37.646C-8.333 156.6 66.461 219.062 86.676 232.479c-3.518-15.366-9.694-49.17-6.12-85.166"/></g><g id="Logotype" fill="#19398A"><path d="M227.377 74.559h.324c5.425 0 7.698-3.293 7.698-9.275h3.431v.464c0 7.604-3.71 11.824-11.407 11.824-8.3 0-12.289-5.147-12.289-17.667V58.05c0-12.52 3.989-17.666 12.289-17.666 7.697 0 11.407 4.219 11.407 12.381v1.298h-3.431c0-7.466-2.273-10.665-7.698-10.665h-.324c-6.029 0-8.811 4.357-8.811 14.652v1.855c0 10.294 2.736 14.654 8.811 14.654M245.604 66.117c.14 5.379 2.412 8.719 7.326 8.719 4.916 0 6.956-3.014 6.956-5.657h3.108v.186c0 3.802-3.154 8.207-10.064 8.207-7.419 0-10.618-5.471-10.618-12.288v-1.02c0-6.817 3.199-12.289 10.386-12.289 7.188 0 10.297 5.472 10.297 12.289v1.854h-17.391zm0-2.688h14.098c-.186-5.333-2.365-8.718-7.049-8.718-4.636 0-6.909 3.385-7.049 8.718M282.428 77.062v-16.74c0-3.711-2.087-5.426-5.334-5.426-3.847 0-5.749 2.18-6.77 3.803v18.363h-3.246V59.441l-.278-6.957h2.688l.465 3.479c1.437-2.18 4.035-3.988 8.254-3.988 4.87 0 7.466 3.292 7.466 7.883v17.205h-3.245zM303.392 52.484v2.922h-7.837v14.422c0 3.896 1.623 4.822 4.729 4.822 1.0

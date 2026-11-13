@@ -1,0 +1,66 @@
+https://www.mei.edu/
+	
+					<!DOCTYPE html>
+		<html lang="en-US">
+			<head>
+				<script>
+					['js'].forEach(attr => {
+						document.documentElement.setAttribute(attr, '');
+					});
+				</script>
+				<meta charset="UTF-8" />
+<script>
+var gform;gform||(document.addEventListener("gform_main_scripts_loaded",function(){gform.scriptsLoaded=!0}),document.addEventListener("gform/theme/scripts_loaded",function(){gform.themeScriptsLoaded=!0}),window.addEventListener("DOMContentLoaded",function(){gform.domLoaded=!0}),gform={domLoaded:!1,scriptsLoaded:!1,themeScriptsLoaded:!1,isFormEditor:()=>"function"==typeof InitializeEditor,callIfLoaded:function(o){return!(!gform.domLoaded||!gform.scriptsLoaded||!gform.themeScriptsLoaded&&!gform.isFormEditor()||(gform.isFormEditor()&&console.warn("The use of gform.initializeOnLoaded() is deprecated in the form editor context and will be removed in Gravity Forms 3.1."),o(),0))},initializeOnLoaded:function(o){gform.callIfLoaded(o)||(document.addEventListener("gform_main_scripts_loaded",()=>{gform.scriptsLoaded=!0,gform.callIfLoaded(o)}),document.addEventListener("gform/theme/scripts_loaded",()=>{gform.themeScriptsLoaded=!0,gform.callIfLoaded(o)}),window.addEventListener("DOMContentLoaded",()=>{gform.domLoaded=!0,gform.callIfLoaded(o)}))},hooks:{action:{},filter:{}},addAction:function(o,r,e,t){gform.addHook("action",o,r,e,t)},addFilter:function(o,r,e,t){gform.addHook("filter",o,r,e,t)},doAction:function(o){gform.doHook("action",o,arguments)},applyFilters:function(o){return gform.doHook("filter",o,arguments)},removeAction:function(o,r){gform.removeHook("action",o,r)},removeFilter:function(o,r,e){gform.removeHook("filter",o,r,e)},addHook:function(o,r,e,t,n){null==gform.hooks[o][r]&&(gform.hooks[o][r]=[]);var d=gform.hooks[o][r];null==n&&(n=r+"_"+d.length),gform.hooks[o][r].push({tag:n,callable:e,priority:t=null==t?10:t})},doHook:function(r,o,e){var t;if(e=Array.prototype.slice.call(e,1),null!=gform.hooks[r][o]&&((o=gform.hooks[r][o]).sort(function(o,r){return o.priority-r.priority}),o.forEach(function(o){"function"!=typeof(t=o.callable)&&(t=window[t]),"action"==r?t.apply(null,e):e[0]=t.apply(null,e)})),"filter"==r)return e[0]},removeHook:function(o,r,t,n){var e;null!=gform.hooks[o][r]&&(e=(e=gform.hooks[o][r]).filter(function(o,r,e){return!!(null!=n&&n!=o.tag||null!=t&&t!=o.priority)}),gform.hooks[o][r]=e)}});
+</script>
+
+				<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover" />
+				<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+		<script>
+			window.dataLayer = window.dataLayer || [];
+
+			
+					</script>
+		
+	<!-- This site is optimized with the Yoast SEO plugin v28.8 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<title>Home - Middle East Institute</title>
+	<meta name="description" content="The Middle East Institute provides expert analysis, research, and programs on the Middle East’s politics, economy, and culture." />
+	<link rel="canonical" href="https://mei.edu/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Home - Middle East Institute" />
+	<meta property="og:description" content="The Middle East Institute provides expert analysis, research, and programs on the Middle East’s politics, economy, and culture." />
+	<meta property="og:url" content="https://mei.edu/" />
+	<meta property="og:site_name" content="Middle East Institute" />
+	<meta property="article:publisher" content="https://www.facebook.com/middleeastinstitute" />
+	<meta property="article:modified_time" content="2026-11-12T20:16:26+00:00" />
+	<meta property="og:image" content="https://mei.edu/wp-content/uploads/2025/12/share-image.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@MiddleEastInst" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"WebPage","@id":"https:\/\/mei.edu\/","url":"https:\/\/mei.edu\/","name":"Home - Middle East Institute","isPartOf":{"@id":"https:\/\/mei.edu\/#website"},"about":{"@id":"https:\/\/mei.edu\/#organization"},"datePublished":"2025-11-04T17:11:58+00:00","dateModified":"2026-11-12T20:16:26+00:00","description":"The Middle East Institute provides expert analysis, research, and programs on the Middle East’s politics, economy, and culture.","breadcrumb":{"@id":"https:\/\/mei.edu\/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/mei.edu\/"]}]},{"@type":"BreadcrumbList","@id":"https:\/\/mei.edu\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home"}]},{"@type":"WebSite","@id":"https:\/\/mei.edu\/#website","url":"https:\/\/mei.edu\/","name":"Middle East Institute","description":"","publisher":{"@id":"https:\/\/mei.edu\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/mei.edu\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https:\/\/mei.edu\/#organization","name":"Middle East Institute","url":"https:\/\/mei.edu\/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/mei.edu\/#\/schema\/logo\/image\/","url":"https:\/\/mei.edu\/wp-content\/uploads\/2025\/12\/yoast-site-logo.png","contentUrl":"https:\/\/mei.edu\/wp-content\/uploads\/2025\/12\/yoast-site-logo.png","width":696,"height":696,"caption":"Middle East Institute"},"image":{"@id":"https:\/\/mei.edu\/#\/schema\/logo\/image\/"},"sameAs":["https:\/\/www.facebook.com\/middleeastinstitute","https:\/\/x.com\/MiddleEastInst"]}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//www.google.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//use.typekit.net' />
+<link rel="alternate" type="application/rss+xml" title="Middle East Institute &raquo; Feed" href="https://mei.edu/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Middle East Institute &raquo; Comments Feed" href="https://mei.edu/comments/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://mei.edu/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fmei.edu%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://mei.edu/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fmei.edu%2F&#038;format=xml" />
+	<link rel="icon" type="image/png" href="https://mei.edu/wp-content/themes/mei/assets/favicons/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/svg+xml" href="https://mei.edu/wp-content/themes/mei/assets/favicons/favicon.svg" />
+	<link rel="shortcut icon" href="https://mei.edu/wp-content/themes/mei/assets/favicons/favicon.ico" />
+	<link rel="apple-touch-icon" sizes="180x180" href="https://mei.edu/wp-content/themes/mei/assets/favicons/apple-touch-icon.png" />
+	<link rel="manifest" href="https://mei.edu/wp-content/themes/mei/assets/favicons/site.webmanifest" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='sbi-tokens-local-css' href='https://mei.edu/wp-content/plugins/instagram-feed-pro/assets/tokens/sb-tokens-local.css?ver=6.13.0' media='all' />
+<link rel='stylesheet' id='sbi_styles-css' href='https://mei.edu/wp-content/plugins/instagram-feed-pro/css/sbi-styles.min.css?ver=6.13.0' media='all' />
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;

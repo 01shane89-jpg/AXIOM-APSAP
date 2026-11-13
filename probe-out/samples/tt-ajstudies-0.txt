@@ -1,0 +1,99 @@
+https://studies.aljazeera.net/en/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://studies.aljazeera.net/en">
+  <channel>
+    <title>Al Jazeera Centre for Studies</title>
+    <link>https://studies.aljazeera.net/en</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>New Halls and Shadows of an Old War</title>
+  <link>https://studies.aljazeera.net/en/analyses/new-halls-and-shadows-old-war</link>
+  <description>The study examines the prospects of renewed U.S.–Israeli military confrontation with Iran following the 2026 war. It highlights Iran’s remaining deterrent capabilities, its strategic leverage over the Strait of Hormuz, and the political and economic constraints facing Washington. Three scenarios are explored: maintaining the current stalemate, launching limited military strikes, or escalating toward a broader conflict. The study concludes that continued confrontation below the threshold of full-scale war remains the most likely near-term outcome, despite persistent risks of escalation.
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-11/web-%287%29.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-11-07T22:47:02+0300</pubDate>
+    <dc:creator>Arash Marzbanmehr</dc:creator>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/analyses/new-halls-and-shadows-old-war</guid>
+    </item>
+<item>
+  <title>In Its 32nd Issue, Lubab Examines Shifts in the Strategic Environment of the Gulf and the Middle East</title>
+  <link>https://studies.aljazeera.net/en/news/its-32nd-issue-lubab-examines-shifts-strategic-environment-gulf-and-middle-east</link>
+  <description>Lubab Journal for Strategic Studies has released its 32nd issue, examining the rapid transformations reshaping the strategic environment of the Gulf and the wider region, and the challenges they pose regarding sources of power, how they are wielded, and the limits of their influence.
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-11/web%20%2816%29.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-11-01T09:36:43+0300</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/news/its-32nd-issue-lubab-examines-shifts-strategic-environment-gulf-and-middle-east</guid>
+    </item>
+<item>
+  <title>Al Jazeera Arabic and Al Arabiya Framing of the 2024 Israeli War on Lebanon</title>
+  <link>https://studies.aljazeera.net/en/university-theses/al-jazeera-arabic-and-al-arabiya-framing-2024-israeli-war-lebanon</link>
+  <description>Introduction
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-10/web%20%283%29_3.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-10-28T10:38:22+0300</pubDate>
+    <dc:creator>Asmaa Jomha</dc:creator>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/university-theses/al-jazeera-arabic-and-al-arabiya-framing-2024-israeli-war-lebanon</guid>
+    </item>
+<item>
+  <title>Iraqi Armed Factions Between National Identity and Ideological Allegiance Amid Regional Escalation</title>
+  <link>https://studies.aljazeera.net/en/analyses/iraqi-armed-factions-between-national-identity-and-ideological-allegiance-amid-regional</link>
+  <description>This paper examines whether Iraqi armed factions aligned with the Axis of Resistance would follow Baghdad’s decisions on war and peace or Iran’s Supreme Leader, arguing that the conflict between national sovereignty and ideological authority emerges when Iraqi and Iranian interests diverge.
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-10/web%20%288%29_0.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-10-25T09:50:07+0300</pubDate>
+    <dc:creator>Liqaa Maki</dc:creator>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/analyses/iraqi-armed-factions-between-national-identity-and-ideological-allegiance-amid-regional</guid>
+    </item>
+<item>
+  <title>Between Renewed Confrontation and a Negotiated Settlement: The Fate of a War That Was Never Meant to Last</title>
+  <link>https://studies.aljazeera.net/en/policy-briefs/between-renewed-confrontation-and-negotiated-settlement-fate-war-was-never-meant-last</link>
+  <description>The US-Iran war remains unresolved, with neither decisive victory nor total defeat in sight. Trump faces three options: renewed escalation and expanded air strikes, a risky ground invasion, or continued negotiations requiring mutual concessions.
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-10/web%20%283%29_0.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-10-18T08:54:39+0300</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/policy-briefs/between-renewed-confrontation-and-negotiated-settlement-fate-war-was-never-meant-last</guid>
+    </item>
+<item>
+  <title>How Can the Mashriq Overcome Its Escalating Security Disorder?</title>
+  <link>https://studies.aljazeera.net/en/policy-briefs/how-can-mashriq-overcome-its-escalating-security-disorder</link>
+  <description>For at least three years, the Arab-Islamic Mashriq has faced unprecedented, multifaceted security disorder, shaped by international and regional powers. Despite initiatives such as the Mecca Agreement, efforts to overcome the crisis continue to face major obstacles.
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-10/webeeeee_0.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-10-04T10:09:17+0300</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/policy-briefs/how-can-mashriq-overcome-its-escalating-security-disorder</guid>
+    </item>
+<item>
+  <title>Advances in Resolving the Kurdish Issue: Toward a New Era for Turkey and Syria</title>
+  <link>https://studies.aljazeera.net/en/policy-briefs/advances-resolving-kurdish-issue-toward-new-era-turkey-and-syria</link>
+  <description>The Kurdish issue in Turkey and Syria is making tangible, parallel progress toward a settlement. Despite challenges, recent practical steps have sought to contain threats to both countries’ unity and stability. A comprehensive resolution could bring significant benefits to the region.
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-09/web%20%289%29_0.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-09-20T11:50:57+0300</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/policy-briefs/advances-resolving-kurdish-issue-toward-new-era-turkey-and-syria</guid>
+    </item>
+<item>
+  <title>Expansion and Exposure: The Paradox of Houthi Control of Bab al-Mandeb</title>
+  <link>https://studies.aljazeera.net/en/policy-briefs/expansion-and-exposure-paradox-houthi-control-bab-al-mandeb</link>
+  <description>Ansar Allah have succeeded in establishing control over the coastline from Hodeidah to Mayyun, positioning them to influence maritime traffic through the Bab al-Mandab Strait. However, this control also exposes them to attack and could prompt affected powers to form an alliance against them.
+  &lt;img loading="eager" src="https://studies.aljazeera.net/sites/default/files/articles/2026-09/web%20%281%29_3.jpg" width="2500" height="1405" alt class="img-responsive"&gt;
+
+</description>
+  <pubDate>2026-09-15T10:05:48+0300</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="true">https://studies.aljazeera.net/en/policy-briefs/expansion-and-exposure-paradox-houthi-control-bab-al-mandeb</guid>
+    </item>
+<item>
+  <title>Niger Coup: Survival of the Military Re

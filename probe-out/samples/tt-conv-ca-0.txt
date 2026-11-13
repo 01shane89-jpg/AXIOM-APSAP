@@ -1,0 +1,55 @@
+https://theconversation.com/ca/politics/articles.atom
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <id>tag:theconversation.com,2011:/ca/politics/articles</id>
+  <link rel="alternate" type="text/html" href="https://theconversation.com"/>
+  <link rel="self" type="application/atom+xml" href="https://theconversation.com/ca/politics/articles.atom"/>
+  <title>Politics – The Conversation</title>
+  <updated>2026-11-12T21:18:55Z</updated>
+  <entry>
+    <id>tag:theconversation.com,2011:article/296188</id>
+    <published>2026-11-12T21:18:55Z</published>
+    <updated>2026-11-12T21:18:55Z</updated>
+    <link rel="alternate" type="text/html" href="https://theconversation.com/why-canada-has-a-moral-imperative-to-address-homelessness-296188"/>
+    <title>Why Canada has a moral imperative to address homelessness</title>
+    <content type="html">&lt;p&gt;Prime Minister Mark Carney &lt;a href="https://www.pm.gc.ca/en/news/news-releases/2026/11/06/prime-minister-carney-launches-plan-put-canada-path-end-homelessness"&gt;has announced&lt;/a&gt; a plan in the 2026 federal budget aimed at eliminating homelessness in the next decade. A statement about the plan says homelessness “strikes at the heart of Canadian values of fairness, solidarity, and human dignity.” &lt;/p&gt;
+
+&lt;p&gt;What are these values and how exactly are they impacted by homelessness? The announcement does not clearly answer these questions. As a researcher in public health ethics, I want to fill the gaps by drawing on empirical and philosophical research to explain why, exactly, the urgent need to address homelessness is matter of ethics.&lt;/p&gt;
+
+&lt;h2&gt;Eroding dignity&lt;/h2&gt;
+
+&lt;p&gt;Dignity &lt;a href="https://plato.stanford.edu/entries/dignity/"&gt;refers to a kind of inherent worth&lt;/a&gt; that all people hold equally by virtue of being human. It serves as &lt;a href="https://www.un.org/en/about-us/universal-declaration-of-human-rights"&gt;the foundation&lt;/a&gt; for human rights, which provide people with entitlements and establish obligations for others (including governments) to treat people in ways that respect their rights. &lt;/p&gt;
+
+&lt;p&gt;Violations of &lt;a href="https://www.ohchr.org/en/special-procedures/sr-housing/homelessness-and-human-rights"&gt;those human rights&lt;/a&gt;, which include a guarantee to &lt;a href="https://www.ohchr.org/en/instruments-mechanisms/instruments/international-covenant-economic-social-and-cultural-rights"&gt;adequate housing&lt;/a&gt;, are one way people experience a loss of dignity when homeless. Some policy responses to homeless encampments have also &lt;a href="https://www.canlii.org/en/on/onsc/doc/2026/2026onsc2971/2026onsc2971.html?resultId=7b44d75b35444008a59045768d5ac7f7&amp;amp;searchId=2026-05-29T10:44:37:114/bf3fbb5c4edd40b6b4b393dce4d571f4"&gt;violated rights&lt;/a&gt; guaranteed under the Canadian Charter of Rights and Freedoms, and therefore &lt;a href="https://www.constitutionalstudies.ca/2022/08/human-dignity/"&gt;peoples’ dignity&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;Homelessness violates dignity in other ways. A lack of shelter, housing and a home — &lt;a href="https://doi.org/10.1007/s10982-021-09414-w"&gt;understood as a place of belonging&lt;/a&gt; — leads people to experience shame and ostracism. &lt;/p&gt;
+
+&lt;p&gt;Homelessness &lt;a href="https://doi.org/10.59962/9780774865135"&gt;excludes people from meaningful participation&lt;/a&gt; in social life. That leaves them &lt;a href="https://crhesi.uwo.ca/margins/homelessness/"&gt;on the margins&lt;/a&gt; of society, with little to no resources or options, reduced social status and &lt;a href="https://homelesshub.ca/resource/homelessness-and-issue-freedom/"&gt;a lack of freedom&lt;/a&gt; &lt;a href="https://doi.org/10.1080/13698230.2022.2057025"&gt;and authority&lt;/a&gt; over their lives since much of what they do, even just to survive, is &lt;a href="https://doi.org/10.1177/15271544231176255"&gt;criminalized&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;In these ways, homelessness reduces people to being less-than, unworthy, and unequal.&lt;/p&gt;
+
+&lt;h2&gt;What makes a just society?&lt;/h2&gt;
+
+&lt;p&gt;This brings us to fairness and related questions about what a just society looks like. &lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://doi.org/10.1086/233897"&gt;In one view&lt;/a&gt;, a just society involves how people stand in terms of equality with one another rather than in hierarchic relations. The failure of the state to adequately respond to homelessness is a profound injustice because &lt;a href="https://philpapers.org/rec/SUNJSG"&gt;it demonstrates&lt;/a&gt; a lack of equal concern for some of the most vulnerable members of society. And, &lt;a href="https://doi.org/10.1177/00323217241286789"&gt;as some argue&lt;/a&gt;, this is precisely what’s at play in terms of homelessness. &lt;/p&gt;
+
+&lt;p&gt;Another famous view comes from &lt;a href="https://doi.org/10.2307/j.ctvjf9z6v"&gt;American philosopher John Rawls&lt;/a&gt;. For him, justice as fairness is concerned with the distribution of benefits and burdens in society, according to &lt;a href="https://plato.stanford.edu/entries/rawls/#TwoPriJusFai"&gt;two principles&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;The first principle states that everyone has an equal claim to basic liberties. The relevant part of the second principle, called the difference principle, holds that any social and economic inequalities in a just society should give the greatest benefit to the least advantaged members of society.&lt;/p&gt;
+
+&lt;p&gt;Although this view tolerates some inequality, homelessness remains incompatible with its principles of justice. &lt;/p&gt;
+
+&lt;p&gt;Rawls didn’t name housing as one of the benefits to be distributed under these principles. &lt;a href="https://www.bostonreview.net/articles/housing-is-a-social-good/"&gt;Some scholars&lt;/a&gt; have argued that it must be one of the social goods we should be concerned about distributing fairly, through, say, social housing models. &lt;/p&gt;
+
+
+
+&lt;p&gt;The fact that homelessness exists to the degree it does in a wealthy country like Canada &lt;a href="https://theconversation.com/the-homelessness-scourge-in-cities-like-london-ont-exposes-the-evils-of-wealth-inequality-287016"&gt;does in fact suggest&lt;/a&gt; a lack of fairness in a broader distributive sense. Some people are left without shelter altogether, some have subpar shelter while others have plenty. &lt;/p&gt;
+
+&lt;p&gt;But the causes of homelessness are &lt;a href="https://homelesshub.ca/collection/homelessness-101/what-are-the-causes-of-homelessness/"&gt;complex and multi-faceted&lt;/a&gt;. The problem has been &lt;a href="https://www.statcan.gc.ca/o1/en/plus/5170-homelessness-how-does-it-happen"&gt;made worse&lt;/a&gt; by a lack of affordable housing, higher unemployment and overall higher costs of living associated with rising inflation. &lt;/p&gt;
+
+&lt;p&gt;In research on the causes, experts and advocates agree that it’s not caused by the choices people make, but &lt;a href="https://doi.org/10.3390/ijerph18063066"&gt;the choices we make as a society&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Health inequities&lt;/h2&gt;
+
+&lt;p&gt;Such social choices have ripple effects, as people who experience homelessness face risks to their health and well-being. Homelessness disproportionately affects &lt;a href="https://homelesshub.ca/collection/population-groups/"&gt;some populations&lt;/a&gt;, which can lead to &lt;a href="https://nhchc.org/wp-content/uploads/2025/10/homelessness-and-health-connection-fact-sheet.pdf"&gt;vicious cycles&lt;/a&gt; of poor health, higher risk of &lt;a href="https://doi.org/10.1177/00333549241228"&gt;infectious disease&lt;/a&gt; and &lt;a href="https://doi.org/10.1093/ije/dyag129"&gt;premature death&lt;/a&gt;. Homelessness therefore leads to &lt;a href="https://doi.org/10.1007/978

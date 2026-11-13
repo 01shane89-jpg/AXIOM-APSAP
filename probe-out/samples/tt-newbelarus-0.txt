@@ -1,0 +1,117 @@
+https://newideas.center/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Цэнтр новых ідэй</title>
+	<atom:link href="https://newideas.center/feed/" rel="self" type="application/rss+xml" />
+	<link>https://newideas.center/</link>
+	<description></description>
+	<lastBuildDate>Thu, 12 Nov 2026 10:21:31 +0000</lastBuildDate>
+	<language>be</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Беларусь у 2026 годзе: вынікі нацыянальнага апытання</title>
+		<link>https://newideas.center/special/belarus_in_2026_national_survey_results_bel/</link>
+		
+		<dc:creator><![CDATA[communications_manager]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 06:00:00 +0000</pubDate>
+				<category><![CDATA[грамадства]]></category>
+		<guid isPermaLink="false">https://newideas.center/?post_type=special&#038;p=22127</guid>
+
+					<description><![CDATA[<p>Цэнтр новых ідэй (у партнёрстве з Фондам Конрада Адэнаўэра) прадстаўляе вынікі новага даследавання, прысвечанага аналізу грамадскіх настрояў, эканамічнага становішча, сацыяльнага даверу, медыяспажывання і знешнепалітычных арыентацый беларусаў у 2026 годзе. Даследаванне цалкам даступнае ў фармаце PDF: • Belarus in 2026: national survey results (PDF) Чаму рэкордная задаволенасць сітуацыяй (87%) і прыхільнасць да статусу-кво (74%) не звязваюцца [&#8230;]</p>
+<p>Сообщение <a href="https://newideas.center/special/belarus_in_2026_national_survey_results_bel/">Беларусь у 2026 годзе: вынікі нацыянальнага апытання</a> появились сначала на <a href="https://newideas.center">Цэнтр новых ідэй</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Belarus in 2026: National Survey Results</title>
+		<link>https://newideas.center/publications/belarus-in-2026-national-survey-results/</link>
+		
+		<dc:creator><![CDATA[communications_manager]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 06:00:00 +0000</pubDate>
+				<category><![CDATA[Грамадства]]></category>
+		<category><![CDATA[politics]]></category>
+		<guid isPermaLink="false">https://newideas.center/?post_type=publications&#038;p=22134</guid>
+
+					<description><![CDATA[<p>The Center for New Ideas, in partnership with the Konrad-Adenauer-Stiftung, presents the findings of a new study examining public attitudes, material well-being, social trust, media consumption, and foreign policy preferences of Belarusians as of May 2026. The full report is available in PDF format: Why does high overall satisfaction with the situation in the country [&#8230;]</p>
+<p>Сообщение <a href="https://newideas.center/publications/belarus-in-2026-national-survey-results/">Belarus in 2026: National Survey Results</a> появились сначала на <a href="https://newideas.center">Цэнтр новых ідэй</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Кто больше оторван от проблем простых беларусов — Лукашенко или Тихановская?</title>
+		<link>https://newideas.center/artykuly/kto-bolshe-otorvan-ot-problem-prostyh-belarusov-lukashenko-ili-tihanovskaja/</link>
+		
+		<dc:creator><![CDATA[communications_manager]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 09:34:05 +0000</pubDate>
+				<category><![CDATA[Артыкулы]]></category>
+		<category><![CDATA[грамадства]]></category>
+		<guid isPermaLink="false">https://newideas.center/?p=22116</guid>
+
+					<description><![CDATA[<p>Руководитель Администрации главы страны Дмитрий Крутой утверждает, что оппозиционеры «оторваны от всех реалий, которые происходят в стране». Политолог Артём Шрайбман ещё в 2024-м писал, что демократические силы больше не представляют большинство беларусов. Даже Виктор Бабарико, один из лидеров оппозиции, признал, что связь потеряна: его друзьям в Беларуси «неинтересно, что происходит в демократическом сообществе». В этих [&#8230;]</p>
+<p>Сообщение <a href="https://newideas.center/artykuly/kto-bolshe-otorvan-ot-problem-prostyh-belarusov-lukashenko-ili-tihanovskaja/">Кто больше оторван от проблем простых беларусов — Лукашенко или Тихановская?</a> появились сначала на <a href="https://newideas.center">Цэнтр новых ідэй</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Transformation of the Repressive Machine in Belarus (2020–2026)</title>
+		<link>https://newideas.center/publications/transformation-of-the-repressive-machine-in-belarus-2020-2026/</link>
+		
+		<dc:creator><![CDATA[communications_manager]]></dc:creator>
+		<pubDate>Fri, 09 Oct 2026 09:17:47 +0000</pubDate>
+				<guid isPermaLink="false">https://newideas.center/?post_type=publications&#038;p=22096</guid>
+
+					<description><![CDATA[<p>The Center for New Ideas presents the findings of a new study focusing on how the repressive apparatus in Belarus has transformed since 2020, how punitive powers are expanding, and how non-security agencies and civil infrastructure are being integrated into repressive practices. The full study is available in PDF format: Since 2020, repression in Belarus [&#8230;]</p>
+<p>Сообщение <a href="https://newideas.center/publications/transformation-of-the-repressive-machine-in-belarus-2020-2026/">Transformation of the Repressive Machine in Belarus (2020–2026)</a> появились сначала на <a href="https://newideas.center">Цэнтр новых ідэй</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Трансфармацыя рэпрэсіўнай машыны ў Беларусі цягам 2020–2026 гадоў</title>
+		<link>https://newideas.center/special/transfarmacyja-rjeprjesi-naj-mashyny-belarusi-cjagam-2020-2026-gado/</link>
+		
+		<dc:creator><![CDATA[communications_manager]]></dc:creator>
+		<pubDate>Tue, 06 Oct 2026 10:00:00 +0000</pubDate>
+				<category><![CDATA[рэпрэсіі]]></category>
+		<guid isPermaLink="false">https://newideas.center/?post_type=special&#038;p=22088</guid>
+
+					<description><![CDATA[<p>Цэнтр новых ідэй прадстаўляе вынікі новага даследавання, прысвечанага таму, як пасля 2020 года трансфармаваўся рэпрэсіўны апарат у Беларусі, як пашыраюцца карныя паўнамоцтвы і як да рэпрэсіўных практык далучаюцца несілавыя ведамствы і грамадзянская інфраструктура. Даследаванне цалкам даступна ў фармаце PDF: Пасля 2020 года рэпрэсіі ў Беларусі часта ўспрымаюцца як кропкавыя ізаляваныя акцыі сілавікоў. Але як насамрэч [&#8230;]</p>
+<p>Сообщение <a href="https://newideas.center/special/transfarmacyja-rjeprjesi-naj-mashyny-belarusi-cjagam-2020-2026-gado/">Трансфармацыя рэпрэсіўнай машыны ў Беларусі цягам 2020–2026 гадоў</a> появились сначала на <a href="https://newideas.center">Цэнтр новых ідэй</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Anatomy of Belarusian State: The Ruling Elite’s Connections</title>
+		<link>https://newideas.center/publications/anatomy-of-belarusian-state-the-ruling-elite-s-connections/</link>
+		
+		<dc:creator><![CDATA[communications_manager]]></dc:creator>
+		<pubDate>Mon, 05 Oct 2026 10:32:04 +0000</pubDate>
+				<category><![CDATA[Belarusian power system]]></category>
+		<category><![CDATA[Belarusian regime]]></category>
+		<category><![CDATA[Elite’s Connections]]></category>
+		<category><![CDATA[Russian trace]]></category>
+		<guid isPermaLink="false">https://newideas.center/?post_type=publications&#038;p=22087</guid>
+
+					<description><![CDATA[<p>The Center for New Ideas presents the findings of a new study examining how the Belarusian power system is structured from within and how connections among its elite members are intertwined. The full study is available in PDF format: We have also prepared an interactive network map. Since 2020, the Belarusian regime has appeared monolithic [&#8230;]</p>
+<p>Сообщение <a href="https://newideas.center/publications/anatomy-of-belarusian-state-the-ruling-elite-s-connections/">Anatomy of Belarusian State: The Ruling Elite’s Connections</a> появились сначала на <a 

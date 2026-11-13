@@ -1,0 +1,67 @@
+https://www.idsa.in/
+<!doctype html>
+<html lang="en-US" >
+<head><script nonce="jY/eJSZYtCi7Q2VXAmxWmg==">(function(){
+function fix(x){var v=x.getAttribute('data-idsa-style');if(v!==null){x.removeAttribute('data-idsa-style');x.style.cssText=v;return;}
+  v=x.getAttribute('style');if(v&&x.style.cssText==='')x.style.cssText=v;} // style="" added by JS is blocked by CSP but still readable
+function sweep(r){if(r.nodeType!==1)return;if(r.hasAttribute('data-idsa-style')||r.hasAttribute('style'))fix(r);r.querySelectorAll('[data-idsa-style],[style]').forEach(fix);}
+new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='attributes')fix(m.target);else m.addedNodes.forEach(sweep);});})
+  .observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});
+document.addEventListener('DOMContentLoaded',function(){sweep(document.documentElement);
+  document.querySelectorAll('[data-idsa-onload]').forEach(function(el){call(el,el.getAttribute('data-idsa-onload'));});});
+function call(el,code,ev){
+  if(/^\s*void\s*\(?\s*0\s*\)?\s*;?\s*$/.test(code||''))return;
+  var m=/^\s*(?:return\s+)?([\w$.]+)\s*\(([\s\S]*)\)\s*;?\s*(?:return\s+false\s*;?\s*)?$/.exec(code||'');
+  if(!m){console.warn('idsa-csp: unsupported handler',code);return;}
+  var o=window,p=m[1].split('.'),f;for(var i=0;i<p.length-1;i++)o=o&&o[p[i]];f=o&&o[p[p.length-1]];
+  if(typeof f!=='function'){console.warn('idsa-csp: no function',m[1]);return;}
+  // inline handlers see event.currentTarget === the element; a delegated listener sees document
+  var e2=ev&&typeof Proxy==='function'?new Proxy(ev,{get:function(t,k){if(k==='currentTarget')return el;var v=t[k];return typeof v==='function'?v.bind(t):v;}}):ev;
+  var args=m[2].trim()===''?[]:m[2].split(',').map(function(a){a=a.trim();
+    if(a==='this')return el;if(a==='event')return e2;
+    if(/^'.*'$/.test(a))return a.slice(1,-1);try{return JSON.parse(a);}catch(e){return a;}});
+  return f.apply(o,args);
+}
+['click','change','submit','input','keyup','mouseover','mouseout','focus','blur'].forEach(function(t){
+  document.addEventListener(t,function(ev){
+    var el=ev.target.closest&&ev.target.closest('[data-idsa-on'+t+']');if(!el)return;
+    if(el.tagName==='A'&&el.getAttribute('href')==='#')ev.preventDefault();
+    if(call(el,el.getAttribute('data-idsa-on'+t),ev)===false)ev.preventDefault();
+  },t==='focus'||t==='blur');
+});
+})();</script>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+	<style nonce="jY/eJSZYtCi7Q2VXAmxWmg==">img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
+	
+	<!-- This site is optimized with the Yoast SEO plugin v26.4 - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Home Page - MP-IDSA</title>
+	<link rel="canonical" href="https://idsa.in/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Home Page - MP-IDSA" />
+	<meta property="og:description" content="Manohar Parrikar Institute for Defence Studies and Analyses" />
+	<meta property="og:url" content="https://idsa.in/" />
+	<meta property="og:site_name" content="MP-IDSA" />
+	<meta property="article:modified_time" content="2024-11-29T11:33:18+00:00" />
+	<meta property="og:image" content="https://idsa.in/wp-content/uploads/2023/11/no_photo-200x150-2.jpg" />
+	<meta property="og:image:width" content="121" />
+	<meta property="og:image:height" content="176" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<script nonce="jY/eJSZYtCi7Q2VXAmxWmg==" type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://idsa.in/","url":"https://idsa.in/","name":"Home Page - MP-IDSA","isPartOf":{"@id":"https://idsa.in/#website"},"about":{"@id":"https://idsa.in/#organization"},"primaryImageOfPage":{"@id":"https://idsa.in/#primaryimage"},"image":{"@id":"https://idsa.in/#primaryimage"},"thumbnailUrl":"https://idsa.in/wp-content/uploads/2023/11/no_photo-200x150-2.jpg","datePublished":"2023-05-19T07:03:59+00:00","dateModified":"2024-11-29T11:33:18+00:00","breadcrumb":{"@id":"https://idsa.in/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://idsa.in/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https://idsa.in/#primaryimage","url":"https://idsa.in/wp-content/uploads/2023/11/no_photo-200x150-2.jpg","contentUrl":"https://idsa.in/wp-content/uploads/2023/11/no_photo-200x150-2.jpg","width":121,"height":176},{"@type":"BreadcrumbList","@id":"https://idsa.in/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home"}]},{"@type":"WebSite","@id":"https://idsa.in/#website","url":"https://idsa.in/","name":"MP-IDSA","description":"","publisher":{"@id":"https://idsa.in/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://idsa.in/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://idsa.in/#organization","name":"MP-IDSA","url":"https://idsa.in/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://idsa.in/#/schema/logo/image/","url":"https://idsa.in/wp-content/uploads/2023/05/cropped-logo-idsa-1.png","contentUrl":"https://idsa.in/wp-content/uploads/2023/05/cropped-logo-idsa-1.png","width":331,"height":72,"caption":"MP-IDSA"},"image":{"@id":"https://idsa.in/#/schema/logo/image/"}}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//static.addtoany.com' />
+<link rel='dns-prefetch' href='//cdn.jsdelivr.net' />
+<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
+<link rel="alternate" type="application/rss+xml" title="MP-IDSA &raquo; Feed" href="https://idsa.in/feed" />
+<link rel="alternate" type="application/rss+xml" title="MP-IDSA &raquo; Comments Feed" href="https://idsa.in/comments/feed" />
+<link rel="alternate" type="text/calendar" title="MP-IDSA &raquo; iCal Feed" href="https://idsa.in/idsa-events/?ical=1" />
+<link rel='stylesheet' id='dashicons-css' href='https://idsa.in/wp-includes/css/dashicons.min.css' media='all' />
+<link rel='stylesheet' id='menu-icons-extra-css' href='https://idsa.in/wp-content/plugins/menu-icons/css/extra.min.css' media='all' />
+<link rel='stylesheet' id='wp-block-library-css' href='https://idsa.in/wp-includes/css/dist/block-library/style.min.css' media='all' />
+<style nonce="jY/eJSZYtCi7Q2VXAmxWmg==" id='wp-block-library-theme-inline-css'>
+.wp-block-audio :where(figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme .wp-block-audio :where(figcaption){color:#ffffffa6}.wp-block-audio{margin:0 0 1em}.wp-block-code{border:1px solid #ccc;border-radius:4px;font-family:Menlo,Consolas,monaco,monospace;padding:.8em 1em}.wp-block-embed :where(figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme .wp-block-embed :where(figcaption){color:#ffffffa6}.wp-block-embed{margin:0 0 1em}.blocks-gallery-caption{color:#555;font-size:13px;text-align:center}.is-dark-theme .blocks-gallery-caption{color:#ffffffa6}:root :where(.wp-block-image figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme :root :where(.wp-block-image figcaption){color:#ffffffa6}.wp-block-image{margin:0 0 1em}.wp-block-pullquote{border-bottom:4px solid;border-top:4px solid;color:currentColor;margin-bottom:1.75em}.wp-block-pullquote cite,.wp-block-pullquote footer,.wp-block-pullquote__citation{color:currentColor;font-size:.8125em;font-style:normal;text-transform:uppercase}.wp-block-quote{border-left:.25em solid;margin:0 0 1.75em;padding-left:1em}.wp-block-quote cite,.wp-block-quote footer{color:currentColor;font-size:.8125em;font-style:normal;posit

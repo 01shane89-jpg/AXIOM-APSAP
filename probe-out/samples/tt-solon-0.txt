@@ -1,0 +1,110 @@
+https://fundacionsolon.org/rss
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title></title>
+	<atom:link href="https://fundacionsolon.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://fundacionsolon.org</link>
+	<description></description>
+	<lastBuildDate>Tue, 10 Nov 2026 20:00:29 +0000</lastBuildDate>
+	<language>es</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://fundacionsolon.org/wp-content/uploads/2026/07/cropped-logo-fs-32x32.png</url>
+	<title></title>
+	<link>https://fundacionsolon.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">255956629</site>	<item>
+		<title>La sentencia constitucional que respalda a los municipios libres de minería</title>
+		<link>https://fundacionsolon.org/la-sentencia-constitucional-que-respalda-a-los-municipios-libres-de-mineria/</link>
+		
+		<dc:creator><![CDATA[Admin]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 10:33:00 +0000</pubDate>
+				<category><![CDATA[Minería]]></category>
+		<category><![CDATA[Oro]]></category>
+		<category><![CDATA[Amazonía]]></category>
+		<category><![CDATA[Bolivia]]></category>
+		<category><![CDATA[Extractivismo]]></category>
+		<guid isPermaLink="false">https://fundacionsolon.org/?p=21141</guid>
+
+					<description><![CDATA[Por Fátima Monasterio En diciembre de 2024, la Sala Plena del Tribunal Constitucional Plurinacional resolvió una controversia de especial importancia para los municipios que buscan proteger sus territorios frente a la expansión minera. Mediante la SCP 0097/2024, declaró competente al Concejo Municipal de Alto Beni y mantuvo la validez y vigencia de su declaratoria como]]></description>
+										<content:encoded><![CDATA[
+<p class="has-text-align-right wp-block-paragraph"><em>Por Fátima Monasterio</em></p>
+
+
+
+<p class="wp-block-paragraph">En diciembre de 2024, la Sala Plena del Tribunal Constitucional Plurinacional resolvió una controversia de especial importancia para los municipios que buscan proteger sus territorios frente a la expansión minera. Mediante la SCP 0097/2024, declaró competente al Concejo Municipal de Alto Beni y mantuvo la validez y vigencia de su declaratoria como municipio libre de actividad y contaminación minera.</p>
+
+
+
+<p class="wp-block-paragraph">El conflicto había sido promovido por el entonces presidente de la Asamblea Legislativa Plurinacional, bajo el argumento de que el gobierno municipal invadía competencias reservadas al nivel central sobre minería, recursos naturales y biodiversidad.</p>
+
+
+
+<p class="wp-block-paragraph">Para resolverlo, el Tribunal examinó el contenido y la finalidad de la ley municipal, así como la distribución constitucional de competencias entre los distintos niveles de gobierno. Su razonamiento permite comprender el alcance de la autonomía en materia de protección ambiental y ordenamiento territorial.</p>
+
+
+
+<p class="wp-block-paragraph">Uno de los aspectos más interesantes de la sentencia es el reconocimiento de la identidad ecológica de Alto Beni. El TCP recuperó el artículo 2 de su Carta Orgánica Municipal, que establece:</p>
+
+
+
+<p class="wp-block-paragraph">«Por decisión histórica de nuestro pueblo, de ahora en adelante, denominamos a nuestro Municipio como Municipio Ecológico Alto Beni».</p>
+
+
+
+<figure class="wp-block-image size-full"><img fetchpriority="high" decoding="async" width="950" height="533" src="https://fundacionsolon.org/wp-content/uploads/2025/12/screenshot-2025-11-21-at-12.19.12.webp" alt="" class="wp-image-19714" srcset="https://fundacionsolon.org/wp-content/uploads/2025/12/screenshot-2025-11-21-at-12.19.12.webp 950w, https://fundacionsolon.org/wp-content/uploads/2025/12/screenshot-2025-11-21-at-12.19.12-300x168.webp 300w, https://fundacionsolon.org/wp-content/uploads/2025/12/screenshot-2025-11-21-at-12.19.12-768x431.webp 768w" sizes="(max-width: 950px) 100vw, 950px" /></figure>
+
+
+
+<p class="wp-block-paragraph">Estas palabras expresan una voluntad colectiva que responde a una trayectoria de organización comunitaria y a una vocación productiva agroecológica construida alrededor del cacao, los cítricos y otros cultivos que sostienen la economía de las familias.</p>
+
+
+
+<p class="wp-block-paragraph">El TCP sostuvo que una entidad territorial autónoma puede autodefinirse a partir de sus características culturales, territoriales, valores y principios, y reconoció expresamente que la autoidentificación ecológica de Alto Beni «se enmarca y emerge del concepto básico de autonomía».</p>
+
+
+
+<p class="wp-block-paragraph">Este reconocimiento vincula la declaratoria con el ejercicio del autogobierno y la capacidad de las comunidades para expresar, mediante sus instituciones, la identidad y el modelo de desarrollo que han construido. Decisiones que encuentran sustento en el régimen autonómico y cuyo respeto compromete a los demás niveles del Estado.</p>
+
+
+
+<p class="wp-block-paragraph">Al examinar la declaratoria de municipio libre de actividad y contaminación minera, el Tribunal identificó su objeto como una manifestación de voluntad institucional vinculada a la condición ecológica de Alto Beni «dirigida a reafirmar sus atribuciones».</p>
+
+
+
+<p class="wp-block-paragraph">La sentencia estableció que la finalidad de la Ley es la protección ambiental y que su contenido no ingresa a regular expresamente la actividad minera, materia reservada al nivel central. En consecuencia, reconoció que esta decisión se encuentra comprendida en la competencia exclusiva municipal de preservar, conservar y contribuir a la protección del medio ambiente y los recursos naturales, prevista en el artículo 302.I.5 de la Constitución.</p>
+
+
+
+<p class="wp-block-paragraph">Por ello concluyó que la disposición «no transgrede el límite competencial asignado a la ETA municipal» y determinó mantener su validez y vigencia.</p>
+
+
+
+<p class="wp-block-paragraph">La Sala Plena también reconoció las atribuciones municipales vinculadas con el ordenamiento territorial, la identificación de áreas de producción y reserva forestal y la conservación de áreas protegidas.</p>
+
+
+
+<p class="wp-block-paragraph">La trascendencia de este pronunciamiento alcanza a otros municipios que se han declarado libres de minería para preservar sus fuentes de agua, sus ecosistemas y sus economías agroecológicas o ecoturísticas. La SCP 0097/2024 ofrece un fundamento jurisprudencial concreto para sostener la legitimidad competencial de estas decisiones, en el marco de las atribuciones reconocidas por la Constitución.</p>
+
+
+
+<p class="wp-block-paragraph">Su aplicación práctica plantea, además, un desafío de coordinación institucional. Las competencias municipales de protección ambiental deben articularse con las atribuciones nacionales sobre minería. En ese marco, los municipios que se han declarado libres de minería han solicitado a la Autoridad Jurisdiccional Administrativa Minera (AJAM) que incorpore restricciones en el Catastro Minero y adopte, dentro de sus competencias, las medidas administrativas necesarias para hacer efectiva la protección de sus jurisdicciones frente a nuevas solicitudes de derechos mineros.</p>
+
+
+
+<figure class="wp-block-image size-full"><img decoding="async" width="1024" height="576" src="https://fundacionsolon.org/wp-content/uploads/2024/08/alto-beni-07.webp" alt="" class="wp-image-17763" srcset="https://fundacionsolon.org/wp-content/uploads/2024/08/alto-beni-07.webp 1024w, https://fundacionsolon.org/wp-content/uploads/2024/08/alto-beni-07-300x169.webp 300w, https://fundacionsolon.org/wp-content/uploads/2024/08/alto-beni-07-768x432.webp 768w" sizes="(max-wi

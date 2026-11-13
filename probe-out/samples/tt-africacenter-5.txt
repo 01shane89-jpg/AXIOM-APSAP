@@ -1,0 +1,109 @@
+https://africacenter.org/publication-sitemap.xml
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="//africacenter.org/wp-content/plugins/wordpress-seo/css/main-sitemap.xsl"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+	<url>
+		<loc>https://africacenter.org/publication/national-maritime-security-strategy-toolkit/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/national-maritime-security-strategy-toolkit/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/national-maritime-security-strategy-toolkit/" />
+		<lastmod>2016-07-27T20:06:04+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2016/07/Cargo-Ships-at-Takoradi-Harbour-600x400.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2016/07/Cargo-Ships-at-Takoradi-Harbour-1000x405.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/publication/combating-piracy-in-the-gulf-of-guinea/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/combating-piracy-in-the-gulf-of-guinea/" />
+		<xhtml:link rel="alternate" hreflang="fr-FR" href="https://africacenter.org/fr/publication/la-lutte-contre-la-piraterie-dans-le-golfe-de-guinee/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/combating-piracy-in-the-gulf-of-guinea/" />
+		<lastmod>2016-12-06T15:41:34+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/02/gabon_navy.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/11/Combating-Piracy-wide.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/fr/publication/lengagement-des-etats-unis-en-matiere-de-securite-en-afrique/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/u-s-security-engagement-in-africa/" />
+		<xhtml:link rel="alternate" hreflang="fr-FR" href="https://africacenter.org/fr/publication/lengagement-des-etats-unis-en-matiere-de-securite-en-afrique/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/u-s-security-engagement-in-africa/" />
+		<lastmod>2017-12-29T21:05:53+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2016/01/15591582362_3bbc03bfd0_k.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2016/01/14279411731_4ebb5af40a_o.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/fr/publication/la-malediction-des-ressources-naturelles-investissements-predateurs-dans-les-industries-extractives-en-lafrique/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/the-anatomy-of-the-resource-curse-predatory-investment-in-africas-extractive-industries/" />
+		<xhtml:link rel="alternate" hreflang="fr-FR" href="https://africacenter.org/fr/publication/la-malediction-des-ressources-naturelles-investissements-predateurs-dans-les-industries-extractives-en-lafrique/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/the-anatomy-of-the-resource-curse-predatory-investment-in-africas-extractive-industries/" />
+		<lastmod>2018-02-05T14:06:55+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2009/07/oil_angola.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2009/07/oil_angola.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/fr/publication/instaurer-des-capacites-durables-de-maintien-de-la-paix-en-afrique/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/creating-sustainable-peacekeeping-capability-in-africa/" />
+		<xhtml:link rel="alternate" hreflang="fr-FR" href="https://africacenter.org/fr/publication/instaurer-des-capacites-durables-de-maintien-de-la-paix-en-afrique/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/creating-sustainable-peacekeeping-capability-in-africa/" />
+		<lastmod>2018-02-20T21:06:59+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/11/582838-1-slide.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/11/582838-1-slide.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/fr/publication/lafrique-et-le-printemps-arabe-une-nouvelle-ere-despoirs-democratiques/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/africa-and-the-arab-spring/" />
+		<xhtml:link rel="alternate" hreflang="fr-FR" href="https://africacenter.org/fr/publication/lafrique-et-le-printemps-arabe-une-nouvelle-ere-despoirs-democratiques/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/africa-and-the-arab-spring/" />
+		<lastmod>2018-02-23T18:00:49+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2011/11/Woman-voting-300x200.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/12/voting.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/fr/publication/la-lutte-contre-la-piraterie-dans-le-golfe-de-guinee/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/combating-piracy-in-the-gulf-of-guinea/" />
+		<xhtml:link rel="alternate" hreflang="fr-FR" href="https://africacenter.org/fr/publication/la-lutte-contre-la-piraterie-dans-le-golfe-de-guinee/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/combating-piracy-in-the-gulf-of-guinea/" />
+		<lastmod>2018-02-23T18:32:55+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/02/gabon_navy.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/09/cameroon_navy.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/fr/publication/renforcer-la-protection-des-civils-dans-les-operations-de-maintien-de-la-paix-regard-sur-lafrique/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/enhancing-civilian-protection-in-peace-operations-africa/" />
+		<xhtml:link rel="alternate" hreflang="fr-FR" href="https://africacenter.org/fr/publication/renforcer-la-protection-des-civils-dans-les-operations-de-maintien-de-la-paix-regard-sur-lafrique/" />
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://africacenter.org/publication/enhancing-civilian-protection-in-peace-operations-africa/" />
+		<lastmod>2018-02-27T15:03:19+00:00</lastmod>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2010/09/MINUSMA1-300x200.jpg</image:loc>
+		</image:image>
+		<image:image>
+			<image:loc>https://africacenter.org/wp-content/uploads/2015/12/MINUSMA1.jpg</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://africacenter.org/fr/publication/playing-ostrich-lessons-learned-from-south-africas-response-to-terrorism/</loc>
+		<xhtml:link rel="alternate" hreflang="en-US" href="https://africacenter.org/publication/playing-ostrich-lessons-learned-from-south-afri

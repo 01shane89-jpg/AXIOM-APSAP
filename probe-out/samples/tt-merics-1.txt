@@ -1,0 +1,188 @@
+https://merics.org/en/rss
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://merics.org/en">
+  <channel>
+    <title/>
+    <link>https://merics.org/en</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>How will pressure from China affect European industry?</title>
+  <link>https://merics.org/en/video/how-will-pressure-china-affect-european-industry</link>
+  <description>&lt;span class="field-wrapper field field--name-title field--type-string field--label-hidden node-title"&gt;&lt;h1&gt;How will pressure from China affect European industry?&lt;/h1&gt;
+&lt;/span&gt;
+&lt;span class="field-wrapper"&gt;&lt;span&gt;H.Seidl&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field-wrapper"&gt;&lt;time datetime="2026-11-10T11:07:12+01:00" title="Tuesday, November 10, 2026 - 11:07"&gt;Tue, 11/10/2026 - 11:07&lt;/time&gt;
+&lt;/span&gt;
+  &lt;div class="layout merics-2col-stacked-left merics-2col-stacked-left--75-25"&gt;
+
+          &lt;div class="layout__region layout__region--left"&gt;
+                  &lt;div class="layout__region--left-top"&gt;
+            &lt;section class="block block-layout-builder block-field-blocknodemicrositefield-publication-type"&gt;
+  
+  
+    
+
+  
+          &lt;div class="field-wrapper field field-node--field-publication-type field-name-field-publication-type field-type-entity-reference field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;&lt;div class="taxonomy-term count-1"&gt;Video&lt;/div&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+    
+    
+  &lt;/section&gt;
+&lt;section class="block block-layout-builder block-field-blocknodemicrositefield-date-published"&gt;
+  
+  
+    
+
+  
+          &lt;div class="field-wrapper field field-node--field-date-published field-name-field-date-published field-type-datetime field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;&lt;time datetime="2026-11-10T11:07:12Z"&gt;Nov 10, 2026&lt;/time&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+    
+    
+  &lt;/section&gt;
+&lt;section class="block block-layout-builder block-extra-field-blocknodemicrositereading-time"&gt;
+  
+  
+    
+
+  
+          1 min read
+
+    
+    
+  &lt;/section&gt;
+
+          &lt;/div&gt;
+        
+                  &lt;div class="layout__region--left-bottom"&gt;
+            &lt;section class="block block-layout-builder block-field-blocknodemicrositetitle"&gt;
+  
+  
+    
+
+  
+          &lt;span class="field-wrapper field field--name-title field--type-string field--label-hidden node-title"&gt;&lt;h1&gt;How will pressure from China affect European industry?&lt;/h1&gt;
+&lt;/span&gt;
+
+    
+    
+  &lt;/section&gt;
+&lt;section class="block block-layout-builder block-field-blocknodemicrositefield-content"&gt;
+  
+  
+    
+
+  
+          &lt;div class="field-wrapper field field-node--field-content field-name-field-content field-type-entity-reference-revisions field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;  &lt;div class="paragraph paragraph--type--chapter paragraph--view-mode--default" id="-21904"&gt;
+          &lt;div class="field-wrapper field field-paragraph--field-ref-paragraph field-name-field-ref-paragraph field-type-entity-reference-revisions field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;  &lt;div class="paragraph paragraph--type--media-container paragraph--view-mode--default"&gt;
+          &lt;div class="field-wrapper field field-paragraph--field-ref-paragraph field-name-field-ref-paragraph field-type-entity-reference-revisions field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;  &lt;div class="paragraph paragraph--type--media paragraph--view-mode--default"&gt;
+          &lt;div class="field-wrapper field field-paragraph--field-media field-name-field-media field-type-entity-reference field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;&lt;article class="media media--type-video-embedded media--view-mode-pt-media-default"&gt;
+  
+      &lt;div class="field-wrapper field field-media--field-media-oembed-video field-name-field-media-oembed-video field-type-string field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;&lt;iframe src="https://merics.org/en/media/oembed?url=https%3A//www.youtube.com/watch%3Fv%3Dx69Pr0LCgL8&amp;amp;max_width=850&amp;amp;max_height=495&amp;amp;hash=xpHhFCIp0SNt5x8rGs5TdpGyO73QIFUut44cx4r0DNw" width="850" height="478" class="media-oembed-content" loading="eager" title="How will pressure from China affect European industry?"&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+    &lt;div class="clear"&gt;&lt;/div&gt;
+&lt;/article&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;/div&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;/div&gt;
+&lt;/div&gt;
+          &lt;div class="field-item"&gt;  &lt;div class="paragraph paragraph--type--text paragraph--view-mode--default"&gt;
+          &lt;div class="field-wrapper field field-paragraph--field-text field-name-field-text field-type-text-long field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;&lt;p&gt;In this short video, MERICS Head of Program Economy and Industry Jacob Gunter talks about the increased competition European companies face from China. Jacob is one of the authors of the &lt;a href="https://merics.org/en/china-overcapacities-monitor" data-entity-type="node" data-entity-uuid="79e6c9d2-83d5-498c-8215-0584edaeff36" data-entity-substitution="canonical" title="China Overcapacities Monitor"&gt;MERICS China Overcapacity Monitor&lt;/a&gt; where you can find data and insights on the topic.&lt;/p&gt;&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;/div&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;/div&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+    
+    
+  &lt;/section&gt;
+&lt;section class="block block-layout-builder block-field-blocknodemicrositefield-authors"&gt;
+  
+  
+    
+
+  
+          &lt;div class="field-wrapper field field-node--field-authors field-name-field-authors field-type-entity-reference field-label-above"&gt;
+      &lt;div class="field-label"&gt;Author(s)&lt;/div&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;&lt;article id="node-978" class="content--type-team-member"&gt;
+    &lt;div class="view-mode-microsite"&gt;
+      &lt;div class="layout layout--twocol-section layout--twocol-section--33-67"&gt;
+
+          &lt;div class="layout__region layout__region--first"&gt;
+        &lt;section class="block block-layout-builder block-field-blocknodeteam-memberfield-team-member-photo"&gt;
+  
+  
+    
+
+  
+          &lt;div class="field-wrapper field field-node--field-team-member-photo field-name-field-team-member-photo field-type-entity-reference field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;&lt;article class="media media--type-image media--view-mode-ct-team-member-microsite"&gt;
+  
+      
+&lt;div class="field-wrapper field field-media--field-media-image field-name-field-media-image field-type-image field-label-hidden"&gt;
+    &lt;div class="field-items"&gt;
+          &lt;div class="field-item"&gt;  &lt;img loading="lazy" src="https://merics.org/sites/default/files/styles/ct_team_member_microsite/public/2023-11/merics-jacob-gunter-website.jpg?h=2a479378&amp;amp;itok=nfH-Hn7d" width="192" height="192" alt="Jacob Gunter"&gt;
+
+
+
+            &lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+    &lt;div class="clear"&gt;&lt;/div&gt;
+&lt;/article&gt;
+&lt;/div&gt;
+      &lt;/div&gt;
+&lt;/div&gt;
+
+    
+    
+  &lt;/section&gt;
+
+      &lt;/div&gt;
+    
+          &lt;div class="layout__region layout__region--second"&gt;
+        &lt;section class="block block-layout-builder block-fi

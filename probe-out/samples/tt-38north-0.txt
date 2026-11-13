@@ -1,0 +1,55 @@
+https://www.38north.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>38 North</title>
+	<atom:link href="https://www.38north.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.38north.org/</link>
+	<description>Informed analysis of events in and around North Korea</description>
+	<lastBuildDate>Tue, 10 Nov 2026 21:21:59 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>The Choe Hyon, North Korean Navy Surface Ship, and Its Strategic Implications</title>
+		<link>https://www.38north.org/2026/11/the-choe-hyon-north-korean-navy-surface-ship-and-its-strategic-implications/</link>
+		
+		<dc:creator><![CDATA[Joshua NT Park]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 21:21:03 +0000</pubDate>
+				<category><![CDATA[Military Affairs]]></category>
+		<category><![CDATA[WMD]]></category>
+		<category><![CDATA[choe hyon destroyer]]></category>
+		<category><![CDATA[cruise missiles]]></category>
+		<category><![CDATA[joshua nt park]]></category>
+		<category><![CDATA[kang kun destroyer]]></category>
+		<category><![CDATA[nampho]]></category>
+		<category><![CDATA[west see fleet]]></category>
+		<guid isPermaLink="false">https://www.38north.org/?p=34770</guid>
+
+					<description><![CDATA[<p>Overview of Series Analysis Most existing analysis of North Korea’s Choe Hyon destroyer has ...</p>
+<p>The post <a href="https://www.38north.org/2026/11/the-choe-hyon-north-korean-navy-surface-ship-and-its-strategic-implications/">The Choe Hyon, North Korean Navy Surface Ship, and Its Strategic Implications</a> appeared first on <a href="https://www.38north.org">38 North</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><strong>Overview of Series Analysis</strong></p>
+<p>Most existing analysis of North Korea’s Choe Hyon destroyer has been <a href="https://www.38north.org/2026/07/is-north-korea-pursuing-a-juche-oriented-nuclear-triad/">conducted</a> at the strategic level, such as whether the ship affords North Korea a sea-based second-strike capability once it carries cruise missiles armed with tactical nuclear warheads. However, further study is needed of the vessel&#8217;s capabilities and their implications to better understand how it advances North Korea’s military ambitions.</p>
+<p>This series examines the Choe Hyon primarily at the tactical and operational levels, examining its specifications and weapons fit as well as the capability-verification process that carried it from launch to commissioning.</p>
+<p><strong>Part 1: The Choe Hyon: Assessing Specifications and Their Strategic Implications</strong></p>
+<p><strong>Introduction</strong></p>
+<p>This article examines the technical and operational capabilities of the Choe Hyon.<a href="#_ftn1" name="_ftnref1">[1]</a> Specifically, it looks at the ship&#8217;s hull characteristics and weapon systems to work backward to the purpose for which it was conceived. Every ship is built to fulfill a particular purpose, and this is all the moretrue of warships, whose intended purpose is embodied in their installed weapon systems, tonnage, external configuration, and propulsion arrangement.</p>
+<p>The Choe Hyon is the most capable surface combatant North Korea has built so far. In theory, it enables North Korea to launch nuclear-capable cruise missiles from almost anywhere at sea. But in practice, the warship’s features reveal critical vulnerabilities, such as potential limits to speed, thin anti-submarine capability, a lack of helicopter or visible towed array, limited stealth, and a combat system of uncertain integration. Moreover, without escorts or oilers, it will likely operate only near its home port.</p>
+<p>Despite these shortcomings, the Choe Hyon class poses four key challenges for the US-ROK alliance. First, its combination of nuclear and conventional armament creates crisis ambiguity that complicates any allied response. Second, with one ship in the West Sea, a second on the east coast, and more planned, the class stretches allied surveillance across two seas. Third, a nuclear-armed warship in the West Sea, whose inner waters open toward Beijing, would also make a crisis uncomfortable for China. Finally, the class signals Kim Jong Un’s ambition to build a modern fleet, an ambition constrained by inadequate shipbuilding infrastructure and competing military and WMD priorities.</p>
+<p><strong>Assessment of </strong><strong>the Choe Hyon&#8217;s Specifications</strong></p>
+<p>In assessing the Choe Hyon&#8217;s specifications, this article compares it with two broadly similar warships: the ROK Navy&#8217;s <a href="https://ko.wikipedia.org/wiki/%EC%B6%A9%EB%AC%B4%EA%B3%B5%EC%9D%B4%EC%88%9C%EC%8B%A0%EA%B8%89_%EA%B5%AC%EC%B6%95%ED%95%A8">Chungmugong Yi Sun-sin class</a> destroyer and the Russian Navy&#8217;s <a href="https://ko.wikipedia.org/wiki/%EA%B3%A0%EB%A5%B4%EC%89%AC%EC%BD%94%ED%94%84%EA%B8%89_%ED%98%B8%EC%9C%84%ED%95%A8">Admiral Gorshkov class</a> frigate. The Chungmugong Yi Sun-sin was commissioned in 2003 and displaces 5,500 tons with an overall length of 150 meters. She possesses anti-surface, anti-air, and anti-submarine warfare capabilities, and ships of her class have conducted counter-piracy operations in the Gulf of Aden off the African coast. The Russian Admiral Gorshkov, commissioned in 2018, is Russia&#8217;s most modern frigate, displacing 4,550 tons with an overall length of 135 meters. The Choe Hyon&#8217;s precise specifications have not been disclosed, but she is reported to be a vessel of some 5,400 tons with an overall <a href="https://beyondparallel.csis.org/north-korea-launches-the-choe-hyon-guided-missile-destroyer/">length</a> of 144 meters.</p>
+<p><strong><em>Tonnage </em></strong></p>
+<p>The Choe Hyon is reported to be a vessel of approximately 5,000 tons, placing it very close in size to both the Chungmugong Yi Sun-sin and the Admiral Gorshkov. A ship of these dimensions should be capable not only of coastal operations but also of blue-water operations at a considerable distance from its home port. Its external configuration likewise appears to have been designed with stealth in mind: the outer surfaces of its sides are inclined in order to minimize radar reflection. Its stealth characteristics are assessed in greater detail in a separate section below.</p>
+<p><strong><em>Propulsion System</em></strong></p>
+<p>Based on video footage released by North Korean state media, the Choe Hyon appears to be fitted with diesel engines only, although this cannot be confirmed. North Korea has not issued an official statement concerning the ship&#8217;s speed. Warships ordinarily employ diesel engines and gas turbines. Diesel engines are efficient at low speed, whereas gas turbines, originally developed as aircraft engines, are efficient at high speed. A warship <a href="https://en.wikipedia.org/wiki/Combined_diesel_or_gas">configured</a> to use diesels and gas turbines alternately (CODOG: Combined Diesel or Gas) therefore attains a maximum speed in excess of 25-30 knots, while one relying upon diesel engines alone attains roughly 20-25 knots, maximum. In the video footage, the wake generated at the ship&#8217;s stern consists of two streams, from which it may be inferred that it has two propeller shafts (<strong>Figure 1</strong>). In all available footage, the ship appears to be steaming at no more than about 20 knots, judging from its bow wave and wake (<strong>Figure 2</strong>). Experience in operating warships permits a rough estimate of a vessel&#8217;s speed from the size of the bow wave as it cuts through the water and the scale of the wake generated astern.

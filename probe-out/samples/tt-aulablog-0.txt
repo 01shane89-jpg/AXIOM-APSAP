@@ -1,0 +1,78 @@
+https://aulablog.net/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	>
+
+<channel>
+	<title>AULA Blog</title>
+	<atom:link href="https://aulablog.net/feed/" rel="self" type="application/rss+xml" />
+	<link>https://aulablog.net</link>
+	<description>Center for Latin American and Latino Studies, American University</description>
+	<lastBuildDate>Fri, 30 Oct 2026 21:58:00 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+
+<image>
+	<url>https://aulablog.net/wp-content/uploads/2026/05/cropped-depositphotos_8937839_l-2015-1.jpg?w=32</url>
+	<title>AULA Blog</title>
+	<link>https://aulablog.net</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">37746636</site><cloud domain='aulablog.net' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+<source:cloud xmlns:source='https://source.scripting.com/'>https://aulablog.net/?rsscloud=notify</source:cloud>
+<atom:link rel="search" type="application/opensearchdescription+xml" href="https://aulablog.net/osd.xml" title="AULA Blog" />
+	<atom:link rel='hub' href='https://aulablog.net/?pushpress=hub'/>
+	<item>
+		<title>What Lula’s Victory Reveals About the Far Right in Latin America</title>
+		<link>https://aulablog.net/2026/10/30/what-lulas-victory-reveals-about-the-far-right-in-latin-america/</link>
+					<comments>https://aulablog.net/2026/10/30/what-lulas-victory-reveals-about-the-far-right-in-latin-america/#respond</comments>
+		
+		<dc:creator><![CDATA[clalsstaff]]></dc:creator>
+		<pubDate>Fri, 30 Oct 2026 21:58:00 +0000</pubDate>
+				<category><![CDATA[Brazil]]></category>
+		<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Elections]]></category>
+		<category><![CDATA[news]]></category>
+		<category><![CDATA[Politics]]></category>
+		<guid isPermaLink="false">http://aulablog.net/?p=8922</guid>
+
+					<description><![CDATA[Flávio Contrera, Lecturer at the Universidade Federal da Grande Dourados, Brazil Luiz Inácio Lula da Silva’s victory in Brazil’s 2026 presidential runoff offers an opportunity to reflect on the strategies of mobilization capable of challenging the far right in a Latin American context marked by the growing strength of conservative forces. The result does not [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph"><strong>Flávio Contrera,</strong> Lecturer at the Universidade Federal da Grande Dourados, Brazil</p>
+
+
+
+<figure class="wp-block-image size-large"><a href="https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg"><img width="1024" height="686" data-attachment-id="8927" data-permalink="https://aulablog.net/2026/10/30/what-lulas-victory-reveals-about-the-far-right-in-latin-america/24-10-2026-lula-em-sao-paulo-o-brasil-pronto-pra-mais/" data-orig-file="https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg" data-orig-size="3543,2375" data-comments-opened="1" data-image-meta="{&quot;credit&quot;:&quot;Foto: Ricardo Stuckert&quot;,&quot;caption&quot;:&quot;24.10.2026 - Presidente da Rep\u00fablica, Luiz In\u00e1cio Lula da Silva, durante ato de campanha no Rio de Janeiro: o evento \&quot;Lula em S\u00e3o Paulo: O Brasil Pronto Pra Mais\&quot;, realizado na Avenida Paulista,  S\u00e3o Paulo (SP).\rFoto: Ricardo Stuckert&quot;,&quot;copyright&quot;:&quot;Foto: Ricardo Stuckert&quot;,&quot;title&quot;:&quot;24.10.2026 - Lula em S\u00e3o Paulo: O Brasil Pronto Pra Mais&quot;}" data-image-title="24.10.2026 &amp;#8211; Lula em São Paulo: O Brasil Pronto Pra Mais" data-image-description="" data-image-caption="&lt;p&gt;24.10.2026 &amp;#8211; Presidente da República, Luiz Inácio Lula da Silva, durante ato de campanha no Rio de Janeiro: o evento &amp;#8220;Lula em São Paulo: O Brasil Pronto Pra Mais&amp;#8221;, realizado na Avenida Paulista,  São Paulo (SP).&lt;br /&gt;
+Foto: Ricardo Stuckert&lt;/p&gt;
+" data-large-file="https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=600" src="https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=1024" alt="" class="wp-image-8927" srcset="https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=1024 1024w, https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=2048 2048w, https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=150 150w, https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=300 300w, https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=768 768w, https://aulablog.net/wp-content/uploads/2026/10/55609862496_daacfceebd_o.jpg?w=1440 1440w" sizes="(max-width: 1024px) 100vw, 1024px" /></a><figcaption class="wp-element-caption">President Luiz Inácio Lula da Silva during a campaign event in Rio de Janeiro, Brazil. Photograph by Ricardo Stuckert on October 24, 2026. Retrieved from <a href="https://flic.kr/p/2sJ45GG">Flikr</a>.</figcaption></figure>
+
+
+
+<p class="wp-block-paragraph">Luiz Inácio Lula da Silva’s victory in Brazil’s 2026 presidential runoff offers an opportunity to reflect on the strategies of mobilization capable of challenging the far right in a Latin American context marked by the growing strength of conservative forces. The result does not signal the end of Bolsonarismo, nor does it halt the rightward shift observed across the region. It does, however, demonstrate that this trajectory is not inevitable. In Brazil, the electoral contest was shaped by three interconnected dimensions that help explain political mobilization: <strong>streets, networks, and fear</strong>.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Streets: Political Mobilization and Intergenerational Engagement</strong></p>
+
+
+
+<p class="wp-block-paragraph">The response to the first-round results began at universities. At Fluminense Federal University (UFF), in Niterói, students organized a demonstration on October 5, one day after the vote. Initially coordinated through WhatsApp groups and student organizations, the mobilization drew thousands of people and inspired demonstrations at more than 40 universities across 14 states and the Federal District. What began as a localized reaction developed into a national public mobilization (<a href="https://www.brasildefato.com.br/2026/10/08/estudantes-vao-as-ruas-puxam-onda-de-protestos-contra-flavio-bolsonaro-e-ampliam-atos-pro-lula">Brasil de Fato</a>⁠).</p>
+
+
+
+<p class="wp-block-paragraph">The significance of these demonstrations went beyond the number of participants. The streets became spaces for organizing, circulating messages, and revitalizing political engagement. Students mobilized classmates, relatives, and local communities, connecting the presidential race to concrete experiences. These included the impacts of funding cuts at federal universities during Jair Bolsonaro’s administration and concerns about the future of public policies.</p>
+
+
+
+<p class="wp-block-paragraph">This mobilization also had an intergenerational dimension. Reports published during the campaign described young people encouraging elderly relatives to vote and accompanying those with disabilities to polling stations. In some cases, voters who had gone years without voting returned to the polls. Meanwhile, voter absenteeism fell from 21.08% in the first round to 19.22% in the runoff, a reduction of approximately three million nonvoters (<a href="https://agenciabras

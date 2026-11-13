@@ -1,0 +1,133 @@
+https://imaniafrica.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Imani Africa</title>
+	<atom:link href="https://imaniafrica.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://imaniafrica.org</link>
+	<description>Centre for Policy &#38; Education - Official Website</description>
+	<lastBuildDate>Thu, 12 Nov 2026 19:52:36 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.8.8</generator>
+
+<image>
+	<url>https://imaniafrica.org/wp-content/uploads/2021/03/favico-75x75.png</url>
+	<title>Imani Africa</title>
+	<link>https://imaniafrica.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>IMANI and 3FM Explore Partnership to Strengthen Child Protection and Safer Learning Environments</title>
+		<link>https://imaniafrica.org/2026/11/imani-and-3fm-explore-partnership-to-strengthen-child-protection-and-safer-learning-environments/</link>
+		
+		<dc:creator><![CDATA[Franklin Cudjoe]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 19:52:36 +0000</pubDate>
+				<category><![CDATA[Alerts]]></category>
+		<category><![CDATA[3FM]]></category>
+		<category><![CDATA[Child Protection]]></category>
+		<category><![CDATA[IMANI]]></category>
+		<category><![CDATA[Teach Don’t Touch]]></category>
+		<guid isPermaLink="false">https://imaniafrica.org/?p=20098</guid>
+
+					<description><![CDATA[<p>IMANI has received a strategic partnership proposal from 3FM, a subsidiary of Media General, to support its “Teach, Don’t Touch” campaign, a national initiative aimed at addressing sexual abuse, exploitation and misconduct against children. The proposed partnership seeks to combine 3FM’s media reach with IMANI Africa’s expertise in research, governance and policy analysis to promote [&#8230;]</p>
+<p>The post <a rel="nofollow" href="https://imaniafrica.org/2026/11/imani-and-3fm-explore-partnership-to-strengthen-child-protection-and-safer-learning-environments/">IMANI and 3FM Explore Partnership to Strengthen Child Protection and Safer Learning Environments</a> appeared first on <a rel="nofollow" href="https://imaniafrica.org">Imani Africa</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Ghana Drug Busts: Drugs, People, Operations and Case Outcomes</title>
+		<link>https://imaniafrica.org/2026/11/ghana-drug-busts-drugs-people-operations-and-case-outcomes/</link>
+		
+		<dc:creator><![CDATA[Franklin Cudjoe]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 18:47:55 +0000</pubDate>
+				<category><![CDATA[Alerts]]></category>
+		<category><![CDATA[Cocaine]]></category>
+		<category><![CDATA[Cocaine Politics]]></category>
+		<category><![CDATA[Drugs]]></category>
+		<category><![CDATA[Ghana]]></category>
+		<guid isPermaLink="false">https://imaniafrica.org/?p=20087</guid>
+
+					<description><![CDATA[<p>By: Kay Codjoe, IMANI Associate and Writer The public case record extends from local possession and cultivation investigations to multi-tonne cargo seizures abroad. This dossier brings together the drugs, quantities, people publicly identified, routes, agencies and dated case outcomes. It contains 58 case and operation records, comprising 50 domestic records and eight overseas records involving [&#8230;]</p>
+<p>The post <a rel="nofollow" href="https://imaniafrica.org/2026/11/ghana-drug-busts-drugs-people-operations-and-case-outcomes/">Ghana Drug Busts: Drugs, People, Operations and Case Outcomes</a> appeared first on <a rel="nofollow" href="https://imaniafrica.org">Imani Africa</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>The Barcode and the Brown Notebook</title>
+		<link>https://imaniafrica.org/2026/11/the-barcode-and-the-brown-notebook/</link>
+		
+		<dc:creator><![CDATA[Franklin Cudjoe]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 11:44:00 +0000</pubDate>
+				<category><![CDATA[Articles]]></category>
+		<category><![CDATA[Ghana]]></category>
+		<category><![CDATA[GUTA]]></category>
+		<category><![CDATA[Malls]]></category>
+		<guid isPermaLink="false">https://imaniafrica.org/?p=20081</guid>
+
+					<description><![CDATA[<p>Walk into any of the sprawling red-and-yellow department stores along the Spintex Road or the Tema motorway on a Saturday afternoon. The first thing that strikes you is the quiet. Nobody is shouting over the price of a blender. Nobody is sizing up your shoes to decide whether to quote you two hundred cedis or [&#8230;]</p>
+<p>The post <a rel="nofollow" href="https://imaniafrica.org/2026/11/the-barcode-and-the-brown-notebook/">The Barcode and the Brown Notebook</a> appeared first on <a rel="nofollow" href="https://imaniafrica.org">Imani Africa</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Unlogged Graders, Paper Jackets, and the Twenty-Portal Audit</title>
+		<link>https://imaniafrica.org/2026/11/unlogged-graders-paper-jackets-and-the-twenty-portal-audit/</link>
+		
+		<dc:creator><![CDATA[Franklin Cudjoe]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 10:36:30 +0000</pubDate>
+				<category><![CDATA[Articles]]></category>
+		<guid isPermaLink="false">https://imaniafrica.org/?p=20073</guid>
+
+					<description><![CDATA[<p>An Expanded Diagnostic on Regulatory Websites, MMDA Permit &#38; DRIP Asset Opacity, and the Missing Telemetry Inside Ghana&#8217;s Public Sector Reform Strategy II By: John Sitsofe Mensah, IMANI Associate and Technology Analyst Turn to Page 60 of the Mfantseman Municipal Assembly&#8217;s Rate Imposition and Fee-Fixing Resolution, hosted as a static PDF on mfantsemanma.gov.gh, and a [&#8230;]</p>
+<p>The post <a rel="nofollow" href="https://imaniafrica.org/2026/11/unlogged-graders-paper-jackets-and-the-twenty-portal-audit/">Unlogged Graders, Paper Jackets, and the Twenty-Portal Audit</a> appeared first on <a rel="nofollow" href="https://imaniafrica.org">Imani Africa</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Digitising the Till While Leaving the Rulebook in the Dark</title>
+		<link>https://imaniafrica.org/2026/11/digitising-the-till-while-leaving-the-rulebook-in-the-dark/</link>
+		
+		<dc:creator><![CDATA[Franklin Cudjoe]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 10:14:49 +0000</pubDate>
+				<category><![CDATA[Articles]]></category>
+		<category><![CDATA[Digital Governance in Ghana]]></category>
+		<guid isPermaLink="false">https://imaniafrica.org/?p=20069</guid>
+
+					<description><![CDATA[<p>Contrasting Cashless Fee Collection with Brick-and-Mortar Process Opacity Across 20 Ghanaian Agencies &#38; MMDAs By: John Sitsofe Mensah, IMANI Associate and Technology Analyst Turn to Page 60 of a Municipal Assembly&#8217;s Fee-Fixing Resolution PDF online, and a quiet line item sits beneath office rentals: DRIP Equipment, Grader without fuel, GHS 3,000.00 per 8 hours. Hold [&#8230;]</p>
+<p>The post <a rel="nofollow" href="https://imaniafrica.org/2026/11/digitising-the-till-while-leaving-the-rulebook-in-the-dark/">Digitising the Till While Leaving the Rulebook in the Dark</a> appeared first on <a rel="nofollow" href="https://imaniafrica.org">Imani Africa</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Taxing the Unborn: Why Ghana’s Best Enterprise Reforms Must Reach the Tax Counter</title>
+		<link>https://imaniafrica.org/2026/11/taxing-the-unborn-why-ghanas-best-enterprise-reforms-must-reach-the-tax-counter/</link>
+		
+		<dc:creator><![CDATA[Franklin Cudjoe]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 15:30:39 +0000</pubDate>
+				<category><![CDATA[Articles]]></category>
+		<category><![CDATA[Ghana]]></category>
+		<category><![CDATA[GRA]]></category>
+		<category><![CDATA[OCR]]></category>
+		<category><![CDATA[Office of the Registrar of Companies

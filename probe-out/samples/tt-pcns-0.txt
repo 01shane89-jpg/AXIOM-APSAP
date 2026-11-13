@@ -1,0 +1,98 @@
+https://www.policycenter.ma/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:schema="http://schema.org/" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" version="2.0" xml:base="https://www.policycenter.ma/">
+  <channel>
+    <title>Policy Center</title>
+    <link>https://www.policycenter.ma/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Opening Africa’s skies and markets through aviation</title>
+  <link>https://www.policycenter.ma/interviews/opening-africas-skies-and-markets-through-aviation-0</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt;Opening Africa’s skies and markets through aviation&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span lang about="https://www.policycenter.ma/user/64" typeof="schema:Person" property="schema:name" datatype&gt;o.elazami&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;Fri, 10/30/2026 - 16:56
+&lt;/span&gt;
+
+            &lt;div class="field field--name-field-date field--type-datetime field--label-hidden field__item"&gt;September 2, 2026
+&lt;/div&gt;
+      
+            &lt;div class="clearfix text-formatted field field--name-field-youtube-url field--type-text field--label-hidden field__item"&gt;https://youtu.be/5xFYhkPHyf8&lt;/div&gt;
+      
+            &lt;div class="field field--name-field-image field--type-image field--label-hidden field__item"&gt;  &lt;img loading="lazy" src="https://www.policycenter.ma/sites/default/files/2026-10/maxresdefault%20%281%29.jpg" width="1280" height="720" alt typeof="foaf:Image"&gt;
+
+&lt;/div&gt;
+      
+  &lt;div class="field field--name-field-intervenants-media field--type-entity-reference-revisions field--label-above"&gt;
+    &lt;div class="field__label"&gt;Speakers&lt;/div&gt;
+          &lt;div class="field__items"&gt;
+              &lt;div class="field__item"&gt;  &lt;div class="paragraph paragraph--type--intervenant-events paragraph--view-mode--preview"&gt;
+          
+      &lt;/div&gt;
+&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="field field--name-field-tags field--type-entity-reference field--label-hidden field__items"&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/geopolitics-1" hreflang="en"&gt;Geopolitics&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/diplomacy-0" hreflang="en"&gt;Diplomacy&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/international-cooperation-0" hreflang="en"&gt;International cooperation&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/economy" hreflang="en"&gt;economy&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/international-relations-0" hreflang="en"&gt;International relations &lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/africa-0" hreflang="en"&gt;africa&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+  
+            &lt;div class="clearfix text-formatted field field--name-field-descriptif field--type-text-long field--label-hidden field__item"&gt;&lt;p&gt;The Africa Center, in partnership with the Policy Center for the New South, hosts a discussion on how air transport in Africa could be a powerful catalyst of economic growth, underpin regional trade, and fuel skilled job creation.&lt;/p&gt;&lt;/div&gt;
+      
+            &lt;div class="field field--name-field-type field--type-list-string field--label-hidden field__item"&gt;Conference&lt;/div&gt;
+      
+  &lt;div class="field field--name-field-image-special-event field--type-image field--label-above"&gt;
+    &lt;div class="field__label"&gt;Image Special Event&lt;/div&gt;
+              &lt;div class="field__item"&gt;  &lt;img loading="lazy" src="https://www.policycenter.ma/sites/default/files/default_images/Rectangle%20101_0_0.jpg" width="1636" height="664" alt typeof="foaf:Image"&gt;
+
+&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <pubDate>Fri, 30 Oct 2026 16:56:21 +0000</pubDate>
+    <dc:creator>o.elazami</dc:creator>
+    <guid isPermaLink="false">10835 at https://www.policycenter.ma</guid>
+    </item>
+<item>
+  <title> Présentation d'ouvrage : Dialogues Stratégiques 20ème volume</title>
+  <link>https://www.policycenter.ma/interviews/presentation-douvrage-dialogues-strategiques-20eme-volume</link>
+  <description>&lt;span class="field field--name-title field--type-string field--label-hidden"&gt; Présentation d'ouvrage : Dialogues Stratégiques 20ème volume&lt;/span&gt;
+&lt;span class="field field--name-uid field--type-entity-reference field--label-hidden"&gt;&lt;span lang about="https://www.policycenter.ma/user/64" typeof="schema:Person" property="schema:name" datatype&gt;o.elazami&lt;/span&gt;&lt;/span&gt;
+&lt;span class="field field--name-created field--type-created field--label-hidden"&gt;Fri, 10/30/2026 - 16:43
+&lt;/span&gt;
+
+            &lt;div class="field field--name-field-date field--type-datetime field--label-hidden field__item"&gt;October 28, 2026
+&lt;/div&gt;
+      
+            &lt;div class="clearfix text-formatted field field--name-field-youtube-url field--type-text field--label-hidden field__item"&gt;https://www.youtube.com/watch?v=rYMJLDIt870&lt;/div&gt;
+      
+            &lt;div class="field field--name-field-image field--type-image field--label-hidden field__item"&gt;  &lt;img loading="lazy" src="https://www.policycenter.ma/sites/default/files/2026-10/maxresdefault.jpg" width="1280" height="720" alt typeof="foaf:Image"&gt;
+
+&lt;/div&gt;
+      
+  &lt;div class="field field--name-field-intervenants-media field--type-entity-reference-revisions field--label-above"&gt;
+    &lt;div class="field__label"&gt;Speakers&lt;/div&gt;
+          &lt;div class="field__items"&gt;
+              &lt;div class="field__item"&gt;  &lt;div class="paragraph paragraph--type--intervenant-events paragraph--view-mode--preview"&gt;
+          
+      &lt;/div&gt;
+&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="field field--name-field-topics field--type-entity-reference field--label-hidden field__items"&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/international-relations" hreflang="en"&gt;International Relations&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/geopolitics-0" hreflang="en"&gt;Geopolitics&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/asia" hreflang="en"&gt;Asia&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/africa" hreflang="en"&gt;Africa&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/armed-conflicts" hreflang="en"&gt;Armed conflicts&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/conflict-resolution" hreflang="en"&gt;Conflict resolution&lt;/a&gt;&lt;/div&gt;
+              &lt;div class="field__item"&gt;&lt;a href="https://www.policycenter.ma/diplomacy" hreflang="en"&gt;Diplomacy&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+  
+            &lt;div class="clearfix text-formatted field field--name-field-descriptif field--type-text-long field--label-hidden field__item"&gt;&lt;p&gt;Depuis 2016, le Policy Center for the New South et le Ce

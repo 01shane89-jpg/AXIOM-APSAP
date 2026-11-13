@@ -1,0 +1,134 @@
+https://www.wathi.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>WATHI</title>
+	<atom:link href="https://www.wathi.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.wathi.org/</link>
+	<description>Think Tank citoyen de l&#039;Afrique de l&#039;Ouest</description>
+	<lastBuildDate>Wed, 11 Nov 2026 11:18:51 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.8.12</generator>
+
+<image>
+	<url>https://www.wathi.org/wp-content/uploads/2025/10/cropped-WATHI-FAVICON_20250115_114001-scaled-1-32x32.png</url>
+	<title>WATHI</title>
+	<link>https://www.wathi.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Loisito Tavares de Sousa, candidat indépendant</title>
+		<link>https://www.wathi.org/programme-election-cabo-verde-2026/loisito-tavares-de-sousa-candidat-independant/</link>
+					<comments>https://www.wathi.org/programme-election-cabo-verde-2026/loisito-tavares-de-sousa-candidat-independant/#respond</comments>
+		
+		<dc:creator><![CDATA[Pape Abdou Ndour]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:18:08 +0000</pubDate>
+				<category><![CDATA[Programme élection Cabo Verde 2026]]></category>
+		<guid isPermaLink="false">https://www.wathi.org/?p=41182</guid>
+
+					<description><![CDATA[<p>L’article <a href="https://www.wathi.org/programme-election-cabo-verde-2026/loisito-tavares-de-sousa-candidat-independant/">Loisito Tavares de Sousa, candidat indépendant</a> est apparu en premier sur <a href="https://www.wathi.org">WATHI</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://www.wathi.org/programme-election-cabo-verde-2026/loisito-tavares-de-sousa-candidat-independant/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Joana Gomes Rosa Amado, candidat du Mouvement pour la démocratie (MpD)</title>
+		<link>https://www.wathi.org/programme-election-cabo-verde-2026/joana-gomes-rosa-amado-candidat-du-mouvement-pour-la-democratie-mpd/</link>
+					<comments>https://www.wathi.org/programme-election-cabo-verde-2026/joana-gomes-rosa-amado-candidat-du-mouvement-pour-la-democratie-mpd/#respond</comments>
+		
+		<dc:creator><![CDATA[Pape Abdou Ndour]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:14:59 +0000</pubDate>
+				<category><![CDATA[Programme élection Cabo Verde 2026]]></category>
+		<guid isPermaLink="false">https://www.wathi.org/?p=41180</guid>
+
+					<description><![CDATA[<p>L’article <a href="https://www.wathi.org/programme-election-cabo-verde-2026/joana-gomes-rosa-amado-candidat-du-mouvement-pour-la-democratie-mpd/">Joana Gomes Rosa Amado, candidat du Mouvement pour la démocratie (MpD)</a> est apparu en premier sur <a href="https://www.wathi.org">WATHI</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://www.wathi.org/programme-election-cabo-verde-2026/joana-gomes-rosa-amado-candidat-du-mouvement-pour-la-democratie-mpd/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Gilson João dos Santos Alves, candidat indépendant</title>
+		<link>https://www.wathi.org/programme-election-cabo-verde-2026/gilson-joao-dos-santos-alves-candidat-independant/</link>
+					<comments>https://www.wathi.org/programme-election-cabo-verde-2026/gilson-joao-dos-santos-alves-candidat-independant/#respond</comments>
+		
+		<dc:creator><![CDATA[Pape Abdou Ndour]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:10:34 +0000</pubDate>
+				<category><![CDATA[Programme élection Cabo Verde 2026]]></category>
+		<guid isPermaLink="false">https://www.wathi.org/?p=41178</guid>
+
+					<description><![CDATA[<p>L’article <a href="https://www.wathi.org/programme-election-cabo-verde-2026/gilson-joao-dos-santos-alves-candidat-independant/">Gilson João dos Santos Alves, candidat indépendant</a> est apparu en premier sur <a href="https://www.wathi.org">WATHI</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://www.wathi.org/programme-election-cabo-verde-2026/gilson-joao-dos-santos-alves-candidat-independant/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Casimiro Jesus Lopes de Pina, candidat indépendant</title>
+		<link>https://www.wathi.org/programme-election-cabo-verde-2026/casimiro-jesus-lopes-de-pina-candidat-independant-2/</link>
+					<comments>https://www.wathi.org/programme-election-cabo-verde-2026/casimiro-jesus-lopes-de-pina-candidat-independant-2/#respond</comments>
+		
+		<dc:creator><![CDATA[Pape Abdou Ndour]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:05:54 +0000</pubDate>
+				<category><![CDATA[Programme élection Cabo Verde 2026]]></category>
+		<guid isPermaLink="false">https://www.wathi.org/?p=41176</guid>
+
+					<description><![CDATA[<p>L’article <a href="https://www.wathi.org/programme-election-cabo-verde-2026/casimiro-jesus-lopes-de-pina-candidat-independant-2/">Casimiro Jesus Lopes de Pina, candidat indépendant</a> est apparu en premier sur <a href="https://www.wathi.org">WATHI</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://www.wathi.org/programme-election-cabo-verde-2026/casimiro-jesus-lopes-de-pina-candidat-independant-2/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>José Maria Pereira Neves, candidat du Parti Africain pour l’indépendance du Cap-vert (PAICV)</title>
+		<link>https://www.wathi.org/programme-election-cabo-verde-2026/jose-maria-pereira-neves-candidat-du-parti-africain-pour-lindependance-du-cap-vert-paicv/</link>
+					<comments>https://www.wathi.org/programme-election-cabo-verde-2026/jose-maria-pereira-neves-candidat-du-parti-africain-pour-lindependance-du-cap-vert-paicv/#respond</comments>
+		
+		<dc:creator><![CDATA[Pape Abdou Ndour]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 11:02:02 +0000</pubDate>
+				<category><![CDATA[Programme élection Cabo Verde 2026]]></category>
+		<guid isPermaLink="false">https://www.wathi.org/?p=41174</guid>
+
+					<description><![CDATA[<p>L’article <a href="https://www.wathi.org/programme-election-cabo-verde-2026/jose-maria-pereira-neves-candidat-du-parti-africain-pour-lindependance-du-cap-vert-paicv/">José Maria Pereira Neves, candidat du Parti Africain pour l’indépendance du Cap-vert (PAICV)</a> est apparu en premier sur <a href="https://www.wathi.org">WATHI</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://www.wathi.org/programme-election-cabo-verde-2026/jose-maria-pereira-neves-candidat-du-parti-africain-pour-lindependance-du-cap-vert-paicv/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Antero Lúcio Lopes Francês Tavares, candidat indépendant</title>
+		<link>https://www.wathi.org/programme-election-cabo-verde-2026/antero-lucio-lopes-frances-tavares-candidat-independant/</link>
+					<comments>https://www.wathi.org/programme-election-cabo-verde-2026/antero-lucio-lopes-frances-tavares-candidat-independant/#respond</comments>
+		
+		<dc:creator><![CDATA[Pape Abdou Ndour]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 10:56:31 +0000</pubDate>
+				<category><![CDATA[Programme élection Cabo Verde 2026]]></category>
+		<guid isPermaLink="false">https://www.wathi.org/?p=41172</guid>
+
+					<description><![CDATA[<p>L’article <a href="https://www.wathi.org/programme-election-cabo-verde-2026/antero-lucio-lopes-frances-tavares-candidat-independant/">Antero Lúcio Lopes Francês Tavares, candidat indépendant</a> est apparu en premier sur <a href="https://www.wathi.org">WATHI</a>.</p>
+]]></description>
+		
+					<wfw:commentRss>https://www.wathi.org/programme-election-cabo-verde-2026/antero-lucio-lopes-frances-tavares-candidat-i

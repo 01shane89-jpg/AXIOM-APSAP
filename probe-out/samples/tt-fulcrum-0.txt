@@ -1,0 +1,68 @@
+https://fulcrum.sg/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>FULCRUM</title>
+	<atom:link href="https://fulcrum.sg/feed/" rel="self" type="application/rss+xml" />
+	<link>https://fulcrum.sg</link>
+	<description>Analysis on Southeast Asia</description>
+	<lastBuildDate>Fri, 13 Nov 2026 02:28:25 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://i0.wp.com/fulcrum.sg/wp-content/uploads/cropped-Fulcrum-Favicon-512px.png?fit=32%2C32&#038;ssl=1</url>
+	<title>FULCRUM</title>
+	<link>https://fulcrum.sg</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">181097070</site>	<item>
+		<title>Restructuring Vietnam’s Electricity Market: The Politics of Pricing</title>
+		<link>https://fulcrum.sg/article/commentaries/restructuring-vietnams-electricity-market-the-politics-of-pricing/</link>
+		
+		<dc:creator><![CDATA[yeosiewhan]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 05:00:00 +0000</pubDate>
+				<category><![CDATA[Commentaries]]></category>
+		<category><![CDATA[Vietnam]]></category>
+		<category><![CDATA[Vietnamese Economy]]></category>
+		<guid isPermaLink="false">https://fulcrum.sg/?p=51935</guid>
+
+					<description><![CDATA[Vietnam has bold plans to restructure its electricity market. But the state should bear the costs if it imposes freezes on tariff increases.]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">On 1 November, Vietnam Electricity (EVN), the state utility, cut average retail power prices by <a href="https://vietnamnet.vn/gia-dien-giam-44-dong-kwh-tu-hom-nay-hoa-don-tien-dien-thay-doi-the-nao-2570422.html" target="_blank" rel="noopener">2 per cent</a>. The cut followed an instruction from Deputy Prime Minister Nguyen Van Thang to <a href="https://vnexpress.net/pho-thu-tuong-xem-xet-giam-gia-dien-tu-1-11-5137612.html" target="_blank" rel="noopener">find savings and lower prices</a>, a month after Prime Minister Le Minh Hung <a href="https://baochinhphu.vn/thu-tuong-quyet-tam-cao-nhat-de-gdp-quy-iv-tang-tren-125-102261003102554144.htm" target="_blank" rel="noopener">ruled out increases</a> to contain inflation. Vietnam manages electricity prices with one eye on the investment needed to keep the lights on and the other on inflation and public opinion. The latter often wins.</p>
+
+
+
+<p class="wp-block-paragraph">This sits awkwardly with the government’s plan to restructure EVN, which owns the national grid and sells most of the country’s power. As both player and referee, EVN competes with other power plants while owning the wires they need and buying most of their output. Separating the grid and retail sales from EVN would let rivals reach customers on fair terms. Fairer competition, in turn, should attract the investment needed to meet <a href="https://nhandan.vn/tang-cuong-nang-luc-he-thong-dien-dap-ung-nhu-cau-phat-trien-post968371.html" target="_blank" rel="noopener">rising demand</a>. But the companies carved out of EVN, including a national grid company and local retailers, will have to pay their own way, even for public services such as supplying electrical power to remote islands. Restructuring EVN, therefore, requires clear rules on who pays when prices fall short of costs.</p>
+
+
+
+<p class="wp-block-paragraph">The need for investment is pressing. <a href="https://baochinhphu.vn/evn-nam-2024-da-hoan-thanh-nhiem-vu-bao-dam-cung-ung-dien-102250106111540146.htm" target="_blank" rel="noopener">Between 2021 and 2024</a>, electricity sales increased by nearly 23 per cent, while Vietnam’s installed generating capacity expanded by only about 7.5 per cent. Hanoi expects demand to rise by <a href="https://baodautu.vn/bao-dam-an-ninh-nang-luong-trong-boi-canh-bat-on-toan-cau-d564036.html" target="_blank" rel="noopener">12–14 per cent</a> a year in 2026-2030 to support double-digit economic growth. Its revised power plan estimates that generation and transmission will require <a href="https://xaydungchinhsach.chinhphu.vn/quyet-dinh-768-qd-ttg-thu-tuong-chinh-phu-phe-duyet-dieu-chinh-quy-hoach-dien-viii-119250417074054718.htm" target="_blank" rel="noopener">USD136.3 billion</a> of investment over that period. EVN’s plan, worth <a href="https://baochinhphu.vn/tai-cau-truc-evn-gan-voi-phat-trien-thi-truong-dien-va-bao-dam-nguon-luc-dau-tu-102261010105423228.htm" target="_blank" rel="noopener">USD32 billion</a>, amounts to less than a quarter of that sum. The balance has to come from other state firms and private developers.</p>
+
+
+
+<p class="wp-block-paragraph">Vietnam’s power system has four components. Power plants generate electricity; a high-voltage grid carries it across the country; local networks distribute it to homes and factories, and retailers sell it to customers (Figure 1). <a href="https://www.evn.com.vn/d6/news/Thi-truong-ban-buon-dien-canh-tranh-Da-dang-thanh-phan-mua-ban-dien-6-15-15092.aspx" target="_blank" rel="noopener">Since 2012</a>, power plants have been competing to sell power. As of the end of 2025, EVN’s share of generating capacity had fallen to <a href="https://baochinhphu.vn/tai-cau-truc-evn-gan-voi-phat-trien-thi-truong-dien-va-bao-dam-nguon-luc-dau-tu-102261010105423228.htm" target="_blank" rel="noopener">37 per cent</a>. In 2024, the function of the <a href="https://znews.vn/trung-tam-dieu-do-he-thong-dien-tach-khoi-evn-post1489990.html" target="_blank" rel="noopener">system operator</a>, the grid’s “air-traffic controller” that decides which plants run, was moved from EVN to the Ministry of Industry and Trade (MOIT), the sector’s regulator. But EVN still owns the grid company (the National Power Transmission Corporation, EVNNPT) and five power corporations that handle distribution and retail. It also buys most of the plants’ output, including its own, while negotiating contracts with generators it competes against. That gives EVN incentives to favour its own power plants when buying electricity.</p>
+
+
+
+<p class="has-large-font-size wp-block-paragraph">Figure 1. How Vietnam&#8217;s power sector is organised and the proposed restructuring</p>
+
+
+
+<figure class="wp-block-image size-full is-resized"><img data-recalc-dims="1" fetchpriority="high" decoding="async" width="624" height="466" src="https://i0.wp.com/fulcrum.sg/wp-content/uploads/NKG-fig1.png?resize=624%2C466&#038;ssl=1" alt="" class="wp-image-51944" style="aspect-ratio:1.3390671629279416;width:780px;height:auto" srcset="https://i0.wp.com/fulcrum.sg/wp-content/uploads/NKG-fig1.png?w=624&amp;ssl=1 624w, https://i0.wp.com/fulcrum.sg/wp-content/uploads/NKG-fig1.png?resize=300%2C224&amp;ssl=1 300w, https://i0.wp.com/fulcrum.sg/wp-content/uploads/NKG-fig1.png?resize=150%2C112&amp;ssl=1 150w, https://i0.wp.com/fulcrum.sg/wp-content/uploads/NKG-fig1.png?resize=438%2C327&amp;ssl=1 438w, https://i0.wp.com/fulcrum.sg/wp-content/uploads/NKG-fig1.png?resize=200%2C149&amp;ssl=1 200w, https://i0.wp.com/fulcrum.sg/wp-content/uploads/NKG-fig1.png?resize=50%2C37&amp;ssl=1 50w" sizes="(max-width: 624px) 100vw, 624px" /></figure>
+
+
+
+<p class="wp-block-paragraph">In <a href="https://baochinhphu.vn/tai-cau-truc-evn-gan-voi-phat-trien-thi-truong-dien-va-bao-dam-nguon-luc-dau-tu-102261010105423228.htm" target="_blank" rel="noopener">proposals</a> debated in early October, the industry ministry wants the grid company spun off from EVN as a separate state enterprise. The aim is to put rival generators on an equal footing when the company decides which plants to connect and which lines to upgrade first. EVN also wants to split the five power corporations’ two functions (distribution and r

@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-serbia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-serbia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:RS</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-13T04:35:16.630946Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>RS007</value>
+    </cap:geocode>
+    <link title="Kosovo i Metohija" href="https://meteoalarm.org?geocode=EMMA_ID:RS007" hreflang="en"/>
+    <cap:areaDesc>Kosovo i Metohija</cap:areaDesc>
+    <cap:event>Rain yellow</cap:event>
+    <cap:sent>2026-11-12T12:30:03+00:00</cap:sent>
+    <cap:expires>2026-11-14T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-13T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-13T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.688.0.20261112133003.729558</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/9403a88a-a826-4c25-9447-1ab0fd0f72b2"/>
+    <link title="Serbia" rel="related" href="https://meteoalarm.org?region=RS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:30:03Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/9403a88a-a826-4c25-9447-1ab0fd0f72b2?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Serbia - Kosovo i Metohija</title>
+    <updated>2026-11-12T12:30:03Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>RS006</value>
+    </cap:geocode>
+    <link title="Southwestern Serbia" href="https://meteoalarm.org?geocode=EMMA_ID:RS006" hreflang="en"/>
+    <cap:areaDesc>Southwestern Serbia</cap:areaDesc>
+    <cap:event>Rain yellow</cap:event>
+    <cap:sent>2026-11-12T12:00:05+00:00</cap:sent>
+    <cap:expires>2026-11-13T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.688.0.20261112130005.659933</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/03afd7cc-25b4-4f6e-ad33-7c26cbf6dcbd"/>
+    <link title="Serbia" rel="related" href="https://meteoalarm.org?region=RS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:00:05Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/03afd7cc-25b4-4f6e-ad33-7c26cbf6dcbd?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Serbia - Southwestern Serbia</title>
+    <updated>2026-11-12T12:00:05Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>RS005</value>
+    </cap:geocode>
+    <link title="Southeastern Serbia" href="https://meteoalarm.org?geocode=EMMA_ID:RS005" hreflang="en"/>
+    <cap:areaDesc>Southeastern Serbia</cap:areaDesc>
+    <cap:event>Rain yellow</cap:event>
+    <cap:sent>2026-11-12T12:00:05+00:00</cap:sent>
+    <cap:expires>2026-11-13T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.688.0.20261112130005.262224</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/1eb9a791-e2fe-40d6-a3db-bdcb1b708383"/>
+    <link title="Serbia" rel="related" href="https://meteoalarm.org?region=RS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:00:05Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/1eb9a791-e2fe-40d6-a3db-bdcb1b708383?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Serbia - Southeastern Serbia</title>
+    <updated>2026-11-12T12:00:05Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>RS007</value>
+    </cap:geocode>
+    <link title="Kosovo i Metohija" href="https://meteoalarm.org?geocode=EMMA_ID:RS007" hreflang="en"/>
+    <cap:areaDesc>Kosovo i Metohija</cap:areaDesc>
+    <cap:event>Rain orange</cap:event>
+    <cap:sent>2026-11-12T12:00:05+00:00</cap:sent>
+    <cap:expires>2026-11-13T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.688.0.20261112130005.204011</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/1e07884d-bf3e-481a-a9f8-6fdaf3fb832a"/>
+    <link title="Serbia" rel="related" href="https://meteoalarm.org?region=RS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-12T12:00:05Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/1e07884d-bf3e-481a-a9f8-6fdaf3fb832a?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Rain Warning issued for Serbia - Kosovo i Metohija</title>
+    <updated>2026-11-12T12:00:05Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>RS004</value>
+    </cap:geocode>
+    <link title="Eastern Serbia" href="https://meteoalarm.org?geocode=EMMA_ID:RS004" hreflang="en"/>
+    <cap:areaDesc>Eastern Serbia</cap:areaDesc>
+    <cap:event>Rain yellow</cap:event>
+    <cap:sent>2026-11-12T12:00:05+00:00</cap:sent>
+    <cap:expires>2026-11-13T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-12T23:00:00+00:00</cap:effective>
+    <cap:onset>2026-11-12T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.688.0.20261112130005.846424</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-serbia/1ace34dd-8874
