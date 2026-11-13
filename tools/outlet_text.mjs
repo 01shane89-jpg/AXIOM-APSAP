@@ -15,7 +15,7 @@ export function stripOutletText(i, R) {
   return i;
 }
 
-// A social post (Bluesky, Telegram) has no headline of its own: its words are the account's, and they are not stored either. What is
+// A social post (Bluesky, Telegram, Mastodon) has no headline of its own: its words are the account's, and they are not stored either. What is
 // stored is who posted, where, when and the link, under a plain stand-in title ("Telegram post by @channel"). notext marks it, so a
 // job does not re-judge a kept post on the stand-in (its kind, figures and place were set while the job held the words).
 export function postOnly(i, platform, account) {
