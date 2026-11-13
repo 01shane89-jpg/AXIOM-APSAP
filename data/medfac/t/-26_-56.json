@@ -138,6 +138,7 @@
 ["w457409178",-24.86261,-54.33638,"br",{"name":"Policlínica Santa Helena","amenity":"clinic","healthcare":"clinic","phone":"+55 45 3268 1494"}],
 ["w457409179",-24.8548,-54.33538,"br",{"name":"Hospital Doutor Ciro","amenity":"hospital","healthcare":"hospital","phone":"+55 45 3268 3019"}],
 ["w458094960",-25.5123,-54.62385,"py",{"name":"IPS: Instituto de Previsión Social","amenity":"hospital","healthcare":"hospital"}],
+["w458094963",-25.50483,-54.64396,"py",{"name":"Sanatorio Manuel Riveros","amenity":"hospital","healthcare":"hospital","addr:street":"Avenida San Blás","addr:city":"Ciudad del Este","addr:postcode":"100128"}],
 ["w458609591",-25.50184,-54.66799,"py",{"name":"Clinica Odontologica Ideal","amenity":"clinic","healthcare":"clinic","addr:street":"Diputado Julio César Riquelme"}],
 ["w459238123",-25.52428,-54.61833,"py",{"name":"Policlinica","amenity":"clinic","healthcare":"clinic"}],
 ["w459854127",-25.4968,-54.66247,"py",{"name":"Ambulancias Internacionales","emergency":"ambulance_station","addr:street":"Avenida Perú","addr:city":"Ciudad del Este"}],

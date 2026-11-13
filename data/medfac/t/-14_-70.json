@@ -7,7 +7,7 @@
 ["n7082640552",-12.59611,-69.17346,"pe",{"name":"Puesto de Salud Pueblo Viejo","amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","operator:type":"government","phone":"+51 993346731","addr:street":"Calle Faustino Maldonado"}],
 ["n7082640553",-12.59388,-69.19951,"pe",{"name":"Centro de Salud Nuevo Milenio","amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","operator:type":"government","phone":"+51 82 790720","addr:full":"Asentamiento humano Señor de los Milagros","addr:street":"Jirón José María Arguedas","addr:city":"Puerto Maldonado"}],
 ["n7082640554",-12.60085,-69.17876,"pe",{"name":"Puesto de Salud La Unión","amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","operator:type":"government","phone":"+51 82 571127","addr:street":"Jirón Brasil"}],
-["n7082640555",-12.59284,-69.17761,"pe",{"amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","phone":"+51 82 572126;+51 82 571127","addr:housenumber":"222","addr:street":"Jirón Puno"}],
+["n7082640555",-12.59284,-69.17761,"pe",{"amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","operator:type":"government","phone":"+51 82 572126;+51 82 571127","addr:housenumber":"222","addr:street":"Jirón Puno"}],
 ["n7082640556",-12.58503,-69.21706,"pe",{"amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","operator:type":"government","phone":"+51 952711499"}],
 ["n8307593948",-12.66948,-69.34653,"pe",{"name":"Fitzcarrald","amenity":"clinic","healthcare":"clinic","phone":"+51 982318555"}],
 ["w1168301174",-12.60134,-69.18309,"pe",{"aeroway":"helipad"}],

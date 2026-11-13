@@ -169,6 +169,7 @@
 ["w1486734289",-9.05246,-77.80995,"pe",{"aeroway":"helipad"}],
 ["w1489603770",-9.49325,-77.53949,"pe",{"aeroway":"helipad"}],
 ["w1551896771",-8.60502,-77.1488,"pe",{"name":"Centro Médico de Huacrachuco","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Gobierno Regional","operator:type":"government","addr:street":"Avenida 28 de Julio","addr:city":"Huacrachuco"}],
+["w1573160768",-8.19541,-76.5296,"pe",{"name":"Aeródromo de Tocache","operator":"CORPAC","operator:type":"public","addr:street":"Avenida Fernando Belaúnde Terry","addr:city":"Tocache","aeroway":"aerodrome","icao":"SPCH","iata":"TCG"}],
 ["w237321378",-9.92796,-76.23618,"pe",{"name":"Hospital Regional Hermilio Valdizán","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Gobierno Regional","operator:type":"public","phone":"+51 62 518139","addr:housenumber":"950","addr:street":"Jirón Hermilio Valdizan"}],
 ["w286363190",-9.28893,-76.00476,"pe",{"name":"Aeropuerto de Tingo María","aeroway":"aerodrome","icao":"SPGM","iata":"TGI","wikidata":"Q5659180"}],
 ["w373619944",-8.55238,-77.63293,"pe",{"amenity":"clinic","operator":"Essalud","osap:withheld":"1"}],

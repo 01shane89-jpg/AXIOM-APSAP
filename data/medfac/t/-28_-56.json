@@ -212,6 +212,7 @@
 ["w1447928255",-26.32558,-55.86153,"py",{"name":"USF: Asentamiento 11 de Mayo - Nucleo 2","amenity":"clinic","healthcare":"clinic"}],
 ["w146355091",-27.38365,-55.89035,"ar",{"name":"Parque de la Salud \"Doctor Ramón Madariaga\"","healthcare":"hospital","addr:city":"Posadas","addr:postcode":"N3300"}],
 ["w1501201652",-27.36243,-55.88883,"ar",{"name":"Helipuerto Torre del Cerro","aeroway":"helipad"}],
+["w1576926594",-27.33694,-55.82189,"py",{"name":"Usf. La Amistad","amenity":"clinic","healthcare":"clinic","opening_hours":"Mo-Fr 07:00-14:00"}],
 ["w159319209",-27.25534,-55.54101,"ar",{"healthcare":"hospital"}],
 ["w159847548",-27.07538,-55.64003,"py",{"name":"Sanatorio Adventista de Hohenau","amenity":"hospital","healthcare":"hospital"}],
 ["w228215934",-27.86882,-55.13771,"ar",{"healthcare":"hospital"}],
