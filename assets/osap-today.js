@@ -368,7 +368,17 @@
     }
     return out;
   }
+  /* Grouping every report into stories (OSAP_EVENTS.list, the same grouping the timeline uses) takes about 0.8 s on a phone.
+     The first time Today opens, the screen is drawn first with this card saying so, and the stories fill in once the loading
+     cover has faded (0.25 s, assets/osap-start.js), so the fade is not held up; the grouping is kept, so the timeline behind Today reuses it (tests/speed_budget.mjs). */
+  var storiesOk = false, storiesAsked = false;
+  function storiesLater() {
+    if (storiesOk) return false;
+    if (!storiesAsked) { storiesAsked = true; requestAnimationFrame(function () { setTimeout(function () { storiesOk = true; if (open) render(); }, 300); }); }
+    return true;
+  }
   function storiesHtml() {
+    if (storiesLater()) return '<section class="tdcard tdnews" aria-busy="true"><div class="tdh"><h2>Top stories</h2><span class="tdcount"></span></div><p class="tdmore">Gathering top stories…</p></section>';
     var S = stories(), w = window.ASAP_NEWS, E = window.OSAP_EMPTY, now = Date.now();
     var h = '<section class="tdcard tdnews"><div class="tdh"><h2>Top stories</h2><span class="tdcount">' + (w && w.asof && S.some(function (x) { return x.rec && x.rec.news; }) ? "news read " + esc(when(w.asof)) + (E ? E.ageNote(w.asof, 120) : "") : "") + "</span></div>";
     /* no headline for this country in the last 24 hours: say so, and offer its older items and nearby countries' news

@@ -9681,6 +9681,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-keydates.js"></script>
 <script src="assets/osap-empty.js"></script>
 <script src="assets/osap-today.js"></script>
+<!-- The tools below are not needed to draw the first screen (Today or the map). They sit in a template, which the browser
+     neither downloads nor runs, and the script after it adds them to the page in the same order once the first screen is up,
+     each still run in turn (async=false), so the phone draws Today first instead of reading about 1.3 MB of tools before it
+     (tests/speed_budget.mjs). The page's "load" event still waits for all of them. -->
+<template id="osap-tail">
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
 <script src="assets/osap-digest.js"></script>
@@ -9807,6 +9812,19 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-illum.js"></script>
 <!-- terrain analysis: viewshed and line of sight (Map overlays > Elevation and terrain analysis, long-press > Terrain) -->
 <script src="assets/osap-terrain.js"></script>
+</template>
+<script>
+(function () {
+  var t = document.getElementById("osap-tail");
+  [].forEach.call(t.content.querySelectorAll("script"), function (o) {
+    var s = document.createElement("script");
+    if (o.src) { s.src = o.getAttribute("src"); s.async = false; } else s.text = o.text;
+    document.body.appendChild(s);
+  });
+  t.parentNode.removeChild(t);
+})();
+</script>
+<!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; /* covered until the new copy replaces this one, so a tap meanwhile is not lost to it */ if (window.OSAP_BOOT && document.visibilityState !== "hidden") window.OSAP_BOOT.show(); location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage(window.OSAP_DATA && OSAP_DATA.plan() ? { warm: OSAP_DATA.plan() } : "warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
