@@ -177,6 +177,14 @@ const click = (p, sel, timeout) => p.waitForSelector(sel, { state: "attached", t
   await check("areasum", "Area summary", p, async () => { await click(p, '[data-area="sum"]'); await click(p, "[data-as-pdf]"); });
   await check("areareport", "Area report with maps", p, async () => { await p.evaluate(() => window.OSAP_AREAREPORT.open()); await click(p, "#arp-print"); }, { wait: 60000, minLinks: 5 });
   await p.evaluate(() => window.OSAP_AREAREPORT.close());
+  {
+    const per0 = await p.evaluate(() => (document.querySelector('#period-seg button.on,#period-seg button[aria-pressed="true"]') || {}).getAttribute?.("data-p") || "");
+    await check("areabrief", "Area brief, one tap", p, async () => { await p.evaluate(() => window.OSAP_REPORTS.run("areabrief")); }, { wait: 60000 });
+    await p.waitForTimeout(1200);
+    const per1 = await p.evaluate(() => (document.querySelector('#period-seg button.on,#period-seg button[aria-pressed="true"]') || {}).getAttribute?.("data-p") || "");
+    ok(per0 === per1, `Area brief puts the page period back after the export (${per0} -> ${per1})`);
+    await p.evaluate(() => window.OSAP_AREAREPORT.close());
+  }
   await p.evaluate(() => window.TSAP.areaApi.setArea(null)); await p.waitForTimeout(500);
   await check("sitrep", "Situation report", p, async () => { await p.evaluate(() => window.OSAP_WORK.open("export")); await click(p, '[data-wk-exp="sitrep"]'); }, { minLinks: 5 });
   await p.evaluate(() => { const x = document.querySelector("#wk .x"); if (x) x.click(); });
