@@ -393,7 +393,10 @@
       var imgs = Array.prototype.slice.call(el.querySelectorAll("img.arpt"));
       var tiles = Promise.all(imgs.map(function (im) { return im.complete ? 0 : new Promise(function (r) { im.addEventListener("load", r); im.addEventListener("error", r); }); }));
       Promise.race([Promise.all([Promise.all(fpJobs).catch(function () {}), tiles]), new Promise(function (r) { setTimeout(r, 6000); })])
-        .then(function () { W.OSAP_PDF.print({ title: "Area report: activity in the drawn area", root: el }); });
+        .then(function () {
+          var t = BRIEF ? "Area brief: last 24 hours in the drawn area" : "Area report: activity in the drawn area", after = BRIEF; BRIEF = null;
+          return W.OSAP_PDF.print({ title: t, root: el }).then(function () { if (after) after(); });
+        });
     }
   }
   function onChange(e) {
@@ -416,10 +419,29 @@
     setTimeout(render, 30);
     return true;
   }
+  /* one tap (Reports > Area brief, PDF; Shane 2026-11-13 "a selected area brief"): the report for the last 24 hours inside the
+     drawn shape goes straight to Export PDF; the page's own period is put back once the export is done. Answers false with no area. */
+  var BRIEF = null;
+  function seg(p) { return D.querySelector('#period-seg [data-p="' + p + '"]'); }
+  function brief() {
+    var a = A();
+    if (!a || !a.area() || a.area().length < 3 || !W.OSAP_AREASUM) return false;
+    var on = D.querySelector('#period-seg button.on,#period-seg button[aria-pressed="true"]'), prev = on && on.getAttribute("data-p");
+    var b24 = seg("24h"), moved = !!(b24 && prev !== "24h");
+    if (moved) b24.click();
+    BRIEF = function () { if (moved && prev && seg(prev) && el && !el.hidden) { var pb = seg(prev); pb.click(); el.innerHTML = '<div class="bbar noprint"><span class="obs">Updating the area report…</span></div>'; setTimeout(render, 600); } else if (moved && prev && seg(prev)) seg(prev).click(); };
+    setTimeout(function () {
+      if (!open()) { BRIEF = null; return; }
+      var t0 = Date.now(), go = function () { var pr = el && el.querySelector("#arp-print"); if (pr) pr.click(); else if (Date.now() - t0 < 8000) setTimeout(go, 150); else BRIEF = null; };
+      setTimeout(go, 100);
+    }, moved ? 600 : 0);
+    return true;
+  }
   function close() { if (!el) return; el.hidden = true; el.innerHTML = ""; C = null; D.documentElement.classList.remove("briefing"); }
   D.addEventListener("keydown", function (e) { if (e.key === "Escape" && el && !el.hidden && el.querySelector(".arp")) close(); });
 
   /* in the Area menu beside Summarise area (assets/osap-atak.js runs it once a shape is drawn) */
-  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "areareport", label: "Area report (print, with maps)", run: function () { open(); } });
-  W.OSAP_AREAREPORT = { open: open, close: close, _collect: collect, _incKind: incKind, _merc: function (lat, lon, z) { return [wx(lon, z), wy(lat, z)]; } };
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "areareport", label: "Area report (print, with maps)", run: function () { open(); } },
+    { id: "areabrief", label: "Area brief, last 24 h (PDF)", run: function () { brief(); } });
+  W.OSAP_AREAREPORT = { open: open, brief: brief, close: close, _collect: collect, _incKind: incKind, _merc: function (lat, lon, z) { return [wx(lon, z), wy(lat, z)]; } };
 })();
