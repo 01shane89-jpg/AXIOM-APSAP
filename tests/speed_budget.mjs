@@ -7,14 +7,15 @@
 // Today (the screen a fresh open lands on, assets/osap-today.js) must be on screen, cover gone, within TODAY ms, and its daily
 // summary drawn soon after (13 Nov 2026: 7.1 s before the list behind Today waited for it, 6.3 s after; 5.7-5.9 s on this machine
 // once Today's top stories wait for its first picture; 5.5 s once the map behind Today is not drawn while Today covers it,
-// assets/osap-start.js step 5; CI runs about 1 s faster).
+// assets/osap-start.js step 5; 5.2 s once Thailand's flood layers wait for that map, index.html OSAP_WHEN_MAP; CI runs about
+// 1 s faster).
 // Fails when a change makes the first map or Today slower than the budget. Run from the repo root: node tests/speed_budget.mjs
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import { extname, join, normalize } from "node:path";
 import { chromium, devices } from "playwright";
-const FIRST = +(process.env.BUDGET || 3500), ALL = FIRST + 2000, TODAY = +(process.env.TODAY_BUDGET || 6000), RUNS = 3;
+const FIRST = +(process.env.BUDGET || 3500), ALL = FIRST + 2000, TODAY = +(process.env.TODAY_BUDGET || 5500), RUNS = 3;
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".webp": "image/webp", ".woff2": "font/woff2" };
 const ZIP = /^(text\/|application\/json|image\/svg)/;
 const root = process.cwd();
