@@ -167,8 +167,8 @@ const SCENES = [
       k.caption("Reporting level against normal", "Spikes in reporting are flagged by place, automatically.");
       await k.wait(4200);
     }
-    await k.into("#td-daily");
     k.caption("One tap: the daily brief as a PDF", "Sources stay clickable. AI-generated parts are labeled.");
+    await k.into("#td-daily");
     await k.wait(1200);
     if (await k.click("#td-daily [data-dlprint]")) await k.pdf("daily-brief.pdf");
     await k.wait(2500);
