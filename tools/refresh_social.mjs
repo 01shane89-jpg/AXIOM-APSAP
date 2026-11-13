@@ -3,6 +3,7 @@
 //   Bluesky  - the public read API.
 //   (Reddit was tried and dropped: it refuses requests from GitHub's servers.)
 //   Telegram - no secrets: reads each listed channel's public web preview (t.me/s/<channel>).
+//   Mastodon - each listed account's public statuses on its own server (government-run servers such as social.bund.de).
 //   YouTube  - each listed channel's public video feed (titles, dates, thumbnails and links only).
 // Posts are machine-translated to English (tools/translate.mjs) with the original kept. Writes data/live/social.js (the newest
 // 40 per country, what the page shows) and keeps every post inside the window in data/history (tools/social_lib.mjs).
@@ -11,7 +12,8 @@ import { translateAll, saveCache, seed } from "./translate.mjs";
 import { updateHistory, storedTranslations } from "./history.mjs";
 import { stripOutletText, postOnly } from "./outlet_text.mjs";
 import { splitByCountry, newsCodes } from "./split_country.mjs";
-import { splitView } from "./social_lib.mjs";
+import { splitView, mastodonPosts } from "./social_lib.mjs";
+import { ccsInText } from "./geo_cc.mjs";
 
 const TIMEOUT = 15000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
 /* Speed (2026-09-27): accounts are read several at a time, each request is time-boxed, and no new YouTube channel is
@@ -55,9 +57,14 @@ const NAMES = { th: "Thailand|Thai", vn: "Vietnam|Vietnamese", kh: "Cambodia|Cam
   kp: "North Korea|Pyongyang", kr: "South Korea|Seoul", jp: "Japan|Japanese", oki: "Okinawa", mn: "Mongolia|Mongolian", au: "Australia|Australian",
   nz: "New Zealand", pg: "Papua New Guinea", in: "India|Indian", pk: "Pakistan|Pakistani", np: "Nepal|Nepali", bt: "Bhutan", bd: "Bangladesh|Bangladeshi",
   lk: "Sri Lanka|Sri Lankan", mv: "Maldives|Maldivian" };
+/* A regional or global account ("*") is filed under every country its post names. Until 2026-11-13 only the 28 researched
+   areas above were read, so a regional account's posts about Ukraine, Sudan or Venezuela were dropped; now every country's
+   name (and its French and Spanish names) counts too (tools/geo_cc.mjs). */
 function areasFor(cc, text) {
   if (cc !== "*") return [cc];
-  return Object.keys(NAMES).filter((k) => new RegExp("\\b(" + NAMES[k] + ")\\b").test(text));
+  const out = Object.keys(NAMES).filter((k) => new RegExp("\\b(" + NAMES[k] + ")\\b").test(text));
+  for (const c of ccsInText(text, true)) if (!out.includes(c)) out.push(c);
+  return out;
 }
 const OKI = /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i;
 function push(cc, text, it) {
@@ -149,6 +156,28 @@ if ((cfg.telegram || []).length) {
   });
   lap("Telegram", t0);
 } else status.push({ platform: "Telegram", source: "Telegram", ok: false, skipped: true, error: "no channels listed in tools/social_accounts.json" });
+
+// Mastodon: each listed account's public statuses through its own server's public API (no login, account or key).
+// Government servers (social.bund.de, social.overheid.nl, ...) host only that government's own accounts.
+if ((cfg.mastodon || []).length) {
+  const t0 = Date.now();
+  await pool(cfg.mastodon, 5, async (a) => {
+    const [user, host] = String(a.acct).replace(/^@/, "").split("@"), src = "@" + user + "@" + host;
+    try {
+      if (!user || !host) throw new Error("account should be user@server");
+      const acct = await req("https://" + host + "/api/v1/accounts/lookup?acct=" + encodeURIComponent(user));
+      const list = await req("https://" + host + "/api/v1/accounts/" + encodeURIComponent(acct.id) + "/statuses?exclude_replies=true&exclude_reblogs=true&limit=40");
+      let n = 0;
+      for (const m of mastodonPosts(list, SINCE)) {
+        push(a.cc, m.text, { platform: "Mastodon", account: src, kind: a.kind, title: m.text.slice(0, 300), summary: "", date: m.date.toISOString().slice(0, 16),
+          link: m.link, lang: m.lang || a.lang || "" });
+        n++;
+      }
+      status.push({ platform: "Mastodon", source: src, cc: a.cc, ok: true, n });
+    } catch (e) { failed("Mastodon", src, a.cc, e); }
+  });
+  lap("Mastodon", t0);
+}
 
 // YouTube: each channel's public video feed (no account, key or Data API). The @handle is turned into the channel id
 // by reading the channel page once per run. Only titles, dates, thumbnails and links are kept; videos stay on YouTube.
@@ -260,9 +289,9 @@ const tTr = Date.now();
 // Headlines first, then the video descriptions (YouTube's summary); a description the model has no time for this run stays
 // untranslated and the page shows only the English headline, with the original under "<language> original".
 console.log("translations reused from the history:", seed(storedTranslations("social", Object.keys(items))));
-// Bluesky and Telegram posts are not translated: their words are read below for relevance and then dropped (tools/outlet_text.mjs).
+// Bluesky, Telegram and Mastodon posts are not translated: their words are read below for relevance and then dropped (tools/outlet_text.mjs).
 // YouTube descriptions are not translated either, as they are not stored.
-const WORDS_ONLY = (i) => i.platform === "Bluesky" || i.platform === "Telegram";
+const WORDS_ONLY = (i) => i.platform === "Bluesky" || i.platform === "Telegram" || i.platform === "Mastodon";
 const tAll = all.filter((i) => !WORDS_ONLY(i)), tExtra = extra.filter((i) => !WORDS_ONLY(i));
 const tr = await translateAll([...tAll, ...tExtra].map((i) => ({ text: i.title, lang: i.lang || "" })));
 const setTitle = (i, t) => { i.title_en = t.en; i.mt = /^en\b/i.test(i.lang || "") ? null : (t.tool || "untranslated"); if (i.mt && t.en === i.title) i.mt = null; };
