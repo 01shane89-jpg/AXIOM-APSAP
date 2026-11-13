@@ -1,0 +1,2355 @@
+{
+ "telegram": [
+  {
+   "cc": "ua",
+   "channel": "GeneralStaffZSU",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "ministry_of_defense_ua",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "mod_ukraine",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "kpszsu",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "navy_ukraine",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "dsns_telegram",
+   "kind": "disaster agency",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "mvs_ukraine",
+   "kind": "government (police)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "police_gov_ua",
+   "kind": "government (police)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "SBUkr",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "spravdi",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "V_Zelenskiy_official",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "air_alert_ua",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "MFA_Ukraine",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "KyivCityOfficial",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "DPSU_official",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "suspilnenews",
+   "kind": "public broadcaster",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "UkrinformNews",
+   "kind": "state media",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "ukrpravda_news",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "hromadske_ua",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "kyivindependent_official",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "channel": "nv_official",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "lbua_official",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "radiosvoboda",
+   "kind": "state-funded (US)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ru",
+   "channel": "MID_Russia",
+   "kind": "government",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "mvd_official",
+   "kind": "government (police)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "interfaxonline",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "kommersant",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "novaya_pishet",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "tvrain",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "bbcrussian",
+   "kind": "state-funded (UK)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "svobodaradio",
+   "kind": "state-funded (US)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "agentstvonews",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "fontankaspb",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "ostorozhno_novosti",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "istories_media",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "il",
+   "channel": "idfofficial",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "il",
+   "channel": "idfonline",
+   "kind": "government (military)",
+   "lang": "he"
+  },
+  {
+   "cc": "il",
+   "channel": "PikudHaOref_all",
+   "kind": "government (military)",
+   "lang": "he"
+  },
+  {
+   "cc": "il",
+   "channel": "IsraelMFA",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "il",
+   "channel": "kann_news",
+   "kind": "public broadcaster",
+   "lang": "he"
+  },
+  {
+   "cc": "il",
+   "channel": "timesofisrael",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "il",
+   "channel": "ynetalerts",
+   "kind": "news desk",
+   "lang": "he"
+  },
+  {
+   "cc": "il",
+   "channel": "haaretzcom",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lb",
+   "channel": "nna_leb",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "channel": "LBCI_NEWS",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "channel": "lebarmyofficial",
+   "kind": "government (military)",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "channel": "naharnet",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sy",
+   "channel": "SANAOfficial",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "channel": "SANA_English",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "sy",
+   "channel": "EnabBaladi",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "channel": "SyriaHRights",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "iq",
+   "channel": "ina_iq",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "iq",
+   "channel": "rudawnews",
+   "kind": "news desk",
+   "lang": "ku"
+  },
+  {
+   "cc": "iq",
+   "channel": "Kurdistan24",
+   "kind": "news desk",
+   "lang": "ku"
+  },
+  {
+   "cc": "iq",
+   "channel": "alsumaria_tv",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "jo",
+   "channel": "petranews",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "jo",
+   "channel": "Roya_News",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "eg",
+   "channel": "ahramonline",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "eg",
+   "channel": "youm7",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "channel": "SPAregions",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "channel": "SaudiNews50",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ae",
+   "channel": "WAMNEWS",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "channel": "aljazeeraglobal",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "channel": "ajmubasher",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "channel": "AJENews_Official",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ye",
+   "channel": "aden_alghad",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ir",
+   "channel": "isna_news",
+   "kind": "state media",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "IranWire",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "channel": "iranintl_en",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "af",
+   "channel": "TOLOnews",
+   "kind": "news desk",
+   "lang": "ps"
+  },
+  {
+   "cc": "af",
+   "channel": "Amu_TV",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "af",
+   "channel": "afintl",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "pk",
+   "channel": "ISPR_Official",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "pk",
+   "channel": "geonewsdottv",
+   "kind": "news desk",
+   "lang": "ur"
+  },
+  {
+   "cc": "pk",
+   "channel": "dawn_com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "channel": "PIB_India",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "channel": "ANI_news",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "channel": "ndtv",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "channel": "the_hindu",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bd",
+   "channel": "prothomalo",
+   "kind": "news desk",
+   "lang": "bn"
+  },
+  {
+   "cc": "bd",
+   "channel": "thedailystar_bd",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kz",
+   "channel": "tengrinews",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "channel": "kazinform_news",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "channel": "kursivkz",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "channel": "vlastkz",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "channel": "mchs_kz",
+   "kind": "disaster agency",
+   "lang": "ru"
+  },
+  {
+   "cc": "uz",
+   "channel": "kunuzofficial",
+   "kind": "news desk",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "channel": "daryo",
+   "kind": "news desk",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "channel": "gazetauz",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "uz",
+   "channel": "podrobno",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "uz",
+   "channel": "uzbekistanmfa",
+   "kind": "government",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "channel": "MFAUzbekistan",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "tm",
+   "channel": "turkmenportal",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "tm",
+   "channel": "habartm",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "tj",
+   "channel": "khovar_tj",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "channel": "kaktusmedia",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "channel": "sputnik_kg",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "channel": "24kg_news",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "az",
+   "channel": "apaaz",
+   "kind": "news desk",
+   "lang": "az"
+  },
+  {
+   "cc": "az",
+   "channel": "report_az",
+   "kind": "news desk",
+   "lang": "az"
+  },
+  {
+   "cc": "az",
+   "channel": "azertacnews",
+   "kind": "state media",
+   "lang": "az"
+  },
+  {
+   "cc": "am",
+   "channel": "armenpress",
+   "kind": "state media",
+   "lang": "hy"
+  },
+  {
+   "cc": "am",
+   "channel": "civilnetam",
+   "kind": "news desk",
+   "lang": "hy"
+  },
+  {
+   "cc": "am",
+   "channel": "news_am",
+   "kind": "news desk",
+   "lang": "hy"
+  },
+  {
+   "cc": "ge",
+   "channel": "interpressnews",
+   "kind": "news desk",
+   "lang": "ka"
+  },
+  {
+   "cc": "ge",
+   "channel": "civilge",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ge",
+   "channel": "imedinews",
+   "kind": "news desk",
+   "lang": "ka"
+  },
+  {
+   "cc": "by",
+   "channel": "belamova",
+   "kind": "news desk",
+   "lang": "be"
+  },
+  {
+   "cc": "by",
+   "channel": "mediazona_by",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "md",
+   "channel": "moldovamd",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "md",
+   "channel": "gov_md",
+   "kind": "government",
+   "lang": "ro"
+  },
+  {
+   "cc": "tr",
+   "channel": "trthaber",
+   "kind": "public broadcaster",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "channel": "afadbaskanlik",
+   "kind": "disaster agency",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "channel": "bbcturkce",
+   "kind": "state-funded (UK)",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "channel": "dwturkce",
+   "kind": "public broadcaster (Germany)",
+   "lang": "tr"
+  },
+  {
+   "cc": "lt",
+   "channel": "delfi_lt",
+   "kind": "news desk",
+   "lang": "lt"
+  },
+  {
+   "cc": "lv",
+   "channel": "rus_lsm",
+   "kind": "public broadcaster",
+   "lang": "ru"
+  },
+  {
+   "cc": "ee",
+   "channel": "err_news",
+   "kind": "public broadcaster",
+   "lang": "et"
+  },
+  {
+   "cc": "pl",
+   "channel": "tvp_info",
+   "kind": "public broadcaster",
+   "lang": "pl"
+  },
+  {
+   "cc": "de",
+   "channel": "tagesschau",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "channel": "dwnews",
+   "kind": "public broadcaster (Germany)",
+   "lang": "en"
+  },
+  {
+   "cc": "fr",
+   "channel": "franceinfo",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "fr",
+   "channel": "lemondefr",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "it",
+   "channel": "ansa_it",
+   "kind": "news desk",
+   "lang": "it"
+  },
+  {
+   "cc": "es",
+   "channel": "rtve",
+   "kind": "public broadcaster",
+   "lang": "es"
+  },
+  {
+   "cc": "gb",
+   "channel": "bbcnews",
+   "kind": "public broadcaster (UK)",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "channel": "skynews",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "et",
+   "channel": "EBCNEWS",
+   "kind": "state media",
+   "lang": "am"
+  },
+  {
+   "cc": "et",
+   "channel": "addisstandard",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "et",
+   "channel": "ethiopiainsider",
+   "kind": "news desk",
+   "lang": "am"
+  },
+  {
+   "cc": "sd",
+   "channel": "SudanTribune",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sd",
+   "channel": "sudan_news_agency",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "so",
+   "channel": "garoweonline",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "so",
+   "channel": "hiiraannews",
+   "kind": "news desk",
+   "lang": "so"
+  },
+  {
+   "cc": "ke",
+   "channel": "citizentvkenya",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ke",
+   "channel": "nationafrica",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ng",
+   "channel": "channelstv",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ng",
+   "channel": "premiumtimesng",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ng",
+   "channel": "NigeriaPoliceForce",
+   "kind": "government (police)",
+   "lang": "en"
+  },
+  {
+   "cc": "za",
+   "channel": "news24",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "cd",
+   "channel": "radiookapi",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "channel": "actualitecd",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ml",
+   "channel": "malijet",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "bf",
+   "channel": "lefaso_net",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ne",
+   "channel": "nigerdiaspora",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "id",
+   "channel": "kompascom",
+   "kind": "news desk",
+   "lang": "id"
+  },
+  {
+   "cc": "id",
+   "channel": "detikcom",
+   "kind": "news desk",
+   "lang": "id"
+  },
+  {
+   "cc": "id",
+   "channel": "tempodotco",
+   "kind": "news desk",
+   "lang": "id"
+  },
+  {
+   "cc": "id",
+   "channel": "BNPB_Indonesia",
+   "kind": "disaster agency",
+   "lang": "id"
+  },
+  {
+   "cc": "id",
+   "channel": "infoBMKG",
+   "kind": "disaster agency",
+   "lang": "id"
+  },
+  {
+   "cc": "ph",
+   "channel": "inquirerdotnet",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ph",
+   "channel": "rapplerdotcom",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ph",
+   "channel": "gmanews",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "vn",
+   "channel": "VnExpress",
+   "kind": "news desk",
+   "lang": "vi"
+  },
+  {
+   "cc": "vn",
+   "channel": "tuoitrenews",
+   "kind": "news desk",
+   "lang": "vi"
+  },
+  {
+   "cc": "th",
+   "channel": "thaipbs",
+   "kind": "public broadcaster",
+   "lang": "th"
+  },
+  {
+   "cc": "th",
+   "channel": "khaosod",
+   "kind": "news desk",
+   "lang": "th"
+  },
+  {
+   "cc": "mm",
+   "channel": "khitthitmedia",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "dvbtvnews",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "MizzimaDaily",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "NUGMyanmar",
+   "kind": "government",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "RFABurmese",
+   "kind": "state-funded (US)",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "voaburmese",
+   "kind": "state-funded (US)",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "BBCBurmese",
+   "kind": "state-funded (UK)",
+   "lang": "my"
+  },
+  {
+   "cc": "kh",
+   "channel": "camboja_news",
+   "kind": "news desk",
+   "lang": "km"
+  },
+  {
+   "cc": "kh",
+   "channel": "rfakhmer",
+   "kind": "state-funded (US)",
+   "lang": "km"
+  },
+  {
+   "cc": "la",
+   "channel": "rfalao",
+   "kind": "state-funded (US)",
+   "lang": "lo"
+  },
+  {
+   "cc": "cn",
+   "channel": "globaltimesnews",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "cn",
+   "channel": "XHNews",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "cn",
+   "channel": "cgtn_official",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "cn",
+   "channel": "rfa_chinese",
+   "kind": "state-funded (US)",
+   "lang": "zh"
+  },
+  {
+   "cc": "cn",
+   "channel": "bbc_chinese",
+   "kind": "state-funded (UK)",
+   "lang": "zh"
+  },
+  {
+   "cc": "cn",
+   "channel": "dw_chinese",
+   "kind": "public broadcaster (Germany)",
+   "lang": "zh"
+  },
+  {
+   "cc": "cn",
+   "channel": "initium_media",
+   "kind": "news desk",
+   "lang": "zh"
+  },
+  {
+   "cc": "cn",
+   "channel": "hkfp",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tw",
+   "channel": "cna_taiwan",
+   "kind": "state media",
+   "lang": "zh"
+  },
+  {
+   "cc": "tw",
+   "channel": "focustaiwan",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "tw",
+   "channel": "MNDROC",
+   "kind": "government (military)",
+   "lang": "zh"
+  },
+  {
+   "cc": "kp",
+   "channel": "nknewsorg",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kp",
+   "channel": "dailynk",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "channel": "yonhapnews",
+   "kind": "state media",
+   "lang": "ko"
+  },
+  {
+   "cc": "jp",
+   "channel": "nhk_news",
+   "kind": "public broadcaster",
+   "lang": "ja"
+  },
+  {
+   "cc": "jp",
+   "channel": "kyodo_news",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "mn",
+   "channel": "ikonmn",
+   "kind": "news desk",
+   "lang": "mn"
+  },
+  {
+   "cc": "ve",
+   "channel": "efectococuyo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "channel": "VTVcanal8",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "channel": "talcualdigital",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "channel": "elestimulo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ni",
+   "channel": "articulo66",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ni",
+   "channel": "Confidencial_NI",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ni",
+   "channel": "100noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "co",
+   "channel": "eltiempo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "co",
+   "channel": "ElEspectador",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "mx",
+   "channel": "elfinanciero_mx",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "mx",
+   "channel": "proceso",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "mx",
+   "channel": "animalpolitico",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ar",
+   "channel": "infobae",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ar",
+   "channel": "clarincom",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "channel": "elcomercio_pe",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "channel": "latercera",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "channel": "biobio",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "bo",
+   "channel": "eldeber",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ht",
+   "channel": "lenouvelliste",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ec",
+   "channel": "primicias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "channel": "elfaro",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "gt",
+   "channel": "prensa_libre",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "channel": "laprensahn",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "channel": "prensacom",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "br",
+   "channel": "g1",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "channel": "folha",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "channel": "estadao",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "channel": "uolnoticias",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "*",
+   "channel": "UN_News",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "unicef",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "WHO",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "ICRC",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "UNHCR",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "reuters",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "ap_news",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "bbcworld",
+   "kind": "public broadcaster (UK)",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "dwnews_en",
+   "kind": "public broadcaster (Germany)",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "euronews",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "france24_en",
+   "kind": "public broadcaster (France)",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "rfi_en",
+   "kind": "public broadcaster (France)",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "channel": "VOANews",
+   "kind": "state-funded (US)",
+   "lang": "en"
+  }
+ ],
+ "bluesky": [
+  {
+   "cc": "*",
+   "handle": "un.org",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "nato.int",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "osce.org",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "iaea.org",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "interpol.int",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "ifrc.org",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "reliefweb.int",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "gdacs.org",
+   "kind": "international organisation"
+  },
+  {
+   "cc": "*",
+   "handle": "acleddata.com",
+   "kind": "think tank"
+  },
+  {
+   "cc": "*",
+   "handle": "iiss.org",
+   "kind": "think tank"
+  },
+  {
+   "cc": "*",
+   "handle": "rusi.org",
+   "kind": "think tank"
+  },
+  {
+   "cc": "*",
+   "handle": "understandingwar.org",
+   "kind": "think tank"
+  },
+  {
+   "cc": "*",
+   "handle": "hiiraan.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "amnesty.org",
+   "kind": "NGO"
+  },
+  {
+   "cc": "*",
+   "handle": "bbc.com",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "*",
+   "handle": "bbcnews.bsky.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "*",
+   "handle": "nytimes.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "washingtonpost.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "cnn.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "aljazeera.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "dw.com",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "*",
+   "handle": "euronews.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "rferl.org",
+   "kind": "state-funded (US)"
+  },
+  {
+   "cc": "*",
+   "handle": "voanews.com",
+   "kind": "state-funded (US)"
+  },
+  {
+   "cc": "*",
+   "handle": "rfa.org",
+   "kind": "state-funded (US)"
+  },
+  {
+   "cc": "*",
+   "handle": "theconversation.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "ft.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "wsj.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "axios.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "thenewhumanitarian.org",
+   "kind": "news desk"
+  },
+  {
+   "cc": "us",
+   "handle": "weather.gov",
+   "kind": "government"
+  },
+  {
+   "cc": "us",
+   "handle": "noaa.gov",
+   "kind": "government"
+  },
+  {
+   "cc": "us",
+   "handle": "nhc.noaa.gov",
+   "kind": "government"
+  },
+  {
+   "cc": "us",
+   "handle": "fema.gov",
+   "kind": "disaster agency"
+  },
+  {
+   "cc": "us",
+   "handle": "usgs.gov",
+   "kind": "government"
+  },
+  {
+   "cc": "us",
+   "handle": "state.gov",
+   "kind": "government"
+  },
+  {
+   "cc": "us",
+   "handle": "defense.gov",
+   "kind": "government (military)"
+  },
+  {
+   "cc": "us",
+   "handle": "cisa.gov",
+   "kind": "government"
+  },
+  {
+   "cc": "us",
+   "handle": "fbi.gov",
+   "kind": "government (police)"
+  },
+  {
+   "cc": "us",
+   "handle": "travel.state.gov",
+   "kind": "government"
+  },
+  {
+   "cc": "gb",
+   "handle": "gov.uk",
+   "kind": "government"
+  },
+  {
+   "cc": "gb",
+   "handle": "fcdo.gov.uk",
+   "kind": "government"
+  },
+  {
+   "cc": "gb",
+   "handle": "mod.gov.uk",
+   "kind": "government (military)"
+  },
+  {
+   "cc": "gb",
+   "handle": "ukhomeoffice.gov.uk",
+   "kind": "government"
+  },
+  {
+   "cc": "gb",
+   "handle": "environment-agency.gov.uk",
+   "kind": "government"
+  },
+  {
+   "cc": "gb",
+   "handle": "bbc.co.uk",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "ca",
+   "handle": "canada.ca",
+   "kind": "government"
+  },
+  {
+   "cc": "ca",
+   "handle": "gc.ca",
+   "kind": "government"
+  },
+  {
+   "cc": "ca",
+   "handle": "cbc.ca",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "ca",
+   "handle": "radio-canada.ca",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "de",
+   "handle": "bundesregierung.de",
+   "kind": "government"
+  },
+  {
+   "cc": "de",
+   "handle": "auswaertiges-amt.de",
+   "kind": "government"
+  },
+  {
+   "cc": "de",
+   "handle": "bmvg.de",
+   "kind": "government (military)"
+  },
+  {
+   "cc": "de",
+   "handle": "bundeswehr.de",
+   "kind": "government (military)"
+  },
+  {
+   "cc": "de",
+   "handle": "dwd.de",
+   "kind": "government"
+  },
+  {
+   "cc": "de",
+   "handle": "bbk.bund.de",
+   "kind": "disaster agency"
+  },
+  {
+   "cc": "de",
+   "handle": "tagesschau.de",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "de",
+   "handle": "zdfheute.de",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "de",
+   "handle": "sueddeutsche.de",
+   "kind": "news desk"
+  },
+  {
+   "cc": "de",
+   "handle": "faz.net",
+   "kind": "news desk"
+  },
+  {
+   "cc": "fr",
+   "handle": "elysee.fr",
+   "kind": "government"
+  },
+  {
+   "cc": "fr",
+   "handle": "gouvernement.fr",
+   "kind": "government"
+  },
+  {
+   "cc": "fr",
+   "handle": "diplomatie.gouv.fr",
+   "kind": "government"
+  },
+  {
+   "cc": "fr",
+   "handle": "franceinfo.fr",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "fr",
+   "handle": "rfi.fr",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "es",
+   "handle": "lamoncloa.gob.es",
+   "kind": "government"
+  },
+  {
+   "cc": "es",
+   "handle": "exteriores.gob.es",
+   "kind": "government"
+  },
+  {
+   "cc": "es",
+   "handle": "rtve.es",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "it",
+   "handle": "ansa.it",
+   "kind": "news desk"
+  },
+  {
+   "cc": "it",
+   "handle": "corriere.it",
+   "kind": "news desk"
+  },
+  {
+   "cc": "it",
+   "handle": "repubblica.it",
+   "kind": "news desk"
+  },
+  {
+   "cc": "pt",
+   "handle": "publico.pt",
+   "kind": "news desk"
+  },
+  {
+   "cc": "pt",
+   "handle": "rtp.pt",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "nl",
+   "handle": "rijksoverheid.nl",
+   "kind": "government"
+  },
+  {
+   "cc": "nl",
+   "handle": "politie.nl",
+   "kind": "government (police)"
+  },
+  {
+   "cc": "nl",
+   "handle": "nos.nl",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "be",
+   "handle": "belgium.be",
+   "kind": "government"
+  },
+  {
+   "cc": "no",
+   "handle": "regjeringen.no",
+   "kind": "government"
+  },
+  {
+   "cc": "no",
+   "handle": "nrk.no",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "no",
+   "handle": "aftenposten.no",
+   "kind": "news desk"
+  },
+  {
+   "cc": "se",
+   "handle": "regeringen.se",
+   "kind": "government"
+  },
+  {
+   "cc": "se",
+   "handle": "svt.se",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "se",
+   "handle": "dn.se",
+   "kind": "news desk"
+  },
+  {
+   "cc": "fi",
+   "handle": "yle.fi",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "fi",
+   "handle": "hs.fi",
+   "kind": "news desk"
+  },
+  {
+   "cc": "fi",
+   "handle": "um.fi",
+   "kind": "government"
+  },
+  {
+   "cc": "dk",
+   "handle": "dr.dk",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "dk",
+   "handle": "um.dk",
+   "kind": "government"
+  },
+  {
+   "cc": "is",
+   "handle": "ruv.is",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "ee",
+   "handle": "err.ee",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "lv",
+   "handle": "lsm.lv",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "lt",
+   "handle": "lrt.lt",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "pl",
+   "handle": "gov.pl",
+   "kind": "government"
+  },
+  {
+   "cc": "pl",
+   "handle": "tvn24.pl",
+   "kind": "news desk"
+  },
+  {
+   "cc": "pl",
+   "handle": "oko.press",
+   "kind": "news desk"
+  },
+  {
+   "cc": "cz",
+   "handle": "irozhlas.cz",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "sk",
+   "handle": "aktuality.sk",
+   "kind": "news desk"
+  },
+  {
+   "cc": "hu",
+   "handle": "telex.hu",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ro",
+   "handle": "hotnews.ro",
+   "kind": "news desk"
+  },
+  {
+   "cc": "gr",
+   "handle": "ekathimerini.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ch",
+   "handle": "admin.ch",
+   "kind": "government"
+  },
+  {
+   "cc": "ch",
+   "handle": "srf.ch",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "ch",
+   "handle": "swissinfo.ch",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "at",
+   "handle": "orf.at",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "ie",
+   "handle": "gov.ie",
+   "kind": "government"
+  },
+  {
+   "cc": "ie",
+   "handle": "met.ie",
+   "kind": "government"
+  },
+  {
+   "cc": "au",
+   "handle": "abc.net.au",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "au",
+   "handle": "bom.gov.au",
+   "kind": "government"
+  },
+  {
+   "cc": "au",
+   "handle": "dfat.gov.au",
+   "kind": "government"
+  },
+  {
+   "cc": "au",
+   "handle": "smh.com.au",
+   "kind": "news desk"
+  },
+  {
+   "cc": "au",
+   "handle": "theguardian.com.au",
+   "kind": "news desk"
+  },
+  {
+   "cc": "nz",
+   "handle": "rnz.co.nz",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "nz",
+   "handle": "stuff.co.nz",
+   "kind": "news desk"
+  },
+  {
+   "cc": "nz",
+   "handle": "mfat.govt.nz",
+   "kind": "government"
+  },
+  {
+   "cc": "jp",
+   "handle": "nhk.or.jp",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "kr",
+   "handle": "koreaherald.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "kr",
+   "handle": "koreatimes.co.kr",
+   "kind": "news desk"
+  },
+  {
+   "cc": "tw",
+   "handle": "taipeitimes.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "tw",
+   "handle": "focustaiwan.tw",
+   "kind": "state media"
+  },
+  {
+   "cc": "tw",
+   "handle": "mofa.gov.tw",
+   "kind": "government"
+  },
+  {
+   "cc": "ph",
+   "handle": "rappler.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ph",
+   "handle": "inquirer.net",
+   "kind": "news desk"
+  },
+  {
+   "cc": "in",
+   "handle": "indianexpress.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "in",
+   "handle": "thewire.in",
+   "kind": "news desk"
+  },
+  {
+   "cc": "pk",
+   "handle": "dawn.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "bd",
+   "handle": "thedailystar.net",
+   "kind": "news desk"
+  },
+  {
+   "cc": "np",
+   "handle": "kathmandupost.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "lk",
+   "handle": "dailymirror.lk",
+   "kind": "news desk"
+  },
+  {
+   "cc": "sg",
+   "handle": "straitstimes.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "sg",
+   "handle": "mothership.sg",
+   "kind": "news desk"
+  },
+  {
+   "cc": "id",
+   "handle": "tempo.co",
+   "kind": "news desk"
+  },
+  {
+   "cc": "my",
+   "handle": "freemalaysiatoday.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "th",
+   "handle": "thaipbsworld.com",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "vn",
+   "handle": "vnexpress.net",
+   "kind": "news desk"
+  },
+  {
+   "cc": "mx",
+   "handle": "animalpolitico.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "mx",
+   "handle": "proceso.com.mx",
+   "kind": "news desk"
+  },
+  {
+   "cc": "br",
+   "handle": "g1.globo.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "br",
+   "handle": "estadao.com.br",
+   "kind": "news desk"
+  },
+  {
+   "cc": "br",
+   "handle": "gov.br",
+   "kind": "government"
+  },
+  {
+   "cc": "ar",
+   "handle": "lanacion.com.ar",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ar",
+   "handle": "clarin.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "cl",
+   "handle": "latercera.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "cl",
+   "handle": "ciperchile.cl",
+   "kind": "news desk"
+  },
+  {
+   "cc": "co",
+   "handle": "cambiocolombia.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "pe",
+   "handle": "ojo-publico.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ve",
+   "handle": "efectococuyo.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "za",
+   "handle": "dailymaverick.co.za",
+   "kind": "news desk"
+  },
+  {
+   "cc": "za",
+   "handle": "news24.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "za",
+   "handle": "mg.co.za",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ng",
+   "handle": "premiumtimesng.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ke",
+   "handle": "nation.africa",
+   "kind": "news desk"
+  },
+  {
+   "cc": "gh",
+   "handle": "myjoyonline.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "ua",
+   "handle": "mfa.gov.ua",
+   "kind": "government"
+  },
+  {
+   "cc": "ua",
+   "handle": "suspilne.media",
+   "kind": "public broadcaster"
+  },
+  {
+   "cc": "il",
+   "handle": "haaretz.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "tr",
+   "handle": "bbcturkce.bsky.social",
+   "kind": "state-funded (UK)"
+  }
+ ],
+ "mastodon": [
+  {
+   "acct": "RegSprecher@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "Bundesregierung@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "AuswaertigesAmt@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "bmi@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "BMI_Bund@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "bmvg@social.bund.de",
+   "kind": "government (military)"
+  },
+  {
+   "acct": "BMVg_Bundeswehr@social.bund.de",
+   "kind": "government (military)"
+  },
+  {
+   "acct": "bbk@social.bund.de",
+   "kind": "disaster agency"
+  },
+  {
+   "acct": "BBK_Bund@social.bund.de",
+   "kind": "disaster agency"
+  },
+  {
+   "acct": "thw@social.bund.de",
+   "kind": "disaster agency"
+  },
+  {
+   "acct": "bka@social.bund.de",
+   "kind": "government (police)"
+  },
+  {
+   "acct": "bundespolizei@social.bund.de",
+   "kind": "government (police)"
+  },
+  {
+   "acct": "BSI@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "DWD@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "destatis@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "bundestag@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "rijksoverheid@social.overheid.nl",
+   "kind": "government"
+  },
+  {
+   "acct": "defensie@social.overheid.nl",
+   "kind": "government (military)"
+  },
+  {
+   "acct": "politie@social.overheid.nl",
+   "kind": "government (police)"
+  },
+  {
+   "acct": "minbz@social.overheid.nl",
+   "kind": "government"
+  },
+  {
+   "acct": "EU_Commission@ec.social-network.europa.eu",
+   "kind": "government"
+  },
+  {
+   "acct": "EUCouncil@social.network.europa.eu",
+   "kind": "government"
+  },
+  {
+   "acct": "EU_EEAS@social.network.europa.eu",
+   "kind": "government"
+  },
+  {
+   "acct": "tagesschau@ard.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "tagesschau@mastodon.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "DLF@ard.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "NDR@ard.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "BR24@ard.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "ZDFheute@zdf.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "heiseonline@social.heise.de",
+   "kind": "news desk"
+  },
+  {
+   "acct": "derstandard@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "ProPublica@newsie.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "bellingcat@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "icij@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "occrp@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "rnz_news@mastodon.nz",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "APnews@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "Reuters@press.coop",
+   "kind": "news desk"
+  },
+  {
+   "acct": "theguardian@press.coop",
+   "kind": "news desk"
+  },
+  {
+   "acct": "npr@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "euronews@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "LeMonde@mastodon.social",
+   "kind": "news desk"
+  },
+  {
+   "acct": "NOS@social.overheid.nl",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "ORF@mastodon.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "srfnews@mastodon.social",
+   "kind": "public broadcaster"
+  },
+  {
+   "acct": "CERTFR@mastodon.social",
+   "kind": "government"
+  },
+  {
+   "acct": "CERT_Bund@social.bund.de",
+   "kind": "government"
+  },
+  {
+   "acct": "ncsc_nl@social.overheid.nl",
+   "kind": "government"
+  },
+  {
+   "acct": "EUvsDisinfo@social.network.europa.eu",
+   "kind": "government"
+  }
+ ],
+ "mastodon_directories": [
+  "social.bund.de",
+  "social.overheid.nl",
+  "ec.social-network.europa.eu",
+  "social.network.europa.eu",
+  "social.admin.ch",
+  "ard.social",
+  "zdf.social",
+  "social.numerique.gouv.fr",
+  "mastodon.gov.pl",
+  "social.gouv.fr"
+ ],
+ "bluesky_lists": [
+  "int.govsky.org",
+  "us.govsky.org",
+  "uk.govsky.org",
+  "eu.govsky.org",
+  "ca.govsky.org",
+  "au.govsky.org",
+  "govsky.org"
+ ]
+}
