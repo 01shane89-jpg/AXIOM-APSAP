@@ -23,12 +23,14 @@ jobs:
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
       - run: VIEW=${{ matrix.view }} OUT=pub node tools/fb_shots.mjs 2>&1 | tee pub-log.txt
+        env:
+          ONLY: h-symbols,h-deepsouth,h-ukraine,h-history,h-medplan,h-evac,h-comms,h-3d,h-grid,h-cams,h-infra,h-mil,h-air,h-pop,h-wxchart,h-illum,h-intelbrief,h-today-ph,h-today-ua
       - name: Push the stills
         env:
           TOKEN: ${{ github.token }}
         run: |
           mkdir -p pub && cp pub-log.txt pub/log.txt && cd pub
-          git init -q -b media/fb-shots-${{ matrix.view }}
+          git init -q -b media/fb-hero-${{ matrix.view }}
           git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q -m "feature stills (${{ matrix.view }}) from ${GITHUB_SHA::7}"
-          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/fb-shots-${{ matrix.view }}
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/fb-hero-${{ matrix.view }}

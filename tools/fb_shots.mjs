@@ -93,6 +93,8 @@ function kit(p) {
     return true;
   };
   k.el = async (sel) => { const all = await p.$$(sel); for (const h of all) if (await h.evaluate((e) => !!e.offsetParent || getComputedStyle(e).position === "fixed")) return h; return all[0] || null; };
+  // click even when the element is hidden (tools that live in the Plans and View menus)
+  k.force = async (sel) => { const ok = await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.click(); return !!e; }, sel); if (!ok) console.log("  missing (force)", sel); return ok; };
   k.click = async (sel) => { const ok = await k.glide(await k.el(sel)); if (!ok) console.log("  missing", sel); return ok; };
   // the visible button (or link, or menu item) whose text is t, or starts with t when t ends with "…"
   k.byText = async (t, within) => {
@@ -418,6 +420,85 @@ const SCENES = [
     await k.caption("Move to another device, or Sync my devices: no account", "Your data is locked on your device with your own passphrase or sync code.");
     await k.scrollIn("#setdlg, .set-panel, #settings", 350, 3, 1500);
   }],
+  // ---------- hero stills for social posts ----------
+  ["h-symbols", "NATO symbols", "", { z: 6, at: [13.2, 101.0], list: true }, async ({ k, p }) => {
+    await k.caption("x");
+    await k.force("#ml-ds [data-dsall='1'], [data-dsall='1']"); await k.wait(9000);
+    await k.press("Show on map"); await k.wait(6000);
+  }],
+  ["h-deepsouth", "Conflict tab", "", { hash: "#cf-thailand-deep-south", at: false }, async ({ k }) => { await k.caption("x"); await k.wait(9000); }],
+  ["h-ukraine", "Conflict tab Ukraine", "", { hash: "#cf-russia-ukraine", at: false }, async ({ k }) => { await k.caption("x"); await k.wait(12000); }],
+  ["h-history", "History of violence", "", { hash: "#th/timeline", at: false }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); const b = document.querySelector('[data-dsxopen="vh"]'); if (b) b.click(); });
+    await k.wait(12000);
+  }],
+  ["h-medplan", "Medical plan", "", { bm: "hybrid", z: 11 }, async ({ k, p }) => {
+    await k.caption("x");
+    await k.force('#atk-tools [data-atk="medplan"]');
+    await p.waitForFunction(() => { const m = document.getElementById("medplan"); return m && !m.hidden && !/Still reading/.test(m.textContent); }, null, { timeout: 180000 }).catch(() => console.log("  medplan not ready"));
+    await k.wait(6000);
+    await k.caption("x2"); await k.press("Full"); await k.wait(3000);
+  }],
+  ["h-evac", "Evacuation plan", "", { bm: "hybrid", z: 10 }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate((a) => window.OSAP_EPE && window.OSAP_EPE.open({ at: a }), AT); await k.wait(2500);
+    await k.force('[data-ep="plan"]');
+    await p.waitForFunction(() => /Work out again/.test((document.getElementById("epe") || {}).textContent || ""), null, { timeout: 420000 }).catch(() => console.log("  evac not ready"));
+    await k.wait(5000);
+  }],
+  ["h-comms", "Comms planning", "", { z: 11, list: true }, async ({ k, p }) => {
+    await k.caption("x");
+    await k.force('#atk-tools [data-atk="comms"]'); await k.wait(6000);
+    await k.caption("x2"); await k.press("Networks"); await k.wait(9000);
+    await k.caption("x3"); await k.press("Coverage"); await k.wait(9000);
+  }],
+  ["h-3d", "3D terrain", "", { bm: "hybrid", z: 12 }, async ({ k, p }) => {
+    await k.caption("x");
+    await k.force('#atk-tools [data-atk="view"]'); await k.wait(800); await k.force('#atk-pop [data-pk="3d"]');
+    await p.waitForFunction(() => window.OSAP_3D && window.OSAP_3D.gl, null, { timeout: 30000 }).catch(() => {});
+    await k.wait(3000);
+    await p.evaluate(() => { try { window.OSAP_3D.gl.jumpTo({ pitch: 62, bearing: 35, zoom: 12.6 }); } catch (e) {} });
+    await k.wait(14000);
+  }],
+  ["h-grid", "MGRS grid", "", { bm: "hybrid", z: 14 }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate(() => { window.OSAP_GRID.grid(true); window.OSAP_GRID.cross(true); }); await k.wait(7000);
+  }],
+  ["h-cams", "Cameras", "", { z: 12, at: [13.75, 100.52] }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate(() => window.OSAP_CAMS.set(true)); await k.wait(12000);
+  }],
+  ["h-infra", "Infrastructure", "", { z: 9, at: [13.75, 100.52], bm: "dark" }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate(() => { const P = window.OSAP_POWER; P.set("lines", true); P.set("plants", true); P.set("subs", true); window.OSAP_INFRA.set("af", true); window.OSAP_DC && window.OSAP_DC.set("all", true); }); await k.wait(15000);
+  }],
+  ["h-mil", "Military installations", "", { z: 7, at: [14.5, 101.0] }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate(() => window.OSAP_MILMAP.set(true)); await k.wait(12000);
+  }],
+  ["h-air", "Live aircraft", "", { z: 6, at: [13.5, 101.0] }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate(() => window.OSAP_ATAK.overlays("overlays")); await k.wait(1500);
+    await p.evaluate(() => document.querySelectorAll('input[data-air]').forEach((i) => { if (!i.checked) { i.checked = true; i.dispatchEvent(new Event("change", { bubbles: true })); } }));
+    await k.wait(4000); await p.evaluate(() => { const x = document.querySelector('#atk-om [data-om="x"]'); if (x) x.click(); }); await k.wait(8000);
+  }],
+  ["h-pop", "Population", "", { z: 7, at: [14.5, 101.0] }, async ({ k, p }) => {
+    await k.caption("x");
+    await p.evaluate(() => window.OSAP_POP.set(true)); await k.wait(10000);
+  }],
+  ["h-wxchart", "Weather chart", "", { z: 9 }, async ({ k, p }) => {
+    await k.caption("x"); await p.evaluate(() => window.OSAP_WX.chart()); await k.wait(12000);
+    await k.caption("x2"); await p.keyboard.press("Escape"); await p.evaluate(() => window.OSAP_WX.brief()); await k.wait(10000);
+  }],
+  ["h-illum", "Night illumination", "", { z: 9 }, async ({ k, p }) => {
+    await k.caption("x"); await p.evaluate(() => window.OSAP_ILLUM.open()); await k.wait(8000);
+  }],
+  ["h-intelbrief", "Intel brief", "", { z: 6, at: [13.2, 101.0] }, async ({ k, p }) => {
+    await k.caption("x"); await p.evaluate(() => window.OSAP_INTELBRIEF.open()); await k.wait(6000);
+  }],
+  ["h-today-ph", "Today Philippines", "", { today: true, hash: "#ph", settle: 12000 }, async ({ k }) => { await k.caption("x"); await k.wait(2000); }],
+  ["h-today-ua", "Today Ukraine", "", { today: true, hash: "#ua", settle: 12000 }, async ({ k }) => { await k.caption("x"); await k.wait(2000); }],
   ["reading", "Reading what you see", "Claims, sources, fingerprints and times", { z: 6, at: [13.2, 101.0], list: true }, async ({ k }) => {
     await k.caption("Every report is what a source said", "Observed is an instrument reading; Reported is unconfirmed. A trusted source can still be wrong.");
     await k.click("#rv-list > button, #rv-list button"); await k.wait(5000);
