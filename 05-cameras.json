@@ -1,0 +1,23 @@
+{
+ "name": "cameras",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 154,
+ "start": 12.241,
+ "end": 23.002,
+ "caps": [
+  {
+   "t": 12.242,
+   "text": "57,000+ official public cameras",
+   "sub": "Traffic and weather cameras published by government sources."
+  },
+  {
+   "t": 15.742,
+   "text": "Tap a camera for its latest picture",
+   "sub": ""
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}

@@ -1,0 +1,23 @@
+{
+ "name": "map",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 168,
+ "start": 13.323,
+ "end": 24.22,
+ "caps": [
+  {
+   "t": 13.323,
+   "text": "Every report, on the map",
+   "sub": "Standard map symbols, filtered by period and topic."
+  },
+  {
+   "t": 17.324,
+   "text": "Tap a report for the details",
+   "sub": "Source link, original language and a SHA-256 fingerprint."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}

@@ -1,0 +1,23 @@
+{
+ "name": "satellite",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 194,
+ "start": 11.325,
+ "end": 25.608,
+ "caps": [
+  {
+   "t": 11.325,
+   "text": "Satellite before and after",
+   "sub": "Any two Sentinel-2 passes from the last 90 days, with their cloud cover."
+  },
+  {
+   "t": 18.84,
+   "text": "Swipe to see what changed",
+   "sub": ""
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}

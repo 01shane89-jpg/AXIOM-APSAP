@@ -1,0 +1,33 @@
+{
+ "name": "area",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 297,
+ "start": 12.402,
+ "end": 28.988,
+ "caps": [
+  {
+   "t": 12.402,
+   "text": "Draw an area to focus",
+   "sub": "The map and the list show only what is inside it."
+  },
+  {
+   "t": 19.475,
+   "text": "Area brief: the last 24 hours, as a PDF",
+   "sub": "Maps, reports and sources for the area in one document."
+  }
+ ],
+ "skips": [
+  [
+   25.854,
+   25.886
+  ]
+ ],
+ "pdfs": [
+  {
+   "file": "area-brief.pdf",
+   "t": 25.884
+  }
+ ]
+}

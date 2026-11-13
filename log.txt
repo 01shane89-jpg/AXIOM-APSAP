@@ -1,0 +1,8 @@
+PASS 01 today {"caps":4,"pdfs":["daily-brief.pdf"]}
+PASS 02 map {"caps":2,"pdfs":[]}
+PASS 03 area {"caps":2,"pdfs":["area-brief.pdf"]}
+PASS 04 watch {"caps":2,"pdfs":[]}
+PASS 05 cameras {"caps":2,"pdfs":[]}
+PASS 06 satellite {"caps":2,"pdfs":[]}
+PASS 07 offline {"caps":1,"pdfs":[]}
+all clips recorded
