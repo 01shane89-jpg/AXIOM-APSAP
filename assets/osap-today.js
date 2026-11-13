@@ -483,6 +483,7 @@
     wxAsked = {};
     open = true; box.hidden = false; document.documentElement.classList.add("td-on"); ssSet(OPEN_KEY, "1");
     render(); box.scrollTop = 0;
+    if (window.OSAP_UNBOOT) requestAnimationFrame(function () { setTimeout(window.OSAP_UNBOOT, 1500); });
     if (ctl) ctl.hidden = true;
     if (window.OSAP_BOOT && window.OSAP_BOOT.done) window.OSAP_BOOT.done();
     clearInterval(tick);
@@ -497,6 +498,8 @@
   function hide() {
     /* the list behind Today is drawn after Today opens (index.html, OSAP_LISTUP); leaving Today early draws it now */
     if (window.OSAP_LISTUP) window.OSAP_LISTUP();
+    /* the page behind Today is drawn again before it is shown (assets/osap-start.js, step 5) */
+    if (window.OSAP_UNBOOT) window.OSAP_UNBOOT();
     open = false; if (box) box.hidden = true; document.documentElement.classList.remove("td-on"); ssSet(OPEN_KEY, "0"); clearInterval(tick);
     if (ctl) ctl.hidden = false;
     if (window.__asapMap && window.__asapMap.invalidateSize) setTimeout(function () { window.__asapMap.invalidateSize(); }, 50);
