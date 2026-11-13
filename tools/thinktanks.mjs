@@ -270,7 +270,7 @@ export function pickSitemaps(kids, n = 2) {
   return kids.filter((k) => k.loc && !SKIP_MAP.test(k.loc.replace(/sitemap\.xml\?page=\d+$/, "sitemap.xml")))
     .sort((a, b) => (ARTICLE_MAP.test(b.loc) - ARTICLE_MAP.test(a.loc)) || (b.mod || "").slice(0, 10).localeCompare((a.mod || "").slice(0, 10)) || num(b.loc) - num(a.loc)).slice(0, n);
 }
-async function fromSitemap(g, home) {
+export async function fromSitemap(g, home) {
   const origin = new URL(home).origin;
   let maps = [];
   try { const r = await g(origin + "/robots.txt", "text", { timeout: 15e3 }); maps = [...r.matchAll(/^\s*sitemap:\s*(\S+)/gim)].map((m) => m[1]); } catch (e) {}
@@ -373,7 +373,7 @@ for (const [id, org, home, urls] of TT) {
     // Bing News results are non-commercial (nc), so the sold version never falls back to them, even for an open-licence institute
     if (!entries && !COMMERCIAL) { try { entries = await fromSearch(g, home); used = "Bing News search of the institute's site"; } catch (e) { why.push("search: " + e.message); } }
     if (!entries) { try { entries = await fromSitemap(g, home); used = "sitemap (headline from page address)"; } catch (e) { why.push("sitemap: " + e.message); } }
-    if (!entries || !entries.length) throw new Error("no feed: " + why.join("; ").slice(0, 300));
+    if (!entries || !entries.length) throw new Error("no feed: " + why.map((w) => w.slice(0, 110)).join("; ").slice(0, 700));   // each reason cut short so the last ones (search, sitemap) still show
     let gz = null; try { gz = await gazetteer(g); } catch (e) {}
     const kind = org + " assessment";
     const items = [], globals = [];
