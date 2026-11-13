@@ -39,7 +39,10 @@
   "use strict";
   var W = window;
   if (W.OSAP_LOCK && W.OSAP_LOCK.isOpen()) main();
-  else if (W.OSAP_TIER && W.OSAP_TIER.ready) W.OSAP_TIER.ready.then(function () { if (W.OSAP_TIER.owner() || inCase()) main(); });
+  /* the tools load in order after the first screen (index.html #osap-tail), so the account can answer before assets/osap-cases.js
+     has run: decide once the page has loaded, when every tool is in */
+  else if (W.OSAP_TIER && W.OSAP_TIER.ready) W.OSAP_TIER.ready.then(function () { loaded(function () { if (W.OSAP_TIER.owner() || inCase()) main(); }); });
+  function loaded(fn) { if (document.readyState === "complete") fn(); else W.addEventListener("load", fn); }
   /* or a member of a team case whose workspace is open (assets/osap-cases.js, Shane 2026-10-23): the workspace then holds the
      case's entities and links, synced sealed with its members; the server checked membership when the case was fetched */
   function inCase() { return !!(W.OSAP_CASES && W.OSAP_CASES.activeCase && W.OSAP_CASES.activeCase()); }
