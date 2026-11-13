@@ -1,0 +1,23 @@
+  missing button "Show on map"
+PASS 25 h-symbols
+PASS 26 h-deepsouth
+PASS 27 h-ukraine
+PASS 28 h-history
+PASS 29 h-medplan
+  missing (force) [data-ep="plan"]
+  evac not ready
+PASS 30 h-evac
+PASS 31 h-comms
+PASS 32 h-3d
+PASS 33 h-grid
+PASS 34 h-cams
+PASS 35 h-infra
+PASS 36 h-mil
+PASS 37 h-air
+PASS 38 h-pop
+PASS 39 h-wxchart
+PASS 40 h-illum
+PASS 41 h-intelbrief
+PASS 42 h-today-ph
+PASS 43 h-today-ua
+all scenes shot 23 shots
