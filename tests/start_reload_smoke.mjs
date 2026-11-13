@@ -6,7 +6,8 @@
 //   1. run-out sign-in: the loading cover stays up until the second load (Today is never seen on the first), Today shows
 //      once after it, and Open map then stays on the map with no further load;
 //   2. run-out sign-in that cannot be renewed: no second load, and the cover still lifts at once (not after its 15 s cap);
-//   3. new release: the cover is back up before the reload, and after it Open map stays on the map.
+//   3. new release: the cover is back up before the reload, and after it Open map stays on the map; also when the release
+//      is found while the page is still loading.
 // Netlify Identity is a stand-in; the account function is the real one. External hosts are blocked.
 // Run from the repo root: node tests/start_reload_smoke.mjs   (needs playwright, Chromium, and npm ci --prefix netlify)
 import { createServer } from "node:http";
@@ -112,11 +113,15 @@ async function signedIn(state) {
   ok(!errors.length, "renewal refused: no page errors " + errors.slice(0, 3).join(" | "));
   await ctx.close();
 }
-// 3. a new release: the service worker takes over and the page reloads behind the cover (signed out, GitHub Pages-like)
-netlify = false;
-{
+// 3. a new release: the service worker takes over and the page reloads behind the cover (signed out, GitHub Pages-like).
+//    Twice: as it usually goes, and with the page's load held back 6 s (a picture that is slow to come) so the new copy is
+//    found and installed while the page is still loading. Its switch-over then waits for the old copy to finish (about
+//    10 s after the load), past the 8 s the page gives a release found later; one found by then still reloads (index.html).
+async function newRelease(what, holdMs) {
+  netlify = false;
   const ctx = await chromium.launchPersistentContext(await mkdtemp(join(tmpdir(), "osap-sw-")), { ...exe, ...devices["Pixel 7"] });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.route(/\/slow-picture\.png/, async (r) => { await new Promise((ok) => setTimeout(ok, holdMs)); r.fulfill({ status: 404, body: "" }); });
   await ctx.addInitScript({ content: WATCH });
   swVer = "v1";
   let p = await ctx.newPage();
@@ -124,17 +129,21 @@ netlify = false;
   await p.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 30000 });
   await p.waitForTimeout(3000); await p.close();
   swVer = "v2";
+  /* the held picture is put on the first load after the release only */
+  if (holdMs) await ctx.addInitScript({ content: `document.addEventListener("DOMContentLoaded", () => { if (window.top === window && +sessionStorage.getItem("t-loads") === 1) { const i = new Image(); i.src = "slow-picture.png"; document.body.appendChild(i); } });` });
   p = await ctx.newPage();
   const errors = []; p.on("pageerror", (e) => errors.push(String(e.message)));
   await p.goto(base);
   await p.waitForFunction(() => +sessionStorage.getItem("t-loads") >= 2, null, { timeout: 30000 }).catch(() => {});
   const n = await loads(p), L = await log(p);
-  ok(n === 2, "new release: the page reloads once for it (" + n + " loads)");
-  ok(L[1] && L[1].coverAtLeave === true, "new release: the cover is up when the old page goes " + JSON.stringify(L[1]));
-  await openMapAndStay(p, "new release");
-  ok(!errors.length, "new release: no page errors " + errors.slice(0, 3).join(" | "));
+  ok(n === 2, what + ": the page reloads once for it (" + n + " loads)");
+  ok(L[1] && L[1].coverAtLeave === true, what + ": the cover is up when the old page goes " + JSON.stringify(L[1]));
+  await openMapAndStay(p, what);
+  ok(!errors.length, what + ": no page errors " + errors.slice(0, 3).join(" | "));
   await ctx.close();
 }
+await newRelease("new release", 0);
+await newRelease("new release found while the page loads", 6000);
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);
