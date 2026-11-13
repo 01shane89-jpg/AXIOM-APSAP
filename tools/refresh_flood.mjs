@@ -53,7 +53,11 @@ try {
   if (stations.length < 100) throw new Error("feed returned only " + stations.length + " stations");
   const over = stations.map((s, i) => (s.lv === 5 ? i : -1)).filter((i) => i >= 0)
     .sort((a, b) => (stations[b].d || 0) - (stations[a].d || 0));
-  const asof = stations.reduce((m, s) => (s.t > m ? s.t : m), "");
+  // ThaiWater times are Bangkok local (UTC+7). A gauge with a clock set ahead (seen 13 Nov: "2026-11-15 00:00"
+  // a day early) would pin asof in the future, so every later run said "unchanged" and the snapshot went stale.
+  // Readings more than an hour ahead of Bangkok time don't count toward asof.
+  const limit = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 16).replace("T", " ");
+  const asof = stations.reduce((m, s) => (s.t && s.t <= limit && s.t > m ? s.t : m), "");
   if (asof === LIVE.asof) { console.log("unchanged: newest gauge reading is still " + asof); process.exit(0); }
   Object.assign(LIVE, clean({ stations, rain, over, asof }), { built: new Date().toISOString().slice(0, 16).replace("T", " ") + "Z" });
   fs.writeFileSync(FILE, "window.LIVE=" + JSON.stringify(LIVE) + ";\n");
