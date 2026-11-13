@@ -63,13 +63,18 @@ await p.waitForTimeout(300);
 const sw = await p.evaluate(() => { const b = document.querySelector(".rail").getBoundingClientRect(), x = Math.round(b.left + b.width / 2), y = Math.round(b.top + b.height * 0.8);
   return { x, y, onSheet: document.querySelector(".rail").contains(document.elementFromPoint(x, y)) }; });
 ok(sw.onSheet, "the swipe starts on the sheet");
-const cdp = await ctx.newCDPSession(p);
-await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: sw.x, y: sw.y }] });
-for (let i = 1; i <= 12; i++) await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: sw.x - 80 * i / 12, y: sw.y - 300 * i / 12 }] });
-await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-await p.waitForTimeout(500);
-const after = await p.evaluate(() => { const rail = document.querySelector(".rail"); return { top: rail.scrollTop, left: rail.scrollLeft }; });
-ok(after.top > 50 && after.left === 0, `a slanted swipe scrolls the list down, not sideways (down ${Math.round(after.top)} px, across ${after.left} px)`);
+/* a real finger swipe needs Chrome's DevTools touch events; WebKit has none in Playwright, so there the CSS that makes the
+   sheet pan up and down only (checked above) stands in for it, and the Chromium run checks the swipe itself */
+if (process.env.BROWSER === "webkit") console.log("NOTE the finger-swipe check runs in the Chromium run only (no touch-event driver for WebKit)");
+else {
+  const cdp = await ctx.newCDPSession(p);
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: sw.x, y: sw.y }] });
+  for (let i = 1; i <= 12; i++) await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: sw.x - 80 * i / 12, y: sw.y - 300 * i / 12 }] });
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await p.waitForTimeout(500);
+  const after = await p.evaluate(() => { const rail = document.querySelector(".rail"); return { top: rail.scrollTop, left: rail.scrollLeft }; });
+  ok(after.top > 50 && after.left === 0, `a slanted swipe scrolls the list down, not sideways (down ${Math.round(after.top)} px, across ${after.left} px)`);
+}
 if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + "/phone-sheet.png" });
 ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 await browser.close(); server.close();
