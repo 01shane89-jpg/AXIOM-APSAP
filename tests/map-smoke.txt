@@ -79,6 +79,7 @@ tests/sat_smoke.mjs
 tests/newimg_smoke.mjs
 tests/keydates_smoke.mjs
 tests/coverage_smoke.mjs
+tests/spikes_smoke.mjs
 tests/maploading_smoke.mjs
 tests/streets_english_smoke.mjs
 tests/sw_data_smoke.mjs

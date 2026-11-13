@@ -146,11 +146,12 @@ jobs:
         run: node tools/refresh_news.mjs
         continue-on-error: true
       # Data sets (tools/topics.json): each one's news searches, then the one search index over every country's news and those
-      # results (data/live/news-index.js and data/live/news-index/<day>.js), which the app's news search reads.
+      # results (data/live/news-index.js and data/live/news-index/<day>.js), which the app's news search reads, and from that index
+      # the reporting levels (tools/news_spikes.mjs -> data/live/spikes.js: places with more headlines than normal, on Today).
       - name: Pull data-set searches and build the news search index
         if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics' || inputs.only == 'et' }}
         timeout-minutes: 5
-        run: node tools/refresh_topics.mjs; node tools/news_index.mjs; node tools/refresh_layerfeed.mjs; node tools/news_stories.mjs
+        run: node tools/refresh_topics.mjs; node tools/news_index.mjs; node tools/news_spikes.mjs; node tools/refresh_layerfeed.mjs; node tools/news_stories.mjs
         continue-on-error: true
       # The ET tab (UFO and UAP reports): the news pool's "uap" data set pinned on the map, official releases and the
       # notable cases in tools/et_cases.json, into data/live/et.js (tools/refresh_et.mjs).
@@ -312,7 +313,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/spikes.js data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true
