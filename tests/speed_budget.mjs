@@ -1,16 +1,19 @@
 // Speed budget: on a phone profile (Chrome's engine, a 4G connection of 150 ms and 9 Mbit/s, a phone-class processor),
 // the first base-map picture must be on screen within BUDGET ms of opening the app, and every picture in view soon after.
+// The map runs open the way "start on: Map" does (localStorage "osap-home" holds JSON, as assets/osap-today.js writes it; before
+// 13 Nov 2026 it held a bare map, which the app does not read, so those runs measured the map behind Today).
 // Map hosts are answered locally after a short pause so only this app's own downloads and work are measured.
 // Files are sent compressed, as Netlify sends them (13 Nov 2026: measured uncompressed the map took 4.2-4.5 s, compressed 2.4-2.6 s).
 // Today (the screen a fresh open lands on, assets/osap-today.js) must be on screen, cover gone, within TODAY ms, and its daily
-// summary drawn soon after (13 Nov 2026: 7.1 s before the list behind Today waited for it, 6.3 s after).
+// summary drawn soon after (13 Nov 2026: 7.1 s before the list behind Today waited for it, 6.3 s after; 5.7-5.9 s on this machine
+// once Today's top stories wait for its first picture; CI runs about 1 s faster).
 // Fails when a change makes the first map or Today slower than the budget. Run from the repo root: node tests/speed_budget.mjs
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import { extname, join, normalize } from "node:path";
 import { chromium, devices } from "playwright";
-const FIRST = +(process.env.BUDGET || 3500), ALL = FIRST + 2000, TODAY = +(process.env.TODAY_BUDGET || 7000), RUNS = 3;
+const FIRST = +(process.env.BUDGET || 3500), ALL = FIRST + 2000, TODAY = +(process.env.TODAY_BUDGET || 6500), RUNS = 3;
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".webp": "image/webp", ".woff2": "font/woff2" };
 const ZIP = /^(text\/|application\/json|image\/svg)/;
 const root = process.cwd();
@@ -35,7 +38,7 @@ async function once(bm) {
     await new Promise((ok) => setTimeout(ok, 120));
     return r.fulfill({ status: 200, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "image/png" }, body: png });
   });
-  await ctx.addInitScript((bm) => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-map-layers", JSON.stringify({ base: bm })); } catch (e) {} }, bm);
+  await ctx.addInitScript((bm) => { try { localStorage.setItem("osap-home", JSON.stringify("map")); localStorage.setItem("asap-map-layers", JSON.stringify({ base: bm })); } catch (e) {} }, bm);
   const p = await ctx.newPage(), cdp = await ctx.newCDPSession(p);
   await cdp.send("Network.enable");
   await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 9e6 / 8, uploadThroughput: 3e6 / 8 });
