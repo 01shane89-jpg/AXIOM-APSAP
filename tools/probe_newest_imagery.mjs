@@ -1,4 +1,4 @@
-// Test only: night lights + Sentinel-1 radar probe. Prints results; writes nothing.
+// Test only: night lights + Sentinel-1 radar probe, round 2. Prints results; writes nothing.
 const ORIGIN = "https://axiom-osap.netlify.app";
 async function get(u, quiet) {
   const t0 = Date.now();
@@ -10,48 +10,37 @@ async function get(u, quiet) {
   } catch (e) { console.log(`ERR ${e.message} ${u.slice(0, 200)}`); return {}; }
 }
 const G = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/";
-const cap = await get(G + "1.0.0/WMTSCapabilities.xml");
-const xml = cap.b ? cap.b.toString() : "";
-const layers = xml.split("<Layer>").slice(1);
-const want = /DayNight|Black_Marble|CityLights|OPERA|RTC|Sentinel-?1|S1_|Nighttime|NightLights|_DNB/i;
-const found = [];
-for (const L of layers) {
-  const id = (L.match(/<ows:Identifier>([^<]+)<\/ows:Identifier>/) || [])[1] || "";
-  if (!want.test(id)) continue;
-  const tms = [...L.matchAll(/<TileMatrixSet>([^<]+)<\/TileMatrixSet>/g)].map(m => m[1]).join(",");
-  const fmt = [...L.matchAll(/<Format>([^<]+)<\/Format>/g)].map(m => m[1]).join(",");
-  const def = (L.match(/<Default>([^<]+)<\/Default>/) || [])[1] || "";
-  const vals = [...L.matchAll(/<Value>([^<]+)<\/Value>/g)].map(m => m[1]);
-  const title = (L.match(/<ows:Title[^>]*>([^<]+)<\/ows:Title>/) || [])[1] || "";
-  const tpl = (L.match(/template="([^"]+)"/) || [])[1] || "";
-  console.log(`LAYER ${id} | ${title} | tms=${tms} fmt=${fmt} default=${def} times=${vals.slice(0, 2).join(" ")} … ${vals.slice(-2).join(" ")} (${vals.length}) tpl=${tpl.slice(-60)}`);
-  found.push({ id, tms, fmt, def, tpl });
-}
-// tile tests: Bangkok + Kyiv + Manila at z6/z8; default time and a few recent days
-const tiles = { z5: "5/24/14", z6: "6/49/29", z8: "8/199/118", z7kyiv: "7/77/43", z8manila: "8/217/115" };
-const now = Date.now();
-for (const f of found) {
-  const ext = /jpeg/.test(f.fmt) ? "jpg" : "png";
-  const tm = f.tms.split(",")[0];
-  const days = ["default"]; for (let k = 0; k < 4; k++) days.push(new Date(now - k * 864e5).toISOString().slice(0, 10));
-  if (f.def && !days.includes(f.def)) days.push(f.def);
-  for (const d of days) for (const [n, t] of Object.entries(tiles)) {
-    const z = +t.split("/")[0]; if (/Level(\d+)/.test(tm) && z > +tm.match(/Level(\d+)/)[1]) continue;
-    const g = await get(`${G}${f.id}/default/${d}/${tm}/${t}.${ext}`, true);
-    console.log(`TILE ${f.id} ${d} ${n} -> ${g.r ? g.r.status : "ERR"} len=${g.b ? g.b.length : 0} acao=${g.r ? g.r.headers.get("access-control-allow-origin") : ""}`);
+const OP = "OPERA_L2_Radiometric_Terrain_Corrected_SAR_Sentinel-1";
+function tile(lon, lat, z) { const n = 2 ** z, x = Math.floor((lon + 180) / 360 * n), r = lat * Math.PI / 180, y = Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n); return `${z}/${y}/${x}`; }
+function merc(lon, lat) { const R = 6378137; return [lon * Math.PI / 180 * R, Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)) * R]; }
+const places = { bangkok: [100.55, 13.75, "2026-11-06"], kyiv: [30.5, 50.45, ""], manila: [121.0, 14.6, ""], la: [-118.25, 34.05, ""], taipei: [121.5, 25.05, ""] };
+// DescribeDomains with bbox (EPSG:3857 metres) for the OPERA layer and night-light layers
+for (const [n, [lon, lat]] of Object.entries(places)) {
+  const a = merc(lon - 0.25, lat - 0.25), b = merc(lon + 0.25, lat + 0.25), bb = [a[0], a[1], b[0], b[1]].map(v => Math.round(v)).join(",");
+  for (const L of [[OP, "GoogleMapsCompatible_Level12"], ["VIIRS_NOAA20_GapFilled_BRDF_Corrected_DayNightBand_Radiance", "GoogleMapsCompatible_Level8"], ["VIIRS_NOAA21_DayNightBand_At_Sensor_Radiance", "GoogleMapsCompatible_Level8"]]) {
+    const d = await get(`${G}1.0.0/${L[0]}/default/${L[1]}/${bb}/2026-10-01--2026-11-13.xml`);
+    if (d.b) console.log("DD", n, L[0].slice(0, 30), d.b.toString().replace(/\s+/g, " ").slice(0, 700));
   }
 }
-// CMR: OPERA RTC-S1 granules (keyless) over Bangkok / Kyiv / Manila, newest first
-for (const [sn, bb] of [["OPERA_L2_RTC-S1_V1", "100.45,13.65,100.65,13.85"], ["OPERA_L2_RTC-S1_V1", "30.4,50.35,30.6,50.55"], ["OPERA_L2_RTC-S1_V1", "120.9,14.5,121.1,14.7"], ["SENTINEL-1A_SLC", "100.45,13.65,100.65,13.85"]]) {
-  const c = await get(`https://cmr.earthdata.nasa.gov/search/granules.json?short_name=${sn}&bounding_box=${bb}&sort_key=-start_date&page_size=5`);
-  if (c.b) { try { const j = JSON.parse(c.b); (j.feed.entry || []).forEach(e => console.log("CMR", sn, e.title, e.time_start, e.id, (e.links || []).filter(l => /browse|png|tif/i.test(l.href || "")).slice(0, 3).map(l => l.href).join(" "))); } catch (e) { console.log(c.b.toString().slice(0, 300)); } }
+// no-bbox form
+const d0 = await get(`${G}1.0.0/${OP}/default/GoogleMapsCompatible_Level12/all/2026-11-01--2026-11-13.xml`);
+if (d0.b) console.log("DD0", d0.b.toString().replace(/\s+/g, " ").slice(0, 900));
+// OPERA tiles at z6..z12 over places, for each of the last 10 days
+const now = Date.now();
+for (const [n, [lon, lat]] of Object.entries(places)) for (let k = 0; k < 10; k++) {
+  const d = new Date(now - k * 864e5).toISOString().slice(0, 10), out = [];
+  for (const z of [6, 8, 10, 12]) { const g = await get(`${G}${OP}/default/${d}/GoogleMapsCompatible_Level12/${tile(lon, lat, z)}.png`, true); out.push(`z${z}:${g.r ? g.r.status : "E"}/${g.b ? g.b.length : 0}`); }
+  console.log("OPT", n, d, out.join(" "));
 }
-// CMR collections: OPERA RTC / DSWx-S1 / Sentinel-1 browse
-const cc = await get("https://cmr.earthdata.nasa.gov/search/collections.json?keyword=OPERA%20RTC-S1&page_size=10");
-if (cc.b) try { JSON.parse(cc.b).feed.entry.forEach(e => console.log("COLL", e.short_name, e.title, e.time_start)); } catch (e) {}
-// Earth Search sentinel-1-grd presence + Planetary Computer sentinel-1-rtc
-await get("https://earth-search.aws.element84.com/v1/collections/sentinel-1-grd");
-const pc = await get("https://planetarycomputer.microsoft.com/api/stac/v1/search?collections=sentinel-1-rtc&bbox=100.45,13.65,100.65,13.85&limit=3&sortby=-datetime");
-if (pc.b) try { JSON.parse(pc.b).features.forEach(f => console.log("PC", f.id, f.properties.datetime, f.assets.tilejson && f.assets.tilejson.href)); } catch (e) { console.log(pc.b.toString().slice(0, 300)); }
-const pg = await get("https://planetarycomputer.microsoft.com/api/stac/v1/search?collections=sentinel-1-grd&bbox=100.45,13.65,100.65,13.85&limit=3&sortby=-datetime");
-if (pg.b) try { JSON.parse(pg.b).features.forEach(f => { console.log("PCGRD", f.id, f.properties.datetime, f.assets.tilejson && f.assets.tilejson.href); }); } catch (e) {}
+// night lights: gap-filled newest days at z6/z8 Kyiv + Taipei
+for (const L of ["VIIRS_NOAA20_GapFilled_BRDF_Corrected_DayNightBand_Radiance", "VIIRS_NOAA21_GapFilled_BRDF_Corrected_DayNightBand_Radiance", "VIIRS_Black_Marble", "VIIRS_CityLights_2012"])
+  for (const [n, [lon, lat]] of Object.entries(places)) {
+    const d = /Black/.test(L) ? "2016-01-01" : /City/.test(L) ? "default" : "2026-11-10", ext = /City/.test(L) ? "jpg" : "png", out = [];
+    for (const z of [3, 5, 7, 8]) { const g = await get(`${G}${L}/default/${d}/GoogleMapsCompatible_Level8/${tile(lon, lat, z)}.${ext}`, true); out.push(`z${z}:${g.r ? g.r.status : "E"}/${g.b ? g.b.length : 0}`); }
+    console.log("NLT", L.slice(0, 28), n, out.join(" "));
+  }
+// z9 over Level8 -> 404 or overzoom?
+await get(`${G}VIIRS_Black_Marble/default/2016-01-01/GoogleMapsCompatible_Level8/${tile(30.5, 50.45, 9)}.png`);
+// Earth Search Sentinel-1 GRD items: are assets public https?
+const es = await get("https://earth-search.aws.element84.com/v1/search?collections=sentinel-1-grd&bbox=100.45,13.65,100.65,13.85&limit=1&sortby=-properties.datetime");
+if (es.b) try { const f = JSON.parse(es.b).features[0]; console.log("ES1", f.id, f.properties.datetime, JSON.stringify(Object.fromEntries(Object.entries(f.assets).map(([k, v]) => [k, v.href]))).slice(0, 600)); } catch (e) {}
