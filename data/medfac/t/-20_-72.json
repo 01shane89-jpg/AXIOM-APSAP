@@ -12,7 +12,7 @@
 ["n8329354117",-18.48391,-70.30803,"cl",{"amenity":"clinic","opening_hours":"Mo-Sa 08:00-18:00","osap:withheld":"1"}],
 ["r8971488",-18.35347,-70.34032,"cl",{"name":"Aeropuerto Internacional Chacalluta","name:en":"Chacalluta International Airport","operator":"DGAC Chile","operator:type":"government","phone":"(58) 221 3416","website":"https://aeropuertoarica.cl/","addr:street":"Ruta 12","addr:city":"Arica","aeroway":"aerodrome","icao":"SCAR","iata":"ARI","wikidata":"Q948809"}],
 ["r9217579",-18.4835,-70.30666,"cl",{"name":"Clínica San José","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
-["w1024393970",-18.02275,-70.2591,"pe",{"name":"Clinica La Luz","amenity":"clinic","healthcare":"clinic","addr:housenumber":"702","addr:street":"Avenida Manuel A. Odría","addr:city":"Tacna"}],
+["w1024393970",-18.02274,-70.25909,"pe",{"name":"Clinica La Luz","amenity":"clinic","healthcare":"clinic","addr:housenumber":"702","addr:street":"Avenida Manuel A. Odría","addr:city":"Tacna"}],
 ["w1024990266",-18.03738,-70.24892,"pe",{"name":"Puesto de Salud 5 de Noviembre","amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","phone":"+51 52 400735","addr:full":"Asociación Perez Gamboa Mazana F Lote 32"}],
 ["w1032370715",-18.01769,-70.25077,"pe",{"name":"Servicios Integrales de Salud Santa Ana S.A.C.","amenity":"clinic","healthcare":"clinic","operator:type":"private","phone":"+51 52 242401","addr:housenumber":"151","addr:street":"Calle Arica"}],
 ["w1041570142",-18.00908,-70.25848,"pe",{"name":"Policlínico Militar","amenity":"clinic","healthcare":"clinic"}],

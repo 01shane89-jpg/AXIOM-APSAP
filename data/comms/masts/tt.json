@@ -1,4 +1,4 @@
-{"cc":"tt","at":"2026-10-10T10:15:33Z","base":"2026-10-10T10:14:19Z","m":[
+{"cc":"tt","at":"2026-11-13T11:46:26Z","base":"2026-11-13T11:45:05Z","m":[
 ["n10152510013",10.68211,-61.57909,{"communication:mobile_phone":"yes","man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
 ["n10778804652",10.43765,-61.44548,{"communication:GPRS":"yes","communication:HSPA":"yes","communication:HSPA+":"yes","communication:dc-hspa":"yes","communication:edge":"yes","communication:gsm":"yes","communication:lte":"yes","communication:lte+":"yes","communication:nr":"yes","communication:umts":"yes","man_made":"tower","name":"bmobile McBean Cell Site","tower:construction":"lattice","tower:type":"communication"}],
 ["n11044612787",11.20289,-60.63367,{"man_made":"tower","name":"Digicel Cell Site","tower:type":"communication"}],

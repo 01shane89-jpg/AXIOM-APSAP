@@ -12,6 +12,7 @@
 ["w1064466888",-22.39314,-60.03405,"py",{"name":"Fundación Visión Clínica Chaco","amenity":"clinic","healthcare":"clinic"}],
 ["w1289776027",-23.57347,-60.57685,"py",{"name":"Aeródromo de General José Eduvigis Díaz","aeroway":"aerodrome"}],
 ["w1296077915",-23.20127,-61.75695,"ar",{"aeroway":"aerodrome"}],
+["w1572230000",-22.83991,-61.66708,"py",{"aeroway":"aerodrome"}],
 ["w161764186",-22.35959,-60.05429,"py",{"name:en":"Filadelfia Airport (FLM)","aeroway":"aerodrome","icao":"SGFI","iata":"FLM","aerodrome:type":"regional","wikidata":"Q11824379"}],
 ["w161765642",-22.35165,-60.03394,"py",{"amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w161765661",-22.35164,-60.03417,"py",{"amenity":"hospital","healthcare":"hospital"}],

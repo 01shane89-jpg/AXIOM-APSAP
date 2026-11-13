@@ -17,7 +17,7 @@
 ["n5070432122",-6.77114,-79.84229,"pe",{"name":"Dental Pacifico","amenity":"clinic","addr:street":"Avenida Luis Gonzáles"}],
 ["n5071832055",-6.7724,-79.8423,"pe",{"name":"Centro Diagnóstico JRB","amenity":"clinic","addr:street":"Avenida Luis Gonzáles"}],
 ["n5073737433",-6.77187,-79.83601,"pe",{"name":"Plaza Medic","amenity":"clinic","addr:street":"Avenida Sáenz Peña"}],
-["n5073737486",-6.76787,-79.8355,"pe",{"amenity":"clinic","osap:withheld":"1"}],
+["n5073737486",-6.76787,-79.8355,"pe",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
 ["n5086474865",-6.77097,-79.84169,"pe",{"name":"Opti Salud","amenity":"clinic","addr:street":"Avenida San Jose","addr:city":"Chiclayo"}],
 ["n5639103821",-6.78761,-79.84637,"pe",{"name":"Clínica Vidavas","amenity":"clinic"}],
 ["n5647978122",-6.77427,-79.84827,"pe",{"name":"Soluciones médicas","amenity":"clinic"}],

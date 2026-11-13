@@ -4,6 +4,7 @@
 ["n13179037725",59.83291,5.72475,"no",{"name":"Husnes helikopterplass, Sunde","aeroway":"helipad"}],
 ["n13192481201",59.27974,5.52714,"no",{"name":"Kårstø Heliport","aeroway":"heliport"}],
 ["n13867569428",58.8304,5.74187,"no",{"aeroway":"helipad","surface":"asphalt"}],
+["n14271064187",58.95205,5.68088,"no",{"name":"Madla Hud- Og Fotklinikk","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"podiatry;dermatology"}],
 ["n1445589034",59.42339,5.25567,"no",{"aeroway":"helipad"}],
 ["n4038568909",59.40873,5.27962,"no",{"name":"Haugesund helikopterplass, Haugesund sykehus","aeroway":"helipad","icao":"ENHX"}],
 ["n5260505831",58.57039,5.69182,"no",{"name":"Vigrestad helsesenter","amenity":"doctors","healthcare":"clinic","healthcare:speciality":"general"}],

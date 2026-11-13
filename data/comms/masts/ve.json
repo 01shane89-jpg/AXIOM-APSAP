@@ -1,4 +1,4 @@
-{"cc":"ve","at":"2026-10-10T10:40:01Z","base":"2026-10-10T10:37:59Z","m":[
+{"cc":"ve","at":"2026-11-13T11:58:54Z","base":"2026-11-13T11:57:27Z","m":[
 ["n10000630810",8.04726,-69.336,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n10000767040",4.97618,-61.14472,{"man_made":"tower","operator":"Movilnet","tower:construction":"lattice","tower:type":"communication"}],
 ["n10006971594",5.83864,-61.44557,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
@@ -289,6 +289,8 @@
 ["n12189721769",10.04344,-69.42311,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n12200057608",10.62113,-66.84476,{"man_made":"tower","tower:type":"communication"}],
 ["n12264886196",8.96163,-71.60487,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n12461741154",10.46901,-66.52971,{"height":"40","man_made":"tower","material":"metal","tower:construction":"lattice","tower:type":"communication"}],
+["n12461775712",10.46937,-66.52908,{"height":"25","man_made":"tower","material":"metal","tower:construction":"lattice","tower:type":"communication"}],
 ["n12463775733",10.48119,-66.48234,{"man_made":"tower","material":"metal","tower:type":"communication"}],
 ["n12463775778",10.48158,-66.48265,{"man_made":"tower","material":"metal","tower:type":"communication"}],
 ["n12463775779",10.48165,-66.48288,{"man_made":"tower","material":"metal","tower:type":"communication"}],
@@ -519,6 +521,8 @@
 ["n14140997989",8.11799,-63.60899,{"height":"12","man_made":"tower","tower:construction":"guyed_lattice","tower:type":"communication"}],
 ["n14142476398",8.04493,-63.54343,{"height":"30","man_made":"tower","tower:construction":"guyed_lattice","tower:type":"communication"}],
 ["n14143469302",8.05591,-63.57429,{"height":"20","man_made":"tower","tower:construction":"guyed_lattice","tower:type":"communication"}],
+["n14304206177",10.34812,-67.04404,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
+["n14334089597",10.34677,-67.0509,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1634115857",10.0337,-68.08171,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1657126621",10.19596,-68.02068,{"man_made":"tower","name":"Antena de CANTV","tower:construction":"lattice","tower:type":"communication"}],
 ["n1729071366",10.49031,-67.99537,{"man_made":"tower","tower:type":"communication"}],

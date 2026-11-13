@@ -3,6 +3,7 @@
 ["n10189434043",14.00722,0.75026,"ne",{"name":"Clinique Bani mate","healthcare":"clinic","healthcare:speciality":"general;paediatrics;internal"}],
 ["n1042031905",14.36597,0.08664,"bf",{"name":"Piste d'Essakane","aeroway":"aerodrome"}],
 ["n12863673491",15.66607,0.50261,"ml",{"name":"CSREF Ansongo","amenity":"hospital"}],
+["n14363146201",14.74378,0.36305,"ne",{"name":"CSI","amenity":"hospital"}],
 ["n2163839525",14.96894,0.70493,"ml",{"name":"CSCOM de LABBEZANGA","amenity":"clinic"}],
 ["n3455739156",14.79028,0.03801,"bf",{"name":"Piste de Tambao","name:en":"Tambao Airport","aeroway":"aerodrome","icao":"DFEM","iata":"TMQ","wikidata":"Q6588001"}],
 ["n4397522664",14.20265,1.46265,"ne",{"name":"Centre de Santé Intégré Type 2","amenity":"clinic","healthcare":"clinic"}],
