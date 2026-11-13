@@ -48,6 +48,26 @@
   /* 4. Today opens first: ask now for the country's daily summary and story list, which Today shows at the top
         (assets/osap-daily.js, assets/osap-coverage.js load the same addresses), so they are here when Today is drawn instead
         of being asked for only then (about half a second on a phone, tests/speed_budget.mjs) */
+  /* 5. While Today covers the app on a fresh open, the page behind it (the header and the map, timeline and panels, about 8,000
+        elements) is not drawn (content-visibility: hidden), so the phone draws Today first; its sizes are still worked out
+        when asked, so the map opens where it would have. It is drawn again a moment after Today is on screen, so the map is
+        ready by the time it is opened (assets/osap-today.js), or at once when Today closes; never later than the page load
+        when Today did not open, or 20 seconds (tests/speed_budget.mjs) */
+  try {
+    if (sessionStorage.getItem("osap-today") === "1") {
+      var hd = document.documentElement, hst = document.createElement("style");
+      hst.textContent = "html.td-boot #map{visibility:hidden}";
+      hd.appendChild(hst); hd.classList.add("td-boot");
+      var unboot = function () {
+        if (!hd.classList.contains("td-boot")) return;
+        hd.classList.remove("td-boot");
+        try { window.dispatchEvent(new Event("resize")); } catch (e) {}
+      };
+      window.OSAP_UNBOOT = unboot;
+      window.addEventListener("load", function () { if (!(window.OSAP_TODAY && window.OSAP_TODAY.isOpen())) unboot(); });
+      setTimeout(unboot, 20000);
+    }
+  } catch (e) {}
   try {
     if (sessionStorage.getItem("osap-today") === "1") {
       var hn = (location.hash || "").replace("#", "").split("/"), tcc = hn.length > 1 && /^[a-z]{2,3}$/.test(hn[0]) ? hn[0] : "th", tq = "?t=" + Math.floor(Date.now() / 6e5);
