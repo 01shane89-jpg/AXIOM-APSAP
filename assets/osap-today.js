@@ -485,6 +485,8 @@
     try { box.focus({ preventScroll: true }); } catch (e) {}
   }
   function hide() {
+    /* the list behind Today is drawn after Today opens (index.html, OSAP_LISTUP); leaving Today early draws it now */
+    if (window.OSAP_LISTUP) window.OSAP_LISTUP();
     open = false; if (box) box.hidden = true; document.documentElement.classList.remove("td-on"); ssSet(OPEN_KEY, "0"); clearInterval(tick);
     if (ctl) ctl.hidden = false;
     if (window.__asapMap && window.__asapMap.invalidateSize) setTimeout(function () { window.__asapMap.invalidateSize(); }, 50);
