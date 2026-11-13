@@ -1,0 +1,43 @@
+{
+ "name": "today",
+ "view": "desk",
+ "w": 1920,
+ "h": 1080,
+ "frames": 158,
+ "start": 13.194,
+ "end": 36.49,
+ "caps": [
+  {
+   "t": 13.194,
+   "text": "Today: your country's picture, first thing",
+   "sub": "Weather, warnings, top stories and a daily summary."
+  },
+  {
+   "t": 20.829,
+   "text": "Every item links to its source",
+   "sub": "Times in Zulu and local. Government figures are marked as claims."
+  },
+  {
+   "t": 24.955,
+   "text": "Reporting level against normal",
+   "sub": "Spikes in reporting are flagged by place, automatically."
+  },
+  {
+   "t": 29.156,
+   "text": "One tap: the daily brief as a PDF",
+   "sub": "Sources stay clickable. AI-generated parts are labeled."
+  }
+ ],
+ "skips": [
+  [
+   33.413999999999994,
+   33.385
+  ]
+ ],
+ "pdfs": [
+  {
+   "file": "daily-brief.pdf",
+   "t": 33.37
+  }
+ ]
+}

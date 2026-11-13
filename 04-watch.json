@@ -1,0 +1,23 @@
+{
+ "name": "watch",
+ "view": "desk",
+ "w": 1920,
+ "h": 1080,
+ "frames": 248,
+ "start": 12.177,
+ "end": 24.347,
+ "caps": [
+  {
+   "t": 12.177,
+   "text": "Watch an area",
+   "sub": "Get an alert on your phone when new reports land inside it."
+  },
+  {
+   "t": 15.585,
+   "text": "Pick a city and a radius",
+   "sub": "Or use the area you drew, or your own location."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}

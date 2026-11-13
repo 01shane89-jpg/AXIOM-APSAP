@@ -1,0 +1,18 @@
+{
+ "name": "offline",
+ "view": "desk",
+ "w": 1920,
+ "h": 1080,
+ "frames": 156,
+ "start": 12.363,
+ "end": 25.32,
+ "caps": [
+  {
+   "t": 12.363,
+   "text": "Save a country for offline use",
+   "sub": "Maps and data keep working with no signal."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}

@@ -1,0 +1,23 @@
+{
+ "name": "map",
+ "view": "desk",
+ "w": 1920,
+ "h": 1080,
+ "frames": 173,
+ "start": 14.074,
+ "end": 25.051,
+ "caps": [
+  {
+   "t": 14.074,
+   "text": "Every report, on the map",
+   "sub": "Standard map symbols, filtered by period and topic."
+  },
+  {
+   "t": 18.075,
+   "text": "Tap a report for the details",
+   "sub": "Source link, original language and a SHA-256 fingerprint."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
