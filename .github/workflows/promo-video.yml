@@ -1,0 +1,35 @@
+# Scratch (claude/promo-video, never merged): records the clips for the captioned OSAP walkthrough video (tools/promo_video.mjs)
+# where map tiles load, desktop and phone, and pushes them to media/promo-video-<view>. Writes nothing to main.
+name: Promo video clips
+on:
+  push:
+    branches: [claude/promo-video]
+    paths: [tools/promo_video.mjs, .github/workflows/promo-video.yml]
+permissions:
+  contents: write
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        view: [desk, phone]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: VIEW=${{ matrix.view }} OUT=pub node tools/promo_video.mjs 2>&1 | tee pub-log.txt
+      - name: Push the clips
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          cp pub-log.txt pub/log.txt && cd pub && ls -la
+          git init -q -b media/promo-video-${{ matrix.view }}
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q -m "promo clips (${{ matrix.view }}) from ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/promo-video-${{ matrix.view }}
