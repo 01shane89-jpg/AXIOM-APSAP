@@ -433,11 +433,13 @@
     /* the news search keeps its own box: re-drawing the rest (every few seconds as records arrive) never wipes what is typed */
     if (!box.querySelector("#td-body")) {
       box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section>' +
-        '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><section id="td-cover" class="tdcard" aria-label="Story coverage" hidden></section>' +
+        '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><section id="td-spike" class="tdcard" aria-label="Reporting level" hidden></section><section id="td-cover" class="tdcard" aria-label="Story coverage" hidden></section>' +
         '<div id="td-body"></div></div>';
       if (window.OSAP_NEWSQ) window.OSAP_NEWSQ.mount(box.querySelector("#td-news"), CC, countryName()); else box.querySelector("#td-news").hidden = true;
       /* the daily summary (assets/osap-daily.js) keeps its own box too, so a picked day survives the redraws */
       if (window.OSAP_DAILYQ) window.OSAP_DAILYQ.mount(box.querySelector("#td-daily"), CC, countryName());
+      /* Reporting level (assets/osap-spikes.js): this country's headlines against its normal level, and spikes elsewhere */
+      if (window.OSAP_SPIKESQ) window.OSAP_SPIKESQ.mount(box.querySelector("#td-spike"), CC, countryName());
       /* Story coverage (assets/osap-coverage.js): which outlets carried each story, and the blindspots; its own box, like the summary */
       if (window.OSAP_COVERAGEQ) window.OSAP_COVERAGEQ.mount(box.querySelector("#td-cover"), CC, countryName());
     }
