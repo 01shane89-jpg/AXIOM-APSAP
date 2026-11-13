@@ -15,3 +15,19 @@ export function splitView(items, perArea) {
   }
   return { kept, view, counts };
 }
+
+// Mastodon statuses (GET /api/v1/accounts/:id/statuses) -> { text, date, link, lang } for public, original posts inside the window.
+// The post's words are HTML; they are turned into plain text here, read for relevance and then dropped (tools/outlet_text.mjs).
+const unhtml = (h) => String(h || "").replace(/<br\s*\/?>|<\/p>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<")
+  .replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&nbsp;/g, " ").replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(+n)).trim();
+export function mastodonPosts(list, since = 0) {
+  const out = [];
+  for (const s of Array.isArray(list) ? list : []) {
+    if (!s || s.reblog || s.in_reply_to_id || (s.visibility && s.visibility !== "public")) continue;
+    const date = new Date(s.created_at), link = s.url || s.uri;
+    const text = [s.spoiler_text, unhtml(s.content)].filter(Boolean).join("\n").trim();
+    if (!text || isNaN(date) || date.getTime() < since || !/^https:\/\//.test(link || "")) continue;
+    out.push({ text, date, link, lang: (s.language || "").slice(0, 3) });
+  }
+  return out;
+}

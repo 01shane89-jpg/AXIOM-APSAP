@@ -10,7 +10,7 @@ import { stripOutletText, postOnly } from "./outlet_text.mjs";
 // loaded only when such a post is met) and then reduced to who, when and the link (tools/outlet_text.mjs postOnly)
 let socialJudge = null;
 async function wordsOnly(i) {
-  if (!i || (i.platform !== "Bluesky" && i.platform !== "Telegram")) return i;
+  if (!i || (i.platform !== "Bluesky" && i.platform !== "Telegram" && i.platform !== "Mastodon")) return i;
   if (!i.notext) {
     if (!socialJudge) {
       const { compileSocial, socialRelevance } = await import("./social_relevance.mjs"), { compileRelevance } = await import("./topics_lib.mjs");

@@ -10,7 +10,7 @@
 (function () {
   "use strict";
   var W = window, tab = "posts", ctx = null, loading = {};
-  var PLAT = ["Bluesky", "Telegram", "YouTube"];
+  var PLAT = ["Bluesky", "Telegram", "Mastodon", "YouTube"];
   var NOT_READ = "X (Twitter), Facebook, Instagram, TikTok and Reddit are not read: they need an account or API key, or refuse automated reads (Reddit blocks GitHub's servers).";
   var NO_COMMENTS = { YouTube: "YouTube comments need a YouTube Data API key, so they are not read.", Telegram: "Telegram comments sit in each channel's discussion group, which needs a logged-in account, so they are not read." };
   var THEMES = [["doubt", "Doubts the report or the source"], ["action", "Calls for action"], ["concern", "Fear or concern"], ["anger", "Anger or outrage"],

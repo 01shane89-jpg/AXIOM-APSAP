@@ -43,7 +43,7 @@ for (const vp of [{ width: 1400, height: 900 }, { width: 390, height: 844 }]) {
     return { shown: !pane.hidden, text: pane.innerText, rows: pane.querySelectorAll(".sstable .ssrow").length, all: S.reduce((a, s) => a + s.all, 0), kept: kept.length,
       wide: pane.scrollWidth <= pane.clientWidth + 1 };
   });
-  ok(plat.shown && plat.rows === 4, `By platform: table with 3 platform rows (${plat.rows - 1})`);
+  ok(plat.shown && plat.rows === 5, `By platform: table with 4 platform rows (Bluesky, Telegram, Mastodon, YouTube) (${plat.rows - 1})`);
   ok(plat.all > 0 && plat.all <= plat.kept, `By platform: counts ${plat.all} of ${plat.kept} kept posts`);
   ok(/YouTube Data API key/.test(plat.text) && /X \(Twitter\)/.test(plat.text), "By platform: says which platforms and comments are not read");
   ok(plat.wide, "By platform: no sideways scroll");

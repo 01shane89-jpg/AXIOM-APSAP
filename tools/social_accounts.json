@@ -835,9 +835,147 @@
    "handle": "jakpost.bsky.social",
    "kind": "news desk",
    "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "interpol.int",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "washingtonpost.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "cnn.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "nytimes.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "aljazeera.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "euronews.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "wsj.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "axios.com",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "fr",
+   "handle": "franceinfo.fr",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "fr",
+   "handle": "rfi.fr",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "pt",
+   "handle": "publico.pt",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "be",
+   "handle": "belgium.be",
+   "kind": "government",
+   "lang": "fr"
+  },
+  {
+   "cc": "cz",
+   "handle": "irozhlas.cz",
+   "kind": "public broadcaster",
+   "lang": "cs"
+  },
+  {
+   "cc": "in",
+   "handle": "thewire.in",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "br",
+   "handle": "estadao.com.br",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "*",
+   "handle": "roasiapacific.iom.int",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "handle": "nws.noaa.gov",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "euinemergencies.ec.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "afro.who.int",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "coe.int",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "ecdc.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "ukparliament.parliament.uk",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "esaspaceweather.esa.int",
+   "kind": "international organisation",
+   "lang": "en"
   }
  ],
- "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run.",
+ "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run. Channels added on 2026-11-13 (tools/probe_social.mjs from GitHub's runners) were kept only when the preview's channel title matched the agency or outlet, it had posted in the last 30 days, and it was the body's own channel (look-alikes, aggregators and mirrors with few subscribers were dropped).",
  "telegram": [
   {
    "cc": "sg",
@@ -1139,6 +1277,513 @@
    "channel": "voachinese",
    "kind": "state-funded (US)",
    "lang": "zh"
+  },
+  {
+   "cc": "ua",
+   "channel": "kpszsu",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "ministry_of_defense_ua",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "GeneralStaffZSU",
+   "kind": "government (military)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "dsns_telegram",
+   "kind": "disaster agency",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "mvs_ukraine",
+   "kind": "government (police)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "SBUkr",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "spravdi",
+   "kind": "government",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "V_Zelenskiy_official",
+   "kind": "government (head of state)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "air_alert_ua",
+   "kind": "government (air raid alerts)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "KyivCityOfficial",
+   "kind": "government (city)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "suspilnenews",
+   "kind": "public broadcaster",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "ukrpravda_news",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "hromadske_ua",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "kyivindependent_official",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "channel": "lbua_official",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ru",
+   "channel": "radiosvoboda",
+   "kind": "state-funded (US)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "MID_Russia",
+   "kind": "government",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "interfaxonline",
+   "kind": "news agency",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "kommersant",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "tvrain",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "novaya_pishet",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "bbcrussian",
+   "kind": "state-funded (UK)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "agentstvonews",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "ostorozhno_novosti",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "fontankaspb",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "channel": "istories_media",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "il",
+   "channel": "idfofficial",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "il",
+   "channel": "PikudHaOref_all",
+   "kind": "government (military, civil defense alerts)",
+   "lang": "he"
+  },
+  {
+   "cc": "il",
+   "channel": "ynetalerts",
+   "kind": "news desk",
+   "lang": "he"
+  },
+  {
+   "cc": "lb",
+   "channel": "LBCI_NEWS",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "channel": "EnabBaladi",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "jo",
+   "channel": "petranews",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "*",
+   "channel": "AJENews_Official",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "af",
+   "channel": "afintl",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "kz",
+   "channel": "tengrinews",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "channel": "kazinform_news",
+   "kind": "state media",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "channel": "vlastkz",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "uz",
+   "channel": "kunuzofficial",
+   "kind": "news desk",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "channel": "daryo",
+   "kind": "news desk",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "channel": "gazetauz",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "uz",
+   "channel": "podrobno",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "az",
+   "channel": "azertacnews",
+   "kind": "state media",
+   "lang": "az"
+  },
+  {
+   "cc": "am",
+   "channel": "armenpress",
+   "kind": "state media",
+   "lang": "hy"
+  },
+  {
+   "cc": "by",
+   "channel": "mediazona_by",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "so",
+   "channel": "garoweonline",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bf",
+   "channel": "lefaso_net",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "id",
+   "channel": "infoBMKG",
+   "kind": "disaster agency",
+   "lang": "id"
+  },
+  {
+   "cc": "mm",
+   "channel": "dvbtvnews",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "NUGMyanmar",
+   "kind": "government (exile, National Unity Government)",
+   "lang": "my"
+  },
+  {
+   "cc": "kh",
+   "channel": "camboja_news",
+   "kind": "news desk",
+   "lang": "km"
+  },
+  {
+   "cc": "mx",
+   "channel": "animalpolitico",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ar",
+   "channel": "clarincom",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ht",
+   "channel": "lenouvelliste",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "*",
+   "channel": "france24_en",
+   "kind": "public broadcaster (France)",
+   "lang": "en"
+  },
+  {
+   "cc": "ru",
+   "channel": "astrapress",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "tj",
+   "channel": "radioozodi",
+   "kind": "state-funded (US)",
+   "lang": "tg"
+  },
+  {
+   "cc": "ru",
+   "channel": "MFARussia",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ru",
+   "channel": "mod_russia_en",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "channel": "ukrinform_news",
+   "kind": "state media",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "energoatom_ua",
+   "kind": "government (state energy company)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "channel": "Ukrenergo",
+   "kind": "government (state grid operator)",
+   "lang": "uk"
+  },
+  {
+   "cc": "il",
+   "channel": "N12chat",
+   "kind": "news desk",
+   "lang": "he"
+  },
+  {
+   "cc": "iq",
+   "channel": "IraqiPMO",
+   "kind": "government",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "channel": "syrianmoi",
+   "kind": "government (police)",
+   "lang": "ar"
+  }
+ ],
+ "mastodon_note": "Each account's public posts through its own server's public API (https://<server>/api/v1/accounts/lookup and /statuses); no login, account or key. Government-run servers (social.bund.de, social.overheid.nl, social.numerique.gouv.fr, ec.social-network.europa.eu) host only that government's own accounts, so an account there is self-verifying. Found and checked on 2026-11-13 with tools/probe_social.mjs from GitHub's runners: kept only when it is a government body, public broadcaster or established news outlet, is not a bot, and posted in the last 30 days. Words are read for relevance and then dropped, like Bluesky and Telegram (tools/outlet_text.mjs).",
+ "mastodon": [
+  {
+   "cc": "de",
+   "acct": "Bundesregierung@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "bmi@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "thw@social.bund.de",
+   "kind": "disaster agency",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "BSI@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "bundestag@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "destatis@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "tagesschau@ard.social",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "NDR@ard.social",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "BR24@ard.social",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "heiseonline@social.heise.de",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "us",
+   "acct": "ProPublica@newsie.social",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "fr",
+   "acct": "LeMonde@mastodon.social",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "de",
+   "acct": "DeutscherWetterdienst@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "certbund@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "strahlenschutz@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "RKI@social.bund.de",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "acct": "ZDF@zdf.social",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "*",
+   "acct": "EUCommission@ec.social-network.europa.eu",
+   "kind": "international organisation",
+   "lang": "en"
+  },
+  {
+   "cc": "nl",
+   "acct": "rivm@social.overheid.nl",
+   "kind": "government",
+   "lang": "nl"
+  },
+  {
+   "cc": "fr",
+   "acct": "cert_fr@social.numerique.gouv.fr",
+   "kind": "government",
+   "lang": "fr"
   }
  ],
  "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets. Channels added on 2026-10-23 (given by channel id) were found the same way (tools/probe_youtube.mjs from GitHub's runners) and kept only when they are the country's own government, parliament, armed forces, police, public or state broadcaster, or an established news outlet, with a video in the last month.",
