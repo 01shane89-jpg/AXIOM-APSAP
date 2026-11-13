@@ -52,10 +52,13 @@ await p.waitForTimeout(300);
 const back = await p.evaluate(async () => {
   const rail = document.querySelector(".rail"), sp = document.createElement("div");
   sp.style.width = "900px"; sp.style.height = "1px"; rail.appendChild(sp);   // force something wide, then scroll sideways from script
-  rail.scrollLeft = 120; await new Promise((r) => setTimeout(r, 100));
-  const sl = rail.scrollLeft; sp.remove(); return sl;
+  /* WebKit fires scroll events at its next rendering update, which a busy headless run can hold past a fixed 100 ms (it
+     read 120 once in two runs, 13 Nov 2026), so wait for the reset, up to one second, and say how long it took */
+  rail.scrollLeft = 120; const t0 = performance.now();
+  while (rail.scrollLeft && performance.now() - t0 < 1000) await new Promise((r) => setTimeout(r, 20));
+  const sl = rail.scrollLeft, ms = Math.round(performance.now() - t0); sp.remove(); return { sl, ms };
 });
-ok(back === 0, `a sideways scroll is put straight back (scrollLeft ${back})`);
+ok(back.sl === 0, `a sideways scroll is put straight back (scrollLeft ${back.sl} after ${back.ms} ms)`);
 // a mostly vertical swipe with some sideways drift moves the list down, never across (Today, which opens over the page on
 // start, is closed first so the finger lands on the sheet)
 await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) window.OSAP_TODAY.hide(); document.querySelector(".rail").scrollTop = 0; });
