@@ -4,7 +4,7 @@
      Open-Meteo's town search (GeoNames) answers instead when Photon does not;
    - an MGRS, UTM or latitude/longitude typed in the box is read on this device (window.OSAP_GEO) and goes straight there;
    - picking a result flies the map there and drops a temporary marker that offers Save as point (a point in the active
-     workspace, the same as the toolbar's Point tool), Route to here, and Copy the grid;
+     workspace, the same as the toolbar's Point tool), Route to here, Alert me here (a new area watch round it), and Copy the grid;
    - the last few places picked are kept in this browser only (localStorage "osap-search-recent");
    - countries, tools, data sets and settings that match are listed above the places, and the last row searches the news
      (assets/osap-findall.js, window.OSAP_FINDALL); those need no network.
@@ -170,7 +170,7 @@
     here.bindPopup(function () {
       var d = D.createElement("div"); d.className = "srch-pop"; d.setAttribute("data-keep-pop", "");
       d.innerHTML = "<b>" + esc(r.name) + "</b>" + (r.sub && !r.grid ? '<p class="obs">' + esc(r.sub) + "</p>" : "") + "<code>" + esc(grid(r.lat, r.lon)) + "</code>" +
-        '<p class="obs">' + (r.grid ? "Typed grid." : "Place from " + esc(r.src || "a place search") + ", not a report.") + "</p>" + '<div class="atk-pb"><button type="button" data-sp="save">Save as point</button><button type="button" data-sp="route">Route to here</button><button type="button" data-sp="copy">Copy grid</button><button type="button" data-sp="x">Remove</button></div>';
+        '<p class="obs">' + (r.grid ? "Typed grid." : "Place from " + esc(r.src || "a place search") + ", not a report.") + "</p>" + '<div class="atk-pb"><button type="button" data-sp="save">Save as point</button><button type="button" data-sp="route">Route to here</button>' + (W.OSAP_WATCH && W.OSAP_WATCH.openNear ? '<button type="button" data-sp="watch" title="Get an alert when new reports land near here">Alert me here</button>' : "") + '<button type="button" data-sp="copy">Copy grid</button><button type="button" data-sp="x">Remove</button></div>';
       d.addEventListener("click", function (e) {
         var b = e.target.closest("[data-sp]"); if (!b) return; var k = b.getAttribute("data-sp"), lon = wrap(r.lon);
         if (k === "save") { map.closePopup(); var a = A(); if (a && a.pts && a.pts.add) { if (a.pts.add(L.latLng(r.lat, lon), r.grid ? "" : r.name)) clearMark(); else here.openPopup(); } }
@@ -178,6 +178,11 @@
           map.closePopup(); clearMark();
           var h = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
           if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED(h ? [[h.lat, h.lon], [r.lat, lon]] : [[r.lat, lon]]);
+        }
+        else if (k === "watch") {
+          /* a new area watch round this place (the Watch dialog's "Around a city or place"), 10 km unless changed there */
+          map.closePopup(); clearMark();
+          W.OSAP_WATCH.openNear({ name: r.grid ? grid(r.lat, lon) : r.name, lat: r.lat, lon: lon, src: r.grid ? "typed grid" : r.src || "place search" }, 10);
         }
         else if (k === "copy") { var t = grid(r.lat, lon); if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { toast("Copied " + t); }, function () { toast(t); }); else toast(t); }
         else if (k === "x") { map.closePopup(); clearMark(); }

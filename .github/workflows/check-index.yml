@@ -392,6 +392,8 @@ jobs:
       - run: node tests/wxeasy_smoke.mjs
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
+      # change alerts by area: watch round a city or a typed grid, Draw a box from the Watch dialog, Alert me here, on to Push to phone
+      - run: node tests/area_alert_smoke.mjs
       - run: node tests/today_width_smoke.mjs
       - run: node tests/press_smoke.mjs
       # the phone bottom sheet scrolls up and down only, never sideways (index.html phone layout)
