@@ -1,0 +1,25 @@
+name: Verify social refresh (test only)
+on:
+  push:
+    branches: [claude/social-verify]
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - run: node tools/refresh_social.mjs > out.txt 2>&1; echo "exit $?"; grep -E "^(FAIL|ok  ) (Mastodon|Telegram|Bluesky)" out.txt; grep -vE "^(ok  |FAIL|skip)" out.txt | tail -30
+        env:
+          SOCIAL_BUDGET_MS: "60000"
+      - run: |
+          node -e '
+          const s=require("fs").readFileSync("data/live/social.js","utf8");const j=JSON.parse(s.slice(s.indexOf("{"),s.lastIndexOf("}")+1));
+          const by={};for(const [cc,l] of Object.entries(j.items))for(const i of l){by[i.platform]=(by[i.platform]||0)+1}
+          console.log("items by platform",JSON.stringify(by));
+          for(const cc of ["ua","ru","il","de","sd","ve","kz","uz","fr","nl","ng"]) console.log(cc,(j.items[cc]||[]).length, [...new Set((j.items[cc]||[]).map(i=>i.platform))].join(","));
+          const m=Object.values(j.items).flat().filter(i=>i.platform==="Mastodon").slice(0,3);console.log(JSON.stringify(m,null,1));'
