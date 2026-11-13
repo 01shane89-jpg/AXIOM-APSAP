@@ -5,7 +5,12 @@
    - the country's data files (layers, brief, crisis-response notes, news and social posts, history, terrain, daily summary), the stored
      hospital and landing-site copy the Medical plan reads, the last 7 days of the news search, and every data file this
      session has already read;
-   - the app itself (the service worker's normal warm-up).
+   - the country's connected stories, open-data posts, live layer reports and coded event history (UCDP, protests, POLECAT);
+   - the app itself (the service worker's normal warm-up). The download waits for the warm-up to answer, so a country is
+     only called saved once the app's own files are on the device too (2026-11-13: before, it said "Saved" while the
+     news, daily and panel scripts were still downloading, and going offline straight after broke those tabs).
+   The 7-day news search covers every country (about 10 MB a day), so it is a separate tick box, off unless picked.
+   With no signal a small "Offline" tag shows the date the open country was saved and how old that is.
    Only that tile service is saved in bulk: its licence allows it (Sentinel-2 cloudless 2016 is CC BY 4.0, commercial use
    allowed with credit; the 2021 mosaic it replaced was non-commercial, so saved 2021 tiles no longer show). Esri, OpenStreetMap's own tile server and OpenTopoMap forbid
    or discourage bulk downloads, so those maps are only kept as they are viewed (the service worker's capped tile cache).
@@ -16,7 +21,7 @@
    Tiles live in the cache OFFLINE ("osap-offline"), which the service worker reads first and never trims; data files go in
    the service worker's own data cache ("asap-data", plain address). What was saved is listed in localStorage "osap-offline".
    Terrain for viewshed and line of sight is saved the same way into its own cache (see "terrain" below).
-   window.OSAP_OFFLINE {open, packs, has, tilesFor, est, terrain}. */
+   window.OSAP_OFFLINE {open, packs, has, files, tilesFor, est, terrain}. Test: tests/offline_pack_smoke.mjs. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -33,6 +38,12 @@
   function cinfo(c) { var L = W.OSAP_COUNTRIES || []; for (var i = 0; i < L.length; i++) if (L[i].id === c) return L[i]; return { id: c, name: c.toUpperCase() }; }
   function mb(b) { return b >= 1048576 ? (b / 1048576).toFixed(b >= 1048576 * 100 ? 0 : 1) + " MB" : Math.max(1, Math.round(b / 1024)) + " KB"; }
   function when(t) { if (!t) return ""; var d = new Date(t); return d.toISOString().slice(0, 16).replace("T", " ") + "Z"; }
+  /* the same time in the device's own zone, 24-hour (OSAP shows Zulu and local together) */
+  function local(t) { var d = new Date(t), z = function (n) { return (n < 10 ? "0" : "") + n; }; return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()) + " " + z(d.getHours()) + ":" + z(d.getMinutes()) + " local"; }
+  /* whole days since t; data older than STALE days is flagged "out of date" */
+  var STALE = 3;
+  function days(t) { return t ? Math.max(0, Math.floor((Date.now() - new Date(t).getTime()) / 864e5)) : null; }
+  function age(t) { var n = days(t); return n == null ? "" : n === 0 ? "less than a day old" : n === 1 ? "1 day old" : n + " days old"; }
   function get() { try { var r = JSON.parse(localStorage.getItem(KEY)); if (r && r.packs) return r; } catch (e) {} return { v: 1, packs: {} }; }
   function put(r) { try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (e) {} }
   var can = !!(W.caches && W.fetch && W.Promise);
@@ -68,7 +79,7 @@
 
   /* ---------- the country's data files ---------- */
   function abs(u) { var a = new URL(u, location.href); a.search = ""; a.hash = ""; return a.href; }
-  function dataFiles(c) {
+  function dataFiles(c, news7) {
     var M = W.OSAP_COUNTRY_FILES || {}, L = [];
     Object.keys((M.layers || {})[c] || {}).forEach(function (l) { L.push("data/layers/" + c + "/" + l + ".js"); });
     if ((M.sof || []).indexOf(c) >= 0) L.push("data/sof/" + c + ".js");
@@ -82,15 +93,18 @@
     });
     L.push("data/live/news/" + c + ".js", "data/live/social/" + c + ".js", "data/history/" + c + ".js", "data/terrain/" + c + ".js", "data/live/daily/" + c + ".js",
       "data/live/news-index.js", "data/medfac/index.json", "data/live/sanctions/" + c + ".js", "data/live/ucdp/" + c + ".js",
-      "data/basemap/borders-50m.js", "data/basemap/borders-10m.js");
-    for (var i = 0; i < 7; i++) L.push("data/live/news-index/" + new Date(Date.now() - i * 864e5).toISOString().slice(0, 10) + ".js");
+      "data/basemap/borders-50m.js", "data/basemap/borders-10m.js",
+      "data/live/stories/" + c + ".js", "data/live/x/" + c + ".js", "data/live/layerfeed/" + c + ".js",
+      "data/live/conflicts/history/cc/" + c + ".js", "data/live/conflicts/history/mm/" + c + ".js", "data/live/conflicts/history/pc/" + c + ".js");
+    if (news7) for (var i = 0; i < 7; i++) L.push("data/live/news-index/" + new Date(Date.now() - i * 864e5).toISOString().slice(0, 10) + ".js");
     /* whatever this session has already read from data/ (open tabs, conflict files, weather, power, comms coverage) */
     try {
       performance.getEntriesByType("resource").forEach(function (r) {
         var u = new URL(r.name); if (u.origin === location.origin && /\/data\//.test(u.pathname)) L.push(u.pathname.replace(/^.*?\/data\//, "data/"));
+        /* the news search days only when asked for (each is every country's headlines for that day) */
       });
     } catch (e) {}
-    var seen = {}; return L.filter(function (u) { if (seen[u]) return false; seen[u] = 1; return true; });
+    var seen = {}; return L.filter(function (u) { if (seen[u] || (!news7 && /^data\/live\/news-index\/\d{4}-/.test(u))) return false; seen[u] = 1; return true; });
   }
   /* the stored hospital copy for this country, from its index, with its blood, chamber and air rescue file (assets/osap-medplan.js reads the same files) */
   function medFiles(c) {
@@ -101,7 +115,7 @@
     }).catch(function () { return []; });
   }
   /* files only this country uses (deleting the country removes them; shared files stay) */
-  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|hospitals/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily|sanctions|ucdp)/" + c + "\\.js$)").test(u); }
+  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|hospitals/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily|sanctions|ucdp|stories|x|layerfeed)/" + c + "\\.js$|live/conflicts/history/(cc|mm|pc)/" + c + "\\.js$)").test(u); }
 
   /* ---------- downloading ---------- */
   var JOB = null;
@@ -125,9 +139,21 @@
       return cache.put(key, new Response(bl, { status: 200, headers: h })).then(function () { return bl.size; });
     });
   }
+  /* ask the service worker to save the app's own files and wait for its answer ({n, fetched, failed}); no service worker
+     (a preview, or a browser without one) answers null at once, and a worker that never answers is given 5 minutes */
+  function warmApp() {
+    var sw = null; try { sw = navigator.serviceWorker && navigator.serviceWorker.controller; } catch (e) {}
+    if (!sw || !W.MessageChannel) return Promise.resolve(null);
+    return new Promise(function (ok) {
+      var ch = new MessageChannel(), t = setTimeout(function () { ok({ failed: -1 }); }, 300000);
+      ch.port1.onmessage = function (e) { clearTimeout(t); ok(e.data || null); };
+      var plan = null; try { plan = W.OSAP_DATA && W.OSAP_DATA.plan ? W.OSAP_DATA.plan() : null; } catch (e) {}
+      try { sw.postMessage(plan ? { warm: plan } : "warm", [ch.port2]); } catch (e) { clearTimeout(t); ok(null); }
+    });
+  }
   function download(area, withFiles) {
     if (JOB) return;
-    var c = cc(), job = JOB = { stop: false, c: c, done: 0, total: 0, bytes: 0, fail: 0, skip: 0, files: 0, fbytes: 0, ffail: 0, phase: "tiles" };
+    var c = cc(), job = JOB = { stop: false, c: c, done: 0, total: 0, bytes: 0, fail: 0, skip: 0, files: 0, fbytes: 0, ffail: 0, locked: 0, afail: 0, phase: "tiles" };
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     var urls = urlsFor(area); job.total = urls.length;
     render();
@@ -146,12 +172,14 @@
       if (job.stop || !withFiles) return;
       job.phase = "files"; job.done = 0; paint();
       return medFiles(c).then(function (mf) {
-        var list = dataFiles(c).concat(mf); job.total = list.length; job.list = list;
+        var list = dataFiles(c, UI.news7).concat(mf); job.total = list.length; job.list = list;
         return caches.open(DATA).then(function (dc) {
           return pool(list, function (u) {
             /* ?fresh=1 makes the service worker wait for the network copy (and save it too) */
             return fetch(u + "?fresh=1", { cache: "no-store", credentials: "same-origin" }).then(function (res) {
-              if (!res.ok) { if (res.status !== 404) job.ffail++; else job.list = job.list.filter(function (x) { return x !== u; }); return; }
+              /* 404: the country has no such file; 402: the signed-in plan does not include it (the paywall's edge gate), so it is
+                 left out rather than counted as a failure to retry */
+              if (!res.ok) { if (res.status === 402) job.locked++; if (res.status !== 404 && res.status !== 402) job.ffail++; else job.list = job.list.filter(function (x) { return x !== u; }); return; }
               /* a hidden area's file opened for this unlocked device: the service worker has already saved its sealed copy */
               if (res.headers.get("X-OSAP-Unsealed")) { job.files++; return; }
               return saveTo(dc, abs(u), res).then(function (n) { job.files++; job.fbytes += n; });
@@ -160,8 +188,12 @@
         });
       });
     }).then(function () {
-      /* the app itself: the service worker's warm-up saves every app file and the shared data it keeps */
-      try { var sw = navigator.serviceWorker && navigator.serviceWorker.controller; if (sw) sw.postMessage("warm"); } catch (e) {}
+      /* the app itself: the service worker's warm-up saves every app file and the shared data it keeps; waited for, so
+         "Saved" is only said once the app opens with no signal too */
+      if (job.stop || !withFiles) return;
+      job.phase = "app"; job.done = 0; job.total = 0; paint();
+      return warmApp().then(function (r) { if (r && r.failed) job.afail = r.failed > 0 ? r.failed : 1; });
+    }).then(function () {
       var r = get(), p = r.packs[c] || (r.packs[c] = { name: cinfo(c).name, areas: [] });
       if (job.done || job.skip || job.bytes) {
         area.at = new Date().toISOString(); area.n = job.total; area.bytes = (area.bytes || 0) + job.bytes;
@@ -171,12 +203,13 @@
           if (i >= 0) { if (p.areas[i].z > area.z) { area.z = p.areas[i].z; area.n = Math.max(area.n, p.areas[i].n || 0); } p.areas[i] = area; } else p.areas.push(area);
         }
       }
-      if (job.list && !job.stop) p.files = { at: new Date().toISOString(), n: job.files, bytes: job.fbytes, list: job.list };
+      if (job.list && !job.stop) p.files = { at: new Date().toISOString(), n: job.files, bytes: job.fbytes, list: job.list, news7: !!UI.news7, locked: job.locked };
       if (!p.areas.length && !p.files) delete r.packs[c];
       put(r);
+      var bad = [job.fail ? job.fail + " map tiles" : "", job.ffail ? job.ffail + " data files" : "", job.afail ? (job.afail > 1 ? job.afail + " app files" : "some app files") : ""].filter(String);
       var msg = job.stop ? "Stopped. What was saved is kept; press Download again to carry on." :
-        "Saved. " + (job.fail || job.ffail ? (job.fail ? job.fail + " map tiles" : "") + (job.fail && job.ffail ? " and " : "") + (job.ffail ? job.ffail + " data files" : "") +
-          " could not be fetched; press Download again to try just those." : "Everything for this area is on the device.");
+        "Saved. " + (bad.length ? bad.join(" and ") + " could not be fetched; press Download again to try just those." : "Everything for this area is on the device.") +
+        (job.locked ? " " + (job.locked === 1 ? "1 file is" : job.locked + " files are") + " not in your plan and was left out.".replace("was", job.locked === 1 ? "was" : "were") : "");
       JOB = null; UI.msg = msg; render();
     }).catch(function (e) { JOB = null; UI.msg = "Could not save: " + (e && e.message || e) + ". The device may be out of space."; render(); });
   }
@@ -292,7 +325,7 @@
 
   /* ---------- the panel ---------- */
   var box = D.createElement("div"); box.id = "offdlg"; box.hidden = true; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-labelledby", "off-h");
-  var UI = { msg: "", kind: "country", z: null, tkind: "view", tz: null, use: null, quota: null, persisted: null };
+  var UI = { msg: "", kind: "country", z: null, tkind: "view", tz: null, use: null, quota: null, persisted: null, news7: false };
   function open() {
     UI.msg = ""; UI.z = null; UI.tz = null; box.hidden = false; if (!box.parentNode) D.body.appendChild(box);
     if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { UI.use = e.usage; UI.quota = e.quota; render(); }).catch(function () {});
@@ -302,6 +335,7 @@
   function close() { box.hidden = true; box.innerHTML = ""; }
   function paint() {
     var j = JOB, pr = box.querySelector(".offprog"); if (!j || !pr) return;
+    if (j.phase === "app") { pr.querySelector("progress").removeAttribute("value"); pr.querySelector("span").textContent = "App files: saving OSAP itself so it opens with no signal…"; return; }
     pr.querySelector("progress").max = j.total || 1; pr.querySelector("progress").value = j.done;
     pr.querySelector("span").textContent = (j.phase === "tiles" ? "Map tiles " : j.phase === "terrain" ? "Elevation tiles " : "Data files ") + j.done + " of " + j.total +
       (j.phase === "tiles" || j.phase === "terrain" ? " · " + mb(j.bytes) + " new" + (j.skip ? " · " + j.skip + " already saved" : "") + (j.fail ? " · " + j.fail + " failed" : "") : " · " + mb(j.fbytes));
@@ -313,7 +347,8 @@
     var saved = Object.keys(r.packs).map(function (k) {
       var q = r.packs[k], tb = 0; (q.areas || []).forEach(function (x) { tb += x.bytes || 0; });
       return "<li><span><b>" + esc(q.name || k) + '</b> <i class="obs">' + esc([(q.areas || []).map(function (x) { return (x.kind === "country" ? "whole country" : "map area") + " to " + zName(x.z).toLowerCase(); }).join(", "),
-        "map " + mb(tb), q.files ? q.files.n + " data files " + mb(q.files.bytes) : "", q.files ? "saved " + when(q.files.at) : ""].filter(String).join(" · ")) + "</i></span>" +
+        "map " + mb(tb), q.files ? q.files.n + " data files " + mb(q.files.bytes) : "", q.files ? "saved " + when(q.files.at) + " (" + age(q.files.at) + ")" : ""].filter(String).join(" · ")) + "</i>" +
+        (q.files && days(q.files.at) >= STALE ? '<i class="offold">Out of date: open ' + esc(q.name || k) + " and press Download or update.</i>" : "") + "</span>" +
         (k === c ? "" : '<button type="button" data-off-go="' + esc(k) + '">Open</button>') + '<button type="button" data-off-del="' + esc(k) + '">Delete</button></li>';
     }).join("");
     var areas = p && p.areas.length ? "<ul>" + p.areas.map(function (x) {
@@ -325,11 +360,13 @@
       '<p class="obs">Save a country on this device so OSAP opens and works with no signal: the Offline map, the country\'s layers, brief, news, history and the Medical plan\'s stored hospitals. Kept on this device only.</p>' +
       '<p class="offmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>" +
       '<section class="offsec"><h3>' + esc(ci.name) + "</h3>" + areas +
-      (p && p.files ? '<p class="obs">Data: ' + p.files.n + " files, " + mb(p.files.bytes) + ", saved " + esc(when(p.files.at)) + ".</p>" : "") +
+      (p && p.files ? '<p class="obs">Data: ' + p.files.n + " files, " + mb(p.files.bytes) + ", saved " + esc(when(p.files.at) + " / " + local(p.files.at)) + " (" + esc(age(p.files.at)) + ")" +
+        (p.files.news7 ? ", with the 7-day news search" : "") + ".</p>" + (days(p.files.at) >= STALE ? '<p class="offmsg offold">This saved data is ' + esc(age(p.files.at)) + ". Press Download or update before you lose signal.</p>" : "") : "") +
       '<div class="offrow" role="group" aria-label="Map area"><label><input type="radio" name="off-kind" value="country"' + (UI.kind === "country" ? " checked" : "") + "> Whole country</label>" +
       '<label><input type="radio" name="off-kind" value="view"' + (UI.kind === "view" ? " checked" : "") + "> What the map shows now</label></div>" +
       '<label class="offrow">Detail <select data-off-z>' + zopts + "</select></label>" +
-      '<p class="obs">' + e.pos.toLocaleString() + " map squares, about " + mb(e.bytes) + ", plus the country's data (usually 5 to 20 MB)" + (big ? ". Too big: zoom the map in and pick What the map shows now." : ".") + "</p>" +
+      '<label class="offrow"><input type="checkbox" data-off-news7' + (UI.news7 ? " checked" : "") + "> Also save the 7-day news search for every country (about 70 MB)</label>" +
+      '<p class="obs">' + e.pos.toLocaleString() + " map squares, about " + mb(e.bytes) + ", plus the country's data (usually 5 to 20 MB)" + (UI.news7 ? " and the news search" : "") + (big ? ". Too big: zoom the map in and pick What the map shows now." : ".") + "</p>" +
       (JOB && JOB.phase !== "terrain" ? '<div class="offprog"><progress max="1" value="0"></progress><span></span></div><div class="offbtns"><button type="button" class="refresh" data-off-stop>Stop</button></div>' : JOB ? "" :
         '<div class="offbtns"><button type="button" class="refresh" data-off-dl' + (can && !big ? "" : " disabled") + ">" + (p ? "Download or update" : "Download for offline") + "</button>" +
         (p ? '<button type="button" data-off-del="' + esc(c) + '">Delete ' + esc(ci.name) + "</button>" : "") +
@@ -368,6 +405,7 @@
     var t = e.target;
     if (t.name === "off-kind") { UI.kind = t.value; UI.z = null; render(); }
     else if (t.hasAttribute("data-off-z")) { UI.z = +t.value; render(); }
+    else if (t.hasAttribute("data-off-news7")) { UI.news7 = t.checked; render(); }
     else if (t.name === "off-tkind") { UI.tkind = t.value; UI.tz = null; render(); }
     else if (t.hasAttribute("data-off-tz")) { UI.tz = +t.value; render(); }
   });
@@ -383,7 +421,9 @@
     "#offdlg .offrow{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:8px 0}#offdlg .offrow label{display:inline-flex;gap:4px;align-items:center;min-height:32px}" +
     "#offdlg select{font:inherit;min-height:34px;max-width:100%;width:auto;flex:1 1 180px;min-width:0}#offdlg .offbtns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}#offdlg .offbtns>*{min-height:38px}" +
     "#offdlg .offprog{display:flex;flex-direction:column;gap:4px;margin:10px 0}#offdlg .offprog progress{width:100%;height:12px}" +
-    "#offdlg .offmsg{background:var(--surface2);border-left:3px solid #1c7ed6;padding:6px 10px;margin:8px 0}#offdlg .offnote summary{cursor:pointer;font-weight:600;padding:6px 0}";
+    "#offdlg .offmsg{background:var(--surface2);border-left:3px solid #1c7ed6;padding:6px 10px;margin:8px 0}#offdlg i.offold{color:#b35c00}#offdlg p.offold{border-left-color:#e8590c}" +
+    "#offtag{left:50%;top:8px;transform:translateX(-50%);z-index:1001;max-width:calc(100% - 130px);white-space:normal;background:var(--ink);color:var(--surface);border:none;border-radius:14px;padding:4px 10px;font:600 12px/1.4 system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;text-align:left}" +
+    "#offtag.old{background:#b35c00;color:#fff}#offdlg .offnote summary{cursor:pointer;font-weight:600;padding:6px 0}";
   D.head.appendChild(css);
 
   /* ---------- no signal: show the saved map ----------
@@ -391,12 +431,29 @@
      earlier choice comes back when the connection does. */
   function hasMap(c) { var p = get().packs[c]; return !!(p && p.areas && p.areas.length); }
   var PREV = "osap-offline-prev";
+  /* the "Offline" tag: while there is no signal, says what the open country's saved data is and how old; tap it for the panel */
+  function tag(on) {
+    var el = D.getElementById("offtag");
+    if (!on) { if (el) el.parentNode.removeChild(el); return; }
+    var c = cc(), p = get().packs[c], at = p && p.files && p.files.at, old = at && days(at) >= STALE;
+    /* on the map itself, top middle, clear of the header and the map's own buttons; the page when there is no map yet */
+    var host = (W.FW && W.FW.map && W.FW.map.getContainer && W.FW.map.getContainer()) || D.body;
+    if (!el) { if (!host) return; el = D.createElement("button"); el.type = "button"; el.id = "offtag"; el.addEventListener("click", function (e) { e.stopPropagation(); open(); }); if (W.L && W.L.DomEvent) W.L.DomEvent.disableClickPropagation(el); }
+    if (el.parentNode !== host) host.appendChild(el);
+    el.style.position = host === D.body ? "fixed" : "absolute";
+    el.className = at && !old ? "" : "old";
+    el.textContent = at ? "Offline · " + cinfo(c).name + " saved " + when(at) + " (" + age(at) + ")" : "Offline · " + cinfo(c).name + " not saved: showing what was last seen";
+    el.title = at ? when(at) + " / " + local(at) + ". Tap for Offline maps and data." : "Nothing saved for this country. Tap for Offline maps and data.";
+    el.setAttribute("aria-live", "polite");
+  }
   function goOffline() {
+    tag(true);
     var B = W.OSAP_BASEMAP; if (!B || !hasMap(cc()) || B.get() === "offline") return;
     try { sessionStorage.setItem(PREV, B.get()); } catch (e) {}
     B.set("offline"); toast("No signal: showing your saved Offline map");
   }
   function goOnline() {
+    tag(false);
     var B = W.OSAP_BASEMAP, prev = null; try { prev = sessionStorage.getItem(PREV); sessionStorage.removeItem(PREV); } catch (e) {}
     if (B && prev && B.get() === "offline") { B.set(prev); toast("Back online"); }
   }
@@ -409,5 +466,5 @@
   W.addEventListener("online", goOnline);
   if (navigator.onLine === false) setTimeout(goOffline, 0);
 
-  W.OSAP_OFFLINE = { open: open, area: areaFor, terrain: { packs: function () { return tget().packs; }, area: tArea, urls: turls, download: downloadTerrain, remove: delTerrain }, packs: function () { return get().packs; }, has: hasMap, tilesFor: urlsFor, est: est, count: count, positions: positions, bestZ: bestZ, MAX_POS: MAX_POS };
+  W.OSAP_OFFLINE = { open: open, area: areaFor, files: dataFiles, terrain: { packs: function () { return tget().packs; }, area: tArea, urls: turls, download: downloadTerrain, remove: delTerrain }, packs: function () { return get().packs; }, has: hasMap, tilesFor: urlsFor, est: est, count: count, positions: positions, bestZ: bestZ, MAX_POS: MAX_POS };
 })();

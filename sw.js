@@ -21,6 +21,11 @@ const PRECACHE = [
 "./",
 "index.html",
 "manifest.webmanifest",
+"assets/osap-news.js",
+"assets/osap-daily.js",
+"assets/osap-coverage.js",
+"assets/osap-mobility.js",
+"assets/osap-panels.js",
 "data/thailand/power.js",
 "data/thailand/flood-live-snapshot.js",
 "data/thailand/flood-exposure.js",
@@ -594,6 +599,39 @@ const PRECACHE = [
 "assets/tiles-flood.js",
 "assets/tiles-flood25.js",
 "assets/fonts/plex.css",
+"assets/fonts/ibmplexmono--F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
+"assets/fonts/ibmplexmono--F63fjptAgt5VM-kVkqdyU8n1iAq129k.woff2",
+"assets/fonts/ibmplexmono--F63fjptAgt5VM-kVkqdyU8n1iEq129k.woff2",
+"assets/fonts/ibmplexmono--F63fjptAgt5VM-kVkqdyU8n1iIq129k.woff2",
+"assets/fonts/ibmplexmono--F63fjptAgt5VM-kVkqdyU8n1isq129k.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3twJwl1FgtIU.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3twJwl5FgtIU.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3twJwl9FgtIU.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgg.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3twJwlRFgtIU.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3vAOwl1FgtIU.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3vAOwl5FgtIU.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3vAOwl9FgtIU.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3vAOwlBFgg.woff2",
+"assets/fonts/ibmplexmono--F6qfjptAgt5VM-kVkqdyU8n3vAOwlRFgtIU.woff2",
+"assets/fonts/ibmplexsans-zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxQKYbABA.woff2",
+"assets/fonts/ibmplexsans-zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxRKYbABA.woff2",
+"assets/fonts/ibmplexsans-zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxTKYbABA.woff2",
+"assets/fonts/ibmplexsans-zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxaKYbABA.woff2",
+"assets/fonts/ibmplexsans-zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxdKYbABA.woff2",
+"assets/fonts/ibmplexsans-zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYY.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvhpYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvipYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvjpYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvspYY.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvhpYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvipYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvjpYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvspYY.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY5a67vhpYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY5a67vipYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY5a67vjpYY1Fw.woff2",
+"assets/fonts/ibmplexsanscondensed-Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY5a67vspYY.woff2",
 "assets/vendor/leaflet-1.9.4.js",
 "assets/vendor/milsymbol-3.0.4.js"
 ];
@@ -623,7 +661,9 @@ const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw
   /cctv\d*\.dot\.wi\.gov\//, /itsstreaming[\w-]*\.dotd\.la\.gov\//i, /\.its\.nv\.gov(:\d+)?\//, /publicstreamer\d*\.cotrip\.org(:\d+)?\//, /video\d*\.iowadot\.gov(:\d+)?\//,
   /skysfs\d*\.trafficwise\.org\//, /wzmedia\.dot\.ca\.gov(:\d+)?\//, /video\.deldot\.gov(:\d+)?\//, /strmr\d*\.sha\.maryland\.gov\//];
 // Saved after install rather than during it (see the top of this file).
-const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/vendor\/pptxgenjs/, /^assets\/osap-milsym-cat/, /^assets\/osap-icons-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
+// The font files (about 450 KB, the browser fetches only the subsets a page uses) are saved by the warm-up so text keeps its
+// face with no signal on a device whose first visit fetched them before this worker took over.
+const LATER = [/^data\//, /^assets\/fonts\/.*\.woff2$/, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/vendor\/pptxgenjs/, /^assets\/osap-milsym-cat/, /^assets\/osap-icons-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
 const DATA = "asap-data";
 const home = (u) => new URL(u, self.registration.scope).href;
@@ -703,12 +743,14 @@ function warm(plan) {
   warming = (async () => {
     const todo = [];
     for (const u of PRECACHE) if (u !== "./" && !locked(u, plan) && !(await caches.open(store(u)).then((c) => c.match(home(u), { ignoreSearch: true })))) todo.push(u);
+    let failed = 0;
     for (let i = 0; i < todo.length; i += 4) {
       await Promise.all(todo.slice(i, i + 4).map((u) => fetch(home(u), { cache: "no-cache", credentials: "same-origin" })
-        .then((res) => { if (!res.ok) throw 0; return save(home(u), res); }).catch(() => {})));
+        .then((res) => { if (!res.ok) throw 0; return save(home(u), res); }).catch(() => { failed++; })));
     }
     const ks = await caches.keys();
     await Promise.all(ks.filter((k) => k.startsWith("asap-shell-") && k !== SHELL).map((k) => caches.delete(k)));
+    return { n: PRECACHE.length, fetched: todo.length - failed, failed };
   })().finally(() => { warming = null; });
   return warming;
 }
@@ -718,7 +760,14 @@ self.addEventListener("activate", (e) => {
     caches.open(DATA).then((c) => c.keys().then((ks) => Promise.all(ks.filter((k) => new URL(k.url).search).map((k) => c.delete(k))))).catch(() => {})]));
 });
 // The page asks for the warm-up once it has loaded, so it never competes with the first paint.
-self.addEventListener("message", (e) => { if (e.data === "warm" || (e.data && e.data.warm)) e.waitUntil(warm(e.data.warm || null)); });
+// Offline maps and data (assets/osap-offline.js) sends a MessageChannel port and waits for the answer, so a country is only
+// called saved once the app's own files are on the device too.
+self.addEventListener("message", (e) => {
+  if (!(e.data === "warm" || (e.data && e.data.warm))) return;
+  const port = e.ports && e.ports[0];
+  e.waitUntil(warm(e.data.warm || null).then((r) => { if (port) port.postMessage(r || { n: PRECACHE.length, failed: 0 }); },
+    () => { if (port) port.postMessage({ n: PRECACHE.length, failed: -1 }); }));
+});
 async function trim(name, max) {
   const c = await caches.open(name), ks = await c.keys();
   for (let i = 0; i < ks.length - max; i++) await c.delete(ks[i]);
