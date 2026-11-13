@@ -1,0 +1,216 @@
+# The map-smoke tests (headless browser checks of the app), run by tools/smoke_shard.mjs in parallel shards from
+# .github/workflows/check-index.yml. One test per line; "#" lines are notes. After a test: group=NAME keeps tests that share
+# a setup on one shard; needs=WHAT names what that shard must install first (poppler: pdftotext for the PDF checks).
+# Run them all locally from the repo root: node tools/smoke_shard.mjs --shard 1/1
+tools/smoke_map.mjs
+tests/locate_smoke.mjs
+# a US state view shows its outlets' earlier items (data/history/us-states, tools/history.mjs)
+tests/state_history_smoke.mjs
+tests/lock_smoke.mjs
+tests/tier_smoke.mjs
+tests/push_server_smoke.mjs
+tests/webpush.test.mjs
+# the plan's locked data files are not asked for (Free and Mid get no 402); Thailand's files load only for Thailand
+tests/locked_requests_smoke.mjs
+# opening the app never shows Today and then loads again over a tap on Open map (run-out sign-in, new release)
+tests/start_reload_smoke.mjs
+tests/analyst_smoke.mjs
+tests/seal_sw_smoke.mjs
+tests/econ_smoke.mjs
+tests/risk_smoke.mjs
+tests/milref_smoke.mjs
+tests/cnpresence_smoke.mjs
+tests/milmap_smoke.mjs
+tests/atak_smoke.mjs
+# phones: the map and its toolbar end where the bottom sheet begins, even where 100svh is taller than the page (iPhone)
+tests/phone_fit_smoke.mjs
+tests/area_shapes_smoke.mjs
+tests/draw_style_rulers_smoke.mjs
+tests/draw_planning_smoke.mjs
+tests/area_report_smoke.mjs
+# sold version: no tile.openstreetmap.org or Esri request once assets/osap-sold.js says true
+tests/sold_mode_smoke.mjs
+# the Esri maps the site's key can use: folded under one "Esri maps" line, English style with the key, 512 px stand-in (index.html ESRI_GROUPS)
+tests/esri_basemaps_smoke.mjs
+# OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
+tests/osir_smoke.mjs
+# one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
+tests/incident_dedup_smoke.mjs
+# one story that came in twice (a headline and the layer feed's or a conflict tab's copy of it) is one timeline item and one alert (index.html storyDedup)
+tests/story_dedup_smoke.mjs
+# incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
+tests/evsum_ai_smoke.mjs
+# report digests reach the Report card, tagged AI generated, shown as text
+tests/digest_smoke.mjs
+tests/points_smoke.mjs
+tests/points_declutter_smoke.mjs
+tests/photo_map_smoke.mjs
+tests/places_smoke.mjs
+tests/places_all_smoke.mjs
+# My work side panel on the left of the map, holding My places and saved reports (assets/osap-work.js #mywk)
+tests/mywork_panel_smoke.mjs
+# Map overlays find box, section chips and folding headings; Settings headings (assets/osap-mlfold.js, assets/osap-tidy.js)
+tests/mlfold_smoke.mjs
+tests/map_display_smoke.mjs
+tests/photocheck_smoke.mjs
+tests/3d_smoke.mjs
+# the map compass behind the north arrow and the shared phone-compass reader (assets/osap-compass.js, assets/osap-heading.js)
+tests/compass_smoke.mjs
+tests/milsym_smoke.mjs
+tests/palettes_smoke.mjs
+tests/milsites_smoke.mjs
+tests/deepsouth_border_smoke.mjs
+tests/dspat_smoke.mjs
+tests/ds_review_smoke.mjs
+tests/cf_verify_smoke.mjs
+tests/cf_layout_smoke.mjs
+tests/cf_history_range_smoke.mjs
+tests/cf_datasets_smoke.mjs
+tests/violence_history_smoke.mjs
+tests/sides_smoke.mjs
+tests/hillshade_smoke.mjs
+tests/flood_overlay_smoke.mjs
+tests/wxmodels_smoke.mjs
+tests/radar_backup_smoke.mjs
+tests/opendata_figures_smoke.mjs
+tests/pop_smoke.mjs
+tests/warngeo_smoke.mjs
+tests/sat_smoke.mjs
+tests/newimg_smoke.mjs
+tests/keydates_smoke.mjs
+tests/coverage_smoke.mjs
+tests/maploading_smoke.mjs
+tests/streets_english_smoke.mjs
+tests/sw_data_smoke.mjs
+tests/offline_smoke.mjs
+tests/workspaces_smoke.mjs
+tests/tak_smoke.mjs
+tests/move_smoke.mjs
+tests/carry_smoke.mjs
+tests/protect_smoke.mjs
+tests/safety_smoke.mjs
+tests/wipe_smoke.mjs
+tests/sync_smoke.mjs
+# team workspace: share from Workspaces, join by viewer and editor links, viewer read-only, forged events refused, new team links
+tests/team_smoke.mjs
+# team shared cases: lead, analyst and viewer accounts, invites, sealed sync, removal and new key, server refusals
+tests/cases_smoke.mjs
+# moving a team-link team to a team case: owner only, same workspace, link members told, items keep who added them
+tests/cases_move_smoke.mjs
+# team plans: set up, sandbox checkout, seat gives Full, invite into team and team case, removal takes both away
+tests/teams_smoke.mjs
+tests/gnss_smoke.mjs
+tests/guide_smoke.mjs
+tests/lang_smoke.mjs
+tests/ai_smoke.mjs
+tests/timeline_scope_smoke.mjs
+tests/period_smoke.mjs
+tests/period14_smoke.mjs
+tests/search_smoke.mjs
+tests/search_all_smoke.mjs
+tests/news_speed_smoke.mjs
+tests/grid_smoke.mjs
+tests/comms_smoke.mjs
+tests/commsplan_smoke.mjs
+tests/commslink_smoke.mjs
+tests/commsradio_smoke.mjs
+tests/power_smoke.mjs
+tests/surveil_smoke.mjs
+tests/cams_smoke.mjs
+tests/privacy_smoke.mjs
+tests/vault_smoke.mjs
+tests/borders_smoke.mjs
+tests/country_outline_smoke.mjs
+tests/wrap_smoke.mjs
+tests/evac_smoke.mjs
+tests/evacroute_smoke.mjs
+tests/route_wpdel_smoke.mjs
+tests/rv_mapitems_smoke.mjs
+tests/route_keepview_smoke.mjs
+tests/route_savedpts_smoke.mjs
+tests/route_multi_smoke.mjs
+# Route > Straight line: pick the aircraft type from the shared catalogue (assets/osap-aircraft.js)
+tests/route_aircraft_smoke.mjs
+# Route > Plan a flight: airborne operation flight plan (assets/osap-flight.js)
+tests/flight_smoke.mjs
+tests/flight_winds_smoke.mjs
+tests/flight_drop_smoke.mjs
+tests/flight_harp_smoke.mjs
+tests/flight_brief_smoke.mjs
+tests/evac_lz_airfield_smoke.mjs
+tests/evac_foot_xc_smoke.mjs
+tests/epe_smoke.mjs
+tests/epe_legs_smoke.mjs
+tests/epe_corridor_smoke.mjs
+tests/epe_deps_smoke.mjs
+tests/epe_along_smoke.mjs
+tests/epe_pkg_smoke.mjs
+# Evac > Evacuation map: checkpoints, phase lines, extraction points, corridor, areas to avoid, directions, printed map
+tests/epe_map_smoke.mjs
+tests/route_api_smoke.mjs
+tests/route_preview_smoke.mjs
+# Route > Navigate: turn banner, lanes, voice, re-route, arrival, phone Go button (assets/osap-nav.js)
+tests/nav_smoke.mjs
+tests/dc_smoke.mjs
+tests/infra_smoke.mjs
+# Overlays > Infrastructure > Bridges and tunnels: every bridge in view with its details from street level (assets/osap-bridges.js)
+tests/bridges_smoke.mjs
+tests/traffic_smoke.mjs
+tests/medplan_smoke.mjs
+tests/medplan_sea_smoke.mjs
+tests/medplan_hang_smoke.mjs
+tests/medplan_equiv.test.mjs
+tests/medplan_conflict_map_smoke.mjs
+tests/medplan_bkk_smoke.mjs
+# one hospital's standalone assessment: map popup, long-press Plans, Reports, planner's check, PDF, open plan untouched
+tests/hospital_assess_smoke.mjs
+tests/seatransit_smoke.mjs
+tests/lz_smoke.mjs
+# DZSO sheet: long-press Plans, point pop-up, Area menu, winds and drift, hazards, hospitals, save, PDF (assets/osap-dzso.js)
+tests/dzso_smoke.mjs
+tests/lz_landcover_smoke.mjs
+tests/terrain_smoke.mjs
+tests/lidar_smoke.mjs
+tests/selected_contrast_smoke.mjs
+tests/event_pin_smoke.mjs
+tests/layout_list_smoke.mjs
+tests/panels_smoke.mjs
+tests/reports_smoke.mjs
+tests/feeds_status_smoke.mjs
+# every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
+tests/pdf_export_smoke.mjs  group=pdf needs=poppler
+# the medical plan as one landscape briefing slide: facilities, PACE, satellite maps, table, contacts; PDF and PowerPoint (assets/osap-medslide.js)
+tests/medslide_smoke.mjs  group=pdf needs=poppler
+# Drop zone edited on the map (move, resize, turn the run-in, phone touch), aircraft drop-down, hazards after a Refresh,
+# satellite map in the PDF (poppler), flight plan following the saved DZ (assets/osap-dzso.js, assets/osap-dz.js, assets/osap-flight.js)
+tests/dz_map_edit_smoke.mjs  group=pdf needs=poppler
+# Ground evacuation from the DZ: road distance and drive time to each hospital, the road route on the map and in the PDF
+tests/dz_ground_evac_smoke.mjs
+# Site survey (DZ, HLZ, airfield): Plans / Area entries, Surveyed vs From sources, obstacles on the approach, save in My places,
+# map handles, PDF, DZ shared with the DZSO sheet, HLZ finder hand-over (assets/osap-survey.js)
+tests/survey_smoke.mjs
+# Dive plan and dive medical plan: Plans / long-press / Area entries, Navy table reading, repetitive dive, marine forecast
+# calls, chambers (military/civilian and hours only where tagged), DAN lines, save, PDF, tables unreachable, phone (assets/osap-dive.js)
+tests/dive_smoke.mjs
+tests/intelbrief_smoke.mjs
+# custom topic (own words, watch-word syntax) in the PowerPoint brief and OSIR windows
+tests/custom_topic_smoke.mjs
+tests/wxchart_smoke.mjs
+tests/avwx_smoke.mjs
+tests/wxbrief_area_smoke.mjs
+tests/wxeasy_smoke.mjs
+tests/illum_smoke.mjs
+tests/watch_links_smoke.mjs
+tests/today_width_smoke.mjs
+tests/press_smoke.mjs
+# the phone bottom sheet scrolls up and down only, never sideways (index.html phone layout)
+tests/phone_sheet_sideways_smoke.mjs
+tests/mycountries_smoke.mjs
+tests/install_smoke.mjs
+tests/empty_states_smoke.mjs
+tests/report_english_smoke.mjs
+tests/social_filter_smoke.mjs
+tests/speed_budget.mjs
+tests/boolq_smoke.mjs
+# source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
+tests/grade_smoke.mjs

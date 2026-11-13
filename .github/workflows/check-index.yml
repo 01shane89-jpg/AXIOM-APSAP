@@ -24,6 +24,8 @@ jobs:
         with:
           fetch-depth: 2
       - run: node tools/check_index.mjs
+      # the map-smoke list (tests/map-smoke.txt): every file there, none twice, every shard plan runs each test once
+      - run: node tools/smoke_shard.mjs --check
       # hidden areas (tools/hidden-areas.json): their files must be sealed, never plain, in the repository
       - run: node tools/seal_hidden.mjs --check --skip-live
       - run: node tests/seal.test.mjs
@@ -153,14 +155,18 @@ jobs:
       - run: node tests/photocheck.test.mjs
       # the bundle AXIOM imports: framing and digest, non-commercial sources left out, curated records unchanged (tools/axiom_bundle_lib.mjs)
       - run: node tests/axiom_bundle.test.mjs
-  map-smoke:
-    # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
+  map-smoke-shard:
+    # Opens the app headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs and the tests listed in
+    # tests/map-smoke.txt). Run one after another the suite took 75 to 90 minutes (2026-11-12, 175 tests), so a fix waited
+    # 1.5 h for its answer; tools/smoke_shard.mjs spreads the tests over 6 machines by their last run times
+    # (tests/map-smoke-times.json), about 14 minutes of tests each, and runs every test of a shard even after one fails.
+    name: map-smoke shard ${{ matrix.shard }}/6
     runs-on: ubuntu-latest
-    # the whole suite now runs about 29 to 30 minutes, so 30 cancelled green runs (2026-10-04); by 2026-10-19 it ran 43 to 45
-    # minutes and 45 cancelled main and two PRs one test from the end; on 2026-10-23 it ran past 60 and cancelled PR #498 three
-    # tests from the end (speed_budget at 07:44Z, 60 minutes after the start)
-    # and a 12-minute browser install pushed a fully green suite past 60 the same day (PR #508)
-    timeout-minutes: 90
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -180,187 +186,10 @@ jobs:
             echo "install attempt $i failed; retrying in 30 s"; sleep 30
           done
           exit 1
-      - run: node tools/smoke_map.mjs
-      - run: node tests/locate_smoke.mjs
-      # a US state view shows its outlets' earlier items (data/history/us-states, tools/history.mjs)
-      - run: node tests/state_history_smoke.mjs
-      - run: node tests/lock_smoke.mjs
       - run: npm ci --prefix netlify --no-audit --no-fund
-      - run: node tests/tier_smoke.mjs
-      - run: node tests/push_server_smoke.mjs
-      - run: node tests/webpush.test.mjs
-      # the plan's locked data files are not asked for (Free and Mid get no 402); Thailand's files load only for Thailand
-      - run: node tests/locked_requests_smoke.mjs
-      # opening the app never shows Today and then loads again over a tap on Open map (run-out sign-in, new release)
-      - run: node tests/start_reload_smoke.mjs
-      - run: node tests/analyst_smoke.mjs
-      - run: node tests/seal_sw_smoke.mjs
-      - run: node tests/econ_smoke.mjs
-      - run: node tests/risk_smoke.mjs
-      - run: node tests/milref_smoke.mjs
-      - run: node tests/cnpresence_smoke.mjs
-      - run: node tests/milmap_smoke.mjs
-      - run: node tests/atak_smoke.mjs
-      # phones: the map and its toolbar end where the bottom sheet begins, even where 100svh is taller than the page (iPhone)
-      - run: node tests/phone_fit_smoke.mjs
-      - run: node tests/area_shapes_smoke.mjs
-      - run: node tests/draw_style_rulers_smoke.mjs
-      - run: node tests/draw_planning_smoke.mjs
-      - run: node tests/area_report_smoke.mjs
-      # sold version: no tile.openstreetmap.org or Esri request once assets/osap-sold.js says true
-      - run: node tests/sold_mode_smoke.mjs
-      # the Esri maps the site's key can use: folded under one "Esri maps" line, English style with the key, 512 px stand-in (index.html ESRI_GROUPS)
-      - run: node tests/esri_basemaps_smoke.mjs
-      # OSIR report: Shane's section order, sources with SHA-256, typed text kept as text (assets/osap-osir.js)
-      - run: node tests/osir_smoke.mjs
-      # one incident = one event, one key-event row and one summary; incidents counted once (index.html evMerge, assets/osap-tlreport.js)
-      - run: node tests/incident_dedup_smoke.mjs
-      # one story that came in twice (a headline and the layer feed's or a conflict tab's copy of it) is one timeline item and one alert (index.html storyDedup)
-      - run: node tests/story_dedup_smoke.mjs
-      # incident summaries drafted by the model on the runner shown in full on key-event rows (data/live/evsum_ai.js)
-      - run: node tests/evsum_ai_smoke.mjs
-      # report digests reach the Report card, tagged AI generated, shown as text
-      - run: node tests/digest_smoke.mjs
-      - run: node tests/points_smoke.mjs
-      - run: node tests/points_declutter_smoke.mjs
-      - run: node tests/photo_map_smoke.mjs
-      - run: node tests/places_smoke.mjs
-      - run: node tests/places_all_smoke.mjs
-      # My work side panel on the left of the map, holding My places and saved reports (assets/osap-work.js #mywk)
-      - run: node tests/mywork_panel_smoke.mjs
-      # Map overlays find box, section chips and folding headings; Settings headings (assets/osap-mlfold.js, assets/osap-tidy.js)
-      - run: node tests/mlfold_smoke.mjs
-      - run: node tests/map_display_smoke.mjs
-      - run: node tests/photocheck_smoke.mjs
-      - run: node tests/3d_smoke.mjs
-      # the map compass behind the north arrow and the shared phone-compass reader (assets/osap-compass.js, assets/osap-heading.js)
-      - run: node tests/compass_smoke.mjs
-      - run: node tests/milsym_smoke.mjs
-      - run: node tests/palettes_smoke.mjs
-      - run: node tests/milsites_smoke.mjs
-      - run: node tests/deepsouth_border_smoke.mjs
-      - run: node tests/dspat_smoke.mjs
-      - run: node tests/ds_review_smoke.mjs
-      - run: node tests/cf_verify_smoke.mjs
-      - run: node tests/cf_layout_smoke.mjs
-      - run: node tests/cf_history_range_smoke.mjs
-      - run: node tests/cf_datasets_smoke.mjs
-      - run: node tests/violence_history_smoke.mjs
-      - run: node tests/sides_smoke.mjs
-      - run: node tests/hillshade_smoke.mjs
-      - run: node tests/flood_overlay_smoke.mjs
-      - run: node tests/wxmodels_smoke.mjs
-      - run: node tests/radar_backup_smoke.mjs
-      - run: node tests/opendata_figures_smoke.mjs
-      - run: node tests/pop_smoke.mjs
-      - run: node tests/warngeo_smoke.mjs
-      - run: node tests/sat_smoke.mjs
-      - run: node tests/newimg_smoke.mjs
-      - run: node tests/keydates_smoke.mjs
-      - run: node tests/coverage_smoke.mjs
-      - run: node tests/maploading_smoke.mjs
-      - run: node tests/streets_english_smoke.mjs
-      - run: node tests/sw_data_smoke.mjs
-      - run: node tests/offline_smoke.mjs
-      - run: node tests/workspaces_smoke.mjs
-      - run: node tests/tak_smoke.mjs
-      - run: node tests/move_smoke.mjs
-      - run: node tests/carry_smoke.mjs
-      - run: node tests/protect_smoke.mjs
-      - run: node tests/safety_smoke.mjs
-      - run: node tests/wipe_smoke.mjs
-      - run: node tests/sync_smoke.mjs
-      # team workspace: share from Workspaces, join by viewer and editor links, viewer read-only, forged events refused, new team links
-      - run: node tests/team_smoke.mjs
-      # team shared cases: lead, analyst and viewer accounts, invites, sealed sync, removal and new key, server refusals
-      - run: node tests/cases_smoke.mjs
-      # moving a team-link team to a team case: owner only, same workspace, link members told, items keep who added them
-      - run: node tests/cases_move_smoke.mjs
-      # team plans: set up, sandbox checkout, seat gives Full, invite into team and team case, removal takes both away
-      - run: node tests/teams_smoke.mjs
-      - run: node tests/gnss_smoke.mjs
-      - run: node tests/guide_smoke.mjs
-      - run: node tests/lang_smoke.mjs
-      - run: node tests/ai_smoke.mjs
-      - run: node tests/timeline_scope_smoke.mjs
-      - run: node tests/period_smoke.mjs
-      - run: node tests/period14_smoke.mjs
-      - run: node tests/search_smoke.mjs
-      - run: node tests/search_all_smoke.mjs
-      - run: node tests/news_speed_smoke.mjs
-      - run: node tests/grid_smoke.mjs
-      - run: node tests/comms_smoke.mjs
-      - run: node tests/commsplan_smoke.mjs
-      - run: node tests/commslink_smoke.mjs
-      - run: node tests/commsradio_smoke.mjs
-      - run: node tests/power_smoke.mjs
-      - run: node tests/surveil_smoke.mjs
-      - run: node tests/cams_smoke.mjs
-      - run: node tests/privacy_smoke.mjs
-      - run: node tests/vault_smoke.mjs
-      - run: node tests/borders_smoke.mjs
-      - run: node tests/country_outline_smoke.mjs
-      - run: node tests/wrap_smoke.mjs
-      - run: node tests/evac_smoke.mjs
-      - run: node tests/evacroute_smoke.mjs
-      - run: node tests/route_wpdel_smoke.mjs
-      - run: node tests/rv_mapitems_smoke.mjs
-      - run: node tests/route_keepview_smoke.mjs
-      - run: node tests/route_savedpts_smoke.mjs
-      - run: node tests/route_multi_smoke.mjs
-      # Route > Straight line: pick the aircraft type from the shared catalogue (assets/osap-aircraft.js)
-      - run: node tests/route_aircraft_smoke.mjs
-      # Route > Plan a flight: airborne operation flight plan (assets/osap-flight.js)
-      - run: node tests/flight_smoke.mjs
-      - run: node tests/flight_winds_smoke.mjs
-      - run: node tests/flight_drop_smoke.mjs
-      - run: node tests/flight_harp_smoke.mjs
-      - run: node tests/flight_brief_smoke.mjs
-      - run: node tests/evac_lz_airfield_smoke.mjs
-      - run: node tests/evac_foot_xc_smoke.mjs
-      - run: node tests/epe_smoke.mjs
-      - run: node tests/epe_legs_smoke.mjs
-      - run: node tests/epe_corridor_smoke.mjs
-      - run: node tests/epe_deps_smoke.mjs
-      - run: node tests/epe_along_smoke.mjs
-      - run: node tests/epe_pkg_smoke.mjs
-      # Evac > Evacuation map: checkpoints, phase lines, extraction points, corridor, areas to avoid, directions, printed map
-      - run: node tests/epe_map_smoke.mjs
-      - run: node tests/route_api_smoke.mjs
-      - run: node tests/route_preview_smoke.mjs
-      # Route > Navigate: turn banner, lanes, voice, re-route, arrival, phone Go button (assets/osap-nav.js)
-      - run: node tests/nav_smoke.mjs
-      - run: node tests/dc_smoke.mjs
-      - run: node tests/infra_smoke.mjs
-      # Overlays > Infrastructure > Bridges and tunnels: every bridge in view with its details from street level (assets/osap-bridges.js)
-      - run: node tests/bridges_smoke.mjs
-      - run: node tests/traffic_smoke.mjs
-      - run: node tests/medplan_smoke.mjs
-      - run: node tests/medplan_sea_smoke.mjs
-      - run: node tests/medplan_hang_smoke.mjs
-      - run: node tests/medplan_equiv.test.mjs
-      - run: node tests/medplan_conflict_map_smoke.mjs
-      - run: node tests/medplan_bkk_smoke.mjs
-      # one hospital's standalone assessment: map popup, long-press Plans, Reports, planner's check, PDF, open plan untouched
-      - run: node tests/hospital_assess_smoke.mjs
-      - run: node tests/seatransit_smoke.mjs
-      - run: node tests/lz_smoke.mjs
-      # DZSO sheet: long-press Plans, point pop-up, Area menu, winds and drift, hazards, hospitals, save, PDF (assets/osap-dzso.js)
-      - run: node tests/dzso_smoke.mjs
-      - run: node tests/lz_landcover_smoke.mjs
-      - run: node tests/terrain_smoke.mjs
-      - run: node tests/lidar_smoke.mjs
-      - run: node tests/selected_contrast_smoke.mjs
-      - run: node tests/event_pin_smoke.mjs
-      - run: node tests/layout_list_smoke.mjs
-      - run: node tests/panels_smoke.mjs
-      - run: node tests/reports_smoke.mjs
-      - run: node tests/feeds_status_smoke.mjs
-      # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
-      # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
-      # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
-      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
+      # pdftotext for the PDF checks (needs=poppler in tests/map-smoke.txt), only on the shard that runs them; same apt caps as above
       - run: |
+          if ! node tools/smoke_shard.mjs --shard ${{ matrix.shard }}/6 --needs poppler; then echo "this shard has no PDF checks"; exit 0; fi
           if command -v pdftotext; then exit 0; fi
           APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
           for i in 1 2 3 4; do
@@ -369,42 +198,17 @@ jobs:
             echo "install attempt $i failed; retrying in 30 s"; sleep 30
           done
           exit 1
-      - run: node tests/pdf_export_smoke.mjs
-      # the medical plan as one landscape briefing slide: facilities, PACE, satellite maps, table, contacts; PDF and PowerPoint (assets/osap-medslide.js)
-      - run: node tests/medslide_smoke.mjs
-      # Drop zone edited on the map (move, resize, turn the run-in, phone touch), aircraft drop-down, hazards after a Refresh,
-      # satellite map in the PDF (poppler, installed above), flight plan following the saved DZ (assets/osap-dzso.js, assets/osap-dz.js, assets/osap-flight.js)
-      - run: node tests/dz_map_edit_smoke.mjs
-      # Ground evacuation from the DZ: road distance and drive time to each hospital, the road route on the map and in the PDF
-      - run: node tests/dz_ground_evac_smoke.mjs
-      # Site survey (DZ, HLZ, airfield): Plans / Area entries, Surveyed vs From sources, obstacles on the approach, save in My places,
-      # map handles, PDF, DZ shared with the DZSO sheet, HLZ finder hand-over (assets/osap-survey.js)
-      - run: node tests/survey_smoke.mjs
-      # Dive plan and dive medical plan: Plans / long-press / Area entries, Navy table reading, repetitive dive, marine forecast
-      # calls, chambers (military/civilian and hours only where tagged), DAN lines, save, PDF, tables unreachable, phone (assets/osap-dive.js)
-      - run: node tests/dive_smoke.mjs
-      - run: node tests/intelbrief_smoke.mjs
-      # custom topic (own words, watch-word syntax) in the PowerPoint brief and OSIR windows
-      - run: node tests/custom_topic_smoke.mjs
-      - run: node tests/wxchart_smoke.mjs
-      - run: node tests/avwx_smoke.mjs
-      - run: node tests/wxbrief_area_smoke.mjs
-      - run: node tests/wxeasy_smoke.mjs
-      - run: node tests/illum_smoke.mjs
-      - run: node tests/watch_links_smoke.mjs
-      - run: node tests/today_width_smoke.mjs
-      - run: node tests/press_smoke.mjs
-      # the phone bottom sheet scrolls up and down only, never sideways (index.html phone layout)
-      - run: node tests/phone_sheet_sideways_smoke.mjs
-      - run: node tests/mycountries_smoke.mjs
-      - run: node tests/install_smoke.mjs
-      - run: node tests/empty_states_smoke.mjs
-      - run: node tests/report_english_smoke.mjs
-      - run: node tests/social_filter_smoke.mjs
-      - run: node tests/speed_budget.mjs
-      - run: node tests/boolq_smoke.mjs
-      # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
-      - run: node tests/grade_smoke.mjs
+      - run: node tools/smoke_shard.mjs --shard ${{ matrix.shard }}/6
+  map-smoke:
+    # The one check a PR waits on: green only when every shard above passed (a skipped or cancelled shard is a failure).
+    if: always()
+    needs: map-smoke-shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          echo "shards: ${{ needs.map-smoke-shard.result }}"
+          test "${{ needs.map-smoke-shard.result }}" = "success"
   carry-webkit:
     # The hand-off of saved work from the old github.io address (assets/osap-carry.js) in WebKit, Safari's engine: the iPhone
     # is where most saved work sits, and Safari is the browser that decides how long an address may be.
