@@ -21,6 +21,14 @@ export function stampOf(text, field = "asof") {
   return t ? new Date(t).toISOString() : null;
 }
 
+// a source's name for the failing list: the warnings file names its sources by agency (PAGASA, EMERCOM), with the country
+// code, and the keeper's outage note showed them as "?" until 13 Nov 2026; a source with no name at all shows its address's host
+function srcName(s) {
+  let n = s.source || s.name || s.agency || s.id;
+  if (n && s.agency === n && s.cc) n = String(s.cc).toUpperCase() + " " + n;
+  if (!n && s.url) try { n = new URL(s.url).host; } catch (e) {}
+  return String(n || "?").slice(0, 60);
+}
 // sources the file says it read: a "sources" or "feeds" list (array or object) whose entries carry ok: true/false
 export function sourcesOf(obj) {
   if (!obj || typeof obj !== "object") return null;
@@ -31,7 +39,7 @@ export function sourcesOf(obj) {
     const withOk = v.filter((s) => s && typeof s === "object" && typeof s.ok === "boolean");
     if (!withOk.length) continue;
     const bad = withOk.filter((s) => !s.ok);
-    return { ok: withOk.length - bad.length, fail: bad.length, failing: bad.slice(0, 8).map((s) => String(s.source || s.name || s.id || "?").slice(0, 60)) };
+    return { ok: withOk.length - bad.length, fail: bad.length, failing: bad.slice(0, 8).map(srcName) };
   }
   return null;
 }

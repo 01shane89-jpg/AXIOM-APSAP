@@ -21,6 +21,10 @@ assert.equal(stampOf("window.ASAP_RW=null;"), null);
 // source lists: arrays or objects of entries with ok flags; anything else is not a source list
 assert.deepEqual(sourcesOf({ sources: [{ source: "A", ok: true }, { source: "B", ok: false }] }), { ok: 1, fail: 1, failing: ["B"] });
 assert.deepEqual(sourcesOf({ feeds: { x: { id: "x", ok: false }, y: { id: "y", ok: true } } }), { ok: 1, fail: 1, failing: ["x"] });
+// the warnings file names its sources by agency and country; an unnamed source shows its host, never "?"
+assert.deepEqual(sourcesOf({ feeds: [{ cc: "ph", agency: "PAGASA", url: "https://publicalert.pagasa.dost.gov.ph/feeds/", ok: false }, { cc: "jp", agency: "JMA", ok: true }] }),
+  { ok: 1, fail: 1, failing: ["PH PAGASA"] });
+assert.deepEqual(sourcesOf({ feeds: [{ url: "https://example.org/rss", ok: false }] }), { ok: 0, fail: 1, failing: ["example.org"] });
 assert.equal(sourcesOf({ features: [{ ok: true }] }), null);
 assert.equal(sourcesOf(null), null);
 
